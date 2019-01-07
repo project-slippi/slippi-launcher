@@ -9,7 +9,12 @@ export default class ActionInput extends Component {
     description: string,
     value: string,
     onClick: () => void,
+    onChange: () => void,
     handlerParams: array,
+  };
+
+  static defaultProps = {
+    onChange: () => {},
   };
 
   clickHandler = () => {
@@ -18,6 +23,10 @@ export default class ActionInput extends Component {
     this.props.onClick(...handlerParams);
   };
 
+  changeHandler = () => {
+    this.props.onChange();
+  };
+  
   render() {
     const actionButton = (
       <Button icon="upload" color="blue" onClick={this.clickHandler} />

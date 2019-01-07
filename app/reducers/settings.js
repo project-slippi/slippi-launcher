@@ -1,19 +1,9 @@
+import _ from 'lodash';
+import electronSettings from 'electron-settings';
+
 import { SELECT_FOLDER, SELECT_FILE, SAVE_SETTINGS, CLEAR_CHANGES } from '../actions/settings';
 import DolphinManager from '../domain/DolphinManager';
-
-const _ = require('lodash');
-const electronSettings = require('electron-settings');
-
-const availableSettings = {
-  isoPath: {
-    location: 'settings.isoPath',
-    defaultValue: "",
-  },
-  rootSlpPath: {
-    location: 'settings.rootSlpPath',
-    defaultValue: "",
-  },
-};
+import { getDolphinPath } from '../utils/settings';
 
 // Default state for this reducer
 const defaultState = {
@@ -22,7 +12,25 @@ const defaultState = {
   currentSettings: getStoredSettings(),
 };
 
+function getAvailableSettings() {
+  return {
+    isoPath: {
+      location: 'settings.isoPath',
+      defaultValue: "",
+    },
+    rootSlpPath: {
+      location: 'settings.rootSlpPath',
+      defaultValue: "",
+    },
+    playbackDolphinPath: {
+      location: 'settings.playbackDolphinPath',
+      defaultValue: getDolphinPath(),
+    }
+  };
+}
+
 function getStoredSettings() {
+  const availableSettings = getAvailableSettings();
   return _.mapValues(availableSettings, settingConfig => {
     let value = electronSettings.get(settingConfig.location);
     if (!value) {
@@ -63,6 +71,7 @@ function saveSettings(state) {
   const currentSettings = state.currentSettings || {};
 
   // Commit new changes to electron-settings file
+  const availableSettings = getAvailableSettings();
   _.forEach(availableSettings, (settingConfig, key) => {
     const newValue = currentSettings[key];
     electronSettings.set(settingConfig.location, newValue);

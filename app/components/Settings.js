@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
-import { Container, Segment, Button } from 'semantic-ui-react';
+import _ from 'lodash';
+import {
+  Container, Segment, Button, Accordion, Icon
+} from 'semantic-ui-react';
 import PageHeader from './common/PageHeader';
 import ActionInput from './common/ActionInput';
 import LabelDescription from './common/LabelDescription';
 import DismissibleMessage from './common/DismissibleMessage';
 
-const _ = require('lodash');
+import styles from './Settings.scss';
 
 export default class Settings extends Component {
   props: {
@@ -24,8 +27,18 @@ export default class Settings extends Component {
     errors: object,
   };
 
+  state = {
+    isAdvancedSectionOpen: false,
+  }
+
   componentWillUnmount() {
     this.props.clearChanges();
+  }
+
+  toggleAdvanced = () => {
+    this.setState({
+      isAdvancedSectionOpen: !this.state.isAdvancedSectionOpen,
+    });
   }
 
   renderGlobalError() {
@@ -92,6 +105,36 @@ export default class Settings extends Component {
     );
   }
 
+  renderAdvanced() {
+    const store = this.props.store || {};
+
+    const playbackDolphinDescription = "The path to the playback instance. " +
+      "If changed this will no longer used the instance of Dolphin packaged with " +
+      "this app. Changing this can cause issues with playback.";
+      
+    return (
+      <Accordion>
+        <Accordion.Title
+          className={styles['expand-toggle']}
+          active={this.state.isAdvancedSectionOpen}
+          onClick={this.toggleAdvanced}
+        >
+          <Icon name='dropdown' />
+          Advanced Settings
+        </Accordion.Title>
+        <Accordion.Content active={this.state.isAdvancedSectionOpen}>
+          <ActionInput
+            label="Playback Dolphin Path"
+            description={playbackDolphinDescription}
+            value={store.currentSettings.playbackDolphinPath}
+            onClick={this.props.browseFolder}
+            handlerParams={['playbackDolphinPath']}
+          />
+        </Accordion.Content>
+      </Accordion>
+    )
+  }
+
   renderContent() {
     const store = this.props.store || {};
 
@@ -116,6 +159,7 @@ export default class Settings extends Component {
           onClick={this.props.browseFolder}
           handlerParams={['rootSlpPath']}
         />
+        {this.renderAdvanced()}
         {this.renderSave()}
         {this.renderConfigDolphin()}
       </Container>

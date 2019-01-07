@@ -5,7 +5,8 @@ import path from 'path';
 import os from 'os';
 import crypto from 'crypto';
 
-const { app } = require('electron').remote;
+import { getDolphinPath } from '../utils/settings';
+
 const electronSettings = require('electron-settings');
 
 export default class DolphinManager {
@@ -59,10 +60,9 @@ export default class DolphinManager {
     const platform = process.platform;
     const isDev = process.env.NODE_ENV === "development";
 
-    const appPath = app.getAppPath();
-
-    // This is the path of dolphin after this app has been packaged
-    let dolphinPath = path.join(appPath, "../app.asar.unpacked/dolphin");
+    // Get release dolphin path. Will be overwritten if in
+    // development mode
+    let dolphinPath = getDolphinPath();
 
     // Get melee file location from settings
     const meleeFile = electronSettings.get('settings.isoPath');
@@ -81,7 +81,7 @@ export default class DolphinManager {
     switch (platform) {
     case "darwin": // osx
       dolphinPath = isDev ? "./app/dolphin-dev/osx" : dolphinPath;
-      executablePath = path.join(dolphinPath, "Dolphin.app");
+      executablePath = path.join(dolphinPath, "Dolphin.app/Contents/MacOS/Dolphin");
       break;
     case "win32": // windows
       dolphinPath = isDev ? "./app/dolphin-dev/windows" : dolphinPath;
