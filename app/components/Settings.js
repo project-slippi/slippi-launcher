@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 import {
-  Container, Segment, Button, Accordion, Icon
+  Container, Segment, Button, Accordion, Icon, Message,
 } from 'semantic-ui-react';
 import PageHeader from './common/PageHeader';
 import ActionInput from './common/ActionInput';
@@ -60,6 +60,33 @@ export default class Settings extends Component {
     );
   }
 
+  renderLinuxNotif() {
+    const platform = process.platform;
+    if (platform !== "linux") {
+      return null;
+    }
+
+    const contentMsg = (
+      <div>
+        Hello linux friend! We cannot include a Dolphin
+        build that is guaranteed to work on your distro.
+        You will likely need to build Dolphin and configure your
+        Playback Dolphin Path under advanced options.&nbsp;
+        <a href="https://discord.gg/KkhZQfR">Join the discord</a>
+        &nbsp;if you need help.
+      </div>
+    );
+
+    return (
+      <Message
+        info={true}
+        icon="linux"
+        header={`Additional configuration necessary`}
+        content={contentMsg}
+      />
+    );
+  }
+
   renderSave() {
     const store = this.props.store || {};
 
@@ -111,7 +138,7 @@ export default class Settings extends Component {
     const playbackDolphinDescription = "The path to the playback instance. " +
       "If changed this will no longer used the instance of Dolphin packaged with " +
       "this app. Changing this can cause issues with playback.";
-      
+
     return (
       <Accordion>
         <Accordion.Title
@@ -132,7 +159,7 @@ export default class Settings extends Component {
           />
         </Accordion.Content>
       </Accordion>
-    )
+    );
   }
 
   renderContent() {
@@ -142,6 +169,7 @@ export default class Settings extends Component {
     return (
       <Container text={true}>
         {this.renderGlobalError()}
+        {this.renderLinuxNotif()}
         <ActionInput
           label="Melee ISO File"
           description="The path to a NTSC Melee 1.02 ISO. Used for playing replay files"

@@ -10,7 +10,7 @@
  *
  * @flow
  */
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, shell } from 'electron';
 import MenuBuilder from './menu';
 
 let mainWindow = null;
@@ -55,7 +55,6 @@ app.on('window-all-closed', () => {
   }
 });
 
-
 app.on('ready', async () => {
   if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
     await installExtensions();
@@ -80,6 +79,18 @@ app.on('ready', async () => {
     }
     mainWindow.show();
     mainWindow.focus();
+  });
+
+  // On navigation links to http urls, open in external browser
+  mainWindow.webContents.on('will-navigate', (event, url) => {
+    if (!url.startsWith("http")) {
+      // Do nothing if url doesn't start with http, without this
+      // HMR was not working
+      return;
+    }
+
+    event.preventDefault();
+    shell.openExternal(url);
   });
 
   mainWindow.on('closed', () => {
