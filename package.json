@@ -97,7 +97,7 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jlaferri/project-slippi/issues"
+    "url": "https://github.com/project-slippi/slippi-desktop-app/issues"
   },
   "keywords": [
     "slippi",
@@ -105,7 +105,7 @@
     "ssbm",
     "gamecube"
   ],
-  "homepage": "https://github.com/jlaferri/project-slippi",
+  "homepage": "https://github.com/project-slippi/project-slippi",
   "jest": {
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/internals/mocks/fileMock.js",
@@ -148,8 +148,8 @@
     "cross-env": "^5.2.0",
     "cross-spawn": "^5.1.0",
     "css-loader": "^0.28.3",
-    "electron": "^1.8.8",
-    "electron-builder": "^19.8.0",
+    "electron": "^3.1.0",
+    "electron-builder": "^20.38.2",
     "electron-devtools-installer": "^2.2.4",
     "enzyme": "^2.9.1",
     "enzyme-to-json": "^1.5.1",
@@ -200,8 +200,9 @@
     "classnames": "^2.2.6",
     "devtron": "^1.4.0",
     "electron-debug": "^1.2.0",
+    "electron-log": "^2.2.17",
     "electron-settings": "^3.2.0",
-    "electron-updater": "^4.0.6",
+    "electron-updater": "^4.0.7",
     "font-awesome": "^4.7.0",
     "fs-extra": "^5.0.0",
     "history": "^4.6.3",

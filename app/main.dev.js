@@ -10,9 +10,22 @@
  *
  * @flow
  */
+import log from 'electron-log';
 import { app, BrowserWindow, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import MenuBuilder from './menu';
+
+//-------------------------------------------------------------------
+// Logging
+//
+// THIS SECTION IS NOT REQUIRED
+//
+// This logging setup is not required for auto-updates to work,
+// but it sure makes debugging easier :)
+//-------------------------------------------------------------------
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
+log.info('App starting...');
 
 let mainWindow = null;
 
@@ -42,7 +55,6 @@ const installExtensions = async () => {
     .all(extensions.map(name => installer.default(installer[name], forceDownload)))
     .catch(console.log);
 };
-
 
 /**
  * Add event listeners...
