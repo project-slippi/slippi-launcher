@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Header, Icon, Container, Segment } from 'semantic-ui-react';
+import {
+  Button, Header, Icon, Container, Segment, Message,
+} from 'semantic-ui-react';
 import styles from './Home.scss';
 
 export default class Home extends Component {
@@ -32,12 +34,32 @@ export default class Home extends Component {
     return buttonDisplay;
   }
 
+  renderPatreonNotif() {
+    const contentMsg = (
+      <div>
+        If you are enjoying using Project Slippi, consider
+        becoming a patron to support continued development.&nbsp;
+        <strong><a href="https://discord.gg/KkhZQfR">Click here</a></strong>
+        &nbsp;to support!
+      </div>
+    );
+
+    return (
+      <Message
+        info={true}
+        icon="patreon"
+        header={`Support continued development`}
+        content={contentMsg}
+      />
+    );
+  }
+
   render() {
     const navigationElements = [];
     const upcomingElements = [];
 
     navigationElements.push(this.generateNav(
-      "disk outline",
+      "disk",
       "Replay Browser",
       "Play and view replay files on your computer",
       "/files",
@@ -62,6 +84,7 @@ export default class Home extends Component {
 
     return (
       <Container text={true} className={styles['vertical-space']}>
+        {this.renderPatreonNotif()}
         <Segment basic={true} className="grid-list">
           <div className="grid-item-center">
             <Header as="h2" color="green">Navigation</Header>
