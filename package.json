@@ -32,7 +32,7 @@
   "browserslist": "electron 1.6",
   "build": {
     "productName": "Slippi Launcher",
-    "appId": "org.develar.SlippiLauncher",
+    "appId": "com.github.projectslippi.slippidesktopapp",
     "asarUnpack": [
       "**/dolphin/**/*",
       "**/images/**/*"
@@ -60,6 +60,13 @@
           "type": "link",
           "path": "/Applications"
         }
+      ]
+    },
+    "mac": {
+      "category": "your.app.category.type",
+      "target": [
+        "zip",
+        "dmg"
       ]
     },
     "win": {
@@ -194,6 +201,7 @@
     "devtron": "^1.4.0",
     "electron-debug": "^1.2.0",
     "electron-settings": "^3.2.0",
+    "electron-updater": "^4.0.6",
     "font-awesome": "^4.7.0",
     "fs-extra": "^5.0.0",
     "history": "^4.6.3",

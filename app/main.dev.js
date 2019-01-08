@@ -11,6 +11,7 @@
  * @flow
  */
 import { app, BrowserWindow, shell } from 'electron';
+import { autoUpdater } from 'electron-updater';
 import MenuBuilder from './menu';
 
 let mainWindow = null;
@@ -34,7 +35,7 @@ const installExtensions = async () => {
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
   const extensions = [
     'REACT_DEVELOPER_TOOLS',
-    'REDUX_DEVTOOLS'
+    'REDUX_DEVTOOLS',
   ];
 
   return Promise
@@ -59,6 +60,8 @@ app.on('ready', async () => {
   if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
     await installExtensions();
   }
+
+  autoUpdater.checkForUpdatesAndNotify();
 
   mainWindow = new BrowserWindow({
     show: false,
