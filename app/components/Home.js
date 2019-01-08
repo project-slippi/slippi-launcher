@@ -39,7 +39,7 @@ export default class Home extends Component {
       <div>
         If you are enjoying using Project Slippi, consider
         becoming a patron to support continued development.&nbsp;
-        <strong><a href="https://discord.gg/KkhZQfR">Click here</a></strong>
+        <strong><a href="https://www.patreon.com/fizzi36">Click here</a></strong>
         &nbsp;to support!
       </div>
     );
