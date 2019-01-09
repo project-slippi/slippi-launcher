@@ -117,6 +117,22 @@ export default class DolphinManager {
       );
     }
 
+    // This probably doesn't belong here - should run on booting the app, or something
+    let hashPath = "./app/latest_codelist_hash"
+    const latestHash = fs.readFileSync(hashPath);
+    let iniFile = "./app/dolphin-dev/overwrite/Sys/GameSettings/GALE01r2.ini";
+    let hash = crypto.createHash('sha256');
+    let data = fs.readFileSync(iniFile);
+    hash.update(data);
+    let currentHash = hash.digest('hex');
+    if (currentHash == latestHash) {
+      console.log("GALE01r2.ini matches latest hash");
+    }
+    else {
+      // Do something more substantial here: tell the user
+      console.log("GALE01r2.ini is changed or outdated!");
+    }
+
     try {
       this.isRunning = true;
       const execFilePromise = util.promisify(execFile);

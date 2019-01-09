@@ -1,6 +1,7 @@
 const { execSync } = require('child_process');
 const fs = require('fs-extra');
 const path = require('path');
+const crypto = require('crypto');
 
 // Check if the renderer and main bundles are built
 function CopyDolphin() {
@@ -27,6 +28,7 @@ function CopyDolphin() {
     throw new Error("Platform not yet supported.");
   }
 
+  getLatestIniHash();
   console.log("Finished copying dolphin build!");
 }
 
@@ -106,6 +108,15 @@ function copyForLinux(targetFolder) {
   fs.copySync(overwriteSysFolder, dolphinDestSysFolder);
   fs.removeSync(gitIgnoreDest);
   fs.emptyDirSync(dolphinDestSlippiFolder);
+}
+
+function getLatestIniHash() {
+  const iniFile = "./app/dolphin-dev/overwrite/Sys/GameSettings/GALE01r2.ini";
+  const hash = crypto.createHash('sha256');
+  const data = fs.readFileSync(iniFile);
+  hash.update(data);
+  let latestHash = hash.digest('hex');
+  fs.writeFileSync("./app/latest_codelist_hash", latestHash);
 }
 
 CopyDolphin();
