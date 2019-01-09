@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import SlippiGame from 'slp-parser-js';
 import {
   LOAD_ROOT_FOLDER, CHANGE_FOLDER_SELECTION, STORE_SCROLL_POSITION,
@@ -116,7 +117,7 @@ function changeFolderSelection(state, action) {
       console.log(err);
       hasError = true;
     }
-   
+
     return {
       fullPath: fullPath,
       fileName: file,

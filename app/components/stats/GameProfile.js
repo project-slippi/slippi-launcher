@@ -15,7 +15,7 @@ import styles from './GameProfile.scss';
 import getLocalImage from '../../utils/image';
 import * as stageUtils from '../../utils/stages';
 import * as timeUtils from '../../utils/time';
-import * as playerUtils from '../../utils/players'
+import * as playerUtils from '../../utils/players';
 
 export default class GameProfile extends Component {
   props: {

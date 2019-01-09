@@ -88,12 +88,8 @@ export default class DolphinManager {
       executablePath = path.join(dolphinPath, "Dolphin.exe");
       break;
     case "linux": // linux
-
       // No need to dev override because Linux users will always need to specify
       // the path inside of the application
-      //
-      //dolphinPath = isDev ? "./app/dolphin-dev/linux" : dolphinPath;
-
       executablePath = path.join(dolphinPath, "dolphin-emu");
       break;
     default:
@@ -113,11 +109,12 @@ export default class DolphinManager {
       ]);
     }
 
-    if (!fs.existsSync(executablePath))
-    {
-	    throw new Error("Couldn't find Dolphin executable at " + executablePath + " . " +
-		"Your \"Playback Dolphin Path\" option is currently set to " + dolphinPath + " . " +
-		"Make sure this directory exists and contains the playback instance of Dolphin.");
+    if (!fs.existsSync(executablePath)) {
+      throw new Error(
+        `Couldn't find Dolphin executable at ${executablePath}. ` +
+        `Your "Playback Dolphin Path" option is currently set to ${dolphinPath}. ` +
+        `Make sure this directory exists and contains the playback instance of Dolphin.`
+      );
     }
 
     try {

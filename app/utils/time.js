@@ -1,7 +1,7 @@
 import moment from 'moment';
 
 export const frames = {
-  START_FRAME: -123
+  START_FRAME: -123,
 };
 
 export function convertFrameCountToDurationString(frameCount: number) {

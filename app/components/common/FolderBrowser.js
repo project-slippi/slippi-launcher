@@ -1,9 +1,8 @@
+import _ from 'lodash';
+import classNames from 'classnames';
 import React, { Component } from 'react';
 import { List, Segment, Header, Icon } from 'semantic-ui-react';
 import styles from './FolderBrowser.scss';
-
-const _ = require('lodash');
-const classNames = require('classnames');
 
 export default class FolderBrowser extends Component {
   props: {

@@ -1,13 +1,12 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Table, Button, Image } from 'semantic-ui-react';
+import { Table, Button } from 'semantic-ui-react';
 import styles from './FileLoader.scss';
 import SpacedGroup from './common/SpacedGroup';
 import PlayerChiclet from './common/PlayerChiclet';
 import * as stageUtils from '../utils/stages';
 import * as timeUtils from '../utils/time';
-import * as playerUtils from '../utils/players';
 
 const path = require('path');
 
@@ -133,7 +132,7 @@ export default class FileRow extends Component {
           />
         ));
       });
-      
+
       // Add VS obj in between teams
       if (idx < teams.length - 1) {
         // If this is not the last team, add a "vs" element

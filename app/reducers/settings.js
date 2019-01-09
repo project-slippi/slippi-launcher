@@ -25,7 +25,7 @@ function getAvailableSettings() {
     playbackDolphinPath: {
       location: 'settings.playbackDolphinPath',
       defaultValue: getDolphinPath(),
-    }
+    },
   };
 }
 

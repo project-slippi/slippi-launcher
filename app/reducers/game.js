@@ -2,7 +2,7 @@ import { GAME_PROFILE_LOAD } from '../actions/game';
 
 // Default state for this reducer
 const defaultState = {
-  game: null
+  game: null,
 };
 
 export default function game(state = defaultState, action) {

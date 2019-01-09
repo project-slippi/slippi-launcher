@@ -3,7 +3,7 @@ import { DISPLAY_ERROR, DISMISS_ERROR } from '../actions/error';
 // Default state for this reducer
 const defaultState = {
   messages: {},
-  displayFlags: {}
+  displayFlags: {},
 };
 
 export default function fileLoader(state = defaultState, action) {

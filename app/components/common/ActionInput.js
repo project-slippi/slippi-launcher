@@ -26,7 +26,7 @@ export default class ActionInput extends Component {
   changeHandler = () => {
     this.props.onChange();
   };
-  
+
   render() {
     const actionButton = (
       <Button icon="upload" color="blue" onClick={this.clickHandler} />

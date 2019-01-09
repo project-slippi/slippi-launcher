@@ -70,9 +70,9 @@ export default class Settings extends Component {
       <div>
         Hello Linux friend! We cannot include a Dolphin
         build that is guaranteed to work on your distro.
-        You will need to build Dolphin and configure 
+        You will need to build Dolphin and configure
         the <b>Playback Dolphin Path</b> in the Advanced Settings dropdown.&nbsp;
-	<a href="https://discord.gg/KkhZQfR">Join the discord</a> &nbsp;if you have any questions.
+        <a href="https://discord.gg/KkhZQfR">Join the discord</a> &nbsp;if you have any questions.
       </div>
     );
 

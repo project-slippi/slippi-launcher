@@ -1,107 +1,107 @@
 const characters = [{
   id: 0,
   name: "Captain Falcon",
-  shortName: "Falcon"
+  shortName: "Falcon",
 }, {
   id: 1,
   name: "Donkey Kong",
-  shortName: "DK"
+  shortName: "DK",
 }, {
   id: 2,
   name: "Fox",
-  shortName: "Fox"
+  shortName: "Fox",
 }, {
   id: 3,
   name: "Mr. Game & Watch",
-  shortName: "G&W"
+  shortName: "G&W",
 }, {
   id: 4,
   name: "Kirby",
-  shortName: "Kirby"
+  shortName: "Kirby",
 }, {
   id: 5,
   name: "Bowser",
-  shortName: "Bowser"
+  shortName: "Bowser",
 }, {
   id: 6,
   name: "Link",
-  shortName: "Link"
+  shortName: "Link",
 }, {
   id: 7,
   name: "Luigi",
-  shortName: "Luigi"
+  shortName: "Luigi",
 }, {
   id: 8,
   name: "Mario",
-  shortName: "Mario"
+  shortName: "Mario",
 }, {
   id: 9,
   name: "Marth",
-  shortName: "Marth"
+  shortName: "Marth",
 }, {
   id: 10,
   name: "Mewtwo",
-  shortName: "Mewtwo"
+  shortName: "Mewtwo",
 }, {
   id: 11,
   name: "Ness",
-  shortName: "Ness"
+  shortName: "Ness",
 }, {
   id: 12,
   name: "Peach",
-  shortName: "Peach"
+  shortName: "Peach",
 }, {
   id: 13,
   name: "Pikachu",
-  shortName: "Pikachu"
+  shortName: "Pikachu",
 }, {
   id: 14,
   name: "Ice Climbers",
-  shortName: "ICs"
+  shortName: "ICs",
 }, {
   id: 15,
   name: "Jigglypuff",
-  shortName: "Puff"
+  shortName: "Puff",
 }, {
   id: 16,
   name: "Samus",
-  shortName: "Samus"
+  shortName: "Samus",
 }, {
   id: 17,
   name: "Yoshi",
-  shortName: "Yoshi"
+  shortName: "Yoshi",
 }, {
   id: 18,
   name: "Zelda",
-  shortName: "Zelda"
+  shortName: "Zelda",
 }, {
   id: 19,
   name: "Sheik",
-  shortName: "Sheik"
+  shortName: "Sheik",
 }, {
   id: 20,
   name: "Falco",
-  shortName: "Falco"
+  shortName: "Falco",
 }, {
   id: 21,
   name: "Young Link",
-  shortName: "YLink"
+  shortName: "YLink",
 }, {
   id: 22,
   name: "Dr. Mario",
-  shortName: "Doc"
+  shortName: "Doc",
 }, {
   id: 23,
   name: "Roy",
-  shortName: "Roy"
+  shortName: "Roy",
 }, {
   id: 24,
   name: "Pichu",
-  shortName: "Pichu"
+  shortName: "Pichu",
 }, {
   id: 25,
   name: "Ganondorf",
-  shortName: "Ganon"
+  shortName: "Ganon",
 }];
 
 export function getCharacterInfo(characterId) {

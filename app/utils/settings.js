@@ -1,5 +1,6 @@
 import electronSettings from 'electron-settings';
 import path from 'path';
+
 const { app } = require('electron').remote;
 
 export function isDolphinPathSet() {

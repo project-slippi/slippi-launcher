@@ -1,8 +1,7 @@
+import _ from 'lodash';
 import React, { Component } from 'react';
 import { Container, Modal, Form, Card, Button } from 'semantic-ui-react';
 import PageHeader from './common/PageHeader';
-
-const _ = require('lodash');
 
 export default class Console extends Component {
   props: {
@@ -69,21 +68,19 @@ export default class Console extends Component {
     );
   }
 
-  renderConnection = (connection, index) => {
-    return (
-      <Card key={`${connection.ipAddress}-connection`}>
-        <Card.Content>
-          <p>{connection.ipAddress}</p>
-          <p>{connection.targetFolder}</p>
-          <Button onClick={_.partial(this.editConnectionClick, index)}>
-            Edit
-          </Button>
-          {this.renderConnectButton(connection)}
-          {this.renderMirrorButton(connection)}
-        </Card.Content>
-      </Card>
-    );
-  }
+  renderConnection = (connection, index) => (
+    <Card key={`${connection.ipAddress}-connection`}>
+      <Card.Content>
+        <p>{connection.ipAddress}</p>
+        <p>{connection.targetFolder}</p>
+        <Button onClick={_.partial(this.editConnectionClick, index)}>
+          Edit
+        </Button>
+        {this.renderConnectButton(connection)}
+        {this.renderMirrorButton(connection)}
+      </Card.Content>
+    </Card>
+  );
 
   renderConnectButton = (connection) => (
     <Button onClick={_.partial(this.connectTo, connection)}>Connect</Button>
