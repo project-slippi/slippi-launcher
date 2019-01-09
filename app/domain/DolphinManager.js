@@ -113,6 +113,13 @@ export default class DolphinManager {
       ]);
     }
 
+    if (!fs.existsSync(executablePath))
+    {
+	    throw new Error("Couldn't find Dolphin executable at " + executablePath + " . " +
+		"Your \"Playback Dolphin Path\" option is currently set to " + dolphinPath + " . " +
+		"Make sure this directory exists and contains the playback instance of Dolphin.");
+    }
+
     try {
       this.isRunning = true;
       const execFilePromise = util.promisify(execFile);
