@@ -18,8 +18,10 @@ function CopyDolphin() {
     copyForWindows(targetFolder);
     break;
   case "linux":
-    console.log("Copying the linux build of dolphin to package");
-    copyForLinux(targetFolder);
+    // For Linux, don't copy anything (the user must specify the path to use)
+    // 
+    // console.log("Copying the linux build of dolphin to package");
+    // copyForLinux(targetFolder);
     break;
   default:
     throw new Error("Platform not yet supported.");

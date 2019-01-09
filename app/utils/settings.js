@@ -3,12 +3,12 @@ import path from 'path';
 const { app } = require('electron').remote;
 
 export function isDolphinPathSet() {
-  const storedDolphinPath = electronSettings.get('settings.dolphinPath');
+  const storedDolphinPath = electronSettings.get('settings.playbackDolphinPath');
   return !!storedDolphinPath;
 }
 
 export function getDolphinPath() {
-  const storedDolphinPath = electronSettings.get('settings.dolphinPath');
+  const storedDolphinPath = electronSettings.get('settings.playbackDolphinPath');
   if (storedDolphinPath) {
     return storedDolphinPath;
   }

@@ -88,7 +88,12 @@ export default class DolphinManager {
       executablePath = path.join(dolphinPath, "Dolphin.exe");
       break;
     case "linux": // linux
-      dolphinPath = isDev ? "./app/dolphin-dev/linux" : dolphinPath;
+
+      // No need to dev override because Linux users will always need to specify
+      // the path inside of the application
+      //
+      //dolphinPath = isDev ? "./app/dolphin-dev/linux" : dolphinPath;
+
       executablePath = path.join(dolphinPath, "dolphin-emu");
       break;
     default:

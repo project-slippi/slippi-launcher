@@ -68,12 +68,11 @@ export default class Settings extends Component {
 
     const contentMsg = (
       <div>
-        Hello linux friend! We cannot include a Dolphin
+        Hello Linux friend! We cannot include a Dolphin
         build that is guaranteed to work on your distro.
-        You will likely need to build Dolphin and configure your
-        Playback Dolphin Path under advanced options.&nbsp;
-        <a href="https://discord.gg/KkhZQfR">Join the discord</a>
-        &nbsp;if you need help.
+        You will need to build Dolphin and configure 
+        the <b>Playback Dolphin Path</b> in the Advanced Settings dropdown.&nbsp;
+	<a href="https://discord.gg/KkhZQfR">Join the discord</a> &nbsp;if you have any questions.
       </div>
     );
 
@@ -137,7 +136,9 @@ export default class Settings extends Component {
 
     const playbackDolphinDescription = "The path to the playback instance. " +
       "If changed this will no longer used the instance of Dolphin packaged with " +
-      "this app. Changing this can cause issues with playback.";
+      "this app. Changing this can cause issues with playback. " +
+      "Linux users *must* do the following: (1) use the installer script to compile " +
+      "Dolphin, then; (2) set this path to the directory containing the playback instance.";
 
     return (
       <Accordion>
