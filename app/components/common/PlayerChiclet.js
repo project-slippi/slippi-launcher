@@ -10,9 +10,9 @@ import SpacedGroup from './SpacedGroup';
 import styles from './PlayerChiclet.scss';
 
 export default class PlayerChiclet extends Component {
-  props: {
-    game: Object,
-    playerIndex: number,
+  static propTypes = {
+    game: PropTypes.object.isRequired,
+    playerIndex: PropTypes.number.isRequired,
     showContainer: PropTypes.bool // eslint-disable-line
   };
 

@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Header, Icon, Button } from 'semantic-ui-react';
 
 export default class PageHeader extends Component {
-  props: {
-    text: string,
-    icon: string,
-    history: Object
+  static propTypes = {
+    text: PropTypes.string.isRequired,
+    icon: PropTypes.string.isRequired,
+    history: PropTypes.object.isRequired
   };
 
   handleBack = () => {

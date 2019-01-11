@@ -1,18 +1,19 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Container, Modal, Form, Card, Button } from 'semantic-ui-react';
 import PageHeader from './common/PageHeader';
 
 export default class Console extends Component {
-  props: {
-    editConnection: () => void,
-    cancelEditConnection: () => void,
-    saveConnection: () => void,
-    // deleteConnection: () => void,
-    connectConnection: () => void,
-    startMirroring: () => void,
-    history: Object,
-    store: Object
+  static propTypes = {
+    editConnection: PropTypes.func.isRequired,
+    cancelEditConnection: PropTypes.func.isRequired,
+    saveConnection: PropTypes.func.isRequired,
+    // deleteConnection: PropTypes.func.isRequired,
+    connectConnection: PropTypes.func.isRequired,
+    startMirroring: PropTypes.func.isRequired,
+    history: PropTypes.object.isRequired,
+    store: PropTypes.object.isRequired
   };
 
   state = {

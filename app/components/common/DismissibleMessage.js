@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import { Message, Transition } from 'semantic-ui-react';
 
 export default class DismissibleMessage extends Component {
-  refMessage: {};
-
   static propTypes = {
     visible: PropTypes.bool,
     info: PropTypes.bool,
@@ -13,7 +11,7 @@ export default class DismissibleMessage extends Component {
     header: PropTypes.string.isRequired,
     content: PropTypes.string.isRequired,
     onDismiss: PropTypes.func.isRequired,
-    dismissParams: PropTypes.instanceOf(PropTypes.any).isRequired
+    dismissParams: PropTypes.arrayOf(PropTypes.any).isRequired
   };
 
   static defaultProps = {
@@ -21,6 +19,12 @@ export default class DismissibleMessage extends Component {
     info: false,
     error: false
   };
+
+  constructor() {
+    super();
+
+    this.refMessage = {};
+  }
 
   componentWillReceiveProps(nextProps) {
     // If message has not been dismissed and content changes, we should move it into view

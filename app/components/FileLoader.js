@@ -19,8 +19,6 @@ import PageHeader from './common/PageHeader';
 import FolderBrowser from './common/FolderBrowser';
 
 export default class FileLoader extends Component {
-  refPrimary: {};
-
   static propTypes = {
     // fileLoader actions
     loadRootFolder: PropTypes.func.isRequired,
@@ -40,6 +38,12 @@ export default class FileLoader extends Component {
     errors: PropTypes.object.isRequired,
     globalNotifs: PropTypes.object.isRequired
   };
+
+  constructor() {
+    super();
+
+    this.refPrimary = {};
+  }
 
   componentDidMount() {
     const xPos = _.get(this.props.store, ['scrollPosition', 'x']) || 0;

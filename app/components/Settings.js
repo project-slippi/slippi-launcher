@@ -17,20 +17,20 @@ import DismissibleMessage from './common/DismissibleMessage';
 import styles from './Settings.scss';
 
 export default class Settings extends Component {
-  props: {
-    browseFolder: () => void,
-    browseFile: () => void,
-    saveSettings: () => void,
-    clearChanges: () => void,
-    openDolphin: () => void,
+  static propTypes = {
+    browseFolder: PropTypes.func.isRequired,
+    browseFile: PropTypes.func.isRequired,
+    saveSettings: PropTypes.func.isRequired,
+    clearChanges: PropTypes.func.isRequired,
+    openDolphin: PropTypes.func.isRequired,
 
     // error actions
-    dismissError: PropTypes.func,
+    dismissError: PropTypes.func.isRequired,
 
     // store data
-    history: Object,
-    store: Object,
-    errors: Object
+    history: PropTypes.object.isRequired,
+    store: PropTypes.object.isRequired,
+    errors: PropTypes.object.isRequired
   };
 
   state = {

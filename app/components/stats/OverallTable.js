@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Table } from 'semantic-ui-react';
 import classNames from 'classnames';
 
@@ -10,12 +11,12 @@ import * as numberUtils from '../../utils/number';
 const columnCount = 3;
 
 export default class OverallTable extends Component {
-  props: {
-    game: Object,
-    player1Display: Object,
-    player1Index: number,
-    player2Display: Object,
-    player2Index: number
+  static propTypes = {
+    game: PropTypes.object.isRequired,
+    player1Display: PropTypes.object.isRequired,
+    player1Index: PropTypes.number.isRequired,
+    player2Display: PropTypes.object.isRequired,
+    player2Index: PropTypes.number.isRequired
   };
 
   renderMultiStatField(header, arrPath, fieldPaths, valueMapper, highlight) {

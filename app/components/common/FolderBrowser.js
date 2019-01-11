@@ -1,15 +1,16 @@
 import _ from 'lodash';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import React, { Component } from 'react';
 import { List, Segment, Header, Icon } from 'semantic-ui-react';
 import styles from './FolderBrowser.scss';
 
 export default class FolderBrowser extends Component {
-  props: {
-    folders: Object,
-    rootFolderName: string,
-    selectedFolderFullPath: string,
-    changeFolderSelection: Function
+  static propTypes = {
+    folders: PropTypes.object.isRequired,
+    rootFolderName: PropTypes.string.isRequired,
+    selectedFolderFullPath: PropTypes.string.isRequired,
+    changeFolderSelection: PropTypes.func.isRequired
   };
 
   selectFolder = folderFullPath => {

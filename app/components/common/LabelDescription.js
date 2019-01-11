@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import styles from './LabelDescription.scss';
 
 export default class LabelDescription extends Component {
-  props: {
-    label: string,
-    description: string,
+  static propTypes = {
+    label: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired
   };
 
   render() {

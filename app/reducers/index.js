@@ -8,7 +8,7 @@ import game from './game';
 import errors from './error';
 import notifs from './notifs';
 
-export default function createRootReducer(history: History) {
+export default function createRootReducer(history) {
   return combineReducers({
     router: connectRouter(history),
     fileLoader: fileLoader,

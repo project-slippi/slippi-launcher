@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
+import PropTypes from 'prop-types';
 import { ipcRenderer } from 'electron';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -8,10 +9,10 @@ import GlobalAlert from '../components/GlobalAlert';
 import * as NotifActions from '../actions/notifs';
 
 class App extends Component {
-  props: {
-    children: any,
-    store: Object,
-    appUpgradeDownloaded: Function
+  static propTypes = {
+    children: PropTypes.any.isRequired,
+    store: PropTypes.object.isRequired,
+    appUpgradeDownloaded: PropTypes.func.isRequired
   };
 
   componentDidMount() {

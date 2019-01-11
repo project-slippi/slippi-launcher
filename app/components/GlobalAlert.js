@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
@@ -9,9 +10,9 @@ import * as NotifActions from '../actions/notifs';
 import styles from './GlobalAlert.scss';
 
 class GlobalAlert extends Component {
-  props: {
-    store: Object,
-    setActiveNotif: Function
+  static propTypes = {
+    store: PropTypes.object.isRequired,
+    setActiveNotif: PropTypes.func.isRequired
   };
 
   // TODO: Perhaps dismissal should happen in redux. This would be useful in the case where

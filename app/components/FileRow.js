@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Table, Button } from 'semantic-ui-react';
 import styles from './FileLoader.scss';
@@ -11,10 +12,10 @@ import * as timeUtils from '../utils/time';
 const path = require('path');
 
 export default class FileRow extends Component {
-  props: {
-    file: Object,
-    playFile: Function,
-    gameProfileLoad: Function
+  static propTypes = {
+    file: PropTypes.object.isRequired,
+    playFile: PropTypes.func.isRequired,
+    gameProfileLoad: PropTypes.func.isRequired
   };
 
   playFile = () => {

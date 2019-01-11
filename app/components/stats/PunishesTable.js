@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import classNames from 'classnames';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Table, Image, Icon } from 'semantic-ui-react';
 
 import styles from './GameProfile.scss';
@@ -12,10 +13,10 @@ import * as numberUtils from '../../utils/number';
 const columnCount = 6;
 
 export default class PunishesTable extends Component {
-  props: {
-    game: Object,
-    playerDisplay: Object,
-    playerIndex: number
+  static propTypes = {
+    game: PropTypes.object.isRequired,
+    playerDisplay: PropTypes.object.isRequired,
+    playerIndex: PropTypes.number.isRequired
   };
 
   generatePunishRow = punish => {
@@ -103,7 +104,7 @@ export default class PunishesTable extends Component {
     );
   };
 
-  getPlayer(playerIndex: number) {
+  getPlayer(playerIndex) {
     const gameSettings = this.props.game.getSettings();
     const players = gameSettings.players || [];
     const playersByIndex = _.keyBy(players, 'playerIndex');

@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Table } from 'semantic-ui-react';
 
 import styles from './GameProfile.scss';
@@ -7,10 +8,10 @@ import styles from './GameProfile.scss';
 import * as timeUtils from '../../utils/time';
 
 export default class EdgeguardsTable extends Component {
-  props: {
-    game: Object,
-    playerDisplay: Object,
-    playerIndex: number
+  static propTypes = {
+    game: PropTypes.object.isRequired,
+    playerDisplay: PropTypes.object.isRequired,
+    playerIndex: PropTypes.number.isRequired
   };
 
   generateEdgeguardRow = edgeguard => {

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import _ from 'lodash';
+import PropTypes from 'prop-types';
 import {
   Header,
   Segment,
@@ -25,22 +26,26 @@ import * as timeUtils from '../../utils/time';
 import * as playerUtils from '../../utils/players';
 
 export default class GameProfile extends Component {
-  props: {
-    history: Object,
+  static propTypes = {
+    history: PropTypes.object.isRequired,
 
     // fileLoaderAction
-    playFile: Function,
+    playFile: PropTypes.func.isRequired,
 
     // error actions
-    dismissError: Function,
+    dismissError: PropTypes.func.isRequired,
 
     // store data
-    store: Object,
-    errors: Object,
-    globalNotifs: Object
+    store: PropTypes.object.isRequired,
+    errors: PropTypes.object.isRequired,
+    globalNotifs: PropTypes.object.isRequired
   };
 
-  refStats: {};
+  constructor() {
+    super();
+
+    this.refStats = {};
+  }
 
   state = {
     isStatsStuck: false
@@ -72,7 +77,7 @@ export default class GameProfile extends Component {
   renderEmpty() {
     return (
       <Header
-        color="green"
+        color="red"
         inverted={true}
         as="h1"
         textAlign="center"
