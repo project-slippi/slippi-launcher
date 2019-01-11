@@ -1,14 +1,17 @@
-os: unstable
+image: Visual Studio 2017
+
+platform:
+  - x64
 
 environment:
   matrix:
-    - nodejs_version: 8
-    - nodejs_version: 7
+    - nodejs_version: 10
 
 cache:
-  - "%LOCALAPPDATA%/Yarn"
-  - node_modules -> package.json
-  - app/node_modules -> app/package.json
+  - '%LOCALAPPDATA%/Yarn'
+  - node_modules
+  - flow-typed
+  - '%USERPROFILE%\.electron'
 
 matrix:
   fast_finish: true
@@ -22,14 +25,14 @@ shallow_clone: true
 clone_depth: 1
 
 install:
-  - ps: Install-Product node $env:nodejs_version
+  - ps: Install-Product node $env:nodejs_version x64
   - set CI=true
   - yarn
-  - cd app && yarn
 
 test_script:
-  - node --version
+  - yarn package-ci
   - yarn lint
-  - yarn package
+  # - yarn flow
   - yarn test
+  - yarn build-e2e
   - yarn test-e2e

@@ -1,100 +1,113 @@
 /**
- * Builds the DLL for development electron renderer process
+ * Build config for electron renderer process
  */
 
-import webpack from 'webpack';
 import path from 'path';
+import webpack from 'webpack';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin';
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import merge from 'webpack-merge';
+import TerserPlugin from 'terser-webpack-plugin';
 import baseConfig from './webpack.config.base';
-import { dependencies } from './package.json';
-import CheckNodeEnv from './internals/scripts/CheckNodeEnv';
+import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 
-CheckNodeEnv('development');
-
-const dist = path.resolve(process.cwd(), 'dll');
-
+CheckNodeEnv('production');
 export default merge.smart(baseConfig, {
-  context: process.cwd(),
+  devtool: 'source-map',
 
-  devtool: 'eval',
+  mode: 'production',
 
   target: 'electron-renderer',
 
-  externals: ['fsevents', 'crypto-browserify'],
+  entry: path.join(__dirname, '..', 'app/index'),
 
-  /**
-   * @HACK: Copy and pasted from renderer dev config. Consider merging these
-   *        rules into the base config. May cause breaking changes.
-   */
+  output: {
+    path: path.join(__dirname, '..', 'app/dist'),
+    publicPath: './dist/',
+    filename: 'renderer.prod.js'
+  },
+
   module: {
     rules: [
+      // Extract all .global.css to style.css as is
       {
         test: /\.global\.css$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              publicPath: './'
+            }
           },
           {
             loader: 'css-loader',
             options: {
-              sourceMap: true,
-            },
+              sourceMap: true
+            }
           }
         ]
       },
+      // Pipe other styles through css modules and append to style.css
       {
         test: /^((?!\.global).)*\.css$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: MiniCssExtractPlugin.loader
           },
           {
             loader: 'css-loader',
             options: {
               modules: true,
-              sourceMap: true,
-              importLoaders: 1,
               localIdentName: '[name]__[local]__[hash:base64:5]',
+              sourceMap: true
             }
-          },
+          }
         ]
       },
       // Add SASS support  - compile all .global.scss files and pipe it to style.css
       {
-        test: /\.global\.scss$/,
+        test: /\.global\.(scss|sass)$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: MiniCssExtractPlugin.loader
           },
           {
             loader: 'css-loader',
             options: {
               sourceMap: true,
-            },
+              importLoaders: 1
+            }
           },
           {
-            loader: 'sass-loader'
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true
+            }
           }
         ]
       },
       // Add SASS support  - compile all other .scss files and pipe it to style.css
       {
-        test: /^((?!\.global).)*\.scss$/,
+        test: /^((?!\.global).)*\.(scss|sass)$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: MiniCssExtractPlugin.loader
           },
           {
             loader: 'css-loader',
             options: {
               modules: true,
-              sourceMap: true,
               importLoaders: 1,
               localIdentName: '[name]__[local]__[hash:base64:5]',
+              sourceMap: true
             }
           },
           {
-            loader: 'sass-loader'
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true
+            }
           }
         ]
       },
@@ -105,9 +118,9 @@ export default merge.smart(baseConfig, {
           loader: 'url-loader',
           options: {
             limit: 10000,
-            mimetype: 'application/font-woff',
+            mimetype: 'application/font-woff'
           }
-        },
+        }
       },
       // WOFF2 Font
       {
@@ -116,7 +129,7 @@ export default merge.smart(baseConfig, {
           loader: 'url-loader',
           options: {
             limit: 10000,
-            mimetype: 'application/font-woff',
+            mimetype: 'application/font-woff'
           }
         }
       },
@@ -134,7 +147,7 @@ export default merge.smart(baseConfig, {
       // EOT Font
       {
         test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-        use: 'file-loader',
+        use: 'file-loader'
       },
       // SVG Font
       {
@@ -143,45 +156,39 @@ export default merge.smart(baseConfig, {
           loader: 'url-loader',
           options: {
             limit: 10000,
-            mimetype: 'image/svg+xml',
+            mimetype: 'image/svg+xml'
           }
         }
       },
       // Common Image Formats
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
-        use: 'url-loader',
+        use: 'url-loader'
       }
     ]
   },
 
-  resolve: {
-    modules: [
-      'app',
-    ],
-  },
-
-  entry: {
-    renderer: (
-      Object
-        .keys(dependencies || {})
-        .filter(dependency => dependency !== 'font-awesome')
-    )
-  },
-
-  output: {
-    library: 'renderer',
-    path: dist,
-    filename: '[name].dev.dll.js',
-    libraryTarget: 'var'
+  optimization: {
+    minimizer: process.env.E2E_BUILD
+      ? []
+      : [
+          new TerserPlugin({
+            parallel: true,
+            sourceMap: true,
+            cache: true
+          }),
+          new OptimizeCSSAssetsPlugin({
+            cssProcessorOptions: {
+              map: {
+                inline: false,
+                annotation: true
+              }
+            }
+          })
+        ]
   },
 
   plugins: [
-    new webpack.DllPlugin({
-      path: path.join(dist, '[name].json'),
-      name: '[name]',
-    }),
-
     /**
      * Create global constants which can be configured at compile time.
      *
@@ -191,18 +198,18 @@ export default merge.smart(baseConfig, {
      * NODE_ENV should be production so that modules do not perform certain
      * development checks
      */
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
+    new webpack.EnvironmentPlugin({
+      NODE_ENV: 'production'
     }),
 
-    new webpack.LoaderOptionsPlugin({
-      debug: true,
-      options: {
-        context: path.resolve(process.cwd(), 'app'),
-        output: {
-          path: path.resolve(process.cwd(), 'dll'),
-        },
-      },
+    new MiniCssExtractPlugin({
+      filename: 'style.css'
+    }),
+
+    new BundleAnalyzerPlugin({
+      analyzerMode:
+        process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
+      openAnalyzer: process.env.OPEN_ANALYZER === 'true'
     })
-  ],
+  ]
 });

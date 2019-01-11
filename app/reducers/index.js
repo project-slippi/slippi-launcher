@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { routerReducer as router } from 'react-router-redux';
+
 import fileLoader from './fileLoader';
 import settings from './settings';
 import console from './console';
@@ -7,14 +7,16 @@ import game from './game';
 import errors from './error';
 import notifs from './notifs';
 
-const rootReducer = combineReducers({
-  router: router,
-  fileLoader: fileLoader,
-  settings: settings,
-  console: console,
-  game: game,
-  errors: errors,
-  notifs: notifs,
-});
+import { connectRouter } from 'connected-react-router';
 
-export default rootReducer;
+export default function createRootReducer(history: History) {
+  return combineReducers({
+    router: connectRouter(history),
+    fileLoader: fileLoader,
+    settings: settings,
+    console: console,
+    game: game,
+    errors: errors,
+    notifs: notifs,
+  });
+}
