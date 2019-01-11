@@ -8,13 +8,15 @@ import * as timeUtils from '../../utils/time';
 
 export default class EdgeguardsTable extends Component {
   props: {
-    game: object,
-    playerDisplay: object,
-    playerIndex: number,
+    game: Object,
+    playerDisplay: Object,
+    playerIndex: number
   };
 
-  generateEdgeguardRow = (edgeguard) => {
-    const start = timeUtils.convertFrameCountToDurationString(edgeguard.startFrame);
+  generateEdgeguardRow = edgeguard => {
+    const start = timeUtils.convertFrameCountToDurationString(
+      edgeguard.startFrame
+    );
     let end = <span className={styles['secondary-text']}>–</span>;
 
     if (edgeguard.endFrame) {
@@ -22,7 +24,9 @@ export default class EdgeguardsTable extends Component {
     }
 
     return (
-      <Table.Row key={`${edgeguard.playerIndex}-edgeguard-${edgeguard.startFrame}`}>
+      <Table.Row
+        key={`${edgeguard.playerIndex}-edgeguard-${edgeguard.startFrame}`}
+      >
         <Table.Cell>{start}</Table.Cell>
         <Table.Cell>{end}</Table.Cell>
       </Table.Row>
@@ -71,9 +75,7 @@ export default class EdgeguardsTable extends Component {
           {this.renderHeaderColumns()}
         </Table.Header>
 
-        <Table.Body>
-          {this.renderEdgeguardRows()}
-        </Table.Body>
+        <Table.Body>{this.renderEdgeguardRows()}</Table.Body>
       </Table>
     );
   }

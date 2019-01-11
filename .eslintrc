@@ -4,7 +4,7 @@
     "sourceType": "module",
     "allowImportExportEverywhere": true
   },
-  "extends": "airbnb",
+  "extends": ["airbnb", "prettier", "prettier/flowtype", "prettier/react"],
   "env": {
     "browser": true,
     "node": true
@@ -16,7 +16,6 @@
     "consistent-return": "off",
     "comma-dangle": ["error", "always-multiline"],
     "dot-notation": "off",
-    "flowtype-errors/show-errors": "error",
     "generator-star-spacing": "off",
     "import/no-unresolved": "error",
     "import/no-extraneous-dependencies": "off",
@@ -31,33 +30,46 @@
     "object-shorthand": ["error", "never"],
     "one-var": "off",
     "one-var-declaration-per-line": "off",
+    "prefer-destructuring": "off",
     "promise/param-names": "error",
     "promise/always-return": "error",
     "promise/catch-or-return": "error",
     "promise/no-native": "off",
     "quotes": "off",
     "quote-props": "off",
-    "react/sort-comp": ["error", {
-      "order": ["type-annotations", "static-methods", "lifecycle", "everything-else", "render"]
-    }],
+    "react/destructuring-assignment": "off",
+    "react/forbid-prop-types": [
+      "warn",
+      {
+        "forbid": ["any", "array", "object"]
+      }
+    ],
+    "react/sort-comp": [
+      "error",
+      {
+        "order": [
+          "type-annotations",
+          "static-methods",
+          "lifecycle",
+          "everything-else",
+          "render"
+        ]
+      }
+    ],
     "react/jsx-boolean-value": ["error", "always"],
     "react/jsx-no-bind": "off",
-    "react/jsx-filename-extension": ["error", { "extensions": [".js", ".jsx"] }],
+    "react/jsx-filename-extension": [
+      "error",
+      { "extensions": [".js", ".jsx"] }
+    ],
     "react/no-array-index-key": "off",
     "react/prefer-stateless-function": "off"
   },
-  "plugins": [
-    "flowtype",
-    "flowtype-errors",
-    "import",
-    "promise",
-    "compat",
-    "react"
-  ],
+  "plugins": ["import", "promise", "compat", "react"],
   "settings": {
     "import/resolver": {
       "webpack": {
-        "config": "webpack.config.eslint.js"
+        "config": "configs/webpack.config.eslint.js"
       }
     }
   }

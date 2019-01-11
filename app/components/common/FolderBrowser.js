@@ -6,13 +6,13 @@ import styles from './FolderBrowser.scss';
 
 export default class FolderBrowser extends Component {
   props: {
-    folders: object,
+    folders: Object,
     rootFolderName: string,
     selectedFolderFullPath: string,
-    changeFolderSelection: (path) => void,
+    changeFolderSelection: Function
   };
 
-  selectFolder = (folderFullPath) => {
+  selectFolder = folderFullPath => {
     this.props.changeFolderSelection(folderFullPath);
   };
 
@@ -20,25 +20,26 @@ export default class FolderBrowser extends Component {
     // Generate sub-directory folder items
     const subDirectories = folderDetails.subDirectories || {};
     const self = this; // I don't know how to pass context to map...
-    const subFolderItems = _.map(subDirectories, iFolderDetails => (
+    const subFolderItems = _.map(subDirectories, iFolderDetails =>
       self.generateFolderItem(iFolderDetails)
-    ));
+    );
 
     // Generate directory listing if we have subdirectories
     let subDirectoryList = null;
     if (_.some(subFolderItems)) {
       subDirectoryList = (
-        <List.List className="no-padding">
-          {subFolderItems}
-        </List.List>
+        <List.List className="no-padding">{subFolderItems}</List.List>
       );
     }
 
     // Generate styles for selection
     const currentSelection = this.props.selectedFolderFullPath;
-    const selectorClasses = classNames({
-      [styles['selected']]: currentSelection === folderDetails.fullPath,
-    }, styles['folder-selection']);
+    const selectorClasses = classNames(
+      {
+        [styles['selected']]: currentSelection === folderDetails.fullPath
+      },
+      styles['folder-selection']
+    );
 
     return [
       <div
@@ -47,7 +48,10 @@ export default class FolderBrowser extends Component {
         className={selectorClasses}
         onClick={_.partial(this.selectFolder, folderDetails.fullPath)}
       />,
-      <List.Item className={`${styles['folder-item']} no-padding`} key={folderDetails.fullPath}>
+      <List.Item
+        className={`${styles['folder-item']} no-padding`}
+        key={folderDetails.fullPath}
+      >
         <List.Icon className={styles['folder-icon']} name="folder" />
         <List.Content>
           <List.Header className={`${styles['folder-name']} unselectable`}>
@@ -55,18 +59,22 @@ export default class FolderBrowser extends Component {
           </List.Header>
           {subDirectoryList}
         </List.Content>
-      </List.Item>,
+      </List.Item>
     ];
   }
 
   renderEmpty() {
     return (
       <Segment basic={true}>
-        <Header as="h3" className={styles['empty-state']} icon={true} color="grey" textAlign="center">
+        <Header
+          as="h3"
+          className={styles['empty-state']}
+          icon={true}
+          color="grey"
+          textAlign="center"
+        >
           <Icon name="folder open outline" />
-          <Header.Content>
-            Folder Browser
-          </Header.Content>
+          <Header.Content>Folder Browser</Header.Content>
         </Header>
       </Segment>
     );

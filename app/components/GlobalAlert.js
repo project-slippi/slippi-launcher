@@ -10,15 +10,15 @@ import styles from './GlobalAlert.scss';
 
 class GlobalAlert extends Component {
   props: {
-    store: object,
-    setActiveNotif: func,
+    store: Object,
+    setActiveNotif: Function
   };
 
   // TODO: Perhaps dismissal should happen in redux. This would be useful in the case where
   // TODO: a notif should come back after being dismissed
   state = {
-    isApplicationUpdatedDismissed: false,
-  }
+    isApplicationUpdatedDismissed: false
+  };
 
   componentDidUpdate() {
     const displayAlert = this.getAlertToDisplay();
@@ -40,20 +40,22 @@ class GlobalAlert extends Component {
   // Notifs must use fixed heights to allow for main window to add the correct amount of padding,
   // dynamic padding may be possible using refs or some different method of offsetting main window.
   getAlerts() {
-    return [{
-      key: "applicationUpdated",
-      icon: "cloud download",
-      message: (
-        <div className={styles['single-line-message']}>
-          A new application version has been downloaded. Restart the application to use the new
-          version.
-        </div>
-      ),
-      isVisible: this.isApplicationUpdatedAlertVisible,
-      onDismiss: this.createGenericOnDismiss("isApplicationUpdatedDismissed"),
-      heightPx: 48,
-      severity: "info",
-    }];
+    return [
+      {
+        key: 'applicationUpdated',
+        icon: 'cloud download',
+        message: (
+          <div className={styles['single-line-message']}>
+            A new application version has been downloaded. Restart the
+            application to use the new version.
+          </div>
+        ),
+        isVisible: this.isApplicationUpdatedAlertVisible,
+        onDismiss: this.createGenericOnDismiss('isApplicationUpdatedDismissed'),
+        heightPx: 48,
+        severity: 'info'
+      }
+    ];
   }
 
   getAlertToDisplay() {
@@ -68,13 +70,13 @@ class GlobalAlert extends Component {
     }
 
     return _.get(this.props.store, ['visibility', 'appUpgrade']);
-  }
+  };
 
-  createGenericOnDismiss = (stateField) => () => {
+  createGenericOnDismiss = stateField => () => {
     this.setState({
-      [stateField]: true,
+      [stateField]: true
     });
-  }
+  };
 
   render() {
     const alert = this.props.store.activeNotif;
@@ -83,14 +85,14 @@ class GlobalAlert extends Component {
     }
 
     const severityFlag = {
-      info: alert.severity === "info",
-      warning: alert.severity === "warning",
-      error: alert.severity === "error",
-      success: alert.severity === "success",
+      info: alert.severity === 'info',
+      warning: alert.severity === 'warning',
+      error: alert.severity === 'error',
+      success: alert.severity === 'success'
     };
 
     const customStyling = {
-      height: alert.height,
+      height: alert.height
     };
 
     let icon = null;
@@ -113,7 +115,7 @@ class GlobalAlert extends Component {
 
 function mapStateToProps(state) {
   return {
-    store: state.notifs,
+    store: state.notifs
   };
 }
 
@@ -121,4 +123,7 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(NotifActions, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(GlobalAlert);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(GlobalAlert);

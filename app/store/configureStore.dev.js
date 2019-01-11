@@ -5,13 +5,12 @@ import { routerMiddleware, routerActions } from 'connected-react-router';
 import { createLogger } from 'redux-logger';
 import createRootReducer from '../reducers';
 import * as fileLoaderActions from '../actions/fileLoader';
-import type { counterStateType } from '../reducers/types';
 
 const history = createHashHistory();
 
 const rootReducer = createRootReducer(history);
 
-const configureStore = (initialState?: counterStateType) => {
+const configureStore = initialState => {
   // Redux Configuration
   const middleware = [];
   const enhancers = [];
@@ -37,14 +36,14 @@ const configureStore = (initialState?: counterStateType) => {
   // Redux DevTools Configuration
   const actionCreators = {
     ...fileLoaderActions,
-    ...routerActions,
+    ...routerActions
   };
   // If Redux DevTools Extension is installed use it, otherwise use Redux compose
   /* eslint-disable no-underscore-dangle */
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
     ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
         // Options: http://extension.remotedev.io/docs/API/Arguments.html
-        actionCreators
+        actionCreators: actionCreators
       })
     : compose;
   /* eslint-enable no-underscore-dangle */
@@ -67,4 +66,4 @@ const configureStore = (initialState?: counterStateType) => {
   return store;
 };
 
-export default { configureStore, history };
+export default { configureStore: configureStore, history: history };

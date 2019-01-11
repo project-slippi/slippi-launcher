@@ -1,24 +1,25 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Message, Transition } from 'semantic-ui-react';
 
 export default class DismissibleMessage extends Component {
-  props: {
-    visible: boolean,
-    info: boolean,
-    error: boolean,
-    icon: string,
-    header: string,
-    content: string,
-    onDismiss: () => void,
-    dismissParams: array,
-  };
-
   refMessage: {};
+
+  static propTypes = {
+    visible: PropTypes.bool,
+    info: PropTypes.bool,
+    error: PropTypes.bool,
+    icon: PropTypes.string.isRequired,
+    header: PropTypes.string.isRequired,
+    content: PropTypes.string.isRequired,
+    onDismiss: PropTypes.func.isRequired,
+    dismissParams: PropTypes.instanceOf(PropTypes.any).isRequired
+  };
 
   static defaultProps = {
     visible: false,
     info: false,
-    error: false,
+    error: false
   };
 
   componentWillReceiveProps(nextProps) {

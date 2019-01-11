@@ -13,4 +13,4 @@ function configureStore(initialState) {
   return createStore(rootReducer, initialState, enhancer);
 }
 
-export default { configureStore, history };
+export default { configureStore: configureStore, history: history };

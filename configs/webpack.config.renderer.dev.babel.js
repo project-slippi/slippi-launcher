@@ -238,8 +238,8 @@ export default merge.smart(baseConfig, {
   },
 
   devServer: {
-    port,
-    publicPath,
+    port: port,
+    publicPath: publicPath,
     compress: true,
     noInfo: true,
     stats: 'errors-only',
@@ -257,7 +257,7 @@ export default merge.smart(baseConfig, {
       verbose: true,
       disableDotRule: false
     },
-    before() {
+    before: function() {
       if (process.env.START_HOT) {
         console.log('Starting Main Process...');
         spawn('npm', ['run', 'start-main-dev'], {

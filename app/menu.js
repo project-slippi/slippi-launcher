@@ -1,4 +1,3 @@
-// @flow
 import { app, Menu, shell, BrowserWindow } from 'electron';
 
 export default class MenuBuilder {
@@ -147,13 +146,13 @@ export default class MenuBuilder {
       submenu: [
         {
           label: 'Learn More',
-          click() {
+          click: function() {
             shell.openExternal('http://electron.atom.io');
           }
         },
         {
           label: 'Documentation',
-          click() {
+          click: function() {
             shell.openExternal(
               'https://github.com/atom/electron/tree/master/docs#readme'
             );
@@ -161,13 +160,13 @@ export default class MenuBuilder {
         },
         {
           label: 'Community Discussions',
-          click() {
+          click: function() {
             shell.openExternal('https://discuss.atom.io/c/electron');
           }
         },
         {
           label: 'Search Issues',
-          click() {
+          click: function() {
             shell.openExternal('https://github.com/atom/electron/issues');
           }
         }
@@ -244,13 +243,13 @@ export default class MenuBuilder {
         submenu: [
           {
             label: 'Learn More',
-            click() {
+            click: function() {
               shell.openExternal('http://electron.atom.io');
             }
           },
           {
             label: 'Documentation',
-            click() {
+            click: function() {
               shell.openExternal(
                 'https://github.com/atom/electron/tree/master/docs#readme'
               );
@@ -258,13 +257,13 @@ export default class MenuBuilder {
           },
           {
             label: 'Community Discussions',
-            click() {
+            click: function() {
               shell.openExternal('https://discuss.atom.io/c/electron');
             }
           },
           {
             label: 'Search Issues',
-            click() {
+            click: function() {
               shell.openExternal('https://github.com/atom/electron/issues');
             }
           }

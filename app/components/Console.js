@@ -8,24 +8,24 @@ export default class Console extends Component {
     editConnection: () => void,
     cancelEditConnection: () => void,
     saveConnection: () => void,
-    deleteConnection: () => void,
+    // deleteConnection: () => void,
     connectConnection: () => void,
     startMirroring: () => void,
-    history: object,
-    store: object,
+    history: Object,
+    store: Object
   };
 
   state = {
-    formData: {},
-  }
-
-  addConnectionClick = () => {
-    this.props.editConnection("new");
+    formData: {}
   };
 
-  editConnectionClick = (index) => {
+  addConnectionClick = () => {
+    this.props.editConnection('new');
+  };
+
+  editConnectionClick = index => {
     this.props.editConnection(index);
-  }
+  };
 
   onModalClose = () => {
     this.props.cancelEditConnection();
@@ -36,23 +36,23 @@ export default class Console extends Component {
     this.setState({
       formData: {
         ...formData,
-        [name]: value,
-      },
+        [name]: value
+      }
     });
   };
 
-  onFormSubmit = (id) => {
+  onFormSubmit = id => {
     const formData = this.state.formData || {};
     this.props.saveConnection(id, formData);
   };
 
-  connectTo = (connection) => {
+  connectTo = connection => {
     this.props.connectConnection(connection);
   };
 
-  mirror = (connection) => {
+  mirror = connection => {
     this.props.startMirroring(connection);
-  }
+  };
 
   renderContent() {
     const store = this.props.store || {};
@@ -82,11 +82,11 @@ export default class Console extends Component {
     </Card>
   );
 
-  renderConnectButton = (connection) => (
+  renderConnectButton = connection => (
     <Button onClick={_.partial(this.connectTo, connection)}>Connect</Button>
   );
 
-  renderMirrorButton = (connection) => (
+  renderMirrorButton = connection => (
     <Button onClick={_.partial(this.mirror, connection)}>Mirror</Button>
   );
 
@@ -95,14 +95,12 @@ export default class Console extends Component {
     const connectionToEdit = store.connectionSettingsToEdit;
 
     const connectionIndex = _.get(connectionToEdit, 'id');
-    const actionText = connectionIndex === "new" ? "Add" : "Edit";
+    const actionText = connectionIndex === 'new' ? 'Add' : 'Edit';
 
     return (
       <Modal open={!!connectionToEdit} onClose={this.onModalClose}>
         <Modal.Header>{`${actionText} Connection`}</Modal.Header>
-        <Modal.Content>
-          {this.renderEditForm(connectionToEdit)}
-        </Modal.Content>
+        <Modal.Content>{this.renderEditForm(connectionToEdit)}</Modal.Content>
       </Modal>
     );
   }
@@ -114,8 +112,18 @@ export default class Console extends Component {
 
     return (
       <Form onSubmit={_.partial(this.onFormSubmit, connectionSettings.id)}>
-        <Form.Input name="ipAddress" label="IP Address" value={connectionSettings.ipAddress} onChange={this.onFieldChange} />
-        <Form.Input name="targetFolder" label="Target Folder" value={connectionSettings.targetFolder} onChange={this.onFieldChange} />
+        <Form.Input
+          name="ipAddress"
+          label="IP Address"
+          value={connectionSettings.ipAddress}
+          onChange={this.onFieldChange}
+        />
+        <Form.Input
+          name="targetFolder"
+          label="Target Folder"
+          value={connectionSettings.targetFolder}
+          onChange={this.onFieldChange}
+        />
         <Form.Button content="Submit" />
       </Form>
     );
@@ -124,7 +132,11 @@ export default class Console extends Component {
   render() {
     return (
       <div className="main-padding">
-        <PageHeader icon="microchip" text="Console" history={this.props.history} />
+        <PageHeader
+          icon="microchip"
+          text="Console"
+          history={this.props.history}
+        />
         {this.renderContent()}
         {this.renderEditModal()}
       </div>
