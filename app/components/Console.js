@@ -13,11 +13,11 @@ export default class Console extends Component {
     connectConnection: PropTypes.func.isRequired,
     startMirroring: PropTypes.func.isRequired,
     history: PropTypes.object.isRequired,
-    store: PropTypes.object.isRequired
+    store: PropTypes.object.isRequired,
   };
 
   state = {
-    formData: {}
+    formData: {},
   };
 
   addConnectionClick = () => {
@@ -37,8 +37,8 @@ export default class Console extends Component {
     this.setState({
       formData: {
         ...formData,
-        [name]: value
-      }
+        [name]: value,
+      },
     });
   };
 

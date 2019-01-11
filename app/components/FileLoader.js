@@ -10,7 +10,7 @@ import {
   Header,
   Button,
   Segment,
-  Message
+  Message,
 } from 'semantic-ui-react';
 import styles from './FileLoader.scss';
 import FileRow from './FileRow';
@@ -36,7 +36,7 @@ export default class FileLoader extends Component {
     history: PropTypes.object.isRequired,
     store: PropTypes.object.isRequired,
     errors: PropTypes.object.isRequired,
-    globalNotifs: PropTypes.object.isRequired
+    globalNotifs: PropTypes.object.isRequired,
   };
 
   constructor() {
@@ -56,7 +56,7 @@ export default class FileLoader extends Component {
   componentWillUnmount() {
     this.props.storeScrollPosition({
       x: window.scrollX,
-      y: window.scrollY
+      y: window.scrollY,
     });
 
     // TODO: I added this because switching to the stats view was maintaining the scroll
@@ -81,7 +81,7 @@ export default class FileLoader extends Component {
     const globalNotifHeightPx =
       _.get(this.props.globalNotifs, ['activeNotif', 'heightPx']) || 0;
     const customStyling = {
-      height: `calc(100vh - ${globalNotifHeightPx}px)`
+      height: `calc(100vh - ${globalNotifHeightPx}px)`,
     };
 
     return (
@@ -127,7 +127,7 @@ export default class FileLoader extends Component {
           const startAt = metadata.startAt;
           return moment(startAt);
         },
-        'fileName'
+        'fileName',
       ],
       ['desc', 'desc']
     );

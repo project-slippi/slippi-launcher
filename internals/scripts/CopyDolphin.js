@@ -9,22 +9,22 @@ function CopyDolphin() {
   const targetFolder = './app/dolphin';
 
   switch (platform) {
-    case 'darwin':
-      console.log('Copying the mac build of dolphin to package');
-      copyForMac(targetFolder);
-      break;
-    case 'win32':
-      console.log('Copying the windows build of dolphin to package');
-      copyForWindows(targetFolder);
-      break;
-    case 'linux':
-      // For Linux, don't copy anything (the user must specify the path to use)
-      //
-      // console.log("Copying the linux build of dolphin to package");
-      // copyForLinux(targetFolder);
-      break;
-    default:
-      throw new Error('Platform not yet supported.');
+  case 'darwin':
+    console.log('Copying the mac build of dolphin to package');
+    copyForMac(targetFolder);
+    break;
+  case 'win32':
+    console.log('Copying the windows build of dolphin to package');
+    copyForWindows(targetFolder);
+    break;
+  case 'linux':
+    // For Linux, don't copy anything (the user must specify the path to use)
+    //
+    // console.log("Copying the linux build of dolphin to package");
+    // copyForLinux(targetFolder);
+    break;
+  default:
+    throw new Error('Platform not yet supported.');
   }
 
   console.log('Finished copying dolphin build!');
@@ -58,7 +58,7 @@ function copyForMac(targetFolder) {
     `ditto "${overwriteUserFolder}" "${dolphinDestUserFolder}"`,
     `ditto "${overwriteSysFolder}" "${dolphinDestSysFolder}"`,
     `rm -rf "${gitIgnoreDest}"`,
-    `mkdir "${dolphinDestSlippiFolder}"`
+    `mkdir "${dolphinDestSlippiFolder}"`,
   ];
 
   const command = commands.join(' && ');

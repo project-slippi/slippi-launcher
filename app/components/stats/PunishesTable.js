@@ -16,7 +16,7 @@ export default class PunishesTable extends Component {
   static propTypes = {
     game: PropTypes.object.isRequired,
     playerDisplay: PropTypes.object.isRequired,
-    playerIndex: PropTypes.number.isRequired
+    playerIndex: PropTypes.number.isRequired,
   };
 
   generatePunishRow = punish => {
@@ -73,7 +73,7 @@ export default class PunishesTable extends Component {
 
     const stockIcons = _.range(1, totalStocks + 1).map(stockNum => {
       const imgClasses = classNames({
-        [styles['lost-stock']]: stockNum > currentStocks
+        [styles['lost-stock']]: stockNum > currentStocks,
       });
 
       return (
@@ -91,7 +91,7 @@ export default class PunishesTable extends Component {
 
     const containerClasses = classNames({
       [styles['stock-display']]: true,
-      'horizontal-spaced-group-right-xs': true
+      'horizontal-spaced-group-right-xs': true,
     });
 
     const key = `${stock.playerIndex}-stock-lost-${currentStocks}`;
@@ -154,7 +154,7 @@ export default class PunishesTable extends Component {
     const textTranslation = {
       'counter-attack': 'Counter Hit',
       'neutral-win': 'Neutral',
-      trade: 'Trade'
+      trade: 'Trade',
     };
 
     return (

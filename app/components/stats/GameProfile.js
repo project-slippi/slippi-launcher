@@ -10,7 +10,7 @@ import {
   Icon,
   Button,
   Modal,
-  Message
+  Message,
 } from 'semantic-ui-react';
 
 import PageHeader from '../common/PageHeader';
@@ -38,7 +38,7 @@ export default class GameProfile extends Component {
     // store data
     store: PropTypes.object.isRequired,
     errors: PropTypes.object.isRequired,
-    globalNotifs: PropTypes.object.isRequired
+    globalNotifs: PropTypes.object.isRequired,
   };
 
   constructor() {
@@ -48,7 +48,7 @@ export default class GameProfile extends Component {
   }
 
   state = {
-    isStatsStuck: false
+    isStatsStuck: false,
   };
 
   setRefStats = element => {
@@ -60,7 +60,7 @@ export default class GameProfile extends Component {
 
     // Play the file
     this.props.playFile({
-      fullPath: filePath
+      fullPath: filePath,
     });
   };
 
@@ -111,7 +111,7 @@ export default class GameProfile extends Component {
       [styles['player-display']]: true,
       [styles['second']]: !isFirstPlayer,
       'horizontal-spaced-group-right-sm': isFirstPlayer,
-      'horizontal-spaced-group-left-sm': !isFirstPlayer
+      'horizontal-spaced-group-left-sm': !isFirstPlayer,
     });
 
     const game = this.props.store.game;
@@ -150,26 +150,26 @@ export default class GameProfile extends Component {
     const startAtDisplay = timeUtils.convertToDateAndTime(startAt);
 
     const gameDetailsClasses = classNames({
-      [styles['game-details']]: true
+      [styles['game-details']]: true,
     });
 
     const metadata = [
       {
         label: 'Stage',
-        content: stageName
+        content: stageName,
       },
       {
         label: 'Duration',
-        content: durationDisplay
+        content: durationDisplay,
       },
       {
         label: 'Time',
-        content: startAtDisplay
+        content: startAtDisplay,
       },
       {
         label: 'Platform',
-        content: platform
-      }
+        content: platform,
+      },
     ];
 
     const metadataElements = metadata.map(details => (
@@ -206,19 +206,19 @@ export default class GameProfile extends Component {
   renderStats() {
     const handleStick = () => {
       this.setState({
-        isStatsStuck: true
+        isStatsStuck: true,
       });
     };
 
     const handleUnstick = () => {
       this.setState({
-        isStatsStuck: false
+        isStatsStuck: false,
       });
     };
 
     const statsSectionClasses = classNames(
       {
-        [styles['stuck']]: this.state.isStatsStuck
+        [styles['stuck']]: this.state.isStatsStuck,
       },
       styles['stats-section']
     );
@@ -283,7 +283,7 @@ export default class GameProfile extends Component {
 
     const rootDivClasses = classNames({
       [styles['player-col-header']]: true,
-      'horizontal-spaced-group-right-xs': true
+      'horizontal-spaced-group-right-xs': true,
     });
 
     return (

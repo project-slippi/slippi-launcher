@@ -12,13 +12,13 @@ import styles from './GlobalAlert.scss';
 class GlobalAlert extends Component {
   static propTypes = {
     store: PropTypes.object.isRequired,
-    setActiveNotif: PropTypes.func.isRequired
+    setActiveNotif: PropTypes.func.isRequired,
   };
 
   // TODO: Perhaps dismissal should happen in redux. This would be useful in the case where
   // TODO: a notif should come back after being dismissed
   state = {
-    isApplicationUpdatedDismissed: false
+    isApplicationUpdatedDismissed: false,
   };
 
   componentDidUpdate() {
@@ -54,8 +54,8 @@ class GlobalAlert extends Component {
         isVisible: this.isApplicationUpdatedAlertVisible,
         onDismiss: this.createGenericOnDismiss('isApplicationUpdatedDismissed'),
         heightPx: 48,
-        severity: 'info'
-      }
+        severity: 'info',
+      },
     ];
   }
 
@@ -75,7 +75,7 @@ class GlobalAlert extends Component {
 
   createGenericOnDismiss = stateField => () => {
     this.setState({
-      [stateField]: true
+      [stateField]: true,
     });
   };
 
@@ -89,11 +89,11 @@ class GlobalAlert extends Component {
       info: alert.severity === 'info',
       warning: alert.severity === 'warning',
       error: alert.severity === 'error',
-      success: alert.severity === 'success'
+      success: alert.severity === 'success',
     };
 
     const customStyling = {
-      height: alert.height
+      height: alert.height,
     };
 
     let icon = null;
@@ -116,7 +116,7 @@ class GlobalAlert extends Component {
 
 function mapStateToProps(state) {
   return {
-    store: state.notifs
+    store: state.notifs,
   };
 }
 

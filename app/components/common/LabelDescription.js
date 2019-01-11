@@ -5,7 +5,7 @@ import styles from './LabelDescription.scss';
 export default class LabelDescription extends Component {
   static propTypes = {
     label: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired
+    description: PropTypes.string.isRequired,
   };
 
   render() {

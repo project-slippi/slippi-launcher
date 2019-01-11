@@ -11,11 +11,11 @@ export default class ActionInput extends Component {
     value: PropTypes.string.isRequired,
     onClick: PropTypes.func.isRequired,
     onChange: PropTypes.func,
-    handlerParams: PropTypes.arrayOf(PropTypes.any).isRequired
+    handlerParams: PropTypes.arrayOf(PropTypes.any).isRequired,
   };
 
   static defaultProps = {
-    onChange: () => {}
+    onChange: () => {},
   };
 
   clickHandler = () => {

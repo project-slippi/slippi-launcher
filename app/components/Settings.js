@@ -7,7 +7,7 @@ import {
   Button,
   Accordion,
   Icon,
-  Message
+  Message,
 } from 'semantic-ui-react';
 import PageHeader from './common/PageHeader';
 import ActionInput from './common/ActionInput';
@@ -30,11 +30,11 @@ export default class Settings extends Component {
     // store data
     history: PropTypes.object.isRequired,
     store: PropTypes.object.isRequired,
-    errors: PropTypes.object.isRequired
+    errors: PropTypes.object.isRequired,
   };
 
   state = {
-    isAdvancedSectionOpen: false
+    isAdvancedSectionOpen: false,
   };
 
   componentWillUnmount() {
@@ -43,7 +43,7 @@ export default class Settings extends Component {
 
   toggleAdvanced = () => {
     this.setState(prevState => ({
-      isAdvancedSectionOpen: !prevState.isAdvancedSectionOpen
+      isAdvancedSectionOpen: !prevState.isAdvancedSectionOpen,
     }));
   };
 

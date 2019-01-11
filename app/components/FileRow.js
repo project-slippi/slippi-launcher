@@ -15,7 +15,7 @@ export default class FileRow extends Component {
   static propTypes = {
     file: PropTypes.object.isRequired,
     playFile: PropTypes.func.isRequired,
-    gameProfileLoad: PropTypes.func.isRequired
+    gameProfileLoad: PropTypes.func.isRequired,
   };
 
   playFile = () => {
@@ -51,15 +51,15 @@ export default class FileRow extends Component {
     const metadata = [
       {
         label: 'Stage',
-        content: this.getStageName()
+        content: this.getStageName(),
       },
       {
-        separator: true
+        separator: true,
       },
       {
         label: 'File',
-        content: this.getFileName()
-      }
+        content: this.getFileName(),
+      },
     ];
 
     const metadataDisplay = _.map(metadata, (entry, key) => {

@@ -8,13 +8,13 @@ export default class SpacedGroup extends Component {
     children: PropTypes.any.isRequired,
     className: PropTypes.string,
     size: PropTypes.string,
-    direction: PropTypes.string
+    direction: PropTypes.string,
   };
 
   static defaultProps = {
     className: '',
     size: 'sm',
-    direction: 'horizontal'
+    direction: 'horizontal',
   };
 
   render() {
@@ -22,7 +22,7 @@ export default class SpacedGroup extends Component {
       {
         [styles['container']]: true,
         [styles[this.props.size]]: true,
-        [styles[this.props.direction]]: true
+        [styles[this.props.direction]]: true,
       },
       this.props.className
     );

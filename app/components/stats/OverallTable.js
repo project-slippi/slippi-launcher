@@ -16,7 +16,7 @@ export default class OverallTable extends Component {
     player1Display: PropTypes.object.isRequired,
     player1Index: PropTypes.number.isRequired,
     player2Display: PropTypes.object.isRequired,
-    player2Index: PropTypes.number.isRequired
+    player2Index: PropTypes.number.isRequired,
   };
 
   renderMultiStatField(header, arrPath, fieldPaths, valueMapper, highlight) {
@@ -42,7 +42,7 @@ export default class OverallTable extends Component {
       const oppValues = generateValues(oppItem);
 
       const classes = classNames({
-        [styles['highlight-text']]: highlight && highlight(values, oppValues)
+        [styles['highlight-text']]: highlight && highlight(values, oppValues),
       });
 
       return <div className={classes}>{values.join(' / ')}</div>;
@@ -108,7 +108,7 @@ export default class OverallTable extends Component {
           [styles['highlight-text']]: highlightCondition(
             fixedPlayerRatio,
             fixedOppRatio
-          )
+          ),
         });
 
         return <div className={classes}>{fixedPlayerRatio}</div>;
@@ -128,7 +128,7 @@ export default class OverallTable extends Component {
         const oppCount = _.get(oppRatio, 'count') || 0;
 
         const classes = classNames({
-          [styles['highlight-text']]: highlightCondition(playerCount, oppCount)
+          [styles['highlight-text']]: highlightCondition(playerCount, oppCount),
         });
 
         let secondaryDisplay = null;
@@ -172,7 +172,7 @@ export default class OverallTable extends Component {
           [styles['highlight-text']]: highlightCondition(
             fixedPlayerRatio,
             fixedOppRatio
-          )
+          ),
         });
 
         const playerCount = _.get(ratio, 'count');
@@ -266,7 +266,7 @@ export default class OverallTable extends Component {
         'successfulConversions'
       ),
       this.renderLowerSimpleRatioField('Openings / Kill', 'openingsPerKill'),
-      this.renderHigherSimpleRatioField('Damage / Opening', 'damagePerOpening')
+      this.renderHigherSimpleRatioField('Damage / Opening', 'damagePerOpening'),
     ];
   }
 
@@ -281,7 +281,7 @@ export default class OverallTable extends Component {
         'Actions (Roll / Air Dodge / Spot Dodge)',
         ['actionCounts'],
         ['rollCount', 'airDodgeCount', 'spotDodgeCount']
-      )
+      ),
     ];
   }
 
@@ -299,7 +299,7 @@ export default class OverallTable extends Component {
         'Actions (Wavedash / Waveland / Dash Dance)',
         ['actionCounts'],
         ['wavedashCount', 'wavelandCount', 'dashDanceCount']
-      )
+      ),
     ];
   }
 
@@ -310,7 +310,7 @@ export default class OverallTable extends Component {
           General
         </Table.Cell>
       </Table.Row>,
-      this.renderHigherSimpleRatioField('Inputs / Minute', 'inputsPerMinute')
+      this.renderHigherSimpleRatioField('Inputs / Minute', 'inputsPerMinute'),
     ];
   }
 

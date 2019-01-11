@@ -11,13 +11,13 @@ export default class DismissibleMessage extends Component {
     header: PropTypes.string.isRequired,
     content: PropTypes.string.isRequired,
     onDismiss: PropTypes.func.isRequired,
-    dismissParams: PropTypes.arrayOf(PropTypes.any).isRequired
+    dismissParams: PropTypes.arrayOf(PropTypes.any).isRequired,
   };
 
   static defaultProps = {
     visible: false,
     info: false,
-    error: false
+    error: false,
   };
 
   constructor() {

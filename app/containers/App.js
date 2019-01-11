@@ -12,7 +12,7 @@ class App extends Component {
   static propTypes = {
     children: PropTypes.any.isRequired,
     store: PropTypes.object.isRequired,
-    appUpgradeDownloaded: PropTypes.func.isRequired
+    appUpgradeDownloaded: PropTypes.func.isRequired,
   };
 
   componentDidMount() {
@@ -29,7 +29,7 @@ class App extends Component {
     const notifHeightPx = _.get(this.props.store, ['activeNotif', 'heightPx']);
     if (notifHeightPx) {
       const customStyling = {
-        height: `${notifHeightPx}px`
+        height: `${notifHeightPx}px`,
       };
 
       // User spacer element to give space for notif. I tried using padding on the top-level div
@@ -50,7 +50,7 @@ class App extends Component {
 
 function mapStateToProps(state) {
   return {
-    store: state.notifs
+    store: state.notifs,
   };
 }
 

@@ -16,6 +16,6 @@ export default function createRootReducer(history) {
     console: console,
     game: game,
     errors: errors,
-    notifs: notifs
+    notifs: notifs,
   });
 }

@@ -10,7 +10,7 @@ export default class FolderBrowser extends Component {
     folders: PropTypes.object.isRequired,
     rootFolderName: PropTypes.string.isRequired,
     selectedFolderFullPath: PropTypes.string.isRequired,
-    changeFolderSelection: PropTypes.func.isRequired
+    changeFolderSelection: PropTypes.func.isRequired,
   };
 
   selectFolder = folderFullPath => {
@@ -37,7 +37,7 @@ export default class FolderBrowser extends Component {
     const currentSelection = this.props.selectedFolderFullPath;
     const selectorClasses = classNames(
       {
-        [styles['selected']]: currentSelection === folderDetails.fullPath
+        [styles['selected']]: currentSelection === folderDetails.fullPath,
       },
       styles['folder-selection']
     );
@@ -60,7 +60,7 @@ export default class FolderBrowser extends Component {
           </List.Header>
           {subDirectoryList}
         </List.Content>
-      </List.Item>
+      </List.Item>,
     ];
   }
 

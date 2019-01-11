@@ -6,7 +6,7 @@ export default class PageHeader extends Component {
   static propTypes = {
     text: PropTypes.string.isRequired,
     icon: PropTypes.string.isRequired,
-    history: PropTypes.object.isRequired
+    history: PropTypes.object.isRequired,
   };
 
   handleBack = () => {

@@ -6,7 +6,7 @@ import {
   Icon,
   Container,
   Segment,
-  Message
+  Message,
 } from 'semantic-ui-react';
 import styles from './Home.scss';
 

@@ -53,95 +53,95 @@ export default class PlayerChiclet extends Component {
 
     let portCircles = [];
     switch (player.port) {
-      case 1:
-        portCircles = [
-          <circle
-            key="1-1"
-            cx={centerX}
-            cy={centerY}
-            r={dotRadius}
-            fill={color}
-          />
-        ];
-        break;
-      case 2:
-        portCircles = [
-          <circle
-            key="2-1"
-            cx={centerX - spacer}
-            cy={centerY}
-            r={dotRadius}
-            fill={color}
-          />,
-          <circle
-            key="2-2"
-            cx={centerX + spacer}
-            cy={centerY}
-            r={dotRadius}
-            fill={color}
-          />
-        ];
-        break;
-      case 3:
-        portCircles = [
-          <circle
-            key="3-1"
-            cx={centerX}
-            cy={centerY - spacer}
-            r={dotRadius}
-            fill={color}
-          />,
-          <circle
-            key="3-2"
-            cx={centerX - spacer}
-            cy={centerY + spacer}
-            r={dotRadius}
-            fill={color}
-          />,
-          <circle
-            key="3-3"
-            cx={centerX + spacer}
-            cy={centerY + spacer}
-            r={dotRadius}
-            fill={color}
-          />
-        ];
-        break;
-      case 4:
-        portCircles = [
-          <circle
-            key="4-1"
-            cx={centerX - spacer}
-            cy={centerY - spacer}
-            r={dotRadius}
-            fill={color}
-          />,
-          <circle
-            key="4-2"
-            cx={centerX + spacer}
-            cy={centerY - spacer}
-            r={dotRadius}
-            fill={color}
-          />,
-          <circle
-            key="4-3"
-            cx={centerX - spacer}
-            cy={centerY + spacer}
-            r={dotRadius}
-            fill={color}
-          />,
-          <circle
-            key="4-4"
-            cx={centerX + spacer}
-            cy={centerY + spacer}
-            r={dotRadius}
-            fill={color}
-          />
-        ];
-        break;
-      default:
-        // Nothing
-        break;
+    case 1:
+      portCircles = [
+        <circle
+          key="1-1"
+          cx={centerX}
+          cy={centerY}
+          r={dotRadius}
+          fill={color}
+        />,
+      ];
+      break;
+    case 2:
+      portCircles = [
+        <circle
+          key="2-1"
+          cx={centerX - spacer}
+          cy={centerY}
+          r={dotRadius}
+          fill={color}
+        />,
+        <circle
+          key="2-2"
+          cx={centerX + spacer}
+          cy={centerY}
+          r={dotRadius}
+          fill={color}
+        />,
+      ];
+      break;
+    case 3:
+      portCircles = [
+        <circle
+          key="3-1"
+          cx={centerX}
+          cy={centerY - spacer}
+          r={dotRadius}
+          fill={color}
+        />,
+        <circle
+          key="3-2"
+          cx={centerX - spacer}
+          cy={centerY + spacer}
+          r={dotRadius}
+          fill={color}
+        />,
+        <circle
+          key="3-3"
+          cx={centerX + spacer}
+          cy={centerY + spacer}
+          r={dotRadius}
+          fill={color}
+        />,
+      ];
+      break;
+    case 4:
+      portCircles = [
+        <circle
+          key="4-1"
+          cx={centerX - spacer}
+          cy={centerY - spacer}
+          r={dotRadius}
+          fill={color}
+        />,
+        <circle
+          key="4-2"
+          cx={centerX + spacer}
+          cy={centerY - spacer}
+          r={dotRadius}
+          fill={color}
+        />,
+        <circle
+          key="4-3"
+          cx={centerX - spacer}
+          cy={centerY + spacer}
+          r={dotRadius}
+          fill={color}
+        />,
+        <circle
+          key="4-4"
+          cx={centerX + spacer}
+          cy={centerY + spacer}
+          r={dotRadius}
+          fill={color}
+        />,
+      ];
+      break;
+    default:
+      // Nothing
+      break;
     }
 
     return (
@@ -166,7 +166,7 @@ export default class PlayerChiclet extends Component {
     const player = playersByIndex[this.props.playerIndex] || {};
 
     const containerClasses = classNames({
-      [styles['container']]: this.props.showContainer
+      [styles['container']]: this.props.showContainer,
     });
 
     return (

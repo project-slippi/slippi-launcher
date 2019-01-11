@@ -11,7 +11,7 @@ export default class EdgeguardsTable extends Component {
   static propTypes = {
     game: PropTypes.object.isRequired,
     playerDisplay: PropTypes.object.isRequired,
-    playerIndex: PropTypes.number.isRequired
+    playerIndex: PropTypes.number.isRequired,
   };
 
   generateEdgeguardRow = edgeguard => {
