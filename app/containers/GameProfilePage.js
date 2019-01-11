@@ -8,6 +8,7 @@ function mapStateToProps(state) {
   return {
     store: state.game,
     errors: state.errors,
+    globalNotifs: state.notifs,
   };
 }
 

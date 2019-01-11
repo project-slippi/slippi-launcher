@@ -1,0 +1,24 @@
+@import "../colors.global.scss";
+
+.alert {
+    top: 0px;
+    position: fixed !important;
+    width: 100% !important;
+    z-index: 1000;
+    margin: 0 !important;
+    border-radius: 0 !important;
+}
+
+.single-line-message {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.main {
+    padding-top: 100px;
+}
+
+.icon {
+    font-size: 24px !important;
+}

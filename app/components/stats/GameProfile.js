@@ -30,6 +30,7 @@ export default class GameProfile extends Component {
     // store data
     store: object,
     errors: object,
+    globalNotifs: object,
   };
 
   refStats: {};
@@ -198,11 +199,14 @@ export default class GameProfile extends Component {
       [styles['stuck']]: this.state.isStatsStuck,
     }, styles['stats-section']);
 
+    const globalNotifHeightPx = _.get(this.props.globalNotifs, ['activeNotif', 'heightPx']) || 0;
+
     return (
       <Segment basic={true}>
         {this.renderErrorModal()}
         <Sticky
           className={styles['sticky-names']}
+          offset={globalNotifHeightPx}
           onStick={handleStick}
           onUnstick={handleUnstick}
           context={this.refStats}

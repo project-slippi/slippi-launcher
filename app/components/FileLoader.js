@@ -27,6 +27,7 @@ export default class FileLoader extends Component {
     history: object,
     store: object,
     errors: object,
+    globalNotifs: object,
   };
 
   refPrimary: {};
@@ -62,9 +63,16 @@ export default class FileLoader extends Component {
     const refPrimary = this.refPrimary;
     const store = this.props.store || {};
 
+    // Have to offset both the height and sticky position of the sidebar when a global notif is
+    // active. Wish I knew a better way to do this.
+    const globalNotifHeightPx = _.get(this.props.globalNotifs, ['activeNotif', 'heightPx']) || 0;
+    const customStyling = {
+      height: `calc(100vh - ${globalNotifHeightPx}px)`,
+    };
+
     return (
-      <Sticky context={refPrimary}>
-        <div className={styles['sidebar']}>
+      <Sticky offset={globalNotifHeightPx} context={refPrimary}>
+        <div style={customStyling} className={styles['sidebar']}>
           <FolderBrowser
             folders={store.folders}
             rootFolderName={store.rootFolderName}

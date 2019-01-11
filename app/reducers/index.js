@@ -5,6 +5,7 @@ import settings from './settings';
 import console from './console';
 import game from './game';
 import errors from './error';
+import notifs from './notifs';
 
 const rootReducer = combineReducers({
   router: router,
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   console: console,
   game: game,
   errors: errors,
+  notifs: notifs,
 });
 
 export default rootReducer;

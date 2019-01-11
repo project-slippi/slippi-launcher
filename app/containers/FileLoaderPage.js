@@ -10,6 +10,7 @@ function mapStateToProps(state) {
   return {
     store: state.fileLoader,
     errors: state.errors,
+    globalNotifs: state.notifs,
   };
 }
 

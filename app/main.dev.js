@@ -73,8 +73,6 @@ app.on('ready', async () => {
     await installExtensions();
   }
 
-  autoUpdater.checkForUpdatesAndNotify();
-
   mainWindow = new BrowserWindow({
     show: false,
     width: 1100,
@@ -94,6 +92,11 @@ app.on('ready', async () => {
     }
     mainWindow.show();
     mainWindow.focus();
+
+    autoUpdater.checkForUpdatesAndNotify();
+    autoUpdater.on('update-downloaded', (info) => {
+      mainWindow.webContents.send("update-downloaded");
+    });
   });
 
   // On navigation links to http urls, open in external browser
