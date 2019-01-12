@@ -32,26 +32,6 @@
     "test-e2e-live": "node -r @babel/register ./internals/scripts/CheckBuiltsExist.js && cross-env NODE_ENV=test testcafe-live electron:./ ./test/e2e/HomePage.e2e.js",
     "test-watch": "yarn test --watch"
   },
-  "lint-staged": {
-    "*.{js,jsx}": [
-      "cross-env NODE_ENV=development eslint --cache --format=pretty",
-      "prettier --ignore-path .eslintignore --single-quote --write",
-      "git add"
-    ],
-    "{*.json,.{babelrc,eslintrc,prettierrc,stylelintrc}}": [
-      "prettier --ignore-path .eslintignore --parser json --write",
-      "git add"
-    ],
-    "*.{css,scss}": [
-      "stylelint --ignore-path .eslintignore --syntax scss --fix",
-      "prettier --ignore-path .eslintignore --single-quote --write",
-      "git add"
-    ],
-    "*.{yml,md}": [
-      "prettier --ignore-path .eslintignore --single-quote --write",
-      "git add"
-    ]
-  },
   "main": "./app/main.prod.js",
   "build": {
     "productName": "Slippi Launcher",
@@ -215,7 +195,6 @@
     "husky": "^1.1.4",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^23.6.0",
-    "lint-staged": "^8.1.0",
     "mini-css-extract-plugin": "^0.4.4",
     "node-sass": "^4.10.0",
     "opencollective-postinstall": "^2.0.1",
@@ -245,7 +224,6 @@
     "yarn": "^1.12.3"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.5.0",
     "classnames": "^2.2.6",
     "devtron": "^1.4.0",
     "electron-debug": "^2.0.0",

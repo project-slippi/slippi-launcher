@@ -6,7 +6,7 @@ export default function getLocalImage(image) {
   const appPath = app.getAppPath();
 
   // This is the path of dolphin after this app has been packaged
-  let imagePath = path.join(appPath, "../app.asar.unpacked/images");
+  let imagePath = path.join(appPath, "../app.asar.unpacked/app/images");
   if (isDev) {
     imagePath = "./images";
   }
