@@ -224,13 +224,13 @@
     "yarn": "^1.12.3"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.5.0",
     "classnames": "^2.2.6",
     "devtron": "^1.4.0",
     "electron-debug": "^2.0.0",
     "electron-log": "^2.2.17",
     "electron-settings": "^3.2.0",
     "electron-updater": "^4.0.6",
-    "font-awesome": "^4.7.0",
     "fs-extra": "^7.0.1",
     "history": "^4.7.2",
     "lodash": "^4.17.11",
