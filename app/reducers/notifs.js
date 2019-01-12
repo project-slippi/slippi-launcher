@@ -1,8 +1,11 @@
-import { APP_UPGRADE_DOWNLOADED, SET_ACTIVE_NOTIF } from '../actions/notifs';
+import {
+  APP_UPGRADE_DOWNLOADED, SET_ACTIVE_NOTIF, DISMISS_GLOBAL_NOTIF,
+} from '../actions/notifs';
 
 // Default state for this reducer
 const defaultState = {
   visibility: {},
+  dismissed: {},
   activeNotif: null,
 };
 
@@ -12,6 +15,8 @@ export default function fileLoader(state = defaultState, action) {
     return displayAppUpgradeNotif(state, action);
   case SET_ACTIVE_NOTIF:
     return setActiveNotif(state, action);
+  case DISMISS_GLOBAL_NOTIF:
+    return dismissNotif(state, action);
   default:
     return state;
   }
@@ -28,5 +33,13 @@ function setActiveNotif(state, action) {
   const newState = { ...state };
 
   newState.activeNotif = action.payload.notif;
+  return newState;
+}
+
+function dismissNotif(state, action) {
+  const newState = { ...state };
+
+  const key = action.payload.key;
+  newState.dismissed[key] = true;
   return newState;
 }

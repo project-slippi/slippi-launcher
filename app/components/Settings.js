@@ -15,6 +15,7 @@ import LabelDescription from './common/LabelDescription';
 import DismissibleMessage from './common/DismissibleMessage';
 
 import styles from './Settings.scss';
+import PageWrapper from './PageWrapper';
 
 export default class Settings extends Component {
   static propTypes = {
@@ -204,14 +205,16 @@ export default class Settings extends Component {
 
   render() {
     return (
-      <div className="main-padding">
-        <PageHeader
-          icon="setting"
-          text="Settings"
-          history={this.props.history}
-        />
-        {this.renderContent()}
-      </div>
+      <PageWrapper>
+        <div className="main-padding">
+          <PageHeader
+            icon="setting"
+            text="Settings"
+            history={this.props.history}
+          />
+          {this.renderContent()}
+        </div>
+      </PageWrapper>
     );
   }
 }

@@ -9,6 +9,7 @@ import {
   Message,
 } from 'semantic-ui-react';
 import styles from './Home.scss';
+import PageWrapper from './PageWrapper';
 
 export default class Home extends Component {
   generateNav(iconName, header, subHeader, target, disabled) {
@@ -100,25 +101,27 @@ export default class Home extends Component {
     );
 
     return (
-      <Container text={true} className={styles['vertical-space']}>
-        {this.renderPatreonNotif()}
-        <Segment basic={true} className="grid-list">
-          <div className="grid-item-center">
-            <Header as="h2" color="green">
-              Navigation
-            </Header>
-          </div>
-          {navigationElements}
-        </Segment>
-        <Segment basic={true} className="grid-list">
-          <div className="grid-item-center">
-            <Header as="h2" color="green">
-              Upcoming Features
-            </Header>
-          </div>
-          {upcomingElements}
-        </Segment>
-      </Container>
+      <PageWrapper>
+        <Container text={true} className={styles['vertical-space']}>
+          {this.renderPatreonNotif()}
+          <Segment basic={true} className="grid-list">
+            <div className="grid-item-center">
+              <Header as="h2" color="green">
+                Navigation
+              </Header>
+            </div>
+            {navigationElements}
+          </Segment>
+          <Segment basic={true} className="grid-list">
+            <div className="grid-item-center">
+              <Header as="h2" color="green">
+                Upcoming Features
+              </Header>
+            </div>
+            {upcomingElements}
+          </Segment>
+        </Container>
+      </PageWrapper>
     );
   }
 }

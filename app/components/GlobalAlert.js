@@ -11,14 +11,10 @@ import styles from './GlobalAlert.scss';
 
 class GlobalAlert extends Component {
   static propTypes = {
+    // From redux
     store: PropTypes.object.isRequired,
     setActiveNotif: PropTypes.func.isRequired,
-  };
-
-  // TODO: Perhaps dismissal should happen in redux. This would be useful in the case where
-  // TODO: a notif should come back after being dismissed
-  state = {
-    isApplicationUpdatedDismissed: false,
+    dismissNotif: PropTypes.func.isRequired,
   };
 
   componentDidUpdate() {
@@ -28,7 +24,7 @@ class GlobalAlert extends Component {
     const displayAlertKey = _.get(displayAlert, 'key');
     const activeAlertKey = _.get(activeAlert, 'key');
 
-    // We set the active alert here such that our App.js can grab the height and offset.
+    // We set the active alert here such that our PageWrapper can grab the height and offset.
     // Perhaps more of this logic should exist in the reducer... not sure.
     if (displayAlertKey !== activeAlertKey) {
       this.props.setActiveNotif(displayAlert);
@@ -52,7 +48,7 @@ class GlobalAlert extends Component {
           </div>
         ),
         isVisible: this.isApplicationUpdatedAlertVisible,
-        onDismiss: this.createGenericOnDismiss('isApplicationUpdatedDismissed'),
+        onDismiss: this.createGenericOnDismiss('applicationUpdated'),
         heightPx: 48,
         severity: 'info',
       },
@@ -65,7 +61,8 @@ class GlobalAlert extends Component {
   }
 
   isApplicationUpdatedAlertVisible = () => {
-    if (this.state.isApplicationUpdatedDismissed) {
+    const isDismissed = _.get(this.props.store, ['dismissed', 'applicationUpdated']);
+    if (isDismissed) {
       // Short circuit if dismissed
       return false;
     }
@@ -73,10 +70,8 @@ class GlobalAlert extends Component {
     return _.get(this.props.store, ['visibility', 'appUpgrade']);
   };
 
-  createGenericOnDismiss = stateField => () => {
-    this.setState({
-      [stateField]: true,
-    });
+  createGenericOnDismiss = alertKey => () => {
+    this.props.dismissNotif(alertKey);
   };
 
   render() {

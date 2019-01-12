@@ -24,6 +24,7 @@ import getLocalImage from '../../utils/image';
 import * as stageUtils from '../../utils/stages';
 import * as timeUtils from '../../utils/time';
 import * as playerUtils from '../../utils/players';
+import PageWrapper from '../PageWrapper';
 
 export default class GameProfile extends Component {
   static propTypes = {
@@ -366,10 +367,12 @@ export default class GameProfile extends Component {
 
   render() {
     return (
-      <div className="main-padding">
-        <PageHeader icon="game" text="Game" history={this.props.history} />
-        {this.renderContent()}
-      </div>
+      <PageWrapper>
+        <div className="main-padding">
+          <PageHeader icon="game" text="Game" history={this.props.history} />
+          {this.renderContent()}
+        </div>
+      </PageWrapper>
     );
   }
 }

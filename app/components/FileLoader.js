@@ -16,6 +16,7 @@ import FileRow from './FileRow';
 import DismissibleMessage from './common/DismissibleMessage';
 import PageHeader from './common/PageHeader';
 import FolderBrowser from './common/FolderBrowser';
+import PageWrapper from './PageWrapper';
 
 export default class FileLoader extends Component {
   static propTypes = {
@@ -74,8 +75,8 @@ export default class FileLoader extends Component {
     // We return a div that will serve as a placeholder for our column as well as a fixed
     // div for actually displaying the sidebar
     return [
-      <div />,
-      <div style={customStyling} className={styles['sidebar']}>
+      <div key="column-placeholder" />,
+      <div key="sidebar" style={customStyling} className={styles['sidebar']}>
         <FolderBrowser
           folders={store.folders}
           rootFolderName={store.rootFolderName}
@@ -293,10 +294,12 @@ export default class FileLoader extends Component {
 
   render() {
     return (
-      <div className={styles['layout']}>
-        {this.renderSidebar()}
-        {this.renderMain()}
-      </div>
+      <PageWrapper>
+        <div className={styles['layout']}>
+          {this.renderSidebar()}
+          {this.renderMain()}
+        </div>
+      </PageWrapper>
     );
   }
 }

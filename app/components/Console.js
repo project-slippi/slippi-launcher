@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Container, Modal, Form, Card, Button } from 'semantic-ui-react';
 import PageHeader from './common/PageHeader';
+import PageWrapper from './PageWrapper';
 
 export default class Console extends Component {
   static propTypes = {
@@ -132,15 +133,17 @@ export default class Console extends Component {
 
   render() {
     return (
-      <div className="main-padding">
-        <PageHeader
-          icon="microchip"
-          text="Console"
-          history={this.props.history}
-        />
-        {this.renderContent()}
-        {this.renderEditModal()}
-      </div>
+      <PageWrapper>
+        <div className="main-padding">
+          <PageHeader
+            icon="microchip"
+            text="Console"
+            history={this.props.history}
+          />
+          {this.renderContent()}
+          {this.renderEditModal()}
+        </div>
+      </PageWrapper>
     );
   }
 }
