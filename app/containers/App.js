@@ -21,6 +21,8 @@ class App extends Component {
       // a global notif to be shown
       this.props.appUpgradeDownloaded();
     });
+
+    this.props.appUpgradeDownloaded();
   }
 
   render() {

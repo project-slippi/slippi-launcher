@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom';
 import {
   Table,
   Icon,
-  Sticky,
   Header,
   Button,
   Segment,
@@ -39,12 +38,6 @@ export default class FileLoader extends Component {
     globalNotifs: PropTypes.object.isRequired,
   };
 
-  constructor() {
-    super();
-
-    this.refPrimary = {};
-  }
-
   componentDidMount() {
     const xPos = _.get(this.props.store, ['scrollPosition', 'x']) || 0;
     const yPos = _.get(this.props.store, ['scrollPosition', 'y']) || 0;
@@ -68,34 +61,29 @@ export default class FileLoader extends Component {
     this.props.dismissError('fileLoader-global');
   }
 
-  setRefPrimary = element => {
-    this.refPrimary = element;
-  };
-
   renderSidebar() {
-    const refPrimary = this.refPrimary;
     const store = this.props.store || {};
 
     // Have to offset both the height and sticky position of the sidebar when a global notif is
     // active. Wish I knew a better way to do this.
-    const globalNotifHeightPx =
-      _.get(this.props.globalNotifs, ['activeNotif', 'heightPx']) || 0;
+    const globalNotifHeightPx = _.get(this.props.globalNotifs, ['activeNotif', 'heightPx']) || 0;
     const customStyling = {
       height: `calc(100vh - ${globalNotifHeightPx}px)`,
     };
 
-    return (
-      <Sticky offset={globalNotifHeightPx} context={refPrimary}>
-        <div style={customStyling} className={styles['sidebar']}>
-          <FolderBrowser
-            folders={store.folders}
-            rootFolderName={store.rootFolderName}
-            selectedFolderFullPath={store.selectedFolderFullPath}
-            changeFolderSelection={this.props.changeFolderSelection}
-          />
-        </div>
-      </Sticky>
-    );
+    // We return a div that will serve as a placeholder for our column as well as a fixed
+    // div for actually displaying the sidebar
+    return [
+      <div />,
+      <div style={customStyling} className={styles['sidebar']}>
+        <FolderBrowser
+          folders={store.folders}
+          rootFolderName={store.rootFolderName}
+          selectedFolderFullPath={store.selectedFolderFullPath}
+          changeFolderSelection={this.props.changeFolderSelection}
+        />
+      </div>,
+    ];
   }
 
   processFiles(files) {
@@ -305,7 +293,7 @@ export default class FileLoader extends Component {
 
   render() {
     return (
-      <div ref={this.setRefPrimary} className={styles['layout']}>
+      <div className={styles['layout']}>
         {this.renderSidebar()}
         {this.renderMain()}
       </div>

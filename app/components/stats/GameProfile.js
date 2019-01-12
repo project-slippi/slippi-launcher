@@ -41,15 +41,11 @@ export default class GameProfile extends Component {
     globalNotifs: PropTypes.object.isRequired,
   };
 
-  constructor() {
-    super();
-
-    this.refStats = {};
-  }
-
   state = {
     isStatsStuck: false,
   };
+
+  refStats = null;
 
   setRefStats = element => {
     this.refStats = element;
@@ -77,7 +73,7 @@ export default class GameProfile extends Component {
   renderEmpty() {
     return (
       <Header
-        color="red"
+        color="green"
         inverted={true}
         as="h1"
         textAlign="center"

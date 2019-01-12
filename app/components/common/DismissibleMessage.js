@@ -20,12 +20,6 @@ export default class DismissibleMessage extends Component {
     error: false,
   };
 
-  constructor() {
-    super();
-
-    this.refMessage = {};
-  }
-
   componentWillReceiveProps(nextProps) {
     // If message has not been dismissed and content changes, we should move it into view
     const contentChanged = this.props.content !== nextProps.content;
@@ -34,6 +28,8 @@ export default class DismissibleMessage extends Component {
     }
   }
 
+  refMessage = null;
+  
   setRefMessage = element => {
     this.refMessage = element;
   };
