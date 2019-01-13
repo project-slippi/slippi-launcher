@@ -1,7 +1,7 @@
 {
   "name": "slippi-launcher",
   "productName": "Slippi Launcher",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "Slippi Launcher program for browsing and playing replays.",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -73,15 +73,12 @@
     },
     "win": {
       "target": [
-        "nsis",
-        "msi"
+        "nsis"
       ]
     },
     "linux": {
       "target": [
         "deb",
-        "rpm",
-        "snap",
         "AppImage"
       ],
       "category": "Development"
