@@ -1,36 +1,37 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Header, Icon, Button } from 'semantic-ui-react';
 
 export default class PageHeader extends Component {
-  props: {
-    text: string,
-    icon: string,
-    history: object,
+  static propTypes = {
+    text: PropTypes.string.isRequired,
+    icon: PropTypes.string.isRequired,
+    history: PropTypes.object.isRequired,
   };
 
   handleBack = () => {
     // TODO: This is an ultra hack because on the windows production build
     // TODO: pressing back from the game screen goes all the way back to the
     // TODO: main navigation screen. This... prevents that
-    const isWindows = process.platform === "win32";
-    const isProd = process.env.NODE_ENV === "production";
-    if (this.props.text === "Game" && isWindows && isProd) {
-      this.props.history.replace("/files");
-      return;
-    }
+    // const isWindows = process.platform === "win32";
+    // const isProd = process.env.NODE_ENV === "production";
+    // if (this.props.text === "Game" && isWindows && isProd) {
+    //   this.props.history.replace("/files");
+    //   return;
+    // }
 
     this.props.history.goBack();
   };
 
   render() {
     return (
-      <Header as='h1' color={"green"} dividing={true}>
+      <Header as="h1" color="green" dividing={true}>
         <Icon name={this.props.icon} />
         <Header.Content className="full-width">
           <div className="flex-horizontal-split">
             {this.props.text}
             <Button
-              content='Back'
+              content="Back"
               color="green"
               basic={true}
               inverted={true}

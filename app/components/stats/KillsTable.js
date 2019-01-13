@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Table, Icon } from 'semantic-ui-react';
 
 import styles from './GameProfile.scss';
@@ -11,13 +12,13 @@ import * as timeUtils from '../../utils/time';
 const columnCount = 5;
 
 export default class KillsTable extends Component {
-  props: {
-    game: object,
-    playerDisplay: object,
-    playerIndex: number,
+  static propTypes = {
+    game: PropTypes.object.isRequired,
+    playerDisplay: PropTypes.object.isRequired,
+    playerIndex: PropTypes.number.isRequired,
   };
 
-  generateStockRow = (stock) => {
+  generateStockRow = stock => {
     let start = timeUtils.convertFrameCountToDurationString(stock.startFrame);
     let end = <span className={styles['secondary-text']}>–</span>;
 
@@ -41,8 +42,12 @@ export default class KillsTable extends Component {
     const secondaryTextStyle = styles['secondary-text'];
     return (
       <Table.Row key={`${stock.playerIndex}-stock-${stock.startFrame}`}>
-        <Table.Cell className={secondaryTextStyle} collapsing={true}>{start}</Table.Cell>
-        <Table.Cell className={secondaryTextStyle} collapsing={true}>{end}</Table.Cell>
+        <Table.Cell className={secondaryTextStyle} collapsing={true}>
+          {start}
+        </Table.Cell>
+        <Table.Cell className={secondaryTextStyle} collapsing={true}>
+          {end}
+        </Table.Cell>
         <Table.Cell>{killedBy}</Table.Cell>
         <Table.Cell>{killedDirection}</Table.Cell>
         <Table.Cell>{percent}</Table.Cell>
@@ -72,14 +77,12 @@ export default class KillsTable extends Component {
   }
 
   renderKilledDirection(stock) {
-    const killedDirection = animationUtils.getDeathDirection(stock.deathAnimation);
+    const killedDirection = animationUtils.getDeathDirection(
+      stock.deathAnimation
+    );
 
     return (
-      <Icon
-        name={`arrow ${killedDirection}`}
-        color="green"
-        inverted={true}
-      />
+      <Icon name={`arrow ${killedDirection}`} color="green" inverted={true} />
     );
   }
 
@@ -128,9 +131,7 @@ export default class KillsTable extends Component {
           {this.renderHeaderColumns()}
         </Table.Header>
 
-        <Table.Body>
-          {this.renderStocksRows()}
-        </Table.Body>
+        <Table.Body>{this.renderStocksRows()}</Table.Body>
       </Table>
     );
   }

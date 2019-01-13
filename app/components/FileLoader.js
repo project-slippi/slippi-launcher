@@ -1,36 +1,43 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
-import { Table, Icon, Sticky, Header, Button, Segment, Message } from 'semantic-ui-react';
+import {
+  Table,
+  Icon,
+  Header,
+  Button,
+  Segment,
+  Message,
+} from 'semantic-ui-react';
 import styles from './FileLoader.scss';
 import FileRow from './FileRow';
 import DismissibleMessage from './common/DismissibleMessage';
 import PageHeader from './common/PageHeader';
 import FolderBrowser from './common/FolderBrowser';
+import PageWrapper from './PageWrapper';
 
 export default class FileLoader extends Component {
-  props: {
+  static propTypes = {
     // fileLoader actions
-    loadRootFolder: () => void,
-    changeFolderSelection: (path) => void,
-    playFile: (file) => void,
-    storeScrollPosition: () => void,
+    loadRootFolder: PropTypes.func.isRequired,
+    changeFolderSelection: PropTypes.func.isRequired,
+    playFile: PropTypes.func.isRequired,
+    storeScrollPosition: PropTypes.func.isRequired,
 
     // game actions
-    gameProfileLoad: (game) => void,
+    gameProfileLoad: PropTypes.func.isRequired,
 
     // error actions
-    dismissError: (key) => void,
+    dismissError: PropTypes.func.isRequired,
 
     // store data
-    history: object,
-    store: object,
-    errors: object,
-    globalNotifs: object,
+    history: PropTypes.object.isRequired,
+    store: PropTypes.object.isRequired,
+    errors: PropTypes.object.isRequired,
+    globalNotifs: PropTypes.object.isRequired,
   };
-
-  refPrimary: {};
 
   componentDidMount() {
     const xPos = _.get(this.props.store, ['scrollPosition', 'x']) || 0;
@@ -55,12 +62,7 @@ export default class FileLoader extends Component {
     this.props.dismissError('fileLoader-global');
   }
 
-  setRefPrimary = element => {
-    this.refPrimary = element;
-  };
-
   renderSidebar() {
-    const refPrimary = this.refPrimary;
     const store = this.props.store || {};
 
     // Have to offset both the height and sticky position of the sidebar when a global notif is
@@ -70,18 +72,19 @@ export default class FileLoader extends Component {
       height: `calc(100vh - ${globalNotifHeightPx}px)`,
     };
 
-    return (
-      <Sticky offset={globalNotifHeightPx} context={refPrimary}>
-        <div style={customStyling} className={styles['sidebar']}>
-          <FolderBrowser
-            folders={store.folders}
-            rootFolderName={store.rootFolderName}
-            selectedFolderFullPath={store.selectedFolderFullPath}
-            changeFolderSelection={this.props.changeFolderSelection}
-          />
-        </div>
-      </Sticky>
-    );
+    // We return a div that will serve as a placeholder for our column as well as a fixed
+    // div for actually displaying the sidebar
+    return [
+      <div key="column-placeholder" />,
+      <div key="sidebar" style={customStyling} className={styles['sidebar']}>
+        <FolderBrowser
+          folders={store.folders}
+          rootFolderName={store.rootFolderName}
+          selectedFolderFullPath={store.selectedFolderFullPath}
+          changeFolderSelection={this.props.changeFolderSelection}
+        />
+      </div>,
+    ];
   }
 
   processFiles(files) {
@@ -101,18 +104,22 @@ export default class FileLoader extends Component {
       }
 
       const metadata = file.game.getMetadata() || {};
-      const totalFrames = metadata.lastFrame || (30 * 60) + 1;
-      return totalFrames > (30 * 60);
+      const totalFrames = metadata.lastFrame || 30 * 60 + 1;
+      return totalFrames > 30 * 60;
     });
 
-    resultFiles = _.orderBy(resultFiles, [
-      file => {
-        const metadata = file.game.getMetadata() || {};
-        const startAt = metadata.startAt;
-        return moment(startAt);
-      },
-      'fileName',
-    ], ['desc', 'desc']);
+    resultFiles = _.orderBy(
+      resultFiles,
+      [
+        file => {
+          const metadata = file.game.getMetadata() || {};
+          const startAt = metadata.startAt;
+          return moment(startAt);
+        },
+        'fileName',
+      ],
+      ['desc', 'desc']
+    );
 
     // Filter out files that were shorter than 30 seconds
     return resultFiles;
@@ -123,7 +130,7 @@ export default class FileLoader extends Component {
     const errorKey = 'fileLoader-global';
 
     const showGlobalError = errors.displayFlags[errorKey] || false;
-    const globalErrorMessage = errors.messages[errorKey] || "";
+    const globalErrorMessage = errors.messages[errorKey] || '';
     return (
       <DismissibleMessage
         error={true}
@@ -146,7 +153,8 @@ export default class FileLoader extends Component {
       return null;
     }
 
-    let contentText = "Replays shorter than 30 seconds are automatically filtered.";
+    let contentText =
+      'Replays shorter than 30 seconds are automatically filtered.';
 
     const filesWithErrors = files.filter(file => file.hasError);
     const errorFileCount = filesWithErrors.length;
@@ -174,7 +182,13 @@ export default class FileLoader extends Component {
 
     return (
       <div className={styles['empty-loader-content']}>
-        <Header as="h2" icon={true} color="grey" inverted={true} textAlign="center">
+        <Header
+          as="h2"
+          icon={true}
+          color="grey"
+          inverted={true}
+          textAlign="center"
+        >
           <Icon name="search" />
           <Header.Content>
             No Replay Files Found
@@ -190,7 +204,13 @@ export default class FileLoader extends Component {
   renderMissingRootFolder() {
     return (
       <div className={styles['empty-loader-content']}>
-        <Header as="h2" icon={true} color="grey" inverted={true} textAlign="center">
+        <Header
+          as="h2"
+          icon={true}
+          color="grey"
+          inverted={true}
+          textAlign="center"
+        >
           <Icon name="folder outline" />
           <Header.Content>
             Root Folder Missing
@@ -227,14 +247,17 @@ export default class FileLoader extends Component {
     );
 
     // Generate a row for every file in selected folder
-    const rows = files.map(file => (
-      <FileRow
-        key={file.fullPath}
-        file={file}
-        playFile={this.props.playFile}
-        gameProfileLoad={this.props.gameProfileLoad}
-      />
-    ), this);
+    const rows = files.map(
+      file => (
+        <FileRow
+          key={file.fullPath}
+          file={file}
+          playFile={this.props.playFile}
+          gameProfileLoad={this.props.gameProfileLoad}
+        />
+      ),
+      this
+    );
 
     return (
       <Table
@@ -244,12 +267,8 @@ export default class FileLoader extends Component {
         inverted={true}
         selectable={true}
       >
-        <Table.Header>
-          {headerRow}
-        </Table.Header>
-        <Table.Body>
-          {rows}
-        </Table.Body>
+        <Table.Header>{headerRow}</Table.Header>
+        <Table.Body>{rows}</Table.Body>
       </Table>
     );
   }
@@ -261,7 +280,11 @@ export default class FileLoader extends Component {
 
     return (
       <div className="main-padding">
-        <PageHeader icon="disk" text="Replay Browser" history={this.props.history} />
+        <PageHeader
+          icon="disk"
+          text="Replay Browser"
+          history={this.props.history}
+        />
         {this.renderGlobalError()}
         {this.renderFilteredFilesNotif(processedFiles)}
         {this.renderFileSelection(processedFiles)}
@@ -271,10 +294,12 @@ export default class FileLoader extends Component {
 
   render() {
     return (
-      <div ref={this.setRefPrimary} className={styles['layout']}>
-        {this.renderSidebar()}
-        {this.renderMain()}
-      </div>
+      <PageWrapper>
+        <div className={styles['layout']}>
+          {this.renderSidebar()}
+          {this.renderMain()}
+        </div>
+      </PageWrapper>
     );
   }
 }

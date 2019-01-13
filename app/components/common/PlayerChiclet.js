@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Image } from 'semantic-ui-react';
 import _ from 'lodash';
 import classNames from 'classnames';
@@ -9,14 +10,14 @@ import SpacedGroup from './SpacedGroup';
 import styles from './PlayerChiclet.scss';
 
 export default class PlayerChiclet extends Component {
-  props: {
-    game: object,
-    playerIndex: number,
-    showContainer: boolean,
+  static propTypes = {
+    game: PropTypes.object.isRequired,
+    playerIndex: PropTypes.number.isRequired,
+    showContainer: PropTypes.bool // eslint-disable-line
   };
 
   static defaultProps = {
-    showContainer: false,
+    showContainer: false // eslint-disable-line
   };
 
   renderNameChiclet() {
@@ -25,11 +26,7 @@ export default class PlayerChiclet extends Component {
 
     const name = playerUtils.getPlayerName(game, index);
 
-    return (
-      <div className={styles['name-display']}>
-        {name}
-      </div>
-    );
+    return <div className={styles['name-display']}>{name}</div>;
   }
 
   renderCharacterBadge(player) {
@@ -37,7 +34,9 @@ export default class PlayerChiclet extends Component {
       <Image
         key={`player-character-icon-${player.playerIndex}`}
         className={styles['character-image']}
-        src={getLocalImage(`stock-icon-${player.characterId}-${player.characterColor}.png`)}
+        src={getLocalImage(
+          `stock-icon-${player.characterId}-${player.characterColor}.png`
+        )}
         inline={true}
         height={18}
         width={18}
@@ -50,34 +49,94 @@ export default class PlayerChiclet extends Component {
     const centerX = 10;
     const centerY = 8;
     const spacer = 2.5;
-    const color = "#919296";
+    const color = '#919296';
 
     let portCircles = [];
     switch (player.port) {
     case 1:
       portCircles = [
-        <circle key="1-1" cx={centerX} cy={centerY} r={dotRadius} fill={color} />,
+        <circle
+          key="1-1"
+          cx={centerX}
+          cy={centerY}
+          r={dotRadius}
+          fill={color}
+        />,
       ];
       break;
     case 2:
       portCircles = [
-        <circle key="2-1" cx={centerX - spacer} cy={centerY} r={dotRadius} fill={color} />,
-        <circle key="2-2" cx={centerX + spacer} cy={centerY} r={dotRadius} fill={color} />,
+        <circle
+          key="2-1"
+          cx={centerX - spacer}
+          cy={centerY}
+          r={dotRadius}
+          fill={color}
+        />,
+        <circle
+          key="2-2"
+          cx={centerX + spacer}
+          cy={centerY}
+          r={dotRadius}
+          fill={color}
+        />,
       ];
       break;
     case 3:
       portCircles = [
-        <circle key="3-1" cx={centerX} cy={centerY - spacer} r={dotRadius} fill={color} />,
-        <circle key="3-2" cx={centerX - spacer} cy={centerY + spacer} r={dotRadius} fill={color} />,
-        <circle key="3-3" cx={centerX + spacer} cy={centerY + spacer} r={dotRadius} fill={color} />,
+        <circle
+          key="3-1"
+          cx={centerX}
+          cy={centerY - spacer}
+          r={dotRadius}
+          fill={color}
+        />,
+        <circle
+          key="3-2"
+          cx={centerX - spacer}
+          cy={centerY + spacer}
+          r={dotRadius}
+          fill={color}
+        />,
+        <circle
+          key="3-3"
+          cx={centerX + spacer}
+          cy={centerY + spacer}
+          r={dotRadius}
+          fill={color}
+        />,
       ];
       break;
     case 4:
       portCircles = [
-        <circle key="4-1" cx={centerX - spacer} cy={centerY - spacer} r={dotRadius} fill={color} />,
-        <circle key="4-2" cx={centerX + spacer} cy={centerY - spacer} r={dotRadius} fill={color} />,
-        <circle key="4-3" cx={centerX - spacer} cy={centerY + spacer} r={dotRadius} fill={color} />,
-        <circle key="4-4" cx={centerX + spacer} cy={centerY + spacer} r={dotRadius} fill={color} />,
+        <circle
+          key="4-1"
+          cx={centerX - spacer}
+          cy={centerY - spacer}
+          r={dotRadius}
+          fill={color}
+        />,
+        <circle
+          key="4-2"
+          cx={centerX + spacer}
+          cy={centerY - spacer}
+          r={dotRadius}
+          fill={color}
+        />,
+        <circle
+          key="4-3"
+          cx={centerX - spacer}
+          cy={centerY + spacer}
+          r={dotRadius}
+          fill={color}
+        />,
+        <circle
+          key="4-4"
+          cx={centerX + spacer}
+          cy={centerY + spacer}
+          r={dotRadius}
+          fill={color}
+        />,
       ];
       break;
     default:

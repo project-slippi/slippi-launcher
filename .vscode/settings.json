@@ -9,7 +9,7 @@
     "app/main.prod.js.map": true,
     "bower_components": true,
     "dll": true,
-    "flow-typed": true,
+    "flow-typed": false,
     "release": true,
     "node_modules": true,
     "npm-debug.log.*": true,

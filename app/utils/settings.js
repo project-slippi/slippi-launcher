@@ -16,5 +16,5 @@ export function getDolphinPath() {
 
   // Build default packaged path
   const appPath = app.getAppPath();
-  return path.join(appPath, "../app.asar.unpacked/dolphin");
+  return path.join(appPath, "../app.asar.unpacked/app/dolphin");
 }

@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import classNames from 'classnames';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Table, Image, Icon } from 'semantic-ui-react';
 
 import styles from './GameProfile.scss';
@@ -12,14 +13,16 @@ import * as numberUtils from '../../utils/number';
 const columnCount = 6;
 
 export default class PunishesTable extends Component {
-  props: {
-    game: object,
-    playerDisplay: object,
-    playerIndex: number,
+  static propTypes = {
+    game: PropTypes.object.isRequired,
+    playerDisplay: PropTypes.object.isRequired,
+    playerIndex: PropTypes.number.isRequired,
   };
 
-  generatePunishRow = (punish) => {
-    const start = timeUtils.convertFrameCountToDurationString(punish.startFrame);
+  generatePunishRow = punish => {
+    const start = timeUtils.convertFrameCountToDurationString(
+      punish.startFrame
+    );
     let end = <span className={styles['secondary-text']}>–</span>;
     const damage = this.renderDamageCell(punish);
     const damageRange = this.renderDamageRangeCell(punish);
@@ -33,35 +36,42 @@ export default class PunishesTable extends Component {
 
     return (
       <Table.Row key={`${punish.playerIndex}-punish-${punish.startFrame}`}>
-        <Table.Cell className={secondaryTextStyle} collapsing={true}>{start}</Table.Cell>
-        <Table.Cell className={secondaryTextStyle} collapsing={true}>{end}</Table.Cell>
+        <Table.Cell className={secondaryTextStyle} collapsing={true}>
+          {start}
+        </Table.Cell>
+        <Table.Cell className={secondaryTextStyle} collapsing={true}>
+          {end}
+        </Table.Cell>
         <Table.Cell collapsing={true}>{damage}</Table.Cell>
-        <Table.Cell className={styles['attach-to-left-cell']}>{damageRange}</Table.Cell>
+        <Table.Cell className={styles['attach-to-left-cell']}>
+          {damageRange}
+        </Table.Cell>
         <Table.Cell>{punish.moves.length}</Table.Cell>
         <Table.Cell collapsing={true}>{openingType}</Table.Cell>
       </Table.Row>
     );
   };
 
-  generateEmptyRow = (stock) => {
+  generateEmptyRow = stock => {
     const player = this.getPlayer(stock.playerIndex);
     const stockIndex = player.startStocks - stock.count + 1;
     return (
       <Table.Row key={`no-punishes-${stock.count}`}>
         <Table.Cell className={styles['secondary-text']} colSpan={columnCount}>
-          No punishes on opponent&apos;s {numberUtils.toOrdinal(stockIndex)} stock
+          No punishes on opponent&apos;s {numberUtils.toOrdinal(stockIndex)}{' '}
+          stock
         </Table.Cell>
       </Table.Row>
     );
   };
 
-  generateStockRow = (stock) => {
+  generateStockRow = stock => {
     const player = this.getPlayer(stock.playerIndex);
 
     const totalStocks = player.startStocks;
     const currentStocks = stock.count - 1;
 
-    const stockIcons = _.range(1, totalStocks + 1).map((stockNum) => {
+    const stockIcons = _.range(1, totalStocks + 1).map(stockNum => {
       const imgClasses = classNames({
         [styles['lost-stock']]: stockNum > currentStocks,
       });
@@ -70,7 +80,9 @@ export default class PunishesTable extends Component {
         <Image
           key={`stock-image-${stock.playerIndex}-${stockNum}`}
           className={imgClasses}
-          src={getLocalImage(`stock-icon-${player.characterId}-${player.characterColor}.png`)}
+          src={getLocalImage(
+            `stock-icon-${player.characterId}-${player.characterColor}.png`
+          )}
           height={20}
           width={20}
         />
@@ -86,15 +98,13 @@ export default class PunishesTable extends Component {
     return (
       <Table.Row key={key}>
         <Table.Cell className={styles['info']} colSpan={columnCount}>
-          <div className={containerClasses}>
-            {stockIcons}
-          </div>
+          <div className={containerClasses}>{stockIcons}</div>
         </Table.Cell>
       </Table.Row>
     );
   };
 
-  getPlayer(playerIndex: number) {
+  getPlayer(playerIndex) {
     const gameSettings = this.props.game.getSettings();
     const players = gameSettings.players || [];
     const playersByIndex = _.keyBy(players, 'playerIndex');
@@ -104,18 +114,27 @@ export default class PunishesTable extends Component {
   renderDamageCell(punish) {
     const difference = punish.currentPercent - punish.startPercent;
 
-    let heartColor = "green";
+    let heartColor = 'green';
     if (difference >= 70) {
-      heartColor = "red";
+      heartColor = 'red';
     } else if (difference >= 35) {
-      heartColor = "yellow";
+      heartColor = 'yellow';
     }
 
     const diffDisplay = `${Math.trunc(difference)}%`;
 
     return (
-      <div className={`${styles['punish-damage-display']} horizontal-spaced-group-right-sm`}>
-        <Icon inverted={true} color={heartColor} name="heartbeat" size="large" />
+      <div
+        className={`${
+          styles['punish-damage-display']
+        } horizontal-spaced-group-right-sm`}
+      >
+        <Icon
+          inverted={true}
+          color={heartColor}
+          name="heartbeat"
+          size="large"
+        />
         <div>{diffDisplay}</div>
       </div>
     );
@@ -124,16 +143,18 @@ export default class PunishesTable extends Component {
   renderDamageRangeCell(punish) {
     return (
       <div className={styles['secondary-text']}>
-        {`(${Math.trunc(punish.startPercent)}% - ${Math.trunc(punish.currentPercent)}%)`}
+        {`(${Math.trunc(punish.startPercent)}% - ${Math.trunc(
+          punish.currentPercent
+        )}%)`}
       </div>
     );
   }
 
   renderOpeningTypeCell(punish) {
     const textTranslation = {
-      'counter-attack': "Counter Hit",
-      'neutral-win': "Neutral",
-      'trade': "Trade",
+      'counter-attack': 'Counter Hit',
+      'neutral-win': 'Neutral',
+      trade: 'Trade',
     };
 
     return (
@@ -178,12 +199,13 @@ export default class PunishesTable extends Component {
 
     const elements = [];
 
-    const addStockRows = (punish) => {
+    const addStockRows = punish => {
       const shouldDisplayStockLoss = () => {
         // Calculates whether we should display a stock loss row in this position
         const currentStock = _.first(opponentStocks);
         const currentStockWasLost = currentStock && currentStock.endFrame;
-        const wasLostBeforeNextPunish = !punish || currentStock.endFrame < punish.startFrame;
+        const wasLostBeforeNextPunish =
+          !punish || currentStock.endFrame < punish.startFrame;
 
         return currentStockWasLost && wasLostBeforeNextPunish;
       };
@@ -223,7 +245,7 @@ export default class PunishesTable extends Component {
       }
     };
 
-    playerPunishes.forEach((punish) => {
+    playerPunishes.forEach(punish => {
       // Add stock rows to indicate when the opponent died
       addStockRows(punish);
 
@@ -250,9 +272,7 @@ export default class PunishesTable extends Component {
           {this.renderHeaderColumns()}
         </Table.Header>
 
-        <Table.Body>
-          {this.renderPunishRows()}
-        </Table.Body>
+        <Table.Body>{this.renderPunishRows()}</Table.Body>
       </Table>
     );
   }

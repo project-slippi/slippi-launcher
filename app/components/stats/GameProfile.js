@@ -1,8 +1,16 @@
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import _ from 'lodash';
+import PropTypes from 'prop-types';
 import {
-  Header, Segment, Sticky, Image, Icon, Button, Modal, Message,
+  Header,
+  Segment,
+  Sticky,
+  Image,
+  Icon,
+  Button,
+  Modal,
+  Message,
 } from 'semantic-ui-react';
 
 import PageHeader from '../common/PageHeader';
@@ -16,28 +24,29 @@ import getLocalImage from '../../utils/image';
 import * as stageUtils from '../../utils/stages';
 import * as timeUtils from '../../utils/time';
 import * as playerUtils from '../../utils/players';
+import PageWrapper from '../PageWrapper';
 
 export default class GameProfile extends Component {
-  props: {
-    history: object,
+  static propTypes = {
+    history: PropTypes.object.isRequired,
 
     // fileLoaderAction
-    playFile: (file) => void,
+    playFile: PropTypes.func.isRequired,
 
     // error actions
-    dismissError: (key) => void,
+    dismissError: PropTypes.func.isRequired,
 
     // store data
-    store: object,
-    errors: object,
-    globalNotifs: object,
+    store: PropTypes.object.isRequired,
+    errors: PropTypes.object.isRequired,
+    globalNotifs: PropTypes.object.isRequired,
   };
-
-  refStats: {};
 
   state = {
     isStatsStuck: false,
   };
+
+  refStats = null;
 
   setRefStats = element => {
     this.refStats = element;
@@ -64,7 +73,13 @@ export default class GameProfile extends Component {
 
   renderEmpty() {
     return (
-      <Header color="green" inverted={true} as="h1" textAlign="center" icon={true}>
+      <Header
+        color="green"
+        inverted={true}
+        as="h1"
+        textAlign="center"
+        icon={true}
+      >
         <Icon name="hand peace" />
         Only Singles is Supported
       </Header>
@@ -100,17 +115,15 @@ export default class GameProfile extends Component {
     const playerNamesByIndex = playerUtils.getPlayerNamesByIndex(game);
 
     return (
-      <Segment
-        className={segmentClasses}
-        textAlign="center"
-        basic={true}
-      >
+      <Segment className={segmentClasses} textAlign="center" basic={true}>
         <Header inverted={true} textAlign="center" as="h2">
           {playerNamesByIndex[player.playerIndex]}
         </Header>
         <Image
           className={styles['character-image']}
-          src={getLocalImage(`stock-icon-${player.characterId}-${player.characterColor}.png`)}
+          src={getLocalImage(
+            `stock-icon-${player.characterId}-${player.characterColor}.png`
+          )}
         />
       </Segment>
     );
@@ -118,12 +131,17 @@ export default class GameProfile extends Component {
 
   renderGameDetails() {
     const gameSettings = _.get(this.props.store, ['game', 'settings']) || {};
-    const stageName = stageUtils.getStageName(gameSettings.stageId) || "Unknown";
+    const stageName =
+      stageUtils.getStageName(gameSettings.stageId) || 'Unknown';
 
-    const duration = _.get(this.props.store, ['game', 'stats', 'lastFrame']) || 0;
-    const durationDisplay = timeUtils.convertFrameCountToDurationString(duration);
+    const duration =
+      _.get(this.props.store, ['game', 'stats', 'lastFrame']) || 0;
+    const durationDisplay = timeUtils.convertFrameCountToDurationString(
+      duration
+    );
 
-    const platform = _.get(this.props.store, ['game', 'metadata', 'playedOn']) || "Unknown";
+    const platform =
+      _.get(this.props.store, ['game', 'metadata', 'playedOn']) || 'Unknown';
 
     const startAt = _.get(this.props.store, ['game', 'metadata', 'startAt']);
     const startAtDisplay = timeUtils.convertToDateAndTime(startAt);
@@ -134,21 +152,24 @@ export default class GameProfile extends Component {
 
     const metadata = [
       {
-        label: "Stage",
+        label: 'Stage',
         content: stageName,
-      }, {
-        label: "Duration",
+      },
+      {
+        label: 'Duration',
         content: durationDisplay,
-      }, {
-        label: "Time",
+      },
+      {
+        label: 'Time',
         content: startAtDisplay,
-      }, {
-        label: "Platform",
+      },
+      {
+        label: 'Platform',
         content: platform,
       },
     ];
 
-    const metadataElements = metadata.map((details) => (
+    const metadataElements = metadata.map(details => (
       <div key={details.label}>
         <span className={styles['label']}>{details.label}</span>
         &nbsp;
@@ -157,10 +178,7 @@ export default class GameProfile extends Component {
     ));
 
     return (
-      <Segment
-        className={gameDetailsClasses}
-        basic={true}
-      >
+      <Segment className={gameDetailsClasses} basic={true}>
         {metadataElements}
       </Segment>
     );
@@ -170,7 +188,7 @@ export default class GameProfile extends Component {
     return (
       <Button
         className={styles['play-button']}
-        content='Launch Replay'
+        content="Launch Replay"
         circular={true}
         color="grey"
         basic={true}
@@ -195,11 +213,15 @@ export default class GameProfile extends Component {
       });
     };
 
-    const statsSectionClasses = classNames({
-      [styles['stuck']]: this.state.isStatsStuck,
-    }, styles['stats-section']);
+    const statsSectionClasses = classNames(
+      {
+        [styles['stuck']]: this.state.isStatsStuck,
+      },
+      styles['stats-section']
+    );
 
-    const globalNotifHeightPx = _.get(this.props.globalNotifs, ['activeNotif', 'heightPx']) || 0;
+    const globalNotifHeightPx =
+      _.get(this.props.globalNotifs, ['activeNotif', 'heightPx']) || 0;
 
     return (
       <Segment basic={true}>
@@ -230,7 +252,7 @@ export default class GameProfile extends Component {
     const errorKey = 'fileLoader-global';
 
     const showGlobalError = errors.displayFlags[errorKey] || false;
-    const globalErrorMessage = errors.messages[errorKey] || "";
+    const globalErrorMessage = errors.messages[errorKey] || '';
 
     return (
       <Modal
@@ -239,9 +261,7 @@ export default class GameProfile extends Component {
         closeIcon={true}
         onClose={_.partial(this.props.dismissError, errorKey)}
       >
-        <Modal.Header>
-          Error Launching Replay
-        </Modal.Header>
+        <Modal.Header>Error Launching Replay</Modal.Header>
         <Modal.Content>
           <Message
             error={true}
@@ -266,13 +286,13 @@ export default class GameProfile extends Component {
     return (
       <div className={rootDivClasses}>
         <Image
-          src={getLocalImage(`stock-icon-${player.characterId}-${player.characterColor}.png`)}
+          src={getLocalImage(
+            `stock-icon-${player.characterId}-${player.characterColor}.png`
+          )}
           height={24}
           width={24}
         />
-        <div>
-          Player {player.port}
-        </div>
+        <div>Player {player.port}</div>
       </div>
     );
   }
@@ -347,10 +367,12 @@ export default class GameProfile extends Component {
 
   render() {
     return (
-      <div className="main-padding">
-        <PageHeader icon="game" text="Game" history={this.props.history} />
-        {this.renderContent()}
-      </div>
+      <PageWrapper>
+        <div className="main-padding">
+          <PageHeader icon="game" text="Game" history={this.props.history} />
+          {this.renderContent()}
+        </div>
+      </PageWrapper>
     );
   }
 }

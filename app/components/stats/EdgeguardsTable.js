@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Table } from 'semantic-ui-react';
 
 import styles from './GameProfile.scss';
@@ -7,14 +8,16 @@ import styles from './GameProfile.scss';
 import * as timeUtils from '../../utils/time';
 
 export default class EdgeguardsTable extends Component {
-  props: {
-    game: object,
-    playerDisplay: object,
-    playerIndex: number,
+  static propTypes = {
+    game: PropTypes.object.isRequired,
+    playerDisplay: PropTypes.object.isRequired,
+    playerIndex: PropTypes.number.isRequired,
   };
 
-  generateEdgeguardRow = (edgeguard) => {
-    const start = timeUtils.convertFrameCountToDurationString(edgeguard.startFrame);
+  generateEdgeguardRow = edgeguard => {
+    const start = timeUtils.convertFrameCountToDurationString(
+      edgeguard.startFrame
+    );
     let end = <span className={styles['secondary-text']}>–</span>;
 
     if (edgeguard.endFrame) {
@@ -22,7 +25,9 @@ export default class EdgeguardsTable extends Component {
     }
 
     return (
-      <Table.Row key={`${edgeguard.playerIndex}-edgeguard-${edgeguard.startFrame}`}>
+      <Table.Row
+        key={`${edgeguard.playerIndex}-edgeguard-${edgeguard.startFrame}`}
+      >
         <Table.Cell>{start}</Table.Cell>
         <Table.Cell>{end}</Table.Cell>
       </Table.Row>
@@ -71,9 +76,7 @@ export default class EdgeguardsTable extends Component {
           {this.renderHeaderColumns()}
         </Table.Header>
 
-        <Table.Body>
-          {this.renderEdgeguardRows()}
-        </Table.Body>
+        <Table.Body>{this.renderEdgeguardRows()}</Table.Body>
       </Table>
     );
   }

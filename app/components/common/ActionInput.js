@@ -1,16 +1,17 @@
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Input, Button, Segment } from 'semantic-ui-react';
 
-import React, { Component } from 'react';
 import LabelDescription from './LabelDescription';
 
 export default class ActionInput extends Component {
-  props: {
-    label: string,
-    description: string,
-    value: string,
-    onClick: () => void,
-    onChange: () => void,
-    handlerParams: array,
+  static propTypes = {
+    label: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    value: PropTypes.string.isRequired,
+    onClick: PropTypes.func.isRequired,
+    onChange: PropTypes.func,
+    handlerParams: PropTypes.arrayOf(PropTypes.any).isRequired,
   };
 
   static defaultProps = {
@@ -38,12 +39,11 @@ export default class ActionInput extends Component {
 
     return (
       <Segment basic={true}>
-        <LabelDescription label={this.props.label} description={this.props.description} />
-        <Input
-          fluid={true}
-          action={actionButton}
-          input={innerInput}
+        <LabelDescription
+          label={this.props.label}
+          description={this.props.description}
         />
+        <Input fluid={true} action={actionButton} input={innerInput} />
       </Segment>
     );
   }

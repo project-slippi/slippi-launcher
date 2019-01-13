@@ -1,7 +1,13 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 import {
-  Container, Segment, Button, Accordion, Icon, Message,
+  Container,
+  Segment,
+  Button,
+  Accordion,
+  Icon,
+  Message,
 } from 'semantic-ui-react';
 import PageHeader from './common/PageHeader';
 import ActionInput from './common/ActionInput';
@@ -9,44 +15,45 @@ import LabelDescription from './common/LabelDescription';
 import DismissibleMessage from './common/DismissibleMessage';
 
 import styles from './Settings.scss';
+import PageWrapper from './PageWrapper';
 
 export default class Settings extends Component {
-  props: {
-    browseFolder: () => void,
-    browseFile: () => void,
-    saveSettings: () => void,
-    clearChanges: () => void,
-    openDolphin: () => void,
+  static propTypes = {
+    browseFolder: PropTypes.func.isRequired,
+    browseFile: PropTypes.func.isRequired,
+    saveSettings: PropTypes.func.isRequired,
+    clearChanges: PropTypes.func.isRequired,
+    openDolphin: PropTypes.func.isRequired,
 
     // error actions
-    dismissError: (key) => void,
+    dismissError: PropTypes.func.isRequired,
 
     // store data
-    history: object,
-    store: object,
-    errors: object,
+    history: PropTypes.object.isRequired,
+    store: PropTypes.object.isRequired,
+    errors: PropTypes.object.isRequired,
   };
 
   state = {
     isAdvancedSectionOpen: false,
-  }
+  };
 
   componentWillUnmount() {
     this.props.clearChanges();
   }
 
   toggleAdvanced = () => {
-    this.setState({
-      isAdvancedSectionOpen: !this.state.isAdvancedSectionOpen,
-    });
-  }
+    this.setState(prevState => ({
+      isAdvancedSectionOpen: !prevState.isAdvancedSectionOpen,
+    }));
+  };
 
   renderGlobalError() {
     const errors = this.props.errors || {};
     const errorKey = 'settings-global';
 
     const showGlobalError = errors.displayFlags[errorKey] || false;
-    const globalErrorMessage = errors.messages[errorKey] || "";
+    const globalErrorMessage = errors.messages[errorKey] || '';
     return (
       <DismissibleMessage
         error={true}
@@ -62,17 +69,17 @@ export default class Settings extends Component {
 
   renderLinuxNotif() {
     const platform = process.platform;
-    if (platform !== "linux") {
+    if (platform !== 'linux') {
       return null;
     }
 
     const contentMsg = (
       <div>
-        Hello Linux friend! We cannot include a Dolphin
-        build that is guaranteed to work on your distro.
-        You will need to build Dolphin and configure
-        the <b>Playback Dolphin Path</b> in the Advanced Settings dropdown.&nbsp;
-        <a href="https://discord.gg/KkhZQfR">Join the discord</a> &nbsp;if you have any questions.
+        Hello Linux friend! We cannot include a Dolphin build that is guaranteed
+        to work on your distro. You will need to build Dolphin and configure the{' '}
+        <b>Playback Dolphin Path</b> in the Advanced Settings dropdown.&nbsp;
+        <a href="https://discord.gg/KkhZQfR">Join the discord</a> &nbsp;if you
+        have any questions.
       </div>
     );
 
@@ -80,7 +87,7 @@ export default class Settings extends Component {
       <Message
         info={true}
         icon="linux"
-        header={`Additional configuration necessary`}
+        header="Additional configuration necessary"
         content={contentMsg}
       />
     );
@@ -113,11 +120,11 @@ export default class Settings extends Component {
       <Segment basic={true}>
         <LabelDescription
           label="Configure Playback Dolphin"
-          description={`
+          description="
             The Dolphin used to play replay files is stored somewhere in the
             depths of your file system. This button will open that Dolphin for
             you so that you can change settings.
-          `}
+          "
         />
         <Button
           content="Configure Dolphin"
@@ -134,11 +141,12 @@ export default class Settings extends Component {
   renderAdvanced() {
     const store = this.props.store || {};
 
-    const playbackDolphinDescription = "The path to the playback instance. " +
-      "If changed this will no longer used the instance of Dolphin packaged with " +
-      "this app. Changing this can cause issues with playback. " +
-      "Linux users *must* do the following: (1) use the installer script to compile " +
-      "Dolphin, then; (2) set this path to the directory containing the playback instance.";
+    const playbackDolphinDescription =
+      'The path to the playback instance. ' +
+      'If changed this will no longer used the instance of Dolphin packaged with ' +
+      'this app. Changing this can cause issues with playback. ' +
+      'Linux users *must* do the following: (1) use the installer script to compile ' +
+      'Dolphin, then; (2) set this path to the directory containing the playback instance.';
 
     return (
       <Accordion>
@@ -147,7 +155,7 @@ export default class Settings extends Component {
           active={this.state.isAdvancedSectionOpen}
           onClick={this.toggleAdvanced}
         >
-          <Icon name='dropdown' />
+          <Icon name="dropdown" />
           Advanced Settings
         </Accordion.Title>
         <Accordion.Content active={this.state.isAdvancedSectionOpen}>
@@ -181,8 +189,8 @@ export default class Settings extends Component {
         <ActionInput
           label="Replay Root Directory"
           description={
-            "The folder where your slp files are stored. Will usually be the " +
-            "Slippi folder located with Dolphin"
+            'The folder where your slp files are stored. Will usually be the ' +
+            'Slippi folder located with Dolphin'
           }
           value={store.currentSettings.rootSlpPath}
           onClick={this.props.browseFolder}
@@ -197,10 +205,16 @@ export default class Settings extends Component {
 
   render() {
     return (
-      <div className="main-padding">
-        <PageHeader icon="setting" text="Settings" history={this.props.history} />
-        {this.renderContent()}
-      </div>
+      <PageWrapper>
+        <div className="main-padding">
+          <PageHeader
+            icon="setting"
+            text="Settings"
+            history={this.props.history}
+          />
+          {this.renderContent()}
+        </div>
+      </PageWrapper>
     );
   }
 }
