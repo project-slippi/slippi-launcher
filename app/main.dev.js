@@ -9,7 +9,7 @@
  * `./app/main.prod.js` using webpack. This gives us some performance wins.
  *
  */
-import { app, BrowserWindow } from 'electron';
+import { app, shell, BrowserWindow } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -90,6 +90,18 @@ app.on('ready', async () => {
     autoUpdater.on('update-downloaded', () => {
       mainWindow.webContents.send('update-downloaded');
     });
+  });
+
+  // On navigation links to http urls, open in external browser
+  mainWindow.webContents.on('will-navigate', (event, url) => {
+    if (!url.startsWith("http")) {
+      // Do nothing if url doesn't start with http, without this
+      // HMR was not working
+      return;
+    }
+
+    event.preventDefault();
+    shell.openExternal(url);
   });
 
   mainWindow.on('closed', () => {
