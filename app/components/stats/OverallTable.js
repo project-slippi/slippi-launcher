@@ -106,8 +106,8 @@ export default class OverallTable extends Component {
 
         const classes = classNames({
           [styles['highlight-text']]: highlightCondition(
-            fixedPlayerRatio,
-            fixedOppRatio
+            parseFloat(fixedPlayerRatio),
+            parseFloat(fixedOppRatio)
           ),
         });
 
@@ -170,8 +170,8 @@ export default class OverallTable extends Component {
 
         const classes = classNames({
           [styles['highlight-text']]: highlightCondition(
-            fixedPlayerRatio,
-            fixedOppRatio
+            parseFloat(fixedPlayerRatio),
+            parseFloat(fixedOppRatio)
           ),
         });
 
