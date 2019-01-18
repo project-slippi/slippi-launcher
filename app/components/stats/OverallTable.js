@@ -207,7 +207,7 @@ export default class OverallTable extends Component {
       'overall',
       field,
       (fixedPlayerRatio, fixedOppRatio) => {
-        const oppIsNull = fixedPlayerRatio && fixedOppRatio === null;
+        const oppIsNull = fixedPlayerRatio && Number.isNaN(fixedOppRatio);
         const isHigher = fixedPlayerRatio > fixedOppRatio;
         return oppIsNull || isHigher;
       }
@@ -220,7 +220,7 @@ export default class OverallTable extends Component {
       'overall',
       field,
       (fixedPlayerRatio, fixedOppRatio) => {
-        const oppIsNull = fixedPlayerRatio && fixedOppRatio === null;
+        const oppIsNull = fixedPlayerRatio && Number.isNaN(fixedOppRatio);
         const isLower = fixedPlayerRatio < fixedOppRatio;
         return oppIsNull || isLower;
       }
@@ -233,7 +233,7 @@ export default class OverallTable extends Component {
       'overall',
       field,
       (fixedPlayerRatio, fixedOppRatio) => {
-        const oppIsNull = fixedPlayerRatio && fixedOppRatio === null;
+        const oppIsNull = fixedPlayerRatio && Number.isNaN(fixedOppRatio);
         const isHigher = fixedPlayerRatio > fixedOppRatio;
         return oppIsNull || isHigher;
       }
