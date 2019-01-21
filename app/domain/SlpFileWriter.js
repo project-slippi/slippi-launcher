@@ -1,0 +1,326 @@
+import _ from 'lodash';
+import fs from 'fs-extra';
+import path from 'path';
+import moment from 'moment';
+
+export default class SlpFileWriter {
+  static commands = {
+    CMD_RECEIVE_COMMANDS: 0x35,
+    CMD_RECEIVE_POST_FRAME_UPDATE: 0x38,
+    CMD_RECEIVE_GAME_END: 0x39,
+  }
+
+  constructor(folderPath) {
+    this.folderPath = folderPath;
+    this.currentFile = this.getClearedCurrentFile();
+  }
+
+  getClearedCurrentFile() {
+    return {
+      payloadSizes: {},
+      path: null,
+      writeStream: null,
+      bytesWritten: 0,
+      metadata: {
+        startTime: null,
+        lastFrame: 0,
+        players: {},
+      },
+    };
+  }
+
+  getCurrentFilePath() {
+    return _.get(this.currentFile, 'path');
+  }
+
+  handleData(data) {
+    let isNewGame = false;
+
+    const dataView = new DataView(data.buffer);
+
+    let index = 0;
+    while (index < data.length) {
+      if (data.slice(0, 5).toString() === "HELO\0") {
+        // This is a consequence of the way our network communication works, "HELO" messages are
+        // sent periodically to avoid the timeout logic. Just ignore them.
+        index += 5;
+        continue;
+      }
+
+      // TODO: Here we are parsing slp file data. Seems pretty silly to do this when
+      // TODO: logic already exists in the parser to do it... Should eventually reconcile
+      // TODO: the two.
+      const command = dataView.getUint8(index);
+
+      // Increment by one for the command byte
+      index += 1;
+
+      // Prepare to write payload
+      const payloadPtr = data.slice(index);
+      const payloadDataView = new DataView(data.buffer, index);
+      let payloadLen = 0;
+
+      switch (command) {
+      case SlpFileWriter.commands.CMD_RECEIVE_COMMANDS:
+        isNewGame = true;
+        this.initializeNewGame();
+        payloadLen = this.processReceiveCommands(payloadDataView);
+        this.writeCommand(command, payloadPtr, payloadLen);
+        break;
+      case SlpFileWriter.commands.CMD_RECEIVE_GAME_END:
+        payloadLen = this.processCommand(command, payloadDataView);
+        this.writeCommand(command, payloadPtr, payloadLen);
+        this.endGame();
+        break;
+      default:
+        payloadLen = this.processCommand(command, payloadDataView);
+        this.writeCommand(command, payloadPtr, payloadLen);
+        break;
+      }
+
+      index += payloadLen;
+    }
+
+    return {
+      isNewGame: isNewGame,
+    };
+  }
+
+  writeCommand(command, payloadPtr, payloadLen) {
+    // Write data
+    const writeStream = this.currentFile.writeStream;
+    if (!writeStream) {
+      return;
+    }
+    
+    // Keep track of how many bytes we have written to the file
+    this.currentFile.bytesWritten += (payloadLen + 1);
+
+    const payloadBuf = payloadPtr.slice(0, payloadLen);
+    const bufToWrite = Buffer.concat([
+      Buffer.from([command]),
+      payloadBuf,
+    ]);
+
+    writeStream.write(bufToWrite);
+  }
+
+  initializeNewGame() {
+    const startTime = moment();
+    const filePath = this.getNewFilePath(startTime);
+    const writeStream = fs.createWriteStream(filePath, {
+      encoding: 'binary',
+    });
+
+    const clearFileObj = this.getClearedCurrentFile();
+    this.currentFile = {
+      ...clearFileObj,
+      path: filePath,
+      writeStream: writeStream,
+      metadata: {
+        ...clearFileObj.metadata,
+        startTime: startTime,
+      },
+    };
+
+    const header = Buffer.concat([
+      Buffer.from("{U"),
+      Buffer.from([3]),
+      Buffer.from("raw[$U#l"),
+      Buffer.from([0, 0, 0, 0]),
+    ]);
+    writeStream.write(header);
+
+    console.log(`Creating new file at: ${filePath}`);
+  }
+
+  getNewFilePath(m) {
+    return path.join(this.folderPath, `Game_${m.format("YYYYMMDD")}T${m.format("hhmmss")}.slp`);
+  }
+
+  endGame() {
+    const writeStream = this.currentFile.writeStream;
+    if (!writeStream) {
+      // Clear current file
+      this.currentFile = this.getClearedCurrentFile();
+
+      return;
+    }
+
+    let footer = Buffer.concat([
+      Buffer.from("U"),
+      Buffer.from([8]),
+      Buffer.from("metadata{"),
+    ]);
+
+    // Write game start time
+    const startTimeStr = this.currentFile.metadata.startTime.toISOString();
+    footer = Buffer.concat([
+      footer,
+      Buffer.from("U"),
+      Buffer.from([7]),
+      Buffer.from("startAtSU"),
+      Buffer.from([startTimeStr.length]),
+      Buffer.from(startTimeStr),
+    ]);
+
+    // Write last frame index
+    // TODO: Get last frame
+    const lastFrame = this.currentFile.metadata.lastFrame;
+    footer = Buffer.concat([
+      footer,
+      Buffer.from("U"),
+      Buffer.from([9]),
+      Buffer.from("lastFramel"),
+      this.createInt32Buffer(lastFrame),
+    ]);
+
+    // Start writting player specific data
+    footer = Buffer.concat([
+      footer,
+      Buffer.from("U"),
+      Buffer.from([7]),
+      Buffer.from("players{"),
+    ]);
+    const players = this.currentFile.metadata.players;
+    _.forEach(players, (player, index) => {
+      // Start player obj with index being the player index
+      footer = Buffer.concat([
+        footer,
+        Buffer.from("U"),
+        Buffer.from([index.length]),
+        Buffer.from(`${index}{`),
+      ]);
+
+      // Start characters key for this player
+      footer = Buffer.concat([
+        footer,
+        Buffer.from("U"),
+        Buffer.from([10]),
+        Buffer.from("characters{"),
+      ]);
+
+      // Write character usage
+      _.forEach(player.characterUsage, (usage, internalId) => {
+        // Write this character
+        footer = Buffer.concat([
+          footer,
+          Buffer.from("U"),
+          Buffer.from([internalId.length]),
+          Buffer.from(`${internalId}l`),
+          this.createUInt32Buffer(usage),
+        ]);
+      });
+
+      // Close characters and player
+      footer = Buffer.concat([
+        footer,
+        Buffer.from("}}"),
+      ]);
+    });
+
+    // Close players
+    footer = Buffer.concat([
+      footer,
+      Buffer.from("}"),
+    ]);
+
+    // Write played on
+    footer = Buffer.concat([
+      footer,
+      Buffer.from("U"),
+      Buffer.from([8]),
+      Buffer.from("playedOnSU"),
+      Buffer.from([7]),
+      Buffer.from("network"),
+    ]);
+    
+    // Close metadata and file
+    footer = Buffer.concat([
+      footer,
+      Buffer.from("}}"),
+    ]);
+
+    // End the stream
+    writeStream.write(footer);
+    writeStream.end();
+
+    // Write bytes written
+    const fd = fs.openSync(this.currentFile.path, "r+");
+    fs.writeSync(fd, this.createUInt32Buffer(this.currentFile.bytesWritten), 0, "binary", 11);
+    fs.closeSync(fd);
+
+    console.log("Finished writting file.");
+
+    // Clear current file
+    this.currentFile = this.getClearedCurrentFile();
+  }
+
+  createInt32Buffer(number) {
+    const buf = Buffer.alloc(4);
+    buf.writeInt32BE(number, 0);
+    return buf;
+  }
+
+  createUInt32Buffer(number) {
+    const buf = Buffer.alloc(4);
+    buf.writeUInt32BE(number, 0);
+    return buf;
+  }
+
+  processReceiveCommands(dataView) {
+    const payloadLen = dataView.getUint8(0);
+    for (let i = 1; i < payloadLen; i += 3) {
+      const commandByte = dataView.getUint8(i);
+      const payloadSize = dataView.getUint16(i + 1);
+      this.currentFile.payloadSizes[commandByte] = payloadSize;
+    }
+
+    return payloadLen;
+  }
+
+  processCommand(command, dataView) {
+    const payloadSize = _.get(this.currentFile, ['payloadSizes', command]);
+    if (!payloadSize) {
+      // TODO: Flag some kind of error
+      return 0;
+    }
+
+    switch (command) {
+    case SlpFileWriter.commands.CMD_RECEIVE_POST_FRAME_UPDATE:
+      // Here we need to update some metadata fields
+      const frameIndex = dataView.getInt32(0);
+      const playerIndex = dataView.getUint8(4);
+      const isFollower = dataView.getUint8(5);
+      const internalCharacterId = dataView.getUint8(6);
+
+      if (isFollower) {
+        // No need to do this for follower
+        break;
+      }
+
+      // Update frame index
+      this.currentFile.metadata.lastFrame = frameIndex;
+
+      // Update character usage
+      const prevPlayer = _.get(this.currentFile, ['metadata', 'players', `${playerIndex}`]) || {};
+      const characterUsage = prevPlayer.characterUsage || {};
+      const curCharFrames = characterUsage[internalCharacterId] || 0;
+      const player = {
+        ...prevPlayer,
+        "characterUsage": {
+          ...characterUsage,
+          [internalCharacterId]: curCharFrames + 1,
+        },
+      };
+
+      this.currentFile.metadata.players[`${playerIndex}`] = player;
+
+      break;
+    default:
+      // Nothing to do
+      break;
+    }
+    return payloadSize;
+  }
+}

@@ -1,8 +1,7 @@
 import net from 'net';
-import fs from 'fs-extra';
-import path from 'path';
 
 import DolphinManager from './DolphinManager';
+import SlpFileWriter from './SlpFileWriter';
 
 export const ConnectionStatus = {
   DISCONNECTED: 0,
@@ -54,49 +53,13 @@ export default class ConsoleConnection {
 
     client.setTimeout(10000);
 
-    let fileIndex = 1;
-    const folder = this.targetFolder;
-    let writeStream = null;
+    // Prepare SlpFileWriter class
+    const slpFileWriter = new SlpFileWriter(this.targetFolder);
+    
     client.on('data', (data) => {
-      if (data.length === 5 && data.toString() === "HELO\0") {
-        // TODO: Deal with potential HELO messages within payloads
-        // This is just a keep-alive message, filter it
-        return;
-      }
-
-      const firstCommand = data[0];
-      if (firstCommand === 0x35) {
-        console.log("Making new file...");
-        // TODO: 1) Make file name include time based string
-        // TODO: 2) Make file type .slp
-        const filePath = path.join(folder, `file${fileIndex}.bin`);
-        console.log(filePath);
-        writeStream = fs.createWriteStream(filePath, {
-          encoding: 'binary',
-        });
-
-        if (this.isMirroring) {
-          // TODO: Handle errors or something?
-          this.dolphinManager.playFile(filePath);
-        }
-      }
-
-      if (!writeStream) {
-        // If no active writeStream, don't do anything
-        return;
-      }
-
-      writeStream.write(data);
-
-      const dataLen = data.length;
-      const gameEndCommandBytePresent = data[dataLen - 2] === 0x39;
-      const gameEndPayloadValid = data[dataLen - 1] === 0x0 || data[dataLen - 1] === 0x3;
-      if (gameEndCommandBytePresent && gameEndPayloadValid) {
-        writeStream.end();
-        writeStream = null;
-        fileIndex += 1;
-
-        console.log("Game end detected.");
+      const result = slpFileWriter.handleData(data);
+      if (result.isNewGame && this.isMirroring) {
+        this.dolphinManager.playFile(slpFileWriter.getCurrentFilePath());
       }
     });
 
