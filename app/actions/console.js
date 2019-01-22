@@ -3,6 +3,7 @@ export const CONNECTION_EDIT = 'CONNECTION_EDIT';
 export const CONNECTION_SAVE = 'CONNECTION_SAVE';
 export const CONNECTION_DELETE = 'CONNECTION_DELETE';
 export const CONNECTION_CONNECT = 'CONNECTION_CONNECT';
+export const CONNECTION_STATE_CHANGED = 'CONNECTION_STATE_CHANGED';
 
 export function cancelEditConnection() {
   return {
@@ -43,6 +44,13 @@ export function connectConnection(connection) {
   return () => {
     connection.connect();
   };
+}
+
+export function connectionStateChanged() {
+  return {
+    type: CONNECTION_STATE_CHANGED,
+    payload: {},
+  }
 }
 
 export function startMirroring(connection) {

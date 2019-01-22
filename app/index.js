@@ -6,7 +6,7 @@ import { configureStore, history } from './store/configureStore';
 import './imports.global.css';
 import './app.global.scss';
 
-const store = configureStore();
+export const store = configureStore(); //eslint-disable-line
 
 render(
   <AppContainer>

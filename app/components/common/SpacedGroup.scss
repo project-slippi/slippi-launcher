@@ -16,4 +16,8 @@
   &.md {
     grid-gap: 9px 9px;
   }
+
+  &.none {
+    grid-gap: 0 0;
+  }
 }

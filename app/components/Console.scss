@@ -1,0 +1,45 @@
+@import "../colors.global.scss";
+
+.card {
+  box-shadow: 3px 3px 2px rgba(0, 0, 0, 0.1) !important;
+  background: none !important;
+  border-style: solid !important;
+  border-width: 1px !important;
+  border-color: $background-darkest !important;
+  color: $foreground;
+
+  .content {
+    border-color: $background-darkest !important;
+    background-color: $background-light !important;
+  }
+}
+
+.label {
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.5);
+  margin-right: 4px;
+}
+
+.conn-content-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-column-gap: 6px;
+}
+
+.conn-button-grid {
+  display: grid;
+  grid-template-columns: auto auto 1fr auto;
+  grid-column-gap: 3px;
+}
+
+.conn-status-value {
+  font-weight: bold;
+
+  &.gray {
+    color: gray;
+  }
+
+  &.green {
+    color: $primary-green;
+  }
+}

@@ -5,7 +5,7 @@ import ConsoleConnection from '../domain/ConsoleConnection';
 
 import {
   CONNECTION_CANCEL_EDIT, CONNECTION_EDIT, CONNECTION_SAVE, CONNECTION_DELETE,
-  CONNECTION_CONNECT,
+  CONNECTION_CONNECT, CONNECTION_STATE_CHANGED,
 } from '../actions/console';
 
 const connectionPath = "connections";
@@ -34,6 +34,8 @@ export default function connections(state = defaultState, action) {
     return deleteConnection(state, action);
   case CONNECTION_CONNECT:
     return connectConnection(state, action);
+  case CONNECTION_STATE_CHANGED:
+    return refreshState(state, action);
   default:
     return state;
   }
@@ -101,4 +103,8 @@ function deleteConnection(state) {
 
 function connectConnection(state) {
   return state;
+}
+
+function refreshState(state) {
+  return { ...state };
 }

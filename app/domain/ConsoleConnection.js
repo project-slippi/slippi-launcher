@@ -1,5 +1,7 @@
 import net from 'net';
 
+import { store } from '../index';
+import { connectionStateChanged } from '../actions/console';
 import DolphinManager from './DolphinManager';
 import SlpFileWriter from './SlpFileWriter';
 
@@ -24,6 +26,9 @@ export default class ConsoleConnection {
 
     // A connection can mirror its received gameplay
     this.dolphinManager = new DolphinManager(`mirror-${this.id}`);
+
+    // SlpFileWriter for writting files
+    this.slpFileWriter = new SlpFileWriter(this.targetFolder);
   }
 
   getSettings() {
@@ -34,8 +39,9 @@ export default class ConsoleConnection {
   }
 
   editSettings(newSettings) {
-    this.ipAddress = newSettings.ipAddress;
-    this.targetFolder = newSettings.targetFolder;
+    // If data is not provided, keep old values
+    this.ipAddress = newSettings.ipAddress || this.ipAddress;
+    this.targetFolder = newSettings.targetFolder || this.targetFolder;
   }
 
   getDolphinManager() {
@@ -49,17 +55,20 @@ export default class ConsoleConnection {
     }, () => {
       console.log(`Connected to ${this.ipAddress}!`);
       this.connectionStatus = ConnectionStatus.CONNECTED;
+      store.dispatch(connectionStateChanged());
     });
 
     client.setTimeout(10000);
-
-    // Prepare SlpFileWriter class
-    const slpFileWriter = new SlpFileWriter(this.targetFolder);
     
     client.on('data', (data) => {
-      const result = slpFileWriter.handleData(data);
+      const result = this.slpFileWriter.handleData(data);
       if (result.isNewGame && this.isMirroring) {
-        this.dolphinManager.playFile(slpFileWriter.getCurrentFilePath());
+        const curFilePath = this.slpFileWriter.getCurrentFilePath();
+        this.dolphinManager.playFile(curFilePath);
+      }
+
+      if (result.isNewGame || result.isGameEnd) {
+        store.dispatch(connectionStateChanged());
       }
     });
 
@@ -68,6 +77,7 @@ export default class ConsoleConnection {
       client.destroy();
       this.connectionStatus = ConnectionStatus.DISCONNECTED;
 
+      store.dispatch(connectionStateChanged());
       // TODO: Handle auto-reconnect logic
     });
 
@@ -76,11 +86,15 @@ export default class ConsoleConnection {
       console.log(error);
       client.destroy();
       this.connectionStatus = ConnectionStatus.DISCONNECTED;
+
+      store.dispatch(connectionStateChanged());
     });
 
     client.on('end', () => {
       console.log('disconnect');
       this.connectionStatus = ConnectionStatus.DISCONNECTED;
+
+      store.dispatch(connectionStateChanged());
     });
   }
 
@@ -88,10 +102,12 @@ export default class ConsoleConnection {
     try {
       console.log("Mirroring start");
       this.isMirroring = true;
+      store.dispatch(connectionStateChanged());
       await this.dolphinManager.startPlayback();
     } finally {
       console.log("Mirroring end");
       this.isMirroring = false;
+      store.dispatch(connectionStateChanged());
     }
   }
 }

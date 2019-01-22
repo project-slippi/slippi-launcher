@@ -1,9 +1,15 @@
 import _ from 'lodash';
+import classNames from 'classnames';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Container, Modal, Form, Card, Button } from 'semantic-ui-react';
+import path from 'path';
+import { Container, Modal, Form, Card, Button, Icon } from 'semantic-ui-react';
+import { ConnectionStatus } from '../domain/ConsoleConnection';
 import PageHeader from './common/PageHeader';
 import PageWrapper from './PageWrapper';
+
+import styles from './Console.scss';
+import SpacedGroup from './common/SpacedGroup';
 
 export default class Console extends Component {
   static propTypes = {
@@ -31,6 +37,11 @@ export default class Console extends Component {
 
   onModalClose = () => {
     this.props.cancelEditConnection();
+
+    // Clear formData state for next
+    this.setState({
+      formData: {},
+    });
   };
 
   onFieldChange = (e, { name, value }) => {
@@ -63,6 +74,7 @@ export default class Console extends Component {
     return (
       <Container text={true}>
         <Button color="blue" onClick={this.addConnectionClick}>
+          <Icon name="plus" />
           Add Connection
         </Button>
         {connectionsById.map(this.renderConnection)}
@@ -70,27 +82,108 @@ export default class Console extends Component {
     );
   }
 
-  renderConnection = (connection, index) => (
-    <Card key={`${connection.ipAddress}-connection`}>
-      <Card.Content>
-        <p>{connection.ipAddress}</p>
-        <p>{connection.targetFolder}</p>
-        <Button onClick={_.partial(this.editConnectionClick, index)}>
-          Edit
-        </Button>
-        {this.renderConnectButton(connection)}
-        {this.renderMirrorButton(connection)}
+  renderConnection = (connection) => (
+    <Card
+      key={`${connection.id}-${connection.ipAddress}-connection`}
+      fluid={true}
+      className={styles['card']}
+    >
+      <Card.Content className={styles['content']}>
+        <div className={styles['conn-content-grid']}>
+          {this.renderLabelValue("IP Address", connection.ipAddress)}
+          {this.renderLabelValue("Target Folder", connection.targetFolder)}
+          {this.renderStatusLabelValue(connection)}
+        </div>
+      </Card.Content>
+      <Card.Content className={styles['content']}>
+        <div className={styles['conn-button-grid']}>
+          {this.renderConnectButton(connection)}
+          {this.renderMirrorButton(connection)}
+          <div key="empty-col" />
+          <Button color="grey" onClick={_.partial(this.editConnectionClick, connection.id)}>
+            <Icon name="edit" />
+            Edit
+          </Button>
+        </div>
       </Card.Content>
     </Card>
   );
 
-  renderConnectButton = connection => (
-    <Button onClick={_.partial(this.connectTo, connection)}>Connect</Button>
-  );
+  renderConnectButton = connection => {
+    const status = connection.connectionStatus;
+    const isConnected = status === ConnectionStatus.CONNECTED;
 
-  renderMirrorButton = connection => (
-    <Button onClick={_.partial(this.mirror, connection)}>Mirror</Button>
-  );
+    const isEnabled = !isConnected;
+
+    return (
+      <Button
+        color="blue"
+        disabled={!isEnabled}
+        onClick={_.partial(this.connectTo, connection)}
+      >
+        <Icon name="linkify" />
+        Connect
+      </Button>
+    );
+  }
+
+  renderMirrorButton = connection => {
+    const status = connection.connectionStatus;
+    const isConnected = status === ConnectionStatus.CONNECTED;
+    const isMirroring = connection.isMirroring;
+
+    const isEnabled = isConnected && !isMirroring;
+    return (
+      <Button
+        color="blue"
+        disabled={!isEnabled}
+        onClick={_.partial(this.mirror, connection)}
+      >
+        <Icon name="film" />
+        Mirror
+      </Button>
+    );
+  }
+    
+  renderLabelValue(label, value) {
+    return (
+      <React.Fragment>
+        <div key="label" className={styles['label']}>{label}</div>
+        <div key="value" className={styles['value']}>{value}</div>
+      </React.Fragment>
+    );
+  }
+
+  renderStatusLabelValue(connection) {
+    const status = connection.connectionStatus;
+    const currentFilePath = _.get(connection, ['slpFileWriter', 'currentFile', 'path']);
+
+    let statusMsg = "Disconnected";
+    let statusColor = "gray";
+    if (status === ConnectionStatus.CONNECTED && currentFilePath) {
+      statusMsg = `Writing file ${path.basename(currentFilePath)}`;
+      statusColor = "green";
+    } else if (status === ConnectionStatus.CONNECTED) {
+      statusMsg = "Connected";
+      statusColor = "green";
+    }
+
+    const valueClasses = classNames({
+      [styles['conn-status-value']]: true,
+      [styles['green']]: statusColor === "green",
+      [styles['gray']]: statusColor === "gray",
+    });
+
+    return (
+      <React.Fragment>
+        <div key="label" className={styles['label']}>Status</div>
+        <SpacedGroup className={valueClasses} size="none">
+          <Icon size="tiny" name="circle" />
+          {statusMsg}
+        </SpacedGroup>
+      </React.Fragment>
+    );
+  }
 
   renderEditModal() {
     const store = this.props.store || {};
@@ -117,13 +210,13 @@ export default class Console extends Component {
         <Form.Input
           name="ipAddress"
           label="IP Address"
-          value={connectionSettings.ipAddress}
+          defaultValue={connectionSettings.ipAddress}
           onChange={this.onFieldChange}
         />
         <Form.Input
           name="targetFolder"
           label="Target Folder"
-          value={connectionSettings.targetFolder}
+          defaultValue={connectionSettings.targetFolder}
           onChange={this.onFieldChange}
         />
         <Form.Button content="Submit" />

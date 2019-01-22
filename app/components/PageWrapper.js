@@ -20,11 +20,17 @@ class PageWrapper extends Component {
   };
 
   componentDidMount() {
-    ipcRenderer.on('update-downloaded', () => {
-      // When main process (main.dev.js) tells us an update has been downloaded, trigger
-      // a global notif to be shown
-      this.props.appUpgradeDownloaded();
-    });
+    ipcRenderer.on('update-downloaded', this.onAppUpgrade);
+  }
+
+  componentWillUnmount() {
+    ipcRenderer.removeListener('update-downloaded', this.onAppUpgrade)
+  }
+
+  onAppUpgrade = () => {
+    // When main process (main.dev.js) tells us an update has been downloaded, trigger
+    // a global notif to be shown
+    this.props.appUpgradeDownloaded();
   }
 
   render() {

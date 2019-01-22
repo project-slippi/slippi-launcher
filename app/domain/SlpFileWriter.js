@@ -35,6 +35,7 @@ export default class SlpFileWriter {
 
   handleData(data) {
     let isNewGame = false;
+    let isGameEnd = false;
 
     const dataView = new DataView(data.buffer);
 
@@ -71,6 +72,7 @@ export default class SlpFileWriter {
         payloadLen = this.processCommand(command, payloadDataView);
         this.writeCommand(command, payloadPtr, payloadLen);
         this.endGame();
+        isGameEnd = true;
         break;
       default:
         payloadLen = this.processCommand(command, payloadDataView);
@@ -83,6 +85,7 @@ export default class SlpFileWriter {
 
     return {
       isNewGame: isNewGame,
+      isGameEnd: isGameEnd,
     };
   }
 
