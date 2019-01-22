@@ -16,7 +16,7 @@ export default class Console extends Component {
     editConnection: PropTypes.func.isRequired,
     cancelEditConnection: PropTypes.func.isRequired,
     saveConnection: PropTypes.func.isRequired,
-    // deleteConnection: PropTypes.func.isRequired,
+    deleteConnection: PropTypes.func.isRequired,
     connectConnection: PropTypes.func.isRequired,
     startMirroring: PropTypes.func.isRequired,
     history: PropTypes.object.isRequired,
@@ -31,7 +31,7 @@ export default class Console extends Component {
     this.props.editConnection('new');
   };
 
-  editConnectionClick = index => {
+  editConnectionClick = index => () => {
     this.props.editConnection(index);
   };
 
@@ -54,18 +54,22 @@ export default class Console extends Component {
     });
   };
 
-  onFormSubmit = id => {
+  onFormSubmit = id => () => {
     const formData = this.state.formData || {};
     this.props.saveConnection(id, formData);
   };
 
-  connectTo = connection => {
+  connectTo = connection => () => {
     this.props.connectConnection(connection);
   };
 
-  mirror = connection => {
+  mirror = connection => () => {
     this.props.startMirroring(connection);
   };
+
+  deleteConnection = connection => () => {
+    this.props.deleteConnection(connection);
+  }
 
   renderContent() {
     const store = this.props.store || {};
@@ -100,10 +104,8 @@ export default class Console extends Component {
           {this.renderConnectButton(connection)}
           {this.renderMirrorButton(connection)}
           <div key="empty-col" />
-          <Button color="grey" onClick={_.partial(this.editConnectionClick, connection.id)}>
-            <Icon name="edit" />
-            Edit
-          </Button>
+          {this.renderEditButton(connection)}
+          {this.renderDeleteButton(connection)}
         </div>
       </Card.Content>
     </Card>
@@ -119,7 +121,7 @@ export default class Console extends Component {
       <Button
         color="blue"
         disabled={!isEnabled}
-        onClick={_.partial(this.connectTo, connection)}
+        onClick={this.connectTo(connection)}
       >
         <Icon name="linkify" />
         Connect
@@ -137,14 +139,50 @@ export default class Console extends Component {
       <Button
         color="blue"
         disabled={!isEnabled}
-        onClick={_.partial(this.mirror, connection)}
+        onClick={this.mirror(connection)}
       >
         <Icon name="film" />
         Mirror
       </Button>
     );
   }
+
+  renderEditButton = connection => {
+    const status = connection.connectionStatus;
+    const isConnected = status === ConnectionStatus.CONNECTED;
+
+    const isEnabled = !isConnected;
+
+    return (
+      <Button
+        color="grey"
+        disabled={!isEnabled}
+        onClick={this.editConnectionClick(connection.id)}
+      >
+        <Icon name="edit" />
+        Edit
+      </Button>
+    );
+  }
     
+  renderDeleteButton = connection => {
+    const status = connection.connectionStatus;
+    const isConnected = status === ConnectionStatus.CONNECTED;
+
+    const isEnabled = !isConnected;
+
+    return (
+      <Button
+        color="red"
+        disabled={!isEnabled}
+        onClick={this.deleteConnection(connection)}
+      >
+        <Icon name="trash" />
+        Delete
+      </Button>
+    );
+  }
+
   renderLabelValue(label, value) {
     return (
       <React.Fragment>
@@ -206,7 +244,7 @@ export default class Console extends Component {
     }
 
     return (
-      <Form onSubmit={_.partial(this.onFormSubmit, connectionSettings.id)}>
+      <Form onSubmit={this.onFormSubmit(connectionSettings.id)}>
         <Form.Input
           name="ipAddress"
           label="IP Address"

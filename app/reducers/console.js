@@ -97,8 +97,21 @@ function storeConnections(connectionObjs) {
   )));
 }
 
-function deleteConnection(state) {
-  return state;
+function deleteConnection(state, action) {
+  const payload = action.payload || {};
+  const index = payload.id;
+
+  const newState = { ...state };
+  const connectionObjs = state.connections || [];
+  const connectionsById = _.keyBy(connectionObjs, 'id');
+  delete connectionsById[index];
+
+  const resultConnections = _.toArray(connectionsById);
+  newState.connections = resultConnections;
+
+  storeConnections(resultConnections);
+
+  return newState;
 }
 
 function connectConnection(state) {

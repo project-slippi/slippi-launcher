@@ -86,7 +86,7 @@ export default class Home extends Component {
         'Stream From Console',
         'Get replays by connecting to a console over network',
         '/console',
-        true
+        false
       )
     );
 

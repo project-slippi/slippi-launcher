@@ -31,11 +31,11 @@ export function saveConnection(id, settings) {
   };
 }
 
-export function deleteConnection(id) {
+export function deleteConnection(connection) {
   return {
     type: CONNECTION_DELETE,
     payload: {
-      id: id,
+      id: connection.id,
     },
   };
 }
