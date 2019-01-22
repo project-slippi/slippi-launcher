@@ -47,12 +47,12 @@ export default class Home extends Component {
   renderPatreonNotif() {
     const contentMsg = (
       <div>
-        If you are enjoying using Project Slippi, consider becoming a patron to
-        support continued development.&nbsp;
+        Your support allows me to spend more time on the project and pay for
+        services to make it even better. Enjoy the beta features!&nbsp;
         <strong>
           <a href="https://www.patreon.com/fizzi36">Click here</a>
         </strong>
-        &nbsp;to support!
+        &nbsp;to view Patreon page.
       </div>
     );
 
@@ -60,7 +60,7 @@ export default class Home extends Component {
       <Message
         info={true}
         icon="patreon"
-        header="Support continued development"
+        header="Thank you!"
         content={contentMsg}
       />
     );
@@ -68,7 +68,6 @@ export default class Home extends Component {
 
   render() {
     const navigationElements = [];
-    const upcomingElements = [];
 
     navigationElements.push(
       this.generateNav(
@@ -80,7 +79,7 @@ export default class Home extends Component {
       )
     );
 
-    upcomingElements.push(
+    navigationElements.push(
       this.generateNav(
         'microchip',
         'Stream From Console',
@@ -111,14 +110,6 @@ export default class Home extends Component {
               </Header>
             </div>
             {navigationElements}
-          </Segment>
-          <Segment basic={true} className="grid-list">
-            <div className="grid-item-center">
-              <Header as="h2" color="green">
-                Upcoming Features
-              </Header>
-            </div>
-            {upcomingElements}
           </Segment>
         </Container>
       </PageWrapper>
