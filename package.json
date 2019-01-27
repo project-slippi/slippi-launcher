@@ -69,7 +69,8 @@
       "target": [
         "zip",
         "dmg"
-      ]
+      ],
+      "identity": null
     },
     "win": {
       "target": [
