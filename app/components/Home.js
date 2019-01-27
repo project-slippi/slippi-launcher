@@ -33,26 +33,60 @@ export default class Home extends Component {
       </Button>
     );
 
+    let earlyAccessNotif = null;
     if (!disabled) {
       buttonDisplay = (
         <Link key={target} to={target}>
           {buttonDisplay}
         </Link>
       );
+    } else {
+      earlyAccessNotif = (
+        <div className={styles["patreon-only-feature"]}>
+          <Icon name="patreon" /> Early-Access Available
+        </div>
+      );
     }
 
-    return buttonDisplay;
+    return (
+      <div className={styles["nav-button-root"]}>
+        {buttonDisplay}
+        {earlyAccessNotif}
+      </div>
+    );
   }
+
+  // renderPatreonNotif() {
+  //   const contentMsg = (
+  //     <div>
+  //       Your support allows me to spend more time on the project and pay for
+  //       services to make it even better. Enjoy the beta features!&nbsp;
+  //       <strong>
+  //         <a href="https://www.patreon.com/fizzi36">Click here</a>
+  //       </strong>
+  //       &nbsp;to view Patreon page.
+  //     </div>
+  //   );
+
+  //   return (
+  //     <Message
+  //       info={true}
+  //       icon="patreon"
+  //       header="Thank you!"
+  //       content={contentMsg}
+  //     />
+  //   );
+  // }
 
   renderPatreonNotif() {
     const contentMsg = (
       <div>
-        Your support allows me to spend more time on the project and pay for
-        services to make it even better. Enjoy the beta features!&nbsp;
+        If you are enjoying using Project Slippi, consider becoming a patron to
+        support continued development.&nbsp;
         <strong>
           <a href="https://www.patreon.com/fizzi36">Click here</a>
         </strong>
-        &nbsp;to view Patreon page.
+        &nbsp;to support!
       </div>
     );
 
@@ -60,7 +94,7 @@ export default class Home extends Component {
       <Message
         info={true}
         icon="patreon"
-        header="Thank you!"
+        header="Support continued development"
         content={contentMsg}
       />
     );
@@ -85,7 +119,7 @@ export default class Home extends Component {
         'Stream From Console',
         'Get replays by connecting to a console over network',
         '/console',
-        false
+        true
       )
     );
 
