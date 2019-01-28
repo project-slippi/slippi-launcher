@@ -81,7 +81,7 @@ export default class Home extends Component {
     const contentMsg = (
       <div>
         If you are enjoying using Project Slippi, consider becoming a patron to
-        support continued development.&nbsp;
+        support continued development and unlock early-access features.&nbsp;
         <strong>
           <a href="https://www.patreon.com/fizzi36">Click here</a>
         </strong>
@@ -93,7 +93,7 @@ export default class Home extends Component {
       <Message
         info={true}
         icon="patreon"
-        header="Support continued development"
+        header="Unlock Early-Access Features"
         content={contentMsg}
       />
     );
