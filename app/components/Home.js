@@ -15,7 +15,6 @@ export default class Home extends Component {
   generateNav(iconName, header, subHeader, target, disabled) {
     let buttonDisplay = (
       <Button
-        key={target}
         fluid={true}
         inverted={true}
         color="green"
@@ -49,7 +48,7 @@ export default class Home extends Component {
     }
 
     return (
-      <div className={styles["nav-button-root"]}>
+      <div key={target} className={styles["nav-button-root"]}>
         {buttonDisplay}
         {earlyAccessNotif}
       </div>
