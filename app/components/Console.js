@@ -113,9 +113,9 @@ export default class Console extends Component {
 
   renderConnectButton = connection => {
     const status = connection.connectionStatus;
-    const isConnected = status === ConnectionStatus.CONNECTED;
+    const isDisconnected = status === ConnectionStatus.DISCONNECTED;
 
-    const isEnabled = !isConnected;
+    const isEnabled = isDisconnected;
 
     return (
       <Button
@@ -204,12 +204,16 @@ export default class Console extends Component {
     } else if (status === ConnectionStatus.CONNECTED) {
       statusMsg = "Connected";
       statusColor = "green";
+    } else if (status === ConnectionStatus.CONNECTING) {
+      statusMsg = "Connecting..."
+      statusColor = "yellow";
     }
 
     const valueClasses = classNames({
       [styles['conn-status-value']]: true,
       [styles['green']]: statusColor === "green",
       [styles['gray']]: statusColor === "gray",
+      [styles['yellow']]: statusColor === "yellow",
     });
 
     return (

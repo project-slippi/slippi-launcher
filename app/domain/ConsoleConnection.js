@@ -7,8 +7,9 @@ import SlpFileWriter from './SlpFileWriter';
 
 export const ConnectionStatus = {
   DISCONNECTED: 0,
-  CONNECTED: 1,
-  RECONNECTING: 2,
+  CONNECTING: 1,
+  CONNECTED: 2,
+  RECONNECTING: 3,
 };
 
 export default class ConsoleConnection {
@@ -49,6 +50,9 @@ export default class ConsoleConnection {
   }
 
   connect() {
+    this.connectionStatus = ConnectionStatus.CONNECTING;
+    store.dispatch(connectionStateChanged());
+
     const client = net.connect({
       host: this.ipAddress,
       port: 666,
