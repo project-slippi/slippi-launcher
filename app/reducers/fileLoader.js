@@ -16,6 +16,7 @@ const defaultState = {
   selectedFolderFullPath: "",
   folders: {},
   files: [],
+  folderFound: false,
   playingFile: null,
   scrollPosition: {
     x: 0,
@@ -42,7 +43,13 @@ function loadRootFolder(state) {
     return state;
   }
 
-  const files = fs.readdirSync(rootFolder);
+  let folderFound = true;
+  let files = [];
+  try {
+    files = fs.readdirSync(rootFolder) || [];
+  } catch (err) {
+    folderFound = false;
+  }
 
   const rootFolderBasename = path.basename(rootFolder);
 
@@ -89,13 +96,20 @@ function loadRootFolder(state) {
   return {
     ...newState,
     rootFolderName: rootFolderBasename,
+    folderFound: folderFound,
     folders: folders,
   };
 }
 
 function changeFolderSelection(state, action) {
   const folderPath = action.payload.folderPath;
-  let files = fs.readdirSync(folderPath) || [];
+
+  let files = [];
+  try {
+    files = fs.readdirSync(folderPath) || [];
+  } catch (err) {
+    // do nothing
+  }
 
   // Filter for all .slp files
   files = files.filter(file => (
