@@ -29,7 +29,13 @@ export default class ConsoleConnection {
     this.dolphinManager = new DolphinManager(`mirror-${this.id}`);
 
     // SlpFileWriter for writting files
-    this.slpFileWriter = new SlpFileWriter(this.targetFolder);
+    this.slpFileWriter = new SlpFileWriter(
+      this.targetFolder, this.fileStateChangeHandler
+    );
+  }
+
+  fileStateChangeHandler = () => {
+    store.dispatch(connectionStateChanged());
   }
 
   getSettings() {
@@ -69,10 +75,6 @@ export default class ConsoleConnection {
       if (result.isNewGame && this.isMirroring) {
         const curFilePath = this.slpFileWriter.getCurrentFilePath();
         this.dolphinManager.playFile(curFilePath);
-      }
-
-      if (result.isNewGame || result.isGameEnd) {
-        store.dispatch(connectionStateChanged());
       }
     });
 

@@ -10,14 +10,16 @@ export default class SlpFileWriter {
     CMD_RECEIVE_GAME_END: 0x39,
   }
 
-  constructor(folderPath) {
+  constructor(folderPath, onFileStateChange) {
     this.folderPath = folderPath;
+    this.onFileStateChange = onFileStateChange;
     this.currentFile = this.getClearedCurrentFile();
   }
 
   getClearedCurrentFile() {
     return {
       payloadSizes: {},
+      previousBuffer: Buffer.from([]),
       path: null,
       writeStream: null,
       bytesWritten: 0,
@@ -33,15 +35,20 @@ export default class SlpFileWriter {
     return _.get(this.currentFile, 'path');
   }
 
-  handleData(data) {
+  handleData(newData) {
     let isNewGame = false;
     let isGameEnd = false;
+
+    const data = Uint8Array.from(Buffer.concat([
+      this.currentFile.previousBuffer,
+      newData,
+    ]));
 
     const dataView = new DataView(data.buffer);
 
     let index = 0;
     while (index < data.length) {
-      if (data.slice(0, 5).toString() === "HELO\0") {
+      if (Buffer.from(data.slice(index, index + 5)).toString() === "HELO\0") {
         // This is a consequence of the way our network communication works, "HELO" messages are
         // sent periodically to avoid the timeout logic. Just ignore them.
         index += 5;
@@ -51,7 +58,20 @@ export default class SlpFileWriter {
       // TODO: Here we are parsing slp file data. Seems pretty silly to do this when
       // TODO: logic already exists in the parser to do it... Should eventually reconcile
       // TODO: the two.
+
+      // Make sure we have enough data to read a full payload
       const command = dataView.getUint8(index);
+      const payloadSize = _.get(this.currentFile, ['payloadSizes', command]) || 0;
+      const remainingLen = data.length - index;
+      if (remainingLen < payloadSize + 1) {
+        // If remaining length is not long enough for full payload, save the remaining
+        // data until we receive more data. The data has been split up.
+        this.currentFile.previousBuffer = data.slice(index);
+        break;
+      }
+
+      // Clear previous buffer here, dunno where else to do this
+      this.currentFile.previousBuffer = Buffer.from([]);
 
       // Increment by one for the command byte
       index += 1;
@@ -67,6 +87,7 @@ export default class SlpFileWriter {
         this.initializeNewGame();
         payloadLen = this.processReceiveCommands(payloadDataView);
         this.writeCommand(command, payloadPtr, payloadLen);
+        this.onFileStateChange();
         break;
       case SlpFileWriter.commands.CMD_RECEIVE_GAME_END:
         payloadLen = this.processCommand(command, payloadDataView);
@@ -95,7 +116,7 @@ export default class SlpFileWriter {
     if (!writeStream) {
       return;
     }
-    
+
     // Keep track of how many bytes we have written to the file
     this.currentFile.bytesWritten += (payloadLen + 1);
 
@@ -246,17 +267,20 @@ export default class SlpFileWriter {
 
     // End the stream
     writeStream.write(footer);
-    writeStream.end();
+    writeStream.end(null, null, () => {
+      // Write bytes written
+      const fd = fs.openSync(this.currentFile.path, "r+");
+      fs.writeSync(fd, this.createUInt32Buffer(this.currentFile.bytesWritten), 0, "binary", 11);
+      fs.closeSync(fd);
 
-    // Write bytes written
-    const fd = fs.openSync(this.currentFile.path, "r+");
-    fs.writeSync(fd, this.createUInt32Buffer(this.currentFile.bytesWritten), 0, "binary", 11);
-    fs.closeSync(fd);
+      console.log("Finished writting file.");
 
-    console.log("Finished writting file.");
+      // Clear current file
+      this.currentFile = this.getClearedCurrentFile();
 
-    // Clear current file
-    this.currentFile = this.getClearedCurrentFile();
+      // Update file state
+      this.onFileStateChange();
+    });
   }
 
   createInt32Buffer(number) {
