@@ -17,3 +17,11 @@ These are the applications you will need to install in order to build this proje
 - Navigate into the directory and run: `yarn`
 - Use `yarn dev` to develop
 - Use `yarn package` to build a release
+
+If you have some weird errors when starting `yarn dev` but think everything else went okay, you can try the following:
+```
+$ UPGRADE_EXTENSIONS=1 yarn run dev
+
+# For Windows
+$ set UPGRADE_EXTENSIONS=1 && yarn run dev
+```
