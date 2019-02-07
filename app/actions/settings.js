@@ -10,7 +10,7 @@ export const CLEAR_CHANGES = 'CLEAR_CHANGES';
 export function browseFolder(field) {
   return (dispatch) => {
     const paths = dialog.showOpenDialog({
-      properties: ['openDirectory'],
+      properties: ['openDirectory', 'treatPackageAsDirectory'],
     }) || [];
 
     const folderPath = paths[0];
