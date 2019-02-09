@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import path from 'path';
-import { Container, Modal, Form, Card, Button, Icon } from 'semantic-ui-react';
+import { Container, Modal, Form, Card, Button, Icon, Checkbox } from 'semantic-ui-react';
 import { ConnectionStatus } from '../domain/ConsoleConnection';
 import PageHeader from './common/PageHeader';
 import PageWrapper from './PageWrapper';
@@ -44,12 +44,17 @@ export default class Console extends Component {
     });
   };
 
-  onFieldChange = (e, { name, value }) => {
+  onFieldChange = (e, control) => {
+    let valueField = "value";
+    if (control.type === "radio" || control.type === "checkbox") {
+      valueField = "checked";
+    }
+
     const formData = this.state.formData || {};
     this.setState({
       formData: {
         ...formData,
-        [name]: value,
+        [control.name]: control[valueField],
       },
     });
   };
@@ -261,6 +266,21 @@ export default class Console extends Component {
           defaultValue={connectionSettings.targetFolder}
           onChange={this.onFieldChange}
         />
+        <Form.Field>
+          <label htmlFor="isRealTimeMode">Real-Time Mode</label>
+          <div className={styles['description']}>
+            <strong>Not recommended unless on wired LAN connection.</strong>&nbsp;
+            Real-time mode will attempt to prevent delay from accumulating when mirroring. Using it
+            when on a connection with inconsistent latency will cause extremely choppy playback.
+          </div>
+          <Checkbox
+            id="isRealTimeMode"
+            name="isRealTimeMode"
+            toggle={true}
+            defaultChecked={connectionSettings.isRealTimeMode}
+            onChange={this.onFieldChange}
+          />
+        </Form.Field>
         <Form.Button content="Submit" />
       </Form>
     );

@@ -47,3 +47,10 @@
     color: $primary-yellow;
   }
 }
+
+.description {
+  color: gray;
+  // Move label margin to be under the description
+  margin-top: -4px;
+  margin-bottom: 4px;
+}

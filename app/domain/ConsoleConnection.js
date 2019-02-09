@@ -1,4 +1,5 @@
 import net from 'net';
+import _ from 'lodash';
 
 import { store } from '../index';
 import { connectionStateChanged } from '../actions/console';
@@ -21,17 +22,13 @@ export default class ConsoleConnection {
     this.id = ConsoleConnection.connectionCount;
     this.ipAddress = settings.ipAddress;
     this.targetFolder = settings.targetFolder;
+    this.isRealTimeMode = settings.isRealTimeMode;
 
     this.isMirroring = false;
     this.connectionStatus = ConnectionStatus.DISCONNECTED;
 
     // A connection can mirror its received gameplay
     this.dolphinManager = new DolphinManager(`mirror-${this.id}`);
-
-    // SlpFileWriter for writting files
-    this.slpFileWriter = new SlpFileWriter(
-      this.targetFolder, this.fileStateChangeHandler
-    );
   }
 
   fileStateChangeHandler = () => {
@@ -42,6 +39,7 @@ export default class ConsoleConnection {
     return {
       ipAddress: this.ipAddress,
       targetFolder: this.targetFolder,
+      isRealTimeMode: this.isRealTimeMode,
     };
   }
 
@@ -49,6 +47,7 @@ export default class ConsoleConnection {
     // If data is not provided, keep old values
     this.ipAddress = newSettings.ipAddress || this.ipAddress;
     this.targetFolder = newSettings.targetFolder || this.targetFolder;
+    this.isRealTimeMode = _.defaultTo(newSettings.isRealTimeMode, this.isRealTimeMode);
   }
 
   getDolphinManager() {
@@ -56,6 +55,19 @@ export default class ConsoleConnection {
   }
 
   connect() {
+    // We need to re-initialize things here in order for any
+    // changes to settings to be propagated
+
+    // Initialize SlpFileWriter for writting files
+    this.slpFileWriter = new SlpFileWriter(
+      this.targetFolder, this.fileStateChangeHandler
+    );
+
+    // Update dolphin manager settings
+    const connectionSettings = this.getSettings();
+    this.dolphinManager.updateSettings(connectionSettings);
+
+    // Indicate we are connecting
     this.connectionStatus = ConnectionStatus.CONNECTING;
     store.dispatch(connectionStateChanged());
 

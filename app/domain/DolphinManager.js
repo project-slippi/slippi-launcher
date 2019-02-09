@@ -15,6 +15,7 @@ export default class DolphinManager {
     // atm other than get added to the commFileName
     this.key = key;
     this.isRunning = false;
+    this.settings = {};
 
     const commFilePaths = this.genCommFilePaths();
 
@@ -33,6 +34,10 @@ export default class DolphinManager {
     };
   }
 
+  updateSettings(settings) {
+    this.settings = settings;
+  }
+
   removeCommFiles() {
     fs.removeSync(this.outputFilePath);
   }
@@ -47,7 +52,12 @@ export default class DolphinManager {
   }
 
   async playFile(filePath) {
-    fs.writeFileSync(this.outputFilePath, filePath);
+    const jsonString = JSON.stringify({
+      replay: filePath,
+      isRealTimeMode: this.settings.isRealTimeMode || false,
+    });
+    fs.writeFileSync(this.outputFilePath, jsonString);
+    
     await this.runDolphin(true);
   }
 
