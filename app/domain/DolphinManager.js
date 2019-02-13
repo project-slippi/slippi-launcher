@@ -47,18 +47,19 @@ export default class DolphinManager {
   }
 
   async startPlayback() {
-    // Trigger playFile with empty file to boot into playback wait scene
-    await this.playFile("");
+    await this.runDolphin(true);
   }
 
-  async playFile(filePath) {
+  async playFile(filePath, startDolphin = true) {
     const jsonString = JSON.stringify({
       replay: filePath,
       isRealTimeMode: this.settings.isRealTimeMode || false,
     });
     fs.writeFileSync(this.outputFilePath, jsonString);
-    
-    await this.runDolphin(true);
+
+    if (startDolphin) {
+      await this.runDolphin(true);
+    }
   }
 
   async runDolphin(startPlayback) {

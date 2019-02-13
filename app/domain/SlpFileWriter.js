@@ -35,6 +35,10 @@ export default class SlpFileWriter {
     return _.get(this.currentFile, 'path');
   }
 
+  updateSettings(settings) {
+    this.folderPath = settings.targetFolder;
+  }
+
   handleData(newData) {
     let isNewGame = false;
     let isGameEnd = false;

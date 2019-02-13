@@ -29,6 +29,11 @@ export default class ConsoleConnection {
 
     // A connection can mirror its received gameplay
     this.dolphinManager = new DolphinManager(`mirror-${this.id}`);
+
+    // Initialize SlpFileWriter for writting files
+    this.slpFileWriter = new SlpFileWriter(
+      this.targetFolder, this.fileStateChangeHandler
+    );
   }
 
   fileStateChangeHandler = () => {
@@ -55,16 +60,12 @@ export default class ConsoleConnection {
   }
 
   connect() {
-    // We need to re-initialize things here in order for any
+    // We need to update settings here in order for any
     // changes to settings to be propagated
-
-    // Initialize SlpFileWriter for writting files
-    this.slpFileWriter = new SlpFileWriter(
-      this.targetFolder, this.fileStateChangeHandler
-    );
 
     // Update dolphin manager settings
     const connectionSettings = this.getSettings();
+    this.slpFileWriter.updateSettings(connectionSettings);
     this.dolphinManager.updateSettings(connectionSettings);
 
     // Indicate we are connecting
@@ -84,9 +85,9 @@ export default class ConsoleConnection {
     
     client.on('data', (data) => {
       const result = this.slpFileWriter.handleData(data);
-      if (result.isNewGame && this.isMirroring) {
+      if (result.isNewGame) {
         const curFilePath = this.slpFileWriter.getCurrentFilePath();
-        this.dolphinManager.playFile(curFilePath);
+        this.dolphinManager.playFile(curFilePath, false);
       }
     });
 
