@@ -9,12 +9,14 @@ export default class SpacedGroup extends Component {
     className: PropTypes.string,
     size: PropTypes.string,
     direction: PropTypes.string,
+    customColumns: PropTypes.string,
   };
 
   static defaultProps = {
     className: '',
     size: 'sm',
     direction: 'horizontal',
+    customColumns: null,
   };
 
   render() {
@@ -27,6 +29,12 @@ export default class SpacedGroup extends Component {
       this.props.className
     );
 
-    return <div className={classes}>{this.props.children}</div>;
+    const customStyles = {};
+    if (this.props.customColumns) {
+      // Think of a better way to do this
+      customStyles['gridTemplateColumns'] = this.props.customColumns;
+    }
+
+    return <div style={customStyles} className={classes}>{this.props.children}</div>;
   }
 }

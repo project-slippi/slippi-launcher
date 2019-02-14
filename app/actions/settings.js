@@ -4,8 +4,6 @@ const { dialog } = require('electron').remote;
 
 export const SELECT_FOLDER = 'SELECT_FOLDER';
 export const SELECT_FILE = 'SELECT_FILE';
-export const SAVE_SETTINGS = 'SAVE_SETTINGS';
-export const CLEAR_CHANGES = 'CLEAR_CHANGES';
 
 export function browseFolder(field) {
   return (dispatch) => {
@@ -54,20 +52,6 @@ export function selectFile(field, selectedPath) {
       field: field,
       path: selectedPath,
     },
-  };
-}
-
-export function saveSettings() {
-  return {
-    type: SAVE_SETTINGS,
-    payload: {},
-  };
-}
-
-export function clearChanges() {
-  return {
-    type: CLEAR_CHANGES,
-    payload: {},
   };
 }
 

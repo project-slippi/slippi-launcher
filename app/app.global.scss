@@ -8,6 +8,11 @@ body {
   background-color: $background-dark;
 }
 
+ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
 .grid-list {
   display: grid;
   grid-gap: 1em 1em;

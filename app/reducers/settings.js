@@ -1,15 +1,14 @@
 import _ from 'lodash';
 import electronSettings from 'electron-settings';
 
-import { SELECT_FOLDER, SELECT_FILE, SAVE_SETTINGS, CLEAR_CHANGES } from '../actions/settings';
+import { SELECT_FOLDER, SELECT_FILE } from '../actions/settings';
 import DolphinManager from '../domain/DolphinManager';
 import { getDolphinPath } from '../utils/settings';
 
 // Default state for this reducer
 const defaultState = {
   dolphinManager: new DolphinManager("settings"),
-  storedSettings: getStoredSettings(),
-  currentSettings: getStoredSettings(),
+  settings: getStoredSettings(),
 };
 
 function getAvailableSettings() {
@@ -47,10 +46,6 @@ export default function settings(state = defaultState, action) {
   case SELECT_FOLDER:
   case SELECT_FILE:
     return selectFileOrFolder(state, action);
-  case SAVE_SETTINGS:
-    return saveSettings(state, action);
-  case CLEAR_CHANGES:
-    return clearChanges(state, action);
   default:
     return state;
   }
@@ -59,35 +54,14 @@ export default function settings(state = defaultState, action) {
 function selectFileOrFolder(state, action) {
   const payload = action.payload || {};
 
-  const newState = { ...state };
-  newState.currentSettings[payload.field] = payload.path;
-
-  // electronSettings.deleteAll();
-
-  return newState;
-}
-
-function saveSettings(state) {
-  const currentSettings = state.currentSettings || {};
-
-  // Commit new changes to electron-settings file
+  // Save into electron settings
   const availableSettings = getAvailableSettings();
-  _.forEach(availableSettings, (settingConfig, key) => {
-    const newValue = currentSettings[key];
-    electronSettings.set(settingConfig.location, newValue);
-  });
+  const location = _.get(availableSettings, [payload.field, 'location']);
+  electronSettings.set(location, payload.path);
 
+  // Update state
   const newState = { ...state };
-  newState.storedSettings = currentSettings;
-
-  return newState;
-}
-
-function clearChanges(state) {
-  const newState = { ...state };
-
-  // Copy the stored settings back into current settings to reset local changes
-  newState.currentSettings = { ...state.storedSettings };
+  newState.settings[payload.field] = payload.path;
 
   return newState;
 }

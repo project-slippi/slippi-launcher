@@ -2,13 +2,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import {
-  Container,
-  Segment,
   Button,
-  Accordion,
-  Icon,
   Message,
+  Header,
 } from 'semantic-ui-react';
+import { getDefaultDolphinPath } from '../utils/settings';
 import PageHeader from './common/PageHeader';
 import ActionInput from './common/ActionInput';
 import LabelDescription from './common/LabelDescription';
@@ -16,13 +14,13 @@ import DismissibleMessage from './common/DismissibleMessage';
 
 import styles from './Settings.scss';
 import PageWrapper from './PageWrapper';
+import SpacedGroup from './common/SpacedGroup';
 
 export default class Settings extends Component {
   static propTypes = {
     browseFolder: PropTypes.func.isRequired,
+    selectFolder: PropTypes.func.isRequired,
     browseFile: PropTypes.func.isRequired,
-    saveSettings: PropTypes.func.isRequired,
-    clearChanges: PropTypes.func.isRequired,
     openDolphin: PropTypes.func.isRequired,
 
     // error actions
@@ -34,18 +32,8 @@ export default class Settings extends Component {
     errors: PropTypes.object.isRequired,
   };
 
-  state = {
-    isAdvancedSectionOpen: false,
-  };
-
-  componentWillUnmount() {
-    this.props.clearChanges();
-  }
-
-  toggleAdvanced = () => {
-    this.setState(prevState => ({
-      isAdvancedSectionOpen: !prevState.isAdvancedSectionOpen,
-    }));
+  setFolderManual = (field, value) => () => {
+    this.props.selectFolder(field, value);
   };
 
   renderGlobalError() {
@@ -76,10 +64,9 @@ export default class Settings extends Component {
     const contentMsg = (
       <div>
         Hello Linux friend! We cannot include a Dolphin build that is guaranteed
-        to work on your distro. You will need to build Dolphin and configure the{' '}
-        <b>Playback Dolphin Path</b> in the Advanced Settings dropdown.&nbsp;
-        <a href="https://discord.gg/KkhZQfR">Join the discord</a> &nbsp;if you
-        have any questions.
+        to work on your distro. Please find the <b>Playback Dolphin Path</b>
+        &nbsp;option to configure. <a href="https://discord.gg/KkhZQfR">Join the discord</a>
+        &nbsp;if you have any questions.
       </div>
     );
 
@@ -93,31 +80,9 @@ export default class Settings extends Component {
     );
   }
 
-  renderSave() {
-    const store = this.props.store || {};
-
-    const extraProps = {};
-    if (_.isEqual(store.currentSettings, store.storedSettings)) {
-      // This will disable the button if there's nothing to save
-      extraProps.disabled = true;
-    }
-
-    return (
-      <Segment basic={true}>
-        <Button
-          {...extraProps}
-          content="Save"
-          color="blue"
-          size="big"
-          onClick={this.props.saveSettings}
-        />
-      </Segment>
-    );
-  }
-
   renderConfigDolphin() {
     return (
-      <Segment basic={true}>
+      <div>
         <LabelDescription
           label="Configure Playback Dolphin"
           description="
@@ -134,72 +99,160 @@ export default class Settings extends Component {
           inverted={true}
           onClick={this.props.openDolphin}
         />
-      </Segment>
+      </div>
     );
   }
 
-  renderAdvanced() {
+  renderBasicSettings() {
     const store = this.props.store || {};
 
-    const playbackDolphinDescription =
-      'The path to the playback instance. ' +
-      'If changed this will no longer used the instance of Dolphin packaged with ' +
-      'this app. Changing this can cause issues with playback. ' +
-      'Linux users *must* do the following: (1) use the installer script to compile ' +
-      'Dolphin, then; (2) set this path to the directory containing the playback instance.';
+    const inputs = [
+      <ActionInput
+        key="meleeISOInput"
+        label="Melee ISO File"
+        description="The path to a NTSC Melee 1.02 ISO. Used for playing replay files"
+        value={store.settings.isoPath}
+        onClick={this.props.browseFile}
+        handlerParams={['isoPath']}
+      />,
+      <ActionInput
+        key="replayRootInput"
+        label="Replay Root Directory"
+        description={
+          'The folder where your slp files are stored. Will usually be the ' +
+          'Slippi folder located with Dolphin'
+        }
+        value={store.settings.rootSlpPath}
+        onClick={this.props.browseFolder}
+        handlerParams={['rootSlpPath']}
+      />,
+    ];
+
+    const platform = process.platform;
+    if (platform === 'linux') {
+      inputs.push([
+        this.renderPlaybackInstanceInput(),
+      ]);
+    }
 
     return (
-      <Accordion>
-        <Accordion.Title
-          className={styles['expand-toggle']}
-          active={this.state.isAdvancedSectionOpen}
-          onClick={this.toggleAdvanced}
-        >
-          <Icon name="dropdown" />
-          Advanced Settings
-        </Accordion.Title>
-        <Accordion.Content active={this.state.isAdvancedSectionOpen}>
-          <ActionInput
-            label="Playback Dolphin Path"
-            description={playbackDolphinDescription}
-            value={store.currentSettings.playbackDolphinPath}
-            onClick={this.props.browseFolder}
-            handlerParams={['playbackDolphinPath']}
-          />
-        </Accordion.Content>
-      </Accordion>
+      <div className={styles['section']}>
+        <Header inverted={true}>Basic Settings</Header>
+        <SpacedGroup direction="vertical" size="lg">
+          {inputs}
+        </SpacedGroup>
+      </div>
     );
+  }
+
+  renderAdvancedSettings() {
+    const inputs = [];
+
+    const platform = process.platform;
+    if (platform !== 'linux') {
+      inputs.push([
+        this.renderPlaybackInstanceInput(),
+      ]);
+    }
+
+    if (_.isEmpty(inputs)) {
+      // Don't show advanced toggle if there are no
+      // advanced inputs
+      return null;
+    }
+
+    return (
+      <div className={styles['section']}>
+        <Header inverted={true}>Advanced Settings</Header>
+        <SpacedGroup direction="vertical" size="lg">
+          {inputs}
+        </SpacedGroup>
+      </div>
+    );
+  }
+
+  renderPlaybackInstanceInput() {
+    const store = this.props.store || {};
+    
+    const platform = process.platform;
+
+    // If on Linux, indicate the steps required
+    let playbackDolphinDescription = (
+      <div>
+        Linux users must build their own playback Dolphin instance
+        <ul>
+          <li>Use <a href="https://github.com/project-slippi/Slippi-FM-installer">installer script</a> to compile playback Dolphin</li>
+          <li>Move the compiled instance out of the build directory</li>
+          <li>Set the field below to point to the directory that contains dolphin-emu</li>
+        </ul>
+      </div>
+    );
+
+    const fieldName = 'playbackDolphinPath';
+    let resetButton = null;
+
+    // If not on Linux, indicate this shouldn't be messed with and set up
+    // reset button
+    if (platform !== 'linux') {
+      playbackDolphinDescription = (
+        <div>
+          An instance of Dolphin for playing replays comes bundled
+          with this app. This setting allows you to configure a different instance.&nbsp;
+          <strong>Only modify if you know what you are doing.</strong>
+        </div>
+      );
+
+      // Also if not on linux, support a button to reset the path
+      const defaultValue = getDefaultDolphinPath();
+      if (defaultValue !== store.settings.playbackDolphinPath) {
+        resetButton = (
+          <Button onClick={this.setFolderManual(fieldName, defaultValue)}>
+            Reset
+          </Button>
+        );
+      }
+    }
+
+    return (
+      <div key="playbackInstanceInput">
+        <LabelDescription
+          label="Playback Dolphin Path"
+          description={playbackDolphinDescription}
+        />
+        <SpacedGroup customColumns="1fr auto">
+          <ActionInput
+            showLabelDescription={false}
+            value={store.settings.playbackDolphinPath}
+            onClick={this.props.browseFolder}
+            handlerParams={[fieldName]}
+          />
+          {resetButton}
+        </SpacedGroup>
+      </div>
+    );
+  }
+
+  renderActions() {
+    return (
+      <div className={styles['section']}>
+        <Header inverted={true}>Actions</Header>
+        <SpacedGroup direction="vertical" size="lg">
+          {this.renderConfigDolphin()}
+        </SpacedGroup>
+      </div>
+    )
   }
 
   renderContent() {
-    const store = this.props.store || {};
-
     // TODO: Add options for file type filtering and folder only
     return (
-      <Container text={true}>
+      <div className={styles['container']}>
         {this.renderGlobalError()}
         {this.renderLinuxNotif()}
-        <ActionInput
-          label="Melee ISO File"
-          description="The path to a NTSC Melee 1.02 ISO. Used for playing replay files"
-          value={store.currentSettings.isoPath}
-          onClick={this.props.browseFile}
-          handlerParams={['isoPath']}
-        />
-        <ActionInput
-          label="Replay Root Directory"
-          description={
-            'The folder where your slp files are stored. Will usually be the ' +
-            'Slippi folder located with Dolphin'
-          }
-          value={store.currentSettings.rootSlpPath}
-          onClick={this.props.browseFolder}
-          handlerParams={['rootSlpPath']}
-        />
-        {this.renderAdvanced()}
-        {this.renderSave()}
-        {this.renderConfigDolphin()}
-      </Container>
+        {this.renderBasicSettings()}
+        {this.renderAdvancedSettings()}
+        {this.renderActions()}
+      </div>
     );
   }
 

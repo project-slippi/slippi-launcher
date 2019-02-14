@@ -7,14 +7,23 @@
 
   &.vertical {
     grid-auto-flow: row;
+    grid-template-columns: 100%;
   }
 
   &.xs {
     grid-gap: 3px 3px;
   }
   
+  &.sm {
+    grid-gap: 6px 6px;
+  }
+
   &.md {
     grid-gap: 9px 9px;
+  }
+
+  &.lg {
+    grid-gap: 15px 15px;
   }
 
   &.none {
