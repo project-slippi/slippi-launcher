@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import path from 'path';
-import { Container, Modal, Form, Card, Button, Icon, Checkbox } from 'semantic-ui-react';
+import { Header, Modal, Form, Card, Button, Icon, Checkbox } from 'semantic-ui-react';
 import { ConnectionStatus } from '../domain/ConsoleConnection';
 import PageHeader from './common/PageHeader';
 import PageWrapper from './PageWrapper';
@@ -31,8 +31,8 @@ export default class Console extends Component {
     this.props.editConnection('new');
   };
 
-  editConnectionClick = index => () => {
-    this.props.editConnection(index);
+  editConnectionClick = (index, defaultSettings = {}) => () => {
+    this.props.editConnection(index, defaultSettings);
   };
 
   onModalClose = () => {
@@ -78,16 +78,19 @@ export default class Console extends Component {
 
   renderContent() {
     const store = this.props.store || {};
-    const connectionsById = store.connections || [];
+    const connections = store.connections || [];
 
     return (
-      <Container text={true}>
-        <Button color="blue" onClick={this.addConnectionClick}>
-          <Icon name="plus" />
-          Add Connection
-        </Button>
-        {connectionsById.map(this.renderConnection)}
-      </Container>
+      <div className={styles['container']}>
+        <div className={styles['section']}>
+          <Button color="blue" onClick={this.addConnectionClick}>
+            <Icon name="plus" />
+            Add Connection
+          </Button>
+          {connections.map(this.renderConnection)}
+        </div>
+        {this.renderAvailableSection()}
+      </div>
     );
   }
 
@@ -201,6 +204,10 @@ export default class Console extends Component {
     const status = connection.connectionStatus;
     const currentFilePath = _.get(connection, ['slpFileWriter', 'currentFile', 'path']);
 
+    const scanner = _.get(this.props.store, 'scanner');
+    const available = scanner ? scanner.getAvailable() : {};
+    const isConnectionAvailable = available[connection.ipAddress];
+
     let statusMsg = "Disconnected";
     let statusColor = "gray";
     if (status === ConnectionStatus.CONNECTED && currentFilePath) {
@@ -210,8 +217,11 @@ export default class Console extends Component {
       statusMsg = "Connected";
       statusColor = "green";
     } else if (status === ConnectionStatus.CONNECTING) {
-      statusMsg = "Connecting..."
+      statusMsg = "Connecting...";
       statusColor = "yellow";
+    } else if (status === ConnectionStatus.DISCONNECTED && isConnectionAvailable) {
+      statusMsg = "Available";
+      statusColor = "white";
     }
 
     const valueClasses = classNames({
@@ -219,6 +229,7 @@ export default class Console extends Component {
       [styles['green']]: statusColor === "green",
       [styles['gray']]: statusColor === "gray",
       [styles['yellow']]: statusColor === "yellow",
+      [styles['white']]: statusColor === "white",
     });
 
     return (
@@ -229,6 +240,62 @@ export default class Console extends Component {
           {statusMsg}
         </SpacedGroup>
       </React.Fragment>
+    );
+  }
+
+  renderAvailableSection() {
+    const store = this.props.store || {};
+    const connections = store.connections || [];
+    const connectionsByIp = _.keyBy(connections, 'ipAddress');
+
+    const scanner = _.get(store, 'scanner');
+    const available = scanner ? scanner.getAvailable() : {};
+    const availableNew = _.filter(available, (info) => (
+      !connectionsByIp[info.ip]
+    ));
+    const sortedAvailableNew = _.orderBy(availableNew, ['firstFound'], ['desc']);
+
+    return (
+      <div className={styles['section']}>
+        <Header inverted={true}>Available</Header>
+        {sortedAvailableNew.map(this.renderAvailable)}
+      </div>
+    );
+  }
+
+  renderAvailable = (info) => (
+    <Card
+      key={`${info.ip}-available-connection`}
+      fluid={true}
+      className={styles['card']}
+    >
+      <Card.Content className={styles['content']}>
+        <div className={styles['conn-content-grid']}>
+          {this.renderLabelValue("IP Address", info.ip)}
+          {this.renderLabelValue("Name", info.name)}
+        </div>
+      </Card.Content>
+      <Card.Content className={styles['content']}>
+        <div>
+          {this.renderAddAvailableButton(info.ip)}
+        </div>
+      </Card.Content>
+    </Card>
+  );
+
+  renderAddAvailableButton = ip => {
+    const defaultSettings = {
+      'ipAddress': ip,
+    };
+
+    return (
+      <Button
+        color="blue"
+        onClick={this.editConnectionClick("new", defaultSettings)}
+      >
+        <Icon name="plus" />
+        Add
+      </Button>
     );
   }
 

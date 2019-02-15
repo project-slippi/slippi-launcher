@@ -7,12 +7,14 @@ import {
   CONNECTION_CANCEL_EDIT, CONNECTION_EDIT, CONNECTION_SAVE, CONNECTION_DELETE,
   CONNECTION_CONNECT, CONNECTION_STATE_CHANGED,
 } from '../actions/console';
+import ConnectionScanner from '../domain/ConnectionScanner';
 
 const connectionPath = "connections";
 
 const defaultState = {
   connections: getStoredConnections(),
   connectionSettingsToEdit: null,
+  scanner: new ConnectionScanner(),
 };
 
 function getStoredConnections() {
@@ -44,11 +46,12 @@ export default function connections(state = defaultState, action) {
 function editConnection(state, action) {
   const payload = action.payload || {};
   const editId = payload.id;
+  const defaultSettings = payload.defaultSettings || {};
 
   const connectionObjs = state.connections || [];
   const connectionsById = _.keyBy(connectionObjs, 'id');
   const connectionToEdit = connectionsById[editId];
-  const connectionSettings = connectionToEdit ? connectionToEdit.getSettings() : {};
+  const connectionSettings = connectionToEdit ? connectionToEdit.getSettings() : defaultSettings;
 
   const newState = { ...state };
   newState.connectionSettingsToEdit = {
