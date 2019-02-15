@@ -31,6 +31,9 @@ export default class ConnectionScanner {
     //     'firstFound': moment(),
     //   },
     // };
+
+    // TODO: For now just start scanning right away. Should be triggered
+    this.startScanning();
   }
 
   forceConsoleUiUpdate() {
