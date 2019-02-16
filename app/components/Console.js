@@ -27,6 +27,16 @@ export default class Console extends Component {
     formData: {},
   };
 
+  componentDidMount() {
+    console.log("Starting scan...");
+    this.props.store.scanner.startScanning();
+  }
+
+  componentWillUnmount() {
+    console.log("Ending scan");
+    this.props.store.scanner.stopScanning();
+  }
+
   addConnectionClick = () => {
     this.props.editConnection('new');
   };
@@ -255,11 +265,59 @@ export default class Console extends Component {
     ));
     const sortedAvailableNew = _.orderBy(availableNew, ['firstFound'], ['desc']);
 
+    let content = sortedAvailableNew.map(this.renderAvailable);
+    if (_.isEmpty(sortedAvailableNew)) {
+      // Render searching display
+      content = this.renderSearchingState();
+    }
+
     return (
       <div className={styles['section']}>
         <Header inverted={true}>Available</Header>
-        {sortedAvailableNew.map(this.renderAvailable)}
+        {content}
       </div>
+    );
+  }
+
+  renderSearchingState() {
+    // Fuck it doing this in css wasn't working. CSS is the worst
+    const iconAnimationStyle = {
+      animation: "fa-spin 6s infinite linear",
+    };
+
+    const isScanning = this.props.store.scanner.getIsScanning();
+
+    let icon, header, subText;
+    if (isScanning) {
+      icon = <Icon style={iconAnimationStyle} name="spinner" fitted={true} />;
+      header = "Scanning";
+      subText = "Looking for available consoles to connect to";
+    } else {
+      icon = <Icon name="warning sign" fitted={true} />;
+      header = "Scanning Error";
+      subText = "An error occured while scanning";
+    }
+    return (
+      <Card
+        fluid={true}
+        className={styles['card']}
+      >
+        <Card.Content className={styles['content']}>
+          <Header
+            as="h2"
+            className={styles['searching-header']}
+            inverted={true}
+          >
+            {icon}
+            <Header.Content>
+              {header}
+              <Header.Subheader>
+                {subText}
+              </Header.Subheader>
+            </Header.Content>
+          </Header>
+        </Card.Content>
+      </Card>
     );
   }
 

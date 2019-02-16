@@ -9,6 +9,7 @@ export default class ConnectionScanner {
   constructor() {
     this.isScanning = false;
     this.availableConnectionsByIp = {};
+    this.server = null;
 
     // TODO: Remove
     // this.availableConnectionsByIp = {
@@ -31,9 +32,6 @@ export default class ConnectionScanner {
     //     'firstFound': moment(),
     //   },
     // };
-
-    // TODO: For now just start scanning right away. Should be triggered
-    this.startScanning();
   }
 
   forceConsoleUiUpdate() {
@@ -42,6 +40,10 @@ export default class ConnectionScanner {
 
   getAvailable() {
     return this.availableConnectionsByIp;
+  }
+
+  getIsScanning() {
+    return !!this.server;
   }
 
   handleMessageReceive = (msg, rinfo) => {
@@ -83,23 +85,30 @@ export default class ConnectionScanner {
     this.forceConsoleUiUpdate();
   }
 
+  handleError = (err) => {
+    console.log(`server error:\n${err.stack}`);
+    this.stopScanning();
+  }
+
   async startScanning() {
-    const server = dgram.createSocket({ type: 'udp4', reuseAddr: true});
+    if (this.server) {
+      // Do nothing if server is already set
+      return;
+    }
 
-    server.on('error', (err) => {
-      console.log(`server error:\n${err.stack}`);
-      server.close();
-    });
+    this.server = dgram.createSocket({ type: 'udp4', reuseAddr: true});
+    const server = this.server;
 
+    server.on('error', this.handleError);
     server.on('message', this.handleMessageReceive);
 
-    server.on('listening', () => {
-      const address = server.address();
-      console.log(`server listening ${address.address}:${address.port}`);
-    });
+    // server.on('listening', () => {
+    //   const address = server.address();
+    //   console.log(`server listening ${address.address}:${address.port}`);
+    // });
 
     // Bind to the broadcast address
-    this.isScanning = true;
+    this.forceConsoleUiUpdate();
     await server.bind({
       address: '255.255.255.255',
       port: 20582,
@@ -107,6 +116,15 @@ export default class ConnectionScanner {
   }
 
   stopScanning() {
+    if (!this.server) {
+      // Nothing to do if server already disconnected
+      return;
+    }
 
+    this.server.close();
+    this.server.removeAllListeners();
+    this.server = null;
+
+    this.forceConsoleUiUpdate();
   }
 }

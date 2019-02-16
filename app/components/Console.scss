@@ -68,3 +68,12 @@
   margin-top: -4px;
   margin-bottom: 4px;
 }
+
+.searching-header {
+  color: rgba(255, 255, 255, 0.6) !important;
+  display: inline-block;
+
+  :global(.sub) {
+    color: rgba(255, 255, 255, 0.5) !important;
+  }
+}
