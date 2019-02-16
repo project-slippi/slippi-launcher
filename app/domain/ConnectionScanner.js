@@ -47,6 +47,13 @@ export default class ConnectionScanner {
   handleMessageReceive = (msg, rinfo) => {
     console.log(`server got: ${msg} from ${rinfo.address}:${rinfo.port}`);
 
+    /* The structure of broadcast messages from the Wii should be:
+     *
+     *		unsigned char	cmd[10];      //SLIP_READY
+     *		u8		mac_addr[6];  // MAC address
+     *		unsigned char	nickname[32]; //interpret in ASCII
+     */
+
     const ip = rinfo.address;
 
     const previous = _.get(this.availableConnectionsByIp, ip);
@@ -77,7 +84,7 @@ export default class ConnectionScanner {
   }
 
   async startScanning() {
-    const server = dgram.createSocket('udp4');
+    const server = dgram.createSocket({ type: 'udp4', reuseAddr: true});
 
     server.on('error', (err) => {
       console.log(`server error:\n${err.stack}`);
@@ -91,8 +98,12 @@ export default class ConnectionScanner {
       console.log(`server listening ${address.address}:${address.port}`);
     });
 
+    // Bind to the broadcast address
     this.isScanning = true;
-    await server.bind(667);
+    await server.bind({
+      address: '255.255.255.255',
+      port: 20582,
+    });
   }
 
   stopScanning() {
