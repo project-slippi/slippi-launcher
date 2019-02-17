@@ -1,9 +1,12 @@
 import _ from 'lodash';
+import semver from 'semver';
 import electronSettings from 'electron-settings';
 
 import { SELECT_FOLDER, SELECT_FILE } from '../actions/settings';
 import DolphinManager from '../domain/DolphinManager';
 import { getDolphinPath } from '../utils/settings';
+
+const { app } = require('electron').remote;
 
 // Default state for this reducer
 const defaultState = {
@@ -29,6 +32,9 @@ function getAvailableSettings() {
 }
 
 function getStoredSettings() {
+  // This runs once on boot so let's do some settings fixing
+  fixSettingsOnNewVersion();
+
   const availableSettings = getAvailableSettings();
   return _.mapValues(availableSettings, settingConfig => {
     let value = electronSettings.get(settingConfig.location);
@@ -39,6 +45,31 @@ function getStoredSettings() {
     }
     return value;
   });
+}
+
+function fixSettingsOnNewVersion() {
+  const prevVersionKey = 'previousVersion';
+
+  const prevVersion = electronSettings.get(prevVersionKey);
+
+  // This doesn't get the right version when developing. It should
+  // in prod though
+  const currentVersion = app.getVersion()
+  
+  if (!prevVersion && semver.gte(currentVersion, '1.2.4')) {
+    // If not on linux, let's clear that setting. We are doing this
+    // because the previous settings page would set it to the default
+    // but then the path changed, so people upgrading from older versions
+    // are having problems
+    const platform = process.platform;
+    if (platform !== 'linux') {
+      const availableSettings = getAvailableSettings();
+      electronSettings.delete(availableSettings.playbackDolphinPath.location);
+    }
+    
+    // Set previous to current version
+    electronSettings.set(prevVersionKey, currentVersion);
+  }
 }
 
 export default function settings(state = defaultState, action) {

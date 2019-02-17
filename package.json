@@ -1,7 +1,7 @@
 {
   "name": "slippi-launcher",
   "productName": "Slippi Launcher",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Slippi Launcher program for browsing and playing replays.",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -242,6 +242,7 @@
     "redux-thunk": "^2.3.0",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^0.84.0",
+    "semver": "^5.6.0",
     "slp-parser-js": "^2.0.2",
     "source-map-support": "^0.5.9"
   },
