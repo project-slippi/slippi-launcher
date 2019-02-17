@@ -76,7 +76,7 @@ export default class Console extends Component {
       ...settings,
       ...this.state.formData,
     };
-    
+
     this.props.saveConnection(settings.id, formData);
   };
 
@@ -330,7 +330,7 @@ export default class Console extends Component {
 
     return (
       <div className={styles['section']}>
-        <Header inverted={true}>Available</Header>
+        <Header inverted={true}>New Connections</Header>
         {content}
       </div>
     );

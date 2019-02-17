@@ -8,7 +8,11 @@ export const SELECT_FILE = 'SELECT_FILE';
 export function browseFolder(field) {
   return (dispatch) => {
     const paths = dialog.showOpenDialog({
-      properties: ['openDirectory', 'treatPackageAsDirectory'],
+      properties: [
+        'openDirectory',
+        'treatPackageAsDirectory',
+        'createDirectory',
+      ],
     }) || [];
 
     const folderPath = paths[0];
