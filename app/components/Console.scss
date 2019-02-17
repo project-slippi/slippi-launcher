@@ -10,6 +10,10 @@
   margin-bottom: 48px;
 }
 
+.global-action-section {
+  margin-bottom: 15px;
+}
+
 .card {
   box-shadow: 3px 3px 2px rgba(0, 0, 0, 0.1) !important;
   background: none !important;
@@ -17,6 +21,7 @@
   border-width: 1px !important;
   border-color: $background-darkest !important;
   color: $foreground;
+  margin: 0 !important;
 
   .content {
     border-color: $background-darkest !important;
@@ -69,7 +74,7 @@
   margin-bottom: 4px;
 }
 
-.searching-header {
+.empty-state-header {
   color: rgba(255, 255, 255, 0.6) !important;
   display: inline-block;
 

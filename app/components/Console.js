@@ -69,9 +69,15 @@ export default class Console extends Component {
     });
   };
 
-  onFormSubmit = id => () => {
-    const formData = this.state.formData || {};
-    this.props.saveConnection(id, formData);
+  onFormSubmit = settings => () => {
+    // Start with settings values and overwrite with modified
+    // form data
+    const formData = {
+      ...settings,
+      ...this.state.formData,
+    };
+    
+    this.props.saveConnection(settings.id, formData);
   };
 
   connectTo = connection => () => {
@@ -87,20 +93,65 @@ export default class Console extends Component {
   }
 
   renderContent() {
-    const store = this.props.store || {};
-    const connections = store.connections || [];
-
     return (
       <div className={styles['container']}>
-        <div className={styles['section']}>
+        <div className={styles['global-action-section']}>
           <Button color="blue" onClick={this.addConnectionClick}>
             <Icon name="plus" />
             Add Connection
           </Button>
-          {connections.map(this.renderConnection)}
         </div>
+        {this.renderConnectionsSection()}
         {this.renderAvailableSection()}
       </div>
+    );
+  }
+
+  renderConnectionsSection() {
+    const store = this.props.store || {};
+    const connections = store.connections || [];
+
+    let content = null;
+    if (_.isEmpty(connections)) {
+      content = this.renderNoConnectionsState();
+    } else {
+      content = (
+        <SpacedGroup size="lg" direction="vertical">
+          {connections.map(this.renderConnection)}
+        </SpacedGroup>
+      );
+    }
+
+    return (
+      <div className={styles['section']}>
+        <Header inverted={true}>Connections</Header>
+        {content}
+      </div>
+    );
+  }
+
+  renderNoConnectionsState() {
+    return (
+      <Card
+        fluid={true}
+        className={styles['card']}
+      >
+        <Card.Content className={styles['content']}>
+          <Header
+            as="h2"
+            className={styles['empty-state-header']}
+            inverted={true}
+          >
+            <Icon name="search" fitted={true} />
+            <Header.Content>
+              No Connections
+              <Header.Subheader>
+                Add a new connection in order to connect to a console
+              </Header.Subheader>
+            </Header.Content>
+          </Header>
+        </Card.Content>
+      </Card>
     );
   }
 
@@ -265,10 +316,16 @@ export default class Console extends Component {
     ));
     const sortedAvailableNew = _.orderBy(availableNew, ['firstFound'], ['desc']);
 
-    let content = sortedAvailableNew.map(this.renderAvailable);
+    let content = null;
     if (_.isEmpty(sortedAvailableNew)) {
       // Render searching display
       content = this.renderSearchingState();
+    } else {
+      content = (
+        <SpacedGroup size="lg" direction="vertical">
+          {sortedAvailableNew.map(this.renderAvailable)}
+        </SpacedGroup>
+      );
     }
 
     return (
@@ -305,7 +362,7 @@ export default class Console extends Component {
         <Card.Content className={styles['content']}>
           <Header
             as="h2"
-            className={styles['searching-header']}
+            className={styles['empty-state-header']}
             inverted={true}
           >
             {icon}
@@ -321,39 +378,31 @@ export default class Console extends Component {
     );
   }
 
-  renderAvailable = (info) => (
-    <Card
-      key={`${info.ip}-available-connection`}
-      fluid={true}
-      className={styles['card']}
-    >
-      <Card.Content className={styles['content']}>
-        <div className={styles['conn-content-grid']}>
-          {this.renderLabelValue("IP Address", info.ip)}
-          {this.renderLabelValue("Name", info.name)}
-        </div>
-      </Card.Content>
-      <Card.Content className={styles['content']}>
-        <div>
-          {this.renderAddAvailableButton(info.ip)}
-        </div>
-      </Card.Content>
-    </Card>
-  );
-
-  renderAddAvailableButton = ip => {
+  renderAvailable = (info) => {
     const defaultSettings = {
-      'ipAddress': ip,
+      'ipAddress': info.ip,
     };
 
     return (
-      <Button
-        color="blue"
-        onClick={this.editConnectionClick("new", defaultSettings)}
-      >
-        <Icon name="plus" />
-        Add
-      </Button>
+      <SpacedGroup key={`${info.ip}-available-connection`} customColumns="auto 1fr">
+        <Button
+          circular={true}
+          color="blue"
+          icon="plus"
+          onClick={this.editConnectionClick("new", defaultSettings)}
+        />
+        <Card
+          fluid={true}
+          className={styles['card']}
+        >
+          <Card.Content className={styles['content']}>
+            <div className={styles['conn-content-grid']}>
+              {this.renderLabelValue("IP Address", info.ip)}
+              {this.renderLabelValue("Name", info.name)}
+            </div>
+          </Card.Content>
+        </Card>
+      </SpacedGroup>
     );
   }
 
@@ -378,7 +427,7 @@ export default class Console extends Component {
     }
 
     return (
-      <Form onSubmit={this.onFormSubmit(connectionSettings.id)}>
+      <Form onSubmit={this.onFormSubmit(connectionSettings)}>
         <Form.Input
           name="ipAddress"
           label="IP Address"
