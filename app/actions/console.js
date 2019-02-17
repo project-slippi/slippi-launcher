@@ -12,11 +12,12 @@ export function cancelEditConnection() {
   };
 }
 
-export function editConnection(id) {
+export function editConnection(id, defaultSettings) {
   return {
     type: CONNECTION_EDIT,
     payload: {
       id: id,
+      defaultSettings: defaultSettings,
     },
   };
 }

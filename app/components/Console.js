@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import path from 'path';
-import { Container, Modal, Form, Card, Button, Icon, Checkbox } from 'semantic-ui-react';
+import { Header, Modal, Form, Card, Button, Icon, Checkbox } from 'semantic-ui-react';
 import { ConnectionStatus } from '../domain/ConsoleConnection';
 import PageHeader from './common/PageHeader';
 import PageWrapper from './PageWrapper';
@@ -27,12 +27,22 @@ export default class Console extends Component {
     formData: {},
   };
 
+  componentDidMount() {
+    console.log("Starting scan...");
+    this.props.store.scanner.startScanning();
+  }
+
+  componentWillUnmount() {
+    console.log("Ending scan");
+    this.props.store.scanner.stopScanning();
+  }
+
   addConnectionClick = () => {
     this.props.editConnection('new');
   };
 
-  editConnectionClick = index => () => {
-    this.props.editConnection(index);
+  editConnectionClick = (index, defaultSettings = {}) => () => {
+    this.props.editConnection(index, defaultSettings);
   };
 
   onModalClose = () => {
@@ -59,9 +69,15 @@ export default class Console extends Component {
     });
   };
 
-  onFormSubmit = id => () => {
-    const formData = this.state.formData || {};
-    this.props.saveConnection(id, formData);
+  onFormSubmit = settings => () => {
+    // Start with settings values and overwrite with modified
+    // form data
+    const formData = {
+      ...settings,
+      ...this.state.formData,
+    };
+
+    this.props.saveConnection(settings.id, formData);
   };
 
   connectTo = connection => () => {
@@ -77,17 +93,65 @@ export default class Console extends Component {
   }
 
   renderContent() {
+    return (
+      <div className={styles['container']}>
+        <div className={styles['global-action-section']}>
+          <Button color="blue" onClick={this.addConnectionClick}>
+            <Icon name="plus" />
+            Add Connection
+          </Button>
+        </div>
+        {this.renderConnectionsSection()}
+        {this.renderAvailableSection()}
+      </div>
+    );
+  }
+
+  renderConnectionsSection() {
     const store = this.props.store || {};
-    const connectionsById = store.connections || [];
+    const connections = store.connections || [];
+
+    let content = null;
+    if (_.isEmpty(connections)) {
+      content = this.renderNoConnectionsState();
+    } else {
+      content = (
+        <SpacedGroup size="lg" direction="vertical">
+          {connections.map(this.renderConnection)}
+        </SpacedGroup>
+      );
+    }
 
     return (
-      <Container text={true}>
-        <Button color="blue" onClick={this.addConnectionClick}>
-          <Icon name="plus" />
-          Add Connection
-        </Button>
-        {connectionsById.map(this.renderConnection)}
-      </Container>
+      <div className={styles['section']}>
+        <Header inverted={true}>Connections</Header>
+        {content}
+      </div>
+    );
+  }
+
+  renderNoConnectionsState() {
+    return (
+      <Card
+        fluid={true}
+        className={styles['card']}
+      >
+        <Card.Content className={styles['content']}>
+          <Header
+            as="h2"
+            className={styles['empty-state-header']}
+            inverted={true}
+          >
+            <Icon name="search" fitted={true} />
+            <Header.Content>
+              No Connections
+              <Header.Subheader>
+                Add a new connection in order to connect to a console
+              </Header.Subheader>
+            </Header.Content>
+          </Header>
+        </Card.Content>
+      </Card>
     );
   }
 
@@ -201,6 +265,10 @@ export default class Console extends Component {
     const status = connection.connectionStatus;
     const currentFilePath = _.get(connection, ['slpFileWriter', 'currentFile', 'path']);
 
+    const scanner = _.get(this.props.store, 'scanner');
+    const available = scanner ? scanner.getAvailable() : {};
+    const isConnectionAvailable = available[connection.ipAddress];
+
     let statusMsg = "Disconnected";
     let statusColor = "gray";
     if (status === ConnectionStatus.CONNECTED && currentFilePath) {
@@ -210,8 +278,11 @@ export default class Console extends Component {
       statusMsg = "Connected";
       statusColor = "green";
     } else if (status === ConnectionStatus.CONNECTING) {
-      statusMsg = "Connecting..."
+      statusMsg = "Connecting...";
       statusColor = "yellow";
+    } else if (status === ConnectionStatus.DISCONNECTED && isConnectionAvailable) {
+      statusMsg = "Available";
+      statusColor = "white";
     }
 
     const valueClasses = classNames({
@@ -219,6 +290,7 @@ export default class Console extends Component {
       [styles['green']]: statusColor === "green",
       [styles['gray']]: statusColor === "gray",
       [styles['yellow']]: statusColor === "yellow",
+      [styles['white']]: statusColor === "white",
     });
 
     return (
@@ -229,6 +301,108 @@ export default class Console extends Component {
           {statusMsg}
         </SpacedGroup>
       </React.Fragment>
+    );
+  }
+
+  renderAvailableSection() {
+    const store = this.props.store || {};
+    const connections = store.connections || [];
+    const connectionsByIp = _.keyBy(connections, 'ipAddress');
+
+    const scanner = _.get(store, 'scanner');
+    const available = scanner ? scanner.getAvailable() : {};
+    const availableNew = _.filter(available, (info) => (
+      !connectionsByIp[info.ip]
+    ));
+    const sortedAvailableNew = _.orderBy(availableNew, ['firstFound'], ['desc']);
+
+    let content = null;
+    if (_.isEmpty(sortedAvailableNew)) {
+      // Render searching display
+      content = this.renderSearchingState();
+    } else {
+      content = (
+        <SpacedGroup size="lg" direction="vertical">
+          {sortedAvailableNew.map(this.renderAvailable)}
+        </SpacedGroup>
+      );
+    }
+
+    return (
+      <div className={styles['section']}>
+        <Header inverted={true}>New Connections</Header>
+        {content}
+      </div>
+    );
+  }
+
+  renderSearchingState() {
+    // Fuck it doing this in css wasn't working. CSS is the worst
+    const iconAnimationStyle = {
+      animation: "fa-spin 6s infinite linear",
+    };
+
+    const isScanning = this.props.store.scanner.getIsScanning();
+
+    let icon, header, subText;
+    if (isScanning) {
+      icon = <Icon style={iconAnimationStyle} name="spinner" fitted={true} />;
+      header = "Scanning";
+      subText = "Looking for available consoles to connect to";
+    } else {
+      icon = <Icon name="warning sign" fitted={true} />;
+      header = "Scanning Error";
+      subText = "An error occured while scanning";
+    }
+    return (
+      <Card
+        fluid={true}
+        className={styles['card']}
+      >
+        <Card.Content className={styles['content']}>
+          <Header
+            as="h2"
+            className={styles['empty-state-header']}
+            inverted={true}
+          >
+            {icon}
+            <Header.Content>
+              {header}
+              <Header.Subheader>
+                {subText}
+              </Header.Subheader>
+            </Header.Content>
+          </Header>
+        </Card.Content>
+      </Card>
+    );
+  }
+
+  renderAvailable = (info) => {
+    const defaultSettings = {
+      'ipAddress': info.ip,
+    };
+
+    return (
+      <SpacedGroup key={`${info.ip}-available-connection`} customColumns="auto 1fr">
+        <Button
+          circular={true}
+          color="blue"
+          icon="plus"
+          onClick={this.editConnectionClick("new", defaultSettings)}
+        />
+        <Card
+          fluid={true}
+          className={styles['card']}
+        >
+          <Card.Content className={styles['content']}>
+            <div className={styles['conn-content-grid']}>
+              {this.renderLabelValue("IP Address", info.ip)}
+              {this.renderLabelValue("Name", info.name)}
+            </div>
+          </Card.Content>
+        </Card>
+      </SpacedGroup>
     );
   }
 
@@ -253,7 +427,7 @@ export default class Console extends Component {
     }
 
     return (
-      <Form onSubmit={this.onFormSubmit(connectionSettings.id)}>
+      <Form onSubmit={this.onFormSubmit(connectionSettings)}>
         <Form.Input
           name="ipAddress"
           label="IP Address"
