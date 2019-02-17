@@ -47,7 +47,11 @@ export default class ConnectionScanner {
   }
 
   handleMessageReceive = (msg, rinfo) => {
-
+    if (msg.slice(0, 10).toString() !== "SLIP_READY") {
+      // This is not a Slippi broadcast message, do nothing
+      return;
+    }
+    
     /* The structure of broadcast messages from the Wii should be:
      *  unsigned char cmd[10]; // 0 - 10
      *  u8 mac_addr[6]; // 10 - 16
@@ -81,11 +85,11 @@ export default class ConnectionScanner {
       clearTimeout(previousTimeoutHandler);
     }
 
-    // If we don't get a message for 20 seconds, remove from list
+    // If we don't get a message for 35 seconds, remove from list
     const timeoutHandler = setTimeout(() => {
       delete this.availableConnectionsByIp[ip];
       this.forceConsoleUiUpdate();
-    });
+    }, 35000);
 
     this.availableConnectionsByIp[ip] = {
       'ip': ip,
@@ -94,7 +98,8 @@ export default class ConnectionScanner {
       'timeout': timeoutHandler,
       'firstFound': previousFirstFound || moment(),
     };
-    console.log(this.availableConnectionsByIp[ip]);
+    
+    // Force UI update to show new connection
     this.forceConsoleUiUpdate();
   }
 
@@ -115,17 +120,32 @@ export default class ConnectionScanner {
     server.on('error', this.handleError);
     server.on('message', this.handleMessageReceive);
 
-    // server.on('listening', () => {
-    //   const address = server.address();
-    //   console.log(`server listening ${address.address}:${address.port}`);
-    // });
+    server.on('listening', () => {
+      const address = server.address();
+      console.log(`server listening ${address.address}:${address.port}`);
+      const client = dgram.createSocket("udp4");
+      client.bind(null, null, () => {
+        // client.bind(41234, "255.255.255.255");
+        client.setBroadcast(true);
+
+        const message = Buffer.concat([
+          Buffer.from("SLIP_READY"),
+          Buffer.from([1, 2, 3, 4, 5, 6]),
+          Buffer.from("MY CONSOLE NICKNAME\0"),
+        ]);
+
+        client.send(message, 0, message.length, 20582, "255.255.255.255", (err, bytes) => {
+          console.log({
+            err: err,
+            bytes: bytes,
+          });
+        });
+      });
+    });
 
     // Bind to the broadcast address
     this.forceConsoleUiUpdate();
-    await server.bind({
-      address: '255.255.255.255',
-      port: 20582,
-    });
+    await server.bind(20582);
   }
 
   stopScanning() {
