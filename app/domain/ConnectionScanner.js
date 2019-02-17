@@ -120,28 +120,29 @@ export default class ConnectionScanner {
     server.on('error', this.handleError);
     server.on('message', this.handleMessageReceive);
 
-    server.on('listening', () => {
-      const address = server.address();
-      console.log(`server listening ${address.address}:${address.port}`);
-      const client = dgram.createSocket("udp4");
-      client.bind(null, null, () => {
-        // client.bind(41234, "255.255.255.255");
-        client.setBroadcast(true);
+    // Used to test receive handling code
+    // server.on('listening', () => {
+    //   const address = server.address();
+    //   console.log(`server listening ${address.address}:${address.port}`);
+    //   const client = dgram.createSocket("udp4");
+    //   client.bind(null, null, () => {
+    //     // client.bind(41234, "255.255.255.255");
+    //     client.setBroadcast(true);
 
-        const message = Buffer.concat([
-          Buffer.from("SLIP_READY"),
-          Buffer.from([1, 2, 3, 4, 5, 6]),
-          Buffer.from("MY CONSOLE NICKNAME\0"),
-        ]);
+    //     const message = Buffer.concat([
+    //       Buffer.from("SLIP_READY"),
+    //       Buffer.from([1, 2, 3, 4, 5, 6]),
+    //       Buffer.from("MY CONSOLE NICKNAME\0"),
+    //     ]);
 
-        client.send(message, 0, message.length, 20582, "255.255.255.255", (err, bytes) => {
-          console.log({
-            err: err,
-            bytes: bytes,
-          });
-        });
-      });
-    });
+    //     client.send(message, 0, message.length, 20582, "255.255.255.255", (err, bytes) => {
+    //       console.log({
+    //         err: err,
+    //         bytes: bytes,
+    //       });
+    //     });
+    //   });
+    // });
 
     // Bind to the broadcast address
     this.forceConsoleUiUpdate();
