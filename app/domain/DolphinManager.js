@@ -51,10 +51,14 @@ export default class DolphinManager {
   }
 
   async playFile(filePath, startDolphin = true) {
+    const uniqueId = crypto.randomBytes(3 * 4).toString('hex');
+
     const jsonString = JSON.stringify({
       replay: filePath,
       isRealTimeMode: this.settings.isRealTimeMode || false,
+      commandId: uniqueId, // Indicates to Dolphin to play new replay
     });
+
     fs.writeFileSync(this.outputFilePath, jsonString);
 
     if (startDolphin) {
