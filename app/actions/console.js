@@ -1,3 +1,5 @@
+import { displayError } from './error';
+
 export const CONNECTION_CANCEL_EDIT = 'CONNECTION_CANCEL_EDIT';
 export const CONNECTION_EDIT = 'CONNECTION_EDIT';
 export const CONNECTION_SAVE = 'CONNECTION_SAVE';
@@ -55,8 +57,15 @@ export function connectionStateChanged() {
 }
 
 export function startMirroring(connection) {
-  return () => {
+  return (dispatch) => {
     // TODO: Handle errors
-    connection.startMirroring();
+    connection.startMirroring().catch((err) => {
+      const errorAction = displayError(
+        'console-global',
+        err.message,
+      );
+
+      dispatch(errorAction);
+    });;
   };
 }

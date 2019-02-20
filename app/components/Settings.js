@@ -44,6 +44,7 @@ export default class Settings extends Component {
     const globalErrorMessage = errors.messages[errorKey] || '';
     return (
       <DismissibleMessage
+        className="bottom-spacer"
         error={true}
         visible={showGlobalError}
         icon="warning circle"

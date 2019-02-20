@@ -7,6 +7,7 @@ import { Header, Modal, Form, Card, Button, Icon, Checkbox } from 'semantic-ui-r
 import { ConnectionStatus } from '../domain/ConsoleConnection';
 import PageHeader from './common/PageHeader';
 import PageWrapper from './PageWrapper';
+import DismissibleMessage from './common/DismissibleMessage';
 
 import styles from './Console.scss';
 import SpacedGroup from './common/SpacedGroup';
@@ -19,8 +20,14 @@ export default class Console extends Component {
     deleteConnection: PropTypes.func.isRequired,
     connectConnection: PropTypes.func.isRequired,
     startMirroring: PropTypes.func.isRequired,
+
+    // error actions
+    dismissError: PropTypes.func.isRequired,
+
+    // store data
     history: PropTypes.object.isRequired,
     store: PropTypes.object.isRequired,
+    errors: PropTypes.object.isRequired,
   };
 
   state = {
@@ -92,9 +99,30 @@ export default class Console extends Component {
     this.props.deleteConnection(connection);
   }
 
+  renderGlobalError() {
+    const errors = this.props.errors || {};
+    const errorKey = 'console-global';
+
+    const showGlobalError = errors.displayFlags[errorKey] || false;
+    const globalErrorMessage = errors.messages[errorKey] || '';
+    return (
+      <DismissibleMessage
+        className="bottom-spacer"
+        error={true}
+        visible={showGlobalError}
+        icon="warning circle"
+        header="An error has occurred"
+        content={globalErrorMessage}
+        onDismiss={this.props.dismissError}
+        dismissParams={[errorKey]}
+      />
+    );
+  }
+
   renderContent() {
     return (
       <div className={styles['container']}>
+        {this.renderGlobalError()}
         <div className={styles['global-action-section']}>
           <Button color="blue" onClick={this.addConnectionClick}>
             <Icon name="plus" />

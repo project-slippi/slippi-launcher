@@ -4,6 +4,7 @@ import { Message, Transition } from 'semantic-ui-react';
 
 export default class DismissibleMessage extends Component {
   static propTypes = {
+    className: PropTypes.string,
     visible: PropTypes.bool,
     info: PropTypes.bool,
     error: PropTypes.bool,
@@ -15,6 +16,7 @@ export default class DismissibleMessage extends Component {
   };
 
   static defaultProps = {
+    className: "",
     visible: false,
     info: false,
     error: false,
@@ -57,7 +59,7 @@ export default class DismissibleMessage extends Component {
         onShow={this.focusMessage}
         mountOnShow={false}
       >
-        <div ref={this.setRefMessage}>
+        <div className={this.props.className} ref={this.setRefMessage}>
           <Message
             info={this.props.info}
             error={this.props.error}
