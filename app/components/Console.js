@@ -19,6 +19,7 @@ export default class Console extends Component {
     saveConnection: PropTypes.func.isRequired,
     deleteConnection: PropTypes.func.isRequired,
     connectConnection: PropTypes.func.isRequired,
+    disconnectConnection: PropTypes.func.isRequired,
     startMirroring: PropTypes.func.isRequired,
 
     // error actions
@@ -89,6 +90,10 @@ export default class Console extends Component {
 
   connectTo = connection => () => {
     this.props.connectConnection(connection);
+  };
+
+  disconnect = connection => () => {
+    this.props.disconnectConnection(connection);
   };
 
   mirror = connection => () => {
@@ -212,12 +217,14 @@ export default class Console extends Component {
     const status = connection.connectionStatus;
     const isDisconnected = status === ConnectionStatus.DISCONNECTED;
 
-    const isEnabled = isDisconnected;
+    if (!isDisconnected) {
+      return this.renderDisconnectButton(connection);
+    }
 
     return (
       <Button
+        className={styles['connect-btn']}
         color="blue"
-        disabled={!isEnabled}
         onClick={this.connectTo(connection)}
       >
         <Icon name="linkify" />
@@ -225,6 +232,17 @@ export default class Console extends Component {
       </Button>
     );
   }
+
+  renderDisconnectButton = connection => (
+    <Button
+      className={styles['connect-btn']}
+      color="grey"
+      onClick={this.disconnect(connection)}
+    >
+      <Icon name="unlink" />
+      Disconnect
+    </Button>
+  )
 
   renderMirrorButton = connection => {
     const status = connection.connectionStatus;
