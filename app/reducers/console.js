@@ -5,7 +5,7 @@ import ConsoleConnection from '../domain/ConsoleConnection';
 
 import {
   CONNECTION_CANCEL_EDIT, CONNECTION_EDIT, CONNECTION_SAVE, CONNECTION_DELETE,
-  CONNECTION_CONNECT, CONNECTION_STATE_CHANGED,
+  CONNECTION_STATE_CHANGED,
 } from '../actions/console';
 import ConnectionScanner from '../domain/ConnectionScanner';
 
@@ -34,8 +34,6 @@ export default function connections(state = defaultState, action) {
     return saveConnection(state, action);
   case CONNECTION_DELETE:
     return deleteConnection(state, action);
-  case CONNECTION_CONNECT:
-    return connectConnection(state, action);
   case CONNECTION_STATE_CHANGED:
     return refreshState(state, action);
   default:
@@ -115,10 +113,6 @@ function deleteConnection(state, action) {
   storeConnections(resultConnections);
 
   return newState;
-}
-
-function connectConnection(state) {
-  return state;
 }
 
 function refreshState(state) {

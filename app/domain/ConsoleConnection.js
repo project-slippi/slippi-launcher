@@ -25,7 +25,9 @@ export default class ConsoleConnection {
     this.isRealTimeMode = settings.isRealTimeMode;
 
     this.isMirroring = false;
+    this.client = null;
     this.connectionStatus = ConnectionStatus.DISCONNECTED;
+    this.connectionRetryState = this.getDefaultRetryState();
 
     // A connection can mirror its received gameplay
     this.dolphinManager = new DolphinManager(`mirror-${this.id}`);
@@ -36,8 +38,12 @@ export default class ConsoleConnection {
     );
   }
 
-  fileStateChangeHandler = () => {
+  forceConsoleUiUpdate() {
     store.dispatch(connectionStateChanged());
+  }
+  
+  fileStateChangeHandler = () => {
+    this.forceConsoleUiUpdate();
   }
 
   getSettings() {
@@ -46,6 +52,42 @@ export default class ConsoleConnection {
       targetFolder: this.targetFolder,
       isRealTimeMode: this.isRealTimeMode,
     };
+  }
+
+  getDefaultRetryState() {
+    return {
+      retryCount: 0,
+      retryWaitMs: 1000,
+      reconnectHandler: null,
+    }
+  }
+
+  startReconnect() {
+    const retryState = this.connectionRetryState;
+    if (retryState.retryCount >= 5) {
+      // Stop reconnecting after 5 attempts
+      this.connectionStatus = ConnectionStatus.DISCONNECTED;
+      this.forceConsoleUiUpdate();
+      return;
+    }
+
+    const waitTime = retryState.retryWaitMs;
+    console.log(`Setting reconnect handler with time: ${waitTime}ms`);
+    const reconnectHandler = setTimeout(() => {
+      console.log(`Trying to reconnect after waiting: ${waitTime}ms`);
+      this.connect();
+    }, retryState.retryWaitMs);
+
+    // Prepare next retry state
+    this.connectionRetryState = {
+      ...retryState,
+      retryCount: retryState.retryCount + 1,
+      retryWaitMs: retryState.retryWaitMs * 2,
+      reconnectHandler: reconnectHandler,
+    };
+
+    this.connectionStatus = ConnectionStatus.RECONNECTING;
+    this.forceConsoleUiUpdate();
   }
 
   editSettings(newSettings) {
@@ -70,18 +112,21 @@ export default class ConsoleConnection {
 
     // Indicate we are connecting
     this.connectionStatus = ConnectionStatus.CONNECTING;
-    store.dispatch(connectionStateChanged());
+    this.forceConsoleUiUpdate();
 
+    // TODO: reconnect on failed reconnect, not sure how
+    // TODO: to do this
     const client = net.connect({
       host: this.ipAddress,
       port: 666,
     }, () => {
       console.log(`Connected to ${this.ipAddress}!`);
+      this.connectionRetryState = this.getDefaultRetryState();
       this.connectionStatus = ConnectionStatus.CONNECTED;
-      store.dispatch(connectionStateChanged());
+      this.forceConsoleUiUpdate();
     });
 
-    client.setTimeout(10000);
+    client.setTimeout(15000);
     
     client.on('data', (data) => {
       const result = this.slpFileWriter.handleData(data);
@@ -92,41 +137,68 @@ export default class ConsoleConnection {
     });
 
     client.on('timeout', () => {
+      // const previouslyConnected = this.connectionStatus === ConnectionStatus.CONNECTED;
       console.log(`Timeout on ${this.ipAddress}`);
       client.destroy();
-      this.connectionStatus = ConnectionStatus.DISCONNECTED;
 
-      store.dispatch(connectionStateChanged());
-      // TODO: Handle auto-reconnect logic
+      // TODO: Fix reconnect logic
+      // if (previouslyConnected) {
+      //   // If previously connected, start the reconnect logic
+      //   this.startReconnect();
+      // }
     });
 
     client.on('error', (error) => {
       console.log('error');
       console.log(error);
       client.destroy();
-      this.connectionStatus = ConnectionStatus.DISCONNECTED;
-
-      store.dispatch(connectionStateChanged());
     });
 
     client.on('end', () => {
       console.log('disconnect');
-      this.connectionStatus = ConnectionStatus.DISCONNECTED;
-
-      store.dispatch(connectionStateChanged());
+      client.destroy();
     });
+
+    client.on('close', () => {
+      console.log('connection was closed');
+      this.client = null;
+      this.connectionStatus = ConnectionStatus.DISCONNECTED;
+      this.forceConsoleUiUpdate();
+
+      // TODO: Fix reconnect logic
+      // // After attempting first reconnect, we may still fail to connect, we should keep
+      // // retrying until we succeed or we hit the retry limit
+      // if (this.connectionRetryState.retryCount) {
+      //   this.startReconnect();
+      // }
+    });
+
+    this.client = client;
+  }
+
+  disconnect() {
+    const reconnectHandler = this.connectionRetryState.reconnectHandler;
+    if (reconnectHandler) {
+      clearTimeout(reconnectHandler);
+    }
+
+    if (this.client) {
+      // TODO: Confirm destroy is picked up by an action and disconnected
+      // TODO: status is set
+      this.client.destroy();
+    }
   }
 
   async startMirroring() {
     try {
       console.log("Mirroring start");
       this.isMirroring = true;
-      store.dispatch(connectionStateChanged());
+      this.forceConsoleUiUpdate();
       await this.dolphinManager.startPlayback();
     } finally {
       console.log("Mirroring end");
       this.isMirroring = false;
-      store.dispatch(connectionStateChanged());
+      this.forceConsoleUiUpdate();
     }
   }
 }
