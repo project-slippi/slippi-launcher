@@ -71,7 +71,10 @@ export default class ConsoleConnection {
       return;
     }
 
+    const waitTime = retryState.retryWaitMs;
+    console.log(`Setting reconnect handler with time: ${waitTime}ms`);
     const reconnectHandler = setTimeout(() => {
+      console.log(`Trying to reconnect after waiting: ${waitTime}ms`);
       this.connect();
     }, retryState.retryWaitMs);
 
@@ -134,28 +137,40 @@ export default class ConsoleConnection {
     });
 
     client.on('timeout', () => {
+      // const previouslyConnected = this.connectionStatus === ConnectionStatus.CONNECTED;
       console.log(`Timeout on ${this.ipAddress}`);
       client.destroy();
 
-      // TODO: Does timeout only happen after a successful connect?
-      // TODO: if so this functino will never return false
-      this.startReconnect();
+      // TODO: Fix reconnect logic
+      // if (previouslyConnected) {
+      //   // If previously connected, start the reconnect logic
+      //   this.startReconnect();
+      // }
     });
 
     client.on('error', (error) => {
       console.log('error');
       console.log(error);
       client.destroy();
-      this.connectionStatus = ConnectionStatus.DISCONNECTED;
-
-      this.forceConsoleUiUpdate();
     });
 
     client.on('end', () => {
       console.log('disconnect');
-      this.connectionStatus = ConnectionStatus.DISCONNECTED;
+      client.destroy();
+    });
 
+    client.on('close', () => {
+      console.log('connection was closed');
+      this.client = null;
+      this.connectionStatus = ConnectionStatus.DISCONNECTED;
       this.forceConsoleUiUpdate();
+
+      // TODO: Fix reconnect logic
+      // // After attempting first reconnect, we may still fail to connect, we should keep
+      // // retrying until we succeed or we hit the retry limit
+      // if (this.connectionRetryState.retryCount) {
+      //   this.startReconnect();
+      // }
     });
 
     this.client = client;
