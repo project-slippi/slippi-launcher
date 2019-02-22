@@ -56,7 +56,7 @@ function fixSettingsOnNewVersion() {
   // in prod though
   const currentVersion = app.getVersion()
   
-  if (!prevVersion && semver.gte(currentVersion, '1.2.4')) {
+  if (!prevVersion && semver.gte(currentVersion, '1.1.10')) {
     // If not on linux, let's clear that setting. We are doing this
     // because the previous settings page would set it to the default
     // but then the path changed, so people upgrading from older versions
