@@ -55,37 +55,15 @@ export default class Home extends Component {
     );
   }
 
-  // renderPatreonNotif() {
-  //   const contentMsg = (
-  //     <div>
-  //       Your support allows me to spend more time on the project and pay for
-  //       services to make it even better. Enjoy the beta features!&nbsp;
-  //       <strong>
-  //         <a href="https://www.patreon.com/fizzi36">Click here</a>
-  //       </strong>
-  //       &nbsp;to view Patreon page.
-  //     </div>
-  //   );
-
-  //   return (
-  //     <Message
-  //       info={true}
-  //       icon="patreon"
-  //       header="Thank you!"
-  //       content={contentMsg}
-  //     />
-  //   );
-  // }
-
   renderPatreonNotif() {
     const contentMsg = (
       <div>
-        If you are enjoying using Project Slippi, consider becoming a patron to
-        support continued development and unlock early-access features.&nbsp;
+        Your support allows me to spend more time on the project and pay for
+        services to make it even better. Enjoy the beta features!&nbsp;
         <strong>
           <a href="https://www.patreon.com/fizzi36">Click here</a>
         </strong>
-        &nbsp;to support!
+        &nbsp;to view Patreon page.
       </div>
     );
 
@@ -93,11 +71,33 @@ export default class Home extends Component {
       <Message
         info={true}
         icon="patreon"
-        header="Unlock Early-Access Features"
+        header="Thank you!"
         content={contentMsg}
       />
     );
   }
+
+  // renderPatreonNotif() {
+  //   const contentMsg = (
+  //     <div>
+  //       If you are enjoying using Project Slippi, consider becoming a patron to
+  //       support continued development and unlock early-access features.&nbsp;
+  //       <strong>
+  //         <a href="https://www.patreon.com/fizzi36">Click here</a>
+  //       </strong>
+  //       &nbsp;to support!
+  //     </div>
+  //   );
+
+  //   return (
+  //     <Message
+  //       info={true}
+  //       icon="patreon"
+  //       header="Unlock Early-Access Features"
+  //       content={contentMsg}
+  //     />
+  //   );
+  // }
 
   render() {
     const navigationElements = [];
@@ -118,7 +118,7 @@ export default class Home extends Component {
         'Stream From Console',
         'Get replays by connecting to a console over network',
         '/console',
-        true
+        false
       )
     );
 
