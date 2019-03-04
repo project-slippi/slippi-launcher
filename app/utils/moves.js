@@ -20,6 +20,11 @@ const moves = {
     name: "Jab",
     shortName: "jab",
   },
+  5: {
+    id: 5,
+    name: "Rapid Jabs",
+    shortName: "rapid-jabs",
+  },
   6: {
     id: 6,
     name: "Dash Attack",

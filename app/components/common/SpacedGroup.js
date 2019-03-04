@@ -5,7 +5,7 @@ import styles from './SpacedGroup.scss';
 
 export default class SpacedGroup extends Component {
   static propTypes = {
-    children: PropTypes.any.isRequired,
+    children: PropTypes.node.isRequired,
     className: PropTypes.string,
     size: PropTypes.string,
     direction: PropTypes.string,
