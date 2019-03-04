@@ -10,11 +10,18 @@ export function getPlayerNamesByIndex(game) {
 
   const players = settings.players || [];
   return _.chain(players).keyBy('playerIndex').mapValues(player => {
+    // Netplay name
     const names = _.get(metadata, ['players', player.playerIndex, 'names']) || {};
     const netplayName = names.netplay;
+
+    // In-game Nametag
+    const nametag = player.nametag;
+
+    // Backup names
     const playerTypeStr = player.type === 1 ? "CPU" : "Player";
     const portName = `${playerTypeStr} ${player.port}`;
-    return netplayName || portName;
+
+    return netplayName || nametag || portName;
   }).value();
 }
 
