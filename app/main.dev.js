@@ -9,9 +9,10 @@
  * `./app/main.prod.js` using webpack. This gives us some performance wins.
  *
  */
-import { app, shell, BrowserWindow } from 'electron';
+import { app, shell, BrowserWindow, protocol } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import path from 'path';
 import MenuBuilder from './menu';
 
 // Set up AppUpdater
@@ -57,7 +58,30 @@ app.on('window-all-closed', () => {
   }
 });
 
+protocol.registerStandardSchemes(['slippi']);
+
+// Only allow a single Slippi Launcher instance
+const lockObtained = app.requestSingleInstanceLock();
+if (!lockObtained) {
+  app.quit();
+}
+
+app.on('second-instance', () => {
+  log.info("Second instance detected...");
+  // Someone tried to run a second instance, we should focus our window.
+  if (mainWindow) {
+    if (mainWindow.isMinimized()){
+      mainWindow.restore();
+    } 
+    mainWindow.focus();
+  }
+});
+
 app.on('ready', async () => {
+  if (!lockObtained) {
+    return;
+  }
+
   if (
     process.env.NODE_ENV === 'development' ||
     process.env.DEBUG_PROD === 'true'
@@ -69,9 +93,36 @@ app.on('ready', async () => {
     show: false,
     width: 1024,
     height: 728,
+    icon: path.join(__dirname, '../resources/icons/64x64.png'),
   });
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
+
+  // Handles links of the form: slippi://<something>
+  protocol.registerStringProtocol("slippi", (req, cb) => {
+    log.info("Successfully received request!!!");
+    console.log(req);
+    // log.info(JSON.stringify(req));
+    cb("Success");
+  }, (err) => {
+    if (err) {
+      log.info("Error registering string protocol");
+      log.info(err);
+    }
+
+    log.info("Successfully registered string protocol.");
+  });
+
+  // protocol.interceptHttpProtocol("slippi", (req) => {
+  //   log.info("interceptted slippi");
+  // }, (err) => {
+  //   if (err) {
+  //     log.info("Error intercepting slippi protocol");
+  //     log.info(err);
+  //   }
+
+  //   log.info("Successfully interceptstart http protocol.");
+  // });
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event

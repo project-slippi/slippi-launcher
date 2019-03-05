@@ -77,6 +77,10 @@
         "nsis"
       ]
     },
+    "nsis": {
+      "perMachine": true,
+      "include": "./build/installer.nsh"
+    },
     "linux": {
       "target": [
         "deb",
@@ -87,7 +91,12 @@
     "directories": {
       "buildResources": "resources",
       "output": "release"
-    }
+    },
+    "protocols": [{
+      "name": "slippi",
+      "role": "Viewer",
+      "schemes": ["slippi"]
+    }]
   },
   "repository": {
     "type": "git",
