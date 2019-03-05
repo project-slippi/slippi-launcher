@@ -66,8 +66,12 @@ if (!lockObtained) {
   app.quit();
 }
 
-app.on('second-instance', () => {
+app.on('second-instance', (event, argv) => {
   log.info("Second instance detected...");
+
+  // Could do a really shitty hack here because argv does contain the URI
+
+  log.info(argv);
   // Someone tried to run a second instance, we should focus our window.
   if (mainWindow) {
     if (mainWindow.isMinimized()){
@@ -99,11 +103,11 @@ app.on('ready', async () => {
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
   // Handles links of the form: slippi://<something>
-  protocol.registerStringProtocol("slippi", (req, cb) => {
+  protocol.registerHttpProtocol("slippi", (req) => {
     log.info("Successfully received request!!!");
     console.log(req);
     // log.info(JSON.stringify(req));
-    cb("Success");
+    // cb("Success");
   }, (err) => {
     if (err) {
       log.info("Error registering string protocol");
@@ -113,6 +117,7 @@ app.on('ready', async () => {
     log.info("Successfully registered string protocol.");
   });
 
+  // Was testing to see if intercept did anything different but I don't think it does
   // protocol.interceptHttpProtocol("slippi", (req) => {
   //   log.info("interceptted slippi");
   // }, (err) => {

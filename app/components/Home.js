@@ -143,6 +143,7 @@ export default class Home extends Component {
               </Header>
             </div>
             {navigationElements}
+            <a href="slippi://teeeeesssttt/eafe">TEST PROTOCOL</a>
           </Segment>
         </Container>
       </PageWrapper>
