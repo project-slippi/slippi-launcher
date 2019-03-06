@@ -20,8 +20,8 @@ These are the applications you will need to install in order to build this proje
 
 If you have some weird errors when starting `yarn dev` but think everything else went okay, you can try the following:
 ```
-$ UPGRADE_EXTENSIONS=1 yarn run dev
+$ UPGRADE_EXTENSIONS=1 yarn dev
 
 # For Windows
-$ set UPGRADE_EXTENSIONS=1 && yarn run dev
+$ set UPGRADE_EXTENSIONS=1 && yarn dev
 ```
