@@ -50,6 +50,10 @@ const installExtensions = async () => {
  * Add event listeners...
  */
 
+app.on('open-url', (event, url) => {
+  log.info(`Received mac open-url: ${url}`);
+});
+
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
