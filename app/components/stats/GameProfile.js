@@ -367,7 +367,7 @@ export default class GameProfile extends Component {
 
   render() {
     return (
-      <PageWrapper>
+      <PageWrapper history={this.props.history}>
         <div className="main-padding">
           <PageHeader icon="game" text="Game" history={this.props.history} />
           {this.renderContent()}

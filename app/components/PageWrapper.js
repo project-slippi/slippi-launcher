@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
+import os from 'os';
+import path from 'path';
 import PropTypes from 'prop-types';
 import { ipcRenderer } from 'electron';
 import { bindActionCreators } from 'redux';
@@ -7,30 +9,50 @@ import { connect } from 'react-redux';
 
 import GlobalAlert from './GlobalAlert';
 import * as NotifActions from '../actions/notifs';
+import * as GameActions from '../actions/game';
+import { playFile } from "../actions/fileLoader";
 
 // Originally this logic was supposed to just exist at the App level. For some reason though
 // that broke navigation, so I decided to put the logic after the 
 class PageWrapper extends Component {
   static propTypes = {
     children: PropTypes.any.isRequired,
+    history: PropTypes.object.isRequired,
     
     // From redux
     store: PropTypes.object.isRequired,
     appUpgradeDownloaded: PropTypes.func.isRequired,
+    gameProfileLoad: PropTypes.func.isRequired,
+    playFile: PropTypes.func.isRequired,
   };
 
   componentDidMount() {
     ipcRenderer.on('update-downloaded', this.onAppUpgrade);
+    ipcRenderer.on('play-replay', this.onPlayReplay);
   }
 
   componentWillUnmount() {
-    ipcRenderer.removeListener('update-downloaded', this.onAppUpgrade)
+    ipcRenderer.removeListener('update-downloaded', this.onAppUpgrade);
+    ipcRenderer.removeListener('play-replay', this.onPlayReplay);
   }
 
   onAppUpgrade = () => {
     // When main process (main.dev.js) tells us an update has been downloaded, trigger
     // a global notif to be shown
     this.props.appUpgradeDownloaded();
+  }
+
+  onPlayReplay = () => {
+    // If no game is passed in, we should load the default replay file
+    const tmpDir = os.tmpdir();
+    const defaultReplayPath = path.join(tmpDir, 'replay.slp');
+
+    // Load default replay file by passing null
+    this.props.gameProfileLoad(defaultReplayPath);
+    this.props.history.push('/game');
+    this.props.playFile({
+      fullPath: defaultReplayPath,
+    });
   }
 
   render() {
@@ -65,7 +87,11 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(NotifActions, dispatch);
+  return bindActionCreators({
+    ...NotifActions,
+    ...GameActions,
+    playFile: playFile,
+  }, dispatch);
 }
 
 export default connect(

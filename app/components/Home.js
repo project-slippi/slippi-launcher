@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import {
   Button,
@@ -12,6 +13,10 @@ import styles from './Home.scss';
 import PageWrapper from './PageWrapper';
 
 export default class Home extends Component {
+  static propTypes = {
+    history: PropTypes.object.isRequired,
+  };
+
   generateNav(iconName, header, subHeader, target, disabled) {
     let buttonDisplay = (
       <Button
@@ -133,7 +138,7 @@ export default class Home extends Component {
     );
 
     return (
-      <PageWrapper>
+      <PageWrapper history={this.props.history}>
         <Container text={true} className={styles['vertical-space']}>
           {this.renderPatreonNotif()}
           <Segment basic={true} className="grid-list">

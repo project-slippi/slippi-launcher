@@ -294,7 +294,7 @@ export default class FileLoader extends Component {
 
   render() {
     return (
-      <PageWrapper>
+      <PageWrapper history={this.props.history}>
         <div className={styles['layout']}>
           {this.renderSidebar()}
           {this.renderMain()}

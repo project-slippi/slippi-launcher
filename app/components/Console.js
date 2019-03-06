@@ -508,7 +508,7 @@ export default class Console extends Component {
 
   render() {
     return (
-      <PageWrapper>
+      <PageWrapper history={this.props.history}>
         <div className="main-padding">
           <PageHeader
             icon="microchip"

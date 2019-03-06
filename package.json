@@ -92,11 +92,15 @@
       "buildResources": "resources",
       "output": "release"
     },
-    "protocols": [{
-      "name": "slippi",
-      "role": "Viewer",
-      "schemes": ["slippi"]
-    }]
+    "protocols": [
+      {
+        "name": "slippi",
+        "role": "Viewer",
+        "schemes": [
+          "slippi"
+        ]
+      }
+    ]
   },
   "repository": {
     "type": "git",
@@ -231,6 +235,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.5.0",
+    "@google-cloud/storage": "^2.4.2",
     "classnames": "^2.2.6",
     "devtron": "^1.4.0",
     "electron-debug": "^2.0.0",
