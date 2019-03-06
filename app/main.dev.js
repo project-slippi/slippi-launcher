@@ -58,7 +58,8 @@ app.on('window-all-closed', () => {
   }
 });
 
-protocol.registerStandardSchemes(['slippi']);
+const slippiProtocol = "slippi";
+// protocol.registerStandardSchemes([slippiProtocol]);
 
 // Only allow a single Slippi Launcher instance
 const lockObtained = app.requestSingleInstanceLock();
@@ -80,6 +81,17 @@ app.on('second-instance', (event, argv) => {
     mainWindow.focus();
   }
 });
+
+const isProtocolHandler = app.isDefaultProtocolClient(slippiProtocol);
+if (isProtocolHandler) {
+  log.info("I am the default handler for slippi://");
+} else {
+  // Even with the setup correctly setting up the registry, the previous function would return
+  // false. This next function causes it to return true, but it doesn't fix the issue with the
+  // handler not being triggered
+  log.info("I am NOT the default handler for slippi://");
+  app.setAsDefaultProtocolClient(slippiProtocol);
+}
 
 app.on('ready', async () => {
   if (!lockObtained) {
@@ -103,7 +115,7 @@ app.on('ready', async () => {
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
   // Handles links of the form: slippi://<something>
-  protocol.registerHttpProtocol("slippi", (req) => {
+  protocol.registerHttpProtocol(slippiProtocol, (req) => {
     log.info("Successfully received request!!!");
     console.log(req);
     // log.info(JSON.stringify(req));
@@ -118,7 +130,7 @@ app.on('ready', async () => {
   });
 
   // Was testing to see if intercept did anything different but I don't think it does
-  // protocol.interceptHttpProtocol("slippi", (req) => {
+  // protocol.interceptHttpProtocol(slippiProtocol, (req) => {
   //   log.info("interceptted slippi");
   // }, (err) => {
   //   if (err) {
