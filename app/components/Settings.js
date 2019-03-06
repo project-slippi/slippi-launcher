@@ -259,7 +259,7 @@ export default class Settings extends Component {
 
   render() {
     return (
-      <PageWrapper>
+      <PageWrapper history={this.props.history}>
         <div className="main-padding">
           <PageHeader
             icon="setting"

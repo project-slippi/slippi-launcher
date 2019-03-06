@@ -9,7 +9,11 @@
  * `./app/main.prod.js` using webpack. This gives us some performance wins.
  *
  */
-import { app, shell, BrowserWindow, protocol } from 'electron';
+import { app, shell, BrowserWindow } from 'electron';
+import _ from 'lodash';
+import os from 'os';
+import { Storage, File } from '@google-cloud/storage';
+import { URL } from 'url';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import path from 'path';
@@ -20,7 +24,10 @@ log.transports.file.level = 'info';
 autoUpdater.logger = log;
 log.info('App starting...');
 
+const slippiProtocol = "slippi";
+
 let mainWindow = null;
+let didFinishLoad = false;
 
 app.disableHardwareAcceleration();
 
@@ -46,12 +53,73 @@ const installExtensions = async () => {
   ).catch(console.log);
 };
 
+const handleSlippiURI = async (url) => {
+  log.info("Handling URL...");
+  log.info(url);
+  
+  // Specifying a base will provide sane defaults if the input is null or wrong
+  const myUrl = new URL(url, `${slippiProtocol}://null`);
+  log.info(`protocol: ${myUrl.protocol}, hostname: ${myUrl.hostname}`);
+  if (myUrl.protocol !== `${slippiProtocol}:`) {
+    return;
+  }
+ 
+  // When handling a Slippi request, focus the window
+  if (mainWindow) {
+    if (mainWindow.isMinimized()){
+      mainWindow.restore();
+    } 
+    mainWindow.focus();
+  }
+
+  switch (myUrl.hostname) {
+  case "play":
+    const tmpDir = os.tmpdir();
+    const destination = path.join(tmpDir, 'replay.slp');
+    const replayPath = myUrl.searchParams.get('path');
+
+    const storage = new Storage({ projectId: 'slippi' });
+    const bucket = storage.bucket('slippi.appspot.com');
+    const file = new File(bucket, replayPath);
+
+    log.info(`Downloading file ${replayPath} to ${destination}`);
+
+    // Dowload file
+    await file.download({ destination: destination });
+
+    log.info(`Finished download`);
+
+    // Wait until mainWindow exists so that we can send an IPC to play.
+    // We are willing to wait for a few seconds before timing out
+    const wait = ms => new Promise((resolve) => setTimeout(resolve, ms));
+    let retryIdx = 0;
+    while (!didFinishLoad && retryIdx < 200) {
+      // It's okay to await in loop, we want things to be slow in this case
+      await wait(100); // eslint-disable-line
+      retryIdx += 1;
+    }
+
+    if (retryIdx === 100) {
+      log.warn("Timed out waiting for mainWindow to exist.");
+      return;
+    }
+
+    log.info(`Found mainWindow after ${retryIdx} tries.`);
+    mainWindow.webContents.send("play-replay");
+
+    break;
+  default:
+    break; // Do nothing
+  }
+};
+
 /**
  * Add event listeners...
  */
 
 app.on('open-url', (event, url) => {
   log.info(`Received mac open-url: ${url}`);
+  handleSlippiURI(url);
 });
 
 app.on('window-all-closed', () => {
@@ -62,9 +130,6 @@ app.on('window-all-closed', () => {
   }
 });
 
-const slippiProtocol = "slippi";
-// protocol.registerStandardSchemes([slippiProtocol]);
-
 // Only allow a single Slippi Launcher instance
 const lockObtained = app.requestSingleInstanceLock();
 if (!lockObtained) {
@@ -73,29 +138,23 @@ if (!lockObtained) {
 
 app.on('second-instance', (event, argv) => {
   log.info("Second instance detected...");
+  log.info(argv);
 
   // Could do a really shitty hack here because argv does contain the URI
-
-  log.info(argv);
-  // Someone tried to run a second instance, we should focus our window.
-  if (mainWindow) {
-    if (mainWindow.isMinimized()){
-      mainWindow.restore();
-    } 
-    mainWindow.focus();
-  }
+  const url = _.get(argv, 1) || "";
+  handleSlippiURI(url);
 });
 
-const isProtocolHandler = app.isDefaultProtocolClient(slippiProtocol);
-if (isProtocolHandler) {
-  log.info("I am the default handler for slippi://");
-} else {
-  // Even with the setup correctly setting up the registry, the previous function would return
-  // false. This next function causes it to return true, but it doesn't fix the issue with the
-  // handler not being triggered
-  log.info("I am NOT the default handler for slippi://");
-  app.setAsDefaultProtocolClient(slippiProtocol);
-}
+// const isProtocolHandler = app.isDefaultProtocolClient(slippiProtocol);
+// if (isProtocolHandler) {
+//   log.info("I am the default handler for slippi://");
+// } else {
+//   // Even with the setup correctly setting up the registry, the previous function would return
+//   // false. This next function causes it to return true, but it doesn't fix the issue with the
+//   // handler not being triggered
+//   log.info("I am NOT the default handler for slippi://");
+//   app.setAsDefaultProtocolClient(slippiProtocol);
+// }
 
 app.on('ready', async () => {
   if (!lockObtained) {
@@ -118,32 +177,9 @@ app.on('ready', async () => {
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
-  // Handles links of the form: slippi://<something>
-  protocol.registerHttpProtocol(slippiProtocol, (req) => {
-    log.info("Successfully received request!!!");
-    console.log(req);
-    // log.info(JSON.stringify(req));
-    // cb("Success");
-  }, (err) => {
-    if (err) {
-      log.info("Error registering string protocol");
-      log.info(err);
-    }
-
-    log.info("Successfully registered string protocol.");
-  });
-
-  // Was testing to see if intercept did anything different but I don't think it does
-  // protocol.interceptHttpProtocol(slippiProtocol, (req) => {
-  //   log.info("interceptted slippi");
-  // }, (err) => {
-  //   if (err) {
-  //     log.info("Error intercepting slippi protocol");
-  //     log.info(err);
-  //   }
-
-  //   log.info("Successfully interceptstart http protocol.");
-  // });
+  // Handle Slippi URI if provided
+  const argURI = _.get(process.argv, 1) || "";
+  handleSlippiURI(argURI);
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
@@ -162,6 +198,8 @@ app.on('ready', async () => {
     autoUpdater.on('update-downloaded', () => {
       mainWindow.webContents.send('update-downloaded');
     });
+
+    didFinishLoad = true;
   });
 
   // On navigation links to http urls, open in external browser
