@@ -16,6 +16,8 @@ import styles from './Settings.scss';
 import PageWrapper from './PageWrapper';
 import SpacedGroup from './common/SpacedGroup';
 
+const { app } = require('electron').remote;
+
 export default class Settings extends Component {
   static propTypes = {
     browseFolder: PropTypes.func.isRequired,
@@ -258,12 +260,15 @@ export default class Settings extends Component {
   }
 
   render() {
+    const currentVersion = app.getVersion();
+
     return (
       <PageWrapper history={this.props.history}>
         <div className="main-padding">
           <PageHeader
             icon="setting"
             text="Settings"
+            infoText={`App v${currentVersion}`}
             history={this.props.history}
           />
           {this.renderContent()}
