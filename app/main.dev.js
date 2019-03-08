@@ -53,7 +53,7 @@ const installExtensions = async () => {
   ).catch(console.log);
 };
 
-const handleSlippiURI = async (url) => {
+const handleSlippiURIAsync = async (url) => {
   log.info("Handling URL...");
   log.info(url);
   
@@ -78,7 +78,15 @@ const handleSlippiURI = async (url) => {
     const destination = path.join(tmpDir, 'replay.slp');
     const replayPath = myUrl.searchParams.get('path');
 
-    const storage = new Storage({ projectId: 'slippi' });
+    // The following path generation will not work on dev
+    // __static didn't exist and __dirname didn't work. /shrug
+    const appPath = app.getAppPath();
+    const keyPath = path.join(appPath, "../app.asar.unpacked/static/storage-reader.json");
+    log.info(`Keypath: ${keyPath}`);
+    const storage = new Storage({
+      projectId: 'slippi',
+      keyFilename: keyPath,
+    });
     const bucket = storage.bucket('slippi.appspot.com');
     const file = new File(bucket, replayPath);
 
@@ -112,6 +120,13 @@ const handleSlippiURI = async (url) => {
     break; // Do nothing
   }
 };
+
+const handleSlippiURI = (url) => {
+  handleSlippiURIAsync(url).catch((err) => {
+    log.error("Handling URI encountered error");
+    log.error(err);
+  });
+}
 
 /**
  * Add event listeners...

@@ -39,7 +39,8 @@
     "appId": "com.github.projectslippi.slippidesktopapp",
     "asarUnpack": [
       "**/dolphin/**/*",
-      "**/images/**/*"
+      "**/images/**/*",
+      "**/static/**/*"
     ],
     "files": [
       "app/dist/",
@@ -48,6 +49,7 @@
       "app/app.html",
       "app/main.prod.js",
       "app/main.prod.js.map",
+      "static/",
       "package.json"
     ],
     "dmg": {
