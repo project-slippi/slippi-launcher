@@ -77,7 +77,8 @@
     "win": {
       "target": [
         "nsis"
-      ]
+      ],
+      "requestedExecutionLevel": "highestAvailable"
     },
     "nsis": {
       "perMachine": true,

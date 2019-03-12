@@ -17,6 +17,7 @@ import { URL } from 'url';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import path from 'path';
+import fs from 'fs-extra';
 import MenuBuilder from './menu';
 
 // Set up AppUpdater
@@ -41,6 +42,27 @@ if (
   process.env.DEBUG_PROD === 'true'
 ) {
   require('electron-debug')();
+}
+
+const platform = process.platform;
+if (process.env.NODE_ENV === 'production' && platform === "win32") {
+  log.info("Checking if Dolphin path has been moved...");
+
+  // If on production and windows, check if dolphin has been moved to the right place
+  const appPath = app.getAppPath();
+  const originalDolphinPath = path.join(appPath, "../app.asar.unpacked/app/dolphin");
+  log.info(`Looking for ${originalDolphinPath}`);
+  const originalPathExists = fs.existsSync(originalDolphinPath);
+
+  if (originalPathExists) {
+    // If path exists, let's move it to app data
+    log.info("Moving dolphin path...");
+    const userDataPath = app.getPath("userData")
+    const targetPath = path.join(userDataPath, 'dolphin');
+    fs.moveSync(originalDolphinPath, targetPath, true);
+  } else {
+    log.info("Path not found, we're good?");
+  }
 }
 
 const installExtensions = async () => {
