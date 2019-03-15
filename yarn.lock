@@ -4340,11 +4340,6 @@ devtron@^1.4.0:
     highlight.js "^9.3.0"
     humanize-plus "^1.8.1"
 
-diacritics@^1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/diacritics/-/diacritics-1.3.0.tgz#3efa87323ebb863e6696cebb0082d48ff3d6f7a1"
-  integrity sha1-PvqHMj67hj5mls67AILUj/PW96E=
-
 diff@^3.2.0, diff@^3.5.0:
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/diff/-/diff-3.5.0.tgz#800c0dd1e0a8bfbc95835c202ad220fe317e5a12"
@@ -11458,11 +11453,10 @@ slice-ansi@2.0.0:
     is-fullwidth-code-point "^2.0.0"
 
 slp-parser-js@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/slp-parser-js/-/slp-parser-js-2.1.0.tgz#c01a48280c38bd1bc3faa83324fd7e2e590150c9"
-  integrity sha512-bfvC3ZzArQJllK1RuDVHasaqts4tlWPzrybrC8PnOczeSW79xjrBL2zhEhNmxHhXqpQU8KG5vP6W37Tafk3nSg==
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/slp-parser-js/-/slp-parser-js-2.1.1.tgz#d8cfad6e193f162f9432588a8a2ba88fa6acf0ec"
+  integrity sha512-b+XlgKK1Dfyvivdfc3RsjtSFEsTvrgZG87Hubpxi41jXm27QC4XWsMG506tOIG6o98wAlNZ812HpI0lS+ltRew==
   dependencies:
-    diacritics "^1.3.0"
     iconv-lite "^0.4.24"
     lodash "^4.17.11"
 
