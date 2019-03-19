@@ -119,12 +119,20 @@ function changeFolderSelection(state, action) {
   // Compute header information for display
   files = files.map((file) => {
     const fullPath = path.join(folderPath, file);
-    const game = new SlippiGame(fullPath);
+    let game = null;
     let hasError = false;
 
     // Pre-load settings here
     try {
-      game.getSettings();
+      game = new SlippiGame(fullPath);
+
+      // Preload settings
+      const settings = game.getSettings();
+      if (_.isEmpty(settings.players)) {
+        throw new Error("Game settings could not be properly loaded.");
+      }
+
+      // Preload metadata
       game.getMetadata();
     } catch (err) {
       console.log(`Failed to parse file: ${fullPath}`);

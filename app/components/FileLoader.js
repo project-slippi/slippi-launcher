@@ -159,7 +159,7 @@ export default class FileLoader extends Component {
     const filesWithErrors = files.filter(file => file.hasError);
     const errorFileCount = filesWithErrors.length;
     if (errorFileCount) {
-      contentText = `${errorFileCount} corrupt files detected. Also replays shorter than 30 seconds are automatically filtered.`;
+      contentText = `${errorFileCount} corrupt files detected. Non-corrupt replays shorter than 30 seconds are automatically filtered.`;
     }
 
     return (

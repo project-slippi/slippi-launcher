@@ -11453,9 +11453,9 @@ slice-ansi@2.0.0:
     is-fullwidth-code-point "^2.0.0"
 
 slp-parser-js@^2.1.0:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/slp-parser-js/-/slp-parser-js-2.1.1.tgz#d8cfad6e193f162f9432588a8a2ba88fa6acf0ec"
-  integrity sha512-b+XlgKK1Dfyvivdfc3RsjtSFEsTvrgZG87Hubpxi41jXm27QC4XWsMG506tOIG6o98wAlNZ812HpI0lS+ltRew==
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/slp-parser-js/-/slp-parser-js-2.2.0.tgz#1fe6aa7a5334fe43deaf46b8ff4fd8de7c6e32dd"
+  integrity sha512-U+ibT9x+vc8xJ4X9h0bGjsDr+tSgdBbbQ55rRoxFtC0OIr6uaInAFcO+3964hcjyhw/nOfT4dX3MoPIfU+WheA==
   dependencies:
     iconv-lite "^0.4.24"
     lodash "^4.17.11"
