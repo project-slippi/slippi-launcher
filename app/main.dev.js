@@ -13,7 +13,7 @@ import { app, shell, BrowserWindow } from 'electron';
 import _ from 'lodash';
 import os from 'os';
 import { Storage, File } from '@google-cloud/storage';
-import { URL } from 'url';
+import url from 'url'
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import path from 'path';
@@ -75,8 +75,8 @@ const installExtensions = async () => {
   ).catch(console.log);
 };
 
-const waitForMainWindow = () => new Promise(async (resolve) => {
-  const wait = ms => new Promise((resolvew) => setTimeout(resolvew, ms)); // eslint-disable-line
+const waitForMainWindow = async () => {
+  const wait = ms => new Promise((resolve) => setTimeout(resolve, ms));
   let retryIdx = 0;
   while (!didFinishLoad && retryIdx < 200) {
     // It's okay to await in loop, we want things to be slow in this case
@@ -84,24 +84,28 @@ const waitForMainWindow = () => new Promise(async (resolve) => {
     retryIdx += 1;
   }
 
-  if (retryIdx === 100) {
-    log.warn("Timed out waiting for mainWindow to exist.");
-    return;
+  if (retryIdx >= 100) {
+    throw "Timed out waiting for mainWindow to exist."; // eslint-disable-line
   }
 
   log.info(`Found mainWindow after ${retryIdx} tries.`);
-  resolve();
-});
+};
 
-const handleSlippiURIAsync = async (url) => {
+const handleSlippiURIAsync = async (aURL) => {
   log.info("Handling URL...");
-  log.info(url);
+  log.info(aURL);
   
   // Specifying a base will provide sane defaults if the input is null or wrong
-  const myUrl = new URL(url, `${slippiProtocol}://null`);
+  const myUrl = new url.URL(aURL, `${slippiProtocol}://null`);
+  let protocol = myUrl.protocol;
   log.info(`protocol: ${myUrl.protocol}, hostname: ${myUrl.hostname}`);
-  if (myUrl.protocol !== `${slippiProtocol}:` && fs.existsSync(url)) {
-    waitForMainWindow().then(() => { mainWindow.webContents.send("play-local-replay", url); });  // eslint-disable-line
+  if (myUrl.protocol !== `${slippiProtocol}:`) {
+    if (fs.existsSync(aURL)) {
+      log.info(`File ${aURL} exists`);
+      protocol = "file:"
+    } else {
+      return;
+    }
   }
  
   // When handling a Slippi request, focus the window
@@ -112,8 +116,8 @@ const handleSlippiURIAsync = async (url) => {
     mainWindow.focus();
   }
 
-  switch (myUrl.hostname) {
-  case "play":
+  switch (protocol) {
+  case "slippi:":
     const tmpDir = os.tmpdir();
     const destination = path.join(tmpDir, 'replay.slp');
     const replayPath = myUrl.searchParams.get('path');
@@ -139,7 +143,15 @@ const handleSlippiURIAsync = async (url) => {
 
     // Wait until mainWindow exists so that we can send an IPC to play.
     // We are willing to wait for a few seconds before timing out
-    waitForMainWindow().then(() => { mainWindow.webContents.send("play-replay", url); });  // eslint-disable-line
+    await waitForMainWindow();
+    mainWindow.webContents.send("play-replay", path.join(tmpDir, 'replay.slp'));
+
+
+    break;
+  case "file:":
+    log.info(myUrl.pathname);
+    await waitForMainWindow();
+    mainWindow.webContents.send("play-replay", aURL);
 
     break;
   default:
@@ -147,8 +159,8 @@ const handleSlippiURIAsync = async (url) => {
   }
 };
 
-const handleSlippiURI = (url) => {
-  handleSlippiURIAsync(url).catch((err) => {
+const handleSlippiURI = (aURL) => {
+  handleSlippiURIAsync(aURL).catch((err) => {
     log.error("Handling URI encountered error");
     log.error(err);
   });
@@ -158,14 +170,14 @@ const handleSlippiURI = (url) => {
  * Add event listeners...
  */
 
-app.on('open-url', (event, url) => {
-  log.info(`Received mac open-url: ${url}`);
-  handleSlippiURI(url);
+app.on('open-aURL', (event, aURL) => {
+  log.info(`Received mac open-aURL: ${aURL}`);
+  handleSlippiURI(aURL);
 });
 
-app.on('open-file', (event, url) => {
-  log.info(`Received mac open-file: ${url}`);
-  handleSlippiURI(url);
+app.on('open-file', (event, aURL) => {
+  log.info(`Received mac open-file: ${aURL}`);
+  handleSlippiURI(aURL);
 });
 
 app.on('window-all-closed', () => {
@@ -191,8 +203,8 @@ app.on('second-instance', (event, argv) => {
   log.info(argv);
 
   // Could do a really shitty hack here because argv does contain the URI
-  const url = _.get(argv, 1) || "";
-  handleSlippiURI(url);
+  const aURL = _.get(argv, 1) || "";
+  handleSlippiURI(aURL);
 });
 
 // const isProtocolHandler = app.isDefaultProtocolClient(slippiProtocol);
@@ -253,15 +265,15 @@ app.on('ready', async () => {
   });
 
   // On navigation links to http urls, open in external browser
-  mainWindow.webContents.on('will-navigate', (event, url) => {
-    if (!url.startsWith("http")) {
-      // Do nothing if url doesn't start with http, without this
+  mainWindow.webContents.on('will-navigate', (event, aURL) => {
+    if (!aURL.startsWith("http")) {
+      // Do nothing if aURL doesn't start with http, without this
       // HMR was not working
       return;
     }
 
     event.preventDefault();
-    shell.openExternal(url);
+    shell.openExternal(aURL);
   });
 
   mainWindow.on('closed', () => {

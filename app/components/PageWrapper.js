@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
-import os from 'os';
-import path from 'path';
+import log from 'electron-log';
 import PropTypes from 'prop-types';
 import { ipcRenderer } from 'electron';
 import { bindActionCreators } from 'redux';
@@ -29,13 +28,11 @@ class PageWrapper extends Component {
   componentDidMount() {
     ipcRenderer.on('update-downloaded', this.onAppUpgrade);
     ipcRenderer.on('play-replay', this.onPlayReplay);
-    ipcRenderer.on('play-local-replay', this.onPlayLocalReplay);
   }
 
   componentWillUnmount() {
     ipcRenderer.removeListener('update-downloaded', this.onAppUpgrade);
     ipcRenderer.removeListener('play-replay', this.onPlayReplay);
-    ipcRenderer.removeListener('play-local-replay', this.onPlayLocalReplay);
   }
 
   onAppUpgrade = () => {
@@ -44,25 +41,13 @@ class PageWrapper extends Component {
     this.props.appUpgradeDownloaded();
   }
 
-  playReplay = (slppath) => {
+  onPlayReplay = (event, slppath) => {
+    log.info(`playing file ${slppath}`);
     this.props.gameProfileLoad(slppath);
     this.props.history.push('/game');
     this.props.playFile({
       fullPath: slppath,
     });
-  }
-
-  onPlayReplay = () => {
-    // If no game is passed in, we should load the default replay file
-    const tmpDir = os.tmpdir();
-    const defaultReplayPath = path.join(tmpDir, 'replay.slp');
-
-    // Load default replay file by passing null
-    this.playReplay(defaultReplayPath);
-  }
-
-  onPlayLocalReplay = (event, slppath) => {
-    this.playReplay(slppath);
   }
 
   render() {
