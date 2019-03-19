@@ -100,8 +100,6 @@ const handleSlippiURIAsync = async (url) => {
 
     log.info("calling play-local-replay");
     mainWindow.webContents.send("play-local-replay", url);
-  } else {
-    return;
   }
  
   // When handling a Slippi request, focus the window
