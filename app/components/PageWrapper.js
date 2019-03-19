@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { ipcRenderer } from 'electron';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import log from 'electron-log';
 
 import GlobalAlert from './GlobalAlert';
 import * as NotifActions from '../actions/notifs';
@@ -29,11 +30,13 @@ class PageWrapper extends Component {
   componentDidMount() {
     ipcRenderer.on('update-downloaded', this.onAppUpgrade);
     ipcRenderer.on('play-replay', this.onPlayReplay);
+    ipcRenderer.on('play-local-replay', (event, slppath) => { this.onPlayLocalReplay(slppath); });
   }
 
   componentWillUnmount() {
     ipcRenderer.removeListener('update-downloaded', this.onAppUpgrade);
     ipcRenderer.removeListener('play-replay', this.onPlayReplay);
+    ipcRenderer.removeListener('play-local-replay', (event, slppath) => { this.onPlayLocalReplay(slppath); });
   }
 
   onAppUpgrade = () => {
@@ -52,6 +55,16 @@ class PageWrapper extends Component {
     this.props.history.push('/game');
     this.props.playFile({
       fullPath: defaultReplayPath,
+    });
+  }
+
+  onPlayLocalReplay = (slppath) => {
+    log.info("Made it here with path:");
+    log.info(slppath);
+    this.props.gameProfileLoad(slppath);
+    this.props.history.push('/game');
+    this.props.playFile({
+      fullPath: slppath,
     });
   }
 

@@ -68,6 +68,12 @@
       ]
     },
     "mac": {
+      "fileAssociations": {
+        "ext": "slp",
+        "name": "slp",
+        "description": "Slippi File Format",
+        "icon": "./resources/icon.icns"
+      },
       "category": "your.app.category.type",
       "target": [
         "zip",
@@ -91,6 +97,12 @@
       "include": "./build/installer.nsh"
     },
     "linux": {
+      "fileAssociations": {
+        "ext": "slp",
+        "name": "slp",
+        "description": "Slippi File Format",
+        "icon": "./resources/icon.ico"
+      },
       "target": [
         "deb",
         "AppImage"

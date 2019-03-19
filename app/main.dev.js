@@ -83,7 +83,23 @@ const handleSlippiURIAsync = async (url) => {
   const myUrl = new URL(url, `${slippiProtocol}://null`);
   log.info(`protocol: ${myUrl.protocol}, hostname: ${myUrl.hostname}`);
   if (myUrl.protocol !== `${slippiProtocol}:`) {
-    return;
+    const wait = ms => new Promise((resolve) => setTimeout(resolve, ms));
+    let retryIdx = 0;
+    while (!didFinishLoad && retryIdx < 200) {
+      // It's okay to await in loop, we want things to be slow in this case
+      await wait(100); // eslint-disable-line
+      retryIdx += 1;
+    }
+
+    if (retryIdx === 100) {
+      log.warn("Timed out waiting for mainWindow to exist.");
+      return;
+    }
+
+    log.info(`Found mainWindow after ${retryIdx} tries.`);
+
+    log.info("calling play-local-replay");
+    mainWindow.webContents.send("play-local-replay", url);
   }
  
   // When handling a Slippi request, focus the window
