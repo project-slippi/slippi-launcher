@@ -30,7 +30,7 @@ export default class ConsoleConnection {
     this.connectionRetryState = this.getDefaultRetryState();
 
     // A connection can mirror its received gameplay
-    this.dolphinManager = new DolphinManager(`mirror-${this.id}`);
+    this.dolphinManager = new DolphinManager(`mirror-${this.id}`, { mode: 'mirror' });
 
     // Initialize SlpFileWriter for writting files
     this.slpFileWriter = new SlpFileWriter(

@@ -211,7 +211,7 @@ app.on('ready', async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
+    width: 1100,
     height: 728,
     icon: path.join(__dirname, '../resources/icons/64x64.png'),
   });

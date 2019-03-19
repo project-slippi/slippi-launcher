@@ -10,12 +10,12 @@ import { getDolphinPath } from '../utils/settings';
 const electronSettings = require('electron-settings');
 
 export default class DolphinManager {
-  constructor(key) {
+  constructor(key, settings = {}) {
     // The key of this dolphin manager, doesn't really do anything
     // atm other than get added to the commFileName
     this.key = key;
     this.isRunning = false;
-    this.settings = {};
+    this.settings = settings;
 
     const commFilePaths = this.genCommFilePaths();
 
@@ -35,7 +35,10 @@ export default class DolphinManager {
   }
 
   updateSettings(settings) {
-    this.settings = settings;
+    this.settings = {
+      ...this.settings,
+      ...settings,
+    };
   }
 
   removeCommFiles() {
@@ -54,6 +57,7 @@ export default class DolphinManager {
     const uniqueId = crypto.randomBytes(3 * 4).toString('hex');
 
     const jsonString = JSON.stringify({
+      mode: this.settings.mode || "normal",
       replay: filePath,
       isRealTimeMode: this.settings.isRealTimeMode || false,
       commandId: uniqueId, // Indicates to Dolphin to play new replay
