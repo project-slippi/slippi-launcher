@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import { ipcRenderer } from 'electron';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import log from 'electron-log';
 
 import GlobalAlert from './GlobalAlert';
 import * as NotifActions from '../actions/notifs';
@@ -30,13 +29,13 @@ class PageWrapper extends Component {
   componentDidMount() {
     ipcRenderer.on('update-downloaded', this.onAppUpgrade);
     ipcRenderer.on('play-replay', this.onPlayReplay);
-    ipcRenderer.on('play-local-replay', (event, slppath) => { this.onPlayLocalReplay(slppath); });
+    ipcRenderer.on('play-local-replay', this.onPlayLocalReplay);
   }
 
   componentWillUnmount() {
     ipcRenderer.removeListener('update-downloaded', this.onAppUpgrade);
     ipcRenderer.removeListener('play-replay', this.onPlayReplay);
-    ipcRenderer.removeListener('play-local-replay', (event, slppath) => { this.onPlayLocalReplay(slppath); });
+    ipcRenderer.removeListener('play-local-replay', this.onPlayLocalReplay);
   }
 
   onAppUpgrade = () => {
@@ -45,27 +44,25 @@ class PageWrapper extends Component {
     this.props.appUpgradeDownloaded();
   }
 
+  playReplay = (slppath) => {
+    this.props.gameProfileLoad(slppath);
+    this.props.history.push('/game');
+    this.props.playFile({
+      fullPath: slppath,
+    });
+  }
+
   onPlayReplay = () => {
     // If no game is passed in, we should load the default replay file
     const tmpDir = os.tmpdir();
     const defaultReplayPath = path.join(tmpDir, 'replay.slp');
 
     // Load default replay file by passing null
-    this.props.gameProfileLoad(defaultReplayPath);
-    this.props.history.push('/game');
-    this.props.playFile({
-      fullPath: defaultReplayPath,
-    });
+    this.playReplay(defaultReplayPath);
   }
 
-  onPlayLocalReplay = (slppath) => {
-    log.info("Made it here with path:");
-    log.info(slppath);
-    this.props.gameProfileLoad(slppath);
-    this.props.history.push('/game');
-    this.props.playFile({
-      fullPath: slppath,
-    });
+  onPlayLocalReplay = (event, slppath) => {
+    this.playReplay(slppath);
   }
 
   render() {

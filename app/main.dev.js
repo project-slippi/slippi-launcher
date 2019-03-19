@@ -75,6 +75,24 @@ const installExtensions = async () => {
   ).catch(console.log);
 };
 
+const waitForMainWindow = () => new Promise(async (resolve) => {
+  const wait = ms => new Promise((resolvew) => setTimeout(resolvew, ms)); // eslint-disable-line
+  let retryIdx = 0;
+  while (!didFinishLoad && retryIdx < 200) {
+    // It's okay to await in loop, we want things to be slow in this case
+    await wait(100); // eslint-disable-line
+    retryIdx += 1;
+  }
+
+  if (retryIdx === 100) {
+    log.warn("Timed out waiting for mainWindow to exist.");
+    return;
+  }
+
+  log.info(`Found mainWindow after ${retryIdx} tries.`);
+  resolve();
+});
+
 const handleSlippiURIAsync = async (url) => {
   log.info("Handling URL...");
   log.info(url);
@@ -83,23 +101,7 @@ const handleSlippiURIAsync = async (url) => {
   const myUrl = new URL(url, `${slippiProtocol}://null`);
   log.info(`protocol: ${myUrl.protocol}, hostname: ${myUrl.hostname}`);
   if (myUrl.protocol !== `${slippiProtocol}:` && fs.existsSync(url)) {
-    const wait = ms => new Promise((resolve) => setTimeout(resolve, ms));
-    let retryIdx = 0;
-    while (!didFinishLoad && retryIdx < 200) {
-      // It's okay to await in loop, we want things to be slow in this case
-      await wait(100); // eslint-disable-line
-      retryIdx += 1;
-    }
-
-    if (retryIdx === 100) {
-      log.warn("Timed out waiting for mainWindow to exist.");
-      return;
-    }
-
-    log.info(`Found mainWindow after ${retryIdx} tries.`);
-
-    log.info("calling play-local-replay");
-    mainWindow.webContents.send("play-local-replay", url);
+    waitForMainWindow().then(() => { mainWindow.webContents.send("play-local-replay", url); });  // eslint-disable-line
   }
  
   // When handling a Slippi request, focus the window
@@ -137,21 +139,7 @@ const handleSlippiURIAsync = async (url) => {
 
     // Wait until mainWindow exists so that we can send an IPC to play.
     // We are willing to wait for a few seconds before timing out
-    const wait = ms => new Promise((resolve) => setTimeout(resolve, ms));
-    let retryIdx = 0;
-    while (!didFinishLoad && retryIdx < 200) {
-      // It's okay to await in loop, we want things to be slow in this case
-      await wait(100); // eslint-disable-line
-      retryIdx += 1;
-    }
-
-    if (retryIdx === 100) {
-      log.warn("Timed out waiting for mainWindow to exist.");
-      return;
-    }
-
-    log.info(`Found mainWindow after ${retryIdx} tries.`);
-    mainWindow.webContents.send("play-replay");
+    waitForMainWindow().then(() => { mainWindow.webContents.send("play-replay", url); });  // eslint-disable-line
 
     break;
   default:
@@ -172,6 +160,11 @@ const handleSlippiURI = (url) => {
 
 app.on('open-url', (event, url) => {
   log.info(`Received mac open-url: ${url}`);
+  handleSlippiURI(url);
+});
+
+app.on('open-file', (event, url) => {
+  log.info(`Received mac open-file: ${url}`);
   handleSlippiURI(url);
 });
 
