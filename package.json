@@ -67,11 +67,15 @@
         }
       ]
     },
-    "mac": {
-      "fileAssociations": {
+    "fileAssociations": {
         "ext": "slp",
         "name": "slp",
         "description": "Slippi File Format",
+        "icon": "./resources/icon.ico"
+    },
+    "mac": {
+      "fileAssociations": {
+        "ext": "slp",
         "icon": "./resources/icon.icns"
       },
       "category": "your.app.category.type",
@@ -81,12 +85,6 @@
       ]
     },
     "win": {
-      "fileAssociations": {
-      	"ext": "slp",
-      	"name": "slp",
-      	"description": "Slippi File Format",
-      	"icon": "./resources/icon.ico"
-      },
       "target": [
         "nsis"
       ],
@@ -97,12 +95,6 @@
       "include": "./build/installer.nsh"
     },
     "linux": {
-      "fileAssociations": {
-        "ext": "slp",
-        "name": "slp",
-        "description": "Slippi File Format",
-        "icon": "./resources/icon.ico"
-      },
       "target": [
         "deb",
         "AppImage"
