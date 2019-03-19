@@ -82,7 +82,7 @@ const handleSlippiURIAsync = async (url) => {
   // Specifying a base will provide sane defaults if the input is null or wrong
   const myUrl = new URL(url, `${slippiProtocol}://null`);
   log.info(`protocol: ${myUrl.protocol}, hostname: ${myUrl.hostname}`);
-  if (myUrl.protocol !== `${slippiProtocol}:`) {
+  if (myUrl.protocol !== `${slippiProtocol}:` && fs.existsSync(url)) {
     const wait = ms => new Promise((resolve) => setTimeout(resolve, ms));
     let retryIdx = 0;
     while (!didFinishLoad && retryIdx < 200) {
@@ -100,6 +100,8 @@ const handleSlippiURIAsync = async (url) => {
 
     log.info("calling play-local-replay");
     mainWindow.webContents.send("play-local-replay", url);
+  } else {
+    return;
   }
  
   // When handling a Slippi request, focus the window
