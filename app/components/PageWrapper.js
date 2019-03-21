@@ -41,12 +41,12 @@ class PageWrapper extends Component {
     this.props.appUpgradeDownloaded();
   }
 
-  onPlayReplay = (event, slppath) => {
-    log.info(`playing file ${slppath}`);
-    this.props.gameProfileLoad(slppath);
+  onPlayReplay = (event, slpPath) => {
+    log.info(`playing file ${slpPath}`);
+    this.props.gameProfileLoad(slpPath);
     this.props.history.push('/game');
     this.props.playFile({
-      fullPath: slppath,
+      fullPath: slpPath,
     });
   }
 

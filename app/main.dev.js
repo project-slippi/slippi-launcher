@@ -91,17 +91,18 @@ const waitForMainWindow = async () => {
   log.info(`Found mainWindow after ${retryIdx} tries.`);
 };
 
-const handleSlippiURIAsync = async (aURL) => {
+const handleSlippiURIAsync = async (aUrl) => {
   log.info("Handling URL...");
-  log.info(aURL);
+  log.info(aUrl);
   
+  // Check if the input is 
   // Specifying a base will provide sane defaults if the input is null or wrong
-  const myUrl = new url.URL(aURL, `${slippiProtocol}://null`);
+  const myUrl = new url.URL(aUrl, `null://null`);
   let protocol = myUrl.protocol;
   log.info(`protocol: ${myUrl.protocol}, hostname: ${myUrl.hostname}`);
   if (myUrl.protocol !== `${slippiProtocol}:`) {
-    if (fs.existsSync(aURL)) {
-      log.info(`File ${aURL} exists`);
+    if (fs.existsSync(aUrl)) {
+      log.info(`File ${aUrl} exists`);
       protocol = "file:"
     } else {
       return;
@@ -151,7 +152,7 @@ const handleSlippiURIAsync = async (aURL) => {
   case "file:":
     log.info(myUrl.pathname);
     await waitForMainWindow();
-    mainWindow.webContents.send("play-replay", aURL);
+    mainWindow.webContents.send("play-replay", aUrl);
 
     break;
   default:
@@ -159,8 +160,8 @@ const handleSlippiURIAsync = async (aURL) => {
   }
 };
 
-const handleSlippiURI = (aURL) => {
-  handleSlippiURIAsync(aURL).catch((err) => {
+const handleSlippiURI = (aUrl) => {
+  handleSlippiURIAsync(aUrl).catch((err) => {
     log.error("Handling URI encountered error");
     log.error(err);
   });
@@ -170,14 +171,14 @@ const handleSlippiURI = (aURL) => {
  * Add event listeners...
  */
 
-app.on('open-aURL', (event, aURL) => {
-  log.info(`Received mac open-aURL: ${aURL}`);
-  handleSlippiURI(aURL);
+app.on('open-url', (event, aUrl) => {
+  log.info(`Received mac open-url: ${aUrl}`);
+  handleSlippiURI(aUrl);
 });
 
-app.on('open-file', (event, aURL) => {
-  log.info(`Received mac open-file: ${aURL}`);
-  handleSlippiURI(aURL);
+app.on('open-file', (event, aUrl) => {
+  log.info(`Received mac open-file: ${aUrl}`);
+  handleSlippiURI(aUrl);
 });
 
 app.on('window-all-closed', () => {
@@ -203,8 +204,8 @@ app.on('second-instance', (event, argv) => {
   log.info(argv);
 
   // Could do a really shitty hack here because argv does contain the URI
-  const aURL = _.get(argv, 1) || "";
-  handleSlippiURI(aURL);
+  const aUrl = _.get(argv, 1) || "";
+  handleSlippiURI(aUrl);
 });
 
 // const isProtocolHandler = app.isDefaultProtocolClient(slippiProtocol);
@@ -265,15 +266,15 @@ app.on('ready', async () => {
   });
 
   // On navigation links to http urls, open in external browser
-  mainWindow.webContents.on('will-navigate', (event, aURL) => {
-    if (!aURL.startsWith("http")) {
-      // Do nothing if aURL doesn't start with http, without this
+  mainWindow.webContents.on('will-navigate', (event, aUrl) => {
+    if (!aUrl.startsWith("http")) {
+      // Do nothing if aUrl doesn't start with http, without this
       // HMR was not working
       return;
     }
 
     event.preventDefault();
-    shell.openExternal(aURL);
+    shell.openExternal(aUrl);
   });
 
   mainWindow.on('closed', () => {
