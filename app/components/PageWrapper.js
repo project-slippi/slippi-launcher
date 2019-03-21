@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
-import os from 'os';
-import path from 'path';
+import log from 'electron-log';
 import PropTypes from 'prop-types';
 import { ipcRenderer } from 'electron';
 import { bindActionCreators } from 'redux';
@@ -42,16 +41,12 @@ class PageWrapper extends Component {
     this.props.appUpgradeDownloaded();
   }
 
-  onPlayReplay = () => {
-    // If no game is passed in, we should load the default replay file
-    const tmpDir = os.tmpdir();
-    const defaultReplayPath = path.join(tmpDir, 'replay.slp');
-
-    // Load default replay file by passing null
-    this.props.gameProfileLoad(defaultReplayPath);
+  onPlayReplay = (event, slpPath) => {
+    log.info(`playing file ${slpPath}`);
+    this.props.gameProfileLoad(slpPath);
     this.props.history.push('/game');
     this.props.playFile({
-      fullPath: defaultReplayPath,
+      fullPath: slpPath,
     });
   }
 
