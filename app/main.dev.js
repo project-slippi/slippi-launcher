@@ -59,7 +59,9 @@ if (process.env.NODE_ENV === 'production' && platform === "win32") {
     log.info("Moving dolphin path...");
     const userDataPath = app.getPath("userData")
     const targetPath = path.join(userDataPath, 'dolphin');
-    fs.moveSync(originalDolphinPath, targetPath, true);
+
+    // TODO: Don't overwrite User folder if it exists
+    fs.moveSync(originalDolphinPath, targetPath, { overwrite: true });
   } else {
     log.info("Path not found, we're good?");
   }
