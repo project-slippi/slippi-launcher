@@ -13,7 +13,7 @@ export default class FolderBrowser extends Component {
     changeFolderSelection: PropTypes.func.isRequired,
   };
 
-  selectFolder = folderFullPath => {
+  selectFolder = folderFullPath => () => {
     this.props.changeFolderSelection(folderFullPath);
   };
 
@@ -47,7 +47,7 @@ export default class FolderBrowser extends Component {
         key="selector"
         role="presentation"
         className={selectorClasses}
-        onClick={_.partial(this.selectFolder, folderDetails.fullPath)}
+        onClick={this.selectFolder(folderDetails.fullPath)}
       />,
       <List.Item
         className={`${styles['folder-item']} no-padding`}

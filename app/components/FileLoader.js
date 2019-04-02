@@ -10,6 +10,7 @@ import {
   Button,
   Segment,
   Message,
+  Loader,
 } from 'semantic-ui-react';
 import styles from './FileLoader.scss';
 import FileRow from './FileRow';
@@ -146,6 +147,10 @@ export default class FileLoader extends Component {
 
   renderFilteredFilesNotif(processedFiles) {
     const store = this.props.store || {};
+    if (store.isLoading) {
+      return null;
+    }
+
     const files = store.files || [];
     const filteredFileCount = files.length - processedFiles.length;
 
@@ -230,7 +235,29 @@ export default class FileLoader extends Component {
     );
   }
 
+  renderLoadingState() {
+    const store = this.props.store || {};
+    
+    return (
+      <Loader
+        className={styles['loader']}
+        inverted={true}
+        active={store.isLoading}
+        indeterminate={true}
+        inline="centered"
+        size="big"
+      >
+        <span>Loading Files...</span>
+      </Loader>
+    )
+  }
+
   renderFileSelection(files) {
+    const store = this.props.store || {};
+    if (store.isLoading) {
+      return this.renderLoadingState();
+    }
+
     // If we have no files to display, render an empty state
     if (!files.length) {
       return this.renderEmptyLoader();
