@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import SlippiGame from 'slp-parser-js';
 import {
-  LOAD_ROOT_FOLDER, CHANGE_FOLDER_SELECTION, STORE_SCROLL_POSITION,
+  LOAD_ROOT_FOLDER, CHANGE_FOLDER_SELECTION, LOAD_FILES_IN_FOLDER, STORE_SCROLL_POSITION,
 } from '../actions/fileLoader';
 import DolphinManager from '../domain/DolphinManager';
 
@@ -14,6 +14,7 @@ const defaultState = {
   dolphinManager: new DolphinManager('vod'),
   rootFolderName: "",
   selectedFolderFullPath: "",
+  isLoading: false,
   folders: {},
   files: [],
   folderFound: false,
@@ -30,6 +31,8 @@ export default function fileLoader(state = defaultState, action) {
     return loadRootFolder(state, action);
   case CHANGE_FOLDER_SELECTION:
     return changeFolderSelection(state, action);
+  case LOAD_FILES_IN_FOLDER:
+    return loadFilesInFolder(state, action);
   case STORE_SCROLL_POSITION:
     return storeScrollPosition(state, action);
   default:
@@ -104,6 +107,16 @@ function loadRootFolder(state) {
 function changeFolderSelection(state, action) {
   const folderPath = action.payload.folderPath;
 
+  return {
+    ...state,
+    selectedFolderFullPath: folderPath,
+    isLoading: true,
+  };
+}
+
+function loadFilesInFolder(state) {
+  const folderPath = state.selectedFolderFullPath;
+
   let files = [];
   try {
     files = fs.readdirSync(folderPath) || [];
@@ -147,10 +160,10 @@ function changeFolderSelection(state, action) {
       hasError: hasError,
     };
   });
-
+  
   return {
     ...state,
-    selectedFolderFullPath: folderPath,
+    isLoading: false,
     files: files,
   };
 }

@@ -1028,6 +1028,11 @@
     exenv "^1.2.2"
     prop-types "^15.6.2"
 
+"@shelacek/ubjson@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@shelacek/ubjson/-/ubjson-1.0.1.tgz#009d39ea22fa80e036f97e936650951a8225fafe"
+  integrity sha512-0vlllP3M7fUElSd4239wmnv6SqDeymJgjRkb/iusOyDN4I0xjc8hrX4Zk/KYoAesgSdsnnSwhOU7g+IewmdaAw==
+
 "@sinonjs/commons@^1.0.2", "@sinonjs/commons@^1.2.0":
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/@sinonjs/commons/-/commons-1.3.0.tgz#50a2754016b6f30a994ceda6d9a0a8c36adda849"
@@ -11453,10 +11458,11 @@ slice-ansi@2.0.0:
     is-fullwidth-code-point "^2.0.0"
 
 slp-parser-js@^2.1.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/slp-parser-js/-/slp-parser-js-2.2.0.tgz#1fe6aa7a5334fe43deaf46b8ff4fd8de7c6e32dd"
-  integrity sha512-U+ibT9x+vc8xJ4X9h0bGjsDr+tSgdBbbQ55rRoxFtC0OIr6uaInAFcO+3964hcjyhw/nOfT4dX3MoPIfU+WheA==
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/slp-parser-js/-/slp-parser-js-2.3.1.tgz#c1f4a683f7218f7440a1314446624a9631434e35"
+  integrity sha512-8ssn694cbmzM6k8F4eTpqi6cgqJHMKB2JsBWqvj+1Ii7v0NmVKidHfobgG5hQBJvWGC4G1oHez2MQJCSy4cdAg==
   dependencies:
+    "@shelacek/ubjson" "^1.0.1"
     iconv-lite "^0.4.24"
     lodash "^4.17.11"
 

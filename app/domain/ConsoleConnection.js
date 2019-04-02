@@ -124,9 +124,11 @@ export default class ConsoleConnection {
       this.connectionRetryState = this.getDefaultRetryState();
       this.connectionStatus = ConnectionStatus.CONNECTED;
       this.forceConsoleUiUpdate();
+
+      // TODO: Send message to initiate transfers
     });
 
-    client.setTimeout(15000);
+    client.setTimeout(20000);
     
     client.on('data', (data) => {
       const result = this.slpFileWriter.handleData(data);
