@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import SlippiGame from 'slp-parser-js';
 import {
   LOAD_ROOT_FOLDER, CHANGE_FOLDER_SELECTION, LOAD_FILES_IN_FOLDER, STORE_SCROLL_POSITION,
 } from '../actions/fileLoader';
@@ -114,57 +113,11 @@ function changeFolderSelection(state, action) {
   };
 }
 
-function loadFilesInFolder(state) {
-  const folderPath = state.selectedFolderFullPath;
-
-  let files = [];
-  try {
-    files = fs.readdirSync(folderPath) || [];
-  } catch (err) {
-    // do nothing
-  }
-
-  // Filter for all .slp files
-  files = files.filter(file => (
-    path.extname(file) === ".slp"
-  ));
-
-  // Compute header information for display
-  files = files.map((file) => {
-    const fullPath = path.join(folderPath, file);
-    let game = null;
-    let hasError = false;
-
-    // Pre-load settings here
-    try {
-      game = new SlippiGame(fullPath);
-
-      // Preload settings
-      const settings = game.getSettings();
-      if (_.isEmpty(settings.players)) {
-        throw new Error("Game settings could not be properly loaded.");
-      }
-
-      // Preload metadata
-      game.getMetadata();
-    } catch (err) {
-      console.log(`Failed to parse file: ${fullPath}`);
-      console.log(err);
-      hasError = true;
-    }
-
-    return {
-      fullPath: fullPath,
-      fileName: file,
-      game: game,
-      hasError: hasError,
-    };
-  });
-  
+function loadFilesInFolder(state, action) {
   return {
     ...state,
     isLoading: false,
-    files: files,
+    files: action.payload.files,
   };
 }
 
