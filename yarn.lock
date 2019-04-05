@@ -11457,10 +11457,10 @@ slice-ansi@2.0.0:
     astral-regex "^1.0.0"
     is-fullwidth-code-point "^2.0.0"
 
-slp-parser-js@^2.1.0:
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/slp-parser-js/-/slp-parser-js-2.3.1.tgz#c1f4a683f7218f7440a1314446624a9631434e35"
-  integrity sha512-8ssn694cbmzM6k8F4eTpqi6cgqJHMKB2JsBWqvj+1Ii7v0NmVKidHfobgG5hQBJvWGC4G1oHez2MQJCSy4cdAg==
+slp-parser-js@^2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/slp-parser-js/-/slp-parser-js-2.3.2.tgz#8f6ef2f377918ea9df42cd9ed5ab1580f19d3a8d"
+  integrity sha512-uX0xHWj7hrh2jqKZN+1LLV8BiXUu/uSDKTa2NNBIZMtqs7ZrYNzcuw6VO0Zx0ywk9TuiQOzhuj4e14T7FdPHfw==
   dependencies:
     "@shelacek/ubjson" "^1.0.1"
     iconv-lite "^0.4.24"

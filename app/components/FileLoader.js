@@ -249,7 +249,7 @@ export default class FileLoader extends Component {
       >
         <span>Loading Files...</span>
       </Loader>
-    )
+    );
   }
 
   renderFileSelection(files) {
