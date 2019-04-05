@@ -11,6 +11,7 @@ import {
   Button,
   Modal,
   Message,
+  Loader,
 } from 'semantic-ui-react';
 
 import PageHeader from '../common/PageHeader';
@@ -62,6 +63,11 @@ export default class GameProfile extends Component {
   };
 
   renderContent() {
+    const isLoading = _.get(this.props.store, 'isLoading') || false;
+    if (isLoading) {
+      return this.renderLoading();
+    }
+
     const gameSettings = _.get(this.props.store, ['game', 'settings']) || {};
     const players = gameSettings.players || [];
     if (players.length !== 2) {
@@ -69,6 +75,23 @@ export default class GameProfile extends Component {
     }
 
     return this.renderStats();
+  }
+
+  renderLoading() {
+    const store = this.props.store || {};
+    
+    return (
+      <Loader
+        className={styles['loader']}
+        inverted={true}
+        active={store.isLoading}
+        indeterminate={true}
+        inline="centered"
+        size="big"
+      >
+        <span>Loading Game...</span>
+      </Loader>
+    );
   }
 
   renderEmpty() {
