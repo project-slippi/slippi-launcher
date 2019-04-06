@@ -45,7 +45,12 @@ export default class FileLoader extends Component {
     const yPos = _.get(this.props.store, ['scrollPosition', 'y']) || 0;
     window.scrollTo(xPos, yPos);
 
-    this.props.loadRootFolder();
+    if (this.props.history.action === "PUSH") {
+      // I don't really like this but when returning back to the file loader, the action is "POP"
+      // instead of "PUSH", and we don't want to trigger the loader and ruin our ability to restore
+      // scroll position when returning to fileLoader from a game
+      this.props.loadRootFolder();
+    }
   }
 
   componentWillUnmount() {
