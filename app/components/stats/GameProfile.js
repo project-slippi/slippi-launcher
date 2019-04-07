@@ -192,6 +192,14 @@ export default class GameProfile extends Component {
       },
     ];
 
+    const consoleNick = _.get(this.props.store, ['game', 'metadata', 'consoleNick']);
+    if (consoleNick) {
+      metadata.push({
+        label: 'Console Name',
+        content: consoleNick,
+      })
+    }
+
     const metadataElements = metadata.map(details => (
       <div key={details.label}>
         <span className={styles['label']}>{details.label}</span>
