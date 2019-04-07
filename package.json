@@ -1,8 +1,8 @@
 {
-  "name": "slippi-launcher",
-  "productName": "Slippi Launcher",
-  "version": "1.4.1",
-  "description": "Slippi Launcher program for browsing and playing replays.",
+  "name": "slippi-desktop-app",
+  "productName": "Slippi Desktop App",
+  "version": "1.4.2-dev",
+  "description": "Slippi Desktop App for browsing and playing replays.",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
     "build-dll": "cross-env NODE_ENV=development webpack --config ./configs/webpack.config.renderer.dev.dll.babel.js --colors",
@@ -35,8 +35,8 @@
   },
   "main": "./app/main.prod.js",
   "build": {
-    "productName": "Slippi Launcher",
-    "appId": "com.github.projectslippi.slippidesktopapp",
+    "productName": "Slippi Desktop App",
+    "appId": "org.slippi.desktop-app",
     "asarUnpack": [
       "**/dolphin/**/*",
       "**/images/**/*",
@@ -92,6 +92,7 @@
       "requestedExecutionLevel": "highestAvailable"
     },
     "nsis": {
+      "artifactName": "slippi-desktop-setup-${version}.${ext}",
       "perMachine": true,
       "include": "./build/installer.nsh"
     },
