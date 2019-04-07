@@ -35,8 +35,8 @@
   },
   "main": "./app/main.prod.js",
   "build": {
-    "productName": "Slippi Desktop App",
-    "appId": "org.slippi.desktop-app",
+    "productName": "Slippi Launcher",
+    "appId": "com.github.projectslippi.slippidesktopapp",
     "asarUnpack": [
       "**/dolphin/**/*",
       "**/images/**/*",
