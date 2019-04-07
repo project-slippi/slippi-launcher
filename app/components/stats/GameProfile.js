@@ -192,6 +192,16 @@ export default class GameProfile extends Component {
       },
     ];
 
+    if (platform === "nintendont") {
+      const nick = 
+        _.get(this.props.store, ['game', 'metadata', 'consoleNick']);
+
+      metadata.push({
+        label: 'Console Name',
+        content: nick,
+      })
+    }
+
     const metadataElements = metadata.map(details => (
       <div key={details.label}>
         <span className={styles['label']}>{details.label}</span>
