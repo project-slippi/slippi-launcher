@@ -192,13 +192,11 @@ export default class GameProfile extends Component {
       },
     ];
 
-    if (platform === "nintendont") {
-      const nick = 
-        _.get(this.props.store, ['game', 'metadata', 'consoleNick']);
-
+    const consoleNick = _.get(this.props.store, ['game', 'metadata', 'consoleNick']);
+    if (consoleNick) {
       metadata.push({
         label: 'Console Name',
-        content: nick,
+        content: consoleNick,
       })
     }
 
