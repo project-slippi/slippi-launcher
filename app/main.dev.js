@@ -10,6 +10,7 @@
  *
  */
 import { app, shell, BrowserWindow } from 'electron';
+import electronSettings from 'electron-settings';
 import _ from 'lodash';
 import os from 'os';
 import { Storage, File } from '@google-cloud/storage';
@@ -44,29 +45,27 @@ if (
   require('electron-debug')();
 }
 
-// Reverted the idea of changing the App name because it was too much of a pain in the ass
-// Keep this here in case we ever feel like trying it again
-// // Copy settings from when the app was called Slippi Launcher
-// const appDataPath = app.getPath("appData");
-// const prevVersion = electronSettings.get('previousVersion');
-// if (!prevVersion) {
-//   // On the very first install of the "Slippi Desktop App", let's transfer over settings from
-//   // "Slippi Launcher"
-//   const oldAppDataPath = path.join(appDataPath, "Slippi Launcher");
-//   const newAppDataPath = path.join(appDataPath, "Slippi Desktop App");
+// Copy settings from when the app was called Slippi Launcher
+const appDataPath = app.getPath("appData");
+const prevVersion = electronSettings.get('previousVersion');
+if (!prevVersion) {
+  // On the very first install of the "Slippi Desktop App", let's transfer over settings from
+  // "Slippi Launcher"
+  const oldAppDataPath = path.join(appDataPath, "Slippi Launcher");
+  const newAppDataPath = path.join(appDataPath, "Slippi Desktop App");
   
-//   log.info("Transferring settings from previous Slippi Launcher install...");
+  log.info("Transferring settings from previous Slippi Launcher install...");
 
-//   const oldSettingPath = path.join(oldAppDataPath, "Settings");
-//   const newSettingsPath = path.join(newAppDataPath, "Settings");
-//   fs.copyFileSync(oldSettingPath, newSettingsPath);
+  const oldSettingPath = path.join(oldAppDataPath, "Settings");
+  const newSettingsPath = path.join(newAppDataPath, "Settings");
+  fs.copyFileSync(oldSettingPath, newSettingsPath);
 
-//   const oldDolphinUserPath = path.join(oldAppDataPath, "dolphin", "User");
-//   const newDolphinUserPath = path.join(newAppDataPath, "dolphin", "User");
-//   fs.copySync(oldDolphinUserPath, newDolphinUserPath, { overwrite: true });
+  const oldDolphinUserPath = path.join(oldAppDataPath, "dolphin", "User");
+  const newDolphinUserPath = path.join(newAppDataPath, "dolphin", "User");
+  fs.copySync(oldDolphinUserPath, newDolphinUserPath, { overwrite: true });
 
-//   log.info("Done transferring settings.");
-// }
+  log.info("Done transferring settings.");
+}
 
 const platform = process.platform;
 if (process.env.NODE_ENV === 'production' && (platform === "win32" || platform === "darwin")) {
