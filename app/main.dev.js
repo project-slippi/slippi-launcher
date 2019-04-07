@@ -10,6 +10,7 @@
  *
  */
 import { app, shell, BrowserWindow } from 'electron';
+import electronSettings from 'electron-settings';
 import _ from 'lodash';
 import os from 'os';
 import { Storage, File } from '@google-cloud/storage';
@@ -44,8 +45,30 @@ if (
   require('electron-debug')();
 }
 
+// Copy settings from when the app was called Slippi Launcher
+const appDataPath = app.getPath("appData");
+const prevVersion = electronSettings.get('previousVersion');
+if (!prevVersion) {
+  // On the very first install of the "Slippi Desktop App", let's transfer over settings from
+  // "Slippi Launcher"
+  const oldAppDataPath = path.join(appDataPath, "Slippi Launcher");
+  const newAppDataPath = path.join(appDataPath, "Slippi Desktop App");
+  
+  log.info("Transferring settings from previous Slippi Launcher install...");
+
+  const oldSettingPath = path.join(oldAppDataPath, "Settings");
+  const newSettingsPath = path.join(newAppDataPath, "Settings");
+  fs.copyFileSync(oldSettingPath, newSettingsPath);
+
+  const oldDolphinUserPath = path.join(oldAppDataPath, "dolphin", "User");
+  const newDolphinUserPath = path.join(newAppDataPath, "dolphin", "User");
+  fs.copySync(oldDolphinUserPath, newDolphinUserPath, { overwrite: true });
+
+  log.info("Done transferring settings.");
+}
+
 const platform = process.platform;
-if (process.env.NODE_ENV === 'production' && platform === "win32") {
+if (process.env.NODE_ENV === 'production' && (platform === "win32" || platform === "darwin")) {
   log.info("Checking if Dolphin path has been moved...");
 
   // If on production and windows, check if dolphin has been moved to the right place
@@ -60,8 +83,23 @@ if (process.env.NODE_ENV === 'production' && platform === "win32") {
     const userDataPath = app.getPath("userData")
     const targetPath = path.join(userDataPath, 'dolphin');
 
-    // TODO: Don't overwrite User folder if it exists
+    const targetUserPath = path.join(targetPath, "User");
+    const shouldBkpUserDir = fs.existsSync(targetUserPath);
+    const backupUserPath = path.join(userDataPath, "DolphinUserBkp");
+    if (shouldBkpUserDir) {
+      log.info("Backing up previous User directory...");
+      fs.moveSync(targetUserPath, backupUserPath, { overwrite: true });
+    }
+
+    // Copy dolphin dir
     fs.moveSync(originalDolphinPath, targetPath, { overwrite: true });
+
+    if (shouldBkpUserDir) {
+      log.info("Restoring backed up User directory...");
+      fs.moveSync(backupUserPath, targetUserPath, { overwrite: true });
+    }
+
+    log.info("Done moving Dolphin");
   } else {
     log.info("Path not found, we're good?");
   }
@@ -195,7 +233,7 @@ app.on('window-all-closed', () => {
   app.quit();
 });
 
-// Only allow a single Slippi Launcher instance
+// Only allow a single Slippi App instance
 const lockObtained = app.requestSingleInstanceLock();
 if (!lockObtained) {
   app.quit();
@@ -259,10 +297,19 @@ app.on('ready', async () => {
       mainWindow.focus();
     }
 
-    autoUpdater.checkForUpdatesAndNotify();
     autoUpdater.on('update-downloaded', () => {
       mainWindow.webContents.send('update-downloaded');
     });
+
+    // TODO: Remove
+    autoUpdater.on('checking-for-update', (arg1, arg2) => {
+      console.log({
+        arg1: arg1,
+        arg2: arg2,
+      });
+    })
+
+    autoUpdater.checkForUpdatesAndNotify();
 
     didFinishLoad = true;
   });

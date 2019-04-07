@@ -66,7 +66,9 @@ function fixSettingsOnNewVersion() {
       const availableSettings = getAvailableSettings();
       electronSettings.delete(availableSettings.playbackDolphinPath.location);
     }
-    
+  }
+
+  if (prevVersion !== currentVersion) {
     // Set previous to current version
     electronSettings.set(prevVersionKey, currentVersion);
   }
