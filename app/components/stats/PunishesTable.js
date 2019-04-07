@@ -196,7 +196,6 @@ export default class PunishesTable extends Component {
     const stocks = _.get(stats, 'stocks') || [];
     const stocksByOpponent = _.groupBy(stocks, 'opponentIndex');
     const opponentStocks = stocksByOpponent[this.props.playerIndex] || [];
-
     const elements = [];
 
     const addStockRows = punish => {

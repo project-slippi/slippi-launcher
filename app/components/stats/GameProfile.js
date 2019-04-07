@@ -19,6 +19,8 @@ import OverallTable from './OverallTable';
 import KillsTable from './KillsTable';
 import PunishesTable from './PunishesTable';
 
+import Chronology from './Chronology'
+
 import styles from './GameProfile.scss';
 
 import getLocalImage from '../../utils/image';
@@ -271,8 +273,9 @@ export default class GameProfile extends Component {
         </Sticky>
         <div ref={this.setRefStats} className={statsSectionClasses}>
           {this.renderOverall()}
-          {this.renderStocks()}
-          {this.renderPunishes()}
+          <div className="ui basic segment"><Chronology game={this.props.store.game} /></div>
+          {/* {this.renderStocks()}
+          {this.renderPunishes()} */}
         </div>
       </Segment>
     );
