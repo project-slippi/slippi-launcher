@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import path from 'path';
-import { Header, Modal, Form, Card, Button, Icon, Checkbox } from 'semantic-ui-react';
+import { Header, Modal, Form, Card, Button, Icon, Checkbox, Message } from 'semantic-ui-react';
 import { ConnectionStatus } from '../domain/ConsoleConnection';
 import PageHeader from './common/PageHeader';
 import PageWrapper from './PageWrapper';
@@ -11,6 +11,9 @@ import DismissibleMessage from './common/DismissibleMessage';
 
 import styles from './Console.scss';
 import SpacedGroup from './common/SpacedGroup';
+import ActionInput from './common/ActionInput';
+
+const { dialog } = require('electron').remote;
 
 export default class Console extends Component {
   static propTypes = {
@@ -69,15 +72,55 @@ export default class Console extends Component {
     }
 
     const formData = this.state.formData || {};
+    const validation = formData.validation || {};
     this.setState({
       formData: {
         ...formData,
         [control.name]: control[valueField],
+        validation: {
+          ...validation,
+          [control.name]: null,
+        },
       },
     });
   };
 
+  onSubmitClick = () => {
+    // I added this so that the folder browse button couldn't trigger a submit. I didn't know
+    // a better solution than this :\
+    const formData = this.state.formData || {};
+    this.setState({
+      formData: {
+        ...formData,
+        isReadyForSubmit: true,
+      },
+    })
+  }
+
   onFormSubmit = settings => () => {
+    const isReadyForSubmit = _.get(this.state, ['formData', 'isReadyForSubmit']);
+    if (!isReadyForSubmit) {
+      return;
+    }
+
+    // Validate that inputs are properly set
+
+    // Validate that target folder has been set
+    const targetFolder = _.get(this.state, ['formData', 'targetFolder']) || settings.targetFolder;
+    if (!targetFolder) {
+      // If no target folder is set, indicate the error
+      const formData = this.state.formData || {};
+      this.setState({
+        formData: {
+          ...formData,
+          validation: {
+            targetFolder: "empty",
+          },
+        },
+      });
+      return;
+    }
+
     // Start with settings values and overwrite with modified
     // form data
     const formData = {
@@ -86,6 +129,11 @@ export default class Console extends Component {
     };
 
     this.props.saveConnection(settings.id, formData);
+
+    // Clear formData state for next
+    this.setState({
+      formData: {},
+    });
   };
 
   connectTo = connection => () => {
@@ -102,6 +150,34 @@ export default class Console extends Component {
 
   deleteConnection = connection => () => {
     this.props.deleteConnection(connection);
+  }
+
+  onBrowseFolder = () => {
+    dialog.showOpenDialog({
+      properties: [
+        'openDirectory',
+        'treatPackageAsDirectory',
+        'createDirectory',
+      ],
+    }, (folderPaths) => {
+      const folderPath = _.get(folderPaths, 0);
+      if (!folderPath) {
+        return;
+      }
+
+      const formData = this.state.formData || {};
+      const validation = formData.validation || {};
+      this.setState({
+        formData: {
+          ...formData,
+          targetFolder: folderPath,
+          validation: {
+            ...validation,
+            targetFolder: null,
+          },
+        },
+      });
+    });
   }
 
   renderGlobalError() {
@@ -472,19 +548,32 @@ export default class Console extends Component {
       return null;
     }
 
+    const targetFolderFormValue = _.get(this.state, ['formData', 'targetFolder']);
+    const validation = _.get(this.state, ['formData', 'validation']) || {};
+
+    let errorMessage = null;
+    if (validation.targetFolder === "empty") {
+      errorMessage = "Target folder cannot be empty. This is where your replays will go to be " +
+        "read by dolphin.";
+    }
+
     return (
-      <Form onSubmit={this.onFormSubmit(connectionSettings)}>
+      <Form error={!!errorMessage} onSubmit={this.onFormSubmit(connectionSettings)} >
         <Form.Input
           name="ipAddress"
           label="IP Address"
           defaultValue={connectionSettings.ipAddress}
           onChange={this.onFieldChange}
         />
-        <Form.Input
+        <ActionInput
           name="targetFolder"
           label="Target Folder"
-          defaultValue={connectionSettings.targetFolder}
-          onChange={this.onFieldChange}
+          error={!!validation['targetFolder']}
+          value={targetFolderFormValue || connectionSettings.targetFolder || ""}
+          onClick={this.onBrowseFolder}
+          handlerParams={[]}
+          showLabelDescription={false}
+          useFormInput={true}
         />
         <Form.Field>
           <label htmlFor="isRealTimeMode">Real-Time Mode</label>
@@ -501,7 +590,8 @@ export default class Console extends Component {
             onChange={this.onFieldChange}
           />
         </Form.Field>
-        <Form.Button content="Submit" />
+        <Message error={true} content={errorMessage} />
+        <Form.Button content="Submit" onClick={this.onSubmitClick} />
       </Form>
     );
   }
