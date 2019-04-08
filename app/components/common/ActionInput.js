@@ -1,24 +1,30 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Input, Button } from 'semantic-ui-react';
+import { Form, Input, Button } from 'semantic-ui-react';
 
 import LabelDescription from './LabelDescription';
 
 export default class ActionInput extends Component {
   static propTypes = {
     showLabelDescription: PropTypes.bool,
+    name: PropTypes.string,
     label: PropTypes.string,
     description: PropTypes.node,
     error: PropTypes.bool,
     value: PropTypes.string.isRequired,
+    defaultValue: PropTypes.string,
+    useFormInput: PropTypes.bool,
     onClick: PropTypes.func.isRequired,
     onChange: PropTypes.func,
     handlerParams: PropTypes.arrayOf(PropTypes.any).isRequired,
   };
 
   static defaultProps = {
-    label: "Label",
+    name: undefined,
+    label: null,
     error: false,
+    useFormInput: false,
+    defaultValue: undefined,
     description: "Description",
     showLabelDescription: true,
     onChange: () => {},
@@ -43,15 +49,18 @@ export default class ActionInput extends Component {
       <input type="text" value={this.props.value} readOnly={true} />
     );
 
-    let result = (
-      <Input
-        fluid={true}
-        error={this.props.error}
-        action={actionButton}
-        input={innerInput}
-        onChange={this.changeHandler}
-      />
-    );
+    const inputProps = {
+      name: this.props.name,
+      label: this.props.showLabelDescription ? undefined : this.props.label,
+      fluid: true,
+      error: this.props.error,
+      action: actionButton,
+      input: innerInput,
+      defaultValue: this.props.defaultValue,
+      onChange: this.changeHandler,
+    };
+
+    let result = this.props.useFormInput ? <Form.Input {...inputProps} /> : <Input {...inputProps} />;
 
     if (this.props.showLabelDescription) {
       result = (
