@@ -9,7 +9,7 @@
  * `./app/main.prod.js` using webpack. This gives us some performance wins.
  *
  */
-import { app, shell, BrowserWindow } from 'electron';
+import { app, shell, ipcMain, BrowserWindow } from 'electron';
 import electronSettings from 'electron-settings';
 import _ from 'lodash';
 import os from 'os';
@@ -24,6 +24,7 @@ import MenuBuilder from './menu';
 // Set up AppUpdater
 log.transports.file.level = 'info';
 autoUpdater.logger = log;
+autoUpdater.autoInstallOnAppQuit = false;
 log.info('App starting...');
 
 const slippiProtocol = "slippi";
@@ -297,21 +298,20 @@ app.on('ready', async () => {
       mainWindow.focus();
     }
 
-    autoUpdater.on('update-downloaded', () => {
-      mainWindow.webContents.send('update-downloaded');
-    });
-
-    // TODO: Remove
-    autoUpdater.on('checking-for-update', (arg1, arg2) => {
-      console.log({
-        arg1: arg1,
-        arg2: arg2,
+    autoUpdater.on('update-downloaded', (info) => {
+      mainWindow.webContents.send('update-downloaded', {
+        version: info.version,
       });
-    })
+    });
 
     autoUpdater.checkForUpdatesAndNotify();
 
     didFinishLoad = true;
+  });
+
+  ipcMain.on('should-quit-and-update', () => {
+    console.log("Install message received");
+    autoUpdater.quitAndInstall();
   });
 
   // On navigation links to http urls, open in external browser

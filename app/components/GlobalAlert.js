@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
+import { ipcRenderer } from 'electron';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
@@ -8,6 +9,8 @@ import { Message, Icon } from 'semantic-ui-react';
 
 import * as NotifActions from '../actions/notifs';
 import styles from './GlobalAlert.scss';
+
+const { app } = require('electron').remote;
 
 class GlobalAlert extends Component {
   static propTypes = {
@@ -20,6 +23,8 @@ class GlobalAlert extends Component {
   componentDidUpdate() {
     const displayAlert = this.getAlertToDisplay();
     const activeAlert = this.props.store.activeNotif;
+
+    console.log(displayAlert);
 
     const displayAlertKey = _.get(displayAlert, 'key');
     const activeAlertKey = _.get(activeAlert, 'key');
@@ -43,8 +48,9 @@ class GlobalAlert extends Component {
         icon: 'cloud download',
         message: (
           <div className={styles['single-line-message']}>
-            A new application version has been downloaded. Restart the
-            application to use the new version.
+            New application version available
+            ({this.renderVersionChange()})
+            {this.renderClickToUpgradeLink()}
           </div>
         ),
         isVisible: this.isApplicationUpdatedAlertVisible,
@@ -53,6 +59,29 @@ class GlobalAlert extends Component {
         severity: 'info',
       },
     ];
+  }
+
+  renderVersionChange() {
+    const curVersion = app.getVersion();
+    const newVersion = _.get(this.props.store, ['meta', 'appUpgrade', 'version']);
+    const arrow = <Icon className={styles['version-arrow-icon']} name="long arrow alternate right" />;
+    return (
+      <a href="https://github.com/project-slippi/slippi-desktop-app/releases">
+        {curVersion} {arrow} {newVersion}
+      </a>
+    );
+  }
+
+  renderClickToUpgradeLink() {
+    return (
+      // eslint-disable-next-line
+      <a
+        className={styles['upgrade-link']}
+        onClick={this.onQuitAndUpdate}
+      >
+        Click to restart and install
+      </a>
+    );
   }
 
   getAlertToDisplay() {
@@ -73,6 +102,11 @@ class GlobalAlert extends Component {
   createGenericOnDismiss = alertKey => () => {
     this.props.dismissNotif(alertKey);
   };
+
+  onQuitAndUpdate = () => {
+    console.log("Time to install!")
+    ipcRenderer.send('should-quit-and-update');
+  }
 
   render() {
     const alert = this.props.store.activeNotif;
