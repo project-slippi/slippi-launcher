@@ -20,3 +20,37 @@
   bottom: -10px;
   right: -10px;
 }
+
+.iso-selection-container {
+  position: relative;
+}
+
+.iso-version-check {
+  position: absolute;
+  bottom: 8px;
+  right: 50px;
+  text-align: right;
+
+  .iso-verify-text {
+    margin-right: 6px;
+    position: relative;
+    font-weight: bold;
+    top: 1px;
+  }
+
+  &.validating {
+    color: #a3a3a3 !important;
+  }
+
+  &.success {
+    color: #21BA45 !important;
+  }
+
+  &.fail {
+    color: #DB2828 !important;
+  }
+
+  &.unknown {
+    color: #a3a3a3 !important;
+  }
+}

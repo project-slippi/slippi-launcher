@@ -1,9 +1,13 @@
 import { displayError } from './error';
 
+const crypto = require('crypto');
+const fs = require('fs');
 const { dialog } = require('electron').remote;
 
 export const SELECT_FOLDER = 'SELECT_FOLDER';
 export const SELECT_FILE = 'SELECT_FILE';
+export const ISO_VALIDATION_START = 'ISO_VALIDATION_START';
+export const ISO_VALIDATION_COMPLETE = 'ISO_VALIDATION_COMPLETE';
 
 export function browseFolder(field) {
   return (dispatch) => {
@@ -35,9 +39,12 @@ export function selectFolder(field, selectedPath) {
 }
 
 export function browseFile(field) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     const files = dialog.showOpenDialog({
-      properties: ['openFile'],
+      properties: [
+        'openFile',
+        'createDirectory',
+      ],
     }) || [];
 
     const filePath = files[0];
@@ -46,6 +53,11 @@ export function browseFile(field) {
     }
 
     dispatch(selectFile(field, filePath));
+
+    // Maybe this should be done as some kind of callback or something... but this works
+    if (field === "isoPath") {
+      validateISO()(dispatch, getState);
+    }
   };
 }
 
@@ -56,6 +68,41 @@ export function selectFile(field, selectedPath) {
       field: field,
       path: selectedPath,
     },
+  };
+}
+
+export function validateISO() {
+  return async (dispatch, getState) => {
+    // Indicate validation start
+    dispatch({
+      type: ISO_VALIDATION_START,
+      payload: {},
+    });
+
+    const isoPath = getState().settings.settings.isoPath;
+   
+    const hash = crypto.createHash('sha1');
+    const input = fs.createReadStream(isoPath);
+
+    // Below is the sha1 hash for NTSC Melee 1.02
+    const correctISOHash = "d4e70c064cc714ba8400a849cf299dbd1aa326fc";
+
+    input.on('readable', () => {
+      const data = input.read();
+      if (data) {
+        hash.update(data);
+        return;
+      } 
+
+      // Reading complete, check hash
+      const resultHash = hash.digest('hex');
+      const isValidISO = resultHash === correctISOHash;
+      
+      dispatch({
+        type: ISO_VALIDATION_COMPLETE,
+        payload: { isValid: isValidISO },
+      })
+    });
   };
 }
 

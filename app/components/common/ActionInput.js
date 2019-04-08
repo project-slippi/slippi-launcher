@@ -9,6 +9,7 @@ export default class ActionInput extends Component {
     showLabelDescription: PropTypes.bool,
     label: PropTypes.string,
     description: PropTypes.node,
+    error: PropTypes.bool,
     value: PropTypes.string.isRequired,
     onClick: PropTypes.func.isRequired,
     onChange: PropTypes.func,
@@ -17,6 +18,7 @@ export default class ActionInput extends Component {
 
   static defaultProps = {
     label: "Label",
+    error: false,
     description: "Description",
     showLabelDescription: true,
     onChange: () => {},
@@ -28,8 +30,8 @@ export default class ActionInput extends Component {
     this.props.onClick(...handlerParams);
   };
 
-  changeHandler = () => {
-    this.props.onChange();
+  changeHandler = (event, data) => {
+    this.props.onChange(event, data);
   };
 
   render() {
@@ -41,7 +43,15 @@ export default class ActionInput extends Component {
       <input type="text" value={this.props.value} readOnly={true} />
     );
 
-    let result = <Input fluid={true} action={actionButton} input={innerInput} />;
+    let result = (
+      <Input
+        fluid={true}
+        error={this.props.error}
+        action={actionButton}
+        input={innerInput}
+        onChange={this.changeHandler}
+      />
+    );
 
     if (this.props.showLabelDescription) {
       result = (
