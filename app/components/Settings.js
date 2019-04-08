@@ -5,6 +5,7 @@ import {
   Button,
   Message,
   Header,
+  Icon,
 } from 'semantic-ui-react';
 import { getDefaultDolphinPath } from '../utils/settings';
 import PageHeader from './common/PageHeader';
@@ -23,6 +24,7 @@ export default class Settings extends Component {
     browseFolder: PropTypes.func.isRequired,
     selectFolder: PropTypes.func.isRequired,
     browseFile: PropTypes.func.isRequired,
+    validateISO: PropTypes.func.isRequired,
     openDolphin: PropTypes.func.isRequired,
 
     // error actions
@@ -33,6 +35,10 @@ export default class Settings extends Component {
     store: PropTypes.object.isRequired,
     errors: PropTypes.object.isRequired,
   };
+
+  componentDidMount() {
+    this.props.validateISO();
+  }
 
   setFolderManual = (field, value) => () => {
     this.props.selectFolder(field, value);
@@ -106,18 +112,58 @@ export default class Settings extends Component {
     );
   }
 
+  renderISOVersionCheck() {
+    const validationState = _.get(this.props.store, 'isoValidationState') || 'unknown';
+
+    let icon, text, loading;
+    switch (validationState) {
+    case "success":
+      icon = "check circle outline";
+      text = "Valid";
+      loading = false;
+      break;
+    case "fail":
+      icon = "times circle outline";
+      text = "Bad ISO";
+      loading = false;
+      break;
+    case "validating":
+      icon = "spinner";
+      text = "Verifying";
+      loading = true;
+      break;
+    default:
+      icon = "question circle outline";
+      text = "";
+      loading = false;
+      break;
+    }
+    
+    return (
+      <div className={`${styles['iso-version-check']} ${styles[validationState]}`}>
+        <span className={styles['iso-verify-text']}>{text}</span>
+        <Icon name={icon} fitted={true} loading={loading} size="large" />
+      </div>
+    );
+  }
+
   renderBasicSettings() {
     const store = this.props.store || {};
 
+    const isoValidationState = _.get(store, 'isoValidationState') || 'unknown';
+
     const inputs = [
-      <ActionInput
-        key="meleeISOInput"
-        label="Melee ISO File"
-        description="The path to a NTSC Melee 1.02 ISO. Used for playing replay files"
-        value={store.settings.isoPath}
-        onClick={this.props.browseFile}
-        handlerParams={['isoPath']}
-      />,
+      <div key="meleeISOInput" className={styles['iso-selection-container']}>
+        <ActionInput
+          label="Melee ISO File"
+          description="The path to a NTSC Melee 1.02 ISO. Used for playing replay files"
+          value={store.settings.isoPath}
+          error={isoValidationState === "fail"}
+          onClick={this.props.browseFile}
+          handlerParams={['isoPath']}
+        />
+        {this.renderISOVersionCheck()}
+      </div>,
       <ActionInput
         key="replayRootInput"
         label="Replay Root Directory"

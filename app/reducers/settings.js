@@ -2,7 +2,9 @@ import _ from 'lodash';
 import semver from 'semver';
 import electronSettings from 'electron-settings';
 
-import { SELECT_FOLDER, SELECT_FILE } from '../actions/settings';
+import { 
+  SELECT_FOLDER, SELECT_FILE, ISO_VALIDATION_START, ISO_VALIDATION_COMPLETE,
+} from '../actions/settings';
 import DolphinManager from '../domain/DolphinManager';
 import { getDolphinPath } from '../utils/settings';
 
@@ -12,6 +14,7 @@ const { app } = require('electron').remote;
 const defaultState = {
   dolphinManager: new DolphinManager("settings"),
   settings: getStoredSettings(),
+  isoValidationState: "unknown",
 };
 
 function getAvailableSettings() {
@@ -79,6 +82,10 @@ export default function settings(state = defaultState, action) {
   case SELECT_FOLDER:
   case SELECT_FILE:
     return selectFileOrFolder(state, action);
+  case ISO_VALIDATION_START:
+    return isoValidationStart(state, action);
+  case ISO_VALIDATION_COMPLETE:
+    return isoValidationComplete(state, action);
   default:
     return state;
   }
@@ -97,4 +104,18 @@ function selectFileOrFolder(state, action) {
   newState.settings[payload.field] = payload.path;
 
   return newState;
+}
+
+function isoValidationStart(state) {
+  return {
+    ...state,
+    isoValidationState: "validating",
+  };
+}
+
+function isoValidationComplete(state, action) {
+  return {
+    ...state,
+    isoValidationState: action.payload.isValid ? "success" : "fail",
+  };
 }
