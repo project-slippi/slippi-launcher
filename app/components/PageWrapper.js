@@ -35,10 +35,10 @@ class PageWrapper extends Component {
     ipcRenderer.removeListener('play-replay', this.onPlayReplay);
   }
 
-  onAppUpgrade = () => {
+  onAppUpgrade = (event, upgradeDetails) => {
     // When main process (main.dev.js) tells us an update has been downloaded, trigger
     // a global notif to be shown
-    this.props.appUpgradeDownloaded();
+    this.props.appUpgradeDownloaded(upgradeDetails);
   }
 
   onPlayReplay = (event, slpPath) => {

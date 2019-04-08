@@ -2,9 +2,12 @@ export const APP_UPGRADE_DOWNLOADED = 'APP_UPGRADE_DOWNLOADED';
 export const SET_ACTIVE_NOTIF = 'SET_ACTIVE_NOTIF';
 export const DISMISS_GLOBAL_NOTIF = 'DISMISS_GLOBAL_NOTIF';
 
-export function appUpgradeDownloaded() {
+export function appUpgradeDownloaded(upgradeDetails) {
   return {
     type: APP_UPGRADE_DOWNLOADED,
+    payload: {
+      upgradeDetails: upgradeDetails,
+    },
   };
 }
 

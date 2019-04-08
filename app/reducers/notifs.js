@@ -6,6 +6,7 @@ import {
 const defaultState = {
   visibility: {},
   dismissed: {},
+  meta: {},
   activeNotif: null,
 };
 
@@ -22,10 +23,11 @@ export default function fileLoader(state = defaultState, action) {
   }
 }
 
-function displayAppUpgradeNotif(state) {
+function displayAppUpgradeNotif(state, action) {
   const newState = { ...state };
 
   newState.visibility.appUpgrade = true;
+  newState.meta.appUpgrade = action.payload.upgradeDetails;
   return newState;
 }
 
