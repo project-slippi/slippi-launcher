@@ -59,15 +59,19 @@ if (isProd && !prevVersion) {
   
   log.info("Transferring settings from previous Slippi Launcher install...");
 
-  const oldSettingPath = path.join(oldAppDataPath, "Settings");
-  const newSettingsPath = path.join(newAppDataPath, "Settings");
-  fs.copyFileSync(oldSettingPath, newSettingsPath);
+  try {
+    const oldSettingPath = path.join(oldAppDataPath, "Settings");
+    const newSettingsPath = path.join(newAppDataPath, "Settings");
+    fs.copyFileSync(oldSettingPath, newSettingsPath);
 
-  const oldDolphinUserPath = path.join(oldAppDataPath, "dolphin", "User");
-  const newDolphinUserPath = path.join(newAppDataPath, "dolphin", "User");
-  fs.copySync(oldDolphinUserPath, newDolphinUserPath, { overwrite: true });
+    const oldDolphinUserPath = path.join(oldAppDataPath, "dolphin", "User");
+    const newDolphinUserPath = path.join(newAppDataPath, "dolphin", "User");
+    fs.copySync(oldDolphinUserPath, newDolphinUserPath, { overwrite: true });
 
-  log.info("Done transferring settings.");
+    log.info("Done transferring settings.");
+  } catch (err) {
+    log.warn("Failed to transfer settings. Maybe old version didn't exist?");
+  }
 }
 
 const platform = process.platform;
