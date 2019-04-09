@@ -3,9 +3,12 @@ import fs from 'fs-extra';
 import path from 'path';
 import moment from 'moment';
 
+const OBSWebSocket = require('obs-websocket-js');
+
 export default class SlpFileWriter {
   static commands = {
     CMD_RECEIVE_COMMANDS: 0x35,
+    CMD_GAME_START: 0x36,
     CMD_RECEIVE_POST_FRAME_UPDATE: 0x38,
     CMD_RECEIVE_GAME_END: 0x39,
   }
@@ -14,6 +17,12 @@ export default class SlpFileWriter {
     this.folderPath = folderPath;
     this.onFileStateChange = onFileStateChange;
     this.currentFile = this.getClearedCurrentFile();
+    this.obs = new OBSWebSocket();
+    this.obs.connect({address: 'localhost:4444'})
+    this.statusOutput = {
+      status: false,
+      timeout: null,
+    };
   }
 
   getClearedCurrentFile() {
@@ -37,6 +46,38 @@ export default class SlpFileWriter {
 
   updateSettings(settings) {
     this.folderPath = settings.targetFolder;
+  }
+
+  setStatus(value) {
+    this.statusOutput.status = value;
+    console.log(`Status changed: ${value}`);
+    this.obs.send("SetSceneItemProperties", {"item": "dolphin", "visible": value});
+  }
+
+  handleStatusOutput() {
+    const setTimer = () => {
+      if (this.statusOutput.timeout) {
+        // If we have a timeout, clear it
+        clearTimeout(this.statusOutput.timeout);
+      }
+
+      this.statusOutput.timeout = setTimeout(() => {
+        // If we timeout, set and set status
+        this.setStatus(false);
+      }, 100);
+    }
+
+    if (this.statusOutput.status) {
+      // If game is currently active, reset the timer
+      setTimer();
+      return;
+    }
+
+    // Here we did not have a game going, so let's indicate we do now
+    this.setStatus(true);
+    
+    // Set timer
+    setTimer();
   }
 
   handleData(newData) {
@@ -99,9 +140,14 @@ export default class SlpFileWriter {
         this.endGame();
         isGameEnd = true;
         break;
+      case SlpFileWriter.commands.CMD_GAME_START:
+        payloadLen = this.processCommand(command, payloadDataView);
+        this.writeCommand(command, payloadPtr, payloadLen);
+        break;
       default:
         payloadLen = this.processCommand(command, payloadDataView);
         this.writeCommand(command, payloadPtr, payloadLen);
+        this.handleStatusOutput();
         break;
       }
 
