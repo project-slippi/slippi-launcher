@@ -39,7 +39,6 @@ export default class Console extends Component {
   };
 
   componentDidMount() {
-    console.log("Starting scan...");
     this.props.store.scanner.startScanning();
   }
 

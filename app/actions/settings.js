@@ -1,7 +1,9 @@
+import fs from 'fs-extra';
+import _ from 'lodash';
+import crypto from 'crypto';
+
 import { displayError } from './error';
 
-const crypto = require('crypto');
-const fs = require('fs');
 const { dialog } = require('electron').remote;
 
 export const SELECT_FOLDER = 'SELECT_FOLDER';
@@ -71,6 +73,7 @@ export function selectFile(field, selectedPath) {
   };
 }
 
+const isoStateLocalCache = {};
 export function validateISO() {
   return async (dispatch, getState) => {
     // Indicate validation start
@@ -80,6 +83,25 @@ export function validateISO() {
     });
 
     const isoPath = getState().settings.settings.isoPath;
+
+    const fileStats = fs.statSync(isoPath);
+    if (!fileStats) {
+      dispatch({
+        type: ISO_VALIDATION_COMPLETE,
+        payload: { isValid: false },
+      });
+      return;
+    }
+
+    const cacheKey = `${isoPath}-${fileStats.ctimeMs}`;
+    const cachedState = _.get(isoStateLocalCache, cacheKey);
+    if (cachedState !== undefined) {
+      dispatch({
+        type: ISO_VALIDATION_COMPLETE,
+        payload: { isValid: cachedState },
+      });
+      return;
+    }
    
     const hash = crypto.createHash('sha1');
     const input = fs.createReadStream(isoPath);
@@ -98,10 +120,12 @@ export function validateISO() {
       const resultHash = hash.digest('hex');
       const isValidISO = resultHash === correctISOHash;
       
+      isoStateLocalCache[cacheKey] = isValidISO;
+
       dispatch({
         type: ISO_VALIDATION_COMPLETE,
         payload: { isValid: isValidISO },
-      })
+      });
     });
   };
 }
