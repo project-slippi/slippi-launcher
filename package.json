@@ -52,6 +52,7 @@
       "static/",
       "package.json"
     ],
+    "artifactName": "Slippi-Launcher-${version}-${os}.${ext}",
     "dmg": {
       "artifactName": "Slippi-Launcher-${version}.${ext}",
       "icon": "./resources/icon.icns",
