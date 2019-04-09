@@ -1,7 +1,7 @@
 {
   "name": "slippi-desktop-app",
   "productName": "Slippi Desktop App",
-  "version": "1.4.2-dev",
+  "version": "1.4.2",
   "description": "Slippi Desktop App for browsing and playing replays.",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -53,6 +53,7 @@
       "package.json"
     ],
     "dmg": {
+      "artifactName": "Slippi-Launcher-${version}.${ext}",
       "icon": "./resources/icon.icns",
       "contents": [
         {
@@ -92,7 +93,7 @@
       "requestedExecutionLevel": "highestAvailable"
     },
     "nsis": {
-      "artifactName": "slippi-desktop-setup-${version}.${ext}",
+      "artifactName": "Slippi-Launcher-Setup-${version}.${ext}",
       "perMachine": true,
       "include": "./build/installer.nsh"
     },
@@ -102,6 +103,9 @@
         "AppImage"
       ],
       "category": "Development"
+    },
+    "appImage": {
+      "artifactName": "Slippi-Launcher-${version}-x86_64.${ext}"
     },
     "directories": {
       "buildResources": "resources",
