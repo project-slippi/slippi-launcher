@@ -46,10 +46,12 @@ if (
   require('electron-debug')();
 }
 
+const isProd = process.env.NODE_ENV === 'production';
+
 // Copy settings from when the app was called Slippi Launcher
 const appDataPath = app.getPath("appData");
 const prevVersion = electronSettings.get('previousVersion');
-if (!prevVersion) {
+if (isProd && !prevVersion) {
   // On the very first install of the "Slippi Desktop App", let's transfer over settings from
   // "Slippi Launcher"
   const oldAppDataPath = path.join(appDataPath, "Slippi Launcher");
@@ -69,7 +71,7 @@ if (!prevVersion) {
 }
 
 const platform = process.platform;
-if (process.env.NODE_ENV === 'production' && (platform === "win32" || platform === "darwin")) {
+if (isProd && (platform === "win32" || platform === "darwin")) {
   log.info("Checking if Dolphin path has been moved...");
 
   // If on production and windows, check if dolphin has been moved to the right place

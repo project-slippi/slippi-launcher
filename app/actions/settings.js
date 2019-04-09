@@ -76,15 +76,24 @@ export function selectFile(field, selectedPath) {
 const isoStateLocalCache = {};
 export function validateISO() {
   return async (dispatch, getState) => {
+    const isoPath = getState().settings.settings.isoPath;
+    if (!isoPath) {
+      return;
+    }
+
     // Indicate validation start
     dispatch({
       type: ISO_VALIDATION_START,
       payload: {},
     });
 
-    const isoPath = getState().settings.settings.isoPath;
-
-    const fileStats = fs.statSync(isoPath);
+    let fileStats = null;
+    try {
+      fileStats = fs.statSync(isoPath);
+    } catch (err) {
+      // Do nothing
+    }
+  
     if (!fileStats) {
       dispatch({
         type: ISO_VALIDATION_COMPLETE,
