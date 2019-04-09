@@ -43,7 +43,6 @@ export default class Console extends Component {
   }
 
   componentWillUnmount() {
-    console.log("Ending scan");
     this.props.store.scanner.stopScanning();
   }
 
