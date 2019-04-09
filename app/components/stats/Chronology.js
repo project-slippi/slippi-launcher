@@ -5,6 +5,8 @@ import _ from 'lodash'
 import { convertFrameCountToDurationString } from '../../utils/time'
 import { getMoveName } from '../../utils/moves'
 import getLocalImage from '../../utils/image'
+import styles from './GameProfile.scss'
+
 
 export default class Chronology extends Component {
 
@@ -15,6 +17,8 @@ export default class Chronology extends Component {
     svgWidth = 150
 
     fontSize = this.svgWidth / 75
+
+    stockSize = this.fontSize * 1.5
 
     gameStats = this.props.game.getStats()
 
@@ -31,14 +35,14 @@ export default class Chronology extends Component {
     textStyle = {
       fontSize: this.fontSize,
       dominantBaseline: 'middle',
-      fill: "rgba(255, 255, 255, 0.7)",
+      fill: "rgba(255, 255, 255, .8)",
     }
 
     get playerStyles() {
       const [firstPlayer, secondPlayer] = _.sortBy(_.keys(this.players))
       return {
         [firstPlayer]: {
-          stock: {transform: `translate(${this.svgWidth*.45 - 4*this.fontSize}, ${this.fontSize / 2})`},
+          stock: {transform: `translate(${this.svgWidth*.45 - 4*this.stockSize}, ${this.stockSize / 2})`},
           percent: {transform: `translate(${this.svgWidth*.45}, 0)`, textAnchor: 'end'},
           text: {transform: `translate(${this.svgWidth*.1}, 0)`, textAnchor: 'start'},
           line: {x1: this.svgWidth*.375, x2: this.svgWidth*.45, stroke: 'rgba(255, 255, 255, 0.7)', strokeWidth: .1},
@@ -90,10 +94,10 @@ export default class Chronology extends Component {
         <image
           opacity={stockNumber > stocksRemaining ? .5 : 1}
           xlinkHref={getLocalImage(imageName)}
-          height={this.fontSize}
-          width={this.fontSize}
-          x={this.fontSize*(player.startStocks - (index+1))}
-          y={-this.fontSize}
+          height={this.stockSize}
+          width={this.stockSize}
+          x={this.stockSize*(player.startStocks - (index+1))}
+          y={-this.stockSize}
         />
       )
     }
@@ -109,13 +113,30 @@ export default class Chronology extends Component {
       return <g>{stockIcons}</g>
     }
 
+    getMoveTextFill(amountOfMoves) {
+
+      // orangeish
+      // const green = Math.max(255 - 50*(amountOfMoves-1), 125)
+      // const blue = Math.max(150 - 50*(amountOfMoves-1), 0)
+
+      // pinkish
+      // const red = Math.max(255 - 8*(amountOfMoves-1), 225)
+      // const green = Math.max(255 - 50*(amountOfMoves-1), 50)
+
+      // blueish
+      const red = Math.max(255 - 50*(amountOfMoves-1), 0)
+      const green = Math.max(255 - 10*(amountOfMoves-1), 200)
+
+      return `rgb(${red}, ${green}, 255, 1)`
+    }
+
     renderPunishText(punish) {
       const { moves, startPercent, endPercent, openingType } = punish
       const damageDone = endPercent - startPercent
 
       const moveText = moves.length > 1
         ? `${moves.length} moves`
-        : `${getMoveName(_.last(moves).moveId)}`
+        : getMoveName(_.last(moves).moveId)
 
       let killText = ''
       if (punish.didKill) {
@@ -129,7 +150,9 @@ export default class Chronology extends Component {
       return (
         <g>
           <text { ...this.textStyle }>
-            {`deals ${Math.trunc(damageDone)}% with ${moveText} from a ${openingType.replace('-', ' ')} `}
+            deals {Math.trunc(damageDone)}% with
+            <tspan fill={this.getMoveTextFill(moves.length)}> {moveText} </tspan>
+            from a {openingType.replace('-', ' ')}
           </text>
           { punish.didKill && <text y={this.fontSize} { ...this.textStyle }> {killText} </text> }
         </g>
@@ -146,6 +169,21 @@ export default class Chronology extends Component {
       return this.renderStockCount(punish.opponentIndex, currentStock.count-1)
     }
 
+    renderPunishPercent(punish) {
+      const gb = Math.max(255-punish.endPercent, 100)
+      const percentFill = `rgb(255, ${gb}, ${gb}, .85)`
+      return (
+        <text
+          fontSize={this.fontSize*1.5}
+          strokeWidth={this.fontSize/3}
+          fill={percentFill}
+          className={styles['percent']}
+        >
+          {Math.trunc(punish.endPercent)}%
+        </text>
+      )
+    }
+
     generatePunishRow = punish => {
       const text = this.renderPunishText(punish)
       const yCoordinate = this.getYCoordinateFromFrame(punish.startFrame)
@@ -159,12 +197,10 @@ export default class Chronology extends Component {
           { punish.openingType !== 'trade' && <line { ...lineStyle } /> }
           <g { ...textStyle }> {text} </g>
           { punish.didKill
-            // if punished killed, render opponent's stockCount
+            // if punish killed, render opponent's stockCount
             ? <g { ...stockStyle }> {this.renderPunishStockCount(punish)} </g>
             // otherwise render opponent's percent
-            : <g { ...percentStyle }>
-              <text fontSize={this.fontSize*1.5} dominantBaseline="middle"> {Math.trunc(punish.endPercent)}% </text>
-            </g>
+            : <g { ...percentStyle }> {this.renderPunishPercent(punish)} </g>
           }
         </g>
       )
@@ -172,7 +208,7 @@ export default class Chronology extends Component {
 
     generateSelfDestructRow = stock => {
       const { playerIndex, count, endFrame } = stock
-      const text = <text { ...this.textStyle }> {`self destructs`} </text>
+      const text = <text { ...this.textStyle } fill='rgb(255, 75, 75, 1)'> self destructs </text>
       const stockCount = this.renderStockCount(playerIndex, count-1)
       const yCoordinate = this.getYCoordinateFromFrame(endFrame)
 
@@ -193,8 +229,8 @@ export default class Chronology extends Component {
       >
         <rect
           width={this.fontSize*4} height={this.fontSize*2}
-          x={-this.fontSize*2} y={-this.fontSize}
-          stroke="rgba(255, 255, 255, 0.7)" strokeWidth=".1"
+          x={-this.fontSize*2} y={-this.fontSize*1.05}
+          stroke="rgba(255, 255, 255, 0.75)" strokeWidth=".1"
           fill="#282B33" rx={this.fontSize / 2}
         />
         <text { ...this.textStyle } > {timestamp} </text>
@@ -216,7 +252,7 @@ export default class Chronology extends Component {
           <line
             x1={this.svgWidth / 2} x2={this.svgWidth / 2}
             y1="0" y2={this.svgHeight}
-            stroke='rgba(255, 255, 255, 0.7)' strokeWidth='.1'
+            stroke='rgba(255, 255, 255, 0.75)' strokeWidth='.1'
           />
 
           { timestampBoxes }

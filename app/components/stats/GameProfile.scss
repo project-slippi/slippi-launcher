@@ -185,3 +185,12 @@ $header-height: 97px;
 .loader {
   margin-top: 48px !important;
 }
+
+.percent {
+  dominant-baseline: middle;
+  paint-order: stroke;
+  stroke: rgb(25, 25, 25);
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
+  font-weight: bold;
+}
