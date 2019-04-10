@@ -13,12 +13,13 @@ export default class SlpFileWriter {
     CMD_RECEIVE_GAME_END: 0x39,
   }
 
-  constructor(folderPath, onFileStateChange) {
+  constructor(folderPath, onFileStateChange, obsIP, obsSourceName) {
     this.folderPath = folderPath;
     this.onFileStateChange = onFileStateChange;
+    this.obsSourceName = obsSourceName;
+    this.obsIP = obsIP;
     this.currentFile = this.getClearedCurrentFile();
     this.obs = new OBSWebSocket();
-    this.obs.connect({address: 'localhost:4444'})
     this.statusOutput = {
       status: false,
       timeout: null,
@@ -46,12 +47,30 @@ export default class SlpFileWriter {
 
   updateSettings(settings) {
     this.folderPath = settings.targetFolder;
+    this.obsIP = settings.obsIP;
+    this.obsSourceName = settings.obsSourceName;
+  }
+
+  connectOBS() {
+    if (this.obsIP && this.obsSourceName) {
+      this.obs.connect({address: this.obsIP}).then((resolve) => {
+        console.log(`OBS connected on ${this.obsIP}`);
+        return resolve();
+      }).catch((err) => {
+        console.log(err);
+        console.log("Couldn't connect to OBS");
+      });
+    }
+  }
+
+  disconnectOBS() {
+    this.obs.disconnect();
   }
 
   setStatus(value) {
     this.statusOutput.status = value;
     console.log(`Status changed: ${value}`);
-    this.obs.send("SetSceneItemProperties", {"item": "dolphin", "visible": value});
+    this.obs.send("SetSceneItemProperties", {"item": this.obsSourceName, "visible": value});
   }
 
   handleStatusOutput() {
