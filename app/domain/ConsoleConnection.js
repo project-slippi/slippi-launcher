@@ -35,9 +35,10 @@ export default class ConsoleConnection {
     this.dolphinManager = new DolphinManager(`mirror-${this.id}`, { mode: 'mirror' });
 
     // Initialize SlpFileWriter for writting files
-    this.slpFileWriter = new SlpFileWriter(
-      this.targetFolder, this.fileStateChangeHandler, this.obsIP, this.obsSourceName
-    );
+    const slpSettings = {targetFolder: this.targetFolder, 
+      onFileStateChange: this.fileStateChangeHandler, 
+      obsIP: this.obsIP, obsSourceName: this.obsSourceName}
+    this.slpFileWriter = new SlpFileWriter(slpSettings);
   }
 
   forceConsoleUiUpdate() {

@@ -12,11 +12,11 @@ export default class SlpFileWriter {
     CMD_RECEIVE_GAME_END: 0x39,
   }
 
-  constructor(folderPath, onFileStateChange, obsIP, obsSourceName) {
-    this.folderPath = folderPath;
-    this.onFileStateChange = onFileStateChange;
-    this.obsSourceName = obsSourceName;
-    this.obsIP = obsIP;
+  constructor(settings) {
+    this.folderPath = settings.folderPath;
+    this.onFileStateChange = settings.onFileStateChange;
+    this.obsSourceName = settings.obsSourceName;
+    this.obsIP = settings.obsIP;
     this.currentFile = this.getClearedCurrentFile();
     this.obs = new OBSWebSocket();
     this.statusOutput = {
@@ -54,6 +54,7 @@ export default class SlpFileWriter {
     if (this.obsIP && this.obsSourceName) {
       await this.obs.connect({address: this.obsIP});
       const obsScenes = await this.obs.send("GetSceneList");
+      console.log(obsScenes);
       this.scenes = obsScenes.scenes;
     }
   }
@@ -65,14 +66,22 @@ export default class SlpFileWriter {
   setStatus(value) {
     this.statusOutput.status = value;
     console.log(`Status changed: ${value}`);
-    for (let i = this.scenes.length - 1; i >= 0; i -= 1) {
-      for (let j = this.scenes[i].sources.length - 1; j >= 0; j -= 1) {
-        if (this.scenes[i].sources[j].name === this.obsSourceName) {
-          console.log(this.obs.send("SetSceneItemProperties", 
-            {"scene-name": this.scenes[j].name, "item": this.obsSourceName, "visible": value}));
-        }
+    const scenes = this.scenes || [];
+    console.log(this.scenes);
+    const pairs = _.flatMap(scenes, (scene) => {
+      const sources = scene.sources || [];
+      return _.map(sources, (source) => ({scene: scene, source: source}));
+    });
+    console.log(pairs);
+    _.forEach(pairs, (pair) => {
+      if (pair.source.name !== this.obsSourceName) {
+        return;
       }
-    }
+
+      const res = this.obs.send("SetSceneItemProperties", 
+        {"scene-name": pair.scene.name, "item": this.obsSourceName, "visible": value});
+      console.log(res);
+    });
   }
 
   handleStatusOutput() {
