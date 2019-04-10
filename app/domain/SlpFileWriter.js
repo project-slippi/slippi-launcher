@@ -2,8 +2,7 @@ import _ from 'lodash';
 import fs from 'fs-extra';
 import path from 'path';
 import moment from 'moment';
-
-const OBSWebSocket = require('obs-websocket-js');
+import OBSWebSocket from 'obs-websocket-js'
 
 export default class SlpFileWriter {
   static commands = {
@@ -53,13 +52,7 @@ export default class SlpFileWriter {
 
   connectOBS() {
     if (this.obsIP && this.obsSourceName) {
-      this.obs.connect({address: this.obsIP}).then((resolve) => {
-        console.log(`OBS connected on ${this.obsIP}`);
-        return resolve();
-      }).catch((err) => {
-        console.log(err);
-        console.log("Couldn't connect to OBS");
-      });
+      this.obs.connect({address: this.obsIP});
     }
   }
 
