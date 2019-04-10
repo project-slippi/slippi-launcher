@@ -272,8 +272,6 @@ export default class Console extends Component {
         <div className={styles['conn-content-grid']}>
           {this.renderLabelValue("IP Address", connection.ipAddress)}
           {this.renderLabelValue("Target Folder", connection.targetFolder)}
-          {this.renderLabelValue("OBS IP", connection.obsIP)}
-          {this.renderLabelValue("OBS Source Name", connection.obsSourceName)}
           {this.renderStatusLabelValue(connection)}
         </div>
       </Card.Content>
@@ -584,7 +582,7 @@ export default class Console extends Component {
         <Form.Input
           name="obsSourceName"
           label="OBS Source Name"
-          default={connectionSettings.obsSourceName}
+          defaultValue={connectionSettings.obsSourceName}
           onChange={this.onFieldChange}
         />
         <Form.Field>
