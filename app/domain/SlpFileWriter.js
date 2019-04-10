@@ -53,8 +53,8 @@ export default class SlpFileWriter {
   async connectOBS() {
     if (this.obsIP && this.obsSourceName) {
       await this.obs.connect({address: this.obsIP});
-      this.scenes = await this.obs.send("GetSceneList");
-      this.scenes = this.scenes.scenes;
+      const obsScenes = await this.obs.send("GetSceneList");
+      this.scenes = obsScenes.scenes;
     }
   }
 
