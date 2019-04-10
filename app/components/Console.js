@@ -272,6 +272,8 @@ export default class Console extends Component {
         <div className={styles['conn-content-grid']}>
           {this.renderLabelValue("IP Address", connection.ipAddress)}
           {this.renderLabelValue("Target Folder", connection.targetFolder)}
+          {this.renderLabelValue("OBS IP", connection.obsIP)}
+          {this.renderLabelValue("OBS Source Name", connection.obsSourceName)}
           {this.renderStatusLabelValue(connection)}
         </div>
       </Card.Content>
@@ -572,6 +574,18 @@ export default class Console extends Component {
           handlerParams={[]}
           showLabelDescription={false}
           useFormInput={true}
+        />
+        <Form.Input
+          name="obsIP"
+          label="OBS Websocket IP"
+          defaultValue={connectionSettings.obsIP || ""}
+          onChange={this.onFieldChange}
+        />
+        <Form.Input
+          name="obsSourceName"
+          label="OBS Source Name"
+          default={connectionSettings.obsSourceName}
+          onChange={this.onFieldChange}
         />
         <Form.Field>
           <label htmlFor="isRealTimeMode">Real-Time Mode</label>
