@@ -575,7 +575,7 @@ export default class Console extends Component {
         />
         <Form.Input
           name="obsIP"
-          label="OBS Websocket IP"
+          label="OBS Websocket IP:Port"
           defaultValue={connectionSettings.obsIP || ""}
           onChange={this.onFieldChange}
         />
