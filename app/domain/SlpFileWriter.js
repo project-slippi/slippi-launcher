@@ -50,9 +50,11 @@ export default class SlpFileWriter {
     this.obsSourceName = settings.obsSourceName;
   }
 
-  connectOBS() {
+  async connectOBS() {
     if (this.obsIP && this.obsSourceName) {
-      this.obs.connect({address: this.obsIP});
+      await this.obs.connect({address: this.obsIP});
+      this.scenes = await this.obs.send("GetSceneList");
+      this.scenes = this.scenes.scenes;
     }
   }
 
@@ -63,7 +65,14 @@ export default class SlpFileWriter {
   setStatus(value) {
     this.statusOutput.status = value;
     console.log(`Status changed: ${value}`);
-    this.obs.send("SetSceneItemProperties", {"item": this.obsSourceName, "visible": value});
+    for (let i = this.scenes.length - 1; i >= 0; i -= 1) {
+      for (let j = this.scenes[i].sources.length - 1; j >= 0; j -= 1) {
+        if (this.scenes[i].sources[j].name === this.obsSourceName) {
+          console.log(this.obs.send("SetSceneItemProperties", 
+            {"scene-name": this.scenes[j].name, "item": this.obsSourceName, "visible": value}));
+        }
+      }
+    }
   }
 
   handleStatusOutput() {
