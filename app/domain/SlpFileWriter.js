@@ -34,7 +34,7 @@ export default class SlpFileWriter {
       bytesWritten: 0,
       metadata: {
         startTime: null,
-        lastFrame: 0,
+        lastFrame: -124,
         players: {},
       },
     };
@@ -97,6 +97,10 @@ export default class SlpFileWriter {
     if (this.statusOutput.status) {
       // If game is currently active, reset the timer
       setTimer();
+      return;
+    }
+    if (this.currentFile.metadata.lastFrame < -90) {
+      // Only show the source in the later portion of the game loading stage
       return;
     }
 
