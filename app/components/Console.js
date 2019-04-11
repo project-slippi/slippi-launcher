@@ -583,15 +583,14 @@ export default class Console extends Component {
           />
         </Form.Field> </Tab.Pane> }, 
       { menuItem: "Advanced", render: () => <Tab.Pane>
-        <div className={styles['description']}>
+        <div className={`${styles['description']} ${styles['spacer']}`}>
           <strong>Only modify if you know what you doing.</strong>&nbsp;
-          OBS integration lets you select the dolphin instance to be shown
-          if the game is active and hidden if the game is inactive.
-          You must download the &nbsp;
+          These settings let you select an OBS source (e.g. your dolphin capture) 
+          to be shown if the game is active and hidden if the game is inactive.
+          You must install the &nbsp;
           <a href="https://github.com/Palakis/obs-websocket">OBS Websocket Plugin</a>&nbsp;
           for this feature to work.
         </div>
-        <br/>
         <Form.Input
           name="obsIP"
           label="OBS Websocket IP:Port"
@@ -621,8 +620,7 @@ export default class Console extends Component {
 
     return (
       <Form error={!!errorMessage} onSubmit={this.onFormSubmit(connectionSettings)} >
-        <Tab panes={panes} />
-        <br/>
+        <Tab panes={panes} className={styles['spacer']} />
         <Message error={true} content={errorMessage} />
         <Form.Button content="Submit" onClick={this.onSubmitClick} />
       </Form>
