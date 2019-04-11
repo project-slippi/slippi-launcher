@@ -96,13 +96,14 @@ export default class SlpFileWriter {
       }, 100);
     }
 
+    if (this.currentFile.metadata.lastFrame < -70) {
+      // Only show the source in the later portion of the game loading stage
+      return;
+    }
+
     if (this.statusOutput.status) {
       // If game is currently active, reset the timer
       setTimer();
-      return;
-    }
-    if (this.currentFile.metadata.lastFrame < -70) {
-      // Only show the source in the later portion of the game loading stage
       return;
     }
 
