@@ -48,11 +48,13 @@ export default class SlpFileWriter {
     this.folderPath = settings.targetFolder;
     this.obsIP = settings.obsIP;
     this.obsSourceName = settings.obsSourceName;
+    this.obsPassword = settings.obsPassword;
   }
 
   async connectOBS() {
     if (this.obsIP && this.obsSourceName) {
-      await this.obs.connect({address: this.obsIP});
+      // if you send a password when authentication is disabled, OBS will still connect
+      await this.obs.connect({address: this.obsIP, password: this.obsPassword});
       const obsScenes = await this.obs.send("GetSceneList");
       this.scenes = obsScenes.scenes;
     }
@@ -99,7 +101,7 @@ export default class SlpFileWriter {
       setTimer();
       return;
     }
-    if (this.currentFile.metadata.lastFrame < -90) {
+    if (this.currentFile.metadata.lastFrame < -70) {
       // Only show the source in the later portion of the game loading stage
       return;
     }
