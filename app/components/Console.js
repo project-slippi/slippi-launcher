@@ -587,12 +587,16 @@ export default class Console extends Component {
           <strong>Only modify if you know what you doing.</strong>&nbsp;
           OBS integration lets you select the dolphin instance to be shown
           if the game is active and hidden if the game is inactive.
+          You must download the &nbsp;
+          <a href="https://github.com/Palakis/obs-websocket">OBS Websocket Plugin</a>&nbsp;
+          for this feature to work.
         </div>
         <br/>
         <Form.Input
           name="obsIP"
           label="OBS Websocket IP:Port"
           defaultValue={connectionSettings.obsIP || ""}
+          placeholder="localhost:4444"
           onChange={this.onFieldChange}
         />
         <Form.Input
