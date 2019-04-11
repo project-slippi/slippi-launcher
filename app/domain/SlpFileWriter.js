@@ -83,7 +83,7 @@ export default class SlpFileWriter {
     });
   }
 
-  handleStatusOutput() {
+  handleStatusOutput(timeoutLength = 100) {
     const setTimer = () => {
       if (this.statusOutput.timeout) {
         // If we have a timeout, clear it
@@ -93,7 +93,7 @@ export default class SlpFileWriter {
       this.statusOutput.timeout = setTimeout(() => {
         // If we timeout, set and set status
         this.setStatus(false);
-      }, 100);
+      }, timeoutLength);
     }
 
     if (this.currentFile.metadata.lastFrame < -70) {
@@ -426,6 +426,14 @@ export default class SlpFileWriter {
       };
 
       this.currentFile.metadata.players[`${playerIndex}`] = player;
+
+      break;
+    case SlpFileWriter.commands.CMD_RECEIVE_GAME_END:
+      const endMethod = dataView.getUint8(1);
+
+      if (endMethod !== 7) {
+        this.handleStatusOutput(1000);
+      }
 
       break;
     default:
