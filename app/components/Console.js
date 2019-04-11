@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import path from 'path';
-import { Header, Modal, Form, Card, Button, Icon, Checkbox, Message } from 'semantic-ui-react';
+import { Header, Modal, Form, Card, Button, Icon, Checkbox, Message, Tab } from 'semantic-ui-react';
 import { ConnectionStatus } from '../domain/ConsoleConnection';
 import PageHeader from './common/PageHeader';
 import PageWrapper from './PageWrapper';
@@ -549,14 +549,8 @@ export default class Console extends Component {
     const targetFolderFormValue = _.get(this.state, ['formData', 'targetFolder']);
     const validation = _.get(this.state, ['formData', 'validation']) || {};
 
-    let errorMessage = null;
-    if (validation.targetFolder === "empty") {
-      errorMessage = "Target folder cannot be empty. This is where your replays will go to be " +
-        "read by dolphin.";
-    }
-
-    return (
-      <Form error={!!errorMessage} onSubmit={this.onFormSubmit(connectionSettings)} >
+    const panes = [
+      { menuItem: "Basic", render: () => <Tab.Pane>
         <Form.Input
           name="ipAddress"
           label="IP Address"
@@ -573,18 +567,6 @@ export default class Console extends Component {
           showLabelDescription={false}
           useFormInput={true}
         />
-        <Form.Input
-          name="obsIP"
-          label="OBS Websocket IP:Port"
-          defaultValue={connectionSettings.obsIP || ""}
-          onChange={this.onFieldChange}
-        />
-        <Form.Input
-          name="obsSourceName"
-          label="OBS Source Name"
-          defaultValue={connectionSettings.obsSourceName}
-          onChange={this.onFieldChange}
-        />
         <Form.Field>
           <label htmlFor="isRealTimeMode">Real-Time Mode</label>
           <div className={styles['description']}>
@@ -599,7 +581,44 @@ export default class Console extends Component {
             defaultChecked={connectionSettings.isRealTimeMode}
             onChange={this.onFieldChange}
           />
-        </Form.Field>
+        </Form.Field> </Tab.Pane> }, 
+      { menuItem: "Advanced", render: () => <Tab.Pane>
+        <div className={styles['description']}>
+          <strong>Only modify if you know what you doing.</strong>&nbsp;
+          OBS integration lets you select the dolphin instance to be shown
+          if the game is active and hidden if the game is inactive.
+        </div>
+        <br/>
+        <Form.Input
+          name="obsIP"
+          label="OBS Websocket IP:Port"
+          defaultValue={connectionSettings.obsIP || ""}
+          onChange={this.onFieldChange}
+        />
+        <Form.Input
+          name="obsPassword"
+          label="OBS Websocket Password"
+          defaultValue={connectionSettings.obsPassword || ""}
+          onChange={this.onFieldChange}
+        />
+        <Form.Input
+          name="obsSourceName"
+          label="OBS Source Name"
+          defaultValue={connectionSettings.obsSourceName}
+          onChange={this.onFieldChange}
+        />
+      </Tab.Pane>}];
+
+    let errorMessage = null;
+    if (validation.targetFolder === "empty") {
+      errorMessage = "Target folder cannot be empty. This is where your replays will go to be " +
+        "read by dolphin.";
+    }
+
+    return (
+      <Form error={!!errorMessage} onSubmit={this.onFormSubmit(connectionSettings)} >
+        <Tab panes={panes} />
+        <br/>
         <Message error={true} content={errorMessage} />
         <Form.Button content="Submit" onClick={this.onSubmitClick} />
       </Form>

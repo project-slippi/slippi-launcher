@@ -24,6 +24,7 @@ export default class ConsoleConnection {
     this.targetFolder = settings.targetFolder;
     this.obsIP = settings.obsIP;
     this.obsSourceName = settings.obsSourceName;
+    this.obsPassword = settings.obsPassword;
     this.isRealTimeMode = settings.isRealTimeMode;
 
     this.isMirroring = false;
@@ -37,7 +38,8 @@ export default class ConsoleConnection {
     // Initialize SlpFileWriter for writting files
     const slpSettings = {targetFolder: this.targetFolder, 
       onFileStateChange: this.fileStateChangeHandler, 
-      obsIP: this.obsIP, obsSourceName: this.obsSourceName}
+      obsIP: this.obsIP, obsSourceName: this.obsSourceName,
+      obsPassword: this.obsPassword}
     this.slpFileWriter = new SlpFileWriter(slpSettings);
   }
 
@@ -55,6 +57,7 @@ export default class ConsoleConnection {
       targetFolder: this.targetFolder,
       obsIP: this.obsIP,
       obsSourceName: this.obsSourceName,
+      obsPassword: this.obsPassword,
       isRealTimeMode: this.isRealTimeMode,
     };
   }
@@ -101,6 +104,7 @@ export default class ConsoleConnection {
     this.targetFolder = newSettings.targetFolder || this.targetFolder;
     this.obsIP = newSettings.obsIP || this.obsIP;
     this.obsSourceName = newSettings.obsSourceName || this.obsSourceName;
+    this.obsPassword = newSettings.obsPassword || this.obsPassword;
     this.isRealTimeMode = _.defaultTo(newSettings.isRealTimeMode, this.isRealTimeMode);
   }
 
