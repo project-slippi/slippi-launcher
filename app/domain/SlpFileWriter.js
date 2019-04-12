@@ -429,10 +429,10 @@ export default class SlpFileWriter {
 
       break;
     case SlpFileWriter.commands.CMD_RECEIVE_GAME_END:
-      const endMethod = dataView.getUint8(1);
+      const endMethod = dataView.getUint8(0);
 
       if (endMethod !== 7) {
-        this.handleStatusOutput(1000);
+        this.handleStatusOutput(1100);
       }
 
       break;
