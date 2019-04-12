@@ -14,7 +14,7 @@ These are the applications you will need to install in order to build this proje
 
 ### Build Steps
 - Clone the repo via: `git clone git@github.com:project-slippi/slippi-desktop-app.git`
-- Navigate into the directory and run: `yarn`
+- Navigate into the directory and run: `yarn` to install all dependencies
 - Use `yarn dev` to develop
 - Use `yarn package` to build a release
 
