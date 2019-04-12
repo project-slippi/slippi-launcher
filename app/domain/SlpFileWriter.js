@@ -2,18 +2,27 @@ import _ from 'lodash';
 import fs from 'fs-extra';
 import path from 'path';
 import moment from 'moment';
+import OBSWebSocket from 'obs-websocket-js'
 
 export default class SlpFileWriter {
   static commands = {
     CMD_RECEIVE_COMMANDS: 0x35,
+    CMD_GAME_START: 0x36,
     CMD_RECEIVE_POST_FRAME_UPDATE: 0x38,
     CMD_RECEIVE_GAME_END: 0x39,
   }
 
-  constructor(folderPath, onFileStateChange) {
-    this.folderPath = folderPath;
-    this.onFileStateChange = onFileStateChange;
+  constructor(settings) {
+    this.folderPath = settings.folderPath;
+    this.onFileStateChange = settings.onFileStateChange;
+    this.obsSourceName = settings.obsSourceName;
+    this.obsIP = settings.obsIP;
     this.currentFile = this.getClearedCurrentFile();
+    this.obs = new OBSWebSocket();
+    this.statusOutput = {
+      status: false,
+      timeout: null,
+    };
   }
 
   getClearedCurrentFile() {
@@ -25,7 +34,7 @@ export default class SlpFileWriter {
       bytesWritten: 0,
       metadata: {
         startTime: null,
-        lastFrame: 0,
+        lastFrame: -124,
         players: {},
       },
     };
@@ -37,6 +46,72 @@ export default class SlpFileWriter {
 
   updateSettings(settings) {
     this.folderPath = settings.targetFolder;
+    this.obsIP = settings.obsIP;
+    this.obsSourceName = settings.obsSourceName;
+    this.obsPassword = settings.obsPassword;
+  }
+
+  async connectOBS() {
+    if (this.obsIP && this.obsSourceName) {
+      // if you send a password when authentication is disabled, OBS will still connect
+      await this.obs.connect({address: this.obsIP, password: this.obsPassword});
+      const obsScenes = await this.obs.send("GetSceneList");
+      this.scenes = obsScenes.scenes;
+    }
+  }
+
+  disconnectOBS() {
+    this.obs.disconnect();
+  }
+
+  setStatus(value) {
+    this.statusOutput.status = value;
+    console.log(`Status changed: ${value}`);
+    const scenes = this.scenes || [];
+    const pairs = _.flatMap(scenes, (scene) => {
+      const sources = scene.sources || [];
+      return _.map(sources, (source) => ({scene: scene.name, source: source.name}));
+    });
+    _.forEach(pairs, (pair) => {
+      if (pair.source !== this.obsSourceName) {
+        return;
+      }
+
+      const res = this.obs.send("SetSceneItemProperties", 
+        {"scene-name": pair.scene, "item": this.obsSourceName, "visible": value});
+      console.log(res);
+    });
+  }
+
+  handleStatusOutput(timeoutLength = 100) {
+    const setTimer = () => {
+      if (this.statusOutput.timeout) {
+        // If we have a timeout, clear it
+        clearTimeout(this.statusOutput.timeout);
+      }
+
+      this.statusOutput.timeout = setTimeout(() => {
+        // If we timeout, set and set status
+        this.setStatus(false);
+      }, timeoutLength);
+    }
+
+    if (this.currentFile.metadata.lastFrame < -70) {
+      // Only show the source in the later portion of the game loading stage
+      return;
+    }
+
+    if (this.statusOutput.status) {
+      // If game is currently active, reset the timer
+      setTimer();
+      return;
+    }
+
+    // Here we did not have a game going, so let's indicate we do now
+    this.setStatus(true);
+    
+    // Set timer
+    setTimer();
   }
 
   handleData(newData) {
@@ -99,9 +174,14 @@ export default class SlpFileWriter {
         this.endGame();
         isGameEnd = true;
         break;
+      case SlpFileWriter.commands.CMD_GAME_START:
+        payloadLen = this.processCommand(command, payloadDataView);
+        this.writeCommand(command, payloadPtr, payloadLen);
+        break;
       default:
         payloadLen = this.processCommand(command, payloadDataView);
         this.writeCommand(command, payloadPtr, payloadLen);
+        this.handleStatusOutput();
         break;
       }
 
@@ -346,6 +426,14 @@ export default class SlpFileWriter {
       };
 
       this.currentFile.metadata.players[`${playerIndex}`] = player;
+
+      break;
+    case SlpFileWriter.commands.CMD_RECEIVE_GAME_END:
+      const endMethod = dataView.getUint8(0);
+
+      if (endMethod !== 7) {
+        this.handleStatusOutput(1100);
+      }
 
       break;
     default:

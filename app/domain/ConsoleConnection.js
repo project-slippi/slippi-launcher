@@ -22,6 +22,9 @@ export default class ConsoleConnection {
     this.id = ConsoleConnection.connectionCount;
     this.ipAddress = settings.ipAddress;
     this.targetFolder = settings.targetFolder;
+    this.obsIP = settings.obsIP;
+    this.obsSourceName = settings.obsSourceName;
+    this.obsPassword = settings.obsPassword;
     this.isRealTimeMode = settings.isRealTimeMode;
 
     this.isMirroring = false;
@@ -33,9 +36,11 @@ export default class ConsoleConnection {
     this.dolphinManager = new DolphinManager(`mirror-${this.id}`, { mode: 'mirror' });
 
     // Initialize SlpFileWriter for writting files
-    this.slpFileWriter = new SlpFileWriter(
-      this.targetFolder, this.fileStateChangeHandler
-    );
+    const slpSettings = {targetFolder: this.targetFolder, 
+      onFileStateChange: this.fileStateChangeHandler, 
+      obsIP: this.obsIP, obsSourceName: this.obsSourceName,
+      obsPassword: this.obsPassword}
+    this.slpFileWriter = new SlpFileWriter(slpSettings);
   }
 
   forceConsoleUiUpdate() {
@@ -50,6 +55,9 @@ export default class ConsoleConnection {
     return {
       ipAddress: this.ipAddress,
       targetFolder: this.targetFolder,
+      obsIP: this.obsIP,
+      obsSourceName: this.obsSourceName,
+      obsPassword: this.obsPassword,
       isRealTimeMode: this.isRealTimeMode,
     };
   }
@@ -94,6 +102,9 @@ export default class ConsoleConnection {
     // If data is not provided, keep old values
     this.ipAddress = newSettings.ipAddress || this.ipAddress;
     this.targetFolder = newSettings.targetFolder || this.targetFolder;
+    this.obsIP = newSettings.obsIP || this.obsIP;
+    this.obsSourceName = newSettings.obsSourceName || this.obsSourceName;
+    this.obsPassword = newSettings.obsPassword || this.obsPassword;
     this.isRealTimeMode = _.defaultTo(newSettings.isRealTimeMode, this.isRealTimeMode);
   }
 
@@ -108,6 +119,7 @@ export default class ConsoleConnection {
     // Update dolphin manager settings
     const connectionSettings = this.getSettings();
     this.slpFileWriter.updateSettings(connectionSettings);
+    this.slpFileWriter.connectOBS();
     this.dolphinManager.updateSettings(connectionSettings);
 
     // Indicate we are connecting
@@ -187,6 +199,7 @@ export default class ConsoleConnection {
     if (this.client) {
       // TODO: Confirm destroy is picked up by an action and disconnected
       // TODO: status is set
+      this.slpFileWriter.disconnectOBS();
       this.client.destroy();
     }
   }
