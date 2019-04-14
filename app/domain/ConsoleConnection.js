@@ -21,6 +21,7 @@ export default class ConsoleConnection {
 
     this.id = ConsoleConnection.connectionCount;
     this.ipAddress = settings.ipAddress;
+    this.port = settings.port;
     this.targetFolder = settings.targetFolder;
     this.obsIP = settings.obsIP;
     this.obsSourceName = settings.obsSourceName;
@@ -39,7 +40,8 @@ export default class ConsoleConnection {
     const slpSettings = {targetFolder: this.targetFolder, 
       onFileStateChange: this.fileStateChangeHandler, 
       obsIP: this.obsIP, obsSourceName: this.obsSourceName,
-      obsPassword: this.obsPassword}
+      obsPassword: this.obsPassword, id: this.id,
+    }
     this.slpFileWriter = new SlpFileWriter(slpSettings);
   }
 
@@ -53,7 +55,9 @@ export default class ConsoleConnection {
 
   getSettings() {
     return {
+      id: this.id,
       ipAddress: this.ipAddress,
+      port: this.port,
       targetFolder: this.targetFolder,
       obsIP: this.obsIP,
       obsSourceName: this.obsSourceName,
@@ -101,6 +105,7 @@ export default class ConsoleConnection {
   editSettings(newSettings) {
     // If data is not provided, keep old values
     this.ipAddress = newSettings.ipAddress || this.ipAddress;
+    this.port = newSettings.port || this.port;
     this.targetFolder = newSettings.targetFolder || this.targetFolder;
     this.obsIP = newSettings.obsIP || this.obsIP;
     this.obsSourceName = newSettings.obsSourceName || this.obsSourceName;
@@ -130,9 +135,9 @@ export default class ConsoleConnection {
     // TODO: to do this
     const client = net.connect({
       host: this.ipAddress,
-      port: 666,
+      port: this.port || 666,
     }, () => {
-      console.log(`Connected to ${this.ipAddress}!`);
+      console.log(`Connected to ${this.ipAddress}:${this.port}!`);
       this.connectionRetryState = this.getDefaultRetryState();
       this.connectionStatus = ConnectionStatus.CONNECTED;
       this.forceConsoleUiUpdate();
@@ -152,7 +157,7 @@ export default class ConsoleConnection {
 
     client.on('timeout', () => {
       // const previouslyConnected = this.connectionStatus === ConnectionStatus.CONNECTED;
-      console.log(`Timeout on ${this.ipAddress}`);
+      console.log(`Timeout on ${this.ipAddress}:${this.port}`);
       client.destroy();
 
       // TODO: Fix reconnect logic

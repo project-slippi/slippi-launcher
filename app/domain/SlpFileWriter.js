@@ -1,3 +1,4 @@
+import net from 'net';
 import _ from 'lodash';
 import fs from 'fs-extra';
 import path from 'path';
@@ -17,12 +18,20 @@ export default class SlpFileWriter {
     this.onFileStateChange = settings.onFileStateChange;
     this.obsSourceName = settings.obsSourceName;
     this.obsIP = settings.obsIP;
+    this.id = settings.id;
     this.currentFile = this.getClearedCurrentFile();
     this.obs = new OBSWebSocket();
     this.statusOutput = {
       status: false,
       timeout: null,
     };
+    this.client = null;
+    this.server = net.createServer((socket) => {
+      if (!this.client) {
+        this.client = socket;
+      }
+    });
+    this.server.listen(666 + this.id, '127.0.0.1');
   }
 
   getClearedCurrentFile() {
@@ -49,6 +58,7 @@ export default class SlpFileWriter {
     this.obsIP = settings.obsIP;
     this.obsSourceName = settings.obsSourceName;
     this.obsPassword = settings.obsPassword;
+    this.id = settings.id;
   }
 
   async connectOBS() {
@@ -122,6 +132,10 @@ export default class SlpFileWriter {
       this.currentFile.previousBuffer,
       newData,
     ]));
+
+    if (this.client) {
+      this.client.write(newData);
+    }
 
     const dataView = new DataView(data.buffer);
 

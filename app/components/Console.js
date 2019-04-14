@@ -272,6 +272,7 @@ export default class Console extends Component {
         <div className={styles['conn-content-grid']}>
           {this.renderLabelValue("IP Address", connection.ipAddress)}
           {this.renderLabelValue("Target Folder", connection.targetFolder)}
+	        {this.renderLabelValue("Relay Port", 666 + connection.id)}
           {this.renderStatusLabelValue(connection)}
         </div>
       </Card.Content>
@@ -582,7 +583,7 @@ export default class Console extends Component {
             onChange={this.onFieldChange}
           />
         </Form.Field> </Tab.Pane> }, 
-      { menuItem: "Advanced", render: () => <Tab.Pane>
+      { menuItem: "OBS", render: () => <Tab.Pane>
         <div className={`${styles['description']} ${styles['spacer']}`}>
           <strong>Only modify if you know what you doing.</strong>&nbsp;
           These settings let you select an OBS source (e.g. your dolphin capture) 
@@ -610,7 +611,16 @@ export default class Console extends Component {
           defaultValue={formData.obsSourceName || connectionSettings.obsSourceName}
           onChange={this.onFieldChange}
         />
-      </Tab.Pane>}];
+      </Tab.Pane>},
+      { menuItem: "Relay", render: () => <Tab.Pane>
+        <Form.Input
+          name="port"
+          label="Relay Port"
+          defaultValue={connectionSettings.port || ""}
+          onChange={this.onFieldChange}
+        />
+      </Tab.Pane>},
+    ];
 
     let errorMessage = null;
     if (validation.targetFolder === "empty") {
