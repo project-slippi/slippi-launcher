@@ -167,7 +167,7 @@ export default class FileRow extends Component {
   generateOptionsCell() {
     return (
       <Table.Cell className={styles['play-cell']} textAlign="center">
-        <Link to="/game" replace={false}>
+        <Link to="/game" className={styles['bound-link']} replace={false}>
           <Button
             circular={true}
             inverted={true}
