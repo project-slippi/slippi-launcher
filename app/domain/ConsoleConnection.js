@@ -157,7 +157,7 @@ export default class ConsoleConnection {
 
     client.on('timeout', () => {
       // const previouslyConnected = this.connectionStatus === ConnectionStatus.CONNECTED;
-      console.log(`Timeout on ${this.ipAddress}:${this.port}`);
+      console.log(`Timeout on ${this.ipAddress}:${this.port || "666"}`);
       client.destroy();
 
       // TODO: Fix reconnect logic

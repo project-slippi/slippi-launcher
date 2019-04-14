@@ -551,7 +551,7 @@ export default class Console extends Component {
     const validation = _.get(this.state, ['formData', 'validation']) || {};
 
     const panes = [
-      { menuItem: "Basic", render: () => <Tab.Pane>
+      { menuItem: "Mirroring", pane: ( <Tab.Pane key="mirroringTab">
         <Form.Input
           name="ipAddress"
           label="IP Address"
@@ -582,8 +582,8 @@ export default class Console extends Component {
             defaultChecked={_.defaultTo(formData.isRealTimeMode, connectionSettings.isRealTimeMode)}
             onChange={this.onFieldChange}
           />
-        </Form.Field> </Tab.Pane> }, 
-      { menuItem: "OBS", render: () => <Tab.Pane>
+        </Form.Field> </Tab.Pane> )}, 
+      { menuItem: "OBS", pane: ( <Tab.Pane key="obsTab">
         <div className={`${styles['description']} ${styles['spacer']}`}>
           <strong>Only modify if you know what you doing.</strong>&nbsp;
           These settings let you select an OBS source (e.g. your dolphin capture) 
@@ -608,18 +608,18 @@ export default class Console extends Component {
         <Form.Input
           name="obsSourceName"
           label="OBS Source Name"
-          defaultValue={formData.obsSourceName || connectionSettings.obsSourceName}
+          defaultValue={formData.obsSourceName || connectionSettings.obsSourceName || ""}
           onChange={this.onFieldChange}
         />
-      </Tab.Pane>},
-      { menuItem: "Relay", render: () => <Tab.Pane>
+      </Tab.Pane>)},
+      { menuItem: "Relay", pane: ( <Tab.Pane key="relayTab">
         <Form.Input
           name="port"
           label="Relay Port"
-          defaultValue={connectionSettings.port || ""}
+          defaultValue={formData.port || connectionSettings.port || ""}
           onChange={this.onFieldChange}
         />
-      </Tab.Pane>},
+      </Tab.Pane>)},
     ];
 
     let errorMessage = null;
@@ -630,7 +630,7 @@ export default class Console extends Component {
 
     return (
       <Form error={!!errorMessage} onSubmit={this.onFormSubmit(connectionSettings)} >
-        <Tab panes={panes} className={styles['spacer']} />
+        <Tab renderActiveOnly={false} panes={panes} className={styles['spacer']} />
         <Message error={true} content={errorMessage} />
         <Form.Button content="Submit" onClick={this.onSubmitClick} />
       </Form>
