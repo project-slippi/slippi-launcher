@@ -9,15 +9,15 @@ const SelfDestructRow = ({ stock, player, playerStyles, yCoordinate }) => {
   const { text: playerTextStyle, stock: playerStockStyle } = playerStyles[player.playerIndex]
   return (
     <g transform={`translate(0, ${yCoordinate})`}>
-      <g { ...playerTextStyle } > {text} </g>
-      <g { ...playerStockStyle } > {stockCount} </g>
+      <g { ...playerTextStyle }> {text} </g>
+      <g { ...playerStockStyle }> {stockCount} </g>
     </g>
   )
 }
 
 SelfDestructRow.propTypes = {
   stock: PropTypes.shape({ count: PropTypes.number }).isRequired,
-  player: PropTypes.shape(playerPropTypes).isRequired,
+  player: playerPropTypes.isRequired,
   playerStyles: PropTypes.object.isRequired,
   yCoordinate: PropTypes.number.isRequired,
 }

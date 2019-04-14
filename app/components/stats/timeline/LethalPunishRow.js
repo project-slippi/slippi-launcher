@@ -14,8 +14,8 @@ const LethalPunishRow = ({ punish, playerStyles, opponent, yCoordinate, stockCou
 }
 
 LethalPunishRow.propTypes = {
-  punish: PropTypes.shape(punishPropTypes).isRequired,
-  opponent: PropTypes.shape(playerPropTypes).isRequired,
+  punish: punishPropTypes.isRequired,
+  opponent: playerPropTypes.isRequired,
   playerStyles: PropTypes.object.isRequired,
   yCoordinate: PropTypes.number.isRequired,
   stockCount: PropTypes.number.isRequired,

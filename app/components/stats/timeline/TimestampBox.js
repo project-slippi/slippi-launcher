@@ -8,10 +8,14 @@ const TimestampBox = ({ timestamp, yCoordinate }) =>
     textAnchor='middle'
   >
     <rect
-      width={fontSize*4} height={fontSize*2}
-      x={-fontSize*2} y={-fontSize*1.05}
-      stroke="rgba(255, 255, 255, 0.75)" strokeWidth=".1"
-      fill="#282B33" rx={fontSize / 2}
+      width={fontSize*4}
+      height={fontSize*2}
+      x={-fontSize*2}
+      y={-fontSize*1.05}
+      stroke="rgba(255, 255, 255, 0.75)"
+      strokeWidth=".1"
+      fill="#282B33"
+      rx={fontSize / 2}
     />
     <text { ...textStyle } > {timestamp} </text>
   </g>

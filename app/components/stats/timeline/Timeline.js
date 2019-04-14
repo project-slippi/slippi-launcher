@@ -1,14 +1,15 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
+import styles from '../GameProfile.scss'
 
 import NonLethalPunishRow from './NonLethalPunishRow'
 import LethalPunishRow from './LethalPunishRow'
 import SelfDestructRow from './SelfDestructRow'
 import TimestampBox from './TimestampBox'
-import { getYCoordinateFromFrame, fontSize, svgWidth, stockSize, isSelfDestruct } from './constants'
+import { getYCoordinateFromFrame, fontSize, svgWidth, stockSize, isSelfDestruct, punishPropTypes } from './constants'
 
-const Timeline = ({ punishes, stocks, players, uniqueTimestamps }) => {
+const Timeline = ({ punishes, stocks, players, uniqueTimestamps, hoveredPunish }) => {
 
   const [firstPlayer, secondPlayer] = _.sortBy(_.keys(players))
 
@@ -81,15 +82,27 @@ const Timeline = ({ punishes, stocks, players, uniqueTimestamps }) => {
 
   return (
     <g>
+      { hoveredPunish &&
+        <rect
+          x={0}
+          y={getYCoordinateFromFrame(hoveredPunish.startFrame, uniqueTimestamps) - fontSize*2}
+          width={svgWidth}
+          height={fontSize*4}
+          className={styles['punish-hover']}
+        />
+      }
       { nonLethalPunishRows }
       { lethalPunishRows }
       { selfDestructRows }
 
       {/* divider */}
       <line
-        x1={svgWidth / 2} x2={svgWidth / 2}
-        y1="0" y2={(uniqueTimestamps.length+1)*(fontSize*4)}
-        stroke='rgba(255, 255, 255, 0.75)' strokeWidth='.1'
+        x1={svgWidth / 2}
+        x2={svgWidth / 2}
+        y1="0"
+        y2={(uniqueTimestamps.length+1)*(fontSize*4)}
+        stroke='rgba(255, 255, 255, 0.75)'
+        strokeWidth='.1'
       />
 
       { timestampBoxes }
@@ -98,10 +111,15 @@ const Timeline = ({ punishes, stocks, players, uniqueTimestamps }) => {
 }
 
 Timeline.propTypes = {
-  punishes: PropTypes.arrayOf(PropTypes.object).isRequired,
+  punishes: PropTypes.arrayOf(punishPropTypes).isRequired,
   stocks: PropTypes.arrayOf(PropTypes.object).isRequired,
   players: PropTypes.object.isRequired,
   uniqueTimestamps: PropTypes.arrayOf(PropTypes.string).isRequired,
+  hoveredPunish: punishPropTypes,
 }
 
-export default Timeline
+Timeline.defaultProps = {
+  hoveredPunish: null,
+}
+
+export default React.memo(Timeline)

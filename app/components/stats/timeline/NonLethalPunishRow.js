@@ -21,16 +21,16 @@ const renderPunishPercent = punish => {
 }
 
 const NonLethalPunishRow = ({ punish, playerStyles, yCoordinate }) => {
-  const { percent: percentStyle } = playerStyles[punish.opponentIndex] 
+  const { percent: opponentPercentStyle } = playerStyles[punish.opponentIndex] 
   return (
     <PunishRow punish={punish} playerStyles={playerStyles} yCoordinate={yCoordinate}>
-      <g { ...percentStyle }> { renderPunishPercent(punish) } </g>
+      <g { ...opponentPercentStyle }> { renderPunishPercent(punish) } </g>
     </PunishRow>
   )
 }
 
 NonLethalPunishRow.propTypes = {
-  punish: PropTypes.shape(punishPropTypes).isRequired,
+  punish: punishPropTypes.isRequired,
   playerStyles: PropTypes.object.isRequired,
   yCoordinate: PropTypes.number.isRequired,
 }

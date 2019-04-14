@@ -194,3 +194,13 @@ $header-height: 97px;
   stroke-linejoin: miter;
   font-weight: bold;
 }
+
+@keyframes hideshow {
+  from { opacity: .5; }
+  to { opacity: 0; }
+}
+
+.punish-hover {
+  animation: hideshow 2s ease-in-out 1 forwards;
+  fill: rgb(120, 0, 200);
+}

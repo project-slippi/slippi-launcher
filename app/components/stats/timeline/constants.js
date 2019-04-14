@@ -55,16 +55,16 @@ export const getYCoordinateFromFrame = (frame, uniqueTimestamps) => {
   return (index+1) * (fontSize*4)
 }
 
-export const playerPropTypes = {
+export const playerPropTypes = PropTypes.shape({
   playerIndex: PropTypes.number.isRequired,
   characterId: PropTypes.number.isRequired,
   characterColor: PropTypes.number.isRequired,
-}
+})
 
-export const punishPropTypes = {
+export const punishPropTypes = PropTypes.shape({
   playerIndex: PropTypes.number.isRequired,
   openingType: PropTypes.string.isRequired,
   moves: PropTypes.array.isRequired,
   startPercent: PropTypes.number.isRequired,
   endPercent: PropTypes.number.isRequired,
-}
+})

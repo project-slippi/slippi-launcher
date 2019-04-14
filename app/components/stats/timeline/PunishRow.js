@@ -1,13 +1,14 @@
-import React from 'react'
+import React, { Component } from 'react'
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 
 import { fontSize, textStyle, punishPropTypes } from './constants'
 import { getMoveName } from '../../../utils/moves'
+import Tooltip from './Tooltip'
 
 const renderPunishText = punish => {
-  const { moves, startPercent, endPercent, openingType } = punish
-  const damageDone = endPercent - startPercent
+  const { moves, openingType } = punish
+  const damageDone = _.sumBy(moves, 'damage')
 
   const moveText = moves.length > 1
     ? `${moves.length} moves`
@@ -51,24 +52,42 @@ const getMoveTextFill = (amountOfMoves) => {
   return `rgb(${red}, ${green}, 255, 1)`
 }
 
-const PunishRow = ({ punish, playerStyles, yCoordinate, children }) => {
-  const text = renderPunishText(punish)
-  const { text: playerTextStyle, line: playerLineStyle } = playerStyles[punish.playerIndex]
+export default class PunishRow extends Component {
 
-  return (
-    <g transform={`translate(0, ${yCoordinate})`}>
-      { punish.openingType !== 'trade' && <line { ...playerLineStyle } /> }
-      <g { ...playerTextStyle }> {text} </g>
-      { children }
-    </g>
-  )
+  static propTypes = {
+    punish: punishPropTypes.isRequired,
+    playerStyles: PropTypes.object.isRequired,
+    yCoordinate: PropTypes.number.isRequired,
+    children: PropTypes.element.isRequired,
+  }
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      hover: false,
+    }
+  }
+
+  render() {
+    const { punish, playerStyles, yCoordinate, children } = this.props
+    const text = renderPunishText(punish)
+    const { text: playerTextStyle, line: playerLineStyle } = playerStyles[punish.playerIndex]
+  
+    return (
+      <g transform={`translate(0, ${yCoordinate})`}>
+        { punish.openingType !== 'trade' && <line { ...playerLineStyle } /> }
+        <g
+          onMouseOver={() => this.setState({hover: true})}
+          onMouseOut={() => this.setState({hover: false})}
+          onFocus={() => this.setState({hover: true})}
+          onBlur={() => this.setState({hover: false})}
+          { ...playerTextStyle }
+        > 
+          {this.state.hover && <Tooltip punish={punish}/>}
+          {text} 
+        </g>
+        { children }
+      </g>
+    )
+  }
 }
-
-PunishRow.propTypes = {
-  punish: PropTypes.shape(punishPropTypes).isRequired,
-  playerStyles: PropTypes.object.isRequired,
-  yCoordinate: PropTypes.number.isRequired,
-  children: PropTypes.element.isRequired,
-}
-
-export default PunishRow
