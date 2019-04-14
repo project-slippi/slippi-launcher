@@ -19,7 +19,7 @@ import OverallTable from './OverallTable';
 import KillsTable from './KillsTable';
 import PunishesTable from './PunishesTable';
 
-import Chronology from './Chronology'
+import TimelineContainer from './timeline/TimelineContainer'
 
 import styles from './GameProfile.scss';
 
@@ -273,7 +273,7 @@ export default class GameProfile extends Component {
         </Sticky>
         <div ref={this.setRefStats} className={statsSectionClasses}>
           {this.renderOverall()}
-          <div className="ui basic segment"><Chronology game={this.props.store.game} /></div>
+          <div className="ui basic segment"><TimelineContainer game={this.props.store.game} /></div>
           {/* {this.renderStocks()}
           {this.renderPunishes()} */}
         </div>
