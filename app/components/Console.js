@@ -546,7 +546,7 @@ export default class Console extends Component {
       return null;
     }
 
-    const targetFolderFormValue = _.get(this.state, ['formData', 'targetFolder']);
+    const formData = _.get(this.state, 'formData') || {};
     const validation = _.get(this.state, ['formData', 'validation']) || {};
 
     const panes = [
@@ -554,14 +554,14 @@ export default class Console extends Component {
         <Form.Input
           name="ipAddress"
           label="IP Address"
-          defaultValue={connectionSettings.ipAddress}
+          defaultValue={formData.ipAddress || connectionSettings.ipAddress}
           onChange={this.onFieldChange}
         />
         <ActionInput
           name="targetFolder"
           label="Target Folder"
           error={!!validation['targetFolder']}
-          value={targetFolderFormValue || connectionSettings.targetFolder || ""}
+          value={formData.targetFolder || connectionSettings.targetFolder || ""}
           onClick={this.onBrowseFolder}
           handlerParams={[]}
           showLabelDescription={false}
@@ -578,7 +578,7 @@ export default class Console extends Component {
             id="isRealTimeMode"
             name="isRealTimeMode"
             toggle={true}
-            defaultChecked={connectionSettings.isRealTimeMode}
+            defaultChecked={_.defaultTo(formData.isRealTimeMode, connectionSettings.isRealTimeMode)}
             onChange={this.onFieldChange}
           />
         </Form.Field> </Tab.Pane> }, 
@@ -594,20 +594,20 @@ export default class Console extends Component {
         <Form.Input
           name="obsIP"
           label="OBS Websocket IP:Port"
-          defaultValue={connectionSettings.obsIP || ""}
+          defaultValue={formData.obsIP || connectionSettings.obsIP || ""}
           placeholder="localhost:4444"
           onChange={this.onFieldChange}
         />
         <Form.Input
           name="obsPassword"
           label="OBS Websocket Password"
-          defaultValue={connectionSettings.obsPassword || ""}
+          defaultValue={formData.obsPassword || connectionSettings.obsPassword || ""}
           onChange={this.onFieldChange}
         />
         <Form.Input
           name="obsSourceName"
           label="OBS Source Name"
-          defaultValue={connectionSettings.obsSourceName}
+          defaultValue={formData.obsSourceName || connectionSettings.obsSourceName}
           onChange={this.onFieldChange}
         />
       </Tab.Pane>}];
