@@ -1,12 +1,11 @@
-@import "../../colors.global";
+@import '../../colors.global';
 
 $header-height: 97px;
 
 .stats-player-header {
   background: $background-lightest !important;
-  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
-  margin: 0 -34px 0 -34px !important;
-  padding: 0 48px 0 48px !important;
+  border-radius: 4px;
+  box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
 
   .matchup-display {
     display: grid;
@@ -79,18 +78,11 @@ $header-height: 97px;
   }
 }
 
-.sticky-names {
-  z-index: 2;
-  position: relative;
-}
-
-.stats-section {
-  padding-top: 28px;
-
-  &.stuck {
-    margin-top: $header-height !important;
-  }
-}
+// .sticky-names {
+//   z-index: 2;
+//   position: relative;
+//   width: 100%;
+// }
 
 .vs-element {
   color: rgba(255, 255, 255, 0.5);
@@ -127,11 +119,11 @@ $header-height: 97px;
   margin: 0 !important;
   box-shadow: 3px 3px 2px rgba(0, 0, 0, 0.1) !important;
 
-  thead>tr>th {
+  thead > tr > th {
     background: $background-medium !important;
   }
 
-  tbody>tr>td {
+  tbody > tr > td {
     background: $background-light !important;
 
     &.category {

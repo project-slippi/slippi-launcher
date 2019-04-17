@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import {
   Header,
   Segment,
-  Sticky,
   Image,
   Icon,
   Button,
@@ -26,6 +25,7 @@ import * as stageUtils from '../../utils/stages';
 import * as timeUtils from '../../utils/time';
 import * as playerUtils from '../../utils/players';
 import PageWrapper from '../PageWrapper';
+import Scroller from '../common/Scroller';
 
 export default class GameProfile extends Component {
   static propTypes = {
@@ -40,11 +40,6 @@ export default class GameProfile extends Component {
     // store data
     store: PropTypes.object.isRequired,
     errors: PropTypes.object.isRequired,
-    globalNotifs: PropTypes.object.isRequired,
-  };
-
-  state = {
-    isStatsStuck: false,
   };
 
   refStats = null;
@@ -79,7 +74,7 @@ export default class GameProfile extends Component {
 
   renderLoading() {
     const store = this.props.store || {};
-    
+
     return (
       <Loader
         className={styles['loader']}
@@ -192,12 +187,16 @@ export default class GameProfile extends Component {
       },
     ];
 
-    const consoleNick = _.get(this.props.store, ['game', 'metadata', 'consoleNick']);
+    const consoleNick = _.get(this.props.store, [
+      'game',
+      'metadata',
+      'consoleNick',
+    ]);
     if (consoleNick) {
       metadata.push({
         label: 'Console Name',
         content: consoleNick,
-      })
+      });
     }
 
     const metadataElements = metadata.map(details => (
@@ -232,48 +231,16 @@ export default class GameProfile extends Component {
   }
 
   renderStats() {
-    const handleStick = () => {
-      this.setState({
-        isStatsStuck: true,
-      });
-    };
-
-    const handleUnstick = () => {
-      this.setState({
-        isStatsStuck: false,
-      });
-    };
-
-    const statsSectionClasses = classNames(
-      {
-        [styles['stuck']]: this.state.isStatsStuck,
-      },
-      styles['stats-section']
-    );
-
-    const globalNotifHeightPx =
-      _.get(this.props.globalNotifs, ['activeNotif', 'heightPx']) || 0;
-
     return (
       <Segment basic={true}>
         {this.renderErrorModal()}
-        <Sticky
-          className={styles['sticky-names']}
-          offset={globalNotifHeightPx}
-          onStick={handleStick}
-          onUnstick={handleUnstick}
-          context={this.refStats}
-        >
-          <div className={styles['stats-player-header']}>
-            {this.renderMatchupDisplay()}
-            {this.renderGameDetails()}
+        <Scroller>
+          <div ref={this.setRefStats}>
+            {this.renderOverall()}
+            {this.renderStocks()}
+            {this.renderPunishes()}
           </div>
-        </Sticky>
-        <div ref={this.setRefStats} className={statsSectionClasses}>
-          {this.renderOverall()}
-          {this.renderStocks()}
-          {this.renderPunishes()}
-        </div>
+        </Scroller>
       </Segment>
     );
   }
@@ -401,6 +368,10 @@ export default class GameProfile extends Component {
       <PageWrapper history={this.props.history}>
         <div className="main-padding">
           <PageHeader icon="game" text="Game" history={this.props.history} />
+          <div className={styles['stats-player-header']}>
+            {this.renderMatchupDisplay()}
+            {this.renderGameDetails()}
+          </div>
           {this.renderContent()}
         </div>
       </PageWrapper>
