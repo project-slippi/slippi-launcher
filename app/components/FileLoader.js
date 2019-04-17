@@ -18,6 +18,7 @@ import DismissibleMessage from './common/DismissibleMessage';
 import PageHeader from './common/PageHeader';
 import FolderBrowser from './common/FolderBrowser';
 import PageWrapper from './PageWrapper';
+import Scroller from './common/Scroller';
 
 export default class FileLoader extends Component {
   static propTypes = {
@@ -318,11 +319,11 @@ export default class FileLoader extends Component {
           text="Replay Browser"
           history={this.props.history}
         />
-        <div className={styles['scroller']}>
+        <Scroller>
           {this.renderGlobalError()}
           {this.renderFilteredFilesNotif(processedFiles)}
           {this.renderFileSelection(processedFiles)}
-        </div>
+        </Scroller>
       </div>
     );
   }

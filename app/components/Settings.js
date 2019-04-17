@@ -1,12 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import {
-  Button,
-  Message,
-  Header,
-  Icon,
-} from 'semantic-ui-react';
+import { Button, Message, Header, Icon } from 'semantic-ui-react';
 import { getDefaultDolphinPath } from '../utils/settings';
 import PageHeader from './common/PageHeader';
 import ActionInput from './common/ActionInput';
@@ -15,6 +10,7 @@ import DismissibleMessage from './common/DismissibleMessage';
 
 import styles from './Settings.scss';
 import PageWrapper from './PageWrapper';
+import Scroller from './common/Scroller';
 import SpacedGroup from './common/SpacedGroup';
 
 const { app } = require('electron').remote;
@@ -74,7 +70,8 @@ export default class Settings extends Component {
       <div>
         Hello Linux friend! We cannot include a Dolphin build that is guaranteed
         to work on your distro. Please find the <b>Playback Dolphin Path</b>
-        &nbsp;option to configure. <a href="https://discord.gg/KkhZQfR">Join the discord</a>
+        &nbsp;option to configure.{' '}
+        <a href="https://discord.gg/KkhZQfR">Join the discord</a>
         &nbsp;if you have any questions.
       </div>
     );
@@ -113,34 +110,37 @@ export default class Settings extends Component {
   }
 
   renderISOVersionCheck() {
-    const validationState = _.get(this.props.store, 'isoValidationState') || 'unknown';
+    const validationState =
+      _.get(this.props.store, 'isoValidationState') || 'unknown';
 
     let icon, text, loading;
     switch (validationState) {
-    case "success":
-      icon = "check circle outline";
-      text = "Valid";
+    case 'success':
+      icon = 'check circle outline';
+      text = 'Valid';
       loading = false;
       break;
-    case "fail":
-      icon = "times circle outline";
-      text = "Bad ISO";
+    case 'fail':
+      icon = 'times circle outline';
+      text = 'Bad ISO';
       loading = false;
       break;
-    case "validating":
-      icon = "spinner";
-      text = "Verifying";
+    case 'validating':
+      icon = 'spinner';
+      text = 'Verifying';
       loading = true;
       break;
     default:
-      icon = "question circle outline";
-      text = "";
+      icon = 'question circle outline';
+      text = '';
       loading = false;
       break;
     }
-    
+
     return (
-      <div className={`${styles['iso-version-check']} ${styles[validationState]}`}>
+      <div
+        className={`${styles['iso-version-check']} ${styles[validationState]}`}
+      >
         <span className={styles['iso-verify-text']}>{text}</span>
         <Icon name={icon} fitted={true} loading={loading} size="large" />
       </div>
@@ -158,7 +158,7 @@ export default class Settings extends Component {
           label="Melee ISO File"
           description="The path to a NTSC Melee 1.02 ISO. Used for playing replay files"
           value={store.settings.isoPath}
-          error={isoValidationState === "fail"}
+          error={isoValidationState === 'fail'}
           onClick={this.props.browseFile}
           handlerParams={['isoPath']}
         />
@@ -179,9 +179,7 @@ export default class Settings extends Component {
 
     const platform = process.platform;
     if (platform === 'linux') {
-      inputs.push([
-        this.renderPlaybackInstanceInput(),
-      ]);
+      inputs.push([this.renderPlaybackInstanceInput()]);
     }
 
     return (
@@ -199,9 +197,7 @@ export default class Settings extends Component {
 
     const platform = process.platform;
     if (platform !== 'linux') {
-      inputs.push([
-        this.renderPlaybackInstanceInput(),
-      ]);
+      inputs.push([this.renderPlaybackInstanceInput()]);
     }
 
     if (_.isEmpty(inputs)) {
@@ -222,7 +218,7 @@ export default class Settings extends Component {
 
   renderPlaybackInstanceInput() {
     const store = this.props.store || {};
-    
+
     const platform = process.platform;
 
     // If on Linux, indicate the steps required
@@ -230,9 +226,18 @@ export default class Settings extends Component {
       <div>
         Linux users must build their own playback Dolphin instance
         <ul>
-          <li>Use <a href="https://github.com/project-slippi/Slippi-FM-installer">installer script</a> to compile playback Dolphin</li>
+          <li>
+            Use{' '}
+            <a href="https://github.com/project-slippi/Slippi-FM-installer">
+              installer script
+            </a>{' '}
+            to compile playback Dolphin
+          </li>
           <li>Move the compiled instance out of the build directory</li>
-          <li>Set the field below to point to the directory that contains dolphin-emu</li>
+          <li>
+            Set the field below to point to the directory that contains
+            dolphin-emu
+          </li>
         </ul>
       </div>
     );
@@ -245,8 +250,8 @@ export default class Settings extends Component {
     if (platform !== 'linux') {
       playbackDolphinDescription = (
         <div>
-          An instance of Dolphin for playing replays comes bundled
-          with this app. This setting allows you to configure a different instance.&nbsp;
+          An instance of Dolphin for playing replays comes bundled with this
+          app. This setting allows you to configure a different instance.&nbsp;
           <strong>Only modify if you know what you are doing.</strong>
         </div>
       );
@@ -289,7 +294,7 @@ export default class Settings extends Component {
           {this.renderConfigDolphin()}
         </SpacedGroup>
       </div>
-    )
+    );
   }
 
   renderContent() {
@@ -317,7 +322,7 @@ export default class Settings extends Component {
             infoText={`App v${currentVersion}`}
             history={this.props.history}
           />
-          {this.renderContent()}
+          <Scroller>{this.renderContent()}</Scroller>
         </div>
       </PageWrapper>
     );
