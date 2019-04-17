@@ -4,4 +4,21 @@
   font-size: 14px;
   font-weight: normal;
   color: $foreground;
+} 
+.header-bar {
+  position: fixed;
+  top: 0;
+  z-index: 2;
+  padding: 20px 20px 20px 0;
+  background: $background-dark;
+}
+
+.header-filler {
+  // spacer so page content loads below header
+  display: block;
+  position: relative;
+  height: 43px;
+  margin-bottom: 20px;
+  width: 100%;
+  visibility: hidden;
 }

@@ -28,24 +28,29 @@ export default class PageHeader extends Component {
     }
 
     return (
-      <Header as="h1" color="green" dividing={true}>
-        <Icon name={this.props.icon} />
-        <Header.Content className="full-width">
-          <div className="flex-horizontal-split">
-            {this.props.text}
-            <SpacedGroup>
-              {infoEl}
-              <Button
-                content="Back"
-                color="green"
-                basic={true}
-                inverted={true}
-                onClick={this.handleBack}
-              />
-            </SpacedGroup>
-          </div>
-        </Header.Content>
-      </Header>
+      <div>
+        <div className={styles['header-bar']}>
+          <Header as="h1" color="green" dividing={true}>
+            <Icon name={this.props.icon} />
+            <Header.Content className="full-width">
+              <div className="flex-horizontal-split">
+                {this.props.text}
+                <SpacedGroup>
+                  {infoEl}
+                  <Button
+                    content="Back"
+                    color="green"
+                    basic={true}
+                    inverted={true}
+                    onClick={this.handleBack}
+                  />
+                </SpacedGroup>
+              </div>
+            </Header.Content>
+          </Header>
+        </div>
+        <div className={styles['header-filler']} />
+      </div>
     );
   }
 }
