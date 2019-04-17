@@ -1,34 +1,34 @@
-@import "../colors.global.scss";
+@import '../colors.global.scss';
 
 .alert {
-    top: 0px;
-    position: fixed !important;
-    width: 100% !important;
-    z-index: 1000;
-    margin: 0 !important;
-    border-radius: 0 !important;
+  top: 0px;
+  // position: fixed !important;
+  width: 100% !important;
+  z-index: 1000;
+  margin: 0 !important;
+  border-radius: 0 !important;
 }
 
 .single-line-message {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .main {
-    padding-top: 100px;
+  padding-top: 100px;
 }
 
 .icon {
-    font-size: 24px !important;
+  font-size: 24px !important;
 }
 
 .version-arrow-icon {
-    margin-right: 0 !important;
+  margin-right: 0 !important;
 }
 
 .upgrade-link {
-    margin-left: 6px;
-    cursor: pointer;
-    font-weight: bold;
+  margin-left: 6px;
+  cursor: pointer;
+  font-weight: bold;
 }

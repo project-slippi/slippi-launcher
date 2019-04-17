@@ -1,4 +1,4 @@
-@import "../colors.global.scss";
+@import '../colors.global.scss';
 
 .layout {
   display: grid;
@@ -30,13 +30,13 @@
 .play-cell {
   text-align: center;
 
-  button>i {
-    color: #94969A;
+  button > i {
+    color: #94969a;
   }
 
   button:hover {
     i {
-      color: #FFFFFF;
+      color: #ffffff;
     }
   }
 }
@@ -99,4 +99,8 @@
 
 .bound-link {
   display: contents;
+}
+
+.scroller {
+  overflow-y: scroll;
 }

@@ -1,11 +1,15 @@
-@import "./colors.global.scss";
-@import "./spacers.global.scss";
+@import './colors.global.scss';
+@import './spacers.global.scss';
 
 body {
   position: relative;
   color: $primary-green;
   height: 100vh;
   background-color: $background-dark;
+}
+
+* {
+  overflow: hidden;
 }
 
 ul {
