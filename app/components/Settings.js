@@ -10,7 +10,6 @@ import DismissibleMessage from './common/DismissibleMessage';
 
 import styles from './Settings.scss';
 import PageWrapper from './PageWrapper';
-import Scroller from './common/Scroller';
 import SpacedGroup from './common/SpacedGroup';
 
 const { app } = require('electron').remote;
@@ -322,7 +321,7 @@ export default class Settings extends Component {
             infoText={`App v${currentVersion}`}
             history={this.props.history}
           />
-          <Scroller>{this.renderContent()}</Scroller>
+          {this.renderContent()}
         </div>
       </PageWrapper>
     );
