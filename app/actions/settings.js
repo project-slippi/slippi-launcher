@@ -115,8 +115,11 @@ export function validateISO() {
     const hash = crypto.createHash('sha1');
     const input = fs.createReadStream(isoPath);
 
-    // Below is the sha1 hash for NTSC Melee 1.02
-    const correctISOHash = "d4e70c064cc714ba8400a849cf299dbd1aa326fc";
+    // Below are the sha1 hashes that are considered valid
+    const validISOHashes = {
+      "d4e70c064cc714ba8400a849cf299dbd1aa326fc": "NTSC 1.02",
+      "e63d50e63a0cdd357f867342d542e7cec0c3a7c7": "NTSC 1.02 Scrubbed",
+    };
 
     input.on('readable', () => {
       const data = input.read();
@@ -127,7 +130,7 @@ export function validateISO() {
 
       // Reading complete, check hash
       const resultHash = hash.digest('hex');
-      const isValidISO = resultHash === correctISOHash;
+      const isValidISO = _.get(validISOHashes, resultHash);
       
       isoStateLocalCache[cacheKey] = isValidISO;
 
