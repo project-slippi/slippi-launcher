@@ -8,10 +8,10 @@ import { connect } from 'react-redux';
 import GlobalAlert from './GlobalAlert';
 import * as NotifActions from '../actions/notifs';
 import * as GameActions from '../actions/game';
-import { playFile } from '../actions/fileLoader';
+import { playFile } from "../actions/fileLoader";
 
 // Originally this logic was supposed to just exist at the App level. For some reason though
-// that broke navigation, so I decided to put the logic after the
+// that broke navigation, so I decided to put the logic after the 
 class PageWrapper extends Component {
   static propTypes = {
     children: PropTypes.any.isRequired,
