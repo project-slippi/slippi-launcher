@@ -312,6 +312,9 @@ export default class FileLoader extends Component {
     const files = store.files || [];
     const processedFiles = this.processFiles(files);
 
+    const scrollerOffset =
+      _.get(this.props.globalNotifs, ['activeNotif', 'heightPx']) || 0;
+
     return (
       <div className="main-padding">
         <PageHeader
@@ -319,7 +322,7 @@ export default class FileLoader extends Component {
           text="Replay Browser"
           history={this.props.history}
         />
-        <Scroller>
+        <Scroller topOffset={scrollerOffset}>
           {this.renderGlobalError()}
           {this.renderFilteredFilesNotif(processedFiles)}
           {this.renderFileSelection(processedFiles)}
