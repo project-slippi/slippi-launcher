@@ -49,6 +49,8 @@ const getMoveTextFill = (amountOfMoves) => {
   const red = Math.max(255 - 50*(amountOfMoves-1), 0)
   const green = Math.max(255 - 10*(amountOfMoves-1), 200)
 
+  // greenish
+  // const rb = Math.max(255 - 50*(amountOfMoves-1), 0)
   return `rgb(${red}, ${green}, 255, 1)`
 }
 
@@ -71,11 +73,17 @@ export default class PunishRow extends Component {
   render() {
     const { punish, playerStyles, yCoordinate, children } = this.props
     const text = renderPunishText(punish)
-    const { text: playerTextStyle, line: playerLineStyle } = playerStyles[punish.playerIndex]
+    const { text: playerTextStyle, line: playerLineStyle, tooltip: tooltipStyle } = playerStyles[punish.playerIndex]
   
     return (
       <g transform={`translate(0, ${yCoordinate})`}>
-        { punish.openingType !== 'trade' && <line { ...playerLineStyle } /> }
+        { punish.openingType !== 'trade' &&
+          <line
+            { ...playerLineStyle }
+            stroke='rgba(255, 255, 255, 0.7)'
+            strokeWidth={.1}
+          />
+        }
         <g
           onMouseOver={() => this.setState({hover: true})}
           onMouseOut={() => this.setState({hover: false})}
@@ -83,7 +91,7 @@ export default class PunishRow extends Component {
           onBlur={() => this.setState({hover: false})}
           { ...playerTextStyle }
         > 
-          {this.state.hover && <Tooltip punish={punish}/>}
+          {this.state.hover && punish.moves.length > 1 && <Tooltip punish={punish} tooltipStyle={tooltipStyle}/>}
           {text} 
         </g>
         { children }

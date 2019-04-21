@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { renderStockCount, textStyle, playerPropTypes } from './constants'
 
 const SelfDestructRow = ({ stock, player, playerStyles, yCoordinate }) => {
-  const text = <text { ...textStyle } fill='rgb(255, 75, 75, 1)'> self destructs </text>
+  const text = <text { ...textStyle } fill='#FF695E'> self destructs </text>
   const stockCount = renderStockCount(player, stock.count-1)
 
   const { text: playerTextStyle, stock: playerStockStyle } = playerStyles[player.playerIndex]

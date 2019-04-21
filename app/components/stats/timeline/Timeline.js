@@ -7,7 +7,17 @@ import NonLethalPunishRow from './NonLethalPunishRow'
 import LethalPunishRow from './LethalPunishRow'
 import SelfDestructRow from './SelfDestructRow'
 import TimestampBox from './TimestampBox'
-import { getYCoordinateFromFrame, fontSize, svgWidth, stockSize, isSelfDestruct, punishPropTypes } from './constants'
+import {
+  getYCoordinateFromFrame,
+  isSelfDestruct,
+  svgWidth,
+  rowHeight,
+  stockSize,
+  tooltipWidth,
+  tooltipTextX,
+  tooltipOffsetX,
+  punishPropTypes,
+} from './constants'
 
 const Timeline = ({ punishes, stocks, players, uniqueTimestamps, hoveredPunish }) => {
 
@@ -18,13 +28,23 @@ const Timeline = ({ punishes, stocks, players, uniqueTimestamps, hoveredPunish }
       stock: {transform: `translate(${svgWidth*.45 - 4*stockSize}, ${stockSize / 2})`},
       percent: {transform: `translate(${svgWidth*.45}, 0)`, textAnchor: 'end'},
       text: {transform: `translate(${svgWidth*.1}, 0)`, textAnchor: 'start'},
-      line: {x1: svgWidth*.375, x2: svgWidth*.45, stroke: 'rgba(255, 255, 255, 0.7)', strokeWidth: .1},
+      line: {x1: svgWidth*.375, x2: svgWidth*.45},
+      tooltip: {
+        text: {x: 0},
+        percent: {x: tooltipTextX},
+        rect: {x: -tooltipOffsetX},
+      },
     },
     [secondPlayer]: {
-      stock: {transform: `translate(${svgWidth*.55}, ${fontSize / 2})`},
+      stock: {transform: `translate(${svgWidth*.55}, ${stockSize / 2})`},
       percent: {transform: `translate(${svgWidth*.55}, 0)`},
       text: {transform: `translate(${svgWidth*.9}, 0)`, textAnchor: 'end'},
-      line: {x1: svgWidth*.625, x2: svgWidth*.55, stroke: 'rgba(255, 255, 255, 0.7)', strokeWidth: .1},
+      line: {x1: svgWidth*.625, x2: svgWidth*.55},
+      tooltip: {
+        text: {x: -tooltipTextX},
+        percent: {x: 0},
+        rect: {x: -tooltipWidth + tooltipOffsetX},
+      },
     },
   }
 
@@ -76,31 +96,35 @@ const Timeline = ({ punishes, stocks, players, uniqueTimestamps, hoveredPunish }
       <TimestampBox
         key={timestamp}
         timestamp={timestamp}
-        yCoordinate={(index+1) * (fontSize*4)}
+        yCoordinate={(index+1) * rowHeight}
       />
     )
+
+  const punishRows = _.sortBy(
+    [ ...nonLethalPunishRows, ...lethalPunishRows ],
+    row => row.props.punish.startFrame
+  )
 
   return (
     <g>
       { hoveredPunish &&
         <rect
           x={0}
-          y={getYCoordinateFromFrame(hoveredPunish.startFrame, uniqueTimestamps) - fontSize*2}
+          y={getYCoordinateFromFrame(hoveredPunish.startFrame, uniqueTimestamps) - (rowHeight/2)}
           width={svgWidth}
-          height={fontSize*4}
+          height={rowHeight}
           className={styles['punish-hover']}
         />
       }
-      { nonLethalPunishRows }
-      { lethalPunishRows }
       { selfDestructRows }
+      { punishRows }
 
       {/* divider */}
       <line
         x1={svgWidth / 2}
         x2={svgWidth / 2}
         y1="0"
-        y2={(uniqueTimestamps.length+1)*(fontSize*4)}
+        y2={(uniqueTimestamps.length+1) * rowHeight}
         stroke='rgba(255, 255, 255, 0.75)'
         strokeWidth='.1'
       />

@@ -55,20 +55,29 @@ class Punish extends Component {
       
     return (
       <g
-        onMouseOver={this.onMouseOver}
-        onMouseOut={this.onMouseOut}
-        onFocus={this.onMouseOver}
-        onBlur={this.onMouseOut}
       >
-        {/* { this.punish.didKill && lastIndex && someIndicationOfKill } */}
+        { punish.didKill &&
+          <rect
+            x={xPosition === "left" ? origin : 0}
+            y={punish.startFrame}
+            width={origin}
+            height={punish.endFrame - punish.startFrame}
+            fill='#FF695E'
+            opacity={.5}
+          />
+        }
         { moves }
         <rect
+          onMouseOver={this.onMouseOver}
+          onMouseOut={this.onMouseOut}
+          onFocus={this.onMouseOver}
+          onBlur={this.onMouseOut}
           x={xPosition === "left" ? 0 : origin}
           y={punish.startFrame}
           width={origin}
           height={punish.endFrame - punish.startFrame}
           opacity={this.state.hover ? .5 : 0}
-          fill='rgb(120, 0, 200)'
+          fill="#E9EAEA"
         />
       </g>
     )

@@ -4,7 +4,7 @@ import _ from 'lodash'
 
 import Timeline from './Timeline'
 import MiniTimeline from './MiniTimeline'
-import { isSelfDestruct, svgWidth, fontSize } from './constants' 
+import { isSelfDestruct, svgWidth, rowHeight } from './constants' 
 import { convertFrameCountToDurationString } from '../../../utils/time'
 
 export default class TimelineContainer extends Component {
@@ -28,7 +28,7 @@ export default class TimelineContainer extends Component {
   }
 
   componentDidMount() {
-    this.heightRatio = this.timelineRef.current.scrollHeight / (this.uniqueTimestamps.length + 1)
+    this.heightRatio = this.timelineRef.current.scrollHeight / (this.uniqueTimestamps.length+1)
   }
 
   get players() {
@@ -54,7 +54,8 @@ export default class TimelineContainer extends Component {
 
   onPunishMouseOver = punish => {
     const timestamp = convertFrameCountToDurationString(punish.startFrame)
-    const y = this.uniqueTimestamps.indexOf(timestamp) * this.heightRatio
+    // the -4 ensures that the row that we're scrolling to is in the middle of the div
+    const y = (this.uniqueTimestamps.indexOf(timestamp)-1) * this.heightRatio
     this.setState({hoveredPunish: punish})
     this.timelineRef.current.scrollTo({top: y, behavior: "smooth"})
   }
@@ -70,7 +71,7 @@ export default class TimelineContainer extends Component {
           style={{flex: 10, overflow: 'scroll', overflowX: 'hidden'}}
         >
           <svg
-            viewBox={`0 0 ${svgWidth} ${(this.uniqueTimestamps.length+1)*(fontSize*4)}`}
+            viewBox={`0 0 ${svgWidth} ${(this.uniqueTimestamps.length+1) * rowHeight}`}
             style={{background: "#2D313A"}}
           >
             <Timeline
