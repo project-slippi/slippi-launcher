@@ -116,6 +116,6 @@ function isoValidationStart(state) {
 function isoValidationComplete(state, action) {
   return {
     ...state,
-    isoValidationState: action.payload.isValid ? "success" : "fail",
+    isoValidationState: action.payload.isValid,
   };
 }

@@ -27,9 +27,12 @@
 
 .iso-version-check {
   position: absolute;
-  bottom: 8px;
+  bottom: 3px;
   right: 50px;
   text-align: right;
+  background-color: rgba(255, 255, 255, 1);
+  border-radius: 5px;
+  padding: 5px 10px 5px 10px;
 
   .iso-verify-text {
     margin-right: 6px;
@@ -39,7 +42,7 @@
   }
 
   &.validating {
-    color: #a3a3a3 !important;
+    color: #A3A3A3 !important;
   }
 
   &.success {
@@ -51,6 +54,6 @@
   }
 
   &.unknown {
-    color: #a3a3a3 !important;
+    color: #EED202 !important;
   }
 }
