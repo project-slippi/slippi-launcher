@@ -51,12 +51,23 @@ export default class SlpFileWriter {
     this.obsPassword = settings.obsPassword;
   }
 
+  getSceneSources = async (data) => {
+    console.log(data);
+    const res = await this.obs.send("GetSceneList");
+    const scenes = res.scenes || [];
+    const pairs = _.flatMap(scenes, (scene) => {
+      const sources = scene.sources || [];
+      return _.map(sources, (source) => ({scene: scene.name, source: source.name}));
+    });
+    this.obsPairs = _.filter(pairs, (pair) => pair.source === this.obsSourceName);
+    console.log(this.obsPairs);
+  }
+
   async connectOBS() {
     if (this.obsIP && this.obsSourceName) {
       // if you send a password when authentication is disabled, OBS will still connect
       await this.obs.connect({address: this.obsIP, password: this.obsPassword});
-      const obsScenes = await this.obs.send("GetSceneList");
-      this.scenes = obsScenes.scenes;
+      await this.getSceneSources();
     }
   }
 
@@ -67,16 +78,7 @@ export default class SlpFileWriter {
   setStatus(value) {
     this.statusOutput.status = value;
     console.log(`Status changed: ${value}`);
-    const scenes = this.scenes || [];
-    const pairs = _.flatMap(scenes, (scene) => {
-      const sources = scene.sources || [];
-      return _.map(sources, (source) => ({scene: scene.name, source: source.name}));
-    });
-    _.forEach(pairs, (pair) => {
-      if (pair.source !== this.obsSourceName) {
-        return;
-      }
-
+    _.forEach(this.obsPairs, (pair) => {
       const res = this.obs.send("SetSceneItemProperties", 
         {"scene-name": pair.scene, "item": this.obsSourceName, "visible": value});
       console.log(res);
@@ -96,7 +98,7 @@ export default class SlpFileWriter {
       }, timeoutLength);
     }
 
-    if (this.currentFile.metadata.lastFrame < -70) {
+    if (this.currentFile.metadata.lastFrame < -60) {
       // Only show the source in the later portion of the game loading stage
       return;
     }
@@ -432,8 +434,10 @@ export default class SlpFileWriter {
       const endMethod = dataView.getUint8(0);
 
       if (endMethod !== 7) {
-        this.handleStatusOutput(1100);
+        this.handleStatusOutput(700);
       }
+
+      this.getSceneSources();
 
       break;
     default:
