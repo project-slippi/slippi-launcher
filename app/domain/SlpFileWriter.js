@@ -25,19 +25,10 @@ export default class SlpFileWriter {
       status: false,
       timeout: null,
     };
-    this.client = null;
-    this.server = net.createServer((socket) => {
-      if (!this.client) {
-        this.client = socket.setNoDelay().setTimeout(10000);
-        this.client.on("close", (err) => {
-          if (err) console.log(err);
-          this.client = null;
-        });
-      } else {
-        socket.end();
-      }
-    });
-    this.server.listen(666 + this.id, '127.0.0.1');
+    this.isRelaying = settings.isRelaying;
+    if (this.isRelaying) {
+      this.startRelay();
+    }
   }
 
   getClearedCurrentFile() {
@@ -55,6 +46,33 @@ export default class SlpFileWriter {
     };
   }
 
+  startRelay = () => {
+    if (!this.isRelaying) {
+      if (this.client) {
+        this.client.destroy();
+      }
+      if (this.server) {
+        this.server.close();
+      }
+      this.server = null;
+      this.client = null;
+      return;
+    }
+    this.client = null;
+    this.server = net.createServer((socket) => {
+      if (!this.client) {
+        this.client = socket.setNoDelay().setTimeout(10000);
+        this.client.on("close", (err) => {
+          if (err) console.log(err);
+          this.client = null;
+        });
+      } else {
+        socket.end();
+      }
+    });
+    this.server.listen(666 + this.id, '127.0.0.1');
+  }
+
   getCurrentFilePath() {
     return _.get(this.currentFile, 'path');
   }
@@ -65,6 +83,8 @@ export default class SlpFileWriter {
     this.obsSourceName = settings.obsSourceName;
     this.obsPassword = settings.obsPassword;
     this.id = settings.id;
+    this.isRelaying = settings.isRelaying;
+    this.startRelay();
   }
 
   async connectOBS() {

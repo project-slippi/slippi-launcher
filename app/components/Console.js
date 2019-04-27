@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import path from 'path';
-import { Header, Modal, Form, Card, Button, Icon, Checkbox, Message, Tab } from 'semantic-ui-react';
+import { Header, Modal, Form, Card, Button, Icon, Checkbox, Message, Tab, Grid } from 'semantic-ui-react';
 import { ConnectionStatus } from '../domain/ConsoleConnection';
 import PageHeader from './common/PageHeader';
 import PageWrapper from './PageWrapper';
@@ -262,8 +262,12 @@ export default class Console extends Component {
     );
   }
 
-  renderConnection = (connection) => (
-    <Card
+  renderConnection = (connection) => {
+    let relayLabelValue = null;
+    if (connection.isRelaying) {
+      relayLabelValue = this.renderLabelValue("Relay Port", 666 + connection.id);
+    }
+    return (<Card
       key={`${connection.id}-${connection.ipAddress}-connection`}
       fluid={true}
       className={styles['card']}
@@ -272,7 +276,7 @@ export default class Console extends Component {
         <div className={styles['conn-content-grid']}>
           {this.renderLabelValue("IP Address", connection.ipAddress)}
           {this.renderLabelValue("Target Folder", connection.targetFolder)}
-	        {this.renderLabelValue("Relay Port", 666 + connection.id)}
+          {relayLabelValue}
           {this.renderStatusLabelValue(connection)}
         </div>
       </Card.Content>
@@ -286,7 +290,7 @@ export default class Console extends Component {
         </div>
       </Card.Content>
     </Card>
-  );
+    )};
 
   renderConnectButton = connection => {
     const status = connection.connectionStatus;
@@ -551,7 +555,7 @@ export default class Console extends Component {
     const validation = _.get(this.state, ['formData', 'validation']) || {};
 
     const panes = [
-      { menuItem: "Mirroring", pane: ( <Tab.Pane key="mirroringTab">
+      { menuItem: "Basic", pane: ( <Tab.Pane key="mirroringTab">
         <Form.Input
           name="ipAddress"
           label="IP Address"
@@ -583,42 +587,71 @@ export default class Console extends Component {
             onChange={this.onFieldChange}
           />
         </Form.Field> </Tab.Pane> )}, 
-      { menuItem: "OBS", pane: ( <Tab.Pane key="obsTab">
-        <div className={`${styles['description']} ${styles['spacer']}`}>
-          <strong>Only modify if you know what you doing.</strong>&nbsp;
-          These settings let you select an OBS source (e.g. your dolphin capture) 
-          to be shown if the game is active and hidden if the game is inactive.
-          You must install the &nbsp;
-          <a href="https://github.com/Palakis/obs-websocket">OBS Websocket Plugin</a>&nbsp;
-          for this feature to work.
-        </div>
-        <Form.Input
-          name="obsIP"
-          label="OBS Websocket IP:Port"
-          defaultValue={formData.obsIP || connectionSettings.obsIP || ""}
-          placeholder="localhost:4444"
-          onChange={this.onFieldChange}
-        />
-        <Form.Input
-          name="obsPassword"
-          label="OBS Websocket Password"
-          defaultValue={formData.obsPassword || connectionSettings.obsPassword || ""}
-          onChange={this.onFieldChange}
-        />
-        <Form.Input
-          name="obsSourceName"
-          label="OBS Source Name"
-          defaultValue={formData.obsSourceName || connectionSettings.obsSourceName || ""}
-          onChange={this.onFieldChange}
-        />
-      </Tab.Pane>)},
-      { menuItem: "Relay", pane: ( <Tab.Pane key="relayTab">
-        <Form.Input
-          name="port"
-          label="Relay Port"
-          defaultValue={formData.port || connectionSettings.port || ""}
-          onChange={this.onFieldChange}
-        />
+      { menuItem: "Advanced", pane: ( <Tab.Pane key="obsTab">
+        <Grid divided='vertically'>
+          <Grid.Row columns={3} className={styles['spacer']}>
+            <div className={`${styles['description']} ${styles['spacer']}`}>
+              <strong>Only modify if you know what you doing.</strong>&nbsp;
+              These settings let you select an OBS source (e.g. your dolphin capture) 
+              to be shown if the game is active and hidden if the game is inactive.
+              You must install the &nbsp;
+              <a href="https://github.com/Palakis/obs-websocket">OBS Websocket Plugin</a>&nbsp;
+              for this feature to work.
+            </div>
+            <Grid.Column>
+              <Form.Input
+                name="obsIP"
+                label="OBS Websocket IP:Port"
+                defaultValue={formData.obsIP || connectionSettings.obsIP || ""}
+                placeholder="localhost:4444"
+                onChange={this.onFieldChange}
+              />
+            </Grid.Column>
+            <Grid.Column>
+              <Form.Input
+                name="obsPassword"
+                label="OBS Websocket Password"
+                defaultValue={formData.obsPassword || connectionSettings.obsPassword || ""}
+                onChange={this.onFieldChange}
+              />
+            </Grid.Column>
+            <Grid.Column>
+              <Form.Input
+                name="obsSourceName"
+                label="OBS Source Name"
+                defaultValue={formData.obsSourceName || connectionSettings.obsSourceName || ""}
+                onChange={this.onFieldChange}
+              />
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row columns={1}>
+            <Grid.Column>
+              <Form.Field>
+                <label htmlFor="isRelaying">Wii Relay</label>
+                <div className={styles['description']}>
+                  <strong>Not recommended unless you want to manipulate raw Slippi data in another program.</strong>&nbsp;
+                </div>
+                <Checkbox
+                  id="isRelaying"
+                  name="isRelaying"
+                  toggle={true}
+                  defaultChecked={_.defaultTo(formData.isRelaying, connectionSettings.isRelaying)}
+                  onChange={this.onFieldChange}
+                />
+              </Form.Field>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row columns={1}>
+            <Grid.Column>
+              <Form.Input
+                name="port"
+                label="Connection Port"
+                defaultValue={formData.port || connectionSettings.port || "666"}
+                onChange={this.onFieldChange}
+              />
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
       </Tab.Pane>)},
     ];
 
