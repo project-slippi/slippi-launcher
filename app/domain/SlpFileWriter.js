@@ -51,8 +51,7 @@ export default class SlpFileWriter {
     this.obsPassword = settings.obsPassword;
   }
 
-  getSceneSources = async (data) => {
-    console.log(data);
+  getSceneSources = async (data = null) => { // eslint-disable-line
     const res = await this.obs.send("GetSceneList");
     const scenes = res.scenes || [];
     const pairs = _.flatMap(scenes, (scene) => {
@@ -60,7 +59,6 @@ export default class SlpFileWriter {
       return _.map(sources, (source) => ({scene: scene.name, source: source.name}));
     });
     this.obsPairs = _.filter(pairs, (pair) => pair.source === this.obsSourceName);
-    console.log(this.obsPairs);
   }
 
   async connectOBS() {
@@ -79,9 +77,8 @@ export default class SlpFileWriter {
     this.statusOutput.status = value;
     console.log(`Status changed: ${value}`);
     _.forEach(this.obsPairs, (pair) => {
-      const res = this.obs.send("SetSceneItemProperties", 
+      this.obs.send("SetSceneItemProperties", 
         {"scene-name": pair.scene, "item": this.obsSourceName, "visible": value});
-      console.log(res);
     });
   }
 
