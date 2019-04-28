@@ -141,7 +141,7 @@ export default class ConsoleConnection {
       host: this.ipAddress,
       port: this.port || 666,
     }, () => {
-      console.log(`Connected to ${this.ipAddress}:${this.port}!`);
+      console.log(`Connected to ${this.ipAddress}:${this.port || "666"}!`);
       this.connectionRetryState = this.getDefaultRetryState();
       this.connectionStatus = ConnectionStatus.CONNECTED;
       this.forceConsoleUiUpdate();

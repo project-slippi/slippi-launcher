@@ -26,6 +26,7 @@ export default class SlpFileWriter {
       timeout: null,
     };
     this.isRelaying = settings.isRelaying;
+    this.clients = [];
     if (this.isRelaying) {
       this.startRelay();
     }
@@ -48,27 +49,22 @@ export default class SlpFileWriter {
 
   startRelay = () => {
     if (!this.isRelaying) {
-      if (this.client) {
-        this.client.destroy();
+      if (this.clients) {
+        _.each(this.clients, (client) => client.destroy());
       }
       if (this.server) {
         this.server.close();
       }
       this.server = null;
-      this.client = null;
+      this.clients = [];
       return;
     }
-    this.client = null;
     this.server = net.createServer((socket) => {
-      if (!this.client) {
-        this.client = socket.setNoDelay().setTimeout(10000);
-        this.client.on("close", (err) => {
-          if (err) console.log(err);
-          this.client = null;
-        });
-      } else {
-        socket.end();
-      }
+      this.clients.push(socket.setNoDelay().setTimeout(10000));
+      socket.on("close", (err) => {
+        if (err) console.log(err);
+        _.remove(this.clients, (client) => socket === client);
+      });
     });
     this.server.listen(666 + this.id, '127.0.0.1');
   }
@@ -159,8 +155,8 @@ export default class SlpFileWriter {
       newData,
     ]));
 
-    if (this.client) {
-      this.client.write(newData);
+    if (this.clients) {
+      _.each(this.clients, (client) => client.write(newData));
     }
 
     const dataView = new DataView(data.buffer);
