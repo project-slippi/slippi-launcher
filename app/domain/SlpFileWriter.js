@@ -57,16 +57,16 @@ export default class SlpFileWriter {
       }
       this.server = null;
       this.clients = [];
-      return;
-    }
-    this.server = net.createServer((socket) => {
-      this.clients.push(socket.setNoDelay().setTimeout(10000));
-      socket.on("close", (err) => {
-        if (err) console.log(err);
-        _.remove(this.clients, (client) => socket === client);
+    } else if (!this.server) {
+      this.server = net.createServer((socket) => {
+        this.clients.push(socket.setNoDelay().setTimeout(10000));
+        socket.on("close", (err) => {
+          if (err) console.log(err);
+          _.remove(this.clients, (client) => socket === client);
+        });
       });
-    });
-    this.server.listen(666 + this.id, '127.0.0.1');
+      this.server.listen(666 + this.id, '127.0.0.1');
+    }
   }
 
   getCurrentFilePath() {
