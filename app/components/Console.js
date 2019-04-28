@@ -629,7 +629,8 @@ export default class Console extends Component {
               <Form.Field>
                 <label htmlFor="isRelaying">Wii Relay</label>
                 <div className={styles['description']}>
-                  <strong>Not recommended unless you want to manipulate raw Slippi data in another program.</strong>&nbsp;
+                  The relay allows external programs (e.g. stream layouts) to tap into the raw Slippi data stream without affecting mirroring.
+                  This connection&apos;s relay port will be shown on the console card after you have saved and is activated once you select connect.
                 </div>
                 <Checkbox
                   id="isRelaying"
@@ -643,12 +644,17 @@ export default class Console extends Component {
           </Grid.Row>
           <Grid.Row columns={1}>
             <Grid.Column>
-              <Form.Input
-                name="port"
-                label="Connection Port"
-                defaultValue={formData.port || connectionSettings.port || "666"}
-                onChange={this.onFieldChange}
-              />
+              <Form.Field>
+                <label htmlFor="port">Connection Port</label>
+                <div className={styles['description']}>
+                  The connection port should only be changed if you are connecting to a relay, 666 is the port all Wiis use to send data.
+                </div>
+                <Form.Input
+                  name="port"
+                  defaultValue={formData.port || connectionSettings.port || "666"}
+                  onChange={this.onFieldChange}
+                />
+              </Form.Field>
             </Grid.Column>
           </Grid.Row>
         </Grid>

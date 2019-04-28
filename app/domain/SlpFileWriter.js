@@ -65,7 +65,7 @@ export default class SlpFileWriter {
           _.remove(this.clients, (client) => socket === client);
         });
       });
-      this.server.listen(666 + this.id, '127.0.0.1');
+      this.server.listen(666 + this.id, '0.0.0.0');
     }
   }
 
