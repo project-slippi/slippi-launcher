@@ -71,6 +71,7 @@ export default class ConsoleConnection {
       obsPassword: this.obsPassword,
       isRealTimeMode: this.isRealTimeMode,
       isRelaying: this.isRelaying,
+      consoleNick: this.connDetails.consoleNick,
     };
   }
 
@@ -159,24 +160,26 @@ export default class ConsoleConnection {
     client.setTimeout(20000);
     
     client.on('data', (data) => {
-      if (data.length === 40) {
-        const intToken = _.slice(data, 0, 4);
+      const header = [83, 76, 73, 80, 95, 72, 83, 72, 75];
+      if (_.difference(_.slice(data, 0, 9), header).length === 0) {
+        const intToken = _.slice(data, 12, 16);
         this.connDetails.token = "0x"
         _.each(intToken.map((x) => x.toString(16)), (val) => {this.connDetails.token += val;});
         console.log(this.connDetails.token);
 
-        _.each(_.slice(data, 4, 6), (val) => {
+        _.each(_.slice(data, 16, 18), (val) => {
           if (!val) return;
           this.connDetails.version += val.toString();
         });
         this.connDetails.version += ".";
-        _.each(_.slice(data, 6, 8), (val) => {
+        _.each(_.slice(data, 18, 20), (val) => {
           if (!val) return;
           this.connDetails.version += val.toString();
         });
 
-        const consoleNick = _.filter(_.slice(data, 8, 40), (val) => val);
-        this.connDetails.consoleNick = String.fromCharCode.apply(null, consoleNick);
+        const consoleNick = _.filter(_.slice(data, 20, 52), (val) => val);
+        this.connDetails.consoleNick = String.fromCharCode.apply(null, consoleNick) || "unknown";
+        this.slpFileWriter.updateSettings(this.getSettings());
       } else {
         const result = this.slpFileWriter.handleData(data);
         if (result.isNewGame) {
