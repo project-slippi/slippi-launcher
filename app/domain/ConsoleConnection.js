@@ -161,11 +161,11 @@ export default class ConsoleConnection {
     
     client.on('data', (data) => {
       const header = [83, 76, 73, 80, 95, 72, 83, 72, 75];
-      if (_.difference(_.slice(data, 0, 9), header).length === 0) {
+      const recvHeader = _.slice(data, 0, 9);
+      if (header.length === recvHeader.length && header.every((val, i) => val === recvHeader[i])) {
         const intToken = _.slice(data, 12, 16);
         this.connDetails.token = "0x"
         _.each(intToken.map((x) => x.toString(16)), (val) => {this.connDetails.token += val;});
-        console.log(this.connDetails.token);
 
         _.each(_.slice(data, 16, 18), (val) => {
           if (!val) return;
