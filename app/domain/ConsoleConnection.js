@@ -32,6 +32,11 @@ export default class ConsoleConnection {
     this.isMirroring = false;
     this.client = null;
     this.connectionStatus = ConnectionStatus.DISCONNECTED;
+    this.connDetails = {
+      token: "0x00000000", 
+      consoleNick: "unknown", 
+      version: "",
+    }
     this.connectionRetryState = this.getDefaultRetryState();
 
     // A connection can mirror its received gameplay
@@ -142,9 +147,11 @@ export default class ConsoleConnection {
       port: this.port || 666,
     }, () => {
       console.log(`Connected to ${this.ipAddress}:${this.port || "666"}!`);
+      clearTimeout(this.connectionRetryState.reconnectHandler);
       this.connectionRetryState = this.getDefaultRetryState();
       this.connectionStatus = ConnectionStatus.CONNECTED;
       this.forceConsoleUiUpdate();
+      client.write(this.connDetails.token);
 
       // TODO: Send message to initiate transfers
     });
@@ -152,10 +159,30 @@ export default class ConsoleConnection {
     client.setTimeout(20000);
     
     client.on('data', (data) => {
-      const result = this.slpFileWriter.handleData(data);
-      if (result.isNewGame) {
-        const curFilePath = this.slpFileWriter.getCurrentFilePath();
-        this.dolphinManager.playFile(curFilePath, false);
+      if (data.length === 40) {
+        const intToken = _.slice(data, 0, 4);
+        this.connDetails.token = "0x"
+        _.each(intToken.map((x) => x.toString(16)), (val) => {this.connDetails.token += val;});
+        console.log(this.connDetails.token);
+
+        _.each(_.slice(data, 4, 6), (val) => {
+          if (!val) return;
+          this.connDetails.version += val.toString();
+        });
+        this.connDetails.version += ".";
+        _.each(_.slice(data, 6, 8), (val) => {
+          if (!val) return;
+          this.connDetails.version += val.toString();
+        });
+
+        const consoleNick = _.filter(_.slice(data, 8, 40), (val) => val);
+        this.connDetails.consoleNick = String.fromCharCode.apply(null, consoleNick);
+      } else {
+        const result = this.slpFileWriter.handleData(data);
+        if (result.isNewGame) {
+          const curFilePath = this.slpFileWriter.getCurrentFilePath();
+          this.dolphinManager.playFile(curFilePath, false);
+        }
       }
     });
 
@@ -165,7 +192,7 @@ export default class ConsoleConnection {
       client.destroy();
 
       // TODO: Fix reconnect logic
-      // if (previouslyConnected) {
+      // if (this.connDetails.token !== "0x00000000") {
       //   // If previously connected, start the reconnect logic
       //   this.startReconnect();
       // }
