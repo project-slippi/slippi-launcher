@@ -62,7 +62,7 @@ export function browseFile(field) {
     if (field === "isoPath") {
       validateISO()(dispatch, getState);
       const fileDir = path.dirname(filePath);
-      const iniPath = path.join(app.getPath("userData"), "Slippi Desktop App", 
+      const iniPath = path.join(app.getPath("userData"),
         "dolphin", "User", "Config", "Dolphin.ini");
       const dolphinINI = ini.parse(fs.readFileSync(iniPath, 'utf-8'));
       dolphinINI.General.ISOPath0 = fileDir;
