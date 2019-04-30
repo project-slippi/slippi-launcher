@@ -175,7 +175,7 @@ export default class ConsoleConnection {
           this.connDetails.version += val.toString();
         });
 
-        const consoleNick = _.filter(_.slice(data, 20, 52), (val) => val);
+        const consoleNick = _.slice(data, 20, 52);
         this.connDetails.consoleNick = String.fromCharCode.apply(null, consoleNick) || "unknown";
         this.slpFileWriter.updateSettings(this.getSettings());
       } else {
