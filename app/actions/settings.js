@@ -1,6 +1,8 @@
 import fs from 'fs-extra';
 import _ from 'lodash';
 import crypto from 'crypto';
+import ini from 'ini';
+import path from 'path';
 
 import { displayError } from './error';
 
@@ -59,6 +61,15 @@ export function browseFile(field) {
     // Maybe this should be done as some kind of callback or something... but this works
     if (field === "isoPath") {
       validateISO()(dispatch, getState);
+      const fileDir = path.dirname(filePath);
+      const iniPath = path.join(process.env.APPDATA, "Slippi Desktop App", 
+        "dolphin", "User", "Config", "Dolphin.ini");
+      const dolphinINI = ini.parse(fs.readFileSync(iniPath, 'utf-8'));
+      dolphinINI.General.ISOPath0 = fileDir;
+      const numPaths = dolphinINI.General.ISOPaths;
+      dolphinINI.General.ISOPaths = numPaths !== "0" ? numPaths : "1";
+      const newINI = ini.encode(dolphinINI);
+      fs.writeFileSync(iniPath, newINI);
     }
   };
 }
