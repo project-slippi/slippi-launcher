@@ -6,7 +6,7 @@ import path from 'path';
 
 import { displayError } from './error';
 
-const { dialog } = require('electron').remote;
+const { dialog, app } = require('electron').remote;
 
 export const SELECT_FOLDER = 'SELECT_FOLDER';
 export const SELECT_FILE = 'SELECT_FILE';
@@ -62,7 +62,7 @@ export function browseFile(field) {
     if (field === "isoPath") {
       validateISO()(dispatch, getState);
       const fileDir = path.dirname(filePath);
-      const iniPath = path.join(process.env.APPDATA, "Slippi Desktop App", 
+      const iniPath = path.join(app.getPath("userData"), "Slippi Desktop App", 
         "dolphin", "User", "Config", "Dolphin.ini");
       const dolphinINI = ini.parse(fs.readFileSync(iniPath, 'utf-8'));
       dolphinINI.General.ISOPath0 = fileDir;
