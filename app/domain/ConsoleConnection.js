@@ -33,7 +33,7 @@ export default class ConsoleConnection {
     this.client = null;
     this.connectionStatus = ConnectionStatus.DISCONNECTED;
     this.connDetails = {
-      token: "0x00000000", 
+      token: Buffer.from([0, 0, 0, 0]), 
       consoleNick: "unknown", 
       version: "",
     }
@@ -163,9 +163,7 @@ export default class ConsoleConnection {
       const header = [83, 76, 73, 80, 95, 72, 83, 72, 75];
       const recvHeader = _.slice(data, 0, 9);
       if (header.length === recvHeader.length && header.every((val, i) => val === recvHeader[i])) {
-        const intToken = _.slice(data, 12, 16);
-        this.connDetails.token = "0x"
-        _.each(intToken.map((x) => x.toString(16)), (val) => {this.connDetails.token += val;});
+        this.connDetails.token = Buffer.from(_.slice(data, 12, 16));
 
         _.each(_.slice(data, 16, 18), (val) => {
           if (!val) return;
