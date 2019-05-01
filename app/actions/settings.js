@@ -3,6 +3,7 @@ import _ from 'lodash';
 import crypto from 'crypto';
 import ini from 'ini';
 import path from 'path';
+import electronSettings from 'electron-settings';
 
 import { displayError } from './error';
 
@@ -62,8 +63,21 @@ export function browseFile(field) {
     if (field === "isoPath") {
       validateISO()(dispatch, getState);
       const fileDir = path.dirname(filePath);
-      const iniPath = path.join(app.getPath("userData"),
-        "dolphin", "User", "Config", "Dolphin.ini");
+      const platform = process.platform;
+      const isDev = process.env.NODE_ENV === "development";
+      const storedDolphinPath = electronSettings.get('settings.playbackDolphinPath');
+      let dolphinPath = storedDolphinPath || path.join(app.getPath("appData"), "Slippi Desktop App", "dolphin");
+      switch (platform) {
+      case "darwin": // osx
+        dolphinPath = isDev ? "./app/dolphin-dev/osx" : dolphinPath;
+        break;
+      case "win32": // windows
+        dolphinPath = isDev ? "./app/dolphin-dev/windows" : dolphinPath;
+        break;
+      default:
+        throw new Error("The current platform is not supported");
+      }
+      const iniPath = path.join(dolphinPath, "User", "Config", "Dolphin.ini");
       const dolphinINI = ini.parse(fs.readFileSync(iniPath, 'utf-8'));
       dolphinINI.General.ISOPath0 = fileDir;
       const numPaths = dolphinINI.General.ISOPaths;

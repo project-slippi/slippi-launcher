@@ -19,6 +19,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import path from 'path';
 import fs from 'fs-extra';
+import ini from 'ini';
 import MenuBuilder from './menu';
 
 // Set up AppUpdater
@@ -28,6 +29,10 @@ autoUpdater.autoInstallOnAppQuit = false;
 log.info('App starting...');
 
 const slippiProtocol = "slippi";
+const platform = process.platform;
+const appDataPath = app.getPath("appData");
+const isProd = process.env.NODE_ENV === 'production';
+const isDev = process.env.NODE_ENV === "development";
 
 let mainWindow = null;
 let didFinishLoad = false;
@@ -46,10 +51,36 @@ if (
   require('electron-debug')();
 }
 
-const isProd = process.env.NODE_ENV === 'production';
+// Add game path to Playback Dolphin
+const isoPath = electronSettings.get("settings.isoPath");
+if (isoPath){
+  const fileDir = path.dirname(isoPath);
+  const storedDolphinPath = electronSettings.get('settings.playbackDolphinPath');
+  let dolphinPath = storedDolphinPath || path.join(appDataPath, "Slippi Desktop App", "dolphin");
+  // Here we are going to build the platform-specific commands required to launch
+  // dolphin from the command line with the correct game
+  // When in development mode, use the build-specific dolphin version
+  // In production mode, only the build from the correct platform should exist
+  switch (platform) {
+  case "darwin": // osx
+    dolphinPath = isDev ? "./app/dolphin-dev/osx" : dolphinPath;
+    break;
+  case "win32": // windows
+    dolphinPath = isDev ? "./app/dolphin-dev/windows" : dolphinPath;
+    break;
+  default:
+    throw new Error("The current platform is not supported");
+  }
+  const iniPath = path.join(dolphinPath, "User", "Config", "Dolphin.ini");
+  const dolphinINI = ini.parse(fs.readFileSync(iniPath, 'utf-8'));
+  dolphinINI.General.ISOPath0 = fileDir;
+  const numPaths = dolphinINI.General.ISOPaths;
+  dolphinINI.General.ISOPaths = numPaths !== "0" ? numPaths : "1";
+  const newINI = ini.encode(dolphinINI);
+  fs.writeFileSync(iniPath, newINI);
+}
 
 // Copy settings from when the app was called Slippi Launcher
-const appDataPath = app.getPath("appData");
 const prevVersion = electronSettings.get('previousVersion');
 if (isProd && !prevVersion) {
   // On the very first install of the "Slippi Desktop App", let's transfer over settings from
@@ -74,7 +105,6 @@ if (isProd && !prevVersion) {
   }
 }
 
-const platform = process.platform;
 if (isProd && (platform === "win32" || platform === "darwin")) {
   log.info("Checking if Dolphin path has been moved...");
 
