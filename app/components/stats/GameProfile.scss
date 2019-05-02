@@ -6,7 +6,7 @@ $header-height: 97px;
   position: relative;
   background: $background-lightest !important;
   width: calc(100% + 40px);
-  padding: 0 40px 0 40px;
+  padding: 0 40px 0 34px;
   margin-left: -20px;
   z-index: 2; // needed for shadow to show up
   box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
@@ -42,7 +42,6 @@ $header-height: 97px;
 
     .play-button {
       justify-self: end;
-      margin-right: 14px;
     }
   }
 
