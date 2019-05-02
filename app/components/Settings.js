@@ -129,6 +129,11 @@ export default class Settings extends Component {
       text = "Bad ISO";
       loading = false;
       break;
+    case "unknown":
+      icon = "warning sign"
+      text = "Unknown ISO";
+      loading = false;
+      break;
     case "validating":
       icon = "spinner";
       text = "Verifying";

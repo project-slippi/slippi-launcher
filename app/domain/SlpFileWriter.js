@@ -1,3 +1,4 @@
+import net from 'net';
 import _ from 'lodash';
 import fs from 'fs-extra';
 import path from 'path';
@@ -17,12 +18,18 @@ export default class SlpFileWriter {
     this.onFileStateChange = settings.onFileStateChange;
     this.obsSourceName = settings.obsSourceName;
     this.obsIP = settings.obsIP;
+    this.id = settings.id;
     this.currentFile = this.getClearedCurrentFile();
     this.obs = new OBSWebSocket();
     this.statusOutput = {
       status: false,
       timeout: null,
     };
+    this.isRelaying = settings.isRelaying;
+    this.clients = [];
+    if (this.isRelaying) {
+      this.startRelay();
+    }
   }
 
   getClearedCurrentFile() {
@@ -40,6 +47,28 @@ export default class SlpFileWriter {
     };
   }
 
+  startRelay = () => {
+    if (!this.isRelaying) {
+      if (this.clients) {
+        _.each(this.clients, (client) => client.destroy());
+      }
+      if (this.server) {
+        this.server.close();
+      }
+      this.server = null;
+      this.clients = [];
+    } else if (!this.server) {
+      this.server = net.createServer((socket) => {
+        this.clients.push(socket.setNoDelay().setTimeout(10000));
+        socket.on("close", (err) => {
+          if (err) console.log(err);
+          _.remove(this.clients, (client) => socket === client);
+        });
+      });
+      this.server.listen(666 + this.id, '0.0.0.0');
+    }
+  }
+
   getCurrentFilePath() {
     return _.get(this.currentFile, 'path');
   }
@@ -49,14 +78,26 @@ export default class SlpFileWriter {
     this.obsIP = settings.obsIP;
     this.obsSourceName = settings.obsSourceName;
     this.obsPassword = settings.obsPassword;
+    this.id = settings.id;
+    this.isRelaying = settings.isRelaying;
+    this.startRelay();
+  }
+
+  getSceneSources = async (data = null) => { // eslint-disable-line
+    const res = await this.obs.send("GetSceneList");
+    const scenes = res.scenes || [];
+    const pairs = _.flatMap(scenes, (scene) => {
+      const sources = scene.sources || [];
+      return _.map(sources, (source) => ({scene: scene.name, source: source.name}));
+    });
+    this.obsPairs = _.filter(pairs, (pair) => pair.source === this.obsSourceName);
   }
 
   async connectOBS() {
     if (this.obsIP && this.obsSourceName) {
       // if you send a password when authentication is disabled, OBS will still connect
       await this.obs.connect({address: this.obsIP, password: this.obsPassword});
-      const obsScenes = await this.obs.send("GetSceneList");
-      this.scenes = obsScenes.scenes;
+      await this.getSceneSources();
     }
   }
 
@@ -67,19 +108,9 @@ export default class SlpFileWriter {
   setStatus(value) {
     this.statusOutput.status = value;
     console.log(`Status changed: ${value}`);
-    const scenes = this.scenes || [];
-    const pairs = _.flatMap(scenes, (scene) => {
-      const sources = scene.sources || [];
-      return _.map(sources, (source) => ({scene: scene.name, source: source.name}));
-    });
-    _.forEach(pairs, (pair) => {
-      if (pair.source !== this.obsSourceName) {
-        return;
-      }
-
-      const res = this.obs.send("SetSceneItemProperties", 
+    _.forEach(this.obsPairs, (pair) => {
+      this.obs.send("SetSceneItemProperties", 
         {"scene-name": pair.scene, "item": this.obsSourceName, "visible": value});
-      console.log(res);
     });
   }
 
@@ -96,7 +127,7 @@ export default class SlpFileWriter {
       }, timeoutLength);
     }
 
-    if (this.currentFile.metadata.lastFrame < -70) {
+    if (this.currentFile.metadata.lastFrame < -60) {
       // Only show the source in the later portion of the game loading stage
       return;
     }
@@ -122,6 +153,10 @@ export default class SlpFileWriter {
       this.currentFile.previousBuffer,
       newData,
     ]));
+
+    if (this.clients) {
+      _.each(this.clients, (client) => client.write(newData));
+    }
 
     const dataView = new DataView(data.buffer);
 
@@ -432,8 +467,10 @@ export default class SlpFileWriter {
       const endMethod = dataView.getUint8(0);
 
       if (endMethod !== 7) {
-        this.handleStatusOutput(1100);
+        this.handleStatusOutput(700);
       }
+
+      this.getSceneSources();
 
       break;
     default:
