@@ -236,16 +236,16 @@ export default class GameProfile extends Component {
       120 + (_.get(this.props.globalNotifs, ['activeNotif', 'heightPx']) || 0); // 120 for game stats header
 
     return (
-      <Segment basic={true}>
-        {this.renderErrorModal()}
-        <Scroller topOffset={scrollerOffset}>
+      <Scroller topOffset={scrollerOffset}>
+        <Segment basic={true}>
+          {this.renderErrorModal()}
           <div ref={this.setRefStats}>
             {this.renderOverall()}
             {this.renderStocks()}
             {this.renderPunishes()}
           </div>
-        </Scroller>
-      </Segment>
+        </Segment>
+      </Scroller>
     );
   }
 
