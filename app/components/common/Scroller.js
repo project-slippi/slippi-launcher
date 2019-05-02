@@ -11,6 +11,7 @@ export default class Scroller extends Component {
     const customStyles = {
       overflowY: 'auto',
       height: `calc(100vh - ${this.props.topOffset + 100}px)`,
+      width: `calc(100% + 17px)`,
     };
 
     return <div style={customStyles}>{this.props.children}</div>;
