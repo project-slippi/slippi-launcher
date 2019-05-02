@@ -40,7 +40,7 @@ export default class GameProfile extends Component {
     // store data
     store: PropTypes.object.isRequired,
     errors: PropTypes.object.isRequired,
-    topOffset: PropTypes.number.isRequired,
+    topNotifOffset: PropTypes.number.isRequired,
   };
 
   refStats = null;
@@ -233,8 +233,10 @@ export default class GameProfile extends Component {
 
   renderStats() {
 
+    const scrollerOffset = this.props.topNotifOffset + 120; // + 120 to account for game-specific header
+
     return (
-      <Scroller topOffset={this.props.topOffset}>
+      <Scroller topOffset={scrollerOffset}>
         <Segment basic={true}>
           {this.renderErrorModal()}
           <div ref={this.setRefStats}>

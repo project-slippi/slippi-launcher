@@ -33,7 +33,7 @@ export default class Console extends Component {
     history: PropTypes.object.isRequired,
     store: PropTypes.object.isRequired,
     errors: PropTypes.object.isRequired,
-    topOffset: PropTypes.number.isRequired,
+    topNotifOffset: PropTypes.number.isRequired,
   };
 
   state = {
@@ -642,7 +642,7 @@ export default class Console extends Component {
             text="Console"
             history={this.props.history}
           />
-          <Scroller topOffset={this.props.topOffset}>
+          <Scroller topOffset={this.props.topNotifOffset}>
             {this.renderContent()}
             {this.renderEditModal()}
           </Scroller>

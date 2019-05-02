@@ -35,7 +35,7 @@ export default class Settings extends Component {
     history: PropTypes.object.isRequired,
     store: PropTypes.object.isRequired,
     errors: PropTypes.object.isRequired,
-    topOffset: PropTypes.number.isRequired,
+    topNotifOffset: PropTypes.number.isRequired,
   };
 
   componentDidMount() {
@@ -319,7 +319,7 @@ export default class Settings extends Component {
             infoText={`App v${currentVersion}`}
             history={this.props.history}
           />
-          <Scroller topOffset={this.props.topOffset}>
+          <Scroller topOffset={this.props.topNotifOffset}>
             {this.renderContent()}
           </Scroller>
         </div>

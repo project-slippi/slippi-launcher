@@ -10,7 +10,7 @@ function mapStateToProps(state) {
   return {
     store: state.fileLoader,
     errors: state.errors,
-    topOffset: _.get(state.globalNotifs, ['activeNotif', 'heightPx']) || 0,
+    topNotifOffset: _.get(state.notifs, ['activeNotif', 'heightPx']) || 0,
   };
 }
 
