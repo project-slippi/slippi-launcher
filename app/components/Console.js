@@ -12,6 +12,7 @@ import DismissibleMessage from './common/DismissibleMessage';
 import styles from './Console.scss';
 import SpacedGroup from './common/SpacedGroup';
 import ActionInput from './common/ActionInput';
+import Scroller from './common/Scroller';
 
 const { dialog } = require('electron').remote;
 
@@ -32,6 +33,7 @@ export default class Console extends Component {
     history: PropTypes.object.isRequired,
     store: PropTypes.object.isRequired,
     errors: PropTypes.object.isRequired,
+    topOffset: PropTypes.number.isRequired,
   };
 
   state = {
@@ -353,7 +355,7 @@ export default class Console extends Component {
       </Button>
     );
   }
-    
+
   renderDeleteButton = connection => {
     const status = connection.connectionStatus;
     const isConnected = status === ConnectionStatus.CONNECTED;
@@ -550,67 +552,71 @@ export default class Console extends Component {
     const validation = _.get(this.state, ['formData', 'validation']) || {};
 
     const panes = [
-      { menuItem: "Basic", render: () => <Tab.Pane>
-        <Form.Input
-          name="ipAddress"
-          label="IP Address"
-          defaultValue={formData.ipAddress || connectionSettings.ipAddress}
-          onChange={this.onFieldChange}
-        />
-        <ActionInput
-          name="targetFolder"
-          label="Target Folder"
-          error={!!validation['targetFolder']}
-          value={formData.targetFolder || connectionSettings.targetFolder || ""}
-          onClick={this.onBrowseFolder}
-          handlerParams={[]}
-          showLabelDescription={false}
-          useFormInput={true}
-        />
-        <Form.Field>
-          <label htmlFor="isRealTimeMode">Real-Time Mode</label>
-          <div className={styles['description']}>
-            <strong>Not recommended unless on wired LAN connection.</strong>&nbsp;
-            Real-time mode will attempt to prevent delay from accumulating when mirroring. Using it
-            when on a connection with inconsistent latency will cause extremely choppy playback.
-          </div>
-          <Checkbox
-            id="isRealTimeMode"
-            name="isRealTimeMode"
-            toggle={true}
-            defaultChecked={_.defaultTo(formData.isRealTimeMode, connectionSettings.isRealTimeMode)}
+      {
+        menuItem: "Basic", render: () => <Tab.Pane>
+          <Form.Input
+            name="ipAddress"
+            label="IP Address"
+            defaultValue={formData.ipAddress || connectionSettings.ipAddress}
             onChange={this.onFieldChange}
           />
-        </Form.Field> </Tab.Pane> }, 
-      { menuItem: "Advanced", render: () => <Tab.Pane>
-        <div className={`${styles['description']} ${styles['spacer']}`}>
-          <strong>Only modify if you know what you doing.</strong>&nbsp;
-          These settings let you select an OBS source (e.g. your dolphin capture) 
-          to be shown if the game is active and hidden if the game is inactive.
-          You must install the &nbsp;
-          <a href="https://github.com/Palakis/obs-websocket">OBS Websocket Plugin</a>&nbsp;
-          for this feature to work.
-        </div>
-        <Form.Input
-          name="obsIP"
-          label="OBS Websocket IP:Port"
-          defaultValue={formData.obsIP || connectionSettings.obsIP || ""}
-          placeholder="localhost:4444"
-          onChange={this.onFieldChange}
-        />
-        <Form.Input
-          name="obsPassword"
-          label="OBS Websocket Password"
-          defaultValue={formData.obsPassword || connectionSettings.obsPassword || ""}
-          onChange={this.onFieldChange}
-        />
-        <Form.Input
-          name="obsSourceName"
-          label="OBS Source Name"
-          defaultValue={formData.obsSourceName || connectionSettings.obsSourceName}
-          onChange={this.onFieldChange}
-        />
-      </Tab.Pane>}];
+          <ActionInput
+            name="targetFolder"
+            label="Target Folder"
+            error={!!validation['targetFolder']}
+            value={formData.targetFolder || connectionSettings.targetFolder || ""}
+            onClick={this.onBrowseFolder}
+            handlerParams={[]}
+            showLabelDescription={false}
+            useFormInput={true}
+          />
+          <Form.Field>
+            <label htmlFor="isRealTimeMode">Real-Time Mode</label>
+            <div className={styles['description']}>
+              <strong>Not recommended unless on wired LAN connection.</strong>&nbsp;
+              Real-time mode will attempt to prevent delay from accumulating when mirroring. Using it
+              when on a connection with inconsistent latency will cause extremely choppy playback.
+            </div>
+            <Checkbox
+              id="isRealTimeMode"
+              name="isRealTimeMode"
+              toggle={true}
+              defaultChecked={_.defaultTo(formData.isRealTimeMode, connectionSettings.isRealTimeMode)}
+              onChange={this.onFieldChange}
+            />
+          </Form.Field> </Tab.Pane>,
+      },
+      {
+        menuItem: "Advanced", render: () => <Tab.Pane>
+          <div className={`${styles['description']} ${styles['spacer']}`}>
+            <strong>Only modify if you know what you doing.</strong>&nbsp;
+            These settings let you select an OBS source (e.g. your dolphin capture)
+            to be shown if the game is active and hidden if the game is inactive.
+            You must install the &nbsp;
+            <a href="https://github.com/Palakis/obs-websocket">OBS Websocket Plugin</a>&nbsp;
+                    for this feature to work.
+          </div>
+          <Form.Input
+            name="obsIP"
+            label="OBS Websocket IP:Port"
+            defaultValue={formData.obsIP || connectionSettings.obsIP || ""}
+            placeholder="localhost:4444"
+            onChange={this.onFieldChange}
+          />
+          <Form.Input
+            name="obsPassword"
+            label="OBS Websocket Password"
+            defaultValue={formData.obsPassword || connectionSettings.obsPassword || ""}
+            onChange={this.onFieldChange}
+          />
+          <Form.Input
+            name="obsSourceName"
+            label="OBS Source Name"
+            defaultValue={formData.obsSourceName || connectionSettings.obsSourceName}
+            onChange={this.onFieldChange}
+          />
+        </Tab.Pane>,
+      }];
 
     let errorMessage = null;
     if (validation.targetFolder === "empty") {
@@ -636,8 +642,10 @@ export default class Console extends Component {
             text="Console"
             history={this.props.history}
           />
-          {this.renderContent()}
-          {this.renderEditModal()}
+          <Scroller topOffset={this.props.topOffset}>
+            {this.renderContent()}
+            {this.renderEditModal()}
+          </Scroller>
         </div>
       </PageWrapper>
     );
