@@ -10,7 +10,7 @@ export default class Scroller extends Component {
   render() {
     const customStyles = {
       overflowY: 'auto',
-      height: `calc(100vh - ${this.props.topOffset + 100}px)`,
+      height: `calc(100vh - ${this.props.topOffset + 85}px)`,
       width: `calc(100% + 17px)`,
     };
 
