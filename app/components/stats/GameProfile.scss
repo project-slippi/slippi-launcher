@@ -3,8 +3,12 @@
 $header-height: 97px;
 
 .stats-player-header {
+  position: relative;
   background: $background-lightest !important;
   border-radius: 4px;
+  width: calc(100% + 40px);
+  margin-left: -20px;
+  z-index: 2; // needed for shadow to show up
   box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
 
   .matchup-display {
