@@ -38,7 +38,7 @@ export default class FileLoader extends Component {
     history: PropTypes.object.isRequired,
     store: PropTypes.object.isRequired,
     errors: PropTypes.object.isRequired,
-    globalNotifs: PropTypes.object.isRequired,
+    topOffset: PropTypes.number.isRequired,
   };
 
   componentDidMount() {
@@ -74,10 +74,8 @@ export default class FileLoader extends Component {
 
     // Have to offset both the height and sticky position of the sidebar when a global notif is
     // active. Wish I knew a better way to do this.
-    const globalNotifHeightPx =
-      _.get(this.props.globalNotifs, ['activeNotif', 'heightPx']) || 0;
     const customStyling = {
-      height: `calc(100vh - ${globalNotifHeightPx}px)`,
+      height: `calc(100vh - ${this.props.topOffset}px)`,
     };
 
     // We return a div that will serve as a placeholder for our column as well as a fixed
@@ -311,8 +309,6 @@ export default class FileLoader extends Component {
     const files = store.files || [];
     const processedFiles = this.processFiles(files);
 
-    const scrollerOffset =
-      _.get(this.props.globalNotifs, ['activeNotif', 'heightPx']) || 0;
 
     return (
       <div className="main-padding">
@@ -321,7 +317,7 @@ export default class FileLoader extends Component {
           text="Replay Browser"
           history={this.props.history}
         />
-        <Scroller topOffset={scrollerOffset}>
+        <Scroller topOffset={this.props.topOffset}>
           {this.renderGlobalError()}
           {this.renderFilteredFilesNotif(processedFiles)}
           {this.renderFileSelection(processedFiles)}
