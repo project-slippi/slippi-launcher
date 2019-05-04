@@ -63,7 +63,7 @@ if (isoPath){
   // In production mode, only the build from the correct platform should exist
   switch (platform) {
   case "darwin": // osx
-    dolphinPath = isDev ? "./app/dolphin-dev/osx" : dolphinPath;
+    dolphinPath = isDev ? "./app/dolphin-dev/osx/Dolphin.app/Contents/Resources" : path.join(dolphinPath, "Dolphin.app/Contents/Resources");
     break;
   case "win32": // windows
     dolphinPath = isDev ? "./app/dolphin-dev/windows" : dolphinPath;

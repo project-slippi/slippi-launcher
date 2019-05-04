@@ -69,7 +69,7 @@ export function browseFile(field) {
       let dolphinPath = storedDolphinPath || path.join(app.getPath("appData"), "Slippi Desktop App", "dolphin");
       switch (platform) {
       case "darwin": // osx
-        dolphinPath = isDev ? "./app/dolphin-dev/osx" : dolphinPath;
+        dolphinPath = isDev ? "./app/dolphin-dev/osx/Dolphin.app/Contents/Resources" : path.join(dolphinPath, "Dolphin.app/Contents/Resources");
         break;
       case "win32": // windows
         dolphinPath = isDev ? "./app/dolphin-dev/windows" : dolphinPath;
