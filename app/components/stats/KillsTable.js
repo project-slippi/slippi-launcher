@@ -3,10 +3,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Table, Icon } from 'semantic-ui-react';
 
+import {
+  animations as animationUtils,
+  moves as moveUtils,
+} from 'slp-parser-js';
+
 import styles from './GameProfile.scss';
 
-import * as moveUtils from '../../utils/moves';
-import * as animationUtils from '../../utils/animations';
 import * as timeUtils from '../../utils/time';
 
 const columnCount = 5;

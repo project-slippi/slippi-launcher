@@ -13,6 +13,7 @@ import {
   Message,
   Loader,
 } from 'semantic-ui-react';
+import { stages as stageUtils } from 'slp-parser-js';
 
 import PageHeader from '../common/PageHeader';
 import OverallTable from './OverallTable';
@@ -22,7 +23,6 @@ import PunishesTable from './PunishesTable';
 import styles from './GameProfile.scss';
 
 import getLocalImage from '../../utils/image';
-import * as stageUtils from '../../utils/stages';
 import * as timeUtils from '../../utils/time';
 import * as playerUtils from '../../utils/players';
 import PageWrapper from '../PageWrapper';

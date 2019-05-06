@@ -3,10 +3,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Table, Button } from 'semantic-ui-react';
+import { stages as stageUtils } from 'slp-parser-js';
+
 import styles from './FileLoader.scss';
 import SpacedGroup from './common/SpacedGroup';
 import PlayerChiclet from './common/PlayerChiclet';
-import * as stageUtils from '../utils/stages';
 import * as timeUtils from '../utils/time';
 
 const path = require('path');
