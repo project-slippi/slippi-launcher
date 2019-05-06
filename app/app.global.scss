@@ -8,6 +8,10 @@ body {
   background-color: $background-dark;
 }
 
+* {
+  overflow: hidden;
+}
+
 ul {
   margin: 0;
   padding-left: 20px;

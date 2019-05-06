@@ -1,12 +1,15 @@
-@import "../../colors.global";
+@import '../../colors.global';
 
 $header-height: 97px;
 
 .stats-player-header {
+  position: relative;
   background: $background-lightest !important;
-  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
-  margin: 0 -34px 0 -34px !important;
-  padding: 0 48px 0 48px !important;
+  width: calc(100% + 40px);
+  padding: 0 40px 0 34px;
+  margin-left: -20px;
+  z-index: 2; // needed for shadow to show up
+  box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
 
   .matchup-display {
     display: grid;
@@ -39,7 +42,6 @@ $header-height: 97px;
 
     .play-button {
       justify-self: end;
-      margin-right: 14px;
     }
   }
 
@@ -76,19 +78,6 @@ $header-height: 97px;
   .character-image {
     height: 36px !important;
     width: 36px !important;
-  }
-}
-
-.sticky-names {
-  z-index: 2;
-  position: relative;
-}
-
-.stats-section {
-  padding-top: 28px;
-
-  &.stuck {
-    margin-top: $header-height !important;
   }
 }
 

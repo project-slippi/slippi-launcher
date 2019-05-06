@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import _ from 'lodash';
 import log from 'electron-log';
 import PropTypes from 'prop-types';
 import { ipcRenderer } from 'electron';
@@ -17,9 +16,8 @@ class PageWrapper extends Component {
   static propTypes = {
     children: PropTypes.any.isRequired,
     history: PropTypes.object.isRequired,
-    
+
     // From redux
-    store: PropTypes.object.isRequired,
     appUpgradeDownloaded: PropTypes.func.isRequired,
     gameProfileLoad: PropTypes.func.isRequired,
     playFile: PropTypes.func.isRequired,
@@ -39,7 +37,7 @@ class PageWrapper extends Component {
     // When main process (main.dev.js) tells us an update has been downloaded, trigger
     // a global notif to be shown
     this.props.appUpgradeDownloaded(upgradeDetails);
-  }
+  };
 
   onPlayReplay = (event, slpPath) => {
     log.info(`playing file ${slpPath}`);
@@ -48,27 +46,12 @@ class PageWrapper extends Component {
     this.props.playFile({
       fullPath: slpPath,
     });
-  }
+  };
 
   render() {
-    let spacerEl = null;
-
-    const notifHeightPx = _.get(this.props.store, ['activeNotif', 'heightPx']);
-    if (notifHeightPx) {
-      const customStyling = {
-        height: `${notifHeightPx}px`,
-      };
-
-      // User spacer element to give space for notif. I tried using padding on the top-level div
-      // and that sorta worked but it didn't seem to respond well when I closed the notif while
-      // on the file loader page, there would still be space above the file selector
-      spacerEl = <div style={customStyling} />;
-    }
-
     return (
       <React.Fragment>
         <GlobalAlert />
-        {spacerEl}
         <div>{this.props.children}</div>
       </React.Fragment>
     );
@@ -82,11 +65,14 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    ...NotifActions,
-    ...GameActions,
-    playFile: playFile,
-  }, dispatch);
+  return bindActionCreators(
+    {
+      ...NotifActions,
+      ...GameActions,
+      playFile: playFile,
+    },
+    dispatch
+  );
 }
 
 export default connect(

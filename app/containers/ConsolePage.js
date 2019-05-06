@@ -9,6 +9,7 @@ function mapStateToProps(state) {
   return {
     store: state.console,
     errors: state.errors,
+    topNotifOffset: _.get(state.notifs, ['activeNotif', 'heightPx']) || 0,
   };
 }
 

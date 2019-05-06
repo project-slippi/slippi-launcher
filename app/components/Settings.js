@@ -16,6 +16,7 @@ import DismissibleMessage from './common/DismissibleMessage';
 import styles from './Settings.scss';
 import PageWrapper from './PageWrapper';
 import SpacedGroup from './common/SpacedGroup';
+import Scroller from './common/Scroller';
 
 const { app } = require('electron').remote;
 
@@ -34,6 +35,7 @@ export default class Settings extends Component {
     history: PropTypes.object.isRequired,
     store: PropTypes.object.isRequired,
     errors: PropTypes.object.isRequired,
+    topNotifOffset: PropTypes.number.isRequired,
   };
 
   componentDidMount() {
@@ -322,7 +324,9 @@ export default class Settings extends Component {
             infoText={`App v${currentVersion}`}
             history={this.props.history}
           />
-          {this.renderContent()}
+          <Scroller topOffset={this.props.topNotifOffset}>
+            {this.renderContent()}
+          </Scroller>
         </div>
       </PageWrapper>
     );

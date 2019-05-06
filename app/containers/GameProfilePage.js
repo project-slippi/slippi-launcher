@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import GameProfile from '../components/stats/GameProfile';
@@ -8,7 +9,7 @@ function mapStateToProps(state) {
   return {
     store: state.game,
     errors: state.errors,
-    globalNotifs: state.notifs,
+    topNotifOffset: _.get(state.notifs, ['activeNotif', 'heightPx']) || 0,
   };
 }
 

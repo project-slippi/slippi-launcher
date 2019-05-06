@@ -12,6 +12,7 @@ import DismissibleMessage from './common/DismissibleMessage';
 import styles from './Console.scss';
 import SpacedGroup from './common/SpacedGroup';
 import ActionInput from './common/ActionInput';
+import Scroller from './common/Scroller';
 
 const { dialog } = require('electron').remote;
 
@@ -32,6 +33,7 @@ export default class Console extends Component {
     history: PropTypes.object.isRequired,
     store: PropTypes.object.isRequired,
     errors: PropTypes.object.isRequired,
+    topNotifOffset: PropTypes.number.isRequired,
   };
 
   state = {
@@ -290,7 +292,8 @@ export default class Console extends Component {
         </div>
       </Card.Content>
     </Card>
-    )};
+    )
+  };
 
   renderConnectButton = connection => {
     const status = connection.connectionStatus;
@@ -358,7 +361,7 @@ export default class Console extends Component {
       </Button>
     );
   }
-    
+
   renderDeleteButton = connection => {
     const status = connection.connectionStatus;
     const isConnected = status === ConnectionStatus.CONNECTED;
@@ -555,110 +558,114 @@ export default class Console extends Component {
     const validation = _.get(this.state, ['formData', 'validation']) || {};
 
     const panes = [
-      { menuItem: "Basic", pane: ( <Tab.Pane key="mirroringTab">
-        <Form.Input
-          name="ipAddress"
-          label="IP Address"
-          defaultValue={formData.ipAddress || connectionSettings.ipAddress}
-          onChange={this.onFieldChange}
-        />
-        <ActionInput
-          name="targetFolder"
-          label="Target Folder"
-          error={!!validation['targetFolder']}
-          value={formData.targetFolder || connectionSettings.targetFolder || ""}
-          onClick={this.onBrowseFolder}
-          handlerParams={[]}
-          showLabelDescription={false}
-          useFormInput={true}
-        />
-        <Form.Field>
-          <label htmlFor="isRealTimeMode">Real-Time Mode</label>
-          <div className={styles['description']}>
-            <strong>Not recommended unless on wired LAN connection.</strong>&nbsp;
-            Real-time mode will attempt to prevent delay from accumulating when mirroring. Using it
-            when on a connection with inconsistent latency will cause extremely choppy playback.
-          </div>
-          <Checkbox
-            id="isRealTimeMode"
-            name="isRealTimeMode"
-            toggle={true}
-            defaultChecked={_.defaultTo(formData.isRealTimeMode, connectionSettings.isRealTimeMode)}
+      {
+        menuItem: "Basic", pane: (<Tab.Pane key="mirroringTab">
+          <Form.Input
+            name="ipAddress"
+            label="IP Address"
+            defaultValue={formData.ipAddress || connectionSettings.ipAddress}
             onChange={this.onFieldChange}
           />
-        </Form.Field> </Tab.Pane> )}, 
-      { menuItem: "Advanced", pane: ( <Tab.Pane key="obsTab">
-        <Grid divided='vertically'>
-          <Grid.Row columns={3} className={styles['spacer']}>
-            <div className={`${styles['description']} ${styles['spacer']}`}>
-              <strong>Only modify if you know what you doing.</strong>&nbsp;
-              These settings let you select an OBS source (e.g. your dolphin capture) 
-              to be shown if the game is active and hidden if the game is inactive.
-              You must install the &nbsp;
-              <a href="https://github.com/Palakis/obs-websocket">OBS Websocket Plugin</a>&nbsp;
-              for this feature to work.
+          <ActionInput
+            name="targetFolder"
+            label="Target Folder"
+            error={!!validation['targetFolder']}
+            value={formData.targetFolder || connectionSettings.targetFolder || ""}
+            onClick={this.onBrowseFolder}
+            handlerParams={[]}
+            showLabelDescription={false}
+            useFormInput={true}
+          />
+          <Form.Field>
+            <label htmlFor="isRealTimeMode">Real-Time Mode</label>
+            <div className={styles['description']}>
+              <strong>Not recommended unless on wired LAN connection.</strong>&nbsp;
+              Real-time mode will attempt to prevent delay from accumulating when mirroring. Using it
+              when on a connection with inconsistent latency will cause extremely choppy playback.
             </div>
-            <Grid.Column>
-              <Form.Input
-                name="obsIP"
-                label="OBS Websocket IP:Port"
-                defaultValue={formData.obsIP || connectionSettings.obsIP || ""}
-                placeholder="localhost:4444"
-                onChange={this.onFieldChange}
-              />
-            </Grid.Column>
-            <Grid.Column>
-              <Form.Input
-                name="obsPassword"
-                label="OBS Websocket Password"
-                defaultValue={formData.obsPassword || connectionSettings.obsPassword || ""}
-                onChange={this.onFieldChange}
-              />
-            </Grid.Column>
-            <Grid.Column>
-              <Form.Input
-                name="obsSourceName"
-                label="OBS Source Name"
-                defaultValue={formData.obsSourceName || connectionSettings.obsSourceName || ""}
-                onChange={this.onFieldChange}
-              />
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row columns={1}>
-            <Grid.Column>
-              <Form.Field>
-                <label htmlFor="isRelaying">Wii Relay</label>
-                <div className={styles['description']}>
-                  The relay allows external programs (e.g. stream layouts) to tap into the raw Slippi data stream without affecting mirroring.
-                  This connection&apos;s relay port will be shown on the console card after you have saved and is activated once you select connect.
-                </div>
-                <Checkbox
-                  id="isRelaying"
-                  name="isRelaying"
-                  toggle={true}
-                  defaultChecked={_.defaultTo(formData.isRelaying, connectionSettings.isRelaying)}
-                  onChange={this.onFieldChange}
-                />
-              </Form.Field>
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row columns={1}>
-            <Grid.Column>
-              <Form.Field>
-                <label htmlFor="port">Connection Port</label>
-                <div className={styles['description']}>
-                  The connection port should only be changed if you are connecting to a relay, 666 is the port all Wiis use to send data.
-                </div>
+            <Form.Input
+              name="obsIP"
+              label="OBS Websocket IP:Port"
+              defaultValue={formData.obsIP || connectionSettings.obsIP || ""}
+              placeholder="localhost:4444"
+              onChange={this.onFieldChange}
+            />
+          </Form.Field> </Tab.Pane>),
+      },
+      {
+        menuItem: "Advanced", pane: (<Tab.Pane key="obsTab">
+          <Grid divided='vertically'>
+            <Grid.Row columns={3} className={styles['spacer']}>
+              <div className={`${styles['description']} ${styles['spacer']}`}>
+                <strong>Only modify if you know what you doing.</strong>&nbsp;
+                These settings let you select an OBS source (e.g. your dolphin capture)
+                to be shown if the game is active and hidden if the game is inactive.
+                You must install the &nbsp;
+                <a href="https://github.com/Palakis/obs-websocket">OBS Websocket Plugin</a>&nbsp;
+                    for this feature to work.
+              </div>
+              <Grid.Column>
                 <Form.Input
-                  name="port"
-                  defaultValue={formData.port || connectionSettings.port || "666"}
+                  name="obsIP"
+                  label="OBS Websocket IP:Port"
+                  defaultValue={formData.obsIP || connectionSettings.obsIP || ""}
+                  placeholder="localhost:4444"
                   onChange={this.onFieldChange}
                 />
-              </Form.Field>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      </Tab.Pane>)},
+              </Grid.Column>
+              <Grid.Column>
+                <Form.Input
+                  name="obsPassword"
+                  label="OBS Websocket Password"
+                  defaultValue={formData.obsPassword || connectionSettings.obsPassword || ""}
+                  onChange={this.onFieldChange}
+                />
+              </Grid.Column>
+              <Grid.Column>
+                <Form.Input
+                  name="obsSourceName"
+                  label="OBS Source Name"
+                  defaultValue={formData.obsSourceName || connectionSettings.obsSourceName || ""}
+                  onChange={this.onFieldChange}
+                />
+              </Grid.Column>
+            </Grid.Row>
+            <Grid.Row columns={1}>
+              <Grid.Column>
+                <Form.Field>
+                  <label htmlFor="isRelaying">Wii Relay</label>
+                  <div className={styles['description']}>
+                    The relay allows external programs (e.g. stream layouts) to tap into the raw Slippi data stream without affecting mirroring.
+                    This connection&apos;s relay port will be shown on the console card after you have saved and is activated once you select connect.
+                  </div>
+                  <Checkbox
+                    id="isRelaying"
+                    name="isRelaying"
+                    toggle={true}
+                    defaultChecked={_.defaultTo(formData.isRelaying, connectionSettings.isRelaying)}
+                    onChange={this.onFieldChange}
+                  />
+                </Form.Field>
+              </Grid.Column>
+            </Grid.Row>
+            <Grid.Row columns={1}>
+              <Grid.Column>
+                <Form.Field>
+                  <label htmlFor="port">Connection Port</label>
+                  <div className={styles['description']}>
+                    The connection port should only be changed if you are connecting to a relay, 666 is the port all Wiis use to send data.
+                  </div>
+                  <Form.Input
+                    name="port"
+                    defaultValue={formData.port || connectionSettings.port || "666"}
+                    onChange={this.onFieldChange}
+                  />
+                </Form.Field>
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
+        </Tab.Pane>),
+      },
     ];
 
     let errorMessage = null;
@@ -685,8 +692,10 @@ export default class Console extends Component {
             text="Console"
             history={this.props.history}
           />
-          {this.renderContent()}
-          {this.renderEditModal()}
+          <Scroller topOffset={this.props.topNotifOffset}>
+            {this.renderContent()}
+            {this.renderEditModal()}
+          </Scroller>
         </div>
       </PageWrapper>
     );
