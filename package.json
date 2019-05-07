@@ -1,7 +1,7 @@
 {
   "name": "slippi-desktop-app",
   "productName": "Slippi Desktop App",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "description": "Slippi Desktop App for browsing and playing replays.",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -256,6 +256,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.5.0",
     "@google-cloud/storage": "^2.4.2",
+    "async-retry": "^1.2.3",
     "classnames": "^2.2.6",
     "devtron": "^1.4.0",
     "electron-debug": "^2.0.0",

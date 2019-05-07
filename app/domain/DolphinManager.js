@@ -4,6 +4,8 @@ import fs from 'fs-extra';
 import path from 'path';
 import os from 'os';
 import crypto from 'crypto';
+import retry from 'async-retry';
+import log from 'electron-log';
 
 import { getDolphinPath } from '../utils/settings';
 
@@ -63,7 +65,18 @@ export default class DolphinManager {
       commandId: uniqueId, // Indicates to Dolphin to play new replay
     });
 
-    fs.writeFileSync(this.outputFilePath, jsonString);
+    await retry(() => {
+      log.info(`Writing to Dolphin comm file, playing replay: ${filePath}`);
+      fs.writeFileSync(this.outputFilePath, jsonString);
+    }, {
+      retries: 5,
+      factor: 1,
+      minTimeout: 100,
+      maxTimeout: 300,
+      onRetry: (err) => {
+        log.error("Encountered error trying to write to Dolphin comm file.", err);
+      },
+    });
 
     if (startDolphin) {
       await this.runDolphin(true);
