@@ -12,6 +12,10 @@ body {
   overflow: hidden;
 }
 
+i, form *{
+  overflow: visible;
+}
+
 ul {
   margin: 0;
   padding-left: 20px;
