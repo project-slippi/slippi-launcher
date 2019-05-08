@@ -280,7 +280,7 @@ export default class SlpFileWriter {
   }
 
   getNewFilePath(m) {
-    return path.join(this.folderPath, `Game_${m.format("YYYYMMDD")}T${m.format("hhmmss")}.slp`);
+    return path.join(this.folderPath, `Game_${m.format("YYYYMMDD")}T${m.format("HHmmss")}.slp`);
   }
 
   endGame() {

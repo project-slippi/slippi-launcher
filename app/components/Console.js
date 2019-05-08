@@ -583,11 +583,11 @@ export default class Console extends Component {
               Real-time mode will attempt to prevent delay from accumulating when mirroring. Using it
               when on a connection with inconsistent latency will cause extremely choppy playback.
             </div>
-            <Form.Input
-              name="obsIP"
-              label="OBS Websocket IP:Port"
-              defaultValue={formData.obsIP || connectionSettings.obsIP || ""}
-              placeholder="localhost:4444"
+            <Checkbox
+              id="isRealTimeMode"
+              name="isRealTimeMode"
+              toggle={true}
+              defaultChecked={_.defaultTo(formData.isRealTimeMode, connectionSettings.isRealTimeMode)}
               onChange={this.onFieldChange}
             />
           </Form.Field> </Tab.Pane>),
