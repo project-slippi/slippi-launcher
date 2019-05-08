@@ -32,6 +32,11 @@ export default class ConsoleConnection {
     this.isMirroring = false;
     this.client = null;
     this.connectionStatus = ConnectionStatus.DISCONNECTED;
+    this.connDetails = {
+      token: Buffer.from([0, 0, 0, 0]), 
+      consoleNick: "unknown", 
+      version: "",
+    }
     this.connectionRetryState = this.getDefaultRetryState();
 
     // A connection can mirror its received gameplay
@@ -66,6 +71,7 @@ export default class ConsoleConnection {
       obsPassword: this.obsPassword,
       isRealTimeMode: this.isRealTimeMode,
       isRelaying: this.isRelaying,
+      consoleNick: this.connDetails.consoleNick,
     };
   }
 
@@ -142,9 +148,11 @@ export default class ConsoleConnection {
       port: this.port || 666,
     }, () => {
       console.log(`Connected to ${this.ipAddress}:${this.port || "666"}!`);
+      clearTimeout(this.connectionRetryState.reconnectHandler);
       this.connectionRetryState = this.getDefaultRetryState();
       this.connectionStatus = ConnectionStatus.CONNECTED;
       this.forceConsoleUiUpdate();
+      client.write(this.connDetails.token);
 
       // TODO: Send message to initiate transfers
     });
@@ -152,20 +160,40 @@ export default class ConsoleConnection {
     client.setTimeout(20000);
     
     client.on('data', (data) => {
-      const result = this.slpFileWriter.handleData(data);
-      if (result.isNewGame) {
-        const curFilePath = this.slpFileWriter.getCurrentFilePath();
-        this.dolphinManager.playFile(curFilePath, false);
+      const header = [83, 76, 73, 80, 95, 72, 83, 72, 75];
+      const recvHeader = _.slice(data, 0, 9);
+      if (header.length === recvHeader.length && header.every((val, i) => val === recvHeader[i])) {
+        this.connDetails.token = Buffer.from(_.slice(data, 12, 16));
+
+        _.each(_.slice(data, 16, 18), (val) => {
+          if (!val) return;
+          this.connDetails.version += val.toString();
+        });
+        this.connDetails.version += ".";
+        _.each(_.slice(data, 18, 20), (val) => {
+          if (!val) return;
+          this.connDetails.version += val.toString();
+        });
+
+        const consoleNick = _.slice(data, 20, 52);
+        this.connDetails.consoleNick = String.fromCharCode.apply(null, consoleNick) || "unknown";
+        this.slpFileWriter.updateSettings(this.getSettings());
+      } else {
+        const result = this.slpFileWriter.handleData(data);
+        if (result.isNewGame) {
+          const curFilePath = this.slpFileWriter.getCurrentFilePath();
+          this.dolphinManager.playFile(curFilePath, false);
+        }
       }
     });
 
     client.on('timeout', () => {
       // const previouslyConnected = this.connectionStatus === ConnectionStatus.CONNECTED;
       console.log(`Timeout on ${this.ipAddress}:${this.port || "666"}`);
-      client.destroy();
+      client.end();
 
       // TODO: Fix reconnect logic
-      // if (previouslyConnected) {
+      // if (this.connDetails.token !== "0x00000000") {
       //   // If previously connected, start the reconnect logic
       //   this.startReconnect();
       // }
@@ -174,7 +202,7 @@ export default class ConsoleConnection {
     client.on('error', (error) => {
       console.log('error');
       console.log(error);
-      client.destroy();
+      client.end();
     });
 
     client.on('end', () => {
@@ -209,7 +237,7 @@ export default class ConsoleConnection {
       // TODO: Confirm destroy is picked up by an action and disconnected
       // TODO: status is set
       this.slpFileWriter.disconnectOBS();
-      this.client.destroy();
+      this.client.end();
     }
   }
 
