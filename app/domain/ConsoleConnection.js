@@ -190,7 +190,7 @@ export default class ConsoleConnection {
     client.on('timeout', () => {
       // const previouslyConnected = this.connectionStatus === ConnectionStatus.CONNECTED;
       console.log(`Timeout on ${this.ipAddress}:${this.port || "666"}`);
-      client.destroy();
+      client.end();
 
       // TODO: Fix reconnect logic
       // if (this.connDetails.token !== "0x00000000") {
@@ -202,7 +202,7 @@ export default class ConsoleConnection {
     client.on('error', (error) => {
       console.log('error');
       console.log(error);
-      client.destroy();
+      client.end();
     });
 
     client.on('end', () => {
@@ -237,7 +237,7 @@ export default class ConsoleConnection {
       // TODO: Confirm destroy is picked up by an action and disconnected
       // TODO: status is set
       this.slpFileWriter.disconnectOBS();
-      this.client.destroy();
+      this.client.end();
     }
   }
 
