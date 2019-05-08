@@ -57,16 +57,15 @@ if (isoPath){
   const fileDir = path.dirname(isoPath);
   const storedDolphinPath = electronSettings.get('settings.playbackDolphinPath');
   let dolphinPath = storedDolphinPath || path.join(appDataPath, "Slippi Desktop App", "dolphin");
-  // Here we are going to build the platform-specific commands required to launch
-  // dolphin from the command line with the correct game
-  // When in development mode, use the build-specific dolphin version
-  // In production mode, only the build from the correct platform should exist
+  // Handle the dolphin INI file being in different paths per platform
   switch (platform) {
   case "darwin": // osx
     dolphinPath = isDev ? "./app/dolphin-dev/osx/Dolphin.app/Contents/Resources" : path.join(dolphinPath, "Dolphin.app/Contents/Resources");
     break;
   case "win32": // windows
     dolphinPath = isDev ? "./app/dolphin-dev/windows" : dolphinPath;
+    break;
+  case "linux":
     break;
   default:
     throw new Error("The current platform is not supported");

@@ -67,12 +67,15 @@ export function browseFile(field) {
       const isDev = process.env.NODE_ENV === "development";
       const storedDolphinPath = electronSettings.get('settings.playbackDolphinPath');
       let dolphinPath = storedDolphinPath || path.join(app.getPath("appData"), "Slippi Desktop App", "dolphin");
+      // Handle the dolphin INI file being in different paths per platform
       switch (platform) {
       case "darwin": // osx
         dolphinPath = isDev ? "./app/dolphin-dev/osx/Dolphin.app/Contents/Resources" : path.join(dolphinPath, "Dolphin.app/Contents/Resources");
         break;
       case "win32": // windows
         dolphinPath = isDev ? "./app/dolphin-dev/windows" : dolphinPath;
+        break;
+      case "linux":
         break;
       default:
         throw new Error("The current platform is not supported");
