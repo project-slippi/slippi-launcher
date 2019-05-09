@@ -19,6 +19,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import path from 'path';
 import fs from 'fs-extra';
+import ini from 'ini';
 import MenuBuilder from './menu';
 
 // Set up AppUpdater
@@ -28,6 +29,10 @@ autoUpdater.autoInstallOnAppQuit = false;
 log.info('App starting...');
 
 const slippiProtocol = "slippi";
+const platform = process.platform;
+const appDataPath = app.getPath("appData");
+const isProd = process.env.NODE_ENV === 'production';
+const isDev = process.env.NODE_ENV === "development";
 
 let mainWindow = null;
 let didFinishLoad = false;
@@ -46,35 +51,6 @@ if (
   require('electron-debug')();
 }
 
-const isProd = process.env.NODE_ENV === 'production';
-
-// Copy settings from when the app was called Slippi Launcher
-const appDataPath = app.getPath("appData");
-const prevVersion = electronSettings.get('previousVersion');
-if (isProd && !prevVersion) {
-  // On the very first install of the "Slippi Desktop App", let's transfer over settings from
-  // "Slippi Launcher"
-  const oldAppDataPath = path.join(appDataPath, "Slippi Launcher");
-  const newAppDataPath = path.join(appDataPath, "Slippi Desktop App");
-  
-  log.info("Transferring settings from previous Slippi Launcher install...");
-
-  try {
-    const oldSettingPath = path.join(oldAppDataPath, "Settings");
-    const newSettingsPath = path.join(newAppDataPath, "Settings");
-    fs.copyFileSync(oldSettingPath, newSettingsPath);
-
-    const oldDolphinUserPath = path.join(oldAppDataPath, "dolphin", "User");
-    const newDolphinUserPath = path.join(newAppDataPath, "dolphin", "User");
-    fs.copySync(oldDolphinUserPath, newDolphinUserPath, { overwrite: true });
-
-    log.info("Done transferring settings.");
-  } catch (err) {
-    log.warn("Failed to transfer settings. Maybe old version didn't exist?");
-  }
-}
-
-const platform = process.platform;
 if (isProd && (platform === "win32" || platform === "darwin")) {
   log.info("Checking if Dolphin path has been moved...");
 
@@ -109,6 +85,64 @@ if (isProd && (platform === "win32" || platform === "darwin")) {
     log.info("Done moving Dolphin");
   } else {
     log.info("Path not found, we're good?");
+  }
+}
+
+// Add game path to Playback Dolphin
+const isoPath = electronSettings.get("settings.isoPath");
+if (isoPath){
+  log.info("ISO path found");
+  const fileDir = path.dirname(isoPath);
+  const storedDolphinPath = electronSettings.get('settings.playbackDolphinPath');
+  let dolphinPath = storedDolphinPath || path.join(appDataPath, "Slippi Desktop App", "dolphin");
+  // Handle the dolphin INI file being in different paths per platform
+  switch (platform) {
+  case "darwin": // osx
+    dolphinPath = isDev ? "./app/dolphin-dev/osx/Dolphin.app/Contents/Resources" : path.join(dolphinPath, "Dolphin.app/Contents/Resources");
+    break;
+  case "win32": // windows
+    dolphinPath = isDev ? "./app/dolphin-dev/windows" : dolphinPath;
+    break;
+  case "linux":
+    break;
+  default:
+    throw new Error("The current platform is not supported");
+  }
+  try {
+    const iniPath = path.join(dolphinPath, "User", "Config", "Dolphin.ini");
+    const dolphinINI = ini.parse(fs.readFileSync(iniPath, 'utf-8'));
+    dolphinINI.General.ISOPath0 = fileDir;
+    const numPaths = dolphinINI.General.ISOPaths;
+    dolphinINI.General.ISOPaths = numPaths !== "0" ? numPaths : "1";
+    const newINI = ini.encode(dolphinINI);
+    fs.writeFileSync(iniPath, newINI);
+  } catch (err) {
+    log.warn(`Failed to update the dolphin paths\n${err}`)
+  }
+}
+
+// Copy settings from when the app was called Slippi Launcher
+const prevVersion = electronSettings.get('previousVersion');
+if (isProd && !prevVersion) {
+  // On the very first install of the "Slippi Desktop App", let's transfer over settings from
+  // "Slippi Launcher"
+  const oldAppDataPath = path.join(appDataPath, "Slippi Launcher");
+  const newAppDataPath = path.join(appDataPath, "Slippi Desktop App");
+  
+  log.info("Transferring settings from previous Slippi Launcher install...");
+
+  try {
+    const oldSettingPath = path.join(oldAppDataPath, "Settings");
+    const newSettingsPath = path.join(newAppDataPath, "Settings");
+    fs.copyFileSync(oldSettingPath, newSettingsPath);
+
+    const oldDolphinUserPath = path.join(oldAppDataPath, "dolphin", "User");
+    const newDolphinUserPath = path.join(newAppDataPath, "dolphin", "User");
+    fs.copySync(oldDolphinUserPath, newDolphinUserPath, { overwrite: true });
+
+    log.info("Done transferring settings.");
+  } catch (err) {
+    log.warn("Failed to transfer settings. Maybe old version didn't exist?");
   }
 }
 
