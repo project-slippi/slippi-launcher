@@ -3,6 +3,7 @@ import _ from 'lodash';
 import crypto from 'crypto';
 import ini from 'ini';
 import path from 'path';
+import log from 'electron-log';
 import electronSettings from 'electron-settings';
 
 import { displayError } from './error';
@@ -80,13 +81,17 @@ export function browseFile(field) {
       default:
         throw new Error("The current platform is not supported");
       }
-      const iniPath = path.join(dolphinPath, "User", "Config", "Dolphin.ini");
-      const dolphinINI = ini.parse(fs.readFileSync(iniPath, 'utf-8'));
-      dolphinINI.General.ISOPath0 = fileDir;
-      const numPaths = dolphinINI.General.ISOPaths;
-      dolphinINI.General.ISOPaths = numPaths !== "0" ? numPaths : "1";
-      const newINI = ini.encode(dolphinINI);
-      fs.writeFileSync(iniPath, newINI);
+      try {
+        const iniPath = path.join(dolphinPath, "User", "Config", "Dolphin.ini");
+        const dolphinINI = ini.parse(fs.readFileSync(iniPath, 'utf-8'));
+        dolphinINI.General.ISOPath0 = fileDir;
+        const numPaths = dolphinINI.General.ISOPaths;
+        dolphinINI.General.ISOPaths = numPaths !== "0" ? numPaths : "1";
+        const newINI = ini.encode(dolphinINI);
+        fs.writeFileSync(iniPath, newINI);
+      } catch (err) {
+        log.warn(`Failed to update the dolphin paths\n${err}`)
+      }
     }
   };
 }

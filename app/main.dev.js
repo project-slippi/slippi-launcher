@@ -91,6 +91,7 @@ if (isProd && (platform === "win32" || platform === "darwin")) {
 // Add game path to Playback Dolphin
 const isoPath = electronSettings.get("settings.isoPath");
 if (isoPath){
+  log.info("ISO path found");
   const fileDir = path.dirname(isoPath);
   const storedDolphinPath = electronSettings.get('settings.playbackDolphinPath');
   let dolphinPath = storedDolphinPath || path.join(appDataPath, "Slippi Desktop App", "dolphin");
@@ -107,13 +108,17 @@ if (isoPath){
   default:
     throw new Error("The current platform is not supported");
   }
-  const iniPath = path.join(dolphinPath, "User", "Config", "Dolphin.ini");
-  const dolphinINI = ini.parse(fs.readFileSync(iniPath, 'utf-8'));
-  dolphinINI.General.ISOPath0 = fileDir;
-  const numPaths = dolphinINI.General.ISOPaths;
-  dolphinINI.General.ISOPaths = numPaths !== "0" ? numPaths : "1";
-  const newINI = ini.encode(dolphinINI);
-  fs.writeFileSync(iniPath, newINI);
+  try {
+    const iniPath = path.join(dolphinPath, "User", "Config", "Dolphin.ini");
+    const dolphinINI = ini.parse(fs.readFileSync(iniPath, 'utf-8'));
+    dolphinINI.General.ISOPath0 = fileDir;
+    const numPaths = dolphinINI.General.ISOPaths;
+    dolphinINI.General.ISOPaths = numPaths !== "0" ? numPaths : "1";
+    const newINI = ini.encode(dolphinINI);
+    fs.writeFileSync(iniPath, newINI);
+  } catch (err) {
+    log.warn(`Failed to update the dolphin paths\n${err}`)
+  }
 }
 
 // Copy settings from when the app was called Slippi Launcher
