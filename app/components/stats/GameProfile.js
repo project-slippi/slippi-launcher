@@ -50,7 +50,7 @@ export default class GameProfile extends Component {
   };
 
   playFile = () => {
-    const filePath = _.get(this.props.store, ['game', 'filePath']);
+    const filePath = _.get(this.props.store, ['game', 'input', 'filePath']);
 
     // Play the file
     this.props.playFile({
