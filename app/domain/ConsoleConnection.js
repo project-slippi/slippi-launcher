@@ -160,6 +160,11 @@ export default class ConsoleConnection {
     client.setTimeout(20000);
     
     client.on('data', (data) => {
+      console.log({
+        'raw': data,
+        'string': data.toString(),
+      });
+
       const header = [83, 76, 73, 80, 95, 72, 83, 72, 75];
       const recvHeader = _.slice(data, 0, 9);
       if (header.length === recvHeader.length && header.every((val, i) => val === recvHeader[i])) {
@@ -190,7 +195,7 @@ export default class ConsoleConnection {
     client.on('timeout', () => {
       // const previouslyConnected = this.connectionStatus === ConnectionStatus.CONNECTED;
       console.log(`Timeout on ${this.ipAddress}:${this.port || "666"}`);
-      client.end();
+      client.destroy();
 
       // TODO: Fix reconnect logic
       // if (this.connDetails.token !== "0x00000000") {
@@ -202,7 +207,7 @@ export default class ConsoleConnection {
     client.on('error', (error) => {
       console.log('error');
       console.log(error);
-      client.end();
+      client.destroy();
     });
 
     client.on('end', () => {
@@ -237,7 +242,7 @@ export default class ConsoleConnection {
       // TODO: Confirm destroy is picked up by an action and disconnected
       // TODO: status is set
       this.slpFileWriter.disconnectOBS();
-      this.client.end();
+      this.client.destroy();
     }
   }
 
