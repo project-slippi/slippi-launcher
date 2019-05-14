@@ -5,6 +5,7 @@ import { store } from '../index';
 import { connectionStateChanged } from '../actions/console';
 import DolphinManager from './DolphinManager';
 import SlpFileWriter from './SlpFileWriter';
+import ConsoleCommunication, { types as commMsgTypes } from './ConsoleCommunication';
 
 export const ConnectionStatus = {
   DISCONNECTED: 0,
@@ -159,12 +160,15 @@ export default class ConsoleConnection {
 
     client.setTimeout(20000);
     
+    const consoleComms = new ConsoleCommunication();
+
     client.on('data', (data) => {
       console.log({
         'raw': data,
         'string': data.toString(),
       });
 
+      // TODO: Convert header to UBJSON message making this block obsolete
       const header = [83, 76, 73, 80, 95, 72, 83, 72, 75];
       const recvHeader = _.slice(data, 0, 9);
       if (header.length === recvHeader.length && header.every((val, i) => val === recvHeader[i])) {
@@ -183,13 +187,14 @@ export default class ConsoleConnection {
         const consoleNick = _.slice(data, 20, 52);
         this.connDetails.consoleNick = String.fromCharCode.apply(null, consoleNick) || "unknown";
         this.slpFileWriter.updateSettings(this.getSettings());
-      } else {
-        const result = this.slpFileWriter.handleData(data);
-        if (result.isNewGame) {
-          const curFilePath = this.slpFileWriter.getCurrentFilePath();
-          this.dolphinManager.playFile(curFilePath, false);
-        }
+        return;
       }
+
+      consoleComms.receive(data);
+      const messages = consoleComms.getMessages();
+
+      // Process all of the received messages
+      _.forEach(messages, message => this.processMessage(message));
     });
 
     client.on('timeout', () => {
@@ -243,6 +248,28 @@ export default class ConsoleConnection {
       // TODO: status is set
       this.slpFileWriter.disconnectOBS();
       this.client.destroy();
+    }
+  }
+
+  processMessage(message) {
+    switch (message.type) {
+    case commMsgTypes.KEEP_ALIVE:
+      console.log("Keep alive message received");
+      break;
+    case commMsgTypes.REPLAY:
+      console.log("Replay message type received");
+      console.log(message.payload.pos);
+
+      const data = Uint8Array.from(message.payload.data);
+      const result = this.slpFileWriter.handleData(data);
+      if (result.isNewGame) {
+        const curFilePath = this.slpFileWriter.getCurrentFilePath();
+        this.dolphinManager.playFile(curFilePath, false);
+      }
+      break;
+    default:
+      // Should this be an error?
+      break;
     }
   }
 
