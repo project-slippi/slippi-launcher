@@ -1,4 +1,4 @@
-import { decode } from "@shelacek/ubjson";
+import { decode, encode } from "@shelacek/ubjson";
 
 export const types = {
   HANDSHAKE: 1,
@@ -43,5 +43,27 @@ export default class ConsoleCommunication {
     this.messages = [];
 
     return toReturn;
+  }
+
+  genHandshakeOut(cursor) {
+    const message = {
+      type: types.HANDSHAKE,
+      payload: {
+        cursor: cursor,
+      },
+    };
+
+    const buf = encode(message, {
+      optimizeArrays: true,
+    });
+
+    const msg = Buffer.concat([
+      Buffer.from([0, 0, 0, 0]),
+      Buffer.from(buf),
+    ]);
+
+    msg.writeUInt32BE(buf.byteLength, 0);
+
+    return msg;
   }
 }

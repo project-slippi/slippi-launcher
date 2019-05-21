@@ -34,7 +34,8 @@ export default class ConsoleConnection {
     this.client = null;
     this.connectionStatus = ConnectionStatus.DISCONNECTED;
     this.connDetails = {
-      token: Buffer.from([0, 0, 0, 0]), 
+      // TODO: Add game boot token
+      gameDataCursor: Uint8Array.from([0, 0, 0, 0, 0, 0, 0, 0]), 
       consoleNick: "unknown", 
       version: "",
     }
@@ -142,6 +143,9 @@ export default class ConsoleConnection {
     this.connectionStatus = ConnectionStatus.CONNECTING;
     this.forceConsoleUiUpdate();
 
+    // Prepare console communication obj for talking UBJSON
+    const consoleComms = new ConsoleCommunication();
+
     // TODO: reconnect on failed reconnect, not sure how
     // TODO: to do this
     const client = net.connect({
@@ -153,14 +157,16 @@ export default class ConsoleConnection {
       this.connectionRetryState = this.getDefaultRetryState();
       this.connectionStatus = ConnectionStatus.CONNECTED;
       this.forceConsoleUiUpdate();
-      client.write(this.connDetails.token);
 
-      // TODO: Send message to initiate transfers
+      const handshakeMsgOut = consoleComms.genHandshakeOut(this.connDetails.gameDataCursor);
+      console.log({
+        'raw': handshakeMsgOut,
+        'string': handshakeMsgOut.toString(),
+      });
+      client.write(handshakeMsgOut);
     });
 
     client.setTimeout(20000);
-    
-    const consoleComms = new ConsoleCommunication();
 
     client.on('data', (data) => {
       console.log({
@@ -259,6 +265,7 @@ export default class ConsoleConnection {
     case commMsgTypes.REPLAY:
       console.log("Replay message type received");
       console.log(message.payload.pos);
+      this.connDetails.gameDataCursor = Uint8Array.from(message.payload.pos);
 
       const data = Uint8Array.from(message.payload.data);
       const result = this.slpFileWriter.handleData(data);
