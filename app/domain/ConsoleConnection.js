@@ -28,6 +28,8 @@ export default class ConsoleConnection {
     this.obsPassword = settings.obsPassword;
     this.isRealTimeMode = settings.isRealTimeMode;
     this.isRelaying = settings.isRelaying;
+    this.startAtFrame = settings.startAtFrame;
+    this.endAtFrame = settings.endAtFrame;
 
     this.isMirroring = false;
     this.client = null;
@@ -42,7 +44,8 @@ export default class ConsoleConnection {
       onFileStateChange: this.fileStateChangeHandler, 
       obsIP: this.obsIP, obsSourceName: this.obsSourceName,
       obsPassword: this.obsPassword, id: this.id,
-      isRelaying: this.isRelaying,
+      isRelaying: this.isRelaying, startAtFrame: this.startAtFrame,
+      endAtFrame: this.endAtFrame,
     }
     this.slpFileWriter = new SlpFileWriter(slpSettings);
   }
@@ -66,6 +69,8 @@ export default class ConsoleConnection {
       obsPassword: this.obsPassword,
       isRealTimeMode: this.isRealTimeMode,
       isRelaying: this.isRelaying,
+      startAtFrame: this.startAtFrame,
+      endAtFrame: this.endAtFrame,
     };
   }
 
@@ -115,6 +120,8 @@ export default class ConsoleConnection {
     this.obsPassword = newSettings.obsPassword || this.obsPassword;
     this.isRealTimeMode = _.defaultTo(newSettings.isRealTimeMode, this.isRealTimeMode);
     this.isRelaying = _.defaultTo(newSettings.isRelaying, this.isRelaying);
+    this.startAtFrame = newSettings.startAtFrame || this.startAtFrame;
+    this.endAtFrame = newSettings.endAtFrame || this.endAtFrame;
   }
 
   getDolphinManager() {

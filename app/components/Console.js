@@ -629,6 +629,24 @@ export default class Console extends Component {
                   onChange={this.onFieldChange}
                 />
               </Grid.Column>
+              <Grid.Column>
+                <Form.Input
+                  name="startAtFrame"
+                  label="Show On Frame"
+                  defaultValue={formData.startAtFrame || connectionSettings.startAtFrame || "-60"}
+                  placeholder="First possible frame is -123"
+                  onChange={this.onFieldChange}
+                />
+              </Grid.Column>
+              <Grid.Column>
+                <Form.Input
+                  name="endAtFrame"
+                  label="Hide On Frame"
+                  defaultValue={formData.endAtFrame || connectionSettings.endAtFrame || "30"}
+                  placeholder="This frames after GAME shows up"
+                  onChange={this.onFieldChange}
+                />
+              </Grid.Column>
             </Grid.Row>
             <Grid.Row columns={1}>
               <Grid.Column>
