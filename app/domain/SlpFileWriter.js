@@ -21,6 +21,7 @@ export default class SlpFileWriter {
     this.id = settings.id;
     this.startAtFrame = parseInt(settings.startAtFrame, 10);
     this.endAtFrame = parseInt(settings.endAtFrame, 10);
+    this.streamTimeout = parseInt(settings.streamTimeout, 10);
     this.currentFile = this.getClearedCurrentFile();
     this.obs = new OBSWebSocket();
     this.statusOutput = {
@@ -84,6 +85,7 @@ export default class SlpFileWriter {
     this.isRelaying = settings.isRelaying;
     this.startAtFrame = parseInt(settings.startAtFrame, 10);
     this.endAtFrame = parseInt(settings.endAtFrame, 10);
+    this.streamTimeout = parseInt(settings.streamTimeout, 10);
     this.startRelay();
   }
 
@@ -101,6 +103,7 @@ export default class SlpFileWriter {
     if (this.obsIP && this.obsSourceName) {
       // if you send a password when authentication is disabled, OBS will still connect
       await this.obs.connect({address: this.obsIP, password: this.obsPassword});
+      await this.obs.on("SceneItemAdded", async (data) => await this.getSceneSources()); // eslint-disable-line
       await this.getSceneSources();
     }
   }
@@ -118,7 +121,7 @@ export default class SlpFileWriter {
     });
   }
 
-  handleStatusOutput(timeoutLength = 100) {
+  handleStatusOutput(timeoutLength) {
     const setTimer = () => {
       if (this.statusOutput.timeout) {
         // If we have a timeout, clear it
@@ -220,7 +223,7 @@ export default class SlpFileWriter {
       default:
         payloadLen = this.processCommand(command, payloadDataView);
         this.writeCommand(command, payloadPtr, payloadLen);
-        this.handleStatusOutput();
+        this.handleStatusOutput(this.streamTimeout);
         break;
       }
 
@@ -473,8 +476,6 @@ export default class SlpFileWriter {
       if (endMethod !== 7) {
         this.handleStatusOutput((this.endAtFrame/60) * 1000); // convert frames to ms
       }
-
-      this.getSceneSources();
 
       break;
     default:

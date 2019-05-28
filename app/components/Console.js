@@ -647,6 +647,15 @@ export default class Console extends Component {
                   onChange={this.onFieldChange}
                 />
               </Grid.Column>
+              <Grid.Column>
+                <Form.Input
+                  name="streamTimeout"
+                  label="Timeout (ms)"
+                  defaultValue={formData.streamTimeout || connectionSettings.streamTimeout || "100"}
+                  placeholder="How long before we assume the game is paused"
+                  onChange={this.onFieldChange}
+                />
+              </Grid.Column>
             </Grid.Row>
             <Grid.Row columns={1}>
               <Grid.Column>

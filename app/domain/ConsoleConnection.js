@@ -30,6 +30,7 @@ export default class ConsoleConnection {
     this.isRelaying = settings.isRelaying;
     this.startAtFrame = settings.startAtFrame;
     this.endAtFrame = settings.endAtFrame;
+    this.streamTimeout = settings.streamTimeout;
 
     this.isMirroring = false;
     this.client = null;
@@ -45,7 +46,7 @@ export default class ConsoleConnection {
       obsIP: this.obsIP, obsSourceName: this.obsSourceName,
       obsPassword: this.obsPassword, id: this.id,
       isRelaying: this.isRelaying, startAtFrame: this.startAtFrame,
-      endAtFrame: this.endAtFrame,
+      endAtFrame: this.endAtFrame, streamTimeout: this.streamTimeout,
     }
     this.slpFileWriter = new SlpFileWriter(slpSettings);
   }
@@ -71,6 +72,7 @@ export default class ConsoleConnection {
       isRelaying: this.isRelaying,
       startAtFrame: this.startAtFrame,
       endAtFrame: this.endAtFrame,
+      streamTimeout: this.streamTimeout,
     };
   }
 
@@ -122,6 +124,7 @@ export default class ConsoleConnection {
     this.isRelaying = _.defaultTo(newSettings.isRelaying, this.isRelaying);
     this.startAtFrame = newSettings.startAtFrame || this.startAtFrame;
     this.endAtFrame = newSettings.endAtFrame || this.endAtFrame;
+    this.streamTimeout = newSettings.streamTimeout || this.streamTimeout;
   }
 
   getDolphinManager() {
