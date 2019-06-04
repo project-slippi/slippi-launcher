@@ -162,6 +162,7 @@ export default class ConsoleConnection {
       console.log({
         'raw': handshakeMsgOut,
         'string': handshakeMsgOut.toString(),
+        'cursor': this.connDetails.gameDataCursor,
       });
       client.write(handshakeMsgOut);
     });
@@ -273,6 +274,10 @@ export default class ConsoleConnection {
         const curFilePath = this.slpFileWriter.getCurrentFilePath();
         this.dolphinManager.playFile(curFilePath, false);
       }
+      break;
+    case commMsgTypes.HANDSHAKE:
+      console.log("Handshake message received");
+      console.log(message);
       break;
     default:
       // Should this be an error?

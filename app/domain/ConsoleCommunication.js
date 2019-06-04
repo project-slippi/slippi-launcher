@@ -50,6 +50,7 @@ export default class ConsoleCommunication {
       type: types.HANDSHAKE,
       payload: {
         cursor: cursor,
+        instanceToken: Uint8Array.from([0, 0, 0, 32]), // TODO: Use real instance token
       },
     };
 
