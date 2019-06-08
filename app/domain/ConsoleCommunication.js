@@ -45,12 +45,15 @@ export default class ConsoleCommunication {
     return toReturn;
   }
 
-  genHandshakeOut(cursor) {
+  genHandshakeOut(cursor, clientToken) {
+    const clientTokenBuf = Buffer.from([0, 0, 0, 0]);
+    clientTokenBuf.writeUInt32BE(clientToken, 0);
+
     const message = {
       type: types.HANDSHAKE,
       payload: {
         cursor: cursor,
-        instanceToken: Uint8Array.from([0, 0, 0, 32]), // TODO: Use real instance token
+        clientToken: Uint8Array.from(clientTokenBuf), // TODO: Use real instance token
       },
     };
 

@@ -34,10 +34,10 @@ export default class ConsoleConnection {
     this.client = null;
     this.connectionStatus = ConnectionStatus.DISCONNECTED;
     this.connDetails = {
-      // TODO: Add game boot token
       gameDataCursor: Uint8Array.from([0, 0, 0, 0, 0, 0, 0, 0]), 
       consoleNick: "unknown", 
       version: "",
+      clientToken: 0,
     }
     this.connectionRetryState = this.getDefaultRetryState();
 
@@ -158,7 +158,10 @@ export default class ConsoleConnection {
       this.connectionStatus = ConnectionStatus.CONNECTED;
       this.forceConsoleUiUpdate();
 
-      const handshakeMsgOut = consoleComms.genHandshakeOut(this.connDetails.gameDataCursor);
+      const handshakeMsgOut = consoleComms.genHandshakeOut(
+        this.connDetails.gameDataCursor, this.connDetails.clientToken
+      );
+
       console.log({
         'raw': handshakeMsgOut,
         'string': handshakeMsgOut.toString(),
@@ -170,33 +173,6 @@ export default class ConsoleConnection {
     client.setTimeout(20000);
 
     client.on('data', (data) => {
-      console.log({
-        'raw': data,
-        'string': data.toString(),
-      });
-
-      // TODO: Convert header to UBJSON message making this block obsolete
-      const header = [83, 76, 73, 80, 95, 72, 83, 72, 75];
-      const recvHeader = _.slice(data, 0, 9);
-      if (header.length === recvHeader.length && header.every((val, i) => val === recvHeader[i])) {
-        this.connDetails.token = Buffer.from(_.slice(data, 12, 16));
-
-        _.each(_.slice(data, 16, 18), (val) => {
-          if (!val) return;
-          this.connDetails.version += val.toString();
-        });
-        this.connDetails.version += ".";
-        _.each(_.slice(data, 18, 20), (val) => {
-          if (!val) return;
-          this.connDetails.version += val.toString();
-        });
-
-        const consoleNick = _.slice(data, 20, 52);
-        this.connDetails.consoleNick = String.fromCharCode.apply(null, consoleNick) || "unknown";
-        this.slpFileWriter.updateSettings(this.getSettings());
-        return;
-      }
-
       consoleComms.receive(data);
       const messages = consoleComms.getMessages();
 
@@ -278,6 +254,14 @@ export default class ConsoleConnection {
     case commMsgTypes.HANDSHAKE:
       console.log("Handshake message received");
       console.log(message);
+
+      this.connDetails.consoleNick = message.payload.nick;
+      const tokenBuf = Buffer.from(message.payload.clientToken);
+      this.connDetails.clientToken =  tokenBuf.readUInt32BE(0);;
+      console.log(`Received token: ${this.connDetails.clientToken}`);
+
+      // Update file writer to use new console nick?
+      this.slpFileWriter.updateSettings(this.getSettings());
       break;
     default:
       // Should this be an error?
