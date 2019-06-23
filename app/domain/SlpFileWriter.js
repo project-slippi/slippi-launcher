@@ -104,6 +104,7 @@ export default class SlpFileWriter {
       // if you send a password when authentication is disabled, OBS will still connect
       await this.obs.connect({address: this.obsIP, password: this.obsPassword});
       await this.obs.on("SceneItemAdded", async (data) => await this.getSceneSources()); // eslint-disable-line
+      await this.obs.on("SceneItemRemoved", async (data) => await this.getSceneSources()); // eslint-disable-line
       await this.getSceneSources();
     }
   }
