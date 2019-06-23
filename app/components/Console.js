@@ -633,6 +633,9 @@ export default class Console extends Component {
                 <Form.Input
                   name="showOnFrame"
                   label="Show On Frame"
+                  type='number'
+                  min={-123}
+                  max = {30}
                   defaultValue={formData.showOnFrame || connectionSettings.showOnFrame || "-60"}
                   placeholder="First possible frame is -123"
                   onChange={this.onFieldChange}
@@ -642,6 +645,9 @@ export default class Console extends Component {
                 <Form.Input
                   name="hideOnFrame"
                   label="Hide On Frame"
+                  type='number'
+                  min={0}
+                  max={240}
                   defaultValue={formData.hideOnFrame || connectionSettings.hideOnFrame || "30"}
                   placeholder="This frames after GAME shows up"
                   onChange={this.onFieldChange}
@@ -651,6 +657,9 @@ export default class Console extends Component {
                 <Form.Input
                   name="streamTimeout"
                   label="Timeout (ms)"
+                  type='number'
+                  min={100}
+                  max={500}
                   defaultValue={formData.streamTimeout || connectionSettings.streamTimeout || "100"}
                   placeholder="How long before we assume the game is paused"
                   onChange={this.onFieldChange}
