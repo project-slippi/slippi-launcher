@@ -19,8 +19,8 @@ export default class SlpFileWriter {
     this.obsSourceName = settings.obsSourceName;
     this.obsIP = settings.obsIP;
     this.id = settings.id;
-    this.startAtFrame = parseInt(settings.startAtFrame, 10);
-    this.endAtFrame = parseInt(settings.endAtFrame, 10);
+    this.showOnFrame = parseInt(settings.showOnFrame, 10);
+    this.hideOnFrame = parseInt(settings.hideOnFrame, 10);
     this.streamTimeout = parseInt(settings.streamTimeout, 10);
     this.currentFile = this.getClearedCurrentFile();
     this.obs = new OBSWebSocket();
@@ -83,8 +83,8 @@ export default class SlpFileWriter {
     this.obsPassword = settings.obsPassword;
     this.id = settings.id;
     this.isRelaying = settings.isRelaying;
-    this.startAtFrame = parseInt(settings.startAtFrame, 10);
-    this.endAtFrame = parseInt(settings.endAtFrame, 10);
+    this.showOnFrame = parseInt(settings.showOnFrame, 10);
+    this.hideOnFrame = parseInt(settings.hideOnFrame, 10);
     this.streamTimeout = parseInt(settings.streamTimeout, 10);
     this.startRelay();
   }
@@ -134,7 +134,7 @@ export default class SlpFileWriter {
       }, timeoutLength);
     }
 
-    if (this.currentFile.metadata.lastFrame < this.startAtFrame) {
+    if (this.currentFile.metadata.lastFrame < this.showOnFrame) {
       // Only show the source in the later portion of the game loading stage
       return;
     }
@@ -474,7 +474,7 @@ export default class SlpFileWriter {
       const endMethod = dataView.getUint8(0);
 
       if (endMethod !== 7) {
-        this.handleStatusOutput((this.endAtFrame/60) * 1000); // convert frames to ms
+        this.handleStatusOutput((this.hideOnFrame/60) * 1000); // convert frames to ms
       }
 
       break;

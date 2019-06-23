@@ -28,8 +28,8 @@ export default class ConsoleConnection {
     this.obsPassword = settings.obsPassword;
     this.isRealTimeMode = settings.isRealTimeMode;
     this.isRelaying = settings.isRelaying;
-    this.startAtFrame = settings.startAtFrame;
-    this.endAtFrame = settings.endAtFrame;
+    this.showOnFrame = settings.showOnFrame;
+    this.hideOnFrame = settings.hideOnFrame;
     this.streamTimeout = settings.streamTimeout;
 
     this.isMirroring = false;
@@ -45,8 +45,8 @@ export default class ConsoleConnection {
       onFileStateChange: this.fileStateChangeHandler, 
       obsIP: this.obsIP, obsSourceName: this.obsSourceName,
       obsPassword: this.obsPassword, id: this.id,
-      isRelaying: this.isRelaying, startAtFrame: this.startAtFrame,
-      endAtFrame: this.endAtFrame, streamTimeout: this.streamTimeout,
+      isRelaying: this.isRelaying, showOnFrame: this.showOnFrame,
+      hideOnFrame: this.hideOnFrame, streamTimeout: this.streamTimeout,
     }
     this.slpFileWriter = new SlpFileWriter(slpSettings);
   }
@@ -70,8 +70,8 @@ export default class ConsoleConnection {
       obsPassword: this.obsPassword,
       isRealTimeMode: this.isRealTimeMode,
       isRelaying: this.isRelaying,
-      startAtFrame: this.startAtFrame,
-      endAtFrame: this.endAtFrame,
+      showOnFrame: this.showOnFrame,
+      hideOnFrame: this.hideOnFrame,
       streamTimeout: this.streamTimeout,
     };
   }
@@ -122,8 +122,8 @@ export default class ConsoleConnection {
     this.obsPassword = newSettings.obsPassword || this.obsPassword;
     this.isRealTimeMode = _.defaultTo(newSettings.isRealTimeMode, this.isRealTimeMode);
     this.isRelaying = _.defaultTo(newSettings.isRelaying, this.isRelaying);
-    this.startAtFrame = newSettings.startAtFrame || this.startAtFrame;
-    this.endAtFrame = newSettings.endAtFrame || this.endAtFrame;
+    this.showOnFrame = newSettings.showOnFrame || this.showOnFrame;
+    this.hideOnFrame = newSettings.hideOnFrame || this.hideOnFrame;
     this.streamTimeout = newSettings.streamTimeout || this.streamTimeout;
   }
 

@@ -631,18 +631,18 @@ export default class Console extends Component {
               </Grid.Column>
               <Grid.Column>
                 <Form.Input
-                  name="startAtFrame"
+                  name="showOnFrame"
                   label="Show On Frame"
-                  defaultValue={formData.startAtFrame || connectionSettings.startAtFrame || "-60"}
+                  defaultValue={formData.showOnFrame || connectionSettings.showOnFrame || "-60"}
                   placeholder="First possible frame is -123"
                   onChange={this.onFieldChange}
                 />
               </Grid.Column>
               <Grid.Column>
                 <Form.Input
-                  name="endAtFrame"
+                  name="hideOnFrame"
                   label="Hide On Frame"
-                  defaultValue={formData.endAtFrame || connectionSettings.endAtFrame || "30"}
+                  defaultValue={formData.hideOnFrame || connectionSettings.hideOnFrame || "30"}
                   placeholder="This frames after GAME shows up"
                   onChange={this.onFieldChange}
                 />
