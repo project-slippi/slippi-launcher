@@ -107,15 +107,16 @@ export default class GameProfile extends Component {
 
   renderGameProfileHeader() {
     const isLoading = _.get(this.props.store, 'isLoading') || false;
+    if (isLoading) {
+      return null;
+    }
 
-    return isLoading
-      ? <React.Fragment></React.Fragment>
-      : (
-        <div className={styles['stats-player-header']}>
-          {this.renderMatchupDisplay()}
-          {this.renderGameDetails()}
-        </div>
-      );
+    return (
+      <div className={styles['stats-player-header']}>
+        {this.renderMatchupDisplay()}
+        {this.renderGameDetails()}
+      </div>
+    );
   }
 
   renderMatchupDisplay() {
