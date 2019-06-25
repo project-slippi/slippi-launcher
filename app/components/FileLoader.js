@@ -80,15 +80,20 @@ export default class FileLoader extends Component {
 
     // We return a div that will serve as a placeholder for our column as well as a fixed
     // div for actually displaying the sidebar
+    // TODO: I'm not really sure why I had to subtract 85 from top offset in this case and
+    // TODO: the other places didn't have to. But without that there was 85 pixels of blank space
+    // TODO: at the bottom
     return [
       <div key="column-placeholder" />,
       <div key="sidebar" style={customStyling} className={styles['sidebar']}>
-        <FolderBrowser
-          folders={store.folders}
-          rootFolderName={store.rootFolderName}
-          selectedFolderFullPath={store.selectedFolderFullPath}
-          changeFolderSelection={this.props.changeFolderSelection}
-        />
+        <Scroller topOffset={this.props.topNotifOffset - 85}>
+          <FolderBrowser
+            folders={store.folders}
+            rootFolderName={store.rootFolderName}
+            selectedFolderFullPath={store.selectedFolderFullPath}
+            changeFolderSelection={this.props.changeFolderSelection}
+          />
+        </Scroller>
       </div>,
     ];
   }
