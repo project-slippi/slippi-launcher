@@ -60,3 +60,19 @@ ul {
 .capitalize {
   text-transform: capitalize;
 }
+
+.ui.secondary.menu a.item:hover {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.ui.secondary.menu a.item:focus {
+  outline: none !important;
+}
+
+.ui.menu .item {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.ui.menu .item.active {
+  color: rgba(255, 255, 255, 0.9) !important;
+}

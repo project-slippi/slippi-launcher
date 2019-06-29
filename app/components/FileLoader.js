@@ -322,6 +322,7 @@ export default class FileLoader extends Component {
         </Table>
         <div className={styles['file-pagination-container']}>
           <Pagination
+            secondary={true}
             activePage={this.props.store.currentPage}
             totalPages={this.calculateTotalPages(files.length)}
             onPageChange={this.handlePaginationChange.bind(this)}
