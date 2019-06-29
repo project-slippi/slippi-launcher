@@ -9,6 +9,7 @@ export const LOAD_ROOT_FOLDER = 'LOAD_ROOT_FOLDER';
 export const CHANGE_FOLDER_SELECTION = 'CHANGE_FOLDER_SELECTION';
 export const LOAD_FILES_IN_FOLDER = 'LOAD_FILES_IN_FOLDER';
 export const STORE_SCROLL_POSITION = 'STORE_SCROLL_POSITION';
+export const CHANGE_PAGE = 'CHANGE_PAGE';
 
 export function loadRootFolder() {
   return async (dispatch, getState) => { 
@@ -65,6 +66,15 @@ export function storeScrollPosition(position) {
       position: position,
     },
   };
+}
+
+export function changeToNewPage(newPage) {
+  return {
+    type: CHANGE_PAGE,
+    payload: {
+      newPage: newPage,
+    },
+  }
 }
 
 export function playFile(file) {

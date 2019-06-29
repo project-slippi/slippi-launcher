@@ -11,6 +11,7 @@ import {
   Segment,
   Message,
   Loader,
+  Pagination,
 } from 'semantic-ui-react';
 import styles from './FileLoader.scss';
 import FileRow from './FileRow';
@@ -20,6 +21,8 @@ import FolderBrowser from './common/FolderBrowser';
 import PageWrapper from './PageWrapper';
 import Scroller from './common/Scroller';
 
+const MAX_NUM_OF_FILES_PER_PAGE = 30.0
+
 export default class FileLoader extends Component {
   static propTypes = {
     // fileLoader actions
@@ -27,6 +30,7 @@ export default class FileLoader extends Component {
     changeFolderSelection: PropTypes.func.isRequired,
     playFile: PropTypes.func.isRequired,
     storeScrollPosition: PropTypes.func.isRequired,
+    changeToNewPage: PropTypes.func.isRequired,
 
     // game actions
     gameProfileLoad: PropTypes.func.isRequired,
@@ -282,8 +286,17 @@ export default class FileLoader extends Component {
       </Table.Row>
     );
 
-    // Generate a row for every file in selected folder
-    const rows = files.map(
+    const fileBeginIndex = (this.props.store.currentPage - 1) * MAX_NUM_OF_FILES_PER_PAGE
+
+    const howManyLeft = (files.length - 1) - fileBeginIndex
+    let lastFileIndex
+    if (howManyLeft > MAX_NUM_OF_FILES_PER_PAGE) {
+      lastFileIndex = fileBeginIndex + MAX_NUM_OF_FILES_PER_PAGE
+    } else {
+      lastFileIndex = fileBeginIndex + howManyLeft
+    }
+
+    const rows = files.slice(fileBeginIndex, lastFileIndex).map(
       file => (
         <FileRow
           key={file.fullPath}
@@ -296,17 +309,35 @@ export default class FileLoader extends Component {
     );
 
     return (
-      <Table
-        className={styles['file-table']}
-        basic="very"
-        celled={true}
-        inverted={true}
-        selectable={true}
-      >
-        <Table.Header>{headerRow}</Table.Header>
-        <Table.Body>{rows}</Table.Body>
-      </Table>
+      <>
+        <Table
+          className={styles['file-table']}
+          basic="very"
+          celled={true}
+          inverted={true}
+          selectable={true}
+        >
+          <Table.Header>{headerRow}</Table.Header>
+          <Table.Body>{rows}</Table.Body>
+        </Table>
+        <div className={styles['file-pagination-container']}>
+          <Pagination
+            activePage={this.props.store.currentPage}
+            totalPages={this.calculateTotalPages(files.length)}
+            onPageChange={this.handlePaginationChange.bind(this)}
+          />
+        </div>
+      </>
     );
+  }
+
+  handlePaginationChange(event, { activePage }) {
+    this.props.changeToNewPage(activePage)
+  }
+
+  calculateTotalPages(numOfFiles) {
+    return Math.floor(numOfFiles / MAX_NUM_OF_FILES_PER_PAGE) +
+      (numOfFiles % MAX_NUM_OF_FILES_PER_PAGE === 0 ? 0 : 1)
   }
 
   renderMain() {
