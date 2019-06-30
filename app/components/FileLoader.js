@@ -288,7 +288,7 @@ export default class FileLoader extends Component {
 
     const fileBeginIndex = (this.props.store.currentPage - 1) * MAX_NUM_OF_FILES_PER_PAGE
 
-    const howManyLeft = (files.length - 1) - fileBeginIndex
+    const howManyLeft = (files.length) - fileBeginIndex
     let lastFileIndex
     if (howManyLeft > MAX_NUM_OF_FILES_PER_PAGE) {
       lastFileIndex = fileBeginIndex + MAX_NUM_OF_FILES_PER_PAGE
