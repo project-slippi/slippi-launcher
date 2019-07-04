@@ -63,7 +63,7 @@ function loadRootFolder(state) {
       folderName: file,
       pathArr: [rootFolderBasename, file],
       expanded: true,
-      subDirectories: {},
+      subDirectories: [],
     };
   }).filter(folderDetails => (
     fs.lstatSync(folderDetails.fullPath).isDirectory()
@@ -114,10 +114,42 @@ function changeFolderSelection(state, action) {
 }
 
 function loadFilesInFolder(state, action) {
+  const rootFolderFullPath = electronSettings.get('settings.rootSlpPath');
+  if (!rootFolderFullPath) {
+    return state;
+  }
+  if (!state.selectedFolderFullPath.startsWith(rootFolderFullPath)) {
+    return state;
+  }
+
+  const rootFolderName = state.rootFolderName;
+  const pathArr = [rootFolderName];
+  const folders = {...state.folders};
+  let currentFolder = folders[rootFolderName];
+  let remainingPath = path.relative(rootFolderFullPath, state.selectedFolderFullPath);
+  while(remainingPath.length > 0) {
+    const paths = remainingPath.split(path.sep);
+    const nextPath = paths[0];
+    const nextFolder = currentFolder.subDirectories.find(subDirectory => (
+      subDirectory.folderName === nextPath
+    ));
+    if (!nextFolder) {
+      return state;
+    }
+    pathArr.push(nextPath);
+    currentFolder = nextFolder;
+    remainingPath = paths.slice(1).join(path.sep);
+  }
+
+  currentFolder.subDirectories = action.payload.folders.map(folder => ({
+    ...folder,
+    pathArr: Array.from(pathArr),
+  }));
   return {
     ...state,
     isLoading: false,
     files: action.payload.files,
+    folders: folders,
   };
 }
 

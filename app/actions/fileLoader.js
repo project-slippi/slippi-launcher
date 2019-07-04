@@ -22,12 +22,13 @@ export function loadRootFolder() {
     await wait(10); // eslint-disable-line
 
     const currentPath = getState().fileLoader.selectedFolderFullPath;
-    const files = await loadFilesInFolder(currentPath);
+    const filesAndFolders = await loadFilesInFolder(currentPath);
 
     dispatch({
       type: LOAD_FILES_IN_FOLDER,
       payload: {
-        files: files,
+        files: filesAndFolders[0],
+        folders: filesAndFolders[1],
       },
     });
   };
@@ -47,12 +48,13 @@ export function changeFolderSelection(folder) {
     await wait(10); // eslint-disable-line
 
     const currentPath = getState().fileLoader.selectedFolderFullPath;
-    const files = await loadFilesInFolder(currentPath);
+    const filesAndFolders = await loadFilesInFolder(currentPath);
 
     dispatch({
       type: LOAD_FILES_IN_FOLDER,
       payload: {
-        files: files,
+        files: filesAndFolders[0],
+        folders: filesAndFolders[1],
       },
     });
   };
@@ -88,58 +90,70 @@ export function playFile(file) {
 }
 
 async function loadFilesInFolder(folderPath) {
-  // console.log(`Loading files in ${folderPath}...`);
-
-  let files = [];
-  try {
-    files = fs.readdirSync(folderPath) || [];
-  } catch (err) {
-    // do nothing
-    console.log(err);
-  }
-
-  // Filter for all .slp files
-  files = files.filter(file => (
-    path.extname(file) === ".slp"
-  ));
-
-  // const start = new Date();
-
-  // Compute header information for display
-  const fileProcessors = files.map(async (file) => {
-    const fullPath = path.join(folderPath, file);
-    let game = null;
-    let hasError = false;
-
-    // Pre-load settings here
-    try {
-      game = new SlippiGame(fullPath);
-
-      // Preload settings
-      const settings = game.getSettings();
-      if (_.isEmpty(settings.players)) {
-        throw new Error("Game settings could not be properly loaded.");
+  const readdirPromise = new Promise((resolve, reject) => {
+    fs.readdir(folderPath, {withFileTypes: true}, (err, dirents) => {
+      if (err) {
+        reject(err);
       }
-
-      // Preload metadata
-      game.getMetadata();
-    } catch (err) {
-      console.log(`Failed to parse file: ${fullPath}`);
-      console.log(err);
-      hasError = true;
-    }
-
-    return {
-      fullPath: fullPath,
-      fileName: file,
-      game: game,
-      hasError: hasError,
-    };
+      resolve(dirents);
+    });
   });
 
-  files = await Promise.all(fileProcessors);
-  
-  // console.log(`Time: ${new Date() - start}ms`);
+  const filesPromise = readdirPromise.then(dirents => (
+    dirents.filter(dirent => (
+      dirent.isFile()
+    )).map(dirent => (
+      dirent.name
+    )).filter(fileName => (
+      // Filter for all .slp files
+      path.extname(fileName) === ".slp"
+    )).map(fileName => {
+      // Compute header information for display
+      const fullPath = path.join(folderPath, fileName);
+      let game = null;
+      let hasError = false;
 
-  return files;
+      // Pre-load settings here
+      try {
+        game = new SlippiGame(fullPath);
+
+        // Preload settings
+        const settings = game.getSettings();
+        if (_.isEmpty(settings.players)) {
+          throw new Error("Game settings could not be properly loaded.");
+        }
+
+        // Preload metadata
+        game.getMetadata();
+      } catch (err) {
+        console.log(`Failed to parse file: ${fullPath}`);
+        console.log(err);
+        hasError = true;
+      }
+
+      return {
+        fullPath: fullPath,
+        fileName: fileName,
+        game: game,
+        hasError: hasError,
+      };
+    })
+  ));
+
+  const foldersPromise = readdirPromise.then(dirents => (
+    dirents.filter(dirent => (
+      dirent.isDirectory()
+    )).map(dirent => {
+      const folderName = dirent.name;
+      const fullPath = path.join(folderPath, folderName);
+      return {
+        fullPath: fullPath,
+        folderName: folderName,
+        expanded: true,
+        subDirectories: [],
+      };
+    })
+  ));
+
+  return Promise.all([filesPromise, foldersPromise]);
 }
