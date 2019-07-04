@@ -4,7 +4,6 @@ import {
 import DolphinManager from '../domain/DolphinManager';
 
 const path = require('path');
-const electronSettings = require('electron-settings');
 
 // Default state for this reducer
 const defaultState = {
@@ -75,11 +74,8 @@ function changeFolderSelection(state, action) {
 }
 
 function loadFilesInFolder(state, action) {
-  const rootFolderFullPath = electronSettings.get('settings.rootSlpPath');
-  if (!rootFolderFullPath) {
-    return state;
-  }
-  if (!state.selectedFolderFullPath.startsWith(rootFolderFullPath)) {
+  const rootFolderPath = state.rootFolderPath;
+  if (!state.selectedFolderFullPath.startsWith(rootFolderPath)) {
     return state;
   }
 
@@ -87,7 +83,7 @@ function loadFilesInFolder(state, action) {
   const pathArr = [rootFolderName];
   const folders = {...state.folders};
   let currentFolder = folders[rootFolderName];
-  let remainingPath = path.relative(rootFolderFullPath, state.selectedFolderFullPath);
+  let remainingPath = path.relative(rootFolderPath, state.selectedFolderFullPath);
   while(remainingPath.length > 0) {
     const paths = remainingPath.split(path.sep);
     const nextPath = paths[0];
