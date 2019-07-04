@@ -5,24 +5,68 @@ import SlippiGame from 'slp-parser-js';
 
 import { displayError } from './error';
 
+const electronSettings = require('electron-settings');
+
 export const LOAD_ROOT_FOLDER = 'LOAD_ROOT_FOLDER';
 export const CHANGE_FOLDER_SELECTION = 'CHANGE_FOLDER_SELECTION';
 export const LOAD_FILES_IN_FOLDER = 'LOAD_FILES_IN_FOLDER';
 export const STORE_SCROLL_POSITION = 'STORE_SCROLL_POSITION';
 
 export function loadRootFolder() {
-  return async (dispatch, getState) => { 
+  return async (dispatch, getState) => {
+    const rootFolderPath = electronSettings.get('settings.rootSlpPath');
+    if (!rootFolderPath) {
+      dispatch({
+        type: LOAD_ROOT_FOLDER,
+        payload: {
+          folderFound: false,
+        },
+      });
+    }
+
+    if (rootFolderPath === getState().fileLoader.rootFolderPath) {
+      return;
+    }
+
+    const folderFound = await new Promise((resolve, reject) => {
+      fs.stat(rootFolderPath, (err, stats) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(stats);
+      });
+    }).then(stats => stats.isDirectory(), () => false);
+
+    if (!folderFound) {
+      dispatch({
+        type: LOAD_ROOT_FOLDER,
+        payload: {
+          folderFound: false,
+        },
+      });
+      return;
+    }
+
     dispatch({
       type: LOAD_ROOT_FOLDER,
-      payload: {},
+      payload: {
+        folderFound: true,
+        rootFolderPath: rootFolderPath,
+        rootFolderName: path.basename(rootFolderPath),
+      },
+    });
+
+    dispatch({
+      type: CHANGE_FOLDER_SELECTION,
+      payload: {
+        folderPath: rootFolderPath,
+      },
     });
 
     // Had to add this wait here otherwise the loading screen would not show
-    const wait = ms => new Promise((resolve) => setTimeout(resolve, ms));
     await wait(10); // eslint-disable-line
 
-    const currentPath = getState().fileLoader.selectedFolderFullPath;
-    const filesAndFolders = await loadFilesInFolder(currentPath);
+    const filesAndFolders = await loadFilesInFolder(rootFolderPath);
 
     dispatch({
       type: LOAD_FILES_IN_FOLDER,
@@ -44,7 +88,6 @@ export function changeFolderSelection(folder) {
     });
 
     // Had to add this wait here otherwise the loading screen would not show
-    const wait = ms => new Promise((resolve) => setTimeout(resolve, ms));
     await wait(10); // eslint-disable-line
 
     const currentPath = getState().fileLoader.selectedFolderFullPath;
@@ -156,4 +199,8 @@ async function loadFilesInFolder(folderPath) {
   ));
 
   return Promise.all([filesPromise, foldersPromise]);
+}
+
+async function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
