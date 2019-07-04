@@ -156,6 +156,7 @@ export function validateISO() {
       "2f0bed5e1d92ebb187840c6e1a2f368ce35f6816": "fail", // 20XX 3.02
       "7f6926f2f35940f5f697eb449c9f3fbd3639dd45": "fail", // 20XX 4.07++
       "49fd53b0a5eb0da9215846cd653ccc4c3548ec69": "fail", // 20XX 4.07++ UCF
+      "5ab1553a941307bb949020fd582b68aabebecb30": "fail", // NTSC 1.00 (possibly)
       "c89cb9b694f0f26ee07a6ee0a3633ba579e5fa12": "fail", // NTSC 1.00 (scrubbed?)
       "5ecab83cd72c0ff515d750280f92713f19fa46f1": "fail", // NTSC 1.01
       "d0a925866379c546ceb739eeb780d011383cb07c": "fail", // PAL
