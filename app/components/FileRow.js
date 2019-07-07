@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { Table, Button } from 'semantic-ui-react';
 import { stages as stageUtils } from 'slp-parser-js';
 
-import styles from './FileLoader.scss';
+import styles from './FileRow.scss';
 import SpacedGroup from './common/SpacedGroup';
 import PlayerChiclet from './common/PlayerChiclet';
 import * as timeUtils from '../utils/time';
@@ -17,6 +17,8 @@ export default class FileRow extends Component {
     file: PropTypes.object.isRequired,
     playFile: PropTypes.func.isRequired,
     gameProfileLoad: PropTypes.func.isRequired,
+    onSelect: PropTypes.func.isRequired,
+    selectedOrdinal: PropTypes.number.isRequired,
   };
 
   playFile = () => {
@@ -24,6 +26,10 @@ export default class FileRow extends Component {
 
     // Play the file
     this.props.playFile(file);
+  };
+
+  onSelect = () => {
+    this.props.onSelect(this.props.file.fullPath);
   };
 
   viewStats = () => {
@@ -34,8 +40,11 @@ export default class FileRow extends Component {
   };
 
   generatePlayCell() {
-    return (
-      <Table.Cell className={styles['play-cell']} textAlign="center">
+    let contents;
+    if (this.props.selectedOrdinal > 0) {
+      contents = this.props.selectedOrdinal;
+    } else {
+      contents = (
         <Button
           circular={true}
           inverted={true}
@@ -44,6 +53,11 @@ export default class FileRow extends Component {
           icon="play"
           onClick={this.playFile}
         />
+      );
+    }
+    return (
+      <Table.Cell className={styles['play-cell']} textAlign="center">
+        {contents}  
       </Table.Cell>
     );
   }
@@ -184,7 +198,7 @@ export default class FileRow extends Component {
 
   render() {
     return (
-      <Table.Row>
+      <Table.Row onClick={this.onSelect}>
         {this.generatePlayCell()}
         {this.generateDetailsCell()}
         {this.generateStartTimeCell()}

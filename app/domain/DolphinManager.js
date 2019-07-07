@@ -55,18 +55,9 @@ export default class DolphinManager {
     await this.runDolphin(true);
   }
 
-  async playFile(filePath, startDolphin = true) {
-    const uniqueId = crypto.randomBytes(3 * 4).toString('hex');
-
-    const jsonString = JSON.stringify({
-      mode: this.settings.mode || "normal",
-      replay: filePath,
-      isRealTimeMode: this.settings.isRealTimeMode || false,
-      commandId: uniqueId, // Indicates to Dolphin to play new replay
-    });
-
-    await retry(() => {
-      log.info(`Writing to Dolphin comm file, playing replay: ${filePath}`);
+  async writeCommFile(jsonString) {
+    return retry(() => {
+      log.info(`Writing to Dolphin comm file: ${jsonString}`);
       fs.writeFileSync(this.outputFilePath, jsonString);
     }, {
       retries: 5,
@@ -77,10 +68,36 @@ export default class DolphinManager {
         log.error("Encountered error trying to write to Dolphin comm file.", err);
       },
     });
+  }
+
+  async playFile(filePath, startDolphin = true) {
+    const uniqueId = crypto.randomBytes(3 * 4).toString('hex');
+
+    const jsonString = JSON.stringify({
+      mode: this.settings.mode || "normal",
+      replay: filePath,
+      isRealTimeMode: this.settings.isRealTimeMode || false,
+      commandId: uniqueId, // Indicates to Dolphin to play new replay
+    });
+
+    await this.writeCommFile(jsonString);
 
     if (startDolphin) {
       await this.runDolphin(true);
     }
+  }
+
+  async queueFiles(filePaths) {
+    const jsonString = JSON.stringify({
+      mode: "queue",
+      replay: "",
+      isRealTimeMode: false,
+      queue: filePaths.map(filePath => ({
+        path: filePath,
+      })),
+    });
+
+    return this.writeCommFile(jsonString).then(() => this.runDolphin(true));
   }
 
   async runDolphin(startPlayback) {

@@ -87,6 +87,24 @@ export function playFile(file) {
   };
 }
 
+export function queueFiles(filePaths) {
+  return (dispatch, getState) => {
+    if (!Array.isArray(filePaths) || filePaths.length === 0) {
+      return;
+    }
+
+    const dolphinManager = getState().fileLoader.dolphinManager;
+    dolphinManager.queueFiles(filePaths).catch(err => {
+      const errorAction = displayError(
+        'fileLoader-global',
+        err.message,
+      );
+
+      dispatch(errorAction);
+    });
+  };
+}
+
 async function loadFilesInFolder(folderPath) {
   // console.log(`Loading files in ${folderPath}...`);
 

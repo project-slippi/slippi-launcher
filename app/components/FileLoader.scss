@@ -27,30 +27,8 @@
   margin-top: 70px;
 }
 
-.play-cell {
-  text-align: center;
-
-  button>i {
-    color: #94969A;
-  }
-
-  button:hover {
-    i {
-      color: #FFFFFF;
-    }
-  }
-}
-
 .file-table {
   min-width: 600px;
-}
-
-.vs-element {
-  color: rgba(255, 255, 255, 0.5);
-  line-height: 0.8;
-  width: 14px;
-  height: 15px;
-  text-align: center;
 }
 
 .secondary-text {
@@ -77,26 +55,6 @@
   }
 }
 
-.metadata-display {
-  .label {
-    font-weight: bold;
-    color: rgba(255, 255, 255, 0.5);
-    margin-right: 4px;
-  }
-
-  .value {
-    color: rgba(255, 255, 255, 0.7);
-  }
-
-  .separator {
-    color: rgba(255, 255, 255, 0.5);
-  }
-}
-
 .loader {
   margin-top: 48px !important;
-}
-
-.bound-link {
-  display: contents;
 }

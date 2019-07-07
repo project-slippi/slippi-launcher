@@ -26,6 +26,7 @@ export default class FileLoader extends Component {
     loadRootFolder: PropTypes.func.isRequired,
     changeFolderSelection: PropTypes.func.isRequired,
     playFile: PropTypes.func.isRequired,
+    queueFiles: PropTypes.func.isRequired,
     storeScrollPosition: PropTypes.func.isRequired,
 
     // game actions
@@ -40,6 +41,24 @@ export default class FileLoader extends Component {
     errors: PropTypes.object.isRequired,
     topNotifOffset: PropTypes.number.isRequired,
   };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      files: [],
+      selections: [],
+    };
+  }
+
+  static getDerivedStateFromProps(newProps, oldState) {
+    if (newProps.store.files !== oldState.files) {
+      return {
+        files: newProps.store.files,
+        selections: [],
+      };
+    }
+    return oldState;
+  }
 
   componentDidMount() {
     const xPos = _.get(this.props.store, ['scrollPosition', 'x']) || 0;
@@ -67,6 +86,26 @@ export default class FileLoader extends Component {
     window.scrollTo(0, 0);
 
     this.props.dismissError('fileLoader-global');
+  }
+
+  onSelect = (key) => {
+    const newSelections = [];
+
+    let wasSeen = false;
+    this.state.selections.forEach(selection => {
+      if (selection === key) {
+        wasSeen = true;
+        return;
+      }
+      newSelections.push(selection);
+    });
+    if (!wasSeen) {
+      newSelections.push(key);
+    }
+
+    this.setState({
+      selections: newSelections,
+    });
   }
 
   renderSidebar() {
@@ -134,6 +173,10 @@ export default class FileLoader extends Component {
 
     // Filter out files that were shorter than 30 seconds
     return resultFiles;
+  }
+
+  queueFiles = () => {
+    this.props.queueFiles(this.state.selections);
   }
 
   renderGlobalError() {
@@ -275,7 +318,13 @@ export default class FileLoader extends Component {
     // Generate header row
     const headerRow = (
       <Table.Row>
-        <Table.HeaderCell />
+        <Table.HeaderCell>
+          <Button
+            disabled={this.state.selections.length === 0}
+            fluid={true}
+            icon="play circle"
+            onClick={this.queueFiles} />
+        </Table.HeaderCell>
         <Table.HeaderCell>Details</Table.HeaderCell>
         <Table.HeaderCell>Time</Table.HeaderCell>
         <Table.HeaderCell />
@@ -290,6 +339,8 @@ export default class FileLoader extends Component {
           file={file}
           playFile={this.props.playFile}
           gameProfileLoad={this.props.gameProfileLoad}
+          onSelect={this.onSelect}
+          selectedOrdinal={this.state.selections.indexOf(file.fullPath) + 1}
         />
       ),
       this
