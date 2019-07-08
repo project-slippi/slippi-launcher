@@ -21,7 +21,12 @@ export default class FileRow extends Component {
     selectedOrdinal: PropTypes.number.isRequired,
   };
 
-  playFile = () => {
+  shouldComponentUpdate(nextProps) {
+    return this.props.selectedOrdinal !== nextProps.selectedOrdinal;
+  }
+
+  playFile = (e) => {
+    e.stopPropagation();
     const file = this.props.file || {};
 
     // Play the file
@@ -32,7 +37,8 @@ export default class FileRow extends Component {
     this.props.onSelect(this.props.file.fullPath);
   };
 
-  viewStats = () => {
+  viewStats = (e) => {
+    e.stopPropagation();
     const file = this.props.file || {};
     const fileGame = file.game;
 
@@ -40,10 +46,14 @@ export default class FileRow extends Component {
   };
 
   generatePlayCell() {
+    const useOrdinal = this.props.selectedOrdinal > 0;
+    let className;
     let contents;
-    if (this.props.selectedOrdinal > 0) {
+    if (useOrdinal) {
+      className = styles['ordinal-cell'];
       contents = this.props.selectedOrdinal;
     } else {
+      className = styles['play-cell'];
       contents = (
         <Button
           circular={true}
@@ -56,7 +66,7 @@ export default class FileRow extends Component {
       );
     }
     return (
-      <Table.Cell className={styles['play-cell']} textAlign="center">
+      <Table.Cell className={className} textAlign="center" active={useOrdinal}>
         {contents}  
       </Table.Cell>
     );

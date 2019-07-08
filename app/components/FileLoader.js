@@ -175,8 +175,17 @@ export default class FileLoader extends Component {
     return resultFiles;
   }
 
+  queueClear = () => {
+    this.setState({
+      selections: [],
+    });
+  }
+
   queueFiles = () => {
     this.props.queueFiles(this.state.selections);
+    this.setState({
+      selections: [],
+    });
   }
 
   renderGlobalError() {
@@ -318,13 +327,7 @@ export default class FileLoader extends Component {
     // Generate header row
     const headerRow = (
       <Table.Row>
-        <Table.HeaderCell>
-          <Button
-            disabled={this.state.selections.length === 0}
-            fluid={true}
-            icon="play circle"
-            onClick={this.queueFiles} />
-        </Table.HeaderCell>
+        <Table.HeaderCell />
         <Table.HeaderCell>Details</Table.HeaderCell>
         <Table.HeaderCell>Time</Table.HeaderCell>
         <Table.HeaderCell />
@@ -360,14 +363,32 @@ export default class FileLoader extends Component {
     );
   }
 
+  renderQueueButtons() {
+    if (this.state.selections.length === 0) {
+      return;
+    }
+    return (
+      <div className={styles['queue-buttons']}>
+        <Button onClick={this.queueFiles}>
+          <Icon name="play circle" />
+          Play all
+        </Button>
+        <Button onClick={this.queueClear}>
+          <Icon name="dont" />
+          Clear
+        </Button>
+      </div>
+    );
+  }
+
   renderMain() {
     const store = this.props.store || {};
     const files = store.files || [];
     const processedFiles = this.processFiles(files);
-
+    const mainStyles = `main-padding ${styles['loader-main']}`;
 
     return (
-      <div className="main-padding">
+      <div className={mainStyles}>
         <PageHeader
           icon="disk"
           text="Replay Browser"
@@ -378,6 +399,7 @@ export default class FileLoader extends Component {
           {this.renderFilteredFilesNotif(processedFiles)}
           {this.renderFileSelection(processedFiles)}
         </Scroller>
+        {this.renderQueueButtons()}
       </div>
     );
   }

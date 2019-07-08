@@ -58,3 +58,13 @@
 .loader {
   margin-top: 48px !important;
 }
+
+.loader-main {
+  position: relative;
+}
+
+.queue-buttons {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+}
