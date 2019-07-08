@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Table, Button } from 'semantic-ui-react';
+import { Button, Checkbox, Table } from 'semantic-ui-react';
 import { stages as stageUtils } from 'slp-parser-js';
 
 import styles from './FileRow.scss';
@@ -47,13 +47,11 @@ export default class FileRow extends Component {
 
   generatePlayCell() {
     const useOrdinal = this.props.selectedOrdinal > 0;
-    let className;
     let contents;
     if (useOrdinal) {
-      className = styles['ordinal-cell'];
-      contents = this.props.selectedOrdinal;
+      const label = <label style={{color: "#FFFFFF"}}>{this.props.selectedOrdinal}</label>;
+      contents = <Checkbox label={label} defaultChecked={true} disabled={true} />;
     } else {
-      className = styles['play-cell'];
       contents = (
         <Button
           circular={true}
@@ -66,7 +64,7 @@ export default class FileRow extends Component {
       );
     }
     return (
-      <Table.Cell className={className} textAlign="center" active={useOrdinal}>
+      <Table.Cell className={styles['play-cell']} textAlign="center">
         {contents}  
       </Table.Cell>
     );
