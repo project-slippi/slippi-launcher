@@ -87,14 +87,14 @@ export function playFile(file) {
   };
 }
 
-export function queueFiles(filePaths) {
+export function queueFiles(files) {
   return (dispatch, getState) => {
-    if (!Array.isArray(filePaths) || filePaths.length === 0) {
+    if (!Array.isArray(files) || files.length === 0) {
       return;
     }
 
     const dolphinManager = getState().fileLoader.dolphinManager;
-    dolphinManager.queueFiles(filePaths).catch(err => {
+    dolphinManager.queueFiles(files).catch(err => {
       const errorAction = displayError(
         'fileLoader-global',
         err.message,

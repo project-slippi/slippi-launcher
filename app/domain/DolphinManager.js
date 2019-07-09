@@ -87,13 +87,15 @@ export default class DolphinManager {
     }
   }
 
-  async queueFiles(filePaths) {
+  async queueFiles(files) {
     const jsonString = JSON.stringify({
       mode: "queue",
       replay: "",
       isRealTimeMode: false,
-      queue: filePaths.map(filePath => ({
-        path: filePath,
+      queue: files.map(file => ({
+        path: file.fullPath,
+        gameStartAt: file.game.getMetadata().startAt || "",
+        gameStation: file.game.getMetadata().consoleNick || "",
       })),
     });
 

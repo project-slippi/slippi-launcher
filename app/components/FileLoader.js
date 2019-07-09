@@ -88,19 +88,19 @@ export default class FileLoader extends Component {
     this.props.dismissError('fileLoader-global');
   }
 
-  onSelect = (key) => {
+  onSelect = (selectedFile) => {
     const newSelections = [];
 
     let wasSeen = false;
-    this.state.selections.forEach(selection => {
-      if (selection === key) {
+    this.state.selections.forEach(file => {
+      if (file === selectedFile) {
         wasSeen = true;
         return;
       }
-      newSelections.push(selection);
+      newSelections.push(file);
     });
     if (!wasSeen) {
-      newSelections.push(key);
+      newSelections.push(selectedFile);
     }
 
     this.setState({
@@ -343,7 +343,7 @@ export default class FileLoader extends Component {
           playFile={this.props.playFile}
           gameProfileLoad={this.props.gameProfileLoad}
           onSelect={this.onSelect}
-          selectedOrdinal={this.state.selections.indexOf(file.fullPath) + 1}
+          selectedOrdinal={this.state.selections.indexOf(file) + 1}
         />
       ),
       this

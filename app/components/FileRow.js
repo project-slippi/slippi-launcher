@@ -34,7 +34,7 @@ export default class FileRow extends Component {
   };
 
   onSelect = () => {
-    this.props.onSelect(this.props.file.fullPath);
+    this.props.onSelect(this.props.file);
   };
 
   viewStats = (e) => {
