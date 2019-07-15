@@ -25,3 +25,18 @@ $ UPGRADE_EXTENSIONS=1 yarn dev
 # For Windows
 $ set UPGRADE_EXTENSIONS=1 && yarn dev
 ```
+
+### Dolphin
+On Windows, you'll need to copy Slippi FM into `app\dolphin-dev\windows`.
+You can grab this from the release version.
+By default, it should be installed to `C:\Users\[Username]\AppData\Roaming\Slippi Desktop App\dolphin`.
+
+If you do it right you should have:
+```
+app\
+  dolphin-dev\
+    windows\
+      Sys\
+      User\
+      Dolphin.exe
+```
