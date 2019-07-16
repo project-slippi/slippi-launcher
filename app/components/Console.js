@@ -635,7 +635,7 @@ export default class Console extends Component {
                   label="Show On Frame"
                   type='number'
                   min={-123}
-                  max = {30}
+                  max = {60}
                   defaultValue={formData.showOnFrame || connectionSettings.showOnFrame || "-60"}
                   placeholder="First possible frame is -123"
                   onChange={this.onFieldChange}
@@ -647,21 +647,20 @@ export default class Console extends Component {
                   label="Hide On Frame"
                   type='number'
                   min={0}
-                  max={240}
+                  max={120}
                   defaultValue={formData.hideOnFrame || connectionSettings.hideOnFrame || "30"}
-                  placeholder="This frames after GAME shows up"
+                  placeholder="Frames after GAME shows up"
                   onChange={this.onFieldChange}
                 />
               </Grid.Column>
               <Grid.Column>
                 <Form.Input
                   name="streamTimeout"
-                  label="Timeout (ms)"
+                  label="Pause Timeout (ms)"
                   type='number'
                   min={100}
                   max={500}
                   defaultValue={formData.streamTimeout || connectionSettings.streamTimeout || "100"}
-                  placeholder="How long before we assume the game is paused"
                   onChange={this.onFieldChange}
                 />
               </Grid.Column>
