@@ -26,6 +26,7 @@ export default class FileLoader extends Component {
     loadRootFolder: PropTypes.func.isRequired,
     changeFolderSelection: PropTypes.func.isRequired,
     playFile: PropTypes.func.isRequired,
+    queueFiles: PropTypes.func.isRequired,
     storeScrollPosition: PropTypes.func.isRequired,
 
     // game actions
@@ -40,6 +41,24 @@ export default class FileLoader extends Component {
     errors: PropTypes.object.isRequired,
     topNotifOffset: PropTypes.number.isRequired,
   };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      files: [],
+      selections: [],
+    };
+  }
+
+  static getDerivedStateFromProps(newProps, oldState) {
+    if (newProps.store.files !== oldState.files) {
+      return {
+        files: newProps.store.files,
+        selections: [],
+      };
+    }
+    return oldState;
+  }
 
   componentDidMount() {
     const xPos = _.get(this.props.store, ['scrollPosition', 'x']) || 0;
@@ -67,6 +86,26 @@ export default class FileLoader extends Component {
     window.scrollTo(0, 0);
 
     this.props.dismissError('fileLoader-global');
+  }
+
+  onSelect = (selectedFile) => {
+    const newSelections = [];
+
+    let wasSeen = false;
+    this.state.selections.forEach(file => {
+      if (file === selectedFile) {
+        wasSeen = true;
+        return;
+      }
+      newSelections.push(file);
+    });
+    if (!wasSeen) {
+      newSelections.push(selectedFile);
+    }
+
+    this.setState({
+      selections: newSelections,
+    });
   }
 
   renderSidebar() {
@@ -134,6 +173,19 @@ export default class FileLoader extends Component {
 
     // Filter out files that were shorter than 30 seconds
     return resultFiles;
+  }
+
+  queueClear = () => {
+    this.setState({
+      selections: [],
+    });
+  }
+
+  queueFiles = () => {
+    this.props.queueFiles(this.state.selections);
+    this.setState({
+      selections: [],
+    });
   }
 
   renderGlobalError() {
@@ -290,6 +342,8 @@ export default class FileLoader extends Component {
           file={file}
           playFile={this.props.playFile}
           gameProfileLoad={this.props.gameProfileLoad}
+          onSelect={this.onSelect}
+          selectedOrdinal={this.state.selections.indexOf(file) + 1}
         />
       ),
       this
@@ -309,14 +363,32 @@ export default class FileLoader extends Component {
     );
   }
 
+  renderQueueButtons() {
+    if (this.state.selections.length === 0) {
+      return;
+    }
+    return (
+      <div className={styles['queue-buttons']}>
+        <Button onClick={this.queueFiles}>
+          <Icon name="play circle" />
+          Play all
+        </Button>
+        <Button onClick={this.queueClear}>
+          <Icon name="dont" />
+          Clear
+        </Button>
+      </div>
+    );
+  }
+
   renderMain() {
     const store = this.props.store || {};
     const files = store.files || [];
     const processedFiles = this.processFiles(files);
-
+    const mainStyles = `main-padding ${styles['loader-main']}`;
 
     return (
-      <div className="main-padding">
+      <div className={mainStyles}>
         <PageHeader
           icon="disk"
           text="Replay Browser"
@@ -327,6 +399,7 @@ export default class FileLoader extends Component {
           {this.renderFilteredFilesNotif(processedFiles)}
           {this.renderFileSelection(processedFiles)}
         </Scroller>
+        {this.renderQueueButtons()}
       </div>
     );
   }
