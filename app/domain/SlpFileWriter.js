@@ -22,6 +22,7 @@ export default class SlpFileWriter {
     this.showOnFrame = parseInt(settings.showOnFrame, 10);
     this.hideOnFrame = parseInt(settings.hideOnFrame, 10);
     this.streamTimeout = parseInt(settings.streamTimeout, 10);
+    this.consoleNick = settings.consoleNick;
     this.currentFile = this.getClearedCurrentFile();
     this.obs = new OBSWebSocket();
     this.statusOutput = {
@@ -86,6 +87,7 @@ export default class SlpFileWriter {
     this.showOnFrame = parseInt(settings.showOnFrame, 10);
     this.hideOnFrame = parseInt(settings.hideOnFrame, 10);
     this.streamTimeout = parseInt(settings.streamTimeout, 10);
+    this.consoleNick = settings.consoleNick || this.consoleNick;
     this.startRelay();
   }
 
@@ -324,6 +326,17 @@ export default class SlpFileWriter {
       Buffer.from([9]),
       Buffer.from("lastFramel"),
       this.createInt32Buffer(lastFrame),
+    ]);
+
+    // write the Console Nickname
+    const consoleNick = this.consoleNick;
+    footer = Buffer.concat([
+      footer,
+      Buffer.from("U"),
+      Buffer.from([11]),
+      Buffer.from("consoleNickSU"),
+      Buffer.from([consoleNick.length]),
+      Buffer.from(consoleNick),
     ]);
 
     // Start writting player specific data

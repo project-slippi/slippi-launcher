@@ -1,15 +1,11 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import _ from 'lodash';
+import { connect } from 'react-redux';
 import Home from '../components/Home';
 
-export default class HomePage extends Component {
-  static propTypes = {
-    history: PropTypes.object.isRequired,
+function mapStateToProps(state) {
+  return {
+    topNotifOffset: _.get(state.notifs, ['activeNotif', 'heightPx']) || 0,
   };
-
-  render() {
-    return (
-      <Home history={this.props.history} />
-    );
-  }
 }
+
+export default connect(mapStateToProps)(Home);

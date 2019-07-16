@@ -5,6 +5,7 @@ import { store } from '../index';
 import { connectionStateChanged } from '../actions/console';
 import DolphinManager from './DolphinManager';
 import SlpFileWriter from './SlpFileWriter';
+import ConsoleCommunication, { types as commMsgTypes } from './ConsoleCommunication';
 
 export const ConnectionStatus = {
   DISCONNECTED: 0,
@@ -35,6 +36,12 @@ export default class ConsoleConnection {
     this.isMirroring = false;
     this.client = null;
     this.connectionStatus = ConnectionStatus.DISCONNECTED;
+    this.connDetails = {
+      gameDataCursor: Uint8Array.from([0, 0, 0, 0, 0, 0, 0, 0]), 
+      consoleNick: "unknown", 
+      version: "",
+      clientToken: 0,
+    }
     this.connectionRetryState = this.getDefaultRetryState();
 
     // A connection can mirror its received gameplay
@@ -73,6 +80,7 @@ export default class ConsoleConnection {
       showOnFrame: this.showOnFrame,
       hideOnFrame: this.hideOnFrame,
       streamTimeout: this.streamTimeout,
+      consoleNick: this.connDetails.consoleNick,
     };
   }
 
@@ -145,6 +153,9 @@ export default class ConsoleConnection {
     this.connectionStatus = ConnectionStatus.CONNECTING;
     this.forceConsoleUiUpdate();
 
+    // Prepare console communication obj for talking UBJSON
+    const consoleComms = new ConsoleCommunication();
+
     // TODO: reconnect on failed reconnect, not sure how
     // TODO: to do this
     const client = net.connect({
@@ -152,21 +163,31 @@ export default class ConsoleConnection {
       port: this.port || 666,
     }, () => {
       console.log(`Connected to ${this.ipAddress}:${this.port || "666"}!`);
+      clearTimeout(this.connectionRetryState.reconnectHandler);
       this.connectionRetryState = this.getDefaultRetryState();
       this.connectionStatus = ConnectionStatus.CONNECTED;
       this.forceConsoleUiUpdate();
 
-      // TODO: Send message to initiate transfers
+      const handshakeMsgOut = consoleComms.genHandshakeOut(
+        this.connDetails.gameDataCursor, this.connDetails.clientToken
+      );
+
+      console.log({
+        'raw': handshakeMsgOut,
+        'string': handshakeMsgOut.toString(),
+        'cursor': this.connDetails.gameDataCursor,
+      });
+      client.write(handshakeMsgOut);
     });
 
     client.setTimeout(20000);
-    
+
     client.on('data', (data) => {
-      const result = this.slpFileWriter.handleData(data);
-      if (result.isNewGame) {
-        const curFilePath = this.slpFileWriter.getCurrentFilePath();
-        this.dolphinManager.playFile(curFilePath, false);
-      }
+      consoleComms.receive(data);
+      const messages = consoleComms.getMessages();
+
+      // Process all of the received messages
+      _.forEach(messages, message => this.processMessage(message));
     });
 
     client.on('timeout', () => {
@@ -175,7 +196,7 @@ export default class ConsoleConnection {
       client.destroy();
 
       // TODO: Fix reconnect logic
-      // if (previouslyConnected) {
+      // if (this.connDetails.token !== "0x00000000") {
       //   // If previously connected, start the reconnect logic
       //   this.startReconnect();
       // }
@@ -220,6 +241,41 @@ export default class ConsoleConnection {
       // TODO: status is set
       this.slpFileWriter.disconnectOBS();
       this.client.destroy();
+    }
+  }
+
+  processMessage(message) {
+    switch (message.type) {
+    case commMsgTypes.KEEP_ALIVE:
+      console.log("Keep alive message received");
+      break;
+    case commMsgTypes.REPLAY:
+      console.log("Replay message type received");
+      console.log(message.payload.pos);
+      this.connDetails.gameDataCursor = Uint8Array.from(message.payload.pos);
+
+      const data = Uint8Array.from(message.payload.data);
+      const result = this.slpFileWriter.handleData(data);
+      if (result.isNewGame) {
+        const curFilePath = this.slpFileWriter.getCurrentFilePath();
+        this.dolphinManager.playFile(curFilePath, false);
+      }
+      break;
+    case commMsgTypes.HANDSHAKE:
+      console.log("Handshake message received");
+      console.log(message);
+
+      this.connDetails.consoleNick = message.payload.nick;
+      const tokenBuf = Buffer.from(message.payload.clientToken);
+      this.connDetails.clientToken =  tokenBuf.readUInt32BE(0);;
+      console.log(`Received token: ${this.connDetails.clientToken}`);
+
+      // Update file writer to use new console nick?
+      this.slpFileWriter.updateSettings(this.getSettings());
+      break;
+    default:
+      // Should this be an error?
+      break;
     }
   }
 

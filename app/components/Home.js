@@ -11,10 +11,13 @@ import {
 } from 'semantic-ui-react';
 import styles from './Home.scss';
 import PageWrapper from './PageWrapper';
+import Scroller from './common/Scroller';
 
 export default class Home extends Component {
   static propTypes = {
     history: PropTypes.object.isRequired,
+
+    topNotifOffset: PropTypes.number.isRequired,
   };
 
   generateNav(iconName, header, subHeader, target, disabled) {
@@ -139,17 +142,19 @@ export default class Home extends Component {
 
     return (
       <PageWrapper history={this.props.history}>
-        <Container text={true} className={styles['vertical-space']}>
-          {this.renderPatreonNotif()}
-          <Segment basic={true} className="grid-list">
-            <div className="grid-item-center">
-              <Header as="h2" color="green">
-                Navigation
-              </Header>
-            </div>
-            {navigationElements}
-          </Segment>
-        </Container>
+        <Scroller topOffset={this.props.topNotifOffset - 85}>
+          <Container text={true} className={styles['vertical-space']}>
+            {this.renderPatreonNotif()}
+            <Segment basic={true} className="grid-list">
+              <div className="grid-item-center">
+                <Header as="h2" color="green">
+                  Navigation
+                </Header>
+              </div>
+              {navigationElements}
+            </Segment>
+          </Container>
+        </Scroller>
       </PageWrapper>
     );
   }

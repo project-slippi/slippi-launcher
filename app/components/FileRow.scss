@@ -1,0 +1,41 @@
+.bound-link {
+  display: contents;
+}
+
+.metadata-display {
+  .label {
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.5);
+    margin-right: 4px;
+  }
+
+  .value {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .separator {
+    color: rgba(255, 255, 255, 0.5);
+  }
+}
+
+.play-cell {
+  text-align: center;
+
+  button>i {
+    color: #94969A;
+  }
+
+  button:hover {
+    i {
+      color: #FFFFFF;
+    }
+  }
+}
+
+.vs-element {
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 0.8;
+  width: 14px;
+  height: 15px;
+  text-align: center;
+}
