@@ -132,6 +132,24 @@ export function playFile(file) {
   };
 }
 
+export function queueFiles(files) {
+  return (dispatch, getState) => {
+    if (!Array.isArray(files) || files.length === 0) {
+      return;
+    }
+
+    const dolphinManager = getState().fileLoader.dolphinManager;
+    dolphinManager.queueFiles(files).catch(err => {
+      const errorAction = displayError(
+        'fileLoader-global',
+        err.message,
+      );
+
+      dispatch(errorAction);
+    });
+  };
+}
+
 async function loadFilesInFolder(folderPath) {
   const readdirPromise = new Promise((resolve, reject) => {
     fs.readdir(folderPath, {withFileTypes: true}, (err, dirents) => {
