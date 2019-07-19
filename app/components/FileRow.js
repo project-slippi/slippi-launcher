@@ -11,6 +11,7 @@ import PlayerChiclet from './common/PlayerChiclet';
 import * as timeUtils from '../utils/time';
 
 const path = require('path');
+const { shell } = require('electron');
 
 export default class FileRow extends Component {
   static propTypes = {
@@ -25,7 +26,7 @@ export default class FileRow extends Component {
     return this.props.selectedOrdinal !== nextProps.selectedOrdinal;
   }
 
-  playFile = (e) => {
+  playFile = e => {
     e.stopPropagation();
     const file = this.props.file || {};
 
@@ -33,11 +34,16 @@ export default class FileRow extends Component {
     this.props.playFile(file);
   };
 
+  showFileOnSystem = event => {
+    event.stopPropagation();
+    shell.showItemInFolder(this.props.file.fullPath);
+  };
+
   onSelect = () => {
     this.props.onSelect(this.props.file);
   };
 
-  viewStats = (e) => {
+  viewStats = e => {
     e.stopPropagation();
     const file = this.props.file || {};
     const fileGame = file.game;
@@ -49,8 +55,12 @@ export default class FileRow extends Component {
     const useOrdinal = this.props.selectedOrdinal > 0;
     let contents;
     if (useOrdinal) {
-      const label = <label style={{color: "#FFFFFF"}}>{this.props.selectedOrdinal}</label>;
-      contents = <Checkbox label={label} defaultChecked={true} disabled={true} />;
+      const label = (
+        <label style={{ color: '#FFFFFF' }}>{this.props.selectedOrdinal}</label>
+      );
+      contents = (
+        <Checkbox label={label} defaultChecked={true} disabled={true} />
+      );
     } else {
       contents = (
         <Button
@@ -65,7 +75,7 @@ export default class FileRow extends Component {
     }
     return (
       <Table.Cell className={styles['play-cell']} textAlign="center">
-        {contents}  
+        {contents}
       </Table.Cell>
     );
   }
@@ -200,6 +210,14 @@ export default class FileRow extends Component {
             onClick={this.viewStats}
           />
         </Link>
+        <Button
+          circular={true}
+          inverted={true}
+          size="tiny"
+          basic={true}
+          icon="folder open"
+          onClick={this.showFileOnSystem}
+        />
       </Table.Cell>
     );
   }
