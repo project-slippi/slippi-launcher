@@ -60,7 +60,7 @@ export default class SlpFileWriter {
       this.clients = [];
     } else if (!this.server) {
       this.server = net.createServer((socket) => {
-        this.clients.push(socket.setNoDelay().setTimeout(10000));
+        this.clients.push(socket.setNoDelay().setKeepAlive(true, 5000).setTimeout(20000));
         socket.on("close", (err) => {
           if (err) console.log(err);
           _.remove(this.clients, (client) => socket === client);
