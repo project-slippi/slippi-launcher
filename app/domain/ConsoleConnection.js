@@ -267,6 +267,14 @@ export default class ConsoleConnection {
     switch (message.type) {
     case commMsgTypes.KEEP_ALIVE:
       // console.log("Keep alive message received");
+
+      // TODO: This is the jankiest shit ever but it will allow for relay connections not
+      // TODO: to time out as long as the main connection is still receving keep alive messages
+      // TODO: Need to figure out a better solution for this. There should be no need to have an
+      // TODO: active Wii connection for the relay connection to keep itself alive
+      const fakeKeepAlive = Buffer.from("HELO\0");
+      this.slpFileWriter.handleData(fakeKeepAlive);
+      
       break;
     case commMsgTypes.REPLAY:
       // console.log("Replay message type received");
