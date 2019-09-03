@@ -54,37 +54,72 @@ if (
 if (isProd && (platform === "win32" || platform === "darwin")) {
   log.info("Checking if Dolphin path has been moved...");
 
-  // If on production and windows, check if dolphin has been moved to the right place
+  // If on production and mac/windows, let's see if this is a fresh install
   const appPath = app.getAppPath();
-  const originalDolphinPath = path.join(appPath, "../app.asar.unpacked/app/dolphin");
-  log.info(`Looking for ${originalDolphinPath}`);
-  const originalPathExists = fs.existsSync(originalDolphinPath);
+  const exePath = path.join(appPath, "../../Slippi Launcher.exe"); // TODO: Make work for mac
+  const exeStats = fs.statSync(exePath);
+  log.info(`Exe path: ${exePath}`);
+  const exeCreateTime = exeStats.ctimeMs;
+  const previousCreateTime = electronSettings.get("boot.installTime");
+  log.info(`Install time is ${exeCreateTime}, previous install is ${previousCreateTime}`);
 
-  if (originalPathExists) {
+  const shouldCopyDolphin = exeCreateTime !== previousCreateTime;
+
+  if (shouldCopyDolphin) {
+    const originalDolphinPath = path.join(appPath, "../app.asar.unpacked/app/dolphin");
+
+    electronSettings.set("boot.installTime", exeCreateTime);
+    
     // If path exists, let's move it to app data
-    log.info("Moving dolphin path...");
+    log.info("Copying dolphin path...");
     const userDataPath = app.getPath("userData")
     const targetPath = path.join(userDataPath, 'dolphin');
 
     const targetUserPath = path.join(targetPath, "User");
-    const shouldBkpUserDir = fs.existsSync(targetUserPath);
+    let shouldBkpUserDir = fs.existsSync(targetUserPath);
     const backupUserPath = path.join(userDataPath, "DolphinUserBkp");
     if (shouldBkpUserDir) {
-      log.info("Backing up previous User directory...");
-      fs.moveSync(targetUserPath, backupUserPath, { overwrite: true });
+      try {
+        log.info("Backing up previous User directory...");
+        fs.removeSync(backupUserPath);
+        fs.copySync(targetUserPath, backupUserPath);
+      } catch (ex) {
+        log.warn("Failed to back up user dir")
+        log.warn(ex);
+
+        shouldBkpUserDir = false; 
+      }
     }
 
     // Copy dolphin dir
-    fs.moveSync(originalDolphinPath, targetPath, { overwrite: true });
+    try {
+      log.info("Copying dolphin instance...");
+      fs.removeSync(targetPath);
+      fs.copySync(originalDolphinPath, targetPath);
+    } catch (ex) {
+      log.warn("Failed copy dolphin...");
+      log.warn(ex);
 
-    if (shouldBkpUserDir) {
-      log.info("Restoring backed up User directory...");
-      fs.moveSync(backupUserPath, targetUserPath, { overwrite: true });
+      throw new Error(
+        "Failed to copy Dolphin instance on first boot. Try deleting the existing " +
+        "Dolphin instance in AppData and re-install. If that still doesn't work, please " +
+        "join the Slippi discord and ask for help in the #support-and-bugs channel"
+      );
     }
 
-    log.info("Done moving Dolphin");
+    if (shouldBkpUserDir) {
+      try {
+        log.info("Restoring backed up User directory...");
+        fs.moveSync(backupUserPath, targetUserPath, { overwrite: true });
+      } catch (ex) {
+        log.warn("Failed to restore user dir")
+        log.warn(ex);
+      }
+    }
+
+    log.info("Done copying Dolphin");
   } else {
-    log.info("Path not found, we're good?");
+    log.info("Install time matches, this is not a new install.");
   }
 }
 
