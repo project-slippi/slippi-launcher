@@ -54,9 +54,14 @@ if (
 if (isProd && (platform === "win32" || platform === "darwin")) {
   log.info("Checking if Dolphin path has been moved...");
 
-  // If on production and mac/windows, let's see if this is a fresh install
   const appPath = app.getAppPath();
-  const exePath = path.join(appPath, "../../Slippi Launcher.exe"); // TODO: Make work for mac
+  const exePlatformPaths = {
+    "win32": path.join(appPath, "../../Slippi Launcher.exe"),
+    "darwin": path.join(appPath, "../../MacOS/Slippi Launcher"),
+  };
+
+  // If on production and mac/windows, let's see if this is a fresh install
+  const exePath = exePlatformPaths[platform];
   const exeStats = fs.statSync(exePath);
   log.info(`Exe path: ${exePath}`);
   const exeCreateTime = exeStats.ctimeMs;
