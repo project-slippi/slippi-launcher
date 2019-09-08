@@ -82,7 +82,7 @@ export default class SlpFileWriter {
         _.remove(this.clients, (client) => socket === client.socket);
       });
     });
-    this.server.listen(666 + this.id, '0.0.0.0');
+    this.server.listen(1666 + this.id, '0.0.0.0');
   }
 
   getCurrentFilePath() {

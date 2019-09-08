@@ -267,7 +267,7 @@ export default class Console extends Component {
   renderConnection = (connection) => {
     let relayLabelValue = null;
     if (connection.isRelaying) {
-      relayLabelValue = this.renderLabelValue("Relay Port", 666 + connection.id);
+      relayLabelValue = this.renderLabelValue("Relay Port", 1666 + connection.id);
     }
     return (<Card
       key={`${connection.id}-${connection.ipAddress}-connection`}
