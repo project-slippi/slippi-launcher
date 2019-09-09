@@ -20,6 +20,7 @@ import log from 'electron-log';
 import path from 'path';
 import fs from 'fs-extra';
 import ini from 'ini';
+import semver from 'semver';
 import MenuBuilder from './menu';
 
 // Set up AppUpdater
@@ -69,7 +70,6 @@ if (isProd && (platform === "win32" || platform === "darwin")) {
   log.info(`Install time is ${exeCreateTime}, previous install is ${previousCreateTime}`);
 
   const shouldCopyDolphin = exeCreateTime !== previousCreateTime;
-
   if (shouldCopyDolphin) {
     const originalDolphinPath = path.join(appPath, "../app.asar.unpacked/app/dolphin");
 
@@ -83,6 +83,14 @@ if (isProd && (platform === "win32" || platform === "darwin")) {
     const targetUserPath = path.join(targetPath, "User");
     let shouldBkpUserDir = fs.existsSync(targetUserPath);
     const backupUserPath = path.join(userDataPath, "DolphinUserBkp");
+
+    // If we are upgrading from a version prior to 1.5.0, let's not back up and restore. This is
+    // because we disabled dual core and changed hotkeys in the more recent version of Dolphin
+    const prevVersion = electronSettings.get('previousVersion');
+    if (semver.lt(prevVersion, '1.5.0-dev-2')) {
+      shouldBkpUserDir = false;
+    }
+
     if (shouldBkpUserDir) {
       try {
         log.info("Backing up previous User directory...");
