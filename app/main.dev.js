@@ -87,7 +87,7 @@ if (isProd && (platform === "win32" || platform === "darwin")) {
     // If we are upgrading from a version prior to 1.5.0, let's not back up and restore. This is
     // because we disabled dual core and changed hotkeys in the more recent version of Dolphin
     const prevVersion = electronSettings.get('previousVersion');
-    if (semver.lt(prevVersion, '1.5.0-dev-2')) {
+    if (!prevVersion || semver.lt(prevVersion, '1.5.0-dev-2')) {
       shouldBkpUserDir = false;
     }
 
