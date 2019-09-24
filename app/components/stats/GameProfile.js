@@ -105,6 +105,20 @@ export default class GameProfile extends Component {
     );
   }
 
+  renderGameProfileHeader() {
+    const isLoading = _.get(this.props.store, 'isLoading') || false;
+    if (isLoading) {
+      return null;
+    }
+
+    return (
+      <div className={styles['stats-player-header']}>
+        {this.renderMatchupDisplay()}
+        {this.renderGameDetails()}
+      </div>
+    );
+  }
+
   renderMatchupDisplay() {
     return (
       <div className={styles['matchup-display']}>
@@ -232,7 +246,6 @@ export default class GameProfile extends Component {
   }
 
   renderStats() {
-
     const scrollerOffset = this.props.topNotifOffset + 120; // + 120 to account for game-specific header
 
     return (
@@ -372,10 +385,7 @@ export default class GameProfile extends Component {
       <PageWrapper history={this.props.history}>
         <div className="main-padding">
           <PageHeader icon="game" text="Game" history={this.props.history} />
-          <div className={styles['stats-player-header']}>
-            {this.renderMatchupDisplay()}
-            {this.renderGameDetails()}
-          </div>
+          {this.renderGameProfileHeader()}
           {this.renderContent()}
         </div>
       </PageWrapper>

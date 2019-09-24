@@ -28,15 +28,14 @@ export default class SlpFileWriter {
     };
     this.isRelaying = settings.isRelaying;
     this.clients = [];
-    if (this.isRelaying) {
-      this.startRelay();
-    }
+    this.manageRelay();
   }
 
   getClearedCurrentFile() {
     return {
       payloadSizes: {},
       previousBuffer: Buffer.from([]),
+      fullBuffer: Buffer.from([]),
       path: null,
       writeStream: null,
       bytesWritten: 0,
@@ -48,26 +47,42 @@ export default class SlpFileWriter {
     };
   }
 
-  startRelay = () => {
+  manageRelay() {
     if (!this.isRelaying) {
-      if (this.clients) {
-        _.each(this.clients, (client) => client.destroy());
-      }
+      // If relay has been disabled, clear states
+      const clients = this.clients || [];
+      _.each(clients, (client) => client.destroy());
+
       if (this.server) {
         this.server.close();
       }
+
       this.server = null;
       this.clients = [];
-    } else if (!this.server) {
-      this.server = net.createServer((socket) => {
-        this.clients.push(socket.setNoDelay().setTimeout(10000));
-        socket.on("close", (err) => {
-          if (err) console.log(err);
-          _.remove(this.clients, (client) => socket === client);
-        });
-      });
-      this.server.listen(666 + this.id, '0.0.0.0');
+
+      return;
     }
+    
+    if (this.server) {
+      // If server is already up, no need to start
+      return;
+    }
+    
+    this.server = net.createServer((socket) => {
+      socket.setNoDelay().setTimeout(20000);
+
+      const clientData = {
+        socket: socket,
+        readPos: 0,
+      };
+
+      this.clients.push(clientData);
+      socket.on("close", (err) => {
+        if (err) console.log(err);
+        _.remove(this.clients, (client) => socket === client.socket);
+      });
+    });
+    this.server.listen(1666 + this.id, '0.0.0.0');
   }
 
   getCurrentFilePath() {
@@ -82,7 +97,7 @@ export default class SlpFileWriter {
     this.id = settings.id;
     this.isRelaying = settings.isRelaying;
     this.consoleNick = settings.consoleNick || this.consoleNick;
-    this.startRelay();
+    this.manageRelay();
   }
 
   getSceneSources = async (data = null) => { // eslint-disable-line
@@ -156,10 +171,6 @@ export default class SlpFileWriter {
       newData,
     ]));
 
-    if (this.clients) {
-      _.each(this.clients, (client) => client.write(newData));
-    }
-
     const dataView = new DataView(data.buffer);
 
     let index = 0;
@@ -225,6 +236,21 @@ export default class SlpFileWriter {
       index += payloadLen;
     }
 
+    // Write data to relay, we do this after processing in the case there is a new game, we need
+    // to have the buffer ready
+    this.currentFile.fullBuffer = Buffer.concat([this.currentFile.fullBuffer, newData]);
+
+    if (this.clients) {
+      const buf = this.currentFile.fullBuffer;
+      _.each(this.clients, (client) => {
+        client.socket.write(buf.slice(client.readPos));
+
+        // eslint doesn't like the following line... I feel like it's a valid use case but idk,
+        // maybe there's risks with doing this?
+        client.readPos = buf.byteLength; // eslint-disable-line
+      });
+    }
+
     return {
       isNewGame: isNewGame,
       isGameEnd: isGameEnd,
@@ -267,6 +293,12 @@ export default class SlpFileWriter {
         startTime: startTime,
       },
     };
+
+    // Clear clients back to position zero
+    this.clients = _.map(this.clients, client => ({
+      ...client,
+      readPos: 0,
+    }));
 
     const header = Buffer.concat([
       Buffer.from("{U"),

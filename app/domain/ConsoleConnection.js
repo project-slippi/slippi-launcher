@@ -1,5 +1,6 @@
 import net from 'net';
 import _ from 'lodash';
+import log from 'electron-log';
 
 import { store } from '../index';
 import { connectionStateChanged } from '../actions/console';
@@ -162,17 +163,31 @@ export default class ConsoleConnection {
         this.connDetails.gameDataCursor, this.connDetails.clientToken
       );
 
-      console.log({
-        'raw': handshakeMsgOut,
-        'string': handshakeMsgOut.toString(),
-        'cursor': this.connDetails.gameDataCursor,
-      });
+      // console.log({
+      //   'raw': handshakeMsgOut,
+      //   'string': handshakeMsgOut.toString(),
+      //   'cursor': this.connDetails.gameDataCursor,
+      // });
       client.write(handshakeMsgOut);
     });
 
     client.setTimeout(20000);
 
+    let commState = "initial";
     client.on('data', (data) => {
+      if (commState === "initial") {
+        commState = this.getInitialCommState(data);
+        log.info(`Connected to source with type: ${commState}`);
+        log.info(data.toString("hex"));
+      }
+      
+      if (commState === "legacy") {
+        // If the first message received was not a handshake message, either we
+        // connected to an old Nintendont version or a relay instance
+        this.handleReplayData(data);
+        return;
+      }
+
       consoleComms.receive(data);
       const messages = consoleComms.getMessages();
 
@@ -234,31 +249,49 @@ export default class ConsoleConnection {
     }
   }
 
+  getInitialCommState(data) {
+    if (data.length < 13) {
+      return "legacy";
+    }
+
+    const openingBytes = Buffer.from([
+      0x7b, 0x69, 0x04, 0x74, 0x79, 0x70, 0x65, 0x55, 0x01,
+    ]);
+
+    const dataStart = data.slice(4, 13);
+    
+    return dataStart.equals(openingBytes) ? "normal" : "legacy";
+  }
+
   processMessage(message) {
     switch (message.type) {
     case commMsgTypes.KEEP_ALIVE:
-      console.log("Keep alive message received");
+      // console.log("Keep alive message received");
+
+      // TODO: This is the jankiest shit ever but it will allow for relay connections not
+      // TODO: to time out as long as the main connection is still receving keep alive messages
+      // TODO: Need to figure out a better solution for this. There should be no need to have an
+      // TODO: active Wii connection for the relay connection to keep itself alive
+      const fakeKeepAlive = Buffer.from("HELO\0");
+      this.slpFileWriter.handleData(fakeKeepAlive);
+      
       break;
     case commMsgTypes.REPLAY:
-      console.log("Replay message type received");
-      console.log(message.payload.pos);
+      // console.log("Replay message type received");
+      // console.log(message.payload.pos);
       this.connDetails.gameDataCursor = Uint8Array.from(message.payload.pos);
 
       const data = Uint8Array.from(message.payload.data);
-      const result = this.slpFileWriter.handleData(data);
-      if (result.isNewGame) {
-        const curFilePath = this.slpFileWriter.getCurrentFilePath();
-        this.dolphinManager.playFile(curFilePath, false);
-      }
+      this.handleReplayData(data);
       break;
     case commMsgTypes.HANDSHAKE:
-      console.log("Handshake message received");
-      console.log(message);
+      // console.log("Handshake message received");
+      // console.log(message);
 
       this.connDetails.consoleNick = message.payload.nick;
       const tokenBuf = Buffer.from(message.payload.clientToken);
-      this.connDetails.clientToken =  tokenBuf.readUInt32BE(0);;
-      console.log(`Received token: ${this.connDetails.clientToken}`);
+      this.connDetails.clientToken = tokenBuf.readUInt32BE(0);;
+      // console.log(`Received token: ${this.connDetails.clientToken}`);
 
       // Update file writer to use new console nick?
       this.slpFileWriter.updateSettings(this.getSettings());
@@ -266,6 +299,14 @@ export default class ConsoleConnection {
     default:
       // Should this be an error?
       break;
+    }
+  }
+
+  handleReplayData(data) {
+    const result = this.slpFileWriter.handleData(data);
+    if (result.isNewGame) {
+      const curFilePath = this.slpFileWriter.getCurrentFilePath();
+      this.dolphinManager.playFile(curFilePath, false);
     }
   }
 
