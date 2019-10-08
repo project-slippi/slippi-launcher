@@ -164,9 +164,8 @@ export default class GameProfile extends Component {
 
   renderGameDetails() {
     const gameSettings = _.get(this.props.store, ['game', 'settings']) || {};
-    const stageName =
-      stageUtils.getStageName(gameSettings.stageId) || 'Unknown';
-
+    const stageName = _.isNil(gameSettings.stageId) ? "Unknown" : stageUtils.getStageName(gameSettings.stageId);
+    
     const duration =
       _.get(this.props.store, ['game', 'stats', 'lastFrame']) || 0;
     const durationDisplay = timeUtils.convertFrameCountToDurationString(
