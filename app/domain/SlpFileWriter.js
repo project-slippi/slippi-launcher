@@ -141,6 +141,8 @@ export default class SlpFileWriter {
     if (this.obsIP && this.obsSourceName) {
       // if you send a password when authentication is disabled, OBS will still connect
       await this.obs.connect({address: this.obsIP, password: this.obsPassword});
+      await this.obs.on("SceneItemAdded", async (data) => await this.getSceneSources()); // eslint-disable-line
+      await this.obs.on("SceneItemRemoved", async (data) => await this.getSceneSources()); // eslint-disable-line
       await this.getSceneSources();
     }
   }
@@ -158,7 +160,7 @@ export default class SlpFileWriter {
     });
   }
 
-  handleStatusOutput(timeoutLength = 100) {
+  handleStatusOutput(timeoutLength = 200) {
     const setTimer = () => {
       if (this.statusOutput.timeout) {
         // If we have a timeout, clear it
@@ -541,8 +543,6 @@ export default class SlpFileWriter {
       if (endMethod !== 7) {
         this.handleStatusOutput(700);
       }
-
-      this.getSceneSources();
 
       break;
     default:
