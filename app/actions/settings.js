@@ -153,11 +153,12 @@ export function validateISO() {
       "d4e70c064cc714ba8400a849cf299dbd1aa326fc": "success", // NTSC-U 1.02
       "e63d50e63a0cdd357f867342d542e7cec0c3a7c7": "success", // NTSC-U 1.02 Scrubbed #1
       "55109bc139b947c8b96b5fc913fbd91245104db8": "success", // NTSC-U 1.02 Scrubbed #2
+      "2ce0ccfc8c31eafe2ff354fe03ac2dd94c20b937": "success", // NTSC-U 1.02 Scrubbed #3
       "71255a30a47b4c6aabb90308d7a514d09d93a7b5": "success", // NTSC-J 1.02
       "2f0bed5e1d92ebb187840c6e1a2f368ce35f6816": "fail", // 20XX 3.02
       "7f6926f2f35940f5f697eb449c9f3fbd3639dd45": "fail", // 20XX 4.07++
       "49fd53b0a5eb0da9215846cd653ccc4c3548ec69": "fail", // 20XX 4.07++ UCF
-      "c89cb9b694f0f26ee07a6ee0a3633ba579e5fa12": "fail", // NTSC-U 1.00 (scrubbed?)
+      "c89cb9b694f0f26ee07a6ee0a3633ba579e5fa12": "fail", // NTSC-U 1.00 Scrubbed # 1
       "5ab1553a941307bb949020fd582b68aabebecb30": "fail", // NTSC-U 1.00
       "5ecab83cd72c0ff515d750280f92713f19fa46f1": "fail", // NTSC-U 1.01
       "d0a925866379c546ceb739eeb780d011383cb07c": "fail", // PAL
