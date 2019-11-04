@@ -27,6 +27,15 @@
     border-color: $background-darkest !important;
     background-color: $background-light !important;
   }
+
+  .warning-bar {
+    border-color: $background-darkest !important;
+    background-color: $primary-yellow !important;
+    padding-top: 4px !important;
+    padding-bottom: 5px !important;
+    color: black;
+    font-weight: 700;
+  }
 }
 
 .label {

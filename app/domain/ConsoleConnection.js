@@ -55,12 +55,7 @@ export default class ConsoleConnection {
     this.isMirroring = false;
     this.client = null;
     this.connectionStatus = ConnectionStatus.DISCONNECTED;
-    this.connDetails = {
-      gameDataCursor: Uint8Array.from([0, 0, 0, 0, 0, 0, 0, 0]), 
-      consoleNick: "unknown", 
-      version: "",
-      clientToken: 0,
-    }
+    this.connDetails = this.getDefaultConnDetails();
     this.connectionRetryState = this.getDefaultRetryState();
 
     // A connection can mirror its received gameplay
@@ -82,6 +77,15 @@ export default class ConsoleConnection {
   
   fileStateChangeHandler = () => {
     this.forceConsoleUiUpdate();
+  }
+
+  getDefaultConnDetails() {
+    return {
+      gameDataCursor: Uint8Array.from([0, 0, 0, 0, 0, 0, 0, 0]), 
+      consoleNick: "unknown", 
+      version: "",
+      clientToken: 0,
+    };
   }
 
   getSettings() {
@@ -168,8 +172,11 @@ export default class ConsoleConnection {
     // Prepare console communication obj for talking UBJSON
     const consoleComms = new ConsoleCommunication();
 
-    // TODO: reconnect on failed reconnect, not sure how
-    // TODO: to do this
+    // Clear nick and version. Will be fetched again
+    const defaultConnDetails = this.getDefaultConnDetails();
+    this.connDetails.consoleNick = defaultConnDetails.consoleNick;
+    this.connDetails.version = defaultConnDetails.version;
+
     const client = net.connect({
       host: this.ipAddress,
       port: this.port || 666,
@@ -178,11 +185,12 @@ export default class ConsoleConnection {
       clearTimeout(this.connectionRetryState.reconnectHandler);
       this.connectionRetryState = this.getDefaultRetryState();
       this.connectionStatus = ConnectionStatus.CONNECTED;
-      this.forceConsoleUiUpdate();
 
       const handshakeMsgOut = consoleComms.genHandshakeOut(
         this.connDetails.gameDataCursor, this.connDetails.clientToken
       );
+
+      this.forceConsoleUiUpdate();
 
       // console.log({
       //   'raw': handshakeMsgOut,
@@ -311,8 +319,11 @@ export default class ConsoleConnection {
 
       this.connDetails.consoleNick = message.payload.nick;
       const tokenBuf = Buffer.from(message.payload.clientToken);
-      this.connDetails.clientToken = tokenBuf.readUInt32BE(0);;
+      this.connDetails.clientToken = tokenBuf.readUInt32BE(0);
+      this.connDetails.version = message.payload.nintendontVersion;
       // console.log(`Received token: ${this.connDetails.clientToken}`);
+
+      this.forceConsoleUiUpdate();
 
       // Update file writer to use new console nick?
       this.slpFileWriter.updateSettings(this.getSettings());

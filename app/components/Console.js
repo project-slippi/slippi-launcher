@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import classNames from 'classnames';
 import React, { Component } from 'react';
+import semver from 'semver';
 import PropTypes from 'prop-types';
 import path from 'path';
 import { Header, Modal, Form, Card, Button, Icon, Checkbox, Message, Tab, Grid } from 'semantic-ui-react';
@@ -274,29 +275,48 @@ export default class Console extends Component {
     if (connection.isRelaying) {
       relayLabelValue = this.renderLabelValue("Relay Port", 1666 + connection.id);
     }
-    return (<Card
-      key={`${connection.id}-${connection.ipAddress}-connection`}
-      fluid={true}
-      className={styles['card']}
-    >
-      <Card.Content className={styles['content']}>
-        <div className={styles['conn-content-grid']}>
-          {this.renderLabelValue("IP Address", connection.ipAddress)}
-          {this.renderLabelValue("Target Folder", connection.targetFolder)}
-          {relayLabelValue}
-          {this.renderStatusLabelValue(connection)}
-        </div>
-      </Card.Content>
-      <Card.Content className={styles['content']}>
-        <div className={styles['conn-button-grid']}>
-          {this.renderConnectButton(connection)}
-          {this.renderMirrorButton(connection)}
-          <div key="empty-col" />
-          {this.renderEditButton(connection)}
-          {this.renderDeleteButton(connection)}
-        </div>
-      </Card.Content>
-    </Card>
+
+    const status = connection.connectionStatus;
+    const version = connection.connDetails.version;
+    const isNintendont = connection.port === 666 || !connection.port;
+    const versionOutdated = !version || semver.lt(`${version}.0`, "1.9.0");
+
+    let outdatedNotif = null;
+    if (status === ConnectionStatus.CONNECTED && isNintendont && versionOutdated) {
+      outdatedNotif = (
+        <Card.Content className={styles['warning-bar']}>
+          The Nintendont app being connected to is out of date. Please download and install the
+          latest version:
+          &nbsp;<a href="https://slippi.gg/downloads">slippi.gg/downloads</a>
+        </Card.Content>
+      );
+    }
+
+    return (
+      <Card
+        key={`${connection.id}-${connection.ipAddress}-connection`}
+        fluid={true}
+        className={styles['card']}
+      >
+        <Card.Content className={styles['content']}>
+          <div className={styles['conn-content-grid']}>
+            {this.renderLabelValue("IP Address", connection.ipAddress)}
+            {this.renderLabelValue("Target Folder", connection.targetFolder)}
+            {relayLabelValue}
+            {this.renderStatusLabelValue(connection)}
+          </div>
+        </Card.Content>
+        <Card.Content className={styles['content']}>
+          <div className={styles['conn-button-grid']}>
+            {this.renderConnectButton(connection)}
+            {this.renderMirrorButton(connection)}
+            <div key="empty-col" />
+            {this.renderEditButton(connection)}
+            {this.renderDeleteButton(connection)}
+          </div>
+        </Card.Content>
+        {outdatedNotif}
+      </Card>
     )
   };
 
