@@ -90,13 +90,6 @@ export default class FileLoader extends Component {
   };
 
   onSelect = (selectedFile) => {
-    console.log({
-      msg: "Checking pos",
-      scroller: this.refTableScroll,
-      x2: this.refTableScroll.scrollLeft,
-      y2: this.refTableScroll.scrollTop,
-    });
-
     const newSelections = [];
 
     let wasSeen = false;
