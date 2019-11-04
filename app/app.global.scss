@@ -34,6 +34,12 @@ ul {
   justify-self: center;
 }
 
+.single-line {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .clear-space {
   margin: 6px;
 }

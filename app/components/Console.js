@@ -424,10 +424,7 @@ export default class Console extends Component {
 
     let statusMsg = "Disconnected";
     let statusColor = "gray";
-    if (status === ConnectionStatus.CONNECTED && currentFilePath) {
-      statusMsg = `Writing file ${path.basename(currentFilePath)}`;
-      statusColor = "green";
-    } else if (status === ConnectionStatus.CONNECTED) {
+    if (status === ConnectionStatus.CONNECTED) {
       statusMsg = "Connected";
       statusColor = "green";
     } else if (status === ConnectionStatus.CONNECTING) {
@@ -436,6 +433,24 @@ export default class Console extends Component {
     } else if (status === ConnectionStatus.DISCONNECTED && isConnectionAvailable) {
       statusMsg = "Available";
       statusColor = "white";
+    }
+
+    const consoleNick = _.get(connection, ['connDetails', 'consoleNick']);
+    let additionalEls = [];
+    if (status === ConnectionStatus.CONNECTED && consoleNick) {
+      additionalEls = [
+        ...additionalEls,
+        <div key="consoleNick-sep">|</div>,
+        <div key="consoleNick" className="single-line">Console: {consoleNick}</div>,
+      ];
+    }
+
+    if (status === ConnectionStatus.CONNECTED && currentFilePath) {
+      additionalEls = [
+        ...additionalEls,
+        <div key="writingFile-sep">|</div>,
+        <div key="writingFile" className="single-line">Writing file {path.basename(currentFilePath)}</div>,
+      ];
     }
 
     const valueClasses = classNames({
@@ -449,9 +464,12 @@ export default class Console extends Component {
     return (
       <React.Fragment>
         <div key="label" className={styles['label']}>Status</div>
-        <SpacedGroup className={valueClasses} size="none">
-          <Icon size="tiny" name="circle" />
-          {statusMsg}
+        <SpacedGroup>
+          <SpacedGroup className={valueClasses} size="none">
+            <Icon size="tiny" name="circle" />
+            {statusMsg}
+          </SpacedGroup>
+          {additionalEls}
         </SpacedGroup>
       </React.Fragment>
     );
