@@ -63,7 +63,8 @@ export default class FileLoader extends Component {
   componentDidMount() {
     const xPos = _.get(this.props.store, ['scrollPosition', 'x']) || 0;
     const yPos = _.get(this.props.store, ['scrollPosition', 'y']) || 0;
-    window.scrollTo(xPos, yPos);
+
+    this.refTableScroll.scrollTo(xPos, yPos);
 
     if (this.props.history.action === "PUSH") {
       // I don't really like this but when returning back to the file loader, the action is "POP"
@@ -75,20 +76,27 @@ export default class FileLoader extends Component {
 
   componentWillUnmount() {
     this.props.storeScrollPosition({
-      x: window.scrollX,
-      y: window.scrollY,
+      x: this.refTableScroll.scrollLeft,
+      y: this.refTableScroll.scrollTop,
     });
-
-    // TODO: I added this because switching to the stats view was maintaining the scroll
-    // TODO: position of this component
-    // TODO: Might be better to do something as shown here:
-    // TODO: https://github.com/ReactTraining/react-router/issues/2144#issuecomment-150939358
-    window.scrollTo(0, 0);
 
     this.props.dismissError('fileLoader-global');
   }
 
+  refTableScroll = null;
+
+  setTableScrollRef = element => {
+    this.refTableScroll = element;
+  };
+
   onSelect = (selectedFile) => {
+    console.log({
+      msg: "Checking pos",
+      scroller: this.refTableScroll,
+      x2: this.refTableScroll.scrollLeft,
+      y2: this.refTableScroll.scrollTop,
+    });
+
     const newSelections = [];
 
     let wasSeen = false;
@@ -394,7 +402,7 @@ export default class FileLoader extends Component {
           text="Replay Browser"
           history={this.props.history}
         />
-        <Scroller topOffset={this.props.topNotifOffset}>
+        <Scroller ref={this.setTableScrollRef} topOffset={this.props.topNotifOffset}>
           {this.renderGlobalError()}
           {this.renderFilteredFilesNotif(processedFiles)}
           {this.renderFileSelection(processedFiles)}
