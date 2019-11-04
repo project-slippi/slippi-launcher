@@ -49,7 +49,9 @@ export default class Console extends Component {
   }
 
   addConnectionClick = () => {
-    this.props.editConnection('new');
+    this.props.editConnection('new', {
+      isRealTimeMode: true,
+    });
   };
 
   editConnectionClick = (index, defaultSettings = {}) => () => {
@@ -104,31 +106,34 @@ export default class Console extends Component {
     }
 
     // Validate that inputs are properly set
+    let hasError = false;
+    const formData = this.state.formData || {};
 
-    // Validate that target folder has been set
-    const targetFolder = _.get(this.state, ['formData', 'targetFolder']) || settings.targetFolder;
-    if (!targetFolder) {
-      // If no target folder is set, indicate the error
-      const formData = this.state.formData || {};
-      this.setState({
-        formData: {
-          ...formData,
-          validation: {
-            targetFolder: "empty",
-          },
-        },
-      });
+    const requiredInputs = ['ipAddress', 'targetFolder'];
+    requiredInputs.forEach(input => {
+      const value = _.get(this.state, ['formData', input]) || settings[input];
+      const err = !value ? "empty" : null;
+      if (err) {
+        hasError = true;
+      }
+
+      _.set(formData, ['validation', input], err);
+    });
+
+    if (hasError) {
+      this.setState({ formData: formData });
+      console.log(formData);
       return;
     }
 
     // Start with settings values and overwrite with modified
     // form data
-    const formData = {
+    const toSubmit = {
       ...settings,
       ...this.state.formData,
     };
 
-    this.props.saveConnection(settings.id, formData);
+    this.props.saveConnection(settings.id, toSubmit);
 
     // Clear formData state for next
     this.setState({
@@ -563,6 +568,7 @@ export default class Console extends Component {
           <Form.Input
             name="ipAddress"
             label="IP Address"
+            error={!!validation['ipAddress']}
             defaultValue={formData.ipAddress || connectionSettings.ipAddress}
             onChange={this.onFieldChange}
           />
@@ -580,8 +586,7 @@ export default class Console extends Component {
             <label htmlFor="isRealTimeMode">Real-Time Mode</label>
             <div className={styles['description']}>
               <strong>Not recommended unless on wired LAN connection.</strong>&nbsp;
-              Real-time mode will attempt to prevent delay from accumulating when mirroring. Using it
-              when on a connection with inconsistent latency will cause extremely choppy playback.
+              Real-time mode will attempt to prevent delay from accumulating when mirroring.
             </div>
             <Checkbox
               id="isRealTimeMode"
@@ -669,9 +674,14 @@ export default class Console extends Component {
     ];
 
     let errorMessage = null;
-    if (validation.targetFolder === "empty") {
+    if (validation.targetFolder === "empty" && validation.ipAddress === "empty") {
+      errorMessage = "Required inputs have been left empty";
+    } else if (validation.targetFolder === "empty") {
       errorMessage = "Target folder cannot be empty. This is where your replays will go to be " +
         "read by dolphin.";
+    } else if (validation.ipAddress === "empty") {
+      errorMessage = "IP address cannot be empty. This is the location this connection will " +
+        "connect to.";
     }
 
     return (
