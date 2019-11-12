@@ -33,7 +33,7 @@ export const ConnectionStatus = {
   DISCONNECTED: 0,
   CONNECTING: 1,
   CONNECTED: 2,
-  RECONNECTING: 3,
+  RECONNECT_WAIT: 3,
 };
 
 export default class ConsoleConnection {
@@ -131,11 +131,11 @@ export default class ConsoleConnection {
     this.connectionRetryState = {
       ...retryState,
       retryCount: retryState.retryCount + 1,
-      retryWaitMs: retryState.retryWaitMs * 2,
+      retryWaitMs: retryState.retryWaitMs * 1.5,
       reconnectHandler: reconnectHandler,
     };
 
-    this.connectionStatus = ConnectionStatus.RECONNECTING;
+    this.connectionStatus = ConnectionStatus.RECONNECT_WAIT;
     this.forceConsoleUiUpdate();
   }
 
@@ -158,6 +158,7 @@ export default class ConsoleConnection {
   connect() {
     // We need to update settings here in order for any
     // changes to settings to be propagated
+    
 
     // Update dolphin manager settings
     const connectionSettings = this.getSettings();
@@ -172,11 +173,6 @@ export default class ConsoleConnection {
     // Prepare console communication obj for talking UBJSON
     const consoleComms = new ConsoleCommunication();
 
-    // Clear nick and version. Will be fetched again
-    const defaultConnDetails = this.getDefaultConnDetails();
-    this.connDetails.consoleNick = defaultConnDetails.consoleNick;
-    this.connDetails.version = defaultConnDetails.version;
-
     const client = net.connect({
       host: this.ipAddress,
       port: this.port || 666,
@@ -190,6 +186,11 @@ export default class ConsoleConnection {
         this.connDetails.gameDataCursor, this.connDetails.clientToken
       );
 
+      // Clear nick and version. Will be fetched again
+      const defaultConnDetails = this.getDefaultConnDetails();
+      this.connDetails.consoleNick = defaultConnDetails.consoleNick;
+      this.connDetails.version = defaultConnDetails.version;
+
       this.forceConsoleUiUpdate();
 
       // console.log({
@@ -200,7 +201,7 @@ export default class ConsoleConnection {
       client.write(handshakeMsgOut);
     });
 
-    client.setTimeout(20000);
+    client.setTimeout(10000);
 
     let commState = "initial";
     client.on('data', (data) => {
@@ -229,11 +230,10 @@ export default class ConsoleConnection {
       console.log(`Timeout on ${this.ipAddress}:${this.port || "666"}`);
       client.destroy();
 
-      // TODO: Fix reconnect logic
-      // if (this.connDetails.token !== "0x00000000") {
-      //   // If previously connected, start the reconnect logic
-      //   this.startReconnect();
-      // }
+      const isDisconnected = this.connectionStatus === ConnectionStatus.DISCONNECTED;
+      if (!isDisconnected) {
+        this.startReconnect();
+      }
     });
 
     client.on('error', (error) => {
@@ -250,32 +250,34 @@ export default class ConsoleConnection {
     client.on('close', () => {
       console.log('connection was closed');
       this.client = null;
-      this.connectionStatus = ConnectionStatus.DISCONNECTED;
-      this.forceConsoleUiUpdate();
 
-      // TODO: Fix reconnect logic
-      // // After attempting first reconnect, we may still fail to connect, we should keep
-      // // retrying until we succeed or we hit the retry limit
-      // if (this.connectionRetryState.retryCount) {
-      //   this.startReconnect();
-      // }
+      const isReconnecting = this.connectionStatus === ConnectionStatus.RECONNECT_WAIT;
+      const isDisconnected = this.connectionStatus === ConnectionStatus.DISCONNECTED;
+      if (!isReconnecting && !isDisconnected) {
+        this.connectionStatus = ConnectionStatus.DISCONNECTED;
+        this.forceConsoleUiUpdate();
+      }
     });
 
     this.client = client;
   }
 
   disconnect() {
+    console.log("Disconnect request");
     const reconnectHandler = this.connectionRetryState.reconnectHandler;
     if (reconnectHandler) {
+      console.log("Clearing reconnect handler");
       clearTimeout(reconnectHandler);
     }
 
+    this.slpFileWriter.disconnectOBS();
+
     if (this.client) {
-      // TODO: Confirm destroy is picked up by an action and disconnected
-      // TODO: status is set
-      this.slpFileWriter.disconnectOBS();
       this.client.destroy();
     }
+
+    this.connectionStatus = ConnectionStatus.DISCONNECTED;
+    this.forceConsoleUiUpdate();
   }
 
   getInitialCommState(data) {
@@ -314,8 +316,8 @@ export default class ConsoleConnection {
       this.handleReplayData(data);
       break;
     case commMsgTypes.HANDSHAKE:
-      // console.log("Handshake message received");
-      // console.log(message);
+      console.log("Handshake message received");
+      console.log(message);
 
       this.connDetails.consoleNick = message.payload.nick;
       const tokenBuf = Buffer.from(message.payload.clientToken);

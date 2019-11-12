@@ -148,6 +148,10 @@ export default class SlpFileWriter {
   }
 
   disconnectOBS() {
+    if (!this.obs) {
+      return;
+    }
+    
     this.obs.disconnect();
   }
 
