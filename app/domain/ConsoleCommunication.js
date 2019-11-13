@@ -59,6 +59,11 @@ export default class ConsoleCommunication {
     }
   }
 
+  // Should likely only be used for debugging purposes
+  getReceiveBuffer() {
+    return this.receiveBuf;
+  }
+
   getMessages() {
     const toReturn = this.messages;
     this.messages = [];
@@ -66,7 +71,7 @@ export default class ConsoleCommunication {
     return toReturn;
   }
 
-  genHandshakeOut(cursor, clientToken) {
+  genHandshakeOut(cursor, clientToken, isRealtime) {
     const clientTokenBuf = Buffer.from([0, 0, 0, 0]);
     clientTokenBuf.writeUInt32BE(clientToken, 0);
 
@@ -75,6 +80,7 @@ export default class ConsoleCommunication {
       payload: {
         cursor: cursor,
         clientToken: Uint8Array.from(clientTokenBuf), // TODO: Use real instance token
+        isRealtime: isRealtime,
       },
     };
 
@@ -89,6 +95,11 @@ export default class ConsoleCommunication {
 
     msg.writeUInt32BE(buf.byteLength, 0);
 
+    // console.log({
+    //   char: msg.toString("ascii", 80, 81),
+    //   isRealtime: isRealtime,
+    //   msg: msg,
+    // });
     return msg;
   }
 }
