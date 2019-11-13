@@ -430,6 +430,9 @@ export default class Console extends Component {
     } else if (status === ConnectionStatus.CONNECTING) {
       statusMsg = "Connecting...";
       statusColor = "yellow";
+    } else if (status === ConnectionStatus.RECONNECT_WAIT) {
+      statusMsg = "Waiting to Reconnect...";
+      statusColor = "yellow";
     } else if (status === ConnectionStatus.DISCONNECTED && isConnectionAvailable) {
       statusMsg = "Available";
       statusColor = "white";
