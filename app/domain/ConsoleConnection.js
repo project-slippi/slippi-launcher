@@ -202,7 +202,12 @@ export default class ConsoleConnection {
         const messages = consoleComms.getMessages();
 
         // Process all of the received messages
-        _.forEach(messages, message => this.processMessage(message));
+        try {
+          _.forEach(messages, message => this.processMessage(message));
+        } catch {
+          // Disconnect client to send another handshake message
+          client.destroy();
+        }
       });
 
       client.on('timeout', () => {
@@ -322,7 +327,26 @@ export default class ConsoleConnection {
     case commMsgTypes.REPLAY:
       // console.log("Replay message type received");
       // console.log(message.payload.pos);
-      this.connDetails.gameDataCursor = Uint8Array.from(message.payload.pos);
+      const readPos = Uint8Array.from(message.payload.pos);
+      const cmp = Buffer.compare(this.connDetails.gameDataCursor, readPos);
+      if (!message.payload.forcePos && cmp !== 0) {
+        log.warn(
+          "Position of received data is not what was expected. Expected, Received:",
+          this.connDetails.gameDataCursor, readPos
+        );
+
+        // The readPos is not the one we are waiting on, throw error
+        throw new Error("Position of received data is incorrect.");
+      }
+
+      if (message.payload.forcePos) {
+        log.warn(
+          "Overflow occured in Nintendont, data has likely been skipped and replay corrupted. " +
+          "Expected, Received:", this.connDetails.gameDataCursor, readPos
+        );
+      }
+
+      this.connDetails.gameDataCursor = Uint8Array.from(message.payload.nextPos);
 
       const data = Uint8Array.from(message.payload.data);
       this.handleReplayData(data);
@@ -335,6 +359,7 @@ export default class ConsoleConnection {
       const tokenBuf = Buffer.from(message.payload.clientToken);
       this.connDetails.clientToken = tokenBuf.readUInt32BE(0);
       this.connDetails.version = message.payload.nintendontVersion;
+      this.connDetails.gameDataCursor = Uint8Array.from(message.payload.pos);
       // console.log(`Received token: ${this.connDetails.clientToken}`);
 
       this.forceConsoleUiUpdate();

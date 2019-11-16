@@ -158,7 +158,7 @@ export default class SlpFileWriter {
 
   setStatus(value) {
     this.statusOutput.status = value;
-    console.log(`Status changed: ${value}`);
+    // console.log(`Status changed: ${value}`);
     _.forEach(this.obsPairs, (pair) => {
       this.obs.send("SetSceneItemProperties", 
         {"scene-name": pair.scene, "item": this.obsSourceName, "visible": value});
@@ -200,6 +200,9 @@ export default class SlpFileWriter {
     let isNewGame = false;
     let isGameEnd = false;
 
+    // We should technically never accrue a previous buffer with new communication methods because
+    // ConsoleCommunication ensures that full data has been received before trying to process
+    // the data
     const data = Uint8Array.from(Buffer.concat([
       this.currentFile.previousBuffer,
       newData,
