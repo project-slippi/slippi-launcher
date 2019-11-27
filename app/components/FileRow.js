@@ -2,8 +2,9 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Button, Checkbox, Table } from 'semantic-ui-react';
+import { Button, Table, Icon } from 'semantic-ui-react';
 import { stages as stageUtils } from 'slp-parser-js';
+import classNames from 'classnames';
 
 import styles from './FileRow.scss';
 import SpacedGroup from './common/SpacedGroup';
@@ -45,26 +46,29 @@ export default class FileRow extends Component {
     this.props.gameProfileLoad(fileGame);
   };
 
-  generatePlayCell() {
+  generateSelectCell() {
     const useOrdinal = this.props.selectedOrdinal > 0;
     let contents;
     if (useOrdinal) {
-      const label = <label style={{color: "#FFFFFF"}}>{this.props.selectedOrdinal}</label>;
-      contents = <Checkbox label={label} defaultChecked={true} disabled={true} />;
+      contents = (
+        <div>
+          <Icon size="big" name="check square outline" />
+          <div className={styles['pos-text']}>{this.props.selectedOrdinal}</div>
+        </div>
+      )
     } else {
       contents = (
-        <Button
-          circular={true}
-          inverted={true}
-          size="tiny"
-          basic={true}
-          icon="play"
-          onClick={this.playFile}
-        />
+        <Icon size="big" name="square outline" />
       );
     }
+
+    const cellStyles = classNames({
+      [styles['select-cell']]: true,
+      [styles['selected']]: useOrdinal,
+    });
+
     return (
-      <Table.Cell className={styles['play-cell']} textAlign="center">
+      <Table.Cell className={cellStyles} verticalAlign="top" onClick={this.onSelect}>
         {contents}  
       </Table.Cell>
     );
@@ -189,25 +193,36 @@ export default class FileRow extends Component {
 
   generateOptionsCell() {
     return (
-      <Table.Cell className={styles['play-cell']} textAlign="center">
-        <Link to="/game" className={styles['bound-link']} replace={false}>
+      <Table.Cell className={styles['actions-cell']} textAlign="center">
+        <SpacedGroup direction="horizontal">
           <Button
             circular={true}
             inverted={true}
             size="tiny"
             basic={true}
-            icon="bar chart"
-            onClick={this.viewStats}
+            icon="play"
+            onClick={this.playFile}
           />
-        </Link>
+          <Link to="/game" className={styles['bound-link']} replace={false}>
+            <Button
+              circular={true}
+              inverted={true}
+              size="tiny"
+              basic={true}
+              icon="bar chart"
+              onClick={this.viewStats}
+            />
+          </Link>
+        </SpacedGroup>
+        
       </Table.Cell>
     );
   }
 
   render() {
     return (
-      <Table.Row onClick={this.onSelect}>
-        {this.generatePlayCell()}
+      <Table.Row>
+        {this.generateSelectCell()}
         {this.generateDetailsCell()}
         {this.generateStartTimeCell()}
         {this.generateOptionsCell()}
