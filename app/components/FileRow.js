@@ -69,7 +69,9 @@ export default class FileRow extends Component {
 
     return (
       <Table.Cell className={cellStyles} verticalAlign="top" onClick={this.onSelect}>
-        {contents}  
+        <div className={styles['select-content-wrapper']}>
+          {contents}
+        </div>
       </Table.Cell>
     );
   }
