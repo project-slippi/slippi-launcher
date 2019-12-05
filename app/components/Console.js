@@ -5,7 +5,7 @@ import semver from 'semver';
 import PropTypes from 'prop-types';
 import path from 'path';
 import { Header, Modal, Form, Card, Button, Icon, Checkbox, Message, Tab, Grid } from 'semantic-ui-react';
-import { ConnectionStatus } from '../domain/ConsoleConnection';
+import { ConnectionStatus, Ports } from '../domain/ConsoleConnection';
 import PageHeader from './common/PageHeader';
 import PageWrapper from './PageWrapper';
 import DismissibleMessage from './common/DismissibleMessage';
@@ -273,12 +273,12 @@ export default class Console extends Component {
   renderConnection = (connection) => {
     let relayLabelValue = null;
     if (connection.isRelaying) {
-      relayLabelValue = this.renderLabelValue("Relay Port", 1666 + connection.id);
+      relayLabelValue = this.renderLabelValue("Relay Port", Ports.RELAY_START + connection.id);
     }
 
     const status = connection.connectionStatus;
     const version = connection.connDetails.version;
-    const isNintendont = connection.port === 666 || !connection.port;
+    const isNintendont = connection.port === Ports.WII_DEFAULT || !connection.port;
     const versionOutdated = !version || semver.lt(`${version}.0`, "1.9.0");
 
     let outdatedNotif = null;
@@ -627,7 +627,8 @@ export default class Console extends Component {
             <label htmlFor="isRealTimeMode">Real-Time Mode</label>
             <div className={styles['description']}>
               <strong>Not recommended unless on wired LAN connection.</strong>&nbsp;
-              Real-time mode will attempt to prevent delay from accumulating when mirroring.
+              Real-time mode will attempt to prevent delay from accumulating when mirroring. If
+              using a WiFi connection on the Wii or computer, turning this off is recommended.
             </div>
             <Checkbox
               id="isRealTimeMode"
@@ -699,11 +700,11 @@ export default class Console extends Component {
                 <Form.Field>
                   <label htmlFor="port">Connection Port</label>
                   <div className={styles['description']}>
-                    The connection port should only be changed if you are connecting to a relay, 666 is the port all Wiis use to send data.
+                    The connection port should only be changed if you are connecting to a relay, {Ports.WII_DEFAULT} is the port all Wiis use to send data.
                   </div>
                   <Form.Input
                     name="port"
-                    defaultValue={formData.port || connectionSettings.port || "666"}
+                    defaultValue={formData.port || connectionSettings.port || `${Ports.WII_DEFAULT}`}
                     onChange={this.onFieldChange}
                   />
                 </Form.Field>

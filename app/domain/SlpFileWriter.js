@@ -31,6 +31,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import moment from 'moment';
 import OBSWebSocket from 'obs-websocket-js'
+import { Ports } from './ConsoleConnection'
 
 export default class SlpFileWriter {
   static commands = {
@@ -109,7 +110,7 @@ export default class SlpFileWriter {
         _.remove(this.clients, (client) => socket === client.socket);
       });
     });
-    this.server.listen(1666 + this.id, '0.0.0.0');
+    this.server.listen(Ports.RELAY_START + this.id, '0.0.0.0');
   }
 
   getCurrentFilePath() {
@@ -157,7 +158,7 @@ export default class SlpFileWriter {
 
   setStatus(value) {
     this.statusOutput.status = value;
-    console.log(`Status changed: ${value}`);
+    // console.log(`Status changed: ${value}`);
     _.forEach(this.obsPairs, (pair) => {
       this.obs.send("SetSceneItemProperties", 
         {"scene-name": pair.scene, "item": this.obsSourceName, "visible": value});
@@ -199,6 +200,9 @@ export default class SlpFileWriter {
     let isNewGame = false;
     let isGameEnd = false;
 
+    // We should technically never accrue a previous buffer with new communication methods because
+    // ConsoleCommunication ensures that full data has been received before trying to process
+    // the data
     const data = Uint8Array.from(Buffer.concat([
       this.currentFile.previousBuffer,
       newData,

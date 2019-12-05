@@ -37,6 +37,14 @@ export const ConnectionStatus = {
   RECONNECT_WAIT: 3,
 };
 
+export const Ports = {
+  WII_DEFAULT: 51441,
+  WII_LEGACY: 666,
+  RELAY_START: 53741,
+};
+
+const TIMEOUT_MS = 20000;
+
 export default class ConsoleConnection {
   static connectionCount = 0;
 
@@ -54,8 +62,8 @@ export default class ConsoleConnection {
     this.isRelaying = settings.isRelaying;
 
     this.isMirroring = false;
-    this.connection = null;
-    this.client = null;
+    this.connectionsByPort = [];
+    this.clientsByPort = [];
     this.connectionStatus = ConnectionStatus.DISCONNECTED;
     this.connDetails = this.getDefaultConnDetails();
 
@@ -127,13 +135,26 @@ export default class ConsoleConnection {
     this.slpFileWriter.connectOBS();
     this.dolphinManager.updateSettings(connectionSettings);
 
+    if (this.port && this.port !== Ports.WII_LEGACY) {
+      // If port is manually set, use that port. Don't do this if the port is set to legacy as
+      // somebody might have accidentally set it to that and they would encounter issues with
+      // the new Nintendont
+      this.connectOnPort(this.port);
+      return;
+    }
+
+    this.connectOnPort(Ports.WII_DEFAULT);
+    this.connectOnPort(Ports.WII_LEGACY);
+  }
+
+  connectOnPort(port) {
     // Set up reconnect
     const reconnect = inject(() => (
-      net.connect.apply(null, [{
+      net.connect({
         host: this.ipAddress,
-        port: this.port || 666,
-        timeout: 20000,
-      }])
+        port: port,
+        timeout: TIMEOUT_MS,
+      })
     ));
 
     const connection = reconnect({
@@ -142,12 +163,12 @@ export default class ConsoleConnection {
       strategy: 'fibonacci',
       failAfter: Infinity,
     }, (client) => {
-      this.client = client;
+      this.clientsByPort[port] = client;
 
       // Prepare console communication obj for talking UBJSON
       const consoleComms = new ConsoleCommunication();
 
-      console.log(`Connected to ${this.ipAddress}:${this.port || "666"}!`);
+      console.log(`Connected to ${this.ipAddress}:${port}!`);
       this.connectionStatus = ConnectionStatus.CONNECTED;
 
       let commState = "initial";
@@ -181,12 +202,17 @@ export default class ConsoleConnection {
         const messages = consoleComms.getMessages();
 
         // Process all of the received messages
-        _.forEach(messages, message => this.processMessage(message));
+        try {
+          _.forEach(messages, message => this.processMessage(message));
+        } catch {
+          // Disconnect client to send another handshake message
+          client.destroy();
+        }
       });
 
       client.on('timeout', () => {
         // const previouslyConnected = this.connectionStatus === ConnectionStatus.CONNECTED;
-        console.log(`Timeout on ${this.ipAddress}:${this.port || "666"}`);
+        console.log(`Timeout on ${this.ipAddress}:${port}`);
         client.destroy();
       });
 
@@ -194,7 +220,7 @@ export default class ConsoleConnection {
         console.log('client end');
         client.destroy();
       });
-  
+
       client.on('close', () => {
         console.log('connection was closed');
       });
@@ -218,40 +244,38 @@ export default class ConsoleConnection {
       client.write(handshakeMsgOut);
     });
 
-    connection.on('connect', (arg) => {
-      console.log("Connect handler...");
-      console.log(arg);
-
+    const setConnectingStatus = () => {
       // Indicate we are connecting
       this.connectionStatus = ConnectionStatus.CONNECTING;
       this.forceConsoleUiUpdate();
-    });
+    };
 
-    connection.on('reconnect', (n, delay) => {
-      console.log("Reconnect handler...");
-      console.log({n: n, delay: delay});
-
-      // Indicate we are connecting
-      this.connectionStatus = ConnectionStatus.CONNECTING;
-      this.forceConsoleUiUpdate();
-    });
+    connection.on('connect', setConnectingStatus);
+    connection.on('reconnect', setConnectingStatus);
 
     connection.on('disconnect', () => {
-      // const previouslyConnected = this.connectionStatus === ConnectionStatus.CONNECTED;
-      console.log(`Disconnect handler...`);
-      
+      // If one of the connections was successful, we no longer need to try connecting this one
+      this.connectionsByPort.forEach((iConn, iPort) => {
+        if (iPort === port || !iConn.connected) {
+          // Only disconnect if a different connection was connected
+          return;
+        }
+
+        // Prevent reconnections and disconnect
+        connection.reconnect = false; // eslint-disable-line
+        connection.disconnect();
+      });
+
       // TODO: Figure out how to set RECONNECT_WAIT state here. Currently it will stay on
       // TODO: Connecting... forever
     });
 
     connection.on('error', (error) => {
-      console.log('error');
-      console.log(error);
+      log.warn(`Connection on port ${port} encountered an error.`, error)
     });
 
+    this.connectionsByPort[port] = connection;
     connection.connect();
-
-    this.connection = connection;
   }
 
   disconnect() {
@@ -259,16 +283,15 @@ export default class ConsoleConnection {
 
     this.slpFileWriter.disconnectOBS();
 
-    if (this.connection) {
-      console.log("Preventing reconnects and closing connection...");
-
-      this.connection.reconnect = false;
-      this.connection.disconnect();
-    }
-
-    if (this.client) {
-      this.client.destroy();
-    }
+    this.connectionsByPort.forEach((connection) => {
+      // Prevent reconnections and disconnect
+      connection.reconnect = false; // eslint-disable-line
+      connection.disconnect();
+    });
+    
+    this.clientsByPort.forEach((client) => {
+      client.destroy();
+    });
 
     this.connectionStatus = ConnectionStatus.DISCONNECTED;
     this.forceConsoleUiUpdate();
@@ -304,7 +327,26 @@ export default class ConsoleConnection {
     case commMsgTypes.REPLAY:
       // console.log("Replay message type received");
       // console.log(message.payload.pos);
-      this.connDetails.gameDataCursor = Uint8Array.from(message.payload.pos);
+      const readPos = Uint8Array.from(message.payload.pos);
+      const cmp = Buffer.compare(this.connDetails.gameDataCursor, readPos);
+      if (!message.payload.forcePos && cmp !== 0) {
+        log.warn(
+          "Position of received data is not what was expected. Expected, Received:",
+          this.connDetails.gameDataCursor, readPos
+        );
+
+        // The readPos is not the one we are waiting on, throw error
+        throw new Error("Position of received data is incorrect.");
+      }
+
+      if (message.payload.forcePos) {
+        log.warn(
+          "Overflow occured in Nintendont, data has likely been skipped and replay corrupted. " +
+          "Expected, Received:", this.connDetails.gameDataCursor, readPos
+        );
+      }
+
+      this.connDetails.gameDataCursor = Uint8Array.from(message.payload.nextPos);
 
       const data = Uint8Array.from(message.payload.data);
       this.handleReplayData(data);
@@ -317,6 +359,7 @@ export default class ConsoleConnection {
       const tokenBuf = Buffer.from(message.payload.clientToken);
       this.connDetails.clientToken = tokenBuf.readUInt32BE(0);
       this.connDetails.version = message.payload.nintendontVersion;
+      this.connDetails.gameDataCursor = Uint8Array.from(message.payload.pos);
       // console.log(`Received token: ${this.connDetails.clientToken}`);
 
       this.forceConsoleUiUpdate();
