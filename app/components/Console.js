@@ -279,7 +279,7 @@ export default class Console extends Component {
     const status = connection.connectionStatus;
     const version = connection.connDetails.version;
     const isNintendont = connection.port === Ports.WII_DEFAULT || !connection.port;
-    const versionOutdated = !version || semver.lt(`${version}.0`, "1.9.0");
+    const versionOutdated = !version || semver.lt(version, "1.9.0-dev"); // TODO: Latest Nintendont Release Version
 
     let outdatedNotif = null;
     if (status === ConnectionStatus.CONNECTED && isNintendont && versionOutdated) {
