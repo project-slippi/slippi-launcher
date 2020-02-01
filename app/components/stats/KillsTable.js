@@ -79,9 +79,8 @@ export default class KillsTable extends Component {
     const lastMove = _.last(punishThatEndedStock.moves);
     if (!(lastMove)) {
       return "Grab Release"
-    }else{
-      return moveUtils.getMoveName(lastMove.moveId);
     }
+    return moveUtils.getMoveName(lastMove.moveId);
   }
 
   renderKilledDirection(stock) {
