@@ -74,8 +74,12 @@ export default class KillsTable extends Component {
     if (!punishThatEndedStock) {
       return <span className={styles['secondary-text']}>Self Destruct</span>;
     }
+    
 
     const lastMove = _.last(punishThatEndedStock.moves);
+    if (!(lastMove)) {
+      return "Grab Release"
+    }
     return moveUtils.getMoveName(lastMove.moveId);
   }
 
