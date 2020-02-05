@@ -20,6 +20,30 @@ import FolderBrowser from './common/FolderBrowser';
 import PageWrapper from './PageWrapper';
 import Scroller from './common/Scroller';
 
+const slp = require('slp-parser-js');
+
+function termMatch(term, name) {
+  if (name == null) {return false;}
+  return name.toLowerCase().startsWith(term.toLowerCase());
+}
+
+function playerInGame(settings, metadata, term) {
+  return settings.players.some((p) => {
+    const netplayName = _.get(metadata, ["players", p.playerIndex, "names", "netplay"], null) || null;
+    const playerTag = _.get(p, "nametag") || null;
+    return termMatch(term, netplayName) || termMatch(term, playerTag);
+  });
+}
+
+function characterInGame(settings, term) {
+  return settings.players.some((p) => {
+    const playerChar = p.characterId;
+    const charName = slp.characters.getCharacterInfo(playerChar).name;
+    const charShortName = slp.characters.getCharacterInfo(playerChar).shortName;
+    return termMatch(term, charName) || termMatch(term, charShortName);
+  });
+}
+
 export default class FileLoader extends Component {
   static propTypes = {
     // fileLoader actions
@@ -46,6 +70,7 @@ export default class FileLoader extends Component {
     super(props);
     this.state = {
       files: [],
+      search: "",
       selections: [],
     };
   }
@@ -174,6 +199,22 @@ export default class FileLoader extends Component {
 
     // Filter out files that were shorter than 30 seconds
     return resultFiles;
+  }
+  
+  searchFiles(files) {
+    if (this.state.search == "") {return files;}
+    const terms = this.state.search.split(' ');
+    
+    return files.filter(file => {
+      const settings = file.game.getSettings() || {};
+      const metadata = file.game.getMetadata();
+      
+      return terms.every((term) => {
+        if (term == "") {return true;}
+        return playerInGame(settings, metadata, term)
+            || characterInGame(settings, term);
+      });
+    });
   }
 
   queueClear = () => {
@@ -382,10 +423,15 @@ export default class FileLoader extends Component {
     );
   }
 
+  handleSearchChange = (e) => {
+    this.setState({search: e.target.value});
+  }
+
   renderMain() {
     const store = this.props.store || {};
     const files = store.files || [];
     const processedFiles = this.processFiles(files);
+    const searchedFiles = this.searchFiles(files);
     const mainStyles = `main-padding ${styles['loader-main']}`;
 
     return (
@@ -395,10 +441,15 @@ export default class FileLoader extends Component {
           text="Replay Browser"
           history={this.props.history}
         />
+        <input
+          type={this.state.search}
+          name="Search"
+          onChange={this.handleSearchChange.bind(this)}
+        />
         <Scroller ref={this.setTableScrollRef} topOffset={this.props.topNotifOffset}>
           {this.renderGlobalError()}
           {this.renderFilteredFilesNotif(processedFiles)}
-          {this.renderFileSelection(processedFiles)}
+          {this.renderFileSelection(searchedFiles)}
         </Scroller>
         {this.renderQueueButtons()}
       </div>
