@@ -349,7 +349,7 @@ export default class SlpFileWriter {
   }
 
   getNewFilePath(m) {
-    return path.join(this.folderPath, `Game_${m.format("YYYYMMDD")}T${m.format("HHmmss")}.slp`);
+    return path.join(this.folderPath, `Game_${m.format("YYYYMMDDTHHmmss")}.slp`);
   }
 
   endGame() {
@@ -368,7 +368,7 @@ export default class SlpFileWriter {
     ]);
 
     // Write game start time
-    const startTimeStr = this.currentFile.metadata.startTime.toISOString();
+    const startTimeStr = this.currentFile.metadata.startTime.format("YYYY-MM-DDTHHmmss");
     footer = Buffer.concat([
       footer,
       Buffer.from("U"),
