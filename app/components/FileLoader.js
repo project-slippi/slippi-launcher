@@ -172,9 +172,8 @@ export default class FileLoader extends Component {
     });
   };
 
-  queueAllFiles = () => {
-    const filteredFiles = this.processFiles(this.state.files)
-    this.props.queueFiles(_.reverse(filteredFiles));
+  selectAll = () => {
+    this.setState({ selections: this.props.store.files });
   }
 
   renderGlobalError() {
@@ -412,9 +411,9 @@ export default class FileLoader extends Component {
   renderQueueButtons() {
     return this.state.selections.length === 0 ? (
       <div className={styles['queue-buttons']}>
-        <Button onClick={this.queueAllFiles}>
-          <Icon name="play circle" />
-          Play all
+        <Button onClick={this.selectAll}>
+          <Icon name="plus" />
+          Select all
         </Button>
       </div>
     ) : (
