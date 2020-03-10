@@ -75,6 +75,12 @@ $header-height: 97px;
     }
   }
 
+  .nav-button {
+    position: absolute;
+    right: 0px;
+    padding-right: 0px !important;
+  }
+
   .character-image {
     height: 36px !important;
     width: 36px !important;

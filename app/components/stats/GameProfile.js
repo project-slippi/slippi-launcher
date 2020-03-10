@@ -224,6 +224,24 @@ export default class GameProfile extends Component {
     return (
       <Segment className={gameDetailsClasses} basic={true}>
         {metadataElements}
+        <div className={styles['nav-button']}>
+          <Button
+            content="Prev"
+            circular={true}
+            color="grey"
+            basic={true}
+            inverted={true}
+            size="tiny"
+          />
+          <Button
+            content="Next"
+            circular={true}
+            color="grey"
+            basic={true}
+            inverted={true}
+            size="tiny"
+          />
+        </div>
       </Segment>
     );
   }
