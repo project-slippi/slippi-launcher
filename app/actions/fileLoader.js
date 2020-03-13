@@ -1,15 +1,18 @@
 import _ from 'lodash';
 import fs from 'fs';
 import path from 'path';
+import moment from 'moment';
 import SlippiGame from 'slp-parser-js';
 
 import { displayError } from './error';
+import { gameProfileLoad } from './game';
 
 const electronSettings = require('electron-settings');
 
 export const LOAD_ROOT_FOLDER = 'LOAD_ROOT_FOLDER';
 export const CHANGE_FOLDER_SELECTION = 'CHANGE_FOLDER_SELECTION';
 export const LOAD_FILES_IN_FOLDER = 'LOAD_FILES_IN_FOLDER';
+export const SET_STATS_GAME_PAGE = 'SET_STATS_GAME_PAGE';
 export const STORE_SCROLL_POSITION = 'STORE_SCROLL_POSITION';
 
 export function loadRootFolder() {
@@ -67,12 +70,14 @@ export function loadRootFolder() {
     await wait(10); // eslint-disable-line
 
     const filesAndFolders = await loadFilesInFolder(rootFolderPath);
+    const processedFiles = processFiles(filesAndFolders[0]);
 
     dispatch({
       type: LOAD_FILES_IN_FOLDER,
       payload: {
-        files: filesAndFolders[0],
+        files: processedFiles,
         folders: filesAndFolders[1],
+        numFilteredFiles: filesAndFolders[0].length - processedFiles.length,
       },
     });
   };
@@ -92,12 +97,14 @@ export function changeFolderSelection(folder) {
 
     const currentPath = getState().fileLoader.selectedFolderFullPath;
     const filesAndFolders = await loadFilesInFolder(currentPath);
+    const processedFiles = processFiles(filesAndFolders[0]);
 
     dispatch({
       type: LOAD_FILES_IN_FOLDER,
       payload: {
-        files: filesAndFolders[0],
+        files: processedFiles,
         folders: filesAndFolders[1],
+        numFilteredFiles: filesAndFolders[0].length - processedFiles.length,
       },
     });
   };
@@ -113,7 +120,7 @@ export function storeScrollPosition(position) {
 }
 
 export function playFile(file) {
-  return (dispatch, getState) => {
+  return async (dispatch, getState) => {
     const filePath = file.fullPath;
     if (!filePath) {
       // TODO: Maybe show error message
@@ -150,9 +157,29 @@ export function queueFiles(files) {
   };
 }
 
+export function setStatsGamePage(index) {
+  return (dispatch, getState) => {
+    const files = getState().fileLoader.files;
+    let statsGameIndex = index;
+    if (statsGameIndex >= files.length) {
+      statsGameIndex = 0;
+    }
+
+    if (statsGameIndex < 0) {
+      statsGameIndex = files.length - 1;
+    }
+
+    dispatch({
+      type: SET_STATS_GAME_PAGE,
+      payload: { statsGameIndex: statsGameIndex },
+    })
+    gameProfileLoad(files[statsGameIndex].game)(dispatch);
+  }
+}
+
 async function loadFilesInFolder(folderPath) {
   const readdirPromise = new Promise((resolve, reject) => {
-    fs.readdir(folderPath, {withFileTypes: true}, (err, dirents) => {
+    fs.readdir(folderPath, { withFileTypes: true }, (err, dirents) => {
       if (err) {
         reject(err);
       }
@@ -221,4 +248,42 @@ async function loadFilesInFolder(folderPath) {
 
 async function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function processFiles(files) {
+  let resultFiles = files;
+
+  resultFiles = resultFiles.filter(file => {
+    if (file.hasError) {
+      // This will occur if an error was encountered while parsing
+      return false;
+    }
+
+    const settings = file.game.getSettings() || {};
+    if (!settings.stageId) {
+      // I know that right now if you play games from debug mode it make some
+      // weird replay files... this should filter those out
+      return false;
+    }
+
+    const metadata = file.game.getMetadata() || {};
+    const totalFrames = metadata.lastFrame || 30 * 60 + 1;
+    return totalFrames > 30 * 60;
+  });
+
+  resultFiles = _.orderBy(
+    resultFiles,
+    [
+      file => {
+        const metadata = file.game.getMetadata() || {};
+        const startAt = metadata.startAt;
+        return moment(startAt);
+      },
+      'fileName',
+    ],
+    ['desc', 'desc']
+  );
+
+  // Filter out files that were shorter than 30 seconds
+  return resultFiles;
 }

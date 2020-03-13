@@ -16,8 +16,9 @@ const path = require('path');
 export default class FileRow extends Component {
   static propTypes = {
     file: PropTypes.object.isRequired,
+    fileIndex: PropTypes.number.isRequired,
     playFile: PropTypes.func.isRequired,
-    gameProfileLoad: PropTypes.func.isRequired,
+    setStatsGamePage: PropTypes.func.isRequired,
     onSelect: PropTypes.func.isRequired,
     selectedOrdinal: PropTypes.number.isRequired,
   };
@@ -40,10 +41,7 @@ export default class FileRow extends Component {
 
   viewStats = (e) => {
     e.stopPropagation();
-    const file = this.props.file || {};
-    const fileGame = file.game;
-
-    this.props.gameProfileLoad(fileGame);
+    this.props.setStatsGamePage(this.props.fileIndex);
   };
 
   generateSelectCell() {
@@ -216,7 +214,7 @@ export default class FileRow extends Component {
             />
           </Link>
         </SpacedGroup>
-        
+
       </Table.Cell>
     );
   }
