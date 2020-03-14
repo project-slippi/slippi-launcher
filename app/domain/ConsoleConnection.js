@@ -135,7 +135,7 @@ export default class ConsoleConnection {
     this.slpFileWriter.connectOBS();
     this.dolphinManager.updateSettings(connectionSettings);
 
-    if (this.port && this.port !== Ports.WII_LEGACY) {
+    if (this.port && this.port !== Ports.WII_LEGACY && this.port !== Ports.WII_DEFAULT) {
       // If port is manually set, use that port. Don't do this if the port is set to legacy as
       // somebody might have accidentally set it to that and they would encounter issues with
       // the new Nintendont
