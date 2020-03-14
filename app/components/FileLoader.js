@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 import { Link } from 'react-router-dom';
 import {
   Table,
@@ -28,9 +27,7 @@ export default class FileLoader extends Component {
     playFile: PropTypes.func.isRequired,
     queueFiles: PropTypes.func.isRequired,
     storeScrollPosition: PropTypes.func.isRequired,
-
-    // game actions
-    gameProfileLoad: PropTypes.func.isRequired,
+    setStatsGamePage: PropTypes.func.isRequired,
 
     // error actions
     dismissError: PropTypes.func.isRequired,
@@ -45,19 +42,8 @@ export default class FileLoader extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      files: [],
       selections: [],
     };
-  }
-
-  static getDerivedStateFromProps(newProps, oldState) {
-    if (newProps.store.files !== oldState.files) {
-      return {
-        files: newProps.store.files,
-        selections: [],
-      };
-    }
-    return oldState;
   }
 
   componentDidMount() {
@@ -138,44 +124,6 @@ export default class FileLoader extends Component {
     ];
   }
 
-  processFiles(files) {
-    let resultFiles = files;
-
-    resultFiles = resultFiles.filter(file => {
-      if (file.hasError) {
-        // This will occur if an error was encountered while parsing
-        return false;
-      }
-
-      const settings = file.game.getSettings() || {};
-      if (!settings.stageId) {
-        // I know that right now if you play games from debug mode it make some
-        // weird replay files... this should filter those out
-        return false;
-      }
-
-      const metadata = file.game.getMetadata() || {};
-      const totalFrames = metadata.lastFrame || 30 * 60 + 1;
-      return totalFrames > 30 * 60;
-    });
-
-    resultFiles = _.orderBy(
-      resultFiles,
-      [
-        file => {
-          const metadata = file.game.getMetadata() || {};
-          const startAt = metadata.startAt;
-          return moment(startAt);
-        },
-        'fileName',
-      ],
-      ['desc', 'desc']
-    );
-
-    // Filter out files that were shorter than 30 seconds
-    return resultFiles;
-  }
-
   queueClear = () => {
     this.setState({
       selections: [],
@@ -208,14 +156,14 @@ export default class FileLoader extends Component {
     );
   }
 
-  renderFilteredFilesNotif(processedFiles) {
+  renderFilteredFilesNotif() {
     const store = this.props.store || {};
     if (store.isLoading) {
       return null;
     }
 
     const files = store.files || [];
-    const filteredFileCount = files.length - processedFiles.length;
+    const filteredFileCount = _.get(this.props.store, 'numFilteredFiles');
 
     if (!filteredFileCount) {
       return null;
@@ -314,8 +262,10 @@ export default class FileLoader extends Component {
     );
   }
 
-  renderFileSelection(files) {
+  renderFileSelection() {
     const store = this.props.store || {};
+    const files = store.files || [];
+
     if (store.isLoading) {
       return this.renderLoadingState();
     }
@@ -336,15 +286,17 @@ export default class FileLoader extends Component {
     );
 
     // Generate a row for every file in selected folder
+    let fileIndex = 0;
     const rows = files.map(
       file => (
         <FileRow
           key={file.fullPath}
           file={file}
           playFile={this.props.playFile}
-          gameProfileLoad={this.props.gameProfileLoad}
+          setStatsGamePage={this.props.setStatsGamePage}
           onSelect={this.onSelect}
           selectedOrdinal={this.state.selections.indexOf(file) + 1}
+          fileIndex={fileIndex++}
         />
       ),
       this
@@ -372,20 +324,17 @@ export default class FileLoader extends Component {
       <div className={styles['queue-buttons']}>
         <Button onClick={this.queueFiles}>
           <Icon name="play circle" />
-          Play all
+            Play all
         </Button>
         <Button onClick={this.queueClear}>
           <Icon name="dont" />
-          Clear
+            Clear
         </Button>
       </div>
     );
   }
 
   renderMain() {
-    const store = this.props.store || {};
-    const files = store.files || [];
-    const processedFiles = this.processFiles(files);
     const mainStyles = `main-padding ${styles['loader-main']}`;
 
     return (
@@ -397,8 +346,8 @@ export default class FileLoader extends Component {
         />
         <Scroller ref={this.setTableScrollRef} topOffset={this.props.topNotifOffset}>
           {this.renderGlobalError()}
-          {this.renderFilteredFilesNotif(processedFiles)}
-          {this.renderFileSelection(processedFiles)}
+          {this.renderFilteredFilesNotif()}
+          {this.renderFileSelection()}
         </Scroller>
         {this.renderQueueButtons()}
       </div>

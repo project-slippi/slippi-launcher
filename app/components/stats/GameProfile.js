@@ -33,6 +33,7 @@ export default class GameProfile extends Component {
 
     // fileLoaderAction
     playFile: PropTypes.func.isRequired,
+    setStatsGamePage: PropTypes.func.isRequired,
 
     // error actions
     dismissError: PropTypes.func.isRequired,
@@ -41,6 +42,7 @@ export default class GameProfile extends Component {
     store: PropTypes.object.isRequired,
     errors: PropTypes.object.isRequired,
     topNotifOffset: PropTypes.number.isRequired,
+    statsGameIndex: PropTypes.number.isRequired,
   };
 
   refStats = null;
@@ -57,6 +59,14 @@ export default class GameProfile extends Component {
       fullPath: filePath,
     });
   };
+
+  nextGame = () => {
+    this.props.setStatsGamePage(this.props.statsGameIndex + 1);
+  }
+
+  prevGame = () => {
+    this.props.setStatsGamePage(this.props.statsGameIndex - 1);
+  }
 
   renderContent() {
     const isLoading = _.get(this.props.store, 'isLoading') || false;
@@ -165,7 +175,7 @@ export default class GameProfile extends Component {
   renderGameDetails() {
     const gameSettings = _.get(this.props.store, ['game', 'settings']) || {};
     const stageName = _.isNil(gameSettings.stageId) ? "Unknown" : stageUtils.getStageName(gameSettings.stageId);
-    
+
     const duration =
       _.get(this.props.store, ['game', 'stats', 'lastFrame']) || 0;
     const durationDisplay = timeUtils.convertFrameCountToDurationString(
@@ -224,6 +234,26 @@ export default class GameProfile extends Component {
     return (
       <Segment className={gameDetailsClasses} basic={true}>
         {metadataElements}
+        <div className={styles['nav-button']}>
+          <Button
+            content="Prev"
+            circular={true}
+            color="grey"
+            basic={true}
+            inverted={true}
+            size="tiny"
+            onClick={this.prevGame}
+          />
+          <Button
+            content="Next"
+            circular={true}
+            color="grey"
+            basic={true}
+            inverted={true}
+            size="tiny"
+            onClick={this.nextGame}
+          />
+        </div>
       </Segment>
     );
   }

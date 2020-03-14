@@ -30,6 +30,7 @@
     "no-mixed-operators": "off",
     "no-use-before-define": "off",
     "no-multi-assign": "off",
+    "no-plusplus": "off",
     "object-shorthand": ["error", "never"],
     "one-var": "off",
     "one-var-declaration-per-line": "off",

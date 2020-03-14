@@ -46,8 +46,8 @@ $header-height: 97px;
   }
 
   .game-details {
-    margin: 0 !important;
-    padding: 0 0 14px 0 !important;
+    margin: 0 0 14px 0 !important;
+    padding: 14px 0 0 0 !important;
 
     display: flex;
     justify-content: start;
@@ -73,6 +73,13 @@ $header-height: 97px;
       color: rgba(255, 255, 255, 0.8);
       text-transform: capitalize;
     }
+  }
+
+  .nav-button {
+    position: absolute;
+    right: 0px;
+    padding-right: 0px !important;
+    bottom: 0px;
   }
 
   .character-image {
