@@ -47,7 +47,7 @@ $header-height: 97px;
 
   .game-details {
     margin: 0 !important;
-    padding: 0 0 14px 0 !important;
+    padding: 14px 0 14px 0 !important;
 
     display: flex;
     justify-content: start;
@@ -79,6 +79,8 @@ $header-height: 97px;
     position: absolute;
     right: 0px;
     padding-right: 0px !important;
+    transform: translateY(-50%);
+    top: 50%;
   }
 
   .character-image {
