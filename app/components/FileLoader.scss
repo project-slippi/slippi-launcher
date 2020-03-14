@@ -68,3 +68,33 @@
   bottom: 20px;
   left: 20px;
 }
+
+.select-cell {
+  margin-left: 10px !important;
+
+  i {
+    color: #94969A;
+  }
+
+  i:hover {
+    color: #FFFFFF;
+    cursor: pointer;
+  }
+
+  &.selected {
+    i {
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    i:hover {
+      color: #FFFFFF;
+      cursor: pointer;
+    }
+  }
+
+  .pos-text {
+    margin-left: 4px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.5);
+  }
+}
