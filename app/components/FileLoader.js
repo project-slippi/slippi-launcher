@@ -12,6 +12,7 @@ import {
   Loader,
   Visibility,
 } from 'semantic-ui-react';
+import classNames from 'classnames';
 import styles from './FileLoader.scss';
 import FileRow from './FileRow';
 import DismissibleMessage from './common/DismissibleMessage';
@@ -51,6 +52,7 @@ export default class FileLoader extends Component {
 
     this.state = {
       selections: [],
+      areAllSelected: false,
     };
   }
 
@@ -127,6 +129,7 @@ export default class FileLoader extends Component {
 
     this.setState({
       selections: newSelections,
+      areAllSelected: newSelections.length === this.props.store.files.length,
     });
   };
 
@@ -162,6 +165,7 @@ export default class FileLoader extends Component {
   queueClear = () => {
     this.setState({
       selections: [],
+      areAllSelected: false,
     });
   };
 
@@ -173,7 +177,10 @@ export default class FileLoader extends Component {
   };
 
   selectAll = () => {
-    this.setState({ selections: this.props.store.files });
+    this.setState((prevState) => ({
+      selections: prevState.areAllSelected ? [] : this.props.store.files,
+      areAllSelected: !prevState.areAllSelected,
+    }));
   }
 
   renderGlobalError() {
@@ -339,10 +346,21 @@ export default class FileLoader extends Component {
       return this.renderEmptyLoader();
     }
 
+    const cellStyles = classNames({
+      [styles['select-cell']]: true,
+      [styles['selected']]: this.state.areAllSelected,
+    });
+
+    const selectAllIcon = this.state.areAllSelected ? (
+      <Icon size="big" name="check square outline" onClick={this.selectAll} className={cellStyles} />
+    ) : (
+      <Icon size="big" name="square outline" onClick={this.selectAll} className={cellStyles} />
+    )
+
     // Generate header row
     const headerRow = (
       <Table.Row>
-        <Table.HeaderCell />
+        <Table.HeaderCell>{selectAllIcon}</Table.HeaderCell>
         <Table.HeaderCell>Details</Table.HeaderCell>
         <Table.HeaderCell>Time</Table.HeaderCell>
         <Table.HeaderCell />
@@ -409,14 +427,10 @@ export default class FileLoader extends Component {
   }
 
   renderQueueButtons() {
-    return this.state.selections.length === 0 ? (
-      <div className={styles['queue-buttons']}>
-        <Button onClick={this.selectAll}>
-          <Icon name="plus" />
-          Select all
-        </Button>
-      </div>
-    ) : (
+    if (this.state.selections.length === 0) {
+      return;
+    }
+    return (
       <div className={styles['queue-buttons']}>
         <Button onClick={this.queueFiles}>
           <Icon name="play circle" />
