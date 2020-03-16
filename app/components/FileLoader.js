@@ -22,6 +22,8 @@ import PageWrapper from './PageWrapper';
 import Scroller from './common/Scroller';
 import { MIN_GAME_LENGTH_SECONDS } from '../actions/fileLoader';
 
+import keymap from '../utils/keymap'
+
 const GAME_BATCH_SIZE = 50;
 
 export default class FileLoader extends Component {
@@ -112,7 +114,14 @@ export default class FileLoader extends Component {
     this.refTableScroll = element;
   };
 
-  onSelect = selectedFile => {
+  onSelect = (selectedFile, fileIndex) => {
+    // shift clicking has gmail behavior
+    console.log(keymap.Shift);
+    if (keymap.Shift) {
+      this.handleShiftSelect(selectedFile, fileIndex);
+      return;
+    }
+
     const newSelections = [];
 
     let wasSeen = false;
@@ -127,6 +136,44 @@ export default class FileLoader extends Component {
       newSelections.push(selectedFile);
     }
 
+    this.setState({
+      selections: newSelections,
+      areAllSelected: newSelections.length === this.props.store.files.length,
+    });
+  };
+
+  handleShiftSelect = (selectedFile, fileIndex) => {
+    // Shift clicking on an already selected file removes all consecutive selections on and after it
+    // eslint-disable-next-line react/no-access-state-in-setstate
+    let newSelections = [...this.state.selections];
+    const files = this.props.store.files;
+    if (this.state.selections.indexOf(selectedFile) !== -1) {
+      const startingFileIndex = files.indexOf(selectedFile);
+      let numToRemove = 0;
+      for (let i = startingFileIndex; i < files.length; i++) {
+        if (this.state.selections.indexOf(files[i]) === -1) {
+          break;
+        }
+        numToRemove++;
+      }
+      newSelections.splice(this.state.selections.indexOf(selectedFile), numToRemove);
+      this.setState({
+        selections: newSelections,
+        areAllSelected: newSelections.length === this.props.store.files.length,
+      });
+      return;
+    }
+
+    // Shift clicking on a not selected file selects all files before it up to another already selected file
+    let newFiles = [];
+    for (let i = fileIndex; i >= 0; i--) {
+      if (this.state.selections.indexOf(files[i]) !== -1) {
+        break;
+      }
+      newFiles.push(files[i]);
+    }
+    newFiles = newFiles.reverse();
+    newSelections = [...this.state.selections, ...newFiles];
     this.setState({
       selections: newSelections,
       areAllSelected: newSelections.length === this.props.store.files.length,
@@ -361,8 +408,8 @@ export default class FileLoader extends Component {
     const headerRow = (
       <Table.Row>
         <Table.HeaderCell>{selectAllIcon}</Table.HeaderCell>
-        <Table.HeaderCell>Details</Table.HeaderCell>
-        <Table.HeaderCell>Time</Table.HeaderCell>
+        <Table.HeaderCell className={styles['table-header']}>Details</Table.HeaderCell>
+        <Table.HeaderCell className={styles['table-header']}>Time</Table.HeaderCell>
         <Table.HeaderCell />
       </Table.Row>
     );
