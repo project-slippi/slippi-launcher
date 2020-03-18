@@ -407,9 +407,9 @@ export default class FileLoader extends Component {
     // Generate header row
     const headerRow = (
       <Table.Row>
-        <Table.HeaderCell>{selectAllIcon}</Table.HeaderCell>
-        <Table.HeaderCell className={styles['table-header']}>Details</Table.HeaderCell>
-        <Table.HeaderCell className={styles['table-header']}>Time</Table.HeaderCell>
+        <Table.HeaderCell verticalAlign="bottom">{selectAllIcon}</Table.HeaderCell>
+        <Table.HeaderCell verticalAlign="bottom" className={styles['table-header']}>Details</Table.HeaderCell>
+        <Table.HeaderCell verticalAlign="bottom" className={styles['table-header']}>Time</Table.HeaderCell>
         <Table.HeaderCell />
       </Table.Row>
     );
