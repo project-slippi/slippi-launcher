@@ -5,12 +5,13 @@ import electronSettings from 'electron-settings';
 
 import { displayError } from './error';
 
-const { dialog, getCurrentWindow } = require('electron').remote;
+const { dialog } = require('electron').remote;
 
 export const SELECT_FOLDER = 'SELECT_FOLDER';
 export const SELECT_FILE = 'SELECT_FILE';
 export const ISO_VALIDATION_START = 'ISO_VALIDATION_START';
 export const ISO_VALIDATION_COMPLETE = 'ISO_VALIDATION_COMPLETE';
+export const TOGGLE_RESET_CONFIRM = 'TOGGLE_RESET_CONFIRM';
 
 export function browseFolder(field) {
   return (dispatch) => {
@@ -173,25 +174,18 @@ export function openDolphin() {
   };
 }
 
-// TODO: a better question modal
 export function resetDolphin() {
   return (dispatch, getState) => {
     const dolphinManager = getState().settings.dolphinManager;
-    console.log(dialog);
-    dialog.showMessageBox(
-      getCurrentWindow(),
-      { 
-        type: "question",
-        buttons: ["No", "Yes"],
-        title: "Reset Dolphin?",
-        message: "Are you sure you would like to reset Dolphin? This will update all the settings to the defaults",
-      }, 
-      (ret) => {
-        if (ret) {
-          dolphinManager.resetDolphin();
-          const meleeFile = electronSettings.get('settings.isoPath');
-          dolphinManager.setGamePath(meleeFile)
-        }
-      });
+    dolphinManager.resetDolphin();
+    const meleeFile = electronSettings.get('settings.isoPath');
+    dolphinManager.setGamePath(meleeFile)
+  };
+}
+
+export function toggleResetConfirm(value) {
+  return {
+    type: TOGGLE_RESET_CONFIRM,
+    payload: { show: value },
   };
 }

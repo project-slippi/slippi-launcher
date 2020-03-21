@@ -3,7 +3,7 @@ import semver from 'semver';
 import electronSettings from 'electron-settings';
 
 import { 
-  SELECT_FOLDER, SELECT_FILE, ISO_VALIDATION_START, ISO_VALIDATION_COMPLETE,
+  SELECT_FOLDER, SELECT_FILE, ISO_VALIDATION_START, ISO_VALIDATION_COMPLETE, TOGGLE_RESET_CONFIRM,
 } from '../actions/settings';
 import DolphinManager from '../domain/DolphinManager';
 import { getDolphinPath } from '../utils/settings';
@@ -15,6 +15,7 @@ const defaultState = {
   dolphinManager: new DolphinManager("settings"),
   settings: getStoredSettings(),
   isoValidationState: "unknown",
+  confirmShow: false,
 };
 
 function getAvailableSettings() {
@@ -86,6 +87,8 @@ export default function settings(state = defaultState, action) {
     return isoValidationStart(state, action);
   case ISO_VALIDATION_COMPLETE:
     return isoValidationComplete(state, action);
+  case TOGGLE_RESET_CONFIRM:
+    return toggleConfirmDialog(state, action);
   default:
     return state;
   }
@@ -118,4 +121,11 @@ function isoValidationComplete(state, action) {
     ...state,
     isoValidationState: action.payload.isValid,
   };
+}
+
+function toggleConfirmDialog(state, action) {
+  return {
+    ...state,
+    confirmShow: action.payload.show,
+  }
 }

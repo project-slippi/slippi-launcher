@@ -6,6 +6,7 @@ import {
   Message,
   Header,
   Icon,
+  Confirm,
 } from 'semantic-ui-react';
 import { getDefaultDolphinPath } from '../utils/settings';
 import PageHeader from './common/PageHeader';
@@ -28,6 +29,7 @@ export default class Settings extends Component {
     validateISO: PropTypes.func.isRequired,
     openDolphin: PropTypes.func.isRequired,
     resetDolphin: PropTypes.func.isRequired,
+    toggleResetConfirm: PropTypes.func.isRequired,
 
     // error actions
     dismissError: PropTypes.func.isRequired,
@@ -116,6 +118,9 @@ export default class Settings extends Component {
   }
 
   renderResetDolphin() {
+    const store = this.props.store || {};
+    const confirmShow = _.get(store, 'confirmShow');
+
     return (
       <div>
         <LabelDescription
@@ -132,10 +137,33 @@ export default class Settings extends Component {
           size="medium"
           basic={true}
           inverted={true}
-          onClick={this.props.resetDolphin}
+          onClick={this.showConfirmReset}
+        />
+        <Confirm
+          className={styles['confirm']}
+          open={!!confirmShow}
+          confirmButton="Yes"
+          cancelButton="No"
+          header="Reset Dolphin?"
+          content="Are you sure you would like to reset Dolphin? This will update all the settings to the defaults"
+          onConfirm={this.confirmResetDolphin}
+          onCancel={this.hideConfirmReset}
         />
       </div>
     )
+  }
+
+  showConfirmReset = () => {
+    this.props.toggleResetConfirm(true);
+  }
+
+  confirmResetDolphin = () => {
+    this.props.resetDolphin();
+    this.hideConfirmReset();
+  }
+
+  hideConfirmReset = () => {
+    this.props.toggleResetConfirm(false);
   }
 
   renderISOVersionCheck() {
