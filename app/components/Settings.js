@@ -27,6 +27,7 @@ export default class Settings extends Component {
     browseFile: PropTypes.func.isRequired,
     validateISO: PropTypes.func.isRequired,
     openDolphin: PropTypes.func.isRequired,
+    resetDolphin: PropTypes.func.isRequired,
 
     // error actions
     dismissError: PropTypes.func.isRequired,
@@ -112,6 +113,29 @@ export default class Settings extends Component {
         />
       </div>
     );
+  }
+
+  renderResetDolphin() {
+    return (
+      <div>
+        <LabelDescription
+          label="Reset Playback Dolphin"
+          description="
+            If playback of files fails to work, this button will reset the Playback
+            Dolphin to its original state. If this doesn't fix your issue please head
+            over to our Discord to receive further support
+          "
+        />
+        <Button
+          content="Reset Dolphin"
+          color="green"
+          size="medium"
+          basic={true}
+          inverted={true}
+          onClick={this.props.resetDolphin}
+        />
+      </div>
+    )
   }
 
   renderISOVersionCheck() {
@@ -294,6 +318,7 @@ export default class Settings extends Component {
         <Header inverted={true}>Actions</Header>
         <SpacedGroup direction="vertical" size="lg">
           {this.renderConfigDolphin()}
+          {this.renderResetDolphin()}
         </SpacedGroup>
       </div>
     )
