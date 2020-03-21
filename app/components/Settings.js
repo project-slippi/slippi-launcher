@@ -7,6 +7,7 @@ import {
   Header,
   Icon,
   Confirm,
+  Loader,
 } from 'semantic-ui-react';
 import { getDefaultDolphinPath } from '../utils/settings';
 import PageHeader from './common/PageHeader';
@@ -121,6 +122,11 @@ export default class Settings extends Component {
     const store = this.props.store || {};
     const confirmShow = _.get(store, 'confirmShow');
 
+    const defaultValue = getDefaultDolphinPath();
+    if (defaultValue !== store.settings.playbackDolphinPath) {
+      return;
+    }
+
     return (
       <div>
         <LabelDescription
@@ -158,8 +164,8 @@ export default class Settings extends Component {
   }
 
   confirmResetDolphin = () => {
-    this.props.resetDolphin();
     this.hideConfirmReset();
+    this.props.resetDolphin();
   }
 
   hideConfirmReset = () => {
@@ -341,6 +347,12 @@ export default class Settings extends Component {
   }
 
   renderActions() {
+    const store = this.props.store || {};
+
+    if (store.isResetting) {
+      return this.renderLoadingState();
+    }
+
     return (
       <div className={styles['section']}>
         <Header inverted={true}>Actions</Header>
@@ -350,6 +362,22 @@ export default class Settings extends Component {
         </SpacedGroup>
       </div>
     )
+  }
+
+  renderLoadingState() {
+    const store = this.props.store || {};
+    return (
+      <Loader
+        className={styles['loader']}
+        inverted={true}
+        active={store.isResetting}
+        indeterminate={true}
+        inline="centered"
+        size="medium"
+      >
+        <span>Resetting Dolphin...</span>
+      </Loader>
+    );
   }
 
   renderContent() {

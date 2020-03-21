@@ -12,6 +12,11 @@ export const SELECT_FILE = 'SELECT_FILE';
 export const ISO_VALIDATION_START = 'ISO_VALIDATION_START';
 export const ISO_VALIDATION_COMPLETE = 'ISO_VALIDATION_COMPLETE';
 export const TOGGLE_RESET_CONFIRM = 'TOGGLE_RESET_CONFIRM';
+export const RESETTING_DOLPHIN = 'RESETTING_DOLPHIN'
+
+async function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 export function browseFolder(field) {
   return (dispatch) => {
@@ -175,11 +180,20 @@ export function openDolphin() {
 }
 
 export function resetDolphin() {
-  return (dispatch, getState) => {
+  return async (dispatch, getState) => {
+    dispatch({
+      type: RESETTING_DOLPHIN,
+      payload: { isResetting: true },
+    });
+    await wait(10);
     const dolphinManager = getState().settings.dolphinManager;
     dolphinManager.resetDolphin();
     const meleeFile = electronSettings.get('settings.isoPath');
-    dolphinManager.setGamePath(meleeFile)
+    dolphinManager.setGamePath(meleeFile);
+    dispatch({
+      type: RESETTING_DOLPHIN,
+      payload: { isResetting: false },
+    });
   };
 }
 
