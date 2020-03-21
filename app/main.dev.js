@@ -77,7 +77,7 @@ if (isProd && (platform === "win32" || platform === "darwin")) {
     
     // If path exists, let's move it to app data
     log.info("Copying dolphin path...");
-    const userDataPath = app.getPath("userData")
+    const userDataPath = app.getPath("userData");
     const targetPath = path.join(userDataPath, 'dolphin');
 
     const targetUserPath = path.join(targetPath, "User");

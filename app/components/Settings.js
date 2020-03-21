@@ -121,7 +121,7 @@ export default class Settings extends Component {
         <LabelDescription
           label="Reset Playback Dolphin"
           description="
-            If playback of files fails to work, this button will reset the Playback
+            If replay playback fails to work, this button will reset the Playback
             Dolphin to its original state. If this doesn't fix your issue please head
             over to our Discord to receive further support
           "
