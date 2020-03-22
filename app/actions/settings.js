@@ -194,7 +194,7 @@ export function resetDolphin() {
       dolphinManager.setGamePath(meleeFile);
     } catch(err) {
       log.info("Dolphin could not be reset");
-      log.info(err.message);
+      log.warn(err.message);
       const errorAction = displayError(
         'settings-global',
         `Dolphin could not be reset. ${err.message}`,

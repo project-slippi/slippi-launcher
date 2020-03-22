@@ -147,6 +147,7 @@ export default class Settings extends Component {
           inverted={true}
           onClick={this.showConfirmReset}
           loading={store.isResetting}
+          disabled={store.isResetting}
         />
         <Confirm
           className={styles['confirm']}

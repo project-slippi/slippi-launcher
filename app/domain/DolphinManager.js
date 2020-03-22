@@ -94,6 +94,7 @@ export default class DolphinManager {
       fs.writeFileSync(iniPath, newINI);
     } catch (err) {
       log.warn(`Failed to update the dolphin paths\n${err}`)
+      throw err;
     }
   }
 
