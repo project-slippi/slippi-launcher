@@ -46,6 +46,7 @@ export default class SlpFileWriter {
     this.onFileStateChange = settings.onFileStateChange;
     this.obsSourceName = settings.obsSourceName;
     this.obsIP = settings.obsIP;
+    this.obsPassword = settings.obsPassword;
     this.id = settings.id;
     this.consoleNick = settings.consoleNick;
     this.currentFile = this.getClearedCurrentFile();
