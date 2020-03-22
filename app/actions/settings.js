@@ -1,19 +1,23 @@
 import fs from 'fs-extra';
 import _ from 'lodash';
 import crypto from 'crypto';
-import ini from 'ini';
-import path from 'path';
-import log from 'electron-log';
 import electronSettings from 'electron-settings';
+import log from 'electron-log';
 
 import { displayError } from './error';
 
-const { dialog, app } = require('electron').remote;
+const { dialog } = require('electron').remote;
 
 export const SELECT_FOLDER = 'SELECT_FOLDER';
 export const SELECT_FILE = 'SELECT_FILE';
 export const ISO_VALIDATION_START = 'ISO_VALIDATION_START';
 export const ISO_VALIDATION_COMPLETE = 'ISO_VALIDATION_COMPLETE';
+export const SET_RESET_CONFIRM = 'SET_RESET_CONFIRM';
+export const RESETTING_DOLPHIN = 'RESETTING_DOLPHIN'
+
+async function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 export function browseFolder(field) {
   return (dispatch) => {
@@ -63,35 +67,7 @@ export function browseFile(field) {
     // Maybe this should be done as some kind of callback or something... but this works
     if (field === "isoPath") {
       validateISO()(dispatch, getState);
-      const fileDir = path.dirname(filePath);
-      const platform = process.platform;
-      const isDev = process.env.NODE_ENV === "development";
-      const storedDolphinPath = electronSettings.get('settings.playbackDolphinPath');
-      let dolphinPath = storedDolphinPath || path.join(app.getPath("appData"), "Slippi Desktop App", "dolphin");
-      // Handle the dolphin INI file being in different paths per platform
-      switch (platform) {
-      case "darwin": // osx
-        dolphinPath = isDev ? "./app/dolphin-dev/osx/Dolphin.app/Contents/Resources" : path.join(dolphinPath, "Dolphin.app/Contents/Resources");
-        break;
-      case "win32": // windows
-        dolphinPath = isDev ? "./app/dolphin-dev/windows" : dolphinPath;
-        break;
-      case "linux":
-        break;
-      default:
-        throw new Error("The current platform is not supported");
-      }
-      try {
-        const iniPath = path.join(dolphinPath, "User", "Config", "Dolphin.ini");
-        const dolphinINI = ini.parse(fs.readFileSync(iniPath, 'utf-8'));
-        dolphinINI.General.ISOPath0 = fileDir;
-        const numPaths = dolphinINI.General.ISOPaths;
-        dolphinINI.General.ISOPaths = numPaths !== "0" ? numPaths : "1";
-        const newINI = ini.encode(dolphinINI);
-        fs.writeFileSync(iniPath, newINI);
-      } catch (err) {
-        log.warn(`Failed to update the dolphin paths\n${err}`)
-      }
+      getState().dolphinManager.setGamePath(filePath)
     }
   };
 }
@@ -201,5 +177,41 @@ export function openDolphin() {
 
       dispatch(errorAction);
     });
+  };
+}
+
+export function resetDolphin() {
+  return async (dispatch, getState) => {
+    dispatch({
+      type: RESETTING_DOLPHIN,
+      payload: { isResetting: true },
+    });
+    await wait(10);
+    try {
+      const dolphinManager = getState().settings.dolphinManager;
+      dolphinManager.resetDolphin();
+      const meleeFile = electronSettings.get('settings.isoPath');
+      dolphinManager.setGamePath(meleeFile);
+    } catch(err) {
+      log.info("Dolphin could not be reset");
+      log.warn(err.message);
+      const errorAction = displayError(
+        'settings-global',
+        `Dolphin could not be reset. ${err.message}`,
+      );
+  
+      dispatch(errorAction);
+    }
+    dispatch({
+      type: RESETTING_DOLPHIN,
+      payload: { isResetting: false },
+    });
+  };
+}
+
+export function setResetConfirm(value) {
+  return {
+    type: SET_RESET_CONFIRM,
+    payload: { show: value },
   };
 }

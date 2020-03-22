@@ -6,10 +6,12 @@ import os from 'os';
 import crypto from 'crypto';
 import retry from 'async-retry';
 import log from 'electron-log';
+import ini from 'ini';
+import electronSettings from 'electron-settings';
 
 import { getDolphinPath } from '../utils/settings';
 
-const electronSettings = require('electron-settings');
+const { app } = require('electron').remote;
 
 export default class DolphinManager {
   constructor(key, settings = {}) {
@@ -49,6 +51,51 @@ export default class DolphinManager {
 
   async configureDolphin() {
     await this.runDolphin(false);
+  }
+
+  resetDolphin() {
+    const appPath = app.getAppPath();
+    const originalDolphinPath = path.join(appPath, "../app.asar.unpacked/app/dolphin");
+    log.info("Resetting dolphin");
+    const userDataPath = app.getPath("userData");
+    const targetPath = path.join(userDataPath, 'dolphin');
+    log.info("Overwriting dolphin");
+    fs.removeSync(targetPath);
+    fs.copySync(originalDolphinPath, targetPath);
+    log.info("Dolphin was reset");
+  }
+
+  setGamePath(filePath) {
+    const fileDir = path.dirname(filePath);
+    const platform = process.platform;
+    const isDev = process.env.NODE_ENV === "development";
+    const storedDolphinPath = electronSettings.get('settings.playbackDolphinPath');
+    let dolphinPath = storedDolphinPath || path.join(app.getPath("appData"), "Slippi Desktop App", "dolphin");
+    // Handle the dolphin INI file being in different paths per platform
+    switch (platform) {
+    case "darwin": // osx
+      dolphinPath = isDev ? "./app/dolphin-dev/osx/Dolphin.app/Contents/Resources" : path.join(dolphinPath, "Dolphin.app/Contents/Resources");
+      break;
+    case "win32": // windows
+      dolphinPath = isDev ? "./app/dolphin-dev/windows" : dolphinPath;
+      break;
+    case "linux":
+      break;
+    default:
+      throw new Error("The current platform is not supported");
+    }
+    try {
+      const iniPath = path.join(dolphinPath, "User", "Config", "Dolphin.ini");
+      const dolphinINI = ini.parse(fs.readFileSync(iniPath, 'utf-8'));
+      dolphinINI.General.ISOPath0 = fileDir;
+      const numPaths = dolphinINI.General.ISOPaths;
+      dolphinINI.General.ISOPaths = numPaths !== "0" ? numPaths : "1";
+      const newINI = ini.encode(dolphinINI);
+      fs.writeFileSync(iniPath, newINI);
+    } catch (err) {
+      log.warn(`Failed to update the dolphin paths\n${err}`)
+      throw err;
+    }
   }
 
   async startPlayback() {

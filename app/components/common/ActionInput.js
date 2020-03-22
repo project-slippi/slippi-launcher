@@ -11,6 +11,7 @@ export default class ActionInput extends Component {
     label: PropTypes.string,
     description: PropTypes.node,
     error: PropTypes.bool,
+    disabled: PropTypes.bool,
     value: PropTypes.string.isRequired,
     defaultValue: PropTypes.string,
     useFormInput: PropTypes.bool,
@@ -23,6 +24,7 @@ export default class ActionInput extends Component {
     name: undefined,
     label: null,
     error: false,
+    disabled: false,
     useFormInput: false,
     defaultValue: undefined,
     description: "Description",
@@ -42,7 +44,7 @@ export default class ActionInput extends Component {
 
   render() {
     const actionButton = (
-      <Button icon="upload" color="blue" onClick={this.clickHandler} />
+      <Button icon="upload" color="blue" onClick={this.clickHandler} disabled={this.props.disabled} />
     );
 
     const innerInput = (

@@ -6,6 +6,7 @@ import {
   Message,
   Header,
   Icon,
+  Confirm,
 } from 'semantic-ui-react';
 import { getDefaultDolphinPath } from '../utils/settings';
 import PageHeader from './common/PageHeader';
@@ -27,6 +28,8 @@ export default class Settings extends Component {
     browseFile: PropTypes.func.isRequired,
     validateISO: PropTypes.func.isRequired,
     openDolphin: PropTypes.func.isRequired,
+    resetDolphin: PropTypes.func.isRequired,
+    setResetConfirm: PropTypes.func.isRequired,
 
     // error actions
     dismissError: PropTypes.func.isRequired,
@@ -92,6 +95,8 @@ export default class Settings extends Component {
   }
 
   renderConfigDolphin() {
+    const store = this.props.store || {};
+
     return (
       <div>
         <LabelDescription
@@ -109,9 +114,66 @@ export default class Settings extends Component {
           basic={true}
           inverted={true}
           onClick={this.props.openDolphin}
+          disabled={store.isResetting}
         />
       </div>
     );
+  }
+
+  renderResetDolphin() {
+    const store = this.props.store || {};
+    const confirmShow = _.get(store, 'confirmShow');
+
+    const defaultValue = getDefaultDolphinPath();
+    if (defaultValue !== store.settings.playbackDolphinPath) {
+      return;
+    }
+
+    return (
+      <div>
+        <LabelDescription
+          label="Reset Playback Dolphin"
+          description="
+            If replay playback fails to work, this button will reset the Playback
+            Dolphin to its original state. If this doesn't fix your issue please head
+            over to our Discord to receive further support
+          "
+        />
+        <Button
+          content="Reset Dolphin"
+          color="green"
+          size="medium"
+          basic={true}
+          inverted={true}
+          onClick={this.showConfirmReset}
+          loading={store.isResetting}
+          disabled={store.isResetting}
+        />
+        <Confirm
+          className={styles['confirm']}
+          open={!!confirmShow}
+          confirmButton="Yes"
+          cancelButton="No"
+          header="Reset Dolphin?"
+          content="Are you sure you would like to reset Dolphin? This will return all the settings to the defaults"
+          onConfirm={this.confirmResetDolphin}
+          onCancel={this.hideConfirmReset}
+        />
+      </div>
+    )
+  }
+
+  showConfirmReset = () => {
+    this.props.setResetConfirm(true);
+  }
+
+  confirmResetDolphin = () => {
+    this.hideConfirmReset();
+    this.props.resetDolphin();
+  }
+
+  hideConfirmReset = () => {
+    this.props.setResetConfirm(false);
   }
 
   renderISOVersionCheck() {
@@ -168,6 +230,7 @@ export default class Settings extends Component {
           error={isoValidationState === "fail"}
           onClick={this.props.browseFile}
           handlerParams={['isoPath']}
+          disabled={store.isResetting}
         />
         {this.renderISOVersionCheck()}
       </div>,
@@ -281,6 +344,7 @@ export default class Settings extends Component {
             value={store.settings.playbackDolphinPath}
             onClick={this.props.browseFolder}
             handlerParams={[fieldName]}
+            disabled={store.isResetting}
           />
           {resetButton}
         </SpacedGroup>
@@ -294,6 +358,7 @@ export default class Settings extends Component {
         <Header inverted={true}>Actions</Header>
         <SpacedGroup direction="vertical" size="lg">
           {this.renderConfigDolphin()}
+          {this.renderResetDolphin()}
         </SpacedGroup>
       </div>
     )
