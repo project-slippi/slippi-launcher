@@ -29,7 +29,7 @@ export default class Settings extends Component {
     validateISO: PropTypes.func.isRequired,
     openDolphin: PropTypes.func.isRequired,
     resetDolphin: PropTypes.func.isRequired,
-    toggleResetConfirm: PropTypes.func.isRequired,
+    setResetConfirm: PropTypes.func.isRequired,
 
     // error actions
     dismissError: PropTypes.func.isRequired,
@@ -154,7 +154,7 @@ export default class Settings extends Component {
           confirmButton="Yes"
           cancelButton="No"
           header="Reset Dolphin?"
-          content="Are you sure you would like to reset Dolphin? This will update all the settings to the defaults"
+          content="Are you sure you would like to reset Dolphin? This will return all the settings to the defaults"
           onConfirm={this.confirmResetDolphin}
           onCancel={this.hideConfirmReset}
         />
@@ -163,7 +163,7 @@ export default class Settings extends Component {
   }
 
   showConfirmReset = () => {
-    this.props.toggleResetConfirm(true);
+    this.props.setResetConfirm(true);
   }
 
   confirmResetDolphin = () => {
@@ -172,7 +172,7 @@ export default class Settings extends Component {
   }
 
   hideConfirmReset = () => {
-    this.props.toggleResetConfirm(false);
+    this.props.setResetConfirm(false);
   }
 
   renderISOVersionCheck() {

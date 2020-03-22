@@ -3,7 +3,7 @@ import semver from 'semver';
 import electronSettings from 'electron-settings';
 
 import { 
-  SELECT_FOLDER, SELECT_FILE, ISO_VALIDATION_START, ISO_VALIDATION_COMPLETE, TOGGLE_RESET_CONFIRM, RESETTING_DOLPHIN,
+  SELECT_FOLDER, SELECT_FILE, ISO_VALIDATION_START, ISO_VALIDATION_COMPLETE, SET_RESET_CONFIRM, RESETTING_DOLPHIN,
 } from '../actions/settings';
 import DolphinManager from '../domain/DolphinManager';
 import { getDolphinPath } from '../utils/settings';
@@ -88,10 +88,10 @@ export default function settings(state = defaultState, action) {
     return isoValidationStart(state, action);
   case ISO_VALIDATION_COMPLETE:
     return isoValidationComplete(state, action);
-  case TOGGLE_RESET_CONFIRM:
-    return toggleConfirmDialog(state, action);
+  case SET_RESET_CONFIRM:
+    return setConfirmDialog(state, action);
   case RESETTING_DOLPHIN:
-    return toggleResetLoader(state, action);
+    return setResetLoader(state, action);
   default:
     return state;
   }
@@ -126,14 +126,14 @@ function isoValidationComplete(state, action) {
   };
 }
 
-function toggleConfirmDialog(state, action) {
+function setConfirmDialog(state, action) {
   return {
     ...state,
     confirmShow: action.payload.show,
   }
 }
 
-function toggleResetLoader(state, action) {
+function setResetLoader(state, action) {
   return {
     ...state,
     isResetting: action.payload.isResetting,

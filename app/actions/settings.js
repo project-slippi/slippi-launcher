@@ -2,6 +2,7 @@ import fs from 'fs-extra';
 import _ from 'lodash';
 import crypto from 'crypto';
 import electronSettings from 'electron-settings';
+import log from 'electron-log';
 
 import { displayError } from './error';
 
@@ -11,7 +12,7 @@ export const SELECT_FOLDER = 'SELECT_FOLDER';
 export const SELECT_FILE = 'SELECT_FILE';
 export const ISO_VALIDATION_START = 'ISO_VALIDATION_START';
 export const ISO_VALIDATION_COMPLETE = 'ISO_VALIDATION_COMPLETE';
-export const TOGGLE_RESET_CONFIRM = 'TOGGLE_RESET_CONFIRM';
+export const SET_RESET_CONFIRM = 'SET_RESET_CONFIRM';
 export const RESETTING_DOLPHIN = 'RESETTING_DOLPHIN'
 
 async function wait(ms) {
@@ -186,17 +187,19 @@ export function resetDolphin() {
       payload: { isResetting: true },
     });
     await wait(10);
-    const dolphinManager = getState().settings.dolphinManager;
-    const resetMsg = dolphinManager.resetDolphin();
-    if (resetMsg === "success") {
+    try {
+      const dolphinManager = getState().settings.dolphinManager;
+      dolphinManager.resetDolphin();
       const meleeFile = electronSettings.get('settings.isoPath');
       dolphinManager.setGamePath(meleeFile);
-    } else {
+    } catch(err) {
+      log.info("Dolphin could not be reset");
+      log.info(err.message);
       const errorAction = displayError(
         'settings-global',
-        `Dolphin could not be reset. ${resetMsg}`,
+        `Dolphin could not be reset. ${err.message}`,
       );
-
+  
       dispatch(errorAction);
     }
     dispatch({
@@ -206,9 +209,9 @@ export function resetDolphin() {
   };
 }
 
-export function toggleResetConfirm(value) {
+export function setResetConfirm(value) {
   return {
-    type: TOGGLE_RESET_CONFIRM,
+    type: SET_RESET_CONFIRM,
     payload: { show: value },
   };
 }

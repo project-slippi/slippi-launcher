@@ -60,16 +60,9 @@ export default class DolphinManager {
     const userDataPath = app.getPath("userData");
     const targetPath = path.join(userDataPath, 'dolphin');
     log.info("Overwriting dolphin");
-    try {
-      fs.removeSync(targetPath);
-      fs.copySync(originalDolphinPath, targetPath);
-      log.info("Dolphin was reset");
-      return "success";
-    } catch(err) {
-      log.info("Dolphin could not be reset");
-      log.info(err.message);
-      return err.message;
-    }
+    fs.removeSync(targetPath);
+    fs.copySync(originalDolphinPath, targetPath);
+    log.info("Dolphin was reset");
   }
 
   setGamePath(filePath) {
