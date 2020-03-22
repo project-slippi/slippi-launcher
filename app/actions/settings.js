@@ -187,9 +187,18 @@ export function resetDolphin() {
     });
     await wait(10);
     const dolphinManager = getState().settings.dolphinManager;
-    dolphinManager.resetDolphin();
-    const meleeFile = electronSettings.get('settings.isoPath');
-    dolphinManager.setGamePath(meleeFile);
+    const resetMsg = dolphinManager.resetDolphin();
+    if (resetMsg === "success") {
+      const meleeFile = electronSettings.get('settings.isoPath');
+      dolphinManager.setGamePath(meleeFile);
+    } else {
+      const errorAction = displayError(
+        'settings-global',
+        `Dolphin could not be reset. ${resetMsg}`,
+      );
+
+      dispatch(errorAction);
+    }
     dispatch({
       type: RESETTING_DOLPHIN,
       payload: { isResetting: false },
