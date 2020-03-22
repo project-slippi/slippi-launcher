@@ -7,7 +7,6 @@ import {
   Header,
   Icon,
   Confirm,
-  Loader,
 } from 'semantic-ui-react';
 import { getDefaultDolphinPath } from '../utils/settings';
 import PageHeader from './common/PageHeader';
@@ -96,6 +95,8 @@ export default class Settings extends Component {
   }
 
   renderConfigDolphin() {
+    const store = this.props.store || {};
+
     return (
       <div>
         <LabelDescription
@@ -113,6 +114,7 @@ export default class Settings extends Component {
           basic={true}
           inverted={true}
           onClick={this.props.openDolphin}
+          disabled={store.isResetting}
         />
       </div>
     );
@@ -144,6 +146,7 @@ export default class Settings extends Component {
           basic={true}
           inverted={true}
           onClick={this.showConfirmReset}
+          loading={store.isResetting}
         />
         <Confirm
           className={styles['confirm']}
@@ -226,6 +229,7 @@ export default class Settings extends Component {
           error={isoValidationState === "fail"}
           onClick={this.props.browseFile}
           handlerParams={['isoPath']}
+          disabled={store.isResetting}
         />
         {this.renderISOVersionCheck()}
       </div>,
@@ -339,6 +343,7 @@ export default class Settings extends Component {
             value={store.settings.playbackDolphinPath}
             onClick={this.props.browseFolder}
             handlerParams={[fieldName]}
+            disabled={store.isResetting}
           />
           {resetButton}
         </SpacedGroup>
@@ -347,12 +352,6 @@ export default class Settings extends Component {
   }
 
   renderActions() {
-    const store = this.props.store || {};
-
-    if (store.isResetting) {
-      return this.renderLoadingState();
-    }
-
     return (
       <div className={styles['section']}>
         <Header inverted={true}>Actions</Header>
@@ -362,22 +361,6 @@ export default class Settings extends Component {
         </SpacedGroup>
       </div>
     )
-  }
-
-  renderLoadingState() {
-    const store = this.props.store || {};
-    return (
-      <Loader
-        className={styles['loader']}
-        inverted={true}
-        active={store.isResetting}
-        indeterminate={true}
-        inline="centered"
-        size="medium"
-      >
-        <span>Resetting Dolphin...</span>
-      </Loader>
-    );
   }
 
   renderContent() {
