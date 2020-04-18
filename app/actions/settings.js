@@ -143,6 +143,7 @@ export function validateISO() {
       "fe23c91b63b0731ef727c13253b6a8c6757432ac": "fail", // NTSC-J 1.00
       "f7ff7664b231042f2c0802041736fb9396a94b83": "fail", // NTSC-J 1.01
       "c7c0866fbe6d7ebf3b9c4236f4f32f4c8f65b578": "fail", // Taikenban (demo)
+      "6e83240872d47cd080a28dea7b8907140c44bef5": "fail", // Unknown
     };
 
     input.on('readable', () => {
