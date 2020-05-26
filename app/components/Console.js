@@ -554,7 +554,8 @@ export default class Console extends Component {
 
   renderAvailable = (info) => {
     const defaultSettings = {
-      'ipAddress': info.ip,
+      ipAddress: info.ip,
+      isRealTimeMode: true,
     };
 
     return (
