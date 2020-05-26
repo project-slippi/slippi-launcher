@@ -71,7 +71,7 @@ export default class ConsoleCommunication {
     return toReturn;
   }
 
-  genHandshakeOut(cursor, clientToken, isRealtime) {
+  genHandshakeOut(cursor, clientToken, isRealtime=false) {
     const clientTokenBuf = Buffer.from([0, 0, 0, 0]);
     clientTokenBuf.writeUInt32BE(clientToken, 0);
 
