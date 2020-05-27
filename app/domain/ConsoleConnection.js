@@ -71,8 +71,8 @@ export default class ConsoleConnection {
     this.dolphinManager = new DolphinManager(`mirror-${this.id}`, { mode: 'mirror' });
 
     // Initialize SlpFileWriter for writting files
-    const slpSettings = {targetFolder: this.targetFolder, 
-      onFileStateChange: this.fileStateChangeHandler, 
+    const slpSettings = {targetFolder: this.targetFolder,
+      onFileStateChange: this.fileStateChangeHandler,
       obsIP: this.obsIP, obsSourceName: this.obsSourceName,
       obsPassword: this.obsPassword, id: this.id,
       isRelaying: this.isRelaying,
@@ -83,15 +83,15 @@ export default class ConsoleConnection {
   forceConsoleUiUpdate() {
     store.dispatch(connectionStateChanged());
   }
-  
+
   fileStateChangeHandler = () => {
     this.forceConsoleUiUpdate();
   }
 
   getDefaultConnDetails() {
     return {
-      gameDataCursor: Uint8Array.from([0, 0, 0, 0, 0, 0, 0, 0]), 
-      consoleNick: "unknown", 
+      gameDataCursor: Uint8Array.from([0, 0, 0, 0, 0, 0, 0, 0]),
+      consoleNick: "unknown",
       version: "",
       clientToken: 0,
     };
@@ -178,7 +178,7 @@ export default class ConsoleConnection {
           log.info(`Connected to source with type: ${commState}`);
           log.info(data.toString("hex"));
         }
-        
+
         if (commState === "legacy") {
           // If the first message received was not a handshake message, either we
           // connected to an old Nintendont version or a relay instance
@@ -195,10 +195,10 @@ export default class ConsoleConnection {
             rcvData: data,
           });
           client.destroy();
-          
+
           return;
         }
-        
+
         const messages = consoleComms.getMessages();
 
         // Process all of the received messages
@@ -288,7 +288,7 @@ export default class ConsoleConnection {
       connection.reconnect = false; // eslint-disable-line
       connection.disconnect();
     });
-    
+
     this.clientsByPort.forEach((client) => {
       client.destroy();
     });
@@ -302,13 +302,15 @@ export default class ConsoleConnection {
       return "legacy";
     }
 
-    const openingBytes = Buffer.from([
-      0x7b, 0x69, 0x04, 0x74, 0x79, 0x70, 0x65, 0x55, 0x01,
+    // was originally [0x7b, 0x69, 0x04, 0x74, 0x79, 0x70, 0x65, 0x55, 0x01]
+    const typeBytes = Buffer.from([
+      0x74, 0x79, 0x70, 0x65, 0x55, 0x01,
     ]);
 
-    const dataStart = data.slice(4, 13);
-    
-    return dataStart.equals(openingBytes) ? "normal" : "legacy";
+    // i don't really like this, but I can't find
+    // a built in method to check if an ordered set of
+    // values exists within an array
+    return (Buffer.from(data).toString()).indexOf(typeBytes.toString()) > -1 ? "normal" : "legacy";
   }
 
   processMessage(message) {
@@ -322,7 +324,7 @@ export default class ConsoleConnection {
       // TODO: active Wii connection for the relay connection to keep itself alive
       const fakeKeepAlive = Buffer.from("HELO\0");
       this.slpFileWriter.handleData(fakeKeepAlive);
-      
+
       break;
     case commMsgTypes.REPLAY:
       // console.log("Replay message type received");
