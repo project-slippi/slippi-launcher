@@ -1,5 +1,5 @@
 import {
-  LOAD_ROOT_FOLDER, CHANGE_FOLDER_SELECTION, LOAD_FILES_IN_FOLDER, STORE_SCROLL_POSITION, SET_STATS_GAME_PAGE,
+  LOAD_ROOT_FOLDER, CHANGE_FOLDER_SELECTION, LOAD_FILES_IN_FOLDER, STORE_SCROLL_POSITION, SET_STATS_GAME_PAGE, STORE_FILE_LOAD_STATE,
 } from '../actions/fileLoader';
 import DolphinManager from '../domain/DolphinManager';
 
@@ -34,6 +34,8 @@ export default function fileLoader(state = defaultState, action) {
     return loadFilesInFolder(state, action);
   case STORE_SCROLL_POSITION:
     return storeScrollPosition(state, action);
+  case STORE_FILE_LOAD_STATE:
+    return storeFileLoadState(state, action);
   case SET_STATS_GAME_PAGE:
     return setStatsGamePage(state, action);
   default:
@@ -119,6 +121,13 @@ function storeScrollPosition(state, action) {
   return {
     ...state,
     scrollPosition: action.payload.position,
+  };
+}
+
+function storeFileLoadState(state, action) {
+  return {
+    ...state,
+    fileLoadState: action.payload.fileLoadState,
   };
 }
 

@@ -10,6 +10,7 @@ import {
   Segment,
   Message,
   Loader,
+  Visibility,
 } from 'semantic-ui-react';
 import styles from './FileLoader.scss';
 import FileRow from './FileRow';
@@ -27,6 +28,7 @@ export default class FileLoader extends Component {
     playFile: PropTypes.func.isRequired,
     queueFiles: PropTypes.func.isRequired,
     storeScrollPosition: PropTypes.func.isRequired,
+    storeFileLoadState: PropTypes.func.isRequired,
     setStatsGamePage: PropTypes.func.isRequired,
 
     // error actions
@@ -41,8 +43,14 @@ export default class FileLoader extends Component {
 
   constructor(props) {
     super(props);
+
+    const filesToRender = _.get(this.props.store, ['fileLoadState', 'filesToRender']) || [];
+    const filesOffset = _.get(this.props.store, ['fileLoadState', 'filesOffset']) || 0;
+
     this.state = {
       selections: [],
+      filesToRender: filesToRender,
+      filesOffset: filesOffset,
     };
   }
 
@@ -64,6 +72,11 @@ export default class FileLoader extends Component {
     this.props.storeScrollPosition({
       x: this.refTableScroll.scrollLeft,
       y: this.refTableScroll.scrollTop,
+    });
+
+    this.props.storeFileLoadState({
+      filesToRender: this.state.filesToRender,
+      filesOffset: this.state.filesOffset,
     });
 
     this.props.dismissError('fileLoader-global');
@@ -264,14 +277,17 @@ export default class FileLoader extends Component {
 
   renderFileSelection() {
     const store = this.props.store || {};
-    const files = store.files || [];
+    const allFiles = store.files || [];
+
+    const filesToRender = this.state.filesToRender || [];
+    const filesOffset = this.state.filesOffset || 0;
 
     if (store.isLoading) {
       return this.renderLoadingState();
     }
 
     // If we have no files to display, render an empty state
-    if (!files.length) {
+    if (!allFiles.length) {
       return this.renderEmptyLoader();
     }
 
@@ -287,7 +303,7 @@ export default class FileLoader extends Component {
 
     // Generate a row for every file in selected folder
     let fileIndex = 0;
-    const rows = files.map(
+    const rows = filesToRender.map(
       file => (
         <FileRow
           key={file.fullPath}
@@ -302,6 +318,28 @@ export default class FileLoader extends Component {
       this
     );
 
+    const bufferMoreFiles = () => {
+      const fileBufferSize = 10;
+
+      const start = filesOffset;
+      const end = Math.min(start + fileBufferSize, allFiles.length);
+
+      if (start < allFiles.length)
+      {
+        const nextFilesToRender = allFiles.slice(start, end);
+        this.setState({
+          filesToRender: filesToRender.concat(nextFilesToRender),
+          filesOffset: end+1,
+        });
+      }
+    }
+
+    const loadMoreRow = (
+      <Table.Row>
+        <Visibility updateOn='repaint' as="td" once={false} onTopVisible={bufferMoreFiles} />
+      </Table.Row>
+    );
+
     return (
       <Table
         className={styles['file-table']}
@@ -311,7 +349,10 @@ export default class FileLoader extends Component {
         selectable={true}
       >
         <Table.Header>{headerRow}</Table.Header>
-        <Table.Body>{rows}</Table.Body>
+        <Table.Body>
+          {rows}
+          {loadMoreRow}
+        </Table.Body>
       </Table>
     );
   }
