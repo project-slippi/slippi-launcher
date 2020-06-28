@@ -11,6 +11,7 @@ import {
   Modal,
   Message,
   Loader,
+  Label,
 } from 'semantic-ui-react';
 import { stages as stageUtils } from 'slp-parser-js';
 
@@ -154,11 +155,26 @@ export default class GameProfile extends Component {
       'horizontal-spaced-group-left-sm': !isFirstPlayer,
     });
 
+    const labelClasses = classNames({
+      [styles['player-code-display']]: true,
+      [styles['second']]: !isFirstPlayer,
+      'horizontal-spaced-group-right-sm': isFirstPlayer,
+      'horizontal-spaced-group-left-sm': !isFirstPlayer,
+    })
+
     const game = this.props.store.game;
     const playerNamesByIndex = playerUtils.getPlayerNamesByIndex(game);
+    const playerCodesByIndex = playerUtils.getPlayerCodesByIndex(game);
+
+    const playerCode = playerCodesByIndex[player.playerIndex];
 
     return (
       <Segment className={segmentClasses} textAlign="center" basic={true}>
+        {playerCode ? (
+          <Label size="mini" className={labelClasses}>
+            {playerCode}
+          </Label>
+        ) : null }
         <Header inverted={true} textAlign="center" as="h2">
           {playerNamesByIndex[player.playerIndex]}
         </Header>
