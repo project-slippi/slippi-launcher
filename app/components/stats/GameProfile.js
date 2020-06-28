@@ -171,7 +171,7 @@ export default class GameProfile extends Component {
     return (
       <Segment className={segmentClasses} textAlign="center" basic={true}>
         {playerCode ? (
-          <Label size="mini" className={labelClasses}>
+          <Label size="large" className={labelClasses}>
             {playerCode}
           </Label>
         ) : null }
