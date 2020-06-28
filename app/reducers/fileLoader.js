@@ -114,6 +114,7 @@ function loadFilesInFolder(state, action) {
     files: action.payload.files,
     folders: folders,
     numFilteredFiles: action.payload.numFilteredFiles,
+    fileLoadState: {},
   };
 }
 
