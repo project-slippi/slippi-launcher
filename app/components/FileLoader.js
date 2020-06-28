@@ -20,6 +20,8 @@ import FolderBrowser from './common/FolderBrowser';
 import PageWrapper from './PageWrapper';
 import Scroller from './common/Scroller';
 
+const GAME_BATCH_SIZE = 10;
+
 export default class FileLoader extends Component {
   static propTypes = {
     // fileLoader actions
@@ -319,17 +321,15 @@ export default class FileLoader extends Component {
     );
 
     const bufferMoreFiles = () => {
-      const fileBufferSize = 10;
-
       const start = filesOffset;
-      const end = Math.min(start + fileBufferSize, allFiles.length);
+      const end = Math.min(start + GAME_BATCH_SIZE, allFiles.length);
 
       if (start < allFiles.length)
       {
         const nextFilesToRender = allFiles.slice(start, end);
         this.setState({
           filesToRender: filesToRender.concat(nextFilesToRender),
-          filesOffset: end+1,
+          filesOffset: end,
         });
       }
     }
