@@ -10,6 +10,7 @@ import {
   Segment,
   Message,
   Loader,
+  Visibility,
 } from 'semantic-ui-react';
 import styles from './FileLoader.scss';
 import FileRow from './FileRow';
@@ -19,6 +20,8 @@ import FolderBrowser from './common/FolderBrowser';
 import PageWrapper from './PageWrapper';
 import Scroller from './common/Scroller';
 
+const GAME_BATCH_SIZE = 100;
+
 export default class FileLoader extends Component {
   static propTypes = {
     // fileLoader actions
@@ -27,6 +30,7 @@ export default class FileLoader extends Component {
     playFile: PropTypes.func.isRequired,
     queueFiles: PropTypes.func.isRequired,
     storeScrollPosition: PropTypes.func.isRequired,
+    storeFileLoadState: PropTypes.func.isRequired,
     setStatsGamePage: PropTypes.func.isRequired,
 
     // error actions
@@ -41,8 +45,17 @@ export default class FileLoader extends Component {
 
   constructor(props) {
     super(props);
+
+    const filesToRender =
+      _.get(this.props.store, ['fileLoadState', 'filesToRender']) || [];
+    const filesOffset =
+      _.get(this.props.store, ['fileLoadState', 'filesOffset']) || 0;
+
     this.state = {
       selections: [],
+      filesToRender: filesToRender,
+      filesOffset: filesOffset,
+      firstLoad: true,
     };
   }
 
@@ -52,7 +65,7 @@ export default class FileLoader extends Component {
 
     this.refTableScroll.scrollTo(xPos, yPos);
 
-    if (this.props.history.action === "PUSH") {
+    if (this.props.history.action === 'PUSH') {
       // I don't really like this but when returning back to the file loader, the action is "POP"
       // instead of "PUSH", and we don't want to trigger the loader and ruin our ability to restore
       // scroll position when returning to fileLoader from a game
@@ -66,6 +79,11 @@ export default class FileLoader extends Component {
       y: this.refTableScroll.scrollTop,
     });
 
+    this.props.storeFileLoadState({
+      filesToRender: this.state.filesToRender,
+      filesOffset: this.state.filesOffset,
+    });
+
     this.props.dismissError('fileLoader-global');
   }
 
@@ -75,7 +93,7 @@ export default class FileLoader extends Component {
     this.refTableScroll = element;
   };
 
-  onSelect = (selectedFile) => {
+  onSelect = selectedFile => {
     const newSelections = [];
 
     let wasSeen = false;
@@ -93,7 +111,7 @@ export default class FileLoader extends Component {
     this.setState({
       selections: newSelections,
     });
-  }
+  };
 
   renderSidebar() {
     const store = this.props.store || {};
@@ -128,14 +146,14 @@ export default class FileLoader extends Component {
     this.setState({
       selections: [],
     });
-  }
+  };
 
   queueFiles = () => {
     this.props.queueFiles(this.state.selections);
     this.setState({
       selections: [],
     });
-  }
+  };
 
   renderGlobalError() {
     const errors = this.props.errors || {};
@@ -264,14 +282,17 @@ export default class FileLoader extends Component {
 
   renderFileSelection() {
     const store = this.props.store || {};
-    const files = store.files || [];
+    const allFiles = store.files || [];
+
+    const filesToRender = this.state.filesToRender || [];
+    const filesOffset = this.state.filesOffset || 0;
 
     if (store.isLoading) {
       return this.renderLoadingState();
     }
 
     // If we have no files to display, render an empty state
-    if (!files.length) {
+    if (!allFiles.length) {
       return this.renderEmptyLoader();
     }
 
@@ -287,7 +308,7 @@ export default class FileLoader extends Component {
 
     // Generate a row for every file in selected folder
     let fileIndex = 0;
-    const rows = files.map(
+    const rows = filesToRender.map(
       file => (
         <FileRow
           key={file.fullPath}
@@ -302,6 +323,30 @@ export default class FileLoader extends Component {
       this
     );
 
+    const bufferMoreFiles = (e, { calculations }) => {
+      const start = filesOffset;
+      const end = Math.min(start + GAME_BATCH_SIZE, allFiles.length);
+      console.log(calculations.percentagePassed);
+
+      if (this.state.firstLoad) {
+        const nextFilesToRender = allFiles.slice(start, end);
+        this.setState({
+          filesToRender: filesToRender.concat(nextFilesToRender),
+          filesOffset: end,
+          firstLoad: false,
+        });
+      } else if (
+        start < allFiles.length &&
+        calculations.percentagePassed > 0.5
+      ) {
+        const nextFilesToRender = allFiles.slice(start, end);
+        this.setState({
+          filesToRender: filesToRender.concat(nextFilesToRender),
+          filesOffset: end,
+        });
+      }
+    };
+
     return (
       <Table
         className={styles['file-table']}
@@ -311,7 +356,9 @@ export default class FileLoader extends Component {
         selectable={true}
       >
         <Table.Header>{headerRow}</Table.Header>
-        <Table.Body>{rows}</Table.Body>
+        <Visibility updateOn="repaint" as="tbody" onUpdate={bufferMoreFiles}>
+          {rows}
+        </Visibility>
       </Table>
     );
   }
@@ -324,11 +371,11 @@ export default class FileLoader extends Component {
       <div className={styles['queue-buttons']}>
         <Button onClick={this.queueFiles}>
           <Icon name="play circle" />
-            Play all
+          Play all
         </Button>
         <Button onClick={this.queueClear}>
           <Icon name="dont" />
-            Clear
+          Clear
         </Button>
       </div>
     );
@@ -344,7 +391,10 @@ export default class FileLoader extends Component {
           text="Replay Browser"
           history={this.props.history}
         />
-        <Scroller ref={this.setTableScrollRef} topOffset={this.props.topNotifOffset}>
+        <Scroller
+          ref={this.setTableScrollRef}
+          topOffset={this.props.topNotifOffset}
+        >
           {this.renderGlobalError()}
           {this.renderFilteredFilesNotif()}
           {this.renderFileSelection()}
