@@ -20,7 +20,7 @@ import FolderBrowser from './common/FolderBrowser';
 import PageWrapper from './PageWrapper';
 import Scroller from './common/Scroller';
 
-const GAME_BATCH_SIZE = 100;
+const GAME_BATCH_SIZE = 50;
 
 export default class FileLoader extends Component {
   static propTypes = {
@@ -46,10 +46,8 @@ export default class FileLoader extends Component {
   constructor(props) {
     super(props);
 
-    const filesToRender =
-      _.get(this.props.store, ['fileLoadState', 'filesToRender']) || [];
-    const filesOffset =
-      _.get(this.props.store, ['fileLoadState', 'filesOffset']) || 0;
+    const filesToRender = _.get(this.props.store, ['fileLoadState', 'filesToRender']) || [];
+    const filesOffset = _.get(this.props.store, ['fileLoadState', 'filesOffset']) || 0;
 
     this.state = {
       selections: [],
