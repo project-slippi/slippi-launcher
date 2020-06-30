@@ -14,6 +14,7 @@ export const CHANGE_FOLDER_SELECTION = 'CHANGE_FOLDER_SELECTION';
 export const LOAD_FILES_IN_FOLDER = 'LOAD_FILES_IN_FOLDER';
 export const SET_STATS_GAME_PAGE = 'SET_STATS_GAME_PAGE';
 export const STORE_SCROLL_POSITION = 'STORE_SCROLL_POSITION';
+export const STORE_FILE_LOAD_STATE = 'STORE_FILE_LOAD_STATE';
 
 export function loadRootFolder() {
   return async (dispatch, getState) => {
@@ -115,6 +116,15 @@ export function storeScrollPosition(position) {
     type: STORE_SCROLL_POSITION,
     payload: {
       position: position,
+    },
+  };
+}
+
+export function storeFileLoadState(fileLoadState) {
+  return {
+    type: STORE_FILE_LOAD_STATE,
+    payload: {
+      fileLoadState: fileLoadState,
     },
   };
 }
