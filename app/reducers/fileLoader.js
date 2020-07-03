@@ -76,6 +76,7 @@ function changeFolderSelection(state, action) {
     ...state,
     selectedFolderFullPath: folderPath,
     isLoading: true,
+    fileLoadState: {},
   };
 }
 

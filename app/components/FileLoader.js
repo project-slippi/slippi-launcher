@@ -46,14 +46,8 @@ export default class FileLoader extends Component {
   constructor(props) {
     super(props);
 
-    const filesToRender = _.get(this.props.store, ['fileLoadState', 'filesToRender']) || [];
-    const filesOffset = _.get(this.props.store, ['fileLoadState', 'filesOffset']) || 0;
-
     this.state = {
       selections: [],
-      filesToRender: filesToRender,
-      filesOffset: filesOffset,
-      firstLoad: true,
     };
   }
 
@@ -280,10 +274,12 @@ export default class FileLoader extends Component {
 
   renderFileSelection() {
     const store = this.props.store || {};
-    const allFiles = store.files || [];
 
-    const filesToRender = this.state.filesToRender || [];
-    const filesOffset = this.state.filesOffset || 0;
+    const allFiles = store.files || [];
+    
+    const filesToRender = _.get(store, ['fileLoadState', 'filesToRender']) || [];
+    const filesOffset = _.get(store, ['fileLoadState', 'filesOffset']) || 0;
+    const hasLoaded = _.get(store, ['fileLoadState', 'hasLoaded']) || false;
 
     if (store.isLoading) {
       return this.renderLoadingState();
@@ -328,14 +324,14 @@ export default class FileLoader extends Component {
       if (
         (calculations.percentagePassed > 0.5 &&
            start < allFiles.length) || 
-        this.state.firstLoad
-      ) {
+           !hasLoaded) {
         const nextFilesToRender = allFiles.slice(start, end);
-        this.setState({
+
+        this.props.storeFileLoadState({
           filesToRender: filesToRender.concat(nextFilesToRender),
           filesOffset: end,
-          firstLoad: false,
-        });
+          hasLoaded: true,
+        });        
       }
     };
 
