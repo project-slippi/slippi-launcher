@@ -24,9 +24,9 @@ export default class PlayerChiclet extends Component {
     const game = this.props.game;
     const index = this.props.playerIndex;
 
-    const name = playerUtils.getPlayerName(game, index);
+    const displayName = playerUtils.getPlayerCode(game, index) || playerUtils.getPlayerName(game, index);
 
-    return <div className={styles['name-display']}>{name}</div>;
+    return <div className={styles['name-display']}>{displayName}</div>;
   }
 
   renderCharacterBadge(player) {

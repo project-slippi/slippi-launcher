@@ -26,6 +26,16 @@ $header-height: 97px;
 
       justify-self: end;
 
+      .player-code-display {
+        margin-left: 0;
+        background-color: $background-light !important;
+        color: rgba(255, 255, 255, 0.8);
+
+        &.second {
+          margin-left: 6px;
+        }
+      }
+
       &.second {
         justify-content: flex-start;
         align-items: center;
