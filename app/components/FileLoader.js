@@ -25,7 +25,6 @@ const GAME_BATCH_SIZE = 50;
 export default class FileLoader extends Component {
   static propTypes = {
     // fileLoader actions
-    loadRootFolder: PropTypes.func.isRequired,
     changeFolderSelection: PropTypes.func.isRequired,
     playFile: PropTypes.func.isRequired,
     queueFiles: PropTypes.func.isRequired,
@@ -51,17 +50,21 @@ export default class FileLoader extends Component {
     };
   }
 
-  componentDidMount() {
-    const xPos = _.get(this.props.store, ['scrollPosition', 'x']) || 0;
-    const yPos = _.get(this.props.store, ['scrollPosition', 'y']) || 0;
+  componentDidUpdate(prevProps) {
+    const filesHaveLoaded = _.get(this.props, ['store', 'fileLoadState', 'hasLoaded'], false);
+    const prevFilesHaveLoaded = _.get(prevProps, ['store', 'fileLoadState', 'hasLoaded'], false);
 
-    this.refTableScroll.scrollTo(xPos, yPos);
+    if (!prevFilesHaveLoaded && filesHaveLoaded) {
+      const xPos = _.get(this.props.store, ['scrollPosition', 'x']) || 0;
+      const yPos = _.get(this.props.store, ['scrollPosition', 'y']) || 0;
 
-    if (this.props.history.action === 'PUSH') {
-      // I don't really like this but when returning back to the file loader, the action is "POP"
-      // instead of "PUSH", and we don't want to trigger the loader and ruin our ability to restore
-      // scroll position when returning to fileLoader from a game
-      this.props.loadRootFolder();
+      this.refTableScroll.scrollTo(xPos, yPos);
+
+      // Clear scroll position
+      this.props.storeScrollPosition({
+        x: 0,
+        y: 0,
+      });
     }
   }
 
@@ -276,7 +279,7 @@ export default class FileLoader extends Component {
     const store = this.props.store || {};
 
     const allFiles = store.files || [];
-    
+
     const filesToRender = _.get(store, ['fileLoadState', 'filesToRender']) || [];
     const filesOffset = _.get(store, ['fileLoadState', 'filesOffset']) || 0;
     const hasLoaded = _.get(store, ['fileLoadState', 'hasLoaded']) || false;
@@ -323,15 +326,15 @@ export default class FileLoader extends Component {
 
       if (
         (calculations.percentagePassed > 0.5 &&
-           start < allFiles.length) || 
-           !hasLoaded) {
+          start < allFiles.length) ||
+        !hasLoaded) {
         const nextFilesToRender = allFiles.slice(start, end);
 
         this.props.storeFileLoadState({
           filesToRender: filesToRender.concat(nextFilesToRender),
           filesOffset: end,
           hasLoaded: true,
-        });        
+        });
       }
     };
 
