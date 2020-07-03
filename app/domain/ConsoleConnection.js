@@ -18,6 +18,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 */
 
+/* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^_" }] */
 
 import net from 'net';
 import inject from 'reconnect-core';
@@ -29,6 +30,8 @@ import { connectionStateChanged } from '../actions/console';
 import DolphinManager from './DolphinManager';
 import SlpFileWriter from './SlpFileWriter';
 import ConsoleCommunication, { types as commMsgTypes } from './ConsoleCommunication';
+
+const enet = require("enet");
 
 export const ConnectionStatus = {
   DISCONNECTED: 0,
@@ -71,8 +74,8 @@ export default class ConsoleConnection {
     this.dolphinManager = new DolphinManager(`mirror-${this.id}`, { mode: 'mirror' });
 
     // Initialize SlpFileWriter for writting files
-    const slpSettings = {targetFolder: this.targetFolder, 
-      onFileStateChange: this.fileStateChangeHandler, 
+    const slpSettings = {targetFolder: this.targetFolder,
+      onFileStateChange: this.fileStateChangeHandler,
       obsIP: this.obsIP, obsSourceName: this.obsSourceName,
       obsPassword: this.obsPassword, id: this.id,
       isRelaying: this.isRelaying,
@@ -83,15 +86,15 @@ export default class ConsoleConnection {
   forceConsoleUiUpdate() {
     store.dispatch(connectionStateChanged());
   }
-  
+
   fileStateChangeHandler = () => {
     this.forceConsoleUiUpdate();
   }
 
   getDefaultConnDetails() {
     return {
-      gameDataCursor: Uint8Array.from([0, 0, 0, 0, 0, 0, 0, 0]), 
-      consoleNick: "unknown", 
+      gameDataCursor: 0,
+      consoleNick: "unknown",
       version: "",
       clientToken: 0,
     };
@@ -135,16 +138,106 @@ export default class ConsoleConnection {
     this.slpFileWriter.connectOBS();
     this.dolphinManager.updateSettings(connectionSettings);
 
-    if (this.port && this.port !== Ports.WII_LEGACY && this.port !== Ports.WII_DEFAULT) {
-      // If port is manually set, use that port. Don't do this if the port is set to legacy as
-      // somebody might have accidentally set it to that and they would encounter issues with
-      // the new Nintendont
-      this.connectOnPort(this.port);
-      return;
-    }
+    // if (this.port && this.port !== Ports.WII_LEGACY && this.port !== Ports.WII_DEFAULT) {
+    //   // If port is manually set, use that port. Don't do this if the port is set to legacy as
+    //   // somebody might have accidentally set it to that and they would encounter issues with
+    //   // the new Nintendont
+    //   this.connectOnPort(this.port);
+    //   return;
+    // }
 
-    this.connectOnPort(Ports.WII_DEFAULT);
-    this.connectOnPort(Ports.WII_LEGACY);
+    this.connectToSpectate();
+    // TODO Turn these back on. But it was causing issues
+    // this.connectOnPort(Ports.WII_DEFAULT);
+    // this.connectOnPort(Ports.WII_LEGACY);
+  }
+
+  connectToSpectate() {
+    this.client = enet.createServer({
+      address: {address:"0.0.0.0", port:14415}, /* the address the server host will bind to */
+      peers:32, /* allow up to 32 clients and/or outgoing connections */
+      channels:3,
+      down:0,
+      up:0,
+    }, (err, _host) => {
+      if(err){
+        console.error("For now, you can only spectate one game at a time, sorry!");
+      }
+    });
+
+    this.connectionStatus = ConnectionStatus.CONNECTING;
+    this.forceConsoleUiUpdate();
+
+    /* Initiate the connection, allocating the two channels 0 and 1. */
+    this.peer = this.client.connect(
+      {address:this.ipAddress, port:51441},
+      3, /* channels */
+      1337, /* data to send, (received in 'connect' event at server) */
+      (err, newPeer) => { /* a connect callback function */
+        if(err){
+          console.error(err); // either connect timeout or maximum peers exceeded
+          return;
+        }
+        // connection to the remote host succeeded
+        newPeer.ping();
+	   });
+
+    // succesful connect event can also be handled with an event handler
+    this.peer.on("connect", () => {
+
+      const connectRequest = {
+        "type" : "connect_request",
+        "cursor" : this.connDetails.gameDataCursor,
+      };
+
+      const packet = new enet.Packet(JSON.stringify(connectRequest), enet.PACKET_FLAG.RELIABLE);
+      this.peer.send(0, packet);
+    });
+
+    // incoming peer connection
+    this.peer.on("message", (packet, _channel) => {
+      if(packet.data().length === 0){
+        return;
+      }
+
+      const message = JSON.parse(packet.data().toString('ascii'));
+      if(message["type"] === "connect_reply") {
+
+        this.connDetails.clientToken = 0;
+        this.connDetails.gameDataCursor = message["cursor"];
+        this.connDetails.consoleNick = message["nick"];
+        this.connDetails.version = message["version"];
+        this.connectionStatus = ConnectionStatus.CONNECTED;
+
+        this.forceConsoleUiUpdate();
+        this.slpFileWriter.updateSettings(this.getSettings());
+      }
+      else if(message["type"] === "game_event") {
+        // Handle incoming game event
+        const cursor = message["cursor"];
+        if (this.connDetails.gameDataCursor !== cursor) {
+          log.warn(
+            "Position of received data is not what was expected. Expected, Received:",
+            this.connDetails.gameDataCursor, cursor
+          );
+
+          // The readPos is not the one we are waiting on, throw error
+          throw new Error("Position of received data is incorrect.");
+        }
+
+        this.connDetails.gameDataCursor = message["next_cursor"];
+        this.handleReplayData(Buffer.from(message["payload"], 'base64'));
+      }
+
+    });
+
+    this.peer.on("disconnect", (_data) => {
+      this.client.destroy();
+
+      this.connectionStatus = ConnectionStatus.DISCONNECTED;
+      this.forceConsoleUiUpdate();
+    });
+
   }
 
   connectOnPort(port) {
@@ -178,7 +271,7 @@ export default class ConsoleConnection {
           log.info(`Connected to source with type: ${commState}`);
           log.info(data.toString("hex"));
         }
-        
+
         if (commState === "legacy") {
           // If the first message received was not a handshake message, either we
           // connected to an old Nintendont version or a relay instance
@@ -195,10 +288,10 @@ export default class ConsoleConnection {
             rcvData: data,
           });
           client.destroy();
-          
+
           return;
         }
-        
+
         const messages = consoleComms.getMessages();
 
         // Process all of the received messages
@@ -288,13 +381,13 @@ export default class ConsoleConnection {
       connection.reconnect = false; // eslint-disable-line
       connection.disconnect();
     });
-    
+
     this.clientsByPort.forEach((client) => {
       client.destroy();
     });
 
-    this.connectionStatus = ConnectionStatus.DISCONNECTED;
-    this.forceConsoleUiUpdate();
+    // A disconnect event will fire on the peer when this completes
+    this.peer.disconnect();
   }
 
   getInitialCommState(data) {
@@ -307,7 +400,7 @@ export default class ConsoleConnection {
     ]);
 
     const dataStart = data.slice(4, 13);
-    
+
     return dataStart.equals(openingBytes) ? "normal" : "legacy";
   }
 
@@ -322,7 +415,7 @@ export default class ConsoleConnection {
       // TODO: active Wii connection for the relay connection to keep itself alive
       const fakeKeepAlive = Buffer.from("HELO\0");
       this.slpFileWriter.handleData(fakeKeepAlive);
-      
+
       break;
     case commMsgTypes.REPLAY:
       // console.log("Replay message type received");

@@ -10,28 +10,6 @@ export default class ConnectionScanner {
     this.isScanning = false;
     this.availableConnectionsByIp = {};
     this.server = null;
-
-    // TODO: Remove
-    // this.availableConnectionsByIp = {
-    //   '192.168.1.500': {
-    //     'ip': '192.168.1.500',
-    //     'mac': '1241:4214',
-    //     'name': "Station Foo",
-    //     'firstFound': moment(),
-    //   },
-    //   '192.168.1.501': {
-    //     'ip': '192.168.1.501',
-    //     'mac': '1241:4214',
-    //     'name': "Station Bar",
-    //     'firstFound': moment(),
-    //   },
-    //   '192.168.1.42': {
-    //     'ip': '192.168.1.42',
-    //     'mac': '1241:4214',
-    //     'name': "Station Zoob",
-    //     'firstFound': moment(),
-    //   },
-    // };
   }
 
   forceConsoleUiUpdate() {
@@ -48,10 +26,9 @@ export default class ConnectionScanner {
 
   handleMessageReceive = (msg, rinfo) => {
     if (msg.slice(0, 10).toString() !== "SLIP_READY") {
-      // This is not a Slippi broadcast message, do nothing
       return;
     }
-    
+
     /* The structure of broadcast messages from the Wii should be:
      *  unsigned char cmd[10]; // 0 - 10
      *  u8 mac_addr[6]; // 10 - 16
@@ -79,7 +56,7 @@ export default class ConnectionScanner {
     const previousTimeoutHandler = _.get(previous, 'timeout');
     const previousFirstFound = _.get(previous, 'firstFound');
 
-    // If we have received a new message from this IP, clear the previous 
+    // If we have received a new message from this IP, clear the previous
     // timeout hanlder so that this IP doesn't get removed
     if (previousTimeoutHandler) {
       clearTimeout(previousTimeoutHandler);
@@ -98,7 +75,7 @@ export default class ConnectionScanner {
       'timeout': timeoutHandler,
       'firstFound': previousFirstFound || moment(),
     };
-    
+
     // Force UI update to show new connection
     this.forceConsoleUiUpdate();
   }
