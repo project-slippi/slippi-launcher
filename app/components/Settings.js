@@ -207,7 +207,7 @@ export default class Settings extends Component {
       loading = false;
       break;
     }
-    
+
     return (
       <div className={`${styles['iso-version-check']} ${styles[validationState]}`}>
         <span className={styles['iso-verify-text']}>{text}</span>
@@ -292,7 +292,7 @@ export default class Settings extends Component {
 
   renderPlaybackInstanceInput() {
     const store = this.props.store || {};
-    
+
     const platform = process.platform;
 
     // If on Linux, indicate the steps required
@@ -315,9 +315,14 @@ export default class Settings extends Component {
     if (platform !== 'linux') {
       playbackDolphinDescription = (
         <div>
-          An instance of Dolphin for playing replays comes bundled
-          with this app. This setting allows you to configure a different instance.&nbsp;
-          <strong>Only modify if you know what you are doing.</strong>
+          <div>
+            An instance of Dolphin for playing replays comes bundled
+            with this app. This setting allows you to configure a different instance.
+          </div>
+          <Message warning={true}>
+            <Icon name="warning sign" />
+            <strong>The default should be used by almost everyone. Only modify if you know what you are doing</strong>
+          </Message>
         </div>
       );
 
