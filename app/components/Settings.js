@@ -315,14 +315,8 @@ export default class Settings extends Component {
     if (platform !== 'linux') {
       playbackDolphinDescription = (
         <div>
-          <div>
-            An instance of Dolphin for playing replays comes bundled
-            with this app. This setting allows you to configure a different instance.
-          </div>
-          <Message warning={true}>
-            <Icon name="warning sign" />
-            <strong>The default should be used by almost everyone. Only modify if you know what you are doing</strong>
-          </Message>
+          An instance of Dolphin for playing replays comes bundled
+          with this app. This setting allows you to configure a different instance.
         </div>
       );
 
@@ -343,6 +337,10 @@ export default class Settings extends Component {
           label="Playback Dolphin Path"
           description={playbackDolphinDescription}
         />
+        <Message className={styles['dolphin-warning']} color="yellow" warning={true}>
+          <Icon name="warning sign" />
+          <strong>The default should be used by almost everyone. Only modify if you know what you are doing</strong>
+        </Message>
         <SpacedGroup customColumns="1fr auto">
           <ActionInput
             showLabelDescription={false}
