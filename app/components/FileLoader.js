@@ -25,6 +25,7 @@ const GAME_BATCH_SIZE = 50;
 export default class FileLoader extends Component {
   static propTypes = {
     // fileLoader actions
+    loadRootFolder: PropTypes.func.isRequired,
     changeFolderSelection: PropTypes.func.isRequired,
     playFile: PropTypes.func.isRequired,
     queueFiles: PropTypes.func.isRequired,
@@ -50,6 +51,15 @@ export default class FileLoader extends Component {
     };
   }
 
+  componentDidMount() {
+    if (this.props.history.action === "PUSH") {
+      // I don't really like this but when returning back to the file loader, the action is "POP"	
+      // instead of "PUSH", and we don't want to trigger the loader and ruin our ability to restore	
+      // scroll position when returning to fileLoader from a game	
+      this.props.loadRootFolder();
+    }
+  }
+
   componentDidUpdate(prevProps) {
     const filesHaveLoaded = _.get(this.props, ['store', 'fileLoadState', 'hasLoaded'], false);
     const prevFilesHaveLoaded = _.get(prevProps, ['store', 'fileLoadState', 'hasLoaded'], false);
@@ -60,7 +70,8 @@ export default class FileLoader extends Component {
 
       this.refTableScroll.scrollTo(xPos, yPos);
 
-      // Clear scroll position
+      // Clear scroll position so that if we browse to a different folder it doesn't try to restore
+      // the position that was saved on the current folder
       this.props.storeScrollPosition({
         x: 0,
         y: 0,
