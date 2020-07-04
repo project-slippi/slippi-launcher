@@ -75,6 +75,11 @@ export default class GameProfile extends Component {
       return this.renderLoading();
     }
 
+    const game = _.get(this.props, ['store', 'game']) || null;
+    if (!game) {
+      return this.renderError();
+    }
+
     const gameSettings = _.get(this.props.store, ['game', 'settings']) || {};
     const players = gameSettings.players || [];
     if (players.length !== 2) {
@@ -116,9 +121,29 @@ export default class GameProfile extends Component {
     );
   }
 
+  renderError() {
+    return (
+      <Header
+        color="red"
+        inverted={true}
+        as="h1"
+        textAlign="center"
+        icon={true}
+      >
+        <Icon name="exclamation circle" />
+        Error loading file
+      </Header>
+    );
+  }
+
   renderGameProfileHeader() {
     const isLoading = _.get(this.props.store, 'isLoading') || false;
     if (isLoading) {
+      return null;
+    }
+
+    const game = _.get(this.props, ['store', 'game']) || null;
+    if (!game) {
       return null;
     }
 
@@ -174,7 +199,7 @@ export default class GameProfile extends Component {
           <Label size="large" className={labelClasses}>
             {playerCode}
           </Label>
-        ) : null }
+        ) : null}
         <Header inverted={true} textAlign="center" as="h2">
           {playerNamesByIndex[player.playerIndex]}
         </Header>

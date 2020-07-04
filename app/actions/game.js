@@ -34,10 +34,16 @@ async function loadGame(gameOrPath) {
     gameToLoad = new SlippiGame(gameOrPath);
   }
 
+  let settings, stats;
+
   // Generate data here so that maybe we can add a loading state
-  const settings = gameToLoad.getSettings();
-  const stats = gameToLoad.getStats();
-  gameToLoad.getMetadata();
+  try {
+    settings = gameToLoad.getSettings();
+    stats = gameToLoad.getStats();
+    gameToLoad.getMetadata();
+  } catch {
+    return null;
+  }
 
   // This is jank and I shouldn't do this... but the rest of the app kind of relies on these being
   // set on the object which was legacy behavior. Preferably all of the places where this is used
