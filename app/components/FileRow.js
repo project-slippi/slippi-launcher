@@ -23,6 +23,24 @@ export default class FileRow extends Component {
     selectedOrdinal: PropTypes.number.isRequired,
   };
 
+  constructor(props) {
+    super(props);
+
+    const file = this.props.file || {};
+
+    let isError = false;
+    try {
+      file.game.getSettings();
+    } catch {
+      isError = true;
+    }
+
+    // TODO: Improve error state UI but at least this doesn't crash the program
+    this.state = {
+      isError: isError,
+    };
+  }
+
   shouldComponentUpdate(nextProps) {
     return this.props.selectedOrdinal !== nextProps.selectedOrdinal;
   }
@@ -129,6 +147,10 @@ export default class FileRow extends Component {
   }
 
   getStageName() {
+    if (this.state.isError) {
+      return null;
+    }
+
     const file = this.props.file || {};
 
     const settings = file.game.getSettings() || {};
@@ -139,6 +161,10 @@ export default class FileRow extends Component {
   }
 
   generateTeamElements() {
+    if (this.state.isError) {
+      return null;
+    }
+
     const file = this.props.file || {};
     const game = file.game || {};
     const settings = game.getSettings() || {};
@@ -182,6 +208,10 @@ export default class FileRow extends Component {
   }
 
   generateStartTimeCell() {
+    if (this.state.isError) {
+      return <Table.Cell singleLine={true}>Error</Table.Cell>;
+    }
+
     const file = this.props.file || {};
 
     const metadata = file.game.getMetadata() || {};
