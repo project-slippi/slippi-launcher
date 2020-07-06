@@ -28,6 +28,7 @@
     "no-console": "off",
     "no-continue": "off",
     "no-mixed-operators": "off",
+    "no-underscore-dangle": "off",
     "no-use-before-define": "off",
     "no-multi-assign": "off",
     "no-plusplus": "off",

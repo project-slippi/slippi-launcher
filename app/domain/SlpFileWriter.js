@@ -30,8 +30,9 @@ import _ from 'lodash';
 import fs from 'fs-extra';
 import path from 'path';
 import moment from 'moment';
-import OBSWebSocket from 'obs-websocket-js'
-import { Ports } from './ConsoleConnection'
+import OBSWebSocket from 'obs-websocket-js';
+import { Ports } from './ConsoleConnection';
+import SlpFile from './SlpFile';
 
 export default class SlpFileWriter {
   static commands = {
@@ -49,7 +50,7 @@ export default class SlpFileWriter {
     this.obsPassword = settings.obsPassword;
     this.id = settings.id;
     this.consoleNick = settings.consoleNick;
-    this.currentFile = this.getClearedCurrentFile();
+    this.currentFile = new SlpFile({});
     this.obs = new OBSWebSocket();
     this.statusOutput = {
       status: false,
@@ -58,22 +59,6 @@ export default class SlpFileWriter {
     this.isRelaying = settings.isRelaying;
     this.clients = [];
     this.manageRelay();
-  }
-
-  getClearedCurrentFile() {
-    return {
-      payloadSizes: {},
-      previousBuffer: Buffer.from([]),
-      fullBuffer: Buffer.from([]),
-      path: null,
-      writeStream: null,
-      bytesWritten: 0,
-      metadata: {
-        startTime: null,
-        lastFrame: -124,
-        players: {},
-      },
-    };
   }
 
   manageRelay() {
@@ -91,12 +76,12 @@ export default class SlpFileWriter {
 
       return;
     }
-    
+
     if (this.server) {
       // If server is already up, no need to start
       return;
     }
-    
+
     this.server = net.createServer((socket) => {
       socket.setNoDelay().setTimeout(20000);
 
@@ -153,7 +138,7 @@ export default class SlpFileWriter {
     if (!this.obs) {
       return;
     }
-    
+
     this.obs.disconnect();
   }
 
@@ -161,7 +146,7 @@ export default class SlpFileWriter {
     this.statusOutput.status = value;
     // console.log(`Status changed: ${value}`);
     _.forEach(this.obsPairs, (pair) => {
-      this.obs.send("SetSceneItemProperties", 
+      this.obs.send("SetSceneItemProperties",
         {"scene-name": pair.scene, "item": this.obsSourceName, "visible": value});
     });
   }
@@ -192,7 +177,7 @@ export default class SlpFileWriter {
 
     // Here we did not have a game going, so let's indicate we do now
     this.setStatus(true);
-    
+
     // Set timer
     setTimer();
   }
@@ -204,10 +189,16 @@ export default class SlpFileWriter {
     // We should technically never accrue a previous buffer with new communication methods because
     // ConsoleCommunication ensures that full data has been received before trying to process
     // the data
-    const data = Uint8Array.from(Buffer.concat([
-      this.currentFile.previousBuffer,
-      newData,
-    ]));
+    let data
+    if (this.currentFile.previousBuffer.length) {
+      data = Uint8Array.from(Buffer.concat([
+        this.currentFile.previousBuffer,
+        newData,
+      ]));
+      this.currentFile.previousBuffer = Buffer.from([]);
+    } else {
+      data = newData;
+    }
 
     const dataView = new DataView(data.buffer);
 
@@ -234,9 +225,6 @@ export default class SlpFileWriter {
         this.currentFile.previousBuffer = data.slice(index);
         break;
       }
-
-      // Clear previous buffer here, dunno where else to do this
-      this.currentFile.previousBuffer = Buffer.from([]);
 
       // Increment by one for the command byte
       index += 1;
@@ -276,9 +264,9 @@ export default class SlpFileWriter {
 
     // Write data to relay, we do this after processing in the case there is a new game, we need
     // to have the buffer ready
-    this.currentFile.fullBuffer = Buffer.concat([this.currentFile.fullBuffer, newData]);
+    this.currentFile.addBuffer(newData);
 
-    if (this.clients) {
+    if (this.clients.length) {
       const buf = this.currentFile.fullBuffer;
       _.each(this.clients, (client) => {
         client.socket.write(buf.slice(client.readPos));
@@ -321,16 +309,11 @@ export default class SlpFileWriter {
       encoding: 'binary',
     });
 
-    const clearFileObj = this.getClearedCurrentFile();
-    this.currentFile = {
-      ...clearFileObj,
+    this.currentFile = new SlpFile({
       path: filePath,
       writeStream: writeStream,
-      metadata: {
-        ...clearFileObj.metadata,
-        startTime: startTime,
-      },
-    };
+      startTime: startTime,
+    });
 
     // Clear clients back to position zero
     this.clients = _.map(this.clients, client => ({
@@ -357,7 +340,7 @@ export default class SlpFileWriter {
     const writeStream = this.currentFile.writeStream;
     if (!writeStream) {
       // Clear current file
-      this.currentFile = this.getClearedCurrentFile();
+      this.currentFile = new SlpFile({});
 
       return;
     }
@@ -460,7 +443,7 @@ export default class SlpFileWriter {
       Buffer.from([7]),
       Buffer.from("network"),
     ]);
-    
+
     // Close metadata and file
     footer = Buffer.concat([
       footer,
@@ -478,7 +461,7 @@ export default class SlpFileWriter {
       console.log("Finished writting file.");
 
       // Clear current file
-      this.currentFile = this.getClearedCurrentFile();
+      this.currentFile = new SlpFile({});
 
       // Update file state
       this.onFileStateChange();
