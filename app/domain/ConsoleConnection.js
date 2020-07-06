@@ -147,9 +147,8 @@ export default class ConsoleConnection {
     // }
 
     this.connectToSpectate();
-    // TODO Turn these back on. But it was causing issues
-    // this.connectOnPort(Ports.WII_DEFAULT);
-    // this.connectOnPort(Ports.WII_LEGACY);
+    this.connectOnPort(Ports.WII_DEFAULT);
+    this.connectOnPort(Ports.WII_LEGACY);
   }
 
   connectToSpectate() {

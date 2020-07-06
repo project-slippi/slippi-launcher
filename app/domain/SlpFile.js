@@ -24,7 +24,7 @@ export default class SlpFile {
   }
 
   addBuffer(buffer) {
-    this.buffersToConcat.push(buffer)
+    this._buffersToConcat.push(buffer)
   }
 }
 
