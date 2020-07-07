@@ -27,9 +27,8 @@ $ set UPGRADE_EXTENSIONS=1 && yarn dev
 ```
 
 ### Dolphin
-On Windows, you'll need to copy the Slippi FM files into `app\dolphin-dev\windows`.
-You can grab these from the release version.
-By default, they should be installed to `C:\Users\[Username]\AppData\Roaming\Slippi Desktop App\dolphin`.
+On Windows, you'll need to copy the Playback Dolphin files into `app\dolphin-dev\windows`.
+You can grab these from the release version, which should be installed at `C:\Users\[Username]\AppData\Roaming\Slippi Desktop App\dolphin`.
 
 If you do it right you should have:
 ```
@@ -45,4 +44,4 @@ app\
       portable
 ```
 
-You will also need to copy the contents of `app\dolphin-dev\overwrite` into `app\dolphin-dev\windows`.
+You will also need to copy the contents of `app\dolphin-dev\overwrite` into `app\dolphin-dev\windows` and overwrite all duplicate files.
