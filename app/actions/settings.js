@@ -127,6 +127,7 @@ export function validateISO() {
     // Below are the sha1 hashes for the ISOs we know about
     const ISOHashes = {
       "d4e70c064cc714ba8400a849cf299dbd1aa326fc": "success", // NTSC-U 1.02
+      "6e83240872d47cd080a28dea7b8907140c44bef5": "success", // NTSC-U 1.02 NKIT
       "e63d50e63a0cdd357f867342d542e7cec0c3a7c7": "success", // NTSC-U 1.02 Scrubbed #1
       "55109bc139b947c8b96b5fc913fbd91245104db8": "success", // NTSC-U 1.02 Scrubbed #2
       "2ce0ccfc8c31eafe2ff354fe03ac2dd94c20b937": "success", // NTSC-U 1.02 Scrubbed #3
@@ -143,7 +144,6 @@ export function validateISO() {
       "fe23c91b63b0731ef727c13253b6a8c6757432ac": "fail", // NTSC-J 1.00
       "f7ff7664b231042f2c0802041736fb9396a94b83": "fail", // NTSC-J 1.01
       "c7c0866fbe6d7ebf3b9c4236f4f32f4c8f65b578": "fail", // Taikenban (demo)
-      "6e83240872d47cd080a28dea7b8907140c44bef5": "fail", // Unknown
     };
 
     input.on('readable', () => {
