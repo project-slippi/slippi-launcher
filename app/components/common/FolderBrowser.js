@@ -29,7 +29,7 @@ export default class FolderBrowser extends Component {
     let subDirectoryList = null;
     if (_.some(subFolderItems)) {
       // Sort the subdirectories numerically instead of lexicographically
-      var numericallySortedSubFolderItems = Array.from(subFolderItems).sort((a, b) => a[1].key.localeCompare(b[1].key, undefined, {numeric: true, sensitivity: 'base'}));
+      const numericallySortedSubFolderItems = subFolderItems.sort((a, b) => a[1].key.localeCompare(b[1].key, undefined, {numeric: true, sensitivity: 'base'}));
 
       subDirectoryList = (
         <List.List className="no-padding">{numericallySortedSubFolderItems}</List.List>
