@@ -30,8 +30,7 @@ import _ from 'lodash';
 import path from 'path';
 import moment from 'moment';
 import OBSWebSocket from 'obs-websocket-js'
-import { SlpFile } from "@slippi/sdk";
-import { Ports } from './ConsoleConnection'
+import { Ports, SlpFile } from "@slippi/sdk";
 
 export default class SlpFileWriter {
   static commands = {
