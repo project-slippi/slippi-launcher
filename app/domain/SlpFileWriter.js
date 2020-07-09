@@ -30,16 +30,9 @@ import _ from 'lodash';
 import path from 'path';
 import moment from 'moment';
 import OBSWebSocket from 'obs-websocket-js'
-import { Ports, SlpFile } from "@slippi/sdk";
+import { Ports, SlpFile, Command } from "@slippi/sdk";
 
 export default class SlpFileWriter {
-  static commands = {
-    CMD_RECEIVE_COMMANDS: 0x35,
-    CMD_GAME_START: 0x36,
-    CMD_RECEIVE_POST_FRAME_UPDATE: 0x38,
-    CMD_RECEIVE_GAME_END: 0x39,
-  }
-
   constructor(settings) {
     this.folderPath = settings.folderPath;
     this.onFileStateChange = settings.onFileStateChange;
@@ -246,20 +239,20 @@ export default class SlpFileWriter {
       let payloadLen = 0;
 
       switch (command) {
-      case SlpFileWriter.commands.CMD_RECEIVE_COMMANDS:
+      case Command.MESSAGE_SIZES:
         isNewGame = true;
         this.initializeNewGame();
         payloadLen = this.processReceiveCommands(payloadDataView);
         this.writeCommand(command, payloadPtr, payloadLen);
         this.onFileStateChange();
         break;
-      case SlpFileWriter.commands.CMD_RECEIVE_GAME_END:
+      case Command.GAME_END:
         payloadLen = this.processCommand(command, payloadDataView);
         this.writeCommand(command, payloadPtr, payloadLen);
         this.endGame();
         isGameEnd = true;
         break;
-      case SlpFileWriter.commands.CMD_GAME_START:
+      case Command.GAME_START:
         payloadLen = this.processCommand(command, payloadDataView);
         this.writeCommand(command, payloadPtr, payloadLen);
         break;
@@ -387,7 +380,7 @@ export default class SlpFileWriter {
     }
 
     switch (command) {
-    case SlpFileWriter.commands.CMD_RECEIVE_POST_FRAME_UPDATE:
+    case Command.POST_FRAME_UPDATE:
       // Here we need to update some metadata fields
       const frameIndex = dataView.getInt32(0);
       const playerIndex = dataView.getUint8(4);
@@ -417,7 +410,7 @@ export default class SlpFileWriter {
       this.currentFile.metadata.players[`${playerIndex}`] = player;
 
       break;
-    case SlpFileWriter.commands.CMD_RECEIVE_GAME_END:
+    case Command.GAME_END:
       const endMethod = dataView.getUint8(0);
 
       if (endMethod !== 7) {
