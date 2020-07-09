@@ -27,10 +27,10 @@ SOFTWARE.
 
 import net from 'net';
 import _ from 'lodash';
-import fs from 'fs-extra';
 import path from 'path';
 import moment from 'moment';
 import OBSWebSocket from 'obs-websocket-js'
+import { SlpFile } from "@slippi/sdk";
 import { Ports } from './ConsoleConnection'
 
 export default class SlpFileWriter {
@@ -317,9 +317,7 @@ export default class SlpFileWriter {
   initializeNewGame() {
     const startTime = moment();
     const filePath = this.getNewFilePath(startTime);
-    const writeStream = fs.createWriteStream(filePath, {
-      encoding: 'binary',
-    });
+    const writeStream = new SlpFile(filePath);
 
     const clearFileObj = this.getClearedCurrentFile();
     this.currentFile = {
@@ -338,14 +336,6 @@ export default class SlpFileWriter {
       readPos: 0,
     }));
 
-    const header = Buffer.concat([
-      Buffer.from("{U"),
-      Buffer.from([3]),
-      Buffer.from("raw[$U#l"),
-      Buffer.from([0, 0, 0, 0]),
-    ]);
-    writeStream.write(header);
-
     console.log(`Creating new file at: ${filePath}`);
   }
 
@@ -362,139 +352,21 @@ export default class SlpFileWriter {
       return;
     }
 
-    let footer = Buffer.concat([
-      Buffer.from("U"),
-      Buffer.from([8]),
-      Buffer.from("metadata{"),
-    ]);
-
-    // Write game start time
-    const startTimeStr = this.currentFile.metadata.startTime.toISOString();
-    footer = Buffer.concat([
-      footer,
-      Buffer.from("U"),
-      Buffer.from([7]),
-      Buffer.from("startAtSU"),
-      Buffer.from([startTimeStr.length]),
-      Buffer.from(startTimeStr),
-    ]);
-
-    // Write last frame index
-    // TODO: Get last frame
-    const lastFrame = this.currentFile.metadata.lastFrame;
-    footer = Buffer.concat([
-      footer,
-      Buffer.from("U"),
-      Buffer.from([9]),
-      Buffer.from("lastFramel"),
-      this.createInt32Buffer(lastFrame),
-    ]);
-
-    // write the Console Nickname
-    const consoleNick = this.consoleNick;
-    footer = Buffer.concat([
-      footer,
-      Buffer.from("U"),
-      Buffer.from([11]),
-      Buffer.from("consoleNickSU"),
-      Buffer.from([consoleNick.length]),
-      Buffer.from(consoleNick),
-    ]);
-
-    // Start writting player specific data
-    footer = Buffer.concat([
-      footer,
-      Buffer.from("U"),
-      Buffer.from([7]),
-      Buffer.from("players{"),
-    ]);
-    const players = this.currentFile.metadata.players;
-    _.forEach(players, (player, index) => {
-      // Start player obj with index being the player index
-      footer = Buffer.concat([
-        footer,
-        Buffer.from("U"),
-        Buffer.from([index.length]),
-        Buffer.from(`${index}{`),
-      ]);
-
-      // Start characters key for this player
-      footer = Buffer.concat([
-        footer,
-        Buffer.from("U"),
-        Buffer.from([10]),
-        Buffer.from("characters{"),
-      ]);
-
-      // Write character usage
-      _.forEach(player.characterUsage, (usage, internalId) => {
-        // Write this character
-        footer = Buffer.concat([
-          footer,
-          Buffer.from("U"),
-          Buffer.from([internalId.length]),
-          Buffer.from(`${internalId}l`),
-          this.createUInt32Buffer(usage),
-        ]);
-      });
-
-      // Close characters and player
-      footer = Buffer.concat([
-        footer,
-        Buffer.from("}}"),
-      ]);
+    writeStream.setMetadata({
+      consoleNickname: this.consoleNick,
+      startTime: this.currentFile.metadata.startTime,
+      lastFrame: this.currentFile.metadata.lastFrame,
+      players: this.currentFile.metadata.players,
     });
 
-    // Close players
-    footer = Buffer.concat([
-      footer,
-      Buffer.from("}"),
-    ]);
-
-    // Write played on
-    footer = Buffer.concat([
-      footer,
-      Buffer.from("U"),
-      Buffer.from([8]),
-      Buffer.from("playedOnSU"),
-      Buffer.from([7]),
-      Buffer.from("network"),
-    ]);
-    
-    // Close metadata and file
-    footer = Buffer.concat([
-      footer,
-      Buffer.from("}}"),
-    ]);
-
     // End the stream
-    writeStream.write(footer);
-    writeStream.end(null, null, () => {
-      // Write bytes written
-      const fd = fs.openSync(this.currentFile.path, "r+");
-      fs.writeSync(fd, this.createUInt32Buffer(this.currentFile.bytesWritten), 0, "binary", 11);
-      fs.closeSync(fd);
-
+    writeStream.end(() => {
       console.log("Finished writting file.");
-
       // Clear current file
       this.currentFile = this.getClearedCurrentFile();
-
       // Update file state
       this.onFileStateChange();
     });
-  }
-
-  createInt32Buffer(number) {
-    const buf = Buffer.alloc(4);
-    buf.writeInt32BE(number, 0);
-    return buf;
-  }
-
-  createUInt32Buffer(number) {
-    const buf = Buffer.alloc(4);
-    buf.writeUInt32BE(number, 0);
-    return buf;
   }
 
   processReceiveCommands(dataView) {
