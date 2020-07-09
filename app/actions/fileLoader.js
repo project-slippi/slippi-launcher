@@ -2,7 +2,7 @@ import _ from 'lodash';
 import fs from 'fs';
 import path from 'path';
 import moment from 'moment';
-import SlippiGame from 'slp-parser-js';
+import SlippiGame from '@slippi/sdk';
 
 import { displayError } from './error';
 import { gameProfileLoad } from './game';

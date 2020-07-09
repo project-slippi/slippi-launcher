@@ -6,7 +6,7 @@ import { Table, Icon } from 'semantic-ui-react';
 import {
   animations as animationUtils,
   moves as moveUtils,
-} from 'slp-parser-js';
+} from '@slippi/sdk';
 
 import styles from './GameProfile.scss';
 
