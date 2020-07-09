@@ -12,6 +12,7 @@ import PlayerChiclet from './common/PlayerChiclet';
 import * as timeUtils from '../utils/time';
 
 const path = require('path');
+const fs = require('fs');
 
 export default class FileRow extends Component {
   static propTypes = {
@@ -215,7 +216,7 @@ export default class FileRow extends Component {
     const file = this.props.file || {};
 
     const metadata = file.game.getMetadata() || {};
-    const startAt = metadata.startAt;
+    const startAt = metadata.startAt || fs.statSync(file.fullPath).ctime;
     const startAtDisplay = timeUtils.convertToDateAndTime(startAt) || 'Unknown';
 
     return <Table.Cell singleLine={true}>{startAtDisplay}</Table.Cell>;
