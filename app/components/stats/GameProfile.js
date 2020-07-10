@@ -32,6 +32,8 @@ export default class GameProfile extends Component {
   static propTypes = {
     history: PropTypes.object.isRequired,
 
+    file: PropTypes.object.isRequired,
+
     // fileLoaderAction
     playFile: PropTypes.func.isRequired,
     setStatsGamePage: PropTypes.func.isRequired,
@@ -226,8 +228,7 @@ export default class GameProfile extends Component {
     const platform =
       _.get(this.props.store, ['game', 'metadata', 'playedOn']) || 'Unknown';
 
-    const startAt = _.get(this.props.store, ['game', 'metadata', 'startAt']);
-    const startAtDisplay = timeUtils.convertToDateAndTime(startAt);
+    const startAtDisplay = timeUtils.monthDayHourFormat(_.get(this.props.file, ['startTime'])) || 'Unknown';
 
     const gameDetailsClasses = classNames({
       [styles['game-details']]: true,

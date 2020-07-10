@@ -6,9 +6,11 @@ import { playFile, setStatsGamePage } from "../actions/fileLoader";
 import { dismissError } from "../actions/error";
 
 function mapStateToProps(state) {
+  const index = state.fileLoader.statsGameIndex;
   return {
     store: state.game,
-    statsGameIndex: state.fileLoader.statsGameIndex,
+    statsGameIndex: index,
+    file: state.fileLoader.files[index],
     errors: state.errors,
     topNotifOffset: _.get(state.notifs, ['activeNotif', 'heightPx']) || 0,
   };

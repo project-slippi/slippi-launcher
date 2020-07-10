@@ -214,7 +214,7 @@ export default class FileRow extends Component {
 
     const file = this.props.file || {};
 
-    const startAtDisplay = timeUtils.fileToDateAndTime(file.game, file.fileName, file.fullPath) || "Unknown";
+    const startAtDisplay = timeUtils.monthDayHourFormat(file.startTime) || "Unknown";
 
     return <Table.Cell singleLine={true}>{startAtDisplay}</Table.Cell>;
   }

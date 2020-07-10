@@ -11,30 +11,22 @@ export function convertFrameCountToDurationString(frameCount) {
   return moment.utc(duration.as('milliseconds')).format('m:ss');
 }
 
-export function convertToDateAndTime(dateTimeString, format=true) {
+export function convertToDateAndTime(dateTimeString) {
   if (!dateTimeString) {
     return null;
   }
 
   const time = moment(dateTimeString).local();
-  if (format) {
-    return time.format('ll · LT');
-  }
   return time;
 }
 
-export function fileToDateAndTime(game, fileName, fullPath, format=true) {
+export function fileToDateAndTime(game, fileName, fullPath) {
   const metadata = game.getMetadata() || {};
-  const startAt = convertToDateAndTime(metadata.startAt, false);
+  const startAt = convertToDateAndTime(metadata.startAt);
   const getTimeFromFileName = () => filenameToDateAndTime(fileName);
-  const getTimeFromBirthTime = () => convertToDateAndTime(fs.statSync(fullPath).birthtime, false);
+  const getTimeFromBirthTime = () => convertToDateAndTime(fs.statSync(fullPath).birthtime);
 
-  const startAtDisplay = startAt || getTimeFromFileName() || getTimeFromBirthTime()
-
-  if (format && startAtDisplay){
-    return startAtDisplay.format('ll · LT');
-  }
-  return startAtDisplay || null;
+  return startAt || getTimeFromFileName() || getTimeFromBirthTime() || null;
 }
 
 function filenameToDateAndTime(fileName) {
@@ -47,4 +39,12 @@ function filenameToDateAndTime(fileName) {
 
   const time = moment(filenameTime[0]).local();
   return time;
+}
+
+export function monthDayHourFormat(time) {
+  if (!moment.isMoment(time)) {
+    return null;
+  }
+
+  return time.format('ll · LT');
 }

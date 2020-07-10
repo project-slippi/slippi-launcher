@@ -230,7 +230,7 @@ async function loadFilesInFolder(folderPath) {
         hasError = true;
       }
 
-      const startTime = timeUtils.fileToDateAndTime(game, fileName, fullPath, false)
+      const startTime = timeUtils.fileToDateAndTime(game, fileName, fullPath)
 
       return {
         fullPath: fullPath,
