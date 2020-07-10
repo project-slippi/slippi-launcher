@@ -25,15 +25,17 @@ SOFTWARE.
 */
 
 
+import EventEmitter from "events";
 import net from 'net';
 import _ from 'lodash';
 import path from 'path';
 import moment from 'moment';
 import OBSWebSocket from 'obs-websocket-js'
-import { Ports, SlpFile, Command } from "@slippi/sdk";
+import { Ports, SlpFile, Command, SlpStream, SlpStreamEvent } from "@slippi/sdk";
 
-export default class SlpFileWriter {
+export default class SlpFileWriter extends EventEmitter {
   constructor(settings) {
+    super();
     this.folderPath = settings.folderPath;
     this.onFileStateChange = settings.onFileStateChange;
     this.obsSourceName = settings.obsSourceName;
@@ -43,6 +45,7 @@ export default class SlpFileWriter {
     this.consoleNick = settings.consoleNick;
     this.currentFile = this.getClearedCurrentFile();
     this.obs = new OBSWebSocket();
+    this.slpStream = new SlpStream();
     this.statusOutput = {
       status: false,
       timeout: null,
@@ -50,6 +53,7 @@ export default class SlpFileWriter {
     this.isRelaying = settings.isRelaying;
     this.clients = [];
     this.manageRelay();
+    this.setupListeners();
   }
 
   getClearedCurrentFile() {
@@ -189,81 +193,7 @@ export default class SlpFileWriter {
   }
 
   handleData(newData) {
-    let isNewGame = false;
-    let isGameEnd = false;
-
-    // We should technically never accrue a previous buffer with new communication methods because
-    // ConsoleCommunication ensures that full data has been received before trying to process
-    // the data
-    const data = Uint8Array.from(Buffer.concat([
-      this.currentFile.previousBuffer,
-      newData,
-    ]));
-
-    const dataView = new DataView(data.buffer);
-
-    let index = 0;
-    while (index < data.length) {
-      if (Buffer.from(data.slice(index, index + 5)).toString() === "HELO\0") {
-        // This is a consequence of the way our network communication works, "HELO" messages are
-        // sent periodically to avoid the timeout logic. Just ignore them.
-        index += 5;
-        continue;
-      }
-
-      // TODO: Here we are parsing slp file data. Seems pretty silly to do this when
-      // TODO: logic already exists in the parser to do it... Should eventually reconcile
-      // TODO: the two.
-
-      // Make sure we have enough data to read a full payload
-      const command = dataView.getUint8(index);
-      const payloadSize = _.get(this.currentFile, ['payloadSizes', command]) || 0;
-      const remainingLen = data.length - index;
-      if (remainingLen < payloadSize + 1) {
-        // If remaining length is not long enough for full payload, save the remaining
-        // data until we receive more data. The data has been split up.
-        this.currentFile.previousBuffer = data.slice(index);
-        break;
-      }
-
-      // Clear previous buffer here, dunno where else to do this
-      this.currentFile.previousBuffer = Buffer.from([]);
-
-      // Increment by one for the command byte
-      index += 1;
-
-      // Prepare to write payload
-      const payloadPtr = data.slice(index);
-      const payloadDataView = new DataView(data.buffer, index);
-      let payloadLen = 0;
-
-      switch (command) {
-      case Command.MESSAGE_SIZES:
-        isNewGame = true;
-        this.initializeNewGame();
-        payloadLen = this.processReceiveCommands(payloadDataView);
-        this.writeCommand(command, payloadPtr, payloadLen);
-        this.onFileStateChange();
-        break;
-      case Command.GAME_END:
-        payloadLen = this.processCommand(command, payloadDataView);
-        this.writeCommand(command, payloadPtr, payloadLen);
-        this.endGame();
-        isGameEnd = true;
-        break;
-      case Command.GAME_START:
-        payloadLen = this.processCommand(command, payloadDataView);
-        this.writeCommand(command, payloadPtr, payloadLen);
-        break;
-      default:
-        payloadLen = this.processCommand(command, payloadDataView);
-        this.writeCommand(command, payloadPtr, payloadLen);
-        this.handleStatusOutput();
-        break;
-      }
-
-      index += payloadLen;
-    }
+    this.slpStream.write(newData);
 
     // Write data to relay, we do this after processing in the case there is a new game, we need
     // to have the buffer ready
@@ -279,26 +209,38 @@ export default class SlpFileWriter {
         client.readPos = buf.byteLength; // eslint-disable-line
       });
     }
-
-    return {
-      isNewGame: isNewGame,
-      isGameEnd: isGameEnd,
-    };
   }
 
-  writeCommand(command, payloadPtr, payloadLen) {
+  setupListeners() {
+    this.slpStream.on(SlpStreamEvent.RAW, (data) => {
+      const { command, payload } = data;
+      switch (command) {
+      case Command.MESSAGE_SIZES:
+        this.initializeNewGame();
+        this.writeCommand(payload);
+        this.onFileStateChange();
+        break;
+      case Command.GAME_END:
+        this.writeCommand(payload);
+        this.endGame();
+        break;
+      case Command.GAME_START:
+        this.writeCommand(payload);
+        break;
+      default:
+        this.writeCommand(payload);
+        this.handleStatusOutput();
+        break;
+      }
+    });
+  }
+
+  writeCommand(bufToWrite) {
     // Write data
     const writeStream = this.currentFile.writeStream;
     if (!writeStream) {
       return;
     }
-
-    const payloadBuf = payloadPtr.slice(0, payloadLen);
-    const bufToWrite = Buffer.concat([
-      Buffer.from([command]),
-      payloadBuf,
-    ]);
-
     writeStream.write(bufToWrite);
   }
 
@@ -325,6 +267,7 @@ export default class SlpFileWriter {
     }));
 
     console.log(`Creating new file at: ${filePath}`);
+    this.emit("new-file", filePath);
   }
 
   getNewFilePath(m) {

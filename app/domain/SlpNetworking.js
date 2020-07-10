@@ -62,6 +62,9 @@ export default class SlpNetworking {
       isRelaying: this.isRelaying,
     }
     this.slpFileWriter = new SlpFileWriter(slpSettings);
+    this.slpFileWriter.on("new-file", (curFilePath) => {
+      this.dolphinManager.playFile(curFilePath, false);
+    })
   }
 
   forceConsoleUiUpdate() {
@@ -144,11 +147,7 @@ export default class SlpNetworking {
   }
 
   handleReplayData(data) {
-    const result = this.slpFileWriter.handleData(data);
-    if (result.isNewGame) {
-      const curFilePath = this.slpFileWriter.getCurrentFilePath();
-      this.dolphinManager.playFile(curFilePath, false);
-    }
+    this.slpFileWriter.handleData(data);
   }
 
   async startMirroring() {
