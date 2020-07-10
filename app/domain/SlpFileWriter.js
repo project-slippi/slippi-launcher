@@ -59,7 +59,6 @@ export default class SlpFileWriter {
       fullBuffer: Buffer.from([]),
       path: null,
       writeStream: null,
-      bytesWritten: 0,
       metadata: {
         startTime: null,
         lastFrame: -124,
@@ -293,9 +292,6 @@ export default class SlpFileWriter {
     if (!writeStream) {
       return;
     }
-
-    // Keep track of how many bytes we have written to the file
-    this.currentFile.bytesWritten += (payloadLen + 1);
 
     const payloadBuf = payloadPtr.slice(0, payloadLen);
     const bufToWrite = Buffer.concat([
