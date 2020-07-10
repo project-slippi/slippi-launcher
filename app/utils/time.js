@@ -19,15 +19,13 @@ export function convertToDateAndTime(dateTimeString) {
 }
 
 export function filenameToDateAndTime(filename) {
-  const filenameArray = filename.split("_")
-  const underscoreCount = (filenameArray.length - 1);
-  const filenameTime = (underscoreCount === 1) ? filenameArray[1] : filenameArray[2]
   const timeReg = /\d{8}T\d{6}/g;
+  const filenameTime = filename.match(timeReg)
 
-  if (!(underscoreCount === 1 || underscoreCount === 2) || filenameArray[0] !== "Game" || !timeReg.test(filenameTime)) {
+  if (filenameTime === null) {
     return null;
   }
 
-  const time = moment(filenameTime).local();
+  const time = moment(filenameTime[0]).local();
   return time.format('ll · LT');
 }
