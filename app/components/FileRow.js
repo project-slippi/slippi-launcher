@@ -216,8 +216,11 @@ export default class FileRow extends Component {
     const file = this.props.file || {};
 
     const metadata = file.game.getMetadata() || {};
-    const startAt = metadata.startAt;
-    const startAtDisplay = timeUtils.convertToDateAndTime(startAt) || timeUtils.filenameToDateAndTime(this.getFileName()) || timeUtils.convertToDateAndTime(fs.statSync(file.fullPath).birthtime) || 'Unknown';
+    const startAt = timeUtils.convertToDateAndTime(metadata.startAt);
+    const getTimeFromFileName = () => timeUtils.filenameToDateAndTime(this.getFileName());
+    const getTimeFromBirthTime = () => timeUtils.convertToDateAndTime(fs.statSync(file.fullPath).birthtime);
+    const startAtDisplay = startAt || getTimeFromFileName() || getTimeFromBirthTime() || 'Unknown';
+
 
     return <Table.Cell singleLine={true}>{startAtDisplay}</Table.Cell>;
   }
