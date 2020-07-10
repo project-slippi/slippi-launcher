@@ -24,14 +24,19 @@ SOFTWARE.
 
 */
 
-
-import EventEmitter from "events";
+import EventEmitter from 'events';
 import net from 'net';
 import _ from 'lodash';
 import path from 'path';
 import moment from 'moment';
-import OBSWebSocket from 'obs-websocket-js'
-import { Ports, SlpFile, Command, SlpStream, SlpStreamEvent } from "@slippi/sdk";
+import OBSWebSocket from 'obs-websocket-js';
+import {
+  Ports,
+  SlpFile,
+  Command,
+  SlpStream,
+  SlpStreamEvent,
+} from '@slippi/sdk';
 
 export default class SlpFileWriter extends EventEmitter {
   constructor(settings) {
@@ -75,7 +80,7 @@ export default class SlpFileWriter extends EventEmitter {
     if (!this.isRelaying) {
       // If relay has been disabled, clear states
       const clients = this.clients || [];
-      _.each(clients, (client) => client.destroy());
+      _.each(clients, client => client.destroy());
 
       if (this.server) {
         this.server.close();
@@ -86,13 +91,13 @@ export default class SlpFileWriter extends EventEmitter {
 
       return;
     }
-    
+
     if (this.server) {
       // If server is already up, no need to start
       return;
     }
-    
-    this.server = net.createServer((socket) => {
+
+    this.server = net.createServer(socket => {
       socket.setNoDelay().setTimeout(20000);
 
       const clientData = {
@@ -101,9 +106,9 @@ export default class SlpFileWriter extends EventEmitter {
       };
 
       this.clients.push(clientData);
-      socket.on("close", (err) => {
+      socket.on('close', err => {
         if (err) console.log(err);
-        _.remove(this.clients, (client) => socket === client.socket);
+        _.remove(this.clients, client => socket === client.socket);
       });
     });
     this.server.listen(Ports.RELAY_START + this.id, '0.0.0.0');
@@ -124,22 +129,35 @@ export default class SlpFileWriter extends EventEmitter {
     this.manageRelay();
   }
 
-  getSceneSources = async (data = null) => { // eslint-disable-line
-    const res = await this.obs.send("GetSceneList");
+  getSceneSources = async () => {
+    // eslint-disable-line
+    const res = await this.obs.send('GetSceneList');
     const scenes = res.scenes || [];
-    const pairs = _.flatMap(scenes, (scene) => {
+    const pairs = _.flatMap(scenes, scene => {
       const sources = scene.sources || [];
-      return _.map(sources, (source) => ({scene: scene.name, source: source.name}));
+      return _.map(sources, source => ({
+        scene: scene.name,
+        source: source.name,
+      }));
     });
-    this.obsPairs = _.filter(pairs, (pair) => pair.source === this.obsSourceName);
-  }
+    this.obsPairs = _.filter(pairs, pair => pair.source === this.obsSourceName);
+  };
 
   async connectOBS() {
     if (this.obsIP && this.obsSourceName) {
       // if you send a password when authentication is disabled, OBS will still connect
-      await this.obs.connect({address: this.obsIP, password: this.obsPassword});
-      await this.obs.on("SceneItemAdded", async (data) => await this.getSceneSources()); // eslint-disable-line
-      await this.obs.on("SceneItemRemoved", async (data) => await this.getSceneSources()); // eslint-disable-line
+      await this.obs.connect({
+        address: this.obsIP,
+        password: this.obsPassword,
+      });
+      await this.obs.on(
+        'SceneItemAdded',
+        async () => this.getSceneSources()
+      ); // eslint-disable-line
+      await this.obs.on(
+        'SceneItemRemoved',
+        async () => this.getSceneSources()
+      ); // eslint-disable-line
       await this.getSceneSources();
     }
   }
@@ -148,16 +166,19 @@ export default class SlpFileWriter extends EventEmitter {
     if (!this.obs) {
       return;
     }
-    
+
     this.obs.disconnect();
   }
 
   setStatus(value) {
     this.statusOutput.status = value;
     // console.log(`Status changed: ${value}`);
-    _.forEach(this.obsPairs, (pair) => {
-      this.obs.send("SetSceneItemProperties", 
-        {"scene-name": pair.scene, "item": this.obsSourceName, "visible": value});
+    _.forEach(this.obsPairs, pair => {
+      this.obs.send('SetSceneItemProperties', {
+        'scene-name': pair.scene,
+        item: this.obsSourceName,
+        visible: value,
+      });
     });
   }
 
@@ -172,7 +193,7 @@ export default class SlpFileWriter extends EventEmitter {
         // If we timeout, set and set status
         this.setStatus(false);
       }, timeoutLength);
-    }
+    };
 
     if (this.currentFile.metadata.lastFrame < -60) {
       // Only show the source in the later portion of the game loading stage
@@ -187,7 +208,7 @@ export default class SlpFileWriter extends EventEmitter {
 
     // Here we did not have a game going, so let's indicate we do now
     this.setStatus(true);
-    
+
     // Set timer
     setTimer();
   }
@@ -197,11 +218,14 @@ export default class SlpFileWriter extends EventEmitter {
 
     // Write data to relay, we do this after processing in the case there is a new game, we need
     // to have the buffer ready
-    this.currentFile.fullBuffer = Buffer.concat([this.currentFile.fullBuffer, newData]);
+    this.currentFile.fullBuffer = Buffer.concat([
+      this.currentFile.fullBuffer,
+      newData,
+    ]);
 
     if (this.clients) {
       const buf = this.currentFile.fullBuffer;
-      _.each(this.clients, (client) => {
+      _.each(this.clients, client => {
         client.socket.write(buf.slice(client.readPos));
 
         // eslint doesn't like the following line... I feel like it's a valid use case but idk,
@@ -212,7 +236,8 @@ export default class SlpFileWriter extends EventEmitter {
   }
 
   setupListeners() {
-    this.slpStream.on(SlpStreamEvent.RAW, (data) => {
+    // Write the raw data to the SlpFile
+    this.slpStream.on(SlpStreamEvent.RAW, data => {
       const { command, payload } = data;
       switch (command) {
       case Command.MESSAGE_SIZES:
@@ -230,6 +255,49 @@ export default class SlpFileWriter extends EventEmitter {
       default:
         this.writeCommand(payload);
         this.handleStatusOutput();
+        break;
+      }
+    });
+
+    // Update the metadata based on parsed data
+    this.slpStream.on(SlpStreamEvent.COMMAND, data => {
+      const { command, payload } = data;
+      switch (command) {
+      case Command.POST_FRAME_UPDATE:
+        // Here we need to update some metadata fields
+        const { frame, playerIndex, isFollower, internalCharacterId } = payload;
+        if (isFollower) {
+          // No need to do this for follower
+          break;
+        }
+
+        // Update frame index
+        this.currentFile.metadata.lastFrame = frame;
+
+        // Update character usage
+        const prevPlayer =
+            _.get(this.currentFile, [
+              'metadata',
+              'players',
+              `${playerIndex}`,
+            ]) || {};
+        const characterUsage = prevPlayer.characterUsage || {};
+        const curCharFrames = characterUsage[internalCharacterId] || 0;
+        const player = {
+          ...prevPlayer,
+          characterUsage: {
+            ...characterUsage,
+            [internalCharacterId]: curCharFrames + 1,
+          },
+        };
+        this.currentFile.metadata.players[`${playerIndex}`] = player;
+        break;
+      case Command.GAME_END:
+        if (payload.gameEndMethod !== 7) {
+          this.handleStatusOutput(700);
+        }
+        break;
+      default:
         break;
       }
     });
@@ -267,11 +335,14 @@ export default class SlpFileWriter extends EventEmitter {
     }));
 
     console.log(`Creating new file at: ${filePath}`);
-    this.emit("new-file", filePath);
+    this.emit('new-file', filePath);
   }
 
   getNewFilePath(m) {
-    return path.join(this.folderPath, `Game_${m.format("YYYYMMDD")}T${m.format("HHmmss")}.slp`);
+    return path.join(
+      this.folderPath,
+      `Game_${m.format('YYYYMMDD')}T${m.format('HHmmss')}.slp`
+    );
   }
 
   endGame() {
@@ -292,75 +363,11 @@ export default class SlpFileWriter extends EventEmitter {
 
     // End the stream
     writeStream.end(() => {
-      console.log("Finished writting file.");
+      console.log('Finished writting file.');
       // Clear current file
       this.currentFile = this.getClearedCurrentFile();
       // Update file state
       this.onFileStateChange();
     });
-  }
-
-  processReceiveCommands(dataView) {
-    const payloadLen = dataView.getUint8(0);
-    for (let i = 1; i < payloadLen; i += 3) {
-      const commandByte = dataView.getUint8(i);
-      const payloadSize = dataView.getUint16(i + 1);
-      this.currentFile.payloadSizes[commandByte] = payloadSize;
-    }
-
-    return payloadLen;
-  }
-
-  processCommand(command, dataView) {
-    const payloadSize = _.get(this.currentFile, ['payloadSizes', command]);
-    if (!payloadSize) {
-      // TODO: Flag some kind of error
-      return 0;
-    }
-
-    switch (command) {
-    case Command.POST_FRAME_UPDATE:
-      // Here we need to update some metadata fields
-      const frameIndex = dataView.getInt32(0);
-      const playerIndex = dataView.getUint8(4);
-      const isFollower = dataView.getUint8(5);
-      const internalCharacterId = dataView.getUint8(6);
-
-      if (isFollower) {
-        // No need to do this for follower
-        break;
-      }
-
-      // Update frame index
-      this.currentFile.metadata.lastFrame = frameIndex;
-
-      // Update character usage
-      const prevPlayer = _.get(this.currentFile, ['metadata', 'players', `${playerIndex}`]) || {};
-      const characterUsage = prevPlayer.characterUsage || {};
-      const curCharFrames = characterUsage[internalCharacterId] || 0;
-      const player = {
-        ...prevPlayer,
-        "characterUsage": {
-          ...characterUsage,
-          [internalCharacterId]: curCharFrames + 1,
-        },
-      };
-
-      this.currentFile.metadata.players[`${playerIndex}`] = player;
-
-      break;
-    case Command.GAME_END:
-      const endMethod = dataView.getUint8(0);
-
-      if (endMethod !== 7) {
-        this.handleStatusOutput(700);
-      }
-
-      break;
-    default:
-      // Nothing to do
-      break;
-    }
-    return payloadSize;
   }
 }
