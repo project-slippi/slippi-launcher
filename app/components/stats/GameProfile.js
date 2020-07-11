@@ -32,7 +32,7 @@ export default class GameProfile extends Component {
   static propTypes = {
     history: PropTypes.object.isRequired,
 
-    file: PropTypes.object.isRequired,
+    file: PropTypes.object, // not required for direct URI handling
 
     // fileLoaderAction
     playFile: PropTypes.func.isRequired,
@@ -46,6 +46,10 @@ export default class GameProfile extends Component {
     errors: PropTypes.object.isRequired,
     topNotifOffset: PropTypes.number.isRequired,
     statsGameIndex: PropTypes.number.isRequired,
+  };
+
+  static defaultProps = {
+    file: null
   };
 
   refStats = null;
@@ -69,6 +73,13 @@ export default class GameProfile extends Component {
 
   prevGame = () => {
     this.props.setStatsGamePage(this.props.statsGameIndex - 1);
+  }
+
+  getTimeFromElsewhere = () => {
+    const game = _.get(this.props.store, ['game']);
+    const fullPath = _.get(this.props.store, ['game', 'input', 'filePath']);
+    const fileName = fullPath.split('\\').pop().split('/').pop();
+    return timeUtils.monthDayHourFormat(timeUtils.fileToDateAndTime(game, fileName, fullPath));
   }
 
   renderContent() {
@@ -228,7 +239,9 @@ export default class GameProfile extends Component {
     const platform =
       _.get(this.props.store, ['game', 'metadata', 'playedOn']) || 'Unknown';
 
-    const startAtDisplay = timeUtils.monthDayHourFormat(_.get(this.props.file, ['startTime'])) || 'Unknown';
+    const getTimeFromFile = timeUtils.monthDayHourFormat(_.get(this.props.file, ['startTime']));
+
+    const startAtDisplay = getTimeFromFile || this.getTimeFromElsewhere() || 'Unknown';
 
     const gameDetailsClasses = classNames({
       [styles['game-details']]: true,

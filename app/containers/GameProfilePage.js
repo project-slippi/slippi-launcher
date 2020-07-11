@@ -7,10 +7,11 @@ import { dismissError } from "../actions/error";
 
 function mapStateToProps(state) {
   const index = state.fileLoader.statsGameIndex;
+  const file = state.fileLoader.files[index] || null;
   return {
     store: state.game,
     statsGameIndex: index,
-    file: state.fileLoader.files[index],
+    file: file,
     errors: state.errors,
     topNotifOffset: _.get(state.notifs, ['activeNotif', 'heightPx']) || 0,
   };
