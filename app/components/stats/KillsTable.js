@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Table, Icon } from 'semantic-ui-react';
 
 import {
+  Frames,
   animations as animationUtils,
   moves as moveUtils,
 } from '@slippi/slippi-js';
@@ -30,7 +31,7 @@ export default class KillsTable extends Component {
 
     const percent = `${Math.trunc(stock.currentPercent)}%`;
 
-    const isFirstFrame = stock.startFrame === timeUtils.frames.START_FRAME;
+    const isFirstFrame = stock.startFrame === Frames.FIRST;
     if (isFirstFrame) {
       start = <span className={styles['secondary-text']}>–</span>;
     }
