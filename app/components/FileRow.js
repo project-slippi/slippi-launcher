@@ -214,9 +214,7 @@ export default class FileRow extends Component {
 
     const file = this.props.file || {};
 
-    const metadata = file.game.getMetadata() || {};
-    const startAt = metadata.startAt;
-    const startAtDisplay = timeUtils.convertToDateAndTime(startAt) || 'Unknown';
+    const startAtDisplay = timeUtils.monthDayHourFormat(file.startTime) || "Unknown";
 
     return <Table.Cell singleLine={true}>{startAtDisplay}</Table.Cell>;
   }

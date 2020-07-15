@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import fs from 'fs';
 import path from 'path';
-import moment from 'moment';
 import SlippiGame from '@slippi/sdk';
+import * as timeUtils from '../utils/time';
 
 import { displayError } from './error';
 import { gameProfileLoad } from './game';
@@ -229,9 +229,12 @@ async function loadFilesInFolder(folderPath) {
         hasError = true;
       }
 
+      const startTime = timeUtils.fileToDateAndTime(game, fileName, fullPath)
+
       return {
         fullPath: fullPath,
         fileName: fileName,
+        startTime: startTime,
         game: game,
         hasError: hasError,
       };
@@ -283,14 +286,7 @@ function processFiles(files) {
 
   resultFiles = _.orderBy(
     resultFiles,
-    [
-      file => {
-        const metadata = file.game.getMetadata() || {};
-        const startAt = metadata.startAt;
-        return moment(startAt);
-      },
-      'fileName',
-    ],
+    ['startTime', 'fileName'],
     ['desc', 'desc']
   );
 
