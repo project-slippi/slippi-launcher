@@ -74,7 +74,7 @@ if (isProd && (platform === "win32" || platform === "darwin")) {
     const originalDolphinPath = path.join(appPath, "../app.asar.unpacked/app/dolphin");
 
     electronSettings.set("boot.installTime", exeCreateTime);
-    
+
     // If path exists, let's move it to app data
     log.info("Copying dolphin path...");
     const userDataPath = app.getPath("userData");
@@ -100,7 +100,7 @@ if (isProd && (platform === "win32" || platform === "darwin")) {
         log.warn("Failed to back up user dir")
         log.warn(ex);
 
-        shouldBkpUserDir = false; 
+        shouldBkpUserDir = false;
       }
     }
 
@@ -176,7 +176,7 @@ if (isProd && !prevVersion) {
   // "Slippi Launcher"
   const oldAppDataPath = path.join(appDataPath, "Slippi Launcher");
   const newAppDataPath = path.join(appDataPath, "Slippi Desktop App");
-  
+
   log.info("Transferring settings from previous Slippi Launcher install...");
 
   try {
@@ -223,8 +223,8 @@ const waitForMainWindow = async () => {
 const handleSlippiURIAsync = async (aUrl) => {
   log.info("Handling URL...");
   log.info(aUrl);
-  
-  // Check if the input is 
+
+  // Check if the input is
   // Specifying a base will provide sane defaults if the input is null or wrong
   const myUrl = new url.URL(aUrl, `null://null`);
   let protocol = myUrl.protocol;
@@ -237,12 +237,12 @@ const handleSlippiURIAsync = async (aUrl) => {
       return;
     }
   }
- 
+
   // When handling a Slippi request, focus the window
   if (mainWindow) {
     if (mainWindow.isMinimized()){
       mainWindow.restore();
-    } 
+    }
     mainWindow.focus();
   }
 
