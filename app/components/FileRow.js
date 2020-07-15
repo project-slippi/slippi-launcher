@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Button, Table, Icon } from 'semantic-ui-react';
-import { stages as stageUtils } from '@slippi/sdk';
+import { stages as stageUtils } from '@slippi/slippi-js';
 import classNames from 'classnames';
 
 import styles from './FileRow.scss';

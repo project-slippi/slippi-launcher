@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import SlippiGame from '@slippi/sdk';
+import SlippiGame from '@slippi/slippi-js';
 
 export const GAME_LOAD_START = 'GAME_LOAD_START'
 export const GAME_LOAD_COMPLETE = 'GAME_LOAD_COMPLETE';

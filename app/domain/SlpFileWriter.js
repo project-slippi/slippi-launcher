@@ -36,7 +36,7 @@ import {
   Command,
   SlpStream,
   SlpStreamEvent,
-} from '@slippi/sdk';
+} from '@slippi/slippi-js';
 
 export default class SlpFileWriter extends EventEmitter {
   constructor(settings) {

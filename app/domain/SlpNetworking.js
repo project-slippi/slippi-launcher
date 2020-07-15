@@ -21,7 +21,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import _ from 'lodash';
 
-import { ConsoleConnection, ConnectionStatus } from '@slippi/sdk';
+import { ConsoleConnection, ConnectionStatus } from '@slippi/slippi-js';
 
 import { store } from '../index';
 import { connectionStateChanged } from '../actions/console';
