@@ -22,7 +22,7 @@ import fs from 'fs-extra';
 import ini from 'ini';
 import semver from 'semver';
 import MenuBuilder from './menu';
-import sudoExecAsync from './utils/sudoExec';
+import {sudoExecAsyncNonWindows, sudoExecAsyncWindows} from './utils/sudoExec';
 
 // Set up AppUpdater
 log.transports.file.level = 'info';
@@ -130,10 +130,10 @@ const handlePreloadLogic = async () => {
           log.info("Copying dolphin instance...");
           switch (platform) {
           case "win32": // windows
-            await sudoExecAsync("rmdir /Q /S \"$DOLPHIN_PATH\"", { ...sudoOptions, env: { DOLPHIN_PATH: targetPath } });
+            await sudoExecAsyncWindows(`rmdir /Q /S "${targetPath}"`);
             break;
           default:
-            await sudoExecAsync("rm -rf \"$DOLPHIN_PATH\"", { ...sudoOptions, env: { DOLPHIN_PATH: targetPath } });
+            await sudoExecAsyncNonWindows("rm -rf \"$DOLPHIN_PATH\"", { ...sudoOptions, env: { DOLPHIN_PATH: targetPath } });
           }
 
           fs.copySync(originalDolphinPath, targetPath);

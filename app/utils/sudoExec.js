@@ -1,19 +1,42 @@
-import sudo from 'sudo-prompt';
+import { app } from 'electron';
 
-export default function sudoExecAsync(command, options) {
+import log from 'electron-log';
+import sudo from 'sudo-prompt';
+import path from 'path';
+import { exec } from 'child_process';
+
+export function sudoExecAsyncNonWindows(command, options) {
   return new Promise((resolve, reject) => {
     sudo.exec(
       command, 
       options,
-      (error, stdout, stderr) => {
+      (error) => {
         if (
-          error === undefined &&
-          stdout !== undefined &&
-          stderr !== undefined
+          error == null
         ) {
           resolve();
         } else {
-          reject(new Error("Could not run elevated command"));
+          reject(new Error(`Could not run elevated command: ${error}`));
+        }
+      })
+  })
+}
+
+export function sudoExecAsyncWindows(command) {
+  const appPath = app.getAppPath();
+  const elevatePath = path.join(appPath, "../app.asar.unpacked/static/elevate.exe");
+  return new Promise((resolve, reject) => {
+    exec(
+      `"${elevatePath}" -c ${command}`,
+      (error, stdout, stderr) => {
+        log.info(stdout);
+        log.info(stderr);
+        if (
+          error == null
+        ) {
+          resolve();
+        } else {
+          reject(new Error(`Could not run elevated command: ${error}`));
         }
       })
   })
