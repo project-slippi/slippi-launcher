@@ -27,7 +27,7 @@ export function sudoExecAsyncWindows(command) {
   const elevatePath = path.join(appPath, "../app.asar.unpacked/static/elevate.exe");
   return new Promise((resolve, reject) => {
     exec(
-      `"${elevatePath}" -c ${command}`,
+      `"${elevatePath}" -c -w ${command}`,
       (error, stdout, stderr) => {
         log.info(stdout);
         log.info(stderr);
