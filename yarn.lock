@@ -2688,6 +2688,11 @@ bluebird-lst@^1.0.6:
   dependencies:
     bluebird "^3.5.2"
 
+bluebird@^3.4.6:
+  version "3.7.2"
+  resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.7.2.tgz#9f229c15be272454ffa973ace0dbee79a1b0c36f"
+  integrity sha512-XpNj6GDQzdfW+r2Wnn7xiSAd7TM3jzkxGXBGTtWKuSXv1xUV+azxAm8jdWZN06QTQk+2N2XB9jRDkvbmQmcRtg==
+
 bluebird@^3.5.0, bluebird@^3.5.1, bluebird@^3.5.2, bluebird@^3.5.3:
   version "3.5.3"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.3.tgz#7d01c6f9616c9a51ab0f8c549a79dfe6ec33efa7"
@@ -4692,6 +4697,14 @@ electron-settings@^3.2.0:
   dependencies:
     clone "^2.1.1"
     jsonfile "^4.0.0"
+
+electron-sudo@^4.0.12:
+  version "4.0.12"
+  resolved "https://registry.yarnpkg.com/electron-sudo/-/electron-sudo-4.0.12.tgz#17d27fcb33837b7f6fd3a7946f168d6590566a53"
+  integrity sha1-F9J/yzODe39v06eUbxaNZZBWalM=
+  dependencies:
+    babel-runtime "^6.18.0"
+    bluebird "^3.4.6"
 
 electron-to-chromium@^1.3.47, electron-to-chromium@^1.3.96:
   version "1.3.100"

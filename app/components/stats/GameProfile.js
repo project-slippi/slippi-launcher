@@ -49,7 +49,7 @@ export default class GameProfile extends Component {
   };
 
   static defaultProps = {
-    file: null
+    file: null,
   };
 
   refStats = null;
