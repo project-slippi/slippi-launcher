@@ -1,7 +1,7 @@
 {
   "name": "slippi-desktop-app",
   "productName": "Slippi Desktop App",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Slippi Desktop App for browsing and playing replays.",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -262,6 +262,7 @@
     "electron-debug": "^2.0.0",
     "electron-log": "^2.2.17",
     "electron-settings": "^3.2.0",
+    "electron-sudo": "^4.0.12",
     "electron-updater": "^4.0.6",
     "fs-extra": "^8.1.0",
     "history": "^4.7.2",

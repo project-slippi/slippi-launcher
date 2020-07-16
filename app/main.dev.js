@@ -22,6 +22,9 @@ import fs from 'fs-extra';
 import ini from 'ini';
 import semver from 'semver';
 import MenuBuilder from './menu';
+// import Sudoer from 'electron-sudo';
+
+// const sudoer = new Sudoer({ name: "Slippi Desktop App" });
 
 // Set up AppUpdater
 log.transports.file.level = 'info';
@@ -52,145 +55,166 @@ if (
   require('electron-debug')();
 }
 
-if (isProd && (platform === "win32" || platform === "darwin")) {
-  log.info("Checking if Dolphin path has been moved...");
+const handlePreloadLogic = async () => {
+  if (isProd && (platform === "win32" || platform === "darwin")) {
+    log.info("Checking if Dolphin path has been moved...");
 
-  const appPath = app.getAppPath();
-  const exePlatformPaths = {
-    "win32": path.join(appPath, "../../Slippi Launcher.exe"),
-    "darwin": path.join(appPath, "../../MacOS/Slippi Launcher"),
-  };
+    const appPath = app.getAppPath();
+    const exePlatformPaths = {
+      "win32": path.join(appPath, "../../Slippi Launcher.exe"),
+      "darwin": path.join(appPath, "../../MacOS/Slippi Launcher"),
+    };
 
-  // If on production and mac/windows, let's see if this is a fresh install
-  const exePath = exePlatformPaths[platform];
-  const exeStats = fs.statSync(exePath);
-  log.info(`Exe path: ${exePath}`);
-  const exeCreateTime = exeStats.ctimeMs;
-  const previousCreateTime = electronSettings.get("boot.installTime");
-  log.info(`Install time is ${exeCreateTime}, previous install is ${previousCreateTime}`);
+    // If on production and mac/windows, let's see if this is a fresh install
+    const exePath = exePlatformPaths[platform];
+    const exeStats = fs.statSync(exePath);
+    log.info(`Exe path: ${exePath}`);
+    const exeCreateTime = exeStats.ctimeMs;
+    const previousCreateTime = electronSettings.get("boot.installTime");
+    log.info(`Install time is ${exeCreateTime}, previous install is ${previousCreateTime}`);
 
-  const shouldCopyDolphin = exeCreateTime !== previousCreateTime;
-  if (shouldCopyDolphin) {
-    const originalDolphinPath = path.join(appPath, "../app.asar.unpacked/app/dolphin");
+    let isCopySuccess = true;
+    const shouldCopyDolphin = exeCreateTime !== previousCreateTime;
+    if (shouldCopyDolphin) {
+      const originalDolphinPath = path.join(appPath, "../app.asar.unpacked/app/dolphin");
 
-    electronSettings.set("boot.installTime", exeCreateTime);
+      electronSettings.set("boot.installTime", exeCreateTime);
 
-    // If path exists, let's move it to app data
-    log.info("Copying dolphin path...");
-    const userDataPath = app.getPath("userData");
-    const targetPath = path.join(userDataPath, 'dolphin');
+      // If path exists, let's move it to app data
+      log.info("Copying dolphin path...");
+      const userDataPath = app.getPath("userData");
+      const targetPath = path.join(userDataPath, 'dolphin');
 
-    const targetUserPath = path.join(targetPath, "User");
-    let shouldBkpUserDir = fs.existsSync(targetUserPath);
-    const backupUserPath = path.join(userDataPath, "DolphinUserBkp");
+      const targetUserPath = path.join(targetPath, "User");
+      let shouldBkpUserDir = fs.existsSync(targetUserPath);
+      const backupUserPath = path.join(userDataPath, "DolphinUserBkp");
 
-    // If we are upgrading from a version prior to 1.5.0, let's not back up and restore. This is
-    // because we disabled dual core and changed hotkeys in the more recent version of Dolphin
-    const prevVersion = electronSettings.get('previousVersion');
-    if (!prevVersion || semver.lt(prevVersion, '1.5.0-dev-2')) {
-      shouldBkpUserDir = false;
-    }
-
-    if (shouldBkpUserDir) {
-      try {
-        log.info("Backing up previous User directory...");
-        fs.removeSync(backupUserPath);
-        fs.copySync(targetUserPath, backupUserPath);
-      } catch (ex) {
-        log.warn("Failed to back up user dir")
-        log.warn(ex);
-
+      // If we are upgrading from a version prior to 1.5.0, let's not back up and restore. This is
+      // because we disabled dual core and changed hotkeys in the more recent version of Dolphin
+      const prevVersion = electronSettings.get('previousVersion');
+      if (!prevVersion || semver.lt(prevVersion, '1.5.0-dev-2')) {
         shouldBkpUserDir = false;
       }
-    }
 
-    // Copy dolphin dir
-    try {
-      log.info("Copying dolphin instance...");
-      fs.removeSync(targetPath);
-      fs.copySync(originalDolphinPath, targetPath);
-    } catch (ex) {
-      log.warn("Failed copy dolphin...");
-      log.warn(ex);
+      if (shouldBkpUserDir) {
+        try {
+          log.info("Backing up previous User directory...");
+          fs.removeSync(backupUserPath);
+          fs.copySync(targetUserPath, backupUserPath);
+        } catch (ex) {
+          log.warn("Failed to back up user dir")
+          log.warn(ex);
 
-      throw new Error(
-        "Failed to copy Dolphin instance on first boot. Try deleting the existing " +
-        "Dolphin instance in AppData and re-install. If that still doesn't work, please " +
-        "join the Slippi discord and ask for help in the #support-and-bugs channel"
-      );
-    }
+          shouldBkpUserDir = false;
+        }
+      }
 
-    if (shouldBkpUserDir) {
+      // Copy dolphin dir
+      isCopySuccess = false;
       try {
-        log.info("Restoring backed up User directory...");
-        fs.moveSync(backupUserPath, targetUserPath, { overwrite: true });
+        log.info("Copying dolphin instance...");
+        fs.removeSync(targetPath);
+        fs.copySync(originalDolphinPath, targetPath);
+        isCopySuccess = true;
       } catch (ex) {
-        log.warn("Failed to restore user dir")
+        log.warn("Failed copy dolphin without permissions, will try with permissions...");
         log.warn(ex);
       }
+
+      // If first attempt failed, try again with elevated privileges
+      if (!isCopySuccess) {
+
+        try {
+          log.info("Copying dolphin instance...");
+          fs.removeSync(targetPath);
+          fs.copySync(originalDolphinPath, targetPath);
+          isCopySuccess = true;
+        } catch (ex) {
+          log.warn("Failed copy dolphin with permissions...");
+          log.warn(ex);
+
+          throw new Error(
+            "Failed to install latest Dolphin instance, your application may not work correctly. " +
+            "Please follow these instructions to get support:\n\n" +
+            `1) Browse to the directory: ${userDataPath}\n` +
+            `2) You should see a file called "log". This file will help us figure out what went wrong.\n` +
+            `3) Join the Slippi Discord and report that you are having issues in the proper support channel\n`
+          );
+        }
+      }
+
+      if (shouldBkpUserDir) {
+        try {
+          log.info("Restoring backed up User directory...");
+          fs.moveSync(backupUserPath, targetUserPath, { overwrite: true });
+        } catch (ex) {
+          log.warn("Failed to restore user dir")
+          log.warn(ex);
+        }
+      }
+
+      log.info("Done copying Dolphin");
+    } else {
+      log.info("Install time matches, this is not a new install.");
     }
-
-    log.info("Done copying Dolphin");
-  } else {
-    log.info("Install time matches, this is not a new install.");
   }
-}
 
-// Add game path to Playback Dolphin
-const isoPath = electronSettings.get("settings.isoPath");
-if (isoPath){
-  log.info("ISO path found");
-  const fileDir = path.dirname(isoPath);
-  const storedDolphinPath = electronSettings.get('settings.playbackDolphinPath');
-  let dolphinPath = storedDolphinPath || path.join(appDataPath, "Slippi Desktop App", "dolphin");
-  // Handle the dolphin INI file being in different paths per platform
-  switch (platform) {
-  case "darwin": // osx
-    dolphinPath = isDev ? "./app/dolphin-dev/osx/Dolphin.app/Contents/Resources" : path.join(dolphinPath, "Dolphin.app/Contents/Resources");
-    break;
-  case "win32": // windows
-    dolphinPath = isDev ? "./app/dolphin-dev/windows" : dolphinPath;
-    break;
-  case "linux":
-    break;
-  default:
-    throw new Error("The current platform is not supported");
+  // Add game path to Playback Dolphin
+  const isoPath = electronSettings.get("settings.isoPath");
+  if (isoPath) {
+    log.info("ISO path found");
+    const fileDir = path.dirname(isoPath);
+    const storedDolphinPath = electronSettings.get('settings.playbackDolphinPath');
+    let dolphinPath = storedDolphinPath || path.join(appDataPath, "Slippi Desktop App", "dolphin");
+    // Handle the dolphin INI file being in different paths per platform
+    switch (platform) {
+    case "darwin": // osx
+      dolphinPath = isDev ? "./app/dolphin-dev/osx/Dolphin.app/Contents/Resources" : path.join(dolphinPath, "Dolphin.app/Contents/Resources");
+      break;
+    case "win32": // windows
+      dolphinPath = isDev ? "./app/dolphin-dev/windows" : dolphinPath;
+      break;
+    case "linux":
+      break;
+    default:
+      throw new Error("The current platform is not supported");
+    }
+    try {
+      const iniPath = path.join(dolphinPath, "User", "Config", "Dolphin.ini");
+      const dolphinINI = ini.parse(fs.readFileSync(iniPath, 'utf-8'));
+      dolphinINI.General.ISOPath0 = fileDir;
+      const numPaths = dolphinINI.General.ISOPaths;
+      dolphinINI.General.ISOPaths = numPaths !== "0" ? numPaths : "1";
+      const newINI = ini.encode(dolphinINI);
+      fs.writeFileSync(iniPath, newINI);
+    } catch (err) {
+      log.warn(`Failed to update the dolphin paths\n${err}`)
+    }
   }
-  try {
-    const iniPath = path.join(dolphinPath, "User", "Config", "Dolphin.ini");
-    const dolphinINI = ini.parse(fs.readFileSync(iniPath, 'utf-8'));
-    dolphinINI.General.ISOPath0 = fileDir;
-    const numPaths = dolphinINI.General.ISOPaths;
-    dolphinINI.General.ISOPaths = numPaths !== "0" ? numPaths : "1";
-    const newINI = ini.encode(dolphinINI);
-    fs.writeFileSync(iniPath, newINI);
-  } catch (err) {
-    log.warn(`Failed to update the dolphin paths\n${err}`)
-  }
-}
 
-// Copy settings from when the app was called Slippi Launcher
-const prevVersion = electronSettings.get('previousVersion');
-if (isProd && !prevVersion) {
-  // On the very first install of the "Slippi Desktop App", let's transfer over settings from
-  // "Slippi Launcher"
-  const oldAppDataPath = path.join(appDataPath, "Slippi Launcher");
-  const newAppDataPath = path.join(appDataPath, "Slippi Desktop App");
+  // Copy settings from when the app was called Slippi Launcher
+  const prevVersion = electronSettings.get('previousVersion');
+  if (isProd && !prevVersion) {
+    // On the very first install of the "Slippi Desktop App", let's transfer over settings from
+    // "Slippi Launcher"
+    const oldAppDataPath = path.join(appDataPath, "Slippi Launcher");
+    const newAppDataPath = path.join(appDataPath, "Slippi Desktop App");
 
-  log.info("Transferring settings from previous Slippi Launcher install...");
+    log.info("Transferring settings from previous Slippi Launcher install...");
 
-  try {
-    const oldSettingPath = path.join(oldAppDataPath, "Settings");
-    const newSettingsPath = path.join(newAppDataPath, "Settings");
-    fs.copyFileSync(oldSettingPath, newSettingsPath);
+    try {
+      const oldSettingPath = path.join(oldAppDataPath, "Settings");
+      const newSettingsPath = path.join(newAppDataPath, "Settings");
+      fs.copyFileSync(oldSettingPath, newSettingsPath);
 
-    const oldDolphinUserPath = path.join(oldAppDataPath, "dolphin", "User");
-    const newDolphinUserPath = path.join(newAppDataPath, "dolphin", "User");
-    fs.copySync(oldDolphinUserPath, newDolphinUserPath, { overwrite: true });
+      const oldDolphinUserPath = path.join(oldAppDataPath, "dolphin", "User");
+      const newDolphinUserPath = path.join(newAppDataPath, "dolphin", "User");
+      fs.copySync(oldDolphinUserPath, newDolphinUserPath, { overwrite: true });
 
-    log.info("Done transferring settings.");
-  } catch (err) {
-    log.warn("Failed to transfer settings. Maybe old version didn't exist?");
+      log.info("Done transferring settings.");
+    } catch (err) {
+      log.warn("Failed to transfer settings. Maybe old version didn't exist?");
+    }
   }
 }
 
@@ -240,7 +264,7 @@ const handleSlippiURIAsync = async (aUrl) => {
 
   // When handling a Slippi request, focus the window
   if (mainWindow) {
-    if (mainWindow.isMinimized()){
+    if (mainWindow.isMinimized()) {
       mainWindow.restore();
     }
     mainWindow.focus();
@@ -353,6 +377,13 @@ app.on('ready', async () => {
     return;
   }
 
+  let bootError = null;
+  try {
+    await handlePreloadLogic();
+  } catch (err) {
+    bootError = err.message;
+  }
+
   if (
     process.env.NODE_ENV === 'development' ||
     process.env.DEBUG_PROD === 'true'
@@ -384,6 +415,10 @@ app.on('ready', async () => {
     } else {
       mainWindow.show();
       mainWindow.focus();
+    }
+
+    if (bootError) {
+      mainWindow.webContents.send('boot-error-encountered', bootError);
     }
 
     autoUpdater.on('update-downloaded', (info) => {

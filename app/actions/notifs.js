@@ -1,6 +1,7 @@
 export const APP_UPGRADE_DOWNLOADED = 'APP_UPGRADE_DOWNLOADED';
 export const SET_ACTIVE_NOTIF = 'SET_ACTIVE_NOTIF';
 export const DISMISS_GLOBAL_NOTIF = 'DISMISS_GLOBAL_NOTIF';
+export const BOOT_ERROR_ENCOUNTERED = 'BOOT_ERROR_ENCOUNTERED';
 
 export function appUpgradeDownloaded(upgradeDetails) {
   return {
@@ -27,4 +28,13 @@ export function dismissNotif(key) {
       key: key,
     },
   }
+}
+
+export function bootErrorEncountered(error) {
+  return {
+    type: BOOT_ERROR_ENCOUNTERED,
+    payload: {
+      error: error,
+    },
+  };
 }

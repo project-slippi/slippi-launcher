@@ -42,9 +42,28 @@ class GlobalAlert extends Component {
   // Notifs must use fixed heights to allow for main window to add the correct amount of padding,
   // dynamic padding may be possible using refs or some different method of offsetting main window.
   getAlerts() {
+    const bootErrString = _.get(this.props.store, ['meta', 'bootError']) || "";
+    const splitString = _.split(bootErrString, '\n');
+    const splitDivs = _.map(splitString, (str) => (
+      <div className={styles['error-msg-line']}>{str}</div>
+    ));
+
     return [
       {
-        key: 'applicationUpdated',
+        key: 'bootError',
+        icon: 'exclamation circle',
+        message: (
+          <div>
+            {splitDivs}
+          </div>
+        ),
+        isVisible: this.isAlertVisible('bootError'),
+        onDismiss: this.createGenericOnDismiss('bootError'),
+        heightPx: 48,
+        severity: 'error',
+      },
+      {
+        key: 'appUpgrade',
         icon: 'cloud download',
         message: (
           <div className={styles['single-line-message']}>
@@ -53,8 +72,8 @@ class GlobalAlert extends Component {
             {this.renderClickToUpgradeLink()}
           </div>
         ),
-        isVisible: this.isApplicationUpdatedAlertVisible,
-        onDismiss: this.createGenericOnDismiss('applicationUpdated'),
+        isVisible: this.isAlertVisible('appUpgrade'),
+        onDismiss: this.createGenericOnDismiss('appUpgrade'),
         heightPx: 48,
         severity: 'info',
       },
@@ -89,14 +108,14 @@ class GlobalAlert extends Component {
     return _.find(alerts, alert => alert.isVisible());
   }
 
-  isApplicationUpdatedAlertVisible = () => {
-    const isDismissed = _.get(this.props.store, ['dismissed', 'applicationUpdated']);
+  isAlertVisible = (key) => () => {
+    const isDismissed = _.get(this.props.store, ['dismissed', key]);
     if (isDismissed) {
       // Short circuit if dismissed
       return false;
     }
 
-    return _.get(this.props.store, ['visibility', 'appUpgrade']);
+    return _.get(this.props.store, ['visibility', key]);
   };
 
   createGenericOnDismiss = alertKey => () => {

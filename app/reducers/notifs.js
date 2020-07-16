@@ -1,5 +1,5 @@
 import {
-  APP_UPGRADE_DOWNLOADED, SET_ACTIVE_NOTIF, DISMISS_GLOBAL_NOTIF,
+  APP_UPGRADE_DOWNLOADED, SET_ACTIVE_NOTIF, DISMISS_GLOBAL_NOTIF, BOOT_ERROR_ENCOUNTERED,
 } from '../actions/notifs';
 
 // Default state for this reducer
@@ -18,6 +18,8 @@ export default function fileLoader(state = defaultState, action) {
     return setActiveNotif(state, action);
   case DISMISS_GLOBAL_NOTIF:
     return dismissNotif(state, action);
+  case BOOT_ERROR_ENCOUNTERED:
+    return displayBootErrorDialog(state, action);
   default:
     return state;
   }
@@ -43,5 +45,13 @@ function dismissNotif(state, action) {
 
   const key = action.payload.key;
   newState.dismissed[key] = true;
+  return newState;
+}
+
+function displayBootErrorDialog(state, action) {
+  const newState = { ...state };
+
+  newState.visibility.bootError = true;
+  newState.meta.bootError = action.payload.error;
   return newState;
 }
