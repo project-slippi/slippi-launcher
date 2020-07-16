@@ -14,7 +14,7 @@ import electronSettings from 'electron-settings';
 import _ from 'lodash';
 import os from 'os';
 import { Storage, File } from '@google-cloud/storage';
-import url from 'url'
+import url from 'url';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import path from 'path';
@@ -22,9 +22,7 @@ import fs from 'fs-extra';
 import ini from 'ini';
 import semver from 'semver';
 import MenuBuilder from './menu';
-// import Sudoer from 'electron-sudo';
-
-// const sudoer = new Sudoer({ name: "Slippi Desktop App" });
+import {sudoExecAsyncNonWindows, sudoExecAsyncWindows} from './utils/sudoExec';
 
 // Set up AppUpdater
 log.transports.file.level = 'info';
@@ -37,6 +35,10 @@ const platform = process.platform;
 const appDataPath = app.getPath("appData");
 const isProd = process.env.NODE_ENV === 'production';
 const isDev = process.env.NODE_ENV === "development";
+
+const sudoOptions = {
+  name: "Slippi Desktop App",
+};
 
 let mainWindow = null;
 let didFinishLoad = false;
@@ -102,7 +104,7 @@ const handlePreloadLogic = async () => {
           fs.removeSync(backupUserPath);
           fs.copySync(targetUserPath, backupUserPath);
         } catch (ex) {
-          log.warn("Failed to back up user dir")
+          log.warn("Failed to back up user dir");
           log.warn(ex);
 
           shouldBkpUserDir = false;
@@ -126,7 +128,14 @@ const handlePreloadLogic = async () => {
 
         try {
           log.info("Copying dolphin instance...");
-          fs.removeSync(targetPath);
+          switch (platform) {
+          case "win32": // windows
+            await sudoExecAsyncWindows(`rmdir /Q /S "${targetPath}"`);
+            break;
+          default:
+            await sudoExecAsyncNonWindows("rm -rf \"$DOLPHIN_PATH\"", { ...sudoOptions, env: { DOLPHIN_PATH: targetPath } });
+          }
+
           fs.copySync(originalDolphinPath, targetPath);
           isCopySuccess = true;
         } catch (ex) {
@@ -138,7 +147,7 @@ const handlePreloadLogic = async () => {
             "Please follow these instructions to get support:\n\n" +
             `1) Browse to the directory: ${userDataPath}\n` +
             `2) You should see a file called "log". This file will help us figure out what went wrong.\n` +
-            `3) Join the Slippi Discord and report that you are having issues in the proper support channel\n`
+            `3) Join the Slippi Discord and report that you are having issues in the proper support channel\n`,
           );
         }
       }
@@ -148,7 +157,7 @@ const handlePreloadLogic = async () => {
           log.info("Restoring backed up User directory...");
           fs.moveSync(backupUserPath, targetUserPath, { overwrite: true });
         } catch (ex) {
-          log.warn("Failed to restore user dir")
+          log.warn("Failed to restore user dir");
           log.warn(ex);
         }
       }
@@ -188,7 +197,7 @@ const handlePreloadLogic = async () => {
       const newINI = ini.encode(dolphinINI);
       fs.writeFileSync(iniPath, newINI);
     } catch (err) {
-      log.warn(`Failed to update the dolphin paths\n${err}`)
+      log.warn(`Failed to update the dolphin paths\n${err}`);
     }
   }
 
@@ -216,7 +225,7 @@ const handlePreloadLogic = async () => {
       log.warn("Failed to transfer settings. Maybe old version didn't exist?");
     }
   }
-}
+};
 
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
@@ -224,7 +233,7 @@ const installExtensions = async () => {
   const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'];
 
   return Promise.all(
-    extensions.map(name => installer.default(installer[name], forceDownload))
+    extensions.map(name => installer.default(installer[name], forceDownload)),
   ).catch(console.log);
 };
 
@@ -256,7 +265,7 @@ const handleSlippiURIAsync = async (aUrl) => {
   if (myUrl.protocol !== `${slippiProtocol}:`) {
     if (fs.existsSync(aUrl)) {
       log.info(`File ${aUrl} exists`);
-      protocol = "file:"
+      protocol = "file:";
     } else {
       return;
     }
@@ -318,7 +327,7 @@ const handleSlippiURI = (aUrl) => {
     log.error("Handling URI encountered error");
     log.error(err);
   });
-}
+};
 
 /**
  * Add event listeners...
