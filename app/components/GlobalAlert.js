@@ -42,13 +42,19 @@ class GlobalAlert extends Component {
   // Notifs must use fixed heights to allow for main window to add the correct amount of padding,
   // dynamic padding may be possible using refs or some different method of offsetting main window.
   getAlerts() {
+    const bootErrString = _.get(this.props.store, ['meta', 'bootError']) || "";
+    const splitString = _.split(bootErrString, '\n');
+    const splitDivs = _.map(splitString, (str) => (
+      <div className={styles['error-msg-line']}>{str}</div>
+    ));
+
     return [
       {
         key: 'bootError',
         icon: 'exclamation circle',
         message: (
           <div>
-            {_.get(this.props.store, ['meta', 'bootError'])}
+            {splitDivs}
           </div>
         ),
         isVisible: this.isAlertVisible('bootError'),

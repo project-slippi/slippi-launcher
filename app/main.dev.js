@@ -134,10 +134,10 @@ const handlePreloadLogic = async () => {
           log.warn(ex);
 
           throw new Error(
-            "\n\nFailed to install latest Dolphin instance, your application may not work correctly. " +
+            "Failed to install latest Dolphin instance, your application may not work correctly. " +
             "Please follow these instructions to get support:\n\n" +
             `1) Browse to the directory: ${userDataPath}\n` +
-            `2) You should see a log.log file. This file will help us figure out what went wrong.\n` +
+            `2) You should see a file called "log". This file will help us figure out what went wrong.\n` +
             `3) Join the Slippi Discord and report that you are having issues in the proper support channel\n`
           );
         }
@@ -216,8 +216,6 @@ const handlePreloadLogic = async () => {
       log.warn("Failed to transfer settings. Maybe old version didn't exist?");
     }
   }
-
-  throw new Error("Test error");
 }
 
 const installExtensions = async () => {
@@ -383,7 +381,7 @@ app.on('ready', async () => {
   try {
     await handlePreloadLogic();
   } catch (err) {
-    bootError = err;
+    bootError = err.message;
   }
 
   if (
