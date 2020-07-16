@@ -130,7 +130,6 @@ const handlePreloadLogic = async () => {
           log.info("Copying dolphin instance...");
           switch (platform) {
           case "win32": // windows
-            await sudoExecAsync("rmdir /Q /S \"$DOLPHIN_PATH\"", sudoOptions);
             await sudoExecAsync("rmdir /Q /S \"$DOLPHIN_PATH\"", { ...sudoOptions, env: { DOLPHIN_PATH: targetPath } });
             break;
           default:
