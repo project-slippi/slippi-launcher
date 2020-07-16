@@ -21,10 +21,8 @@ import path from 'path';
 import fs from 'fs-extra';
 import ini from 'ini';
 import semver from 'semver';
-import Sudoer from 'electron-sudo';
 import MenuBuilder from './menu';
-
-const sudoer = new Sudoer({ name: "Slippi Desktop App" });
+import sudoExecAsync from './utils/sudoExec';
 
 // Set up AppUpdater
 log.transports.file.level = 'info';
@@ -37,6 +35,10 @@ const platform = process.platform;
 const appDataPath = app.getPath("appData");
 const isProd = process.env.NODE_ENV === 'production';
 const isDev = process.env.NODE_ENV === "development";
+
+const sudoOptions = {
+  name: "Slippi Desktop App",
+};
 
 let mainWindow = null;
 let didFinishLoad = false;
@@ -128,10 +130,11 @@ const handlePreloadLogic = async () => {
           log.info("Copying dolphin instance...");
           switch (platform) {
           case "win32": // windows
-            await sudoer.exec("rmdir /Q /S \"$DOLPHIN_PATH\"", { env: { DOLPHIN_PATH: targetPath } });
+            await sudoExecAsync("rmdir /Q /S \"$DOLPHIN_PATH\"", sudoOptions);
+            await sudoExecAsync("rmdir /Q /S \"$DOLPHIN_PATH\"", { ...sudoOptions, env: { DOLPHIN_PATH: targetPath } });
             break;
           default:
-            await sudoer.exec("rm -rf \"$DOLPHIN_PATH\"", { env: { DOLPHIN_PATH: targetPath } });
+            await sudoExecAsync("rm -rf \"$DOLPHIN_PATH\"", { ...sudoOptions, env: { DOLPHIN_PATH: targetPath } });
           }
 
           fs.copySync(originalDolphinPath, targetPath);
@@ -145,7 +148,7 @@ const handlePreloadLogic = async () => {
             "Please follow these instructions to get support:\n\n" +
             `1) Browse to the directory: ${userDataPath}\n` +
             `2) You should see a file called "log". This file will help us figure out what went wrong.\n` +
-            `3) Join the Slippi Discord and report that you are having issues in the proper support channel\n`
+            `3) Join the Slippi Discord and report that you are having issues in the proper support channel\n`,
           );
         }
       }
@@ -231,7 +234,7 @@ const installExtensions = async () => {
   const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'];
 
   return Promise.all(
-    extensions.map(name => installer.default(installer[name], forceDownload))
+    extensions.map(name => installer.default(installer[name], forceDownload)),
   ).catch(console.log);
 };
 
