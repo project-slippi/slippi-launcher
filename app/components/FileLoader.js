@@ -53,9 +53,9 @@ export default class FileLoader extends Component {
 
   componentDidMount() {
     if (this.props.history.action === "PUSH") {
-      // I don't really like this but when returning back to the file loader, the action is "POP"	
-      // instead of "PUSH", and we don't want to trigger the loader and ruin our ability to restore	
-      // scroll position when returning to fileLoader from a game	
+      // The action when returning from the stats page is "POP". The action when coming from the
+      // main menu is "PUSH". When coming from the main menu, we want to reload the files such that
+      // any new files show up correctly
       this.props.loadRootFolder();
     }
   }

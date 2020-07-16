@@ -309,7 +309,6 @@ const handleSlippiURIAsync = async (aUrl) => {
     await waitForMainWindow();
     mainWindow.webContents.send("play-replay", path.join(tmpDir, 'replay.slp'));
 
-
     break;
   case "file:":
     log.info(myUrl.pathname);
