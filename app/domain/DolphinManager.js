@@ -10,6 +10,7 @@ import ini from 'ini';
 import electronSettings from 'electron-settings';
 
 import { getDolphinPath } from '../utils/settings';
+import { sudoRemovePath } from '../utils/sudoExec';
 
 const { app } = require('electron').remote;
 
@@ -53,16 +54,38 @@ export default class DolphinManager {
     await this.runDolphin(false);
   }
 
-  resetDolphin() {
+  async resetDolphin() {
     const appPath = app.getAppPath();
     const originalDolphinPath = path.join(appPath, "../app.asar.unpacked/app/dolphin");
     log.info("Resetting dolphin");
     const userDataPath = app.getPath("userData");
     const targetPath = path.join(userDataPath, 'dolphin');
     log.info("Overwriting dolphin");
-    fs.removeSync(targetPath);
-    fs.copySync(originalDolphinPath, targetPath);
-    log.info("Dolphin was reset");
+
+    let isCopySuccess = false;
+    try {
+      fs.removeSync(targetPath);
+      fs.copySync(originalDolphinPath, targetPath);
+      log.info("Dolphin was reset");
+      isCopySuccess = true;
+    } catch (err) {
+      log.error("Failed to reset Dolphin, will try again with elevated permissions");
+    }
+
+    if (!isCopySuccess) {
+      try {
+        // TODO: This doesn't actually work, the UAC prompt never shows up. Might need to use
+        // TODO: ipc to trigger it in the main process? But I'm too lazy right now
+        await sudoRemovePath(targetPath);
+        fs.copySync(originalDolphinPath, targetPath);
+        log.info("Dolphin was reset");
+        isCopySuccess = true;
+      } catch (err) {
+        log.error("Failed to reset Dolphin, will try again with elevated permissions");
+        log.error(err);
+        throw new Error("Failed to reset Dolphin. You may need to reinstall the desktop app.");
+      }
+    }
   }
 
   setGamePath(filePath) {
@@ -93,7 +116,7 @@ export default class DolphinManager {
       const newINI = ini.encode(dolphinINI);
       fs.writeFileSync(iniPath, newINI);
     } catch (err) {
-      log.warn(`Failed to update the dolphin paths\n${err}`)
+      log.warn(`Failed to update the dolphin paths\n${err}`);
       throw err;
     }
   }

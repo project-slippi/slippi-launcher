@@ -13,7 +13,7 @@ export const SELECT_FILE = 'SELECT_FILE';
 export const ISO_VALIDATION_START = 'ISO_VALIDATION_START';
 export const ISO_VALIDATION_COMPLETE = 'ISO_VALIDATION_COMPLETE';
 export const SET_RESET_CONFIRM = 'SET_RESET_CONFIRM';
-export const RESETTING_DOLPHIN = 'RESETTING_DOLPHIN'
+export const RESETTING_DOLPHIN = 'RESETTING_DOLPHIN';
 
 async function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -67,7 +67,7 @@ export function browseFile(field) {
     // Maybe this should be done as some kind of callback or something... but this works
     if (field === "isoPath") {
       validateISO()(dispatch, getState);
-      getState().dolphinManager.setGamePath(filePath)
+      getState().dolphinManager.setGamePath(filePath);
     }
   };
 }
@@ -102,7 +102,7 @@ export function validateISO() {
     } catch (err) {
       // Do nothing
     }
-  
+
     if (!fileStats) {
       dispatch({
         type: ISO_VALIDATION_COMPLETE,
@@ -120,7 +120,7 @@ export function validateISO() {
       });
       return;
     }
-   
+
     const hash = crypto.createHash('sha1');
     const input = fs.createReadStream(isoPath);
 
@@ -151,12 +151,12 @@ export function validateISO() {
       if (data) {
         hash.update(data);
         return;
-      } 
+      }
 
       // Reading complete, check hash
       const resultHash = hash.digest('hex');
       const isValidISO = _.get(ISOHashes, resultHash) || "unknown";
-      
+
       isoStateLocalCache[cacheKey] = isValidISO;
 
       dispatch({
@@ -190,17 +190,17 @@ export function resetDolphin() {
     await wait(10);
     try {
       const dolphinManager = getState().settings.dolphinManager;
-      dolphinManager.resetDolphin();
+      await dolphinManager.resetDolphin();
       const meleeFile = electronSettings.get('settings.isoPath');
       dolphinManager.setGamePath(meleeFile);
-    } catch(err) {
+    } catch (err) {
       log.info("Dolphin could not be reset");
       log.warn(err.message);
       const errorAction = displayError(
         'settings-global',
         `Dolphin could not be reset. ${err.message}`,
       );
-  
+
       dispatch(errorAction);
     }
     dispatch({

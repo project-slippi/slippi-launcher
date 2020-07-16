@@ -22,7 +22,7 @@ import fs from 'fs-extra';
 import ini from 'ini';
 import semver from 'semver';
 import MenuBuilder from './menu';
-import {sudoExecAsyncNonWindows, sudoExecAsyncWindows} from './utils/sudoExec';
+import { sudoRemovePath } from './utils/sudoExec';
 
 // Set up AppUpdater
 log.transports.file.level = 'info';
@@ -35,10 +35,6 @@ const platform = process.platform;
 const appDataPath = app.getPath("appData");
 const isProd = process.env.NODE_ENV === 'production';
 const isDev = process.env.NODE_ENV === "development";
-
-const sudoOptions = {
-  name: "Slippi Desktop App",
-};
 
 let mainWindow = null;
 let didFinishLoad = false;
@@ -128,14 +124,7 @@ const handlePreloadLogic = async () => {
 
         try {
           log.info("Copying dolphin instance...");
-          switch (platform) {
-          case "win32": // windows
-            await sudoExecAsyncWindows(`rmdir /Q /S "${targetPath}"`);
-            break;
-          default:
-            await sudoExecAsyncNonWindows("rm -rf \"$DOLPHIN_PATH\"", { ...sudoOptions, env: { DOLPHIN_PATH: targetPath } });
-          }
-
+          await sudoRemovePath(targetPath);
           fs.copySync(originalDolphinPath, targetPath);
           isCopySuccess = true;
         } catch (ex) {

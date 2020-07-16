@@ -5,10 +5,25 @@ import sudo from 'sudo-prompt';
 import path from 'path';
 import { exec } from 'child_process';
 
+const sudoOptions = {
+  name: "Slippi Desktop App",
+};
+
+export async function sudoRemovePath(pathToRemove) {
+  const platform = process.platform;
+  switch (platform) {
+  case "win32": // windows
+    await sudoExecAsyncWindows(`rmdir /Q /S "${pathToRemove}"`);
+    break;
+  default:
+    await sudoExecAsyncNonWindows("rm -rf \"$DOLPHIN_PATH\"", { ...sudoOptions, env: { DOLPHIN_PATH: pathToRemove } });
+  }
+}
+
 export function sudoExecAsyncNonWindows(command, options) {
   return new Promise((resolve, reject) => {
     sudo.exec(
-      command, 
+      command,
       options,
       (error) => {
         if (
@@ -18,8 +33,8 @@ export function sudoExecAsyncNonWindows(command, options) {
         } else {
           reject(new Error(`Could not run elevated command: ${error}`));
         }
-      })
-  })
+      });
+  });
 }
 
 export function sudoExecAsyncWindows(command) {
@@ -38,6 +53,6 @@ export function sudoExecAsyncWindows(command) {
         } else {
           reject(new Error(`Could not run elevated command: ${error}`));
         }
-      })
-  })
+      });
+  });
 }
