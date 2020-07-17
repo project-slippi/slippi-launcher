@@ -210,9 +210,14 @@ export default class DolphinManager {
       executablePath = path.join(dolphinPath, "Dolphin.exe");
       break;
     case "linux": // linux
-      // No need to dev override because Linux users will always need to specify
-      // the path inside of the application
-      executablePath = path.join(dolphinPath, "dolphin-emu");
+      dolphinPath = isDev ? "./app/dolphin-dev/linux" : dolphinPath;
+      const appImagePath = path.join(dolphinPath, "Slippi_Playback-x86_64.AppImage");
+      const emuPath = path.join(dolphinPath, "dolphin-emu");
+      if (fs.existsSync(appImagePath)){
+        executablePath = appImagePath;
+      } else {
+        executablePath = emuPath;
+      }
       break;
     default:
       throw new Error("The current platform is not supported");
