@@ -18,10 +18,7 @@ function CopyDolphin() {
     copyForWindows(targetFolder);
     break;
   case 'linux':
-    // For Linux, don't copy anything (the user must specify the path to use)
-    //
-    // console.log("Copying the linux build of dolphin to package");
-    // copyForLinux(targetFolder);
+    copyForLinux(targetFolder);
     break;
   default:
     throw new Error('Platform not yet supported.');
@@ -91,28 +88,16 @@ function copyForWindows(targetFolder) {
   fs.emptyDirSync(dolphinDestSlippiFolder);
 }
 
-// function copyForLinux(targetFolder) {
-//   const sourceFolder = "./app/dolphin-dev/linux";
-//   const dolphinSource = "./app/dolphin-dev/linux/dolphin-emu";
-//   if (!fs.existsSync(dolphinSource)) {
-//     throw new Error("Must have a dolphin-emu file in dolphin-dev/linux folder.");
-//   }
+// We only want to package AppImages in the Linux builds
+function copyForLinux(targetFolder) {
+  const dolphinSource = "./app/dolphin-dev/linux/Slippi_Playback-x86_64.AppImage";
+  const dolphinDest = path.join(targetFolder, "Slippi_Playback-x86_64.AppImage");
+  if (!fs.existsSync(dolphinSource)) {
+    throw new Error("Must have a Slippi_Playback-x86_64.AppImage file in dolphin-dev/linux folder.");
+  }
 
-//   const dolphinDestUserFolder = path.join(targetFolder, 'User');
-//   const dolphinDestSysFolder = path.join(targetFolder, 'Sys');
-//   const dolphinDestSlippiFolder = path.join(targetFolder, 'Slippi');
-//   const gitIgnoreDest = path.join(targetFolder, ".gitignore");
-
-//   const overwriteUserFolder = "./app/dolphin-dev/overwrite/User";
-//   const overwriteSysFolder = "./app/dolphin-dev/overwrite/Sys";
-
-//   fs.emptyDirSync(targetFolder);
-//   fs.copySync(sourceFolder, targetFolder);
-//   fs.removeSync(dolphinDestUserFolder);
-//   fs.copySync(overwriteUserFolder, dolphinDestUserFolder);
-//   fs.copySync(overwriteSysFolder, dolphinDestSysFolder);
-//   fs.removeSync(gitIgnoreDest);
-//   fs.emptyDirSync(dolphinDestSlippiFolder);
-// }
+  fs.emptyDirSync(targetFolder);
+  fs.copyFileSync(dolphinSource, dolphinDest);
+}
 
 CopyDolphin();
