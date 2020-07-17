@@ -97,18 +97,19 @@ export default class DolphinManager {
     // Handle the dolphin INI file being in different paths per platform
     switch (platform) {
     case "darwin": // osx
-      dolphinPath = isDev ? "./app/dolphin-dev/osx/Dolphin.app/Contents/Resources" : path.join(dolphinPath, "Dolphin.app/Contents/Resources");
+      dolphinPath = isDev ? "./app/dolphin-dev/osx/Dolphin.app/Contents/Resources" : path.join(dolphinPath, "Dolphin.app", "Contents", "Resources", "User");
       break;
     case "win32": // windows
-      dolphinPath = isDev ? "./app/dolphin-dev/windows" : dolphinPath;
+      dolphinPath = isDev ? "./app/dolphin-dev/windows" : path.join(dolphinPath, "User");
       break;
     case "linux":
+      dolphinPath = path.join(os.homedir(),".config", "SlippiPlayback");
       break;
     default:
       throw new Error("The current platform is not supported");
     }
     try {
-      const iniPath = path.join(dolphinPath, "User", "Config", "Dolphin.ini");
+      const iniPath = path.join(dolphinPath, "Config", "Dolphin.ini");
       const dolphinINI = ini.parse(fs.readFileSync(iniPath, 'utf-8'));
       dolphinINI.General.ISOPath0 = fileDir;
       const numPaths = dolphinINI.General.ISOPaths;

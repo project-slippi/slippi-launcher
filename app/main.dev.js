@@ -54,16 +54,17 @@ if (
 }
 
 const handlePreloadLogic = async () => {
-  if (isProd && (platform === "win32" || platform === "darwin")) {
+  if (isProd && (platform === "win32" || platform === "darwin" || process.env.APPIMAGE)) {
     log.info("Checking if Dolphin path has been moved...");
 
     const appPath = app.getAppPath();
     const exePlatformPaths = {
       "win32": path.join(appPath, "../../Slippi Launcher.exe"),
       "darwin": path.join(appPath, "../../MacOS/Slippi Launcher"),
+      "linux": path.join(process.env.APPDIR, "AppRun"),
     };
 
-    // If on production and mac/windows, let's see if this is a fresh install
+    // If on production and mac/windows/appimage, let's see if this is a fresh install
     const exePath = exePlatformPaths[platform];
     const exeStats = fs.statSync(exePath);
     log.info(`Exe path: ${exePath}`);
@@ -74,23 +75,24 @@ const handlePreloadLogic = async () => {
     let isCopySuccess = true;
     const shouldCopyDolphin = exeCreateTime !== previousCreateTime;
     if (shouldCopyDolphin) {
-      const originalDolphinPath = path.join(appPath, "../app.asar.unpacked/app/dolphin");
+      const originalDolphinPath = process.env.APPIMAGE ? path.join(process.env.APPDIR, "resources/app.asar.unpacked/app/dolphin") : path.join(appPath, "../app.asar.unpacked/app/dolphin");
 
       electronSettings.set("boot.installTime", exeCreateTime);
 
       // If path exists, let's move it to app data
-      log.info("Copying dolphin path...");
       const userDataPath = app.getPath("userData");
       const targetPath = path.join(userDataPath, 'dolphin');
 
       const targetUserPath = path.join(targetPath, "User");
       let shouldBkpUserDir = fs.existsSync(targetUserPath);
       const backupUserPath = path.join(userDataPath, "DolphinUserBkp");
+      log.info(`Copying dolphin path ${originalDolphinPath} to ${userDataPath}`);
 
       // If we are upgrading from a version prior to 1.5.0, let's not back up and restore. This is
       // because we disabled dual core and changed hotkeys in the more recent version of Dolphin
+      // AppImages are new and we don't need to mess with a user directory for them
       const prevVersion = electronSettings.get('previousVersion');
-      if (!prevVersion || semver.lt(prevVersion, '1.5.0-dev-2')) {
+      if (!prevVersion || (semver.lt(prevVersion, '1.5.0-dev-2') && !process.env.APPIMAGE)) {
         shouldBkpUserDir = false;
       }
 
@@ -167,18 +169,19 @@ const handlePreloadLogic = async () => {
     // Handle the dolphin INI file being in different paths per platform
     switch (platform) {
     case "darwin": // osx
-      dolphinPath = isDev ? "./app/dolphin-dev/osx/Dolphin.app/Contents/Resources" : path.join(dolphinPath, "Dolphin.app/Contents/Resources");
+      dolphinPath = isDev ? "./app/dolphin-dev/osx/Dolphin.app/Contents/Resources" : path.join(dolphinPath, "Dolphin.app", "Contents", "Resources", "User");
       break;
     case "win32": // windows
-      dolphinPath = isDev ? "./app/dolphin-dev/windows" : dolphinPath;
+      dolphinPath = isDev ? "./app/dolphin-dev/windows" : path.join(dolphinPath, "User");
       break;
     case "linux":
+      dolphinPath = path.join(os.homedir(),".config", "SlippiPlayback");
       break;
     default:
       throw new Error("The current platform is not supported");
     }
     try {
-      const iniPath = path.join(dolphinPath, "User", "Config", "Dolphin.ini");
+      const iniPath = path.join(dolphinPath, "Config", "Dolphin.ini");
       const dolphinINI = ini.parse(fs.readFileSync(iniPath, 'utf-8'));
       dolphinINI.General.ISOPath0 = fileDir;
       const numPaths = dolphinINI.General.ISOPaths;
