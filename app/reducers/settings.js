@@ -62,15 +62,12 @@ function fixSettingsOnNewVersion() {
   const currentVersion = app.getVersion()
   
   if (!prevVersion && semver.gte(currentVersion, '1.1.10')) {
-    // If not on linux, let's clear that setting. We are doing this
+    // Let's clear that setting. We are doing this
     // because the previous settings page would set it to the default
     // but then the path changed, so people upgrading from older versions
     // are having problems
-    const platform = process.platform;
-    if (platform !== 'linux') {
-      const availableSettings = getAvailableSettings();
-      electronSettings.delete(availableSettings.playbackDolphinPath.location);
-    }
+    const availableSettings = getAvailableSettings();
+    electronSettings.delete(availableSettings.playbackDolphinPath.location);
   }
 
   if (prevVersion !== currentVersion) {
