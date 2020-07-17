@@ -193,6 +193,7 @@ export function resetDolphin() {
       await dolphinManager.resetDolphin();
       const meleeFile = electronSettings.get('settings.isoPath');
       dolphinManager.setGamePath(meleeFile);
+      log.info("Dolphin was reset");
     } catch (err) {
       log.info("Dolphin could not be reset");
       log.warn(err.message);

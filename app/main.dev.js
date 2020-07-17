@@ -86,7 +86,6 @@ const handlePreloadLogic = async () => {
       const targetUserPath = path.join(targetPath, "User");
       let shouldBkpUserDir = fs.existsSync(targetUserPath);
       const backupUserPath = path.join(userDataPath, "DolphinUserBkp");
-      log.info(`Copying dolphin path ${originalDolphinPath} to ${userDataPath}`);
 
       // If we are upgrading from a version prior to 1.5.0, let's not back up and restore. This is
       // because we disabled dual core and changed hotkeys in the more recent version of Dolphin
@@ -160,6 +159,8 @@ const handlePreloadLogic = async () => {
   }
 
   // Add game path to Playback Dolphin
+  // TODO: just call a util function so we don't have to maintain
+  // the same function in 2 places.
   const isoPath = electronSettings.get("settings.isoPath");
   if (isoPath) {
     log.info("ISO path found");
@@ -182,12 +183,20 @@ const handlePreloadLogic = async () => {
     }
     try {
       const iniPath = path.join(dolphinPath, "Config", "Dolphin.ini");
-      const dolphinINI = ini.parse(fs.readFileSync(iniPath, 'utf-8'));
-      dolphinINI.General.ISOPath0 = fileDir;
-      const numPaths = dolphinINI.General.ISOPaths;
-      dolphinINI.General.ISOPaths = numPaths !== "0" ? numPaths : "1";
-      const newINI = ini.encode(dolphinINI);
-      fs.writeFileSync(iniPath, newINI);
+      if (fs.existsSync(iniPath)){
+        const dolphinINI = ini.parse(fs.readFileSync(iniPath, 'utf-8'));
+        dolphinINI.General.ISOPath0 = fileDir;
+        const numPaths = dolphinINI.General.ISOPaths;
+        dolphinINI.General.ISOPaths = numPaths !== "0" ? numPaths : "1";
+        const newINI = ini.encode(dolphinINI);
+        fs.writeFileSync(iniPath, newINI);
+      } else {
+        log.info("There isn't a Dolphin.ini to update...");
+        const configPath = path.join(dolphinPath, "Config");
+        const newINI = ini.encode({"General": {"ISOPath0": fileDir, "ISOPaths": 1}});
+        fs.mkdirpSync(configPath);
+        fs.writeFileSync(iniPath, newINI);
+      }
     } catch (err) {
       log.warn(`Failed to update the dolphin paths\n${err}`);
     }
