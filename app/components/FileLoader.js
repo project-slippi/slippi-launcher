@@ -97,11 +97,6 @@ export default class FileLoader extends Component {
       y: this.refTableScroll.scrollTop,
     });
 
-    // this.props.storeFileLoadState({
-    //   filesToRender: this.state.filesToRender,
-    //   filesOffset: this.state.filesOffset,
-    // });
-
     this.props.dismissError('fileLoader-global');
   }
 
