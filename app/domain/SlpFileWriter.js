@@ -61,6 +61,7 @@ export default class SlpFileManager extends EventEmitter {
     return {
       previousBuffer: Buffer.from([]),
       fullBuffer: Buffer.from([]),
+      path: null,
       lastFrame: -124,
     };
   }
@@ -104,7 +105,7 @@ export default class SlpFileManager extends EventEmitter {
   }
 
   getCurrentFilePath() {
-    this.slpStream.getCurrentFilename();
+    return _.get(this.currentFile, 'path');
   }
 
   updateSettings(settings) {
@@ -157,6 +158,10 @@ export default class SlpFileManager extends EventEmitter {
   setupListeners() {
     // Forward the new-file event on
     this.slpStream.on(SlpFileWriterEvent.NEW_FILE, (filePath) => {
+      // Clear the current file and update current file path
+      this.initializeNewGame(filePath);
+      this.onFileStateChange();
+
       console.log(`Creating new file at: ${filePath}`);
       this.emit('new-file', filePath);
     });
@@ -170,10 +175,6 @@ export default class SlpFileManager extends EventEmitter {
     this.slpStream.on(SlpStreamEvent.COMMAND, data => {
       const { command, payload } = data;
       switch (command) {
-      case Command.MESSAGE_SIZES:
-        this.initializeNewGame();
-        this.onFileStateChange();
-        break;
       case Command.POST_FRAME_UPDATE:
         // Update frame index
         this.currentFile.lastFrame = payload.frame;
@@ -194,8 +195,12 @@ export default class SlpFileManager extends EventEmitter {
     });
   }
 
-  initializeNewGame() {
-    this.currentFile = this.getClearedCurrentFile();
+  initializeNewGame(filePath) {
+    const clearFileObj = this.getClearedCurrentFile();
+    this.currentFile = {
+      ...clearFileObj,
+      path: filePath,
+    };
 
     // Clear clients back to position zero
     this.clients = _.map(this.clients, client => ({
