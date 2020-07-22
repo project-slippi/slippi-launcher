@@ -96,7 +96,7 @@ export default class SlpFileManager extends EventEmitter {
 
       this.clients.push(clientData);
       socket.on('close', err => {
-        if (err) console.log(err);
+        if (err) console.warn(err);
         _.remove(this.clients, client => socket === client.socket);
       });
     });
@@ -166,6 +166,7 @@ export default class SlpFileManager extends EventEmitter {
     });
 
     this.slpStream.on(SlpFileWriterEvent.FILE_COMPLETE, () => {
+      console.log('Finished writing file.');
       // Update file state
       this.onFileStateChange();
     });
