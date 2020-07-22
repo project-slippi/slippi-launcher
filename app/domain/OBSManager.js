@@ -87,11 +87,6 @@ export default class OBSManager {
       }, timeoutLength);
     };
 
-    if (this.currentFile.metadata.lastFrame < -60) {
-      // Only show the source in the later portion of the game loading stage
-      return;
-    }
-
     if (this.statusOutput.status) {
       // If game is currently active, reset the timer
       setTimer();

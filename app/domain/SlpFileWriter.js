@@ -173,7 +173,10 @@ export default class SlpFileWriter extends EventEmitter {
         break;
       default:
         this.writeCommand(payload);
-        this.obs.handleStatusOutput();
+        if (this.currentFile.metadata.lastFrame >= -60) {
+          // Only show OBS source in the later portion of the game loading stage
+          this.obs.handleStatusOutput();
+        }
         break;
       }
     });
