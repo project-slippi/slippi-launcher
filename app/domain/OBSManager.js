@@ -72,7 +72,7 @@ export default class OBSManager {
   }
 
   /*
-  As long as  
+  As long as we are receiving data from the console, show the source feed in OBS.
   */
   handleStatusOutput(timeoutLength = 200) {
     const setTimer = () => {
