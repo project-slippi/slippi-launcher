@@ -159,7 +159,6 @@ export default class SlpFileManager extends EventEmitter {
     this.slpStream.on(SlpFileWriterEvent.NEW_FILE, (filePath) => {
       console.log(`Creating new file at: ${filePath}`);
       this.emit('new-file', filePath);
-      this.onFileStateChange();
     });
 
     this.slpStream.on(SlpFileWriterEvent.FILE_COMPLETE, () => {
@@ -171,9 +170,18 @@ export default class SlpFileManager extends EventEmitter {
     this.slpStream.on(SlpStreamEvent.COMMAND, data => {
       const { command, payload } = data;
       switch (command) {
+      case Command.MESSAGE_SIZES:
+        this.initializeNewGame();
+        this.onFileStateChange();
+        break;
       case Command.POST_FRAME_UPDATE:
         // Update frame index
         this.currentFile.lastFrame = payload.frame;
+
+        // Only show OBS source in the later portion of the game loading stage
+        if (this.currentFile.lastFrame >= -60) {
+          this.obs.handleStatusOutput();
+        }
         break;
       case Command.GAME_END:
         if (payload.gameEndMethod !== 7) {
@@ -182,11 +190,6 @@ export default class SlpFileManager extends EventEmitter {
         break;
       default:
         break;
-      }
-
-      // Only show OBS source in the later portion of the game loading stage
-      if (this.currentFile.lastFrame >= -60) {
-        this.obs.handleStatusOutput();
       }
     });
   }
