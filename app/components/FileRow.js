@@ -71,7 +71,7 @@ export default class FileRow extends Component {
           <Icon size="big" name="check square outline" />
           <div className={styles['pos-text']}>{this.props.selectedOrdinal}</div>
         </div>
-      )
+      );
     } else {
       contents = (
         <Icon size="big" name="square outline" />
@@ -162,7 +162,7 @@ export default class FileRow extends Component {
 
   generateTeamElements() {
     if (this.state.isError) {
-      return null;
+      return <div />;
     }
 
     const file = this.props.file || {};

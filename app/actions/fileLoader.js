@@ -29,6 +29,11 @@ export function loadRootFolder() {
     }
 
     if (rootFolderPath === getState().fileLoader.rootFolderPath) {
+      // Reload the currently selected folder even if the root hasn't changed, the loadRootFolder
+      // function only gets called when entering the fileLoader component from the main menu and
+      // we want to support returning to the fileLoader from the main menu to update the files
+      // in the list
+      await changeFolderSelection(getState().fileLoader.selectedFolderFullPath)(dispatch, getState);
       return;
     }
 
@@ -182,9 +187,9 @@ export function setStatsGamePage(index) {
     dispatch({
       type: SET_STATS_GAME_PAGE,
       payload: { statsGameIndex: statsGameIndex },
-    })
+    });
     gameProfileLoad(files[statsGameIndex].game)(dispatch);
-  }
+  };
 }
 
 async function loadFilesInFolder(folderPath) {
@@ -229,7 +234,7 @@ async function loadFilesInFolder(folderPath) {
         hasError = true;
       }
 
-      const startTime = timeUtils.fileToDateAndTime(game, fileName, fullPath)
+      const startTime = timeUtils.fileToDateAndTime(game, fileName, fullPath);
 
       return {
         fullPath: fullPath,

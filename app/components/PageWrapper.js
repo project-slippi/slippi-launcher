@@ -19,6 +19,7 @@ class PageWrapper extends Component {
 
     // From redux
     appUpgradeDownloaded: PropTypes.func.isRequired,
+    bootErrorEncountered: PropTypes.func.isRequired,
     gameProfileLoad: PropTypes.func.isRequired,
     playFile: PropTypes.func.isRequired,
   };
@@ -26,11 +27,13 @@ class PageWrapper extends Component {
   componentDidMount() {
     ipcRenderer.on('update-downloaded', this.onAppUpgrade);
     ipcRenderer.on('play-replay', this.onPlayReplay);
+    ipcRenderer.on('boot-error-encountered', this.onBootError)
   }
 
   componentWillUnmount() {
     ipcRenderer.removeListener('update-downloaded', this.onAppUpgrade);
     ipcRenderer.removeListener('play-replay', this.onPlayReplay);
+    ipcRenderer.removeListener('boot-error-encountered', this.onBootError)
   }
 
   onAppUpgrade = (event, upgradeDetails) => {
@@ -46,6 +49,10 @@ class PageWrapper extends Component {
     this.props.playFile({
       fullPath: slpPath,
     });
+  };
+
+  onBootError = (event, error) => {
+    this.props.bootErrorEncountered(error)
   };
 
   render() {
