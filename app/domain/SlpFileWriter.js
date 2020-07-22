@@ -61,11 +61,8 @@ export default class SlpFileWriter extends EventEmitter {
       fullBuffer: Buffer.from([]),
       path: null,
       writeStream: null,
-      metadata: {
-        startTime: null,
-        lastFrame: -124,
-        players: {},
-      },
+      lastFrame: -124,
+      startTime: null,
     };
   }
 
@@ -173,7 +170,7 @@ export default class SlpFileWriter extends EventEmitter {
         break;
       default:
         this.writeCommand(payload);
-        if (this.currentFile.metadata.lastFrame >= -60) {
+        if (this.currentFile.lastFrame >= -60) {
           // Only show OBS source in the later portion of the game loading stage
           this.obs.handleStatusOutput();
         }
@@ -186,33 +183,8 @@ export default class SlpFileWriter extends EventEmitter {
       const { command, payload } = data;
       switch (command) {
       case Command.POST_FRAME_UPDATE:
-        // Here we need to update some metadata fields
-        const { frame, playerIndex, isFollower, internalCharacterId } = payload;
-        if (isFollower) {
-          // No need to do this for follower
-          break;
-        }
-
         // Update frame index
-        this.currentFile.metadata.lastFrame = frame;
-
-        // Update character usage
-        const prevPlayer =
-            _.get(this.currentFile, [
-              'metadata',
-              'players',
-              `${playerIndex}`,
-            ]) || {};
-        const characterUsage = prevPlayer.characterUsage || {};
-        const curCharFrames = characterUsage[internalCharacterId] || 0;
-        const player = {
-          ...prevPlayer,
-          characterUsage: {
-            ...characterUsage,
-            [internalCharacterId]: curCharFrames + 1,
-          },
-        };
-        this.currentFile.metadata.players[`${playerIndex}`] = player;
+        this.currentFile.lastFrame = payload.frame;
         break;
       case Command.GAME_END:
         if (payload.gameEndMethod !== 7) {
@@ -244,9 +216,9 @@ export default class SlpFileWriter extends EventEmitter {
       ...clearFileObj,
       path: filePath,
       writeStream: writeStream,
+      startTime: startTime,
       metadata: {
         ...clearFileObj.metadata,
-        startTime: startTime,
       },
     };
 
@@ -278,9 +250,7 @@ export default class SlpFileWriter extends EventEmitter {
 
     writeStream.setMetadata({
       consoleNickname: this.consoleNick,
-      startTime: this.currentFile.metadata.startTime,
-      lastFrame: this.currentFile.metadata.lastFrame,
-      players: this.currentFile.metadata.players,
+      startTime: this.currentFile.startTime,
     });
 
     // End the stream
