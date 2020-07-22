@@ -5,7 +5,7 @@ import semver from 'semver';
 import PropTypes from 'prop-types';
 import path from 'path';
 import { Header, Modal, Form, Card, Button, Icon, Checkbox, Message, Tab, Grid } from 'semantic-ui-react';
-import { ConnectionStatus, Ports } from '../domain/ConsoleConnection';
+import { ConnectionStatus, Ports } from '@slippi/slippi-js';
 import PageHeader from './common/PageHeader';
 import PageWrapper from './PageWrapper';
 import DismissibleMessage from './common/DismissibleMessage';

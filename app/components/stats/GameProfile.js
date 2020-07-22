@@ -13,7 +13,7 @@ import {
   Loader,
   Label,
 } from 'semantic-ui-react';
-import { stages as stageUtils } from 'slp-parser-js';
+import { stages as stageUtils } from '@slippi/slippi-js';
 
 import PageHeader from '../common/PageHeader';
 import OverallTable from './OverallTable';
