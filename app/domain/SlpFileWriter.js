@@ -62,7 +62,6 @@ export default class SlpFileManager extends EventEmitter {
       previousBuffer: Buffer.from([]),
       fullBuffer: Buffer.from([]),
       path: null,
-      lastFrame: -124,
     };
   }
 
@@ -176,11 +175,8 @@ export default class SlpFileManager extends EventEmitter {
       const { command, payload } = data;
       switch (command) {
       case Command.POST_FRAME_UPDATE:
-        // Update frame index
-        this.currentFile.lastFrame = payload.frame;
-
         // Only show OBS source in the later portion of the game loading stage
-        if (this.currentFile.lastFrame >= -60) {
+        if (payload.frame >= -60) {
           this.obs.handleStatusOutput();
         }
         break;
