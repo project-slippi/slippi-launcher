@@ -32,12 +32,12 @@ import {
   Ports,
   Command,
   SlpStreamEvent,
-  SlpFileWriter,
+  SlpFileWriter as SlpFileWriteStream,
   SlpFileWriterEvent,
 } from '@slippi/slippi-js';
 import OBSManager from './OBSManager';
 
-export default class SlpFileManager extends EventEmitter {
+export default class SlpFileWriter extends EventEmitter {
   constructor(settings) {
     super();
     this.folderPath = settings.folderPath;
@@ -46,7 +46,7 @@ export default class SlpFileManager extends EventEmitter {
     this.consoleNick = settings.consoleNick;
     this.currentFile = this.getClearedCurrentFile();
     this.obs = new OBSManager(settings);
-    this.slpStream = new SlpFileWriter({
+    this.slpStream = new SlpFileWriteStream({
       folderPath: this.folderPath,
       consoleNickname: this.consoleNick,
       newFilename: getNewFilePath,
