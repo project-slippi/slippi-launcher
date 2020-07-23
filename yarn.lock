@@ -1056,10 +1056,10 @@
     array-from "^2.1.1"
     lodash.get "^4.4.2"
 
-"@slippi/slippi-js@^5.0.1":
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/@slippi/slippi-js/-/slippi-js-5.0.1.tgz#e5e124aaaa218358d0b8877444ebe6ccf47bc037"
-  integrity sha512-bKkx94e77DcZf+yXy2jftbaB7g2mtAd5Q7ni25lwsJ7ZC7bBeD+W3RRGMPY/emPJwMAeF+axmj2XVNMk4BNzLQ==
+"@slippi/slippi-js@^5.0.2":
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/@slippi/slippi-js/-/slippi-js-5.0.2.tgz#ef83372d1eaee82ba7f97ae89c549b392f261a5b"
+  integrity sha512-8r1zWjAh5PNVo386oUNu8EcIh39UrvMKsU7IVUERnhqMLhIjfFR8sVKZTgBx1gxexhzJGAVdvdEnWb6kDLbNDw==
   dependencies:
     "@shelacek/ubjson" "^1.0.1"
     iconv-lite "^0.6.2"
