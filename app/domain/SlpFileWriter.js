@@ -28,13 +28,12 @@ import EventEmitter from 'events';
 import net from 'net';
 import _ from 'lodash';
 import path from 'path';
-import moment from 'moment';
 import {
   Ports,
-  SlpFile,
   Command,
-  SlpStream,
   SlpStreamEvent,
+  SlpFileWriter as SlpFileWriteStream,
+  SlpFileWriterEvent,
 } from '@slippi/slippi-js';
 import OBSManager from './OBSManager';
 
@@ -47,7 +46,11 @@ export default class SlpFileWriter extends EventEmitter {
     this.consoleNick = settings.consoleNick;
     this.currentFile = this.getClearedCurrentFile();
     this.obs = new OBSManager(settings);
-    this.slpStream = new SlpStream();
+    this.slpStream = new SlpFileWriteStream({
+      folderPath: this.folderPath,
+      consoleNickname: this.consoleNick,
+      newFilename: getNewFilePath,
+    });
     this.isRelaying = settings.isRelaying;
     this.clients = [];
     this.manageRelay();
@@ -56,16 +59,9 @@ export default class SlpFileWriter extends EventEmitter {
 
   getClearedCurrentFile() {
     return {
-      payloadSizes: {},
       previousBuffer: Buffer.from([]),
       fullBuffer: Buffer.from([]),
       path: null,
-      writeStream: null,
-      metadata: {
-        startTime: null,
-        lastFrame: -124,
-        players: {},
-      },
     };
   }
 
@@ -100,7 +96,7 @@ export default class SlpFileWriter extends EventEmitter {
 
       this.clients.push(clientData);
       socket.on('close', err => {
-        if (err) console.log(err);
+        if (err) console.warn(err);
         _.remove(this.clients, client => socket === client.socket);
       });
     });
@@ -117,6 +113,10 @@ export default class SlpFileWriter extends EventEmitter {
     this.isRelaying = settings.isRelaying;
     this.consoleNick = settings.consoleNick || this.consoleNick;
     this.obs.updateSettings(settings);
+    this.slpStream.updateSettings({
+      folderPath: this.folderPath,
+      consoleNickname: this.consoleNick,
+    });
     this.manageRelay();
   }
 
@@ -155,30 +155,20 @@ export default class SlpFileWriter extends EventEmitter {
   }
 
   setupListeners() {
-    // Write the raw data to the SlpFile
-    this.slpStream.on(SlpStreamEvent.RAW, data => {
-      const { command, payload } = data;
-      switch (command) {
-      case Command.MESSAGE_SIZES:
-        this.initializeNewGame();
-        this.writeCommand(payload);
-        this.onFileStateChange();
-        break;
-      case Command.GAME_END:
-        this.writeCommand(payload);
-        this.endGame();
-        break;
-      case Command.GAME_START:
-        this.writeCommand(payload);
-        break;
-      default:
-        this.writeCommand(payload);
-        if (this.currentFile.metadata.lastFrame >= -60) {
-          // Only show OBS source in the later portion of the game loading stage
-          this.obs.handleStatusOutput();
-        }
-        break;
-      }
+    // Forward the new-file event on
+    this.slpStream.on(SlpFileWriterEvent.NEW_FILE, (filePath) => {
+      // Clear the current file and update current file path
+      this.initializeNewGame(filePath);
+      this.onFileStateChange();
+
+      console.log(`Creating new file at: ${filePath}`);
+      this.emit('new-file', filePath);
+    });
+
+    this.slpStream.on(SlpFileWriterEvent.FILE_COMPLETE, () => {
+      console.log('Finished writing file.');
+      // Update file state
+      this.onFileStateChange();
     });
 
     // Update the metadata based on parsed data
@@ -186,33 +176,10 @@ export default class SlpFileWriter extends EventEmitter {
       const { command, payload } = data;
       switch (command) {
       case Command.POST_FRAME_UPDATE:
-        // Here we need to update some metadata fields
-        const { frame, playerIndex, isFollower, internalCharacterId } = payload;
-        if (isFollower) {
-          // No need to do this for follower
-          break;
+        // Only show OBS source in the later portion of the game loading stage
+        if (payload.frame >= -60) {
+          this.obs.handleStatusOutput();
         }
-
-        // Update frame index
-        this.currentFile.metadata.lastFrame = frame;
-
-        // Update character usage
-        const prevPlayer =
-            _.get(this.currentFile, [
-              'metadata',
-              'players',
-              `${playerIndex}`,
-            ]) || {};
-        const characterUsage = prevPlayer.characterUsage || {};
-        const curCharFrames = characterUsage[internalCharacterId] || 0;
-        const player = {
-          ...prevPlayer,
-          characterUsage: {
-            ...characterUsage,
-            [internalCharacterId]: curCharFrames + 1,
-          },
-        };
-        this.currentFile.metadata.players[`${playerIndex}`] = player;
         break;
       case Command.GAME_END:
         if (payload.gameEndMethod !== 7) {
@@ -225,29 +192,11 @@ export default class SlpFileWriter extends EventEmitter {
     });
   }
 
-  writeCommand(bufToWrite) {
-    // Write data
-    const writeStream = this.currentFile.writeStream;
-    if (!writeStream) {
-      return;
-    }
-    writeStream.write(bufToWrite);
-  }
-
-  initializeNewGame() {
-    const startTime = moment();
-    const filePath = this.getNewFilePath(startTime);
-    const writeStream = new SlpFile(filePath);
-
+  initializeNewGame(filePath) {
     const clearFileObj = this.getClearedCurrentFile();
     this.currentFile = {
       ...clearFileObj,
       path: filePath,
-      writeStream: writeStream,
-      metadata: {
-        ...clearFileObj.metadata,
-        startTime: startTime,
-      },
     };
 
     // Clear clients back to position zero
@@ -255,41 +204,10 @@ export default class SlpFileWriter extends EventEmitter {
       ...client,
       readPos: 0,
     }));
-
-    console.log(`Creating new file at: ${filePath}`);
-    this.emit('new-file', filePath);
-  }
-
-  getNewFilePath(m) {
-    return path.join(
-      this.folderPath,
-      `Game_${m.format('YYYYMMDD')}T${m.format('HHmmss')}.slp`
-    );
-  }
-
-  endGame() {
-    const writeStream = this.currentFile.writeStream;
-    if (!writeStream) {
-      // Clear current file
-      this.currentFile = this.getClearedCurrentFile();
-
-      return;
-    }
-
-    writeStream.setMetadata({
-      consoleNickname: this.consoleNick,
-      startTime: this.currentFile.metadata.startTime,
-      lastFrame: this.currentFile.metadata.lastFrame,
-      players: this.currentFile.metadata.players,
-    });
-
-    // End the stream
-    writeStream.end(() => {
-      console.log('Finished writting file.');
-      // Clear current file
-      this.currentFile = this.getClearedCurrentFile();
-      // Update file state
-      this.onFileStateChange();
-    });
   }
 }
+
+const getNewFilePath = (folderPath, m) => path.join(
+  folderPath,
+  `Game_${m.format('YYYYMMDD')}T${m.format('HHmmss')}.slp`
+);
