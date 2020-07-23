@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
+Copyright (C) 2020 JLaferri <https://slippi.gg/>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
