@@ -170,10 +170,10 @@ const handlePreloadLogic = async () => {
     // Handle the dolphin INI file being in different paths per platform
     switch (platform) {
     case "darwin": // osx
-      dolphinPath = isDev ? "./app/dolphin-dev/osx/Dolphin.app/Contents/Resources" : path.join(dolphinPath, "Dolphin.app", "Contents", "Resources", "User");
+      dolphinPath = isDev ? "./app/dolphin-dev/osx/Dolphin.app/Contents/Resources/User" : path.join(dolphinPath, "Dolphin.app", "Contents", "Resources", "User");
       break;
     case "win32": // windows
-      dolphinPath = isDev ? "./app/dolphin-dev/windows" : path.join(dolphinPath, "User");
+      dolphinPath = isDev ? "./app/dolphin-dev/windows/User" : path.join(dolphinPath, "User");
       break;
     case "linux":
       dolphinPath = path.join(os.homedir(),".config", "SlippiPlayback");
