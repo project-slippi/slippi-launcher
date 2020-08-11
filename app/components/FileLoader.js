@@ -206,18 +206,18 @@ export default class FileLoader extends Component {
     }
 
     const allFiles = store.files || [];
+    // These are the number of files that were initiall removed probably because they're corrupted
+    const errorFileCount = _.get(this.props.store, 'numFilteredFiles');
+
     const files = this.unfilteredFiles();
-    const filteredFileCount = allFiles.length - files.length;
-    if (!filteredFileCount || !this.state.filterReplays) {
+    const filteredFileCount = allFiles.length - files.length + errorFileCount;
+    if (!filteredFileCount) {
       return null;
     }
 
     let contentText =
       'Replays shorter than 30 seconds are automatically filtered.';
 
-    // These are the number of files that were initiall removed probably because they're corrupted
-    const filesWithErrors = _.get(this.props.store, 'numFilteredFiles');
-    const errorFileCount = filesWithErrors.length;
     if (errorFileCount) {
       contentText = `${errorFileCount} corrupt files detected. Non-corrupt replays shorter than 30 seconds are automatically filtered.`;
     }
