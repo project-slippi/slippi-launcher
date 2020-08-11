@@ -12,6 +12,7 @@ import PlayerChiclet from './common/PlayerChiclet';
 import * as timeUtils from '../utils/time';
 
 const path = require('path');
+const shell = require('electron').shell;
 
 export default class FileRow extends Component {
   static propTypes = {
@@ -93,6 +94,10 @@ export default class FileRow extends Component {
   }
 
   generateDetailsCell() {
+    const onFileLocationClick = () => {
+      const fileLocation = path.resolve(this.props.file.fullPath);
+      shell.showItemInFolder(fileLocation);
+    }
     const metadata = [
       {
         label: 'Stage',
@@ -103,7 +108,7 @@ export default class FileRow extends Component {
       },
       {
         label: 'File',
-        content: this.getFileName(),
+        content: <button type="button" className={styles['reveal-file-location']} onClick={onFileLocationClick}>{this.getFileName()}</button>,
       },
     ];
 
