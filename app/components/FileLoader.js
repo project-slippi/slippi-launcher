@@ -241,7 +241,7 @@ export default class FileLoader extends Component {
         icon="info circle"
         header={`${filteredFileCount} Files have been filtered`}
         content={<>
-          <span>{contentText}</span> <button type="button" className={styles['show-anyway']} onClick={onShowAnywayClick}>Show anyway</button>
+          <span>{contentText}</span> <button type="button" className={styles['show-anyway']} onClick={onShowAnywayClick}>Click to show all</button>
         </>}
       />
     );
