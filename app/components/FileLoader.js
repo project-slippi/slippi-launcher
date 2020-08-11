@@ -21,7 +21,8 @@ import PageWrapper from './PageWrapper';
 import Scroller from './common/Scroller';
 
 const GAME_BATCH_SIZE = 50;
-const MIN_GAME_LENGTH_FRAMES = 30 * 60;
+const MIN_GAME_LENGTH_SECONDS = 30;
+const MIN_GAME_LENGTH_FRAMES = MIN_GAME_LENGTH_SECONDS * 60;
 
 export default class FileLoader extends Component {
   static propTypes = {
@@ -48,8 +49,7 @@ export default class FileLoader extends Component {
     super(props);
 
     this.state = {
-      // Filter 30 second replays by default
-      // Gets reset when the component is unmounted
+      // Filter the replays by default. Gets reset when the component is unmounted
       filterReplays: true,
       selections: [],
     };
@@ -216,10 +216,10 @@ export default class FileLoader extends Component {
     }
 
     let contentText =
-      'Replays shorter than 30 seconds are automatically filtered.';
+      `Replays shorter than ${MIN_GAME_LENGTH_SECONDS} seconds are automatically filtered.`;
 
     if (errorFileCount) {
-      contentText = `${errorFileCount} corrupt files detected. Non-corrupt replays shorter than 30 seconds are automatically filtered.`;
+      contentText = `${errorFileCount} corrupt files detected. Non-corrupt replays shorter than ${MIN_GAME_LENGTH_SECONDS} seconds are automatically filtered.`;
     }
 
     const onShowAnywayClick = () => {
