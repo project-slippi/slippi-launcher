@@ -211,7 +211,7 @@ export default class FileLoader extends Component {
 
     const files = this.unfilteredFiles();
     const filteredFileCount = allFiles.length - files.length + errorFileCount;
-    if (!filteredFileCount) {
+    if (!filteredFileCount || !this.state.filterReplays) {
       return null;
     }
 
