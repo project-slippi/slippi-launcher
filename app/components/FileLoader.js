@@ -21,6 +21,7 @@ import PageWrapper from './PageWrapper';
 import Scroller from './common/Scroller';
 
 const GAME_BATCH_SIZE = 50;
+const MIN_GAME_LENGTH_FRAMES = 30 * 60;
 
 export default class FileLoader extends Component {
   static propTypes = {
@@ -47,6 +48,9 @@ export default class FileLoader extends Component {
     super(props);
 
     this.state = {
+      // Filter 30 second replays by default
+      // Gets reset when the component is unmounted
+      filterReplays: true,
       selections: [],
     };
   }
@@ -180,26 +184,55 @@ export default class FileLoader extends Component {
     );
   }
 
+  /**
+   * Returns all the files which have not been filtered by game duration
+   */
+  unfilteredFiles() {
+    const store = this.props.store || {};
+    const allFiles = store.files || [];
+    return allFiles.filter((f) => {
+      if (this.state.filterReplays) {
+        // Files which have no metadata will be shown
+        return f.lastFrame === null || f.lastFrame >= MIN_GAME_LENGTH_FRAMES;
+      }
+      return true;
+    });
+  }
+
   renderFilteredFilesNotif() {
     const store = this.props.store || {};
     if (store.isLoading) {
       return null;
     }
 
-    const files = store.files || [];
-    const filteredFileCount = _.get(this.props.store, 'numFilteredFiles');
-
-    if (!filteredFileCount) {
+    const allFiles = store.files || [];
+    const files = this.unfilteredFiles();
+    const filteredFileCount = allFiles.length - files.length;
+    if (!filteredFileCount || !this.state.filterReplays) {
       return null;
     }
 
     let contentText =
       'Replays shorter than 30 seconds are automatically filtered.';
 
-    const filesWithErrors = files.filter(file => file.hasError);
+    // These are the number of files that were initiall removed probably because they're corrupted
+    const filesWithErrors = _.get(this.props.store, 'numFilteredFiles');
     const errorFileCount = filesWithErrors.length;
     if (errorFileCount) {
       contentText = `${errorFileCount} corrupt files detected. Non-corrupt replays shorter than 30 seconds are automatically filtered.`;
+    }
+
+    const onShowAnywayClick = () => {
+      // Clear the currently loaded files
+      this.props.storeFileLoadState({
+        filesToRender: [],
+        filesOffset: 0,
+      });
+      // Clear the selection and disable replay filter
+      this.setState({
+        filterReplays: false,
+        selections: [],
+      });
     }
 
     return (
@@ -207,7 +240,9 @@ export default class FileLoader extends Component {
         info={true}
         icon="info circle"
         header={`${filteredFileCount} Files have been filtered`}
-        content={contentText}
+        content={<>
+          <span>{contentText}</span> <button type="button" className={styles['show-anyway']} onClick={onShowAnywayClick}>Show anyway</button>
+        </>}
       />
     );
   }
@@ -289,7 +324,7 @@ export default class FileLoader extends Component {
   renderFileSelection() {
     const store = this.props.store || {};
 
-    const allFiles = store.files || [];
+    const allFiles = this.unfilteredFiles();
 
     const filesToRender = _.get(store, ['fileLoadState', 'filesToRender']) || [];
     const filesOffset = _.get(store, ['fileLoadState', 'filesOffset']) || 0;

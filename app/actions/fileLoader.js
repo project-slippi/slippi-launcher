@@ -215,6 +215,7 @@ async function loadFilesInFolder(folderPath) {
       const fullPath = path.join(folderPath, fileName);
       let game = null;
       let hasError = false;
+      let lastFrame = null;
 
       // Pre-load settings here
       try {
@@ -227,7 +228,10 @@ async function loadFilesInFolder(folderPath) {
         }
 
         // Preload metadata
-        game.getMetadata();
+        const metadata = game.getMetadata();
+        if (metadata && metadata.lastFrame !== undefined) {
+          lastFrame = metadata.lastFrame;
+        }
       } catch (err) {
         console.log(`Failed to parse file: ${fullPath}`);
         console.log(err);
@@ -242,6 +246,7 @@ async function loadFilesInFolder(folderPath) {
         startTime: startTime,
         game: game,
         hasError: hasError,
+        lastFrame: lastFrame,
       };
     })
   ));
@@ -284,9 +289,7 @@ function processFiles(files) {
       return false;
     }
 
-    const metadata = file.game.getMetadata() || {};
-    const totalFrames = metadata.lastFrame || 30 * 60 + 1;
-    return totalFrames > 30 * 60;
+    return true;
   });
 
   resultFiles = _.orderBy(
