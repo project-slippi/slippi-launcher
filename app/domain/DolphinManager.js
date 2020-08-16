@@ -55,8 +55,9 @@ export default class DolphinManager {
   }
 
   async resetDolphin() {
+    const platform = process.platform;
     const appPath = app.getAppPath();
-    const originalDolphinPath = path.join(appPath, "../app.asar.unpacked/app/dolphin");
+    const originalDolphinPath = process.env.APPIMAGE ? path.join(process.env.APPDIR, "resources/app.asar.unpacked/app/dolphin") : path.join(appPath, "../app.asar.unpacked/app/dolphin");
     log.info("Resetting dolphin");
     const userDataPath = app.getPath("userData");
     const targetPath = path.join(userDataPath, 'dolphin');
@@ -64,9 +65,14 @@ export default class DolphinManager {
 
     let isCopySuccess = false;
     try {
-      fs.removeSync(targetPath);
-      fs.copySync(originalDolphinPath, targetPath);
-      log.info("Dolphin was reset");
+      if (platform === "win32" || platform === "darwin" || process.env.APPIMAGE){
+        fs.removeSync(targetPath);
+        fs.copySync(originalDolphinPath, targetPath);
+      }
+      if (process.platform === "linux") {
+        const linuxUserDir = path.join(os.homedir(),".config", "SlippiPlayback");
+        fs.removeSync(linuxUserDir); // clear the User dir on linux
+      }
       isCopySuccess = true;
     } catch (err) {
       log.error("Failed to reset Dolphin, will try again with elevated permissions");
@@ -78,10 +84,9 @@ export default class DolphinManager {
         // TODO: ipc to trigger it in the main process? But I'm too lazy right now
         await sudoRemovePath(targetPath);
         fs.copySync(originalDolphinPath, targetPath);
-        log.info("Dolphin was reset");
         isCopySuccess = true;
       } catch (err) {
-        log.error("Failed to reset Dolphin, will try again with elevated permissions");
+        log.error("Failed to reset Dolphin with elevated permissions");
         log.error(err);
         throw new Error("Failed to reset Dolphin. You may need to reinstall the desktop app.");
       }
@@ -97,24 +102,34 @@ export default class DolphinManager {
     // Handle the dolphin INI file being in different paths per platform
     switch (platform) {
     case "darwin": // osx
-      dolphinPath = isDev ? "./app/dolphin-dev/osx/Dolphin.app/Contents/Resources" : path.join(dolphinPath, "Dolphin.app/Contents/Resources");
+      dolphinPath = isDev ? "./app/dolphin-dev/osx/Dolphin.app/Contents/Resources/User" : path.join(dolphinPath, "Dolphin.app", "Contents", "Resources", "User");
       break;
     case "win32": // windows
-      dolphinPath = isDev ? "./app/dolphin-dev/windows" : dolphinPath;
+      dolphinPath = isDev ? "./app/dolphin-dev/windows/User" : path.join(dolphinPath, "User");
       break;
     case "linux":
+      dolphinPath = path.join(os.homedir(),".config", "SlippiPlayback");
       break;
     default:
       throw new Error("The current platform is not supported");
     }
     try {
-      const iniPath = path.join(dolphinPath, "User", "Config", "Dolphin.ini");
-      const dolphinINI = ini.parse(fs.readFileSync(iniPath, 'utf-8'));
-      dolphinINI.General.ISOPath0 = fileDir;
-      const numPaths = dolphinINI.General.ISOPaths;
-      dolphinINI.General.ISOPaths = numPaths !== "0" ? numPaths : "1";
-      const newINI = ini.encode(dolphinINI);
-      fs.writeFileSync(iniPath, newINI);
+      const iniPath = path.join(dolphinPath, "Config", "Dolphin.ini");
+      if (fs.existsSync(iniPath)){
+        const dolphinINI = ini.parse(fs.readFileSync(iniPath, 'utf-8'));
+        dolphinINI.General.ISOPath0 = fileDir;
+        const numPaths = dolphinINI.General.ISOPaths;
+        dolphinINI.General.ISOPaths = numPaths !== "0" ? numPaths : "1";
+        const newINI = ini.encode(dolphinINI);
+        fs.writeFileSync(iniPath, newINI);
+      } else {
+        log.info("There isn't a User dir to write to.");
+        const configPath = path.join(dolphinPath, "Config");
+        const newINI = ini.encode({"General": {"ISOPath0": fileDir, "ISOPaths": 1}});
+        log.info("attempting to mkdir -p");
+        fs.mkdirpSync(configPath);
+        fs.writeFileSync(iniPath, newINI);
+      }
     } catch (err) {
       log.warn(`Failed to update the dolphin paths\n${err}`);
       throw err;
@@ -209,9 +224,14 @@ export default class DolphinManager {
       executablePath = path.join(dolphinPath, "Dolphin.exe");
       break;
     case "linux": // linux
-      // No need to dev override because Linux users will always need to specify
-      // the path inside of the application
-      executablePath = path.join(dolphinPath, "dolphin-emu");
+      dolphinPath = isDev ? "./app/dolphin-dev/linux" : dolphinPath;
+      const appImagePath = path.join(dolphinPath, "Slippi_Playback-x86_64.AppImage");
+      const emuPath = path.join(dolphinPath, "dolphin-emu");
+      if (fs.existsSync(appImagePath)){
+        executablePath = appImagePath;
+      } else {
+        executablePath = emuPath;
+      }
       break;
     default:
       throw new Error("The current platform is not supported");

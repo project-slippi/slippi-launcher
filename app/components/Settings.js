@@ -77,10 +77,13 @@ export default class Settings extends Component {
 
     const contentMsg = (
       <div>
-        Hello Linux friend! We cannot include a Dolphin build that is guaranteed
-        to work on your distro. Please find the <b>Playback Dolphin Path</b>
-        &nbsp;option to configure. <a href="https://discord.gg/pPfEaW5">Join the discord</a>
-        &nbsp;if you have any questions.
+        Hello Linux friend! We now include a Dolphin build that will probably
+        work on your distro. If it doesn&apos;t work, you will have to build your own. 
+        Please find the <b>Playback Dolphin Path</b> &nbsp;option to configure. 
+        <strong>
+          <a href="https://discord.gg/pPfEaW5">Join the discord</a>&nbsp;
+        </strong>
+        if you have any questions.
       </div>
     );
 
@@ -88,7 +91,7 @@ export default class Settings extends Component {
       <Message
         info={true}
         icon="linux"
-        header="Additional configuration necessary"
+        header="Additional configuration possibly necessary"
         content={contentMsg}
       />
     );
@@ -247,13 +250,6 @@ export default class Settings extends Component {
       />,
     ];
 
-    const platform = process.platform;
-    if (platform === 'linux') {
-      inputs.push([
-        this.renderPlaybackInstanceInput(),
-      ]);
-    }
-
     return (
       <div className={styles['section']}>
         <Header inverted={true}>Basic Settings</Header>
@@ -266,13 +262,10 @@ export default class Settings extends Component {
 
   renderAdvancedSettings() {
     const inputs = [];
-
-    const platform = process.platform;
-    if (platform !== 'linux') {
-      inputs.push([
-        this.renderPlaybackInstanceInput(),
-      ]);
-    }
+    
+    inputs.push([
+      this.renderPlaybackInstanceInput(),
+    ]);
 
     if (_.isEmpty(inputs)) {
       // Don't show advanced toggle if there are no
@@ -293,42 +286,23 @@ export default class Settings extends Component {
   renderPlaybackInstanceInput() {
     const store = this.props.store || {};
 
-    const platform = process.platform;
-
-    // If on Linux, indicate the steps required
-    let playbackDolphinDescription = (
-      <div>
-        Linux users must build their own playback Dolphin instance
-        <ul>
-          <li>Use <a href="https://github.com/project-slippi/Slippi-FM-installer">installer script</a> to compile playback Dolphin</li>
-          <li>Move the compiled instance out of the build directory</li>
-          <li>Set the field below to point to the directory that contains dolphin-emu</li>
-        </ul>
-      </div>
-    );
-
     const fieldName = 'playbackDolphinPath';
     let resetButton = null;
 
-    // If not on Linux, indicate this shouldn't be messed with and set up
-    // reset button
-    if (platform !== 'linux') {
-      playbackDolphinDescription = (
-        <div>
-          An instance of Dolphin for playing replays comes bundled
-          with this app. This setting allows you to configure a different instance.
-        </div>
-      );
+    const playbackDolphinDescription = (
+      <div>
+        An instance of Dolphin for playing replays comes bundled
+        with this app. This setting allows you to configure a different instance.
+      </div>
+    );
 
-      // Also if not on linux, support a button to reset the path
-      const defaultValue = getDefaultDolphinPath();
-      if (defaultValue !== store.settings.playbackDolphinPath) {
-        resetButton = (
-          <Button onClick={this.setFolderManual(fieldName, defaultValue)}>
-            Reset
-          </Button>
-        );
-      }
+    const defaultValue = getDefaultDolphinPath();
+    if (defaultValue !== store.settings.playbackDolphinPath) {
+      resetButton = (
+        <Button onClick={this.setFolderManual(fieldName, defaultValue)}>
+          Reset
+        </Button>
+      );
     }
 
     return (
