@@ -57,6 +57,18 @@ export default class FileLoader extends Component {
       // main menu is "PUSH". When coming from the main menu, we want to reload the files such that
       // any new files show up correctly
       this.props.loadRootFolder();
+
+      // Arriving at the file browser from the top level menu should reset the scroll position because
+      // the files may be different than when we last looked.
+      this.props.storeScrollPosition({
+        x: 0,
+        y: 0,
+      });
+    } else if (this.props.history.action === "POP") {
+      const xPos = _.get(this.props.store, ['scrollPosition', 'x']) || 0;
+      const yPos = _.get(this.props.store, ['scrollPosition', 'y']) || 0;
+
+      this.refTableScroll.scrollTo(xPos, yPos);
     }
   }
 
@@ -83,11 +95,6 @@ export default class FileLoader extends Component {
     this.props.storeScrollPosition({
       x: this.refTableScroll.scrollLeft,
       y: this.refTableScroll.scrollTop,
-    });
-
-    this.props.storeFileLoadState({
-      filesToRender: this.state.filesToRender,
-      filesOffset: this.state.filesOffset,
     });
 
     this.props.dismissError('fileLoader-global');
