@@ -93,7 +93,7 @@ function copyForLinux(targetFolder) {
   const dolphinSource = "./app/dolphin-dev/linux/Slippi_Playback-x86_64.AppImage";
   const dolphinDest = path.join(targetFolder, "Slippi_Playback-x86_64.AppImage");
   if (!fs.existsSync(dolphinSource)) {
-    throw new Error("Must have a Slippi_Playback-x86_64.AppImage file in dolphin-dev/linux folder.");
+    console.log("Must have a Slippi_Playback-x86_64.AppImage file in dolphin-dev/linux folder if you would like to package a Dolphin build.");
   }
 
   fs.emptyDirSync(targetFolder);
