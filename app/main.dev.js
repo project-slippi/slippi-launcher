@@ -154,7 +154,7 @@ const handlePreloadLogic = async () => {
 
       log.info("Done copying Dolphin");
     } else {
-      log.info("Install time matches, this is not a new install.");
+      log.info("New install not necessary...");
     }
   }
 
