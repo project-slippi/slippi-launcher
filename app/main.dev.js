@@ -73,9 +73,9 @@ const handlePreloadLogic = async () => {
     log.info(`Install time is ${exeCreateTime}, previous install is ${previousCreateTime}`);
 
     let isCopySuccess = true;
-    const shouldCopyDolphin = exeCreateTime !== previousCreateTime;
+    const originalDolphinPath = process.env.APPIMAGE ? path.join(process.env.APPDIR, "resources/app.asar.unpacked/app/dolphin") : path.join(appPath, "../app.asar.unpacked/app/dolphin");
+    const shouldCopyDolphin = exeCreateTime !== previousCreateTime && fs.existsSync(originalDolphinPath);
     if (shouldCopyDolphin) {
-      const originalDolphinPath = process.env.APPIMAGE ? path.join(process.env.APPDIR, "resources/app.asar.unpacked/app/dolphin") : path.join(appPath, "../app.asar.unpacked/app/dolphin");
 
       electronSettings.set("boot.installTime", exeCreateTime);
 
