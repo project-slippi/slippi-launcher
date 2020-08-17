@@ -210,17 +210,24 @@ export default class FileLoader extends Component {
     const errorFileCount = _.get(this.props.store, 'numFilteredFiles');
 
     const files = this.unfilteredFiles();
-    const filteredFileCount = allFiles.length - files.length + errorFileCount;
-    if (!filteredFileCount || !this.state.filterReplays) {
+    const durationFilterCount = allFiles.length - files.length;
+    const totalFilteredCount = durationFilterCount + errorFileCount;
+    if (totalFilteredCount === 0) {
       return null;
     }
 
     let contentText =
       `Replays shorter than ${MIN_GAME_LENGTH_SECONDS} seconds are automatically filtered.`;
 
-    if (errorFileCount) {
-      contentText = `${errorFileCount} corrupt files detected. Non-corrupt replays shorter than ${MIN_GAME_LENGTH_SECONDS} seconds are automatically filtered.`;
+    if (errorFileCount > 0) {
+      if (durationFilterCount > 0) {
+        // There are corrupted files and filtered files
+        contentText = `${errorFileCount} corrupt files detected. Non-corrupt replays shorter than ${MIN_GAME_LENGTH_SECONDS} seconds are automatically filtered.`;
+      } else {
+        contentText = `${errorFileCount} corrupt files detected.`;
+      }
     }
+    const showHideButton = durationFilterCount > 0 && this.state.filterReplays;
 
     const onShowAnywayClick = () => {
       // Clear the currently loaded files
@@ -239,9 +246,9 @@ export default class FileLoader extends Component {
       <Message
         info={true}
         icon="info circle"
-        header={`${filteredFileCount} Files have been filtered`}
+        header={`${totalFilteredCount} Files have been filtered`}
         content={<>
-          <span>{contentText}</span> <button type="button" className={styles['show-anyway']} onClick={onShowAnywayClick}>Click to show all</button>
+          <span>{contentText}</span> {showHideButton && <button type="button" className={styles['show-anyway']} onClick={onShowAnywayClick}>Click to show all</button>}
         </>}
       />
     );
