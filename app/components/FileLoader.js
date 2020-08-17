@@ -213,7 +213,7 @@ export default class FileLoader extends Component {
     }
 
     const allFiles = store.files || [];
-    // These are the number of files that were initiall removed probably because they're corrupted
+    // These are the number of files that were initially removed probably because they're corrupted
     const errorFileCount = _.get(this.props.store, 'numFilteredFiles');
 
     const files = this.unfilteredFiles();
