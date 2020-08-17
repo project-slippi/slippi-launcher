@@ -73,3 +73,14 @@
   height: 15px;
   text-align: center;
 }
+
+.reveal-file-location {
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  &:hover {
+    cursor: pointer;
+    text-decoration: underline;
+  }
+}

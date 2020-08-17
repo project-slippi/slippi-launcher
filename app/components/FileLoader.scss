@@ -68,3 +68,16 @@
   bottom: 20px;
   left: 20px;
 }
+
+.show-anyway {
+  background: none;
+  border: 0;
+  color: inherit;
+  padding: 0;
+  font-weight: bold;
+
+  &:hover {
+    cursor: pointer;
+    text-decoration: underline;
+  }
+}

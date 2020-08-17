@@ -21,6 +21,8 @@ import PageWrapper from './PageWrapper';
 import Scroller from './common/Scroller';
 
 const GAME_BATCH_SIZE = 50;
+const MIN_GAME_LENGTH_SECONDS = 30;
+const MIN_GAME_LENGTH_FRAMES = MIN_GAME_LENGTH_SECONDS * 60;
 
 export default class FileLoader extends Component {
   static propTypes = {
@@ -47,6 +49,8 @@ export default class FileLoader extends Component {
     super(props);
 
     this.state = {
+      // Filter the replays by default. Gets reset when the component is unmounted
+      filterReplays: true,
       selections: [],
     };
   }
@@ -187,34 +191,72 @@ export default class FileLoader extends Component {
     );
   }
 
+  /**
+   * Returns all the files which have not been filtered by game duration
+   */
+  unfilteredFiles() {
+    const store = this.props.store || {};
+    const allFiles = store.files || [];
+    return allFiles.filter((f) => {
+      if (this.state.filterReplays) {
+        // Files which have no metadata will be shown
+        return f.lastFrame === null || f.lastFrame >= MIN_GAME_LENGTH_FRAMES;
+      }
+      return true;
+    });
+  }
+
   renderFilteredFilesNotif() {
     const store = this.props.store || {};
     if (store.isLoading) {
       return null;
     }
 
-    const files = store.files || [];
-    const filteredFileCount = _.get(this.props.store, 'numFilteredFiles');
+    const allFiles = store.files || [];
+    // These are the number of files that were initially removed probably because they're corrupted
+    const errorFileCount = _.get(this.props.store, 'numFilteredFiles');
 
-    if (!filteredFileCount) {
+    const files = this.unfilteredFiles();
+    const durationFilterCount = allFiles.length - files.length;
+    const totalFilteredCount = durationFilterCount + errorFileCount;
+    if (totalFilteredCount === 0) {
       return null;
     }
 
     let contentText =
-      'Replays shorter than 30 seconds are automatically filtered.';
+      `Replays shorter than ${MIN_GAME_LENGTH_SECONDS} seconds are automatically filtered.`;
 
-    const filesWithErrors = files.filter(file => file.hasError);
-    const errorFileCount = filesWithErrors.length;
-    if (errorFileCount) {
-      contentText = `${errorFileCount} corrupt files detected. Non-corrupt replays shorter than 30 seconds are automatically filtered.`;
+    if (errorFileCount > 0) {
+      if (durationFilterCount > 0) {
+        // There are corrupted files and filtered files
+        contentText = `${errorFileCount} corrupt files detected. Non-corrupt replays shorter than ${MIN_GAME_LENGTH_SECONDS} seconds are automatically filtered.`;
+      } else {
+        contentText = `${errorFileCount} corrupt files detected.`;
+      }
+    }
+    const showHideButton = durationFilterCount > 0 && this.state.filterReplays;
+
+    const onShowAnywayClick = () => {
+      // Clear the currently loaded files
+      this.props.storeFileLoadState({
+        filesToRender: [],
+        filesOffset: 0,
+      });
+      // Clear the selection and disable replay filter
+      this.setState({
+        filterReplays: false,
+        selections: [],
+      });
     }
 
     return (
       <Message
         info={true}
         icon="info circle"
-        header={`${filteredFileCount} Files have been filtered`}
-        content={contentText}
+        header={`${totalFilteredCount} Files have been filtered`}
+        content={<>
+          <span>{contentText}</span> {showHideButton && <button type="button" className={styles['show-anyway']} onClick={onShowAnywayClick}>Click to show all</button>}
+        </>}
       />
     );
   }
@@ -296,7 +338,7 @@ export default class FileLoader extends Component {
   renderFileSelection() {
     const store = this.props.store || {};
 
-    const allFiles = store.files || [];
+    const allFiles = this.unfilteredFiles();
 
     const filesToRender = _.get(store, ['fileLoadState', 'filesToRender']) || [];
     const filesOffset = _.get(store, ['fileLoadState', 'filesOffset']) || 0;
