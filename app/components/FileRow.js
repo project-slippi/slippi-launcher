@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import log from 'electron-log';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -160,9 +161,13 @@ export default class FileRow extends Component {
 
     const settings = file.game.getSettings() || {};
     const stageId = settings.stageId;
-    const stageName = stageUtils.getStageName(stageId) || 'Unknown';
-
-    return stageName;
+    try {
+      const stageName = stageUtils.getStageName(stageId);
+      return stageName;
+    } catch (err) {
+      log.error(err);
+      return "Unknown";
+    }
   }
 
   generateTeamElements() {
