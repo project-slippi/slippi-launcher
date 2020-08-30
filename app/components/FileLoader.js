@@ -34,7 +34,8 @@ export default class FileLoader extends Component {
     storeScrollPosition: PropTypes.func.isRequired,
     storeFileLoadState: PropTypes.func.isRequired,
     setStatsGamePage: PropTypes.func.isRequired,
-
+    deleteSelections:  PropTypes.func.isRequired,
+    
     // error actions
     dismissError: PropTypes.func.isRequired,
 
@@ -413,6 +414,14 @@ export default class FileLoader extends Component {
       </Table>
     );
   }
+  
+  deleteSelections = () => {
+    this.props.deleteSelections(this.state.selections);
+    this.setState({
+      selections: [],
+    });
+    this.renderMain();
+  }
 
   renderQueueButtons() {
     if (this.state.selections.length === 0) {
@@ -427,6 +436,10 @@ export default class FileLoader extends Component {
         <Button onClick={this.queueClear}>
           <Icon name="dont" />
           Clear
+        </Button>
+        <Button onClick={this.deleteSelections}>
+          <Icon name="trash alternate outline" />
+            Delete
         </Button>
       </div>
     );
