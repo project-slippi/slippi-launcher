@@ -7,6 +7,7 @@ import console from './console';
 import game from './game';
 import errors from './error';
 import notifs from './notifs';
+import broadcast from './broadcast';
 
 export default function createRootReducer(history) {
   return combineReducers({
@@ -17,5 +18,6 @@ export default function createRootReducer(history) {
     game: game,
     errors: errors,
     notifs: notifs,
+    broadcast: broadcast,
   });
 }

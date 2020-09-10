@@ -16,10 +16,13 @@ export default class Broadcast extends Component {
   static propTypes = {
     // error actions
     dismissError: PropTypes.func.isRequired,
+    // broadcast actions
+    startBroadcast: PropTypes.func.isRequired,
+    stopBroadcast: PropTypes.func.isRequired,
 
     // store data
     history: PropTypes.object.isRequired,
-    // store: PropTypes.object.isRequired,
+    broadcast: PropTypes.object.isRequired,
     errors: PropTypes.object.isRequired,
     topNotifOffset: PropTypes.number.isRequired,
   };
@@ -45,22 +48,36 @@ export default class Broadcast extends Component {
   }
 
   renderButton() {
+    const { isBroadcasting } = this.props.broadcast;
+    const buttonText = isBroadcasting ? "Stop Broadcast" : "Start Broadcast";
+    const onClick = () => {
+      if (isBroadcasting) {
+        this.props.stopBroadcast();
+      } else {
+        this.props.startBroadcast();
+      }
+    }
     return (
       <Button
         color="blue"
         size="large"
-        onClick={() => { }}
+        onClick={onClick}
       >
-        Start Broadcast
+        {buttonText}
       </Button>
     );
   }
 
   renderContent() {
+    const { startTime, endTime, isBroadcasting } = this.props.broadcast;
+    console.log(JSON.stringify(this.props));
     return (
       <div className={styles['container']}>
         {this.renderGlobalError()}
         {this.renderButton()}
+        <div>start: {JSON.stringify(startTime)}</div>
+        <div>end: {JSON.stringify(endTime)}</div>
+        <div>isbroadcasting: {JSON.stringify(isBroadcasting)}</div>
       </div>
     );
   }
