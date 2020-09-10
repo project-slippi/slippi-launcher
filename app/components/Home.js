@@ -132,6 +132,16 @@ export default class Home extends Component {
 
     navigationElements.push(
       this.generateNav(
+        'podcast',
+        'Broadcast Gameplay',
+        'Allow others to spectate your gameplay',
+        '/broadcast',
+        false
+      )
+    );
+
+    navigationElements.push(
+      this.generateNav(
         'setting',
         'Configure Settings',
         'Configure iso location and replay root',
