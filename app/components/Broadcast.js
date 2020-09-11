@@ -69,7 +69,7 @@ export default class Broadcast extends Component {
   }
 
   renderContent() {
-    const { startTime, endTime, isBroadcasting } = this.props.broadcast;
+    const { slippiConnectionStatus, dolphinConnectionStatus, startTime, endTime, isBroadcasting } = this.props.broadcast;
     console.log(JSON.stringify(this.props));
     return (
       <div className={styles['container']}>
@@ -77,6 +77,8 @@ export default class Broadcast extends Component {
         {this.renderButton()}
         <div>start: {JSON.stringify(startTime)}</div>
         <div>end: {JSON.stringify(endTime)}</div>
+        <div>dolphin connection status: {JSON.stringify(dolphinConnectionStatus)}</div>
+        <div>slippi connection status: {JSON.stringify(slippiConnectionStatus)}</div>
         <div>isbroadcasting: {JSON.stringify(isBroadcasting)}</div>
       </div>
     );
