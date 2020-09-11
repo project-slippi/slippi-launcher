@@ -24,15 +24,9 @@ export class BroadcastManager {
         type: SET_DOLPHIN_STATUS,
         status: status,
       });
-      switch(status) {
-      case ConnectionStatus.CONNECTED:
-        this._connectToSlippiServer();
-        break;
-      case ConnectionStatus.DISCONNECTED:
-        this._disconnectFromSlippiServer();
-        break;
-      default:
-        break;
+      // Disconnect from Slippi server when we disconnect from Dolphin
+      if (status === ConnectionStatus.DISCONNECTED) {
+        this.stop();
       }
     });
     this.connection.on(ConnectionEvent.DATA, (data) => {
@@ -41,29 +35,12 @@ export class BroadcastManager {
   }
 
   /**
-   * Connects to Dolphin and the Slippi server, forwarding data from Dolphin to Slippi
+   * Connects to the Slippi server and the local Dolphin instance
    */
   start() {
-    this.connection.connect(
-      '127.0.0.1',
-      Ports.DEFAULT
-    );
-  }
-
-  stop() {
-    this.connection.disconnect();
-  }
-
-  _handleGameData(data) {
-    if (this.socket) {
-      this.socket.send(data);
-    }
-  }
-
-  _connectToSlippiServer() {
     if (this.socket) {
       // We're already connected
-      console.log("skipping websocket connection since we're already connected");
+      console.log("Skipping websocket connection since we're already connected");
       return;
     }
 
@@ -75,23 +52,31 @@ export class BroadcastManager {
     });
 
     this.socket = new WebSocket(SLIPPI_SERVER);
+
     this.socket.on('open', () => {
+      // We successfully connected to the Slippi server
       store.dispatch({
         type: SET_SLIPPI_STATUS,
         status: ConnectionStatus.CONNECTED,
       });
+
+      // Now try connect to our local Dolphin instance
+      this.connection.connect(
+        '127.0.0.1',
+        Ports.DEFAULT
+      );
     });
+
     this.socket.on('close', () => {
       store.dispatch({
         type: SET_SLIPPI_STATUS,
         status: ConnectionStatus.DISCONNECTED,
       });
-      // Clear the socket
-      console.log("clearing the socket");
+      // Clear the socket and disconnect from Dolphin too if we're still connected
       this.socket = null;
-      // Disconnect from Dolphin too if we're still connected
       this.connection.disconnect();
     });
+
     this.socket.on('error', (err) => {
       log.error("[BroadcastManager] Error connecting to Slippi server: ", err);
       const errorAction = displayError(
@@ -102,9 +87,15 @@ export class BroadcastManager {
     });
   }
 
-  _disconnectFromSlippiServer() {
+  stop() {
     if (this.socket) {
       this.socket.close();
+    }
+  }
+
+  _handleGameData(data) {
+    if (this.socket) {
+      this.socket.send(data);
     }
   }
 }
