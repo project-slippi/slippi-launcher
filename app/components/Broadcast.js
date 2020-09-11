@@ -1,3 +1,5 @@
+/* eslint-disable no-nested-ternary */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
@@ -48,10 +50,11 @@ export default class Broadcast extends Component {
   }
 
   renderButton() {
-    const { isBroadcasting } = this.props.broadcast;
-    const buttonText = isBroadcasting ? "Stop Broadcast" : "Start Broadcast";
+    const { isConnecting, isBroadcasting } = this.props.broadcast;
+    const active = isConnecting || isBroadcasting;
+    const buttonText = active ? "Stop Broadcast" : "Start Broadcast";
     const onClick = () => {
-      if (isBroadcasting) {
+      if (active) {
         this.props.stopBroadcast();
       } else {
         this.props.startBroadcast();
@@ -69,17 +72,17 @@ export default class Broadcast extends Component {
   }
 
   renderContent() {
-    const { slippiConnectionStatus, dolphinConnectionStatus, startTime, endTime, isBroadcasting } = this.props.broadcast;
+    const { slippiConnectionStatus, dolphinConnectionStatus, startTime, endTime, isConnecting, isBroadcasting } = this.props.broadcast;
     console.log(JSON.stringify(this.props));
     return (
       <div className={styles['container']}>
         {this.renderGlobalError()}
         {this.renderButton()}
-        <div>start: {JSON.stringify(startTime)}</div>
-        <div>end: {JSON.stringify(endTime)}</div>
+        <div>Status: {isBroadcasting ? `broadcasting since ${JSON.stringify(startTime)}` : endTime ? `broadcast lasted ${(endTime - startTime) / 1000} seconds` : "not broadcasting"}</div>
         <div>dolphin connection status: {JSON.stringify(dolphinConnectionStatus)}</div>
         <div>slippi connection status: {JSON.stringify(slippiConnectionStatus)}</div>
-        <div>isbroadcasting: {JSON.stringify(isBroadcasting)}</div>
+        <div>isBroadcasting: {JSON.stringify(isBroadcasting)}</div>
+        <div>isConnecting: {JSON.stringify(isConnecting)}</div>
       </div>
     );
   }
@@ -101,3 +104,5 @@ export default class Broadcast extends Component {
     );
   }
 }
+
+/* eslint-enable no-nested-ternary */

@@ -8,6 +8,7 @@ const defaultState = {
   dolphinConnectionStatus: ConnectionStatus.DISCONNECTED,
   slippiConnectionStatus: ConnectionStatus.DISCONNECTED,
   isBroadcasting: false,
+  isConnecting: false,
 };
 
 export default function broadcastReducer(state = defaultState, action) {
@@ -30,7 +31,7 @@ function setSlippiStatus(state, action) {
   const { status } = action;
   newState.slippiConnectionStatus = status;
   newState.isBroadcasting = newState.slippiConnectionStatus === ConnectionStatus.CONNECTED && newState.dolphinConnectionStatus === ConnectionStatus.CONNECTED;
-  return newState;
+  return updateBroadcastStatus(state, newState);
 }
 
 function setDolphinStatus(state, action) {
@@ -38,20 +39,20 @@ function setDolphinStatus(state, action) {
   const { status } = action;
   newState.dolphinConnectionStatus = status;
   newState.isBroadcasting = newState.slippiConnectionStatus === ConnectionStatus.CONNECTED && newState.dolphinConnectionStatus === ConnectionStatus.CONNECTED;
-  return newState;
+  return updateBroadcastStatus(state, newState);
 }
 
-/*
-function startBroadcast(state) {
+function updateBroadcastStatus(oldState, state) {
   const newState = { ...state };
-  newState.startTime = new Date();
-  newState.endTime = null;
+  newState.isBroadcasting = newState.slippiConnectionStatus === ConnectionStatus.CONNECTED && newState.dolphinConnectionStatus === ConnectionStatus.CONNECTED;
+  newState.isConnecting = !newState.isBroadcasting && (newState.slippiConnectionStatus !== ConnectionStatus.DISCONNECTED || newState.dolphinConnectionStatus !== ConnectionStatus.DISCONNECTED);
+  if (!oldState.isBroadcasting && newState.isBroadcasting) {
+    // We just started broadcasting
+    newState.startTime = new Date();
+    newState.endTime = null;
+  } else if (oldState.isBroadcasting && !newState.isBroadcasting) {
+    // We just stopped broadcasting
+    newState.endTime = new Date();
+  }
   return newState;
 }
-
-function stopBroadcast(state) {
-  const newState = { ...state };
-  newState.endTime = new Date();
-  return newState;
-}
-*/
