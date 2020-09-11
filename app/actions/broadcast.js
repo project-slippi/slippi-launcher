@@ -1,28 +1,36 @@
 import { BroadcastManager } from '../domain/BroadcastManager';
 
-export const START_BROADCAST = 'START_BROADCAST';
-export const STOP_BROADCAST = 'STOP_BROADCAST';
 export const SET_DOLPHIN_STATUS = 'SET_DOLPHIN_STATUS';
 export const SET_SLIPPI_STATUS = 'SET_SLIPPI_STATUS';
 
 const broadcastManager = new BroadcastManager();
 
-export function startBroadcast() {
-  // return async (dispatch, getState) => {
-  broadcastManager.start();
+export function setDolphinStatus(status) {
+  return async (dispatch) => {
+    dispatch({
+      type: SET_DOLPHIN_STATUS,
+      status: status,
+    })
+  }
+}
 
-  //   dispatch({
-  //     type: START_BROADCAST,
-  //   })
-  // }
+export function setSlippiStatus(status) {
+  return async (dispatch) => {
+    dispatch({
+      type: SET_SLIPPI_STATUS,
+      status: status,
+    })
+  }
+}
+
+export function startBroadcast() {
+  return async () => {
+    broadcastManager.start();
+  }
 }
 
 export function stopBroadcast() {
-  // return async (dispatch, getState) => {
-  broadcastManager.stop();
-
-  //   dispatch({
-  //     type: STOP_BROADCAST,
-  //   })
-  // }
+  return async () => {
+    broadcastManager.stop();
+  }
 }

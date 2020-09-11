@@ -5,7 +5,7 @@ import WebSocket from 'ws';
 
 import { DolphinConnection, Ports, ConnectionEvent, ConnectionStatus } from '@slippi/slippi-js';
 import { store } from '../index';
-import { SET_DOLPHIN_STATUS, SET_SLIPPI_STATUS } from '../actions/broadcast';
+import { setDolphinStatus, setSlippiStatus } from '../actions/broadcast';
 import { displayError } from '../actions/error';
 
 const SLIPPI_SERVER = 'ws://localhost:9898/';
@@ -20,10 +20,7 @@ export class BroadcastManager {
     this.socket = null;
     this.connection = new DolphinConnection();
     this.connection.on(ConnectionEvent.STATUS_CHANGE, status => {
-      store.dispatch({
-        type: SET_DOLPHIN_STATUS,
-        status: status,
-      });
+      store.dispatch(setDolphinStatus(status));
       // Disconnect from Slippi server when we disconnect from Dolphin
       if (status === ConnectionStatus.DISCONNECTED) {
         this.stop();
@@ -46,19 +43,13 @@ export class BroadcastManager {
 
     // Indicate we're connecting to the Slippi server
     console.log("Attempting to connect to the Slippi server");
-    store.dispatch({
-      type: SET_SLIPPI_STATUS,
-      status: ConnectionStatus.CONNECTING,
-    });
+    store.dispatch(setSlippiStatus(ConnectionStatus.CONNECTING));
 
     this.socket = new WebSocket(SLIPPI_SERVER);
 
     this.socket.on('open', () => {
       // We successfully connected to the Slippi server
-      store.dispatch({
-        type: SET_SLIPPI_STATUS,
-        status: ConnectionStatus.CONNECTED,
-      });
+      store.dispatch(setSlippiStatus(ConnectionStatus.CONNECTED));
 
       // Now try connect to our local Dolphin instance
       this.connection.connect(
@@ -68,10 +59,8 @@ export class BroadcastManager {
     });
 
     this.socket.on('close', () => {
-      store.dispatch({
-        type: SET_SLIPPI_STATUS,
-        status: ConnectionStatus.DISCONNECTED,
-      });
+      store.dispatch(setSlippiStatus(ConnectionStatus.DISCONNECTED));
+
       // Clear the socket and disconnect from Dolphin too if we're still connected
       this.socket = null;
       this.connection.disconnect();

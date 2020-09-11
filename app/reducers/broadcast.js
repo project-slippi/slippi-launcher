@@ -1,5 +1,5 @@
 import { ConnectionStatus } from '@slippi/slippi-js';
-import { START_BROADCAST, STOP_BROADCAST, SET_DOLPHIN_STATUS, SET_SLIPPI_STATUS } from '../actions/broadcast';
+import { SET_DOLPHIN_STATUS, SET_SLIPPI_STATUS } from '../actions/broadcast';
 
 // Default state for this reducer
 const defaultState = {
@@ -12,10 +12,10 @@ const defaultState = {
 
 export default function broadcastReducer(state = defaultState, action) {
   switch (action.type) {
-  case START_BROADCAST:
-    return startBroadcast(state, action);
-  case STOP_BROADCAST:
-    return stopBroadcast(state, action);
+  // case START_BROADCAST:
+  //   return startBroadcast(state, action);
+  // case STOP_BROADCAST:
+  //   return stopBroadcast(state, action);
   case SET_DOLPHIN_STATUS:
     return setDolphinStatus(state, action);
   case SET_SLIPPI_STATUS:
@@ -41,6 +41,7 @@ function setDolphinStatus(state, action) {
   return newState;
 }
 
+/*
 function startBroadcast(state) {
   const newState = { ...state };
   newState.startTime = new Date();
@@ -53,3 +54,4 @@ function stopBroadcast(state) {
   newState.endTime = new Date();
   return newState;
 }
+*/
