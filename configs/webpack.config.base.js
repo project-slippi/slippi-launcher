@@ -45,8 +45,6 @@ export default {
 
     new webpack.NamedModulesPlugin(),
 
-    new Dotenv({
-      path: '../.env',
-    }),
+    new Dotenv(),
   ],
 };

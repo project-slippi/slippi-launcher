@@ -1,13 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import {
-  Button,
-  Message,
-  Header,
-  Icon,
-  Confirm,
-} from 'semantic-ui-react';
+import { Button, Message, Header, Icon, Confirm } from 'semantic-ui-react';
 import { getDefaultDolphinPath } from '../utils/settings';
 import PageHeader from './common/PageHeader';
 import ActionInput from './common/ActionInput';
@@ -30,6 +24,8 @@ export default class Settings extends Component {
     openDolphin: PropTypes.func.isRequired,
     resetDolphin: PropTypes.func.isRequired,
     setResetConfirm: PropTypes.func.isRequired,
+    login: PropTypes.func.isRequired,
+    logout: PropTypes.func.isRequired,
 
     // error actions
     dismissError: PropTypes.func.isRequired,
@@ -37,9 +33,18 @@ export default class Settings extends Component {
     // store data
     history: PropTypes.object.isRequired,
     store: PropTypes.object.isRequired,
+    auth: PropTypes.object.isRequired,
     errors: PropTypes.object.isRequired,
     topNotifOffset: PropTypes.number.isRequired,
   };
+
+  constructor() {
+    super();
+    this.state = {
+      email: '',
+      password: '',
+    };
+  }
 
   componentDidMount() {
     this.props.validateISO();
@@ -78,8 +83,9 @@ export default class Settings extends Component {
     const contentMsg = (
       <div>
         Hello Linux friend! We now include a Dolphin build that will probably
-        work on your distro. If it doesn&apos;t work, you will have to build your own. 
-        Please find the <b>Playback Dolphin Path</b> &nbsp;option to configure. 
+        work on your distro. If it doesn&apos;t work, you will have to build
+        your own. Please find the <b>Playback Dolphin Path</b> &nbsp;option to
+        configure.
         <strong>
           <a href="https://discord.gg/pPfEaW5">Join the discord</a>&nbsp;
         </strong>
@@ -95,6 +101,49 @@ export default class Settings extends Component {
         content={contentMsg}
       />
     );
+  }
+
+  renderUserBlock() {
+    const auth = this.props.auth || {};
+
+    if (!auth.user) {
+      return (
+        <div>
+          <LabelDescription
+            label="hello"
+            description="
+            Connecting with Slippi.gg enables you to broadcast your games to other people.
+          "
+          />
+          <div>
+            <label>email</label>
+            <input
+              value={this.state.email}
+              onChange={e => this.setState({ email: e.target.value })}
+            />
+          </div>
+          <div>
+            <label>password</label>
+            <input
+              value={this.state.password}
+              type="password"
+              onChange={e => this.setState({ password: e.target.value })}
+            />
+          </div>
+          <Button
+            content="Login"
+            color="green"
+            size="medium"
+            basic={true}
+            inverted={true}
+            onClick={() =>
+              this.props.login(this.state.email, this.state.password)
+            }
+          />
+        </div>
+      );
+    }
+    return <div><h2>Welcome {auth.user.displayName}</h2><button type="button" onClick={this.props.logout}>Log out</button></div>;
   }
 
   renderConfigDolphin() {
@@ -163,56 +212,59 @@ export default class Settings extends Component {
           onCancel={this.hideConfirmReset}
         />
       </div>
-    )
+    );
   }
 
   showConfirmReset = () => {
     this.props.setResetConfirm(true);
-  }
+  };
 
   confirmResetDolphin = () => {
     this.hideConfirmReset();
     this.props.resetDolphin();
-  }
+  };
 
   hideConfirmReset = () => {
     this.props.setResetConfirm(false);
-  }
+  };
 
   renderISOVersionCheck() {
-    const validationState = _.get(this.props.store, 'isoValidationState') || 'unknown';
+    const validationState =
+      _.get(this.props.store, 'isoValidationState') || 'unknown';
 
     let icon, text, loading;
     switch (validationState) {
-    case "success":
-      icon = "check circle outline";
-      text = "Valid";
+    case 'success':
+      icon = 'check circle outline';
+      text = 'Valid';
       loading = false;
       break;
-    case "fail":
-      icon = "times circle outline";
-      text = "Bad ISO";
+    case 'fail':
+      icon = 'times circle outline';
+      text = 'Bad ISO';
       loading = false;
       break;
-    case "unknown":
-      icon = "warning sign"
-      text = "Unknown ISO";
+    case 'unknown':
+      icon = 'warning sign';
+      text = 'Unknown ISO';
       loading = false;
       break;
-    case "validating":
-      icon = "spinner";
-      text = "Verifying";
+    case 'validating':
+      icon = 'spinner';
+      text = 'Verifying';
       loading = true;
       break;
     default:
-      icon = "question circle outline";
-      text = "";
+      icon = 'question circle outline';
+      text = '';
       loading = false;
       break;
     }
 
     return (
-      <div className={`${styles['iso-version-check']} ${styles[validationState]}`}>
+      <div
+        className={`${styles['iso-version-check']} ${styles[validationState]}`}
+      >
         <span className={styles['iso-verify-text']}>{text}</span>
         <Icon name={icon} fitted={true} loading={loading} size="large" />
       </div>
@@ -230,7 +282,7 @@ export default class Settings extends Component {
           label="Melee ISO File"
           description="The path to a NTSC Melee 1.02 ISO. Used for playing replay files"
           value={store.settings.isoPath}
-          error={isoValidationState === "fail"}
+          error={isoValidationState === 'fail'}
           onClick={this.props.browseFile}
           handlerParams={['isoPath']}
           disabled={store.isResetting}
@@ -262,10 +314,8 @@ export default class Settings extends Component {
 
   renderAdvancedSettings() {
     const inputs = [];
-    
-    inputs.push([
-      this.renderPlaybackInstanceInput(),
-    ]);
+
+    inputs.push([this.renderPlaybackInstanceInput()]);
 
     if (_.isEmpty(inputs)) {
       // Don't show advanced toggle if there are no
@@ -291,8 +341,8 @@ export default class Settings extends Component {
 
     const playbackDolphinDescription = (
       <div>
-        An instance of Dolphin for playing replays comes bundled
-        with this app. This setting allows you to configure a different instance.
+        An instance of Dolphin for playing replays comes bundled with this app.
+        This setting allows you to configure a different instance.
       </div>
     );
 
@@ -311,9 +361,16 @@ export default class Settings extends Component {
           label="Playback Dolphin Path"
           description={playbackDolphinDescription}
         />
-        <Message className={styles['dolphin-warning']} color="yellow" warning={true}>
+        <Message
+          className={styles['dolphin-warning']}
+          color="yellow"
+          warning={true}
+        >
           <Icon name="warning sign" />
-          <strong>The default should be used by almost everyone. Only modify if you know what you are doing</strong>
+          <strong>
+            The default should be used by almost everyone. Only modify if you
+            know what you are doing
+          </strong>
         </Message>
         <SpacedGroup customColumns="1fr auto">
           <ActionInput
@@ -338,7 +395,18 @@ export default class Settings extends Component {
           {this.renderResetDolphin()}
         </SpacedGroup>
       </div>
-    )
+    );
+  }
+
+  renderUserAuth() {
+    return (
+      <div className={styles['section']}>
+        <Header inverted={true}>Connect with Slippi.gg</Header>
+        <SpacedGroup direction="vertical" size="lg">
+          {this.renderUserBlock()}
+        </SpacedGroup>
+      </div>
+    );
   }
 
   renderContent() {
@@ -350,6 +418,7 @@ export default class Settings extends Component {
         {this.renderBasicSettings()}
         {this.renderAdvancedSettings()}
         {this.renderActions()}
+        {this.renderUserAuth()}
       </div>
     );
   }
