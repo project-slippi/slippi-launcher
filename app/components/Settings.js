@@ -157,6 +157,7 @@ export default class Settings extends Component {
         <div>
           {this.renderLoginModal()}
           <LabelDescription
+            label="Slippi.gg Integration"
             description="
             Connecting with Slippi.gg enables you to broadcast your games to other people.
           "
@@ -430,7 +431,7 @@ export default class Settings extends Component {
   renderUserAuth() {
     return (
       <div className={styles['section']}>
-        <Header inverted={true}>Slippi.gg Integration</Header>
+        <Header inverted={true}>Connection Settings</Header>
         <SpacedGroup direction="vertical" size="lg">
           {this.renderUserBlock()}
         </SpacedGroup>

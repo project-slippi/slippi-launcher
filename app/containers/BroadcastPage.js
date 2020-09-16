@@ -9,6 +9,7 @@ function mapStateToProps(state) {
   return {
     errors: state.errors,
     broadcast: state.broadcast,
+    auth: state.auth,
     topNotifOffset: _.get(state.notifs, ['activeNotif', 'heightPx']) || 0,
   };
 }

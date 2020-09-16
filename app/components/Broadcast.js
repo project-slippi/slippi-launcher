@@ -25,6 +25,7 @@ export default class Broadcast extends Component {
     // store data
     history: PropTypes.object.isRequired,
     broadcast: PropTypes.object.isRequired,
+    auth: PropTypes.object.isRequired,
     errors: PropTypes.object.isRequired,
     topNotifOffset: PropTypes.number.isRequired,
   };
@@ -72,8 +73,16 @@ export default class Broadcast extends Component {
   }
 
   renderContent() {
+    const { user } = this.props.auth;
+    if (!user) {
+      return (
+        <div>
+          <h2>You must be logged in to broadcast</h2>
+        </div>
+      );
+    }
+
     const { slippiConnectionStatus, dolphinConnectionStatus, startTime, endTime, isConnecting, isBroadcasting } = this.props.broadcast;
-    console.log(JSON.stringify(this.props));
     return (
       <div className={styles['container']}>
         {this.renderGlobalError()}
