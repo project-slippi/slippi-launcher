@@ -1,7 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { Modal, Button, Message, Header, Icon, Confirm } from 'semantic-ui-react';
+import {
+  Modal,
+  Button,
+  Message,
+  Header,
+  Icon,
+  Confirm,
+} from 'semantic-ui-react';
 import { getDefaultDolphinPath } from '../utils/settings';
 import PageHeader from './common/PageHeader';
 import ActionInput from './common/ActionInput';
@@ -107,7 +114,10 @@ export default class Settings extends Component {
   renderLoginModal() {
     const auth = this.props.auth || {};
     return (
-      <Modal open={this.state.showLoginModal} onClose={() => this.setState({showLoginModal: false})}>
+      <Modal
+        open={this.state.showLoginModal}
+        onClose={() => this.setState({ showLoginModal: false })}
+      >
         <Modal.Header>Login</Modal.Header>
         <Modal.Content>
           <div>
@@ -129,7 +139,9 @@ export default class Settings extends Component {
             type="button"
             disabled={auth.loading}
             onClick={() => this.handleLogin()}
-          >Login</button>
+          >
+            Login
+          </button>
           {auth.error && <div>{auth.error}</div>}
         </Modal.Content>
       </Modal>
@@ -141,8 +153,8 @@ export default class Settings extends Component {
     this.props.login(email, password, () => {
       // Clear the state on successful login
       this.setState({
-        email: "",
-        password: "",
+        email: '',
+        password: '',
         showLoginModal: false,
       });
     });
@@ -153,7 +165,6 @@ export default class Settings extends Component {
 
     if (!auth.user) {
       return (
-
         <div>
           {this.renderLoginModal()}
           <LabelDescription
@@ -168,12 +179,24 @@ export default class Settings extends Component {
             size="medium"
             basic={true}
             inverted={true}
-            onClick={() => this.setState({showLoginModal: true})}
+            onClick={() => this.setState({ showLoginModal: true })}
           />
         </div>
       );
     }
-    return <div><h2>Welcome {auth.user.displayName}</h2><button type="button" onClick={this.props.logout}>Log out</button></div>;
+    return (
+      <div>
+        <h2>Welcome {auth.user.displayName}</h2>
+        <Button
+          content="Log out"
+          color="green"
+          size="medium"
+          basic={true}
+          inverted={true}
+          onClick={this.props.logout}
+        />
+      </div>
+    );
   }
 
   renderConfigDolphin() {
