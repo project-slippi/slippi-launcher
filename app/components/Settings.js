@@ -6,6 +6,7 @@ import {
   Button,
   Message,
   Header,
+  Form,
   Icon,
   Confirm,
 } from 'semantic-ui-react';
@@ -51,6 +52,7 @@ export default class Settings extends Component {
       email: '',
       password: '',
       showLoginModal: false,
+      showPassword: false,
     };
   }
 
@@ -112,36 +114,47 @@ export default class Settings extends Component {
   }
 
   renderLoginModal() {
+    const { showPassword, showLoginModal, email, password } = this.state;
     const auth = this.props.auth || {};
+
+    const togglePass = () => this.setState({
+      showPassword: !showPassword,
+    });
+
     return (
       <Modal
-        open={this.state.showLoginModal}
+        open={showLoginModal}
         onClose={() => this.setState({ showLoginModal: false })}
       >
-        <Modal.Header>Login</Modal.Header>
+        <Modal.Header>Login with Slippi.gg</Modal.Header>
         <Modal.Content>
-          <div>
-            <label>email</label>
-            <input
-              value={this.state.email}
-              onChange={e => this.setState({ email: e.target.value })}
-            />
-          </div>
-          <div>
-            <label>password</label>
-            <input
-              value={this.state.password}
-              type="password"
-              onChange={e => this.setState({ password: e.target.value })}
-            />
-          </div>
-          <button
-            type="button"
-            disabled={auth.loading}
-            onClick={() => this.handleLogin()}
-          >
-            Login
-          </button>
+          <Form onSubmit={() => this.handleLogin()}>
+            <div>
+              <label>Email</label>
+              <Form.Input
+                value={email}
+                onChange={e => this.setState({ email: e.target.value })}
+              />
+            </div>
+            <div>
+              <label>Password</label>
+              <Form.Input
+                icon={
+                  <Icon
+                    name={showPassword ? 'eye slash' : 'eye'}
+                    link={true}
+                    onClick={togglePass}
+                  />
+                }
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={e => this.setState({ password: e.target.value })}
+              />
+            </div>
+            <Button primary={true} type="submit">
+              Login
+            </Button>
+          </Form>
           {auth.error && <div>{auth.error}</div>}
         </Modal.Content>
       </Modal>
@@ -170,11 +183,11 @@ export default class Settings extends Component {
           <LabelDescription
             label="Slippi.gg Integration"
             description="
-            Connecting with Slippi.gg enables you to broadcast your games to other people.
+            Connecting with Slippi.gg allows you to broadcast your games to other people.
           "
           />
           <Button
-            content="Connect with Slippi.gg"
+            content="Login with Slippi.gg"
             color="green"
             size="medium"
             basic={true}
