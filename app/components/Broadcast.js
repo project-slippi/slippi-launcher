@@ -5,7 +5,11 @@ import PropTypes from 'prop-types';
 
 import {
   Button,
+  Header,
+  Segment,
+  Icon,
 } from 'semantic-ui-react';
+import { Link } from 'react-router-dom';
 
 import PageHeader from './common/PageHeader';
 import PageWrapper from './PageWrapper';
@@ -72,14 +76,39 @@ export default class Broadcast extends Component {
     );
   }
 
+  renderNotLoggedIn() {
+    return (
+      <div className={styles['empty-loader-content']}>
+        <Header
+          as="h2"
+          icon={true}
+          color="grey"
+          inverted={true}
+          textAlign="center"
+        >
+          <Icon name="question circle outline" />
+          <Header.Content>
+            Not logged in
+            <Header.Subheader>
+              You must be logged in to broadcast your gameplay. Go to the settings page to log in.
+            </Header.Subheader>
+          </Header.Content>
+        </Header>
+        <Segment basic={true} textAlign="center">
+          <Link to="/settings">
+            <Button color="blue" size="large">
+              Open settings
+            </Button>
+          </Link>
+        </Segment>
+      </div>
+    );
+  }
+
   renderContent() {
     const { user } = this.props.auth;
     if (!user) {
-      return (
-        <div>
-          <h2>You must be logged in to broadcast</h2>
-        </div>
-      );
+      return this.renderNotLoggedIn();
     }
 
     const { slippiConnectionStatus, dolphinConnectionStatus, startTime, endTime, isConnecting, isBroadcasting } = this.props.broadcast;
