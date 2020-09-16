@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { Button, Message, Header, Icon, Confirm } from 'semantic-ui-react';
+import { Modal, Button, Message, Header, Icon, Confirm } from 'semantic-ui-react';
 import { getDefaultDolphinPath } from '../utils/settings';
 import PageHeader from './common/PageHeader';
 import ActionInput from './common/ActionInput';
@@ -43,6 +43,7 @@ export default class Settings extends Component {
     this.state = {
       email: '',
       password: '',
+      showLoginModal: false,
     };
   }
 
@@ -103,18 +104,12 @@ export default class Settings extends Component {
     );
   }
 
-  renderUserBlock() {
+  renderLoginModal() {
     const auth = this.props.auth || {};
-
-    if (!auth.user) {
-      return (
-        <div>
-          <LabelDescription
-            label="hello"
-            description="
-            Connecting with Slippi.gg enables you to broadcast your games to other people.
-          "
-          />
+    return (
+      <Modal open={this.state.showLoginModal} onClose={() => this.setState({showLoginModal: false})}>
+        <Modal.Header>Login</Modal.Header>
+        <Modal.Content>
           <div>
             <label>email</label>
             <input
@@ -130,18 +125,50 @@ export default class Settings extends Component {
               onChange={e => this.setState({ password: e.target.value })}
             />
           </div>
+          <button
+            type="button"
+            disabled={auth.loading}
+            onClick={() => this.handleLogin()}
+          >Login</button>
+          {auth.error && <div>{auth.error}</div>}
+        </Modal.Content>
+      </Modal>
+    );
+  }
+
+  handleLogin() {
+    const { email, password } = this.state;
+    this.props.login(email, password, () => {
+      // Clear the state on successful login
+      this.setState({
+        email: "",
+        password: "",
+        showLoginModal: false,
+      });
+    });
+  }
+
+  renderUserBlock() {
+    const auth = this.props.auth || {};
+
+    if (!auth.user) {
+      return (
+
+        <div>
+          {this.renderLoginModal()}
+          <LabelDescription
+            description="
+            Connecting with Slippi.gg enables you to broadcast your games to other people.
+          "
+          />
           <Button
-            content="Login"
+            content="Connect with Slippi.gg"
             color="green"
             size="medium"
             basic={true}
             inverted={true}
-            disabled={auth.loading}
-            onClick={() =>
-              this.props.login(this.state.email, this.state.password)
-            }
+            onClick={() => this.setState({showLoginModal: true})}
           />
-          {auth.error && <div>{auth.error}</div>}
         </div>
       );
     }
@@ -403,7 +430,7 @@ export default class Settings extends Component {
   renderUserAuth() {
     return (
       <div className={styles['section']}>
-        <Header inverted={true}>Connect with Slippi.gg</Header>
+        <Header inverted={true}>Slippi.gg Integration</Header>
         <SpacedGroup direction="vertical" size="lg">
           {this.renderUserBlock()}
         </SpacedGroup>

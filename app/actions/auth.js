@@ -13,7 +13,7 @@ export function setAuthUser(user) {
   };
 }
 
-export function login(email, password) {
+export function login(email, password, callback) {
   return async (dispatch) => {
     // Set loading state
     dispatch({
@@ -28,7 +28,10 @@ export function login(email, password) {
     });
 
     try {
-      await auth().signInWithEmailAndPassword(email, password);
+      const user = await auth().signInWithEmailAndPassword(email, password);
+      if (user && callback) {
+        callback();
+      }
     } catch (err) {
       console.error(err);
       dispatch({
