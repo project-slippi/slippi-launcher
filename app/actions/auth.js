@@ -15,16 +15,16 @@ export function setAuthUser(user) {
 
 export function login(email, password) {
   return async (dispatch) => {
-    // Clear any existing errors
-    dispatch({
-      type: SET_AUTH_ERROR,
-      error: null,
-    });
-
     // Set loading state
     dispatch({
       type: SET_AUTH_LOADING,
       loading: true,
+    });
+
+    // Clear any existing errors
+    dispatch({
+      type: SET_AUTH_ERROR,
+      error: null,
     });
 
     try {
