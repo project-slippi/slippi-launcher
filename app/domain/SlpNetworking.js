@@ -21,7 +21,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import _ from 'lodash';
 
-import { DolphinConnection, ConnectionStatus } from '@slippi/slippi-js';
+import { ConsoleConnection, ConnectionStatus } from '@slippi/slippi-js';
 
 import { store } from '../index';
 import { connectionStateChanged } from '../actions/console';
@@ -123,7 +123,7 @@ export default class SlpNetworking {
     this.dolphinManager.updateSettings(connectionSettings);
 
     console.log(`Connecting to: ${this.ipAdress}:${this.port}`);
-    if (!this.consoleConn) this.consoleConn = new DolphinConnection();
+    if (!this.consoleConn) this.consoleConn = new ConsoleConnection();
     this.consoleConn.connect(this.ipAddress, this.port);
     this.consoleConn.on("handshake", (details) => {
       console.log(details);
