@@ -1,7 +1,7 @@
-import firebase from "firebase";
+import firebase from 'firebase';
 
 import { setAuthUser } from '../actions/auth';
-import { store } from "../index";
+import { store } from '../index';
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -17,8 +17,12 @@ const firebaseConfig = {
 // Initialize firebase and mirror user to store
 // eslint-disable-next-line import/prefer-default-export
 export function initializeFirebase() {
-  firebase.initializeApp(firebaseConfig);
-  firebase.auth().onAuthStateChanged(user => {
-    store.dispatch(setAuthUser(user));
-  });
+  try {
+    firebase.initializeApp(firebaseConfig);
+    firebase.auth().onAuthStateChanged(user => {
+      store.dispatch(setAuthUser(user));
+    });
+  } catch (err) {
+    console.error("Error initializing firebase: ", err);
+  }
 }
