@@ -23,6 +23,6 @@ export function initializeFirebase() {
       store.dispatch(setAuthUser(user));
     });
   } catch (err) {
-    console.error("Error initializing firebase: ", err);
+    console.error("Error initializing firebase. Did you forget to create a .env file from the .env.example file?", err);
   }
 }
