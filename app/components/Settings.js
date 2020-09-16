@@ -136,10 +136,12 @@ export default class Settings extends Component {
             size="medium"
             basic={true}
             inverted={true}
+            disabled={auth.loading}
             onClick={() =>
               this.props.login(this.state.email, this.state.password)
             }
           />
+          {auth.error && <div>{auth.error}</div>}
         </div>
       );
     }
