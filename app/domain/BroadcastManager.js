@@ -8,7 +8,7 @@ import { store } from '../index';
 import { setDolphinStatus, setSlippiStatus } from '../actions/broadcast';
 import { displayError } from '../actions/error';
 
-const SLIPPI_SERVER = 'ws://localhost:9898/';
+const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
 
 /**
  * Responsible for retrieving Dolphin game data over enet and sending the data
@@ -45,7 +45,7 @@ export class BroadcastManager {
     console.log("Attempting to connect to the Slippi server");
     store.dispatch(setSlippiStatus(ConnectionStatus.CONNECTING));
 
-    this.socket = new WebSocket(SLIPPI_SERVER);
+    this.socket = new WebSocket(SLIPPI_WS_SERVER);
 
     this.socket.on('open', () => {
       // We successfully connected to the Slippi server
