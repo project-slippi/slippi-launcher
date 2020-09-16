@@ -284,7 +284,8 @@
     "semantic-ui-react": "^0.84.0",
     "semver": "^5.6.0",
     "source-map-support": "^0.5.9",
-    "sudo-prompt": "^9.2.1"
+    "sudo-prompt": "^9.2.1",
+    "websocket": "^1.0.32"
   },
   "devEngines": {
     "node": ">=7.x",

@@ -10,8 +10,8 @@ export function setDolphinStatus(status) {
     dispatch({
       type: SET_DOLPHIN_STATUS,
       status: status,
-    })
-  }
+    });
+  };
 }
 
 export function setSlippiStatus(status) {
@@ -19,18 +19,18 @@ export function setSlippiStatus(status) {
     dispatch({
       type: SET_SLIPPI_STATUS,
       status: status,
-    })
-  }
+    });
+  };
 }
 
 export function startBroadcast() {
   return async () => {
-    broadcastManager.start();
-  }
+    await broadcastManager.start();
+  };
 }
 
 export function stopBroadcast() {
   return async () => {
     broadcastManager.stop();
-  }
+  };
 }

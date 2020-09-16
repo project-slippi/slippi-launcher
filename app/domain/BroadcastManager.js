@@ -1,7 +1,8 @@
 /* eslint-disable no-underscore-dangle */
 
 import log from 'electron-log';
-import WebSocket from 'ws';
+import { client as WebSocketClient } from 'websocket';
+import * as firebase from 'firebase';
 
 import { DolphinConnection, Ports, ConnectionEvent, ConnectionStatus } from '@slippi/slippi-js';
 import { store } from '../index';
@@ -17,16 +18,16 @@ const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
 // eslint-disable-next-line import/prefer-default-export
 export class BroadcastManager {
   constructor() {
-    this.socket = null;
-    this.connection = new DolphinConnection();
-    this.connection.on(ConnectionEvent.STATUS_CHANGE, status => {
+    this.wsConnection = null;
+    this.dolphinConnection = new DolphinConnection();
+    this.dolphinConnection.on(ConnectionEvent.STATUS_CHANGE, status => {
       store.dispatch(setDolphinStatus(status));
       // Disconnect from Slippi server when we disconnect from Dolphin
       if (status === ConnectionStatus.DISCONNECTED) {
         this.stop();
       }
     });
-    this.connection.on(ConnectionEvent.DATA, (data) => {
+    this.dolphinConnection.on(ConnectionEvent.DATA, (data) => {
       this._handleGameData(data);
     });
   }
@@ -34,8 +35,8 @@ export class BroadcastManager {
   /**
    * Connects to the Slippi server and the local Dolphin instance
    */
-  start() {
-    if (this.socket) {
+  async start() {
+    if (this.wsConnection) {
       // We're already connected
       console.log("Skipping websocket connection since we're already connected");
       return;
@@ -45,46 +46,60 @@ export class BroadcastManager {
     console.log("Attempting to connect to the Slippi server");
     store.dispatch(setSlippiStatus(ConnectionStatus.CONNECTING));
 
-    this.socket = new WebSocket(SLIPPI_WS_SERVER);
+    const headers = {};
+    const user = firebase.auth().currentUser;
+    if (user) {
+      const token = await user.getIdToken();
+      headers.authorization = `Bearer ${token}`;
+    }
 
-    this.socket.on('open', () => {
+    console.log(headers);
+
+    const socket = new WebSocketClient();
+
+    socket.on('connect', (connection) => {
+      this.wsConnection = connection;
+
       // We successfully connected to the Slippi server
       store.dispatch(setSlippiStatus(ConnectionStatus.CONNECTED));
 
       // Now try connect to our local Dolphin instance
-      this.connection.connect(
+      this.dolphinConnection.connect(
         '127.0.0.1',
         Ports.DEFAULT
       );
+
+      connection.on('error', (err) => {
+        log.error("[BroadcastManager] Error connecting to Slippi server: ", err);
+        const errorAction = displayError(
+          'broadcast-global',
+          err.message,
+        );
+        store.dispatch(errorAction);
+      });
+
+      connection.on('close', () => {
+        store.dispatch(setSlippiStatus(ConnectionStatus.DISCONNECTED));
+
+        // Clear the socket and disconnect from Dolphin too if we're still connected
+        this.wsConnection = null;
+        this.dolphinConnection.disconnect();
+      });
     });
 
-    this.socket.on('close', () => {
-      store.dispatch(setSlippiStatus(ConnectionStatus.DISCONNECTED));
-
-      // Clear the socket and disconnect from Dolphin too if we're still connected
-      this.socket = null;
-      this.connection.disconnect();
-    });
-
-    this.socket.on('error', (err) => {
-      log.error("[BroadcastManager] Error connecting to Slippi server: ", err);
-      const errorAction = displayError(
-        'broadcast-global',
-        err.message,
-      );
-      store.dispatch(errorAction);
-    });
+    socket.connect(SLIPPI_WS_SERVER, 'broadcast-protocol', undefined, headers);
   }
 
   stop() {
-    if (this.socket) {
-      this.socket.close();
+    if (this.wsConnection) {
+      this.wsConnection.close();
     }
   }
 
   _handleGameData(data) {
-    if (this.socket) {
-      this.socket.send(data);
+    if (this.wsConnection) {
+      console.log(data);
+      this.wsConnection.sendUTF(JSON.stringify(data));
     }
   }
 }
