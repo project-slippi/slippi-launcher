@@ -4,6 +4,7 @@
 
 import path from 'path';
 import webpack from 'webpack';
+import Dotenv from 'dotenv-webpack';
 import { dependencies } from '../package.json';
 
 export default {
@@ -43,5 +44,9 @@ export default {
     }),
 
     new webpack.NamedModulesPlugin(),
+
+    new Dotenv({
+      path: '../.env',
+    }),
   ],
 };
