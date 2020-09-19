@@ -53,8 +53,6 @@ export class BroadcastManager {
       headers.authorization = `Bearer ${token}`;
     }
 
-    console.log(headers);
-
     const socket = new WebSocketClient();
 
     socket.on('connect', (connection) => {
@@ -98,8 +96,11 @@ export class BroadcastManager {
 
   _handleGameData(data) {
     if (this.wsConnection) {
-      console.log(data);
-      this.wsConnection.sendUTF(JSON.stringify(data));
+      const base64 = data.toString('base64');
+      this.wsConnection.sendUTF(JSON.stringify({
+        type: "game_event",
+        payload: base64,
+      }));
     }
   }
 }

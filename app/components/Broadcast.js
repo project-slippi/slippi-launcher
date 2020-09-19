@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 import {
   Button,
@@ -17,6 +18,7 @@ import DismissibleMessage from './common/DismissibleMessage';
 
 import styles from './Broadcast.scss';
 import Scroller from './common/Scroller';
+import SpacedGroup from './common/SpacedGroup';
 
 export default class Broadcast extends Component {
   static propTypes = {
@@ -25,6 +27,9 @@ export default class Broadcast extends Component {
     // broadcast actions
     startBroadcast: PropTypes.func.isRequired,
     stopBroadcast: PropTypes.func.isRequired,
+    refreshBroadcasts: PropTypes.func.isRequired,
+    watchChannel: PropTypes.func.isRequired,
+    initSpectate: PropTypes.func.isRequired,
 
     // store data
     history: PropTypes.object.isRequired,
@@ -33,6 +38,10 @@ export default class Broadcast extends Component {
     errors: PropTypes.object.isRequired,
     topNotifOffset: PropTypes.number.isRequired,
   };
+
+  componentDidMount() {
+    this.props.initSpectate();
+  }
 
   renderGlobalError() {
     const errors = this.props.errors || {};
@@ -64,7 +73,7 @@ export default class Broadcast extends Component {
       } else {
         this.props.startBroadcast();
       }
-    }
+    };
     return (
       <Button
         color="blue"
@@ -73,6 +82,40 @@ export default class Broadcast extends Component {
       >
         {buttonText}
       </Button>
+    );
+  }
+
+  renderRefreshButton() {
+    return (
+      <Button
+        color="blue"
+        size="large"
+        onClick={() => this.props.refreshBroadcasts()}
+      >
+        Refresh
+      </Button>
+    );
+  }
+
+  renderChannels() {
+    const channels = _.get(this.props.broadcast, 'channels') || [];
+    const broadcastEntries = _.map(channels, channel => (
+      <SpacedGroup key={channel.id} direction="horizontal">
+        <div>{channel.id}</div>
+        <Button
+          color="blue"
+          size="small"
+          onClick={() => this.props.watchChannel(channel.id)}
+        >
+          Watch
+        </Button>
+      </SpacedGroup>
+    ));
+
+    return (
+      <div>
+        {broadcastEntries}
+      </div>
     );
   }
 
@@ -121,6 +164,9 @@ export default class Broadcast extends Component {
         <div>slippi connection status: {JSON.stringify(slippiConnectionStatus)}</div>
         <div>isBroadcasting: {JSON.stringify(isBroadcasting)}</div>
         <div>isConnecting: {JSON.stringify(isConnecting)}</div>
+        <h2>Spectate</h2>
+        {this.renderRefreshButton()}
+        {this.renderChannels()}
       </div>
     );
   }

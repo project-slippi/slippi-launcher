@@ -1,5 +1,5 @@
 import { ConnectionStatus } from '@slippi/slippi-js';
-import { SET_DOLPHIN_STATUS, SET_SLIPPI_STATUS } from '../actions/broadcast';
+import { SET_DOLPHIN_STATUS, SET_SLIPPI_STATUS, UPDATE_BROADCAST_CHANNELS } from '../actions/broadcast';
 
 // Default state for this reducer
 const defaultState = {
@@ -9,6 +9,7 @@ const defaultState = {
   slippiConnectionStatus: ConnectionStatus.DISCONNECTED,
   isBroadcasting: false,
   isConnecting: false,
+  channels: [],
 };
 
 export default function broadcastReducer(state = defaultState, action) {
@@ -21,6 +22,8 @@ export default function broadcastReducer(state = defaultState, action) {
     return setDolphinStatus(state, action);
   case SET_SLIPPI_STATUS:
     return setSlippiStatus(state, action);
+  case UPDATE_BROADCAST_CHANNELS:
+    return updateBroadcastChannels(state, action);
   default:
     return state;
   }
@@ -55,4 +58,12 @@ function updateBroadcastStatus(oldState, state) {
     newState.endTime = new Date();
   }
   return newState;
+}
+
+function updateBroadcastChannels(state, action) {
+  const { channels } = action;
+  return {
+    ...state,
+    channels: channels,
+  };
 }
