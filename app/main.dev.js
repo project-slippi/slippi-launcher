@@ -57,11 +57,11 @@ const handlePreloadLogic = async () => {
   if (isProd && (platform === "win32" || platform === "darwin" || process.env.APPIMAGE)) {
     log.info("Checking if Dolphin path has been moved...");
 
-    const appPath = app.getAppPath();
+    const appPath = process.env.APPDIR || app.getAppPath();
     const exePlatformPaths = {
       "win32": path.join(appPath, "../../Slippi Launcher.exe"),
       "darwin": path.join(appPath, "../../MacOS/Slippi Launcher"),
-      "linux": path.join(process.env.APPDIR, "AppRun"),
+      "linux": path.join(appPath, "AppRun"),
     };
 
     // If on production and mac/windows/appimage, let's see if this is a fresh install
