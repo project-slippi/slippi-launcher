@@ -133,8 +133,8 @@ export default class Home extends Component {
     navigationElements.push(
       this.generateNav(
         'podcast',
-        'Broadcast Gameplay',
-        'Allow others to spectate your gameplay',
+        'Gameplay Broadcasts',
+        'Share your gameplay or watch others',
         '/broadcast',
         false
       )
