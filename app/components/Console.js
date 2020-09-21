@@ -701,11 +701,11 @@ export default class Console extends Component {
                 <Form.Field>
                   <label htmlFor="port">Connection Port</label>
                   <div className={styles['description']}>
-                    The connection port should only be changed if you are connecting to a relay, {Ports.WII_DEFAULT} is the port all Wiis use to send data.
+                    The connection port should only be changed if you are connecting to a relay, {Ports.DEFAULT} is the port all Wiis use to send data.
                   </div>
                   <Form.Input
                     name="port"
-                    defaultValue={formData.port || connectionSettings.port || `${Ports.WII_DEFAULT}`}
+                    defaultValue={formData.port || connectionSettings.port || `${Ports.DEFAULT}`}
                     onChange={this.onFieldChange}
                   />
                 </Form.Field>
