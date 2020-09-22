@@ -21,7 +21,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import _ from 'lodash';
 
-import { Ports, ConsoleConnection, ConnectionStatus } from '@slippi/slippi-js';
+import { Ports, DolphinConnection, ConsoleConnection, ConnectionStatus } from '@slippi/slippi-js';
 
 import { store } from '../index';
 import { connectionStateChanged } from '../actions/console';
@@ -130,11 +130,19 @@ export default class SlpNetworking {
       // Try both the default and legacy ports
       this.connectOnPort(Ports.DEFAULT);
       this.connectOnPort(Ports.LEGACY);
+
+      // Also try to connect as a Dolphin instance
+      this.connectOnPort(Ports.DEFAULT, "dolphin");
     }
   }
 
-  connectOnPort(port) {
-    const conn = new ConsoleConnection();
+  connectOnPort(port, connectionType="console") {
+    let conn;
+    if (connectionType === "console") {
+      conn = new ConsoleConnection();
+    } else {
+      conn = new DolphinConnection();
+    }
     // Only add the event listeners once we've connected
     conn.once("connect", () => {
       conn.on("handshake", (details) => {
