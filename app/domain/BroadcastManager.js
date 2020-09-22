@@ -98,6 +98,7 @@ export class BroadcastManager {
     if (this.wsConnection) {
       // Only forward the game event messages for now
       if (message.type === DolphinMessageType.GAME_EVENT) {
+        // console.log(`[Broadcaster] ${JSON.stringify(message)}`);
         this.wsConnection.sendUTF(JSON.stringify(message));
       }
     }

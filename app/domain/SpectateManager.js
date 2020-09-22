@@ -80,6 +80,7 @@ export class SpectateManager {
           return;
         }
 
+        // console.log(`[Spectator] ${message.utf8Data}`);
         const obj = JSON.parse(message.utf8Data);
         switch (obj.type) {
         case 'list-channels-resp':

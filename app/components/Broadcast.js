@@ -99,18 +99,21 @@ export default class Broadcast extends Component {
 
   renderChannels() {
     const channels = _.get(this.props.broadcast, 'channels') || [];
-    const broadcastEntries = _.map(channels, channel => (
-      <SpacedGroup key={channel.id} direction="horizontal">
-        <div>{channel.id}</div>
-        <Button
-          color="blue"
-          size="small"
-          onClick={() => this.props.watchChannel(channel.id)}
-        >
-          Watch
-        </Button>
-      </SpacedGroup>
-    ));
+    const broadcastEntries = _.map(channels, channel => {
+      const name = _.get(channel, ['broadcaster', 'name']);
+      return (
+        <SpacedGroup key={channel.id} direction="horizontal">
+          <div>{name} ({channel.id})</div>
+          <Button
+            color="blue"
+            size="small"
+            onClick={() => this.props.watchChannel(channel.id)}
+          >
+            Watch
+          </Button>
+        </SpacedGroup>
+      );
+    });
 
     return (
       <div>
