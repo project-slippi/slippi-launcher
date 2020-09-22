@@ -27,8 +27,8 @@ export class BroadcastManager {
         this.stop();
       }
     });
-    this.dolphinConnection.on(ConnectionEvent.DATA, (data) => {
-      this._handleGameData(data);
+    this.dolphinConnection.on(ConnectionEvent.MESSAGE, (message) => {
+      this._handleGameData(message);
     });
   }
 
@@ -94,13 +94,9 @@ export class BroadcastManager {
     }
   }
 
-  _handleGameData(data) {
+  _handleGameData(message) {
     if (this.wsConnection) {
-      const base64 = data.toString('base64');
-      this.wsConnection.sendUTF(JSON.stringify({
-        type: "game_event",
-        payload: base64,
-      }));
+      this.wsConnection.sendUTF(JSON.stringify(message));
     }
   }
 }
