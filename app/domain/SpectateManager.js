@@ -62,7 +62,7 @@ export class SpectateManager {
       this.wsConnection = connection;
 
       connection.on('error', (err) => {
-        log.error("[BroadcastManager] Error connecting to Slippi server: ", err);
+        log.error("[SpectateManager] Error connecting to Slippi server: ", err);
         const errorAction = displayError(
           'broadcast-global',
           err.message,
