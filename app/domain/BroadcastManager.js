@@ -4,7 +4,7 @@ import log from 'electron-log';
 import { client as WebSocketClient } from 'websocket';
 import * as firebase from 'firebase';
 
-import { DolphinConnection, Ports, ConnectionEvent, ConnectionStatus } from '@slippi/slippi-js';
+import { DolphinMessageType, DolphinConnection, Ports, ConnectionEvent, ConnectionStatus } from '@slippi/slippi-js';
 import { store } from '../index';
 import { setDolphinStatus, setSlippiStatus } from '../actions/broadcast';
 import { displayError } from '../actions/error';
@@ -96,7 +96,10 @@ export class BroadcastManager {
 
   _handleGameData(message) {
     if (this.wsConnection) {
-      this.wsConnection.sendUTF(JSON.stringify(message));
+      // Only forward the game event messages for now
+      if (message.type === DolphinMessageType.GAME_EVENT) {
+        this.wsConnection.sendUTF(JSON.stringify(message));
+      }
     }
   }
 }
