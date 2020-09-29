@@ -1362,12 +1362,13 @@
     array-from "^2.1.1"
     lodash.get "^4.4.2"
 
-"@slippi/slippi-js@^5.0.5":
-  version "5.0.5"
-  resolved "https://registry.yarnpkg.com/@slippi/slippi-js/-/slippi-js-5.0.5.tgz#abb86b598451d100519a8cb7cddc048e58e2f9e2"
-  integrity sha512-iVFhJz1njibZf55KCSk8egRpuc85EnkWQtARnNLzzE6nzffMbUwZip5dHwhuH2PI8BRnPmN2M0d9Ri5QdTaZ/g==
+"@slippi/slippi-js@next":
+  version "5.1.0-beta.0"
+  resolved "https://registry.yarnpkg.com/@slippi/slippi-js/-/slippi-js-5.1.0-beta.0.tgz#69ba00212866e0e45cdd71be68d5ebada2b7aa5e"
+  integrity sha512-Jcw0EzL+swzLqxQdt4XqUNczru7d1/pENkeCCo0/bwy1XTaKNWAptCO3rMqdY7tmRkAdu8+1H4svkEq6MD4lgQ==
   dependencies:
     "@shelacek/ubjson" "^1.0.1"
+    enet "^0.2.9"
     iconv-lite "^0.6.2"
     lodash "^4.17.19"
     moment "^2.27.0"
@@ -5234,6 +5235,11 @@ endpoint-utils@^1.0.2:
   dependencies:
     ip "^1.1.3"
     pinkie-promise "^1.0.0"
+
+enet@^0.2.9:
+  version "0.2.9"
+  resolved "https://registry.yarnpkg.com/enet/-/enet-0.2.9.tgz#d7fd68a0bf8bb3891408ea465e26ed6955822a1a"
+  integrity sha1-1/1ooL+Ls4kUCOpGXibtaVWCKho=
 
 enhanced-resolve@^4.1.0:
   version "4.1.0"
