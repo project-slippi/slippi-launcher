@@ -129,33 +129,29 @@ export default class Settings extends Component {
         <Modal.Header>Login with Slippi.gg</Modal.Header>
         <Modal.Content>
           <Form onSubmit={() => this.handleLogin()}>
-            <div>
-              <label>Email</label>
-              <Form.Input
-                value={email}
-                onChange={e => this.setState({ email: e.target.value })}
-              />
-            </div>
-            <div>
-              <label>Password</label>
-              <Form.Input
-                icon={
-                  <Icon
-                    name={showPassword ? 'eye slash' : 'eye'}
-                    link={true}
-                    onClick={togglePass}
-                  />
-                }
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={e => this.setState({ password: e.target.value })}
-              />
-            </div>
+            <Form.Input
+              label="Email"
+              value={email}
+              onChange={e => this.setState({ email: e.target.value })}
+            />
+            <Form.Input
+              label="Password"
+              icon={
+                <Icon
+                  name={showPassword ? 'eye slash' : 'eye'}
+                  link={true}
+                  onClick={togglePass}
+                />
+              }
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={e => this.setState({ password: e.target.value })}
+            />
+            {auth.error && <div className={styles['login-error']}>{auth.error}</div>}
             <Button primary={true} type="submit">
               Login
             </Button>
           </Form>
-          {auth.error && <div>{auth.error}</div>}
         </Modal.Content>
       </Modal>
     );
