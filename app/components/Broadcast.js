@@ -5,10 +5,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 import {
-  Button,
-  Header,
-  Segment,
-  Icon,
+  Button, Header, Segment, Icon, Tab, Input,
 } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
@@ -39,8 +36,8 @@ export default class Broadcast extends Component {
     topNotifOffset: PropTypes.number.isRequired,
   };
 
-  componentDidMount() {
-    this.props.initSpectate();
+  state = {
+    password: "",
   }
 
   renderGlobalError() {
@@ -71,7 +68,7 @@ export default class Broadcast extends Component {
       if (active) {
         this.props.stopBroadcast();
       } else {
-        this.props.startBroadcast();
+        this.props.startBroadcast(this.state.password);
       }
     };
     return (
@@ -151,25 +148,90 @@ export default class Broadcast extends Component {
     );
   }
 
+  renderBroadcastContent() {
+    const { slippiConnectionStatus, dolphinConnectionStatus, startTime, endTime, isConnecting, isBroadcasting } = this.props.broadcast;
+
+    return (
+      <div>
+        <h2>Broadcast</h2>
+        <SpacedGroup direction="vertical">
+          {this.renderButton()}
+          <div>
+            <div>Status: {isBroadcasting ? `broadcasting since ${JSON.stringify(startTime)}` : endTime ? `broadcast lasted ${(endTime - startTime) / 1000} seconds` : "not broadcasting"}</div>
+            <div>dolphin connection status: {JSON.stringify(dolphinConnectionStatus)}</div>
+            <div>slippi connection status: {JSON.stringify(slippiConnectionStatus)}</div>
+            <div>isBroadcasting: {JSON.stringify(isBroadcasting)}</div>
+            <div>isConnecting: {JSON.stringify(isConnecting)}</div>
+          </div>
+        </SpacedGroup>
+      </div>
+    );
+  }
+
+  renderSpectateContent() {
+    return (
+      <div>
+        <h2>Spectate</h2>
+        {this.renderRefreshButton()}
+        {this.renderChannels()}
+      </div>
+    );
+  }
+
+  renderTabs() {
+    const panes = [
+      {
+        menuItem: "Broadcast",
+        render: _.bind(this.renderBroadcastContent, this),
+      },
+      {
+        menuItem: "Spectate",
+        render: _.bind(this.renderSpectateContent, this),
+      },
+    ];
+
+    return (
+      <Tab
+        className={styles['tabs']}
+        menu={{ secondary: true, pointing: true }}
+        panes={panes}
+        onTabChange={(event, data) => {
+          if (data.activeIndex !== 1) {
+            return;
+          }
+
+          this.props.initSpectate(this.state.password);
+        }}
+      />
+    );
+  }
+
+  renderPasswordInput() {
+    return (
+      <Input
+        type="password"
+        inverted={true}
+        label="Password"
+        onChange={(event, p) => {
+          this.setState({
+            password: p.value,
+          });
+        }}
+      />
+    );
+  }
+
   renderContent() {
     const { user } = this.props.auth;
     if (!user) {
       return this.renderNotLoggedIn();
     }
 
-    const { slippiConnectionStatus, dolphinConnectionStatus, startTime, endTime, isConnecting, isBroadcasting } = this.props.broadcast;
     return (
       <div className={styles['container']}>
         {this.renderGlobalError()}
-        {this.renderButton()}
-        <div>Status: {isBroadcasting ? `broadcasting since ${JSON.stringify(startTime)}` : endTime ? `broadcast lasted ${(endTime - startTime) / 1000} seconds` : "not broadcasting"}</div>
-        <div>dolphin connection status: {JSON.stringify(dolphinConnectionStatus)}</div>
-        <div>slippi connection status: {JSON.stringify(slippiConnectionStatus)}</div>
-        <div>isBroadcasting: {JSON.stringify(isBroadcasting)}</div>
-        <div>isConnecting: {JSON.stringify(isConnecting)}</div>
-        <h2>Spectate</h2>
-        {this.renderRefreshButton()}
-        {this.renderChannels()}
+        {this.renderPasswordInput()}
+        {this.renderTabs()}
       </div>
     );
   }

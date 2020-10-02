@@ -35,9 +35,9 @@ export function updateBroadcastChannels(channels) {
   };
 }
 
-export function startBroadcast() {
+export function startBroadcast(password) {
   return async () => {
-    await broadcastManager.start();
+    await broadcastManager.start(password);
   };
 }
 
@@ -59,8 +59,8 @@ export function watchChannel(channelId) {
   };
 }
 
-export function initSpectate() {
+export function initSpectate(password) {
   return async () => {
-    await spectateManager.connect();
+    await spectateManager.connect(password);
   };
 }

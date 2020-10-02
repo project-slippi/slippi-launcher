@@ -35,7 +35,7 @@ export class BroadcastManager {
   /**
    * Connects to the Slippi server and the local Dolphin instance
    */
-  async start() {
+  async start(password) {
     if (this.wsConnection) {
       // We're already connected
       console.log("Skipping websocket connection since we're already connected");
@@ -46,7 +46,9 @@ export class BroadcastManager {
     console.log("Attempting to connect to the Slippi server");
     store.dispatch(setSlippiStatus(ConnectionStatus.CONNECTING));
 
-    const headers = {};
+    const headers = {
+      password: password,
+    };
     const user = firebase.auth().currentUser;
     if (user) {
       const token = await user.getIdToken();
@@ -54,6 +56,15 @@ export class BroadcastManager {
     }
 
     const socket = new WebSocketClient();
+
+    socket.on('connectFailed', (error) => {
+      store.dispatch(setSlippiStatus(ConnectionStatus.DISCONNECTED));
+      const errorAction = displayError(
+        'broadcast-global',
+        error.message,
+      );
+      store.dispatch(errorAction);
+    });
 
     socket.on('connect', (connection) => {
       this.wsConnection = connection;

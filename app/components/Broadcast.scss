@@ -6,6 +6,17 @@
   margin-right: auto;
 }
 
+.tabs {
+  margin-top: 24px;
+
+  :global(.menu) {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    a {
+      color: $foreground !important;
+    }
+  }
+}
+
 .section {
   margin-bottom: 48px;
 }

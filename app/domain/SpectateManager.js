@@ -42,14 +42,16 @@ export class SpectateManager {
   /**
    * Connects to the Slippi server and the local Dolphin instance
    */
-  async connect() {
+  async connect(password) {
     if (this.wsConnection) {
       // We're already connected
       console.log("Skipping websocket connection since we're already connected");
       return;
     }
 
-    const headers = {};
+    const headers = {
+      password: password,
+    };
     const user = firebase.auth().currentUser;
     if (user) {
       const token = await user.getIdToken();
@@ -57,6 +59,14 @@ export class SpectateManager {
     }
 
     const socket = new WebSocketClient();
+
+    socket.on('connectFailed', (error) => {
+      const errorAction = displayError(
+        'broadcast-global',
+        error.message,
+      );
+      store.dispatch(errorAction);
+    });
 
     socket.on('connect', (connection) => {
       this.wsConnection = connection;
@@ -73,6 +83,9 @@ export class SpectateManager {
       connection.on('close', () => {
         // Clear the socket and disconnect from Dolphin too if we're still connected
         this.wsConnection = null;
+        
+        // TODO: Somehow kill dolphin? Or maybe reconnect to a person's broadcast when it
+        // TODO: comes back up?
       });
 
       connection.on('message', message => {
