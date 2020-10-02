@@ -47,9 +47,14 @@ export function stopBroadcast() {
   };
 }
 
-export function refreshBroadcasts() {
+export function refreshBroadcasts(password) {
   return async () => {
-    spectateManager.refreshChannels();
+    try {
+      await spectateManager.connect(password);
+      spectateManager.refreshChannels();
+    } catch {
+      // Do nothing
+    }
   };
 }
 
@@ -61,6 +66,10 @@ export function watchChannel(channelId) {
 
 export function initSpectate(password) {
   return async () => {
-    await spectateManager.connect(password);
+    try {
+      await spectateManager.connect(password);
+    } catch {
+      // Do nothing
+    }
   };
 }

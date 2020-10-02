@@ -26,7 +26,6 @@ export default class Broadcast extends Component {
     stopBroadcast: PropTypes.func.isRequired,
     refreshBroadcasts: PropTypes.func.isRequired,
     watchChannel: PropTypes.func.isRequired,
-    initSpectate: PropTypes.func.isRequired,
 
     // store data
     history: PropTypes.object.isRequired,
@@ -87,7 +86,7 @@ export default class Broadcast extends Component {
       <Button
         color="blue"
         size="large"
-        onClick={() => this.props.refreshBroadcasts()}
+        onClick={() => this.props.refreshBroadcasts(this.state.password)}
       >
         Refresh
       </Button>
@@ -195,13 +194,6 @@ export default class Broadcast extends Component {
         className={styles['tabs']}
         menu={{ secondary: true, pointing: true }}
         panes={panes}
-        onTabChange={(event, data) => {
-          if (data.activeIndex !== 1) {
-            return;
-          }
-
-          this.props.initSpectate(this.state.password);
-        }}
       />
     );
   }

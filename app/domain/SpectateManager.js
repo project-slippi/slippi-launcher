@@ -68,60 +68,66 @@ export class SpectateManager {
       headers.authorization = `Bearer ${token}`;
     }
 
-    const socket = new WebSocketClient();
-
-    socket.on('connectFailed', (error) => {
-      const errorAction = displayError(
-        'broadcast-global',
-        error.message,
-      );
-      store.dispatch(errorAction);
-    });
-
-    socket.on('connect', (connection) => {
-      this.wsConnection = connection;
-
-      connection.on('error', (err) => {
-        log.error("[SpectateManager] Error connecting to Slippi server: ", err);
+    await new Promise((resolve, reject) => {
+      const socket = new WebSocketClient();
+  
+      socket.on('connectFailed', (error) => {
         const errorAction = displayError(
           'broadcast-global',
-          err.message,
+          error.message,
         );
         store.dispatch(errorAction);
-      });
 
-      connection.on('close', () => {
-        // Clear the socket and disconnect from Dolphin too if we're still connected
-        this.wsConnection = null;
-        
-        // TODO: Somehow kill dolphin? Or maybe reconnect to a person's broadcast when it
-        // TODO: comes back up?
+        reject();
       });
+  
+      socket.on('connect', (connection) => {
+        this.wsConnection = connection;
+  
+        connection.on('error', (err) => {
+          log.error("[SpectateManager] Error connecting to Slippi server: ", err);
+          const errorAction = displayError(
+            'broadcast-global',
+            err.message,
+          );
+          store.dispatch(errorAction);
+        });
+  
+        connection.on('close', () => {
+          // Clear the socket and disconnect from Dolphin too if we're still connected
+          this.wsConnection = null;
+          
+          // TODO: Somehow kill dolphin? Or maybe reconnect to a person's broadcast when it
+          // TODO: comes back up?
+        });
+  
+        connection.on('message', message => {
+          if (message.type !== "utf8") {
+            return;
+          }
+  
+          // console.log(`[Spectator] ${message.utf8Data}`);
+          const obj = JSON.parse(message.utf8Data);
+          switch (obj.type) {
+          case 'list-channels-resp':
+            this.channels = obj.channels || [];
+            store.dispatch(updateBroadcastChannels(this.channels));
+            break;
+          case 'game_event':
+            const buf = Buffer.from(obj.payload, 'base64');
+            this.slpFileWriter.handleData(buf);
+            break;
+          default:
+            console.log(`Ws resp type ${obj.type} not supported`);
+            break;
+          }
+        });
 
-      connection.on('message', message => {
-        if (message.type !== "utf8") {
-          return;
-        }
-
-        // console.log(`[Spectator] ${message.utf8Data}`);
-        const obj = JSON.parse(message.utf8Data);
-        switch (obj.type) {
-        case 'list-channels-resp':
-          this.channels = obj.channels || [];
-          store.dispatch(updateBroadcastChannels(this.channels));
-          break;
-        case 'game_event':
-          const buf = Buffer.from(obj.payload, 'base64');
-          this.slpFileWriter.handleData(buf);
-          break;
-        default:
-          console.log(`Ws resp type ${obj.type} not supported`);
-          break;
-        }
+        resolve();
       });
+  
+      socket.connect(SLIPPI_WS_SERVER, 'spectate-protocol', undefined, headers);
     });
-
-    socket.connect(SLIPPI_WS_SERVER, 'spectate-protocol', undefined, headers);
   }
 
   refreshChannels() {
