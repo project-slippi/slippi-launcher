@@ -1,12 +1,16 @@
 import log from 'electron-log';
 import { client as WebSocketClient } from 'websocket';
 import * as firebase from 'firebase';
+import fs from 'fs-extra';
+import path from 'path';
 
 import DolphinManager from './DolphinManager';
 import SlpFileWriter from './SlpFileWriter';
 import { store } from '../index';
 import { updateBroadcastChannels } from '../actions/broadcast';
 import { displayError } from '../actions/error';
+
+const { app } = require('electron').remote;
 
 const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
 
@@ -28,9 +32,15 @@ export class SpectateManager {
       this.prevChannelId = null;
     });
 
+    // Get path for spectate replays in my documents
+    const documentsPath = app.getPath("documents");
+    const targetPath = path.join(documentsPath, 'Slippi', 'Spectate');
+    fs.ensureDirSync(targetPath);
+    console.log(targetPath);
+
     // Initialize SlpFileWriter for writting files
     const slpSettings = {
-      folderPath: "C:/Users/Jas/Documents/Slippi/Spectate",
+      folderPath: targetPath,
       onFileStateChange: () => { },
     };
     this.slpFileWriter = new SlpFileWriter(slpSettings);
