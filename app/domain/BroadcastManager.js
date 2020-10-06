@@ -112,6 +112,15 @@ export class BroadcastManager {
       case "start_game":
       case "game_event":
       case "end_game":
+        // const payloadStart = obj.payload.substring(0, 4);
+        // const buf = Buffer.from(payloadStart, 'base64');
+        // const command = buf[0];
+        // if (command) {
+        //   console.log(`[Broadcast] Sending 0x${command.toString(16)}`);
+        // } else {
+        //   console.log(`[Broadcast] Empty message received? ${JSON.stringify(message)}`);
+        // }
+        
         this.wsConnection.sendUTF(JSON.stringify(message));
         break;
       default:

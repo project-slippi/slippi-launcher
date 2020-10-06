@@ -127,11 +127,31 @@ export class SpectateManager {
             this.gameStarted = false;
             break;
           case 'game_event':
-            // Only forward data to the file writer when it's a new game
+            const payloadStart = obj.payload.substring(0, 4);
+            const payloadStartBuf = Buffer.from(payloadStart, 'base64');
+            const command = payloadStartBuf[0];
+            if (command === 0x35) {
+              this.gameStarted = true;
+            }
+
+            // Only forward data to the file writer when it's an active game
             if (this.gameStarted) {
               const buf = Buffer.from(obj.payload, 'base64');
               this.slpFileWriter.handleData(buf);
             }
+
+            if (command === 0x39) {
+              // End the current game if it's not already ended
+              this.slpFileWriter.endGame();
+              this.gameStarted = false;
+            }
+
+            // if (command) {
+            //   console.log(`[Spectate] Receiving 0x${command.toString(16)}`);
+            // } else {
+            //   console.log(`[Broadcast] Empty message received? ${JSON.stringify(obj)}`);
+            // }
+            
             break;
           default:
             console.log(`Ws resp type ${obj.type} not supported`);
