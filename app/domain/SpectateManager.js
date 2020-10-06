@@ -33,8 +33,6 @@ export class SpectateManager {
       this.gameStarted = false;
       // Clear previous channel ID when Dolphin closes
       this.prevChannelId = null;
-      // Stop receiving data from the server
-      this.wsConnection.close();
     });
 
     // Get path for spectate replays in my documents
@@ -132,10 +130,17 @@ export class SpectateManager {
             const command = payloadStartBuf[0];
             if (command === 0x35) {
               this.gameStarted = true;
+              // console.log("[Spectate] Game start");
             }
 
             // Only forward data to the file writer when it's an active game
             if (this.gameStarted) {
+              // if (command) {
+              //   console.log(`[Spectate] Handling 0x${command.toString(16)}`);
+              // } else {
+              //   console.log(`[Spectate] Empty message received? ${JSON.stringify(obj)}`);
+              // }
+
               const buf = Buffer.from(obj.payload, 'base64');
               this.slpFileWriter.handleData(buf);
             }
@@ -144,13 +149,8 @@ export class SpectateManager {
               // End the current game if it's not already ended
               this.slpFileWriter.endGame();
               this.gameStarted = false;
+              // console.log("[Spectate] Game end");
             }
-
-            // if (command) {
-            //   console.log(`[Spectate] Receiving 0x${command.toString(16)}`);
-            // } else {
-            //   console.log(`[Broadcast] Empty message received? ${JSON.stringify(obj)}`);
-            // }
             
             break;
           default:
