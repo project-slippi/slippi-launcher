@@ -29,6 +29,7 @@ export class SpectateManager {
     // A connection can mirror its received gameplay
     this.dolphinManager = new DolphinManager(`spectate`, { mode: 'mirror' });
     this.dolphinManager.on('dolphin-closed', () => {
+      console.log("[Spectator] dolphin closed");
       // Reset the game started flag
       this.gameStarted = false;
       // Clear previous channel ID when Dolphin closes
@@ -97,6 +98,7 @@ export class SpectateManager {
         });
   
         connection.on('close', () => {
+          console.log("[Spectator] connection close");
           // Clear the socket and disconnect from Dolphin too if we're still connected
           this.wsConnection = null;
           
