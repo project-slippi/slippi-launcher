@@ -24,6 +24,7 @@ export class SpectateManager {
     this.prevChannelId = null;
     this.wsConnection = null;
     this.channels = [];
+    this.gameStarted = false;
 
     // A connection can mirror its received gameplay
     this.dolphinManager = new DolphinManager(`spectate`, { mode: 'mirror' });
@@ -113,9 +114,18 @@ export class SpectateManager {
             this.channels = obj.channels || [];
             store.dispatch(updateBroadcastChannels(this.channels));
             break;
+          case 'start_game':
+            this.gameStarted = true;
+            break;
+          case 'end_game':
+            this.gameStarted = false;
+            break;
           case 'game_event':
-            const buf = Buffer.from(obj.payload, 'base64');
-            this.slpFileWriter.handleData(buf);
+            // Only forward data to the file writer when it's a new game
+            if (this.gameStarted) {
+              const buf = Buffer.from(obj.payload, 'base64');
+              this.slpFileWriter.handleData(buf);
+            }
             break;
           default:
             console.log(`Ws resp type ${obj.type} not supported`);
