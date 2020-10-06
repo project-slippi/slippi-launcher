@@ -29,6 +29,8 @@ export class SpectateManager {
     // A connection can mirror its received gameplay
     this.dolphinManager = new DolphinManager(`spectate`, { mode: 'mirror' });
     this.dolphinManager.on('dolphin-closed', () => {
+      // Reset the game started flag
+      this.gameStarted = false;
       // Clear previous channel ID when Dolphin closes
       this.prevChannelId = null;
       // Stop receiving data from the server
@@ -120,6 +122,8 @@ export class SpectateManager {
             this.gameStarted = true;
             break;
           case 'end_game':
+            // End the current game if it's not already ended
+            this.slpFileWriter.endGame();
             this.gameStarted = false;
             break;
           case 'game_event':
