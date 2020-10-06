@@ -31,6 +31,8 @@ export class SpectateManager {
     this.dolphinManager.on('dolphin-closed', () => {
       // Clear previous channel ID when Dolphin closes
       this.prevChannelId = null;
+      // Stop receiving data from the server
+      this.wsConnection.close();
     });
 
     // Get path for spectate replays in my documents
