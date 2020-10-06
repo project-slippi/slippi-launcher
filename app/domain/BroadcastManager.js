@@ -30,6 +30,10 @@ export class BroadcastManager {
     this.dolphinConnection.on(ConnectionEvent.MESSAGE, (message) => {
       this._handleGameData(message);
     });
+    this.dolphinConnection.on(ConnectionEvent.ERROR, (err) => {
+      // Log the error messages we get from Dolphin
+      log.error(err);
+    });
   }
 
   /**
