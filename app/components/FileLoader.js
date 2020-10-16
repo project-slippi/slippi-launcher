@@ -345,10 +345,7 @@ export default class FileLoader extends Component {
         return true;
       }
     } else if (searchData.dropSelect === "filename") {
-      filterFunc = file => {
-        const booleanVal = file.fileName.includes(searchData.filterText);
-        return booleanVal;
-      }
+      filterFunc = file => file.fileName.includes(searchData.filterText);
     }
 
     let nextFilesToRender = this.unfilteredFiles().filter(filterFunc);
