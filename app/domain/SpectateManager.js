@@ -137,6 +137,7 @@ export class SpectateManager {
 
     const headers = {
       password: password,
+      "api-version": 1,
     };
     const user = firebase.auth().currentUser;
     if (user) {
