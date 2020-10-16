@@ -3,7 +3,7 @@ import { SpectateManager } from '../domain/SpectateManager';
 
 export const SET_DOLPHIN_STATUS = 'SET_DOLPHIN_STATUS';
 export const SET_SLIPPI_STATUS = 'SET_SLIPPI_STATUS';
-export const UPDATE_BROADCAST_CHANNELS = 'UPDATE_BROADCAST_CHANNELS';
+export const UPDATE_VIEWABLE_BROADCASTS = 'UPDATE_VIEWABLE_BROADCASTS';
 
 const broadcastManager = new BroadcastManager();
 const spectateManager = new SpectateManager();
@@ -26,11 +26,11 @@ export function setSlippiStatus(status) {
   };
 }
 
-export function updateBroadcastChannels(channels) {
+export function updateViewableBroadcasts(broadcasts) {
   return async (dispatch) => {
     dispatch({
-      type: UPDATE_BROADCAST_CHANNELS,
-      channels: channels,
+      type: UPDATE_VIEWABLE_BROADCASTS,
+      broadcasts: broadcasts,
     });
   };
 }
@@ -51,16 +51,16 @@ export function refreshBroadcasts(password) {
   return async () => {
     try {
       await spectateManager.connect(password);
-      spectateManager.refreshChannels();
+      spectateManager.refreshBroadcasts();
     } catch {
       // Do nothing
     }
   };
 }
 
-export function watchChannel(channelId) {
+export function watchBroadcast(broadcastId) {
   return async () => {
-    spectateManager.watchChannel(channelId);
+    spectateManager.watchBroadcast(broadcastId);
   };
 }
 

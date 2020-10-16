@@ -1,5 +1,5 @@
 import { ConnectionStatus } from '@slippi/slippi-js';
-import { SET_DOLPHIN_STATUS, SET_SLIPPI_STATUS, UPDATE_BROADCAST_CHANNELS } from '../actions/broadcast';
+import { SET_DOLPHIN_STATUS, SET_SLIPPI_STATUS, UPDATE_VIEWABLE_BROADCASTS } from '../actions/broadcast';
 
 // Default state for this reducer
 const defaultState = {
@@ -9,7 +9,7 @@ const defaultState = {
   slippiConnectionStatus: ConnectionStatus.DISCONNECTED,
   isBroadcasting: false,
   isConnecting: false,
-  channels: [],
+  broadcasts: [],
 };
 
 export default function broadcastReducer(state = defaultState, action) {
@@ -22,8 +22,8 @@ export default function broadcastReducer(state = defaultState, action) {
     return setDolphinStatus(state, action);
   case SET_SLIPPI_STATUS:
     return setSlippiStatus(state, action);
-  case UPDATE_BROADCAST_CHANNELS:
-    return updateBroadcastChannels(state, action);
+  case UPDATE_VIEWABLE_BROADCASTS:
+    return updateViewableBroadcasts(state, action);
   default:
     return state;
   }
@@ -60,10 +60,10 @@ function updateBroadcastStatus(oldState, state) {
   return newState;
 }
 
-function updateBroadcastChannels(state, action) {
-  const { channels } = action;
+function updateViewableBroadcasts(state, action) {
+  const { broadcasts } = action;
   return {
     ...state,
-    channels: channels,
+    broadcasts: broadcasts,
   };
 }

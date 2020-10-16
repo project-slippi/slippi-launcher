@@ -25,7 +25,7 @@ export default class Broadcast extends Component {
     startBroadcast: PropTypes.func.isRequired,
     stopBroadcast: PropTypes.func.isRequired,
     refreshBroadcasts: PropTypes.func.isRequired,
-    watchChannel: PropTypes.func.isRequired,
+    watchBroadcast: PropTypes.func.isRequired,
 
     // store data
     history: PropTypes.object.isRequired,
@@ -93,17 +93,17 @@ export default class Broadcast extends Component {
     );
   }
 
-  renderChannels() {
-    const channels = _.get(this.props.broadcast, 'channels') || [];
-    const broadcastEntries = _.map(channels, channel => {
-      const name = _.get(channel, ['broadcaster', 'name']);
+  renderBroadcasts() {
+    const broadcasts = _.get(this.props.broadcast, 'broadcasts') || [];
+    const broadcastEntries = _.map(broadcasts, broadcast => {
+      const name = _.get(broadcast, ['broadcaster', 'name']);
       return (
-        <SpacedGroup key={channel.id} direction="horizontal">
-          <div>{name} ({channel.id})</div>
+        <SpacedGroup key={broadcast.id} direction="horizontal">
+          <div>{name} ({broadcast.id})</div>
           <Button
             color="blue"
             size="small"
-            onClick={() => this.props.watchChannel(channel.id)}
+            onClick={() => this.props.watchBroadcast(broadcast.id)}
           >
             Watch
           </Button>
@@ -172,7 +172,7 @@ export default class Broadcast extends Component {
       <div>
         <h2>Spectate</h2>
         {this.renderRefreshButton()}
-        {this.renderChannels()}
+        {this.renderBroadcasts()}
       </div>
     );
   }
