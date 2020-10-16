@@ -7,6 +7,8 @@ import {
   Icon,
   Header,
   Button,
+  Input,
+  Dropdown,
   Segment,
   Message,
   Loader,
@@ -261,6 +263,109 @@ export default class FileLoader extends Component {
     );
   }
 
+  renderFilterButton() {
+    const store = this.props.store || {};
+    if (store.isLoading) {
+      return null;
+    }
+
+    const dropdownOptions = [
+      {text: 'Character', value: 'character'},
+      {text: 'Stage', value: 'stage'},
+      {text: 'Date', value: 'date'},
+    ];
+
+    return (
+      <div className={styles['filter-dropdown-content']}>
+        <Dropdown
+          className={styles['filter-dropdown-content']}
+          inline={true}
+          options={dropdownOptions}
+          defaultValue={dropdownOptions[0].value}
+          onChange={this.onDropdownInputChange}/>
+        <Input
+          key="gameFilter"
+          fluid={true}
+          inverted={true}
+          placeholder="Filter Matches"
+          action={
+            <Button onClick={this.onSearchClick} icon='search' />
+          }
+          onChange={this.onTextInputChange}
+        />
+      </div>
+    );
+  }
+
+  onDropdownInputChange = (e, control) => {
+    const searchData = this.state.searchData || {};
+    this.setState({
+      searchData: {
+        ...searchData,
+        "dropSelect": control["value"],
+      },
+    });
+  }
+
+  onTextInputChange = (e, control) => {
+    const searchData = this.state.searchData || {};
+    this.setState({
+      searchData: {
+        ...searchData,
+        "filterText": control["value"],
+      },
+    });
+  }
+
+  onSearchClick = () => {
+    const searchData = this.state.searchData || {};
+
+    if (!searchData.filterText) {
+      return;
+    }
+
+    console.log(searchData)
+
+    let filterFunc;
+    if (searchData.dropSelect === "character") {
+      filterFunc = file => {
+        console.log(file?.game?.metadata?.players?.names);
+        return true;
+      }
+    } else if (searchData.dropSelect === "stage") {
+      filterFunc = file => {
+        console.log("stage");
+        console.log(file);
+        return true;
+      }
+    } else if (searchData.dropSelect === "date") {
+      filterFunc = file => {
+        console.log("date");
+        console.log(file);
+        return true;
+      }
+    } else if (searchData.dropSelect === "filename") {
+      filterFunc = file => {
+        const booleanVal = file.fileName.includes(searchData.filterText);
+        return booleanVal;
+      }
+    }
+
+    let nextFilesToRender = this.unfilteredFiles().filter(filterFunc);
+
+    // if search returns more than 100 games, trim
+    if (nextFilesToRender.length > 100) {
+      nextFilesToRender = nextFilesToRender.slice(0, 100);
+    }
+    const newFilesOffset = nextFilesToRender.length
+
+    this.props.storeFileLoadState({
+      filesToRender: nextFilesToRender,
+      filesOffset: newFilesOffset,
+      hasLoaded: true,
+    });
+  }
+
   renderEmptyLoader() {
     const folders = this.props.store.folders || {};
     const rootFolderName = this.props.store.rootFolderName || '';
@@ -448,6 +553,7 @@ export default class FileLoader extends Component {
         >
           {this.renderGlobalError()}
           {this.renderFilteredFilesNotif()}
+          {this.renderFilterButton()}
           {this.renderFileSelection()}
         </Scroller>
         {this.renderQueueButtons()}
