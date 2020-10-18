@@ -2,6 +2,7 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { stages as stageUtils } from '@slippi/slippi-js';
 import {
   Table,
   Icon,
@@ -272,7 +273,8 @@ export default class FileLoader extends Component {
     const dropdownOptions = [
       {text: 'Character', value: 'character'},
       {text: 'Stage', value: 'stage'},
-      {text: 'Date', value: 'date'},
+      {text: 'Player', value: 'player'},
+      {text: 'Filename', value: 'filename'},
     ];
 
     return (
@@ -319,32 +321,30 @@ export default class FileLoader extends Component {
 
   onSearchClick = () => {
     const searchData = this.state.searchData || {};
+    const dropSelect = searchData.dropSelect || "character";
 
     if (!searchData.filterText) {
       return;
     }
 
-    console.log(searchData)
-
     let filterFunc;
-    if (searchData.dropSelect === "character") {
+    if (dropSelect === "character") {
       filterFunc = file => {
-        console.log(file?.game?.metadata?.players?.names);
+        console.log(file?.game?.metadata?.players[0]);
         return true;
       }
-    } else if (searchData.dropSelect === "stage") {
+    } else if (dropSelect === "stage") {
       filterFunc = file => {
-        console.log("stage");
-        console.log(file);
-        return true;
+        const settings = file.game.getSettings() || {};
+        const stageId = settings.stageId;
+
+        const stageName = stageUtils.getStageName(stageId);
+        return stageName.includes(searchData.filterText);;
       }
-    } else if (searchData.dropSelect === "date") {
-      filterFunc = file => {
-        console.log("date");
-        console.log(file);
-        return true;
-      }
-    } else if (searchData.dropSelect === "filename") {
+    } else if (dropSelect === "player") {
+      filterFunc = file => file?.game?.metadata?.players[0]?.names?.netplay?.includes(searchData.filterText) ||
+      file?.game?.metadata?.players[1]?.names?.netplay?.includes(searchData.filterText);
+    } else if (dropSelect === "filename") {
       filterFunc = file => file.fileName.includes(searchData.filterText);
     }
 
@@ -486,8 +486,7 @@ export default class FileLoader extends Component {
       const start = filesOffset;
       const end = Math.min(start + GAME_BATCH_SIZE, allFiles.length);
 
-      if (
-        (calculations.percentagePassed > 0.5 &&
+      if ((calculations.percentagePassed > 0.5 &&
           start < allFiles.length) ||
         !hasLoaded) {
         const nextFilesToRender = allFiles.slice(start, end);
