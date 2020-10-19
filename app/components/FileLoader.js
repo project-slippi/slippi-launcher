@@ -272,8 +272,8 @@ export default class FileLoader extends Component {
 
     const dropdownOptions = [
       {text: 'Character', value: 'character'},
-      {text: 'Stage', value: 'stage'},
       {text: 'Player', value: 'player'},
+      {text: 'Stage', value: 'stage'},
       {text: 'Filename', value: 'filename'},
     ];
 
@@ -291,7 +291,7 @@ export default class FileLoader extends Component {
           inverted={true}
           placeholder="Filter Matches"
           action={
-            <Button onClick={this.onSearchClick} icon='search' />
+            <Button onClick={this.onSearchClick} icon='search'/>
           }
           onChange={this.onTextInputChange}
         />
@@ -333,19 +333,26 @@ export default class FileLoader extends Component {
         console.log(file?.game?.metadata?.players[0]);
         return true;
       }
+    } else if (dropSelect === "player") {
+      filterFunc = file => {
+        if (file?.game?.metadata?.players) {
+          return Object.values(file?.game?.metadata?.players).filter(players => {
+            const name = players?.names?.netplay || "";
+            return name.toLowerCase().includes(searchData.filterText.toLowerCase());
+          }).length > 0;
+        }
+        return false;
+      }
     } else if (dropSelect === "stage") {
       filterFunc = file => {
         const settings = file.game.getSettings() || {};
         const stageId = settings.stageId;
 
         const stageName = stageUtils.getStageName(stageId);
-        return stageName.includes(searchData.filterText);;
+        return stageName.toLowerCase().includes(searchData.filterText.toLowerCase());
       }
-    } else if (dropSelect === "player") {
-      filterFunc = file => file?.game?.metadata?.players[0]?.names?.netplay?.includes(searchData.filterText) ||
-      file?.game?.metadata?.players[1]?.names?.netplay?.includes(searchData.filterText);
     } else if (dropSelect === "filename") {
-      filterFunc = file => file.fileName.includes(searchData.filterText);
+      filterFunc = file => file.fileName.toLowerCase().includes(searchData.filterText.toLowerCase());
     }
 
     let nextFilesToRender = this.unfilteredFiles().filter(filterFunc);
