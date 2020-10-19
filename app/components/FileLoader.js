@@ -335,13 +335,12 @@ export default class FileLoader extends Component {
       }
     } else if (dropSelect === "player") {
       filterFunc = file => {
-        if (file?.game?.metadata?.players) {
-          return Object.values(file?.game?.metadata?.players).filter(players => {
-            const name = players?.names?.netplay || "";
-            return name.toLowerCase().includes(searchData.filterText.toLowerCase());
-          }).length > 0;
-        }
-        return false;
+        const playerObj = file?.game?.metadata?.players || {};
+        // converts object to array for filtering
+        return Object.values(playerObj).filter(players => {
+          const name = players?.names?.netplay || "";
+          return name.toLowerCase().includes(searchData.filterText.toLowerCase());
+        }).length > 0;
       }
     } else if (dropSelect === "stage") {
       filterFunc = file => {
