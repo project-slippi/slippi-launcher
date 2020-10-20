@@ -27,6 +27,9 @@ export class BroadcastManager {
       store.dispatch(setDolphinStatus(status));
       // Disconnect from Slippi server when we disconnect from Dolphin
       if (status === ConnectionStatus.DISCONNECTED) {
+        // Kind of jank but this will hopefully stop the game on the spectator side when someone
+        // kills Dolphin. May no longer be necessary after Dolphin itself sends these messages
+        this._handleGameData({ type: 'end_game' });
         this.stop();
       }
     });
@@ -108,6 +111,7 @@ export class BroadcastManager {
       const startBroadcast = async () => {
         connection.sendUTF(JSON.stringify({
           type: "start-broadcast",
+          name: "Netplay",
         }));
       };
 
@@ -195,7 +199,8 @@ export class BroadcastManager {
     case "start_game":
     case "game_event":
     case "end_game":
-      const payloadStart = event.payload.substring(0, 4);
+      const payload = event.payload || "";
+      const payloadStart = payload.substring(0, 4);
       const buf = Buffer.from(payloadStart, 'base64');
       const command = buf[0];
       // if (command) {
@@ -216,7 +221,9 @@ export class BroadcastManager {
           return;
         }
 
-        this._debouncedGameDataLog(event.cursor, command);
+        if (event.type === "game_event") {
+          this._debouncedGameDataLog(event.cursor, command);
+        }
       });
       break;
     default:

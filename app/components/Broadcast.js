@@ -96,10 +96,11 @@ export default class Broadcast extends Component {
   renderBroadcasts() {
     const broadcasts = _.get(this.props.broadcast, 'broadcasts') || [];
     const broadcastEntries = _.map(broadcasts, broadcast => {
-      const name = _.get(broadcast, ['broadcaster', 'name']);
+      const name = _.get(broadcast, 'name');
+      const broadcasterName = _.get(broadcast, ['broadcaster', 'name']);
       return (
         <SpacedGroup key={broadcast.id} direction="horizontal">
-          <div>{name} ({broadcast.id})</div>
+          <div>[{broadcasterName}] {name} ({broadcast.id})</div>
           <Button
             color="blue"
             size="small"

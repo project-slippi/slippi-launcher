@@ -26,8 +26,8 @@ export class SpectateManager {
   constructor() {
     this.prevBroadcastId = null;
     this.wsConnection = null;
-    this.broadcasts = [];
     this.gameStarted = false;
+    this.cursorByBroadcast = {};
 
     // A connection can mirror its received gameplay
     this.dolphinManager = new DolphinManager(`spectate`, { mode: 'mirror' });
@@ -36,10 +36,14 @@ export class SpectateManager {
 
       // Stop watching channel
       if (this.prevBroadcastId) {
-        this.wsConnection.sendUTF(JSON.stringify({
-          type: "close-broadcast",
-          broadcastId: this.prevBroadcastId,
-        }));
+        if (this.wsConnection) {
+          this.wsConnection.sendUTF(JSON.stringify({
+            type: "close-broadcast",
+            broadcastId: this.prevBroadcastId,
+          }));
+        } else {
+          log.error(`[Spectate] Could not close broadcast because connection is gone`);
+        }
       }
 
       // Reset the game started flag
@@ -83,6 +87,7 @@ export class SpectateManager {
         break;
       case 'end_game':
         // End the current game if it's not already ended
+        // console.log("[Spectate] Game end explicit");
         this.slpFileWriter.endGame();
         this.gameStarted = false;
         break;
@@ -112,10 +117,12 @@ export class SpectateManager {
 
         if (command === 0x39) {
           // End the current game if it's not already ended
+          // console.log("[Spectate] Game end 0x39");
           this.slpFileWriter.endGame();
           this.gameStarted = false;
-          // console.log("[Spectate] Game end");
         }
+
+        this.cursorByBroadcast[obj.broadcastId] = event.cursor;
 
         break;
       default:
@@ -177,8 +184,13 @@ export class SpectateManager {
           // Clear the socket and disconnect from Dolphin too if we're still connected
           this.wsConnection = null;
 
-          // TODO: Somehow kill dolphin? Or maybe reconnect to a person's broadcast when it
-          // TODO: comes back up?
+          if (code === 1006) {
+            // Here we have an abnormal disconnect... try to reconnect?
+            
+          } else {
+            // TODO: Somehow kill dolphin? Or maybe reconnect to a person's broadcast when it
+            // TODO: comes back up?
+          }
         });
 
         connection.on('message', message => {
@@ -190,8 +202,8 @@ export class SpectateManager {
           const obj = JSON.parse(message.utf8Data);
           switch (obj.type) {
           case 'list-broadcasts-resp':
-            this.broadcasts = obj.broadcasts || [];
-            store.dispatch(updateViewableBroadcasts(this.broadcasts));
+            const broadcasts = obj.broadcasts || [];
+            store.dispatch(updateViewableBroadcasts(broadcasts));
             break;
           case 'events':
             this.handleEvents(obj);
