@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import SlippiGame from '@slippi/slippi-js';
 import * as timeUtils from '../utils/time';
+import { shell } from 'electron';
 
 import { displayError } from './error';
 import { gameProfileLoad } from './game';
@@ -190,6 +191,25 @@ export function setStatsGamePage(index) {
     });
     gameProfileLoad(files[statsGameIndex].game)(dispatch);
   };
+}
+
+export function deleteSelections(selections) {
+    return (dispatch, getState) => {
+      const tempStore = getState().fileLoader.fileLoadState;
+      const filesToRender = tempStore.filesToRender;
+      for(const i of selections){
+        shell.moveItemToTrash(i.fullPath);
+        filesToRender.splice(filesToRender.indexOf(i),1);
+      }
+      tempStore.filesToRender = filesToRender;
+      tempStore.filesOffset = filesToRender.length;
+      dispatch({
+        type: STORE_FILE_LOAD_STATE,
+        payload: {
+          fileLoadState: tempStore,
+        },
+      });
+    };
 }
 
 async function loadFilesInFolder(folderPath) {
