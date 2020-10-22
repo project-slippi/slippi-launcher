@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { stages as stageUtils } from '@slippi/slippi-js';
+import { stages as stageUtils, characters as characterUtils } from '@slippi/slippi-js';
 import {
   Table,
   Icon,
@@ -10,6 +10,7 @@ import {
   Button,
   Input,
   Dropdown,
+  Form,
   Segment,
   Message,
   Loader,
@@ -285,16 +286,18 @@ export default class FileLoader extends Component {
           options={dropdownOptions}
           defaultValue={dropdownOptions[0].value}
           onChange={this.onDropdownInputChange}/>
-        <Input
-          key="gameFilter"
-          fluid={true}
-          inverted={true}
-          placeholder="Filter Matches"
-          action={
-            <Button onClick={this.onSearchClick} icon='search'/>
-          }
-          onChange={this.onTextInputChange}
-        />
+        <Form>
+          <Input
+            key="gameFilter"
+            fluid={true}
+            inverted={true}
+            placeholder="Filter Matches"
+            action={
+              <Button onClick={this.onSearchClick} icon='search'/>
+            }
+            onChange={this.onTextInputChange}
+          />
+        </Form>
       </div>
     );
   }
@@ -328,21 +331,24 @@ export default class FileLoader extends Component {
     }
 
     let filterFunc;
-    if (dropSelect === "character") {
+    switch (dropSelect) {
+    case "character":
       filterFunc = file => {
-        console.log(file?.game?.metadata?.players[0]);
-        return true;
+        const players = file.game.getSettings().players || {};
+        return players.some(playerObj => characterUtils.getCharacterName(playerObj.characterId).toLowerCase().includes(searchData.filterText.toLowerCase()));
       }
-    } else if (dropSelect === "player") {
+      break;
+    case "player":
       filterFunc = file => {
         const playerObj = file?.game?.metadata?.players || {};
-        // converts object to array for filtering
-        return Object.values(playerObj).filter(players => {
+        // returns array of object values
+        return Object.values(playerObj).some(players => {
           const name = players?.names?.netplay || "";
           return name.toLowerCase().includes(searchData.filterText.toLowerCase());
-        }).length > 0;
+        });
       }
-    } else if (dropSelect === "stage") {
+      break;
+    case "stage":
       filterFunc = file => {
         const settings = file.game.getSettings() || {};
         const stageId = settings.stageId;
@@ -350,8 +356,12 @@ export default class FileLoader extends Component {
         const stageName = stageUtils.getStageName(stageId);
         return stageName.toLowerCase().includes(searchData.filterText.toLowerCase());
       }
-    } else if (dropSelect === "filename") {
+      break;
+    case "filename":
       filterFunc = file => file.fileName.toLowerCase().includes(searchData.filterText.toLowerCase());
+      break;
+    default:
+      return;
     }
 
     let nextFilesToRender = this.unfilteredFiles().filter(filterFunc);
