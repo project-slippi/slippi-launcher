@@ -19,10 +19,9 @@ import PageHeader from './common/PageHeader';
 import FolderBrowser from './common/FolderBrowser';
 import PageWrapper from './PageWrapper';
 import Scroller from './common/Scroller';
+import { MIN_GAME_LENGTH_SECONDS } from '../actions/fileLoader';
 
 const GAME_BATCH_SIZE = 50;
-const MIN_GAME_LENGTH_SECONDS = 30;
-const MIN_GAME_LENGTH_FRAMES = MIN_GAME_LENGTH_SECONDS * 60;
 
 export default class FileLoader extends Component {
   static propTypes = {
@@ -34,7 +33,8 @@ export default class FileLoader extends Component {
     storeScrollPosition: PropTypes.func.isRequired,
     storeFileLoadState: PropTypes.func.isRequired,
     setStatsGamePage: PropTypes.func.isRequired,
-    deleteSelections:  PropTypes.func.isRequired,
+    deleteSelections: PropTypes.func.isRequired,
+    setFilterReplays: PropTypes.func.isRequired,
     
     // error actions
     dismissError: PropTypes.func.isRequired,
@@ -49,9 +49,8 @@ export default class FileLoader extends Component {
   constructor(props) {
     super(props);
 
+    this.props.setFilterReplays(true);
     this.state = {
-      // Filter the replays by default. Gets reset when the component is unmounted
-      filterReplays: true,
       selections: [],
     };
   }
@@ -192,34 +191,16 @@ export default class FileLoader extends Component {
     );
   }
 
-  /**
-   * Returns all the files which have not been filtered by game duration
-   */
-  unfilteredFiles() {
-    const store = this.props.store || {};
-    const allFiles = store.files || [];
-    return allFiles.filter((f) => {
-      if (this.state.filterReplays) {
-        // Files which have no metadata will be shown
-        return f.lastFrame === null || f.lastFrame >= MIN_GAME_LENGTH_FRAMES;
-      }
-      return true;
-    });
-  }
-
   renderFilteredFilesNotif() {
     const store = this.props.store || {};
     if (store.isLoading) {
       return null;
     }
 
-    const allFiles = store.files || [];
     // These are the number of files that were initially removed probably because they're corrupted
-    const errorFileCount = _.get(this.props.store, 'numFilteredFiles');
-
-    const files = this.unfilteredFiles();
-    const durationFilterCount = allFiles.length - files.length;
-    const totalFilteredCount = durationFilterCount + errorFileCount;
+    const errorFileCount = _.get(store, 'numErroredFiles');
+    const durationFilterCount = _.get(store, 'numDurationFilteredFiles');
+    const totalFilteredCount = _.get(store, 'numFilteredFiles');
     if (totalFilteredCount === 0) {
       return null;
     }
@@ -235,7 +216,7 @@ export default class FileLoader extends Component {
         contentText = `${errorFileCount} corrupt files detected.`;
       }
     }
-    const showHideButton = durationFilterCount > 0 && this.state.filterReplays;
+    const showHideButton = durationFilterCount > 0 && store.filterReplays;
 
     const onShowAnywayClick = () => {
       // Clear the currently loaded files
@@ -244,8 +225,8 @@ export default class FileLoader extends Component {
         filesOffset: 0,
       });
       // Clear the selection and disable replay filter
+      this.props.setFilterReplays(false);
       this.setState({
-        filterReplays: false,
         selections: [],
       });
     }
@@ -339,7 +320,7 @@ export default class FileLoader extends Component {
   renderFileSelection() {
     const store = this.props.store || {};
 
-    const allFiles = this.unfilteredFiles();
+    const allFiles = (store.filterReplays ? store.files : store.allFiles) || [];
 
     const filesToRender = _.get(store, ['fileLoadState', 'filesToRender']) || [];
     const filesOffset = _.get(store, ['fileLoadState', 'filesOffset']) || 0;
