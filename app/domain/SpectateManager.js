@@ -1,4 +1,5 @@
 /* eslint-disable no-underscore-dangle */
+/* eslint-disable promise/always-return */
 
 import log from 'electron-log';
 import { client as WebSocketClient } from 'websocket';
@@ -122,14 +123,16 @@ export class SpectateManager {
           this.gameStarted = false;
         }
 
-        this.cursorByBroadcast[obj.broadcastId] = event.cursor;
-
         break;
       default:
         log.error(`[Spectate] Event type ${event.type} not supported`);
         break;
       }
     });
+
+    // Update cursor with redis cursor such that if we disconnect, we can pick back up from where
+    // we left off
+    this.cursorByBroadcast[obj.broadcastId] = obj.cursor;
   }
 
   /**
@@ -186,7 +189,29 @@ export class SpectateManager {
 
           if (code === 1006) {
             // Here we have an abnormal disconnect... try to reconnect?
-            
+            this.connect(password).then(() => {
+              if (!this.prevBroadcastId || !this.wsConnection) {
+                return;
+              }
+              
+              const watchMsg = {
+                type: "watch-broadcast",
+                broadcastId: this.prevBroadcastId,
+              };
+
+              // If we were previously watching a broadcast, let's try to reconnect to it
+              const prevCursor = this.cursorByBroadcast[this.prevBroadcastId];
+              if (prevCursor) {
+                watchMsg.startCursor = prevCursor;
+              }
+
+              log.info(`[Spectate] Picking up broadcast ${this.prevBroadcastId} starting at: ${prevCursor}`);
+
+              this.wsConnection.sendUTF(JSON.stringify(watchMsg));
+            }).catch((err) => {
+              log.error(`[Specate] Error while reconnecting to broadcast.\n`, err);
+            });
+
           } else {
             // TODO: Somehow kill dolphin? Or maybe reconnect to a person's broadcast when it
             // TODO: comes back up?
@@ -264,3 +289,4 @@ export class SpectateManager {
 }
 
 /* eslint-enable no-underscore-dangle */
+/* eslint-enable promise/always-return */
