@@ -311,6 +311,7 @@ export default class OverallTable extends Component {
         </Table.Cell>
       </Table.Row>,
       this.renderHigherSimpleRatioField('Inputs / Minute', 'inputsPerMinute'),
+      this.renderHigherSimpleRatioField('Digital Inputs / Minute', 'digitalInputsPerMinute'),
     ];
   }
 
