@@ -207,10 +207,9 @@ export function setStatsGamePage(index) {
 export function deleteSelections(selections) {
   return (dispatch, getState) => {
     const tempStore = getState().fileLoader.fileLoadState;
-    const filesToRender = tempStore.filesToRender;
-    _.each(selections, (selection, i) => {
+    const filesToRender = _.without(tempStore.filesToRender, ...selections);
+    _.each(selections, (selection) => {
       shell.moveItemToTrash(selection.fullPath);
-      filesToRender.splice(i, 1);
     });
     tempStore.filesToRender = filesToRender;
     tempStore.filesOffset = filesToRender.length;
