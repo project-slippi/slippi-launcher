@@ -2,8 +2,8 @@ import _ from 'lodash';
 import fs from 'fs';
 import path from 'path';
 import SlippiGame from '@slippi/slippi-js';
-import * as timeUtils from '../utils/time';
 import { shell } from 'electron';
+import * as timeUtils from '../utils/time';
 
 import { displayError } from './error';
 import { gameProfileLoad } from './game';
@@ -16,6 +16,10 @@ export const LOAD_FILES_IN_FOLDER = 'LOAD_FILES_IN_FOLDER';
 export const SET_STATS_GAME_PAGE = 'SET_STATS_GAME_PAGE';
 export const STORE_SCROLL_POSITION = 'STORE_SCROLL_POSITION';
 export const STORE_FILE_LOAD_STATE = 'STORE_FILE_LOAD_STATE';
+export const SET_FILTER_REPLAYS = 'SET_FILTER_REPLAYS';
+
+const MIN_GAME_LENGTH_SECONDS = 30;
+const MIN_GAME_LENGTH_FRAMES = MIN_GAME_LENGTH_SECONDS * 60;
 
 export function loadRootFolder() {
   return async (dispatch, getState) => {
@@ -77,14 +81,17 @@ export function loadRootFolder() {
     await wait(10); // eslint-disable-line
 
     const filesAndFolders = await loadFilesInFolder(rootFolderPath);
-    const processedFiles = processFiles(filesAndFolders[0]);
+    const [unfilteredFiles, allFiles] = processFiles(filesAndFolders[0]);
 
     dispatch({
       type: LOAD_FILES_IN_FOLDER,
       payload: {
-        files: processedFiles,
+        files: unfilteredFiles,
+        allFiles: allFiles,
         folders: filesAndFolders[1],
-        numFilteredFiles: filesAndFolders[0].length - processedFiles.length,
+        numErroredFiles: filesAndFolders[0].length - allFiles.length,
+        numDurationFilteredFiles: allFiles.length - unfilteredFiles.length,
+        numFilteredFiles: filesAndFolders[0].length - unfilteredFiles.length,
       },
     });
   };
@@ -104,14 +111,17 @@ export function changeFolderSelection(folder) {
 
     const currentPath = getState().fileLoader.selectedFolderFullPath;
     const filesAndFolders = await loadFilesInFolder(currentPath);
-    const processedFiles = processFiles(filesAndFolders[0]);
+    const [unfilteredFiles, allFiles] = processFiles(filesAndFolders[0]);
 
     dispatch({
       type: LOAD_FILES_IN_FOLDER,
       payload: {
-        files: processedFiles,
+        files: unfilteredFiles,
+        allFiles: allFiles,
         folders: filesAndFolders[1],
-        numFilteredFiles: filesAndFolders[0].length - processedFiles.length,
+        numErroredFiles: filesAndFolders[0].length - allFiles.length,
+        numDurationFilteredFiles: allFiles.length - unfilteredFiles.length,
+        numFilteredFiles: filesAndFolders[0].length - unfilteredFiles.length,
       },
     });
   };
@@ -175,7 +185,8 @@ export function queueFiles(files) {
 
 export function setStatsGamePage(index) {
   return (dispatch, getState) => {
-    const files = getState().fileLoader.files;
+    const state = getState().fileLoader;
+    const files = (state.filterReplays ? state.files : state.allFiles) || [];
     let statsGameIndex = index;
     if (statsGameIndex >= files.length) {
       statsGameIndex = 0;
@@ -194,22 +205,31 @@ export function setStatsGamePage(index) {
 }
 
 export function deleteSelections(selections) {
-    return (dispatch, getState) => {
-      const tempStore = getState().fileLoader.fileLoadState;
-      const filesToRender = tempStore.filesToRender;
-      for(const i of selections){
-        shell.moveItemToTrash(i.fullPath);
-        filesToRender.splice(filesToRender.indexOf(i),1);
-      }
-      tempStore.filesToRender = filesToRender;
-      tempStore.filesOffset = filesToRender.length;
-      dispatch({
-        type: STORE_FILE_LOAD_STATE,
-        payload: {
-          fileLoadState: tempStore,
-        },
-      });
-    };
+  return (dispatch, getState) => {
+    const tempStore = getState().fileLoader.fileLoadState;
+    const filesToRender = tempStore.filesToRender;
+    _.each(selections, (selection, i) => {
+      shell.moveItemToTrash(selection.fullPath);
+      filesToRender.splice(i, 1);
+    });
+    tempStore.filesToRender = filesToRender;
+    tempStore.filesOffset = filesToRender.length;
+    dispatch({
+      type: STORE_FILE_LOAD_STATE,
+      payload: {
+        fileLoadState: tempStore,
+      },
+    });
+  };
+}
+
+export function setFilterReplays(val) {
+  return {
+    type: SET_FILTER_REPLAYS,
+    payload: {
+      filterReplays: val,
+    },
+  }
 }
 
 async function loadFilesInFolder(folderPath) {
@@ -294,9 +314,9 @@ async function wait(ms) {
 }
 
 function processFiles(files) {
-  let resultFiles = files;
+  let goodFiles = files;
 
-  resultFiles = resultFiles.filter(file => {
+  goodFiles = goodFiles.filter(file => {
     if (file.hasError) {
       // This will occur if an error was encountered while parsing
       return false;
@@ -312,12 +332,24 @@ function processFiles(files) {
     return true;
   });
 
-  resultFiles = _.orderBy(
-    resultFiles,
+  let filteredFiles = goodFiles.filter(file => {
+    const metadata = file.game.getMetadata() || {};
+    const totalFrames = metadata.lastFrame || MIN_GAME_LENGTH_FRAMES + 1;
+    return totalFrames > MIN_GAME_LENGTH_FRAMES;
+  })
+
+  goodFiles = _.orderBy(
+    goodFiles,
+    ['startTime', 'fileName'],
+    ['desc', 'desc']
+  );
+
+  filteredFiles = _.orderBy(
+    filteredFiles,
     ['startTime', 'fileName'],
     ['desc', 'desc']
   );
 
   // Filter out files that were shorter than 30 seconds
-  return resultFiles;
+  return [filteredFiles, goodFiles];
 }
