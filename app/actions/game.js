@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import SlippiGame from '@slippi/slippi-js';
+import log from 'electron-log';
 
 export const GAME_LOAD_START = 'GAME_LOAD_START'
 export const GAME_LOAD_COMPLETE = 'GAME_LOAD_COMPLETE';
@@ -41,7 +42,8 @@ async function loadGame(gameOrPath) {
     settings = gameToLoad.getSettings();
     stats = gameToLoad.getStats();
     gameToLoad.getMetadata();
-  } catch {
+  } catch (err) {
+    log.error(`Error loading replay file\n`, err);
     return null;
   }
 

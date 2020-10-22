@@ -23,7 +23,10 @@ export class BroadcastManager {
     this.prevBroadcastId = null;
     this.wsConnection = null;
     this.incomingEvents = [];
-    this.deadletterEvents = [];
+
+    // We need to store events as we process them in the event that we get a disconnect and
+    // we need to re-send some events to the server
+    this.backupEvents = [];
 
     this.dolphinConnection = new DolphinConnection();
     this.dolphinConnection.on(ConnectionEvent.STATUS_CHANGE, status => {
@@ -38,7 +41,7 @@ export class BroadcastManager {
         this.stop();
 
         this.incomingEvents = [];
-        this.deadletterEvents = [];
+        this.backupEvents = [];
       }
     });
     this.dolphinConnection.on(ConnectionEvent.MESSAGE, (message) => {
@@ -128,9 +131,9 @@ export class BroadcastManager {
       const connectionComplete = (broadcastId) => {
         log.info(`[Broadcast] Starting broadcast to: ${broadcastId}`);
 
-        // Get rid of any previously dead events, they should have gotten to incomming events in
-        // the situation where it's relevant already
-        this.deadletterEvents = [];
+        // Clear backup events when a connection completes. The backup events should already have
+        // been added back to the events to process at this point if that is relevant
+        this.backupEvents = [];
 
         this.broadcastId = broadcastId;
         store.dispatch(setSlippiStatus(ConnectionStatus.CONNECTED));
@@ -188,6 +191,22 @@ export class BroadcastManager {
         
         switch (obj.type) {
         case 'start-broadcast-resp':
+          if (obj.recoveryGameCursor) {
+            log.info(`[Broadcast] Picking broadcast back up from ${obj.recoveryGameCursor}`);
+
+            const firstIncoming = _.first(this.incomingEvents) || {};
+            const firstCursor = firstIncoming.cursor;
+
+            // Add any events that didn't make it to the server to the front of the event queue
+            const backedEventsToUse = _.filter(this.backupEvents, event => {
+              const isNeededByServer = event.cursor > obj.recoveryGameCursor;
+              const isNotIncoming = !_.isNil(firstCursor) && event.cursor < firstCursor;
+              return isNeededByServer && isNotIncoming;
+            });
+            log.info(backedEventsToUse);
+            this.incomingEvents = _.concat(backedEventsToUse, this.incomingEvents);
+          }
+
           connectionComplete(obj.broadcastId);
           break;
         case 'get-broadcasts-resp':
@@ -203,9 +222,6 @@ export class BroadcastManager {
           console.log(prevBroadcast);
 
           if (prevBroadcast) {
-            // Add any events that didn't make it to the server to the front of the event queue
-            const sortedRecaptureEvents = _.orderBy(this.deadletterEvents, 'cursor');
-            this.incomingEvents = _.concat(sortedRecaptureEvents, this.incomingEvents);
             startBroadcast(prevBroadcast.id);
             return;
           }
@@ -255,6 +271,12 @@ export class BroadcastManager {
     while (!_.isEmpty(this.incomingEvents)) {
       const event = this.incomingEvents.shift();
 
+      this.backupEvents.push(event);
+      if (this.backupEvents.length > 100) {
+        // Remove element after adding one once size is too big
+        this.backupEvents.shift();
+      }
+
       switch (event.type) {
       // Only forward these message types to the server
       case "start_game":
@@ -279,14 +301,9 @@ export class BroadcastManager {
         this.wsConnection.sendUTF(JSON.stringify(message), err => {
           if (err) {
             log.error("[Broadcast] WS send error encountered\n", err);
-            this.deadletterEvents.push(event);
             return;
           }
-          
-          // TODO: Need to somehow preserve events that don't get properly processed for if we need
-          // TODO: to reconnect
-          // console.log("Received ws send resp");
-  
+
           if (event.type === "game_event") {
             this._debouncedGameDataLog(event.cursor, command);
           }
