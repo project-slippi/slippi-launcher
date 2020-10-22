@@ -326,7 +326,18 @@ export default class FileLoader extends Component {
     const searchData = this.state.searchData || {};
     const dropSelect = searchData.dropSelect || "character";
 
+    const allFiles = this.unfilteredFiles();
+
+    // set view back to unfiltered
     if (!searchData.filterText) {
+      const end = Math.min(GAME_BATCH_SIZE, allFiles.length);
+      const nextFilesToRender = allFiles.slice(0, end);
+
+      this.props.storeFileLoadState({
+        filesToRender: nextFilesToRender,
+        filesOffset: end,
+        hasLoaded: true,
+      });
       return;
     }
 
@@ -361,19 +372,23 @@ export default class FileLoader extends Component {
       filterFunc = file => file.fileName.toLowerCase().includes(searchData.filterText.toLowerCase());
       break;
     default:
-      return;
+      return; // stop searching
     }
 
-    let nextFilesToRender = this.unfilteredFiles().filter(filterFunc);
-
-    // if search returns more than 100 games, trim
-    if (nextFilesToRender.length > 100) {
-      nextFilesToRender = nextFilesToRender.slice(0, 100);
-    }
-    const newFilesOffset = nextFilesToRender.length
+    // Searches files in chunks of 100 to limit slow downs from searching
+    // large quantities of game files
+    let filteredMatches = [];
+    const chunksOfMatches = _.chunk(this.unfilteredFiles(), GAME_BATCH_SIZE);
+    chunksOfMatches.forEach(chunk => {
+      if (filteredMatches.length >= GAME_BATCH_SIZE) {
+        return;
+      }
+      filteredMatches = filteredMatches.concat(chunk.filter(filterFunc));
+    });
+    const newFilesOffset = filteredMatches.length;
 
     this.props.storeFileLoadState({
-      filesToRender: nextFilesToRender,
+      filesToRender: filteredMatches,
       filesOffset: newFilesOffset,
       hasLoaded: true,
     });
