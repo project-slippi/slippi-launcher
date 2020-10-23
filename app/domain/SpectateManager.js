@@ -88,7 +88,7 @@ export class SpectateManager {
         break;
       case 'end_game':
         // End the current game if it's not already ended
-        // console.log("[Spectate] Game end explicit");
+        // log.info("[Spectate] Game end explicit");
         this.slpFileWriter.endGame();
         this.gameStarted = false;
         break;
@@ -101,24 +101,18 @@ export class SpectateManager {
 
         if (command === 0x35) {
           this.gameStarted = true;
-          // console.log("[Spectate] Game start");
+          // log.info("[Spectate] Game start");
         }
 
         // Only forward data to the file writer when it's an active game
         if (this.gameStarted) {
-          // if (command) {
-          //   console.log(`[Spectate] Handling 0x${command.toString(16)}`);
-          // } else {
-          //   console.log(`[Spectate] Empty message received? ${JSON.stringify(obj)}`);
-          // }
-
           const buf = Buffer.from(event.payload, 'base64');
           this.slpFileWriter.handleData(buf);
         }
 
         if (command === 0x39) {
           // End the current game if it's not already ended
-          // console.log("[Spectate] Game end 0x39");
+          // log.info("[Spectate] Game end 0x39");
           this.slpFileWriter.endGame();
           this.gameStarted = false;
         }

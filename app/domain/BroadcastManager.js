@@ -21,6 +21,7 @@ export class BroadcastManager {
   constructor() {
     this.broadcastId = null;
     this.prevBroadcastId = null;
+    this.isBroadcastReady = false;
     this.wsConnection = null;
     this.incomingEvents = [];
 
@@ -134,6 +135,7 @@ export class BroadcastManager {
         // Clear backup events when a connection completes. The backup events should already have
         // been added back to the events to process at this point if that is relevant
         this.backupEvents = [];
+        this.isBroadcastReady = true;
 
         this.broadcastId = broadcastId;
         store.dispatch(setSlippiStatus(ConnectionStatus.CONNECTED));
@@ -166,6 +168,7 @@ export class BroadcastManager {
 
         // Clear the socket and disconnect from Dolphin too if we're still connected
         this.wsConnection = null;
+        this.isBroadcastReady = false;
         
         if (code === 1006) {
           // Here we have an abnormal disconnect... try to reconnect?
@@ -192,15 +195,15 @@ export class BroadcastManager {
         switch (obj.type) {
         case 'start-broadcast-resp':
           if (obj.recoveryGameCursor) {
-            log.info(`[Broadcast] Picking broadcast back up from ${obj.recoveryGameCursor}`);
-
             const firstIncoming = _.first(this.incomingEvents) || {};
             const firstCursor = firstIncoming.cursor;
+
+            log.info(`[Broadcast] Picking broadcast back up from ${obj.recoveryGameCursor}. Last not sent: ${firstCursor}`);
 
             // Add any events that didn't make it to the server to the front of the event queue
             const backedEventsToUse = _.filter(this.backupEvents, event => {
               const isNeededByServer = event.cursor > obj.recoveryGameCursor;
-              const isNotIncoming = !_.isNil(firstCursor) && event.cursor < firstCursor;
+              const isNotIncoming = _.isNil(firstCursor) || event.cursor < firstCursor;
               return isNeededByServer && isNotIncoming;
             });
             log.info(backedEventsToUse);
@@ -264,7 +267,11 @@ export class BroadcastManager {
   }
 
   _handleGameData() {
-    if (!this.broadcastId || !this.wsConnection) {
+    // On a disconnect, we need to wait until isBroadcastReady otherwise we will skip the messages
+    // that were missed because we will start sending new data immediately as soon as the ws
+    // is established. We need to wait until the service tells us where we need to pick back up
+    // at before starting to send messages again
+    if (!this.broadcastId || !this.wsConnection || !this.isBroadcastReady) {
       return;
     }
 
@@ -286,11 +293,6 @@ export class BroadcastManager {
         const payloadStart = payload.substring(0, 4);
         const buf = Buffer.from(payloadStart, 'base64');
         const command = buf[0];
-        // if (command) {
-        //   console.log(`[Broadcast] Sending 0x${command.toString(16)}`);
-        // } else {
-        //   console.log(`[Broadcast] Empty event received? ${JSON.stringify(event)}`);
-        // }
   
         const message = {
           type: 'send-event',

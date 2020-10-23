@@ -26,6 +26,7 @@ import { sudoRemovePath } from './utils/sudoExec';
 
 // Set up AppUpdater
 log.transports.file.level = 'info';
+// log.transports.file.maxSize = 0; // Remove max log size, default is 1 MB (1048576)
 autoUpdater.logger = log;
 autoUpdater.autoInstallOnAppQuit = false;
 log.info('App starting...');
