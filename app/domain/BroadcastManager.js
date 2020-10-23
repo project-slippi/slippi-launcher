@@ -29,6 +29,8 @@ export class BroadcastManager {
     // we need to re-send some events to the server
     this.backupEvents = [];
 
+    this.nextGameCursor = null;
+
     this.dolphinConnection = new DolphinConnection();
     this.dolphinConnection.on(ConnectionEvent.STATUS_CHANGE, status => {
       log.info(`[Broadcast] Dolphin status change: ${status}`);
@@ -37,7 +39,12 @@ export class BroadcastManager {
       if (status === ConnectionStatus.DISCONNECTED) {
         // Kind of jank but this will hopefully stop the game on the spectator side when someone
         // kills Dolphin. May no longer be necessary after Dolphin itself sends these messages
-        this.incomingEvents.push({ type: 'end_game' })
+        this.incomingEvents.push({
+          type: 'end_game',
+          cursor: this.nextGameCursor,
+          'next_cursor': this.nextGameCursor,
+        });
+
         this._handleGameData();
         this.stop();
 
@@ -289,26 +296,35 @@ export class BroadcastManager {
       case "start_game":
       case "game_event":
       case "end_game":
-        const payload = event.payload || "";
-        const payloadStart = payload.substring(0, 4);
-        const buf = Buffer.from(payloadStart, 'base64');
-        const command = buf[0];
+        // const payload = event.payload || "";
+        // const payloadStart = payload.substring(0, 4);
+        // const buf = Buffer.from(payloadStart, 'base64');
+        // const command = buf[0];
   
+        if (event.type === "game_event" && !event.payload) {
+          // Don't send empty payload game_event
+          break;
+        }
+
         const message = {
           type: 'send-event',
           broadcastId: this.broadcastId,
           event: event,
         };
-  
+
+        if (event['next_cursor']) {
+          this.nextGameCursor = event['next_cursor'];
+        }
+
         this.wsConnection.sendUTF(JSON.stringify(message), err => {
           if (err) {
             log.error("[Broadcast] WS send error encountered\n", err);
-            return;
+            // return;
           }
 
-          if (event.type === "game_event") {
-            this._debouncedGameDataLog(event.cursor, command);
-          }
+          // if (event.type === "game_event") {
+          //   this._debouncedGameDataLog(event.cursor, command);
+          // }
         });
         break;
       default:

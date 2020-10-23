@@ -97,7 +97,7 @@ export class SpectateManager {
         const payloadStartBuf = Buffer.from(payloadStart, 'base64');
         const command = payloadStartBuf[0];
 
-        this.debouncedGameDataLog(event.cursor, command);
+        // this.debouncedGameDataLog(event.cursor, command);
 
         if (command === 0x35) {
           this.gameStarted = true;
