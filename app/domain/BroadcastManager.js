@@ -254,20 +254,30 @@ export class BroadcastManager {
   stop() {
     // TODO: Handle cancelling the retry case
 
+    log.info("[Broadcast] Service stop message received");
+
+    if (this.dolphinConnection.getStatus() === ConnectionStatus.CONNECTED) {
+      log.info("[Broadcast] Disconnecting dolphin connection...");
+
+      this.dolphinConnection.disconnect();
+
+      // If the dolphin connection is still active, disconnecting it will cause the stop function
+      // to be called again, so just return on this iteration and the callback will handle the rest
+      return;
+    }
+
     if (this.wsConnection && this.broadcastId)
     {
+      log.info("[Broadcast] Disconnecting ws connection...");
+
       this.wsConnection.sendUTF(JSON.stringify({
         type: 'stop-broadcast',
         broadcastId: this.broadcastId,
       }));
   
-      log.info("[Broadcast] Attempting to close ws connection normally");
       this.wsConnection.close();
-
       this.wsConnection = null;
     }
-
-    this.dolphinConnection.disconnect();
 
     // Clear incoming events
     this.incomingEvents = [];
