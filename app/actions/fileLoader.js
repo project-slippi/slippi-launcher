@@ -17,6 +17,7 @@ export const SET_STATS_GAME_PAGE = 'SET_STATS_GAME_PAGE';
 export const STORE_SCROLL_POSITION = 'STORE_SCROLL_POSITION';
 export const STORE_FILE_LOAD_STATE = 'STORE_FILE_LOAD_STATE';
 export const SET_FILTER_REPLAYS = 'SET_FILTER_REPLAYS';
+export const DELETE_FILE = 'DELETE_FILE';
 
 export const MIN_GAME_LENGTH_SECONDS = 30;
 const MIN_GAME_LENGTH_FRAMES = MIN_GAME_LENGTH_SECONDS * 60;
@@ -206,17 +207,21 @@ export function setStatsGamePage(index) {
 
 export function deleteSelections(selections) {
   return (dispatch, getState) => {
-    const tempStore = getState().fileLoader.fileLoadState;
-    const filesToRender = _.without(tempStore.filesToRender, ...selections);
+    const tempStore = getState().fileLoader;
+    const filesToRender = _.without(tempStore.fileLoadState.filesToRender, ...selections);
+    const files = _.without(tempStore.files, ...selections);
+    const allFiles = _.without(tempStore.allFiles, ...selections);
     _.each(selections, (selection) => {
       shell.moveItemToTrash(selection.fullPath);
     });
     tempStore.filesToRender = filesToRender;
     tempStore.filesOffset = filesToRender.length;
     dispatch({
-      type: STORE_FILE_LOAD_STATE,
+      type: DELETE_FILE,
       payload: {
         fileLoadState: tempStore,
+        files: files,
+        allFiles: allFiles,
       },
     });
   };
