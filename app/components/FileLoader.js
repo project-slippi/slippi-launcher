@@ -49,7 +49,6 @@ export default class FileLoader extends Component {
   constructor(props) {
     super(props);
 
-    this.props.setFilterReplays(true);
     this.state = {
       selections: [],
     };
@@ -60,6 +59,7 @@ export default class FileLoader extends Component {
       // The action when returning from the stats page is "POP". The action when coming from the
       // main menu is "PUSH". When coming from the main menu, we want to reload the files such that
       // any new files show up correctly
+      this.props.setFilterReplays(true);
       this.props.loadRootFolder();
 
       // Arriving at the file browser from the top level menu should reset the scroll position because
