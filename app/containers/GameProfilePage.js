@@ -7,7 +7,8 @@ import { dismissError } from "../actions/error";
 
 function mapStateToProps(state) {
   const index = state.fileLoader.statsGameIndex;
-  const file = state.fileLoader.files[index] || null;
+  const files = state.fileLoader.filterReplays ? state.fileLoader.files : state.fileLoader.allFiles;
+  const file = files[index] || null;
   return {
     store: state.game,
     statsGameIndex: index,
