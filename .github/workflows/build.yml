@@ -79,6 +79,8 @@ jobs:
           yarn package
           mkdir artifact
           cp ./release/Slippi* ./artifact
+        env:
+          USE_HARD_LINKS: false
       - name: Publish
         if: success()
         uses: actions/upload-artifact@v2-preview
