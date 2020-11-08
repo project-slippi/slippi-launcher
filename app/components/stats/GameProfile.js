@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import log from 'electron-log';
 import classNames from 'classnames';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
@@ -228,7 +229,12 @@ export default class GameProfile extends Component {
 
   renderGameDetails() {
     const gameSettings = _.get(this.props.store, ['game', 'settings']) || {};
-    const stageName = _.isNil(gameSettings.stageId) ? "Unknown" : stageUtils.getStageName(gameSettings.stageId);
+    let stageName = "Unknown";
+    try {
+      stageName = stageUtils.getStageName(gameSettings.stageId);
+    } catch(err) {
+      log.error(err);
+    }
 
     const duration =
       _.get(this.props.store, ['game', 'stats', 'lastFrame']) || 0;

@@ -1,5 +1,5 @@
 import {
-  LOAD_ROOT_FOLDER, CHANGE_FOLDER_SELECTION, LOAD_FILES_IN_FOLDER, STORE_SCROLL_POSITION, SET_STATS_GAME_PAGE, STORE_FILE_LOAD_STATE,
+  LOAD_ROOT_FOLDER, CHANGE_FOLDER_SELECTION, LOAD_FILES_IN_FOLDER, STORE_SCROLL_POSITION, SET_STATS_GAME_PAGE, STORE_FILE_LOAD_STATE, SET_FILTER_REPLAYS, DELETE_FILE,
 } from '../actions/fileLoader';
 import DolphinManager from '../domain/DolphinManager';
 
@@ -38,6 +38,10 @@ export default function fileLoader(state = defaultState, action) {
     return storeFileLoadState(state, action);
   case SET_STATS_GAME_PAGE:
     return setStatsGamePage(state, action);
+  case SET_FILTER_REPLAYS:
+    return setFilterReplays(state, action);
+  case DELETE_FILE:
+    return deleteFile(state, action);
   default:
     return state;
   }
@@ -113,7 +117,10 @@ function loadFilesInFolder(state, action) {
     ...state,
     isLoading: false,
     files: action.payload.files,
+    allFiles: action.payload.allFiles,
     folders: folders,
+    numErroredFiles: action.payload.numErroredFiles,
+    numDurationFilteredFiles: action.payload.numDurationFilteredFiles,
     numFilteredFiles: action.payload.numFilteredFiles,
     fileLoadState: {},
   };
@@ -138,4 +145,20 @@ function setStatsGamePage(state, action) {
     ...state,
     statsGameIndex: action.payload.statsGameIndex,
   };
+}
+
+function setFilterReplays(state, action) {
+  return {
+    ...state,
+    filterReplays: action.payload.filterReplays,
+  }
+}
+
+function deleteFile(state, action) {
+  return {
+    ...state,
+    allFiles: action.payload.allFiles,
+    files: action.payload.files,
+    fileLoadState: action.payload.fileLoadState,
+  }
 }

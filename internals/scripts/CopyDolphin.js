@@ -28,14 +28,14 @@ function CopyDolphin() {
 }
 
 function copyForMac(targetFolder) {
-  const dolphinSource = './app/dolphin-dev/osx/Dolphin.app';
+  const dolphinSource = './app/dolphin-dev/osx/Slippi Dolphin.app';
   if (!fs.existsSync(dolphinSource)) {
     throw new Error(
-      'Must have a Dolphin.app application in dolphin-dev/osx folder.'
+      'Must have a Slippi Dolphin.app application in dolphin-dev/osx folder.'
     );
   }
 
-  const dolphinDest = path.join(targetFolder, 'Dolphin.app');
+  const dolphinDest = path.join(targetFolder, 'Slippi Dolphin.app');
   const dolphinDestUserFolder = path.join(
     dolphinDest,
     'Contents/Resources/User'
