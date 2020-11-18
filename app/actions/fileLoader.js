@@ -2,6 +2,7 @@ import _ from 'lodash';
 import fs from 'fs';
 import path from 'path';
 import SlippiGame from '@slippi/slippi-js';
+import { shell } from 'electron';
 import * as timeUtils from '../utils/time';
 
 import { displayError } from './error';
@@ -15,6 +16,11 @@ export const LOAD_FILES_IN_FOLDER = 'LOAD_FILES_IN_FOLDER';
 export const SET_STATS_GAME_PAGE = 'SET_STATS_GAME_PAGE';
 export const STORE_SCROLL_POSITION = 'STORE_SCROLL_POSITION';
 export const STORE_FILE_LOAD_STATE = 'STORE_FILE_LOAD_STATE';
+export const SET_FILTER_REPLAYS = 'SET_FILTER_REPLAYS';
+export const DELETE_FILE = 'DELETE_FILE';
+
+export const MIN_GAME_LENGTH_SECONDS = 30;
+const MIN_GAME_LENGTH_FRAMES = MIN_GAME_LENGTH_SECONDS * 60;
 
 export function loadRootFolder() {
   return async (dispatch, getState) => {
@@ -76,14 +82,17 @@ export function loadRootFolder() {
     await wait(10); // eslint-disable-line
 
     const filesAndFolders = await loadFilesInFolder(rootFolderPath);
-    const processedFiles = processFiles(filesAndFolders[0]);
+    const [unfilteredFiles, allFiles] = processFiles(filesAndFolders[0]);
 
     dispatch({
       type: LOAD_FILES_IN_FOLDER,
       payload: {
-        files: processedFiles,
+        files: unfilteredFiles,
+        allFiles: allFiles,
         folders: filesAndFolders[1],
-        numFilteredFiles: filesAndFolders[0].length - processedFiles.length,
+        numErroredFiles: filesAndFolders[0].length - allFiles.length,
+        numDurationFilteredFiles: allFiles.length - unfilteredFiles.length,
+        numFilteredFiles: filesAndFolders[0].length - unfilteredFiles.length,
       },
     });
   };
@@ -103,14 +112,17 @@ export function changeFolderSelection(folder) {
 
     const currentPath = getState().fileLoader.selectedFolderFullPath;
     const filesAndFolders = await loadFilesInFolder(currentPath);
-    const processedFiles = processFiles(filesAndFolders[0]);
+    const [unfilteredFiles, allFiles] = processFiles(filesAndFolders[0]);
 
     dispatch({
       type: LOAD_FILES_IN_FOLDER,
       payload: {
-        files: processedFiles,
+        files: unfilteredFiles,
+        allFiles: allFiles,
         folders: filesAndFolders[1],
-        numFilteredFiles: filesAndFolders[0].length - processedFiles.length,
+        numErroredFiles: filesAndFolders[0].length - allFiles.length,
+        numDurationFilteredFiles: allFiles.length - unfilteredFiles.length,
+        numFilteredFiles: filesAndFolders[0].length - unfilteredFiles.length,
       },
     });
   };
@@ -174,7 +186,8 @@ export function queueFiles(files) {
 
 export function setStatsGamePage(index) {
   return (dispatch, getState) => {
-    const files = getState().fileLoader.files;
+    const state = getState().fileLoader;
+    const files = (state.filterReplays ? state.files : state.allFiles) || [];
     let statsGameIndex = index;
     if (statsGameIndex >= files.length) {
       statsGameIndex = 0;
@@ -190,6 +203,37 @@ export function setStatsGamePage(index) {
     });
     gameProfileLoad(files[statsGameIndex].game)(dispatch);
   };
+}
+
+export function deleteSelections(selections) {
+  return (dispatch, getState) => {
+    const tempStore = getState().fileLoader;
+    const filesToRender = _.without(tempStore.fileLoadState.filesToRender, ...selections);
+    const files = _.without(tempStore.files, ...selections);
+    const allFiles = _.without(tempStore.allFiles, ...selections);
+    _.each(selections, (selection) => {
+      shell.moveItemToTrash(selection.fullPath);
+    });
+    tempStore.filesToRender = filesToRender;
+    tempStore.filesOffset = filesToRender.length;
+    dispatch({
+      type: DELETE_FILE,
+      payload: {
+        fileLoadState: tempStore,
+        files: files,
+        allFiles: allFiles,
+      },
+    });
+  };
+}
+
+export function setFilterReplays(val) {
+  return {
+    type: SET_FILTER_REPLAYS,
+    payload: {
+      filterReplays: val,
+    },
+  }
 }
 
 async function loadFilesInFolder(folderPath) {
@@ -274,9 +318,9 @@ async function wait(ms) {
 }
 
 function processFiles(files) {
-  let resultFiles = files;
+  let goodFiles = files;
 
-  resultFiles = resultFiles.filter(file => {
+  goodFiles = goodFiles.filter(file => {
     if (file.hasError) {
       // This will occur if an error was encountered while parsing
       return false;
@@ -292,12 +336,24 @@ function processFiles(files) {
     return true;
   });
 
-  resultFiles = _.orderBy(
-    resultFiles,
+  let filteredFiles = goodFiles.filter(file => {
+    const metadata = file.game.getMetadata() || {};
+    const totalFrames = metadata.lastFrame || MIN_GAME_LENGTH_FRAMES + 1;
+    return totalFrames > MIN_GAME_LENGTH_FRAMES;
+  })
+
+  goodFiles = _.orderBy(
+    goodFiles,
+    ['startTime', 'fileName'],
+    ['desc', 'desc']
+  );
+
+  filteredFiles = _.orderBy(
+    filteredFiles,
     ['startTime', 'fileName'],
     ['desc', 'desc']
   );
 
   // Filter out files that were shorter than 30 seconds
-  return resultFiles;
+  return [filteredFiles, goodFiles];
 }
