@@ -305,10 +305,11 @@ export default class FileLoader extends Component {
   }
 
   onSearchClick = () => {
+    const store = this.props.store || {};
     const searchData = this.state.searchData || {};
     const dropSelect = searchData.dropSelect || "character";
 
-    const allFiles = this.unfilteredFiles();
+    const allFiles = (store.filterReplays ? store.files : store.allFiles) || [];
 
     // set view back to unfiltered
     if (!searchData.filterText) {
@@ -357,10 +358,9 @@ export default class FileLoader extends Component {
       return; // stop searching
     }
 
-    // Searches files in chunks of 100 to limit slow downs from searching
-    // large quantities of game files
+    // Searches files in chunks to limit slow downs from large data set
     let filteredMatches = [];
-    const chunksOfMatches = _.chunk(this.unfilteredFiles(), GAME_BATCH_SIZE);
+    const chunksOfMatches = _.chunk(allFiles, GAME_BATCH_SIZE);
     chunksOfMatches.forEach(chunk => {
       if (filteredMatches.length >= GAME_BATCH_SIZE) {
         return;
