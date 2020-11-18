@@ -2,9 +2,6 @@ name: Release Builds
 
 on:
   push:
-    branches:
-        - master
-        - CI
     paths-ignore:
         - "**.md"
         - "**.ini"
@@ -60,7 +57,7 @@ jobs:
       - name: Download playback artifact
         uses: dawidd6/action-download-artifact@v2
         with:
-          github_token: ${{secrets.GITHUB_TOKEN}}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           workflow: pr-build.yml
           branch: slippi
           name: ${{ matrix.playback_image }}
@@ -76,6 +73,7 @@ jobs:
         shell: bash
         working-directory: ${{ github.workspace }}
         run: |
+          echo ${{ secrets.ENVFILE }} > .env
           yarn package
           mkdir artifact
           cp ./release/Slippi* ./artifact
