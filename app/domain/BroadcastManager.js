@@ -12,6 +12,10 @@ import { displayError } from '../actions/error';
 
 const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
 
+// This variable defines the number of events saved in the case of a disconnect. 1800 should
+// support disconnects of 30 seconds at most
+const BACKUP_MAX_LENGTH = 1800;
+
 /**
  * Responsible for retrieving Dolphin game data over enet and sending the data
  * to the Slippi server over websockets.
@@ -210,11 +214,22 @@ export class BroadcastManager {
             // Add any events that didn't make it to the server to the front of the event queue
             const backedEventsToUse = _.filter(this.backupEvents, event => {
               const isNeededByServer = event.cursor > obj.recoveryGameCursor;
+
+              // Make sure we aren't duplicating anything that is already in the incoming events array
               const isNotIncoming = _.isNil(firstCursor) || event.cursor < firstCursor;
+
               return isNeededByServer && isNotIncoming;
             });
-            log.info(backedEventsToUse);
+
             this.incomingEvents = _.concat(backedEventsToUse, this.incomingEvents);
+
+            const newFirstEvent = _.first(this.incomingEvents) || {};
+            const newFirstCursor = newFirstEvent.cursor;
+
+            const firstBackupCursor = (_.first(this.backupEvents) || {}).cursor;
+            const lastBackupCursor = (_.last(this.backupEvents) || {}).cursor;
+            
+            log.info(`[Broadcast] Backup events include range from: [${firstBackupCursor}, ${lastBackupCursor}]. Next cursor to be sent: ${newFirstCursor}`);
           }
 
           connectionComplete(obj.broadcastId);
@@ -296,7 +311,7 @@ export class BroadcastManager {
       const event = this.incomingEvents.shift();
 
       this.backupEvents.push(event);
-      if (this.backupEvents.length > 100) {
+      if (this.backupEvents.length > BACKUP_MAX_LENGTH) {
         // Remove element after adding one once size is too big
         this.backupEvents.shift();
       }
