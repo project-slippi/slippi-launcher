@@ -26,6 +26,18 @@ jobs:
             playback_image: macOS-playback
             playback_dolphin_path: app/dolphin-dev/osx/
     steps:
+      - name: Load macOS signing certificates and secrets
+        if: matrix.os == 'macOS-latest'
+        run: |
+          chmod +x build/load-macos-certs-ci.sh && ./build/load-macos-certs-ci.sh
+          mkdir -p ~/private_keys/
+          echo '${{ secrets.APPLE_CONNECT_API_KEY }}' > ~/private_keys/AuthKey_${{ secrets.APPLE_API_KEY_ID }}.p8
+        env:
+          CSC_LINK: ${{ secrets.CERTIFICATE_MACOS_APPLICATION }}
+          CSC_KEY_PASSWORD: ${{ secrets.CERTIFICATE_MACOS_PASSWORD }}
+          APPLE_API_KEY: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_ISSUER_ID: ${{ secrets.APPLE_ISSUER_ID }}
+          APPLE_TEAM_PROVIDER_ID: ${{ secrets.APPLE_TEAM_PROVIDER_ID }}
       - name: Use Node.js ${{ matrix.node-version }} on ${{ matrix.os }}
         uses: actions/setup-node@v1
         with:

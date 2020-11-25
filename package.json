@@ -81,7 +81,10 @@
         "role": "viewer",
         "icon": "./resources/file.icns"
       },
-      "category": "your.app.category.type",
+      "hardenedRuntime": true,
+      "entitlements": "./build/entitlements.macos.plist",
+      "afterSign": "./build/afterSignHook.macos.js",
+      "category": "public.app-category.video",
       "target": [
         "zip",
         "dmg"
@@ -205,6 +208,7 @@
     "electron": "^4.1.4",
     "electron-builder": "^22.8.0",
     "electron-devtools-installer": "^2.2.4",
+    "electron-notarize": "^1.0.0",
     "enzyme": "^3.7.0",
     "enzyme-adapter-react-16": "^1.7.0",
     "enzyme-to-json": "^3.3.4",
