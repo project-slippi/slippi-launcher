@@ -6,14 +6,39 @@
   margin-right: auto;
 }
 
+.highlight {
+  color: $foreground;
+}
+
 .tabs {
   margin-top: 24px;
 
   :global(.menu) {
-    border-color: rgba(255, 255, 255, 0.2) !important;
+    // border-color: rgba(255, 255, 255, 0.2) !important;
+    border-bottom-width: 0 !important;
+
     a {
-      color: $foreground !important;
+      color: rgba(255, 255, 255, 0.7) !important;
+      font-size: 20px;
+      font-weight: lighter !important;
+      border-bottom-color: $primary-gray !important;
+      border-bottom-width: 4px !important;
+
     }
+
+    :global(.active) {
+      color: $foreground !important;
+      font-weight: bolder !important;
+      border-bottom-color: $primary-green !important;
+    }
+  }
+
+  h2 {
+    color:  rgba(255, 255, 255, 0.9);
+  }
+
+  div {
+    color:  rgba(255, 255, 255, 0.7);
   }
 }
 
@@ -23,48 +48,6 @@
 
 .global-action-section {
   margin-bottom: 15px;
-}
-
-.card {
-  box-shadow: 3px 3px 2px rgba(0, 0, 0, 0.1) !important;
-  background: none !important;
-  border-style: solid !important;
-  border-width: 1px !important;
-  border-color: $background-darkest !important;
-  color: $foreground;
-  margin: 0 !important;
-
-  .content {
-    border-color: $background-darkest !important;
-    background-color: $background-light !important;
-  }
-
-  .warning-bar {
-    border-color: $background-darkest !important;
-    background-color: $primary-yellow !important;
-    padding-top: 4px !important;
-    padding-bottom: 5px !important;
-    color: black;
-    font-weight: 700;
-  }
-}
-
-.label {
-  font-weight: bold;
-  color: rgba(255, 255, 255, 0.5);
-  margin-right: 4px;
-}
-
-.conn-content-grid {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  grid-column-gap: 6px;
-}
-
-.conn-button-grid {
-  display: grid;
-  grid-template-columns: auto auto 1fr auto auto;
-  grid-column-gap: 3px;
 }
 
 .conn-status-value {
@@ -85,6 +68,12 @@
   &.white {
     color: white;
   }
+}
+
+.label {
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.5);
+  margin-right: 4px;
 }
 
 .description {

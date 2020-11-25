@@ -3,11 +3,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import * as firebase from 'firebase';
+import classNames from 'classnames';
 
 import {
-  Button, Header, Segment, Icon, Tab, Input,
+  Button, Header, Segment, Icon, Tab, Input, List,
 } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
+
+import { ConnectionStatus } from '@slippi/slippi-js';
 
 import PageHeader from './common/PageHeader';
 import PageWrapper from './PageWrapper';
@@ -36,7 +40,7 @@ export default class Broadcast extends Component {
   };
 
   state = {
-    password: "",
+    viewerId: "",
   }
 
   renderGlobalError() {
@@ -67,7 +71,7 @@ export default class Broadcast extends Component {
       if (active) {
         this.props.stopBroadcast();
       } else {
-        this.props.startBroadcast(this.state.password);
+        this.props.startBroadcast(this.state.viewerId);
       }
     };
     return (
@@ -86,7 +90,7 @@ export default class Broadcast extends Component {
       <Button
         color="blue"
         size="large"
-        onClick={() => this.props.refreshBroadcasts(this.state.password)}
+        onClick={() => this.props.refreshBroadcasts()}
       >
         Refresh
       </Button>
@@ -95,6 +99,23 @@ export default class Broadcast extends Component {
 
   renderBroadcasts() {
     const broadcasts = _.get(this.props.broadcast, 'broadcasts') || [];
+    if (_.isEmpty(broadcasts)) {
+      return (
+        <Header
+          as="h3"
+          color="grey"
+          inverted={true}
+        >
+          <Icon name="question circle outline" />
+          <Header.Content>
+            No broadcasts found
+            <Header.Subheader>
+              Click refresh to reload
+            </Header.Subheader>
+          </Header.Content>
+        </Header>
+      )
+    }
     const broadcastEntries = _.map(broadcasts, broadcast => {
       const name = _.get(broadcast, 'name');
       const broadcasterName = _.get(broadcast, ['broadcaster', 'name']);
@@ -148,20 +169,73 @@ export default class Broadcast extends Component {
     );
   }
 
+  renderStatusDisplay(status, prefix) {
+    let statusMsg = `${prefix}Disconnected`;
+    let statusColor = "gray";
+    if (status === ConnectionStatus.CONNECTED) {
+      statusMsg = `${prefix}Connected`;
+      statusColor = "green";
+    } else if (status === ConnectionStatus.CONNECTING) {
+      statusMsg = `${prefix}Connecting...`;
+      statusColor = "yellow";
+    } else if (status === ConnectionStatus.RECONNECT_WAIT) {
+      statusMsg = `${prefix}Reconnecting...`;
+      statusColor = "yellow";
+    }
+
+    const valueClasses = classNames({
+      [styles['conn-status-value']]: true,
+      [styles['green']]: statusColor === "green",
+      [styles['gray']]: statusColor === "gray",
+      [styles['yellow']]: statusColor === "yellow",
+      [styles['white']]: statusColor === "white",
+    });
+
+    return (
+      <SpacedGroup className={valueClasses} size="none">
+        <Icon size="small" name="circle" />
+        {statusMsg}
+      </SpacedGroup>
+    );
+  }
+
   renderBroadcastContent() {
-    const { slippiConnectionStatus, dolphinConnectionStatus, startTime, endTime, isConnecting, isBroadcasting } = this.props.broadcast;
+    const { slippiConnectionStatus, dolphinConnectionStatus, startTime, endTime, isBroadcasting } = this.props.broadcast;
+
+    
 
     return (
       <div>
-        <h2>Broadcast</h2>
         <SpacedGroup direction="vertical">
+          <List>
+            <List.Item>
+              <List.Icon name="caret right"/>
+              <List.Content>Open Slippi Dolphin and start game</List.Content>
+            </List.Item>
+            <List.Item>
+              <List.Icon name="caret right"/>
+              <List.Content>Enter the ID from whoever will be viewing your broadcast</List.Content>
+            </List.Item>
+            <List.Item>
+              <List.Icon name="caret right"/>
+              <List.Content>Click Start Broadcast</List.Content>
+            </List.Item>
+          </List>
+          <Input
+            type="text"
+            inverted={true}
+            label="Viewer ID"
+            onChange={(event, p) => {
+              this.setState({
+                viewerId: p.value,
+              });
+            }}
+          />
           {this.renderButton()}
           <div>
-            <div>Status: {isBroadcasting ? `broadcasting since ${JSON.stringify(startTime)}` : endTime ? `broadcast lasted ${(endTime - startTime) / 1000} seconds` : "not broadcasting"}</div>
-            <div>dolphin connection status: {JSON.stringify(dolphinConnectionStatus)}</div>
-            <div>slippi connection status: {JSON.stringify(slippiConnectionStatus)}</div>
-            <div>isBroadcasting: {JSON.stringify(isBroadcasting)}</div>
-            <div>isConnecting: {JSON.stringify(isConnecting)}</div>
+            <div>Status: {isBroadcasting ? `Broadcasting since ${JSON.stringify(startTime)}` : endTime ? `Broadcast lasted ${(endTime - startTime) / 1000} seconds` : "Not broadcasting"}</div>
+            {this.renderStatusDisplay(dolphinConnectionStatus, "Dolphin ")}
+            {this.renderStatusDisplay(slippiConnectionStatus, "Broadcast ")}
           </div>
         </SpacedGroup>
       </div>
@@ -169,9 +243,24 @@ export default class Broadcast extends Component {
   }
 
   renderSpectateContent() {
+    const user = firebase.auth().currentUser;
+
     return (
       <div>
-        <h2>Spectate</h2>
+        <List>
+          <List.Item>
+            <List.Icon name="caret right"/>
+            <List.Content>Give the person broadcasting your ID: <strong className={styles['highlight']}>{user.uid}</strong></List.Content>
+          </List.Item>
+          <List.Item>
+            <List.Icon name="caret right"/>
+            <List.Content>After they have started their broadcast, refresh</List.Content>
+          </List.Item>
+          <List.Item>
+            <List.Icon name="caret right"/>
+            <List.Content>Once the broadcast appears, click to watch</List.Content>
+          </List.Item>
+        </List>
         {this.renderRefreshButton()}
         {this.renderBroadcasts()}
       </div>
@@ -199,21 +288,6 @@ export default class Broadcast extends Component {
     );
   }
 
-  renderPasswordInput() {
-    return (
-      <Input
-        type="password"
-        inverted={true}
-        label="Password"
-        onChange={(event, p) => {
-          this.setState({
-            password: p.value,
-          });
-        }}
-      />
-    );
-  }
-
   renderContent() {
     const { user } = this.props.auth;
     if (!user) {
@@ -223,7 +297,6 @@ export default class Broadcast extends Component {
     return (
       <div className={styles['container']}>
         {this.renderGlobalError()}
-        {this.renderPasswordInput()}
         {this.renderTabs()}
       </div>
     );

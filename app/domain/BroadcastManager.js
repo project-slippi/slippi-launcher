@@ -78,7 +78,7 @@ export class BroadcastManager {
   /**
    * Connects to the Slippi server and the local Dolphin instance
    */
-  async start(password) {
+  async start(target) {
     if (this.wsConnection) {
       // We're already connected
       return;
@@ -88,7 +88,7 @@ export class BroadcastManager {
     store.dispatch(setSlippiStatus(ConnectionStatus.CONNECTING));
 
     const headers = {
-      password: password,
+      target: target,
       "api-version": 1,
     };
     const user = firebase.auth().currentUser;
@@ -183,7 +183,7 @@ export class BroadcastManager {
         
         if (code === 1006) {
           // Here we have an abnormal disconnect... try to reconnect?
-          this.start(password);
+          this.start(target);
         } else {
           // If normal close, disconnect from dolphin
           this.dolphinConnection.disconnect();

@@ -35,9 +35,9 @@ export function updateViewableBroadcasts(broadcasts) {
   };
 }
 
-export function startBroadcast(password) {
+export function startBroadcast(target) {
   return async () => {
-    await broadcastManager.start(password);
+    await broadcastManager.start(target);
   };
 }
 
@@ -47,10 +47,10 @@ export function stopBroadcast() {
   };
 }
 
-export function refreshBroadcasts(password) {
+export function refreshBroadcasts() {
   return async () => {
     try {
-      await spectateManager.connect(password);
+      await spectateManager.connect();
       spectateManager.refreshBroadcasts();
     } catch {
       // Do nothing
@@ -64,10 +64,10 @@ export function watchBroadcast(broadcastId) {
   };
 }
 
-export function initSpectate(password) {
+export function initSpectate() {
   return async () => {
     try {
-      await spectateManager.connect(password);
+      await spectateManager.connect();
     } catch {
       // Do nothing
     }

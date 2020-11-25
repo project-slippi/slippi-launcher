@@ -132,7 +132,7 @@ export class SpectateManager {
   /**
    * Connects to the Slippi server and the local Dolphin instance
    */
-  async connect(password) {
+  async connect() {
     if (this.wsConnection) {
       // We're already connected
       console.log("Skipping websocket connection since we're already connected");
@@ -140,7 +140,6 @@ export class SpectateManager {
     }
 
     const headers = {
-      password: password,
       "api-version": 1,
     };
     const user = firebase.auth().currentUser;
@@ -183,7 +182,7 @@ export class SpectateManager {
 
           if (code === 1006) {
             // Here we have an abnormal disconnect... try to reconnect?
-            this.connect(password).then(() => {
+            this.connect().then(() => {
               if (!this.prevBroadcastId || !this.wsConnection) {
                 return;
               }
