@@ -3,8 +3,8 @@ name: Release Builds
 on:
   push:
     paths-ignore:
-        - "**.md"
-        - "**.ini"
+      - '**.md'
+      - '**.ini'
 
 jobs:
   package:
@@ -77,6 +77,7 @@ jobs:
           yarn package
           mkdir artifact
           cp ./release/Slippi* ./artifact
+          cp ./release/*.yml ./artifact
         env:
           USE_HARD_LINKS: false
       - name: Publish
@@ -84,5 +85,4 @@ jobs:
         uses: actions/upload-artifact@v2-preview
         with:
           name: ${{ matrix.os }}
-          path: "./artifact/"
-      
+          path: './artifact/'
