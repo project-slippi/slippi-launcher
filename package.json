@@ -37,6 +37,7 @@
   "build": {
     "productName": "Slippi Launcher",
     "appId": "com.github.projectslippi.slippidesktopapp",
+    "afterSign": "./build/afterSignHook.macos.js",
     "asarUnpack": [
       "**/dolphin/**/*",
       "**/images/**/*",
@@ -83,7 +84,6 @@
       },
       "hardenedRuntime": true,
       "entitlements": "./build/entitlements.macos.plist",
-      "afterSign": "./build/afterSignHook.macos.js",
       "category": "public.app-category.video",
       "target": [
         "zip",
