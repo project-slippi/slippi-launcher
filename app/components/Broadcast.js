@@ -7,7 +7,7 @@ import * as firebase from 'firebase';
 import classNames from 'classnames';
 
 import {
-  Button, Header, Segment, Icon, Tab, Input, List,
+  Button, Header, Segment, Icon, Tab, Input, List, Card,
 } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
@@ -92,6 +92,7 @@ export default class Broadcast extends Component {
         size="large"
         onClick={() => this.props.refreshBroadcasts()}
       >
+        <Icon name="refresh" />
         Refresh
       </Button>
     );
@@ -120,23 +121,46 @@ export default class Broadcast extends Component {
       const name = _.get(broadcast, 'name');
       const broadcasterName = _.get(broadcast, ['broadcaster', 'name']);
       return (
-        <SpacedGroup key={broadcast.id} direction="horizontal">
-          <div>[{broadcasterName}] {name} ({broadcast.id})</div>
-          <Button
-            color="blue"
-            size="small"
-            onClick={() => this.props.watchBroadcast(broadcast.id)}
-          >
-            Watch
-          </Button>
-        </SpacedGroup>
+        <Card
+          key={broadcast.id}
+          fluid={true}
+          className={styles['card']}
+        >
+          <Card.Content className={styles['content']}>
+            <div className={styles['conn-content-grid']}>
+              {this.renderLabelValue("Broadcaster", broadcasterName)}
+              {this.renderLabelValue("Name", name)}
+              {/* {this.renderLabelValue("ID", broadcast.id)} */}
+            </div>
+          </Card.Content>
+          <Card.Content className={styles['content']}>
+            <div className={styles['conn-button-grid']}>
+              <Button
+                color="blue"
+                onClick={() => this.props.watchBroadcast(broadcast.id)}
+              >
+                <Icon name="play circle" />
+                Watch
+              </Button>
+            </div>
+          </Card.Content>
+        </Card>
       );
     });
 
     return (
-      <div>
+      <SpacedGroup className={styles['broadcast-list']} direction="vertical">
         {broadcastEntries}
-      </div>
+      </SpacedGroup>
+    );
+  }
+
+  renderLabelValue(label, value) {
+    return (
+      <React.Fragment>
+        <div key="label" className={styles['label']}>{label}</div>
+        <div key="value" className={styles['value']}>{value}</div>
+      </React.Fragment>
     );
   }
 
@@ -202,8 +226,6 @@ export default class Broadcast extends Component {
   renderBroadcastContent() {
     const { slippiConnectionStatus, dolphinConnectionStatus, startTime, endTime, isBroadcasting } = this.props.broadcast;
 
-    
-
     return (
       <div>
         <SpacedGroup direction="vertical">
@@ -232,7 +254,7 @@ export default class Broadcast extends Component {
             }}
           />
           {this.renderButton()}
-          <div>
+          <div className={styles['connection-details']}>
             <div>Status: {isBroadcasting ? `Broadcasting since ${JSON.stringify(startTime)}` : endTime ? `Broadcast lasted ${(endTime - startTime) / 1000} seconds` : "Not broadcasting"}</div>
             {this.renderStatusDisplay(dolphinConnectionStatus, "Dolphin ")}
             {this.renderStatusDisplay(slippiConnectionStatus, "Broadcast ")}
