@@ -87,7 +87,12 @@
       "category": "public.app-category.video",
       "target": [
         "dmg"
-      ]
+      ],
+      "extendInfo": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
+      }
     },
     "win": {
       "target": [
