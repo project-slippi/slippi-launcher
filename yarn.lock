@@ -1375,10 +1375,10 @@
     array-from "^2.1.1"
     lodash.get "^4.4.2"
 
-"@slippi/slippi-js@^5.1.0":
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/@slippi/slippi-js/-/slippi-js-5.1.0.tgz#ec523179d07b48fde94036080c4abd1b6eab4cc4"
-  integrity sha512-u9RWxFU8oDzv5COCmA2lSnQzcgFwEliFNKijDfzKRlnQ68AuIFz/RFOaP+YwWegvarTYVU29RdDtnD1+oAjlpw==
+"@slippi/slippi-js@^5.1.1":
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/@slippi/slippi-js/-/slippi-js-5.1.1.tgz#63dc0ba131019fcaf9fe01417c6ecbe53db095aa"
+  integrity sha512-5iutrhwfjQNA2Ri9vzWM30wsAY43MVzSWT/hW/CkqS3jEU/I8PIpn5kMVLz2gESYnYOjOSTCB4sqEQJBLrBBSA==
   dependencies:
     "@shelacek/ubjson" "^1.0.1"
     enet "^0.2.9"
