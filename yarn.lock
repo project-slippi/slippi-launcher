@@ -1375,10 +1375,10 @@
     array-from "^2.1.1"
     lodash.get "^4.4.2"
 
-"@slippi/slippi-js@^5.1.0-beta.2":
-  version "5.1.0-beta.2"
-  resolved "https://registry.yarnpkg.com/@slippi/slippi-js/-/slippi-js-5.1.0-beta.2.tgz#e8f9ac50f97692d047a884ab73c2b3aff5873f75"
-  integrity sha512-OACCMaQ/gJROMuMRV2OHSHm76xUJ1mwuZw9sTDFj+Bt3ykex9IQ/3ebZ1qX7i2nWeonB/iDrigvPTTzkjL4q8w==
+"@slippi/slippi-js@^5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@slippi/slippi-js/-/slippi-js-5.1.0.tgz#ec523179d07b48fde94036080c4abd1b6eab4cc4"
+  integrity sha512-u9RWxFU8oDzv5COCmA2lSnQzcgFwEliFNKijDfzKRlnQ68AuIFz/RFOaP+YwWegvarTYVU29RdDtnD1+oAjlpw==
   dependencies:
     "@shelacek/ubjson" "^1.0.1"
     enet "^0.2.9"
@@ -3143,15 +3143,15 @@ bluebird-lst@^1.0.9:
   dependencies:
     bluebird "^3.5.5"
 
-bluebird@^3.4.6, bluebird@^3.5.5:
-  version "3.7.2"
-  resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.7.2.tgz#9f229c15be272454ffa973ace0dbee79a1b0c36f"
-  integrity sha512-XpNj6GDQzdfW+r2Wnn7xiSAd7TM3jzkxGXBGTtWKuSXv1xUV+azxAm8jdWZN06QTQk+2N2XB9jRDkvbmQmcRtg==
-
 bluebird@^3.5.1, bluebird@^3.5.2, bluebird@^3.5.3:
   version "3.5.3"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.3.tgz#7d01c6f9616c9a51ab0f8c549a79dfe6ec33efa7"
   integrity sha512-/qKPUQlaW1OyR51WeCPBvRnAlnZFUJkCSG5HzGnuIqhgyJtF+T94lFnn33eiazjRm2LAHVy2guNnaq48X9SJuw==
+
+bluebird@^3.5.5:
+  version "3.7.2"
+  resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.7.2.tgz#9f229c15be272454ffa973ace0dbee79a1b0c36f"
+  integrity sha512-XpNj6GDQzdfW+r2Wnn7xiSAd7TM3jzkxGXBGTtWKuSXv1xUV+azxAm8jdWZN06QTQk+2N2XB9jRDkvbmQmcRtg==
 
 bn.js@^4.0.0, bn.js@^4.1.0, bn.js@^4.1.1, bn.js@^4.4.0:
   version "4.11.8"
@@ -5235,6 +5235,14 @@ electron-log@^2.2.17:
   resolved "https://registry.yarnpkg.com/electron-log/-/electron-log-2.2.17.tgz#e71e2ebb949fc96ded7cdb99eeee7202e48981d2"
   integrity sha512-v+Af5W5z99ehhaLOfE9eTSXUwjzh2wFlQjz51dvkZ6ZIrET6OB/zAZPvsuwT6tm3t5x+M1r+Ed3U3xtPZYAyuQ==
 
+electron-notarize@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/electron-notarize/-/electron-notarize-1.0.0.tgz#bc925b1ccc3f79e58e029e8c4706572b01a9fd8f"
+  integrity sha512-dsib1IAquMn0onCrNMJ6gtEIZn/azG8hZMCYOuZIMVMUeRMgBYHK1s5TK9P8xAcrAjh/2aN5WYHzgVSWX314og==
+  dependencies:
+    debug "^4.1.1"
+    fs-extra "^9.0.1"
+
 electron-publish@22.8.0:
   version "22.8.0"
   resolved "https://registry.yarnpkg.com/electron-publish/-/electron-publish-22.8.0.tgz#7f410fe043abc5d3d896c4ee9eea7a43ea352c7d"
@@ -5256,14 +5264,6 @@ electron-settings@^3.2.0:
   dependencies:
     clone "^2.1.1"
     jsonfile "^4.0.0"
-
-electron-sudo@^4.0.12:
-  version "4.0.12"
-  resolved "https://registry.yarnpkg.com/electron-sudo/-/electron-sudo-4.0.12.tgz#17d27fcb33837b7f6fd3a7946f168d6590566a53"
-  integrity sha1-F9J/yzODe39v06eUbxaNZZBWalM=
-  dependencies:
-    babel-runtime "^6.18.0"
-    bluebird "^3.4.6"
 
 electron-to-chromium@^1.3.47, electron-to-chromium@^1.3.96:
   version "1.3.100"
