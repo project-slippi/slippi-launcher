@@ -26,11 +26,11 @@ export default class CopyToClipboard extends Component {
   render() {
     return (
       <Popup
-        size="tiny"
+        size="mini"
         position="top center"
-        content={this.state.copied ? 'Copied!' : 'Click to copy'}
+        content={this.state.copied ? 'Copied!' : 'Copy to clipboard'}
         trigger={
-          <Copy text={this.props.text} onCopy={() => this.onCopy()}>
+          <Copy text={this.props.text} onCopy={this.onCopy}>
             {this.props.children}
           </Copy>
         }
