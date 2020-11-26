@@ -51,7 +51,7 @@ jobs:
             ${{ runner.OS }}-build-
             ${{ runner.OS }}-
       - name: Load macOS signing certificates and secrets
-        if: matrix.os == 'macOS-latest'
+        if: matrix.os == 'macOS-latest' && env.CERTIFICATE_MACOS_PASSWORD != null
         run: |
           chmod +x build/load-macos-certs-ci.sh && ./build/load-macos-certs-ci.sh
           mkdir -p ~/private_keys/
