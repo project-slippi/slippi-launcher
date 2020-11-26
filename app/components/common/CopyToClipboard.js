@@ -18,10 +18,21 @@ export default class CopyToClipboard extends Component {
     copied: false,
   };
 
+  timeout = null;
+
   onCopy = () => {
+    this.reset();
     this.setState({ copied: true });
-    setTimeout(() => this.setState({ copied: false }), this.props.timeoutMs);
+    this.timeout = setTimeout(() => this.setState({ copied: false }), this.props.timeoutMs);
   };
+
+  reset = () => {
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+      this.timeout = null;
+    }
+    this.setState({ copied: false });
+  }
 
   render() {
     return (
@@ -29,6 +40,7 @@ export default class CopyToClipboard extends Component {
         size="mini"
         position="top center"
         content={this.state.copied ? 'Copied!' : 'Copy to clipboard'}
+        onUnmount={this.reset}
         trigger={
           <Copy text={this.props.text} onCopy={this.onCopy}>
             {this.props.children}
