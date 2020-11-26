@@ -6,13 +6,12 @@ import Copy from 'react-copy-to-clipboard';
 export default class CopyToClipboard extends Component {
   static propTypes = {
     children: PropTypes.any.isRequired,
+    text: PropTypes.string.isRequired,
     timeoutMs: PropTypes.number,
-    text: PropTypes.string,
   };
 
   static defaultProps = {
     timeoutMs: 2000,
-    text: '',
   };
 
   state = {
