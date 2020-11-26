@@ -99,5 +99,4 @@ jobs:
         uses: actions/upload-artifact@v2-preview
         with:
           name: ${{ matrix.os }}
-          path: "./artifact/"
           path: './artifact/'
