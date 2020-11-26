@@ -162,6 +162,10 @@ export default class SlpFileWriter extends EventEmitter {
     });
   }
 
+  endGame() {
+    this.slpStream.endCurrentFile();
+  }
+
   initializeNewGame(filePath) {
     const clearFileObj = this.getClearedCurrentFile();
     this.currentFile = {

@@ -296,9 +296,9 @@ export default class OverallTable extends Component {
       this.renderOpeningField('Counter Hits', 'counterHitRatio'),
       this.renderOpeningField('Beneficial Trades', 'beneficialTradeRatio'),
       this.renderMultiStatField(
-        'Actions (Wavedash / Waveland / Dash Dance)',
+        'Actions (Wavedash / Waveland / Dash Dance / Ledgegrab)',
         ['actionCounts'],
-        ['wavedashCount', 'wavelandCount', 'dashDanceCount']
+        ['wavedashCount', 'wavelandCount', 'dashDanceCount', 'ledgegrabCount']
       ),
     ];
   }
@@ -311,6 +311,7 @@ export default class OverallTable extends Component {
         </Table.Cell>
       </Table.Row>,
       this.renderHigherSimpleRatioField('Inputs / Minute', 'inputsPerMinute'),
+      this.renderHigherSimpleRatioField('Digital Inputs / Minute', 'digitalInputsPerMinute'),
     ];
   }
 

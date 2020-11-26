@@ -1,23 +1,22 @@
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Settings from '../components/Settings';
-import * as SettingsActions from '../actions/settings';
-import * as AuthActions from '../actions/auth';
+import Broadcast from '../components/Broadcast';
 import * as ErrorActions from '../actions/error';
+import * as BroadcastActions from '../actions/broadcast';
 
 function mapStateToProps(state) {
   return {
-    store: state.settings,
-    auth: state.auth,
     errors: state.errors,
+    broadcast: state.broadcast,
+    auth: state.auth,
     topNotifOffset: _.get(state.notifs, ['activeNotif', 'heightPx']) || 0,
   };
 }
 
 function mapDispatchToProps(dispatch) {
-  const allActions = _.extend({}, AuthActions, SettingsActions, ErrorActions);
+  const allActions = _.extend({}, ErrorActions, BroadcastActions);
   return bindActionCreators(allActions, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Settings);
+export default connect(mapStateToProps, mapDispatchToProps)(Broadcast);

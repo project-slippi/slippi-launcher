@@ -51,3 +51,5 @@ main.js.map
 npm-debug.log.*
 
 dolphin/
+
+.env
