@@ -86,7 +86,6 @@
       "entitlements": "./build/entitlements.macos.plist",
       "category": "public.app-category.video",
       "target": [
-        "zip",
         "dmg"
       ]
     },
