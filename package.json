@@ -37,6 +37,7 @@
   "build": {
     "productName": "Slippi Launcher",
     "appId": "com.github.projectslippi.slippidesktopapp",
+    "afterSign": "./build/afterSignHook.macos.js",
     "asarUnpack": [
       "**/dolphin/**/*",
       "**/images/**/*",
@@ -81,7 +82,9 @@
         "role": "viewer",
         "icon": "./resources/file.icns"
       },
-      "category": "your.app.category.type",
+      "hardenedRuntime": true,
+      "entitlements": "./build/entitlements.macos.plist",
+      "category": "public.app-category.video",
       "target": [
         "dmg"
       ]
@@ -204,6 +207,7 @@
     "electron": "^4.1.4",
     "electron-builder": "^22.8.0",
     "electron-devtools-installer": "^2.2.4",
+    "electron-notarize": "^1.0.0",
     "enzyme": "^3.7.0",
     "enzyme-adapter-react-16": "^1.7.0",
     "enzyme-to-json": "^3.3.4",
@@ -261,7 +265,6 @@
     "electron-debug": "^2.0.0",
     "electron-log": "^2.2.17",
     "electron-settings": "^3.2.0",
-    "electron-sudo": "^4.0.12",
     "electron-updater": "^4.0.6",
     "firebase": "^7.20.0",
     "fs-extra": "^8.1.0",
