@@ -65,7 +65,6 @@ jobs:
           CERTIFICATE_MACOS_APPLICATION: ${{ secrets.CERTIFICATE_MACOS_APPLICATION }}
           CERTIFICATE_MACOS_PASSWORD: ${{ secrets.CERTIFICATE_MACOS_PASSWORD }}
       - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
         run: |
           yarn install
       - name: Download playback artifact
