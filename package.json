@@ -86,7 +86,8 @@
       "entitlements": "./build/entitlements.macos.plist",
       "category": "public.app-category.video",
       "target": [
-        "dmg"
+        "dmg",
+        "zip"
       ],
       "extendInfo": {
         "NSAppTransportSecurity": {
