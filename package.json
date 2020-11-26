@@ -275,6 +275,7 @@
     "obs-websocket-js": "^3.0.0",
     "prop-types": "^15.6.2",
     "react": "^16.6.3",
+    "react-copy-to-clipboard": "^5.0.2",
     "react-dom": "^16.6.3",
     "react-hot-loader": "^4.3.12",
     "react-redux": "^5.1.1",

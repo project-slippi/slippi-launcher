@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom';
 
 import { ConnectionStatus } from '@slippi/slippi-js';
 
+import CopyToClipboard from './common/CopyToClipboard';
 import PageHeader from './common/PageHeader';
 import PageWrapper from './PageWrapper';
 import DismissibleMessage from './common/DismissibleMessage';
@@ -272,7 +273,9 @@ export default class Broadcast extends Component {
         <List>
           <List.Item>
             <List.Icon name="caret right"/>
-            <List.Content>Give the person broadcasting your ID: <strong className={styles['highlight']}>{user.uid}</strong></List.Content>
+            <List.Content>
+              Give the person broadcasting your ID: <CopyToClipboard text={user.uid}><strong className={styles['highlight']}>{user.uid}</strong></CopyToClipboard>
+            </List.Content>
           </List.Item>
           <List.Item>
             <List.Icon name="caret right"/>

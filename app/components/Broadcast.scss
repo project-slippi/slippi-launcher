@@ -8,6 +8,11 @@
 
 .highlight {
   color: $foreground;
+
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .tabs {
