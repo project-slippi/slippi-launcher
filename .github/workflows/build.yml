@@ -92,7 +92,7 @@ jobs:
           cp ./release/*.yml ./artifact
         env:
           USE_HARD_LINKS: false
-      - name: Publish
+      - name: Upload artifacts
         if: success()
         uses: actions/upload-artifact@v2-preview
         with:
