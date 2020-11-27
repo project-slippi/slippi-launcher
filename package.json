@@ -1,7 +1,7 @@
 {
   "name": "slippi-desktop-app",
   "productName": "Slippi Desktop App",
-  "version": "1.5.1",
+  "version": "1.6.2",
   "description": "Slippi Desktop App for browsing and playing replays.",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -20,7 +20,7 @@
     "package-ci": "yarn postinstall && yarn build && electron-builder --publish always",
     "package-linux": "yarn build && electron-builder build --linux",
     "package-win": "yarn build && electron-builder build --win --x64",
-    "postinstall": "electron-builder install-app-deps package.json && yarn build-dll",
+    "postinstall": "electron-builder install-app-deps && yarn build-dll",
     "postlint-fix": "prettier --ignore-path .eslintignore --single-quote --write '**/*.{*{js,jsx,json},babelrc,eslintrc,prettierrc,stylelintrc}'",
     "postlint-styles-fix": "prettier --ignore-path .eslintignore --single-quote --write '**/*.{css,scss}'",
     "prestart": "yarn build",
@@ -37,6 +37,7 @@
   "build": {
     "productName": "Slippi Launcher",
     "appId": "com.github.projectslippi.slippidesktopapp",
+    "afterSign": "./build/afterSignHook.macos.js",
     "asarUnpack": [
       "**/dolphin/**/*",
       "**/images/**/*",
@@ -81,11 +82,18 @@
         "role": "viewer",
         "icon": "./resources/file.icns"
       },
-      "category": "your.app.category.type",
+      "hardenedRuntime": true,
+      "entitlements": "./build/entitlements.macos.plist",
+      "category": "public.app-category.video",
       "target": [
-        "zip",
-        "dmg"
-      ]
+        "dmg",
+        "zip"
+      ],
+      "extendInfo": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
+      }
     },
     "win": {
       "target": [
@@ -201,9 +209,11 @@
     "cross-spawn": "^6.0.5",
     "css-loader": "^1.0.1",
     "detect-port": "^1.3.0",
+    "dotenv-webpack": "^2.0.0",
     "electron": "^4.1.4",
-    "electron-builder": "^20.34.0",
+    "electron-builder": "^22.8.0",
     "electron-devtools-installer": "^2.2.4",
+    "electron-notarize": "^1.0.0",
     "enzyme": "^3.7.0",
     "enzyme-adapter-react-16": "^1.7.0",
     "enzyme-to-json": "^3.3.4",
@@ -254,15 +264,15 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.5.0",
     "@google-cloud/storage": "^2.4.2",
-    "@slippi/slippi-js": "^5.0.5",
+    "@slippi/slippi-js": "^5.1.1",
     "async-retry": "^1.2.3",
     "classnames": "^2.2.6",
     "devtron": "^1.4.0",
     "electron-debug": "^2.0.0",
     "electron-log": "^2.2.17",
     "electron-settings": "^3.2.0",
-    "electron-sudo": "^4.0.12",
     "electron-updater": "^4.0.6",
+    "firebase": "^7.20.0",
     "fs-extra": "^8.1.0",
     "history": "^4.7.2",
     "ini": "^1.3.5",
@@ -271,6 +281,7 @@
     "obs-websocket-js": "^3.0.0",
     "prop-types": "^15.6.2",
     "react": "^16.6.3",
+    "react-copy-to-clipboard": "^5.0.2",
     "react-dom": "^16.6.3",
     "react-hot-loader": "^4.3.12",
     "react-redux": "^5.1.1",
@@ -282,7 +293,8 @@
     "semantic-ui-react": "^0.84.0",
     "semver": "^5.6.0",
     "source-map-support": "^0.5.9",
-    "sudo-prompt": "^9.2.1"
+    "sudo-prompt": "^9.2.1",
+    "websocket": "^1.0.32"
   },
   "devEngines": {
     "node": ">=7.x",
