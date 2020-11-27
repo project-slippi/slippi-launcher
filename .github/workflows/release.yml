@@ -1,0 +1,21 @@
+name: Release Builds
+
+on:
+  push:
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  package:
+    name: Release New Desktop App
+    steps:
+      - name: Download latest artifacts
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          workflow: build.yml
+          branch: master
+      - name: ls
+        shell: bash
+        run: |
+          ls
