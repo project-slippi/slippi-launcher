@@ -8,6 +8,7 @@ on:
 jobs:
   package:
     name: Release New Desktop App
+    runs-on: ubuntu-latest
     steps:
       - name: Download latest artifacts
         uses: dawidd6/action-download-artifact@v2
