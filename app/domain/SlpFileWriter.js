@@ -88,9 +88,9 @@ export default class SlpFileWriter extends EventEmitter {
   }
 
   updateSettings(settings) {
-    this.folderPath = settings.targetFolder;
-    this.id = settings.id;
-    this.isRelaying = settings.isRelaying;
+    this.folderPath = settings.targetFolder || this.folderPath;
+    this.id = settings.id || this.id;
+    this.isRelaying = settings.isRelaying || this.isRelaying;
     this.consoleNick = settings.consoleNick || this.consoleNick;
     this.obs.updateSettings(settings);
     this.slpStream.updateSettings({

@@ -1,3 +1,4 @@
+import { displayError } from './error';
 import { BroadcastManager } from '../domain/BroadcastManager';
 import { SpectateManager } from '../domain/SpectateManager';
 
@@ -59,8 +60,17 @@ export function refreshBroadcasts() {
 }
 
 export function watchBroadcast(broadcastId) {
-  return async () => {
-    spectateManager.watchBroadcast(broadcastId);
+  return async (dispatch) => {
+    try {
+      spectateManager.watchBroadcast(broadcastId);
+    } catch (err) {
+      const errorAction = displayError(
+        'broadcast-global',
+        err.message,
+      );
+
+      dispatch(errorAction);
+    }
   };
 }
 

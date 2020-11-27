@@ -53,20 +53,10 @@ export class SpectateManager {
       this.prevBroadcastId = null;
     });
 
-    // Get path for spectate replays in my documents
-    const rootFolderPath = electronSettings.get('settings.rootSlpPath');
-    if (!rootFolderPath) {
-      throw new Error(
-        `Files cannot be saved without a Root Replay Directory set. Please return to the
-        settings page and set a Replay Root Directory.`
-      );
-    }
-    const targetPath = path.join(rootFolderPath, 'Spectate');
-    fs.ensureDirSync(targetPath);
-
-    // Initialize SlpFileWriter for writting files
+    // Initialize SlpFileWriter for writting files with an empty folderPath
+    // We will update the folderPath when starting to watch a broadcast
     const slpSettings = {
-      folderPath: targetPath,
+      folderPath: "",
       onFileStateChange: () => { },
     };
     this.slpFileWriter = new SlpFileWriter(slpSettings);
@@ -259,6 +249,23 @@ export class SpectateManager {
     if (!this.wsConnection) {
       return;
     }
+
+    // Get path for spectate replays in my documents
+    const rootFolderPath = electronSettings.get('settings.rootSlpPath');
+    if (!rootFolderPath) {
+      throw new Error(
+        `Files cannot be saved without a Root Replay Directory set. Please return to the
+        settings page and set a Replay Root Directory.`
+      );
+    }
+    const targetPath = path.join(rootFolderPath, 'Spectate');
+    fs.ensureDirSync(targetPath);
+
+    const slpSettings = {
+      folderPath: targetPath,
+    };
+
+    this.slpFileWriter.updateSettings(slpSettings);
 
     if (broadcastId === this.prevBroadcastId) {
       // If we have not changed broadcasts, don't do anything. Worth noting that closing
