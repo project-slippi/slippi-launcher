@@ -244,6 +244,10 @@ export default class DolphinManager extends EventEmitter {
       this.outputFilePath,
     ];
 
+    if (this.settings.mode === "mirror") {
+      args = args.concat(['-hs']);
+    }
+
     if (startPlayback) {
       args = args.concat([
         '-b',
