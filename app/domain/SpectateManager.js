@@ -14,7 +14,7 @@ import { store } from '../index';
 import { updateViewableBroadcasts } from '../actions/broadcast';
 import { displayError } from '../actions/error';
 
-const { app } = require('electron').remote;
+const electronSettings = require('electron-settings');
 
 const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
 
@@ -54,8 +54,14 @@ export class SpectateManager {
     });
 
     // Get path for spectate replays in my documents
-    const documentsPath = app.getPath("documents");
-    const targetPath = path.join(documentsPath, 'Slippi', 'Spectate');
+    const rootFolderPath = electronSettings.get('settings.rootSlpPath');
+    if (!rootFolderPath) {
+      throw new Error(
+        `Files cannot be saved without a Root Replay Directory set. Please return to the
+        settings page and set a Root Replay Directory.`
+      );
+    }
+    const targetPath = path.join(rootFolderPath, 'Spectate');
     fs.ensureDirSync(targetPath);
 
     // Initialize SlpFileWriter for writting files
