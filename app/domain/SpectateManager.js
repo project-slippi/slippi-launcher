@@ -58,7 +58,7 @@ export class SpectateManager {
     if (!rootFolderPath) {
       throw new Error(
         `Files cannot be saved without a Root Replay Directory set. Please return to the
-        settings page and set a Root Replay Directory.`
+        settings page and set a Replay Root Directory.`
       );
     }
     const targetPath = path.join(rootFolderPath, 'Spectate');
