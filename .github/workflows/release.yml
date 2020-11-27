@@ -1,9 +1,11 @@
-name: Release Builds
+name: Upload Latest Artifacts to Release
 
 on:
   push:
     paths-ignore:
       - '**.md'
+  # release:
+  #   types: [created]
 
 jobs:
   package:
@@ -16,7 +18,15 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           workflow: build.yml
           branch: master
-      - name: ls
-        shell: bash
+      - name: Flatten
         run: |
+          find /dir1 -mindepth 2 -type f -exec mv -t /dir1 -i '{}' +
           ls
+      # - name: Upload binaries to release
+      #   uses: svenstaro/upload-release-action@v2
+      #   with:
+      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
+      #     file: target/release/my*
+      #     tag: ${{ github.ref }}
+      #     overwrite: true
+      #     file_glob: true
