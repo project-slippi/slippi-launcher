@@ -20,7 +20,7 @@ jobs:
           branch: master
       - name: Flatten
         run: |
-          find /dir1 -mindepth 2 -type f -exec mv -t /dir1 -i '{}' +
+          find ./ -mindepth 2 -type f -exec mv -t ./ -i '{}' +
           ls
       # - name: Upload binaries to release
       #   uses: svenstaro/upload-release-action@v2

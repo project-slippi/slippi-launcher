@@ -1,100 +1,100 @@
-name: Release Builds
+# name: Release Builds
 
-on:
-  push:
-    paths-ignore:
-      - '**.md'
+# on:
+#   push:
+#     paths-ignore:
+#       - '**.md'
 
-jobs:
-  package:
-    name: Build and package on node ${{ matrix.node-version }} and ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: [10.x]
-        os: [ubuntu-latest, windows-latest, macOS-latest]
-        include:
-          - os: windows-latest
-            playback_image: windows64-playback
-            playback_dolphin_path: app/dolphin-dev/windows/
-          - os: ubuntu-latest
-            playback_image: linux-playback
-            playback_dolphin_path: app/dolphin-dev/linux/
-          - os: macOS-latest
-            playback_image: macOS-playback
-            playback_dolphin_path: app/dolphin-dev/osx/
-    steps:
-      - name: Use Node.js ${{ matrix.node-version }} on ${{ matrix.os }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-      - name: Checkout
-        uses: actions/checkout@v2.3.1
-      - name: Fetch Git Tags
-        if: success()
-        shell: bash
-        run: |
-          git fetch --prune --unshallow
-          echo "GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
-          echo "GIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-          echo "GIT_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
-      - name: Cache node modules
-        uses: actions/cache@v1
-        id: cache
-        with:
-          path: node_modules
-          key: ${{ runner.OS }}-build-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.OS }}-build-${{ env.cache-name }}-
-            ${{ runner.OS }}-build-
-            ${{ runner.OS }}-
-      - name: Load macOS signing certificates and secrets
-        if: matrix.os == 'macOS-latest' && env.CERTIFICATE_MACOS_PASSWORD != null
-        run: |
-          chmod +x build/load-macos-certs-ci.sh && ./build/load-macos-certs-ci.sh
-          mkdir -p ~/private_keys/
-          echo '${{ secrets.APPLE_CONNECT_API_KEY }}' > ~/private_keys/AuthKey_${{ secrets.APPLE_API_KEY_ID }}.p8
-          echo "CSC_LINK=${{ secrets.CERTIFICATE_MACOS_APPLICATION }}" >> $GITHUB_ENV
-          echo "CSC_KEY_PASSWORD=${{ secrets.CERTIFICATE_MACOS_PASSWORD }}" >> $GITHUB_ENV
-          echo "APPLE_API_KEY=${{ secrets.APPLE_API_KEY_ID }}" >> $GITHUB_ENV
-          echo "APPLE_ISSUER_ID=${{ secrets.APPLE_ISSUER_ID }}" >> $GITHUB_ENV
-          echo "APPLE_TEAM_PROVIDER_ID=${{ secrets.APPLE_TEAM_PROVIDER_ID }}" >> $GITHUB_ENV
-        env:
-          CERTIFICATE_MACOS_APPLICATION: ${{ secrets.CERTIFICATE_MACOS_APPLICATION }}
-          CERTIFICATE_MACOS_PASSWORD: ${{ secrets.CERTIFICATE_MACOS_PASSWORD }}
-      - name: Install dependencies
-        run: |
-          yarn install
-      - name: Download playback artifact
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          workflow: pr-build.yml
-          branch: slippi
-          name: ${{ matrix.playback_image }}
-          path: ${{ matrix.playback_dolphin_path }}
-          repo: project-slippi/Ishiiruka
-      - name: Unzip
-        shell: bash
-        working-directory: ${{ matrix.playback_dolphin_path }}
-        run: |
-          unzip *
-          rm *.zip
-      - name: Package
-        shell: bash
-        working-directory: ${{ github.workspace }}
-        run: |
-          echo ${{ secrets.ENVFILE }} > .env
-          yarn package
-          mkdir artifact
-          cp ./release/Slippi* ./artifact
-          cp ./release/*.yml ./artifact
-        env:
-          USE_HARD_LINKS: false
-      - name: Upload artifacts
-        if: success()
-        uses: actions/upload-artifact@v2-preview
-        with:
-          name: ${{ matrix.os }}
-          path: './artifact/'
+# jobs:
+#   package:
+#     name: Build and package on node ${{ matrix.node-version }} and ${{ matrix.os }}
+#     runs-on: ${{ matrix.os }}
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         node-version: [10.x]
+#         os: [ubuntu-latest, windows-latest, macOS-latest]
+#         include:
+#           - os: windows-latest
+#             playback_image: windows64-playback
+#             playback_dolphin_path: app/dolphin-dev/windows/
+#           - os: ubuntu-latest
+#             playback_image: linux-playback
+#             playback_dolphin_path: app/dolphin-dev/linux/
+#           - os: macOS-latest
+#             playback_image: macOS-playback
+#             playback_dolphin_path: app/dolphin-dev/osx/
+#     steps:
+#       - name: Use Node.js ${{ matrix.node-version }} on ${{ matrix.os }}
+#         uses: actions/setup-node@v1
+#         with:
+#           node-version: ${{ matrix.node-version }}
+#       - name: Checkout
+#         uses: actions/checkout@v2.3.1
+#       - name: Fetch Git Tags
+#         if: success()
+#         shell: bash
+#         run: |
+#           git fetch --prune --unshallow
+#           echo "GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
+#           echo "GIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+#           echo "GIT_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
+#       - name: Cache node modules
+#         uses: actions/cache@v1
+#         id: cache
+#         with:
+#           path: node_modules
+#           key: ${{ runner.OS }}-build-${{ hashFiles('**/yarn.lock') }}
+#           restore-keys: |
+#             ${{ runner.OS }}-build-${{ env.cache-name }}-
+#             ${{ runner.OS }}-build-
+#             ${{ runner.OS }}-
+#       - name: Load macOS signing certificates and secrets
+#         if: matrix.os == 'macOS-latest' && env.CERTIFICATE_MACOS_PASSWORD != null
+#         run: |
+#           chmod +x build/load-macos-certs-ci.sh && ./build/load-macos-certs-ci.sh
+#           mkdir -p ~/private_keys/
+#           echo '${{ secrets.APPLE_CONNECT_API_KEY }}' > ~/private_keys/AuthKey_${{ secrets.APPLE_API_KEY_ID }}.p8
+#           echo "CSC_LINK=${{ secrets.CERTIFICATE_MACOS_APPLICATION }}" >> $GITHUB_ENV
+#           echo "CSC_KEY_PASSWORD=${{ secrets.CERTIFICATE_MACOS_PASSWORD }}" >> $GITHUB_ENV
+#           echo "APPLE_API_KEY=${{ secrets.APPLE_API_KEY_ID }}" >> $GITHUB_ENV
+#           echo "APPLE_ISSUER_ID=${{ secrets.APPLE_ISSUER_ID }}" >> $GITHUB_ENV
+#           echo "APPLE_TEAM_PROVIDER_ID=${{ secrets.APPLE_TEAM_PROVIDER_ID }}" >> $GITHUB_ENV
+#         env:
+#           CERTIFICATE_MACOS_APPLICATION: ${{ secrets.CERTIFICATE_MACOS_APPLICATION }}
+#           CERTIFICATE_MACOS_PASSWORD: ${{ secrets.CERTIFICATE_MACOS_PASSWORD }}
+#       - name: Install dependencies
+#         run: |
+#           yarn install
+#       - name: Download playback artifact
+#         uses: dawidd6/action-download-artifact@v2
+#         with:
+#           github_token: ${{ secrets.GITHUB_TOKEN }}
+#           workflow: pr-build.yml
+#           branch: slippi
+#           name: ${{ matrix.playback_image }}
+#           path: ${{ matrix.playback_dolphin_path }}
+#           repo: project-slippi/Ishiiruka
+#       - name: Unzip
+#         shell: bash
+#         working-directory: ${{ matrix.playback_dolphin_path }}
+#         run: |
+#           unzip *
+#           rm *.zip
+#       - name: Package
+#         shell: bash
+#         working-directory: ${{ github.workspace }}
+#         run: |
+#           echo ${{ secrets.ENVFILE }} > .env
+#           yarn package
+#           mkdir artifact
+#           cp ./release/Slippi* ./artifact
+#           cp ./release/*.yml ./artifact
+#         env:
+#           USE_HARD_LINKS: false
+#       - name: Upload artifacts
+#         if: success()
+#         uses: actions/upload-artifact@v2-preview
+#         with:
+#           name: ${{ matrix.os }}
+#           path: './artifact/'
