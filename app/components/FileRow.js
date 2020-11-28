@@ -3,7 +3,7 @@ import log from 'electron-log';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Button, Table, Icon } from 'semantic-ui-react';
+import { Popup, Button, Table, Icon } from 'semantic-ui-react';
 import { stages as stageUtils } from '@slippi/slippi-js';
 import classNames from 'classnames';
 
@@ -109,7 +109,15 @@ export default class FileRow extends Component {
       },
       {
         label: 'File',
-        content: <button type="button" className={styles['reveal-file-location']} onClick={onFileLocationClick}>{this.getFileName()}</button>,
+        content:
+          <Popup
+            size="mini"
+            position="top center"
+            content="Open location"
+            trigger={
+              <button type="button" className={styles['reveal-file-location']} onClick={onFileLocationClick}>{this.getFileName()}</button>
+            }
+          />,
       },
     ];
 
