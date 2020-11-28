@@ -2,7 +2,7 @@ import _ from 'lodash';
 import classNames from 'classnames';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Table, Image, Icon } from 'semantic-ui-react';
+import { Table, Image, Icon, Popup } from 'semantic-ui-react';
 
 import styles from './GameProfile.scss';
 
@@ -17,6 +17,9 @@ export default class PunishesTable extends Component {
     game: PropTypes.object.isRequired,
     playerDisplay: PropTypes.object.isRequired,
     playerIndex: PropTypes.number.isRequired,
+
+    // fileLoaderAction
+    playFile: PropTypes.func.isRequired,
   };
 
   generatePunishRow = punish => {
@@ -34,11 +37,25 @@ export default class PunishesTable extends Component {
 
     const secondaryTextStyle = styles['secondary-text'];
 
+    const playPunish = () => {
+      const file = {fullPath: this.props.game.getFilePath()}
+      this.props.playFile(file, punish.startFrame)
+    }
+
+    const renderPunishStart = <Popup
+      size="mini"
+      position="top center"
+      content="Play from here"
+      trigger={
+        <Table.Cell className={secondaryTextStyle} collapsing={true} onClick={playPunish}>
+          <strong style={{ cursor: 'pointer' }} className={styles['highlight']}>{start}</strong>
+        </Table.Cell>
+      }
+    />
+
     return (
       <Table.Row key={`${punish.playerIndex}-punish-${punish.startFrame}`}>
-        <Table.Cell className={secondaryTextStyle} collapsing={true}>
-          {start}
-        </Table.Cell>
+        {renderPunishStart}
         <Table.Cell className={secondaryTextStyle} collapsing={true}>
           {end}
         </Table.Cell>
@@ -125,8 +142,7 @@ export default class PunishesTable extends Component {
 
     return (
       <div
-        className={`${
-          styles['punish-damage-display']
+        className={`${styles['punish-damage-display']
         } horizontal-spaced-group-right-sm`}
       >
         <Icon

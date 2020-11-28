@@ -9,6 +9,7 @@ import log from 'electron-log';
 import ini from 'ini';
 import electronSettings from 'electron-settings';
 import { EventEmitter } from 'events';
+import { Frames } from '@slippi/slippi-js';
 
 import { getDolphinPath } from '../utils/settings';
 import { sudoRemovePath } from '../utils/sudoExec';
@@ -157,7 +158,7 @@ export default class DolphinManager extends EventEmitter {
     });
   }
 
-  async playFile(filePath, startDolphin = true) {
+  async playFile(filePath, startDolphin = true, startFrame=Frames.FIRST) {
     const uniqueId = crypto.randomBytes(3 * 4).toString('hex');
 
     const jsonString = JSON.stringify({
@@ -165,6 +166,7 @@ export default class DolphinManager extends EventEmitter {
       replay: filePath,
       isRealTimeMode: this.settings.isRealTimeMode || false,
       commandId: uniqueId, // Indicates to Dolphin to play new replay
+      startFrame: startFrame,
     });
 
     await this.writeCommFile(jsonString);
