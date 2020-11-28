@@ -9,6 +9,7 @@
 .highlight {
   color: $foreground;
 
+  margin: 0 5px;
   cursor: pointer;
   &:hover {
     text-decoration: underline;
