@@ -42,6 +42,16 @@ export function startBroadcast(target) {
   };
 }
 
+export function fetchSpectateFolder() {
+  return () => {
+    try {
+      return spectateManager.fetchSpectateFolder();
+    } catch (err) {
+      return "";
+    }
+  }
+}
+
 export function stopBroadcast() {
   return async () => {
     broadcastManager.stop();

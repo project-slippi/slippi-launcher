@@ -245,11 +245,7 @@ export class SpectateManager {
     }));
   }
 
-  watchBroadcast(broadcastId) {
-    if (!this.wsConnection) {
-      return;
-    }
-
+  fetchSpectateFolder() {
     // Get path for spectate replays in my documents
     const rootFolderPath = electronSettings.get('settings.rootSlpPath');
     if (!rootFolderPath) {
@@ -258,7 +254,15 @@ export class SpectateManager {
         settings page and set a Replay Root Directory.`
       );
     }
-    const targetPath = path.join(rootFolderPath, 'Spectate');
+    return path.join(rootFolderPath, 'Spectate');
+  }
+
+  watchBroadcast(broadcastId) {
+    if (!this.wsConnection) {
+      return;
+    }
+
+    const targetPath = this.fetchSpectateFolder();
     fs.ensureDirSync(targetPath);
 
     const slpSettings = {
