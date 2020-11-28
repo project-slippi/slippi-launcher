@@ -271,18 +271,14 @@ export default class Broadcast extends Component {
   renderSpectateContent() {
     const user = firebase.auth().currentUser;
     const spectateFolder = this.props.fetchSpectateFolder();
-    let renderSpectateFolder = <strong>Unknown</strong>;
-
-    if (spectateFolder) {
-      renderSpectateFolder = <Popup
-        size="mini"
-        position="top center"
-        content="Open location"
-        trigger={
-          <strong className={styles['highlight']} onClick={() => shell.showItemInFolder(spectateFolder)}>{spectateFolder}</strong>
-        }
-      />
-    }
+    const renderSpectateFolder = <Popup
+      size="mini"
+      position="top center"
+      content="Open location"
+      trigger={
+        <strong className={styles['highlight']} onClick={() => shell.showItemInFolder(spectateFolder)}>{spectateFolder}</strong>
+      }
+    />
 
     return (
       <div>
