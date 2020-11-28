@@ -7,8 +7,7 @@ import * as timeUtils from '../utils/time';
 
 import { displayError } from './error';
 import { gameProfileLoad } from './game';
-
-const electronSettings = require('electron-settings');
+import { getRootSlpPath } from '../utils/settings';
 
 export const LOAD_ROOT_FOLDER = 'LOAD_ROOT_FOLDER';
 export const CHANGE_FOLDER_SELECTION = 'CHANGE_FOLDER_SELECTION';
@@ -24,7 +23,7 @@ const MIN_GAME_LENGTH_FRAMES = MIN_GAME_LENGTH_SECONDS * 60;
 
 export function loadRootFolder() {
   return async (dispatch, getState) => {
-    const rootFolderPath = electronSettings.get('settings.rootSlpPath');
+    const rootFolderPath = getRootSlpPath();
     if (!rootFolderPath) {
       dispatch({
         type: LOAD_ROOT_FOLDER,

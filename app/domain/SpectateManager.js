@@ -13,8 +13,7 @@ import SlpFileWriter from './SlpFileWriter';
 import { store } from '../index';
 import { updateViewableBroadcasts } from '../actions/broadcast';
 import { displayError } from '../actions/error';
-
-const electronSettings = require('electron-settings');
+import { getRootSlpPath } from '../utils/settings';
 
 const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
 
@@ -246,8 +245,7 @@ export class SpectateManager {
   }
 
   fetchSpectateFolder() {
-    // Get path for spectate replays in my documents
-    const rootFolderPath = electronSettings.get('settings.rootSlpPath');
+    const rootFolderPath = getRootSlpPath();
     if (!rootFolderPath) {
       throw new Error(
         `Files cannot be saved without a Root Replay Directory set. Please return to the
@@ -262,6 +260,7 @@ export class SpectateManager {
       return;
     }
 
+    // Get path for spectate replays
     const targetPath = this.fetchSpectateFolder();
     fs.ensureDirSync(targetPath);
 

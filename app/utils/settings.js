@@ -22,3 +22,20 @@ export function getDefaultDolphinPath() {
   const userDataPath = app.getPath("userData")
   return path.join(userDataPath, 'dolphin');
 }
+
+export function getDefaultRootSlpPath() {
+  let root = app.getPath("home");
+  if (process.platform === "win32") {
+    root = app.getPath("documents");
+  }
+  return path.join(root, "Slippi")
+}
+
+export function getRootSlpPath() {
+  const storedRootSlpPath = electronSettings.get('settings.rootSlpPath');
+  if (storedRootSlpPath) {
+    return storedRootSlpPath;
+  }
+
+  return getDefaultRootSlpPath();
+}
