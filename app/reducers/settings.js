@@ -6,7 +6,7 @@ import {
   SELECT_FOLDER, SELECT_FILE, ISO_VALIDATION_START, ISO_VALIDATION_COMPLETE, SET_RESET_CONFIRM, RESETTING_DOLPHIN,
 } from '../actions/settings';
 import DolphinManager from '../domain/DolphinManager';
-import { getDolphinPath } from '../utils/settings';
+import { getRootSlpPath, getDolphinPath } from '../utils/settings';
 
 const { app } = require('electron').remote;
 
@@ -27,7 +27,7 @@ function getAvailableSettings() {
     },
     rootSlpPath: {
       location: 'settings.rootSlpPath',
-      defaultValue: "",
+      defaultValue: getRootSlpPath(),
     },
     playbackDolphinPath: {
       location: 'settings.playbackDolphinPath',

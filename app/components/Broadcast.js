@@ -7,10 +7,11 @@ import * as firebase from 'firebase';
 import classNames from 'classnames';
 
 import {
-  Button, Header, Segment, Icon, Tab, Input, List, Card,
+  Popup, Button, Header, Segment, Icon, Tab, Input, List, Card,
 } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
+import { shell } from 'electron';
 import { ConnectionStatus } from '@slippi/slippi-js';
 
 import CopyToClipboard from './common/CopyToClipboard';
@@ -31,6 +32,7 @@ export default class Broadcast extends Component {
     stopBroadcast: PropTypes.func.isRequired,
     refreshBroadcasts: PropTypes.func.isRequired,
     watchBroadcast: PropTypes.func.isRequired,
+    fetchSpectateFolder: PropTypes.func.isRequired,
 
     // store data
     history: PropTypes.object.isRequired,
@@ -248,6 +250,7 @@ export default class Broadcast extends Component {
             type="text"
             inverted={true}
             label="Viewer ID"
+            value={this.state.viewerId}
             onChange={(event, p) => {
               this.setState({
                 viewerId: p.value,
@@ -267,6 +270,15 @@ export default class Broadcast extends Component {
 
   renderSpectateContent() {
     const user = firebase.auth().currentUser;
+    const spectateFolder = this.props.fetchSpectateFolder();
+    const renderSpectateFolder = <Popup
+      size="mini"
+      position="top center"
+      content="Open location"
+      trigger={
+        <strong className={styles['highlight']} onClick={() => shell.showItemInFolder(spectateFolder)}>{spectateFolder}</strong>
+      }
+    />
 
     return (
       <div>
@@ -285,6 +297,10 @@ export default class Broadcast extends Component {
             <List.Icon name="caret right"/>
             <List.Content>Once the broadcast appears, click to watch</List.Content>
           </List.Item>
+          {spectateFolder && <List.Item>
+            <List.Icon name="caret right"/>
+            <List.Content>Spectated games will saved to: {renderSpectateFolder}</List.Content>
+          </List.Item>}
         </List>
         {this.renderRefreshButton()}
         {this.renderBroadcasts()}
