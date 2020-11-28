@@ -297,10 +297,10 @@ export default class Broadcast extends Component {
             <List.Icon name="caret right"/>
             <List.Content>Once the broadcast appears, click to watch</List.Content>
           </List.Item>
-          <List.Item>
+          {spectateFolder && <List.Item>
             <List.Icon name="caret right"/>
             <List.Content>Spectated games will saved to: {renderSpectateFolder}</List.Content>
-          </List.Item>
+          </List.Item>}
         </List>
         {this.renderRefreshButton()}
         {this.renderBroadcasts()}
