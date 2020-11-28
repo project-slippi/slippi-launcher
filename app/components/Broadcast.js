@@ -250,6 +250,7 @@ export default class Broadcast extends Component {
             type="text"
             inverted={true}
             label="Viewer ID"
+            value={this.state.viewerId}
             onChange={(event, p) => {
               this.setState({
                 viewerId: p.value,
