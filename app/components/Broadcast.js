@@ -271,7 +271,7 @@ export default class Broadcast extends Component {
   renderSpectateContent() {
     const user = firebase.auth().currentUser;
     const spectateFolder = this.props.fetchSpectateFolder();
-    let renderSpectateFolder = <span>Unknown</span>;
+    let renderSpectateFolder = <strong>Unknown</strong>;
 
     if (spectateFolder) {
       renderSpectateFolder = <Popup
