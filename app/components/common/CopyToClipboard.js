@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Popup } from 'semantic-ui-react';
 import Copy from 'react-copy-to-clipboard';
+import Tooltip from './Tooltip';
 
 export default class CopyToClipboard extends Component {
   static propTypes = {
@@ -36,17 +36,14 @@ export default class CopyToClipboard extends Component {
 
   render() {
     return (
-      <Popup
-        size="mini"
-        position="top center"
-        content={this.state.copied ? 'Copied!' : 'Copy to clipboard'}
+      <Tooltip
+        title={this.state.copied ? 'Copied!' : 'Copy to clipboard'}
         onUnmount={this.reset}
-        trigger={
-          <Copy text={this.props.text} onCopy={this.onCopy}>
-            {this.props.children}
-          </Copy>
-        }
-      />
+      >
+        <Copy text={this.props.text} onCopy={this.onCopy}>
+          {this.props.children}
+        </Copy>
+      </Tooltip>
     );
   }
 }

@@ -7,7 +7,7 @@ import * as firebase from 'firebase';
 import classNames from 'classnames';
 
 import {
-  Popup, Button, Header, Segment, Icon, Tab, Input, List, Card,
+  Button, Header, Segment, Icon, Tab, Input, List, Card,
 } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
@@ -20,6 +20,7 @@ import PageWrapper from './PageWrapper';
 import DismissibleMessage from './common/DismissibleMessage';
 
 import styles from './Broadcast.scss';
+import Tooltip from './common/Tooltip';
 import Scroller from './common/Scroller';
 import SpacedGroup from './common/SpacedGroup';
 
@@ -271,14 +272,9 @@ export default class Broadcast extends Component {
   renderSpectateContent() {
     const user = firebase.auth().currentUser;
     const spectateFolder = this.props.fetchSpectateFolder();
-    const renderSpectateFolder = <Popup
-      size="mini"
-      position="top center"
-      content="Open location"
-      trigger={
-        <strong className={styles['highlight']} onClick={() => shell.showItemInFolder(spectateFolder)}>{spectateFolder}</strong>
-      }
-    />
+    const renderSpectateFolder = <Tooltip title="Open location">
+      <strong className={styles['highlight']} onClick={() => shell.showItemInFolder(spectateFolder)}>{spectateFolder}</strong>
+    </Tooltip>;
 
     return (
       <div>

@@ -2,9 +2,11 @@ import _ from 'lodash';
 import classNames from 'classnames';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Table, Image, Icon, Popup } from 'semantic-ui-react';
+import { Table, Image, Icon } from 'semantic-ui-react';
 
 import styles from './GameProfile.scss';
+
+import Tooltip from '../common/Tooltip';
 
 import getLocalImage from '../../utils/image';
 import * as timeUtils from '../../utils/time';
@@ -42,16 +44,11 @@ export default class PunishesTable extends Component {
       this.props.playFile(file, punish.startFrame)
     }
 
-    const renderPunishStart = <Popup
-      size="mini"
-      position="top center"
-      content="Play from here"
-      trigger={
-        <Table.Cell className={secondaryTextStyle} collapsing={true} onClick={playPunish}>
-          <strong style={{ cursor: 'pointer' }} className={styles['highlight']}>{start}</strong>
-        </Table.Cell>
-      }
-    />
+    const renderPunishStart = <Tooltip title="Play from here">
+      <Table.Cell className={secondaryTextStyle} collapsing={true} onClick={playPunish}>
+        <strong style={{ cursor: 'pointer' }} className={styles['highlight']}>{start}</strong>
+      </Table.Cell>
+    </Tooltip>;
 
     return (
       <Table.Row key={`${punish.playerIndex}-punish-${punish.startFrame}`}>
