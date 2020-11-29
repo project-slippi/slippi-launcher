@@ -115,7 +115,7 @@ export default class FileLoader extends Component {
     document.removeEventListener("keyup", this.shiftKeyListener);
   }
 
-  shiftKeyListener(event) {
+  shiftKeyListener = (event) => {
     if (event.key === "Shift") {
       this.setState({
         shiftPressed: Boolean(event.type === "keydown"),
