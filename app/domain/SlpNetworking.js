@@ -37,7 +37,7 @@ export default class SlpNetworking {
     this.id = SlpNetworking.connectionCount;
     this.ipAddress = settings.ipAddress;
     this.port = settings.port;
-    this.targetFolder = settings.targetFolder;
+    this.folderPath = settings.folderPath;
     this.obsIP = settings.obsIP;
     this.obsSourceName = settings.obsSourceName;
     this.obsPassword = settings.obsPassword;
@@ -53,7 +53,7 @@ export default class SlpNetworking {
     this.dolphinManager = new DolphinManager(`mirror-${this.id}`, { mode: 'mirror' });
 
     // Initialize SlpFileWriter for writting files
-    const slpSettings = {targetFolder: this.targetFolder, 
+    const slpSettings = {folderPath: this.folderPath, 
       onFileStateChange: this.fileStateChangeHandler, 
       obsIP: this.obsIP, obsSourceName: this.obsSourceName,
       obsPassword: this.obsPassword, id: this.id,
@@ -87,7 +87,7 @@ export default class SlpNetworking {
       id: this.id,
       ipAddress: this.ipAddress,
       port: this.port,
-      targetFolder: this.targetFolder,
+      folderPath: this.folderPath,
       obsIP: this.obsIP,
       obsSourceName: this.obsSourceName,
       obsPassword: this.obsPassword,
@@ -101,7 +101,7 @@ export default class SlpNetworking {
     // If data is not provided, keep old values
     this.ipAddress = newSettings.ipAddress || this.ipAddress;
     this.port = newSettings.port || this.port;
-    this.targetFolder = newSettings.targetFolder || this.targetFolder;
+    this.folderPath = newSettings.folderPath || this.folderPath;
     this.obsIP = newSettings.obsIP || this.obsIP;
     this.obsSourceName = newSettings.obsSourceName || this.obsSourceName;
     this.obsPassword = newSettings.obsPassword || this.obsPassword;

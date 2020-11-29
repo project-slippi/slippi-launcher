@@ -110,7 +110,7 @@ export default class Console extends Component {
     let hasError = false;
     const formData = this.state.formData || {};
 
-    const requiredInputs = ['ipAddress', 'targetFolder'];
+    const requiredInputs = ['ipAddress', 'folderPath'];
     requiredInputs.forEach(input => {
       const value = _.get(this.state, ['formData', input]) || settings[input];
       const err = !value ? "empty" : null;
@@ -176,10 +176,10 @@ export default class Console extends Component {
       this.setState({
         formData: {
           ...formData,
-          targetFolder: folderPath,
+          folderPath: folderPath,
           validation: {
             ...validation,
-            targetFolder: null,
+            folderPath: null,
           },
         },
       });
@@ -301,7 +301,7 @@ export default class Console extends Component {
         <Card.Content className={styles['content']}>
           <div className={styles['conn-content-grid']}>
             {this.renderLabelValue("IP Address", connection.ipAddress)}
-            {this.renderLabelValue("Target Folder", connection.targetFolder)}
+            {this.renderLabelValue("Target Folder", connection.folderPath)}
             {relayLabelValue}
             {this.renderStatusLabelValue(connection)}
           </div>
@@ -615,10 +615,10 @@ export default class Console extends Component {
             onChange={this.onFieldChange}
           />
           <ActionInput
-            name="targetFolder"
+            name="folderPath"
             label="Target Folder"
-            error={!!validation['targetFolder']}
-            value={formData.targetFolder || connectionSettings.targetFolder || ""}
+            error={!!validation['folderPath']}
+            value={formData.folderPath || connectionSettings.folderPath || ""}
             onClick={this.onBrowseFolder}
             handlerParams={[]}
             showLabelDescription={false}
@@ -717,9 +717,9 @@ export default class Console extends Component {
     ];
 
     let errorMessage = null;
-    if (validation.targetFolder === "empty" && validation.ipAddress === "empty") {
+    if (validation.folderPath === "empty" && validation.ipAddress === "empty") {
       errorMessage = "Required inputs have been left empty";
-    } else if (validation.targetFolder === "empty") {
+    } else if (validation.folderPath === "empty") {
       errorMessage = "Target folder cannot be empty. This is where your replays will go to be " +
         "read by dolphin.";
     } else if (validation.ipAddress === "empty") {
