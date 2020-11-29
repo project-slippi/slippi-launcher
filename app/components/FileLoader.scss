@@ -1,4 +1,4 @@
-@import "../colors.global.scss";
+@import '../colors.global.scss';
 
 .layout {
   display: grid;
@@ -83,15 +83,19 @@
   }
 }
 
-.select-cell {
+.select-all-icon {
   margin-left: 10px !important;
+}
+
+.select-cell {
+  margin: 6px !important;
 
   i {
-    color: #94969A;
+    color: #94969a;
   }
 
   i:hover {
-    color: #FFFFFF;
+    color: #ffffff;
     cursor: pointer;
   }
 
@@ -101,7 +105,7 @@
     }
 
     i:hover {
-      color: #FFFFFF;
+      color: #ffffff;
       cursor: pointer;
     }
   }
@@ -110,6 +114,10 @@
     margin-left: 4px;
     font-weight: bold;
     color: rgba(255, 255, 255, 0.5);
+  }
+
+  .select-content-wrapper {
+    margin-left: 10px;
   }
 }
 

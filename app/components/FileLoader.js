@@ -412,16 +412,20 @@ export default class FileLoader extends Component {
       [styles['selected']]: this.state.areAllSelected,
     });
 
+    const iconStyle = classNames({ [styles['select-all-icon']]: true})
+
+    console.log(this.state.areAllSelected);
+
     const selectAllIcon = this.state.areAllSelected ? (
-      <Icon size="big" name="check square outline" onClick={this.selectAll} className={cellStyles} />
+      <Icon size="big" name="check square outline" onClick={this.selectAll} className={iconStyle} />
     ) : (
-      <Icon size="big" name="square outline" onClick={this.selectAll} className={cellStyles} />
+      <Icon size="big" name="square outline" onClick={this.selectAll} className={iconStyle} />
     )
 
     // Generate header row
     const headerRow = (
       <Table.Row>
-        <Table.HeaderCell verticalAlign="bottom">{selectAllIcon}</Table.HeaderCell>
+        <Table.HeaderCell verticalAlign="bottom" className={cellStyles} >{selectAllIcon}</Table.HeaderCell>
         <Table.HeaderCell verticalAlign="bottom" className={styles['table-header']}>Details</Table.HeaderCell>
         <Table.HeaderCell verticalAlign="bottom" className={styles['table-header']}>Time</Table.HeaderCell>
         <Table.HeaderCell />
