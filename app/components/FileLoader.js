@@ -414,8 +414,6 @@ export default class FileLoader extends Component {
 
     const iconStyle = classNames({ [styles['select-all-icon']]: true})
 
-    console.log(this.state.areAllSelected);
-
     const selectAllIcon = this.state.areAllSelected ? (
       <Icon size="big" name="check square outline" onClick={this.selectAll} className={iconStyle} />
     ) : (
