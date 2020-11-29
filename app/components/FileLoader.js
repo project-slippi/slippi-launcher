@@ -239,7 +239,7 @@ export default class FileLoader extends Component {
 
   selectAll = () => {
     this.setState((prevState) => ({
-      selections: prevState.areAllSelected ? [] : this.props.store.files,
+      selections: prevState.areAllSelected ? [] : (this.props.store.filterReplays ? this.props.store.files : this.props.store.allFiles) || [],
       areAllSelected: !prevState.areAllSelected,
     }));
   }
@@ -300,6 +300,7 @@ export default class FileLoader extends Component {
       this.props.setFilterReplays(false);
       this.setState({
         selections: [],
+        areAllSelected: false,
       });
     }
 
