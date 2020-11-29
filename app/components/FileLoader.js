@@ -160,7 +160,7 @@ export default class FileLoader extends Component {
     // Shift clicking on an already selected file removes all consecutive selections on and after it
     // eslint-disable-next-line react/no-access-state-in-setstate
     let newSelections = [...this.state.selections];
-    const files = this.props.store.files;
+    const files = (this.props.store.filterReplays ? this.props.store.files : this.props.store.allFiles) || [];
     if (this.state.selections.indexOf(selectedFile) !== -1) {
       const startingFileIndex = files.indexOf(selectedFile);
       let numToRemove = 0;
