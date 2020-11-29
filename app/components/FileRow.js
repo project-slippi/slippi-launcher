@@ -3,7 +3,7 @@ import log from 'electron-log';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Popup, Button, Table, Icon } from 'semantic-ui-react';
+import { Button, Table, Icon } from 'semantic-ui-react';
 import { stages as stageUtils } from '@slippi/slippi-js';
 import classNames from 'classnames';
 
@@ -11,6 +11,7 @@ import styles from './FileRow.scss';
 import SpacedGroup from './common/SpacedGroup';
 import PlayerChiclet from './common/PlayerChiclet';
 import * as timeUtils from '../utils/time';
+import Tooltip from './common/Tooltip';
 
 const path = require('path');
 const shell = require('electron').shell;
@@ -110,14 +111,10 @@ export default class FileRow extends Component {
       {
         label: 'File',
         content:
-          <Popup
-            size="mini"
-            position="top center"
-            content="Open location"
-            trigger={
-              <button type="button" className={styles['reveal-file-location']} onClick={onFileLocationClick}>{this.getFileName()}</button>
-            }
-          />,
+          <Tooltip
+            title="Open location">
+            <button type="button" className={styles['reveal-file-location']} onClick={onFileLocationClick}>{this.getFileName()}</button>
+          </Tooltip>,
       },
     ];
 
