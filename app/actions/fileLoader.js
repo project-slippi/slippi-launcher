@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import fs from 'fs';
 import path from 'path';
-import SlippiGame from '@slippi/slippi-js';
+import { SlippiGame, Frames } from '@slippi/slippi-js';
 import { shell } from 'electron';
 import * as timeUtils from '../utils/time';
 
@@ -145,7 +145,7 @@ export function storeFileLoadState(fileLoadState) {
   };
 }
 
-export function playFile(file) {
+export function playFile(file, startFrame=Frames.FIRST) {
   return async (dispatch, getState) => {
     const filePath = file.fullPath;
     if (!filePath) {
@@ -154,7 +154,7 @@ export function playFile(file) {
     }
 
     const dolphinManager = getState().fileLoader.dolphinManager;
-    dolphinManager.playFile(filePath).catch((err) => {
+    dolphinManager.playFile(filePath, true, startFrame).catch((err) => {
       const errorAction = displayError(
         'fileLoader-global',
         err.message,
