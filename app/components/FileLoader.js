@@ -22,8 +22,6 @@ import PageWrapper from './PageWrapper';
 import Scroller from './common/Scroller';
 import { MIN_GAME_LENGTH_SECONDS } from '../actions/fileLoader';
 
-import keymap from '../utils/keymap'
-
 const GAME_BATCH_SIZE = 50;
 
 export default class FileLoader extends Component {
@@ -55,6 +53,7 @@ export default class FileLoader extends Component {
     this.state = {
       selections: [],
       areAllSelected: false,
+      shiftPressed: false,
     };
   }
 
@@ -78,6 +77,10 @@ export default class FileLoader extends Component {
 
       this.refTableScroll.scrollTo(xPos, yPos);
     }
+
+    // Listen for the shift key
+    document.addEventListener("keydown", this.shiftKeyListener);
+    document.addEventListener("keyup", this.shiftKeyListener);
   }
 
   componentDidUpdate(prevProps) {
@@ -106,6 +109,18 @@ export default class FileLoader extends Component {
     });
 
     this.props.dismissError('fileLoader-global');
+
+    // Stop listening for the shift key
+    document.removeEventListener("keydown", this.shiftKeyListener);
+    document.removeEventListener("keyup", this.shiftKeyListener);
+  }
+
+  shiftKeyListener(event) {
+    if (event.key === "Shift") {
+      this.setState({
+        shiftPressed: Boolean(event.type === "keydown"),
+      });
+    }
   }
 
   refTableScroll = null;
@@ -116,8 +131,7 @@ export default class FileLoader extends Component {
 
   onSelect = (selectedFile, fileIndex) => {
     // shift clicking has gmail behavior
-    console.log(keymap.Shift);
-    if (keymap.Shift) {
+    if (this.state.shiftPressed) {
       this.handleShiftSelect(selectedFile, fileIndex);
       return;
     }
