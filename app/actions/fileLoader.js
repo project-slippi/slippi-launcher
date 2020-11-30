@@ -236,6 +236,33 @@ export function setFilterReplays(val) {
   }
 }
 
+
+function parseStats(game, replayPath, name) {
+  const extension = path.extname(name);
+  const statsName = `${path.basename(name,extension)}_stats.json`;
+  const dir = path.join(replayPath, 'stats')
+  if (!fs.existsSync(dir)){
+    fs.mkdirSync(dir);
+  }
+  const statsFile = path.join(dir, statsName);
+  let parsedGame;
+
+  if (!fs.existsSync(statsFile)){
+    parsedGame = {
+      metadata: game.getMetadata(),
+      settings: game.getSettings(),
+      stats: game.getStats(),
+    }
+    fs.writeFileSync(statsFile, JSON.stringify(parsedGame))
+  } else {
+    parsedGame =  JSON.parse(fs.readFileSync(statsFile));
+  }
+  parsedGame.getMetadata = () => parsedGame.metadata
+  parsedGame.getSettings = () => parsedGame.settings
+  parsedGame.getStats = () => parsedGame.stats
+  return parsedGame
+}
+
 async function loadFilesInFolder(folderPath) {
   const readdirPromise = new Promise((resolve, reject) => {
     fs.readdir(folderPath, { withFileTypes: true }, (err, dirents) => {
@@ -264,6 +291,7 @@ async function loadFilesInFolder(folderPath) {
       // Pre-load settings here
       try {
         game = new SlippiGame(fullPath);
+        game = parseStats(game, folderPath, fileName)
 
         // Preload settings
         const settings = game.getSettings();
