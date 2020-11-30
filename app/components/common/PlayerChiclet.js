@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image } from 'semantic-ui-react';
 import _ from 'lodash';
 import classNames from 'classnames';
 import * as playerUtils from '../../utils/players';
-import getLocalImage from '../../utils/image';
 import SpacedGroup from './SpacedGroup';
 
 import styles from './PlayerChiclet.scss';
+import StockCard from './stocks'
 
 export default class PlayerChiclet extends Component {
   static propTypes = {
@@ -31,16 +30,7 @@ export default class PlayerChiclet extends Component {
 
   renderCharacterBadge(player) {
     return (
-      <Image
-        key={`player-character-icon-${player.playerIndex}`}
-        className={styles['character-image']}
-        src={getLocalImage(
-          `stock-icon-${player.characterId}-${player.characterColor}.png`
-        )}
-        inline={true}
-        height={18}
-        width={18}
-      />
+      <StockCard game={this.props.game} playerIndex={player.playerIndex} />
     );
   }
 
