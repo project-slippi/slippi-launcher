@@ -11,6 +11,7 @@ import styles from './FileRow.scss';
 import SpacedGroup from './common/SpacedGroup';
 import PlayerChiclet from './common/PlayerChiclet';
 import * as timeUtils from '../utils/time';
+import { getPlayerName } from '../utils/players'
 
 const path = require('path');
 const shell = require('electron').shell;
@@ -21,6 +22,7 @@ export default class FileRow extends Component {
     fileIndex: PropTypes.number.isRequired,
     playFile: PropTypes.func.isRequired,
     setStatsGamePage: PropTypes.func.isRequired,
+    setPlayerProfilePage: PropTypes.func.isRequired,
     onSelect: PropTypes.func.isRequired,
     selectedOrdinal: PropTypes.number.isRequired,
   };
@@ -62,6 +64,11 @@ export default class FileRow extends Component {
   viewStats = (e) => {
     e.stopPropagation();
     this.props.setStatsGamePage(this.props.fileIndex);
+  };
+
+  viewPlayer = (e, player) => {
+    e.stopPropagation();
+    this.props.setPlayerProfilePage(player);
   };
 
   generateSelectCell() {
@@ -192,13 +199,15 @@ export default class FileRow extends Component {
     teams.forEach((team, idx) => {
       // Add player chiclets for all the players on the team
       team.forEach(player => {
+        const tag = getPlayerName(game, player.playerIndex)
         elements.push(
-          <PlayerChiclet
-            key={`player-${player.playerIndex}`}
-            game={game}
-            playerIndex={player.playerIndex}
-            showContainer={true}
-          />
+          <Link to="/player" key={`player-${player.playerIndex}`} className={styles['bound-link']} replace={false} onClick={e=> this.viewPlayer(e, tag)} >
+            <PlayerChiclet
+              game={game}
+              playerIndex={player.playerIndex}
+              showContainer={true}
+            />
+          </Link>
         );
       });
 

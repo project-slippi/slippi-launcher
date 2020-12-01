@@ -33,6 +33,7 @@ export default class FileLoader extends Component {
     storeScrollPosition: PropTypes.func.isRequired,
     storeFileLoadState: PropTypes.func.isRequired,
     setStatsGamePage: PropTypes.func.isRequired,
+    setPlayerProfilePage: PropTypes.func.isRequired,
     deleteSelections: PropTypes.func.isRequired,
     setFilterReplays: PropTypes.func.isRequired,
     
@@ -354,6 +355,7 @@ export default class FileLoader extends Component {
           file={file}
           playFile={this.props.playFile}
           setStatsGamePage={this.props.setStatsGamePage}
+          setPlayerProfilePage={this.props.setPlayerProfilePage}
           onSelect={this.onSelect}
           selectedOrdinal={this.state.selections.indexOf(file) + 1}
           fileIndex={fileIndex++}

@@ -14,6 +14,7 @@ export const LOAD_ROOT_FOLDER = 'LOAD_ROOT_FOLDER';
 export const CHANGE_FOLDER_SELECTION = 'CHANGE_FOLDER_SELECTION';
 export const LOAD_FILES_IN_FOLDER = 'LOAD_FILES_IN_FOLDER';
 export const SET_STATS_GAME_PAGE = 'SET_STATS_GAME_PAGE';
+export const SET_PLAYER_PROFILE_PAGE = 'SET_PLAYER_PROFILE_PAGE';
 export const STORE_SCROLL_POSITION = 'STORE_SCROLL_POSITION';
 export const STORE_FILE_LOAD_STATE = 'STORE_FILE_LOAD_STATE';
 export const SET_FILTER_REPLAYS = 'SET_FILTER_REPLAYS';
@@ -204,6 +205,16 @@ export function setStatsGamePage(index) {
     gameProfileLoad(files[statsGameIndex].game)(dispatch);
   };
 }
+
+export function setPlayerProfilePage(player) { 
+  return (dispatch, getState) => { // eslint-disable-line no-unused-vars
+    dispatch({
+      type: SET_PLAYER_PROFILE_PAGE,
+      payload: { player: player },
+    });
+  };
+}
+
 
 export function deleteSelections(selections) {
   return (dispatch, getState) => {
