@@ -10,6 +10,7 @@ import styles from './GameProfile.scss';
 import Scroller from '../common/Scroller';
 import OpponentTable from './OpponentTable';
 import ComboTable from './ComboTable';
+import GlobalTable from './GlobalTable';
 
 export default class PlayerProfile extends Component {
   static propTypes = {
@@ -37,6 +38,12 @@ export default class PlayerProfile extends Component {
         <div className="main-padding">
           <PageHeader icon="game" text={this.props.player} history={this.props.history} />
           <Scroller topOffset={scrollerOffset}>
+            <Segment basic={true}>
+              <GlobalTable
+                games={this.props.games} 
+                playerTag={this.props.player} 
+              />
+            </Segment>
             <Segment basic={true}>
               <div className={styles['three-column-main']}>
                 <PlayerCharacterTable 

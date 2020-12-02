@@ -1,5 +1,7 @@
 import _ from 'lodash';
 
+import * as timeUtils from '../utils/time';
+
 import { getPlayerName, getPlayerNamesByIndex } from './players'
 
 export function getPlayerStocks(game, playerIndex) {
@@ -117,3 +119,47 @@ export function getTopPunishes(games, playerTag) {
   return _.orderBy(aggs, x => -x.moves.length)
 }
 
+export function getGlobalStats(games, playerTag) {
+  const len = games.length
+  return games.reduce((a, game) => {
+    const agg = a // because es-lint can be dumb
+    const index = getGamePlayerIndex(game, playerTag)
+    const stats = game.getStats()
+
+    const pOverall = stats.overall[index]
+    const oOverall = stats.overall[1-index]
+
+
+    if (getGameWinner(game) === index) agg.wins += 1
+    const opp = getPlayerName(game, 1-index)
+    if (!agg.opponents.includes(opp)) agg.opponents.push(opp)
+    agg.time += timeUtils.convertFrameCountToDurationString(stats.lastFrame)
+    agg.kills += pOverall.killCount
+    agg.deaths += oOverall.killCount
+    agg.damageDone += pOverall.totalDamage
+    agg.damageReceived += oOverall.totalDamage
+    agg.conversionRate += pOverall.successfulConversions.ratio / len
+    agg.damagePerOpening += pOverall.damagePerOpening.ratio / len
+    agg.openingsPerKill += pOverall.openingsPerKill.ratio / len
+    agg.neutralWinRatio += pOverall.neutralWinRatio.ratio / len
+
+    agg.inputsPerMinute += pOverall.inputsPerMinute.ratio / len  
+    agg.digitalInputsPerMinute += pOverall.digitalInputsPerMinute.ratio / len  
+    return agg
+  }, {
+    count: games.length,
+    wins: 0,
+    opponents: [],
+    time: 0,
+    kills: 0,
+    deaths: 0,
+    damageDone: 0,
+    damageReceived: 0,
+    conversionRate: 0,
+    openingsPerKill: 0,
+    damagePerOpening: 0,
+    neutralWinRatio: 0,
+    inputsPerMinute: 0,
+    digitalInputsPerMinute: 0,
+  })
+}
