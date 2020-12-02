@@ -48,3 +48,31 @@ export function getStageName(game) {
   }
 }
 
+export function getPlayerCharacterCounts(games, playerTag, isOpponent) {
+  let aggs = games.map(game => {
+    let index = getGamePlayerIndex(game, playerTag)
+    if (isOpponent) {
+      index = 1 - index
+    }
+    return {
+      charId: _.get(game.getSettings().players, index).characterId,
+      won: isOpponent ? index !== getGameWinner(game) : index === getGameWinner(game),
+      player: getPlayerName(game, index),
+    }
+  }).reduce((aggs, x) => {
+    aggs[x.charId] = aggs[x.charId] || {count: 0, won: 0, players: []}
+    aggs[x.charId].count += 1
+    if (x.won) {
+      aggs[x.charId].won += 1
+    }
+    if (!aggs[x.charId].players.includes(x.player)) {
+      aggs[x.charId].players.push(x.player)
+    }
+    return aggs;
+  }, {});
+
+  aggs =  _.map(aggs, (value, key) => [key, value])
+  aggs =  _.sortBy(aggs, v => -v[1].count)
+  return aggs
+}
+
