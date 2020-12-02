@@ -247,7 +247,7 @@ export default class DolphinManager extends EventEmitter {
     ];
 
     if (this.settings.mode === "mirror") {
-      args = args.concat(['-hs']);
+      args = args.concat(['--hide-seekbar']);
     }
 
     if (startPlayback) {
