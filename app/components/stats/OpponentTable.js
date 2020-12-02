@@ -2,6 +2,7 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Image, Table } from 'semantic-ui-react';
+import { Link } from 'react-router-dom';
 
 import classNames from 'classnames';
 
@@ -9,12 +10,13 @@ import styles from './GameProfile.scss';
 import { getOpponentsSummary } from '../../utils/game';
 import { getStockIconImage } from '../common/stocks'
 
-const columnCount = 5;
+const columnCount = 4;
 
 export default class OpponentTable extends Component {
   static propTypes = {
     games: PropTypes.array.isRequired,
     playerTag: PropTypes.string.isRequired,
+    setPlayerProfilePage: PropTypes.func.isRequired,
   };
 
   renderHeaderPlayer() {
@@ -62,7 +64,7 @@ export default class OpponentTable extends Component {
 
     return (
       <Table.Row key={`${playerTag}-${agg.count}`}>
-        <Table.Cell>{playerTag}</Table.Cell>
+        <Table.Cell><Link to="/player" onClick={() => this.props.setPlayerProfilePage(playerTag)}>{playerTag}</Link></Table.Cell>
         <Table.Cell>{agg.count}</Table.Cell>
         <Table.Cell>{(agg.won/agg.count*100).toFixed(0)}%</Table.Cell>
         <Table.Cell>

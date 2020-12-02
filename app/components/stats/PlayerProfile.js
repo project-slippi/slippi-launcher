@@ -53,6 +53,7 @@ export default class PlayerProfile extends Component {
                   games={this.props.games} 
                   playerTag={this.props.player} 
                   opponent={ true }
+                  setPlayerProfilePage={this.props.setPlayerProfilePage}
                 />
               </div>
             </Segment>
