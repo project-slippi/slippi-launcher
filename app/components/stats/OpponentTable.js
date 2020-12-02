@@ -6,7 +6,7 @@ import { Image, Table } from 'semantic-ui-react';
 import classNames from 'classnames';
 
 import styles from './GameProfile.scss';
-import { getOpponensSummary } from '../../utils/game';
+import { getOpponentsSummary } from '../../utils/game';
 import { getStockIconImage } from '../common/stocks'
 
 const columnCount = 5;
@@ -40,7 +40,7 @@ export default class OpponentTable extends Component {
   }
 
   renderRows() {
-    let aggs = getOpponensSummary(this.props.games, this.props.playerTag)
+    let aggs = getOpponentsSummary(this.props.games, this.props.playerTag)
     aggs = aggs.slice(0, 9)
     return _.map(aggs, v => this.generateOpponentRow(v[0], v[1]))
   }
