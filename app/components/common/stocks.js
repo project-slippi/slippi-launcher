@@ -6,32 +6,40 @@ import { Image } from 'semantic-ui-react';
 
 import styles from '../stats/GameProfile.scss';
 import getLocalImage from '../../utils/image';
+import { getLastPlayerStock } from '../../utils/game';
 
-const StockCard = ({game, playerIndex}) => {
+
+/*
+ * These icons are used everywhere so it makes sense to keep them cached 
+ * instead of keep reloading the file. The FileLoader table particularly 
+ * suffers quite a bit when scrolling as FileRows get loaded dynamically
+ */
+const icons = {}
+export const getStockIconImage = (charId, color) => {
+  if (!icons[charId]) icons[charId] = []
+  if (!icons[charId][color]) icons[charId][color] = getLocalImage(`stock-icon-${charId}-${color}.png`)
+  return icons[charId][color]
+}
+
+export const StockCard = ({game, playerIndex}) => {
   const gameSettings = game.getSettings();
   const players = gameSettings.players || [];
   const playersByIndex = _.keyBy(players, 'playerIndex');
   const player = playersByIndex[playerIndex];
 
-  const stocks = _.get(game.getStats(), 'stocks')
-  let playerStocks = _.groupBy(stocks, 'playerIndex')[playerIndex] || []
-  playerStocks= playerStocks.filter(s => s.endFrame !== null)
-  const count = playerStocks.length > 0 ? playerStocks[playerStocks.length - 1].count : 4
-  const totalStocks = player.startStocks;
-  const currentStocks = count - 1;
+  let lastStock = getLastPlayerStock(game, playerIndex)
+  let count = lastStock.endPercent == null ? lastStock.count : lastStock.count - 1
 
-  const stockIcons = _.range(1, totalStocks + 1).map(stockNum => {
+  const stockIcons = _.range(1, player.startStocks + 1).map(stockNum => {
     const imgClasses = classNames({
-      [styles['lost-stock']]: stockNum > currentStocks,
+      [styles['lost-stock']]: stockNum > count,
     });
 
     return (
       <Image
         key={`stock-image-${playerIndex}-${stockNum}`}
         className={imgClasses}
-        src={getLocalImage(
-          `stock-icon-${player.characterId}-${player.characterColor}.png`
-        )}
+        src={getStockIconImage(player.characterId, player.characterColor)}
         height={20}
         width={20}
       />
@@ -52,5 +60,3 @@ StockCard.propTypes = {
   game: PropTypes.object.isRequired,
   playerIndex: PropTypes.number.isRequired,
 };
-
-export default StockCard

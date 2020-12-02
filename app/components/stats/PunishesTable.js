@@ -6,9 +6,9 @@ import { Table, Image, Icon } from 'semantic-ui-react';
 
 import styles from './GameProfile.scss';
 
-import getLocalImage from '../../utils/image';
 import * as timeUtils from '../../utils/time';
 import * as numberUtils from '../../utils/number';
+import { getStockIconImage } from '../common/stocks'
 
 const columnCount = 6;
 
@@ -80,9 +80,7 @@ export default class PunishesTable extends Component {
         <Image
           key={`stock-image-${stock.playerIndex}-${stockNum}`}
           className={imgClasses}
-          src={getLocalImage(
-            `stock-icon-${player.characterId}-${player.characterColor}.png`
-          )}
+          src={getStockIconImage(player.characterId, player.characterColor)}
           height={20}
           width={20}
         />

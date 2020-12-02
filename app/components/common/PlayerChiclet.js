@@ -6,7 +6,7 @@ import * as playerUtils from '../../utils/players';
 import SpacedGroup from './SpacedGroup';
 
 import styles from './PlayerChiclet.scss';
-import StockCard from './stocks'
+import { StockCard } from './stocks'
 
 export default class PlayerChiclet extends Component {
   static propTypes = {

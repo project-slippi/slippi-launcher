@@ -23,11 +23,11 @@ import PunishesTable from './PunishesTable';
 
 import styles from './GameProfile.scss';
 
-import getLocalImage from '../../utils/image';
 import * as timeUtils from '../../utils/time';
 import * as playerUtils from '../../utils/players';
 import PageWrapper from '../PageWrapper';
 import Scroller from '../common/Scroller';
+import { getStockIconImage } from '../common/stocks'
 
 export default class GameProfile extends Component {
   static propTypes = {
@@ -219,9 +219,7 @@ export default class GameProfile extends Component {
         </Header>
         <Image
           className={styles['character-image']}
-          src={getLocalImage(
-            `stock-icon-${player.characterId}-${player.characterColor}.png`
-          )}
+          src={getStockIconImage(player.characterId, player.characterColor)}
         />
       </Segment>
     );
@@ -391,9 +389,7 @@ export default class GameProfile extends Component {
     return (
       <div className={rootDivClasses}>
         <Image
-          src={getLocalImage(
-            `stock-icon-${player.characterId}-${player.characterColor}.png`
-          )}
+          src={getStockIconImage(player.characterId, player.characterColor)}
           height={24}
           width={24}
         />
