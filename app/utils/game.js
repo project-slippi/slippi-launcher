@@ -76,3 +76,33 @@ export function getPlayerCharacterCounts(games, playerTag, isOpponent) {
   return aggs
 }
 
+export function getOpponentsSummary(games, playerTag) {
+  let aggs = games.map(game => {
+    let index = 1 - getGamePlayerIndex(game, playerTag)
+    return {
+      name: getPlayerName(game, index),
+      won: index !== getGameWinner(game),
+      charId: _.get(game.getSettings().players, index).characterId,
+    }
+  }).reduce((agg, x) => {
+    agg[x.name] = agg[x.name] || {
+      count: 0,
+      won: 0,
+      charIds: [],
+    }
+    agg[x.name].count += 1
+    if (x.won) {
+      agg[x.name].won += 1
+    }
+    if (!agg[x.name].charIds.includes(x.charId)) {
+      agg[x.name].charIds.push(x.charId)
+    }
+    return agg;
+  }, {});
+
+  aggs = _.map(aggs, (value, key) => [key, value])
+  aggs = _.sortBy(aggs, v => -v[1].count)
+  getTopPunishes(games, playerTag)
+  return aggs;
+}
+
