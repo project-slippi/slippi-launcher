@@ -7,6 +7,7 @@ import GameProfilePage from './containers/GameProfilePage';
 import PlayerProfilePage from './containers/PlayerProfilePage';
 import SettingsPage from './containers/SettingsPage';
 import ConsolePage from './containers/ConsolePage';
+import BroadcastPage from './containers/BroadcastPage';
 
 export default () => (
   <App>
@@ -15,6 +16,7 @@ export default () => (
       <Route path="/settings" component={SettingsPage} />
       <Route path="/game" component={GameProfilePage} />
       <Route path="/player" component={PlayerProfilePage} />
+      <Route path="/broadcast" component={BroadcastPage} />
       <Route path="/console" component={ConsolePage} />
       <Route path="/" component={HomePage} />
     </Switch>

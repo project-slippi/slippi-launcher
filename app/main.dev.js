@@ -26,6 +26,7 @@ import { sudoRemovePath } from './utils/sudoExec';
 
 // Set up AppUpdater
 log.transports.file.level = 'info';
+// log.transports.file.maxSize = 0; // Remove max log size, default is 1 MB (1048576)
 autoUpdater.logger = log;
 autoUpdater.autoInstallOnAppQuit = false;
 log.info('App starting...');
@@ -57,11 +58,11 @@ const handlePreloadLogic = async () => {
   if (isProd && (platform === "win32" || platform === "darwin" || process.env.APPIMAGE)) {
     log.info("Checking if Dolphin path has been moved...");
 
-    const appPath = app.getAppPath();
+    const appPath = process.env.APPDIR || app.getAppPath();
     const exePlatformPaths = {
       "win32": path.join(appPath, "../../Slippi Launcher.exe"),
       "darwin": path.join(appPath, "../../MacOS/Slippi Launcher"),
-      "linux": path.join(process.env.APPDIR, "AppRun"),
+      "linux": path.join(appPath, "AppRun"),
     };
 
     // If on production and mac/windows/appimage, let's see if this is a fresh install
@@ -170,7 +171,7 @@ const handlePreloadLogic = async () => {
     // Handle the dolphin INI file being in different paths per platform
     switch (platform) {
     case "darwin": // osx
-      dolphinPath = isDev ? "./app/dolphin-dev/osx/Dolphin.app/Contents/Resources/User" : path.join(dolphinPath, "Dolphin.app", "Contents", "Resources", "User");
+      dolphinPath = isDev ? "./app/dolphin-dev/osx/Slippi Dolphin.app/Contents/Resources/User" : path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "Resources", "User");
       break;
     case "win32": // windows
       dolphinPath = isDev ? "./app/dolphin-dev/windows/User" : path.join(dolphinPath, "User");

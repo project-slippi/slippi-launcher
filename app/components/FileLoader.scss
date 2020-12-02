@@ -1,4 +1,4 @@
-@import "../colors.global.scss";
+@import '../colors.global.scss';
 
 .layout {
   display: grid;
@@ -28,6 +28,7 @@
 }
 
 .file-table {
+  user-select: none;
   min-width: 600px;
 }
 
@@ -80,4 +81,46 @@
     cursor: pointer;
     text-decoration: underline;
   }
+}
+
+.select-all-icon {
+  margin-left: 10px !important;
+}
+
+.select-cell {
+  margin: 6px !important;
+
+  i {
+    color: #94969a;
+  }
+
+  i:hover {
+    color: #ffffff;
+    cursor: pointer;
+  }
+
+  &.selected {
+    i {
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    i:hover {
+      color: #ffffff;
+      cursor: pointer;
+    }
+  }
+
+  .pos-text {
+    margin-left: 4px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .select-content-wrapper {
+    margin-left: 10px;
+  }
+}
+
+.table-header {
+  font-size: 1.2em;
 }

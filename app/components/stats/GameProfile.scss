@@ -116,6 +116,15 @@ $header-height: 97px;
   color: rgba(255, 255, 255, 0.6) !important;
 }
 
+.highlight {
+  color: $foreground;
+
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 .highlight-text {
   color: $primary-yellow;
   font-weight: bolder;

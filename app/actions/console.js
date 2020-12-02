@@ -58,7 +58,7 @@ export function connectionStateChanged() {
   return {
     type: CONNECTION_STATE_CHANGED,
     payload: {},
-  }
+  };
 }
 
 export function startMirroring(connection) {
@@ -71,6 +71,6 @@ export function startMirroring(connection) {
       );
 
       dispatch(errorAction);
-    });;
+    });
   };
 }

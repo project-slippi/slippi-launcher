@@ -12,6 +12,7 @@ import SpacedGroup from './common/SpacedGroup';
 import PlayerChiclet from './common/PlayerChiclet';
 import * as timeUtils from '../utils/time';
 import { getPlayerName } from '../utils/players'
+import Tooltip from './common/Tooltip';
 
 const path = require('path');
 const shell = require('electron').shell;
@@ -58,7 +59,7 @@ export default class FileRow extends Component {
   };
 
   onSelect = () => {
-    this.props.onSelect(this.props.file);
+    this.props.onSelect(this.props.file, this.props.fileIndex);
   };
 
   viewStats = (e) => {
@@ -116,7 +117,11 @@ export default class FileRow extends Component {
       },
       {
         label: 'File',
-        content: <button type="button" className={styles['reveal-file-location']} onClick={onFileLocationClick}>{this.getFileName()}</button>,
+        content:
+          <Tooltip
+            title="Open location">
+            <button type="button" className={styles['reveal-file-location']} onClick={onFileLocationClick}>{this.getFileName()}</button>
+          </Tooltip>,
       },
     ];
 

@@ -3,10 +3,13 @@ import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import Root from './containers/Root';
 import { configureStore, history } from './store/configureStore';
+import { initializeFirebase } from './domain/FirebaseAuthentication';
 import './imports.global.css';
 import './app.global.scss';
 
 export const store = configureStore(); //eslint-disable-line
+
+initializeFirebase();
 
 render(
   <AppContainer>

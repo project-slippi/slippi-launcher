@@ -21,7 +21,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import _ from 'lodash';
 
-import { ConsoleConnection, ConnectionStatus } from '@slippi/slippi-js';
+import { Ports, DolphinConnection, ConsoleConnection, ConnectionStatus } from '@slippi/slippi-js';
 
 import { store } from '../index';
 import { connectionStateChanged } from '../actions/console';
@@ -37,7 +37,7 @@ export default class SlpNetworking {
     this.id = SlpNetworking.connectionCount;
     this.ipAddress = settings.ipAddress;
     this.port = settings.port;
-    this.targetFolder = settings.targetFolder;
+    this.folderPath = settings.folderPath;
     this.obsIP = settings.obsIP;
     this.obsSourceName = settings.obsSourceName;
     this.obsPassword = settings.obsPassword;
@@ -45,17 +45,15 @@ export default class SlpNetworking {
     this.isRelaying = settings.isRelaying;
 
     this.isMirroring = false;
-    this.connectionsByPort = [];
-    this.clientsByPort = [];
+    this.connections = [];
     this.connectionStatus = ConnectionStatus.DISCONNECTED;
     this.connDetails = this.getDefaultConnDetails();
-    this.consoleConn = null;
 
     // A connection can mirror its received gameplay
     this.dolphinManager = new DolphinManager(`mirror-${this.id}`, { mode: 'mirror' });
 
     // Initialize SlpFileWriter for writting files
-    const slpSettings = {targetFolder: this.targetFolder, 
+    const slpSettings = {folderPath: this.folderPath, 
       onFileStateChange: this.fileStateChangeHandler, 
       obsIP: this.obsIP, obsSourceName: this.obsSourceName,
       obsPassword: this.obsPassword, id: this.id,
@@ -89,7 +87,7 @@ export default class SlpNetworking {
       id: this.id,
       ipAddress: this.ipAddress,
       port: this.port,
-      targetFolder: this.targetFolder,
+      folderPath: this.folderPath,
       obsIP: this.obsIP,
       obsSourceName: this.obsSourceName,
       obsPassword: this.obsPassword,
@@ -103,7 +101,7 @@ export default class SlpNetworking {
     // If data is not provided, keep old values
     this.ipAddress = newSettings.ipAddress || this.ipAddress;
     this.port = newSettings.port || this.port;
-    this.targetFolder = newSettings.targetFolder || this.targetFolder;
+    this.folderPath = newSettings.folderPath || this.folderPath;
     this.obsIP = newSettings.obsIP || this.obsIP;
     this.obsSourceName = newSettings.obsSourceName || this.obsSourceName;
     this.obsPassword = newSettings.obsPassword || this.obsPassword;
@@ -116,34 +114,61 @@ export default class SlpNetworking {
   }
 
   connect() {
+    this.setStatus(ConnectionStatus.CONNECTING);
     // Update dolphin manager settings
     const connectionSettings = this.getSettings();
     this.slpFileWriter.updateSettings(connectionSettings);
     this.slpFileWriter.connectOBS();
     this.dolphinManager.updateSettings(connectionSettings);
 
-    console.log("Connecting");
-    if (!this.consoleConn) this.consoleConn = new ConsoleConnection();
-    this.consoleConn.connect(this.ipAddress, this.port);
-    this.consoleConn.on("handshake", (details) => {
-      console.log(details);
-      this.connDetails = {...this.connDetails, ...details};
-      console.log(this.connDetails);
+    if (this.port && this.port !== Ports.LEGACY && this.port !== Ports.DEFAULT) {
+      // If port is manually set, use that port. Don't do this if the port is set to legacy as
+      // somebody might have accidentally set it to that and they would encounter issues with
+      // the new Nintendont
+      this.connectOnPort(this.port);
+    } else {
+      // Try both the default and legacy ports
+      this.connectOnPort(Ports.DEFAULT);
+      this.connectOnPort(Ports.LEGACY);
+
+      // Also try to connect as a Dolphin instance
+      this.connectOnPort(Ports.DEFAULT, "dolphin");
+    }
+  }
+
+  connectOnPort(port, connectionType="console") {
+    let conn;
+    if (connectionType === "console") {
+      conn = new ConsoleConnection();
+    } else {
+      conn = new DolphinConnection();
+    }
+    // Only add the event listeners once we've connected
+    conn.once("connect", () => {
+      conn.on("handshake", (details) => {
+        console.log(details);
+        this.connDetails = {...this.connDetails, ...details};
+        console.log(this.connDetails);
+      });
+      conn.on("statusChange", (status) => this.setStatus(status));
+      conn.on("data", (data) => this.handleReplayData(data));
     });
-    this.consoleConn.on("statusChange", (status) => {
-      this.connectionStatus = status;
-      this.forceConsoleUiUpdate();
-    });
-    this.consoleConn.on("data", (data) => this.handleReplayData(data));
+    this.connections.push(conn);
+    // Actually try to connect
+    console.log(`Connecting to: ${this.ipAddress}:${port}`);
+    conn.connect(this.ipAddress, port);
   }
 
   disconnect() {
     console.log("Disconnect request");
 
     this.slpFileWriter.disconnectOBS();
-    this.consoleConn.disconnect();
+    this.connections.forEach((conn) => {
+      conn.disconnect();
+    });
+    this.connections = [];
 
-    this.forceConsoleUiUpdate();
+    this.setStatus(ConnectionStatus.DISCONNECTED);
   }
 
   handleReplayData(data) {
@@ -159,6 +184,13 @@ export default class SlpNetworking {
     } finally {
       console.log("Mirroring end");
       this.isMirroring = false;
+      this.forceConsoleUiUpdate();
+    }
+  }
+
+  setStatus(status) {
+    if (this.connectionStatus !== status) {
+      this.connectionStatus = status;
       this.forceConsoleUiUpdate();
     }
   }

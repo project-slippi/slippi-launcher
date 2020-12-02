@@ -12,6 +12,7 @@ import {
   Loader,
   Visibility,
 } from 'semantic-ui-react';
+import classNames from 'classnames';
 import styles from './FileLoader.scss';
 import FileRow from './FileRow';
 import DismissibleMessage from './common/DismissibleMessage';
@@ -52,6 +53,8 @@ export default class FileLoader extends Component {
 
     this.state = {
       selections: [],
+      areAllSelected: false,
+      shiftPressed: false,
     };
   }
 
@@ -75,6 +78,10 @@ export default class FileLoader extends Component {
 
       this.refTableScroll.scrollTo(xPos, yPos);
     }
+
+    // Listen for the shift key
+    document.addEventListener("keydown", this.shiftKeyListener);
+    document.addEventListener("keyup", this.shiftKeyListener);
   }
 
   componentDidUpdate(prevProps) {
@@ -103,6 +110,18 @@ export default class FileLoader extends Component {
     });
 
     this.props.dismissError('fileLoader-global');
+
+    // Stop listening for the shift key
+    document.removeEventListener("keydown", this.shiftKeyListener);
+    document.removeEventListener("keyup", this.shiftKeyListener);
+  }
+
+  shiftKeyListener = (event) => {
+    if (event.key === "Shift") {
+      this.setState({
+        shiftPressed: Boolean(event.type === "keydown"),
+      });
+    }
   }
 
   refTableScroll = null;
@@ -111,7 +130,13 @@ export default class FileLoader extends Component {
     this.refTableScroll = element;
   };
 
-  onSelect = selectedFile => {
+  onSelect = (selectedFile, fileIndex) => {
+    // shift clicking has gmail behavior
+    if (this.state.shiftPressed) {
+      this.handleShiftSelect(selectedFile, fileIndex);
+      return;
+    }
+
     const newSelections = [];
 
     let wasSeen = false;
@@ -128,6 +153,45 @@ export default class FileLoader extends Component {
 
     this.setState({
       selections: newSelections,
+      areAllSelected: newSelections.length === this.props.store.files.length,
+    });
+  };
+
+  handleShiftSelect = (selectedFile, fileIndex) => {
+    // Shift clicking on an already selected file removes all consecutive selections on and after it
+    // eslint-disable-next-line react/no-access-state-in-setstate
+    let newSelections = [...this.state.selections];
+    const files = (this.props.store.filterReplays ? this.props.store.files : this.props.store.allFiles) || [];
+    if (this.state.selections.indexOf(selectedFile) !== -1) {
+      const startingFileIndex = files.indexOf(selectedFile);
+      let numToRemove = 0;
+      for (let i = startingFileIndex; i < files.length; i++) {
+        if (this.state.selections.indexOf(files[i]) === -1) {
+          break;
+        }
+        numToRemove++;
+      }
+      newSelections.splice(this.state.selections.indexOf(selectedFile), numToRemove);
+      this.setState({
+        selections: newSelections,
+        areAllSelected: newSelections.length === this.props.store.files.length,
+      });
+      return;
+    }
+
+    // Shift clicking on a not selected file selects all files before it up to another already selected file
+    let newFiles = [];
+    for (let i = fileIndex; i >= 0; i--) {
+      if (this.state.selections.indexOf(files[i]) !== -1) {
+        break;
+      }
+      newFiles.push(files[i]);
+    }
+    newFiles = newFiles.reverse();
+    newSelections = [...this.state.selections, ...newFiles];
+    this.setState({
+      selections: newSelections,
+      areAllSelected: newSelections.length === this.props.store.files.length,
     });
   };
 
@@ -163,6 +227,7 @@ export default class FileLoader extends Component {
   queueClear = () => {
     this.setState({
       selections: [],
+      areAllSelected: false,
     });
   };
 
@@ -172,6 +237,13 @@ export default class FileLoader extends Component {
       selections: [],
     });
   };
+
+  selectAll = () => {
+    this.setState((prevState) => ({
+      selections: prevState.areAllSelected ? [] : (this.props.store.filterReplays ? this.props.store.files : this.props.store.allFiles) || [],
+      areAllSelected: !prevState.areAllSelected,
+    }));
+  }
 
   renderGlobalError() {
     const errors = this.props.errors || {};
@@ -229,6 +301,7 @@ export default class FileLoader extends Component {
       this.props.setFilterReplays(false);
       this.setState({
         selections: [],
+        areAllSelected: false,
       });
     }
 
@@ -336,12 +409,25 @@ export default class FileLoader extends Component {
       return this.renderEmptyLoader();
     }
 
+    const cellStyles = classNames({
+      [styles['select-cell']]: true,
+      [styles['selected']]: this.state.areAllSelected,
+    });
+
+    const iconStyle = classNames({ [styles['select-all-icon']]: true})
+
+    const selectAllIcon = this.state.areAllSelected ? (
+      <Icon size="big" name="check square outline" onClick={this.selectAll} className={iconStyle} />
+    ) : (
+      <Icon size="big" name="square outline" onClick={this.selectAll} className={iconStyle} />
+    )
+
     // Generate header row
     const headerRow = (
       <Table.Row>
-        <Table.HeaderCell />
-        <Table.HeaderCell>Details</Table.HeaderCell>
-        <Table.HeaderCell>Time</Table.HeaderCell>
+        <Table.HeaderCell verticalAlign="bottom" className={cellStyles} >{selectAllIcon}</Table.HeaderCell>
+        <Table.HeaderCell verticalAlign="bottom" className={styles['table-header']}>Details</Table.HeaderCell>
+        <Table.HeaderCell verticalAlign="bottom" className={styles['table-header']}>Time</Table.HeaderCell>
         <Table.HeaderCell />
       </Table.Row>
     );

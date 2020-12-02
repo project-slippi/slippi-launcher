@@ -22,6 +22,8 @@
     "indent": ["error", 2, { "SwitchCase": 0 }],
     "jsx-a11y/label-has-associated-control": "off",
     "jsx-a11y/label-has-for": "off",
+    "jsx-a11y/click-events-have-key-events": "off",
+    "jsx-a11y/no-static-element-interactions": "off",
     "jsx-quotes": "off",
     "no-bitwise": "off",
     "no-case-declarations": "off",

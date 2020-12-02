@@ -67,7 +67,7 @@ export function browseFile(field) {
     // Maybe this should be done as some kind of callback or something... but this works
     if (field === "isoPath") {
       validateISO()(dispatch, getState);
-      getState().dolphinManager.setGamePath(filePath);
+      getState().settings.dolphinManager.setGamePath(filePath);
     }
   };
 }

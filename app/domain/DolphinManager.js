@@ -8,14 +8,17 @@ import retry from 'async-retry';
 import log from 'electron-log';
 import ini from 'ini';
 import electronSettings from 'electron-settings';
+import { EventEmitter } from 'events';
+import { Frames } from '@slippi/slippi-js';
 
 import { getDolphinPath } from '../utils/settings';
 import { sudoRemovePath } from '../utils/sudoExec';
 
 const { app } = require('electron').remote;
 
-export default class DolphinManager {
+export default class DolphinManager extends EventEmitter {
   constructor(key, settings = {}) {
+    super();
     // The key of this dolphin manager, doesn't really do anything
     // atm other than get added to the commFileName
     this.key = key;
@@ -65,12 +68,12 @@ export default class DolphinManager {
 
     let isCopySuccess = false;
     try {
-      if (platform === "win32" || platform === "darwin" || process.env.APPIMAGE){
+      if (platform === "win32" || platform === "darwin" || process.env.APPIMAGE) {
         fs.removeSync(targetPath);
         fs.copySync(originalDolphinPath, targetPath);
       }
       if (process.platform === "linux") {
-        const linuxUserDir = path.join(os.homedir(),".config", "SlippiPlayback");
+        const linuxUserDir = path.join(os.homedir(), ".config", "SlippiPlayback");
         fs.removeSync(linuxUserDir); // clear the User dir on linux
       }
       isCopySuccess = true;
@@ -102,20 +105,20 @@ export default class DolphinManager {
     // Handle the dolphin INI file being in different paths per platform
     switch (platform) {
     case "darwin": // osx
-      dolphinPath = isDev ? "./app/dolphin-dev/osx/Dolphin.app/Contents/Resources/User" : path.join(dolphinPath, "Dolphin.app", "Contents", "Resources", "User");
+      dolphinPath = isDev ? "./app/dolphin-dev/osx/Slippi Dolphin.app/Contents/Resources/User" : path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "Resources", "User");
       break;
     case "win32": // windows
       dolphinPath = isDev ? "./app/dolphin-dev/windows/User" : path.join(dolphinPath, "User");
       break;
     case "linux":
-      dolphinPath = path.join(os.homedir(),".config", "SlippiPlayback");
+      dolphinPath = path.join(os.homedir(), ".config", "SlippiPlayback");
       break;
     default:
       throw new Error("The current platform is not supported");
     }
     try {
       const iniPath = path.join(dolphinPath, "Config", "Dolphin.ini");
-      if (fs.existsSync(iniPath)){
+      if (fs.existsSync(iniPath)) {
         const dolphinINI = ini.parse(fs.readFileSync(iniPath, 'utf-8'));
         dolphinINI.General.ISOPath0 = fileDir;
         const numPaths = dolphinINI.General.ISOPaths;
@@ -125,7 +128,7 @@ export default class DolphinManager {
       } else {
         log.info("There isn't a User dir to write to.");
         const configPath = path.join(dolphinPath, "Config");
-        const newINI = ini.encode({"General": {"ISOPath0": fileDir, "ISOPaths": 1}});
+        const newINI = ini.encode({ "General": { "ISOPath0": fileDir, "ISOPaths": 1 } });
         log.info("attempting to mkdir -p");
         fs.mkdirpSync(configPath);
         fs.writeFileSync(iniPath, newINI);
@@ -155,7 +158,7 @@ export default class DolphinManager {
     });
   }
 
-  async playFile(filePath, startDolphin = true) {
+  async playFile(filePath, startDolphin = true, startFrame=Frames.FIRST) {
     const uniqueId = crypto.randomBytes(3 * 4).toString('hex');
 
     const jsonString = JSON.stringify({
@@ -163,6 +166,7 @@ export default class DolphinManager {
       replay: filePath,
       isRealTimeMode: this.settings.isRealTimeMode || false,
       commandId: uniqueId, // Indicates to Dolphin to play new replay
+      startFrame: startFrame,
     });
 
     await this.writeCommFile(jsonString);
@@ -217,7 +221,7 @@ export default class DolphinManager {
     switch (platform) {
     case "darwin": // osx
       dolphinPath = isDev ? "./app/dolphin-dev/osx" : dolphinPath;
-      executablePath = path.join(dolphinPath, "Dolphin.app/Contents/MacOS/Dolphin");
+      executablePath = path.join(dolphinPath, "Slippi Dolphin.app/Contents/MacOS/Slippi Dolphin");
       break;
     case "win32": // windows
       dolphinPath = isDev ? "./app/dolphin-dev/windows" : dolphinPath;
@@ -227,7 +231,7 @@ export default class DolphinManager {
       dolphinPath = isDev ? "./app/dolphin-dev/linux" : dolphinPath;
       const appImagePath = path.join(dolphinPath, "Slippi_Playback-x86_64.AppImage");
       const emuPath = path.join(dolphinPath, "dolphin-emu");
-      if (fs.existsSync(appImagePath)){
+      if (fs.existsSync(appImagePath)) {
         executablePath = appImagePath;
       } else {
         executablePath = emuPath;
@@ -241,6 +245,10 @@ export default class DolphinManager {
       '-i',
       this.outputFilePath,
     ];
+
+    if (this.settings.mode === "mirror") {
+      args = args.concat(['-hs']);
+    }
 
     if (startPlayback) {
       args = args.concat([
@@ -268,6 +276,7 @@ export default class DolphinManager {
       // TODO: Could cause the temp directory to get cluttered
       this.removeCommFiles();
       this.isRunning = false;
+      this.emit('dolphin-closed');
     }
   }
 }

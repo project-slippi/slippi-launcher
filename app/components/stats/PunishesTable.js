@@ -6,6 +6,9 @@ import { Table, Image, Icon } from 'semantic-ui-react';
 
 import styles from './GameProfile.scss';
 
+import Tooltip from '../common/Tooltip';
+
+import getLocalImage from '../../utils/image';
 import * as timeUtils from '../../utils/time';
 import * as numberUtils from '../../utils/number';
 import { getStockIconImage } from '../common/stocks'
@@ -17,6 +20,9 @@ export default class PunishesTable extends Component {
     game: PropTypes.object.isRequired,
     playerDisplay: PropTypes.object.isRequired,
     playerIndex: PropTypes.number.isRequired,
+
+    // fileLoaderAction
+    playFile: PropTypes.func.isRequired,
   };
 
   generatePunishRow = punish => {
@@ -34,11 +40,20 @@ export default class PunishesTable extends Component {
 
     const secondaryTextStyle = styles['secondary-text'];
 
+    const playPunish = () => {
+      const file = {fullPath: this.props.game.getFilePath()}
+      this.props.playFile(file, punish.startFrame)
+    }
+
+    const renderPunishStart = <Tooltip title="Play from here">
+      <Table.Cell className={secondaryTextStyle} collapsing={true} onClick={playPunish}>
+        <strong style={{ cursor: 'pointer' }} className={styles['highlight']}>{start}</strong>
+      </Table.Cell>
+    </Tooltip>;
+
     return (
       <Table.Row key={`${punish.playerIndex}-punish-${punish.startFrame}`}>
-        <Table.Cell className={secondaryTextStyle} collapsing={true}>
-          {start}
-        </Table.Cell>
+        {renderPunishStart}
         <Table.Cell className={secondaryTextStyle} collapsing={true}>
           {end}
         </Table.Cell>
@@ -123,8 +138,7 @@ export default class PunishesTable extends Component {
 
     return (
       <div
-        className={`${
-          styles['punish-damage-display']
+        className={`${styles['punish-damage-display']
         } horizontal-spaced-group-right-sm`}
       >
         <Icon

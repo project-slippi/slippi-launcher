@@ -448,11 +448,13 @@ export default class GameProfile extends Component {
             game={this.props.store.game}
             playerDisplay={this.renderPlayerColHeader(true)}
             playerIndex={this.getPlayerIndex(true)}
+            playFile={this.props.playFile}
           />
           <PunishesTable
             game={this.props.store.game}
             playerDisplay={this.renderPlayerColHeader(false)}
             playerIndex={this.getPlayerIndex(false)}
+            playFile={this.props.playFile}
           />
         </div>
       </Segment>
