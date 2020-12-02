@@ -26,11 +26,6 @@ export default class PlayerProfile extends Component {
     topNotifOffset: PropTypes.number.isRequired,
   };
 
-  static defaultProps = {
-    player: "FalcoMaster3000",
-    games: [],
-  };
-
   render() {
     const scrollerOffset = this.props.topNotifOffset;
     return (
@@ -68,8 +63,7 @@ export default class PlayerProfile extends Component {
               games={this.props.games} 
               playerTag={this.props.player} 
             />
-            <Segment basic={true}>
-            </Segment>
+            <Segment basic={true}/>
           </Scroller>
         </div>
       </PageWrapper>

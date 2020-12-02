@@ -4,12 +4,10 @@ import path from 'path';
 import { SlippiGame, Frames } from '@slippi/slippi-js';
 import { shell } from 'electron';
 import md5 from 'md5'
-import * as timeUtils from '../utils/time';
 
+import * as timeUtils from '../utils/time';
 import { displayError } from './error';
 import { gameProfileLoad } from './game';
-
-const electronSettings = require('electron-settings');
 import { getRootSlpPath } from '../utils/settings';
 
 export const LOAD_ROOT_FOLDER = 'LOAD_ROOT_FOLDER';
@@ -270,7 +268,7 @@ function parseStats(game, replayPath, name) {
     fs.writeFileSync(statsFile, JSON.stringify(parsedGame))
   } else {
     parsedGame =  JSON.parse(fs.readFileSync(statsFile));
-    let compHash = md5(JSON.stringify({
+    const compHash = md5(JSON.stringify({
       metadata: parsedGame.metadata,
       settings: parsedGame.settings,
       stats: parsedGame.stats,

@@ -8,7 +8,6 @@ import styles from './GameProfile.scss';
 
 import Tooltip from '../common/Tooltip';
 
-import getLocalImage from '../../utils/image';
 import * as timeUtils from '../../utils/time';
 import * as numberUtils from '../../utils/number';
 import { getStockIconImage } from '../common/stocks'

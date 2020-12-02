@@ -27,8 +27,8 @@ export const StockCard = ({game, playerIndex}) => {
   const playersByIndex = _.keyBy(players, 'playerIndex');
   const player = playersByIndex[playerIndex];
 
-  let lastStock = getLastPlayerStock(game, playerIndex)
-  let count = lastStock.endPercent == null ? lastStock.count : lastStock.count - 1
+  const lastStock = getLastPlayerStock(game, playerIndex)
+  const count = lastStock.endPercent == null ? lastStock.count : lastStock.count - 1
 
   const stockIcons = _.range(1, player.startStocks + 1).map(stockNum => {
     const imgClasses = classNames({
