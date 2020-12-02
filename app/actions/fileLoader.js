@@ -7,6 +7,7 @@ import * as timeUtils from '../utils/time';
 
 import { displayError } from './error';
 import { gameProfileLoad } from './game';
+import md5 from 'md5'
 
 const electronSettings = require('electron-settings');
 
@@ -264,9 +265,20 @@ function parseStats(game, replayPath, name) {
       settings: game.getSettings(),
       stats: game.getStats(),
     }
+    parsedGame.hash = md5(JSON.stringify(parsedGame))
     fs.writeFileSync(statsFile, JSON.stringify(parsedGame))
   } else {
     parsedGame =  JSON.parse(fs.readFileSync(statsFile));
+    let compHash = md5(JSON.stringify({
+      metadata: parsedGame.metadata,
+      settings: parsedGame.settings,
+      stats: parsedGame.stats,
+    }))
+    if (parsedGame.hash !== compHash) {
+      console.log(`hash mismatch for file ${statsFile}. Recreating.`)
+      fs.unlinkSync(statsFile)
+      return parseStats(game, replayPath, name)
+    }
   }
   parsedGame.getMetadata = () => parsedGame.metadata
   parsedGame.getSettings = () => parsedGame.settings
