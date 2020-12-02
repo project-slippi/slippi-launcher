@@ -106,3 +106,14 @@ export function getOpponentsSummary(games, playerTag) {
   return aggs;
 }
 
+export function getTopPunishes(games, playerTag) {
+  let aggs = games.map(game => {
+    let index = getGamePlayerIndex(game, playerTag)
+    let punishes = game.getStats().conversions.filter(p => p.playerIndex === index)
+    punishes = _.orderBy(punishes, x => -x.moves.length)
+    return punishes[0] || null
+  }).filter(x => x !== null)
+
+  return _.orderBy(aggs, x => -x.moves.length)
+}
+
