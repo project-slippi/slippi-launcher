@@ -9,7 +9,7 @@ import {
 import classNames from 'classnames';
 
 import styles from './GameProfile.scss';
-import { getPlayerCharacterCounts } from '../../utils/game';
+import { getPlayerCharacterCounts, getGamePlayerIndex } from '../../utils/game';
 import { getStockIconImage } from '../common/stocks'
 
 const columnCount = 5;
@@ -18,7 +18,16 @@ export default class PlayerCharacterTable extends Component {
   static propTypes = {
     store: PropTypes.object.isRequired,
     opponent: PropTypes.bool.isRequired,
+    gamesFilterAdd: PropTypes.func.isRequired,
+    gamesFilterRemove: PropTypes.func.isRequired,
   };
+
+  constructor(props) {
+    super(props)
+    this.state ={
+      activeFilter: "",
+    }
+  }
 
   renderHeaderPlayer() {
     const headerText = `${this.props.opponent ? "Opponent" : "Player"} Characters`
@@ -49,6 +58,23 @@ export default class PlayerCharacterTable extends Component {
     return _.map(aggs, v => this.generateCharacterRow(v[0], v[1]))
   }
 
+  setCharacterFilter(charId) {
+    const filterId = `character${this.props.opponent ? '-opponent' : ''}`
+    if (this.state.activeFilter === charId) {
+      this.setState({activeFilter: null})
+      this.props.gamesFilterRemove({id: filterId})
+    } else {
+      this.setState({activeFilter: charId})
+      const f = game => {
+        let index = getGamePlayerIndex(game, this.props.store.player)
+        if (this.props.opponent) index = 1 - index
+        const gameId = _.get(game.getSettings().players, index).characterId
+        return charId === gameId.toString()
+      }
+      this.props.gamesFilterAdd({id: filterId, value: f})
+    }
+  }
+
   generateCharacterRow(charId, agg) {
     const name = characters.getCharacterShortName(charId)
     const count = agg.count
@@ -62,7 +88,7 @@ export default class PlayerCharacterTable extends Component {
     return (
       <Table.Row key={`${charId}-${count}`}>
         <Table.Cell>
-          <div className={rootDivClasses}>
+          <div className={rootDivClasses} onClick={() => this.setCharacterFilter(charId)}>
             <Image
               src={getStockIconImage(charId, 0)}
               height={24}

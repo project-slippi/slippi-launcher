@@ -20,8 +20,8 @@ export default class PlayerProfile extends Component {
     setPlayerProfilePage: PropTypes.func.isRequired,
     //
     // fileLoaderAction
-    // gamesFilterAdd: PropTypes.func.isRequired,
-    // gamesFilterRemove: PropTypes.func.isRequired,
+    gamesFilterAdd: PropTypes.func.isRequired,
+    gamesFilterRemove: PropTypes.func.isRequired,
 
     store: PropTypes.object.isRequired,
 
@@ -47,10 +47,14 @@ export default class PlayerProfile extends Component {
                 <PlayerCharacterTable 
                   store={this.props.store}
                   opponent={ false }
+                  gamesFilterAdd={ this.props.gamesFilterAdd }
+                  gamesFilterRemove={ this.props.gamesFilterRemove }
                 />
                 <PlayerCharacterTable 
                   store={this.props.store}
                   opponent={ true }
+                  gamesFilterAdd={ this.props.gamesFilterAdd }
+                  gamesFilterRemove={ this.props.gamesFilterRemove }
                 />
                 <OpponentTable 
                   store={this.props.store}
