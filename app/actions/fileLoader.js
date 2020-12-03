@@ -3,7 +3,6 @@ import fs from 'fs';
 import path from 'path';
 import { SlippiGame, Frames } from '@slippi/slippi-js';
 import { shell } from 'electron';
-import md5 from 'md5'
 
 import * as timeUtils from '../utils/time';
 import { displayError } from './error';
@@ -248,40 +247,26 @@ export function setFilterReplays(val) {
 }
 
 
-function parseStats(game, replayPath, name) {
+function parseStats(fullPath, dir, name) {
   const extension = path.extname(name);
   const statsName = `${path.basename(name,extension)}_stats.json`;
-  const dir = path.join(replayPath, 'stats')
-  if (!fs.existsSync(dir)){
-    fs.mkdirSync(dir);
-  }
   const statsFile = path.join(dir, statsName);
   let parsedGame;
 
-  if (!fs.existsSync(statsFile)){
-    parsedGame = {
+  if (fs.existsSync(statsFile)){
+    parsedGame =  JSON.parse(fs.readFileSync(statsFile));
+  } else {
+    const game = new SlippiGame(fullPath);
+    parsedGame =     fs.writeFileSync(statsFile, JSON.stringify({
       metadata: game.getMetadata(),
       settings: game.getSettings(),
       stats: game.getStats(),
-    }
-    parsedGame.hash = md5(JSON.stringify(parsedGame))
-    fs.writeFileSync(statsFile, JSON.stringify(parsedGame))
-  } else {
-    parsedGame =  JSON.parse(fs.readFileSync(statsFile));
-    const compHash = md5(JSON.stringify({
-      metadata: parsedGame.metadata,
-      settings: parsedGame.settings,
-      stats: parsedGame.stats,
     }))
-    if (parsedGame.hash !== compHash) {
-      console.log(`hash mismatch for file ${statsFile}. Recreating.`)
-      fs.unlinkSync(statsFile)
-      return parseStats(game, replayPath, name)
-    }
   }
   parsedGame.getMetadata = () => parsedGame.metadata
   parsedGame.getSettings = () => parsedGame.settings
-  parsedGame.getStats = () => parsedGame.stats
+  parsedGame.getStats    = () => parsedGame.stats
+  parsedGame.getFilePath = () => fullPath
   return parsedGame
 }
 
@@ -312,8 +297,11 @@ async function loadFilesInFolder(folderPath) {
 
       // Pre-load settings here
       try {
-        game = new SlippiGame(fullPath);
-        game = parseStats(game, folderPath, fileName)
+        const statsDir = path.join(folderPath, 'stats')
+        if (!fs.existsSync(statsDir)){
+          fs.mkdirSync(statsDir);
+        }
+        game = parseStats(fullPath, statsDir, fileName)
 
         // Preload settings
         const settings = game.getSettings();

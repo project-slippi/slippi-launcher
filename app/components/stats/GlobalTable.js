@@ -68,7 +68,6 @@ export default class GlobalTable extends Component {
 
 
   renderOverallSection(stats) {
-    console.log(stats.opponents)
     return [
       <Table.Row key="overall-header">
         <Table.Cell className={styles['category']} colSpan={columnCount}>
