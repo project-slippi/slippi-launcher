@@ -11,8 +11,7 @@ const columnCount = 6;
 
 export default class ComboTable extends Component {
   static propTypes = {
-    games: PropTypes.array.isRequired,
-    playerTag: PropTypes.string.isRequired,
+    store: PropTypes.object.isRequired,
   };
 
   generatePunishRow(punish) {
@@ -122,7 +121,7 @@ export default class ComboTable extends Component {
   }
 
   renderPunishRows() {
-    let punishes = getTopPunishes(this.props.games, this.props.playerTag) 
+    let punishes = getTopPunishes(this.props.store.games, this.props.store.player) 
     punishes = punishes.slice(0, 19)
     const elements = [];
     punishes.forEach(punish => {

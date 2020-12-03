@@ -18,50 +18,49 @@ export default class PlayerProfile extends Component {
 
     // fileLoaderAction
     setPlayerProfilePage: PropTypes.func.isRequired,
+    //
+    // fileLoaderAction
+    // gamesFilterAdd: PropTypes.func.isRequired,
+    // gamesFilterRemove: PropTypes.func.isRequired,
 
-    games: PropTypes.array.isRequired,
-    player: PropTypes.string.isRequired,
+    store: PropTypes.object.isRequired,
 
     // store data
     topNotifOffset: PropTypes.number.isRequired,
   };
+
 
   render() {
     const scrollerOffset = this.props.topNotifOffset;
     return (
       <PageWrapper history={this.props.history}>
         <div className="main-padding">
-          <PageHeader icon="game" text={this.props.player} history={this.props.history} />
+          <PageHeader icon="game" text={this.props.store.player} history={this.props.history} />
           <Scroller topOffset={scrollerOffset}>
             <Segment basic={true}>
               <GlobalTable
-                games={this.props.games} 
-                playerTag={this.props.player} 
+                store={this.props.store}
               />
             </Segment>
             <Segment basic={true}>
               <div className={styles['three-column-main']}>
                 <PlayerCharacterTable 
-                  games={this.props.games} 
-                  playerTag={this.props.player} 
+                  store={this.props.store}
                   opponent={ false }
                 />
                 <PlayerCharacterTable 
-                  games={this.props.games} 
-                  playerTag={this.props.player} 
+                  store={this.props.store}
                   opponent={ true }
                 />
                 <OpponentTable 
-                  games={this.props.games} 
-                  playerTag={this.props.player} 
+                  store={this.props.store}
                   opponent={ true }
                   setPlayerProfilePage={this.props.setPlayerProfilePage}
                 />
               </div>
             </Segment>
             <ComboTable 
-              games={this.props.games} 
-              playerTag={this.props.player} 
+              store={this.props.store}
             />
             <Segment basic={true}/>
           </Scroller>

@@ -16,8 +16,7 @@ const columnCount = 5;
 
 export default class PlayerCharacterTable extends Component {
   static propTypes = {
-    games: PropTypes.array.isRequired,
-    playerTag: PropTypes.string.isRequired,
+    store: PropTypes.object.isRequired,
     opponent: PropTypes.bool.isRequired,
   };
 
@@ -45,7 +44,7 @@ export default class PlayerCharacterTable extends Component {
   }
 
   renderRows() {
-    let aggs = getPlayerCharacterCounts(this.props.games, this.props.playerTag, this.props.opponent)
+    let aggs = getPlayerCharacterCounts(this.props.store.games, this.props.store.player, this.props.opponent)
     aggs = aggs.slice(0, 9)
     return _.map(aggs, v => this.generateCharacterRow(v[0], v[1]))
   }

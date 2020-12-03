@@ -12,8 +12,7 @@ const columnCount = 3;
 
 export default class GlobalTable extends Component {
   static propTypes = {
-    games: PropTypes.array.isRequired,
-    playerTag: PropTypes.string.isRequired,
+    store: PropTypes.object.isRequired,
   };
 
   renderStatField(header, value) {
@@ -125,7 +124,7 @@ export default class GlobalTable extends Component {
   }
 
   render() {
-    const stats = getGlobalStats(this.props.games, this.props.playerTag)
+    const stats = getGlobalStats(this.props.store.games, this.props.store.player)
     return (
       <Table
         className={styles['stats-table']}

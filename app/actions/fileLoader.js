@@ -7,6 +7,7 @@ import { shell } from 'electron';
 import * as timeUtils from '../utils/time';
 import { displayError } from './error';
 import { gameProfileLoad } from './game';
+import { playerGamesLoad } from './player';
 import { getRootSlpPath } from '../utils/settings';
 
 export const LOAD_ROOT_FOLDER = 'LOAD_ROOT_FOLDER';
@@ -207,10 +208,13 @@ export function setStatsGamePage(index) {
 
 export function setPlayerProfilePage(player) { 
   return (dispatch, getState) => { // eslint-disable-line no-unused-vars
+    const state = getState().fileLoader;
+    const files = (state.filterReplays ? state.files : state.allFiles) || [];
     dispatch({
       type: SET_PLAYER_PROFILE_PAGE,
       payload: { player: player },
     });
+    playerGamesLoad(files.map(f=>f.game), player)(dispatch)
   };
 }
 

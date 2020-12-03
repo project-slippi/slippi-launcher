@@ -14,8 +14,7 @@ const columnCount = 4;
 
 export default class OpponentTable extends Component {
   static propTypes = {
-    games: PropTypes.array.isRequired,
-    playerTag: PropTypes.string.isRequired,
+    store: PropTypes.object.isRequired,
     setPlayerProfilePage: PropTypes.func.isRequired,
   };
 
@@ -42,7 +41,7 @@ export default class OpponentTable extends Component {
   }
 
   renderRows() {
-    let aggs = getOpponentsSummary(this.props.games, this.props.playerTag)
+    let aggs = getOpponentsSummary(this.props.store.games, this.props.store.player)
     aggs = aggs.slice(0, 9)
     return _.map(aggs, v => this.generateOpponentRow(v[0], v[1]))
   }
