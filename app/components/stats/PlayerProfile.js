@@ -38,11 +38,6 @@ export default class PlayerProfile extends Component {
           <PageHeader icon="game" text={this.props.store.player} history={this.props.history} />
           <Scroller topOffset={scrollerOffset}>
             <Segment basic={true}>
-              <GlobalTable
-                store={this.props.store}
-              />
-            </Segment>
-            <Segment basic={true}>
               <div className={styles['three-column-main']}>
                 <PlayerCharacterTable 
                   store={this.props.store}
@@ -63,10 +58,16 @@ export default class PlayerProfile extends Component {
                 />
               </div>
             </Segment>
-            <ComboTable 
-              store={this.props.store}
-            />
-            <Segment basic={true}/>
+            <Segment basic={true}>
+              <GlobalTable
+                store={this.props.store}
+              />
+            </Segment>
+            <Segment basic={true}>
+              <ComboTable 
+                store={this.props.store}
+              />
+            </Segment>
           </Scroller>
         </div>
       </PageWrapper>

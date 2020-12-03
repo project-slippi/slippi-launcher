@@ -42,7 +42,7 @@ export default class OpponentTable extends Component {
 
   renderRows() {
     let aggs = getOpponentsSummary(this.props.store.games, this.props.store.player)
-    aggs = aggs.slice(0, 9)
+    aggs = aggs.slice(0, 26)
     return _.map(aggs, v => this.generateOpponentRow(v[0], v[1]))
   }
 

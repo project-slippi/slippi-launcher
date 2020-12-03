@@ -53,8 +53,8 @@ export default class PlayerCharacterTable extends Component {
   }
 
   renderRows() {
-    let aggs = getPlayerCharacterCounts(this.props.store.games, this.props.store.player, this.props.opponent)
-    aggs = aggs.slice(0, 9)
+    const aggs = getPlayerCharacterCounts(this.props.store.games, this.props.store.player, this.props.opponent)
+    // aggs = aggs.slice(0, 19)
     return _.map(aggs, v => this.generateCharacterRow(v[0], v[1]))
   }
 
