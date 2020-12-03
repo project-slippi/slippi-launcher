@@ -7,16 +7,27 @@ import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 
 import styles from './GameProfile.scss';
-import { getOpponentsSummary } from '../../utils/game';
+import { getOpponentsSummary, getGamePlayerIndex } from '../../utils/game';
+import { getPlayerName } from '../../utils/players'
 import { getStockIconImage } from '../common/stocks'
 
-const columnCount = 4;
+const columnCount = 5;
 
 export default class OpponentTable extends Component {
   static propTypes = {
     store: PropTypes.object.isRequired,
     setPlayerProfilePage: PropTypes.func.isRequired,
+    gamesFilterAdd: PropTypes.func.isRequired,
+    gamesFilterRemove: PropTypes.func.isRequired,
   };
+
+  constructor(props) {
+    super(props)
+    this.state ={
+      excluded: [],
+      filtering: false,
+    }
+  }
 
   renderHeaderPlayer() {
     const headerText = 'Top Opponents'
@@ -24,10 +35,21 @@ export default class OpponentTable extends Component {
       <Table.Row>
         <Table.HeaderCell colSpan={columnCount}>
           {headerText}
+          {" "}
+          {this.state.filtering ? (<a onClick={() => this.clearFilters()}>Clear Filters</a>) : null}
         </Table.HeaderCell>
       </Table.Row>
     );
   }
+
+  clearFilters() {
+    this.setState({
+      filtering: null,
+      excluded: [],
+    })
+    this.props.gamesFilterRemove({id: "opponents"})
+  }
+
 
   renderHeaderColumns() {
     return (
@@ -36,6 +58,7 @@ export default class OpponentTable extends Component {
         <Table.HeaderCell>Games Played</Table.HeaderCell>
         <Table.HeaderCell>Winrate</Table.HeaderCell>
         <Table.HeaderCell>Characters</Table.HeaderCell>
+        <Table.HeaderCell>Filters</Table.HeaderCell>
       </Table.Row>
     );
   }
@@ -68,12 +91,43 @@ export default class OpponentTable extends Component {
         <Table.Cell>{(agg.won/agg.count*100).toFixed(0)}%</Table.Cell>
         <Table.Cell>
           <div className={rootDivClasses}>
-            {chars}
+            {chars.slice(0,4)}
           </div>
         </Table.Cell>
+        <Table.Cell>{this.generateFilterToggles(playerTag)}</Table.Cell>
       </Table.Row>
     );
   };
+
+  generateFilterToggles(charId) {
+    return (
+      <div>
+        <a onClick={() => this.setCharacterFilter(charId, false)}>focus</a><br/><a onClick={() => this.setCharacterFilter(charId, true)}>hide</a>
+      </div>
+    )
+  }
+
+  setCharacterFilter(charId, hide) {
+    const filterId = 'opponent'
+    const excluded = [...this.state.excluded, charId]
+    if (hide) {
+      this.setState({ excluded: excluded, filtering: true })
+      const f = game => {
+        const index = 1 - getGamePlayerIndex(game, this.props.store.player)
+        const playerTag = getPlayerName(game, index)
+        return !excluded.includes(playerTag)
+      }
+      this.props.gamesFilterAdd({id: filterId, value: f})
+    } else {
+      this.setState({ filtering: true })
+      const f = game => {
+        const index = 1 - getGamePlayerIndex(game, this.props.store.player)
+        const playerTag = getPlayerName(game, index)
+        return charId === playerTag
+      }
+      this.props.gamesFilterAdd({id: filterId, value: f})
+    }
+  }
 
   render() {
     return (

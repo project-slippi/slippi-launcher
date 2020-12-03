@@ -55,6 +55,8 @@ export default class PlayerProfile extends Component {
                   store={this.props.store}
                   opponent={ true }
                   setPlayerProfilePage={this.props.setPlayerProfilePage}
+                  gamesFilterAdd={ this.props.gamesFilterAdd }
+                  gamesFilterRemove={ this.props.gamesFilterRemove }
                 />
               </div>
             </Segment>

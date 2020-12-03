@@ -25,7 +25,8 @@ export default class PlayerCharacterTable extends Component {
   constructor(props) {
     super(props)
     this.state ={
-      activeFilter: "",
+      excluded: [],
+      filtering: false,
     }
   }
 
@@ -34,10 +35,13 @@ export default class PlayerCharacterTable extends Component {
     return (
       <Table.Row>
         <Table.HeaderCell colSpan={columnCount}>
-          {headerText}
+          {headerText} 
+          {" " }
+          {this.state.filtering ? (<a onClick={() => this.clearFilters()}>Clear Filters</a>) : null} 
+
         </Table.HeaderCell>
       </Table.Row>
-    );
+    ); 
   }
 
   renderHeaderColumns() {
@@ -47,6 +51,7 @@ export default class PlayerCharacterTable extends Component {
         <Table.HeaderCell>Games Played</Table.HeaderCell>
         <Table.HeaderCell>Winrate</Table.HeaderCell>
         {this.props.opponent ? <Table.HeaderCell>Unique Players</Table.HeaderCell> : null}
+        <Table.HeaderCell>Filters</Table.HeaderCell>
         
       </Table.Row>
     );
@@ -58,13 +63,30 @@ export default class PlayerCharacterTable extends Component {
     return _.map(aggs, v => this.generateCharacterRow(v[0], v[1]))
   }
 
-  setCharacterFilter(charId) {
+  clearFilters() {
+    this.setState({
+      filtering: null,
+      excluded: [],
+    })
     const filterId = `character${this.props.opponent ? '-opponent' : ''}`
-    if (this.state.activeFilter === charId) {
-      this.setState({activeFilter: null})
-      this.props.gamesFilterRemove({id: filterId})
+    this.props.gamesFilterRemove({id: filterId})
+  }
+
+  setCharacterFilter(charId, hide) {
+    const filterId = `character${this.props.opponent ? '-opponent' : ''}`
+    const excluded = [...this.state.excluded, charId]
+    if (hide) {
+      this.setState({ excluded: excluded, filtering: true })
+      console.log(this.state.excluded)
+      const f = game => {
+        let index = getGamePlayerIndex(game, this.props.store.player)
+        if (this.props.opponent) index = 1 - index
+        const gameId = _.get(game.getSettings().players, index).characterId
+        return !excluded.includes(gameId.toString())
+      }
+      this.props.gamesFilterAdd({id: filterId, value: f})
     } else {
-      this.setState({activeFilter: charId})
+      this.setState({ filtering: true })
       const f = game => {
         let index = getGamePlayerIndex(game, this.props.store.player)
         if (this.props.opponent) index = 1 - index
@@ -73,6 +95,14 @@ export default class PlayerCharacterTable extends Component {
       }
       this.props.gamesFilterAdd({id: filterId, value: f})
     }
+  }
+
+  generateFilterToggles(charId) {
+    return (
+      <div>
+        <a onClick={() => this.setCharacterFilter(charId, false)}>focus</a><br/><a onClick={() => this.setCharacterFilter(charId, true)}>hide</a>
+      </div>
+    )
   }
 
   generateCharacterRow(charId, agg) {
@@ -88,7 +118,7 @@ export default class PlayerCharacterTable extends Component {
     return (
       <Table.Row key={`${charId}-${count}`}>
         <Table.Cell>
-          <div className={rootDivClasses} onClick={() => this.setCharacterFilter(charId)}>
+          <div className={rootDivClasses}>
             <Image
               src={getStockIconImage(charId, 0)}
               height={24}
@@ -100,6 +130,7 @@ export default class PlayerCharacterTable extends Component {
         <Table.Cell>{count}</Table.Cell>
         <Table.Cell>{winrate}%</Table.Cell>
         {this.props.opponent ? <Table.Cell>{agg.players.length}</Table.Cell> : null}
+        <Table.Cell>{this.generateFilterToggles(charId)}</Table.Cell>
       </Table.Row>
     );
   };
