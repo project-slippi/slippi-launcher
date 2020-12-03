@@ -37,6 +37,7 @@ function setPlayerGames(state, action) {
     games: games,
     player: action.payload.player,
     allGames: games,
+    filters: {},
   };
 }
 

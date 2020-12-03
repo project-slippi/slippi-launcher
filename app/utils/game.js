@@ -2,7 +2,6 @@ import _ from 'lodash';
 
 import { stages } from '@slippi/slippi-js';
 
-import * as timeUtils from './time';
 import { getPlayerName, getPlayerNamesByIndex } from './players'
 
 export function getPlayerStocks(game, playerIndex) {
@@ -123,8 +122,7 @@ export function getTopPunishes(games, playerTag) {
 }
 
 export function getGlobalStats(games, playerTag) {
-  const len = games.length
-  return games.reduce((a, game) => {
+  const aggs =  games.reduce((a, game) => {
     const agg = a // because es-lint can be dumb
     const index = getGamePlayerIndex(game, playerTag)
     const stats = game.getStats()
@@ -136,18 +134,34 @@ export function getGlobalStats(games, playerTag) {
     if (getGameWinner(game) === index) agg.wins += 1
     const opp = getPlayerName(game, 1-index)
     if (!agg.opponents.includes(opp)) agg.opponents.push(opp)
-    agg.time += timeUtils.convertFrameCountToDurationString(stats.lastFrame)
+    agg.time += stats.lastFrame
+
     agg.kills += pOverall.killCount
     agg.deaths += oOverall.killCount
     agg.damageDone += pOverall.totalDamage
     agg.damageReceived += oOverall.totalDamage
-    agg.conversionRate += pOverall.successfulConversions.ratio / len
-    agg.damagePerOpening += pOverall.damagePerOpening.ratio / len
-    agg.openingsPerKill += pOverall.openingsPerKill.ratio / len
-    agg.neutralWinRatio += pOverall.neutralWinRatio.ratio / len
 
-    agg.inputsPerMinute += pOverall.inputsPerMinute.ratio / len  
-    agg.digitalInputsPerMinute += pOverall.digitalInputsPerMinute.ratio / len  
+    agg.conversionRateCount += pOverall.successfulConversions.count
+    agg.conversionRateTotal += pOverall.successfulConversions.total
+    agg.damagePerOpeningCount += pOverall.damagePerOpening.count
+    agg.damagePerOpeningTotal += pOverall.damagePerOpening.total
+    agg.openingsPerKillCount += pOverall.openingsPerKill.count
+    agg.openingsPerKillTotal += pOverall.openingsPerKill.total
+    agg.neutralWinRatioCount += pOverall.neutralWinRatio.count
+    agg.neutralWinRatioTotal += pOverall.neutralWinRatio.total
+
+    agg.inputsPerMinuteCount += pOverall.inputsPerMinute.count
+    agg.inputsPerMinuteTotal += pOverall.inputsPerMinute.total
+    agg.digitalInputsPerMinuteCount += pOverall.digitalInputsPerMinute.count
+    agg.digitalInputsPerMinuteTotal += pOverall.digitalInputsPerMinute.total
+    
+    // agg.conversionRate += pOverall.successfulConversions.ratio / len
+    // agg.damagePerOpening += pOverall.damagePerOpening.ratio / len
+    // agg.openingsPerKill += pOverall.openingsPerKill.ratio / len
+    // agg.neutralWinRatio += pOverall.neutralWinRatio.ratio / len
+
+    // agg.inputsPerMinute += pOverall.inputsPerMinute.ratio / len  
+    // agg.digitalInputsPerMinute += pOverall.digitalInputsPerMinute.ratio / len  
     return agg
   }, {
     count: games.length,
@@ -158,11 +172,29 @@ export function getGlobalStats(games, playerTag) {
     deaths: 0,
     damageDone: 0,
     damageReceived: 0,
-    conversionRate: 0,
-    openingsPerKill: 0,
-    damagePerOpening: 0,
-    neutralWinRatio: 0,
-    inputsPerMinute: 0,
-    digitalInputsPerMinute: 0,
+    conversionRateCount: 0,
+    conversionRateTotal: 0,
+    openingsPerKillCount: 0,
+    openingsPerKillTotal: 0,
+    damagePerOpeningCount: 0,
+    damagePerOpeningTotal: 0,
+    neutralWinRatioCount: 0,
+    neutralWinRatioTotal: 0,
+    inputsPerMinuteCount: 0,
+    inputsPerMinuteTotal: 0,
+    digitalInputsPerMinuteCount: 0,
+    digitalInputsPerMinuteTotal: 0,
   })
+
+  console.log(aggs.conversionRateCount, aggs.conversionRateTotal, aggs.conversionRateCount/aggs.conversionRateTotal)
+
+  return {
+    ...aggs,
+    conversionRate: aggs.conversionRateCount / aggs.conversionRateTotal,
+    openingsPerKill: aggs.openingsPerKillCount / aggs.openingsPerKillTotal,
+    damagePerOpening: aggs.damagePerOpeningCount / aggs.damagePerOpeningTotal,
+    neutralWinRatio: aggs.neutralWinRatioCount / aggs.neutralWinRatioTotal,
+    inputsPerMinute: aggs.inputsPerMinuteCount / aggs.inputsPerMinuteTotal,
+    digitalInputsPerMinute: aggs.digitalInputsPerMinuteCount / aggs.digitalInputsPerMinuteTotal,
+  }
 }

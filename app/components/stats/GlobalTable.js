@@ -7,6 +7,7 @@ import styles from './GameProfile.scss';
 
 import * as numberUtils from '../../utils/number';
 import { getGlobalStats } from '../../utils/game'
+import  * as  timeUtils from '../../utils/time'
 
 const columnCount = 3;
 
@@ -78,7 +79,7 @@ export default class GlobalTable extends Component {
       this.renderStatField('Opponents Played', stats.opponents.length),
       this.renderStatField('Average Games / Opponent', 
         (stats.count/stats.opponents.length).toFixed(2)),
-      this.renderStatField('Total Play Time', 0),
+      this.renderStatField('Total Play Time', timeUtils.convertLongFrameCountToDurationString(stats.time)),
     ];
   }
 
@@ -86,13 +87,13 @@ export default class GlobalTable extends Component {
     return [
       <Table.Row key="offense-header">
         <Table.Cell className={styles['category']} colSpan={columnCount}>
-          Overall
+          Offense
         </Table.Cell>
       </Table.Row>,
-      this.renderStatField('Total Kills', stats.kills),
-      this.renderStatField('Total Deaths', stats.deaths),
-      this.renderStatField('Total Damage Done', stats.damageDone.toFixed(0)),
-      this.renderStatField('Total Damage Received',stats.damageReceived.toFixed(0)),
+      this.renderStatField('Total Kills', `${stats.kills.toLocaleString(undefined, {maximumFractionDigits: 0})}`),
+      this.renderStatField('Total Deaths', `${stats.deaths.toLocaleString(undefined, {maximumFractionDigits: 0})}`),
+      this.renderStatField('Total Damage Done', `${stats.damageDone.toLocaleString(undefined, {maximumFractionDigits: 0})}%`),
+      this.renderStatField('Total Damage Received', `${stats.damageReceived.toLocaleString(undefined, {maximumFractionDigits: 0})}%`),
       this.renderStatField('Average Opening Conversion Rate', 
         numberUtils.formatPercent(stats.conversionRate)),
       this.renderStatField('Average Openings / Kill', stats.openingsPerKill.toFixed(2)),

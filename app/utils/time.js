@@ -7,6 +7,14 @@ export function convertFrameCountToDurationString(frameCount) {
   return moment.utc(duration.as('milliseconds')).format('m:ss');
 }
 
+export function convertLongFrameCountToDurationString(frameCount) {
+  const duration = moment.duration(frameCount / 60, 'seconds');
+  let format = ''
+  if (duration.days() > 0) format += `${duration.days()} Day${duration.days() > 1 ? 's' : ''}, `
+  format += `${duration.hours()} Hour${duration.hours() > 1 ? 's' : ''}`
+  return format
+}
+
 export function convertToDateAndTime(dateTimeString) {
   if (!dateTimeString) {
     return null;
