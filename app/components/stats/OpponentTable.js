@@ -47,7 +47,7 @@ export default class OpponentTable extends Component {
       filtering: null,
       excluded: [],
     })
-    this.props.gamesFilterRemove({id: "opponents"})
+    this.props.gamesFilterRemove({id: "opponent"})
   }
 
 
