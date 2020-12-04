@@ -1,20 +1,24 @@
+import _ from 'lodash';
 import React, { Component } from 'react';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import { Table, Icon } from 'semantic-ui-react';
+import { Table, Icon, Image } from 'semantic-ui-react';
 
 import styles from './GameProfile.scss';
 
+import * as playerUtils from '../../utils/players';
 import * as timeUtils from '../../utils/time';
-import { getTopPunishes } from '../../utils/game'
+import { getTopPunishes, getGamePlayerIndex } from '../../utils/game'
+import { getStockIconImage } from '../common/stocks'
 
-const columnCount = 6;
+const columnCount = 8;
 
 export default class ComboTable extends Component {
   static propTypes = {
     store: PropTypes.object.isRequired,
   };
 
-  generatePunishRow(punish) {
+  generatePunishRow(game, punish) {
     const start = timeUtils.convertFrameCountToDurationString(punish.startFrame);
     let end = <span className={styles['secondary-text']}>–</span>;
     const damage = this.renderDamageCell(punish);
@@ -29,21 +33,48 @@ export default class ComboTable extends Component {
 
     return (
       <Table.Row key={`${punish.playerIndex}-punish-${punish.startFrame}`}>
+        <Table.Cell collapsing={true}>{this.getPlayerCard(game, false)}</Table.Cell>
+        <Table.Cell collapsing={true}>{this.getPlayerCard(game, true)}</Table.Cell>
+        <Table.Cell collapsing={true}>{openingType}</Table.Cell>
+        <Table.Cell collapsing={true}>{damage}</Table.Cell>
+        <Table.Cell className={styles['attach-to-left-cell']}>
+          {damageRange}
+        </Table.Cell>
+        <Table.Cell>{punish.moves.length}</Table.Cell>
         <Table.Cell className={secondaryTextStyle} collapsing={true}>
           {start}
         </Table.Cell>
         <Table.Cell className={secondaryTextStyle} collapsing={true}>
           {end}
         </Table.Cell>
-        <Table.Cell collapsing={true}>{damage}</Table.Cell>
-        <Table.Cell className={styles['attach-to-left-cell']}>
-          {damageRange}
-        </Table.Cell>
-        <Table.Cell>{punish.moves.length}</Table.Cell>
-        <Table.Cell collapsing={true}>{openingType}</Table.Cell>
       </Table.Row>
     );
   };
+
+  getPlayerCard(game, isOpponent) {
+    let index = getGamePlayerIndex(game, this.props.store.player)
+    if (isOpponent) index = 1 - index
+    const tag = playerUtils.getPlayerName(game, index)
+    const players = game.getSettings().players || [];
+    const playersByIndex = _.keyBy(players, 'playerIndex');
+    const player = playersByIndex[index];
+    const rootDivClasses = classNames({
+      [styles['player-col-header']]: true,
+      'horizontal-spaced-group-right-xs': true,
+    });
+    
+    return (
+      <div className={rootDivClasses}>
+        <Image
+          src={getStockIconImage(player.characterId, player.characterColor)}
+          height={24}
+          width={24}
+        />
+        <div>{tag}</div>
+      </div>
+
+    )
+  }
 
   renderDamageCell(punish) {
     const difference = punish.currentPercent - punish.startPercent;
@@ -111,11 +142,13 @@ export default class ComboTable extends Component {
   renderHeaderColumns() {
     return (
       <Table.Row>
-        <Table.HeaderCell>Start</Table.HeaderCell>
-        <Table.HeaderCell>End</Table.HeaderCell>
+        <Table.HeaderCell>Player</Table.HeaderCell>
+        <Table.HeaderCell>Opponent</Table.HeaderCell>
+        <Table.HeaderCell>Opening</Table.HeaderCell>
         <Table.HeaderCell colSpan={2}>Damage</Table.HeaderCell>
         <Table.HeaderCell>Moves</Table.HeaderCell>
-        <Table.HeaderCell>Opening</Table.HeaderCell>
+        <Table.HeaderCell>Start</Table.HeaderCell>
+        <Table.HeaderCell>End</Table.HeaderCell>
       </Table.Row>
     );
   }
@@ -125,7 +158,7 @@ export default class ComboTable extends Component {
     punishes = punishes.slice(0, 19)
     const elements = [];
     punishes.forEach(punish => {
-      const punishRow = this.generatePunishRow(punish);
+      const punishRow = this.generatePunishRow(punish.game, punish.punish);
       elements.push(punishRow);
     });
     return elements;

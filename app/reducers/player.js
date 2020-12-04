@@ -1,5 +1,6 @@
 import _ from "lodash";
 import { getPlayerNamesByIndex } from '../utils/players'
+import { getGameWinner } from '../utils/game'
 
 import { PLAYER_GAMES_LOAD, ADD_FILTER, REMOVE_FILTER } from '../actions/player';
 
@@ -29,6 +30,7 @@ function setPlayerGames(state, action) {
     if (!g.getMetadata() || _.values(g.getMetadata().players).length !== 2) {
       return false
     }
+    if (getGameWinner(g) === -1) return false
     const players = _.values(getPlayerNamesByIndex(g))
     return players.includes(action.payload.player)
   });

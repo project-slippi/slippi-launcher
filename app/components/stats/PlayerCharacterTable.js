@@ -47,11 +47,11 @@ export default class PlayerCharacterTable extends Component {
   renderHeaderColumns() {
     return (
       <Table.Row>
-        <Table.HeaderCell>Character</Table.HeaderCell>
-        <Table.HeaderCell>Games Played</Table.HeaderCell>
-        <Table.HeaderCell>Winrate</Table.HeaderCell>
-        {this.props.opponent ? <Table.HeaderCell>Unique Players</Table.HeaderCell> : null}
-        <Table.HeaderCell>Filters</Table.HeaderCell>
+        <Table.HeaderCell >Character</Table.HeaderCell>
+        <Table.HeaderCell collapsing={true}>Games</Table.HeaderCell>
+        <Table.HeaderCell collapsing={true}>Winrate</Table.HeaderCell>
+        {this.props.opponent ? <Table.HeaderCell collapsing={true}>Players</Table.HeaderCell> : null}
+        <Table.HeaderCell collapsing={true}>Filters</Table.HeaderCell>
         
       </Table.Row>
     );
@@ -100,7 +100,7 @@ export default class PlayerCharacterTable extends Component {
   generateFilterToggles(charId) {
     return (
       <div>
-        <a onClick={() => this.setCharacterFilter(charId, false)}>focus</a><br/><a onClick={() => this.setCharacterFilter(charId, true)}>hide</a>
+        <a onClick={() => this.setCharacterFilter(charId, false)}>focus</a> | <a onClick={() => this.setCharacterFilter(charId, true)}>hide</a>
       </div>
     )
   }
@@ -130,7 +130,7 @@ export default class PlayerCharacterTable extends Component {
         <Table.Cell>{count}</Table.Cell>
         <Table.Cell>{winrate}%</Table.Cell>
         {this.props.opponent ? <Table.Cell>{agg.players.length}</Table.Cell> : null}
-        <Table.Cell>{this.generateFilterToggles(charId)}</Table.Cell>
+        <Table.Cell collapsing={true}>{this.generateFilterToggles(charId)}</Table.Cell>
       </Table.Row>
     );
   };

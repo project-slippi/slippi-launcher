@@ -115,10 +115,13 @@ export function getTopPunishes(games, playerTag) {
     const index = getGamePlayerIndex(game, playerTag)
     let punishes = game.getStats().conversions.filter(p => p.playerIndex === index)
     punishes = _.orderBy(punishes, x => -x.moves.length)
-    return punishes[0] || null
-  }).filter(x => x !== null)
+    return {
+      game: game,
+      punish: punishes[0] || null,
+    }
+  }).filter(x => x.punish !== null)
 
-  return _.orderBy(aggs, x => -x.moves.length)
+  return _.orderBy(aggs, x => -x.punish.moves.length)
 }
 
 export function getGlobalStats(games, playerTag) {
@@ -154,14 +157,7 @@ export function getGlobalStats(games, playerTag) {
     agg.inputsPerMinuteTotal += pOverall.inputsPerMinute.total
     agg.digitalInputsPerMinuteCount += pOverall.digitalInputsPerMinute.count
     agg.digitalInputsPerMinuteTotal += pOverall.digitalInputsPerMinute.total
-    
-    // agg.conversionRate += pOverall.successfulConversions.ratio / len
-    // agg.damagePerOpening += pOverall.damagePerOpening.ratio / len
-    // agg.openingsPerKill += pOverall.openingsPerKill.ratio / len
-    // agg.neutralWinRatio += pOverall.neutralWinRatio.ratio / len
 
-    // agg.inputsPerMinute += pOverall.inputsPerMinute.ratio / len  
-    // agg.digitalInputsPerMinute += pOverall.digitalInputsPerMinute.ratio / len  
     return agg
   }, {
     count: games.length,
@@ -185,8 +181,6 @@ export function getGlobalStats(games, playerTag) {
     digitalInputsPerMinuteCount: 0,
     digitalInputsPerMinuteTotal: 0,
   })
-
-  console.log(aggs.conversionRateCount, aggs.conversionRateTotal, aggs.conversionRateCount/aggs.conversionRateTotal)
 
   return {
     ...aggs,

@@ -55,8 +55,8 @@ export default class OpponentTable extends Component {
     return (
       <Table.Row>
         <Table.HeaderCell>Player</Table.HeaderCell>
-        <Table.HeaderCell>Games Played</Table.HeaderCell>
-        <Table.HeaderCell>Winrate</Table.HeaderCell>
+        <Table.HeaderCell collapsing={true}>Games</Table.HeaderCell>
+        <Table.HeaderCell collapsing={true}>Winrate</Table.HeaderCell>
         <Table.HeaderCell>Characters</Table.HeaderCell>
         <Table.HeaderCell>Filters</Table.HeaderCell>
       </Table.Row>
@@ -91,10 +91,10 @@ export default class OpponentTable extends Component {
         <Table.Cell>{(agg.won/agg.count*100).toFixed(0)}%</Table.Cell>
         <Table.Cell>
           <div className={rootDivClasses}>
-            {chars.slice(0,4)}
+            {chars.slice(0,5)}
           </div>
         </Table.Cell>
-        <Table.Cell>{this.generateFilterToggles(playerTag)}</Table.Cell>
+        <Table.Cell collapsing={true}>{this.generateFilterToggles(playerTag)}</Table.Cell>
       </Table.Row>
     );
   };
@@ -102,7 +102,7 @@ export default class OpponentTable extends Component {
   generateFilterToggles(charId) {
     return (
       <div>
-        <a onClick={() => this.setCharacterFilter(charId, false)}>focus</a><br/><a onClick={() => this.setCharacterFilter(charId, true)}>hide</a>
+        <a onClick={() => this.setCharacterFilter(charId, false)}>focus</a> | <a onClick={() => this.setCharacterFilter(charId, true)}>hide</a>
       </div>
     )
   }
