@@ -1,8 +1,9 @@
 import _ from 'lodash';
 import fs from 'fs';
+import * as fsExtra from 'fs-extra'
 import path from 'path';
 import { SlippiGame, Frames } from '@slippi/slippi-js';
-import { shell } from 'electron';
+import { shell, remote } from 'electron';
 
 import * as timeUtils from '../utils/time';
 import { displayError } from './error';
@@ -22,6 +23,13 @@ export const DELETE_FILE = 'DELETE_FILE';
 
 export const MIN_GAME_LENGTH_SECONDS = 30;
 const MIN_GAME_LENGTH_FRAMES = MIN_GAME_LENGTH_SECONDS * 60;
+
+/*
+ * WARNING: Increasing this value will trigger the app
+ * to flush the stats data cache. This is to be able to 
+ * recreate the cache when a new slp feature is added.
+ */
+const STATS_VERSION = 1;
 
 export function loadRootFolder() {
   return async (dispatch, getState) => {
@@ -256,16 +264,16 @@ function parseStats(fullPath, dir, name) {
   const statsName = `${path.basename(name,extension)}_stats.json`;
   const statsFile = path.join(dir, statsName);
   let parsedGame;
-
   if (fs.existsSync(statsFile)){
     parsedGame =  JSON.parse(fs.readFileSync(statsFile));
   } else {
     const game = new SlippiGame(fullPath);
-    parsedGame =     fs.writeFileSync(statsFile, JSON.stringify({
+    parsedGame = {
       metadata: game.getMetadata(),
       settings: game.getSettings(),
       stats: game.getStats(),
-    }))
+    }
+    fs.writeFileSync(statsFile, JSON.stringify(parsedGame))
   }
   parsedGame.getMetadata = () => parsedGame.metadata
   parsedGame.getSettings = () => parsedGame.settings
@@ -284,6 +292,22 @@ async function loadFilesInFolder(folderPath) {
     });
   });
 
+  const statsDir = path.join(remote.app.getPath('appData'), 'Slippi Desktop App', 'stats')
+  if (!fs.existsSync(statsDir)){
+    fs.mkdirSync(statsDir);
+  }
+
+  const metadataPath = path.join(statsDir, '.metadata')
+
+  let meta = { version: -1 }
+  if (fs.existsSync(metadataPath)) meta = JSON.parse(fs.readFileSync(metadataPath))
+  console.log(meta)
+  if (meta.version < STATS_VERSION) {
+    fsExtra.emptyDirSync(statsDir)
+    meta.version =  STATS_VERSION
+    fs.writeFileSync(metadataPath, JSON.stringify(meta)) 
+  }
+
   const filesPromise = readdirPromise.then(dirents => (
     dirents.filter(dirent => (
       dirent.isFile()
@@ -301,10 +325,6 @@ async function loadFilesInFolder(folderPath) {
 
       // Pre-load settings here
       try {
-        const statsDir = path.join(folderPath, 'stats')
-        if (!fs.existsSync(statsDir)){
-          fs.mkdirSync(statsDir);
-        }
         game = parseStats(fullPath, statsDir, fileName)
 
         // Preload settings
