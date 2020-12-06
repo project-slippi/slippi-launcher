@@ -1,5 +1,5 @@
 import {
-  LOAD_ROOT_FOLDER, CHANGE_FOLDER_SELECTION, LOAD_FILES_IN_FOLDER, STORE_SCROLL_POSITION, SET_STATS_GAME_PAGE, SET_PLAYER_PROFILE_PAGE, STORE_FILE_LOAD_STATE, SET_FILTER_REPLAYS, DELETE_FILE,
+  LOAD_ROOT_FOLDER, CHANGE_FOLDER_SELECTION, LOAD_FILES_IN_FOLDER, STORE_SCROLL_POSITION, SET_STATS_GAME_PAGE, SET_PLAYER_PROFILE_PAGE, STORE_FILE_LOAD_STATE, SET_FILTER_REPLAYS, DELETE_FILE, INCREMENT_LOADED, SET_TOTAL_FILE_COUNT
 } from '../actions/fileLoader';
 import DolphinManager from '../domain/DolphinManager';
 
@@ -12,6 +12,8 @@ const defaultState = {
   rootFolderPath: "",
   selectedFolderFullPath: "",
   isLoading: false,
+  loadedFiles: 0,
+  totalFileCount: 0,
   folders: {},
   files: [],
   folderFound: false,
@@ -44,6 +46,10 @@ export default function fileLoader(state = defaultState, action) {
     return setFilterReplays(state, action);
   case DELETE_FILE:
     return deleteFile(state, action);
+  case INCREMENT_LOADED:
+    return incrementLoaded(state, action);
+  case SET_TOTAL_FILE_COUNT:
+    return setTotalFileCount(state, action);
   default:
     return state;
   }
@@ -83,7 +89,23 @@ function changeFolderSelection(state, action) {
     selectedFolderFullPath: folderPath,
     isLoading: true,
     fileLoadState: {},
+    loadedFiles: 0,
+    totalFileCount: 0,
   };
+}
+
+function incrementLoaded(state, action) {
+  return {
+    ...state,
+    loadedFiles: state.loadedFiles+action.payload,
+  }
+}
+
+function setTotalFileCount(state, action) {
+  return {
+    ...state,
+    totalFileCount: action.payload,
+  }
 }
 
 function loadFilesInFolder(state, action) {

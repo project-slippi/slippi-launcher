@@ -20,6 +20,8 @@ export const STORE_SCROLL_POSITION = 'STORE_SCROLL_POSITION';
 export const STORE_FILE_LOAD_STATE = 'STORE_FILE_LOAD_STATE';
 export const SET_FILTER_REPLAYS = 'SET_FILTER_REPLAYS';
 export const DELETE_FILE = 'DELETE_FILE';
+export const INCREMENT_LOADED = 'INCREMENT_LOADED';
+export const SET_TOTAL_FILE_COUNT = 'SET_TOTAL_FILE_COUNT';
 
 export const MIN_GAME_LENGTH_SECONDS = 30;
 const MIN_GAME_LENGTH_FRAMES = MIN_GAME_LENGTH_SECONDS * 60;
@@ -90,7 +92,7 @@ export function loadRootFolder() {
     // Had to add this wait here otherwise the loading screen would not show
     await wait(10); // eslint-disable-line
 
-    const filesAndFolders = await loadFilesInFolder(rootFolderPath);
+    const filesAndFolders = await loadFilesInFolder(rootFolderPath, dispatch);
     const [unfilteredFiles, allFiles] = processFiles(filesAndFolders[0]);
 
     dispatch({
@@ -120,7 +122,7 @@ export function changeFolderSelection(folder) {
     await wait(10); // eslint-disable-line
 
     const currentPath = getState().fileLoader.selectedFolderFullPath;
-    const filesAndFolders = await loadFilesInFolder(currentPath);
+    const filesAndFolders = await loadFilesInFolder(currentPath, dispatch);
     const [unfilteredFiles, allFiles] = processFiles(filesAndFolders[0]);
 
     dispatch({
@@ -259,120 +261,110 @@ export function setFilterReplays(val) {
 }
 
 
-function parseStats(fullPath, dir, name) {
-  const extension = path.extname(name);
-  const statsName = `${path.basename(name,extension)}_stats.json`;
-  const statsFile = path.join(dir, statsName);
-  let parsedGame;
-  if (fs.existsSync(statsFile)){
-    parsedGame =  JSON.parse(fs.readFileSync(statsFile));
-  } else {
-    const game = new SlippiGame(fullPath);
-    parsedGame = {
-      metadata: game.getMetadata(),
-      settings: game.getSettings(),
-      stats: game.getStats(),
+async function parseStats(fullPath, dir, name, index, dispatch) {
+  let game
+  let hasError = false
+  let lastFrame = null
+  try {
+    const extension = path.extname(name);
+    const statsName = `${path.basename(name,extension)}_stats.json`;
+    const statsFile = path.join(dir, statsName);
+    if (fs.existsSync(statsFile)){
+      const parsed = await fs.promises.readFile(statsFile)
+      game =  JSON.parse(parsed);
+    } else {
+      const parsed = new SlippiGame(fullPath);
+      game = {
+        metadata: parsed.getMetadata(),
+        settings: parsed.getSettings(),
+        stats: parsed.getStats(),
+      }
+      fs.writeFileSync(statsFile, JSON.stringify(game))
+      await wait(10)
     }
-    fs.writeFileSync(statsFile, JSON.stringify(parsedGame))
+    game.getMetadata = () => game.metadata
+    game.getSettings = () => game.settings
+    game.getStats    = () => game.stats
+    game.getFilePath = () => fullPath
+
+    if (_.isEmpty(game.settings.players)) {
+      throw new Error("Game settings could not be properly loaded.");
+    }
+
+    if (game.metadata && game.metadata.lastFrame !== undefined) {
+      lastFrame = game.metadata.lastFrame;
+    }
+  } catch (err) {
+    console.log(`Failed to parse file: ${fullPath}`);
+    console.log(err);
+    hasError = true;
   }
-  parsedGame.getMetadata = () => parsedGame.metadata
-  parsedGame.getSettings = () => parsedGame.settings
-  parsedGame.getStats    = () => parsedGame.stats
-  parsedGame.getFilePath = () => fullPath
-  return parsedGame
+
+  const progressFreq = 20
+  if (index % progressFreq === 0) {
+    dispatch({
+      type: INCREMENT_LOADED,
+      payload: progressFreq,
+    })
+  }
+
+  const startTime = timeUtils.fileToDateAndTime(game, name, fullPath);
+
+  return {
+    fullPath: fullPath,
+    fileName: name,
+    startTime: startTime,
+    game: game,
+    hasError: hasError,
+    lastFrame: lastFrame,
+  };
 }
 
-async function loadFilesInFolder(folderPath) {
-  const readdirPromise = new Promise((resolve, reject) => {
-    fs.readdir(folderPath, { withFileTypes: true }, (err, dirents) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(dirents);
-    });
-  });
+async function loadFilesInFolder(folderPath, dispatch) {
+  const dirents = await fs.promises.readdir(folderPath, { withFileTypes: true })
 
   const statsDir = path.join(remote.app.getPath('appData'), 'Slippi Desktop App', 'stats')
   if (!fs.existsSync(statsDir)){
     fs.mkdirSync(statsDir);
   }
-
   const metadataPath = path.join(statsDir, '.metadata')
-
   let meta = { version: -1 }
   if (fs.existsSync(metadataPath)) meta = JSON.parse(fs.readFileSync(metadataPath))
-  console.log(meta)
   if (meta.version < STATS_VERSION) {
     fsExtra.emptyDirSync(statsDir)
     meta.version =  STATS_VERSION
     fs.writeFileSync(metadataPath, JSON.stringify(meta)) 
   }
 
-  const filesPromise = readdirPromise.then(dirents => (
-    dirents.filter(dirent => (
-      dirent.isFile()
-    )).map(dirent => (
-      dirent.name
-    )).filter(fileName => (
-      // Filter for all .slp files
-      path.extname(fileName) === ".slp"
-    )).map(fileName => {
-      // Compute header information for display
-      const fullPath = path.join(folderPath, fileName);
-      let game = null;
-      let hasError = false;
-      let lastFrame = null;
+  const slpFiles = dirents
+    .filter(dirent => dirent.isFile())
+    .map(dirent => dirent.name)
+    .filter(fileName => path.extname(fileName) === ".slp")
 
-      // Pre-load settings here
-      try {
-        game = parseStats(fullPath, statsDir, fileName)
+  dispatch({
+    type: SET_TOTAL_FILE_COUNT,
+    payload: slpFiles.length,
+  })
 
-        // Preload settings
-        const settings = game.getSettings();
-        if (_.isEmpty(settings.players)) {
-          throw new Error("Game settings could not be properly loaded.");
-        }
+  let i = 0
+  let files = []
+  for (const fileName of slpFiles) {
+    const stats = await parseStats(path.join(folderPath, fileName), statsDir, fileName, i, dispatch)
+    files = [...files, stats]
+    i++
+  }
 
-        // Preload metadata
-        const metadata = game.getMetadata();
-        if (metadata && metadata.lastFrame !== undefined) {
-          lastFrame = metadata.lastFrame;
-        }
-      } catch (err) {
-        console.log(`Failed to parse file: ${fullPath}`);
-        console.log(err);
-        hasError = true;
-      }
 
-      const startTime = timeUtils.fileToDateAndTime(game, fileName, fullPath);
+  const folders = dirents
+    .filter(dirent => dirent.isDirectory())
+    .map(dirent => ({
+      folderName: dirent.name,
+      fullPath: path.join(folderPath, dirent.name),
+      expanded: true,
+      subDirectories: [],
+    }))
 
-      return {
-        fullPath: fullPath,
-        fileName: fileName,
-        startTime: startTime,
-        game: game,
-        hasError: hasError,
-        lastFrame: lastFrame,
-      };
-    })
-  ));
-
-  const foldersPromise = readdirPromise.then(dirents => (
-    dirents.filter(dirent => (
-      dirent.isDirectory()
-    )).map(dirent => {
-      const folderName = dirent.name;
-      const fullPath = path.join(folderPath, folderName);
-      return {
-        fullPath: fullPath,
-        folderName: folderName,
-        expanded: true,
-        subDirectories: [],
-      };
-    })
-  ));
-
-  return Promise.all([filesPromise, foldersPromise]);
+  return [files, folders];
 }
 
 async function wait(ms) {

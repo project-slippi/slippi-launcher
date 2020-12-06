@@ -11,6 +11,7 @@ import {
   Message,
   Loader,
   Visibility,
+  Progress,
 } from 'semantic-ui-react';
 import classNames from 'classnames';
 import styles from './FileLoader.scss';
@@ -376,18 +377,14 @@ export default class FileLoader extends Component {
   }
 
   renderLoadingState() {
-    const store = this.props.store || {};
+    const files = this.props.store.totalFileCount
+    const loaded = this.props.store.loadedFiles
+    const percent = files === 0 ? 0 : loaded / files * 100
+    const mainStyles = `main-padding ${styles['loader-main']}`;
     return (
-      <Loader
-        className={styles['loader']}
-        inverted={true}
-        active={store.isLoading}
-        indeterminate={true}
-        inline="centered"
-        size="big"
-      >
-        <span>Loading Files...</span>
-      </Loader>
+      <div className={mainStyles}>
+        <Progress percent={percent.toFixed(0)} indicating={true} progress={true} />
+      </div>
     );
   }
 
@@ -521,8 +518,9 @@ export default class FileLoader extends Component {
       <div className={mainStyles}>
         <PageHeader
           icon="disk"
-          text="Replay Browser"
+          text={`Replay Browser`}
           history={this.props.history}
+          blocked={this.props.store.isLoading}
         />
         <Scroller
           ref={this.setTableScrollRef}

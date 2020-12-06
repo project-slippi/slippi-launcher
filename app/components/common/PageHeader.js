@@ -11,10 +11,12 @@ export default class PageHeader extends Component {
     infoText: PropTypes.string,
     icon: PropTypes.string.isRequired,
     history: PropTypes.object.isRequired,
+    blocked: PropTypes.bool,
   };
 
   static defaultProps = {
     infoText: "",
+    blocked: false,
   };
 
   handleBack = () => {
@@ -35,13 +37,13 @@ export default class PageHeader extends Component {
             {this.props.text}
             <SpacedGroup>
               {infoEl}
-              <Button
+              {!this.props.blocked ? (<Button
                 content="Back"
                 color="green"
                 basic={true}
                 inverted={true}
                 onClick={this.handleBack}
-              />
+              />) : null }
             </SpacedGroup>
           </div>
         </Header.Content>

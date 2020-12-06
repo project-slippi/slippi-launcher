@@ -25,7 +25,7 @@ export function convertToDateAndTime(dateTimeString) {
 }
 
 export function fileToDateAndTime(game, fileName, fullPath) {
-  const metadata = game.getMetadata() || {};
+  let metadata = (game ? game.getMetadata() : {}) ||  {}
   const startAt = convertToDateAndTime(metadata.startAt);
   const getTimeFromFileName = () => filenameToDateAndTime(fileName);
   const getTimeFromBirthTime = () => convertToDateAndTime(fs.statSync(fullPath).birthtime);
