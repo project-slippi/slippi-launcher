@@ -5,8 +5,23 @@ import { download } from "common/download";
 import AdmZip from "adm-zip";
 import { fetchPlayKey } from "./playkey";
 import { fileExists } from "common/utils";
+import { spawn } from "child_process";
 
 const NETPLAY_PATH = path.join(remote.app.getPath("userData"), "netplay");
+
+export function openDolphin() {
+  const dolphinPath = getDolphinPath();
+  spawn(dolphinPath);
+}
+
+function getDolphinPath(): string {
+  switch (process.platform) {
+    case "win32":
+      return path.join(NETPLAY_PATH, "Dolphin.exe");
+    default:
+      throw new Error(`Unsupported OS: ${process.platform}`);
+  }
+}
 
 function getPlayKeyPath(): string {
   switch (process.platform) {

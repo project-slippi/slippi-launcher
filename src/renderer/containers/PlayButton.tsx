@@ -18,6 +18,10 @@ export const PlayButton: React.FC = () => {
         payload: status,
       });
     });
+    dispatch({
+      type: Action.SET_INSTALL_STATUS,
+      payload: "",
+    });
   });
   return (
     <div>
