@@ -64,6 +64,7 @@
   .select-content-wrapper {
     margin-left: 10px;
   }
+  
 }
 
 .vs-element {
@@ -84,3 +85,18 @@
     text-decoration: underline;
   }
 }
+
+.select-all-icon {
+  text-align: center;
+}
+
+:focus {
+  outline: 0;
+}
+
+.queue-buttons {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+}
+

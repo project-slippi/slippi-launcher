@@ -6,3 +6,4 @@ file and that seems to have solved the issue.
 */
 @import "~@fortawesome/fontawesome-free/css/all.css";
 @import '~semantic-ui-css/semantic.min.css';
+@import '~react-virtualized/styles.css';

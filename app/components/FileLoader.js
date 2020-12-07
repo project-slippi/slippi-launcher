@@ -3,26 +3,22 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import {
-  Table,
   Icon,
   Header,
   Button,
   Segment,
   Message,
   Loader,
-  Visibility,
 } from 'semantic-ui-react';
-import classNames from 'classnames';
 import styles from './FileLoader.scss';
-import FileRow from './FileRow';
 import DismissibleMessage from './common/DismissibleMessage';
 import PageHeader from './common/PageHeader';
 import FolderBrowser from './common/FolderBrowser';
 import PageWrapper from './PageWrapper';
 import Scroller from './common/Scroller';
 import { MIN_GAME_LENGTH_SECONDS } from '../actions/fileLoader';
-
-const GAME_BATCH_SIZE = 50;
+import FileTable from './FileTable';
+import 'react-virtualized/styles.css';
 
 export default class FileLoader extends Component {
   static propTypes = {
@@ -31,7 +27,6 @@ export default class FileLoader extends Component {
     changeFolderSelection: PropTypes.func.isRequired,
     playFile: PropTypes.func.isRequired,
     queueFiles: PropTypes.func.isRequired,
-    storeScrollPosition: PropTypes.func.isRequired,
     storeFileLoadState: PropTypes.func.isRequired,
     setStatsGamePage: PropTypes.func.isRequired,
     deleteSelections: PropTypes.func.isRequired,
@@ -47,16 +42,6 @@ export default class FileLoader extends Component {
     topNotifOffset: PropTypes.number.isRequired,
   };
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      selections: [],
-      areAllSelected: false,
-      shiftPressed: false,
-    };
-  }
-
   componentDidMount() {
     if (this.props.history.action === "PUSH") {
       // The action when returning from the stats page is "POP". The action when coming from the
@@ -64,135 +49,18 @@ export default class FileLoader extends Component {
       // any new files show up correctly
       this.props.setFilterReplays(true);
       this.props.loadRootFolder();
-
-      // Arriving at the file browser from the top level menu should reset the scroll position because
-      // the files may be different than when we last looked.
-      this.props.storeScrollPosition({
-        x: 0,
-        y: 0,
-      });
     } else if (this.props.history.action === "POP") {
-      const xPos = _.get(this.props.store, ['scrollPosition', 'x']) || 0;
-      const yPos = _.get(this.props.store, ['scrollPosition', 'y']) || 0;
-
-      this.refTableScroll.scrollTo(xPos, yPos);
-    }
-
-    // Listen for the shift key
-    document.addEventListener("keydown", this.shiftKeyListener);
-    document.addEventListener("keyup", this.shiftKeyListener);
-  }
-
-  componentDidUpdate(prevProps) {
-    const filesHaveLoaded = _.get(this.props, ['store', 'fileLoadState', 'hasLoaded'], false);
-    const prevFilesHaveLoaded = _.get(prevProps, ['store', 'fileLoadState', 'hasLoaded'], false);
-
-    if (!prevFilesHaveLoaded && filesHaveLoaded) {
-      const xPos = _.get(this.props.store, ['scrollPosition', 'x']) || 0;
-      const yPos = _.get(this.props.store, ['scrollPosition', 'y']) || 0;
-
-      this.refTableScroll.scrollTo(xPos, yPos);
-
-      // Clear scroll position so that if we browse to a different folder it doesn't try to restore
-      // the position that was saved on the current folder
-      this.props.storeScrollPosition({
-        x: 0,
-        y: 0,
-      });
+      //
     }
   }
 
   componentWillUnmount() {
-    this.props.storeScrollPosition({
-      x: this.refTableScroll.scrollLeft,
-      y: this.refTableScroll.scrollTop,
-    });
-
     this.props.dismissError('fileLoader-global');
 
     // Stop listening for the shift key
     document.removeEventListener("keydown", this.shiftKeyListener);
     document.removeEventListener("keyup", this.shiftKeyListener);
   }
-
-  shiftKeyListener = (event) => {
-    if (event.key === "Shift") {
-      this.setState({
-        shiftPressed: Boolean(event.type === "keydown"),
-      });
-    }
-  }
-
-  refTableScroll = null;
-
-  setTableScrollRef = element => {
-    this.refTableScroll = element;
-  };
-
-  onSelect = (selectedFile, fileIndex) => {
-    // shift clicking has gmail behavior
-    if (this.state.shiftPressed) {
-      this.handleShiftSelect(selectedFile, fileIndex);
-      return;
-    }
-
-    const newSelections = [];
-
-    let wasSeen = false;
-    this.state.selections.forEach(file => {
-      if (file === selectedFile) {
-        wasSeen = true;
-        return;
-      }
-      newSelections.push(file);
-    });
-    if (!wasSeen) {
-      newSelections.push(selectedFile);
-    }
-
-    this.setState({
-      selections: newSelections,
-      areAllSelected: newSelections.length === this.props.store.files.length,
-    });
-  };
-
-  handleShiftSelect = (selectedFile, fileIndex) => {
-    // Shift clicking on an already selected file removes all consecutive selections on and after it
-    // eslint-disable-next-line react/no-access-state-in-setstate
-    let newSelections = [...this.state.selections];
-    const files = (this.props.store.filterReplays ? this.props.store.files : this.props.store.allFiles) || [];
-    if (this.state.selections.indexOf(selectedFile) !== -1) {
-      const startingFileIndex = files.indexOf(selectedFile);
-      let numToRemove = 0;
-      for (let i = startingFileIndex; i < files.length; i++) {
-        if (this.state.selections.indexOf(files[i]) === -1) {
-          break;
-        }
-        numToRemove++;
-      }
-      newSelections.splice(this.state.selections.indexOf(selectedFile), numToRemove);
-      this.setState({
-        selections: newSelections,
-        areAllSelected: newSelections.length === this.props.store.files.length,
-      });
-      return;
-    }
-
-    // Shift clicking on a not selected file selects all files before it up to another already selected file
-    let newFiles = [];
-    for (let i = fileIndex; i >= 0; i--) {
-      if (this.state.selections.indexOf(files[i]) !== -1) {
-        break;
-      }
-      newFiles.push(files[i]);
-    }
-    newFiles = newFiles.reverse();
-    newSelections = [...this.state.selections, ...newFiles];
-    this.setState({
-      selections: newSelections,
-      areAllSelected: newSelections.length === this.props.store.files.length,
-    });
-  };
 
   renderSidebar() {
     const store = this.props.store || {};
@@ -221,27 +89,6 @@ export default class FileLoader extends Component {
         </Scroller>
       </div>,
     ];
-  }
-
-  queueClear = () => {
-    this.setState({
-      selections: [],
-      areAllSelected: false,
-    });
-  };
-
-  queueFiles = () => {
-    this.props.queueFiles(this.state.selections);
-    this.setState({
-      selections: [],
-    });
-  };
-
-  selectAll = () => {
-    this.setState((prevState) => ({
-      selections: prevState.areAllSelected ? [] : (this.props.store.filterReplays ? this.props.store.files : this.props.store.allFiles) || [],
-      areAllSelected: !prevState.areAllSelected,
-    }));
   }
 
   renderGlobalError() {
@@ -298,10 +145,10 @@ export default class FileLoader extends Component {
       });
       // Clear the selection and disable replay filter
       this.props.setFilterReplays(false);
-      this.setState({
-        selections: [],
-        areAllSelected: false,
-      });
+      // this.setState({
+      //   selections: [],
+      //   areAllSelected: false,
+      // });
     }
 
     return (
@@ -395,10 +242,6 @@ export default class FileLoader extends Component {
 
     const allFiles = (store.filterReplays ? store.files : store.allFiles) || [];
 
-    const filesToRender = _.get(store, ['fileLoadState', 'filesToRender']) || [];
-    const filesOffset = _.get(store, ['fileLoadState', 'filesOffset']) || 0;
-    const hasLoaded = _.get(store, ['fileLoadState', 'hasLoaded']) || false;
-
     if (store.isLoading) {
       return this.renderLoadingState();
     }
@@ -408,113 +251,28 @@ export default class FileLoader extends Component {
       return this.renderEmptyLoader();
     }
 
-    const cellStyles = classNames({
-      [styles['select-cell']]: true,
-      [styles['selected']]: this.state.areAllSelected,
-    });
+    const isFiltering = _.get(this.props.store, 'numFilteredFiles') > 0;
+    const offset = this.props.topNotifOffset + isFiltering ? 70 : 0
 
-    const iconStyle = classNames({ [styles['select-all-icon']]: true})
-
-    const selectAllIcon = this.state.areAllSelected ? (
-      <Icon size="big" name="check square outline" onClick={this.selectAll} className={iconStyle} />
-    ) : (
-      <Icon size="big" name="square outline" onClick={this.selectAll} className={iconStyle} />
-    )
-
-    // Generate header row
-    const headerRow = (
-      <Table.Row>
-        <Table.HeaderCell verticalAlign="bottom" className={cellStyles} >{selectAllIcon}</Table.HeaderCell>
-        <Table.HeaderCell verticalAlign="bottom" className={styles['table-header']}>Details</Table.HeaderCell>
-        <Table.HeaderCell verticalAlign="bottom" className={styles['table-header']}>Time</Table.HeaderCell>
-        <Table.HeaderCell />
-      </Table.Row>
-    );
-
-    // Generate a row for every file in selected folder
-    let fileIndex = 0;
-    const rows = filesToRender.map(
-      file => (
-        <FileRow
-          key={file.fullPath}
-          file={file}
-          playFile={this.props.playFile}
+    return (
+      <div style={{
+        width: `calc(100% + 17px)`,
+        height: `calc(100vh - ${offset + 85}px)`,
+      }}>
+        <FileTable 
+          files={allFiles}
           setStatsGamePage={this.props.setStatsGamePage}
-          onSelect={this.onSelect}
-          selectedOrdinal={this.state.selections.indexOf(file) + 1}
-          fileIndex={fileIndex++}
+          onSelectFunc={this.onSelect}
+          playFile={this.props.playFile}
+          queueFiles={this.props.queueFiles}
+          deleteSelections={this.props.deleteSelections}
         />
-      ),
-      this
-    );
-
-    const bufferMoreFiles = (e, { calculations }) => {
-      const start = filesOffset;
-      const end = Math.min(start + GAME_BATCH_SIZE, allFiles.length);
-
-      if (
-        (calculations.percentagePassed > 0.5 &&
-          start < allFiles.length) ||
-        !hasLoaded) {
-        const nextFilesToRender = allFiles.slice(start, end);
-
-        this.props.storeFileLoadState({
-          filesToRender: filesToRender.concat(nextFilesToRender),
-          filesOffset: end,
-          hasLoaded: true,
-        });
-      }
-    };
-
-    return (
-      <Table
-        className={styles['file-table']}
-        basic="very"
-        celled={true}
-        inverted={true}
-        selectable={true}
-      >
-        <Table.Header>{headerRow}</Table.Header>
-        <Visibility updateOn="repaint" as="tbody" onUpdate={bufferMoreFiles}>
-          {rows}
-        </Visibility>
-      </Table>
-    );
-  }
-  
-  deleteSelections = () => {
-    this.props.deleteSelections(this.state.selections);
-    this.setState({
-      selections: [],
-    });
-    this.renderMain();
-  }
-
-  renderQueueButtons() {
-    if (this.state.selections.length === 0) {
-      return;
-    }
-    return (
-      <div className={styles['queue-buttons']}>
-        <Button onClick={this.queueFiles}>
-          <Icon name="play circle" />
-          Play all
-        </Button>
-        <Button onClick={this.queueClear}>
-          <Icon name="dont" />
-          Clear
-        </Button>
-        <Button onClick={this.deleteSelections}>
-          <Icon name="trash alternate outline" />
-            Delete
-        </Button>
       </div>
-    );
+    )
   }
 
   renderMain() {
     const mainStyles = `main-padding ${styles['loader-main']}`;
-
     return (
       <div className={mainStyles}>
         <PageHeader
@@ -522,15 +280,9 @@ export default class FileLoader extends Component {
           text="Replay Browser"
           history={this.props.history}
         />
-        <Scroller
-          ref={this.setTableScrollRef}
-          topOffset={this.props.topNotifOffset}
-        >
-          {this.renderGlobalError()}
-          {this.renderFilteredFilesNotif()}
-          {this.renderFileSelection()}
-        </Scroller>
-        {this.renderQueueButtons()}
+        {this.renderGlobalError()}
+        {this.renderFilteredFilesNotif()}
+        {this.renderFileSelection()}
       </div>
     );
   }
