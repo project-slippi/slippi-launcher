@@ -1,10 +1,17 @@
 import firebase from "firebase";
 import React from "react";
-import { LoginForm } from "./containers/LoginForm";
-import { PlayKey } from "./containers/PlayKey";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from "react-router-dom";
+
 import { initializeFirebase } from "./lib/firebase";
 import { AppContext, Action } from "./store";
-import { CheckDolphinUpdates } from "./components/CheckDolphinUpdates";
+import { HomeView } from "./views/HomeView";
+import { LoadingView } from "./views/LoadingView";
+import { LoginView } from "./views/LoginView";
 
 initializeFirebase();
 
@@ -19,19 +26,29 @@ export const App: React.FC = () => {
           user,
         },
       });
+
+      if (!state.initialized) {
+        dispatch({
+          type: Action.SET_INITIALIZED,
+        });
+      }
     });
 
     // Unsubscribe on unmount
     return unsubscribe;
   }, []);
 
+  if (!state.initialized) {
+    return <LoadingView />;
+  }
+
   return (
-    <div>
-      Hello world!
-      <LoginForm />
-      <PlayKey />
-      <CheckDolphinUpdates />
-      <pre>{JSON.stringify(state, null, 2)}</pre>
-    </div>
+    <Router>
+      <Switch>
+        <Route path="/home" component={HomeView} />
+        <Route path="/login" component={LoginView} />
+        <Redirect from="/" to="/login" />
+      </Switch>
+    </Router>
   );
 };
