@@ -9,9 +9,13 @@
     "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null"
   },
   "dependencies": {
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
     "source-map-support": "^0.5.16"
   },
   "devDependencies": {
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
     "electron": "8.2.0",
     "electron-builder": "^22.4.1",
     "electron-webpack": "^2.8.2",
