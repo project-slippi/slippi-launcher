@@ -1,12 +1,12 @@
 {
   "name": "electron-webpack-quick-start",
   "version": "0.0.0",
-  "license": "MIT",
+  "license": "GPL-3.0",
   "scripts": {
     "dev": "electron-webpack dev",
-    "compile": "electron-webpack",
-    "dist": "yarn compile && electron-builder",
-    "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",
+    "build": "electron-webpack",
+    "package": "yarn run build && electron-builder",
+    "package:dir": "yarn run package --dir -c.compression=store -c.mac.identity=null",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "lint:fix": "yarn run lint --fix"
   },
