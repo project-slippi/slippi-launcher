@@ -1,5 +1,3 @@
-'use strict'
-
 import { app, BrowserWindow } from 'electron'
 import * as path from 'path'
 import { format as formatUrl } from 'url'
@@ -7,7 +5,7 @@ import { format as formatUrl } from 'url'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // global reference to mainWindow (necessary to prevent window from being garbage collected)
-let mainWindow
+let mainWindow: BrowserWindow | null = null;
 
 function createMainWindow() {
   const window = new BrowserWindow({webPreferences: {nodeIntegration: true}})
