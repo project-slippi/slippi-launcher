@@ -1,4 +1,0 @@
-http://code.kliu.org/misc/elevate/
-
-Utility for popping a user account control dialog on windows. Allows deleting of the dolphin directory on update if it
-was created with an admin account.

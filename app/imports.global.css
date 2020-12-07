@@ -1,8 +1,0 @@
-/*
-Originally these imports were in app.global.scss but for some reason when
-the app was packaged, font-awesome icons would all just be squares.
-The workaround was to just import them in a .css file instead of a sass
-file and that seems to have solved the issue.
-*/
-@import "~@fortawesome/fontawesome-free/css/all.css";
-@import '~semantic-ui-css/semantic.min.css';
