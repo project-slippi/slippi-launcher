@@ -9,7 +9,10 @@ let mainWindow: BrowserWindow | null = null;
 
 function createMainWindow() {
   const window = new BrowserWindow({
-    webPreferences: { nodeIntegration: true },
+    webPreferences: {
+      nodeIntegration: true,
+      enableRemoteModule: true,
+    },
   });
 
   if (isDevelopment) {
