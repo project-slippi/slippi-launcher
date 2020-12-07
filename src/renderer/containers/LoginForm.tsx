@@ -1,13 +1,13 @@
 import firebase from "firebase";
 import React from "react";
 
-import { useSubmit } from "@/lib/hooks/useSubmit";
+import { useAsync } from "@/lib/hooks/useAsync";
 
 export const LoginForm: React.FC = () => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
 
-  const [handleSubmit, loading, error] = useSubmit(async () => {
+  const { execute, loading, error } = useAsync(async () => {
     const user = await firebase
       .auth()
       .signInWithEmailAndPassword(email, password);
@@ -24,7 +24,7 @@ export const LoginForm: React.FC = () => {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          handleSubmit();
+          execute();
         }}
       >
         <div>

@@ -1,9 +1,10 @@
 import firebase from "firebase";
 import React from "react";
 import { LoginForm } from "./containers/LoginForm";
-import { PlayKey } from "./containers/Playkey";
+import { PlayKey } from "./containers/PlayKey";
 import { initializeFirebase } from "./lib/firebase";
 import { AppContext, Action } from "./store";
+import { CheckDolphinUpdates } from "./components/CheckDolphinUpdates";
 
 initializeFirebase();
 
@@ -29,6 +30,7 @@ export const App: React.FC = () => {
       Hello world!
       <LoginForm />
       <PlayKey />
+      <CheckDolphinUpdates />
       <pre>{JSON.stringify(state, null, 2)}</pre>
     </div>
   );
