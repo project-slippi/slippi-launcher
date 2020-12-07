@@ -1,6 +1,7 @@
 import firebase from "firebase";
 import React from "react";
 import { LoginForm } from "./containers/LoginForm";
+import { PlayKey } from "./containers/Playkey";
 import { initializeFirebase } from "./lib/firebase";
 import { AppContext, Action } from "./store";
 
@@ -27,6 +28,7 @@ export const App: React.FC = () => {
     <div>
       Hello world!
       <LoginForm />
+      <PlayKey />
       <pre>{JSON.stringify(state, null, 2)}</pre>
     </div>
   );

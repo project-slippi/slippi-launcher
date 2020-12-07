@@ -9,6 +9,7 @@ export const useSubmit = (submitFunction: () => Promise<void>) => {
       setError(null);
       await submitFunction();
     } catch (error) {
+      console.error(error);
       setError(error);
     } finally {
       setLoading(false);
