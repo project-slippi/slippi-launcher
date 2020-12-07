@@ -4,6 +4,7 @@ import { reducer, ReducerActions } from "./reducers";
 import { InitialStateType } from "./types";
 
 const initialState: InitialStateType = {
+  initialized: false,
   user: null,
 };
 

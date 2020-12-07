@@ -23,6 +23,12 @@ export const reducer = (state: InitialStateType, action: ReducerActions) => {
         user,
       };
     }
+    case Action.SET_INITIALIZED: {
+      return {
+        ...state,
+        initialized: true,
+      };
+    }
     default:
       return state;
   }
