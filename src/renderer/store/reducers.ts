@@ -14,13 +14,23 @@ type ActionMap<M extends { [index: string]: any }> = {
 
 export type ReducerActions = ActionMap<ActionPayload>[keyof ActionMap<ActionPayload>];
 
-export const reducer = (state: InitialStateType, action: ReducerActions) => {
+export const reducer = (
+  state: InitialStateType,
+  action: ReducerActions
+): InitialStateType => {
   switch (action.type) {
     case Action.SET_USER: {
       const { user } = action.payload;
       return {
         ...state,
         user,
+      };
+    }
+    case Action.SET_INSTALL_STATUS: {
+      const status = action.payload || "";
+      return {
+        ...state,
+        installStatus: status,
       };
     }
     case Action.SET_INITIALIZED: {

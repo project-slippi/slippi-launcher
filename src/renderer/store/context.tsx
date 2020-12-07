@@ -6,6 +6,7 @@ import { InitialStateType } from "./types";
 const initialState: InitialStateType = {
   initialized: false,
   user: null,
+  installStatus: "",
 };
 
 const AppContext = createContext<{

@@ -17,16 +17,25 @@ function getPlayKeyPath(): string {
   }
 }
 
-export async function checkDolphinUpdates(): Promise<any> {
-  console.log("Checking for netplay update");
-  const res = await downloadLatestNetplay();
-  console.log("Downloading user playkey");
-  const playKey = await fetchPlayKey();
+export async function checkDolphinUpdates(
+  log: (status: string) => void = console.log
+): Promise<void> {
+  const dolphinExists = await fileExists(NETPLAY_PATH);
+  if (dolphinExists) {
+    log("Dolphin already exists");
+  } else {
+    log("Downloading Dolphin...");
+    await downloadLatestNetplay(log);
+  }
+
+  log("Checking user account...");
   const keyPath = getPlayKeyPath();
-  const contents = JSON.stringify(playKey, null, 2);
-  await fs.writeFile(keyPath, contents);
-  console.log(`Wrote: ${contents} to ${keyPath}`);
-  return res;
+  const playKeyExists = await fileExists(keyPath);
+  if (!playKeyExists) {
+    const playKey = await fetchPlayKey();
+    const contents = JSON.stringify(playKey, null, 2);
+    await fs.writeFile(keyPath, contents);
+  }
 }
 
 async function getLatestNetplayAsset(): Promise<any> {
@@ -60,31 +69,33 @@ function matchesPlatform(releaseName: string): boolean {
   }
 }
 
-async function downloadLatestNetplay() {
+async function downloadLatestNetplay(
+  log: (status: string) => void = console.log
+) {
   const asset = await getLatestNetplayAsset();
   const downloadLocation = path.join(remote.app.getPath("temp"), asset.name);
   const exists = await fileExists(downloadLocation);
   if (!exists) {
-    console.log(
-      `Downloading ${asset.browser_download_url} to ${downloadLocation}`
+    log(`Downloading ${asset.browser_download_url} to ${downloadLocation}`);
+    await download(asset.browser_download_url, downloadLocation, (percent) =>
+      log(`Downloading... ${(percent * 100).toFixed(0)}%`)
     );
-    await download(asset.browser_download_url, downloadLocation, console.log);
-    console.log(
+    log(
       `Successfully downloaded ${asset.browser_download_url} to ${downloadLocation}`
     );
   } else {
-    console.log(`${downloadLocation} already exists. Skipping download.`);
+    log(`${downloadLocation} already exists. Skipping download.`);
   }
   const extractToLocation = remote.app.getPath("userData");
   const zip = new AdmZip(downloadLocation);
   const zipEntries = zip.getEntries();
 
-  console.log(`Extracting to: ${extractToLocation}, and renaming to netplay`);
+  log(`Extracting to: ${extractToLocation}, and renaming to netplay`);
   zip.extractAllTo(extractToLocation, true);
   const oldPath = path.join(extractToLocation, "FM-Slippi");
   const newPath = NETPLAY_PATH;
   if (await fs.pathExists(newPath)) {
-    console.log(`${newPath} already exists. Deleting...`);
+    log(`${newPath} already exists. Deleting...`);
     await fs.remove(newPath);
   }
   await fs.rename(oldPath, newPath);
