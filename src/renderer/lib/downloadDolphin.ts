@@ -1,9 +1,10 @@
-import fs from "fs-extra";
+import * as fs from "fs-extra";
 import path from "path";
 import { remote } from "electron";
 import { download } from "common/download";
 import AdmZip from "adm-zip";
 import { fetchPlayKey } from "./playkey";
+import { fileExists } from "common/utils";
 
 const NETPLAY_PATH = path.join(remote.app.getPath("userData"), "netplay");
 
@@ -62,7 +63,8 @@ function matchesPlatform(releaseName: string): boolean {
 async function downloadLatestNetplay() {
   const asset = await getLatestNetplayAsset();
   const downloadLocation = path.join(remote.app.getPath("temp"), asset.name);
-  if (!fs.existsSync(downloadLocation)) {
+  const exists = await fileExists(downloadLocation);
+  if (!exists) {
     console.log(
       `Downloading ${asset.browser_download_url} to ${downloadLocation}`
     );

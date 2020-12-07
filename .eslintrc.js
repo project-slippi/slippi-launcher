@@ -11,6 +11,9 @@ module.exports = {
     react: {
       version: "detect",
     },
+    "import/resolver": {
+      typescript: {},
+    },
   },
   extends: [
     "plugin:react/recommended",
@@ -40,5 +43,6 @@ module.exports = {
     ],
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "import/no-default-export": "error",
+    "import/no-named-as-default-member": "off",
   },
 };
