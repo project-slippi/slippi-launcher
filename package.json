@@ -1,5 +1,7 @@
 {
-  "name": "electron-webpack-quick-start",
+  "name": "slippi-launcher",
+  "productName": "Slippi Launcher",
+  "description": "Launch Slippi Online, browse and watch saved replays",
   "version": "0.0.0",
   "license": "GPL-3.0",
   "scripts": {
@@ -22,6 +24,7 @@
     "@typescript-eslint/parser": "^4.9.0",
     "electron": "11.0.3",
     "electron-builder": "^22.4.1",
+    "electron-notarize": "^1.0.0",
     "electron-webpack": "^2.8.2",
     "electron-webpack-ts": "^4.0.1",
     "eslint": "^7.15.0",
@@ -33,6 +36,11 @@
     "pretty-quick": "^3.1.0",
     "typescript": "3.8.3",
     "webpack": "~4.42.1"
+  },
+  "author": {
+    "name": "Jas Laferriere",
+    "email": "jas.laferriere@gmail.com",
+    "url": "https://github.com/jlaferri"
   },
   "husky": {
     "hooks": {

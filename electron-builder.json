@@ -1,0 +1,29 @@
+{
+  "productName": "Slippi Launcher",
+  "appId": "com.github.projectslippi.slippidesktopapp",
+  "afterSign": "build/afterSignHook.macos.js",
+  "directories": {
+    "buildResources": "resources",
+    "output": "release"
+  },
+  "dmg": {
+    "artifactName": "Slippi-Launcher-${version}.${ext}",
+    "icon": "resources/icon.icns",
+    "contents": [
+      {
+        "x": 130,
+        "y": 220
+      },
+      {
+        "x": 410,
+        "y": 220,
+        "type": "link",
+        "path": "/Applications"
+      }
+    ]
+  },
+  "win": {
+    "target": ["nsis"],
+    "icon": "resources/icon.ico"
+  }
+}
