@@ -17,6 +17,9 @@ module.exports = {
     // Uses the recommended rules from the @typescript-eslint/eslint-plugin
     "plugin:@typescript-eslint/recommended",
     // Uses eslint-config-prettier to disable ESLint rules from @typescript-eslint/eslint-plugin that would conflict with prettier
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:import/typescript",
     "prettier/@typescript-eslint",
     // Enables eslint-plugin-prettier and eslint-config-prettier.
     // This will display prettier errors as ESLint errors.
@@ -36,5 +39,6 @@ module.exports = {
       },
     ],
     "@typescript-eslint/explicit-module-boundary-types": "off",
+    "import/no-default-export": "error",
   },
 };
