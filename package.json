@@ -6,7 +6,9 @@
     "dev": "electron-webpack dev",
     "compile": "electron-webpack",
     "dist": "yarn compile && electron-builder",
-    "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null"
+    "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "lint:fix": "yarn run lint --fix"
   },
   "dependencies": {
     "react": "^17.0.1",
@@ -16,10 +18,17 @@
   "devDependencies": {
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
+    "@typescript-eslint/eslint-plugin": "^4.9.0",
+    "@typescript-eslint/parser": "^4.9.0",
     "electron": "8.2.0",
     "electron-builder": "^22.4.1",
     "electron-webpack": "^2.8.2",
     "electron-webpack-ts": "^4.0.1",
+    "eslint": "^7.15.0",
+    "eslint-config-prettier": "^7.0.0",
+    "eslint-plugin-prettier": "^3.2.0",
+    "eslint-plugin-react": "^7.21.5",
+    "prettier": "^2.2.1",
     "typescript": "3.8.3",
     "webpack": "~4.42.1"
   }
