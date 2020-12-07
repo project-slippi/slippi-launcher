@@ -3,9 +3,28 @@ import path from "path";
 import { remote } from "electron";
 import { download } from "common/download";
 import AdmZip from "adm-zip";
+import { fetchPlayKey } from "./playkey";
+
+const NETPLAY_PATH = path.join(remote.app.getPath("userData"), "netplay");
+
+function getPlayKeyPath(): string {
+  switch (process.platform) {
+    case "win32":
+      return path.join(NETPLAY_PATH, "user.json");
+    default:
+      throw new Error(`Unsupported OS: ${process.platform}`);
+  }
+}
 
 export async function checkDolphinUpdates(): Promise<any> {
+  console.log("Checking for netplay update");
   const res = await downloadLatestNetplay();
+  console.log("Downloading user playkey");
+  const playKey = await fetchPlayKey();
+  const keyPath = getPlayKeyPath();
+  const contents = JSON.stringify(playKey, null, 2);
+  await fs.writeFile(keyPath, contents);
+  console.log(`Wrote: ${contents} to ${keyPath}`);
   return res;
 }
 
@@ -61,7 +80,7 @@ async function downloadLatestNetplay() {
   console.log(`Extracting to: ${extractToLocation}, and renaming to netplay`);
   zip.extractAllTo(extractToLocation, true);
   const oldPath = path.join(extractToLocation, "FM-Slippi");
-  const newPath = path.join(extractToLocation, "netplay");
+  const newPath = NETPLAY_PATH;
   if (await fs.pathExists(newPath)) {
     console.log(`${newPath} already exists. Deleting...`);
     await fs.remove(newPath);
