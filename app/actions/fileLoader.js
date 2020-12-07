@@ -348,7 +348,10 @@ async function loadFilesInFolder(folderPath, dispatch) {
 
   let i = 0
   let files = []
+
+  // eslint-disable-next-line
   for (const fileName of slpFiles) {
+    // eslint-disable-next-line
     const stats = await parseStats(path.join(folderPath, fileName), statsDir, fileName, i, dispatch)
     files = [...files, stats]
     i++

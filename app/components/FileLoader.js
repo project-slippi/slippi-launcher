@@ -9,7 +9,6 @@ import {
   Button,
   Segment,
   Message,
-  Loader,
   Visibility,
   Progress,
 } from 'semantic-ui-react';
@@ -518,7 +517,7 @@ export default class FileLoader extends Component {
       <div className={mainStyles}>
         <PageHeader
           icon="disk"
-          text={`Replay Browser`}
+          text="Replay Browser"
           history={this.props.history}
           blocked={this.props.store.isLoading}
         />
