@@ -15,6 +15,7 @@
   "dependencies": {
     "@apollo/client": "^3.3.4",
     "adm-zip": "^0.5.1",
+    "electron-context-menu": "^2.3.0",
     "electron-settings": "^4.0.2",
     "firebase": "^8.1.2",
     "fs-extra": "^9.0.1",

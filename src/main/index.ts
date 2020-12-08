@@ -1,6 +1,7 @@
 import { app, BrowserWindow } from "electron";
 import * as path from "path";
 import { format as formatUrl } from "url";
+import contextMenu from "electron-context-menu";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -18,6 +19,9 @@ function createMainWindow() {
 
   if (isDevelopment) {
     window.webContents.openDevTools();
+
+    // Enable context menu for inspecting elements
+    contextMenu();
   }
 
   if (isDevelopment) {
