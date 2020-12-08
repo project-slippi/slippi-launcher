@@ -13,6 +13,7 @@ function createMainWindow() {
       nodeIntegration: true,
       enableRemoteModule: true,
     },
+    autoHideMenuBar: true,
   });
 
   if (isDevelopment) {
