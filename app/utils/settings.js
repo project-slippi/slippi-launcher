@@ -23,6 +23,21 @@ export function getDefaultDolphinPath() {
   return path.join(userDataPath, 'dolphin');
 }
 
+export function getDolphinNetplayPath() {
+  const storedDolphinPath = electronSettings.get('settings.netplayDolphinPath');
+  if (storedDolphinPath) {
+    return storedDolphinPath;
+  }
+
+  return getDefaultDolphinNetplayPath();
+}
+
+export function getDefaultDolphinNetplayPath() {
+  // Build default packaged path
+  const userDataPath = app.getPath("userData")
+  return path.join(userDataPath, 'dolphin-netplay');
+}
+
 export function getDefaultRootSlpPath() {
   let root = app.getPath("home");
   if (process.platform === "win32") {

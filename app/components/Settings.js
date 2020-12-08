@@ -10,7 +10,7 @@ import {
   Icon,
   Confirm,
 } from 'semantic-ui-react';
-import { getDefaultDolphinPath } from '../utils/settings';
+import { getDefaultDolphinPath, getDefaultDolphinNetplayPath } from '../utils/settings';
 import PageHeader from './common/PageHeader';
 import ActionInput from './common/ActionInput';
 import LabelDescription from './common/LabelDescription';
@@ -32,6 +32,9 @@ export default class Settings extends Component {
     openDolphin: PropTypes.func.isRequired,
     resetDolphin: PropTypes.func.isRequired,
     setResetConfirm: PropTypes.func.isRequired,
+    openNetplayDolphin: PropTypes.func.isRequired,
+    resetNetplayDolphin: PropTypes.func.isRequired,
+    setResetNetplayConfirm: PropTypes.func.isRequired,
     login: PropTypes.func.isRequired,
     logout: PropTypes.func.isRequired,
 
@@ -63,6 +66,11 @@ export default class Settings extends Component {
   setFolderManual = (field, value) => () => {
     this.props.selectFolder(field, value);
   };
+
+  setNetplayFolderManual = (field, value) => () => {
+    this.props.selectNetplayFolder(field, value);
+  };
+
 
   renderGlobalError() {
     const errors = this.props.errors || {};
@@ -180,7 +188,7 @@ export default class Settings extends Component {
             label="Slippi.gg Integration"
             description="
             Connecting with Slippi.gg allows you to broadcast your games to other people.
-          "
+            "
           />
           <Button
             content="Login with Slippi.gg"
@@ -216,13 +224,13 @@ export default class Settings extends Component {
         <LabelDescription
           label="Configure Playback Dolphin"
           description="
-            The Dolphin used to play replay files is stored somewhere in the
-            depths of your file system. This button will open that Dolphin for
-            you so that you can change settings.
+          The Dolphin used to play replay files is stored somewhere in the
+          depths of your file system. This button will open that Dolphin for
+          you so that you can change settings.
           "
         />
         <Button
-          content="Configure Dolphin"
+          content="Configure Playback Dolphin"
           color="green"
           size="medium"
           basic={true}
@@ -233,6 +241,33 @@ export default class Settings extends Component {
       </div>
     );
   }
+
+  renderConfigNetplayDolphin() {
+    const store = this.props.store || {};
+
+    return (
+      <div>
+        <LabelDescription
+          label="Configure Netplay Dolphin"
+          description="
+          The Dolphin used to play online is stored somewhere in the
+          depths of your file system. This button will open that Dolphin for
+          you so that you can change settings.
+          "
+        />
+        <Button
+          content="Configure Netplay Dolphin"
+          color="green"
+          size="medium"
+          basic={true}
+          inverted={true}
+          onClick={this.props.openNetplayDolphin}
+          disabled={store.isResetting}
+        />
+      </div>
+    );
+  }
+
 
   renderResetDolphin() {
     const store = this.props.store || {};
@@ -248,9 +283,9 @@ export default class Settings extends Component {
         <LabelDescription
           label="Reset Playback Dolphin"
           description="
-            If replay playback fails to work, this button will reset the Playback
-            Dolphin to its original state. If this doesn't fix your issue please head
-            over to our Discord to receive further support
+          If replay playback fails to work, this button will reset the Playback
+          Dolphin to its original state. If this doesn't fix your issue please head
+          over to our Discord to receive further support
           "
         />
         <Button
@@ -277,6 +312,49 @@ export default class Settings extends Component {
     );
   }
 
+  renderResetNetplayDolphin() {
+    const store = this.props.store || {};
+    const confirmShow = _.get(store, 'confirmNetplayShow');
+
+    const defaultValue = getDefaultDolphinNetplayPath();
+    if (defaultValue !== store.settings.netplayDolphinPath) {
+      return;
+    }
+
+    return (
+      <div>
+        <LabelDescription
+          label="Reset Netplay Dolphin"
+          description="
+          If online play fails to work, this button will reset the Netplay
+          Dolphin to its original state. If this doesn't fix your issue please head
+          over to our Discord to receive further support
+          "
+        />
+        <Button
+          content="Reset Netplay Dolphin"
+          color="green"
+          size="medium"
+          basic={true}
+          inverted={true}
+          onClick={this.showConfirmNetplayReset}
+          loading={store.isNetplayResetting}
+          disabled={store.isNetplayResetting}
+        />
+        <Confirm
+          className={styles['confirm']}
+          open={!!confirmShow}
+          confirmButton="Yes"
+          cancelButton="No"
+          header="Reset Netplay Dolphin?"
+          content="Are you sure you would like to reset Dolphin? This will return all the settings to the defaults"
+          onConfirm={this.confirmResetNetplayDolphin}
+          onCancel={this.hideConfirmNetplayReset}
+        />
+      </div>
+    );
+  }
+
   showConfirmReset = () => {
     this.props.setResetConfirm(true);
   };
@@ -288,6 +366,20 @@ export default class Settings extends Component {
 
   hideConfirmReset = () => {
     this.props.setResetConfirm(false);
+  };
+
+
+  showConfirmNetplayReset = () => {
+    this.props.setResetNetplayConfirm(true);
+  };
+
+  confirmResetNetplayDolphin = () => {
+    this.hideConfirmNetplayReset();
+    this.props.resetNetplayDolphin();
+  };
+
+  hideConfirmNetplayReset = () => {
+    this.props.setResetNetplayConfirm(false);
   };
 
   renderISOVersionCheck() {
@@ -356,7 +448,7 @@ export default class Settings extends Component {
         label="Replay Root Directory"
         description={
           'The folder where your slp files are stored. Will usually be the ' +
-          'Slippi folder located with Dolphin'
+            'Slippi folder located with Dolphin'
         }
         value={store.settings.rootSlpPath}
         onClick={this.props.browseFolder}
@@ -377,6 +469,7 @@ export default class Settings extends Component {
   renderAdvancedSettings() {
     const inputs = [];
 
+    inputs.push([this.renderNetplayInstanceInput()]);
     inputs.push([this.renderPlaybackInstanceInput()]);
 
     if (_.isEmpty(inputs)) {
@@ -448,11 +541,68 @@ export default class Settings extends Component {
     );
   }
 
+  renderNetplayInstanceInput() {
+    const store = this.props.store || {};
+
+    const fieldName = 'netplayDolphinPath';
+    let resetButton = null;
+
+    const netplayDolphinDescription = (
+      <div>
+        The main Netplay instance of Dolphin for playing online comes bundled with this app.
+        This setting allows you to configure a different instance.
+      </div>
+    );
+
+    const defaultValue = getDefaultDolphinNetplayPath();
+    if (defaultValue !== store.settings.netplayDolphinPath) {
+      resetButton = (
+        <Button onClick={this.setFolderManual(fieldName, defaultValue)}>
+          Reset
+        </Button>
+      );
+    }
+
+    return (
+      <div key="netplayInstanceInput">
+        <LabelDescription
+          label="Netplay Dolphin Path"
+          description={netplayDolphinDescription}
+        />
+        <Message
+          className={styles['dolphin-warning']}
+          color="yellow"
+          warning={true}
+        >
+          <Icon name="warning sign" />
+          <strong>
+            The default should be used by almost everyone. Only modify if you
+            know what you are doing
+          </strong>
+        </Message>
+        <SpacedGroup customColumns="1fr auto">
+          <ActionInput
+            showLabelDescription={false}
+            value={store.settings.netplayDolphinPath}
+            onClick={this.props.browseFolder}
+            handlerParams={[fieldName]}
+            disabled={store.isResetting}
+          />
+          {resetButton}
+        </SpacedGroup>
+      </div>
+    );
+  }
+
+
+
   renderActions() {
     return (
       <div className={styles['section']}>
         <Header inverted={true}>Actions</Header>
         <SpacedGroup direction="vertical" size="lg">
+          {this.renderConfigNetplayDolphin()}
+          {this.renderResetNetplayDolphin()}
           {this.renderConfigDolphin()}
           {this.renderResetDolphin()}
         </SpacedGroup>

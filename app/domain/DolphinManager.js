@@ -11,7 +11,7 @@ import electronSettings from 'electron-settings';
 import { EventEmitter } from 'events';
 import { Frames } from '@slippi/slippi-js';
 
-import { getDolphinPath } from '../utils/settings';
+import { getDolphinPath, getDolphinNetplayPath } from '../utils/settings';
 import { sudoRemovePath } from '../utils/sudoExec';
 
 const { app } = require('electron').remote;
@@ -57,6 +57,10 @@ export default class DolphinManager extends EventEmitter {
     await this.runDolphin(false);
   }
 
+  async configureNetplayDolphin() {
+    await this.runDolphinNetplay(false);
+  }
+
   async resetDolphin() {
     const platform = process.platform;
     const appPath = app.getAppPath();
@@ -95,6 +99,46 @@ export default class DolphinManager extends EventEmitter {
       }
     }
   }
+
+  async resetNetplayDolphin() {
+    const platform = process.platform;
+    const appPath = app.getAppPath();
+    const originalDolphinPath = process.env.APPIMAGE ? path.join(process.env.APPDIR, "resources/app.asar.unpacked/app/dolphin-netplay") : path.join(appPath, "../app.asar.unpacked/app/dolphin-netplay");
+    log.info("Resetting netplay dolphin");
+    const userDataPath = app.getPath("userData");
+    const targetPath = path.join(userDataPath, 'dolphin-netplay');
+    log.info("Overwriting dolphin-netplay");
+
+    let isCopySuccess = false;
+    try {
+      if (platform === "win32" || platform === "darwin" || process.env.APPIMAGE) {
+        fs.removeSync(targetPath);
+        fs.copySync(originalDolphinPath, targetPath);
+      }
+      if (process.platform === "linux") {
+        const linuxUserDir = path.join(os.homedir(), ".config", "SlippiNetplay");
+        fs.removeSync(linuxUserDir); // clear the User dir on linux
+      }
+      isCopySuccess = true;
+    } catch (err) {
+      log.error("Failed to reset Dolphin Netplay, will try again with elevated permissions");
+    }
+
+    if (!isCopySuccess) {
+      try {
+        // TODO: This doesn't actually work, the UAC prompt never shows up. Might need to use
+        // TODO: ipc to trigger it in the main process? But I'm too lazy right now
+        await sudoRemovePath(targetPath);
+        fs.copySync(originalDolphinPath, targetPath);
+        isCopySuccess = true;
+      } catch (err) {
+        log.error("Failed to reset Dolphin Netplay with elevated permissions");
+        log.error(err);
+        throw new Error("Failed to reset Dolphin Netplay. You may need to reinstall the desktop app.");
+      }
+    }
+  }
+
 
   setGamePath(filePath) {
     const fileDir = path.dirname(filePath);
@@ -279,4 +323,79 @@ export default class DolphinManager extends EventEmitter {
       this.emit('dolphin-closed');
     }
   }
+
+  async runDolphinNetplay(runGame) {
+    if (this.isNetplayRunning) {
+      // TODO: Bring dolphin into focus
+      return;
+    }
+
+    const platform = process.platform;
+    const isDev = process.env.NODE_ENV === "development";
+
+    // Get release dolphin path. Will be overwritten if in
+    // development mode
+    let dolphinPath = getDolphinNetplayPath();
+
+    // Get melee file location from settings
+    const meleeFile = electronSettings.get('settings.isoPath');
+    if (!meleeFile) {
+      throw new Error(
+        `Files cannot be played without a melee iso selected. Please return to the
+        settings page and select a melee iso.`
+      );
+    }
+
+    // Here we are going to build the platform-specific commands required to launch
+    // dolphin from the command line with the correct game
+    // When in development mode, use the build-specific dolphin version
+    // In production mode, only the build from the correct platform should exist
+    let executablePath;
+    switch (platform) {
+    case "darwin": // osx
+      // dolphinPath = isDev ? "./app/dolphin-netplay-dev/osx" : dolphinPath;
+      console.log(dolphinPath)
+      executablePath = path.join(dolphinPath, "Slippi Dolphin.app/Contents/MacOS/Slippi Dolphin");
+      break;
+    case "win32": // windows
+      dolphinPath = isDev ? "./app/dolphin-netplay-dev/windows" : dolphinPath;
+      executablePath = path.join(dolphinPath, "Dolphin.exe");
+      break;
+    case "linux": // linux
+      dolphinPath = isDev ? "./app/dolphin-netplay-dev/linux" : dolphinPath;
+      const appImagePath = path.join(dolphinPath, "Slippi_Playback-x86_64.AppImage");
+      const emuPath = path.join(dolphinPath, "dolphin-emu");
+      if (fs.existsSync(appImagePath)) {
+        executablePath = appImagePath;
+      } else {
+        executablePath = emuPath;
+      }
+      break;
+    default:
+      throw new Error("The current platform is not supported");
+    }
+
+    const args = runGame ? [ '-e',  meleeFile ] :  [];
+
+    if (!fs.existsSync(executablePath)) {
+      throw new Error(
+        `Couldn't find Dolphin executable at ${executablePath}. ` +
+        `Your "Playback Dolphin Path" option is currently set to ${dolphinPath}. ` +
+        `Make sure this directory exists and contains the playback instance of Dolphin.`
+      );
+    }
+
+    try {
+      this.isNetplayRunning = true;
+      const execFilePromise = util.promisify(execFile);
+      await execFilePromise(executablePath, args);
+    } finally {
+      // TODO: This doesn't work right when the main electon app gets
+      // TODO: closed first instead of the dolphin instance.
+      // TODO: Could cause the temp directory to get cluttered
+      this.isNetplayRunning = false;
+      this.emit('dolphin-netplay-closed');
+    }
+  }
+
 }

@@ -3,10 +3,10 @@ import semver from 'semver';
 import electronSettings from 'electron-settings';
 
 import { 
-  SELECT_FOLDER, SELECT_FILE, ISO_VALIDATION_START, ISO_VALIDATION_COMPLETE, SET_RESET_CONFIRM, RESETTING_DOLPHIN,
+  SELECT_FOLDER, SELECT_FILE, ISO_VALIDATION_START, ISO_VALIDATION_COMPLETE, SET_RESET_CONFIRM, RESETTING_DOLPHIN, SET_NETPLAY_RESET_CONFIRM, RESETTING_NETPLAY_DOLPHIN,
 } from '../actions/settings';
 import DolphinManager from '../domain/DolphinManager';
-import { getRootSlpPath, getDolphinPath } from '../utils/settings';
+import { getRootSlpPath, getDolphinPath, getDolphinNetplayPath } from '../utils/settings';
 
 const { app } = require('electron').remote;
 
@@ -17,6 +17,8 @@ const defaultState = {
   isoValidationState: "unknown",
   confirmShow: false,
   isResetting: false,
+  confirmNetplayShow: false,
+  isNetplayResetting: false,
 };
 
 function getAvailableSettings() {
@@ -32,6 +34,10 @@ function getAvailableSettings() {
     playbackDolphinPath: {
       location: 'settings.playbackDolphinPath',
       defaultValue: getDolphinPath(),
+    },
+    netplayDolphinPath: {
+      location: 'settings.netplayDolphinPath',
+      defaultValue: getDolphinNetplayPath(),
     },
   };
 }
@@ -89,6 +95,10 @@ export default function settings(state = defaultState, action) {
     return setConfirmDialog(state, action);
   case RESETTING_DOLPHIN:
     return setResetLoader(state, action);
+  case SET_NETPLAY_RESET_CONFIRM:
+    return setConfirmNetplayDialog(state, action);
+  case RESETTING_NETPLAY_DOLPHIN:
+    return setResetNetplayLoader(state, action);
   default:
     return state;
   }
@@ -126,7 +136,7 @@ function isoValidationComplete(state, action) {
 function setConfirmDialog(state, action) {
   return {
     ...state,
-    confirmShow: action.payload.show,
+    confirmNetplayShow: action.payload.show,
   }
 }
 
@@ -134,5 +144,19 @@ function setResetLoader(state, action) {
   return {
     ...state,
     isResetting: action.payload.isResetting,
+  }
+}
+
+function setConfirmNetplayDialog(state, action) {
+  return {
+    ...state,
+    confirmNetplayShow: action.payload.show,
+  }
+}
+
+function setResetNetplayLoader(state, action) {
+  return {
+    ...state,
+    isNetplayResetting: action.payload.isResetting,
   }
 }

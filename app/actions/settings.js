@@ -14,6 +14,8 @@ export const ISO_VALIDATION_START = 'ISO_VALIDATION_START';
 export const ISO_VALIDATION_COMPLETE = 'ISO_VALIDATION_COMPLETE';
 export const SET_RESET_CONFIRM = 'SET_RESET_CONFIRM';
 export const RESETTING_DOLPHIN = 'RESETTING_DOLPHIN';
+export const RESETTING_NETPLAY_DOLPHIN = 'RESETTING_NETPLAY_DOLPHIN';
+export const SET_NETPLAY_RESET_CONFIRM = 'SET_NETPLAY_RESET_CONFIRM';
 
 async function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -217,3 +219,53 @@ export function setResetConfirm(value) {
     payload: { show: value },
   };
 }
+
+export function openNetplayDolphin() {
+  return (dispatch, getState) => {
+    const dolphinManager = getState().settings.dolphinManager;
+    dolphinManager.runDolphinNetplay(false).catch((err) => {
+      const errorAction = displayError(
+        'settings-global',
+        err.message,
+      );
+
+      dispatch(errorAction);
+    });
+  };
+}
+
+export function resetNetplayDolphin() {
+  return async (dispatch, getState) => {
+    dispatch({
+      type: RESETTING_NETPLAY_DOLPHIN,
+      payload: { isResetting: true },
+    });
+    await wait(10);
+    try {
+      const dolphinManager = getState().settings.dolphinManager;
+      await dolphinManager.resetNetplayDolphin();
+      log.info("Dolphin was reset");
+    } catch (err) {
+      log.info("Dolphin could not be reset");
+      log.warn(err.message);
+      const errorAction = displayError(
+        'settings-global',
+        `Dolphin Netplay could not be reset. ${err.message}`,
+      );
+
+      dispatch(errorAction);
+    }
+    dispatch({
+      type: RESETTING_NETPLAY_DOLPHIN,
+      payload: { isNetplayResetting: false },
+    });
+  };
+}
+
+export function setResetNetplayConfirm(value) {
+  return {
+    type: SET_NETPLAY_RESET_CONFIRM,
+    payload: { show: value },
+  };
+}
+
