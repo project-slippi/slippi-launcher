@@ -8,14 +8,15 @@ import styles from './GameProfile.scss';
 
 import * as playerUtils from '../../utils/players';
 import * as timeUtils from '../../utils/time';
-import { getTopPunishes, getGamePlayerIndex } from '../../utils/game'
+import { getGamePlayerIndex } from '../../utils/game'
 import { getStockIconImage } from '../common/stocks'
 
 const columnCount = 8;
 
 export default class ComboTable extends Component {
   static propTypes = {
-    store: PropTypes.object.isRequired,
+    punishes: PropTypes.array.isRequired,
+    player: PropTypes.string.isRequired,
   };
 
   generatePunishRow(game, punish) {
@@ -32,7 +33,7 @@ export default class ComboTable extends Component {
     const secondaryTextStyle = styles['secondary-text'];
 
     return (
-      <Table.Row key={`${punish.playerIndex}-punish-${punish.startFrame}`}>
+      <Table.Row key={`${game.getFilePath()}-${punish.playerIndex}-punish-${punish.startFrame}`}>
         <Table.Cell collapsing={true}>{this.getPlayerCard(game, false)}</Table.Cell>
         <Table.Cell collapsing={true}>{this.getPlayerCard(game, true)}</Table.Cell>
         <Table.Cell collapsing={true}>{openingType}</Table.Cell>
@@ -52,7 +53,7 @@ export default class ComboTable extends Component {
   };
 
   getPlayerCard(game, isOpponent) {
-    let index = getGamePlayerIndex(game, this.props.store.player)
+    let index = getGamePlayerIndex(game, this.props.player)
     if (isOpponent) index = 1 - index
     const tag = playerUtils.getPlayerName(game, index)
     const players = game.getSettings().players || [];
@@ -154,14 +155,10 @@ export default class ComboTable extends Component {
   }
 
   renderPunishRows() {
-    let punishes = getTopPunishes(this.props.store.games, this.props.store.player) 
-    punishes = punishes.slice(0, 19)
-    const elements = [];
-    punishes.forEach(punish => {
-      const punishRow = this.generatePunishRow(punish.game, punish.punish);
-      elements.push(punishRow);
-    });
-    return elements;
+    return this.props.punishes
+      .slice(0, 19)
+      .map(punish => this.generatePunishRow(punish.game, punish.punish));
+
   }
 
   render() {

@@ -1,5 +1,4 @@
 import _ from 'lodash';
-
 import { stages } from '@slippi/slippi-js';
 
 import { getPlayerName, getPlayerNamesByIndex } from './players'
@@ -50,79 +49,6 @@ export function getStageName(game) {
   }
 }
 
-export function getPlayerCharacterCounts(games, playerTag, isOpponent) {
-  let counts = games.map(game => {
-    let index = getGamePlayerIndex(game, playerTag)
-    if (isOpponent) {
-      index = 1 - index
-    }
-    return {
-      charId: _.get(game.getSettings().players, index).characterId,
-      won: isOpponent ? index !== getGameWinner(game) : index === getGameWinner(game),
-      player: getPlayerName(game, index),
-    }
-  }).reduce((a, x) => {
-    const aggs = a // because es-lint can be dumb
-    aggs[x.charId] = aggs[x.charId] || {count: 0, won: 0, players: []}
-    aggs[x.charId].count += 1
-    if (x.won) {
-      aggs[x.charId].won += 1
-    }
-    if (!aggs[x.charId].players.includes(x.player)) {
-      aggs[x.charId].players.push(x.player)
-    }
-    return aggs;
-  }, {});
-
-  counts =  _.map(counts, (value, key) => [key, value])
-  counts =  _.sortBy(counts, v => -v[1].count)
-  return counts
-}
-
-export function getOpponentsSummary(games, playerTag) {
-  let aggs = games.map(game => {
-    const index = 1 - getGamePlayerIndex(game, playerTag)
-    return {
-      name: getPlayerName(game, index),
-      won: index !== getGameWinner(game),
-      charId: _.get(game.getSettings().players, index).characterId,
-    }
-  }).reduce((a, x) => {
-    const agg = a // because es-lint can be dumb
-    agg[x.name] = agg[x.name] || {
-      count: 0,
-      won: 0,
-      charIds: [],
-    }
-    agg[x.name].count += 1
-    if (x.won) {
-      agg[x.name].won += 1
-    }
-    if (!agg[x.name].charIds.includes(x.charId)) {
-      agg[x.name].charIds.push(x.charId)
-    }
-    return agg;
-  }, {});
-
-  aggs = _.map(aggs, (value, key) => [key, value])
-  aggs = _.sortBy(aggs, v => -v[1].count)
-  return aggs;
-}
-
-export function getTopPunishes(games, playerTag) {
-  const aggs = games.map(game => {
-    const index = getGamePlayerIndex(game, playerTag)
-    let punishes = game.getStats().conversions.filter(p => p.playerIndex === index)
-    punishes = _.orderBy(punishes, x => -x.moves.length)
-    return {
-      game: game,
-      punish: punishes[0] || null,
-    }
-  }).filter(x => x.punish !== null)
-
-  return _.orderBy(aggs, x => -x.punish.moves.length)
-}
-
 export function getGlobalStats(games, playerTag) {
   const aggs =  games.reduce((a, game) => {
     const agg = a // because es-lint can be dumb
@@ -133,17 +59,47 @@ export function getGlobalStats(games, playerTag) {
     const pOverall = stats.overall[index]
     const oOverall = stats.overall[1-index]
 
+    const won = getGameWinner(game) === index
 
-    if (getGameWinner(game) === index) agg.wins += 1
+    const charId = _.get(game.getSettings().players, index).characterId
+    const oppCharId = _.get(game.getSettings().players, 1-index).characterId
+
+    // Opponent aggregates
     agg.opponents[opp] = agg.opponents[opp] || {
       count: 0,
       won: 0,
       charIds: [],
     }
     agg.opponents[opp].count += 1
-    if (getGameWinner(game) === index) agg.opponents[opp].wins += 1
-    if (!agg.opponents.includes(opp)) agg.opponents.push(_.get(game.getSettings().players, 1-index).characterId)
+    if (won) agg.opponents[opp].won += 1
+    if (!agg.opponents[opp].charIds.includes(oppCharId)) agg.opponents[opp].charIds.push(oppCharId)
 
+    // Player character aggregates
+    agg.charIds[charId] = agg.charIds[charId] || {
+      count: 0,
+      won: 0,
+    }
+    agg.charIds[charId].count += 1
+    if (won) agg.charIds[charId].won += 1
+
+    // Opponent character aggregates
+    agg.opponentChars[oppCharId] = agg.opponentChars[oppCharId] || {
+      count: 0,
+      won: 0,
+      players: [],
+    }
+    agg.opponentChars[oppCharId].count += 1
+    if (won) agg.opponentChars[oppCharId].won += 1
+    if (!agg.opponentChars[oppCharId].players.includes(oppCharId)) agg.opponentChars[oppCharId].players.push(opp)
+
+    // Punishes 
+    agg.punishes = [...agg.punishes, ...stats.conversions.filter(p => p.playerIndex === index).map(p => ({
+      punish: p,
+      game: game,
+    }))]
+
+    // General stats
+    if (won) agg.wins += 1
     agg.time += stats.lastFrame
 
     agg.kills += pOverall.killCount
@@ -165,13 +121,11 @@ export function getGlobalStats(games, playerTag) {
     agg.digitalInputsPerMinuteCount += pOverall.digitalInputsPerMinute.count
     agg.digitalInputsPerMinuteTotal += pOverall.digitalInputsPerMinute.total
 
-    agg.punishes += stats.conversions.filter(p => p.playerIndex === index)
     return agg
 
   }, {
     count: games.length,
     wins: 0,
-    opponents: [],
     time: 0,
     kills: 0,
     deaths: 0,
@@ -189,10 +143,11 @@ export function getGlobalStats(games, playerTag) {
     inputsPerMinuteTotal: 0,
     digitalInputsPerMinuteCount: 0,
     digitalInputsPerMinuteTotal: 0,
+    charIds: {},
+    opponents: {},
+    opponentChars: {},
     punishes: [],
   })
-
-  console.log(aggs.punishes)
 
   return {
     ...aggs,
@@ -203,4 +158,5 @@ export function getGlobalStats(games, playerTag) {
     inputsPerMinute: aggs.inputsPerMinuteCount / aggs.inputsPerMinuteTotal,
     digitalInputsPerMinute: aggs.digitalInputsPerMinuteCount / aggs.digitalInputsPerMinuteTotal,
   }
+  
 }

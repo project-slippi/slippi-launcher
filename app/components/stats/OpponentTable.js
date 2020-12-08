@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 
 import styles from './GameProfile.scss';
-import { getOpponentsSummary, getGamePlayerIndex } from '../../utils/game';
+import { getGamePlayerIndex } from '../../utils/game';
 import { getPlayerName } from '../../utils/players'
 import { getStockIconImage } from '../common/stocks'
 
@@ -15,7 +15,8 @@ const columnCount = 5;
 
 export default class OpponentTable extends Component {
   static propTypes = {
-    store: PropTypes.object.isRequired,
+    opponentStats: PropTypes.object.isRequired,
+    player: PropTypes.string.isRequired,
     setPlayerProfilePage: PropTypes.func.isRequired,
     gamesFilterAdd: PropTypes.func.isRequired,
     gamesFilterRemove: PropTypes.func.isRequired,
@@ -64,9 +65,11 @@ export default class OpponentTable extends Component {
   }
 
   renderRows() {
-    let aggs = getOpponentsSummary(this.props.store.games, this.props.store.player)
-    aggs = aggs.slice(0, 26)
-    return _.map(aggs, v => this.generateOpponentRow(v[0], v[1]))
+    const stats = this.props.opponentStats
+    return Object.keys(stats)
+      .sort((a, b) => stats[b].count - stats[a].count)
+      .slice(0, 26)
+      .map(k => this.generateOpponentRow(k, stats[k]))
   }
 
   generateOpponentRow(playerTag, agg) {
@@ -113,7 +116,7 @@ export default class OpponentTable extends Component {
     if (hide) {
       this.setState({ excluded: excluded, filtering: true })
       const f = game => {
-        const index = 1 - getGamePlayerIndex(game, this.props.store.player)
+        const index = 1 - getGamePlayerIndex(game, this.props.player)
         const playerTag = getPlayerName(game, index)
         return !excluded.includes(playerTag)
       }
@@ -121,7 +124,7 @@ export default class OpponentTable extends Component {
     } else {
       this.setState({ filtering: true })
       const f = game => {
-        const index = 1 - getGamePlayerIndex(game, this.props.store.player)
+        const index = 1 - getGamePlayerIndex(game, this.props.player)
         const playerTag = getPlayerName(game, index)
         return charId === playerTag
       }

@@ -11,6 +11,7 @@ import Scroller from '../common/Scroller';
 import OpponentTable from './OpponentTable';
 import ComboTable from './ComboTable';
 import GlobalTable from './GlobalTable';
+import { getGlobalStats } from '../../utils/game'
 
 export default class PlayerProfile extends Component {
   static propTypes = {
@@ -32,6 +33,8 @@ export default class PlayerProfile extends Component {
 
   render() {
     const scrollerOffset = this.props.topNotifOffset;
+    const stats = getGlobalStats(this.props.store.games, this.props.store.player)
+    console.log(stats.punishes[0])
     return (
       <PageWrapper history={this.props.history}>
         <div className="main-padding">
@@ -40,35 +43,33 @@ export default class PlayerProfile extends Component {
             <Segment basic={true}>
               <div className={styles['three-column-main']}>
                 <PlayerCharacterTable 
-                  store={this.props.store}
-                  opponent={ false }
+                  characterStats={stats.charIds}
+                  player={this.props.store.player}
+                  opponent={false}
                   gamesFilterAdd={ this.props.gamesFilterAdd }
                   gamesFilterRemove={ this.props.gamesFilterRemove }
                 />
                 <PlayerCharacterTable 
-                  store={this.props.store}
-                  opponent={ true }
+                  characterStats={stats.opponentChars}
+                  player={this.props.store.player}
+                  opponent={true}
                   gamesFilterAdd={ this.props.gamesFilterAdd }
                   gamesFilterRemove={ this.props.gamesFilterRemove }
                 />
                 <OpponentTable 
-                  store={this.props.store}
-                  opponent={ true }
-                  setPlayerProfilePage={this.props.setPlayerProfilePage}
+                  opponentStats={stats.opponents}
+                  player={this.props.store.player}
                   gamesFilterAdd={ this.props.gamesFilterAdd }
                   gamesFilterRemove={ this.props.gamesFilterRemove }
+                  setPlayerProfilePage={this.props.setPlayerProfilePage}
                 />
               </div>
             </Segment>
             <Segment basic={true}>
-              <GlobalTable
-                store={this.props.store}
-              />
+              <GlobalTable stats={stats} player={this.props.store.player} />
             </Segment>
             <Segment basic={true}>
-              <ComboTable 
-                store={this.props.store}
-              />
+              <ComboTable punishes={stats.punishes} player={this.props.store.player} />
             </Segment>
           </Scroller>
         </div>

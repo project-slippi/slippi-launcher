@@ -6,14 +6,14 @@ import classNames from 'classnames';
 import styles from './GameProfile.scss';
 
 import * as numberUtils from '../../utils/number';
-import { getGlobalStats } from '../../utils/game'
 import  * as  timeUtils from '../../utils/time'
 
 const columnCount = 3;
 
 export default class GlobalTable extends Component {
   static propTypes = {
-    store: PropTypes.object.isRequired,
+    stats: PropTypes.object.isRequired,
+    player: PropTypes.string.isRequired,
   };
 
   renderStatField(header, value) {
@@ -76,9 +76,9 @@ export default class GlobalTable extends Component {
       </Table.Row>,
       this.renderStatField('Games Played', stats.count),
       this.renderRatioStatField('Games Won', stats.wins, stats.count),
-      this.renderStatField('Opponents Played', stats.opponents.length),
+      this.renderStatField('Opponents Played', Object.keys(stats.opponents).length),
       this.renderStatField('Average Games / Opponent', 
-        (stats.count/stats.opponents.length).toFixed(2)),
+        (stats.count/Object.keys(stats.opponents).length).toFixed(2)),
       this.renderStatField('Total Play Time', timeUtils.convertLongFrameCountToDurationString(stats.time)),
     ];
   }
@@ -125,7 +125,7 @@ export default class GlobalTable extends Component {
   }
 
   render() {
-    const stats = getGlobalStats(this.props.store.games, this.props.store.player)
+    const stats = this.props.stats
     return (
       <Table
         className={styles['stats-table']}

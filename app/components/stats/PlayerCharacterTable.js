@@ -9,14 +9,15 @@ import {
 import classNames from 'classnames';
 
 import styles from './GameProfile.scss';
-import { getPlayerCharacterCounts, getGamePlayerIndex } from '../../utils/game';
+import { getGamePlayerIndex } from '../../utils/game';
 import { getStockIconImage } from '../common/stocks'
 
 const columnCount = 5;
 
 export default class PlayerCharacterTable extends Component {
   static propTypes = {
-    store: PropTypes.object.isRequired,
+    player: PropTypes.string.isRequired,
+    characterStats: PropTypes.object.isRequired,
     opponent: PropTypes.bool.isRequired,
     gamesFilterAdd: PropTypes.func.isRequired,
     gamesFilterRemove: PropTypes.func.isRequired,
@@ -38,7 +39,6 @@ export default class PlayerCharacterTable extends Component {
           {headerText} 
           {" " }
           {this.state.filtering ? (<a onClick={() => this.clearFilters()}>Clear Filters</a>) : null} 
-
         </Table.HeaderCell>
       </Table.Row>
     ); 
@@ -52,15 +52,16 @@ export default class PlayerCharacterTable extends Component {
         <Table.HeaderCell collapsing={true}>Winrate</Table.HeaderCell>
         {this.props.opponent ? <Table.HeaderCell collapsing={true}>Players</Table.HeaderCell> : null}
         <Table.HeaderCell collapsing={true}>Filters</Table.HeaderCell>
-        
       </Table.Row>
     );
   }
 
   renderRows() {
-    const aggs = getPlayerCharacterCounts(this.props.store.games, this.props.store.player, this.props.opponent)
-    // aggs = aggs.slice(0, 19)
-    return _.map(aggs, v => this.generateCharacterRow(v[0], v[1]))
+    const stats = this.props.characterStats
+    return Object.keys(stats)
+      .sort((a, b) => stats[b].count - stats[a].count)
+      .map(k => this.generateCharacterRow(k, stats[k]))
+      // .slice(0,9)
   }
 
   clearFilters() {
@@ -77,9 +78,8 @@ export default class PlayerCharacterTable extends Component {
     const excluded = [...this.state.excluded, charId]
     if (hide) {
       this.setState({ excluded: excluded, filtering: true })
-      console.log(this.state.excluded)
       const f = game => {
-        let index = getGamePlayerIndex(game, this.props.store.player)
+        let index = getGamePlayerIndex(game, this.props.player)
         if (this.props.opponent) index = 1 - index
         const gameId = _.get(game.getSettings().players, index).characterId
         return !excluded.includes(gameId.toString())
@@ -88,7 +88,7 @@ export default class PlayerCharacterTable extends Component {
     } else {
       this.setState({ filtering: true })
       const f = game => {
-        let index = getGamePlayerIndex(game, this.props.store.player)
+        let index = getGamePlayerIndex(game, this.props.player)
         if (this.props.opponent) index = 1 - index
         const gameId = _.get(game.getSettings().players, index).characterId
         return charId === gameId.toString()
