@@ -140,7 +140,7 @@ export default class FileTable extends Component {
     )
     // Generate header row
     return (
-      <div>{selectAllIcon}</div>
+      <div className={iconStyle}>{selectAllIcon}</div>
     );
   }
 
@@ -150,7 +150,7 @@ export default class FileTable extends Component {
     let contents;
     if (useOrdinal) {
       contents = (
-        <div>
+        <div className={styles['pos-text']}>
           <Icon size="big" name="check square outline"  onClick={() => this.onSelect(file, index)}/>
           <div className={styles['pos-text']}>{selectedOrdinal}</div>
         </div>
@@ -315,8 +315,8 @@ export default class FileTable extends Component {
             circular={true}
             inverted={true}
             size="tiny"
-            basic={true}
-            icon="play"
+            color="green"
+            icon={<Icon name="play" color="green"/>}
             onClick={e => this.playFile(e, file)}
           />
           <Link to="/game" className={styles['bound-link']} replace={false}>
@@ -324,8 +324,8 @@ export default class FileTable extends Component {
               circular={true}
               inverted={true}
               size="tiny"
-              basic={true}
-              icon="bar chart"
+              color="green"
+              icon={<Icon name="bar chart" color="green"/>}
               onClick={e => this.viewStats(e, index)}
             />
           </Link>
@@ -393,6 +393,7 @@ export default class FileTable extends Component {
       <AutoSizer key="autosizer">
         {
           ({width, height}) => <Table
+            className={styles['file-table']}
             style={{overflow: 'visible'}}
             width={width}
             height={height}
@@ -403,14 +404,15 @@ export default class FileTable extends Component {
             <Column 
               label="Select" 
               dataKey="" 
-              width={100}
+              width={70}
               headerRenderer={() => this.generateSelectHeader(this.state)}
               cellRenderer={props => this.generateSelectCell(props.rowData, props.rowIndex)}
             />
             <Column 
               label="Details" 
               dataKey="" 
-              width={1000}
+              flexGrow={1}
+              width={100}
               cellRenderer={props => this.generateDetailsCell(props.rowData)}
             />
             <Column 

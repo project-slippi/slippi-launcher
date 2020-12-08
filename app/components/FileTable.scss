@@ -33,10 +33,10 @@
 }
 
 .select-cell {
-  margin: 6px !important;
+  // margin: 6px !important;
 
   i {
-    color: #94969a;
+    // color: #94969a;
   }
 
   i:hover {
@@ -55,16 +55,18 @@
     }
   }
 
+  
   .pos-text {
-    margin-left: 4px;
+    // margin-left: 4px;
     font-weight: bold;
-    color: rgba(255, 255, 255, 0.5);
+    // color: rgba(255, 255, 255, 0.5);
   }
 
-  .select-content-wrapper {
-    margin-left: 10px;
-  }
+  // .select-content-wrapper {
+  //   margin-left: 10px;
+  // }
   
+  text-align: center
 }
 
 .vs-element {
