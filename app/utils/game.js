@@ -106,7 +106,6 @@ export function getOpponentsSummary(games, playerTag) {
 
   aggs = _.map(aggs, (value, key) => [key, value])
   aggs = _.sortBy(aggs, v => -v[1].count)
-  getTopPunishes(games, playerTag)
   return aggs;
 }
 
@@ -128,6 +127,7 @@ export function getGlobalStats(games, playerTag) {
   const aggs =  games.reduce((a, game) => {
     const agg = a // because es-lint can be dumb
     const index = getGamePlayerIndex(game, playerTag)
+    const opp = getPlayerName(game, 1-index)
     const stats = game.getStats()
 
     const pOverall = stats.overall[index]
@@ -135,8 +135,15 @@ export function getGlobalStats(games, playerTag) {
 
 
     if (getGameWinner(game) === index) agg.wins += 1
-    const opp = getPlayerName(game, 1-index)
-    if (!agg.opponents.includes(opp)) agg.opponents.push(opp)
+    agg.opponents[opp] = agg.opponents[opp] || {
+      count: 0,
+      won: 0,
+      charIds: [],
+    }
+    agg.opponents[opp].count += 1
+    if (getGameWinner(game) === index) agg.opponents[opp].wins += 1
+    if (!agg.opponents.includes(opp)) agg.opponents.push(_.get(game.getSettings().players, 1-index).characterId)
+
     agg.time += stats.lastFrame
 
     agg.kills += pOverall.killCount
@@ -158,7 +165,9 @@ export function getGlobalStats(games, playerTag) {
     agg.digitalInputsPerMinuteCount += pOverall.digitalInputsPerMinute.count
     agg.digitalInputsPerMinuteTotal += pOverall.digitalInputsPerMinute.total
 
+    agg.punishes += stats.conversions.filter(p => p.playerIndex === index)
     return agg
+
   }, {
     count: games.length,
     wins: 0,
@@ -180,7 +189,10 @@ export function getGlobalStats(games, playerTag) {
     inputsPerMinuteTotal: 0,
     digitalInputsPerMinuteCount: 0,
     digitalInputsPerMinuteTotal: 0,
+    punishes: [],
   })
+
+  console.log(aggs.punishes)
 
   return {
     ...aggs,
