@@ -9,9 +9,9 @@ import { spawn } from "child_process";
 
 const NETPLAY_PATH = path.join(remote.app.getPath("userData"), "netplay");
 
-export function openDolphin() {
+export function openDolphin(params?: string[]) {
   const dolphinPath = getDolphinPath();
-  spawn(dolphinPath);
+  spawn(dolphinPath, params);
 }
 
 function getDolphinPath(): string {

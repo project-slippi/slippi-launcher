@@ -2,6 +2,7 @@ import { useAsync } from "@/lib/hooks/useAsync";
 import { startGame } from "@/lib/startGame";
 import { Action, AppContext } from "@/store";
 import React from "react";
+import { ISOFileSelector } from "./ISOFileSelector";
 
 export const PlayButton: React.FC = () => {
   const { state, dispatch } = React.useContext(AppContext);
@@ -17,14 +18,16 @@ export const PlayButton: React.FC = () => {
         type: Action.SET_INSTALL_STATUS,
         payload: status,
       });
-    });
-    dispatch({
-      type: Action.SET_INSTALL_STATUS,
-      payload: "",
+    }).finally(() => {
+      dispatch({
+        type: Action.SET_INSTALL_STATUS,
+        payload: "",
+      });
     });
   });
   return (
     <div>
+      <ISOFileSelector />
       <button disabled={handleAsync.loading} onClick={handleAsync.execute}>
         Play
       </button>
