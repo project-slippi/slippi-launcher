@@ -1,3 +1,4 @@
+import { hot } from "react-hot-loader/root";
 import firebase from "firebase";
 import React from "react";
 import {
@@ -13,11 +14,12 @@ import { HomeView } from "./views/HomeView";
 import { LoadingView } from "./views/LoadingView";
 import { LoginView } from "./views/LoginView";
 
-initializeFirebase();
-
-export const App: React.FC = () => {
+const App: React.FC = () => {
   const { state, dispatch } = React.useContext(AppContext);
   React.useEffect(() => {
+    // Initialize firebase
+    initializeFirebase();
+
     // Subscribe to user auth changes
     const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
       dispatch({
@@ -52,3 +54,5 @@ export const App: React.FC = () => {
     </Router>
   );
 };
+
+export default hot(App);

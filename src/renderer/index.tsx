@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import { App } from "./App";
+import App from "./App";
 import { AppProvider } from "./store";
 
 const rootEl = document.getElementById("app");
