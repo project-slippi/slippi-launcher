@@ -1,4 +1,5 @@
 import firebase from "firebase";
+import { assertDolphinInstallation } from "./downloadDolphin";
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -11,7 +12,11 @@ const firebaseConfig = {
   measurementId: process.env.FIREBASE_MEASUREMENT_ID,
 };
 
-export function initializeFirebase() {
+/**
+ * Handle complex initialisation steps here. To be run on App start.
+ */
+export async function init(log: (message: string) => void = console.log) {
+  // Initialize firebase
   try {
     firebase.initializeApp(firebaseConfig);
   } catch (err) {
@@ -20,4 +25,7 @@ export function initializeFirebase() {
       err
     );
   }
+
+  // Check for Dolphin installation and download if necessary
+  await assertDolphinInstallation(log);
 }

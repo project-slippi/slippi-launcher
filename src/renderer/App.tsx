@@ -8,7 +8,7 @@ import {
   Redirect,
 } from "react-router-dom";
 
-import { initializeFirebase } from "./lib/firebase";
+import { init } from "./lib/init";
 import { AppContext, Action } from "./store";
 import { HomeView } from "./views/HomeView";
 import { LoadingView } from "./views/LoadingView";
@@ -18,7 +18,12 @@ const App: React.FC = () => {
   const { state, dispatch } = React.useContext(AppContext);
   React.useEffect(() => {
     // Initialize firebase
-    initializeFirebase();
+    const startup = init((message) => {
+      dispatch({
+        type: Action.SET_INSTALL_STATUS,
+        payload: message,
+      });
+    });
 
     // Subscribe to user auth changes
     const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
@@ -29,11 +34,29 @@ const App: React.FC = () => {
         },
       });
 
-      if (!state.initialized) {
-        dispatch({
-          type: Action.SET_INITIALIZED,
+      startup
+        .then(() => {
+          // Clear the installation status when finished
+          dispatch({
+            type: Action.SET_INSTALL_STATUS,
+            payload: "",
+          });
+        })
+        .catch((err) => {
+          // Set the install status as the error message
+          dispatch({
+            type: Action.SET_INSTALL_STATUS,
+            payload: err.message,
+          });
+        })
+        .finally(() => {
+          // Tell the rest of the app we're done loading
+          if (!state.initialized) {
+            dispatch({
+              type: Action.SET_INITIALIZED,
+            });
+          }
         });
-      }
     });
 
     // Unsubscribe on unmount
@@ -55,4 +78,5 @@ const App: React.FC = () => {
   );
 };
 
+// eslint-disable-next-line import/no-default-export
 export default hot(App);

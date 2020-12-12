@@ -1,4 +1,5 @@
 import { LoadingIndicator } from "@/components/LoadingIndicator";
+import { AppContext } from "@/store";
 import React from "react";
 import styled from "styled-components";
 
@@ -14,10 +15,12 @@ const Outer = styled.div`
 `;
 
 export const LoadingView: React.FC = () => {
+  const { state } = React.useContext(AppContext);
   return (
     <Outer>
       <LoadingIndicator />
       <div>Loading...</div>
+      {state.installStatus && <div>{state.installStatus}</div>}
     </Outer>
   );
 };

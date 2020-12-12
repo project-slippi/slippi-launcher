@@ -1,5 +1,5 @@
 import electronSettings from "electron-settings";
-import { verifyISO } from "@/lib/verifyIso";
+import { verifyISO } from "@/lib/verifyISO";
 import { remote } from "electron";
 import React from "react";
 

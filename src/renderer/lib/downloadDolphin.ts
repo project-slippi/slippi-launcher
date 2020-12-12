@@ -9,6 +9,16 @@ import { spawn } from "child_process";
 
 const NETPLAY_PATH = path.join(remote.app.getPath("userData"), "netplay");
 
+export async function assertDolphinInstallation(
+  log: (message: string) => void
+) {
+  const dolphinExists = await fileExists(NETPLAY_PATH);
+  if (!dolphinExists) {
+    log("Downloading Dolphin...");
+    await downloadLatestNetplay(log);
+  }
+}
+
 export function openDolphin(params?: string[]) {
   const dolphinPath = getDolphinPath();
   spawn(dolphinPath, params);
@@ -32,21 +42,11 @@ function getPlayKeyPath(): string {
   }
 }
 
-export async function checkDolphinUpdates(
-  log: (status: string) => void = console.log
-): Promise<void> {
-  const dolphinExists = await fileExists(NETPLAY_PATH);
-  if (dolphinExists) {
-    log("Dolphin already exists");
-  } else {
-    log("Downloading Dolphin...");
-    await downloadLatestNetplay(log);
-  }
-
-  log("Checking user account...");
+export async function assertPlayKey(): Promise<void> {
   const keyPath = getPlayKeyPath();
   const playKeyExists = await fileExists(keyPath);
-  if (!playKeyExists) {
+  if (playKeyExists) {
+  } else {
     const playKey = await fetchPlayKey();
     const contents = JSON.stringify(playKey, null, 2);
     await fs.writeFile(keyPath, contents);
@@ -86,7 +86,7 @@ function matchesPlatform(releaseName: string): boolean {
 
 async function downloadLatestNetplay(
   log: (status: string) => void = console.log
-) {
+): Promise<void> {
   const asset = await getLatestNetplayAsset();
   const downloadLocation = path.join(remote.app.getPath("temp"), asset.name);
   const exists = await fileExists(downloadLocation);
@@ -103,7 +103,6 @@ async function downloadLatestNetplay(
   }
   const extractToLocation = remote.app.getPath("userData");
   const zip = new AdmZip(downloadLocation);
-  const zipEntries = zip.getEntries();
 
   log(`Extracting to: ${extractToLocation}, and renaming to netplay`);
   zip.extractAllTo(extractToLocation, true);
@@ -114,5 +113,4 @@ async function downloadLatestNetplay(
     await fs.remove(newPath);
   }
   await fs.rename(oldPath, newPath);
-  return zipEntries;
 }
