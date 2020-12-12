@@ -15,33 +15,34 @@ export interface LoadingIndicatorProps {
   size?: string;
 }
 
-export const LoadingIndicator: React.FC<LoadingIndicatorProps> = (props) => {
-  const { size } = props;
-  const Outer = styled.div`
-    display: flex;
-    position: relative;
-    height: ${size};
-    width: ${size};
-    padding-top: 20px;
-  `;
+const Outer = styled.div<{
+  size: string;
+}>`
+  display: flex;
+  position: relative;
+  height: ${(props) => props.size};
+  width: ${(props) => props.size};
+  padding-top: 20px;
+`;
 
-  const Logo = styled.div`
-    background-image: url("${slippiLogo}");
-    background-size: contain;
-    background-repeat: no-repeat;
-    animation: ${bounceAnimation} 1.2s infinite;
-    position: absolute;
-    height: ${size};
-    width: ${size};
-  `;
+const Logo = styled.div<{
+  size: string;
+}>`
+  background-image: url("${slippiLogo}");
+  background-size: contain;
+  background-repeat: no-repeat;
+  animation: ${bounceAnimation} 1.2s infinite;
+  position: absolute;
+  height: ${(props) => props.size};
+  width: ${(props) => props.size};
+`;
 
+export const LoadingIndicator: React.FC<LoadingIndicatorProps> = ({
+  size = "80px",
+}) => {
   return (
-    <Outer>
-      <Logo />
+    <Outer size={size}>
+      <Logo size={size} />
     </Outer>
   );
-};
-
-LoadingIndicator.defaultProps = {
-  size: "80px",
 };
