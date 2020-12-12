@@ -2,6 +2,7 @@ import { app, BrowserWindow } from "electron";
 import * as path from "path";
 import { format as formatUrl } from "url";
 import contextMenu from "electron-context-menu";
+import { colors } from "common/colors";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -10,6 +11,7 @@ let mainWindow: BrowserWindow | null = null;
 
 function createMainWindow() {
   const window = new BrowserWindow({
+    backgroundColor: colors.greenDark,
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,
