@@ -15,9 +15,9 @@ import { init } from "./lib/init";
 import { AppContext, Action, AppProvider } from "./store";
 import { HomeView } from "./views/HomeView";
 import { LoadingView } from "./views/LoadingView";
-import { LoginView } from "./views/LoginView";
 import { MuiThemeProvider } from "@material-ui/core";
 import { slippiTheme } from "./styles/theme";
+import { LandingView } from "./views/LandingView";
 
 const App: React.FC = () => {
   const { state, dispatch } = React.useContext(AppContext);
@@ -76,8 +76,8 @@ const App: React.FC = () => {
     <Router>
       <Switch>
         <Route path="/home" component={HomeView} />
-        <Route path="/login" component={LoginView} />
-        <Redirect from="/" to="/login" />
+        <Route path="/landing" component={LandingView} />
+        <Redirect from="/" to="/landing" />
       </Switch>
     </Router>
   );

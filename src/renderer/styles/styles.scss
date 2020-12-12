@@ -10,3 +10,8 @@ body {
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   color: white;
 }
+
+/* This fixes some strange margin behaviour with material-ui margins */
+#app {
+  display: inline-block;
+}

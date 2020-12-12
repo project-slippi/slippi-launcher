@@ -1,9 +1,10 @@
-import electronSettings from "electron-settings";
 import { verifyISO } from "@/lib/verifyISO";
 import { remote } from "electron";
 import React from "react";
 
-export const ISOFileSelector: React.FC = () => {
+export const ISOFileSelector: React.FC<{
+  handlePathSelection: (isoPath: string) => void;
+}> = ({ handlePathSelection }) => {
   const [loading, setLoading] = React.useState(false);
   const [verification, setVerification] = React.useState("");
   const onClick = async () => {
@@ -30,7 +31,7 @@ export const ISOFileSelector: React.FC = () => {
       const verifyResult = await verifyISO(meleeIsoPath);
       if (verifyResult.valid) {
         setVerification("Valid ISO");
-        await electronSettings.set("settings.isoPath", meleeIsoPath);
+        handlePathSelection(meleeIsoPath);
       } else {
         setVerification(`Invalid ISO. ${verifyResult.name} is not supported.`);
       }
