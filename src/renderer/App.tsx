@@ -1,3 +1,6 @@
+import "typeface-roboto/index.css";
+import "./styles/styles.scss";
+
 import { hot } from "react-hot-loader/root";
 import firebase from "firebase";
 import React from "react";
@@ -9,10 +12,12 @@ import {
 } from "react-router-dom";
 
 import { init } from "./lib/init";
-import { AppContext, Action } from "./store";
+import { AppContext, Action, AppProvider } from "./store";
 import { HomeView } from "./views/HomeView";
 import { LoadingView } from "./views/LoadingView";
 import { LoginView } from "./views/LoginView";
+import { MuiThemeProvider } from "@material-ui/core";
+import { slippiTheme } from "./styles/theme";
 
 const App: React.FC = () => {
   const { state, dispatch } = React.useContext(AppContext);
@@ -78,5 +83,16 @@ const App: React.FC = () => {
   );
 };
 
+// Providers need to be initialized before the rest of the app can use them
+const AppWithProviders: React.FC = () => {
+  return (
+    <AppProvider>
+      <MuiThemeProvider theme={slippiTheme}>
+        <App />
+      </MuiThemeProvider>
+    </AppProvider>
+  );
+};
+
 // eslint-disable-next-line import/no-default-export
-export default hot(App);
+export default hot(AppWithProviders);
