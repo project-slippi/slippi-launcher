@@ -4,9 +4,8 @@ import React from "react";
 
 const StyledStepper = withStyles({
   root: {
-    // Why do I have to set it as important for this to work?! This is garbo!
-    background: "transparent !important",
-    padding: "0 !important",
+    background: "transparent",
+    padding: "0",
   },
   dots: {
     margin: "auto auto",

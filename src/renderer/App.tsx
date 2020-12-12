@@ -10,6 +10,7 @@ import {
   Route,
   Redirect,
 } from "react-router-dom";
+import { StylesProvider } from "@material-ui/styles";
 
 import { init } from "./lib/init";
 import { AppContext, Action, AppProvider } from "./store";
@@ -87,9 +88,11 @@ const App: React.FC = () => {
 const AppWithProviders: React.FC = () => {
   return (
     <AppProvider>
-      <MuiThemeProvider theme={slippiTheme}>
-        <App />
-      </MuiThemeProvider>
+      <StylesProvider injectFirst>
+        <MuiThemeProvider theme={slippiTheme}>
+          <App />
+        </MuiThemeProvider>
+      </StylesProvider>
     </AppProvider>
   );
 };
