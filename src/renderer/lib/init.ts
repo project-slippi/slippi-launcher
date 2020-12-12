@@ -18,7 +18,10 @@ const firebaseConfig = {
 export async function init(log: (message: string) => void = console.log) {
   // Initialize firebase
   try {
-    firebase.initializeApp(firebaseConfig);
+    // Initialize the Firebase app if we haven't already
+    if (firebase.apps.length === 0) {
+      firebase.initializeApp(firebaseConfig);
+    }
   } catch (err) {
     console.error(
       "Error initializing firebase. Did you forget to create a .env file from the .env.example file?",
