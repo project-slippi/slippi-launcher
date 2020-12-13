@@ -27,14 +27,17 @@ export const LoginForm: React.FC = () => {
   const classes = useStyles();
 
   const { execute, loading, error } = useAsync(async () => {
-    const user = await firebase
+    await firebase
       .auth()
-      .signInWithEmailAndPassword(email, password);
-    if (user) {
-      // Clear inputs on successful login
-      setEmail("");
-      setPassword("");
-    }
+      .signInWithEmailAndPassword(email, password)
+      .then((user) => {
+        // Putting the clean up step here curiously seems to fix the state setting on unmounted component
+        if (user) {
+          // Clear inputs on successful login
+          setEmail("");
+          setPassword("");
+        }
+      });
   });
 
   return (
