@@ -15,3 +15,11 @@ body {
 #app {
   display: inline-block;
 }
+
+*,
+*::after,
+*::before {
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-app-region: no-drag;
+}
