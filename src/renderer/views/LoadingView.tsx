@@ -22,8 +22,7 @@ export const LoadingView: React.FC = () => {
   return (
     <Outer backgroundColor={colors.greenDark}>
       <LoadingIndicator />
-      <div>Loading...</div>
-      {state.installStatus && <div>{state.installStatus}</div>}
+      <div>{state.installStatus ? state.installStatus : "Just a sec..."}</div>
     </Outer>
   );
 };
