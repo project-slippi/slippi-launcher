@@ -52,6 +52,7 @@ const addOverrides = (theme: Theme) => {
       MuiButton: {
         contained: {
           fontWeight: 700,
+          textTransform: "none",
         },
       },
     },
