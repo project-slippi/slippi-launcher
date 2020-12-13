@@ -10,6 +10,7 @@ import { IsoSelectionStep } from "./IsoSelectionStep";
 import styled from "styled-components";
 import Box from "@material-ui/core/Box";
 import { SetupCompleteStep } from "./SetupCompleteStep";
+import { LoginStep } from "./LoginStep";
 
 const OuterBox = styled(Box)`
   flex: 1;
@@ -53,7 +54,7 @@ export const QuickStart: React.FC<{
   const getStepContent = (step: QuickStartStep | null) => {
     switch (step) {
       case QuickStartStep.LOGIN:
-        return <LoginForm />;
+        return <LoginStep />;
       case QuickStartStep.SET_ISO_PATH:
         return <IsoSelectionStep setIsoPath={setIsoPath} isoPath={isoPath} />;
       case QuickStartStep.COMPLETE:
@@ -87,8 +88,6 @@ export const QuickStart: React.FC<{
 
   return (
     <OuterBox display="flex" flexDirection="column">
-      {isoPath && <div>{isoPath}</div>}
-      <button onClick={() => setIsoPath(null)}>clear iso</button>
       <Box display="flex" flex="1" alignSelf="stretch">
         {getStepContent(currentStep)}
       </Box>
