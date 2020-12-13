@@ -3,8 +3,7 @@ import React from "react";
 import { AppContext } from "@/store";
 import { QuickStart } from "@/containers/QuickStart/QuickStart";
 import Box from "@material-ui/core/Box";
-import { ThemeProvider } from "@material-ui/core/styles";
-import { createMuiTheme } from "@material-ui/core/styles";
+import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 
 import slippiLogo from "@/styles/images/slippi-logo.svg";
 

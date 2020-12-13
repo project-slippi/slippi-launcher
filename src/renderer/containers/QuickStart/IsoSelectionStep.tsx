@@ -2,7 +2,6 @@ import { verifyISO } from "@/lib/verifyISO";
 import { hasBorder } from "@/styles/hasBorder";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
-import { withStyles } from "@material-ui/core/styles";
 import React from "react";
 import { useDropzone } from "react-dropzone";
 import styled from "styled-components";
@@ -49,9 +48,8 @@ const ErrorMessage = styled.div`
 `;
 
 export const IsoSelectionStep: React.FC<{
-  isoPath: string | null;
   setIsoPath: (isoPath: string | null) => void;
-}> = ({ isoPath, setIsoPath }) => {
+}> = ({ setIsoPath }) => {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<any>(null);
   const onDrop = React.useCallback(async (acceptedFiles: File[]) => {

@@ -65,7 +65,7 @@ export const QuickStart: React.FC<{
       case QuickStartStep.LOGIN:
         return <LoginStep />;
       case QuickStartStep.SET_ISO_PATH:
-        return <IsoSelectionStep setIsoPath={setIsoPath} isoPath={isoPath} />;
+        return <IsoSelectionStep setIsoPath={setIsoPath} />;
       case QuickStartStep.COMPLETE:
         return <SetupCompleteStep />;
       default:
