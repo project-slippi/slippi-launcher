@@ -103,11 +103,11 @@ export async function verifyISO(isoPath: string): Promise<ISOHashInfo> {
       // Reading complete, check hash
       const resultHash = hash.digest("hex");
       const isoInfo = isoHashes.get(resultHash);
-      if (!isoInfo) {
+      if (isoInfo) {
+        resolve(isoInfo);
+      } else {
         reject("Unknown ISO");
       }
-
-      resolve(isoInfo);
     });
   });
 }

@@ -6,6 +6,16 @@ import { StepperDots } from "@/components/StepperDots";
 import { LoginForm } from "@/containers/LoginForm";
 import { Setting, useSetting } from "@/lib/hooks/useSetting";
 import { ISOFileSelector } from "../ISOFileSelector";
+import { IsoSelectionStep } from "./IsoSelectionStep";
+import styled from "styled-components";
+import Box from "@material-ui/core/Box";
+import { SetupCompleteStep } from "./SetupCompleteStep";
+
+const OuterBox = styled(Box)`
+  flex: 1;
+  align-self: stretch;
+  padding: 5% 10%;
+`;
 
 enum QuickStartStep {
   LOGIN = "LOGIN",
@@ -45,18 +55,9 @@ export const QuickStart: React.FC<{
       case QuickStartStep.LOGIN:
         return <LoginForm />;
       case QuickStartStep.SET_ISO_PATH:
-        return (
-          <ISOFileSelector
-            handlePathSelection={(isoPath) => setIsoPath(isoPath)}
-          />
-        );
+        return <IsoSelectionStep setIsoPath={setIsoPath} isoPath={isoPath} />;
       case QuickStartStep.COMPLETE:
-        return (
-          <div>
-            you're done!{" "}
-            <button onClick={() => history.push("/home")}>continue</button>
-          </div>
-        );
+        return <SetupCompleteStep />;
       default:
         return null;
     }
@@ -85,12 +86,16 @@ export const QuickStart: React.FC<{
   }
 
   return (
-    <div>
-      <div>{getStepContent(currentStep)}</div>
+    <OuterBox display="flex" flexDirection="column">
+      {isoPath && <div>{isoPath}</div>}
+      <button onClick={() => setIsoPath(null)}>clear iso</button>
+      <Box display="flex" flex="1" alignSelf="stretch">
+        {getStepContent(currentStep)}
+      </Box>
       <StepperDots
         steps={steps.length}
         activeStep={steps.indexOf(currentStep)}
       />
-    </div>
+    </OuterBox>
   );
 };

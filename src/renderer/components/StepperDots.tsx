@@ -6,6 +6,7 @@ const StyledStepper = withStyles({
   root: {
     background: "transparent",
     padding: "0",
+    marginTop: "25px",
   },
   dots: {
     margin: "auto auto",
