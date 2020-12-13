@@ -38,7 +38,12 @@ export const LoginForm: React.FC = () => {
   });
 
   return (
-    <div>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        execute();
+      }}
+    >
       <Grid container spacing={8} alignItems="flex-end">
         <Grid item md={true} sm={true} xs={true}>
           <TextField
@@ -94,10 +99,10 @@ export const LoginForm: React.FC = () => {
         </Grid>
       )}
       <Grid container justify="flex-end" style={{ marginTop: "15px" }}>
-        <Button disabled={loading} onClick={execute} variant="outlined">
-          Login
+        <Button type="submit" disabled={loading} variant="contained">
+          Log in
         </Button>
       </Grid>
-    </div>
+    </form>
   );
 };
