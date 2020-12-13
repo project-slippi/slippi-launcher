@@ -9,6 +9,7 @@ const WhiteButton = withStyles(() => ({
   root: {
     color: "#ffffff",
     borderColor: "#ffffff",
+    textTransform: "none",
   },
 }))(Button);
 
