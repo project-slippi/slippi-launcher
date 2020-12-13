@@ -3,14 +3,14 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 
 import { StepperDots } from "@/components/StepperDots";
-import { LoginForm } from "@/containers/LoginForm";
 import { Setting, useSetting } from "@/lib/hooks/useSetting";
-import { ISOFileSelector } from "../ISOFileSelector";
 import { IsoSelectionStep } from "./IsoSelectionStep";
 import styled from "styled-components";
 import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
 import { SetupCompleteStep } from "./SetupCompleteStep";
 import { LoginStep } from "./LoginStep";
+import Typography from "@material-ui/core/Typography";
 
 const OuterBox = styled(Box)`
   flex: 1;
@@ -38,6 +38,15 @@ function generateSteps(
 
   steps.push(QuickStartStep.COMPLETE);
   return steps;
+}
+
+function getStepHeader(step: QuickStartStep): string {
+  switch (step) {
+    case QuickStartStep.COMPLETE:
+      return "You're all set up";
+    default:
+      return "Let's get set up";
+  }
 }
 
 export const QuickStart: React.FC<{
@@ -88,6 +97,19 @@ export const QuickStart: React.FC<{
 
   return (
     <OuterBox display="flex" flexDirection="column">
+      <Box display="flex" justifyContent="space-between" marginBottom="20px">
+        <Typography variant="h2">{getStepHeader(currentStep)}</Typography>
+        {currentStep !== QuickStartStep.COMPLETE && (
+          <div>
+            <Button
+              onClick={() => history.push("/home")}
+              style={{ color: "white" }}
+            >
+              Skip setup
+            </Button>
+          </div>
+        )}
+      </Box>
       <Box display="flex" flex="1" alignSelf="stretch">
         {getStepContent(currentStep)}
       </Box>

@@ -48,14 +48,6 @@ const ErrorMessage = styled.div`
   margin-bottom: 20px;
 `;
 
-const WhiteButton = withStyles(() => ({
-  root: {
-    color: "#ffffff",
-    borderColor: "#ffffff",
-    textTransform: "none",
-  },
-}))(Button);
-
 export const IsoSelectionStep: React.FC<{
   isoPath: string | null;
   setIsoPath: (isoPath: string | null) => void;
@@ -115,9 +107,13 @@ export const IsoSelectionStep: React.FC<{
         <input {...getInputProps()} />
         {!loading && error && <ErrorMessage>{error}</ErrorMessage>}
         {!loading && (
-          <WhiteButton variant="outlined" onClick={open}>
+          <Button
+            variant="contained"
+            onClick={open}
+            style={{ textTransform: "none" }}
+          >
             Select
-          </WhiteButton>
+          </Button>
         )}
         <p>{loading ? "Verifying ISO..." : "Or drag and drop here"}</p>
       </Container>
