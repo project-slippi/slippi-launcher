@@ -10,7 +10,7 @@ import {
   useRouteMatch,
 } from "react-router-dom";
 
-import { settings } from "../containers/settings";
+import { settings } from "../containers/Settings";
 import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";

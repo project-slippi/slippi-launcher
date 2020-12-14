@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import React from "react";
 import { AppContext } from "@/store";
-import { QuickStart } from "@/containers/QuickStart/QuickStart";
+import { QuickStart } from "@/containers/QuickStart";
 import Box from "@material-ui/core/Box";
 
 import slippiLogo from "@/styles/images/slippi-logo.svg";
