@@ -38,7 +38,7 @@ const ContentColumn = styled.div`
   padding-right: 100px;
 `;
 
-const CloseButton = styled.div`
+const CloseButton = styled(IconButton)`
   position: absolute;
   top: 20px;
   right: 20px;
@@ -61,10 +61,8 @@ export const SettingsView: React.FC = () => {
 
   return (
     <Outer>
-      <CloseButton>
-        <IconButton aria-label="close" onClick={onClose}>
-          <CloseIcon />
-        </IconButton>
+      <CloseButton onClick={onClose}>
+        <CloseIcon />
       </CloseButton>
       <MenuColumn options={{ sizeAutoCapable: false }}>
         {settings.map((section, i) => {
