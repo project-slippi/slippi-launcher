@@ -10,13 +10,12 @@ import {
   Route,
   Redirect,
 } from "react-router-dom";
-import { StylesProvider } from "@material-ui/styles";
 
 import { init } from "./lib/init";
 import { AppContext, Action, AppProvider } from "./store";
 import { HomeView } from "./views/HomeView";
 import { LoadingView } from "./views/LoadingView";
-import { MuiThemeProvider } from "@material-ui/core";
+import { MuiThemeProvider, StylesProvider } from "@material-ui/core/styles";
 import { slippiTheme } from "./styles/theme";
 import { LandingView } from "./views/LandingView";
 

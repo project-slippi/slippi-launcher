@@ -1,6 +1,7 @@
 import firebase from "firebase";
 import React from "react";
-import { Box, Button } from "@material-ui/core";
+import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
 import styled from "styled-components";
 import { colors } from "common/colors";
 import { UserInfo } from "./UserInfo";

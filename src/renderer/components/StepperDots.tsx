@@ -1,5 +1,5 @@
-import { withStyles } from "@material-ui/core";
-import MobileStepper from "@material-ui/core/MobileStepper/MobileStepper";
+import { withStyles } from "@material-ui/core/styles";
+import MobileStepper from "@material-ui/core/MobileStepper";
 import React from "react";
 
 const StyledStepper = withStyles({
