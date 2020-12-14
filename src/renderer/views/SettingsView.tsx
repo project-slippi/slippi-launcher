@@ -51,7 +51,7 @@ export const SettingsView: React.FC = () => {
   const { path } = useRouteMatch();
 
   const isActive = (name: string): boolean => {
-    return history.location.pathname.includes(name);
+    return history.location.pathname === `${path}/${name}`;
   };
 
   const onClose = () => {
