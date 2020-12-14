@@ -22,6 +22,8 @@
     "firebase": "^8.1.2",
     "fs-extra": "^9.0.1",
     "graphql": "^15.4.0",
+    "overlayscrollbars": "^1.13.0",
+    "overlayscrollbars-react": "^0.2.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-dropzone": "^11.2.4",
@@ -32,6 +34,7 @@
   },
   "devDependencies": {
     "@types/adm-zip": "^0.4.33",
+    "@types/overlayscrollbars": "^1.12.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "@types/react-router-dom": "^5.1.6",

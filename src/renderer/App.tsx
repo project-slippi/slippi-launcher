@@ -1,4 +1,5 @@
 import "typeface-roboto/index.css";
+import "overlayscrollbars/css/OverlayScrollbars.css";
 import "./styles/styles.scss";
 
 import { hot } from "react-hot-loader/root";
@@ -19,6 +20,7 @@ import { MuiThemeProvider, StylesProvider } from "@material-ui/core/styles";
 import { slippiTheme } from "./styles/theme";
 import { LandingView } from "./views/LandingView";
 import { NotFoundView } from "./views/NotFoundView";
+import { SettingsView } from "./views/SettingsView";
 
 const App: React.FC = () => {
   const { state, dispatch } = React.useContext(AppContext);
@@ -78,6 +80,7 @@ const App: React.FC = () => {
       <Switch>
         <Route path="/home" component={HomeView} />
         <Route path="/landing" component={LandingView} />
+        <Route path="/settings" component={SettingsView} />
         <Redirect exact from="/" to="/landing" />
         <Route component={NotFoundView} />
       </Switch>
