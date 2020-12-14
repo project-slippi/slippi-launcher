@@ -11,7 +11,7 @@ let mainWindow: BrowserWindow | null = null;
 
 function createMainWindow() {
   const window = new BrowserWindow({
-    backgroundColor: colors.greenDark,
+    backgroundColor: colors.offGray,
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,

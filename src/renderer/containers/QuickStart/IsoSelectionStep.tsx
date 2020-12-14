@@ -2,6 +2,7 @@ import { verifyISO } from "@/lib/verifyISO";
 import { hasBorder } from "@/styles/hasBorder";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
+import { colors } from "common/colors";
 import React from "react";
 import { useDropzone } from "react-dropzone";
 import styled from "styled-components";
@@ -12,7 +13,7 @@ const getColor = (props: any, defaultColor = "#eeeeee") => {
     return "#00e676";
   }
   if (props.isDragActive) {
-    return "#2196f3";
+    return colors.greenPrimary;
   }
   return defaultColor;
 };
@@ -106,6 +107,7 @@ export const IsoSelectionStep: React.FC<{
         {!loading && error && <ErrorMessage>{error}</ErrorMessage>}
         {!loading && (
           <Button
+            color="primary"
             variant="contained"
             onClick={open}
             style={{ textTransform: "none" }}

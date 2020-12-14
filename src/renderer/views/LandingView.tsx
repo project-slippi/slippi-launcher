@@ -3,17 +3,8 @@ import React from "react";
 import { AppContext } from "@/store";
 import { QuickStart } from "@/containers/QuickStart/QuickStart";
 import Box from "@material-ui/core/Box";
-import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 
 import slippiLogo from "@/styles/images/slippi-logo.svg";
-
-const theme = createMuiTheme({
-  palette: {
-    primary: {
-      main: "#ffffff",
-    },
-  },
-});
 
 const OuterBox = styled(Box)`
   position: relative;
@@ -37,9 +28,7 @@ export const LandingView: React.FC = () => {
 
   return (
     <OuterBox display="flex" style={{ height: "100%", width: "100%" }}>
-      <ThemeProvider theme={theme}>
-        <QuickStart user={state.user} />
-      </ThemeProvider>
+      <QuickStart user={state.user} />
     </OuterBox>
   );
 };

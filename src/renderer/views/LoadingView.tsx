@@ -20,7 +20,7 @@ const Outer = styled.div<{
 export const LoadingView: React.FC = () => {
   const { state } = React.useContext(AppContext);
   return (
-    <Outer backgroundColor={colors.greenDark}>
+    <Outer backgroundColor={colors.offGray}>
       <LoadingIndicator />
       <div>{state.installStatus ? state.installStatus : "Just a sec..."}</div>
     </Outer>

@@ -11,11 +11,10 @@ export const SetupCompleteStep: React.FC = () => {
   };
   return (
     <Box display="flex" flexDirection="column" flexGrow="1">
-      <QuickStartHeader>
-        Nice work! Press 'Continue' to proceed.
-      </QuickStartHeader>
+      <QuickStartHeader>Nice work!</QuickStartHeader>
       <div style={{ textAlign: "right" }}>
         <Button
+          color="primary"
           variant="contained"
           onClick={onClick}
           style={{ textTransform: "none" }}
