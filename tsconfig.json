@@ -1,34 +1,28 @@
 {
-    "extends": "./node_modules/electron-webpack/tsconfig-base.json",
-    "compilerOptions": {
-        "paths": {
-            "@/*": [
-                "renderer/*"
-            ],
-            "common/*": [
-                "common/*"
-            ]
-        },
-        "baseUrl": "src/",
-        "jsx": "react",
-        "forceConsistentCasingInFileNames": true,
-        "noImplicitReturns": true,
-        "noImplicitThis": true,
-        "noImplicitAny": true,
-        "strictNullChecks": true,
-        "suppressImplicitAnyIndexErrors": true,
-        "strictPropertyInitialization": true,
-        "skipLibCheck": true,
-        "esModuleInterop": true,
-        "strict": true,
-        "resolveJsonModule": true,
-        "alwaysStrict": true,
-        "strictFunctionTypes": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true
+  "extends": "./node_modules/electron-webpack/tsconfig-base.json",
+  "compilerOptions": {
+    "lib": ["dom", "es2019"],
+    "paths": {
+      "@/*": ["renderer/*"],
+      "common/*": ["common/*"]
     },
-    "exclude": [
-        "node_modules",
-        "packaging"
-  ]
+    "baseUrl": "src/",
+    "jsx": "react",
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "strictPropertyInitialization": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "resolveJsonModule": true,
+    "alwaysStrict": true,
+    "strictFunctionTypes": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
+  },
+  "exclude": ["node_modules", "packaging"]
 }
