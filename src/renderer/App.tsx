@@ -18,6 +18,7 @@ import { LoadingView } from "./views/LoadingView";
 import { MuiThemeProvider, StylesProvider } from "@material-ui/core/styles";
 import { slippiTheme } from "./styles/theme";
 import { LandingView } from "./views/LandingView";
+import { NotFoundView } from "./views/NotFoundView";
 
 const App: React.FC = () => {
   const { state, dispatch } = React.useContext(AppContext);
@@ -77,7 +78,8 @@ const App: React.FC = () => {
       <Switch>
         <Route path="/home" component={HomeView} />
         <Route path="/landing" component={LandingView} />
-        <Redirect from="/" to="/landing" />
+        <Redirect exact from="/" to="/landing" />
+        <Route component={NotFoundView} />
       </Switch>
     </Router>
   );
