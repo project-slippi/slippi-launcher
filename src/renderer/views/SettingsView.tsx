@@ -18,6 +18,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import CloseIcon from "@material-ui/icons/Close";
+import { colors } from "common/colors";
 
 const Outer = styled.div`
   position: relative;
@@ -27,7 +28,7 @@ const Outer = styled.div`
 `;
 
 const MenuColumn = styled(OverlayScrollbarsComponent)`
-  border-right: solid 1px white;
+  background-color: ${colors.grayDark};
 `;
 
 const ContentColumn = styled.div`
