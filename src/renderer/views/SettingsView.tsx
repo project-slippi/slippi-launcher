@@ -30,8 +30,9 @@ const MenuColumn = styled(OverlayScrollbarsComponent)`
   border-right: solid 1px white;
 `;
 
-const ContentColumn = styled(OverlayScrollbarsComponent)`
+const ContentColumn = styled.div`
   padding-top: 50px;
+  padding-bottom: 30px;
   padding-left: 30px;
   padding-right: 100px;
 `;
@@ -98,23 +99,25 @@ export const SettingsView: React.FC = () => {
           );
         })}
       </MenuColumn>
-      <ContentColumn options={{ sizeAutoCapable: false }}>
-        <Switch>
-          {settingItems.map((item) => {
-            const fullItemPath = `${path}/${item.path}`;
-            return (
-              <Route key={fullItemPath} path={fullItemPath}>
-                {item.component}
+      <OverlayScrollbarsComponent options={{ sizeAutoCapable: false }}>
+        <ContentColumn>
+          <Switch>
+            {settingItems.map((item) => {
+              const fullItemPath = `${path}/${item.path}`;
+              return (
+                <Route key={fullItemPath} path={fullItemPath}>
+                  {item.component}
+                </Route>
+              );
+            })}
+            {settingItems.length > 0 && (
+              <Route exact path={path}>
+                <Redirect to={`${path}/${settingItems[0].path}`} />
               </Route>
-            );
-          })}
-          {settingItems.length > 0 && (
-            <Route exact path={path}>
-              <Redirect to={`${path}/${settingItems[0].path}`} />
-            </Route>
-          )}
-        </Switch>
-      </ContentColumn>
+            )}
+          </Switch>
+        </ContentColumn>
+      </OverlayScrollbarsComponent>
     </Outer>
   );
 };
