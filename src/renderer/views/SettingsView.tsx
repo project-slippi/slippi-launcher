@@ -20,6 +20,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import CloseIcon from "@material-ui/icons/Close";
 import { colors } from "common/colors";
+import { useModal } from "@/lib/hooks/useModal";
 
 const Outer = styled.div`
   position: relative;
@@ -51,19 +52,16 @@ const settingItems = settings.flatMap((section) => section.items);
 export const SettingsView: React.FC = () => {
   const history = useHistory();
   const { path } = useRouteMatch();
+  const { close } = useModal(path);
 
   const isActive = (name: string): boolean => {
     return history.location.pathname === `${path}/${name}`;
   };
 
-  const onClose = () => {
-    history.push("/home");
-  };
-
   return (
     <Outer>
       <Tooltip title="Close">
-        <CloseButton onClick={onClose}>
+        <CloseButton onClick={close}>
           <CloseIcon />
         </CloseButton>
       </Tooltip>
