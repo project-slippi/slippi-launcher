@@ -2,10 +2,10 @@ import { useSettings } from "@/store/settings";
 import React from "react";
 import { PathInput } from "@/components/PathInput";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
-import HourglassEmptyIcon from "@material-ui/icons/HourglassEmpty";
 import ErrorIcon from "@material-ui/icons/Error";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import { SettingItem } from "./SettingItem";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -55,6 +55,7 @@ export const MeleeOptions: React.FC = () => {
           value={isoPath !== null ? isoPath : ""}
           onSelect={onIsoSelect}
           placeholder="No file set"
+          disabled={verifying}
           endAdornment={
             <div
               className={`${classes.validation} ${
@@ -65,7 +66,7 @@ export const MeleeOptions: React.FC = () => {
                 {verifying ? "Verifying..." : isValidIso ? "Valid" : "Invalid"}
               </span>
               {verifying ? (
-                <HourglassEmptyIcon />
+                <CircularProgress size={25} color="inherit" />
               ) : isValidIso ? (
                 <CheckCircleIcon />
               ) : (

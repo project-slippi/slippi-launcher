@@ -52,6 +52,7 @@ export interface PathInputProps {
   value?: string;
   options?: OpenDialogOptions;
   endAdornment?: JSX.Element;
+  disabled?: boolean;
 }
 
 export const PathInput: React.FC<PathInputProps> = ({
@@ -60,6 +61,7 @@ export const PathInput: React.FC<PathInputProps> = ({
   endAdornment,
   onSelect,
   options,
+  disabled,
 }) => {
   const classes = useStyles();
   const onClick = async () => {
@@ -89,6 +91,7 @@ export const PathInput: React.FC<PathInputProps> = ({
         variant="contained"
         style={{ textTransform: "none" }}
         onClick={onClick}
+        disabled={disabled}
       >
         Select
       </Button>
