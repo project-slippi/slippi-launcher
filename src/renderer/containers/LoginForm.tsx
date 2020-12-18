@@ -18,7 +18,10 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export const LoginForm: React.FC = () => {
+export const LoginForm: React.FC<{
+  className?: string;
+  onSuccess?: () => void;
+}> = ({ className, onSuccess }) => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [showPassword, setShowPassword] = React.useState(false);
@@ -31,15 +34,22 @@ export const LoginForm: React.FC = () => {
       .then((user) => {
         // Putting the clean up step here curiously seems to fix the state setting on unmounted component
         if (user) {
-          // Clear inputs on successful login
+          // We successfully logged in
+          // Clear the old inputs
           setEmail("");
           setPassword("");
+
+          // Run the callback function
+          if (onSuccess) {
+            onSuccess();
+          }
         }
       });
   });
 
   return (
     <form
+      className={className}
       onSubmit={(e) => {
         e.preventDefault();
         execute();

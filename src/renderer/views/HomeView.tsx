@@ -8,7 +8,7 @@ import {
   useRouteMatch,
 } from "react-router-dom";
 import React from "react";
-import { Header } from "@/components/Header";
+import { Header } from "@/containers/Header";
 import { startGame } from "@/lib/startGame";
 import Button from "@material-ui/core/Button";
 import { useApp } from "@/store/app";
@@ -37,12 +37,7 @@ export const HomeView: React.FC = () => {
 
   return (
     <div>
-      <Header
-        onPlay={() => startGame(console.log)}
-        onLogin={onLogin}
-        onLogout={onLogout}
-        currentUser={user}
-      />
+      <Header />
       <h3>here is some latest slippi news</h3>
       <Button
         color="primary"
