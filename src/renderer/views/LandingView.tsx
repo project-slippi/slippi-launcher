@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import React from "react";
-import { AppContext } from "@/store";
+import { useApp } from "@/store/app";
 import { QuickStart } from "@/containers/QuickStart";
 import Box from "@material-ui/core/Box";
 
@@ -24,11 +24,10 @@ const OuterBox = styled(Box)`
 `;
 
 export const LandingView: React.FC = () => {
-  const { state } = React.useContext(AppContext);
-
+  const user = useApp((store) => store.user);
   return (
     <OuterBox display="flex" style={{ height: "100%", width: "100%" }}>
-      <QuickStart user={state.user} />
+      <QuickStart user={user} />
     </OuterBox>
   );
 };

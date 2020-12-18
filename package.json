@@ -18,10 +18,12 @@
     "@material-ui/icons": "^4.11.2",
     "adm-zip": "^0.5.1",
     "electron-context-menu": "^2.3.0",
+    "electron-log": "^4.3.1",
     "electron-settings": "^4.0.2",
     "firebase": "^8.1.2",
     "fs-extra": "^9.0.1",
     "graphql": "^15.4.0",
+    "immer": "^8.0.0",
     "overlayscrollbars": "^1.13.0",
     "overlayscrollbars-react": "^0.2.2",
     "react": "^17.0.1",
@@ -30,7 +32,8 @@
     "react-router-dom": "^5.2.0",
     "source-map-support": "^0.5.16",
     "styled-components": "^5.2.1",
-    "typeface-roboto": "^1.1.13"
+    "typeface-roboto": "^1.1.13",
+    "zustand": "^3.2.0"
   },
   "devDependencies": {
     "@types/adm-zip": "^0.4.33",

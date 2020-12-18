@@ -12,8 +12,6 @@ import {
   Redirect,
 } from "react-router-dom";
 
-import { init } from "./lib/init";
-import { AppContext, Action, AppProvider } from "./store";
 import { HomeView } from "./views/HomeView";
 import { LoadingView } from "./views/LoadingView";
 import { MuiThemeProvider, StylesProvider } from "@material-ui/core/styles";
@@ -22,56 +20,34 @@ import { LandingView } from "./views/LandingView";
 import { NotFoundView } from "./views/NotFoundView";
 import { SettingsView } from "./views/SettingsView";
 
+import { useApp } from "@/store/app";
+import { initializeFirebase } from "./lib/firebase";
+
 const App: React.FC = () => {
-  const { state, dispatch } = React.useContext(AppContext);
+  const initialized = useApp((state) => state.initialized);
+  const init = useApp((state) => state.initialize);
+  const setUser = useApp((state) => state.setUser);
+
   React.useEffect(() => {
-    // Initialize firebase
-    const startup = init((message) => {
-      dispatch({
-        type: Action.SET_INSTALL_STATUS,
-        payload: message,
-      });
-    });
+    // Initialize the Firebase app if we haven't already
+    initializeFirebase();
 
     // Subscribe to user auth changes
     const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-      dispatch({
-        type: Action.SET_USER,
-        payload: {
-          user,
-        },
-      });
+      // Set the user
+      setUser(user);
 
-      startup
-        .then(() => {
-          // Clear the installation status when finished
-          dispatch({
-            type: Action.SET_INSTALL_STATUS,
-            payload: "",
-          });
-        })
-        .catch((err) => {
-          // Set the install status as the error message
-          dispatch({
-            type: Action.SET_INSTALL_STATUS,
-            payload: err.message,
-          });
-        })
-        .finally(() => {
-          // Tell the rest of the app we're done loading
-          if (!state.initialized) {
-            dispatch({
-              type: Action.SET_INITIALIZED,
-            });
-          }
-        });
+      // Initialize the rest if we haven't already
+      if (!initialized) {
+        init();
+      }
     });
 
     // Unsubscribe on unmount
     return unsubscribe;
-  }, []);
+  }, [initialized]);
 
-  if (!state.initialized) {
+  if (!initialized) {
     return <LoadingView />;
   }
 
@@ -91,13 +67,11 @@ const App: React.FC = () => {
 // Providers need to be initialized before the rest of the app can use them
 const AppWithProviders: React.FC = () => {
   return (
-    <AppProvider>
-      <StylesProvider injectFirst>
-        <MuiThemeProvider theme={slippiTheme}>
-          <App />
-        </MuiThemeProvider>
-      </StylesProvider>
-    </AppProvider>
+    <StylesProvider injectFirst>
+      <MuiThemeProvider theme={slippiTheme}>
+        <App />
+      </MuiThemeProvider>
+    </StylesProvider>
   );
 };
 

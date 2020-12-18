@@ -1,4 +1,3 @@
-import { verifyISO } from "@/lib/verifyISO";
 import { hasBorder } from "@/styles/hasBorder";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
@@ -7,6 +6,7 @@ import React from "react";
 import { useDropzone } from "react-dropzone";
 import styled from "styled-components";
 import { QuickStartHeader } from "./QuickStartHeader";
+import { useSettings } from "@/store/settings";
 
 const getColor = (props: any, defaultColor = "#eeeeee") => {
   if (props.isDragAccept) {
@@ -48,38 +48,20 @@ const ErrorMessage = styled.div`
   margin-bottom: 20px;
 `;
 
-export const IsoSelectionStep: React.FC<{
-  setIsoPath: (isoPath: string | null) => void;
-}> = ({ setIsoPath }) => {
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState<any>(null);
-  const onDrop = React.useCallback(async (acceptedFiles: File[]) => {
-    if (loading) {
+export const IsoSelectionStep: React.FC = () => {
+  const loading = useSettings((store) => store.verifyingIso);
+  const validIsoPath = useSettings((store) => store.validIsoPath);
+  const verifyIsoPath = useSettings((store) => store.verifyIsoPath);
+  const onDrop = React.useCallback((acceptedFiles: File[]) => {
+    if (loading || acceptedFiles.length === 0) {
+      console.log("already loading or no file selected");
       // Only verify one file at a time
       return;
     }
 
-    setError(null);
-    console.log(acceptedFiles);
-    if (acceptedFiles.length === 0) {
-      setError("No file selected");
-      return;
-    }
-
     const filePath = acceptedFiles[0].path;
-    try {
-      setLoading(true);
-      const verifyResult = await verifyISO(filePath);
-      if (verifyResult.valid) {
-        setIsoPath(filePath);
-      } else {
-        setError(`${verifyResult.name} is not supported`);
-      }
-    } catch (err) {
-      setError(`Invalid ISO`);
-    } finally {
-      setLoading(false);
-    }
+    console.log("verifying iso");
+    verifyIsoPath(filePath, true);
   }, []);
 
   const {
@@ -104,7 +86,7 @@ export const IsoSelectionStep: React.FC<{
         {...getRootProps({ isDragActive, isDragAccept, isDragReject })}
       >
         <input {...getInputProps()} />
-        {!loading && error && <ErrorMessage>{error}</ErrorMessage>}
+        {!loading && !validIsoPath && <ErrorMessage>Invalid ISO</ErrorMessage>}
         {!loading && (
           <Button
             color="primary"

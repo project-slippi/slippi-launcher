@@ -3,7 +3,6 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 
 import { StepperDots } from "@/components/StepperDots";
-import { Setting, useSetting } from "@/lib/hooks/useSetting";
 import { IsoSelectionStep } from "./IsoSelectionStep";
 import styled from "styled-components";
 import Box from "@material-ui/core/Box";
@@ -11,6 +10,7 @@ import Button from "@material-ui/core/Button";
 import { SetupCompleteStep } from "./SetupCompleteStep";
 import { LoginStep } from "./LoginStep";
 import Typography from "@material-ui/core/Typography";
+import { useSettings } from "@/store/settings";
 
 const OuterBox = styled(Box)`
   flex: 1;
@@ -26,13 +26,13 @@ enum QuickStartStep {
 
 function generateSteps(
   user: firebase.User | null,
-  isoPath: string | null
+  validIsoPath: boolean
 ): QuickStartStep[] {
   const steps: QuickStartStep[] = [];
   if (!user) {
     steps.push(QuickStartStep.LOGIN);
   }
-  if (!isoPath) {
+  if (!validIsoPath) {
     steps.push(QuickStartStep.SET_ISO_PATH);
   }
 
@@ -49,29 +49,31 @@ function getStepHeader(step: QuickStartStep): string {
   }
 }
 
+const getStepContent = (step: QuickStartStep | null) => {
+  switch (step) {
+    case QuickStartStep.LOGIN:
+      return <LoginStep />;
+    case QuickStartStep.SET_ISO_PATH:
+      return <IsoSelectionStep />;
+    case QuickStartStep.COMPLETE:
+      return <SetupCompleteStep />;
+    default:
+      return null;
+  }
+};
+
 export const QuickStart: React.FC<{
   user: firebase.User | null;
 }> = ({ user }) => {
-  const [isoPath, setIsoPath] = useSetting<string>(Setting.ISO_PATH);
+  const savedIsoPath = useSettings((store) => store.settings.isoPath);
+  const isoIsValid = useSettings((store) => store.validIsoPath);
+  const skipIsoPage = savedIsoPath !== null && Boolean(isoIsValid);
   const history = useHistory();
   // We only want to generate the steps list once so use a React state
-  const [steps] = React.useState(generateSteps(user, isoPath));
+  const [steps] = React.useState(generateSteps(user, skipIsoPage));
   const [currentStep, setCurrentStep] = React.useState<QuickStartStep | null>(
     null
   );
-
-  const getStepContent = (step: QuickStartStep | null) => {
-    switch (step) {
-      case QuickStartStep.LOGIN:
-        return <LoginStep />;
-      case QuickStartStep.SET_ISO_PATH:
-        return <IsoSelectionStep setIsoPath={setIsoPath} />;
-      case QuickStartStep.COMPLETE:
-        return <SetupCompleteStep />;
-      default:
-        return null;
-    }
-  };
 
   React.useEffect(() => {
     // If we only have the complete step then just go home
@@ -81,7 +83,7 @@ export const QuickStart: React.FC<{
     }
 
     let stepToShow: QuickStartStep | null = QuickStartStep.COMPLETE;
-    if (!isoPath) {
+    if (!skipIsoPage) {
       stepToShow = QuickStartStep.SET_ISO_PATH;
     }
 
@@ -89,7 +91,7 @@ export const QuickStart: React.FC<{
       stepToShow = QuickStartStep.LOGIN;
     }
     setCurrentStep(stepToShow);
-  }, [user, isoPath]);
+  }, [user, skipIsoPage]);
 
   if (currentStep === null) {
     return null;
