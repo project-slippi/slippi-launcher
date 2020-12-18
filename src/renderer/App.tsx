@@ -22,9 +22,14 @@ import { SettingsView } from "./views/SettingsView";
 
 import { useApp } from "@/store/app";
 import { initializeFirebase } from "./lib/firebase";
+import Snackbar from "@material-ui/core/Snackbar";
+import Alert from "@material-ui/lab/Alert";
 
 const App: React.FC = () => {
   const initialized = useApp((state) => state.initialized);
+  const showError = useApp((state) => state.showError);
+  const errorMessage = useApp((state) => state.errorMessage);
+  const dismissError = useApp((state) => state.dismissError);
   const init = useApp((state) => state.initialize);
   const setUser = useApp((state) => state.setUser);
 
@@ -60,6 +65,11 @@ const App: React.FC = () => {
         <Redirect exact from="/" to="/landing" />
         <Route component={NotFoundView} />
       </Switch>
+      <Snackbar open={showError} onClose={dismissError}>
+        <Alert onClose={dismissError} severity="error">
+          {errorMessage}
+        </Alert>
+      </Snackbar>
     </Router>
   );
 };

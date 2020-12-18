@@ -31,8 +31,9 @@ const LoginHeading = styled.h2`
 export const Header: React.FC = () => {
   const [open, setOpen] = React.useState(false);
   const currentUser = useApp((store) => store.user);
+  const handleError = useApp((state) => state.handleError);
   const onPlay = () => {
-    startGame(console.log);
+    startGame(console.log).catch(handleError);
   };
   const onLogout = () => {
     firebase
@@ -42,7 +43,7 @@ export const Header: React.FC = () => {
         // Sign-out successful.
       })
       .catch((err) => {
-        console.error(err);
+        handleError(err);
       });
   };
   return (

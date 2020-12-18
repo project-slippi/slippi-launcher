@@ -8,17 +8,23 @@ type StoreState = {
   initialized: boolean;
   user: firebase.User | null;
   logMessage: string;
+  errorMessage: string;
+  showError: boolean;
 };
 
 type StoreReducers = {
   initialize: () => Promise<void>;
   setUser: (user: firebase.User | null) => void;
+  handleError: (error: any) => void;
+  dismissError: () => void;
 };
 
 const initialState: StoreState = {
   initialized: false,
   user: null,
   logMessage: "",
+  errorMessage: "",
+  showError: false,
 };
 
 export const useApp = create<StoreState & StoreReducers>((set) => ({
@@ -59,7 +65,20 @@ export const useApp = create<StoreState & StoreReducers>((set) => ({
     await Promise.all(promises);
     set({ initialized: true });
   },
+
   setUser: (user) => {
     set({ user });
+  },
+
+  handleError: (error: any) => {
+    log.error(error);
+    set({
+      showError: true,
+      errorMessage: error.message || JSON.stringify(error),
+    });
+  },
+
+  dismissError: () => {
+    set({ showError: false });
   },
 }));

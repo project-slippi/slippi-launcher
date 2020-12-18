@@ -7,3 +7,4 @@ declare module "*.bmp";
 declare module "*.tiff";
 
 declare module "@material-ui/icons/*";
+declare module "@material-ui/lab/*";
