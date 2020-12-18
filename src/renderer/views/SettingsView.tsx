@@ -13,6 +13,7 @@ import {
 import { settings } from "../containers/Settings";
 import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List";
+import Tooltip from "@material-ui/core/Tooltip";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -61,9 +62,11 @@ export const SettingsView: React.FC = () => {
 
   return (
     <Outer>
-      <CloseButton onClick={onClose}>
-        <CloseIcon />
-      </CloseButton>
+      <Tooltip title="Close">
+        <CloseButton onClick={onClose}>
+          <CloseIcon />
+        </CloseButton>
+      </Tooltip>
       <MenuColumn options={{ sizeAutoCapable: false }}>
         {settings.map((section, i) => {
           return (
