@@ -50,17 +50,16 @@ const ErrorMessage = styled.div`
 
 export const IsoSelectionStep: React.FC = () => {
   const loading = useSettings((store) => store.verifyingIso);
+  const isoPath = useSettings((store) => store.settings.isoPath);
   const validIsoPath = useSettings((store) => store.validIsoPath);
   const verifyIsoPath = useSettings((store) => store.verifyIsoPath);
   const onDrop = React.useCallback((acceptedFiles: File[]) => {
     if (loading || acceptedFiles.length === 0) {
-      console.log("already loading or no file selected");
       // Only verify one file at a time
       return;
     }
 
     const filePath = acceptedFiles[0].path;
-    console.log("verifying iso");
     verifyIsoPath(filePath, true);
   }, []);
 
@@ -86,7 +85,9 @@ export const IsoSelectionStep: React.FC = () => {
         {...getRootProps({ isDragActive, isDragAccept, isDragReject })}
       >
         <input {...getInputProps()} />
-        {!loading && !validIsoPath && <ErrorMessage>Invalid ISO</ErrorMessage>}
+        {isoPath && !loading && !validIsoPath && (
+          <ErrorMessage>Invalid ISO</ErrorMessage>
+        )}
         {!loading && (
           <Button
             color="primary"
