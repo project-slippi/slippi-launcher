@@ -3,11 +3,9 @@ import path from "path";
 import { remote } from "electron";
 import { download } from "common/download";
 import AdmZip from "adm-zip";
-import { fetchPlayKey } from "./playkey";
 import { fileExists } from "common/utils";
 import { spawn } from "child_process";
-
-const NETPLAY_PATH = path.join(remote.app.getPath("userData"), "netplay");
+import { getDolphinPath, NETPLAY_PATH } from "./directories";
 
 export async function assertDolphinInstallation(
   log: (message: string) => void
@@ -22,35 +20,6 @@ export async function assertDolphinInstallation(
 export function openDolphin(params?: string[]) {
   const dolphinPath = getDolphinPath();
   spawn(dolphinPath, params);
-}
-
-function getDolphinPath(): string {
-  switch (process.platform) {
-    case "win32":
-      return path.join(NETPLAY_PATH, "Dolphin.exe");
-    default:
-      throw new Error(`Unsupported OS: ${process.platform}`);
-  }
-}
-
-function getPlayKeyPath(): string {
-  switch (process.platform) {
-    case "win32":
-      return path.join(NETPLAY_PATH, "user.json");
-    default:
-      throw new Error(`Unsupported OS: ${process.platform}`);
-  }
-}
-
-export async function assertPlayKey(): Promise<void> {
-  const keyPath = getPlayKeyPath();
-  const playKeyExists = await fileExists(keyPath);
-  if (playKeyExists) {
-  } else {
-    const playKey = await fetchPlayKey();
-    const contents = JSON.stringify(playKey, null, 2);
-    await fs.writeFile(keyPath, contents);
-  }
 }
 
 async function getLatestNetplayAsset(): Promise<any> {

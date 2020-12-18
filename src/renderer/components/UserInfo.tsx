@@ -1,14 +1,21 @@
 import firebase from "firebase";
 import React from "react";
+import Avatar from "@material-ui/core/Avatar";
 
 export const UserInfo: React.FC<{
   user: firebase.User;
-  onLogout: () => void;
-}> = ({ user, onLogout }) => {
+}> = ({ user }) => {
+  const imageUrl = `https://www.gravatar.com/avatar/${user.uid}?d=identicon`;
   return (
-    <div>
-      <div>{user.displayName}</div>
-      <button onClick={onLogout}>Log out</button>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Avatar src={imageUrl} />
+      <div style={{ marginLeft: 10, fontSize: 18 }}>{user.displayName}</div>
     </div>
   );
 };

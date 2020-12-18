@@ -1,3 +1,4 @@
+import * as fs from "fs-extra";
 import firebase from "firebase";
 import {
   gql,
@@ -6,6 +7,8 @@ import {
   ApolloLink,
   HttpLink,
 } from "@apollo/client";
+import { getPlayKeyPath } from "./directories";
+import { fileExists } from "common/utils";
 
 export interface PlayKey {
   uid: string;
@@ -37,7 +40,7 @@ const getUserKey = gql`
   }
 `;
 
-export async function fetchPlayKey(): Promise<PlayKey> {
+async function fetchPlayKey(): Promise<PlayKey> {
   const user = firebase.auth().currentUser;
   if (!user) {
     throw new Error("Failed to get play key. User is not logged in");
@@ -73,4 +76,22 @@ export async function fetchPlayKey(): Promise<PlayKey> {
     connectCode: res.data.user.connectCode,
     playKey: res.data.user.private.playKey,
   };
+}
+
+export async function assertPlayKey(): Promise<void> {
+  const keyPath = getPlayKeyPath();
+  const playKeyExists = await fileExists(keyPath);
+  if (!playKeyExists) {
+    const playKey = await fetchPlayKey();
+    const contents = JSON.stringify(playKey, null, 2);
+    await fs.writeFile(keyPath, contents);
+  }
+}
+
+export async function deletePlayKey(): Promise<void> {
+  const keyPath = getPlayKeyPath();
+  const playKeyExists = await fileExists(keyPath);
+  if (playKeyExists) {
+    await fs.unlink(keyPath);
+  }
 }
