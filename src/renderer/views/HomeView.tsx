@@ -1,40 +1,12 @@
-import firebase from "firebase";
-import {
-  Link,
-  Redirect,
-  Route,
-  Switch,
-  useHistory,
-  useRouteMatch,
-} from "react-router-dom";
+import { Link, Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
 import React from "react";
 import { Header } from "@/containers/Header";
-import { startGame } from "@/lib/startGame";
 import Button from "@material-ui/core/Button";
-import { useApp } from "@/store/app";
 import { useModal } from "@/lib/hooks/useModal";
 
 export const HomeView: React.FC = () => {
   const { open } = useModal("/settings");
-  const user = useApp((state) => state.user);
-  const history = useHistory();
   const { path } = useRouteMatch();
-  const onLogin = () => {
-    history.push("/login");
-  };
-
-  const onLogout = () => {
-    firebase
-      .auth()
-      .signOut()
-      .then(() => {
-        // Sign-out successful.
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  };
-
   return (
     <div>
       <Header />
