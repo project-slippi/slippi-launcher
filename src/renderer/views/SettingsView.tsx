@@ -21,7 +21,6 @@ import ListSubheader from "@material-ui/core/ListSubheader";
 import CloseIcon from "@material-ui/icons/Close";
 import { colors } from "common/colors";
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
-import { useOnKeyDown } from "@/lib/hooks/useOnKeyDown";
 
 const Outer = styled.div`
   position: relative;
@@ -59,8 +58,17 @@ export const SettingsView: React.FC = () => {
     return history.location.pathname === `${path}/${name}`;
   };
 
-  // Close the modal on ESC
-  useOnKeyDown(27, close);
+  const keyDownFunction = (event: any) => {
+    if (event.keyCode === 27) {
+      close();
+    }
+  };
+
+  React.useEffect(() => {
+    document.addEventListener("keydown", keyDownFunction, false);
+    return () =>
+      document.removeEventListener("keydown", keyDownFunction, false);
+  }, [keyDownFunction]);
 
   return (
     <Outer>
