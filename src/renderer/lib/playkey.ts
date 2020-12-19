@@ -16,9 +16,7 @@ export interface PlayKey {
   connectCode: string;
 }
 
-const GRAPHQL_ENDPOINT = "https://slippi-hasura.herokuapp.com/v1/graphql";
-
-const httpLink = new HttpLink({ uri: GRAPHQL_ENDPOINT });
+const httpLink = new HttpLink({ uri: process.env.SLIPPI_GRAPHQL_ENDPOINT });
 
 const client = new ApolloClient({
   link: httpLink,
