@@ -1,9 +1,6 @@
 import electronSettings from "electron-settings";
-import {
-  assertDolphinInstallation,
-  assertPlayKey,
-  openDolphin,
-} from "./downloadDolphin";
+import { assertDolphinInstallation, openDolphin } from "./downloadDolphin";
+import { assertPlayKey } from "./playkey";
 
 export async function startGame(log: (status: string) => void): Promise<void> {
   log("Checking for Dolphin installation...");
