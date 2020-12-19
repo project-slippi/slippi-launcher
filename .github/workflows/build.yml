@@ -4,8 +4,10 @@ on:
   push:
     branches:
       - "**"
+    branches-ignore:
+      - "refactor/rewrite"
     paths-ignore:
-      - '**.md'
+      - "**.md"
 
 jobs:
   package:
@@ -99,4 +101,4 @@ jobs:
         uses: actions/upload-artifact@v2-preview
         with:
           name: ${{ matrix.os }}
-          path: './artifact/'
+          path: "./artifact/"
