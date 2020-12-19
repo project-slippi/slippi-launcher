@@ -8,23 +8,23 @@ type StoreState = {
   initialized: boolean;
   user: firebase.User | null;
   logMessage: string;
-  errorMessage: string;
-  showError: boolean;
+  snackbarContent: JSX.Element | undefined;
+  snackbarOpen: boolean;
 };
 
 type StoreReducers = {
   initialize: () => Promise<void>;
   setUser: (user: firebase.User | null) => void;
-  handleError: (error: any) => void;
-  dismissError: () => void;
+  showSnackbar: (content?: JSX.Element) => void;
+  dismissSnackbar: () => void;
 };
 
 const initialState: StoreState = {
   initialized: false,
   user: null,
   logMessage: "",
-  errorMessage: "",
-  showError: false,
+  snackbarContent: undefined,
+  snackbarOpen: false,
 };
 
 export const useApp = create<StoreState & StoreReducers>((set) => ({
@@ -70,15 +70,14 @@ export const useApp = create<StoreState & StoreReducers>((set) => ({
     set({ user });
   },
 
-  handleError: (error: any) => {
-    log.error(error);
+  showSnackbar: (content?: JSX.Element) => {
     set({
-      showError: true,
-      errorMessage: error.message || JSON.stringify(error),
+      snackbarContent: content,
+      snackbarOpen: true,
     });
   },
 
-  dismissError: () => {
-    set({ showError: false });
+  dismissSnackbar: () => {
+    set({ snackbarOpen: false });
   },
 }));

@@ -20,7 +20,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import CloseIcon from "@material-ui/icons/Close";
 import { colors } from "common/colors";
-import { useModal } from "@/lib/hooks/useModal";
+import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
 import { useOnKeyDown } from "@/lib/hooks/useOnKeyDown";
 
 const Outer = styled.div`
@@ -53,7 +53,7 @@ const settingItems = settings.flatMap((section) => section.items);
 export const SettingsView: React.FC = () => {
   const history = useHistory();
   const { path } = useRouteMatch();
-  const { close } = useModal(path);
+  const { close } = useSettingsModal();
 
   const isActive = (name: string): boolean => {
     return history.location.pathname === `${path}/${name}`;

@@ -41,6 +41,12 @@ const addOverrides = (theme: Theme) => {
           borderBottomColor: "#1E1F25",
         },
       },
+      MuiSnackbarContent: {
+        root: {
+          backgroundColor: theme.palette.background.default,
+          color: "inherit",
+        },
+      },
       MuiTooltip: {
         tooltip: {
           backgroundColor: theme.palette.common.white,

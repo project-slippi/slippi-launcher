@@ -2,10 +2,10 @@ import { Link, Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
 import React from "react";
 import { Header } from "@/containers/Header";
 import Button from "@material-ui/core/Button";
-import { useModal } from "@/lib/hooks/useModal";
+import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
 
 export const HomeView: React.FC = () => {
-  const { open } = useModal("/settings");
+  const { open } = useSettingsModal();
   const { path } = useRouteMatch();
   return (
     <div>
@@ -14,7 +14,7 @@ export const HomeView: React.FC = () => {
       <Button
         color="primary"
         variant="contained"
-        onClick={open}
+        onClick={() => open()}
         style={{ textTransform: "none" }}
       >
         Settings
