@@ -6,7 +6,7 @@ import { hot } from "react-hot-loader/root";
 import firebase from "firebase";
 import React from "react";
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Switch,
   Route,
   Redirect,
