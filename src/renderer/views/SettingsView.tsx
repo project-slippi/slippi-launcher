@@ -35,7 +35,7 @@ const MenuColumn = styled(OverlayScrollbarsComponent)`
 `;
 
 const ContentColumn = styled.div`
-  padding-top: 50px;
+  padding-top: 30px;
   padding-bottom: 30px;
   padding-left: 30px;
   padding-right: 100px;
@@ -43,8 +43,8 @@ const ContentColumn = styled.div`
 
 const CloseButton = styled(IconButton)`
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 5px;
+  right: 10px;
   z-index: 1;
 `;
 

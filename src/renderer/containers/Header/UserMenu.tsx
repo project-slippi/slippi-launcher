@@ -4,7 +4,6 @@ import Button from "@material-ui/core/Button";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import ButtonBase from "@material-ui/core/ButtonBase";
-import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -22,7 +21,6 @@ export const UserMenu: React.FC<{
   const [openLogoutPrompt, setOpenLogoutPrompt] = React.useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
-  const { open } = useSettingsModal();
   const onLogout = async () => {
     handleClose();
     await deletePlayKey();
@@ -54,14 +52,6 @@ export const UserMenu: React.FC<{
         open={Boolean(anchorEl)}
         onClose={closeMenu}
       >
-        <MenuItem
-          onClick={() => {
-            closeMenu();
-            open();
-          }}
-        >
-          Settings
-        </MenuItem>
         <MenuItem
           onClick={() => {
             closeMenu();

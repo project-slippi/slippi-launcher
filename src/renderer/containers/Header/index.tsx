@@ -19,6 +19,9 @@ import { UserMenu } from "./UserMenu";
 import { assertPlayKey } from "@/lib/playkey";
 import { shell } from "electron";
 import { startGame } from "@/lib/startGame";
+import Tooltip from "@material-ui/core/Tooltip";
+import IconButton from "@material-ui/core/IconButton";
+import SettingsIcon from "@material-ui/icons/Settings";
 
 const handleError = (error: any) => {
   const { showSnackbar, dismissSnackbar } = useApp.getState();
@@ -118,9 +121,16 @@ export const Header: React.FC = () => {
         ) : (
           <Button onClick={() => setLoginModalOpen(true)}>Log in</Button>
         )}
-        {currentUser && (
-          <UserMenu user={currentUser} handleError={handleError}></UserMenu>
-        )}
+        <Box display="flex" alignItems="center">
+          {currentUser && (
+            <UserMenu user={currentUser} handleError={handleError}></UserMenu>
+          )}
+          <Tooltip title="Settings">
+            <IconButton onClick={() => open()}>
+              <SettingsIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
       </OuterBox>
       <Dialog
         open={loginModalOpen}
