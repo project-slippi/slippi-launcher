@@ -1,6 +1,6 @@
 {
   "productName": "Slippi Launcher",
-  "appId": "com.github.projectslippi.slippidesktopapp",
+  "appId": "gg.slippi.launcher",
   "afterSign": "build/afterSignHook.macos.js",
   "directories": {
     "buildResources": "resources",
