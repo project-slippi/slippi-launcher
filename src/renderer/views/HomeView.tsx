@@ -1,38 +1,61 @@
-import { Link, Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
+import styled from "styled-components";
+import {
+  Link,
+  Redirect,
+  Route,
+  Switch,
+  useHistory,
+  useRouteMatch,
+} from "react-router-dom";
 import React from "react";
 import { Header } from "@/containers/Header";
-import Button from "@material-ui/core/Button";
-import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
+import Button from "@material-ui/core/ButtonBase";
+
+const MenuButton = styled.div<{
+  selected?: boolean;
+}>`
+  padding: 5px 10px;
+  ${(props) =>
+    props.selected
+      ? `
+text-decoration: underline;
+  `
+      : `
+  opacity: 0.5;
+  `}
+`;
 
 export const HomeView: React.FC = () => {
-  const { open } = useSettingsModal();
+  const history = useHistory();
+  const isActive = (name: string): boolean => {
+    return history.location.pathname === `${path}/${name}`;
+  };
   const { path } = useRouteMatch();
   return (
     <div>
       <Header />
-      <h3>here is some latest slippi news</h3>
-      <Button
-        color="primary"
-        variant="contained"
-        onClick={() => open()}
-        style={{ textTransform: "none" }}
-      >
-        Settings
-      </Button>
-      <Link to={`${path}/foo`}>foo</Link>
-      <Link to={`${path}/bar`}>bar</Link>
-      <Link to={`${path}/baz`}>baz</Link>
+      <div>
+        <Button component={Link} to={`${path}/home`}>
+          <MenuButton selected={isActive("home")}>Home</MenuButton>
+        </Button>
+        <Button component={Link} to={`${path}/replays`}>
+          <MenuButton selected={isActive("replays")}>Replays</MenuButton>
+        </Button>
+        <Button component={Link} to={`${path}/spectate`}>
+          <MenuButton selected={isActive("spectate")}>Spectate</MenuButton>
+        </Button>
+      </div>
       <Switch>
-        <Route path={`${path}/foo`}>
-          <h1>foo</h1>
+        <Route path={`${path}/home`}>
+          <h1>Home</h1>
         </Route>
-        <Route path={`${path}/bar`}>
-          <h1>bar</h1>
+        <Route path={`${path}/replays`}>
+          <h1>Replays</h1>
         </Route>
-        <Route path={`${path}/baz`}>
-          <h1>baz</h1>
+        <Route path={`${path}/spectate`}>
+          <h1>Spectate</h1>
         </Route>
-        <Redirect exact from="/" to={`${path}/foo`} />
+        <Redirect exact from={path} to={`${path}/home`} />
       </Switch>
     </div>
   );
