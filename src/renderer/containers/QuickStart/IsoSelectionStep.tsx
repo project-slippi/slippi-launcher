@@ -52,6 +52,7 @@ export const IsoSelectionStep: React.FC = () => {
   const loading = useSettings((store) => store.verifyingIso);
   const isoPath = useSettings((store) => store.settings.isoPath);
   const validIsoPath = useSettings((store) => store.validIsoPath);
+  const setIsoPath = useSettings((store) => store.setIsoPath);
   const verifyIsoPath = useSettings((store) => store.verifyIsoPath);
   const onDrop = React.useCallback((acceptedFiles: File[]) => {
     if (loading || acceptedFiles.length === 0) {
@@ -60,7 +61,8 @@ export const IsoSelectionStep: React.FC = () => {
     }
 
     const filePath = acceptedFiles[0].path;
-    verifyIsoPath(filePath, true);
+    setIsoPath(filePath);
+    verifyIsoPath(filePath);
   }, []);
 
   const {
