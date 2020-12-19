@@ -55,7 +55,7 @@ export const LoginForm: React.FC<{
         execute();
       }}
     >
-      <Grid container spacing={8} alignItems="flex-end">
+      <Grid container alignItems="flex-end">
         <Grid item md={true} sm={true} xs={true}>
           <TextField
             disabled={loading}
@@ -73,7 +73,7 @@ export const LoginForm: React.FC<{
           />
         </Grid>
       </Grid>
-      <Grid container spacing={8} alignItems="flex-end">
+      <Grid container alignItems="flex-end" style={{ marginTop: 15 }}>
         <Grid item md={true} sm={true} xs={true}>
           <TextField
             disabled={loading}
@@ -109,7 +109,7 @@ export const LoginForm: React.FC<{
           <p>{error.message}</p>
         </Grid>
       )}
-      <Grid container justify="flex-end" style={{ marginTop: "15px" }}>
+      <Grid container justify="flex-end" style={{ marginTop: 15 }}>
         <Button
           type="submit"
           color="primary"
