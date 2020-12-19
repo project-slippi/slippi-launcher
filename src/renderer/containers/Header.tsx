@@ -22,6 +22,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useTheme } from "@material-ui/core/styles";
 import { deletePlayKey } from "@/lib/playkey";
+import { useSettings } from "@/store/settings";
 
 const OuterBox = styled(Box)`
   background-color: ${colors.purpleDark};
@@ -44,9 +45,11 @@ const LoginHeading = styled.h2`
 export const Header: React.FC = () => {
   const [open, setOpen] = React.useState(false);
   const currentUser = useApp((store) => store.user);
+  const meleeIsoPath =
+    useSettings((store) => store.settings.isoPath) || undefined;
   const handleError = useApp((state) => state.handleError);
   const onPlay = () => {
-    startGame(console.log).catch(handleError);
+    startGame(console.log, meleeIsoPath).catch(handleError);
   };
   return (
     <div>
