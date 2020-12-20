@@ -1,6 +1,9 @@
 const fs = require("fs");
 const path = require("path");
 const electronNotarize = require("electron-notarize");
+const electronBuilderConfig = require("../electron-builder.json");
+
+const { APPLE_TEAM_PROVIDER_ID, APPLE_API_KEY, APPLE_ISSUER_ID } = process.env;
 
 module.exports = async function (params) {
   if (process.platform !== "darwin") {
@@ -11,16 +14,12 @@ module.exports = async function (params) {
 
   // Bail early if this is a fork-caused PR build, which doesn't get
   // secrets.
-  if (
-    !process.env.APPLE_TEAM_PROVIDER_ID ||
-    !process.env.APPLE_API_KEY ||
-    !process.env.APPLE_ISSUER_ID
-  ) {
+  if (!APPLE_TEAM_PROVIDER_ID || !APPLE_API_KEY || !APPLE_ISSUER_ID) {
     console.log("Bailing, no secrets found.");
     return;
   }
 
-  const appId = "com.github.projectslippi.slippidesktopapp";
+  const appId = electronBuilderConfig.appId;
   const appPath = path.join(
     params.appOutDir,
     `${params.packager.appInfo.productFilename}.app`
@@ -37,8 +36,8 @@ module.exports = async function (params) {
     await electronNotarize.notarize({
       appBundleId: appId,
       appPath: appPath,
-      appleApiKey: process.env.APPLE_API_KEY,
-      appleApiIssuer: process.env.APPLE_ISSUER_ID,
+      appleApiKey: APPLE_API_KEY,
+      appleApiIssuer: APPLE_ISSUER_ID,
     });
 
     console.log(`Successfully notarized ${appId}`);
