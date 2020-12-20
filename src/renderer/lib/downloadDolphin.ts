@@ -104,6 +104,8 @@ async function installNetplay(
       }
       // Actually move the app image to the correct folder
       await fs.rename(assetPath, dolphinAppImagePath);
+      // Make the file executable
+      await fs.chmod(dolphinAppImagePath, "755");
       break;
     }
     default: {
