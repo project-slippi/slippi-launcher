@@ -18,6 +18,8 @@ export function getDolphinPath(): string {
   switch (process.platform) {
     case "win32":
       return path.join(NETPLAY_PATH, "Dolphin.exe");
+    case "linux":
+      return path.join(NETPLAY_PATH, "Dolphin.AppImage");
     default:
       throw new Error(`Unsupported OS: ${process.platform}`);
   }
@@ -26,6 +28,8 @@ export function getDolphinPath(): string {
 export function getPlayKeyPath(): string {
   switch (process.platform) {
     case "win32":
+      return path.join(NETPLAY_PATH, "user.json");
+    case "linux":
       return path.join(NETPLAY_PATH, "user.json");
     default:
       throw new Error(`Unsupported OS: ${process.platform}`);

@@ -10,10 +10,13 @@ import { getDolphinPath, NETPLAY_PATH } from "./directories";
 export async function assertDolphinInstallation(
   log: (message: string) => void
 ) {
-  const dolphinExists = await fileExists(NETPLAY_PATH);
+  const dolphinPath = getDolphinPath();
+  const dolphinExists = await fileExists(dolphinPath);
   if (!dolphinExists) {
     log("Downloading Dolphin...");
-    await downloadLatestNetplay(log);
+    const downloadedAsset = await downloadLatestNetplay(log);
+    log("Installing Dolphin...");
+    await installNetplay(downloadedAsset);
   }
 }
 
@@ -55,7 +58,7 @@ function matchesPlatform(releaseName: string): boolean {
 
 async function downloadLatestNetplay(
   log: (status: string) => void = console.log
-): Promise<void> {
+): Promise<string> {
   const asset = await getLatestNetplayAsset();
   const downloadLocation = path.join(remote.app.getPath("temp"), asset.name);
   const exists = await fileExists(downloadLocation);
@@ -70,16 +73,43 @@ async function downloadLatestNetplay(
   } else {
     log(`${downloadLocation} already exists. Skipping download.`);
   }
-  const extractToLocation = remote.app.getPath("userData");
-  const zip = new AdmZip(downloadLocation);
+  return downloadLocation;
+}
 
-  log(`Extracting to: ${extractToLocation}, and renaming to netplay`);
-  zip.extractAllTo(extractToLocation, true);
-  const oldPath = path.join(extractToLocation, "FM-Slippi");
-  const newPath = NETPLAY_PATH;
-  if (await fs.pathExists(newPath)) {
-    log(`${newPath} already exists. Deleting...`);
-    await fs.remove(newPath);
+async function installNetplay(
+  assetPath: string,
+  log: (message: string) => void = console.log
+) {
+  switch (process.platform) {
+    case "win32": {
+      const extractToLocation = remote.app.getPath("userData");
+      const zip = new AdmZip(assetPath);
+      log(`Extracting to: ${extractToLocation}, and renaming to netplay`);
+      zip.extractAllTo(extractToLocation, true);
+      const oldPath = path.join(extractToLocation, "FM-Slippi");
+      const newPath = NETPLAY_PATH;
+      if (await fs.pathExists(newPath)) {
+        log(`${newPath} already exists. Deleting...`);
+        await fs.remove(newPath);
+      }
+      await fs.rename(oldPath, newPath);
+      break;
+    }
+    case "linux": {
+      const dolphinAppImagePath = getDolphinPath();
+      // Delete the existing app image if it already exists
+      if (await fileExists(dolphinAppImagePath)) {
+        log(`${dolphinAppImagePath} already exists. Deleting...`);
+        await fs.remove(dolphinAppImagePath);
+      }
+      // Actually move the app image to the correct folder
+      await fs.rename(assetPath, dolphinAppImagePath);
+      break;
+    }
+    default: {
+      throw new Error(
+        `Installing Netplay is not supported on this platform: ${process.platform}`
+      );
+    }
   }
-  await fs.rename(oldPath, newPath);
 }
