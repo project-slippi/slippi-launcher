@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         node-version: [10.x]
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macOS-latest]
     steps:
       - uses: actions/checkout@v1
       - name: Use Node.js ${{ matrix.node-version }} on ${{ matrix.os }}
@@ -39,6 +39,20 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           yarn run lint
+      - name: Load macOS signing certificates and secrets
+        if: matrix.os == 'macOS-latest' && env.CERTIFICATE_MACOS_PASSWORD != null
+        run: |
+          chmod +x build/load-macos-certs-ci.sh && ./build/load-macos-certs-ci.sh
+          mkdir -p ~/private_keys/
+          echo '${{ secrets.APPLE_CONNECT_API_KEY }}' > ~/private_keys/AuthKey_${{ secrets.APPLE_API_KEY_ID }}.p8
+          echo "CSC_LINK=${{ secrets.CERTIFICATE_MACOS_APPLICATION }}" >> $GITHUB_ENV
+          echo "CSC_KEY_PASSWORD=${{ secrets.CERTIFICATE_MACOS_PASSWORD }}" >> $GITHUB_ENV
+          echo "APPLE_API_KEY=${{ secrets.APPLE_API_KEY_ID }}" >> $GITHUB_ENV
+          echo "APPLE_ISSUER_ID=${{ secrets.APPLE_ISSUER_ID }}" >> $GITHUB_ENV
+          echo "APPLE_TEAM_PROVIDER_ID=${{ secrets.APPLE_TEAM_PROVIDER_ID }}" >> $GITHUB_ENV
+        env:
+          CERTIFICATE_MACOS_APPLICATION: ${{ secrets.CERTIFICATE_MACOS_APPLICATION }}
+          CERTIFICATE_MACOS_PASSWORD: ${{ secrets.CERTIFICATE_MACOS_PASSWORD }}
       - name: Build App
         shell: bash
         working-directory: ${{ github.workspace }}
