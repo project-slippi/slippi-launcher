@@ -61,7 +61,7 @@ export const useApp = create<StoreState & StoreReducers>((set, get) => ({
         settingsState
           .verifyIsoPath(currentIsoPath)
           .then((res) => {
-            console.log("finishede verifying iso", res);
+            console.log("finished verifying iso", res);
           })
           .catch(log.error)
       );

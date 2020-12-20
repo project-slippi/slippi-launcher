@@ -4,6 +4,7 @@ import electronSettings from "electron-settings";
 import produce from "immer";
 import { verifyISO } from "@/lib/verifyISO";
 import { getDefaultRootSlpPath } from "@/lib/directories";
+import { statSync } from "fs-extra";
 
 electronSettings.configure({
   fileName: "Settings",
@@ -16,6 +17,7 @@ type StoreState = {
   // These are the settings which will get persisted into the electron-settings file
   settings: {
     isoPath: string | null;
+    isoModTime: string | null;
     rootSlpPath: string;
   };
   // Other settings related values
@@ -25,6 +27,7 @@ type StoreState = {
 
 type StoreReducers = {
   setIsoPath: (isoPath: string | null) => void;
+  setIsoModTime: (isoModTime: string | null) => void;
   setReplayDirectory: (dir: string) => void;
   verifyIsoPath: (isoPath: string, shouldSetPath?: boolean) => Promise<void>;
 };
@@ -36,6 +39,7 @@ const restored = (electronSettings.getSync(SETTINGS_KEY) as unknown) as Partial<
 const initialState: StoreState = {
   settings: {
     isoPath: null,
+    isoModTime: null,
     rootSlpPath: getDefaultRootSlpPath(),
     ...restored,
   },
@@ -55,6 +59,13 @@ export const useSettings = create<StoreState & StoreReducers>((set, get) => ({
       })
     );
   },
+  setIsoModTime: (isoModTime) => {
+    set((state) =>
+      produce(state, (draft) => {
+        draft.settings.isoModTime = isoModTime;
+      })
+    );
+  },
   setReplayDirectory: (dir) => {
     set((state) =>
       produce(state, (draft) => {
@@ -62,7 +73,7 @@ export const useSettings = create<StoreState & StoreReducers>((set, get) => ({
       })
     );
   },
-  verifyIsoPath: async (isoPath, shouldSetPath) => {
+  verifyIsoPath: async (isoPath) => {
     // Indicate that we're loading
     set({
       verifyingIso: true,
@@ -70,13 +81,21 @@ export const useSettings = create<StoreState & StoreReducers>((set, get) => ({
     });
 
     try {
-      const res = await verifyISO(isoPath);
-      set({ validIsoPath: res.valid });
+      const storedModTime = get().settings.isoModTime;
+      const currentIsoModTime = statSync(isoPath).mtime.toString();
+      if (storedModTime !== currentIsoModTime) {
+        const res = await verifyISO(isoPath);
+        set({ validIsoPath: res.valid });
 
-      // Set the path if valid
-      if (shouldSetPath && res.valid) {
+        // set the iso path even if it is invalid
         const setIsoPath = get().setIsoPath;
         setIsoPath(isoPath);
+
+        // set the mod time since it has changed
+        const setIsoModTime = get().setIsoModTime;
+        setIsoModTime(currentIsoModTime);
+      } else {
+        set({ validIsoPath: true });
       }
     } catch (err) {
       set({ validIsoPath: false });
