@@ -73,7 +73,7 @@ export const useSettings = create<StoreState & StoreReducers>((set, get) => ({
       })
     );
   },
-  verifyIsoPath: async (isoPath, shouldSetPath) => {
+  verifyIsoPath: async (isoPath) => {
     // Indicate that we're loading
     set({
       verifyingIso: true,
@@ -86,11 +86,12 @@ export const useSettings = create<StoreState & StoreReducers>((set, get) => ({
       if (storedModTime !== currentIsoModTime) {
         const res = await verifyISO(isoPath);
         set({ validIsoPath: res.valid });
-        // Set the path if valid
-        if (shouldSetPath && res.valid) {
-          const setIsoPath = get().setIsoPath;
-          setIsoPath(isoPath);
-        }
+
+        // set the iso path even if it is invalid
+        const setIsoPath = get().setIsoPath;
+        setIsoPath(isoPath);
+
+        // set the mod time since it has changed
         const setIsoModTime = get().setIsoModTime;
         setIsoModTime(currentIsoModTime);
       } else {
