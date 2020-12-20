@@ -2,8 +2,6 @@ name: Release Builds
 
 on:
   push:
-    branches:
-      - "**"
     branches-ignore:
       - "refactor/rewrite"
     paths-ignore:
