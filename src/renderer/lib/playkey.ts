@@ -1,4 +1,5 @@
 import * as fs from "fs-extra";
+import path from "path";
 import firebase from "firebase";
 import {
   gql,
@@ -7,7 +8,7 @@ import {
   ApolloLink,
   HttpLink,
 } from "@apollo/client";
-import { getPlayKeyPath } from "./directories";
+import { findDolphinExecutable } from "./directories";
 import { fileExists } from "common/utils";
 
 export interface PlayKey {
@@ -77,7 +78,7 @@ async function fetchPlayKey(): Promise<PlayKey> {
 }
 
 export async function assertPlayKey(): Promise<void> {
-  const keyPath = getPlayKeyPath();
+  const keyPath = await findPlayKey();
   const playKeyExists = await fileExists(keyPath);
   if (!playKeyExists) {
     const playKey = await fetchPlayKey();
@@ -86,8 +87,17 @@ export async function assertPlayKey(): Promise<void> {
   }
 }
 
+async function findPlayKey(): Promise<string> {
+  const dolphinPath = await findDolphinExecutable();
+  let dolphinDir = path.dirname(dolphinPath);
+  if (process.platform === "darwin") {
+    dolphinDir = path.join(dolphinPath, "Contents", "Resources");
+  }
+  return path.resolve(dolphinDir, "user.json");
+}
+
 export async function deletePlayKey(): Promise<void> {
-  const keyPath = getPlayKeyPath();
+  const keyPath = await findPlayKey();
   const playKeyExists = await fileExists(keyPath);
   if (playKeyExists) {
     await fs.unlink(keyPath);

@@ -5,23 +5,25 @@ import { download } from "common/download";
 import AdmZip from "adm-zip";
 import { fileExists } from "common/utils";
 import { spawn } from "child_process";
-import { getDolphinPath, NETPLAY_PATH } from "./directories";
+import { findDolphinExecutable, NETPLAY_PATH } from "./directories";
 
 export async function assertDolphinInstallation(
   log: (message: string) => void
-) {
-  const dolphinPath = getDolphinPath();
-  const dolphinExists = await fileExists(dolphinPath);
-  if (!dolphinExists) {
-    log("Downloading Dolphin...");
+): Promise<void> {
+  try {
+    await findDolphinExecutable();
+    log("Found existing Dolphin executable.");
+    return;
+  } catch (err) {
+    log("Could not find Dolphin installation. Downloading...");
     const downloadedAsset = await downloadLatestNetplay(log);
     log("Installing Dolphin...");
     await installNetplay(downloadedAsset);
   }
 }
 
-export function openDolphin(params?: string[]) {
-  const dolphinPath = getDolphinPath();
+export async function openDolphin(params?: string[]) {
+  const dolphinPath = await findDolphinExecutable();
   spawn(dolphinPath, params);
 }
 
@@ -95,17 +97,44 @@ async function installNetplay(
       await fs.rename(oldPath, newPath);
       break;
     }
-    case "linux": {
-      const dolphinAppImagePath = getDolphinPath();
-      // Delete the existing app image if it already exists
-      if (await fileExists(dolphinAppImagePath)) {
-        log(`${dolphinAppImagePath} already exists. Deleting...`);
-        await fs.remove(dolphinAppImagePath);
+    case "darwin": {
+      const extractToLocation = NETPLAY_PATH;
+      if (await fs.pathExists(extractToLocation)) {
+        log(`${extractToLocation} already exists. Deleting...`);
+        await fs.remove(extractToLocation);
+      } else {
+        // Ensure the directory exists
+        await fs.ensureDir(extractToLocation);
       }
+      const zip = new AdmZip(assetPath);
+      log(`Extracting to: ${extractToLocation}`);
+      zip.extractAllTo(extractToLocation, true);
+      break;
+    }
+    case "linux": {
+      // Delete the existing app image if there is one
+      try {
+        const dolphinAppImagePath = await findDolphinExecutable();
+        // Delete the existing app image if it already exists
+        if (await fileExists(dolphinAppImagePath)) {
+          log(`${dolphinAppImagePath} already exists. Deleting...`);
+          await fs.remove(dolphinAppImagePath);
+        }
+      } catch (err) {
+        // There's no app image
+        log("No existing AppImage found");
+      }
+
+      const assetFilename = path.basename(assetPath);
+      const targetLocation = path.join(NETPLAY_PATH, assetFilename);
+
       // Actually move the app image to the correct folder
-      await fs.rename(assetPath, dolphinAppImagePath);
+      log(`Moving ${assetPath} to ${targetLocation}`);
+      await fs.rename(assetPath, targetLocation);
+
       // Make the file executable
-      await fs.chmod(dolphinAppImagePath, "755");
+      log(`Setting executable permissions...`);
+      await fs.chmod(targetLocation, "755");
       break;
     }
     default: {
