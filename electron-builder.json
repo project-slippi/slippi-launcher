@@ -38,8 +38,7 @@
     "icon": "resources/icon.ico"
   },
   "nsis": {
-    "artifactName": "Slippi-Launcher-Setup-${version}.${ext}",
-    "perMachine": true
+    "artifactName": "Slippi-Launcher-Setup-${version}.${ext}"
   },
   "linux": {
     "target": ["AppImage"],
