@@ -81,18 +81,18 @@ export const useSettings = create<StoreState & StoreReducers>((set, get) => ({
     });
 
     try {
-      const storedModTime = get().settings.isoModTime;
+      const { settings, setIsoPath, setIsoModTime } = get();
+
+      const storedModTime = settings.isoModTime;
       const currentIsoModTime = statSync(isoPath).mtime.toString();
       if (storedModTime !== currentIsoModTime) {
         const res = await verifyISO(isoPath);
         set({ validIsoPath: res.valid });
 
         // set the iso path even if it is invalid
-        const setIsoPath = get().setIsoPath;
         setIsoPath(isoPath);
 
         // set the mod time since it has changed
-        const setIsoModTime = get().setIsoModTime;
         setIsoModTime(currentIsoModTime);
       } else {
         set({ validIsoPath: true });
