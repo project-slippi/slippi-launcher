@@ -11,6 +11,8 @@ let mainWindow: BrowserWindow | null = null;
 
 function createMainWindow() {
   const window = new BrowserWindow({
+    width: 1100,
+    height: 728,
     backgroundColor: colors.offGray,
     webPreferences: {
       nodeIntegration: true,
