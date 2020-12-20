@@ -11,6 +11,7 @@ let mainWindow: BrowserWindow | null = null;
 
 function createMainWindow() {
   const window = new BrowserWindow({
+    show: false,
     width: 1100,
     height: 728,
     backgroundColor: colors.offGray,
@@ -49,6 +50,11 @@ function createMainWindow() {
     setImmediate(() => {
       window.focus();
     });
+  });
+
+  window.once("ready-to-show", () => {
+    window.show();
+    window.focus();
   });
 
   return window;
