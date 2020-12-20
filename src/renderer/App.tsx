@@ -2,6 +2,7 @@ import "typeface-roboto/index.css";
 import "overlayscrollbars/css/OverlayScrollbars.css";
 import "./styles/styles.scss";
 
+import log from "electron-log";
 import { hot } from "react-hot-loader/root";
 import firebase from "firebase";
 import React from "react";
@@ -34,22 +35,28 @@ const App: React.FC = () => {
 
   React.useEffect(() => {
     // Initialize the Firebase app if we haven't already
-    initializeFirebase();
+    try {
+      initializeFirebase();
+    } catch (err) {
+      log.error(
+        "Error initializing firebase. Did you forget to create a .env file from the .env.example file?"
+      );
+      init();
+      return;
+    }
 
     // Subscribe to user auth changes
     const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
       // Set the user
       setUser(user);
 
-      // Initialize the rest if we haven't already
-      if (!initialized) {
-        init();
-      }
+      // Initialize the rest of the app
+      init();
     });
 
     // Unsubscribe on unmount
     return unsubscribe;
-  }, [initialized]);
+  }, []);
 
   if (!initialized) {
     return <LoadingView />;

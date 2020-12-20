@@ -27,13 +27,18 @@ const initialState: StoreState = {
   snackbarOpen: false,
 };
 
-export const useApp = create<StoreState & StoreReducers>((set) => ({
+export const useApp = create<StoreState & StoreReducers>((set, get) => ({
   // Set the initial state
   ...initialState,
 
   // Reducers
   initialize: async () => {
-    console.log("someone called 'app.initialize' function");
+    if (get().initialized) {
+      console.log("App is already initialized!");
+      return;
+    }
+
+    console.log("Initializing app...");
     const promises: Promise<void>[] = [];
     // Download Dolphin if necessary
     promises.push(

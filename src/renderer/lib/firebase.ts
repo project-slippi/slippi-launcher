@@ -12,18 +12,12 @@ const firebaseConfig = {
 };
 
 /**
- * Handle complex initialisation steps here. To be run on App start.
+ * Initialize Firebase
  */
-export function initializeFirebase() {
-  try {
-    // Initialize the Firebase app if we haven't already
-    if (firebase.apps.length === 0) {
-      firebase.initializeApp(firebaseConfig);
-    }
-  } catch (err) {
-    console.error(
-      "Error initializing firebase. Did you forget to create a .env file from the .env.example file?",
-      err
-    );
+export function initializeFirebase(): firebase.auth.Auth {
+  // Initialize the Firebase app if we haven't already
+  if (firebase.apps.length === 0) {
+    firebase.initializeApp(firebaseConfig);
   }
+  return firebase.auth();
 }
