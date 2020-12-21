@@ -10,6 +10,7 @@ import {
 import React from "react";
 import { Header } from "@/containers/Header";
 import Button from "@material-ui/core/ButtonBase";
+import { ReplayBrowser } from "@/containers/ReplayBrowser";
 
 const MenuButton = styled.div<{
   selected?: boolean;
@@ -51,6 +52,7 @@ export const HomeView: React.FC = () => {
         </Route>
         <Route path={`${path}/replays`}>
           <h1>Replays</h1>
+          <ReplayBrowser />
         </Route>
         <Route path={`${path}/spectate`}>
           <h1>Spectate</h1>
