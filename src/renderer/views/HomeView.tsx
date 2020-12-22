@@ -43,40 +43,31 @@ export const HomeView: React.FC = () => {
     >
       <div style={{ flexShrink: 0 }}>
         <Header />
+        <div>
+          <Button component={Link} to={`${path}/home`}>
+            <MenuButton selected={isActive("home")}>Home</MenuButton>
+          </Button>
+          <Button component={Link} to={`${path}/replays`}>
+            <MenuButton selected={isActive("replays")}>Replays</MenuButton>
+          </Button>
+          <Button component={Link} to={`${path}/spectate`}>
+            <MenuButton selected={isActive("spectate")}>Spectate</MenuButton>
+          </Button>
+        </div>
       </div>
       <OverlayScrollbarsComponent style={{ flexGrow: 1 }}>
-        <Box
-          display="flex"
-          flexDirection="column"
-          style={{ height: "100%", width: "100%" }}
-        >
-          <div>
-            <Button component={Link} to={`${path}/home`}>
-              <MenuButton selected={isActive("home")}>Home</MenuButton>
-            </Button>
-            <Button component={Link} to={`${path}/replays`}>
-              <MenuButton selected={isActive("replays")}>Replays</MenuButton>
-            </Button>
-            <Button component={Link} to={`${path}/spectate`}>
-              <MenuButton selected={isActive("spectate")}>Spectate</MenuButton>
-            </Button>
-          </div>
-          <div style={{ flex: 1 }}>
-            <Switch>
-              <Route path={`${path}/home`}>
-                <h1>Home</h1>
-              </Route>
-              <Route path={`${path}/replays`}>
-                <h1>Replays</h1>
-                <ReplayBrowser />
-              </Route>
-              <Route path={`${path}/spectate`}>
-                <h1>Spectate</h1>
-              </Route>
-              <Redirect exact from={path} to={`${path}/home`} />
-            </Switch>
-          </div>
-        </Box>
+        <Switch>
+          <Route path={`${path}/home`}>
+            <h1>Home</h1>
+          </Route>
+          <Route path={`${path}/replays`}>
+            <ReplayBrowser />
+          </Route>
+          <Route path={`${path}/spectate`}>
+            <h1>Spectate</h1>
+          </Route>
+          <Redirect exact from={path} to={`${path}/home`} />
+        </Switch>
       </OverlayScrollbarsComponent>
     </Box>
   );

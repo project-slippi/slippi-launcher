@@ -3,7 +3,11 @@ import path from "path";
 import create from "zustand";
 
 import { useSettings } from "../settings";
-import { FolderResult, generateSubFolderTree } from "@/lib/replayBrowser";
+import {
+  findChild,
+  FolderResult,
+  generateSubFolderTree,
+} from "@/lib/replayBrowser";
 
 type StoreState = {
   loaded: boolean;
@@ -12,20 +16,19 @@ type StoreState = {
     total: number;
   };
   folders: FolderResult | null;
-  loadingFolders: boolean;
 };
 
 type StoreReducers = {
   loadRootFolder: () => Promise<void>;
   loadDirectoryList: (folder: string) => Promise<void>;
   loadFolder: (childPath: string) => Promise<void>;
+  toggleFolder: (fullPath: string) => void;
 };
 
 const initialState: StoreState = {
   loaded: false,
   loading: null,
   folders: null,
-  loadingFolders: false,
 };
 
 export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
@@ -46,13 +49,24 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     // }
   },
 
-  loadDirectoryList: async (folder?: string) => {
-    set({ loadingFolders: true });
+  toggleFolder: (folder) => {
+    console.log(`toggling: ${folder}`);
+    set((state) =>
+      produce(state, (draft) => {
+        let currentTree = draft.folders;
+        if (currentTree) {
+          const child = findChild(currentTree, folder);
+          if (child) {
+            child.collapsed = !child.collapsed;
+          }
+        }
+      })
+    );
+  },
 
+  loadDirectoryList: async (folder?: string) => {
     const rootSlpPath = useSettings.getState().settings.rootSlpPath;
-    const relativePath = path.relative(rootSlpPath, folder || rootSlpPath);
-    // The child paths to expand
-    const pathMap = relativePath ? relativePath.split(path.sep) : [];
+    const pathToLoad = folder ?? rootSlpPath;
 
     let currentTree = get().folders;
     if (currentTree === null) {
@@ -60,33 +74,17 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
         name: path.basename(rootSlpPath),
         fullPath: rootSlpPath,
         subdirectories: [],
+        collapsed: false,
       };
-    } else if (pathMap.length === 0) {
-      // We've loaded the root path already so just return
-      return;
     }
 
     const newFolders = await produce(currentTree, async (draft) => {
-      let currentChild = draft;
-
-      const foundChildSegments: string[] = [];
-      while (pathMap.length > 0) {
-        const nextChildIndex = currentChild.subdirectories.findIndex(
-          (dir) => dir.name === pathMap[0]
-        );
-        if (nextChildIndex === -1) {
-          break;
-        }
-        currentChild = currentChild.subdirectories[nextChildIndex];
-        foundChildSegments.push(pathMap.shift() as string);
+      const child = findChild(draft, pathToLoad);
+      if (child && child.subdirectories.length === 0) {
+        child.subdirectories = await generateSubFolderTree(pathToLoad, []);
       }
-
-      currentChild.subdirectories = await generateSubFolderTree(
-        path.join(rootSlpPath, ...foundChildSegments),
-        pathMap
-      );
     });
 
-    set({ folders: newFolders, loadingFolders: false });
+    set({ folders: newFolders });
   },
 }));

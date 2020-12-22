@@ -12,11 +12,32 @@ export interface FolderResult {
   name: string;
   fullPath: string;
   subdirectories: FolderResult[];
+  collapsed: boolean;
 }
 
 export interface FileLoaderResult {
   files: FileResult[];
   folders: FolderResult[];
+}
+
+export function findChild(
+  tree: FolderResult,
+  childToFind: string
+): FolderResult | null {
+  const relativePath = path.relative(tree.fullPath, childToFind);
+  if (!relativePath) {
+    return tree;
+  }
+  const pathMap = relativePath.split(path.sep);
+  if (pathMap.length > 0) {
+    const nextChild = tree.subdirectories.find(
+      (dir) => dir.name === pathMap[0]
+    );
+    if (nextChild) {
+      return findChild(nextChild, childToFind);
+    }
+  }
+  return null;
 }
 
 /**
@@ -54,6 +75,7 @@ export async function generateSubFolderTree(
           name: dirent.name,
           fullPath,
           subdirectories: subdirs,
+          collapsed: false,
         };
       }
     );
