@@ -1,3 +1,4 @@
+import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
 import styled from "styled-components";
 import {
   Link,
@@ -11,6 +12,7 @@ import React from "react";
 import { Header } from "@/containers/Header";
 import Button from "@material-ui/core/ButtonBase";
 import { ReplayBrowser } from "@/containers/ReplayBrowser";
+import Box from "@material-ui/core/Box";
 
 const MenuButton = styled.div<{
   selected?: boolean;
@@ -33,32 +35,49 @@ export const HomeView: React.FC = () => {
   };
   const { path } = useRouteMatch();
   return (
-    <div>
-      <Header />
-      <div>
-        <Button component={Link} to={`${path}/home`}>
-          <MenuButton selected={isActive("home")}>Home</MenuButton>
-        </Button>
-        <Button component={Link} to={`${path}/replays`}>
-          <MenuButton selected={isActive("replays")}>Replays</MenuButton>
-        </Button>
-        <Button component={Link} to={`${path}/spectate`}>
-          <MenuButton selected={isActive("spectate")}>Spectate</MenuButton>
-        </Button>
+    <Box
+      display="flex"
+      flexDirection="column"
+      flexWrap="nowrap"
+      style={{ height: "100%", width: "100%" }}
+    >
+      <div style={{ flexShrink: 0 }}>
+        <Header />
       </div>
-      <Switch>
-        <Route path={`${path}/home`}>
-          <h1>Home</h1>
-        </Route>
-        <Route path={`${path}/replays`}>
-          <h1>Replays</h1>
-          <ReplayBrowser />
-        </Route>
-        <Route path={`${path}/spectate`}>
-          <h1>Spectate</h1>
-        </Route>
-        <Redirect exact from={path} to={`${path}/home`} />
-      </Switch>
-    </div>
+      <OverlayScrollbarsComponent style={{ flexGrow: 1 }}>
+        <Box
+          display="flex"
+          flexDirection="column"
+          style={{ height: "100%", width: "100%" }}
+        >
+          <div>
+            <Button component={Link} to={`${path}/home`}>
+              <MenuButton selected={isActive("home")}>Home</MenuButton>
+            </Button>
+            <Button component={Link} to={`${path}/replays`}>
+              <MenuButton selected={isActive("replays")}>Replays</MenuButton>
+            </Button>
+            <Button component={Link} to={`${path}/spectate`}>
+              <MenuButton selected={isActive("spectate")}>Spectate</MenuButton>
+            </Button>
+          </div>
+          <div style={{ flex: 1 }}>
+            <Switch>
+              <Route path={`${path}/home`}>
+                <h1>Home</h1>
+              </Route>
+              <Route path={`${path}/replays`}>
+                <h1>Replays</h1>
+                <ReplayBrowser />
+              </Route>
+              <Route path={`${path}/spectate`}>
+                <h1>Spectate</h1>
+              </Route>
+              <Redirect exact from={path} to={`${path}/home`} />
+            </Switch>
+          </div>
+        </Box>
+      </OverlayScrollbarsComponent>
+    </Box>
   );
 };
