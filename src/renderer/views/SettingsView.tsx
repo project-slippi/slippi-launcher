@@ -77,7 +77,7 @@ export const SettingsView: React.FC = () => {
           <CloseIcon />
         </CloseButton>
       </Tooltip>
-      <MenuColumn options={{ sizeAutoCapable: false }}>
+      <MenuColumn>
         {settings.map((section, i) => {
           return (
             <List
@@ -111,7 +111,7 @@ export const SettingsView: React.FC = () => {
           );
         })}
       </MenuColumn>
-      <OverlayScrollbarsComponent options={{ sizeAutoCapable: false }}>
+      <OverlayScrollbarsComponent>
         <ContentColumn>
           <Switch>
             {settingItems.map((item) => {
