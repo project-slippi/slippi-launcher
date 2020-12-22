@@ -26,7 +26,7 @@ export interface FileLoaderResult {
  */
 export async function generateSubFolderTree(
   folder: string,
-  childrenToExpand: string[]
+  childrenToExpand?: string[]
 ): Promise<FolderResult[]> {
   console.log(
     `generating subfolder tree for folder: ${folder} with children: ${childrenToExpand}`
@@ -40,6 +40,7 @@ export async function generateSubFolderTree(
         const fullPath = path.join(folder, dirent.name);
         let subdirs: FolderResult[] = [];
         if (
+          childrenToExpand &&
           childrenToExpand.length > 0 &&
           childrenToExpand[0] === dirent.name
         ) {
