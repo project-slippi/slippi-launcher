@@ -1,5 +1,5 @@
 import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
-import { FolderResult } from "@/lib/replayBrowser";
+import { FolderResult } from "common/replayBrowser";
 import { useReplays } from "@/store/replays";
 import { useSettings } from "@/store/settings";
 import { ReflexContainer, ReflexSplitter, ReflexElement } from "react-reflex";

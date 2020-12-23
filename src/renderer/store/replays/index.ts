@@ -7,7 +7,7 @@ import {
   findChild,
   FolderResult,
   generateSubFolderTree,
-} from "@/lib/replayBrowser";
+} from "common/replayBrowser";
 
 type StoreState = {
   loaded: boolean;

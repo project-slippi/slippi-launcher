@@ -1,24 +1,6 @@
 import path from "path";
 import * as fs from "fs-extra";
-export interface FileResult {
-  name: string;
-  fullPath: string;
-  hasError: boolean;
-  startTime: string | null;
-  lastFrame: number | null;
-}
-
-export interface FolderResult {
-  name: string;
-  fullPath: string;
-  subdirectories: FolderResult[];
-  collapsed: boolean;
-}
-
-export interface FileLoaderResult {
-  files: FileResult[];
-  folders: FolderResult[];
-}
+import { FolderResult } from "./types";
 
 export function findChild(
   tree: FolderResult,
