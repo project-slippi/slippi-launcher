@@ -13,7 +13,7 @@ export interface FolderResult {
   collapsed: boolean;
 }
 
-export interface FileLoaderResult {
+export interface FileLoadResult {
   files: FileResult[];
-  folders: FolderResult[];
+  aborted: boolean;
 }

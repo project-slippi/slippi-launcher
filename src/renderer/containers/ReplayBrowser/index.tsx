@@ -94,7 +94,7 @@ export const ReplayBrowser: React.FC = () => {
   React.useEffect(() => {
     console.log("inside react use effect");
     loadDirectoryList(rootSlpPath);
-    loadFolder(rootSlpPath);
+    loadFolder();
     const oldFlex = localStorage.getItem(STORE_KEY);
     setFlex(oldFlex ? +oldFlex : undefined);
   }, [rootSlpPath, loadDirectoryList, setFlex]);

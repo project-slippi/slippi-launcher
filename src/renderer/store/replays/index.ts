@@ -10,7 +10,7 @@ import {
   generateSubFolderTree,
 } from "common/replayBrowser";
 import * as Comlink from "comlink";
-import { loadFolder } from "@/workers/fileLoader.worker";
+import { loadFolder, abortFolderLoad } from "@/workers/fileLoader.worker";
 
 type StoreState = {
   loaded: boolean;
@@ -21,12 +21,13 @@ type StoreState = {
   };
   files: FileResult[];
   folders: FolderResult | null;
+  currentFolder: string;
 };
 
 type StoreReducers = {
   loadRootFolder: () => Promise<void>;
   loadDirectoryList: (folder: string) => Promise<void>;
-  loadFolder: (childPath?: string) => Promise<void>;
+  loadFolder: (childPath?: string, forceReload?: boolean) => Promise<void>;
   toggleFolder: (fullPath: string) => void;
 };
 
@@ -36,6 +37,7 @@ const initialState: StoreState = {
   progress: null,
   files: [],
   folders: null,
+  currentFolder: useSettings.getState().settings.rootSlpPath,
 };
 
 export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
@@ -44,26 +46,39 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
 
   loadRootFolder: async () => {},
 
-  loadFolder: async (childPath) => {
-    if (get().loading) {
-      // We should cancel the existing file load here
-      // but for now just ignore the request.
-      return;
+  loadFolder: async (childPath, forceReload) => {
+    const { currentFolder, loaded } = get();
+    const folderToLoad = childPath ?? currentFolder;
+    if (currentFolder === folderToLoad) {
+      // Just quit early if we're already loading or if we're not force reloading
+      console.log("we're already loading or loaded this folder");
+      console.log("force reload", forceReload);
+      const { loading } = get();
+      console.log("loading", loading);
+      if ((loaded && !forceReload) || loading) {
+        console.log("bailing early...");
+        return;
+      } else {
+        console.log(`loading the ${folderToLoad} anyway`);
+      }
     }
 
-    set({ loading: true, progress: null });
-    const { settings } = useSettings.getState();
-    const folderToLoad = childPath ?? settings.rootSlpPath;
+    set({ currentFolder: folderToLoad });
+
+    if (get().loading) {
+      await abortFolderLoad();
+    }
+
+    set({ loaded: false, loading: true, progress: null });
     try {
-      const files = await loadFolder(
+      const result = await loadFolder(
         folderToLoad,
         Comlink.proxy((current, total) => {
           set({ progress: { current, total } });
         })
       );
-      set({ files });
+      set({ loaded: true, files: result.files, loading: result.aborted });
     } catch (err) {
-    } finally {
       set({ loading: false, progress: null });
     }
   },

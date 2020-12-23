@@ -1,6 +1,68 @@
 import path from "path";
 import * as fs from "fs-extra";
-import { FileResult } from "common/replayBrowser";
+import { FileLoadResult, FileResult } from "common/replayBrowser";
+import { delay } from "common/utils";
+
+class FileLoader {
+  private processing = false;
+  private stopRequested = false;
+
+  public async loadFolder(
+    folder: string,
+    callback: (current: number, total: number) => void
+  ): Promise<FileLoadResult> {
+    if (this.processing) {
+      // Kill the existing folder load
+      await this.abort();
+    }
+
+    // Reset state
+    this.processing = true;
+    this.stopRequested = false;
+
+    // If the folder does not exist, return empty
+    if (!(await fs.pathExists(folder))) {
+      return {
+        aborted: false,
+        files: [],
+      };
+    }
+
+    const results = await fs.readdir(folder, { withFileTypes: true });
+    const slpFiles = results.filter(
+      (dirent) => dirent.isFile() && path.extname(dirent.name) === ".slp"
+    );
+    const total = slpFiles.length;
+    const slpGames: FileResult[] = [];
+    for (const [i, dirent] of slpFiles.entries()) {
+      if (this.stopRequested) {
+        break;
+      }
+      const game = processGame(dirent.name, folder);
+      callback(i + 1, total);
+      slpGames.push(game);
+
+      // Add a bit of time delay so the worker thread can handle the stop signal
+      await delay(5);
+    }
+
+    this.processing = false;
+    return {
+      aborted: this.stopRequested,
+      files: slpGames,
+    };
+  }
+
+  public async abort() {
+    this.stopRequested = true;
+    while (this.processing) {
+      // Wait till processing is complete
+      await delay(50);
+    }
+  }
+}
+
+const fileLoader = new FileLoader();
 
 function fibonacci(num: number): number {
   if (num <= 1) return 1;
@@ -11,24 +73,12 @@ function fibonacci(num: number): number {
 export async function loadFolder(
   folder: string,
   callback: (current: number, total: number) => void
-): Promise<FileResult[]> {
-  // If the folder does not exist, return empty
-  if (!(await fs.pathExists(folder))) {
-    return [];
-  }
+): Promise<FileLoadResult> {
+  return fileLoader.loadFolder(folder, callback);
+}
 
-  const results = await fs.readdir(folder, { withFileTypes: true });
-  const slpFiles = results.filter(
-    (dirent) => dirent.isFile() && path.extname(dirent.name) === ".slp"
-  );
-  const total = slpFiles.length;
-  const slpGames = slpFiles.map((dirent, i) => {
-    const game = processGame(dirent.name, folder);
-    callback(i + 1, total);
-    return game;
-  });
-
-  return slpGames;
+export async function abortFolderLoad(): Promise<void> {
+  return fileLoader.abort();
 }
 
 function processGame(filename: string, folder: string): FileResult {
