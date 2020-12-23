@@ -81,7 +81,7 @@
   },
   "electronWebpack": {
     "renderer": {
-      "webpackConfig": "custom.webpack.additions.js"
+      "webpackConfig": "webpack.renderer.additions.js"
     }
   },
   "husky": {
