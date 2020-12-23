@@ -22,6 +22,7 @@ type StoreState = {
   files: FileResult[];
   folders: FolderResult | null;
   currentFolder: string;
+  fileErrorCount: number;
 };
 
 type StoreReducers = {
@@ -38,6 +39,7 @@ const initialState: StoreState = {
   files: [],
   folders: null,
   currentFolder: useSettings.getState().settings.rootSlpPath,
+  fileErrorCount: 0,
 };
 
 export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
@@ -77,7 +79,12 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
           set({ progress: { current, total } });
         })
       );
-      set({ loaded: true, files: result.files, loading: result.aborted });
+      set({
+        loaded: true,
+        files: result.files,
+        loading: result.aborted,
+        fileErrorCount: result.fileErrorCount,
+      });
     } catch (err) {
       set({ loading: false, progress: null });
     }

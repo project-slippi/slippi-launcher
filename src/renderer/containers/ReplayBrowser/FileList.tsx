@@ -6,6 +6,7 @@ import { ReplayFile } from "./ReplayFile";
 export const FileList: React.FC = () => {
   const files = useReplays((store) => store.files);
   const loading = useReplays((store) => store.loading);
+  const fileErrorCount = useReplays((store) => store.fileErrorCount);
   const progress = useReplays((store) => store.progress);
   if (loading) {
     if (progress === null) {
@@ -19,6 +20,7 @@ export const FileList: React.FC = () => {
   }
   return (
     <div>
+      {fileErrorCount > 0 && <div>{fileErrorCount} files had errors.</div>}
       {files.map((f) => (
         <ReplayFile key={f.fullPath} {...f} />
       ))}
