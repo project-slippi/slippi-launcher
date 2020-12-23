@@ -17,6 +17,7 @@ function createMainWindow() {
     backgroundColor: colors.offGray,
     webPreferences: {
       nodeIntegration: true,
+      nodeIntegrationInWorker: true,
       enableRemoteModule: true,
     },
     autoHideMenuBar: true,

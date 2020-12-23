@@ -4,30 +4,37 @@ import create from "zustand";
 
 import { useSettings } from "../settings";
 import {
+  FileResult,
   findChild,
   FolderResult,
   generateSubFolderTree,
 } from "common/replayBrowser";
+import * as Comlink from "comlink";
+import { loadFolder } from "@/workers/fileLoader.worker";
 
 type StoreState = {
   loaded: boolean;
-  loading: null | {
+  loading: boolean;
+  progress: null | {
     current: number;
     total: number;
   };
+  files: FileResult[];
   folders: FolderResult | null;
 };
 
 type StoreReducers = {
   loadRootFolder: () => Promise<void>;
   loadDirectoryList: (folder: string) => Promise<void>;
-  loadFolder: (childPath: string) => Promise<void>;
+  loadFolder: (childPath?: string) => Promise<void>;
   toggleFolder: (fullPath: string) => void;
 };
 
 const initialState: StoreState = {
   loaded: false,
-  loading: null,
+  loading: false,
+  progress: null,
+  files: [],
   folders: null,
 };
 
@@ -37,16 +44,28 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
 
   loadRootFolder: async () => {},
 
-  loadFolder: async (folder) => {
-    // const { settings } = useSettings.getState();
-    // try {
-    //   await loadFolder(settings.rootSlpPath, (current, total) => {
-    //     set({ loading: { current, total } });
-    //   });
-    // } catch (err) {
-    // } finally {
-    //   set({ loading: null });
-    // }
+  loadFolder: async (childPath) => {
+    if (get().loading) {
+      // We should cancel the existing file load here
+      // but for now just ignore the request.
+      return;
+    }
+
+    set({ loading: true, progress: null });
+    const { settings } = useSettings.getState();
+    const folderToLoad = childPath ?? settings.rootSlpPath;
+    try {
+      const files = await loadFolder(
+        folderToLoad,
+        Comlink.proxy((current, total) => {
+          set({ progress: { current, total } });
+        })
+      );
+      set({ files });
+    } catch (err) {
+    } finally {
+      set({ loading: false, progress: null });
+    }
   },
 
   toggleFolder: (folder) => {
