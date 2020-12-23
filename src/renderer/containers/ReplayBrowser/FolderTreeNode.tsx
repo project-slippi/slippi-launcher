@@ -14,6 +14,7 @@ export const FolderTreeNode: React.FC<FolderResult> = (props) => {
   const loadDirectoryList = useReplays((store) => store.loadDirectoryList);
   const loadFolder = useReplays((store) => store.loadFolder);
   const toggleFolder = useReplays((store) => store.toggleFolder);
+  const currentFolder = useReplays((store) => store.currentFolder);
   const hasChildren = subdirectories.length > 0;
   const onClick = async () => {
     console.log(`loading directory: ${name}`);
@@ -35,7 +36,15 @@ export const FolderTreeNode: React.FC<FolderResult> = (props) => {
             {collapsed ? "v" : "^"}
           </div>
         )}
-        <div onClick={onClick} style={{ cursor: "pointer", marginLeft: 10 }}>
+        <div
+          onClick={onClick}
+          style={{
+            cursor: "pointer",
+            marginLeft: 10,
+            fontWeight: currentFolder === fullPath ? "bold" : "normal",
+            opacity: currentFolder === fullPath ? 1 : 0.5,
+          }}
+        >
           {name}
         </div>
       </div>
