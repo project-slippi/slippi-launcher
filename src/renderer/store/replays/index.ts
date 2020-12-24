@@ -26,7 +26,6 @@ type StoreState = {
 };
 
 type StoreReducers = {
-  loadRootFolder: () => Promise<void>;
   loadDirectoryList: (folder: string) => Promise<void>;
   loadFolder: (childPath?: string, forceReload?: boolean) => Promise<void>;
   toggleFolder: (fullPath: string) => void;
@@ -45,8 +44,6 @@ const initialState: StoreState = {
 export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   // Set the initial state
   ...initialState,
-
-  loadRootFolder: async () => {},
 
   loadFolder: async (childPath, forceReload) => {
     const { currentFolder, loaded } = get();
@@ -91,10 +88,9 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   },
 
   toggleFolder: (folder) => {
-    console.log(`toggling: ${folder}`);
     set((state) =>
       produce(state, (draft) => {
-        let currentTree = draft.folders;
+        const currentTree = draft.folders;
         if (currentTree) {
           const child = findChild(currentTree, folder);
           if (child) {

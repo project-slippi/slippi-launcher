@@ -1,5 +1,5 @@
 import moment from "moment";
-import * as fs from "fs-extra";
+import fs from "fs";
 
 /*
 export function convertFrameCountToDurationString(frameCount) {
