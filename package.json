@@ -34,7 +34,6 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-dropzone": "^11.2.4",
-    "react-reflex": "^3.1.0",
     "react-router-dom": "^5.2.0",
     "source-map-support": "^0.5.16",
     "styled-components": "^5.2.1",

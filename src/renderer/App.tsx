@@ -1,6 +1,5 @@
 import "typeface-roboto/index.css";
 import "overlayscrollbars/css/OverlayScrollbars.css";
-import "react-reflex/styles.css";
 import "./styles/styles.scss";
 
 import log from "electron-log";
