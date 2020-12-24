@@ -4,7 +4,7 @@ import electronSettings from "electron-settings";
 import produce from "immer";
 import { verifyISO } from "@/lib/verifyISO";
 import { getDefaultRootSlpPath } from "@/lib/directories";
-import { statSync } from "fs-extra";
+import { stat } from "fs-extra";
 
 electronSettings.configure({
   fileName: "Settings",
@@ -84,7 +84,8 @@ export const useSettings = create<StoreState & StoreReducers>((set, get) => ({
       const { settings, setIsoPath, setIsoModTime } = get();
 
       const storedModTime = settings.isoModTime;
-      const currentIsoModTime = statSync(isoPath).mtime.toString();
+      const { mtime } = await stat(isoPath);
+      const currentIsoModTime = mtime.toString();
       if (storedModTime !== currentIsoModTime) {
         const res = await verifyISO(isoPath);
         set({ validIsoPath: res.valid });
