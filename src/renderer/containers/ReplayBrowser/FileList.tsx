@@ -20,7 +20,10 @@ export const FileList: React.FC = () => {
   }
   return (
     <div>
-      {fileErrorCount > 0 && <div>{fileErrorCount} files had errors.</div>}
+      <div>
+        {files.length} files found.{" "}
+        {fileErrorCount > 0 ? `${fileErrorCount} files had errors.` : ""}
+      </div>
       {files.map((f) => (
         <ReplayFile key={f.fullPath} {...f} />
       ))}
