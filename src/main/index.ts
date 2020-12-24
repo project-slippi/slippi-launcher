@@ -3,6 +3,7 @@ import * as path from "path";
 import { format as formatUrl } from "url";
 import contextMenu from "electron-context-menu";
 import { colors } from "common/colors";
+import { setupListeners } from "./listeners";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -57,6 +58,8 @@ function createMainWindow() {
     window.show();
     window.focus();
   });
+
+  setupListeners();
 
   return window;
 }
