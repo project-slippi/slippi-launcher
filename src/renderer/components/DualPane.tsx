@@ -23,6 +23,18 @@ const Column = styled(OverlayScrollbarsComponent)`
   position: relative;
 `;
 
+const ResizeHandle = styled.div`
+  position: absolute;
+  cursor: e-resize;
+  background-color: black;
+  top: 0;
+  height: 100%;
+  opacity: 0;
+  &:hover {
+    opacity: 0.9;
+  }
+`;
+
 const getStoreKey = (paneId = "default"): string => {
   return `dual-pane-width-${paneId}`;
 };
@@ -85,26 +97,15 @@ export const DualPane: React.FC<{
     <Outer panelWidth={resizable ? panelWidth : width}>
       <Column style={leftStyle}>{leftSide}</Column>
       <Column style={rightStyle}>{rightSide}</Column>
-      <ResizeHandle
-        style={{
-          display: resizable ? "block" : "none",
-          left: panelWidth - Math.floor(resizeHandleWidth / 2),
-          width: resizeHandleWidth,
-        }}
-        onMouseDown={initResize}
-      />
+      {resizable && (
+        <ResizeHandle
+          style={{
+            left: panelWidth - Math.floor(resizeHandleWidth / 2),
+            width: resizeHandleWidth,
+          }}
+          onMouseDown={initResize}
+        />
+      )}
     </Outer>
   );
 };
-
-const ResizeHandle = styled.div`
-  position: absolute;
-  cursor: e-resize;
-  background-color: black;
-  top: 0;
-  height: 100%;
-  opacity: 0;
-  &:hover {
-    opacity: 0.9;
-  }
-`;
