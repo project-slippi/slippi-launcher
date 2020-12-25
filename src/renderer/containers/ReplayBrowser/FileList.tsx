@@ -20,7 +20,7 @@ export const FileList: React.FC = () => {
       </div>
     );
   }
-  const Row = (props: { style: React.CSSProperties; index: number }) => (
+  const Row = (props: { style?: React.CSSProperties; index: number }) => (
     <div style={props.style}>
       <ReplayFile {...files[props.index]} />
     </div>
@@ -33,7 +33,7 @@ export const FileList: React.FC = () => {
         {files.length} files found.{" "}
         {fileErrorCount > 0 ? `${fileErrorCount} files had errors.` : ""}
       </div>
-      <div style={{ flex: "1", overflow: "auto" }}>
+      <div style={{ flex: "1", overflow: "hidden" }}>
         <AutoSizer>
           {({ height, width }) => (
             <List

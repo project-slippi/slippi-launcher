@@ -1,0 +1,40 @@
+/*
+ * Customize MacOS style scrollbars.
+ * Does not support Firefox and IE. Luckily we're using Chromium via Electron.
+ * Taken from: https://gist.github.com/spemer/a0e218bbb45433bd611e68446523a00b
+ */
+
+$scrolltrack-width: 10px;
+$scrolltrack-background-color: rgba(0, 0, 0, 0.2);
+$scrollbar-color: rgba(0, 0, 0, 0.4);
+$scrollbar-color-hover: #6c7277;
+$scrollbar-min-height: 50px;
+
+/* total width */
+*::-webkit-scrollbar {
+  background-color: $scrolltrack-background-color;
+  width: $scrolltrack-width;
+  height: $scrolltrack-width;
+  border-radius: $scrolltrack-width;
+}
+
+/* background of the scrollbar except button or resizer */
+*::-webkit-scrollbar-corner,
+*::-webkit-scrollbar-track,
+*::-webkit-scrollbar-track:hover {
+  background-color: transparent;
+}
+
+/* scrollbar itself */
+*::-webkit-scrollbar-thumb {
+  background-color: $scrollbar-color;
+  border-radius: $scrolltrack-width;
+  min-height: $scrollbar-min-height;
+  &:hover {
+    background-color: $scrollbar-color-hover;
+  }
+}
+
+*::-webkit-scrollbar-button {
+  display: none;
+}

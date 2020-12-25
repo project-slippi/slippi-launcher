@@ -1,5 +1,4 @@
 import { debounce } from "lodash";
-import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
 import React from "react";
 import styled from "styled-components";
 
@@ -18,9 +17,12 @@ const Outer = styled.div.attrs<OuterProps>((props) => ({
   width: 100%;
 `;
 
-const Column = styled(OverlayScrollbarsComponent)`
+const Column = styled.div`
   display: flex;
+  height: 100%;
+  width: 100%;
   position: relative;
+  overflow: auto;
 `;
 
 const ResizeHandle = styled.div`

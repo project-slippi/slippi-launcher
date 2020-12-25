@@ -1,5 +1,4 @@
 import "typeface-roboto/index.css";
-import "overlayscrollbars/css/OverlayScrollbars.css";
 import "./styles/styles.scss";
 
 import log from "electron-log";
@@ -24,11 +23,6 @@ import { SettingsView } from "./views/SettingsView";
 import { useApp } from "@/store/app";
 import { initializeFirebase } from "./lib/firebase";
 import Snackbar from "@material-ui/core/Snackbar";
-import OverlayScrollbars from "overlayscrollbars";
-
-OverlayScrollbars.defaultOptions({
-  sizeAutoCapable: false,
-});
 
 const App: React.FC = () => {
   const initialized = useApp((state) => state.initialized);

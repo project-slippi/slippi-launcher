@@ -28,9 +28,12 @@ const Outer = styled.div`
   width: 100%;
 `;
 
-const MenuColumn = styled.div``;
+const MenuColumn = styled.div`
+  flex: 1;
+`;
 
 const ContentColumn = styled.div`
+  flex: 1;
   padding-top: 30px;
   padding-bottom: 30px;
   padding-left: 30px;

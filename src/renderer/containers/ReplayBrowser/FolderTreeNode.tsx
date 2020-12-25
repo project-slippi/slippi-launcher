@@ -3,7 +3,9 @@ import { FolderResult } from "common/replayBrowser";
 import React from "react";
 import styled from "styled-components";
 
-const OuterFolder = styled.div``;
+const OuterFolder = styled.div`
+  flex: 1;
+`;
 
 const ChildFolder = styled.div`
   margin-left: 10px;

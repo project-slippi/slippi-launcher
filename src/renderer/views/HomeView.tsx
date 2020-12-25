@@ -1,4 +1,3 @@
-import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
 import styled from "styled-components";
 import {
   Link,
@@ -12,7 +11,6 @@ import React from "react";
 import { Header } from "@/containers/Header";
 import Button from "@material-ui/core/ButtonBase";
 import { ReplayBrowser } from "@/containers/ReplayBrowser";
-import Box from "@material-ui/core/Box";
 
 const MenuButton = styled.div<{
   selected?: boolean;
@@ -35,11 +33,13 @@ export const HomeView: React.FC = () => {
   };
   const { path } = useRouteMatch();
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      flexWrap="nowrap"
-      style={{ height: "100%", width: "100%" }}
+    <div
+      style={{
+        display: "flex",
+        flexFlow: "column",
+        height: "100%",
+        width: "100%",
+      }}
     >
       <div style={{ flexShrink: 0 }}>
         <Header />
@@ -55,7 +55,7 @@ export const HomeView: React.FC = () => {
           </Button>
         </div>
       </div>
-      <OverlayScrollbarsComponent style={{ flexGrow: 1 }}>
+      <div style={{ flex: 1, overflow: "auto" }}>
         <Switch>
           <Route path={`${path}/home`}>
             <h1>Home</h1>
@@ -68,7 +68,7 @@ export const HomeView: React.FC = () => {
           </Route>
           <Redirect exact from={path} to={`${path}/home`} />
         </Switch>
-      </OverlayScrollbarsComponent>
-    </Box>
+      </div>
+    </div>
   );
 };
