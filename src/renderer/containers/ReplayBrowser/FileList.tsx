@@ -1,4 +1,6 @@
 import React from "react";
+import { FixedSizeList as List } from "react-window";
+import AutoSizer from "react-virtualized-auto-sizer";
 
 import { useReplays } from "@/store/replays";
 import { ReplayFile } from "./ReplayFile";
@@ -18,15 +20,33 @@ export const FileList: React.FC = () => {
       </div>
     );
   }
+  const Row = (props: { style: React.CSSProperties; index: number }) => (
+    <div style={props.style}>
+      <ReplayFile {...files[props.index]} />
+    </div>
+  );
   return (
-    <div>
+    <div
+      style={{ display: "flex", flexFlow: "column", height: "100%", flex: "1" }}
+    >
       <div>
         {files.length} files found.{" "}
         {fileErrorCount > 0 ? `${fileErrorCount} files had errors.` : ""}
       </div>
-      {files.map((f) => (
-        <ReplayFile key={f.fullPath} {...f} />
-      ))}
+      <div style={{ flex: "1", overflow: "auto" }}>
+        <AutoSizer>
+          {({ height, width }) => (
+            <List
+              height={height}
+              width={width}
+              itemCount={files.length}
+              itemSize={60}
+            >
+              {Row}
+            </List>
+          )}
+        </AutoSizer>
+      </div>
     </div>
   );
 };
