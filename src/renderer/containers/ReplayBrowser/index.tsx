@@ -4,22 +4,36 @@ import React from "react";
 import { FolderTreeNode } from "./FolderTreeNode";
 import { FileList } from "./FileList";
 import { DualPane } from "@/components/DualPane";
+import RefreshIcon from "@material-ui/icons/Refresh";
+import Tooltip from "@material-ui/core/Tooltip";
+import IconButton from "@material-ui/core/IconButton";
 
 export const ReplayBrowser: React.FC = () => {
   const folders = useReplays((store) => store.folders);
-  const loadDirectoryList = useReplays((store) => store.loadDirectoryList);
-  const loadFolder = useReplays((store) => store.loadFolder);
+  const init = useReplays((store) => store.init);
+  const currentFolder = useReplays((store) => store.currentFolder);
   const rootSlpPath = useSettings((store) => store.settings.rootSlpPath);
   React.useEffect(() => {
-    loadDirectoryList(rootSlpPath);
-    loadFolder();
-  }, [rootSlpPath, loadDirectoryList]);
+    init(rootSlpPath);
+  }, [rootSlpPath, init]);
+
+  const refresh = React.useCallback(() => {
+    init(rootSlpPath, true, currentFolder);
+  }, [rootSlpPath, init, currentFolder]);
 
   if (folders === null) {
     return null;
   }
+
   return (
     <div style={{ display: "flex", flexFlow: "column", flex: "1" }}>
+      <div>
+        <Tooltip title="Refresh">
+          <IconButton onClick={refresh}>
+            <RefreshIcon />
+          </IconButton>
+        </Tooltip>
+      </div>
       <DualPane
         id="replay-browser"
         resizable={true}

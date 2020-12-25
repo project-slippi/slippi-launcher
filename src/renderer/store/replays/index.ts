@@ -13,7 +13,6 @@ import * as Comlink from "comlink";
 import { loadFolder, abortFolderLoad } from "@/workers/fileLoader.worker";
 
 type StoreState = {
-  loaded: boolean;
   loading: boolean;
   progress: null | {
     current: number;
@@ -21,22 +20,28 @@ type StoreState = {
   };
   files: FileResult[];
   folders: FolderResult | null;
+  currentRoot: string | null;
   currentFolder: string;
   fileErrorCount: number;
 };
 
 type StoreReducers = {
+  init: (
+    rootFolder: string,
+    forceReload?: boolean,
+    currentFolder?: string
+  ) => Promise<void>;
   loadDirectoryList: (folder: string) => Promise<void>;
   loadFolder: (childPath?: string, forceReload?: boolean) => Promise<void>;
   toggleFolder: (fullPath: string) => void;
 };
 
 const initialState: StoreState = {
-  loaded: false,
   loading: false,
   progress: null,
   files: [],
   folders: null,
+  currentRoot: null,
   currentFolder: useSettings.getState().settings.rootSlpPath,
   fileErrorCount: 0,
 };
@@ -45,8 +50,30 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   // Set the initial state
   ...initialState,
 
+  init: async (rootFolder, forceReload, currentFolder) => {
+    const { currentRoot, loadFolder, loadDirectoryList } = get();
+    if (currentRoot === rootFolder && !forceReload) {
+      return;
+    }
+
+    set({
+      currentRoot: rootFolder,
+      folders: {
+        name: path.basename(rootFolder),
+        fullPath: rootFolder,
+        subdirectories: [],
+        collapsed: false,
+      },
+    });
+
+    await Promise.all([
+      loadDirectoryList(currentFolder ?? rootFolder),
+      loadFolder(currentFolder ?? rootFolder, true),
+    ]);
+  },
+
   loadFolder: async (childPath, forceReload) => {
-    const { currentFolder, loaded } = get();
+    const { currentFolder } = get();
     const folderToLoad = childPath ?? currentFolder;
     if (currentFolder === folderToLoad) {
       // Just quit early if we're already loading or if we're not force reloading
@@ -54,7 +81,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
       console.log("force reload", forceReload);
       const { loading } = get();
       console.log("loading", loading);
-      if ((loaded && !forceReload) || loading) {
+      if (!forceReload || loading) {
         console.log("bailing early...");
         return;
       } else {
@@ -68,7 +95,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
       await abortFolderLoad();
     }
 
-    set({ loaded: false, loading: true, progress: null });
+    set({ loading: true, progress: null });
     try {
       const result = await loadFolder(
         folderToLoad,
@@ -77,7 +104,6 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
         })
       );
       set({
-        loaded: true,
         files: result.files,
         loading: result.aborted,
         fileErrorCount: result.fileErrorCount,
@@ -102,11 +128,11 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   },
 
   loadDirectoryList: async (folder?: string) => {
+    const { currentRoot, folders } = get();
     const rootSlpPath = useSettings.getState().settings.rootSlpPath;
-    const pathToLoad = folder ?? rootSlpPath;
 
-    let currentTree = get().folders;
-    if (currentTree === null) {
+    let currentTree = folders;
+    if (currentTree === null || currentRoot !== rootSlpPath) {
       currentTree = {
         name: path.basename(rootSlpPath),
         fullPath: rootSlpPath,
@@ -115,12 +141,21 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
       };
     }
 
-    const newFolders = await produce(currentTree, async (draft) => {
-      const child = findChild(draft, pathToLoad);
-      if (child && child.subdirectories.length === 0) {
-        child.subdirectories = await generateSubFolderTree(pathToLoad, []);
+    const newFolders = await produce(
+      currentTree,
+      async (draft: FolderResult) => {
+        const pathToLoad = folder ?? rootSlpPath;
+        const child = findChild(draft, pathToLoad) ?? draft;
+        const childPaths = path.relative(child.fullPath, pathToLoad);
+        const childrenToExpand = childPaths ? childPaths.split(path.sep) : [];
+        if (child && child.subdirectories.length === 0) {
+          child.subdirectories = await generateSubFolderTree(
+            child.fullPath,
+            childrenToExpand
+          );
+        }
       }
-    });
+    );
 
     set({ folders: newFolders });
   },
