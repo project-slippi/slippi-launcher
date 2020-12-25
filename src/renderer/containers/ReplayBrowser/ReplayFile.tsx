@@ -8,9 +8,10 @@ import Tooltip from "@material-ui/core/Tooltip";
 import { DraggableFile } from "@/components/DraggableFile";
 import FolderIcon from "@material-ui/icons/Folder";
 import { shell } from "electron";
+import { extractPlayerNames } from "common/matchNames";
 
 export const ReplayFile: React.FC<FileResult> = (props) => {
-  const { startTime, settings, fullPath } = props;
+  const { startTime, settings, metadata, fullPath } = props;
   const date = new Date(startTime ? Date.parse(startTime) : 0);
   if (!settings) {
     return <div>Error rendering {fullPath}. Settings is null.</div>;
@@ -35,19 +36,28 @@ export const ReplayFile: React.FC<FileResult> = (props) => {
         <div>{props.name}</div>{" "}
         <div style={{ display: "flex" }}>
           {teams.flatMap((team, i) =>
-            team.map((player, j) => (
-              <div
-                key={`team-${i}-player-${j}-char${player.characterId}-${player.characterColor}`}
-              >
-                <img
-                  style={{ width: 20 }}
-                  src={getCharacterIcon(
-                    player.characterId ?? 0,
-                    player.characterColor ?? 0
-                  )}
-                />
-              </div>
-            ))
+            team.map((player, j) => {
+              const backupName = player.type === 1 ? "CPU" : "Player";
+              const names = extractPlayerNames(
+                player.playerIndex,
+                settings,
+                metadata
+              );
+              return (
+                <div
+                  key={`team-${i}-player-${j}-char${player.characterId}-${player.characterColor}`}
+                >
+                  <img
+                    style={{ width: 20 }}
+                    src={getCharacterIcon(
+                      player.characterId ?? 0,
+                      player.characterColor ?? 0
+                    )}
+                  />
+                  <span>{names.code || names.tag || backupName}</span>
+                </div>
+              );
+            })
           )}
         </div>
       </Box>

@@ -7,7 +7,7 @@ import AutoSizer from "react-virtualized-auto-sizer";
 import { useReplays } from "@/store/replays";
 import { ReplayFile } from "./ReplayFile";
 import { FileResult } from "common/replayBrowser";
-import { extractPlayerNames, namesMatch } from "common/matchNames";
+import { extractAllPlayerNames, namesMatch } from "common/matchNames";
 import { GameStartType } from "@slippi/slippi-js";
 
 const FileListResults: React.FC<{ files: FileResult[] }> = ({ files }) => {
@@ -128,7 +128,7 @@ export const FileList: React.FC = () => {
         }
       }
 
-      const matchable = extractPlayerNames(
+      const matchable = extractAllPlayerNames(
         file.settings as GameStartType,
         file.metadata
       );

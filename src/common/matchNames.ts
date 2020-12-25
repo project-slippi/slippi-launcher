@@ -1,44 +1,42 @@
-import { GameStartType } from "@slippi/slippi-js";
+import { GameStartType, MetadataType } from "@slippi/slippi-js";
 import { get } from "lodash";
 
-export function extractPlayerNames(
-  settings: GameStartType,
-  metadata?: any,
-  playerIndex?: number
-): string[] {
-  const nametags: string[] = [];
-  let indices: number[] = settings.players.map((p) => p.playerIndex);
-  // If playerIndex is provided use that
-  if (playerIndex !== undefined) {
-    indices = [playerIndex];
-  }
+interface PlayerNames {
+  name: string | null;
+  code: string | null;
+  tag: string | null;
+}
 
-  for (const index of indices) {
-    const player = settings.players.find(
-      (player) => player.playerIndex === index
-    );
-    const playerTag = player ? player.nametag : null;
-    const netplayName: string | null = get(
-      metadata,
-      ["players", index, "names", "netplay"],
-      null
-    );
-    const netplayCode: string | null = get(
-      metadata,
-      ["players", index, "names", "code"],
-      null
-    );
-    if (netplayName) {
-      nametags.push(netplayName);
-    }
-    if (netplayCode) {
-      nametags.push(netplayCode);
-    }
-    if (playerTag) {
-      nametags.push(playerTag);
-    }
+export function extractPlayerNames(
+  index: number,
+  settings: GameStartType,
+  metadata?: MetadataType | null
+): PlayerNames {
+  const result: PlayerNames = {
+    name: null,
+    code: null,
+    tag: null,
+  };
+
+  const player = settings.players.find(
+    (player) => player.playerIndex === index
+  );
+  result.tag = player ? player.nametag : null;
+  result.name = get(metadata, ["players", index, "names", "netplay"], null);
+  result.code = get(metadata, ["players", index, "names", "code"], null);
+  return result;
+}
+
+export function extractAllPlayerNames(
+  settings: GameStartType,
+  metadata?: MetadataType | null
+): string[] {
+  const result: string[] = [];
+  for (const player of settings.players) {
+    const names = extractPlayerNames(player.playerIndex, settings, metadata);
+    result.push(...Object.values(names).filter((n) => Boolean(n)));
   }
-  return nametags;
+  return result;
 }
 
 export function namesMatch(
