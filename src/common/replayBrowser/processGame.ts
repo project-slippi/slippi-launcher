@@ -30,19 +30,19 @@ export async function processGame(fullPath: string): Promise<FileResult> {
   if (metadata) {
     result.metadata = metadata;
 
-    if (metadata && metadata.lastFrame !== undefined) {
+    if (metadata.lastFrame !== undefined) {
       result.lastFrame = metadata.lastFrame;
     }
+  }
 
-    const startAtTime = fileToDateAndTime(
-      metadata.startAt,
-      filename,
-      result.fullPath
-    );
+  const startAtTime = fileToDateAndTime(
+    metadata ? metadata.startAt : null,
+    filename,
+    result.fullPath
+  );
 
-    if (startAtTime) {
-      result.startTime = startAtTime.toISOString();
-    }
+  if (startAtTime) {
+    result.startTime = startAtTime.toISOString();
   }
 
   return result;
