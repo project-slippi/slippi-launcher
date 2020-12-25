@@ -61,6 +61,8 @@ export const DualPane: React.FC<{
   leftStyle?: React.CSSProperties;
   rightStyle?: React.CSSProperties;
   width?: number;
+  minWidth?: number;
+  maxWidth?: number;
   resizeHandleWidth?: number;
 }> = ({
   id,
@@ -69,6 +71,8 @@ export const DualPane: React.FC<{
   rightStyle,
   leftSide,
   rightSide,
+  minWidth,
+  maxWidth,
   width = 250,
   resizeHandleWidth = 8,
 }) => {
@@ -84,8 +88,10 @@ export const DualPane: React.FC<{
 
   // Where the magic happens. i.e. when they're actually resizing
   const onMouseMove = (e: any) => {
-    let value = Math.min(window.innerWidth - resizeHandleWidth, e.clientX);
-    value = Math.max(0, value);
+    const maxPaneWidth = maxWidth ?? window.innerWidth;
+    const minPaneWidth = minWidth ?? 0;
+    let value = Math.min(maxPaneWidth - resizeHandleWidth, e.clientX);
+    value = Math.max(minPaneWidth, value);
     setPanelWidth(value);
     saveWidth(id, value);
   };

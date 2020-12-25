@@ -22,6 +22,8 @@ export const ReplayBrowser: React.FC = () => {
     <DualPane
       id="replay-browser"
       resizable={true}
+      minWidth={50}
+      maxWidth={300}
       leftSide={<FolderTreeNode {...folders} />}
       rightSide={<FileList />}
     />
