@@ -55,7 +55,7 @@ export const HomeView: React.FC = () => {
           </Button>
         </div>
       </div>
-      <div style={{ flex: 1, overflow: "auto" }}>
+      <div style={{ flex: 1, overflow: "auto", display: "flex" }}>
         <Switch>
           <Route path={`${path}/home`}>
             <h1>Home</h1>

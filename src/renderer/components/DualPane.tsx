@@ -13,8 +13,7 @@ const Outer = styled.div.attrs<OuterProps>((props) => ({
 }))<OuterProps>`
   position: relative;
   display: grid;
-  height: 100%;
-  width: 100%;
+  flex: 1;
 `;
 
 const Column = styled.div`

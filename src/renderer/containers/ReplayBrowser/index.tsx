@@ -19,13 +19,15 @@ export const ReplayBrowser: React.FC = () => {
     return null;
   }
   return (
-    <DualPane
-      id="replay-browser"
-      resizable={true}
-      minWidth={50}
-      maxWidth={300}
-      leftSide={<FolderTreeNode {...folders} />}
-      rightSide={<FileList />}
-    />
+    <div style={{ display: "flex", flexFlow: "column", flex: "1" }}>
+      <DualPane
+        id="replay-browser"
+        resizable={true}
+        minWidth={50}
+        maxWidth={300}
+        leftSide={<FolderTreeNode {...folders} />}
+        rightSide={<FileList />}
+      />
+    </div>
   );
 };
