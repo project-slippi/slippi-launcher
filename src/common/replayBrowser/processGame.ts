@@ -6,24 +6,21 @@ import { fileToDateAndTime } from "../time";
 
 export async function processGame(fullPath: string): Promise<FileResult> {
   const filename = path.basename(fullPath);
+  const game = new SlippiGame(fullPath);
+  // Load settings
+  const settings = game.getSettings();
+  if (!settings || _.isEmpty(settings.players)) {
+    throw new Error("Game settings could not be properly loaded.");
+  }
 
   const result: FileResult = {
     name: filename,
     fullPath,
+    settings,
     startTime: null,
     lastFrame: null,
-    settings: null,
     metadata: null,
   };
-
-  const game = new SlippiGame(fullPath);
-
-  // Load settings
-  const settings = game.getSettings();
-  result.settings = settings;
-  if (_.isEmpty(settings.players)) {
-    throw new Error("Game settings could not be properly loaded.");
-  }
 
   // Load metadata
   const metadata = game.getMetadata();

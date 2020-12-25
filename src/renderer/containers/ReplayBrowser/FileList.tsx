@@ -8,7 +8,6 @@ import { useReplays } from "@/store/replays";
 import { ReplayFile } from "./ReplayFile";
 import { FileResult } from "common/replayBrowser";
 import { extractAllPlayerNames, namesMatch } from "common/matchNames";
-import { GameStartType } from "@slippi/slippi-js";
 
 const FileListResults: React.FC<{ files: FileResult[] }> = ({ files }) => {
   const Row = (props: { style?: React.CSSProperties; index: number }) => (
@@ -128,10 +127,7 @@ export const FileList: React.FC = () => {
         }
       }
 
-      const matchable = extractAllPlayerNames(
-        file.settings as GameStartType,
-        file.metadata
-      );
+      const matchable = extractAllPlayerNames(file.settings, file.metadata);
       if (!filterOptions.tag) {
         return true;
       } else if (matchable.length === 0) {

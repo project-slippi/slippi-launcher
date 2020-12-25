@@ -3,9 +3,9 @@ import { MetadataType, GameStartType } from "@slippi/slippi-js";
 export interface FileResult {
   name: string;
   fullPath: string;
+  settings: GameStartType;
   startTime: string | null;
   lastFrame: number | null;
-  settings: GameStartType | null;
   metadata: MetadataType | null;
 }
 
