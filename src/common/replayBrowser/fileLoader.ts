@@ -36,6 +36,7 @@ export class FileLoader {
       (dirent) => dirent.isFile() && path.extname(dirent.name) === ".slp"
     );
     const total = slpFiles.length;
+
     const slpGames: FileResult[] = [];
     let fileErrorCount = 0;
     for (const [i, dirent] of slpFiles.entries()) {
@@ -45,8 +46,8 @@ export class FileLoader {
 
       const fullPath = path.resolve(folder, dirent.name);
       try {
+        callback(i, total);
         const game = await processGame(fullPath);
-        callback(i + 1, total);
         slpGames.push(game);
       } catch (err) {
         log.error(`Error processing ${fullPath}: ${err}`);
@@ -56,6 +57,9 @@ export class FileLoader {
       // Add a bit of time delay so the worker thread can handle the stop signal
       await delay(5);
     }
+
+    // Indicate that loading is complete
+    callback(total, total);
 
     this.processing = false;
     return {
