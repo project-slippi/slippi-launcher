@@ -36,11 +36,13 @@ const FileListResults: React.FC<{ files: FileResult[] }> = ({ files }) => {
 interface FilterOptions {
   tag: string;
   newestFirst: boolean;
+  hideShortGames: boolean;
 }
 
 const initialFilters: FilterOptions = {
   tag: "",
   newestFirst: true,
+  hideShortGames: true,
 };
 
 const FilterToolbar: React.FC<{
@@ -50,6 +52,9 @@ const FilterToolbar: React.FC<{
   const [tag, setTag] = React.useState<string>(props.value.tag);
   const [sortNewest, setSortNewest] = React.useState<boolean>(
     props.value.newestFirst
+  );
+  const [hideShortGames, setHideShortGames] = React.useState<boolean>(
+    props.value.hideShortGames
   );
   const setNameFilter = (name: string) => {
     setTag(name);
@@ -65,6 +70,15 @@ const FilterToolbar: React.FC<{
     props.onChange(
       produce(props.value, (draft) => {
         draft.newestFirst = shouldSortByNew;
+      })
+    );
+  };
+
+  const setShortGameFilter = (shouldHide: boolean) => {
+    setHideShortGames(shouldHide);
+    props.onChange(
+      produce(props.value, (draft) => {
+        draft.hideShortGames = shouldHide;
       })
     );
   };
@@ -86,6 +100,14 @@ const FilterToolbar: React.FC<{
         />
         <span>sort by newest</span>
       </label>
+      <label>
+        <input
+          type="checkbox"
+          checked={hideShortGames}
+          onChange={(e) => setShortGameFilter(e.target.checked)}
+        />
+        <span>hide short games</span>
+      </label>
     </div>
   );
 };
@@ -100,6 +122,12 @@ export const FileList: React.FC = () => {
   const progress = useReplays((store) => store.progress);
   const filterFunction = React.useCallback(
     (file: FileResult): boolean => {
+      if (filterOptions.hideShortGames) {
+        if (file.lastFrame && file.lastFrame <= 30 * 60) {
+          return false;
+        }
+      }
+
       const matchable = extractPlayerNames(
         file.settings as GameStartType,
         file.metadata
@@ -142,6 +170,7 @@ export const FileList: React.FC = () => {
         {filterOptions.tag}
         <div>
           {filteredFiles.length} files found.{" "}
+          {files.length - filteredFiles.length} files filtered.{" "}
           {fileErrorCount > 0 ? `${fileErrorCount} files had errors.` : ""}
         </div>
         <FilterToolbar
