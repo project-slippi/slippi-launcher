@@ -10,7 +10,8 @@ import FolderIcon from "@material-ui/icons/Folder";
 import { shell } from "electron";
 
 export const ReplayFile: React.FC<FileResult> = (props) => {
-  const { settings, fullPath } = props;
+  const { startTime, settings, fullPath } = props;
+  const date = new Date(startTime ? Date.parse(startTime) : 0);
   if (!settings) {
     return <div>Error rendering {fullPath}. Settings is null.</div>;
   }
@@ -50,6 +51,7 @@ export const ReplayFile: React.FC<FileResult> = (props) => {
           )}
         </div>
       </Box>
+      <div>{date.toLocaleString()}</div>
       <div>
         <DraggableFile fullPath={fullPath} />
         <Tooltip title="Reveal location">
