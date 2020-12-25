@@ -4,7 +4,10 @@ import React from "react";
 import { FileResult } from "common/replayBrowser";
 import { getCharacterIcon } from "@/lib/utils";
 import Box from "@material-ui/core/Box";
+import Tooltip from "@material-ui/core/Tooltip";
 import { DraggableFile } from "@/components/DraggableFile";
+import FolderIcon from "@material-ui/icons/Folder";
+import { shell } from "electron";
 
 export const ReplayFile: React.FC<FileResult> = (props) => {
   const { settings, fullPath } = props;
@@ -18,9 +21,15 @@ export const ReplayFile: React.FC<FileResult> = (props) => {
     .toArray()
     .value();
 
+  const onRevealLocation = () => shell.showItemInFolder(fullPath);
+
   return (
-    <Box display="flex" flexDirection="row" alignItems="center">
-      <DraggableFile fullPath={fullPath} />
+    <Box
+      display="flex"
+      flexDirection="row"
+      alignItems="center"
+      justifyContent="space-between"
+    >
       <Box display="flex" flexDirection="column">
         <div>{props.name}</div>{" "}
         <div style={{ display: "flex" }}>
@@ -41,6 +50,15 @@ export const ReplayFile: React.FC<FileResult> = (props) => {
           )}
         </div>
       </Box>
+      <div>
+        <DraggableFile fullPath={fullPath} />
+        <Tooltip title="Reveal location">
+          <FolderIcon
+            onClick={onRevealLocation}
+            style={{ cursor: "pointer" }}
+          />
+        </Tooltip>
+      </div>
     </Box>
   );
 };
