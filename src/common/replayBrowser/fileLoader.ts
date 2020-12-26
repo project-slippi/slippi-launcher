@@ -1,4 +1,3 @@
-import log from "electron-log";
 import path from "path";
 import * as fs from "fs-extra";
 import { FileLoadResult, FileResult } from "./types";
@@ -37,26 +36,34 @@ export class FileLoader {
     );
     const total = slpFiles.length;
 
-    const slpGames: FileResult[] = [];
     let fileErrorCount = 0;
-    for (const [i, dirent] of slpFiles.entries()) {
-      if (this.stopRequested) {
-        break;
-      }
+    let fileValidCount = 0;
+    callback(0, total);
 
-      const fullPath = path.resolve(folder, dirent.name);
-      try {
-        callback(i, total);
-        const game = await processGame(fullPath);
-        slpGames.push(game);
-      } catch (err) {
-        log.error(`Error processing ${fullPath}: ${err}`);
-        fileErrorCount += 1;
-      }
+    const process = async (path: string) => {
+      return new Promise((resolve) => {
+        setImmediate(async () => {
+          try {
+            const res = await processGame(path);
+            fileValidCount += 1;
+            callback(fileValidCount, total);
+            resolve(res);
+          } catch (err) {
+            fileErrorCount += 1;
+            resolve(null);
+          }
+        });
+      });
+    };
 
-      // Add a bit of time delay so the worker thread can handle the stop signal
-      await delay(5);
-    }
+    const slpGames = (
+      await Promise.all(
+        slpFiles.map((dirent) => {
+          const fullPath = path.resolve(folder, dirent.name);
+          return process(fullPath);
+        })
+      )
+    ).filter((g) => g !== null) as FileResult[];
 
     // Indicate that loading is complete
     callback(total, total);
