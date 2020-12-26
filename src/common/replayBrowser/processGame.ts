@@ -3,7 +3,6 @@ import { SlippiGame } from "@slippi/slippi-js";
 import path from "path";
 import { FileResult } from "./types";
 import { fileToDateAndTime } from "../time";
-import SlippiGame from "@slippi/slippi-js";
 
 export async function processGame(fullPath: string): Promise<FileResult> {
   const filename = path.basename(fullPath);

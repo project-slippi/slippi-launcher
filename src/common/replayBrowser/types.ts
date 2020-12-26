@@ -1,5 +1,4 @@
-import SlippiGame from "@slippi/slippi-js";
-import { StatsType, MetadataType, GameStartType } from "@slippi/slippi-js";
+import { MetadataType, GameStartType } from "@slippi/slippi-js";
 
 export interface FileResult {
   name: string;
