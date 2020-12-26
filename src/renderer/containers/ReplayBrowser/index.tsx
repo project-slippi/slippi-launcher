@@ -1,25 +1,63 @@
+import { debounce } from "lodash";
 import { useReplays } from "@/store/replays";
 import { useSettings } from "@/store/settings";
 import React from "react";
 import { FolderTreeNode } from "./FolderTreeNode";
 import { FileList } from "./FileList";
 import { DualPane } from "@/components/DualPane";
-import RefreshIcon from "@material-ui/icons/Refresh";
-import Tooltip from "@material-ui/core/Tooltip";
-import IconButton from "@material-ui/core/IconButton";
+import { FilterOptions, FilterToolbar } from "./FilterToolbar";
+import { FileResult } from "common/replayBrowser";
+import { extractAllPlayerNames, namesMatch } from "common/matchNames";
+
+const initialFilters: FilterOptions = {
+  tag: "",
+  newestFirst: true,
+  hideShortGames: true,
+};
 
 export const ReplayBrowser: React.FC = () => {
+  const [filterOptions, setFilterOptions] = React.useState<FilterOptions>(
+    initialFilters
+  );
+
+  const files = useReplays((store) => store.files);
   const folders = useReplays((store) => store.folders);
   const init = useReplays((store) => store.init);
-  const currentFolder = useReplays((store) => store.currentFolder);
+  const fileErrorCount = useReplays((store) => store.fileErrorCount);
   const rootSlpPath = useSettings((store) => store.settings.rootSlpPath);
   React.useEffect(() => {
     init(rootSlpPath);
   }, [rootSlpPath, init]);
 
-  const refresh = React.useCallback(() => {
-    init(rootSlpPath, true, currentFolder);
-  }, [rootSlpPath, init, currentFolder]);
+  const filterFunction = React.useCallback(
+    (file: FileResult): boolean => {
+      if (filterOptions.hideShortGames) {
+        if (file.lastFrame && file.lastFrame <= 30 * 60) {
+          return false;
+        }
+      }
+
+      const matchable = extractAllPlayerNames(file.settings, file.metadata);
+      if (!filterOptions.tag) {
+        return true;
+      } else if (matchable.length === 0) {
+        return false;
+      }
+      return namesMatch([filterOptions.tag], matchable);
+    },
+    [filterOptions]
+  );
+
+  const filteredFiles = files.filter(filterFunction).sort((a, b) => {
+    const aTime = a.startTime ? Date.parse(a.startTime) : 0;
+    const bTime = b.startTime ? Date.parse(b.startTime) : 0;
+    if (filterOptions.newestFirst) {
+      return bTime - aTime;
+    }
+    return aTime - bTime;
+  });
+
+  const updateFilter = debounce((val) => setFilterOptions(val), 100);
 
   if (folders === null) {
     return null;
@@ -27,20 +65,22 @@ export const ReplayBrowser: React.FC = () => {
 
   return (
     <div style={{ display: "flex", flexFlow: "column", flex: "1" }}>
-      <div>
-        <Tooltip title="Refresh">
-          <IconButton onClick={refresh}>
-            <RefreshIcon />
-          </IconButton>
-        </Tooltip>
-      </div>
+      <FilterToolbar onChange={updateFilter} value={filterOptions} />
       <DualPane
         id="replay-browser"
         resizable={true}
         minWidth={50}
         maxWidth={300}
         leftSide={<FolderTreeNode {...folders} />}
-        rightSide={<FileList />}
+        rightSide={
+          <FileList files={filteredFiles}>
+            <div style={{ textAlign: "right" }}>
+              {filteredFiles.length} files found.{" "}
+              {files.length - filteredFiles.length} files filtered.{" "}
+              {fileErrorCount > 0 ? `${fileErrorCount} files had errors.` : ""}
+            </div>
+          </FileList>
+        }
       />
     </div>
   );
