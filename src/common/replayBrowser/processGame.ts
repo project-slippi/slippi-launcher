@@ -3,6 +3,7 @@ import { SlippiGame } from "@slippi/slippi-js";
 import path from "path";
 import { FileResult } from "./types";
 import { fileToDateAndTime } from "../time";
+import SlippiGame from "@slippi/slippi-js";
 
 export async function processGame(fullPath: string): Promise<FileResult> {
   const filename = path.basename(fullPath);
@@ -20,6 +21,8 @@ export async function processGame(fullPath: string): Promise<FileResult> {
     startTime: null,
     lastFrame: null,
     metadata: null,
+    // stats: null,
+    // latestFrame: null,
   };
 
   // Load metadata
@@ -42,5 +45,16 @@ export async function processGame(fullPath: string): Promise<FileResult> {
     result.startTime = startAtTime.toISOString();
   }
 
+  // // Load stats
+  // const stats = game.getStats();
+  // if (stats) {
+  //   result.stats = stats;
+  // }
+
+  // // Load latestFrame
+  // const latestFrameDetails = game.getLatestFrame(); // TODO this is way too slow to put here...
+  // if (latestFrameDetails) {
+  //   result.latestFrameDetails = latestFrameDetails;
+  // }
   return result;
 }

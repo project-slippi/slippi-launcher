@@ -32,16 +32,51 @@ const FileListResults: React.FC<{ files: FileResult[] }> = ({ files }) => {
   );
 };
 
+const sortByNew = (a: FileResult, b: FileResult) => {
+  if (a === undefined || b === undefined) {
+    return 1;
+  }
+  const aTime = a.startTime ? Date.parse(a.startTime) : 0;
+  const bTime = b.startTime ? Date.parse(b.startTime) : 0;
+  return bTime - aTime;
+};
+
+const sortByOld = (a: FileResult, b: FileResult) => {
+  if (a === undefined || b === undefined) {
+    return 1;
+  }
+  const aTime = a.startTime ? Date.parse(a.startTime) : 0;
+  const bTime = b.startTime ? Date.parse(b.startTime) : 0;
+  return aTime - bTime;
+};
+
+// const sortByP1HighestNeutralWinRatio = (a: FileResult, b: FileResult) => {
+//   if (a === undefined || b === undefined) {
+//     return 1;
+//   }
+//   return a.stats.overall[0].neutralWinRatio.ratio - b.stats.overall[0].neutralWinRatio.ratio
+// }
+
+const sortByLongestMatch = (a: FileResult, b: FileResult) => {
+  if (a === undefined || b === undefined) {
+    return 1;
+  }
+  if (a.lastFrame && b.lastFrame) {
+    return b.lastFrame - a.lastFrame;
+  }
+  return 1;
+};
+
 interface FilterOptions {
   tag: string;
-  newestFirst: boolean;
+  sortingStrategy: (a: FileResult, b: FileResult) => number;
   hideShortGames: boolean;
 }
 
 const initialFilters: FilterOptions = {
   tag: "",
-  newestFirst: true,
-  hideShortGames: true,
+  sortingStrategy: sortByNew,
+  hideShortGames: false,
 };
 
 const FilterToolbar: React.FC<{
@@ -49,8 +84,8 @@ const FilterToolbar: React.FC<{
   onChange: (value: FilterOptions) => void;
 }> = (props) => {
   const [tag, setTag] = React.useState<string>(props.value.tag);
-  const [sortNewest, setSortNewest] = React.useState<boolean>(
-    props.value.newestFirst
+  const [setSortStrategy] = React.useState<Function>(
+    props.value.sortingStrategy
   );
   const [hideShortGames, setHideShortGames] = React.useState<boolean>(
     props.value.hideShortGames
@@ -64,11 +99,13 @@ const FilterToolbar: React.FC<{
     );
   };
 
-  const setNewest = (shouldSortByNew: boolean) => {
-    setSortNewest(shouldSortByNew);
+  const setSortingStrategy = (
+    sortingStrategy: (a: FileResult, b: FileResult) => number
+  ) => {
+    setSortStrategy(sortingStrategy);
     props.onChange(
       produce(props.value, (draft) => {
-        draft.newestFirst = shouldSortByNew;
+        draft.sortingStrategy = sortingStrategy;
       })
     );
   };
@@ -91,14 +128,27 @@ const FilterToolbar: React.FC<{
           setNameFilter(e.target.value);
         }}
       />
-      <label>
-        <input
-          type="checkbox"
-          checked={sortNewest}
-          onChange={(e) => setNewest(e.target.checked)}
-        />
-        <span>sort by newest</span>
-      </label>
+      <input
+        type="radio"
+        name="sort"
+        onChange={() => setSortingStrategy(sortByNew)}
+      />
+      <label>New</label>
+      <input
+        type="radio"
+        name="sort"
+        onChange={() => setSortingStrategy(sortByOld)}
+      />
+      <label>Old</label>
+      {/* <input type="radio" name="sort" onChange={() => setSortingStrategy(sortByP1HighestNeutralWinRatio)}/>
+      <label>P1 highestKillPercent</label> */}
+      <input
+        type="radio"
+        name="sort"
+        onChange={() => setSortingStrategy(sortByLongestMatch)}
+      />
+      <label>longest match</label>
+
       <label>
         <input
           type="checkbox"
@@ -149,15 +199,13 @@ export const FileList: React.FC = () => {
     );
   }
 
-  const updateFilter = debounce((val) => setFilterOptions(val), 100);
-  const filteredFiles = files.filter(filterFunction).sort((a, b) => {
-    const aTime = a.startTime ? Date.parse(a.startTime) : 0;
-    const bTime = b.startTime ? Date.parse(b.startTime) : 0;
-    if (filterOptions.newestFirst) {
-      return bTime - aTime;
-    }
-    return aTime - bTime;
-  });
+  const updateFilter = debounce(
+    (val: React.SetStateAction<FilterOptions>) => setFilterOptions(val),
+    100
+  );
+  const filteredFiles = files
+    .filter(filterFunction)
+    .sort(filterOptions.sortingStrategy);
   return (
     <div
       style={{ display: "flex", flexFlow: "column", height: "100%", flex: "1" }}
