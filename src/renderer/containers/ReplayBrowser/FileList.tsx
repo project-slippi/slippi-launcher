@@ -84,9 +84,7 @@ const FilterToolbar: React.FC<{
   onChange: (value: FilterOptions) => void;
 }> = (props) => {
   const [tag, setTag] = React.useState<string>(props.value.tag);
-  const [setSortStrategy] = React.useState<Function>(
-    props.value.sortingStrategy
-  );
+  const [setSortStrategy] = React.useState<any>(props.value.sortingStrategy); // tried to make this (a: FileResult, b: FileResult) => number instead of any but react doesn't like that?
   const [hideShortGames, setHideShortGames] = React.useState<boolean>(
     props.value.hideShortGames
   );
