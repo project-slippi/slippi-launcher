@@ -13,6 +13,7 @@ import * as Comlink from "comlink";
 import { loadReplayFolder } from "@/workers/fileLoader.worker";
 import { calculateGameStats } from "@/workers/gameStats.worker";
 import { StatsType } from "@slippi/slippi-js";
+import { shell } from "electron";
 
 type StoreState = {
   loading: boolean;
@@ -41,6 +42,7 @@ type StoreReducers = {
   ) => Promise<void>;
   selectFile: (index: number, filePath: string) => Promise<void>;
   clearSelectedFile: () => Promise<void>;
+  deleteFile: (filePath: string) => Promise<void>;
   loadDirectoryList: (folder: string) => Promise<void>;
   loadFolder: (childPath?: string, forceReload?: boolean) => Promise<void>;
   toggleFolder: (fullPath: string) => void;
@@ -89,7 +91,6 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   },
 
   selectFile: async (index, fullPath) => {
-    console.log(`selected file ${index}: ${fullPath}`);
     if (get().selectedFile.loading) {
       console.warn(
         "Alreading loading game stats for another file. Try again later."
@@ -104,7 +105,6 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     const newSelectedFile = await produce(selectedFile, async (draft) => {
       try {
         const gameStats = await calculateGameStats(fullPath);
-        console.log(`got game stats: ${JSON.stringify(gameStats, null, 2)}`);
         draft.gameStats = gameStats;
       } catch (err) {
         draft.error = err;
@@ -124,6 +124,26 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
         loading: false,
       },
     });
+  },
+
+  deleteFile: async (filePath: string) => {
+    set((state) =>
+      produce(state, (draft) => {
+        const index = draft.files.findIndex((f) => f.fullPath === filePath);
+        if (index === -1) {
+          console.warn(`Could not find ${filePath} in file list`);
+          return;
+        }
+
+        const success = shell.moveItemToTrash(filePath);
+        if (success) {
+          // Modify the array in place
+          draft.files.splice(index, 1);
+        } else {
+          console.warn(`Failed to delete ${filePath}`);
+        }
+      })
+    );
   },
 
   loadFolder: async (childPath, forceReload) => {
