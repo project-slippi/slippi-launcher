@@ -18,6 +18,5 @@ export interface FolderResult {
 
 export interface FileLoadResult {
   files: FileResult[];
-  aborted: boolean;
   fileErrorCount: number;
 }

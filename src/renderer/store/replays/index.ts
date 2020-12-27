@@ -10,7 +10,7 @@ import {
   generateSubFolderTree,
 } from "common/replayBrowser";
 import * as Comlink from "comlink";
-import { loadFolder, abortFolderLoad } from "@/workers/fileLoader.worker";
+import { loadReplayFolder } from "@/workers/fileLoader.worker";
 
 type StoreState = {
   loading: boolean;
@@ -73,31 +73,28 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   },
 
   loadFolder: async (childPath, forceReload) => {
-    const { currentFolder } = get();
+    const { currentFolder, loading } = get();
+
+    if (loading) {
+      console.warn(
+        "A folder is already loading! Please wait for it to finish first."
+      );
+      return;
+    }
+
     const folderToLoad = childPath ?? currentFolder;
-    if (currentFolder === folderToLoad) {
-      // Just quit early if we're already loading or if we're not force reloading
-      console.log("we're already loading or loaded this folder");
-      console.log("force reload", forceReload);
-      const { loading } = get();
-      console.log("loading", loading);
-      if (!forceReload || loading) {
-        console.log("bailing early...");
-        return;
-      } else {
-        console.log(`loading the ${folderToLoad} anyway`);
-      }
+    if (currentFolder === folderToLoad && !forceReload) {
+      console.warn(
+        `${currentFolder} is already loaded. Set forceReload to true to reload anyway.`
+      );
+      return;
     }
 
     set({ currentFolder: folderToLoad });
 
-    if (get().loading) {
-      await abortFolderLoad();
-    }
-
     set({ loading: true, progress: null });
     try {
-      const result = await loadFolder(
+      const result = await loadReplayFolder(
         folderToLoad,
         Comlink.proxy((current, total) => {
           set({ progress: { current, total } });
@@ -105,7 +102,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
       );
       set({
         files: result.files,
-        loading: result.aborted,
+        loading: false,
         fileErrorCount: result.fileErrorCount,
       });
     } catch (err) {

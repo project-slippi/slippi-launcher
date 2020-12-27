@@ -1,14 +1,8 @@
-import { FileLoader, FileLoadResult } from "common/replayBrowser";
+import { loadFolder, FileLoadResult } from "common/replayBrowser";
 
-const fileLoader = new FileLoader();
-
-export async function loadFolder(
+export async function loadReplayFolder(
   folder: string,
   callback: (current: number, total: number) => void
 ): Promise<FileLoadResult> {
-  return fileLoader.loadFolder(folder, callback);
-}
-
-export async function abortFolderLoad(): Promise<void> {
-  return fileLoader.abort();
+  return loadFolder(folder, callback);
 }
