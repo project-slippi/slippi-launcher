@@ -4,10 +4,16 @@ import AutoSizer from "react-virtualized-auto-sizer";
 import { ReplayFile } from "./ReplayFile";
 import { FileResult } from "common/replayBrowser";
 
-const FileListResults: React.FC<{ files: FileResult[] }> = ({ files }) => {
+const FileListResults: React.FC<{
+  onSelect: (index: number) => void;
+  files: FileResult[];
+}> = ({ files, onSelect }) => {
   const Row = (props: { style?: React.CSSProperties; index: number }) => (
     <div style={props.style}>
-      <ReplayFile {...files[props.index]} />
+      <ReplayFile
+        onSelect={() => onSelect(props.index)}
+        {...files[props.index]}
+      />
     </div>
   );
 
@@ -29,13 +35,14 @@ const FileListResults: React.FC<{ files: FileResult[] }> = ({ files }) => {
 
 export const FileList: React.FC<{
   files: FileResult[];
-}> = ({ files }) => {
+  onSelect: (index: number) => void;
+}> = ({ files, onSelect }) => {
   return (
     <div
       style={{ display: "flex", flexFlow: "column", height: "100%", flex: "1" }}
     >
       <div style={{ flex: "1", overflow: "hidden" }}>
-        <FileListResults files={files} />
+        <FileListResults onSelect={onSelect} files={files} />
       </div>
     </div>
   );

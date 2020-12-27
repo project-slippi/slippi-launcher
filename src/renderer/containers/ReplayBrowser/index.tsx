@@ -9,6 +9,7 @@ import { FilterOptions, FilterToolbar } from "./FilterToolbar";
 import { FileResult } from "common/replayBrowser";
 import { extractAllPlayerNames, namesMatch } from "common/matchNames";
 import { LoadingScreen } from "@/components/LoadingScreen";
+import { ReplayFileStats } from "../ReplayFileStats";
 
 const initialFilters: FilterOptions = {
   tag: "",
@@ -17,6 +18,7 @@ const initialFilters: FilterOptions = {
 };
 
 export const ReplayBrowser: React.FC = () => {
+  const [selectedItem, setSelectedItem] = React.useState<number | null>(null);
   const [filterOptions, setFilterOptions] = React.useState<FilterOptions>(
     initialFilters
   );
@@ -75,37 +77,60 @@ export const ReplayBrowser: React.FC = () => {
         position: "relative",
       }}
     >
-      <FilterToolbar onChange={updateFilter} value={filterOptions} />
-      <div
-        style={{
-          display: "flex",
-          flex: "1",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
-        <DualPane
-          id="replay-browser"
-          minWidth={50}
-          maxWidth={300}
-          leftSide={<FolderTreeNode {...folders} />}
-          rightSide={<FileList files={filteredFiles} />}
+      {selectedItem !== null ? (
+        <ReplayFileStats
+          index={selectedItem}
+          total={filteredFiles.length}
+          file={filteredFiles[selectedItem]}
+          onNext={() =>
+            setSelectedItem(
+              Math.min(filteredFiles.length - 1, selectedItem + 1)
+            )
+          }
+          onPrev={() => setSelectedItem(Math.max(0, selectedItem - 1))}
+          onClose={() => setSelectedItem(null)}
         />
-      </div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          whiteSpace: "nowrap",
-        }}
-      >
-        <div>{currentFolder}</div>
-        <div style={{ textAlign: "right" }}>
-          {filteredFiles.length} files found.{" "}
-          {files.length - filteredFiles.length} files filtered.{" "}
-          {fileErrorCount > 0 ? `${fileErrorCount} files had errors.` : ""}
-        </div>
-      </div>
+      ) : (
+        <>
+          <FilterToolbar onChange={updateFilter} value={filterOptions} />
+          <div
+            style={{
+              display: "flex",
+              flex: "1",
+              position: "relative",
+              overflow: "hidden",
+            }}
+          >
+            <DualPane
+              id="replay-browser"
+              resizable={true}
+              minWidth={0}
+              maxWidth={300}
+              leftSide={<FolderTreeNode {...folders} />}
+              rightSide={
+                <FileList
+                  onSelect={(index: number) => setSelectedItem(index)}
+                  files={filteredFiles}
+                />
+              }
+            />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              whiteSpace: "nowrap",
+            }}
+          >
+            <div>{currentFolder}</div>
+            <div style={{ textAlign: "right" }}>
+              {filteredFiles.length} files found.{" "}
+              {files.length - filteredFiles.length} files filtered.{" "}
+              {fileErrorCount > 0 ? `${fileErrorCount} files had errors.` : ""}
+            </div>
+          </div>
+        </>
+      )}
       {loading && <LoadingBox />}
     </div>
   );

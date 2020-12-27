@@ -10,8 +10,12 @@ import FolderIcon from "@material-ui/icons/Folder";
 import { shell } from "electron";
 import { extractPlayerNames } from "common/matchNames";
 
-export const ReplayFile: React.FC<FileResult> = (props) => {
-  const { startTime, settings, metadata, fullPath } = props;
+export interface ReplayFileProps extends FileResult {
+  onSelect: () => void;
+}
+
+export const ReplayFile: React.FC<ReplayFileProps> = (props) => {
+  const { onSelect, startTime, settings, metadata, fullPath } = props;
   const date = new Date(startTime ? Date.parse(startTime) : 0);
   if (!settings) {
     return <div>Error rendering {fullPath}. Settings is null.</div>;
@@ -63,6 +67,15 @@ export const ReplayFile: React.FC<FileResult> = (props) => {
       </Box>
       <div>{date.toLocaleString()}</div>
       <div>
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            onSelect();
+          }}
+        >
+          view stats
+        </a>
         <DraggableFile fullPath={fullPath} />
         <Tooltip title="Reveal location">
           <FolderIcon
