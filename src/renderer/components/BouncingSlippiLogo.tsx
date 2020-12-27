@@ -1,7 +1,5 @@
 import React from "react";
-
 import styled, { keyframes } from "styled-components";
-
 import slippiLogo from "../styles/images/slippi-logo.svg";
 
 const bounceAnimation = keyframes`
@@ -10,10 +8,6 @@ const bounceAnimation = keyframes`
   50%      { bottom: 20px; }
   100%     { bottom: 0; }
 `;
-
-export interface LoadingIndicatorProps {
-  size?: string;
-}
 
 const Outer = styled.div<{
   size: string;
@@ -37,7 +31,11 @@ const Logo = styled.div<{
   width: ${(props) => props.size};
 `;
 
-export const LoadingIndicator: React.FC<LoadingIndicatorProps> = ({
+export interface BouncingSlippiLogoProps {
+  size?: string;
+}
+
+export const BouncingSlippiLogo: React.FC<BouncingSlippiLogoProps> = ({
   size = "80px",
 }) => {
   return (

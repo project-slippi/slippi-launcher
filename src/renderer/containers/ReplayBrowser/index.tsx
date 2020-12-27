@@ -8,6 +8,7 @@ import { DualPane } from "@/components/DualPane";
 import { FilterOptions, FilterToolbar } from "./FilterToolbar";
 import { FileResult } from "common/replayBrowser";
 import { extractAllPlayerNames, namesMatch } from "common/matchNames";
+import { LoadingScreen } from "@/components/LoadingScreen";
 
 const initialFilters: FilterOptions = {
   tag: "",
@@ -21,6 +22,7 @@ export const ReplayBrowser: React.FC = () => {
   );
 
   const files = useReplays((store) => store.files);
+  const loading = useReplays((store) => store.loading);
   const currentFolder = useReplays((store) => store.currentFolder);
   const folders = useReplays((store) => store.folders);
   const init = useReplays((store) => store.init);
@@ -65,7 +67,14 @@ export const ReplayBrowser: React.FC = () => {
   }
 
   return (
-    <div style={{ display: "flex", flexFlow: "column", flex: "1" }}>
+    <div
+      style={{
+        display: "flex",
+        flexFlow: "column",
+        flex: "1",
+        position: "relative",
+      }}
+    >
       <FilterToolbar onChange={updateFilter} value={filterOptions} />
       <div
         style={{
@@ -97,6 +106,23 @@ export const ReplayBrowser: React.FC = () => {
           {fileErrorCount > 0 ? `${fileErrorCount} files had errors.` : ""}
         </div>
       </div>
+      {loading && <LoadingBox />}
     </div>
+  );
+};
+
+const LoadingBox: React.FC = () => {
+  const progress = useReplays((store) => store.progress);
+  const percent = progress
+    ? Math.floor((progress.current / progress.total) * 100)
+    : 0;
+  return (
+    <LoadingScreen
+      message={`Loading... ${percent}%`}
+      style={{
+        position: "absolute",
+        backgroundColor: "rgba(0,0,0,0.8)",
+      }}
+    />
   );
 };
