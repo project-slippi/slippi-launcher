@@ -67,14 +67,22 @@ export const ReplayBrowser: React.FC = () => {
   return (
     <div style={{ display: "flex", flexFlow: "column", flex: "1" }}>
       <FilterToolbar onChange={updateFilter} value={filterOptions} />
-      <DualPane
-        id="replay-browser"
-        resizable={true}
-        minWidth={50}
-        maxWidth={300}
-        leftSide={<FolderTreeNode {...folders} />}
-        rightSide={<FileList files={filteredFiles} />}
-      />
+      <div
+        style={{
+          display: "flex",
+          flex: "1",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        <DualPane
+          id="replay-browser"
+          minWidth={50}
+          maxWidth={300}
+          leftSide={<FolderTreeNode {...folders} />}
+          rightSide={<FileList files={filteredFiles} />}
+        />
+      </div>
       <div
         style={{
           display: "flex",
