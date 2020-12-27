@@ -4,7 +4,7 @@ import path from "path";
 import { FileResult } from "./types";
 import { fileToDateAndTime } from "../time";
 
-export async function processGame(fullPath: string): Promise<FileResult> {
+export async function loadFile(fullPath: string): Promise<FileResult> {
   const filename = path.basename(fullPath);
   const game = new SlippiGame(fullPath);
   // Load settings

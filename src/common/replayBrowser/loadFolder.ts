@@ -1,7 +1,7 @@
 import path from "path";
 import * as fs from "fs-extra";
 import { FileLoadResult, FileResult } from "./types";
-import { processGame } from "./processGame";
+import { loadFile } from "./loadFile";
 
 export async function loadFolder(
   folder: string,
@@ -26,10 +26,10 @@ export async function loadFolder(
   callback(0, total);
 
   const process = async (path: string) => {
-    return new Promise((resolve) => {
+    return new Promise<FileResult | null>((resolve) => {
       setImmediate(async () => {
         try {
-          const res = await processGame(path);
+          const res = await loadFile(path);
           fileValidCount += 1;
           callback(fileValidCount, total);
           resolve(res);
