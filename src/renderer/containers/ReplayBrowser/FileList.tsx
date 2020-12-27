@@ -29,7 +29,7 @@ const FileListResults: React.FC<{ files: FileResult[] }> = ({ files }) => {
 
 export const FileList: React.FC<{
   files: FileResult[];
-}> = ({ files, children }) => {
+}> = ({ files }) => {
   return (
     <div
       style={{ display: "flex", flexFlow: "column", height: "100%", flex: "1" }}
@@ -37,7 +37,6 @@ export const FileList: React.FC<{
       <div style={{ flex: "1", overflow: "hidden" }}>
         <FileListResults files={files} />
       </div>
-      <div>{children}</div>
     </div>
   );
 };

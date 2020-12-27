@@ -21,6 +21,7 @@ export const ReplayBrowser: React.FC = () => {
   );
 
   const files = useReplays((store) => store.files);
+  const currentFolder = useReplays((store) => store.currentFolder);
   const folders = useReplays((store) => store.folders);
   const init = useReplays((store) => store.init);
   const fileErrorCount = useReplays((store) => store.fileErrorCount);
@@ -72,16 +73,22 @@ export const ReplayBrowser: React.FC = () => {
         minWidth={50}
         maxWidth={300}
         leftSide={<FolderTreeNode {...folders} />}
-        rightSide={
-          <FileList files={filteredFiles}>
-            <div style={{ textAlign: "right" }}>
-              {filteredFiles.length} files found.{" "}
-              {files.length - filteredFiles.length} files filtered.{" "}
-              {fileErrorCount > 0 ? `${fileErrorCount} files had errors.` : ""}
-            </div>
-          </FileList>
-        }
+        rightSide={<FileList files={filteredFiles} />}
       />
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          whiteSpace: "nowrap",
+        }}
+      >
+        <div>{currentFolder}</div>
+        <div style={{ textAlign: "right" }}>
+          {filteredFiles.length} files found.{" "}
+          {files.length - filteredFiles.length} files filtered.{" "}
+          {fileErrorCount > 0 ? `${fileErrorCount} files had errors.` : ""}
+        </div>
+      </div>
     </div>
   );
 };
