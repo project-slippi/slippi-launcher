@@ -18,12 +18,14 @@ const initialFilters: FilterOptions = {
 };
 
 export const ReplayBrowser: React.FC = () => {
-  const [selectedItem, setSelectedItem] = React.useState<number | null>(null);
   const [filterOptions, setFilterOptions] = React.useState<FilterOptions>(
     initialFilters
   );
 
   const files = useReplays((store) => store.files);
+  const selectedItem = useReplays((store) => store.selectedFile.index);
+  const selectFile = useReplays((store) => store.selectFile);
+  const clearSelectedFile = useReplays((store) => store.clearSelectedFile);
   const loading = useReplays((store) => store.loading);
   const currentFolder = useReplays((store) => store.currentFolder);
   const folders = useReplays((store) => store.folders);
@@ -61,6 +63,15 @@ export const ReplayBrowser: React.FC = () => {
     }
     return aTime - bTime;
   });
+
+  const setSelectedItem = (index: number | null) => {
+    if (index === null) {
+      clearSelectedFile();
+    } else {
+      const filePath = filteredFiles[index].fullPath;
+      selectFile(index, filePath);
+    }
+  };
 
   const updateFilter = debounce((val) => setFilterOptions(val), 100);
 
@@ -138,12 +149,13 @@ export const ReplayBrowser: React.FC = () => {
 
 const LoadingBox: React.FC = () => {
   const progress = useReplays((store) => store.progress);
-  const percent = progress
-    ? Math.floor((progress.current / progress.total) * 100)
-    : 0;
+  let message = "Loading...";
+  if (progress !== null) {
+    message += ` ${Math.floor((progress.current / progress.total) * 100)}%`;
+  }
   return (
     <LoadingScreen
-      message={`Loading... ${percent}%`}
+      message={message}
       style={{
         position: "absolute",
         backgroundColor: "rgba(0,0,0,0.8)",

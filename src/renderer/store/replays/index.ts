@@ -11,6 +11,8 @@ import {
 } from "common/replayBrowser";
 import * as Comlink from "comlink";
 import { loadReplayFolder } from "@/workers/fileLoader.worker";
+import { calculateGameStats } from "@/workers/gameStats.worker";
+import { StatsType } from "@slippi/slippi-js";
 
 type StoreState = {
   loading: boolean;
@@ -23,6 +25,12 @@ type StoreState = {
   currentRoot: string | null;
   currentFolder: string;
   fileErrorCount: number;
+  selectedFile: {
+    index: number | null;
+    gameStats: StatsType | null;
+    loading: boolean;
+    error?: any;
+  };
 };
 
 type StoreReducers = {
@@ -31,6 +39,8 @@ type StoreReducers = {
     forceReload?: boolean,
     currentFolder?: string
   ) => Promise<void>;
+  selectFile: (index: number, filePath: string) => Promise<void>;
+  clearSelectedFile: () => Promise<void>;
   loadDirectoryList: (folder: string) => Promise<void>;
   loadFolder: (childPath?: string, forceReload?: boolean) => Promise<void>;
   toggleFolder: (fullPath: string) => void;
@@ -44,6 +54,12 @@ const initialState: StoreState = {
   currentRoot: null,
   currentFolder: useSettings.getState().settings.rootSlpPath,
   fileErrorCount: 0,
+  selectedFile: {
+    index: null,
+    gameStats: null,
+    error: null,
+    loading: false,
+  },
 };
 
 export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
@@ -70,6 +86,44 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
       loadDirectoryList(currentFolder ?? rootFolder),
       loadFolder(currentFolder ?? rootFolder, true),
     ]);
+  },
+
+  selectFile: async (index, fullPath) => {
+    console.log(`selected file ${index}: ${fullPath}`);
+    if (get().selectedFile.loading) {
+      console.warn(
+        "Alreading loading game stats for another file. Try again later."
+      );
+      return;
+    }
+
+    set({
+      selectedFile: { index, gameStats: null, loading: true, error: null },
+    });
+    const { selectedFile } = get();
+    const newSelectedFile = await produce(selectedFile, async (draft) => {
+      try {
+        const gameStats = await calculateGameStats(fullPath);
+        console.log(`got game stats: ${JSON.stringify(gameStats, null, 2)}`);
+        draft.gameStats = gameStats;
+      } catch (err) {
+        draft.error = err;
+      } finally {
+        draft.loading = false;
+      }
+    });
+    set({ selectedFile: newSelectedFile });
+  },
+
+  clearSelectedFile: async () => {
+    set({
+      selectedFile: {
+        index: null,
+        gameStats: null,
+        error: null,
+        loading: false,
+      },
+    });
   },
 
   loadFolder: async (childPath, forceReload) => {
