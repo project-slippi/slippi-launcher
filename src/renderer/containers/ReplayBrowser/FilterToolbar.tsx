@@ -9,7 +9,7 @@ import InputBase from "@material-ui/core/InputBase";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import { useReplays } from "@/store/replays";
 import { useSettings } from "@/store/settings";
-import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
+import { makeStyles, createStyles } from "@material-ui/core/styles";
 
 export interface FilterOptions {
   tag: string;
@@ -22,7 +22,7 @@ export interface FilterToolbarProps {
   onChange: (options: FilterOptions) => void;
 }
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     input: {
       border: "solid 1px white",
