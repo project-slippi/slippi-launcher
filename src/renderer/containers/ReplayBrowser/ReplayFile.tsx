@@ -29,9 +29,6 @@ export const ReplayFile: React.FC<ReplayFileProps> = React.memo((props) => {
     fullPath,
   } = props;
   const date = new Date(startTime ? Date.parse(startTime) : 0);
-  if (!settings) {
-    return <div>Error rendering {fullPath}. Settings is null.</div>;
-  }
 
   // If this is a teams game, group by teamId, otherwise group players individually
   const teams = _.chain(settings.players)
