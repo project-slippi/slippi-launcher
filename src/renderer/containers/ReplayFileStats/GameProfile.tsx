@@ -83,7 +83,7 @@ const TableDiv = styled.div`
   width: 100%;
   overflow: auto;
   position: fixed;
-  top: 140px;
+  top: 240px;
 `;
 export const GameProfile: React.FC<GameProfileProps> = ({
   file,
@@ -189,7 +189,7 @@ export const GameProfile: React.FC<GameProfileProps> = ({
 
   const renderOverall = () => {
     return (
-      <div style={{ margin: "140px 16px" }}>
+      <div style={{ margin: "0px 16px" }}>
         <TableTitle>Overall</TableTitle>
         {/* <OverallTable
           game={this.props.store.game}
