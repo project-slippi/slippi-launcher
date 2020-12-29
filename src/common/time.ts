@@ -42,10 +42,10 @@ function filenameToDateAndTime(fileName: string): moment.Moment | null {
   return time;
 }
 
-export function monthDayHourFormat(time: string): string {
-  if (!moment.isMoment(time)) {
-    return null;
-  }
+// export function monthDayHourFormat(time: string): string {
+//   if (!moment.isMoment(time)) {
+//     return null;
+//   }
 
-  return time.format("ll · LT");
-}
+//   return time.format("ll · LT");
+// }
