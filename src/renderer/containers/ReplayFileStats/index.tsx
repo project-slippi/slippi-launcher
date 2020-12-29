@@ -2,6 +2,7 @@ import { useReplays } from "@/store/replays";
 import { FileResult } from "common/replayBrowser";
 import React from "react";
 import { GameProfile } from "./GameProfile";
+import { LoadingScreen } from "@/components/LoadingScreen";
 
 export interface ReplayFileStatsProps {
   file: FileResult;
@@ -35,7 +36,15 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
       </button>
       <div>
         {loading ? (
-          <div>Loading...</div>
+          <div>
+            <LoadingScreen
+              message={"Fetching Stats..."}
+              style={{
+                position: "absolute",
+                backgroundColor: "rgba(0,0,0,0.8)",
+              }}
+            />
+          </div>
         ) : error ? (
           <div>
             Error occurred: {JSON.stringify(error.message || error, null, 2)}

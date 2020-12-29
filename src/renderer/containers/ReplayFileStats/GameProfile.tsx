@@ -49,6 +49,8 @@ const StatsButton = styled.button`
   margin: 6px 2px;
   text-align: center;
   line-height: 20px;
+  outline: none;
+
   &:hover:enabled {
     background-color: ${colors.offWhite};
     color: ${colors.grayDark};
@@ -136,11 +138,15 @@ export const GameProfile: React.FC<GameProfileProps> = ({
     return <div>{metadataElements}</div>;
   };
 
+  const playFile = () => {
+    console.log(":D");
+  };
+
   const renderStatsControls = () => {
     return (
       <div style={{ margin: "15px" }}>
         <div>
-          <StatsButton>
+          <StatsButton onClick={playFile}>
             <img
               src="images\play.png"
               style={{ height: "12px", marginRight: "5px" }}
