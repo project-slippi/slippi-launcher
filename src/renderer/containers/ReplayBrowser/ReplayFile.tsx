@@ -17,7 +17,7 @@ export interface ReplayFileProps extends FileResult {
   onOpenMenu: (index: number, element: HTMLElement) => void;
 }
 
-export const ReplayFile: React.FC<ReplayFileProps> = React.memo((props) => {
+export const ReplayFile: React.FC<ReplayFileProps> = (props) => {
   const {
     index,
     onOpenMenu,
@@ -90,4 +90,4 @@ export const ReplayFile: React.FC<ReplayFileProps> = React.memo((props) => {
       </div>
     </Box>
   );
-});
+};
