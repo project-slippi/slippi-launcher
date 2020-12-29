@@ -9,5 +9,6 @@ export const colors = {
   purpleDark: "#310057",
   offGray: "#2D313A",
   offWhite: "rgba(255, 255, 255, 0.8)",
-  background: "#757985",
+  tableBackground: "#23252c",
+  foreground: "#2d313a",
 };

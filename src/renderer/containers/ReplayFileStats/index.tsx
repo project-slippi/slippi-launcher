@@ -21,7 +21,7 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
   const gameStats = useReplays((store) => store.selectedFile.gameStats);
   return (
     <div>
-      <div>{file.name}</div>
+      {/* <div>{file.name}</div>
       <div>
         {index + 1} / {total}
       </div>
@@ -33,7 +33,7 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
       </button>
       <button disabled={loading || index === total - 1} onClick={onNext}>
         Next
-      </button>
+      </button> */}
       <div>
         {loading ? (
           <div>
@@ -50,9 +50,9 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
             Error occurred: {JSON.stringify(error.message || error, null, 2)}
           </div>
         ) : (
-          <div style={{ marginLeft: "16px" }}>
+          <div>
             <GameProfile {...props}></GameProfile>
-            <pre>{JSON.stringify(gameStats, null, 2)}</pre>
+            {/* <pre>{JSON.stringify(gameStats, null, 2)}</pre> */}
           </div>
         )}
       </div>

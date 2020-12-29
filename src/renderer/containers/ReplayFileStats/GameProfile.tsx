@@ -62,6 +62,29 @@ const StatsButton = styled.button`
   }
 `;
 
+const TableTitle = styled.h2`
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.8);
+  height: 100px;
+`;
+
+const HeaderDiv = styled.div`
+  background-color: ${colors.foreground};
+  box-shadow: 0px 20px 20px 0px rgba(0, 0, 0, 0.2);
+  padding: 12px 0px;
+  position: fixed;
+  width: 100%;
+  z-index: 2;
+`;
+
+const TableDiv = styled.div`
+  background-color: ${colors.tableBackground};
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+  position: fixed;
+  top: 140px;
+`;
 export const GameProfile: React.FC<GameProfileProps> = ({
   file,
   index,
@@ -164,15 +187,41 @@ export const GameProfile: React.FC<GameProfileProps> = ({
     );
   };
 
+  const renderOverall = () => {
+    return (
+      <div style={{ margin: "140px 16px" }}>
+        <TableTitle>Overall</TableTitle>
+        {/* <OverallTable
+          game={this.props.store.game}
+          player1Display={this.renderPlayerColHeader(true)}
+          player1Index={this.getPlayerIndex(true)}
+          player2Display={this.renderPlayerColHeader(false)}
+          player2Index={this.getPlayerIndex(false)}
+        /> */}
+      </div>
+    );
+  };
   return (
     <div>
-      <div style={{ display: "inline-block" }}>
-        <GameProfileHeader metadata={file.metadata} settings={file.settings} />
+      <div>
+        <HeaderDiv>
+          <div style={{ margin: "0px 16px" }}>
+            <div style={{ display: "inline-block" }}>
+              <GameProfileHeader
+                metadata={file.metadata}
+                settings={file.settings}
+              />
+            </div>
+            <div style={{ display: "inline-block", float: "right" }}>
+              {renderStatsControls()}
+            </div>
+            {renderGameDetails()}
+          </div>
+        </HeaderDiv>
       </div>
-      <div style={{ display: "inline-block", float: "right" }}>
-        {renderStatsControls()}
+      <div style={{ margin: "0px" }}>
+        <TableDiv>{renderOverall()}</TableDiv>
       </div>
-      {renderGameDetails()}
     </div>
   );
 };
