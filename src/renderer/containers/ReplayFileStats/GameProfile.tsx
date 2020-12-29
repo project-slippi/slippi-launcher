@@ -5,7 +5,6 @@ import log from "electron-log";
 import {
   convertFrameCountToDurationString,
   fileToDateAndTime,
-  monthDayHourFormat,
 } from "../../../common/time";
 import { GameProfileHeader } from "./GameProfileHeader";
 import { FileResult } from "../../../common/replayBrowser/types";
