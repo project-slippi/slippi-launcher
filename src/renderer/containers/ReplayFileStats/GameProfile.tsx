@@ -10,6 +10,7 @@ import {
 import { GameProfileHeader } from "./GameProfileHeader";
 import { FileResult } from "../../../common/replayBrowser/types";
 import _ from "lodash";
+import { stages as stageUtils } from "@slippi/slippi-js";
 
 export interface GameProfileProps {
   file: FileResult;
@@ -17,7 +18,6 @@ export interface GameProfileProps {
   total: number;
   onNext: () => void;
   onPrev: () => void;
-  onClose: () => void;
 }
 
 const DetailLabel = styled.label`
@@ -46,10 +46,19 @@ const StatsButton = styled.button`
   border: 2px solid rgba(255, 255, 255, 0.5);
   display: inline-block;
   cursor: pointer;
-  padding: 4px 22px;
+  padding: 2px 22px;
   margin: 6px 2px;
   text-align: center;
   line-height: 20px;
+  &:hover:enabled {
+    background-color: ${colors.offWhite};
+    color: ${colors.grayDark};
+  }
+
+  &:disabled {
+    color: rgba(255, 255, 255, 0.2);
+    cursor: default;
+  }
 `;
 
 export const GameProfile: React.FC<GameProfileProps> = ({
@@ -69,10 +78,9 @@ export const GameProfile: React.FC<GameProfileProps> = ({
   };
 
   const renderGameDetails = () => {
-    const stageName = "Unknown";
-    //TODO why u no work
+    let stageName = "Unknown";
     try {
-      // stageName = getStageName(file.settings.stageId);
+      stageName = stageUtils.getStageName(file.settings.stageId);
     } catch (err) {
       log.error(err);
     }
@@ -82,7 +90,9 @@ export const GameProfile: React.FC<GameProfileProps> = ({
 
     const platform = file.metadata.playedOn || "Unknown";
 
-    const getTimeFromFile = monthDayHourFormat(file.startTime);
+    const getTimeFromFile = new Date(
+      file.startTime ? Date.parse(file.startTime) : 0
+    );
 
     const startAtDisplay =
       getTimeFromFile || getTimeFromElsewhere() || "Unknown";
@@ -98,7 +108,7 @@ export const GameProfile: React.FC<GameProfileProps> = ({
       },
       {
         label: "Time",
-        content: startAtDisplay,
+        content: startAtDisplay.toLocaleString(),
       },
       {
         label: "Platform",
@@ -119,9 +129,7 @@ export const GameProfile: React.FC<GameProfileProps> = ({
         <div key={details.label} style={{ display: "inline-block" }}>
           {index ? <PipeSpacer /> : null}
           <DetailLabel>{details.label}</DetailLabel>
-          <DetailContent>
-            {JSON.stringify(details.content).slice(1, -1)}
-          </DetailContent>
+          <DetailContent>{details.content}</DetailContent>
         </div>
       );
     });
@@ -134,7 +142,6 @@ export const GameProfile: React.FC<GameProfileProps> = ({
       <div style={{ margin: "15px" }}>
         <div>
           <StatsButton>
-            {/* TODO change this icon */}
             <img
               src="images\play.png"
               style={{ height: "12px", marginRight: "5px" }}

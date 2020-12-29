@@ -13,7 +13,7 @@ export interface ReplayFileStatsProps {
 }
 
 export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
-  const { file, index, total, onNext, onPrev, onClose } = props; //TODO remove
+  const { file, index, total, onNext, onPrev, onClose } = props;
 
   const loading = useReplays((store) => store.selectedFile.loading);
   const error = useReplays((store) => store.selectedFile.error);
