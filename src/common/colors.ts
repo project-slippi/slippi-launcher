@@ -8,4 +8,6 @@ export const colors = {
   greenDarker: "#208E2C",
   purpleDark: "#310057",
   offGray: "#2D313A",
+  offWhite: "rgba(255, 255, 255, 0.8)",
+  background: "#757985",
 };

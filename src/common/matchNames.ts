@@ -1,7 +1,7 @@
 import { GameStartType, MetadataType } from "@slippi/slippi-js";
 import { get } from "lodash";
 
-interface PlayerNames {
+export interface PlayerNames {
   name: string | null;
   code: string | null;
   tag: string | null;

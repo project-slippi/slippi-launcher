@@ -1,6 +1,7 @@
 import { useReplays } from "@/store/replays";
 import { FileResult } from "common/replayBrowser";
 import React from "react";
+import { GameProfile } from "./GameProfile";
 
 export interface ReplayFileStatsProps {
   file: FileResult;
@@ -11,14 +12,9 @@ export interface ReplayFileStatsProps {
   onClose: () => void;
 }
 
-export const ReplayFileStats: React.FC<ReplayFileStatsProps> = ({
-  file,
-  index,
-  total,
-  onNext,
-  onPrev,
-  onClose,
-}) => {
+export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
+  const { file, index, total, onNext, onPrev, onClose } = props; //TODO remove
+
   const loading = useReplays((store) => store.selectedFile.loading);
   const error = useReplays((store) => store.selectedFile.error);
   const gameStats = useReplays((store) => store.selectedFile.gameStats);
@@ -45,7 +41,10 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = ({
             Error occurred: {JSON.stringify(error.message || error, null, 2)}
           </div>
         ) : (
-          <pre>{JSON.stringify(gameStats, null, 2)}</pre>
+          <div style={{ marginLeft: "16px" }}>
+            <GameProfile {...props}></GameProfile>
+            {/* <pre>{JSON.stringify(gameStats, null, 2)}</pre> */}
+          </div>
         )}
       </div>
     </div>

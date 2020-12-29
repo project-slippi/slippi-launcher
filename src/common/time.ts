@@ -1,12 +1,10 @@
 import moment from "moment";
 import fs from "fs";
 
-/*
-export function convertFrameCountToDurationString(frameCount) {
-  const duration = moment.duration(frameCount / 60, 'seconds');
-  return moment.utc(duration.as('milliseconds')).format('m:ss');
+export function convertFrameCountToDurationString(frameCount: number): string {
+  const duration = moment.duration(frameCount / 60, "seconds");
+  return moment.utc(duration.as("milliseconds")).format("m:ss");
 }
-*/
 
 function convertToDateAndTime(
   dateTimeString: moment.MomentInput
@@ -44,13 +42,10 @@ function filenameToDateAndTime(fileName: string): moment.Moment | null {
   return time;
 }
 
-/*
-export function monthDayHourFormat(time) {
+export function monthDayHourFormat(time: any): string {
   if (!moment.isMoment(time)) {
     return null;
   }
 
-  return time.format('ll · LT');
+  return time.format("ll · LT");
 }
-
-*/
