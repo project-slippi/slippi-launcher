@@ -43,7 +43,7 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
         ) : (
           <div style={{ marginLeft: "16px" }}>
             <GameProfile {...props}></GameProfile>
-            {/* <pre>{JSON.stringify(gameStats, null, 2)}</pre> */}
+            <pre>{JSON.stringify(gameStats, null, 2)}</pre>
           </div>
         )}
       </div>
