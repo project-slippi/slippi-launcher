@@ -18,7 +18,7 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
 
   const loading = useReplays((store) => store.selectedFile.loading);
   const error = useReplays((store) => store.selectedFile.error);
-  // const gameStats = useReplays((store) => store.selectedFile.gameStats);
+  const gameStats = useReplays((store) => store.selectedFile.gameStats);
   return (
     <div>
       {/* <div>{file.name}</div>
@@ -51,7 +51,7 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
           </div>
         ) : (
           <div>
-            <GameProfile {...props}></GameProfile>
+            <GameProfile {...props} stats={gameStats}></GameProfile>
             {/* <pre>{JSON.stringify(gameStats, null, 2)}</pre> */}
           </div>
         )}

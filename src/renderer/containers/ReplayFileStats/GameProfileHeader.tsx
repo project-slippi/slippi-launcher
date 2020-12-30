@@ -30,7 +30,7 @@ const CharIcon = styled.img`
 `;
 
 const TagsDiv = styled.div`
-  margin: 10px;
+  margin: 0px 10px;
   padding: 10px;
   display: inline-block;
   vertical-align: middle;
@@ -48,7 +48,7 @@ const VsSpan = styled.span`
 
 export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
   metadata,
-  settings: gameStart,
+  settings,
 }) => {
   const renderMatchupDisplay = () => {
     return (
@@ -61,13 +61,12 @@ export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
   };
 
   const renderPlayerDisplay = (index: number) => {
-    const isFirstPlayer = index === 0;
-    const players = gameStart.players || [];
-    const player = isFirstPlayer ? players[0] : players[players.length - 1];
+    const players = settings.players || [];
+    const player = players[index];
 
     const allPlayerNames: PlayerNames[] = [];
-    for (const p of gameStart.players) {
-      const names = extractPlayerNames(p.playerIndex, gameStart, metadata);
+    for (const p of settings.players) {
+      const names = extractPlayerNames(p.playerIndex, settings, metadata);
       allPlayerNames.push(names);
     }
 

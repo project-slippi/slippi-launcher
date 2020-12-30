@@ -9,7 +9,9 @@ import {
 import { GameProfileHeader } from "./GameProfileHeader";
 import { FileResult } from "../../../common/replayBrowser/types";
 import _ from "lodash";
-import { stages as stageUtils } from "@slippi/slippi-js";
+import { stages as stageUtils, StatsType } from "@slippi/slippi-js";
+import { OverallTable } from "./OverallTable";
+import { KillsTable } from "./KillTable";
 
 export interface GameProfileProps {
   file: FileResult;
@@ -17,6 +19,7 @@ export interface GameProfileProps {
   total: number;
   onNext: () => void;
   onPrev: () => void;
+  stats: StatsType;
 }
 
 const DetailLabel = styled.label`
@@ -65,12 +68,11 @@ const StatsButton = styled.button`
 const TableTitle = styled.h2`
   font-weight: bold;
   color: rgba(255, 255, 255, 0.8);
-  height: 100px;
 `;
 
 const HeaderDiv = styled.div`
   background-color: ${colors.foreground};
-  box-shadow: 0px 20px 20px 0px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.5);
   padding: 12px 0px;
   position: fixed;
   width: 100%;
@@ -83,14 +85,16 @@ const TableDiv = styled.div`
   width: 100%;
   overflow: auto;
   position: fixed;
-  top: 240px;
+  top: 225px;
 `;
+
 export const GameProfile: React.FC<GameProfileProps> = ({
   file,
   index,
   total,
   onNext,
   onPrev,
+  stats,
 }) => {
   const getTimeFromElsewhere = (): string => {
     const fileName = file.fullPath.split("\\").pop().split("/").pop();
@@ -189,15 +193,41 @@ export const GameProfile: React.FC<GameProfileProps> = ({
 
   const renderOverall = () => {
     return (
-      <div style={{ margin: "0px 16px" }}>
+      <div style={{ margin: "0% 5%", width: "100%" }}>
         <TableTitle>Overall</TableTitle>
-        {/* <OverallTable
-          game={this.props.store.game}
-          player1Display={this.renderPlayerColHeader(true)}
-          player1Index={this.getPlayerIndex(true)}
-          player2Display={this.renderPlayerColHeader(false)}
-          player2Index={this.getPlayerIndex(false)}
-        /> */}
+        <OverallTable file={file} stats={stats} />
+      </div>
+    );
+  };
+
+  const renderKills = () => {
+    return (
+      <div style={{ margin: "0% 5%", width: "100%" }}>
+        <TableTitle>Kills</TableTitle>
+        <div style={{ width: "100%" }}>
+          <div style={{ display: "inline-block", verticalAlign: "top" }}>
+            <KillsTable file={file} stats={stats} playerIndex={0} />
+          </div>
+          <div style={{ display: "inline-block", verticalAlign: "top" }}>
+            <KillsTable file={file} stats={stats} playerIndex={1} />
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderPunishes = () => {
+    return (
+      <div style={{ margin: "0% 5%", width: "100%" }}>
+        <TableTitle>Openings & Conversions</TableTitle>
+        <div style={{ width: "100%", verticalAlign: "top" }}>
+          <div style={{ display: "inline-block", verticalAlign: "top" }}>
+            <KillsTable file={file} stats={stats} playerIndex={0} />
+          </div>
+          <div style={{ display: "inline-block", verticalAlign: "top" }}>
+            <KillsTable file={file} stats={stats} playerIndex={1} />
+          </div>
+        </div>
       </div>
     );
   };
@@ -219,8 +249,14 @@ export const GameProfile: React.FC<GameProfileProps> = ({
           </div>
         </HeaderDiv>
       </div>
-      <div style={{ margin: "0px" }}>
-        <TableDiv>{renderOverall()}</TableDiv>
+      <div>
+        <TableDiv>
+          <div style={{ marginBottom: "500px" }}>
+            {renderOverall()}
+            {renderKills()}
+            {renderPunishes()}
+          </div>
+        </TableDiv>
       </div>
     </div>
   );
