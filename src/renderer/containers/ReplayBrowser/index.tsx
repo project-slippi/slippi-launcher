@@ -11,6 +11,7 @@ import { extractAllPlayerNames, namesMatch } from "common/matchNames";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { ReplayFileStats } from "../ReplayFileStats";
 import List from "@material-ui/core/List";
+import { colors } from "common/colors";
 
 const initialFilters: FilterOptions = {
   tag: "",
@@ -136,6 +137,9 @@ export const ReplayBrowser: React.FC = () => {
               display: "flex",
               justifyContent: "space-between",
               whiteSpace: "nowrap",
+              padding: 5,
+              backgroundColor: colors.grayDark,
+              fontSize: 14,
             }}
           >
             <div>{currentFolder}</div>
