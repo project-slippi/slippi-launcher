@@ -119,7 +119,7 @@ export const ReplayBrowser: React.FC = () => {
               minWidth={0}
               maxWidth={300}
               leftSide={
-                <List dense={true} style={{ flex: 1 }}>
+                <List dense={true} style={{ flex: 1, padding: 0 }}>
                   <FolderTreeNode {...folders} />
                 </List>
               }
