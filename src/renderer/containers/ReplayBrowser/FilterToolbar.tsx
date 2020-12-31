@@ -3,13 +3,16 @@ import React from "react";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import SortIcon from "@material-ui/icons/Sort";
 import SearchIcon from "@material-ui/icons/Search";
+import CloseIcon from "@material-ui/icons/Close";
 import TimerIcon from "@material-ui/icons/Timer";
 import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
 import InputBase from "@material-ui/core/InputBase";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import { useReplays } from "@/store/replays";
 import { useSettings } from "@/store/settings";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
+import styled from "styled-components";
 
 export interface FilterOptions {
   tag: string;
@@ -25,16 +28,24 @@ export interface FilterToolbarProps {
 const useStyles = makeStyles(() =>
   createStyles({
     input: {
-      border: "solid 1px white",
-      borderRadius: "5px",
+      border: "solid 1px rgba(255, 255, 255, 0.6)",
+      borderRadius: 5,
+      paddingLeft: 10,
     },
     root: {
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
+      padding: 5,
     },
   })
 );
+
+const ButtonContainer = styled.div`
+  button + button {
+    margin-left: 5px;
+  }
+`;
 
 export const FilterToolbar: React.FC<FilterToolbarProps> = (props) => {
   const [tag, setTag] = React.useState<string>(props.value.tag);
@@ -83,7 +94,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = (props) => {
 
   return (
     <div className={classes.root}>
-      <div>
+      <ButtonContainer>
         <Button
           variant="contained"
           size="small"
@@ -111,13 +122,19 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = (props) => {
         >
           {hideShortGames ? "Short games hidden" : "Short games shown"}
         </Button>
-      </div>
+      </ButtonContainer>
       <div>
         <InputBase
           className={classes.input}
-          startAdornment={
-            <InputAdornment position="start">
-              <SearchIcon />
+          endAdornment={
+            <InputAdornment position="end">
+              <IconButton
+                size="small"
+                onClick={() => setNameFilter("")}
+                disabled={tag.length === 0}
+              >
+                {tag.length > 0 ? <CloseIcon /> : <SearchIcon />}
+              </IconButton>
             </InputAdornment>
           }
           placeholder="Search..."

@@ -1,18 +1,28 @@
 import { useReplays } from "@/store/replays";
 import { FolderResult } from "common/replayBrowser";
 import React from "react";
-import styled from "styled-components";
 
-const OuterFolder = styled.div`
-  flex: 1;
-`;
+import IconButton from "@material-ui/core/IconButton";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
+import FolderIcon from "@material-ui/icons/Folder";
+import { colors } from "common/colors";
 
-const ChildFolder = styled.div`
-  margin-left: 10px;
-`;
+export interface FolderTreeNodeProps extends FolderResult {
+  nestLevel?: number;
+}
 
-export const FolderTreeNode: React.FC<FolderResult> = (props) => {
-  const { name, subdirectories, fullPath, collapsed } = props;
+export const FolderTreeNode: React.FC<FolderTreeNodeProps> = ({
+  nestLevel = 0,
+  name,
+  subdirectories,
+  fullPath,
+  collapsed,
+}) => {
   const loadDirectoryList = useReplays((store) => store.loadDirectoryList);
   const loadFolder = useReplays((store) => store.loadFolder);
   const toggleFolder = useReplays((store) => store.toggleFolder);
@@ -23,40 +33,62 @@ export const FolderTreeNode: React.FC<FolderResult> = (props) => {
     loadDirectoryList(fullPath);
     loadFolder(fullPath);
   };
+  const isSelected = currentFolder === fullPath;
+  const labelColor = isSelected ? colors.grayDark : "rgba(255, 255, 255, 0.5)";
   return (
-    <OuterFolder>
-      <div style={{ display: "flex", whiteSpace: "nowrap" }}>
-        {!hasChildren ? (
-          <div style={{ padding: 5, cursor: "pointer" }} onClick={onClick}>
-            o
-          </div>
-        ) : (
-          <div
-            onClick={() => toggleFolder(fullPath)}
-            style={{ padding: 5, cursor: "pointer" }}
+    <div>
+      <ListItem
+        onClick={onClick}
+        button={true}
+        style={{
+          backgroundColor: isSelected ? colors.greenPrimary : undefined,
+          color: labelColor,
+          padding: 0,
+          paddingLeft: nestLevel * 15,
+        }}
+      >
+        <ListItemIcon>
+          <IconButton
+            size="small"
+            style={{ color: labelColor }}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (!hasChildren) {
+                onClick();
+              } else {
+                toggleFolder(fullPath);
+              }
+            }}
           >
-            {collapsed ? "v" : "^"}
-          </div>
-        )}
-        <div
-          onClick={onClick}
-          style={{
-            cursor: "pointer",
-            marginLeft: 10,
-            fontWeight: currentFolder === fullPath ? "bold" : "normal",
-            opacity: currentFolder === fullPath ? 1 : 0.5,
+            {!hasChildren ? (
+              <FolderIcon fontSize="small" />
+            ) : collapsed ? (
+              <KeyboardArrowDownIcon fontSize="small" />
+            ) : (
+              <KeyboardArrowUpIcon fontSize="small" />
+            )}
+          </IconButton>
+        </ListItemIcon>
+        <ListItemText
+          primaryTypographyProps={{
+            style: {
+              whiteSpace: "nowrap",
+              cursor: "pointer",
+              marginLeft: 10,
+              fontWeight: isSelected ? "bold" : "normal",
+            },
           }}
-        >
-          {name}
-        </div>
-      </div>
-      {collapsed
-        ? null
-        : subdirectories.map((f) => (
-            <ChildFolder key={f.fullPath}>
-              <FolderTreeNode {...f} />
-            </ChildFolder>
+          primary={name}
+        />
+      </ListItem>
+      {subdirectories.length === 0 || collapsed ? null : (
+        <List dense={true} style={{ padding: 0 }}>
+          {subdirectories.map((f) => (
+            <FolderTreeNode nestLevel={nestLevel + 1} key={f.fullPath} {...f} />
           ))}
-    </OuterFolder>
+        </List>
+      )}
+    </div>
   );
 };

@@ -41,6 +41,11 @@ const addOverrides = (theme: Theme) => {
           borderBottomColor: "#1E1F25",
         },
       },
+      MuiListItemIcon: {
+        root: {
+          minWidth: "initial",
+        },
+      },
       MuiSnackbarContent: {
         root: {
           backgroundColor: theme.palette.background.default,
