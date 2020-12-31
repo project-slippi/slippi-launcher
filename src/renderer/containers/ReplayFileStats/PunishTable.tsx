@@ -75,10 +75,6 @@ export const PunishTable: React.FC<PunishTableProps> = ({
       end = convertFrameCountToDurationString(punish.endFrame);
     }
 
-    // const playPunish = () => {
-    //   this.props.playFile(file, punish.startFrame) //TODO launch  replay
-    // };
-
     return (
       <T.TableRow key={`${punish.playerIndex}-punish-${punish.startFrame}`}>
         <T.TableCell>{start}</T.TableCell>

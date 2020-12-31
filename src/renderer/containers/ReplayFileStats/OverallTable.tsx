@@ -98,10 +98,7 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
     const arr = _.get(stats, arrPath) || [];
     const itemsByPlayer = _.keyBy(arr, "playerIndex");
 
-    // const player1Item = itemsByPlayer[this.props.player1Index] || {};
-    // const player2Item = itemsByPlayer[this.props.player2Index] || {};
-
-    const player1Item = itemsByPlayer[0] || {}; //TODO
+    const player1Item = itemsByPlayer[0] || {};
     const player2Item = itemsByPlayer[1] || {};
 
     const displayRenderer = (firstPlayer: boolean) => {
