@@ -202,11 +202,11 @@ export const PunishTable: React.FC<PunishTableProps> = ({
   const renderHeaderColumns = () => {
     return (
       <T.TableRow>
-        <T.TableHeaderCell>Start</T.TableHeaderCell>
-        <T.TableHeaderCell>End</T.TableHeaderCell>
-        <T.TableHeaderCell colSpan={2}>Damage</T.TableHeaderCell>
-        <T.TableHeaderCell>Moves</T.TableHeaderCell>
-        <T.TableHeaderCell>Opening</T.TableHeaderCell>
+        <T.TableSubHeaderCell>Start</T.TableSubHeaderCell>
+        <T.TableSubHeaderCell>End</T.TableSubHeaderCell>
+        <T.TableSubHeaderCell colSpan={2}>Damage</T.TableSubHeaderCell>
+        <T.TableSubHeaderCell>Moves</T.TableSubHeaderCell>
+        <T.TableSubHeaderCell>Opening</T.TableSubHeaderCell>
       </T.TableRow>
     );
   };

@@ -112,9 +112,10 @@ export const KillTable: React.FC<KillTableProps> = ({
   };
 
   const renderKilledDirection = (stock: StockType) => {
-    const killedDirection = stock.deathAnimation
-      ? animationUtils.getDeathDirection(stock.deathAnimation)
-      : "error";
+    const killedDirection =
+      stock.deathAnimation !== null && stock.deathAnimation !== undefined
+        ? animationUtils.getDeathDirection(stock.deathAnimation)
+        : "error";
 
     return (
       //TODO killed direction icons
