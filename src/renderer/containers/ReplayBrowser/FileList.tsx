@@ -16,7 +16,6 @@ import { useReplays } from "@/store/replays";
 
 const StyledListItemIcon = withStyles(() => ({
   root: {
-    minWidth: "initial",
     marginRight: "10px",
   },
 }))(ListItemIcon);
