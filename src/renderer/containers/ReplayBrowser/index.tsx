@@ -10,6 +10,7 @@ import { FileResult } from "common/replayBrowser";
 import { extractAllPlayerNames, namesMatch } from "common/matchNames";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { ReplayFileStats } from "../ReplayFileStats";
+import List from "@material-ui/core/List";
 
 const initialFilters: FilterOptions = {
   tag: "",
@@ -117,7 +118,11 @@ export const ReplayBrowser: React.FC = () => {
               resizable={true}
               minWidth={0}
               maxWidth={300}
-              leftSide={<FolderTreeNode {...folders} />}
+              leftSide={
+                <List dense={true} style={{ flex: 1 }}>
+                  <FolderTreeNode {...folders} />
+                </List>
+              }
               rightSide={
                 <FileList
                   onSelect={(index: number) => setSelectedItem(index)}
