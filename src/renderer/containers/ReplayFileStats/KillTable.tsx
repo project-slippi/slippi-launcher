@@ -3,6 +3,7 @@ import {
   Frames,
   animations as animationUtils,
   moves as moveUtils,
+  StockType,
 } from "@slippi/slippi-js";
 import { FileResult } from "../../../common/replayBrowser/types";
 import React from "react";
@@ -13,17 +14,18 @@ import { extractPlayerNames } from "common/matchNames";
 import { getCharacterIcon } from "@/lib/utils";
 
 const columnCount = 5;
-export interface KillsTableProps {
+export interface KillTableProps {
   file: FileResult;
-  stats: StatsType;
+  stats: StatsType | null;
   playerIndex: number;
 }
 
-export const KillsTable: React.FC<KillsTableProps> = ({
+export const KillTable: React.FC<KillTableProps> = ({
   file,
   stats,
   playerIndex,
 }) => {
+  if (!stats) return <div>An Error Occurred!</div>;
   const player = file.settings.players[playerIndex];
   const playerName = extractPlayerNames(
     playerIndex,
@@ -50,13 +52,10 @@ export const KillsTable: React.FC<KillsTableProps> = ({
       />
     </div>
   );
-  const generateStockRow = (stock) => {
+  const generateStockRow = (stock: StockType) => {
     let start = convertFrameCountToDurationString(stock.startFrame);
-    // let end = <span className={styles['secondary-text']}>–</span>;
     let end = "–";
 
-    // let killedBy = <span className={styles['secondary-text']}>–</span>;
-    // let killedDirection = <span className={styles['secondary-text']}>–</span>;
     let killedBy = <span>–</span>;
     let killedDirection = <span>–</span>;
 
@@ -86,7 +85,7 @@ export const KillsTable: React.FC<KillsTableProps> = ({
     );
   };
 
-  const renderKilledBy = (stock) => {
+  const renderKilledBy = (stock: StockType) => {
     // Here we are going to grab the opponent's punishes and see if one of them was
     // responsible for ending this stock, if so show the kill move, otherwise assume SD
     const punishes = _.get(stats, "conversions") || [];
@@ -96,7 +95,9 @@ export const KillsTable: React.FC<KillsTableProps> = ({
     // Only get punishes that killed
     const killingPunishes = _.filter(playerPunishes, "didKill");
     const killingPunishesByEndFrame = _.keyBy(killingPunishes, "endFrame");
-    const punishThatEndedStock = killingPunishesByEndFrame[stock.endFrame];
+    const punishThatEndedStock = stock.endFrame
+      ? killingPunishesByEndFrame[stock.endFrame]
+      : null;
 
     if (!punishThatEndedStock) {
       // return <span className={styles['secondary-text']}>Self Destruct</span>;
@@ -110,10 +111,10 @@ export const KillsTable: React.FC<KillsTableProps> = ({
     return <span>{moveUtils.getMoveName(lastMove.moveId)}</span>;
   };
 
-  const renderKilledDirection = (stock) => {
-    const killedDirection = animationUtils.getDeathDirection(
-      stock.deathAnimation
-    );
+  const renderKilledDirection = (stock: StockType) => {
+    const killedDirection = stock.deathAnimation
+      ? animationUtils.getDeathDirection(stock.deathAnimation)
+      : "error";
 
     return (
       //TODO killed direction icons

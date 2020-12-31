@@ -13,7 +13,7 @@ export const TableHeaderCell = styled.td`
   border: 2px solid rgba(255, 255, 255, 0.1);
   border-style: none solid;
   background-color: rgba(255, 255, 255, 0.2);
-  height: 50px;
+  height: 40px;
   text-align: left;
   padding-left: 12px;
   font-size: 18px;
@@ -26,7 +26,7 @@ export const TableSubHeaderCell = styled.td`
   border-style: none solid;
   background-color: rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.8);
-  height: 40px;
+  height: 25px;
   font-size: 18px;
   padding: 4px;
 `;
@@ -53,4 +53,15 @@ export const TableRow = styled.tr`
   &:nth-child(even) {
     background-color: ${colors.foreground};
   }
+`;
+
+interface GrayableImageProps {
+  gray?: boolean;
+}
+export const GrayableImage = styled.img`
+  ${(props: GrayableImageProps) =>
+    props.gray &&
+    css`
+      opacity: 0.4;
+    `}
 `;

@@ -2,7 +2,7 @@ import _ from "lodash";
 import React from "react";
 import { FileResult } from "../../../common/replayBrowser/types";
 import { extractPlayerNames } from "common/matchNames";
-import { StatsType } from "@slippi/slippi-js";
+import { RatioType, StatsType } from "@slippi/slippi-js";
 import { getCharacterIcon } from "@/lib/utils";
 import * as T from "./TableStyles";
 
@@ -10,10 +10,11 @@ const columnCount = 5; // Unfortunately there is no way to specify a col span of
 
 export interface OverallTableProps {
   file: FileResult;
-  stats: StatsType;
+  stats: StatsType | null;
 }
 
 export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
+  if (!stats) return <div>An Error Occurred!</div>;
   //RENDER HELPERS
   const renderPlayerHeaders = () => {
     const tableHeaders = [];
@@ -53,21 +54,18 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
   };
 
   const renderMultiStatField = (
-    header,
-    arrPath,
-    fieldPaths,
-    valueMapper,
-    highlight
+    header: string,
+    arrPath: string | string[],
+    fieldPaths: string | string[],
+    highlight?: (v: number[] | string[], ov: number[] | string[]) => boolean,
+    valueMapper?: (a: number) => string
   ) => {
     const arr = _.get(stats, arrPath) || [];
     const itemsByPlayer = _.keyBy(arr, "playerIndex");
 
-    // const player1Item = itemsByPlayer[this.props.player1Index] || {};
-    // const player2Item = itemsByPlayer[this.props.player2Index] || {};
-
     const player1Item = itemsByPlayer[0] || {};
-    const player2Item = itemsByPlayer[1] || {}; //TODO above
-    const generateValues = (item) =>
+    const player2Item = itemsByPlayer[1] || {};
+    const generateValues = (item: any) =>
       _.chain(item)
         .pick(fieldPaths)
         .toArray()
@@ -91,7 +89,12 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
     );
   };
 
-  const renderRatioStatField = (header, arrPath, fieldPath, ratioRenderer) => {
+  const renderRatioStatField = (
+    header: string,
+    arrPath: string,
+    fieldPath: string,
+    ratioRenderer: (ratio: RatioType, oppRatio: RatioType) => JSX.Element
+  ) => {
     const arr = _.get(stats, arrPath) || [];
     const itemsByPlayer = _.keyBy(arr, "playerIndex");
 
@@ -101,7 +104,7 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
     const player1Item = itemsByPlayer[0] || {}; //TODO
     const player2Item = itemsByPlayer[1] || {};
 
-    const displayRenderer = (firstPlayer) => {
+    const displayRenderer = (firstPlayer: boolean) => {
       const item = firstPlayer ? player1Item : player2Item;
       const oppItem = firstPlayer ? player2Item : player1Item;
 
@@ -122,16 +125,16 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
   };
 
   const renderSimpleRatioField = (
-    header,
-    arrPath,
-    fieldPath,
-    highlightCondition
+    header: string,
+    arrPath: string,
+    fieldPath: string,
+    highlightCondition: (a: number, b: number) => boolean
   ) => {
     return renderRatioStatField(
       header,
       arrPath,
       fieldPath,
-      (ratio, oppRatio) => {
+      (ratio: RatioType, oppRatio: RatioType) => {
         const playerRatio = _.get(ratio, "ratio");
         if (playerRatio === null) {
           return <div>N/A</div>;
@@ -139,10 +142,10 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
         const oppRatioField = _.get(oppRatio, "ratio");
 
         const fixedPlayerRatio =
-          playerRatio !== null ? playerRatio.toFixed(1) : null;
+          playerRatio !== null ? playerRatio.toFixed(1) : "0.000";
 
         const fixedOppRatio =
-          oppRatioField !== null ? oppRatioField.toFixed(1) : null;
+          oppRatioField !== null ? oppRatioField.toFixed(1) : "0.000";
 
         return (
           <T.TableCell
@@ -159,10 +162,10 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
   };
 
   const renderPercentFractionField = (
-    header,
-    arrPath,
-    fieldPath,
-    highlightCondition
+    header: string,
+    arrPath: string,
+    fieldPath: string,
+    highlightCondition: (a: number, b: number) => boolean
   ) => {
     return renderRatioStatField(
       header,
@@ -177,9 +180,9 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
         const oppRatioField = _.get(oppRatio, "ratio");
 
         const fixedPlayerRatio =
-          playerRatio !== null ? playerRatio.toFixed(3) : null;
+          playerRatio !== null ? playerRatio.toFixed(3) : "0.000";
         const fixedOppRatio =
-          oppRatioField !== null ? oppRatioField.toFixed(3) : null;
+          oppRatioField !== null ? oppRatioField.toFixed(3) : "0.000";
 
         const playerCount = _.get(ratio, "count");
         const playerTotal = _.get(ratio, "total");
@@ -205,12 +208,12 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
     );
   };
 
-  const renderHigherSimpleRatioField = (header, field) => {
+  const renderHigherSimpleRatioField = (header: string, field: string) => {
     return renderSimpleRatioField(
       header,
       "overall",
       field,
-      (fixedPlayerRatio, fixedOppRatio) => {
+      (fixedPlayerRatio: number, fixedOppRatio: number) => {
         const oppIsNull = fixedPlayerRatio && Number.isNaN(fixedOppRatio);
         const isHigher = fixedPlayerRatio > fixedOppRatio;
         return oppIsNull || isHigher;
@@ -218,12 +221,12 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
     );
   };
 
-  const renderLowerSimpleRatioField = (header, field) => {
+  const renderLowerSimpleRatioField = (header: string, field: string) => {
     return renderSimpleRatioField(
       header,
       "overall",
       field,
-      (fixedPlayerRatio, fixedOppRatio) => {
+      (fixedPlayerRatio: number, fixedOppRatio: number) => {
         const oppIsNull = fixedPlayerRatio && Number.isNaN(fixedOppRatio);
         const isLower = fixedPlayerRatio < fixedOppRatio;
         return oppIsNull || isLower;
@@ -231,12 +234,12 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
     );
   };
 
-  const renderHigherPercentFractionField = (header, field) => {
+  const renderHigherPercentFractionField = (header: string, field: string) => {
     return renderPercentFractionField(
       header,
       "overall",
       field,
-      (fixedPlayerRatio, fixedOppRatio) => {
+      (fixedPlayerRatio: number, fixedOppRatio: number) => {
         const oppIsNull = fixedPlayerRatio && Number.isNaN(fixedOppRatio);
         const isHigher = fixedPlayerRatio > fixedOppRatio;
         return oppIsNull || isHigher;
@@ -245,16 +248,16 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
   };
 
   const renderCountPercentField = (
-    header,
-    arrPath,
-    fieldPath,
-    highlightCondition
+    header: string,
+    arrPath: string,
+    fieldPath: string,
+    highlightCondition: (a: number, b: number) => boolean
   ) => {
     return renderRatioStatField(
       header,
       arrPath,
       fieldPath,
-      (ratio, oppRatio) => {
+      (ratio: RatioType, oppRatio: RatioType) => {
         const playerCount = _.get(ratio, "count") || 0;
         const playerRatio = _.get(ratio, "ratio");
 
@@ -283,7 +286,7 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
     );
   };
 
-  const renderOpeningField = (header, field) => {
+  const renderOpeningField = (header: string, field: string) => {
     return renderCountPercentField(
       header,
       "overall",
@@ -307,15 +310,15 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
           "Kills",
           "overall",
           "killCount",
-          null,
           (v, ov) => v[0] > ov[0]
         )}
         {renderMultiStatField(
           "Damage Done",
           "overall",
           "totalDamage",
-          (v) => v.toFixed(1),
-          (v, ov) => parseInt(v[0], 10) > parseInt(ov[0], 10)
+          (v, ov) =>
+            parseInt(v[0].toString(), 10) > parseInt(ov[0].toString(), 10),
+          (v) => v.toFixed(1)
         )}
         {renderHigherPercentFractionField(
           "Opening Conversion Rate",
@@ -338,9 +341,7 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
         {renderMultiStatField(
           "Actions (Roll / Air Dodge / Spot Dodge)",
           ["actionCounts"],
-          ["rollCount", "airDodgeCount", "spotDodgeCount"],
-          null,
-          null
+          ["rollCount", "airDodgeCount", "spotDodgeCount"]
         )}
       </tbody>,
     ];
@@ -360,14 +361,7 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
         {renderMultiStatField(
           "Actions (Wavedash / Waveland / Dash Dance / Ledgegrab)",
           ["actionCounts"],
-          [
-            "wavedashCount",
-            "wavelandCount",
-            "dashDanceCount",
-            "ledgegrabCount",
-          ],
-          null,
-          null
+          ["wavedashCount", "wavelandCount", "dashDanceCount", "ledgegrabCount"]
         )}
       </tbody>,
     ];

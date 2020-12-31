@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import React from "react";
 import { colors } from "../../../common/colors";
-import log from "electron-log";
 import {
   convertFrameCountToDurationString,
   fileToDateAndTime,
@@ -11,7 +10,8 @@ import { FileResult } from "../../../common/replayBrowser/types";
 import _ from "lodash";
 import { stages as stageUtils, StatsType } from "@slippi/slippi-js";
 import { OverallTable } from "./OverallTable";
-import { KillsTable } from "./KillTable";
+import { KillTable } from "./KillTable";
+import { PunishTable } from "./PunishTable";
 
 export interface GameProfileProps {
   file: FileResult;
@@ -19,7 +19,7 @@ export interface GameProfileProps {
   total: number;
   onNext: () => void;
   onPrev: () => void;
-  stats: StatsType;
+  stats: StatsType | null;
 }
 
 const DetailLabel = styled.label`
@@ -96,27 +96,29 @@ export const GameProfile: React.FC<GameProfileProps> = ({
   onPrev,
   stats,
 }) => {
-  const getTimeFromElsewhere = (): string => {
-    const fileName = file.fullPath.split("\\").pop().split("/").pop();
-    return fileToDateAndTime(
-      file.metadata ? _.get(file.metadata, "startAt") : null,
-      fileName,
+  const getTimeFromElsewhere = (): string | null => {
+    const path = file.fullPath.split("\\").pop();
+    const fileName = path ? path.split("/").pop() : "";
+
+    const moment = fileToDateAndTime(
+      file.metadata ? _.get(file.metadata, "startAt") : "",
+      fileName ? fileName : "",
       file.fullPath
     );
+    return moment ? moment.toString() : null;
   };
 
   const renderGameDetails = () => {
-    let stageName = "Unknown";
-    try {
-      stageName = stageUtils.getStageName(file.settings.stageId);
-    } catch (err) {
-      log.error(err);
-    }
+    const stageName = stageUtils.getStageName(
+      file.settings.stageId ? file.settings.stageId : 0
+    );
 
     const duration = _.get(file.metadata, "lastFrame");
-    const durationDisplay = convertFrameCountToDurationString(duration);
+    const durationDisplay = convertFrameCountToDurationString(
+      duration ? duration : -1
+    );
 
-    const platform = file.metadata.playedOn || "Unknown";
+    const platform = _.get(file.metadata, "playedOn") || "Unknown";
 
     const getTimeFromFile = new Date(
       file.startTime ? Date.parse(file.startTime) : 0
@@ -128,7 +130,7 @@ export const GameProfile: React.FC<GameProfileProps> = ({
     const displayData = [
       {
         label: "Stage",
-        content: stageName,
+        content: stageName ? stageName : "Unknown",
       },
       {
         label: "Duration",
@@ -139,18 +141,10 @@ export const GameProfile: React.FC<GameProfileProps> = ({
         content: startAtDisplay.toLocaleString(),
       },
       {
-        label: "Platform",
+        label: "Platform Name",
         content: platform,
       },
     ];
-
-    if (_.get(file.metadata, "playedOn")) {
-      // TODO is this necessary?
-      displayData.push({
-        label: "Console Name",
-        content: _.get(file.metadata, "playedOn"),
-      });
-    }
 
     const metadataElements = displayData.map((details, index) => {
       return (
@@ -206,10 +200,10 @@ export const GameProfile: React.FC<GameProfileProps> = ({
         <TableTitle>Kills</TableTitle>
         <div style={{ width: "100%" }}>
           <div style={{ display: "inline-block", verticalAlign: "top" }}>
-            <KillsTable file={file} stats={stats} playerIndex={0} />
+            <KillTable file={file} stats={stats} playerIndex={0} />
           </div>
           <div style={{ display: "inline-block", verticalAlign: "top" }}>
-            <KillsTable file={file} stats={stats} playerIndex={1} />
+            <KillTable file={file} stats={stats} playerIndex={1} />
           </div>
         </div>
       </div>
@@ -222,10 +216,10 @@ export const GameProfile: React.FC<GameProfileProps> = ({
         <TableTitle>Openings & Conversions</TableTitle>
         <div style={{ width: "100%", verticalAlign: "top" }}>
           <div style={{ display: "inline-block", verticalAlign: "top" }}>
-            <KillsTable file={file} stats={stats} playerIndex={0} />
+            <PunishTable file={file} stats={stats} playerIndex={0} />
           </div>
           <div style={{ display: "inline-block", verticalAlign: "top" }}>
-            <KillsTable file={file} stats={stats} playerIndex={1} />
+            <PunishTable file={file} stats={stats} playerIndex={1} />
           </div>
         </div>
       </div>

@@ -42,7 +42,7 @@ function filenameToDateAndTime(fileName: string): moment.Moment | null {
   return time;
 }
 
-export function monthDayHourFormat(time: string): string {
+export function monthDayHourFormat(time: string): string | null {
   if (!moment.isMoment(time)) {
     return null;
   }
