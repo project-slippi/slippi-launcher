@@ -2,13 +2,12 @@ import _ from "lodash";
 
 import React from "react";
 import { FileResult } from "common/replayBrowser";
-import { getCharacterIcon } from "@/lib/utils";
 import Box from "@material-ui/core/Box";
 import Tooltip from "@material-ui/core/Tooltip";
 import { DraggableFile } from "@/components/DraggableFile";
 import EqualizerIcon from "@material-ui/icons/Equalizer";
-import { extractPlayerNames } from "common/matchNames";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
+import { TeamElements } from "./TeamElements";
 
 export interface ReplayFileProps extends FileResult {
   index: number;
@@ -45,33 +44,8 @@ export const ReplayFile: React.FC<ReplayFileProps> = (props) => {
       style={style}
     >
       <Box display="flex" flexDirection="column">
+        <TeamElements teams={teams} settings={settings} metadata={metadata} />
         <div>{props.name}</div>{" "}
-        <div style={{ display: "flex" }}>
-          {teams.flatMap((team, i) =>
-            team.map((player, j) => {
-              const backupName = player.type === 1 ? "CPU" : "Player";
-              const names = extractPlayerNames(
-                player.playerIndex,
-                settings,
-                metadata
-              );
-              return (
-                <div
-                  key={`team-${i}-player-${j}-char${player.characterId}-${player.characterColor}`}
-                >
-                  <img
-                    style={{ width: 20 }}
-                    src={getCharacterIcon(
-                      player.characterId ?? 0,
-                      player.characterColor ?? 0
-                    )}
-                  />
-                  <span>{names.code || names.tag || backupName}</span>
-                </div>
-              );
-            })
-          )}
-        </div>
       </Box>
       <div>{date.toLocaleString()}</div>
       <div>
