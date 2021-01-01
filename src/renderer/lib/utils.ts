@@ -1,5 +1,6 @@
 import path from "path";
 import url from "url";
+import { stages as stageUtils } from "@slippi/slippi-js";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -9,7 +10,8 @@ export const getStatic = (val: string): string => {
   if (isDevelopment) {
     return url.resolve(window.location.origin, val);
   }
-  return path.resolve(path.join(__static, val));
+  // Escape the backslashes or they won't work as CSS background images
+  return path.resolve(path.join(__static, val)).replace(/\\/g, "/");
 };
 
 export const getCharacterIcon = (
@@ -19,5 +21,11 @@ export const getCharacterIcon = (
   const imgSrc = getStatic(
     `/images/characters/${characterId}/${characterColor}/stock.png`
   );
+  return imgSrc;
+};
+
+export const getStageImage = (stageId: number): string => {
+  const name = stageUtils.getStageName(stageId);
+  const imgSrc = getStatic(`/images/stages/${name}.png`);
   return imgSrc;
 };
