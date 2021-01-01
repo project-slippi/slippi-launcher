@@ -26,6 +26,7 @@ type StoreState = {
   currentRoot: string | null;
   currentFolder: string;
   fileErrorCount: number;
+  scrollRowItem: number;
   selectedFile: {
     index: number | null;
     gameStats: StatsType | null;
@@ -46,6 +47,7 @@ type StoreReducers = {
   loadDirectoryList: (folder: string) => Promise<void>;
   loadFolder: (childPath?: string, forceReload?: boolean) => Promise<void>;
   toggleFolder: (fullPath: string) => void;
+  setScrollRowItem: (offset: number) => void;
 };
 
 const initialState: StoreState = {
@@ -56,6 +58,7 @@ const initialState: StoreState = {
   currentRoot: null,
   currentFolder: useSettings.getState().settings.rootSlpPath,
   fileErrorCount: 0,
+  scrollRowItem: 0,
   selectedFile: {
     index: null,
     gameStats: null,
@@ -175,6 +178,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
         })
       );
       set({
+        scrollRowItem: 0,
         files: result.files,
         loading: false,
         fileErrorCount: result.fileErrorCount,
@@ -229,5 +233,9 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     );
 
     set({ folders: newFolders });
+  },
+
+  setScrollRowItem: (rowItem) => {
+    set({ scrollRowItem: rowItem });
   },
 }));
