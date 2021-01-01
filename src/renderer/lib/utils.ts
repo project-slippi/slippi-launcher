@@ -1,5 +1,6 @@
 import path from "path";
 import url from "url";
+import { stages as stageUtils } from "@slippi/slippi-js";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -19,5 +20,11 @@ export const getCharacterIcon = (
   const imgSrc = getStatic(
     `/images/characters/${characterId}/${characterColor}/stock.png`
   );
+  return imgSrc;
+};
+
+export const getStageImage = (stageId: number): string => {
+  const name = stageUtils.getStageName(stageId);
+  const imgSrc = getStatic(`/images/stages/${name}.png`);
   return imgSrc;
 };
