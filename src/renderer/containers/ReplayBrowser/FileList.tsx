@@ -7,12 +7,35 @@ import { FileResult } from "common/replayBrowser";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
+import Typography from "@material-ui/core/Typography";
 import ListItemText from "@material-ui/core/ListItemText";
 import { shell } from "electron";
+import SearchIcon from "@material-ui/icons/Search";
 import FolderIcon from "@material-ui/icons/Folder";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { withStyles } from "@material-ui/core/styles";
 import { useReplays } from "@/store/replays";
+
+const EmptyFolder: React.FC = () => {
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100%",
+        width: "100%",
+        fontSize: 74,
+      }}
+    >
+      <SearchIcon fontSize="inherit" />
+      <Typography variant="h6" style={{ marginTop: 20 }}>
+        No SLP files found
+      </Typography>
+    </div>
+  );
+};
 
 const StyledListItemIcon = withStyles(() => ({
   root: {
@@ -95,11 +118,15 @@ export const FileList: React.FC<{
       style={{ display: "flex", flexFlow: "column", height: "100%", flex: "1" }}
     >
       <div style={{ flex: "1", overflow: "hidden" }}>
-        <FileListResults
-          onOpenMenu={onOpenMenu}
-          onSelect={onSelect}
-          files={files}
-        />
+        {files.length > 0 ? (
+          <FileListResults
+            onOpenMenu={onOpenMenu}
+            onSelect={onSelect}
+            files={files}
+          />
+        ) : (
+          <EmptyFolder />
+        )}
       </div>
       <Menu
         anchorEl={menuItem ? menuItem.anchorEl : null}
