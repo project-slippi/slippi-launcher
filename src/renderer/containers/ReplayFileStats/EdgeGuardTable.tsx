@@ -84,8 +84,6 @@ export const EdgeGuardTable: React.FC<EdgeGuardTableProps> = ({
     const edgeguardsByPlayer = _.groupBy(edgeguards, "playerIndex");
     const playerEdgeguards = edgeguardsByPlayer[playerIndex] || [];
 
-    console.log("egeguards");
-    console.log(stats);
     return playerEdgeguards.map(generateEdgeguardRow);
   };
   return (

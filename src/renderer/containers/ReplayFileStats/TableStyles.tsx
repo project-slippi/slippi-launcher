@@ -4,7 +4,7 @@ import { colors } from "../../../common/colors";
 export const Table = styled.table`
   width: 90%;
   border-collapse: collapse;
-  margin-bottom: 50px;
+  margin-bottom: 0px;
   box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.7);
   font-size: 14px;
 `;

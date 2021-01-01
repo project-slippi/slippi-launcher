@@ -147,22 +147,16 @@ export const PunishTable: React.FC<PunishTableProps> = ({
   const renderDamageCell = (punish: ConversionType) => {
     const difference = punish.currentPercent - punish.startPercent;
 
-    // Logic from old desktop app
-    // let heartColor = "green";
-    // if (difference >= 70) {
-    //   heartColor = "red";
-    // } else if (difference >= 35) {
-    //   heartColor = "yellow";
-    // }
+    let diffColor = "green";
+    if (difference >= 70) {
+      diffColor = "red";
+    } else if (difference >= 35) {
+      diffColor = "yellow";
+    }
 
     const diffDisplay = `${Math.trunc(difference)}%`;
 
-    //TODO heart icons
-    return (
-      <div>
-        {"<3 "} {diffDisplay}
-      </div>
-    );
+    return <div style={{ color: diffColor }}>{diffDisplay}</div>;
   };
 
   const renderDamageRangeCell = (punish: ConversionType) => {
