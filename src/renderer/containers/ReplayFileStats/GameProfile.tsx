@@ -12,6 +12,7 @@ import { stages as stageUtils, StatsType } from "@slippi/slippi-js";
 import { OverallTable } from "./OverallTable";
 import { KillTable } from "./KillTable";
 import { PunishTable } from "./PunishTable";
+import { EdgeGuardTable } from "./EdgeGuardTable";
 
 export interface GameProfileProps {
   file: FileResult;
@@ -225,6 +226,22 @@ export const GameProfile: React.FC<GameProfileProps> = ({
       </div>
     );
   };
+
+  const renderEdgeGuards = () => {
+    return (
+      <div style={{ margin: "0% 5%", width: "100%" }}>
+        <TableTitle>EdgeGuards</TableTitle>
+        <div style={{ width: "100%", verticalAlign: "top" }}>
+          <div style={{ display: "inline-block", verticalAlign: "top" }}>
+            <EdgeGuardTable file={file} stats={stats} playerIndex={0} />
+          </div>
+          <div style={{ display: "inline-block", verticalAlign: "top" }}>
+            <EdgeGuardTable file={file} stats={stats} playerIndex={1} />
+          </div>
+        </div>
+      </div>
+    );
+  };
   return (
     <div>
       <div>
@@ -249,6 +266,7 @@ export const GameProfile: React.FC<GameProfileProps> = ({
             {renderOverall()}
             {renderKills()}
             {renderPunishes()}
+            {renderEdgeGuards()}
           </div>
         </TableDiv>
       </div>

@@ -46,10 +46,12 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
     }
 
     return (
-      <T.TableRow>
-        <T.TableHeaderCell />
-        {tableHeaders}
-      </T.TableRow>
+      <thead>
+        <T.TableRow>
+          <T.TableHeaderCell />
+          {tableHeaders}
+        </T.TableRow>
+      </thead>
     );
   };
 
@@ -297,11 +299,13 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
   //
   const renderOffenseSection = () => {
     return [
-      <tr key="offense-header">
-        <T.TableSubHeaderCell colSpan={columnCount}>
-          Offense
-        </T.TableSubHeaderCell>
-      </tr>,
+      <thead key="offense-header">
+        <tr>
+          <T.TableSubHeaderCell colSpan={columnCount}>
+            Offense
+          </T.TableSubHeaderCell>
+        </tr>
+      </thead>,
       <tbody key="offense-body">
         {renderMultiStatField(
           "Kills",
@@ -329,11 +333,13 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
 
   const renderDefenseSection = () => {
     return [
-      <tr key="defense-header">
-        <T.TableSubHeaderCell colSpan={columnCount}>
-          Defense
-        </T.TableSubHeaderCell>
-      </tr>,
+      <thead key="defense-header">
+        <tr>
+          <T.TableSubHeaderCell colSpan={columnCount}>
+            Defense
+          </T.TableSubHeaderCell>
+        </tr>
+      </thead>,
       <tbody key="defense-body">
         {renderMultiStatField(
           "Actions (Roll / Air Dodge / Spot Dodge)",
@@ -346,11 +352,13 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
 
   const renderNeutralSection = () => {
     return [
-      <tr key="neutral-header">
-        <T.TableSubHeaderCell colSpan={columnCount}>
-          Neutral
-        </T.TableSubHeaderCell>
-      </tr>,
+      <thead key="neutral-header">
+        <tr key="neutral-header">
+          <T.TableSubHeaderCell colSpan={columnCount}>
+            Neutral
+          </T.TableSubHeaderCell>
+        </tr>
+      </thead>,
       <tbody key="neutral-body">
         {renderOpeningField("Neutral Wins", "neutralWinRatio")}
         {renderOpeningField("Counter Hits", "counterHitRatio")}
@@ -366,11 +374,13 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
 
   const renderGeneralSection = () => {
     return [
-      <tr key="general-header">
-        <T.TableSubHeaderCell colSpan={columnCount}>
-          General
-        </T.TableSubHeaderCell>
-      </tr>,
+      <thead key="general-header">
+        <tr>
+          <T.TableSubHeaderCell colSpan={columnCount}>
+            General
+          </T.TableSubHeaderCell>
+        </tr>
+      </thead>,
       <tbody key="neutral-body">
         {renderHigherSimpleRatioField("Inputs / Minute", "inputsPerMinute")}
         {renderHigherSimpleRatioField(
