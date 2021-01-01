@@ -118,8 +118,6 @@ export const KillTable: React.FC<KillTableProps> = ({
         : "error";
 
     return (
-      //TODO killed direction icons
-      // <Icon name={`arrow ${killedDirection}`} color="green" inverted={true} />
       <div>
         <img
           src={"images/arrow_" + killedDirection + ".png"}
