@@ -45,7 +45,7 @@ const FileListResults: React.FC<{
           height={height}
           width={width}
           itemCount={files.length}
-          itemSize={60}
+          itemSize={85}
         >
           {Row}
         </List>
