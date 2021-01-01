@@ -10,7 +10,8 @@ export const getStatic = (val: string): string => {
   if (isDevelopment) {
     return url.resolve(window.location.origin, val);
   }
-  return path.resolve(path.join(__static, val));
+  // Escape the backslashes or they won't work as CSS background images
+  return path.resolve(path.join(__static, val)).replace(/\\/g, "/");
 };
 
 export const getCharacterIcon = (
