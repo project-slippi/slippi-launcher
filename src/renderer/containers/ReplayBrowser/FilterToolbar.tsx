@@ -1,4 +1,3 @@
-import produce from "immer";
 import React from "react";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import SortIcon from "@material-ui/icons/Sort";
@@ -13,17 +12,7 @@ import { useReplays } from "@/store/replays";
 import { useSettings } from "@/store/settings";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
 import styled from "styled-components";
-
-export interface FilterOptions {
-  tag: string;
-  newestFirst: boolean;
-  hideShortGames: boolean;
-}
-
-export interface FilterToolbarProps {
-  value: FilterOptions;
-  onChange: (options: FilterOptions) => void;
-}
+import { FilterOptions } from "@/store/replayFilter";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -47,10 +36,15 @@ const ButtonContainer = styled.div`
   }
 `;
 
+export interface FilterToolbarProps {
+  value: FilterOptions;
+  onChange: (options: Partial<FilterOptions>) => void;
+}
+
 export const FilterToolbar: React.FC<FilterToolbarProps> = (props) => {
-  const [tag, setTag] = React.useState<string>(props.value.tag);
+  const [tag, setTag] = React.useState<string>(props.value.searchText);
   const [sortNewest, setSortNewest] = React.useState<boolean>(
-    props.value.newestFirst
+    props.value.sortByNewestFirst
   );
   const [hideShortGames, setHideShortGames] = React.useState<boolean>(
     props.value.hideShortGames
@@ -67,29 +61,17 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = (props) => {
 
   const setNameFilter = (name: string) => {
     setTag(name);
-    props.onChange(
-      produce(props.value, (draft) => {
-        draft.tag = name;
-      })
-    );
+    props.onChange({ searchText: name });
   };
 
   const setNewest = (shouldSortByNew: boolean) => {
     setSortNewest(shouldSortByNew);
-    props.onChange(
-      produce(props.value, (draft) => {
-        draft.newestFirst = shouldSortByNew;
-      })
-    );
+    props.onChange({ sortByNewestFirst: shouldSortByNew });
   };
 
   const setShortGameFilter = (shouldHide: boolean) => {
     setHideShortGames(shouldHide);
-    props.onChange(
-      produce(props.value, (draft) => {
-        draft.hideShortGames = shouldHide;
-      })
-    );
+    props.onChange({ hideShortGames: shouldHide });
   };
 
   return (
