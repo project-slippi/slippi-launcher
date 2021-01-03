@@ -25,7 +25,7 @@ const useStyles = makeStyles(() =>
     root: {
       display: "flex",
       height: 75,
-      margin: "0 10px",
+      margin: 10,
     },
     details: {
       display: "flex",

@@ -117,6 +117,7 @@ export const ReplayBrowser: React.FC = () => {
               flex: "1",
               position: "relative",
               overflow: "hidden",
+              borderTop: `solid 2px ${colors.grayDark}`,
             }}
           >
             <DualPane
@@ -124,6 +125,7 @@ export const ReplayBrowser: React.FC = () => {
               resizable={true}
               minWidth={0}
               maxWidth={300}
+              leftStyle={{ backgroundColor: "rgba(0,0,0, 0.3)" }}
               leftSide={
                 <List dense={true} style={{ flex: 1, padding: 0 }}>
                   <div style={{ position: "relative", minHeight: "100%" }}>
