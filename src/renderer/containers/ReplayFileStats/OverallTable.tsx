@@ -61,9 +61,19 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
     highlight?: (v: number[] | string[], ov: number[] | string[]) => boolean,
     valueMapper?: (a: number) => string
   ) => {
+    const key = `standard-field-${header}`;
+
     const arr = _.get(stats, arrPath) || [];
     const itemsByPlayer = _.keyBy(arr, "playerIndex");
 
+    if (!arr || arr.length == 0) {
+      return (
+        <T.TableRow key={key}>
+          <T.TableCell>{header}</T.TableCell>
+          <T.TableCell>Doubles is not supported for this field</T.TableCell>
+        </T.TableRow>
+      );
+    }
     const player1Item = itemsByPlayer[0] || {};
     const player2Item = itemsByPlayer[1] || {};
     const generateValues = (item: any) =>
@@ -76,7 +86,6 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
     const p1Values = generateValues(player1Item);
     const p2Values = generateValues(player2Item);
 
-    const key = `standard-field-${header}`;
     return (
       <T.TableRow key={key}>
         <T.TableCell>{header}</T.TableCell>
@@ -134,21 +143,17 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
       fieldPath,
       (ratio: RatioType, oppRatio: RatioType) => {
         const playerRatio = _.get(ratio, "ratio");
-        if (playerRatio === null) {
+        const oppRatioType = _.get(oppRatio, "ratio");
+
+        if (!playerRatio || !oppRatioType) {
           return (
             <T.TableCell>
               <div>N/A</div>
             </T.TableCell>
           );
         }
-        const oppRatioField = _.get(oppRatio, "ratio");
-
-        const fixedPlayerRatio =
-          playerRatio !== null ? playerRatio.toFixed(1) : "0.000";
-
-        const fixedOppRatio =
-          oppRatioField !== null ? oppRatioField.toFixed(1) : "0.000";
-
+        const fixedPlayerRatio = playerRatio.toFixed(1);
+        const fixedOppRatio = oppRatioType.toFixed(1);
         return (
           <T.TableCell
             highlight={highlightCondition(
@@ -175,20 +180,17 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
       fieldPath,
       (ratio, oppRatio) => {
         const playerRatio = _.get(ratio, "ratio");
-        if (playerRatio === null) {
+        const oppRatioType = _.get(oppRatio, "ratio");
+
+        if (!playerRatio || !oppRatioType) {
           return (
             <T.TableCell>
               <div>N/A</div>
             </T.TableCell>
           );
         }
-
-        const oppRatioField = _.get(oppRatio, "ratio");
-
-        const fixedPlayerRatio =
-          playerRatio !== null ? playerRatio.toFixed(3) : "0.000";
-        const fixedOppRatio =
-          oppRatioField !== null ? oppRatioField.toFixed(3) : "0.000";
+        const fixedPlayerRatio = playerRatio.toFixed(3);
+        const fixedOppRatio = oppRatioType.toFixed(3);
 
         const playerCount = _.get(ratio, "count");
         const playerTotal = _.get(ratio, "total");
