@@ -12,7 +12,7 @@ import { useReplays } from "@/store/replays";
 import { useSettings } from "@/store/settings";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
 import styled from "styled-components";
-import { FilterOptions } from "@/store/replayFilter";
+import { FilterOptions } from "@/lib/hooks/useReplayFilter";
 
 const useStyles = makeStyles(() =>
   createStyles({

@@ -6,20 +6,15 @@ import { FolderTreeNode } from "./FolderTreeNode";
 import { FileList } from "./FileList";
 import { DualPane } from "@/components/DualPane";
 import { FilterToolbar } from "./FilterToolbar";
-import { FileResult } from "common/replayBrowser";
-import { extractAllPlayerNames, namesMatch } from "common/matchNames";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { ReplayFileStats } from "../ReplayFileStats";
 import List from "@material-ui/core/List";
 import SearchIcon from "@material-ui/icons/Search";
 import Typography from "@material-ui/core/Typography";
 import { colors } from "common/colors";
-import { useReplayFilter, FilterOptions } from "@/store/replayFilter";
+import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
 
 export const ReplayBrowser: React.FC = () => {
-  const filterOptions = useReplayFilter((store) => store.options);
-  const setFilterOptions = useReplayFilter((store) => store.setOptions);
-
   const scrollRowItem = useReplays((store) => store.scrollRowItem);
   const setScrollRowItem = useReplays((store) => store.setScrollRowItem);
   const deleteFile = useReplays((store) => store.deleteFile);
@@ -34,13 +29,16 @@ export const ReplayBrowser: React.FC = () => {
   const fileErrorCount = useReplays((store) => store.fileErrorCount);
   const rootSlpPath = useSettings((store) => store.settings.rootSlpPath);
 
+  const {
+    filterOptions,
+    setFilterOptions,
+    sortAndFilterFiles,
+  } = useReplayFilter();
+  const filteredFiles = sortAndFilterFiles(files);
+
   React.useEffect(() => {
     init(rootSlpPath);
   }, [rootSlpPath, init]);
-
-  const filterFunction = generateFilterFunction(filterOptions);
-  const sortFunction = generateSortFunction(filterOptions);
-  const filteredFiles = files.filter(filterFunction).sort(sortFunction);
 
   const setSelectedItem = (index: number | null) => {
     if (index === null) {
@@ -183,33 +181,4 @@ const EmptyFolder: React.FC = () => {
       </Typography>
     </div>
   );
-};
-
-const generateFilterFunction = (
-  filterOptions: FilterOptions
-): ((file: FileResult) => boolean) => (file) => {
-  if (filterOptions.hideShortGames) {
-    if (file.lastFrame && file.lastFrame <= 30 * 60) {
-      return false;
-    }
-  }
-
-  const matchable = extractAllPlayerNames(file.settings, file.metadata);
-  if (!filterOptions.searchText) {
-    return true;
-  } else if (matchable.length === 0) {
-    return false;
-  }
-  return namesMatch([filterOptions.searchText], matchable);
-};
-
-const generateSortFunction = (
-  filterOptions: FilterOptions
-): ((a: FileResult, b: FileResult) => number) => (a, b) => {
-  const aTime = a.startTime ? Date.parse(a.startTime) : 0;
-  const bTime = b.startTime ? Date.parse(b.startTime) : 0;
-  if (filterOptions.sortByNewestFirst) {
-    return bTime - aTime;
-  }
-  return aTime - bTime;
 };
