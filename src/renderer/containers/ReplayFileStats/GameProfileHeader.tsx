@@ -74,7 +74,11 @@ export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
 
     return (
       <TagsDiv>
-        <NameLabel>{allPlayerNames[player.playerIndex].name}</NameLabel>
+        <NameLabel>
+          {allPlayerNames[player.playerIndex].name
+            ? allPlayerNames[player.playerIndex].name
+            : "Player " + (index + 1)}
+        </NameLabel>
         <CharIcon
           src={getCharacterIcon(
             player.characterId ?? 0,

@@ -4,14 +4,14 @@ import React from "react";
 import { convertFrameCountToDurationString } from "../../../common/time";
 import * as T from "./TableStyles";
 import _ from "lodash";
-import { getCharacterIcon } from "@/lib/utils";
+import { getCharacterIcon, toOrdinal } from "@/lib/utils";
 import { extractPlayerNames } from "common/matchNames";
 
 const columnCount = 6;
 
 export interface PunishTableProps {
   file: FileResult;
-  stats: StatsType | null;
+  stats: StatsType;
   playerIndex: number;
 }
 
@@ -20,32 +20,12 @@ export const PunishTable: React.FC<PunishTableProps> = ({
   stats,
   playerIndex,
 }) => {
-  if (!stats) return <div>An Error Occurred!</div>;
-  const toOrdinal = (i: number) => {
-    const j = i % 10,
-      k = i % 100;
-    if (j == 1 && k != 11) {
-      return i + "st";
-    }
-    if (j == 2 && k != 12) {
-      return i + "nd";
-    }
-    if (j == 3 && k != 13) {
-      return i + "rd";
-    }
-    return i + "th";
-  };
-
   const player = file.settings.players[playerIndex];
-  const playerName = extractPlayerNames(
-    playerIndex,
-    file.settings,
-    file.metadata
-  );
+  const names = extractPlayerNames(playerIndex, file.settings, file.metadata);
   const playerDisplay = (
     <div style={{ display: "inline-block" }}>
       <div style={{ display: "inline-block", margin: "10px 10px" }}>
-        {playerName.name}
+        {names.name ? names.name : "Player " + (playerIndex + 1)}
       </div>
       <img
         src={getCharacterIcon(
@@ -99,7 +79,7 @@ export const PunishTable: React.FC<PunishTableProps> = ({
     return (
       <T.TableRow key={`no-punishes-${stock.count}`}>
         <T.TableCell colSpan={columnCount}>
-          No punishes on opponent&apos; {toOrdinal(stockIndex)} stock
+          {"No punishes on opponent's " + toOrdinal(stockIndex)} stock
         </T.TableCell>
       </T.TableRow>
     );

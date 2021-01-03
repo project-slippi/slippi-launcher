@@ -16,7 +16,7 @@ import { getCharacterIcon } from "@/lib/utils";
 const columnCount = 5;
 export interface KillTableProps {
   file: FileResult;
-  stats: StatsType | null;
+  stats: StatsType;
   playerIndex: number;
 }
 
@@ -25,17 +25,12 @@ export const KillTable: React.FC<KillTableProps> = ({
   stats,
   playerIndex,
 }) => {
-  if (!stats) return <div>An Error Occurred!</div>;
   const player = file.settings.players[playerIndex];
-  const playerName = extractPlayerNames(
-    playerIndex,
-    file.settings,
-    file.metadata
-  );
+  const names = extractPlayerNames(playerIndex, file.settings, file.metadata);
   const playerDisplay = (
     <div style={{ display: "inline-block" }}>
       <div style={{ display: "inline-block", margin: "10px 10px" }}>
-        {playerName.name}
+        {names.name ? names.name : "Player " + (playerIndex + 1)}
       </div>
       <img
         src={getCharacterIcon(

@@ -12,7 +12,6 @@ import { stages as stageUtils, StatsType } from "@slippi/slippi-js";
 import { OverallTable } from "./OverallTable";
 import { KillTable } from "./KillTable";
 import { PunishTable } from "./PunishTable";
-// import { EdgeGuardTable } from "./EdgeGuardTable";
 
 export interface GameProfileProps {
   file: FileResult;
@@ -20,7 +19,8 @@ export interface GameProfileProps {
   total: number;
   onNext: () => void;
   onPrev: () => void;
-  stats: StatsType | null;
+  onClose: () => void;
+  stats: StatsType;
 }
 
 const DetailLabel = styled.label`
@@ -66,6 +66,30 @@ const StatsButton = styled.button`
   }
 `;
 
+const CloseButton = styled.button`
+  color: ${colors.offWhite};
+  background-color: transparent;
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  display: inline-block;
+  cursor: pointer;
+  padding: 4px 8px;
+  text-align: center;
+  line-height: 10px;
+  outline: none;
+  font-size: 10px;
+
+  &:hover:enabled {
+    background-color: ${colors.offWhite};
+    color: ${colors.grayDark};
+  }
+
+  &:disabled {
+    color: rgba(255, 255, 255, 0.2);
+    cursor: default;
+  }
+`;
+
 const TableTitle = styled.h2`
   font-weight: bold;
   color: rgba(255, 255, 255, 0.8);
@@ -95,6 +119,7 @@ export const GameProfile: React.FC<GameProfileProps> = ({
   total,
   onNext,
   onPrev,
+  onClose,
   stats,
 }) => {
   const getTimeFromElsewhere = (): string | null => {
@@ -182,6 +207,17 @@ export const GameProfile: React.FC<GameProfileProps> = ({
         <StatsButton disabled={index === total - 1} onClick={onNext}>
           Next
         </StatsButton>
+        <div>
+          <div
+            style={{
+              float: "right",
+              marginRight: "8px",
+              color: colors.offWhite,
+            }}
+          >
+            {index + 1} / {total}
+          </div>
+        </div>
       </div>
     );
   };
@@ -227,27 +263,14 @@ export const GameProfile: React.FC<GameProfileProps> = ({
     );
   };
 
-  // This was not in the old desktop version... remove?
-  // const renderEdgeGuards = () => {
-  //   return (
-  //     <div style={{ margin: "0% 5%", width: "100%" }}>
-  //       <TableTitle>EdgeGuards</TableTitle>
-  //       <div style={{ width: "100%", verticalAlign: "top" }}>
-  //         <div style={{ display: "inline-block", verticalAlign: "top" }}>
-  //           <EdgeGuardTable file={file} stats={stats} playerIndex={0} />
-  //         </div>
-  //         <div style={{ display: "inline-block", verticalAlign: "top" }}>
-  //           <EdgeGuardTable file={file} stats={stats} playerIndex={1} />
-  //         </div>
-  //       </div>
-  //     </div>
-  //   );
-  // };
   return (
     <div>
       <div>
         <HeaderDiv>
           <div style={{ margin: "0px 16px" }}>
+            <div style={{ display: "inline-block", verticalAlign: "top" }}>
+              <CloseButton onClick={onClose}>Close</CloseButton>
+            </div>
             <div style={{ display: "inline-block" }}>
               <GameProfileHeader
                 metadata={file.metadata}
@@ -267,7 +290,6 @@ export const GameProfile: React.FC<GameProfileProps> = ({
             {renderOverall()}
             {renderKills()}
             {renderPunishes()}
-            {/* {renderEdgeGuards()} */}
           </div>
         </TableDiv>
       </div>

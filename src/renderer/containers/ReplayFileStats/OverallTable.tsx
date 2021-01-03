@@ -10,11 +10,10 @@ const columnCount = 5; // Unfortunately there is no way to specify a col span of
 
 export interface OverallTableProps {
   file: FileResult;
-  stats: StatsType | null;
+  stats: StatsType;
 }
 
 export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
-  if (!stats) return <div>An Error Occurred!</div>;
   //RENDER HELPERS
   const renderPlayerHeaders = () => {
     const tableHeaders = [];
@@ -25,10 +24,10 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
         file.metadata
       );
       tableHeaders.push(
-        <T.TableHeaderCell key={names.code}>
+        <T.TableHeaderCell key={p.playerIndex}>
           <div style={{ display: "inline-block" }}>
             <div style={{ display: "inline-block", margin: "10px 10px" }}>
-              {names.name}
+              {names.name ? names.name : "Player " + (p.playerIndex + 1)}
             </div>
             <img
               src={getCharacterIcon(p.characterId ?? 0, p.characterColor ?? 0)}
@@ -136,7 +135,11 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
       (ratio: RatioType, oppRatio: RatioType) => {
         const playerRatio = _.get(ratio, "ratio");
         if (playerRatio === null) {
-          return <div>N/A</div>;
+          return (
+            <T.TableCell>
+              <div>N/A</div>
+            </T.TableCell>
+          );
         }
         const oppRatioField = _.get(oppRatio, "ratio");
 
@@ -173,7 +176,11 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
       (ratio, oppRatio) => {
         const playerRatio = _.get(ratio, "ratio");
         if (playerRatio === null) {
-          return <div>N/A</div>;
+          return (
+            <T.TableCell>
+              <div>N/A</div>
+            </T.TableCell>
+          );
         }
 
         const oppRatioField = _.get(oppRatio, "ratio");
