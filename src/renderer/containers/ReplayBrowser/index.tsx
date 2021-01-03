@@ -11,6 +11,8 @@ import { extractAllPlayerNames, namesMatch } from "common/matchNames";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { ReplayFileStats } from "../ReplayFileStats";
 import List from "@material-ui/core/List";
+import SearchIcon from "@material-ui/icons/Search";
+import Typography from "@material-ui/core/Typography";
 import { colors } from "common/colors";
 
 const initialFilters: FilterOptions = {
@@ -124,17 +126,36 @@ export const ReplayBrowser: React.FC = () => {
               maxWidth={300}
               leftSide={
                 <List dense={true} style={{ flex: 1, padding: 0 }}>
-                  <FolderTreeNode {...folders} />
+                  <div style={{ position: "relative", minHeight: "100%" }}>
+                    <FolderTreeNode {...folders} />
+                    {loading && (
+                      <div
+                        style={{
+                          position: "absolute",
+                          height: "100%",
+                          width: "100%",
+                          top: 0,
+                          backgroundColor: "rgba(0, 0, 0, 0.5)",
+                        }}
+                      />
+                    )}
+                  </div>
                 </List>
               }
               rightSide={
-                <FileList
-                  onDelete={deleteFile}
-                  onSelect={(index: number) => setSelectedItem(index)}
-                  files={filteredFiles}
-                  scrollRowItem={scrollRowItem}
-                  setScrollRowItem={setScrollRowItem}
-                />
+                loading ? (
+                  <LoadingBox />
+                ) : filteredFiles.length === 0 ? (
+                  <EmptyFolder />
+                ) : (
+                  <FileList
+                    onDelete={deleteFile}
+                    onSelect={(index: number) => setSelectedItem(index)}
+                    files={filteredFiles}
+                    scrollRowItem={scrollRowItem}
+                    setScrollRowItem={setScrollRowItem}
+                  />
+                )
               }
             />
           </div>
@@ -157,7 +178,6 @@ export const ReplayBrowser: React.FC = () => {
           </div>
         </>
       )}
-      {loading && <LoadingBox />}
     </div>
   );
 };
@@ -168,13 +188,26 @@ const LoadingBox: React.FC = () => {
   if (progress !== null) {
     message += ` ${Math.floor((progress.current / progress.total) * 100)}%`;
   }
+  return <LoadingScreen message={message} />;
+};
+
+const EmptyFolder: React.FC = () => {
   return (
-    <LoadingScreen
-      message={message}
+    <div
       style={{
-        position: "absolute",
-        backgroundColor: "rgba(0,0,0,0.8)",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100%",
+        width: "100%",
+        fontSize: 74,
       }}
-    />
+    >
+      <SearchIcon fontSize="inherit" />
+      <Typography variant="h6" style={{ marginTop: 20 }}>
+        No SLP files found
+      </Typography>
+    </div>
   );
 };
