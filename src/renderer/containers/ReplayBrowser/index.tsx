@@ -9,12 +9,15 @@ import { FilterToolbar } from "./FilterToolbar";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { ReplayFileStats } from "../ReplayFileStats";
 import List from "@material-ui/core/List";
+import Button from "@material-ui/core/Button";
 import SearchIcon from "@material-ui/icons/Search";
 import Typography from "@material-ui/core/Typography";
 import { colors } from "common/colors";
 import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
+import { createStyles, makeStyles } from "@material-ui/core/styles";
 
 export const ReplayBrowser: React.FC = () => {
+  const searchInputRef = React.createRef<HTMLInputElement>();
   const scrollRowItem = useReplays((store) => store.scrollRowItem);
   const setScrollRowItem = useReplays((store) => store.setScrollRowItem);
   const deleteFile = useReplays((store) => store.deleteFile);
@@ -33,8 +36,10 @@ export const ReplayBrowser: React.FC = () => {
     filterOptions,
     setFilterOptions,
     sortAndFilterFiles,
+    clearFilter,
   } = useReplayFilter();
   const filteredFiles = sortAndFilterFiles(files);
+  const numHiddenFiles = files.length - filteredFiles.length;
 
   React.useEffect(() => {
     init(rootSlpPath);
@@ -79,7 +84,11 @@ export const ReplayBrowser: React.FC = () => {
         />
       ) : (
         <>
-          <FilterToolbar onChange={updateFilter} value={filterOptions} />
+          <FilterToolbar
+            onChange={updateFilter}
+            value={filterOptions}
+            ref={searchInputRef}
+          />
           <div
             style={{
               display: "flex",
@@ -117,7 +126,15 @@ export const ReplayBrowser: React.FC = () => {
                 loading ? (
                   <LoadingBox />
                 ) : filteredFiles.length === 0 ? (
-                  <EmptyFolder />
+                  <EmptyFolder
+                    hiddenFileCount={numHiddenFiles}
+                    onClearFilter={() => {
+                      if (searchInputRef.current) {
+                        searchInputRef.current.value = "";
+                      }
+                      clearFilter();
+                    }}
+                  />
                 ) : (
                   <FileList
                     onDelete={deleteFile}
@@ -142,8 +159,8 @@ export const ReplayBrowser: React.FC = () => {
           >
             <div>{currentFolder}</div>
             <div style={{ textAlign: "right" }}>
-              {filteredFiles.length} files found.{" "}
-              {files.length - filteredFiles.length} files filtered.{" "}
+              {filteredFiles.length} files found. {numHiddenFiles} files
+              filtered.{" "}
               {fileErrorCount > 0 ? `${fileErrorCount} files had errors.` : ""}
             </div>
           </div>
@@ -162,7 +179,11 @@ const LoadingBox: React.FC = () => {
   return <LoadingScreen message={message} />;
 };
 
-const EmptyFolder: React.FC = () => {
+const EmptyFolder: React.FC<{
+  hiddenFileCount: number;
+  onClearFilter: () => void;
+}> = ({ hiddenFileCount, onClearFilter }) => {
+  const classes = useStyles();
   return (
     <div
       style={{
@@ -172,13 +193,38 @@ const EmptyFolder: React.FC = () => {
         justifyContent: "center",
         height: "100%",
         width: "100%",
-        fontSize: 74,
       }}
     >
-      <SearchIcon fontSize="inherit" />
+      <span style={{ fontSize: 74 }}>
+        <SearchIcon fontSize="inherit" />
+      </span>
       <Typography variant="h6" style={{ marginTop: 20 }}>
         No SLP files found
       </Typography>
+      {hiddenFileCount > 0 && (
+        <div style={{ textAlign: "center" }}>
+          <Typography style={{ marginTop: 20, opacity: 0.6 }}>
+            {hiddenFileCount} files hidden
+          </Typography>
+          <Button
+            className={classes.label}
+            color="primary"
+            onClick={onClearFilter}
+            size="small"
+          >
+            clear filter
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
+
+const useStyles = makeStyles(() =>
+  createStyles({
+    label: {
+      textTransform: "lowercase",
+      fontSize: 12,
+    },
+  })
+);
