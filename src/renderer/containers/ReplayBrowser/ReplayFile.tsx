@@ -105,9 +105,11 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
             image={getStageImage(settings.stageId)}
             title={stageUtils.getStageName(settings.stageId)}
           >
-            <div className={classes.duration}>
-              {convertFrameCountToDurationString(lastFrame ?? 0)}
-            </div>
+            {lastFrame && (
+              <div className={classes.duration}>
+                {convertFrameCountToDurationString(lastFrame)}
+              </div>
+            )}
           </CardMedia>
         )}
         <div className={classes.details}>
