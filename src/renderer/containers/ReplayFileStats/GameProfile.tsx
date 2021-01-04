@@ -135,9 +135,14 @@ export const GameProfile: React.FC<GameProfileProps> = ({
   };
 
   const renderGameDetails = () => {
-    const stageName = stageUtils.getStageName(
-      file.settings.stageId ? file.settings.stageId : 0
-    );
+    let stageName = "Unknown";
+    try {
+      stageName = stageUtils.getStageName(
+        file.settings.stageId ? file.settings.stageId : 0
+      );
+    } catch (err) {
+      console.log(err);
+    }
 
     const duration = _.get(file.metadata, "lastFrame");
     const durationDisplay = convertFrameCountToDurationString(

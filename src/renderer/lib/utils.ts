@@ -25,7 +25,12 @@ export const getCharacterIcon = (
 };
 
 export const getStageImage = (stageId: number): string => {
-  const name = stageUtils.getStageName(stageId);
+  let name = "Unknown";
+  try {
+    name = stageUtils.getStageName(stageId);
+  } catch (err) {
+    console.log(err);
+  }
   const imgSrc = getStatic(`/images/stages/${name}.png`);
   return imgSrc;
 };

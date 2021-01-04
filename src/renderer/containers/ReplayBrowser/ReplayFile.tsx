@@ -95,6 +95,14 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
     .groupBy((player) => (settings.isTeams ? player.teamId : player.port))
     .toArray()
     .value();
+  let stageName = "Unknown";
+  try {
+    stageName = stageUtils.getStageName(
+      settings.stageId ? settings.stageId : 0
+    );
+  } catch (err) {
+    console.log(err);
+  }
 
   return (
     <div style={style}>
@@ -103,7 +111,7 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
           <CardMedia
             className={classes.cover}
             image={getStageImage(settings.stageId)}
-            title={stageUtils.getStageName(settings.stageId)}
+            title={stageName}
           >
             {lastFrame && (
               <div className={classes.duration}>
