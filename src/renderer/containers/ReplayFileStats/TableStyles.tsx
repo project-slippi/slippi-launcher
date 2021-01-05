@@ -26,8 +26,9 @@ export const TableSubHeaderCell = styled.td`
   background-color: rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.8);
   height: 25px;
-  font-size: 18px;
-  padding: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 5px 10px;
 `;
 
 export const TableCell = styled.td<{
@@ -35,13 +36,13 @@ export const TableCell = styled.td<{
 }>`
   border: 2px solid rgba(255, 255, 255, 0.1);
   border-style: none solid;
-  color: rgba(255, 255, 255, 0.8);
-  padding: 4px 12px;
-  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 10px;
+  font-size: 16px;
   ${(props) =>
     props.highlight &&
     css`
-      font-weight: bold;
+      font-weight: 500;
       color: #ffe21f;
     `};
 `;

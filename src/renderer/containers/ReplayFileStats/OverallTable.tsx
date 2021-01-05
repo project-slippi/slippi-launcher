@@ -26,17 +26,17 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
       tableHeaders.push(
         <T.TableHeaderCell key={p.playerIndex}>
           <div style={{ display: "flex", alignItems: "center" }}>
-            <div style={{ margin: "10px 10px" }}>
-              {names.name ? names.name : "Player " + (p.playerIndex + 1)}
-            </div>
             <img
               src={getCharacterIcon(p.characterId ?? 0, p.characterColor ?? 0)}
               height={24}
               width={24}
               style={{
-                marginRight: "0px",
+                marginRight: 10,
               }}
             />
+            <div style={{ fontWeight: 500 }}>
+              {names.name ? names.name : "Player " + (p.playerIndex + 1)}
+            </div>
           </div>
         </T.TableHeaderCell>
       );

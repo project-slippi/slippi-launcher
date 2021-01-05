@@ -24,9 +24,6 @@ export const PunishTable: React.FC<PunishTableProps> = ({
   const names = extractPlayerNames(playerIndex, file.settings, file.metadata);
   const playerDisplay = (
     <div style={{ display: "flex", alignItems: "center" }}>
-      <div style={{ margin: "10px 10px" }}>
-        {names.name ? names.name : "Player " + (playerIndex + 1)}
-      </div>
       <img
         src={getCharacterIcon(
           player.characterId ?? 0,
@@ -35,9 +32,12 @@ export const PunishTable: React.FC<PunishTableProps> = ({
         height={24}
         width={24}
         style={{
-          marginRight: "0px",
+          marginRight: 10,
         }}
       />
+      <div style={{ fontWeight: 500 }}>
+        {names.name ? names.name : "Player " + (playerIndex + 1)}
+      </div>
     </div>
   );
 

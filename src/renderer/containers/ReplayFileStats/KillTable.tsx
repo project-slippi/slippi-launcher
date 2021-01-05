@@ -1,3 +1,7 @@
+import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
+import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 import {
   StatsType,
   Frames,
@@ -29,9 +33,6 @@ export const KillTable: React.FC<KillTableProps> = ({
   const names = extractPlayerNames(playerIndex, file.settings, file.metadata);
   const playerDisplay = (
     <div style={{ display: "flex", alignItems: "center" }}>
-      <div style={{ margin: "10px 10px" }}>
-        {names.name ? names.name : "Player " + (playerIndex + 1)}
-      </div>
       <img
         src={getCharacterIcon(
           player.characterId ?? 0,
@@ -40,9 +41,12 @@ export const KillTable: React.FC<KillTableProps> = ({
         height={24}
         width={24}
         style={{
-          marginRight: "0px",
+          marginRight: 10,
         }}
       />
+      <div style={{ fontWeight: 500 }}>
+        {names.name ? names.name : "Player " + (playerIndex + 1)}
+      </div>
     </div>
   );
   const generateStockRow = (stock: StockType) => {
@@ -64,7 +68,11 @@ export const KillTable: React.FC<KillTableProps> = ({
       end = convertFrameCountToDurationString(stock.endFrame);
 
       killedBy = renderKilledBy(stock);
-      killedDirection = renderKilledDirection(stock);
+      killedDirection = (
+        <span style={{ color: "#2ECC40", fontSize: 24 }}>
+          {renderKilledDirection(stock)}
+        </span>
+      );
     }
 
     return (
@@ -105,19 +113,23 @@ export const KillTable: React.FC<KillTableProps> = ({
   };
 
   const renderKilledDirection = (stock: StockType) => {
-    const killedDirection =
-      stock.deathAnimation !== null && stock.deathAnimation !== undefined
-        ? animationUtils.getDeathDirection(stock.deathAnimation)
-        : "error";
+    if (stock.deathAnimation === null || stock.deathAnimation === undefined) {
+      return undefined;
+    }
 
-    return (
-      <div>
-        <img
-          src={"images/arrow_" + killedDirection + ".png"}
-          style={{ height: "12px", marginRight: "5px" }}
-        ></img>
-      </div>
+    const killedDirection = animationUtils.getDeathDirection(
+      stock.deathAnimation
     );
+    switch (killedDirection) {
+      case "up":
+        return <ArrowUpwardIcon fontSize="inherit" />;
+      case "down":
+        return <ArrowDownwardIcon fontSize="inherit" />;
+      case "left":
+        return <ArrowBackIcon fontSize="inherit" />;
+      case "right":
+        return <ArrowForwardIcon fontSize="inherit" />;
+    }
   };
 
   const renderHeaderPlayer = () => {
