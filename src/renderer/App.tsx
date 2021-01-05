@@ -1,5 +1,4 @@
 import "typeface-roboto/index.css";
-import "overlayscrollbars/css/OverlayScrollbars.css";
 import "./styles/styles.scss";
 
 import log from "electron-log";

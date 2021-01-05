@@ -3,6 +3,7 @@ import * as path from "path";
 import { format as formatUrl } from "url";
 import contextMenu from "electron-context-menu";
 import { colors } from "common/colors";
+import { setupListeners } from "./listeners";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -17,6 +18,7 @@ function createMainWindow() {
     backgroundColor: colors.offGray,
     webPreferences: {
       nodeIntegration: true,
+      nodeIntegrationInWorker: true,
       enableRemoteModule: true,
     },
     autoHideMenuBar: true,
@@ -56,6 +58,8 @@ function createMainWindow() {
     window.show();
     window.focus();
   });
+
+  setupListeners();
 
   return window;
 }
