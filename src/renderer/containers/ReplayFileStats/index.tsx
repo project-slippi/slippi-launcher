@@ -50,10 +50,6 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
   const error = useReplays((store) => store.selectedFile.error);
   const gameStats = useReplays((store) => store.selectedFile.gameStats);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <Outer>
       <HeaderDiv backgroundImage={stageImage}>
@@ -68,9 +64,11 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
             <div style={{ display: "flex" }}>
               <div>
                 <Tooltip title="Back to replays">
-                  <IconButton onClick={onClose}>
-                    <ArrowBackIcon />
-                  </IconButton>
+                  <span>
+                    <IconButton onClick={onClose} disabled={loading}>
+                      <ArrowBackIcon />
+                    </IconButton>
+                  </span>
                 </Tooltip>
               </div>
               <GameProfileHeader metadata={metadata} settings={settings} />
@@ -78,6 +76,7 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
             <GameDetails file={file} stats={gameStats} />
           </div>
           <Controls
+            disabled={loading}
             index={index}
             total={total}
             onNext={onNext}
@@ -197,12 +196,13 @@ const GameDetails: React.FC<{
 };
 
 const Controls: React.FC<{
+  disabled?: boolean;
   index: number;
   total: number;
   onPlay: () => void;
   onPrev: () => void;
   onNext: () => void;
-}> = ({ index, total, onPlay, onPrev, onNext }) => {
+}> = ({ disabled, index, total, onPlay, onPrev, onNext }) => {
   return (
     <div
       style={{
@@ -232,7 +232,11 @@ const Controls: React.FC<{
       >
         <Tooltip title="Previous replay">
           <span>
-            <IconButton disabled={index === 0} onClick={onPrev} size="small">
+            <IconButton
+              disabled={disabled || index === 0}
+              onClick={onPrev}
+              size="small"
+            >
               <ArrowBackIosIcon fontSize="small" />
             </IconButton>
           </span>
@@ -243,7 +247,7 @@ const Controls: React.FC<{
         <Tooltip title="Next replay">
           <span>
             <IconButton
-              disabled={index === total - 1}
+              disabled={disabled || index === total - 1}
               onClick={onNext}
               size="small"
             >
