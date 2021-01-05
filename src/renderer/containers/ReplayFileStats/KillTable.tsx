@@ -151,15 +151,12 @@ export const KillTable: React.FC<KillTableProps> = ({
   };
 
   return (
-    <div style={{ width: "510px" }}>
-      <T.Table>
-        <thead>
-          {renderHeaderPlayer()}
-          {renderHeaderColumns()}
-        </thead>
-
-        <tbody>{renderStocksRows()}</tbody>
-      </T.Table>
-    </div>
+    <T.Table>
+      <thead>
+        {renderHeaderPlayer()}
+        {renderHeaderColumns()}
+      </thead>
+      <tbody>{renderStocksRows()}</tbody>
+    </T.Table>
   );
 };

@@ -9,7 +9,6 @@ import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import { GameProfile } from "./GameProfile";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import styled from "styled-components";
-import { colors } from "common/colors";
 import { GameProfileHeader } from "./GameProfileHeader";
 import { stages as stageUtils, StatsType } from "@slippi/slippi-js";
 import {
@@ -21,6 +20,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 import Tooltip from "@material-ui/core/Tooltip";
 import { getStageImage } from "@/lib/utils";
+import { colors } from "common/colors";
 
 const Outer = styled.div<{
   backgroundImage?: any;
@@ -110,6 +110,7 @@ const HeaderDiv = styled.div<{
   position: sticky;
   top: 0;
   width: 100%;
+  border-bottom: solid 2px ${colors.grayDark};
   background-size: cover;
   background-position: center center;
   background-image: linear-gradient(
@@ -234,7 +235,7 @@ const Controls: React.FC<{
             </IconButton>
           </span>
         </Tooltip>
-        <div style={{ color: colors.offWhite, fontSize: 12 }}>
+        <div style={{ fontSize: 12 }}>
           {index + 1} / {total}
         </div>
         <Tooltip title="Next replay">
@@ -263,7 +264,6 @@ const DetailLabel = styled.label`
 // `text-transform: capitalize` doesn't work unless it's an inline-block
 // See: https://stackoverflow.com/a/49783868 for more info
 const DetailContent = styled.label`
-  color: ${colors.offWhite};
   text-transform: capitalize;
   display: inline-block;
   font-size: 14px;

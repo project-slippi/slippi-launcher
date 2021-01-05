@@ -6,64 +6,46 @@ import { StatsType } from "@slippi/slippi-js";
 import { OverallTable } from "./OverallTable";
 import { KillTable } from "./KillTable";
 import { PunishTable } from "./PunishTable";
+import Typography from "@material-ui/core/Typography";
 
 export interface GameProfileProps {
   file: FileResult;
   stats: StatsType;
 }
 
-const TableTitle = styled.h2`
-  font-weight: bold;
-  color: rgba(255, 255, 255, 0.8);
+const TableContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-gap: 20px;
 `;
 
-export const GameProfile: React.FC<GameProfileProps> = ({ file, stats }) => {
-  const renderOverall = () => {
-    return (
-      <div>
-        <TableTitle>Overall</TableTitle>
-        <OverallTable file={file} stats={stats} />
-      </div>
-    );
-  };
-
-  const renderKills = () => {
-    return (
-      <div>
-        <TableTitle>Kills</TableTitle>
-        <div style={{ width: "100%" }}>
-          <div style={{ display: "inline-block", verticalAlign: "top" }}>
-            <KillTable file={file} stats={stats} playerIndex={0} />
-          </div>
-          <div style={{ display: "inline-block", verticalAlign: "top" }}>
-            <KillTable file={file} stats={stats} playerIndex={1} />
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const renderPunishes = () => {
-    return (
-      <div>
-        <TableTitle>Openings &amp; Conversions</TableTitle>
-        <div style={{ width: "100%", verticalAlign: "top" }}>
-          <div style={{ display: "inline-block", verticalAlign: "top" }}>
-            <PunishTable file={file} stats={stats} playerIndex={0} />
-          </div>
-          <div style={{ display: "inline-block", verticalAlign: "top" }}>
-            <PunishTable file={file} stats={stats} playerIndex={1} />
-          </div>
-        </div>
-      </div>
-    );
-  };
-
+const StatSection: React.FC<{
+  title: string;
+}> = (props) => {
   return (
-    <div>
-      {renderOverall()}
-      {renderKills()}
-      {renderPunishes()}
+    <div style={{ padding: 10 }}>
+      <Typography variant="h5" style={{ marginBottom: 10 }}>
+        {props.title}
+      </Typography>
+      <TableContainer>{props.children}</TableContainer>
+    </div>
+  );
+};
+
+export const GameProfile: React.FC<GameProfileProps> = ({ file, stats }) => {
+  return (
+    <div style={{ margin: 20 }}>
+      <StatSection title="Overall">
+        <OverallTable file={file} stats={stats} />
+      </StatSection>
+      <StatSection title="Kills">
+        <KillTable file={file} stats={stats} playerIndex={0} />
+        <KillTable file={file} stats={stats} playerIndex={1} />
+      </StatSection>
+      <StatSection title="Openings &amp; Conversions">
+        <PunishTable file={file} stats={stats} playerIndex={0} />
+        <PunishTable file={file} stats={stats} playerIndex={1} />
+      </StatSection>
     </div>
   );
 };

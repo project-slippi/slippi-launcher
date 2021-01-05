@@ -1,13 +1,14 @@
+import Paper from "@material-ui/core/Paper";
+import React from "react";
 import styled, { css } from "styled-components";
-import { colors } from "../../../common/colors";
 
-export const Table = styled.table`
-  width: 90%;
-  border-collapse: collapse;
-  margin-bottom: 0px;
-  box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.7);
-  font-size: 14px;
-`;
+export const Table: React.FC = (props) => {
+  return (
+    <Paper component="table" style={{ borderCollapse: "collapse" }}>
+      {props.children}
+    </Paper>
+  );
+};
 
 export const TableHeaderCell = styled.td`
   border: 2px solid rgba(255, 255, 255, 0.1);
@@ -17,8 +18,6 @@ export const TableHeaderCell = styled.td`
   text-align: left;
   padding-left: 12px;
   font-size: 18px;
-  color: rgba(255, 255, 255, 0.8);
-  text-shadow: 0px 0px 15px rgba(255, 255, 255, 1);
 `;
 
 export const TableSubHeaderCell = styled.td`
@@ -31,27 +30,25 @@ export const TableSubHeaderCell = styled.td`
   padding: 4px;
 `;
 
-interface TableCellProps {
+export const TableCell = styled.td<{
   highlight?: boolean;
-}
-
-export const TableCell = styled.td`
+}>`
   border: 2px solid rgba(255, 255, 255, 0.1);
   border-style: none solid;
   color: rgba(255, 255, 255, 0.8);
   padding: 4px 12px;
   font-size: 12px;
-  ${(props: TableCellProps) =>
+  ${(props) =>
     props.highlight &&
     css`
-      color: khaki;
-      text-shadow: 0px 0px 3px khaki;
+      font-weight: bold;
+      color: #ffe21f;
     `};
 `;
 
 export const TableRow = styled.tr`
   &:nth-child(even) {
-    background-color: ${colors.foreground};
+    background-color: rgba(255, 255, 255, 0.05);
   }
 `;
 
