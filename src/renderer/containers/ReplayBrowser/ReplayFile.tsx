@@ -90,12 +90,6 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
   const date = new Date(startTime ? Date.parse(startTime) : 0);
   const classes = useStyles();
 
-  // If this is a teams game, group by teamId, otherwise group players individually
-  const teams = _.chain(settings.players)
-    .groupBy((player) => (settings.isTeams ? player.teamId : player.port))
-    .toArray()
-    .value();
-
   let stageName = "Unknown";
   try {
     if (settings.stageId) {

@@ -86,7 +86,9 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
             total={total}
             onNext={onNext}
             onPrev={onPrev}
-            onPlay={() => {}}
+            onPlay={() =>
+              console.warn("Playing back replays is currently unsupported")
+            }
           />
         </div>
       </HeaderDiv>
