@@ -15,6 +15,7 @@ import Typography from "@material-ui/core/Typography";
 import { colors } from "common/colors";
 import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
+import { IconMessage } from "@/components/IconMessage";
 
 export const ReplayBrowser: React.FC = () => {
   const searchInputRef = React.createRef<HTMLInputElement>();
@@ -185,22 +186,7 @@ const EmptyFolder: React.FC<{
 }> = ({ hiddenFileCount, onClearFilter }) => {
   const classes = useStyles();
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100%",
-        width: "100%",
-      }}
-    >
-      <span style={{ fontSize: 74 }}>
-        <SearchIcon fontSize="inherit" />
-      </span>
-      <Typography variant="h6" style={{ marginTop: 20 }}>
-        No SLP files found
-      </Typography>
+    <IconMessage Icon={SearchIcon} title="No SLP files found">
       {hiddenFileCount > 0 && (
         <div style={{ textAlign: "center" }}>
           <Typography style={{ marginTop: 20, opacity: 0.6 }}>
@@ -216,7 +202,7 @@ const EmptyFolder: React.FC<{
           </Button>
         </div>
       )}
-    </div>
+    </IconMessage>
   );
 };
 

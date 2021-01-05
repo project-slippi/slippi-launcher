@@ -5,6 +5,8 @@ import React from "react";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import HelpIcon from "@material-ui/icons/Help";
+import ErrorIcon from "@material-ui/icons/Error";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import { GameProfile } from "./GameProfile";
 import { LoadingScreen } from "@/components/LoadingScreen";
@@ -21,6 +23,7 @@ import Button from "@material-ui/core/Button";
 import Tooltip from "@material-ui/core/Tooltip";
 import { getStageImage } from "@/lib/utils";
 import { colors } from "common/colors";
+import { IconMessage } from "@/components/IconMessage";
 
 const Outer = styled.div<{
   backgroundImage?: any;
@@ -50,6 +53,7 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
   const loading = useReplays((store) => store.selectedFile.loading);
   const error = useReplays((store) => store.selectedFile.error);
   const gameStats = useReplays((store) => store.selectedFile.gameStats);
+  const numPlayers = settings.players.length;
 
   return (
     <Outer>
@@ -86,18 +90,19 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
           />
         </div>
       </HeaderDiv>
-      {loading ? (
+      {numPlayers !== 2 ? (
+        <IconMessage Icon={ErrorIcon} title="Only singles is supported" />
+      ) : loading ? (
         <LoadingScreen message={"Crunching numbers..."} />
       ) : error ? (
-        <div>
-          Error occurred: {JSON.stringify(error.message || error, null, 2)}
-        </div>
+        <IconMessage
+          Icon={ErrorIcon}
+          title={`Error: ${error.message ?? JSON.stringify(error, null, 2)}`}
+        />
       ) : gameStats ? (
-        <div>
-          <GameProfile {...props} stats={gameStats}></GameProfile>
-        </div>
+        <GameProfile {...props} stats={gameStats}></GameProfile>
       ) : (
-        <div>Error computing stats</div>
+        <IconMessage Icon={HelpIcon} title="No stats computed" />
       )}
     </Outer>
   );

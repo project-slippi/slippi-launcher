@@ -9,5 +9,9 @@ export async function calculateGameStats(fullPath: string): Promise<StatsType> {
     throw new Error("Game settings could not be properly loaded.");
   }
 
+  if (settings.players.length !== 2) {
+    throw new Error("Stats can only be calculated for 1v1s.");
+  }
+
   return game.getStats();
 }
