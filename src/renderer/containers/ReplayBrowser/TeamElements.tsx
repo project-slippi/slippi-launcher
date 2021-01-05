@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { getCharacterIcon } from "@/lib/utils";
 import Chip from "@material-ui/core/Chip";
 import Avatar from "@material-ui/core/Avatar";
@@ -66,16 +67,20 @@ const Outer = styled.div`
 `;
 
 export interface TeamElementProps {
-  teams: PlayerType[][];
   settings: GameStartType;
   metadata: MetadataType | null;
 }
 
 export const TeamElements: React.FC<TeamElementProps> = ({
-  teams,
   settings,
   metadata,
 }) => {
+  // If this is a teams game, group by teamId, otherwise group players individually
+  const teams = _.chain(settings.players)
+    .groupBy((player) => (settings.isTeams ? player.teamId : player.port))
+    .toArray()
+    .value();
+
   const elements: JSX.Element[] = [];
   teams.forEach((team, idx) => {
     team.forEach((player) => {

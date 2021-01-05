@@ -95,13 +95,14 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
     .groupBy((player) => (settings.isTeams ? player.teamId : player.port))
     .toArray()
     .value();
+
   let stageName = "Unknown";
   try {
-    stageName = stageUtils.getStageName(
-      settings.stageId ? settings.stageId : 0
-    );
+    if (settings.stageId) {
+      stageName = stageUtils.getStageName(settings.stageId);
+    }
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
 
   return (
@@ -113,7 +114,7 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
             image={getStageImage(settings.stageId)}
             title={stageName}
           >
-            {lastFrame && (
+            {lastFrame !== null && (
               <div className={classes.duration}>
                 {convertFrameCountToDurationString(lastFrame)}
               </div>
@@ -123,11 +124,7 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
         <div className={classes.details}>
           <div style={{ display: "flex", flexDirection: "row", flex: 1 }}>
             <CardContent className={classes.content}>
-              <TeamElements
-                teams={teams}
-                settings={settings}
-                metadata={metadata}
-              />
+              <TeamElements settings={settings} metadata={metadata} />
             </CardContent>
             <div className={classes.controls}>
               <Tooltip title="View replay">

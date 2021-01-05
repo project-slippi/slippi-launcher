@@ -29,7 +29,7 @@ export const getStageImage = (stageId: number): string => {
   try {
     name = stageUtils.getStageName(stageId);
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
   const imgSrc = getStatic(`/images/stages/${name}.png`);
   return imgSrc;

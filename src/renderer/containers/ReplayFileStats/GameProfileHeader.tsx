@@ -1,95 +1,120 @@
-import { GameStartType, MetadataType } from "@slippi/slippi-js";
-import { extractPlayerNames, PlayerNames } from "common/matchNames";
-import styled from "styled-components";
-import React from "react";
-import { colors } from "../../../common/colors";
+import _ from "lodash";
 import { getCharacterIcon } from "@/lib/utils";
+import Chip from "@material-ui/core/Chip";
+import Typography from "@material-ui/core/Typography";
+import React from "react";
+import styled from "styled-components";
+import { makeStyles } from "@material-ui/core/styles";
+import { GameStartType, MetadataType, PlayerType } from "@slippi/slippi-js";
+import { extractPlayerNames, PlayerNames } from "common/matchNames";
 
-export interface GameProfileHeaderProps {
-  metadata: MetadataType | null;
-  settings: GameStartType;
+const useStyles = makeStyles({
+  labelSmall: {
+    fontSize: 12,
+    opacity: 0.8,
+    backgroundColor: "#2D313A",
+  },
+});
+
+interface PlayerIndicatorProps {
+  player: PlayerType;
+  names: PlayerNames;
+  isTeams?: boolean;
 }
 
-const TagLabel = styled.label`
-  color: ${colors.offWhite};
-  background-color: ${colors.grayDark};
-  padding: 6px;
-  margin: 4px;
-  font-size: 10px;
-  font-weight: bold;
+const PlayerIndicator: React.FC<PlayerIndicatorProps> = ({ player, names }) => {
+  const classes = useStyles();
+  const backupName = player.type === 1 ? "CPU" : "Player";
+  const charIcon = getCharacterIcon(
+    player.characterId ?? 0,
+    player.characterColor ?? 0
+  );
+  // const teamId = isTeams ? player.teamId : null;
+  return (
+    <PlayerInfo>
+      <Typography
+        variant="h6"
+        style={{ display: "flex", alignItems: "center" }}
+      >
+        <img src={charIcon} />
+        {names.name || names.tag || `${backupName} ${player.port}`}
+      </Typography>
+      {names.code && (
+        <div style={{ textAlign: "center" }}>
+          <Chip
+            className={classes.labelSmall}
+            size="small"
+            label={names.code}
+          />
+        </div>
+      )}
+    </PlayerInfo>
+  );
+};
+
+const PlayerInfo = styled.div`
+  margin: 0 15px;
+  display: flex;
+  flex-direction: column;
+  font-size: 22px;
+  img {
+    width: 32px;
+    margin-right: 8px;
+  }
 `;
 
-const NameLabel = styled.label`
-  color: ${colors.offWhite};
-  font-size: 32px;
-  margin-right: 6px;
+const Outer = styled.div`
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 `;
 
-const CharIcon = styled.img`
-  width: 36px;
-`;
-
-const TagsDiv = styled.div`
-  margin: 0px 10px;
-  padding: 10px;
-  display: inline-block;
-  vertical-align: middle;
-`;
-
-const VsSpan = styled.span`
-  color: rgba(255, 255, 255, 0.5);
-  line-height: 0.8;
-  width: 20px;
-  height: 18px;
-  font-weight: bold;
-  font-size: 1.4em;
-  text-align: center;
-`;
+export interface GameProfileHeaderProps {
+  settings: GameStartType;
+  metadata: MetadataType | null;
+}
 
 export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
-  metadata,
   settings,
+  metadata,
 }) => {
-  const renderMatchupDisplay = () => {
-    return (
-      <div>
-        {renderPlayerDisplay(0)}
-        <VsSpan>vs</VsSpan>
-        {renderPlayerDisplay(1)}
-      </div>
-    );
-  };
+  const teams = _.chain(settings.players)
+    .groupBy((player) => (settings.isTeams ? player.teamId : player.port))
+    .toArray()
+    .value();
 
-  const renderPlayerDisplay = (index: number) => {
-    const players = settings.players || [];
-    const player = players[index];
-
-    const allPlayerNames: PlayerNames[] = [];
-    for (const p of settings.players) {
-      const names = extractPlayerNames(p.playerIndex, settings, metadata);
-      allPlayerNames.push(names);
-    }
-
-    const playerCode = allPlayerNames[player.playerIndex].code;
-
-    return (
-      <TagsDiv>
-        <NameLabel>
-          {allPlayerNames[player.playerIndex].name
-            ? allPlayerNames[player.playerIndex].name
-            : "Player " + (index + 1)}
-        </NameLabel>
-        <CharIcon
-          src={getCharacterIcon(
-            player.characterId ?? 0,
-            player.characterColor ?? 0
-          )}
+  const elements: JSX.Element[] = [];
+  teams.forEach((team, idx) => {
+    team.forEach((player) => {
+      const names = extractPlayerNames(player.playerIndex, settings, metadata);
+      elements.push(
+        <PlayerIndicator
+          key={`player-${player.playerIndex}`}
+          player={player}
+          isTeams={Boolean(settings.isTeams)}
+          names={names}
         />
-        <div style={{ height: "2px" }}></div>
-        {playerCode ? <TagLabel>{playerCode}</TagLabel> : null}
-      </TagsDiv>
-    );
-  };
+      );
+    });
 
-  return <div>{renderMatchupDisplay()}</div>;
+    // Add VS obj in between teams
+    if (idx < teams.length - 1) {
+      // If this is not the last team, add a "vs" element
+      elements.push(
+        <div
+          key={`vs-${idx}`}
+          style={{
+            fontWeight: "bold",
+            color: "rgba(255, 255, 255, 0.5)",
+            padding: "0 20px",
+            fontSize: 20,
+          }}
+        >
+          vs
+        </div>
+      );
+    }
+  });
+  return <Outer>{...elements}</Outer>;
 };
