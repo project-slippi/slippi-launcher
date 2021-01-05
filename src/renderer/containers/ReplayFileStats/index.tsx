@@ -26,6 +26,7 @@ const Outer = styled.div<{
   backgroundImage?: any;
 }>`
   position: relative;
+  flex: 1;
   display: flex;
   flex-direction: column;
 `;
@@ -86,15 +87,7 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
         </div>
       </HeaderDiv>
       {loading ? (
-        <div>
-          <LoadingScreen
-            message={"Fetching Stats..."}
-            style={{
-              position: "absolute",
-              backgroundColor: "rgba(0,0,0,0.8)",
-            }}
-          />
-        </div>
+        <LoadingScreen message={"Crunching numbers..."} />
       ) : error ? (
         <div>
           Error occurred: {JSON.stringify(error.message || error, null, 2)}
