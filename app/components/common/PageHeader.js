@@ -1,6 +1,7 @@
+import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Header, Icon, Button } from 'semantic-ui-react';
+import { Header, Icon, Button, Input } from 'semantic-ui-react';
 import SpacedGroup from './SpacedGroup';
 
 import styles from './PageHeader.scss';
@@ -11,15 +12,42 @@ export default class PageHeader extends Component {
     infoText: PropTypes.string,
     icon: PropTypes.string.isRequired,
     history: PropTypes.object.isRequired,
+    setSearchText: PropTypes.func,
+    showSearchBar: PropTypes.bool,
   };
 
   static defaultProps = {
     infoText: "",
+    setSearchText: () => {},
+    showSearchBar: false,
   };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      inputText: "",
+    };
+  }
+
+  componentWillUnmount() {
+    this.delayedStateChange.cancel();
+  }
 
   handleBack = () => {
     this.props.history.goBack();
   };
+
+  delayedStateChange = _.debounce((searchString, setSearchState) => { setSearchState(searchString) }, 1000);
+
+  debounceRequest(searchString) {
+    this.delayedStateChange(searchString, this.props.setSearchText);
+  };
+
+  onChange = e => {
+    this.debounceRequest(e.target.value);
+    this.setState({ inputText: e.target.value });
+  }
 
   render() {
     let infoEl = null;
@@ -35,6 +63,15 @@ export default class PageHeader extends Component {
             {this.props.text}
             <SpacedGroup>
               {infoEl}
+              {this.props.showSearchBar && (
+              <>
+                <div>
+                  <Input placeholder='Search' className={styles['search-bar']} onChange={this.onChange} value={this.state.inputText} />
+                </div>
+                <div className={styles['search-icon']}>
+                  <Icon name='search' />
+                </div>
+              </>)}
               <Button
                 content="Back"
                 color="green"

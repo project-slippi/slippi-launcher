@@ -52,6 +52,7 @@ export default class FileLoader extends Component {
 
     this.state = {
       selections: [],
+      searchText: "",
       areAllSelected: false,
       shiftPressed: false,
     };
@@ -122,6 +123,14 @@ export default class FileLoader extends Component {
       });
     }
   }
+
+  setSearchText = (str) => {
+    this.setState({ searchText: str });
+    this.setState({
+      selections: [],
+      areAllSelected: false,
+    });
+  };
 
   refTableScroll = null;
 
@@ -390,6 +399,23 @@ export default class FileLoader extends Component {
     );
   }
 
+  nameMatch(file) {
+    // Extract Data
+    const firstPlayer = _.get(file, ["game", "metadata", "players", "0", "names", "netplay"] || "");
+    const secondPlayer = _.get(file, ["game", "metadata", "players", "1", "names", "netplay"] || "");
+    const firstCode = _.get(file, ["game", "metadata", "players", "0", "names", "code"] || "");
+    const secondCode = _.get(file, ["game", "metadata", "players", "1", "names", "code"] || "");
+
+    if (!firstPlayer || !secondPlayer || !firstCode || !secondCode) { return false; }
+
+    const lowerCaseSearchText = this.state.searchText.toLowerCase();
+
+    if (firstPlayer.toLowerCase().includes(lowerCaseSearchText) || secondPlayer.toLowerCase().includes(lowerCaseSearchText) ||
+      firstCode.toLowerCase().includes(lowerCaseSearchText) || secondCode.toLowerCase().includes(lowerCaseSearchText)) {
+      return true;
+    }
+  };
+
   renderFileSelection() {
     const store = this.props.store || {};
 
@@ -434,17 +460,35 @@ export default class FileLoader extends Component {
     // Generate a row for every file in selected folder
     let fileIndex = 0;
     const rows = filesToRender.map(
-      file => (
-        <FileRow
-          key={file.fullPath}
-          file={file}
-          playFile={this.props.playFile}
-          setStatsGamePage={this.props.setStatsGamePage}
-          onSelect={this.onSelect}
-          selectedOrdinal={this.state.selections.indexOf(file) + 1}
-          fileIndex={fileIndex++}
-        />
-      ),
+      file => {
+        if (this.state.searchText === "") {
+          return (
+            <FileRow
+              key={file.fullPath}
+              file={file}
+              playFile={this.props.playFile}
+              setStatsGamePage={this.props.setStatsGamePage}
+              onSelect={this.onSelect}
+              selectedOrdinal={this.state.selections.indexOf(file) + 1}
+              fileIndex={fileIndex++}
+            />
+          )
+        } 
+        if (this.nameMatch(file)) {
+          return (
+            <FileRow
+              key={file.fullPath}
+              file={file}
+              playFile={this.props.playFile}
+              setStatsGamePage={this.props.setStatsGamePage}
+              onSelect={this.onSelect}
+              selectedOrdinal={this.state.selections.indexOf(file) + 1}
+              fileIndex={fileIndex++}
+            />
+          )
+        }
+        fileIndex++;
+      },
       this
     );
 
@@ -455,7 +499,7 @@ export default class FileLoader extends Component {
       if (
         (calculations.percentagePassed > 0.5 &&
           start < allFiles.length) ||
-        !hasLoaded) {
+        !hasLoaded || (this.state.searchText !== "" && start < allFiles.length)) {
         const nextFilesToRender = allFiles.slice(start, end);
 
         this.props.storeFileLoadState({
@@ -521,6 +565,9 @@ export default class FileLoader extends Component {
           icon="disk"
           text="Replay Browser"
           history={this.props.history}
+          setSearchText={this.setSearchText}
+          searchText={this.state.searchText}
+          showSearchBar={true}
         />
         <Scroller
           ref={this.setTableScrollRef}
