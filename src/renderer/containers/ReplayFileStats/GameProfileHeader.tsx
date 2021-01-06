@@ -216,8 +216,8 @@ const Header = styled.div<{
   background-position: center center;
   background-image: linear-gradient(
       to bottom,
-      rgba(0, 0, 0, 0.7) 0 30%,
-      rgba(0, 0, 0, 0.8) 100%
+      rgba(0, 0, 0, 0.5) 0 30%,
+      rgba(0, 0, 0, 0.8) 90%
     )
     ${(p) =>
       p.backgroundImage
