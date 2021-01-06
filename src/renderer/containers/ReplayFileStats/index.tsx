@@ -23,7 +23,7 @@ import Button from "@material-ui/core/Button";
 import Tooltip from "@material-ui/core/Tooltip";
 import { getStageImage } from "@/lib/utils";
 import { colors } from "common/colors";
-import { IconMessage } from "@/components/IconMessage";
+import { IconMessage } from "@/components/Message";
 
 const Outer = styled.div<{
   backgroundImage?: any;
@@ -93,18 +93,18 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
         </div>
       </HeaderDiv>
       {numPlayers !== 2 ? (
-        <IconMessage Icon={ErrorIcon} title="Only singles is supported" />
+        <IconMessage Icon={ErrorIcon} label="Only singles is supported" />
       ) : loading ? (
         <LoadingScreen message={"Crunching numbers..."} />
       ) : error ? (
         <IconMessage
           Icon={ErrorIcon}
-          title={`Error: ${error.message ?? JSON.stringify(error, null, 2)}`}
+          label={`Error: ${error.message ?? JSON.stringify(error, null, 2)}`}
         />
       ) : gameStats ? (
         <GameProfile {...props} stats={gameStats}></GameProfile>
       ) : (
-        <IconMessage Icon={HelpIcon} title="No stats computed" />
+        <IconMessage Icon={HelpIcon} label="No stats computed" />
       )}
     </Outer>
   );
