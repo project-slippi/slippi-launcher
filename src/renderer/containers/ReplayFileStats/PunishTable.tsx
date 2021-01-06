@@ -1,7 +1,7 @@
 import { ConversionType, StatsType, StockType } from "@slippi/slippi-js";
-import { FileResult } from "../../../common/replayBrowser/types";
+import { FileResult } from "common/replayBrowser";
 import React from "react";
-import { convertFrameCountToDurationString } from "../../../common/time";
+import { convertFrameCountToDurationString } from "common/time";
 import * as T from "./TableStyles";
 import _ from "lodash";
 import { getCharacterIcon, toOrdinal } from "@/lib/utils";

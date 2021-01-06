@@ -1,3 +1,5 @@
+import _ from "lodash";
+import React from "react";
 import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
@@ -9,10 +11,8 @@ import {
   moves as moveUtils,
   StockType,
 } from "@slippi/slippi-js";
-import { FileResult } from "../../../common/replayBrowser/types";
-import React from "react";
-import { convertFrameCountToDurationString } from "../../../common/time";
-import _ from "lodash";
+import { FileResult } from "common/replayBrowser";
+import { convertFrameCountToDurationString } from "common/time";
 import * as T from "./TableStyles";
 import { extractPlayerNames } from "common/matchNames";
 import { getCharacterIcon } from "@/lib/utils";

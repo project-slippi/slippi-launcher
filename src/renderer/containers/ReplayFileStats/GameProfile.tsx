@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import React from "react";
-import { FileResult } from "../../../common/replayBrowser/types";
+import { FileResult } from "common/replayBrowser/types";
 import _ from "lodash";
 import { StatsType } from "@slippi/slippi-js";
 import { OverallTable } from "./OverallTable";

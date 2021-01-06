@@ -1,6 +1,6 @@
 import _ from "lodash";
 import React from "react";
-import { FileResult } from "../../../common/replayBrowser/types";
+import { FileResult } from "common/replayBrowser";
 import { extractPlayerNames } from "common/matchNames";
 import { RatioType, StatsType } from "@slippi/slippi-js";
 import { getCharacterIcon } from "@/lib/utils";
