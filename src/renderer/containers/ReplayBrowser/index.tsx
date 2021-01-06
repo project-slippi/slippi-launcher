@@ -86,6 +86,7 @@ export const ReplayBrowser: React.FC = () => {
       ) : (
         <>
           <FilterToolbar
+            disabled={loading}
             onChange={updateFilter}
             value={filterOptions}
             ref={searchInputRef}

@@ -38,6 +38,7 @@ const ButtonContainer = styled.div`
 `;
 
 export interface FilterToolbarProps {
+  disabled?: boolean;
   value: FilterOptions;
   onChange: (options: Partial<FilterOptions>) => void;
 }
@@ -46,7 +47,7 @@ export const FilterToolbar = React.forwardRef<
   HTMLInputElement,
   FilterToolbarProps
 >((props, ref) => {
-  const { onChange, value } = props;
+  const { disabled, onChange, value } = props;
   const [searchText, setSearchText] = React.useState(value.searchText || "");
   const classes = useStyles();
   const init = useReplays((store) => store.init);
@@ -90,6 +91,7 @@ export const FilterToolbar = React.forwardRef<
           startIcon={<RefreshIcon />}
           style={{ textTransform: "initial" }}
           onClick={refresh}
+          disabled={disabled}
         >
           Refresh
         </Button>
