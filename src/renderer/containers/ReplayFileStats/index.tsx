@@ -34,6 +34,31 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
   const gameStats = useReplays((store) => store.selectedFile.gameStats);
   const numPlayers = settings.players.length;
 
+  const keyDownFunction = (event: { keyCode: number }) => {
+    // Don't do anything if we're in the middle of processing
+    if (loading) {
+      return;
+    }
+
+    switch (event.keyCode) {
+      case 27: // Escape
+        props.onClose();
+        break;
+      case 39: // Right arrow
+        props.onNext();
+        break;
+      case 37: // Left arrow
+        props.onPrev();
+        break;
+    }
+  };
+
+  React.useEffect(() => {
+    document.addEventListener("keydown", keyDownFunction, false);
+    return () =>
+      document.removeEventListener("keydown", keyDownFunction, false);
+  }, [keyDownFunction]);
+
   return (
     <Outer>
       <GameProfileHeader
