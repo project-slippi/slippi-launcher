@@ -1,6 +1,6 @@
+import Avatar from "@material-ui/core/Avatar";
 import firebase from "firebase";
 import React from "react";
-import Avatar from "@material-ui/core/Avatar";
 
 export const UserInfo: React.FC<{
   user: firebase.User;

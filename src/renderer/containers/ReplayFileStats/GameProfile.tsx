@@ -1,12 +1,13 @@
-import styled from "styled-components";
-import React from "react";
+import Typography from "@material-ui/core/Typography";
+import { StatsType } from "@slippi/slippi-js";
 import { FileResult } from "common/replayBrowser/types";
 import _ from "lodash";
-import { StatsType } from "@slippi/slippi-js";
-import { OverallTable } from "./OverallTable";
+import React from "react";
+import styled from "styled-components";
+
 import { KillTable } from "./KillTable";
+import { OverallTable } from "./OverallTable";
 import { PunishTable } from "./PunishTable";
-import Typography from "@material-ui/core/Typography";
 
 export interface GameProfileProps {
   file: FileResult;

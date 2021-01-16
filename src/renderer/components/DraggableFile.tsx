@@ -1,7 +1,6 @@
-import styled from "styled-components";
-import React from "react";
-
 import { ipcRenderer } from "electron";
+import React from "react";
+import styled from "styled-components";
 
 const DraggableLink = styled.a`
   text-decoration: none;

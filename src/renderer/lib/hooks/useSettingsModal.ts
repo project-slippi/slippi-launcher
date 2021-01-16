@@ -1,5 +1,5 @@
-import create from "zustand";
 import { useHistory, useLocation } from "react-router-dom";
+import create from "zustand";
 
 type StoreState = {
   lastModalPage?: string;

@@ -1,5 +1,5 @@
-import _ from "lodash";
 import { SlippiGame, StatsType } from "@slippi/slippi-js";
+import _ from "lodash";
 
 export async function calculateGameStats(fullPath: string): Promise<StatsType> {
   // For a valid SLP game, at the very least we should have valid settings

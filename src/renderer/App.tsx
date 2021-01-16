@@ -1,28 +1,28 @@
 import "typeface-roboto/index.css";
 import "./styles/styles.scss";
 
+import Snackbar from "@material-ui/core/Snackbar";
+import { MuiThemeProvider, StylesProvider } from "@material-ui/core/styles";
 import log from "electron-log";
-import { hot } from "react-hot-loader/root";
 import firebase from "firebase";
 import React from "react";
+import { hot } from "react-hot-loader/root";
 import {
   HashRouter as Router,
-  Switch,
-  Route,
   Redirect,
+  Route,
+  Switch,
 } from "react-router-dom";
 
-import { HomeView } from "./views/HomeView";
-import { LoadingView } from "./views/LoadingView";
-import { MuiThemeProvider, StylesProvider } from "@material-ui/core/styles";
+import { useApp } from "@/store/app";
+
+import { initializeFirebase } from "./lib/firebase";
 import { slippiTheme } from "./styles/theme";
+import { HomeView } from "./views/HomeView";
 import { LandingView } from "./views/LandingView";
+import { LoadingView } from "./views/LoadingView";
 import { NotFoundView } from "./views/NotFoundView";
 import { SettingsView } from "./views/SettingsView";
-
-import { useApp } from "@/store/app";
-import { initializeFirebase } from "./lib/firebase";
-import Snackbar from "@material-ui/core/Snackbar";
 
 const App: React.FC = () => {
   const initialized = useApp((state) => state.initialized);

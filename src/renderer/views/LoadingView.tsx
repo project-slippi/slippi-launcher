@@ -1,7 +1,8 @@
 import { colors } from "common/colors";
 import React from "react";
-import { useApp } from "@/store/app";
+
 import { LoadingScreen } from "@/components/LoadingScreen";
+import { useApp } from "@/store/app";
 
 export const LoadingView: React.FC = () => {
   const installStatus = useApp((store) => store.logMessage);

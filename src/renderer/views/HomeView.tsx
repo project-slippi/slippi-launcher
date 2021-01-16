@@ -1,4 +1,5 @@
-import styled from "styled-components";
+import Button from "@material-ui/core/ButtonBase";
+import React from "react";
 import {
   Link,
   Redirect,
@@ -7,9 +8,9 @@ import {
   useHistory,
   useRouteMatch,
 } from "react-router-dom";
-import React from "react";
+import styled from "styled-components";
+
 import { Header } from "@/containers/Header";
-import Button from "@material-ui/core/ButtonBase";
 import { ReplayBrowser } from "@/containers/ReplayBrowser";
 
 const MenuButton = styled.div<{

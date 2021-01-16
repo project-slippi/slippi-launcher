@@ -1,5 +1,6 @@
-import path from "path";
 import * as fs from "fs-extra";
+import path from "path";
+
 import { FolderResult } from "./types";
 
 export function findChild(

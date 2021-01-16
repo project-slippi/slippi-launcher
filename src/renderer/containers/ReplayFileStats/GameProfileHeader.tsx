@@ -1,32 +1,33 @@
-import _ from "lodash";
-import { FileResult } from "common/replayBrowser";
-import React from "react";
-import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
-import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
+import Button from "@material-ui/core/Button";
+import Chip from "@material-ui/core/Chip";
+import IconButton from "@material-ui/core/IconButton";
+import { makeStyles } from "@material-ui/core/styles";
+import Tooltip from "@material-ui/core/Tooltip";
+import Typography from "@material-ui/core/Typography";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
+import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
-import styled from "styled-components";
 import {
-  stages as stageUtils,
-  StatsType,
   GameStartType,
   MetadataType,
   PlayerType,
+  stages as stageUtils,
+  StatsType,
 } from "@slippi/slippi-js";
+import { colors } from "common/colors";
+import { extractPlayerNames, PlayerNames } from "common/matchNames";
+import { FileResult } from "common/replayBrowser";
 import {
   convertFrameCountToDurationString,
   monthDayHourFormat,
 } from "common/time";
+import _ from "lodash";
 import moment from "moment";
-import IconButton from "@material-ui/core/IconButton";
-import Button from "@material-ui/core/Button";
-import Tooltip from "@material-ui/core/Tooltip";
-import { getStageImage, getCharacterIcon } from "@/lib/utils";
-import { colors } from "common/colors";
-import Chip from "@material-ui/core/Chip";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
-import { extractPlayerNames, PlayerNames } from "common/matchNames";
+import React from "react";
+import styled from "styled-components";
+
+import { getCharacterIcon, getStageImage } from "@/lib/utils";
 
 const useStyles = makeStyles({
   labelSmall: {

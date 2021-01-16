@@ -1,9 +1,11 @@
+import { RatioType, StatsType } from "@slippi/slippi-js";
+import { extractPlayerNames } from "common/matchNames";
+import { FileResult } from "common/replayBrowser";
 import _ from "lodash";
 import React from "react";
-import { FileResult } from "common/replayBrowser";
-import { extractPlayerNames } from "common/matchNames";
-import { RatioType, StatsType } from "@slippi/slippi-js";
+
 import { getCharacterIcon } from "@/lib/utils";
+
 import * as T from "./TableStyles";
 
 const columnCount = 5; // Unfortunately there is no way to specify a col span of "all" max cols there will be is 5

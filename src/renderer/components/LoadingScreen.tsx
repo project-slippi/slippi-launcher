@@ -1,5 +1,7 @@
-import { BouncingSlippiLogo } from "@/components/BouncingSlippiLogo";
 import React from "react";
+
+import { BouncingSlippiLogo } from "@/components/BouncingSlippiLogo";
+
 import { Message } from "./Message";
 
 export const LoadingScreen: React.FC<{

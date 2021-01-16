@@ -1,16 +1,16 @@
-import { useReplays } from "@/store/replays";
-import { FolderResult } from "common/replayBrowser";
-import React from "react";
-
 import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
+import FolderIcon from "@material-ui/icons/Folder";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
-import FolderIcon from "@material-ui/icons/Folder";
 import { colors } from "common/colors";
+import { FolderResult } from "common/replayBrowser";
+import React from "react";
+
+import { useReplays } from "@/store/replays";
 
 export interface FolderTreeNodeProps extends FolderResult {
   nestLevel?: number;

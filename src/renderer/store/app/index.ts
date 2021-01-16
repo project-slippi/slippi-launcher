@@ -1,7 +1,9 @@
-import { assertDolphinInstallation } from "@/lib/downloadDolphin";
+import log from "electron-log";
 import firebase from "firebase";
 import create from "zustand";
-import log from "electron-log";
+
+import { assertDolphinInstallation } from "@/lib/downloadDolphin";
+
 import { useSettings } from "../settings";
 
 type StoreState = {

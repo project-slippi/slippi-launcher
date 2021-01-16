@@ -1,27 +1,29 @@
-import React from "react";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
-import styled from "styled-components";
-import { colors } from "common/colors";
-import { useApp } from "@/store/app";
-import { LoginForm } from "../LoginForm";
-import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { useTheme } from "@material-ui/core/styles";
-import { useSettings } from "@/store/settings";
-import Alert from "@material-ui/lab/Alert";
-import SnackbarContent from "@material-ui/core/SnackbarContent";
-import { UserMenu } from "./UserMenu";
-import { assertPlayKey } from "@/lib/playkey";
-import { shell } from "electron";
-import { startGame } from "@/lib/startGame";
-import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
+import SnackbarContent from "@material-ui/core/SnackbarContent";
+import { useTheme } from "@material-ui/core/styles";
+import Tooltip from "@material-ui/core/Tooltip";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 import SettingsIcon from "@material-ui/icons/Settings";
+import Alert from "@material-ui/lab/Alert";
+import { colors } from "common/colors";
+import { shell } from "electron";
+import React from "react";
+import styled from "styled-components";
+
+import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
+import { assertPlayKey } from "@/lib/playkey";
+import { startGame } from "@/lib/startGame";
+import { useApp } from "@/store/app";
+import { useSettings } from "@/store/settings";
+
+import { LoginForm } from "../LoginForm";
+import { UserMenu } from "./UserMenu";
 
 const handleError = (error: any) => {
   const { showSnackbar, dismissSnackbar } = useApp.getState();

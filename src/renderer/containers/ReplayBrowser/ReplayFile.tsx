@@ -1,24 +1,26 @@
-import _ from "lodash";
-import React from "react";
-import moment from "moment";
-import { FileResult } from "common/replayBrowser";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
-import IconButton from "@material-ui/core/IconButton";
 import CardMedia from "@material-ui/core/CardMedia";
+import IconButton from "@material-ui/core/IconButton";
+import { createStyles, makeStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
-import { DraggableFile } from "@/components/DraggableFile";
 import EqualizerIcon from "@material-ui/icons/Equalizer";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
-import { TeamElements } from "./TeamElements";
-import { getStageImage } from "@/lib/utils";
 import { stages as stageUtils } from "@slippi/slippi-js";
-import { createStyles, makeStyles } from "@material-ui/core/styles";
+import { FileResult } from "common/replayBrowser";
 import {
   convertFrameCountToDurationString,
   monthDayHourFormat,
 } from "common/time";
+import _ from "lodash";
+import moment from "moment";
+import React from "react";
+
+import { DraggableFile } from "@/components/DraggableFile";
+import { getStageImage } from "@/lib/utils";
+
+import { TeamElements } from "./TeamElements";
 
 const useStyles = makeStyles(() =>
   createStyles({

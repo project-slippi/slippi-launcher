@@ -1,10 +1,10 @@
-import create from "zustand";
 import electronSettings from "electron-settings";
-
-import produce from "immer";
-import { verifyISO } from "@/lib/verifyISO";
-import { getDefaultRootSlpPath } from "@/lib/directories";
 import { stat } from "fs-extra";
+import produce from "immer";
+import create from "zustand";
+
+import { getDefaultRootSlpPath } from "@/lib/directories";
+import { verifyISO } from "@/lib/verifyISO";
 
 electronSettings.configure({
   fileName: "Settings",

@@ -1,9 +1,9 @@
-import styled from "styled-components";
-import React from "react";
-import { useApp } from "@/store/app";
-import { QuickStart } from "@/containers/QuickStart";
 import Box from "@material-ui/core/Box";
+import React from "react";
+import styled from "styled-components";
 
+import { QuickStart } from "@/containers/QuickStart";
+import { useApp } from "@/store/app";
 import slippiLogo from "@/styles/images/slippi-logo.svg";
 
 const OuterBox = styled(Box)`

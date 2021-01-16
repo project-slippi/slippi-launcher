@@ -1,21 +1,23 @@
-import _ from "lodash";
-import React from "react";
-import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
+import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
 import {
-  StatsType,
-  Frames,
   animations as animationUtils,
+  Frames,
   moves as moveUtils,
+  StatsType,
   StockType,
 } from "@slippi/slippi-js";
+import { extractPlayerNames } from "common/matchNames";
 import { FileResult } from "common/replayBrowser";
 import { convertFrameCountToDurationString } from "common/time";
-import * as T from "./TableStyles";
-import { extractPlayerNames } from "common/matchNames";
+import _ from "lodash";
+import React from "react";
+
 import { getCharacterIcon } from "@/lib/utils";
+
+import * as T from "./TableStyles";
 
 const columnCount = 5;
 export interface KillTableProps {

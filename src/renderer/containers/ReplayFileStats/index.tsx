@@ -1,14 +1,16 @@
-import _ from "lodash";
-import { useReplays } from "@/store/replays";
-import { FileResult } from "common/replayBrowser";
-import React from "react";
-import HelpIcon from "@material-ui/icons/Help";
 import ErrorIcon from "@material-ui/icons/Error";
-import { GameProfile } from "./GameProfile";
-import { LoadingScreen } from "@/components/LoadingScreen";
+import HelpIcon from "@material-ui/icons/Help";
+import { FileResult } from "common/replayBrowser";
+import _ from "lodash";
+import React from "react";
 import styled from "styled-components";
-import { GameProfileHeader } from "./GameProfileHeader";
+
+import { LoadingScreen } from "@/components/LoadingScreen";
 import { IconMessage } from "@/components/Message";
+import { useReplays } from "@/store/replays";
+
+import { GameProfile } from "./GameProfile";
+import { GameProfileHeader } from "./GameProfileHeader";
 
 const Outer = styled.div`
   position: relative;

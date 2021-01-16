@@ -1,18 +1,18 @@
-import { debounce } from "lodash";
-import React from "react";
-import { FixedSizeList as List } from "react-window";
-import AutoSizer from "react-virtualized-auto-sizer";
-import { ReplayFile } from "./ReplayFile";
-import { FileResult } from "common/replayBrowser";
-
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import { shell } from "electron";
-import FolderIcon from "@material-ui/icons/Folder";
-import DeleteIcon from "@material-ui/icons/Delete";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
 import { withStyles } from "@material-ui/core/styles";
+import DeleteIcon from "@material-ui/icons/Delete";
+import FolderIcon from "@material-ui/icons/Folder";
+import { FileResult } from "common/replayBrowser";
+import { shell } from "electron";
+import { debounce } from "lodash";
+import React from "react";
+import AutoSizer from "react-virtualized-auto-sizer";
+import { FixedSizeList as List } from "react-window";
+
+import { ReplayFile } from "./ReplayFile";
 
 const REPLAY_FILE_ITEM_SIZE = 85;
 

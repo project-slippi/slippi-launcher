@@ -1,19 +1,20 @@
-import { debounce } from "lodash";
-import React from "react";
-import RefreshIcon from "@material-ui/icons/Refresh";
-import SortIcon from "@material-ui/icons/Sort";
-import SearchIcon from "@material-ui/icons/Search";
-import CloseIcon from "@material-ui/icons/Close";
-import TimerIcon from "@material-ui/icons/Timer";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
-import InputBase from "@material-ui/core/InputBase";
 import InputAdornment from "@material-ui/core/InputAdornment";
+import InputBase from "@material-ui/core/InputBase";
+import { createStyles, makeStyles } from "@material-ui/core/styles";
+import CloseIcon from "@material-ui/icons/Close";
+import RefreshIcon from "@material-ui/icons/Refresh";
+import SearchIcon from "@material-ui/icons/Search";
+import SortIcon from "@material-ui/icons/Sort";
+import TimerIcon from "@material-ui/icons/Timer";
+import { debounce } from "lodash";
+import React from "react";
+import styled from "styled-components";
+
+import { FilterOptions } from "@/lib/hooks/useReplayFilter";
 import { useReplays } from "@/store/replays";
 import { useSettings } from "@/store/settings";
-import { makeStyles, createStyles } from "@material-ui/core/styles";
-import styled from "styled-components";
-import { FilterOptions } from "@/lib/hooks/useReplayFilter";
 
 const useStyles = makeStyles(() =>
   createStyles({

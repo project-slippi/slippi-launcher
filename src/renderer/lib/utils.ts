@@ -1,6 +1,6 @@
+import { stages as stageUtils } from "@slippi/slippi-js";
 import path from "path";
 import url from "url";
-import { stages as stageUtils } from "@slippi/slippi-js";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 

@@ -16,7 +16,7 @@ module.exports = {
       typescript: {},
     },
   },
-  plugins: ["strict-booleans"],
+  plugins: ["simple-import-sort", "strict-booleans"],
   extends: [
     "plugin:react/recommended",
     // Uses the recommended rules from the @typescript-eslint/eslint-plugin
@@ -47,6 +47,8 @@ module.exports = {
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "import/no-default-export": "error",
     "import/no-named-as-default-member": "off",
+    "simple-import-sort/imports": "warn",
+    "simple-import-sort/exports": "warn",
     "strict-booleans/no-nullable-numbers": "error",
   },
 };

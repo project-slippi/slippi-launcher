@@ -1,15 +1,16 @@
+import {
+  ApolloClient,
+  ApolloLink,
+  gql,
+  HttpLink,
+  InMemoryCache,
+} from "@apollo/client";
+import { fileExists } from "common/utils";
+import firebase from "firebase";
 import * as fs from "fs-extra";
 import path from "path";
-import firebase from "firebase";
-import {
-  gql,
-  ApolloClient,
-  InMemoryCache,
-  ApolloLink,
-  HttpLink,
-} from "@apollo/client";
+
 import { findDolphinExecutable } from "./directories";
-import { fileExists } from "common/utils";
 
 export interface PlayKey {
   uid: string;

@@ -1,19 +1,20 @@
-import produce from "immer";
-import path from "path";
-import create from "zustand";
-
-import { useSettings } from "../settings";
+import { StatsType } from "@slippi/slippi-js";
+import * as Comlink from "comlink";
 import {
   FileResult,
   findChild,
   FolderResult,
   generateSubFolderTree,
 } from "common/replayBrowser";
-import * as Comlink from "comlink";
+import { shell } from "electron";
+import produce from "immer";
+import path from "path";
+import create from "zustand";
+
 import { loadReplayFolder } from "@/workers/fileLoader.worker";
 import { calculateGameStats } from "@/workers/gameStats.worker";
-import { StatsType } from "@slippi/slippi-js";
-import { shell } from "electron";
+
+import { useSettings } from "../settings";
 
 type StoreState = {
   loading: boolean;

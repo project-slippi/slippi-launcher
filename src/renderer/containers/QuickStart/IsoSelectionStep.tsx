@@ -1,12 +1,14 @@
-import { hasBorder } from "@/styles/hasBorder";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import { colors } from "common/colors";
 import React from "react";
 import { useDropzone } from "react-dropzone";
 import styled from "styled-components";
-import { QuickStartHeader } from "./QuickStartHeader";
+
 import { useSettings } from "@/store/settings";
+import { hasBorder } from "@/styles/hasBorder";
+
+import { QuickStartHeader } from "./QuickStartHeader";
 
 const getColor = (props: any, defaultColor = "#eeeeee") => {
   if (props.isDragAccept) {

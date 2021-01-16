@@ -1,5 +1,13 @@
+import IconButton from "@material-ui/core/IconButton";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import ListSubheader from "@material-ui/core/ListSubheader";
+import Tooltip from "@material-ui/core/Tooltip";
+import CloseIcon from "@material-ui/icons/Close";
+import { colors } from "common/colors";
 import React from "react";
-import styled from "styled-components";
 import {
   Link,
   Redirect,
@@ -8,19 +16,12 @@ import {
   useHistory,
   useRouteMatch,
 } from "react-router-dom";
+import styled from "styled-components";
+
+import { DualPane } from "@/components/DualPane";
+import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
 
 import { settings } from "../containers/Settings";
-import IconButton from "@material-ui/core/IconButton";
-import List from "@material-ui/core/List";
-import Tooltip from "@material-ui/core/Tooltip";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListSubheader from "@material-ui/core/ListSubheader";
-import CloseIcon from "@material-ui/icons/Close";
-import { colors } from "common/colors";
-import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
-import { DualPane } from "@/components/DualPane";
 
 const Outer = styled.div`
   position: relative;

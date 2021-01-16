@@ -1,7 +1,8 @@
-import path from "path";
 import * as fs from "fs-extra";
-import { FileLoadResult, FileResult } from "./types";
+import path from "path";
+
 import { loadFile } from "./loadFile";
+import { FileLoadResult, FileResult } from "./types";
 
 export async function loadFolder(
   folder: string,

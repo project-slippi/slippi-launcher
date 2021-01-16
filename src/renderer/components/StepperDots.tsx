@@ -1,5 +1,5 @@
-import { withStyles } from "@material-ui/core/styles";
 import MobileStepper from "@material-ui/core/MobileStepper";
+import { withStyles } from "@material-ui/core/styles";
 import { colors } from "common/colors";
 import React from "react";
 

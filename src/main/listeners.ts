@@ -1,5 +1,5 @@
-import path from "path";
 import { ipcMain, nativeImage } from "electron";
+import path from "path";
 
 export function setupListeners() {
   ipcMain.on("ondragstart", (event, filePath) => {

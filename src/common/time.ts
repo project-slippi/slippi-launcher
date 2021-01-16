@@ -1,5 +1,5 @@
-import moment from "moment";
 import fs from "fs";
+import moment from "moment";
 
 export function convertFrameCountToDurationString(frameCount: number): string {
   const duration = moment.duration(frameCount / 60, "seconds");

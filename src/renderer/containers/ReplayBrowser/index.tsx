@@ -1,21 +1,23 @@
+import Button from "@material-ui/core/Button";
+import List from "@material-ui/core/List";
+import { createStyles, makeStyles } from "@material-ui/core/styles";
+import Typography from "@material-ui/core/Typography";
+import SearchIcon from "@material-ui/icons/Search";
+import { colors } from "common/colors";
 import { debounce } from "lodash";
+import React from "react";
+
+import { DualPane } from "@/components/DualPane";
+import { LoadingScreen } from "@/components/LoadingScreen";
+import { IconMessage } from "@/components/Message";
+import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
 import { useReplays } from "@/store/replays";
 import { useSettings } from "@/store/settings";
-import React from "react";
-import { FolderTreeNode } from "./FolderTreeNode";
-import { FileList } from "./FileList";
-import { DualPane } from "@/components/DualPane";
-import { FilterToolbar } from "./FilterToolbar";
-import { LoadingScreen } from "@/components/LoadingScreen";
+
 import { ReplayFileStats } from "../ReplayFileStats";
-import List from "@material-ui/core/List";
-import Button from "@material-ui/core/Button";
-import SearchIcon from "@material-ui/icons/Search";
-import Typography from "@material-ui/core/Typography";
-import { colors } from "common/colors";
-import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
-import { createStyles, makeStyles } from "@material-ui/core/styles";
-import { IconMessage } from "@/components/Message";
+import { FileList } from "./FileList";
+import { FilterToolbar } from "./FilterToolbar";
+import { FolderTreeNode } from "./FolderTreeNode";
 
 export const ReplayBrowser: React.FC = () => {
   const searchInputRef = React.createRef<HTMLInputElement>();

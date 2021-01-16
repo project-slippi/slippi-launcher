@@ -1,6 +1,6 @@
+import { remote } from "electron";
 import * as fs from "fs-extra";
 import path from "path";
-import { remote } from "electron";
 
 export const NETPLAY_PATH = path.join(
   remote.app.getPath("userData"),

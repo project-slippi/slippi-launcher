@@ -1,10 +1,10 @@
-import React from "react";
-import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import InputBase from "@material-ui/core/InputBase";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
+import InputBase from "@material-ui/core/InputBase";
+import Paper from "@material-ui/core/Paper";
+import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import { OpenDialogOptions, remote } from "electron";
+import React from "react";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

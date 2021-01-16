@@ -1,17 +1,19 @@
-import firebase from "firebase";
-import React from "react";
 import Button from "@material-ui/core/Button";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
 import { useTheme } from "@material-ui/core/styles";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import firebase from "firebase";
+import React from "react";
+
 import { deletePlayKey } from "@/lib/playkey";
+
 import { UserInfo } from "./UserInfo";
 
 export const UserMenu: React.FC<{

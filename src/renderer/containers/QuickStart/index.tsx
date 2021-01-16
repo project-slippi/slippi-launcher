@@ -1,16 +1,17 @@
+import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
 import firebase from "firebase";
 import React from "react";
 import { useHistory } from "react-router-dom";
+import styled from "styled-components";
 
 import { StepperDots } from "@/components/StepperDots";
-import { IsoSelectionStep } from "./IsoSelectionStep";
-import styled from "styled-components";
-import Box from "@material-ui/core/Box";
-import Button from "@material-ui/core/Button";
-import { SetupCompleteStep } from "./SetupCompleteStep";
-import { LoginStep } from "./LoginStep";
-import Typography from "@material-ui/core/Typography";
 import { useSettings } from "@/store/settings";
+
+import { IsoSelectionStep } from "./IsoSelectionStep";
+import { LoginStep } from "./LoginStep";
+import { SetupCompleteStep } from "./SetupCompleteStep";
 
 const OuterBox = styled(Box)`
   flex: 1;

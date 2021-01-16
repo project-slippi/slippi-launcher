@@ -1,10 +1,11 @@
+import AdmZip from "adm-zip";
+import { spawn } from "child_process";
+import { download } from "common/download";
+import { fileExists } from "common/utils";
+import { remote } from "electron";
 import * as fs from "fs-extra";
 import path from "path";
-import { remote } from "electron";
-import { download } from "common/download";
-import AdmZip from "adm-zip";
-import { fileExists } from "common/utils";
-import { spawn } from "child_process";
+
 import { findDolphinExecutable, NETPLAY_PATH } from "./directories";
 
 export async function assertDolphinInstallation(

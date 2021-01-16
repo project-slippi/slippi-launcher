@@ -1,4 +1,4 @@
-import { loadFolder, FileLoadResult } from "common/replayBrowser";
+import { FileLoadResult, loadFolder } from "common/replayBrowser";
 
 export async function loadReplayFolder(
   folder: string,

@@ -1,14 +1,15 @@
-import _ from "lodash";
-import { getCharacterIcon } from "@/lib/utils";
-import Chip from "@material-ui/core/Chip";
 import Avatar from "@material-ui/core/Avatar";
 import Badge from "@material-ui/core/Badge";
-import { getPortColor, getTeamColor } from "common/colors";
-import React from "react";
-import styled from "styled-components";
+import Chip from "@material-ui/core/Chip";
 import { makeStyles } from "@material-ui/core/styles";
 import { GameStartType, MetadataType, PlayerType } from "@slippi/slippi-js";
+import { getPortColor, getTeamColor } from "common/colors";
 import { extractPlayerNames } from "common/matchNames";
+import _ from "lodash";
+import React from "react";
+import styled from "styled-components";
+
+import { getCharacterIcon } from "@/lib/utils";
 
 function getColor(port: number, teamId: number | null) {
   if (teamId !== null) {

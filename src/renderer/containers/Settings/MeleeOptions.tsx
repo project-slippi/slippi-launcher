@@ -1,11 +1,13 @@
-import { useSettings } from "@/store/settings";
-import React from "react";
-import { PathInput } from "@/components/PathInput";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import Typography from "@material-ui/core/Typography";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import ErrorIcon from "@material-ui/icons/Error";
-import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import React from "react";
+
+import { PathInput } from "@/components/PathInput";
+import { useSettings } from "@/store/settings";
+
 import { SettingItem } from "./SettingItem";
 
 const useStyles = makeStyles((theme: Theme) =>
