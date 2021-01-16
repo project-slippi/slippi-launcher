@@ -143,7 +143,7 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
         const playerRatio = _.get(ratio, "ratio");
         const oppRatioType = _.get(oppRatio, "ratio");
 
-        if (!playerRatio || !oppRatioType) {
+        if (playerRatio === null || oppRatioType === null) {
           return (
             <T.TableCell>
               <div>N/A</div>
@@ -180,7 +180,7 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
         const playerRatio = _.get(ratio, "ratio");
         const oppRatioType = _.get(oppRatio, "ratio");
 
-        if (!playerRatio || !oppRatioType) {
+        if (playerRatio === null || oppRatioType === null) {
           return (
             <T.TableCell>
               <div>N/A</div>

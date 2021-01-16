@@ -21,9 +21,8 @@ import moment from "moment";
 import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 import Tooltip from "@material-ui/core/Tooltip";
-import { getStageImage } from "@/lib/utils";
+import { getStageImage, getCharacterIcon } from "@/lib/utils";
 import { colors } from "common/colors";
-import { getCharacterIcon } from "@/lib/utils";
 import Chip from "@material-ui/core/Chip";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
@@ -164,9 +163,8 @@ export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
   onClose,
 }) => {
   const { metadata, settings } = file;
-  const stageImage = settings.stageId
-    ? getStageImage(settings.stageId)
-    : undefined;
+  const stageImage =
+    settings.stageId !== null ? getStageImage(settings.stageId) : undefined;
   return (
     <Header backgroundImage={stageImage}>
       <div
@@ -233,7 +231,7 @@ const GameDetails: React.FC<{
   let stageName = "Unknown";
   try {
     stageName = stageUtils.getStageName(
-      file.settings.stageId ? file.settings.stageId : 0
+      file.settings.stageId !== null ? file.settings.stageId : 0
     );
   } catch (err) {
     console.error(err);

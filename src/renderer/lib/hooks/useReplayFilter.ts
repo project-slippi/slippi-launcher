@@ -44,7 +44,7 @@ const generateFilterFunction = (
   filterOptions: FilterOptions
 ): ((file: FileResult) => boolean) => (file) => {
   if (filterOptions.hideShortGames) {
-    if (file.lastFrame && file.lastFrame <= 30 * 60) {
+    if (file.lastFrame !== null && file.lastFrame <= 30 * 60) {
       return false;
     }
   }

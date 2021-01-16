@@ -1,6 +1,7 @@
 module.exports = {
   parser: "@typescript-eslint/parser", // Specifies the ESLint parser
   parserOptions: {
+    project: "tsconfig.json",
     ecmaVersion: 2020, // Allows for the parsing of modern ECMAScript features
     sourceType: "module", // Allows for the use of imports
     ecmaFeatures: {
@@ -15,6 +16,7 @@ module.exports = {
       typescript: {},
     },
   },
+  plugins: ["strict-booleans"],
   extends: [
     "plugin:react/recommended",
     // Uses the recommended rules from the @typescript-eslint/eslint-plugin
@@ -45,5 +47,6 @@ module.exports = {
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "import/no-default-export": "error",
     "import/no-named-as-default-member": "off",
+    "strict-booleans/no-nullable-numbers": "error",
   },
 };

@@ -92,7 +92,7 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
 
   let stageName = "Unknown";
   try {
-    if (settings.stageId) {
+    if (settings.stageId !== null) {
       stageName = stageUtils.getStageName(settings.stageId);
     }
   } catch (err) {

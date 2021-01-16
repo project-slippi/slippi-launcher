@@ -64,7 +64,7 @@ export const KillTable: React.FC<KillTableProps> = ({
       start = "–";
     }
 
-    if (stock.endFrame) {
+    if (stock.endFrame !== null && stock.endFrame !== undefined) {
       end = convertFrameCountToDurationString(stock.endFrame);
 
       killedBy = renderKilledBy(stock);
@@ -96,9 +96,10 @@ export const KillTable: React.FC<KillTableProps> = ({
     // Only get punishes that killed
     const killingPunishes = _.filter(playerPunishes, "didKill");
     const killingPunishesByEndFrame = _.keyBy(killingPunishes, "endFrame");
-    const punishThatEndedStock = stock.endFrame
-      ? killingPunishesByEndFrame[stock.endFrame]
-      : null;
+    const punishThatEndedStock =
+      stock.endFrame !== null && stock.endFrame !== undefined
+        ? killingPunishesByEndFrame[stock.endFrame]
+        : null;
 
     if (!punishThatEndedStock) {
       // return <span className={styles['secondary-text']}>Self Destruct</span>;

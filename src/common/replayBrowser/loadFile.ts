@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { SlippiGame } from "@slippi/slippi-js";
+import { GameStartType, MetadataType, SlippiGame } from "@slippi/slippi-js";
 import path from "path";
 import { FileResult } from "./types";
 import { fileToDateAndTime } from "../time";
@@ -8,7 +8,7 @@ export async function loadFile(fullPath: string): Promise<FileResult> {
   const filename = path.basename(fullPath);
   const game = new SlippiGame(fullPath);
   // Load settings
-  const settings = game.getSettings();
+  const settings: GameStartType | null = game.getSettings();
   if (!settings || _.isEmpty(settings.players)) {
     throw new Error("Game settings could not be properly loaded.");
   }
@@ -23,7 +23,7 @@ export async function loadFile(fullPath: string): Promise<FileResult> {
   };
 
   // Load metadata
-  const metadata = game.getMetadata();
+  const metadata: MetadataType | null = game.getMetadata();
   if (metadata) {
     result.metadata = metadata;
 

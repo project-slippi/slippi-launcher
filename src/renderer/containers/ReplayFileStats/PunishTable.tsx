@@ -49,7 +49,7 @@ export const PunishTable: React.FC<PunishTableProps> = ({
     const damageRange = renderDamageRangeCell(punish);
     const openingType = renderOpeningTypeCell(punish);
 
-    if (punish.endFrame) {
+    if (punish.endFrame !== null && punish.endFrame !== undefined) {
       end = convertFrameCountToDurationString(punish.endFrame);
     }
 
@@ -67,11 +67,9 @@ export const PunishTable: React.FC<PunishTableProps> = ({
 
   const generateEmptyRow = (stock: StockType) => {
     const player = getPlayer(stock.playerIndex);
-    let stockIndex: number;
-    if (player.startStocks) {
+    let stockIndex = 0;
+    if (player.startStocks !== null) {
       stockIndex = player.startStocks - stock.count + 1;
-    } else {
-      stockIndex = 0;
     }
 
     return (
@@ -89,22 +87,23 @@ export const PunishTable: React.FC<PunishTableProps> = ({
     const totalStocks = _.get(player, "startStocks");
     const currentStocks = stock.count - 1;
 
-    const stockIcons = _.range(1, totalStocks ? totalStocks + 1 : 1).map(
-      (stockNum) => {
-        return (
-          <T.GrayableImage
-            key={`stock-image-${stock.playerIndex}-${stockNum}`}
-            gray={stockNum > currentStocks}
-            src={getCharacterIcon(
-              player.characterId ?? 0,
-              player.characterColor ?? 0
-            )}
-            height={20}
-            width={20}
-          />
-        );
-      }
-    );
+    const stockIcons = _.range(
+      1,
+      totalStocks !== null ? totalStocks + 1 : 1
+    ).map((stockNum) => {
+      return (
+        <T.GrayableImage
+          key={`stock-image-${stock.playerIndex}-${stockNum}`}
+          gray={stockNum > currentStocks}
+          src={getCharacterIcon(
+            player.characterId ?? 0,
+            player.characterColor ?? 0
+          )}
+          height={20}
+          width={20}
+        />
+      );
+    });
 
     const key = `${stock.playerIndex}-stock-lost-${currentStocks}`;
     return (
@@ -194,15 +193,18 @@ export const PunishTable: React.FC<PunishTableProps> = ({
       const shouldDisplayStockLoss = () => {
         // Calculates whether we should display a stock loss row in this position
         const currentStock = _.first(opponentStocks);
-        const currentStockWasLost = currentStock && currentStock.endFrame;
-
-        if (!currentStock || !currentStock.endFrame) {
+        if (
+          !currentStock ||
+          currentStock.endFrame === null ||
+          currentStock.endFrame === undefined
+        ) {
           return false;
         }
+
         const wasLostBeforeNextPunish =
           !punish || currentStock.endFrame < punish.startFrame;
 
-        return currentStockWasLost && wasLostBeforeNextPunish;
+        return wasLostBeforeNextPunish;
       };
 
       let addedStockRow = false;
