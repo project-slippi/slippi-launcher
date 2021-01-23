@@ -281,13 +281,14 @@
     "moment": "^2.23.0",
     "obs-websocket-js": "^3.0.0",
     "prop-types": "^15.6.2",
-    "react": "^16.6.3",
+    "react": "^16.13.1",
     "react-copy-to-clipboard": "^5.0.2",
-    "react-dom": "^16.6.3",
+    "react-dom": "^16.13.1",
     "react-hot-loader": "^4.3.12",
     "react-redux": "^5.1.1",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
+    "react-slippi-visualiser": "^0.1.30",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
     "semantic-ui-css": "^2.4.1",
@@ -310,6 +311,8 @@
     }
   },
   "lint-staged": {
-    "*.js": ["yarn lint --quiet --fix"]
+    "*.js": [
+      "yarn lint --quiet --fix"
+    ]
   }
 }

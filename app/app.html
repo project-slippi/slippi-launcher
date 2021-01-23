@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>Slippi Desktop App</title>
     <script>
       (function() {
@@ -12,7 +12,13 @@
           // HACK: Writing the script path should be done with webpack
           document.getElementsByTagName('head')[0].appendChild(link);
         }
-      }());
+      })();
+    </script>
+    <script>
+      require('react-slippi-visualiser/dist/animations');
+    </script>
+    <script>
+      window.$ = window.jQuery = require('jquery');
     </script>
   </head>
   <body>
@@ -30,7 +36,7 @@
         // Dynamically insert the bundled app script in the renderer process
         const port = process.env.PORT || 1212;
         scripts.push(
-          (process.env.HOT)
+          process.env.HOT
             ? 'http://localhost:' + port + '/dist/renderer.dev.js'
             : './dist/renderer.prod.js'
         );

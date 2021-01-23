@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Table, Image, Icon } from 'semantic-ui-react';
 
+import Visualiser from 'react-slippi-visualiser';
 import styles from './GameProfile.scss';
 
 import Tooltip from '../common/Tooltip';
@@ -40,15 +41,23 @@ export default class PunishesTable extends Component {
     const secondaryTextStyle = styles['secondary-text'];
 
     const playPunish = () => {
-      const file = {fullPath: this.props.game.getFilePath()}
-      this.props.playFile(file, punish.startFrame)
-    }
+      const file = { fullPath: this.props.game.getFilePath() };
+      this.props.playFile(file, punish.startFrame);
+    };
 
-    const renderPunishStart = <Tooltip title="Play from here">
-      <Table.Cell className={secondaryTextStyle} collapsing={true} onClick={playPunish}>
-        <strong style={{ cursor: 'pointer' }} className={styles['highlight']}>{start}</strong>
-      </Table.Cell>
-    </Tooltip>;
+    const renderPunishStart = (
+      <Tooltip title="Play from here">
+        <Table.Cell
+          className={secondaryTextStyle}
+          collapsing={true}
+          onClick={playPunish}
+        >
+          <strong style={{ cursor: 'pointer' }} className={styles['highlight']}>
+            {start}
+          </strong>
+        </Table.Cell>
+      </Tooltip>
+    );
 
     return (
       <Table.Row key={`${punish.playerIndex}-punish-${punish.startFrame}`}>
@@ -126,11 +135,24 @@ export default class PunishesTable extends Component {
   }
 
   renderDamageCell(punish) {
+    const replay = {
+      ...this.props.game.parser,
+      metadata: { lastFrame: this.props.game.parser.latestFrameIndex },
+      visualiser: {
+        startFrame: punish.startFrame,
+        lastFrame: punish.endFrame,
+        shouldLoop: true,
+      },
+    };
+
+    let shouldVisualize = false;
+
     const difference = punish.currentPercent - punish.startPercent;
 
     let heartColor = 'green';
     if (difference >= 70) {
       heartColor = 'red';
+      shouldVisualize = true;
     } else if (difference >= 35) {
       heartColor = 'yellow';
     }
@@ -139,7 +161,8 @@ export default class PunishesTable extends Component {
 
     return (
       <div
-        className={`${styles['punish-damage-display']
+        className={`${
+          styles['punish-damage-display']
         } horizontal-spaced-group-right-sm`}
       >
         <Icon
@@ -149,6 +172,9 @@ export default class PunishesTable extends Component {
           size="large"
         />
         <div>{diffDisplay}</div>
+        {shouldVisualize && (
+          <Visualiser shouldActivatePause={true} replay={replay} size="25rem" />
+        )}
       </div>
     );
   }
