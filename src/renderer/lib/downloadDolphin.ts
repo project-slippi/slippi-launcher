@@ -132,7 +132,7 @@ async function installDolphin(
   );
   switch (process.platform) {
     case "win32": {
-      await backupUser(dolphinPath, backupLocation);
+      await backupUser(backupLocation, dolphinPath, log);
 
       log(`Extracting to: ${dolphinPath}`);
       const zip = new AdmZip(assetPath);
@@ -150,7 +150,7 @@ async function installDolphin(
         "Resources"
       );
 
-      await backupUser(newDolphinResources, backupLocation, log);
+      await backupUser(backupLocation, newDolphinResources, log);
 
       const zip = new AdmZip(assetPath);
       log(`Extracting to: ${dolphinPath}`);
@@ -195,8 +195,8 @@ async function installDolphin(
 }
 
 async function backupUser(
-  toBackup: string,
   backupLocation: string,
+  toBackup: string,
   log: (status: string) => void = console.log
 ): Promise<void> {
   const alreadyInstalled = await fs.pathExists(toBackup);
