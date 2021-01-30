@@ -132,11 +132,6 @@ async function installDolphin(
   );
   switch (process.platform) {
     case "win32": {
-      const backupLocation = path.join(
-        remote.app.getPath("userData"),
-        type + "_old"
-      );
-
       await backupUser(dolphinPath, backupLocation);
 
       log(`Extracting to: ${dolphinPath}`);
