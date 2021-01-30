@@ -4,6 +4,7 @@ on:
   push:
     branches-ignore:
       - "refactor/rewrite"
+      - "rewrite/**"
     paths-ignore:
       - "**.md"
 
