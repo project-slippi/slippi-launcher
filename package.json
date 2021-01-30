@@ -4,6 +4,9 @@
   "description": "Launch Slippi Online, browse and watch saved replays",
   "version": "0.0.0",
   "license": "GPL-3.0",
+  "engines": {
+    "node": ">=14"
+  },
   "scripts": {
     "dev": "electron-webpack dev",
     "build": "electron-webpack",
