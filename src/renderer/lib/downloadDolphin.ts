@@ -128,25 +128,54 @@ async function installDolphin(
   const dolphinPath = path.join(remote.app.getPath("userData"), type);
   switch (process.platform) {
     case "win32": {
-      const userFolderPath = path.join(dolphinPath, "User");
-      const bkpUserFolderPath = path.join(
-        remote.app.getPath("userData"),
-        "Userbkp"
-      );
-
-      const zip = new AdmZip(assetPath);
       const alreadyInstalled = await fs.pathExists(dolphinPath);
       if (alreadyInstalled) {
         log(
-          `${dolphinPath} already exists. Backing up User folder and deleting ${type} dolphin...`
+          `${dolphinPath} already exists. Backing up ${type} dolphin folder...`
         );
-        await fs.move(userFolderPath, bkpUserFolderPath);
-        await fs.remove(dolphinPath);
+        await fs.move(
+          dolphinPath,
+          path.join(remote.app.getPath("userData"), type + "_old")
+        );
       }
 
       log(`Extracting to: ${dolphinPath}`);
+      const zip = new AdmZip(assetPath);
       zip.extractAllTo(dolphinPath, true);
-      if (alreadyInstalled) await fs.move(bkpUserFolderPath, userFolderPath);
+
+      // move User folder and user.json to the new installation
+      if (alreadyInstalled) {
+        const oldUserFolder = path.join(
+          remote.app.getPath("userData"),
+          type + "_old",
+          "User"
+        );
+        const newUserFolder = path.join(dolphinPath, "User");
+
+        const oldUserJSON = path.join(
+          remote.app.getPath("userData"),
+          type + "_old",
+          "user.json"
+        );
+        const newUserJSON = path.join(dolphinPath, "user.json");
+
+        if (await fs.pathExists(oldUserFolder)) {
+          log("moving User folder...");
+          await fs.move(oldUserFolder, newUserFolder);
+        } else {
+          log("no old User folder to move");
+        }
+
+        if (await fileExists(oldUserJSON)) {
+          log("moving user.json...");
+          await fs.move(oldUserJSON, newUserJSON);
+        } else {
+          log("no old user.json to move");
+        }
+        await fs.remove(
+          path.join(remote.app.getPath("userData"), type + "_old")
+        );
+      }
       break;
     }
     case "darwin": {
