@@ -18,9 +18,9 @@ export async function assertDolphinInstallation(
     log(`Found existing ${type} Dolphin executable.`);
     log(`Checking if we need to update`);
     const data = await getLatestReleaseData(type);
-    const latest_version = data.tag_name?.substring(1);
-    const is_outdated = await compareDolphinVersion(type, latest_version);
-    if (is_outdated) {
+    const latestVersion = data.tag_name;
+    const isOutdated = await compareDolphinVersion(type, latestVersion);
+    if (isOutdated) {
       log(`${type} Dolphin installation is outdated. Downloading latest...`);
       const downloadedAsset = await downloadLatestDolphin(type, log);
       log(`Installing ${type} Dolphin...`);
@@ -47,13 +47,13 @@ export async function assertDolphinInstallations(
 
 async function compareDolphinVersion(
   type: DolphinType,
-  latest_version: string
+  latestVersion: string
 ): Promise<boolean> {
-  const dolphin_path = await findDolphinExecutable(type);
-  const dolphin_version = spawnSync(dolphin_path, [
+  const dolphinPath = await findDolphinExecutable(type);
+  const dolphinVersion = spawnSync(dolphinPath, [
     "--version",
   ]).stdout.toString();
-  return lt(latest_version, dolphin_version);
+  return lt(latestVersion, dolphinVersion);
 }
 
 export async function openDolphin(type: DolphinType, params?: string[]) {
@@ -125,33 +125,32 @@ async function installDolphin(
   assetPath: string,
   log: (message: string) => void = console.log
 ) {
-  const dolphin_path = path.join(remote.app.getPath("userData"), type);
+  const dolphinPath = path.join(remote.app.getPath("userData"), type);
   switch (process.platform) {
     case "win32": {
-      const user_folder_path = path.join(dolphin_path, "User");
-      const bkp_user_folder_path = path.join(
+      const userFolderPath = path.join(dolphinPath, "User");
+      const bkpUserFolderPath = path.join(
         remote.app.getPath("userData"),
         "Userbkp"
       );
 
       const zip = new AdmZip(assetPath);
-      const already_installed = await fs.pathExists(dolphin_path);
-      if (already_installed) {
+      const alreadyInstalled = await fs.pathExists(dolphinPath);
+      if (alreadyInstalled) {
         log(
-          `${dolphin_path} already exists. Backing up User folder and deleting ${type} dolphin...`
+          `${dolphinPath} already exists. Backing up User folder and deleting ${type} dolphin...`
         );
-        await fs.move(user_folder_path, bkp_user_folder_path);
-        await fs.remove(dolphin_path);
+        await fs.move(userFolderPath, bkpUserFolderPath);
+        await fs.remove(dolphinPath);
       }
 
-      log(`Extracting to: ${dolphin_path}`);
-      zip.extractAllTo(dolphin_path, true);
-      if (already_installed)
-        await fs.move(bkp_user_folder_path, user_folder_path);
+      log(`Extracting to: ${dolphinPath}`);
+      zip.extractAllTo(dolphinPath, true);
+      if (alreadyInstalled) await fs.move(bkpUserFolderPath, userFolderPath);
       break;
     }
     case "darwin": {
-      const extractToLocation = dolphin_path;
+      const extractToLocation = dolphinPath;
       if (await fs.pathExists(extractToLocation)) {
         log(`${extractToLocation} already exists. Deleting...`);
         await fs.remove(extractToLocation);
@@ -179,7 +178,7 @@ async function installDolphin(
       }
 
       const assetFilename = path.basename(assetPath);
-      const targetLocation = path.join(dolphin_path, assetFilename);
+      const targetLocation = path.join(dolphinPath, assetFilename);
 
       // Actually move the app image to the correct folder
       log(`Moving ${assetPath} to ${targetLocation}`);

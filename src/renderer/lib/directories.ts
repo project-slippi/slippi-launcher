@@ -19,11 +19,11 @@ export async function findDolphinExecutable(
   type: DolphinType
 ): Promise<string> {
   // Make sure the directory actually exists
-  const dolphin_path = path.join(remote.app.getPath("userData"), type);
-  await fs.ensureDir(dolphin_path);
+  const dolphinPath = path.join(remote.app.getPath("userData"), type);
+  await fs.ensureDir(dolphinPath);
 
   // Check the directory contents
-  const files = await fs.readdir(dolphin_path);
+  const files = await fs.readdir(dolphinPath);
   const result = files.find((filename) => {
     switch (process.platform) {
       case "win32":
@@ -38,8 +38,8 @@ export async function findDolphinExecutable(
   });
 
   if (!result) {
-    throw new Error(`No Dolphin found in: ${dolphin_path}`);
+    throw new Error(`No Dolphin found in: ${dolphinPath}`);
   }
 
-  return path.join(dolphin_path, result);
+  return path.join(dolphinPath, result);
 }
