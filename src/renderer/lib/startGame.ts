@@ -1,3 +1,4 @@
+import { DolphinType } from "./directories";
 import { assertDolphinInstallation, openDolphin } from "./downloadDolphin";
 import { assertPlayKey } from "./playkey";
 
@@ -16,5 +17,5 @@ export async function startGame(
   }
 
   log("Starting game...");
-  openDolphin(["-b", "-e", meleeFile]);
+  openDolphin(DolphinType.NETPLAY, ["-b", "-e", meleeFile]);
 }
