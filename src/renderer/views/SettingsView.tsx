@@ -8,14 +8,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import CloseIcon from "@material-ui/icons/Close";
 import { colors } from "common/colors";
 import React from "react";
-import {
-  Link,
-  Redirect,
-  Route,
-  Switch,
-  useHistory,
-  useRouteMatch,
-} from "react-router-dom";
+import { Link, Redirect, Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
 
 import { DualPane } from "@/components/DualPane";
@@ -68,8 +61,7 @@ export const SettingsView: React.FC = () => {
 
   React.useEffect(() => {
     document.addEventListener("keydown", keyDownFunction, false);
-    return () =>
-      document.removeEventListener("keydown", keyDownFunction, false);
+    return () => document.removeEventListener("keydown", keyDownFunction, false);
   }, [keyDownFunction]);
 
   return (
@@ -106,9 +98,7 @@ export const SettingsView: React.FC = () => {
                         component={Link}
                         to={`${path}/${item.path}`}
                       >
-                        {item.icon ? (
-                          <ListItemIcon>{item.icon}</ListItemIcon>
-                        ) : null}
+                        {item.icon ? <ListItemIcon>{item.icon}</ListItemIcon> : null}
                         <ListItemText primary={item.name} />
                       </ListItem>
                     );

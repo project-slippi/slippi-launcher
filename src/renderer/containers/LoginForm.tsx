@@ -111,13 +111,7 @@ export const LoginForm: React.FC<{
         </Grid>
       )}
       <Grid container justify="flex-end" style={{ marginTop: 15 }}>
-        <Button
-          type="submit"
-          color="primary"
-          disabled={loading}
-          variant="contained"
-          style={{ textTransform: "none" }}
-        >
+        <Button type="submit" color="primary" disabled={loading} variant="contained" style={{ textTransform: "none" }}>
           Log in
         </Button>
       </Grid>

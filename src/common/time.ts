@@ -6,9 +6,7 @@ export function convertFrameCountToDurationString(frameCount: number): string {
   return moment.utc(duration.as("milliseconds")).format("m:ss");
 }
 
-function convertToDateAndTime(
-  dateTimeString: moment.MomentInput
-): moment.Moment | null {
+function convertToDateAndTime(dateTimeString: moment.MomentInput): moment.Moment | null {
   const asMoment = moment(dateTimeString);
   if (asMoment.isValid()) {
     return asMoment.local();
@@ -20,12 +18,11 @@ function convertToDateAndTime(
 export function fileToDateAndTime(
   dateTimeString: string | undefined | null,
   fileName: string,
-  fullPath: string
+  fullPath: string,
 ): moment.Moment | null {
   const startAt = convertToDateAndTime(dateTimeString);
   const getTimeFromFileName = () => filenameToDateAndTime(fileName);
-  const getTimeFromBirthTime = () =>
-    convertToDateAndTime(fs.statSync(fullPath).birthtime);
+  const getTimeFromBirthTime = () => convertToDateAndTime(fs.statSync(fullPath).birthtime);
 
   return startAt || getTimeFromFileName() || getTimeFromBirthTime() || null;
 }

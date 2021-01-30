@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginRight: 5,
       fontWeight: 500,
     },
-  })
+  }),
 );
 
 export const MeleeOptions: React.FC = () => {
@@ -44,26 +44,19 @@ export const MeleeOptions: React.FC = () => {
       setIsoPath(isoPath);
       verifyIsoPath(isoPath);
     },
-    [setIsoPath]
+    [setIsoPath],
   );
   return (
     <div>
       <Typography variant="h5">Melee Options</Typography>
-      <SettingItem
-        name="Melee ISO File"
-        description="The path to an NTSC Melee 1.02 ISO."
-      >
+      <SettingItem name="Melee ISO File" description="The path to an NTSC Melee 1.02 ISO.">
         <PathInput
           value={isoPath !== null ? isoPath : ""}
           onSelect={onIsoSelect}
           placeholder="No file set"
           disabled={verifying}
           endAdornment={
-            <div
-              className={`${classes.validation} ${
-                verifying ? "" : classes[isValidIso ? "valid" : "invalid"]
-              }`}
-            >
+            <div className={`${classes.validation} ${verifying ? "" : classes[isValidIso ? "valid" : "invalid"]}`}>
               <span className={classes.validationText}>
                 {verifying ? "Verifying..." : isValidIso ? "Valid" : "Invalid"}
               </span>
@@ -78,10 +71,7 @@ export const MeleeOptions: React.FC = () => {
           }
         />
       </SettingItem>
-      <SettingItem
-        name="Replay Root Directory"
-        description="The folder where your SLP files are stored."
-      >
+      <SettingItem name="Replay Root Directory" description="The folder where your SLP files are stored.">
         <PathInput
           value={replayDir}
           onSelect={setReplayDir}

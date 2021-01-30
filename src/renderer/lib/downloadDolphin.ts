@@ -9,10 +9,7 @@ import { lt } from "semver";
 
 import { DolphinType, findDolphinExecutable } from "./directories";
 
-export async function assertDolphinInstallation(
-  type: DolphinType,
-  log: (message: string) => void
-): Promise<void> {
+export async function assertDolphinInstallation(type: DolphinType, log: (message: string) => void): Promise<void> {
   try {
     await findDolphinExecutable(type);
     log(`Found existing ${type} Dolphin executable.`);
@@ -37,22 +34,15 @@ export async function assertDolphinInstallation(
   }
 }
 
-export async function assertDolphinInstallations(
-  log: (message: string) => void
-): Promise<void> {
+export async function assertDolphinInstallations(log: (message: string) => void): Promise<void> {
   await assertDolphinInstallation(DolphinType.NETPLAY, log);
   await assertDolphinInstallation(DolphinType.PLAYBACK, log);
   return;
 }
 
-async function compareDolphinVersion(
-  type: DolphinType,
-  latestVersion: string
-): Promise<boolean> {
+async function compareDolphinVersion(type: DolphinType, latestVersion: string): Promise<boolean> {
   const dolphinPath = await findDolphinExecutable(type);
-  const dolphinVersion = spawnSync(dolphinPath, [
-    "--version",
-  ]).stdout.toString();
+  const dolphinVersion = spawnSync(dolphinPath, ["--version"]).stdout.toString();
   return lt(latestVersion, dolphinVersion);
 }
 
@@ -99,37 +89,25 @@ function matchesPlatform(releaseName: string): boolean {
   }
 }
 
-async function downloadLatestDolphin(
-  type: DolphinType,
-  log: (status: string) => void = console.log
-): Promise<string> {
+async function downloadLatestDolphin(type: DolphinType, log: (status: string) => void = console.log): Promise<string> {
   const asset = await getLatestDolphinAsset(type);
   const downloadLocation = path.join(remote.app.getPath("temp"), asset.name);
   const exists = await fileExists(downloadLocation);
   if (!exists) {
     log(`Downloading ${asset.browser_download_url} to ${downloadLocation}`);
     await download(asset.browser_download_url, downloadLocation, (percent) =>
-      log(`Downloading... ${(percent * 100).toFixed(0)}%`)
+      log(`Downloading... ${(percent * 100).toFixed(0)}%`),
     );
-    log(
-      `Successfully downloaded ${asset.browser_download_url} to ${downloadLocation}`
-    );
+    log(`Successfully downloaded ${asset.browser_download_url} to ${downloadLocation}`);
   } else {
     log(`${downloadLocation} already exists. Skipping download.`);
   }
   return downloadLocation;
 }
 
-async function installDolphin(
-  type: DolphinType,
-  assetPath: string,
-  log: (message: string) => void = console.log
-) {
+async function installDolphin(type: DolphinType, assetPath: string, log: (message: string) => void = console.log) {
   const dolphinPath = path.join(remote.app.getPath("userData"), type);
-  const backupLocation = path.join(
-    remote.app.getPath("userData"),
-    type + "_old"
-  );
+  const backupLocation = path.join(remote.app.getPath("userData"), type + "_old");
   switch (process.platform) {
     case "win32": {
       await backupUser(backupLocation, dolphinPath, log);
@@ -143,12 +121,7 @@ async function installDolphin(
       break;
     }
     case "darwin": {
-      const newDolphinResources = path.join(
-        dolphinPath,
-        "Slippi Dolphin.app",
-        "Contents",
-        "Resources"
-      );
+      const newDolphinResources = path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "Resources");
 
       await backupUser(backupLocation, newDolphinResources, log);
 
@@ -187,9 +160,7 @@ async function installDolphin(
       break;
     }
     default: {
-      throw new Error(
-        `Installing Netplay is not supported on this platform: ${process.platform}`
-      );
+      throw new Error(`Installing Netplay is not supported on this platform: ${process.platform}`);
     }
   }
 }
@@ -197,7 +168,7 @@ async function installDolphin(
 async function backupUser(
   backupLocation: string,
   toBackup: string,
-  log: (status: string) => void = console.log
+  log: (status: string) => void = console.log,
 ): Promise<void> {
   const alreadyInstalled = await fs.pathExists(toBackup);
   if (alreadyInstalled) {
@@ -209,7 +180,7 @@ async function backupUser(
 async function restoreUser(
   backupLocation: string,
   restoreLocation: string,
-  log: (status: string) => void = console.log
+  log: (status: string) => void = console.log,
 ): Promise<void> {
   const alreadyInstalled = await fs.pathExists(restoreLocation);
   if (alreadyInstalled) {

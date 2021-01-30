@@ -4,11 +4,7 @@ import fs from "fs";
 import http from "http";
 import https from "https";
 
-export function download(
-  url: string,
-  destf: string,
-  progressCallback?: (percent: number) => void
-) {
+export function download(url: string, destf: string, progressCallback?: (percent: number) => void) {
   const w = fs.createWriteStream(destf);
 
   const progress = (percent: number) => {
@@ -29,10 +25,7 @@ export function download(
 
         protocol
           .get(location, (res2) => {
-            const total = parseInt(
-              res2.headers["content-length"] as string,
-              10
-            );
+            const total = parseInt(res2.headers["content-length"] as string, 10);
             let completed = 0;
             res2.pipe(w);
             res2.on("data", (data) => {

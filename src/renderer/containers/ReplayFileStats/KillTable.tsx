@@ -2,13 +2,7 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
-import {
-  animations as animationUtils,
-  Frames,
-  moves as moveUtils,
-  StatsType,
-  StockType,
-} from "@slippi/slippi-js";
+import { animations as animationUtils, Frames, moves as moveUtils, StatsType, StockType } from "@slippi/slippi-js";
 import { extractPlayerNames } from "common/matchNames";
 import { FileResult } from "common/replayBrowser";
 import { convertFrameCountToDurationString } from "common/time";
@@ -26,29 +20,20 @@ export interface KillTableProps {
   playerIndex: number;
 }
 
-export const KillTable: React.FC<KillTableProps> = ({
-  file,
-  stats,
-  playerIndex,
-}) => {
+export const KillTable: React.FC<KillTableProps> = ({ file, stats, playerIndex }) => {
   const player = file.settings.players[playerIndex];
   const names = extractPlayerNames(playerIndex, file.settings, file.metadata);
   const playerDisplay = (
     <div style={{ display: "flex", alignItems: "center" }}>
       <img
-        src={getCharacterIcon(
-          player.characterId ?? 0,
-          player.characterColor ?? 0
-        )}
+        src={getCharacterIcon(player.characterId ?? 0, player.characterColor ?? 0)}
         height={24}
         width={24}
         style={{
           marginRight: 10,
         }}
       />
-      <div style={{ fontWeight: 500 }}>
-        {names.name ? names.name : "Player " + (playerIndex + 1)}
-      </div>
+      <div style={{ fontWeight: 500 }}>{names.name ? names.name : "Player " + (playerIndex + 1)}</div>
     </div>
   );
   const generateStockRow = (stock: StockType) => {
@@ -70,11 +55,7 @@ export const KillTable: React.FC<KillTableProps> = ({
       end = convertFrameCountToDurationString(stock.endFrame);
 
       killedBy = renderKilledBy(stock);
-      killedDirection = (
-        <span style={{ color: "#2ECC40", fontSize: 24 }}>
-          {renderKilledDirection(stock)}
-        </span>
-      );
+      killedDirection = <span style={{ color: "#2ECC40", fontSize: 24 }}>{renderKilledDirection(stock)}</span>;
     }
 
     return (
@@ -99,9 +80,7 @@ export const KillTable: React.FC<KillTableProps> = ({
     const killingPunishes = _.filter(playerPunishes, "didKill");
     const killingPunishesByEndFrame = _.keyBy(killingPunishes, "endFrame");
     const punishThatEndedStock =
-      stock.endFrame !== null && stock.endFrame !== undefined
-        ? killingPunishesByEndFrame[stock.endFrame]
-        : null;
+      stock.endFrame !== null && stock.endFrame !== undefined ? killingPunishesByEndFrame[stock.endFrame] : null;
 
     if (!punishThatEndedStock) {
       // return <span className={styles['secondary-text']}>Self Destruct</span>;
@@ -120,9 +99,7 @@ export const KillTable: React.FC<KillTableProps> = ({
       return undefined;
     }
 
-    const killedDirection = animationUtils.getDeathDirection(
-      stock.deathAnimation
-    );
+    const killedDirection = animationUtils.getDeathDirection(stock.deathAnimation);
     switch (killedDirection) {
       case "up":
         return <ArrowUpwardIcon fontSize="inherit" />;
@@ -138,9 +115,7 @@ export const KillTable: React.FC<KillTableProps> = ({
   const renderHeaderPlayer = () => {
     return (
       <T.TableRow>
-        <T.TableHeaderCell colSpan={columnCount}>
-          {playerDisplay}
-        </T.TableHeaderCell>
+        <T.TableHeaderCell colSpan={columnCount}>{playerDisplay}</T.TableHeaderCell>
       </T.TableRow>
     );
   };

@@ -47,7 +47,7 @@ const FileListResults: React.FC<{
         {...files[props.index]}
       />
     ),
-    [files, onSelect, onOpenMenu]
+    [files, onSelect, onOpenMenu],
   );
 
   // Store the latest scroll row item on unmount
@@ -123,9 +123,7 @@ export const FileList: React.FC<{
   };
 
   return (
-    <div
-      style={{ display: "flex", flexFlow: "column", height: "100%", flex: "1" }}
-    >
+    <div style={{ display: "flex", flexFlow: "column", height: "100%", flex: "1" }}>
       <div style={{ flex: "1", overflow: "hidden" }}>
         <FileListResults
           onOpenMenu={onOpenMenu}
@@ -135,11 +133,7 @@ export const FileList: React.FC<{
           setScrollRowItem={setScrollRowItem}
         />
       </div>
-      <Menu
-        anchorEl={menuItem ? menuItem.anchorEl : null}
-        open={Boolean(menuItem)}
-        onClose={handleClose}
-      >
+      <Menu anchorEl={menuItem ? menuItem.anchorEl : null} open={Boolean(menuItem)} onClose={handleClose}>
         <MenuItem onClick={handleRevealLocation}>
           <StyledListItemIcon>
             <FolderIcon fontSize="small" />

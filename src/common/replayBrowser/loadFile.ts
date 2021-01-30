@@ -33,11 +33,7 @@ export async function loadFile(fullPath: string): Promise<FileResult> {
     }
   }
 
-  const startAtTime = fileToDateAndTime(
-    metadata ? metadata.startAt : null,
-    filename,
-    result.fullPath
-  );
+  const startAtTime = fileToDateAndTime(metadata ? metadata.startAt : null, filename, result.fullPath);
 
   if (startAtTime) {
     result.startTime = startAtTime.toISOString();

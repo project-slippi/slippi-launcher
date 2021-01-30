@@ -57,8 +57,7 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
 
   React.useEffect(() => {
     document.addEventListener("keydown", keyDownFunction, false);
-    return () =>
-      document.removeEventListener("keydown", keyDownFunction, false);
+    return () => document.removeEventListener("keydown", keyDownFunction, false);
   }, [keyDownFunction]);
 
   return (
@@ -67,19 +66,14 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
         {...props}
         loading={loading}
         stats={gameStats}
-        onPlay={() =>
-          console.warn("Playing back replays is currently unsupported")
-        }
+        onPlay={() => console.warn("Playing back replays is currently unsupported")}
       />
       {numPlayers !== 2 ? (
         <IconMessage Icon={ErrorIcon} label="Only singles is supported" />
       ) : loading ? (
         <LoadingScreen message={"Crunching numbers..."} />
       ) : error ? (
-        <IconMessage
-          Icon={ErrorIcon}
-          label={`Error: ${error.message ?? JSON.stringify(error, null, 2)}`}
-        />
+        <IconMessage Icon={ErrorIcon} label={`Error: ${error.message ?? JSON.stringify(error, null, 2)}`} />
       ) : gameStats ? (
         <GameProfile {...props} stats={gameStats}></GameProfile>
       ) : (

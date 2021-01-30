@@ -36,9 +36,7 @@ export interface BouncingSlippiLogoProps {
   size?: string;
 }
 
-export const BouncingSlippiLogo: React.FC<BouncingSlippiLogoProps> = ({
-  size = "80px",
-}) => {
+export const BouncingSlippiLogo: React.FC<BouncingSlippiLogoProps> = ({ size = "80px" }) => {
   return (
     <Outer size={size}>
       <Logo size={size} />

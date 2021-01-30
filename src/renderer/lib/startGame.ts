@@ -2,10 +2,7 @@ import { DolphinType } from "./directories";
 import { assertDolphinInstallation, openDolphin } from "./downloadDolphin";
 import { assertPlayKey } from "./playkey";
 
-export async function startGame(
-  log: (status: string) => void,
-  meleeFile?: string
-): Promise<void> {
+export async function startGame(log: (status: string) => void, meleeFile?: string): Promise<void> {
   log("Checking for Dolphin installation...");
   await assertDolphinInstallation(DolphinType.NETPLAY, log);
 

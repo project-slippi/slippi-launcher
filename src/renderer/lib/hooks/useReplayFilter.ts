@@ -35,14 +35,12 @@ const useReplayFilterStore = create<StoreState & StoreReducers>((set) => ({
     set((store) =>
       produce(store, (draft) => {
         draft.options = Object.assign({}, draft.options, options);
-      })
+      }),
     );
   },
 }));
 
-const generateFilterFunction = (
-  filterOptions: FilterOptions
-): ((file: FileResult) => boolean) => (file) => {
+const generateFilterFunction = (filterOptions: FilterOptions): ((file: FileResult) => boolean) => (file) => {
   if (filterOptions.hideShortGames) {
     if (file.lastFrame !== null && file.lastFrame <= 30 * 60) {
       return false;
@@ -58,9 +56,7 @@ const generateFilterFunction = (
   return namesMatch([filterOptions.searchText], matchable);
 };
 
-const generateSortFunction = (
-  filterOptions: FilterOptions
-): ((a: FileResult, b: FileResult) => number) => (a, b) => {
+const generateSortFunction = (filterOptions: FilterOptions): ((a: FileResult, b: FileResult) => number) => (a, b) => {
   const aTime = a.startTime ? Date.parse(a.startTime) : 0;
   const bTime = b.startTime ? Date.parse(b.startTime) : 0;
   if (filterOptions.sortByNewestFirst) {

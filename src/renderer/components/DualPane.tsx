@@ -75,9 +75,7 @@ export const DualPane: React.FC<{
   width = 250,
   resizeHandleWidth = 8,
 }) => {
-  const [panelWidth, setPanelWidth] = React.useState<number>(
-    restoreWidth(id, width)
-  );
+  const [panelWidth, setPanelWidth] = React.useState<number>(restoreWidth(id, width));
 
   // Clean up event listeners, classes, etc.
   const onMouseUp = () => {

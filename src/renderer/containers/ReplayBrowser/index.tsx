@@ -35,12 +35,7 @@ export const ReplayBrowser: React.FC = () => {
   const fileErrorCount = useReplays((store) => store.fileErrorCount);
   const rootSlpPath = useSettings((store) => store.settings.rootSlpPath);
 
-  const {
-    filterOptions,
-    setFilterOptions,
-    sortAndFilterFiles,
-    clearFilter,
-  } = useReplayFilter();
+  const { filterOptions, setFilterOptions, sortAndFilterFiles, clearFilter } = useReplayFilter();
   const filteredFiles = sortAndFilterFiles(files);
   const numHiddenFiles = files.length - filteredFiles.length;
 
@@ -77,22 +72,13 @@ export const ReplayBrowser: React.FC = () => {
           index={selectedItem}
           total={filteredFiles.length}
           file={filteredFiles[selectedItem]}
-          onNext={() =>
-            setSelectedItem(
-              Math.min(filteredFiles.length - 1, selectedItem + 1)
-            )
-          }
+          onNext={() => setSelectedItem(Math.min(filteredFiles.length - 1, selectedItem + 1))}
           onPrev={() => setSelectedItem(Math.max(0, selectedItem - 1))}
           onClose={() => setSelectedItem(null)}
         />
       ) : (
         <>
-          <FilterToolbar
-            disabled={loading}
-            onChange={updateFilter}
-            value={filterOptions}
-            ref={searchInputRef}
-          />
+          <FilterToolbar disabled={loading} onChange={updateFilter} value={filterOptions} ref={searchInputRef} />
           <div
             style={{
               display: "flex",
@@ -163,8 +149,7 @@ export const ReplayBrowser: React.FC = () => {
           >
             <div>{currentFolder}</div>
             <div style={{ textAlign: "right" }}>
-              {filteredFiles.length} files found. {numHiddenFiles} files
-              filtered.{" "}
+              {filteredFiles.length} files found. {numHiddenFiles} files filtered.{" "}
               {fileErrorCount > 0 ? `${fileErrorCount} files had errors.` : ""}
             </div>
           </div>
@@ -192,15 +177,8 @@ const EmptyFolder: React.FC<{
     <IconMessage Icon={SearchIcon} label="No SLP files found">
       {hiddenFileCount > 0 && (
         <div style={{ textAlign: "center" }}>
-          <Typography style={{ marginTop: 20, opacity: 0.6 }}>
-            {hiddenFileCount} files hidden
-          </Typography>
-          <Button
-            className={classes.label}
-            color="primary"
-            onClick={onClearFilter}
-            size="small"
-          >
+          <Typography style={{ marginTop: 20, opacity: 0.6 }}>{hiddenFileCount} files hidden</Typography>
+          <Button className={classes.label} color="primary" onClick={onClearFilter} size="small">
             clear filter
           </Button>
         </div>
@@ -215,5 +193,5 @@ const useStyles = makeStyles(() =>
       textTransform: "lowercase",
       fontSize: 12,
     },
-  })
+  }),
 );

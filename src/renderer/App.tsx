@@ -7,12 +7,7 @@ import log from "electron-log";
 import firebase from "firebase";
 import React from "react";
 import { hot } from "react-hot-loader/root";
-import {
-  HashRouter as Router,
-  Redirect,
-  Route,
-  Switch,
-} from "react-router-dom";
+import { HashRouter as Router, Redirect, Route, Switch } from "react-router-dom";
 
 import { useApp } from "@/store/app";
 
@@ -37,9 +32,7 @@ const App: React.FC = () => {
     try {
       initializeFirebase();
     } catch (err) {
-      log.error(
-        "Error initializing firebase. Did you forget to create a .env file from the .env.example file?"
-      );
+      log.error("Error initializing firebase. Did you forget to create a .env file from the .env.example file?");
       init();
       return;
     }

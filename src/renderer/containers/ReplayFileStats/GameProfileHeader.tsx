@@ -8,20 +8,11 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
-import {
-  GameStartType,
-  MetadataType,
-  PlayerType,
-  stages as stageUtils,
-  StatsType,
-} from "@slippi/slippi-js";
+import { GameStartType, MetadataType, PlayerType, stages as stageUtils, StatsType } from "@slippi/slippi-js";
 import { colors } from "common/colors";
 import { extractPlayerNames, PlayerNames } from "common/matchNames";
 import { FileResult } from "common/replayBrowser";
-import {
-  convertFrameCountToDurationString,
-  monthDayHourFormat,
-} from "common/time";
+import { convertFrameCountToDurationString, monthDayHourFormat } from "common/time";
 import _ from "lodash";
 import moment from "moment";
 import React from "react";
@@ -46,27 +37,17 @@ interface PlayerIndicatorProps {
 const PlayerIndicator: React.FC<PlayerIndicatorProps> = ({ player, names }) => {
   const classes = useStyles();
   const backupName = player.type === 1 ? "CPU" : "Player";
-  const charIcon = getCharacterIcon(
-    player.characterId ?? 0,
-    player.characterColor ?? 0
-  );
+  const charIcon = getCharacterIcon(player.characterId ?? 0, player.characterColor ?? 0);
   // const teamId = isTeams ? player.teamId : null;
   return (
     <PlayerInfo>
-      <Typography
-        variant="h6"
-        style={{ display: "flex", alignItems: "center" }}
-      >
+      <Typography variant="h6" style={{ display: "flex", alignItems: "center" }}>
         <img src={charIcon} />
         {names.name || names.tag || `${backupName} ${player.port}`}
       </Typography>
       {names.code && (
         <div style={{ textAlign: "center" }}>
-          <Chip
-            className={classes.labelSmall}
-            size="small"
-            label={names.code}
-          />
+          <Chip className={classes.labelSmall} size="small" label={names.code} />
         </div>
       )}
     </PlayerInfo>
@@ -96,10 +77,7 @@ interface PlayerInfoDisplayProps {
   metadata: MetadataType | null;
 }
 
-const PlayerInfoDisplay: React.FC<PlayerInfoDisplayProps> = ({
-  settings,
-  metadata,
-}) => {
+const PlayerInfoDisplay: React.FC<PlayerInfoDisplayProps> = ({ settings, metadata }) => {
   const teams = _.chain(settings.players)
     .groupBy((player) => (settings.isTeams ? player.teamId : player.port))
     .toArray()
@@ -115,7 +93,7 @@ const PlayerInfoDisplay: React.FC<PlayerInfoDisplayProps> = ({
           player={player}
           isTeams={Boolean(settings.isTeams)}
           names={names}
-        />
+        />,
       );
     });
 
@@ -133,7 +111,7 @@ const PlayerInfoDisplay: React.FC<PlayerInfoDisplayProps> = ({
           }}
         >
           vs
-        </div>
+        </div>,
       );
     }
   });
@@ -164,8 +142,7 @@ export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
   onClose,
 }) => {
   const { metadata, settings } = file;
-  const stageImage =
-    settings.stageId !== null ? getStageImage(settings.stageId) : undefined;
+  const stageImage = settings.stageId !== null ? getStageImage(settings.stageId) : undefined;
   return (
     <Header backgroundImage={stageImage}>
       <div
@@ -190,14 +167,7 @@ export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
           </div>
           <GameDetails file={file} stats={stats} />
         </div>
-        <Controls
-          disabled={loading}
-          index={index}
-          total={total}
-          onNext={onNext}
-          onPrev={onPrev}
-          onPlay={onPlay}
-        />
+        <Controls disabled={loading} index={index} total={total} onNext={onNext} onPrev={onPrev} onPlay={onPlay} />
       </div>
     </Header>
   );
@@ -213,11 +183,7 @@ const Header = styled.div<{
   border-bottom: solid 2px ${colors.grayDark};
   background-size: cover;
   background-position: center center;
-  background-image: linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0.5) 0 30%,
-      rgba(0, 0, 0, 0.8) 90%
-    )
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0 30%, rgba(0, 0, 0, 0.8) 90%)
     ${(p) =>
       p.backgroundImage
         ? `,
@@ -231,18 +197,14 @@ const GameDetails: React.FC<{
 }> = ({ file, stats }) => {
   let stageName = "Unknown";
   try {
-    stageName = stageUtils.getStageName(
-      file.settings.stageId !== null ? file.settings.stageId : 0
-    );
+    stageName = stageUtils.getStageName(file.settings.stageId !== null ? file.settings.stageId : 0);
   } catch (err) {
     console.error(err);
   }
 
   const platform = _.get(file.metadata, "playedOn") || "Unknown";
 
-  const startAtDisplay = new Date(
-    file.startTime ? Date.parse(file.startTime) : 0
-  );
+  const startAtDisplay = new Date(file.startTime ? Date.parse(file.startTime) : 0);
 
   // Sometimes metadata doesn't exist and won't have the last frame
   // but we might have the stats computed which contains the real last frame.
@@ -252,9 +214,7 @@ const GameDetails: React.FC<{
     duration = _.get(stats, "lastFrame");
   }
   const durationLength =
-    duration !== null && duration !== undefined
-      ? convertFrameCountToDurationString(duration)
-      : "Unknown";
+    duration !== null && duration !== undefined ? convertFrameCountToDurationString(duration) : "Unknown";
 
   const displayData = [
     {
@@ -284,9 +244,7 @@ const GameDetails: React.FC<{
     );
   });
 
-  return (
-    <div style={{ display: "flex", padding: "0 10px" }}>{metadataElements}</div>
-  );
+  return <div style={{ display: "flex", padding: "0 10px" }}>{metadataElements}</div>;
 };
 
 const Controls: React.FC<{
@@ -306,11 +264,7 @@ const Controls: React.FC<{
       }}
     >
       <div>
-        <Button
-          variant="outlined"
-          onClick={onPlay}
-          startIcon={<PlayArrowIcon />}
-        >
+        <Button variant="outlined" onClick={onPlay} startIcon={<PlayArrowIcon />}>
           View Replay
         </Button>
       </div>
@@ -326,11 +280,7 @@ const Controls: React.FC<{
       >
         <Tooltip title="Previous replay">
           <span>
-            <IconButton
-              disabled={disabled || index === 0}
-              onClick={onPrev}
-              size="small"
-            >
+            <IconButton disabled={disabled || index === 0} onClick={onPrev} size="small">
               <ArrowBackIosIcon fontSize="small" />
             </IconButton>
           </span>
@@ -340,11 +290,7 @@ const Controls: React.FC<{
         </div>
         <Tooltip title="Next replay">
           <span>
-            <IconButton
-              disabled={disabled || index === total - 1}
-              onClick={onNext}
-              size="small"
-            >
+            <IconButton disabled={disabled || index === total - 1} onClick={onNext} size="small">
               <ArrowForwardIosIcon fontSize="small" />
             </IconButton>
           </span>

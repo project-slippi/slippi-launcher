@@ -25,10 +25,7 @@ enum QuickStartStep {
   COMPLETE = "COMPLETE",
 }
 
-function generateSteps(
-  user: firebase.User | null,
-  validIsoPath: boolean
-): QuickStartStep[] {
+function generateSteps(user: firebase.User | null, validIsoPath: boolean): QuickStartStep[] {
   const steps: QuickStartStep[] = [];
   if (!user) {
     steps.push(QuickStartStep.LOGIN);
@@ -72,9 +69,7 @@ export const QuickStart: React.FC<{
   const history = useHistory();
   // We only want to generate the steps list once so use a React state
   const [steps] = React.useState(generateSteps(user, skipIsoPage));
-  const [currentStep, setCurrentStep] = React.useState<QuickStartStep | null>(
-    null
-  );
+  const [currentStep, setCurrentStep] = React.useState<QuickStartStep | null>(null);
 
   React.useEffect(() => {
     // If we only have the complete step then just go home
@@ -104,10 +99,7 @@ export const QuickStart: React.FC<{
         <Typography variant="h2">{getStepHeader(currentStep)}</Typography>
         {currentStep !== QuickStartStep.COMPLETE && (
           <div>
-            <Button
-              onClick={() => history.push("/home")}
-              style={{ color: "white" }}
-            >
+            <Button onClick={() => history.push("/home")} style={{ color: "white" }}>
               Skip setup
             </Button>
           </div>
@@ -116,10 +108,7 @@ export const QuickStart: React.FC<{
       <Box display="flex" flex="1" alignSelf="stretch">
         {getStepContent(currentStep)}
       </Box>
-      <StepperDots
-        steps={steps.length}
-        activeStep={steps.indexOf(currentStep)}
-      />
+      <StepperDots steps={steps.length} activeStep={steps.indexOf(currentStep)} />
     </OuterBox>
   );
 };

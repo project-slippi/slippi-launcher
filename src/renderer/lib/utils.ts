@@ -14,13 +14,8 @@ export const getStatic = (val: string): string => {
   return path.resolve(path.join(__static, val)).replace(/\\/g, "/");
 };
 
-export const getCharacterIcon = (
-  characterId: number,
-  characterColor = 0
-): string => {
-  const imgSrc = getStatic(
-    `/images/characters/${characterId}/${characterColor}/stock.png`
-  );
+export const getCharacterIcon = (characterId: number, characterColor = 0): string => {
+  const imgSrc = getStatic(`/images/characters/${characterId}/${characterColor}/stock.png`);
   return imgSrc;
 };
 

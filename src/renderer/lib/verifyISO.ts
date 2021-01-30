@@ -88,9 +88,7 @@ isoHashes.set("c7c0866fbe6d7ebf3b9c4236f4f32f4c8f65b578", {
 export async function verifyISO(isoPath: string): Promise<ISOHashInfo> {
   const exists = await fileExists(isoPath);
   if (!exists) {
-    return Promise.reject(
-      `Error verifying ISO: File ${isoPath} does not exist`
-    );
+    return Promise.reject(`Error verifying ISO: File ${isoPath} does not exist`);
   }
 
   return new Promise((resolve, reject) => {

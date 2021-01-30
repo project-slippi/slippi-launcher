@@ -30,29 +30,15 @@ interface PlayerIndicatorProps {
   isTeams?: boolean;
 }
 
-const PlayerIndicator: React.FC<PlayerIndicatorProps> = ({
-  player,
-  name,
-  isTeams,
-}) => {
-  const charIcon = getCharacterIcon(
-    player.characterId ?? 0,
-    player.characterColor ?? 0
-  );
+const PlayerIndicator: React.FC<PlayerIndicatorProps> = ({ player, name, isTeams }) => {
+  const charIcon = getCharacterIcon(player.characterId ?? 0, player.characterColor ?? 0);
   const teamId = isTeams ? player.teamId : null;
   const color = getColor(player.port, teamId);
   const classes = useStyles({ backgroundColor: color });
 
   return (
-    <Badge
-      component="div"
-      classes={{ badge: classes.badge }}
-      badgeContent={`P${player.port}`}
-    >
-      <Chip
-        avatar={<Avatar alt="Natacha" src={charIcon} variant="square" />}
-        label={name}
-      />
+    <Badge component="div" classes={{ badge: classes.badge }} badgeContent={`P${player.port}`}>
+      <Chip avatar={<Avatar alt="Natacha" src={charIcon} variant="square" />} label={name} />
     </Badge>
   );
 };
@@ -72,10 +58,7 @@ export interface TeamElementProps {
   metadata: MetadataType | null;
 }
 
-export const TeamElements: React.FC<TeamElementProps> = ({
-  settings,
-  metadata,
-}) => {
+export const TeamElements: React.FC<TeamElementProps> = ({ settings, metadata }) => {
   // If this is a teams game, group by teamId, otherwise group players individually
   const teams = _.chain(settings.players)
     .groupBy((player) => (settings.isTeams ? player.teamId : player.port))
@@ -93,7 +76,7 @@ export const TeamElements: React.FC<TeamElementProps> = ({
           player={player}
           isTeams={Boolean(settings.isTeams)}
           name={names.code || names.tag || backupName}
-        />
+        />,
       );
     });
 
@@ -103,7 +86,7 @@ export const TeamElements: React.FC<TeamElementProps> = ({
       elements.push(
         <div key={`vs-${idx}`} style={{ color: "rgba(255, 255, 255, 0.5)" }}>
           vs
-        </div>
+        </div>,
       );
     }
   });

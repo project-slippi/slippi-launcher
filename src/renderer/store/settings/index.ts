@@ -32,9 +32,7 @@ type StoreReducers = {
   verifyIsoPath: (isoPath: string, shouldSetPath?: boolean) => Promise<void>;
 };
 
-const restored = (electronSettings.getSync(SETTINGS_KEY) as unknown) as Partial<
-  StoreState["settings"]
->;
+const restored = (electronSettings.getSync(SETTINGS_KEY) as unknown) as Partial<StoreState["settings"]>;
 
 const initialState: StoreState = {
   settings: {
@@ -56,21 +54,21 @@ export const useSettings = create<StoreState & StoreReducers>((set, get) => ({
     set((state) =>
       produce(state, (draft) => {
         draft.settings.isoPath = isoPath;
-      })
+      }),
     );
   },
   setIsoModTime: (isoModTime) => {
     set((state) =>
       produce(state, (draft) => {
         draft.settings.isoModTime = isoModTime;
-      })
+      }),
     );
   },
   setReplayDirectory: (dir) => {
     set((state) =>
       produce(state, (draft) => {
         draft.settings.rootSlpPath = dir;
-      })
+      }),
     );
   },
   verifyIsoPath: async (isoPath) => {
@@ -111,5 +109,5 @@ useSettings.subscribe(
   (settings: StoreState["settings"]) => {
     electronSettings.setSync(SETTINGS_KEY, settings);
   },
-  (state) => state.settings
+  (state) => state.settings,
 );

@@ -1,10 +1,4 @@
-import {
-  ApolloClient,
-  ApolloLink,
-  gql,
-  HttpLink,
-  InMemoryCache,
-} from "@apollo/client";
+import { ApolloClient, ApolloLink, gql, HttpLink, InMemoryCache } from "@apollo/client";
 import { fileExists } from "common/utils";
 import firebase from "firebase";
 import * as fs from "fs-extra";

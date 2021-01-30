@@ -10,7 +10,7 @@ export interface PlayerNames {
 export function extractPlayerNames(
   index: number,
   settings: GameStartType,
-  metadata?: MetadataType | null
+  metadata?: MetadataType | null,
 ): PlayerNames {
   const result: PlayerNames = {
     name: null,
@@ -18,19 +18,14 @@ export function extractPlayerNames(
     tag: null,
   };
 
-  const player = settings.players.find(
-    (player) => player.playerIndex === index
-  );
+  const player = settings.players.find((player) => player.playerIndex === index);
   result.tag = player ? player.nametag : null;
   result.name = get(metadata, ["players", index, "names", "netplay"], null);
   result.code = get(metadata, ["players", index, "names", "code"], null);
   return result;
 }
 
-export function extractAllPlayerNames(
-  settings: GameStartType,
-  metadata?: MetadataType | null
-): string[] {
+export function extractAllPlayerNames(settings: GameStartType, metadata?: MetadataType | null): string[] {
   const result: string[] = [];
   for (const player of settings.players) {
     const names = extractPlayerNames(player.playerIndex, settings, metadata);
@@ -39,11 +34,7 @@ export function extractAllPlayerNames(
   return result;
 }
 
-export function namesMatch(
-  lookingForNametags: string[],
-  inGameTags: string[],
-  fuzzyMatch = true
-): boolean {
+export function namesMatch(lookingForNametags: string[], inGameTags: string[], fuzzyMatch = true): boolean {
   if (lookingForNametags.length === 0 || inGameTags.length === 0) {
     return false;
   }
@@ -60,10 +51,7 @@ export function namesMatch(
     const matchedFuzzyTag = lookingForNametags.find((tag) => {
       const lowerSearch = tag.toLowerCase();
       const fuzzySearch = tag.split(" ").join("_").toLowerCase();
-      return (
-        fuzzyNetplayName.startsWith(lowerSearch) ||
-        fuzzyNetplayName.startsWith(fuzzySearch)
-      );
+      return fuzzyNetplayName.startsWith(lowerSearch) || fuzzyNetplayName.startsWith(fuzzySearch);
     });
     return matchedFuzzyTag !== undefined;
   });

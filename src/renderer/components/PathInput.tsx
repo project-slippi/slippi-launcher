@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginRight: 5,
       fontWeight: 500,
     },
-  })
+  }),
 );
 
 export interface PathInputProps {
@@ -65,9 +65,7 @@ export const PathInput: React.FC<PathInputProps> = ({
 }) => {
   const classes = useStyles();
   const onClick = async () => {
-    const result = await remote.dialog.showOpenDialog(
-      options ?? { properties: ["openFile"] }
-    );
+    const result = await remote.dialog.showOpenDialog(options ?? { properties: ["openFile"] });
     const res = result.filePaths;
     if (result.canceled || res.length === 0) {
       return;

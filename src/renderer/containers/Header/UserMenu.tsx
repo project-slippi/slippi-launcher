@@ -48,12 +48,7 @@ export const UserMenu: React.FC<{
       <ButtonBase onClick={handleClick}>
         <UserInfo user={user} />
       </ButtonBase>
-      <Menu
-        anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={closeMenu}
-      >
+      <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={closeMenu}>
         <MenuItem
           onClick={() => {
             closeMenu();
@@ -69,13 +64,9 @@ export const UserMenu: React.FC<{
         onClose={handleClose}
         aria-labelledby="responsive-dialog-title"
       >
-        <DialogTitle id="responsive-dialog-title">
-          Are you sure you want to log out?
-        </DialogTitle>
+        <DialogTitle id="responsive-dialog-title">Are you sure you want to log out?</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            You will need to log in again next time you want to play.
-          </DialogContentText>
+          <DialogContentText>You will need to log in again next time you want to play.</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">

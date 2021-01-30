@@ -31,7 +31,7 @@ const handleError = (error: any) => {
   showSnackbar(
     <Alert onClose={dismissSnackbar} severity="error">
       {message}
-    </Alert>
+    </Alert>,
   );
 };
 
@@ -60,11 +60,7 @@ const EnableOnlineSnackBar: React.FC = () => {
     <SnackbarContent
       message={"Please configure your online connect code."}
       action={
-        <Button
-          color="secondary"
-          size="small"
-          onClick={() => shell.openExternal("https://slippi.gg/online/enable")}
-        >
+        <Button color="secondary" size="small" onClick={() => shell.openExternal("https://slippi.gg/online/enable")}>
           Configure
         </Button>
       }
@@ -78,8 +74,7 @@ export const Header: React.FC = () => {
   const currentUser = useApp((store) => store.user);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
-  const meleeIsoPath =
-    useSettings((store) => store.settings.isoPath) || undefined;
+  const meleeIsoPath = useSettings((store) => store.settings.isoPath) || undefined;
   const showSnackbar = useApp((state) => state.showSnackbar);
   const dismissSnackbar = useApp((state) => state.dismissSnackbar);
 
@@ -92,7 +87,7 @@ export const Header: React.FC = () => {
             open("/settings/melee-options");
             dismissSnackbar();
           }}
-        />
+        />,
       );
       return;
     }
@@ -113,20 +108,14 @@ export const Header: React.FC = () => {
 
   return (
     <div>
-      <OuterBox
-        display="flex"
-        flexDirection="row"
-        justifyContent="space-between"
-      >
+      <OuterBox display="flex" flexDirection="row" justifyContent="space-between">
         {currentUser ? (
           <Button onClick={onPlay}>Play now</Button>
         ) : (
           <Button onClick={() => setLoginModalOpen(true)}>Log in</Button>
         )}
         <Box display="flex" alignItems="center">
-          {currentUser && (
-            <UserMenu user={currentUser} handleError={handleError}></UserMenu>
-          )}
+          {currentUser && <UserMenu user={currentUser} handleError={handleError}></UserMenu>}
           <Tooltip title="Settings">
             <IconButton onClick={() => open()}>
               <SettingsIcon />
@@ -134,12 +123,7 @@ export const Header: React.FC = () => {
           </Tooltip>
         </Box>
       </OuterBox>
-      <Dialog
-        open={loginModalOpen}
-        onClose={() => setLoginModalOpen(false)}
-        fullWidth={true}
-        fullScreen={fullScreen}
-      >
+      <Dialog open={loginModalOpen} onClose={() => setLoginModalOpen(false)} fullWidth={true} fullScreen={fullScreen}>
         <DialogTitle>Login</DialogTitle>
         <DialogContent>
           <LoginForm onSuccess={() => setLoginModalOpen(false)} />

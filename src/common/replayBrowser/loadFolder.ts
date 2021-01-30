@@ -6,7 +6,7 @@ import { FileLoadResult, FileResult } from "./types";
 
 export async function loadFolder(
   folder: string,
-  callback: (current: number, total: number) => void
+  callback: (current: number, total: number) => void,
 ): Promise<FileLoadResult> {
   // If the folder does not exist, return empty
   if (!(await fs.pathExists(folder))) {
@@ -17,9 +17,7 @@ export async function loadFolder(
   }
 
   const results = await fs.readdir(folder, { withFileTypes: true });
-  const slpFiles = results.filter(
-    (dirent) => dirent.isFile() && path.extname(dirent.name) === ".slp"
-  );
+  const slpFiles = results.filter((dirent) => dirent.isFile() && path.extname(dirent.name) === ".slp");
   const total = slpFiles.length;
 
   let fileErrorCount = 0;
@@ -47,7 +45,7 @@ export async function loadFolder(
       slpFiles.map((dirent) => {
         const fullPath = path.resolve(folder, dirent.name);
         return process(fullPath);
-      })
+      }),
     )
   ).filter((g) => g !== null) as FileResult[];
 

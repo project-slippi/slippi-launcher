@@ -1,13 +1,6 @@
 import Button from "@material-ui/core/ButtonBase";
 import React from "react";
-import {
-  Link,
-  Redirect,
-  Route,
-  Switch,
-  useHistory,
-  useRouteMatch,
-} from "react-router-dom";
+import { Link, Redirect, Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
 
 import { Header } from "@/containers/Header";

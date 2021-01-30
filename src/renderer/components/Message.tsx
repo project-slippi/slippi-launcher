@@ -20,13 +20,7 @@ export interface MessageProps {
   label?: string;
 }
 
-export const Message: React.FC<MessageProps> = ({
-  children,
-  className,
-  icon,
-  label,
-  style,
-}) => {
+export const Message: React.FC<MessageProps> = ({ children, className, icon, label, style }) => {
   return (
     <Outer style={style} className={className}>
       {icon}

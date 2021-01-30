@@ -15,9 +15,7 @@ export function getDefaultRootSlpPath(): string {
   return path.join(root, "Slippi");
 }
 
-export async function findDolphinExecutable(
-  type: DolphinType
-): Promise<string> {
+export async function findDolphinExecutable(type: DolphinType): Promise<string> {
   // Make sure the directory actually exists
   const dolphinPath = path.join(remote.app.getPath("userData"), type);
   await fs.ensureDir(dolphinPath);

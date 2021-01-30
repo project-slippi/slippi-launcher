@@ -29,7 +29,7 @@ const useStyles = makeStyles(() =>
       justifyContent: "space-between",
       padding: 5,
     },
-  })
+  }),
 );
 
 const ButtonContainer = styled.div`
@@ -44,10 +44,7 @@ export interface FilterToolbarProps {
   onChange: (options: Partial<FilterOptions>) => void;
 }
 
-export const FilterToolbar = React.forwardRef<
-  HTMLInputElement,
-  FilterToolbarProps
->((props, ref) => {
+export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarProps>((props, ref) => {
   const { disabled, onChange, value } = props;
   const [searchText, setSearchText] = React.useState(value.searchText || "");
   const classes = useStyles();
@@ -121,11 +118,7 @@ export const FilterToolbar = React.forwardRef<
           className={classes.input}
           endAdornment={
             <InputAdornment position="end">
-              <IconButton
-                size="small"
-                onClick={() => setNameFilter("")}
-                disabled={value.searchText.length === 0}
-              >
+              <IconButton size="small" onClick={() => setNameFilter("")} disabled={value.searchText.length === 0}>
                 {value.searchText.length > 0 ? <CloseIcon /> : <SearchIcon />}
               </IconButton>
             </InputAdornment>

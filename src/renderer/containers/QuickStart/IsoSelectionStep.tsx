@@ -67,14 +67,7 @@ export const IsoSelectionStep: React.FC = () => {
     verifyIsoPath(filePath);
   }, []);
 
-  const {
-    open,
-    getRootProps,
-    getInputProps,
-    isDragActive,
-    isDragAccept,
-    isDragReject,
-  } = useDropzone({
+  const { open, getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
     accept: ".iso",
     onDrop: onDrop,
     multiple: false,
@@ -85,20 +78,11 @@ export const IsoSelectionStep: React.FC = () => {
   return (
     <Box display="flex" flexDirection="column" flexGrow="1">
       <QuickStartHeader>Select Melee ISO</QuickStartHeader>
-      <Container
-        {...getRootProps({ isDragActive, isDragAccept, isDragReject })}
-      >
+      <Container {...getRootProps({ isDragActive, isDragAccept, isDragReject })}>
         <input {...getInputProps()} />
-        {isoPath && !loading && !validIsoPath && (
-          <ErrorMessage>Invalid ISO</ErrorMessage>
-        )}
+        {isoPath && !loading && !validIsoPath && <ErrorMessage>Invalid ISO</ErrorMessage>}
         {!loading && (
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={open}
-            style={{ textTransform: "none" }}
-          >
+          <Button color="primary" variant="contained" onClick={open} style={{ textTransform: "none" }}>
             Select
           </Button>
         )}

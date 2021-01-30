@@ -50,7 +50,7 @@ export const useApp = create<StoreState & StoreReducers>((set, get) => ({
       }).catch((err) => {
         log.error(err);
         set({ logMessage: err.message });
-      })
+      }),
     );
 
     // If there's an ISO path already set then verify the ISO
@@ -65,7 +65,7 @@ export const useApp = create<StoreState & StoreReducers>((set, get) => ({
           .then((res) => {
             console.log("finished verifying iso", res);
           })
-          .catch(log.error)
+          .catch(log.error),
       );
     }
 

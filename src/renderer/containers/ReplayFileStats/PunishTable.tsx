@@ -17,29 +17,20 @@ export interface PunishTableProps {
   playerIndex: number;
 }
 
-export const PunishTable: React.FC<PunishTableProps> = ({
-  file,
-  stats,
-  playerIndex,
-}) => {
+export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, playerIndex }) => {
   const player = file.settings.players[playerIndex];
   const names = extractPlayerNames(playerIndex, file.settings, file.metadata);
   const playerDisplay = (
     <div style={{ display: "flex", alignItems: "center" }}>
       <img
-        src={getCharacterIcon(
-          player.characterId ?? 0,
-          player.characterColor ?? 0
-        )}
+        src={getCharacterIcon(player.characterId ?? 0, player.characterColor ?? 0)}
         height={24}
         width={24}
         style={{
           marginRight: 10,
         }}
       />
-      <div style={{ fontWeight: 500 }}>
-        {names.name ? names.name : "Player " + (playerIndex + 1)}
-      </div>
+      <div style={{ fontWeight: 500 }}>{names.name ? names.name : "Player " + (playerIndex + 1)}</div>
     </div>
   );
 
@@ -76,9 +67,7 @@ export const PunishTable: React.FC<PunishTableProps> = ({
 
     return (
       <T.TableRow key={`no-punishes-${stock.count}`}>
-        <T.TableCell colSpan={columnCount}>
-          {"No punishes on opponent's " + toOrdinal(stockIndex)} stock
-        </T.TableCell>
+        <T.TableCell colSpan={columnCount}>{"No punishes on opponent's " + toOrdinal(stockIndex)} stock</T.TableCell>
       </T.TableRow>
     );
   };
@@ -89,18 +78,12 @@ export const PunishTable: React.FC<PunishTableProps> = ({
     const totalStocks = _.get(player, "startStocks");
     const currentStocks = stock.count - 1;
 
-    const stockIcons = _.range(
-      1,
-      totalStocks !== null ? totalStocks + 1 : 1
-    ).map((stockNum) => {
+    const stockIcons = _.range(1, totalStocks !== null ? totalStocks + 1 : 1).map((stockNum) => {
       return (
         <T.GrayableImage
           key={`stock-image-${stock.playerIndex}-${stockNum}`}
           gray={stockNum > currentStocks}
-          src={getCharacterIcon(
-            player.characterId ?? 0,
-            player.characterColor ?? 0
-          )}
+          src={getCharacterIcon(player.characterId ?? 0, player.characterColor ?? 0)}
           height={20}
           width={20}
         />
@@ -139,13 +122,7 @@ export const PunishTable: React.FC<PunishTableProps> = ({
   };
 
   const renderDamageRangeCell = (punish: ConversionType) => {
-    return (
-      <div>
-        {`(${Math.trunc(punish.startPercent)}% - ${Math.trunc(
-          punish.currentPercent
-        )}%)`}
-      </div>
-    );
+    return <div>{`(${Math.trunc(punish.startPercent)}% - ${Math.trunc(punish.currentPercent)}%)`}</div>;
   };
 
   const renderOpeningTypeCell = (punish: ConversionType) => {
@@ -161,9 +138,7 @@ export const PunishTable: React.FC<PunishTableProps> = ({
   const renderHeaderPlayer = () => {
     return (
       <T.TableRow>
-        <T.TableHeaderCell colSpan={columnCount}>
-          {playerDisplay}
-        </T.TableHeaderCell>
+        <T.TableHeaderCell colSpan={columnCount}>{playerDisplay}</T.TableHeaderCell>
       </T.TableRow>
     );
   };
@@ -195,16 +170,11 @@ export const PunishTable: React.FC<PunishTableProps> = ({
       const shouldDisplayStockLoss = () => {
         // Calculates whether we should display a stock loss row in this position
         const currentStock = _.first(opponentStocks);
-        if (
-          !currentStock ||
-          currentStock.endFrame === null ||
-          currentStock.endFrame === undefined
-        ) {
+        if (!currentStock || currentStock.endFrame === null || currentStock.endFrame === undefined) {
           return false;
         }
 
-        const wasLostBeforeNextPunish =
-          !punish || currentStock.endFrame < punish.startFrame;
+        const wasLostBeforeNextPunish = !punish || currentStock.endFrame < punish.startFrame;
 
         return wasLostBeforeNextPunish;
       };

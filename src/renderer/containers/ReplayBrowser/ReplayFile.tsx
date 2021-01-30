@@ -9,10 +9,7 @@ import MoreVertIcon from "@material-ui/icons/MoreVert";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import { stages as stageUtils } from "@slippi/slippi-js";
 import { FileResult } from "common/replayBrowser";
-import {
-  convertFrameCountToDurationString,
-  monthDayHourFormat,
-} from "common/time";
+import { convertFrameCountToDurationString, monthDayHourFormat } from "common/time";
 import _ from "lodash";
 import moment from "moment";
 import React from "react";
@@ -67,7 +64,7 @@ const useStyles = makeStyles(() =>
       padding: 3,
       fontSize: 12,
     },
-  })
+  }),
 );
 
 export interface ReplayFileProps extends FileResult {
@@ -105,15 +102,9 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
     <div style={style}>
       <Card className={classes.root}>
         {settings.stageId !== null && (
-          <CardMedia
-            className={classes.cover}
-            image={getStageImage(settings.stageId)}
-            title={stageName}
-          >
+          <CardMedia className={classes.cover} image={getStageImage(settings.stageId)} title={stageName}>
             {lastFrame !== null && (
-              <div className={classes.duration}>
-                {convertFrameCountToDurationString(lastFrame)}
-              </div>
+              <div className={classes.duration}>{convertFrameCountToDurationString(lastFrame)}</div>
             )}
           </CardMedia>
         )}

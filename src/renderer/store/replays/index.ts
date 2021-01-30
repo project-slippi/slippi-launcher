@@ -1,11 +1,6 @@
 import { StatsType } from "@slippi/slippi-js";
 import * as Comlink from "comlink";
-import {
-  FileResult,
-  findChild,
-  FolderResult,
-  generateSubFolderTree,
-} from "common/replayBrowser";
+import { FileResult, findChild, FolderResult, generateSubFolderTree } from "common/replayBrowser";
 import { shell } from "electron";
 import produce from "immer";
 import path from "path";
@@ -37,11 +32,7 @@ type StoreState = {
 };
 
 type StoreReducers = {
-  init: (
-    rootFolder: string,
-    forceReload?: boolean,
-    currentFolder?: string
-  ) => Promise<void>;
+  init: (rootFolder: string, forceReload?: boolean, currentFolder?: string) => Promise<void>;
   selectFile: (index: number, filePath: string) => Promise<void>;
   clearSelectedFile: () => Promise<void>;
   deleteFile: (filePath: string) => Promise<void>;
@@ -88,17 +79,12 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
       },
     });
 
-    await Promise.all([
-      loadDirectoryList(currentFolder ?? rootFolder),
-      loadFolder(currentFolder ?? rootFolder, true),
-    ]);
+    await Promise.all([loadDirectoryList(currentFolder ?? rootFolder), loadFolder(currentFolder ?? rootFolder, true)]);
   },
 
   selectFile: async (index, fullPath) => {
     if (get().selectedFile.loading) {
-      console.warn(
-        "Alreading loading game stats for another file. Try again later."
-      );
+      console.warn("Alreading loading game stats for another file. Try again later.");
       return;
     }
 
@@ -146,7 +132,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
         } else {
           console.warn(`Failed to delete ${filePath}`);
         }
-      })
+      }),
     );
   },
 
@@ -154,17 +140,13 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     const { currentFolder, loading } = get();
 
     if (loading) {
-      console.warn(
-        "A folder is already loading! Please wait for it to finish first."
-      );
+      console.warn("A folder is already loading! Please wait for it to finish first.");
       return;
     }
 
     const folderToLoad = childPath ?? currentFolder;
     if (currentFolder === folderToLoad && !forceReload) {
-      console.warn(
-        `${currentFolder} is already loaded. Set forceReload to true to reload anyway.`
-      );
+      console.warn(`${currentFolder} is already loaded. Set forceReload to true to reload anyway.`);
       return;
     }
 
@@ -176,7 +158,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
         folderToLoad,
         Comlink.proxy((current, total) => {
           set({ progress: { current, total } });
-        })
+        }),
       );
       set({
         scrollRowItem: 0,
@@ -199,7 +181,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
             child.collapsed = !child.collapsed;
           }
         }
-      })
+      }),
     );
   },
 
@@ -217,21 +199,15 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
       };
     }
 
-    const newFolders = await produce(
-      currentTree,
-      async (draft: FolderResult) => {
-        const pathToLoad = folder ?? rootSlpPath;
-        const child = findChild(draft, pathToLoad) ?? draft;
-        const childPaths = path.relative(child.fullPath, pathToLoad);
-        const childrenToExpand = childPaths ? childPaths.split(path.sep) : [];
-        if (child && child.subdirectories.length === 0) {
-          child.subdirectories = await generateSubFolderTree(
-            child.fullPath,
-            childrenToExpand
-          );
-        }
+    const newFolders = await produce(currentTree, async (draft: FolderResult) => {
+      const pathToLoad = folder ?? rootSlpPath;
+      const child = findChild(draft, pathToLoad) ?? draft;
+      const childPaths = path.relative(child.fullPath, pathToLoad);
+      const childrenToExpand = childPaths ? childPaths.split(path.sep) : [];
+      if (child && child.subdirectories.length === 0) {
+        child.subdirectories = await generateSubFolderTree(child.fullPath, childrenToExpand);
       }
-    );
+    });
 
     set({ folders: newFolders });
   },
