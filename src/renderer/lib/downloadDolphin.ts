@@ -1,10 +1,11 @@
 import AdmZip from "adm-zip";
-import { spawn } from "child_process";
+import { spawn, spawnSync } from "child_process";
 import { download } from "common/download";
 import { fileExists } from "common/utils";
 import { remote } from "electron";
 import * as fs from "fs-extra";
 import path from "path";
+import { lt } from "semver";
 
 import { DolphinType, findDolphinExecutable } from "./directories";
 
@@ -15,6 +16,18 @@ export async function assertDolphinInstallation(
   try {
     await findDolphinExecutable(type);
     log(`Found existing ${type} Dolphin executable.`);
+    log(`Checking if we need to update`);
+    const data = await getLatestReleaseData(type);
+    const latest_version = data.tag_name?.substring(1);
+    const is_outdated = await compareDolphinVersion(type, latest_version);
+    if (is_outdated) {
+      log(`${type} Dolphin installation is outdated. Downloading latest...`);
+      const downloadedAsset = await downloadLatestDolphin(type, log);
+      log(`Installing ${type} Dolphin...`);
+      await installDolphin(type, downloadedAsset);
+      return;
+    }
+    log("No update found...");
     return;
   } catch (err) {
     log(`Could not find ${type} Dolphin installation. Downloading...`);
@@ -32,23 +45,38 @@ export async function assertDolphinInstallations(
   return;
 }
 
+async function compareDolphinVersion(
+  type: DolphinType,
+  latest_version: string
+): Promise<boolean> {
+  const dolphin_path = await findDolphinExecutable(type);
+  const dolphin_version = spawnSync(dolphin_path, [
+    "--version",
+  ]).stdout.toString();
+  return lt(latest_version, dolphin_version);
+}
+
 export async function openDolphin(type: DolphinType, params?: string[]) {
   const dolphinPath = await findDolphinExecutable(type);
   spawn(dolphinPath, params);
 }
 
 async function getLatestDolphinAsset(type: DolphinType): Promise<any> {
-  const owner = "project-slippi";
-  let repo = "Ishiiruka";
-  if (type === DolphinType.PLAYBACK) {
-    repo += "-Playback";
-  }
-  const release = await getLatestRelease(owner, repo);
+  const release = await getLatestReleaseData(type);
   const asset = release.assets.find((a: any) => matchesPlatform(a.name));
   if (!asset) {
     throw new Error("Could not fetch latest release");
   }
   return asset;
+}
+
+async function getLatestReleaseData(type: DolphinType): Promise<any> {
+  const owner = "project-slippi";
+  let repo = "Ishiiruka";
+  if (type === DolphinType.PLAYBACK) {
+    repo += "-Playback";
+  }
+  return getLatestRelease(owner, repo);
 }
 
 async function getLatestRelease(owner: string, repo: string): Promise<any> {
