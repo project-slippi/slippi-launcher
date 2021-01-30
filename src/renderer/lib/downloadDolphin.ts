@@ -128,13 +128,26 @@ async function installDolphin(
   const dolphin_path = path.join(remote.app.getPath("userData"), type);
   switch (process.platform) {
     case "win32": {
+      const user_folder_path = path.join(dolphin_path, "User");
+      const bkp_user_folder_path = path.join(
+        remote.app.getPath("userData"),
+        "Userbkp"
+      );
+
       const zip = new AdmZip(assetPath);
-      if (await fs.pathExists(dolphin_path)) {
-        log(`${dolphin_path} already exists. Deleting...`);
+      const already_installed = await fs.pathExists(dolphin_path);
+      if (already_installed) {
+        log(
+          `${dolphin_path} already exists. Backing up User folder and deleting ${type} dolphin...`
+        );
+        await fs.move(user_folder_path, bkp_user_folder_path);
         await fs.remove(dolphin_path);
       }
+
       log(`Extracting to: ${dolphin_path}`);
       zip.extractAllTo(dolphin_path, true);
+      if (already_installed)
+        await fs.move(bkp_user_folder_path, user_folder_path);
       break;
     }
     case "darwin": {
