@@ -2,7 +2,7 @@ import log from "electron-log";
 import firebase from "firebase";
 import create from "zustand";
 
-import { assertDolphinInstallation } from "@/lib/downloadDolphin";
+import { assertDolphinInstallations } from "@/lib/downloadDolphin";
 
 import { useSettings } from "../settings";
 
@@ -44,7 +44,7 @@ export const useApp = create<StoreState & StoreReducers>((set, get) => ({
     const promises: Promise<void>[] = [];
     // Download Dolphin if necessary
     promises.push(
-      assertDolphinInstallation((message) => {
+      assertDolphinInstallations((message) => {
         log.info(message);
         set({ logMessage: message });
       }).catch((err) => {

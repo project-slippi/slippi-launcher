@@ -10,7 +10,7 @@ import firebase from "firebase";
 import * as fs from "fs-extra";
 import path from "path";
 
-import { findDolphinExecutable } from "./directories";
+import { DolphinType, findDolphinExecutable } from "./directories";
 
 export interface PlayKey {
   uid: string;
@@ -89,7 +89,7 @@ export async function assertPlayKey(): Promise<void> {
 }
 
 async function findPlayKey(): Promise<string> {
-  const dolphinPath = await findDolphinExecutable();
+  const dolphinPath = await findDolphinExecutable(DolphinType.NETPLAY);
   let dolphinDir = path.dirname(dolphinPath);
   if (process.platform === "darwin") {
     dolphinDir = path.join(dolphinPath, "Contents", "Resources");

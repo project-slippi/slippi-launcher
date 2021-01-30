@@ -1,42 +1,82 @@
 import AdmZip from "adm-zip";
-import { spawn } from "child_process";
+import { spawn, spawnSync } from "child_process";
 import { download } from "common/download";
 import { fileExists } from "common/utils";
 import { remote } from "electron";
 import * as fs from "fs-extra";
 import path from "path";
+import { lt } from "semver";
 
-import { findDolphinExecutable, NETPLAY_PATH } from "./directories";
+import { DolphinType, findDolphinExecutable } from "./directories";
 
 export async function assertDolphinInstallation(
+  type: DolphinType,
   log: (message: string) => void
 ): Promise<void> {
   try {
-    await findDolphinExecutable();
-    log("Found existing Dolphin executable.");
+    await findDolphinExecutable(type);
+    log(`Found existing ${type} Dolphin executable.`);
+    log(`Checking if we need to update`);
+    const data = await getLatestReleaseData(type);
+    const latestVersion = data.tag_name;
+    const isOutdated = await compareDolphinVersion(type, latestVersion);
+    if (isOutdated) {
+      log(`${type} Dolphin installation is outdated. Downloading latest...`);
+      const downloadedAsset = await downloadLatestDolphin(type, log);
+      log(`Installing ${type} Dolphin...`);
+      await installDolphin(type, downloadedAsset);
+      return;
+    }
+    log("No update found...");
     return;
   } catch (err) {
-    log("Could not find Dolphin installation. Downloading...");
-    const downloadedAsset = await downloadLatestNetplay(log);
-    log("Installing Dolphin...");
-    await installNetplay(downloadedAsset);
+    log(`Could not find ${type} Dolphin installation. Downloading...`);
+    const downloadedAsset = await downloadLatestDolphin(type, log);
+    log(`Installing ${type} Dolphin...`);
+    await installDolphin(type, downloadedAsset);
   }
 }
 
-export async function openDolphin(params?: string[]) {
-  const dolphinPath = await findDolphinExecutable();
+export async function assertDolphinInstallations(
+  log: (message: string) => void
+): Promise<void> {
+  await assertDolphinInstallation(DolphinType.NETPLAY, log);
+  await assertDolphinInstallation(DolphinType.PLAYBACK, log);
+  return;
+}
+
+async function compareDolphinVersion(
+  type: DolphinType,
+  latestVersion: string
+): Promise<boolean> {
+  const dolphinPath = await findDolphinExecutable(type);
+  const dolphinVersion = spawnSync(dolphinPath, [
+    "--version",
+  ]).stdout.toString();
+  return lt(latestVersion, dolphinVersion);
+}
+
+export async function openDolphin(type: DolphinType, params?: string[]) {
+  const dolphinPath = await findDolphinExecutable(type);
   spawn(dolphinPath, params);
 }
 
-async function getLatestNetplayAsset(): Promise<any> {
-  const owner = "project-slippi";
-  const repo = "Ishiiruka";
-  const release = await getLatestRelease(owner, repo);
+async function getLatestDolphinAsset(type: DolphinType): Promise<any> {
+  const release = await getLatestReleaseData(type);
   const asset = release.assets.find((a: any) => matchesPlatform(a.name));
   if (!asset) {
     throw new Error("Could not fetch latest release");
   }
   return asset;
+}
+
+async function getLatestReleaseData(type: DolphinType): Promise<any> {
+  const owner = "project-slippi";
+  let repo = "Ishiiruka";
+  if (type === DolphinType.PLAYBACK) {
+    repo += "-Playback";
+  }
+  return getLatestRelease(owner, repo);
 }
 
 async function getLatestRelease(owner: string, repo: string): Promise<any> {
@@ -59,10 +99,11 @@ function matchesPlatform(releaseName: string): boolean {
   }
 }
 
-async function downloadLatestNetplay(
+async function downloadLatestDolphin(
+  type: DolphinType,
   log: (status: string) => void = console.log
 ): Promise<string> {
-  const asset = await getLatestNetplayAsset();
+  const asset = await getLatestDolphinAsset(type);
   const downloadLocation = path.join(remote.app.getPath("temp"), asset.name);
   const exists = await fileExists(downloadLocation);
   if (!exists) {
@@ -79,43 +120,50 @@ async function downloadLatestNetplay(
   return downloadLocation;
 }
 
-async function installNetplay(
+async function installDolphin(
+  type: DolphinType,
   assetPath: string,
   log: (message: string) => void = console.log
 ) {
+  const dolphinPath = path.join(remote.app.getPath("userData"), type);
+  const backupLocation = path.join(
+    remote.app.getPath("userData"),
+    type + "_old"
+  );
   switch (process.platform) {
     case "win32": {
-      const extractToLocation = remote.app.getPath("userData");
+      await backupUser(backupLocation, dolphinPath, log);
+
+      log(`Extracting to: ${dolphinPath}`);
       const zip = new AdmZip(assetPath);
-      log(`Extracting to: ${extractToLocation}, and renaming to netplay`);
-      zip.extractAllTo(extractToLocation, true);
-      const oldPath = path.join(extractToLocation, "FM-Slippi");
-      const newPath = NETPLAY_PATH;
-      if (await fs.pathExists(newPath)) {
-        log(`${newPath} already exists. Deleting...`);
-        await fs.remove(newPath);
-      }
-      await fs.rename(oldPath, newPath);
+      zip.extractAllTo(dolphinPath, true);
+
+      // move User folder and user.json to the new installation
+      await restoreUser(backupLocation, dolphinPath, log);
       break;
     }
     case "darwin": {
-      const extractToLocation = NETPLAY_PATH;
-      if (await fs.pathExists(extractToLocation)) {
-        log(`${extractToLocation} already exists. Deleting...`);
-        await fs.remove(extractToLocation);
-      } else {
-        // Ensure the directory exists
-        await fs.ensureDir(extractToLocation);
-      }
+      const newDolphinResources = path.join(
+        dolphinPath,
+        "Slippi Dolphin.app",
+        "Contents",
+        "Resources"
+      );
+
+      await backupUser(backupLocation, newDolphinResources, log);
+
       const zip = new AdmZip(assetPath);
-      log(`Extracting to: ${extractToLocation}`);
-      zip.extractAllTo(extractToLocation, true);
+      log(`Extracting to: ${dolphinPath}`);
+      zip.extractAllTo(dolphinPath, true);
+
+      // Move backed up User folder and user.json
+      await restoreUser(backupLocation, newDolphinResources, log);
       break;
     }
     case "linux": {
       // Delete the existing app image if there is one
       try {
-        const dolphinAppImagePath = await findDolphinExecutable();
+        const dolphinAppImagePath = await findDolphinExecutable(type);
         // Delete the existing app image if it already exists
         if (await fileExists(dolphinAppImagePath)) {
           log(`${dolphinAppImagePath} already exists. Deleting...`);
@@ -127,7 +175,7 @@ async function installNetplay(
       }
 
       const assetFilename = path.basename(assetPath);
-      const targetLocation = path.join(NETPLAY_PATH, assetFilename);
+      const targetLocation = path.join(dolphinPath, assetFilename);
 
       // Actually move the app image to the correct folder
       log(`Moving ${assetPath} to ${targetLocation}`);
@@ -143,5 +191,47 @@ async function installNetplay(
         `Installing Netplay is not supported on this platform: ${process.platform}`
       );
     }
+  }
+}
+
+async function backupUser(
+  backupLocation: string,
+  toBackup: string,
+  log: (status: string) => void = console.log
+): Promise<void> {
+  const alreadyInstalled = await fs.pathExists(toBackup);
+  if (alreadyInstalled) {
+    log(`${toBackup} already exists. Moving...`);
+    await fs.move(toBackup, backupLocation);
+  }
+}
+
+async function restoreUser(
+  backupLocation: string,
+  restoreLocation: string,
+  log: (status: string) => void = console.log
+): Promise<void> {
+  const alreadyInstalled = await fs.pathExists(restoreLocation);
+  if (alreadyInstalled) {
+    const oldUserFolder = path.join(backupLocation, "User");
+    const newUserFolder = path.join(restoreLocation, "User");
+
+    const oldUserJSON = path.join(backupLocation, "user.json");
+    const newUserJSON = path.join(restoreLocation, "user.json");
+
+    if (await fs.pathExists(oldUserFolder)) {
+      log("moving User folder...");
+      await fs.move(oldUserFolder, newUserFolder);
+    } else {
+      log("no old User folder to move");
+    }
+
+    if (await fileExists(oldUserJSON)) {
+      log("moving user.json...");
+      await fs.move(oldUserJSON, newUserJSON);
+    } else {
+      log("no old user.json to move");
+    }
+    await fs.remove(backupLocation);
   }
 }

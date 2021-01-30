@@ -2,10 +2,10 @@ import { remote } from "electron";
 import * as fs from "fs-extra";
 import path from "path";
 
-export const NETPLAY_PATH = path.join(
-  remote.app.getPath("userData"),
-  "netplay"
-);
+export enum DolphinType {
+  NETPLAY = "netplay",
+  PLAYBACK = "playback",
+}
 
 export function getDefaultRootSlpPath(): string {
   let root = remote.app.getPath("home");
@@ -15,12 +15,15 @@ export function getDefaultRootSlpPath(): string {
   return path.join(root, "Slippi");
 }
 
-export async function findDolphinExecutable(): Promise<string> {
+export async function findDolphinExecutable(
+  type: DolphinType
+): Promise<string> {
   // Make sure the directory actually exists
-  await fs.ensureDir(NETPLAY_PATH);
+  const dolphinPath = path.join(remote.app.getPath("userData"), type);
+  await fs.ensureDir(dolphinPath);
 
   // Check the directory contents
-  const files = await fs.readdir(NETPLAY_PATH);
+  const files = await fs.readdir(dolphinPath);
   const result = files.find((filename) => {
     switch (process.platform) {
       case "win32":
@@ -35,8 +38,8 @@ export async function findDolphinExecutable(): Promise<string> {
   });
 
   if (!result) {
-    throw new Error(`No Dolphin found in: ${NETPLAY_PATH}`);
+    throw new Error(`No Dolphin found in: ${dolphinPath}`);
   }
 
-  return path.join(NETPLAY_PATH, result);
+  return path.join(dolphinPath, result);
 }

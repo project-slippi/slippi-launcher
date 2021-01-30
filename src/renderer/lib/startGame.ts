@@ -1,3 +1,4 @@
+import { DolphinType } from "./directories";
 import { assertDolphinInstallation, openDolphin } from "./downloadDolphin";
 import { assertPlayKey } from "./playkey";
 
@@ -6,7 +7,7 @@ export async function startGame(
   meleeFile?: string
 ): Promise<void> {
   log("Checking for Dolphin installation...");
-  await assertDolphinInstallation(log);
+  await assertDolphinInstallation(DolphinType.NETPLAY, log);
 
   log("Checking user account...");
   await assertPlayKey();
@@ -16,5 +17,5 @@ export async function startGame(
   }
 
   log("Starting game...");
-  openDolphin(["-b", "-e", meleeFile]);
+  openDolphin(DolphinType.NETPLAY, ["-b", "-e", meleeFile]);
 }
