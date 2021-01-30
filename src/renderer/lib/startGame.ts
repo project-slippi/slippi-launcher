@@ -7,7 +7,7 @@ export async function startGame(
   meleeFile?: string
 ): Promise<void> {
   log("Checking for Dolphin installation...");
-  await assertDolphinInstallation(log);
+  await assertDolphinInstallation(DolphinType.NETPLAY, log);
 
   log("Checking user account...");
   await assertPlayKey();

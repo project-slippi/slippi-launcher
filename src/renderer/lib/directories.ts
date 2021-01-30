@@ -2,16 +2,6 @@ import { remote } from "electron";
 import * as fs from "fs-extra";
 import path from "path";
 
-export const NETPLAY_PATH = path.join(
-  remote.app.getPath("userData"),
-  "netplay"
-);
-
-export const PLAYBACK_PATH = path.join(
-  remote.app.getPath("userData"),
-  "playback"
-);
-
 export enum DolphinType {
   NETPLAY = "netplay",
   PLAYBACK = "playback",

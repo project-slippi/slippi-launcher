@@ -6,34 +6,30 @@ import { remote } from "electron";
 import * as fs from "fs-extra";
 import path from "path";
 
-import {
-  DolphinType,
-  findDolphinExecutable,
-  NETPLAY_PATH,
-  PLAYBACK_PATH,
-} from "./directories";
+import { DolphinType, findDolphinExecutable } from "./directories";
 
 export async function assertDolphinInstallation(
+  type: DolphinType,
   log: (message: string) => void
 ): Promise<void> {
   try {
-    await findDolphinExecutable(DolphinType.NETPLAY);
-    log("Found existing Netplay Dolphin executable.");
+    await findDolphinExecutable(type);
+    log(`Found existing ${type} Dolphin executable.`);
+    return;
   } catch (err) {
-    log("Could not find Netplay Dolphin installation. Downloading...");
-    const downloadedAsset = await downloadLatestNetplay(log);
-    log("Installing Playback Dolphin...");
-    await installNetplay(downloadedAsset);
+    log(`Could not find ${type} Dolphin installation. Downloading...`);
+    const downloadedAsset = await downloadLatestDolphin(type, log);
+    log(`Installing ${type} Dolphin...`);
+    await installDolphin(type, downloadedAsset);
   }
-  try {
-    await findDolphinExecutable(DolphinType.PLAYBACK);
-    log("Found existing Playback Dolphin executable.");
-  } catch (err) {
-    log("Could not find Playback Dolphin installation. Downloading...");
-    const downloadedAsset = await downloadLatestPlayback(log);
-    log("Installing Playback Dolphin...");
-    await installPlayback(downloadedAsset);
-  }
+}
+
+export async function assertDolphinInstallations(
+  log: (message: string) => void
+): Promise<void> {
+  await assertDolphinInstallation(DolphinType.NETPLAY, log);
+  await assertDolphinInstallation(DolphinType.PLAYBACK, log);
+  return;
 }
 
 export async function openDolphin(type: DolphinType, params?: string[]) {
@@ -41,20 +37,12 @@ export async function openDolphin(type: DolphinType, params?: string[]) {
   spawn(dolphinPath, params);
 }
 
-async function getLatestNetplayAsset(): Promise<any> {
+async function getLatestDolphinAsset(type: DolphinType): Promise<any> {
   const owner = "project-slippi";
-  const repo = "Ishiiruka";
-  const release = await getLatestRelease(owner, repo);
-  const asset = release.assets.find((a: any) => matchesPlatform(a.name));
-  if (!asset) {
-    throw new Error("Could not fetch latest release");
+  let repo = "Ishiiruka";
+  if (type === DolphinType.PLAYBACK) {
+    repo += "-Playback";
   }
-  return asset;
-}
-
-async function getLatestPlaybackAsset(): Promise<any> {
-  const owner = "project-slippi";
-  const repo = "Ishiiruka-Playback";
   const release = await getLatestRelease(owner, repo);
   const asset = release.assets.find((a: any) => matchesPlatform(a.name));
   if (!asset) {
@@ -83,10 +71,11 @@ function matchesPlatform(releaseName: string): boolean {
   }
 }
 
-async function downloadLatestNetplay(
+async function downloadLatestDolphin(
+  type: DolphinType,
   log: (status: string) => void = console.log
 ): Promise<string> {
-  const asset = await getLatestNetplayAsset();
+  const asset = await getLatestDolphinAsset(type);
   const downloadLocation = path.join(remote.app.getPath("temp"), asset.name);
   const exists = await fileExists(downloadLocation);
   if (!exists) {
@@ -103,48 +92,25 @@ async function downloadLatestNetplay(
   return downloadLocation;
 }
 
-async function downloadLatestPlayback(
-  log: (status: string) => void = console.log
-): Promise<string> {
-  const asset = await getLatestPlaybackAsset();
-  const downloadLocation = path.join(remote.app.getPath("temp"), asset.name);
-  const exists = await fileExists(downloadLocation);
-  if (!exists) {
-    log(`Downloading ${asset.browser_download_url} to ${downloadLocation}`);
-    await download(asset.browser_download_url, downloadLocation, (percent) =>
-      log(`Downloading... ${(percent * 100).toFixed(0)}%`)
-    );
-    log(
-      `Successfully downloaded ${asset.browser_download_url} to ${downloadLocation}`
-    );
-  } else {
-    log(`${downloadLocation} already exists. Skipping download.`);
-  }
-  return downloadLocation;
-}
-
-async function installNetplay(
+async function installDolphin(
+  type: DolphinType,
   assetPath: string,
   log: (message: string) => void = console.log
 ) {
+  const dolphin_path = path.join(remote.app.getPath("userData"), type);
   switch (process.platform) {
     case "win32": {
-      const extractToLocation = remote.app.getPath("userData");
       const zip = new AdmZip(assetPath);
-      log(`Extracting to: ${extractToLocation}, and renaming to netplay`);
-      zip.extractAllTo(extractToLocation, true);
-      const oldPath = path.join(extractToLocation, "FM-Slippi");
-      const newPath = NETPLAY_PATH;
-      if (await fs.pathExists(newPath)) {
-        log(`${newPath} already exists. Deleting...`);
-        await fs.remove(newPath);
-        log(`${newPath} deleted`);
+      if (await fs.pathExists(dolphin_path)) {
+        log(`${dolphin_path} already exists. Deleting...`);
+        await fs.remove(dolphin_path);
       }
-      await fs.rename(oldPath, newPath);
+      log(`Extracting to: ${dolphin_path}`);
+      zip.extractAllTo(dolphin_path, true);
       break;
     }
     case "darwin": {
-      const extractToLocation = NETPLAY_PATH;
+      const extractToLocation = dolphin_path;
       if (await fs.pathExists(extractToLocation)) {
         log(`${extractToLocation} already exists. Deleting...`);
         await fs.remove(extractToLocation);
@@ -160,9 +126,7 @@ async function installNetplay(
     case "linux": {
       // Delete the existing app image if there is one
       try {
-        const dolphinAppImagePath = await findDolphinExecutable(
-          DolphinType.NETPLAY
-        );
+        const dolphinAppImagePath = await findDolphinExecutable(type);
         // Delete the existing app image if it already exists
         if (await fileExists(dolphinAppImagePath)) {
           log(`${dolphinAppImagePath} already exists. Deleting...`);
@@ -174,72 +138,7 @@ async function installNetplay(
       }
 
       const assetFilename = path.basename(assetPath);
-      const targetLocation = path.join(NETPLAY_PATH, assetFilename);
-
-      // Actually move the app image to the correct folder
-      log(`Moving ${assetPath} to ${targetLocation}`);
-      await fs.rename(assetPath, targetLocation);
-
-      // Make the file executable
-      log(`Setting executable permissions...`);
-      await fs.chmod(targetLocation, "755");
-      break;
-    }
-    default: {
-      throw new Error(
-        `Installing Netplay is not supported on this platform: ${process.platform}`
-      );
-    }
-  }
-}
-
-async function installPlayback(
-  assetPath: string,
-  log: (message: string) => void = console.log
-) {
-  switch (process.platform) {
-    case "win32": {
-      const zip = new AdmZip(assetPath);
-      if (await fs.pathExists(PLAYBACK_PATH)) {
-        log(`${PLAYBACK_PATH} already exists. Deleting...`);
-        await fs.remove(PLAYBACK_PATH);
-      }
-      log(`Extracting to: ${PLAYBACK_PATH}`);
-      zip.extractAllTo(PLAYBACK_PATH, true);
-      break;
-    }
-    case "darwin": {
-      const extractToLocation = PLAYBACK_PATH;
-      if (await fs.pathExists(extractToLocation)) {
-        log(`${extractToLocation} already exists. Deleting...`);
-        await fs.remove(extractToLocation);
-      } else {
-        // Ensure the directory exists
-        await fs.ensureDir(extractToLocation);
-      }
-      const zip = new AdmZip(assetPath);
-      log(`Extracting to: ${extractToLocation}`);
-      zip.extractAllTo(extractToLocation, true);
-      break;
-    }
-    case "linux": {
-      // Delete the existing app image if there is one
-      try {
-        const dolphinAppImagePath = await findDolphinExecutable(
-          DolphinType.PLAYBACK
-        );
-        // Delete the existing app image if it already exists
-        if (await fileExists(dolphinAppImagePath)) {
-          log(`${dolphinAppImagePath} already exists. Deleting...`);
-          await fs.remove(dolphinAppImagePath);
-        }
-      } catch (err) {
-        // There's no app image
-        log("No existing AppImage found");
-      }
-
-      const assetFilename = path.basename(assetPath);
-      const targetLocation = path.join(PLAYBACK_PATH, assetFilename);
+      const targetLocation = path.join(dolphin_path, assetFilename);
 
       // Actually move the app image to the correct folder
       log(`Moving ${assetPath} to ${targetLocation}`);
