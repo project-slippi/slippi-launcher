@@ -11,12 +11,29 @@ import { useReplays } from "@/store/replays";
 
 import { GameProfile } from "./GameProfile";
 import { GameProfileHeader } from "./GameProfileHeader";
+import { colors } from "common/colors";
 
 const Outer = styled.div`
   position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+`;
+
+const Content = styled.div`
+  display: flex;
+  flex: 1;
+  overflow: auto;
+`;
+
+const Footer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  white-space: nowrap;
+  padding: 5px;
+  background-color: ${colors.grayDark};
+  font-size: 14px;
 `;
 
 export interface ReplayFileStatsProps {
@@ -68,17 +85,20 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
         stats={gameStats}
         onPlay={() => console.warn("Playing back replays is currently unsupported")}
       />
-      {numPlayers !== 2 ? (
-        <IconMessage Icon={ErrorIcon} label="Only singles is supported" />
-      ) : loading ? (
-        <LoadingScreen message={"Crunching numbers..."} />
-      ) : error ? (
-        <IconMessage Icon={ErrorIcon} label={`Error: ${error.message ?? JSON.stringify(error, null, 2)}`} />
-      ) : gameStats ? (
-        <GameProfile {...props} stats={gameStats}></GameProfile>
-      ) : (
-        <IconMessage Icon={HelpIcon} label="No stats computed" />
-      )}
+      <Content>
+        {numPlayers !== 2 ? (
+          <IconMessage Icon={ErrorIcon} label="Only singles is supported" />
+        ) : loading ? (
+          <LoadingScreen message={"Crunching numbers..."} />
+        ) : error ? (
+          <IconMessage Icon={ErrorIcon} label={`Error: ${error.message ?? JSON.stringify(error, null, 2)}`} />
+        ) : gameStats ? (
+          <GameProfile {...props} stats={gameStats}></GameProfile>
+        ) : (
+          <IconMessage Icon={HelpIcon} label="No stats computed" />
+        )}
+      </Content>
+      <Footer>{props.file.fullPath}</Footer>
     </Outer>
   );
 };

@@ -177,7 +177,6 @@ const Header = styled.div<{
   backgroundImage?: any;
 }>`
   z-index: 1;
-  position: sticky;
   top: 0;
   width: 100%;
   border-bottom: solid 2px ${colors.grayDark};

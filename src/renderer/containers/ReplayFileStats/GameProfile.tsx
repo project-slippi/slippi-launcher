@@ -35,7 +35,7 @@ const StatSection: React.FC<{
 
 export const GameProfile: React.FC<GameProfileProps> = ({ file, stats }) => {
   return (
-    <div style={{ margin: 20 }}>
+    <div style={{ flex: "1", margin: 20 }}>
       <StatSection title="Overall">
         <OverallTable file={file} stats={stats} />
       </StatSection>
