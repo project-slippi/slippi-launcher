@@ -37,7 +37,7 @@ interface PlayerIndicatorProps {
 const PlayerIndicator: React.FC<PlayerIndicatorProps> = ({ player, names }) => {
   const classes = useStyles();
   const backupName = player.type === 1 ? "CPU" : "Player";
-  const charIcon = getCharacterIcon(player.characterId ?? 0, player.characterColor ?? 0);
+  const charIcon = getCharacterIcon(player.characterId, player.characterColor);
   // const teamId = isTeams ? player.teamId : null;
   return (
     <PlayerInfo>

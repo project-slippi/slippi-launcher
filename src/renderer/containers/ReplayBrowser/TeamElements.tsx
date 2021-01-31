@@ -31,7 +31,7 @@ interface PlayerIndicatorProps {
 }
 
 const PlayerIndicator: React.FC<PlayerIndicatorProps> = ({ player, name, isTeams }) => {
-  const charIcon = getCharacterIcon(player.characterId ?? 0, player.characterColor ?? 0);
+  const charIcon = getCharacterIcon(player.characterId, player.characterColor);
   const teamId = isTeams ? player.teamId : null;
   const color = getColor(player.port, teamId);
   const classes = useStyles({ backgroundColor: color });

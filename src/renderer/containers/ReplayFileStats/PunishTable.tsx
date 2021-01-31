@@ -23,7 +23,7 @@ export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, playerInd
   const playerDisplay = (
     <div style={{ display: "flex", alignItems: "center" }}>
       <img
-        src={getCharacterIcon(player.characterId ?? 0, player.characterColor ?? 0)}
+        src={getCharacterIcon(player.characterId, player.characterColor)}
         height={24}
         width={24}
         style={{
@@ -83,7 +83,7 @@ export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, playerInd
         <T.GrayableImage
           key={`stock-image-${stock.playerIndex}-${stockNum}`}
           gray={stockNum > currentStocks}
-          src={getCharacterIcon(player.characterId ?? 0, player.characterColor ?? 0)}
+          src={getCharacterIcon(player.characterId, player.characterColor)}
           height={20}
           width={20}
         />

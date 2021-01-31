@@ -26,7 +26,7 @@ export const KillTable: React.FC<KillTableProps> = ({ file, stats, playerIndex }
   const playerDisplay = (
     <div style={{ display: "flex", alignItems: "center" }}>
       <img
-        src={getCharacterIcon(player.characterId ?? 0, player.characterColor ?? 0)}
+        src={getCharacterIcon(player.characterId, player.characterColor)}
         height={24}
         width={24}
         style={{

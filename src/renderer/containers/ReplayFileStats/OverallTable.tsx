@@ -25,7 +25,7 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
         <T.TableHeaderCell key={p.playerIndex}>
           <div style={{ display: "flex", alignItems: "center" }}>
             <img
-              src={getCharacterIcon(p.characterId ?? 0, p.characterColor ?? 0)}
+              src={getCharacterIcon(p.characterId, p.characterColor)}
               height={24}
               width={24}
               style={{
