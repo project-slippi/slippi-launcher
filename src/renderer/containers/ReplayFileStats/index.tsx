@@ -28,12 +28,13 @@ const Content = styled.div`
 `;
 
 const Footer = styled.div`
-  display: flex;
-  justify-content: space-between;
+  display: inline-block;
   white-space: nowrap;
   padding: 5px;
   background-color: ${colors.grayDark};
   font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export interface ReplayFileStatsProps {

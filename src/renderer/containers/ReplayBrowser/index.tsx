@@ -62,14 +62,7 @@ export const ReplayBrowser: React.FC = () => {
   }
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexFlow: "column",
-        flex: "1",
-        position: "relative",
-      }}
-    >
+    <Outer>
       {selectedItem !== null ? (
         <ReplayFileStats
           index={selectedItem}
@@ -162,7 +155,7 @@ export const ReplayBrowser: React.FC = () => {
           </div>
         </>
       )}
-    </div>
+    </Outer>
   );
 };
 
@@ -208,4 +201,12 @@ const ReplayFolderLink = styled.div`
     cursor: pointer;
     text-decoration: underline;
   }
+`;
+
+const Outer = styled.div`
+  display: flex;
+  flex-flow: column;
+  flex: 1;
+  position: relative;
+  min-width: 0;
 `;
