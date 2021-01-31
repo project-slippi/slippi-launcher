@@ -1,3 +1,4 @@
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import Menu from "@material-ui/core/Menu";
@@ -39,13 +40,15 @@ const FileListResults: React.FC<{
 
   const Row = React.useCallback(
     (props: { style?: React.CSSProperties; index: number }) => (
-      <ReplayFile
-        onOpenMenu={onOpenMenu}
-        index={props.index}
-        style={props.style}
-        onSelect={() => onSelect(props.index)}
-        {...files[props.index]}
-      />
+      <ErrorBoundary>
+        <ReplayFile
+          onOpenMenu={onOpenMenu}
+          index={props.index}
+          style={props.style}
+          onSelect={() => onSelect(props.index)}
+          {...files[props.index]}
+        />
+      </ErrorBoundary>
     ),
     [files, onSelect, onOpenMenu],
   );
