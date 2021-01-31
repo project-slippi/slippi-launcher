@@ -1,3 +1,5 @@
+import Tooltip from "@material-ui/core/Tooltip";
+import styled from "styled-components";
 import Button from "@material-ui/core/Button";
 import List from "@material-ui/core/List";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
@@ -6,6 +8,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import { colors } from "common/colors";
 import { debounce } from "lodash";
 import React from "react";
+import { shell } from "electron";
 
 import { DualPane } from "@/components/DualPane";
 import { LoadingScreen } from "@/components/LoadingScreen";
@@ -147,7 +150,11 @@ export const ReplayBrowser: React.FC = () => {
               fontSize: 14,
             }}
           >
-            <div>{currentFolder}</div>
+            <div>
+              <Tooltip title="Open folder">
+                <ReplayFolderLink onClick={() => shell.openItem(currentFolder)}>{currentFolder}</ReplayFolderLink>
+              </Tooltip>
+            </div>
             <div style={{ textAlign: "right" }}>
               {filteredFiles.length} files found. {numHiddenFiles} files filtered.{" "}
               {fileErrorCount > 0 ? `${fileErrorCount} files had errors.` : ""}
@@ -195,3 +202,10 @@ const useStyles = makeStyles(() =>
     },
   }),
 );
+
+const ReplayFolderLink = styled.div`
+  &:hover {
+    cursor: pointer;
+    text-decoration: underline;
+  }
+`;
