@@ -1,22 +1,32 @@
 import { GameStartType, MetadataType, SlippiGame } from "@slippi/slippi-js";
 import _ from "lodash";
-import path from "path";
 
 import { fileToDateAndTime } from "../time";
-import { FileResult } from "./types";
+import { FileDetails, FileHeader } from "./types";
 
-export async function loadFile(fullPath: string): Promise<FileResult> {
-  const filename = path.basename(fullPath);
-  const game = new SlippiGame(fullPath);
+export async function loadFiles(
+  fileHeaders: FileHeader[],
+  callback: (path: string, details: FileDetails) => void,
+  errorCallback: (path: string, err: Error) => void,
+): Promise<void> {
+  for (const header of fileHeaders) {
+    try {
+      callback(header.fullPath, await loadFile(header));
+    } catch (err) {
+      errorCallback(header.fullPath, err);
+    }
+  }
+}
+
+async function loadFile(fileHeader: FileHeader): Promise<FileDetails> {
+  const game = new SlippiGame(fileHeader.fullPath);
   // Load settings
   const settings: GameStartType | null = game.getSettings();
   if (!settings || _.isEmpty(settings.players)) {
     throw new Error("Game settings could not be properly loaded.");
   }
 
-  const result: FileResult = {
-    name: filename,
-    fullPath,
+  const details: FileDetails = {
     settings,
     startTime: null,
     lastFrame: null,
@@ -26,18 +36,18 @@ export async function loadFile(fullPath: string): Promise<FileResult> {
   // Load metadata
   const metadata: MetadataType | null = game.getMetadata();
   if (metadata) {
-    result.metadata = metadata;
+    details.metadata = metadata;
 
     if (metadata.lastFrame !== undefined) {
-      result.lastFrame = metadata.lastFrame;
+      details.lastFrame = metadata.lastFrame;
     }
   }
 
-  const startAtTime = fileToDateAndTime(metadata ? metadata.startAt : null, filename, result.fullPath);
+  const startAtTime = fileToDateAndTime(metadata ? metadata.startAt : null, fileHeader);
 
   if (startAtTime) {
-    result.startTime = startAtTime.toISOString();
+    details.startTime = startAtTime.toISOString();
   }
 
-  return result;
+  return details;
 }

@@ -1,17 +1,16 @@
 import * as fs from "fs-extra";
 import path from "path";
 
-import { loadFile } from "./loadFile";
-import { FileLoadResult, FileResult } from "./types";
+import { FolderLoadResult, FileHeader } from "./types";
 
 export async function loadFolder(
   folder: string,
   callback: (current: number, total: number) => void,
-): Promise<FileLoadResult> {
+): Promise<FolderLoadResult> {
   // If the folder does not exist, return empty
   if (!(await fs.pathExists(folder))) {
     return {
-      files: [],
+      files: new Map(),
       fileErrorCount: 0,
     };
   }
@@ -24,14 +23,18 @@ export async function loadFolder(
   let fileValidCount = 0;
   callback(0, total);
 
-  const process = async (path: string) => {
-    return new Promise<FileResult | null>((resolve) => {
+  const process = async (fullPath: string) => {
+    return new Promise<FileHeader | null>((resolve) => {
       setImmediate(async () => {
         try {
-          const res = await loadFile(path);
+          const result: FileHeader = {
+            name: path.basename(fullPath),
+            fullPath: fullPath,
+            birthtime: (await fs.stat(fullPath)).birthtime,
+          };
           fileValidCount += 1;
           callback(fileValidCount, total);
-          resolve(res);
+          resolve(result);
         } catch (err) {
           fileErrorCount += 1;
           resolve(null);
@@ -40,14 +43,15 @@ export async function loadFolder(
     });
   };
 
-  const slpGames = (
+  const slpGamesList = (
     await Promise.all(
       slpFiles.map((dirent) => {
         const fullPath = path.resolve(folder, dirent.name);
         return process(fullPath);
       }),
     )
-  ).filter((g) => g !== null) as FileResult[];
+  ).filter((g) => g !== null) as FileHeader[];
+  const slpGames = new Map(slpGamesList.map((g) => [g.fullPath, g]));
 
   // Indicate that loading is complete
   callback(total, total);

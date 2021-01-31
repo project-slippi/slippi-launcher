@@ -39,9 +39,11 @@ export const ReplayBrowser: React.FC = () => {
   const fileErrorCount = useReplays((store) => store.fileErrorCount);
   const rootSlpPath = useSettings((store) => store.settings.rootSlpPath);
 
+  useReplays((store) => store.forceRender);
+
   const { filterOptions, setFilterOptions, sortAndFilterFiles, clearFilter } = useReplayFilter();
   const filteredFiles = sortAndFilterFiles(files);
-  const numHiddenFiles = files.length - filteredFiles.length;
+  const numHiddenFiles = Array.from(files).length - filteredFiles.length;
 
   React.useEffect(() => {
     init(rootSlpPath);
@@ -51,7 +53,7 @@ export const ReplayBrowser: React.FC = () => {
     if (index === null) {
       clearSelectedFile();
     } else {
-      const filePath = filteredFiles[index].fullPath;
+      const filePath = filteredFiles[index].header.fullPath;
       selectFile(index, filePath);
     }
   };
@@ -69,7 +71,7 @@ export const ReplayBrowser: React.FC = () => {
 
   return (
     <Outer>
-      {selectedItem !== null ? (
+      {selectedItem !== null && filteredFiles[selectedItem].details !== null ? (
         <ReplayFileStats
           index={selectedItem}
           total={filteredFiles.length}
@@ -132,6 +134,7 @@ export const ReplayBrowser: React.FC = () => {
                     onDelete={deleteFile}
                     onSelect={(index: number) => setSelectedItem(index)}
                     onPlay={(index: number) => playSelectedFile(index)}
+                    currentFolder={currentFolder}
                     files={filteredFiles}
                     scrollRowItem={scrollRowItem}
                     setScrollRowItem={setScrollRowItem}

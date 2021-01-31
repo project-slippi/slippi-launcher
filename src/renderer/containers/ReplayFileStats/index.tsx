@@ -47,7 +47,8 @@ export interface ReplayFileStatsProps {
 }
 
 export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
-  const { settings, fullPath } = props.file;
+  const details = props.file.details!;
+  const { settings, fullPath } = details;
 
   const loading = useReplays((store) => store.selectedFile.loading);
   const error = useReplays((store) => store.selectedFile.error);
@@ -81,7 +82,17 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
 
   return (
     <Outer>
-      <GameProfileHeader {...props} loading={loading} stats={gameStats} onPlay={() => playFile(fullPath)} />
+      <GameProfileHeader
+        file={details}
+        index={props.index}
+        total={props.total}
+        loading={loading}
+        stats={gameStats}
+        onNext={props.onNext}
+        onPrev={props.onPrev}
+        onClose={props.onClose}
+        onPlay={() => playFile(fullPath)}
+      />
       <Content>
         {numPlayers !== 2 ? (
           <IconMessage Icon={ErrorIcon} label="Only singles is supported" />
@@ -90,12 +101,12 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
         ) : error ? (
           <IconMessage Icon={ErrorIcon} label={`Error: ${error.message ?? JSON.stringify(error, null, 2)}`} />
         ) : gameStats ? (
-          <GameProfile {...props} stats={gameStats}></GameProfile>
+          <GameProfile file={details} stats={gameStats}></GameProfile>
         ) : (
           <IconMessage Icon={HelpIcon} label="No stats computed" />
         )}
       </Content>
-      <Footer>{props.file.fullPath}</Footer>
+      <Footer>{props.file.header.fullPath}</Footer>
     </Outer>
   );
 };

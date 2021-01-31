@@ -6,7 +6,10 @@ import produce from "immer";
 import path from "path";
 import create from "zustand";
 
-import { loadReplayFolder } from "@/workers/fileLoader.worker";
+import { useReplayFilterStore } from "@/lib/hooks/useReplayFilter";
+
+import { loadReplayFiles } from "@/workers/fileLoader.worker";
+import { loadReplayFolder } from "@/workers/folderLoader.worker";
 import { calculateGameStats } from "@/workers/gameStats.worker";
 
 import { useSettings } from "../settings";
@@ -17,7 +20,7 @@ type StoreState = {
     current: number;
     total: number;
   };
-  files: FileResult[];
+  files: Map<string, FileResult>;
   folders: FolderResult | null;
   currentRoot: string | null;
   currentFolder: string;
@@ -29,6 +32,11 @@ type StoreState = {
     loading: boolean;
     error?: any;
   };
+  // Can be incremented to force ReplayBrowser to re-render. This is useful
+  // because we can significantly improve performance by updating files in place
+  // (without copying the map), but this will not normally trigger a render
+  // because React does not recognize it as a state change.
+  forceRender: number;
 };
 
 type StoreReducers = {
@@ -39,6 +47,7 @@ type StoreReducers = {
   deleteFile: (filePath: string) => Promise<void>;
   loadDirectoryList: (folder: string) => Promise<void>;
   loadFolder: (childPath?: string, forceReload?: boolean) => Promise<void>;
+  loadFiles: (results: Map<string, FileResult>) => void;
   toggleFolder: (fullPath: string) => void;
   setScrollRowItem: (offset: number) => void;
 };
@@ -46,7 +55,7 @@ type StoreReducers = {
 const initialState: StoreState = {
   loading: false,
   progress: null,
-  files: [],
+  files: new Map(),
   folders: null,
   currentRoot: null,
   currentFolder: useSettings.getState().settings.rootSlpPath,
@@ -58,6 +67,7 @@ const initialState: StoreState = {
     error: null,
     loading: false,
   },
+  forceRender: 0,
 };
 
 export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
@@ -124,16 +134,14 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   deleteFile: async (filePath: string) => {
     set((state) =>
       produce(state, (draft) => {
-        const index = draft.files.findIndex((f) => f.fullPath === filePath);
-        if (index === -1) {
+        if (!draft.files.has(filePath)) {
           console.warn(`Could not find ${filePath} in file list`);
           return;
         }
 
         const success = shell.moveItemToTrash(filePath);
         if (success) {
-          // Modify the array in place
-          draft.files.splice(index, 1);
+          draft.files.delete(filePath);
         } else {
           console.warn(`Failed to delete ${filePath}`);
         }
@@ -142,7 +150,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   },
 
   loadFolder: async (childPath, forceReload) => {
-    const { currentFolder, loading } = get();
+    const { currentFolder, loading, loadFiles } = get();
 
     if (loading) {
       console.warn("A folder is already loading! Please wait for it to finish first.");
@@ -165,15 +173,96 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
           set({ progress: { current, total } });
         }),
       );
+      const results = new Map(Array.from(result.files, ([path, header]) => [path, { header: header, details: null }]));
       set({
         scrollRowItem: 0,
-        files: result.files,
+        files: results,
         loading: false,
         fileErrorCount: result.fileErrorCount,
       });
+      loadFiles(results);
     } catch (err) {
+      console.warn(err);
       set({ loading: false, progress: null });
     }
+  },
+
+  loadFiles: async (results: Map<string, FileResult>) => {
+    // Every time we update files causes an expensive rerender, and React will
+    // not batch state changes that are made in the callback. Therefore we batch
+    // state changes manually.
+    const batcher = (() => {
+      // This parameter balances the responsiveness of the replays list versus the
+      // total loading time. A smaller value will update the list more frequency,
+      // but will delay further loads while the list is re-rendered.
+      const UPDATE_BATCH_SIZE = 400;
+
+      // Making the first batch smaller improves the perceived responsiveness.
+      // This value is chosen to be slightly larger than the likely first page
+      // size.
+      const FIRST_BATCH_SIZE = 20;
+
+      const state = get();
+      let batchSize = UPDATE_BATCH_SIZE - FIRST_BATCH_SIZE;
+
+      const flush = () => {
+        set((oldState) => ({ ...state, forceRender: oldState.forceRender + 1 }));
+        batchSize = 0;
+      };
+
+      const setState = (updateFn: (state: StoreState) => Partial<StoreState>) => {
+        Object.assign(state, updateFn(state));
+        batchSize++;
+        if (batchSize >= UPDATE_BATCH_SIZE) {
+          flush();
+        }
+      };
+
+      return {
+        setState: setState,
+        flush: flush,
+      };
+    })();
+
+    // Sort headers so files will load in approximately display order (nothing
+    // will be filtered at this point since details are empty).
+    const sortedHeaders = Array.from(results, ([_, result]) => result)
+      .sort(useReplayFilterStore.getState().generateSortFunction())
+      .map((result) => result.header);
+
+    let callbackCount = 0;
+    const newFiles = new Map(results);
+    await loadReplayFiles(
+      sortedHeaders,
+      Comlink.proxy((path, details) => {
+        if (!newFiles.has(path)) {
+          console.error("File misssing (this should not happen).");
+        } else {
+          newFiles.get(path)!.details = details;
+          batcher.setState((_) => ({ files: newFiles }));
+        }
+        callbackCount++;
+        if (callbackCount == sortedHeaders.length) {
+          batcher.flush();
+        }
+      }),
+      Comlink.proxy((path, err) => {
+        if (!newFiles.has(path)) {
+          console.error("File misssing (this should not happen).");
+        } else {
+          newFiles.delete(path);
+          console.warn(err);
+          batcher.setState((state) => ({
+            fileErrorCount: state.fileErrorCount + 1,
+            files: newFiles,
+          }));
+        }
+        callbackCount++;
+        if (callbackCount == sortedHeaders.length) {
+          batcher.flush();
+        }
+      }),
+    );
   },
 
   toggleFolder: (folder) => {
