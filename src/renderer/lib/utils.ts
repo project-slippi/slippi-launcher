@@ -1,4 +1,4 @@
-import { stages as stageUtils } from "@slippi/slippi-js";
+import { characters as charUtils, stages as stageUtils } from "@slippi/slippi-js";
 import path from "path";
 import url from "url";
 
@@ -14,9 +14,15 @@ export const getStatic = (val: string): string => {
   return path.resolve(path.join(__static, val)).replace(/\\/g, "/");
 };
 
-export const getCharacterIcon = (characterId: number, characterColor = 0): string => {
-  const imgSrc = getStatic(`/images/characters/${characterId}/${characterColor}/stock.png`);
-  return imgSrc;
+export const getCharacterIcon = (characterId: number | null, characterColor: number | null = 0): string => {
+  if (characterId === null) {
+    return getStatic(`/images/unknown.png`);
+  }
+
+  const allColors = charUtils.getCharacterInfo(characterId).colors;
+  // Make sure it's a valid color, otherwise use the default color
+  const color = characterColor !== null && characterColor <= allColors.length - 1 ? characterColor : 0;
+  return getStatic(`/images/characters/${characterId}/${color}/stock.png`);
 };
 
 export const getStageImage = (stageId: number): string => {
