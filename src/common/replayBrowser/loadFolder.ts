@@ -21,6 +21,7 @@ export async function loadFolder(
 
   let fileErrorCount = 0;
   let fileValidCount = 0;
+  let batchSize = 0;
   callback(0, total);
 
   const process = async (fullPath: string) => {
@@ -32,11 +33,17 @@ export async function loadFolder(
             fullPath: fullPath,
             birthtime: (await fs.stat(fullPath)).birthtime,
           };
-          fileValidCount += 1;
-          callback(fileValidCount, total);
+          fileValidCount++;
+          // Only send progress updates when it would meaningfully change (ie,
+          // every whole percent increment).
+          batchSize++;
+          if (batchSize >= Math.floor(total / 100)) {
+            callback(fileValidCount, total);
+            batchSize = 0;
+          }
           resolve(result);
         } catch (err) {
-          fileErrorCount += 1;
+          fileErrorCount++;
           resolve(null);
         }
       });

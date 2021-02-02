@@ -188,6 +188,12 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   },
 
   loadFiles: async (results: Map<string, FileResult>) => {
+    // Subset of StoreState that is allowed to be modified in this function.
+    type LoadFilesState = {
+      files: Map<string, FileResult>;
+      fileErrorCount: number;
+    };
+
     // Every time we update files causes an expensive rerender, and React will
     // not batch state changes that are made in the callback. Therefore we batch
     // state changes manually.
@@ -202,15 +208,22 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
       // size.
       const FIRST_BATCH_SIZE = 20;
 
-      const state = get();
+      const indexState = get();
+      const state: LoadFilesState = { files: indexState.files, fileErrorCount: indexState.fileErrorCount };
+      const thisFolder = indexState.currentFolder;
+
       let batchSize = UPDATE_BATCH_SIZE - FIRST_BATCH_SIZE;
 
       const flush = () => {
-        set((oldState) => ({ ...state, forceRender: oldState.forceRender + 1 }));
-        batchSize = 0;
+        // The current folder may change while we are loading files. If it does
+        // so, ignore state changes.
+        if (get().currentFolder == thisFolder) {
+          set((oldState) => ({ ...state, forceRender: oldState.forceRender + 1 }));
+          batchSize = 0;
+        }
       };
 
-      const setState = (updateFn: (state: StoreState) => Partial<StoreState>) => {
+      const setState = (updateFn: (state: LoadFilesState) => Partial<LoadFilesState>) => {
         Object.assign(state, updateFn(state));
         batchSize++;
         if (batchSize >= UPDATE_BATCH_SIZE) {
