@@ -8,17 +8,42 @@ export async function loadFiles(
   fileHeaders: FileHeader[],
   callback: (path: string, details: FileDetails) => void,
   errorCallback: (path: string, err: Error) => void,
+  shouldCancel: () => boolean,
 ): Promise<void> {
+  let cancel = false;
+  let stopLoop = false;
+
+  // Start an asynchronous loop to check for cancellation.
+  (async () => {
+    while (!cancel && !stopLoop) {
+      cancel = await shouldCancel();
+    }
+  })();
+
   for (const header of fileHeaders) {
+    if (cancel) {
+      break;
+    }
     try {
-      callback(header.fullPath, await loadFile(header));
+      callback(header.fullPath, loadFile(header));
     } catch (err) {
       errorCallback(header.fullPath, err);
     }
+    // Yield control before the next loop. This gives the cancellation loop a
+    // chance to run.
+    await setImmediatePromise();
   }
+  // Stop the cancellation loop.
+  stopLoop = true;
 }
 
-async function loadFile(fileHeader: FileHeader): Promise<FileDetails> {
+function setImmediatePromise(): Promise<void> {
+  return new Promise((resolve) => {
+    setImmediate(() => resolve());
+  });
+}
+
+function loadFile(fileHeader: FileHeader): FileDetails {
   const game = new SlippiGame(fileHeader.fullPath);
   // Load settings
   const settings: GameStartType | null = game.getSettings();

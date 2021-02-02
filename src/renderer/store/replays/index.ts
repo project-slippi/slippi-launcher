@@ -2,7 +2,7 @@ import { StatsType } from "@slippi/slippi-js";
 import * as Comlink from "comlink";
 import { FileResult, findChild, FolderResult, generateSubFolderTree } from "common/replayBrowser";
 import { ipcRenderer, shell } from "electron";
-import produce from "immer";
+import { produce, setAutoFreeze } from "immer";
 import path from "path";
 import create from "zustand";
 
@@ -13,6 +13,9 @@ import { loadReplayFolder } from "@/workers/folderLoader.worker";
 import { calculateGameStats } from "@/workers/gameStats.worker";
 
 import { useSettings } from "../settings";
+
+// Necessary because freezing the state can errors in loadFiles.
+setAutoFreeze(false);
 
 type StoreState = {
   loading: boolean;
@@ -188,6 +191,8 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   },
 
   loadFiles: async (results: Map<string, FileResult>) => {
+    const thisFolder = get().currentFolder;
+
     // Subset of StoreState that is allowed to be modified in this function.
     type LoadFilesState = {
       files: Map<string, FileResult>;
@@ -210,7 +215,6 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
 
       const indexState = get();
       const state: LoadFilesState = { files: indexState.files, fileErrorCount: indexState.fileErrorCount };
-      const thisFolder = indexState.currentFolder;
 
       let batchSize = UPDATE_BATCH_SIZE - FIRST_BATCH_SIZE;
 
@@ -274,6 +278,9 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
         if (callbackCount == sortedHeaders.length) {
           batcher.flush();
         }
+      }),
+      Comlink.proxy(() => {
+        return get().currentFolder != thisFolder;
       }),
     );
   },
