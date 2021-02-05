@@ -69,7 +69,13 @@ jobs:
         run: |
           yarn install
       - name: Download playback artifact
+        shell: powershell
+        if: matrix.os == "windows-latest"
+        run: |
+          Invoke-WebRequest -Uri https://github.com/project-slippi/Ishiiruka-Playback/releases/latest/download/${{ matrix.playback_image }} -UseBasicParsing -OutFile "${{ matrix.playback_dolphin_path }}/${{ matrix.playback_image }}"
+      - name: Download playback artifact
         shell: bash
+        if: matrix.os != "windows-latest"
         run: |
           wget https://github.com/project-slippi/Ishiiruka-Playback/releases/latest/download/${{ matrix.playback_image }} -P ${{ matrix.playback_dolphin_path }}
       - name: Unzip
