@@ -57,10 +57,10 @@ function copyForMac(targetFolder) {
 
 function copyForWindows(targetFolder) {
   const sourceFolder = './app/dolphin-dev/windows';
-  const dolphinSource = './app/dolphin-dev/windows/Dolphin.exe';
+  const dolphinSource = './app/dolphin-dev/windows/Slippi Dolphin.exe';
   if (!fs.existsSync(dolphinSource)) {
     throw new Error(
-      'Must have a Dolphin.exe file in dolphin-dev/windows folder.'
+      'Must have a Slippi Dolphin.exe file in dolphin-dev/windows folder.'
     );
   }
 
