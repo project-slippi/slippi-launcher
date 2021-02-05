@@ -18,13 +18,13 @@ jobs:
         os: [ubuntu-latest, windows-latest, macOS-latest]
         include:
           - os: windows-latest
-            playback_image: windows64-playback
+            playback_image: playback-Win.zip
             playback_dolphin_path: app/dolphin-dev/windows/
           - os: ubuntu-latest
-            playback_image: linux-playback
+            playback_image: Slippi_Playback-x86_64.AppImage
             playback_dolphin_path: app/dolphin-dev/linux/
           - os: macOS-latest
-            playback_image: macOS-playback
+            playback_image: playback-Mac.zip
             playback_dolphin_path: app/dolphin-dev/osx/
     steps:
       - name: Use Node.js ${{ matrix.node-version }} on ${{ matrix.os }}
@@ -69,15 +69,11 @@ jobs:
         run: |
           yarn install
       - name: Download playback artifact
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          workflow: pr-build.yml
-          branch: slippi
-          name: ${{ matrix.playback_image }}
-          path: ${{ matrix.playback_dolphin_path }}
-          repo: project-slippi/Ishiiruka
+        shell: bash
+        run: |
+          wget https://github.com/project-slippi/Ishiiruka-Playback/releases/latest/download/${{ matrix.playback_image }} -P ${{ matrix.playback_dolphin_path }}
       - name: Unzip
+        if: matrix.os == 'macOS-latest' || matrix.os == 'windows-latest'
         shell: bash
         working-directory: ${{ matrix.playback_dolphin_path }}
         run: |
