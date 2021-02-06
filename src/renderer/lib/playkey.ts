@@ -28,9 +28,6 @@ const getUserKey = gql`
         playKey
       }
     }
-    dolphinVersions(order_by: { releasedAt: desc }, limit: 1) {
-      version
-    }
   }
 `;
 
