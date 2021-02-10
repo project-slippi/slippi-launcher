@@ -260,7 +260,7 @@ export default class Broadcast extends Component {
           />
           {this.renderButton()}
           <div className={styles['connection-details']}>
-            <div>Status: {isBroadcasting ? `Broadcasting since ${JSON.stringify(startTime)}` : endTime ? `Broadcast lasted ${(endTime - startTime) / 1000} seconds` : "Not broadcasting"}</div>
+            <div>Status: {isBroadcasting ? `Broadcasting since ${startTime.toLocaleString()}` : endTime ? `Broadcast lasted ${(endTime - startTime) / 1000} seconds` : "Not broadcasting"}</div>
             {this.renderStatusDisplay(dolphinConnectionStatus, "Dolphin ")}
             {this.renderStatusDisplay(slippiConnectionStatus, "Broadcast ")}
           </div>
