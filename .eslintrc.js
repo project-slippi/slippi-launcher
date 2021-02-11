@@ -53,5 +53,6 @@ module.exports = {
     "strict-booleans/no-nullable-numbers": "error",
     "no-undef": "off",
     "new-cap": "error",
+    curly: "error",
   },
 };
