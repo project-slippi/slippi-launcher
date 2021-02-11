@@ -58,6 +58,7 @@ export async function startReplay(log: (status: string) => void, replayComm: Rep
   log("Starting replay...");
   const dolphin = await openDolphin(DolphinType.PLAYBACK, ["-i", replayCommPath, "-b", "-e", meleeFile]);
   dolphin.on("close", () => {
+    log(`deleting ${replayCommPath}`);
     fs.unlink(replayCommPath);
   });
 }
