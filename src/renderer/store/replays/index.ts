@@ -10,7 +10,7 @@ import { loadReplayFolder } from "@/workers/fileLoader.worker";
 import { calculateGameStats } from "@/workers/gameStats.worker";
 
 import { useSettings } from "../settings";
-import { ReplayComm, startReplay } from "@/lib/startDolphin";
+import { ReplayCommunication, startReplay } from "@/lib/startDolphin";
 
 type StoreState = {
   loading: boolean;
@@ -85,7 +85,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   },
 
   playFile: async (fullPath) => {
-    const replayComm: ReplayComm = {
+    const replayComm: ReplayCommunication = {
       replay: fullPath,
       mode: "normal",
     };

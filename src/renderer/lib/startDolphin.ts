@@ -7,7 +7,7 @@ import * as fs from "fs-extra";
 
 import path from "path";
 
-export interface ReplayComm {
+export interface ReplayCommunication {
   mode?: string;
   replay?: string;
   startFrame?: number;
@@ -43,7 +43,7 @@ export async function startGame(log: (status: string) => void, meleeFile?: strin
   openDolphin(DolphinType.NETPLAY, ["-b", "-e", meleeFile]);
 }
 
-export async function startReplay(log: (status: string) => void, replayComm: ReplayComm, meleeFile?: string) {
+export async function startReplay(log: (status: string) => void, replayComm: ReplayCommunication, meleeFile?: string) {
   log("Checking for Dolphin installation...");
   await assertDolphinInstallation(DolphinType.PLAYBACK, log);
 
@@ -51,7 +51,7 @@ export async function startReplay(log: (status: string) => void, replayComm: Rep
     throw new Error("Melee ISO is not specified");
   }
 
-  const replayCommPath = await genCommFilePath();
+  const replayCommPath = await generateCommunicationFilePath();
 
   await fs.writeFile(replayCommPath, JSON.stringify(replayComm));
 
@@ -63,7 +63,7 @@ export async function startReplay(log: (status: string) => void, replayComm: Rep
   });
 }
 
-async function genCommFilePath(): Promise<string> {
+async function generateCommunicationFilePath(): Promise<string> {
   const tmpDir = remote.app.getPath("temp");
   const uniqueId = randomBytes(3 * 4).toString("hex");
   const commFileName = `slippi-comm-${uniqueId}.txt`;
