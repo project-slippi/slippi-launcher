@@ -47,11 +47,12 @@ export interface ReplayFileStatsProps {
 }
 
 export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
-  const { settings } = props.file;
+  const { settings, fullPath } = props.file;
 
   const loading = useReplays((store) => store.selectedFile.loading);
   const error = useReplays((store) => store.selectedFile.error);
   const gameStats = useReplays((store) => store.selectedFile.gameStats);
+  const playFile = useReplays((store) => store.playFile);
   const numPlayers = settings.players.length;
 
   const keyDownFunction = (event: { keyCode: number }) => {
@@ -80,12 +81,7 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
 
   return (
     <Outer>
-      <GameProfileHeader
-        {...props}
-        loading={loading}
-        stats={gameStats}
-        onPlay={() => console.warn("Playing back replays is currently unsupported")}
-      />
+      <GameProfileHeader {...props} loading={loading} stats={gameStats} onPlay={() => playFile(fullPath)} />
       <Content>
         {numPlayers !== 2 ? (
           <IconMessage Icon={ErrorIcon} label="Only singles is supported" />
