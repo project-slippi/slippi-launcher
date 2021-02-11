@@ -45,7 +45,8 @@ interface DolphinInstances {
   playback: DolphinInstance | null;
   spectate: DolphinInstance[] | null;
   netplay: DolphinInstance | null;
-  config: DolphinInstance | null;
+  configNetplay: DolphinInstance | null;
+  configPlayback: DolphinInstance | null;
 }
 
 async function generateCommunicationFilePath(
@@ -70,7 +71,8 @@ export class DolphinManager extends EventEmitter {
     playback: null,
     spectate: null,
     netplay: null,
-    config: null,
+    configNetplay: null,
+    configPlayback: null,
   };
 
   public static getInstance(): DolphinManager {
@@ -84,6 +86,7 @@ export class DolphinManager extends EventEmitter {
     dolphinUseType: "playback" | "spectate" | "config" | "netplay",
     index: number,
     replayComm?: ReplayCommunication,
+    dolphinType?: DolphinType,
   ): Promise<void> {
     // I hate how this is done
     const isoParams: string[] = [];
@@ -118,9 +121,8 @@ export class DolphinManager extends EventEmitter {
       }
 
       case "spectate": {
-        if (!index) {
-          console.error("that's illegal");
-          break;
+        if (index < 0) {
+          throw Error("Must have a valid index");
         }
         let dolphinInstance: DolphinInstance | undefined = find(this.dolphinInstances.spectate, ["index", index]);
         if (!dolphinInstance?.dolphin) {
@@ -139,7 +141,7 @@ export class DolphinManager extends EventEmitter {
           } else {
             this.dolphinInstances.spectate.push(dolphinInstance);
           }
-          // set up actions for when dolphin closes
+
           dolphin.on("close", async () => {
             await fs.unlink(commFilePath);
             if (this.dolphinInstances.spectate) {
@@ -156,7 +158,7 @@ export class DolphinManager extends EventEmitter {
 
       case "netplay": {
         if (!this.dolphinInstances.netplay) {
-          const dolphin = await this.startDolphin(DolphinType.NETPLAY, "", isoParams);
+          const dolphin = await this.startDolphin(DolphinType.NETPLAY, undefined, isoParams);
           this.dolphinInstances.netplay = {
             dolphinUseType: "netplay",
             dolphin: dolphin,
@@ -171,26 +173,41 @@ export class DolphinManager extends EventEmitter {
       }
 
       case "config": {
-        throw Error("Unsupported use type");
-      }
+        let configureType = "";
+        if (dolphinType === DolphinType.NETPLAY) {
+          configureType = "configNetplay";
+        } else if (dolphinType === DolphinType.PLAYBACK) {
+          configureType = "configPlayback";
+        } else {
+          throw Error("Must define a dolphin type for configuration");
+        }
 
-      default:
-        throw Error("Unsupported use type");
+        const dolphin = await this.startDolphin(dolphinType);
+        this.dolphinInstances[configureType] = {
+          dolphinUseType: "config",
+          dolphin: dolphin,
+        };
+
+        dolphin.on("close", () => {
+          this.dolphinInstances[configureType] = null;
+        });
+
+        break;
+      }
     }
   }
 
   private async startDolphin(
     dolphinType: DolphinType,
-    commFilePath: string,
+    commFilePath?: string,
     additionalParams?: string[],
   ): Promise<ChildProcessWithoutNullStreams> {
     const dolphinPath = await findDolphinExecutable(dolphinType);
 
-    if (dolphinType === DolphinType.NETPLAY) {
-      return spawn(dolphinPath, additionalParams);
+    const params = [];
+    if (commFilePath) {
+      params.push("-i", commFilePath);
     }
-
-    const params = ["-i", commFilePath];
     if (additionalParams) {
       params.push(...additionalParams);
     }

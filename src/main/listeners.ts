@@ -1,3 +1,4 @@
+import { DolphinType } from "common/dolphin";
 import { ipcMain, nativeImage } from "electron";
 import path from "path";
 import { DolphinManager, ReplayCommunication } from "./dolphinManager";
@@ -21,5 +22,9 @@ export function setupListeners() {
 
   ipcMain.on("playnetplay", () => {
     dolphinManager.launchDolphin("netplay", -1);
+  });
+
+  ipcMain.on("configuredolphin", (_, dolphinType: DolphinType) => {
+    dolphinManager.launchDolphin("config", -1, undefined, dolphinType);
   });
 }
