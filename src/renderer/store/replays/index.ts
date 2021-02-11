@@ -1,7 +1,7 @@
 import { StatsType } from "@slippi/slippi-js";
 import * as Comlink from "comlink";
 import { FileResult, findChild, FolderResult, generateSubFolderTree } from "common/replayBrowser";
-import { shell } from "electron";
+import { ipcRenderer, shell } from "electron";
 import produce from "immer";
 import path from "path";
 import create from "zustand";
@@ -34,6 +34,7 @@ type StoreState = {
 type StoreReducers = {
   init: (rootFolder: string, forceReload?: boolean, currentFolder?: string) => Promise<void>;
   selectFile: (index: number, filePath: string) => Promise<void>;
+  playFile: (filePath: string) => Promise<void>;
   clearSelectedFile: () => Promise<void>;
   deleteFile: (filePath: string) => Promise<void>;
   loadDirectoryList: (folder: string) => Promise<void>;
@@ -80,6 +81,10 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     });
 
     await Promise.all([loadDirectoryList(currentFolder ?? rootFolder), loadFolder(currentFolder ?? rootFolder, true)]);
+  },
+
+  playFile: async (fullPath) => {
+    ipcRenderer.send("viewReplay", fullPath);
   },
 
   selectFile: async (index, fullPath) => {

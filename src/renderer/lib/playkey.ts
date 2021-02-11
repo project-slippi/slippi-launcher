@@ -1,10 +1,9 @@
 import { ApolloClient, ApolloLink, gql, HttpLink, InMemoryCache } from "@apollo/client";
+import { DolphinLaunchType, findDolphinExecutable } from "common/dolphin";
 import { fileExists } from "common/utils";
 import firebase from "firebase";
 import * as fs from "fs-extra";
 import path from "path";
-
-import { DolphinType, findDolphinExecutable } from "./directories";
 
 export interface PlayKey {
   uid: string;
@@ -80,7 +79,7 @@ export async function assertPlayKey(): Promise<void> {
 }
 
 async function findPlayKey(): Promise<string> {
-  const dolphinPath = await findDolphinExecutable(DolphinType.NETPLAY);
+  const dolphinPath = await findDolphinExecutable(DolphinLaunchType.NETPLAY);
   let dolphinDir = path.dirname(dolphinPath);
   if (process.platform === "darwin") {
     dolphinDir = path.join(dolphinPath, "Contents", "Resources");

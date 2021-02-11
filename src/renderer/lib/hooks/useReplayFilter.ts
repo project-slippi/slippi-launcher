@@ -1,6 +1,6 @@
 import { extractAllPlayerNames, namesMatch } from "common/matchNames";
 import { FileResult } from "common/replayBrowser";
-import produce from "immer";
+import { produce } from "immer";
 import create from "zustand";
 
 export interface FilterOptions {

@@ -1,14 +1,14 @@
-import Tooltip from "@material-ui/core/Tooltip";
-import styled from "styled-components";
 import Button from "@material-ui/core/Button";
 import List from "@material-ui/core/List";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
+import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import SearchIcon from "@material-ui/icons/Search";
 import { colors } from "common/colors";
+import { shell } from "electron";
 import { debounce } from "lodash";
 import React from "react";
-import { shell } from "electron";
+import styled from "styled-components";
 
 import { DualPane } from "@/components/DualPane";
 import { LoadingScreen } from "@/components/LoadingScreen";
@@ -30,6 +30,7 @@ export const ReplayBrowser: React.FC = () => {
   const files = useReplays((store) => store.files);
   const selectedItem = useReplays((store) => store.selectedFile.index);
   const selectFile = useReplays((store) => store.selectFile);
+  const playFile = useReplays((store) => store.playFile);
   const clearSelectedFile = useReplays((store) => store.clearSelectedFile);
   const loading = useReplays((store) => store.loading);
   const currentFolder = useReplays((store) => store.currentFolder);
@@ -53,6 +54,11 @@ export const ReplayBrowser: React.FC = () => {
       const filePath = filteredFiles[index].fullPath;
       selectFile(index, filePath);
     }
+  };
+
+  const playSelectedFile = (index: number) => {
+    const filePath = filteredFiles[index].fullPath;
+    playFile(filePath);
   };
 
   const updateFilter = debounce((val) => setFilterOptions(val), 100);
@@ -125,6 +131,7 @@ export const ReplayBrowser: React.FC = () => {
                   <FileList
                     onDelete={deleteFile}
                     onSelect={(index: number) => setSelectedItem(index)}
+                    onPlay={(index: number) => playSelectedFile(index)}
                     files={filteredFiles}
                     scrollRowItem={scrollRowItem}
                     setScrollRowItem={setScrollRowItem}

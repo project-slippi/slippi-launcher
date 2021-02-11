@@ -1,8 +1,8 @@
-import Collapse from "@material-ui/core/Collapse";
-import styled from "styled-components";
 import Button from "@material-ui/core/Button";
-import React from "react";
+import Collapse from "@material-ui/core/Collapse";
 import WarningIcon from "@material-ui/icons/Warning";
+import React from "react";
+import styled from "styled-components";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 

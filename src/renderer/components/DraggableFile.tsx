@@ -24,7 +24,7 @@ export interface DraggableFileProps {
 export const DraggableFile: React.FC<DraggableFileProps> = ({ fullPath, children, className, style }) => {
   const handleDragStart = (e: React.DragEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    ipcRenderer.send("ondragstart", fullPath);
+    ipcRenderer.send("onDragStart", fullPath);
   };
   return (
     <DraggableLink

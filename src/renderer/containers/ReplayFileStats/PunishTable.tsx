@@ -191,7 +191,9 @@ export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, playerInd
       while (shouldDisplayStockLoss()) {
         const stock = opponentStocks.shift();
 
-        if (!stock) break;
+        if (!stock) {
+          break;
+        }
         if (shouldAddEmptyState) {
           const emptyPunishes = generateEmptyRow(stock);
           elements.push(emptyPunishes);
