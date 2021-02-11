@@ -1,11 +1,11 @@
-import { DolphinType } from "./directories";
-import { remote } from "electron";
 import { randomBytes } from "crypto";
+import { remote } from "electron";
+import * as fs from "fs-extra";
+import path from "path";
+
+import { DolphinType } from "./directories";
 import { assertDolphinInstallation, openDolphin } from "./downloadDolphin";
 import { assertPlayKey } from "./playkey";
-import * as fs from "fs-extra";
-
-import path from "path";
 
 export interface ReplayCommunication {
   mode?: "normal" | "mirror" | "queue";

@@ -1,5 +1,6 @@
 import { ipcMain, nativeImage } from "electron";
 import path from "path";
+
 import { dolphinManager, ReplayCommunication } from "./dolphinManager";
 
 export function setupListeners() {

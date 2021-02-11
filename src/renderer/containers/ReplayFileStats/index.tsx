@@ -1,5 +1,6 @@
 import ErrorIcon from "@material-ui/icons/Error";
 import HelpIcon from "@material-ui/icons/Help";
+import { colors } from "common/colors";
 import { FileResult } from "common/replayBrowser";
 import _ from "lodash";
 import React from "react";
@@ -11,7 +12,6 @@ import { useReplays } from "@/store/replays";
 
 import { GameProfile } from "./GameProfile";
 import { GameProfileHeader } from "./GameProfileHeader";
-import { colors } from "common/colors";
 
 const Outer = styled.div`
   position: relative;

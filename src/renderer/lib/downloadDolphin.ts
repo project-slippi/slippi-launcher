@@ -1,5 +1,5 @@
 import AdmZip from "adm-zip";
-import { spawn, spawnSync, ChildProcessWithoutNullStreams } from "child_process";
+import { ChildProcessWithoutNullStreams, spawn, spawnSync } from "child_process";
 import { download } from "common/download";
 import { fileExists } from "common/utils";
 import { remote } from "electron";

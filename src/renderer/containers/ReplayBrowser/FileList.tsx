@@ -1,4 +1,3 @@
-import { ErrorBoundary } from "@/components/ErrorBoundary";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import Menu from "@material-ui/core/Menu";
@@ -12,6 +11,8 @@ import { debounce } from "lodash";
 import React from "react";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as List } from "react-window";
+
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 import { ReplayFile } from "./ReplayFile";
 

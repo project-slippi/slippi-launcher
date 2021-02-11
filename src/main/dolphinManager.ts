@@ -1,12 +1,13 @@
-import { EventEmitter } from "events";
-import electronSettings from "electron-settings";
 import { ChildProcessWithoutNullStreams, spawn } from "child_process";
-import { find, remove } from "lodash";
-import { app } from "electron";
 import { randomBytes } from "crypto";
-import path from "path";
-import { DolphinType } from "../renderer/lib/directories";
+import { app } from "electron";
+import electronSettings from "electron-settings";
+import { EventEmitter } from "events";
 import * as fs from "fs-extra";
+import { find, remove } from "lodash";
+import path from "path";
+
+import { DolphinType } from "../renderer/lib/directories";
 
 electronSettings.configure({
   fileName: "Settings",
