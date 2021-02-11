@@ -19,6 +19,7 @@ module.exports = {
   plugins: ["simple-import-sort", "strict-booleans"],
   extends: [
     "plugin:react/recommended",
+    "eslint:recommended",
     // Uses the recommended rules from the @typescript-eslint/eslint-plugin
     "plugin:@typescript-eslint/recommended",
     // Uses eslint-config-prettier to disable ESLint rules from @typescript-eslint/eslint-plugin that would conflict with prettier
@@ -50,5 +51,7 @@ module.exports = {
     "simple-import-sort/imports": "warn",
     "simple-import-sort/exports": "warn",
     "strict-booleans/no-nullable-numbers": "error",
+    "no-undef": "off",
+    "new-cap": "error",
   },
 };
