@@ -23,13 +23,15 @@ const StyledListItemIcon = withStyles(() => ({
   },
 }))(ListItemIcon);
 
+// This is the container for all the replays visible, the autosizer will handle the virtualization portion
 const FileListResults: React.FC<{
   files: FileResult[];
   scrollRowItem: number;
   onOpenMenu: (index: number, element: HTMLElement) => void;
   onSelect: (index: number) => void;
+  onPlay: (index: number) => void;
   setScrollRowItem: (row: number) => void;
-}> = ({ scrollRowItem, files, onSelect, onOpenMenu, setScrollRowItem }) => {
+}> = ({ scrollRowItem, files, onSelect, onPlay, onOpenMenu, setScrollRowItem }) => {
   // Keep a reference to the list so we can control the scroll position
   const listRef = React.createRef<List>();
   // Keep track of the latest scroll position
@@ -46,11 +48,12 @@ const FileListResults: React.FC<{
           index={props.index}
           style={props.style}
           onSelect={() => onSelect(props.index)}
+          onPlay={() => onPlay(props.index)}
           {...files[props.index]}
         />
       </ErrorBoundary>
     ),
-    [files, onSelect, onOpenMenu],
+    [files, onSelect, onPlay, onOpenMenu],
   );
 
   // Store the latest scroll row item on unmount
@@ -88,13 +91,16 @@ const FileListResults: React.FC<{
   );
 };
 
+// the container containing FileListResults. figure the rest out yourself
+// to simplify the DOM, the submenu for each row is essentially the same until you actually click on it for a given row.
 export const FileList: React.FC<{
   files: FileResult[];
   scrollRowItem?: number;
   setScrollRowItem: (row: number) => void;
   onDelete: (filepath: string) => void;
   onSelect: (index: number) => void;
-}> = ({ scrollRowItem = 0, files, onSelect, onDelete, setScrollRowItem }) => {
+  onPlay: (index: number) => void;
+}> = ({ scrollRowItem = 0, files, onSelect, onPlay, onDelete, setScrollRowItem }) => {
   const [menuItem, setMenuItem] = React.useState<null | {
     index: number;
     anchorEl: HTMLElement;
@@ -131,6 +137,7 @@ export const FileList: React.FC<{
         <FileListResults
           onOpenMenu={onOpenMenu}
           onSelect={onSelect}
+          onPlay={onPlay}
           files={files}
           scrollRowItem={scrollRowItem}
           setScrollRowItem={setScrollRowItem}

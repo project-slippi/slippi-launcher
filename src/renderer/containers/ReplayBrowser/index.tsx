@@ -30,6 +30,7 @@ export const ReplayBrowser: React.FC = () => {
   const files = useReplays((store) => store.files);
   const selectedItem = useReplays((store) => store.selectedFile.index);
   const selectFile = useReplays((store) => store.selectFile);
+  const playFile = useReplays((store) => store.playFile);
   const clearSelectedFile = useReplays((store) => store.clearSelectedFile);
   const loading = useReplays((store) => store.loading);
   const currentFolder = useReplays((store) => store.currentFolder);
@@ -53,6 +54,11 @@ export const ReplayBrowser: React.FC = () => {
       const filePath = filteredFiles[index].fullPath;
       selectFile(index, filePath);
     }
+  };
+
+  const playSelectedFile = (index: number) => {
+    const filePath = filteredFiles[index].fullPath;
+    playFile(filePath);
   };
 
   const updateFilter = debounce((val) => setFilterOptions(val), 100);
@@ -125,6 +131,7 @@ export const ReplayBrowser: React.FC = () => {
                   <FileList
                     onDelete={deleteFile}
                     onSelect={(index: number) => setSelectedItem(index)}
+                    onPlay={(index: number) => playSelectedFile(index)}
                     files={filteredFiles}
                     scrollRowItem={scrollRowItem}
                     setScrollRowItem={setScrollRowItem}

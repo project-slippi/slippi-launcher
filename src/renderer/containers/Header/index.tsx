@@ -18,7 +18,7 @@ import styled from "styled-components";
 
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
 import { assertPlayKey } from "@/lib/playkey";
-import { startGame } from "@/lib/startGame";
+import { startGame } from "@/lib/startDolphin";
 import { useApp } from "@/store/app";
 import { useSettings } from "@/store/settings";
 

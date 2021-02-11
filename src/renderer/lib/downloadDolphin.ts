@@ -1,5 +1,5 @@
 import AdmZip from "adm-zip";
-import { spawn, spawnSync } from "child_process";
+import { spawn, spawnSync, ChildProcessWithoutNullStreams } from "child_process";
 import { download } from "common/download";
 import { fileExists } from "common/utils";
 import { remote } from "electron";
@@ -13,7 +13,7 @@ export async function assertDolphinInstallation(type: DolphinType, log: (message
   try {
     await findDolphinExecutable(type);
     log(`Found existing ${type} Dolphin executable.`);
-    log(`Checking if we need to update`);
+    log(`Checking if we need to update ${type} Dolphin`);
     const data = await getLatestReleaseData(type);
     const latestVersion = data.tag_name;
     const isOutdated = await compareDolphinVersion(type, latestVersion);
@@ -46,9 +46,9 @@ async function compareDolphinVersion(type: DolphinType, latestVersion: string): 
   return lt(latestVersion, dolphinVersion);
 }
 
-export async function openDolphin(type: DolphinType, params?: string[]) {
+export async function openDolphin(type: DolphinType, params?: string[]): Promise<ChildProcessWithoutNullStreams> {
   const dolphinPath = await findDolphinExecutable(type);
-  spawn(dolphinPath, params);
+  return spawn(dolphinPath, params);
 }
 
 async function getLatestDolphinAsset(type: DolphinType): Promise<any> {

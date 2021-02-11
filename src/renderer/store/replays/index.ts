@@ -10,6 +10,7 @@ import { loadReplayFolder } from "@/workers/fileLoader.worker";
 import { calculateGameStats } from "@/workers/gameStats.worker";
 
 import { useSettings } from "../settings";
+import { ReplayComm, startReplay } from "@/lib/startDolphin";
 
 type StoreState = {
   loading: boolean;
@@ -34,6 +35,7 @@ type StoreState = {
 type StoreReducers = {
   init: (rootFolder: string, forceReload?: boolean, currentFolder?: string) => Promise<void>;
   selectFile: (index: number, filePath: string) => Promise<void>;
+  playFile: (filePath: string) => Promise<void>;
   clearSelectedFile: () => Promise<void>;
   deleteFile: (filePath: string) => Promise<void>;
   loadDirectoryList: (folder: string) => Promise<void>;
@@ -80,6 +82,15 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     });
 
     await Promise.all([loadDirectoryList(currentFolder ?? rootFolder), loadFolder(currentFolder ?? rootFolder, true)]);
+  },
+
+  playFile: async (fullPath) => {
+    const replayComm: ReplayComm = {
+      replay: fullPath,
+      mode: "normal",
+    };
+    const meleeIsoPath = useSettings.getState().settings.isoPath || undefined;
+    startReplay(console.log, replayComm, meleeIsoPath);
   },
 
   selectFile: async (index, fullPath) => {
