@@ -98,8 +98,9 @@ export class dolphinManager extends EventEmitter {
           });
         }
 
-        if (this.dolphinInstances.playback.commFilePath)
+        if (this.dolphinInstances.playback.commFilePath) {
           await fs.writeFile(this.dolphinInstances.playback.commFilePath, JSON.stringify(replayComm));
+        }
 
         break;
 
@@ -127,11 +128,14 @@ export class dolphinManager extends EventEmitter {
           }
           // set up actions for when dolphin closes
           dolphin.on("close", () => {
-            if (this.dolphinInstances.spectate)
+            if (this.dolphinInstances.spectate) {
               remove(this.dolphinInstances.spectate, (instance) => instance.index === index);
+            }
           });
         }
-        if (dolphinInstance.commFilePath) await fs.writeFile(dolphinInstance.commFilePath, JSON.stringify(replayComm));
+        if (dolphinInstance.commFilePath) {
+          await fs.writeFile(dolphinInstance.commFilePath, JSON.stringify(replayComm));
+        }
 
         break;
 
