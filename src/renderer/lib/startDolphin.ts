@@ -8,7 +8,7 @@ import * as fs from "fs-extra";
 import path from "path";
 
 export interface ReplayCommunication {
-  mode?: string;
+  mode?: "normal" | "mirror" | "queue";
   replay?: string;
   startFrame?: number;
   endFrame?: number;
@@ -16,7 +16,7 @@ export interface ReplayCommunication {
   outputOverlayFiles?: boolean;
   isRealTimeMode?: boolean;
   shouldResync?: boolean;
-  rollbackDisplayMethod?: string;
+  rollbackDisplayMethod?: "off" | "normal" | "visible";
   queue?: ReplayQueueItem[];
 }
 
