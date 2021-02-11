@@ -12,13 +12,12 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import SettingsIcon from "@material-ui/icons/Settings";
 import Alert from "@material-ui/lab/Alert";
 import { colors } from "common/colors";
-import { shell } from "electron";
+import { ipcRenderer, shell } from "electron";
 import React from "react";
 import styled from "styled-components";
 
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
 import { assertPlayKey } from "@/lib/playkey";
-import { startGame } from "@/lib/startDolphin";
 import { useApp } from "@/store/app";
 import { useSettings } from "@/store/settings";
 
@@ -100,7 +99,7 @@ export const Header: React.FC = () => {
     }
 
     try {
-      await startGame(console.log, meleeIsoPath);
+      await ipcRenderer.send("playnetplay");
     } catch (err) {
       handleError(err);
     }

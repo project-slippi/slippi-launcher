@@ -1,7 +1,7 @@
 import { StatsType } from "@slippi/slippi-js";
 import * as Comlink from "comlink";
 import { FileResult, findChild, FolderResult, generateSubFolderTree } from "common/replayBrowser";
-import { shell } from "electron";
+import { ipcRenderer, shell } from "electron";
 import produce from "immer";
 import path from "path";
 import create from "zustand";
@@ -10,7 +10,6 @@ import { loadReplayFolder } from "@/workers/fileLoader.worker";
 import { calculateGameStats } from "@/workers/gameStats.worker";
 
 import { useSettings } from "../settings";
-import { ReplayCommunication, startReplay } from "@/lib/startDolphin";
 
 type StoreState = {
   loading: boolean;
@@ -85,12 +84,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   },
 
   playFile: async (fullPath) => {
-    const replayComm: ReplayCommunication = {
-      replay: fullPath,
-      mode: "normal",
-    };
-    const meleeIsoPath = useSettings.getState().settings.isoPath || undefined;
-    startReplay(console.log, replayComm, meleeIsoPath);
+    ipcRenderer.send("viewreplay", fullPath);
   },
 
   selectFile: async (index, fullPath) => {
