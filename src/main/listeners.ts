@@ -5,19 +5,27 @@ import { DolphinManager, ReplayCommunication } from "./dolphinManager";
 
 export function setupListeners() {
   const dolphinManager = DolphinManager.getInstance();
-  ipcMain.on("ondragstart", (event, filePath) => {
+  ipcMain.on("ondragstart", (event, filePath: string) => {
     event.sender.startDrag({
       file: filePath,
       icon: nativeImage.createFromPath(path.join(__static, "images", "file.png")),
     });
   });
 
-  ipcMain.on("viewreplay", (_, filePath) => {
+  ipcMain.on("viewreplay", (_, filePath: string) => {
     const replayComm: ReplayCommunication = {
       mode: "normal",
       replay: filePath,
     };
     dolphinManager.launchDolphin("playback", -1, replayComm);
+  });
+
+  ipcMain.on("watchbroadcast", (_, filePath: string, mode: "normal" | "mirror", index: number) => {
+    const replayComm: ReplayCommunication = {
+      mode: mode,
+      replay: filePath,
+    };
+    dolphinManager.launchDolphin("spectate", index, replayComm);
   });
 
   ipcMain.on("playnetplay", () => {
