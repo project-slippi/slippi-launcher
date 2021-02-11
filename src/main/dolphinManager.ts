@@ -6,8 +6,7 @@ import { EventEmitter } from "events";
 import * as fs from "fs-extra";
 import { find, remove } from "lodash";
 import path from "path";
-
-import { DolphinType } from "../renderer/lib/directories";
+import { DolphinType, findDolphinExecutable } from "common/dolphin";
 
 electronSettings.configure({
   fileName: "Settings",
@@ -49,11 +48,22 @@ interface DolphinInstances {
   config: DolphinInstance | null;
 }
 
+async function generateCommunicationFilePath(
+  dolphinUseType: "playback" | "spectate" | "config" | "netplay",
+): Promise<string> {
+  const tmpDir = app.getPath("temp");
+  const uniqueId = randomBytes(3 * 4).toString("hex");
+  const commFileName = `slippi-${dolphinUseType}-${uniqueId}.txt`;
+  const commFileFullPath = path.join(tmpDir, commFileName);
+
+  return commFileFullPath;
+}
+
 // dolphinManager should be in control of all dolphin instances that get opened for actual use.
 // This includes playing netplay, viewing replays, watching broadcasts (spectating), and configuring Dolphin.
 // The openDolphin function is exported so other parts of the app can do some checks.
-export class dolphinManager extends EventEmitter {
-  private static instance: dolphinManager;
+export class DolphinManager extends EventEmitter {
+  private static instance: DolphinManager;
 
   private dolphinInstances: DolphinInstances = {
     playback: null,
@@ -62,11 +72,11 @@ export class dolphinManager extends EventEmitter {
     config: null,
   };
 
-  public static getInstance(): dolphinManager {
-    if (!dolphinManager.instance) {
-      dolphinManager.instance = new dolphinManager();
+  public static getInstance(): DolphinManager {
+    if (!DolphinManager.instance) {
+      DolphinManager.instance = new DolphinManager();
     }
-    return dolphinManager.instance;
+    return DolphinManager.instance;
   }
 
   public async launchDolphin(
@@ -74,17 +84,17 @@ export class dolphinManager extends EventEmitter {
     index: number,
     replayComm?: ReplayCommunication,
   ): Promise<void> {
-    const meleeISOPath = await electronSettings.get("settings.isoPath");
     // I hate how this is done
+    const meleeISOPath = await electronSettings.get("settings.isoPath");
     const isoParams: string[] = [];
-
     if (meleeISOPath?.toString()) {
       isoParams.push("-b", "-e", meleeISOPath.toString());
     }
+
     switch (dolphinUseType) {
-      case "playback":
+      case "playback": {
         if (!this.dolphinInstances.playback) {
-          const commFilePath = await this.generateCommunicationFilePath(dolphinUseType);
+          const commFilePath = await generateCommunicationFilePath(dolphinUseType);
 
           const dolphin = await this.startDolphin(DolphinType.PLAYBACK, commFilePath, isoParams);
           this.dolphinInstances.playback = {
@@ -103,15 +113,16 @@ export class dolphinManager extends EventEmitter {
         }
 
         break;
+      }
 
-      case "spectate":
+      case "spectate": {
         if (!index) {
-          console.log("that's illegal");
+          console.error("that's illegal");
           break;
         }
         let dolphinInstance: DolphinInstance | undefined = find(this.dolphinInstances.spectate, ["index", index]);
         if (!dolphinInstance?.dolphin) {
-          const commFilePath = await this.generateCommunicationFilePath(dolphinUseType);
+          const commFilePath = await generateCommunicationFilePath(dolphinUseType);
           const dolphin = await this.startDolphin(DolphinType.PLAYBACK, commFilePath, isoParams);
           dolphinInstance = {
             dolphinUseType: dolphinUseType,
@@ -138,10 +149,11 @@ export class dolphinManager extends EventEmitter {
         }
 
         break;
+      }
 
-      case "netplay":
+      case "netplay": {
         if (!this.dolphinInstances.netplay) {
-          const commFilePath = await this.generateCommunicationFilePath(dolphinUseType);
+          const commFilePath = await generateCommunicationFilePath(dolphinUseType);
           const dolphin = await this.startDolphin(DolphinType.NETPLAY, "", isoParams);
           this.dolphinInstances.netplay = {
             dolphinUseType: "netplay",
@@ -155,23 +167,15 @@ export class dolphinManager extends EventEmitter {
         }
 
         break;
+      }
 
-      case "config":
+      case "config": {
+        throw Error("Unsupported use type");
+      }
 
       default:
-        console.log("unsupported atm");
+        throw Error("Unsupported use type");
     }
-  }
-
-  private async generateCommunicationFilePath(
-    dolphinUseType: "playback" | "spectate" | "config" | "netplay",
-  ): Promise<string> {
-    const tmpDir = app.getPath("temp");
-    const uniqueId = randomBytes(3 * 4).toString("hex");
-    const commFileName = `slippi-${dolphinUseType}-${uniqueId}.txt`;
-    const commFileFullPath = path.join(tmpDir, commFileName);
-
-    return commFileFullPath;
   }
 
   private async startDolphin(
@@ -179,7 +183,7 @@ export class dolphinManager extends EventEmitter {
     commFilePath: string,
     additionalParams?: string[],
   ): Promise<ChildProcessWithoutNullStreams> {
-    const dolphinPath = await this.findDolphinExecutable(dolphinType);
+    const dolphinPath = await findDolphinExecutable(dolphinType);
 
     if (dolphinType === DolphinType.NETPLAY) {
       return spawn(dolphinPath, additionalParams);
@@ -190,32 +194,5 @@ export class dolphinManager extends EventEmitter {
       params.push(...additionalParams);
     }
     return spawn(dolphinPath, params);
-  }
-
-  public async findDolphinExecutable(type: DolphinType): Promise<string> {
-    // Make sure the directory actually exists
-    const dolphinPath = path.join(app.getPath("userData"), type);
-    await fs.ensureDir(dolphinPath);
-
-    // Check the directory contents
-    const files = await fs.readdir(dolphinPath);
-    const result = files.find((filename) => {
-      switch (process.platform) {
-        case "win32":
-          return filename.endsWith("Dolphin.exe");
-        case "darwin":
-          return filename.endsWith("Dolphin.app");
-        case "linux":
-          return filename.endsWith(".AppImage");
-        default:
-          return false;
-      }
-    });
-
-    if (!result) {
-      throw new Error(`No Dolphin found in: ${dolphinPath}`);
-    }
-
-    return path.join(dolphinPath, result);
   }
 }

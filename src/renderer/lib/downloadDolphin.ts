@@ -1,13 +1,12 @@
 import AdmZip from "adm-zip";
 import { ChildProcessWithoutNullStreams, spawn, spawnSync } from "child_process";
+import { DolphinType, findDolphinExecutable } from "common/dolphin";
 import { download } from "common/download";
 import { fileExists } from "common/utils";
 import { remote } from "electron";
 import * as fs from "fs-extra";
 import path from "path";
 import { lt } from "semver";
-
-import { DolphinType, findDolphinExecutable } from "./directories";
 
 export async function assertDolphinInstallation(type: DolphinType, log: (message: string) => void): Promise<void> {
   try {
