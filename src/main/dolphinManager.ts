@@ -103,7 +103,8 @@ export class DolphinManager extends EventEmitter {
             commFilePath: commFilePath,
           };
 
-          dolphin.on("close", () => {
+          dolphin.on("close", async () => {
+            await fs.unlink(commFilePath);
             this.dolphinInstances.playback = null;
           });
         }
@@ -138,7 +139,8 @@ export class DolphinManager extends EventEmitter {
             this.dolphinInstances.spectate.push(dolphinInstance);
           }
           // set up actions for when dolphin closes
-          dolphin.on("close", () => {
+          dolphin.on("close", async () => {
+            await fs.unlink(commFilePath);
             if (this.dolphinInstances.spectate) {
               remove(this.dolphinInstances.spectate, (instance) => instance.index === index);
             }
@@ -153,12 +155,10 @@ export class DolphinManager extends EventEmitter {
 
       case "netplay": {
         if (!this.dolphinInstances.netplay) {
-          const commFilePath = await generateCommunicationFilePath(dolphinUseType);
           const dolphin = await this.startDolphin(DolphinType.NETPLAY, "", isoParams);
           this.dolphinInstances.netplay = {
             dolphinUseType: "netplay",
             dolphin: dolphin,
-            commFilePath: commFilePath,
           };
 
           dolphin.on("close", () => {
