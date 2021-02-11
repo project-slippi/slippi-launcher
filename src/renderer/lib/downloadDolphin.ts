@@ -1,6 +1,6 @@
 import AdmZip from "adm-zip";
 import { ChildProcessWithoutNullStreams, spawn, spawnSync } from "child_process";
-import { DolphinType, findDolphinExecutable } from "common/dolphin";
+import { DolphinLaunchType, findDolphinExecutable } from "common/dolphin";
 import { download } from "common/download";
 import { fileExists } from "common/utils";
 import { remote } from "electron";
@@ -8,7 +8,10 @@ import * as fs from "fs-extra";
 import path from "path";
 import { lt } from "semver";
 
-export async function assertDolphinInstallation(type: DolphinType, log: (message: string) => void): Promise<void> {
+export async function assertDolphinInstallation(
+  type: DolphinLaunchType,
+  log: (message: string) => void,
+): Promise<void> {
   try {
     await findDolphinExecutable(type);
     log(`Found existing ${type} Dolphin executable.`);
@@ -34,23 +37,23 @@ export async function assertDolphinInstallation(type: DolphinType, log: (message
 }
 
 export async function assertDolphinInstallations(log: (message: string) => void): Promise<void> {
-  await assertDolphinInstallation(DolphinType.NETPLAY, log);
-  await assertDolphinInstallation(DolphinType.PLAYBACK, log);
+  await assertDolphinInstallation(DolphinLaunchType.NETPLAY, log);
+  await assertDolphinInstallation(DolphinLaunchType.PLAYBACK, log);
   return;
 }
 
-async function compareDolphinVersion(type: DolphinType, latestVersion: string): Promise<boolean> {
+async function compareDolphinVersion(type: DolphinLaunchType, latestVersion: string): Promise<boolean> {
   const dolphinPath = await findDolphinExecutable(type);
   const dolphinVersion = spawnSync(dolphinPath, ["--version"]).stdout.toString();
   return lt(latestVersion, dolphinVersion);
 }
 
-export async function openDolphin(type: DolphinType, params?: string[]): Promise<ChildProcessWithoutNullStreams> {
+export async function openDolphin(type: DolphinLaunchType, params?: string[]): Promise<ChildProcessWithoutNullStreams> {
   const dolphinPath = await findDolphinExecutable(type);
   return spawn(dolphinPath, params);
 }
 
-async function getLatestDolphinAsset(type: DolphinType): Promise<any> {
+async function getLatestDolphinAsset(type: DolphinLaunchType): Promise<any> {
   const release = await getLatestReleaseData(type);
   const asset = release.assets.find((a: any) => matchesPlatform(a.name));
   if (!asset) {
@@ -59,10 +62,10 @@ async function getLatestDolphinAsset(type: DolphinType): Promise<any> {
   return asset;
 }
 
-async function getLatestReleaseData(type: DolphinType): Promise<any> {
+async function getLatestReleaseData(type: DolphinLaunchType): Promise<any> {
   const owner = "project-slippi";
   let repo = "Ishiiruka";
-  if (type === DolphinType.PLAYBACK) {
+  if (type === DolphinLaunchType.PLAYBACK) {
     repo += "-Playback";
   }
   return getLatestRelease(owner, repo);
@@ -88,7 +91,10 @@ function matchesPlatform(releaseName: string): boolean {
   }
 }
 
-async function downloadLatestDolphin(type: DolphinType, log: (status: string) => void = console.log): Promise<string> {
+async function downloadLatestDolphin(
+  type: DolphinLaunchType,
+  log: (status: string) => void = console.log,
+): Promise<string> {
   const asset = await getLatestDolphinAsset(type);
   const downloadLocation = path.join(remote.app.getPath("temp"), asset.name);
   const exists = await fileExists(downloadLocation);
@@ -104,7 +110,11 @@ async function downloadLatestDolphin(type: DolphinType, log: (status: string) =>
   return downloadLocation;
 }
 
-async function installDolphin(type: DolphinType, assetPath: string, log: (message: string) => void = console.log) {
+async function installDolphin(
+  type: DolphinLaunchType,
+  assetPath: string,
+  log: (message: string) => void = console.log,
+) {
   const dolphinPath = path.join(remote.app.getPath("userData"), type);
   const backupLocation = path.join(remote.app.getPath("userData"), type + "_old");
   switch (process.platform) {

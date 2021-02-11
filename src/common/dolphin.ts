@@ -2,12 +2,19 @@ import path from "path";
 import { app, remote } from "electron";
 import * as fs from "fs-extra";
 
-export enum DolphinType {
+export enum DolphinLaunchType {
   NETPLAY = "netplay",
   PLAYBACK = "playback",
 }
 
-export async function findDolphinExecutable(type: DolphinType): Promise<string> {
+export enum DolphinUseType {
+  PLAYBACK = "playback",
+  SPECTATE = "spectate",
+  CONFIG = "config",
+  NETPLAY = "netplay",
+}
+
+export async function findDolphinExecutable(type: DolphinLaunchType): Promise<string> {
   // Make sure the directory actually exists
   let dolphinPath = "";
   try {

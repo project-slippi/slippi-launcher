@@ -2,11 +2,10 @@ import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 import { randomBytes } from "crypto";
 import { app } from "electron";
 import electronSettings from "electron-settings";
-import { EventEmitter } from "events";
 import * as fs from "fs-extra";
 import { find, remove } from "lodash";
 import path from "path";
-import { DolphinType, findDolphinExecutable } from "common/dolphin";
+import { DolphinLaunchType, DolphinUseType, findDolphinExecutable } from "common/dolphin";
 
 electronSettings.configure({
   fileName: "Settings",
@@ -35,7 +34,7 @@ export interface ReplayQueueItem {
 }
 
 interface DolphinInstance {
-  dolphinUseType: "playback" | "spectate" | "config" | "netplay";
+  dolphinUseType: DolphinUseType;
   index?: number; // should refer to the index in relation to the list of sources for spectating
   dolphin?: ChildProcessWithoutNullStreams;
   commFilePath?: string;
@@ -49,9 +48,7 @@ interface DolphinInstances {
   configPlayback: DolphinInstance | null;
 }
 
-async function generateCommunicationFilePath(
-  dolphinUseType: "playback" | "spectate" | "config" | "netplay",
-): Promise<string> {
+async function generateCommunicationFilePath(dolphinUseType: DolphinUseType): Promise<string> {
   const tmpDir = app.getPath("temp");
   const uniqueId = randomBytes(3 * 4).toString("hex");
   const commFileName = `slippi-${dolphinUseType}-${uniqueId}.txt`;
@@ -60,10 +57,26 @@ async function generateCommunicationFilePath(
   return commFileFullPath;
 }
 
+async function startDolphin(
+  dolphinType: DolphinLaunchType,
+  commFilePath?: string,
+  additionalParams?: string[],
+): Promise<ChildProcessWithoutNullStreams> {
+  const dolphinPath = await findDolphinExecutable(dolphinType);
+
+  const params = [];
+  if (commFilePath) {
+    params.push("-i", commFilePath);
+  }
+  if (additionalParams) {
+    params.push(...additionalParams);
+  }
+  return spawn(dolphinPath, params);
+}
+
 // DolphinManager should be in control of all dolphin instances that get opened for actual use.
 // This includes playing netplay, viewing replays, watching broadcasts (spectating), and configuring Dolphin.
-// The openDolphin function is exported so other parts of the app can do some checks.
-export class DolphinManager extends EventEmitter {
+export class DolphinManager {
   private static instance: DolphinManager;
 
   // max instances: playback, config, netplay - 1 | spectate - "infinite"
@@ -83,10 +96,10 @@ export class DolphinManager extends EventEmitter {
   }
 
   public async launchDolphin(
-    dolphinUseType: "playback" | "spectate" | "config" | "netplay",
+    dolphinUseType: DolphinUseType,
     index: number,
     replayComm?: ReplayCommunication,
-    dolphinType?: DolphinType,
+    dolphinType?: DolphinLaunchType,
   ): Promise<void> {
     // I hate how this is done
     const isoParams: string[] = [];
@@ -96,13 +109,13 @@ export class DolphinManager extends EventEmitter {
     }
 
     switch (dolphinUseType) {
-      case "playback": {
+      case DolphinUseType.PLAYBACK: {
         if (!this.dolphinInstances.playback) {
           const commFilePath = await generateCommunicationFilePath(dolphinUseType);
 
-          const dolphin = await this.startDolphin(DolphinType.PLAYBACK, commFilePath, isoParams);
+          const dolphin = await startDolphin(DolphinLaunchType.PLAYBACK, commFilePath, isoParams);
           this.dolphinInstances.playback = {
-            dolphinUseType: "playback",
+            dolphinUseType: dolphinUseType,
             dolphin: dolphin,
             commFilePath: commFilePath,
           };
@@ -120,14 +133,14 @@ export class DolphinManager extends EventEmitter {
         break;
       }
 
-      case "spectate": {
+      case DolphinUseType.SPECTATE: {
         if (index < 0) {
           throw Error("Must have a valid index");
         }
         let dolphinInstance: DolphinInstance | undefined = find(this.dolphinInstances.spectate, ["index", index]);
         if (!dolphinInstance?.dolphin) {
           const commFilePath = await generateCommunicationFilePath(dolphinUseType);
-          const dolphin = await this.startDolphin(DolphinType.PLAYBACK, commFilePath, isoParams);
+          const dolphin = await startDolphin(DolphinLaunchType.PLAYBACK, commFilePath, isoParams);
           dolphinInstance = {
             dolphinUseType: dolphinUseType,
             index: index,
@@ -156,11 +169,11 @@ export class DolphinManager extends EventEmitter {
         break;
       }
 
-      case "netplay": {
+      case DolphinUseType.NETPLAY: {
         if (!this.dolphinInstances.netplay) {
-          const dolphin = await this.startDolphin(DolphinType.NETPLAY, undefined, isoParams);
+          const dolphin = await startDolphin(DolphinLaunchType.NETPLAY, undefined, isoParams);
           this.dolphinInstances.netplay = {
-            dolphinUseType: "netplay",
+            dolphinUseType: dolphinUseType,
             dolphin: dolphin,
           };
 
@@ -172,19 +185,19 @@ export class DolphinManager extends EventEmitter {
         break;
       }
 
-      case "config": {
+      case DolphinUseType.CONFIG: {
         let configureType = "";
-        if (dolphinType === DolphinType.NETPLAY) {
+        if (dolphinType === DolphinLaunchType.NETPLAY) {
           configureType = "configNetplay";
-        } else if (dolphinType === DolphinType.PLAYBACK) {
+        } else if (dolphinType === DolphinLaunchType.PLAYBACK) {
           configureType = "configPlayback";
         } else {
           throw Error("Must define a dolphin type for configuration");
         }
 
-        const dolphin = await this.startDolphin(dolphinType);
+        const dolphin = await startDolphin(dolphinType);
         this.dolphinInstances[configureType] = {
-          dolphinUseType: "config",
+          dolphinUseType: dolphinUseType,
           dolphin: dolphin,
         };
 
@@ -195,22 +208,5 @@ export class DolphinManager extends EventEmitter {
         break;
       }
     }
-  }
-
-  private async startDolphin(
-    dolphinType: DolphinType,
-    commFilePath?: string,
-    additionalParams?: string[],
-  ): Promise<ChildProcessWithoutNullStreams> {
-    const dolphinPath = await findDolphinExecutable(dolphinType);
-
-    const params = [];
-    if (commFilePath) {
-      params.push("-i", commFilePath);
-    }
-    if (additionalParams) {
-      params.push(...additionalParams);
-    }
-    return spawn(dolphinPath, params);
   }
 }

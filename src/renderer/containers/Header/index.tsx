@@ -99,7 +99,7 @@ export const Header: React.FC = () => {
     }
 
     try {
-      await ipcRenderer.send("playnetplay");
+      await ipcRenderer.send("playNetplay");
     } catch (err) {
       handleError(err);
     }

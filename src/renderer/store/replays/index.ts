@@ -84,7 +84,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   },
 
   playFile: async (fullPath) => {
-    ipcRenderer.send("viewreplay", fullPath);
+    ipcRenderer.send("viewReplay", fullPath);
   },
 
   selectFile: async (index, fullPath) => {
