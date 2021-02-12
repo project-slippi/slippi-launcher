@@ -50,6 +50,12 @@ These are the applications you will need to install in order to build this proje
 - Node v14+: https://nodejs.org/en/
 - yarn: https://yarnpkg.com/en/docs/install
 
+#### Recommended IDE + Extensions
+We recommend using VSCode or your derivative of choice and installing the ESLint plugin when working on the desktop app. This provides automatic formatting and warns you about issues before you commit/push.
+
+- VSCode: https://code.visualstudio.com/
+- ESint: https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint
+
 ### Build Steps
 
 - Clone the repo via: `git clone git@github.com:project-slippi/slippi-desktop-app.git`
