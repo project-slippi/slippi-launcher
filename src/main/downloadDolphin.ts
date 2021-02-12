@@ -133,7 +133,7 @@ async function installDolphin(
   log: (message: string) => void = console.log,
 ) {
   const dolphinPath = path.join(app.getPath("userData"), type);
-  const backupLocation = path.join(app.getPath("userData"), type + "_old");
+  const backupLocation = dolphinPath + "_old";
   switch (process.platform) {
     case "win32": {
       await backupUser(backupLocation, dolphinPath, log);
