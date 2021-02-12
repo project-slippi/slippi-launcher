@@ -54,7 +54,7 @@ These are the applications you will need to install in order to build this proje
 
 For development, we recommend using [VSCode](https://code.visualstudio.com/) with the following plugins:
 
-- [ESint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+- [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 - [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
 
 These extensions will provide automatic formatting and warnings about code quality issues before you commit/push.
