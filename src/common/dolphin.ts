@@ -1,6 +1,6 @@
-import path from "path";
 import { app, remote } from "electron";
 import * as fs from "fs-extra";
+import path from "path";
 
 export enum DolphinLaunchType {
   NETPLAY = "netplay",

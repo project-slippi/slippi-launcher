@@ -1,11 +1,11 @@
 import { ChildProcessWithoutNullStreams, spawn } from "child_process";
+import { DolphinLaunchType, DolphinUseType, findDolphinExecutable } from "common/dolphin";
 import { randomBytes } from "crypto";
 import { app } from "electron";
 import electronSettings from "electron-settings";
 import * as fs from "fs-extra";
 import { find, remove } from "lodash";
 import path from "path";
-import { DolphinLaunchType, DolphinUseType, findDolphinExecutable } from "common/dolphin";
 
 electronSettings.configure({
   fileName: "Settings",
