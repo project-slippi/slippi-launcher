@@ -9,7 +9,7 @@ import * as fs from "fs-extra";
 import path from "path";
 import { lt } from "semver";
 
-export function sendToRenderer(message: string, channel = "downloadDolphinLog"): void {
+function sendToRenderer(message: string, channel = "downloadDolphinLog"): void {
   const window = BrowserWindow.getFocusedWindow();
   if (window) {
     window.webContents.send(channel, message);
