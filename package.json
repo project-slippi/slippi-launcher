@@ -23,6 +23,7 @@
     "@slippi/slippi-js": "^5.1.1",
     "adm-zip": "^0.5.1",
     "comlink": "^4.3.0",
+    "cross-fetch": "^3.0.6",
     "electron-context-menu": "^2.3.0",
     "electron-dl": "^3.0.2",
     "electron-log": "^4.3.1",
