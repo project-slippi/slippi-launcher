@@ -41,15 +41,25 @@ export const useApp = create<StoreState & StoreReducers>((set, get) => ({
 
     console.log("Initializing app...");
     const promises: Promise<void>[] = [];
-    // Download Dolphin if necessary
-    ipcRenderer.send("downloadDolphin");
+
     ipcRenderer.on("downloadDolphinLog", (_, message: string) => {
       log.info(message);
       set({ logMessage: message });
     });
-    ipcRenderer.on("downloadDolphinFinished", (_) => {
-      set({ initialized: true });
-    });
+
+    promises.push(
+      new Promise((resolve) => {
+        ipcRenderer.once("downloadDolphinFinished", (_, err: any) => {
+          if (err) {
+            log.error("Error occurred while downloading Dolphin", err);
+          }
+          resolve();
+        });
+      }),
+    );
+
+    // Download Dolphin if necessary
+    ipcRenderer.send("downloadDolphin");
 
     // If there's an ISO path already set then verify the ISO
     const settingsState = useSettings.getState();
@@ -68,6 +78,7 @@ export const useApp = create<StoreState & StoreReducers>((set, get) => ({
     }
 
     await Promise.all(promises);
+    set({ initialized: true });
   },
 
   setUser: (user) => {
