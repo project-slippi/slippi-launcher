@@ -51,7 +51,9 @@ export const useApp = create<StoreState & StoreReducers>((set, get) => ({
       new Promise((resolve) => {
         ipcRenderer.once("downloadDolphinFinished", (_, err: any) => {
           if (err) {
-            log.error("Error occurred while downloading Dolphin", err);
+            const errMsg = "Error occurred while downloading Dolphin";
+            log.error(errMsg, err);
+            set({ logMessage: errMsg });
           }
           resolve();
         });
