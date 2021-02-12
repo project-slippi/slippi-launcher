@@ -46,9 +46,9 @@ This project is home to the desktop app for Project Slippi. The app allows the u
 
 These are the applications you will need to install in order to build this project:
 
-- Git: https://git-scm.com/downloads
-- Node v14+: https://nodejs.org/en/
-- yarn: https://yarnpkg.com/en/docs/install
+- [Git](https://git-scm.com/downloads)
+- [Node v14+](https://nodejs.org/en/)
+- [Yarn](https://yarnpkg.com/getting-started/install)
 
 #### Recommended IDE + Extensions
 
