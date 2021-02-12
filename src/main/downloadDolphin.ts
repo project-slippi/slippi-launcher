@@ -45,9 +45,13 @@ export async function assertDolphinInstallation(
 }
 
 export async function assertDolphinInstallations(): Promise<void> {
-  await assertDolphinInstallation(DolphinLaunchType.NETPLAY, sendToRenderer);
-  await assertDolphinInstallation(DolphinLaunchType.PLAYBACK, sendToRenderer);
-  sendToRenderer("", "downloadDolphinFinished");
+  try {
+    await assertDolphinInstallation(DolphinLaunchType.NETPLAY, sendToRenderer);
+    await assertDolphinInstallation(DolphinLaunchType.PLAYBACK, sendToRenderer);
+    sendToRenderer("", "downloadDolphinFinished");
+  } catch (err) {
+    sendToRenderer(err, "downloadDolphinFinished");
+  }
   return;
 }
 
