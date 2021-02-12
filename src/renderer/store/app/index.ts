@@ -1,8 +1,7 @@
+import { ipcRenderer } from "electron";
 import log from "electron-log";
 import firebase from "firebase";
 import create from "zustand";
-
-import { assertDolphinInstallations } from "@/lib/downloadDolphin";
 
 import { useSettings } from "../settings";
 
@@ -42,16 +41,27 @@ export const useApp = create<StoreState & StoreReducers>((set, get) => ({
 
     console.log("Initializing app...");
     const promises: Promise<void>[] = [];
-    // Download Dolphin if necessary
+
+    ipcRenderer.on("downloadDolphinLog", (_, message: string) => {
+      log.info(message);
+      set({ logMessage: message });
+    });
+
     promises.push(
-      assertDolphinInstallations((message) => {
-        log.info(message);
-        set({ logMessage: message });
-      }).catch((err) => {
-        log.error(err);
-        set({ logMessage: err.message });
+      new Promise((resolve) => {
+        ipcRenderer.once("downloadDolphinFinished", (_, err: any) => {
+          if (err) {
+            const errMsg = "Error occurred while downloading Dolphin";
+            log.error(errMsg, err);
+            set({ logMessage: errMsg });
+          }
+          resolve();
+        });
       }),
     );
+
+    // Download Dolphin if necessary
+    ipcRenderer.send("downloadDolphin");
 
     // If there's an ISO path already set then verify the ISO
     const settingsState = useSettings.getState();

@@ -1,12 +1,20 @@
 import AdmZip from "adm-zip";
 import { ChildProcessWithoutNullStreams, spawn, spawnSync } from "child_process";
 import { DolphinLaunchType, findDolphinExecutable } from "common/dolphin";
-import { download } from "common/download";
 import { fileExists } from "common/utils";
-import { remote } from "electron";
+import { fetch } from "cross-fetch";
+import { app, BrowserWindow } from "electron";
+import { download } from "electron-dl";
 import * as fs from "fs-extra";
 import path from "path";
 import { lt } from "semver";
+
+function sendToRenderer(message: string, channel = "downloadDolphinLog"): void {
+  const window = BrowserWindow.getFocusedWindow();
+  if (window) {
+    window.webContents.send(channel, message);
+  }
+}
 
 export async function assertDolphinInstallation(
   type: DolphinLaunchType,
@@ -36,9 +44,14 @@ export async function assertDolphinInstallation(
   }
 }
 
-export async function assertDolphinInstallations(log: (message: string) => void): Promise<void> {
-  await assertDolphinInstallation(DolphinLaunchType.NETPLAY, log);
-  await assertDolphinInstallation(DolphinLaunchType.PLAYBACK, log);
+export async function assertDolphinInstallations(): Promise<void> {
+  try {
+    await assertDolphinInstallation(DolphinLaunchType.NETPLAY, sendToRenderer);
+    await assertDolphinInstallation(DolphinLaunchType.PLAYBACK, sendToRenderer);
+    sendToRenderer("", "downloadDolphinFinished");
+  } catch (err) {
+    sendToRenderer(err, "downloadDolphinFinished");
+  }
   return;
 }
 
@@ -96,14 +109,22 @@ async function downloadLatestDolphin(
   log: (status: string) => void = console.log,
 ): Promise<string> {
   const asset = await getLatestDolphinAsset(type);
-  const downloadLocation = path.join(remote.app.getPath("temp"), asset.name);
+  const downloadDir = app.getPath("temp");
+  const downloadLocation = path.join(downloadDir, asset.name);
   const exists = await fileExists(downloadLocation);
   if (!exists) {
     log(`Downloading ${asset.browser_download_url} to ${downloadLocation}`);
-    await download(asset.browser_download_url, downloadLocation, (percent) =>
-      log(`Downloading... ${(percent * 100).toFixed(0)}%`),
-    );
-    log(`Successfully downloaded ${asset.browser_download_url} to ${downloadLocation}`);
+    const win = BrowserWindow.getFocusedWindow();
+    if (win) {
+      await download(win, asset.browser_download_url, {
+        filename: asset.name,
+        directory: downloadDir,
+        onProgress: (progress) => log(`Downloading... ${(progress.percent * 100).toFixed(0)}%`),
+      });
+      log(`Successfully downloaded ${asset.browser_download_url} to ${downloadLocation}`);
+    } else {
+      log("I dunno how we got here, but apparently there isn't a browser window /shrug");
+    }
   } else {
     log(`${downloadLocation} already exists. Skipping download.`);
   }
@@ -115,8 +136,8 @@ async function installDolphin(
   assetPath: string,
   log: (message: string) => void = console.log,
 ) {
-  const dolphinPath = path.join(remote.app.getPath("userData"), type);
-  const backupLocation = path.join(remote.app.getPath("userData"), type + "_old");
+  const dolphinPath = path.join(app.getPath("userData"), type);
+  const backupLocation = dolphinPath + "_old";
   switch (process.platform) {
     case "win32": {
       await backupUser(backupLocation, dolphinPath, log);

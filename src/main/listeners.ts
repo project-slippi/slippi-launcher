@@ -3,6 +3,7 @@ import { ipcMain, nativeImage } from "electron";
 import path from "path";
 
 import { DolphinManager, ReplayCommunication } from "./dolphinManager";
+import { assertDolphinInstallations } from "./downloadDolphin";
 
 export function setupListeners() {
   const dolphinManager = DolphinManager.getInstance();
@@ -11,6 +12,10 @@ export function setupListeners() {
       file: filePath,
       icon: nativeImage.createFromPath(path.join(__static, "images", "file.png")),
     });
+  });
+
+  ipcMain.on("downloadDolphin", (_) => {
+    assertDolphinInstallations();
   });
 
   ipcMain.on("viewReplay", (_, filePath: string) => {
