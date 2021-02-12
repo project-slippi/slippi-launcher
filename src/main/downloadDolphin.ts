@@ -9,6 +9,13 @@ import * as fs from "fs-extra";
 import path from "path";
 import { lt } from "semver";
 
+export function sendToRenderer(message: string, channel = "downloadDolphinLog"): void {
+  const window = BrowserWindow.getFocusedWindow();
+  if (window) {
+    window.webContents.send(channel, message);
+  }
+}
+
 export async function assertDolphinInstallation(
   type: DolphinLaunchType,
   log: (message: string) => void,
@@ -37,9 +44,10 @@ export async function assertDolphinInstallation(
   }
 }
 
-export async function assertDolphinInstallations(log: (message: string) => void): Promise<void> {
-  await assertDolphinInstallation(DolphinLaunchType.NETPLAY, log);
-  await assertDolphinInstallation(DolphinLaunchType.PLAYBACK, log);
+export async function assertDolphinInstallations(): Promise<void> {
+  await assertDolphinInstallation(DolphinLaunchType.NETPLAY, sendToRenderer);
+  await assertDolphinInstallation(DolphinLaunchType.PLAYBACK, sendToRenderer);
+  sendToRenderer("", "downloadDolphinFinished");
   return;
 }
 

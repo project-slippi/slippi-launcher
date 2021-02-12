@@ -47,6 +47,9 @@ export const useApp = create<StoreState & StoreReducers>((set, get) => ({
       log.info(message);
       set({ logMessage: message });
     });
+    ipcRenderer.on("downloadDolphinFinished", (_) => {
+      set({ initialized: true });
+    });
 
     // If there's an ISO path already set then verify the ISO
     const settingsState = useSettings.getState();
@@ -65,7 +68,6 @@ export const useApp = create<StoreState & StoreReducers>((set, get) => ({
     }
 
     await Promise.all(promises);
-    set({ initialized: true });
   },
 
   setUser: (user) => {

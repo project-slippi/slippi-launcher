@@ -14,12 +14,8 @@ export function setupListeners() {
     });
   });
 
-  ipcMain.on("downloadDolphin", (event) => {
-    assertDolphinInstallations((message: string) => {
-      event.reply("downloadDolphinLog", message);
-    }).catch((reason) => {
-      console.error(reason);
-    });
+  ipcMain.on("downloadDolphin", (_) => {
+    assertDolphinInstallations();
   });
 
   ipcMain.on("viewReplay", (_, filePath: string) => {
