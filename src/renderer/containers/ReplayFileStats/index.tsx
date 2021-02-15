@@ -1,7 +1,7 @@
 import ErrorIcon from "@material-ui/icons/Error";
 import HelpIcon from "@material-ui/icons/Help";
 import { colors } from "common/colors";
-import { FileResult } from "common/replayBrowser";
+import { FileDetails } from "common/replayBrowser";
 import _ from "lodash";
 import React from "react";
 import styled from "styled-components";
@@ -38,7 +38,8 @@ const Footer = styled.div`
 `;
 
 export interface ReplayFileStatsProps {
-  file: FileResult;
+  details: FileDetails;
+  fullPath: string;
   index: number;
   total: number;
   onNext: () => void;
@@ -47,8 +48,7 @@ export interface ReplayFileStatsProps {
 }
 
 export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
-  const details = props.file.details!;
-  const { settings, fullPath } = details;
+  const { settings } = props.details;
 
   const loading = useReplays((store) => store.selectedFile.loading);
   const error = useReplays((store) => store.selectedFile.error);
@@ -83,7 +83,7 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
   return (
     <Outer>
       <GameProfileHeader
-        file={details}
+        file={props.details}
         index={props.index}
         total={props.total}
         loading={loading}
@@ -91,7 +91,7 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
         onNext={props.onNext}
         onPrev={props.onPrev}
         onClose={props.onClose}
-        onPlay={() => playFile(fullPath)}
+        onPlay={() => playFile(props.fullPath)}
       />
       <Content>
         {numPlayers !== 2 ? (
@@ -101,12 +101,12 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
         ) : error ? (
           <IconMessage Icon={ErrorIcon} label={`Error: ${error.message ?? JSON.stringify(error, null, 2)}`} />
         ) : gameStats ? (
-          <GameProfile file={details} stats={gameStats}></GameProfile>
+          <GameProfile file={props.details} stats={gameStats}></GameProfile>
         ) : (
           <IconMessage Icon={HelpIcon} label="No stats computed" />
         )}
       </Content>
-      <Footer>{props.file.header.fullPath}</Footer>
+      <Footer>{props.fullPath}</Footer>
     </Outer>
   );
 };

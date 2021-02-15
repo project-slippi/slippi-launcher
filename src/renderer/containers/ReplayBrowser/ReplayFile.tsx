@@ -85,7 +85,6 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
   header,
   details,
 }) => {
-  const date = new Date(startTime ? Date.parse(startTime) : 0);
   const classes = useStyles();
   if (details !== null) {
     const date = new Date(details.startTime ? Date.parse(details.startTime) : 0);

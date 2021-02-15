@@ -59,7 +59,7 @@ export const ReplayBrowser: React.FC = () => {
   };
 
   const playSelectedFile = (index: number) => {
-    const filePath = filteredFiles[index].fullPath;
+    const filePath = filteredFiles[index].header.fullPath;
     playFile(filePath);
   };
 
@@ -75,7 +75,8 @@ export const ReplayBrowser: React.FC = () => {
         <ReplayFileStats
           index={selectedItem}
           total={filteredFiles.length}
-          file={filteredFiles[selectedItem]}
+          details={filteredFiles[selectedItem].details!}
+          fullPath={filteredFiles[selectedItem].header.fullPath}
           onNext={() => setSelectedItem(Math.min(filteredFiles.length - 1, selectedItem + 1))}
           onPrev={() => setSelectedItem(Math.max(0, selectedItem - 1))}
           onClose={() => setSelectedItem(null)}
