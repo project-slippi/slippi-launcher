@@ -4,19 +4,13 @@ import log from "electron-log";
 import _ from "lodash";
 import WebSocketClient, { MessageEvent } from "ws";
 
+import { SlippiBroadcastEvent } from "./types";
+
 const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
 
 // This variable defines the number of events saved in the case of a disconnect. 1800 should
 // support disconnects of 30 seconds at most
 const BACKUP_MAX_LENGTH = 1800;
-
-interface SlippiDolphinEvent {
-  type: DolphinMessageType;
-  cursor?: number | null;
-  nextCursor?: number | null;
-  payload?: string | null;
-  version?: string | null;
-}
 
 /**
  * Responsible for retrieving Dolphin game data over enet and sending the data
@@ -25,8 +19,8 @@ interface SlippiDolphinEvent {
 export class BroadcastManager {
   private broadcastId: string | null;
   private isBroadcastReady: boolean;
-  private incomingEvents: SlippiDolphinEvent[];
-  private backupEvents: SlippiDolphinEvent[];
+  private incomingEvents: SlippiBroadcastEvent[];
+  private backupEvents: SlippiBroadcastEvent[];
   private nextGameCursor: number | null;
 
   private wsConnection: WebSocketClient | null;
@@ -55,11 +49,14 @@ export class BroadcastManager {
       if (status === ConnectionStatus.DISCONNECTED) {
         // Kind of jank but this will hopefully stop the game on the spectator side when someone
         // kills Dolphin. May no longer be necessary after Dolphin itself sends these messages
-        this.incomingEvents.push({
-          type: DolphinMessageType.END_GAME,
-          cursor: this.nextGameCursor,
-          nextCursor: this.nextGameCursor,
-        });
+        if (this.nextGameCursor !== null) {
+          this.incomingEvents.push({
+            type: DolphinMessageType.END_GAME,
+            cursor: this.nextGameCursor,
+            nextCursor: this.nextGameCursor,
+            payload: "",
+          });
+        }
 
         this._handleGameData();
         this._stop();
