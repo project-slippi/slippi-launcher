@@ -1,5 +1,4 @@
 import { ConnectionEvent, ConnectionStatus, DolphinConnection, DolphinMessageType, Ports } from "@slippi/slippi-js";
-import { initializeFirebase } from "common/firebase";
 import log from "electron-log";
 import _ from "lodash";
 import WebSocketClient, { MessageEvent } from "ws";
@@ -78,9 +77,10 @@ export class BroadcastManager {
   /**
    * Connects to the Slippi server and the local Dolphin instance
    */
-  public async start(target: string) {
+  public async start(target: string, token: string) {
     if (this.wsConnection) {
       // We're already connected
+      log.info("[Broadcast] we are already connected");
       return;
     }
 
@@ -90,18 +90,12 @@ export class BroadcastManager {
     const headers = {
       target: target,
       "api-version": 2,
-      authorization: "",
+      authorization: `Bearer ${token}`,
     };
-    const user = initializeFirebase().currentUser;
-    if (user) {
-      const token = await user.getIdToken();
-      headers.authorization = `Bearer ${token}`;
-    }
 
-    // Disable nagle because we send a lot of small packets, latency not overly important
     if (SLIPPI_WS_SERVER) {
       log.info("[Broadcast] Connecting to WS service");
-      this.wsConnection = new WebSocketClient(SLIPPI_WS_SERVER);
+      this.wsConnection = new WebSocketClient(SLIPPI_WS_SERVER, { headers: headers });
 
       this.wsConnection.on("error", (error: Error) => {
         log.error("[Broadcast] WS failed to connect\n", error);
@@ -194,7 +188,7 @@ export class BroadcastManager {
 
           if (code === 1006) {
             // Here we have an abnormal disconnect... try to reconnect?
-            this.start(target);
+            this.start(target, token);
           } else {
             // If normal close, disconnect from dolphin
             this.dolphinConnection.disconnect();
