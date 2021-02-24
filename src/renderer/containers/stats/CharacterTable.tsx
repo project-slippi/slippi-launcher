@@ -1,9 +1,11 @@
+import { characters } from "@slippi/slippi-js";
+import { GlobalStats, MatchupAggregate } from "common/game";
 import _ from "lodash";
 import React from "react";
-import { GlobalStats, MatchupAggregate } from "common/game";
-import * as T from "../ReplayFileStats/TableStyles";
-import { characters } from "@slippi/slippi-js";
+
 import { getCharacterIcon } from "@/lib/utils";
+
+import * as T from "../ReplayFileStats/TableStyles";
 
 const columnCount = 5;
 

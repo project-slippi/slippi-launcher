@@ -1,5 +1,5 @@
+import { ConversionType, GameStartType, MetadataType, stages, StatsType, StockType } from "@slippi/slippi-js";
 import _ from "lodash";
-import { stages, StatsType, GameStartType, MetadataType, StockType, ConversionType } from "@slippi/slippi-js";
 
 export class Game {
   stats!: StatsType;
@@ -77,8 +77,8 @@ export function getGlobalStats(games: Game[], playerTag: string): GlobalStats {
 
       const won = getGameWinner(game) === index;
 
-      const charId = _.get(game.getSettings().players, index).characterId || -1;
-      const oppCharId = _.get(game.getSettings().players, 1 - index).characterId || -1;
+      const charId = _.get(game.getSettings().players, index).characterId;
+      const oppCharId = _.get(game.getSettings().players, 1 - index).characterId;
 
       // Opponent aggregates
       agg.opponents[opp] = agg.opponents[opp] || {
@@ -87,8 +87,12 @@ export function getGlobalStats(games: Game[], playerTag: string): GlobalStats {
         charIds: [],
       };
       agg.opponents[opp].count += 1;
-      if (won) agg.opponents[opp].won += 1;
-      if (!agg.opponents[opp].charIds.includes(oppCharId)) agg.opponents[opp].charIds.push(oppCharId);
+      if (won) {
+        agg.opponents[opp].won += 1;
+      }
+      if (!agg.opponents[opp].charIds.includes(oppCharId)) {
+        agg.opponents[opp].charIds.push(oppCharId);
+      }
 
       // Player character aggregates
       agg.charIds[charId] = agg.charIds[charId] || {
@@ -96,7 +100,9 @@ export function getGlobalStats(games: Game[], playerTag: string): GlobalStats {
         won: 0,
       };
       agg.charIds[charId].count += 1;
-      if (won) agg.charIds[charId].won += 1;
+      if (won) {
+        agg.charIds[charId].won += 1;
+      }
 
       // Opponent character aggregates
       agg.opponentChars[oppCharId] = agg.opponentChars[oppCharId] || {
@@ -105,8 +111,12 @@ export function getGlobalStats(games: Game[], playerTag: string): GlobalStats {
         players: [],
       };
       agg.opponentChars[oppCharId].count += 1;
-      if (won) agg.opponentChars[oppCharId].won += 1;
-      if (!agg.opponentChars[oppCharId].players.includes(oppCharId)) agg.opponentChars[oppCharId].players.push(opp);
+      if (won) {
+        agg.opponentChars[oppCharId].won += 1;
+      }
+      if (!agg.opponentChars[oppCharId].players.includes(oppCharId)) {
+        agg.opponentChars[oppCharId].players.push(opp);
+      }
 
       // Punishes
       agg.punishes = [
@@ -120,7 +130,9 @@ export function getGlobalStats(games: Game[], playerTag: string): GlobalStats {
       ];
 
       // General stats
-      if (won) agg.wins += 1;
+      if (won) {
+        agg.wins += 1;
+      }
       agg.time += stats.lastFrame;
 
       agg.kills += pOverall.killCount;
@@ -254,23 +266,42 @@ export function getLastPlayerStock(game: Game, playerIndex: number): StockType {
 export function getGameWinner(game: Game): number {
   const lastStock0 = getLastPlayerStock(game, 0);
   const lastStock1 = getLastPlayerStock(game, 1);
-  if (lastStock0.count > lastStock1.count) return 0;
-  if (lastStock0.count < lastStock1.count) return 1;
-  if (!lastStock0.endPercent) return 0;
-  if (!lastStock1.endPercent) return 1;
-  if (lastStock0.endPercent < lastStock1.endPercent) return 0;
-  if (lastStock0.endPercent > lastStock1.endPercent) return 1;
+  if (lastStock0.count > lastStock1.count) {
+    return 0;
+  }
+  if (lastStock0.count < lastStock1.count) {
+    return 1;
+  }
+  if (lastStock0.endPercent == null) {
+    return 0;
+  }
+  if (lastStock1.endPercent == null) {
+    return 1;
+  }
+  if (lastStock0.endPercent < lastStock1.endPercent) {
+    return 0;
+  }
+  if (lastStock0.endPercent > lastStock1.endPercent) {
+    return 1;
+  }
   return -1;
 }
 
 export function getGamePlayerIndex(game: Game, playerTag: string): number {
   const players = _.values(getPlayerNamesByIndex(game));
-  if (players[0] === playerTag) return 0;
-  if (players[1] === playerTag) return 1;
+  if (players[0] === playerTag) {
+    return 0;
+  }
+  if (players[1] === playerTag) {
+    return 1;
+  }
   return -1;
 }
 
 export function getStageName(game: Game): string {
-  const stageId = game.getSettings().stageId || -1;
+  const stageId = game.getSettings().stageId;
+  if (stageId == null) {
+    return "error";
+  }
   return stages.getStageName(stageId);
 }

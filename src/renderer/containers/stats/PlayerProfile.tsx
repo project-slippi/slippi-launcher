@@ -1,5 +1,6 @@
 import { GlobalStats } from "common/game";
 import React from "react";
+
 import { StatSection } from "../ReplayFileStats/GameProfile";
 import { CharacterTable } from "./CharacterTable";
 import { ComboTable } from "./ComboTable";

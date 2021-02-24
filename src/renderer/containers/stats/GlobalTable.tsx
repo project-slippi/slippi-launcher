@@ -1,8 +1,8 @@
-import React, { Component } from "react";
-
-import * as T from "../ReplayFileStats/TableStyles";
 import { GlobalStats } from "common/game";
 import * as timeUtils from "common/time";
+import React from "react";
+
+import * as T from "../ReplayFileStats/TableStyles";
 
 export function toOrdinal(n: number) {
   const s = ["th", "st", "nd", "rd"];

@@ -1,9 +1,11 @@
-import { getCharacterIcon } from "@/lib/utils";
 import { ConversionType } from "@slippi/slippi-js";
 import { Game, getGamePlayerIndex, getPlayerName, GlobalStats } from "common/game";
 import { convertFrameCountToDurationString } from "common/time";
 import _ from "lodash";
 import React from "react";
+
+import { getCharacterIcon } from "@/lib/utils";
+
 import * as T from "../ReplayFileStats/TableStyles";
 
 const columnCount = 8;
@@ -18,7 +20,7 @@ export const ComboTable: React.FC<{ stats: GlobalStats }> = ({ stats }) => {
     const damageRange = renderDamageRangeCell(punish);
     const openingType = renderOpeningTypeCell(punish);
 
-    if (punish.endFrame) {
+    if (punish.endFrame != null) {
       end = convertFrameCountToDurationString(punish.endFrame);
     }
 
@@ -38,7 +40,9 @@ export const ComboTable: React.FC<{ stats: GlobalStats }> = ({ stats }) => {
 
   const getPlayerCard = (game: Game, isOpponent: boolean) => {
     let index = getGamePlayerIndex(game, player);
-    if (isOpponent) index = 1 - index;
+    if (isOpponent) {
+      index = 1 - index;
+    }
     const tag = getPlayerName(game, index);
     const players = game.getSettings().players || [];
     const playersByIndex = _.keyBy(players, "playerIndex");

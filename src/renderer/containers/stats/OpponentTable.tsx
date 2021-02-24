@@ -1,9 +1,10 @@
+import { GlobalStats, MatchupAggregate } from "common/game";
 import _ from "lodash";
 import React from "react";
-import * as T from "../ReplayFileStats/TableStyles";
 
 import { getCharacterIcon } from "@/lib/utils";
-import { GlobalStats, MatchupAggregate } from "common/game";
+
+import * as T from "../ReplayFileStats/TableStyles";
 
 export const OpponentTable: React.FC<{ stats: GlobalStats }> = ({ stats }) => {
   const renderHeaderPlayer = () => {
