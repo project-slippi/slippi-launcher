@@ -5,6 +5,7 @@ import styled from "styled-components";
 
 import { Header } from "@/containers/Header";
 import { ReplayBrowser } from "@/containers/ReplayBrowser";
+import { PlayerProfile } from "@/containers/stats/PlayerProfile";
 
 const MenuButton = styled.div<{
   selected?: boolean;
@@ -47,6 +48,9 @@ export const HomeView: React.FC = () => {
           <Button component={Link} to={`${path}/spectate`}>
             <MenuButton selected={isActive("spectate")}>Spectate</MenuButton>
           </Button>
+          <Button component={Link} to={`${path}/stats`}>
+            <MenuButton selected={isActive("spectate")}>Stats</MenuButton>
+          </Button>
         </div>
       </div>
       <div style={{ flex: 1, overflow: "auto", display: "flex" }}>
@@ -59,6 +63,9 @@ export const HomeView: React.FC = () => {
           </Route>
           <Route path={`${path}/spectate`}>
             <h1>Spectate</h1>
+          </Route>
+          <Route path={`${path}/stats`}>
+            <PlayerProfile />
           </Route>
           <Redirect exact from={path} to={`${path}/home`} />
         </Switch>
