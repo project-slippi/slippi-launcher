@@ -127,14 +127,14 @@ export function getGlobalStats(games: Game[], playerCode: string): GlobalStats {
       agg.opponentChars[oppCharId] = agg.opponentChars[oppCharId] || {
         count: 0,
         won: 0,
-        players: [],
+        unique: [],
       };
       agg.opponentChars[oppCharId].count += 1;
       if (won) {
         agg.opponentChars[oppCharId].won += 1;
       }
-      if (!agg.opponentChars[oppCharId].players.includes(oppCharId)) {
-        agg.opponentChars[oppCharId].players.push(opp);
+      if (!agg.opponentChars[oppCharId].unique.includes(oppCharId)) {
+        agg.opponentChars[oppCharId].unique.push(opp);
       }
 
       // Punishes

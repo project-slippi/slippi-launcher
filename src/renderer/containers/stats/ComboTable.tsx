@@ -48,8 +48,10 @@ export const ComboTable: React.FC<{ player: string; stats: GlobalStats }> = ({ p
 
     return (
       <div>
-        <T.GrayableImage src={getCharacterIcon(p.characterId, p.characterColor)} height={24} width={24} />
-        <div>{tag}</div>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <T.GrayableImage src={getCharacterIcon(p.characterId, p.characterColor)} height={24} width={24} />
+          <div>{tag}</div>
+        </div>
       </div>
     );
   };
@@ -106,7 +108,11 @@ export const ComboTable: React.FC<{ player: string; stats: GlobalStats }> = ({ p
   };
 
   const renderPunishRows = () => {
-    return stats.punishes.slice(0, 19).map((punish) => generatePunishRow(punish.game, punish.punish));
+    const diff = (p: ConversionType) => p.currentPercent - p.startPercent;
+    return stats.punishes
+      .sort((a, b) => diff(b.punish) - diff(a.punish))
+      .slice(0, 19)
+      .map((punish) => generatePunishRow(punish.game, punish.punish));
   };
 
   return (

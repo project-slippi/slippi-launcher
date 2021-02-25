@@ -11,7 +11,7 @@ export const OpponentTable: React.FC<{ stats: GlobalStats }> = ({ stats }) => {
     const headerText = "Top Opponents";
     return (
       <T.TableRow>
-        <T.TableHeaderCell colSpan={5}>{headerText}</T.TableHeaderCell>
+        <T.TableHeaderCell colSpan={4}>{headerText}</T.TableHeaderCell>
       </T.TableRow>
     );
   };
@@ -23,7 +23,6 @@ export const OpponentTable: React.FC<{ stats: GlobalStats }> = ({ stats }) => {
         <T.TableHeaderCell>Games</T.TableHeaderCell>
         <T.TableHeaderCell>Winrate</T.TableHeaderCell>
         <T.TableHeaderCell>Characters</T.TableHeaderCell>
-        <T.TableHeaderCell>Filters</T.TableHeaderCell>
       </T.TableRow>
     );
   };
@@ -47,7 +46,7 @@ export const OpponentTable: React.FC<{ stats: GlobalStats }> = ({ stats }) => {
         <T.TableCell>{agg.count}</T.TableCell>
         <T.TableCell>{((agg.won / agg.count) * 100).toFixed(0)}%</T.TableCell>
         <T.TableCell>
-          <div>{chars.slice(0, 5)}</div>
+          <div style={{ display: "flex", alignItems: "center" }}>{chars.slice(0, 5)}</div>
         </T.TableCell>
       </T.TableRow>
     );

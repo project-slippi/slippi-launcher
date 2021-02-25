@@ -39,8 +39,9 @@ export const GlobalTable: React.FC<GlobalTableProps> = ({ stats }) => {
         <T.TableCell>{header}</T.TableCell>
         <T.TableCell>
           <div>
-            <div>{value}</div>
-            <div>({formatPercent(value / total, 2)})</div>
+            <div>
+              {value} ({formatPercent(value / total, 2)})
+            </div>
           </div>
         </T.TableCell>
       </T.TableRow>

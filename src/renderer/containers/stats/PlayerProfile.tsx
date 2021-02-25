@@ -18,9 +18,9 @@ export const PlayerProfile: React.FC<PlayerProfileProps> = (props) => {
         <GlobalTable stats={props.stats} />
       </StatSection>
       <StatSection title="Characters">
-        <CharacterTable stats={props.stats} />
+        <CharacterTable opponent={false} stats={props.stats} />
         <OpponentTable stats={props.stats} />
-        <CharacterTable stats={props.stats} />
+        <CharacterTable opponent={true} stats={props.stats} />
       </StatSection>
       <StatSection title="Conversions">
         <ComboTable player={props.player} stats={props.stats} />
