@@ -5,6 +5,7 @@ import { loadFile } from "./loadFile";
 import { FileLoadResult, FileResult } from "./types";
 
 export async function loadFolder(
+  loadedFiles: string[],
   folder: string,
   callback: (current: number, total: number) => void,
 ): Promise<FileLoadResult> {
@@ -18,7 +19,15 @@ export async function loadFolder(
 
   const results = await fs.readdir(folder, { withFileTypes: true });
   const slpFiles = results.filter((dirent) => dirent.isFile() && path.extname(dirent.name) === ".slp");
-  const total = slpFiles.length;
+  const filtered = slpFiles.filter((dirent) => !loadedFiles.includes(path.resolve(folder, dirent.name)));
+  console.log(`found ${slpFiles.length} files in dir, ${filtered.length} are new`);
+  const total = filtered.length;
+  if (total === 0) {
+    return {
+      files: [],
+      fileErrorCount: 0,
+    };
+  }
 
   let fileErrorCount = 0;
   let fileValidCount = 0;
@@ -42,7 +51,7 @@ export async function loadFolder(
 
   const slpGames = (
     await Promise.all(
-      slpFiles.map((dirent) => {
+      filtered.map((dirent) => {
         const fullPath = path.resolve(folder, dirent.name);
         return process(fullPath);
       }),

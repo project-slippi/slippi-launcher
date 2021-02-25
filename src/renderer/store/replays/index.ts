@@ -1,13 +1,13 @@
 import { StatsType } from "@slippi/slippi-js";
 import * as Comlink from "comlink";
 import { FileResult, findChild, FolderResult, generateSubFolderTree } from "common/replayBrowser";
+import { loadReplays, saveReplay } from "common/replayBrowser/db";
 import { ipcRenderer, shell } from "electron";
 import produce from "immer";
 import path from "path";
 import create from "zustand";
 
 import { loadReplayFolder } from "@/workers/fileLoader.worker";
-import { calculateGameStats } from "@/workers/gameStats.worker";
 
 import { useSettings } from "../settings";
 
@@ -88,26 +88,19 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   },
 
   selectFile: async (index, fullPath) => {
-    if (get().selectedFile.loading) {
-      console.warn("Alreading loading game stats for another file. Try again later.");
-      return;
+    const file = get().files[index];
+    if (file.fullPath !== fullPath) {
+      console.log("files and indexes are not aligned!");
     }
-
-    set({
-      selectedFile: { index, gameStats: null, loading: true, error: null },
-    });
-    const { selectedFile } = get();
-    const newSelectedFile = await produce(selectedFile, async (draft) => {
-      try {
-        const gameStats = await calculateGameStats(fullPath);
-        draft.gameStats = gameStats;
-      } catch (err) {
-        draft.error = err;
-      } finally {
-        draft.loading = false;
-      }
-    });
-    set({ selectedFile: newSelectedFile });
+    if (file.stats) {
+      set({
+        selectedFile: { index, gameStats: file.stats, loading: false, error: null },
+      });
+    } else {
+      set({
+        selectedFile: { index, gameStats: file.stats, loading: false, error: "Stats could not be loaded" },
+      });
+    }
   },
 
   clearSelectedFile: async () => {
@@ -159,20 +152,31 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
 
     set({ loading: true, progress: null });
     try {
+      const files = await loadReplays();
+      console.log(`loaded ${files.length} replays from the db`);
+
       const result = await loadReplayFolder(
         folderToLoad,
+        files.map((f) => f.fullPath),
         Comlink.proxy((current, total) => {
           set({ progress: { current, total } });
         }),
       );
+
+      for (let i = 0; i < result.files.length; ++i) {
+        const file = result.files[i];
+        await saveReplay(file);
+      }
+
       set({
         scrollRowItem: 0,
-        files: result.files,
+        files: [...files, ...result.files],
         loading: false,
         fileErrorCount: result.fileErrorCount,
       });
     } catch (err) {
       set({ loading: false, progress: null });
+      console.log(err);
     }
   },
 

@@ -1,10 +1,32 @@
 import { colors } from "common/colors";
-import { app, BrowserWindow } from "electron";
+import { FileResult } from "common/replayBrowser/types";
+import { app, BrowserWindow, ipcMain } from "electron";
 import contextMenu from "electron-context-menu";
+import Nedb from "nedb-promises-ts";
 import * as path from "path";
 import { format as formatUrl } from "url";
 
 import { setupListeners } from "./listeners";
+
+const db = new Nedb<FileResult>({ autoload: true, filename: "/Users/alvaro/Desktop/db.db" });
+
+const loadReplays = async () => {
+  const res = await db.find({}).sort({ timestamp: 1 });
+  return Array.from(res.values());
+};
+
+const saveReplay = async (replayFile: FileResult) => {
+  await db.insert(replayFile);
+  console.log(`inserted ${replayFile.fullPath} to the db`);
+};
+
+ipcMain.on("load-replays", async (event) => {
+  event.reply("load-replays", await loadReplays());
+});
+
+ipcMain.on("save-replay", async (event, replay) => {
+  event.reply("save-replay", await saveReplay(replay));
+});
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
