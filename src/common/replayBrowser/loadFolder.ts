@@ -22,7 +22,8 @@ export async function loadFolder(
   const slpFiles = results.filter((dirent) => dirent.isFile() && path.extname(dirent.name) === ".slp");
   const filtered = slpFiles.filter((dirent) => !loadedFiles.includes(path.resolve(folder, dirent.name)));
   const total = filtered.length;
-  const toDelete = loadedFiles.filter((file) => !slpFiles.map((d) => path.resolve(folder, d.name)).includes(file));
+  const paths = slpFiles.map((d) => path.resolve(folder, d.name));
+  const toDelete = loadedFiles.filter((file) => !paths.includes(file));
   console.log(
     `found ${slpFiles.length} files in ${folder}, ${total} are new. ${toDelete.length} will be removed from the DB`,
   );
