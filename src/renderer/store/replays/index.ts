@@ -16,6 +16,7 @@ type StoreState = {
   progress: null | {
     current: number;
     total: number;
+    isSaving: boolean;
   };
   files: FileResult[];
   folders: FolderResult | null;
@@ -159,12 +160,18 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
         folderToLoad,
         files.map((f) => f.fullPath),
         Comlink.proxy((current, total) => {
-          set({ progress: { current, total } });
+          set({ progress: { current, total, isSaving: false } });
         }),
       );
 
       await deleteReplays(result.filesToDelete);
-      result.files.forEach(async (file) => await saveReplay(file));
+      const len = result.files.length;
+      set({ progress: { current: 0, total: len, isSaving: true } });
+      for (let i = 0; i < result.files.length; i++) {
+        const file = result.files[i];
+        await saveReplay(file);
+        set({ progress: { current: i, total: len, isSaving: true } });
+      }
 
       set({
         scrollRowItem: 0,

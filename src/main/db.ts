@@ -1,3 +1,4 @@
+import SlippiGame, { StatsType } from "@slippi/slippi-js";
 import { FileResult } from "common/replayBrowser/types";
 import { app, ipcMain } from "electron";
 import Nedb from "nedb-promises-ts";
@@ -11,8 +12,12 @@ const loadReplays = async (folder: string) => {
 };
 
 const saveReplay = async (replayFile: FileResult) => {
+  const game = new SlippiGame(replayFile.fullPath);
+  const stats: StatsType | null = game.getStats();
+  if (stats) {
+    replayFile.stats = stats;
+  }
   await db.insert(replayFile);
-  console.log(`inserted ${replayFile.fullPath} to the db`);
   return null;
 };
 

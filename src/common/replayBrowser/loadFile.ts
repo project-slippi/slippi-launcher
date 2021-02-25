@@ -1,4 +1,4 @@
-import { GameStartType, MetadataType, SlippiGame, StatsType } from "@slippi/slippi-js";
+import { GameStartType, MetadataType, SlippiGame } from "@slippi/slippi-js";
 import _ from "lodash";
 import path from "path";
 
@@ -33,11 +33,6 @@ export async function loadFile(fullPath: string): Promise<FileResult> {
     if (metadata.lastFrame !== undefined) {
       result.lastFrame = metadata.lastFrame;
     }
-  }
-
-  const stats: StatsType | null = game.getStats();
-  if (stats) {
-    result.stats = stats;
   }
 
   const startAtTime = fileToDateAndTime(metadata ? metadata.startAt : null, filename, result.fullPath);
