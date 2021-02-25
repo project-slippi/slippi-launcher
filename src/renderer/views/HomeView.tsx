@@ -5,7 +5,7 @@ import styled from "styled-components";
 
 import { Header } from "@/containers/Header";
 import { ReplayBrowser } from "@/containers/ReplayBrowser";
-import { PlayerProfile } from "@/containers/stats/PlayerProfile";
+import { PlayerStats } from "@/containers/stats";
 
 const MenuButton = styled.div<{
   selected?: boolean;
@@ -65,7 +65,7 @@ export const HomeView: React.FC = () => {
             <h1>Spectate</h1>
           </Route>
           <Route path={`${path}/stats`}>
-            <PlayerProfile />
+            <PlayerStats player="EAST#312" />
           </Route>
           <Redirect exact from={path} to={`${path}/home`} />
         </Switch>

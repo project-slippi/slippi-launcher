@@ -1,11 +1,19 @@
 import { ConversionType, GameStartType, MetadataType, stages, StatsType, StockType } from "@slippi/slippi-js";
 import _ from "lodash";
 
+import { FileResult } from "./replayBrowser";
+
 export class Game {
   stats!: StatsType;
   settings!: GameStartType;
   metadata!: MetadataType;
   filePath!: string;
+  constructor(stats: StatsType, settings: GameStartType, metadata: MetadataType, path: string) {
+    this.stats = stats;
+    this.settings = settings;
+    this.metadata = metadata;
+    this.filePath = path;
+  }
   getStats = () => this.stats;
   getSettings = () => this.settings;
   getMetadata = () => this.metadata;
@@ -64,11 +72,18 @@ export interface Conversion {
   game: Game;
 }
 
-export function getGlobalStats(games: Game[], playerTag: string): GlobalStats {
+export function getFilesGlobalStats(files: FileResult[], playerTag: string): GlobalStats {
+  return getGlobalStats(
+    files.map((f) => new Game(f.stats!, f.settings!, f.metadata!, f.fullPath)),
+    playerTag,
+  );
+}
+
+export function getGlobalStats(games: Game[], playerCode: string): GlobalStats {
   const aggs = games.reduce(
     (a, game) => {
       const agg = a; // because es-lint can be dumb
-      const index = getGamePlayerIndex(game, playerTag);
+      const index = getGamePlayerCodeIndex(game, playerCode);
       const opp = getPlayerName(game, 1 - index);
       const stats = game.getStats();
 
@@ -77,8 +92,12 @@ export function getGlobalStats(games: Game[], playerTag: string): GlobalStats {
 
       const won = getGameWinner(game) === index;
 
-      const charId = _.get(game.getSettings().players, index).characterId;
-      const oppCharId = _.get(game.getSettings().players, 1 - index).characterId;
+      const players = game.getSettings().players;
+      if (players.length !== 2) {
+        return agg;
+      }
+      const charId = players[index].characterId!;
+      const oppCharId = players[1 - index].characterId!;
 
       // Opponent aggregates
       agg.opponents[opp] = agg.opponents[opp] || {
@@ -157,7 +176,7 @@ export function getGlobalStats(games: Game[], playerTag: string): GlobalStats {
       return agg;
     },
     {
-      player: playerTag,
+      player: playerCode,
       count: games.length,
       wins: 0,
       time: 0,
@@ -293,6 +312,17 @@ export function getGamePlayerIndex(game: Game, playerTag: string): number {
     return 0;
   }
   if (players[1] === playerTag) {
+    return 1;
+  }
+  return -1;
+}
+
+export function getGamePlayerCodeIndex(game: Game, code: string): number {
+  const players = _.values(getPlayerCodesByIndex(game));
+  if (players[0] === code) {
+    return 0;
+  }
+  if (players[1] === code) {
     return 1;
   }
   return -1;

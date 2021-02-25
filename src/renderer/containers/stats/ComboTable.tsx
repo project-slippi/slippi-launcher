@@ -1,5 +1,5 @@
 import { ConversionType } from "@slippi/slippi-js";
-import { Game, getGamePlayerIndex, getPlayerName, GlobalStats } from "common/game";
+import { Game, getGamePlayerCodeIndex, getPlayerName, GlobalStats } from "common/game";
 import { convertFrameCountToDurationString } from "common/time";
 import _ from "lodash";
 import React from "react";
@@ -10,9 +10,7 @@ import * as T from "../ReplayFileStats/TableStyles";
 
 const columnCount = 8;
 
-export const ComboTable: React.FC<{ stats: GlobalStats }> = ({ stats }) => {
-  const player = "";
-
+export const ComboTable: React.FC<{ player: string; stats: GlobalStats }> = ({ player, stats }) => {
   const generatePunishRow = (game: Game, punish: ConversionType) => {
     const start = convertFrameCountToDurationString(punish.startFrame);
     let end = "-";
@@ -39,7 +37,7 @@ export const ComboTable: React.FC<{ stats: GlobalStats }> = ({ stats }) => {
   };
 
   const getPlayerCard = (game: Game, isOpponent: boolean) => {
-    let index = getGamePlayerIndex(game, player);
+    let index = getGamePlayerCodeIndex(game, player);
     if (isOpponent) {
       index = 1 - index;
     }

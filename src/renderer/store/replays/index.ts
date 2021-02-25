@@ -27,10 +27,19 @@ type StoreState = {
     loading: boolean;
     error?: any;
   };
+  selectedPlayer: {
+    player: string | null;
+    files: FileResult[];
+    stats: GlobalStats | null;
+    loading: boolean;
+    error?: any;
+  };
 };
 
 type StoreReducers = {
   init: (rootFolder: string, forceReload?: boolean, currentFolder?: string) => Promise<void>;
+  initPlayer: (player: string) => Promise<void>;
+  selectPlayer: (player: string) => Promise<void>;
   selectFile: (index: number, filePath: string) => Promise<void>;
   playFile: (filePath: string) => Promise<void>;
   clearSelectedFile: () => Promise<void>;
@@ -53,6 +62,13 @@ const initialState: StoreState = {
   selectedFile: {
     index: null,
     gameStats: null,
+    error: null,
+    loading: false,
+  },
+  selectedPlayer: {
+    player: null,
+    files: [],
+    stats: null,
     error: null,
     loading: false,
   },
@@ -79,6 +95,41 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     });
 
     await Promise.all([loadDirectoryList(currentFolder ?? rootFolder), loadFolder(currentFolder ?? rootFolder, true)]);
+  },
+
+  initPlayer: async (player) => {
+    const { selectedPlayer } = get();
+    if (player === selectedPlayer.player) {
+      return;
+    }
+
+    set({
+      selectedPlayer: {
+        player: player,
+        files: [],
+        stats: null,
+        error: null,
+        loading: true,
+      },
+    });
+
+    const { selectPlayer } = get();
+    await selectPlayer(player);
+  },
+
+  selectPlayer: async (player) => {
+    try {
+      const files = await loadPlayerReplays(player);
+      const stats = getFilesGlobalStats(files, player);
+      set({
+        selectedPlayer: { player: player, files: files, stats: stats, loading: false, error: null },
+      });
+    } catch (err) {
+      set({
+        selectedPlayer: { player: player, files: [], stats: null, loading: false, error: err },
+      });
+      throw err;
+    }
   },
 
   playFile: async (fullPath) => {
