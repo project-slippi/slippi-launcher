@@ -11,6 +11,10 @@ const db = new Nedb<FileResult>({
 
 db.ensureIndex({ fieldName: "fullPath", unique: true });
 db.ensureIndex({ fieldName: "folder" });
+db.ensureIndex({ fieldName: "player1" });
+db.ensureIndex({ fieldName: "player2" });
+db.ensureIndex({ fieldName: "player3" });
+db.ensureIndex({ fieldName: "player4" });
 
 ipcMain.on("load-replays", async (event, folder) => {
   db.find({ folder: folder })
@@ -20,6 +24,17 @@ ipcMain.on("load-replays", async (event, folder) => {
         event.reply("load-replays", err);
       }
       event.reply("load-replays", docs);
+    });
+});
+
+ipcMain.on("load-player-replays", async (event, player) => {
+  db.find({ $or: [{ player1: player }, { player2: player }, { player3: player }, { player4: player }] })
+    .sort({ timestamp: 1 })
+    .exec((err, docs) => {
+      if (err) {
+        event.reply("load-player-replays", err);
+      }
+      event.reply("load-player-replays", docs);
     });
 });
 

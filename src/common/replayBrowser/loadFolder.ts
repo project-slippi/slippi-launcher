@@ -47,6 +47,7 @@ export async function loadFolder(
           callback(fileValidCount, total);
           resolve(res);
         } catch (err) {
+          console.log(err);
           fileErrorCount += 1;
           resolve(null);
         }

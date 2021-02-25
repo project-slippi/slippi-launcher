@@ -22,6 +22,11 @@ export async function loadFile(fullPath: string): Promise<FileResult> {
     lastFrame: null,
     metadata: null,
     stats: null,
+    playerCount: settings.players.length,
+    player1: null,
+    player2: null,
+    player3: null,
+    player4: null,
     folder: path.dirname(fullPath),
   };
 
@@ -32,6 +37,14 @@ export async function loadFile(fullPath: string): Promise<FileResult> {
 
     if (metadata.lastFrame !== undefined) {
       result.lastFrame = metadata.lastFrame;
+    }
+
+    if (metadata.players) {
+      const players = metadata.players;
+      result.player1 = "0" in players ? players["0"].names.code : null;
+      result.player2 = "1" in players ? players["1"].names.code : null;
+      result.player3 = "2" in players ? players["2"].names.code : null;
+      result.player4 = "3" in players ? players["4"].names.code : null;
     }
   }
 

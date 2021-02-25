@@ -8,6 +8,11 @@ export interface FileResult {
   lastFrame: number | null;
   metadata: MetadataType | null;
   stats: StatsType | null;
+  playerCount: number | null;
+  player1: string | null;
+  player2: string | null;
+  player3: string | null;
+  player4: string | null;
   folder: string;
 }
 

@@ -165,11 +165,13 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
       );
 
       await deleteReplays(result.filesToDelete);
+      console.debug(`deleted ${result.filesToDelete.length} replays from the db`);
       const len = result.files.length;
       set({ progress: { current: 0, total: len, isSaving: true } });
       for (let i = 0; i < result.files.length; i++) {
         const file = result.files[i];
         await saveReplay(file);
+        console.debug("saved ", file.fullPath);
         set({ progress: { current: i, total: len, isSaving: true } });
       }
 
@@ -228,8 +230,9 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     };
 
     try {
-      console.log("deleting where folder not in ", newFolders);
-      await deleteFolderReplays(getFolderList(newFolders));
+      const folders = getFolderList(newFolders);
+      console.log("deleting where folder not in ", folders);
+      await deleteFolderReplays(folders);
     } catch (err) {
       console.log(err);
     }
