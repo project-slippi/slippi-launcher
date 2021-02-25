@@ -1,7 +1,7 @@
 import { StatsType } from "@slippi/slippi-js";
 import * as Comlink from "comlink";
 import { FileResult, findChild, FolderResult, generateSubFolderTree } from "common/replayBrowser";
-import { deleteReplays, loadReplays, saveReplay } from "common/replayBrowser/db";
+import { deleteFolderReplays, deleteReplays, loadReplays, saveReplay } from "common/replayBrowser/db";
 import { ipcRenderer, shell } from "electron";
 import produce from "immer";
 import path from "path";
@@ -222,6 +222,17 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
         child.subdirectories = await generateSubFolderTree(child.fullPath, childrenToExpand);
       }
     });
+
+    const getFolderList = (root: FolderResult): string[] => {
+      return [root.fullPath, ...root.subdirectories.flatMap((d) => getFolderList(d))];
+    };
+
+    try {
+      console.log("deleting where folder not in ", newFolders);
+      await deleteFolderReplays(getFolderList(newFolders));
+    } catch (err) {
+      console.log(err);
+    }
 
     set({ folders: newFolders });
   },

@@ -37,6 +37,7 @@ export async function saveReplay(replay: FileResult) {
     ipcRenderer.send("save-replay", replay);
   });
 }
+
 export async function deleteReplays(replays: string[]) {
   return new Promise<void>((resolve, reject) => {
     ipcRenderer.once("delete-replays", (_: any, err: Error | null) => {
@@ -46,5 +47,17 @@ export async function deleteReplays(replays: string[]) {
       resolve();
     });
     ipcRenderer.send("delete-replays", replays);
+  });
+}
+
+export async function deleteFolderReplays(existingFolders: string[]) {
+  return new Promise<void>((resolve, reject) => {
+    ipcRenderer.once("delete-folders", (_: any, err: Error | null) => {
+      if (err) {
+        reject(err);
+      }
+      resolve();
+    });
+    ipcRenderer.send("delete-folders", existingFolders);
   });
 }
