@@ -175,8 +175,8 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
         fileErrorCount: result.fileErrorCount,
       });
     } catch (err) {
-      set({ loading: false, progress: null });
       console.log(err);
+      set({ loading: false, progress: null });
     }
   },
 

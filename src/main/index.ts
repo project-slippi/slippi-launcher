@@ -8,7 +8,7 @@ import { format as formatUrl } from "url";
 
 import { setupListeners } from "./listeners";
 
-const db = new Nedb<FileResult>({ autoload: true, filename: "/Users/alvaro/Desktop/db.db" });
+const db = new Nedb<FileResult>({ autoload: true, filename: path.join(app.getPath("userData"), "statsDB") });
 
 const loadReplays = async () => {
   const res = await db.find({}).sort({ timestamp: 1 });
@@ -18,6 +18,7 @@ const loadReplays = async () => {
 const saveReplay = async (replayFile: FileResult) => {
   await db.insert(replayFile);
   console.log(`inserted ${replayFile.fullPath} to the db`);
+  return null;
 };
 
 ipcMain.on("load-replays", async (event) => {
