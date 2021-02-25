@@ -14,18 +14,23 @@ export async function loadFolder(
     return {
       files: [],
       fileErrorCount: 0,
+      filesToDelete: [],
     };
   }
 
   const results = await fs.readdir(folder, { withFileTypes: true });
   const slpFiles = results.filter((dirent) => dirent.isFile() && path.extname(dirent.name) === ".slp");
   const filtered = slpFiles.filter((dirent) => !loadedFiles.includes(path.resolve(folder, dirent.name)));
-  console.log(`found ${slpFiles.length} files in dir, ${filtered.length} are new`);
   const total = filtered.length;
+  const toDelete = loadedFiles.filter((file) => !slpFiles.map((d) => path.resolve(folder, d.name)).includes(file));
+  console.log(
+    `found ${slpFiles.length} files in ${folder}, ${total} are new. ${toDelete.length} will be removed from the DB`,
+  );
   if (total === 0) {
     return {
       files: [],
       fileErrorCount: 0,
+      filesToDelete: toDelete,
     };
   }
 
@@ -64,5 +69,6 @@ export async function loadFolder(
   return {
     files: slpGames,
     fileErrorCount,
+    filesToDelete: toDelete,
   };
 }

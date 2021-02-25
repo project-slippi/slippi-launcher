@@ -8,6 +8,7 @@ export interface FileResult {
   lastFrame: number | null;
   metadata: MetadataType | null;
   stats: StatsType | null;
+  folder: string;
 }
 
 export interface FolderResult {
@@ -20,4 +21,5 @@ export interface FolderResult {
 export interface FileLoadResult {
   files: FileResult[];
   fileErrorCount: number;
+  filesToDelete: string[];
 }

@@ -1,7 +1,7 @@
 import { StatsType } from "@slippi/slippi-js";
 import * as Comlink from "comlink";
 import { FileResult, findChild, FolderResult, generateSubFolderTree } from "common/replayBrowser";
-import { loadReplays, saveReplay } from "common/replayBrowser/db";
+import { deleteReplays, loadReplays, saveReplay } from "common/replayBrowser/db";
 import { ipcRenderer, shell } from "electron";
 import produce from "immer";
 import path from "path";
@@ -152,8 +152,8 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
 
     set({ loading: true, progress: null });
     try {
-      const files = await loadReplays();
-      console.log(`loaded ${files.length} replays from the db`);
+      const files = await loadReplays(folderToLoad);
+      console.log(`loaded ${files.length} replays in ${folderToLoad} from the db`);
 
       const result = await loadReplayFolder(
         folderToLoad,
@@ -163,10 +163,8 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
         }),
       );
 
-      for (let i = 0; i < result.files.length; ++i) {
-        const file = result.files[i];
-        await saveReplay(file);
-      }
+      await deleteReplays(result.filesToDelete);
+      result.files.forEach(async (file) => await saveReplay(file));
 
       set({
         scrollRowItem: 0,

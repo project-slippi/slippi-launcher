@@ -22,6 +22,7 @@ export async function loadFile(fullPath: string): Promise<FileResult> {
     lastFrame: null,
     metadata: null,
     stats: null,
+    folder: path.dirname(fullPath),
   };
 
   // Load metadata
