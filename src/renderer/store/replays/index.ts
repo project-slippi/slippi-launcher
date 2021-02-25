@@ -1,7 +1,7 @@
 import { StatsType } from "@slippi/slippi-js";
 import * as Comlink from "comlink";
 import { FileResult, findChild, FolderResult, generateSubFolderTree } from "common/replayBrowser";
-import { deleteFolderReplays, deleteReplays, loadReplays, saveReplay } from "common/replayBrowser/db";
+import { deleteFolderReplays, deleteReplays, loadReplayFile, loadReplays, saveReplay } from "common/replayBrowser/db";
 import { ipcRenderer, shell } from "electron";
 import produce from "immer";
 import path from "path";
@@ -89,10 +89,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   },
 
   selectFile: async (index, fullPath) => {
-    const file = get().files[index];
-    if (file.fullPath !== fullPath) {
-      console.log("files and indexes are not aligned!");
-    }
+    const file = await loadReplayFile(fullPath);
     if (file.stats) {
       set({
         selectedFile: { index, gameStats: file.stats, loading: false, error: null },

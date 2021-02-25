@@ -17,7 +17,7 @@ db.ensureIndex({ fieldName: "player3" });
 db.ensureIndex({ fieldName: "player4" });
 
 ipcMain.on("load-replays", async (event, folder) => {
-  db.find({ folder: folder })
+  db.find({ folder: folder }, { stats: 0 })
     .sort({ timestamp: 1 })
     .exec((err, docs) => {
       if (err) {
@@ -25,6 +25,15 @@ ipcMain.on("load-replays", async (event, folder) => {
       }
       event.reply("load-replays", docs);
     });
+});
+
+ipcMain.on("load-replay-file", async (event, file) => {
+  db.findOne({ fullPath: file }, (err, docs) => {
+    if (err) {
+      event.reply("load-replay-file", err);
+    }
+    event.reply("load-replay-file", docs);
+  });
 });
 
 ipcMain.on("load-player-replays", async (event, player) => {

@@ -14,6 +14,18 @@ export function loadReplays(folder: string) {
   });
 }
 
+export function loadReplayFile(file: string) {
+  return new Promise<FileResult>((resolve, reject) => {
+    ipcRenderer.once("load-replay-file", (_: any, arg: Error | FileResult) => {
+      if (arg instanceof Error) {
+        reject(arg);
+      }
+      resolve(arg as FileResult);
+    });
+    ipcRenderer.send("load-replay-file", file);
+  });
+}
+
 export function loadPlayerReplays(player: string) {
   return new Promise<FileResult[]>((resolve, reject) => {
     ipcRenderer.once("load-player-replays", (_: any, arg: Error | FileResult[]) => {
