@@ -1441,6 +1441,13 @@
   dependencies:
     moment "*"
 
+"@types/nedb@^1.8.11":
+  version "1.8.11"
+  resolved "https://registry.yarnpkg.com/@types/nedb/-/nedb-1.8.11.tgz#a8f9d9c8d43d12e98df7cbcfeb5f107bbb0971c0"
+  integrity sha512-qHQRLZ0e6l/XK/2Qb2v5N1ujmdttYkUvnRI4nPIifMy6vYwoAnER10xhX13isWjjQtNsrjNLinZgDDguzPmEKw==
+  dependencies:
+    "@types/node" "*"
+
 "@types/node@*":
   version "14.14.13"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.13.tgz#9e425079799322113ae8477297ae6ef51b8e0cdf"
@@ -3989,10 +3996,10 @@ electron-webpack@^2.8.2:
     webpack-merge "^4.2.2"
     yargs "^15.3.1"
 
-electron@11.3.0:
-  version "11.3.0"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-11.3.0.tgz#87e8528fd23ae53b0eeb3a738f1fe0a3ad27c2db"
-  integrity sha512-MhdS0gok3wZBTscLBbYrOhLaQybCSAfkupazbK1dMP5c+84eVMxJE/QGohiWQkzs0tVFIJsAHyN19YKPbelNrQ==
+electron@7.3.3:
+  version "7.3.3"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-7.3.3.tgz#f61502a3d42d85adfecd8e37f98da449b591f8af"
+  integrity sha512-PrJEsuRiaAhTDHtbH3EM+RIne+nZ6ifGChUadmtmPqHUQ+rIhf4jSi2ZN768IgBDw4SidMJiCrvQRiuDha9+Ew==
   dependencies:
     "@electron/get" "^1.0.1"
     "@types/node" "^12.0.12"
@@ -6947,13 +6954,6 @@ natural-compare@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc=
-
-nedb-promises-ts@^0.0.1-4:
-  version "0.0.1-4"
-  resolved "https://registry.yarnpkg.com/nedb-promises-ts/-/nedb-promises-ts-0.0.1-4.tgz#cccc6d9d1574f7738fc7499f6a67d5e267aab83b"
-  integrity sha512-vEYqn9pyf7RrLiC9yfnCq/kn3I/bPH0bRwDK8tF3HqcqX9I0wrbMI12pxZbz79QZdlyOVjeYvu7JY9yl4sL0yw==
-  dependencies:
-    nedb "^1.8.0"
 
 nedb@^1.8.0:
   version "1.8.0"

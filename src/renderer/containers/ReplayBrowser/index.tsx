@@ -168,7 +168,8 @@ export const ReplayBrowser: React.FC = () => {
 
 const LoadingBox: React.FC = () => {
   const progress = useReplays((store) => store.progress);
-  let message = progress && progress.isSaving ? "Storing new files, this can take a while..." : "Loading...";
+  let message =
+    progress && progress.isSaving ? `Storing ${progress.total} new files, this can take a while...` : "Loading...";
   if (progress !== null) {
     message += ` ${Math.floor((progress.current / progress.total) * 100)}%`;
   }
