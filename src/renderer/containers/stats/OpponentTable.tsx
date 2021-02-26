@@ -1,17 +1,66 @@
+import { Checkbox, Link } from "@material-ui/core";
 import { GlobalStats, MatchupAggregate } from "common/game";
 import _ from "lodash";
-import React from "react";
+import React, { useState } from "react";
 
 import { getCharacterIcon } from "@/lib/utils";
 
 import * as T from "../ReplayFileStats/TableStyles";
 
-export const OpponentTable: React.FC<{ stats: GlobalStats }> = ({ stats }) => {
+export const OpponentTable: React.FC<{ stats: GlobalStats; setFiltered: (f: string[]) => void }> = ({
+  stats,
+  setFiltered,
+}) => {
+  const [selected, setSelected] = useState([] as string[]);
+  const [focused, setFocused] = useState([] as string[]);
+  const [hidden, setHidden] = useState([] as string[]);
+
+  const setFocus = () => {
+    setFocused([...selected, ...focused]);
+    setSelected([]);
+    setFiltered(hidden);
+  };
+
+  const setHide = () => {
+    setHidden([...selected, ...hidden]);
+    setSelected([]);
+    setFiltered(hidden);
+  };
+
+  const setClear = () => {
+    setFocused([]);
+    setHidden([]);
+    setSelected([]);
+    setFiltered([]);
+  };
+
+  const setCheck = (isChecked: boolean, player: string) => {
+    if (isChecked) {
+      setSelected([...selected, player]);
+    } else {
+      setSelected(selected.filter((p) => p !== player));
+    }
+  };
+
+  const renderFilterControls = () => {
+    return selected.length > 0 ? (
+      <div style={{ alignSelf: "right" }}>
+        <Link onClick={setClear}>Clear</Link> / <Link onClick={setFocus}>Focus</Link> /{" "}
+        <Link onClick={setHide}>Hide</Link>
+      </div>
+    ) : null;
+  };
+
   const renderHeaderPlayer = () => {
     const headerText = "Top Opponents";
     return (
       <T.TableRow>
-        <T.TableHeaderCell colSpan={4}>{headerText}</T.TableHeaderCell>
+        <T.TableHeaderCell colSpan={5}>
+          <div style={{ display: "flex" }}>
+            {headerText}
+            {renderFilterControls()}
+          </div>
+        </T.TableHeaderCell>
       </T.TableRow>
     );
   };
@@ -19,6 +68,7 @@ export const OpponentTable: React.FC<{ stats: GlobalStats }> = ({ stats }) => {
   const renderHeaderColumns = () => {
     return (
       <T.TableRow>
+        <T.TableHeaderCell></T.TableHeaderCell>
         <T.TableHeaderCell>Player</T.TableHeaderCell>
         <T.TableHeaderCell>Games</T.TableHeaderCell>
         <T.TableHeaderCell>Winrate</T.TableHeaderCell>
@@ -32,7 +82,8 @@ export const OpponentTable: React.FC<{ stats: GlobalStats }> = ({ stats }) => {
     return Object.keys(oppStats)
       .sort((a, b) => oppStats[b].count - oppStats[a].count)
       .slice(0, 26)
-      .map((k) => generateOpponentRow(k, oppStats[k]));
+      .map((k) => generateOpponentRow(k, oppStats[k]))
+      .slice(0, 9);
   };
 
   const generateOpponentRow = (playerTag: string, agg: MatchupAggregate) => {
@@ -42,6 +93,13 @@ export const OpponentTable: React.FC<{ stats: GlobalStats }> = ({ stats }) => {
 
     return (
       <T.TableRow key={`${playerTag}-${agg.count}`}>
+        <T.TableCell style={{ alignItems: "center" }}>
+          <Checkbox
+            color="default"
+            checked={selected.includes(playerTag)}
+            onChange={(e) => setCheck(e.target.checked, playerTag)}
+          />
+        </T.TableCell>
         <T.TableCell>{playerTag}</T.TableCell>
         <T.TableCell>{agg.count}</T.TableCell>
         <T.TableCell>{((agg.won / agg.count) * 100).toFixed(0)}%</T.TableCell>
