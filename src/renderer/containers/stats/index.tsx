@@ -37,6 +37,7 @@ const Footer = styled.div`
 
 export interface ReplayFileStatsProps {
   player: string;
+  onClose: () => void;
   // file: FileResult;
   // index: number;
   // total: number;
@@ -64,7 +65,7 @@ export const PlayerStats: React.FC<ReplayFileStatsProps> = (props) => {
 
     switch (event.keyCode) {
       case 27: // Escape
-        // props.onClose();
+        props.onClose();
         break;
     }
   };

@@ -43,6 +43,7 @@ type StoreReducers = {
   selectFile: (index: number, filePath: string) => Promise<void>;
   playFile: (filePath: string) => Promise<void>;
   clearSelectedFile: () => Promise<void>;
+  clearSelectedPlayer: () => Promise<void>;
   deleteFile: (filePath: string) => Promise<void>;
   loadDirectoryList: (folder: string) => Promise<void>;
   loadFolder: (childPath?: string, forceReload?: boolean) => Promise<void>;
@@ -119,10 +120,9 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
 
   selectPlayer: async (player) => {
     try {
-      const files = await loadPlayerReplays(player);
-      const stats = getFilesGlobalStats(files, player);
+      const stats = await loadPlayerReplays(player);
       set({
-        selectedPlayer: { player: player, files: files, stats: stats, loading: false, error: null },
+        selectedPlayer: { player: player, files: [], stats: stats, loading: false, error: null },
       });
     } catch (err) {
       set({
@@ -156,6 +156,18 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
         gameStats: null,
         error: null,
         loading: false,
+      },
+    });
+  },
+
+  clearSelectedPlayer: async () => {
+    set({
+      selectedPlayer: {
+        player: null,
+        files: [],
+        stats: null,
+        loading: false,
+        error: null,
       },
     });
   },

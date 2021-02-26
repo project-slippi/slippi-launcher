@@ -23,7 +23,7 @@ export const ComboTable: React.FC<{ player: string; stats: GlobalStats }> = ({ p
     }
 
     return (
-      <T.TableRow key={`${game.filePath}-${punish.playerIndex}-punish-${punish.startFrame}`}>
+      <T.TableRow key={`${game.fullPath}-${punish.playerIndex}-punish-${punish.startFrame}`}>
         <T.TableCell>{getPlayerCard(game, false)}</T.TableCell>
         <T.TableCell>{getPlayerCard(game, true)}</T.TableCell>
         <T.TableCell>{openingType}</T.TableCell>
@@ -42,7 +42,8 @@ export const ComboTable: React.FC<{ player: string; stats: GlobalStats }> = ({ p
       index = 1 - index;
     }
     const tag = getPlayerName(game, index);
-    const players = game.getSettings().players || [];
+    console.log(game);
+    const players = game.settings.players || [];
     const playersByIndex = _.keyBy(players, "playerIndex");
     const p = playersByIndex[index];
 

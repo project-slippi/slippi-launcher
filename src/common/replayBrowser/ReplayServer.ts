@@ -1,3 +1,4 @@
+import { getGlobalStats } from "common/game";
 import { ipcMain } from "electron";
 
 import { getFullReplay, getPlayerReplays, pruneFolders } from "./dao";
@@ -27,7 +28,7 @@ export const startReplayServer = () => {
 
   ipcMain.on("load-player-replays", async (event, player) => {
     try {
-      event.reply("load-player-replays", await getPlayerReplays(player));
+      event.reply("load-player-replays", getGlobalStats(await getPlayerReplays(player), player, []));
     } catch (err) {
       event.reply("load-player-replays", err);
     }

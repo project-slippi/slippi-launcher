@@ -1,22 +1,11 @@
 import { ConversionType, GameStartType, MetadataType, stages, StatsType, StockType } from "@slippi/slippi-js";
 import _ from "lodash";
 
-import { FileResult } from "./replayBrowser";
-
-export class Game {
-  stats!: StatsType;
-  settings!: GameStartType;
-  metadata!: MetadataType;
-  filePath!: string;
-  constructor(stats: StatsType, settings: GameStartType, metadata: MetadataType, path: string) {
-    this.stats = stats;
-    this.settings = settings;
-    this.metadata = metadata;
-    this.filePath = path;
-  }
-  getStats = () => this.stats;
-  getSettings = () => this.settings;
-  getMetadata = () => this.metadata;
+export interface Game {
+  stats: StatsType | null;
+  settings: GameStartType;
+  metadata: MetadataType | null;
+  fullPath: string;
 }
 
 export interface GlobalStats {
@@ -72,27 +61,23 @@ export interface Conversion {
   game: Game;
 }
 
-export function getFilesGlobalStats(files: FileResult[], playerTag: string): GlobalStats {
-  return getGlobalStats(
-    files.map((f) => new Game(f.stats!, f.settings!, f.metadata!, f.fullPath)),
-    playerTag,
-  );
-}
-
 export function getGlobalStats(games: Game[], playerCode: string): GlobalStats {
   const aggs = games.reduce(
     (a, game) => {
       const agg = a; // because es-lint can be dumb
       const index = getGamePlayerCodeIndex(game, playerCode);
       const opp = getPlayerName(game, 1 - index);
-      const stats = game.getStats();
+      const stats = game.stats;
+      if (!stats) {
+        return agg;
+      }
 
       const pOverall = stats.overall[index];
       const oOverall = stats.overall[1 - index];
 
       const won = getGameWinner(game) === index;
 
-      const players = game.getSettings().players;
+      const players = game.settings.players;
       if (players.length !== 2) {
         return agg;
       }
@@ -203,6 +188,9 @@ export function getGlobalStats(games: Game[], playerCode: string): GlobalStats {
     },
   );
 
+  const diff = (p: ConversionType) => p.currentPercent - p.startPercent;
+  aggs.punishes = aggs.punishes.sort((a, b) => diff(b.punish) - diff(a.punish)).slice(0, 20);
+
   return {
     ...aggs,
     conversionRate: aggs.conversionRateCount / aggs.conversionRateTotal,
@@ -215,8 +203,8 @@ export function getGlobalStats(games: Game[], playerCode: string): GlobalStats {
 }
 
 export function getPlayerCodesByIndex(game: Game) {
-  const settings = game.getSettings() || {};
-  const metadata = game.getMetadata() || {};
+  const settings = game.settings || {};
+  const metadata = game.metadata || {};
 
   const players = settings.players || [];
 
@@ -239,8 +227,8 @@ export function getPlayerNamesByIndex(game: Game) {
     return {};
   }
 
-  const settings = game.getSettings() || {};
-  const metadata = game.getMetadata() || {};
+  const settings = game.settings || {};
+  const metadata = game.metadata || {};
 
   const players = settings.players || [];
   return _.chain(players)
@@ -273,7 +261,7 @@ export function getPlayerCode(game: Game, playerIndex: number) {
 }
 
 export function getPlayerStocks(game: Game, playerIndex: number): StockType[] {
-  const stocks = game.getStats().stocks;
+  const stocks = game.stats!.stocks;
   return _.groupBy(stocks, "playerIndex")[playerIndex] || [];
 }
 
@@ -329,7 +317,7 @@ export function getGamePlayerCodeIndex(game: Game, code: string): number {
 }
 
 export function getStageName(game: Game): string {
-  const stageId = game.getSettings().stageId;
+  const stageId = game.settings.stageId;
   if (stageId == null) {
     return "error";
   }
