@@ -13,7 +13,8 @@
     "package": "yarn run build && electron-builder",
     "package:dir": "yarn run package --dir -c.compression=store -c.mac.identity=null",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
-    "lint:fix": "yarn run lint --fix"
+    "lint:fix": "yarn run lint --fix",
+    "postinstall": "install-app-deps"
   },
   "dependencies": {
     "@apollo/client": "^3.3.4",
@@ -21,7 +22,7 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@slippi/slippi-js": "^5.1.1",
-    "@types/nedb": "^1.8.11",
+    "@types/sqlite3": "^3.1.7",
     "adm-zip": "^0.5.1",
     "comlink": "^4.3.0",
     "cross-fetch": "^3.0.6",
@@ -35,7 +36,6 @@
     "immer": "^8.0.0",
     "lodash": "^4.17.20",
     "moment": "^2.29.1",
-    "nedb": "^1.8.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-dropzone": "^11.2.4",
@@ -44,6 +44,7 @@
     "react-window": "^1.8.6",
     "semver": "^7.3.4",
     "source-map-support": "^0.5.16",
+    "sqlite3": "^5.0.2",
     "styled-components": "^5.2.1",
     "typeface-roboto": "^1.1.13",
     "zustand": "^3.2.0"
