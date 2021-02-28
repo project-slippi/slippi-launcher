@@ -1,7 +1,7 @@
 import { StatsType } from "@slippi/slippi-js";
 import * as Comlink from "comlink";
 import { FileResult, findChild, FolderResult, generateSubFolderTree } from "common/replayBrowser";
-import { deleteFolderReplays, deleteReplays, loadReplayFile, loadReplays, saveReplay } from "common/replayBrowser/db";
+import { deleteFolderReplays, deleteReplays, loadReplayFile, loadReplays, saveReplays } from "common/replayBrowser/db";
 import { ipcRenderer, shell } from "electron";
 import produce from "immer";
 import path from "path";
@@ -164,12 +164,9 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
       await deleteReplays(result.filesToDelete);
       console.debug(`deleted ${result.filesToDelete.length} replays from the db`);
       const len = result.files.length;
-      set({ progress: { current: 0, total: len, isSaving: true } });
-      for (let i = 0; i < result.files.length; i++) {
-        const file = result.files[i];
-        await saveReplay(file);
-        console.debug("saved ", file.fullPath);
-        set({ progress: { current: i, total: len, isSaving: true } });
+      if (result.files.length > 0) {
+        set({ progress: { current: 0, total: len, isSaving: true } });
+        await saveReplays(result.files, (count) => set({ progress: { current: count, total: len, isSaving: true } }));
       }
 
       set({

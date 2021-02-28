@@ -50,6 +50,24 @@ export async function saveReplay(replay: FileResult) {
   });
 }
 
+export async function saveReplays(replays: FileResult[], progressCallback: (count: number) => void) {
+  return new Promise<void>((resolve, reject) => {
+    ipcRenderer.on("save-replays", (_: any, arg: number | Error | null) => {
+      if (arg instanceof Error) {
+        reject(arg);
+        return;
+      }
+      if (arg === null) {
+        ipcRenderer.removeAllListeners("save-replays");
+        resolve();
+      } else {
+        progressCallback(arg);
+      }
+    });
+    ipcRenderer.send("save-replays", replays);
+  });
+}
+
 export async function deleteReplays(replays: string[]) {
   return new Promise<void>((resolve, reject) => {
     ipcRenderer.once("delete-replays", (_: any, err: Error | null) => {
