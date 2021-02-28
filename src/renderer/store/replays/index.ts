@@ -1,7 +1,13 @@
 import { StatsType } from "@slippi/slippi-js";
 import * as Comlink from "comlink";
 import { FileResult, findChild, FolderResult, generateSubFolderTree } from "common/replayBrowser";
-import { deleteFolderReplays, deleteReplays, loadReplayFile, loadReplays, saveReplays } from "common/replayBrowser/db";
+import {
+  deleteFolderReplays,
+  deleteReplays,
+  loadReplayFile,
+  loadReplays,
+  saveReplays,
+} from "common/replayBrowser/ReplayClient";
 import { ipcRenderer, shell } from "electron";
 import produce from "immer";
 import path from "path";

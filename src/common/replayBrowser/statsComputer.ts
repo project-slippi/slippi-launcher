@@ -1,6 +1,6 @@
+import { FileResult } from "common/replayBrowser";
 import os from "os";
 import { Worker } from "worker_threads";
-import { FileResult } from "common/replayBrowser";
 
 export const parseReplays = (replays: FileResult[], progressCallback: (count: number) => void) => {
   return new Promise<FileResult[]>((resolve, reject) => {
