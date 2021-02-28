@@ -1,15 +1,19 @@
 import { ipcMain } from "electron";
 
-import { deleteReplays, getFolderReplays, getFullReplay, getPlayerReplays, pruneFolders, saveReplays } from "./dao";
-import { parseReplays } from "./statsComputer";
+import { getFullReplay, getPlayerReplays, pruneFolders } from "./dao";
+import { loadFolder } from "./loadFolder";
 
 export const startReplayServer = () => {
-  console.log(ipcMain);
   ipcMain.on("load-folder-replays", async (event, folder) => {
     try {
-      event.reply("load-folder-replays", await getFolderReplays(folder));
+      const result = await loadFolder(folder, (count, total) =>
+        event.reply("load-folder-replays", { type: "callback", value: [count, total] }),
+      );
+      event.reply("load-folder-replays", { type: "done", value: result });
     } catch (err) {
-      event.reply("load-folder-replays", err);
+      console.log(err);
+      event.reply("load-folder-replays", { type: "error", value: err });
+      return;
     }
   });
 
@@ -26,26 +30,6 @@ export const startReplayServer = () => {
       event.reply("load-player-replays", await getPlayerReplays(player));
     } catch (err) {
       event.reply("load-player-replays", err);
-    }
-  });
-
-  ipcMain.on("save-replays", async (event, replays) => {
-    try {
-      const results = await parseReplays(replays, (count) => event.reply("save-replays", count));
-      await saveReplays(results);
-      event.reply("save-replays", null);
-    } catch (err) {
-      console.log(err);
-      event.reply("save-replays", err);
-      return;
-    }
-  });
-
-  ipcMain.on("delete-replays", async (event, replays) => {
-    try {
-      event.reply("delete-replays", await deleteReplays(replays));
-    } catch (err) {
-      event.reply("delete-replays", err);
     }
   });
 

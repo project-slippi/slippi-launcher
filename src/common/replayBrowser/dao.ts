@@ -50,15 +50,35 @@ const parseRow = (row: any) => {
   } as FileResult;
 };
 
+export const getFolderFiles = (folder: string) => {
+  return new Promise<string[]>((resolve, reject) =>
+    db.all(
+      `
+    SELECT fullPath
+    FROM replays 
+    WHERE folder = ?
+    ORDER by startTime DESC`,
+      [folder],
+      (err, files) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(files ? files.map((f) => f.fullPath) : []);
+        }
+      },
+    ),
+  );
+};
+
 export const getFolderReplays = (folder: string) => {
-  return new Promise((resolve, reject) =>
+  return new Promise<FileResult[]>((resolve, reject) =>
     db.all(
       `
     SELECT fullPath, name, folder, startTime, lastFrame, 
     playerCount, player1, player2, player3, player4, 
     settings, metadata 
     FROM replays 
-    WHERE folder in (?)
+    WHERE folder = ?
     ORDER by startTime DESC`,
       [folder],
       (err, docs) => {
@@ -147,8 +167,9 @@ const saveReplayBatch = async (replays: FileResult[]) => {
 };
 
 export const deleteReplays = (files: string[]) => {
+  const qfmt = files.map(() => "?").join(",");
   return new Promise((resolve, reject) =>
-    db.run("DELETE FROM replays WHERE fullPath IN (?)", files, (err) => (err ? reject(err) : resolve(null))),
+    db.run(`DELETE FROM replays WHERE fullPath IN (${qfmt})`, files, (err) => (err ? reject(err) : resolve(null))),
   );
 };
 

@@ -26,5 +26,4 @@ export interface FolderResult {
 export interface FileLoadResult {
   files: FileResult[];
   fileErrorCount: number;
-  filesToDelete: string[];
 }

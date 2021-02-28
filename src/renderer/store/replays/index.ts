@@ -1,19 +1,10 @@
 import { StatsType } from "@slippi/slippi-js";
-import * as Comlink from "comlink";
 import { FileResult, findChild, FolderResult, generateSubFolderTree } from "common/replayBrowser";
-import {
-  deleteFolderReplays,
-  deleteReplays,
-  loadReplayFile,
-  loadReplays,
-  saveReplays,
-} from "common/replayBrowser/ReplayClient";
+import { deleteFolderReplays, loadReplayFile, loadReplays } from "common/replayBrowser/ReplayClient";
 import { ipcRenderer, shell } from "electron";
 import produce from "immer";
 import path from "path";
 import create from "zustand";
-
-import { loadReplayFolder } from "@/workers/fileLoader.worker";
 
 import { useSettings } from "../settings";
 
@@ -152,32 +143,15 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
       return;
     }
 
-    set({ currentFolder: folderToLoad });
-
-    set({ loading: true, progress: null });
+    set({ currentFolder: folderToLoad, loading: true, progress: null });
     try {
-      const files = await loadReplays(folderToLoad);
-      console.log(`loaded ${files.length} replays in ${folderToLoad} from the db`);
-
-      const result = await loadReplayFolder(
-        folderToLoad,
-        files.map((f) => f.fullPath),
-        Comlink.proxy((current, total) => {
-          set({ progress: { current, total, isSaving: false } });
-        }),
+      console.log("will load");
+      const result = await loadReplays(folderToLoad, (count, total) =>
+        set({ progress: { current: count, total: total, isSaving: true } }),
       );
-
-      await deleteReplays(result.filesToDelete);
-      console.debug(`deleted ${result.filesToDelete.length} replays from the db`);
-      const len = result.files.length;
-      if (result.files.length > 0) {
-        set({ progress: { current: 0, total: len, isSaving: true } });
-        await saveReplays(result.files, (count) => set({ progress: { current: count, total: len, isSaving: true } }));
-      }
-
       set({
         scrollRowItem: 0,
-        files: [...files, ...result.files],
+        files: result.files,
         loading: false,
         fileErrorCount: result.fileErrorCount,
       });

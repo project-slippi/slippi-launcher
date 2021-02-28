@@ -1,14 +1,20 @@
 import { ipcRenderer } from "electron";
 
-import { FileResult } from "./types";
+import { FileLoadResult, FileResult, FolderResult } from "./types";
 
-export function loadReplays(folder: string) {
-  return new Promise<FileResult[]>((resolve, reject) => {
-    ipcRenderer.once("load-folder-replays", (_: any, arg: Error | FileResult[]) => {
-      if (arg instanceof Error) {
+export async function loadReplays(folder: string, progressCallback: (count: number, total: number) => void) {
+  return new Promise<FileLoadResult>((resolve, reject) => {
+    ipcRenderer.on("load-folder-replays", (_: any, arg: { type: string; value: number[] | FolderResult | any }) => {
+      if (arg.type === "error") {
         reject(arg);
+        return;
       }
-      resolve(arg as FileResult[]);
+      if (arg.type === "done") {
+        ipcRenderer.removeAllListeners("load-folder-replays");
+        resolve((arg.value as unknown) as FileLoadResult);
+      } else {
+        progressCallback(arg.value[0], arg.value[1]);
+      }
     });
     ipcRenderer.send("load-folder-replays", folder);
   });
@@ -50,18 +56,18 @@ export async function saveReplay(replay: FileResult) {
   });
 }
 
-export async function saveReplays(replays: FileResult[], progressCallback: (count: number) => void) {
-  return new Promise<void>((resolve, reject) => {
-    ipcRenderer.on("save-replays", (_: any, arg: number | Error | null) => {
+export async function saveReplays(replays: string[], progressCallback: (count: number) => void) {
+  return new Promise<number>((resolve, reject) => {
+    ipcRenderer.on("save-replays", (_: any, arg: { type: string; value: number } | Error) => {
       if (arg instanceof Error) {
         reject(arg);
         return;
       }
-      if (arg === null) {
+      if (arg.type === "done") {
         ipcRenderer.removeAllListeners("save-replays");
-        resolve();
+        resolve(arg.value);
       } else {
-        progressCallback(arg);
+        progressCallback(arg.value);
       }
     });
     ipcRenderer.send("save-replays", replays);
