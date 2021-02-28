@@ -1,15 +1,11 @@
-const path = require("path");
 const ThreadsPlugin = require("threads-plugin");
 const Dotenv = require("dotenv-webpack");
 
 module.exports = function (context) {
-  context.optimization.minimizer = [];
-
-  context.resolve.modules = [path.resolve(__dirname, "./src"), "node_modules"];
-
-  context.module.rules = context.module.rules.filter((r) => {
-    return r.use !== "node-loader";
-  });
+  // Enforce chunkhash when building output files.
+  // Without this we get the following error when building workers:
+  // Conflict: Multiple assets emit to the same filename: 0.bundle.worker.js
+  context.output.chunkFilename = "[id].[chunkhash].js";
 
   context.module.rules.unshift({
     test: /\.node$/,
