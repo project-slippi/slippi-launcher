@@ -6,6 +6,7 @@
 
 // import * as fs from "fs-extra";
 // import * as path from "path";
+import { SlippiGame } from "@slippi/slippi-js";
 import { ModuleMethods } from "threads/dist/types/master";
 // import { Observable, Subject } from "threads/observable";
 import { expose } from "threads/worker";
@@ -24,6 +25,7 @@ export interface Methods {
   destroyWorker: () => Promise<void>;
   // start: (rootFolder: string) => Promise<void>;
   fib: (n: number) => Promise<number>;
+  processSlpFile: (filename: string) => Promise<any>;
 }
 
 export type WorkerSpec = ModuleMethods & Methods;
@@ -50,6 +52,12 @@ const methods: WorkerSpec = {
 
   async fib(n) {
     return fibonacci(n);
+  },
+
+  async processSlpFile(filename) {
+    const game = new SlippiGame(filename);
+    const frame = game.getLatestFrame();
+    return frame;
   },
 };
 

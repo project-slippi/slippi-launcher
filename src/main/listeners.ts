@@ -31,6 +31,16 @@ export function setupListeners() {
     }
   });
 
+  ipcMain.on("processFile", async (_, arg) => {
+    console.log(`processing slp file: ${arg}`);
+    const w = await worker;
+    const val = await w.processSlpFile(arg);
+    const x = BrowserWindow.getFocusedWindow();
+    if (x) {
+      x.webContents.send("processFile-reply", val);
+    }
+  });
+
   ipcMain.on("viewReplay", (_, filePath: string) => {
     const replayComm: ReplayCommunication = {
       mode: "normal",
