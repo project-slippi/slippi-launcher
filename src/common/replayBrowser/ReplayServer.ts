@@ -26,9 +26,9 @@ export const startReplayServer = () => {
     }
   });
 
-  ipcMain.on("load-player-replays", async (event, player) => {
+  ipcMain.on("load-player-replays", async (event, player, filters) => {
     try {
-      event.reply("load-player-replays", getGlobalStats(await getPlayerReplays(player), player, []));
+      event.reply("load-player-replays", getGlobalStats(await getPlayerReplays(player), player, filters));
     } catch (err) {
       event.reply("load-player-replays", err);
     }

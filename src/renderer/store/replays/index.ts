@@ -1,4 +1,5 @@
 import { StatsType } from "@slippi/slippi-js";
+import { GameFilters, GlobalStats } from "common/game";
 import { FileResult, findChild, FolderResult, generateSubFolderTree } from "common/replayBrowser";
 import { deleteFolderReplays, loadReplayFile, loadReplays } from "common/replayBrowser/ReplayClient";
 import { ipcRenderer, shell } from "electron";
@@ -29,7 +30,7 @@ type StoreState = {
   };
   selectedPlayer: {
     player: string | null;
-    files: FileResult[];
+    filters: GameFilters;
     stats: GlobalStats | null;
     loading: boolean;
     error?: any;
@@ -38,8 +39,8 @@ type StoreState = {
 
 type StoreReducers = {
   init: (rootFolder: string, forceReload?: boolean, currentFolder?: string) => Promise<void>;
-  initPlayer: (player: string) => Promise<void>;
-  selectPlayer: (player: string) => Promise<void>;
+  initPlayer: (player: string, filters: GameFilters) => Promise<void>;
+  selectPlayer: (player: string, filters: GameFilters) => Promise<void>;
   selectFile: (index: number, filePath: string) => Promise<void>;
   playFile: (filePath: string) => Promise<void>;
   clearSelectedFile: () => Promise<void>;
@@ -68,7 +69,7 @@ const initialState: StoreState = {
   },
   selectedPlayer: {
     player: null,
-    files: [],
+    filters: { characters: [], opponentCharacters: [], opponents: [] },
     stats: null,
     error: null,
     loading: false,
@@ -98,16 +99,17 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     await Promise.all([loadDirectoryList(currentFolder ?? rootFolder), loadFolder(currentFolder ?? rootFolder, true)]);
   },
 
-  initPlayer: async (player) => {
-    const { selectedPlayer } = get();
-    if (player === selectedPlayer.player) {
-      return;
-    }
+  initPlayer: async (player, filters) => {
+    console.log(player, filters);
+    // const { selectedPlayer } = get();
+    // if (player === selectedPlayer.player) {
+    //   return;
+    // }
 
     set({
       selectedPlayer: {
         player: player,
-        files: [],
+        filters: { characters: [], opponentCharacters: [], opponents: [] },
         stats: null,
         error: null,
         loading: true,
@@ -115,18 +117,24 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     });
 
     const { selectPlayer } = get();
-    await selectPlayer(player);
+    await selectPlayer(player, filters);
   },
 
-  selectPlayer: async (player) => {
+  selectPlayer: async (player, filters) => {
     try {
-      const stats = await loadPlayerReplays(player);
+      const stats = await loadPlayerReplays(player, filters);
       set({
-        selectedPlayer: { player: player, files: [], stats: stats, loading: false, error: null },
+        selectedPlayer: { player: player, filters: filters, stats: stats, loading: false, error: null },
       });
     } catch (err) {
       set({
-        selectedPlayer: { player: player, files: [], stats: null, loading: false, error: err },
+        selectedPlayer: {
+          player: player,
+          filters: { characters: [], opponentCharacters: [], opponents: [] },
+          stats: null,
+          loading: false,
+          error: err,
+        },
       });
       throw err;
     }

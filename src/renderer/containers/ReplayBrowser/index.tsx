@@ -33,7 +33,8 @@ export const ReplayBrowser: React.FC = () => {
   const selectFile = useReplays((store) => store.selectFile);
   const playFile = useReplays((store) => store.playFile);
   const clearSelectedFile = useReplays((store) => store.clearSelectedFile);
-  const selectPlayer = useReplays((store) => store.initPlayer);
+  const choosePlayer = useReplays((store) => store.initPlayer);
+  const selectPlayer = (p: string) => choosePlayer(p, { characters: [], opponents: [], opponentCharacters: [] });
   const selectedPlayer = useReplays((store) => store.selectedPlayer.player);
   const clearSelectedPlayer = useReplays((store) => store.clearSelectedPlayer);
   const loading = useReplays((store) => store.loading);

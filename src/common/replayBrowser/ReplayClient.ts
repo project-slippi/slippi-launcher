@@ -1,4 +1,4 @@
-import { GlobalStats } from "common/game";
+import { GameFilters, GlobalStats } from "common/game";
 import { ipcRenderer } from "electron";
 
 import { FileLoadResult, FileResult, FolderResult } from "./types";
@@ -33,7 +33,8 @@ export function loadReplayFile(file: string) {
   });
 }
 
-export function loadPlayerReplays(player: string) {
+export function loadPlayerReplays(player: string, filters: GameFilters) {
+  console.log(filters);
   return new Promise<GlobalStats>((resolve, reject) => {
     ipcRenderer.once("load-player-replays", (_: any, arg: Error | GlobalStats) => {
       if (arg instanceof Error) {
@@ -41,7 +42,8 @@ export function loadPlayerReplays(player: string) {
       }
       resolve(arg as GlobalStats);
     });
-    ipcRenderer.send("load-player-replays", player);
+    console.log(filters);
+    ipcRenderer.send("load-player-replays", player, filters);
   });
 }
 

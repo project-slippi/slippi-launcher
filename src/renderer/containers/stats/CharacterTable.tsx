@@ -11,32 +11,21 @@ import * as T from "../ReplayFileStats/TableStyles";
 export const CharacterTable: React.FC<{
   opponent: boolean;
   stats: GlobalStats;
+  hidden: number[];
   setFiltered: (f: number[]) => void;
-}> = ({ opponent, stats, setFiltered }) => {
+}> = ({ opponent, stats, hidden, setFiltered }) => {
   const [selected, setSelected] = useState([] as number[]);
-  const [focused, setFocused] = useState([] as number[]);
-  const [hidden, setHidden] = useState([] as number[]);
-
-  const setFocus = () => {
-    setFocused([...selected, ...focused]);
-    setSelected([]);
-    setFiltered(hidden);
-  };
-
   const setHide = () => {
-    setHidden([...selected, ...hidden]);
+    setFiltered([...selected, ...hidden]);
     setSelected([]);
-    setFiltered(hidden);
   };
 
   const setClear = () => {
-    setFocused([]);
-    setHidden([]);
     setSelected([]);
     setFiltered([]);
   };
 
-  const setCheck = (isChecked: boolean, player: number) => {
+  const select = (isChecked: boolean, player: number) => {
     if (isChecked) {
       setSelected([...selected, player]);
     } else {
@@ -45,12 +34,12 @@ export const CharacterTable: React.FC<{
   };
 
   const renderFilterControls = () => {
-    return selected.length > 0 ? (
+    return (
       <div style={{ alignSelf: "right" }}>
-        <Link onClick={setClear}>Clear</Link> / <Link onClick={setFocus}>Focus</Link> /{" "}
-        <Link onClick={setHide}>Hide</Link>
+        {selected.length > 0 || hidden.length > 0 ? <Link onClick={setClear}>Clear</Link> : null}
+        {selected.length > 0 ? <Link onClick={setHide}>Hide</Link> : null}
       </div>
-    ) : null;
+    );
   };
 
   const columnCount = opponent ? 5 : 4;
@@ -100,7 +89,7 @@ export const CharacterTable: React.FC<{
           <Checkbox
             color="default"
             checked={selected.includes(charId)}
-            onChange={(e) => setCheck(e.target.checked, charId)}
+            onChange={(e) => select(e.target.checked, charId)}
           />
         </T.TableCell>
         <T.TableCell>

@@ -7,31 +7,21 @@ import { getCharacterIcon } from "@/lib/utils";
 
 import * as T from "../ReplayFileStats/TableStyles";
 
-export const OpponentTable: React.FC<{ stats: GlobalStats; setFiltered: (f: string[]) => void }> = ({
+export const OpponentTable: React.FC<{ stats: GlobalStats; hidden: string[]; setFiltered: (f: string[]) => void }> = ({
   stats,
+  hidden,
   setFiltered,
 }) => {
   const [selected, setSelected] = useState([] as string[]);
-  const [focused, setFocused] = useState([] as string[]);
-  const [hidden, setHidden] = useState([] as string[]);
-
-  const setFocus = () => {
-    setFocused([...selected, ...focused]);
-    setSelected([]);
-    setFiltered(hidden);
-  };
 
   const setHide = () => {
-    setHidden([...selected, ...hidden]);
+    setFiltered([...selected, ...hidden]);
     setSelected([]);
-    setFiltered(hidden);
   };
 
   const setClear = () => {
-    setFocused([]);
-    setHidden([]);
-    setSelected([]);
     setFiltered([]);
+    setSelected([]);
   };
 
   const setCheck = (isChecked: boolean, player: string) => {
@@ -43,12 +33,12 @@ export const OpponentTable: React.FC<{ stats: GlobalStats; setFiltered: (f: stri
   };
 
   const renderFilterControls = () => {
-    return selected.length > 0 ? (
+    return (
       <div style={{ alignSelf: "right" }}>
-        <Link onClick={setClear}>Clear</Link> / <Link onClick={setFocus}>Focus</Link> /{" "}
-        <Link onClick={setHide}>Hide</Link>
+        {selected.length > 0 || hidden.length > 0 ? <Link onClick={setClear}>Clear</Link> : null}
+        {selected.length > 0 ? <Link onClick={setHide}>Hide</Link> : null}
       </div>
-    ) : null;
+    );
   };
 
   const renderHeaderPlayer = () => {

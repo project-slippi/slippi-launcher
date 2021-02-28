@@ -61,7 +61,37 @@ export interface Conversion {
   game: Game;
 }
 
-export function getGlobalStats(games: Game[], playerCode: string): GlobalStats {
+export type GameFilter = (g: Game, p: string) => boolean;
+
+export type GameFilters = {
+  characters: number[];
+  opponentCharacters: number[];
+  opponents: string[];
+};
+const opponentFilter = (game: Game, p: string, filtered: string[]) => {
+  const index = 1 - getGamePlayerCodeIndex(game, p);
+  const playerTag = getPlayerName(game, index);
+  return !filtered.includes(playerTag);
+};
+
+const characterFilter = (game: Game, p: string, opponent: boolean, filtered: number[]) => {
+  let index = getGamePlayerCodeIndex(game, p);
+  index = opponent ? 1 - index : index;
+  const players = game.settings.players;
+  if (players.length !== 2) {
+    return false;
+  }
+  const charId = players[index].characterId!;
+  return !filtered.includes(charId);
+};
+
+export function getGlobalStats(games: Game[], playerCode: string, filters: GameFilters): GlobalStats {
+  games = games.filter(
+    (g) =>
+      opponentFilter(g, playerCode, filters.opponents) &&
+      characterFilter(g, playerCode, false, filters.characters) &&
+      characterFilter(g, playerCode, true, filters.opponentCharacters),
+  );
   const aggs = games.reduce(
     (a, game) => {
       const agg = a; // because es-lint can be dumb

@@ -1,6 +1,7 @@
 import ErrorIcon from "@material-ui/icons/Error";
 import HelpIcon from "@material-ui/icons/Help";
 import { colors } from "common/colors";
+import { GameFilters } from "common/game";
 import _ from "lodash";
 import React from "react";
 import styled from "styled-components";
@@ -50,15 +51,11 @@ export const PlayerStats: React.FC<ReplayFileStatsProps> = (props) => {
   const loading = useReplays((store) => store.selectedPlayer.loading);
   const error = useReplays((store) => store.selectedPlayer.error);
   const player = useReplays((store) => store.selectedPlayer.player);
+  const filters = useReplays((store) => store.selectedPlayer.filters);
   const gameStats = useReplays((store) => store.selectedPlayer.stats);
-  const init = useReplays((store) => store.initPlayer);
-
-  React.useEffect(() => {
-    init(props.player);
-  }, [init]);
+  const update = useReplays((store) => store.selectPlayer);
 
   const keyDownFunction = (event: { keyCode: number }) => {
-    // Don't do anything if we're in the middle of processing
     if (loading) {
       return;
     }
@@ -75,6 +72,11 @@ export const PlayerStats: React.FC<ReplayFileStatsProps> = (props) => {
     return () => document.removeEventListener("keydown", keyDownFunction, false);
   }, [keyDownFunction]);
 
+  const queryFilters = (filters: GameFilters) => {
+    console.log(filters);
+    update(props.player, filters);
+  };
+
   return (
     <Outer>
       <Content>
@@ -83,7 +85,12 @@ export const PlayerStats: React.FC<ReplayFileStatsProps> = (props) => {
         ) : error ? (
           <IconMessage Icon={ErrorIcon} label={`Error: ${error.message ?? JSON.stringify(error, null, 2)}`} />
         ) : gameStats ? (
-          <PlayerProfile player={player!} stats={gameStats}></PlayerProfile>
+          <PlayerProfile
+            player={player!}
+            stats={gameStats}
+            filters={filters}
+            queryFilters={queryFilters}
+          ></PlayerProfile>
         ) : (
           <IconMessage Icon={HelpIcon} label="No stats computed" />
         )}
