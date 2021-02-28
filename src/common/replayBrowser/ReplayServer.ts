@@ -1,6 +1,6 @@
 import { ipcMain } from "electron";
-import { deleteReplays, getFolderReplays, getFullReplay, getPlayerReplays, pruneFolders, saveReplays } from "./Dao";
-import { parseReplays } from "./StatsComputer";
+import { deleteReplays, getFolderReplays, getFullReplay, getPlayerReplays, pruneFolders, saveReplays } from "./dao";
+import { parseReplays } from "./statsComputer";
 
 ipcMain.on("load-folder-replays", async (event, folder) => {
   try {
@@ -32,6 +32,7 @@ ipcMain.on("save-replays", async (event, replays) => {
     await saveReplays(results);
     event.reply("save-replays", null);
   } catch (err) {
+    console.log(err);
     event.reply("save-replays", err);
     return;
   }

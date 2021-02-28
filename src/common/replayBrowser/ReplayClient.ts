@@ -4,13 +4,13 @@ import { FileResult } from "./types";
 
 export function loadReplays(folder: string) {
   return new Promise<FileResult[]>((resolve, reject) => {
-    ipcRenderer.once("load-replays", (_: any, arg: Error | FileResult[]) => {
+    ipcRenderer.once("load-folder-replays", (_: any, arg: Error | FileResult[]) => {
       if (arg instanceof Error) {
         reject(arg);
       }
       resolve(arg as FileResult[]);
     });
-    ipcRenderer.send("load-replays", folder);
+    ipcRenderer.send("load-folder-replays", folder);
   });
 }
 

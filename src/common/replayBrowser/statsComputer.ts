@@ -11,7 +11,9 @@ export const parseReplays = (replays: FileResult[], progressCallback: (count: nu
     for (let i = 0; i < cores; i++) {
       const start = i * batchSize;
       const end = Math.min(i * batchSize + batchSize, replays.length);
-      const worker = new Worker("./src/main/db.worker.js", { workerData: replays.slice(start, end) });
+      const worker = new Worker("./src/common/replayBrowser/stats.worker.js", {
+        workerData: replays.slice(start, end),
+      });
       worker.on("message", (result) => {
         count++;
         results.push(result);
