@@ -107,13 +107,13 @@ export const getFullReplay = (file: string) => {
 };
 
 export const getPlayerReplays = (player: string) => {
-  return new Promise((resolve, reject) =>
+  return new Promise<FileResult[]>((resolve, reject) =>
     db.all("SELECT * from replays WHERE (?) IN (player1, player2, player3, player4)", [player], (err, docs) => {
       if (err) {
         reject(err);
       } else {
         const files = docs.map(parseRow);
-        resolve(docs ? files[0] : []);
+        resolve(docs ? files : []);
       }
     }),
   );

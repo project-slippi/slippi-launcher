@@ -1,7 +1,7 @@
 import { StatsType } from "@slippi/slippi-js";
 import { GameFilters, GlobalStats } from "common/game";
 import { FileResult, findChild, FolderResult, generateSubFolderTree } from "common/replayBrowser";
-import { deleteFolderReplays, loadReplayFile, loadReplays } from "common/replayBrowser/ReplayClient";
+import { deleteFolderReplays, loadPlayerReplays, loadReplayFile, loadReplays } from "common/replayBrowser/ReplayClient";
 import { ipcRenderer, shell } from "electron";
 import produce from "immer";
 import path from "path";
