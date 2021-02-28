@@ -8,30 +8,29 @@ const db = new sqlite3.Database(path.join(app.getPath("userData"), "statsdb.sqli
     return console.error(err.message);
   }
   console.log("Connected to the replay database.");
+  db.run(`
+  CREATE TABLE IF NOT EXISTS replays (
+       fullPath      TEXT PRIMARY KEY,
+       name          TEXT,
+       folder        TEXT,
+       startTime     TEXT,
+       lastFrame     INTEGER,
+       playerCount   INTEGER,
+       player1       INTEGER,
+       player2       INTEGER,
+       player3       INTEGER,
+       player4       INTEGER,
+       settings      JSON,
+       metadata      JSON,
+       stats         JSON)
+  `);
+
+  db.run("CREATE INDEX IF NOT EXISTS folder_idx  ON replays(folder)");
+  db.run("CREATE INDEX IF NOT EXISTS player1_idx ON replays(player1)");
+  db.run("CREATE INDEX IF NOT EXISTS player2_idx ON replays(player2)");
+  db.run("CREATE INDEX IF NOT EXISTS player3_idx ON replays(player3)");
+  db.run("CREATE INDEX IF NOT EXISTS player4_idx ON replays(player4)");
 });
-
-db.run(`
-CREATE TABLE IF NOT EXISTS replays (
-     fullPath      TEXT PRIMARY KEY,
-     name          TEXT,
-     folder        TEXT,
-     startTime     TEXT,
-     lastFrame     INTEGER,
-     playerCount   INTEGER,
-     player1       INTEGER,
-     player2       INTEGER,
-     player3       INTEGER,
-     player4       INTEGER,
-     settings      JSON,
-     metadata      JSON,
-     stats         JSON)
-`);
-
-db.run("CREATE INDEX IF NOT EXISTS folder_idx  ON replays(folder)");
-db.run("CREATE INDEX IF NOT EXISTS player1_idx ON replays(player1)");
-db.run("CREATE INDEX IF NOT EXISTS player2_idx ON replays(player2)");
-db.run("CREATE INDEX IF NOT EXISTS player3_idx ON replays(player3)");
-db.run("CREATE INDEX IF NOT EXISTS player4_idx ON replays(player4)");
 
 const parseRow = (row: any) => {
   return {
@@ -111,11 +110,12 @@ export const saveReplays = async (replays: FileResult[]) => {
   }
 };
 
-export const saveReplayBatch = async (replays: FileResult[]) => {
+const saveReplayBatch = async (replays: FileResult[]) => {
   return new Promise((resolve, reject) => {
     const placeholders = replays.map(() => "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)").join(",");
     db.run(
-      `INSERT INTO replays(
+      `
+       INSERT INTO replays(
        fullPath, name, folder, startTime, lastFrame, 
        playerCount, player1, player2, player3, player4, 
        settings, metadata, stats)
