@@ -1,9 +1,10 @@
 import { DolphinLaunchType, DolphinUseType } from "common/dolphin";
-import { ipcMain, nativeImage } from "electron";
+import { BrowserWindow, ipcMain, nativeImage } from "electron";
 import path from "path";
 
 import { DolphinManager, ReplayCommunication } from "./dolphinManager";
 import { assertDolphinInstallations } from "./downloadDolphin";
+import { worker } from "./fileIndexer/workerInterface";
 
 export function setupListeners() {
   const dolphinManager = DolphinManager.getInstance();
@@ -16,6 +17,18 @@ export function setupListeners() {
 
   ipcMain.on("downloadDolphin", (_) => {
     assertDolphinInstallations();
+  });
+
+  ipcMain.on("synchronous-message", async (_, arg) => {
+    console.log(`calculating factorial for: ${arg}`);
+    const w = await worker;
+    const val = await w.fib(arg);
+    console.log(`return ${val} as factorial result`);
+    // event.returnValue = val;
+    const x = BrowserWindow.getFocusedWindow();
+    if (x) {
+      x.webContents.send("synchronous-message-reply", val);
+    }
   });
 
   ipcMain.on("viewReplay", (_, filePath: string) => {
