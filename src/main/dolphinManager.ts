@@ -96,6 +96,7 @@ export class DolphinManager extends EventEmitter {
     index: number,
     replayComm?: ReplayCommunication,
     dolphinType?: DolphinLaunchType,
+    broadcastId?: string,
   ): Promise<void> {
     // I hate how this is done
     const isoParams: string[] = [];
@@ -145,6 +146,7 @@ export class DolphinManager extends EventEmitter {
             index: index,
             commFilePath: commFilePath,
             dolphin: dolphin,
+            broadcastId: broadcastId,
           };
 
           // create an array of DolphinInstances if this is our first time launching a spectator client
@@ -155,6 +157,7 @@ export class DolphinManager extends EventEmitter {
           }
 
           dolphin.on("close", async () => {
+            this.emit("spectate-dolphin-closed", broadcastId);
             await fs.unlink(commFilePath);
             if (this.dolphinInstances.spectate) {
               remove(

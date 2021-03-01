@@ -29,7 +29,10 @@ export class SpectateManager {
 
     // A connection can mirror its received gameplay
     this.dolphinManager = DolphinManager.getInstance();
-    this.dolphinManager.on("dolphin-closed", () => {
+    this.dolphinManager.on("spectate-dolphin-closed", (broadcastId: string) => {
+      if (this.prevBroadcastId !== broadcastId) {
+        return;
+      }
       log.info("[Spectator] dolphin closed");
 
       // Stop watching channel
