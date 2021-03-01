@@ -1,7 +1,8 @@
 import { ConnectionEvent, ConnectionStatus, DolphinConnection, DolphinMessageType, Ports } from "@slippi/slippi-js";
 import log from "electron-log";
 import _ from "lodash";
-import WebSocketClient, { MessageEvent } from "ws";
+// import { MessageEvent } from "ws";
+import { client as WebSocketClient, connection, IMessage } from "websocket";
 
 import { SlippiBroadcastEvent } from "./types";
 
@@ -22,7 +23,7 @@ export class BroadcastManager {
   private backupEvents: SlippiBroadcastEvent[];
   private nextGameCursor: number | null;
 
-  private wsConnection: WebSocketClient | null;
+  private wsConnection: connection | null;
   private dolphinConnection: DolphinConnection;
 
   constructor() {
@@ -94,10 +95,9 @@ export class BroadcastManager {
     };
 
     if (SLIPPI_WS_SERVER) {
-      log.info("[Broadcast] Connecting to WS service");
-      this.wsConnection = new WebSocketClient(SLIPPI_WS_SERVER, { headers: headers });
+      const socket = new WebSocketClient({ disableNagleAlgorithm: true });
 
-      this.wsConnection.on("error", (error: Error) => {
+      socket.on("connectFailed", (error: Error) => {
         log.error("[Broadcast] WS failed to connect\n", error);
 
         // TODO: Let renderer thread know that we are disconnected and show the error message
@@ -115,13 +115,9 @@ export class BroadcastManager {
         //store.dispatch(errorAction);
       });
 
-      this.wsConnection.on("open", () => {
-        if (!this.wsConnection) {
-          log.info("[Broadcast] WS connection failed");
-          return;
-        }
-
+      socket.on("connect", (connection: connection) => {
         log.info("[Broadcast] WS connection successful");
+        this.wsConnection = connection;
 
         const getBroadcasts = async () => {
           if (!this.wsConnection) {
@@ -170,14 +166,14 @@ export class BroadcastManager {
           this.dolphinConnection.connect("127.0.0.1", Ports.DEFAULT);
         }
 
-        this.wsConnection.on("error", (err: Error) => {
+        connection.on("error", (err: Error) => {
           log.error("[Broadcast] WS connection error encountered\n", err);
           // TODO: Let renderer thread know that we want to show the error message
           // const errorAction = displayError("broadcast-global", err.message);
           // store.dispatch(errorAction);
         });
 
-        this.wsConnection.on("close", (code: number, reason: string) => {
+        connection.on("close", (code: number, reason: string) => {
           log.info(`[Broadcast] WS connection closed: ${code}, ${reason}`);
           // TODO: Let renderer thread know that we are disconnected
           // store.dispatch(setSlippiStatus(ConnectionStatus.DISCONNECTED));
@@ -195,25 +191,23 @@ export class BroadcastManager {
           }
         });
 
-        this.wsConnection.on("message", (message: MessageEvent) => {
+        connection.on("message", (message: IMessage) => {
           if (message.type !== "utf8") {
             return;
           }
 
           let obj: any;
+
           try {
-            if (typeof message.data === "string") {
-              obj = JSON.parse(message.data);
-            } else {
-              log.error(
-                `[Broadcast] Failed to parse message from server because the data was not a string\n`,
-                message.data,
-              );
+            if (message.utf8Data) {
+              obj = JSON.parse(message.utf8Data);
             }
           } catch (err) {
-            log.error(`[Broadcast] Failed to parse message from server\n`, err, message.data);
+            log.error(`[Broadcast] Failed to parse message from server\n`, err, message.utf8Data);
             return;
           }
+
+          log.info(message);
 
           switch (obj.type) {
             case "start-broadcast-resp": {
@@ -274,9 +268,8 @@ export class BroadcastManager {
                   startBroadcast(prevBroadcast.id);
                   return;
                 }
-
-                startBroadcast(this.broadcastId);
               }
+              startBroadcast(target);
               break;
             }
 
@@ -289,6 +282,9 @@ export class BroadcastManager {
 
         getBroadcasts();
       });
+
+      log.info("[Broadcast] Connecting to WS service");
+      socket.connect(SLIPPI_WS_SERVER, "broadcast-protocol", undefined, headers);
     }
   }
 
