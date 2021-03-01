@@ -3,9 +3,12 @@ import { DolphinLaunchType, DolphinUseType, findDolphinExecutable } from "common
 import { randomBytes } from "crypto";
 import { app } from "electron";
 import electronSettings from "electron-settings";
+import { EventEmitter } from "events";
 import * as fs from "fs-extra";
 import { find, remove } from "lodash";
 import path from "path";
+
+import { DolphinInstance } from "./types";
 
 electronSettings.configure({
   fileName: "Settings",
@@ -31,13 +34,6 @@ export interface ReplayQueueItem {
   endFrame?: number;
   gameStartAt?: string;
   gameStation?: string;
-}
-
-interface DolphinInstance {
-  dolphinUseType: DolphinUseType;
-  index?: number; // should refer to the index in relation to the list of sources for spectating
-  dolphin?: ChildProcessWithoutNullStreams;
-  commFilePath?: string;
 }
 
 interface DolphinInstances {
@@ -76,7 +72,7 @@ async function startDolphin(
 
 // DolphinManager should be in control of all dolphin instances that get opened for actual use.
 // This includes playing netplay, viewing replays, watching broadcasts (spectating), and configuring Dolphin.
-export class DolphinManager {
+export class DolphinManager extends EventEmitter {
   private static instance: DolphinManager;
 
   // max instances: playback, config, netplay - 1 | spectate - "infinite"
@@ -115,7 +111,7 @@ export class DolphinManager {
 
           const dolphin = await startDolphin(DolphinLaunchType.PLAYBACK, commFilePath, isoParams);
           this.dolphinInstances.playback = {
-            dolphinUseType: dolphinUseType,
+            type: dolphinUseType,
             dolphin: dolphin,
             commFilePath: commFilePath,
           };
@@ -126,7 +122,10 @@ export class DolphinManager {
           });
         }
 
-        if (this.dolphinInstances.playback.commFilePath) {
+        if (
+          this.dolphinInstances.playback.type === DolphinUseType.PLAYBACK &&
+          this.dolphinInstances.playback.commFilePath
+        ) {
           await fs.writeFile(this.dolphinInstances.playback.commFilePath, JSON.stringify(replayComm));
         }
 
@@ -142,7 +141,7 @@ export class DolphinManager {
           const commFilePath = await generateCommunicationFilePath(dolphinUseType);
           const dolphin = await startDolphin(DolphinLaunchType.PLAYBACK, commFilePath, isoParams);
           dolphinInstance = {
-            dolphinUseType: dolphinUseType,
+            type: dolphinUseType,
             index: index,
             commFilePath: commFilePath,
             dolphin: dolphin,
@@ -158,11 +157,14 @@ export class DolphinManager {
           dolphin.on("close", async () => {
             await fs.unlink(commFilePath);
             if (this.dolphinInstances.spectate) {
-              remove(this.dolphinInstances.spectate, (instance) => instance.index === index);
+              remove(
+                this.dolphinInstances.spectate,
+                (instance) => instance.type === DolphinUseType.SPECTATE && instance.index === index,
+              );
             }
           });
         }
-        if (dolphinInstance.commFilePath) {
+        if (dolphinInstance.type === DolphinUseType.SPECTATE && dolphinInstance.commFilePath) {
           await fs.writeFile(dolphinInstance.commFilePath, JSON.stringify(replayComm));
         }
 
@@ -173,7 +175,7 @@ export class DolphinManager {
         if (!this.dolphinInstances.netplay) {
           const dolphin = await startDolphin(DolphinLaunchType.NETPLAY, undefined, isoParams);
           this.dolphinInstances.netplay = {
-            dolphinUseType: dolphinUseType,
+            type: dolphinUseType,
             dolphin: dolphin,
           };
 
@@ -197,7 +199,7 @@ export class DolphinManager {
 
         const dolphin = await startDolphin(dolphinType);
         this.dolphinInstances[configureType] = {
-          dolphinUseType: dolphinUseType,
+          type: dolphinUseType,
           dolphin: dolphin,
         };
 

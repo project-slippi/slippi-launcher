@@ -1,6 +1,8 @@
 import { DolphinMessageType } from "@slippi/slippi-js";
+import { ChildProcessWithoutNullStreams } from "child_process";
+import { DolphinUseType } from "common/dolphin";
 
-type SlippiBroadcastEventMap<M extends { [index: string]: any }> = {
+type TypeMap<M extends { [index: string]: any }> = {
   [Key in keyof M]: M[Key] extends undefined
     ? {
         type: Key;
@@ -27,4 +29,25 @@ type SlippiBroadcastEventPayload = {
   [DolphinMessageType.START_GAME]: SlippiPlayload;
 };
 
-export type SlippiBroadcastEvent = SlippiBroadcastEventMap<SlippiBroadcastEventPayload>[keyof SlippiBroadcastEventMap<SlippiBroadcastEventPayload>];
+export type SlippiBroadcastEvent = TypeMap<SlippiBroadcastEventPayload>[keyof TypeMap<SlippiBroadcastEventPayload>];
+
+type DolphinInstancePayload = {
+  [DolphinUseType.CONFIG]: {
+    dolphin?: ChildProcessWithoutNullStreams;
+  };
+  [DolphinUseType.NETPLAY]: {
+    dolphin?: ChildProcessWithoutNullStreams;
+  };
+  [DolphinUseType.PLAYBACK]: {
+    dolphin?: ChildProcessWithoutNullStreams;
+    commFilePath?: string;
+  };
+  [DolphinUseType.SPECTATE]: {
+    index?: number; // should refer to the index in relation to the list of sources for spectating
+    dolphin?: ChildProcessWithoutNullStreams;
+    commFilePath?: string;
+    broadcastId?: string; // only necessary for spectating dolphins
+  };
+};
+
+export type DolphinInstance = TypeMap<DolphinInstancePayload>[keyof TypeMap<DolphinInstancePayload>];
