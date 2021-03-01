@@ -191,27 +191,34 @@ export class BroadcastManager {
           }
         });
 
-        connection.on("message", (message: IMessage) => {
-          if (message.type !== "utf8") {
+        connection.on("message", (data: IMessage) => {
+          if (data.type !== "utf8") {
             return;
           }
 
-          let obj: any;
+          let message: {
+            type: string;
+            broadcasts?: any[]; // todo: figure out what the heck this is (i think it might just be the broadcastIds)
+            broadcastId?: string;
+            recoveryGameCursor?: number; // probably, I haven't tested this yet
+          };
 
           try {
-            if (message.utf8Data) {
-              obj = JSON.parse(message.utf8Data);
+            if (data.utf8Data) {
+              message = JSON.parse(data.utf8Data);
+            } else {
+              return;
             }
           } catch (err) {
-            log.error(`[Broadcast] Failed to parse message from server\n`, err, message.utf8Data);
+            log.error(`[Broadcast] Failed to parse message from server\n`, err, data.utf8Data);
             return;
           }
 
           log.info(message);
 
-          switch (obj.type) {
+          switch (message.type) {
             case "start-broadcast-resp": {
-              if (obj.recoveryGameCursor) {
+              if (message.recoveryGameCursor !== undefined) {
                 const firstIncoming = _.first(this.incomingEvents);
                 let firstCursor: number | null | undefined;
                 if (firstIncoming) {
@@ -219,13 +226,13 @@ export class BroadcastManager {
                 }
 
                 log.info(
-                  `[Broadcast] Picking broadcast back up from ${obj.recoveryGameCursor}. Last not sent: ${firstCursor}`,
+                  `[Broadcast] Picking broadcast back up from ${message.recoveryGameCursor}. Last not sent: ${firstCursor}`,
                 );
 
                 // Add any events that didn't make it to the server to the front of the event queue
                 const backedEventsToUse = this.backupEvents.filter((event) => {
-                  if (event.cursor !== null && event.cursor !== undefined) {
-                    const isNeededByServer = event.cursor > obj.recoveryGameCursor;
+                  if (event.cursor !== null && event.cursor !== undefined && message.recoveryGameCursor !== undefined) {
+                    const isNeededByServer = event.cursor > message.recoveryGameCursor;
 
                     // Make sure we aren't duplicating anything that is already in the incoming events array
                     const isNotIncoming = _.isNil(firstCursor) || event.cursor < firstCursor;
@@ -251,12 +258,13 @@ export class BroadcastManager {
                   `[Broadcast] Backup events include range from: [${firstBackupCursor}, ${lastBackupCursor}]. Next cursor to be sent: ${newFirstCursor}`,
                 );
               }
-
-              connectionComplete(obj.broadcastId);
+              if (message.broadcastId !== undefined) {
+                connectionComplete(message.broadcastId);
+              }
               break;
             }
             case "get-broadcasts-resp": {
-              const broadcasts = obj.broadcasts || [];
+              const broadcasts = message.broadcasts || [];
 
               // Grab broadcastId we were currently using if the broadcast still exists, would happen
               // in the case of a reconnect
@@ -274,7 +282,7 @@ export class BroadcastManager {
             }
 
             default: {
-              log.error(`[Broadcast] Ws resp type ${obj.type} not supported`);
+              log.error(`[Broadcast] Ws resp type ${message.type} not supported`);
               break;
             }
           }
