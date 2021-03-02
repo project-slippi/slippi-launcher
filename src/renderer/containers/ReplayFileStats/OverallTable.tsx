@@ -1,7 +1,7 @@
 import { RatioType, StatsType } from "@slippi/slippi-js";
 import { extractPlayerNames } from "common/matchNames";
+import { FileResult } from "common/types";
 import _ from "lodash";
-import { FileResult } from "main/replayBrowser";
 import React from "react";
 
 import { getCharacterIcon } from "@/lib/utils";

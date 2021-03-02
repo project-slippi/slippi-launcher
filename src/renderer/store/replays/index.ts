@@ -2,7 +2,7 @@ import { StatsType } from "@slippi/slippi-js";
 import { FileLoadResult, FileResult, FolderResult } from "common/types";
 import { ipcRenderer, shell } from "electron";
 import { ipcRenderer as ipc } from "electron-better-ipc";
-import produce from "immer";
+import { produce } from "immer";
 import path from "path";
 import create from "zustand";
 

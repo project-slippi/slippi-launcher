@@ -12,8 +12,8 @@ import { GameStartType, MetadataType, PlayerType, stages as stageUtils, StatsTyp
 import { colors } from "common/colors";
 import { extractPlayerNames, PlayerNames } from "common/matchNames";
 import { convertFrameCountToDurationString, monthDayHourFormat } from "common/time";
+import { FileResult } from "common/types";
 import _ from "lodash";
-import { FileResult } from "main/replayBrowser";
 import moment from "moment";
 import React from "react";
 import styled from "styled-components";

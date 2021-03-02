@@ -1,5 +1,5 @@
 import { DolphinLaunchType, DolphinUseType } from "common/dolphin";
-import { BrowserWindow, ipcMain, nativeImage } from "electron";
+import { ipcMain, nativeImage } from "electron";
 import { ipcMain as ipc } from "electron-better-ipc";
 import path from "path";
 

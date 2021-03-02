@@ -3,9 +3,9 @@ import React from "react";
 import { Link, Redirect, Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
 
+import { Broadcast } from "@/containers/Broadcast";
 import { Header } from "@/containers/Header";
 import { ReplayBrowser } from "@/containers/ReplayBrowser";
-import { Broadcast } from "@/containers/Broadcast";
 
 const MenuButton = styled.div<{
   selected?: boolean;

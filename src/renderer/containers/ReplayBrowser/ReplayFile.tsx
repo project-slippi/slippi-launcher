@@ -9,8 +9,8 @@ import MoreVertIcon from "@material-ui/icons/MoreVert";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import { stages as stageUtils } from "@slippi/slippi-js";
 import { convertFrameCountToDurationString, monthDayHourFormat } from "common/time";
+import { FileResult } from "common/types";
 import _ from "lodash";
-import { FileResult } from "main/replayBrowser";
 import moment from "moment";
 import React from "react";
 
