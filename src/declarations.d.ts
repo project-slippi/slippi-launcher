@@ -6,6 +6,7 @@ declare module "*.gif";
 declare module "*.bmp";
 declare module "*.tiff";
 
+declare module "medium-json-feed";
 declare module "@material-ui/icons/*";
 declare module "@material-ui/lab/*";
 
