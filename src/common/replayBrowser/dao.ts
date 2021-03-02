@@ -3,7 +3,7 @@ import { app } from "electron";
 import path from "path";
 import * as sqlite3 from "sqlite3";
 
-const db = new sqlite3.Database(path.join(app.getPath("userData"), "statsdb.sqlite"), (err) => {
+const db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlippi.db"), (err) => {
   if (err) {
     return console.error(err.message);
   }
