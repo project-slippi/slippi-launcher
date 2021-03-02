@@ -1,13 +1,10 @@
 import * as fs from "fs-extra";
 import path from "path";
 
+import { FileLoadResult, FileResult } from "../../common/types";
 import { loadFile } from "./loadFile";
-import { FileLoadResult, FileResult } from "./types";
 
-export async function loadFolder(
-  folder: string,
-  callback: (current: number, total: number) => void,
-): Promise<FileLoadResult> {
+export async function loadFolder(folder: string): Promise<FileLoadResult> {
   // If the folder does not exist, return empty
   if (!(await fs.pathExists(folder))) {
     return {
@@ -18,19 +15,19 @@ export async function loadFolder(
 
   const results = await fs.readdir(folder, { withFileTypes: true });
   const slpFiles = results.filter((dirent) => dirent.isFile() && path.extname(dirent.name) === ".slp");
-  const total = slpFiles.length;
+  // const total = slpFiles.length;
 
   let fileErrorCount = 0;
-  let fileValidCount = 0;
-  callback(0, total);
+  // let fileValidCount = 0;
+  // callback(0, total);
 
   const process = async (path: string) => {
     return new Promise<FileResult | null>((resolve) => {
       setImmediate(async () => {
         try {
           const res = await loadFile(path);
-          fileValidCount += 1;
-          callback(fileValidCount, total);
+          // fileValidCount += 1;
+          // callback(fileValidCount, total);
           resolve(res);
         } catch (err) {
           fileErrorCount += 1;
@@ -50,7 +47,7 @@ export async function loadFolder(
   ).filter((g) => g !== null) as FileResult[];
 
   // Indicate that loading is complete
-  callback(total, total);
+  // callback(total, total);
 
   return {
     files: slpGames,

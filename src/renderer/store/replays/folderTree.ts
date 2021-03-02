@@ -1,7 +1,7 @@
 import * as fs from "fs-extra";
 import path from "path";
 
-import { FolderResult } from "./types";
+import { FolderResult } from "../../../common/types";
 
 export function findChild(tree: FolderResult, childToFind: string): FolderResult | null {
   const relativePath = path.relative(tree.fullPath, childToFind);

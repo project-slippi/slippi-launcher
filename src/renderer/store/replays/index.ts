@@ -1,15 +1,14 @@
 import { StatsType } from "@slippi/slippi-js";
-import * as Comlink from "comlink";
-import { FileResult, findChild, FolderResult, generateSubFolderTree } from "common/replayBrowser";
+import { FileLoadResult, FileResult, FolderResult } from "common/types";
 import { ipcRenderer, shell } from "electron";
 import produce from "immer";
 import path from "path";
 import create from "zustand";
 
-import { loadReplayFolder } from "@/workers/fileLoader.worker";
-import { calculateGameStats } from "@/workers/gameStats.worker";
-
+// import { loadReplayFolder } from "@/workers/fileLoader.worker";
+// import { calculateGameStats } from "@/workers/gameStats.worker";
 import { useSettings } from "../settings";
+import { findChild, generateSubFolderTree } from "./folderTree";
 
 type StoreState = {
   loading: boolean;
@@ -159,12 +158,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
 
     set({ loading: true, progress: null });
     try {
-      const result = await loadReplayFolder(
-        folderToLoad,
-        Comlink.proxy((current, total) => {
-          set({ progress: { current, total } });
-        }),
-      );
+      const result = await loadReplayFolder(folderToLoad);
       set({
         scrollRowItem: 0,
         files: result.files,
@@ -221,3 +215,25 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     set({ scrollRowItem: rowItem });
   },
 }));
+
+const loadReplayFolder = (folder: string) =>
+  new Promise<FileLoadResult>((resolve, reject) => {
+    ipcRenderer.once("loadReplayFolder-reply", (_, val) => {
+      if (val) {
+        resolve(val);
+      }
+      reject(new Error("invalid load replay folder response"));
+    });
+    ipcRenderer.send("loadReplayFolder", folder);
+  });
+
+const calculateGameStats = (file: string) =>
+  new Promise<StatsType>((resolve, reject) => {
+    ipcRenderer.once("calculateGameStats-reply", (_, val) => {
+      if (val) {
+        resolve(val);
+      }
+      reject(new Error("invalid calculate game stats response"));
+    });
+    ipcRenderer.send("calculateGameStats", file);
+  });

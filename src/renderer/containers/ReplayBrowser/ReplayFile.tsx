@@ -8,9 +8,9 @@ import EqualizerIcon from "@material-ui/icons/Equalizer";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import { stages as stageUtils } from "@slippi/slippi-js";
-import { FileResult } from "common/replayBrowser";
 import { convertFrameCountToDurationString, monthDayHourFormat } from "common/time";
 import _ from "lodash";
+import { FileResult } from "main/replayBrowser";
 import moment from "moment";
 import React from "react";
 

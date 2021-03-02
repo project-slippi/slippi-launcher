@@ -1,8 +1,8 @@
 import { ConversionType, StatsType, StockType } from "@slippi/slippi-js";
 import { extractPlayerNames } from "common/matchNames";
-import { FileResult } from "common/replayBrowser";
 import { convertFrameCountToDurationString } from "common/time";
 import _ from "lodash";
+import { FileResult } from "main/replayBrowser";
 import React from "react";
 
 import { getCharacterIcon, toOrdinal } from "@/lib/utils";

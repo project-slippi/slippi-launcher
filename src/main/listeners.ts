@@ -4,7 +4,8 @@ import path from "path";
 
 import { DolphinManager, ReplayCommunication } from "./dolphinManager";
 import { assertDolphinInstallations } from "./downloadDolphin";
-import { worker } from "./fileIndexer/workerInterface";
+import { worker as fileIndexerWorker } from "./fileIndexer/workerInterface";
+import { worker as replayBrowserWorker } from "./replayBrowser/workerInterface";
 
 export function setupListeners() {
   const dolphinManager = DolphinManager.getInstance();
@@ -21,7 +22,7 @@ export function setupListeners() {
 
   ipcMain.on("synchronous-message", async (_, arg) => {
     console.log(`calculating factorial for: ${arg}`);
-    const w = await worker;
+    const w = await fileIndexerWorker;
     const val = await w.fib(arg);
     console.log(`return ${val} as factorial result`);
     // event.returnValue = val;
@@ -33,7 +34,7 @@ export function setupListeners() {
 
   ipcMain.on("processFile", async (_, arg) => {
     console.log(`processing slp file: ${arg}`);
-    const w = await worker;
+    const w = await fileIndexerWorker;
     const val = await w.processSlpFile(arg);
     const x = BrowserWindow.getFocusedWindow();
     if (x) {
@@ -63,5 +64,23 @@ export function setupListeners() {
 
   ipcMain.on("configureDolphin", (_, dolphinType: DolphinLaunchType) => {
     dolphinManager.launchDolphin(DolphinUseType.CONFIG, -1, undefined, dolphinType);
+  });
+
+  ipcMain.on("loadReplayFolder", async (_, folderPath: string) => {
+    const w = await replayBrowserWorker;
+    const result = await w.loadReplayFolder(folderPath);
+    const x = BrowserWindow.getFocusedWindow();
+    if (x) {
+      x.webContents.send("loadReplayFolder-reply", result);
+    }
+  });
+
+  ipcMain.on("calculateGameStats", async (_, filePath: string) => {
+    const w = await replayBrowserWorker;
+    const result = await w.calculateGameStats(filePath);
+    const x = BrowserWindow.getFocusedWindow();
+    if (x) {
+      x.webContents.send("calculateGameStats-reply", result);
+    }
   });
 }
