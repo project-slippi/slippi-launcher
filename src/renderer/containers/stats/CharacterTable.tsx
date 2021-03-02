@@ -71,7 +71,8 @@ export const CharacterTable: React.FC<{
   };
 
   const renderRows = () => {
-    const charStats = opponent ? stats.opponentChars : stats.charIds;
+    console.log(stats);
+    const charStats = opponent ? stats.opponentChars : stats.characters;
     return Object.keys(charStats)
       .sort((a, b) => charStats[b].count - charStats[a].count)
       .map((k) => generateCharacterRow(Number(k), charStats[k]))

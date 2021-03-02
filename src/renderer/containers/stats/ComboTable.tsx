@@ -24,8 +24,8 @@ export const ComboTable: React.FC<{ player: string; stats: GlobalStats }> = ({ p
 
     return (
       <T.TableRow key={`${game.fullPath}-${punish.playerIndex}-punish-${punish.startFrame}`}>
-        <T.TableCell>{getPlayerCard(game, true)}</T.TableCell>
         <T.TableCell>{getPlayerCard(game, false)}</T.TableCell>
+        <T.TableCell>{getPlayerCard(game, true)}</T.TableCell>
         <T.TableCell>{openingType}</T.TableCell>
         <T.TableCell>{damage}</T.TableCell>
         <T.TableCell>{damageRange}</T.TableCell>
@@ -96,8 +96,8 @@ export const ComboTable: React.FC<{ player: string; stats: GlobalStats }> = ({ p
   const renderHeaderColumns = () => {
     return (
       <T.TableRow>
-        <T.TableHeaderCell>Opponent</T.TableHeaderCell>
         <T.TableHeaderCell>Player</T.TableHeaderCell>
+        <T.TableHeaderCell>Opponent</T.TableHeaderCell>
         <T.TableHeaderCell>Opening</T.TableHeaderCell>
         <T.TableHeaderCell colSpan={2}>Damage</T.TableHeaderCell>
         <T.TableHeaderCell>Moves</T.TableHeaderCell>

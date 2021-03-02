@@ -83,9 +83,9 @@ export const GlobalTable: React.FC<GlobalTableProps> = ({ stats }) => {
           "Total Damage Received",
           `${stats.damageReceived.toLocaleString(undefined, { maximumFractionDigits: 0 })}%`,
         )}
-        {renderStatField("Average Opening Conversion Rate", formatPercent(stats.conversionRate, 2))}
-        {renderStatField("Average Openings / Kill", stats.openingsPerKill.toFixed(2))}
-        {renderStatField("Average Damage / Opening", stats.damagePerOpening.toFixed(2))}
+        {renderStatField("Average Opening Conversion Rate", formatPercent(stats.conversionRate.ratio, 2))}
+        {renderStatField("Average Openings / Kill", stats.openingsPerKill.ratio.toFixed(2))}
+        {renderStatField("Average Damage / Opening", stats.damagePerOpening.ratio.toFixed(2))}
       </tbody>,
     ];
   };
@@ -97,7 +97,9 @@ export const GlobalTable: React.FC<GlobalTableProps> = ({ stats }) => {
           <T.TableSubHeaderCell colSpan={columnCount}>Neutral</T.TableSubHeaderCell>
         </tr>
       </thead>,
-      <tbody key="neutral-body">{renderStatField("Neutral Winrate", formatPercent(stats.neutralWinRatio, 2))}</tbody>,
+      <tbody key="neutral-body">
+        {renderStatField("Neutral Winrate", formatPercent(stats.neutralWinrate.ratio, 2))}
+      </tbody>,
     ];
   };
 
@@ -109,8 +111,8 @@ export const GlobalTable: React.FC<GlobalTableProps> = ({ stats }) => {
         </tr>
       </thead>,
       <tbody key="general-body">
-        {renderStatField("Inputs / Minute", stats.inputsPerMinute.toFixed(0))}
-        {renderStatField("Digital Inputs / Minute", stats.digitalInputsPerMinute.toFixed(0))}
+        {renderStatField("Inputs / Minute", stats.inputsPerMinute.ratio.toFixed(0))}
+        {renderStatField("Digital Inputs / Minute", stats.digitalInputsPerMinute.ratio.toFixed(0))}
       </tbody>,
     ];
   };

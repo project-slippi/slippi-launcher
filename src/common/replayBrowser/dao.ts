@@ -106,6 +106,17 @@ export const getFullReplay = (file: string) => {
   );
 };
 
+let playerCache = {
+  player: "",
+  games: [] as FileResult[],
+};
+
+export const getPlayerReplaysWithCache = async (player: string) => {
+  const games = player === playerCache.player ? playerCache.games : await getPlayerReplays(player);
+  playerCache = { player, games };
+  return games;
+};
+
 export const getPlayerReplays = (player: string) => {
   return new Promise<FileResult[]>((resolve, reject) =>
     db.all("SELECT * from replays WHERE (?) IN (player1, player2, player3, player4)", [player], (err, docs) => {

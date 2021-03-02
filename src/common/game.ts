@@ -1,11 +1,19 @@
-import { ConversionType, GameStartType, MetadataType, stages, StatsType, StockType } from "@slippi/slippi-js";
+import { ConversionType, GameStartType, stages, StatsType, StockType } from "@slippi/slippi-js";
 import _ from "lodash";
+
+import { FullMetadataType } from "./replayBrowser";
 
 export interface Game {
   stats: StatsType | null;
   settings: GameStartType;
-  metadata: MetadataType | null;
+  metadata: FullMetadataType | null;
   fullPath: string;
+}
+
+export interface Ratio {
+  ratio: number;
+  count: number;
+  total: number;
 }
 
 export interface GlobalStats {
@@ -17,25 +25,13 @@ export interface GlobalStats {
   deaths: number;
   damageDone: number;
   damageReceived: number;
-  conversionRate: number;
-  conversionRateCount: number;
-  conversionRateTotal: number;
-  openingsPerKill: number;
-  openingsPerKillCount: number;
-  openingsPerKillTotal: number;
-  damagePerOpening: number;
-  damagePerOpeningCount: number;
-  damagePerOpeningTotal: number;
-  neutralWinRatio: number;
-  neutralWinRatioCount: number;
-  neutralWinRatioTotal: number;
-  inputsPerMinute: number;
-  inputsPerMinuteCount: number;
-  inputsPerMinuteTotal: number;
-  digitalInputsPerMinute: number;
-  digitalInputsPerMinuteCount: number;
-  digitalInputsPerMinuteTotal: number;
-  charIds: CharacterStats;
+  conversionRate: Ratio;
+  openingsPerKill: Ratio;
+  damagePerOpening: Ratio;
+  neutralWinrate: Ratio;
+  inputsPerMinute: Ratio;
+  digitalInputsPerMinute: Ratio;
+  characters: CharacterStats;
   opponents: OpponentStats;
   opponentChars: CharacterStats;
   punishes: Conversion[];
@@ -92,103 +88,103 @@ export function getGlobalStats(games: Game[], playerCode: string, filters: GameF
       characterFilter(g, playerCode, false, filters.characters) &&
       characterFilter(g, playerCode, true, filters.opponentCharacters),
   );
+  console.log(games);
   const aggs = games.reduce(
     (a, game) => {
-      const agg = a; // because es-lint can be dumb
-      const index = getGamePlayerCodeIndex(game, playerCode);
-      const opp = getPlayerName(game, 1 - index);
-      const stats = game.stats;
-      if (!stats) {
+      try {
+        const agg = a; // because es-lint can be dumb
+        const index = getGamePlayerCodeIndex(game, playerCode);
+        const opp = getPlayerName(game, 1 - index);
+        const stats = game.stats;
+        if (!stats) {
+          return agg;
+        }
+
+        const pOverall = stats.overall[index];
+        const oOverall = stats.overall[1 - index];
+
+        const won = getGameWinner(game) === index;
+
+        const players = game.settings.players;
+        if (players.length !== 2) {
+          return agg;
+        }
+        const charId = players[index].characterId!;
+        const oppCharId = players[1 - index].characterId!;
+
+        // Opponent aggregates
+        agg.opponents[opp] = agg.opponents[opp] || {
+          count: 0,
+          won: 0,
+          charIds: [],
+        };
+        agg.opponents[opp].count += 1;
+        if (won) {
+          agg.opponents[opp].won += 1;
+        }
+        if (!agg.opponents[opp].charIds.includes(oppCharId)) {
+          agg.opponents[opp].charIds.push(oppCharId);
+        }
+
+        const characterAggregates = (agg: CharacterStats, player: string, charId: number, won: boolean) => {
+          agg[charId] = agg[charId] || {
+            count: 0,
+            won: 0,
+            unique: [],
+          };
+          agg[charId].count += 1;
+          if (won) {
+            agg[charId].won += 1;
+          }
+          if (!agg[charId].unique.includes(player)) {
+            agg[charId].unique.push(player);
+          }
+        };
+
+        characterAggregates(agg.characters, playerCode, charId, won);
+        characterAggregates(agg.opponentChars, opp, oppCharId, won);
+
+        // Punishes
+        agg.punishes = [
+          ...agg.punishes,
+          ...stats.conversions
+            .filter((p) => p.playerIndex === index)
+            .map((p) => ({
+              punish: p,
+              game: game,
+            })),
+        ];
+
+        // General stats
+        if (won) {
+          agg.wins += 1;
+        }
+        agg.time += stats.lastFrame;
+
+        agg.kills += pOverall.killCount;
+        agg.deaths += oOverall.killCount;
+        agg.damageDone += pOverall.totalDamage;
+        agg.damageReceived += oOverall.totalDamage;
+
+        agg.conversionRate.count += pOverall.successfulConversions.count;
+        agg.conversionRate.total += pOverall.successfulConversions.total;
+        agg.damagePerOpening.count += pOverall.damagePerOpening.count;
+        agg.damagePerOpening.total += pOverall.damagePerOpening.total;
+        agg.openingsPerKill.count += pOverall.openingsPerKill.count;
+        agg.openingsPerKill.total += pOverall.openingsPerKill.total;
+        agg.neutralWinrate.count += pOverall.neutralWinRatio.count;
+        agg.neutralWinrate.total += pOverall.neutralWinRatio.total;
+
+        agg.inputsPerMinute.count += pOverall.inputsPerMinute.count;
+        agg.inputsPerMinute.total += pOverall.inputsPerMinute.total;
+        agg.digitalInputsPerMinute.count += pOverall.digitalInputsPerMinute.count;
+        agg.digitalInputsPerMinute.total += pOverall.digitalInputsPerMinute.total;
+
+        return agg;
+      } catch (err) {
+        console.log(err);
         return agg;
       }
-
-      const pOverall = stats.overall[index];
-      const oOverall = stats.overall[1 - index];
-
-      const won = getGameWinner(game) === index;
-
-      const players = game.settings.players;
-      if (players.length !== 2) {
-        return agg;
-      }
-      const charId = players[index].characterId!;
-      const oppCharId = players[1 - index].characterId!;
-
-      // Opponent aggregates
-      agg.opponents[opp] = agg.opponents[opp] || {
-        count: 0,
-        won: 0,
-        charIds: [],
-      };
-      agg.opponents[opp].count += 1;
-      if (won) {
-        agg.opponents[opp].won += 1;
-      }
-      if (!agg.opponents[opp].charIds.includes(oppCharId)) {
-        agg.opponents[opp].charIds.push(oppCharId);
-      }
-
-      // Player character aggregates
-      agg.charIds[charId] = agg.charIds[charId] || {
-        count: 0,
-        won: 0,
-      };
-      agg.charIds[charId].count += 1;
-      if (won) {
-        agg.charIds[charId].won += 1;
-      }
-
-      // Opponent character aggregates
-      agg.opponentChars[oppCharId] = agg.opponentChars[oppCharId] || {
-        count: 0,
-        won: 0,
-        unique: [],
-      };
-      agg.opponentChars[oppCharId].count += 1;
-      if (won) {
-        agg.opponentChars[oppCharId].won += 1;
-      }
-      if (!agg.opponentChars[oppCharId].unique.includes(oppCharId)) {
-        agg.opponentChars[oppCharId].unique.push(opp);
-      }
-
-      // Punishes
-      agg.punishes = [
-        ...agg.punishes,
-        ...stats.conversions
-          .filter((p) => p.playerIndex === index)
-          .map((p) => ({
-            punish: p,
-            game: game,
-          })),
-      ];
-
-      // General stats
-      if (won) {
-        agg.wins += 1;
-      }
-      agg.time += stats.lastFrame;
-
-      agg.kills += pOverall.killCount;
-      agg.deaths += oOverall.killCount;
-      agg.damageDone += pOverall.totalDamage;
-      agg.damageReceived += oOverall.totalDamage;
-
-      agg.conversionRateCount += pOverall.successfulConversions.count;
-      agg.conversionRateTotal += pOverall.successfulConversions.total;
-      agg.damagePerOpeningCount += pOverall.damagePerOpening.count;
-      agg.damagePerOpeningTotal += pOverall.damagePerOpening.total;
-      agg.openingsPerKillCount += pOverall.openingsPerKill.count;
-      agg.openingsPerKillTotal += pOverall.openingsPerKill.total;
-      agg.neutralWinRatioCount += pOverall.neutralWinRatio.count;
-      agg.neutralWinRatioTotal += pOverall.neutralWinRatio.total;
-
-      agg.inputsPerMinuteCount += pOverall.inputsPerMinute.count;
-      agg.inputsPerMinuteTotal += pOverall.inputsPerMinute.total;
-      agg.digitalInputsPerMinuteCount += pOverall.digitalInputsPerMinute.count;
-      agg.digitalInputsPerMinuteTotal += pOverall.digitalInputsPerMinute.total;
-
-      return agg;
     },
     {
       player: playerCode,
@@ -199,19 +195,13 @@ export function getGlobalStats(games: Game[], playerCode: string, filters: GameF
       deaths: 0,
       damageDone: 0,
       damageReceived: 0,
-      conversionRateCount: 0,
-      conversionRateTotal: 0,
-      openingsPerKillCount: 0,
-      openingsPerKillTotal: 0,
-      damagePerOpeningCount: 0,
-      damagePerOpeningTotal: 0,
-      neutralWinRatioCount: 0,
-      neutralWinRatioTotal: 0,
-      inputsPerMinuteCount: 0,
-      inputsPerMinuteTotal: 0,
-      digitalInputsPerMinuteCount: 0,
-      digitalInputsPerMinuteTotal: 0,
-      charIds: {},
+      conversionRate: { count: 0, total: 0, ratio: 0 },
+      openingsPerKill: { count: 0, total: 0, ratio: 0 },
+      damagePerOpening: { count: 0, total: 0, ratio: 0 },
+      neutralWinrate: { count: 0, total: 0, ratio: 0 },
+      inputsPerMinute: { count: 0, total: 0, ratio: 0 },
+      digitalInputsPerMinute: { count: 0, total: 0, ratio: 0 },
+      characters: {},
       opponents: {},
       opponentChars: {},
       punishes: [] as Conversion[],
@@ -221,15 +211,13 @@ export function getGlobalStats(games: Game[], playerCode: string, filters: GameF
   const diff = (p: ConversionType) => p.currentPercent - p.startPercent;
   aggs.punishes = aggs.punishes.sort((a, b) => diff(b.punish) - diff(a.punish)).slice(0, 20);
 
-  return {
-    ...aggs,
-    conversionRate: aggs.conversionRateCount / aggs.conversionRateTotal,
-    openingsPerKill: aggs.openingsPerKillCount / aggs.openingsPerKillTotal,
-    damagePerOpening: aggs.damagePerOpeningCount / aggs.damagePerOpeningTotal,
-    neutralWinRatio: aggs.neutralWinRatioCount / aggs.neutralWinRatioTotal,
-    inputsPerMinute: aggs.inputsPerMinuteCount / aggs.inputsPerMinuteTotal,
-    digitalInputsPerMinute: aggs.digitalInputsPerMinuteCount / aggs.digitalInputsPerMinuteTotal,
-  };
+  aggs.conversionRate.ratio = aggs.conversionRate.count / aggs.conversionRate.total;
+  aggs.openingsPerKill.ratio = aggs.openingsPerKill.count / aggs.openingsPerKill.total;
+  aggs.damagePerOpening.ratio = aggs.damagePerOpening.count / aggs.damagePerOpening.total;
+  aggs.neutralWinrate.ratio = aggs.neutralWinrate.count / aggs.neutralWinrate.total;
+  aggs.inputsPerMinute.ratio = aggs.inputsPerMinute.count / aggs.inputsPerMinute.total;
+  aggs.digitalInputsPerMinute.ratio = aggs.digitalInputsPerMinute.count / aggs.digitalInputsPerMinute.total;
+  return aggs;
 }
 
 export function getPlayerCodesByIndex(game: Game) {
@@ -291,13 +279,13 @@ export function getPlayerCode(game: Game, playerIndex: number) {
 }
 
 export function getPlayerStocks(game: Game, playerIndex: number): StockType[] {
-  const stocks = game.stats!.stocks;
+  const stocks = game.metadata!.stocks;
   return _.groupBy(stocks, "playerIndex")[playerIndex] || [];
 }
 
 export function getLastPlayerStock(game: Game, playerIndex: number): StockType {
   const playerStocks = getPlayerStocks(game, playerIndex);
-  return _.orderBy(playerStocks, (s) => s.count)[0];
+  return _.orderBy(playerStocks, (s) => s.count)[0] || { count: 0, deathAnimation: 0 };
 }
 
 export function getGameWinner(game: Game): number {

@@ -57,6 +57,16 @@ const parse = (fullPath) => {
   const stats = game.getStats();
   if (stats) {
     result.stats = stats;
+    const stocks = stats.stocks;
+    result.settings.players.forEach((player) => {
+      player.stocks = _.groupBy(stocks, "playerIndex")[player.playerIndex] || [];
+      player.endStocks = _.orderBy(player.stocks, (s) => s.count)[0].count || 0;
+    });
+  } else {
+    result.settings.players.forEach((player) => {
+      player.stocks = [];
+      player.endStocks = 0;
+    });
   }
 
   return result;

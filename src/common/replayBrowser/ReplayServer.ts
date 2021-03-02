@@ -1,7 +1,7 @@
 import { getGlobalStats } from "common/game";
 import { ipcMain } from "electron";
 
-import { getFullReplay, getPlayerReplays, pruneFolders } from "./dao";
+import { getFullReplay, getPlayerReplaysWithCache, pruneFolders } from "./dao";
 import { loadFolder } from "./loadFolder";
 
 export const startReplayServer = () => {
@@ -28,7 +28,8 @@ export const startReplayServer = () => {
 
   ipcMain.on("load-player-replays", async (event, player, filters) => {
     try {
-      event.reply("load-player-replays", getGlobalStats(await getPlayerReplays(player), player, filters));
+      const stats = getGlobalStats(await getPlayerReplaysWithCache(player), player, filters);
+      event.reply("load-player-replays", stats);
     } catch (err) {
       event.reply("load-player-replays", err);
     }

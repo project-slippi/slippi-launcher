@@ -1,9 +1,18 @@
-import { GameStartType, MetadataType, StatsType } from "@slippi/slippi-js";
+import { GameStartType, MetadataType, PlayerType, StatsType, StockType } from "@slippi/slippi-js";
+
+export interface FullPlayerType extends PlayerType {
+  endStocks: number;
+  stocks: StockType[];
+}
+
+export interface FullGameStartType extends GameStartType {
+  players: FullPlayerType[];
+}
 
 export interface FileResult {
   name: string;
   fullPath: string;
-  settings: GameStartType;
+  settings: FullGameStartType;
   startTime: string | null;
   lastFrame: number | null;
   metadata: MetadataType | null;
