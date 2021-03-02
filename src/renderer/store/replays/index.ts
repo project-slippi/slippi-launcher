@@ -1,6 +1,6 @@
 import { StatsType } from "@slippi/slippi-js";
 import { deleteFolderReplays, loadReplayFile, loadReplays } from "common/replayBrowser/ReplayClient";
-import { FileLoadResult, FileResult, FolderResult } from "common/types";
+import { FileResult, FolderResult } from "common/types";
 import { ipcRenderer, shell } from "electron";
 import { ipcRenderer as ipc } from "electron-better-ipc";
 import { produce } from "immer";
@@ -226,15 +226,15 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   },
 }));
 
-const loadReplayFolder = async (folder: string): Promise<FileLoadResult> => {
-  const res = await iipc.callMain<string, FileLoadResult>("loadReplayFolder", folder);
-  return res;
-};
+// const loadReplayFolder = async (folder: string): Promise<FileLoadResult> => {
+//   const res = await ipc.callMain<string, FileLoadResult>("loadReplayFolder", folder);
+//   return res;
+// };
 
-const calculateGameStats = async (file: string): Promise<StatsType> => {
-  const res = await ipc.callMain<string, StatsType>("calculateGameStats", file);
-  return res;
-};
+// const calculateGameStats = async (file: string): Promise<StatsType> => {
+//   const res = await ipc.callMain<string, StatsType>("calculateGameStats", file);
+//   return res;
+// };
 
 // Listen to the replay folder progress event
 ipc.on("loadReplayFolderProgress", (_, progress: { current: number; total: number }) => {

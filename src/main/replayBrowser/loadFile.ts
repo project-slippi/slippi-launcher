@@ -35,7 +35,7 @@ export async function loadFile(fullPath: string): Promise<FileResult> {
   if (metadata) {
     result.metadata = metadata;
 
-    if (metadata.lastFrame) {
+    if (metadata.lastFrame !== undefined) {
       result.lastFrame = metadata.lastFrame!;
     }
 

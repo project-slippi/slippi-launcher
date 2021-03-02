@@ -1,6 +1,5 @@
+import { FileLoadResult, FileResult, FolderResult } from "common/types";
 import { ipcRenderer } from "electron";
-
-import { FileLoadResult, FileResult, FolderResult } from "./types";
 
 export async function loadReplays(folder: string, progressCallback: (count: number, total: number) => void) {
   return new Promise<FileLoadResult>((resolve, reject) => {
