@@ -2397,6 +2397,13 @@
     "@types/history" "*"
     "@types/react" "*"
 
+"@types/react-timeago@^4.1.2":
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/@types/react-timeago/-/react-timeago-4.1.2.tgz#fc365ac4483888e9b47267259416be2fd5cf765f"
+  integrity sha512-gkhU3rH7aZgeRybbm9ie9wHOM9i1I5YhUoto/uqY/DAbeRZuLU8ugl6E97jp65XCl9QTij32Vs7BAX2E/MqOAw==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-transition-group@^4.2.0":
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/@types/react-transition-group/-/react-transition-group-4.4.0.tgz#882839db465df1320e4753e6e9f70ca7e9b4d46d"
@@ -9449,6 +9456,11 @@ react-test-renderer@^16.0.0-0:
     prop-types "^15.6.2"
     react-is "^16.8.6"
     scheduler "^0.19.1"
+
+react-timeago@^5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/react-timeago/-/react-timeago-5.2.0.tgz#d655d40aa55e4fe08a92234481a6aea7f656ab5d"
+  integrity sha512-wCEEDGQHMdFh/PLp+Hj5vk9ZoC4KjQ5u0u6+KrrY9rny5LqJ2gZvNNEAS4mhSZDV1i7JLgQI5VQTAux7f+vj2w==
 
 react-transition-group@^4.4.0:
   version "4.4.1"

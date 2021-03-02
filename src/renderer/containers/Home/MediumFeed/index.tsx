@@ -27,6 +27,7 @@ export const MediumFeed: React.FC = () => {
           imageUrl={`https://cdn-images-1.medium.com/${post.virtuals.previewImage.imageId}`}
           title={post.title}
           subtitle={post.virtuals.subtitle}
+          publishedAt={post.firstPublishedAt}
           permalink={`https://medium.com/project-slippi/${post.uniqueSlug}`}
         />
       ))}

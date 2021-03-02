@@ -8,12 +8,14 @@ import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import { shell } from "electron";
 import React from "react";
+import TimeAgo from "react-timeago";
 
 export interface MediumArticleProps {
   imageUrl: string;
   title: string;
   subtitle: string;
   permalink: string;
+  publishedAt: number;
 }
 
 const useStyles = makeStyles({
@@ -23,9 +25,15 @@ const useStyles = makeStyles({
   media: {
     height: 200,
   },
+  date: {
+    marginLeft: "auto",
+    marginRight: 5,
+    fontStyle: "italic",
+    opacity: 0.9,
+  },
 });
 
-export const MediumArticle: React.FC<MediumArticleProps> = ({ imageUrl, title, subtitle, permalink }) => {
+export const MediumArticle: React.FC<MediumArticleProps> = ({ imageUrl, title, subtitle, permalink, publishedAt }) => {
   const classes = useStyles();
 
   const onClick = () => shell.openExternal(permalink);
@@ -43,10 +51,15 @@ export const MediumArticle: React.FC<MediumArticleProps> = ({ imageUrl, title, s
             </Typography>
           </CardContent>
         </CardActionArea>
-        <CardActions>
+        <CardActions disableSpacing={true}>
           <Button size="small" color="primary" onClick={onClick}>
             Read more
           </Button>
+          <div className={classes.date}>
+            <Typography variant="caption">
+              Posted <TimeAgo date={new Date(publishedAt)} />
+            </Typography>
+          </div>
         </CardActions>
       </Card>
     </div>
