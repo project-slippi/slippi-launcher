@@ -5,7 +5,6 @@ import path from "path";
 
 import { DolphinManager, ReplayCommunication } from "./dolphinManager";
 import { assertDolphinInstallations } from "./downloadDolphin";
-import { worker as fileIndexerWorker } from "./fileIndexer/workerInterface";
 import { worker as replayBrowserWorker } from "./replayBrowser/workerInterface";
 
 export function setupListeners() {
@@ -58,20 +57,5 @@ export function setupListeners() {
     const w = await replayBrowserWorker;
     const result = await w.calculateGameStats(filePath);
     return result;
-  });
-
-  ipc.answerRenderer("synchronous-message", async (arg: number) => {
-    console.log(`calculating factorial for: ${arg}`);
-    const w = await fileIndexerWorker;
-    const val = await w.fib(arg);
-    console.log(`return ${val} as factorial result`);
-    return val;
-  });
-
-  ipc.answerRenderer("processFile", async (arg: string) => {
-    console.log(`processing slp file: ${arg}`);
-    const w = await fileIndexerWorker;
-    const val = await w.processSlpFile(arg);
-    return val;
   });
 }
