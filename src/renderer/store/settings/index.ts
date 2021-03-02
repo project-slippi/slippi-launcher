@@ -1,6 +1,6 @@
 import electronSettings from "electron-settings";
 import { stat } from "fs-extra";
-import produce from "immer";
+import { produce } from "immer";
 import create from "zustand";
 
 import { getDefaultRootSlpPath } from "@/lib/directories";

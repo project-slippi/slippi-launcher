@@ -1,7 +1,7 @@
 import ErrorIcon from "@material-ui/icons/Error";
 import HelpIcon from "@material-ui/icons/Help";
 import { colors } from "common/colors";
-import { FileResult } from "common/replayBrowser";
+import { FileResult } from "common/types";
 import _ from "lodash";
 import React from "react";
 import styled from "styled-components";

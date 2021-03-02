@@ -4,8 +4,8 @@ import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
 import { animations as animationUtils, Frames, moves as moveUtils, StatsType, StockType } from "@slippi/slippi-js";
 import { extractPlayerNames } from "common/matchNames";
-import { FileResult } from "common/replayBrowser";
 import { convertFrameCountToDurationString } from "common/time";
+import { FileResult } from "common/types";
 import _ from "lodash";
 import React from "react";
 

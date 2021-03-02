@@ -1,9 +1,8 @@
 import { GameStartType, MetadataType, SlippiGame } from "@slippi/slippi-js";
+import { fileToDateAndTime } from "common/time";
+import { FileResult } from "common/types";
 import _ from "lodash";
 import path from "path";
-
-import { fileToDateAndTime } from "../time";
-import { FileResult } from "./types";
 
 export async function loadFile(fullPath: string): Promise<FileResult> {
   const filename = path.basename(fullPath);

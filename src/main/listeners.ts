@@ -1,9 +1,11 @@
 import { DolphinLaunchType, DolphinUseType } from "common/dolphin";
 import { ipcMain, nativeImage } from "electron";
+import { ipcMain as ipc } from "electron-better-ipc";
 import path from "path";
 
 import { DolphinManager, ReplayCommunication } from "./dolphinManager";
 import { assertDolphinInstallations } from "./downloadDolphin";
+import { worker as replayBrowserWorker } from "./replayBrowser/workerInterface";
 
 export function setupListeners() {
   const dolphinManager = DolphinManager.getInstance();
@@ -40,5 +42,20 @@ export function setupListeners() {
 
   ipcMain.on("configureDolphin", (_, dolphinType: DolphinLaunchType) => {
     dolphinManager.launchDolphin(DolphinUseType.CONFIG, -1, undefined, dolphinType);
+  });
+
+  ipc.answerRenderer("loadReplayFolder", async (folderPath: string) => {
+    const w = await replayBrowserWorker;
+    w.getProgressObservable().subscribe((progress) => {
+      ipc.sendToRenderers<{ current: number; total: number }>("loadReplayFolderProgress", progress);
+    });
+    const result = await w.loadReplayFolder(folderPath);
+    return result;
+  });
+
+  ipc.answerRenderer("calculateGameStats", async (filePath: string) => {
+    const w = await replayBrowserWorker;
+    const result = await w.calculateGameStats(filePath);
+    return result;
   });
 }

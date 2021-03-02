@@ -7,7 +7,7 @@ import FolderIcon from "@material-ui/icons/Folder";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import { colors } from "common/colors";
-import { FolderResult } from "common/replayBrowser";
+import { FolderResult } from "common/types";
 import React from "react";
 
 import { useReplays } from "@/store/replays";
