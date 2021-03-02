@@ -1,9 +1,8 @@
+import { FileLoadResult } from "common/types";
 import * as fs from "fs-extra";
 import path from "path";
-
 import { deleteReplays, getFolderFiles, getFolderReplays, saveReplays } from "./db";
 import { parseReplays } from "./statsComputer";
-import { FileLoadResult } from "./types";
 
 const filterReplays = async (folder: string) => {
   const loadedFiles = await getFolderFiles(folder);
@@ -22,7 +21,7 @@ const filterReplays = async (folder: string) => {
 
 export async function loadFolder(
   folder: string,
-  callback: (current: number, total: number) => void,
+  callback: (current: number, total: number) => void = () => null,
 ): Promise<FileLoadResult> {
   // If the folder does not exist, return empty
   if (!(await fs.pathExists(folder))) {

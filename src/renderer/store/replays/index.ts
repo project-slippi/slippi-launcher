@@ -1,19 +1,21 @@
 import { StatsType } from "@slippi/slippi-js";
-import { FileResult, findChild, FolderResult, generateSubFolderTree } from "common/replayBrowser";
 import { deleteFolderReplays, loadReplayFile, loadReplays } from "common/replayBrowser/ReplayClient";
+import { FileLoadResult, FileResult, FolderResult } from "common/types";
 import { ipcRenderer, shell } from "electron";
-import produce from "immer";
+import { ipcRenderer as ipc } from "electron-better-ipc";
+import { produce } from "immer";
 import path from "path";
+import { unstable_batchedUpdates } from "react-dom";
 import create from "zustand";
 
 import { useSettings } from "../settings";
+import { findChild, generateSubFolderTree } from "./folderTree";
 
 type StoreState = {
   loading: boolean;
   progress: null | {
     current: number;
     total: number;
-    isSaving: boolean;
   };
   files: FileResult[];
   folders: FolderResult | null;
@@ -39,6 +41,7 @@ type StoreReducers = {
   loadFolder: (childPath?: string, forceReload?: boolean) => Promise<void>;
   toggleFolder: (fullPath: string) => void;
   setScrollRowItem: (offset: number) => void;
+  updateProgress: (progress: { current: number; total: number } | null) => void;
 };
 
 const initialState: StoreState = {
@@ -129,6 +132,10 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     );
   },
 
+  updateProgress: (progress: { current: number; total: number } | null) => {
+    set({ progress });
+  },
+
   loadFolder: async (childPath, forceReload) => {
     const { currentFolder, loading } = get();
 
@@ -147,7 +154,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     try {
       console.log("will load");
       const result = await loadReplays(folderToLoad, (count, total) =>
-        set({ progress: { current: count, total: total, isSaving: true } }),
+        set({ progress: { current: count, total: total } }),
       );
       set({
         scrollRowItem: 0,
@@ -218,3 +225,20 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     set({ scrollRowItem: rowItem });
   },
 }));
+
+const loadReplayFolder = async (folder: string): Promise<FileLoadResult> => {
+  const res = await iipc.callMain<string, FileLoadResult>("loadReplayFolder", folder);
+  return res;
+};
+
+const calculateGameStats = async (file: string): Promise<StatsType> => {
+  const res = await ipc.callMain<string, StatsType>("calculateGameStats", file);
+  return res;
+};
+
+// Listen to the replay folder progress event
+ipc.on("loadReplayFolderProgress", (_, progress: { current: number; total: number }) => {
+  unstable_batchedUpdates(() => {
+    useReplays.getState().updateProgress(progress);
+  });
+});

@@ -8,6 +8,8 @@
     },
     "baseUrl": "src/",
     "jsx": "react",
+    "noEmit": false,
+    "noEmitOnError": false,
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,

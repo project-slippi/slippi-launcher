@@ -6,6 +6,7 @@
     "buildResources": "resources",
     "output": "release"
   },
+  "asarUnpack": ["**/*.node", "**/*.worker.js*"],
   "dmg": {
     "artifactName": "Slippi-Launcher-${version}.${ext}",
     "icon": "resources/icon.icns",

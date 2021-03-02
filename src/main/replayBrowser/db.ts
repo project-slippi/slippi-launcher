@@ -1,4 +1,4 @@
-import { FileResult } from "common/replayBrowser";
+import { FileResult } from "common/types";
 import { app } from "electron";
 import path from "path";
 import * as sqlite3 from "sqlite3";

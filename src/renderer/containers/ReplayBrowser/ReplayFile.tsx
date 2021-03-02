@@ -8,8 +8,8 @@ import EqualizerIcon from "@material-ui/icons/Equalizer";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import { stages as stageUtils } from "@slippi/slippi-js";
-import { FileResult } from "common/replayBrowser";
 import { convertFrameCountToDurationString, monthDayHourFormat } from "common/time";
+import { FileResult } from "common/types";
 import _ from "lodash";
 import moment from "moment";
 import React from "react";
@@ -59,8 +59,9 @@ const useStyles = makeStyles(() =>
     duration: {
       position: "absolute",
       backgroundColor: "rgba(0, 0, 0, 0.7)",
-      top: 0,
-      right: 0,
+      bottom: 0,
+      left: 0,
+      lineHeight: "12px",
       padding: 3,
       fontSize: 12,
     },

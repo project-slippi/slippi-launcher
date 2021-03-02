@@ -1,11 +1,11 @@
 import { colors } from "common/colors";
-import { startReplayServer } from "common/replayBrowser/ReplayServer";
 import { app, BrowserWindow } from "electron";
 import contextMenu from "electron-context-menu";
 import * as path from "path";
 import { format as formatUrl } from "url";
 
 import { setupListeners } from "./listeners";
+import { startReplayServer } from "./replayBrowser/ReplayServer";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 

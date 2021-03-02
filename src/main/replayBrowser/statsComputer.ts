@@ -1,4 +1,4 @@
-import { FileResult } from "common/replayBrowser";
+import { FileResult } from "common/types";
 import os from "os";
 import { Worker } from "worker_threads";
 
@@ -11,7 +11,7 @@ export const parseReplays = (files: string[], progressCallback: (count: number) 
     for (let i = 0; i < cores; i++) {
       const start = i * batchSize;
       const end = Math.min(i * batchSize + batchSize, files.length);
-      const worker = new Worker("./src/common/replayBrowser/stats.worker.js", {
+      const worker = new Worker("./src/main/replayBrowser/stats.worker.js", {
         workerData: files.slice(start, end),
       });
       worker.on("message", (result) => {
