@@ -7,8 +7,6 @@ import path from "path";
 import { unstable_batchedUpdates } from "react-dom";
 import create from "zustand";
 
-// import { loadReplayFolder } from "@/workers/fileLoader.worker";
-// import { calculateGameStats } from "@/workers/gameStats.worker";
 import { useSettings } from "../settings";
 import { findChild, generateSubFolderTree } from "./folderTree";
 
@@ -233,6 +231,7 @@ const calculateGameStats = async (file: string): Promise<StatsType> => {
   return res;
 };
 
+// Listen to the replay folder progress event
 ipc.on("loadReplayFolderProgress", (_, progress: { current: number; total: number }) => {
   unstable_batchedUpdates(() => {
     useReplays.getState().updateProgress(progress);
