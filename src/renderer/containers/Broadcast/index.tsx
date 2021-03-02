@@ -1,4 +1,4 @@
-import { ipcRenderer } from "electron";
+import { ipcRenderer as ipc } from "electron-better-ipc";
 import React from "react";
 
 import { BouncingSlippiLogo } from "@/components/BouncingSlippiLogo";
@@ -15,13 +15,8 @@ export const Broadcast: React.FC = () => {
         <input onChange={(e) => setNumInput(e.target.value)} value={numInput} />
         <button
           onClick={async () => {
-            // const res = await fibonacci(Number(numInput) - 1);
-            // setNumResult(res);
-            ipcRenderer.once("synchronous-message-reply", (_, res) => {
-              console.log(`got response from main: ${res}`);
-              setNumResult(res);
-            });
-            ipcRenderer.send("synchronous-message", Number(numInput) - 1);
+            const res = await ipc.callMain<number, number>("synchronous-message", Number(numInput) - 1);
+            setNumResult(res);
           }}
         >
           compute fibonacci
@@ -32,12 +27,9 @@ export const Broadcast: React.FC = () => {
       <div>
         <input onChange={(e) => setSlpFileInput(e.target.value)} value={slpFileInput} />
         <button
-          onClick={() => {
-            ipcRenderer.once("processFile-reply", (_, res) => {
-              console.log(`got response from main: ${res}`);
-              setSlpFileResult(res);
-            });
-            ipcRenderer.send("processFile", slpFileInput);
+          onClick={async () => {
+            const res = await ipc.callMain<string, any>("processFile", slpFileInput);
+            setSlpFileResult(res);
           }}
         >
           fetch slp info

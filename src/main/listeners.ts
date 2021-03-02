@@ -1,5 +1,6 @@
 import { DolphinLaunchType, DolphinUseType } from "common/dolphin";
 import { BrowserWindow, ipcMain, nativeImage } from "electron";
+import { ipcMain as ipc } from "electron-better-ipc";
 import path from "path";
 
 import { DolphinManager, ReplayCommunication } from "./dolphinManager";
@@ -18,28 +19,6 @@ export function setupListeners() {
 
   ipcMain.on("downloadDolphin", (_) => {
     assertDolphinInstallations();
-  });
-
-  ipcMain.on("synchronous-message", async (_, arg) => {
-    console.log(`calculating factorial for: ${arg}`);
-    const w = await fileIndexerWorker;
-    const val = await w.fib(arg);
-    console.log(`return ${val} as factorial result`);
-    // event.returnValue = val;
-    const x = BrowserWindow.getFocusedWindow();
-    if (x) {
-      x.webContents.send("synchronous-message-reply", val);
-    }
-  });
-
-  ipcMain.on("processFile", async (_, arg) => {
-    console.log(`processing slp file: ${arg}`);
-    const w = await fileIndexerWorker;
-    const val = await w.processSlpFile(arg);
-    const x = BrowserWindow.getFocusedWindow();
-    if (x) {
-      x.webContents.send("processFile-reply", val);
-    }
   });
 
   ipcMain.on("viewReplay", (_, filePath: string) => {
@@ -66,21 +45,30 @@ export function setupListeners() {
     dolphinManager.launchDolphin(DolphinUseType.CONFIG, -1, undefined, dolphinType);
   });
 
-  ipcMain.on("loadReplayFolder", async (_, folderPath: string) => {
+  ipc.answerRenderer("loadReplayFolder", async (folderPath: string) => {
     const w = await replayBrowserWorker;
     const result = await w.loadReplayFolder(folderPath);
-    const x = BrowserWindow.getFocusedWindow();
-    if (x) {
-      x.webContents.send("loadReplayFolder-reply", result);
-    }
+    return result;
   });
 
-  ipcMain.on("calculateGameStats", async (_, filePath: string) => {
+  ipc.answerRenderer("calculateGameStats", async (filePath: string) => {
     const w = await replayBrowserWorker;
     const result = await w.calculateGameStats(filePath);
-    const x = BrowserWindow.getFocusedWindow();
-    if (x) {
-      x.webContents.send("calculateGameStats-reply", result);
-    }
+    return result;
+  });
+
+  ipc.answerRenderer("synchronous-message", async (arg: number) => {
+    console.log(`calculating factorial for: ${arg}`);
+    const w = await fileIndexerWorker;
+    const val = await w.fib(arg);
+    console.log(`return ${val} as factorial result`);
+    return val;
+  });
+
+  ipc.answerRenderer("processFile", async (arg: string) => {
+    console.log(`processing slp file: ${arg}`);
+    const w = await fileIndexerWorker;
+    const val = await w.processSlpFile(arg);
+    return val;
   });
 }

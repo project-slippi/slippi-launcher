@@ -1,6 +1,7 @@
 import { StatsType } from "@slippi/slippi-js";
 import { FileLoadResult, FileResult, FolderResult } from "common/types";
 import { ipcRenderer, shell } from "electron";
+import { ipcRenderer as ipc } from "electron-better-ipc";
 import produce from "immer";
 import path from "path";
 import create from "zustand";
@@ -216,24 +217,12 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   },
 }));
 
-const loadReplayFolder = (folder: string) =>
-  new Promise<FileLoadResult>((resolve, reject) => {
-    ipcRenderer.once("loadReplayFolder-reply", (_, val) => {
-      if (val) {
-        resolve(val);
-      }
-      reject(new Error("invalid load replay folder response"));
-    });
-    ipcRenderer.send("loadReplayFolder", folder);
-  });
+const loadReplayFolder = async (folder: string): Promise<FileLoadResult> => {
+  const res = await ipc.callMain<string, FileLoadResult>("loadReplayFolder", folder);
+  return res;
+};
 
-const calculateGameStats = (file: string) =>
-  new Promise<StatsType>((resolve, reject) => {
-    ipcRenderer.once("calculateGameStats-reply", (_, val) => {
-      if (val) {
-        resolve(val);
-      }
-      reject(new Error("invalid calculate game stats response"));
-    });
-    ipcRenderer.send("calculateGameStats", file);
-  });
+const calculateGameStats = async (file: string): Promise<StatsType> => {
+  const res = await ipc.callMain<string, StatsType>("calculateGameStats", file);
+  return res;
+};
