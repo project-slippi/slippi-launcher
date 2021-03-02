@@ -5,14 +5,14 @@ import { spawn, Thread, Worker } from "threads";
 import { Methods as WorkerMethods, WorkerSpec } from "./worker";
 
 export const worker: Promise<Thread & WorkerMethods> = new Promise((resolve, reject) => {
-  log.debug("Repositories: Spawning worker");
+  log.debug("replayBrowser: Spawning worker");
 
   spawn<WorkerSpec>(new Worker("./worker"))
     .then((worker) => {
-      log.debug("Repositories: Spawning worker: Done");
+      log.debug("replayBrowser: Spawning worker: Done");
 
       async function terminateWorker() {
-        log.debug("Repositories: Terminating worker");
+        log.debug("replayBrowser: Terminating worker");
         try {
           await worker.destroyWorker();
         } finally {
@@ -22,10 +22,10 @@ export const worker: Promise<Thread & WorkerMethods> = new Promise((resolve, rej
 
       app.on("quit", terminateWorker);
 
-      Thread.events(worker).subscribe((evt) => {
-        log.debug("Repositories: Worker event:", evt);
-        // TODO: Respawn on worker exit?
-      });
+      // Thread.events(worker).subscribe((evt) => {
+      //   log.debug("replayBrowser: Worker event:", evt);
+      //   // TODO: Respawn on worker exit?
+      // });
 
       resolve(worker);
     })
