@@ -12,14 +12,7 @@ const MenuButton = styled.div<{
   selected?: boolean;
 }>`
   padding: 5px 10px;
-  ${(props) =>
-    props.selected
-      ? `
-text-decoration: underline;
-  `
-      : `
-  opacity: 0.5;
-  `}
+  ${(props) => (props.selected ? "text-decoration: underline;" : "opacity: 0.5;")}
 `;
 
 export const HomeView: React.FC = () => {

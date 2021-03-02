@@ -8,7 +8,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import { shell } from "electron";
 import React from "react";
-import styled from "styled-components";
 
 export interface MediumArticleProps {
   imageUrl: string;
@@ -17,13 +16,12 @@ export interface MediumArticleProps {
   permalink: string;
 }
 
-const Outer = styled.div`
-  margin-bottom: 20px;
-`;
-
 const useStyles = makeStyles({
+  outer: {
+    marginBottom: 20,
+  },
   media: {
-    height: 140,
+    height: 200,
   },
 });
 
@@ -32,7 +30,7 @@ export const MediumArticle: React.FC<MediumArticleProps> = ({ imageUrl, title, s
 
   const onClick = () => shell.openExternal(permalink);
   return (
-    <Outer>
+    <div className={classes.outer}>
       <Card>
         <CardActionArea onClick={onClick}>
           <CardMedia className={classes.media} image={imageUrl} title={title} />
@@ -51,6 +49,6 @@ export const MediumArticle: React.FC<MediumArticleProps> = ({ imageUrl, title, s
           </Button>
         </CardActions>
       </Card>
-    </Outer>
+    </div>
   );
 };
