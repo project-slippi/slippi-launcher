@@ -1,6 +1,6 @@
 import { ipcMain } from "electron";
 
-import { getFullReplay, getPlayerReplays, pruneFolders } from "./dao";
+import { getFullReplay, getPlayerReplays, pruneFolders } from "./db";
 import { loadFolder } from "./loadFolder";
 
 export const startReplayServer = () => {

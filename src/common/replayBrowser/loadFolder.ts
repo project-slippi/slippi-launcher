@@ -1,7 +1,7 @@
 import * as fs from "fs-extra";
 import path from "path";
 
-import { deleteReplays, getFolderFiles, getFolderReplays, saveReplays } from "./dao";
+import { deleteReplays, getFolderFiles, getFolderReplays, saveReplays } from "./db";
 import { parseReplays } from "./statsComputer";
 import { FileLoadResult } from "./types";
 
