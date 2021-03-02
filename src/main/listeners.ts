@@ -47,6 +47,9 @@ export function setupListeners() {
 
   ipc.answerRenderer("loadReplayFolder", async (folderPath: string) => {
     const w = await replayBrowserWorker;
+    w.getProgressObservable().subscribe((progress) => {
+      ipc.sendToRenderers<{ current: number; total: number }>("loadReplayFolderProgress", progress);
+    });
     const result = await w.loadReplayFolder(folderPath);
     return result;
   });

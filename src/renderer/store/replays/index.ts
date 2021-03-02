@@ -4,6 +4,7 @@ import { ipcRenderer, shell } from "electron";
 import { ipcRenderer as ipc } from "electron-better-ipc";
 import { produce } from "immer";
 import path from "path";
+import { unstable_batchedUpdates } from "react-dom";
 import create from "zustand";
 
 // import { loadReplayFolder } from "@/workers/fileLoader.worker";
@@ -41,6 +42,7 @@ type StoreReducers = {
   loadFolder: (childPath?: string, forceReload?: boolean) => Promise<void>;
   toggleFolder: (fullPath: string) => void;
   setScrollRowItem: (offset: number) => void;
+  updateProgress: (progress: { current: number; total: number } | null) => void;
 };
 
 const initialState: StoreState = {
@@ -141,6 +143,10 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     );
   },
 
+  updateProgress: (progress: { current: number; total: number } | null) => {
+    set({ progress });
+  },
+
   loadFolder: async (childPath, forceReload) => {
     const { currentFolder, loading } = get();
 
@@ -226,3 +232,9 @@ const calculateGameStats = async (file: string): Promise<StatsType> => {
   const res = await ipc.callMain<string, StatsType>("calculateGameStats", file);
   return res;
 };
+
+ipc.on("loadReplayFolderProgress", (_, progress: { current: number; total: number }) => {
+  unstable_batchedUpdates(() => {
+    useReplays.getState().updateProgress(progress);
+  });
+});
