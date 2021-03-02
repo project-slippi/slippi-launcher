@@ -1,4 +1,3 @@
-import { colors } from "common/colors";
 import { app, BrowserWindow, shell } from "electron";
 import contextMenu from "electron-context-menu";
 import * as path from "path";
@@ -16,7 +15,7 @@ function createMainWindow() {
     show: false,
     width: 1100,
     height: 728,
-    backgroundColor: colors.offGray,
+    backgroundColor: "#23252C",
     webPreferences: {
       nodeIntegration: true,
       nodeIntegrationInWorker: true,
