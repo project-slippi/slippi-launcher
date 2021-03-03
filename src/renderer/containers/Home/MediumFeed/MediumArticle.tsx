@@ -65,7 +65,6 @@ export const MediumArticle: React.FC<MediumArticleProps> = ({ item }) => {
 };
 
 const ArticleBody = styled.div`
-  font-size: 90%;
   color: #ccc;
   max-width: 700px;
 
