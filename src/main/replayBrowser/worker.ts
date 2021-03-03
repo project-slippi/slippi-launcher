@@ -3,58 +3,25 @@
 // when in Node worker context.
 
 // TODO: Make electron-log work somehow
-import { SlippiGame, StatsType } from "@slippi/slippi-js";
-import { FileLoadResult } from "common/types";
-import _ from "lodash";
+import { FileResult } from "common/types";
 import { ModuleMethods } from "threads/dist/types/master";
-import { Observable, Subject } from "threads/observable";
 import { expose } from "threads/worker";
 
-import { loadFolder } from "./loadFolder";
+import { loadFile } from "./loadFile";
 
 export interface Methods {
-  loadReplayFolder(folder: string): Promise<FileLoadResult>;
-  calculateGameStats(fullPath: string): Promise<StatsType>;
-  getProgressObservable(): Observable<Progress>;
+  loadReplayFile(fullPath: string): Promise<FileResult | null>;
 }
 
 export type WorkerSpec = ModuleMethods & Methods;
 
-interface Progress {
-  current: number;
-  total: number;
-}
-
-let progressSubject: Subject<Progress> = new Subject();
-
 const methods: WorkerSpec = {
-  getProgressObservable(): Observable<Progress> {
-    return Observable.from(progressSubject);
-  },
-  async loadReplayFolder(folder: string): Promise<FileLoadResult> {
-    const result = await loadFolder(folder, (current, total) => {
-      progressSubject.next({ current, total });
-    });
-
-    // Reset the progress subject
-    progressSubject.complete();
-    progressSubject = new Subject();
-
-    return result;
-  },
-  async calculateGameStats(fullPath: string): Promise<StatsType> {
-    // For a valid SLP game, at the very least we should have valid settings
-    const game = new SlippiGame(fullPath);
-    const settings = game.getSettings();
-    if (!settings || _.isEmpty(settings.players)) {
-      throw new Error("Game settings could not be properly loaded.");
+  async loadReplayFile(fullPath: string): Promise<FileResult | null> {
+    try {
+      return await loadFile(fullPath);
+    } catch (err) {
+      return null; // File load failed, should be filtered
     }
-
-    if (settings.players.length !== 2) {
-      throw new Error("Stats can only be calculated for 1v1s.");
-    }
-
-    return game.getStats();
   },
 };
 

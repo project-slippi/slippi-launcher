@@ -1,33 +1,29 @@
 import { app } from "electron";
 import log from "electron-log";
-import { spawn, Thread, Worker } from "threads";
+import os from "os";
+import { Pool as spawnPool, spawn, Worker } from "threads";
 
-import { Methods as WorkerMethods, WorkerSpec } from "./worker";
+import { WorkerSpec } from "./worker";
 
-export const worker: Promise<Thread & WorkerMethods> = new Promise((resolve, reject) => {
-  log.debug("replayBrowser: Spawning worker");
+const workerPool = spawnPool(() => spawn<WorkerSpec>(new Worker("./worker")), os.cpus().length);
+log.debug("replayBrowser: Spawning pool");
 
-  spawn<WorkerSpec>(new Worker("./worker"))
-    .then((worker) => {
-      log.debug("replayBrowser: Spawning worker: Done");
+async function terminatePool() {
+  log.debug("replayBrowser: Terminating pool");
+  await workerPool.terminate();
+}
+app.on("quit", terminatePool);
 
-      async function terminateWorker() {
-        log.debug("replayBrowser: Terminating worker");
-        try {
-          await worker.destroyWorker();
-        } finally {
-          await Thread.terminate(worker);
-        }
-      }
+export const loadReplayFile = async (fullPath: string) => await workerPool.queue((w) => w.loadReplayFile(fullPath));
 
-      app.on("quit", terminateWorker);
-
-      // Thread.events(worker).subscribe((evt) => {
-      //   log.debug("replayBrowser: Worker event:", evt);
-      //   // TODO: Respawn on worker exit?
-      // });
-
-      resolve(worker);
-    })
-    .catch(reject);
-});
+export const loadReplays = async (files: string[], progressCallback: (count: number) => void) => {
+  let count = 0;
+  const parsed = await Promise.all(
+    files.map(async (file) => {
+      const res = await loadReplayFile(file);
+      progressCallback(count++);
+      return res;
+    }),
+  );
+  return parsed.filter((f) => f);
+};

@@ -1,9 +1,9 @@
 import { FileLoadResult } from "common/types";
 import * as fs from "fs-extra";
 import path from "path";
+import { loadReplays } from "./workerInterface";
 
 import { deleteReplays, getFolderFiles, getFolderReplays, saveReplays } from "./db";
-import { parseReplays } from "./statsComputer";
 
 const filterReplays = async (folder: string) => {
   const loadedFiles = await getFolderFiles(folder);
@@ -42,7 +42,7 @@ export async function loadFolder(
   }
   let fileErrorCount = 0;
   if (toLoad.length > 0) {
-    const parsed = await parseReplays(toLoad, (count) => callback(count, toLoad.length));
+    const parsed = await loadReplays(toLoad, (count) => callback(count, toLoad.length));
     fileErrorCount = toLoad.length - parsed.length;
     await saveReplays(parsed);
   }
