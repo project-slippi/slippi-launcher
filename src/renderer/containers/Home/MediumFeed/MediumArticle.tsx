@@ -6,62 +6,88 @@ import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
+import { NewsItem } from "common/types";
 import { shell } from "electron";
 import React from "react";
+import ReactMarkdown from "react-markdown";
 import TimeAgo from "react-timeago";
+import styled from "styled-components";
 
 export interface MediumArticleProps {
-  imageUrl: string;
-  title: string;
-  subtitle: string;
-  permalink: string;
-  publishedAt: number;
+  item: NewsItem;
 }
 
 const useStyles = makeStyles({
-  outer: {
-    marginBottom: 20,
-  },
   media: {
     height: 200,
   },
-  date: {
-    marginLeft: "auto",
-    marginRight: 5,
-    fontStyle: "italic",
-    opacity: 0.9,
-  },
 });
 
-export const MediumArticle: React.FC<MediumArticleProps> = ({ imageUrl, title, subtitle, permalink, publishedAt }) => {
+export const MediumArticle: React.FC<MediumArticleProps> = ({ item }) => {
   const classes = useStyles();
+  const { imageUrl, title, subtitle, permalink, body, publishedAt } = item;
 
   const onClick = () => shell.openExternal(permalink);
   return (
-    <div className={classes.outer}>
+    <Outer>
       <Card>
         <CardActionArea onClick={onClick}>
-          <CardMedia className={classes.media} image={imageUrl} title={title} />
+          {imageUrl && <CardMedia className={classes.media} image={imageUrl} title={title} />}
           <CardContent>
             <Typography gutterBottom variant="h5" component="h2">
               {title}
             </Typography>
-            <Typography variant="body2" color="textSecondary" component="p">
-              {subtitle}
-            </Typography>
+            {subtitle && (
+              <Typography variant="body2" color="textSecondary" component="p">
+                {subtitle}
+              </Typography>
+            )}
+            {body && (
+              <ArticleBody>
+                <ReactMarkdown skipHtml={true}>{body}</ReactMarkdown>
+              </ArticleBody>
+            )}
           </CardContent>
         </CardActionArea>
         <CardActions disableSpacing={true}>
           <Button size="small" color="primary" onClick={onClick}>
             Read more
           </Button>
-          <div className={classes.date}>
+          <DateInfo>
             <Typography variant="caption">
               Posted <TimeAgo date={new Date(publishedAt)} />
             </Typography>
-          </div>
+          </DateInfo>
         </CardActions>
       </Card>
-    </div>
+    </Outer>
   );
 };
+
+const ArticleBody = styled.div`
+  font-size: 90%;
+  color: #ccc;
+  max-width: 700px;
+
+  img {
+    display: list-item;
+  }
+
+  li {
+    margin-bottom: 5px;
+
+    ul {
+      margin-top: 5px;
+    }
+  }
+`;
+
+const Outer = styled.div`
+  margin-bottom: 20px;
+`;
+
+const DateInfo = styled.div`
+  margin-left: auto;
+  margin-right: 5px;
+  opacity: 0.9;
+`;

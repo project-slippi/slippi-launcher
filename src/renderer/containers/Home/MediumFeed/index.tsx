@@ -1,4 +1,5 @@
 import Typography from "@material-ui/core/Typography";
+import { NewsItem } from "common/types";
 import { ipcRenderer as ipc } from "electron-better-ipc";
 import React from "react";
 import { useQuery } from "react-query";
@@ -12,24 +13,19 @@ const Outer = styled.div`
 `;
 
 export const MediumFeed: React.FC = () => {
-  const mediumFeedQuery = useQuery(["medium-articles"], () => ipc.callMain<never, any>("fetchMediumFeed"));
+  const mediumFeedQuery = useQuery(["news-articles"], () => ipc.callMain<never, NewsItem[]>("fetchNewsFeed"));
   if (mediumFeedQuery.isLoading) {
     return <div>Loading...</div>;
   }
+
+  const posts = mediumFeedQuery.data ?? [];
   return (
     <Outer>
       <Typography variant="h4" style={{ marginBottom: 20 }}>
         Latest News
       </Typography>
-      {mediumFeedQuery.data.map((post: any) => (
-        <MediumArticle
-          key={post.id}
-          imageUrl={`https://cdn-images-1.medium.com/${post.virtuals.previewImage.imageId}`}
-          title={post.title}
-          subtitle={post.virtuals.subtitle}
-          publishedAt={post.firstPublishedAt}
-          permalink={`https://medium.com/project-slippi/${post.uniqueSlug}`}
-        />
+      {posts.map((post) => (
+        <MediumArticle key={post.id} item={post} />
       ))}
     </Outer>
   );

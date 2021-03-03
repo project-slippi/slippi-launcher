@@ -1,11 +1,11 @@
 import { DolphinLaunchType, DolphinUseType } from "common/dolphin";
 import { ipcMain, nativeImage } from "electron";
 import { ipcMain as ipc } from "electron-better-ipc";
-import mediumJSONFeed from "medium-json-feed";
 import path from "path";
 
 import { DolphinManager, ReplayCommunication } from "./dolphinManager";
 import { assertDolphinInstallations } from "./downloadDolphin";
+import { fetchNewsFeed } from "./newsFeed";
 import { worker as replayBrowserWorker } from "./replayBrowser/workerInterface";
 
 export function setupListeners() {
@@ -60,14 +60,8 @@ export function setupListeners() {
     return result;
   });
 
-  ipc.answerRenderer("fetchMediumFeed", async () => {
-    console.log("received a request to get the medium feed");
-    const response = await mediumJSONFeed("project-slippi");
-    if (!response || response.status !== 200) {
-      throw new Error("Error fetching medium feed");
-    }
-    const result = response.response;
-    console.log("got medium info: ", result);
+  ipc.answerRenderer("fetchNewsFeed", async () => {
+    const result = await fetchNewsFeed();
     return result;
   });
 }
