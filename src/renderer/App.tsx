@@ -7,6 +7,7 @@ import log from "electron-log";
 import firebase from "firebase";
 import React from "react";
 import { hot } from "react-hot-loader/root";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { HashRouter as Router, Redirect, Route, Switch } from "react-router-dom";
 
 import { useApp } from "@/store/app";
@@ -18,6 +19,20 @@ import { LandingView } from "./views/LandingView";
 import { LoadingView } from "./views/LoadingView";
 import { NotFoundView } from "./views/NotFoundView";
 import { SettingsView } from "./views/SettingsView";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // Once we've fetched a query never refetch
+      staleTime: Infinity,
+      refetchIntervalInBackground: false,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      refetchInterval: false,
+    },
+  },
+});
 
 const App: React.FC = () => {
   const initialized = useApp((state) => state.initialized);
@@ -75,7 +90,9 @@ const AppWithProviders: React.FC = () => {
   return (
     <StylesProvider injectFirst>
       <MuiThemeProvider theme={slippiTheme}>
-        <App />
+        <QueryClientProvider client={queryClient}>
+          <App />
+        </QueryClientProvider>
       </MuiThemeProvider>
     </StylesProvider>
   );

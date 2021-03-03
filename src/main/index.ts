@@ -1,5 +1,4 @@
-import { colors } from "common/colors";
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, shell } from "electron";
 import contextMenu from "electron-context-menu";
 import * as path from "path";
 import { format as formatUrl } from "url";
@@ -16,7 +15,7 @@ function createMainWindow() {
     show: false,
     width: 1100,
     height: 728,
-    backgroundColor: colors.offGray,
+    backgroundColor: "#23252C",
     webPreferences: {
       nodeIntegration: true,
       nodeIntegrationInWorker: true,
@@ -53,6 +52,12 @@ function createMainWindow() {
     setImmediate(() => {
       window.focus();
     });
+  });
+
+  // Automatically open new-tab/new-window URLs in their default browser
+  window.webContents.on("new-window", (event: Event, url: string) => {
+    event.preventDefault();
+    shell.openExternal(url);
   });
 
   window.once("ready-to-show", () => {

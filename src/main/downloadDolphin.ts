@@ -2,12 +2,13 @@ import AdmZip from "adm-zip";
 import { ChildProcessWithoutNullStreams, spawn, spawnSync } from "child_process";
 import { DolphinLaunchType, findDolphinExecutable } from "common/dolphin";
 import { fileExists } from "common/utils";
-import { fetch } from "cross-fetch";
 import { app, BrowserWindow } from "electron";
 import { download } from "electron-dl";
 import * as fs from "fs-extra";
 import path from "path";
 import { lt } from "semver";
+
+import { getLatestRelease } from "./github";
 
 function sendToRenderer(message: string, channel = "downloadDolphinLog"): void {
   const window = BrowserWindow.getFocusedWindow();
@@ -82,13 +83,6 @@ async function getLatestReleaseData(type: DolphinLaunchType): Promise<any> {
     repo += "-Playback";
   }
   return getLatestRelease(owner, repo);
-}
-
-async function getLatestRelease(owner: string, repo: string): Promise<any> {
-  const url = `https://api.github.com/repos/${owner}/${repo}/releases/latest`;
-  const res = await fetch(url);
-  const data = await res.json();
-  return data;
 }
 
 function matchesPlatform(releaseName: string): boolean {

@@ -5,6 +5,7 @@ import path from "path";
 
 import { DolphinManager, ReplayCommunication } from "./dolphinManager";
 import { assertDolphinInstallations } from "./downloadDolphin";
+import { fetchNewsFeed } from "./newsFeed";
 import { worker as replayBrowserWorker } from "./replayBrowser/workerInterface";
 
 export function setupListeners() {
@@ -56,6 +57,11 @@ export function setupListeners() {
   ipc.answerRenderer("calculateGameStats", async (filePath: string) => {
     const w = await replayBrowserWorker;
     const result = await w.calculateGameStats(filePath);
+    return result;
+  });
+
+  ipc.answerRenderer("fetchNewsFeed", async () => {
+    const result = await fetchNewsFeed();
     return result;
   });
 }

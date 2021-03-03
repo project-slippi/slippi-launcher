@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme: Theme) =>
       width: 400,
       flex: 1,
       marginRight: 10,
-      backgroundColor: theme.palette.background.default,
+      backgroundColor: theme.palette.background.paper,
     },
     input: {
       marginLeft: theme.spacing(2),
