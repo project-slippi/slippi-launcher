@@ -94,13 +94,13 @@ export const getFolderReplays = (folder: string) => {
 };
 
 export const getFullReplay = (file: string) => {
-  return new Promise((resolve, reject) =>
+  return new Promise<FileResult>((resolve, reject) =>
     db.all("SELECT * from replays WHERE fullPath = ?", [file], (err, docs) => {
       if (err) {
         reject(err);
       } else {
         const files = docs.map(parseRow);
-        resolve(docs ? files[0] : []);
+        resolve(files[0]);
       }
     }),
   );

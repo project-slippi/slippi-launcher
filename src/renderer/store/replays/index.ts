@@ -1,6 +1,5 @@
 import { StatsType } from "@slippi/slippi-js";
-import { deleteFolderReplays, loadReplayFile, loadReplays } from "common/replayBrowser/ReplayClient";
-import { FileResult, FolderResult } from "common/types";
+import { FileLoadResult, FileResult, FolderResult } from "common/types";
 import { ipcRenderer, shell } from "electron";
 import { ipcRenderer as ipc } from "electron-better-ipc";
 import { produce } from "immer";
@@ -152,10 +151,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
 
     set({ currentFolder: folderToLoad, loading: true, progress: null });
     try {
-      console.log("will load");
-      const result = await loadReplays(folderToLoad, (count, total) =>
-        set({ progress: { current: count, total: total } }),
-      );
+      const result = await loadReplayFolder(folderToLoad);
       set({
         scrollRowItem: 0,
         files: result.files,
@@ -213,7 +209,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     try {
       const folders = getFolderList(newFolders);
       console.log("deleting where folder not in ", folders);
-      await deleteFolderReplays(folders);
+      await pruneFolders(folders);
     } catch (err) {
       console.log(err);
     }
@@ -226,15 +222,21 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   },
 }));
 
-// const loadReplayFolder = async (folder: string): Promise<FileLoadResult> => {
-//   const res = await ipc.callMain<string, FileLoadResult>("loadReplayFolder", folder);
-//   return res;
+const loadReplayFolder = async (folder: string): Promise<FileLoadResult> => {
+  return await ipc.callMain<string, FileLoadResult>("loadReplayFolder", folder);
+};
+
+const loadReplayFile = async (file: string): Promise<FileResult> => {
+  return await ipc.callMain<string, FileResult>("loadReplayFile", file);
+};
+
+// const loadPlayerReplays = async (player: string): Promise<StatsType> => {
+//   return await ipc.callMain<string, StatsType>("loadPlayerReplays", player);
 // };
 
-// const calculateGameStats = async (file: string): Promise<StatsType> => {
-//   const res = await ipc.callMain<string, StatsType>("calculateGameStats", file);
-//   return res;
-// };
+const pruneFolders = async (existingFolders: string[]): Promise<void> => {
+  return await ipc.callMain<string[], void>("pruneFolders", existingFolders);
+};
 
 // Listen to the replay folder progress event
 ipc.on("loadReplayFolderProgress", (_, progress: { current: number; total: number }) => {

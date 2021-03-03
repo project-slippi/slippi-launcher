@@ -5,6 +5,8 @@ import path from "path";
 
 import { DolphinManager, ReplayCommunication } from "./dolphinManager";
 import { assertDolphinInstallations } from "./downloadDolphin";
+import { getFullReplay, getPlayerReplays, pruneFolders } from "./replayBrowser/db";
+import { loadFolder } from "./replayBrowser/loadFolder";
 
 export function setupListeners() {
   const dolphinManager = DolphinManager.getInstance();
@@ -43,18 +45,21 @@ export function setupListeners() {
     dolphinManager.launchDolphin(DolphinUseType.CONFIG, -1, undefined, dolphinType);
   });
 
-  ipc.answerRenderer("loadReplayFolder", async (_: string) => {
-    // const w = await replayBrowserWorker;
-    // w.getProgressObservable().subscribe((progress) => {
-    //   ipc.sendToRenderers<{ current: number; total: number }>("loadReplayFolderProgress", progress);
-    // });
-    // const result = await w.loadReplayFolder(folderPath);
-    // return result;
+  ipc.answerRenderer("loadReplayFolder", async (folderPath: string) => {
+    return await loadFolder(folderPath, (current, total) =>
+      ipc.sendToRenderers<{ current: number; total: number }>("loadReplayFolderProgress", { current, total }),
+    );
   });
 
-  ipc.answerRenderer("calculateGameStats", async (_: string) => {
-    // const w = await replayBrowserWorker;
-    // const result = await w.calculateGameStats(filePath);
-    // return result;
+  ipc.answerRenderer("loadReplayFile", async (file: string) => {
+    return await getFullReplay(file);
+  });
+
+  ipc.answerRenderer("loadPlayerReplays", async (player: string) => {
+    return await getPlayerReplays(player);
+  });
+
+  ipc.answerRenderer("pruneFolders", async (existingFolders: string[]) => {
+    return await pruneFolders(existingFolders);
   });
 }

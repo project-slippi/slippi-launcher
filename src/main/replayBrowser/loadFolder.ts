@@ -1,9 +1,9 @@
 import { FileLoadResult } from "common/types";
 import * as fs from "fs-extra";
 import path from "path";
-import { loadReplays } from "./workerInterface";
 
 import { deleteReplays, getFolderFiles, getFolderReplays, saveReplays } from "./db";
+import { loadReplays } from "./workerInterface";
 
 const filterReplays = async (folder: string) => {
   const loadedFiles = await getFolderFiles(folder);
@@ -15,8 +15,6 @@ const filterReplays = async (folder: string) => {
   const toLoad = slpFiles.filter((file) => !loadedFiles.includes(file));
   const toDelete = loadedFiles.filter((file) => !slpFiles.includes(file));
 
-  console.log({ loadedFiles });
-  console.log({ total: slpFiles.length, toLoad, toDelete });
   return { total: slpFiles.length, toLoad, toDelete };
 };
 
@@ -36,7 +34,6 @@ export async function loadFolder(
   console.log(`found ${total} files in ${folder}, ${total} are new. ${toDelete.length} will be removed from the DB`);
 
   if (toDelete.length > 0) {
-    console.log(toDelete);
     await deleteReplays(toDelete);
     console.log(`deleted ${toDelete.length} replays from the db`);
   }
