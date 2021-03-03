@@ -48,7 +48,7 @@ const addOverrides = (theme: Theme) => {
       },
       MuiSnackbarContent: {
         root: {
-          backgroundColor: theme.palette.background.default,
+          backgroundColor: theme.palette.background.paper,
           color: "inherit",
         },
       },
