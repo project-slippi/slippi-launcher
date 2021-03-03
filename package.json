@@ -43,6 +43,7 @@
     "react-window": "^1.8.6",
     "semver": "^7.3.4",
     "source-map-support": "^0.5.16",
+    "sqlite": "^4.0.19",
     "sqlite3": "^5.0.2",
     "styled-components": "^5.2.1",
     "threads": "^1.6.3",
