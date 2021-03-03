@@ -17,6 +17,9 @@ export const Home: React.FC = () => {
     <Outer>
       <DualPane
         id="home-page"
+        leftStyle={{
+          display: "inline-block",
+        }}
         leftSide={<NewsFeed />}
         rightSide={<SideBar />}
         rightStyle={{ backgroundColor: "#222222" }}
