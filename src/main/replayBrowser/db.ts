@@ -17,13 +17,13 @@ let db: Database | undefined = undefined;
     CREATE TABLE IF NOT EXISTS replays (
        fullPath      TEXT PRIMARY KEY,
        name          TEXT,
-       folder        TEXT,
-       startTime     TEXT)
+       folder        TEXT)
   `);
   await db.exec("CREATE INDEX IF NOT EXISTS folder_idx ON replays(folder)");
   await db.exec(`
     CREATE TABLE IF NOT EXISTS replay_data (
        fullPath      TEXT PRIMARY KEY,
+       startTime     TEXT,
        lastFrame     INTEGER,
        settings      JSON,
        metadata      JSON,
@@ -50,8 +50,7 @@ export const getFolderFiles = async (folder: string) => {
     `
       SELECT fullPath
       FROM replays 
-      WHERE folder = ?
-      ORDER by startTime DESC`,
+      WHERE folder = ?`,
     [folder],
   );
   return files ? files.map((f) => f.fullPath) : [];
@@ -114,23 +113,24 @@ const inTransaction = async (cb: () => Promise<void>) => {
 
 const saveReplayBatch = async (replays: FileResult[]) => {
   await inTransaction(async () => {
-    const placeholdersMeta = replays.map(() => "(?, ?, ? ,?)").join(",");
+    const placeholdersMeta = replays.map(() => "(?, ?, ?)").join(",");
     await db!.run(
       `
       INSERT INTO replays(
-      fullPath, name, folder, startTime)
+      fullPath, name, folder)
       VALUES ` + placeholdersMeta,
-      replays.flatMap((replay: FileResult) => [replay.fullPath, replay.name, replay.folder, replay.startTime]),
+      replays.flatMap((replay: FileResult) => [replay.fullPath, replay.name, replay.folder]),
     );
-    const placeholdersData = replays.map(() => "(?, ?, ?, ?, ?)").join(",");
+    const placeholdersData = replays.map(() => "(?, ?, ?, ?, ?, ?)").join(",");
     await db!.run(
       `
       INSERT INTO replay_data(
-      fullPath, lastFrame, 
+      fullPath, startTime, lastFrame, 
       settings, metadata, stats)
       VALUES ` + placeholdersData,
       replays.flatMap((replay: FileResult) => [
         replay.fullPath,
+        replay.startTime,
         replay.lastFrame,
         JSON.stringify(replay.settings),
         JSON.stringify(replay.metadata),
