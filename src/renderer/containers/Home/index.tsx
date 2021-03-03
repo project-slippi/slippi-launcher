@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 import { DualPane } from "@/components/DualPane";
 
-import { MediumFeed } from "./MediumFeed";
+import { NewsFeed } from "./NewsFeed";
 import { SideBar } from "./SideBar";
 
 const Outer = styled.div`
@@ -17,7 +17,7 @@ export const Home: React.FC = () => {
     <Outer>
       <DualPane
         id="home-page"
-        leftSide={<MediumFeed />}
+        leftSide={<NewsFeed />}
         rightSide={<SideBar />}
         rightStyle={{ backgroundColor: "#222222" }}
         style={{ gridTemplateColumns: "auto 300px" }}

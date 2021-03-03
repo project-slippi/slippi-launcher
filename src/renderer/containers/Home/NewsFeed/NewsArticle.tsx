@@ -13,7 +13,7 @@ import ReactMarkdown from "react-markdown";
 import TimeAgo from "react-timeago";
 import styled from "styled-components";
 
-export interface MediumArticleProps {
+export interface NewsArticleProps {
   item: NewsItem;
 }
 
@@ -23,7 +23,7 @@ const useStyles = makeStyles({
   },
 });
 
-export const MediumArticle: React.FC<MediumArticleProps> = ({ item }) => {
+export const NewsArticle: React.FC<NewsArticleProps> = ({ item }) => {
   const classes = useStyles();
   const { imageUrl, title, subtitle, permalink, body, publishedAt } = item;
 
