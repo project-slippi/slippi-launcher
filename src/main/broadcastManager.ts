@@ -95,7 +95,7 @@ export class BroadcastManager {
     };
 
     if (SLIPPI_WS_SERVER) {
-      const socket = new WebSocketClient({ disableNagleAlgorithm: true });
+      const socket = new WebSocketClient({ disableNagleAlgorithm: true } as any);
 
       socket.on("connectFailed", (error: Error) => {
         log.error("[Broadcast] WS failed to connect\n", error);
