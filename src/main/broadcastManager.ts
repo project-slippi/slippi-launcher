@@ -59,7 +59,7 @@ export class BroadcastManager {
         }
 
         this._handleGameData();
-        this._stop();
+        this.stop();
 
         this.incomingEvents = [];
         this.backupEvents = [];
@@ -296,7 +296,7 @@ export class BroadcastManager {
     }
   }
 
-  private _stop() {
+  public stop() {
     // TODO: Handle cancelling the retry case
 
     log.info("[Broadcast] Service stop message received");
