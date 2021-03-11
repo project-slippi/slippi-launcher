@@ -21,7 +21,7 @@ jobs:
             playback_image: playback-Win.zip
             playback_dolphin_path: app/dolphin-dev/windows/
           - os: ubuntu-latest
-            playback_image: Slippi_Playback-x86_64.AppImage
+            playback_image: playback-Linux.zip
             playback_dolphin_path: app/dolphin-dev/linux/
           - os: macOS-latest
             playback_image: playback-Mac.zip
@@ -79,7 +79,6 @@ jobs:
         run: |
           wget https://github.com/project-slippi/Ishiiruka-Playback/releases/latest/download/${{ matrix.playback_image }} -P ${{ matrix.playback_dolphin_path }}
       - name: Unzip
-        if: matrix.os == 'macOS-latest' || matrix.os == 'windows-latest'
         shell: bash
         working-directory: ${{ matrix.playback_dolphin_path }}
         run: |
