@@ -225,7 +225,7 @@ export default class DolphinManager extends EventEmitter {
       break;
     case "win32": // windows
       dolphinPath = isDev ? "./app/dolphin-dev/windows" : dolphinPath;
-      executablePath = path.join(dolphinPath, "Dolphin.exe");
+      executablePath = path.join(dolphinPath, "Slippi Dolphin.exe");
       break;
     case "linux": // linux
       dolphinPath = isDev ? "./app/dolphin-dev/linux" : dolphinPath;
