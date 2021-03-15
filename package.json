@@ -57,6 +57,7 @@
   "devDependencies": {
     "@svgr/webpack": "^5.5.0",
     "@types/adm-zip": "^0.4.33",
+    "@types/better-sqlite3": "^5.4.1",
     "@types/lodash": "^4.14.165",
     "@types/moment": "^2.13.0",
     "@types/react": "^17.0.0",

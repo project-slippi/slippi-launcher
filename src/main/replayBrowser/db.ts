@@ -1,7 +1,8 @@
-import Database, { Database as Db } from "better-sqlite3";
+// eslint-disable-next-line import/no-named-as-default
+import Database from "better-sqlite3";
 import { FileResult } from "common/types";
 
-let db: Db;
+let db: Database.Database;
 
 export const connect = (path: string) => {
   db = new Database(path);
@@ -47,7 +48,7 @@ export const getFolderFiles = async (folder: string) => {
       WHERE folder = ?`,
     )
     .all(folder);
-  return files ? files.map((f) => f.fullPath) : [];
+  return files ? files.map((f: any) => f.fullPath) : [];
 };
 
 export const getFolderReplays = async (folder: string) => {
