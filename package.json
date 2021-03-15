@@ -14,7 +14,7 @@
     "package:dir": "yarn run package --dir -c.compression=store -c.mac.identity=null",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "lint:fix": "yarn run lint --fix",
-    "postinstall": "patch-package && install-app-deps"
+    "postinstall": "electron-builder install-app-deps && patch-package"
   },
   "dependencies": {
     "@apollo/client": "^3.3.4",
@@ -87,7 +87,6 @@
     "husky": "^4.3.0",
     "node-sass": "^5.0.0",
     "patch-package": "^6.2.2",
-    "postinstall-postinstall": "^2.1.0",
     "prettier": "^2.2.1",
     "pretty-quick": "^3.1.0",
     "raw-loader": "^4.0.2",
