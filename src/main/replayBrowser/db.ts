@@ -1,16 +1,18 @@
-import Database from "better-sqlite3";
+import Database, { Database as Db } from "better-sqlite3";
 import { FileResult } from "common/types";
 
-const db = new Database(path.join(app.getPath("userData"), "sqlippi.db"), { verbose: console.log });
+let db: Db;
 
-db.exec(`
+export const connect = (path: string) => {
+  db = new Database(path);
+  db.exec(`
   CREATE TABLE IF NOT EXISTS replays (
      fullPath      TEXT PRIMARY KEY,
      name          TEXT,
      folder        TEXT)
   `);
-db.exec("CREATE INDEX IF NOT EXISTS folder_idx ON replays(folder)");
-db.exec(`
+  db.exec("CREATE INDEX IF NOT EXISTS folder_idx ON replays(folder)");
+  db.exec(`
   CREATE TABLE IF NOT EXISTS replay_data (
      fullPath      TEXT PRIMARY KEY,
      startTime     TEXT,
@@ -20,6 +22,7 @@ db.exec(`
      stats         JSON,
      FOREIGN KEY (fullPath) REFERENCES replays(fullPath) ON DELETE CASCADE);
   `);
+};
 
 const parseRow = (row: any) => {
   return {
@@ -81,43 +84,26 @@ export const getPlayerReplays = async (_: string) => {
 };
 
 export const saveReplays = async (replays: FileResult[]) => {
-  const insertMany = db.transaction((insert, docs) => {
-    for (const doc of docs) {
-      insert.run(doc);
-    }
-  });
+  db.transaction(() => {
+    let insert = db.prepare(`INSERT INTO replays(fullPath, name, folder) VALUES (?, ?, ?)`);
+    const docs1 = replays.map((replay: FileResult) => [replay.fullPath, replay.name, replay.folder]);
+    docs1.forEach((d) => insert.run(...d));
 
-  const placeholdersMeta = replays.map(() => "(?, ?, ?)").join(",");
-  let insert = db.prepare(
-    `
-    INSERT INTO replays(
-      fullPath, name, folder)
-      VALUES ` + placeholdersMeta,
-  );
-  insertMany(
-    insert,
-    replays.flatMap((replay: FileResult) => [replay.fullPath, replay.name, replay.folder]),
-  );
-
-  const placeholdersData = replays.map(() => "(?, ?, ?, ?, ?, ?)").join(",");
-  insert = db.prepare(
-    `
-    INSERT INTO replay_data(
-      fullPath, startTime, lastFrame, 
-      settings, metadata, stats)
-      VALUES ` + placeholdersData,
-  );
-  insertMany(
-    insert,
-    replays.flatMap((replay: FileResult) => [
+    insert = db.prepare(`
+      INSERT INTO replay_data(
+        fullPath, startTime, lastFrame, 
+        settings, metadata, stats)
+        VALUES (?, ?, ?, ?, ?, ?)`);
+    const docs2 = replays.map((replay: FileResult) => [
       replay.fullPath,
       replay.startTime,
       replay.lastFrame,
       JSON.stringify(replay.settings),
       JSON.stringify(replay.metadata),
       JSON.stringify(replay.stats),
-    ]),
-  );
+    ]);
+    docs2.forEach((d) => insert.run(...d));
+  })();
 };
 
 export const deleteReplays = async (files: string[]) => {

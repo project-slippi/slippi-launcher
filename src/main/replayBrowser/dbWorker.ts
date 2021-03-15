@@ -7,9 +7,18 @@ import { FileResult } from "common/types";
 import { ModuleMethods } from "threads/dist/types/master";
 import { expose } from "threads/worker";
 
-import { deleteReplays, getFolderFiles, getFolderReplays, getFullReplay, pruneFolders, saveReplays } from "./db";
+import {
+  connect,
+  deleteReplays,
+  getFolderFiles,
+  getFolderReplays,
+  getFullReplay,
+  pruneFolders,
+  saveReplays,
+} from "./db";
 
 export interface Methods {
+  connect(path: string): void;
   getFolderFiles(folder: string): Promise<string[]>;
   getFolderReplays(folder: string): Promise<FileResult[]>;
   getFullReplay(file: string): Promise<FileResult | null>;
@@ -22,6 +31,9 @@ export interface Methods {
 export type WorkerSpec = ModuleMethods & Methods;
 
 const methods: WorkerSpec = {
+  connect(path: string) {
+    connect(path);
+  },
   async getFolderFiles(folder: string): Promise<string[]> {
     return getFolderFiles(folder);
   },
