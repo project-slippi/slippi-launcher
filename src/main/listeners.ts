@@ -5,6 +5,7 @@ import path from "path";
 
 import { DolphinManager, ReplayCommunication } from "./dolphinManager";
 import { assertDolphinInstallations } from "./downloadDolphin";
+import { fetchNewsFeed } from "./newsFeed";
 import { worker } from "./replayBrowser/dbWorkerInterface";
 import { loadFolder } from "./replayBrowser/loadFolder";
 
@@ -64,5 +65,10 @@ export function setupListeners() {
   ipc.answerRenderer("pruneFolders", async (existingFolders: string[]) => {
     const w = await worker;
     return await w.pruneFolders(existingFolders);
+  });
+
+  ipc.answerRenderer("fetchNewsFeed", async () => {
+    const result = await fetchNewsFeed();
+    return result;
   });
 }

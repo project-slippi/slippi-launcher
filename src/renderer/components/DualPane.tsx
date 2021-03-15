@@ -2,15 +2,7 @@ import { debounce } from "lodash";
 import React from "react";
 import styled from "styled-components";
 
-interface OuterProps {
-  panelWidth: number;
-}
-
-const Outer = styled.div.attrs<OuterProps>((props) => ({
-  style: {
-    gridTemplateColumns: `${props.panelWidth}px auto`,
-  },
-}))<OuterProps>`
+const Outer = styled.div`
   position: relative;
   display: grid;
   flex: 1;
@@ -54,6 +46,8 @@ const saveWidth = debounce((paneId: string, width: number) => {
 
 export const DualPane: React.FC<{
   id: string;
+  style?: React.CSSProperties;
+  className?: string;
   resizable?: boolean;
   leftSide: React.ReactNode;
   rightSide: React.ReactNode;
@@ -74,6 +68,8 @@ export const DualPane: React.FC<{
   maxWidth,
   width = 250,
   resizeHandleWidth = 8,
+  className,
+  style,
 }) => {
   const [panelWidth, setPanelWidth] = React.useState<number>(restoreWidth(id, width));
 
@@ -98,8 +94,16 @@ export const DualPane: React.FC<{
     window.addEventListener("mouseup", onMouseUp);
   };
 
+  const gridTemplateColumns = `${resizable ? panelWidth : width}px auto`;
+
   return (
-    <Outer panelWidth={resizable ? panelWidth : width}>
+    <Outer
+      className={className}
+      style={{
+        gridTemplateColumns,
+        ...style,
+      }}
+    >
       <Column style={leftStyle}>{leftSide}</Column>
       <Column style={rightStyle}>{rightSide}</Column>
       {resizable && (

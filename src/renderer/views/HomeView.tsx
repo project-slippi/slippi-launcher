@@ -5,20 +5,14 @@ import styled from "styled-components";
 
 import { Broadcast } from "@/containers/Broadcast";
 import { Header } from "@/containers/Header";
+import { Home } from "@/containers/Home";
 import { ReplayBrowser } from "@/containers/ReplayBrowser";
 
 const MenuButton = styled.div<{
   selected?: boolean;
 }>`
   padding: 5px 10px;
-  ${(props) =>
-    props.selected
-      ? `
-text-decoration: underline;
-  `
-      : `
-  opacity: 0.5;
-  `}
+  ${(props) => (props.selected ? "text-decoration: underline;" : "opacity: 0.5;")}
 `;
 
 export const HomeView: React.FC = () => {
@@ -56,7 +50,7 @@ export const HomeView: React.FC = () => {
       <div style={{ flex: 1, overflow: "auto", display: "flex" }}>
         <Switch>
           <Route path={`${path}/home`}>
-            <h1>Home</h1>
+            <Home />
           </Route>
           <Route path={`${path}/replays`}>
             <ReplayBrowser />
