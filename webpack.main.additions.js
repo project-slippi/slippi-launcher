@@ -23,10 +23,7 @@ module.exports = function (context) {
     // Add threads worker support
     new ThreadsPlugin({
       target: "electron-node-worker",
-      plugins: [
-        new webpack.ExternalsPlugin("commonjs", ["sqlite3"]),
-        new webpack.ExternalsPlugin("commonjs", ["sqlite"]),
-      ],
+      plugins: [new webpack.ExternalsPlugin("commonjs", ["better-sqlite3"])],
     }),
     // Expose dotenv variables
     new Dotenv(),
