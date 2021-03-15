@@ -1,36 +1,25 @@
+import Database from "better-sqlite3";
 import { FileResult } from "common/types";
-import { app } from "electron";
-import path from "path";
-import { Database, open } from "sqlite";
-import { Database as Sql3Db } from "sqlite3";
 
-let db: Database | undefined = undefined;
+const db = new Database("sqlippi.db", { verbose: console.log });
 
-(async () => {
-  // open the database
-  db = await open({
-    filename: path.join(app.getPath("userData"), "sqlippi.db"),
-    driver: Sql3Db,
-  });
-  console.log("Connected to the replay database.");
-  await db.exec(`
-    CREATE TABLE IF NOT EXISTS replays (
-       fullPath      TEXT PRIMARY KEY,
-       name          TEXT,
-       folder        TEXT)
+db.exec(`
+  CREATE TABLE IF NOT EXISTS replays (
+     fullPath      TEXT PRIMARY KEY,
+     name          TEXT,
+     folder        TEXT)
   `);
-  await db.exec("CREATE INDEX IF NOT EXISTS folder_idx ON replays(folder)");
-  await db.exec(`
-    CREATE TABLE IF NOT EXISTS replay_data (
-       fullPath      TEXT PRIMARY KEY,
-       startTime     TEXT,
-       lastFrame     INTEGER,
-       settings      JSON,
-       metadata      JSON,
-       stats         JSON,
-       FOREIGN KEY (fullPath) REFERENCES replays(fullPath) ON DELETE CASCADE);
+db.exec("CREATE INDEX IF NOT EXISTS folder_idx ON replays(folder)");
+db.exec(`
+  CREATE TABLE IF NOT EXISTS replay_data (
+     fullPath      TEXT PRIMARY KEY,
+     startTime     TEXT,
+     lastFrame     INTEGER,
+     settings      JSON,
+     metadata      JSON,
+     stats         JSON,
+     FOREIGN KEY (fullPath) REFERENCES replays(fullPath) ON DELETE CASCADE);
   `);
-})();
 
 const parseRow = (row: any) => {
   return {
@@ -46,33 +35,35 @@ const parseRow = (row: any) => {
 };
 
 export const getFolderFiles = async (folder: string) => {
-  const files = await db!.all(
-    `
+  const files = db
+    .prepare(
+      `
       SELECT fullPath
       FROM replays 
       WHERE folder = ?`,
-    [folder],
-  );
+    )
+    .all(folder);
   return files ? files.map((f) => f.fullPath) : [];
 };
 
 export const getFolderReplays = async (folder: string) => {
-  const docs = await db!.all(
-    `
+  const docs = db
+    .prepare(
+      `
     SELECT fullPath, name, folder, startTime, lastFrame, 
     settings, metadata 
     FROM replays 
     JOIN replay_data USING (fullPath)
     WHERE folder = ?
     ORDER by startTime DESC`,
-    [folder],
-  );
+    )
+    .all(folder);
   const files = docs.map(parseRow);
   return docs ? files : [];
 };
 
 export const getFullReplay = async (file: string) => {
-  const doc = await db!.get("SELECT * from replays JOIN replay_data USING (fullPath) WHERE fullPath = ?", [file]);
+  const doc = db.prepare("SELECT * from replays JOIN replay_data USING (fullPath) WHERE fullPath = ?").get(file);
   return parseRow(doc);
 };
 
@@ -90,62 +81,49 @@ export const getPlayerReplays = async (_: string) => {
 };
 
 export const saveReplays = async (replays: FileResult[]) => {
-  const batchSize = 100;
-  const batches = Math.floor(replays.length / batchSize);
-  for (let i = 0; i <= batches; i++) {
-    const start = i * batchSize;
-    const end = Math.min(i * batchSize + batchSize, replays.length);
-    const slice = replays.slice(start, end);
-    await saveReplayBatch(slice);
-  }
-};
+  let insertMany = db.transaction((insert, docs) => {
+    for (const doc of docs) insert.run(doc);
+  });
 
-const inTransaction = async (cb: () => Promise<void>) => {
-  db!.exec("BEGIN");
-  try {
-    await cb();
-    db!.exec("COMMIT");
-  } catch (err) {
-    db!.exec("ROLLBACK");
-    throw err;
-  }
-};
-
-const saveReplayBatch = async (replays: FileResult[]) => {
-  await inTransaction(async () => {
-    const placeholdersMeta = replays.map(() => "(?, ?, ?)").join(",");
-    await db!.run(
-      `
-      INSERT INTO replays(
+  const placeholdersMeta = replays.map(() => "(?, ?, ?)").join(",");
+  let insert = db.prepare(
+    `
+    INSERT INTO replays(
       fullPath, name, folder)
       VALUES ` + placeholdersMeta,
-      replays.flatMap((replay: FileResult) => [replay.fullPath, replay.name, replay.folder]),
-    );
-    const placeholdersData = replays.map(() => "(?, ?, ?, ?, ?, ?)").join(",");
-    await db!.run(
-      `
-      INSERT INTO replay_data(
+  );
+  insertMany(
+    insert,
+    replays.flatMap((replay: FileResult) => [replay.fullPath, replay.name, replay.folder]),
+  );
+
+  const placeholdersData = replays.map(() => "(?, ?, ?, ?, ?, ?)").join(",");
+  insert = db.prepare(
+    `
+    INSERT INTO replay_data(
       fullPath, startTime, lastFrame, 
       settings, metadata, stats)
       VALUES ` + placeholdersData,
-      replays.flatMap((replay: FileResult) => [
-        replay.fullPath,
-        replay.startTime,
-        replay.lastFrame,
-        JSON.stringify(replay.settings),
-        JSON.stringify(replay.metadata),
-        JSON.stringify(replay.stats),
-      ]),
-    );
-  });
+  );
+  insertMany(
+    insert,
+    replays.flatMap((replay: FileResult) => [
+      replay.fullPath,
+      replay.startTime,
+      replay.lastFrame,
+      JSON.stringify(replay.settings),
+      JSON.stringify(replay.metadata),
+      JSON.stringify(replay.stats),
+    ]),
+  );
 };
 
 export const deleteReplays = async (files: string[]) => {
   const qfmt = files.map(() => "?").join(",");
-  await db!.run(`DELETE FROM replays WHERE fullPath IN (${qfmt})`, files);
+  db.prepare(`DELETE FROM replays WHERE fullPath IN (${qfmt})`).run(files);
 };
 
 export const pruneFolders = async (existingFolders: string[]) => {
   const qfmt = existingFolders.map(() => "?").join(", ");
-  await db!.run(`DELETE FROM replays WHERE folder NOT IN (${qfmt})`, existingFolders);
+  db.prepare(`DELETE FROM replays WHERE folder NOT IN (${qfmt})`).run(existingFolders);
 };
