@@ -1,5 +1,6 @@
 const ThreadsPlugin = require("threads-plugin");
 const Dotenv = require("dotenv-webpack");
+const webpack = require("webpack");
 
 module.exports = function (context) {
   // Enforce chunkhash when building output files.
@@ -20,7 +21,10 @@ module.exports = function (context) {
 
   context.plugins.unshift(
     // Add threads worker support
-    new ThreadsPlugin({ target: "electron-node-worker" }),
+    new ThreadsPlugin({
+      target: "electron-node-worker",
+      plugins: [new webpack.ExternalsPlugin("commonjs", ["better-sqlite3"])],
+    }),
     // Expose dotenv variables
     new Dotenv(),
   );
