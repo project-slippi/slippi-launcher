@@ -5,6 +5,7 @@ let db: Db;
 
 export const connect = (path: string) => {
   db = new Database(path);
+  // db = new Database(path, { verbose: console.log });
   db.exec(`
   CREATE TABLE IF NOT EXISTS replays (
      fullPath      TEXT PRIMARY KEY,

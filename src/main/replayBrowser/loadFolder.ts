@@ -32,7 +32,9 @@ export async function loadFolder(
   const w = await worker;
   const loadedFiles = await w.getFolderFiles(folder);
   const { total, toLoad, toDelete } = await filterReplays(folder, loadedFiles);
-  console.log(`found ${total} files in ${folder}, ${total} are new. ${toDelete.length} will be removed from the DB`);
+  console.log(
+    `found ${total} files in ${folder}, ${toLoad.length} are new. ${toDelete.length} will be removed from the DB`,
+  );
 
   if (toDelete.length > 0) {
     await w.deleteReplays(toDelete);
