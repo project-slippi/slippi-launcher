@@ -5,7 +5,7 @@ import path from "path";
 
 import { DolphinManager, ReplayCommunication } from "./dolphinManager";
 import { assertDolphinInstallations } from "./downloadDolphin";
-import { getFullReplay, getPlayerReplays, pruneFolders } from "./replayBrowser/db";
+import { worker } from "./replayBrowser/dbWorkerInterface";
 import { loadFolder } from "./replayBrowser/loadFolder";
 
 export function setupListeners() {
@@ -52,14 +52,17 @@ export function setupListeners() {
   });
 
   ipc.answerRenderer("loadReplayFile", async (file: string) => {
-    return await getFullReplay(file);
+    const w = await worker;
+    return await w.getFullReplay(file);
   });
 
-  ipc.answerRenderer("loadPlayerReplays", async (player: string) => {
-    return await getPlayerReplays(player);
-  });
+  // ipc.answerRenderer("loadPlayerReplays", async (player: string) => {
+  //   const w = await worker
+  //   return await w.getPlayerReplays(player);
+  // });
 
   ipc.answerRenderer("pruneFolders", async (existingFolders: string[]) => {
-    return await pruneFolders(existingFolders);
+    const w = await worker;
+    return await w.pruneFolders(existingFolders);
   });
 }

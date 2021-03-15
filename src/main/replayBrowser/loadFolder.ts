@@ -2,11 +2,10 @@ import { FileLoadResult } from "common/types";
 import * as fs from "fs-extra";
 import path from "path";
 
-import { deleteReplays, getFolderFiles, getFolderReplays, saveReplays } from "./db";
+import { worker } from "./dbWorkerInterface";
 import { loadReplays } from "./workerInterface";
 
-const filterReplays = async (folder: string) => {
-  const loadedFiles = await getFolderFiles(folder);
+const filterReplays = async (folder: string, loadedFiles: string[]) => {
   const dirfiles = await fs.readdir(folder, { withFileTypes: true });
   const slpFiles = dirfiles
     .filter((dirent) => dirent.isFile() && path.extname(dirent.name) === ".slp")
@@ -30,21 +29,23 @@ export async function loadFolder(
     };
   }
 
-  const { total, toLoad, toDelete } = await filterReplays(folder);
+  const w = await worker;
+  const loadedFiles = await w.getFolderFiles(folder);
+  const { total, toLoad, toDelete } = await filterReplays(folder, loadedFiles);
   console.log(`found ${total} files in ${folder}, ${total} are new. ${toDelete.length} will be removed from the DB`);
 
   if (toDelete.length > 0) {
-    await deleteReplays(toDelete);
+    await w.deleteReplays(toDelete);
     console.log(`deleted ${toDelete.length} replays from the db`);
   }
   let fileErrorCount = 0;
   if (toLoad.length > 0) {
     const parsed = await loadReplays(toLoad, (count) => callback(count, toLoad.length));
     fileErrorCount = toLoad.length - parsed.length;
-    await saveReplays(parsed);
+    await w.saveReplays(parsed);
   }
 
-  const files = await getFolderReplays(folder);
+  const files = await w.getFolderReplays(folder);
   console.log(`loaded ${files.length} replays in ${folder} from the db`);
 
   return { files, fileErrorCount };

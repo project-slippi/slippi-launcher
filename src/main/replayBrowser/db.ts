@@ -1,7 +1,7 @@
 import Database from "better-sqlite3";
 import { FileResult } from "common/types";
 
-const db = new Database("sqlippi.db", { verbose: console.log });
+const db = new Database(path.join(app.getPath("userData"), "sqlippi.db"), { verbose: console.log });
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS replays (
@@ -81,8 +81,10 @@ export const getPlayerReplays = async (_: string) => {
 };
 
 export const saveReplays = async (replays: FileResult[]) => {
-  let insertMany = db.transaction((insert, docs) => {
-    for (const doc of docs) insert.run(doc);
+  const insertMany = db.transaction((insert, docs) => {
+    for (const doc of docs) {
+      insert.run(doc);
+    }
   });
 
   const placeholdersMeta = replays.map(() => "(?, ?, ?)").join(",");
