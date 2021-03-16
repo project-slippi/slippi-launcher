@@ -389,12 +389,12 @@ export class BroadcastManager extends EventEmitter {
 export const broadcastManager = new BroadcastManager();
 
 // Add event handlers to notify renderer
-broadcastManager.on(BroadcastEvent.error, (err) => {
-  ipc.sendToRenderers(BroadcastEvent.error, err);
+broadcastManager.on(BroadcastEvent.error, (error) => {
+  ipc.sendToRenderers(BroadcastEvent.error, { error });
 });
 broadcastManager.on(BroadcastEvent.slippiStatusChange, (status) => {
-  ipc.sendToRenderers(BroadcastEvent.slippiStatusChange, status);
+  ipc.sendToRenderers(BroadcastEvent.slippiStatusChange, { status });
 });
 broadcastManager.on(BroadcastEvent.dolphinStatusChange, (status) => {
-  ipc.sendToRenderers(BroadcastEvent.dolphinStatusChange, status);
+  ipc.sendToRenderers(BroadcastEvent.dolphinStatusChange, { status });
 });

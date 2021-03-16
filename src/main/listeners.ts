@@ -25,6 +25,10 @@ export function setupListeners() {
     broadcastManager.start(viewerId, firebaseToken);
   });
 
+  ipcMain.on("stopBroadcast", () => {
+    broadcastManager.stop();
+  });
+
   setupDolphinManagerListeners();
 }
 
