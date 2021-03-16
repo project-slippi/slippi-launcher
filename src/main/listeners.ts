@@ -3,15 +3,13 @@ import { ipcMain, nativeImage } from "electron";
 import { ipcMain as ipc } from "electron-better-ipc";
 import path from "path";
 
-import { BroadcastManager } from "./broadcastManager";
+import { broadcastManager } from "./broadcastManager";
 import { DolphinManager, ReplayCommunication } from "./dolphinManager";
 import { assertDolphinInstallations } from "./downloadDolphin";
 import { fetchNewsFeed } from "./newsFeed";
 import { worker as replayBrowserWorker } from "./replayBrowser/workerInterface";
 
 export function setupListeners() {
-  const broadcastManager = new BroadcastManager();
-
   ipcMain.on("onDragStart", (event, filePath: string) => {
     event.sender.startDrag({
       file: filePath,

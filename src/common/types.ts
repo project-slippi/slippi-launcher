@@ -30,3 +30,9 @@ export interface NewsItem {
   imageUrl?: string;
   body?: string;
 }
+
+export enum BroadcastEvent {
+  slippiStatusChange = "slippiStatusChange",
+  dolphinStatusChange = "dolphinStatusChange",
+  error = "broadcastError",
+}

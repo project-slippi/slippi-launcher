@@ -1,5 +1,8 @@
 import { ConnectionEvent, ConnectionStatus, DolphinConnection, DolphinMessageType, Ports } from "@slippi/slippi-js";
+import { BroadcastEvent } from "common/types";
+import { ipcMain as ipc } from "electron-better-ipc";
 import log from "electron-log";
+import { EventEmitter } from "events";
 import _ from "lodash";
 // import { MessageEvent } from "ws";
 import { client as WebSocketClient, connection, IMessage } from "websocket";
@@ -16,7 +19,7 @@ const BACKUP_MAX_LENGTH = 1800;
  * Responsible for retrieving Dolphin game data over enet and sending the data
  * to the Slippi server over websockets.
  */
-export class BroadcastManager {
+export class BroadcastManager extends EventEmitter {
   private broadcastId: string | null;
   private isBroadcastReady: boolean;
   private incomingEvents: SlippiBroadcastEvent[];
@@ -27,6 +30,7 @@ export class BroadcastManager {
   private dolphinConnection: DolphinConnection;
 
   constructor() {
+    super();
     this.broadcastId = null;
     this.isBroadcastReady = false;
     this.wsConnection = null;
@@ -41,9 +45,7 @@ export class BroadcastManager {
     this.dolphinConnection = new DolphinConnection();
     this.dolphinConnection.on(ConnectionEvent.STATUS_CHANGE, (status: number) => {
       log.info(`[Broadcast] Dolphin status change: ${status}`);
-
-      // TODO: Let renderer thread know the status has changed
-      // store.dispatch(setDolphinStatus(status));
+      this.emit(BroadcastEvent.dolphinStatusChange, status);
 
       // Disconnect from Slippi server when we disconnect from Dolphin
       if (status === ConnectionStatus.DISCONNECTED) {
@@ -86,7 +88,7 @@ export class BroadcastManager {
     }
 
     // Indicate we're connecting to the Slippi server
-    //store.dispatch(setSlippiStatus(ConnectionStatus.CONNECTING));
+    this.emit(BroadcastEvent.slippiStatusChange, ConnectionStatus.CONNECTING);
 
     const headers = {
       target: target,
@@ -100,19 +102,16 @@ export class BroadcastManager {
       socket.on("connectFailed", (error: Error) => {
         log.error("[Broadcast] WS failed to connect\n", error);
 
-        // TODO: Let renderer thread know that we are disconnected and show the error message
+        const label = "x-websocket-reject-reason: ";
+        let message = error.message;
+        const pos = error.message.indexOf(label);
+        if (pos >= 0) {
+          const endPos = error.message.indexOf("\n", pos + label.length);
+          message = message.substring(pos + label.length, endPos >= 0 ? endPos : undefined);
+        }
 
-        // const label = "x-websocket-reject-reason: ";
-        // let message = error.message;
-        // const pos = error.message.indexOf(label);
-        // if (pos >= 0) {
-        //   const endPos = error.message.indexOf("\n", pos + label.length);
-        //   message = message.substring(pos + label.length, endPos >= 0 ? endPos : undefined);
-        // }
-
-        //store.dispatch(setSlippiStatus(ConnectionStatus.DISCONNECTED));
-        //const errorAction = displayError("broadcast-global", message);
-        //store.dispatch(errorAction);
+        this.emit(BroadcastEvent.slippiStatusChange, ConnectionStatus.DISCONNECTED);
+        this.emit(BroadcastEvent.error, message);
       });
 
       socket.on("connect", (connection: connection) => {
@@ -154,8 +153,7 @@ export class BroadcastManager {
           this.isBroadcastReady = true;
 
           this.broadcastId = broadcastId;
-          // TODO: Let renderer thread know that we are connected
-          //store.dispatch(setSlippiStatus(ConnectionStatus.CONNECTED));
+          this.emit(BroadcastEvent.slippiStatusChange, ConnectionStatus.CONNECTED);
 
           // Process any events that may have been missed when we disconnected
           this._handleGameData();
@@ -168,15 +166,12 @@ export class BroadcastManager {
 
         connection.on("error", (err: Error) => {
           log.error("[Broadcast] WS connection error encountered\n", err);
-          // TODO: Let renderer thread know that we want to show the error message
-          // const errorAction = displayError("broadcast-global", err.message);
-          // store.dispatch(errorAction);
+          this.emit(BroadcastEvent.error, err.message);
         });
 
         connection.on("close", (code: number, reason: string) => {
           log.info(`[Broadcast] WS connection closed: ${code}, ${reason}`);
-          // TODO: Let renderer thread know that we are disconnected
-          // store.dispatch(setSlippiStatus(ConnectionStatus.DISCONNECTED));
+          this.emit(BroadcastEvent.slippiStatusChange, ConnectionStatus.DISCONNECTED);
 
           // Clear the socket and disconnect from Dolphin too if we're still connected
           this.wsConnection = null;
@@ -390,3 +385,16 @@ export class BroadcastManager {
     }
   }
 }
+
+export const broadcastManager = new BroadcastManager();
+
+// Add event handlers to notify renderer
+broadcastManager.on(BroadcastEvent.error, (err) => {
+  ipc.sendToRenderers(BroadcastEvent.error, err);
+});
+broadcastManager.on(BroadcastEvent.slippiStatusChange, (status) => {
+  ipc.sendToRenderers(BroadcastEvent.slippiStatusChange, status);
+});
+broadcastManager.on(BroadcastEvent.dolphinStatusChange, (status) => {
+  ipc.sendToRenderers(BroadcastEvent.dolphinStatusChange, status);
+});
