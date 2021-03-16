@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.3.4",
+    "@fontsource/roboto": "^4.2.2",
     "@material-ui/core": "^4.11.2",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
@@ -50,7 +51,6 @@
     "source-map-support": "^0.5.16",
     "styled-components": "^5.2.1",
     "threads": "^1.6.3",
-    "typeface-roboto": "^1.1.13",
     "zustand": "^3.2.0"
   },
   "devDependencies": {
