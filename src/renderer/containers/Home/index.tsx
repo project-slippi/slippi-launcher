@@ -1,6 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 
+// import { useQuery } from "react-query";
+// import { ipcRenderer as ipc } from "electron-better-ipc";
+
 import { DualPane } from "@/components/DualPane";
 
 import { NewsFeed } from "./NewsFeed";
