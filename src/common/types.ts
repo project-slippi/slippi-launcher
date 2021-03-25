@@ -36,3 +36,10 @@ export enum BroadcastEvent {
   dolphinStatusChange = "dolphinStatusChange",
   error = "broadcastError",
 }
+
+export interface StartBroadcastConfig {
+  ip: string;
+  port: number;
+  viewerId: string;
+  authToken: string;
+}

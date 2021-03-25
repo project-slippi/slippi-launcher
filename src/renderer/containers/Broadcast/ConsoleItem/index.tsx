@@ -19,6 +19,9 @@ const skipUserValidation = isDevelopment && !process.env.SLIPPI_USER_SERVER;
 
 export interface ConsoleItemProps {
   name: string;
+  ip: string;
+  port: number;
+  onStartBroadcast: (viewerId: string) => void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -49,7 +52,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export const ConsoleItem: React.FC<ConsoleItemProps> = () => {
+export const ConsoleItem: React.FC<ConsoleItemProps> = ({ name, ip, port, onStartBroadcast }) => {
   const [modalOpen, setModalOpen] = React.useState(false);
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -62,12 +65,12 @@ export const ConsoleItem: React.FC<ConsoleItemProps> = () => {
         <CardHeader
           avatar={<DolphinIcon fill="white" height="40px" width="40px" />}
           action={
-            <IconButton aria-label="settings" onClick={(e) => setAnchorEl(e.currentTarget)}>
+            <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
               <MoreVertIcon />
             </IconButton>
           }
-          title="Slippi Dolphin"
-          subheader="127.0.0.1:12345"
+          title={name}
+          subheader={`${ip}:${port}`}
         />
         <Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
           <MenuItem onClick={handleClose}>Configure</MenuItem>
@@ -82,7 +85,7 @@ export const ConsoleItem: React.FC<ConsoleItemProps> = () => {
       <StartBroadcastDialog
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        onSubmit={(userId) => console.log(`broadcasting to user: ${userId}`)}
+        onSubmit={onStartBroadcast}
         skipUserValidation={skipUserValidation}
       />
     </div>

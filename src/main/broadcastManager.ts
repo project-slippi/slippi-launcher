@@ -1,5 +1,5 @@
-import { ConnectionEvent, ConnectionStatus, DolphinConnection, DolphinMessageType, Ports } from "@slippi/slippi-js";
-import { BroadcastEvent } from "common/types";
+import { ConnectionEvent, ConnectionStatus, DolphinConnection, DolphinMessageType } from "@slippi/slippi-js";
+import { BroadcastEvent, StartBroadcastConfig } from "common/types";
 import { ipcMain as ipc } from "electron-better-ipc";
 import log from "electron-log";
 import { EventEmitter } from "events";
@@ -80,7 +80,7 @@ export class BroadcastManager extends EventEmitter {
   /**
    * Connects to the Slippi server and the local Dolphin instance
    */
-  public async start(target: string, token: string) {
+  public async start(config: StartBroadcastConfig) {
     if (this.wsConnection) {
       // We're already connected
       log.info("[Broadcast] we are already connected");
@@ -91,9 +91,9 @@ export class BroadcastManager extends EventEmitter {
     this.emit(BroadcastEvent.slippiStatusChange, ConnectionStatus.CONNECTING);
 
     const headers = {
-      target: target,
+      target: config.viewerId,
       "api-version": 2,
-      authorization: `Bearer ${token}`,
+      authorization: `Bearer ${config.authToken}`,
     };
 
     if (SLIPPI_WS_SERVER) {
@@ -139,7 +139,7 @@ export class BroadcastManager extends EventEmitter {
             JSON.stringify({
               type: "start-broadcast",
               name: "Netplay",
-              broadcastId: broadcastId,
+              broadcastId,
             }),
           );
         };
@@ -160,8 +160,8 @@ export class BroadcastManager extends EventEmitter {
         };
 
         if (this.dolphinConnection.getStatus() === ConnectionStatus.DISCONNECTED) {
-          // Now try connect to our local Dolphin instance
-          this.dolphinConnection.connect("127.0.0.1", Ports.DEFAULT);
+          // Now try to connect
+          this.dolphinConnection.connect(config.ip, config.port);
         }
 
         connection.on("error", (err: Error) => {
@@ -179,7 +179,7 @@ export class BroadcastManager extends EventEmitter {
 
           if (code === 1006) {
             // Here we have an abnormal disconnect... try to reconnect?
-            this.start(target, token);
+            this.start(config);
           } else {
             // If normal close, disconnect from dolphin
             this.dolphinConnection.disconnect();
@@ -272,7 +272,7 @@ export class BroadcastManager extends EventEmitter {
                   return;
                 }
               }
-              startBroadcast(target);
+              startBroadcast(config.viewerId);
               break;
             }
 

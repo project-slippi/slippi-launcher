@@ -1,4 +1,6 @@
 import Alert from "@material-ui/lab/Alert";
+import { Ports } from "@slippi/slippi-js";
+import { StartBroadcastConfig } from "common/types";
 import { ipcRenderer } from "electron";
 import log from "electron-log";
 import React from "react";
@@ -24,11 +26,14 @@ export const Broadcast: React.FC = () => {
   const dolphinStatus = useConsole((store) => store.dolphinConnectionStatus);
   const error = useConsole((store) => store.broadcastError);
   const user = useApp((store) => store.user);
-  const startBroadcast = async () => {
+  const startBroadcast = async (config: Omit<StartBroadcastConfig, "authToken">) => {
     if (user !== null) {
-      const token = await user.getIdToken();
+      const authToken = await user.getIdToken();
       log.info("[Broadcast] Starting broadcast");
-      ipcRenderer.send("startBroadcast", user.uid, token);
+      ipcRenderer.send("startBroadcast", {
+        ...config,
+        authToken,
+      });
     } else {
       handleError("Not logged in!");
     }
@@ -36,11 +41,24 @@ export const Broadcast: React.FC = () => {
   const stopBroadcast = async () => {
     ipcRenderer.send("stopBroadcast");
   };
+
+  const ip = "127.0.0.1";
+  const port = Ports.DEFAULT;
   return (
     <Outer>
       <h1>Broadcast</h1>
-      <ConsoleItem name="Dolpin" />
-      <button onClick={() => startBroadcast()}>connect to dolphin</button>
+      <ConsoleItem
+        name="Slippi Dolpin"
+        ip={ip}
+        port={port}
+        onStartBroadcast={(viewerId) => {
+          startBroadcast({
+            ip,
+            port,
+            viewerId,
+          });
+        }}
+      />
       <button onClick={() => stopBroadcast()}>disconnect</button>
       <pre>slippi status: {JSON.stringify(slippiStatus)}</pre>
       <pre>dolphin status: {JSON.stringify(dolphinStatus)}</pre>

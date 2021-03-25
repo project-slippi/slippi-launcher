@@ -1,4 +1,5 @@
 import { DolphinLaunchType, DolphinUseType } from "common/dolphin";
+import { StartBroadcastConfig } from "common/types";
 import { ipcMain, nativeImage } from "electron";
 import { ipcMain as ipc } from "electron-better-ipc";
 import path from "path";
@@ -21,8 +22,8 @@ export function setupListeners() {
     assertDolphinInstallations();
   });
 
-  ipcMain.on("startBroadcast", (_, viewerId: string, firebaseToken: string) => {
-    broadcastManager.start(viewerId, firebaseToken);
+  ipcMain.on("startBroadcast", (_, config: StartBroadcastConfig) => {
+    broadcastManager.start(config);
   });
 
   ipcMain.on("stopBroadcast", () => {
