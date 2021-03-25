@@ -1,4 +1,6 @@
-import { delay } from "common/utils";
+import { fetch } from "cross-fetch";
+
+const BASE_URL = process.env.SLIPPI_USER_SERVER;
 
 export interface ValidateUserIdResponse {
   uid: string;
@@ -7,23 +9,7 @@ export interface ValidateUserIdResponse {
   latestVersion: string;
 }
 
-export const validateUserId = async (userId: string): Promise<ValidateUserIdResponse> => {
-  console.log("got validation request: ", JSON.stringify(new Date()));
-  await delay(2000);
-  console.log("finished fake delay: ", JSON.stringify(new Date()));
-  if (userId.includes("hello")) {
-    console.log("returning data: ", JSON.stringify(new Date()));
-    return {
-      uid: userId,
-      displayName: "hello",
-      connectCode: "WORLD#0",
-      latestVersion: "1.2.3",
-    };
-  }
-  console.log("throwing error: ", JSON.stringify(new Date()));
-  throw new Error("Invalid user id");
-
-  /*
+export const validateUserId = async (userId: string, timeout = 2500): Promise<ValidateUserIdResponse> => {
   // Create a new AbortController instance for this request
   const controller = new AbortController();
   // Get the abortController's signal
@@ -32,8 +18,9 @@ export const validateUserId = async (userId: string): Promise<ValidateUserIdResp
   // Cancel the request if React Query calls the `promise.cancel` method
   (promise as any).cancel = () => controller.abort();
 
-  // Manually abort the request if it takes too long
+  // FIXME: Currently the users rest endpoint spins forever on invalid userId.
+  // Fizzi has been informed and says he'll look into it eventually, so for now
+  // we'll just manually abort the request if it takes longer than the timeout
   setTimeout(() => controller.abort(), timeout);
   return promise;
-  */
 };
