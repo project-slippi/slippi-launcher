@@ -1,25 +1,13 @@
-import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
 import CardHeader from "@material-ui/core/CardHeader";
-import CardMedia from "@material-ui/core/CardMedia";
-import Collapse from "@material-ui/core/Collapse";
 import { red } from "@material-ui/core/colors";
 import IconButton from "@material-ui/core/IconButton";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import FavoriteIcon from "@material-ui/icons/Favorite";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
-import ShareIcon from "@material-ui/icons/Share";
-import SkipNextIcon from "@material-ui/icons/SkipNext";
-import SkipPreviousIcon from "@material-ui/icons/SkipPrevious";
-import WifiTetheringIcon from "@material-ui/icons/WifiTethering";
-import clsx from "clsx";
 import React from "react";
 
 import { ReactComponent as DolphinIcon } from "@/styles/images/dolphin.svg";
@@ -61,7 +49,6 @@ const useStyles = makeStyles((theme: Theme) =>
 export const ConsoleItem: React.FC<ConsoleItemProps> = () => {
   const [modalOpen, setModalOpen] = React.useState(false);
   const classes = useStyles();
-  const [expanded, setExpanded] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const handleClose = () => setAnchorEl(null);
