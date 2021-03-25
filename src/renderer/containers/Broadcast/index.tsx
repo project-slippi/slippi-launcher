@@ -2,9 +2,12 @@ import Alert from "@material-ui/lab/Alert";
 import { ipcRenderer } from "electron";
 import log from "electron-log";
 import React from "react";
+import styled from "styled-components";
 
 import { useApp } from "@/store/app";
 import { useConsole } from "@/store/console";
+
+import { ConsoleItem } from "./ConsoleItem";
 
 const handleError = (error: any) => {
   const { showSnackbar, dismissSnackbar } = useApp.getState();
@@ -34,13 +37,19 @@ export const Broadcast: React.FC = () => {
     ipcRenderer.send("stopBroadcast");
   };
   return (
-    <div>
+    <Outer>
       <h1>Broadcast</h1>
+      <ConsoleItem name="Dolpin" />
       <button onClick={() => startBroadcast()}>connect to dolphin</button>
       <button onClick={() => stopBroadcast()}>disconnect</button>
       <pre>slippi status: {JSON.stringify(slippiStatus)}</pre>
       <pre>dolphin status: {JSON.stringify(dolphinStatus)}</pre>
       <pre>broadcast error: {JSON.stringify(error)}</pre>
-    </div>
+    </Outer>
   );
 };
+
+const Outer = styled.div`
+  height: 100%;
+  width: 100%;
+`;
