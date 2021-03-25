@@ -1,11 +1,10 @@
+import { isDevelopment } from "common/constants";
 import { app, BrowserWindow, shell } from "electron";
 import contextMenu from "electron-context-menu";
 import * as path from "path";
 import { format as formatUrl } from "url";
 
 import { setupListeners } from "./listeners";
-
-const isDevelopment = process.env.NODE_ENV !== "production";
 
 // global reference to mainWindow (necessary to prevent window from being garbage collected)
 let mainWindow: BrowserWindow | null = null;

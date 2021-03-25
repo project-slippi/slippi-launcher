@@ -1,8 +1,7 @@
 import { characters as charUtils, stages as stageUtils } from "@slippi/slippi-js";
+import { isDevelopment } from "common/constants";
 import path from "path";
 import url from "url";
-
-const isDevelopment = process.env.NODE_ENV !== "production";
 
 // Fix static folder access in development. For more information see:
 // https://github.com/electron-userland/electron-webpack/issues/99#issuecomment-459251702
