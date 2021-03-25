@@ -107,7 +107,15 @@ export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({ open
                     </Tooltip>
                   ) : (
                     <Tooltip title="Paste">
-                      <IconButton size="small" onClick={() => handleChange(clipboard.readText())}>
+                      <IconButton
+                        size="small"
+                        onClick={() => {
+                          const text = clipboard.readText();
+                          if (text) {
+                            handleChange(text);
+                          }
+                        }}
+                      >
                         <AssignmentIcon />
                       </IconButton>
                     </Tooltip>
