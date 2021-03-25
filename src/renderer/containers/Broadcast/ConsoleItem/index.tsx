@@ -8,11 +8,14 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
+import { isDevelopment } from "common/constants";
 import React from "react";
 
 import { ReactComponent as DolphinIcon } from "@/styles/images/dolphin.svg";
 
 import { StartBroadcastDialog } from "./StartBroadcastDialog";
+
+const skipUserValidation = isDevelopment && !process.env.SLIPPI_USER_SERVER;
 
 export interface ConsoleItemProps {
   name: string;
@@ -80,6 +83,7 @@ export const ConsoleItem: React.FC<ConsoleItemProps> = () => {
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         onSubmit={(userId) => console.log(`broadcasting to user: ${userId}`)}
+        skipUserValidation={skipUserValidation}
       />
     </div>
   );
