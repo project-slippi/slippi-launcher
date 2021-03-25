@@ -4,13 +4,18 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import IconButton from "@material-ui/core/IconButton";
+import InputAdornment from "@material-ui/core/InputAdornment";
 import { useTheme } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Tooltip from "@material-ui/core/Tooltip";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
+import AssignmentIcon from "@material-ui/icons/Assignment";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
+import CloseIcon from "@material-ui/icons/Close";
 import ErrorIcon from "@material-ui/icons/Error";
 import HelpIcon from "@material-ui/icons/Help";
+import { clipboard } from "electron";
 import debounce from "lodash/debounce";
 import React from "react";
 import { useQuery } from "react-query";
@@ -53,6 +58,8 @@ export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({ open
   );
 
   const handleChange = React.useCallback((inputText: string) => {
+    // First clear the react-query state
+    userQuery.remove();
     setValue(inputText);
     fetchUser();
   }, []);
@@ -74,12 +81,12 @@ export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({ open
             <HelpIcon style={{ marginLeft: 10, opacity: 0.7 }} fontSize="small" />
           </Tooltip>
         </StyledDialogTitle>
-        <DialogContent>
+        <DialogContent style={{ display: "flex" }}>
           <TextField
-            id="filled-basic"
             label="Spectator ID"
+            value={value}
             variant="filled"
-            style={{ width: "100%" }}
+            style={{ width: "100%", flex: 1 }}
             onChange={(e) => handleChange(e.target.value)}
             error={showErrorStatus}
             helperText={
@@ -91,26 +98,43 @@ export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({ open
             }
             InputProps={{
               endAdornment: (
-                <div>
-                  {value.length === 0 ? null : userQuery.isLoading ? (
-                    <CircularProgress size={27} />
-                  ) : userQuery.data ? (
-                    <CheckCircleIcon
-                      style={{
-                        color: theme.palette.success.main,
-                      }}
-                    />
-                  ) : userQuery.isError ? (
-                    <ErrorIcon
-                      style={{
-                        color: theme.palette.error.main,
-                      }}
-                    />
-                  ) : null}
-                </div>
+                <InputAdornment position="end">
+                  {value.length > 0 ? (
+                    <Tooltip title="Clear">
+                      <IconButton size="small" onClick={() => handleChange("")}>
+                        <CloseIcon />
+                      </IconButton>
+                    </Tooltip>
+                  ) : (
+                    <Tooltip title="Paste">
+                      <IconButton size="small" onClick={() => handleChange(clipboard.readText())}>
+                        <AssignmentIcon />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                </InputAdornment>
               ),
             }}
           />
+          <div style={{ opacity: value.length === 0 ? 0 : 1 }}>
+            <div style={{ margin: 12, marginRight: 0 }}>
+              {userQuery.data ? (
+                <CheckCircleIcon
+                  style={{
+                    color: theme.palette.success.main,
+                  }}
+                />
+              ) : userQuery.isError ? (
+                <ErrorIcon
+                  style={{
+                    color: theme.palette.error.main,
+                  }}
+                />
+              ) : (
+                <CircularProgress size={27} />
+              )}
+            </div>
+          </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose} color="secondary">
