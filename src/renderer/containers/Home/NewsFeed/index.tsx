@@ -1,4 +1,3 @@
-import { Modal } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import { NewsItem } from "common/types";
 import { ipcRenderer as ipc } from "electron-better-ipc";
@@ -15,14 +14,11 @@ const Outer = styled.div`
   padding: 20px;
 `;
 
-export interface MyModalProps {
-  showModal: boolean;
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  currVer: NewsItem;
-}
-
 export const NewsFeed: React.FC = () => {
-  const [showModal, setShowModal] = React.useState(true);
+  //const [open, setOpen] = React.useState(true);
+  const openState = React.useState(false);
+  let open = openState[0];
+  const setOpen = openState[1];
   const newsFeedQuery = useQuery(["news-articles"], () => ipc.callMain<never, NewsItem[]>("fetchNewsFeed"));
   if (newsFeedQuery.isLoading) {
     return <div>Loading...</div>;
@@ -35,11 +31,12 @@ export const NewsFeed: React.FC = () => {
     return /(gh-)(.*-)(.*)/.test(post.id);
   });
   const currVer = posts[recentPostInd];
-
+  const prevVer = localStorage.getItem("ver");
+  //check if prevVer exists - if it does, check if prevVer differs from current version
+  open = prevVer == null ? true : prevVer === currVer.id ? true : false;
   return (
     <Outer>
-      <PatchNote currVer={currVer} showModal={showModal} setShowModal={setShowModal} />
-      <MyModal showModal={showModal} setShowModal={setShowModal} currVer={posts[0]} />
+      <PatchNote currVer={currVer} open={open} setOpen={setOpen} />
       <Typography variant="h4" style={{ marginBottom: 20 }}>
         Latest News
       </Typography>
@@ -47,20 +44,5 @@ export const NewsFeed: React.FC = () => {
         <NewsArticle key={post.id} item={post} />
       ))}
     </Outer>
-  );
-};
-
-const MyModal: React.FC<MyModalProps> = (props) => {
-  //const recVer = localStorage.getItem("ver");
-  //props.setShowModal(true);
-
-  return (
-    <div>
-      <Modal open={props.showModal} onClose={() => props.setShowModal(false)}>
-        <Outer>
-          <NewsArticle key={props.currVer.id} item={props.currVer} />
-        </Outer>
-      </Modal>
-    </div>
   );
 };

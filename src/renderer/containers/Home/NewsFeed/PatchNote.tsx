@@ -5,8 +5,8 @@ import React from "react";
 import { NewsArticle } from "./NewsArticle";
 
 export interface PatchNoteProps {
-  showModal: boolean;
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   currVer: NewsItem;
 }
 
@@ -14,10 +14,9 @@ export const PatchNote: React.FC<PatchNoteProps> = (props) => {
   React.useEffect(() => {
     localStorage.setItem("ver", props.currVer.id);
   });
-
   return (
     <div>
-      <Modal open={props.showModal} onClose={() => props.setShowModal(false)}>
+      <Modal open={props.open} onClose={() => props.setOpen(false)}>
         <div>
           <NewsArticle key={props.currVer.id} item={props.currVer} />
         </div>
