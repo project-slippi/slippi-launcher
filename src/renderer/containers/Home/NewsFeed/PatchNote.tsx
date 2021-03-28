@@ -11,9 +11,13 @@ export interface PatchNoteProps {
 }
 
 export const PatchNote: React.FC<PatchNoteProps> = (props) => {
+  const prevVer = localStorage.getItem("ver");
   React.useEffect(() => {
+    // check if previous version exists - if it does and it differs from current version,
+    // we display the current version as a PatchNote
+    props.setOpen(prevVer == null ? true : prevVer === props.currVer.id ? false : true);
     localStorage.setItem("ver", props.currVer.id);
-  });
+  }, []);
   return (
     <div>
       <Modal open={props.open} onClose={() => props.setOpen(false)}>

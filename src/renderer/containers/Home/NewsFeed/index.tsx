@@ -15,10 +15,10 @@ const Outer = styled.div`
 `;
 
 export const NewsFeed: React.FC = () => {
-  //const [open, setOpen] = React.useState(true);
-  const openState = React.useState(false);
-  let open = openState[0];
-  const setOpen = openState[1];
+  const [open, setOpen] = React.useState(false);
+  // const openState = React.useState(false);
+  // let open = openState[0];
+  // const setOpen = openState[1];
   const newsFeedQuery = useQuery(["news-articles"], () => ipc.callMain<never, NewsItem[]>("fetchNewsFeed"));
   if (newsFeedQuery.isLoading) {
     return <div>Loading...</div>;
@@ -31,9 +31,12 @@ export const NewsFeed: React.FC = () => {
     return /(gh-)(.*-)(.*)/.test(post.id);
   });
   const currVer = posts[recentPostInd];
-  const prevVer = localStorage.getItem("ver");
   //check if prevVer exists - if it does, check if prevVer differs from current version
-  open = prevVer == null ? true : prevVer === currVer.id ? true : false;
+  //setOpen(prevVer == null ? true : prevVer === currVer.id ? true : false);
+  // React.useEffect(() => {
+  //   setOpen(prevVer == null ? true : prevVer === currVer.id ? true : false);
+  // }, []);
+
   return (
     <Outer>
       <PatchNote currVer={currVer} open={open} setOpen={setOpen} />
