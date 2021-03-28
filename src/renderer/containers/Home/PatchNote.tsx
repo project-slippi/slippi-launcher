@@ -10,26 +10,28 @@ export interface NewsItemsProps {
 }
 
 export const PatchNote: React.FC<NewsItemsProps> = (props) => {
-  let [open, setOpen] = React.useState(false);
-
-  const handleClose = () => setOpen(false);
-
   const prevVer = localStorage.getItem("ver") || null;
   const recentPostInd = _.findIndex(props.posts, (post) => {
     return /(gh-)(.*-)(.*)/.test(post.id);
   });
   const currVer = props.posts[recentPostInd].id;
 
-  if (prevVer == null) {
-    open = true;
-    localStorage.setItem(currVer, "ver");
-  } else {
-    if (prevVer === currVer) {
-      open = false;
-    } else {
-      open = true;
-    }
-  }
+  const toDisplay = prevVer === currVer ? false : true;
+
+  const [open, setOpen] = React.useState(toDisplay);
+
+  const handleClose = () => setOpen(false);
+
+  // if (prevVer == null) {
+  //   open = true;
+  //   localStorage.setItem("ver", currVer);
+  // } else {
+  //   if (prevVer === currVer) {
+  //     open = false;
+  //   } else {
+  //     open = true;
+  //   }
+  // }
   const body = (
     <div>
       <NewsArticle key={props.posts[recentPostInd].id} item={props.posts[recentPostInd]} />
