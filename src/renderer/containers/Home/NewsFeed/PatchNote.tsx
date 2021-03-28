@@ -1,4 +1,4 @@
-import { Modal } from "@material-ui/core";
+import { makeStyles, Modal } from "@material-ui/core";
 import { NewsItem } from "common/types";
 import React from "react";
 import styled from "styled-components";
@@ -10,6 +10,7 @@ const Outer = styled.div`
   margin-top: 25%;
   margin-left: 10%;
   position: absolute;
+  outline: "none";
 `;
 
 export interface PatchNoteProps {
@@ -18,7 +19,14 @@ export interface PatchNoteProps {
   currVer: NewsItem;
 }
 
+const useStyles = makeStyles({
+  modal: {
+    outline: 0,
+  },
+});
+
 export const PatchNote: React.FC<PatchNoteProps> = (props) => {
+  const styles = useStyles();
   //get most recent stored version ID
   const prevVer = localStorage.getItem("ver");
   React.useEffect(() => {
@@ -30,7 +38,7 @@ export const PatchNote: React.FC<PatchNoteProps> = (props) => {
   }, []);
   return (
     <Modal open={props.open} onClose={() => props.setOpen(false)}>
-      <Outer>
+      <Outer className={styles.modal}>
         <NewsArticle key={props.currVer.id} item={props.currVer} />
       </Outer>
     </Modal>
