@@ -56,4 +56,5 @@ module.exports = {
     "new-cap": "error",
     curly: "error",
   },
+  ignorePatterns: ["/*.js"],
 };
