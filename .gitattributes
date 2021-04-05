@@ -5,3 +5,4 @@
 *.ico binary
 *.icns binary
 *.exe binary
+*.svg binary
