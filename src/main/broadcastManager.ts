@@ -29,7 +29,7 @@ export class BroadcastManager extends EventEmitter {
   private wsConnection: connection | null;
   private dolphinConnection: DolphinConnection;
 
-  constructor() {
+  public constructor() {
     super();
     this.broadcastId = null;
     this.isBroadcastReady = false;

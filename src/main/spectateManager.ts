@@ -21,7 +21,7 @@ export class SpectateManager {
   private dolphinManager: DolphinManager;
 
   private wsConnection: connection | null;
-  constructor() {
+  public constructor() {
     this.prevBroadcastId = null;
     this.wsConnection = null;
     this.gameStarted = false;
@@ -67,7 +67,7 @@ export class SpectateManager {
     // });
   }
 
-  handleEvents(obj: any) {
+  private _handleEvents(obj: any) {
     const events = obj.events || [];
 
     events.forEach((event: any) => {
@@ -122,7 +122,7 @@ export class SpectateManager {
   /**
    * Connects to the Slippi server and the local Dolphin instance
    */
-  async connect() {
+  public async connect() {
     if (this.wsConnection) {
       // We're already connected
       console.log("Skipping websocket connection since we're already connected");
@@ -212,7 +212,7 @@ export class SpectateManager {
               // store.dispatch(updateViewableBroadcasts(broadcasts));
               break;
             case "events":
-              this.handleEvents(obj);
+              this._handleEvents(obj);
               break;
             default:
               log.error(`[Spectate] Ws resp type ${obj.type} not supported`);
@@ -228,7 +228,7 @@ export class SpectateManager {
     });
   }
 
-  refreshBroadcasts() {
+  public refreshBroadcasts() {
     if (!this.wsConnection) {
       return;
     }
@@ -240,7 +240,7 @@ export class SpectateManager {
     );
   }
 
-  fetchSpectateFolder() {
+  public fetchSpectateFolder() {
     const rootFolderPath = ""; // will need to figure out if we can get the root slp path in the main process
     if (!rootFolderPath) {
       throw new Error(
@@ -251,7 +251,7 @@ export class SpectateManager {
     return path.join(rootFolderPath, "Spectate");
   }
 
-  watchBroadcast(broadcastId: string) {
+  public watchBroadcast(broadcastId: string) {
     if (!this.wsConnection) {
       return;
     }
