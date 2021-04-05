@@ -22,6 +22,8 @@ const handleError = (error: any) => {
 };
 
 export const Broadcast: React.FC = () => {
+  const startTime = useConsole((store) => store.startTime);
+  const endTime = useConsole((store) => store.endTime);
   const slippiStatus = useConsole((store) => store.slippiConnectionStatus);
   const dolphinStatus = useConsole((store) => store.dolphinConnectionStatus);
   const error = useConsole((store) => store.broadcastError);
@@ -51,6 +53,11 @@ export const Broadcast: React.FC = () => {
         name="Slippi Dolpin"
         ip={ip}
         port={port}
+        slippiServerStatus={slippiStatus}
+        dolphinStatus={dolphinStatus}
+        startTime={startTime}
+        endTime={endTime}
+        onDisconnect={stopBroadcast}
         onStartBroadcast={(viewerId) => {
           startBroadcast({
             ip,
@@ -59,10 +66,7 @@ export const Broadcast: React.FC = () => {
           });
         }}
       />
-      <button onClick={() => stopBroadcast()}>disconnect</button>
-      <pre>slippi status: {JSON.stringify(slippiStatus)}</pre>
-      <pre>dolphin status: {JSON.stringify(dolphinStatus)}</pre>
-      <pre>broadcast error: {JSON.stringify(error)}</pre>
+      {error && <pre>Error occurred while broadcasting: {JSON.stringify(error)}</pre>}
     </Outer>
   );
 };
@@ -70,4 +74,5 @@ export const Broadcast: React.FC = () => {
 const Outer = styled.div`
   height: 100%;
   width: 100%;
+  margin: 0 20px;
 `;
