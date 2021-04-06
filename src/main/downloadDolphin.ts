@@ -51,7 +51,8 @@ export async function assertDolphinInstallations(): Promise<void> {
     await assertDolphinInstallation(DolphinLaunchType.PLAYBACK, sendToRenderer);
     sendToRenderer("", "downloadDolphinFinished");
   } catch (err) {
-    sendToRenderer(err, "downloadDolphinFinished");
+    console.error(err);
+    sendToRenderer(err.message, "downloadDolphinFinished");
   }
   return;
 }
@@ -71,7 +72,7 @@ async function getLatestDolphinAsset(type: DolphinLaunchType): Promise<any> {
   const release = await getLatestReleaseData(type);
   const asset = release.assets.find((a: any) => matchesPlatform(a.name));
   if (!asset) {
-    throw new Error("Could not fetch latest release");
+    throw new Error(`No release asset matched the current platform: ${process.platform}`);
   }
   return asset;
 }
