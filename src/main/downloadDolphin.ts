@@ -91,6 +91,10 @@ function matchesPlatform(releaseName: string): boolean {
     case "win32":
       return releaseName.endsWith("Win.zip");
     case "darwin":
+      // FIXME: The netplay release sometimes provided in DMG format.
+      // This is not what we expect since the playback release is in a ZIP format.
+      // We need to ensure that in the future we only release in the ZIP format
+      // so the launcher can unpack it.
       return releaseName.endsWith("Mac.zip");
     case "linux":
       return releaseName.endsWith(".AppImage");
