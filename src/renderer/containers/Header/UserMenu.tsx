@@ -24,12 +24,14 @@ export const UserMenu: React.FC<{
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
   const onLogout = async () => {
-    handleClose();
-    await deletePlayKey();
     try {
       await firebase.auth().signOut();
+      await deletePlayKey();
     } catch (err) {
+      console.error(err);
       handleError(err);
+    } finally {
+      handleClose();
     }
   };
 
