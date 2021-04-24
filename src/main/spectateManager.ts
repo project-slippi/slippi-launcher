@@ -1,5 +1,4 @@
 import { SlpFileWriter, SlpFileWriterEvent } from "@slippi/slippi-js";
-import { DolphinUseType } from "common/dolphin";
 import { BroadcasterItem } from "common/types";
 import { app } from "electron";
 import log from "electron-log";
@@ -8,7 +7,8 @@ import * as fs from "fs-extra";
 import _ from "lodash";
 import { client as WebSocketClient, connection, IMessage } from "websocket";
 
-import { DolphinManager, ReplayCommunication } from "./dolphinManager";
+import { ReplayCommunication } from "./dolphin";
+import { dolphinManager } from "./dolphinManager";
 
 const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
 
@@ -25,7 +25,6 @@ export class SpectateManager extends EventEmitter {
   private prevBroadcastId: string | null;
   private gameStarted: boolean;
   private cursorByBroadcast: any;
-  private dolphinManager: DolphinManager;
   private slpFileWriter: SlpFileWriter;
   private wsConnection: connection | null;
 
@@ -37,9 +36,9 @@ export class SpectateManager extends EventEmitter {
     this.cursorByBroadcast = {};
 
     // A connection can mirror its received gameplay
-    this.dolphinManager = DolphinManager.getInstance();
-    this.dolphinManager.on("spectate-dolphin-closed", (broadcastId: string) => {
-      if (this.prevBroadcastId !== broadcastId) {
+    dolphinManager.on("dolphin-closed", (data: { id: string; metadata: any }) => {
+      const broadcastId = data.metadata;
+      if (data.id !== "spectate" || this.prevBroadcastId !== broadcastId) {
         return;
       }
       log.info("[Spectator] dolphin closed");
@@ -77,7 +76,7 @@ export class SpectateManager extends EventEmitter {
       mode: "mirror",
       replay: filePath,
     };
-    this.dolphinManager.launchDolphin(DolphinUseType.PLAYBACK, -1, replayComm);
+    dolphinManager.launchPlaybackDolphin("spectate", replayComm);
   }
 
   private _handleEvents(obj: any) {

@@ -1,11 +1,12 @@
-import { DolphinLaunchType, DolphinUseType } from "common/dolphin";
+import { DolphinLaunchType } from "common/dolphin";
 import { StartBroadcastConfig } from "common/types";
 import { ipcMain, nativeImage } from "electron";
 import { ipcMain as ipc } from "electron-better-ipc";
 import path from "path";
 
 import { broadcastManager } from "./broadcastManager";
-import { DolphinManager, ReplayCommunication } from "./dolphinManager";
+import { ReplayCommunication } from "./dolphin";
+import { dolphinManager } from "./dolphinManager";
 import { assertDolphinInstallations } from "./downloadDolphin";
 import { fetchNewsFeed } from "./newsFeed";
 import { worker as replayBrowserWorker } from "./replayBrowser/workerInterface";
@@ -37,29 +38,20 @@ export function setupListeners() {
 }
 
 function setupDolphinManagerListeners() {
-  const dolphinManager = DolphinManager.getInstance();
   ipcMain.on("viewReplay", (_, filePath: string) => {
     const replayComm: ReplayCommunication = {
       mode: "normal",
       replay: filePath,
     };
-    dolphinManager.launchDolphin(DolphinUseType.PLAYBACK, -1, replayComm);
-  });
-
-  ipcMain.on("watchBroadcast", (_, filePath: string, mode: "normal" | "mirror", index: number) => {
-    const replayComm: ReplayCommunication = {
-      mode: mode,
-      replay: filePath,
-    };
-    dolphinManager.launchDolphin(DolphinUseType.SPECTATE, index, replayComm);
+    dolphinManager.launchPlaybackDolphin("playback", replayComm);
   });
 
   ipcMain.on("playNetplay", () => {
-    dolphinManager.launchDolphin(DolphinUseType.NETPLAY, -1);
+    dolphinManager.launchNetplayDolphin();
   });
 
   ipcMain.on("configureDolphin", (_, dolphinType: DolphinLaunchType) => {
-    dolphinManager.launchDolphin(DolphinUseType.CONFIG, -1, undefined, dolphinType);
+    dolphinManager.configureDolphin(dolphinType);
   });
 
   ipc.answerRenderer("loadReplayFolder", async (folderPath: string) => {
