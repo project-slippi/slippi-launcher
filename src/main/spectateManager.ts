@@ -11,6 +11,8 @@ import { dolphinManager, ReplayCommunication } from "./dolphin";
 
 const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
 
+const DOLPHIN_INSTANCE_ID = "spectate";
+
 export enum SpectateManagerEvent {
   ERROR = "error",
   BROADCAST_LIST_UPDATE = "broadcastListUpdate",
@@ -37,7 +39,7 @@ export class SpectateManager extends EventEmitter {
     // A connection can mirror its received gameplay
     dolphinManager.on("dolphin-closed", (data: { id: string; metadata: any }) => {
       const broadcastId = data.metadata;
-      if (data.id !== "spectate" || this.prevBroadcastId !== broadcastId) {
+      if (data.id !== DOLPHIN_INSTANCE_ID || this.prevBroadcastId !== broadcastId) {
         return;
       }
       log.info("[Spectator] dolphin closed");
@@ -75,7 +77,7 @@ export class SpectateManager extends EventEmitter {
       mode: "mirror",
       replay: filePath,
     };
-    dolphinManager.launchPlaybackDolphin("spectate", replayComm);
+    dolphinManager.launchPlaybackDolphin(DOLPHIN_INSTANCE_ID, replayComm);
   }
 
   private _handleEvents(obj: any) {
@@ -297,3 +299,5 @@ export class SpectateManager extends EventEmitter {
     this.prevBroadcastId = broadcastId;
   }
 }
+
+export const spectateManager = new SpectateManager();

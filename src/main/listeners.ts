@@ -9,9 +9,7 @@ import { dolphinManager, ReplayCommunication } from "./dolphin";
 import { assertDolphinInstallations } from "./downloadDolphin";
 import { fetchNewsFeed } from "./newsFeed";
 import { worker as replayBrowserWorker } from "./replayBrowser/workerInterface";
-import { SpectateManager } from "./spectateManager";
-
-const spectateManager = new SpectateManager();
+import { spectateManager } from "./spectateManager";
 
 export function setupListeners() {
   ipcMain.on("onDragStart", (event, filePath: string) => {
@@ -33,10 +31,6 @@ export function setupListeners() {
     broadcastManager.stop();
   });
 
-  setupDolphinManagerListeners();
-}
-
-function setupDolphinManagerListeners() {
   ipcMain.on("viewReplay", (_, filePath: string) => {
     const replayComm: ReplayCommunication = {
       mode: "normal",

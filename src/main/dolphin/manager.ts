@@ -27,6 +27,9 @@ export class DolphinManager extends EventEmitter {
           id,
           metadata,
         });
+
+        // Remove the instance from the map on close
+        this.playbackDolphinInstances.delete(id);
       });
       this.playbackDolphinInstances.set(id, playbackInstance);
     }
