@@ -2,7 +2,8 @@ import { DolphinLaunchType, findDolphinExecutable } from "common/dolphin";
 import electronSettings from "electron-settings";
 import { EventEmitter } from "events";
 
-import { DolphinInstance, PlaybackDolphinInstance, ReplayCommunication } from ".";
+import { DolphinInstance, PlaybackDolphinInstance } from "./instance";
+import { ReplayCommunication } from "./types";
 
 electronSettings.configure({
   fileName: "Settings",

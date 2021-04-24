@@ -25,7 +25,7 @@ export enum SpectateManagerEvent {
 export class SpectateManager extends EventEmitter {
   private prevBroadcastId: string | null;
   private gameStarted: boolean;
-  private cursorByBroadcast: any;
+  private cursorByBroadcast: Record<string, any>;
   private slpFileWriter: SlpFileWriter;
   private wsConnection: connection | null;
 
