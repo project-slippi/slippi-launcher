@@ -1,27 +1,36 @@
+import { SlpFileWriter, SlpFileWriterEvent } from "@slippi/slippi-js";
+import { DolphinUseType } from "common/dolphin";
+import { BroadcasterItem } from "common/types";
+import { app } from "electron";
 import log from "electron-log";
+import { EventEmitter } from "events";
 import * as fs from "fs-extra";
 import _ from "lodash";
-import path from "path";
 import { client as WebSocketClient, connection, IMessage } from "websocket";
 
-import { DolphinManager } from "./dolphinManager";
-
-// import SlpFileWriter from "./SlpFileWriter"; // TODO: will have to reimplement later
+import { DolphinManager, ReplayCommunication } from "./dolphinManager";
 
 const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
+
+export enum SpectateManagerEvent {
+  ERROR = "error",
+  BROADCAST_LIST_UPDATE = "broadcastListUpdate",
+}
 
 /**
  * Responsible for retrieving Dolphin game data over enet and sending the data
  * to the Slippi server over websockets.
  */
-export class SpectateManager {
+export class SpectateManager extends EventEmitter {
   private prevBroadcastId: string | null;
   private gameStarted: boolean;
   private cursorByBroadcast: any;
   private dolphinManager: DolphinManager;
-
+  private slpFileWriter: SlpFileWriter;
   private wsConnection: connection | null;
+
   public constructor() {
+    super();
     this.prevBroadcastId = null;
     this.wsConnection = null;
     this.gameStarted = false;
@@ -55,20 +64,24 @@ export class SpectateManager {
       this.prevBroadcastId = null;
     });
 
-    // Initialize SlpFileWriter for writting files with an empty folderPath
-    // We will update the folderPath when starting to watch a broadcast
-    // const slpSettings = {
-    //   folderPath: "",
-    //   onFileStateChange: () => {},
-    // };
-    // this.slpFileWriter = new SlpFileWriter(slpSettings);
-    // this.slpFileWriter.on("new-file", (curFilePath) => {
-    //   this.dolphinManager.playFile(curFilePath, false);
-    // });
+    this.slpFileWriter = new SlpFileWriter({
+      folderPath: app.getPath("temp"), // Store written SLP files to the temp folder by default
+    });
+    this.slpFileWriter.on(SlpFileWriterEvent.NEW_FILE, (currFilePath) => {
+      this._playFile(currFilePath);
+    });
+  }
+
+  private _playFile(filePath: string) {
+    const replayComm: ReplayCommunication = {
+      mode: "mirror",
+      replay: filePath,
+    };
+    this.dolphinManager.launchDolphin(DolphinUseType.PLAYBACK, -1, replayComm);
   }
 
   private _handleEvents(obj: any) {
-    const events = obj.events || [];
+    const events = obj.events ?? [];
 
     events.forEach((event: any) => {
       switch (event.type) {
@@ -78,8 +91,8 @@ export class SpectateManager {
         }
         case "end_game": {
           // End the current game if it's not already ended
-          // log.info("[Spectate] Game end explicit");
-          // this.slpFileWriter.endGame();
+          log.info("[Spectate] Game end explicit");
+          this.slpFileWriter.endCurrentFile();
           this.gameStarted = false;
           break;
         }
@@ -90,19 +103,19 @@ export class SpectateManager {
 
           if (command === 0x35) {
             this.gameStarted = true;
-            // log.info("[Spectate] Game start");
+            log.info("[Spectate] Game start");
           }
 
           // Only forward data to the file writer when it's an active game
           if (this.gameStarted) {
-            // const buf = Buffer.from(event.payload, "base64");
-            // this.slpFileWriter.handleData(buf);
+            const buf = Buffer.from(event.payload, "base64");
+            this.slpFileWriter.write(buf);
           }
 
           if (command === 0x39) {
             // End the current game if it's not already ended
-            // log.info("[Spectate] Game end 0x39");
-            // this.slpFileWriter.endGame();
+            log.info("[Spectate] Game end 0x39");
+            this.slpFileWriter.endCurrentFile();
             this.gameStarted = false;
           }
 
@@ -122,7 +135,7 @@ export class SpectateManager {
   /**
    * Connects to the Slippi server and the local Dolphin instance
    */
-  public async connect() {
+  public async connect(authToken: string) {
     if (this.wsConnection) {
       // We're already connected
       console.log("Skipping websocket connection since we're already connected");
@@ -131,7 +144,7 @@ export class SpectateManager {
 
     const headers = {
       "api-version": 2,
-      authorization: `Bearer ${false}`, // TODO: get the actual token
+      authorization: `Bearer ${authToken}`,
     };
 
     await new Promise<void>((resolve, reject) => {
@@ -139,10 +152,7 @@ export class SpectateManager {
 
       socket.on("connectFailed", (error) => {
         log.error(`[Spectate] WS connection failed\n`, error);
-        // TODO: Render an error about the websocket connection
-        // const errorAction = displayError("broadcast-global", error.message);
-        // store.dispatch(errorAction);
-
+        this.emit(SpectateManagerEvent.ERROR, error);
         reject();
       });
 
@@ -152,9 +162,7 @@ export class SpectateManager {
 
         connection.on("error", (err) => {
           log.error("[Spectate] Error with WS connection\n", err);
-          // TODO: Render an error about the websocket connection
-          // const errorAction = displayError("broadcast-global", err.message);
-          // store.dispatch(errorAction);
+          this.emit(SpectateManagerEvent.ERROR, err);
         });
 
         connection.on("close", (code, reason) => {
@@ -164,7 +172,7 @@ export class SpectateManager {
 
           if (code === 1006) {
             // Here we have an abnormal disconnect... try to reconnect?
-            this.connect()
+            this.connect(authToken)
               .then(() => {
                 if (!this.prevBroadcastId || !this.wsConnection) {
                   return;
@@ -206,17 +214,19 @@ export class SpectateManager {
             obj = JSON.parse(message.utf8Data);
           }
           switch (obj.type) {
-            case "list-broadcasts-resp":
-              // TODO: Tell renderer to show some broadcasts
-              // const broadcasts = obj.broadcasts || [];
-              // store.dispatch(updateViewableBroadcasts(broadcasts));
+            case "list-broadcasts-resp": {
+              const broadcasts: BroadcasterItem[] = obj.broadcasts ?? [];
+              this.emit(SpectateManagerEvent.BROADCAST_LIST_UPDATE, broadcasts);
               break;
-            case "events":
+            }
+            case "events": {
               this._handleEvents(obj);
               break;
-            default:
-              log.error(`[Spectate] Ws resp type ${obj.type} not supported`);
+            }
+            default: {
+              log.warn(`[Spectate] Ws resp type ${obj.type} not supported`);
               break;
+            }
           }
         });
 
@@ -228,43 +238,36 @@ export class SpectateManager {
     });
   }
 
-  public refreshBroadcasts() {
-    if (!this.wsConnection) {
-      return;
-    }
+  public async fetchBroadcastList(): Promise<BroadcasterItem[]> {
+    return new Promise((resolve, reject) => {
+      if (!this.wsConnection) {
+        reject(new Error("No websocket connection"));
+        return;
+      }
 
-    this.wsConnection.sendUTF(
-      JSON.stringify({
-        type: "list-broadcasts",
-      }),
-    );
-  }
+      this.once(SpectateManagerEvent.BROADCAST_LIST_UPDATE, (data: BroadcasterItem[]) => resolve(data));
+      this.once(SpectateManagerEvent.ERROR, reject);
 
-  public fetchSpectateFolder() {
-    const rootFolderPath = ""; // will need to figure out if we can get the root slp path in the main process
-    if (!rootFolderPath) {
-      throw new Error(
-        `Files cannot be saved without a Root Replay Directory set. Please return to the
-        settings page and set a Replay Root Directory.`,
+      this.wsConnection.sendUTF(
+        JSON.stringify({
+          type: "list-broadcasts",
+        }),
       );
-    }
-    return path.join(rootFolderPath, "Spectate");
+    });
   }
 
-  public watchBroadcast(broadcastId: string) {
+  public watchBroadcast(broadcastId: string, targetPath?: string) {
     if (!this.wsConnection) {
       return;
     }
 
-    // Get path for spectate replays
-    const targetPath = this.fetchSpectateFolder();
-    fs.ensureDirSync(targetPath);
-
-    // const slpSettings = {
-    //   folderPath: targetPath,
-    // };
-
-    // this.slpFileWriter.updateSettings(slpSettings);
+    if (targetPath) {
+      fs.ensureDirSync(targetPath);
+      const slpSettings = {
+        folderPath: targetPath,
+      };
+      this.slpFileWriter.updateSettings(slpSettings);
+    }
 
     if (broadcastId === this.prevBroadcastId) {
       // If we have not changed broadcasts, don't do anything. Worth noting that closing
@@ -291,7 +294,7 @@ export class SpectateManager {
     // Play an empty file such that we just launch into the waiting for game screen, this is
     // used to clear out any previous file that we were reading for. The file will get updated
     // by the fileWriter
-    // this.dolphinManager.playFile("", true); TODO: figure out how to implement this properly
+    this._playFile("");
 
     this.prevBroadcastId = broadcastId;
   }

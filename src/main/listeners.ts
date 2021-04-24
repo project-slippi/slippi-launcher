@@ -9,6 +9,9 @@ import { DolphinManager, ReplayCommunication } from "./dolphinManager";
 import { assertDolphinInstallations } from "./downloadDolphin";
 import { fetchNewsFeed } from "./newsFeed";
 import { worker as replayBrowserWorker } from "./replayBrowser/workerInterface";
+import { SpectateManager } from "./spectateManager";
+
+const spectateManager = new SpectateManager();
 
 export function setupListeners() {
   ipcMain.on("onDragStart", (event, filePath: string) => {
@@ -77,5 +80,16 @@ function setupDolphinManagerListeners() {
   ipc.answerRenderer("fetchNewsFeed", async () => {
     const result = await fetchNewsFeed();
     return result;
+  });
+
+  ipc.answerRenderer("fetchBroadcastList", async (authToken: string) => {
+    await spectateManager.connect(authToken);
+    const result = await spectateManager.fetchBroadcastList();
+    console.log("fetched broadcast list: ", result);
+    return result;
+  });
+
+  ipc.answerRenderer("watchBroadcast", async (broadcasterId: string) => {
+    spectateManager.watchBroadcast(broadcasterId);
   });
 }

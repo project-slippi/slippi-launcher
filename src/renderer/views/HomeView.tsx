@@ -7,6 +7,7 @@ import { Broadcast } from "@/containers/Broadcast";
 import { Header } from "@/containers/Header";
 import { Home } from "@/containers/Home";
 import { ReplayBrowser } from "@/containers/ReplayBrowser";
+import { SpectatePage } from "@/containers/SpectatePage";
 
 const MenuButton = styled.div<{
   selected?: boolean;
@@ -56,7 +57,7 @@ export const HomeView: React.FC = () => {
             <ReplayBrowser />
           </Route>
           <Route path={`${path}/spectate`}>
-            <h1>Spectate</h1>
+            <SpectatePage />
           </Route>
           <Route path={`${path}/broadcast`}>
             <Broadcast />

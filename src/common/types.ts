@@ -43,3 +43,12 @@ export interface StartBroadcastConfig {
   viewerId: string;
   authToken: string;
 }
+
+export interface BroadcasterItem {
+  broadcaster: {
+    name: string;
+    uid: string;
+  };
+  id: string;
+  name: string;
+}
