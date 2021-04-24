@@ -5,8 +5,7 @@ import { ipcMain as ipc } from "electron-better-ipc";
 import path from "path";
 
 import { broadcastManager } from "./broadcastManager";
-import { ReplayCommunication } from "./dolphin";
-import { dolphinManager } from "./dolphinManager";
+import { dolphinManager, ReplayCommunication } from "./dolphin";
 import { assertDolphinInstallations } from "./downloadDolphin";
 import { fetchNewsFeed } from "./newsFeed";
 import { worker as replayBrowserWorker } from "./replayBrowser/workerInterface";

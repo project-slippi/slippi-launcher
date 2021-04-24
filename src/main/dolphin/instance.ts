@@ -16,7 +16,7 @@ const generateTempCommunicationFile = (): string => {
   return commFileFullPath;
 };
 
-export class NetplayDolphinInstance extends EventEmitter {
+export class DolphinInstance extends EventEmitter {
   protected process: ChildProcessWithoutNullStreams | null = null;
   private executablePath: string;
   private isoPath: string | null = null;
@@ -50,7 +50,7 @@ export class NetplayDolphinInstance extends EventEmitter {
   }
 }
 
-export class PlaybackDolphinInstance extends NetplayDolphinInstance {
+export class PlaybackDolphinInstance extends DolphinInstance {
   private commPath: string;
 
   public constructor(execPath: string, isoPath?: string) {

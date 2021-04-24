@@ -2,7 +2,7 @@ import { DolphinLaunchType, findDolphinExecutable } from "common/dolphin";
 import electronSettings from "electron-settings";
 import { EventEmitter } from "events";
 
-import { NetplayDolphinInstance, PlaybackDolphinInstance, ReplayCommunication } from "./dolphin";
+import { DolphinInstance, PlaybackDolphinInstance, ReplayCommunication } from ".";
 
 electronSettings.configure({
   fileName: "Settings",
@@ -13,7 +13,7 @@ electronSettings.configure({
 // This includes playing netplay, viewing replays, watching broadcasts (spectating), and configuring Dolphin.
 export class DolphinManager extends EventEmitter {
   private playbackDolphinInstances = new Map<string, PlaybackDolphinInstance>();
-  private netplayDolphinInstance: NetplayDolphinInstance | null = null;
+  private netplayDolphinInstance: DolphinInstance | null = null;
 
   public async launchPlaybackDolphin(id: string, replayComm: ReplayCommunication, metadata?: any): Promise<void> {
     const dolphinPath = await findDolphinExecutable(DolphinLaunchType.PLAYBACK);
@@ -38,7 +38,7 @@ export class DolphinManager extends EventEmitter {
     const dolphinPath = await findDolphinExecutable(DolphinLaunchType.NETPLAY);
     const meleeISOPath = (await electronSettings.get("settings.isoPath")) as string | undefined;
     if (!this.netplayDolphinInstance) {
-      this.netplayDolphinInstance = new NetplayDolphinInstance(dolphinPath, meleeISOPath);
+      this.netplayDolphinInstance = new DolphinInstance(dolphinPath, meleeISOPath);
       this.netplayDolphinInstance.on("close", () => {
         this.netplayDolphinInstance = null;
       });
@@ -47,7 +47,7 @@ export class DolphinManager extends EventEmitter {
 
   public async configureDolphin(launchType: DolphinLaunchType) {
     const dolphinPath = await findDolphinExecutable(launchType);
-    const instance = new NetplayDolphinInstance(dolphinPath);
+    const instance = new DolphinInstance(dolphinPath);
     instance.start();
   }
 }
