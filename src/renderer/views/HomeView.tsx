@@ -8,6 +8,7 @@ import React from "react";
 import { Link, Redirect, Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
 
+import { PrivateRoute } from "@/components/PrivateRoute";
 import { Broadcast } from "@/containers/Broadcast";
 import { Header } from "@/containers/Header";
 import { Home } from "@/containers/Home";
@@ -67,12 +68,12 @@ export const HomeView: React.FC = () => {
           <Route path={`${path}/replays`}>
             <ReplayBrowser />
           </Route>
-          <Route path={`${path}/spectate`}>
+          <PrivateRoute path={`${path}/spectate`}>
             <SpectatePage />
-          </Route>
-          <Route path={`${path}/broadcast`}>
+          </PrivateRoute>
+          <PrivateRoute path={`${path}/broadcast`}>
             <Broadcast />
-          </Route>
+          </PrivateRoute>
           <Redirect exact from={path} to={`${path}/home`} />
         </Switch>
       </div>
