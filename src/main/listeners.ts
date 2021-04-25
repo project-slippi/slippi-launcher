@@ -75,6 +75,6 @@ export function setupListeners() {
   });
 
   ipc.answerRenderer("watchBroadcast", async (broadcasterId: string) => {
-    spectateManager.watchBroadcast(broadcasterId);
+    spectateManager.watchBroadcast(broadcasterId, undefined, true);
   });
 }

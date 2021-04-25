@@ -16,7 +16,7 @@ export class DolphinManager extends EventEmitter {
   private playbackDolphinInstances = new Map<string, PlaybackDolphinInstance>();
   private netplayDolphinInstance: DolphinInstance | null = null;
 
-  public async launchPlaybackDolphin(id: string, replayComm: ReplayCommunication, metadata?: any): Promise<void> {
+  public async launchPlaybackDolphin(id: string, replayComm: ReplayCommunication): Promise<void> {
     const dolphinPath = await findDolphinExecutable(DolphinLaunchType.PLAYBACK);
     const meleeISOPath = (await electronSettings.get("settings.isoPath")) as string | undefined;
 
@@ -24,10 +24,7 @@ export class DolphinManager extends EventEmitter {
     if (!playbackInstance) {
       playbackInstance = new PlaybackDolphinInstance(dolphinPath, meleeISOPath);
       playbackInstance.on("close", () => {
-        this.emit("dolphin-closed", {
-          id,
-          metadata,
-        });
+        this.emit("dolphin-closed", id);
 
         // Remove the instance from the map on close
         this.playbackDolphinInstances.delete(id);
