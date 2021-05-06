@@ -219,13 +219,6 @@ export default class DolphinManager extends EventEmitter {
       );
     }
 
-    if (path.extname(meleeFile) !== ".iso" || path.extname(meleeFile !== ".gcm")) {
-      throw new Error(
-        `The Melee game file selected is not an ISO or GCM file. Please return to the settings page 
-        and select a Melee ISO.`
-      );
-    }
-
     // Here we are going to build the platform-specific commands required to launch
     // dolphin from the command line with the correct game
     // When in development mode, use the build-specific dolphin version

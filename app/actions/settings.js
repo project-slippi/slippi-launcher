@@ -3,6 +3,7 @@ import _ from 'lodash';
 import crypto from 'crypto';
 import electronSettings from 'electron-settings';
 import log from 'electron-log';
+import path from 'path';
 
 import { displayError } from './error';
 
@@ -106,7 +107,15 @@ export function validateISO() {
     if (!fileStats) {
       dispatch({
         type: ISO_VALIDATION_COMPLETE,
-        payload: { isValid: false },
+        payload: { isValid: "fail" },
+      });
+      return;
+    }
+
+    if (path.extname(isoPath) !== ".iso" || path.extname(isoPath) !== ".gcm") {
+      dispatch({
+        type: ISO_VALIDATION_COMPLETE,
+        payload: { isValid: "fail" },
       });
       return;
     }
