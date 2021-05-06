@@ -208,8 +208,21 @@ export default class DolphinManager extends EventEmitter {
     const meleeFile = electronSettings.get('settings.isoPath');
     if (!meleeFile) {
       throw new Error(
-        `Files cannot be played without a melee iso selected. Please return to the
-        settings page and select a melee iso.`
+        `Replays cannot be played without a Melee ISO selected. Please return to the
+        settings page and select a Melee ISO.`
+      );
+    }
+
+    if (!fs.existsSync(meleeFile)) {
+      throw new Error(
+        `The ISO selected does not exist. Please return to the settings page and select a Melee ISO.`
+      );
+    }
+
+    if (path.extname(meleeFile) !== ".iso" || path.extname(meleeFile !== ".gcm")) {
+      throw new Error(
+        `The Melee game file selected is not an ISO or GCM file. Please return to the settings page 
+        and select a Melee ISO.`
       );
     }
 
