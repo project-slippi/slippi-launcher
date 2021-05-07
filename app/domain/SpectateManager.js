@@ -83,35 +83,15 @@ export class SpectateManager {
         break;
       case 'end_game':
         // End the current game if it's not already ended
-        // log.info("[Spectate] Game end explicit");
         this.slpFileWriter.endGame();
         this.gameStarted = false;
         break;
       case 'game_event':
-        const payloadStart = event.payload.substring(0, 4);
-        const payloadStartBuf = Buffer.from(payloadStart, 'base64');
-        const command = payloadStartBuf[0];
-
-        // this.debouncedGameDataLog(event.cursor, command);
-
-        if (command === 0x35) {
-          this.gameStarted = true;
-          // log.info("[Spectate] Game start");
-        }
-
         // Only forward data to the file writer when it's an active game
         if (this.gameStarted) {
           const buf = Buffer.from(event.payload, 'base64');
           this.slpFileWriter.handleData(buf);
         }
-
-        if (command === 0x39) {
-          // End the current game if it's not already ended
-          // log.info("[Spectate] Game end 0x39");
-          this.slpFileWriter.endGame();
-          this.gameStarted = false;
-        }
-
         break;
       default:
         log.error(`[Spectate] Event type ${event.type} not supported`);
