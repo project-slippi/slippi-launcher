@@ -113,6 +113,12 @@ export function validateISO() {
     }
 
     if (path.extname(isoPath) !== ".iso" || path.extname(isoPath) !== ".gcm") {
+      const errorAction = displayError(
+        'settings-global',
+        "The file selected is not a valid ISO file",
+      );
+
+      dispatch(errorAction);
       dispatch({
         type: ISO_VALIDATION_COMPLETE,
         payload: { isValid: "fail" },
