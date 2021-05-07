@@ -303,12 +303,12 @@ export default class Settings extends Component {
       break;
     case 'fail':
       icon = 'times circle outline';
-      text = 'Bad ISO';
+      text = 'Invalid';
       loading = false;
       break;
     case 'unknown':
       icon = 'warning sign';
-      text = 'Unknown ISO';
+      text = 'Unknown';
       loading = false;
       break;
     case 'validating':
