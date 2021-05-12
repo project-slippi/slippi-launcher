@@ -429,12 +429,12 @@ export default class GameProfile extends Component {
           <KillsTable
             game={this.props.store.game}
             playerDisplay={this.renderPlayerColHeader(true)}
-            playerIndex={this.getPlayerIndex(true)}
+            playerIndex={this.getPlayerIndex(false)}
           />
           <KillsTable
             game={this.props.store.game}
             playerDisplay={this.renderPlayerColHeader(false)}
-            playerIndex={this.getPlayerIndex(false)}
+            playerIndex={this.getPlayerIndex(true)}
           />
         </div>
       </Segment>
@@ -451,13 +451,13 @@ export default class GameProfile extends Component {
           <PunishesTable
             game={this.props.store.game}
             playerDisplay={this.renderPlayerColHeader(true)}
-            playerIndex={this.getPlayerIndex(true)}
+            playerIndex={this.getPlayerIndex(false)}
             playFile={this.props.playFile}
           />
           <PunishesTable
             game={this.props.store.game}
             playerDisplay={this.renderPlayerColHeader(false)}
-            playerIndex={this.getPlayerIndex(false)}
+            playerIndex={this.getPlayerIndex(true)}
             playFile={this.props.playFile}
           />
         </div>
@@ -465,10 +465,10 @@ export default class GameProfile extends Component {
     );
   }
 
-  getPlayerIndex(isFirstPlayer = true) {
+  getPlayerIndex(wantFirstPlayer = true) {
     const gameSettings = _.get(this.props.store, ['game', 'settings']) || {};
     const players = gameSettings.players || [];
-    const player = (isFirstPlayer ? _.first(players) : _.last(players)) || {};
+    const player = (wantFirstPlayer ? _.first(players) : _.last(players)) || {};
     return player.playerIndex;
   }
 

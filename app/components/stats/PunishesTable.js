@@ -207,15 +207,15 @@ export default class PunishesTable extends Component {
     const playerPunishes = punishesByPlayer[this.props.playerIndex] || [];
 
     const stocks = _.get(stats, 'stocks') || [];
-    const stocksByOpponent = _.groupBy(stocks, 'opponentIndex');
-    const opponentStocks = stocksByOpponent[this.props.playerIndex] || [];
+    const stocksByPlayer = _.groupBy(stocks, 'playerIndex');
+    const playerStocks = stocksByPlayer[this.props.playerIndex] || [];
 
     const elements = [];
 
     const addStockRows = punish => {
       const shouldDisplayStockLoss = () => {
         // Calculates whether we should display a stock loss row in this position
-        const currentStock = _.first(opponentStocks);
+        const currentStock = _.first(playerStocks);
         const currentStockWasLost = currentStock && currentStock.endFrame;
         const wasLostBeforeNextPunish =
           !punish || currentStock.endFrame < punish.startFrame;
@@ -233,7 +233,7 @@ export default class PunishesTable extends Component {
       // stock
       let shouldAddEmptyState = punish === _.first(playerPunishes);
       while (shouldDisplayStockLoss()) {
-        const stock = opponentStocks.shift();
+        const stock = playerStocks.shift();
 
         if (shouldAddEmptyState) {
           const emptyPunishes = this.generateEmptyRow(stock);
@@ -251,7 +251,7 @@ export default class PunishesTable extends Component {
 
       // Special case handling when a player finishes their opponent without getting hit
       // on their last stock. Still want to show an empty state
-      const stock = _.first(opponentStocks);
+      const stock = _.first(playerStocks);
       if (stock && addedStockRow && !punish) {
         const emptyPunishes = this.generateEmptyRow(stock);
         elements.push(emptyPunishes);

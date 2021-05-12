@@ -120,10 +120,10 @@ export default class KillsTable extends Component {
   renderStocksRows() {
     const stats = this.props.game.getStats() || {};
     const stocks = _.get(stats, 'stocks') || [];
-    const stocksByOpponent = _.groupBy(stocks, 'opponentIndex');
-    const opponentStocks = stocksByOpponent[this.props.playerIndex] || [];
+    const stocksByPlayer = _.groupBy(stocks, 'playerIndex');
+    const playerStocks = stocksByPlayer[this.props.playerIndex] || [];
 
-    return opponentStocks.map(this.generateStockRow);
+    return playerStocks.map(this.generateStockRow);
   }
 
   render() {
