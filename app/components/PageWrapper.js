@@ -18,6 +18,7 @@ class PageWrapper extends Component {
     history: PropTypes.object.isRequired,
 
     // From redux
+    appUpgradeDownloading: PropTypes.func.isRequired,
     appUpgradeDownloaded: PropTypes.func.isRequired,
     bootErrorEncountered: PropTypes.func.isRequired,
     gameProfileLoad: PropTypes.func.isRequired,
@@ -25,16 +26,24 @@ class PageWrapper extends Component {
   };
 
   componentDidMount() {
+    ipcRenderer.on('update-downloading', this.onAppUpgradeFound);
     ipcRenderer.on('update-downloaded', this.onAppUpgrade);
     ipcRenderer.on('play-replay', this.onPlayReplay);
     ipcRenderer.on('boot-error-encountered', this.onBootError)
   }
 
   componentWillUnmount() {
+    ipcRenderer.removeListener('update-downloading', this.onAppUpgradeFound);
     ipcRenderer.removeListener('update-downloaded', this.onAppUpgrade);
     ipcRenderer.removeListener('play-replay', this.onPlayReplay);
     ipcRenderer.removeListener('boot-error-encountered', this.onBootError)
   }
+
+  onAppUpgradeFound = (event, upgradeDetails) => {
+    // When main process (main.dev.js) tells us an update is downloading, trigger
+    // a global notif to be shown
+    this.props.appUpgradeDownloading(upgradeDetails);
+  };
 
   onAppUpgrade = (event, upgradeDetails) => {
     // When main process (main.dev.js) tells us an update has been downloaded, trigger

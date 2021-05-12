@@ -1,5 +1,5 @@
 import {
-  APP_UPGRADE_DOWNLOADED, SET_ACTIVE_NOTIF, DISMISS_GLOBAL_NOTIF, BOOT_ERROR_ENCOUNTERED,
+  APP_UPGRADE_DOWNLOADING, APP_UPGRADE_DOWNLOADED, SET_ACTIVE_NOTIF, DISMISS_GLOBAL_NOTIF, BOOT_ERROR_ENCOUNTERED,
 } from '../actions/notifs';
 
 // Default state for this reducer
@@ -12,6 +12,8 @@ const defaultState = {
 
 export default function fileLoader(state = defaultState, action) {
   switch (action.type) {
+  case APP_UPGRADE_DOWNLOADING:
+    return displayAppDownloadNotif(state, action);
   case APP_UPGRADE_DOWNLOADED:
     return displayAppUpgradeNotif(state, action);
   case SET_ACTIVE_NOTIF:
@@ -25,11 +27,22 @@ export default function fileLoader(state = defaultState, action) {
   }
 }
 
+function displayAppDownloadNotif(state, action) {
+  const newState = { ...state };
+
+  newState.visibility.appUpgradeDownloading = true;
+  newState.meta.appUpgrade = action.payload.upgradeDetails;
+  newState.meta.appUpdateDownloaded = action.payload.downloaded;
+  return newState;
+}
+
 function displayAppUpgradeNotif(state, action) {
   const newState = { ...state };
 
+  newState.visibility.appUpgradeDownloading = false;
   newState.visibility.appUpgrade = true;
   newState.meta.appUpgrade = action.payload.upgradeDetails;
+  newState.meta.appUpdateDownloaded = action.payload.downloaded;
   return newState;
 }
 

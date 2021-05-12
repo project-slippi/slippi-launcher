@@ -1,12 +1,24 @@
+export const APP_UPGRADE_DOWNLOADING = 'APP_UPGRADE_DOWNLOADING';
 export const APP_UPGRADE_DOWNLOADED = 'APP_UPGRADE_DOWNLOADED';
 export const SET_ACTIVE_NOTIF = 'SET_ACTIVE_NOTIF';
 export const DISMISS_GLOBAL_NOTIF = 'DISMISS_GLOBAL_NOTIF';
 export const BOOT_ERROR_ENCOUNTERED = 'BOOT_ERROR_ENCOUNTERED';
 
+export function appUpgradeDownloading(upgradeDetails) {
+  return {
+    type: APP_UPGRADE_DOWNLOADING,
+    payload: {
+      downloaded: false,
+      upgradeDetails: upgradeDetails,
+    },
+  };
+}
+
 export function appUpgradeDownloaded(upgradeDetails) {
   return {
     type: APP_UPGRADE_DOWNLOADED,
     payload: {
+      downloaded: true,
       upgradeDetails: upgradeDetails,
     },
   };

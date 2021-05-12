@@ -65,19 +65,32 @@ class GlobalAlert extends Component {
       {
         key: 'appUpgrade',
         icon: 'cloud download',
-        message: (
-          <div className={styles['single-line-message']}>
-            New application version available
-            ({this.renderVersionChange()})
-            {this.renderClickToUpgradeLink()}
-          </div>
-        ),
+        message: this.renderUpdateInfo(),
         isVisible: this.isAlertVisible('appUpgrade'),
         onDismiss: this.createGenericOnDismiss('appUpgrade'),
         heightPx: 48,
         severity: 'info',
       },
+      {
+        key: 'appUpgradeDownloading',
+        icon: 'cloud download',
+        message: this.renderUpdateInfo(),
+        isVisible: this.isAlertVisible('appUpgradeDownloading'),
+        onDismiss: this.createGenericOnDismiss('appUpgradeDownloading'),
+        heightPx: 48,
+        severity: 'info',
+      },
     ];
+  }
+
+  renderUpdateInfo() {
+    return (
+      <div className={styles['single-line-message']}>
+        New application version available
+        ({this.renderVersionChange()})
+        {this.renderClickToUpgradeLink()}
+      </div>
+    )
   }
 
   renderVersionChange() {
@@ -92,15 +105,23 @@ class GlobalAlert extends Component {
   }
 
   renderClickToUpgradeLink() {
+    const isDownloaded = _.get(this.props.store, ['meta', 'appUpdateDownloaded']);
+    if (isDownloaded) {
+      return (
+        // eslint-disable-next-line
+        <a
+          className={styles['upgrade-link']}
+          onClick={this.onQuitAndUpdate}
+        >
+          Click to restart and install
+        </a>
+      );
+    }
     return (
-      // eslint-disable-next-line
-      <a
-        className={styles['upgrade-link']}
-        onClick={this.onQuitAndUpdate}
-      >
-        Click to restart and install
-      </a>
-    );
+      <span className={styles['downloading']}>
+        downloading...
+      </span>
+    )
   }
 
   getAlertToDisplay() {

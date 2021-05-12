@@ -42,7 +42,7 @@ let didFinishLoad = false;
 
 app.disableHardwareAcceleration();
 
-if (process.env.NODE_ENV === 'production') {
+if (isProd) {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
 }
@@ -430,6 +430,12 @@ app.on('ready', async () => {
     if (bootError) {
       mainWindow.webContents.send('boot-error-encountered', bootError);
     }
+
+    autoUpdater.on("update-available", (info) => {
+      mainWindow.webContents.send("update-downloading", {
+        version: info.version,
+      })
+    })
 
     autoUpdater.on('update-downloaded', (info) => {
       mainWindow.webContents.send('update-downloaded', {
