@@ -130,7 +130,7 @@ export default class GameProfile extends Component {
         icon={true}
       >
         <Icon name="hand peace" />
-        Only Singles is Supported
+        Only Singles Stats are Supported
       </Header>
     );
   }
