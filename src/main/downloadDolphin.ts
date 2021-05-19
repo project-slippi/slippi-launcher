@@ -10,7 +10,7 @@ import { lt } from "semver";
 
 import { getLatestRelease } from "./github";
 
-function sendToRenderer(message: string, channel = "downloadDolphinLog"): void {
+export function sendToRenderer(message: string, channel = "downloadDolphinLog"): void {
   const window = BrowserWindow.getFocusedWindow();
   if (window) {
     window.webContents.send(channel, message);
@@ -20,7 +20,15 @@ function sendToRenderer(message: string, channel = "downloadDolphinLog"): void {
 export async function assertDolphinInstallation(
   type: DolphinLaunchType,
   log: (message: string) => void,
+  force = false,
 ): Promise<void> {
+  if (force) {
+    log(`Forcibly downloading ${type} Dolphin installation. Downloading...`);
+    const downloadedAsset = await downloadLatestDolphin(type, log);
+    log(`Installing ${type} Dolphin...`);
+    await installDolphin(type, downloadedAsset);
+    return;
+  }
   try {
     await findDolphinExecutable(type);
     log(`Found existing ${type} Dolphin executable.`);

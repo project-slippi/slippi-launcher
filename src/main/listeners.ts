@@ -2,6 +2,7 @@ import { DolphinLaunchType } from "common/dolphin";
 import { StartBroadcastConfig } from "common/types";
 import { ipcMain, nativeImage } from "electron";
 import { ipcMain as ipc } from "electron-better-ipc";
+import log from "electron-log";
 import path from "path";
 
 import { broadcastManager } from "./broadcastManager";
@@ -45,6 +46,11 @@ export function setupListeners() {
 
   ipcMain.on("configureDolphin", (_, dolphinType: DolphinLaunchType) => {
     dolphinManager.configureDolphin(dolphinType);
+  });
+
+  ipcMain.on("resetDolphin", (_, dolphinType: DolphinLaunchType) => {
+    log.info("Resetting dolphin");
+    dolphinManager.resetDolphin(dolphinType);
   });
 
   ipc.answerRenderer("loadReplayFolder", async (folderPath: string) => {

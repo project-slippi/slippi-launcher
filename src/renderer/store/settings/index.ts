@@ -1,3 +1,4 @@
+import { DolphinLaunchType, findDolphinExecutable, getDefaultDolphinPath } from "common/dolphin";
 import electronSettings from "electron-settings";
 import { stat } from "fs-extra";
 import { produce } from "immer";
@@ -19,10 +20,18 @@ type StoreState = {
     isoPath: string | null;
     isoModTime: string | null;
     rootSlpPath: string;
+    netplay: {
+      path: string | null;
+    };
+    playback: {
+      path: string | null;
+    };
   };
   // Other settings related values
   verifyingIso: boolean;
   validIsoPath: boolean | null;
+  verifyingDolphinPath: boolean;
+  validDolphinPath: boolean | null;
 };
 
 type StoreReducers = {
@@ -30,6 +39,8 @@ type StoreReducers = {
   setIsoModTime: (isoModTime: string | null) => void;
   setReplayDirectory: (dir: string) => void;
   verifyIsoPath: (isoPath: string, shouldSetPath?: boolean) => Promise<void>;
+  setDolphinFolderPath: (dolphinType: DolphinLaunchType, dolphinPath: string | null) => void;
+  verifyAndSetDolphinPath: (dolphinType: DolphinLaunchType, dolphinPath: string) => Promise<void>;
 };
 
 const restored = (electronSettings.getSync(SETTINGS_KEY) as unknown) as Partial<StoreState["settings"]>;
@@ -39,10 +50,18 @@ const initialState: StoreState = {
     isoPath: null,
     isoModTime: null,
     rootSlpPath: getDefaultRootSlpPath(),
+    netplay: {
+      path: getDefaultDolphinPath(DolphinLaunchType.NETPLAY),
+    },
+    playback: {
+      path: getDefaultDolphinPath(DolphinLaunchType.PLAYBACK),
+    },
     ...restored,
   },
   verifyingIso: false,
   validIsoPath: null,
+  verifyingDolphinPath: false,
+  validDolphinPath: true,
 };
 
 export const useSettings = create<StoreState & StoreReducers>((set, get) => ({
@@ -100,6 +119,34 @@ export const useSettings = create<StoreState & StoreReducers>((set, get) => ({
       set({ validIsoPath: false });
     } finally {
       set({ verifyingIso: false });
+    }
+  },
+
+  setDolphinFolderPath: (dolphinType, dolphinPath) => {
+    set((state) =>
+      produce(state, (draft) => {
+        draft.settings[dolphinType].path = dolphinPath;
+      }),
+    );
+  },
+  verifyAndSetDolphinPath: async (dolphinType, dolphinPath) => {
+    // Indicate that we're loading
+    set({
+      verifyingDolphinPath: true,
+      validDolphinPath: null,
+    });
+
+    try {
+      const { setDolphinFolderPath } = get();
+
+      await findDolphinExecutable(dolphinType); // errors if there is no dolphin in the path
+
+      set({ validDolphinPath: true });
+      setDolphinFolderPath(dolphinType, dolphinPath);
+    } catch (err) {
+      set({ validDolphinPath: false });
+    } finally {
+      set({ verifyingDolphinPath: false });
     }
   },
 }));
