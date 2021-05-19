@@ -46,11 +46,10 @@ jobs:
         id: cache
         with:
           path: node_modules
-          key: ${{ runner.OS }}-build-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.OS }}-build-${{ secrets.CACHE_CONTROL }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.OS }}-build-${{ env.cache-name }}-
-            ${{ runner.OS }}-build-
-            ${{ runner.OS }}-
+            ${{ runner.OS }}-build-${{ secrets.CACHE_CONTROL }}-${{ env.cache-name }}-
+            ${{ runner.OS }}-build-${{ secrets.CACHE_CONTROL }}
       - name: Load macOS signing certificates and secrets
         if: matrix.os == 'macOS-latest' && env.CERTIFICATE_MACOS_PASSWORD != null
         run: |
