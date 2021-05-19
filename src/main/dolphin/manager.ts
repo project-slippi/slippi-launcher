@@ -2,8 +2,8 @@ import { DolphinLaunchType, findDolphinExecutable } from "common/dolphin";
 import log from "electron-log";
 import electronSettings from "electron-settings";
 import { EventEmitter } from "events";
-import { assertDolphinInstallation } from "main/downloadDolphin";
 
+import { assertDolphinInstallation } from "../downloadDolphin";
 import { DolphinInstance, PlaybackDolphinInstance } from "./instance";
 import { ReplayCommunication } from "./types";
 
