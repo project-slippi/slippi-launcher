@@ -1,7 +1,7 @@
 {
   "name": "slippi-desktop-app",
   "productName": "Slippi Desktop App",
-  "version": "1.6.9",
+  "version": "1.6.10",
   "description": "Slippi Desktop App for browsing and playing replays.",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
