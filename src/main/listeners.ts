@@ -2,7 +2,6 @@ import { DolphinLaunchType } from "common/dolphin";
 import { StartBroadcastConfig } from "common/types";
 import { ipcMain, nativeImage } from "electron";
 import { ipcMain as ipc } from "electron-better-ipc";
-import log from "electron-log";
 import path from "path";
 
 import { broadcastManager } from "./broadcastManager";
@@ -44,13 +43,14 @@ export function setupListeners() {
     dolphinManager.launchNetplayDolphin();
   });
 
-  ipcMain.on("configureDolphin", (_, dolphinType: DolphinLaunchType) => {
-    dolphinManager.configureDolphin(dolphinType);
+  ipc.answerRenderer("configureDolphin", async (dolphinType: DolphinLaunchType) => {
+    console.log("configuring dolphin...");
+    await dolphinManager.configureDolphin(dolphinType);
   });
 
-  ipcMain.on("resetDolphin", (_, dolphinType: DolphinLaunchType) => {
-    log.info("Resetting dolphin");
-    dolphinManager.resetDolphin(dolphinType);
+  ipc.answerRenderer("resetDolphin", async (dolphinType: DolphinLaunchType) => {
+    console.log("resetting dolphin...");
+    await dolphinManager.resetDolphin(dolphinType);
   });
 
   ipc.answerRenderer("loadReplayFolder", async (folderPath: string) => {

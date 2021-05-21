@@ -4,7 +4,7 @@ import Typography from "@material-ui/core/Typography";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import ErrorIcon from "@material-ui/icons/Error";
 import { DolphinLaunchType } from "common/dolphin";
-import { ipcRenderer } from "electron-better-ipc";
+import { ipcRenderer as ipc } from "electron-better-ipc";
 import React from "react";
 
 import { PathInput } from "@/components/PathInput";
@@ -49,11 +49,13 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
     },
     [setDolphinFolderPath],
   );
-  const configureDolphin = () => {
-    ipcRenderer.send("configureDolphin", dolphinType);
+  const configureDolphin = async () => {
+    console.log("configure dolphin pressesd");
+    await ipc.callMain<string, never>("configureDolphin", dolphinType);
   };
-  const resetDolphin = () => {
-    ipcRenderer.send("resetDolphin", dolphinType);
+  const resetDolphin = async () => {
+    console.log("reset button clicked");
+    await ipc.callMain<string, never>("resetDolphin", dolphinType);
   };
   return (
     <div>
