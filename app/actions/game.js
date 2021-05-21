@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import SlippiGame from '@slippi/slippi-js';
+import { SlippiGame } from '@slippi/slippi-js';
 import log from 'electron-log';
 
 export const GAME_LOAD_START = 'GAME_LOAD_START'
