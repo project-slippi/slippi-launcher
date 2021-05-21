@@ -64,15 +64,6 @@ export class BroadcastManager {
       // Log the error messages we get from Dolphin
       log.error("[Broadcast] Dolphin connection error\n", err);
     });
-
-    this._debouncedGameDataLog = _.debounce((cursor, cmd) => {
-      // I can't figure out how to differentiate when an invocation is triggered by a leading vs
-      // falling edge, would be useful to log that
-      log.info(`[Broadcast] Game events edge. ${cursor} 0x${cmd ? cmd.toString(16) : "??"}`);
-    }, 1000, {
-      leading: true,
-      trailing: true,
-    });
   }
 
   /**
@@ -321,16 +312,6 @@ export class BroadcastManager {
       case "start_game":
       case "game_event":
       case "end_game":
-        // const payload = event.payload || "";
-        // const payloadStart = payload.substring(0, 4);
-        // const buf = Buffer.from(payloadStart, 'base64');
-        // const command = buf[0];
-  
-        if (event.type === "game_event" && !event.payload) {
-          // Don't send empty payload game_event
-          break;
-        }
-
         const message = {
           type: 'send-event',
           broadcastId: this.broadcastId,
@@ -344,12 +325,7 @@ export class BroadcastManager {
         this.wsConnection.sendUTF(JSON.stringify(message), err => {
           if (err) {
             log.error("[Broadcast] WS send error encountered\n", err);
-            // return;
           }
-
-          // if (event.type === "game_event") {
-          //   this._debouncedGameDataLog(event.cursor, command);
-          // }
         });
         break;
       default:

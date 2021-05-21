@@ -4,7 +4,6 @@
 import log from 'electron-log';
 import { client as WebSocketClient } from 'websocket';
 import * as firebase from 'firebase';
-import _ from 'lodash';
 import fs from 'fs-extra';
 import path from 'path';
 
@@ -61,15 +60,6 @@ export class SpectateManager {
     this.slpFileWriter = new SlpFileWriter(slpSettings);
     this.slpFileWriter.on("new-file", (curFilePath) => {
       this.dolphinManager.playFile(curFilePath, false);
-    });
-
-    this.debouncedGameDataLog = _.debounce((cursor, cmd) => {
-      // I can't figure out how to differentiate when an invocation is triggered by a leading vs
-      // falling edge, would be useful to log that
-      log.info(`[Spectate] Game events edge. ${cursor} 0x${cmd ? cmd.toString(16) : "??"}`);
-    }, 1000, {
-      leading: true,
-      trailing: true,
     });
   }
 
