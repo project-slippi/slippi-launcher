@@ -5,6 +5,9 @@ This repository is part of the Project Slippi ecosystem. For more information ab
 ## Intro
 This project is home to the desktop app for Project Slippi. The app allows the user to browse and launch replay files. It also has stat analysis tools for replay files.
 
+## Contributing
+We are currently in the process of rewriting the desktop app and are not accepting any feature PRs to the main branch. Contributions are welcome for the rewerite, more details can be found in issue [#112](https://github.com/project-slippi/slippi-desktop-app/issues/112).
+
 ## Build Instructions
 ### Prerequisites
 These are the applications you will need to install in order to build this project:
