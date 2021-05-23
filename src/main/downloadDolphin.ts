@@ -20,15 +20,7 @@ export function sendToRenderer(message: string, channel = "downloadDolphinLog"):
 export async function assertDolphinInstallation(
   type: DolphinLaunchType,
   log: (message: string) => void,
-  force = false,
 ): Promise<void> {
-  if (force) {
-    log(`Forcibly downloading ${type} Dolphin installation. Downloading...`);
-    const downloadedAsset = await downloadLatestDolphin(type, log);
-    log(`Installing ${type} Dolphin...`);
-    await installDolphin(type, downloadedAsset);
-    return;
-  }
   try {
     await findDolphinExecutable(type);
     log(`Found existing ${type} Dolphin executable.`);
@@ -38,19 +30,25 @@ export async function assertDolphinInstallation(
     const isOutdated = await compareDolphinVersion(type, latestVersion);
     if (isOutdated) {
       log(`${type} Dolphin installation is outdated. Downloading latest...`);
-      const downloadedAsset = await downloadLatestDolphin(type, log);
-      log(`Installing ${type} Dolphin...`);
-      await installDolphin(type, downloadedAsset);
+      downloadAndInstallDolphin(type, log);
       return;
     }
     log("No update found...");
     return;
   } catch (err) {
     log(`Could not find ${type} Dolphin installation. Downloading...`);
-    const downloadedAsset = await downloadLatestDolphin(type, log);
-    log(`Installing ${type} Dolphin...`);
-    await installDolphin(type, downloadedAsset);
+    downloadAndInstallDolphin(type, log);
   }
+}
+
+export async function downloadAndInstallDolphin(
+  type: DolphinLaunchType,
+  log: (message: string) => void,
+): Promise<void> {
+  const downloadedAsset = await downloadLatestDolphin(type, log);
+  log(`Installing ${type} Dolphin...`);
+  await installDolphin(type, downloadedAsset);
+  log(`Finished ${type} installing`);
 }
 
 export async function assertDolphinInstallations(): Promise<void> {

@@ -3,7 +3,7 @@ import log from "electron-log";
 import electronSettings from "electron-settings";
 import { EventEmitter } from "events";
 
-import { assertDolphinInstallation } from "../downloadDolphin";
+import { downloadAndInstallDolphin } from "../downloadDolphin";
 import { DolphinInstance, PlaybackDolphinInstance } from "./instance";
 import { ReplayCommunication } from "./types";
 
@@ -58,25 +58,21 @@ export class DolphinManager extends EventEmitter {
     switch (launchType) {
       case DolphinLaunchType.NETPLAY: {
         if (this.netplayDolphinInstance !== null) {
-          log.warn("a netplay dolphin is open");
+          log.warn("A netplay dolphin is open");
           return;
         }
-
-        assertDolphinInstallation(launchType, log.info, true);
-
         break;
       }
       case DolphinLaunchType.PLAYBACK: {
         if (this.playbackDolphinInstances.size > 0) {
-          log.warn("a playback dolphin is open");
+          log.warn("A playback dolphin is open");
           return;
         }
-
-        assertDolphinInstallation(launchType, log.info, true);
-
         break;
       }
     }
+    // No dolphins of launchType are open so lets reinstall
+    downloadAndInstallDolphin(launchType, log.info);
   }
 }
 
