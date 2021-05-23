@@ -72,7 +72,7 @@ export class DolphinManager extends EventEmitter {
       }
     }
     // No dolphins of launchType are open so lets reinstall
-    downloadAndInstallDolphin(launchType, log.info);
+    downloadAndInstallDolphin(launchType, log.info, true);
   }
 }
 
