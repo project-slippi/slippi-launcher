@@ -22,6 +22,10 @@ export class DolphinManager extends EventEmitter {
     const dolphinPath = await findDolphinExecutable(DolphinLaunchType.PLAYBACK);
     const meleeISOPath = (await electronSettings.get("settings.isoPath")) as string | undefined;
 
+    const configuring = this.playbackDolphinInstances.get("configure");
+    if (configuring) {
+      log.warn("cannot open dolphin if a configuring dolphin is open");
+    }
     let playbackInstance = this.playbackDolphinInstances.get(id);
     if (!playbackInstance) {
       playbackInstance = new PlaybackDolphinInstance(dolphinPath, meleeISOPath);
@@ -45,13 +49,31 @@ export class DolphinManager extends EventEmitter {
       this.netplayDolphinInstance.on("close", () => {
         this.netplayDolphinInstance = null;
       });
+    } else {
+      log.warn("cannot open netplay dolphin twice");
     }
   }
 
   public async configureDolphin(launchType: DolphinLaunchType) {
     const dolphinPath = await findDolphinExecutable(launchType);
-    const instance = new DolphinInstance(dolphinPath);
-    instance.start();
+    if (launchType === DolphinLaunchType.NETPLAY && !this.netplayDolphinInstance) {
+      const instance = new DolphinInstance(dolphinPath);
+      this.netplayDolphinInstance = instance;
+      this.netplayDolphinInstance.on("close", () => {
+        this.netplayDolphinInstance = null;
+      });
+      instance.start();
+    } else if (launchType === DolphinLaunchType.PLAYBACK && this.playbackDolphinInstances.size === 0) {
+      const instance = new PlaybackDolphinInstance(dolphinPath);
+      this.playbackDolphinInstances.set("configure", instance);
+      instance.on("close", () => {
+        this.emit("dolphin-closed", "configure");
+
+        // Remove the instance from the map on close
+        this.playbackDolphinInstances.delete("configure");
+      });
+      instance.start();
+    }
   }
 
   public async reinstallDolphin(launchType: DolphinLaunchType) {
