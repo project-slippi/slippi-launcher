@@ -6,8 +6,6 @@
 import fs from "fs";
 import readline from "readline";
 
-import { stripSpace } from "./utils";
-
 /**
  * The IniFile Class, contains a Section subclass
  */
