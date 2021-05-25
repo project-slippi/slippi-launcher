@@ -116,7 +116,7 @@ export const updateGeckos = async (geckoIniPath: string, checked: number[]): Pro
 };
 
 /**
- *
+ * reads all the files in a directory and returns a string[] of filenames
  * @param directoryName - the name of the directory to be searched
  * @returns the filenames of all the files in the firectory as a string[]
  */

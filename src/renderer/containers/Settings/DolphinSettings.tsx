@@ -1,5 +1,6 @@
 
 
+
 /** @jsx jsx */
 import { configureDolphin, reinstallDolphin } from "@dolphin/ipc";
 import { DolphinLaunchType } from "@dolphin/types";
@@ -14,6 +15,8 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import Tab from "@material-ui/core/Tab";
+import Tabs from "@material-ui/core/Tabs";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import React from "react";
@@ -74,19 +77,19 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   const setDolphinFolderPath = useSettings((state) => state.setDolphinFolderPath);
 
   //vars for editing gecko codes/ ini files
-  const [iniFiles, setIniFiles] = React.useState(null);
+  const [iniFiles, setIniFiles] = React.useState([]);
   const [iniPath, setIniPath] = React.useState("");
   const [openGecko, setOpenGecko] = React.useState(false);
   const [tabValue, setTabValue] = React.useState(0);
   const [geckoName, setGeckoName] = React.useState("");
   const [geckoBody, setGeckoBody] = React.useState("");
-  const [geckoCodes, setGeckoCodes] = React.useState(null);
+  const [geckoCodes, setGeckoCodes] = React.useState([]);
   const [checked, setChecked] = React.useState([]);
 
   const classes = useStyles();
 
 
-  //when dolphinPath is changed, change
+  //when dolphinPath is changed, change where we read ini files from
   React.useEffect(() => {
     const filesArray = getFilesInDir(`${dolphinPath}/FM-Slippi/Sys/GameSettings`);
     setIniFiles(filesArray);
@@ -148,7 +151,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
     setTabValue(newValue);
   };
 
-  //handles the checklist
+  //handles the checklist in the gecko window
   const handleToggle = (i: number) => async () => {
     const currentValue = checked[i];
     const newChecked = checked.slice();
