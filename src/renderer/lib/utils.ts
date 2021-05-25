@@ -1,7 +1,12 @@
+import { BallotSharp } from "@material-ui/icons";
 import { characters as charUtils, stages as stageUtils } from "@slippi/slippi-js";
 import { isDevelopment } from "common/constants";
 import path from "path";
 import url from "url";
+
+const fs = require("fs");
+
+import { IniFile } from "./IniFile";
 
 // Fix static folder access in development. For more information see:
 // https://github.com/electron-userland/electron-webpack/issues/99#issuecomment-459251702
@@ -49,3 +54,81 @@ export const toOrdinal = (i: number): string => {
   }
   return i + "th";
 };
+
+export const stripSpace = (toStrip: string): string => {
+  return toStrip.replace(/\s+/g, "");
+};
+
+/**
+ * writes a gecko code by appending it to the end of the [Gecko] section
+ * of the ini file
+ * @param geckoIniPath - the path to the gecko file
+ * @param geckoTitle - the name of the gecko code
+ * @param geckoBody - the body of the gecko code
+ */
+export const writeGecko = async (geckoIniPath: string, geckoTitle: string, geckoBody: string): Promise<boolean> => {
+  const geckoName = `$Optional: ${geckoTitle}`;
+  const fullGecko = geckoName + "\n" + geckoBody + "\n";
+  const geckoIni = new IniFile();
+  await geckoIni.Load(geckoIniPath, false);
+  const enabledLines = geckoIni.GetLines("Gecko_Enabled", false);
+  enabledLines.push(geckoName);
+  geckoIni.SetLines("Gecko_Enabled", enabledLines);
+  const geckoBodyLines = geckoIni.GetLines("Gecko", false);
+  geckoBodyLines.push(fullGecko);
+  geckoIni.SetLines("Gecko", geckoBodyLines);
+  geckoIni.Save(geckoIniPath);
+
+  return true;
+};
+
+/**
+ *
+ * @param geckoIniPath - the path to the ini file
+ * @returns all of the lines of the [Gecko_Enabled] section as a string[]
+ */
+export const getGeckos = async (geckoIniPath: string): Promise<string[]> => {
+  const geckoIni = new IniFile();
+  await geckoIni.Load(geckoIniPath);
+  const geckoCodes = geckoIni.GetLines("Gecko_Enabled", false);
+  return geckoCodes;
+};
+/**
+ * uses checked to determine if gecko codes should be marked as enabled or disabled
+ * @param geckoIniPath - the path to the .ini file
+ * @param checked - an array specifiying which codes are to be marked as enabled or disabled
+ */
+export const updateGeckos = async (geckoIniPath: string, checked: number[]): Promise<boolean> => {
+  const geckoIni = new IniFile();
+  await geckoIni.Load(geckoIniPath);
+  const geckoCodes = geckoIni.GetLines("Gecko_Enabled", false);
+  checked.forEach((check: number, i: number) => {
+    if (check === 1) {
+      geckoCodes[i] = "$" + geckoCodes[i].substring(1);
+    } else {
+      geckoCodes[i] = "-" + geckoCodes[i].substring(1);
+    }
+  });
+  geckoIni.SetLines("Gecko_Enabled", geckoCodes);
+  geckoIni.Save(geckoIniPath);
+
+  return true;
+};
+
+/**
+ *
+ * @param directoryName - the name of the directory to be searched
+ * @returns the filenames of all the files in the firectory as a string[]
+ */
+export function getFilesInDir(directoryName: string): string[] {
+  const fileNames: string[] = [];
+  fs.readdir(directoryName, (error: any, files: string[]) => {
+    if (error) {
+      return console.log("Unable to scan directory: " + error);
+    }
+    files.forEach((file: string) => {
+      fileNames.push(file);
+    });
+  });
+  return fileNames;
+}
