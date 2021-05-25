@@ -70,14 +70,14 @@ export const writeGecko = async (geckoIniPath: string, geckoTitle: string, gecko
   const geckoName = `$Optional: ${geckoTitle}`;
   const fullGecko = geckoName + "\n" + geckoBody + "\n";
   const geckoIni = new IniFile();
-  await geckoIni.Load(geckoIniPath, false);
-  const enabledLines = geckoIni.GetLines("Gecko_Enabled", false);
+  await geckoIni.load(geckoIniPath, false);
+  const enabledLines = geckoIni.getLines("Gecko_Enabled", false);
   enabledLines.push(geckoName);
-  geckoIni.SetLines("Gecko_Enabled", enabledLines);
-  const geckoBodyLines = geckoIni.GetLines("Gecko", false);
+  geckoIni.setLines("Gecko_Enabled", enabledLines);
+  const geckoBodyLines = geckoIni.getLines("Gecko", false);
   geckoBodyLines.push(fullGecko);
-  geckoIni.SetLines("Gecko", geckoBodyLines);
-  geckoIni.Save(geckoIniPath);
+  geckoIni.setLines("Gecko", geckoBodyLines);
+  geckoIni.save(geckoIniPath);
 
   return true;
 };
@@ -89,8 +89,8 @@ export const writeGecko = async (geckoIniPath: string, geckoTitle: string, gecko
  */
 export const getGeckos = async (geckoIniPath: string): Promise<string[]> => {
   const geckoIni = new IniFile();
-  await geckoIni.Load(geckoIniPath);
-  const geckoCodes = geckoIni.GetLines("Gecko_Enabled", false);
+  await geckoIni.load(geckoIniPath);
+  const geckoCodes = geckoIni.getLines("Gecko_Enabled", false);
   return geckoCodes;
 };
 /**
@@ -100,8 +100,8 @@ export const getGeckos = async (geckoIniPath: string): Promise<string[]> => {
  */
 export const updateGeckos = async (geckoIniPath: string, checked: number[]): Promise<boolean> => {
   const geckoIni = new IniFile();
-  await geckoIni.Load(geckoIniPath);
-  const geckoCodes = geckoIni.GetLines("Gecko_Enabled", false);
+  await geckoIni.load(geckoIniPath, false);
+  const geckoCodes = geckoIni.getLines("Gecko_Enabled", false);
   checked.forEach((check: number, i: number) => {
     if (check === 1) {
       geckoCodes[i] = "$" + geckoCodes[i].substring(1);
@@ -109,8 +109,8 @@ export const updateGeckos = async (geckoIniPath: string, checked: number[]): Pro
       geckoCodes[i] = "-" + geckoCodes[i].substring(1);
     }
   });
-  geckoIni.SetLines("Gecko_Enabled", geckoCodes);
-  geckoIni.Save(geckoIniPath);
+  geckoIni.setLines("Gecko_Enabled", geckoCodes);
+  geckoIni.save(geckoIniPath);
 
   return true;
 };
