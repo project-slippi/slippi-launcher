@@ -1,5 +1,4 @@
 import { remote } from "electron";
-import { UniqueInputFieldNamesRule } from "graphql";
 import path from "path";
 
 export function getDefaultRootSlpPath(): string {

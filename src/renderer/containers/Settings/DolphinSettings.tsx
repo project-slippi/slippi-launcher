@@ -22,8 +22,6 @@ import { PathInput } from "@/components/PathInput";
 import { getFilesInDir, getGeckos, updateGeckos, writeGecko } from "@/lib/utils";
 import { useSettings } from "@/store/settings";
 
-import { ConsoleItem } from "../Broadcast/ConsoleItem";
-import { KillTable } from "../ReplayFileStats/KillTable";
 import { SettingItem } from "./SettingItem";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -145,6 +143,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
     setOpenGecko(false);
   };
   //handles gecko window tabs
+  // eslint-disable-next-line @typescript-eslint/ban-types
   const handleChange = (e: React.ChangeEvent<{}>, newValue: number) => {
     setTabValue(newValue);
   };
