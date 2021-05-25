@@ -8,6 +8,9 @@ const readline = require("readline");
 
 import { stripSpace } from "./utils";
 
+/**
+ * The IniFile Class, contains a Section subclass
+ */
 export class IniFile {
   private sections: Section[];
 
@@ -199,6 +202,9 @@ export class IniFile {
   };
 }
 
+/**
+ * The Section class
+ */
 export class Section {
   public name: string;
   public keys_order: string[];
