@@ -1,10 +1,8 @@
-import { BallotSharp } from "@material-ui/icons";
 import { characters as charUtils, stages as stageUtils } from "@slippi/slippi-js";
 import { isDevelopment } from "common/constants";
+import fs from "fs";
 import path from "path";
 import url from "url";
-
-const fs = require("fs");
 
 import { IniFile } from "./IniFile";
 

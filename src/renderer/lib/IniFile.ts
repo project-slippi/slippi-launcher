@@ -229,18 +229,18 @@ export class Section {
   };
 
   //TODO work around pass by reference
+  // no idea what default value is for
   public get = (key: string, default_value: string): string | undefined => {
-    const value = this.values.get(key);
+    let value = this.values.get(key);
 
     if (value !== undefined) {
       return value;
     }
 
-    /**if (&default_value != &NULL_STRING)
-    {
-      *value = default_value;
-      return true;
-    }*/
+    if (default_value != null) {
+      value = default_value;
+      return value;
+    }
 
     return undefined;
   };
@@ -268,11 +268,11 @@ export class Section {
   public getLines = (remove_comments: boolean): string[] => {
     const lines: string[] = [];
     this.m_lines.forEach((line) => {
-      let stripped_line = stripSpace(line);
+      //let stripped_line = stripSpace(line);
       if (remove_comments) {
         const commentPos = line.indexOf("#");
         if (commentPos !== -1) {
-          stripped_line = stripped_line.substring(0, commentPos);
+          //stripped_line = stripped_line.substring(0, commentPos);
         }
       }
       if (line !== "\n" && line !== "") {
