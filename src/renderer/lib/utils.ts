@@ -53,10 +53,6 @@ export const toOrdinal = (i: number): string => {
   return i + "th";
 };
 
-export const stripSpace = (toStrip: string): string => {
-  return toStrip.replace(/\s+/g, "");
-};
-
 /**
  * writes a gecko code by appending it to the end of the [Gecko] section
  * of the ini file
