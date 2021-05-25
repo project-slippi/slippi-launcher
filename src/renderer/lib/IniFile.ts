@@ -3,8 +3,8 @@
  * https://github.com/dolphin-emu/dolphin/blob/master/Source/Core/Common/IniFile.cpp
  */
 
-const fs = require("fs");
-const readline = require("readline");
+import fs from "fs";
+import readline from "readline";
 
 import { stripSpace } from "./utils";
 
@@ -20,7 +20,7 @@ export class IniFile {
 
   /** Differs from IniFile.cpp via:
    * Instead of editing keyOut and valueOut by reference, return them */
-  public ParseLine = (line: string, valueOut: string): any => {
+  public parseLine = (line: string): any => {
     if (line === "" || line[0] == "#") {
       return [null, null];
     }
@@ -29,7 +29,6 @@ export class IniFile {
     const firstEquals = line.indexOf("=");
     if (firstEquals !== -1) {
       keyOut = line.substring(0, firstEquals).replace(/\s+/g, "");
-
       retValueOut = line
         .substring(firstEquals + 1)
         .replace(/\s+/g, "")
@@ -42,7 +41,7 @@ export class IniFile {
   /**Differs from IniFile.cpp by:
    * returns section object, not pointer
    */
-  public GetSection = (section_name: string): Section | undefined => {
+  public getSection = (section_name: string): Section | undefined => {
     const section = this.sections.find((section) => section.name == section_name);
     return section;
   };
@@ -50,8 +49,8 @@ export class IniFile {
   /**Differs from IniFile.cpp by:
    * returns section object, not pointer
    */
-  public GetOrCreateSection = (section_name: string): Section | undefined => {
-    let section = this.GetSection(section_name);
+  public getOrCreateSection = (section_name: string): Section | undefined => {
+    let section = this.getSection(section_name);
     if (section === undefined) {
       section = new Section(section_name);
       this.sections.push(section);
@@ -59,8 +58,8 @@ export class IniFile {
     return section;
   };
 
-  public DeleteSection = (section_name: string): boolean => {
-    const s = this.GetSection(section_name);
+  public deleteSection = (section_name: string): boolean => {
+    const s = this.getSection(section_name);
     if (s === undefined) {
       return false;
     }
@@ -68,28 +67,28 @@ export class IniFile {
     return true;
   };
 
-  public Exists = (section_name: string): boolean => {
-    return this.GetSection(section_name) != undefined;
+  public exists = (section_name: string): boolean => {
+    return this.getSection(section_name) != undefined;
   };
 
-  public SetLines = (section_name: string, lines: string[]): void => {
-    const section = this.GetOrCreateSection(section_name);
-    section?.SetLines(lines);
+  public setLines = (section_name: string, lines: string[]): void => {
+    const section = this.getOrCreateSection(section_name);
+    section?.setLines(lines);
   };
 
-  public DeleteKey = (section_name: string, key: string): boolean => {
-    const section = this.GetSection(section_name);
+  public deleteKey = (section_name: string, key: string): boolean => {
+    const section = this.getSection(section_name);
     if (section === undefined) {
       return false;
     }
-    return section.Delete(key);
+    return section.delete(key);
   };
 
   /**Differs from IniFile.cpp by:
    * returns keys instead of passing it by reference
    */
-  public GetKeys = (section_name: string): string[] | boolean => {
-    const section = this.GetSection(section_name);
+  public getKeys = (section_name: string): string[] | boolean => {
+    const section = this.getSection(section_name);
     if (section === undefined) {
       return false;
     }
@@ -99,18 +98,18 @@ export class IniFile {
   /**Differs from IniFile.cpp by:
    * returns lines instead of passing it by reference
    */
-  public GetLines = (section_name: string, remove_comments: boolean): string[] => {
-    const section = this.GetSection(section_name);
+  public getLines = (section_name: string, remove_comments: boolean): string[] => {
+    const section = this.getSection(section_name);
     if (section === undefined) {
       return [];
     }
 
-    const lines = section.GetLines(remove_comments);
+    const lines = section.getLines(remove_comments);
 
     return lines;
   };
 
-  public Load = async (fileName: string, keep_current_data: boolean): Promise<boolean> => {
+  public load = async (fileName: string, keep_current_data: boolean): Promise<boolean> => {
     if (!keep_current_data) {
       this.sections = [];
     }
@@ -142,13 +141,13 @@ export class IniFile {
           //we have a new section
           const sub = line.substr(1, endpos - 1);
           //console.log(sub);
-          current_section = this.GetOrCreateSection(sub);
+          current_section = this.getOrCreateSection(sub);
           //console.log(current_section);
         }
       } else {
         if (current_section !== undefined) {
           let value;
-          const [key, value2] = this.ParseLine(line, value);
+          const [key, value2] = this.parseLine(line);
 
           // Lines starting with '$', '*' or '+' are kept verbatim.
           // Kind of a hack, but the support for raw lines inside an
@@ -159,7 +158,7 @@ export class IniFile {
           ) {
             current_section.m_lines.push(line);
           } else {
-            current_section.Set(key, value2);
+            current_section.set(key, value2);
           }
         }
       }
@@ -168,7 +167,7 @@ export class IniFile {
     return true;
   };
 
-  public Save = (fileName: string): boolean => {
+  public save = (fileName: string): boolean => {
     const out = fs.createWriteStream(fileName);
 
     out.on("error", (e) => {
@@ -221,7 +220,7 @@ export class Section {
   /**Differs from IniFile.cpp by:
    * passes key by value rather than address
    */
-  public Set = (key: string, new_value: string): void => {
+  public set = (key: string, new_value: string): void => {
     const newKey = !this.values.has(key);
     if (newKey) {
       this.keys_order.push(key);
@@ -230,7 +229,7 @@ export class Section {
   };
 
   //TODO work around pass by reference
-  public Get = (key: string, default_value: string): string | undefined => {
+  public get = (key: string, default_value: string): string | undefined => {
     const value = this.values.get(key);
 
     if (value !== undefined) {
@@ -246,11 +245,11 @@ export class Section {
     return undefined;
   };
 
-  public Exists = (key: string): boolean => {
+  public exists = (key: string): boolean => {
     return this.values.get(key) !== undefined;
   };
 
-  public Delete = (key: string): boolean => {
+  public delete = (key: string): boolean => {
     const success = this.values.delete(key);
     if (!success) {
       return false;
@@ -259,14 +258,14 @@ export class Section {
     return true;
   };
 
-  public SetLines = (lines: string[]): void => {
+  public setLines = (lines: string[]): void => {
     this.m_lines = lines;
   };
 
   /**Differs from IniFile.cpp by:
    * returns lines instead of passing it by reference
    */
-  public GetLines = (remove_comments: boolean): string[] => {
+  public getLines = (remove_comments: boolean): string[] => {
     const lines: string[] = [];
     this.m_lines.forEach((line) => {
       let stripped_line = stripSpace(line);
