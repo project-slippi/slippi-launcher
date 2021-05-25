@@ -1,3 +1,4 @@
+
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -11,6 +12,7 @@ import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import TextField from "@material-ui/core/TextField";
+
 import Typography from "@material-ui/core/Typography";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import ErrorIcon from "@material-ui/icons/Error";
@@ -19,7 +21,9 @@ import { ipcRenderer as ipc } from "electron-better-ipc";
 import React from "react";
 
 import { PathInput } from "@/components/PathInput";
+
 import { getFilesInDir, getGeckos, updateGeckos, writeGecko } from "@/lib/utils";
+
 import { useSettings } from "@/store/settings";
 
 import { SettingItem } from "./SettingItem";
@@ -44,12 +48,6 @@ const useStyles = makeStyles((theme: Theme) =>
     title: {
       textTransform: "capitalize",
     },
-    paper: {
-      backgroundColor: "primary",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-    },
   }),
 );
 
@@ -58,12 +56,14 @@ function TabPanel(props) {
   return <div {...other}>{value === index && <Box p={3}>{children}</Box>}</div>;
 }
 
+
 export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolphinType }) => {
   const dolphinPath = useSettings((state) => state.settings[dolphinType].path);
   const verifying = useSettings((state) => state.verifyingDolphinPath);
   const isValidDolphinPath = useSettings((state) => state.validDolphinPath);
   const verifyAndSetDolphinPath = useSettings((state) => state.verifyAndSetDolphinPath);
   const setDolphinFolderPath = useSettings((state) => state.setDolphinFolderPath);
+
 
   //vars for editing gecko codes/ ini files
   const [iniFiles, setIniFiles] = React.useState([]);
@@ -84,6 +84,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
     },
     [setDolphinFolderPath],
   );
+
 
   //when dolphinPath is changed, change where we read ini files from
   React.useEffect(() => {
@@ -110,6 +111,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
     console.log("configure dolphin pressesd");
     await ipc.callMain<string, never>("configureDolphin", dolphinType);
   };
+
   const resetDolphin = async () => {
     console.log("reset button clicked");
     await ipc.callMain<string, never>("resetDolphin", dolphinType);
@@ -158,6 +160,11 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
       newChecked[i] = 1;
     }
     setChecked(newChecked);
+
+  const reinstallDolphin = async () => {
+    console.log("reinstall button clicked");
+    await ipc.callMain<string, never>("reinstallDolphin", dolphinType);
+
   };
   return (
     <div>
@@ -189,16 +196,11 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           }
         />
       </SettingItem>
+
       <SettingItem name="Gecko Codes" description="Manage and Add Gecko Codes">
         <Button variant="outlined" color="primary" onClick={handleClickOpenGecko}>
           Gecko Codes
         </Button>
-      </SettingItem>
-      <SettingItem name="Configure Dolphin" description="Open Dolphin to modify settings.">
-        <button onClick={configureDolphin}>Configure Dolphin</button>
-      </SettingItem>
-      <SettingItem name="Reset Dolphin" description="Reset Dolphin to its defaults.">
-        <button onClick={resetDolphin}>Reset Dolphin</button>
       </SettingItem>
       <Dialog open={openGecko} onClose={handleGeckoClose}>
         <Tabs value={tabValue} onChange={handleChange}>
@@ -276,6 +278,14 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           </TabPanel>
         </DialogContent>
       </Dialog>
+
+      <SettingItem name="Configure Dolphin" description="Open Dolphin to modify settings.">
+        <button onClick={configureDolphin}>Configure Dolphin</button>
+      </SettingItem>
+      <SettingItem name="Reinstall Dolphin" description="Delete and reinstall dolphin">
+        <button onClick={reinstallDolphin}>Reset Dolphin</button>
+      </SettingItem>
+
     </div>
   );
 };

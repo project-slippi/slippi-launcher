@@ -48,9 +48,11 @@ export function setupListeners() {
     await dolphinManager.configureDolphin(dolphinType);
   });
 
-  ipc.answerRenderer("resetDolphin", async (dolphinType: DolphinLaunchType) => {
-    console.log("resetting dolphin...");
-    await dolphinManager.resetDolphin(dolphinType);
+
+  ipc.answerRenderer("reinstallDolphin", async (dolphinType: DolphinLaunchType) => {
+    console.log("reinstalling dolphin...");
+    await dolphinManager.reinstallDolphin(dolphinType);
+
   });
 
   ipc.answerRenderer("loadReplayFolder", async (folderPath: string) => {
