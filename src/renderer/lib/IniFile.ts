@@ -225,10 +225,10 @@ export class Section {
 
   //TODO work around pass by reference
   public Get = (key: string, default_value: string): string | undefined => {
-    const it = this.values.get(key);
+    const value = this.values.get(key);
 
-    if (it !== undefined) {
-      return it;
+    if (value !== undefined) {
+      return value;
     }
 
     /**if (&default_value != &NULL_STRING)
