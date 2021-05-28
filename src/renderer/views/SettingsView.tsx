@@ -53,7 +53,8 @@ export const SettingsView: React.FC = () => {
     return history.location.pathname === `${path}/${name}`;
   };
 
-  const keyDownFunction = (event: any) => {
+  const keyDownFunction = (event: KeyboardEvent) => {
+    // ignore depercation warning, it works everywhere
     if (event.keyCode === 27) {
       close();
     }

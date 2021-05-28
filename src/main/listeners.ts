@@ -43,8 +43,14 @@ export function setupListeners() {
     dolphinManager.launchNetplayDolphin();
   });
 
-  ipcMain.on("configureDolphin", (_, dolphinType: DolphinLaunchType) => {
-    dolphinManager.configureDolphin(dolphinType);
+  ipc.answerRenderer("configureDolphin", async (dolphinType: DolphinLaunchType) => {
+    console.log("configuring dolphin...");
+    await dolphinManager.configureDolphin(dolphinType);
+  });
+
+  ipc.answerRenderer("reinstallDolphin", async (dolphinType: DolphinLaunchType) => {
+    console.log("reinstalling dolphin...");
+    await dolphinManager.reinstallDolphin(dolphinType);
   });
 
   ipc.answerRenderer("loadReplayFolder", async (folderPath: string) => {

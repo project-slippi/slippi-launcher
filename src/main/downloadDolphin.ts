@@ -10,7 +10,7 @@ import { lt } from "semver";
 
 import { getLatestRelease } from "./github";
 
-function sendToRenderer(message: string, channel = "downloadDolphinLog"): void {
+export function sendToRenderer(message: string, channel = "downloadDolphinLog"): void {
   const window = BrowserWindow.getFocusedWindow();
   if (window) {
     window.webContents.send(channel, message);
@@ -30,19 +30,26 @@ export async function assertDolphinInstallation(
     const isOutdated = await compareDolphinVersion(type, latestVersion);
     if (isOutdated) {
       log(`${type} Dolphin installation is outdated. Downloading latest...`);
-      const downloadedAsset = await downloadLatestDolphin(type, log);
-      log(`Installing ${type} Dolphin...`);
-      await installDolphin(type, downloadedAsset);
+      downloadAndInstallDolphin(type, log);
       return;
     }
     log("No update found...");
     return;
   } catch (err) {
     log(`Could not find ${type} Dolphin installation. Downloading...`);
-    const downloadedAsset = await downloadLatestDolphin(type, log);
-    log(`Installing ${type} Dolphin...`);
-    await installDolphin(type, downloadedAsset);
+    downloadAndInstallDolphin(type, log);
   }
+}
+
+export async function downloadAndInstallDolphin(
+  type: DolphinLaunchType,
+  log: (message: string) => void,
+  cleanInstall = false,
+): Promise<void> {
+  const downloadedAsset = await downloadLatestDolphin(type, log);
+  log(`Installing ${type} Dolphin...`);
+  await installDolphin(type, downloadedAsset, log, cleanInstall);
+  log(`Finished ${type} installing`);
 }
 
 export async function assertDolphinInstallations(): Promise<void> {
@@ -133,33 +140,61 @@ async function downloadLatestDolphin(
 async function installDolphin(
   type: DolphinLaunchType,
   assetPath: string,
-  log: (message: string) => void = console.log,
+  log: (message: string) => void,
+  cleanInstall = false,
 ) {
   const dolphinPath = path.join(app.getPath("userData"), type);
   const backupLocation = dolphinPath + "_old";
+
+  if (cleanInstall) {
+    await fs.remove(dolphinPath);
+  }
+
   switch (process.platform) {
     case "win32": {
-      await backupUser(backupLocation, dolphinPath, log);
-
+      // don't need to backup user files since our zips don't contain them
+      // and the overwrite won't make them disappear.
       log(`Extracting to: ${dolphinPath}`);
       const zip = new AdmZip(assetPath);
       zip.extractAllTo(dolphinPath, true);
-
-      // move User folder and user.json to the new installation
-      await restoreUser(backupLocation, dolphinPath, log);
       break;
     }
     case "darwin": {
-      const newDolphinResources = path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "Resources");
+      const dolphinResourcesPath = path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "Resources");
 
-      await backupUser(backupLocation, newDolphinResources, log);
+      const alreadyInstalled = await fs.pathExists(dolphinResourcesPath);
+      if (alreadyInstalled) {
+        log(`${dolphinResourcesPath} already exists. Moving...`);
+        await fs.move(dolphinResourcesPath, backupLocation);
+      }
 
-      const zip = new AdmZip(assetPath);
       log(`Extracting to: ${dolphinPath}`);
+      const zip = new AdmZip(assetPath);
       zip.extractAllTo(dolphinPath, true);
 
       // Move backed up User folder and user.json
-      await restoreUser(backupLocation, newDolphinResources, log);
+      if (alreadyInstalled) {
+        const oldUserFolder = path.join(backupLocation, "User");
+        const newUserFolder = path.join(dolphinResourcesPath, "User");
+
+        const oldUserJSON = path.join(backupLocation, "user.json");
+        const newUserJSON = path.join(dolphinResourcesPath, "user.json");
+
+        if (await fs.pathExists(oldUserFolder)) {
+          log("moving User folder...");
+          await fs.move(oldUserFolder, newUserFolder);
+        } else {
+          log("no old User folder to move");
+        }
+
+        if (await fileExists(oldUserJSON)) {
+          log("moving user.json...");
+          await fs.move(oldUserJSON, newUserJSON);
+        } else {
+          log("no old user.json to move");
+        }
+        await fs.remove(backupLocation);
+      }
       break;
     }
     case "linux": {
@@ -172,8 +207,12 @@ async function installDolphin(
           await fs.remove(dolphinAppImagePath);
         }
       } catch (err) {
-        // There's no app image
         log("No existing AppImage found");
+      }
+
+      if (cleanInstall) {
+        const userFolder = type === DolphinLaunchType.NETPLAY ? "SlippiOnline" : "SlippiPlayback";
+        await fs.remove(path.join(app.getPath("home"), ".config", userFolder));
       }
 
       const assetFilename = path.basename(assetPath);
@@ -191,47 +230,5 @@ async function installDolphin(
     default: {
       throw new Error(`Installing Netplay is not supported on this platform: ${process.platform}`);
     }
-  }
-}
-
-async function backupUser(
-  backupLocation: string,
-  toBackup: string,
-  log: (status: string) => void = console.log,
-): Promise<void> {
-  const alreadyInstalled = await fs.pathExists(toBackup);
-  if (alreadyInstalled) {
-    log(`${toBackup} already exists. Moving...`);
-    await fs.move(toBackup, backupLocation);
-  }
-}
-
-async function restoreUser(
-  backupLocation: string,
-  restoreLocation: string,
-  log: (status: string) => void = console.log,
-): Promise<void> {
-  const alreadyInstalled = await fs.pathExists(restoreLocation);
-  if (alreadyInstalled) {
-    const oldUserFolder = path.join(backupLocation, "User");
-    const newUserFolder = path.join(restoreLocation, "User");
-
-    const oldUserJSON = path.join(backupLocation, "user.json");
-    const newUserJSON = path.join(restoreLocation, "user.json");
-
-    if (await fs.pathExists(oldUserFolder)) {
-      log("moving User folder...");
-      await fs.move(oldUserFolder, newUserFolder);
-    } else {
-      log("no old User folder to move");
-    }
-
-    if (await fileExists(oldUserJSON)) {
-      log("moving user.json...");
-      await fs.move(oldUserJSON, newUserJSON);
-    } else {
-      log("no old user.json to move");
-    }
-    await fs.remove(backupLocation);
   }
 }

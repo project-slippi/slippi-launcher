@@ -1,4 +1,5 @@
 import { app, remote } from "electron";
+import electronSettings from "electron-settings";
 import * as fs from "fs-extra";
 import path from "path";
 
@@ -14,14 +15,22 @@ export enum DolphinUseType {
   NETPLAY = "netplay",
 }
 
-export async function findDolphinExecutable(type: DolphinLaunchType): Promise<string> {
-  // Make sure the directory actually exists
+export function getDefaultDolphinPath(type: DolphinLaunchType): string {
   let dolphinPath = "";
   try {
     dolphinPath = path.join(app.getPath("userData"), type);
   } catch {
     dolphinPath = path.join(remote.app.getPath("userData"), type);
   }
+  return dolphinPath;
+}
+
+export async function findDolphinExecutable(type: DolphinLaunchType | string, dolphinPath = ""): Promise<string> {
+  // Make sure the directory actually exists
+  if (dolphinPath === "") {
+    dolphinPath = (await electronSettings.get(`settings.${type}.path`)) as string;
+  }
+
   await fs.ensureDir(dolphinPath);
 
   // Check the directory contents
