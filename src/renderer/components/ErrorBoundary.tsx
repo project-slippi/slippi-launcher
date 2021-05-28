@@ -1,10 +1,9 @@
 import Button from "@material-ui/core/Button";
 import Collapse from "@material-ui/core/Collapse";
 import WarningIcon from "@material-ui/icons/Warning";
+import { isDevelopment } from "common/constants";
 import React from "react";
 import styled from "styled-components";
-
-const isDevelopment = process.env.NODE_ENV !== "production";
 
 const StackTraceContainer = styled.div`
   background-color: #290000;
@@ -21,7 +20,7 @@ interface ErrorBoundaryState {
 }
 
 export class ErrorBoundary extends React.Component<any, ErrorBoundaryState> {
-  constructor(props: any) {
+  public constructor(props: any) {
     super(props);
     this.state = {
       hasError: false,

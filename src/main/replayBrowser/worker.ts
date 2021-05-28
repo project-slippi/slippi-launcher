@@ -13,6 +13,7 @@ import { expose } from "threads/worker";
 import { loadFolder } from "./loadFolder";
 
 export interface Methods {
+  destroyWorker: () => Promise<void>;
   loadReplayFolder(folder: string): Promise<FileLoadResult>;
   calculateGameStats(fullPath: string): Promise<StatsType>;
   getProgressObservable(): Observable<Progress>;
@@ -28,6 +29,9 @@ interface Progress {
 let progressSubject: Subject<Progress> = new Subject();
 
 const methods: WorkerSpec = {
+  async destroyWorker(): Promise<void> {
+    // Clean up worker
+  },
   getProgressObservable(): Observable<Progress> {
     return Observable.from(progressSubject);
   },

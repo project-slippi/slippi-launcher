@@ -1,14 +1,8 @@
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import IconButton from "@material-ui/core/IconButton";
 import SnackbarContent from "@material-ui/core/SnackbarContent";
-import { useTheme } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
 import SettingsIcon from "@material-ui/icons/Settings";
 import Alert from "@material-ui/lab/Alert";
 import { colors } from "common/colors";
@@ -16,12 +10,12 @@ import { ipcRenderer, shell } from "electron";
 import React from "react";
 import styled from "styled-components";
 
+import { useLoginModal } from "@/lib/hooks/useLoginModal";
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
 import { assertPlayKey } from "@/lib/playkey";
 import { useApp } from "@/store/app";
 import { useSettings } from "@/store/settings";
 
-import { LoginForm } from "../LoginForm";
 import { UserMenu } from "./UserMenu";
 
 const handleError = (error: any) => {
@@ -68,11 +62,9 @@ const EnableOnlineSnackBar: React.FC = () => {
 };
 
 export const Header: React.FC = () => {
-  const [loginModalOpen, setLoginModalOpen] = React.useState(false);
+  const openModal = useLoginModal((store) => store.openModal);
   const { open } = useSettingsModal();
   const currentUser = useApp((store) => store.user);
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
   const meleeIsoPath = useSettings((store) => store.settings.isoPath) || undefined;
   const showSnackbar = useApp((state) => state.showSnackbar);
   const dismissSnackbar = useApp((state) => state.dismissSnackbar);
@@ -108,11 +100,7 @@ export const Header: React.FC = () => {
   return (
     <div>
       <OuterBox display="flex" flexDirection="row" justifyContent="space-between">
-        {currentUser ? (
-          <Button onClick={onPlay}>Play now</Button>
-        ) : (
-          <Button onClick={() => setLoginModalOpen(true)}>Log in</Button>
-        )}
+        {currentUser ? <Button onClick={onPlay}>Play now</Button> : <Button onClick={openModal}>Log in</Button>}
         <Box display="flex" alignItems="center">
           {currentUser && <UserMenu user={currentUser} handleError={handleError}></UserMenu>}
           <Tooltip title="Settings">
@@ -122,17 +110,6 @@ export const Header: React.FC = () => {
           </Tooltip>
         </Box>
       </OuterBox>
-      <Dialog open={loginModalOpen} onClose={() => setLoginModalOpen(false)} fullWidth={true} fullScreen={fullScreen}>
-        <DialogTitle>Login</DialogTitle>
-        <DialogContent>
-          <LoginForm onSuccess={() => setLoginModalOpen(false)} />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setLoginModalOpen(false)} color="primary">
-            Cancel
-          </Button>
-        </DialogActions>
-      </Dialog>
     </div>
   );
 };
