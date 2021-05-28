@@ -1,4 +1,5 @@
 import { DolphinLaunchType } from "common/dolphin";
+import { fetchNewsFeed } from "common/ipc";
 import { StartBroadcastConfig } from "common/types";
 import { ipcMain, nativeImage } from "electron";
 import { ipcMain as ipc } from "electron-better-ipc";
@@ -7,7 +8,7 @@ import path from "path";
 import { broadcastManager } from "./broadcastManager";
 import { dolphinManager, ReplayCommunication } from "./dolphin";
 import { assertDolphinInstallations } from "./downloadDolphin";
-import { fetchNewsFeed } from "./newsFeed";
+import { fetchNewsFeedData } from "./newsFeed";
 import { worker as replayBrowserWorker } from "./replayBrowser/workerInterface";
 import { spectateManager } from "./spectateManager";
 
@@ -68,8 +69,8 @@ export function setupListeners() {
     return result;
   });
 
-  ipc.answerRenderer("fetchNewsFeed", async () => {
-    const result = await fetchNewsFeed();
+  fetchNewsFeed.main!.handle(async () => {
+    const result = await fetchNewsFeedData();
     return result;
   });
 
