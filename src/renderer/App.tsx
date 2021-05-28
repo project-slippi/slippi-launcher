@@ -1,4 +1,3 @@
-import "typeface-roboto/index.css";
 import "./styles/styles.scss";
 
 import Snackbar from "@material-ui/core/Snackbar";
