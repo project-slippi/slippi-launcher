@@ -1,14 +1,15 @@
-import { DolphinLaunchType, DolphinUseType } from "common/dolphin";
+import { DolphinLaunchType } from "common/dolphin";
 import { StartBroadcastConfig } from "common/types";
 import { ipcMain, nativeImage } from "electron";
 import { ipcMain as ipc } from "electron-better-ipc";
 import path from "path";
 
 import { broadcastManager } from "./broadcastManager";
-import { DolphinManager, ReplayCommunication } from "./dolphinManager";
+import { dolphinManager, ReplayCommunication } from "./dolphin";
 import { assertDolphinInstallations } from "./downloadDolphin";
 import { fetchNewsFeed } from "./newsFeed";
 import { worker as replayBrowserWorker } from "./replayBrowser/workerInterface";
+import { spectateManager } from "./spectateManager";
 
 export function setupListeners() {
   ipcMain.on("onDragStart", (event, filePath: string) => {
@@ -30,33 +31,26 @@ export function setupListeners() {
     broadcastManager.stop();
   });
 
-  setupDolphinManagerListeners();
-}
-
-function setupDolphinManagerListeners() {
-  const dolphinManager = DolphinManager.getInstance();
   ipcMain.on("viewReplay", (_, filePath: string) => {
     const replayComm: ReplayCommunication = {
       mode: "normal",
       replay: filePath,
     };
-    dolphinManager.launchDolphin(DolphinUseType.PLAYBACK, -1, replayComm);
-  });
-
-  ipcMain.on("watchBroadcast", (_, filePath: string, mode: "normal" | "mirror", index: number) => {
-    const replayComm: ReplayCommunication = {
-      mode: mode,
-      replay: filePath,
-    };
-    dolphinManager.launchDolphin(DolphinUseType.SPECTATE, index, replayComm);
+    dolphinManager.launchPlaybackDolphin("playback", replayComm);
   });
 
   ipcMain.on("playNetplay", () => {
-    dolphinManager.launchDolphin(DolphinUseType.NETPLAY, -1);
+    dolphinManager.launchNetplayDolphin();
   });
 
-  ipcMain.on("configureDolphin", (_, dolphinType: DolphinLaunchType) => {
-    dolphinManager.launchDolphin(DolphinUseType.CONFIG, -1, undefined, dolphinType);
+  ipc.answerRenderer("configureDolphin", async (dolphinType: DolphinLaunchType) => {
+    console.log("configuring dolphin...");
+    await dolphinManager.configureDolphin(dolphinType);
+  });
+
+  ipc.answerRenderer("reinstallDolphin", async (dolphinType: DolphinLaunchType) => {
+    console.log("reinstalling dolphin...");
+    await dolphinManager.reinstallDolphin(dolphinType);
   });
 
   ipc.answerRenderer("loadReplayFolder", async (folderPath: string) => {
@@ -77,5 +71,16 @@ function setupDolphinManagerListeners() {
   ipc.answerRenderer("fetchNewsFeed", async () => {
     const result = await fetchNewsFeed();
     return result;
+  });
+
+  ipc.answerRenderer("fetchBroadcastList", async (authToken: string) => {
+    await spectateManager.connect(authToken);
+    const result = await spectateManager.fetchBroadcastList();
+    console.log("fetched broadcast list: ", result);
+    return result;
+  });
+
+  ipc.answerRenderer("watchBroadcast", async (broadcasterId: string) => {
+    spectateManager.watchBroadcast(broadcasterId, undefined, true);
   });
 }
