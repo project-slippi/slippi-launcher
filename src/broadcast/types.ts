@@ -13,9 +13,3 @@ export interface StartBroadcastConfig {
   viewerId: string;
   authToken: string;
 }
-
-export enum BroadcastEvent {
-  slippiStatusChange = "slippiStatusChange",
-  dolphinStatusChange = "dolphinStatusChange",
-  error = "broadcastError",
-}
