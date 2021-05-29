@@ -1,5 +1,6 @@
 import { DolphinLaunchType } from "@dolphin/types";
 import electronSettings from "electron-settings";
+import fs from "fs";
 import merge from "lodash/merge";
 import set from "lodash/set";
 
@@ -17,7 +18,15 @@ export class SettingsManager {
   private appSettings: Partial<AppSettings>;
 
   public constructor() {
-    this.appSettings = electronSettings.getSync() as Partial<AppSettings>;
+    const restoredSettings = electronSettings.getSync() as Partial<AppSettings>;
+
+    // If the ISO file no longer exists, don't restore it
+    if (restoredSettings.settings?.isoPath) {
+      if (!fs.existsSync(restoredSettings.settings.isoPath)) {
+        delete restoredSettings.settings.isoPath;
+      }
+    }
+    this.appSettings = restoredSettings;
   }
 
   public get(): AppSettings {
