@@ -4,13 +4,13 @@
 
 // TODO: Make electron-log work somehow
 import { SlippiGame, StatsType } from "@slippi/slippi-js";
-import { FileLoadResult } from "common/types";
 import _ from "lodash";
 import { ModuleMethods } from "threads/dist/types/master";
 import { Observable, Subject } from "threads/observable";
 import { expose } from "threads/worker";
 
 import { loadFolder } from "./loadFolder";
+import { FileLoadResult, Progress } from "./types";
 
 export interface Methods {
   destroyWorker: () => Promise<void>;
@@ -20,11 +20,6 @@ export interface Methods {
 }
 
 export type WorkerSpec = ModuleMethods & Methods;
-
-interface Progress {
-  current: number;
-  total: number;
-}
 
 let progressSubject: Subject<Progress> = new Subject();
 

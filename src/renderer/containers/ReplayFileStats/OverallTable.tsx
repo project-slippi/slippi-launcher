@@ -1,6 +1,6 @@
+import { FileResult } from "@replays/types";
 import { RatioType, StatsType } from "@slippi/slippi-js";
 import { extractPlayerNames } from "common/matchNames";
-import { FileResult } from "common/types";
 import _ from "lodash";
 import React from "react";
 

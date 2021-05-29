@@ -5,7 +5,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import { withStyles } from "@material-ui/core/styles";
 import DeleteIcon from "@material-ui/icons/Delete";
 import FolderIcon from "@material-ui/icons/Folder";
-import { FileResult } from "common/types";
+import { FileResult } from "@replays/types";
 import { shell } from "electron";
 import { debounce } from "lodash";
 import React from "react";

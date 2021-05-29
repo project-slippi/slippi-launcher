@@ -1,7 +1,9 @@
 import { broadcastErrorOccurred, dolphinStatusChanged, slippiStatusChanged } from "@broadcast/ipc";
+import { loadProgressUpdated } from "@replays/ipc";
 import throttle from "lodash/throttle";
 
 import { useConsole } from "@/store/console";
+import { useReplays } from "@/store/replays";
 
 export const useAppListeners = () => {
   const setSlippiConnectionStatus = useConsole((store) => store.setSlippiConnectionStatus);
@@ -19,5 +21,11 @@ export const useAppListeners = () => {
   const setBroadcastError = useConsole((store) => store.setBroadcastError);
   broadcastErrorOccurred.renderer!.useEvent(async ({ errorMessage }) => {
     setBroadcastError(errorMessage);
+  }, []);
+
+  const updateProgress = useReplays((store) => store.updateProgress);
+  const throttledUpdateProgress = throttle(updateProgress, 50);
+  loadProgressUpdated.renderer!.useEvent(async (progress) => {
+    throttledUpdateProgress(progress);
   }, []);
 };

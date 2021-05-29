@@ -1,7 +1,7 @@
+import { FileResult } from "@replays/types";
 import { ConversionType, StatsType, StockType } from "@slippi/slippi-js";
 import { extractPlayerNames } from "common/matchNames";
 import { convertFrameCountToDurationString } from "common/time";
-import { FileResult } from "common/types";
 import _ from "lodash";
 import React from "react";
 
