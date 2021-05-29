@@ -23,6 +23,10 @@ export const checkPlayKeyExists = makeEndpoint.main("checkPlayKeyExists", <Empty
 
 export const removePlayKeyFile = makeEndpoint.main("removePlayKeyFile", <EmptyPayload>_, <SuccessPayload>_);
 
+export const viewSlpReplay = makeEndpoint.main("viewSlpReplay", <{ filePath: string }>_, <SuccessPayload>_);
+
+export const launchNetplayDolphin = makeEndpoint.main("launchNetplayDolphin", <EmptyPayload>_, <SuccessPayload>_);
+
 // Events
 
 export const dolphinDownloadFinished = makeEndpoint.renderer(

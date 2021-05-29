@@ -5,12 +5,15 @@ import {
   checkPlayKeyExists,
   configureDolphin,
   downloadDolphin,
+  launchNetplayDolphin,
   reinstallDolphin,
   removePlayKeyFile,
   storePlayKeyFile,
+  viewSlpReplay,
 } from "./ipc";
 import { dolphinManager } from "./manager";
 import { deletePlayKeyFile, findPlayKey, writePlayKeyFile } from "./playkey";
+import { ReplayCommunication } from "./types";
 
 downloadDolphin.main!.handle(async () => {
   await assertDolphinInstallations();
@@ -42,5 +45,19 @@ checkPlayKeyExists.main!.handle(async () => {
 
 removePlayKeyFile.main!.handle(async () => {
   await deletePlayKeyFile();
+  return { success: true };
+});
+
+viewSlpReplay.main!.handle(async ({ filePath }) => {
+  const replayComm: ReplayCommunication = {
+    mode: "normal",
+    replay: filePath,
+  };
+  await dolphinManager.launchPlaybackDolphin("playback", replayComm);
+  return { success: true };
+});
+
+launchNetplayDolphin.main!.handle(async () => {
+  await dolphinManager.launchNetplayDolphin();
   return { success: true };
 });

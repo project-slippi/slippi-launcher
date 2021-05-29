@@ -1,6 +1,7 @@
+import { viewSlpReplay } from "@dolphin/ipc";
 import { StatsType } from "@slippi/slippi-js";
 import { FileLoadResult, FileResult, FolderResult } from "common/types";
-import { ipcRenderer, shell } from "electron";
+import { shell } from "electron";
 import { ipcRenderer as ipc } from "electron-better-ipc";
 import { produce } from "immer";
 import path from "path";
@@ -84,7 +85,11 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   },
 
   playFile: async (fullPath) => {
-    ipcRenderer.send("viewReplay", fullPath);
+    const viewResult = await viewSlpReplay.renderer!.trigger({ filePath: fullPath });
+    if (!viewResult.result) {
+      console.error(`Error playing file: ${fullPath}`, viewResult.errors);
+      throw new Error(`Error playing file: ${fullPath}`);
+    }
   },
 
   selectFile: async (index, fullPath) => {
