@@ -1,4 +1,4 @@
-import { DolphinLaunchType } from "common/dolphin";
+import { DolphinLaunchType } from "@dolphin/types";
 import React from "react";
 
 import { DolphinSettings } from "./DolphinSettings";

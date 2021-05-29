@@ -1,10 +1,10 @@
+import { configureDolphin, reinstallDolphin } from "@dolphin/ipc";
+import { DolphinLaunchType } from "@dolphin/types";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import ErrorIcon from "@material-ui/icons/Error";
-import { DolphinLaunchType } from "common/dolphin";
-import { ipcRenderer as ipc } from "electron-better-ipc";
 import React from "react";
 
 import { PathInput } from "@/components/PathInput";
@@ -49,13 +49,13 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
     },
     [setDolphinFolderPath],
   );
-  const configureDolphin = async () => {
+  const configureDolphinHandler = async () => {
     console.log("configure dolphin pressesd");
-    await ipc.callMain<string, never>("configureDolphin", dolphinType);
+    await configureDolphin.renderer!.trigger({ dolphinType });
   };
-  const reinstallDolphin = async () => {
+  const reinstallDolphinHandler = async () => {
     console.log("reinstall button clicked");
-    await ipc.callMain<string, never>("reinstallDolphin", dolphinType);
+    await reinstallDolphin.renderer!.trigger({ dolphinType });
   };
   return (
     <div>
@@ -88,10 +88,10 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
         />
       </SettingItem>
       <SettingItem name="Configure Dolphin" description="Open Dolphin to modify settings.">
-        <button onClick={configureDolphin}>Configure Dolphin</button>
+        <button onClick={configureDolphinHandler}>Configure Dolphin</button>
       </SettingItem>
       <SettingItem name="Reinstall Dolphin" description="Delete and reinstall dolphin">
-        <button onClick={reinstallDolphin}>Reset Dolphin</button>
+        <button onClick={reinstallDolphinHandler}>Reset Dolphin</button>
       </SettingItem>
     </div>
   );

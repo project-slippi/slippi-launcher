@@ -1,4 +1,5 @@
 import "@broadcast/main";
+import "@dolphin/main";
 
 import { isDevelopment } from "common/constants";
 import { app, BrowserWindow, shell } from "electron";

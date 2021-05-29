@@ -25,6 +25,7 @@ type EndpointMaker = {
   renderer: <I extends Payload>(name: string, _: I) => RendererEndpoint<I>;
 };
 
+export type SuccessPayload = { success: true };
 export type EmptyPayload = Record<never, never>;
 
 type Payload = Record<string, any>;

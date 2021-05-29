@@ -1,27 +1,16 @@
-import { app, remote } from "electron";
+import { app } from "electron";
 import electronSettings from "electron-settings";
 import * as fs from "fs-extra";
 import path from "path";
 
-export enum DolphinLaunchType {
-  NETPLAY = "netplay",
-  PLAYBACK = "playback",
-}
+import { DolphinLaunchType } from "./types";
 
-export enum DolphinUseType {
-  PLAYBACK = "playback",
-  SPECTATE = "spectate",
-  CONFIG = "config",
-  NETPLAY = "netplay",
-}
+export * from "./instance";
+export * from "./manager";
+export * from "./types";
 
 export function getDefaultDolphinPath(type: DolphinLaunchType): string {
-  let dolphinPath = "";
-  try {
-    dolphinPath = path.join(app.getPath("userData"), type);
-  } catch {
-    dolphinPath = path.join(remote.app.getPath("userData"), type);
-  }
+  const dolphinPath = path.join(app.getPath("userData"), type);
   return dolphinPath;
 }
 

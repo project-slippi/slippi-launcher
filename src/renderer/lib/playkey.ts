@@ -1,15 +1,8 @@
 import { ApolloClient, ApolloLink, gql, HttpLink, InMemoryCache } from "@apollo/client";
-import { DolphinLaunchType, findDolphinExecutable } from "common/dolphin";
-import { fileExists } from "common/utils";
+import { checkPlayKeyExists, removePlayKeyFile, storePlayKeyFile } from "@dolphin/ipc";
+import { PlayKey } from "@dolphin/types";
+import log from "electron-log";
 import firebase from "firebase";
-import * as fs from "fs-extra";
-import path from "path";
-
-export interface PlayKey {
-  uid: string;
-  playKey: string;
-  connectCode: string;
-}
 
 const httpLink = new HttpLink({ uri: process.env.SLIPPI_GRAPHQL_ENDPOINT });
 
@@ -68,29 +61,29 @@ async function fetchPlayKey(): Promise<PlayKey> {
   };
 }
 
-export async function assertPlayKey(): Promise<void> {
-  const keyPath = await findPlayKey();
-  const playKeyExists = await fileExists(keyPath);
-  if (!playKeyExists) {
-    const playKey = await fetchPlayKey();
-    const contents = JSON.stringify(playKey, null, 2);
-    await fs.writeFile(keyPath, contents);
+export async function assertPlayKey() {
+  const playKeyExistsResult = await checkPlayKeyExists.renderer!.trigger({});
+  if (!playKeyExistsResult.result) {
+    log.error("Error checking for play key.", playKeyExistsResult.errors);
+    throw new Error("Error checking for play key");
   }
-}
 
-async function findPlayKey(): Promise<string> {
-  const dolphinPath = await findDolphinExecutable(DolphinLaunchType.NETPLAY);
-  let dolphinDir = path.dirname(dolphinPath);
-  if (process.platform === "darwin") {
-    dolphinDir = path.join(dolphinPath, "Contents", "Resources");
+  if (playKeyExistsResult.result.exists) {
+    return;
   }
-  return path.resolve(dolphinDir, "user.json");
+
+  const playKey = await fetchPlayKey();
+  const storeResult = await storePlayKeyFile.renderer!.trigger({ key: playKey });
+  if (!storeResult.result) {
+    log.error("Error saving play key", storeResult.errors);
+    throw new Error("Error saving play key");
+  }
 }
 
 export async function deletePlayKey(): Promise<void> {
-  const keyPath = await findPlayKey();
-  const playKeyExists = await fileExists(keyPath);
-  if (playKeyExists) {
-    await fs.unlink(keyPath);
+  const deleteResult = await removePlayKeyFile.renderer!.trigger({});
+  if (!deleteResult.result) {
+    log.error("Error deleting play key", deleteResult.errors);
+    throw new Error("Error deleting play key");
   }
 }

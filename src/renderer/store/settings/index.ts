@@ -1,4 +1,4 @@
-import { DolphinLaunchType, findDolphinExecutable, getDefaultDolphinPath } from "common/dolphin";
+import { DolphinLaunchType } from "@dolphin/types";
 import electronSettings from "electron-settings";
 import { stat } from "fs-extra";
 import { produce } from "immer";
@@ -51,10 +51,10 @@ const initialState: StoreState = {
     isoModTime: null,
     rootSlpPath: getDefaultRootSlpPath(),
     netplay: {
-      path: getDefaultDolphinPath(DolphinLaunchType.NETPLAY),
+      path: "",
     },
     playback: {
-      path: getDefaultDolphinPath(DolphinLaunchType.PLAYBACK),
+      path: "",
     },
     ...restored,
   },
@@ -139,7 +139,7 @@ export const useSettings = create<StoreState & StoreReducers>((set, get) => ({
     try {
       const { setDolphinFolderPath } = get();
 
-      await findDolphinExecutable(dolphinType); // errors if there is no dolphin in the path
+      // await findDolphinExecutable(dolphinType); // errors if there is no dolphin in the path
 
       set({ validDolphinPath: true });
       setDolphinFolderPath(dolphinType, dolphinPath);

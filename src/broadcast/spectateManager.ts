@@ -6,7 +6,7 @@ import * as fs from "fs-extra";
 import _ from "lodash";
 import { client as WebSocketClient, connection, IMessage } from "websocket";
 
-import { dolphinManager, ReplayCommunication } from "../main/dolphin";
+import { dolphinManager, ReplayCommunication } from "../dolphin";
 import { BroadcasterItem } from "./types";
 
 const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;

@@ -5,7 +5,8 @@
     "paths": {
       "@/*": ["renderer/*"],
       "common/*": ["common/*"],
-      "@broadcast/*": ["broadcast/*"]
+      "@broadcast/*": ["broadcast/*"],
+      "@dolphin/*": ["dolphin/*"]
     },
     "baseUrl": "src/",
     "jsx": "react",

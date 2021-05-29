@@ -1,11 +1,9 @@
-import { DolphinLaunchType } from "common/dolphin";
 import { fetchNewsFeed } from "common/ipc";
 import { ipcMain, nativeImage } from "electron";
 import { ipcMain as ipc } from "electron-better-ipc";
 import path from "path";
 
-import { dolphinManager, ReplayCommunication } from "./dolphin";
-import { assertDolphinInstallations } from "./downloadDolphin";
+import { dolphinManager, ReplayCommunication } from "../dolphin";
 import { fetchNewsFeedData } from "./newsFeed";
 import { worker as replayBrowserWorker } from "./replayBrowser/workerInterface";
 
@@ -15,10 +13,6 @@ export function setupListeners() {
       file: filePath,
       icon: nativeImage.createFromPath(path.join(__static, "images", "file.png")),
     });
-  });
-
-  ipcMain.on("downloadDolphin", (_) => {
-    assertDolphinInstallations();
   });
 
   ipcMain.on("viewReplay", (_, filePath: string) => {
@@ -31,16 +25,6 @@ export function setupListeners() {
 
   ipcMain.on("playNetplay", () => {
     dolphinManager.launchNetplayDolphin();
-  });
-
-  ipc.answerRenderer("configureDolphin", async (dolphinType: DolphinLaunchType) => {
-    console.log("configuring dolphin...");
-    await dolphinManager.configureDolphin(dolphinType);
-  });
-
-  ipc.answerRenderer("reinstallDolphin", async (dolphinType: DolphinLaunchType) => {
-    console.log("reinstalling dolphin...");
-    await dolphinManager.reinstallDolphin(dolphinType);
   });
 
   ipc.answerRenderer("loadReplayFolder", async (folderPath: string) => {

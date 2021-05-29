@@ -1,11 +1,11 @@
-import { DolphinLaunchType, findDolphinExecutable } from "common/dolphin";
 import log from "electron-log";
 import electronSettings from "electron-settings";
 import { EventEmitter } from "events";
 
-import { downloadAndInstallDolphin } from "../downloadDolphin";
+import { downloadAndInstallDolphin } from "./downloadDolphin";
 import { DolphinInstance, PlaybackDolphinInstance } from "./instance";
-import { ReplayCommunication } from "./types";
+import { DolphinLaunchType, ReplayCommunication } from "./types";
+import { findDolphinExecutable } from "./util";
 
 electronSettings.configure({
   fileName: "Settings",
@@ -55,6 +55,7 @@ export class DolphinManager extends EventEmitter {
   }
 
   public async configureDolphin(launchType: DolphinLaunchType) {
+    log.debug(`configuring ${launchType} dolphin...`);
     const dolphinPath = await findDolphinExecutable(launchType);
     if (launchType === DolphinLaunchType.NETPLAY && !this.netplayDolphinInstance) {
       const instance = new DolphinInstance(dolphinPath);
