@@ -4,7 +4,8 @@
     "lib": ["dom", "es2019"],
     "paths": {
       "@/*": ["renderer/*"],
-      "common/*": ["common/*"]
+      "common/*": ["common/*"],
+      "@broadcast/*": ["broadcast/*"]
     },
     "baseUrl": "src/",
     "jsx": "react",

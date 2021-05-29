@@ -1,5 +1,4 @@
 import { SlpFileWriter, SlpFileWriterEvent } from "@slippi/slippi-js";
-import { BroadcasterItem } from "common/types";
 import { app } from "electron";
 import log from "electron-log";
 import { EventEmitter } from "events";
@@ -7,7 +6,8 @@ import * as fs from "fs-extra";
 import _ from "lodash";
 import { client as WebSocketClient, connection, IMessage } from "websocket";
 
-import { dolphinManager, ReplayCommunication } from "./dolphin";
+import { dolphinManager, ReplayCommunication } from "../main/dolphin";
+import { BroadcasterItem } from "./types";
 
 const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
 

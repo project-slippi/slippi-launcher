@@ -1,3 +1,5 @@
+import "@broadcast/main";
+
 import { isDevelopment } from "common/constants";
 import { app, BrowserWindow, shell } from "electron";
 import contextMenu from "electron-context-menu";
