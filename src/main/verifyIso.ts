@@ -85,7 +85,7 @@ isoHashes.set("c7c0866fbe6d7ebf3b9c4236f4f32f4c8f65b578", {
   name: "Taikenban (demo)",
 });
 
-export async function verifyISO(isoPath: string): Promise<ISOHashInfo> {
+export async function verifyIso(isoPath: string): Promise<ISOHashInfo> {
   const exists = await fileExists(isoPath);
   if (!exists) {
     return Promise.reject(`Error verifying ISO: File ${isoPath} does not exist`);

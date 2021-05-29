@@ -1,9 +1,10 @@
 import { settingsManager } from "@settings/settingsManager";
-import { fetchNewsFeed } from "common/ipc";
+import { checkValidIso, fetchNewsFeed } from "common/ipc";
 import { ipcMain, nativeImage } from "electron";
 import path from "path";
 
 import { fetchNewsFeedData } from "./newsFeed";
+import { verifyIso } from "./verifyIso";
 
 export function setupListeners() {
   ipcMain.on("onDragStart", (event, filePath: string) => {
@@ -21,5 +22,14 @@ export function setupListeners() {
   fetchNewsFeed.main!.handle(async () => {
     const result = await fetchNewsFeedData();
     return result;
+  });
+
+  checkValidIso.main!.handle(async ({ path }) => {
+    try {
+      const result = await verifyIso(path);
+      return { valid: result.valid };
+    } catch (err) {
+      return { valid: false };
+    }
   });
 }
