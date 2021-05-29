@@ -29,6 +29,9 @@ export async function findDolphinExecutable(type: DolphinLaunchType | string, do
   // Make sure the directory actually exists
   if (dolphinPath === "") {
     dolphinPath = (await electronSettings.get(`settings.${type}.path`)) as string;
+    if (!dolphinPath) {
+      dolphinPath = getDefaultDolphinPath(type as DolphinLaunchType);
+    }
   }
 
   await fs.ensureDir(dolphinPath);
