@@ -1,5 +1,5 @@
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { BroadcasterItem } from "common/types";
+import { fetchBroadcastList } from "common/ipc";
 import { ipcRenderer as ipc } from "electron-better-ipc";
 import React from "react";
 import { useQuery } from "react-query";
@@ -16,7 +16,11 @@ export const SpectatePage: React.FC = () => {
       throw new Error("User is not logged in");
     }
     const authToken = await currentUser.getIdToken();
-    return ipc.callMain<string, BroadcasterItem[]>("fetchBroadcastList", authToken);
+    const broadcastListResult = await fetchBroadcastList.renderer!.trigger({ authToken });
+    if (!broadcastListResult.result) {
+      throw new Error("Error fetching broadcast list");
+    }
+    return broadcastListResult.result;
   });
 
   React.useEffect(() => {

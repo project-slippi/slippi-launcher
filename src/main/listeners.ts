@@ -1,5 +1,5 @@
 import { DolphinLaunchType } from "common/dolphin";
-import { fetchNewsFeed } from "common/ipc";
+import { fetchBroadcastList, fetchNewsFeed } from "common/ipc";
 import { StartBroadcastConfig } from "common/types";
 import { ipcMain, nativeImage } from "electron";
 import { ipcMain as ipc } from "electron-better-ipc";
@@ -74,7 +74,7 @@ export function setupListeners() {
     return result;
   });
 
-  ipc.answerRenderer("fetchBroadcastList", async (authToken: string) => {
+  fetchBroadcastList.main!.handle(async ({ authToken }) => {
     await spectateManager.connect(authToken);
     const result = await spectateManager.fetchBroadcastList();
     console.log("fetched broadcast list: ", result);
