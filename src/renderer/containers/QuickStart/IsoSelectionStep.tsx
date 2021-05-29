@@ -5,7 +5,7 @@ import React from "react";
 import { useDropzone } from "react-dropzone";
 import styled from "styled-components";
 
-import { useSettings } from "@/store/settings";
+import { useSettings } from "@/lib/hooks/useSettings";
 import { hasBorder } from "@/styles/hasBorder";
 
 import { QuickStartHeader } from "./QuickStartHeader";
@@ -51,11 +51,12 @@ const ErrorMessage = styled.div`
 `;
 
 export const IsoSelectionStep: React.FC = () => {
-  const loading = useSettings((store) => store.verifyingIso);
+  const loading = false;
+  // const loading = useSettings((store) => store.verifyingIso);
   const isoPath = useSettings((store) => store.settings.isoPath);
-  const validIsoPath = useSettings((store) => store.validIsoPath);
-  const setIsoPath = useSettings((store) => store.setIsoPath);
-  const verifyIsoPath = useSettings((store) => store.verifyIsoPath);
+  // const validIsoPath = useSettings((store) => store.validIsoPath);
+  // const setIsoPath = useSettings((store) => store.setIsoPath);
+  // const verifyIsoPath = useSettings((store) => store.verifyIsoPath);
   const onDrop = React.useCallback((acceptedFiles: File[]) => {
     if (loading || acceptedFiles.length === 0) {
       // Only verify one file at a time
@@ -63,9 +64,11 @@ export const IsoSelectionStep: React.FC = () => {
     }
 
     const filePath = acceptedFiles[0].path;
-    setIsoPath(filePath);
-    verifyIsoPath(filePath);
+    console.log(filePath);
+    // setIsoPath(filePath);
+    // verifyIsoPath(filePath);
   }, []);
+  const validIsoPath = true;
 
   const { open, getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
     accept: ".iso",

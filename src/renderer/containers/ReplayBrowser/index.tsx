@@ -14,8 +14,8 @@ import { DualPane } from "@/components/DualPane";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { IconMessage } from "@/components/Message";
 import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
+import { useSettings } from "@/lib/hooks/useSettings";
 import { useReplays } from "@/store/replays";
-import { useSettings } from "@/store/settings";
 
 import { ReplayFileStats } from "../ReplayFileStats";
 import { FileList } from "./FileList";

@@ -7,7 +7,8 @@ import { produce } from "immer";
 import path from "path";
 import create from "zustand";
 
-import { useSettings } from "../settings";
+import { useSettings } from "@/lib/hooks/useSettings";
+
 import { findChild, generateSubFolderTree } from "./folderTree";
 
 type StoreState = {

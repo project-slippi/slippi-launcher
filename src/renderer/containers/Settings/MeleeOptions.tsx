@@ -6,7 +6,7 @@ import ErrorIcon from "@material-ui/icons/Error";
 import React from "react";
 
 import { PathInput } from "@/components/PathInput";
-import { useSettings } from "@/store/settings";
+import { useIsoPath, useRootSlpPath } from "@/lib/hooks/useSettings";
 
 import { SettingItem } from "./SettingItem";
 
@@ -31,21 +31,15 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export const MeleeOptions: React.FC = () => {
-  const isoPath = useSettings((state) => state.settings.isoPath);
-  const verifying = useSettings((state) => state.verifyingIso);
-  const isValidIso = useSettings((state) => state.validIsoPath);
-  const verifyIsoPath = useSettings((state) => state.verifyIsoPath);
-  const setIsoPath = useSettings((state) => state.setIsoPath);
-  const setReplayDir = useSettings((state) => state.setReplayDirectory);
-  const replayDir = useSettings((state) => state.settings.rootSlpPath);
+  // const verifying = useSettings((state) => state.verifyingIso);
+  // const isValidIso = useSettings((state) => state.validIsoPath);
+  // const verifyIsoPath = useSettings((state) => state.verifyIsoPath);
+  const [isoPath, setIsoPath] = useIsoPath();
+  const [replayDir, setReplayDir] = useRootSlpPath();
   const classes = useStyles();
-  const onIsoSelect = React.useCallback(
-    (isoPath: string) => {
-      setIsoPath(isoPath);
-      verifyIsoPath(isoPath);
-    },
-    [setIsoPath],
-  );
+  const onIsoSelect = setIsoPath;
+  const isValidIso = true;
+  const verifying = false;
   return (
     <div>
       <Typography variant="h5">Melee Options</Typography>

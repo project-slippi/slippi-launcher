@@ -3,7 +3,7 @@ import log from "electron-log";
 import firebase from "firebase";
 import create from "zustand";
 
-import { useSettings } from "../settings";
+// import { useSettings } from "@/lib/hooks/useSettings";
 
 type StoreState = {
   initialized: boolean;
@@ -67,20 +67,20 @@ export const useApp = create<StoreState & StoreReducers>((set, get) => ({
     downloadDolphin.renderer!.trigger({});
 
     // If there's an ISO path already set then verify the ISO
-    const settingsState = useSettings.getState();
-    const currentIsoPath = settingsState.settings.isoPath;
-    if (currentIsoPath !== null) {
-      // We have an iso path that we should probably validate
-      console.log(`starting iso verification: ${currentIsoPath}`);
-      promises.push(
-        settingsState
-          .verifyIsoPath(currentIsoPath)
-          .then(() => {
-            console.log("finished verifying iso");
-          })
-          .catch(log.error),
-      );
-    }
+    // const settingsState = useSettings.getState();
+    // const currentIsoPath = settingsState.settings.isoPath;
+    // if (currentIsoPath !== null) {
+    // We have an iso path that we should probably validate
+    // console.log(`starting iso verification: ${currentIsoPath}`);
+    // promises.push(
+    //   settingsState
+    //     .verifyIsoPath(currentIsoPath)
+    //     .then(() => {
+    //       console.log("finished verifying iso");
+    //     })
+    //     .catch(log.error),
+    // );
+    // }
 
     await Promise.all(promises);
     set({ initialized: true });

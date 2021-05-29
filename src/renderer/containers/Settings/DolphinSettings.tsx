@@ -8,7 +8,7 @@ import ErrorIcon from "@material-ui/icons/Error";
 import React from "react";
 
 import { PathInput } from "@/components/PathInput";
-import { useSettings } from "@/store/settings";
+import { useSettings } from "@/lib/hooks/useSettings";
 
 import { SettingItem } from "./SettingItem";
 
@@ -36,19 +36,21 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolphinType }) => {
-  const dolphinPath = useSettings((state) => state.settings[dolphinType].path);
-  const verifying = useSettings((state) => state.verifyingDolphinPath);
-  const isValidDolphinPath = useSettings((state) => state.validDolphinPath);
-  const verifyAndSetDolphinPath = useSettings((state) => state.verifyAndSetDolphinPath);
-  const setDolphinFolderPath = useSettings((state) => state.setDolphinFolderPath);
+  const netplayDolphinPath = useSettings((state) => state.settings.netplayDolphinPath);
+  const playbackDolphinPath = useSettings((state) => state.settings.playbackDolphinPath);
+  // const verifyAndSetDolphinPath = useSettings((state) => state.verifyAndSetDolphinPath);
+  const dolphinPath = dolphinType === DolphinLaunchType.NETPLAY ? netplayDolphinPath : playbackDolphinPath;
+  const verifying = false;
+  // const isValidDolphinPath = useSettings((state) => state.validDolphinPath);
+  // const verifyAndSetDolphinPath = useSettings((state) => state.verifyAndSetDolphinPath);
+  // const setDolphinFolderPath = useSettings((state) => state.setDolphinFolderPath);
   const classes = useStyles();
-  const onDolphinFolderSelect = React.useCallback(
-    (dolphinPath: string) => {
-      setDolphinFolderPath(dolphinType, dolphinPath);
-      verifyAndSetDolphinPath(dolphinType, dolphinPath);
-    },
-    [setDolphinFolderPath],
-  );
+  const onDolphinFolderSelect = React.useCallback((dolphinPath: string) => {
+    console.log(dolphinPath);
+    // setDolphinFolderPath(dolphinType, dolphinPath);
+    // verifyAndSetDolphinPath(dolphinType, dolphinPath);
+  }, []);
+  const isValidDolphinPath = true;
   const configureDolphinHandler = async () => {
     console.log("configure dolphin pressesd");
     await configureDolphin.renderer!.trigger({ dolphinType });
