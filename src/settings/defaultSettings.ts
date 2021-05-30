@@ -14,6 +14,7 @@ function getDefaultRootSlpPath(): string {
 export const defaultAppSettings: AppSettings = {
   connections: [],
   settings: {
+    isoPath: null,
     rootSlpPath: getDefaultRootSlpPath(),
     spectateSlpPath: path.join(getDefaultRootSlpPath(), "Spectate"),
     netplayDolphinPath: path.join(app.getPath("userData"), "netplay"),

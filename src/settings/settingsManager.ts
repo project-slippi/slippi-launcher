@@ -23,7 +23,7 @@ export class SettingsManager {
     // If the ISO file no longer exists, don't restore it
     if (restoredSettings.settings?.isoPath) {
       if (!fs.existsSync(restoredSettings.settings.isoPath)) {
-        delete restoredSettings.settings.isoPath;
+        restoredSettings.settings.isoPath = null;
       }
     }
     this.appSettings = restoredSettings;
@@ -45,7 +45,7 @@ export class SettingsManager {
     }
   }
 
-  public async setIsoPath(isoPath: string): Promise<void> {
+  public async setIsoPath(isoPath: string | null): Promise<void> {
     await this._set("settings.isoPath", isoPath);
   }
 

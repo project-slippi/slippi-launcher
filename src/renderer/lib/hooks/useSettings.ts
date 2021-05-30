@@ -26,7 +26,7 @@ export const useSettings = create(
 
 export const useIsoPath = () => {
   const isoPath = useSettings((store) => store.settings.isoPath);
-  const setPath = async (path: string) => {
+  const setPath = async (path: string | null) => {
     const setResult = await setIsoPath.renderer!.trigger({ path });
     if (!setResult.result) {
       throw new Error("Error setting ISO path");
