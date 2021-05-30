@@ -11,6 +11,7 @@ import { loadFile } from "./loadFile";
 
 export interface Methods {
   loadReplayFile(fullPath: string): Promise<FileResult | null>;
+  destroyWorker: () => Promise<void>;
 }
 
 export type WorkerSpec = ModuleMethods & Methods;
@@ -22,6 +23,9 @@ const methods: WorkerSpec = {
     } catch (err) {
       return null; // File load failed, should be filtered
     }
+  },
+  async destroyWorker(): Promise<void> {
+    // Clean up worker
   },
 };
 

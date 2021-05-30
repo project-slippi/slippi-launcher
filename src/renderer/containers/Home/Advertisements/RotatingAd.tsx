@@ -53,6 +53,9 @@ const Container = styled(ExternalLink)`
   transition: opacity 0.2s ease-in-out;
   text-decoration: none;
   color: inherit;
+  display: inline-block;
+  height: 100%;
+  width: 100%;
 
   &:hover {
     opacity: 0.8;

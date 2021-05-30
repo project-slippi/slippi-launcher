@@ -132,8 +132,8 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
     highlightCondition: (a: number, b: number) => boolean,
   ) => {
     return renderRatioStatField(header, arrPath, fieldPath, (ratio: RatioType, oppRatio: RatioType) => {
-      const playerRatio = _.get(ratio, "ratio");
-      const oppRatioType = _.get(oppRatio, "ratio");
+      const playerRatio = _.get(ratio, "ratio", null);
+      const oppRatioType = _.get(oppRatio, "ratio", null);
 
       if (playerRatio === null || oppRatioType === null) {
         return (
@@ -159,8 +159,8 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
     highlightCondition: (a: number, b: number) => boolean,
   ) => {
     return renderRatioStatField(header, arrPath, fieldPath, (ratio, oppRatio) => {
-      const playerRatio = _.get(ratio, "ratio");
-      const oppRatioType = _.get(oppRatio, "ratio");
+      const playerRatio = _.get(ratio, "ratio", null);
+      const oppRatioType = _.get(oppRatio, "ratio", null);
 
       if (playerRatio === null || oppRatioType === null) {
         return (
