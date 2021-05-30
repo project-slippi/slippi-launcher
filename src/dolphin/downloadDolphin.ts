@@ -1,12 +1,12 @@
 import AdmZip from "adm-zip";
 import { ChildProcessWithoutNullStreams, spawn, spawnSync } from "child_process";
-import { fileExists } from "common/utils";
 import { app, BrowserWindow } from "electron";
 import { download } from "electron-dl";
 import * as fs from "fs-extra";
 import path from "path";
 import { lt } from "semver";
 
+import { fileExists } from "../main/fileExists";
 import { getLatestRelease } from "../main/github";
 import { dolphinDownloadFinished, dolphinDownloadLogReceived } from "./ipc";
 import { DolphinLaunchType } from "./types";

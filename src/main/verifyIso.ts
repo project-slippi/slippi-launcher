@@ -1,6 +1,7 @@
-import { fileExists } from "common/utils";
 import crypto from "crypto";
 import fs from "fs";
+
+import { fileExists } from "./fileExists";
 
 interface ISOHashInfo {
   valid: boolean;

@@ -1,8 +1,8 @@
 import { DolphinLaunchType, PlayKey } from "@dolphin/types";
-import { fileExists } from "common/utils";
 import * as fs from "fs-extra";
 import path from "path";
 
+import { fileExists } from "../main/fileExists";
 import { findDolphinExecutable } from "./util";
 
 export async function writePlayKeyFile(playKey: PlayKey): Promise<void> {
