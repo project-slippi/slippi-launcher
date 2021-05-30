@@ -1,3 +1,5 @@
+import { settingsManager } from "@settings/settingsManager";
+
 import { broadcastManager } from "./broadcastManager";
 import { fetchBroadcastList, startBroadcast, stopBroadcast, watchBroadcast } from "./ipc";
 import { spectateManager } from "./spectateManager";
@@ -10,7 +12,8 @@ fetchBroadcastList.main!.handle(async ({ authToken }) => {
 });
 
 watchBroadcast.main!.handle(async ({ broadcasterId }) => {
-  spectateManager.watchBroadcast(broadcasterId, undefined, true);
+  const folderPath = settingsManager.get().settings.spectateSlpPath;
+  spectateManager.watchBroadcast(broadcasterId, folderPath, true);
   return { success: true };
 });
 

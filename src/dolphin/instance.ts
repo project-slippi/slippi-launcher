@@ -1,11 +1,11 @@
 import { ChildProcessWithoutNullStreams, spawn } from "child_process";
-import { fileExists } from "common/utils";
 import { randomBytes } from "crypto";
 import { app } from "electron";
 import { EventEmitter } from "events";
 import * as fs from "fs-extra";
 import path from "path";
 
+import { fileExists } from "../main/fileExists";
 import { ReplayCommunication } from "./types";
 
 const generateTempCommunicationFile = (): string => {

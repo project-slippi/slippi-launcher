@@ -12,10 +12,10 @@ import React from "react";
 import styled from "styled-components";
 
 import { useLoginModal } from "@/lib/hooks/useLoginModal";
+import { useSettings } from "@/lib/hooks/useSettings";
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
 import { assertPlayKey } from "@/lib/playkey";
 import { useApp } from "@/store/app";
-import { useSettings } from "@/store/settings";
 
 import { UserMenu } from "./UserMenu";
 

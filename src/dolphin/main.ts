@@ -1,5 +1,4 @@
-import { fileExists } from "common/utils";
-
+import { fileExists } from "../main/fileExists";
 import { assertDolphinInstallations } from "./downloadDolphin";
 import {
   checkPlayKeyExists,
