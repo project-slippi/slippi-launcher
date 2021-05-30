@@ -25,11 +25,16 @@ export function setupListeners() {
   });
 
   checkValidIso.main!.handle(async ({ path }) => {
+    // Make sure we have a valid path
+    if (!path) {
+      return { path, valid: false };
+    }
+
     try {
       const result = await verifyIso(path);
-      return { valid: result.valid };
+      return { path, valid: result.valid };
     } catch (err) {
-      return { valid: false };
+      return { path, valid: false };
     }
   });
 }
