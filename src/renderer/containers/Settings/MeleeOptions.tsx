@@ -7,7 +7,7 @@ import React from "react";
 
 import { PathInput } from "@/components/PathInput";
 import { useIsoVerification } from "@/lib/hooks/useIsoVerification";
-import { useIsoPath, useRootSlpPath } from "@/lib/hooks/useSettings";
+import { useIsoPath, useRootSlpPath, useSpectateSlpPath } from "@/lib/hooks/useSettings";
 
 import { SettingItem } from "./SettingItem";
 
@@ -36,6 +36,7 @@ export const MeleeOptions: React.FC = () => {
   const isValidIso = useIsoVerification((state) => state.isValid);
   const [isoPath, setIsoPath] = useIsoPath();
   const [replayDir, setReplayDir] = useRootSlpPath();
+  const [spectateDir, setSpectateDir] = useSpectateSlpPath();
   const classes = useStyles();
 
   return (
@@ -67,6 +68,16 @@ export const MeleeOptions: React.FC = () => {
         <PathInput
           value={replayDir}
           onSelect={setReplayDir}
+          options={{
+            properties: ["openDirectory"],
+          }}
+          placeholder="No folder set"
+        />
+      </SettingItem>
+      <SettingItem name="Spectator SLP Directory" description="The folder where spectated SLP files are stored.">
+        <PathInput
+          value={spectateDir}
+          onSelect={setSpectateDir}
           options={{
             properties: ["openDirectory"],
           }}
