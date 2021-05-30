@@ -1,14 +1,11 @@
 import { configureDolphin, reinstallDolphin } from "@dolphin/ipc";
 import { DolphinLaunchType } from "@dolphin/types";
-import CircularProgress from "@material-ui/core/CircularProgress";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
-import CheckCircleIcon from "@material-ui/icons/CheckCircle";
-import ErrorIcon from "@material-ui/icons/Error";
 import React from "react";
 
 import { PathInput } from "@/components/PathInput";
-import { useSettings } from "@/lib/hooks/useSettings";
+import { useDolphinPath } from "@/lib/hooks/useSettings";
 
 import { SettingItem } from "./SettingItem";
 
@@ -36,21 +33,8 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolphinType }) => {
-  const netplayDolphinPath = useSettings((state) => state.settings.netplayDolphinPath);
-  const playbackDolphinPath = useSettings((state) => state.settings.playbackDolphinPath);
-  // const verifyAndSetDolphinPath = useSettings((state) => state.verifyAndSetDolphinPath);
-  const dolphinPath = dolphinType === DolphinLaunchType.NETPLAY ? netplayDolphinPath : playbackDolphinPath;
-  const verifying = false;
-  // const isValidDolphinPath = useSettings((state) => state.validDolphinPath);
-  // const verifyAndSetDolphinPath = useSettings((state) => state.verifyAndSetDolphinPath);
-  // const setDolphinFolderPath = useSettings((state) => state.setDolphinFolderPath);
+  const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
   const classes = useStyles();
-  const onDolphinFolderSelect = React.useCallback((dolphinPath: string) => {
-    console.log(dolphinPath);
-    // setDolphinFolderPath(dolphinType, dolphinPath);
-    // verifyAndSetDolphinPath(dolphinType, dolphinPath);
-  }, []);
-  const isValidDolphinPath = true;
   const configureDolphinHandler = async () => {
     console.log("configure dolphin pressesd");
     await configureDolphin.renderer!.trigger({ dolphinType });
@@ -66,27 +50,10 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
       </Typography>
       <SettingItem name="Dolphin Directory" description="The path to Dolphin.">
         <PathInput
-          value={dolphinPath !== null ? dolphinPath : ""}
-          onSelect={onDolphinFolderSelect}
+          value={dolphinPath ?? ""}
+          onSelect={setDolphinPath}
           placeholder="No folder set"
-          disabled={verifying}
           options={{ properties: ["openDirectory"] }}
-          endAdornment={
-            <div
-              className={`${classes.validation} ${verifying ? "" : classes[isValidDolphinPath ? "valid" : "invalid"]}`}
-            >
-              <span className={classes.validationText}>
-                {verifying ? "Verifying..." : isValidDolphinPath ? "Valid" : "Invalid"}
-              </span>
-              {verifying ? (
-                <CircularProgress size={25} color="inherit" />
-              ) : isValidDolphinPath ? (
-                <CheckCircleIcon />
-              ) : (
-                <ErrorIcon />
-              )}
-            </div>
-          }
         />
       </SettingItem>
       <SettingItem name="Configure Dolphin" description="Open Dolphin to modify settings.">

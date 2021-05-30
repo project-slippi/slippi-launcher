@@ -1,3 +1,4 @@
+import { DolphinLaunchType } from "@dolphin/types";
 import {
   setIsoPath,
   setNetplayDolphinPath,
@@ -57,24 +58,29 @@ export const useSpectateSlpPath = () => {
   return [spectateSlpPath, setSpectateDir] as const;
 };
 
-export const useNetplayDolphinPath = () => {
+export const useDolphinPath = (dolphinType: DolphinLaunchType) => {
   const netplayDolphinPath = useSettings((store) => store.settings.netplayDolphinPath);
-  const setPath = async (path: string) => {
+  const setNetplayPath = async (path: string) => {
     const setResult = await setNetplayDolphinPath.renderer!.trigger({ path });
     if (!setResult.result) {
       throw new Error("Error setting netplay dolphin path");
     }
   };
-  return [netplayDolphinPath, setPath] as const;
-};
 
-export const usePlaybackDolphinPath = () => {
   const playbackDolphinPath = useSettings((store) => store.settings.playbackDolphinPath);
-  const setPath = async (path: string) => {
+  const setDolphinPath = async (path: string) => {
     const setResult = await setPlaybackDolphinPath.renderer!.trigger({ path });
     if (!setResult.result) {
       throw new Error("Error setting playback dolphin path");
     }
   };
-  return [playbackDolphinPath, setPath] as const;
+
+  switch (dolphinType) {
+    case DolphinLaunchType.NETPLAY: {
+      return [netplayDolphinPath, setNetplayPath] as const;
+    }
+    case DolphinLaunchType.PLAYBACK: {
+      return [playbackDolphinPath, setDolphinPath] as const;
+    }
+  }
 };
