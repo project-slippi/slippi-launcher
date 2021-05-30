@@ -6,6 +6,7 @@ import ErrorIcon from "@material-ui/icons/Error";
 import React from "react";
 
 import { PathInput } from "@/components/PathInput";
+import { useIsoVerification } from "@/lib/hooks/useIsoVerification";
 import { useIsoPath, useRootSlpPath } from "@/lib/hooks/useSettings";
 
 import { SettingItem } from "./SettingItem";
@@ -31,22 +32,19 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export const MeleeOptions: React.FC = () => {
-  // const verifying = useSettings((state) => state.verifyingIso);
-  // const isValidIso = useSettings((state) => state.validIsoPath);
-  // const verifyIsoPath = useSettings((state) => state.verifyIsoPath);
+  const verifying = useIsoVerification((state) => state.isValidating);
+  const isValidIso = useIsoVerification((state) => state.isValid);
   const [isoPath, setIsoPath] = useIsoPath();
   const [replayDir, setReplayDir] = useRootSlpPath();
   const classes = useStyles();
-  const onIsoSelect = setIsoPath;
-  const isValidIso = true;
-  const verifying = false;
+
   return (
     <div>
       <Typography variant="h5">Melee Options</Typography>
       <SettingItem name="Melee ISO File" description="The path to an NTSC Melee 1.02 ISO.">
         <PathInput
           value={isoPath !== null ? isoPath : ""}
-          onSelect={onIsoSelect}
+          onSelect={setIsoPath}
           placeholder="No file set"
           disabled={verifying}
           endAdornment={
