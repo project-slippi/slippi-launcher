@@ -1,13 +1,19 @@
-import { calculateGameStats, loadProgressUpdated, loadReplayFolder } from "./ipc";
+import { worker } from "./dbWorkerInterface";
+import { calculateGameStats, loadProgressUpdated, loadReplayFolder, pruneFolders } from "./ipc";
+import { loadFolder } from "./loadFolder";
 import { worker as replayBrowserWorker } from "./workerInterface";
 
 loadReplayFolder.main!.handle(async ({ folderPath }) => {
-  const w = await replayBrowserWorker;
-  w.getProgressObservable().subscribe((progress) => {
-    loadProgressUpdated.main!.trigger(progress);
-  });
-  const result = await w.loadReplayFolder(folderPath);
-  return result;
+  return await loadFolder(
+    folderPath,
+    async (current, total) => await loadProgressUpdated.main!.trigger({ current, total }),
+  );
+});
+
+pruneFolders.main!.handle(async ({ existingFolders }) => {
+  const w = await worker;
+  await w.pruneFolders(existingFolders);
+  return { success: true };
 });
 
 calculateGameStats.main!.handle(async ({ filePath }) => {
