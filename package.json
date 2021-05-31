@@ -14,7 +14,7 @@
     "package:dir": "yarn run package --dir -c.compression=store -c.mac.identity=null",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "lint:fix": "yarn run lint --fix",
-    "postinstall": "patch-package"
+    "postinstall": "electron-builder install-app-deps && patch-package"
   },
   "dependencies": {
     "@apollo/client": "^3.3.4",
@@ -24,6 +24,7 @@
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@slippi/slippi-js": "^5.1.1",
     "adm-zip": "^0.5.1",
+    "better-sqlite3": "^7.1.2",
     "cross-fetch": "^3.0.6",
     "electron-better-ipc": "^1.1.1",
     "electron-context-menu": "^2.3.0",
@@ -57,6 +58,7 @@
   "devDependencies": {
     "@svgr/webpack": "^5.5.0",
     "@types/adm-zip": "^0.4.33",
+    "@types/better-sqlite3": "^5.4.1",
     "@types/lodash": "^4.14.165",
     "@types/moment": "^2.13.0",
     "@types/react": "^17.0.0",
@@ -87,7 +89,6 @@
     "husky": "^4.3.0",
     "node-sass": "^5.0.0",
     "patch-package": "^6.2.2",
-    "postinstall-postinstall": "^2.1.0",
     "prettier": "^2.2.1",
     "pretty-quick": "^3.1.0",
     "raw-loader": "^4.0.2",

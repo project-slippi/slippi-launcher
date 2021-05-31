@@ -88,26 +88,16 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   },
 
   selectFile: async (index, fullPath) => {
-    if (get().selectedFile.loading) {
-      console.warn("Alreading loading game stats for another file. Try again later.");
-      return;
+    const file = await loadReplayFile(fullPath);
+    if (file.stats) {
+      set({
+        selectedFile: { index, gameStats: file.stats, loading: false, error: null },
+      });
+    } else {
+      set({
+        selectedFile: { index, gameStats: file.stats, loading: false, error: "Stats could not be loaded" },
+      });
     }
-
-    set({
-      selectedFile: { index, gameStats: null, loading: true, error: null },
-    });
-    const { selectedFile } = get();
-    const newSelectedFile = await produce(selectedFile, async (draft) => {
-      try {
-        const gameStats = await calculateGameStats(fullPath);
-        draft.gameStats = gameStats;
-      } catch (err) {
-        draft.error = err;
-      } finally {
-        draft.loading = false;
-      }
-    });
-    set({ selectedFile: newSelectedFile });
   },
 
   clearSelectedFile: async () => {
@@ -159,9 +149,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
       return;
     }
 
-    set({ currentFolder: folderToLoad });
-
-    set({ loading: true, progress: null });
+    set({ currentFolder: folderToLoad, loading: true, progress: null });
     try {
       const result = await loadReplayFolder(folderToLoad);
       set({
@@ -171,6 +159,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
         fileErrorCount: result.fileErrorCount,
       });
     } catch (err) {
+      console.log(err);
       set({ loading: false, progress: null });
     }
   },
@@ -213,6 +202,18 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
       }
     });
 
+    const getFolderList = (root: FolderResult): string[] => {
+      return [root.fullPath, ...root.subdirectories.flatMap((d) => getFolderList(d))];
+    };
+
+    try {
+      const folders = getFolderList(newFolders);
+      console.log("deleting where folder not in ", folders);
+      await pruneFolders(folders);
+    } catch (err) {
+      console.log(err);
+    }
+
     set({ folders: newFolders });
   },
 
@@ -222,13 +223,19 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
 }));
 
 const loadReplayFolder = async (folder: string): Promise<FileLoadResult> => {
-  const res = await ipc.callMain<string, FileLoadResult>("loadReplayFolder", folder);
-  return res;
+  return await ipc.callMain<string, FileLoadResult>("loadReplayFolder", folder);
 };
 
-const calculateGameStats = async (file: string): Promise<StatsType> => {
-  const res = await ipc.callMain<string, StatsType>("calculateGameStats", file);
-  return res;
+const loadReplayFile = async (file: string): Promise<FileResult> => {
+  return await ipc.callMain<string, FileResult>("loadReplayFile", file);
+};
+
+// const loadPlayerReplays = async (player: string): Promise<StatsType> => {
+//   return await ipc.callMain<string, StatsType>("loadPlayerReplays", player);
+// };
+
+const pruneFolders = async (existingFolders: string[]): Promise<void> => {
+  return await ipc.callMain<string[], void>("pruneFolders", existingFolders);
 };
 
 // Listen to the replay folder progress event

@@ -8,7 +8,9 @@ import { broadcastManager } from "./broadcastManager";
 import { dolphinManager, ReplayCommunication } from "./dolphin";
 import { assertDolphinInstallations } from "./downloadDolphin";
 import { fetchNewsFeed } from "./newsFeed";
-import { worker as replayBrowserWorker } from "./replayBrowser/workerInterface";
+import { worker } from "./replayBrowser/dbWorkerInterface";
+import { loadFolder } from "./replayBrowser/loadFolder";
+// import { worker as replayBrowserWorker } from "./replayBrowser/workerInterface";
 import { spectateManager } from "./spectateManager";
 
 export function setupListeners() {
@@ -54,18 +56,24 @@ export function setupListeners() {
   });
 
   ipc.answerRenderer("loadReplayFolder", async (folderPath: string) => {
-    const w = await replayBrowserWorker;
-    w.getProgressObservable().subscribe((progress) => {
-      ipc.sendToRenderers<{ current: number; total: number }>("loadReplayFolderProgress", progress);
-    });
-    const result = await w.loadReplayFolder(folderPath);
-    return result;
+    return await loadFolder(folderPath, (current, total) =>
+      ipc.sendToRenderers<{ current: number; total: number }>("loadReplayFolderProgress", { current, total }),
+    );
   });
 
-  ipc.answerRenderer("calculateGameStats", async (filePath: string) => {
-    const w = await replayBrowserWorker;
-    const result = await w.calculateGameStats(filePath);
-    return result;
+  ipc.answerRenderer("loadReplayFile", async (file: string) => {
+    const w = await worker;
+    return await w.getFullReplay(file);
+  });
+
+  // ipc.answerRenderer("loadPlayerReplays", async (player: string) => {
+  //   const w = await worker
+  //   return await w.getPlayerReplays(player);
+  // });
+
+  ipc.answerRenderer("pruneFolders", async (existingFolders: string[]) => {
+    const w = await worker;
+    return await w.pruneFolders(existingFolders);
   });
 
   ipc.answerRenderer("fetchNewsFeed", async () => {
