@@ -88,16 +88,26 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   },
 
   selectFile: async (index, fullPath) => {
-    const file = await loadReplayFile(fullPath);
-    if (file.stats) {
-      set({
-        selectedFile: { index, gameStats: file.stats, loading: false, error: null },
-      });
-    } else {
-      set({
-        selectedFile: { index, gameStats: file.stats, loading: false, error: "Stats could not be loaded" },
-      });
+    if (get().selectedFile.loading) {
+      console.warn("Alreading loading game stats for another file. Try again later.");
+      return;
     }
+
+    set({
+      selectedFile: { index, gameStats: null, loading: true, error: null },
+    });
+    const { selectedFile } = get();
+    const newSelectedFile = await produce(selectedFile, async (draft) => {
+      try {
+        const gameStats = await calculateGameStats(fullPath);
+        draft.gameStats = gameStats;
+      } catch (err) {
+        draft.error = err;
+      } finally {
+        draft.loading = false;
+      }
+    });
+    set({ selectedFile: newSelectedFile });
   },
 
   clearSelectedFile: async () => {
@@ -226,14 +236,6 @@ const loadReplayFolder = async (folder: string): Promise<FileLoadResult> => {
   return await ipc.callMain<string, FileLoadResult>("loadReplayFolder", folder);
 };
 
-const loadReplayFile = async (file: string): Promise<FileResult> => {
-  return await ipc.callMain<string, FileResult>("loadReplayFile", file);
-};
-
-// const loadPlayerReplays = async (player: string): Promise<StatsType> => {
-//   return await ipc.callMain<string, StatsType>("loadPlayerReplays", player);
-// };
-
 const pruneFolders = async (existingFolders: string[]): Promise<void> => {
   return await ipc.callMain<string[], void>("pruneFolders", existingFolders);
 };
@@ -244,3 +246,8 @@ ipc.on("loadReplayFolderProgress", (_, progress: { current: number; total: numbe
     useReplays.getState().updateProgress(progress);
   });
 });
+
+const calculateGameStats = async (file: string): Promise<StatsType> => {
+  const res = await ipc.callMain<string, StatsType>("calculateGameStats", file);
+  return res;
+};

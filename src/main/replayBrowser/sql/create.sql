@@ -12,6 +12,5 @@ CREATE TABLE IF NOT EXISTS replay_data (
     lastFrame     INTEGER,
     settings      JSON,
     metadata      JSON,
-    stats         JSON,
     FOREIGN KEY (fullPath) REFERENCES replays(fullPath) ON DELETE CASCADE
 );

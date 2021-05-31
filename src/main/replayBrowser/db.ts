@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-named-as-default
 import Database from "better-sqlite3";
 import { FileResult } from "common/types";
+import path from "path";
 
 import createTablesSql from "./sql/create.sql";
 
@@ -73,21 +74,23 @@ export const getPlayerReplays = async (_: string) => {
 export const saveReplays = async (replays: FileResult[]) => {
   db.transaction(() => {
     let insert = db.prepare(`INSERT INTO replays(fullPath, name, folder) VALUES (?, ?, ?)`);
-    const docs1 = replays.map((replay: FileResult) => [replay.fullPath, replay.name, replay.folder]);
+    const docs1 = replays.map((replay: FileResult) => {
+      const folder = path.dirname(replay.fullPath);
+      return [replay.fullPath, replay.name, folder];
+    });
     docs1.forEach((d) => insert.run(...d));
 
     insert = db.prepare(`
       INSERT INTO replay_data(
         fullPath, startTime, lastFrame, 
-        settings, metadata, stats)
-        VALUES (?, ?, ?, ?, ?, ?)`);
+        settings, metadata)
+        VALUES (?, ?, ?, ?, ?)`);
     const docs2 = replays.map((replay: FileResult) => [
       replay.fullPath,
       replay.startTime,
       replay.lastFrame,
       JSON.stringify(replay.settings),
       JSON.stringify(replay.metadata),
-      JSON.stringify(replay.stats),
     ]);
     docs2.forEach((d) => insert.run(...d));
   })();

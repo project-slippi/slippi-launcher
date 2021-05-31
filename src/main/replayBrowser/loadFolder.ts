@@ -1,9 +1,9 @@
-import { FileLoadResult } from "common/types";
+import { FileLoadResult, FileResult } from "common/types";
 import * as fs from "fs-extra";
 import path from "path";
 
 import { worker } from "./dbWorkerInterface";
-import { loadReplays } from "./workerInterface";
+import { worker as replayBrowserWorker } from "./workerInterface";
 
 const filterReplays = async (folder: string, loadedFiles: string[]) => {
   const dirfiles = await fs.readdir(folder, { withFileTypes: true });
@@ -15,6 +15,19 @@ const filterReplays = async (folder: string, loadedFiles: string[]) => {
   const toDelete = loadedFiles.filter((file) => !slpFiles.includes(file));
 
   return { total: slpFiles.length, toLoad, toDelete };
+};
+
+const loadReplays = async (files: string[], progressCallback: (count: number) => void): Promise<FileResult[]> => {
+  let count = 0;
+  const w = await replayBrowserWorker;
+  const parsed = await Promise.all(
+    files.map(async (file) => {
+      const res = await w.loadReplayFile(file);
+      progressCallback(count++);
+      return res;
+    }),
+  );
+  return parsed.filter((f) => f) as FileResult[];
 };
 
 export async function loadFolder(

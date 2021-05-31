@@ -3,7 +3,9 @@
 // when in Node worker context.
 
 // TODO: Make electron-log work somehow
+import { SlippiGame, StatsType } from "@slippi/slippi-js";
 import { FileResult } from "common/types";
+import isEmpty from "lodash/isEmpty";
 import { ModuleMethods } from "threads/dist/types/master";
 import { expose } from "threads/worker";
 
@@ -11,6 +13,7 @@ import { loadFile } from "./loadFile";
 
 export interface Methods {
   loadReplayFile(fullPath: string): Promise<FileResult | null>;
+  calculateGameStats(fullPath: string): Promise<StatsType>;
   destroyWorker: () => Promise<void>;
 }
 
@@ -26,6 +29,20 @@ const methods: WorkerSpec = {
   },
   async destroyWorker(): Promise<void> {
     // Clean up worker
+  },
+  async calculateGameStats(fullPath: string): Promise<StatsType> {
+    // For a valid SLP game, at the very least we should have valid settings
+    const game = new SlippiGame(fullPath);
+    const settings = game.getSettings();
+    if (!settings || isEmpty(settings.players)) {
+      throw new Error("Game settings could not be properly loaded.");
+    }
+
+    if (settings.players.length !== 2) {
+      throw new Error("Stats can only be calculated for 1v1s.");
+    }
+
+    return game.getStats();
   },
 };
 

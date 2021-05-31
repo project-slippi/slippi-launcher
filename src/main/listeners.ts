@@ -10,7 +10,7 @@ import { assertDolphinInstallations } from "./downloadDolphin";
 import { fetchNewsFeed } from "./newsFeed";
 import { worker } from "./replayBrowser/dbWorkerInterface";
 import { loadFolder } from "./replayBrowser/loadFolder";
-// import { worker as replayBrowserWorker } from "./replayBrowser/workerInterface";
+import { worker as replayBrowserWorker } from "./replayBrowser/workerInterface";
 import { spectateManager } from "./spectateManager";
 
 export function setupListeners() {
@@ -66,10 +66,11 @@ export function setupListeners() {
     return await w.getFullReplay(file);
   });
 
-  // ipc.answerRenderer("loadPlayerReplays", async (player: string) => {
-  //   const w = await worker
-  //   return await w.getPlayerReplays(player);
-  // });
+  ipc.answerRenderer("calculateGameStats", async (filePath: string) => {
+    const w = await replayBrowserWorker;
+    const result = await w.calculateGameStats(filePath);
+    return result;
+  });
 
   ipc.answerRenderer("pruneFolders", async (existingFolders: string[]) => {
     const w = await worker;
