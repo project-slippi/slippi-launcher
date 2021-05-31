@@ -2,28 +2,13 @@
 import Database from "better-sqlite3";
 import { FileResult } from "common/types";
 
+import createTablesSql from "./sql/create.sql";
+
 let db: Database.Database;
 
 export const connect = (path: string) => {
   db = new Database(path);
-  // db = new Database(path, { verbose: console.log });
-  db.exec(`
-  CREATE TABLE IF NOT EXISTS replays (
-     fullPath      TEXT PRIMARY KEY,
-     name          TEXT,
-     folder        TEXT)
-  `);
-  db.exec("CREATE INDEX IF NOT EXISTS folder_idx ON replays(folder)");
-  db.exec(`
-  CREATE TABLE IF NOT EXISTS replay_data (
-     fullPath      TEXT PRIMARY KEY,
-     startTime     TEXT,
-     lastFrame     INTEGER,
-     settings      JSON,
-     metadata      JSON,
-     stats         JSON,
-     FOREIGN KEY (fullPath) REFERENCES replays(fullPath) ON DELETE CASCADE);
-  `);
+  db.exec(createTablesSql);
 };
 
 const parseRow = (row: any) => {
