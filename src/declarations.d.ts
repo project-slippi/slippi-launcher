@@ -15,3 +15,10 @@ declare module "@material-ui/lab/*";
 // provided by electron-webpack.
 // For more info see: https://webpack.electron.build/using-static-assets
 declare const __static: string;
+
+// Allow importing SQL files as text
+declare module "*.sql" {
+  const content: string;
+  // eslint-disable-next-line import/no-default-export
+  export default content;
+}

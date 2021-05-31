@@ -8,16 +8,22 @@ module.exports = function (context) {
   // Conflict: Multiple assets emit to the same filename: 0.bundle.worker.js
   context.output.chunkFilename = "[id].[chunkhash].js";
 
-  context.module.rules.unshift({
-    test: /\.node$/,
-    use: {
-      loader: "native-ext-loader",
-      options: {
-        rewritePath: undefined,
-        name: "[path][name].[ext]",
+  context.module.rules.unshift(
+    {
+      test: /\.node$/,
+      use: {
+        loader: "native-ext-loader",
+        options: {
+          rewritePath: undefined,
+          name: "[path][name].[ext]",
+        },
       },
     },
-  });
+    {
+      test: /\.sql$/i,
+      loader: "raw-loader",
+    },
+  );
 
   context.plugins.unshift(
     // Add threads worker support
