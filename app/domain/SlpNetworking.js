@@ -149,6 +149,7 @@ export default class SlpNetworking {
         console.log(details);
         this.connDetails = {...this.connDetails, ...details};
         console.log(this.connDetails);
+        this.forceConsoleUiUpdate();
       });
       conn.on("statusChange", (status) => this.setStatus(status));
       conn.on("data", (data) => this.handleReplayData(data));

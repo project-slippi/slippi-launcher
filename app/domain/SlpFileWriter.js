@@ -138,6 +138,7 @@ export default class SlpFileWriter extends EventEmitter {
     this.slpStream.on(SlpFileWriterEvent.FILE_COMPLETE, () => {
       console.log('Finished writing file.');
       // Update file state
+      this.currentFile = this.getClearedCurrentFile();
       this.onFileStateChange();
     });
 
