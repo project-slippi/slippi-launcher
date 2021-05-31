@@ -1,8 +1,8 @@
-import { FileLoadResult, FileResult } from "common/types";
 import * as fs from "fs-extra";
 import path from "path";
 
 import { worker } from "./dbWorkerInterface";
+import { FileLoadResult, FileResult } from "./types";
 import { worker as replayBrowserWorker } from "./workerInterface";
 
 const filterReplays = async (folder: string, loadedFiles: string[]) => {
@@ -17,13 +17,16 @@ const filterReplays = async (folder: string, loadedFiles: string[]) => {
   return { total: slpFiles.length, toLoad, toDelete };
 };
 
-const loadReplays = async (files: string[], progressCallback: (count: number) => void): Promise<FileResult[]> => {
+const loadReplays = async (
+  files: string[],
+  progressCallback: (count: number) => Promise<void>,
+): Promise<FileResult[]> => {
   let count = 0;
   const w = await replayBrowserWorker;
   const parsed = await Promise.all(
     files.map(async (file) => {
       const res = await w.loadReplayFile(file);
-      progressCallback(count++);
+      await progressCallback(count++);
       return res;
     }),
   );
@@ -32,7 +35,7 @@ const loadReplays = async (files: string[], progressCallback: (count: number) =>
 
 export async function loadFolder(
   folder: string,
-  callback: (current: number, total: number) => void = () => null,
+  callback?: (current: number, total: number) => Promise<void>,
 ): Promise<FileLoadResult> {
   // If the folder does not exist, return empty
   if (!(await fs.pathExists(folder))) {
@@ -55,7 +58,11 @@ export async function loadFolder(
   }
   let fileErrorCount = 0;
   if (toLoad.length > 0) {
-    const parsed = await loadReplays(toLoad, (count) => callback(count, toLoad.length));
+    const parsed = await loadReplays(toLoad, async (count) => {
+      if (callback) {
+        await callback(count, toLoad.length);
+      }
+    });
     fileErrorCount = toLoad.length - parsed.length;
     await w.saveReplays(parsed);
   }

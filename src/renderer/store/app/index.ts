@@ -1,9 +1,7 @@
-import { ipcRenderer } from "electron";
+import { dolphinDownloadFinished, dolphinDownloadLogReceived, downloadDolphin } from "dolphin/ipc";
 import log from "electron-log";
 import firebase from "firebase";
 import create from "zustand";
-
-import { useSettings } from "../settings";
 
 type StoreState = {
   initialized: boolean;
@@ -42,17 +40,20 @@ export const useApp = create<StoreState & StoreReducers>((set, get) => ({
     console.log("Initializing app...");
     const promises: Promise<void>[] = [];
 
-    ipcRenderer.on("downloadDolphinLog", (_, message: string) => {
+    dolphinDownloadLogReceived.renderer!.handle(async ({ message }) => {
       log.info(message);
       set({ logMessage: message });
     });
 
     promises.push(
       new Promise((resolve) => {
-        ipcRenderer.once("downloadDolphinFinished", (_, err: any) => {
-          if (err) {
+        const handler = dolphinDownloadFinished.renderer!.handle(async ({ error }) => {
+          // We only want to handle this event once so immediately destroy
+          handler.destroy();
+
+          if (error) {
             const errMsg = "Error occurred while downloading Dolphin";
-            log.error(errMsg, err);
+            log.error(errMsg, error);
             set({ logMessage: errMsg });
           }
           resolve();
@@ -61,23 +62,7 @@ export const useApp = create<StoreState & StoreReducers>((set, get) => ({
     );
 
     // Download Dolphin if necessary
-    ipcRenderer.send("downloadDolphin");
-
-    // If there's an ISO path already set then verify the ISO
-    const settingsState = useSettings.getState();
-    const currentIsoPath = settingsState.settings.isoPath;
-    if (currentIsoPath !== null) {
-      // We have an iso path that we should probably validate
-      console.log(`starting iso verification: ${currentIsoPath}`);
-      promises.push(
-        settingsState
-          .verifyIsoPath(currentIsoPath)
-          .then(() => {
-            console.log("finished verifying iso");
-          })
-          .catch(log.error),
-      );
-    }
+    downloadDolphin.renderer!.trigger({});
 
     await Promise.all(promises);
     set({ initialized: true });

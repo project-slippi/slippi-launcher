@@ -4,7 +4,11 @@
     "lib": ["dom", "es2019"],
     "paths": {
       "@/*": ["renderer/*"],
-      "common/*": ["common/*"]
+      "common/*": ["common/*"],
+      "@broadcast/*": ["broadcast/*"],
+      "@dolphin/*": ["dolphin/*"],
+      "@replays/*": ["replays/*"],
+      "@settings/*": ["settings/*"]
     },
     "baseUrl": "src/",
     "jsx": "react",

@@ -4,12 +4,12 @@
 
 // TODO: Make electron-log work somehow
 import { SlippiGame, StatsType } from "@slippi/slippi-js";
-import { FileResult } from "common/types";
 import isEmpty from "lodash/isEmpty";
 import { ModuleMethods } from "threads/dist/types/master";
 import { expose } from "threads/worker";
 
 import { loadFile } from "./loadFile";
+import { FileResult } from "./types";
 
 export interface Methods {
   loadReplayFile(fullPath: string): Promise<FileResult | null>;

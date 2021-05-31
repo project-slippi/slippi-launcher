@@ -7,7 +7,7 @@ import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 
 import { StepperDots } from "@/components/StepperDots";
-import { useSettings } from "@/store/settings";
+import { useSettings } from "@/lib/hooks/useSettings";
 
 import { IsoSelectionStep } from "./IsoSelectionStep";
 import { LoginStep } from "./LoginStep";
@@ -64,8 +64,7 @@ export const QuickStart: React.FC<{
   user: firebase.User | null;
 }> = ({ user }) => {
   const savedIsoPath = useSettings((store) => store.settings.isoPath);
-  const isoIsValid = useSettings((store) => store.validIsoPath);
-  const skipIsoPage = savedIsoPath !== null && Boolean(isoIsValid);
+  const skipIsoPage = Boolean(savedIsoPath);
   const history = useHistory();
   // We only want to generate the steps list once so use a React state
   const [steps] = React.useState(generateSteps(user, skipIsoPage));

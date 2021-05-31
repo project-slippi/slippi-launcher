@@ -1,9 +1,9 @@
 // eslint-disable-next-line import/no-named-as-default
 import Database from "better-sqlite3";
-import { FileResult } from "common/types";
 import path from "path";
 
 import createTablesSql from "./sql/create.sql";
+import { FileResult } from "./types";
 
 let db: Database.Database;
 

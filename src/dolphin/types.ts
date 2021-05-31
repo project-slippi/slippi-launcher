@@ -18,3 +18,21 @@ export interface ReplayQueueItem {
   gameStartAt?: string;
   gameStation?: string;
 }
+
+export enum DolphinLaunchType {
+  NETPLAY = "netplay",
+  PLAYBACK = "playback",
+}
+
+export enum DolphinUseType {
+  PLAYBACK = "playback",
+  SPECTATE = "spectate",
+  CONFIG = "config",
+  NETPLAY = "netplay",
+}
+
+export interface PlayKey {
+  uid: string;
+  playKey: string;
+  connectCode: string;
+}

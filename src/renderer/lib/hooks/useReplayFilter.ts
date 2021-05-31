@@ -1,5 +1,5 @@
+import { FileResult } from "@replays/types";
 import { extractAllPlayerNames, namesMatch } from "common/matchNames";
-import { FileResult } from "common/types";
 import { produce } from "immer";
 import create from "zustand";
 

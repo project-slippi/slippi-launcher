@@ -3,7 +3,6 @@
 // when in Node worker context.
 
 // TODO: Make electron-log work somehow
-import { FileResult } from "common/types";
 import { ModuleMethods } from "threads/dist/types/master";
 import { expose } from "threads/worker";
 
@@ -16,6 +15,7 @@ import {
   pruneFolders,
   saveReplays,
 } from "./db";
+import { FileResult } from "./types";
 
 export interface Methods {
   connect(path: string): void;

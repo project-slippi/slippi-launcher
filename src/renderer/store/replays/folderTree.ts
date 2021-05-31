@@ -1,4 +1,4 @@
-import { FolderResult } from "common/types";
+import { FolderResult } from "@replays/types";
 import * as fs from "fs-extra";
 import path from "path";
 

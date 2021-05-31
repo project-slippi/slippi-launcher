@@ -1,21 +1,19 @@
+import { viewSlpReplay } from "@dolphin/ipc";
+import { calculateGameStats, loadReplayFolder, pruneFolders } from "@replays/ipc";
+import { FileLoadResult, FileResult, FolderResult, Progress } from "@replays/types";
 import { StatsType } from "@slippi/slippi-js";
-import { FileLoadResult, FileResult, FolderResult } from "common/types";
-import { ipcRenderer, shell } from "electron";
-import { ipcRenderer as ipc } from "electron-better-ipc";
+import { shell } from "electron";
 import { produce } from "immer";
 import path from "path";
-import { unstable_batchedUpdates } from "react-dom";
 import create from "zustand";
 
-import { useSettings } from "../settings";
+import { useSettings } from "@/lib/hooks/useSettings";
+
 import { findChild, generateSubFolderTree } from "./folderTree";
 
 type StoreState = {
   loading: boolean;
-  progress: null | {
-    current: number;
-    total: number;
-  };
+  progress: Progress | null;
   files: FileResult[];
   folders: FolderResult | null;
   currentRoot: string | null;
@@ -40,7 +38,7 @@ type StoreReducers = {
   loadFolder: (childPath?: string, forceReload?: boolean) => Promise<void>;
   toggleFolder: (fullPath: string) => void;
   setScrollRowItem: (offset: number) => void;
-  updateProgress: (progress: { current: number; total: number } | null) => void;
+  updateProgress: (progress: Progress | null) => void;
 };
 
 const initialState: StoreState = {
@@ -84,7 +82,11 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   },
 
   playFile: async (fullPath) => {
-    ipcRenderer.send("viewReplay", fullPath);
+    const viewResult = await viewSlpReplay.renderer!.trigger({ filePath: fullPath });
+    if (!viewResult.result) {
+      console.error(`Error playing file: ${fullPath}`, viewResult.errors);
+      throw new Error(`Error playing file: ${fullPath}`);
+    }
   },
 
   selectFile: async (index, fullPath) => {
@@ -99,7 +101,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     const { selectedFile } = get();
     const newSelectedFile = await produce(selectedFile, async (draft) => {
       try {
-        const gameStats = await calculateGameStats(fullPath);
+        const gameStats = await handleCalculatingGameStats(fullPath);
         draft.gameStats = gameStats;
       } catch (err) {
         draft.error = err;
@@ -161,7 +163,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
 
     set({ currentFolder: folderToLoad, loading: true, progress: null });
     try {
-      const result = await loadReplayFolder(folderToLoad);
+      const result = await handleReplayFolderLoading(folderToLoad);
       set({
         scrollRowItem: 0,
         files: result.files,
@@ -219,7 +221,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     try {
       const folders = getFolderList(newFolders);
       console.log("deleting where folder not in ", folders);
-      await pruneFolders(folders);
+      await handleFolderPruning(folders);
     } catch (err) {
       console.log(err);
     }
@@ -232,22 +234,28 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   },
 }));
 
-const loadReplayFolder = async (folder: string): Promise<FileLoadResult> => {
-  return await ipc.callMain<string, FileLoadResult>("loadReplayFolder", folder);
+const handleFolderPruning = async (existingFolders: string[]): Promise<void> => {
+  const pruneResult = await pruneFolders.renderer!.trigger({ existingFolders });
+  if (!pruneResult.result) {
+    console.error(`Error pruning folders`, pruneResult.errors);
+    throw new Error(`Error pruning folders`);
+  }
 };
 
-const pruneFolders = async (existingFolders: string[]): Promise<void> => {
-  return await ipc.callMain<string[], void>("pruneFolders", existingFolders);
+const handleReplayFolderLoading = async (folderPath: string): Promise<FileLoadResult> => {
+  const loadFolderResult = await loadReplayFolder.renderer!.trigger({ folderPath });
+  if (!loadFolderResult.result) {
+    console.error(`Error loading folder: ${folderPath}`, loadFolderResult.errors);
+    throw new Error(`Error loading folder: ${folderPath}`);
+  }
+  return loadFolderResult.result;
 };
 
-// Listen to the replay folder progress event
-ipc.on("loadReplayFolderProgress", (_, progress: { current: number; total: number }) => {
-  unstable_batchedUpdates(() => {
-    useReplays.getState().updateProgress(progress);
-  });
-});
-
-const calculateGameStats = async (file: string): Promise<StatsType> => {
-  const res = await ipc.callMain<string, StatsType>("calculateGameStats", file);
-  return res;
+const handleCalculatingGameStats = async (filePath: string): Promise<StatsType> => {
+  const statsResult = await calculateGameStats.renderer!.trigger({ filePath });
+  if (!statsResult.result) {
+    console.error(`Error calculating stats for: ${filePath}`, statsResult.errors);
+    throw new Error(`Error calculating stats for: ${filePath}`);
+  }
+  return statsResult.result;
 };
