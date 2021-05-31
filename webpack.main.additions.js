@@ -1,3 +1,4 @@
+const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const ThreadsPlugin = require("threads-plugin");
 const Dotenv = require("dotenv-webpack");
 
@@ -6,6 +7,9 @@ module.exports = function (context) {
   // Without this we get the following error when building workers:
   // Conflict: Multiple assets emit to the same filename: 0.bundle.worker.js
   context.output.chunkFilename = "[id].[chunkhash].js";
+
+  // Ensure our custom paths can be resolved
+  context.resolve.plugins = [new TsconfigPathsPlugin()];
 
   context.module.rules.unshift({
     test: /\.node$/,

@@ -1,7 +1,7 @@
+import { startBroadcast, stopBroadcast } from "@broadcast/ipc";
+import { StartBroadcastConfig } from "@broadcast/types";
 import Alert from "@material-ui/lab/Alert";
 import { Ports } from "@slippi/slippi-js";
-import { StartBroadcastConfig } from "common/types";
-import { ipcRenderer } from "electron";
 import log from "electron-log";
 import React from "react";
 import styled from "styled-components";
@@ -28,20 +28,21 @@ export const Broadcast: React.FC = () => {
   const dolphinStatus = useConsole((store) => store.dolphinConnectionStatus);
   const error = useConsole((store) => store.broadcastError);
   const user = useApp((store) => store.user);
-  const startBroadcast = async (config: Omit<StartBroadcastConfig, "authToken">) => {
-    if (user !== null) {
-      const authToken = await user.getIdToken();
-      log.info("[Broadcast] Starting broadcast");
-      ipcRenderer.send("startBroadcast", {
-        ...config,
-        authToken,
-      });
-    } else {
+  const startBroadcastHandler = async (config: Omit<StartBroadcastConfig, "authToken">) => {
+    if (!user) {
       handleError("Not logged in!");
+      return;
     }
+
+    const authToken = await user.getIdToken();
+    log.info("[Broadcast] Starting broadcast");
+    await startBroadcast.renderer!.trigger({
+      ...config,
+      authToken,
+    });
   };
-  const stopBroadcast = async () => {
-    ipcRenderer.send("stopBroadcast");
+  const disconnectHandler = async () => {
+    await stopBroadcast.renderer!.trigger({});
   };
 
   const ip = "127.0.0.1";
@@ -57,9 +58,9 @@ export const Broadcast: React.FC = () => {
         dolphinStatus={dolphinStatus}
         startTime={startTime}
         endTime={endTime}
-        onDisconnect={stopBroadcast}
+        onDisconnect={disconnectHandler}
         onStartBroadcast={(viewerId) => {
-          startBroadcast({
+          startBroadcastHandler({
             ip,
             port,
             viewerId,

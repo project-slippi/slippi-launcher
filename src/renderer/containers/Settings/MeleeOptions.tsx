@@ -6,7 +6,8 @@ import ErrorIcon from "@material-ui/icons/Error";
 import React from "react";
 
 import { PathInput } from "@/components/PathInput";
-import { useSettings } from "@/store/settings";
+import { useIsoVerification } from "@/lib/hooks/useIsoVerification";
+import { useIsoPath, useRootSlpPath, useSpectateSlpPath } from "@/lib/hooks/useSettings";
 
 import { SettingItem } from "./SettingItem";
 
@@ -31,28 +32,20 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export const MeleeOptions: React.FC = () => {
-  const isoPath = useSettings((state) => state.settings.isoPath);
-  const verifying = useSettings((state) => state.verifyingIso);
-  const isValidIso = useSettings((state) => state.validIsoPath);
-  const verifyIsoPath = useSettings((state) => state.verifyIsoPath);
-  const setIsoPath = useSettings((state) => state.setIsoPath);
-  const setReplayDir = useSettings((state) => state.setReplayDirectory);
-  const replayDir = useSettings((state) => state.settings.rootSlpPath);
+  const verifying = useIsoVerification((state) => state.isValidating);
+  const isValidIso = useIsoVerification((state) => state.isValid);
+  const [isoPath, setIsoPath] = useIsoPath();
+  const [replayDir, setReplayDir] = useRootSlpPath();
+  const [spectateDir, setSpectateDir] = useSpectateSlpPath();
   const classes = useStyles();
-  const onIsoSelect = React.useCallback(
-    (isoPath: string) => {
-      setIsoPath(isoPath);
-      verifyIsoPath(isoPath);
-    },
-    [setIsoPath],
-  );
+
   return (
     <div>
       <Typography variant="h5">Melee Options</Typography>
       <SettingItem name="Melee ISO File" description="The path to an NTSC Melee 1.02 ISO.">
         <PathInput
           value={isoPath !== null ? isoPath : ""}
-          onSelect={onIsoSelect}
+          onSelect={setIsoPath}
           placeholder="No file set"
           disabled={verifying}
           endAdornment={
@@ -75,6 +68,16 @@ export const MeleeOptions: React.FC = () => {
         <PathInput
           value={replayDir}
           onSelect={setReplayDir}
+          options={{
+            properties: ["openDirectory"],
+          }}
+          placeholder="No folder set"
+        />
+      </SettingItem>
+      <SettingItem name="Spectator SLP Directory" description="The folder where spectated SLP files are stored.">
+        <PathInput
+          value={spectateDir}
+          onSelect={setSpectateDir}
           options={{
             properties: ["openDirectory"],
           }}

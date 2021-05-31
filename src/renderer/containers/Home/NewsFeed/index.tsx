@@ -1,6 +1,6 @@
 import Typography from "@material-ui/core/Typography";
-import { NewsItem } from "common/types";
-import { ipcRenderer as ipc } from "electron-better-ipc";
+import { fetchNewsFeed } from "common/ipc";
+import log from "electron-log";
 import React from "react";
 import { useQuery } from "react-query";
 import styled from "styled-components";
@@ -13,7 +13,15 @@ const Outer = styled.div`
 `;
 
 export const NewsFeed: React.FC = () => {
-  const newsFeedQuery = useQuery(["news-articles"], () => ipc.callMain<never, NewsItem[]>("fetchNewsFeed"));
+  const newsFeedQuery = useQuery(["news-articles"], async () => {
+    const articlesResult = await fetchNewsFeed.renderer!.trigger({});
+    if (!articlesResult.result) {
+      log.error("NewsFeed: error fetching news articles", articlesResult.errors);
+      throw new Error("Error fetching news articles");
+    }
+    return articlesResult.result;
+  });
+
   if (newsFeedQuery.isLoading) {
     return <div>Loading...</div>;
   }

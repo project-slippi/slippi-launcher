@@ -1,3 +1,8 @@
+import "@broadcast/main";
+import "@dolphin/main";
+import "@replays/main";
+import "@settings/main";
+
 import { isDevelopment } from "common/constants";
 import { app, BrowserWindow, shell } from "electron";
 import contextMenu from "electron-context-menu";

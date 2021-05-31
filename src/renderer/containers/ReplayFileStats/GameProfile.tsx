@@ -1,6 +1,6 @@
 import Typography from "@material-ui/core/Typography";
+import { FileResult } from "@replays/types";
 import { StatsType } from "@slippi/slippi-js";
-import { FileResult } from "common/types";
 import _ from "lodash";
 import React from "react";
 import styled from "styled-components";

@@ -1,15 +1,10 @@
-import { DolphinLaunchType } from "common/dolphin";
-import { StartBroadcastConfig } from "common/types";
+import { settingsManager } from "@settings/settingsManager";
+import { checkValidIso, fetchNewsFeed } from "common/ipc";
 import { ipcMain, nativeImage } from "electron";
-import { ipcMain as ipc } from "electron-better-ipc";
 import path from "path";
 
-import { broadcastManager } from "./broadcastManager";
-import { dolphinManager, ReplayCommunication } from "./dolphin";
-import { assertDolphinInstallations } from "./downloadDolphin";
-import { fetchNewsFeed } from "./newsFeed";
-import { worker as replayBrowserWorker } from "./replayBrowser/workerInterface";
-import { spectateManager } from "./spectateManager";
+import { fetchNewsFeedData } from "./newsFeed";
+import { verifyIso } from "./verifyIso";
 
 export function setupListeners() {
   ipcMain.on("onDragStart", (event, filePath: string) => {
@@ -19,68 +14,27 @@ export function setupListeners() {
     });
   });
 
-  ipcMain.on("downloadDolphin", (_) => {
-    assertDolphinInstallations();
+  ipcMain.on("getAppSettingsSync", (event) => {
+    const settings = settingsManager.get();
+    event.returnValue = settings;
   });
 
-  ipcMain.on("startBroadcast", (_, config: StartBroadcastConfig) => {
-    broadcastManager.start(config);
-  });
-
-  ipcMain.on("stopBroadcast", () => {
-    broadcastManager.stop();
-  });
-
-  ipcMain.on("viewReplay", (_, filePath: string) => {
-    const replayComm: ReplayCommunication = {
-      mode: "normal",
-      replay: filePath,
-    };
-    dolphinManager.launchPlaybackDolphin("playback", replayComm);
-  });
-
-  ipcMain.on("playNetplay", () => {
-    dolphinManager.launchNetplayDolphin();
-  });
-
-  ipc.answerRenderer("configureDolphin", async (dolphinType: DolphinLaunchType) => {
-    console.log("configuring dolphin...");
-    await dolphinManager.configureDolphin(dolphinType);
-  });
-
-  ipc.answerRenderer("reinstallDolphin", async (dolphinType: DolphinLaunchType) => {
-    console.log("reinstalling dolphin...");
-    await dolphinManager.reinstallDolphin(dolphinType);
-  });
-
-  ipc.answerRenderer("loadReplayFolder", async (folderPath: string) => {
-    const w = await replayBrowserWorker;
-    w.getProgressObservable().subscribe((progress) => {
-      ipc.sendToRenderers<{ current: number; total: number }>("loadReplayFolderProgress", progress);
-    });
-    const result = await w.loadReplayFolder(folderPath);
+  fetchNewsFeed.main!.handle(async () => {
+    const result = await fetchNewsFeedData();
     return result;
   });
 
-  ipc.answerRenderer("calculateGameStats", async (filePath: string) => {
-    const w = await replayBrowserWorker;
-    const result = await w.calculateGameStats(filePath);
-    return result;
-  });
+  checkValidIso.main!.handle(async ({ path }) => {
+    // Make sure we have a valid path
+    if (!path) {
+      return { path, valid: false };
+    }
 
-  ipc.answerRenderer("fetchNewsFeed", async () => {
-    const result = await fetchNewsFeed();
-    return result;
-  });
-
-  ipc.answerRenderer("fetchBroadcastList", async (authToken: string) => {
-    await spectateManager.connect(authToken);
-    const result = await spectateManager.fetchBroadcastList();
-    console.log("fetched broadcast list: ", result);
-    return result;
-  });
-
-  ipc.answerRenderer("watchBroadcast", async (broadcasterId: string) => {
-    spectateManager.watchBroadcast(broadcasterId, undefined, true);
+    try {
+      const result = await verifyIso(path);
+      return { path, valid: result.valid };
+    } catch (err) {
+      return { path, valid: false };
+    }
   });
 }

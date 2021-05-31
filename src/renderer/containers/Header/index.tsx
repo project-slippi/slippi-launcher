@@ -1,3 +1,4 @@
+import { launchNetplayDolphin } from "@dolphin/ipc";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
@@ -6,15 +7,15 @@ import Tooltip from "@material-ui/core/Tooltip";
 import SettingsIcon from "@material-ui/icons/Settings";
 import Alert from "@material-ui/lab/Alert";
 import { colors } from "common/colors";
-import { ipcRenderer, shell } from "electron";
+import { shell } from "electron";
 import React from "react";
 import styled from "styled-components";
 
 import { useLoginModal } from "@/lib/hooks/useLoginModal";
+import { useSettings } from "@/lib/hooks/useSettings";
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
 import { assertPlayKey } from "@/lib/playkey";
 import { useApp } from "@/store/app";
-import { useSettings } from "@/store/settings";
 
 import { UserMenu } from "./UserMenu";
 
@@ -90,11 +91,12 @@ export const Header: React.FC = () => {
       return;
     }
 
-    try {
-      await ipcRenderer.send("playNetplay");
-    } catch (err) {
-      handleError(err);
+    const launchResult = await launchNetplayDolphin.renderer!.trigger({});
+    if (!launchResult.result) {
+      console.error("Error launching netplay dolphin", launchResult.errors);
+      handleError("Error launching netplay dolphin");
     }
+    return;
   };
 
   return (

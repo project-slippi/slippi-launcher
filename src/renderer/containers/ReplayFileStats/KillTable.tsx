@@ -2,10 +2,10 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
+import { FileResult } from "@replays/types";
 import { animations as animationUtils, Frames, moves as moveUtils, StatsType, StockType } from "@slippi/slippi-js";
 import { extractPlayerNames } from "common/matchNames";
 import { convertFrameCountToDurationString } from "common/time";
-import { FileResult } from "common/types";
 import _ from "lodash";
 import React from "react";
 

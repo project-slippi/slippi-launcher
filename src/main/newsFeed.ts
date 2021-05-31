@@ -3,7 +3,7 @@ import mediumJSONFeed from "medium-json-feed";
 
 import { getAllReleases } from "./github";
 
-export async function fetchNewsFeed(): Promise<NewsItem[]> {
+export async function fetchNewsFeedData(): Promise<NewsItem[]> {
   const mediumNews = fetchMediumNews();
   const githubNews = fetchGithubReleaseNews(["Ishiiruka", "slippi-desktop-app"]);
   const allNews = (await Promise.all([mediumNews, githubNews])).flat();

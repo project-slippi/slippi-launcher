@@ -1,20 +1,19 @@
 import AdmZip from "adm-zip";
 import { ChildProcessWithoutNullStreams, spawn, spawnSync } from "child_process";
-import { DolphinLaunchType, findDolphinExecutable } from "common/dolphin";
-import { fileExists } from "common/utils";
 import { app, BrowserWindow } from "electron";
 import { download } from "electron-dl";
 import * as fs from "fs-extra";
 import path from "path";
 import { lt } from "semver";
 
-import { getLatestRelease } from "./github";
+import { fileExists } from "../main/fileExists";
+import { getLatestRelease } from "../main/github";
+import { dolphinDownloadFinished, dolphinDownloadLogReceived } from "./ipc";
+import { DolphinLaunchType } from "./types";
+import { findDolphinExecutable } from "./util";
 
-export function sendToRenderer(message: string, channel = "downloadDolphinLog"): void {
-  const window = BrowserWindow.getFocusedWindow();
-  if (window) {
-    window.webContents.send(channel, message);
-  }
+function logDownloadInfo(message: string): void {
+  dolphinDownloadLogReceived.main!.trigger({ message });
 }
 
 export async function assertDolphinInstallation(
@@ -37,7 +36,7 @@ export async function assertDolphinInstallation(
     return;
   } catch (err) {
     log(`Could not find ${type} Dolphin installation. Downloading...`);
-    downloadAndInstallDolphin(type, log);
+    await downloadAndInstallDolphin(type, log);
   }
 }
 
@@ -54,12 +53,12 @@ export async function downloadAndInstallDolphin(
 
 export async function assertDolphinInstallations(): Promise<void> {
   try {
-    await assertDolphinInstallation(DolphinLaunchType.NETPLAY, sendToRenderer);
-    await assertDolphinInstallation(DolphinLaunchType.PLAYBACK, sendToRenderer);
-    sendToRenderer("", "downloadDolphinFinished");
+    await assertDolphinInstallation(DolphinLaunchType.NETPLAY, logDownloadInfo);
+    await assertDolphinInstallation(DolphinLaunchType.PLAYBACK, logDownloadInfo);
+    await dolphinDownloadFinished.main!.trigger({ error: null });
   } catch (err) {
     console.error(err);
-    sendToRenderer(err.message, "downloadDolphinFinished");
+    await dolphinDownloadFinished.main!.trigger({ error: err.message });
   }
   return;
 }

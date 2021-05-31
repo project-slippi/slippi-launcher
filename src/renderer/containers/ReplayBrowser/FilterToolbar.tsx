@@ -13,8 +13,8 @@ import React from "react";
 import styled from "styled-components";
 
 import { FilterOptions } from "@/lib/hooks/useReplayFilter";
+import { useSettings } from "@/lib/hooks/useSettings";
 import { useReplays } from "@/store/replays";
-import { useSettings } from "@/store/settings";
 
 const useStyles = makeStyles(() =>
   createStyles({

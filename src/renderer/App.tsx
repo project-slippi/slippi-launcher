@@ -12,6 +12,7 @@ import { HashRouter as Router, Redirect, Route, Switch } from "react-router-dom"
 import { useApp } from "@/store/app";
 
 import { initializeFirebase } from "./lib/firebase";
+import { useAppListeners } from "./lib/hooks/useAppListeners";
 import { slippiTheme } from "./styles/theme";
 import { HomeView } from "./views/HomeView";
 import { LandingView } from "./views/LandingView";
@@ -40,6 +41,9 @@ const App: React.FC = () => {
   const dismissSnackbar = useApp((state) => state.dismissSnackbar);
   const init = useApp((state) => state.initialize);
   const setUser = useApp((state) => state.setUser);
+
+  // Add the app listeners
+  useAppListeners();
 
   React.useEffect(() => {
     // Initialize the Firebase app if we haven't already
