@@ -21,6 +21,7 @@ function getColor(port: number, teamId: number | null) {
 const useStyles = makeStyles<any, { backgroundColor: string }>({
   badge: {
     backgroundColor: (props) => props.backgroundColor,
+    color: "black",
   },
 });
 
