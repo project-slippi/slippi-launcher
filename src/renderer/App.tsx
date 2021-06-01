@@ -1,5 +1,6 @@
 import "./styles/styles.scss";
 
+import { ThemeProvider } from "@emotion/react";
 import Snackbar from "@material-ui/core/Snackbar";
 import { MuiThemeProvider, StylesProvider } from "@material-ui/core/styles";
 import log from "electron-log";
@@ -93,9 +94,11 @@ const AppWithProviders: React.FC = () => {
   return (
     <StylesProvider injectFirst>
       <MuiThemeProvider theme={slippiTheme}>
-        <QueryClientProvider client={queryClient}>
-          <App />
-        </QueryClientProvider>
+        <ThemeProvider theme={slippiTheme}>
+          <QueryClientProvider client={queryClient}>
+            <App />
+          </QueryClientProvider>
+        </ThemeProvider>
       </MuiThemeProvider>
     </StylesProvider>
   );
