@@ -22,7 +22,7 @@ export const NotFoundView: React.FC = () => {
       <Typography variant="h2">Uh oh.</Typography>
       <Text>Something went wrong.</Text>
       <div style={{ textAlign: "right" }}>
-        <Button color="primary" variant="contained" component={Link} to="/home" style={{ textTransform: "none" }}>
+        <Button color="primary" variant="contained" component={Link} to="/main" style={{ textTransform: "none" }}>
           Return home
         </Button>
       </div>

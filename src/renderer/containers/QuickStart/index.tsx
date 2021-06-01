@@ -71,9 +71,9 @@ export const QuickStart: React.FC<{
   const [currentStep, setCurrentStep] = React.useState<QuickStartStep | null>(null);
 
   React.useEffect(() => {
-    // If we only have the complete step then just go home
+    // If we only have the complete step then just go to the main page
     if (steps.length === 1 && steps[0] === QuickStartStep.COMPLETE) {
-      history.push("/home");
+      history.push("/main");
       return;
     }
 
@@ -98,7 +98,7 @@ export const QuickStart: React.FC<{
         <Typography variant="h2">{getStepHeader(currentStep)}</Typography>
         {currentStep !== QuickStartStep.COMPLETE && (
           <div>
-            <Button onClick={() => history.push("/home")} style={{ color: "white" }}>
+            <Button onClick={() => history.push("/main")} style={{ color: "white" }}>
               Skip setup
             </Button>
           </div>

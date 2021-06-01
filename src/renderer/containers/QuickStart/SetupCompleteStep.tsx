@@ -8,7 +8,7 @@ import { QuickStartHeader } from "./QuickStartHeader";
 export const SetupCompleteStep: React.FC = () => {
   const history = useHistory();
   const onClick = () => {
-    history.push("/home");
+    history.push("/main");
   };
   return (
     <Box display="flex" flexDirection="column" flexGrow="1">

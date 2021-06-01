@@ -57,7 +57,7 @@ const menuItems: MainMenuItem[] = [
   },
 ];
 
-export const HomeView: React.FC = () => {
+export const MainView: React.FC = () => {
   const { path } = useRouteMatch();
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
