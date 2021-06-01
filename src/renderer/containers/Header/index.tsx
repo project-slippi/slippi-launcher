@@ -1,4 +1,5 @@
 import { launchNetplayDolphin } from "@dolphin/ipc";
+import styled from "@emotion/styled";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
@@ -9,7 +10,6 @@ import Alert from "@material-ui/lab/Alert";
 import { colors } from "common/colors";
 import { shell } from "electron";
 import React from "react";
-import styled from "styled-components";
 
 import { useLoginModal } from "@/lib/hooks/useLoginModal";
 import { useSettings } from "@/lib/hooks/useSettings";

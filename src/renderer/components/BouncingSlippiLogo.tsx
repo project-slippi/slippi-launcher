@@ -1,5 +1,6 @@
+import { keyframes } from "@emotion/react";
+import styled from "@emotion/styled";
 import React from "react";
-import styled, { keyframes } from "styled-components";
 
 import slippiLogo from "../styles/images/slippi-logo.svg";
 

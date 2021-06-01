@@ -3,7 +3,7 @@ import { fetchNewsFeed } from "common/ipc";
 import log from "electron-log";
 import React from "react";
 import { useQuery } from "react-query";
-import styled from "styled-components";
+import styled from "@emotion/styled";
 
 import { NewsArticle } from "./NewsArticle";
 

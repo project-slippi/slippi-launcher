@@ -1,10 +1,10 @@
 import { startBroadcast, stopBroadcast } from "@broadcast/ipc";
 import { StartBroadcastConfig } from "@broadcast/types";
+import styled from "@emotion/styled";
 import Alert from "@material-ui/lab/Alert";
 import { Ports } from "@slippi/slippi-js";
 import log from "electron-log";
 import React from "react";
-import styled from "styled-components";
 
 import { useApp } from "@/store/app";
 import { useConsole } from "@/store/console";

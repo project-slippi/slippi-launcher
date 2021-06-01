@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
 import Chip from "@material-ui/core/Chip";
 import IconButton from "@material-ui/core/IconButton";
@@ -16,7 +17,6 @@ import { convertFrameCountToDurationString, monthDayHourFormat } from "common/ti
 import _ from "lodash";
 import moment from "moment";
 import React from "react";
-import styled from "styled-components";
 
 import { getCharacterIcon, getStageImage } from "@/lib/utils";
 

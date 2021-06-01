@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardActionArea from "@material-ui/core/CardActionArea";
@@ -11,7 +12,6 @@ import { shell } from "electron";
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import TimeAgo from "react-timeago";
-import styled from "styled-components";
 
 export interface NewsArticleProps {
   item: NewsItem;

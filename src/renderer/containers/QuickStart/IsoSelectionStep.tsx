@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -11,7 +12,6 @@ import { colors } from "common/colors";
 import { checkValidIso } from "common/ipc";
 import React from "react";
 import { useDropzone } from "react-dropzone";
-import styled from "styled-components";
 
 import { useIsoPath } from "@/lib/hooks/useSettings";
 import { hasBorder } from "@/styles/hasBorder";

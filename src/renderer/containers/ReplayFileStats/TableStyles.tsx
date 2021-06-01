@@ -1,6 +1,8 @@
+/** @jsx jsx */
+import { css, jsx } from "@emotion/react";
+import styled from "@emotion/styled";
 import Paper from "@material-ui/core/Paper";
 import React from "react";
-import styled, { css } from "styled-components";
 
 export const Table: React.FC = (props) => {
   return (
@@ -48,7 +50,7 @@ export const TableCell = styled.td<{
 `;
 
 export const TableRow = styled.tr`
-  &:nth-child(even) {
+  &:nth-of-type(even) {
     background-color: rgba(255, 255, 255, 0.05);
   }
 `;

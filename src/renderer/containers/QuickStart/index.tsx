@@ -1,10 +1,10 @@
+import styled from "@emotion/styled";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import firebase from "firebase";
 import React from "react";
 import { useHistory } from "react-router-dom";
-import styled from "styled-components";
 
 import { StepperDots } from "@/components/StepperDots";
 import { useSettings } from "@/lib/hooks/useSettings";

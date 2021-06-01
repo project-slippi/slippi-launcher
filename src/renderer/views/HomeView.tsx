@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import Button from "@material-ui/core/ButtonBase";
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -6,7 +7,6 @@ import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import React from "react";
 import { Link, Redirect, Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
-import styled from "styled-components";
 
 import { PrivateRoute } from "@/components/PrivateRoute";
 import { Broadcast } from "@/containers/Broadcast";

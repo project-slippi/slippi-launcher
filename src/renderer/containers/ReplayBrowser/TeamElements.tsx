@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import Avatar from "@material-ui/core/Avatar";
 import Badge from "@material-ui/core/Badge";
 import Chip from "@material-ui/core/Chip";
@@ -7,7 +8,6 @@ import { getPortColor, getTeamColor } from "common/colors";
 import { extractPlayerNames } from "common/matchNames";
 import _ from "lodash";
 import React from "react";
-import styled from "styled-components";
 
 import { getCharacterIcon } from "@/lib/utils";
 

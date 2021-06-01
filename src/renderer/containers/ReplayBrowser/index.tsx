@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
 import List from "@material-ui/core/List";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
@@ -8,7 +9,6 @@ import { colors } from "common/colors";
 import { shell } from "electron";
 import { debounce } from "lodash";
 import React from "react";
-import styled from "styled-components";
 
 import { DualPane } from "@/components/DualPane";
 import { LoadingScreen } from "@/components/LoadingScreen";

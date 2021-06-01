@@ -1,8 +1,8 @@
+import styled from "@emotion/styled";
 import { OverridableComponent } from "@material-ui/core/OverridableComponent";
 import { SvgIconTypeMap } from "@material-ui/core/SvgIcon";
 import Typography from "@material-ui/core/Typography";
 import React from "react";
-import styled from "styled-components";
 
 const Outer = styled.div`
   height: 100%;

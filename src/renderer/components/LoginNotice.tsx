@@ -1,8 +1,8 @@
+import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import PersonOutlineIcon from "@material-ui/icons/PersonOutline";
 import React from "react";
-import styled from "styled-components";
 
 import { useLoginModal } from "@/lib/hooks/useLoginModal";
 

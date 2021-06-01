@@ -1,9 +1,9 @@
+import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
 import Collapse from "@material-ui/core/Collapse";
 import WarningIcon from "@material-ui/icons/Warning";
 import { isDevelopment } from "common/constants";
 import React from "react";
-import styled from "styled-components";
 
 const StackTraceContainer = styled.div`
   background-color: #290000;

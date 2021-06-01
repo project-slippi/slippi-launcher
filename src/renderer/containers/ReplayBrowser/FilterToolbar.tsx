@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -10,7 +11,6 @@ import SortIcon from "@material-ui/icons/Sort";
 import TimerIcon from "@material-ui/icons/Timer";
 import { debounce } from "lodash";
 import React from "react";
-import styled from "styled-components";
 
 import { FilterOptions } from "@/lib/hooks/useReplayFilter";
 import { useSettings } from "@/lib/hooks/useSettings";

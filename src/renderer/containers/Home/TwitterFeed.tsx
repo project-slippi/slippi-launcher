@@ -1,6 +1,6 @@
+import styled from "@emotion/styled";
 import React from "react";
 import { TwitterTimelineEmbed } from "react-twitter-embed";
-import styled from "styled-components";
 
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Spinner } from "@/components/Spinner";

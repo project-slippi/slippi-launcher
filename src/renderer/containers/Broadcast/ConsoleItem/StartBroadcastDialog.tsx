@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Dialog from "@material-ui/core/Dialog";
@@ -19,7 +20,6 @@ import { clipboard } from "electron";
 import debounce from "lodash/debounce";
 import React from "react";
 import { useQuery } from "react-query";
-import styled from "styled-components";
 
 import { validateUserId } from "@/lib/validateUserId";
 

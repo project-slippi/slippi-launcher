@@ -1,6 +1,6 @@
 import Typography from "@material-ui/core/Typography";
 import React from "react";
-import styled from "styled-components";
+import styled from "@emotion/styled";
 
 import { AdInfo } from "./types";
 

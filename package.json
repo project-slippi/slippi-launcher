@@ -18,6 +18,8 @@
   },
   "dependencies": {
     "@apollo/client": "^3.3.4",
+    "@emotion/react": "^11.4.0",
+    "@emotion/styled": "^11.3.0",
     "@fontsource/roboto": "^4.2.2",
     "@material-ui/core": "^4.11.2",
     "@material-ui/icons": "^4.11.2",
@@ -48,7 +50,6 @@
     "react-window": "^1.8.6",
     "semver": "^7.3.4",
     "source-map-support": "^0.5.16",
-    "styled-components": "^5.2.1",
     "threads": "^1.6.3",
     "websocket": "^1.0.33",
     "zustand": "^3.2.0"
@@ -65,7 +66,6 @@
     "@types/react-virtualized-auto-sizer": "^1.0.0",
     "@types/react-window": "^1.8.2",
     "@types/semver": "^7.3.4",
-    "@types/styled-components": "^5.1.4",
     "@types/websocket": "^1.0.2",
     "@typescript-eslint/eslint-plugin": "^4.9.0",
     "@typescript-eslint/parser": "^4.9.0",
