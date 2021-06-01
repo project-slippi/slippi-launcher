@@ -65,6 +65,7 @@ export const NewsArticle: React.FC<NewsArticleProps> = ({ item }) => {
 };
 
 const ArticleBody = styled.div`
+  font-family: "Rubik", "Helvetica", "Arial", sans-serif;
   color: #ccc;
   max-width: 700px;
 

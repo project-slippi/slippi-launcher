@@ -21,6 +21,7 @@ const theme = createMuiTheme({
     },
   },
   typography: {
+    fontFamily: ["Rubik", "Helvetica", "Arial", "sans-serif"].join(", "),
     fontSize: 16,
   },
 });

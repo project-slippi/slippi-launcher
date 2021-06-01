@@ -2024,10 +2024,10 @@
   resolved "https://registry.yarnpkg.com/@firebase/webchannel-wrapper/-/webchannel-wrapper-0.4.1.tgz#600f2275ff54739ad5ac0102f1467b8963cd5f71"
   integrity sha512-0yPjzuzGMkW1GkrC8yWsiN7vt1OzkMIi9HgxRmKREZl2wnNPOKo/yScTjXf/O57HM8dltqxPF6jlNLFVtc2qdw==
 
-"@fontsource/roboto@^4.2.2":
-  version "4.2.2"
-  resolved "https://registry.yarnpkg.com/@fontsource/roboto/-/roboto-4.2.2.tgz#39b87680b25915539e445cc6e0fac99e1a81f58b"
-  integrity sha512-VzYWCdqjrepaT7dezuaTZXKaW1L+f5FSp7DGxMqTrf81OTzh9xpKIpr8lgjPg2ZNwiT8rnU++mJ4hojsCnOoqw==
+"@fontsource/rubik@^4.4.2":
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/@fontsource/rubik/-/rubik-4.4.2.tgz#ab4dab949b83fbdfc94449aa16e8d6d9e832dc87"
+  integrity sha512-ODMUZKrHycNABdmVBl6X6Dm9cH/41wHWt1CwMc+Vqh0RMc/XCiojbX6ZdQ4lCADqqwv+piNUaE46jMxIfA9EDw==
 
 "@graphql-typed-document-node/core@^3.0.0":
   version "3.1.0"
