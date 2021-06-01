@@ -27,9 +27,12 @@ export const RotatingAd: React.FC<{
     // Stop any existing intervals
     stopRotation();
 
-    timeout = setTimeout(() => {
+    // I'm pretty sure setTimeout returns a number but for some reason the types
+    // are getting mixed up with NodeJS.Timeout so I guess we'll just convert it
+    // into an unknown number for now.
+    timeout = (setTimeout(() => {
       setCurrent((current + 1) % adverts.length);
-    }, interval);
+    }, interval) as unknown) as number;
   };
 
   // Auto start rotation on render
