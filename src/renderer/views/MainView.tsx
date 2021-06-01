@@ -24,7 +24,7 @@ const MenuButton = styled.div<{
   ${(props) => (props.selected ? "text-decoration: underline;" : "opacity: 0.5;")}
 `;
 
-export const HomeView: React.FC = () => {
+export const MainView: React.FC = () => {
   const history = useHistory();
   const isActive = (name: string): boolean => {
     return history.location.pathname === `${path}/${name}`;

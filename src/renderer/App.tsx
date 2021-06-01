@@ -15,9 +15,9 @@ import { useApp } from "@/store/app";
 import { initializeFirebase } from "./lib/firebase";
 import { useAppListeners } from "./lib/hooks/useAppListeners";
 import { slippiTheme } from "./styles/theme";
-import { HomeView } from "./views/HomeView";
 import { LandingView } from "./views/LandingView";
 import { LoadingView } from "./views/LoadingView";
+import { MainView } from "./views/MainView";
 import { NotFoundView } from "./views/NotFoundView";
 import { SettingsView } from "./views/SettingsView";
 
@@ -76,7 +76,7 @@ const App: React.FC = () => {
   return (
     <Router>
       <Switch>
-        <Route path="/home" component={HomeView} />
+        <Route path="/main" component={MainView} />
         <Route path="/landing" component={LandingView} />
         <Route path="/settings" component={SettingsView} />
         <Redirect exact from="/" to="/landing" />
