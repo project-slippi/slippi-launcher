@@ -1,11 +1,13 @@
+/** @jsx jsx */
 import { launchNetplayDolphin } from "@dolphin/ipc";
+import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import SnackbarContent from "@material-ui/core/SnackbarContent";
 import Tooltip from "@material-ui/core/Tooltip";
-import SettingsIcon from "@material-ui/icons/Settings";
+import SettingsOutlinedIcon from "@material-ui/icons/SettingsOutlined";
 import Alert from "@material-ui/lab/Alert";
 import { colors } from "common/colors";
 import { shell } from "electron";
@@ -17,6 +19,7 @@ import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
 import { assertPlayKey } from "@/lib/playkey";
 import { useApp } from "@/store/app";
 
+import { MainMenu, MenuItem } from "./MainMenu";
 import { UserMenu } from "./UserMenu";
 
 const handleError = (error: any) => {
@@ -31,7 +34,6 @@ const handleError = (error: any) => {
 
 const OuterBox = styled(Box)`
   background-color: ${colors.purple};
-  padding: 5px 10px;
 `;
 
 const SelectMeleeIsoSnackBar: React.FC<{
@@ -62,7 +64,12 @@ const EnableOnlineSnackBar: React.FC = () => {
   );
 };
 
-export const Header: React.FC = () => {
+export interface HeaderProps {
+  path: string;
+  menuItems: MenuItem[];
+}
+
+export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
   const openModal = useLoginModal((store) => store.openModal);
   const { open } = useSettingsModal();
   const currentUser = useApp((store) => store.user);
@@ -100,18 +107,29 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <div>
-      <OuterBox display="flex" flexDirection="row" justifyContent="space-between">
+    <OuterBox
+      css={css`
+        display: flex;
+        justify-content: space-between;
+      `}
+    >
+      <div
+        css={css`
+          display: flex;
+          align-items: center;
+        `}
+      >
         {currentUser ? <Button onClick={onPlay}>Play now</Button> : <Button onClick={openModal}>Log in</Button>}
-        <Box display="flex" alignItems="center">
-          {currentUser && <UserMenu user={currentUser} handleError={handleError}></UserMenu>}
-          <Tooltip title="Settings">
-            <IconButton onClick={() => open()}>
-              <SettingsIcon />
-            </IconButton>
-          </Tooltip>
-        </Box>
-      </OuterBox>
-    </div>
+        <MainMenu path={path} menuItems={menuItems} />
+      </div>
+      <Box display="flex" alignItems="center">
+        {currentUser && <UserMenu user={currentUser} handleError={handleError}></UserMenu>}
+        <Tooltip title="Settings">
+          <IconButton onClick={() => open()}>
+            <SettingsOutlinedIcon />
+          </IconButton>
+        </Tooltip>
+      </Box>
+    </OuterBox>
   );
 };
