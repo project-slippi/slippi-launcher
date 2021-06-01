@@ -1,6 +1,9 @@
 import { createMuiTheme, Theme } from "@material-ui/core/styles";
 import { colors } from "common/colors";
 
+const rubikFont = ["Rubik", "Helvetica", "Arial", "sans-serif"].join(", ");
+const mavenProFont = ["Maven Pro", "Helvetica", "Arial", "sans-serif"].join(", ");
+
 const theme = createMuiTheme({
   palette: {
     type: "dark",
@@ -21,8 +24,26 @@ const theme = createMuiTheme({
     },
   },
   typography: {
-    fontFamily: ["Rubik", "Helvetica", "Arial", "sans-serif"].join(", "),
+    fontFamily: rubikFont,
     fontSize: 16,
+    h1: {
+      fontFamily: mavenProFont,
+    },
+    h2: {
+      fontFamily: mavenProFont,
+    },
+    h3: {
+      fontFamily: mavenProFont,
+    },
+    h4: {
+      fontFamily: mavenProFont,
+    },
+    h5: {
+      fontFamily: mavenProFont,
+    },
+    h6: {
+      fontFamily: mavenProFont,
+    },
   },
 });
 

@@ -2024,6 +2024,11 @@
   resolved "https://registry.yarnpkg.com/@firebase/webchannel-wrapper/-/webchannel-wrapper-0.4.1.tgz#600f2275ff54739ad5ac0102f1467b8963cd5f71"
   integrity sha512-0yPjzuzGMkW1GkrC8yWsiN7vt1OzkMIi9HgxRmKREZl2wnNPOKo/yScTjXf/O57HM8dltqxPF6jlNLFVtc2qdw==
 
+"@fontsource/maven-pro@^4.4.2":
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/@fontsource/maven-pro/-/maven-pro-4.4.2.tgz#ebb8740383dbd5eb9df423010732896bf469b2bf"
+  integrity sha512-HoiHan4fUXbzbuAssVwaN6htiFd/DQRFUblsfjmZ2XL1xhFKgcWPnMoXfRNMUtx+gLN0HavVkGQsQjxFg7qJRQ==
+
 "@fontsource/rubik@^4.4.2":
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/@fontsource/rubik/-/rubik-4.4.2.tgz#ab4dab949b83fbdfc94449aa16e8d6d9e832dc87"
