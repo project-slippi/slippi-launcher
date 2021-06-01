@@ -74,7 +74,7 @@ export const SettingsView: React.FC = () => {
       </Tooltip>
       <DualPane
         id="settings-view"
-        leftStyle={{ backgroundColor: colors.grayDark }}
+        leftStyle={{ backgroundColor: colors.purpleDark }}
         leftSide={
           <MenuColumn>
             {settings.map((section, i) => {

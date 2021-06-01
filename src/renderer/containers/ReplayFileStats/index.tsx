@@ -31,7 +31,8 @@ const Footer = styled.div`
   display: inline-block;
   white-space: nowrap;
   padding: 5px;
-  background-color: ${colors.grayDark};
+  color: ${colors.purpleLight};
+  background-color: black;
   font-size: 14px;
   overflow: hidden;
   text-overflow: ellipsis;

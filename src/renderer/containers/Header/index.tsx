@@ -30,7 +30,7 @@ const handleError = (error: any) => {
 };
 
 const OuterBox = styled(Box)`
-  background-color: ${colors.purpleDark};
+  background-color: ${colors.purple};
   padding: 5px 10px;
 `;
 

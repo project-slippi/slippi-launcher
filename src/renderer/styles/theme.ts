@@ -16,8 +16,8 @@ const theme = createMuiTheme({
     },
     divider: "rgba(255,255,255)",
     background: {
-      paper: "#2D313A",
-      default: "#23252C",
+      paper: colors.purpleDark,
+      default: colors.purple,
     },
   },
   typography: {
@@ -33,7 +33,11 @@ const addOverrides = (theme: Theme) => {
         root: {
           borderStyle: "solid",
           borderWidth: "1px",
-          borderColor: "#1E1F25",
+          borderColor: "transparent",
+        },
+        rounded: {
+          borderRadius: "10px",
+          overflow: "hidden",
         },
       },
       MuiTableCell: {
@@ -48,7 +52,7 @@ const addOverrides = (theme: Theme) => {
       },
       MuiSnackbarContent: {
         root: {
-          backgroundColor: theme.palette.background.paper,
+          backgroundColor: colors.purpleDark,
           color: "inherit",
         },
       },

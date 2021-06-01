@@ -146,7 +146,8 @@ export const ReplayBrowser: React.FC = () => {
               justifyContent: "space-between",
               whiteSpace: "nowrap",
               padding: 5,
-              backgroundColor: colors.grayDark,
+              backgroundColor: "black",
+              color: colors.purpleLight,
               fontSize: 14,
             }}
           >

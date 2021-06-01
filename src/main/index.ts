@@ -3,6 +3,7 @@ import "@dolphin/main";
 import "@replays/main";
 import "@settings/main";
 
+import { colors } from "common/colors";
 import { isDevelopment } from "common/constants";
 import { app, BrowserWindow, shell } from "electron";
 import contextMenu from "electron-context-menu";
@@ -19,7 +20,7 @@ function createMainWindow() {
     show: false,
     width: 1100,
     height: 728,
-    backgroundColor: "#23252C",
+    backgroundColor: colors.purpleDarker,
     webPreferences: {
       nodeIntegration: true,
       nodeIntegrationInWorker: true,
