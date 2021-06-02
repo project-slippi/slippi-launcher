@@ -1,3 +1,5 @@
+/** @jsx jsx */
+import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List";
@@ -25,6 +27,7 @@ const Outer = styled.div`
 
 const MenuColumn = styled.div`
   flex: 1;
+  padding-top: 20px;
 `;
 
 const ContentColumn = styled.div`
@@ -83,9 +86,20 @@ export const SettingsView: React.FC = () => {
                 <List
                   key={`section-${section.title}${i}`}
                   component="nav"
+                  css={css`
+                    padding-bottom: 10px;
+                  `}
                   subheader={
                     section.title ? (
-                      <ListSubheader component="div" disableSticky={true}>
+                      <ListSubheader
+                        component="div"
+                        disableSticky={true}
+                        css={css`
+                          line-height: 20px;
+                          font-size: 14px;
+                          color: ${colors.purpleLight};
+                        `}
+                      >
                         {section.title}
                       </ListSubheader>
                     ) : undefined
@@ -99,9 +113,20 @@ export const SettingsView: React.FC = () => {
                         selected={isActive(item.path)}
                         component={Link}
                         to={`${path}/${item.path}`}
+                        css={css`
+                          padding-top: 4px;
+                          padding-bottom: 4px;
+                        `}
                       >
                         {item.icon ? <ListItemIcon>{item.icon}</ListItemIcon> : null}
-                        <ListItemText primary={item.name} />
+                        <ListItemText
+                          primary={item.name}
+                          css={css`
+                            .MuiTypography-body1 {
+                              font-size: 16px;
+                            }
+                          `}
+                        />
                       </ListItem>
                     );
                   })}

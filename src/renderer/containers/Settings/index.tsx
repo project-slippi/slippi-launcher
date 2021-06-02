@@ -10,17 +10,22 @@ export const settings: SettingSection[] = [
     title: "General Settings",
     items: [
       {
-        name: "Melee Options",
+        name: "Game & Replays",
         path: "melee-options",
         component: <MeleeOptions />,
       },
+    ],
+  },
+  {
+    title: "Dolphin Settings",
+    items: [
       {
-        name: "Netplay Dolphin Settings",
+        name: "Netplay",
         path: "netplay-dolphin-settings",
         component: <DolphinSettings dolphinType={DolphinLaunchType.NETPLAY} />,
       },
       {
-        name: "Playback Dolphin Settings",
+        name: "Playback",
         path: "playback-dolphin-settings",
         component: <DolphinSettings dolphinType={DolphinLaunchType.PLAYBACK} />,
       },

@@ -46,7 +46,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   return (
     <div>
       <Typography variant="h5" className={classes.title}>
-        {dolphinType} Dolphin Options
+        {dolphinType} Dolphin Settings
       </Typography>
       <SettingItem name="Dolphin Directory" description="The path to Dolphin.">
         <PathInput
