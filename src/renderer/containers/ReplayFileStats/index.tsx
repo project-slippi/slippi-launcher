@@ -28,9 +28,11 @@ const Content = styled.div`
 `;
 
 const Footer = styled.div`
-  display: inline-block;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
   white-space: nowrap;
-  padding: 5px;
   color: ${colors.purpleLight};
   background-color: black;
   font-size: 14px;
