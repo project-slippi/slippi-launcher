@@ -92,6 +92,10 @@ const addOverrides = (theme: Theme) => {
           textTransform: "initial",
           borderRadius: "10px",
         },
+        outlined: {
+          textTransform: "initial",
+          borderRadius: "10px",
+        },
       },
     },
   });
