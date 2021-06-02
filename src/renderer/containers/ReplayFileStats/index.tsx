@@ -1,8 +1,12 @@
+/** @jsx jsx */
+import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
+import Tooltip from "@material-ui/core/Tooltip";
 import ErrorIcon from "@material-ui/icons/Error";
 import HelpIcon from "@material-ui/icons/Help";
 import { FileResult } from "@replays/types";
 import { colors } from "common/colors";
+import { shell } from "electron";
 import _ from "lodash";
 import React from "react";
 
@@ -82,6 +86,9 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
     return () => document.removeEventListener("keydown", keyDownFunction, false);
   }, [keyDownFunction]);
 
+  const handleRevealLocation = () => {
+    shell.showItemInFolder(props.file.fullPath);
+  };
   return (
     <Outer>
       <GameProfileHeader {...props} loading={loading} stats={gameStats} onPlay={() => playFile(fullPath)} />
@@ -98,7 +105,20 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
           <IconMessage Icon={HelpIcon} label="No stats computed" />
         )}
       </Content>
-      <Footer>{props.file.fullPath}</Footer>
+      <Footer>
+        <Tooltip title="Reveal location" onClick={handleRevealLocation}>
+          <span
+            css={css`
+              cursor: pointer;
+              &:hover {
+                text-decoration: underline;
+              }
+            `}
+          >
+            {props.file.fullPath}
+          </span>
+        </Tooltip>
+      </Footer>
     </Outer>
   );
 };
