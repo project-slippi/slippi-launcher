@@ -50,14 +50,14 @@ export const NewsArticle: React.FC<NewsArticleProps> = ({ item }) => {
           </CardContent>
         </CardActionArea>
         <CardActions disableSpacing={true}>
-          <Button size="small" color="primary" onClick={onClick}>
-            Read more
-          </Button>
           <DateInfo>
             <Typography variant="caption">
               Posted <TimeAgo date={new Date(publishedAt)} />
             </Typography>
           </DateInfo>
+          <Button size="small" color="primary" onClick={onClick}>
+            Read more
+          </Button>
         </CardActions>
       </Card>
     </Outer>
@@ -86,7 +86,7 @@ const Outer = styled.div`
 `;
 
 const DateInfo = styled.div`
-  margin-left: auto;
-  margin-right: 5px;
+  margin-right: auto;
+  margin-left: 5px;
   opacity: 0.9;
 `;
