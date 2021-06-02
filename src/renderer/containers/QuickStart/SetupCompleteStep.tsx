@@ -14,7 +14,7 @@ export const SetupCompleteStep: React.FC = () => {
     <Box display="flex" flexDirection="column" flexGrow="1">
       <QuickStartHeader>Nice work!</QuickStartHeader>
       <div style={{ textAlign: "right" }}>
-        <Button color="primary" variant="contained" onClick={onClick} style={{ textTransform: "none" }}>
+        <Button color="primary" variant="contained" onClick={onClick}>
           Continue
         </Button>
       </div>

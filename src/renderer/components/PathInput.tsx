@@ -84,13 +84,7 @@ export const PathInput: React.FC<PathInputProps> = ({
         />
         {endAdornment}
       </Paper>
-      <Button
-        color="primary"
-        variant="contained"
-        style={{ textTransform: "none" }}
-        onClick={onClick}
-        disabled={disabled}
-      >
+      <Button color="primary" variant="contained" onClick={onClick} disabled={disabled}>
         Select
       </Button>
     </Box>

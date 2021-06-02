@@ -83,21 +83,13 @@ export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarPro
   return (
     <div className={classes.root}>
       <ButtonContainer>
-        <Button
-          variant="contained"
-          size="small"
-          startIcon={<RefreshIcon />}
-          style={{ textTransform: "initial" }}
-          onClick={refresh}
-          disabled={disabled}
-        >
+        <Button variant="contained" size="small" startIcon={<RefreshIcon />} onClick={refresh} disabled={disabled}>
           Refresh
         </Button>
         <Button
           variant="contained"
           size="small"
           startIcon={<SortIcon />}
-          style={{ textTransform: "initial" }}
           onClick={() => setNewest(!value.sortByNewestFirst)}
         >
           {value.sortByNewestFirst ? "Newest first" : "Oldest first"}
@@ -106,7 +98,6 @@ export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarPro
           variant="contained"
           size="small"
           startIcon={<TimerIcon />}
-          style={{ textTransform: "initial" }}
           onClick={() => setShortGameFilter(!value.hideShortGames)}
         >
           {value.hideShortGames ? "Short games hidden" : "Short games shown"}

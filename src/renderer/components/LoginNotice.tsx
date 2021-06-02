@@ -14,7 +14,7 @@ export const LoginNotice: React.FC = () => {
         <PersonOutlineIcon style={{ fontSize: 100 }} />
       </div>
       <Typography variant="h6">User is not logged in</Typography>
-      <Button type="button" color="primary" variant="contained" style={{ textTransform: "none" }} onClick={openModal}>
+      <Button type="button" color="primary" variant="contained" onClick={openModal}>
         Log in
       </Button>
     </Outer>
