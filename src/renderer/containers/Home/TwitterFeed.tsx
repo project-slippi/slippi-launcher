@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { socials } from "common/constants";
 import React from "react";
 import { TwitterTimelineEmbed } from "react-twitter-embed";
 
@@ -36,7 +37,7 @@ export const TwitterFeed: React.FC = () => {
         <TwitterFeedContainer style={{ opacity: isLoading ? 0 : 1 }}>
           <TwitterTimelineEmbed
             sourceType="profile"
-            screenName="projectslippi"
+            screenName={socials.twitterId}
             theme="dark"
             noHeader={true}
             noFooter={true}
