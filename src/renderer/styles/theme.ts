@@ -90,6 +90,7 @@ const addOverrides = (theme: Theme) => {
         contained: {
           fontWeight: 700,
           textTransform: "initial",
+          borderRadius: "10px",
         },
       },
     },
