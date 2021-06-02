@@ -15,15 +15,13 @@ import { useSettings } from "./useSettings";
 
 export const useAppListeners = () => {
   const setSlippiConnectionStatus = useConsole((store) => store.setSlippiConnectionStatus);
-  const throttledSetSlippiStatus = throttle(setSlippiConnectionStatus, 50);
   slippiStatusChanged.renderer!.useEvent(async ({ status }) => {
-    throttledSetSlippiStatus(status);
+    setSlippiConnectionStatus(status);
   }, []);
 
   const setDolphinConnectionStatus = useConsole((store) => store.setDolphinConnectionStatus);
-  const throttledSetDolphinStatus = throttle(setDolphinConnectionStatus, 50);
   dolphinStatusChanged.renderer!.useEvent(async ({ status }) => {
-    throttledSetDolphinStatus(status);
+    setDolphinConnectionStatus(status);
   }, []);
 
   const setBroadcastError = useConsole((store) => store.setBroadcastError);
