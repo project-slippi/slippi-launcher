@@ -50,6 +50,11 @@ const theme = createMuiTheme({
 const addOverrides = (theme: Theme) => {
   return createMuiTheme({
     ...theme,
+    props: {
+      MuiTooltip: {
+        arrow: true,
+      },
+    },
     overrides: {
       MuiPaper: {
         root: {
@@ -79,11 +84,14 @@ const addOverrides = (theme: Theme) => {
         },
       },
       MuiTooltip: {
+        arrow: {
+          color: theme.palette.secondary.main,
+        },
         tooltip: {
-          backgroundColor: theme.palette.common.white,
-          color: "rgba(0, 0, 0, 0.87)",
+          backgroundColor: theme.palette.secondary.main,
+          color: "black",
           boxShadow: theme.shadows[1],
-          fontSize: 11,
+          fontSize: 13,
         },
       },
       MuiButton: {
