@@ -125,7 +125,12 @@ export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
       <Box display="flex" alignItems="center">
         {currentUser && <UserMenu user={currentUser} handleError={handleError}></UserMenu>}
         <Tooltip title="Settings">
-          <IconButton onClick={() => open()}>
+          <IconButton
+            onClick={() => open()}
+            css={css`
+              opacity: 0.5;
+            `}
+          >
             <SettingsOutlinedIcon />
           </IconButton>
         </Tooltip>

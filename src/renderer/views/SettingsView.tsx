@@ -36,6 +36,7 @@ const ContentColumn = styled.div`
 `;
 
 const CloseButton = styled(IconButton)`
+  opacity: 0.5;
   position: absolute;
   top: 5px;
   right: 10px;
