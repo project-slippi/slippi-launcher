@@ -1,9 +1,8 @@
 import Typography from "@material-ui/core/Typography";
-import { fetchNewsFeed } from "common/ipc";
-import log from "electron-log";
 import React from "react";
-import { useQuery } from "react-query";
-import styled from "@emotion/styled";
+
+import { LoadingScreen } from "@/components/LoadingScreen";
+import { useNewsFeed } from "@/lib/hooks/useNewsFeed";
 
 import { NewsArticle } from "./NewsArticle";
 
@@ -13,20 +12,18 @@ const Outer = styled.div`
 `;
 
 export const NewsFeed: React.FC = () => {
-  const newsFeedQuery = useQuery(["news-articles"], async () => {
-    const articlesResult = await fetchNewsFeed.renderer!.trigger({});
-    if (!articlesResult.result) {
-      log.error("NewsFeed: error fetching news articles", articlesResult.errors);
-      throw new Error("Error fetching news articles");
-    }
-    return articlesResult.result;
-  });
+  const didError = useNewsFeed((store) => store.error);
+  const posts = useNewsFeed((store) => store.newsItems);
+  const isLoading = useNewsFeed((store) => store.fetching);
 
-  if (newsFeedQuery.isLoading) {
-    return <div>Loading...</div>;
+  if (isLoading) {
+    return <LoadingScreen message="Loading..." />;
   }
 
-  const posts = newsFeedQuery.data ?? [];
+  if (didError) {
+    return <div>Failed to fetch news articles.</div>;
+  }
+
   return (
     <Outer>
       <Typography variant="h4" style={{ marginBottom: 20 }}>

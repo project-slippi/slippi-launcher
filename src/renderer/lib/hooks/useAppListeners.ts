@@ -11,6 +11,7 @@ import { useConsole } from "@/store/console";
 import { useReplays } from "@/store/replays";
 
 import { useIsoVerification } from "./useIsoVerification";
+import { useNewsFeed } from "./useNewsFeed";
 import { useSettings } from "./useSettings";
 
 export const useAppListeners = () => {
@@ -73,4 +74,10 @@ export const useAppListeners = () => {
         setIsValidating(false);
       });
   }, [isoPath]);
+
+  // Load the news articles once on app load
+  const updateNewsFeed = useNewsFeed((store) => store.update);
+  React.useEffect(() => {
+    updateNewsFeed();
+  }, []);
 };
