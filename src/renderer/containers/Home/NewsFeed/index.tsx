@@ -1,3 +1,7 @@
+/** @jsx jsx */
+import { css, jsx } from "@emotion/react";
+import styled from "@emotion/styled";
+import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import React from "react";
 
@@ -11,9 +15,16 @@ const Outer = styled.div`
   padding: 20px;
 `;
 
-export const NewsFeed: React.FC = () => {
+export interface NewsFeedProps {
+  numItemsToShow?: number;
+  batchSize?: number;
+}
+
+export const NewsFeed: React.FC<NewsFeedProps> = ({ numItemsToShow = 7, batchSize = 5 }) => {
+  // The number of items to show
+  const [numItems, setNumItems] = React.useState(numItemsToShow);
   const didError = useNewsFeed((store) => store.error);
-  const posts = useNewsFeed((store) => store.newsItems);
+  const allPosts = useNewsFeed((store) => store.newsItems);
   const isLoading = useNewsFeed((store) => store.fetching);
 
   if (isLoading) {
@@ -24,14 +35,31 @@ export const NewsFeed: React.FC = () => {
     return <div>Failed to fetch news articles.</div>;
   }
 
+  const onShowMore = () => {
+    setNumItems(numItems + batchSize);
+  };
+
+  const postsToShow = numItems <= 0 ? allPosts : allPosts.slice(0, numItems);
+
   return (
     <Outer>
       <Typography variant="h4" style={{ marginBottom: 20 }}>
         Latest News
       </Typography>
-      {posts.map((post) => (
+      {postsToShow.slice(0, numItems).map((post) => (
         <NewsArticle key={post.id} item={post} />
       ))}
+      {allPosts.length > numItems && (
+        <div
+          css={css`
+            text-align: center;
+          `}
+        >
+          <Button color="primary" variant="contained" size="small" onClick={onShowMore}>
+            Show more
+          </Button>
+        </div>
+      )}
     </Outer>
   );
 };
