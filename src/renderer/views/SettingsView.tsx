@@ -34,9 +34,8 @@ const MenuColumn = styled.div`
 
 const ContentColumn = styled.div`
   flex: 1;
-  padding-top: 30px;
-  padding-bottom: 30px;
-  padding-left: 30px;
+  overflow-x: hidden;
+  padding: 30px;
   padding-right: 100px;
 `;
 
