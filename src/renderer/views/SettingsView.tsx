@@ -15,6 +15,7 @@ import { Link, Redirect, Route, Switch, useHistory, useRouteMatch } from "react-
 
 import { DualPane } from "@/components/DualPane";
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
+import { withSlippiBackground } from "@/styles/withSlippiBackground";
 
 import { settings } from "../containers/Settings";
 
@@ -23,6 +24,7 @@ const Outer = styled.div`
   display: flex;
   height: 100%;
   width: 100%;
+  ${withSlippiBackground}
 `;
 
 const MenuColumn = styled.div`
