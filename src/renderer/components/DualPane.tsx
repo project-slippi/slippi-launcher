@@ -19,7 +19,7 @@ const Column = styled.div`
 const ResizeHandle = styled.div`
   position: absolute;
   cursor: e-resize;
-  background-color: ${({ theme }) => theme.palette.primary.main};
+  background-color: ${({ theme }) => theme.palette.secondary.main};
   top: 0;
   height: 100%;
   opacity: 0;

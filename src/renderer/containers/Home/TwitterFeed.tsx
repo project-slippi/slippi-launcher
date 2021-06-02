@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { colors } from "common/colors";
 import { socials } from "common/constants";
 import React from "react";
 import { TwitterTimelineEmbed } from "react-twitter-embed";
@@ -39,6 +40,7 @@ export const TwitterFeed: React.FC = () => {
             sourceType="profile"
             screenName={socials.twitterId}
             theme="dark"
+            borderColor={colors.purpleLight}
             noHeader={true}
             noFooter={true}
             transparent={true}
