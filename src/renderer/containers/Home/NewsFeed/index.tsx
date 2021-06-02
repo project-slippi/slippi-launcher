@@ -12,6 +12,7 @@ import { NewsArticle } from "./NewsArticle";
 
 const Outer = styled.div`
   flex: 1;
+  overflow-x: hidden;
   padding: 20px;
 `;
 

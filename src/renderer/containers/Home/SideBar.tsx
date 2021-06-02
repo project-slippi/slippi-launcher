@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
 import React from "react";
 
-import { Advertisements } from "./Advertisements";
 import { TwitterFeed } from "./TwitterFeed";
 
 const Outer = styled.div`
@@ -10,18 +9,10 @@ const Outer = styled.div`
   flex: 1;
 `;
 
-const AdvertContainer = styled.div`
-  height: 120px;
-  width: 100%;
-`;
-
 export const SideBar: React.FC = () => {
   return (
     <Outer>
       <TwitterFeed />
-      <AdvertContainer>
-        <Advertisements />
-      </AdvertContainer>
     </Outer>
   );
 };
