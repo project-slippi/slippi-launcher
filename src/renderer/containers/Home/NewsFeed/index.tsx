@@ -1,9 +1,12 @@
-import Typography from "@material-ui/core/Typography";
-import { fetchNewsFeed } from "common/ipc";
-import log from "electron-log";
-import React from "react";
-import { useQuery } from "react-query";
+/** @jsx jsx */
+import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
+import React from "react";
+
+import { LoadingScreen } from "@/components/LoadingScreen";
+import { useNewsFeed } from "@/lib/hooks/useNewsFeed";
 
 import { NewsArticle } from "./NewsArticle";
 
@@ -12,29 +15,51 @@ const Outer = styled.div`
   padding: 20px;
 `;
 
-export const NewsFeed: React.FC = () => {
-  const newsFeedQuery = useQuery(["news-articles"], async () => {
-    const articlesResult = await fetchNewsFeed.renderer!.trigger({});
-    if (!articlesResult.result) {
-      log.error("NewsFeed: error fetching news articles", articlesResult.errors);
-      throw new Error("Error fetching news articles");
-    }
-    return articlesResult.result;
-  });
+export interface NewsFeedProps {
+  numItemsToShow?: number;
+  batchSize?: number;
+}
 
-  if (newsFeedQuery.isLoading) {
-    return <div>Loading...</div>;
+export const NewsFeed: React.FC<NewsFeedProps> = ({ numItemsToShow = 7, batchSize = 5 }) => {
+  // The number of items to show
+  const [numItems, setNumItems] = React.useState(numItemsToShow);
+  const didError = useNewsFeed((store) => store.error);
+  const allPosts = useNewsFeed((store) => store.newsItems);
+  const isLoading = useNewsFeed((store) => store.fetching);
+
+  if (isLoading) {
+    return <LoadingScreen message="Loading..." />;
   }
 
-  const posts = newsFeedQuery.data ?? [];
+  if (didError) {
+    return <div>Failed to fetch news articles.</div>;
+  }
+
+  const onShowMore = () => {
+    setNumItems(numItems + batchSize);
+  };
+
+  const postsToShow = numItems <= 0 ? allPosts : allPosts.slice(0, numItems);
+
   return (
     <Outer>
       <Typography variant="h4" style={{ marginBottom: 20 }}>
         Latest News
       </Typography>
-      {posts.map((post) => (
+      {postsToShow.slice(0, numItems).map((post) => (
         <NewsArticle key={post.id} item={post} />
       ))}
+      {allPosts.length > numItems && (
+        <div
+          css={css`
+            text-align: center;
+          `}
+        >
+          <Button color="primary" variant="contained" size="small" onClick={onShowMore}>
+            Show more
+          </Button>
+        </div>
+      )}
     </Outer>
   );
 };
