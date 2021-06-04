@@ -19,12 +19,12 @@ const Column = styled.div`
 const ResizeHandle = styled.div`
   position: absolute;
   cursor: e-resize;
-  background-color: black;
+  background-color: ${({ theme }) => theme.palette.secondary.main};
   top: 0;
   height: 100%;
   opacity: 0;
   &:hover {
-    opacity: 0.9;
+    opacity: 0.7;
   }
 `;
 

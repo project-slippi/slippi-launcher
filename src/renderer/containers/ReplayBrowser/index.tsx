@@ -140,16 +140,7 @@ export const ReplayBrowser: React.FC = () => {
               }
             />
           </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              whiteSpace: "nowrap",
-              padding: 5,
-              backgroundColor: colors.grayDark,
-              fontSize: 14,
-            }}
-          >
+          <Footer>
             <div>
               <Tooltip title="Open folder">
                 <ReplayFolderLink onClick={() => shell.openItem(currentFolder)}>{currentFolder}</ReplayFolderLink>
@@ -159,7 +150,7 @@ export const ReplayBrowser: React.FC = () => {
               {filteredFiles.length} files found. {numHiddenFiles} files filtered.{" "}
               {fileErrorCount > 0 ? `${fileErrorCount} files had errors.` : ""}
             </div>
-          </div>
+          </Footer>
         </>
       )}
     </Outer>
@@ -216,4 +207,16 @@ const Outer = styled.div`
   flex: 1;
   position: relative;
   min-width: 0;
+`;
+
+const Footer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  whitespace: nowrap;
+  height: 50px;
+  align-items: center;
+  padding: 0 20px;
+  background-color: black;
+  color: ${colors.purpleLight};
+  font-size: 14px;
 `;

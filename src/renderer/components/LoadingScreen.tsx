@@ -5,11 +5,12 @@ import { BouncingSlippiLogo } from "@/components/BouncingSlippiLogo";
 import { Message } from "./Message";
 
 export const LoadingScreen: React.FC<{
+  className?: string;
   message?: string;
   style?: React.CSSProperties;
-}> = ({ message, style }) => {
+}> = ({ message, style, className }) => {
   return (
-    <Message style={style} icon={<BouncingSlippiLogo />}>
+    <Message className={className} style={style} icon={<BouncingSlippiLogo />}>
       {message}
     </Message>
   );

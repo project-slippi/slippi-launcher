@@ -1,3 +1,5 @@
+/** @jsx jsx */
+import { css, jsx } from "@emotion/react";
 import Typography from "@material-ui/core/Typography";
 import React from "react";
 
@@ -8,10 +10,26 @@ export interface SettingItemProps {
 
 export const SettingItem: React.FC<SettingItemProps> = (props) => {
   return (
-    <div style={{ margin: "20px 0" }}>
-      <Typography variant="subtitle1">{props.name}</Typography>
+    <div
+      css={css`
+        margin: 20px 0;
+      `}
+    >
+      <Typography
+        variant="subtitle1"
+        css={css`
+          text-transform: capitalize;
+        `}
+      >
+        {props.name}
+      </Typography>
       {props.description && (
-        <div style={{ paddingBottom: 5, opacity: 0.6 }}>
+        <div
+          css={css`
+            padding-bottom: 10px;
+            opacity: 0.6;
+          `}
+        >
           <Typography variant="caption">{props.description}</Typography>
         </div>
       )}

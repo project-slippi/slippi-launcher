@@ -1,6 +1,9 @@
 import { createMuiTheme, Theme } from "@material-ui/core/styles";
 import { colors } from "common/colors";
 
+const rubikFont = ["Rubik", "Helvetica", "Arial", "sans-serif"].join(", ");
+const mavenProFont = ["Maven Pro", "Helvetica", "Arial", "sans-serif"].join(", ");
+
 const theme = createMuiTheme({
   palette: {
     type: "dark",
@@ -16,24 +19,52 @@ const theme = createMuiTheme({
     },
     divider: "rgba(255,255,255)",
     background: {
-      paper: "#2D313A",
-      default: "#23252C",
+      paper: colors.purpleDark,
+      default: colors.purple,
     },
   },
   typography: {
+    fontFamily: rubikFont,
     fontSize: 16,
+    h1: {
+      fontFamily: mavenProFont,
+    },
+    h2: {
+      fontFamily: mavenProFont,
+    },
+    h3: {
+      fontFamily: mavenProFont,
+    },
+    h4: {
+      fontFamily: mavenProFont,
+    },
+    h5: {
+      fontFamily: mavenProFont,
+    },
+    h6: {
+      fontFamily: mavenProFont,
+    },
   },
 });
 
 const addOverrides = (theme: Theme) => {
   return createMuiTheme({
     ...theme,
+    props: {
+      MuiTooltip: {
+        arrow: true,
+      },
+    },
     overrides: {
       MuiPaper: {
         root: {
           borderStyle: "solid",
           borderWidth: "1px",
-          borderColor: "#1E1F25",
+          borderColor: "transparent",
+        },
+        rounded: {
+          borderRadius: "10px",
+          overflow: "hidden",
         },
       },
       MuiTableCell: {
@@ -48,21 +79,30 @@ const addOverrides = (theme: Theme) => {
       },
       MuiSnackbarContent: {
         root: {
-          backgroundColor: theme.palette.background.paper,
+          backgroundColor: colors.purpleDark,
           color: "inherit",
         },
       },
       MuiTooltip: {
+        arrow: {
+          color: theme.palette.secondary.main,
+        },
         tooltip: {
-          backgroundColor: theme.palette.common.white,
-          color: "rgba(0, 0, 0, 0.87)",
+          backgroundColor: theme.palette.secondary.main,
+          color: "black",
           boxShadow: theme.shadows[1],
-          fontSize: 11,
+          fontSize: 13,
         },
       },
       MuiButton: {
         contained: {
           fontWeight: 700,
+          textTransform: "initial",
+          borderRadius: "10px",
+        },
+        outlined: {
+          textTransform: "initial",
+          borderRadius: "10px",
         },
       },
     },

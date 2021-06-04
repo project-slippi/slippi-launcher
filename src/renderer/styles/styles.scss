@@ -10,7 +10,7 @@ body,
 }
 
 body {
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-family: "Rubik", "Helvetica", "Arial", sans-serif;
   color: white;
 }
 
@@ -33,5 +33,11 @@ h3,
 h4,
 h5,
 h6 {
+  font-family: "Maven Pro", "Helvetica", "Arial", sans-serif;
   font-weight: 400;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
 }

@@ -1,3 +1,5 @@
+/** @jsx jsx */
+import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List";
@@ -13,6 +15,7 @@ import { Link, Redirect, Route, Switch, useHistory, useRouteMatch } from "react-
 
 import { DualPane } from "@/components/DualPane";
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
+import { withSlippiBackground } from "@/styles/withSlippiBackground";
 
 import { settings } from "../containers/Settings";
 
@@ -21,21 +24,23 @@ const Outer = styled.div`
   display: flex;
   height: 100%;
   width: 100%;
+  ${withSlippiBackground}
 `;
 
 const MenuColumn = styled.div`
   flex: 1;
+  padding-top: 20px;
 `;
 
 const ContentColumn = styled.div`
   flex: 1;
-  padding-top: 30px;
-  padding-bottom: 30px;
-  padding-left: 30px;
+  overflow-x: hidden;
+  padding: 30px;
   padding-right: 100px;
 `;
 
 const CloseButton = styled(IconButton)`
+  opacity: 0.5;
   position: absolute;
   top: 5px;
   right: 10px;
@@ -74,7 +79,7 @@ export const SettingsView: React.FC = () => {
       </Tooltip>
       <DualPane
         id="settings-view"
-        leftStyle={{ backgroundColor: colors.grayDark }}
+        leftStyle={{ backgroundColor: colors.purpleDark }}
         leftSide={
           <MenuColumn>
             {settings.map((section, i) => {
@@ -82,9 +87,20 @@ export const SettingsView: React.FC = () => {
                 <List
                   key={`section-${section.title}${i}`}
                   component="nav"
+                  css={css`
+                    padding-bottom: 10px;
+                  `}
                   subheader={
                     section.title ? (
-                      <ListSubheader component="div" disableSticky={true}>
+                      <ListSubheader
+                        component="div"
+                        disableSticky={true}
+                        css={css`
+                          line-height: 20px;
+                          font-size: 14px;
+                          color: ${colors.purpleLight};
+                        `}
+                      >
                         {section.title}
                       </ListSubheader>
                     ) : undefined
@@ -98,9 +114,20 @@ export const SettingsView: React.FC = () => {
                         selected={isActive(item.path)}
                         component={Link}
                         to={`${path}/${item.path}`}
+                        css={css`
+                          padding-top: 4px;
+                          padding-bottom: 4px;
+                        `}
                       >
                         {item.icon ? <ListItemIcon>{item.icon}</ListItemIcon> : null}
-                        <ListItemText primary={item.name} />
+                        <ListItemText
+                          primary={item.name}
+                          css={css`
+                            .MuiTypography-body1 {
+                              font-size: 16px;
+                            }
+                          `}
+                        />
                       </ListItem>
                     );
                   })}

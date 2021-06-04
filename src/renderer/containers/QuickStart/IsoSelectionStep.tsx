@@ -94,7 +94,7 @@ export const IsoSelectionStep: React.FC = () => {
       <Container {...getRootProps({ isDragActive, isDragAccept, isDragReject })}>
         <input {...getInputProps()} />
         {!loading && (
-          <Button color="primary" variant="contained" onClick={open} style={{ textTransform: "none" }}>
+          <Button color="primary" variant="contained" onClick={open}>
             Select
           </Button>
         )}

@@ -6,7 +6,10 @@ export const colors = {
   grayDark: "#222222",
   greenDark: "#21BA45",
   greenDarker: "#208E2C",
-  purpleDark: "#310057",
+  purpleLight: "#8665A0",
+  purple: "#310057",
+  purpleDark: "#29133B",
+  purpleDarker: "#1B0B28",
   offGray: "#2D313A",
 };
 

@@ -1,6 +1,5 @@
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import ErrorIcon from "@material-ui/icons/Error";
 import React from "react";
@@ -41,7 +40,6 @@ export const MeleeOptions: React.FC = () => {
 
   return (
     <div>
-      <Typography variant="h5">Melee Options</Typography>
       <SettingItem name="Melee ISO File" description="The path to an NTSC Melee 1.02 ISO.">
         <PathInput
           value={isoPath !== null ? isoPath : ""}

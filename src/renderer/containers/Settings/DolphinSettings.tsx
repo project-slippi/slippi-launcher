@@ -1,5 +1,8 @@
+/** @jsx jsx */
 import { configureDolphin, reinstallDolphin } from "@dolphin/ipc";
 import { DolphinLaunchType } from "@dolphin/types";
+import { css, jsx } from "@emotion/react";
+import Button from "@material-ui/core/Button";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import React from "react";
@@ -46,9 +49,9 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   return (
     <div>
       <Typography variant="h5" className={classes.title}>
-        {dolphinType} Dolphin Options
+        {dolphinType} Dolphin Settings
       </Typography>
-      <SettingItem name="Dolphin Directory" description="The path to Dolphin.">
+      <SettingItem name={`${dolphinType} Dolphin Directory`} description="The path to Dolphin.">
         <PathInput
           value={dolphinPath ?? ""}
           onSelect={setDolphinPath}
@@ -57,10 +60,28 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
         />
       </SettingItem>
       <SettingItem name="Configure Dolphin" description="Open Dolphin to modify settings.">
-        <button onClick={configureDolphinHandler}>Configure Dolphin</button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={configureDolphinHandler}
+          css={css`
+            text-transform: capitalize;
+          `}
+        >
+          Configure {dolphinType} Dolphin
+        </Button>
       </SettingItem>
-      <SettingItem name="Reinstall Dolphin" description="Delete and reinstall dolphin">
-        <button onClick={reinstallDolphinHandler}>Reset Dolphin</button>
+      <SettingItem name="Reset Dolphin" description="Delete and reinstall dolphin">
+        <Button
+          variant="outlined"
+          color="secondary"
+          onClick={reinstallDolphinHandler}
+          css={css`
+            text-transform: capitalize;
+          `}
+        >
+          Reset {dolphinType} Dolphin
+        </Button>
       </SettingItem>
     </div>
   );
