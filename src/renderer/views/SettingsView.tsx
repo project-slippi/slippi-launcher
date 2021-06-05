@@ -14,6 +14,7 @@ import React from "react";
 import { Link, Redirect, Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
 
 import { DualPane } from "@/components/DualPane";
+import { useMousetrap } from "@/lib/hooks/useMousetrap";
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
 import { withSlippiBackground } from "@/styles/withSlippiBackground";
 
@@ -58,17 +59,7 @@ export const SettingsView: React.FC = () => {
     return history.location.pathname === `${path}/${name}`;
   };
 
-  const keyDownFunction = (event: KeyboardEvent) => {
-    // ignore depercation warning, it works everywhere
-    if (event.keyCode === 27) {
-      close();
-    }
-  };
-
-  React.useEffect(() => {
-    document.addEventListener("keydown", keyDownFunction, false);
-    return () => document.removeEventListener("keydown", keyDownFunction, false);
-  }, [keyDownFunction]);
+  useMousetrap("escape", close);
 
   return (
     <Outer>

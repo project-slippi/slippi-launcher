@@ -12,6 +12,7 @@ import React from "react";
 
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { IconMessage } from "@/components/Message";
+import { useMousetrap } from "@/lib/hooks/useMousetrap";
 import { useReplays } from "@/store/replays";
 
 import { GameProfile } from "./GameProfile";
@@ -62,33 +63,25 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
   const playFile = useReplays((store) => store.playFile);
   const numPlayers = settings.players.length;
 
-  const keyDownFunction = (event: { keyCode: number }) => {
-    // Don't do anything if we're in the middle of processing
-    if (loading) {
-      return;
+  // Add key bindings
+  useMousetrap("escape", () => {
+    if (!loading) {
+      props.onClose();
     }
-
-    switch (event.keyCode) {
-      case 27: // Escape
-        props.onClose();
-        break;
-      case 39: // Right arrow
-        props.onNext();
-        break;
-      case 37: // Left arrow
-        props.onPrev();
-        break;
+  });
+  useMousetrap("left", () => {
+    if (!loading) {
+      props.onPrev();
     }
-  };
+  });
+  useMousetrap("right", () => {
+    if (!loading) {
+      props.onNext();
+    }
+  });
 
-  React.useEffect(() => {
-    document.addEventListener("keydown", keyDownFunction, false);
-    return () => document.removeEventListener("keydown", keyDownFunction, false);
-  }, [keyDownFunction]);
+  const handleRevealLocation = () => shell.showItemInFolder(props.file.fullPath);
 
-  const handleRevealLocation = () => {
-    shell.showItemInFolder(props.file.fullPath);
-  };
   return (
     <Outer>
       <GameProfileHeader {...props} loading={loading} stats={gameStats} onPlay={() => playFile(fullPath)} />
