@@ -302,7 +302,7 @@ export const makeEndpoint: EndpointMaker = {
       return {
         main: {
           trigger: async (payload) => {
-            notify(name, payload);
+            notifyAll(name, payload);
           },
         },
       };
@@ -323,9 +323,9 @@ function toJSONPreservingUndefined(data: any) {
   );
 }
 
-function notify(channel: string, payload: any): void {
-  const window = BrowserWindow.getFocusedWindow();
-  if (window) {
+function notifyAll(channel: string, payload: any): void {
+  const allWindows = BrowserWindow.getAllWindows();
+  allWindows.forEach((window) => {
     window.webContents.send(channel, payload);
-  }
+  });
 }
