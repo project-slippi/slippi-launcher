@@ -12,4 +12,12 @@ export interface MirrorDetails {
   connection?: ConsoleConnection | null;
   fileWriter?: SlpFileWriter | null;
   isMirroring?: boolean;
+  obsSettings?: OBSSettings | null;
+  obsManager?: OBSManager | null;
+}
+
+export interface OBSSettings {
+  sourceName: string;
+  ip: string;
+  password?: string;
 }

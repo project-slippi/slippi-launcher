@@ -41,6 +41,7 @@
     "medium-json-feed": "^0.0.3",
     "moment": "^2.29.1",
     "mousetrap": "^1.6.5",
+    "obs-websocket-js": "^4.0.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-dropzone": "^11.2.4",

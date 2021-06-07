@@ -1,10 +1,24 @@
 import { dolphinManager } from "@dolphin/manager";
 import { ReplayCommunication } from "@dolphin/types";
-import { ConnectionDetails, ConsoleConnection, Ports, SlpFileWriter, SlpFileWriterEvent } from "@slippi/slippi-js";
+import {
+  Command,
+  ConnectionDetails,
+  ConsoleConnection,
+  GameEndType,
+  Ports,
+  PostFrameUpdateType,
+  SlpFileWriter,
+  SlpFileWriterEvent,
+  SlpStreamEvent,
+} from "@slippi/slippi-js";
 import log from "electron-log";
 
+import { OBSManager } from "./autoSwitcher";
 import { MirrorDetails } from "./types";
 
+/**
+ * Responsible for setting up and keeping track of active console connections and mirroring.
+ */
 export class MirrorManager {
   private mirrors: { [ipAddress: string]: MirrorDetails };
 
@@ -25,7 +39,6 @@ export class MirrorManager {
 
   public async start(config: MirrorDetails) {
     if (this.mirrors[config.ipAddress]) {
-      // maybe we want to support editing the config, but for now i'm skipping that. get it right the first time idiots
       log.info(`[Mirroring] already connected to Wii @ ${config.ipAddress}`);
       return;
     }
@@ -45,7 +58,6 @@ export class MirrorManager {
         log.info("[Mirroring] Got handshake from wii");
         log.info(details);
         config.fileWriter!.updateSettings({ consoleNickname: details.consoleNick });
-        // log.info(this.connDetails);
         // this.forceConsoleUiUpdate();
       });
       // connection.on("statusChange", (status) => this.setStatus(status));
@@ -54,12 +66,39 @@ export class MirrorManager {
     connection.connect(config.ipAddress, config.port || Ports.DEFAULT);
 
     config.connection = connection;
+
+    if (config.obsSettings) {
+      config.obsManager = new OBSManager(config.obsSettings);
+    }
+
+    fileWriter.on(SlpStreamEvent.COMMAND, (data) => {
+      const { command, payload } = data;
+      switch (command) {
+        case Command.POST_FRAME_UPDATE:
+          // Only show OBS source in the later portion of the game loading stage
+          if ((payload as PostFrameUpdateType).frame! >= -60) {
+            config.obsManager!.handleStatusOutput();
+          }
+          break;
+        case Command.GAME_END:
+          if ((payload as GameEndType).gameEndMethod !== 7) {
+            config.obsManager!.handleStatusOutput(700);
+          }
+          break;
+        default:
+          break;
+      }
+    });
+
     // add mirror config to mirrors so we can track it
     this.mirrors[config.ipAddress] = config;
   }
+
   public disconnect(ip: string) {
     log.info("[Mirroring] Disconnect request");
     this.mirrors[ip].connection!.disconnect();
+    this.mirrors[ip].obsManager!.disconnect();
+    delete this.mirrors[ip];
   }
 
   public async startMirroring(ip: string) {

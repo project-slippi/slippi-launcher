@@ -10,13 +10,14 @@ export const Broadcast: React.FC = () => {
       ipAddress: "192.168.1.64",
       port: Ports.DEFAULT,
       folderPath: "C:\\Users\\Nikhi\\Documents\\Slippi\\test",
+      isMirroring: false,
       isRealTimeMode: true,
     };
     await addMirrorConfig.renderer!.trigger({ config });
   };
 
   const startMirrorHandler = async () => {
-    await startMirroring.renderer!.trigger({ ip: "192.168.1.71" });
+    await startMirroring.renderer!.trigger({ ip: "192.168.1.64" });
   };
   return (
     <Outer>
