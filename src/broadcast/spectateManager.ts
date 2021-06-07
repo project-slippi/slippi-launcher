@@ -7,6 +7,7 @@ import _ from "lodash";
 import { client as WebSocketClient, connection, IMessage } from "websocket";
 
 import { dolphinManager, ReplayCommunication } from "../dolphin";
+import { broadcastListUpdated, spectateErrorOccurred } from "./ipc";
 import { BroadcasterItem } from "./types";
 
 const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
@@ -134,8 +135,6 @@ export class SpectateManager extends EventEmitter {
    */
   public async connect(authToken: string) {
     if (this.wsConnection) {
-      // We're already connected
-      console.log("Skipping websocket connection since we're already connected");
       return;
     }
 
@@ -232,22 +231,16 @@ export class SpectateManager extends EventEmitter {
     });
   }
 
-  public async fetchBroadcastList(): Promise<BroadcasterItem[]> {
-    return new Promise((resolve, reject) => {
-      if (!this.wsConnection) {
-        reject(new Error("No websocket connection"));
-        return;
-      }
+  public async refreshBroadcastList(): Promise<void> {
+    if (!this.wsConnection) {
+      throw new Error("No websocket connection");
+    }
 
-      this.once(SpectateManagerEvent.BROADCAST_LIST_UPDATE, (data: BroadcasterItem[]) => resolve(data));
-      this.once(SpectateManagerEvent.ERROR, reject);
-
-      this.wsConnection.sendUTF(
-        JSON.stringify({
-          type: "list-broadcasts",
-        }),
-      );
-    });
+    this.wsConnection.sendUTF(
+      JSON.stringify({
+        type: "list-broadcasts",
+      }),
+    );
   }
 
   public stopWatchingBroadcast(broadcastId: string) {
@@ -339,3 +332,12 @@ export class SpectateManager extends EventEmitter {
 }
 
 export const spectateManager = new SpectateManager();
+
+// Forward the events to the renderer
+spectateManager.on(SpectateManagerEvent.BROADCAST_LIST_UPDATE, async (data: BroadcasterItem[]) => {
+  await broadcastListUpdated.main!.trigger({ items: data });
+});
+
+spectateManager.on(SpectateManagerEvent.ERROR, async (error) => {
+  await spectateErrorOccurred.main!.trigger({ errorMessage: error.message ?? JSON.stringify(error) });
+});

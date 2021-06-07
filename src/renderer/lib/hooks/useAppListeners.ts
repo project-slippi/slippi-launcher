@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-import { broadcastErrorOccurred, dolphinStatusChanged, slippiStatusChanged } from "@broadcast/ipc";
+import {
+  broadcastErrorOccurred,
+  broadcastListUpdated,
+  dolphinStatusChanged,
+  slippiStatusChanged,
+} from "@broadcast/ipc";
 import { loadProgressUpdated } from "@replays/ipc";
 import { settingsUpdated } from "@settings/ipc";
 import { checkValidIso } from "common/ipc";
@@ -10,6 +15,7 @@ import React from "react";
 import { useConsole } from "@/store/console";
 import { useReplays } from "@/store/replays";
 
+import { useBroadcastListStore } from "./useBroadcastList";
 import { useIsoVerification } from "./useIsoVerification";
 import { useNewsFeed } from "./useNewsFeed";
 import { useSettings } from "./useSettings";
@@ -39,6 +45,12 @@ export const useAppListeners = () => {
   const updateSettings = useSettings((store) => store.updateSettings);
   settingsUpdated.renderer!.useEvent(async (newSettings) => {
     updateSettings(newSettings);
+  }, []);
+
+  // Listen to when the list of broadcasting users has changed
+  const updateBroadcastingList = useBroadcastListStore((store) => store.setItems);
+  broadcastListUpdated.renderer!.useEvent(async ({ items }) => {
+    updateBroadcastingList(items);
   }, []);
 
   // Automatically run ISO verification whenever the isoPath changes

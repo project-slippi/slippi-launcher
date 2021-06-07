@@ -1,14 +1,13 @@
 import { settingsManager } from "@settings/settingsManager";
 
 import { broadcastManager } from "./broadcastManager";
-import { fetchBroadcastList, startBroadcast, stopBroadcast, watchBroadcast } from "./ipc";
+import { refreshBroadcastList, startBroadcast, stopBroadcast, watchBroadcast } from "./ipc";
 import { spectateManager } from "./spectateManager";
 
-fetchBroadcastList.main!.handle(async ({ authToken }) => {
+refreshBroadcastList.main!.handle(async ({ authToken }) => {
   await spectateManager.connect(authToken);
-  const result = await spectateManager.fetchBroadcastList();
-  console.log("fetched broadcast list: ", result);
-  return { items: result };
+  await spectateManager.refreshBroadcastList();
+  return { success: true };
 });
 
 watchBroadcast.main!.handle(async ({ broadcasterId }) => {

@@ -3,10 +3,10 @@ import { BroadcasterItem, StartBroadcastConfig } from "./types";
 
 // Handlers
 
-export const fetchBroadcastList = makeEndpoint.main(
-  "fetchBroadcastList",
+export const refreshBroadcastList = makeEndpoint.main(
+  "refreshBroadcastList",
   <{ authToken: string }>_,
-  <{ items: BroadcasterItem[] }>_,
+  <{ success: true }>_,
 );
 
 export const watchBroadcast = makeEndpoint.main("watchBroadcast", <{ broadcasterId: string }>_, <{ success: true }>_);
@@ -16,6 +16,16 @@ export const startBroadcast = makeEndpoint.main("startBroadcast", <StartBroadcas
 export const stopBroadcast = makeEndpoint.main("stopBroadcast", <EmptyPayload>_, <{ success: true }>_);
 
 // Events
+
+export const broadcastListUpdated = makeEndpoint.renderer(
+  "broadcast_broadcastListUpdated",
+  <{ items: BroadcasterItem[] }>_,
+);
+
+export const spectateErrorOccurred = makeEndpoint.renderer(
+  "broadcast_spectateErrorOccurred",
+  <{ errorMessage: string | null }>_,
+);
 
 export const broadcastErrorOccurred = makeEndpoint.renderer(
   "broadcast_broadcastErrorOccurred",
