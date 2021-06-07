@@ -9,8 +9,11 @@ const AUTO_REFRESH_INTERVAL = 30 * SECOND;
 export const SpectatePage: React.FC = () => {
   const [currentBroadcasts, refreshBroadcasts] = useBroadcastList();
 
-  // Automatically refresh the broadcast list
   React.useEffect(() => {
+    // Refresh once on component mount
+    refreshBroadcasts();
+
+    // Start automatic refreshing of the broadcast list
     const interval = setInterval(refreshBroadcasts, AUTO_REFRESH_INTERVAL);
     return () => clearInterval(interval);
   }, []);
