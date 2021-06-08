@@ -4,7 +4,7 @@ import "@replays/main";
 import "@settings/main";
 
 import { colors } from "common/colors";
-import { isDevelopment } from "common/constants";
+import { isDevelopment, isMac } from "common/constants";
 import { app, BrowserWindow, shell } from "electron";
 import contextMenu from "electron-context-menu";
 import * as path from "path";
@@ -78,7 +78,7 @@ function createMainWindow() {
 // quit application when all windows are closed
 app.on("window-all-closed", () => {
   // on macOS it is common for applications to stay open until the user explicitly quits
-  if (process.platform !== "darwin") {
+  if (!isMac) {
     app.quit();
   }
 });

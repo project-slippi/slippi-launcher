@@ -1,4 +1,5 @@
 import { DolphinLaunchType, PlayKey } from "@dolphin/types";
+import { isMac } from "common/constants";
 import * as fs from "fs-extra";
 import path from "path";
 
@@ -14,7 +15,7 @@ export async function writePlayKeyFile(playKey: PlayKey): Promise<void> {
 export async function findPlayKey(): Promise<string> {
   const dolphinPath = await findDolphinExecutable(DolphinLaunchType.NETPLAY);
   let dolphinDir = path.dirname(dolphinPath);
-  if (process.platform === "darwin") {
+  if (isMac) {
     dolphinDir = path.join(dolphinPath, "Contents", "Resources");
   }
   return path.resolve(dolphinDir, "user.json");
