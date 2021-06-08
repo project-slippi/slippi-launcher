@@ -4,6 +4,7 @@ import { css, jsx } from "@emotion/react";
 import { CircularProgress } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
 import { colors } from "common/colors";
+import crypto from "crypto";
 import firebase from "firebase";
 import React from "react";
 
@@ -12,7 +13,8 @@ export const UserInfo: React.FC<{
   playKey: PlayKey | null;
   loading: boolean;
 }> = ({ user, playKey, loading }) => {
-  const imageUrl = `https://www.gravatar.com/avatar/${user.uid}?d=identicon`;
+  const hexString = crypto.createHash("md5").update(user.uid).digest("hex");
+  const imageUrl = `https://www.gravatar.com/avatar/${hexString}?d=identicon`;
   return (
     <div
       css={css`
