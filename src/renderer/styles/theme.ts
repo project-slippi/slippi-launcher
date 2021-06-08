@@ -94,6 +94,11 @@ const addOverrides = (theme: Theme) => {
           fontSize: 13,
         },
       },
+      MuiButtonBase: {
+        root: {
+          fontFamily: rubikFont,
+        },
+      },
       MuiButton: {
         contained: {
           fontWeight: 700,
