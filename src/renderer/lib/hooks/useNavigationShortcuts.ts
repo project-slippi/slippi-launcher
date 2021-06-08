@@ -1,3 +1,4 @@
+import { isMac } from "common/constants";
 import mousetrap from "mousetrap";
 import { useEffect } from "react";
 import { useHistory } from "react-router-dom";
@@ -11,7 +12,7 @@ export const useNavigationShortcuts = (paths: string[]) => {
   const handlers = paths.slice(0, 9).map((path, i) => {
     const oneIndexed = i + 1;
     return {
-      keys: [`ctrl+${oneIndexed}`, `meta+${oneIndexed}`],
+      keys: isMac ? `meta+${oneIndexed}` : `ctrl+${oneIndexed}`,
       handler: () => {
         history.push(path);
       },
