@@ -6,6 +6,7 @@ import { Ports } from "@slippi/slippi-js";
 import log from "electron-log";
 import React from "react";
 
+import { useAccount } from "@/lib/hooks/useAccount";
 import { useApp } from "@/store/app";
 import { useConsole } from "@/store/console";
 
@@ -27,7 +28,7 @@ export const Broadcast: React.FC = () => {
   const slippiStatus = useConsole((store) => store.slippiConnectionStatus);
   const dolphinStatus = useConsole((store) => store.dolphinConnectionStatus);
   const error = useConsole((store) => store.broadcastError);
-  const user = useApp((store) => store.user);
+  const user = useAccount((store) => store.user);
   const startBroadcastHandler = async (config: Omit<StartBroadcastConfig, "authToken">) => {
     if (!user) {
       handleError("Not logged in!");

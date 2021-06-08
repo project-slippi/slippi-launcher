@@ -23,7 +23,7 @@ const getUserKey = gql`
   }
 `;
 
-async function fetchPlayKey(): Promise<PlayKey> {
+export async function fetchPlayKey(): Promise<PlayKey> {
   const user = firebase.auth().currentUser;
   if (!user) {
     throw new Error("Failed to get play key. User is not logged in");

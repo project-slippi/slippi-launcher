@@ -1,12 +1,12 @@
 import React from "react";
 import { Route, RouteProps } from "react-router-dom";
 
-import { useApp } from "@/store/app";
+import { useAccount } from "@/lib/hooks/useAccount";
 
 import { LoginNotice } from "./LoginNotice";
 
 export const PrivateRoute: React.FC<RouteProps> = ({ children, component: Component, ...rest }) => {
-  const user = useApp((store) => store.user);
+  const user = useAccount((store) => store.user);
   const isLoggedIn = user !== null;
 
   return (

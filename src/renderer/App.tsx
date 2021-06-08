@@ -4,7 +4,6 @@ import { ThemeProvider } from "@emotion/react";
 import Snackbar from "@material-ui/core/Snackbar";
 import { MuiThemeProvider, StylesProvider } from "@material-ui/core/styles";
 import log from "electron-log";
-import firebase from "firebase";
 import React from "react";
 import { hot } from "react-hot-loader/root";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -41,33 +40,22 @@ const App: React.FC = () => {
   const snackbarContent = useApp((state) => state.snackbarContent);
   const dismissSnackbar = useApp((state) => state.dismissSnackbar);
   const init = useApp((state) => state.initialize);
-  const setUser = useApp((state) => state.setUser);
 
-  // Add the app listeners
-  useAppListeners();
-
+  // First init firebase
   React.useEffect(() => {
     // Initialize the Firebase app if we haven't already
     try {
       initializeFirebase();
     } catch (err) {
       log.error("Error initializing firebase. Did you forget to create a .env file from the .env.example file?");
-      init();
       return;
     }
 
-    // Subscribe to user auth changes
-    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-      // Set the user
-      setUser(user);
-
-      // Initialize the rest of the app
-      init();
-    });
-
-    // Unsubscribe on unmount
-    return unsubscribe;
+    init();
   }, []);
+
+  // Then add the rest of the app listeners
+  useAppListeners();
 
   if (!initialized) {
     return <LoadingView />;

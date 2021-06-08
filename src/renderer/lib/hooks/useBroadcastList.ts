@@ -4,7 +4,7 @@ import throttle from "lodash/throttle";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
-import { useApp } from "@/store/app";
+import { useAccount } from "./useAccount";
 
 export const useBroadcastListStore = create(
   combine(
@@ -18,7 +18,7 @@ export const useBroadcastListStore = create(
 );
 
 export const useBroadcastList = () => {
-  const currentUser = useApp((store) => store.user);
+  const currentUser = useAccount((store) => store.user);
   const items = useBroadcastListStore((store) => store.items);
 
   const refresh = async () => {

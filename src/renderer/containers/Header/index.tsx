@@ -13,6 +13,7 @@ import { colors } from "common/colors";
 import { shell } from "electron";
 import React from "react";
 
+import { useAccount } from "@/lib/hooks/useAccount";
 import { useLoginModal } from "@/lib/hooks/useLoginModal";
 import { useSettings } from "@/lib/hooks/useSettings";
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
@@ -34,6 +35,7 @@ const handleError = (error: any) => {
 
 const OuterBox = styled(Box)`
   background-color: ${colors.purple};
+  height: 75px;
 `;
 
 const SelectMeleeIsoSnackBar: React.FC<{
@@ -72,7 +74,7 @@ export interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
   const openModal = useLoginModal((store) => store.openModal);
   const { open } = useSettingsModal();
-  const currentUser = useApp((store) => store.user);
+  const currentUser = useAccount((store) => store.user);
   const meleeIsoPath = useSettings((store) => store.settings.isoPath) || undefined;
   const showSnackbar = useApp((state) => state.showSnackbar);
   const dismissSnackbar = useApp((state) => state.dismissSnackbar);

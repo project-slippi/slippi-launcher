@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 import {
   broadcastErrorOccurred,
   broadcastListUpdated,
@@ -9,18 +8,36 @@ import {
 import { loadProgressUpdated } from "@replays/ipc";
 import { settingsUpdated } from "@settings/ipc";
 import { checkValidIso } from "common/ipc";
+import firebase from "firebase";
 import throttle from "lodash/throttle";
 import React from "react";
 
 import { useConsole } from "@/store/console";
 import { useReplays } from "@/store/replays";
 
+import { useAccount } from "./useAccount";
 import { useBroadcastListStore } from "./useBroadcastList";
 import { useIsoVerification } from "./useIsoVerification";
 import { useNewsFeed } from "./useNewsFeed";
 import { useSettings } from "./useSettings";
 
 export const useAppListeners = () => {
+  // Subscribe to user auth changes to keep store up to date
+  const setUser = useAccount((store) => store.setUser);
+  const refreshPlayKey = useAccount((store) => store.refreshPlayKey);
+  React.useEffect(() => {
+    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+      // Update the user
+      setUser(user);
+
+      // Refresh the play key
+      refreshPlayKey();
+    });
+
+    // Unsubscribe on unmount
+    return unsubscribe;
+  }, []);
+
   const setSlippiConnectionStatus = useConsole((store) => store.setSlippiConnectionStatus);
   slippiStatusChanged.renderer!.useEvent(async ({ status }) => {
     setSlippiConnectionStatus(status);
