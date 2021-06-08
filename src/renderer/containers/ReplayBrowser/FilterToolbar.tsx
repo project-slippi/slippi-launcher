@@ -1,3 +1,5 @@
+/** @jsx jsx */
+import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
@@ -18,11 +20,6 @@ import { useReplays } from "@/store/replays";
 
 const useStyles = makeStyles(() =>
   createStyles({
-    input: {
-      border: "solid 1px rgba(255, 255, 255, 0.6)",
-      borderRadius: 5,
-      paddingLeft: 10,
-    },
     root: {
       display: "flex",
       alignItems: "center",
@@ -106,15 +103,20 @@ export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarPro
       <div>
         <InputBase
           ref={ref}
-          className={classes.input}
+          css={css`
+            background-color: black;
+            border-radius: 100px;
+            padding: 5px 20px;
+            font-size: 12px;
+          `}
           endAdornment={
             <InputAdornment position="end">
               <IconButton size="small" onClick={() => setNameFilter("")} disabled={value.searchText.length === 0}>
-                {value.searchText.length > 0 ? <CloseIcon /> : <SearchIcon />}
+                {value.searchText.length > 0 ? <CloseIcon fontSize="inherit" /> : <SearchIcon fontSize="inherit" />}
               </IconButton>
             </InputAdornment>
           }
-          placeholder="Search..."
+          placeholder="Search"
           value={searchText}
           onChange={(e) => {
             setNameFilter(e.target.value);

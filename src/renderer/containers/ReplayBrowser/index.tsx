@@ -87,7 +87,6 @@ export const ReplayBrowser: React.FC = () => {
               flex: "1",
               position: "relative",
               overflow: "hidden",
-              borderTop: `solid 2px ${colors.grayDark}`,
             }}
           >
             <DualPane
