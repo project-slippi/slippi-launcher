@@ -2,6 +2,8 @@ export const isDevelopment = process.env.NODE_ENV !== "production";
 
 export const isMac = process.platform === "darwin";
 
+export const slippiActivationUrl = "https://slippi.gg/online/enable";
+
 export const socials = {
   twitterId: "ProjectSlippi",
   discordUrl: "https://slippi.gg/discord",

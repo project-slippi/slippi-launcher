@@ -10,6 +10,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import SettingsOutlinedIcon from "@material-ui/icons/SettingsOutlined";
 import Alert from "@material-ui/lab/Alert";
 import { colors } from "common/colors";
+import { slippiActivationUrl } from "common/constants";
 import { shell } from "electron";
 import React from "react";
 
@@ -58,7 +59,7 @@ const EnableOnlineSnackBar: React.FC = () => {
     <SnackbarContent
       message={"Please configure your online connect code."}
       action={
-        <Button color="secondary" size="small" onClick={() => shell.openExternal("https://slippi.gg/online/enable")}>
+        <Button color="secondary" size="small" onClick={() => shell.openExternal(slippiActivationUrl)}>
           Configure
         </Button>
       }
