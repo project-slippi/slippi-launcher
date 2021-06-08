@@ -9,6 +9,8 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
+import { slippiActivationUrl } from "common/constants";
+import { shell } from "electron";
 import firebase from "firebase";
 import React from "react";
 
@@ -22,6 +24,7 @@ export const UserMenu: React.FC<{
   handleError: (error: any) => void;
 }> = ({ user, handleError }) => {
   const playKey = useAccount((store) => store.playKey);
+  const refreshPlayKey = useAccount((store) => store.refreshPlayKey);
   const loading = useAccount((store) => store.loading);
   const [openLogoutPrompt, setOpenLogoutPrompt] = React.useState(false);
   const theme = useTheme();
@@ -55,6 +58,26 @@ export const UserMenu: React.FC<{
         <UserInfo user={user} playKey={playKey} loading={loading} />
       </ButtonBase>
       <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={closeMenu}>
+        {!playKey && (
+          <MenuItem
+            onClick={() => {
+              closeMenu();
+              shell.openExternal(slippiActivationUrl);
+            }}
+          >
+            Activate online play
+          </MenuItem>
+        )}
+        {!playKey && (
+          <MenuItem
+            onClick={() => {
+              closeMenu();
+              refreshPlayKey();
+            }}
+          >
+            Refresh activation status
+          </MenuItem>
+        )}
         <MenuItem
           onClick={() => {
             closeMenu();
