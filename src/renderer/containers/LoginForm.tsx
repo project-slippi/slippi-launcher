@@ -63,8 +63,9 @@ export const LoginForm: React.FC<{
             label="Email"
             variant="filled"
             value={email}
-            fullWidth
-            required
+            autoFocus={true}
+            fullWidth={true}
+            required={true}
             onChange={(e) => setEmail(e.target.value)}
             InputLabelProps={{
               classes: {
@@ -83,8 +84,8 @@ export const LoginForm: React.FC<{
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             type={showPassword ? "text" : "password"}
-            fullWidth
-            required
+            fullWidth={true}
+            required={true}
             InputLabelProps={{
               classes: {
                 root: classes.cssLabel,
