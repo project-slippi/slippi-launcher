@@ -26,16 +26,21 @@ export const useAppListeners = () => {
   const setUser = useAccount((store) => store.setUser);
   const refreshPlayKey = useAccount((store) => store.refreshPlayKey);
   React.useEffect(() => {
-    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-      // Update the user
-      setUser(user);
+    try {
+      const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+        // Update the user
+        setUser(user);
 
-      // Refresh the play key
-      refreshPlayKey();
-    });
+        // Refresh the play key
+        refreshPlayKey();
+      });
 
-    // Unsubscribe on unmount
-    return unsubscribe;
+      // Unsubscribe on unmount
+      return unsubscribe;
+    } catch (err) {
+      console.log("Skipping setting up the unsubscribe beacuse Firebase isn't initialized");
+      return;
+    }
   }, []);
 
   const setSlippiConnectionStatus = useConsole((store) => store.setSlippiConnectionStatus);

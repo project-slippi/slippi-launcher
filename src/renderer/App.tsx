@@ -48,7 +48,6 @@ const App: React.FC = () => {
       initializeFirebase();
     } catch (err) {
       log.error("Error initializing firebase. Did you forget to create a .env file from the .env.example file?");
-      return;
     }
 
     init();
