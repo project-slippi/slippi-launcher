@@ -127,7 +127,7 @@ export class BroadcastManager {
           );
         };
 
-        const startBroadcast = async (broadcastId: string) => {
+        const startBroadcast = async (broadcastId: string, name?: string) => {
           if (!this.wsConnection) {
             log.info("[Broadcast] WS connection failed");
             return;
@@ -135,7 +135,7 @@ export class BroadcastManager {
           this.wsConnection.send(
             JSON.stringify({
               type: "start-broadcast",
-              name: "Netplay",
+              name: name ?? "Netplay",
               broadcastId,
             }),
           );
@@ -265,11 +265,12 @@ export class BroadcastManager {
                 const prevBroadcast = broadcastsById[this.broadcastId];
 
                 if (prevBroadcast) {
-                  startBroadcast(prevBroadcast.id);
+                  // TODO: Figure out if this config.name guaranteed to be the correct name?
+                  startBroadcast(prevBroadcast.id, config.name);
                   return;
                 }
               }
-              startBroadcast(config.viewerId);
+              startBroadcast(config.viewerId, config.name);
               break;
             }
 

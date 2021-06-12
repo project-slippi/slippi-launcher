@@ -12,4 +12,5 @@ export interface StartBroadcastConfig {
   port: number;
   viewerId: string;
   authToken: string;
+  name?: string;
 }
