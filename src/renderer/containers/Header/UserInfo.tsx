@@ -18,17 +18,25 @@ export const UserInfo: React.FC<{
       css={css`
         display: flex;
         align-items: center;
-        min-width: 250px;
         color: white;
+
+        @media (min-width: 800px) {
+          min-width: 250px;
+        }
       `}
     >
-      {loading ? <CircularProgress color="inherit" /> : <UserIcon userId={user.uid} />}
+      {loading ? <CircularProgress color="inherit" /> : <UserIcon userId={user.uid} size="38px" />}
       <div
         css={css`
           display: flex;
           flex-direction: column;
           align-items: flex-start;
           margin-left: 10px;
+
+          @media (max-width: 800px) {
+            display: none;
+          }
+
           h3 {
             margin: 0;
             margin-bottom: 6px;
