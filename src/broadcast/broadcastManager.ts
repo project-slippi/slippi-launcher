@@ -127,7 +127,7 @@ export class BroadcastManager {
           );
         };
 
-        const startBroadcast = async (broadcastId: string, name?: string) => {
+        const startBroadcast = async (broadcastId: string | null, name?: string) => {
           if (!this.wsConnection) {
             log.info("[Broadcast] WS connection failed");
             return;
@@ -270,7 +270,9 @@ export class BroadcastManager {
                   return;
                 }
               }
-              startBroadcast(config.viewerId, config.name);
+
+              // Pass in null as the broadcast ID to tell the server to generate an ID for us
+              startBroadcast(null, config.name);
               break;
             }
 
