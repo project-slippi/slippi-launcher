@@ -5,8 +5,8 @@ import { useAccount } from "@/lib/hooks/useAccount";
 import { useBroadcast } from "@/lib/hooks/useBroadcast";
 import { useConsole } from "@/store/console";
 
-import { ConsoleItem } from "./ConsoleItem";
-import { InfoBlock } from "./InfoBlock";
+import { InfoBlock } from "../InfoBlock";
+import { BroadcastPanel } from "./BroadcastPanel";
 
 // These are the default params for broadcasting Netplay Dolphin
 const ip = "127.0.0.1";
@@ -21,7 +21,7 @@ export const ShareGameplayBlock: React.FC<{ className?: string }> = ({ className
   const [start, stop] = useBroadcast();
   return (
     <InfoBlock title="Share your gameplay" className={className}>
-      <ConsoleItem
+      <BroadcastPanel
         slippiServerStatus={slippiStatus}
         dolphinStatus={dolphinStatus}
         startTime={startTime}

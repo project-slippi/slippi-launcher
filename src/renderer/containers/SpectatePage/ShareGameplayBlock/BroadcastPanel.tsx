@@ -13,7 +13,7 @@ import { StartBroadcastDialog } from "./StartBroadcastDialog";
 
 const skipUserValidation = isDevelopment && !process.env.SLIPPI_USER_SERVER;
 
-export interface ConsoleItemProps {
+export interface BroadcastPanelProps {
   dolphinStatus: ConnectionStatus;
   slippiServerStatus: ConnectionStatus;
   startTime: Date | null;
@@ -22,7 +22,7 @@ export interface ConsoleItemProps {
   onDisconnect: () => void;
 }
 
-export const ConsoleItem: React.FC<ConsoleItemProps> = ({
+export const BroadcastPanel: React.FC<BroadcastPanelProps> = ({
   slippiServerStatus,
   dolphinStatus,
   startTime,

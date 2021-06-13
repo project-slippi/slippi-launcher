@@ -13,10 +13,10 @@ import { IconMessage } from "@/components/Message";
 import { useAccount } from "@/lib/hooks/useAccount";
 import { useBroadcastList } from "@/lib/hooks/useBroadcastList";
 
-import { ShareGameplayBlock } from "../Broadcast/ShareGameplayBlock";
-import { SpectateItem } from "../Broadcast/SpectateItem";
-import { SpectatorIdBlock } from "../Broadcast/SpectatorIdBlock";
 import { Footer } from "./Footer";
+import { ShareGameplayBlock } from "./ShareGameplayBlock";
+import { SpectateItem } from "./SpectateItem";
+import { SpectatorIdBlock } from "./SpectatorIdBlock";
 
 const SECOND = 1000;
 const AUTO_REFRESH_INTERVAL = 30 * SECOND;
