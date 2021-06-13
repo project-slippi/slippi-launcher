@@ -1,8 +1,8 @@
 /** @jsx jsx */
 import { PlayKey } from "@dolphin/types";
 import { css, jsx } from "@emotion/react";
-import { CircularProgress } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import { colors } from "common/colors";
 import crypto from "crypto";
 import firebase from "firebase";
