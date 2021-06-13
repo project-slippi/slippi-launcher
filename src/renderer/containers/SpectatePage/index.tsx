@@ -8,6 +8,7 @@ import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import SyncIcon from "@material-ui/icons/Sync";
 import React from "react";
 
+import { DualPane } from "@/components/DualPane";
 import { IconMessage } from "@/components/Message";
 import { useAccount } from "@/lib/hooks/useAccount";
 import { useBroadcastList } from "@/lib/hooks/useBroadcastList";
@@ -15,6 +16,7 @@ import { useBroadcastList } from "@/lib/hooks/useBroadcastList";
 import { ShareGameplayBlock } from "../Broadcast/ShareGameplayBlock";
 import { SpectateItem } from "../Broadcast/SpectateItem";
 import { SpectatorIdBlock } from "../Broadcast/SpectatorIdBlock";
+import { Footer } from "./Footer";
 
 const SECOND = 1000;
 const AUTO_REFRESH_INTERVAL = 30 * SECOND;
@@ -41,74 +43,89 @@ export const SpectatePage: React.FC = () => {
   }
 
   return (
-    <div
-      css={css`
-        display: grid;
-        grid-template-columns: 60% 40%;
-        height: 100%;
-        width: 100%;
-      `}
-    >
+    <Outer>
       <div
         css={css`
-          padding-left: 20px;
+          display: flex;
+          flex: 1;
+          position: relative;
+          overflow: hidden;
         `}
       >
-        <h1>Spectate</h1>
-        <div>
-          <RefreshButton
-            variant="contained"
-            onClick={refreshBroadcasts}
-            color="inherit"
-            startIcon={
-              <div
-                css={css`
-                  display: flex;
-                  color: #9f74c0;
-                `}
-              >
-                <SyncIcon fontSize="small" />
+        <DualPane
+          id="spectate-page"
+          leftSide={
+            <div
+              css={css`
+                padding-left: 20px;
+                padding-right: 10px;
+                width: 100%;
+              `}
+            >
+              <h1>Spectate</h1>
+              <div>
+                <RefreshButton
+                  variant="contained"
+                  onClick={refreshBroadcasts}
+                  color="inherit"
+                  startIcon={
+                    <div
+                      css={css`
+                        display: flex;
+                        color: #9f74c0;
+                      `}
+                    >
+                      <SyncIcon fontSize="small" />
+                    </div>
+                  }
+                >
+                  Refresh
+                </RefreshButton>
+                <div
+                  css={css`
+                    padding-top: 20px;
+                    padding-bottom: 20px;
+                  `}
+                >
+                  {currentBroadcasts.length === 0 ? (
+                    <IconMessage Icon={HelpOutlineIcon} label="No users are broadcasting to you" />
+                  ) : (
+                    currentBroadcasts.map(({ id, broadcaster, name }) => {
+                      return (
+                        <div key={id}>
+                          <SpectateItem
+                            broadcasterId={broadcaster.uid}
+                            broadcasterName={broadcaster.name}
+                            name={name}
+                            onWatch={() => startWatching(id)}
+                          />
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
               </div>
-            }
-          >
-            Refresh
-          </RefreshButton>
-          <div
-            css={css`
-              margin-top: 20px;
-            `}
-          >
-            {currentBroadcasts.length === 0 ? (
-              <IconMessage Icon={HelpOutlineIcon} label="No users are broadcasting to you" />
-            ) : (
-              currentBroadcasts.map(({ id, broadcaster, name }) => {
-                return (
-                  <div key={id}>
-                    <SpectateItem
-                      broadcasterId={broadcaster.uid}
-                      broadcasterName={broadcaster.name}
-                      name={name}
-                      onWatch={() => startWatching(id)}
-                    />
-                  </div>
-                );
-              })
-            )}
-          </div>
-        </div>
-      </div>
-      <div
-        css={css`
-          padding: 0 20px;
-          & > * {
-            margin-top: 20px;
+            </div>
           }
-        `}
-      >
-        <SpectatorIdBlock userId={user.uid} />
-        <ShareGameplayBlock />
+          rightSide={
+            <div
+              css={css`
+                padding-left: 10px;
+                padding-right: 20px;
+                & > * {
+                  margin-top: 20px;
+                }
+              `}
+            >
+              <SpectatorIdBlock userId={user.uid} />
+              <ShareGameplayBlock />
+            </div>
+          }
+          style={{ gridTemplateColumns: "auto 400px" }}
+        />
       </div>
-    </div>
+      <Footer />
+    </Outer>
   );
 };
 
@@ -118,4 +135,12 @@ const RefreshButton = styled(Button)`
     font-weight: 500;
     font-size: 12px;
   }
+`;
+
+const Outer = styled.div`
+  display: flex;
+  flex-flow: column;
+  flex: 1;
+  position: relative;
+  min-width: 0;
 `;
