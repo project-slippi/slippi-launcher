@@ -35,8 +35,9 @@ const handleError = (error: any) => {
 };
 
 const OuterBox = styled(Box)`
+  background: radial-gradient(circle at left, #5c1394, transparent 30%);
   background-color: ${colors.purple};
-  height: 75px;
+  height: 70px;
 `;
 
 const SelectMeleeIsoSnackBar: React.FC<{

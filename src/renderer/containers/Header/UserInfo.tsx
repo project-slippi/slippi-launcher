@@ -20,8 +20,11 @@ export const UserInfo: React.FC<{
       css={css`
         display: flex;
         align-items: center;
-        min-width: 250px;
         color: white;
+
+        @media (min-width: 800px) {
+          min-width: 250px;
+        }
       `}
     >
       {loading ? (
@@ -31,8 +34,8 @@ export const UserInfo: React.FC<{
           src={imageUrl}
           css={css`
             border: solid 3px ${colors.purpleLight};
-            height: 45px;
-            width: 45px;
+            height: 38px;
+            width: 38px;
           `}
         />
       )}
@@ -42,6 +45,11 @@ export const UserInfo: React.FC<{
           flex-direction: column;
           align-items: flex-start;
           margin-left: 10px;
+
+          @media (max-width: 800px) {
+            display: none;
+          }
+
           h3 {
             margin: 0;
             margin-bottom: 6px;
