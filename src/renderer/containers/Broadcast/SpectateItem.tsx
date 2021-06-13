@@ -53,4 +53,5 @@ const Outer = styled(Paper)`
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
+  margin-bottom: 10px;
 `;

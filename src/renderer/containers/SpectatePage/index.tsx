@@ -92,14 +92,13 @@ export const SpectatePage: React.FC = () => {
                   ) : (
                     currentBroadcasts.map(({ id, broadcaster, name }) => {
                       return (
-                        <div key={id}>
-                          <SpectateItem
-                            broadcasterId={broadcaster.uid}
-                            broadcasterName={broadcaster.name}
-                            name={name}
-                            onWatch={() => startWatching(id)}
-                          />
-                        </div>
+                        <SpectateItem
+                          key={id}
+                          broadcasterId={broadcaster.uid}
+                          broadcasterName={broadcaster.name}
+                          name={name}
+                          onWatch={() => startWatching(id)}
+                        />
                       );
                     })
                   )}
