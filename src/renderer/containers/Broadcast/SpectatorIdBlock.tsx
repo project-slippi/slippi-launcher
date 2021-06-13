@@ -2,8 +2,8 @@
 import { css, jsx } from "@emotion/react";
 import Button from "@material-ui/core/Button";
 import InputBase from "@material-ui/core/InputBase";
+import { clipboard } from "electron";
 import React from "react";
-import Copy from "react-copy-to-clipboard";
 
 import { InfoBlock } from "./InfoBlock";
 
@@ -13,15 +13,16 @@ export interface SpectatorIdBlockProps {
 }
 
 export const SpectatorIdBlock: React.FC<SpectatorIdBlockProps> = ({ userId, className }) => {
-  console.log("viewer id block render");
   const [copied, setCopied] = React.useState(false);
 
-  const onCopy = () => {
-    console.log("on copy start");
+  const onCopy = React.useCallback(() => {
+    // Set the clipboard text
+    clipboard.writeText(userId);
+
+    // Set copied indication
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-    console.log("on copy end");
-  };
+  }, [userId]);
 
   return (
     <InfoBlock title="Your Spectator ID" className={className}>
@@ -42,11 +43,9 @@ export const SpectatorIdBlock: React.FC<SpectatorIdBlockProps> = ({ userId, clas
           disabled={true}
           value={userId}
         />
-        <Copy onCopy={onCopy} text={userId}>
-          <Button variant="contained" color="primary">
-            {copied ? "Copied!" : "Copy"}
-          </Button>
-        </Copy>
+        <Button variant="contained" color="primary" onClick={onCopy}>
+          {copied ? "Copied!" : "Copy"}
+        </Button>
       </div>
       <div
         css={css`
