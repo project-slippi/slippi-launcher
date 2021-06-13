@@ -78,6 +78,17 @@ export class BroadcastManager {
    * Connects to the Slippi server and the local Dolphin instance
    */
   public async start(config: StartBroadcastConfig) {
+    // First try to connect to Dolphin if we haven't already
+    if (this.dolphinConnection.getStatus() === ConnectionStatus.DISCONNECTED) {
+      try {
+        await this._connectToDolphin(config.ip, config.port);
+      } catch (err) {
+        log.warn(err);
+        this.dolphinConnection.disconnect();
+        throw err;
+      }
+    }
+
     if (this.wsConnection) {
       // We're already connected
       log.info("[Broadcast] we are already connected");
@@ -93,202 +104,199 @@ export class BroadcastManager {
       authorization: `Bearer ${config.authToken}`,
     };
 
-    if (SLIPPI_WS_SERVER) {
-      const socket = new WebSocketClient({ disableNagleAlgorithm: true } as any);
-
-      socket.on("connectFailed", (error: Error) => {
-        log.error("[Broadcast] WS failed to connect\n", error);
-
-        const label = "x-websocket-reject-reason: ";
-        let message = error.message;
-        const pos = error.message.indexOf(label);
-        if (pos >= 0) {
-          const endPos = error.message.indexOf("\n", pos + label.length);
-          message = message.substring(pos + label.length, endPos >= 0 ? endPos : undefined);
-        }
-
-        slippiStatusChanged.main!.trigger({ status: ConnectionStatus.DISCONNECTED });
-        broadcastErrorOccurred.main!.trigger({ errorMessage: message });
-      });
-
-      socket.on("connect", (connection: connection) => {
-        log.info("[Broadcast] WS connection successful");
-        this.wsConnection = connection;
-
-        const getBroadcasts = async () => {
-          if (!this.wsConnection) {
-            log.info("[Broadcast] WS connection failed");
-            return;
-          }
-          this.wsConnection.send(
-            JSON.stringify({
-              type: "get-broadcasts",
-            }),
-          );
-        };
-
-        const startBroadcast = async (broadcastId: string | null, name?: string) => {
-          if (!this.wsConnection) {
-            log.info("[Broadcast] WS connection failed");
-            return;
-          }
-          this.wsConnection.send(
-            JSON.stringify({
-              type: "start-broadcast",
-              name: name ?? "Netplay",
-              broadcastId,
-            }),
-          );
-        };
-
-        const connectionComplete = (broadcastId: string) => {
-          log.info(`[Broadcast] Starting broadcast to: ${broadcastId}`);
-
-          // Clear backup events when a connection completes. The backup events should already have
-          // been added back to the events to process at this point if that is relevant
-          this.backupEvents = [];
-          this.isBroadcastReady = true;
-
-          this.broadcastId = broadcastId;
-          slippiStatusChanged.main!.trigger({ status: ConnectionStatus.CONNECTED });
-
-          // Process any events that may have been missed when we disconnected
-          this._handleGameData();
-        };
-
-        if (this.dolphinConnection.getStatus() === ConnectionStatus.DISCONNECTED) {
-          // Now try to connect
-          this.dolphinConnection.connect(config.ip, config.port);
-        }
-
-        connection.on("error", (err: Error) => {
-          log.error("[Broadcast] WS connection error encountered\n", err);
-          broadcastErrorOccurred.main!.trigger({ errorMessage: err.message });
-        });
-
-        connection.on("close", (code: number, reason: string) => {
-          log.info(`[Broadcast] WS connection closed: ${code}, ${reason}`);
-          slippiStatusChanged.main!.trigger({ status: ConnectionStatus.DISCONNECTED });
-
-          // Clear the socket and disconnect from Dolphin too if we're still connected
-          this.wsConnection = null;
-          this.isBroadcastReady = false;
-
-          if (code === 1006) {
-            // Here we have an abnormal disconnect... try to reconnect?
-            this.start(config);
-          } else {
-            // If normal close, disconnect from dolphin
-            this.dolphinConnection.disconnect();
-          }
-        });
-
-        connection.on("message", (data: IMessage) => {
-          if (data.type !== "utf8") {
-            return;
-          }
-
-          let message: {
-            type: string;
-            broadcasts?: any[]; // todo: figure out what the heck this is (i think it might just be the broadcastIds)
-            broadcastId?: string;
-            recoveryGameCursor?: number; // probably, I haven't tested this yet
-          };
-
-          try {
-            if (data.utf8Data) {
-              message = JSON.parse(data.utf8Data);
-            } else {
-              return;
-            }
-          } catch (err) {
-            log.error(`[Broadcast] Failed to parse message from server\n`, err, data.utf8Data);
-            return;
-          }
-
-          log.info(message);
-
-          switch (message.type) {
-            case "start-broadcast-resp": {
-              if (message.recoveryGameCursor !== undefined) {
-                const firstIncoming = _.first(this.incomingEvents);
-                let firstCursor: number | null | undefined;
-                if (firstIncoming) {
-                  firstCursor = firstIncoming.cursor;
-                }
-
-                log.info(
-                  `[Broadcast] Picking broadcast back up from ${message.recoveryGameCursor}. Last not sent: ${firstCursor}`,
-                );
-
-                // Add any events that didn't make it to the server to the front of the event queue
-                const backedEventsToUse = this.backupEvents.filter((event) => {
-                  if (event.cursor !== null && event.cursor !== undefined && message.recoveryGameCursor !== undefined) {
-                    const isNeededByServer = event.cursor > message.recoveryGameCursor;
-
-                    // Make sure we aren't duplicating anything that is already in the incoming events array
-                    const isNotIncoming = _.isNil(firstCursor) || event.cursor < firstCursor;
-
-                    return isNeededByServer && isNotIncoming;
-                  }
-                  return false;
-                });
-
-                this.incomingEvents = _.concat(backedEventsToUse, this.incomingEvents);
-
-                const newFirstEvent = _.first(this.incomingEvents);
-                if (!newFirstEvent) {
-                  log.info("[Broadcast] UH I DUNNO SOMEONE COMMENT THIS CORRECTLY");
-                  return;
-                }
-                const newFirstCursor = newFirstEvent.cursor;
-
-                const firstBackupCursor = (_.first(this.backupEvents) || {}).cursor;
-                const lastBackupCursor = (_.last(this.backupEvents) || {}).cursor;
-
-                log.info(
-                  `[Broadcast] Backup events include range from: [${firstBackupCursor}, ${lastBackupCursor}]. Next cursor to be sent: ${newFirstCursor}`,
-                );
-              }
-              if (message.broadcastId !== undefined) {
-                connectionComplete(message.broadcastId);
-              }
-              break;
-            }
-            case "get-broadcasts-resp": {
-              const broadcasts = message.broadcasts || [];
-
-              // Grab broadcastId we were currently using if the broadcast still exists, would happen
-              // in the case of a reconnect
-              if (this.broadcastId) {
-                const broadcastsById = _.keyBy(broadcasts, "id");
-                const prevBroadcast = broadcastsById[this.broadcastId];
-
-                if (prevBroadcast) {
-                  // TODO: Figure out if this config.name guaranteed to be the correct name?
-                  startBroadcast(prevBroadcast.id, config.name);
-                  return;
-                }
-              }
-
-              // Pass in null as the broadcast ID to tell the server to generate an ID for us
-              startBroadcast(null, config.name);
-              break;
-            }
-
-            default: {
-              log.error(`[Broadcast] Ws resp type ${message.type} not supported`);
-              break;
-            }
-          }
-        });
-
-        getBroadcasts();
-      });
-
-      log.info("[Broadcast] Connecting to WS service");
-      socket.connect(SLIPPI_WS_SERVER, "broadcast-protocol", undefined, headers);
+    if (!SLIPPI_WS_SERVER) {
+      throw new Error("Slippi websocket server is undefined");
     }
+
+    const socket = new WebSocketClient({ disableNagleAlgorithm: true });
+
+    socket.on("connectFailed", (error: Error) => {
+      log.error("[Broadcast] WS failed to connect\n", error);
+
+      const label = "x-websocket-reject-reason: ";
+      let message = error.message;
+      const pos = error.message.indexOf(label);
+      if (pos >= 0) {
+        const endPos = error.message.indexOf("\n", pos + label.length);
+        message = message.substring(pos + label.length, endPos >= 0 ? endPos : undefined);
+      }
+
+      slippiStatusChanged.main!.trigger({ status: ConnectionStatus.DISCONNECTED });
+      broadcastErrorOccurred.main!.trigger({ errorMessage: message });
+    });
+
+    socket.on("connect", (connection: connection) => {
+      log.info("[Broadcast] WS connection successful");
+      this.wsConnection = connection;
+
+      const getBroadcasts = async () => {
+        if (!this.wsConnection) {
+          log.info("[Broadcast] WS connection failed");
+          return;
+        }
+        this.wsConnection.send(
+          JSON.stringify({
+            type: "get-broadcasts",
+          }),
+        );
+      };
+
+      const startBroadcast = async (broadcastId: string | null, name?: string) => {
+        if (!this.wsConnection) {
+          log.info("[Broadcast] WS connection failed");
+          return;
+        }
+        this.wsConnection.send(
+          JSON.stringify({
+            type: "start-broadcast",
+            name: name ?? "Netplay",
+            broadcastId,
+          }),
+        );
+      };
+
+      const connectionComplete = (broadcastId: string) => {
+        log.info(`[Broadcast] Starting broadcast to: ${broadcastId}`);
+
+        // Clear backup events when a connection completes. The backup events should already have
+        // been added back to the events to process at this point if that is relevant
+        this.backupEvents = [];
+        this.isBroadcastReady = true;
+
+        this.broadcastId = broadcastId;
+        slippiStatusChanged.main!.trigger({ status: ConnectionStatus.CONNECTED });
+
+        // Process any events that may have been missed when we disconnected
+        this._handleGameData();
+      };
+
+      connection.on("error", (err: Error) => {
+        log.error("[Broadcast] WS connection error encountered\n", err);
+        broadcastErrorOccurred.main!.trigger({ errorMessage: err.message });
+      });
+
+      connection.on("close", (code: number, reason: string) => {
+        log.info(`[Broadcast] WS connection closed: ${code}, ${reason}`);
+        slippiStatusChanged.main!.trigger({ status: ConnectionStatus.DISCONNECTED });
+
+        // Clear the socket and disconnect from Dolphin too if we're still connected
+        this.wsConnection = null;
+        this.isBroadcastReady = false;
+
+        if (code === 1006) {
+          // Here we have an abnormal disconnect... try to reconnect?
+          this.start(config);
+        } else {
+          // If normal close, disconnect from dolphin
+          this.dolphinConnection.disconnect();
+        }
+      });
+
+      connection.on("message", (data: IMessage) => {
+        if (data.type !== "utf8") {
+          return;
+        }
+
+        let message: {
+          type: string;
+          broadcasts?: any[]; // todo: figure out what the heck this is (i think it might just be the broadcastIds)
+          broadcastId?: string;
+          recoveryGameCursor?: number; // probably, I haven't tested this yet
+        };
+
+        try {
+          if (data.utf8Data) {
+            message = JSON.parse(data.utf8Data);
+          } else {
+            return;
+          }
+        } catch (err) {
+          log.error(`[Broadcast] Failed to parse message from server\n`, err, data.utf8Data);
+          return;
+        }
+
+        log.info(message);
+
+        switch (message.type) {
+          case "start-broadcast-resp": {
+            if (message.recoveryGameCursor !== undefined) {
+              const firstIncoming = _.first(this.incomingEvents);
+              let firstCursor: number | null | undefined;
+              if (firstIncoming) {
+                firstCursor = firstIncoming.cursor;
+              }
+
+              log.info(
+                `[Broadcast] Picking broadcast back up from ${message.recoveryGameCursor}. Last not sent: ${firstCursor}`,
+              );
+
+              // Add any events that didn't make it to the server to the front of the event queue
+              const backedEventsToUse = this.backupEvents.filter((event) => {
+                if (event.cursor !== null && event.cursor !== undefined && message.recoveryGameCursor !== undefined) {
+                  const isNeededByServer = event.cursor > message.recoveryGameCursor;
+
+                  // Make sure we aren't duplicating anything that is already in the incoming events array
+                  const isNotIncoming = _.isNil(firstCursor) || event.cursor < firstCursor;
+
+                  return isNeededByServer && isNotIncoming;
+                }
+                return false;
+              });
+
+              this.incomingEvents = _.concat(backedEventsToUse, this.incomingEvents);
+
+              const newFirstEvent = _.first(this.incomingEvents);
+              if (!newFirstEvent) {
+                log.info("[Broadcast] UH I DUNNO SOMEONE COMMENT THIS CORRECTLY");
+                return;
+              }
+              const newFirstCursor = newFirstEvent.cursor;
+
+              const firstBackupCursor = (_.first(this.backupEvents) || {}).cursor;
+              const lastBackupCursor = (_.last(this.backupEvents) || {}).cursor;
+
+              log.info(
+                `[Broadcast] Backup events include range from: [${firstBackupCursor}, ${lastBackupCursor}]. Next cursor to be sent: ${newFirstCursor}`,
+              );
+            }
+            if (message.broadcastId !== undefined) {
+              connectionComplete(message.broadcastId);
+            }
+            break;
+          }
+          case "get-broadcasts-resp": {
+            const broadcasts = message.broadcasts || [];
+
+            // Grab broadcastId we were currently using if the broadcast still exists, would happen
+            // in the case of a reconnect
+            if (this.broadcastId) {
+              const broadcastsById = _.keyBy(broadcasts, "id");
+              const prevBroadcast = broadcastsById[this.broadcastId];
+
+              if (prevBroadcast) {
+                // TODO: Figure out if this config.name guaranteed to be the correct name?
+                startBroadcast(prevBroadcast.id, config.name);
+                return;
+              }
+            }
+
+            // Pass in null as the broadcast ID to tell the server to generate an ID for us
+            startBroadcast(null, config.name);
+            break;
+          }
+
+          default: {
+            log.error(`[Broadcast] Ws resp type ${message.type} not supported`);
+            break;
+          }
+        }
+      });
+
+      getBroadcasts();
+    });
+
+    log.info("[Broadcast] Connecting to WS service");
+    socket.connect(SLIPPI_WS_SERVER, "broadcast-protocol", undefined, headers);
   }
 
   public stop() {
@@ -322,6 +330,51 @@ export class BroadcastManager {
 
     // Clear incoming events
     this.incomingEvents = [];
+  }
+
+  /**
+   * Initiates a connection to Dolphin but only resolves when it's actually connected.
+   * The promise rejects if not connected before the timeout.
+   */
+  private async _connectToDolphin(ip: string, port: number, timeout = 5000): Promise<void> {
+    // We're already connected so do nothing
+    if (this.dolphinConnection.getStatus() === ConnectionStatus.CONNECTED) {
+      return;
+    }
+
+    return new Promise((resolve, reject) => {
+      // Set up the timeout
+      const timer = setTimeout(() => {
+        reject(new Error(`Dolphin connection request timed out after ${timeout}ms`));
+      }, timeout);
+
+      const connectionChangeHandler = (status: number) => {
+        switch (status) {
+          case ConnectionStatus.CONNECTED: {
+            // Stop listening to the event
+            this.dolphinConnection.removeListener(ConnectionEvent.STATUS_CHANGE, connectionChangeHandler);
+
+            clearTimeout(timer);
+            resolve();
+            return;
+          }
+          case ConnectionStatus.DISCONNECTED: {
+            // Stop listening to the event
+            this.dolphinConnection.removeListener(ConnectionEvent.STATUS_CHANGE, connectionChangeHandler);
+
+            clearTimeout(timer);
+            reject(new Error("Broadcast manager failed to connect to Dolphin"));
+            return;
+          }
+        }
+      };
+
+      // Set up the listeners
+      this.dolphinConnection.on(ConnectionEvent.STATUS_CHANGE, connectionChangeHandler);
+
+      // Actually initiate the connection
+      this.dolphinConnection.connect(ip, port);
+    });
   }
 
   private _handleGameData() {
