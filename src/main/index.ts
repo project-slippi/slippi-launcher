@@ -20,7 +20,7 @@ function createMainWindow() {
     show: false,
     width: 1100,
     height: 728,
-    minHeight: isDevelopment ? undefined : 675,
+    minHeight: isDevelopment ? undefined : 450,
     minWidth: isDevelopment ? undefined : 900,
     backgroundColor: colors.purpleDarker,
     webPreferences: {
