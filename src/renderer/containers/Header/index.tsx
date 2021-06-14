@@ -11,6 +11,7 @@ import SettingsOutlinedIcon from "@material-ui/icons/SettingsOutlined";
 import { colors } from "common/colors";
 import { slippiHomepage } from "common/constants";
 import { shell } from "electron";
+import log from "electron-log";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
 
@@ -23,6 +24,7 @@ import { assertPlayKey } from "@/lib/playkey";
 import slippiLogo from "@/styles/images/slippi-logo.svg";
 
 import { MainMenu, MenuItem } from "./MainMenu";
+import { StartGameDialog } from "./StartGameDialog";
 import { UserMenu } from "./UserMenu";
 
 const OuterBox = styled(Box)`
@@ -36,32 +38,55 @@ export interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
+  const [startGameModalOpen, setStartGameModalOpen] = React.useState(false);
   const openModal = useLoginModal((store) => store.openModal);
   const { open } = useSettingsModal();
   const currentUser = useAccount((store) => store.user);
+  const playKey = useAccount((store) => store.playKey);
   const meleeIsoPath = useSettings((store) => store.settings.isoPath) || undefined;
   const { addToast } = useToasts();
 
   const handleError = (errMsg: string) => addToast(errMsg, { appearance: "error" });
 
-  const onPlay = async () => {
+  const onPlay = async (offlineOnly?: boolean) => {
+    if (!offlineOnly) {
+      // Ensure user is logged in
+      if (!currentUser) {
+        setStartGameModalOpen(true);
+        return;
+      }
+
+      // Ensure user has a valid play key
+      if (!playKey) {
+        handleError("User has not activated online play");
+        return;
+      }
+
+      // Ensure the play key is saved to disk
+      try {
+        await assertPlayKey(playKey);
+      } catch (err) {
+        handleError(err.message);
+        return;
+      }
+    }
+
     if (!meleeIsoPath) {
       handleError("No Melee ISO file specified");
       return;
     }
 
     try {
-      await assertPlayKey();
+      const launchResult = await launchNetplayDolphin.renderer!.trigger({});
+      if (!launchResult.result) {
+        log.info("Error launching netplay dolphin", launchResult.errors);
+        throw new Error("Error launching netplay dolphin");
+      }
     } catch (err) {
       handleError(err.message);
       return;
     }
 
-    const launchResult = await launchNetplayDolphin.renderer!.trigger({});
-    if (!launchResult.result) {
-      console.error("Error launching netplay dolphin", launchResult.errors);
-      handleError("Error launching netplay dolphin");
-    }
     return;
   };
 
@@ -83,23 +108,23 @@ export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
             <img src={slippiLogo} width="43px" />
           </Button>
         </Tooltip>
-        {currentUser ? (
-          <div
-            css={css`
-              margin: 0 10px;
-            `}
-          >
-            <ButtonBase onClick={onPlay}>
-              <PlayIcon>Play</PlayIcon>
-            </ButtonBase>
-          </div>
-        ) : (
-          <Button onClick={openModal}>Log in</Button>
-        )}
+        <div
+          css={css`
+            margin: 0 10px;
+          `}
+        >
+          <ButtonBase onClick={() => onPlay()}>
+            <PlayIcon>Play</PlayIcon>
+          </ButtonBase>
+        </div>
         <MainMenu path={path} menuItems={menuItems} />
       </div>
       <Box display="flex" alignItems="center">
-        {currentUser && <UserMenu user={currentUser} handleError={handleError}></UserMenu>}
+        {currentUser ? (
+          <UserMenu user={currentUser} handleError={handleError} />
+        ) : (
+          <Button onClick={openModal}>Log in</Button>
+        )}
         <Tooltip title="Settings">
           <IconButton
             onClick={() => open()}
@@ -111,6 +136,11 @@ export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
           </IconButton>
         </Tooltip>
       </Box>
+      <StartGameDialog
+        open={startGameModalOpen}
+        onClose={() => setStartGameModalOpen(false)}
+        onSubmit={() => onPlay(true)}
+      />
     </OuterBox>
   );
 };

@@ -61,7 +61,7 @@ export async function fetchPlayKey(): Promise<PlayKey> {
   };
 }
 
-export async function assertPlayKey() {
+export async function assertPlayKey(playKey: PlayKey) {
   const playKeyExistsResult = await checkPlayKeyExists.renderer!.trigger({});
   if (!playKeyExistsResult.result) {
     log.error("Error checking for play key.", playKeyExistsResult.errors);
@@ -72,7 +72,6 @@ export async function assertPlayKey() {
     return;
   }
 
-  const playKey = await fetchPlayKey();
   const storeResult = await storePlayKeyFile.renderer!.trigger({ key: playKey });
   if (!storeResult.result) {
     log.error("Error saving play key", storeResult.errors);
