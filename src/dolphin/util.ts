@@ -1,22 +1,13 @@
-import { app } from "electron";
-import electronSettings from "electron-settings";
+import { settingsManager } from "@settings/settingsManager";
 import * as fs from "fs-extra";
 import path from "path";
 
 import { DolphinLaunchType } from "./types";
 
-export function getDefaultDolphinPath(type: DolphinLaunchType): string {
-  const dolphinPath = path.join(app.getPath("userData"), type);
-  return dolphinPath;
-}
-
-export async function findDolphinExecutable(type: DolphinLaunchType | string, dolphinPath = ""): Promise<string> {
+export async function findDolphinExecutable(type: DolphinLaunchType | string, dolphinPath?: string): Promise<string> {
   // Make sure the directory actually exists
-  if (dolphinPath === "") {
-    dolphinPath = (await electronSettings.get(`settings.${type}.path`)) as string;
-    if (!dolphinPath) {
-      dolphinPath = getDefaultDolphinPath(type as DolphinLaunchType);
-    }
+  if (!dolphinPath) {
+    dolphinPath = settingsManager.getDolphinPath(type as DolphinLaunchType);
   }
 
   await fs.ensureDir(dolphinPath);

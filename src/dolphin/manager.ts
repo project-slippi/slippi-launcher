@@ -1,16 +1,11 @@
+import { settingsManager } from "@settings/settingsManager";
 import log from "electron-log";
-import electronSettings from "electron-settings";
 import { EventEmitter } from "events";
 
 import { downloadAndInstallDolphin } from "./downloadDolphin";
 import { DolphinInstance, PlaybackDolphinInstance } from "./instance";
 import { DolphinLaunchType, ReplayCommunication } from "./types";
 import { findDolphinExecutable } from "./util";
-
-electronSettings.configure({
-  fileName: "Settings",
-  prettify: true,
-});
 
 // DolphinManager should be in control of all dolphin instances that get opened for actual use.
 // This includes playing netplay, viewing replays, watching broadcasts (spectating), and configuring Dolphin.
@@ -20,7 +15,7 @@ export class DolphinManager extends EventEmitter {
 
   public async launchPlaybackDolphin(id: string, replayComm: ReplayCommunication): Promise<void> {
     const dolphinPath = await findDolphinExecutable(DolphinLaunchType.PLAYBACK);
-    const meleeISOPath = (await electronSettings.get("settings.isoPath")) as string | undefined;
+    const meleeISOPath = settingsManager.get().settings.isoPath ?? undefined;
 
     const configuring = this.playbackDolphinInstances.get("configure");
     if (configuring) {
@@ -43,7 +38,8 @@ export class DolphinManager extends EventEmitter {
 
   public async launchNetplayDolphin() {
     const dolphinPath = await findDolphinExecutable(DolphinLaunchType.NETPLAY);
-    const meleeISOPath = (await electronSettings.get("settings.isoPath")) as string | undefined;
+    log.info(`Launching dolphin at path: ${dolphinPath}`);
+    const meleeISOPath = settingsManager.get().settings.isoPath ?? undefined;
     if (this.netplayDolphinInstance) {
       throw new Error("Netplay dolphin is already open!");
     }
