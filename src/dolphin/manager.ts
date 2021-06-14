@@ -44,14 +44,16 @@ export class DolphinManager extends EventEmitter {
   public async launchNetplayDolphin() {
     const dolphinPath = await findDolphinExecutable(DolphinLaunchType.NETPLAY);
     const meleeISOPath = (await electronSettings.get("settings.isoPath")) as string | undefined;
-    if (!this.netplayDolphinInstance) {
-      this.netplayDolphinInstance = new DolphinInstance(dolphinPath, meleeISOPath);
-      this.netplayDolphinInstance.on("close", () => {
-        this.netplayDolphinInstance = null;
-      });
-    } else {
-      log.warn("cannot open netplay dolphin twice");
+    if (this.netplayDolphinInstance) {
+      throw new Error("Netplay dolphin is already open!");
     }
+
+    // Create the Dolphin instance and start it
+    this.netplayDolphinInstance = new DolphinInstance(dolphinPath, meleeISOPath);
+    this.netplayDolphinInstance.on("close", () => {
+      this.netplayDolphinInstance = null;
+    });
+    this.netplayDolphinInstance.start();
   }
 
   public async configureDolphin(launchType: DolphinLaunchType) {
