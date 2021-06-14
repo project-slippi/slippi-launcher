@@ -15,6 +15,7 @@ export const CustomToast: React.ComponentType<ToastProps> = ({ appearance, child
         onClose={() => onDismiss()}
         css={css`
           margin-bottom: 5px;
+          max-width: 500px;
         `}
       >
         {children}
