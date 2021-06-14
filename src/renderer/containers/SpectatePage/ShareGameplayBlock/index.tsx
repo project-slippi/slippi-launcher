@@ -1,5 +1,7 @@
 import { Ports } from "@slippi/slippi-js";
+import log from "electron-log";
 import React from "react";
+import { useToasts } from "react-toast-notifications";
 
 import { useAccount } from "@/lib/hooks/useAccount";
 import { useBroadcast } from "@/lib/hooks/useBroadcast";
@@ -19,6 +21,8 @@ export const ShareGameplayBlock: React.FC<{ className?: string }> = ({ className
   const slippiStatus = useConsole((store) => store.slippiConnectionStatus);
   const dolphinStatus = useConsole((store) => store.dolphinConnectionStatus);
   const [start, stop] = useBroadcast();
+  const { addToast } = useToasts();
+
   return (
     <InfoBlock title="Share your gameplay" className={className}>
       <BroadcastPanel
@@ -27,13 +31,18 @@ export const ShareGameplayBlock: React.FC<{ className?: string }> = ({ className
         startTime={startTime}
         endTime={endTime}
         onDisconnect={stop}
-        onStartBroadcast={(viewerId: string) => {
-          start({
-            ip,
-            port,
-            viewerId,
-            name: playKey ? playKey.connectCode : undefined,
-          });
+        onStartBroadcast={async (viewerId: string) => {
+          try {
+            await start({
+              ip,
+              port,
+              viewerId,
+              name: playKey ? playKey.connectCode : undefined,
+            });
+          } catch (err) {
+            log.error(err);
+            addToast("Error connecting to Dolphin. Ensure Dolphin is running and try again.", { appearance: "error" });
+          }
         }}
       />
     </InfoBlock>
