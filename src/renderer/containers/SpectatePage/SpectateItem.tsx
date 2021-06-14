@@ -26,7 +26,7 @@ export const SpectateItem: React.FC<SpectateItemProps> = ({ broadcasterName, bro
       >
         <UserIcon
           userId={broadcasterId}
-          size="40px"
+          size={40}
           css={css`
             margin-right: 10px;
           `}

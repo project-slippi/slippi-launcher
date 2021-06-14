@@ -1,26 +1,27 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/react";
-import Avatar from "@material-ui/core/Avatar";
 import { colors } from "common/colors";
-import crypto from "crypto";
+import Identicon from "react-identicons";
 
 export interface UserIconProps {
   userId: string;
-  size?: string;
+  size?: number;
   className?: string;
 }
-export const UserIcon: React.FC<UserIconProps> = ({ userId, className, size = "45px" }) => {
-  const hexString = crypto.createHash("md5").update(userId).digest("hex");
-  const imageUrl = `https://www.gravatar.com/avatar/${hexString}?d=identicon`;
+export const UserIcon: React.FC<UserIconProps> = ({ userId, className, size = 45 }) => {
   return (
-    <Avatar
+    <div
       className={className}
-      src={imageUrl}
       css={css`
         border: solid 3px ${colors.purpleLight};
-        height: ${size};
-        width: ${size};
+        background-color: white;
+        border-radius: 50%;
+        overflow: hidden;
+        height: ${size}px;
+        width: ${size}px;
       `}
-    />
+    >
+      <Identicon string={userId} size={size} />
+    </div>
   );
 };

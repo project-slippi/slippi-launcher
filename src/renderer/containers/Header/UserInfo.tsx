@@ -25,7 +25,7 @@ export const UserInfo: React.FC<{
         }
       `}
     >
-      {loading ? <CircularProgress color="inherit" /> : <UserIcon userId={user.uid} size="38px" />}
+      {loading ? <CircularProgress color="inherit" /> : <UserIcon userId={user.uid} size={38} />}
       <div
         css={css`
           display: flex;
