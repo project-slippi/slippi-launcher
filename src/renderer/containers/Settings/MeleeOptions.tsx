@@ -62,7 +62,7 @@ export const MeleeOptions: React.FC = () => {
           }
         />
       </SettingItem>
-      <SettingItem name="Replay Root Directory" description="The folder where your SLP files are stored.">
+      <SettingItem name="Replay Root Directory" description="The folder where your SLP replays are stored.">
         <PathInput
           value={replayDir}
           onSelect={setReplayDir}
@@ -72,7 +72,7 @@ export const MeleeOptions: React.FC = () => {
           placeholder="No folder set"
         />
       </SettingItem>
-      <SettingItem name="Spectator SLP Directory" description="The folder where spectated SLP files are stored.">
+      <SettingItem name="Spectator SLP Directory" description="The folder where spectated games should be saved.">
         <PathInput
           value={spectateDir}
           onSelect={setSpectateDir}

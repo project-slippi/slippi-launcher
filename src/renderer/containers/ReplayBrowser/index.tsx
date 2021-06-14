@@ -5,11 +5,11 @@ import { createStyles, makeStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import SearchIcon from "@material-ui/icons/Search";
-import { colors } from "common/colors";
 import { shell } from "electron";
 import { debounce } from "lodash";
 import React from "react";
 
+import { BasicFooter } from "@/components/BasicFooter";
 import { DualPane } from "@/components/DualPane";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { IconMessage } from "@/components/Message";
@@ -208,14 +208,6 @@ const Outer = styled.div`
   min-width: 0;
 `;
 
-const Footer = styled.div`
-  display: flex;
+const Footer = styled(BasicFooter)`
   justify-content: space-between;
-  whitespace: nowrap;
-  height: 50px;
-  align-items: center;
-  padding: 0 20px;
-  background-color: black;
-  color: ${colors.purpleLight};
-  font-size: 14px;
 `;

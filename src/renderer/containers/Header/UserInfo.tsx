@@ -1,20 +1,18 @@
 /** @jsx jsx */
 import { PlayKey } from "@dolphin/types";
 import { css, jsx } from "@emotion/react";
-import Avatar from "@material-ui/core/Avatar";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { colors } from "common/colors";
-import crypto from "crypto";
 import firebase from "firebase";
 import React from "react";
+
+import { UserIcon } from "@/components/UserIcon";
 
 export const UserInfo: React.FC<{
   user: firebase.User;
   playKey: PlayKey | null;
   loading: boolean;
 }> = ({ user, playKey, loading }) => {
-  const hexString = crypto.createHash("md5").update(user.uid).digest("hex");
-  const imageUrl = `https://www.gravatar.com/avatar/${hexString}?d=identicon`;
   return (
     <div
       css={css`
@@ -27,18 +25,7 @@ export const UserInfo: React.FC<{
         }
       `}
     >
-      {loading ? (
-        <CircularProgress color="inherit" />
-      ) : (
-        <Avatar
-          src={imageUrl}
-          css={css`
-            border: solid 3px ${colors.purpleLight};
-            height: 38px;
-            width: 38px;
-          `}
-        />
-      )}
+      {loading ? <CircularProgress color="inherit" /> : <UserIcon userId={user.uid} size={38} />}
       <div
         css={css`
           display: flex;
