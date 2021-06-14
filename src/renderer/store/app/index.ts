@@ -5,21 +5,15 @@ import create from "zustand";
 type StoreState = {
   initialized: boolean;
   logMessage: string;
-  snackbarContent: JSX.Element | undefined;
-  snackbarOpen: boolean;
 };
 
 type StoreReducers = {
   initialize: () => Promise<void>;
-  showSnackbar: (content?: JSX.Element) => void;
-  dismissSnackbar: () => void;
 };
 
 const initialState: StoreState = {
   initialized: false,
   logMessage: "",
-  snackbarContent: undefined,
-  snackbarOpen: false,
 };
 
 export const useApp = create<StoreState & StoreReducers>((set, get) => ({
@@ -62,16 +56,5 @@ export const useApp = create<StoreState & StoreReducers>((set, get) => ({
 
     await Promise.all(promises);
     set({ initialized: true });
-  },
-
-  showSnackbar: (content?: JSX.Element) => {
-    set({
-      snackbarContent: content,
-      snackbarOpen: true,
-    });
-  },
-
-  dismissSnackbar: () => {
-    set({ snackbarOpen: false });
   },
 }));

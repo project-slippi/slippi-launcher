@@ -77,12 +77,6 @@ const addOverrides = (theme: Theme) => {
           minWidth: "initial",
         },
       },
-      MuiSnackbarContent: {
-        root: {
-          backgroundColor: colors.purpleDark,
-          color: "inherit",
-        },
-      },
       MuiTooltip: {
         arrow: {
           color: theme.palette.secondary.main,
