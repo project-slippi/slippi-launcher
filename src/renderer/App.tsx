@@ -1,16 +1,17 @@
 import "./styles/styles.scss";
 
 import { ThemeProvider } from "@emotion/react";
-import Snackbar from "@material-ui/core/Snackbar";
 import { MuiThemeProvider, StylesProvider } from "@material-ui/core/styles";
 import log from "electron-log";
 import React from "react";
 import { hot } from "react-hot-loader/root";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { HashRouter as Router, Redirect, Route, Switch } from "react-router-dom";
+import { ToastProvider } from "react-toast-notifications";
 
 import { useApp } from "@/store/app";
 
+import { CustomToast } from "./components/CustomToast";
 import { initializeFirebase } from "./lib/firebase";
 import { useAppListeners } from "./lib/hooks/useAppListeners";
 import { slippiTheme } from "./styles/theme";
@@ -36,9 +37,6 @@ const queryClient = new QueryClient({
 
 const App: React.FC = () => {
   const initialized = useApp((state) => state.initialized);
-  const snackbarOpen = useApp((state) => state.snackbarOpen);
-  const snackbarContent = useApp((state) => state.snackbarContent);
-  const dismissSnackbar = useApp((state) => state.dismissSnackbar);
   const init = useApp((state) => state.initialize);
 
   // First init firebase
@@ -69,9 +67,6 @@ const App: React.FC = () => {
         <Redirect exact from="/" to="/landing" />
         <Route component={NotFoundView} />
       </Switch>
-      <Snackbar open={snackbarOpen} onClose={dismissSnackbar}>
-        {snackbarContent}
-      </Snackbar>
     </Router>
   );
 };
@@ -83,7 +78,9 @@ const AppWithProviders: React.FC = () => {
       <MuiThemeProvider theme={slippiTheme}>
         <ThemeProvider theme={slippiTheme}>
           <QueryClientProvider client={queryClient}>
-            <App />
+            <ToastProvider components={{ Toast: CustomToast }}>
+              <App />
+            </ToastProvider>
           </QueryClientProvider>
         </ThemeProvider>
       </MuiThemeProvider>
