@@ -16,7 +16,7 @@ export const LoginStep: React.FC = () => {
     <Box display="flex" flexDirection="column" flexGrow="1">
       <FormContainer>
         <QuickStartHeader>Login</QuickStartHeader>
-        <LoginForm />
+        <LoginForm disableAutoFocus={true} />
       </FormContainer>
     </Box>
   );

@@ -21,8 +21,9 @@ const useStyles = makeStyles(() => ({
 
 export const LoginForm: React.FC<{
   className?: string;
+  disableAutoFocus?: boolean;
   onSuccess?: () => void;
-}> = ({ className, onSuccess }) => {
+}> = ({ className, onSuccess, disableAutoFocus }) => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [showPassword, setShowPassword] = React.useState(false);
@@ -67,7 +68,7 @@ export const LoginForm: React.FC<{
             label="Email"
             variant="filled"
             value={email}
-            autoFocus={true}
+            autoFocus={!disableAutoFocus}
             fullWidth={true}
             required={true}
             onChange={(e) => setEmail(e.target.value)}
