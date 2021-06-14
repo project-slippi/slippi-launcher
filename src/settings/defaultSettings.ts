@@ -18,6 +18,6 @@ export const defaultAppSettings: AppSettings = {
     rootSlpPath: getDefaultRootSlpPath(),
     spectateSlpPath: path.join(getDefaultRootSlpPath(), "Spectate"),
     netplayDolphinPath: path.join(app.getPath("userData"), "netplay"),
-    playbackDolphinPath: path.join(app.getPath("userData"), "dolphin"),
+    playbackDolphinPath: path.join(app.getPath("userData"), "playback"),
   },
 };
