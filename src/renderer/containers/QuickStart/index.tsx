@@ -7,6 +7,7 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 
 import { StepperDots } from "@/components/StepperDots";
+import { useMousetrap } from "@/lib/hooks/useMousetrap";
 import { useSettings } from "@/lib/hooks/useSettings";
 
 import { IsoSelectionStep } from "./IsoSelectionStep";
@@ -70,6 +71,10 @@ export const QuickStart: React.FC<{
   const [steps] = React.useState(generateSteps(user, skipIsoPage));
   const [currentStep, setCurrentStep] = React.useState<QuickStartStep | null>(null);
 
+  const skipSetup = () => history.push("/main");
+
+  useMousetrap("escape", skipSetup);
+
   React.useEffect(() => {
     // If we only have the complete step then just go to the main page
     if (steps.length === 1 && steps[0] === QuickStartStep.COMPLETE) {
@@ -98,7 +103,7 @@ export const QuickStart: React.FC<{
         <Typography variant="h2">{getStepHeader(currentStep)}</Typography>
         {currentStep !== QuickStartStep.COMPLETE && (
           <div>
-            <Button onClick={() => history.push("/main")} style={{ color: "white" }}>
+            <Button onClick={skipSetup} style={{ color: "white" }}>
               Skip setup
             </Button>
           </div>
