@@ -4,6 +4,9 @@ export interface StoredConnection {
   folderPath: string;
   isRealTimeMode: boolean;
   consoleNick: string;
+  obsIP: string;
+  obsSourceName: string;
+  obsPassword: string;
 }
 
 export type AppSettings = {
