@@ -28,7 +28,7 @@ export const PlayerIndicator: React.FC<PlayerIndicatorProps> = ({ player, childr
     <div
       css={css`
         position: relative;
-        display: flex;
+        display: inline-flex;
         align-items: center;
         margin-left: 12px;
         background-color: ${color};
@@ -52,6 +52,7 @@ export const PlayerIndicator: React.FC<PlayerIndicatorProps> = ({ player, childr
           background-color: rgba(0, 0, 0, 0.3);
           padding: 5px 15px;
           border-radius: 100px;
+          white-space: nowrap;
         `}
       >
         {children}
