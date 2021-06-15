@@ -119,27 +119,27 @@ export const ReplayBrowser: React.FC = () => {
                 </List>
               }
               rightSide={
-                loading ? (
-                  <LoadingBox />
-                ) : filteredFiles.length === 0 ? (
-                  <EmptyFolder
-                    hiddenFileCount={numHiddenFiles}
-                    onClearFilter={() => {
-                      if (searchInputRef.current) {
-                        searchInputRef.current.value = "";
-                      }
-                      resetFilter();
-                    }}
-                  />
-                ) : (
-                  <div
-                    css={css`
-                      display: flex;
-                      flex-direction: column;
-                      flex: 1;
-                    `}
-                  >
-                    <FilterToolbar disabled={loading} ref={searchInputRef} />
+                <div
+                  css={css`
+                    display: flex;
+                    flex-direction: column;
+                    flex: 1;
+                  `}
+                >
+                  <FilterToolbar disabled={loading} ref={searchInputRef} />
+                  {loading ? (
+                    <LoadingBox />
+                  ) : filteredFiles.length === 0 ? (
+                    <EmptyFolder
+                      hiddenFileCount={numHiddenFiles}
+                      onClearFilter={() => {
+                        if (searchInputRef.current) {
+                          searchInputRef.current.value = "";
+                        }
+                        resetFilter();
+                      }}
+                    />
+                  ) : (
                     <FileList
                       onDelete={deleteFile}
                       onSelect={(index: number) => setSelectedItem(index)}
@@ -148,8 +148,8 @@ export const ReplayBrowser: React.FC = () => {
                       scrollRowItem={scrollRowItem}
                       setScrollRowItem={setScrollRowItem}
                     />
-                  </div>
-                )
+                  )}
+                </div>
               }
             />
           </div>
