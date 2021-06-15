@@ -49,7 +49,7 @@ export const TeamElements: React.FC<TeamElementProps> = ({ settings, metadata })
   const elements: JSX.Element[] = [];
   teams.forEach((team, idx) => {
     team.forEach((player) => {
-      const backupName = player.type === 1 ? "CPU" : "Player";
+      const backupName = player.type === 1 ? "CPU" : `Player ${player.playerIndex + 1}`;
       const names = extractPlayerNames(player.playerIndex, settings, metadata);
       elements.push(
         <PlayerIndicator key={`player-${player.playerIndex}`} player={player} isTeams={Boolean(settings.isTeams)}>
