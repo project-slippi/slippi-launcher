@@ -12,6 +12,10 @@ export const Broadcast: React.FC = () => {
       folderPath: "C:\\Users\\Nikhi\\Documents\\Slippi\\test",
       isMirroring: false,
       isRealTimeMode: true,
+      obsSettings: {
+        ip: "localhost",
+        sourceName: "dolphin",
+      },
     };
     await addMirrorConfig.renderer!.trigger({ config });
   };

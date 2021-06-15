@@ -34,6 +34,9 @@ export class MirrorManager {
       log.info("[Mirroring] Dolphin closed");
 
       this.mirrors[dolphinPlaybackId].isMirroring = false;
+      if (this.mirrors[dolphinPlaybackId].obsManager) {
+        this.mirrors[dolphinPlaybackId].obsManager!.disconnect();
+      }
     });
   }
 
@@ -104,6 +107,9 @@ export class MirrorManager {
   public async startMirroring(ip: string) {
     log.info("[Mirroring] Mirroring start");
     this.mirrors[ip].isMirroring = true;
+    if (this.mirrors[ip].obsManager) {
+      this.mirrors[ip].obsManager!.connect();
+    }
     this._playFile("", ip);
   }
 
