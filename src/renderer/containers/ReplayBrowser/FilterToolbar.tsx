@@ -6,11 +6,11 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import InputBase from "@material-ui/core/InputBase";
 import CloseIcon from "@material-ui/icons/Close";
 import SearchIcon from "@material-ui/icons/Search";
+import SyncIcon from "@material-ui/icons/Sync";
 import { debounce } from "lodash";
 import React from "react";
 
-import { Checkbox, Dropdown } from "@/components/FormInputs";
-import { RefreshButton } from "@/components/RefreshButton";
+import { Button, Checkbox, Dropdown } from "@/components/FormInputs";
 import { FilterOptions } from "@/lib/hooks/useReplayFilter";
 import { useSettings } from "@/lib/hooks/useSettings";
 import { useReplays } from "@/store/replays";
@@ -72,9 +72,9 @@ export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarPro
   return (
     <Outer>
       <ButtonContainer>
-        <RefreshButton onClick={refresh} disabled={disabled}>
+        <Button onClick={refresh} disabled={disabled} startIcon={<SyncIcon />}>
           Refresh
-        </RefreshButton>
+        </Button>
         <Dropdown
           value={value.sortByNewestFirst ? "newest" : "oldest"}
           options={[

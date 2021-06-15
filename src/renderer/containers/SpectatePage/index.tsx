@@ -4,11 +4,12 @@ import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
+import SyncIcon from "@material-ui/icons/Sync";
 import React from "react";
 
 import { DualPane } from "@/components/DualPane";
+import { Button } from "@/components/FormInputs";
 import { IconMessage } from "@/components/Message";
-import { RefreshButton } from "@/components/RefreshButton";
 import { useAccount } from "@/lib/hooks/useAccount";
 import { useBroadcastList } from "@/lib/hooks/useBroadcastList";
 
@@ -63,7 +64,9 @@ export const SpectatePage: React.FC = () => {
             >
               <h1>Spectate</h1>
               <div>
-                <RefreshButton onClick={refreshBroadcasts}>Refresh</RefreshButton>
+                <Button startIcon={<SyncIcon />} onClick={refreshBroadcasts}>
+                  Refresh
+                </Button>
                 <div
                   css={css`
                     padding-top: 20px;
