@@ -1,4 +1,5 @@
-import { addMirrorConfig, startMirroring } from "./ipc";
+import { consoleDiscovery } from "./discovery";
+import { addMirrorConfig, startDiscovery, startMirroring, stopDiscovery } from "./ipc";
 import { mirrorManager } from "./mirrorManager";
 
 addMirrorConfig.main!.handle(async ({ config }) => {
@@ -8,5 +9,15 @@ addMirrorConfig.main!.handle(async ({ config }) => {
 
 startMirroring.main!.handle(async ({ ip }) => {
   mirrorManager.startMirroring(ip);
+  return { success: true };
+});
+
+startDiscovery.main!.handle(async () => {
+  consoleDiscovery.startScanning();
+  return { success: true };
+});
+
+stopDiscovery.main!.handle(async () => {
+  consoleDiscovery.stopScanning();
   return { success: true };
 });
