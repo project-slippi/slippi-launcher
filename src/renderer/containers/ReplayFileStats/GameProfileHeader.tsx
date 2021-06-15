@@ -1,3 +1,5 @@
+/** @jsx jsx */
+import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
 import Chip from "@material-ui/core/Chip";
@@ -8,12 +10,16 @@ import Typography from "@material-ui/core/Typography";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
+import EventIcon from "@material-ui/icons/Event";
+import LandscapeIcon from "@material-ui/icons/Landscape";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
+import SportsEsportsIcon from "@material-ui/icons/SportsEsports";
+import TimerIcon from "@material-ui/icons/Timer";
 import { FileResult } from "@replays/types";
 import { GameStartType, MetadataType, PlayerType, stages as stageUtils, StatsType } from "@slippi/slippi-js";
 import { colors } from "common/colors";
 import { extractPlayerNames, PlayerNames } from "common/matchNames";
-import { convertFrameCountToDurationString, monthDayHourFormat } from "common/time";
+import { monthDayHourFormat } from "common/time";
 import _ from "lodash";
 import moment from "moment";
 import React from "react";
@@ -179,7 +185,7 @@ const Header = styled.div<{
   z-index: 1;
   top: 0;
   width: 100%;
-  border-bottom: solid 2px ${colors.grayDark};
+  border-bottom: solid 2px ${colors.purpleDark};
   background-size: cover;
   background-position: center center;
   background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0 30%, rgba(0, 0, 0, 0.8) 90%)
@@ -212,31 +218,38 @@ const GameDetails: React.FC<{
   if (duration === null || duration === undefined) {
     duration = _.get(stats, "lastFrame");
   }
-  const durationLength =
-    duration !== null && duration !== undefined ? convertFrameCountToDurationString(duration) : "Unknown";
+  const durationLength = duration !== null && duration !== undefined ? formatGameDuration(duration) : "Unknown";
 
   const displayData = [
     {
-      label: "Stage",
-      content: stageName,
-    },
-    {
-      label: "Duration",
-      content: durationLength,
-    },
-    {
-      label: "Time",
+      label: <EventIcon />,
       content: monthDayHourFormat(moment(startAtDisplay)) as string,
     },
     {
-      label: "Platform",
+      label: <LandscapeIcon />,
+      content: stageName,
+    },
+    {
+      label: <TimerIcon />,
+      content: durationLength,
+    },
+    {
+      label: <SportsEsportsIcon />,
       content: platform,
     },
   ];
 
-  const metadataElements = displayData.map((details) => {
+  const metadataElements = displayData.map((details, i) => {
     return (
-      <div key={details.label} style={{ margin: 10 }}>
+      <div
+        key={`item-${i}-${details.content}`}
+        css={css`
+          margin: 10px;
+          display: flex;
+          align-items: center;
+          font-size: 14px;
+        `}
+      >
         <DetailLabel>{details.label}</DetailLabel>
         <DetailContent>{details.content}</DetailContent>
       </div>
@@ -300,10 +313,14 @@ const Controls: React.FC<{
 };
 
 const DetailLabel = styled.label`
+  display: flex;
+  align-items: center;
   font-weight: bold;
   opacity: 0.6;
-  font-size: 14px;
   margin-right: 5px;
+  svg {
+    font-size: 22px;
+  }
 `;
 
 // `text-transform: capitalize` doesn't work unless it's an inline-block
@@ -311,5 +328,9 @@ const DetailLabel = styled.label`
 const DetailContent = styled.label`
   text-transform: capitalize;
   display: inline-block;
-  font-size: 14px;
 `;
+
+function formatGameDuration(frameCount: number): string {
+  const duration = moment.duration(frameCount / 60, "seconds");
+  return moment.utc(duration.as("milliseconds")).format("m[m] ss[s]");
+}
