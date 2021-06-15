@@ -12,9 +12,8 @@ const Outer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-top: 15px;
   & > div {
-    margin-right: 15px;
+    margin-right: 8px;
   }
 `;
 
