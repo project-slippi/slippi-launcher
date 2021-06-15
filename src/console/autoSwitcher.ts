@@ -1,3 +1,4 @@
+import log from "electron-log";
 import _ from "lodash";
 import OBSWebSocket from "obs-websocket-js";
 
@@ -50,10 +51,13 @@ export class OBSManager {
   public async connect() {
     if (this.obsIP && this.obsSourceName) {
       // if you send a password when authentication is disabled, OBS will still connect
-      await this.obs.connect({
-        address: this.obsIP,
-        password: this.obsPassword,
-      });
+      await this.obs.connect(
+        {
+          address: this.obsIP,
+          password: this.obsPassword,
+        },
+        (err) => log.error(err?.message),
+      );
       await this.obs.on("SceneItemAdded", async () => this._getSceneSources()); // eslint-disable-line
       await this.obs.on("SceneItemRemoved", async () => this._getSceneSources()); // eslint-disable-line
       await this._getSceneSources();
@@ -87,6 +91,7 @@ export class OBSManager {
 
       this.statusOutput.timeout = setTimeout(() => {
         // If we timeout, set and set status
+        log.info("we timed out");
         this._setStatus(false);
       }, timeoutLength);
     };

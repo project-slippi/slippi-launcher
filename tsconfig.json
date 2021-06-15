@@ -9,7 +9,7 @@
       "@dolphin/*": ["dolphin/*"],
       "@replays/*": ["replays/*"],
       "@settings/*": ["settings/*"],
-      "@mirror/*": ["consoleMirror/*"]
+      "@console/*": ["console/*"]
     },
     "baseUrl": "src/",
     "jsx": "react",

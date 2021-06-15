@@ -1,6 +1,6 @@
+import { addMirrorConfig, startMirroring } from "@console/ipc";
+import { MirrorDetails } from "@console/types";
 import styled from "@emotion/styled";
-import { addMirrorConfig, startMirroring } from "@mirror/ipc";
-import { MirrorDetails } from "@mirror/types";
 import { Ports } from "@slippi/slippi-js";
 import React from "react";
 
