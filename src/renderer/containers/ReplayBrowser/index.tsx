@@ -1,3 +1,5 @@
+/** @jsx jsx */
+import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
 import List from "@material-ui/core/List";
@@ -79,8 +81,7 @@ export const ReplayBrowser: React.FC = () => {
           onClose={() => setSelectedItem(null)}
         />
       ) : (
-        <>
-          <FilterToolbar disabled={loading} onChange={updateFilter} value={filterOptions} ref={searchInputRef} />
+        <React.Fragment>
           <div
             style={{
               display: "flex",
@@ -127,14 +128,28 @@ export const ReplayBrowser: React.FC = () => {
                     }}
                   />
                 ) : (
-                  <FileList
-                    onDelete={deleteFile}
-                    onSelect={(index: number) => setSelectedItem(index)}
-                    onPlay={(index: number) => playSelectedFile(index)}
-                    files={filteredFiles}
-                    scrollRowItem={scrollRowItem}
-                    setScrollRowItem={setScrollRowItem}
-                  />
+                  <div
+                    css={css`
+                      display: flex;
+                      flex-direction: column;
+                      flex: 1;
+                    `}
+                  >
+                    <FilterToolbar
+                      disabled={loading}
+                      onChange={updateFilter}
+                      value={filterOptions}
+                      ref={searchInputRef}
+                    />
+                    <FileList
+                      onDelete={deleteFile}
+                      onSelect={(index: number) => setSelectedItem(index)}
+                      onPlay={(index: number) => playSelectedFile(index)}
+                      files={filteredFiles}
+                      scrollRowItem={scrollRowItem}
+                      setScrollRowItem={setScrollRowItem}
+                    />
+                  </div>
                 )
               }
             />
@@ -150,7 +165,7 @@ export const ReplayBrowser: React.FC = () => {
               {fileErrorCount > 0 ? `${fileErrorCount} files had errors.` : ""}
             </div>
           </Footer>
-        </>
+        </React.Fragment>
       )}
     </Outer>
   );
