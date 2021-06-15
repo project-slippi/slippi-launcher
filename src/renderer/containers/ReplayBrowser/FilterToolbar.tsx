@@ -7,12 +7,13 @@ import InputBase from "@material-ui/core/InputBase";
 import CloseIcon from "@material-ui/icons/Close";
 import SearchIcon from "@material-ui/icons/Search";
 import SyncIcon from "@material-ui/icons/Sync";
-import { debounce } from "lodash";
+import debounce from "lodash/debounce";
 import React from "react";
 
 import { Button, Checkbox, Dropdown } from "@/components/FormInputs";
-import { FilterOptions } from "@/lib/hooks/useReplayFilter";
+import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
 import { useSettings } from "@/lib/hooks/useSettings";
+import { ReplaySortOption, SortDirection } from "@/lib/replayFileSort";
 import { useReplays } from "@/store/replays";
 
 const Outer = styled.div`
@@ -30,43 +31,33 @@ const ButtonContainer = styled.div`
 
 export interface FilterToolbarProps {
   disabled?: boolean;
-  value: FilterOptions;
-  onChange: (options: Partial<FilterOptions>) => void;
 }
 
 export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarProps>((props, ref) => {
-  const { disabled, onChange, value } = props;
-  const [searchText, setSearchText] = React.useState(value.searchText || "");
+  const { disabled } = props;
+  const [searchText, setSearchText] = React.useState("");
   const init = useReplays((store) => store.init);
   const rootSlpPath = useSettings((store) => store.settings.rootSlpPath);
   const currentFolder = useReplays((store) => store.currentFolder);
-
-  React.useEffect(() => {
-    if (!value.searchText) {
-      setSearchText("");
-    }
-  }, [value.searchText]);
+  const setStoreSearchText = useReplayFilter((store) => store.setSearchText);
+  const sortBy = useReplayFilter((store) => store.sortBy);
+  const hideShortGames = useReplayFilter((store) => store.hideShortGames);
+  const setHideShortGames = useReplayFilter((store) => store.setHideShortGames);
+  const setSortBy = useReplayFilter((store) => store.setSortBy);
+  const sortDirection = useReplayFilter((store) => store.sortDirection);
+  const setSortDirection = useReplayFilter((store) => store.setSortDirection);
 
   const refresh = React.useCallback(() => {
     init(rootSlpPath, true, currentFolder);
   }, [rootSlpPath, init, currentFolder]);
 
   const debounceChange = debounce((text: string) => {
-    onChange({ searchText: text });
+    setStoreSearchText(text);
   }, 100);
 
   const setNameFilter = (name: string) => {
     setSearchText(name);
     debounceChange(name);
-    // onChange({ searchText: name });
-  };
-
-  const setNewest = (shouldSortByNew: boolean) => {
-    onChange({ sortByNewestFirst: shouldSortByNew });
-  };
-
-  const setShortGameFilter = (shouldHide: boolean) => {
-    onChange({ hideShortGames: shouldHide });
   };
 
   return (
@@ -76,23 +67,49 @@ export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarPro
           Refresh
         </Button>
         <Dropdown
-          value={value.sortByNewestFirst ? "newest" : "oldest"}
+          value={{
+            key: sortBy,
+            dir: sortDirection,
+          }}
           options={[
-            { value: "newest", label: "Date added (newest)" },
-            { value: "oldest", label: "Date added (oldest)" },
+            {
+              value: {
+                key: ReplaySortOption.DATE,
+                dir: SortDirection.DESC,
+              },
+              label: "Most recent",
+            },
+            {
+              value: {
+                key: ReplaySortOption.DATE,
+                dir: SortDirection.ASC,
+              },
+              label: "Least recent",
+            },
+            {
+              value: {
+                key: ReplaySortOption.GAME_DURATION,
+                dir: SortDirection.DESC,
+              },
+              label: "Longest game",
+            },
+            {
+              value: {
+                key: ReplaySortOption.GAME_DURATION,
+                dir: SortDirection.ASC,
+              },
+              label: "Shortest game",
+            },
           ]}
           onChange={(val) => {
-            if (val === "newest") {
-              setNewest(true);
-            } else if (val === "oldest") {
-              setNewest(false);
-            }
+            setSortBy(val.key);
+            setSortDirection(val.dir);
           }}
         />
         <Checkbox
           label="Hide short games"
-          checked={value.hideShortGames}
-          onChange={() => setShortGameFilter(!value.hideShortGames)}
+          checked={hideShortGames}
+          onChange={() => setHideShortGames(!hideShortGames)}
         />
       </ButtonContainer>
       <div>
@@ -106,8 +123,8 @@ export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarPro
           `}
           endAdornment={
             <InputAdornment position="end">
-              <IconButton size="small" onClick={() => setNameFilter("")} disabled={value.searchText.length === 0}>
-                {value.searchText.length > 0 ? <CloseIcon fontSize="inherit" /> : <SearchIcon fontSize="inherit" />}
+              <IconButton size="small" onClick={() => setNameFilter("")} disabled={searchText.length === 0}>
+                {searchText.length > 0 ? <CloseIcon fontSize="inherit" /> : <SearchIcon fontSize="inherit" />}
               </IconButton>
             </InputAdornment>
           }

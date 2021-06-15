@@ -1,28 +1,34 @@
 import styled from "@emotion/styled";
 import MenuItem from "@material-ui/core/MenuItem";
-import { default as MatSelect } from "@material-ui/core/Select";
+import MatSelect from "@material-ui/core/Select";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import { colors } from "common/colors";
 import React from "react";
 
 export interface DropdownProps {
-  value: string;
+  value: any;
   options: Array<{
-    value: string;
+    value: any;
     label: string;
   }>;
-  onChange: (val: string) => void;
+  onChange: (val: any) => void;
 }
 
 export const Dropdown: React.FC<DropdownProps> = ({ value, options, onChange }) => {
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    onChange(event.target.value as string);
+    onChange(JSON.parse(event.target.value as string));
   };
+
   return (
-    <Select variant="outlined" value={value} onChange={handleChange} IconComponent={KeyboardArrowDownIcon}>
+    <Select
+      variant="outlined"
+      value={JSON.stringify(value)}
+      onChange={handleChange}
+      IconComponent={KeyboardArrowDownIcon}
+    >
       {options.map(({ value, label }) => {
         return (
-          <MenuItem key={`option-${value}`} value={value}>
+          <MenuItem key={`option-${label}`} value={JSON.stringify(value)}>
             {label}
           </MenuItem>
         );

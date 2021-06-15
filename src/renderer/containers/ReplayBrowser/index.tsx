@@ -8,7 +8,6 @@ import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import SearchIcon from "@material-ui/icons/Search";
 import { shell } from "electron";
-import { debounce } from "lodash";
 import React from "react";
 
 import { BasicFooter } from "@/components/BasicFooter";
@@ -17,6 +16,7 @@ import { LoadingScreen } from "@/components/LoadingScreen";
 import { IconMessage } from "@/components/Message";
 import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
 import { useSettings } from "@/lib/hooks/useSettings";
+import { replayFileFilter, replayFileSort } from "@/lib/replayFileSort";
 import { useReplays } from "@/store/replays";
 
 import { ReplayFileStats } from "../ReplayFileStats";
@@ -41,8 +41,14 @@ export const ReplayBrowser: React.FC = () => {
   const fileErrorCount = useReplays((store) => store.fileErrorCount);
   const rootSlpPath = useSettings((store) => store.settings.rootSlpPath);
 
-  const { filterOptions, setFilterOptions, sortAndFilterFiles, clearFilter } = useReplayFilter();
-  const filteredFiles = sortAndFilterFiles(files);
+  const sortDirection = useReplayFilter((store) => store.sortDirection);
+  const sortBy = useReplayFilter((store) => store.sortBy);
+  const searchText = useReplayFilter((store) => store.searchText);
+  const hideShortGames = useReplayFilter((store) => store.hideShortGames);
+  const resetFilter = useReplayFilter((store) => store.resetFilter);
+  const filteredFiles = files
+    .filter(replayFileFilter({ searchText, hideShortGames }))
+    .sort(replayFileSort(sortBy, sortDirection));
   const numHiddenFiles = files.length - filteredFiles.length;
 
   React.useEffect(() => {
@@ -62,8 +68,6 @@ export const ReplayBrowser: React.FC = () => {
     const filePath = filteredFiles[index].fullPath;
     playFile(filePath);
   };
-
-  const updateFilter = debounce((val) => setFilterOptions(val), 100);
 
   if (folders === null) {
     return null;
@@ -124,7 +128,7 @@ export const ReplayBrowser: React.FC = () => {
                       if (searchInputRef.current) {
                         searchInputRef.current.value = "";
                       }
-                      clearFilter();
+                      resetFilter();
                     }}
                   />
                 ) : (
@@ -135,12 +139,7 @@ export const ReplayBrowser: React.FC = () => {
                       flex: 1;
                     `}
                   >
-                    <FilterToolbar
-                      disabled={loading}
-                      onChange={updateFilter}
-                      value={filterOptions}
-                      ref={searchInputRef}
-                    />
+                    <FilterToolbar disabled={loading} ref={searchInputRef} />
                     <FileList
                       onDelete={deleteFile}
                       onSelect={(index: number) => setSelectedItem(index)}
