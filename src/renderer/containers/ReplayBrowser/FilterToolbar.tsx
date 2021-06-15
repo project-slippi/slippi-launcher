@@ -1,37 +1,30 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
-import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import InputBase from "@material-ui/core/InputBase";
-import { createStyles, makeStyles } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
-import RefreshIcon from "@material-ui/icons/Refresh";
 import SearchIcon from "@material-ui/icons/Search";
-import SortIcon from "@material-ui/icons/Sort";
-import TimerIcon from "@material-ui/icons/Timer";
 import { debounce } from "lodash";
 import React from "react";
 
+import { Checkbox, Dropdown } from "@/components/FormInputs";
+import { RefreshButton } from "@/components/RefreshButton";
 import { FilterOptions } from "@/lib/hooks/useReplayFilter";
 import { useSettings } from "@/lib/hooks/useSettings";
 import { useReplays } from "@/store/replays";
 
-const useStyles = makeStyles(() =>
-  createStyles({
-    root: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      padding: 5,
-    },
-  }),
-);
+const Outer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 10px;
+`;
 
 const ButtonContainer = styled.div`
-  button + button {
-    margin-left: 5px;
+  & > * {
+    margin-right: 20px;
   }
 `;
 
@@ -44,7 +37,6 @@ export interface FilterToolbarProps {
 export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarProps>((props, ref) => {
   const { disabled, onChange, value } = props;
   const [searchText, setSearchText] = React.useState(value.searchText || "");
-  const classes = useStyles();
   const init = useReplays((store) => store.init);
   const rootSlpPath = useSettings((store) => store.settings.rootSlpPath);
   const currentFolder = useReplays((store) => store.currentFolder);
@@ -78,35 +70,38 @@ export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarPro
   };
 
   return (
-    <div className={classes.root}>
+    <Outer>
       <ButtonContainer>
-        <Button variant="contained" size="small" startIcon={<RefreshIcon />} onClick={refresh} disabled={disabled}>
+        <RefreshButton onClick={refresh} disabled={disabled}>
           Refresh
-        </Button>
-        <Button
-          variant="contained"
-          size="small"
-          startIcon={<SortIcon />}
-          onClick={() => setNewest(!value.sortByNewestFirst)}
-        >
-          {value.sortByNewestFirst ? "Newest first" : "Oldest first"}
-        </Button>
-        <Button
-          variant="contained"
-          size="small"
-          startIcon={<TimerIcon />}
-          onClick={() => setShortGameFilter(!value.hideShortGames)}
-        >
-          {value.hideShortGames ? "Short games hidden" : "Short games shown"}
-        </Button>
+        </RefreshButton>
+        <Dropdown
+          value={value.sortByNewestFirst ? "newest" : "oldest"}
+          options={[
+            { value: "newest", label: "Date added (newest)" },
+            { value: "oldest", label: "Date added (oldest)" },
+          ]}
+          onChange={(val) => {
+            if (val === "newest") {
+              setNewest(true);
+            } else if (val === "oldest") {
+              setNewest(false);
+            }
+          }}
+        />
+        <Checkbox
+          label="Hide short games"
+          checked={value.hideShortGames}
+          onChange={() => setShortGameFilter(!value.hideShortGames)}
+        />
       </ButtonContainer>
       <div>
         <InputBase
           ref={ref}
           css={css`
             background-color: black;
-            border-radius: 100px;
-            padding: 5px 20px;
+            border-radius: 10px;
+            padding: 5px 10px;
             font-size: 12px;
           `}
           endAdornment={
@@ -123,6 +118,6 @@ export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarPro
           }}
         />
       </div>
-    </div>
+    </Outer>
   );
 });

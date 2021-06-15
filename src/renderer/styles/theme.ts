@@ -67,6 +67,11 @@ const addOverrides = (theme: Theme) => {
           overflow: "hidden",
         },
       },
+      MuiCheckbox: {
+        root: {
+          color: colors.purplePrimary,
+        },
+      },
       MuiTableCell: {
         root: {
           borderBottomColor: "#1E1F25",
