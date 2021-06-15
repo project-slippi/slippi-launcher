@@ -276,8 +276,8 @@ const Controls: React.FC<{
       }}
     >
       <div>
-        <Button variant="outlined" onClick={onPlay} startIcon={<PlayArrowIcon />}>
-          View Replay
+        <Button variant="contained" onClick={onPlay} color="primary" startIcon={<PlayArrowIcon />}>
+          Launch Replay
         </Button>
       </div>
       <div

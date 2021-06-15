@@ -91,7 +91,7 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
               <ReplayActionButton label="Show stats" onClick={onSelect}>
                 <EqualizerIcon />
               </ReplayActionButton>
-              <ReplayActionButton label="View replay" onClick={onPlay} color={colors.greenDark}>
+              <ReplayActionButton label="Launch replay" onClick={onPlay} color={colors.greenDark}>
                 <PlayCircleOutlineIcon />
               </ReplayActionButton>
             </div>
