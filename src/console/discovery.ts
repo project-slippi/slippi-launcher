@@ -13,12 +13,10 @@ export interface DiscoveredConsoleInfo {
 }
 
 export class ConnectionScanner {
-  private _isScanning = false;
   public availableConnectionsByIp: { [ip: string]: DiscoveredConsoleInfo };
   private server: dgram.Socket | null;
 
   public constructor() {
-    this._isScanning = false;
     this.availableConnectionsByIp = {};
     this.server = null;
 
@@ -163,7 +161,6 @@ export class ConnectionScanner {
     // Bind to the broadcast address
     // this.forceConsoleUiUpdate();
     await server.bind(20582);
-    this._isScanning = true;
   }
 
   public stopScanning() {

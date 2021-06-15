@@ -7,13 +7,13 @@ import React from "react";
 export const Broadcast: React.FC = () => {
   const mirrorConfigHandler = async () => {
     const config: MirrorDetails = {
-      ipAddress: "192.168.1.64",
+      ipAddress: "192.168.1.39",
       port: Ports.DEFAULT,
       folderPath: "C:\\Users\\Nikhi\\Documents\\Slippi\\test",
       isMirroring: false,
       isRealTimeMode: true,
       obsSettings: {
-        ip: "localhost",
+        ip: "localhost:4444", // should do validation to ensure port is provided or have a separate port field
         sourceName: "dolphin",
       },
     };
@@ -21,7 +21,7 @@ export const Broadcast: React.FC = () => {
   };
 
   const startMirrorHandler = async () => {
-    await startMirroring.renderer!.trigger({ ip: "192.168.1.64" });
+    await startMirroring.renderer!.trigger({ ip: "192.168.1.39" });
   };
   return (
     <Outer>

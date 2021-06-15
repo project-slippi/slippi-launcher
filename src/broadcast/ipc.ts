@@ -1,4 +1,4 @@
-import { _, EmptyPayload, makeEndpoint } from "../ipc";
+import { _, EmptyPayload, makeEndpoint, SuccessPayload } from "../ipc";
 import { BroadcasterItem, StartBroadcastConfig } from "./types";
 
 // Handlers
@@ -6,14 +6,14 @@ import { BroadcasterItem, StartBroadcastConfig } from "./types";
 export const refreshBroadcastList = makeEndpoint.main(
   "refreshBroadcastList",
   <{ authToken: string }>_,
-  <{ success: true }>_,
+  <SuccessPayload>_,
 );
 
-export const watchBroadcast = makeEndpoint.main("watchBroadcast", <{ broadcasterId: string }>_, <{ success: true }>_);
+export const watchBroadcast = makeEndpoint.main("watchBroadcast", <{ broadcasterId: string }>_, <SuccessPayload>_);
 
-export const startBroadcast = makeEndpoint.main("startBroadcast", <StartBroadcastConfig>_, <{ success: true }>_);
+export const startBroadcast = makeEndpoint.main("startBroadcast", <StartBroadcastConfig>_, <SuccessPayload>_);
 
-export const stopBroadcast = makeEndpoint.main("stopBroadcast", <EmptyPayload>_, <{ success: true }>_);
+export const stopBroadcast = makeEndpoint.main("stopBroadcast", <EmptyPayload>_, <SuccessPayload>_);
 
 // Events
 

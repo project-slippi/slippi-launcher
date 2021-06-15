@@ -108,6 +108,7 @@ export class MirrorManager {
     log.info("[Mirroring] Mirroring start");
     this.mirrors[ip].isMirroring = true;
     if (this.mirrors[ip].obsManager) {
+      log.info("[Mirroring] Connecting to OBS");
       this.mirrors[ip].obsManager!.connect();
     }
     this._playFile("", ip);
