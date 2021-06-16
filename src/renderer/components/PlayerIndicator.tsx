@@ -1,18 +1,11 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/react";
 import { PlayerType } from "@slippi/slippi-js";
-import { getPortColor, getTeamColor } from "common/colors";
+import { getColor } from "common/colors";
 import _ from "lodash";
 import React from "react";
 
 import { getCharacterIcon } from "@/lib/utils";
-
-function getColor(port: number, teamId: number | null) {
-  if (teamId !== null) {
-    return getTeamColor(teamId);
-  }
-  return getPortColor(port);
-}
 
 export interface PlayerIndicatorProps {
   player: PlayerType;

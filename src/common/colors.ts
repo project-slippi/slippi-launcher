@@ -40,3 +40,10 @@ export function getTeamColor(teamId: number): string {
       return getPortColor();
   }
 }
+
+export function getColor(port: number, teamId: number | null) {
+  if (teamId !== null) {
+    return getTeamColor(teamId);
+  }
+  return getPortColor(port);
+}
