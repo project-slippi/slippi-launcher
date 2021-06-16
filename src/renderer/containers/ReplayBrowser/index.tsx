@@ -21,6 +21,7 @@ import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
 import { useSettings } from "@/lib/hooks/useSettings";
 import { replayFileFilter, replayFileSort } from "@/lib/replayFileSort";
 import { useReplays } from "@/store/replays";
+import { withFont } from "@/styles/withFont";
 
 import { ReplayFileStats } from "../ReplayFileStats";
 import { FileList } from "./FileList";
@@ -188,7 +189,7 @@ export const ReplayBrowser: React.FC = () => {
                     font-weight: bold;
                     margin-bottom: 4px;
                     text-transform: uppercase;
-                    font-family: "Maven Pro", "Helvetica", "Arial", sans-serif;
+                    font-family: ${withFont("Maven Pro")};
                   `}
                 >
                   Current folder

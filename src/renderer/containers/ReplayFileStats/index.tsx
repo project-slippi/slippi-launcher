@@ -17,6 +17,7 @@ import { LoadingScreen } from "@/components/LoadingScreen";
 import { IconMessage } from "@/components/Message";
 import { useMousetrap } from "@/lib/hooks/useMousetrap";
 import { useReplays } from "@/store/replays";
+import { withFont } from "@/styles/withFont";
 
 import { GameProfile } from "./GameProfile";
 import { GameProfileHeader } from "./GameProfileHeader";
@@ -112,7 +113,7 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
               font-weight: bold;
               margin-bottom: 4px;
               text-transform: uppercase;
-              font-family: "Maven Pro", "Helvetica", "Arial", sans-serif;
+              font-family: ${withFont("Maven Pro")};
             `}
           >
             Current File

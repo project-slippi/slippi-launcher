@@ -7,7 +7,7 @@ import { PlayerNames } from "common/matchNames";
 import React from "react";
 
 import { getCharacterIcon } from "@/lib/utils";
-import { withMavenProFont } from "@/styles/withFont";
+import { withFont } from "@/styles/withFont";
 
 export interface PlayerInfoProps {
   player: PlayerType;
@@ -44,7 +44,7 @@ export const PlayerInfo: React.FC<PlayerInfoProps> = ({ player, names, isTeams }
           css={css`
             display: flex;
             align-items: center;
-            ${withMavenProFont}
+            font-family: ${withFont("Maven Pro")};
             font-size: 18px;
           `}
         >

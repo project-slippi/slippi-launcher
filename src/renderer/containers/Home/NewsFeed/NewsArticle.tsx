@@ -12,6 +12,8 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import TimeAgo from "react-timeago";
 
+import { withFont } from "@/styles/withFont";
+
 export interface NewsArticleProps {
   item: NewsItem;
 }
@@ -62,7 +64,7 @@ export const NewsArticle: React.FC<NewsArticleProps> = ({ item }) => {
 };
 
 const ArticleBody = styled.div`
-  font-family: "Rubik", "Helvetica", "Arial", sans-serif;
+  font-family: ${withFont("Rubik")};
   color: #ccc;
   max-width: 700px;
 
