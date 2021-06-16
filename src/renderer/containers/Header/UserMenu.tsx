@@ -14,8 +14,8 @@ import { shell } from "electron";
 import firebase from "firebase";
 import React from "react";
 
+import { logout } from "@/lib/firebase";
 import { useAccount } from "@/lib/hooks/useAccount";
-import { deletePlayKey } from "@/lib/playkey";
 
 import { UserInfo } from "./UserInfo";
 
@@ -31,8 +31,7 @@ export const UserMenu: React.FC<{
   const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
   const onLogout = async () => {
     try {
-      await firebase.auth().signOut();
-      await deletePlayKey();
+      await logout();
     } catch (err) {
       console.error(err);
       handleError(err);

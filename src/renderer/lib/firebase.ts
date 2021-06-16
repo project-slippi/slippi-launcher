@@ -1,5 +1,7 @@
 import firebase from "firebase";
 
+import { deletePlayKey } from "./playkey";
+
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
   authDomain: process.env.FIREBASE_AUTH_DOMAIN,
@@ -21,3 +23,16 @@ export function initializeFirebase(): firebase.auth.Auth {
   }
   return firebase.auth();
 }
+
+export const signUp = async (email: string, password: string) => {
+  return firebase.auth().createUserWithEmailAndPassword(email, password);
+};
+
+export const login = async (email: string, password: string) => {
+  return firebase.auth().signInWithEmailAndPassword(email, password);
+};
+
+export const logout = async () => {
+  await firebase.auth().signOut();
+  await deletePlayKey();
+};
