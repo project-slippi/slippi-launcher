@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { colors } from "common/colors";
 import { debounce } from "lodash";
 import React from "react";
 
@@ -19,7 +20,7 @@ const Column = styled.div`
 const ResizeHandle = styled.div`
   position: absolute;
   cursor: e-resize;
-  background-color: ${({ theme }) => theme.palette.secondary.main};
+  background-color: ${colors.offWhite};
   top: 0;
   height: 100%;
   opacity: 0;
@@ -67,7 +68,7 @@ export const DualPane: React.FC<{
   minWidth,
   maxWidth,
   width = 250,
-  resizeHandleWidth = 8,
+  resizeHandleWidth = 6,
   className,
   style,
 }) => {

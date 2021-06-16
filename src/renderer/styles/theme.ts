@@ -86,11 +86,11 @@ const addOverrides = (theme: Theme) => {
       },
       MuiTooltip: {
         arrow: {
-          color: theme.palette.secondary.main,
+          color: colors.offWhite,
         },
         tooltip: {
-          backgroundColor: theme.palette.secondary.main,
-          color: "black",
+          backgroundColor: colors.offWhite,
+          color: colors.purpleDarker,
           boxShadow: theme.shadows[1],
           fontSize: 13,
         },
