@@ -1,0 +1,87 @@
+/** @jsx jsx */
+import { css, jsx } from "@emotion/react";
+import styled from "@emotion/styled";
+import { PlayerType } from "@slippi/slippi-js";
+import { colors, getColor } from "common/colors";
+import { PlayerNames } from "common/matchNames";
+import React from "react";
+
+import { getCharacterIcon } from "@/lib/utils";
+import { withMavenProFont } from "@/styles/withFont";
+
+export interface PlayerInfoProps {
+  player: PlayerType;
+  names: PlayerNames;
+  isTeams?: boolean;
+}
+
+export const PlayerInfo: React.FC<PlayerInfoProps> = ({ player, names, isTeams }) => {
+  const backupName = player.type === 1 ? "CPU" : `Player ${player.port}`;
+  const charIcon = getCharacterIcon(player.characterId, player.characterColor);
+  const teamId = isTeams ? player.teamId : null;
+  return (
+    <Outer>
+      <div
+        css={css`
+          display: flex;
+          img {
+            align-self: center;
+            width: 32px;
+            margin-right: 8px;
+          }
+        `}
+      >
+        <img src={charIcon} />
+      </div>
+      <div
+        css={css`
+          display: flex;
+          justify-content: center;
+          flex-direction: column;
+        `}
+      >
+        <div
+          css={css`
+            display: flex;
+            align-items: center;
+            ${withMavenProFont}
+            font-size: 18px;
+          `}
+        >
+          <span>{names.name || names.tag || backupName}</span>
+          <span
+            css={css`
+              display: inline-block;
+              color: ${colors.grayDark};
+              font-weight: bold;
+              background-color: ${getColor(player.port, teamId)};
+              padding: 2px 6px;
+              font-size: 12px;
+              border-radius: 100px;
+              margin-left: 5px;
+            `}
+          >
+            P{player.port}
+          </span>
+        </div>
+        {names.code && (
+          <div
+            css={css`
+              color: rgba(255, 255, 255, 0.6);
+              font-size: 14px;
+              font-weight: 500;
+            `}
+          >
+            {names.code}
+          </div>
+        )}
+      </div>
+    </Outer>
+  );
+};
+
+const Outer = styled.div`
+  margin: 0 10px;
+  display: flex;
+  font-size: 22px;
+`;

@@ -2,11 +2,8 @@
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
-import Chip from "@material-ui/core/Chip";
 import IconButton from "@material-ui/core/IconButton";
-import { makeStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
-import Typography from "@material-ui/core/Typography";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
@@ -16,65 +13,21 @@ import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import SportsEsportsIcon from "@material-ui/icons/SportsEsports";
 import TimerIcon from "@material-ui/icons/Timer";
 import { FileResult } from "@replays/types";
-import { GameStartType, MetadataType, PlayerType, stages as stageUtils, StatsType } from "@slippi/slippi-js";
+import { GameStartType, MetadataType, stages as stageUtils, StatsType } from "@slippi/slippi-js";
 import { colors } from "common/colors";
-import { extractPlayerNames, PlayerNames } from "common/matchNames";
+import { extractPlayerNames } from "common/matchNames";
 import { convertFrameCountToDurationString, monthDayHourFormat } from "common/time";
 import _ from "lodash";
 import moment from "moment";
 import React from "react";
 
-import { getCharacterIcon, getStageImage } from "@/lib/utils";
+import { getStageImage } from "@/lib/utils";
 
-const useStyles = makeStyles({
-  labelSmall: {
-    fontSize: 12,
-    opacity: 0.8,
-    backgroundColor: "#2D313A",
-  },
-});
-
-interface PlayerIndicatorProps {
-  player: PlayerType;
-  names: PlayerNames;
-  isTeams?: boolean;
-}
-
-const PlayerIndicator: React.FC<PlayerIndicatorProps> = ({ player, names }) => {
-  const classes = useStyles();
-  const backupName = player.type === 1 ? "CPU" : "Player";
-  const charIcon = getCharacterIcon(player.characterId, player.characterColor);
-  // const teamId = isTeams ? player.teamId : null;
-  return (
-    <PlayerInfo>
-      <Typography variant="h6" style={{ display: "flex", alignItems: "center" }}>
-        <img src={charIcon} />
-        {names.name || names.tag || `${backupName} ${player.port}`}
-      </Typography>
-      {names.code && (
-        <div style={{ textAlign: "center" }}>
-          <Chip className={classes.labelSmall} size="small" label={names.code} />
-        </div>
-      )}
-    </PlayerInfo>
-  );
-};
-
-const PlayerInfo = styled.div`
-  margin: 0 15px;
-  display: flex;
-  flex-direction: column;
-  font-size: 22px;
-  img {
-    width: 32px;
-    margin-right: 8px;
-  }
-`;
+import { PlayerInfo } from "./PlayerInfo";
 
 const Outer = styled.div`
   margin-top: 10px;
   display: flex;
-  flex-direction: row;
   align-items: center;
 `;
 
@@ -91,17 +44,27 @@ const PlayerInfoDisplay: React.FC<PlayerInfoDisplayProps> = ({ settings, metadat
 
   const elements: JSX.Element[] = [];
   teams.forEach((team, idx) => {
-    team.forEach((player) => {
+    const teamEls = team.map((player) => {
       const names = extractPlayerNames(player.playerIndex, settings, metadata);
-      elements.push(
-        <PlayerIndicator
+      return (
+        <PlayerInfo
           key={`player-${player.playerIndex}`}
           player={player}
           isTeams={Boolean(settings.isTeams)}
           names={names}
-        />,
+        />
       );
     });
+    elements.push(
+      <div
+        key={`team-${idx}`}
+        css={css`
+          display: flex;
+        `}
+      >
+        {...teamEls}
+      </div>,
+    );
 
     // Add VS obj in between teams
     if (idx < teams.length - 1) {
@@ -109,12 +72,12 @@ const PlayerInfoDisplay: React.FC<PlayerInfoDisplayProps> = ({ settings, metadat
       elements.push(
         <div
           key={`vs-${idx}`}
-          style={{
-            fontWeight: "bold",
-            color: "rgba(255, 255, 255, 0.5)",
-            padding: "0 20px",
-            fontSize: 20,
-          }}
+          css={css`
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.5);
+            padding: 0 10px;
+            font-size: 20px;
+          `}
         >
           vs
         </div>,
@@ -152,18 +115,34 @@ export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
   return (
     <Header backgroundImage={stageImage}>
       <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
+        css={css`
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        `}
       >
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ display: "flex" }}>
+        <div
+          css={css`
+            display: flex;
+            flex-direction: column;
+          `}
+        >
+          <div
+            css={css`
+              display: flex;
+              align-items: center;
+            `}
+          >
             <div>
               <Tooltip title="Back to replays">
                 <span>
-                  <IconButton onClick={onClose} disabled={loading}>
+                  <IconButton
+                    onClick={onClose}
+                    disabled={loading}
+                    css={css`
+                      padding: 8px;
+                    `}
+                  >
                     <ArrowBackIcon />
                   </IconButton>
                 </span>
@@ -257,7 +236,16 @@ const GameDetails: React.FC<{
     );
   });
 
-  return <div style={{ display: "flex", padding: "0 10px" }}>{metadataElements}</div>;
+  return (
+    <div
+      css={css`
+        display: flex;
+        padding: 0 10px;
+      `}
+    >
+      {metadataElements}
+    </div>
+  );
 };
 
 const Controls: React.FC<{
@@ -270,11 +258,11 @@ const Controls: React.FC<{
 }> = ({ disabled, index, total, onPlay, onPrev, onNext }) => {
   return (
     <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        margin: 10,
-      }}
+      css={css`
+        display: flex;
+        flex-direction: column;
+        margin: 10px;
+      `}
     >
       <div>
         <Button variant="contained" onClick={onPlay} color="primary" startIcon={<PlayArrowIcon />}>
@@ -282,14 +270,15 @@ const Controls: React.FC<{
         </Button>
       </div>
       <div
-        style={{
-          marginTop: 10,
-          display: "grid",
-          gridAutoFlow: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          gridGap: 10,
-        }}
+        css={css`
+          margin-top: 10px;
+          display: grid;
+          grid-auto-flow: column;
+          align-items: center;
+          justify-content: center;
+          grid-gap: 10px;
+          font-size: 13px;
+        `}
       >
         <Tooltip title="Previous replay">
           <span>
@@ -298,9 +287,9 @@ const Controls: React.FC<{
             </IconButton>
           </span>
         </Tooltip>
-        <div style={{ fontSize: 12 }}>
+        <span>
           {index + 1} / {total}
-        </div>
+        </span>
         <Tooltip title="Next replay">
           <span>
             <IconButton disabled={disabled || index === total - 1} onClick={onNext} size="small">
