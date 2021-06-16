@@ -260,7 +260,7 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
           "Damage Done",
           "overall",
           "totalDamage",
-          (v, ov) => parseInt(v[0].toString(), 10) > parseInt(ov[0].toString(), 10),
+          (v, ov) => Boolean(v[0]) && Boolean(ov[0]) && parseInt(v[0].toString(), 10) > parseInt(ov[0].toString(), 10),
           (v) => v.toFixed(1),
         )}
         {renderHigherPercentFractionField("Opening Conversion Rate", "successfulConversions")}
