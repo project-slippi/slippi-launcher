@@ -1,8 +1,7 @@
 import { createMuiTheme, Theme } from "@material-ui/core/styles";
 import { colors } from "common/colors";
 
-const rubikFont = ["Rubik", "Helvetica", "Arial", "sans-serif"].join(", ");
-const mavenProFont = ["Maven Pro", "Helvetica", "Arial", "sans-serif"].join(", ");
+import { mavenProFont, rubikFont } from "./withFont";
 
 const theme = createMuiTheme({
   palette: {
