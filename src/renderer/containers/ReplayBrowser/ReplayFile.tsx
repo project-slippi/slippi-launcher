@@ -12,7 +12,7 @@ import TimerIcon from "@material-ui/icons/Timer";
 import { FileResult } from "@replays/types";
 import { stages as stageUtils } from "@slippi/slippi-js";
 import { colors } from "common/colors";
-import { monthDayHourFormat } from "common/time";
+import { convertFrameCountToDurationString, monthDayHourFormat } from "common/time";
 import _ from "lodash";
 import moment from "moment";
 import React from "react";
@@ -114,7 +114,9 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
             >
               <InfoItem label={<EventIcon />}>{monthDayHourFormat(moment(date))}</InfoItem>
 
-              {lastFrame !== null && <InfoItem label={<TimerIcon />}>{formatGameDuration(lastFrame)}</InfoItem>}
+              {lastFrame !== null && (
+                <InfoItem label={<TimerIcon />}>{convertFrameCountToDurationString(lastFrame, "m[m] ss[s]")}</InfoItem>
+              )}
               <InfoItem label={<LandscapeIcon />}>{stageName}</InfoItem>
             </div>
             <DraggableFile
@@ -216,8 +218,3 @@ const ReplayActionButton: React.FC<{
     </Tooltip>
   );
 };
-
-function formatGameDuration(frameCount: number): string {
-  const duration = moment.duration(frameCount / 60, "seconds");
-  return moment.utc(duration.as("milliseconds")).format("m[m] ss[s]");
-}

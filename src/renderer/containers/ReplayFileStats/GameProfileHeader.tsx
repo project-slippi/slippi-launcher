@@ -19,7 +19,7 @@ import { FileResult } from "@replays/types";
 import { GameStartType, MetadataType, PlayerType, stages as stageUtils, StatsType } from "@slippi/slippi-js";
 import { colors } from "common/colors";
 import { extractPlayerNames, PlayerNames } from "common/matchNames";
-import { monthDayHourFormat } from "common/time";
+import { convertFrameCountToDurationString, monthDayHourFormat } from "common/time";
 import _ from "lodash";
 import moment from "moment";
 import React from "react";
@@ -218,7 +218,8 @@ const GameDetails: React.FC<{
   if (duration === null || duration === undefined) {
     duration = _.get(stats, "lastFrame");
   }
-  const durationLength = duration !== null && duration !== undefined ? formatGameDuration(duration) : "Unknown";
+  const durationLength =
+    duration !== null && duration !== undefined ? convertFrameCountToDurationString(duration, "m[m] ss[s]") : "Unknown";
 
   const displayData = [
     {
@@ -329,8 +330,3 @@ const DetailContent = styled.label`
   text-transform: capitalize;
   display: inline-block;
 `;
-
-function formatGameDuration(frameCount: number): string {
-  const duration = moment.duration(frameCount / 60, "seconds");
-  return moment.utc(duration.as("milliseconds")).format("m[m] ss[s]");
-}
