@@ -42,7 +42,7 @@ export const PlayerIndicator: React.FC<PlayerIndicatorProps> = ({ player, childr
       />
       <div
         css={css`
-          background-color: rgba(0, 0, 0, 0.3);
+          background-color: rgba(0, 0, 0, 0.4);
           padding: 5px 15px;
           border-radius: 100px;
           white-space: nowrap;
