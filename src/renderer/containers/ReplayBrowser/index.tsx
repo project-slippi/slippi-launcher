@@ -2,11 +2,14 @@
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
+import FolderIcon from "@material-ui/icons/Folder";
 import SearchIcon from "@material-ui/icons/Search";
+import { colors } from "common/colors";
 import { shell } from "electron";
 import React from "react";
 
@@ -154,10 +157,51 @@ export const ReplayBrowser: React.FC = () => {
             />
           </div>
           <Footer>
-            <div>
-              <Tooltip title="Open folder">
-                <ReplayFolderLink onClick={() => shell.openItem(currentFolder)}>{currentFolder}</ReplayFolderLink>
-              </Tooltip>
+            <div
+              css={css`
+                display: flex;
+                align-items: center;
+              `}
+            >
+              <div>
+                <Tooltip title="Reveal location">
+                  <IconButton onClick={() => shell.openItem(currentFolder)} size="small">
+                    <FolderIcon
+                      css={css`
+                        color: ${colors.purpleLight};
+                      `}
+                    />
+                  </IconButton>
+                </Tooltip>
+              </div>
+              <div
+                css={css`
+                  display: flex;
+                  flex-direction: column;
+                  margin-left: 10px;
+                  padding-right: 20px;
+                `}
+              >
+                <div
+                  css={css`
+                    font-size: 11px;
+                    font-weight: bold;
+                    margin-bottom: 4px;
+                    text-transform: uppercase;
+                    font-family: "Maven Pro", "Helvetica", "Arial", sans-serif;
+                  `}
+                >
+                  Current folder
+                </div>
+                <div
+                  css={css`
+                    color: white;
+                    font-weight: lighter;
+                  `}
+                >
+                  {currentFolder}
+                </div>
+              </div>
             </div>
             <div style={{ textAlign: "right" }}>
               {filteredFiles.length} files found. {numHiddenFiles} files filtered.{" "}
@@ -206,13 +250,6 @@ const useStyles = makeStyles(() =>
     },
   }),
 );
-
-const ReplayFolderLink = styled.div`
-  &:hover {
-    cursor: pointer;
-    text-decoration: underline;
-  }
-`;
 
 const Outer = styled.div`
   display: flex;
