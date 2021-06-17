@@ -57,7 +57,7 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
 
   return (
     <div style={style}>
-      <Outer backgroundImage={stageImageUrl}>
+      <Outer backgroundImage={stageImageUrl ?? undefined}>
         <div
           css={css`
             display: flex;
@@ -149,13 +149,10 @@ const Outer = styled.div<{
   border-radius: 10px;
   height: 80px;
   margin: 10px;
-  background: linear-gradient(
-    to right,
-    ${colors.purpleDark} 20%,
-    transparent 35%,
-    transparent 65%,
-    ${colors.purpleDark} 80%
-  );
+  background: ${(p) =>
+    p.backgroundImage
+      ? `linear-gradient(to right, ${colors.purpleDark} 20%, transparent 35%, transparent 65%, ${colors.purpleDark} 80%)`
+      : colors.purpleDark};
   &::before {
     z-index: -1;
     position: absolute;
