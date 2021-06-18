@@ -7,6 +7,7 @@ import React from "react";
 
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { useNewsFeed } from "@/lib/hooks/useNewsFeed";
+import { usePageScrollingShortcuts } from "@/lib/hooks/useShortcuts";
 
 import { NewsArticle } from "./NewsArticle";
 
@@ -27,6 +28,8 @@ export const NewsFeed: React.FC<NewsFeedProps> = ({ numItemsToShow = 7, batchSiz
   const didError = useNewsFeed((store) => store.error);
   const allPosts = useNewsFeed((store) => store.newsItems);
   const isLoading = useNewsFeed((store) => store.fetching);
+  const mainRef = React.createRef<HTMLDivElement>();
+  usePageScrollingShortcuts(mainRef);
 
   if (isLoading) {
     return <LoadingScreen message="Loading..." />;
@@ -43,7 +46,7 @@ export const NewsFeed: React.FC<NewsFeedProps> = ({ numItemsToShow = 7, batchSiz
   const postsToShow = numItems <= 0 ? allPosts : allPosts.slice(0, numItems);
 
   return (
-    <Outer>
+    <Outer ref={mainRef}>
       <Typography variant="h4" style={{ marginBottom: 20 }}>
         Latest News
       </Typography>
