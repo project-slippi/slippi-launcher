@@ -2,7 +2,6 @@ import { viewSlpReplay } from "@dolphin/ipc";
 import { calculateGameStats, loadReplayFolder } from "@replays/ipc";
 import { FileLoadResult, FileResult, FolderResult, Progress } from "@replays/types";
 import { StatsType } from "@slippi/slippi-js";
-import { shell } from "electron";
 import { produce } from "immer";
 import path from "path";
 import create from "zustand";
