@@ -4,13 +4,11 @@ import path from "path";
 
 import { DolphinLaunchType } from "./types";
 
-
 export async function findDolphinExecutable(type: DolphinLaunchType | string, dolphinPath?: string): Promise<string> {
   // Make sure the directory actually exists
   if (!dolphinPath) {
     dolphinPath = settingsManager.getDolphinPath(type as DolphinLaunchType);
   }
-
 
   await fs.ensureDir(dolphinPath);
 
