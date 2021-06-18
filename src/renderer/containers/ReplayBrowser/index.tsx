@@ -128,6 +128,7 @@ export const ReplayBrowser: React.FC = () => {
                   />
                 ) : (
                   <FileList
+                    folderPath={currentFolder}
                     onDelete={deleteFile}
                     onSelect={(index: number) => setSelectedItem(index)}
                     onPlay={(index: number) => playSelectedFile(index)}
