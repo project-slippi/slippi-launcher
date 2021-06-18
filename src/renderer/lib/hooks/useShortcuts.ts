@@ -69,7 +69,7 @@ export const usePageScrollingShortcuts = (ref: RefObject<HTMLDivElement>) => {
 
   useEffect(() => {
     handlers.forEach((handler) => {
-      mousetrap.bind(handler.keys, handler.handler, "keydown");
+      mousetrap.bind(handler.keys, handler.handler);
     });
 
     return () => {
