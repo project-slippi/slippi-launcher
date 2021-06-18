@@ -16,7 +16,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 import { ReplayFile } from "./ReplayFile";
 
-const REPLAY_FILE_ITEM_SIZE = 85;
+const REPLAY_FILE_ITEM_SIZE = 90;
 
 const StyledListItemIcon = withStyles(() => ({
   root: {

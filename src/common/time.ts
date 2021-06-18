@@ -1,9 +1,9 @@
 import fs from "fs";
 import moment from "moment";
 
-export function convertFrameCountToDurationString(frameCount: number): string {
+export function convertFrameCountToDurationString(frameCount: number, format = "m:ss"): string {
   const duration = moment.duration(frameCount / 60, "seconds");
-  return moment.utc(duration.as("milliseconds")).format("m:ss");
+  return moment.utc(duration.as("milliseconds")).format(format);
 }
 
 function convertToDateAndTime(dateTimeString: moment.MomentInput): moment.Moment | null {

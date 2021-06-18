@@ -6,11 +6,13 @@ export const colors = {
   grayDark: "#222222",
   greenDark: "#21BA45",
   greenDarker: "#208E2C",
+  purpleLighter: "#9f74c0",
   purpleLight: "#8665A0",
   purple: "#310057",
   purpleDark: "#29133B",
   purpleDarker: "#1B0B28",
   offGray: "#2D313A",
+  offWhite: "#E0E0E0",
 };
 
 export function getPortColor(port?: number): string {
@@ -39,4 +41,11 @@ export function getTeamColor(teamId: number): string {
     default:
       return getPortColor();
   }
+}
+
+export function getColor(port: number, teamId: number | null) {
+  if (teamId !== null) {
+    return getTeamColor(teamId);
+  }
+  return getPortColor(port);
 }

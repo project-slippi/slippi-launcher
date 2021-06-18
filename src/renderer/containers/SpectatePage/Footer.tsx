@@ -10,6 +10,7 @@ import React from "react";
 
 import { BasicFooter } from "@/components/BasicFooter";
 import { useSpectateSlpPath } from "@/lib/hooks/useSettings";
+import { withFont } from "@/styles/withFont";
 
 export const Footer: React.FC = () => {
   const [spectateSlpFolder, setSpectateSlpFolder] = useSpectateSlpPath();
@@ -52,7 +53,7 @@ export const Footer: React.FC = () => {
             font-weight: bold;
             margin-bottom: 4px;
             text-transform: uppercase;
-            font-family: "Maven Pro", "Helvetica", "Arial", sans-serif;
+            font-family: ${withFont("Maven Pro")};
           `}
         >
           Save spectated games to

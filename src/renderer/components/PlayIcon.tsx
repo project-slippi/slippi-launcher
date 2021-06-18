@@ -3,6 +3,8 @@ import { css, jsx } from "@emotion/react";
 import { colors } from "common/colors";
 import React from "react";
 
+import { withFont } from "@/styles/withFont";
+
 export const PlayIcon: React.FC = ({ children }) => {
   return (
     <div
@@ -16,7 +18,7 @@ export const PlayIcon: React.FC = ({ children }) => {
           margin-left: 50%;
           transform: translateX(-50%);
           line-height: 45px;
-          font-family: "Maven Pro", "Helvetica", "Arial", sans-serif;
+          font-family: ${withFont("Maven Pro")};
           font-weight: bold;
           font-size: 16px;
           text-transform: uppercase;

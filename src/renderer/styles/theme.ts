@@ -1,8 +1,10 @@
 import { createMuiTheme, Theme } from "@material-ui/core/styles";
 import { colors } from "common/colors";
 
-const rubikFont = ["Rubik", "Helvetica", "Arial", "sans-serif"].join(", ");
-const mavenProFont = ["Maven Pro", "Helvetica", "Arial", "sans-serif"].join(", ");
+import { withFont } from "./withFont";
+
+const rubikFont = withFont("Rubik");
+const mavenProFont = withFont("Maven Pro");
 
 const theme = createMuiTheme({
   palette: {
@@ -67,6 +69,11 @@ const addOverrides = (theme: Theme) => {
           overflow: "hidden",
         },
       },
+      MuiCheckbox: {
+        root: {
+          color: colors.purplePrimary,
+        },
+      },
       MuiTableCell: {
         root: {
           borderBottomColor: "#1E1F25",
@@ -79,11 +86,11 @@ const addOverrides = (theme: Theme) => {
       },
       MuiTooltip: {
         arrow: {
-          color: theme.palette.secondary.main,
+          color: colors.offWhite,
         },
         tooltip: {
-          backgroundColor: theme.palette.secondary.main,
-          color: "black",
+          backgroundColor: colors.offWhite,
+          color: colors.purpleDarker,
           boxShadow: theme.shadows[1],
           fontSize: 13,
         },

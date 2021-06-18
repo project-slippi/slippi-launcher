@@ -2,13 +2,13 @@
 import { watchBroadcast } from "@broadcast/ipc";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
-import Button from "@material-ui/core/Button";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import SyncIcon from "@material-ui/icons/Sync";
 import React from "react";
 
 import { DualPane } from "@/components/DualPane";
+import { Button } from "@/components/FormInputs";
 import { IconMessage } from "@/components/Message";
 import { useAccount } from "@/lib/hooks/useAccount";
 import { useBroadcastList } from "@/lib/hooks/useBroadcastList";
@@ -64,23 +64,9 @@ export const SpectatePage: React.FC = () => {
             >
               <h1>Spectate</h1>
               <div>
-                <RefreshButton
-                  variant="contained"
-                  onClick={refreshBroadcasts}
-                  color="inherit"
-                  startIcon={
-                    <div
-                      css={css`
-                        display: flex;
-                        color: #9f74c0;
-                      `}
-                    >
-                      <SyncIcon fontSize="small" />
-                    </div>
-                  }
-                >
+                <Button startIcon={<SyncIcon />} onClick={refreshBroadcasts}>
                   Refresh
-                </RefreshButton>
+                </Button>
                 <div
                   css={css`
                     padding-top: 20px;
@@ -127,14 +113,6 @@ export const SpectatePage: React.FC = () => {
     </Outer>
   );
 };
-
-const RefreshButton = styled(Button)`
-  .MuiButton-label {
-    color: #1b0b28;
-    font-weight: 500;
-    font-size: 12px;
-  }
-`;
 
 const Outer = styled.div`
   display: flex;

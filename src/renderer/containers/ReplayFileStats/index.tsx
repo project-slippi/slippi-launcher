@@ -1,8 +1,10 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
+import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 import ErrorIcon from "@material-ui/icons/Error";
+import FolderIcon from "@material-ui/icons/Folder";
 import HelpIcon from "@material-ui/icons/Help";
 import { FileResult } from "@replays/types";
 import { colors } from "common/colors";
@@ -10,10 +12,12 @@ import { shell } from "electron";
 import _ from "lodash";
 import React from "react";
 
+import { BasicFooter } from "@/components/BasicFooter";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { IconMessage } from "@/components/Message";
 import { useMousetrap } from "@/lib/hooks/useMousetrap";
 import { useReplays } from "@/store/replays";
+import { withFont } from "@/styles/withFont";
 
 import { GameProfile } from "./GameProfile";
 import { GameProfileHeader } from "./GameProfileHeader";
@@ -30,19 +34,6 @@ const Content = styled.div`
   display: flex;
   flex: 1;
   overflow: auto;
-`;
-
-const Footer = styled.div`
-  height: 50px;
-  display: flex;
-  align-items: center;
-  padding: 0 20px;
-  white-space: nowrap;
-  color: ${colors.purpleLight};
-  background-color: black;
-  font-size: 14px;
-  overflow: hidden;
-  text-overflow: ellipsis;
 `;
 
 export interface ReplayFileStatsProps {
@@ -87,7 +78,7 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
       <GameProfileHeader {...props} loading={loading} stats={gameStats} onPlay={() => playFile(fullPath)} />
       <Content>
         {numPlayers !== 2 ? (
-          <IconMessage Icon={ErrorIcon} label="Only singles is supported" />
+          <IconMessage Icon={ErrorIcon} label="Game stats for doubles is unsupported" />
         ) : loading ? (
           <LoadingScreen message={"Crunching numbers..."} />
         ) : error ? (
@@ -98,20 +89,45 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
           <IconMessage Icon={HelpIcon} label="No stats computed" />
         )}
       </Content>
-      <Footer>
-        <Tooltip title="Reveal location" onClick={handleRevealLocation}>
-          <span
+      <BasicFooter>
+        <Tooltip title="Reveal location">
+          <IconButton onClick={handleRevealLocation} size="small">
+            <FolderIcon
+              css={css`
+                color: ${colors.purpleLight};
+              `}
+            />
+          </IconButton>
+        </Tooltip>
+        <div
+          css={css`
+            display: flex;
+            flex-direction: column;
+            margin-left: 10px;
+            padding-right: 20px;
+          `}
+        >
+          <div
             css={css`
-              cursor: pointer;
-              &:hover {
-                text-decoration: underline;
-              }
+              font-size: 11px;
+              font-weight: bold;
+              margin-bottom: 4px;
+              text-transform: uppercase;
+              font-family: ${withFont("Maven Pro")};
+            `}
+          >
+            Current File
+          </div>
+          <div
+            css={css`
+              color: white;
+              font-weight: lighter;
             `}
           >
             {props.file.fullPath}
-          </span>
-        </Tooltip>
-      </Footer>
+          </div>
+        </div>
+      </BasicFooter>
     </Outer>
   );
 };

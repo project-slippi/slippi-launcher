@@ -5,6 +5,8 @@ import { StatsType } from "@slippi/slippi-js";
 import _ from "lodash";
 import React from "react";
 
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+
 import { KillTable } from "./KillTable";
 import { OverallTable } from "./OverallTable";
 import { PunishTable } from "./PunishTable";
@@ -37,7 +39,9 @@ export const GameProfile: React.FC<GameProfileProps> = ({ file, stats }) => {
   return (
     <div style={{ flex: "1", margin: 20 }}>
       <StatSection title="Overall">
-        <OverallTable file={file} stats={stats} />
+        <ErrorBoundary>
+          <OverallTable file={file} stats={stats} />
+        </ErrorBoundary>
       </StatSection>
       <StatSection title="Kills">
         <KillTable file={file} stats={stats} playerIndex={0} />

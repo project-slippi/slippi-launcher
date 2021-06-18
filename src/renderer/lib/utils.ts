@@ -14,22 +14,26 @@ export const getStatic = (val: string): string => {
 };
 
 export const getCharacterIcon = (characterId: number | null, characterColor: number | null = 0): string => {
-  if (characterId === null) {
-    return getStatic(`/images/unknown.png`);
+  try {
+    if (characterId !== null) {
+      const allColors = charUtils.getCharacterInfo(characterId).colors;
+      // Make sure it's a valid color, otherwise use the default color
+      const color = characterColor !== null && characterColor <= allColors.length - 1 ? characterColor : 0;
+      return getStatic(`/images/characters/${characterId}/${color}/stock.png`);
+    }
+  } catch (err) {
+    console.warn(err);
   }
-
-  const allColors = charUtils.getCharacterInfo(characterId).colors;
-  // Make sure it's a valid color, otherwise use the default color
-  const color = characterColor !== null && characterColor <= allColors.length - 1 ? characterColor : 0;
-  return getStatic(`/images/characters/${characterId}/${color}/stock.png`);
+  return getStatic(`/images/unknown.png`);
 };
 
-export const getStageImage = (stageId: number): string => {
+export const getStageImage = (stageId: number): string | null => {
   let name = "Unknown";
   try {
     name = stageUtils.getStageName(stageId);
   } catch (err) {
-    console.error(err);
+    console.warn(err);
+    return null;
   }
   const imgSrc = getStatic(`/images/stages/${name}.png`);
   return imgSrc;

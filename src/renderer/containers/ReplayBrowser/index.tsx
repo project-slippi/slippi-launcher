@@ -1,12 +1,16 @@
+/** @jsx jsx */
+import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
+import FolderIcon from "@material-ui/icons/Folder";
 import SearchIcon from "@material-ui/icons/Search";
+import { colors } from "common/colors";
 import { shell } from "electron";
-import { debounce } from "lodash";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
 
@@ -16,7 +20,9 @@ import { LoadingScreen } from "@/components/LoadingScreen";
 import { IconMessage } from "@/components/Message";
 import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
 import { useSettings } from "@/lib/hooks/useSettings";
+import { replayFileFilter, replayFileSort } from "@/lib/replayFileSort";
 import { useReplays } from "@/store/replays";
+import { withFont } from "@/styles/withFont";
 
 import { ReplayFileStats } from "../ReplayFileStats";
 import { FileList } from "./FileList";
@@ -41,8 +47,14 @@ export const ReplayBrowser: React.FC = () => {
   const rootSlpPath = useSettings((store) => store.settings.rootSlpPath);
   const { addToast } = useToasts();
 
-  const { filterOptions, setFilterOptions, sortAndFilterFiles, clearFilter } = useReplayFilter();
-  const filteredFiles = sortAndFilterFiles(files);
+  const sortDirection = useReplayFilter((store) => store.sortDirection);
+  const sortBy = useReplayFilter((store) => store.sortBy);
+  const searchText = useReplayFilter((store) => store.searchText);
+  const hideShortGames = useReplayFilter((store) => store.hideShortGames);
+  const resetFilter = useReplayFilter((store) => store.resetFilter);
+  const filteredFiles = files
+    .filter(replayFileFilter({ searchText, hideShortGames }))
+    .sort(replayFileSort(sortBy, sortDirection));
   const numHiddenFiles = files.length - filteredFiles.length;
 
   React.useEffect(() => {
@@ -62,8 +74,6 @@ export const ReplayBrowser: React.FC = () => {
     const filePath = filteredFiles[index].fullPath;
     playFile(filePath);
   };
-
-  const updateFilter = debounce((val) => setFilterOptions(val), 100);
 
   const deleteFile = (filePath: string) => {
     const success = shell.moveItemToTrash(filePath);
@@ -93,8 +103,7 @@ export const ReplayBrowser: React.FC = () => {
           onClose={() => setSelectedItem(null)}
         />
       ) : (
-        <>
-          <FilterToolbar disabled={loading} onChange={updateFilter} value={filterOptions} ref={searchInputRef} />
+        <React.Fragment>
           <div
             style={{
               display: "flex",
@@ -128,44 +137,94 @@ export const ReplayBrowser: React.FC = () => {
                 </List>
               }
               rightSide={
-                loading ? (
-                  <LoadingBox />
-                ) : filteredFiles.length === 0 ? (
-                  <EmptyFolder
-                    hiddenFileCount={numHiddenFiles}
-                    onClearFilter={() => {
-                      if (searchInputRef.current) {
-                        searchInputRef.current.value = "";
-                      }
-                      clearFilter();
-                    }}
-                  />
-                ) : (
-                  <FileList
-                    folderPath={currentFolder}
-                    onDelete={deleteFile}
-                    onSelect={(index: number) => setSelectedItem(index)}
-                    onPlay={(index: number) => playSelectedFile(index)}
-                    files={filteredFiles}
-                    scrollRowItem={scrollRowItem}
-                    setScrollRowItem={setScrollRowItem}
-                  />
-                )
+                <div
+                  css={css`
+                    display: flex;
+                    flex-direction: column;
+                    flex: 1;
+                  `}
+                >
+                  <FilterToolbar disabled={loading} ref={searchInputRef} />
+                  {loading ? (
+                    <LoadingBox />
+                  ) : filteredFiles.length === 0 ? (
+                    <EmptyFolder
+                      hiddenFileCount={numHiddenFiles}
+                      onClearFilter={() => {
+                        if (searchInputRef.current) {
+                          searchInputRef.current.value = "";
+                        }
+                        resetFilter();
+                      }}
+                    />
+                  ) : (
+                    <FileList
+                      folderPath={currentFolder}
+                      onDelete={deleteFile}
+                      onSelect={(index: number) => setSelectedItem(index)}
+                      onPlay={(index: number) => playSelectedFile(index)}
+                      files={filteredFiles}
+                      scrollRowItem={scrollRowItem}
+                      setScrollRowItem={setScrollRowItem}
+                    />
+                  )}
+                </div>
               }
             />
           </div>
           <Footer>
-            <div>
-              <Tooltip title="Open folder">
-                <ReplayFolderLink onClick={() => shell.openItem(currentFolder)}>{currentFolder}</ReplayFolderLink>
-              </Tooltip>
+            <div
+              css={css`
+                display: flex;
+                align-items: center;
+              `}
+            >
+              <div>
+                <Tooltip title="Reveal location">
+                  <IconButton onClick={() => shell.openItem(currentFolder)} size="small">
+                    <FolderIcon
+                      css={css`
+                        color: ${colors.purpleLight};
+                      `}
+                    />
+                  </IconButton>
+                </Tooltip>
+              </div>
+              <div
+                css={css`
+                  display: flex;
+                  flex-direction: column;
+                  margin-left: 10px;
+                  padding-right: 20px;
+                `}
+              >
+                <div
+                  css={css`
+                    font-size: 11px;
+                    font-weight: bold;
+                    margin-bottom: 4px;
+                    text-transform: uppercase;
+                    font-family: ${withFont("Maven Pro")};
+                  `}
+                >
+                  Current folder
+                </div>
+                <div
+                  css={css`
+                    color: white;
+                    font-weight: lighter;
+                  `}
+                >
+                  {currentFolder}
+                </div>
+              </div>
             </div>
             <div style={{ textAlign: "right" }}>
               {filteredFiles.length} files found. {numHiddenFiles} files filtered.{" "}
               {fileErrorCount > 0 ? `${fileErrorCount} files had errors.` : ""}
             </div>
           </Footer>
-        </>
+        </React.Fragment>
       )}
     </Outer>
   );
@@ -207,13 +266,6 @@ const useStyles = makeStyles(() =>
     },
   }),
 );
-
-const ReplayFolderLink = styled.div`
-  &:hover {
-    cursor: pointer;
-    text-decoration: underline;
-  }
-`;
 
 const Outer = styled.div`
   display: flex;
