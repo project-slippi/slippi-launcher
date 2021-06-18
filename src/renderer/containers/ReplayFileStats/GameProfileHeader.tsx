@@ -206,12 +206,12 @@ const GameDetails: React.FC<{
       content: monthDayHourFormat(moment(startAtDisplay)) as string,
     },
     {
-      label: <LandscapeIcon />,
-      content: stageName,
-    },
-    {
       label: <TimerIcon />,
       content: durationLength,
+    },
+    {
+      label: <LandscapeIcon />,
+      content: stageName,
     },
     {
       label: <SportsEsportsIcon />,
