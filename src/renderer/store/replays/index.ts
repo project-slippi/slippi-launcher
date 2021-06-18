@@ -33,7 +33,7 @@ type StoreReducers = {
   selectFile: (index: number, filePath: string) => Promise<void>;
   playFile: (filePath: string) => Promise<void>;
   clearSelectedFile: () => Promise<void>;
-  deleteFile: (filePath: string) => Promise<void>;
+  removeFile: (filePath: string) => void;
   loadDirectoryList: (folder: string) => Promise<void>;
   loadFolder: (childPath?: string, forceReload?: boolean) => Promise<void>;
   toggleFolder: (fullPath: string) => void;
@@ -123,22 +123,12 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     });
   },
 
-  deleteFile: async (filePath: string) => {
+  removeFile: (filePath: string) => {
     set((state) =>
       produce(state, (draft) => {
         const index = draft.files.findIndex((f) => f.fullPath === filePath);
-        if (index === -1) {
-          console.warn(`Could not find ${filePath} in file list`);
-          return;
-        }
-
-        const success = shell.moveItemToTrash(filePath);
-        if (success) {
-          // Modify the array in place
-          draft.files.splice(index, 1);
-        } else {
-          console.warn(`Failed to delete ${filePath}`);
-        }
+        // Modify the array in place
+        draft.files.splice(index, 1);
       }),
     );
   },

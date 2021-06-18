@@ -78,7 +78,7 @@ const AppWithProviders: React.FC = () => {
       <MuiThemeProvider theme={slippiTheme}>
         <ThemeProvider theme={slippiTheme}>
           <QueryClientProvider client={queryClient}>
-            <ToastProvider components={{ Toast: CustomToast }}>
+            <ToastProvider components={{ Toast: CustomToast }} placement="bottom-right">
               <App />
             </ToastProvider>
           </QueryClientProvider>

@@ -8,6 +8,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import { shell } from "electron";
 import { debounce } from "lodash";
 import React from "react";
+import { useToasts } from "react-toast-notifications";
 
 import { BasicFooter } from "@/components/BasicFooter";
 import { DualPane } from "@/components/DualPane";
@@ -26,7 +27,7 @@ export const ReplayBrowser: React.FC = () => {
   const searchInputRef = React.createRef<HTMLInputElement>();
   const scrollRowItem = useReplays((store) => store.scrollRowItem);
   const setScrollRowItem = useReplays((store) => store.setScrollRowItem);
-  const deleteFile = useReplays((store) => store.deleteFile);
+  const removeFile = useReplays((store) => store.removeFile);
   const files = useReplays((store) => store.files);
   const selectedItem = useReplays((store) => store.selectedFile.index);
   const selectFile = useReplays((store) => store.selectFile);
@@ -38,6 +39,7 @@ export const ReplayBrowser: React.FC = () => {
   const init = useReplays((store) => store.init);
   const fileErrorCount = useReplays((store) => store.fileErrorCount);
   const rootSlpPath = useSettings((store) => store.settings.rootSlpPath);
+  const { addToast } = useToasts();
 
   const { filterOptions, setFilterOptions, sortAndFilterFiles, clearFilter } = useReplayFilter();
   const filteredFiles = sortAndFilterFiles(files);
@@ -62,6 +64,18 @@ export const ReplayBrowser: React.FC = () => {
   };
 
   const updateFilter = debounce((val) => setFilterOptions(val), 100);
+
+  const deleteFile = (filePath: string) => {
+    const success = shell.moveItemToTrash(filePath);
+    if (!success) {
+      addToast(`Error deleting file: ${filePath}`, { appearance: "error" });
+      return;
+    }
+
+    // Remove the file from the store
+    removeFile(filePath);
+    addToast(`File deleted successfully`, { appearance: "success", autoDismiss: true });
+  };
 
   if (folders === null) {
     return null;
