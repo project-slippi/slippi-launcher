@@ -95,6 +95,31 @@ export class DolphinManager extends EventEmitter {
     // No dolphins of launchType are open so lets reinstall
     downloadAndInstallDolphin(launchType, log.info, true);
   }
+
+  public async resetDolphin(launchType: DolphinLaunchType) {
+    switch (launchType) {
+      case DolphinLaunchType.NETPLAY: {
+        if (this.netplayDolphinInstance !== null) {
+          log.warn("a netplay dolphin is open");
+          return;
+        }
+
+        assertDolphinInstallation(launchType, log.info, true);
+
+        break;
+      }
+      case DolphinLaunchType.PLAYBACK: {
+        if (this.playbackDolphinInstances.size > 0) {
+          log.warn("a playback dolphin is open");
+          return;
+        }
+
+        assertDolphinInstallation(launchType, log.info, true);
+
+        break;
+      }
+    }
+  }
 }
 
 export const dolphinManager = new DolphinManager();
