@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 /** @jsx jsx */
 import { configureDolphin, reinstallDolphin } from "@dolphin/ipc";
 import { DolphinLaunchType } from "@dolphin/types";
@@ -10,19 +10,7 @@ import React from "react";
 
 import { PathInput } from "@/components/PathInput";
 import { useDolphinPath } from "@/lib/hooks/useSettings";
-=======
-import CircularProgress from "@material-ui/core/CircularProgress";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
-import CheckCircleIcon from "@material-ui/icons/CheckCircle";
-import ErrorIcon from "@material-ui/icons/Error";
-import { DolphinLaunchType } from "common/dolphin";
-import { ipcRenderer } from "electron-better-ipc";
-import React from "react";
 
-import { PathInput } from "@/components/PathInput";
-import { useSettings } from "@/store/settings";
->>>>>>> 13a2608... Add initial dolphin settings
 
 import { SettingItem } from "./SettingItem";
 
@@ -60,9 +48,6 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   const reinstallDolphinHandler = async () => {
     console.log("reinstall button clicked");
     await reinstallDolphin.renderer!.trigger({ dolphinType });
-
-
-
   };
   return (
     <div>
