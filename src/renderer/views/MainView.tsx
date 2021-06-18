@@ -19,7 +19,7 @@ import { LoginForm } from "@/containers/LoginForm";
 import { ReplayBrowser } from "@/containers/ReplayBrowser";
 import { SpectatePage } from "@/containers/SpectatePage";
 import { useLoginModal } from "@/lib/hooks/useLoginModal";
-import { useNavigationShortcuts } from "@/lib/hooks/useNavigationShortcuts";
+import { usePageNavigationShortcuts } from "@/lib/hooks/useShortcuts";
 
 interface MainMenuItem extends MenuItem {
   component: React.ReactNode;
@@ -66,7 +66,7 @@ export const MainView: React.FC = () => {
   const loginModalOpen = useLoginModal((store) => store.open);
   const defaultRoute = menuItems.find((item) => item.default);
 
-  useNavigationShortcuts(menuItems.map((item) => `${path}/${item.subpath}`));
+  usePageNavigationShortcuts(menuItems.map((item) => `${path}/${item.subpath}`));
 
   return (
     <div

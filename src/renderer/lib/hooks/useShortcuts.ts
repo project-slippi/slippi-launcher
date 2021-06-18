@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useHistory } from "react-router-dom";
 
 // Map Ctrl + 1 to be the first page, Ctrl + 2 to be the second page etc.
-export const useNavigationShortcuts = (paths: string[]) => {
+export const usePageNavigationShortcuts = (paths: string[]) => {
   const history = useHistory();
 
   // Only take the first 9 elements to map from 1-9
@@ -29,5 +29,5 @@ export const useNavigationShortcuts = (paths: string[]) => {
         mousetrap.unbind(handler.keys);
       });
     };
-  }, []);
+  }, [paths]);
 };
