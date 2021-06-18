@@ -12,6 +12,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import { colors } from "common/colors";
 import { shell } from "electron";
 import React from "react";
+import { useToasts } from "react-toast-notifications";
 
 import { BasicFooter } from "@/components/BasicFooter";
 import { DualPane } from "@/components/DualPane";
@@ -32,7 +33,7 @@ export const ReplayBrowser: React.FC = () => {
   const searchInputRef = React.createRef<HTMLInputElement>();
   const scrollRowItem = useReplays((store) => store.scrollRowItem);
   const setScrollRowItem = useReplays((store) => store.setScrollRowItem);
-  const deleteFile = useReplays((store) => store.deleteFile);
+  const removeFile = useReplays((store) => store.removeFile);
   const files = useReplays((store) => store.files);
   const selectedItem = useReplays((store) => store.selectedFile.index);
   const selectFile = useReplays((store) => store.selectFile);
@@ -44,6 +45,7 @@ export const ReplayBrowser: React.FC = () => {
   const init = useReplays((store) => store.init);
   const fileErrorCount = useReplays((store) => store.fileErrorCount);
   const rootSlpPath = useSettings((store) => store.settings.rootSlpPath);
+  const { addToast } = useToasts();
 
   const sortDirection = useReplayFilter((store) => store.sortDirection);
   const sortBy = useReplayFilter((store) => store.sortBy);
@@ -71,6 +73,18 @@ export const ReplayBrowser: React.FC = () => {
   const playSelectedFile = (index: number) => {
     const filePath = filteredFiles[index].fullPath;
     playFile(filePath);
+  };
+
+  const deleteFile = (filePath: string) => {
+    const success = shell.moveItemToTrash(filePath);
+    if (!success) {
+      addToast(`Error deleting file: ${filePath}`, { appearance: "error" });
+      return;
+    }
+
+    // Remove the file from the store
+    removeFile(filePath);
+    addToast(`File deleted successfully`, { appearance: "success", autoDismiss: true });
   };
 
   if (folders === null) {
@@ -145,6 +159,7 @@ export const ReplayBrowser: React.FC = () => {
                     />
                   ) : (
                     <FileList
+                      folderPath={currentFolder}
                       onDelete={deleteFile}
                       onSelect={(index: number) => setSelectedItem(index)}
                       onPlay={(index: number) => playSelectedFile(index)}
