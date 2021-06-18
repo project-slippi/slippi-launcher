@@ -35,10 +35,10 @@ export interface FilterToolbarProps {
 
 export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarProps>((props, ref) => {
   const { disabled } = props;
-  const [searchText, setSearchText] = React.useState("");
   const init = useReplays((store) => store.init);
   const rootSlpPath = useSettings((store) => store.settings.rootSlpPath);
   const currentFolder = useReplays((store) => store.currentFolder);
+  const storeSearchText = useReplayFilter((store) => store.searchText);
   const setStoreSearchText = useReplayFilter((store) => store.setSearchText);
   const sortBy = useReplayFilter((store) => store.sortBy);
   const hideShortGames = useReplayFilter((store) => store.hideShortGames);
@@ -46,6 +46,7 @@ export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarPro
   const setSortBy = useReplayFilter((store) => store.setSortBy);
   const sortDirection = useReplayFilter((store) => store.sortDirection);
   const setSortDirection = useReplayFilter((store) => store.setSortDirection);
+  const [searchText, setSearchText] = React.useState(storeSearchText ?? "");
 
   const refresh = React.useCallback(() => {
     init(rootSlpPath, true, currentFolder);
