@@ -1,6 +1,3 @@
-
-
-
 /** @jsx jsx */
 import { configureDolphin, reinstallDolphin } from "@dolphin/ipc";
 import { DolphinLaunchType } from "@dolphin/types";
@@ -15,8 +12,6 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import Tab from "@material-ui/core/Tab";
-import Tabs from "@material-ui/core/Tabs";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import React from "react";
@@ -62,17 +57,8 @@ function TabPanel(props) {
 }
 
 export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolphinType }) => {
-
-
   const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
   const classes = useStyles();
-  const configureDolphinHandler = async () => {
-
-  const dolphinPath = useSettings((state) => state.settings[dolphinType].path);
-  const verifying = useSettings((state) => state.verifyingDolphinPath);
-  const isValidDolphinPath = useSettings((state) => state.validDolphinPath);
-  const verifyAndSetDolphinPath = useSettings((state) => state.verifyAndSetDolphinPath);
-  const setDolphinFolderPath = useSettings((state) => state.setDolphinFolderPath);
 
   //vars for editing gecko codes/ ini files
   const [iniFiles, setIniFiles] = React.useState([]);
@@ -83,9 +69,6 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   const [geckoBody, setGeckoBody] = React.useState("");
   const [geckoCodes, setGeckoCodes] = React.useState([]);
   const [checked, setChecked] = React.useState([]);
-
-  const classes = useStyles();
-
 
   //when dolphinPath is changed, change where we read ini files from
   React.useEffect(() => {
@@ -108,7 +91,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
     }
   }, [geckoCodes]);
 
-
+  const configureDolphinHandler = async () => {
     console.log("configure dolphin pressesd");
     await configureDolphin.renderer!.trigger({ dolphinType });
   };
@@ -119,6 +102,8 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
 
   const loadGeckoCodes = async () => {
     console.log("getting geckos");
+    console.log(process.platform);
+    console.log(dolphinPath);
     const geckoCodesArr = await getGeckos(iniPath);
     setGeckoCodes(geckoCodesArr);
   };

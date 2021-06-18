@@ -12,24 +12,14 @@ import { dolphinDownloadFinished, dolphinDownloadLogReceived } from "./ipc";
 import { DolphinLaunchType } from "./types";
 import { findDolphinExecutable } from "./util";
 
-
 function logDownloadInfo(message: string): void {
   dolphinDownloadLogReceived.main!.trigger({ message });
-
 }
 
 export async function assertDolphinInstallation(
   type: DolphinLaunchType,
   log: (message: string) => void,
-  force = false,
 ): Promise<void> {
-  if (force) {
-    log(`Forcibly downloading ${type} Dolphin installation. Downloading...`);
-    const downloadedAsset = await downloadLatestDolphin(type, log);
-    log(`Installing ${type} Dolphin...`);
-    await installDolphin(type, downloadedAsset);
-    return;
-  }
   try {
     await findDolphinExecutable(type);
     log(`Found existing ${type} Dolphin executable.`);

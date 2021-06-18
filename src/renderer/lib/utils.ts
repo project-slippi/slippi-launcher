@@ -83,7 +83,7 @@ export const writeGecko = async (geckoIniPath: string, geckoTitle: string, gecko
  */
 export const getGeckos = async (geckoIniPath: string): Promise<string[]> => {
   const geckoIni = new IniFile();
-  await geckoIni.load(geckoIniPath);
+  await geckoIni.load(geckoIniPath, false);
   const geckoCodes = geckoIni.getLines("Gecko_Enabled", false);
   return geckoCodes;
 };
