@@ -1,5 +1,3 @@
-import log from "electron-log";
-
 import { connectionScanner } from "./discovery";
 import { addMirrorConfig, startDiscovery, startMirroring, stopDiscovery } from "./ipc";
 import { mirrorManager } from "./mirrorManager";
@@ -10,9 +8,7 @@ addMirrorConfig.main!.handle(async ({ config }) => {
 });
 
 startMirroring.main!.handle(async ({ ip }) => {
-  mirrorManager
-    .startMirroring(ip)
-    .catch((err: Error) => log.info(`[Mirroring] Failed to start mirroring Wii @ ${ip}\n${err}`));
+  mirrorManager.startMirroring(ip);
   return { success: true };
 });
 
