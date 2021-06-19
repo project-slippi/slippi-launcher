@@ -12,11 +12,12 @@ const FormContainer = styled.div`
 `;
 
 export const LoginStep: React.FC = () => {
+  const [isSignUp, setIsSignUp] = React.useState(false);
   return (
     <Box display="flex" flexDirection="column" flexGrow="1">
       <FormContainer>
-        <QuickStartHeader>Login</QuickStartHeader>
-        <LoginForm disableAutoFocus={true} />
+        <QuickStartHeader>{isSignUp ? "Create an account" : "Login"}</QuickStartHeader>
+        <LoginForm disableAutoFocus={true} isSignUp={isSignUp} toggleSignUp={() => setIsSignUp(!isSignUp)} />
       </FormContainer>
     </Box>
   );

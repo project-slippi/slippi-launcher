@@ -49,6 +49,7 @@ export async function fetchPlayKey(): Promise<PlayKey> {
     variables: {
       uid: user.uid,
     },
+    fetchPolicy: "network-only",
   });
   if (!res.data.user.isOnlineEnabled) {
     throw new Error("User is not allowed online");

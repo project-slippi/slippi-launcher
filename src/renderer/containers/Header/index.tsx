@@ -23,6 +23,7 @@ import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
 import { assertPlayKey } from "@/lib/playkey";
 import slippiLogo from "@/styles/images/slippi-logo.svg";
 
+import { ActivateOnlineDialog } from "./ActivateOnlineDialog";
 import { MainMenu, MenuItem } from "./MainMenu";
 import { StartGameDialog } from "./StartGameDialog";
 import { UserMenu } from "./UserMenu";
@@ -39,6 +40,7 @@ export interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
   const [startGameModalOpen, setStartGameModalOpen] = React.useState(false);
+  const [activateOnlineModal, setActivateOnlineModal] = React.useState(false);
   const openModal = useLoginModal((store) => store.openModal);
   const { open } = useSettingsModal();
   const currentUser = useAccount((store) => store.user);
@@ -58,7 +60,7 @@ export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
 
       // Ensure user has a valid play key
       if (!playKey) {
-        handleError("User has not activated online play");
+        setActivateOnlineModal(true);
         return;
       }
 
@@ -140,6 +142,11 @@ export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
         open={startGameModalOpen}
         onClose={() => setStartGameModalOpen(false)}
         onSubmit={() => onPlay(true)}
+      />
+      <ActivateOnlineDialog
+        open={activateOnlineModal}
+        onClose={() => setActivateOnlineModal(false)}
+        onSubmit={() => onPlay()}
       />
     </OuterBox>
   );
