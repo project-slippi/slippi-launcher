@@ -57,8 +57,8 @@ export class OBSManager {
         },
         (err) => log.error(err?.message),
       );
-      await this.obs.on("SceneItemAdded", async () => this._getSceneSources()); // eslint-disable-line
-      await this.obs.on("SceneItemRemoved", async () => this._getSceneSources()); // eslint-disable-line
+      this.obs.on("SceneItemAdded", async () => this._getSceneSources());
+      this.obs.on("SceneItemRemoved", async () => this._getSceneSources());
       await this._getSceneSources();
     }
   }
