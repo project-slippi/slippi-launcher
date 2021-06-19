@@ -19,33 +19,7 @@ export class ConnectionScanner {
   public constructor() {
     this.availableConnectionsByIp = {};
     this.server = null;
-
-    // TODO: Remove
-    // this.availableConnectionsByIp = {
-    //   '192.168.1.500': {
-    //     'ip': '192.168.1.500',
-    //     'mac': '1241:4214',
-    //     'name': "Station Foo",
-    //     'firstFound': moment(),
-    //   },
-    //   '192.168.1.501': {
-    //     'ip': '192.168.1.501',
-    //     'mac': '1241:4214',
-    //     'name': "Station Bar",
-    //     'firstFound': moment(),
-    //   },
-    //   '192.168.1.42': {
-    //     'ip': '192.168.1.42',
-    //     'mac': '1241:4214',
-    //     'name': "Station Zoob",
-    //     'firstFound': moment(),
-    //   },
-    // };
   }
-
-  // forceConsoleUiUpdate() {
-  //   store.dispatch(connectionStateChanged());
-  // }
 
   public getAvailable() {
     return this.availableConnectionsByIp;
@@ -75,8 +49,8 @@ export class ConnectionScanner {
     const macAddr = `${mac[0]}:${mac[1]}:${mac[2]}:${mac[3]}:${mac[4]}:${mac[5]}`;
 
     // Broadcast 'command' string
-    const cmd = msg.slice(0, 10).toString("ascii");
-    console.log(`Got broadcast ${cmd} from ${rinfo.address}:${rinfo.port}`);
+    // const cmd = msg.slice(0, 10).toString("ascii");
+    // console.log(`Got broadcast ${cmd} from ${rinfo.address}:${rinfo.port}`);
 
     // Console nickname string
     const nick = msg.slice(16, 48).toString().split("\0").shift();
@@ -159,7 +133,6 @@ export class ConnectionScanner {
     // });
 
     // Bind to the broadcast address
-    // this.forceConsoleUiUpdate();
     await server.bind(20582);
   }
 
@@ -172,8 +145,6 @@ export class ConnectionScanner {
     this.server.close();
     this.server.removeAllListeners();
     this.server = null;
-
-    // this.forceConsoleUiUpdate();
   }
 }
 
