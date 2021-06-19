@@ -10,16 +10,17 @@ export interface DiscoveredConsoleInfo {
   ip: string;
   mac: string;
   name: string | undefined;
-  timeout: NodeJS.Timeout;
-  firstFound: moment.Moment;
+  firstFound: string;
 }
 
 export class ConnectionScanner {
   public availableConnectionsByIp: { [ip: string]: DiscoveredConsoleInfo };
+  private timeoutsByIp: { [ip: string]: NodeJS.Timeout };
   private server: dgram.Socket | null;
 
   public constructor() {
     this.availableConnectionsByIp = {};
+    this.timeoutsByIp = {};
     this.server = null;
   }
 
@@ -61,7 +62,7 @@ export class ConnectionScanner {
     const ip = rinfo.address;
 
     const previous = this.availableConnectionsByIp[ip];
-    const previousTimeoutHandler = previous.timeout;
+    const previousTimeoutHandler = this.timeoutsByIp[ip];
     const previousFirstFound = previous.firstFound;
 
     // If we have received a new message from this IP, clear the previous
@@ -81,9 +82,10 @@ export class ConnectionScanner {
       ip: ip,
       mac: macAddr,
       name: nick,
-      timeout: timeoutHandler,
-      firstFound: previousFirstFound || moment(),
+      firstFound: previousFirstFound || moment().toISOString(),
     };
+
+    this.timeoutsByIp[ip] = timeoutHandler;
 
     if (!previous) {
       discoverConsoleFound.main!.trigger({ console: this.availableConnectionsByIp[ip] });
