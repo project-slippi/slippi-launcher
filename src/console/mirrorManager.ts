@@ -11,19 +11,19 @@ import {
   SlpFileWriterEvent,
   SlpStreamEvent,
 } from "@slippi/slippi-js";
+import { app } from "electron";
 import log from "electron-log";
 
 import { AutoSwitcher } from "./autoSwitcher";
-import { MirrorDetails } from "./types";
+import { MirrorConfig, MirrorDetails } from "./types";
 
 /**
  * Responsible for setting up and keeping track of active console connections and mirroring.
  */
 export class MirrorManager {
-  private mirrors: { [ipAddress: string]: MirrorDetails };
+  private mirrors: Record<string, MirrorDetails> = {};
 
   public constructor() {
-    this.mirrors = {};
     dolphinManager.on("dolphin-closed", (dolphinPlaybackId: string) => {
       const broadcastInfo = Object.values(this.mirrors).find((info) => info.ipAddress === dolphinPlaybackId);
       if (!broadcastInfo) {
@@ -33,14 +33,19 @@ export class MirrorManager {
 
       log.info("[Mirroring] Dolphin closed");
 
-      this.mirrors[dolphinPlaybackId].isMirroring = false;
-      if (this.mirrors[dolphinPlaybackId].autoSwitcher) {
-        this.mirrors[dolphinPlaybackId].autoSwitcher!.disconnect();
+      const details = this.mirrors[dolphinPlaybackId];
+      if (!details) {
+        return;
+      }
+
+      details.isMirroring = false;
+      if (details.autoSwitcher) {
+        details.autoSwitcher.disconnect();
       }
     });
   }
 
-  public async start(config: MirrorDetails) {
+  public async start(config: MirrorConfig) {
     if (this.mirrors[config.ipAddress]) {
       log.info(`[Mirroring] already connected to Wii @ ${config.ipAddress}`);
       return;
@@ -48,8 +53,8 @@ export class MirrorManager {
 
     log.info("[Mirroring] Setting up mirror");
 
-    const fileWriter = new SlpFileWriter({ folderPath: config.folderPath, consoleNickname: "unknown" });
-    config.fileWriter = fileWriter;
+    const folderPath = config.folderPath ?? app.getPath("temp");
+    const fileWriter = new SlpFileWriter({ folderPath, consoleNickname: "unknown" });
     fileWriter.on(SlpFileWriterEvent.NEW_FILE, (currFilePath) => {
       this._playFile(currFilePath, config.ipAddress);
     });
@@ -60,56 +65,79 @@ export class MirrorManager {
       connection.on("handshake", (details: ConnectionDetails) => {
         log.info("[Mirroring] Got handshake from wii");
         log.info(details);
-        config.fileWriter!.updateSettings({ consoleNickname: details.consoleNick });
+        fileWriter.updateSettings({ consoleNickname: details.consoleNick });
         // this.forceConsoleUiUpdate();
       });
       // connection.on("statusChange", (status) => this.setStatus(status));
-      connection.on("data", (data) => config.fileWriter!.write(data));
+      connection.on("data", (data) => fileWriter.write(data));
     });
-    connection.connect(config.ipAddress, config.port || Ports.DEFAULT);
+    connection.connect(config.ipAddress, config.port ?? Ports.DEFAULT);
 
-    config.connection = connection;
-
+    let autoSwitcher: AutoSwitcher | null = null;
     if (config.autoSwitcherSettings) {
-      config.autoSwitcher = new AutoSwitcher(config.autoSwitcherSettings);
+      autoSwitcher = new AutoSwitcher(config.autoSwitcherSettings);
     }
 
     fileWriter.on(SlpStreamEvent.COMMAND, (data) => {
+      if (!autoSwitcher) {
+        return;
+      }
+
       const { command, payload } = data;
       switch (command) {
-        case Command.POST_FRAME_UPDATE:
+        case Command.POST_FRAME_UPDATE: {
+          const frame = (payload as PostFrameUpdateType).frame;
           // Only show OBS source in the later portion of the game loading stage
-          if ((payload as PostFrameUpdateType).frame! >= -60) {
-            config.autoSwitcher!.handleStatusOutput();
+          if (frame !== null && frame >= -60) {
+            autoSwitcher.handleStatusOutput();
           }
           break;
-        case Command.GAME_END:
+        }
+        case Command.GAME_END: {
           if ((payload as GameEndType).gameEndMethod !== 7) {
-            config.autoSwitcher!.handleStatusOutput(700);
+            autoSwitcher.handleStatusOutput(700);
           }
           break;
-        default:
-          break;
+        }
       }
     });
 
     // add mirror config to mirrors so we can track it
-    this.mirrors[config.ipAddress] = config;
+    this.mirrors[config.ipAddress] = {
+      ...config,
+      fileWriter,
+      connection,
+      autoSwitcher,
+    };
   }
 
   public disconnect(ip: string) {
     log.info("[Mirroring] Disconnect request");
-    this.mirrors[ip].connection!.disconnect();
-    this.mirrors[ip].autoSwitcher!.disconnect();
+    const details = this.mirrors[ip];
+    if (!details) {
+      console.warn(`Error disconnecting. No mirror details found for: ${ip}`);
+      return;
+    }
+
+    details.connection.disconnect();
+    if (details.autoSwitcher) {
+      details.autoSwitcher.disconnect();
+    }
     delete this.mirrors[ip];
   }
 
   public async startMirroring(ip: string) {
     log.info("[Mirroring] Mirroring start");
-    this.mirrors[ip].isMirroring = true;
-    if (this.mirrors[ip].autoSwitcher) {
+    const details = this.mirrors[ip];
+    if (!details) {
+      console.warn(`Could not start mirroring. No mirror details found for: ${ip}`);
+      return;
+    }
+
+    details.isMirroring = true;
+    if (details.autoSwitcher) {
       log.info("[Mirroring] Connecting to OBS");
-      this.mirrors[ip].autoSwitcher!.connect();
+      details.autoSwitcher.connect();
     }
     this._playFile("", ip);
   }

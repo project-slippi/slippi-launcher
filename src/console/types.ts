@@ -6,16 +6,16 @@ export interface MirrorConfig {
   id?: number;
   ipAddress: string;
   port: number;
-  folderPath: string;
-  isRealTimeMode: boolean;
-  autoSwitcherSettings?: AutoSwitcherSettings | null;
+  folderPath?: string;
+  isRealTimeMode?: boolean;
+  autoSwitcherSettings?: AutoSwitcherSettings;
 }
 
 export interface MirrorDetails extends MirrorConfig {
   isMirroring?: boolean;
-  connection?: ConsoleConnection | null;
-  fileWriter?: SlpFileWriter | null;
-  autoSwitcher?: AutoSwitcher | null;
+  connection: ConsoleConnection;
+  fileWriter: SlpFileWriter;
+  autoSwitcher: AutoSwitcher | null;
 }
 
 export interface AutoSwitcherSettings {
