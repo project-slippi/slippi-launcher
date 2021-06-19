@@ -49,7 +49,7 @@ export class ConnectionScanner {
     for (let i = 10; i <= 15; i += 1) {
       mac.push(msg.readUInt8(i).toString(16).padStart(2, "0"));
     }
-    const macAddr = `${mac[0]}:${mac[1]}:${mac[2]}:${mac[3]}:${mac[4]}:${mac[5]}`;
+    const macAddr = mac.join(":");
 
     // Broadcast 'command' string
     // const cmd = msg.slice(0, 10).toString("ascii");
