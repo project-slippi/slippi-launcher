@@ -14,7 +14,7 @@ import firebase from "firebase";
 import throttle from "lodash/throttle";
 import React from "react";
 
-import { useAppInitialization, useAppStore } from "@/store/app";
+import { useAppInitialization, useAppStore } from "@/lib/hooks/useApp";
 import { useConsole } from "@/store/console";
 import { useReplays } from "@/store/replays";
 

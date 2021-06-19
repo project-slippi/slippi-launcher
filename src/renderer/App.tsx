@@ -8,7 +8,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { HashRouter as Router, Redirect, Route, Switch } from "react-router-dom";
 import { ToastProvider } from "react-toast-notifications";
 
-import { useAppStore } from "@/store/app";
+import { useAppStore } from "@/lib/hooks/useApp";
 
 import { CustomToast } from "./components/CustomToast";
 import { useAppListeners } from "./lib/hooks/useAppListeners";
