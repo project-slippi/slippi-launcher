@@ -1,5 +1,4 @@
 import log from "electron-log";
-import _ from "lodash";
 import OBSWebSocket from "obs-websocket-js";
 
 import { OBSSettings } from "./types";
@@ -38,14 +37,14 @@ export class OBSManager {
     // eslint-disable-line
     const res = await this.obs.send("GetSceneList");
     const scenes = res.scenes || [];
-    const pairs = _.flatMap(scenes, (scene) => {
+    const pairs = scenes.flatMap((scene) => {
       const sources = scene.sources || [];
-      return _.map(sources, (source) => ({
+      return sources.map((source) => ({
         scene: scene.name,
         source: source.name,
       }));
     });
-    this.obsPairs = _.filter(pairs, (pair) => pair.source === this.obsSourceName);
+    this.obsPairs = pairs.filter((pair) => pair.source === this.obsSourceName);
   };
 
   public async connect() {
@@ -65,7 +64,7 @@ export class OBSManager {
   }
 
   private _updateSourceVisibility(show: boolean) {
-    _.forEach(this.obsPairs, (pair) => {
+    this.obsPairs.forEach((pair) => {
       this.obs.send("SetSceneItemProperties", {
         "scene-name": pair.scene,
         item: { name: pair.source },

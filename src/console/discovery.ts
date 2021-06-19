@@ -1,5 +1,4 @@
 import dgram from "dgram";
-import _ from "lodash";
 import moment from "moment";
 
 import { discoverConsoleFound, discoverConsoleLost } from "./ipc";
@@ -58,9 +57,9 @@ export class ConnectionScanner {
     // The Wii's IP address
     const ip = rinfo.address;
 
-    const previous = _.get(this.availableConnectionsByIp, ip);
-    const previousTimeoutHandler = _.get(previous, "timeout");
-    const previousFirstFound = _.get(previous, "firstFound");
+    const previous = this.availableConnectionsByIp[ip];
+    const previousTimeoutHandler = previous.timeout;
+    const previousFirstFound = previous.firstFound;
 
     // If we have received a new message from this IP, clear the previous
     // timeout hanlder so that this IP doesn't get removed
