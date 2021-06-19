@@ -3,6 +3,9 @@ import moment from "moment";
 
 import { discoverConsoleFound, discoverConsoleLost } from "./ipc";
 
+const SECONDS = 1000;
+const CONSOLE_EXPIRY_TIMEOUT = 35 * SECONDS;
+
 export interface DiscoveredConsoleInfo {
   ip: string;
   mac: string;
@@ -72,7 +75,7 @@ export class ConnectionScanner {
       discoverConsoleLost.main!.trigger({ console: this.availableConnectionsByIp[ip] });
       delete this.availableConnectionsByIp[ip];
       // this.forceConsoleUiUpdate();
-    }, 35000);
+    }, CONSOLE_EXPIRY_TIMEOUT);
 
     this.availableConnectionsByIp[ip] = {
       ip: ip,
