@@ -2,17 +2,15 @@ import "./styles/styles.scss";
 
 import { ThemeProvider } from "@emotion/react";
 import { MuiThemeProvider, StylesProvider } from "@material-ui/core/styles";
-import log from "electron-log";
 import React from "react";
 import { hot } from "react-hot-loader/root";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { HashRouter as Router, Redirect, Route, Switch } from "react-router-dom";
 import { ToastProvider } from "react-toast-notifications";
 
-import { useApp } from "@/store/app";
+import { useAppStore } from "@/store/app";
 
 import { CustomToast } from "./components/CustomToast";
-import { initializeFirebase } from "./lib/firebase";
 import { useAppListeners } from "./lib/hooks/useAppListeners";
 import { slippiTheme } from "./styles/theme";
 import { LandingView } from "./views/LandingView";
@@ -36,20 +34,7 @@ const queryClient = new QueryClient({
 });
 
 const App: React.FC = () => {
-  const initialized = useApp((state) => state.initialized);
-  const init = useApp((state) => state.initialize);
-
-  // First init firebase
-  React.useEffect(() => {
-    // Initialize the Firebase app if we haven't already
-    try {
-      initializeFirebase();
-    } catch (err) {
-      log.error("Error initializing firebase. Did you forget to create a .env file from the .env.example file?");
-    }
-
-    init();
-  }, []);
+  const initialized = useAppStore((state) => state.initialized);
 
   // Then add the rest of the app listeners
   useAppListeners();

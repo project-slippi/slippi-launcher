@@ -5,13 +5,16 @@ import {
   dolphinStatusChanged,
   slippiStatusChanged,
 } from "@broadcast/ipc";
+import { dolphinDownloadLogReceived } from "@dolphin/ipc";
 import { loadProgressUpdated } from "@replays/ipc";
 import { settingsUpdated } from "@settings/ipc";
 import { checkValidIso } from "common/ipc";
+import log from "electron-log";
 import firebase from "firebase";
 import throttle from "lodash/throttle";
 import React from "react";
 
+import { useAppInitialization, useAppStore } from "@/store/app";
 import { useConsole } from "@/store/console";
 import { useReplays } from "@/store/replays";
 
@@ -22,10 +25,22 @@ import { useNewsFeed } from "./useNewsFeed";
 import { useSettings } from "./useSettings";
 
 export const useAppListeners = () => {
+  // Handle app initalization
+  const initialized = useAppStore((store) => store.initialized);
+  const initializeApp = useAppInitialization();
+  React.useEffect(() => {
+    initializeApp();
+  }, []);
+
   // Subscribe to user auth changes to keep store up to date
   const setUser = useAccount((store) => store.setUser);
   const refreshPlayKey = useAccount((store) => store.refreshPlayKey);
   React.useEffect(() => {
+    // Only start subscribing to user change events after we've finished initializing
+    if (!initialized) {
+      return;
+    }
+
     try {
       const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
         // Update the user
@@ -38,9 +53,16 @@ export const useAppListeners = () => {
       // Unsubscribe on unmount
       return unsubscribe;
     } catch (err) {
-      console.log("Skipping setting up the unsubscribe beacuse Firebase isn't initialized");
-      return;
+      console.warn(err);
     }
+
+    return;
+  }, [initialized]);
+
+  const setLogMessage = useAppStore((store) => store.setLogMessage);
+  dolphinDownloadLogReceived.renderer!.useEvent(async ({ message }) => {
+    log.info(message);
+    setLogMessage(message);
   }, []);
 
   const setSlippiConnectionStatus = useConsole((store) => store.setSlippiConnectionStatus);

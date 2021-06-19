@@ -16,12 +16,29 @@ const firebaseConfig = {
 /**
  * Initialize Firebase
  */
-export function initializeFirebase(): firebase.auth.Auth {
+export async function initializeFirebase(): Promise<firebase.User | null> {
   // Initialize the Firebase app if we haven't already
-  if (firebase.apps.length === 0) {
-    firebase.initializeApp(firebaseConfig);
+  if (firebase.apps.length !== 0) {
+    // We've already initialized the app before so just return the current user
+    return Promise.resolve(firebase.auth().currentUser);
   }
-  return firebase.auth();
+
+  return new Promise((resolve, reject) => {
+    try {
+      firebase.initializeApp(firebaseConfig);
+
+      const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+        // Unsubscribe after the first event
+        unsubscribe();
+
+        // Return the user
+        resolve(user);
+      });
+    } catch (err) {
+      console.warn("Error initializing firebase. Did you create a .env file from .env.example?");
+      reject(err);
+    }
+  });
 }
 
 export const signUp = async (email: string, password: string) => {

@@ -15,6 +15,7 @@ export const useAccount = create(
     (set, get) => ({
       setUser: (user: firebase.User | null) => set({ user }),
       setLoading: (loading: boolean) => set({ loading }),
+      setPlayKey: (playKey: PlayKey | null) => set({ playKey }),
       refreshPlayKey: async (): Promise<void> => {
         // We're already refreshing the key
         if (get().loading) {
