@@ -94,7 +94,7 @@ export class ConnectionScanner {
   };
 
   private _handleError = (err: Error) => {
-    console.log(`server error:\n${err.stack}`);
+    console.warn("Console discovery server error: ", err);
     this.stopScanning();
   };
 
@@ -135,7 +135,7 @@ export class ConnectionScanner {
     // });
 
     // Bind to the broadcast address
-    await server.bind(20582);
+    server.bind(20582);
   }
 
   public stopScanning() {
@@ -150,4 +150,4 @@ export class ConnectionScanner {
   }
 }
 
-export const consoleDiscovery = new ConnectionScanner();
+export const connectionScanner = new ConnectionScanner();

@@ -1,6 +1,6 @@
 import log from "electron-log";
 
-import { consoleDiscovery } from "./discovery";
+import { connectionScanner } from "./discovery";
 import { addMirrorConfig, startDiscovery, startMirroring, stopDiscovery } from "./ipc";
 import { mirrorManager } from "./mirrorManager";
 
@@ -17,11 +17,11 @@ startMirroring.main!.handle(async ({ ip }) => {
 });
 
 startDiscovery.main!.handle(async () => {
-  consoleDiscovery.startScanning();
+  connectionScanner.startScanning();
   return { success: true };
 });
 
 stopDiscovery.main!.handle(async () => {
-  consoleDiscovery.stopScanning();
+  connectionScanner.stopScanning();
   return { success: true };
 });
