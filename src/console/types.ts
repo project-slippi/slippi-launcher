@@ -1,22 +1,24 @@
 import { ConsoleConnection, SlpFileWriter } from "@slippi/slippi-js";
 
-import { OBSManager } from "./autoSwitcher";
+import { AutoSwitcher } from "./autoSwitcher";
 
-export interface MirrorDetails {
+export interface MirrorConfig {
   id?: number;
   ipAddress: string;
   port: number;
   folderPath: string;
   isRealTimeMode: boolean;
-  isRelaying?: boolean;
-  connection?: ConsoleConnection | null;
-  fileWriter?: SlpFileWriter | null;
-  isMirroring?: boolean;
-  obsSettings?: OBSSettings | null;
-  obsManager?: OBSManager | null;
+  autoSwitcherSettings?: AutoSwitcherSettings | null;
 }
 
-export interface OBSSettings {
+export interface MirrorDetails extends MirrorConfig {
+  isMirroring?: boolean;
+  connection?: ConsoleConnection | null;
+  fileWriter?: SlpFileWriter | null;
+  autoSwitcher?: AutoSwitcher | null;
+}
+
+export interface AutoSwitcherSettings {
   sourceName: string;
   ip: string;
   password?: string;

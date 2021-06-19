@@ -13,7 +13,7 @@ import {
 } from "@slippi/slippi-js";
 import log from "electron-log";
 
-import { OBSManager } from "./autoSwitcher";
+import { AutoSwitcher } from "./autoSwitcher";
 import { MirrorDetails } from "./types";
 
 /**
@@ -34,8 +34,8 @@ export class MirrorManager {
       log.info("[Mirroring] Dolphin closed");
 
       this.mirrors[dolphinPlaybackId].isMirroring = false;
-      if (this.mirrors[dolphinPlaybackId].obsManager) {
-        this.mirrors[dolphinPlaybackId].obsManager!.disconnect();
+      if (this.mirrors[dolphinPlaybackId].autoSwitcher) {
+        this.mirrors[dolphinPlaybackId].autoSwitcher!.disconnect();
       }
     });
   }
@@ -70,8 +70,8 @@ export class MirrorManager {
 
     config.connection = connection;
 
-    if (config.obsSettings) {
-      config.obsManager = new OBSManager(config.obsSettings);
+    if (config.autoSwitcherSettings) {
+      config.autoSwitcher = new AutoSwitcher(config.autoSwitcherSettings);
     }
 
     fileWriter.on(SlpStreamEvent.COMMAND, (data) => {
@@ -80,12 +80,12 @@ export class MirrorManager {
         case Command.POST_FRAME_UPDATE:
           // Only show OBS source in the later portion of the game loading stage
           if ((payload as PostFrameUpdateType).frame! >= -60) {
-            config.obsManager!.handleStatusOutput();
+            config.autoSwitcher!.handleStatusOutput();
           }
           break;
         case Command.GAME_END:
           if ((payload as GameEndType).gameEndMethod !== 7) {
-            config.obsManager!.handleStatusOutput(700);
+            config.autoSwitcher!.handleStatusOutput(700);
           }
           break;
         default:
@@ -100,16 +100,16 @@ export class MirrorManager {
   public disconnect(ip: string) {
     log.info("[Mirroring] Disconnect request");
     this.mirrors[ip].connection!.disconnect();
-    this.mirrors[ip].obsManager!.disconnect();
+    this.mirrors[ip].autoSwitcher!.disconnect();
     delete this.mirrors[ip];
   }
 
   public async startMirroring(ip: string) {
     log.info("[Mirroring] Mirroring start");
     this.mirrors[ip].isMirroring = true;
-    if (this.mirrors[ip].obsManager) {
+    if (this.mirrors[ip].autoSwitcher) {
       log.info("[Mirroring] Connecting to OBS");
-      this.mirrors[ip].obsManager!.connect();
+      this.mirrors[ip].autoSwitcher!.connect();
     }
     this._playFile("", ip);
   }

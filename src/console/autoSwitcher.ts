@@ -1,9 +1,9 @@
 import log from "electron-log";
 import OBSWebSocket from "obs-websocket-js";
 
-import { OBSSettings } from "./types";
+import { AutoSwitcherSettings } from "./types";
 
-export class OBSManager {
+export class AutoSwitcher {
   private obs: OBSWebSocket;
   private obsSourceName: string;
   private obsIP: string;
@@ -11,7 +11,7 @@ export class OBSManager {
   private statusOutput: { status: boolean; timeout: NodeJS.Timeout | null };
   private obsPairs: { scene: string; source: string }[];
 
-  public constructor(settings: OBSSettings) {
+  public constructor(settings: AutoSwitcherSettings) {
     this.obs = new OBSWebSocket();
     this.obsSourceName = settings.sourceName;
     this.obsIP = settings.ip;
@@ -27,7 +27,7 @@ export class OBSManager {
     this.obs.disconnect();
   }
 
-  public updateSettings(settings: OBSSettings) {
+  public updateSettings(settings: AutoSwitcherSettings) {
     this.obsIP = settings.ip;
     this.obsSourceName = settings.sourceName;
     this.obsPassword = settings.password;

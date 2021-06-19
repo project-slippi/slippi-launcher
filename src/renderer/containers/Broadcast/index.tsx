@@ -1,5 +1,5 @@
 import { addMirrorConfig, discoverConsoleFound, startDiscovery, startMirroring } from "@console/ipc";
-import { MirrorDetails } from "@console/types";
+import { MirrorConfig } from "@console/types";
 import styled from "@emotion/styled";
 import { Ports } from "@slippi/slippi-js";
 import log from "electron-log";
@@ -7,13 +7,12 @@ import React from "react";
 
 export const Broadcast: React.FC = () => {
   const mirrorConfigHandler = async () => {
-    const config: MirrorDetails = {
+    const config: MirrorConfig = {
       ipAddress: "192.168.1.39",
       port: Ports.DEFAULT,
       folderPath: "C:\\Users\\Nikhi\\Documents\\Slippi\\test",
-      isMirroring: false,
       isRealTimeMode: true,
-      obsSettings: {
+      autoSwitcherSettings: {
         ip: "localhost:4444", // should do validation to ensure port is provided or have a separate port field
         sourceName: "dolphin",
       },
