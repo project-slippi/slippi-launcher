@@ -1,3 +1,5 @@
+/** @jsx jsx */
+import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
@@ -47,8 +49,7 @@ const Container = styled.div`
   transition: border 0.24s ease-in-out;
   p {
     text-align: center;
-    text-transform: uppercase;
-    font-weight: bold;
+    font-weight: 500;
   }
 `;
 
@@ -89,8 +90,15 @@ export const IsoSelectionStep: React.FC = () => {
   }, [verification.value.valid]);
 
   return (
-    <Box display="flex" flexDirection="column" flexGrow="1">
-      <QuickStartHeader>Select Melee ISO</QuickStartHeader>
+    <Box display="flex" flexDirection="column" flexGrow="1" maxWidth="800px" marginLeft="auto" marginRight="auto">
+      <div
+        css={css`
+          margin-bottom: 20px;
+        `}
+      >
+        <QuickStartHeader>Select Melee ISO</QuickStartHeader>
+        <div>This application uses an NTSC 1.02 game backup.</div>
+      </div>
       <Container {...getRootProps({ isDragActive, isDragAccept, isDragReject })}>
         <input {...getInputProps()} />
         {!loading && (
@@ -98,7 +106,7 @@ export const IsoSelectionStep: React.FC = () => {
             Select
           </Button>
         )}
-        <p>{loading ? "Verifying ISO..." : "Or drag and drop here"}</p>
+        <p>{loading ? "Verifying ISO..." : "or drag and drop here"}</p>
       </Container>
       <Dialog fullScreen={fullScreen} open={invalidIso} onClose={handleClose}>
         <DialogTitle>Invalid ISO</DialogTitle>

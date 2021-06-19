@@ -9,6 +9,7 @@ import { StepperDots } from "@/components/StepperDots";
 import { useMousetrap } from "@/lib/hooks/useMousetrap";
 import { QuickStartStep } from "@/lib/hooks/useQuickStart";
 
+import { ActivateOnlineStep } from "./ActivateOnlineStep";
 import { IsoSelectionStep } from "./IsoSelectionStep";
 import { LoginStep } from "./LoginStep";
 import { SetupCompleteStep } from "./SetupCompleteStep";
@@ -33,7 +34,7 @@ const getStepContent = (step: QuickStartStep | null) => {
     case QuickStartStep.LOGIN:
       return <LoginStep />;
     case QuickStartStep.ACTIVATE_ONLINE:
-      return <div>you need to activate online</div>;
+      return <ActivateOnlineStep />;
     case QuickStartStep.SET_ISO_PATH:
       return <IsoSelectionStep />;
     case QuickStartStep.COMPLETE:
@@ -65,13 +66,13 @@ export const QuickStart: React.FC<QuickStartProps> = ({ allSteps: steps, current
         <Typography variant="h2">{getStepHeader(currentStep)}</Typography>
         {currentStep !== QuickStartStep.COMPLETE && (
           <div>
-            <Button onClick={skipSetup} style={{ color: "white" }}>
+            <Button onClick={skipSetup} style={{ color: "white", textTransform: "uppercase" }}>
               Skip setup
             </Button>
           </div>
         )}
       </Box>
-      <Box display="flex" flex="1" alignSelf="stretch">
+      <Box display="flex" flex="1" alignSelf="stretch" paddingTop="40px">
         {getStepContent(currentStep)}
       </Box>
       <StepperDots steps={steps.length} activeStep={steps.indexOf(currentStep)} />
