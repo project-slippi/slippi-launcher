@@ -1,5 +1,6 @@
 import { dolphinDownloadFinished, downloadDolphin } from "dolphin/ipc";
 import log from "electron-log";
+import firebase from "firebase";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
@@ -35,25 +36,27 @@ export const useAppInitialization = () => {
 
     console.log("Initializing app...");
 
+    // Initialize firebase first
+    let user: firebase.User | null = null;
+    try {
+      user = await initializeFirebase();
+      setUser(user);
+    } catch (err) {
+      console.warn(err);
+    }
+
     const promises: Promise<any>[] = [];
 
-    // Check user login status at the start
-    promises.push(
-      initializeFirebase()
-        .then((user) => setUser(user))
-        .catch((err) => {
-          console.warn(err);
-        }),
-    );
-
-    // Check they have a valid key
-    promises.push(
-      fetchPlayKey()
-        .then((key) => setPlayKey(key))
-        .catch((err) => {
-          console.warn(err);
-        }),
-    );
+    // If we're logged in, check they have a valid play key
+    if (user) {
+      promises.push(
+        fetchPlayKey()
+          .then((key) => setPlayKey(key))
+          .catch((err) => {
+            console.warn(err);
+          }),
+      );
+    }
 
     promises.push(
       new Promise<void>((resolve) => {
