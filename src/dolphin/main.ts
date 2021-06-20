@@ -1,3 +1,5 @@
+import { Frames } from "@slippi/slippi-js";
+
 import { fileExists } from "../main/fileExists";
 import { assertDolphinInstallations } from "./downloadDolphin";
 import {
@@ -48,6 +50,9 @@ removePlayKeyFile.main!.handle(async () => {
 });
 
 viewSlpReplay.main!.handle(async ({ filePath, startFrame }) => {
+  if (startFrame === undefined) {
+    startFrame = Frames.FIRST;
+  }
   const replayComm: ReplayCommunication = {
     mode: "normal",
     replay: filePath,

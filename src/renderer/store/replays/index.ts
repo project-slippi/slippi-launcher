@@ -1,7 +1,7 @@
 import { viewSlpReplay } from "@dolphin/ipc";
 import { calculateGameStats, loadReplayFolder } from "@replays/ipc";
 import { FileLoadResult, FileResult, FolderResult, Progress } from "@replays/types";
-import { Frames, StatsType } from "@slippi/slippi-js";
+import { StatsType } from "@slippi/slippi-js";
 import { produce } from "immer";
 import path from "path";
 import create from "zustand";
@@ -81,9 +81,6 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   },
 
   playFile: async (fullPath, startFrame) => {
-    if (startFrame === undefined) {
-      startFrame = Frames.FIRST;
-    }
     const viewResult = await viewSlpReplay.renderer!.trigger({
       filePath: fullPath,
       startFrame: startFrame,
