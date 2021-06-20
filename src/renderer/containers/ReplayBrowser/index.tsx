@@ -205,6 +205,7 @@ export const ReplayBrowser: React.FC = () => {
                       </Button>
 
                       <Button
+                        onClick={() => setList([])}
                         css={css`
                           background-color: rgb(220, 219, 220);
                           color: black;
