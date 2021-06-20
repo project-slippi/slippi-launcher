@@ -101,6 +101,9 @@ const addOverrides = (theme: Theme) => {
         },
       },
       MuiButton: {
+        root: {
+          borderRadius: "10px",
+        },
         contained: {
           fontWeight: 700,
           textTransform: "initial",

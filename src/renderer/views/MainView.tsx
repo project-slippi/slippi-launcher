@@ -1,8 +1,3 @@
-import Dialog from "@material-ui/core/Dialog";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import { useTheme } from "@material-ui/core/styles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
 import HomeOutlinedIcon from "@material-ui/icons/HomeOutlined";
 import LiveTvOutlinedIcon from "@material-ui/icons/LiveTvOutlined";
 import ReplayOutlinedIcon from "@material-ui/icons/ReplayOutlined";
@@ -13,12 +8,11 @@ import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
 import { PrivateRoute } from "@/components/PrivateRoute";
 import { Broadcast } from "@/containers/Broadcast";
 import { Header } from "@/containers/Header";
+import { LoginDialog } from "@/containers/Header/LoginDialog";
 import { MenuItem } from "@/containers/Header/MainMenu";
 import { Home } from "@/containers/Home";
-import { LoginForm } from "@/containers/LoginForm";
 import { ReplayBrowser } from "@/containers/ReplayBrowser";
 import { SpectatePage } from "@/containers/SpectatePage";
-import { useLoginModal } from "@/lib/hooks/useLoginModal";
 import { usePageNavigationShortcuts } from "@/lib/hooks/useShortcuts";
 
 interface MainMenuItem extends MenuItem {
@@ -60,10 +54,6 @@ const menuItems: MainMenuItem[] = [
 
 export const MainView: React.FC = () => {
   const { path } = useRouteMatch();
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
-  const closeModal = useLoginModal((store) => store.closeModal);
-  const loginModalOpen = useLoginModal((store) => store.open);
   const defaultRoute = menuItems.find((item) => item.default);
 
   usePageNavigationShortcuts(menuItems.map((item) => `${path}/${item.subpath}`));
@@ -93,12 +83,7 @@ export const MainView: React.FC = () => {
           {defaultRoute && <Redirect exact from={path} to={`${path}/${defaultRoute.subpath}`} />}
         </Switch>
       </div>
-      <Dialog open={loginModalOpen} onClose={closeModal} fullWidth={true} fullScreen={fullScreen}>
-        <DialogTitle>Slippi Login</DialogTitle>
-        <DialogContent>
-          <LoginForm onSuccess={closeModal} />
-        </DialogContent>
-      </Dialog>
+      <LoginDialog />
     </div>
   );
 };
