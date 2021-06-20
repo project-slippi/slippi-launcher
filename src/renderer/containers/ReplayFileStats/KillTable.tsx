@@ -1,3 +1,4 @@
+import Tooltip from "@material-ui/core/Tooltip";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
@@ -10,6 +11,7 @@ import _ from "lodash";
 import React from "react";
 
 import { getCharacterIcon } from "@/lib/utils";
+import { useReplays } from "@/store/replays";
 
 import * as T from "./TableStyles";
 
@@ -21,6 +23,7 @@ export interface KillTableProps {
 }
 
 export const KillTable: React.FC<KillTableProps> = ({ file, stats, playerIndex }) => {
+  const playFile = useReplays((store) => store.playFile);
   const player = file.settings.players[playerIndex];
   const names = extractPlayerNames(playerIndex, file.settings, file.metadata);
   const playerDisplay = (
@@ -58,9 +61,15 @@ export const KillTable: React.FC<KillTableProps> = ({ file, stats, playerIndex }
       killedDirection = <span style={{ color: "#2ECC40", fontSize: 24 }}>{renderKilledDirection(stock)}</span>;
     }
 
+    const playPunish = () => {
+      playFile(file.fullPath, stock.startFrame);
+    };
+
     return (
       <T.TableRow key={`${stock.playerIndex}-stock-${stock.startFrame}`}>
-        <T.TableCell>{start}</T.TableCell>
+        <Tooltip title="Play from here">
+          <T.TableCell onClick={playPunish}>{start}</T.TableCell>
+        </Tooltip>
         <T.TableCell>{end}</T.TableCell>
         <T.TableCell>{killedBy}</T.TableCell>
         <T.TableCell>{killedDirection}</T.TableCell>
