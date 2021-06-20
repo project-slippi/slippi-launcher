@@ -5,6 +5,7 @@ import { Ports } from "@slippi/slippi-js";
 import React from "react";
 
 import { AvailableConsoleList } from "./AvailableConsoleList";
+import { SavedConnectionsList } from "./SavedConnectionsList";
 
 export const Console: React.FC = () => {
   const mirrorConfigHandler = async () => {
@@ -40,6 +41,9 @@ export const Console: React.FC = () => {
       <h1>Console</h1>
       <button onClick={mirrorConfigHandler}>Connect to Wii</button>
       <button onClick={startMirrorHandler}>Mirror Wii</button>
+      <h2>Saved Connections</h2>
+      <SavedConnectionsList />
+      <h2>Available Connections</h2>
       <AvailableConsoleList />
     </Outer>
   );
