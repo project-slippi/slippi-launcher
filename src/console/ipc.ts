@@ -1,6 +1,5 @@
 import { _, EmptyPayload, makeEndpoint, SuccessPayload } from "../ipc";
-import { DiscoveredConsoleInfo } from "./discovery";
-import { MirrorConfig } from "./types";
+import { DiscoveredConsoleInfo, MirrorConfig } from "./types";
 
 export const addMirrorConfig = makeEndpoint.main("addMirrorConfig", <{ config: MirrorConfig }>_, <SuccessPayload>_);
 

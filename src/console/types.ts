@@ -23,3 +23,10 @@ export interface AutoSwitcherSettings {
   ip: string;
   password?: string;
 }
+
+export interface DiscoveredConsoleInfo {
+  ip: string;
+  mac: string;
+  name: string | undefined;
+  firstFound: string;
+}

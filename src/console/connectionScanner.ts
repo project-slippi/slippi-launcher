@@ -2,27 +2,15 @@ import dgram from "dgram";
 import moment from "moment";
 
 import { discoverConsoleFound, discoverConsoleLost } from "./ipc";
+import { DiscoveredConsoleInfo } from "./types";
 
 const SECONDS = 1000;
 const CONSOLE_EXPIRY_TIMEOUT = 35 * SECONDS;
 
-export interface DiscoveredConsoleInfo {
-  ip: string;
-  mac: string;
-  name: string | undefined;
-  firstFound: string;
-}
-
 export class ConnectionScanner {
-  public availableConnectionsByIp: { [ip: string]: DiscoveredConsoleInfo };
-  private timeoutsByIp: { [ip: string]: NodeJS.Timeout };
-  private server: dgram.Socket | null;
-
-  public constructor() {
-    this.availableConnectionsByIp = {};
-    this.timeoutsByIp = {};
-    this.server = null;
-  }
+  public availableConnectionsByIp: Record<string, DiscoveredConsoleInfo> = {};
+  private timeoutsByIp: Record<string, NodeJS.Timeout> = {};
+  private server: dgram.Socket | null = null;
 
   public getAvailable() {
     return this.availableConnectionsByIp;

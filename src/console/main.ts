@@ -1,4 +1,4 @@
-import { connectionScanner } from "./discovery";
+import { connectionScanner } from "./connectionScanner";
 import { addMirrorConfig, startDiscovery, startMirroring, stopDiscovery } from "./ipc";
 import { mirrorManager } from "./mirrorManager";
 
