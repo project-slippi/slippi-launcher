@@ -29,11 +29,13 @@ const FileListResults: React.FC<{
   folderPath: string;
   files: FileResult[];
   scrollRowItem: number;
+  list: Array<string>;
+  handleAddToList: (name: string) => void;
   onOpenMenu: (index: number, element: HTMLElement) => void;
   onSelect: (index: number) => void;
   onPlay: (index: number) => void;
   setScrollRowItem: (row: number) => void;
-}> = ({ folderPath, scrollRowItem, files, onSelect, onPlay, onOpenMenu, setScrollRowItem }) => {
+}> = ({ folderPath, scrollRowItem, files, onSelect, onPlay, onOpenMenu, setScrollRowItem, handleAddToList, list }) => {
   // Keep a reference to the list so we can control the scroll position
   const listRef = React.createRef<List>();
   // Keep track of the latest scroll position
@@ -50,6 +52,8 @@ const FileListResults: React.FC<{
           index={props.index}
           style={props.style}
           onSelect={() => onSelect(props.index)}
+          handleAddToList={handleAddToList}
+          list={list}
           onPlay={() => onPlay(props.index)}
           {...files[props.index]}
         />
@@ -102,8 +106,20 @@ export const FileList: React.FC<{
   setScrollRowItem: (row: number) => void;
   onDelete: (filepath: string) => void;
   onSelect: (index: number) => void;
+  handleAddToList: (name: string) => void;
+  list: Array<string>;
   onPlay: (index: number) => void;
-}> = ({ scrollRowItem = 0, files, onSelect, onPlay, onDelete, setScrollRowItem, folderPath }) => {
+}> = ({
+  scrollRowItem = 0,
+  files,
+  onSelect,
+  onPlay,
+  onDelete,
+  setScrollRowItem,
+  handleAddToList,
+  folderPath,
+  list,
+}) => {
   const [menuItem, setMenuItem] = React.useState<null | {
     index: number;
     anchorEl: HTMLElement;
@@ -142,6 +158,8 @@ export const FileList: React.FC<{
           onOpenMenu={onOpenMenu}
           onSelect={onSelect}
           onPlay={onPlay}
+          handleAddToList={handleAddToList}
+          list={list}
           files={files}
           scrollRowItem={scrollRowItem}
           setScrollRowItem={setScrollRowItem}
