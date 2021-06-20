@@ -6,7 +6,7 @@ import React from "react";
 
 import { AvailableConsoleList } from "./AvailableConsoleList";
 
-export const Broadcast: React.FC = () => {
+export const Console: React.FC = () => {
   const mirrorConfigHandler = async () => {
     const config: MirrorConfig = {
       ipAddress: "192.168.1.39",
@@ -37,10 +37,10 @@ export const Broadcast: React.FC = () => {
 
   return (
     <Outer>
+      <h1>Console</h1>
       <button onClick={mirrorConfigHandler}>Connect to Wii</button>
       <button onClick={startMirrorHandler}>Mirror Wii</button>
       <AvailableConsoleList />
-      <h1>Broadcast</h1>
     </Outer>
   );
 };

@@ -6,7 +6,7 @@ import React from "react";
 import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
 
 import { PrivateRoute } from "@/components/PrivateRoute";
-import { Broadcast } from "@/containers/Broadcast";
+import { Console } from "@/containers/Console";
 import { Header } from "@/containers/Header";
 import { LoginDialog } from "@/containers/Header/LoginDialog";
 import { MenuItem } from "@/containers/Header/MainMenu";
@@ -44,9 +44,9 @@ const menuItems: MainMenuItem[] = [
     private: true,
   },
   {
-    subpath: "broadcast",
-    title: "Broadcast",
-    component: <Broadcast />,
+    subpath: "console",
+    title: "Console",
+    component: <Console />,
     icon: <WifiTetheringOutlinedIcon />,
   },
 ];
