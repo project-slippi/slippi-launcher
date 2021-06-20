@@ -1,3 +1,4 @@
+import Tooltip from "@material-ui/core/Tooltip";
 import { FileResult } from "@replays/types";
 import { ConversionType, StatsType, StockType } from "@slippi/slippi-js";
 import { extractPlayerNames } from "common/matchNames";
@@ -6,6 +7,7 @@ import _ from "lodash";
 import React from "react";
 
 import { getCharacterIcon, toOrdinal } from "@/lib/utils";
+import { useReplays } from "@/store/replays";
 
 import * as T from "./TableStyles";
 
@@ -18,6 +20,7 @@ export interface PunishTableProps {
 }
 
 export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, playerIndex }) => {
+  const playFile = useReplays((store) => store.playFile);
   const player = file.settings.players[playerIndex];
   const names = extractPlayerNames(playerIndex, file.settings, file.metadata);
   const playerDisplay = (
@@ -46,9 +49,15 @@ export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, playerInd
       end = convertFrameCountToDurationString(punish.endFrame);
     }
 
+    const playPunish = () => {
+      playFile(file.fullPath, punish.startFrame);
+    };
+
     return (
       <T.TableRow key={`${punish.playerIndex}-punish-${punish.startFrame}`}>
-        <T.TableCell>{start}</T.TableCell>
+        <Tooltip title="Play from here">
+          <T.TableCell onClick={playPunish}>{start}</T.TableCell>
+        </Tooltip>
         <T.TableCell>{end}</T.TableCell>
         <T.TableCell>{damage}</T.TableCell>
         <T.TableCell>{damageRange}</T.TableCell>
