@@ -5,6 +5,7 @@ import {
   dolphinStatusChanged,
   slippiStatusChanged,
 } from "@broadcast/ipc";
+import { discoveredConsolesUpdated } from "@console/ipc";
 import { dolphinDownloadLogReceived } from "@dolphin/ipc";
 import { loadProgressUpdated } from "@replays/ipc";
 import { settingsUpdated } from "@settings/ipc";
@@ -20,6 +21,7 @@ import { useReplays } from "@/store/replays";
 
 import { useAccount } from "./useAccount";
 import { useBroadcastListStore } from "./useBroadcastList";
+import { useConsoleDiscoveryStore } from "./useConsoleDiscovery";
 import { useIsoVerification } from "./useIsoVerification";
 import { useNewsFeed } from "./useNewsFeed";
 import { useSettings } from "./useSettings";
@@ -96,6 +98,11 @@ export const useAppListeners = () => {
   broadcastListUpdated.renderer!.useEvent(async ({ items }) => {
     updateBroadcastingList(items);
   }, []);
+
+  const updateConsoleItems = useConsoleDiscoveryStore((store) => store.updateConsoleItems);
+  discoveredConsolesUpdated.renderer!.handle(async ({ consoles }) => {
+    updateConsoleItems(consoles);
+  });
 
   // Automatically run ISO verification whenever the isoPath changes
   const isoPath = useSettings((store) => store.settings.isoPath);

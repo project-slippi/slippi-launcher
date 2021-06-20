@@ -1,7 +1,7 @@
 import dgram from "dgram";
 import moment from "moment";
 
-import { discoverConsoleFound, discoverConsoleLost } from "./ipc";
+import { discoveredConsolesUpdated } from "./ipc";
 import { DiscoveredConsoleInfo } from "./types";
 
 const SECONDS = 1000;
@@ -60,12 +60,8 @@ export class ConnectionScanner {
 
     // If we don't get a message for 35 seconds, remove from list
     const timeoutHandler = setTimeout(() => {
-      const console = this.availableConnectionsByIp[ip];
-      if (console) {
-        discoverConsoleLost.main!.trigger({ console });
-      }
       delete this.availableConnectionsByIp[ip];
-      // this.forceConsoleUiUpdate();
+      this._emitConsoleListUpdatedEvent();
     }, CONSOLE_EXPIRY_TIMEOUT);
 
     const newConsole = {
@@ -79,12 +75,17 @@ export class ConnectionScanner {
     this.timeoutsByIp[ip] = timeoutHandler;
 
     if (!previous) {
-      discoverConsoleFound.main!.trigger({ console: newConsole });
+      this._emitConsoleListUpdatedEvent();
     }
 
     // Force UI update to show new connection
     // this.forceConsoleUiUpdate();
   };
+
+  private _emitConsoleListUpdatedEvent() {
+    const consoleList = Object.values(this.availableConnectionsByIp) as DiscoveredConsoleInfo[];
+    discoveredConsolesUpdated.main!.trigger({ consoles: consoleList });
+  }
 
   private _handleError = (err: Error) => {
     console.warn("Console discovery server error: ", err);

@@ -9,9 +9,7 @@ export const startDiscovery = makeEndpoint.main("startDiscovery", <EmptyPayload>
 
 export const stopDiscovery = makeEndpoint.main("stopDiscovery", <EmptyPayload>_, <SuccessPayload>_);
 
-export const discoverConsoleFound = makeEndpoint.renderer(
-  "discover_consoleFound",
-  <{ console: DiscoveredConsoleInfo }>_,
+export const discoveredConsolesUpdated = makeEndpoint.renderer(
+  "console_discoveredConsolesUpdated",
+  <{ consoles: DiscoveredConsoleInfo[] }>_,
 );
-
-export const discoverConsoleLost = makeEndpoint.renderer("discover_consoleLost", <{ console: DiscoveredConsoleInfo }>_);

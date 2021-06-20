@@ -1,9 +1,10 @@
-import { addMirrorConfig, discoverConsoleFound, startDiscovery, startMirroring } from "@console/ipc";
+import { addMirrorConfig, startDiscovery, startMirroring, stopDiscovery } from "@console/ipc";
 import { MirrorConfig } from "@console/types";
 import styled from "@emotion/styled";
 import { Ports } from "@slippi/slippi-js";
-import log from "electron-log";
 import React from "react";
+
+import { AvailableConsoleList } from "./AvailableConsoleList";
 
 export const Broadcast: React.FC = () => {
   const mirrorConfigHandler = async () => {
@@ -24,14 +25,21 @@ export const Broadcast: React.FC = () => {
     await startMirroring.renderer!.trigger({ ip: "192.168.1.39" });
   };
 
-  startDiscovery.renderer!.trigger({});
-  discoverConsoleFound.renderer!.handle(async ({ console }) => {
-    log.info(console);
-  });
+  React.useEffect(() => {
+    // Start scanning for new consoles
+    startDiscovery.renderer!.trigger({});
+
+    // Stop scanning on component unmount
+    return () => {
+      stopDiscovery.renderer!.trigger({});
+    };
+  }, []);
+
   return (
     <Outer>
       <button onClick={mirrorConfigHandler}>Connect to Wii</button>
       <button onClick={startMirrorHandler}>Mirror Wii</button>
+      <AvailableConsoleList />
       <h1>Broadcast</h1>
     </Outer>
   );
