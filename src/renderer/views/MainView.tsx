@@ -48,7 +48,6 @@ const menuItems: MainMenuItem[] = [
     title: "Broadcast",
     component: <Broadcast />,
     icon: <WifiTetheringOutlinedIcon />,
-    private: true,
   },
 ];
 
