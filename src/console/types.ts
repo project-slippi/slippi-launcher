@@ -6,7 +6,7 @@ export interface MirrorConfig {
   id?: number;
   ipAddress: string;
   port: number;
-  folderPath?: string;
+  folderPath: string;
   isRealTimeMode?: boolean;
   autoSwitcherSettings?: AutoSwitcherSettings;
 }

@@ -11,7 +11,6 @@ import {
   SlpFileWriterEvent,
   SlpStreamEvent,
 } from "@slippi/slippi-js";
-import { app } from "electron";
 import log from "electron-log";
 
 import { AutoSwitcher } from "./autoSwitcher";
@@ -53,8 +52,7 @@ export class MirrorManager {
 
     log.info("[Mirroring] Setting up mirror");
 
-    const folderPath = config.folderPath ?? app.getPath("temp");
-    const fileWriter = new SlpFileWriter({ folderPath, consoleNickname: "unknown" });
+    const fileWriter = new SlpFileWriter({ folderPath: config.folderPath, consoleNickname: "unknown" });
     fileWriter.on(SlpFileWriterEvent.NEW_FILE, (currFilePath) => {
       this._playFile(currFilePath, config.ipAddress);
     });
