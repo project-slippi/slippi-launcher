@@ -46,6 +46,7 @@ export const ReplayBrowser: React.FC = () => {
   const fileErrorCount = useReplays((store) => store.fileErrorCount);
   const rootSlpPath = useSettings((store) => store.settings.rootSlpPath);
   const { addToast } = useToasts();
+  const [list, setList] = React.useState<Array<string>>([]);
 
   const sortDirection = useReplayFilter((store) => store.sortDirection);
   const sortBy = useReplayFilter((store) => store.sortBy);
@@ -85,6 +86,19 @@ export const ReplayBrowser: React.FC = () => {
     // Remove the file from the store
     removeFile(filePath);
     addToast(`File deleted successfully`, { appearance: "success", autoDismiss: true });
+  };
+
+  const handleAddToList = (name: string) => {
+    if (list.includes(name)) {
+      list.splice(list.indexOf(name), 1);
+      setList([...list]);
+      return;
+    }
+
+    list.push(name);
+    setList([...list]);
+
+    console.log("whats going on");
   };
 
   if (folders === null) {
@@ -142,6 +156,7 @@ export const ReplayBrowser: React.FC = () => {
                     display: flex;
                     flex-direction: column;
                     flex: 1;
+                    poaition: relative;
                   `}
                 >
                   <FilterToolbar disabled={loading} ref={searchInputRef} />
@@ -161,6 +176,8 @@ export const ReplayBrowser: React.FC = () => {
                     <FileList
                       folderPath={currentFolder}
                       onDelete={deleteFile}
+                      handleAddToList={handleAddToList}
+                      list={list}
                       onSelect={(index: number) => setSelectedItem(index)}
                       onPlay={(index: number) => playSelectedFile(index)}
                       files={filteredFiles}
@@ -168,10 +185,51 @@ export const ReplayBrowser: React.FC = () => {
                       setScrollRowItem={setScrollRowItem}
                     />
                   )}
+                  {list.length > 0 ? (
+                    <div
+                      css={css`
+                        position: absolute;
+                        bottom: 0px;
+                        right: 0px;
+                        margin-right: 24px;
+                        margin-bottom: 16px;
+                      `}
+                    >
+                      <Button
+                        css={css`
+                          background-color: rgb(220, 219, 220);
+                          color: black;
+                        `}
+                      >
+                        Play All
+                      </Button>
+
+                      <Button
+                        css={css`
+                          background-color: rgb(220, 219, 220);
+                          color: black;
+                          margin-left: 12px;
+                        `}
+                      >
+                        Clear
+                      </Button>
+
+                      <Button
+                        css={css`
+                          background-color: rgb(220, 219, 220);
+                          color: black;
+                          margin-left: 12px;
+                        `}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  ) : null}
                 </div>
               }
             />
           </div>
+
           <Footer>
             <div
               css={css`
