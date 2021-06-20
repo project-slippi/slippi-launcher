@@ -6,7 +6,7 @@ import set from "lodash/set";
 
 import { defaultAppSettings } from "./defaultSettings";
 import { settingsUpdated } from "./ipc";
-import { AppSettings } from "./types";
+import { AppSettings, StoredConnection } from "./types";
 
 electronSettings.configure({
   fileName: "Settings",
@@ -63,6 +63,33 @@ export class SettingsManager {
 
   public async setPlaybackDolphinPath(dolphinPath: string): Promise<void> {
     await this._set("settings.playbackDolphinPath", dolphinPath);
+  }
+
+  public async addConsoleConnection(conn: Omit<StoredConnection, "id">): Promise<void> {
+    const connections = this.get().connections;
+    // Auto-generate an ID
+    let nextId = 0;
+    if (connections.length > 0) {
+      nextId = Math.max(...connections.map((c) => c.id)) + 1;
+    }
+    connections.push({ id: nextId, ...conn });
+    await this._set("connections", connections);
+  }
+
+  public async editConsoleConnection(id: number, conn: Omit<StoredConnection, "id">): Promise<void> {
+    const connections = this.get().connections;
+    const index = connections.findIndex((c) => c.id === id);
+    if (index === -1) {
+      throw new Error(`Could not find console connection with id: ${id}`);
+    }
+
+    connections[index] = { id, ...conn };
+    await this._set("connections", connections);
+  }
+
+  public async deleteConsoleConnection(id: number): Promise<void> {
+    const connections = this.get().connections.filter((c) => c.id !== id);
+    await this._set("connections", connections);
   }
 
   private async _set(objectPath: string, value: any) {

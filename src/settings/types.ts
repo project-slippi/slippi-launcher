@@ -3,10 +3,11 @@ export interface StoredConnection {
   ipAddress: string;
   folderPath: string;
   isRealTimeMode: boolean;
-  consoleNick: string;
-  obsIP: string;
-  obsSourceName: string;
-  obsPassword: string;
+  port?: number;
+  consoleNick?: string;
+  obsIP?: string;
+  obsSourceName?: string;
+  obsPassword?: string;
 }
 
 export type AppSettings = {
