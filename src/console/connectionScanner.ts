@@ -8,8 +8,8 @@ const SECONDS = 1000;
 const CONSOLE_EXPIRY_TIMEOUT = 35 * SECONDS;
 
 export class ConnectionScanner {
-  public availableConnectionsByIp: Record<string, DiscoveredConsoleInfo> = {};
-  private timeoutsByIp: Record<string, NodeJS.Timeout> = {};
+  public availableConnectionsByIp: Record<string, DiscoveredConsoleInfo | undefined> = {};
+  private timeoutsByIp: Record<string, NodeJS.Timeout | undefined> = {};
   private server: dgram.Socket | null = null;
 
   public getAvailable() {
@@ -51,7 +51,6 @@ export class ConnectionScanner {
 
     const previous = this.availableConnectionsByIp[ip];
     const previousTimeoutHandler = this.timeoutsByIp[ip];
-    const previousFirstFound = previous.firstFound;
 
     // If we have received a new message from this IP, clear the previous
     // timeout hanlder so that this IP doesn't get removed
@@ -61,22 +60,26 @@ export class ConnectionScanner {
 
     // If we don't get a message for 35 seconds, remove from list
     const timeoutHandler = setTimeout(() => {
-      discoverConsoleLost.main!.trigger({ console: this.availableConnectionsByIp[ip] });
+      const console = this.availableConnectionsByIp[ip];
+      if (console) {
+        discoverConsoleLost.main!.trigger({ console });
+      }
       delete this.availableConnectionsByIp[ip];
       // this.forceConsoleUiUpdate();
     }, CONSOLE_EXPIRY_TIMEOUT);
 
-    this.availableConnectionsByIp[ip] = {
+    const newConsole = {
       ip: ip,
       mac: macAddr,
       name: nick,
-      firstFound: previousFirstFound || moment().toISOString(),
+      firstFound: previous ? previous.firstFound : moment().toISOString(),
     };
+    this.availableConnectionsByIp[ip] = newConsole;
 
     this.timeoutsByIp[ip] = timeoutHandler;
 
     if (!previous) {
-      discoverConsoleFound.main!.trigger({ console: this.availableConnectionsByIp[ip] });
+      discoverConsoleFound.main!.trigger({ console: newConsole });
     }
 
     // Force UI update to show new connection
