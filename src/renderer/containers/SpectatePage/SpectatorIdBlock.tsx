@@ -5,7 +5,7 @@ import InputBase from "@material-ui/core/InputBase";
 import { clipboard } from "electron";
 import React from "react";
 
-import { InfoBlock } from "./InfoBlock";
+import { InfoBlock } from "@/components/InfoBlock";
 
 export interface SpectatorIdBlockProps {
   userId: string;
