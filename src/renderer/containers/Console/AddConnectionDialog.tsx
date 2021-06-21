@@ -1,3 +1,5 @@
+/** @jsx jsx */
+import { css, jsx } from "@emotion/react";
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
@@ -11,14 +13,14 @@ import { useSettings } from "@/lib/hooks/useSettings";
 
 import { AddConnectionForm } from "./AddConnectionForm";
 
-export interface AddConnectionModalProps {
+export interface AddConnectionDialogProps {
   open: boolean;
   selectedConnection: Partial<StoredConnection> | null;
   onSubmit: (conn: Omit<StoredConnection, "id">) => void;
   onCancel: () => void;
 }
 
-export const AddConnectionDialog: React.FC<AddConnectionModalProps> = ({
+export const AddConnectionDialog: React.FC<AddConnectionDialogProps> = ({
   open,
   selectedConnection,
   onSubmit,
@@ -47,7 +49,13 @@ export const AddConnectionDialog: React.FC<AddConnectionModalProps> = ({
     >
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
-        <AddConnectionForm defaultValues={defaultValues} onSubmit={onSubmit} />
+        <div
+          css={css`
+            padding-bottom: 20px;
+          `}
+        >
+          <AddConnectionForm defaultValues={defaultValues} onSubmit={onSubmit} />
+        </div>
       </DialogContent>
     </Dialog>
   );
