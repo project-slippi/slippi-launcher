@@ -26,6 +26,7 @@ import { withFont } from "@/styles/withFont";
 
 import { ReplayFileStats } from "../ReplayFileStats";
 import { FileList } from "./FileList";
+import { FileSelectionToolbar } from "./FileSelectionToolbar";
 import { FilterToolbar } from "./FilterToolbar";
 import { FolderTreeNode } from "./FolderTreeNode";
 
@@ -174,47 +175,12 @@ export const ReplayBrowser: React.FC = () => {
                       setScrollRowItem={setScrollRowItem}
                     />
                   )}
-                  {selectedFiles.length > 0 ? (
-                    <div
-                      css={css`
-                        position: absolute;
-                        bottom: 0px;
-                        right: 0px;
-                        margin-right: 24px;
-                        margin-bottom: 16px;
-                      `}
-                    >
-                      <Button
-                        css={css`
-                          background-color: rgb(220, 219, 220);
-                          color: black;
-                        `}
-                      >
-                        Play All
-                      </Button>
-
-                      <Button
-                        onClick={clearSelectedFiles}
-                        css={css`
-                          background-color: rgb(220, 219, 220);
-                          color: black;
-                          margin-left: 12px;
-                        `}
-                      >
-                        Clear
-                      </Button>
-
-                      <Button
-                        css={css`
-                          background-color: rgb(220, 219, 220);
-                          color: black;
-                          margin-left: 12px;
-                        `}
-                      >
-                        Delete
-                      </Button>
-                    </div>
-                  ) : null}
+                  <FileSelectionToolbar
+                    totalSelected={selectedFiles.length}
+                    onPlay={() => null}
+                    onClear={clearSelectedFiles}
+                    onDelete={() => null}
+                  />
                 </div>
               }
             />
