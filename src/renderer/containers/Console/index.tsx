@@ -63,7 +63,12 @@ export const Console: React.FC = () => {
         onDelete={(conn) => deleteConsoleConnection(conn.id)}
       />
       <h2>New Connections</h2>
-      <NewConnectionList onClick={(item) => setCurrentFormValues({ ipAddress: item.ip })} />
+      <NewConnectionList
+        onClick={(item) => {
+          setCurrentFormValues({ ipAddress: item.ip });
+          setModalOpen(true);
+        }}
+      />
       <AddConnectionDialog
         open={modalOpen}
         selectedConnection={currentFormValues}
