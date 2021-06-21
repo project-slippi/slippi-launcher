@@ -25,7 +25,7 @@ export const Message: React.FC<MessageProps> = ({ children, className, icon, lab
     <Outer style={style} className={className}>
       {icon}
       {label && (
-        <Typography variant="h6" style={{ marginTop: 20 }}>
+        <Typography variant="h6" style={{ marginTop: 20, textAlign: "center" }}>
           {label}
         </Typography>
       )}
