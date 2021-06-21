@@ -227,11 +227,11 @@ const handleReplayFolderLoading = async (folderPath: string): Promise<FileLoadRe
   return loadFolderResult.result;
 };
 
-const handleCalculatingGameStats = async (filePath: string): Promise<StatsType> => {
+const handleCalculatingGameStats = async (filePath: string): Promise<StatsType | null> => {
   const statsResult = await calculateGameStats.renderer!.trigger({ filePath });
   if (!statsResult.result) {
     console.error(`Error calculating stats for: ${filePath}`, statsResult.errors);
     throw new Error(`Error calculating stats for: ${filePath}`);
   }
-  return statsResult.result;
+  return statsResult.result.stats;
 };
