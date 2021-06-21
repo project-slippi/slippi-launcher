@@ -43,7 +43,7 @@ export const SpectatorIdBlock: React.FC<SpectatorIdBlockProps> = ({ userId, clas
           disabled={true}
           value={userId}
         />
-        <Button variant="contained" color="primary" onClick={onCopy}>
+        <Button variant="contained" color="secondary" onClick={onCopy}>
           {copied ? "Copied!" : "Copy"}
         </Button>
       </div>
