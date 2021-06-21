@@ -1,4 +1,4 @@
-import { connectToConsoleMirror, startMirroring } from "@console/ipc";
+import { connectToConsoleMirror, disconnectFromConsoleMirror, startMirroring } from "@console/ipc";
 import { MirrorConfig } from "@console/types";
 import { addNewConnection, deleteConnection, editConnection } from "@settings/ipc";
 import { StoredConnection } from "@settings/types";
@@ -58,5 +58,13 @@ export const startConsoleMirror = async (ip: string) => {
   if (!res.result) {
     console.error("Error starting console mirror: ", res.errors);
     throw new Error("Error starting console mirror");
+  }
+};
+
+export const disconnectFromConsole = async (ip: string) => {
+  const res = await disconnectFromConsoleMirror.renderer!.trigger({ ip });
+  if (!res.result) {
+    console.error("Error disconnecting from console mirror: ", res.errors);
+    throw new Error("Error disconnecting from console mirror");
   }
 };

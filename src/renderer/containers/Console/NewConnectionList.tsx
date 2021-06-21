@@ -4,20 +4,15 @@ import { css, jsx } from "@emotion/react";
 import React from "react";
 
 import { InfoBlock } from "@/components/InfoBlock";
-import { useConsoleDiscoveryStore } from "@/lib/hooks/useConsoleDiscovery";
-import { useSettings } from "@/lib/hooks/useSettings";
 
 import { NewConnectionItem } from "./NewConnectionItem";
 
 export interface NewConnectionListProps {
+  consoleItems: DiscoveredConsoleInfo[];
   onClick: (conn: DiscoveredConsoleInfo) => void;
 }
 
-export const NewConnectionList: React.FC<NewConnectionListProps> = ({ onClick }) => {
-  const savedConnections = useSettings((store) => store.connections);
-  const savedIps = savedConnections.map((conn) => conn.ipAddress);
-  const allConsoleItems = useConsoleDiscoveryStore((store) => store.consoleItems);
-  const consoleItemsToShow = allConsoleItems.filter((item) => !savedIps.includes(item.ip));
+export const NewConnectionList: React.FC<NewConnectionListProps> = ({ consoleItems, onClick }) => {
   return (
     <InfoBlock
       title={
@@ -28,7 +23,7 @@ export const NewConnectionList: React.FC<NewConnectionListProps> = ({ onClick })
           `}
         >
           <span>New Connections</span>
-          <span>({consoleItemsToShow.length})</span>
+          <span>({consoleItems.length})</span>
         </div>
       }
     >
@@ -38,8 +33,8 @@ export const NewConnectionList: React.FC<NewConnectionListProps> = ({ onClick })
           flex-direction: column;
         `}
       >
-        {consoleItemsToShow.length > 0 ? (
-          consoleItemsToShow.map((item) => {
+        {consoleItems.length > 0 ? (
+          consoleItems.map((item) => {
             return <NewConnectionItem key={item.ip} onAdd={() => onClick(item)} ip={item.ip} nickname={item.name} />;
           })
         ) : (

@@ -13,6 +13,7 @@ export interface NewConnectionItemProps {
 }
 
 export const NewConnectionItem: React.FC<NewConnectionItemProps> = ({ ip, onAdd, nickname }) => {
+  const title = nickname ? `${ip} (${nickname})` : ip;
   return (
     <div
       css={css`
@@ -38,7 +39,8 @@ export const NewConnectionItem: React.FC<NewConnectionItemProps> = ({ ip, onAdd,
             margin-left: 10px;
           `}
         >
-          <div>{ip}</div> <div>{nickname}</div>
+          <div>{title}</div>
+          <div>Available</div>
         </div>
       </div>
       <div>

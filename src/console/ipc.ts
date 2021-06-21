@@ -1,5 +1,5 @@
 import { _, EmptyPayload, makeEndpoint, SuccessPayload } from "../ipc";
-import { DiscoveredConsoleInfo, MirrorConfig } from "./types";
+import { ConsoleMirrorStatusUpdate, DiscoveredConsoleInfo, MirrorConfig } from "./types";
 
 export const connectToConsoleMirror = makeEndpoint.main(
   "connectToConsoleMirror",
@@ -26,5 +26,5 @@ export const discoveredConsolesUpdated = makeEndpoint.renderer(
 
 export const consoleMirrorStatusUpdated = makeEndpoint.renderer(
   "console_consoleMirrorStatusUpdated",
-  <{ ip: string; status: number; nickname?: string }>_,
+  <{ ip: string; info: Partial<ConsoleMirrorStatusUpdate> }>_,
 );

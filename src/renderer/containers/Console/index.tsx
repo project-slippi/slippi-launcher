@@ -11,12 +11,12 @@ import { DualPane } from "@/components/DualPane";
 import { Button } from "@/components/FormInputs";
 import {
   addConsoleConnection,
-  connectToConsole,
   deleteConsoleConnection,
   EditConnectionType,
   editConsoleConnection,
-  startConsoleMirror,
 } from "@/lib/consoleConnection";
+import { useConsoleDiscoveryStore } from "@/lib/hooks/useConsoleDiscovery";
+import { useSettings } from "@/lib/hooks/useSettings";
 
 import { AddConnectionDialog } from "./AddConnectionDialog";
 import { NewConnectionList } from "./NewConnectionList";
@@ -33,6 +33,10 @@ const Outer = styled.div`
 export const Console: React.FC = () => {
   const [modalOpen, setModalOpen] = React.useState(false);
   const [currentFormValues, setCurrentFormValues] = React.useState<Partial<StoredConnection> | null>(null);
+  const savedConnections = useSettings((store) => store.connections);
+  const savedIps = savedConnections.map((conn) => conn.ipAddress);
+  const availableConsoles = useConsoleDiscoveryStore((store) => store.consoleItems);
+  const consoleItemsToShow = availableConsoles.filter((item) => !savedIps.includes(item.ip));
 
   React.useEffect(() => {
     // Start scanning for new consoles
@@ -76,7 +80,9 @@ export const Console: React.FC = () => {
           leftSide={
             <div
               css={css`
+                padding-right: 10px;
                 padding-left: 20px;
+                flex: 1;
               `}
             >
               <h1>Console Mirror</h1>
@@ -85,12 +91,11 @@ export const Console: React.FC = () => {
               </Button>
               <h2>Saved Connections</h2>
               <SavedConnectionsList
+                availableConsoles={availableConsoles}
                 onEdit={(conn) => {
                   setCurrentFormValues(conn);
                   setModalOpen(true);
                 }}
-                onConnect={connectToConsole}
-                onMirror={(conn) => startConsoleMirror(conn.ipAddress)}
                 onDelete={(conn) => deleteConsoleConnection(conn.id)}
               />
             </div>
@@ -104,6 +109,7 @@ export const Console: React.FC = () => {
               `}
             >
               <NewConnectionList
+                consoleItems={consoleItemsToShow}
                 onClick={(item) => {
                   setCurrentFormValues({ ipAddress: item.ip });
                   setModalOpen(true);
