@@ -80,17 +80,22 @@ export const ReplayBrowser: React.FC = () => {
   };
 
   const deleteFiles = (filePaths: string[]) => {
+    let errCount = 0;
     filePaths.forEach((filePath) => {
       const success = shell.moveItemToTrash(filePath);
-      if (!success) {
-        addToast(`Error deleting file: ${filePath}`, { appearance: "error" });
-        return;
+      if (success) {
+        // Remove the file from the store
+        removeFile(filePath);
+      } else {
+        errCount += 1;
       }
-      // Remove the file from the store
-      removeFile(filePath);
     });
 
-    addToast(`${filePaths.length} file(s) deleted successfully`, { appearance: "success", autoDismiss: true });
+    let message = `${filePaths.length - errCount} file(s) deleted successfully.`;
+    if (errCount > 0) {
+      message += ` ${errCount} file(s) couldn't be deleted.`;
+    }
+    addToast(message, { appearance: "success", autoDismiss: true });
   };
 
   if (folders === null) {
