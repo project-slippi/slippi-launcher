@@ -7,7 +7,11 @@ import { FileLoadResult, Progress } from "./types";
 
 export const loadReplayFolder = makeEndpoint.main("loadReplayFolder", <{ folderPath: string }>_, <FileLoadResult>_);
 
-export const calculateGameStats = makeEndpoint.main("calculateGameStats", <{ filePath: string }>_, <StatsType>_);
+export const calculateGameStats = makeEndpoint.main(
+  "calculateGameStats",
+  <{ filePath: string }>_,
+  <{ stats: StatsType | null }>_,
+);
 
 // Events
 

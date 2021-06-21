@@ -1,6 +1,8 @@
+/** @jsx jsx */
+import { css, jsx } from "@emotion/react";
 import Tooltip from "@material-ui/core/Tooltip";
 import { FileResult } from "@replays/types";
-import { ConversionType, StatsType, StockType } from "@slippi/slippi-js";
+import { ConversionType, PlayerType, StatsType, StockType } from "@slippi/slippi-js";
 import { extractPlayerNames } from "common/matchNames";
 import { convertFrameCountToDurationString } from "common/time";
 import _ from "lodash";
@@ -16,13 +18,13 @@ const columnCount = 6;
 export interface PunishTableProps {
   file: FileResult;
   stats: StatsType;
-  playerIndex: number;
+  player: PlayerType;
+  opp: PlayerType;
 }
 
-export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, playerIndex }) => {
+export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, player, opp }) => {
   const playFile = useReplays((store) => store.playFile);
-  const player = file.settings.players[playerIndex];
-  const names = extractPlayerNames(playerIndex, file.settings, file.metadata);
+  const names = extractPlayerNames(player.playerIndex, file.settings, file.metadata);
   const playerDisplay = (
     <div style={{ display: "flex", alignItems: "center" }}>
       <img
@@ -33,7 +35,7 @@ export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, playerInd
           marginRight: 10,
         }}
       />
-      <div style={{ fontWeight: 500 }}>{names.name ? names.name : "Player " + (playerIndex + 1)}</div>
+      <div style={{ fontWeight: 500 }}>{names.name ? names.name : "Player " + (player.playerIndex + 1)}</div>
     </div>
   );
 
@@ -55,9 +57,21 @@ export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, playerInd
 
     return (
       <T.TableRow key={`${punish.playerIndex}-punish-${punish.startFrame}`}>
-        <Tooltip title="Play from here">
-          <T.TableCell onClick={playPunish}>{start}</T.TableCell>
-        </Tooltip>
+        <T.TableCell>
+          <Tooltip title="Play from here">
+            <span
+              onClick={playPunish}
+              css={css`
+                &:hover {
+                  cursor: pointer;
+                  text-decoration: underline;
+                }
+              `}
+            >
+              {start}
+            </span>
+          </Tooltip>
+        </T.TableCell>
         <T.TableCell>{end}</T.TableCell>
         <T.TableCell>{damage}</T.TableCell>
         <T.TableCell>{damageRange}</T.TableCell>
@@ -167,11 +181,11 @@ export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, playerInd
   const renderPunishRows = () => {
     const punishes = _.get(stats, "conversions") || [];
     const punishesByPlayer = _.groupBy(punishes, "playerIndex");
-    const playerPunishes = punishesByPlayer[playerIndex] || [];
+    const playerPunishes = punishesByPlayer[opp.playerIndex] || [];
 
     const stocks = _.get(stats, "stocks") || [];
-    const stocksByOpponent = _.groupBy(stocks, "opponentIndex");
-    const opponentStocks = stocksByOpponent[playerIndex] || [];
+    const stocksTakenFromPlayer = _.groupBy(stocks, "playerIndex");
+    const opponentStocks = stocksTakenFromPlayer[opp.playerIndex] || [];
 
     const elements: JSX.Element[] = [];
 

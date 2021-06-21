@@ -51,14 +51,15 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
   const renderMultiStatField = (
     header: string,
     arrPath: string | string[],
-    fieldPaths: string | string[],
-    highlight?: (v: number[] | string[], ov: number[] | string[]) => boolean,
-    valueMapper?: (a: number) => string,
+    fieldPaths: string | string[] | null,
+    highlight?: (v: any[], ov: any[]) => boolean,
+    valueMapper?: (a: any) => string,
+    arrPathExtension?: string | string[],
   ) => {
     const key = `standard-field-${header}`;
 
     const arr = _.get(stats, arrPath) || [];
-    const itemsByPlayer = _.keyBy(arr, "playerIndex");
+    const itemsByPlayer = arr; // _.keyBy(arr, "playerIndex");
 
     if (!arr || arr.length == 0) {
       return (
@@ -68,14 +69,23 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
         </T.TableRow>
       );
     }
-    const player1Item = itemsByPlayer[0] || {};
-    const player2Item = itemsByPlayer[1] || {};
-    const generateValues = (item: any) =>
-      _.chain(item)
-        .pick(fieldPaths)
-        .toArray()
-        .map((v) => (valueMapper ? valueMapper(v) : v))
-        .value();
+    const player1Item = arrPathExtension ? _.get(itemsByPlayer[0], arrPathExtension) : itemsByPlayer[0] || {};
+    const player2Item = arrPathExtension ? _.get(itemsByPlayer[1], arrPathExtension) : itemsByPlayer[1] || {};
+    const generateValues = (item: any) => {
+      if (fieldPaths !== null) {
+        return _.chain(item)
+          .pick(fieldPaths)
+          .toArray()
+          .map((v) => (valueMapper ? valueMapper(v) : v))
+          .value();
+      }
+
+      if (valueMapper) {
+        return [valueMapper(item)];
+      }
+
+      return [item];
+    };
 
     const p1Values = generateValues(player1Item);
     const p2Values = generateValues(player2Item);
@@ -100,7 +110,7 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
     ratioRenderer: (ratio: RatioType, oppRatio: RatioType) => JSX.Element,
   ) => {
     const arr = _.get(stats, arrPath) || [];
-    const itemsByPlayer = _.keyBy(arr, "playerIndex");
+    const itemsByPlayer = arr; // _.keyBy(arr, "playerIndex");
 
     const player1Item = itemsByPlayer[0] || {};
     const player2Item = itemsByPlayer[1] || {};
@@ -135,7 +145,7 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
       const playerRatio = _.get(ratio, "ratio", null);
       const oppRatioType = _.get(oppRatio, "ratio", null);
 
-      if (playerRatio === null || oppRatioType === null) {
+      if (playerRatio === null) {
         return (
           <T.TableCell>
             <div>N/A</div>
@@ -143,7 +153,7 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
         );
       }
       const fixedPlayerRatio = playerRatio.toFixed(1);
-      const fixedOppRatio = oppRatioType.toFixed(1);
+      const fixedOppRatio = oppRatioType !== null ? oppRatioType.toFixed(1) : "Infinity";
       return (
         <T.TableCell highlight={highlightCondition(parseFloat(fixedPlayerRatio), parseFloat(fixedOppRatio))}>
           <div>{fixedPlayerRatio}</div>
@@ -278,11 +288,11 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
         </tr>
       </thead>,
       <tbody key="defense-body">
-        {renderMultiStatField(
-          "Actions (Roll / Air Dodge / Spot Dodge)",
-          ["actionCounts"],
-          ["rollCount", "airDodgeCount", "spotDodgeCount"],
-        )}
+        {renderMultiStatField("Actions (Roll / Air Dodge / Spot Dodge)", "actionCounts", [
+          "rollCount",
+          "airDodgeCount",
+          "spotDodgeCount",
+        ])}
       </tbody>,
     ];
   };
@@ -298,11 +308,12 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
         {renderOpeningField("Neutral Wins", "neutralWinRatio")}
         {renderOpeningField("Counter Hits", "counterHitRatio")}
         {renderOpeningField("Beneficial Trades", "beneficialTradeRatio")}
-        {renderMultiStatField(
-          "Actions (Wavedash / Waveland / Dash Dance / Ledgegrab)",
-          ["actionCounts"],
-          ["wavedashCount", "wavelandCount", "dashDanceCount", "ledgegrabCount"],
-        )}
+        {renderMultiStatField("Actions (Wavedash / Waveland / Dash Dance / Ledgegrab)", "actionCounts", [
+          "wavedashCount",
+          "wavelandCount",
+          "dashDanceCount",
+          "ledgegrabCount",
+        ])}
       </tbody>,
     ];
   };
@@ -317,6 +328,23 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
       <tbody key="neutral-body">
         {renderHigherSimpleRatioField("Inputs / Minute", "inputsPerMinute")}
         {renderHigherSimpleRatioField("Digital Inputs / Minute", "digitalInputsPerMinute")}
+        {renderMultiStatField(
+          "L-Cancels (Succeeded / Failed)",
+          "actionCounts",
+          null,
+          undefined,
+          (val: any) => {
+            if (!val) {
+              return "N/A";
+            }
+
+            const { fail, success } = val;
+            const total = success + fail;
+            const rate = total === 0 ? 0 : (success / (success + fail)) * 100;
+            return `${success} / ${fail} (${Math.round(rate)}%)`;
+          },
+          "lCancelCount",
+        )}
       </tbody>,
     ];
   };

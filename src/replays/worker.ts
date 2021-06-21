@@ -15,7 +15,7 @@ import { FileLoadResult, Progress } from "./types";
 export interface Methods {
   destroyWorker: () => Promise<void>;
   loadReplayFolder(folder: string): Promise<FileLoadResult>;
-  calculateGameStats(fullPath: string): Promise<StatsType>;
+  calculateGameStats(fullPath: string): Promise<StatsType | null>;
   getProgressObservable(): Observable<Progress>;
 }
 
@@ -41,7 +41,7 @@ const methods: WorkerSpec = {
 
     return result;
   },
-  async calculateGameStats(fullPath: string): Promise<StatsType> {
+  async calculateGameStats(fullPath: string): Promise<StatsType | null> {
     // For a valid SLP game, at the very least we should have valid settings
     const game = new SlippiGame(fullPath);
     const settings = game.getSettings();

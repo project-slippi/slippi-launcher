@@ -1,7 +1,7 @@
 import { viewSlpReplay } from "@dolphin/ipc";
 import { calculateGameStats, loadReplayFolder } from "@replays/ipc";
 import { FileLoadResult, FileResult, FolderResult, Progress } from "@replays/types";
-import { StatsType } from "@slippi/slippi-js";
+import { GameStartType, StatsType } from "@slippi/slippi-js";
 import { produce } from "immer";
 import path from "path";
 import create from "zustand";
@@ -22,6 +22,7 @@ type StoreState = {
   selectedFile: {
     index: number | null;
     gameStats: StatsType | null;
+    gameSettings: GameStartType | null;
     loading: boolean;
     error?: any;
   };
@@ -52,6 +53,7 @@ const initialState: StoreState = {
   selectedFile: {
     index: null,
     gameStats: null,
+    gameSettings: null,
     error: null,
     loading: false,
   },
@@ -98,7 +100,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     }
 
     set({
-      selectedFile: { index, gameStats: null, loading: true, error: null },
+      selectedFile: { index, gameStats: null, gameSettings: null, loading: true, error: null },
     });
     const { selectedFile } = get();
     const newSelectedFile = await produce(selectedFile, async (draft) => {
@@ -119,6 +121,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
       selectedFile: {
         index: null,
         gameStats: null,
+        gameSettings: null,
         error: null,
         loading: false,
       },
@@ -224,11 +227,11 @@ const handleReplayFolderLoading = async (folderPath: string): Promise<FileLoadRe
   return loadFolderResult.result;
 };
 
-const handleCalculatingGameStats = async (filePath: string): Promise<StatsType> => {
+const handleCalculatingGameStats = async (filePath: string): Promise<StatsType | null> => {
   const statsResult = await calculateGameStats.renderer!.trigger({ filePath });
   if (!statsResult.result) {
     console.error(`Error calculating stats for: ${filePath}`, statsResult.errors);
     throw new Error(`Error calculating stats for: ${filePath}`);
   }
-  return statsResult.result;
+  return statsResult.result.stats;
 };

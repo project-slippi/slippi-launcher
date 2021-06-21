@@ -13,5 +13,5 @@ loadReplayFolder.main!.handle(async ({ folderPath }) => {
 calculateGameStats.main!.handle(async ({ filePath }) => {
   const w = await replayBrowserWorker;
   const result = await w.calculateGameStats(filePath);
-  return result;
+  return { stats: result };
 });

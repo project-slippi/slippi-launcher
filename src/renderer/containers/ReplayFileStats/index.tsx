@@ -84,7 +84,7 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
         ) : error ? (
           <IconMessage Icon={ErrorIcon} label={`Error: ${error.message ?? JSON.stringify(error, null, 2)}`} />
         ) : gameStats ? (
-          <GameProfile {...props} stats={gameStats}></GameProfile>
+          <GameProfile {...props} stats={gameStats} settings={settings}></GameProfile>
         ) : (
           <IconMessage Icon={HelpIcon} label="No stats computed" />
         )}

@@ -1,10 +1,19 @@
+/** @jsx jsx */
+import { css, jsx } from "@emotion/react";
 import Tooltip from "@material-ui/core/Tooltip";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
 import { FileResult } from "@replays/types";
-import { animations as animationUtils, Frames, moves as moveUtils, StatsType, StockType } from "@slippi/slippi-js";
+import {
+  animations as animationUtils,
+  Frames,
+  moves as moveUtils,
+  PlayerType,
+  StatsType,
+  StockType,
+} from "@slippi/slippi-js";
 import { extractPlayerNames } from "common/matchNames";
 import { convertFrameCountToDurationString } from "common/time";
 import _ from "lodash";
@@ -19,13 +28,13 @@ const columnCount = 5;
 export interface KillTableProps {
   file: FileResult;
   stats: StatsType;
-  playerIndex: number;
+  player: PlayerType;
+  opp: PlayerType;
 }
 
-export const KillTable: React.FC<KillTableProps> = ({ file, stats, playerIndex }) => {
+export const KillTable: React.FC<KillTableProps> = ({ file, stats, player, opp }) => {
   const playFile = useReplays((store) => store.playFile);
-  const player = file.settings.players[playerIndex];
-  const names = extractPlayerNames(playerIndex, file.settings, file.metadata);
+  const names = extractPlayerNames(player.playerIndex, file.settings, file.metadata);
   const playerDisplay = (
     <div style={{ display: "flex", alignItems: "center" }}>
       <img
@@ -36,7 +45,7 @@ export const KillTable: React.FC<KillTableProps> = ({ file, stats, playerIndex }
           marginRight: 10,
         }}
       />
-      <div style={{ fontWeight: 500 }}>{names.name ? names.name : "Player " + (playerIndex + 1)}</div>
+      <div style={{ fontWeight: 500 }}>{names.name ? names.name : "Player " + (player.playerIndex + 1)}</div>
     </div>
   );
   const generateStockRow = (stock: StockType) => {
@@ -67,9 +76,25 @@ export const KillTable: React.FC<KillTableProps> = ({ file, stats, playerIndex }
 
     return (
       <T.TableRow key={`${stock.playerIndex}-stock-${stock.startFrame}`}>
-        <Tooltip title="Play from here">
-          <T.TableCell onClick={playPunish}>{start}</T.TableCell>
-        </Tooltip>
+        <T.TableCell>
+          {start === "–" ? (
+            start
+          ) : (
+            <Tooltip title="Play from here">
+              <span
+                onClick={playPunish}
+                css={css`
+                  &:hover {
+                    cursor: pointer;
+                    text-decoration: underline;
+                  }
+                `}
+              >
+                {start}
+              </span>
+            </Tooltip>
+          )}
+        </T.TableCell>
         <T.TableCell>{end}</T.TableCell>
         <T.TableCell>{killedBy}</T.TableCell>
         <T.TableCell>{killedDirection}</T.TableCell>
@@ -83,7 +108,7 @@ export const KillTable: React.FC<KillTableProps> = ({ file, stats, playerIndex }
     // responsible for ending this stock, if so show the kill move, otherwise assume SD
     const punishes = _.get(stats, "conversions") || [];
     const punishesByPlayer = _.groupBy(punishes, "playerIndex");
-    const playerPunishes = punishesByPlayer[playerIndex] || [];
+    const playerPunishes = punishesByPlayer[opp.playerIndex] || [];
 
     // Only get punishes that killed
     const killingPunishes = _.filter(playerPunishes, "didKill");
@@ -118,6 +143,8 @@ export const KillTable: React.FC<KillTableProps> = ({ file, stats, playerIndex }
         return <ArrowBackIcon fontSize="inherit" />;
       case "right":
         return <ArrowForwardIcon fontSize="inherit" />;
+      default:
+        return undefined;
     }
   };
 
@@ -143,8 +170,8 @@ export const KillTable: React.FC<KillTableProps> = ({ file, stats, playerIndex }
 
   const renderStocksRows = () => {
     const stocks = _.get(stats, "stocks") || [];
-    const stocksByOpponent = _.groupBy(stocks, "opponentIndex");
-    const opponentStocks = stocksByOpponent[playerIndex] || [];
+    const stocksByOpponent = _.groupBy(stocks, "playerIndex");
+    const opponentStocks = stocksByOpponent[opp.playerIndex] || [];
 
     return opponentStocks.map(generateStockRow);
   };
