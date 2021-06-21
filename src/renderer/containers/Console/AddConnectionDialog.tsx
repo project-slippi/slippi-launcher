@@ -12,16 +12,21 @@ import { useSettings } from "@/lib/hooks/useSettings";
 import { AddConnectionForm } from "./AddConnectionForm";
 
 export interface AddConnectionModalProps {
+  open: boolean;
   selectedConnection: Partial<StoredConnection> | null;
   onSubmit: (conn: Omit<StoredConnection, "id">) => void;
   onCancel: () => void;
 }
 
-export const AddConnectionDialog: React.FC<AddConnectionModalProps> = ({ selectedConnection, onSubmit, onCancel }) => {
+export const AddConnectionDialog: React.FC<AddConnectionModalProps> = ({
+  open,
+  selectedConnection,
+  onSubmit,
+  onCancel,
+}) => {
   const spectateFolder = useSettings((store) => store.settings.spectateSlpPath);
   const isEditing = Boolean(selectedConnection && selectedConnection.id);
   const [title, setTitle] = React.useState("");
-  const isOpen = selectedConnection !== null;
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
   const updateTitle = () => {
@@ -33,7 +38,7 @@ export const AddConnectionDialog: React.FC<AddConnectionModalProps> = ({ selecte
   );
   return (
     <Dialog
-      open={isOpen}
+      open={open}
       onClose={onCancel}
       fullWidth={true}
       fullScreen={fullScreen}
