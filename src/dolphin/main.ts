@@ -47,11 +47,12 @@ removePlayKeyFile.main!.handle(async () => {
   return { success: true };
 });
 
-viewSlpReplay.main!.handle(async ({ filePath, startFrame }) => {
+viewSlpReplay.main!.handle(async ({ files }) => {
+  const commandId = Math.random().toString(36).slice(2);
   const replayComm: ReplayCommunication = {
-    mode: "normal",
-    replay: filePath,
-    startFrame: startFrame,
+    commandId,
+    mode: "queue",
+    queue: files,
   };
   await dolphinManager.launchPlaybackDolphin("playback", replayComm);
   return { success: true };

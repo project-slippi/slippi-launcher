@@ -33,7 +33,7 @@ export interface KillTableProps {
 }
 
 export const KillTable: React.FC<KillTableProps> = ({ file, stats, player, opp }) => {
-  const playFile = useReplays((store) => store.playFile);
+  const playFiles = useReplays((store) => store.playFiles);
   const names = extractPlayerNames(player.playerIndex, file.settings, file.metadata);
   const playerDisplay = (
     <div style={{ display: "flex", alignItems: "center" }}>
@@ -71,7 +71,7 @@ export const KillTable: React.FC<KillTableProps> = ({ file, stats, player, opp }
     }
 
     const playPunish = () => {
-      playFile(file.fullPath, stock.startFrame);
+      playFiles([{ path: file.fullPath, startFrame: stock.startFrame }]);
     };
 
     return (

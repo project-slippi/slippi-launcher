@@ -1,4 +1,5 @@
 import { viewSlpReplay } from "@dolphin/ipc";
+import { ReplayQueueItem } from "@dolphin/types";
 import { calculateGameStats, loadReplayFolder } from "@replays/ipc";
 import { FileLoadResult, FileResult, FolderResult, Progress } from "@replays/types";
 import { GameStartType, StatsType } from "@slippi/slippi-js";
@@ -32,7 +33,7 @@ type StoreState = {
 type StoreReducers = {
   init: (rootFolder: string, forceReload?: boolean, currentFolder?: string) => Promise<void>;
   selectFile: (index: number, filePath: string) => Promise<void>;
-  playFile: (filePath: string, startFrame?: number) => Promise<void>;
+  playFiles: (files: ReplayQueueItem[]) => Promise<void>;
   clearSelectedFile: () => Promise<void>;
   removeFile: (filePath: string) => void;
   loadDirectoryList: (folder: string) => Promise<void>;
@@ -86,14 +87,11 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     await Promise.all([loadDirectoryList(currentFolder ?? rootFolder), loadFolder(currentFolder ?? rootFolder, true)]);
   },
 
-  playFile: async (fullPath, startFrame) => {
-    const viewResult = await viewSlpReplay.renderer!.trigger({
-      filePath: fullPath,
-      startFrame: startFrame,
-    });
+  playFiles: async (files: ReplayQueueItem[]) => {
+    const viewResult = await viewSlpReplay.renderer!.trigger({ files });
     if (!viewResult.result) {
-      console.error(`Error playing file: ${fullPath}`, viewResult.errors);
-      throw new Error(`Error playing file: ${fullPath}`);
+      console.error(`Error playing file(s): ${files.join(", ")}`, viewResult.errors);
+      throw new Error(`Error playing file(s): ${files.join(", ")}`);
     }
   },
 

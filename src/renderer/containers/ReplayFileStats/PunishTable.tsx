@@ -23,7 +23,7 @@ export interface PunishTableProps {
 }
 
 export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, player, opp }) => {
-  const playFile = useReplays((store) => store.playFile);
+  const playFiles = useReplays((store) => store.playFiles);
   const names = extractPlayerNames(player.playerIndex, file.settings, file.metadata);
   const playerDisplay = (
     <div style={{ display: "flex", alignItems: "center" }}>
@@ -52,7 +52,7 @@ export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, player, o
     }
 
     const playPunish = () => {
-      playFile(file.fullPath, punish.startFrame);
+      playFiles([{ path: file.fullPath, startFrame: punish.startFrame }]);
     };
 
     return (

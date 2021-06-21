@@ -33,7 +33,7 @@ export class DolphinManager extends EventEmitter {
       this.playbackDolphinInstances.set(id, playbackInstance);
     }
 
-    playbackInstance.play(replayComm);
+    await playbackInstance.play(replayComm);
   }
 
   public async launchNetplayDolphin() {

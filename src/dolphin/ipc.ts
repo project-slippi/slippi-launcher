@@ -1,5 +1,5 @@
 import { _, EmptyPayload, makeEndpoint, SuccessPayload } from "../ipc";
-import { DolphinLaunchType, PlayKey } from "./types";
+import { DolphinLaunchType, PlayKey, ReplayQueueItem } from "./types";
 
 // Handlers
 
@@ -23,11 +23,7 @@ export const checkPlayKeyExists = makeEndpoint.main("checkPlayKeyExists", <Empty
 
 export const removePlayKeyFile = makeEndpoint.main("removePlayKeyFile", <EmptyPayload>_, <SuccessPayload>_);
 
-export const viewSlpReplay = makeEndpoint.main(
-  "viewSlpReplay",
-  <{ filePath: string; startFrame?: number }>_,
-  <SuccessPayload>_,
-);
+export const viewSlpReplay = makeEndpoint.main("viewSlpReplay", <{ files: ReplayQueueItem[] }>_, <SuccessPayload>_);
 
 export const launchNetplayDolphin = makeEndpoint.main("launchNetplayDolphin", <EmptyPayload>_, <SuccessPayload>_);
 

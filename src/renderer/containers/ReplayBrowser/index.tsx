@@ -38,7 +38,7 @@ export const ReplayBrowser: React.FC = () => {
   const files = useReplays((store) => store.files);
   const selectedItem = useReplays((store) => store.selectedFile.index);
   const selectFile = useReplays((store) => store.selectFile);
-  const playFile = useReplays((store) => store.playFile);
+  const playFiles = useReplays((store) => store.playFiles);
   const clearSelectedFile = useReplays((store) => store.clearSelectedFile);
   const loading = useReplays((store) => store.loading);
   const currentFolder = useReplays((store) => store.currentFolder);
@@ -76,7 +76,7 @@ export const ReplayBrowser: React.FC = () => {
 
   const playSelectedFile = (index: number) => {
     const filePath = filteredFiles[index].fullPath;
-    playFile(filePath);
+    playFiles([{ path: filePath }]);
   };
 
   const deleteFiles = (filePaths: string[]) => {
@@ -183,7 +183,7 @@ export const ReplayBrowser: React.FC = () => {
                   )}
                   <FileSelectionToolbar
                     totalSelected={selectedFiles.length}
-                    onPlay={() => null}
+                    onPlay={() => playFiles(selectedFiles.map((path) => ({ path })))}
                     onClear={clearSelectedFiles}
                     onDelete={() => {
                       deleteFiles(selectedFiles);
