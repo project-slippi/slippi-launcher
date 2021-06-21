@@ -1,6 +1,6 @@
 import Tooltip from "@material-ui/core/Tooltip";
 import { FileResult } from "@replays/types";
-import { ConversionType, StatsType, StockType } from "@slippi/slippi-js";
+import { ConversionType, PlayerType, StatsType, StockType } from "@slippi/slippi-js";
 import { extractPlayerNames } from "common/matchNames";
 import { convertFrameCountToDurationString } from "common/time";
 import _ from "lodash";
@@ -16,14 +16,13 @@ const columnCount = 6;
 export interface PunishTableProps {
   file: FileResult;
   stats: StatsType;
-  playerIndex: number;
-  oppIndex: number;
+  player: PlayerType;
+  opp: PlayerType;
 }
 
-export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, playerIndex, oppIndex }) => {
+export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, player, opp }) => {
   const playFile = useReplays((store) => store.playFile);
-  const player = file.settings.players[playerIndex];
-  const names = extractPlayerNames(playerIndex, file.settings, file.metadata);
+  const names = extractPlayerNames(player.playerIndex, file.settings, file.metadata);
   const playerDisplay = (
     <div style={{ display: "flex", alignItems: "center" }}>
       <img
@@ -34,7 +33,7 @@ export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, playerInd
           marginRight: 10,
         }}
       />
-      <div style={{ fontWeight: 500 }}>{names.name ? names.name : "Player " + (playerIndex + 1)}</div>
+      <div style={{ fontWeight: 500 }}>{names.name ? names.name : "Player " + (player.playerIndex + 1)}</div>
     </div>
   );
 
@@ -168,11 +167,11 @@ export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, playerInd
   const renderPunishRows = () => {
     const punishes = _.get(stats, "conversions") || [];
     const punishesByPlayer = _.groupBy(punishes, "playerIndex");
-    const playerPunishes = punishesByPlayer[oppIndex] || [];
+    const playerPunishes = punishesByPlayer[opp.playerIndex] || [];
 
     const stocks = _.get(stats, "stocks") || [];
     const stocksTakenFromPlayer = _.groupBy(stocks, "playerIndex");
-    const opponentStocks = stocksTakenFromPlayer[oppIndex] || [];
+    const opponentStocks = stocksTakenFromPlayer[opp.playerIndex] || [];
 
     const elements: JSX.Element[] = [];
 
