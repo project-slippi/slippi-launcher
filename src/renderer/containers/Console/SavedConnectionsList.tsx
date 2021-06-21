@@ -8,10 +8,12 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import CreateIcon from "@material-ui/icons/Create";
 import DeleteIcon from "@material-ui/icons/Delete";
+import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import { StoredConnection } from "@settings/types";
 import { ConnectionStatus } from "@slippi/slippi-js";
 import React from "react";
 
+import { IconMessage } from "@/components/Message";
 import { useConsoleDiscoveryStore } from "@/lib/hooks/useConsoleDiscovery";
 import { useSettings } from "@/lib/hooks/useSettings";
 
@@ -58,14 +60,9 @@ export const SavedConnectionsList: React.FC<SavedConnectionsListProps> = ({ avai
   };
 
   return (
-    <div
-      css={css`
-        display: flex;
-        flex-direction: column;
-      `}
-    >
+    <Outer>
       {savedConnections.length === 0 ? (
-        <div>No saved connections</div>
+        <IconMessage Icon={HelpOutlineIcon} label="No saved console connections" />
       ) : (
         <div>
           {savedConnections.map((conn, index) => {
@@ -101,10 +98,16 @@ export const SavedConnectionsList: React.FC<SavedConnectionsListProps> = ({ avai
           <ListItemText primary="Delete" />
         </MenuItem>
       </Menu>
-    </div>
+    </Outer>
   );
 };
 
 const StyledListItemIcon = styled(ListItemIcon)`
   margin-right: 10px;
+`;
+
+const Outer = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
 `;

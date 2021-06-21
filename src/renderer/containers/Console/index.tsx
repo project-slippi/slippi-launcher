@@ -89,7 +89,6 @@ export const Console: React.FC = () => {
               <Button onClick={() => setModalOpen(true)} startIcon={<AddIcon />}>
                 New connection
               </Button>
-              <h2>Saved Connections</h2>
               <SavedConnectionsList
                 availableConsoles={availableConsoles}
                 onEdit={(conn) => {
