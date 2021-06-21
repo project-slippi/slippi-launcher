@@ -56,6 +56,11 @@ const addOverrides = (theme: Theme) => {
       MuiTooltip: {
         arrow: true,
       },
+      MuiTextField: {
+        variant: "filled",
+        fullWidth: true,
+        size: "small",
+      },
     },
     overrides: {
       MuiPaper: {
