@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import Typography from "@material-ui/core/Typography";
 import { FileResult } from "@replays/types";
-import { GameStartType, PlayerType, StatsType } from "@slippi/slippi-js";
+import { GameStartType, StatsType } from "@slippi/slippi-js";
 import _ from "lodash";
 import React from "react";
 
@@ -37,19 +37,7 @@ const StatSection: React.FC<{
 };
 
 export const GameProfile: React.FC<GameProfileProps> = ({ file, stats, settings }) => {
-  // return an array with the
-  const getPlayerIndexes = (isFirstPlayer: boolean): PlayerType[] => {
-    const players = settings.players;
-    const player = isFirstPlayer ? _.first(players) : _.last(players);
-    const opp = isFirstPlayer ? _.last(players) : _.first(players);
-    if (player === undefined || opp === undefined) {
-      return [];
-    }
-    return [player, opp];
-  };
-
-  const firstPlayer = getPlayerIndexes(true);
-  const secondPlayer = getPlayerIndexes(false);
+  const [firstPlayer, secondPlayer] = settings.players;
 
   return (
     <div style={{ flex: "1", margin: 20 }}>
@@ -59,12 +47,12 @@ export const GameProfile: React.FC<GameProfileProps> = ({ file, stats, settings 
         </ErrorBoundary>
       </StatSection>
       <StatSection title="Kills">
-        <KillTable file={file} stats={stats} player={firstPlayer[0]} opp={firstPlayer[1]} />
-        <KillTable file={file} stats={stats} player={secondPlayer[0]} opp={secondPlayer[1]} />
+        <KillTable file={file} stats={stats} player={firstPlayer} opp={secondPlayer} />
+        <KillTable file={file} stats={stats} player={secondPlayer} opp={firstPlayer} />
       </StatSection>
       <StatSection title="Openings &amp; Conversions">
-        <PunishTable file={file} stats={stats} player={firstPlayer[0]} opp={firstPlayer[1]} />
-        <PunishTable file={file} stats={stats} player={secondPlayer[0]} opp={secondPlayer[1]} />
+        <PunishTable file={file} stats={stats} player={firstPlayer} opp={secondPlayer} />
+        <PunishTable file={file} stats={stats} player={secondPlayer} opp={firstPlayer} />
       </StatSection>
     </div>
   );
