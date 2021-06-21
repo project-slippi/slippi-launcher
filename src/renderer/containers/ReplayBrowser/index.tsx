@@ -42,11 +42,13 @@ export const ReplayBrowser: React.FC = () => {
   const loading = useReplays((store) => store.loading);
   const currentFolder = useReplays((store) => store.currentFolder);
   const folders = useReplays((store) => store.folders);
+  const selectedFiles = useReplays((store) => store.selectedFiles);
+  const toggleSelectedFiles = useReplays((store) => store.toggleSelectedFiles);
+  const clearSelectedFiles = useReplays((store) => store.clearSelectedFiles);
   const init = useReplays((store) => store.init);
   const fileErrorCount = useReplays((store) => store.fileErrorCount);
   const rootSlpPath = useSettings((store) => store.settings.rootSlpPath);
   const { addToast } = useToasts();
-  const [list, setList] = React.useState<Array<string>>([]);
 
   const sortDirection = useReplayFilter((store) => store.sortDirection);
   const sortBy = useReplayFilter((store) => store.sortBy);
@@ -86,19 +88,6 @@ export const ReplayBrowser: React.FC = () => {
     // Remove the file from the store
     removeFile(filePath);
     addToast(`File deleted successfully`, { appearance: "success", autoDismiss: true });
-  };
-
-  const handleAddToList = (name: string) => {
-    if (list.includes(name)) {
-      list.splice(list.indexOf(name), 1);
-      setList([...list]);
-      return;
-    }
-
-    list.push(name);
-    setList([...list]);
-
-    console.log("whats going on");
   };
 
   if (folders === null) {
@@ -176,8 +165,8 @@ export const ReplayBrowser: React.FC = () => {
                     <FileList
                       folderPath={currentFolder}
                       onDelete={deleteFile}
-                      handleAddToList={handleAddToList}
-                      list={list}
+                      handleAddToList={(filePath: string) => toggleSelectedFiles(filePath)}
+                      list={selectedFiles}
                       onSelect={(index: number) => setSelectedItem(index)}
                       onPlay={(index: number) => playSelectedFile(index)}
                       files={filteredFiles}
@@ -185,7 +174,7 @@ export const ReplayBrowser: React.FC = () => {
                       setScrollRowItem={setScrollRowItem}
                     />
                   )}
-                  {list.length > 0 ? (
+                  {selectedFiles.length > 0 ? (
                     <div
                       css={css`
                         position: absolute;
@@ -205,7 +194,7 @@ export const ReplayBrowser: React.FC = () => {
                       </Button>
 
                       <Button
-                        onClick={() => setList([])}
+                        onClick={clearSelectedFiles}
                         css={css`
                           background-color: rgb(220, 219, 220);
                           color: black;

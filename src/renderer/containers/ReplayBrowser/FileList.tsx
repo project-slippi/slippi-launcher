@@ -30,12 +30,12 @@ const FileListResults: React.FC<{
   files: FileResult[];
   scrollRowItem: number;
   list: Array<string>;
-  handleAddToList: (name: string) => void;
+  onClick: (index: number) => void;
   onOpenMenu: (index: number, element: HTMLElement) => void;
   onSelect: (index: number) => void;
   onPlay: (index: number) => void;
   setScrollRowItem: (row: number) => void;
-}> = ({ folderPath, scrollRowItem, files, onSelect, onPlay, onOpenMenu, setScrollRowItem, handleAddToList, list }) => {
+}> = ({ folderPath, scrollRowItem, files, onSelect, onPlay, onOpenMenu, setScrollRowItem, onClick, list }) => {
   // Keep a reference to the list so we can control the scroll position
   const listRef = React.createRef<List>();
   // Keep track of the latest scroll position
@@ -45,20 +45,24 @@ const FileListResults: React.FC<{
   }, 100);
 
   const Row = React.useCallback(
-    (props: { style?: React.CSSProperties; index: number }) => (
-      <ErrorBoundary>
-        <ReplayFile
-          onOpenMenu={onOpenMenu}
-          index={props.index}
-          style={props.style}
-          onSelect={() => onSelect(props.index)}
-          handleAddToList={handleAddToList}
-          list={list}
-          onPlay={() => onPlay(props.index)}
-          {...files[props.index]}
-        />
-      </ErrorBoundary>
-    ),
+    (props: { style?: React.CSSProperties; index: number }) => {
+      const file = files[props.index];
+      const selectedIndex = list.indexOf(file.fullPath);
+      return (
+        <ErrorBoundary>
+          <ReplayFile
+            onOpenMenu={onOpenMenu}
+            index={props.index}
+            style={props.style}
+            onSelect={() => onSelect(props.index)}
+            onClick={() => onClick(props.index)}
+            selectedIndex={selectedIndex}
+            onPlay={() => onPlay(props.index)}
+            {...file}
+          />
+        </ErrorBoundary>
+      );
+    },
     [files, onSelect, onPlay, onOpenMenu],
   );
 
@@ -158,7 +162,7 @@ export const FileList: React.FC<{
           onOpenMenu={onOpenMenu}
           onSelect={onSelect}
           onPlay={onPlay}
-          handleAddToList={handleAddToList}
+          onClick={(index: number) => handleAddToList(files[index].fullPath)}
           list={list}
           files={files}
           scrollRowItem={scrollRowItem}
