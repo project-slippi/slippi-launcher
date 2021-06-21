@@ -105,32 +105,13 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
                 display: flex;
               `}
             >
-              <ReplayActionButton
-                label="More options"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onOpenMenu(index, e.currentTarget as any);
-                }}
-              >
+              <ReplayActionButton label="More options" onClick={(e) => onOpenMenu(index, e.currentTarget as any)}>
                 <MoreHorizIcon />
               </ReplayActionButton>
-              <ReplayActionButton
-                label="Show stats"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onSelect();
-                }}
-              >
+              <ReplayActionButton label="Show stats" onClick={onSelect}>
                 <EqualizerIcon />
               </ReplayActionButton>
-              <ReplayActionButton
-                label="Launch replay"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onPlay();
-                }}
-                color={colors.greenDark}
-              >
+              <ReplayActionButton label="Launch replay" onClick={onPlay} color={colors.greenDark}>
                 <PlayCircleOutlineIcon />
               </ReplayActionButton>
             </div>
@@ -243,7 +224,12 @@ const ReplayActionButton: React.FC<{
   return (
     <Tooltip title={label}>
       <IconButton
-        onClick={onClick}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (onClick) {
+            onClick(e);
+          }
+        }}
         css={css`
           padding: 5px;
           margin: 0 5px;
