@@ -51,9 +51,9 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
   const renderMultiStatField = (
     header: string,
     arrPath: string | string[],
-    fieldPaths: string | string[],
-    highlight?: (v: number[] | string[], ov: number[] | string[]) => boolean,
-    valueMapper?: (a: number) => string,
+    fieldPaths: string | string[] | null,
+    highlight?: (v: any[], ov: any[]) => boolean,
+    valueMapper?: (a: any) => string,
     arrPathExtension?: string | string[],
   ) => {
     const key = `standard-field-${header}`;
@@ -71,12 +71,21 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
     }
     const player1Item = arrPathExtension ? _.get(itemsByPlayer[0], arrPathExtension) : itemsByPlayer[0] || {};
     const player2Item = arrPathExtension ? _.get(itemsByPlayer[1], arrPathExtension) : itemsByPlayer[1] || {};
-    const generateValues = (item: any) =>
-      _.chain(item)
-        .pick(fieldPaths)
-        .toArray()
-        .map((v) => (valueMapper ? valueMapper(v) : v))
-        .value();
+    const generateValues = (item: any) => {
+      if (fieldPaths !== null) {
+        return _.chain(item)
+          .pick(fieldPaths)
+          .toArray()
+          .map((v) => (valueMapper ? valueMapper(v) : v))
+          .value();
+      }
+
+      if (valueMapper) {
+        return [valueMapper(item)];
+      }
+
+      return [item];
+    };
 
     const p1Values = generateValues(player1Item);
     const p2Values = generateValues(player2Item);
@@ -322,9 +331,13 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
         {renderMultiStatField(
           "L-Cancels (Succeeded / Failed)",
           "actionCounts",
-          ["success", "fail"],
+          null,
           undefined,
-          undefined,
+          ({ fail, success }) => {
+            const total = success + fail;
+            const rate = total === 0 ? 0 : (success / (success + fail)) * 100;
+            return `${success} / ${fail} (${Math.round(rate)}%)`;
+          },
           "lCancelCount",
         )}
       </tbody>,
