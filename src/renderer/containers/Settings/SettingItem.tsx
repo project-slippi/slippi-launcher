@@ -27,7 +27,6 @@ export const SettingItem: React.FC<SettingItemProps> = (props) => {
         <div
           css={css`
             padding-bottom: 10px;
-            opacity: 0.6;
           `}
         >
           <Typography variant="caption">{props.description}</Typography>
