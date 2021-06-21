@@ -1,3 +1,5 @@
+/** @jsx jsx */
+import { css, jsx } from "@emotion/react";
 import Tooltip from "@material-ui/core/Tooltip";
 import { FileResult } from "@replays/types";
 import { ConversionType, PlayerType, StatsType, StockType } from "@slippi/slippi-js";
@@ -55,9 +57,21 @@ export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, player, o
 
     return (
       <T.TableRow key={`${punish.playerIndex}-punish-${punish.startFrame}`}>
-        <Tooltip title="Play from here">
-          <T.TableCell onClick={playPunish}>{start}</T.TableCell>
-        </Tooltip>
+        <T.TableCell>
+          <Tooltip title="Play from here">
+            <span
+              onClick={playPunish}
+              css={css`
+                &:hover {
+                  cursor: pointer;
+                  text-decoration: underline;
+                }
+              `}
+            >
+              {start}
+            </span>
+          </Tooltip>
+        </T.TableCell>
         <T.TableCell>{end}</T.TableCell>
         <T.TableCell>{damage}</T.TableCell>
         <T.TableCell>{damageRange}</T.TableCell>

@@ -1,3 +1,5 @@
+/** @jsx jsx */
+import { css, jsx } from "@emotion/react";
 import Tooltip from "@material-ui/core/Tooltip";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
@@ -74,9 +76,25 @@ export const KillTable: React.FC<KillTableProps> = ({ file, stats, player, opp }
 
     return (
       <T.TableRow key={`${stock.playerIndex}-stock-${stock.startFrame}`}>
-        <Tooltip title="Play from here">
-          <T.TableCell onClick={playPunish}>{start}</T.TableCell>
-        </Tooltip>
+        <T.TableCell>
+          {start === "–" ? (
+            start
+          ) : (
+            <Tooltip title="Play from here">
+              <span
+                onClick={playPunish}
+                css={css`
+                  &:hover {
+                    cursor: pointer;
+                    text-decoration: underline;
+                  }
+                `}
+              >
+                {start}
+              </span>
+            </Tooltip>
+          )}
+        </T.TableCell>
         <T.TableCell>{end}</T.TableCell>
         <T.TableCell>{killedBy}</T.TableCell>
         <T.TableCell>{killedDirection}</T.TableCell>
