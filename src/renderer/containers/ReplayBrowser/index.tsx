@@ -148,7 +148,6 @@ export const ReplayBrowser: React.FC = () => {
                     display: flex;
                     flex-direction: column;
                     flex: 1;
-                    poaition: relative;
                   `}
                 >
                   <FilterToolbar disabled={loading} ref={searchInputRef} />
@@ -169,7 +168,7 @@ export const ReplayBrowser: React.FC = () => {
                       folderPath={currentFolder}
                       onDelete={(filePath) => deleteFiles([filePath])}
                       handleAddToList={(filePath: string) => toggleSelectedFiles(filePath)}
-                      list={selectedFiles}
+                      selectedFiles={selectedFiles}
                       onSelect={(index: number) => setSelectedItem(index)}
                       onPlay={(index: number) => playSelectedFile(index)}
                       files={filteredFiles}

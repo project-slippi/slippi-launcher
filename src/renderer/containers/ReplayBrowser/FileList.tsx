@@ -29,13 +29,13 @@ const FileListResults: React.FC<{
   folderPath: string;
   files: FileResult[];
   scrollRowItem: number;
-  list: Array<string>;
+  selectedFiles: Array<string>;
   onClick: (index: number) => void;
   onOpenMenu: (index: number, element: HTMLElement) => void;
   onSelect: (index: number) => void;
   onPlay: (index: number) => void;
   setScrollRowItem: (row: number) => void;
-}> = ({ folderPath, scrollRowItem, files, onSelect, onPlay, onOpenMenu, setScrollRowItem, onClick, list }) => {
+}> = ({ folderPath, scrollRowItem, files, onSelect, onPlay, onOpenMenu, setScrollRowItem, onClick, selectedFiles }) => {
   // Keep a reference to the list so we can control the scroll position
   const listRef = React.createRef<List>();
   // Keep track of the latest scroll position
@@ -47,7 +47,7 @@ const FileListResults: React.FC<{
   const Row = React.useCallback(
     (props: { style?: React.CSSProperties; index: number }) => {
       const file = files[props.index];
-      const selectedIndex = list.indexOf(file.fullPath);
+      const selectedIndex = selectedFiles.indexOf(file.fullPath);
       return (
         <ErrorBoundary>
           <ReplayFile
@@ -63,7 +63,7 @@ const FileListResults: React.FC<{
         </ErrorBoundary>
       );
     },
-    [files, onSelect, onPlay, onOpenMenu],
+    [files, onSelect, onPlay, onOpenMenu, selectedFiles],
   );
 
   // Store the latest scroll row item on unmount
@@ -111,7 +111,7 @@ export const FileList: React.FC<{
   onDelete: (filepath: string) => void;
   onSelect: (index: number) => void;
   handleAddToList: (name: string) => void;
-  list: Array<string>;
+  selectedFiles: Array<string>;
   onPlay: (index: number) => void;
 }> = ({
   scrollRowItem = 0,
@@ -122,7 +122,7 @@ export const FileList: React.FC<{
   setScrollRowItem,
   handleAddToList,
   folderPath,
-  list,
+  selectedFiles,
 }) => {
   const [menuItem, setMenuItem] = React.useState<null | {
     index: number;
@@ -163,7 +163,7 @@ export const FileList: React.FC<{
           onSelect={onSelect}
           onPlay={onPlay}
           onClick={(index: number) => handleAddToList(files[index].fullPath)}
-          list={list}
+          selectedFiles={selectedFiles}
           files={files}
           scrollRowItem={scrollRowItem}
           setScrollRowItem={setScrollRowItem}
