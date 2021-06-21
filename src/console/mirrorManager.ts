@@ -3,6 +3,7 @@ import { ReplayCommunication } from "@dolphin/types";
 import {
   Command,
   ConnectionDetails,
+  ConnectionStatus,
   ConsoleConnection,
   GameEndType,
   Ports,
@@ -14,6 +15,7 @@ import {
 import log from "electron-log";
 
 import { AutoSwitcher } from "./autoSwitcher";
+import { consoleMirrorStatusUpdated } from "./ipc";
 import { MirrorConfig, MirrorDetails } from "./types";
 
 /**
@@ -64,9 +66,22 @@ export class MirrorManager {
         log.info("[Mirroring] Got handshake from wii");
         log.info(details);
         fileWriter.updateSettings({ consoleNickname: details.consoleNick });
-        // this.forceConsoleUiUpdate();
+        consoleMirrorStatusUpdated
+          .main!.trigger({
+            ip: config.ipAddress,
+            status: ConnectionStatus.CONNECTING,
+            nickname: details.consoleNick,
+          })
+          .catch((err) => log.warn(err));
       });
-      // connection.on("statusChange", (status) => this.setStatus(status));
+      connection.on("statusChange", (status) => {
+        consoleMirrorStatusUpdated
+          .main!.trigger({
+            ip: config.ipAddress,
+            status,
+          })
+          .catch((err) => log.warn(err));
+      });
       connection.on("data", (data) => fileWriter.write(data));
     });
     connection.connect(config.ipAddress, config.port ?? Ports.DEFAULT);
@@ -113,7 +128,7 @@ export class MirrorManager {
     log.info("[Mirroring] Disconnect request");
     const details = this.mirrors[ip];
     if (!details) {
-      console.warn(`Error disconnecting. No mirror details found for: ${ip}`);
+      log.warn(`Error disconnecting. No mirror details found for: ${ip}`);
       return;
     }
 
@@ -128,7 +143,7 @@ export class MirrorManager {
     log.info("[Mirroring] Mirroring start");
     const details = this.mirrors[ip];
     if (!details) {
-      console.warn(`Could not start mirroring. No mirror details found for: ${ip}`);
+      log.warn(`Could not start mirroring. No mirror details found for: ${ip}`);
       return;
     }
 

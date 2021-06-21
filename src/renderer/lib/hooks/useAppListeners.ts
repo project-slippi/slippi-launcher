@@ -5,7 +5,7 @@ import {
   dolphinStatusChanged,
   slippiStatusChanged,
 } from "@broadcast/ipc";
-import { discoveredConsolesUpdated } from "@console/ipc";
+import { consoleMirrorStatusUpdated, discoveredConsolesUpdated } from "@console/ipc";
 import { dolphinDownloadLogReceived } from "@dolphin/ipc";
 import { loadProgressUpdated } from "@replays/ipc";
 import { settingsUpdated } from "@settings/ipc";
@@ -99,9 +99,16 @@ export const useAppListeners = () => {
     updateBroadcastingList(items);
   }, []);
 
+  // Update the discovered console list
   const updateConsoleItems = useConsoleDiscoveryStore((store) => store.updateConsoleItems);
   discoveredConsolesUpdated.renderer!.handle(async ({ consoles }) => {
     updateConsoleItems(consoles);
+  });
+
+  // Update the mirroring console status
+  const updateConsoleStatus = useConsoleDiscoveryStore((store) => store.updateConsoleStatus);
+  consoleMirrorStatusUpdated.renderer!.handle(async ({ ip, status, nickname }) => {
+    updateConsoleStatus(ip, { status, nickname });
   });
 
   // Automatically run ISO verification whenever the isoPath changes

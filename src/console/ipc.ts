@@ -13,3 +13,8 @@ export const discoveredConsolesUpdated = makeEndpoint.renderer(
   "console_discoveredConsolesUpdated",
   <{ consoles: DiscoveredConsoleInfo[] }>_,
 );
+
+export const consoleMirrorStatusUpdated = makeEndpoint.renderer(
+  "console_consoleMirrorStatusUpdated",
+  <{ ip: string; status: number; nickname?: string }>_,
+);
