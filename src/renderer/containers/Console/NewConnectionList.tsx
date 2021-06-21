@@ -14,19 +14,7 @@ export interface NewConnectionListProps {
 
 export const NewConnectionList: React.FC<NewConnectionListProps> = ({ consoleItems, onClick }) => {
   return (
-    <InfoBlock
-      title={
-        <div
-          css={css`
-            display: flex;
-            justify-content: space-between;
-          `}
-        >
-          <span>New Connections</span>
-          <span>({consoleItems.length})</span>
-        </div>
-      }
-    >
+    <InfoBlock title={`New Connections (${consoleItems.length})`}>
       <div
         css={css`
           display: flex;
