@@ -68,11 +68,11 @@ export class SettingsManager {
   public async addConsoleConnection(conn: Omit<StoredConnection, "id">): Promise<void> {
     const connections = this.get().connections;
     // Auto-generate an ID
-    let nextId = 0;
+    let prevId = 0;
     if (connections.length > 0) {
-      nextId = Math.max(...connections.map((c) => c.id)) + 1;
+      prevId = Math.max(...connections.map((c) => c.id));
     }
-    connections.push({ id: nextId, ...conn });
+    connections.push({ id: prevId + 1, ...conn });
     await this._set("connections", connections);
   }
 
