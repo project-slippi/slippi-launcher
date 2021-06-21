@@ -90,20 +90,20 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
           >
             <TextField
               label="OBS Websocket IP:Port"
-              value={obsIP}
+              value={obsIP ?? ""}
               required={showAdvanced}
               onChange={(e) => setValue("obsIP", e.target.value)}
             />
             <TextField
-              label="Password"
-              value={obsPassword}
+              label="OBS Password"
+              value={obsPassword ?? ""}
               onChange={(e) => setValue("obsPassword", e.target.value)}
               type="password"
             />
           </div>
           <TextField
             label="OBS Source Name"
-            value={obsSourceName}
+            value={obsSourceName ?? ""}
             required={showAdvanced}
             onChange={(e) => setValue("obsSourceName", e.target.value)}
           />
