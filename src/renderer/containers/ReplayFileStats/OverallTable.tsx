@@ -279,11 +279,11 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
         </tr>
       </thead>,
       <tbody key="defense-body">
-        {renderMultiStatField(
-          "Actions (Roll / Air Dodge / Spot Dodge)",
-          ["actionCounts"],
-          ["rollCount", "airDodgeCount", "spotDodgeCount"],
-        )}
+        {renderMultiStatField("Actions (Roll / Air Dodge / Spot Dodge)", "actionCounts", [
+          "rollCount",
+          "airDodgeCount",
+          "spotDodgeCount",
+        ])}
       </tbody>,
     ];
   };
@@ -299,11 +299,12 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
         {renderOpeningField("Neutral Wins", "neutralWinRatio")}
         {renderOpeningField("Counter Hits", "counterHitRatio")}
         {renderOpeningField("Beneficial Trades", "beneficialTradeRatio")}
-        {renderMultiStatField(
-          "Actions (Wavedash / Waveland / Dash Dance / Ledgegrab)",
-          ["actionCounts"],
-          ["wavedashCount", "wavelandCount", "dashDanceCount", "ledgegrabCount"],
-        )}
+        {renderMultiStatField("Actions (Wavedash / Waveland / Dash Dance / Ledgegrab)", "actionCounts", [
+          "wavedashCount",
+          "wavelandCount",
+          "dashDanceCount",
+          "ledgegrabCount",
+        ])}
       </tbody>,
     ];
   };
