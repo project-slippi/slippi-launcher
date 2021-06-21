@@ -16,13 +16,13 @@ import { useToasts } from "react-toast-notifications";
 
 import { BasicFooter } from "@/components/BasicFooter";
 import { DualPane } from "@/components/DualPane";
+import { LabelledText } from "@/components/LabelledText";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { IconMessage } from "@/components/Message";
 import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
 import { useSettings } from "@/lib/hooks/useSettings";
 import { replayFileFilter, replayFileSort } from "@/lib/replayFileSort";
 import { useReplays } from "@/store/replays";
-import { withFont } from "@/styles/withFont";
 
 import { ReplayFileStats } from "../ReplayFileStats";
 import { FileList } from "./FileList";
@@ -190,34 +190,14 @@ export const ReplayBrowser: React.FC = () => {
                   </IconButton>
                 </Tooltip>
               </div>
-              <div
+              <LabelledText
+                label="Current folder"
                 css={css`
-                  display: flex;
-                  flex-direction: column;
                   margin-left: 10px;
-                  padding-right: 20px;
                 `}
               >
-                <div
-                  css={css`
-                    font-size: 11px;
-                    font-weight: bold;
-                    margin-bottom: 4px;
-                    text-transform: uppercase;
-                    font-family: ${withFont("Maven Pro")};
-                  `}
-                >
-                  Current folder
-                </div>
-                <div
-                  css={css`
-                    color: white;
-                    font-weight: lighter;
-                  `}
-                >
-                  {currentFolder}
-                </div>
-              </div>
+                {currentFolder}
+              </LabelledText>
             </div>
             <div style={{ textAlign: "right" }}>
               {filteredFiles.length} files found. {numHiddenFiles} files filtered.{" "}
