@@ -54,6 +54,7 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
     fieldPaths: string | string[],
     highlight?: (v: number[] | string[], ov: number[] | string[]) => boolean,
     valueMapper?: (a: number) => string,
+    arrPathExtension?: string | string[],
   ) => {
     const key = `standard-field-${header}`;
 
@@ -68,8 +69,8 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
         </T.TableRow>
       );
     }
-    const player1Item = itemsByPlayer[0] || {};
-    const player2Item = itemsByPlayer[1] || {};
+    const player1Item = arrPathExtension ? _.get(itemsByPlayer[0], arrPathExtension) : itemsByPlayer[0] || {};
+    const player2Item = arrPathExtension ? _.get(itemsByPlayer[1], arrPathExtension) : itemsByPlayer[1] || {};
     const generateValues = (item: any) =>
       _.chain(item)
         .pick(fieldPaths)
@@ -317,6 +318,14 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
       <tbody key="neutral-body">
         {renderHigherSimpleRatioField("Inputs / Minute", "inputsPerMinute")}
         {renderHigherSimpleRatioField("Digital Inputs / Minute", "digitalInputsPerMinute")}
+        {renderMultiStatField(
+          "L-Cancels (Succeeded / Failed)",
+          "actionCounts",
+          ["success", "fail"],
+          undefined,
+          undefined,
+          "lCancelCount",
+        )}
       </tbody>,
     ];
   };
