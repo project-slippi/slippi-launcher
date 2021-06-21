@@ -26,6 +26,7 @@ import { withFont } from "@/styles/withFont";
 
 import { ReplayFileStats } from "../ReplayFileStats";
 import { FileList } from "./FileList";
+import { FileSelectionToolbar } from "./FileSelectionToolbar";
 import { FilterToolbar } from "./FilterToolbar";
 import { FolderTreeNode } from "./FolderTreeNode";
 
@@ -42,6 +43,9 @@ export const ReplayBrowser: React.FC = () => {
   const loading = useReplays((store) => store.loading);
   const currentFolder = useReplays((store) => store.currentFolder);
   const folders = useReplays((store) => store.folders);
+  const selectedFiles = useReplays((store) => store.selectedFiles);
+  const toggleSelectedFiles = useReplays((store) => store.toggleSelectedFiles);
+  const clearSelectedFiles = useReplays((store) => store.clearSelectedFiles);
   const init = useReplays((store) => store.init);
   const fileErrorCount = useReplays((store) => store.fileErrorCount);
   const rootSlpPath = useSettings((store) => store.settings.rootSlpPath);
@@ -75,16 +79,23 @@ export const ReplayBrowser: React.FC = () => {
     playFile(filePath);
   };
 
-  const deleteFile = (filePath: string) => {
-    const success = shell.moveItemToTrash(filePath);
-    if (!success) {
-      addToast(`Error deleting file: ${filePath}`, { appearance: "error" });
-      return;
-    }
+  const deleteFiles = (filePaths: string[]) => {
+    let errCount = 0;
+    filePaths.forEach((filePath) => {
+      const success = shell.moveItemToTrash(filePath);
+      if (success) {
+        // Remove the file from the store
+        removeFile(filePath);
+      } else {
+        errCount += 1;
+      }
+    });
 
-    // Remove the file from the store
-    removeFile(filePath);
-    addToast(`File deleted successfully`, { appearance: "success", autoDismiss: true });
+    let message = `${filePaths.length - errCount} file(s) deleted successfully.`;
+    if (errCount > 0) {
+      message += ` ${errCount} file(s) couldn't be deleted.`;
+    }
+    addToast(message, { appearance: "success", autoDismiss: true });
   };
 
   if (folders === null) {
@@ -160,7 +171,9 @@ export const ReplayBrowser: React.FC = () => {
                   ) : (
                     <FileList
                       folderPath={currentFolder}
-                      onDelete={deleteFile}
+                      onDelete={(filePath) => deleteFiles([filePath])}
+                      handleAddToList={(filePath: string) => toggleSelectedFiles(filePath)}
+                      selectedFiles={selectedFiles}
                       onSelect={(index: number) => setSelectedItem(index)}
                       onPlay={(index: number) => playSelectedFile(index)}
                       files={filteredFiles}
@@ -168,10 +181,20 @@ export const ReplayBrowser: React.FC = () => {
                       setScrollRowItem={setScrollRowItem}
                     />
                   )}
+                  <FileSelectionToolbar
+                    totalSelected={selectedFiles.length}
+                    onPlay={() => null}
+                    onClear={clearSelectedFiles}
+                    onDelete={() => {
+                      deleteFiles(selectedFiles);
+                      clearSelectedFiles();
+                    }}
+                  />
                 </div>
               }
             />
           </div>
+
           <Footer>
             <div
               css={css`

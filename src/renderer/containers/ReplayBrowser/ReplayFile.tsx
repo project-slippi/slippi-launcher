@@ -28,6 +28,8 @@ export interface ReplayFileProps extends FileResult {
   onSelect: () => void;
   onPlay: () => void;
   onOpenMenu: (index: number, element: HTMLElement) => void;
+  onClick: () => void;
+  selectedIndex: number;
 }
 
 export const ReplayFile: React.FC<ReplayFileProps> = ({
@@ -36,6 +38,8 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
   style,
   onSelect,
   onPlay,
+  onClick,
+  selectedIndex,
   startTime,
   settings,
   name,
@@ -43,8 +47,8 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
   lastFrame,
   fullPath,
 }) => {
+  const selected = selectedIndex !== -1;
   const date = new Date(startTime ? Date.parse(startTime) : 0);
-
   let stageName = "Unknown";
   try {
     if (settings.stageId !== null) {
@@ -56,8 +60,8 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
   const stageImageUrl = settings.stageId !== null ? getStageImage(settings.stageId) : undefined;
 
   return (
-    <div style={style}>
-      <Outer backgroundImage={stageImageUrl ?? undefined}>
+    <div onClick={onClick} style={style}>
+      <Outer backgroundImage={stageImageUrl ?? undefined} selected={selected}>
         <div
           css={css`
             display: flex;
@@ -65,8 +69,10 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
             flex-direction: column;
             justify-content: center;
             padding: 10px;
+            background-color: ${selected ? "rgba(180, 130, 176, 0.1)" : "transparent"};
           `}
         >
+          {selected && <SelectedNumber>{selectedIndex + 1}</SelectedNumber>}
           <div
             css={css`
               display: flex;
@@ -80,12 +86,7 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
                 display: flex;
               `}
             >
-              <ReplayActionButton
-                label="More options"
-                onClick={(e) => {
-                  onOpenMenu(index, e.currentTarget as any);
-                }}
-              >
+              <ReplayActionButton label="More options" onClick={(e) => onOpenMenu(index, e.currentTarget as any)}>
                 <MoreHorizIcon />
               </ReplayActionButton>
               <ReplayActionButton label="Show stats" onClick={onSelect}>
@@ -96,6 +97,7 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
               </ReplayActionButton>
             </div>
           </div>
+
           <div
             css={css`
               display: flex;
@@ -141,10 +143,14 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
 
 const Outer = styled.div<{
   backgroundImage?: string;
+  selected?: boolean;
 }>`
+  cursor: pointer;
   display: flex;
   position: relative;
-  border: solid 1px rgba(159, 116, 192, 0.1);
+  border-style: solid;
+  border-width: 1px;
+  border-color: ${(p) => (p.selected ? "rgba(255, 255, 255, 0.7)" : "rgba(159, 116, 192, 0.1)")};
   overflow: hidden;
   border-radius: 10px;
   height: 80px;
@@ -203,7 +209,12 @@ const ReplayActionButton: React.FC<{
   return (
     <Tooltip title={label}>
       <IconButton
-        onClick={onClick}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (onClick) {
+            onClick(e);
+          }
+        }}
         css={css`
           padding: 5px;
           margin: 0 5px;
@@ -215,3 +226,20 @@ const ReplayActionButton: React.FC<{
     </Tooltip>
   );
 };
+
+const SelectedNumber = styled.div`
+  position: absolute;
+  left: 50%;
+  line-height: 50px;
+  width: 50px;
+  height: 50px;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: black;
+  mix-blend-mode: color-dodge;
+  font-weight: bold;
+  font-size: 30px;
+  border-radius: 50%;
+  text-align: center;
+  transform: translateX(-50%);
+  z-index: 1;
+`;

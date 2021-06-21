@@ -29,11 +29,13 @@ const FileListResults: React.FC<{
   folderPath: string;
   files: FileResult[];
   scrollRowItem: number;
+  selectedFiles: Array<string>;
+  onClick: (index: number) => void;
   onOpenMenu: (index: number, element: HTMLElement) => void;
   onSelect: (index: number) => void;
   onPlay: (index: number) => void;
   setScrollRowItem: (row: number) => void;
-}> = ({ folderPath, scrollRowItem, files, onSelect, onPlay, onOpenMenu, setScrollRowItem }) => {
+}> = ({ folderPath, scrollRowItem, files, onSelect, onPlay, onOpenMenu, setScrollRowItem, onClick, selectedFiles }) => {
   // Keep a reference to the list so we can control the scroll position
   const listRef = React.createRef<List>();
   // Keep track of the latest scroll position
@@ -43,19 +45,25 @@ const FileListResults: React.FC<{
   }, 100);
 
   const Row = React.useCallback(
-    (props: { style?: React.CSSProperties; index: number }) => (
-      <ErrorBoundary>
-        <ReplayFile
-          onOpenMenu={onOpenMenu}
-          index={props.index}
-          style={props.style}
-          onSelect={() => onSelect(props.index)}
-          onPlay={() => onPlay(props.index)}
-          {...files[props.index]}
-        />
-      </ErrorBoundary>
-    ),
-    [files, onSelect, onPlay, onOpenMenu],
+    (props: { style?: React.CSSProperties; index: number }) => {
+      const file = files[props.index];
+      const selectedIndex = selectedFiles.indexOf(file.fullPath);
+      return (
+        <ErrorBoundary>
+          <ReplayFile
+            onOpenMenu={onOpenMenu}
+            index={props.index}
+            style={props.style}
+            onSelect={() => onSelect(props.index)}
+            onClick={() => onClick(props.index)}
+            selectedIndex={selectedIndex}
+            onPlay={() => onPlay(props.index)}
+            {...file}
+          />
+        </ErrorBoundary>
+      );
+    },
+    [files, onSelect, onPlay, onOpenMenu, selectedFiles],
   );
 
   // Store the latest scroll row item on unmount
@@ -102,8 +110,20 @@ export const FileList: React.FC<{
   setScrollRowItem: (row: number) => void;
   onDelete: (filepath: string) => void;
   onSelect: (index: number) => void;
+  handleAddToList: (name: string) => void;
+  selectedFiles: Array<string>;
   onPlay: (index: number) => void;
-}> = ({ scrollRowItem = 0, files, onSelect, onPlay, onDelete, setScrollRowItem, folderPath }) => {
+}> = ({
+  scrollRowItem = 0,
+  files,
+  onSelect,
+  onPlay,
+  onDelete,
+  setScrollRowItem,
+  handleAddToList,
+  folderPath,
+  selectedFiles,
+}) => {
   const [menuItem, setMenuItem] = React.useState<null | {
     index: number;
     anchorEl: HTMLElement;
@@ -142,6 +162,8 @@ export const FileList: React.FC<{
           onOpenMenu={onOpenMenu}
           onSelect={onSelect}
           onPlay={onPlay}
+          onClick={(index: number) => handleAddToList(files[index].fullPath)}
+          selectedFiles={selectedFiles}
           files={files}
           scrollRowItem={scrollRowItem}
           setScrollRowItem={setScrollRowItem}

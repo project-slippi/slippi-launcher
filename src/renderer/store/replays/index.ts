@@ -19,6 +19,7 @@ type StoreState = {
   currentFolder: string;
   fileErrorCount: number;
   scrollRowItem: number;
+  selectedFiles: string[];
   selectedFile: {
     index: number | null;
     gameStats: StatsType | null;
@@ -39,6 +40,8 @@ type StoreReducers = {
   toggleFolder: (fullPath: string) => void;
   setScrollRowItem: (offset: number) => void;
   updateProgress: (progress: Progress | null) => void;
+  toggleSelectedFiles: (filePath: string) => void;
+  clearSelectedFiles: () => void;
 };
 
 const initialState: StoreState = {
@@ -50,6 +53,7 @@ const initialState: StoreState = {
   currentFolder: useSettings.getState().settings.rootSlpPath,
   fileErrorCount: 0,
   scrollRowItem: 0,
+  selectedFiles: [],
   selectedFile: {
     index: null,
     gameStats: null,
@@ -215,6 +219,24 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
 
   setScrollRowItem: (rowItem) => {
     set({ scrollRowItem: rowItem });
+  },
+
+  toggleSelectedFiles: (filePath: string) => {
+    set((store) =>
+      produce(store, (draft) => {
+        const index = draft.selectedFiles.findIndex((f) => f === filePath);
+        // We haven't selected it yet so push it on to the list
+        if (index === -1) {
+          draft.selectedFiles.push(filePath);
+        } else {
+          draft.selectedFiles.splice(index, 1);
+        }
+      }),
+    );
+  },
+
+  clearSelectedFiles: () => {
+    set({ selectedFiles: [] });
   },
 }));
 
