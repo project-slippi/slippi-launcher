@@ -1,9 +1,3 @@
-import "@broadcast/main";
-import "@dolphin/main";
-import "@replays/main";
-import "@settings/main";
-import "@console/main";
-
 import { colors } from "common/colors";
 import { isDevelopment, isMac } from "common/constants";
 import { app, BrowserWindow, shell } from "electron";

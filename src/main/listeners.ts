@@ -1,3 +1,9 @@
+import "@broadcast/main";
+import "@dolphin/main";
+import "@replays/main";
+import "@settings/main";
+import "@console/main";
+
 import { settingsManager } from "@settings/settingsManager";
 import { checkValidIso, fetchNewsFeed } from "common/ipc";
 import { ipcMain, nativeImage } from "electron";
