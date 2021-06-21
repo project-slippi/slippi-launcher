@@ -53,7 +53,7 @@ const methods: WorkerSpec = {
       throw new Error("Stats can only be calculated for 1v1s.");
     }
 
-    return game.getStats();
+    return game.getStats() || ({} as StatsType);
   },
 };
 

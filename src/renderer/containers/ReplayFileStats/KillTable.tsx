@@ -119,6 +119,8 @@ export const KillTable: React.FC<KillTableProps> = ({ file, stats, playerIndex, 
         return <ArrowBackIcon fontSize="inherit" />;
       case "right":
         return <ArrowForwardIcon fontSize="inherit" />;
+      default:
+        return undefined;
     }
   };
 
