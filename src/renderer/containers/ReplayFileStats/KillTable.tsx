@@ -20,9 +20,10 @@ export interface KillTableProps {
   file: FileResult;
   stats: StatsType;
   playerIndex: number;
+  oppIndex: number;
 }
 
-export const KillTable: React.FC<KillTableProps> = ({ file, stats, playerIndex }) => {
+export const KillTable: React.FC<KillTableProps> = ({ file, stats, playerIndex, oppIndex }) => {
   const playFile = useReplays((store) => store.playFile);
   const player = file.settings.players[playerIndex];
   const names = extractPlayerNames(playerIndex, file.settings, file.metadata);
@@ -83,7 +84,7 @@ export const KillTable: React.FC<KillTableProps> = ({ file, stats, playerIndex }
     // responsible for ending this stock, if so show the kill move, otherwise assume SD
     const punishes = _.get(stats, "conversions") || [];
     const punishesByPlayer = _.groupBy(punishes, "playerIndex");
-    const playerPunishes = punishesByPlayer[playerIndex] || [];
+    const playerPunishes = punishesByPlayer[oppIndex] || [];
 
     // Only get punishes that killed
     const killingPunishes = _.filter(playerPunishes, "didKill");
@@ -143,8 +144,8 @@ export const KillTable: React.FC<KillTableProps> = ({ file, stats, playerIndex }
 
   const renderStocksRows = () => {
     const stocks = _.get(stats, "stocks") || [];
-    const stocksByOpponent = _.groupBy(stocks, "opponentIndex");
-    const opponentStocks = stocksByOpponent[playerIndex] || [];
+    const stocksByOpponent = _.groupBy(stocks, "playerIndex");
+    const opponentStocks = stocksByOpponent[oppIndex] || [];
 
     return opponentStocks.map(generateStockRow);
   };

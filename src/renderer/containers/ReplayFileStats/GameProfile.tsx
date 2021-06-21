@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import Typography from "@material-ui/core/Typography";
 import { FileResult } from "@replays/types";
-import { StatsType } from "@slippi/slippi-js";
+import { GameStartType, StatsType } from "@slippi/slippi-js";
 import _ from "lodash";
 import React from "react";
 
@@ -14,6 +14,7 @@ import { PunishTable } from "./PunishTable";
 export interface GameProfileProps {
   file: FileResult;
   stats: StatsType;
+  settings: GameStartType;
 }
 
 const TableContainer = styled.div`
@@ -35,7 +36,18 @@ const StatSection: React.FC<{
   );
 };
 
-export const GameProfile: React.FC<GameProfileProps> = ({ file, stats }) => {
+export const GameProfile: React.FC<GameProfileProps> = ({ file, stats, settings }) => {
+  // return an array with the
+  const getPlayerIndexes = (isFirstPlayer: boolean): number[] => {
+    const players = settings.players;
+    const player = isFirstPlayer ? players[0] : players[1];
+    const opp = isFirstPlayer ? players[1] : players[0];
+    return [player.playerIndex, opp.playerIndex];
+  };
+
+  const firstPlayer = getPlayerIndexes(true);
+  const secondPlayer = getPlayerIndexes(false);
+
   return (
     <div style={{ flex: "1", margin: 20 }}>
       <StatSection title="Overall">
@@ -44,12 +56,12 @@ export const GameProfile: React.FC<GameProfileProps> = ({ file, stats }) => {
         </ErrorBoundary>
       </StatSection>
       <StatSection title="Kills">
-        <KillTable file={file} stats={stats} playerIndex={0} />
-        <KillTable file={file} stats={stats} playerIndex={1} />
+        <KillTable file={file} stats={stats} playerIndex={firstPlayer[0]} oppIndex={firstPlayer[1]} />
+        <KillTable file={file} stats={stats} playerIndex={secondPlayer[0]} oppIndex={secondPlayer[1]} />
       </StatSection>
       <StatSection title="Openings &amp; Conversions">
-        <PunishTable file={file} stats={stats} playerIndex={0} />
-        <PunishTable file={file} stats={stats} playerIndex={1} />
+        <PunishTable file={file} stats={stats} playerIndex={firstPlayer[0]} oppIndex={firstPlayer[1]} />
+        <PunishTable file={file} stats={stats} playerIndex={secondPlayer[0]} oppIndex={secondPlayer[1]} />
       </StatSection>
     </div>
   );

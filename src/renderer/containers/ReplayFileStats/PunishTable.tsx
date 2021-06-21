@@ -17,9 +17,10 @@ export interface PunishTableProps {
   file: FileResult;
   stats: StatsType;
   playerIndex: number;
+  oppIndex: number;
 }
 
-export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, playerIndex }) => {
+export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, playerIndex, oppIndex }) => {
   const playFile = useReplays((store) => store.playFile);
   const player = file.settings.players[playerIndex];
   const names = extractPlayerNames(playerIndex, file.settings, file.metadata);
@@ -167,11 +168,11 @@ export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, playerInd
   const renderPunishRows = () => {
     const punishes = _.get(stats, "conversions") || [];
     const punishesByPlayer = _.groupBy(punishes, "playerIndex");
-    const playerPunishes = punishesByPlayer[playerIndex] || [];
+    const playerPunishes = punishesByPlayer[oppIndex] || [];
 
     const stocks = _.get(stats, "stocks") || [];
-    const stocksByOpponent = _.groupBy(stocks, "opponentIndex");
-    const opponentStocks = stocksByOpponent[playerIndex] || [];
+    const stocksTakenFromPlayer = _.groupBy(stocks, "playerIndex");
+    const opponentStocks = stocksTakenFromPlayer[oppIndex] || [];
 
     const elements: JSX.Element[] = [];
 
