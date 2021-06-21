@@ -6,8 +6,8 @@ import AddIcon from "@material-ui/icons/Add";
 import { StoredConnection } from "@settings/types";
 import React from "react";
 
-import { BasicFooter } from "@/components/BasicFooter";
 import { DualPane } from "@/components/DualPane";
+import { Footer } from "@/components/Footer";
 import { Button } from "@/components/FormInputs";
 import {
   addConsoleConnection,
@@ -119,7 +119,7 @@ export const Console: React.FC = () => {
           style={{ gridTemplateColumns: "auto 400px" }}
         />
       </div>
-      <BasicFooter>Hello world</BasicFooter>
+      <Footer />
       <AddConnectionDialog
         open={modalOpen}
         selectedConnection={currentFormValues}

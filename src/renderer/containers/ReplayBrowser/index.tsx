@@ -14,8 +14,8 @@ import { shell } from "electron";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
 
-import { BasicFooter } from "@/components/BasicFooter";
 import { DualPane } from "@/components/DualPane";
+import { BasicFooter } from "@/components/Footer";
 import { LabelledText } from "@/components/LabelledText";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { IconMessage } from "@/components/Message";

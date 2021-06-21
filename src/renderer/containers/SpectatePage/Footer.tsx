@@ -8,7 +8,7 @@ import { colors } from "common/colors";
 import { remote, shell } from "electron";
 import React from "react";
 
-import { BasicFooter } from "@/components/BasicFooter";
+import { BasicFooter } from "@/components/Footer";
 import { LabelledText } from "@/components/LabelledText";
 import { useSpectateSlpPath } from "@/lib/hooks/useSettings";
 

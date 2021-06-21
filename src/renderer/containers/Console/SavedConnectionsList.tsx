@@ -1,6 +1,4 @@
-/** @jsx jsx */
 import { DiscoveredConsoleInfo } from "@console/types";
-import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";

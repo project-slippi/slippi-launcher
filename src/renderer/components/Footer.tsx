@@ -7,10 +7,25 @@ import { colors } from "common/colors";
 import { socials } from "common/constants";
 import React from "react";
 
-import { BasicFooter } from "@/components/BasicFooter";
 import { ExternalLink as A } from "@/components/ExternalLink";
 import { ReactComponent as DiscordIcon } from "@/styles/images/discord.svg";
 import { ReactComponent as PatreonIcon } from "@/styles/images/patreon.svg";
+
+export const BasicFooter = styled.div`
+  display: flex;
+  padding: 0 20px;
+  height: 50px;
+  whitespace: nowrap;
+  align-items: center;
+  background-color: black;
+  font-size: 14px;
+  color: ${colors.purpleLight};
+
+  svg {
+    width: 20px;
+    height: auto;
+  }
+`;
 
 export const Footer: React.FC = () => {
   return (
