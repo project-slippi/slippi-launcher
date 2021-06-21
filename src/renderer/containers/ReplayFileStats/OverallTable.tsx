@@ -333,7 +333,12 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
           "actionCounts",
           null,
           undefined,
-          ({ fail, success }) => {
+          (val: any) => {
+            if (!val) {
+              return "N/A";
+            }
+
+            const { fail, success } = val;
             const total = success + fail;
             const rate = total === 0 ? 0 : (success / (success + fail)) * 100;
             return `${success} / ${fail} (${Math.round(rate)}%)`;
