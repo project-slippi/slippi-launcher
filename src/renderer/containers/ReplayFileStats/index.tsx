@@ -51,7 +51,7 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
   const loading = useReplays((store) => store.selectedFile.loading);
   const error = useReplays((store) => store.selectedFile.error);
   const gameStats = useReplays((store) => store.selectedFile.gameStats);
-  const playFile = useReplays((store) => store.playFile);
+  const playFiles = useReplays((store) => store.playFiles);
   const numPlayers = settings.players.length;
 
   // Add key bindings
@@ -75,7 +75,12 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
 
   return (
     <Outer>
-      <GameProfileHeader {...props} loading={loading} stats={gameStats} onPlay={() => playFile(fullPath)} />
+      <GameProfileHeader
+        {...props}
+        loading={loading}
+        stats={gameStats}
+        onPlay={() => playFiles([{ path: fullPath }])}
+      />
       <Content>
         {numPlayers !== 2 ? (
           <IconMessage Icon={ErrorIcon} label="Game stats for doubles is unsupported" />
