@@ -15,7 +15,7 @@ export class DolphinManager extends EventEmitter {
 
   public async launchPlaybackDolphin(id: string, replayComm: ReplayCommunication): Promise<void> {
     const dolphinPath = await findDolphinExecutable(DolphinLaunchType.PLAYBACK);
-    const meleeISOPath = settingsManager.get().settings.isoPath ?? undefined;
+    const meleeIsoPath = settingsManager.get().settings.isoPath ?? undefined;
 
     const configuring = this.playbackDolphinInstances.get("configure");
     if (configuring) {
@@ -23,7 +23,7 @@ export class DolphinManager extends EventEmitter {
     }
     let playbackInstance = this.playbackDolphinInstances.get(id);
     if (!playbackInstance) {
-      playbackInstance = new PlaybackDolphinInstance(dolphinPath, meleeISOPath);
+      playbackInstance = new PlaybackDolphinInstance(dolphinPath, meleeIsoPath);
       playbackInstance.on("close", () => {
         this.emit("dolphin-closed", id);
 
@@ -39,13 +39,13 @@ export class DolphinManager extends EventEmitter {
   public async launchNetplayDolphin() {
     const dolphinPath = await findDolphinExecutable(DolphinLaunchType.NETPLAY);
     log.info(`Launching dolphin at path: ${dolphinPath}`);
-    const meleeISOPath = settingsManager.get().settings.isoPath ?? undefined;
+    const meleeIsoPath = settingsManager.get().settings.isoPath ?? undefined;
     if (this.netplayDolphinInstance) {
       throw new Error("Netplay dolphin is already open!");
     }
 
     // Create the Dolphin instance and start it
-    this.netplayDolphinInstance = new DolphinInstance(dolphinPath, meleeISOPath);
+    this.netplayDolphinInstance = new DolphinInstance(dolphinPath, meleeIsoPath);
     this.netplayDolphinInstance.on("close", () => {
       this.netplayDolphinInstance = null;
     });

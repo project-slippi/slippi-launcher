@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme: Theme) =>
       width: 400,
       flex: 1,
       marginRight: 10,
-      backgroundColor: theme.palette.background.paper,
+      backgroundColor: "rgba(255, 255, 255, 0.1)",
     },
     input: {
       marginLeft: theme.spacing(2),
@@ -84,7 +84,7 @@ export const PathInput: React.FC<PathInputProps> = ({
         />
         {endAdornment}
       </Paper>
-      <Button color="primary" variant="contained" onClick={onClick} disabled={disabled}>
+      <Button color="secondary" variant="contained" onClick={onClick} disabled={disabled}>
         Select
       </Button>
     </Box>

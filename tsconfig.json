@@ -8,7 +8,8 @@
       "@broadcast/*": ["broadcast/*"],
       "@dolphin/*": ["dolphin/*"],
       "@replays/*": ["replays/*"],
-      "@settings/*": ["settings/*"]
+      "@settings/*": ["settings/*"],
+      "@console/*": ["console/*"]
     },
     "baseUrl": "src/",
     "jsx": "react",
