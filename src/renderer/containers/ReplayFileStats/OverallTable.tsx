@@ -59,7 +59,7 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
     const key = `standard-field-${header}`;
 
     const arr = _.get(stats, arrPath) || [];
-    const itemsByPlayer = _.keyBy(arr, "playerIndex");
+    const itemsByPlayer = arr; // _.keyBy(arr, "playerIndex");
 
     if (!arr || arr.length == 0) {
       return (
@@ -110,7 +110,7 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
     ratioRenderer: (ratio: RatioType, oppRatio: RatioType) => JSX.Element,
   ) => {
     const arr = _.get(stats, arrPath) || [];
-    const itemsByPlayer = _.keyBy(arr, "playerIndex");
+    const itemsByPlayer = arr; // _.keyBy(arr, "playerIndex");
 
     const player1Item = itemsByPlayer[0] || {};
     const player2Item = itemsByPlayer[1] || {};
@@ -145,7 +145,7 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
       const playerRatio = _.get(ratio, "ratio", null);
       const oppRatioType = _.get(oppRatio, "ratio", null);
 
-      if (playerRatio === null || oppRatioType === null) {
+      if (playerRatio === null) {
         return (
           <T.TableCell>
             <div>N/A</div>
@@ -153,7 +153,7 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
         );
       }
       const fixedPlayerRatio = playerRatio.toFixed(1);
-      const fixedOppRatio = oppRatioType.toFixed(1);
+      const fixedOppRatio = oppRatioType !== null ? oppRatioType.toFixed(1) : "Infinity";
       return (
         <T.TableCell highlight={highlightCondition(parseFloat(fixedPlayerRatio), parseFloat(fixedOppRatio))}>
           <div>{fixedPlayerRatio}</div>
