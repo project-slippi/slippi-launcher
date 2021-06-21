@@ -1,30 +1,23 @@
-import { addMirrorConfig, startDiscovery, startMirroring, stopDiscovery } from "@console/ipc";
-import { MirrorConfig } from "@console/types";
+import { startDiscovery, stopDiscovery } from "@console/ipc";
 import styled from "@emotion/styled";
-import { Ports } from "@slippi/slippi-js";
+import { StoredConnection } from "@settings/types";
 import React from "react";
 
-import { AvailableConsoleList } from "./AvailableConsoleList";
+import {
+  addConsoleConnection,
+  connectToConsole,
+  deleteConsoleConnection,
+  EditConnectionType,
+  editConsoleConnection,
+  startConsoleMirror,
+} from "@/lib/consoleConnection";
+
+import { AddConnectionDialog } from "./AddConnectionDialog";
+import { NewConnectionList } from "./NewConnectionList";
 import { SavedConnectionsList } from "./SavedConnectionsList";
 
 export const Console: React.FC = () => {
-  const mirrorConfigHandler = async () => {
-    const config: MirrorConfig = {
-      ipAddress: "192.168.1.39",
-      port: Ports.DEFAULT,
-      folderPath: "C:\\Users\\Nikhi\\Documents\\Slippi\\test",
-      isRealTimeMode: true,
-      autoSwitcherSettings: {
-        ip: "localhost:4444", // should do validation to ensure port is provided or have a separate port field
-        sourceName: "dolphin",
-      },
-    };
-    await addMirrorConfig.renderer!.trigger({ config });
-  };
-
-  const startMirrorHandler = async () => {
-    await startMirroring.renderer!.trigger({ ip: "192.168.1.39" });
-  };
+  const [currentFormValues, setCurrentFormValues] = React.useState<Partial<StoredConnection> | null>(null);
 
   React.useEffect(() => {
     // Start scanning for new consoles
@@ -36,15 +29,34 @@ export const Console: React.FC = () => {
     };
   }, []);
 
+  const onCancel = () => setCurrentFormValues(null);
+
+  const onSubmit = async (data: EditConnectionType) => {
+    if (currentFormValues && currentFormValues.id !== undefined) {
+      // We're editing an existing connection
+      await editConsoleConnection(currentFormValues.id, data);
+    } else {
+      // This is a new connection
+      await addConsoleConnection(data);
+    }
+
+    // Close the dialog
+    onCancel();
+  };
+
   return (
     <Outer>
       <h1>Console</h1>
-      <button onClick={mirrorConfigHandler}>Connect to Wii</button>
-      <button onClick={startMirrorHandler}>Mirror Wii</button>
       <h2>Saved Connections</h2>
-      <SavedConnectionsList />
-      <h2>Available Connections</h2>
-      <AvailableConsoleList />
+      <SavedConnectionsList
+        onEdit={(conn) => setCurrentFormValues(conn)}
+        onConnect={connectToConsole}
+        onMirror={(conn) => startConsoleMirror(conn.ipAddress)}
+        onDelete={(conn) => deleteConsoleConnection(conn.id)}
+      />
+      <h2>New Connections</h2>
+      <NewConnectionList onClick={(item) => setCurrentFormValues({ ipAddress: item.ip })} />
+      <AddConnectionDialog selectedConnection={currentFormValues} onSubmit={onSubmit} onCancel={onCancel} />
     </Outer>
   );
 };

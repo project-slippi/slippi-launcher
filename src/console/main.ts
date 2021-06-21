@@ -1,19 +1,30 @@
 import { connectionScanner } from "./connectionScanner";
-import { addMirrorConfig, startDiscovery, startMirroring, stopDiscovery } from "./ipc";
+import {
+  connectToConsoleMirror,
+  disconnectFromConsoleMirror,
+  startDiscovery,
+  startMirroring,
+  stopDiscovery,
+} from "./ipc";
 import { mirrorManager } from "./mirrorManager";
 
-addMirrorConfig.main!.handle(async ({ config }) => {
-  mirrorManager.start(config);
+connectToConsoleMirror.main!.handle(async ({ config }) => {
+  await mirrorManager.connect(config);
+  return { success: true };
+});
+
+disconnectFromConsoleMirror.main!.handle(async ({ ip }) => {
+  mirrorManager.disconnect(ip);
   return { success: true };
 });
 
 startMirroring.main!.handle(async ({ ip }) => {
-  mirrorManager.startMirroring(ip);
+  await mirrorManager.startMirroring(ip);
   return { success: true };
 });
 
 startDiscovery.main!.handle(async () => {
-  connectionScanner.startScanning();
+  await connectionScanner.startScanning();
   return { success: true };
 });
 

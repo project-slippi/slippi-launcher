@@ -46,7 +46,7 @@ export class MirrorManager {
     });
   }
 
-  public async start(config: MirrorConfig) {
+  public async connect(config: MirrorConfig) {
     if (this.mirrors[config.ipAddress]) {
       log.info(`[Mirroring] already connected to Wii @ ${config.ipAddress}`);
       return;

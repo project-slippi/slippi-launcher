@@ -1,7 +1,17 @@
 import { _, EmptyPayload, makeEndpoint, SuccessPayload } from "../ipc";
 import { DiscoveredConsoleInfo, MirrorConfig } from "./types";
 
-export const addMirrorConfig = makeEndpoint.main("addMirrorConfig", <{ config: MirrorConfig }>_, <SuccessPayload>_);
+export const connectToConsoleMirror = makeEndpoint.main(
+  "connectToConsoleMirror",
+  <{ config: MirrorConfig }>_,
+  <SuccessPayload>_,
+);
+
+export const disconnectFromConsoleMirror = makeEndpoint.main(
+  "disconnectFromConsoleMirror",
+  <{ ip: string }>_,
+  <SuccessPayload>_,
+);
 
 export const startMirroring = makeEndpoint.main("startMirroring", <{ ip: string }>_, <SuccessPayload>_);
 
