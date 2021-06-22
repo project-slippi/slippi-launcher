@@ -68,7 +68,7 @@ export async function assertDolphinInstallations(): Promise<void> {
 async function compareDolphinVersion(type: DolphinLaunchType, latestVersion: string): Promise<boolean> {
   const dolphinPath = await findDolphinExecutable(type);
   const dolphinVersion = spawnSync(dolphinPath, ["--version"]).stdout.toString();
-  return lt(latestVersion, dolphinVersion);
+  return lt(dolphinVersion, latestVersion);
 }
 
 export async function openDolphin(type: DolphinLaunchType, params?: string[]): Promise<ChildProcessWithoutNullStreams> {
