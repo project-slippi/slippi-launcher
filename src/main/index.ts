@@ -233,6 +233,11 @@ const handleSlippiURIAsync = async (aUrl: string) => {
 };
 
 const handleSlippiURI = (aUrl: string) => {
+  // Filter out command line parameters and invalid urls
+  if (aUrl.startsWith("-")) {
+    return;
+  }
+
   handleSlippiURIAsync(aUrl).catch((err) => {
     log.error("Handling URI encountered error");
     log.error(err);
