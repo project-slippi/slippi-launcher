@@ -2,7 +2,6 @@
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
 import React from "react";
 
 import { LoadingScreen } from "@/components/LoadingScreen";
@@ -15,6 +14,7 @@ const Outer = styled.div`
   flex: 1;
   overflow-x: hidden;
   padding: 20px;
+  padding-top: 0;
 `;
 
 export interface NewsFeedProps {
@@ -47,9 +47,7 @@ export const NewsFeed: React.FC<NewsFeedProps> = ({ numItemsToShow = 7, batchSiz
 
   return (
     <Outer ref={mainRef}>
-      <Typography variant="h4" style={{ marginBottom: 20 }}>
-        Latest News
-      </Typography>
+      <h1>Latest News</h1>
       {postsToShow.slice(0, numItems).map((post) => (
         <NewsArticle key={post.id} item={post} />
       ))}
