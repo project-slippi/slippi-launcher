@@ -1,5 +1,7 @@
+import { isMac } from "common/constants";
 import React from "react";
 import { Redirect, Route, Switch, useHistory, useParams, useRouteMatch } from "react-router-dom";
+import { useToasts } from "react-toast-notifications";
 
 import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/useReplayBrowserList";
 import { useReplays } from "@/store/replays";
@@ -33,8 +35,15 @@ const ChildPage: React.FC<{ parent: string; goBack: () => void }> = () => {
   const playFiles = useReplays((store) => store.playFiles);
   const nav = useReplayBrowserList();
   const { goToReplayList } = useReplayBrowserNavigation();
+  const { addToast } = useToasts();
 
   const onPlay = () => {
+    if (isMac) {
+      addToast("Dolphin may open in the background, please check the app bar", {
+        appearance: "info",
+        autoDismiss: true,
+      });
+    }
     playFiles([{ path: filePath }]);
   };
 
