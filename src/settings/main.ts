@@ -1,3 +1,6 @@
+import { addGamePathToInis } from "@dolphin/util";
+import path from "path";
+
 import {
   addNewConnection,
   deleteConnection,
@@ -15,8 +18,12 @@ import { settingsManager } from "./settingsManager";
 //   return settings;
 // });
 
-setIsoPath.main!.handle(async ({ path }) => {
-  await settingsManager.setIsoPath(path);
+setIsoPath.main!.handle(async ({ isoPath }) => {
+  await settingsManager.setIsoPath(isoPath);
+  if (isoPath) {
+    const gameDir = path.dirname(isoPath);
+    await addGamePathToInis(gameDir);
+  }
   return { success: true };
 });
 
