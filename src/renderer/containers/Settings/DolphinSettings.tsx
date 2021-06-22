@@ -106,8 +106,9 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           onClose={() => setModalOpen(false)}
           onSubmit={reinstallDolphinHandler}
           title="Are you sure?"
-          content={`This will remove all your ${dolphinType} dolphin settings.`}
-        />
+        >
+          This will remove all your ${dolphinType} dolphin settings.
+        </ConfirmationModal>
         <Button
           variant="outlined"
           color="secondary"
