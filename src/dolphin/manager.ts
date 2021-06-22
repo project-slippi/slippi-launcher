@@ -22,7 +22,7 @@ export class DolphinManager extends EventEmitter {
 
     const configuring = this.playbackDolphinInstances.get("configure");
     if (configuring) {
-      log.warn("cannot open dolphin if a configuring dolphin is open");
+      throw new Error("Cannot open dolphin if a configuring dolphin is open.");
     }
     let playbackInstance = this.playbackDolphinInstances.get(id);
     if (!playbackInstance) {
