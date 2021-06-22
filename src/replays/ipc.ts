@@ -1,7 +1,7 @@
 import { StatsType } from "@slippi/slippi-js";
 
 import { _, makeEndpoint } from "../ipc";
-import { FileLoadResult, Progress } from "./types";
+import { FileLoadResult, FileResult, Progress } from "./types";
 
 // Handlers
 
@@ -10,7 +10,7 @@ export const loadReplayFolder = makeEndpoint.main("loadReplayFolder", <{ folderP
 export const calculateGameStats = makeEndpoint.main(
   "calculateGameStats",
   <{ filePath: string }>_,
-  <{ stats: StatsType | null }>_,
+  <{ file: FileResult; stats: StatsType | null }>_,
 );
 
 // Events

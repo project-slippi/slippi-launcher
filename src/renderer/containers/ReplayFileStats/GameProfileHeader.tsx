@@ -89,19 +89,19 @@ const PlayerInfoDisplay: React.FC<PlayerInfoDisplayProps> = ({ settings, metadat
 
 export interface GameProfileHeaderProps {
   file: FileResult;
-  index: number;
-  total: number;
+  index: number | null;
+  total: number | null;
   onNext: () => void;
   onPrev: () => void;
   onPlay: () => void;
   onClose: () => void;
-  loading?: boolean;
+  disabled?: boolean;
   stats: StatsType | null;
 }
 
 export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
   stats,
-  loading,
+  disabled,
   file,
   index,
   total,
@@ -138,7 +138,7 @@ export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
                 <span>
                   <IconButton
                     onClick={onClose}
-                    disabled={loading}
+                    disabled={disabled}
                     css={css`
                       padding: 8px;
                     `}
@@ -152,7 +152,7 @@ export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
           </div>
           <GameDetails file={file} stats={stats} />
         </div>
-        <Controls disabled={loading} index={index} total={total} onNext={onNext} onPrev={onPrev} onPlay={onPlay} />
+        <Controls disabled={disabled} index={index} total={total} onNext={onNext} onPrev={onPrev} onPlay={onPlay} />
       </div>
     </Header>
   );
@@ -250,12 +250,15 @@ const GameDetails: React.FC<{
 
 const Controls: React.FC<{
   disabled?: boolean;
-  index: number;
-  total: number;
+  index: number | null;
+  total: number | null;
   onPlay: () => void;
   onPrev: () => void;
   onNext: () => void;
 }> = ({ disabled, index, total, onPlay, onPrev, onNext }) => {
+  const indexLabel = index !== null && total !== null ? `${index + 1} / ${total}` : "1 / 1";
+  const atStart = index === null || index === 0;
+  const atEnd = total === null || index === total - 1;
   return (
     <div
       css={css`
@@ -282,17 +285,15 @@ const Controls: React.FC<{
       >
         <Tooltip title="Previous replay">
           <span>
-            <IconButton disabled={disabled || index === 0} onClick={onPrev} size="small">
+            <IconButton disabled={disabled || atStart} onClick={onPrev} size="small">
               <ArrowBackIosIcon fontSize="small" />
             </IconButton>
           </span>
         </Tooltip>
-        <span>
-          {index + 1} / {total}
-        </span>
+        <span>{indexLabel}</span>
         <Tooltip title="Next replay">
           <span>
-            <IconButton disabled={disabled || index === total - 1} onClick={onNext} size="small">
+            <IconButton disabled={disabled || atEnd} onClick={onNext} size="small">
               <ArrowForwardIosIcon fontSize="small" />
             </IconButton>
           </span>

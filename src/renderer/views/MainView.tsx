@@ -11,7 +11,7 @@ import { Header } from "@/containers/Header";
 import { LoginDialog } from "@/containers/Header/LoginDialog";
 import { MenuItem } from "@/containers/Header/MainMenu";
 import { Home } from "@/containers/Home";
-import { ReplayBrowser } from "@/containers/ReplayBrowser";
+import { ReplayBrowserPage } from "@/containers/ReplayBrowser/ReplayBrowserPage";
 import { SpectatePage } from "@/containers/SpectatePage";
 import { usePageNavigationShortcuts } from "@/lib/hooks/useShortcuts";
 
@@ -32,7 +32,7 @@ const menuItems: MainMenuItem[] = [
   {
     subpath: "replays",
     title: "Replays",
-    component: <ReplayBrowser />,
+    component: <ReplayBrowserPage />,
     icon: <ReplayOutlinedIcon />,
   },
 
