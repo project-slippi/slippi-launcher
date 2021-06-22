@@ -9,6 +9,7 @@ import { isLinux } from "common/constants";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
 
+import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { DevGuard } from "@/components/DevGuard";
 import { PathInput } from "@/components/PathInput";
 import { useDolphinPath } from "@/lib/hooks/useSettings";
@@ -40,6 +41,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolphinType }) => {
   const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
+  const [modalOpen, setModalOpen] = React.useState(false);
   const classes = useStyles();
   const { addToast } = useToasts();
   const configureDolphinHandler = async () => {
@@ -99,10 +101,17 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
         </Button>
       </SettingItem>
       <SettingItem name="Reset Dolphin" description="Delete and reinstall dolphin">
+        <ConfirmationModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onSubmit={reinstallDolphinHandler}
+          title="Are you sure?"
+          content={`This will remove all your ${dolphinType} dolphin settings.`}
+        />
         <Button
           variant="outlined"
           color="secondary"
-          onClick={reinstallDolphinHandler}
+          onClick={() => setModalOpen(true)}
           css={css`
             text-transform: capitalize;
           `}
