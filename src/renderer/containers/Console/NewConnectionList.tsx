@@ -3,37 +3,32 @@ import { DiscoveredConsoleInfo } from "@console/types";
 import { css, jsx } from "@emotion/react";
 import React from "react";
 
-import { useConsoleDiscoveryStore } from "@/lib/hooks/useConsoleDiscovery";
-import { useSettings } from "@/lib/hooks/useSettings";
+import { InfoBlock } from "@/components/InfoBlock";
+
+import { NewConnectionItem } from "./NewConnectionItem";
 
 export interface NewConnectionListProps {
+  consoleItems: DiscoveredConsoleInfo[];
   onClick: (conn: DiscoveredConsoleInfo) => void;
 }
 
-export const NewConnectionList: React.FC<NewConnectionListProps> = ({ onClick }) => {
-  const savedConnections = useSettings((store) => store.connections);
-  const savedIps = savedConnections.map((conn) => conn.ipAddress);
-  const allConsoleItems = useConsoleDiscoveryStore((store) => store.consoleItems);
-  const consoleItemsToShow = allConsoleItems.filter((item) => !savedIps.includes(item.ip));
+export const NewConnectionList: React.FC<NewConnectionListProps> = ({ consoleItems, onClick }) => {
   return (
-    <div
-      css={css`
-        display: flex;
-        flex-direction: column;
-      `}
-    >
-      {consoleItemsToShow.length > 0 ? (
-        consoleItemsToShow.map((item) => {
-          return (
-            <div key={item.ip}>
-              <div>{JSON.stringify(item)}</div>
-              <button onClick={() => onClick(item)}>add</button>
-            </div>
-          );
-        })
-      ) : (
-        <div>no items to show</div>
-      )}
-    </div>
+    <InfoBlock title={`New Connections (${consoleItems.length})`}>
+      <div
+        css={css`
+          display: flex;
+          flex-direction: column;
+        `}
+      >
+        {consoleItems.length > 0 ? (
+          consoleItems.map((item) => {
+            return <NewConnectionItem key={item.ip} onAdd={() => onClick(item)} ip={item.ip} nickname={item.name} />;
+          })
+        ) : (
+          <div>Consoles detected on the network will show up here.</div>
+        )}
+      </div>
+    </InfoBlock>
   );
 };

@@ -1,7 +1,7 @@
+import CastOutlinedIcon from "@material-ui/icons/CastOutlined";
 import HomeOutlinedIcon from "@material-ui/icons/HomeOutlined";
 import LiveTvOutlinedIcon from "@material-ui/icons/LiveTvOutlined";
 import ReplayOutlinedIcon from "@material-ui/icons/ReplayOutlined";
-import WifiTetheringOutlinedIcon from "@material-ui/icons/WifiTetheringOutlined";
 import React from "react";
 import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
 
@@ -45,9 +45,9 @@ const menuItems: MainMenuItem[] = [
   },
   {
     subpath: "console",
-    title: "Console",
+    title: "Console Mirror",
     component: <Console />,
-    icon: <WifiTetheringOutlinedIcon />,
+    icon: <CastOutlinedIcon />,
   },
 ];
 

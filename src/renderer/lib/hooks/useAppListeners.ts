@@ -107,8 +107,8 @@ export const useAppListeners = () => {
 
   // Update the mirroring console status
   const updateConsoleStatus = useConsoleDiscoveryStore((store) => store.updateConsoleStatus);
-  consoleMirrorStatusUpdated.renderer!.handle(async ({ ip, status, nickname }) => {
-    updateConsoleStatus(ip, { status, nickname });
+  consoleMirrorStatusUpdated.renderer!.handle(async ({ ip, info }) => {
+    updateConsoleStatus(ip, info);
   });
 
   // Automatically run ISO verification whenever the isoPath changes

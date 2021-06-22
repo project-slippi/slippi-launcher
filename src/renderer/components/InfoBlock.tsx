@@ -5,14 +5,14 @@ import Paper from "@material-ui/core/Paper";
 import React from "react";
 
 export interface InfoBlockProps {
-  title: string;
+  title: React.ReactNode | string;
   className?: string;
 }
 
 export const InfoBlock: React.FC<InfoBlockProps> = ({ title, children, className }) => {
   return (
     <Block className={className}>
-      <Header title={title} />
+      <Header>{title}</Header>
       <div>{children}</div>
     </Block>
   );
@@ -22,20 +22,21 @@ const Block = styled(Paper)`
   padding: 20px;
 `;
 
-const Header: React.FC<{ title: string }> = ({ title }) => {
+const Header: React.FC = ({ children }) => {
   return (
     <div
       css={css`
         display: flex;
         align-items: center;
         h3 {
+          flex: 1;
           color: #39d05d;
           margin: 0;
           margin-bottom: 20px;
         }
       `}
     >
-      <h3>{title}</h3>
+      <h3>{children}</h3>
     </div>
   );
 };

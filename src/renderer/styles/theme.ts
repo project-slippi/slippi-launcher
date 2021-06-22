@@ -46,6 +46,9 @@ const theme = createMuiTheme({
     h6: {
       fontFamily: mavenProFont,
     },
+    caption: {
+      opacity: 0.6,
+    },
   },
 });
 

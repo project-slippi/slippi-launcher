@@ -2,6 +2,12 @@ import { ConsoleConnection, SlpFileWriter } from "@slippi/slippi-js";
 
 import { AutoSwitcher } from "./autoSwitcher";
 
+export interface ConsoleMirrorStatusUpdate {
+  status: number;
+  filename: string | null;
+  nickname: string;
+}
+
 export interface MirrorConfig {
   id?: number;
   ipAddress: string;

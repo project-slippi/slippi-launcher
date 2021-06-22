@@ -1,24 +1,42 @@
+/** @jsx jsx */
 import { startDiscovery, stopDiscovery } from "@console/ipc";
+import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
+import AddIcon from "@material-ui/icons/Add";
 import { StoredConnection } from "@settings/types";
 import React from "react";
 
+import { DualPane } from "@/components/DualPane";
+import { Footer } from "@/components/Footer";
+import { Button } from "@/components/FormInputs";
 import {
   addConsoleConnection,
-  connectToConsole,
   deleteConsoleConnection,
   EditConnectionType,
   editConsoleConnection,
-  startConsoleMirror,
 } from "@/lib/consoleConnection";
+import { useConsoleDiscoveryStore } from "@/lib/hooks/useConsoleDiscovery";
+import { useSettings } from "@/lib/hooks/useSettings";
 
 import { AddConnectionDialog } from "./AddConnectionDialog";
 import { NewConnectionList } from "./NewConnectionList";
 import { SavedConnectionsList } from "./SavedConnectionsList";
 
+const Outer = styled.div`
+  display: flex;
+  flex-flow: column;
+  flex: 1;
+  position: relative;
+  min-width: 0;
+`;
+
 export const Console: React.FC = () => {
   const [modalOpen, setModalOpen] = React.useState(false);
   const [currentFormValues, setCurrentFormValues] = React.useState<Partial<StoredConnection> | null>(null);
+  const savedConnections = useSettings((store) => store.connections);
+  const savedIps = savedConnections.map((conn) => conn.ipAddress);
+  const availableConsoles = useConsoleDiscoveryStore((store) => store.consoleItems);
+  const consoleItemsToShow = availableConsoles.filter((item) => !savedIps.includes(item.ip));
 
   React.useEffect(() => {
     // Start scanning for new consoles
@@ -47,28 +65,61 @@ export const Console: React.FC = () => {
     // Close the dialog
     onCancel();
   };
-
   return (
     <Outer>
-      <h1>Console</h1>
-      <button onClick={() => setModalOpen(true)}>Add new connection</button>
-      <h2>Saved Connections</h2>
-      <SavedConnectionsList
-        onEdit={(conn) => {
-          setCurrentFormValues(conn);
-          setModalOpen(true);
-        }}
-        onConnect={connectToConsole}
-        onMirror={(conn) => startConsoleMirror(conn.ipAddress)}
-        onDelete={(conn) => deleteConsoleConnection(conn.id)}
-      />
-      <h2>New Connections</h2>
-      <NewConnectionList
-        onClick={(item) => {
-          setCurrentFormValues({ ipAddress: item.ip });
-          setModalOpen(true);
-        }}
-      />
+      <div
+        css={css`
+          display: flex;
+          flex: 1;
+          position: relative;
+          overflow: hidden;
+        `}
+      >
+        <DualPane
+          id="console-mirror-page"
+          leftSide={
+            <div
+              css={css`
+                padding-right: 10px;
+                padding-left: 20px;
+                flex: 1;
+              `}
+            >
+              <h1>Console Mirror</h1>
+              <Button onClick={() => setModalOpen(true)} startIcon={<AddIcon />}>
+                New connection
+              </Button>
+              <SavedConnectionsList
+                availableConsoles={availableConsoles}
+                onEdit={(conn) => {
+                  setCurrentFormValues(conn);
+                  setModalOpen(true);
+                }}
+                onDelete={(conn) => deleteConsoleConnection(conn.id)}
+              />
+            </div>
+          }
+          rightSide={
+            <div
+              css={css`
+                padding: 20px;
+                padding-left: 10px;
+                flex: 1;
+              `}
+            >
+              <NewConnectionList
+                consoleItems={consoleItemsToShow}
+                onClick={(item) => {
+                  setCurrentFormValues({ ipAddress: item.ip });
+                  setModalOpen(true);
+                }}
+              />
+            </div>
+          }
+          style={{ gridTemplateColumns: "auto 400px" }}
+        />
+      </div>
+      <Footer />
       <AddConnectionDialog
         open={modalOpen}
         selectedConnection={currentFormValues}
@@ -78,9 +129,3 @@ export const Console: React.FC = () => {
     </Outer>
   );
 };
-
-const Outer = styled.div`
-  height: 100%;
-  width: 100%;
-  margin: 0 20px;
-`;

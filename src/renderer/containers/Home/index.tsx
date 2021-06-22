@@ -5,8 +5,8 @@ import { colors } from "common/colors";
 import React from "react";
 
 import { DualPane } from "@/components/DualPane";
+import { Footer } from "@/components/Footer";
 
-import { Footer } from "./Footer";
 import { NewsFeed } from "./NewsFeed";
 import { SideBar } from "./SideBar";
 

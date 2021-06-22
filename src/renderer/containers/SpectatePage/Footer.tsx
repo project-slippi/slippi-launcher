@@ -8,9 +8,9 @@ import { colors } from "common/colors";
 import { remote, shell } from "electron";
 import React from "react";
 
-import { BasicFooter } from "@/components/BasicFooter";
+import { BasicFooter } from "@/components/Footer";
+import { LabelledText } from "@/components/LabelledText";
 import { useSpectateSlpPath } from "@/lib/hooks/useSettings";
-import { withFont } from "@/styles/withFont";
 
 export const Footer: React.FC = () => {
   const [spectateSlpFolder, setSpectateSlpFolder] = useSpectateSlpPath();
@@ -37,36 +37,17 @@ export const Footer: React.FC = () => {
           <FolderIcon />
         </IconButton>
       </Tooltip>
-      <div
+      <LabelledText
         css={css`
-          display: flex;
-          flex-direction: column;
           margin-left: 10px;
           margin-right: 15px;
           padding-right: 20px;
           border-right: solid 1px ${colors.purple};
         `}
+        label="Save spectated games to"
       >
-        <div
-          css={css`
-            font-size: 11px;
-            font-weight: bold;
-            margin-bottom: 4px;
-            text-transform: uppercase;
-            font-family: ${withFont("Maven Pro")};
-          `}
-        >
-          Save spectated games to
-        </div>
-        <div
-          css={css`
-            color: white;
-            font-weight: lighter;
-          `}
-        >
-          {spectateSlpFolder}
-        </div>
-      </div>
+        {spectateSlpFolder}
+      </LabelledText>
       <Button
         size="small"
         css={css`

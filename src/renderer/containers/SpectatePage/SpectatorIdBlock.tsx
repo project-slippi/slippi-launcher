@@ -5,7 +5,7 @@ import InputBase from "@material-ui/core/InputBase";
 import { clipboard } from "electron";
 import React from "react";
 
-import { InfoBlock } from "./InfoBlock";
+import { InfoBlock } from "@/components/InfoBlock";
 
 export interface SpectatorIdBlockProps {
   userId: string;
@@ -43,7 +43,7 @@ export const SpectatorIdBlock: React.FC<SpectatorIdBlockProps> = ({ userId, clas
           disabled={true}
           value={userId}
         />
-        <Button variant="contained" color="primary" onClick={onCopy}>
+        <Button variant="contained" color="secondary" onClick={onCopy}>
           {copied ? "Copied!" : "Copy"}
         </Button>
       </div>

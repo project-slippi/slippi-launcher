@@ -12,7 +12,7 @@ import { shell } from "electron";
 import _ from "lodash";
 import React from "react";
 
-import { BasicFooter } from "@/components/BasicFooter";
+import { BasicFooter } from "@/components/Footer";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { IconMessage } from "@/components/Message";
 import { useMousetrap } from "@/lib/hooks/useMousetrap";

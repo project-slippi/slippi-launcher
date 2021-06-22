@@ -3,6 +3,7 @@ import { ReplayCommunication } from "@dolphin/types";
 import {
   Command,
   ConnectionDetails,
+  ConnectionEvent,
   ConnectionStatus,
   ConsoleConnection,
   GameEndType,
@@ -13,6 +14,7 @@ import {
   SlpStreamEvent,
 } from "@slippi/slippi-js";
 import log from "electron-log";
+import path from "path";
 
 import { AutoSwitcher } from "./autoSwitcher";
 import { consoleMirrorStatusUpdated } from "./ipc";
@@ -57,32 +59,61 @@ export class MirrorManager {
     const fileWriter = new SlpFileWriter({ folderPath: config.folderPath, consoleNickname: "unknown" });
     fileWriter.on(SlpFileWriterEvent.NEW_FILE, (currFilePath) => {
       this._playFile(currFilePath, config.ipAddress);
+
+      // Let the front-end know of the new file that we're writing too
+      consoleMirrorStatusUpdated
+        .main!.trigger({
+          ip: config.ipAddress,
+          info: {
+            filename: path.basename(currFilePath),
+          },
+        })
+        .catch((err) => log.warn(err));
+    });
+
+    // Clear the current writing file
+    fileWriter.on(SlpFileWriterEvent.FILE_COMPLETE, () => {
+      consoleMirrorStatusUpdated
+        .main!.trigger({
+          ip: config.ipAddress,
+          info: {
+            filename: null,
+          },
+        })
+        .catch((err) => log.warn(err));
     });
 
     const connection = new ConsoleConnection();
     connection.once("connect", () => {
       log.info("[Mirroring] Connecting to Wii");
-      connection.on("handshake", (details: ConnectionDetails) => {
+      connection.on(ConnectionEvent.HANDSHAKE, (details: ConnectionDetails) => {
         log.info("[Mirroring] Got handshake from wii");
         log.info(details);
         fileWriter.updateSettings({ consoleNickname: details.consoleNick });
+
         consoleMirrorStatusUpdated
           .main!.trigger({
             ip: config.ipAddress,
-            status: ConnectionStatus.CONNECTING,
-            nickname: details.consoleNick,
+            info: {
+              nickname: details.consoleNick,
+            },
           })
           .catch((err) => log.warn(err));
       });
-      connection.on("statusChange", (status) => {
+
+      connection.on(ConnectionEvent.STATUS_CHANGE, (status) => {
+        log.info(`${config.ipAddress} status changed: ${status}`);
         consoleMirrorStatusUpdated
           .main!.trigger({
             ip: config.ipAddress,
-            status,
+            info: {
+              status,
+            },
           })
           .catch((err) => log.warn(err));
       });
-      connection.on("data", (data) => fileWriter.write(data));
+
+      connection.on(ConnectionEvent.DATA, (data) => fileWriter.write(data));
     });
     connection.connect(config.ipAddress, config.port ?? Ports.DEFAULT);
 
@@ -137,6 +168,18 @@ export class MirrorManager {
       details.autoSwitcher.disconnect();
     }
     delete this.mirrors[ip];
+
+    // FIXME: Not sure why the disconnected status update isn't working
+    // For now let's just manually show the disconnected status
+    consoleMirrorStatusUpdated
+      .main!.trigger({
+        ip,
+        info: {
+          status: ConnectionStatus.DISCONNECTED,
+          filename: null,
+        },
+      })
+      .catch((err) => log.warn(err));
   }
 
   public async startMirroring(ip: string) {
