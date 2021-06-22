@@ -55,6 +55,7 @@ module.exports = {
     "strict-booleans/no-nullable-numbers": "error",
     "no-undef": "off",
     "new-cap": "error",
+    "@typescript-eslint/no-non-null-assertion": "off",
     curly: "error",
   },
   ignorePatterns: ["/*.js"],
