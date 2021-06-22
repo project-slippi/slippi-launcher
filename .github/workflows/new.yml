@@ -61,6 +61,7 @@ jobs:
         env:
           CI: true
       - name: Prepare artifacts
+        shell: bash
         run: |
           mkdir artifacts
           mv release/{*.exe,*.deb,*.AppImage,*.dmg,*.zip,*.yml} artifacts || true
