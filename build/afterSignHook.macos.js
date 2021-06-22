@@ -10,6 +10,13 @@ module.exports = async function (params) {
 
   console.log("afterSign hook triggered", params);
 
+  // Bail early if this is a fork-caused PR build, which doesn't get
+  // secrets.
+  if (!process.env.APPLE_TEAM_PROVIDER_ID || !process.env.APPLE_API_KEY || !process.env.APPLE_ISSUER_ID) {
+    console.log("Bailing, no secrets found.");
+    return;
+  }
+
   const appId = electronBuilderConfig.appId;
   const appPath = path.join(params.appOutDir, `${params.packager.appInfo.productFilename}.app`);
   if (!fs.existsSync(appPath)) {
