@@ -1,8 +1,10 @@
 import { DolphinLaunchType } from "@dolphin/types";
+import { addGamePathToInis } from "@dolphin/util";
 import electronSettings from "electron-settings";
 import fs from "fs";
 import merge from "lodash/merge";
 import set from "lodash/set";
+import path from "path";
 
 import { defaultAppSettings } from "./defaultSettings";
 import { settingsUpdated } from "./ipc";
@@ -47,6 +49,10 @@ export class SettingsManager {
 
   public async setIsoPath(isoPath: string | null): Promise<void> {
     await this._set("settings.isoPath", isoPath);
+    if (isoPath) {
+      const gameDir = path.dirname(isoPath);
+      await addGamePathToInis(gameDir);
+    }
   }
 
   public async setRootSlpPath(slpPath: string): Promise<void> {

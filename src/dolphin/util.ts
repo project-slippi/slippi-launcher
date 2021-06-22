@@ -1,5 +1,8 @@
 import { settingsManager } from "@settings/settingsManager";
+import log from "electron-log";
 import * as fs from "fs-extra";
+import * as ini from "ini";
+import { fileExists } from "main/fileExists";
 import os from "os";
 import path from "path";
 
@@ -64,4 +67,30 @@ export async function findUserFolder(type: DolphinLaunchType): Promise<string> {
   fs.ensureDir(userPath);
 
   return userPath;
+}
+
+export async function addGamePathToInis(gameDir: string): Promise<void> {
+  await addGamePathToIni(DolphinLaunchType.NETPLAY, gameDir);
+  await addGamePathToIni(DolphinLaunchType.PLAYBACK, gameDir);
+}
+
+async function addGamePathToIni(type: DolphinLaunchType, gameDir: string): Promise<void> {
+  const userFolder = await findUserFolder(type);
+  const iniPath = path.join(userFolder, "Config", "Dolphin.ini");
+  if (await fileExists(iniPath)) {
+    log.info("Found a Dolphin.ini to update...");
+    const dolphinINI = ini.parse(await fs.readFile(iniPath, "utf-8"));
+    dolphinINI.General.ISOPath0 = gameDir;
+    const numPaths = dolphinINI.General.ISOPaths;
+    dolphinINI.General.ISOPaths = numPaths !== "0" ? numPaths : "1";
+    const newINI = ini.encode(dolphinINI);
+    await fs.writeFile(iniPath, newINI);
+  } else {
+    log.info("There isn't a Dolphin.ini to update...");
+    const configPath = path.join(userFolder, "Config");
+    const newINI = ini.encode({ General: { ISOPath0: gameDir, ISOPaths: 1 } });
+    await fs.ensureDir(configPath);
+    await fs.writeFile(iniPath, newINI);
+  }
+  log.info(`Finished updating ${type} dolphin...`);
 }
