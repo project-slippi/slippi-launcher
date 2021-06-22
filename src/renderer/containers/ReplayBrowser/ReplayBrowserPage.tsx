@@ -33,6 +33,7 @@ export const ReplayBrowserPage: React.FC = () => {
 const ChildPage: React.FC<{ parent: string; goBack: () => void }> = () => {
   const { filePath } = useParams<Record<string, any>>();
   const selectedFile = useReplays((store) => store.selectedFile);
+  const decodedFilePath = decodeURIComponent(filePath);
   const playFiles = usePlayFiles();
   const nav = useReplayBrowserList();
   const { goToReplayList } = useReplayBrowserNavigation();
@@ -45,12 +46,12 @@ const ChildPage: React.FC<{ parent: string; goBack: () => void }> = () => {
         autoDismiss: true,
       });
     }
-    playFiles([{ path: filePath }]);
+    playFiles([{ path: decodedFilePath }]);
   };
 
   return (
     <ReplayFileStats
-      filePath={filePath}
+      filePath={decodedFilePath}
       file={selectedFile.fileResult ?? undefined}
       index={nav.index}
       total={nav.total}

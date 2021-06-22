@@ -29,7 +29,8 @@ export const useReplayBrowserNavigation = () => {
   };
 
   const goToReplayStatsPage = (filePath: string) => {
-    const pageUrl = `/main/replays/${filePath}`;
+    const encodedPath = encodeURIComponent(filePath);
+    const pageUrl = `/main/replays/${encodedPath}`;
     navigate(pageUrl);
   };
 
