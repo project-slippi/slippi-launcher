@@ -77,11 +77,24 @@ export const replayFileFilter = (filterOptions: ReplayFilterOptions): ((file: Fi
     }
   }
 
-  const matchable = extractAllPlayerNames(file.settings, file.metadata);
-  if (!filterOptions.searchText) {
+  // First try to match names
+  const playerNamesMatch = (): boolean => {
+    const matchable = extractAllPlayerNames(file.settings, file.metadata);
+    if (!filterOptions.searchText) {
+      return true;
+    } else if (matchable.length === 0) {
+      return false;
+    }
+    return namesMatch([filterOptions.searchText], matchable);
+  };
+  if (playerNamesMatch()) {
     return true;
-  } else if (matchable.length === 0) {
-    return false;
   }
-  return namesMatch([filterOptions.searchText], matchable);
+
+  // Match filenames
+  if (file.name.toLowerCase().includes(filterOptions.searchText.toLowerCase())) {
+    return true;
+  }
+
+  return false;
 };
