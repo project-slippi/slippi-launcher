@@ -1,4 +1,4 @@
-# Slippi Launcher
+# ![Launcher icon](resources/icons/48x48.png) Slippi Launcher
 
 The Slippi Launcher acts as a one stop shop for everything Slippi related. It handles updating Slippi Dolphin, playing Slippi Online, launching and analyzing replays, and more.
 
