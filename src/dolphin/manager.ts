@@ -2,6 +2,7 @@ import { settingsManager } from "@settings/settingsManager";
 import log from "electron-log";
 import { EventEmitter } from "events";
 import * as fs from "fs-extra";
+import { fileExists } from "main/fileExists";
 import path from "path";
 
 import { downloadAndInstallDolphin } from "./downloadDolphin";
@@ -17,7 +18,7 @@ export class DolphinManager extends EventEmitter {
 
   public async launchPlaybackDolphin(id: string, replayComm: ReplayCommunication): Promise<void> {
     const dolphinPath = await findDolphinExecutable(DolphinLaunchType.PLAYBACK);
-    const meleeIsoPath = settingsManager.get().settings.isoPath ?? undefined;
+    const meleeIsoPath = await this._getIsoPath();
 
     const configuring = this.playbackDolphinInstances.get("configure");
     if (configuring) {
@@ -39,12 +40,13 @@ export class DolphinManager extends EventEmitter {
   }
 
   public async launchNetplayDolphin() {
-    const dolphinPath = await findDolphinExecutable(DolphinLaunchType.NETPLAY);
-    log.info(`Launching dolphin at path: ${dolphinPath}`);
-    const meleeIsoPath = settingsManager.get().settings.isoPath ?? undefined;
     if (this.netplayDolphinInstance) {
       throw new Error("Netplay dolphin is already open!");
     }
+
+    const dolphinPath = await findDolphinExecutable(DolphinLaunchType.NETPLAY);
+    log.info(`Launching dolphin at path: ${dolphinPath}`);
+    const meleeIsoPath = await this._getIsoPath();
 
     // Create the Dolphin instance and start it
     this.netplayDolphinInstance = new DolphinInstance(dolphinPath, meleeIsoPath);
@@ -122,6 +124,17 @@ export class DolphinManager extends EventEmitter {
       log.error(err);
       throw err;
     }
+  }
+
+  private async _getIsoPath(): Promise<string | undefined> {
+    const meleeIsoPath = settingsManager.get().settings.isoPath ?? undefined;
+    if (meleeIsoPath) {
+      // Make sure the file actually exists
+      if (!(await fileExists(meleeIsoPath))) {
+        throw new Error(`Could not find ISO file: ${meleeIsoPath}`);
+      }
+    }
+    return meleeIsoPath;
   }
 }
 
