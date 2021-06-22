@@ -6,6 +6,7 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import SyncIcon from "@material-ui/icons/Sync";
 import React from "react";
+import { useToasts } from "react-toast-notifications";
 
 import { DualPane } from "@/components/DualPane";
 import { Button } from "@/components/FormInputs";
@@ -23,6 +24,7 @@ const AUTO_REFRESH_INTERVAL = 30 * SECOND;
 
 export const SpectatePage: React.FC = () => {
   const user = useAccount((store) => store.user);
+  const { addToast } = useToasts();
   const [currentBroadcasts, refreshBroadcasts] = useBroadcastList();
 
   React.useEffect(() => {
@@ -35,6 +37,12 @@ export const SpectatePage: React.FC = () => {
   }, []);
 
   const startWatching = async (id: string) => {
+    if (process.platform === "darwin") {
+      addToast("Dolphin may open in the background, please check the app bar", {
+        appearance: "info",
+        autoDismiss: true,
+      });
+    }
     await watchBroadcast.renderer!.trigger({ broadcasterId: id });
   };
 

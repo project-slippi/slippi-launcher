@@ -31,5 +31,9 @@ export async function findDolphinExecutable(type: DolphinLaunchType | string, do
     throw new Error(`No Dolphin found in: ${dolphinPath}`);
   }
 
+  if (process.platform === "darwin") {
+    return path.join(dolphinPath, result, "Contents", "MacOS", "Slippi Dolphin");
+  }
+
   return path.join(dolphinPath, result);
 }

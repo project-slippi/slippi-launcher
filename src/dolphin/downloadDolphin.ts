@@ -2,7 +2,9 @@ import AdmZip from "adm-zip";
 import { ChildProcessWithoutNullStreams, spawn, spawnSync } from "child_process";
 import { app, BrowserWindow } from "electron";
 import { download } from "electron-dl";
+import extractDmg from "extract-dmg";
 import * as fs from "fs-extra";
+import os from "os";
 import path from "path";
 import { lt } from "semver";
 
@@ -66,7 +68,7 @@ export async function assertDolphinInstallations(): Promise<void> {
 async function compareDolphinVersion(type: DolphinLaunchType, latestVersion: string): Promise<boolean> {
   const dolphinPath = await findDolphinExecutable(type);
   const dolphinVersion = spawnSync(dolphinPath, ["--version"]).stdout.toString();
-  return lt(latestVersion, dolphinVersion);
+  return lt(dolphinVersion, latestVersion);
 }
 
 export async function openDolphin(type: DolphinLaunchType, params?: string[]): Promise<ChildProcessWithoutNullStreams> {
@@ -97,11 +99,7 @@ function matchesPlatform(releaseName: string): boolean {
     case "win32":
       return releaseName.endsWith("Win.zip");
     case "darwin":
-      // FIXME: The netplay release sometimes provided in DMG format.
-      // This is not what we expect since the playback release is in a ZIP format.
-      // We need to ensure that in the future we only release in the ZIP format
-      // so the launcher can unpack it.
-      return releaseName.endsWith("Mac.zip");
+      return releaseName.endsWith("Mac.dmg");
     case "linux":
       return releaseName.endsWith(".AppImage");
     default:
@@ -164,33 +162,44 @@ async function installDolphin(
       const alreadyInstalled = await fs.pathExists(dolphinResourcesPath);
       if (alreadyInstalled) {
         log(`${dolphinResourcesPath} already exists. Moving...`);
-        await fs.move(dolphinResourcesPath, backupLocation);
+        await fs.move(dolphinPath, backupLocation);
       }
 
       log(`Extracting to: ${dolphinPath}`);
-      const zip = new AdmZip(assetPath);
-      zip.extractAllTo(dolphinPath, true);
+      await extractDmg(assetPath, dolphinPath);
+      await fs.readdir(dolphinPath, (err, files) => {
+        if (err) {
+          log(err.message);
+        }
+        if (files) {
+          files.forEach(async (file) => {
+            if (file !== "Slippi Dolphin.app") {
+              try {
+                await fs.unlink(path.join(dolphinPath, file));
+              } catch (err) {
+                fs.removeSync(path.join(dolphinPath, file));
+              }
+            }
+          });
+        }
+      });
+      const binaryLocation = path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "MacOS", "Slippi Dolphin");
+      const userInfo = os.userInfo();
+      await fs.chmod(path.join(dolphinPath, "Slippi Dolphin.app"), "777");
+      await fs.chown(path.join(dolphinPath, "Slippi Dolphin.app"), userInfo.uid, userInfo.gid);
+      await fs.chmod(binaryLocation, "777");
+      await fs.chown(binaryLocation, userInfo.uid, userInfo.gid);
 
       // Move backed up User folder and user.json
       if (alreadyInstalled) {
-        const oldUserFolder = path.join(backupLocation, "User");
+        const oldUserFolder = path.join(backupLocation, "Slippi Dolphin.app", "Contents", "Resources", "User");
         const newUserFolder = path.join(dolphinResourcesPath, "User");
-
-        const oldUserJSON = path.join(backupLocation, "user.json");
-        const newUserJSON = path.join(dolphinResourcesPath, "user.json");
 
         if (await fs.pathExists(oldUserFolder)) {
           log("moving User folder...");
           await fs.move(oldUserFolder, newUserFolder);
         } else {
           log("no old User folder to move");
-        }
-
-        if (await fileExists(oldUserJSON)) {
-          log("moving user.json...");
-          await fs.move(oldUserJSON, newUserJSON);
-        } else {
-          log("no old user.json to move");
         }
         await fs.remove(backupLocation);
       }

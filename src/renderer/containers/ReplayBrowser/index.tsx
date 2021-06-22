@@ -75,8 +75,24 @@ export const ReplayBrowser: React.FC = () => {
   };
 
   const playSelectedFile = (index: number) => {
+    if (process.platform === "darwin") {
+      addToast("Dolphin may open in the background, please check the app bar", {
+        appearance: "info",
+        autoDismiss: true,
+      });
+    }
     const filePath = filteredFiles[index].fullPath;
     playFiles([{ path: filePath }]);
+  };
+
+  const playSelectedFiles = () => {
+    if (process.platform === "darwin") {
+      addToast("Dolphin may open in the background, please check the app bar", {
+        appearance: "info",
+        autoDismiss: true,
+      });
+    }
+    playFiles(selectedFiles.map((path) => ({ path })));
   };
 
   const deleteFiles = (filePaths: string[]) => {
@@ -183,7 +199,7 @@ export const ReplayBrowser: React.FC = () => {
                   )}
                   <FileSelectionToolbar
                     totalSelected={selectedFiles.length}
-                    onPlay={() => playFiles(selectedFiles.map((path) => ({ path })))}
+                    onPlay={playSelectedFiles}
                     onClear={clearSelectedFiles}
                     onDelete={() => {
                       deleteFiles(selectedFiles);
