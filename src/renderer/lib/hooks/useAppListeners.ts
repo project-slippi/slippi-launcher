@@ -7,13 +7,14 @@ import {
 } from "@broadcast/ipc";
 import { consoleMirrorStatusUpdated, discoveredConsolesUpdated } from "@console/ipc";
 import { dolphinDownloadLogReceived } from "@dolphin/ipc";
-import { loadProgressUpdated } from "@replays/ipc";
+import { loadProgressUpdated, playReplayAndShowStatsPage } from "@replays/ipc";
 import { settingsUpdated } from "@settings/ipc";
 import { checkValidIso } from "common/ipc";
 import log from "electron-log";
 import firebase from "firebase";
 import throttle from "lodash/throttle";
 import React from "react";
+import { useHistory } from "react-router-dom";
 
 import { useAppInitialization, useAppStore } from "@/lib/hooks/useApp";
 import { useConsole } from "@/store/console";
@@ -27,6 +28,8 @@ import { useNewsFeed } from "./useNewsFeed";
 import { useSettings } from "./useSettings";
 
 export const useAppListeners = () => {
+  const history = useHistory();
+
   // Handle app initalization
   const initialized = useAppStore((store) => store.initialized);
   const initializeApp = useAppInitialization();
@@ -144,6 +147,16 @@ export const useAppListeners = () => {
         setIsValidating(false);
       });
   }, [isoPath]);
+
+  const clearSelectedFile = useReplays((store) => store.clearSelectedFile);
+  const playFiles = useReplays((store) => store.playFiles);
+  playReplayAndShowStatsPage.renderer!.handle(async ({ filePath }) => {
+    await clearSelectedFile();
+    await playFiles([{ path: filePath }]);
+
+    // TODO: Don't use a hard-coded path
+    history.push(`/main/replays/${filePath}`);
+  });
 
   // Load the news articles once on app load
   const updateNewsFeed = useNewsFeed((store) => store.update);
