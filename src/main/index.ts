@@ -254,7 +254,7 @@ app.on("second-instance", (_, argv) => {
   log.info(argv);
 
   const lastItem = last(argv);
-  if (!lastItem) {
+  if (argv.length === 1 || !lastItem) {
     return;
   }
 
