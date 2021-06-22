@@ -172,6 +172,22 @@ async function installDolphin(
       log(`Extracting to: ${dolphinPath}`);
       if (assetPath.endsWith(".dmg")) {
         await extractDmg(assetPath, dolphinPath);
+        await fs.readdir(dolphinPath, (err, files) => {
+          if (err) {
+            log(err.message);
+          }
+          if (files) {
+            files.forEach((file) => {
+              if (file !== "Slippi Dolphin.app") {
+                try {
+                  fs.unlinkSync(path.join(dolphinPath, file));
+                } catch (err) {
+                  fs.removeSync(path.join(dolphinPath, file));
+                }
+              }
+            });
+          }
+        });
       } else {
         const zip = new AdmZip(assetPath);
         zip.extractAllTo(dolphinPath, true);
