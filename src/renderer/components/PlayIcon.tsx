@@ -5,9 +5,10 @@ import React from "react";
 
 import { withFont } from "@/styles/withFont";
 
-export const PlayIcon: React.FC = ({ children }) => {
+export const PlayIcon: React.FC<{ className?: string }> = ({ className, children }) => {
   return (
     <div
+      className={className}
       css={css`
         position: relative;
       `}

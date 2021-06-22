@@ -116,7 +116,16 @@ export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
           `}
         >
           <ButtonBase onClick={() => onPlay()}>
-            <PlayIcon>Play</PlayIcon>
+            <PlayIcon
+              css={css`
+                &:hover {
+                  opacity: 0.8;
+                  transition: opacity 0.2s ease-in-out;
+                }
+              `}
+            >
+              Play
+            </PlayIcon>
           </ButtonBase>
         </div>
         <MainMenu path={path} menuItems={menuItems} />
