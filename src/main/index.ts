@@ -1,4 +1,3 @@
-import { File, Storage } from "@google-cloud/storage";
 import { playReplayAndShowStatsPage } from "@replays/ipc";
 import { colors } from "common/colors";
 import { isDevelopment, isMac } from "common/constants";
@@ -12,6 +11,7 @@ import last from "lodash/last";
 import path from "path";
 import url, { format as formatUrl } from "url";
 
+import { download } from "./download";
 import { fileExists } from "./fileExists";
 import { setupListeners } from "./listeners";
 
@@ -187,30 +187,21 @@ const handleSlippiURIAsync = async (aUrl: string) => {
       const tmpDir = app.getPath("temp");
       const destination = path.join(tmpDir, path.basename(replayPath));
 
-      // The following path generation will not work on dev
-      // __static didn't exist and __dirname didn't work. /shrug
-      // const appPath = app.getAppPath();
-      const keyPath = path.join(__static, "storage-reader.json");
-      log.info(`Keypath: ${keyPath}`);
-      const storage = new Storage({
-        projectId: "slippi",
-        keyFilename: keyPath,
-      });
-      const bucket = storage.bucket("slippi.appspot.com");
-      const file = new File(bucket, replayPath);
-
-      log.info(`Downloading file ${replayPath} to ${destination}`);
-
-      // Dowload file
-      await file.download({ destination: destination });
-
-      log.info(`Finished download`);
+      const fileAlreadyExists = await fileExists(destination);
+      if (!fileAlreadyExists) {
+        const dlUrl = `https://storage.googleapis.com/slippi.appspot.com/${replayPath}`;
+        log.info(`Downloading file ${replayPath} to ${destination}`);
+        // Dowload file
+        await download(dlUrl, destination);
+        log.info(`Finished download`);
+      } else {
+        log.info(`${destination} already exists. Skipping download...`);
+      }
 
       // Wait until mainWindow exists so that we can send an IPC to play.
       // We are willing to wait for a few seconds before timing out
       await waitForMainWindow();
       if (mainWindow) {
-        // mainWindow.webContents.send("play-replay", path.join(tmpDir, "replay.slp"));
         await playReplayAndShowStats(destination);
       }
 
