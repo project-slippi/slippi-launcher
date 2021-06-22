@@ -105,7 +105,7 @@ export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
           align-items: center;
         `}
       >
-        <Tooltip title="Open Slippi homepage">
+        <Tooltip title="Open Slippi.gg">
           <Button onClick={() => shell.openExternal(slippiHomepage)}>
             <img src={slippiLogo} width="43px" />
           </Button>
