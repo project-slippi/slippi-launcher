@@ -5,7 +5,7 @@ import { getAllReleases } from "./github";
 
 export async function fetchNewsFeedData(): Promise<NewsItem[]> {
   const mediumNews = fetchMediumNews();
-  const githubNews = fetchGithubReleaseNews(["Ishiiruka", "slippi-desktop-app"]);
+  const githubNews = fetchGithubReleaseNews(["Ishiiruka", "slippi-launcher"]);
   const allNews = (await Promise.all([mediumNews, githubNews])).flat();
   return allNews.sort((a, b) => {
     // Sort all news item by reverse chronological order

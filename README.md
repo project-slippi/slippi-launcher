@@ -61,7 +61,7 @@ These extensions will provide automatic formatting and warnings about code quali
 
 ### Build Steps
 
-- Clone the repo via: `git clone git@github.com:project-slippi/slippi-desktop-app.git`
+- Clone the repo via: `git clone https://github.com/project-slippi/slippi-launcher.git`
 - Navigate into the directory and run: `yarn` to install all dependencies
 - Use `yarn dev` to develop
 - Use `yarn package` to build a release
