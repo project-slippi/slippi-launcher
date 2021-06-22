@@ -131,5 +131,9 @@
       "pre-commit": "pretty-quick --staged",
       "pre-push": "yarn lint"
     }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/project-slippi/slippi-launcher.git"
   }
 }
