@@ -1,4 +1,5 @@
-import { playReplayAndShowStatsPage } from "@replays/ipc";
+import { dolphinManager } from "@dolphin/manager";
+import { showStatsPage } from "@replays/ipc";
 import { colors } from "common/colors";
 import { isDevelopment, isMac } from "common/constants";
 import { delay } from "common/delay";
@@ -258,5 +259,9 @@ app.on("second-instance", (_, argv) => {
 });
 
 const playReplayAndShowStats = async (filePath: string) => {
-  await playReplayAndShowStatsPage.main!.trigger({ filePath });
+  await dolphinManager.launchPlaybackDolphin("playback", {
+    mode: "normal",
+    replay: filePath,
+  });
+  await showStatsPage.main!.trigger({ filePath });
 };

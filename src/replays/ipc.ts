@@ -17,7 +17,4 @@ export const calculateGameStats = makeEndpoint.main(
 
 export const loadProgressUpdated = makeEndpoint.renderer("replays_loadProgressUpdated", <Progress>_);
 
-export const playReplayAndShowStatsPage = makeEndpoint.renderer(
-  "replays_playReplayAndShowStatsPage",
-  <{ filePath: string }>_,
-);
+export const showStatsPage = makeEndpoint.renderer("replays_showStatsPage", <{ filePath: string }>_);

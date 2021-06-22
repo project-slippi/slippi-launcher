@@ -7,7 +7,7 @@ import {
 } from "@broadcast/ipc";
 import { consoleMirrorStatusUpdated, discoveredConsolesUpdated } from "@console/ipc";
 import { dolphinDownloadLogReceived } from "@dolphin/ipc";
-import { loadProgressUpdated, playReplayAndShowStatsPage } from "@replays/ipc";
+import { loadProgressUpdated, showStatsPage } from "@replays/ipc";
 import { settingsUpdated } from "@settings/ipc";
 import { checkValidIso } from "common/ipc";
 import log from "electron-log";
@@ -147,12 +147,9 @@ export const useAppListeners = () => {
   }, [isoPath]);
 
   const clearSelectedFile = useReplays((store) => store.clearSelectedFile);
-  const playFiles = useReplays((store) => store.playFiles);
   const { goToReplayStatsPage } = useReplayBrowserNavigation();
-  playReplayAndShowStatsPage.renderer!.handle(async ({ filePath }) => {
+  showStatsPage.renderer!.handle(async ({ filePath }) => {
     await clearSelectedFile();
-    await playFiles([{ path: filePath }]);
-
     goToReplayStatsPage(filePath);
   });
 

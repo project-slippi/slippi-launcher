@@ -13,7 +13,6 @@ import {
 } from "./ipc";
 import { dolphinManager } from "./manager";
 import { deletePlayKeyFile, findPlayKey, writePlayKeyFile } from "./playkey";
-import { ReplayCommunication } from "./types";
 
 downloadDolphin.main!.handle(async () => {
   await assertDolphinInstallations();
@@ -55,13 +54,10 @@ removePlayKeyFile.main!.handle(async () => {
 });
 
 viewSlpReplay.main!.handle(async ({ files }) => {
-  const commandId = Math.random().toString(36).slice(2);
-  const replayComm: ReplayCommunication = {
-    commandId,
+  await dolphinManager.launchPlaybackDolphin("playback", {
     mode: "queue",
     queue: files,
-  };
-  await dolphinManager.launchPlaybackDolphin("playback", replayComm);
+  });
   return { success: true };
 });
 
