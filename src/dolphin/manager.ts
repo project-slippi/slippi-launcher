@@ -71,6 +71,14 @@ export class DolphinManager extends EventEmitter {
         // Remove the instance from the map on close
         this.playbackDolphinInstances.delete("configure");
       });
+      instance.on("error", (err: Error) => {
+        this.emit("dolphin-closed", "configure");
+
+        log.error(err);
+
+        // Remove the instance from the map on close
+        this.playbackDolphinInstances.delete("configure");
+      });
       instance.start();
     }
   }
