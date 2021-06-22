@@ -2,17 +2,17 @@ import AdmZip from "adm-zip";
 import { ChildProcessWithoutNullStreams, spawn, spawnSync } from "child_process";
 import { app, BrowserWindow } from "electron";
 import { download } from "electron-dl";
+import extractDmg from "extract-dmg";
 import * as fs from "fs-extra";
+import os from "os";
 import path from "path";
 import { lt } from "semver";
-import os from "os";
 
 import { fileExists } from "../main/fileExists";
 import { getLatestRelease } from "../main/github";
 import { dolphinDownloadFinished, dolphinDownloadLogReceived } from "./ipc";
 import { DolphinLaunchType } from "./types";
 import { findDolphinExecutable } from "./util";
-import extractDmg from "extract-dmg";
 
 function logDownloadInfo(message: string): void {
   dolphinDownloadLogReceived.main!.trigger({ message });
@@ -99,11 +99,7 @@ function matchesPlatform(releaseName: string): boolean {
     case "win32":
       return releaseName.endsWith("Win.zip");
     case "darwin":
-      // FIXME: The netplay release sometimes provided in DMG format.
-      // This is not what we expect since the playback release is in a ZIP format.
-      // We need to ensure that in the future we only release in the ZIP format
-      // so the launcher can unpack it.
-      return releaseName.endsWith("Mac.zip") || releaseName.endsWith(".dmg");
+      return releaseName.endsWith("Mac.dmg");
     case "linux":
       return releaseName.endsWith(".AppImage");
     default:
@@ -170,28 +166,23 @@ async function installDolphin(
       }
 
       log(`Extracting to: ${dolphinPath}`);
-      if (assetPath.endsWith(".dmg")) {
-        await extractDmg(assetPath, dolphinPath);
-        await fs.readdir(dolphinPath, (err, files) => {
-          if (err) {
-            log(err.message);
-          }
-          if (files) {
-            files.forEach(async (file) => {
-              if (file !== "Slippi Dolphin.app") {
-                try {
-                  await fs.unlink(path.join(dolphinPath, file));
-                } catch (err) {
-                  fs.removeSync(path.join(dolphinPath, file));
-                }
+      await extractDmg(assetPath, dolphinPath);
+      await fs.readdir(dolphinPath, (err, files) => {
+        if (err) {
+          log(err.message);
+        }
+        if (files) {
+          files.forEach(async (file) => {
+            if (file !== "Slippi Dolphin.app") {
+              try {
+                await fs.unlink(path.join(dolphinPath, file));
+              } catch (err) {
+                fs.removeSync(path.join(dolphinPath, file));
               }
-            });
-          }
-        });
-      } else {
-        const zip = new AdmZip(assetPath);
-        zip.extractAllTo(dolphinPath, true);
-      }
+            }
+          });
+        }
+      });
       const binaryLocation = path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "MacOS", "Slippi Dolphin");
       const userInfo = os.userInfo();
       await fs.chmod(path.join(dolphinPath, "Slippi Dolphin.app"), "777");
