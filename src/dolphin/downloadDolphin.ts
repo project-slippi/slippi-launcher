@@ -5,6 +5,7 @@ import { download } from "electron-dl";
 import * as fs from "fs-extra";
 import path from "path";
 import { lt } from "semver";
+import os from "os";
 
 import { fileExists } from "../main/fileExists";
 import { getLatestRelease } from "../main/github";
@@ -170,6 +171,12 @@ async function installDolphin(
       log(`Extracting to: ${dolphinPath}`);
       const zip = new AdmZip(assetPath);
       zip.extractAllTo(dolphinPath, true);
+      const binaryLocation = path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "MacOS", "Slippi Dolphin");
+      const userInfo = os.userInfo();
+      await fs.chmod(path.join(dolphinPath, "Slippi Dolphin.app"), "777");
+      await fs.chown(path.join(dolphinPath, "Slippi Dolphin.app"), userInfo.uid, userInfo.gid);
+      await fs.chmod(binaryLocation, "777");
+      await fs.chown(binaryLocation, userInfo.uid, userInfo.gid);
 
       // Move backed up User folder and user.json
       if (alreadyInstalled) {
