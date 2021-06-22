@@ -5,9 +5,11 @@ import { css, jsx } from "@emotion/react";
 import Button from "@material-ui/core/Button";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
+import { isLinux } from "common/constants";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
 
+import { DevGuard } from "@/components/DevGuard";
 import { PathInput } from "@/components/PathInput";
 import { useDolphinPath } from "@/lib/hooks/useSettings";
 
@@ -59,14 +61,16 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
       <Typography variant="h5" className={classes.title}>
         {dolphinType} Dolphin Settings
       </Typography>
-      <SettingItem name={`${dolphinType} Dolphin Directory`} description="The path to Dolphin.">
-        <PathInput
-          value={dolphinPath ?? ""}
-          onSelect={setDolphinPath}
-          placeholder="No folder set"
-          options={{ properties: ["openDirectory"] }}
-        />
-      </SettingItem>
+      <DevGuard show={isLinux}>
+        <SettingItem name={`${dolphinType} Dolphin Directory`} description="The path to Dolphin.">
+          <PathInput
+            value={dolphinPath ?? ""}
+            onSelect={setDolphinPath}
+            placeholder="No folder set"
+            options={{ properties: ["openDirectory"] }}
+          />
+        </SettingItem>
+      </DevGuard>
       <SettingItem name="Configure Dolphin" description="Open Dolphin to modify settings.">
         <Button
           variant="contained"

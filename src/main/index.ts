@@ -1,17 +1,17 @@
-import "@broadcast/main";
-import "@dolphin/main";
-import "@replays/main";
-import "@settings/main";
-import "@console/main";
-
 import { colors } from "common/colors";
 import { isDevelopment, isMac } from "common/constants";
 import { app, BrowserWindow, shell } from "electron";
 import contextMenu from "electron-context-menu";
+import log from "electron-log";
+import { autoUpdater } from "electron-updater";
 import * as path from "path";
 import { format as formatUrl } from "url";
 
 import { setupListeners } from "./listeners";
+
+// Check for updates
+autoUpdater.logger = log;
+autoUpdater.checkForUpdatesAndNotify();
 
 // global reference to mainWindow (necessary to prevent window from being garbage collected)
 let mainWindow: BrowserWindow | null = null;
