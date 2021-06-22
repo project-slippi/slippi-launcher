@@ -67,6 +67,7 @@ export class DolphinManager extends EventEmitter {
         this.netplayDolphinInstance = null;
 
         log.error(err);
+        throw err;
       });
       instance.start();
     } else if (launchType === DolphinLaunchType.PLAYBACK && this.playbackDolphinInstances.size === 0) {
@@ -81,10 +82,11 @@ export class DolphinManager extends EventEmitter {
       instance.on("error", (err: Error) => {
         this.emit("dolphin-closed", "configure");
 
-        log.error(err);
-
         // Remove the instance from the map on close
         this.playbackDolphinInstances.delete("configure");
+
+        log.error(err);
+        throw err;
       });
       instance.start();
     }
@@ -118,6 +120,7 @@ export class DolphinManager extends EventEmitter {
       fs.remove(cacheFolder);
     } catch (err) {
       log.error(err);
+      throw err;
     }
   }
 }
