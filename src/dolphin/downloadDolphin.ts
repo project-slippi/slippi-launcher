@@ -12,6 +12,7 @@ import { getLatestRelease } from "../main/github";
 import { dolphinDownloadFinished, dolphinDownloadLogReceived } from "./ipc";
 import { DolphinLaunchType } from "./types";
 import { findDolphinExecutable } from "./util";
+import extractDmg from "extract-dmg";
 
 function logDownloadInfo(message: string): void {
   dolphinDownloadLogReceived.main!.trigger({ message });
@@ -102,7 +103,7 @@ function matchesPlatform(releaseName: string): boolean {
       // This is not what we expect since the playback release is in a ZIP format.
       // We need to ensure that in the future we only release in the ZIP format
       // so the launcher can unpack it.
-      return releaseName.endsWith("Mac.zip");
+      return releaseName.endsWith("Mac.zip") || releaseName.endsWith(".dmg");
     case "linux":
       return releaseName.endsWith(".AppImage");
     default:
@@ -165,12 +166,16 @@ async function installDolphin(
       const alreadyInstalled = await fs.pathExists(dolphinResourcesPath);
       if (alreadyInstalled) {
         log(`${dolphinResourcesPath} already exists. Moving...`);
-        await fs.move(dolphinResourcesPath, backupLocation);
+        await fs.move(dolphinPath, backupLocation);
       }
 
       log(`Extracting to: ${dolphinPath}`);
-      const zip = new AdmZip(assetPath);
-      zip.extractAllTo(dolphinPath, true);
+      if (assetPath.endsWith(".dmg")) {
+        await extractDmg(assetPath, dolphinPath);
+      } else {
+        const zip = new AdmZip(assetPath);
+        zip.extractAllTo(dolphinPath, true);
+      }
       const binaryLocation = path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "MacOS", "Slippi Dolphin");
       const userInfo = os.userInfo();
       await fs.chmod(path.join(dolphinPath, "Slippi Dolphin.app"), "777");
@@ -180,24 +185,14 @@ async function installDolphin(
 
       // Move backed up User folder and user.json
       if (alreadyInstalled) {
-        const oldUserFolder = path.join(backupLocation, "User");
+        const oldUserFolder = path.join(backupLocation, "Slippi Dolphin.app", "Contents", "Resources", "User");
         const newUserFolder = path.join(dolphinResourcesPath, "User");
-
-        const oldUserJSON = path.join(backupLocation, "user.json");
-        const newUserJSON = path.join(dolphinResourcesPath, "user.json");
 
         if (await fs.pathExists(oldUserFolder)) {
           log("moving User folder...");
           await fs.move(oldUserFolder, newUserFolder);
         } else {
           log("no old User folder to move");
-        }
-
-        if (await fileExists(oldUserJSON)) {
-          log("moving user.json...");
-          await fs.move(oldUserJSON, newUserJSON);
-        } else {
-          log("no old user.json to move");
         }
         await fs.remove(backupLocation);
       }
