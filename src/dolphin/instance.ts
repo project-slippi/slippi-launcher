@@ -47,6 +47,9 @@ export class DolphinInstance extends EventEmitter {
     this.process.on("close", () => {
       this.emit("close");
     });
+    this.process.on("error", (err) => {
+      this.emit("error", err);
+    });
   }
 }
 

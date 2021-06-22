@@ -58,8 +58,13 @@ export class DolphinManager extends EventEmitter {
     if (launchType === DolphinLaunchType.NETPLAY && !this.netplayDolphinInstance) {
       const instance = new DolphinInstance(dolphinPath);
       this.netplayDolphinInstance = instance;
-      this.netplayDolphinInstance.on("close", () => {
+      instance.on("close", () => {
         this.netplayDolphinInstance = null;
+      });
+      instance.on("error", (err: Error) => {
+        this.netplayDolphinInstance = null;
+
+        log.error(err);
       });
       instance.start();
     } else if (launchType === DolphinLaunchType.PLAYBACK && this.playbackDolphinInstances.size === 0) {
@@ -67,6 +72,14 @@ export class DolphinManager extends EventEmitter {
       this.playbackDolphinInstances.set("configure", instance);
       instance.on("close", () => {
         this.emit("dolphin-closed", "configure");
+
+        // Remove the instance from the map on close
+        this.playbackDolphinInstances.delete("configure");
+      });
+      instance.on("error", (err: Error) => {
+        this.emit("dolphin-closed", "configure");
+
+        log.error(err);
 
         // Remove the instance from the map on close
         this.playbackDolphinInstances.delete("configure");

@@ -6,6 +6,7 @@ import Button from "@material-ui/core/Button";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import React from "react";
+import { useToasts } from "react-toast-notifications";
 
 import { PathInput } from "@/components/PathInput";
 import { useDolphinPath } from "@/lib/hooks/useSettings";
@@ -38,8 +39,15 @@ const useStyles = makeStyles((theme: Theme) =>
 export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolphinType }) => {
   const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
   const classes = useStyles();
+  const { addToast } = useToasts();
   const configureDolphinHandler = async () => {
-    console.log("configure dolphin pressesd");
+    console.log("configure dolphin pressed");
+    if (process.platform === "darwin") {
+      addToast("Dolphin may open in the background, please check the app bar", {
+        appearance: "info",
+        autoDismiss: true,
+      });
+    }
     await configureDolphin.renderer!.trigger({ dolphinType });
   };
   const reinstallDolphinHandler = async () => {
