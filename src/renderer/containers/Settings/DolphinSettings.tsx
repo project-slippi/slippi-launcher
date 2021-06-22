@@ -6,6 +6,7 @@ import Button from "@material-ui/core/Button";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import { isLinux } from "common/constants";
+import { shell } from "electron";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
 
@@ -44,6 +45,9 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   const [modalOpen, setModalOpen] = React.useState(false);
   const classes = useStyles();
   const { addToast } = useToasts();
+  const openDolphinDirectoryHandler = async () => {
+    shell.openItem(dolphinPath);
+  };
   const configureDolphinHandler = async () => {
     console.log("configure dolphin pressed");
     if (process.platform === "darwin") {
@@ -76,6 +80,18 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           />
         </SettingItem>
       </DevGuard>
+      <SettingItem name="Open Dolphin Directory" description="Open the directory containing Dolphin in a file browser.">
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={openDolphinDirectoryHandler}
+          css={css`
+            text-transform: capitalize;
+          `}
+        >
+          Open {dolphinType} Dolphin Directory
+        </Button>
+      </SettingItem>
       <SettingItem name="Configure Dolphin" description="Open Dolphin to modify settings.">
         <Button
           variant="contained"
