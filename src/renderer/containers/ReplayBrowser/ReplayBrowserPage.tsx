@@ -5,7 +5,7 @@ import { useToasts } from "react-toast-notifications";
 
 import { usePlayFiles } from "@/lib/hooks/usePlayFiles";
 import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/useReplayBrowserList";
-import { useReplays } from "@/store/replays";
+import { useReplays } from "@/lib/hooks/useReplays";
 
 import { ReplayFileStats } from "../ReplayFileStats";
 import { ReplayBrowser } from "./ReplayBrowser";

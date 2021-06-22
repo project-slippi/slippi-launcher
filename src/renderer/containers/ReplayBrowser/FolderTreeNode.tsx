@@ -10,7 +10,7 @@ import { FolderResult } from "@replays/types";
 import { colors } from "common/colors";
 import React from "react";
 
-import { useReplays } from "@/store/replays";
+import { useReplays } from "@/lib/hooks/useReplays";
 
 export interface FolderTreeNodeProps extends FolderResult {
   nestLevel?: number;

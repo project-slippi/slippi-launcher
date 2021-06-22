@@ -3,11 +3,11 @@ import log from "electron-log";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
 
+import { InfoBlock } from "@/components/InfoBlock";
 import { useAccount } from "@/lib/hooks/useAccount";
 import { useBroadcast } from "@/lib/hooks/useBroadcast";
-import { useConsole } from "@/store/console";
+import { useConsole } from "@/lib/hooks/useConsole";
 
-import { InfoBlock } from "@/components/InfoBlock";
 import { BroadcastPanel } from "./BroadcastPanel";
 
 // These are the default params for broadcasting Netplay Dolphin

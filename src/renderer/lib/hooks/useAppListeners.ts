@@ -16,8 +16,8 @@ import throttle from "lodash/throttle";
 import React from "react";
 
 import { useAppInitialization, useAppStore } from "@/lib/hooks/useApp";
-import { useConsole } from "@/store/console";
-import { useReplays } from "@/store/replays";
+import { useConsole } from "@/lib/hooks/useConsole";
+import { useReplays } from "@/lib/hooks/useReplays";
 
 import { useAccount } from "./useAccount";
 import { useBroadcastListStore } from "./useBroadcastList";

@@ -22,8 +22,8 @@ import { IconMessage } from "@/components/Message";
 import { usePlayFiles } from "@/lib/hooks/usePlayFiles";
 import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/useReplayBrowserList";
 import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
+import { useReplays } from "@/lib/hooks/useReplays";
 import { useSettings } from "@/lib/hooks/useSettings";
-import { useReplays } from "@/store/replays";
 
 import { FileList } from "./FileList";
 import { FileSelectionToolbar } from "./FileSelectionToolbar";

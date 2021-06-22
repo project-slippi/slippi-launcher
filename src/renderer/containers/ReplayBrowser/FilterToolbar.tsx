@@ -12,9 +12,9 @@ import React from "react";
 
 import { Button, Checkbox, Dropdown } from "@/components/FormInputs";
 import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
+import { useReplays } from "@/lib/hooks/useReplays";
 import { useSettings } from "@/lib/hooks/useSettings";
 import { ReplaySortOption, SortDirection } from "@/lib/replayFileSort";
-import { useReplays } from "@/store/replays";
 
 const Outer = styled.div`
   display: flex;

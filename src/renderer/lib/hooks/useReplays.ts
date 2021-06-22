@@ -6,7 +6,7 @@ import create from "zustand";
 
 import { useSettings } from "@/lib/hooks/useSettings";
 
-import { findChild, generateSubFolderTree } from "./folderTree";
+import { findChild, generateSubFolderTree } from "../folderTree";
 
 type StoreState = {
   loading: boolean;

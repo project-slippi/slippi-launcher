@@ -2,7 +2,7 @@ import { useHistory } from "react-router-dom";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
-import { useReplays } from "@/store/replays";
+import { useReplays } from "@/lib/hooks/useReplays";
 
 import { replayFileFilter, replayFileSort } from "../replayFileSort";
 import { useReplayFilter } from "./useReplayFilter";
