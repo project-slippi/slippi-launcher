@@ -39,8 +39,7 @@
   "mac": {
     "fileAssociations": {
       "ext": "slp",
-      "role": "viewer",
-      "icon": "./resources/file.icns"
+      "role": "viewer"
     },
     "hardenedRuntime": true,
     "entitlements": "./build/entitlements.macos.plist",
