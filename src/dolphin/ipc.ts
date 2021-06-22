@@ -17,6 +17,12 @@ export const reinstallDolphin = makeEndpoint.main(
   <SuccessPayload>_,
 );
 
+export const clearDolphinCache = makeEndpoint.main(
+  "clearDolphinCache",
+  <{ dolphinType: DolphinLaunchType }>_,
+  <SuccessPayload>_,
+);
+
 export const storePlayKeyFile = makeEndpoint.main("storePlayKeyFile", <{ key: PlayKey }>_, <SuccessPayload>_);
 
 export const checkPlayKeyExists = makeEndpoint.main("checkPlayKeyExists", <EmptyPayload>_, <{ exists: boolean }>_);

@@ -2,6 +2,7 @@ import { fileExists } from "../main/fileExists";
 import { assertDolphinInstallations } from "./downloadDolphin";
 import {
   checkPlayKeyExists,
+  clearDolphinCache,
   configureDolphin,
   downloadDolphin,
   launchNetplayDolphin,
@@ -28,6 +29,12 @@ configureDolphin.main!.handle(async ({ dolphinType }) => {
 reinstallDolphin.main!.handle(async ({ dolphinType }) => {
   console.log("reinstalling dolphin...");
   await dolphinManager.reinstallDolphin(dolphinType);
+  return { success: true };
+});
+
+clearDolphinCache.main!.handle(async ({ dolphinType }) => {
+  console.log("clearing dolphin cache...");
+  await dolphinManager.clearCache(dolphinType);
   return { success: true };
 });
 

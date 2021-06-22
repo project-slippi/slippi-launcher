@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { configureDolphin, reinstallDolphin } from "@dolphin/ipc";
+import { clearDolphinCache, configureDolphin, reinstallDolphin } from "@dolphin/ipc";
 import { DolphinLaunchType } from "@dolphin/types";
 import { css, jsx } from "@emotion/react";
 import Button from "@material-ui/core/Button";
@@ -56,6 +56,9 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
     console.log("reinstall button clicked");
     await reinstallDolphin.renderer!.trigger({ dolphinType });
   };
+  const clearDolphinCacheHandler = async () => {
+    await clearDolphinCache.renderer!.trigger({ dolphinType });
+  };
   return (
     <div>
       <Typography variant="h5" className={classes.title}>
@@ -81,6 +84,18 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           `}
         >
           Configure {dolphinType} Dolphin
+        </Button>
+      </SettingItem>
+      <SettingItem name="Clear Dolphin Cache" description="Clear Dolphin's graphics cache.">
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={clearDolphinCacheHandler}
+          css={css`
+            text-transform: capitalize;
+          `}
+        >
+          Clear {dolphinType} Dolphin Cache
         </Button>
       </SettingItem>
       <SettingItem name="Reset Dolphin" description="Delete and reinstall dolphin">

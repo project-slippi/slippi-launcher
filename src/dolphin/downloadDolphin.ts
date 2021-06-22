@@ -141,7 +141,6 @@ async function installDolphin(
   cleanInstall = false,
 ) {
   const dolphinPath = path.join(app.getPath("userData"), type);
-  const backupLocation = dolphinPath + "_old";
 
   if (cleanInstall) {
     await fs.remove(dolphinPath);
@@ -157,6 +156,7 @@ async function installDolphin(
       break;
     }
     case "darwin": {
+      const backupLocation = dolphinPath + "_old";
       const dolphinResourcesPath = path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "Resources");
 
       const alreadyInstalled = await fs.pathExists(dolphinResourcesPath);
