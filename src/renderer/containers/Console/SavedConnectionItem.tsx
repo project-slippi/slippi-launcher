@@ -12,6 +12,7 @@ import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { StoredConnection } from "@settings/types";
 import { ConnectionStatus } from "@slippi/slippi-js";
 import React from "react";
+import { useToasts } from "react-toast-notifications";
 
 import { LabelledText } from "@/components/LabelledText";
 import { connectToConsole, disconnectFromConsole, startConsoleMirror } from "@/lib/consoleConnection";
@@ -36,8 +37,17 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
   isAvailable,
   currentFilename,
 }) => {
+  const { addToast } = useToasts();
   const onConnect = () => connectToConsole(connection);
-  const onMirror = () => startConsoleMirror(connection.ipAddress);
+  const onMirror = () => {
+    if (process.platform === "darwin") {
+      addToast("Dolphin may open in the background, please check the app bar", {
+        appearance: "info",
+        autoDismiss: true,
+      });
+    }
+    startConsoleMirror(connection.ipAddress);
+  };
   const onDisconnect = () => disconnectFromConsole(connection.ipAddress);
   const statusName = status === ConnectionStatus.DISCONNECTED && isAvailable ? "Available" : renderStatusName(status);
   const isConnected = status !== ConnectionStatus.DISCONNECTED;
