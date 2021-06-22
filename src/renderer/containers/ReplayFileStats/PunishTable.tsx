@@ -8,8 +8,8 @@ import { convertFrameCountToDurationString } from "common/time";
 import _ from "lodash";
 import React from "react";
 
+import { usePlayFiles } from "@/lib/hooks/usePlayFiles";
 import { getCharacterIcon, toOrdinal } from "@/lib/utils";
-import { useReplays } from "@/store/replays";
 
 import * as T from "./TableStyles";
 
@@ -23,7 +23,7 @@ export interface PunishTableProps {
 }
 
 export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, player, opp }) => {
-  const playFiles = useReplays((store) => store.playFiles);
+  const playFiles = usePlayFiles();
   const names = extractPlayerNames(player.playerIndex, file.settings, file.metadata);
   const playerDisplay = (
     <div style={{ display: "flex", alignItems: "center" }}>

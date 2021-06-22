@@ -3,6 +3,7 @@ import React from "react";
 import { Redirect, Route, Switch, useHistory, useParams, useRouteMatch } from "react-router-dom";
 import { useToasts } from "react-toast-notifications";
 
+import { usePlayFiles } from "@/lib/hooks/usePlayFiles";
 import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/useReplayBrowserList";
 import { useReplays } from "@/store/replays";
 
@@ -32,7 +33,7 @@ export const ReplayBrowserPage: React.FC = () => {
 const ChildPage: React.FC<{ parent: string; goBack: () => void }> = () => {
   const { filePath } = useParams<Record<string, any>>();
   const selectedFile = useReplays((store) => store.selectedFile);
-  const playFiles = useReplays((store) => store.playFiles);
+  const playFiles = usePlayFiles();
   const nav = useReplayBrowserList();
   const { goToReplayList } = useReplayBrowserNavigation();
   const { addToast } = useToasts();

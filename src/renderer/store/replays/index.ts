@@ -1,5 +1,3 @@
-import { viewSlpReplay } from "@dolphin/ipc";
-import { ReplayQueueItem } from "@dolphin/types";
 import { loadReplayFolder } from "@replays/ipc";
 import { FileLoadResult, FileResult, FolderResult, Progress } from "@replays/types";
 import { produce } from "immer";
@@ -30,7 +28,6 @@ type StoreState = {
 type StoreReducers = {
   init: (rootFolder: string, forceReload?: boolean, currentFolder?: string) => Promise<void>;
   selectFile: (file: FileResult, index?: number | null, total?: number | null) => Promise<void>;
-  playFiles: (files: ReplayQueueItem[]) => Promise<void>;
   clearSelectedFile: () => Promise<void>;
   removeFile: (filePath: string) => void;
   loadDirectoryList: (folder: string) => Promise<void>;
@@ -80,14 +77,6 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     });
 
     await Promise.all([loadDirectoryList(currentFolder ?? rootFolder), loadFolder(currentFolder ?? rootFolder, true)]);
-  },
-
-  playFiles: async (files: ReplayQueueItem[]) => {
-    const viewResult = await viewSlpReplay.renderer!.trigger({ files });
-    if (!viewResult.result) {
-      console.error(`Error playing file(s): ${files.join(", ")}`, viewResult.errors);
-      throw new Error(`Error playing file(s): ${files.join(", ")}`);
-    }
   },
 
   selectFile: async (file, index = null, total = null) => {
