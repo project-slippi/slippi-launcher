@@ -39,6 +39,7 @@ export const SpectatorIdBlock: React.FC<SpectatorIdBlockProps> = ({ userId, clas
             margin-right: 10px;
             border-radius: 10px;
             background-color: rgba(0, 0, 0, 0.4);
+            font-size: 14px;
           `}
           disabled={true}
           value={userId}
