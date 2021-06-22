@@ -74,6 +74,11 @@ export class PlaybackDolphinInstance extends DolphinInstance {
    * Starts Dolphin with the specified replay communication options
    */
   public async play(options: ReplayCommunication) {
+    // Automatically generate a command id if not provided
+    if (!options.commandId) {
+      options.commandId = Math.random().toString(36).slice(2);
+    }
+
     // Write out the comms file
     await fs.writeFile(this.commPath, JSON.stringify(options));
 
