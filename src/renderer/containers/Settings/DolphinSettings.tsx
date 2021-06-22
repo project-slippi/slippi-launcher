@@ -80,43 +80,38 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           />
         </SettingItem>
       </DevGuard>
-      <SettingItem name="Open Dolphin Directory" description="Open the directory containing Dolphin in a file browser.">
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={openDolphinDirectoryHandler}
+      <SettingItem name={`Configure ${dolphinType} Dolphin`}>
+        <div
           css={css`
-            text-transform: capitalize;
+            display: flex;
+            & > button {
+              margin-right: 10px;
+            }
           `}
         >
-          Open {dolphinType} Dolphin Directory
-        </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={configureDolphinHandler}
+            css={css`
+              text-transform: capitalize;
+            `}
+          >
+            Configure Dolphin
+          </Button>
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={openDolphinDirectoryHandler}
+            css={css`
+              text-transform: capitalize;
+            `}
+          >
+            Open Containing Folder
+          </Button>
+        </div>
       </SettingItem>
-      <SettingItem name="Configure Dolphin" description="Open Dolphin to modify settings.">
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={configureDolphinHandler}
-          css={css`
-            text-transform: capitalize;
-          `}
-        >
-          Configure {dolphinType} Dolphin
-        </Button>
-      </SettingItem>
-      <SettingItem name="Clear Dolphin Cache" description="Clear Dolphin's graphics cache.">
-        <Button
-          variant="outlined"
-          color="secondary"
-          onClick={clearDolphinCacheHandler}
-          css={css`
-            text-transform: capitalize;
-          `}
-        >
-          Clear {dolphinType} Dolphin Cache
-        </Button>
-      </SettingItem>
-      <SettingItem name="Reset Dolphin" description="Delete and reinstall dolphin.">
+      <SettingItem name={`Reset ${dolphinType} Dolphin`}>
         <ConfirmationModal
           open={modalOpen}
           onClose={() => setModalOpen(false)}
@@ -125,16 +120,35 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
         >
           This will remove all your {dolphinType} dolphin settings.
         </ConfirmationModal>
-        <Button
-          variant="outlined"
-          color="secondary"
-          onClick={() => setModalOpen(true)}
+        <div
           css={css`
-            text-transform: capitalize;
+            display: flex;
+            & > button {
+              margin-right: 10px;
+            }
           `}
         >
-          Reset {dolphinType} Dolphin
-        </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={clearDolphinCacheHandler}
+            css={css`
+              text-transform: capitalize;
+            `}
+          >
+            Clear Cache
+          </Button>
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={() => setModalOpen(true)}
+            css={css`
+              text-transform: capitalize;
+            `}
+          >
+            Reset Everything
+          </Button>
+        </div>
       </SettingItem>
     </div>
   );
