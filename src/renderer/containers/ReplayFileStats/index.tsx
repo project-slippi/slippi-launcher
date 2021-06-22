@@ -99,10 +99,10 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
         onPlay={props.onPlay}
       />
       <Content>
-        {numPlayers !== 2 ? (
-          <IconMessage Icon={ErrorIcon} label="Game stats for doubles is unsupported" />
-        ) : !file || loading ? (
+        {!file || loading ? (
           <LoadingScreen message={"Crunching numbers..."} />
+        ) : numPlayers !== 2 ? (
+          <IconMessage Icon={ErrorIcon} label="Game stats for doubles is unsupported" />
         ) : error ? (
           <IconMessage Icon={ErrorIcon} label={`Error: ${error.message ?? JSON.stringify(error, null, 2)}`} />
         ) : gameStats ? (
