@@ -1,12 +1,51 @@
 import { useHistory } from "react-router-dom";
+import create from "zustand";
+import { combine } from "zustand/middleware";
 
 import { useReplays } from "@/store/replays";
 
 import { replayFileFilter, replayFileSort } from "../replayFileSort";
 import { useReplayFilter } from "./useReplayFilter";
 
-export const useReplayBrowserList = (path: string) => {
+const useReplayBrowserNavigationStore = create(
+  combine(
+    {
+      lastPath: "/main/replays/list",
+    },
+    (set) => ({
+      setLastPath: (lastPath: string) => set({ lastPath }),
+    }),
+  ),
+);
+
+export const useReplayBrowserNavigation = () => {
   const history = useHistory();
+  const lastPath = useReplayBrowserNavigationStore((store) => store.lastPath);
+  const setLastPath = useReplayBrowserNavigationStore((store) => store.setLastPath);
+
+  const navigate = (pageUrl: string) => {
+    setLastPath(pageUrl);
+    history.push(pageUrl);
+  };
+
+  const goToReplayStatsPage = (filePath: string) => {
+    const pageUrl = `/main/replays/${filePath}`;
+    navigate(pageUrl);
+  };
+
+  const goToReplayList = () => {
+    const pageUrl = `/main/replays/list`;
+    navigate(pageUrl);
+  };
+
+  return {
+    lastPath,
+    goToReplayStatsPage,
+    goToReplayList,
+  };
+};
+
+export const useReplayBrowserList = () => {
   const files = useReplays((store) => store.files);
   const clearSelectedFile = useReplays((store) => store.clearSelectedFile);
   const selectFile = useReplays((store) => store.selectFile);
@@ -19,6 +58,7 @@ export const useReplayBrowserList = (path: string) => {
     .sort(replayFileSort(sortBy, sortDirection));
   const numHiddenFiles = files.length - filteredFiles.length;
   const { index, total } = useReplays((store) => store.selectedFile);
+  const { goToReplayStatsPage } = useReplayBrowserNavigation();
 
   const setSelectedItem = (index: number | null) => {
     if (index === null) {
@@ -27,7 +67,7 @@ export const useReplayBrowserList = (path: string) => {
     }
     const file = filteredFiles[index];
     selectFile(file, index, filteredFiles.length);
-    history.push(`${path}/${file.fullPath}`);
+    goToReplayStatsPage(file.fullPath);
   };
 
   const selectNextFile = () => {

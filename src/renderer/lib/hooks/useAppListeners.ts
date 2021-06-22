@@ -14,7 +14,6 @@ import log from "electron-log";
 import firebase from "firebase";
 import throttle from "lodash/throttle";
 import React from "react";
-import { useHistory } from "react-router-dom";
 
 import { useAppInitialization, useAppStore } from "@/lib/hooks/useApp";
 import { useConsole } from "@/store/console";
@@ -25,11 +24,10 @@ import { useBroadcastListStore } from "./useBroadcastList";
 import { useConsoleDiscoveryStore } from "./useConsoleDiscovery";
 import { useIsoVerification } from "./useIsoVerification";
 import { useNewsFeed } from "./useNewsFeed";
+import { useReplayBrowserNavigation } from "./useReplayBrowserList";
 import { useSettings } from "./useSettings";
 
 export const useAppListeners = () => {
-  const history = useHistory();
-
   // Handle app initalization
   const initialized = useAppStore((store) => store.initialized);
   const initializeApp = useAppInitialization();
@@ -150,12 +148,12 @@ export const useAppListeners = () => {
 
   const clearSelectedFile = useReplays((store) => store.clearSelectedFile);
   const playFiles = useReplays((store) => store.playFiles);
+  const { goToReplayStatsPage } = useReplayBrowserNavigation();
   playReplayAndShowStatsPage.renderer!.handle(async ({ filePath }) => {
     await clearSelectedFile();
     await playFiles([{ path: filePath }]);
 
-    // TODO: Don't use a hard-coded path
-    history.push(`/main/replays/${filePath}`);
+    goToReplayStatsPage(filePath);
   });
 
   // Load the news articles once on app load

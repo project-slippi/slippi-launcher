@@ -12,7 +12,6 @@ import SearchIcon from "@material-ui/icons/Search";
 import { colors } from "common/colors";
 import { shell } from "electron";
 import React from "react";
-import { useHistory } from "react-router-dom";
 import { useToasts } from "react-toast-notifications";
 
 import { DualPane } from "@/components/DualPane";
@@ -20,7 +19,7 @@ import { BasicFooter } from "@/components/Footer";
 import { LabelledText } from "@/components/LabelledText";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { IconMessage } from "@/components/Message";
-import { useReplayBrowserList } from "@/lib/hooks/useReplayBrowserList";
+import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/useReplayBrowserList";
 import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
 import { useSettings } from "@/lib/hooks/useSettings";
 import { useReplays } from "@/store/replays";
@@ -30,10 +29,7 @@ import { FileSelectionToolbar } from "./FileSelectionToolbar";
 import { FilterToolbar } from "./FilterToolbar";
 import { FolderTreeNode } from "./FolderTreeNode";
 
-export const ReplayBrowser: React.FC<{
-  path: string;
-}> = ({ path }) => {
-  const history = useHistory();
+export const ReplayBrowser: React.FC = () => {
   const searchInputRef = React.createRef<HTMLInputElement>();
   const scrollRowItem = useReplays((store) => store.scrollRowItem);
   const setScrollRowItem = useReplays((store) => store.setScrollRowItem);
@@ -53,7 +49,8 @@ export const ReplayBrowser: React.FC<{
   const { addToast } = useToasts();
 
   const resetFilter = useReplayFilter((store) => store.resetFilter);
-  const { files: filteredFiles, hiddenFileCount } = useReplayBrowserList(path);
+  const { files: filteredFiles, hiddenFileCount } = useReplayBrowserList();
+  const { goToReplayStatsPage } = useReplayBrowserNavigation();
 
   React.useEffect(() => {
     init(rootSlpPath);
@@ -65,7 +62,7 @@ export const ReplayBrowser: React.FC<{
     } else {
       const file = filteredFiles[index];
       selectFile(file, index, filteredFiles.length);
-      history.push(`${path}/${file.fullPath}`);
+      goToReplayStatsPage(file.fullPath);
     }
   };
 
