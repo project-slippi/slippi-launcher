@@ -1,6 +1,6 @@
 {
   "productName": "Slippi Launcher",
-  "appId": "gg.slippi.launcher",
+  "appId": "com.github.projectslippi.slippidesktopapp",
   "afterSign": "build/afterSignHook.macos.js",
   "directories": {
     "buildResources": "resources",
@@ -13,6 +13,7 @@
     "node_modules/source-map-support/**/*",
     "node_modules/buffer-from/**/*"
   ],
+  "artifactName": "Slippi-Launcher-${version}-${os}.${ext}",
   "dmg": {
     "artifactName": "Slippi-Launcher-${version}.${ext}",
     "icon": "resources/icon.icns",
@@ -29,7 +30,18 @@
       }
     ]
   },
+  "fileAssociations": {
+    "ext": "slp",
+    "name": "slp",
+    "description": "Slippi File Format",
+    "icon": "./resources/file.ico"
+  },
   "mac": {
+    "fileAssociations": {
+      "ext": "slp",
+      "role": "viewer",
+      "icon": "./resources/file.icns"
+    },
     "hardenedRuntime": true,
     "entitlements": "./build/entitlements.macos.plist",
     "category": "public.app-category.video",
@@ -45,7 +57,9 @@
     "icon": "resources/icon.ico"
   },
   "nsis": {
-    "artifactName": "Slippi-Launcher-Setup-${version}.${ext}"
+    "artifactName": "Slippi-Launcher-Setup-${version}.${ext}",
+    "perMachine": true,
+    "include": "./build/installer.nsh"
   },
   "linux": {
     "target": ["AppImage"],
@@ -53,5 +67,12 @@
   },
   "appImage": {
     "artifactName": "Slippi-Launcher-${version}-x86_64.${ext}"
-  }
+  },
+  "protocols": [
+    {
+      "name": "slippi",
+      "role": "Viewer",
+      "schemes": ["slippi"]
+    }
+  ]
 }
