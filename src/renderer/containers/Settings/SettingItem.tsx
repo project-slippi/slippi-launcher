@@ -4,8 +4,8 @@ import Typography from "@material-ui/core/Typography";
 import React from "react";
 
 export interface SettingItemProps {
-  name: string;
-  description?: string;
+  name: React.ReactNode | string;
+  description?: React.ReactNode | string;
 }
 
 export const SettingItem: React.FC<SettingItemProps> = (props) => {
@@ -15,23 +15,21 @@ export const SettingItem: React.FC<SettingItemProps> = (props) => {
         margin: 20px 0;
       `}
     >
-      <Typography
-        variant="subtitle1"
+      <div
         css={css`
-          text-transform: capitalize;
+          padding-bottom: 10px;
         `}
       >
-        {props.name}
-      </Typography>
-      {props.description && (
-        <div
+        <Typography
+          variant="subtitle1"
           css={css`
-            padding-bottom: 10px;
+            text-transform: capitalize;
           `}
         >
-          <Typography variant="caption">{props.description}</Typography>
-        </div>
-      )}
+          {props.name}
+        </Typography>
+        {props.description && <Typography variant="caption">{props.description}</Typography>}
+      </div>
       {props.children}
     </div>
   );
