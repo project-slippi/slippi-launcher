@@ -101,7 +101,7 @@ function matchesPlatform(releaseName: string): boolean {
     case "darwin":
       return releaseName.endsWith("Mac.dmg");
     case "linux":
-      return releaseName.endsWith(".AppImage");
+      return releaseName.endsWith("Linux.zip");
     default:
       return false;
   }
@@ -207,8 +207,8 @@ async function installDolphin(
     }
     case "linux": {
       // Delete the existing app image if there is one
+      const dolphinAppImagePath = await findDolphinExecutable(type);
       try {
-        const dolphinAppImagePath = await findDolphinExecutable(type);
         // Delete the existing app image if it already exists
         if (await fileExists(dolphinAppImagePath)) {
           log(`${dolphinAppImagePath} already exists. Deleting...`);
@@ -223,16 +223,12 @@ async function installDolphin(
         await fs.remove(path.join(app.getPath("home"), ".config", userFolder));
       }
 
-      const assetFilename = path.basename(assetPath);
-      const targetLocation = path.join(dolphinPath, assetFilename);
-
-      // Actually move the app image to the correct folder
-      log(`Moving ${assetPath} to ${targetLocation}`);
-      await fs.rename(assetPath, targetLocation);
+      const zip = new AdmZip(assetPath);
+      zip.extractAllTo(dolphinPath, true);
 
       // Make the file executable
       log(`Setting executable permissions...`);
-      await fs.chmod(targetLocation, "755");
+      await fs.chmod(dolphinAppImagePath, "755");
       break;
     }
     default: {
