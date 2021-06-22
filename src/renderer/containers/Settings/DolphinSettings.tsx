@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { configureDolphin, reinstallDolphin } from "@dolphin/ipc";
+import { clearDolphinCache, configureDolphin, reinstallDolphin } from "@dolphin/ipc";
 import { DolphinLaunchType } from "@dolphin/types";
 import { css, jsx } from "@emotion/react";
 import Button from "@material-ui/core/Button";
@@ -9,6 +9,7 @@ import { isLinux } from "common/constants";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
 
+import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { DevGuard } from "@/components/DevGuard";
 import { PathInput } from "@/components/PathInput";
 import { useDolphinPath } from "@/lib/hooks/useSettings";
@@ -40,6 +41,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolphinType }) => {
   const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
+  const [modalOpen, setModalOpen] = React.useState(false);
   const classes = useStyles();
   const { addToast } = useToasts();
   const configureDolphinHandler = async () => {
@@ -55,6 +57,9 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   const reinstallDolphinHandler = async () => {
     console.log("reinstall button clicked");
     await reinstallDolphin.renderer!.trigger({ dolphinType });
+  };
+  const clearDolphinCacheHandler = async () => {
+    await clearDolphinCache.renderer!.trigger({ dolphinType });
   };
   return (
     <div>
@@ -83,11 +88,31 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           Configure {dolphinType} Dolphin
         </Button>
       </SettingItem>
-      <SettingItem name="Reset Dolphin" description="Delete and reinstall dolphin">
+      <SettingItem name="Clear Dolphin Cache" description="Clear Dolphin's graphics cache.">
         <Button
           variant="outlined"
           color="secondary"
-          onClick={reinstallDolphinHandler}
+          onClick={clearDolphinCacheHandler}
+          css={css`
+            text-transform: capitalize;
+          `}
+        >
+          Clear {dolphinType} Dolphin Cache
+        </Button>
+      </SettingItem>
+      <SettingItem name="Reset Dolphin" description="Delete and reinstall dolphin.">
+        <ConfirmationModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onSubmit={reinstallDolphinHandler}
+          title="Are you sure?"
+        >
+          This will remove all your {dolphinType} dolphin settings.
+        </ConfirmationModal>
+        <Button
+          variant="outlined"
+          color="secondary"
+          onClick={() => setModalOpen(true)}
           css={css`
             text-transform: capitalize;
           `}

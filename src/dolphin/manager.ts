@@ -1,11 +1,13 @@
 import { settingsManager } from "@settings/settingsManager";
 import log from "electron-log";
 import { EventEmitter } from "events";
+import * as fs from "fs-extra";
+import path from "path";
 
 import { downloadAndInstallDolphin } from "./downloadDolphin";
 import { DolphinInstance, PlaybackDolphinInstance } from "./instance";
 import { DolphinLaunchType, ReplayCommunication } from "./types";
-import { findDolphinExecutable } from "./util";
+import { findDolphinExecutable, findUserFolder } from "./util";
 
 // DolphinManager should be in control of all dolphin instances that get opened for actual use.
 // This includes playing netplay, viewing replays, watching broadcasts (spectating), and configuring Dolphin.
@@ -65,6 +67,7 @@ export class DolphinManager extends EventEmitter {
         this.netplayDolphinInstance = null;
 
         log.error(err);
+        throw err;
       });
       instance.start();
     } else if (launchType === DolphinLaunchType.PLAYBACK && this.playbackDolphinInstances.size === 0) {
@@ -79,10 +82,11 @@ export class DolphinManager extends EventEmitter {
       instance.on("error", (err: Error) => {
         this.emit("dolphin-closed", "configure");
 
-        log.error(err);
-
         // Remove the instance from the map on close
         this.playbackDolphinInstances.delete("configure");
+
+        log.error(err);
+        throw err;
       });
       instance.start();
     }
@@ -107,6 +111,17 @@ export class DolphinManager extends EventEmitter {
     }
     // No dolphins of launchType are open so lets reinstall
     downloadAndInstallDolphin(launchType, log.info, true);
+  }
+
+  public async clearCache(launchType: DolphinLaunchType) {
+    const userFolder = await findUserFolder(launchType);
+    const cacheFolder = path.join(userFolder, "Cache");
+    try {
+      fs.remove(cacheFolder);
+    } catch (err) {
+      log.error(err);
+      throw err;
+    }
   }
 }
 

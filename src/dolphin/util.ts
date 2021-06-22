@@ -1,5 +1,6 @@
 import { settingsManager } from "@settings/settingsManager";
 import * as fs from "fs-extra";
+import os from "os";
 import path from "path";
 
 import { DolphinLaunchType } from "./types";
@@ -36,4 +37,31 @@ export async function findDolphinExecutable(type: DolphinLaunchType | string, do
   }
 
   return path.join(dolphinPath, result);
+}
+
+export async function findUserFolder(type: DolphinLaunchType): Promise<string> {
+  let userPath = "";
+  const dolphinPath = settingsManager.getDolphinPath(type);
+  switch (process.platform) {
+    case "win32": {
+      userPath = path.join(dolphinPath, "User");
+      break;
+    }
+    case "darwin": {
+      userPath = path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "Resources", "User");
+      break;
+    }
+    case "linux": {
+      const configPath = path.join(os.homedir(), ".config");
+      const userFolderName = type === DolphinLaunchType.NETPLAY ? "SlippiOnline" : "SlippiPlayback";
+      userPath = path.join(configPath, userFolderName);
+      break;
+    }
+    default:
+      break;
+  }
+
+  fs.ensureDir(userPath);
+
+  return userPath;
 }
