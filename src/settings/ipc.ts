@@ -5,7 +5,7 @@ import { AppSettings, StoredConnection } from "./types";
 
 // export const getAppSettings = makeEndpoint.main("getAppSettings", <EmptyPayload>_, <AppSettings>_);
 
-export const setIsoPath = makeEndpoint.main("setIsoPath", <{ path: string | null }>_, <SuccessPayload>_);
+export const setIsoPath = makeEndpoint.main("setIsoPath", <{ isoPath: string | null }>_, <SuccessPayload>_);
 
 export const setRootSlpPath = makeEndpoint.main("setRootSlpPath", <{ path: string }>_, <SuccessPayload>_);
 
