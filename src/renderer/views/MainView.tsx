@@ -1,7 +1,7 @@
 import CastOutlinedIcon from "@material-ui/icons/CastOutlined";
 import HomeOutlinedIcon from "@material-ui/icons/HomeOutlined";
 import LiveTvOutlinedIcon from "@material-ui/icons/LiveTvOutlined";
-import ReplayOutlinedIcon from "@material-ui/icons/ReplayOutlined";
+import SlowMotionVideoIcon from "@material-ui/icons/SlowMotionVideo";
 import React from "react";
 import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
 
@@ -33,7 +33,7 @@ const menuItems: MainMenuItem[] = [
     subpath: "replays",
     title: "Replays",
     component: <ReplayBrowserPage />,
-    icon: <ReplayOutlinedIcon />,
+    icon: <SlowMotionVideoIcon />,
   },
 
   {
