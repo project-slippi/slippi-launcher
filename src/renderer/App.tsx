@@ -44,15 +44,13 @@ const App: React.FC = () => {
   }
 
   return (
-    <Router>
-      <Switch>
-        <Route path="/main" component={MainView} />
-        <Route path="/landing" component={LandingView} />
-        <Route path="/settings" component={SettingsView} />
-        <Redirect exact from="/" to="/landing" />
-        <Route component={NotFoundView} />
-      </Switch>
-    </Router>
+    <Switch>
+      <Route path="/main" component={MainView} />
+      <Route path="/landing" component={LandingView} />
+      <Route path="/settings" component={SettingsView} />
+      <Redirect exact from="/" to="/landing" />
+      <Route component={NotFoundView} />
+    </Switch>
   );
 };
 
@@ -64,7 +62,9 @@ const AppWithProviders: React.FC = () => {
         <ThemeProvider theme={slippiTheme}>
           <QueryClientProvider client={queryClient}>
             <ToastProvider components={{ Toast: CustomToast }} placement="bottom-right">
-              <App />
+              <Router>
+                <App />
+              </Router>
             </ToastProvider>
           </QueryClientProvider>
         </ThemeProvider>
