@@ -19,22 +19,10 @@ import { ShareGameplayBlock } from "./ShareGameplayBlock";
 import { SpectateItem } from "./SpectateItem";
 import { SpectatorIdBlock } from "./SpectatorIdBlock";
 
-const SECOND = 1000;
-const AUTO_REFRESH_INTERVAL = 30 * SECOND;
-
 export const SpectatePage: React.FC = () => {
   const user = useAccount((store) => store.user);
   const { addToast } = useToasts();
   const [currentBroadcasts, refreshBroadcasts] = useBroadcastList();
-
-  React.useEffect(() => {
-    // Refresh once on component mount
-    refreshBroadcasts();
-
-    // Start automatic refreshing of the broadcast list
-    const interval = setInterval(refreshBroadcasts, AUTO_REFRESH_INTERVAL);
-    return () => clearInterval(interval);
-  }, []);
 
   const startWatching = async (id: string) => {
     if (process.platform === "darwin") {
