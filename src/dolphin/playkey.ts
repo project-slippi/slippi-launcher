@@ -1,6 +1,6 @@
 import { DolphinLaunchType, PlayKey } from "@dolphin/types";
-import { isMac } from "common/constants";
 import * as fs from "fs-extra";
+import os from "os";
 import path from "path";
 
 import { fileExists } from "../main/fileExists";
@@ -13,10 +13,24 @@ export async function writePlayKeyFile(playKey: PlayKey): Promise<void> {
 }
 
 export async function findPlayKey(): Promise<string> {
-  const dolphinPath = await findDolphinExecutable(DolphinLaunchType.NETPLAY);
-  let dolphinDir = path.dirname(dolphinPath);
-  if (isMac) {
-    dolphinDir = path.join(dolphinPath, "Contents", "Resources");
+  let dolphinDir = "";
+  switch (process.platform) {
+    case "win32": {
+      const dolphinPath = await findDolphinExecutable(DolphinLaunchType.NETPLAY);
+      dolphinDir = path.dirname(dolphinPath);
+      break;
+    }
+    case "darwin": {
+      dolphinDir = path.join(os.homedir(), "Library", "Application Support", "com.project-slippi.dolphin", "Slippi");
+      break;
+    }
+    case "linux": {
+      dolphinDir = path.join(os.homedir(), ".config", "SlippiOnline");
+      break;
+    }
+    default: {
+      break;
+    }
   }
   return path.resolve(dolphinDir, "user.json");
 }
