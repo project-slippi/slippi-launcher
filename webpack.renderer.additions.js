@@ -1,6 +1,12 @@
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const pkg = require("./package.json");
 const Dotenv = require("dotenv-webpack");
+const { DefinePlugin } = require("webpack");
+
+const moment = require("moment");
+
+const buildDate = moment().toISOString();
+const commitHash = require("child_process").execSync("git rev-parse --short HEAD").toString().trim();
 
 module.exports = function (context) {
   // Expose dotenv variables
@@ -18,6 +24,15 @@ module.exports = function (context) {
     test: /\.svg$/,
     use: ["@svgr/webpack", "url-loader"],
   });
+
+  // Add global definitions
+  context.plugins.push(
+    new DefinePlugin({
+      __VERSION__: JSON.stringify(pkg.version),
+      __DATE__: JSON.stringify(buildDate),
+      __COMMIT__: JSON.stringify(commitHash),
+    }),
+  );
 
   return context;
 };

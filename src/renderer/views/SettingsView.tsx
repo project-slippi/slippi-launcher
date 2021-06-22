@@ -14,6 +14,7 @@ import React from "react";
 import { Link, Redirect, Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
 
 import { DualPane } from "@/components/DualPane";
+import { BuildInfo } from "@/containers/Settings/BuildInfo";
 import { useMousetrap } from "@/lib/hooks/useMousetrap";
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
 import { withSlippiBackground } from "@/styles/withSlippiBackground";
@@ -29,6 +30,8 @@ const Outer = styled.div`
 `;
 
 const MenuColumn = styled.div`
+  display: flex;
+  flex-direction: column;
   flex: 1;
   padding-top: 20px;
 `;
@@ -73,58 +76,65 @@ export const SettingsView: React.FC = () => {
         leftStyle={{ backgroundColor: colors.purpleDark }}
         leftSide={
           <MenuColumn>
-            {settings.map((section, i) => {
-              return (
-                <List
-                  key={`section-${section.title}${i}`}
-                  component="nav"
-                  css={css`
-                    padding-bottom: 10px;
-                  `}
-                  subheader={
-                    section.title ? (
-                      <ListSubheader
-                        component="div"
-                        disableSticky={true}
-                        css={css`
-                          line-height: 20px;
-                          font-size: 14px;
-                          color: ${colors.purpleLight};
-                        `}
-                      >
-                        {section.title}
-                      </ListSubheader>
-                    ) : undefined
-                  }
-                >
-                  {section.items.map((item) => {
-                    return (
-                      <ListItem
-                        button
-                        key={item.name}
-                        selected={isActive(item.path)}
-                        component={Link}
-                        to={`${path}/${item.path}`}
-                        css={css`
-                          padding-top: 4px;
-                          padding-bottom: 4px;
-                        `}
-                      >
-                        {item.icon ? <ListItemIcon>{item.icon}</ListItemIcon> : null}
-                        <ListItemText
-                          primary={item.name}
+            <div
+              css={css`
+                flex: 1;
+              `}
+            >
+              {settings.map((section, i) => {
+                return (
+                  <List
+                    key={`section-${section.title}${i}`}
+                    component="nav"
+                    css={css`
+                      padding-bottom: 10px;
+                    `}
+                    subheader={
+                      section.title ? (
+                        <ListSubheader
+                          component="div"
+                          disableSticky={true}
                           css={css`
-                            .MuiTypography-body1 {
-                              font-size: 16px;
-                            }
+                            line-height: 20px;
+                            font-size: 14px;
+                            color: ${colors.purpleLight};
                           `}
-                        />
-                      </ListItem>
-                    );
-                  })}
-                </List>
-              );
-            })}
+                        >
+                          {section.title}
+                        </ListSubheader>
+                      ) : undefined
+                    }
+                  >
+                    {section.items.map((item) => {
+                      return (
+                        <ListItem
+                          button
+                          key={item.name}
+                          selected={isActive(item.path)}
+                          component={Link}
+                          to={`${path}/${item.path}`}
+                          css={css`
+                            padding-top: 4px;
+                            padding-bottom: 4px;
+                          `}
+                        >
+                          {item.icon ? <ListItemIcon>{item.icon}</ListItemIcon> : null}
+                          <ListItemText
+                            primary={item.name}
+                            css={css`
+                              .MuiTypography-body1 {
+                                font-size: 16px;
+                              }
+                            `}
+                          />
+                        </ListItem>
+                      );
+                    })}
+                  </List>
+                );
+              })}
+            </div>
+            <BuildInfo />
           </MenuColumn>
         }
         rightSide={
