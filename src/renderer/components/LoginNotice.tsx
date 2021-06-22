@@ -1,3 +1,5 @@
+/** @jsx jsx */
+import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
@@ -13,7 +15,14 @@ export const LoginNotice: React.FC = () => {
       <div>
         <PersonOutlineIcon style={{ fontSize: 100 }} />
       </div>
-      <Typography variant="h6">User is not logged in</Typography>
+      <Typography
+        variant="h6"
+        css={css`
+          margin-bottom: 20px;
+        `}
+      >
+        User is not logged in
+      </Typography>
       <Button type="button" color="primary" variant="contained" onClick={openModal}>
         Log in
       </Button>
