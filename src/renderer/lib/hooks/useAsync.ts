@@ -1,9 +1,9 @@
 import React from "react";
 
-export const useAsync = (asyncFunction: (...args: any[]) => Promise<any>) => {
+export const useAsync = <T>(asyncFunction: (...args: any[]) => Promise<T>) => {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<any>(null);
-  const [result, setResult] = React.useState<any>(null);
+  const [result, setResult] = React.useState<T | null>(null);
   const runAsync = async (...args: any[]) => {
     try {
       setLoading(true);

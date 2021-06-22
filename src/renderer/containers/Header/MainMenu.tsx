@@ -21,7 +21,7 @@ export interface MainMenuProps {
 export const MainMenu: React.FC<MainMenuProps> = ({ path, menuItems }) => {
   const history = useHistory();
   const isActive = (name: string): boolean => {
-    return history.location.pathname === `${path}/${name}`;
+    return history.location.pathname.startsWith(`${path}/${name}`);
   };
 
   return (

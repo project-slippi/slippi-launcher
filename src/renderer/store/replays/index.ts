@@ -1,8 +1,7 @@
 import { viewSlpReplay } from "@dolphin/ipc";
 import { ReplayQueueItem } from "@dolphin/types";
-import { calculateGameStats, loadReplayFolder } from "@replays/ipc";
+import { loadReplayFolder } from "@replays/ipc";
 import { FileLoadResult, FileResult, FolderResult, Progress } from "@replays/types";
-import { StatsType } from "@slippi/slippi-js";
 import { produce } from "immer";
 import path from "path";
 import create from "zustand";
@@ -23,15 +22,14 @@ type StoreState = {
   selectedFiles: string[];
   selectedFile: {
     index: number | null;
-    gameStats: StatsType | null;
-    loading: boolean;
-    error?: any;
+    total: number | null;
+    fileResult: FileResult | null;
   };
 };
 
 type StoreReducers = {
   init: (rootFolder: string, forceReload?: boolean, currentFolder?: string) => Promise<void>;
-  selectFile: (index: number, filePath: string) => Promise<void>;
+  selectFile: (file: FileResult, index?: number | null, total?: number | null) => Promise<void>;
   playFiles: (files: ReplayQueueItem[]) => Promise<void>;
   clearSelectedFile: () => Promise<void>;
   removeFile: (filePath: string) => void;
@@ -56,9 +54,8 @@ const initialState: StoreState = {
   selectedFiles: [],
   selectedFile: {
     index: null,
-    gameStats: null,
-    error: null,
-    loading: false,
+    total: null,
+    fileResult: null,
   },
 };
 
@@ -93,36 +90,18 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     }
   },
 
-  selectFile: async (index, fullPath) => {
-    if (get().selectedFile.loading) {
-      console.warn("Alreading loading game stats for another file. Try again later.");
-      return;
-    }
-
+  selectFile: async (file, index = null, total = null) => {
     set({
-      selectedFile: { index, gameStats: null, loading: true, error: null },
+      selectedFile: { fileResult: file, index, total },
     });
-    const { selectedFile } = get();
-    const newSelectedFile = await produce(selectedFile, async (draft) => {
-      try {
-        const gameStats = await handleCalculatingGameStats(fullPath);
-        draft.gameStats = gameStats;
-      } catch (err) {
-        draft.error = err;
-      } finally {
-        draft.loading = false;
-      }
-    });
-    set({ selectedFile: newSelectedFile });
   },
 
   clearSelectedFile: async () => {
     set({
       selectedFile: {
+        fileResult: null,
         index: null,
-        gameStats: null,
-        error: null,
-        loading: false,
+        total: null,
       },
     });
   },
@@ -242,13 +221,4 @@ const handleReplayFolderLoading = async (folderPath: string): Promise<FileLoadRe
     throw new Error(`Error loading folder: ${folderPath}`);
   }
   return loadFolderResult.result;
-};
-
-const handleCalculatingGameStats = async (filePath: string): Promise<StatsType | null> => {
-  const statsResult = await calculateGameStats.renderer!.trigger({ filePath });
-  if (!statsResult.result) {
-    console.error(`Error calculating stats for: ${filePath}`, statsResult.errors);
-    throw new Error(`Error calculating stats for: ${filePath}`);
-  }
-  return statsResult.result.stats;
 };

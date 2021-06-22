@@ -7,7 +7,7 @@ import {
 } from "@broadcast/ipc";
 import { consoleMirrorStatusUpdated, discoveredConsolesUpdated } from "@console/ipc";
 import { dolphinDownloadLogReceived } from "@dolphin/ipc";
-import { loadProgressUpdated } from "@replays/ipc";
+import { loadProgressUpdated, playReplayAndShowStatsPage } from "@replays/ipc";
 import { settingsUpdated } from "@settings/ipc";
 import { checkValidIso } from "common/ipc";
 import log from "electron-log";
@@ -24,6 +24,7 @@ import { useBroadcastListStore } from "./useBroadcastList";
 import { useConsoleDiscoveryStore } from "./useConsoleDiscovery";
 import { useIsoVerification } from "./useIsoVerification";
 import { useNewsFeed } from "./useNewsFeed";
+import { useReplayBrowserNavigation } from "./useReplayBrowserList";
 import { useSettings } from "./useSettings";
 
 export const useAppListeners = () => {
@@ -144,6 +145,16 @@ export const useAppListeners = () => {
         setIsValidating(false);
       });
   }, [isoPath]);
+
+  const clearSelectedFile = useReplays((store) => store.clearSelectedFile);
+  const playFiles = useReplays((store) => store.playFiles);
+  const { goToReplayStatsPage } = useReplayBrowserNavigation();
+  playReplayAndShowStatsPage.renderer!.handle(async ({ filePath }) => {
+    await clearSelectedFile();
+    await playFiles([{ path: filePath }]);
+
+    goToReplayStatsPage(filePath);
+  });
 
   // Load the news articles once on app load
   const updateNewsFeed = useNewsFeed((store) => store.update);

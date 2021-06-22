@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import Typography from "@material-ui/core/Typography";
 import { FileResult } from "@replays/types";
-import { GameStartType, StatsType } from "@slippi/slippi-js";
+import { StatsType } from "@slippi/slippi-js";
 import _ from "lodash";
 import React from "react";
 
@@ -14,7 +14,6 @@ import { PunishTable } from "./PunishTable";
 export interface GameProfileProps {
   file: FileResult;
   stats: StatsType;
-  settings: GameStartType;
 }
 
 const TableContainer = styled.div`
@@ -36,8 +35,8 @@ const StatSection: React.FC<{
   );
 };
 
-export const GameProfile: React.FC<GameProfileProps> = ({ file, stats, settings }) => {
-  const [firstPlayer, secondPlayer] = settings.players;
+export const GameProfile: React.FC<GameProfileProps> = ({ file, stats }) => {
+  const [firstPlayer, secondPlayer] = file.settings.players;
 
   return (
     <div style={{ flex: "1", margin: 20 }}>
