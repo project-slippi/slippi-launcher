@@ -30,7 +30,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ open, onCl
     <Dialog open={open} onClose={onClose} fullWidth={true} fullScreen={fullScreen} disableBackdropClick={true}>
       <form onSubmit={handleSubmit}>
         <StyledDialogTitle>{title}</StyledDialogTitle>
-        <DialogContent style={{ display: "flex" }}>{children}</DialogContent>
+        <DialogContent>{children}</DialogContent>
         <DialogActions>
           <Button onClick={onClose} color="secondary">
             Cancel
