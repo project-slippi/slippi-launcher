@@ -177,10 +177,10 @@ async function installDolphin(
             log(err.message);
           }
           if (files) {
-            files.forEach((file) => {
+            files.forEach(async (file) => {
               if (file !== "Slippi Dolphin.app") {
                 try {
-                  fs.unlinkSync(path.join(dolphinPath, file));
+                  await fs.unlink(path.join(dolphinPath, file));
                 } catch (err) {
                   fs.removeSync(path.join(dolphinPath, file));
                 }
