@@ -90,8 +90,8 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
       </SettingItem>
       <SettingItem name="Clear Dolphin Cache" description="Clear Dolphin's graphics cache.">
         <Button
-          variant="contained"
-          color="primary"
+          variant="outlined"
+          color="secondary"
           onClick={clearDolphinCacheHandler}
           css={css`
             text-transform: capitalize;
@@ -100,7 +100,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           Clear {dolphinType} Dolphin Cache
         </Button>
       </SettingItem>
-      <SettingItem name="Reset Dolphin" description="Delete and reinstall dolphin">
+      <SettingItem name="Reset Dolphin" description="Delete and reinstall dolphin.">
         <ConfirmationModal
           open={modalOpen}
           onClose={() => setModalOpen(false)}
