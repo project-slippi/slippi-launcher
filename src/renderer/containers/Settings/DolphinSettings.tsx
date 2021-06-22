@@ -89,25 +89,11 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
             }
           `}
         >
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={configureDolphinHandler}
-            css={css`
-              text-transform: capitalize;
-            `}
-          >
+          <Button variant="contained" color="primary" onClick={configureDolphinHandler}>
             Configure Dolphin
           </Button>
-          <Button
-            variant="outlined"
-            color="secondary"
-            onClick={openDolphinDirectoryHandler}
-            css={css`
-              text-transform: capitalize;
-            `}
-          >
-            Open Containing Folder
+          <Button variant="outlined" color="secondary" onClick={openDolphinDirectoryHandler}>
+            Open containing folder
           </Button>
         </div>
       </SettingItem>
@@ -128,25 +114,11 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
             }
           `}
         >
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={clearDolphinCacheHandler}
-            css={css`
-              text-transform: capitalize;
-            `}
-          >
-            Clear Cache
+          <Button variant="contained" color="secondary" onClick={clearDolphinCacheHandler}>
+            Clear cache
           </Button>
-          <Button
-            variant="outlined"
-            color="secondary"
-            onClick={() => setModalOpen(true)}
-            css={css`
-              text-transform: capitalize;
-            `}
-          >
-            Reset Everything
+          <Button variant="outlined" color="secondary" onClick={() => setModalOpen(true)}>
+            Reset everything
           </Button>
         </div>
       </SettingItem>
