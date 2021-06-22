@@ -58,8 +58,13 @@ export class DolphinManager extends EventEmitter {
     if (launchType === DolphinLaunchType.NETPLAY && !this.netplayDolphinInstance) {
       const instance = new DolphinInstance(dolphinPath);
       this.netplayDolphinInstance = instance;
-      this.netplayDolphinInstance.on("close", () => {
+      instance.on("close", () => {
         this.netplayDolphinInstance = null;
+      });
+      instance.on("error", (err: Error) => {
+        this.netplayDolphinInstance = null;
+
+        log.error(err);
       });
       instance.start();
     } else if (launchType === DolphinLaunchType.PLAYBACK && this.playbackDolphinInstances.size === 0) {
