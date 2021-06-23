@@ -63,7 +63,7 @@ jobs:
         shell: bash
         run: |
           mkdir artifacts
-          mv release/{*.exe*,*.deb,*.AppImage,*.dmg,*.zip,*.yml} artifacts || true
+          mv release/{*.exe*,*.deb,*.AppImage,*.dmg*,*.zip,*.yml} artifacts || true
       - name: Upload artifacts
         uses: actions/upload-artifact@v1
         with:
