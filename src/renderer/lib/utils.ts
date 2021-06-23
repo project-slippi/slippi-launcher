@@ -14,15 +14,14 @@ export const getStatic = (val: string): string => {
 };
 
 export const getCharacterIcon = (characterId: number | null, characterColor: number | null = 0): string => {
-  try {
-    if (characterId !== null) {
-      const allColors = charUtils.getCharacterInfo(characterId).colors;
+  if (characterId !== null) {
+    const characterInfo = charUtils.getCharacterInfo(characterId);
+    if (characterInfo.id !== charUtils.UnknownCharacter.id) {
+      const allColors = characterInfo.colors;
       // Make sure it's a valid color, otherwise use the default color
       const color = characterColor !== null && characterColor <= allColors.length - 1 ? characterColor : 0;
       return getStatic(`/images/characters/${characterId}/${color}/stock.png`);
     }
-  } catch (err) {
-    console.warn(err);
   }
   return getStatic(`/images/unknown.png`);
 };
