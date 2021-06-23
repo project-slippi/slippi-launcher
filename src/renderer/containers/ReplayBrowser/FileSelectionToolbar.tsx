@@ -2,10 +2,15 @@
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
+import BlockIcon from "@material-ui/icons/Block";
+import DeleteIcon from "@material-ui/icons/Delete";
+import PlayArrowIcon from "@material-ui/icons/PlayArrow";
+import SelectAllIcon from "@material-ui/icons/SelectAll";
 import React from "react";
 
 export interface FileSelectionToolbarProps {
   totalSelected: number;
+  onSelectAll: () => void;
   onPlay: () => void;
   onClear: () => void;
   onDelete: () => void;
@@ -13,6 +18,7 @@ export interface FileSelectionToolbarProps {
 
 export const FileSelectionToolbar: React.FC<FileSelectionToolbarProps> = ({
   totalSelected,
+  onSelectAll,
   onPlay,
   onClear,
   onDelete,
@@ -43,14 +49,23 @@ export const FileSelectionToolbar: React.FC<FileSelectionToolbarProps> = ({
           {totalSelected} files selected
         </div>
         <div>
-          <Button color="secondary" variant="contained" size="small" onClick={onPlay}>
-            Play All
+          <Button color="secondary" variant="contained" size="small" onClick={onDelete} startIcon={<DeleteIcon />}>
+            Delete
           </Button>
-          <Button color="secondary" variant="contained" size="small" onClick={onClear}>
+          <Button color="secondary" variant="contained" size="small" onClick={onClear} startIcon={<BlockIcon />}>
             Clear
           </Button>
-          <Button color="secondary" variant="contained" size="small" onClick={onDelete}>
-            Delete
+          <Button
+            color="secondary"
+            variant="contained"
+            size="small"
+            onClick={onSelectAll}
+            startIcon={<SelectAllIcon />}
+          >
+            Select All
+          </Button>
+          <Button color="primary" variant="contained" size="small" onClick={onPlay} startIcon={<PlayArrowIcon />}>
+            Play All
           </Button>
         </div>
       </div>

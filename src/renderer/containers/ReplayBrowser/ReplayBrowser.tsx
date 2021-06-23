@@ -164,6 +164,7 @@ export const ReplayBrowser: React.FC = () => {
               )}
               <FileSelectionToolbar
                 totalSelected={selectedFiles.length}
+                onSelectAll={fileSelection.selectAll}
                 onPlay={() => playFiles(selectedFiles.map((path) => ({ path })))}
                 onClear={fileSelection.clearSelection}
                 onDelete={() => {
