@@ -35,27 +35,31 @@ These extensions will provide automatic formatting and warnings about code quali
 ### The `src` folder is split into the following:
 
 - `common`
-  - The code in `common` is for things that are shared between both `main` and `renderer` processes. Thus the code written should be agnostic to which thread its being imported from.
+  - Code shared between both `main` and `renderer` processes. Thus the code written should be agnostic to which thread its being imported from.
 - `main`
   - Code for the main process. e.g. electron config, menubars etc.
 - `renderer`
-  - Most of your actual app code
+  - Code for the all the visual components
 - `<module>`
   - Modules for the main process that handles specfic tasks should be kept in their own folder with a clear name.
 
 ### The `renderer` folder is organised as follows:
 
 - `components`
-  - Dumb components which are reusable throughout the app. These should not directly access or modify state but should accept handlers and state info via props.
+  - "Dumb" components reusable throughout the app. These should not directly access or modify state but should accept handlers and state info via props.
 - `containers`
-  - These components piece multiple dumb components together into a single "container". These can modify state and bind logic to the components but make sure most complex logic is in `lib`.
+  - Components that piece multiple dumb components together into a single "container". These can modify state and bind logic to the components but make sure most complex logic is in `lib`.
 - `lib`
-  - Put reusable logic here so you can keep the components mainly representative and visual.
+  - Reusable logic goes here to keep the components mainly representative and visual.
 - `styles`
-  - App styles and theming.
+  - Code for app styles and theming.
 - `views`
-  - The main pages of the app that can be routed to. Can give a starting point for finding components.
+  - The root pages of the app. Give a starting point for finding components.
 
 ## Contributing
 
 Contributions are welcome! The [issues section](https://github.com/project-slippi/slippi-launcher/issues) contains some good first ideas. When making a PR, ensure you are not PRing your `main` branch and always describe the feature and what testing you've done so far.
+
+## License
+
+Slippi Launcher is released as open source software under the [GPL v3](https://opensource.org/licenses/gpl-3.0.html) license. See the [LICENSE](./LICENSE) file in the project root for the full license text.
