@@ -32,7 +32,7 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
                 marginRight: 10,
               }}
             />
-            <div style={{ fontWeight: 500 }}>{names.name ? names.name : "Player " + (p.playerIndex + 1)}</div>
+            <div style={{ fontWeight: 500 }}>{names.name || names.tag || `Player ${p.playerIndex + 1}`}</div>
           </div>
         </T.TableHeaderCell>,
       );

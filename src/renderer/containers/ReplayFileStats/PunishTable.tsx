@@ -35,7 +35,7 @@ export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, player, o
           marginRight: 10,
         }}
       />
-      <div style={{ fontWeight: 500 }}>{names.name ? names.name : "Player " + (player.playerIndex + 1)}</div>
+      <div style={{ fontWeight: 500 }}>{names.name || names.tag || `Player ${player.playerIndex + 1}`}</div>
     </div>
   );
 
