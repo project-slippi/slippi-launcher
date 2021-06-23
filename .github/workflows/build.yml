@@ -1,11 +1,9 @@
-name: Build Launcher
+name: build
 
 on:
   push:
     branches:
       - "main"
-      - "refactor/rewrite"
-      - "rewrite/**"
     paths-ignore:
       - "**.md"
 
