@@ -51,18 +51,14 @@ export interface ReplayFileStatsProps {
 export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
   const { filePath } = props;
 
-  const gameStatsQuery = useQuery(
-    ["loadStatsQuery", filePath],
-    async () => {
-      const queryRes = await calculateGameStats.renderer!.trigger({ filePath: filePath });
-      if (!queryRes.result) {
-        console.error(`Error calculating game stats: ${filePath}`, queryRes.errors);
-        throw new Error(`Error calculating game stats ${filePath}`);
-      }
-      return queryRes.result;
-    },
-    { retry: false },
-  );
+  const gameStatsQuery = useQuery(["loadStatsQuery", filePath], async () => {
+    const queryRes = await calculateGameStats.renderer!.trigger({ filePath: filePath });
+    if (!queryRes.result) {
+      console.error(`Error calculating game stats: ${filePath}`, queryRes.errors);
+      throw new Error(`Error calculating game stats ${filePath}`);
+    }
+    return queryRes.result;
+  });
   const loading = gameStatsQuery.isLoading;
   const error = gameStatsQuery.error as any;
 
