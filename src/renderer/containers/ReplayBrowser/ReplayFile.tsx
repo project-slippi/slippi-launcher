@@ -49,15 +49,9 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
 }) => {
   const selected = selectedIndex !== -1;
   const date = new Date(startTime ? Date.parse(startTime) : 0);
-  let stageName = "Unknown";
-  try {
-    if (settings.stageId !== null) {
-      stageName = stageUtils.getStageName(settings.stageId);
-    }
-  } catch (err) {
-    console.error(err);
-  }
-  const stageImageUrl = settings.stageId !== null ? getStageImage(settings.stageId) : undefined;
+  const stageInfo = settings.stageId !== null ? stageUtils.getStageInfo(settings.stageId) : null;
+  const stageImageUrl = stageInfo !== null && stageInfo.id !== -1 ? getStageImage(stageInfo.id) : undefined;
+  const stageName = stageInfo !== null ? stageInfo.name : "Unknown Stage";
 
   return (
     <div onClick={onClick} style={style}>
