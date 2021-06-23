@@ -22,13 +22,12 @@ import { SettingsView } from "./views/SettingsView";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      // Once we've fetched a query never refetch
-      staleTime: Infinity,
       refetchIntervalInBackground: false,
       refetchOnMount: false,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
       refetchInterval: false,
+      retry: false,
     },
   },
 });
