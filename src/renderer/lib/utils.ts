@@ -1,4 +1,4 @@
-import { characters as charUtils, stages as stageUtils } from "@slippi/slippi-js";
+import { characters as charUtils } from "@slippi/slippi-js";
 import { isDevelopment } from "common/constants";
 import path from "path";
 import url from "url";
@@ -27,16 +27,8 @@ export const getCharacterIcon = (characterId: number | null, characterColor: num
   return getStatic(`/images/unknown.png`);
 };
 
-export const getStageImage = (stageId: number): string | null => {
-  let name = "Unknown";
-  try {
-    name = stageUtils.getStageName(stageId);
-  } catch (err) {
-    console.warn(err);
-    return null;
-  }
-  const imgSrc = getStatic(`/images/stages/${name}.png`);
-  return imgSrc;
+export const getStageImage = (stageId: number): string => {
+  return getStatic(`/images/stages/${stageId}.png`);
 };
 
 export const toOrdinal = (i: number): string => {
