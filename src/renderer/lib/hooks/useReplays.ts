@@ -2,11 +2,14 @@ import { loadReplayFolder } from "@replays/ipc";
 import { FileLoadResult, FileResult, FolderResult, Progress } from "@replays/types";
 import { produce } from "immer";
 import path from "path";
+import { useState } from "react";
 import create from "zustand";
 
 import { useSettings } from "@/lib/hooks/useSettings";
 
 import { findChild, generateSubFolderTree } from "../folderTree";
+import { useMousetrap } from "./useMousetrap";
+import { useReplayBrowserList } from "./useReplayBrowserList";
 
 type StoreState = {
   loading: boolean;
@@ -35,8 +38,7 @@ type StoreReducers = {
   toggleFolder: (fullPath: string) => void;
   setScrollRowItem: (offset: number) => void;
   updateProgress: (progress: Progress | null) => void;
-  toggleSelectedFiles: (filePath: string) => void;
-  clearSelectedFiles: () => void;
+  setSelectedFiles: (filePaths: string[]) => void;
 };
 
 const initialState: StoreState = {
@@ -184,22 +186,8 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     set({ scrollRowItem: rowItem });
   },
 
-  toggleSelectedFiles: (filePath: string) => {
-    set((store) =>
-      produce(store, (draft) => {
-        const index = draft.selectedFiles.findIndex((f) => f === filePath);
-        // We haven't selected it yet so push it on to the list
-        if (index === -1) {
-          draft.selectedFiles.push(filePath);
-        } else {
-          draft.selectedFiles.splice(index, 1);
-        }
-      }),
-    );
-  },
-
-  clearSelectedFiles: () => {
-    set({ selectedFiles: [] });
+  setSelectedFiles: (filePaths: string[]) => {
+    set({ selectedFiles: filePaths });
   },
 }));
 
@@ -210,4 +198,87 @@ const handleReplayFolderLoading = async (folderPath: string): Promise<FileLoadRe
     throw new Error(`Error loading folder: ${folderPath}`);
   }
   return loadFolderResult.result;
+};
+
+export const useReplaySelection = () => {
+  const { files } = useReplayBrowserList();
+  const selectedFiles = useReplays((store) => store.selectedFiles);
+  const setSelectedFiles = useReplays((store) => store.setSelectedFiles);
+
+  const [lastClickIndex, setLastClickIndex] = useState<number | null>(null);
+  const [shiftHeld, setShiftHeld] = useState(false);
+  useMousetrap("shift", () => setShiftHeld(true));
+  useMousetrap("shift", () => setShiftHeld(false), "keyup");
+
+  const toggleFiles = (fileNames: string[], mode: "toggle" | "select" | "deselect" = "toggle") => {
+    const newSelection = Array.from(selectedFiles);
+
+    fileNames.forEach((fileName) => {
+      const alreadySelectedIndex = newSelection.findIndex((f) => f === fileName);
+      switch (mode) {
+        case "toggle": {
+          if (alreadySelectedIndex !== -1) {
+            newSelection.splice(alreadySelectedIndex, 1);
+          } else {
+            newSelection.push(fileName);
+          }
+          break;
+        }
+        case "select": {
+          if (alreadySelectedIndex === -1) {
+            newSelection.push(fileName);
+          }
+          break;
+        }
+        case "deselect": {
+          if (alreadySelectedIndex !== -1) {
+            newSelection.splice(alreadySelectedIndex, 1);
+          }
+          break;
+        }
+      }
+    });
+
+    setSelectedFiles(newSelection);
+  };
+
+  const onFileClick = (index: number) => {
+    const isCurrentSelected = selectedFiles.includes(files[index].fullPath);
+    if (lastClickIndex !== null && shiftHeld) {
+      // Shift is held
+      // Find all the files between the last clicked file and the current one
+      const startIndex = Math.min(index, lastClickIndex);
+      const endIndex = Math.max(index, lastClickIndex);
+
+      const filesToToggle: string[] = [];
+      for (let i = startIndex; i <= endIndex; i++) {
+        filesToToggle.push(files[i].fullPath);
+      }
+
+      if (isCurrentSelected) {
+        toggleFiles(filesToToggle, "deselect");
+      } else {
+        toggleFiles(filesToToggle, "select");
+      }
+    } else {
+      toggleFiles([files[index].fullPath]);
+    }
+
+    // Update the click index when we're done
+    setLastClickIndex(index);
+  };
+
+  const clearSelection = () => {
+    setSelectedFiles([]);
+  };
+
+  const selectAll = () => {
+    setSelectedFiles(files.map((f) => f.fullPath));
+  };
+
+  return {
+    onFileClick,
+    clearSelection,
+    selectAll,
+  };
 };

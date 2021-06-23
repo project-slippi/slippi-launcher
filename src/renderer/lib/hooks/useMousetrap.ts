@@ -28,5 +28,5 @@ export const useMousetrap = (handlerKey: string | string[], handlerCallback: Mou
     return () => {
       mousetrap.unbind(handlerKey);
     };
-  }, [handlerKey]);
+  }, [handlerKey, handlerCallback]);
 };
