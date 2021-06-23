@@ -110,7 +110,7 @@ export const FileList: React.FC<{
   setScrollRowItem: (row: number) => void;
   onDelete: (filepath: string) => void;
   onSelect: (index: number) => void;
-  handleAddToList: (name: string) => void;
+  onFileClick: (index: number) => void;
   selectedFiles: Array<string>;
   onPlay: (index: number) => void;
 }> = ({
@@ -120,7 +120,7 @@ export const FileList: React.FC<{
   onPlay,
   onDelete,
   setScrollRowItem,
-  handleAddToList,
+  onFileClick,
   folderPath,
   selectedFiles,
 }) => {
@@ -162,7 +162,7 @@ export const FileList: React.FC<{
           onOpenMenu={onOpenMenu}
           onSelect={onSelect}
           onPlay={onPlay}
-          onClick={(index: number) => handleAddToList(files[index].fullPath)}
+          onClick={onFileClick}
           selectedFiles={selectedFiles}
           files={files}
           scrollRowItem={scrollRowItem}

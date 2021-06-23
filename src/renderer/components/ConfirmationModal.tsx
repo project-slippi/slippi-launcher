@@ -13,9 +13,17 @@ export interface ConfirmationModalProps {
   onClose: () => void;
   onSubmit: () => void;
   title: string;
+  confirmText?: string;
 }
 
-export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ open, onClose, onSubmit, title, children }) => {
+export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
+  open,
+  onClose,
+  onSubmit,
+  title,
+  children,
+  confirmText = "Confirm",
+}) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
 
@@ -36,7 +44,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ open, onCl
             Cancel
           </Button>
           <Button color="primary" type="submit">
-            Confirm
+            {confirmText}
           </Button>
         </DialogActions>
       </form>

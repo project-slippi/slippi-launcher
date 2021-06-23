@@ -22,7 +22,7 @@ import { IconMessage } from "@/components/Message";
 import { usePlayFiles } from "@/lib/hooks/usePlayFiles";
 import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/useReplayBrowserList";
 import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
-import { useReplays } from "@/lib/hooks/useReplays";
+import { useReplays, useReplaySelection } from "@/lib/hooks/useReplays";
 import { useSettings } from "@/lib/hooks/useSettings";
 
 import { FileList } from "./FileList";
@@ -42,8 +42,7 @@ export const ReplayBrowser: React.FC = () => {
   const currentFolder = useReplays((store) => store.currentFolder);
   const folders = useReplays((store) => store.folders);
   const selectedFiles = useReplays((store) => store.selectedFiles);
-  const toggleSelectedFiles = useReplays((store) => store.toggleSelectedFiles);
-  const clearSelectedFiles = useReplays((store) => store.clearSelectedFiles);
+  const fileSelection = useReplaySelection();
   const init = useReplays((store) => store.init);
   const fileErrorCount = useReplays((store) => store.fileErrorCount);
   const rootSlpPath = useSettings((store) => store.settings.rootSlpPath);
@@ -154,7 +153,7 @@ export const ReplayBrowser: React.FC = () => {
                 <FileList
                   folderPath={currentFolder}
                   onDelete={(filePath) => deleteFiles([filePath])}
-                  handleAddToList={(filePath: string) => toggleSelectedFiles(filePath)}
+                  onFileClick={fileSelection.onFileClick}
                   selectedFiles={selectedFiles}
                   onSelect={(index: number) => setSelectedItem(index)}
                   onPlay={(index: number) => playSelectedFile(index)}
@@ -165,11 +164,12 @@ export const ReplayBrowser: React.FC = () => {
               )}
               <FileSelectionToolbar
                 totalSelected={selectedFiles.length}
+                onSelectAll={fileSelection.selectAll}
                 onPlay={() => playFiles(selectedFiles.map((path) => ({ path })))}
-                onClear={clearSelectedFiles}
+                onClear={fileSelection.clearSelection}
                 onDelete={() => {
                   deleteFiles(selectedFiles);
-                  clearSelectedFiles();
+                  fileSelection.clearSelection();
                 }}
               />
             </div>
