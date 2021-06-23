@@ -8,6 +8,8 @@ import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import SelectAllIcon from "@material-ui/icons/SelectAll";
 import React from "react";
 
+import { ConfirmationModal } from "@/components/ConfirmationModal";
+
 export interface FileSelectionToolbarProps {
   totalSelected: number;
   onSelectAll: () => void;
@@ -23,6 +25,8 @@ export const FileSelectionToolbar: React.FC<FileSelectionToolbarProps> = ({
   onClear,
   onDelete,
 }) => {
+  const [showDeletePrompt, setShowDeletePrompt] = React.useState(false);
+
   if (totalSelected === 0) {
     return null;
   }
@@ -49,7 +53,13 @@ export const FileSelectionToolbar: React.FC<FileSelectionToolbarProps> = ({
           {totalSelected} files selected
         </div>
         <div>
-          <Button color="secondary" variant="contained" size="small" onClick={onDelete} startIcon={<DeleteIcon />}>
+          <Button
+            color="secondary"
+            variant="contained"
+            size="small"
+            onClick={() => setShowDeletePrompt(true)}
+            startIcon={<DeleteIcon />}
+          >
             Delete
           </Button>
           <Button color="secondary" variant="contained" size="small" onClick={onClear} startIcon={<BlockIcon />}>
@@ -69,6 +79,15 @@ export const FileSelectionToolbar: React.FC<FileSelectionToolbarProps> = ({
           </Button>
         </div>
       </div>
+      <ConfirmationModal
+        open={showDeletePrompt}
+        title="Confirm File Deletion"
+        confirmText="Delete"
+        onClose={() => setShowDeletePrompt(false)}
+        onSubmit={onDelete}
+      >
+        {totalSelected} file(s) will be deleted.
+      </ConfirmationModal>
     </Outer>
   );
 };
