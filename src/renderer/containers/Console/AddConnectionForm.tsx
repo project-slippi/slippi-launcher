@@ -7,13 +7,15 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import WarningIcon from "@material-ui/icons/Warning";
+import { Ports } from "@slippi/slippi-js";
 import { colors } from "common/colors";
 import React from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 import { ExternalLink as A } from "@/components/ExternalLink";
 import { Toggle } from "@/components/FormInputs/Toggle";
 import { PathInput } from "@/components/PathInput";
+import { isValidIpAddress } from "@/lib/validate";
 
 type FormValues = {
   ipAddress: string;
@@ -23,6 +25,7 @@ type FormValues = {
   obsIP?: string;
   obsSourceName?: string;
   obsPassword?: string;
+  enableRelay?: boolean;
 };
 
 export interface AddConnectionFormProps {
@@ -35,15 +38,18 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
   const {
     handleSubmit,
     watch,
+    control,
     setValue,
     formState: { errors },
   } = useForm<FormValues>({ defaultValues });
-  const ipAddress = watch("ipAddress");
   const folderPath = watch("folderPath");
   const isRealTimeMode = watch("isRealTimeMode");
   const obsIP = watch("obsIP");
   const obsPassword = watch("obsPassword");
   const obsSourceName = watch("obsSourceName");
+  const enableRelay = watch("enableRelay");
+
+  const [showAutoswitcher, setShowAutoswitcher] = React.useState(Boolean(obsIP && obsSourceName));
 
   const onFormSubmit = handleSubmit(onSubmit);
 
@@ -51,11 +57,20 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
     <Outer>
       <form className="form" onSubmit={onFormSubmit}>
         <section>
-          <TextField
-            label="IP Address"
-            value={ipAddress}
-            onChange={(e) => setValue("ipAddress", e.target.value)}
-            required={true}
+          <Controller
+            name="ipAddress"
+            control={control}
+            defaultValue=""
+            render={({ field, fieldState: { error } }) => (
+              <TextField
+                {...field}
+                label="IP Address"
+                required={true}
+                error={Boolean(error)}
+                helperText={error ? error.message : undefined}
+              />
+            )}
+            rules={{ validate: (val) => isValidIpAddress(val) || "Invalid IP address" }}
           />
         </section>
 
@@ -75,8 +90,8 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
           <Toggle
             value={Boolean(isRealTimeMode)}
             onChange={(checked) => setValue("isRealTimeMode", checked)}
-            label="Real-time Mode"
-            description="When enabled, prevents delay from accumulating when mirroring. Keep this off unless both the Wii and computer are on a wired LAN connection."
+            label="Enable Real-time Mode"
+            description="Prevents delay from accumulating when mirroring. Keep this off unless both the Wii and computer are on a wired LAN connection."
           />
         </section>
 
@@ -108,50 +123,91 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
               <WarningIcon />
               Only modify these values if you know what you're doing.
             </Notice>
-            <SettingDescription
-              label="Autoswitcher"
-              css={css`
-                margin-bottom: 10px;
-              `}
-            >
-              <span
-                css={css`
-                  a {
-                    text-decoration: underline;
-                  }
-                `}
-              >
-                Enables automatic hiding and showing of an OBS source (e.g. your Dolphin capture) when the game is
-                active. Requires <A href="https://github.com/Palakis/obs-websocket">OBS Websocket Plugin</A>.
-              </span>
-            </SettingDescription>
-            <div
-              css={css`
-                display: grid;
-                grid-gap: 10px;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                margin-bottom: 10px;
-              `}
-            >
-              <TextField
-                label="OBS Websocket IP:Port"
-                value={obsIP ?? ""}
-                required={showAdvanced}
-                onChange={(e) => setValue("obsIP", e.target.value)}
-              />
-              <TextField
-                label="OBS Password"
-                value={obsPassword ?? ""}
-                onChange={(e) => setValue("obsPassword", e.target.value)}
-                type="password"
-              />
-            </div>
-            <TextField
-              label="OBS Source Name"
-              value={obsSourceName ?? ""}
-              required={showAdvanced}
-              onChange={(e) => setValue("obsSourceName", e.target.value)}
+            <Toggle
+              value={showAutoswitcher}
+              onChange={() => setShowAutoswitcher(!showAutoswitcher)}
+              label="Enable Autoswitcher"
+              description={
+                <span
+                  css={css`
+                    a {
+                      text-decoration: underline;
+                    }
+                  `}
+                >
+                  Allows automatic hiding and showing of an OBS source (e.g. your Dolphin capture) when the game is
+                  active. Requires <A href="https://github.com/Palakis/obs-websocket">OBS Websocket Plugin</A>.
+                </span>
+              }
             />
+            <section>
+              <Collapse in={showAutoswitcher}>
+                <div
+                  css={css`
+                    display: grid;
+                    grid-gap: 10px;
+                    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                    margin: 10px 0px 10px;
+                  `}
+                >
+                  <TextField
+                    label="OBS Websocket IP:Port"
+                    value={obsIP ?? ""}
+                    required={showAutoswitcher}
+                    onChange={(e) => setValue("obsIP", e.target.value)}
+                  />
+                  <TextField
+                    label="OBS Password"
+                    value={obsPassword ?? ""}
+                    onChange={(e) => setValue("obsPassword", e.target.value)}
+                    type="password"
+                  />
+                </div>
+                <TextField
+                  label="OBS Source Name"
+                  value={obsSourceName ?? ""}
+                  required={showAutoswitcher}
+                  onChange={(e) => setValue("obsSourceName", e.target.value)}
+                />
+              </Collapse>
+            </section>
+            <section>
+              <Toggle
+                value={Boolean(enableRelay)}
+                onChange={(checked) => setValue("enableRelay", checked)}
+                label="Enable Console Relay"
+                description="Allows external programs to read live game data by connecting to a local endpoint."
+              />
+            </section>
+            <section>
+              <SettingDescription label="Connection Port">
+                The port used for connecting to console. Only change this if connecting to a Console Relay. If unsure,
+                leave it as {Ports.DEFAULT}.
+              </SettingDescription>
+              <Controller
+                name="port"
+                control={control}
+                render={({ field: { onChange, value }, fieldState: { error } }) => (
+                  <TextField
+                    css={css`
+                      input::-webkit-outer-spin-button,
+                      input::-webkit-inner-spin-button {
+                        -webkit-appearance: none;
+                        margin: 0;
+                      }
+                    `}
+                    label="Port"
+                    required={true}
+                    value={isNaN(value) ? "" : value.toString()}
+                    onChange={(e) => onChange(parseInt(e.target.value))}
+                    error={!!error}
+                    helperText={error ? error.message : null}
+                    type="number"
+                  />
+                )}
+                rules={{ validate: (val) => !isNaN(val) || "Invalid port number" }}
+              />
+            </section>
           </Collapse>
         </div>
 

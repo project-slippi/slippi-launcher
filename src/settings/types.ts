@@ -8,6 +8,7 @@ export interface StoredConnection {
   obsIP?: string;
   obsSourceName?: string;
   obsPassword?: string;
+  enableRelay?: boolean;
 }
 
 export type AppSettings = {

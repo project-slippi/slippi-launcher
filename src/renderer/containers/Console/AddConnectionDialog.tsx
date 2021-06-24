@@ -6,6 +6,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { StoredConnection } from "@settings/types";
+import { Ports } from "@slippi/slippi-js";
 import merge from "lodash/merge";
 import React from "react";
 
@@ -35,7 +36,7 @@ export const AddConnectionDialog: React.FC<AddConnectionDialogProps> = ({
     setTitle(isEditing ? "Edit Connection" : "New Connection");
   };
   const defaultValues: Partial<StoredConnection> = merge(
-    { isRealTimeMode: false, folderPath: spectateFolder },
+    { isRealTimeMode: false, folderPath: spectateFolder, port: Ports.DEFAULT },
     selectedConnection,
   );
   return (
