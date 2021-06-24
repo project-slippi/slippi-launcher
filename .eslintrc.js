@@ -48,6 +48,7 @@ module.exports = {
     ],
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/explicit-member-accessibility": "error",
+    "@typescript-eslint/no-floating-promises": "error",
     "import/no-default-export": "error",
     "import/no-named-as-default-member": "off",
     "simple-import-sort/imports": "warn",
