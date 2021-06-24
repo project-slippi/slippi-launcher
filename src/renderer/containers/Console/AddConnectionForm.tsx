@@ -15,6 +15,7 @@ import { Controller, useForm } from "react-hook-form";
 import { ExternalLink as A } from "@/components/ExternalLink";
 import { Toggle } from "@/components/FormInputs/Toggle";
 import { PathInput } from "@/components/PathInput";
+import { isValidIpAddress } from "@/lib/validate";
 
 type FormValues = {
   ipAddress: string;
@@ -41,7 +42,6 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
     setValue,
     formState: { errors },
   } = useForm<FormValues>({ defaultValues });
-  const ipAddress = watch("ipAddress");
   const folderPath = watch("folderPath");
   const isRealTimeMode = watch("isRealTimeMode");
   const obsIP = watch("obsIP");
@@ -57,11 +57,20 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
     <Outer>
       <form className="form" onSubmit={onFormSubmit}>
         <section>
-          <TextField
-            label="IP Address"
-            value={ipAddress}
-            onChange={(e) => setValue("ipAddress", e.target.value)}
-            required={true}
+          <Controller
+            name="ipAddress"
+            control={control}
+            defaultValue=""
+            render={({ field, fieldState: { error } }) => (
+              <TextField
+                {...field}
+                label="IP Address"
+                required={true}
+                error={Boolean(error)}
+                helperText={error ? error.message : undefined}
+              />
+            )}
+            rules={{ validate: (val) => isValidIpAddress(val) || "Invalid IP address" }}
           />
         </section>
 
