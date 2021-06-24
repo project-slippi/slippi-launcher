@@ -57,7 +57,7 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
       <CardHeader
         avatar={<WiiIcon fill="#ffffff" width="40px" />}
         action={
-          <IconButton onClick={(e) => onOpenMenu(index, e.currentTarget as HTMLElement)}>
+          <IconButton disabled={isConnected} onClick={(e) => onOpenMenu(index, e.currentTarget as HTMLElement)}>
             <MoreVertIcon />
           </IconButton>
         }
