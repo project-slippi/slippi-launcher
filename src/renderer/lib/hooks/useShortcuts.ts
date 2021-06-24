@@ -1,6 +1,6 @@
 import { isMac } from "common/constants";
 import mousetrap from "mousetrap";
-import { RefObject, useEffect } from "react";
+import { RefObject, useCallback, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 
 // Map Ctrl + 1 to be the first page, Ctrl + 2 to be the second page etc.
@@ -37,37 +37,40 @@ export const usePageScrollingShortcuts = (ref: RefObject<HTMLDivElement>) => {
   const smallStep = 50;
   const bigStep = 300;
 
-  const scrollBy = (amount: number) => {
-    if (!ref.current) {
-      return;
-    }
+  const scrollBy = useCallback(
+    (amount: number) => {
+      if (!ref.current) {
+        return;
+      }
 
-    ref.current.scrollBy({ top: amount });
-  };
-
-  const handlers: Array<{
-    keys: string | string[];
-    handler: () => void;
-  }> = [
-    {
-      keys: "j",
-      handler: () => scrollBy(smallStep),
+      ref.current.scrollBy({ top: amount });
     },
-    {
-      keys: "k",
-      handler: () => scrollBy(-smallStep),
-    },
-    {
-      keys: "ctrl+d",
-      handler: () => scrollBy(bigStep),
-    },
-    {
-      keys: "ctrl+u",
-      handler: () => scrollBy(-bigStep),
-    },
-  ];
+    [ref],
+  );
 
   useEffect(() => {
+    const handlers: Array<{
+      keys: string | string[];
+      handler: () => void;
+    }> = [
+      {
+        keys: "j",
+        handler: () => scrollBy(smallStep),
+      },
+      {
+        keys: "k",
+        handler: () => scrollBy(-smallStep),
+      },
+      {
+        keys: "ctrl+d",
+        handler: () => scrollBy(bigStep),
+      },
+      {
+        keys: "ctrl+u",
+        handler: () => scrollBy(-bigStep),
+      },
+    ];
+
     handlers.forEach((handler) => {
       mousetrap.bind(handler.keys, handler.handler);
     });
@@ -77,5 +80,5 @@ export const usePageScrollingShortcuts = (ref: RefObject<HTMLDivElement>) => {
         mousetrap.unbind(handler.keys);
       });
     };
-  }, [ref]);
+  }, [ref, scrollBy]);
 };

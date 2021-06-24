@@ -54,23 +54,23 @@ export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({
     },
   );
 
-  const fetchUser = React.useCallback(
-    debounce(async () => {
-      console.log("start debounced code");
-      await userQuery.refetch();
-      console.log("end debounced code");
-    }, 200),
-    [userQuery],
-  );
+  const fetchUser = debounce(async () => {
+    console.log("start debounced code");
+    await userQuery.refetch();
+    console.log("end debounced code");
+  }, 200);
 
-  const handleChange = React.useCallback((inputText: string) => {
-    // First clear the react-query state
-    userQuery.remove();
-    setValue(inputText);
-    if (!skipUserValidation) {
-      void fetchUser();
-    }
-  }, []);
+  const handleChange = React.useCallback(
+    (inputText: string) => {
+      // First clear the react-query state
+      userQuery.remove();
+      setValue(inputText);
+      if (!skipUserValidation) {
+        void fetchUser();
+      }
+    },
+    [fetchUser, skipUserValidation, userQuery],
+  );
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

@@ -54,7 +54,7 @@ export const ReplayBrowser: React.FC = () => {
 
   React.useEffect(() => {
     init(rootSlpPath).catch((err) => addToast(err.message, { appearance: "error" }));
-  }, [rootSlpPath, init]);
+  }, [rootSlpPath, init, addToast]);
 
   const setSelectedItem = (index: number | null) => {
     if (index === null) {

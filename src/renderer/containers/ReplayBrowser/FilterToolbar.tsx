@@ -52,7 +52,7 @@ export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarPro
 
   const refresh = React.useCallback(() => {
     init(rootSlpPath, true, currentFolder).catch((err) => addToast(err.message, { appearance: "error" }));
-  }, [rootSlpPath, init, currentFolder]);
+  }, [rootSlpPath, init, currentFolder, addToast]);
 
   const debounceChange = debounce((text: string) => {
     setStoreSearchText(text);
