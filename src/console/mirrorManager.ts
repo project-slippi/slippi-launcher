@@ -137,23 +137,26 @@ export class MirrorManager {
     }
 
     fileWriter.on(SlpStreamEvent.COMMAND, (data) => {
-      if (!autoSwitcher) {
+      if (!autoSwitcher && !relay) {
         return;
       }
-
       const { command, payload } = data;
       switch (command) {
         case Command.POST_FRAME_UPDATE: {
           const frame = (payload as PostFrameUpdateType).frame;
           // Only show OBS source in the later portion of the game loading stage
           if (frame !== null && frame >= -60) {
-            autoSwitcher.handleStatusOutput();
+            if (autoSwitcher) {
+              autoSwitcher.handleStatusOutput();
+            }
           }
           break;
         }
         case Command.GAME_END: {
           if ((payload as GameEndType).gameEndMethod !== 7) {
-            autoSwitcher.handleStatusOutput(700);
+            if (autoSwitcher) {
+              autoSwitcher.handleStatusOutput(700); // 700ms is about enough time for GAME! to stop shaking
+            }
           }
           if (relay) {
             relay.clearBuffer().catch(log.warn); // clear buffer after each game to avoid concating a gigantic array
