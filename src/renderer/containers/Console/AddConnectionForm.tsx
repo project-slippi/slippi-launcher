@@ -7,6 +7,7 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import WarningIcon from "@material-ui/icons/Warning";
+import { Ports } from "@slippi/slippi-js";
 import { colors } from "common/colors";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -172,20 +173,25 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
               />
             </section>
             <section>
-              <Toggle
-                value={showConnPort}
-                onChange={() => setShowConnPort(!showConnPort)}
-                label="Connection Port"
-                description="Set the port to connect to for mirroring. This is typically used with Console Relay from another computer to send mirror again"
+              <SettingDescription label="Connection Port">
+                The port we will use for connecting to the console. This is typically changed when using the Console
+                Relay to mirror from another computer.
+              </SettingDescription>
+              <TextField
+                css={css`
+                  input::-webkit-outer-spin-button,
+                  input::-webkit-inner-spin-button {
+                    /* display: none; <- Crashes Chrome on hover */
+                    -webkit-appearance: none;
+                    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+                  }
+                `}
+                label="Port Number"
+                value={port ?? Ports.DEFAULT}
+                required={true}
+                type="number"
+                onChange={(e) => setValue("port", Number(e.target.value))}
               />
-              <Collapse in={showConnPort}>
-                <TextField
-                  label="Port Number"
-                  value={port ?? ""}
-                  required={showConnPort}
-                  onChange={(e) => setValue("port", Number(e.target.value.replace(/[^0-9]/g, "")))}
-                />
-              </Collapse>
             </section>
           </Collapse>
         </div>
