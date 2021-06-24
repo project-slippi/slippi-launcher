@@ -11,7 +11,7 @@ export interface ValidateUserIdResponse {
 
 export const validateUserId = async (userId: string, timeout = 2500): Promise<ValidateUserIdResponse> => {
   // First check that the user id is only alphanumeric
-  if (!userId.match(/^[0-9a-z]+$/)) {
+  if (!userId.match(/^[0-9A-z]+$/)) {
     throw new Error("Invalid user ID format");
   }
 
