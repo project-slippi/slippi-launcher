@@ -17,7 +17,7 @@ module.exports = {
     },
   },
   ignorePatterns: ["/*.js"],
-  plugins: ["simple-import-sort", "strict-booleans"],
+  plugins: ["simple-import-sort", "strict-booleans", "react-hooks"],
   extends: [
     "plugin:react/recommended",
     "eslint:recommended",
@@ -57,6 +57,8 @@ module.exports = {
     "no-undef": "off",
     "new-cap": "error",
     "@typescript-eslint/no-non-null-assertion": "off",
+    "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
+    "react-hooks/exhaustive-deps": "warn", // Checks effect dependencies
     curly: "error",
   },
   ignorePatterns: ["/*.js"],
