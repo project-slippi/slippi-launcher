@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/react";
+import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
@@ -12,8 +12,10 @@ import React from "react";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
-import { login, signUp } from "@/lib/firebase";
+import { login, resetPassword, signUp } from "@/lib/firebase";
 import { useAsync } from "@/lib/hooks/useAsync";
+
+import { QuickStartHeader } from "./QuickStart/QuickStartHeader";
 
 // Store this data in a hook so we can avoid dealing with setting state on unmount errors
 const useLoginStore = create(
@@ -43,20 +45,12 @@ const useStyles = makeStyles(() => ({
 }));
 
 export interface LoginFormProps {
-  isSignUp?: boolean;
   className?: string;
   disableAutoFocus?: boolean;
   onSuccess?: () => void;
-  toggleSignUp: () => void;
 }
 
-export const LoginForm: React.FC<LoginFormProps> = ({
-  className,
-  onSuccess,
-  disableAutoFocus,
-  isSignUp,
-  toggleSignUp,
-}) => {
+export const LoginForm: React.FC<LoginFormProps> = ({ className, onSuccess, disableAutoFocus }) => {
   const email = useLoginStore((store) => store.email);
   const setEmail = useLoginStore((store) => store.setEmail);
   const displayName = useLoginStore((store) => store.displayName);
@@ -66,9 +60,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   const confirmPassword = useLoginStore((store) => store.confirmPassword);
   const setConfirmPassword = useLoginStore((store) => store.setConfirmPassword);
   const [showPassword, setShowPassword] = React.useState(false);
+  const [showPasswordResetForm, setShowPasswordResetForm] = React.useState(false);
+  const [isSignUp, setIsSignUp] = React.useState(false);
+  const toggleSignUp = () => setIsSignUp(!isSignUp);
   const classes = useStyles();
 
-  const { execute, loading, error } = useAsync(async () => {
+  const { execute, loading, error, clearError } = useAsync(async () => {
     let user: firebase.auth.UserCredential;
     if (isSignUp) {
       if (password !== confirmPassword) {
@@ -91,17 +88,32 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     }
   });
 
+  // Reset the error state when changing form type
+  React.useEffect(() => {
+    clearError();
+  }, [showPasswordResetForm, isSignUp, clearError]);
+
+  if (showPasswordResetForm) {
+    return <ForgotPasswordForm onClose={() => setShowPasswordResetForm(false)} />;
+  }
+
   return (
-    <form
-      className={className}
-      onSubmit={(e) => {
-        e.preventDefault();
-        void execute();
-      }}
-    >
-      {isSignUp && (
-        <Grid container alignItems="flex-end">
-          <Grid item md={true} sm={true} xs={true}>
+    <div className={className}>
+      <QuickStartHeader>{isSignUp ? "Create an account" : "Log in"}</QuickStartHeader>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          void execute();
+        }}
+      >
+        <div
+          css={css`
+            display: grid;
+            grid-template-columns: 100%;
+            grid-gap: 15px;
+          `}
+        >
+          {isSignUp && (
             <TextField
               disabled={loading}
               label="Display Name"
@@ -117,11 +129,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                 },
               }}
             />
-          </Grid>
-        </Grid>
-      )}
-      <Grid container alignItems="flex-end" style={{ marginTop: 15 }}>
-        <Grid item md={true} sm={true} xs={true}>
+          )}
           <TextField
             disabled={loading}
             label="Email"
@@ -137,10 +145,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({
               },
             }}
           />
-        </Grid>
-      </Grid>
-      <Grid container alignItems="flex-end" style={{ marginTop: 15 }}>
-        <Grid item md={true} sm={true} xs={true}>
           <TextField
             disabled={loading}
             variant="filled"
@@ -168,11 +172,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
               ) : undefined,
             }}
           />
-        </Grid>
-      </Grid>
-      {isSignUp && (
-        <Grid container alignItems="flex-end" style={{ marginTop: 15 }}>
-          <Grid item md={true} sm={true} xs={true}>
+          {isSignUp && (
             <TextField
               disabled={loading}
               variant="filled"
@@ -188,38 +188,144 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                 },
               }}
             />
-          </Grid>
-        </Grid>
-      )}
-      {error && (
-        <Grid>
-          <p>{error.message}</p>
-        </Grid>
-      )}
-      <div
-        css={css`
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-end;
-          margin-top: 20px;
-          margin-bottom: 10px;
-        `}
-      >
-        <Button
-          color="secondary"
-          onClick={toggleSignUp}
-          size="small"
+          )}
+        </div>
+        {error && <ErrorMessage>{error.message}</ErrorMessage>}
+        <div
           css={css`
-            text-transform: initial;
-            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            margin-bottom: 10px;
           `}
         >
-          {isSignUp ? "I already have an account" : "Create an account"}
-        </Button>
-        <Button type="submit" color="primary" disabled={loading} variant="contained">
-          {isSignUp ? "Sign up" : "Log in"}
-        </Button>
-      </div>
-    </form>
+          <Button
+            color="secondary"
+            onClick={toggleSignUp}
+            size="small"
+            css={css`
+              text-transform: initial;
+              font-size: 14px;
+            `}
+          >
+            {isSignUp ? "I already have an account" : "Create an account"}
+          </Button>
+          <Button type="submit" color="primary" disabled={loading} variant="contained">
+            {isSignUp ? "Sign up" : "Log in"}
+          </Button>
+        </div>
+        {!isSignUp && (
+          <div
+            css={css`
+              text-align: right;
+            `}
+          >
+            <Button
+              color="secondary"
+              onClick={() => setShowPasswordResetForm(true)}
+              size="small"
+              css={css`
+                text-transform: initial;
+                font-size: 12px;
+              `}
+            >
+              Forgot your password?
+            </Button>
+          </div>
+        )}
+      </form>
+    </div>
   );
 };
+
+const ForgotPasswordForm: React.FC<{
+  className?: string;
+  onClose: () => void;
+}> = ({ className, onClose }) => {
+  const email = useLoginStore((store) => store.email);
+  const setEmail = useLoginStore((store) => store.setEmail);
+  const [success, setSuccess] = React.useState(false);
+  const classes = useStyles();
+
+  const { execute, loading, error } = useAsync(async () => {
+    setSuccess(false);
+    await resetPassword(email);
+    setSuccess(true);
+  });
+
+  return (
+    <div className={className}>
+      <QuickStartHeader>Password Reset</QuickStartHeader>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (success) {
+            onClose();
+          } else {
+            void execute();
+          }
+        }}
+      >
+        {success ? (
+          <div>Password reset instructions have been sent to {email}.</div>
+        ) : (
+          <TextField
+            disabled={loading}
+            label="Email"
+            variant="filled"
+            value={email}
+            autoFocus={false}
+            fullWidth={true}
+            required={true}
+            onChange={(e) => setEmail(e.target.value)}
+            InputLabelProps={{
+              classes: {
+                root: classes.cssLabel,
+              },
+            }}
+          />
+        )}
+        {error && <ErrorMessage>{error.message}</ErrorMessage>}
+        <div
+          css={css`
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-top: 20px;
+            margin-bottom: 10px;
+          `}
+        >
+          <Button type="submit" color="primary" disabled={loading} variant="contained">
+            {success ? "Continue" : "Reset"}
+          </Button>
+        </div>
+        {!success && (
+          <div
+            css={css`
+              text-align: right;
+            `}
+          >
+            <Button
+              color="secondary"
+              onClick={onClose}
+              size="small"
+              css={css`
+                text-transform: initial;
+                font-size: 12px;
+              `}
+            >
+              Go back
+            </Button>
+          </div>
+        )}
+      </form>
+    </div>
+  );
+};
+
+const ErrorMessage = styled.div`
+  margin-top: 10px;
+  color: ${({ theme }) => theme.palette.error.main};
+  font-size: 14px;
+`;

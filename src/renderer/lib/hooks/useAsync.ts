@@ -22,5 +22,6 @@ export const useAsync = <T>(asyncFunction: (...args: any[]) => Promise<T>) => {
     loading,
     error,
     result,
+    clearError: React.useCallback(() => setError(null), []),
   };
 };

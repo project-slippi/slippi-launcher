@@ -55,3 +55,7 @@ export const logout = async () => {
   await firebase.auth().signOut();
   await deletePlayKey();
 };
+
+export const resetPassword = async (email: string) => {
+  await firebase.auth().sendPasswordResetEmail(email);
+};
