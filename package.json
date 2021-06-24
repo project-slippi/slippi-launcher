@@ -12,7 +12,7 @@
     "build": "electron-webpack",
     "package": "yarn run build && electron-builder",
     "package:dir": "yarn run package --dir -c.compression=store -c.mac.identity=null",
-    "lint": "eslint --cache \"src/**/*.{ts,tsx}\"",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "lint:fix": "yarn run lint --fix",
     "postinstall": "patch-package"
   },
