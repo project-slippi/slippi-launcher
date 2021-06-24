@@ -64,7 +64,7 @@ export async function findUserFolder(type: DolphinLaunchType): Promise<string> {
       break;
   }
 
-  fs.ensureDir(userPath);
+  await fs.ensureDir(userPath);
 
   return userPath;
 }

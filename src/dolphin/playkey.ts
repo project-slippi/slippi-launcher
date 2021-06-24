@@ -32,6 +32,7 @@ export async function findPlayKey(): Promise<string> {
       break;
     }
   }
+  await fs.ensureDir(dolphinDir);
   return path.resolve(dolphinDir, "user.json");
 }
 
