@@ -74,7 +74,7 @@ export async function addGamePathToInis(gameDir: string): Promise<void> {
   await addGamePathToIni(DolphinLaunchType.PLAYBACK, gameDir);
 }
 
-async function addGamePathToIni(type: DolphinLaunchType, gameDir: string): Promise<void> {
+export async function addGamePathToIni(type: DolphinLaunchType, gameDir: string): Promise<void> {
   const userFolder = await findUserFolder(type);
   const iniPath = path.join(userFolder, "Config", "Dolphin.ini");
   if (await fileExists(iniPath)) {

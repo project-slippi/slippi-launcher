@@ -8,7 +8,7 @@ import path from "path";
 import { downloadAndInstallDolphin } from "./downloadDolphin";
 import { DolphinInstance, PlaybackDolphinInstance } from "./instance";
 import { DolphinLaunchType, ReplayCommunication } from "./types";
-import { findDolphinExecutable, findUserFolder } from "./util";
+import { addGamePathToIni, findDolphinExecutable, findUserFolder } from "./util";
 
 // DolphinManager should be in control of all dolphin instances that get opened for actual use.
 // This includes playing netplay, viewing replays, watching broadcasts (spectating), and configuring Dolphin.
@@ -114,6 +114,11 @@ export class DolphinManager extends EventEmitter {
 
     // No dolphins of launchType are open so lets reinstall
     await downloadAndInstallDolphin(launchType, log.info, true);
+    const isoPath = settingsManager.get().settings.isoPath;
+    if (isoPath) {
+      const gameDir = path.dirname(isoPath);
+      await addGamePathToIni(launchType, gameDir);
+    }
   }
 
   public async clearCache(launchType: DolphinLaunchType) {
