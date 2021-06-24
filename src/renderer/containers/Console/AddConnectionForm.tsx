@@ -90,8 +90,8 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
           <Toggle
             value={Boolean(isRealTimeMode)}
             onChange={(checked) => setValue("isRealTimeMode", checked)}
-            label="Real-time Mode"
-            description="When enabled, prevents delay from accumulating when mirroring. Keep this off unless both the Wii and computer are on a wired LAN connection."
+            label="Enable Real-time Mode"
+            description="Prevents delay from accumulating when mirroring. Keep this off unless both the Wii and computer are on a wired LAN connection."
           />
         </section>
 
@@ -126,7 +126,7 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
             <Toggle
               value={showAutoswitcher}
               onChange={() => setShowAutoswitcher(!showAutoswitcher)}
-              label="Autoswitcher"
+              label="Enable Autoswitcher"
               description={
                 <span
                   css={css`
@@ -135,7 +135,7 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
                     }
                   `}
                 >
-                  Enables automatic hiding and showing of an OBS source (e.g. your Dolphin capture) when the game is
+                  Allows automatic hiding and showing of an OBS source (e.g. your Dolphin capture) when the game is
                   active. Requires <A href="https://github.com/Palakis/obs-websocket">OBS Websocket Plugin</A>.
                 </span>
               }
@@ -175,14 +175,14 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
               <Toggle
                 value={Boolean(enableRelay)}
                 onChange={(checked) => setValue("enableRelay", checked)}
-                label="Console Relay"
-                description="The relay allows external programs (e.g. stream layouts) to tap into the raw Slippi data stream without affecting mirroring.
-                This connection's relay port will be shown on the console card after you have saved and is activated once you select connect."
+                label="Enable Console Relay"
+                description="Allows external programs to read live game data by connecting to a local endpoint."
               />
             </section>
             <section>
               <SettingDescription label="Connection Port">
-                {`The port used for connecting to console. Only change this if connecting to a Console Relay. If unsure, leave it as ${Ports.DEFAULT}.`}
+                The port used for connecting to console. Only change this if connecting to a Console Relay. If unsure,
+                leave it as {Ports.DEFAULT}.
               </SettingDescription>
               <Controller
                 name="port"
