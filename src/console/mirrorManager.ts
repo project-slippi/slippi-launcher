@@ -156,7 +156,7 @@ export class MirrorManager {
             autoSwitcher.handleStatusOutput(700);
           }
           if (relay) {
-            relay.clearBuffer(); // clear buffer after each game to avoid concating a gigantic array
+            relay.clearBuffer().catch(log.warn); // clear buffer after each game to avoid concating a gigantic array
           }
           break;
         }
