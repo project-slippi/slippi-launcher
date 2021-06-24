@@ -126,7 +126,7 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
         >
           {isConnected ? "Disconnect" : "Connect"}
         </Button>
-        <Button size="small" onClick={onMirror} color="secondary" disabled={!isConnected}>
+        <Button size="small" onClick={onMirror} color="primary" disabled={!isConnected}>
           Mirror
         </Button>
       </CardActions>
