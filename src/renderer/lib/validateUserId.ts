@@ -10,6 +10,11 @@ export interface ValidateUserIdResponse {
 }
 
 export const validateUserId = async (userId: string, timeout = 2500): Promise<ValidateUserIdResponse> => {
+  // First check that the user id is only alphanumeric
+  if (!userId.match(/^[0-9a-z]+$/)) {
+    throw new Error("Invalid user ID format");
+  }
+
   // Create a new AbortController instance for this request
   const controller = new AbortController();
   // Get the abortController's signal
