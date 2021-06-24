@@ -49,8 +49,7 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
   const obsSourceName = watch("obsSourceName");
   const enableRelay = watch("enableRelay");
 
-  const [showAutoswitcher, setShowAutoswitcher] = React.useState(obsIP !== undefined && obsSourceName !== undefined);
-  const [showConnPort, setShowConnPort] = React.useState(port !== undefined);
+  const [showAutoswitcher, setShowAutoswitcher] = React.useState(Boolean(obsIP && obsSourceName));
 
   const onFormSubmit = handleSubmit(onSubmit);
 
