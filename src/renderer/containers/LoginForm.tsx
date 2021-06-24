@@ -20,11 +20,13 @@ const useLoginStore = create(
   combine(
     {
       email: "",
+      displayName: "",
       password: "",
       confirmPassword: "",
     },
     (set) => ({
       setEmail: (email: string) => set({ email }),
+      setDisplayName: (displayName: string) => set({ displayName }),
       setPassword: (password: string) => set({ password }),
       setConfirmPassword: (confirmPassword: string) => set({ confirmPassword }),
     }),
@@ -57,6 +59,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 }) => {
   const email = useLoginStore((store) => store.email);
   const setEmail = useLoginStore((store) => store.setEmail);
+  const displayName = useLoginStore((store) => store.displayName);
+  const setDisplayName = useLoginStore((store) => store.setDisplayName);
   const password = useLoginStore((store) => store.password);
   const setPassword = useLoginStore((store) => store.setPassword);
   const confirmPassword = useLoginStore((store) => store.confirmPassword);
@@ -70,13 +74,14 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       if (password !== confirmPassword) {
         throw new Error("Passwords do not match");
       }
-      user = await signUp(email, password);
+      user = await signUp(email, displayName, password);
     } else {
       user = await login(email, password);
     }
     if (user) {
       // Clear the form
       setEmail("");
+      setDisplayName("");
       setPassword("");
       setConfirmPassword("");
 
@@ -113,6 +118,27 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           />
         </Grid>
       </Grid>
+      {isSignUp && (
+        <Grid container alignItems="flex-end" style={{ marginTop: 15 }}>
+          <Grid item md={true} sm={true} xs={true}>
+            <TextField
+              disabled={loading}
+              label="Display Name"
+              variant="filled"
+              value={displayName}
+              autoFocus={!disableAutoFocus}
+              fullWidth={true}
+              required={true}
+              onChange={(e) => setDisplayName(e.target.value)}
+              InputLabelProps={{
+                classes: {
+                  root: classes.cssLabel,
+                },
+              }}
+            />
+          </Grid>
+        </Grid>
+      )}
       <Grid container alignItems="flex-end" style={{ marginTop: 15 }}>
         <Grid item md={true} sm={true} xs={true}>
           <TextField

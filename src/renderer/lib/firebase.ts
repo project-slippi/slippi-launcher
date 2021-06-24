@@ -41,8 +41,10 @@ export async function initializeFirebase(): Promise<firebase.User | null> {
   });
 }
 
-export const signUp = async (email: string, password: string) => {
-  return firebase.auth().createUserWithEmailAndPassword(email, password);
+export const signUp = async (email: string, displayName: string, password: string) => {
+  const createUser = firebase.functions().httpsCallable("createUser");
+  await createUser({ email: email, password: password, displayName: displayName });
+  return firebase.auth().signInWithEmailAndPassword(email, password);
 };
 
 export const login = async (email: string, password: string) => {
