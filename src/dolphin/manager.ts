@@ -111,8 +111,9 @@ export class DolphinManager extends EventEmitter {
         break;
       }
     }
+
     // No dolphins of launchType are open so lets reinstall
-    downloadAndInstallDolphin(launchType, log.info, true);
+    await downloadAndInstallDolphin(launchType, log.info, true);
   }
 
   public async clearCache(launchType: DolphinLaunchType) {

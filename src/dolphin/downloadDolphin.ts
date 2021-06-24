@@ -15,7 +15,7 @@ import { DolphinLaunchType } from "./types";
 import { findDolphinExecutable } from "./util";
 
 function logDownloadInfo(message: string): void {
-  dolphinDownloadLogReceived.main!.trigger({ message });
+  void dolphinDownloadLogReceived.main!.trigger({ message });
 }
 
 export async function assertDolphinInstallation(
@@ -31,7 +31,7 @@ export async function assertDolphinInstallation(
     const isOutdated = await compareDolphinVersion(type, latestVersion);
     if (isOutdated) {
       log(`${type} Dolphin installation is outdated. Downloading latest...`);
-      downloadAndInstallDolphin(type, log);
+      await downloadAndInstallDolphin(type, log);
       return;
     }
     log("No update found...");

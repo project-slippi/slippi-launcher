@@ -14,6 +14,7 @@ import { colors } from "common/colors";
 import { checkValidIso } from "common/ipc";
 import React from "react";
 import { useDropzone } from "react-dropzone";
+import { useToasts } from "react-toast-notifications";
 
 import { useIsoPath } from "@/lib/hooks/useSettings";
 import { hasBorder } from "@/styles/hasBorder";
@@ -80,7 +81,10 @@ export const IsoSelectionStep: React.FC = () => {
   });
   const invalidIso = Boolean(tempIsoPath) && !loading && !validIsoPath;
   const handleClose = () => setTempIsoPath("");
-  const onConfirm = () => setIsoPath(tempIsoPath);
+  const { addToast } = useToasts();
+  const onConfirm = () => {
+    setIsoPath(tempIsoPath).catch((err) => addToast(err.message, { appearance: "error" }));
+  };
 
   React.useEffect(() => {
     // Auto-confirm ISO if it's valid

@@ -58,7 +58,7 @@ export class MirrorManager {
 
     const fileWriter = new SlpFileWriter({ folderPath: config.folderPath, consoleNickname: "unknown" });
     fileWriter.on(SlpFileWriterEvent.NEW_FILE, (currFilePath) => {
-      this._playFile(currFilePath, config.ipAddress);
+      this._playFile(currFilePath, config.ipAddress).catch(log.warn);
 
       // Let the front-end know of the new file that we're writing too
       consoleMirrorStatusUpdated
@@ -68,7 +68,7 @@ export class MirrorManager {
             filename: path.basename(currFilePath),
           },
         })
-        .catch((err) => log.warn(err));
+        .catch(log.warn);
     });
 
     // Clear the current writing file
@@ -193,18 +193,18 @@ export class MirrorManager {
     details.isMirroring = true;
     if (details.autoSwitcher) {
       log.info("[Mirroring] Connecting to OBS");
-      details.autoSwitcher.connect();
+      await details.autoSwitcher.connect();
     }
-    this._playFile("", ip);
+    await this._playFile("", ip);
   }
 
-  private _playFile(filePath: string, playbackId: string) {
+  private async _playFile(filePath: string, playbackId: string) {
     const replayComm: ReplayCommunication = {
       mode: "mirror",
       isRealTimeMode: this.mirrors[playbackId].isRealTimeMode,
       replay: filePath,
     };
-    dolphinManager.launchPlaybackDolphin(playbackId, replayComm);
+    return dolphinManager.launchPlaybackDolphin(playbackId, replayComm);
   }
 }
 

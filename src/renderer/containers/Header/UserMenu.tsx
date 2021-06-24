@@ -13,6 +13,7 @@ import { slippiActivationUrl } from "common/constants";
 import { shell } from "electron";
 import firebase from "firebase";
 import React from "react";
+import { useToasts } from "react-toast-notifications";
 
 import { logout } from "@/lib/firebase";
 import { useAccount } from "@/lib/hooks/useAccount";
@@ -29,6 +30,7 @@ export const UserMenu: React.FC<{
   const [openLogoutPrompt, setOpenLogoutPrompt] = React.useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
+  const { addToast } = useToasts();
   const onLogout = async () => {
     try {
       await logout();
@@ -61,7 +63,7 @@ export const UserMenu: React.FC<{
           <MenuItem
             onClick={() => {
               closeMenu();
-              shell.openExternal(slippiActivationUrl);
+              void shell.openExternal(slippiActivationUrl);
             }}
           >
             Activate online play
@@ -71,7 +73,7 @@ export const UserMenu: React.FC<{
           <MenuItem
             onClick={() => {
               closeMenu();
-              refreshPlayKey();
+              refreshPlayKey().catch((err) => addToast(err.message, { appearance: "error" }));
             }}
           >
             Refresh activation status

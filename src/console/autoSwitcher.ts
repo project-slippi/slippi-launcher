@@ -64,13 +64,16 @@ export class AutoSwitcher {
   }
 
   private _updateSourceVisibility(show: boolean) {
-    this.obsPairs.forEach((pair) => {
-      this.obs.send("SetSceneItemProperties", {
-        "scene-name": pair.scene,
-        item: { name: pair.source },
-        visible: show,
-      } as any);
+    const promises = this.obsPairs.map((pair) => {
+      return this.obs
+        .send("SetSceneItemProperties", {
+          "scene-name": pair.scene,
+          item: { name: pair.source },
+          visible: show,
+        } as any)
+        .catch(log.warn);
     });
+    Promise.all(promises).catch(log.warn);
   }
 
   private _setStatus(value: boolean) {

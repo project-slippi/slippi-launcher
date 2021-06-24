@@ -4,7 +4,7 @@ import { worker as replayBrowserWorker } from "./workerInterface";
 loadReplayFolder.main!.handle(async ({ folderPath }) => {
   const w = await replayBrowserWorker;
   w.getProgressObservable().subscribe((progress) => {
-    loadProgressUpdated.main!.trigger(progress);
+    loadProgressUpdated.main!.trigger(progress).catch(console.warn);
   });
   const result = await w.loadReplayFolder(folderPath);
   return result;

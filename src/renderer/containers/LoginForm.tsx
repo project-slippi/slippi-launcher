@@ -91,7 +91,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       className={className}
       onSubmit={(e) => {
         e.preventDefault();
-        execute();
+        void execute();
       }}
     >
       <Grid container alignItems="flex-end">

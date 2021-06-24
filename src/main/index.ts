@@ -18,7 +18,7 @@ import { setupListeners } from "./listeners";
 
 // Check for updates
 autoUpdater.logger = log;
-autoUpdater.checkForUpdatesAndNotify();
+autoUpdater.checkForUpdatesAndNotify().catch(log.warn);
 
 // global reference to mainWindow (necessary to prevent window from being garbage collected)
 let mainWindow: BrowserWindow | null = null;
@@ -54,9 +54,9 @@ function createMainWindow() {
   }
 
   if (isDevelopment) {
-    window.loadURL(`http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}`);
+    void window.loadURL(`http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}`);
   } else {
-    window.loadURL(
+    void window.loadURL(
       formatUrl({
         pathname: path.join(__dirname, "index.html"),
         protocol: "file",
@@ -79,7 +79,7 @@ function createMainWindow() {
   // Automatically open new-tab/new-window URLs in their default browser
   window.webContents.on("new-window", (event: Event, url: string) => {
     event.preventDefault();
-    shell.openExternal(url);
+    void shell.openExternal(url);
   });
 
   window.once("ready-to-show", () => {

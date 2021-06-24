@@ -32,7 +32,7 @@ export const useAppListeners = () => {
   const initialized = useAppStore((store) => store.initialized);
   const initializeApp = useAppInitialization();
   React.useEffect(() => {
-    initializeApp();
+    void initializeApp();
   }, []);
 
   // Subscribe to user auth changes to keep store up to date
@@ -50,7 +50,7 @@ export const useAppListeners = () => {
         setUser(user);
 
         // Refresh the play key
-        refreshPlayKey();
+        void refreshPlayKey();
       });
 
       // Unsubscribe on unmount

@@ -38,7 +38,7 @@ export function download(url: string, dest: string): Promise<void> {
           return;
         }
 
-        download(nextUrl, dest).then(() => resolve());
+        void download(nextUrl, dest).then(() => resolve());
       } else {
         reject(new Error(`Download request failed, response status: ${res.statusCode} ${res.statusMessage}`));
       }

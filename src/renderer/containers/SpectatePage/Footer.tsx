@@ -22,7 +22,7 @@ export const Footer: React.FC = () => {
     if (result.canceled || res.length === 0) {
       return;
     }
-    setSpectateSlpFolder(res[0]);
+    await setSpectateSlpFolder(res[0]);
   };
   return (
     <BasicFooter>

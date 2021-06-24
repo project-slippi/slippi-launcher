@@ -42,7 +42,7 @@ export class BroadcastManager {
     this.dolphinConnection = new DolphinConnection();
     this.dolphinConnection.on(ConnectionEvent.STATUS_CHANGE, (status: number) => {
       log.info(`[Broadcast] Dolphin status change: ${status}`);
-      dolphinStatusChanged.main!.trigger({ status });
+      dolphinStatusChanged.main!.trigger({ status }).catch(log.warn);
 
       // Disconnect from Slippi server when we disconnect from Dolphin
       if (status === ConnectionStatus.DISCONNECTED) {
@@ -121,8 +121,8 @@ export class BroadcastManager {
         message = message.substring(pos + label.length, endPos >= 0 ? endPos : undefined);
       }
 
-      slippiStatusChanged.main!.trigger({ status: ConnectionStatus.DISCONNECTED });
-      broadcastErrorOccurred.main!.trigger({ errorMessage: message });
+      slippiStatusChanged.main!.trigger({ status: ConnectionStatus.DISCONNECTED }).catch(log.warn);
+      broadcastErrorOccurred.main!.trigger({ errorMessage: message }).catch(log.warn);
     });
 
     socket.on("connect", (connection: connection) => {
@@ -164,7 +164,7 @@ export class BroadcastManager {
         this.isBroadcastReady = true;
 
         this.broadcastId = broadcastId;
-        slippiStatusChanged.main!.trigger({ status: ConnectionStatus.CONNECTED });
+        slippiStatusChanged.main!.trigger({ status: ConnectionStatus.CONNECTED }).catch(log.warn);
 
         // Process any events that may have been missed when we disconnected
         this._handleGameData();
@@ -172,12 +172,12 @@ export class BroadcastManager {
 
       connection.on("error", (err: Error) => {
         log.error("[Broadcast] WS connection error encountered\n", err);
-        broadcastErrorOccurred.main!.trigger({ errorMessage: err.message });
+        broadcastErrorOccurred.main!.trigger({ errorMessage: err.message }).catch(log.warn);
       });
 
       connection.on("close", (code: number, reason: string) => {
         log.info(`[Broadcast] WS connection closed: ${code}, ${reason}`);
-        slippiStatusChanged.main!.trigger({ status: ConnectionStatus.DISCONNECTED });
+        slippiStatusChanged.main!.trigger({ status: ConnectionStatus.DISCONNECTED }).catch(log.warn);
 
         // Clear the socket and disconnect from Dolphin too if we're still connected
         this.wsConnection = null;
@@ -185,7 +185,7 @@ export class BroadcastManager {
 
         if (code === 1006) {
           // Here we have an abnormal disconnect... try to reconnect?
-          this.start(config);
+          this.start(config).catch(console.error);
         } else {
           // If normal close, disconnect from dolphin
           this.dolphinConnection.disconnect();
@@ -275,13 +275,13 @@ export class BroadcastManager {
 
               if (prevBroadcast) {
                 // TODO: Figure out if this config.name guaranteed to be the correct name?
-                startBroadcast(prevBroadcast.id, config.name);
+                startBroadcast(prevBroadcast.id, config.name).catch(log.warn);
                 return;
               }
             }
 
             // Pass in null as the broadcast ID to tell the server to generate an ID for us
-            startBroadcast(null, config.name);
+            startBroadcast(null, config.name).catch(log.warn);
             break;
           }
 
@@ -292,7 +292,7 @@ export class BroadcastManager {
         }
       });
 
-      getBroadcasts();
+      getBroadcasts().catch(log.warn);
     });
 
     log.info("[Broadcast] Connecting to WS service");
@@ -373,7 +373,7 @@ export class BroadcastManager {
       this.dolphinConnection.on(ConnectionEvent.STATUS_CHANGE, connectionChangeHandler);
 
       // Actually initiate the connection
-      this.dolphinConnection.connect(ip, port);
+      this.dolphinConnection.connect(ip, port).catch(reject);
     });
   }
 

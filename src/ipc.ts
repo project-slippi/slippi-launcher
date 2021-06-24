@@ -234,7 +234,7 @@ export const makeEndpoint: EndpointMaker = {
               }
 
               //log.debug("IPC: Querying", name, payloadSliceToLog);
-              doQuery();
+              void doQuery();
             }, [name, reqCounter, payloadHash]);
 
             return {
@@ -285,7 +285,7 @@ export const makeEndpoint: EndpointMaker = {
           useEvent: (handler, memoizedArgs) => {
             function handleEvent(_: IpcRendererEvent, payload: I) {
               //log.silly("C/ipc/useIPCEvent: Handling IPC event", name, payload);
-              handler(payload);
+              void handler(payload);
             }
 
             useEffect(() => {

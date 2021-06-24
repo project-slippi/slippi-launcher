@@ -62,12 +62,15 @@ export class PlaybackDolphinInstance extends DolphinInstance {
     this.commPath = generateTempCommunicationFile();
 
     // Delete the comm file once Dolphin is closed
-    this.on("close", () => {
-      fileExists(this.commPath).then((exists) => {
+    this.on("close", async () => {
+      try {
+        const exists = await fileExists(this.commPath);
         if (exists) {
-          fs.unlink(this.commPath).catch((reason) => log.warn(`could not unlink comm file...\n${reason}`));
+          await fs.unlink(this.commPath);
         }
-      });
+      } catch (err) {
+        log.warn(err);
+      }
     });
   }
 

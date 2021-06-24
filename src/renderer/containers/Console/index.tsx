@@ -5,6 +5,7 @@ import styled from "@emotion/styled";
 import AddIcon from "@material-ui/icons/Add";
 import { StoredConnection } from "@settings/types";
 import React from "react";
+import { useToasts } from "react-toast-notifications";
 
 import { DualPane } from "@/components/DualPane";
 import { Footer } from "@/components/Footer";
@@ -37,14 +38,17 @@ export const Console: React.FC = () => {
   const savedIps = savedConnections.map((conn) => conn.ipAddress);
   const availableConsoles = useConsoleDiscoveryStore((store) => store.consoleItems);
   const consoleItemsToShow = availableConsoles.filter((item) => !savedIps.includes(item.ip));
+  const { addToast } = useToasts();
 
   React.useEffect(() => {
     // Start scanning for new consoles
-    startDiscovery.renderer!.trigger({});
+    startDiscovery.renderer!.trigger({}).catch((err) => {
+      addToast(err.message ?? JSON.stringify(err), { appearance: "error" });
+    });
 
     // Stop scanning on component unmount
     return () => {
-      stopDiscovery.renderer!.trigger({});
+      void stopDiscovery.renderer!.trigger({});
     };
   }, []);
 

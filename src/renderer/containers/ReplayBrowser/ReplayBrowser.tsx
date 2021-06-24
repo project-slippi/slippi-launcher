@@ -53,15 +53,15 @@ export const ReplayBrowser: React.FC = () => {
   const { goToReplayStatsPage } = useReplayBrowserNavigation();
 
   React.useEffect(() => {
-    init(rootSlpPath);
+    init(rootSlpPath).catch((err) => addToast(err.message, { appearance: "error" }));
   }, [rootSlpPath, init]);
 
   const setSelectedItem = (index: number | null) => {
     if (index === null) {
-      clearSelectedFile();
+      void clearSelectedFile();
     } else {
       const file = filteredFiles[index];
-      selectFile(file, index, filteredFiles.length);
+      void selectFile(file, index, filteredFiles.length);
       goToReplayStatsPage(file.fullPath);
     }
   };

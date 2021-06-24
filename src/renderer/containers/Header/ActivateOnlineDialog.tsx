@@ -7,6 +7,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import React from "react";
+import { useToasts } from "react-toast-notifications";
 
 import { useAccount } from "@/lib/hooks/useAccount";
 
@@ -23,13 +24,18 @@ export const ActivateOnlineDialog: React.FC<ActivateOnlineDialogProps> = ({ open
   const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
   const refreshPlayKey = useAccount((store) => store.refreshPlayKey);
   const loading = useAccount((store) => store.loading);
+  const { addToast } = useToasts();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    refreshPlayKey().then(() => {
-      onClose();
-      onSubmit();
-    });
+    refreshPlayKey()
+      .then(() => {
+        onClose();
+        onSubmit();
+      })
+      .catch((err) => {
+        addToast(err.message, { apperance: "error" });
+      });
   };
 
   return (

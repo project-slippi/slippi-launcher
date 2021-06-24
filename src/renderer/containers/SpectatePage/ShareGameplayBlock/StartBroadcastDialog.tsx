@@ -68,7 +68,7 @@ export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({
     userQuery.remove();
     setValue(inputText);
     if (!skipUserValidation) {
-      fetchUser();
+      void fetchUser();
     }
   }, []);
 

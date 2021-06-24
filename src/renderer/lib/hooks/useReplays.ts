@@ -30,8 +30,8 @@ type StoreState = {
 
 type StoreReducers = {
   init: (rootFolder: string, forceReload?: boolean, currentFolder?: string) => Promise<void>;
-  selectFile: (file: FileResult, index?: number | null, total?: number | null) => Promise<void>;
-  clearSelectedFile: () => Promise<void>;
+  selectFile: (file: FileResult, index?: number | null, total?: number | null) => void;
+  clearSelectedFile: () => void;
   removeFile: (filePath: string) => void;
   loadDirectoryList: (folder: string) => Promise<void>;
   loadFolder: (childPath?: string, forceReload?: boolean) => Promise<void>;
@@ -81,13 +81,13 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     await Promise.all([loadDirectoryList(currentFolder ?? rootFolder), loadFolder(currentFolder ?? rootFolder, true)]);
   },
 
-  selectFile: async (file, index = null, total = null) => {
+  selectFile: (file, index = null, total = null) => {
     set({
       selectedFile: { fileResult: file, index, total },
     });
   },
 
-  clearSelectedFile: async () => {
+  clearSelectedFile: () => {
     set({
       selectedFile: {
         fileResult: null,

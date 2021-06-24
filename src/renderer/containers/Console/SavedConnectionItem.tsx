@@ -46,7 +46,11 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
         autoDismiss: true,
       });
     }
-    startConsoleMirror(connection.ipAddress);
+    startConsoleMirror(connection.ipAddress).catch((err) => {
+      addToast(err.message ?? JSON.stringify(err), {
+        appearance: "error",
+      });
+    });
   };
   const onDisconnect = () => disconnectFromConsole(connection.ipAddress);
   const statusName = status === ConnectionStatus.DISCONNECTED && isAvailable ? "Available" : renderStatusName(status);

@@ -19,5 +19,7 @@ export const usePlayFiles = () => {
     }
   };
 
-  return playFiles;
+  return (files: ReplayQueueItem[]) => {
+    void playFiles(files);
+  };
 };

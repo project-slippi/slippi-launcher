@@ -9,6 +9,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import SyncIcon from "@material-ui/icons/Sync";
 import debounce from "lodash/debounce";
 import React from "react";
+import { useToasts } from "react-toast-notifications";
 
 import { Button, Checkbox, Dropdown } from "@/components/FormInputs";
 import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
@@ -47,9 +48,10 @@ export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarPro
   const sortDirection = useReplayFilter((store) => store.sortDirection);
   const setSortDirection = useReplayFilter((store) => store.setSortDirection);
   const [searchText, setSearchText] = React.useState(storeSearchText ?? "");
+  const { addToast } = useToasts();
 
   const refresh = React.useCallback(() => {
-    init(rootSlpPath, true, currentFolder);
+    init(rootSlpPath, true, currentFolder).catch((err) => addToast(err.message, { appearance: "error" }));
   }, [rootSlpPath, init, currentFolder]);
 
   const debounceChange = debounce((text: string) => {

@@ -9,6 +9,7 @@ import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import { FolderResult } from "@replays/types";
 import { colors } from "common/colors";
 import React from "react";
+import { useToasts } from "react-toast-notifications";
 
 import { useReplays } from "@/lib/hooks/useReplays";
 
@@ -27,11 +28,13 @@ export const FolderTreeNode: React.FC<FolderTreeNodeProps> = ({
   const loadFolder = useReplays((store) => store.loadFolder);
   const toggleFolder = useReplays((store) => store.toggleFolder);
   const currentFolder = useReplays((store) => store.currentFolder);
+  const { addToast } = useToasts();
   const hasChildren = subdirectories.length > 0;
-  const onClick = async () => {
+  const onClick = () => {
     console.log(`loading directory: ${name}`);
-    loadDirectoryList(fullPath);
-    loadFolder(fullPath);
+    Promise.all([loadDirectoryList(fullPath), loadFolder(fullPath)]).catch((err) =>
+      addToast(err.message, { appearance: "error" }),
+    );
   };
   const isSelected = currentFolder === fullPath;
   const labelColor = isSelected ? colors.grayDark : "rgba(255, 255, 255, 0.5)";
@@ -55,7 +58,7 @@ export const FolderTreeNode: React.FC<FolderTreeNodeProps> = ({
               e.preventDefault();
               e.stopPropagation();
               if (!hasChildren) {
-                onClick();
+                void onClick();
               } else {
                 toggleFolder(fullPath);
               }

@@ -63,12 +63,12 @@ export class SpectateManager extends EventEmitter {
     });
   }
 
-  private _playFile(filePath: string, playbackId: string) {
+  private async _playFile(filePath: string, playbackId: string) {
     const replayComm: ReplayCommunication = {
       mode: "mirror",
       replay: filePath,
     };
-    dolphinManager.launchPlaybackDolphin(playbackId, replayComm);
+    return dolphinManager.launchPlaybackDolphin(playbackId, replayComm);
   }
 
   private _handleEvents(obj: { type: string; broadcastId: string; cursor: string; events: any[] }) {
@@ -298,7 +298,7 @@ export class SpectateManager extends EventEmitter {
     });
 
     slpFileWriter.on(SlpFileWriterEvent.NEW_FILE, (currFilePath) => {
-      this._playFile(currFilePath, dolphinPlaybackId);
+      this._playFile(currFilePath, dolphinPlaybackId).catch(log.warn);
     });
 
     if (targetPath) {
@@ -327,7 +327,7 @@ export class SpectateManager extends EventEmitter {
     // Play an empty file such that we just launch into the waiting for game screen, this is
     // used to clear out any previous file that we were reading for. The file will get updated
     // by the fileWriter
-    this._playFile("", dolphinPlaybackId);
+    this._playFile("", dolphinPlaybackId).catch(log.warn);
   }
 }
 
