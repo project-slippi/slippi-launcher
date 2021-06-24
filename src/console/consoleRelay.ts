@@ -45,7 +45,7 @@ export class ConsoleRelay {
     this.server = null;
   }
 
-  public writeData(newData: Buffer) {
+  public write(newData: Buffer) {
     this.dataBuffer.buffersToConcat.push(newData);
     if (this.clients) {
       this.clients.forEach((client) => {

@@ -123,7 +123,9 @@ export class MirrorManager {
 
       connection.on(ConnectionEvent.DATA, (data: Buffer) => {
         fileWriter.write(data);
-        relay?.writeData(data);
+        if (relay) {
+          relay.write(data);
+        }
       });
     });
     log.info(config.port);
