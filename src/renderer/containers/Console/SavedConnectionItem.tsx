@@ -72,39 +72,48 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
           }
         `}
       >
+        <div
+          css={css`
+            display: flex;
+            align-items: center;
+            flex: 1;
+            margin-bottom: 10px;
+          `}
+        >
+          <LabelledText label="Target folder">
+            <span
+              css={css`
+                font-size: 14px;
+              `}
+            >
+              {connection.folderPath}
+            </span>
+          </LabelledText>
+          {connection.enableRelay && (
+            <LabelledText
+              label="Relay Port"
+              css={css`
+                margin-left: 20px;
+              `}
+            >
+              <span
+                css={css`
+                  font-size: 14px;
+                `}
+              >
+                {Ports.RELAY_START + connection.id}
+              </span>
+            </LabelledText>
+          )}
+        </div>
         {currentFilename && (
-          <LabelledText
-            label="Current file"
-            css={css`
-              margin-bottom: 5px;
-            `}
-          >
+          <LabelledText label="Current file" css={css``}>
             <span
               css={css`
                 font-size: 14px;
               `}
             >
               {currentFilename}
-            </span>
-          </LabelledText>
-        )}
-        <LabelledText label="Target folder">
-          <span
-            css={css`
-              font-size: 14px;
-            `}
-          >
-            {connection.folderPath}
-          </span>
-        </LabelledText>
-        {connection.enableRelay && (
-          <LabelledText label="Relay Port">
-            <span
-              css={css`
-                font-size: 14px;
-              `}
-            >
-              {Ports.RELAY_START + connection.id}
             </span>
           </LabelledText>
         )}
