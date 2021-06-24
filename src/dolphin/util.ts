@@ -25,7 +25,7 @@ export async function findDolphinExecutable(type: DolphinLaunchType, dolphinPath
       case "darwin":
         return filename.endsWith("Dolphin.app");
       case "linux":
-        return filename.endsWith(".AppImage");
+        return filename.endsWith(".AppImage") || filename.endsWith("dolphin-emu");
       default:
         return false;
     }
