@@ -10,7 +10,7 @@ import WarningIcon from "@material-ui/icons/Warning";
 import { Ports } from "@slippi/slippi-js";
 import { colors } from "common/colors";
 import React from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 import { ExternalLink as A } from "@/components/ExternalLink";
 import { Toggle } from "@/components/FormInputs/Toggle";
@@ -37,11 +37,11 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
   const {
     handleSubmit,
     watch,
+    control,
     setValue,
     formState: { errors },
   } = useForm<FormValues>({ defaultValues });
   const ipAddress = watch("ipAddress");
-  const port = watch("port");
   const folderPath = watch("folderPath");
   const isRealTimeMode = watch("isRealTimeMode");
   const obsIP = watch("obsIP");
@@ -173,23 +173,30 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
             </section>
             <section>
               <SettingDescription label="Connection Port">
-                The port we will use for connecting to the console. This is typically changed when using the Console
-                Relay to mirror from another computer.
+                {`The port used for connecting to console. Only change this if connecting to a Console Relay. If unsure, leave it as ${Ports.DEFAULT}.`}
               </SettingDescription>
-              <TextField
-                css={css`
-                  input::-webkit-outer-spin-button,
-                  input::-webkit-inner-spin-button {
-                    /* display: none; <- Crashes Chrome on hover */
-                    -webkit-appearance: none;
-                    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
-                  }
-                `}
-                label="Port Number"
-                value={port ?? Ports.DEFAULT}
-                required={true}
-                type="number"
-                onChange={(e) => setValue("port", Number(e.target.value))}
+              <Controller
+                name="port"
+                control={control}
+                render={({ field: { onChange, value }, fieldState: { error } }) => (
+                  <TextField
+                    css={css`
+                      input::-webkit-outer-spin-button,
+                      input::-webkit-inner-spin-button {
+                        -webkit-appearance: none;
+                        margin: 0;
+                      }
+                    `}
+                    label="Port"
+                    required={true}
+                    value={isNaN(value) ? "" : value.toString()}
+                    onChange={(e) => onChange(parseInt(e.target.value))}
+                    error={!!error}
+                    helperText={error ? error.message : null}
+                    type="number"
+                  />
+                )}
+                rules={{ validate: (val) => !isNaN(val) || "Invalid port number" }}
               />
             </section>
           </Collapse>
