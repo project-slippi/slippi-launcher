@@ -99,27 +99,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         void execute();
       }}
     >
-      <Grid container alignItems="flex-end">
-        <Grid item md={true} sm={true} xs={true}>
-          <TextField
-            disabled={loading}
-            label="Email"
-            variant="filled"
-            value={email}
-            autoFocus={!disableAutoFocus}
-            fullWidth={true}
-            required={true}
-            onChange={(e) => setEmail(e.target.value)}
-            InputLabelProps={{
-              classes: {
-                root: classes.cssLabel,
-              },
-            }}
-          />
-        </Grid>
-      </Grid>
       {isSignUp && (
-        <Grid container alignItems="flex-end" style={{ marginTop: 15 }}>
+        <Grid container alignItems="flex-end">
           <Grid item md={true} sm={true} xs={true}>
             <TextField
               disabled={loading}
@@ -139,6 +120,25 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           </Grid>
         </Grid>
       )}
+      <Grid container alignItems="flex-end" style={{ marginTop: 15 }}>
+        <Grid item md={true} sm={true} xs={true}>
+          <TextField
+            disabled={loading}
+            label="Email"
+            variant="filled"
+            value={email}
+            autoFocus={!disableAutoFocus}
+            fullWidth={true}
+            required={true}
+            onChange={(e) => setEmail(e.target.value)}
+            InputLabelProps={{
+              classes: {
+                root: classes.cssLabel,
+              },
+            }}
+          />
+        </Grid>
+      </Grid>
       <Grid container alignItems="flex-end" style={{ marginTop: 15 }}>
         <Grid item md={true} sm={true} xs={true}>
           <TextField
