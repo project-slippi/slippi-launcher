@@ -119,7 +119,7 @@ export class DolphinManager extends EventEmitter {
     const userFolder = await findUserFolder(launchType);
     const cacheFolder = path.join(userFolder, "Cache");
     try {
-      fs.remove(cacheFolder);
+      await fs.remove(cacheFolder);
     } catch (err) {
       log.error(err);
       throw err;

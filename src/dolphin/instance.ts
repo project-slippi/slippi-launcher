@@ -1,6 +1,7 @@
 import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 import { randomBytes } from "crypto";
 import { app } from "electron";
+import log from "electron-log";
 import { EventEmitter } from "events";
 import * as fs from "fs-extra";
 import path from "path";
@@ -64,7 +65,7 @@ export class PlaybackDolphinInstance extends DolphinInstance {
     this.on("close", () => {
       fileExists(this.commPath).then((exists) => {
         if (exists) {
-          fs.unlink(this.commPath);
+          fs.unlink(this.commPath).catch((reason) => log.warn(`could not unlink comm file...\n${reason}`));
         }
       });
     });
