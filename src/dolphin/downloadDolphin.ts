@@ -185,10 +185,14 @@ async function installDolphin(
       });
       const binaryLocation = path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "MacOS", "Slippi Dolphin");
       const userInfo = os.userInfo();
-      await fs.chmod(path.join(dolphinPath, "Slippi Dolphin.app"), "777");
-      await fs.chown(path.join(dolphinPath, "Slippi Dolphin.app"), userInfo.uid, userInfo.gid);
-      await fs.chmod(binaryLocation, "777");
-      await fs.chown(binaryLocation, userInfo.uid, userInfo.gid);
+      try {
+        await fs.chmod(path.join(dolphinPath, "Slippi Dolphin.app"), "777");
+        await fs.chown(path.join(dolphinPath, "Slippi Dolphin.app"), userInfo.uid, userInfo.gid);
+        await fs.chmod(binaryLocation, "777");
+        await fs.chown(binaryLocation, userInfo.uid, userInfo.gid);
+      } catch (err) {
+        log(`could not chmod/chown ${type} Dolphin\n${err}`);
+      }
 
       // Move backed up User folder and user.json
       if (alreadyInstalled) {
