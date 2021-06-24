@@ -2,6 +2,7 @@
 
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
+import { Tooltip } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -57,9 +58,13 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
       <CardHeader
         avatar={<WiiIcon fill="#ffffff" width="40px" />}
         action={
-          <IconButton disabled={isConnected} onClick={(e) => onOpenMenu(index, e.currentTarget as HTMLElement)}>
-            <MoreVertIcon />
-          </IconButton>
+          <Tooltip disableHoverListener={!isConnected} title="Options disabled while connected">
+            <div>
+              <IconButton disabled={isConnected} onClick={(e) => onOpenMenu(index, e.currentTarget as HTMLElement)}>
+                <MoreVertIcon />
+              </IconButton>
+            </div>
+          </Tooltip>
         }
         title={title}
         subheader={statusName}
