@@ -23,6 +23,7 @@ type FormValues = {
   obsIP?: string;
   obsSourceName?: string;
   obsPassword?: string;
+  enableRelay?: boolean;
 };
 
 export interface AddConnectionFormProps {
@@ -39,11 +40,16 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
     formState: { errors },
   } = useForm<FormValues>({ defaultValues });
   const ipAddress = watch("ipAddress");
+  const port = watch("port");
   const folderPath = watch("folderPath");
   const isRealTimeMode = watch("isRealTimeMode");
   const obsIP = watch("obsIP");
   const obsPassword = watch("obsPassword");
   const obsSourceName = watch("obsSourceName");
+  const enableRelay = watch("enableRelay");
+
+  const [showAutoswitcher, setShowAutoswitcher] = React.useState(obsIP !== undefined && obsSourceName !== undefined);
+  const [showConnPort, setShowConnPort] = React.useState(port !== undefined);
 
   const onFormSubmit = handleSubmit(onSubmit);
 
@@ -108,50 +114,79 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
               <WarningIcon />
               Only modify these values if you know what you're doing.
             </Notice>
-            <SettingDescription
+            <Toggle
+              value={showAutoswitcher}
+              onChange={() => setShowAutoswitcher(!showAutoswitcher)}
               label="Autoswitcher"
-              css={css`
-                margin-bottom: 10px;
-              `}
-            >
-              <span
-                css={css`
-                  a {
-                    text-decoration: underline;
-                  }
-                `}
-              >
-                Enables automatic hiding and showing of an OBS source (e.g. your Dolphin capture) when the game is
-                active. Requires <A href="https://github.com/Palakis/obs-websocket">OBS Websocket Plugin</A>.
-              </span>
-            </SettingDescription>
-            <div
-              css={css`
-                display: grid;
-                grid-gap: 10px;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                margin-bottom: 10px;
-              `}
-            >
-              <TextField
-                label="OBS Websocket IP:Port"
-                value={obsIP ?? ""}
-                required={showAdvanced}
-                onChange={(e) => setValue("obsIP", e.target.value)}
-              />
-              <TextField
-                label="OBS Password"
-                value={obsPassword ?? ""}
-                onChange={(e) => setValue("obsPassword", e.target.value)}
-                type="password"
-              />
-            </div>
-            <TextField
-              label="OBS Source Name"
-              value={obsSourceName ?? ""}
-              required={showAdvanced}
-              onChange={(e) => setValue("obsSourceName", e.target.value)}
+              description={
+                <span
+                  css={css`
+                    a {
+                      text-decoration: underline;
+                    }
+                  `}
+                >
+                  Enables automatic hiding and showing of an OBS source (e.g. your Dolphin capture) when the game is
+                  active. Requires <A href="https://github.com/Palakis/obs-websocket">OBS Websocket Plugin</A>.
+                </span>
+              }
             />
+            <section>
+              <Collapse in={showAutoswitcher}>
+                <div
+                  css={css`
+                    display: grid;
+                    grid-gap: 10px;
+                    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                    margin: 10px 0px 10px;
+                  `}
+                >
+                  <TextField
+                    label="OBS Websocket IP:Port"
+                    value={obsIP ?? ""}
+                    required={showAutoswitcher}
+                    onChange={(e) => setValue("obsIP", e.target.value)}
+                  />
+                  <TextField
+                    label="OBS Password"
+                    value={obsPassword ?? ""}
+                    onChange={(e) => setValue("obsPassword", e.target.value)}
+                    type="password"
+                  />
+                </div>
+                <TextField
+                  label="OBS Source Name"
+                  value={obsSourceName ?? ""}
+                  required={showAutoswitcher}
+                  onChange={(e) => setValue("obsSourceName", e.target.value)}
+                />
+              </Collapse>
+            </section>
+            <section>
+              <Toggle
+                value={Boolean(enableRelay)}
+                onChange={(checked) => setValue("enableRelay", checked)}
+                label="Console Relay"
+                description="The relay allows external programs (e.g. stream layouts) to tap into the raw Slippi data stream without affecting mirroring.
+                This connection's relay port will be shown on the console card after you have saved and is activated once you select connect."
+              />
+            </section>
+            <section>
+              <Toggle
+                value={showConnPort}
+                onChange={() => setShowConnPort(!showConnPort)}
+                label="Connection Port"
+                description="Set the port to connect to for mirroring. This is typically used with Console Relay from another computer to send mirror again"
+              />
+              <Collapse in={showConnPort}>
+                <TextField
+                  label="Port Number"
+                  value={port ?? ""}
+                  required={showConnPort}
+                  onChange={(e) => setValue("port", Number(e.target.value.replace(/[^0-9]/g, "")))}
+                />
+              </Collapse>
+            </section>
           </Collapse>
         </div>
 

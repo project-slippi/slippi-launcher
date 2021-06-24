@@ -10,7 +10,7 @@ import CardHeader from "@material-ui/core/CardHeader";
 import IconButton from "@material-ui/core/IconButton";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { StoredConnection } from "@settings/types";
-import { ConnectionStatus } from "@slippi/slippi-js";
+import { ConnectionStatus, Ports } from "@slippi/slippi-js";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
 
@@ -97,6 +97,17 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
             {connection.folderPath}
           </span>
         </LabelledText>
+        {connection.enableRelay && (
+          <LabelledText label="Relay Port">
+            <span
+              css={css`
+                font-size: 14px;
+              `}
+            >
+              {Ports.RELAY_START + connection.id}
+            </span>
+          </LabelledText>
+        )}
       </CardContent>
       <CardActions>
         <Button

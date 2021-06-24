@@ -17,6 +17,7 @@ import log from "electron-log";
 import path from "path";
 
 import { AutoSwitcher } from "./autoSwitcher";
+import { ConsoleRelay } from "./consoleRelay";
 import { consoleMirrorStatusUpdated } from "./ipc";
 import { MirrorConfig, MirrorDetails } from "./types";
 
@@ -49,6 +50,7 @@ export class MirrorManager {
   }
 
   public async connect(config: MirrorConfig) {
+    log.info(config.id);
     if (this.mirrors[config.ipAddress]) {
       log.info(`[Mirroring] already connected to Wii @ ${config.ipAddress}`);
       return;
@@ -83,6 +85,12 @@ export class MirrorManager {
         .catch((err) => log.warn(err));
     });
 
+    let relay: ConsoleRelay | null = null;
+    if (config.enableRelay) {
+      log.info("starting relay");
+      relay = new ConsoleRelay(config.id);
+    }
+
     const connection = new ConsoleConnection();
     connection.once("connect", () => {
       log.info("[Mirroring] Connecting to Wii");
@@ -113,8 +121,12 @@ export class MirrorManager {
           .catch((err) => log.warn(err));
       });
 
-      connection.on(ConnectionEvent.DATA, (data) => fileWriter.write(data));
+      connection.on(ConnectionEvent.DATA, (data: Buffer) => {
+        fileWriter.write(data);
+        relay?.writeData(data);
+      });
     });
+    log.info(config.port);
     connection.connect(config.ipAddress, config.port ?? Ports.DEFAULT);
 
     let autoSwitcher: AutoSwitcher | null = null;
@@ -141,6 +153,9 @@ export class MirrorManager {
           if ((payload as GameEndType).gameEndMethod !== 7) {
             autoSwitcher.handleStatusOutput(700);
           }
+          if (relay) {
+            relay.clearBuffer(); // clear buffer after each game to avoid concating a gigantic array
+          }
           break;
         }
       }
@@ -152,6 +167,7 @@ export class MirrorManager {
       fileWriter,
       connection,
       autoSwitcher,
+      relay,
     };
   }
 
@@ -166,6 +182,9 @@ export class MirrorManager {
     details.connection.disconnect();
     if (details.autoSwitcher) {
       details.autoSwitcher.disconnect();
+    }
+    if (details.relay) {
+      details.relay.stopRelay();
     }
     delete this.mirrors[ip];
 

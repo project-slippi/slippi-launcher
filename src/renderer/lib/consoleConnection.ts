@@ -33,10 +33,12 @@ export const deleteConsoleConnection = async (id: number) => {
 
 export const connectToConsole = async (conn: StoredConnection) => {
   const config: MirrorConfig = {
+    id: conn.id,
     ipAddress: conn.ipAddress,
     port: conn.port ?? Ports.DEFAULT,
     folderPath: conn.folderPath,
     isRealTimeMode: conn.isRealTimeMode,
+    enableRelay: conn.enableRelay,
   };
 
   // Add OBS config if necessary
