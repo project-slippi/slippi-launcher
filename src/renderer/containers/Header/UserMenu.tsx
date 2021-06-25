@@ -1,20 +1,14 @@
-import Button from "@material-ui/core/Button";
 import ButtonBase from "@material-ui/core/ButtonBase";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-import { useTheme } from "@material-ui/core/styles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { slippiActivationUrl } from "common/constants";
 import { shell } from "electron";
 import firebase from "firebase";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
 
+import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { logout } from "@/lib/firebase";
 import { useAccount } from "@/lib/hooks/useAccount";
 
@@ -28,8 +22,6 @@ export const UserMenu: React.FC<{
   const refreshPlayKey = useAccount((store) => store.refreshPlayKey);
   const loading = useAccount((store) => store.loading);
   const [openLogoutPrompt, setOpenLogoutPrompt] = React.useState(false);
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
   const { addToast } = useToasts();
   const onLogout = async () => {
     try {
@@ -88,25 +80,17 @@ export const UserMenu: React.FC<{
           Logout
         </MenuItem>
       </Menu>
-      <Dialog
-        fullScreen={fullScreen}
+      <ConfirmationModal
+        title="Are you sure you want to log out?"
+        confirmText="Log out"
         open={openLogoutPrompt}
         onClose={handleClose}
-        aria-labelledby="responsive-dialog-title"
+        onSubmit={onLogout}
+        fullWidth={false}
+        cancelColor="primary"
       >
-        <DialogTitle id="responsive-dialog-title">Are you sure you want to log out?</DialogTitle>
-        <DialogContent>
-          <DialogContentText>You will need to log in again next time you want to play.</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={onLogout} color="primary">
-            Log out
-          </Button>
-        </DialogActions>
-      </Dialog>
+        <DialogContentText>You will need to log in again next time you want to play.</DialogContentText>
+      </ConfirmationModal>
     </div>
   );
 };

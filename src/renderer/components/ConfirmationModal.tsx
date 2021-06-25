@@ -14,6 +14,9 @@ export interface ConfirmationModalProps {
   onSubmit: () => void;
   title: string;
   confirmText?: string;
+  cancelText?: string;
+  cancelColor?: "secondary" | "inherit" | "default" | "primary" | undefined;
+  fullWidth?: boolean;
 }
 
 export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -23,6 +26,9 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   title,
   children,
   confirmText = "Confirm",
+  cancelText = "Cancel",
+  cancelColor = "secondary",
+  fullWidth = true,
 }) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
@@ -35,13 +41,13 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth={true} fullScreen={fullScreen} disableBackdropClick={true}>
+    <Dialog open={open} onClose={onClose} fullWidth={fullWidth} fullScreen={fullScreen} disableBackdropClick={true}>
       <form onSubmit={handleSubmit}>
-        <StyledDialogTitle>{title}</StyledDialogTitle>
+        <StyledDialogTitle id="responsive-dialog-title">{title}</StyledDialogTitle>
         <DialogContent>{children}</DialogContent>
         <DialogActions>
-          <Button onClick={onClose} color="secondary">
-            Cancel
+          <Button onClick={onClose} color={cancelColor}>
+            {cancelText}
           </Button>
           <Button color="primary" type="submit">
             {confirmText}
