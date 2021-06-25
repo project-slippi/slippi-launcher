@@ -3,7 +3,7 @@ import firebase from "firebase";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
-import { fetchPlayKey } from "../playkey";
+import { fetchPlayKey } from "../gql";
 
 export const useAccount = create(
   combine(
