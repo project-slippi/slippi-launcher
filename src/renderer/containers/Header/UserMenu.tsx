@@ -2,7 +2,6 @@ import ButtonBase from "@material-ui/core/ButtonBase";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-import TextField from "@material-ui/core/TextField";
 import { slippiActivationUrl } from "common/constants";
 import { shell } from "electron";
 import firebase from "firebase";
@@ -14,6 +13,7 @@ import { logout } from "@/lib/firebase";
 import { useAccount } from "@/lib/hooks/useAccount";
 import { changeDisplayName } from "@/lib/slippiBackend";
 
+import { NameChangeDialog } from "./NameChangeDialog";
 import { UserInfo } from "./UserInfo";
 
 export const UserMenu: React.FC<{
@@ -21,11 +21,10 @@ export const UserMenu: React.FC<{
   handleError: (error: any) => void;
 }> = ({ user, handleError }) => {
   const playKey = useAccount((store) => store.playKey);
+  const [displayName, setDisplayName] = useAccount((store) => [store.displayName, store.setDisplayName]);
   const refreshPlayKey = useAccount((store) => store.refreshPlayKey);
   const loading = useAccount((store) => store.loading);
   const [openLogoutPrompt, setOpenLogoutPrompt] = React.useState(false);
-  const [name, setName] = React.useState(user.displayName);
-  const [nameChange, setNameChange] = React.useState("");
   const [openNameChangePrompt, setOpenNameChangePrompt] = React.useState(false);
   const { addToast } = useToasts();
   const onLogout = async () => {
@@ -50,10 +49,10 @@ export const UserMenu: React.FC<{
     setOpenNameChangePrompt(false);
     setOpenLogoutPrompt(false);
   };
-  const onChangeName = async () => {
+  const onChangeName = async (name: string) => {
     try {
-      await changeDisplayName(nameChange);
-      setName(nameChange);
+      await changeDisplayName(name);
+      setDisplayName(name);
     } catch (err) {
       console.error(err);
       handleError(err);
@@ -65,7 +64,7 @@ export const UserMenu: React.FC<{
   return (
     <div>
       <ButtonBase onClick={handleClick}>
-        <UserInfo uid={user.uid} displayName={name} playKey={playKey} loading={loading} />
+        <UserInfo uid={user.uid} displayName={displayName} playKey={playKey} loading={loading} />
       </ButtonBase>
       <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={closeMenu}>
         {!playKey && (
@@ -107,26 +106,12 @@ export const UserMenu: React.FC<{
           Logout
         </MenuItem>
       </Menu>
-      <ConfirmationModal
-        title="Change display name"
+      <NameChangeDialog
+        displayName={displayName}
         open={openNameChangePrompt}
-        onClose={handleClose}
         onSubmit={onChangeName}
-        fullWidth={false}
-      >
-        <TextField
-          required={true}
-          id="displayName"
-          variant="filled"
-          autoFocus={true}
-          key={`displayName`} // Change key on new mode to force field to reset
-          name="displayName"
-          value={nameChange || name}
-          label="Display name"
-          fullWidth={true}
-          onChange={(event) => setNameChange(event.target.value)}
-        />
-      </ConfirmationModal>
+        handleClose={handleClose}
+      />
       <ConfirmationModal
         title="Are you sure you want to log out?"
         confirmText="Log out"
