@@ -1,5 +1,3 @@
-/** @jsx jsx */
-import { css, jsx } from "@emotion/react";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import Menu from "@material-ui/core/Menu";
@@ -57,10 +55,10 @@ export const UserMenu: React.FC<{
         <UserInfo uid={user.uid} displayName={displayName} playKey={playKey} loading={loading} />
       </ButtonBase>
       <Menu
-        css={css`
-          margin-top: 54px;
-        `}
         anchorEl={anchorEl}
+        getContentAnchorEl={null}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        transformOrigin={{ vertical: "top", horizontal: "left" }}
         keepMounted
         open={Boolean(anchorEl)}
         onClose={closeMenu}
