@@ -5,10 +5,10 @@ import React from "react";
 
 import { MarkdownContent } from "@/components/MarkdownContent";
 
-export const FaqPage: React.FC = () => {
+export const HelpPage: React.FC = () => {
   return (
     <div>
-      <h1>FAQ</h1>
+      <h1>Help</h1>
       <MarkdownContent
         content={faqMarkdown}
         css={css`

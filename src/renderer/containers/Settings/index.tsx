@@ -2,7 +2,7 @@ import { DolphinLaunchType } from "@dolphin/types";
 import React from "react";
 
 import { DolphinSettings } from "./DolphinSettings";
-import { FaqPage } from "./FaqPage";
+import { HelpPage } from "./HelpPage";
 import { MeleeOptions } from "./MeleeOptions";
 import { SettingSection } from "./types";
 
@@ -35,9 +35,9 @@ export const settings: SettingSection[] = [
   {
     items: [
       {
-        name: "FAQ",
-        path: "faq",
-        component: <FaqPage />,
+        name: "Help",
+        path: "help",
+        component: <HelpPage />,
       },
     ],
   },
