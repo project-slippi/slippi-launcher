@@ -1,3 +1,5 @@
+/** @jsx jsx */
+import { css, jsx } from "@emotion/react";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import Menu from "@material-ui/core/Menu";
@@ -54,7 +56,15 @@ export const UserMenu: React.FC<{
       <ButtonBase onClick={handleClick}>
         <UserInfo uid={user.uid} displayName={displayName} playKey={playKey} loading={loading} />
       </ButtonBase>
-      <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={closeMenu}>
+      <Menu
+        css={css`
+          margin-top: 54px;
+        `}
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={closeMenu}
+      >
         {!playKey && (
           <MenuItem
             onClick={() => {
