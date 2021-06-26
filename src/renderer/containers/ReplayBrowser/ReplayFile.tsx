@@ -17,7 +17,7 @@ import _ from "lodash";
 import moment from "moment";
 import React from "react";
 
-import { DraggableFile } from "@/components/DraggableFile";
+import { DraggableFiles } from "@/components/DraggableFiles";
 import { getStageImage } from "@/lib/utils";
 
 import { TeamElements } from "./TeamElements";
@@ -115,8 +115,8 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
               )}
               <InfoItem label={<LandscapeIcon />}>{stageName}</InfoItem>
             </div>
-            <DraggableFile
-              fullPath={fullPath}
+            <DraggableFiles
+              fullPaths={[fullPath]}
               css={css`
                 opacity: 0.6;
                 transition: opacity 0.2s ease-in-out;
@@ -127,7 +127,7 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
               `}
             >
               {name}
-            </DraggableFile>
+            </DraggableFiles>
           </div>
         </div>
       </Outer>

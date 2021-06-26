@@ -13,9 +13,10 @@ import { fetchNewsFeedData } from "./newsFeed";
 import { verifyIso } from "./verifyIso";
 
 export function setupListeners() {
-  ipcMain.on("onDragStart", (event, filePath: string) => {
+  ipcMain.on("onDragStart", (event, filePaths: string[]) => {
+    console.log(filePaths);
     event.sender.startDrag({
-      file: filePath,
+      files: filePaths, // if this shows an error, its due to the development api being outdated
       icon: nativeImage.createFromPath(path.join(__static, "images", "file.png")),
     });
   });
