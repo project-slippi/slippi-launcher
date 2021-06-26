@@ -100,7 +100,7 @@ export async function deletePlayKey(): Promise<void> {
 export async function changeDisplayName(name: string) {
   const user = firebase.auth().currentUser;
   if (!user) {
-    throw new Error("Failed to get play key. User is not logged in");
+    throw new Error("Failed to change display name. User is not logged in");
   }
   const res = await client.mutate({ mutation: renameUserMutation, variables: { uid: user.uid, displayName: name } });
 
