@@ -48,7 +48,7 @@ export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
   const meleeIsoPath = useSettings((store) => store.settings.isoPath) || undefined;
   const { addToast } = useToasts();
 
-  const handleError = (errMsg: string) => addToast(errMsg, { appearance: "error" });
+  const handleError = (err: any) => addToast(err.message ?? JSON.stringify(err), { appearance: "error" });
 
   const onPlay = async (offlineOnly?: boolean) => {
     if (!offlineOnly) {
