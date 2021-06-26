@@ -107,4 +107,6 @@ export async function changeDisplayName(name: string) {
   if (res.data.user_rename.displayName !== name) {
     throw new Error("Could not change name.");
   }
+
+  await user.updateProfile({ displayName: name });
 }
