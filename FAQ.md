@@ -4,18 +4,52 @@ Rollback is a superior netcode implementation to the delay based netcode that ev
 
 ## How do I get started?
 
-Head on over to <https://slippi.gg/netplay> and get setup. If you need a video checkout this video by RadarSSBM: <https://www.youtube.com/watch?v=yzawZ2nanu0>.
+Head on over to <https://slippi.gg/downloads> and download the Slippi Launcher. Walk through its setup and you should be good to go.
 
-## Why can't I connect?
+## What versions of Melee does Slippi support
 
-- Make sure your computer's firewall rules aren't blocking any traffic.
-- Check if your NAT type is Strict, it should be non-strict for the best experience.
+We only support NTSC-U/J 1.02
+
+## How do I setup my GameCube Controller Adapter?
+
+Set your adapter to Wii U/Switch mode and then follow the section for your OS.
+
+### Windows
+
+1. Close Dolphin.
+2. Download [slippi-zadig](https://github.com/project-slippi/libwdi/releases/download/slippi-v1/slippi-zadig.exe) and run it.
+3. If any device shows up, hit Install Driver.
+4. Accept modifying System Drivers if a prompt shows up.
+5. Start Dolphin and go to the Controllers -> Configure and make sure your poll rate is around 125hz.
+6. (Optional) Install [drivers](https://docs.google.com/document/d/1cQ3pbKZm_yUtcLK9ZIXyPzVbTJkvnfxKIyvuFMwzWe0/edit?usp=sharing) to overclock the poll rate to up to 1000hz.
+
+### macOS
+
+#### High Sierra to Mojave (10.13 - 10.15)
+
+Download and install [GCAdapterDriver](https://github.com/secretkeysio/GCAdapterDriver/releases/download/1.0/GCAdapterDriverInstaller.pkg).
+
+#### Big Sur
+
+Read the installation instructions for [GCAdapterDriver](https://github.com/secretkeysio/GCAdapterDriver/releases#:~:text=with%20existing%20installations.-,Installation,-macOS%2010.13-10.15). Ask in our Discord's #mac-support channel for further help.
+
+### Linux
+
+Run the following command block
+
+> sudo rm -f /etc/udev/rules.d/51-gcadapter.rules && sudo touch /etc/udev/rules.d/51-gcadapter.rules && echo 'SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="057e", ATTRS{idProduct}=="0337", MODE="0666"' | sudo tee /etc/udev/rules.d/51-gcadapter.rules > /dev/null && sudo udevadm control --reload-rules
+
+There is no output, so once it is finished restart Dolphin and test your adapter.
+
+If your adapter still doesn't work then try running the command below if you use systemd or restarting your computer.
+
+`sudo systemctl restart udev.service`
 
 ## What are delay frames and how do I change them?
 
 A single delay frame is equal to 4 buffer in traditional Dolphin netplay. Our recommended default is 2 frame delay (8 buffer). We suggest using 2 frame delay for connections up to 130ms ping. Mixed buffers are allowed to play each other.
 
-If you want to change this value, first open Dolphin and go to `Config->GameCube`. At the bottom you will see the option to update the Delay Frames. You can update this value at any time but it will only update for the next game you play (e.g if you are in a game it won't take effect until the next game).
+If you want to change this value, first open Dolphin (if using the Launcher go to `Settings` -> `Netplay` -> `Configure Dolphin`) and go to `Config->GameCube`. At the bottom you will see the option to update the Delay Frames. You can update this value at any time but it will only update for the next game you play (e.g if you are in a game it won't take effect until the next game).
 
 ## Why is there no music?
 
@@ -33,10 +67,6 @@ Yes, we currently ship with UCF 0.8 and it is applied everywhere by default.
 ## Where can I find a Melee ISO
 
 We cannot help you find an ISO, you will need to acquire one yourself. This website may be a starting point: <https://wiki.dolphin-emu.org/index.php?title=Ripping_Games>.
-
-## What versions of Melee does Slippi support
-
-We only support NTSC-U/J 1.02
 
 ## Can I play Free For All with Slippi Online?
 
@@ -58,4 +88,4 @@ If changing ports doesn't work then try the following:
 
 ## Where did my replays go?
 
-Replays have moved to `Documents/Slippi` on Windows and `~/Slippi` on macOS and Linux. The replay directory is configurable in `Config->Slippi`.
+Replays have moved to `Documents/Slippi` on Windows and `~/Slippi` on macOS and Linux. The replay directory is configurable in `Config->Slippi` of the netplay Dolphin.
