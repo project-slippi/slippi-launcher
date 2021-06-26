@@ -11,7 +11,6 @@ import { useToasts } from "react-toast-notifications";
 import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { logout } from "@/lib/firebase";
 import { useAccount } from "@/lib/hooks/useAccount";
-import { changeDisplayName } from "@/lib/slippiBackend";
 
 import { NameChangeDialog } from "./NameChangeDialog";
 import { UserInfo } from "./UserInfo";
@@ -21,7 +20,7 @@ export const UserMenu: React.FC<{
   handleError: (error: any) => void;
 }> = ({ user, handleError }) => {
   const playKey = useAccount((store) => store.playKey);
-  const [displayName, setDisplayName] = useAccount((store) => [store.displayName, store.setDisplayName]);
+  const displayName = useAccount((store) => store.displayName);
   const refreshPlayKey = useAccount((store) => store.refreshPlayKey);
   const loading = useAccount((store) => store.loading);
   const [openLogoutPrompt, setOpenLogoutPrompt] = React.useState(false);
@@ -48,17 +47,6 @@ export const UserMenu: React.FC<{
   const handleClose = () => {
     setOpenNameChangePrompt(false);
     setOpenLogoutPrompt(false);
-  };
-  const onChangeName = async (name: string) => {
-    try {
-      await changeDisplayName(name);
-      setDisplayName(name);
-    } catch (err) {
-      console.error(err);
-      handleError(err);
-    } finally {
-      handleClose();
-    }
   };
 
   return (
@@ -106,12 +94,7 @@ export const UserMenu: React.FC<{
           Logout
         </MenuItem>
       </Menu>
-      <NameChangeDialog
-        displayName={displayName}
-        open={openNameChangePrompt}
-        onSubmit={onChangeName}
-        handleClose={handleClose}
-      />
+      <NameChangeDialog displayName={displayName} open={openNameChangePrompt} handleClose={handleClose} />
       <ConfirmationModal
         title="Are you sure you want to log out?"
         confirmText="Log out"
