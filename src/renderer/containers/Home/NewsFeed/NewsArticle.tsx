@@ -1,3 +1,5 @@
+/** @jsx jsx */
+import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
@@ -9,10 +11,9 @@ import Typography from "@material-ui/core/Typography";
 import { NewsItem } from "common/types";
 import { shell } from "electron";
 import React from "react";
-import ReactMarkdown from "react-markdown";
 import TimeAgo from "react-timeago";
 
-import { withFont } from "@/styles/withFont";
+import { MarkdownContent } from "@/components/MarkdownContent";
 
 export interface NewsArticleProps {
   item: NewsItem;
@@ -43,9 +44,13 @@ export const NewsArticle: React.FC<NewsArticleProps> = ({ item }) => {
             </Typography>
           )}
           {body && (
-            <ArticleBody>
-              <ReactMarkdown skipHtml={true}>{body}</ReactMarkdown>
-            </ArticleBody>
+            <MarkdownContent
+              content={body}
+              css={css`
+                color: #ccc;
+                max-width: 700px;
+              `}
+            />
           )}
         </CardContent>
         <CardActions disableSpacing={true}>
@@ -60,24 +65,6 @@ export const NewsArticle: React.FC<NewsArticleProps> = ({ item }) => {
     </Outer>
   );
 };
-
-const ArticleBody = styled.div`
-  font-family: ${withFont("Rubik")};
-  color: #ccc;
-  max-width: 700px;
-
-  img {
-    display: list-item;
-  }
-
-  li {
-    margin-bottom: 5px;
-
-    ul {
-      margin-top: 5px;
-    }
-  }
-`;
 
 const Outer = styled.div`
   margin-bottom: 20px;
