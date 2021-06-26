@@ -1,4 +1,7 @@
 import CircularProgress from "@material-ui/core/CircularProgress";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Radio from "@material-ui/core/Radio";
+import RadioGroup from "@material-ui/core/RadioGroup";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import ErrorIcon from "@material-ui/icons/Error";
@@ -6,7 +9,7 @@ import React from "react";
 
 import { PathInput } from "@/components/PathInput";
 import { useIsoVerification } from "@/lib/hooks/useIsoVerification";
-import { useIsoPath, useRootSlpPath, useSpectateSlpPath } from "@/lib/hooks/useSettings";
+import { useIsoPath, useLaunchMeleeOnPlay, useRootSlpPath, useSpectateSlpPath } from "@/lib/hooks/useSettings";
 
 import { SettingItem } from "./SettingItem";
 
@@ -34,9 +37,15 @@ export const MeleeOptions: React.FC = () => {
   const verifying = useIsoVerification((state) => state.isValidating);
   const isValidIso = useIsoVerification((state) => state.isValid);
   const [isoPath, setIsoPath] = useIsoPath();
+  const [launchMeleeOnPlay, setLaunchMelee] = useLaunchMeleeOnPlay();
   const [replayDir, setReplayDir] = useRootSlpPath();
   const [spectateDir, setSpectateDir] = useSpectateSlpPath();
   const classes = useStyles();
+
+  const onLaunchMeleeChange = async (value: string) => {
+    const launchMelee = value === "true";
+    await setLaunchMelee(launchMelee);
+  };
 
   return (
     <div>
@@ -61,6 +70,12 @@ export const MeleeOptions: React.FC = () => {
             </div>
           }
         />
+      </SettingItem>
+      <SettingItem name="Play Button Action" description="Choose what happens when the Play button is pressed.">
+        <RadioGroup value={launchMeleeOnPlay} onChange={(_event, value) => onLaunchMeleeChange(value)}>
+          <FormControlLabel value={true} label="Launch Melee" control={<Radio />} />
+          <FormControlLabel value={false} label="Launch Dolphin" control={<Radio />} />
+        </RadioGroup>
       </SettingItem>
       <SettingItem name="Replay Root Directory" description="The folder where your SLP replays are stored.">
         <PathInput

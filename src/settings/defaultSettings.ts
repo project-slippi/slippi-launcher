@@ -19,5 +19,6 @@ export const defaultAppSettings: AppSettings = {
     spectateSlpPath: path.join(getDefaultRootSlpPath(), "Spectate"),
     netplayDolphinPath: path.join(app.getPath("userData"), "netplay"),
     playbackDolphinPath: path.join(app.getPath("userData"), "playback"),
+    launchMeleeOnPlay: true,
   },
 };

@@ -6,6 +6,7 @@ import {
   deleteConnection,
   editConnection,
   setIsoPath,
+  setLaunchMeleeOnPlay,
   setNetplayDolphinPath,
   setPlaybackDolphinPath,
   setRootSlpPath,
@@ -59,5 +60,10 @@ editConnection.main!.handle(async ({ id, connection }) => {
 
 deleteConnection.main!.handle(async ({ id }) => {
   await settingsManager.deleteConsoleConnection(id);
+  return { success: true };
+});
+
+setLaunchMeleeOnPlay.main!.handle(async ({ launchMelee }) => {
+  await settingsManager.setLaunchMeleeOnPlay(launchMelee);
   return { success: true };
 });

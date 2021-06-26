@@ -45,9 +45,11 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   const [modalOpen, setModalOpen] = React.useState(false);
   const classes = useStyles();
   const { addToast } = useToasts();
+
   const openDolphinDirectoryHandler = async () => {
     shell.openItem(dolphinPath);
   };
+
   const configureDolphinHandler = async () => {
     console.log("configure dolphin pressed");
     if (process.platform === "darwin") {
@@ -58,13 +60,16 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
     }
     await configureDolphin.renderer!.trigger({ dolphinType });
   };
+
   const reinstallDolphinHandler = async () => {
     console.log("reinstall button clicked");
     await reinstallDolphin.renderer!.trigger({ dolphinType });
   };
+
   const clearDolphinCacheHandler = async () => {
     await clearDolphinCache.renderer!.trigger({ dolphinType });
   };
+
   return (
     <div>
       <Typography variant="h5" className={classes.title}>

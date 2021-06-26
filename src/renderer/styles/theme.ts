@@ -64,6 +64,9 @@ const addOverrides = (theme: Theme) => {
         fullWidth: true,
         size: "small",
       },
+      MuiRadio: {
+        color: "primary",
+      },
     },
     overrides: {
       MuiPaper: {

@@ -65,6 +65,10 @@ export class SettingsManager {
     await this._set("settings.playbackDolphinPath", dolphinPath);
   }
 
+  public async setLaunchMeleeOnPlay(launchMelee: boolean): Promise<void> {
+    await this._set("settings.launchMeleeOnPlay", launchMelee);
+  }
+
   public async addConsoleConnection(conn: Omit<StoredConnection, "id">): Promise<void> {
     const connections = this.get().connections;
     // Auto-generate an ID

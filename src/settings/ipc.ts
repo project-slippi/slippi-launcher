@@ -19,6 +19,12 @@ export const setPlaybackDolphinPath = makeEndpoint.main(
   <SuccessPayload>_,
 );
 
+export const setLaunchMeleeOnPlay = makeEndpoint.main(
+  "setLaunchMeleeOnPlay",
+  <{ launchMelee: boolean }>_,
+  <SuccessPayload>_,
+);
+
 export const addNewConnection = makeEndpoint.main(
   "addNewConnection",
   <{ connection: Omit<StoredConnection, "id"> }>_,
