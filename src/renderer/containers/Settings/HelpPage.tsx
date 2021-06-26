@@ -14,16 +14,16 @@ export const HelpPage: React.FC = () => {
         css={css`
           max-width: 800px;
           border-radius: 10px;
-          background-color: rgba(0, 0, 0, 0.5);
+          background-color: rgba(0, 0, 0, 0.7);
           padding: 10px 20px;
           * {
-            opacity: 0.7;
+            color: #bbb;
           }
 
           h1,
           h2,
           h3 {
-            opacity: 1;
+            color: white;
           }
         `}
       />
