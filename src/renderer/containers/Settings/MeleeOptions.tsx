@@ -73,16 +73,8 @@ export const MeleeOptions: React.FC = () => {
       </SettingItem>
       <SettingItem name="Play Button Functionality">
         <RadioGroup value={launchMeleeOnPlay} onChange={(_event, value) => onLaunchMeleeChange(value)}>
-          <FormControlLabel
-            value={true}
-            label="Launch Melee when clicking play on the home screen"
-            control={<Radio />}
-          />
-          <FormControlLabel
-            value={false}
-            label="Launch Dolphin when clicking play on the home screen"
-            control={<Radio />}
-          />
+          <FormControlLabel value={true} label="Launch Melee" control={<Radio />} />
+          <FormControlLabel value={false} label="Launch Dolphin" control={<Radio />} />
         </RadioGroup>
       </SettingItem>
       <SettingItem name="Replay Root Directory" description="The folder where your SLP replays are stored.">
