@@ -1,6 +1,7 @@
 /** @jsx jsx */
 import { DiscoveredConsoleInfo } from "@console/types";
 import { css, jsx } from "@emotion/react";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import React from "react";
 
 import { InfoBlock } from "@/components/InfoBlock";
@@ -8,13 +9,27 @@ import { InfoBlock } from "@/components/InfoBlock";
 import { NewConnectionItem } from "./NewConnectionItem";
 
 export interface NewConnectionListProps {
+  isScanning?: boolean;
   consoleItems: DiscoveredConsoleInfo[];
   onClick: (conn: DiscoveredConsoleInfo) => void;
 }
 
-export const NewConnectionList: React.FC<NewConnectionListProps> = ({ consoleItems, onClick }) => {
+export const NewConnectionList: React.FC<NewConnectionListProps> = ({ consoleItems, isScanning, onClick }) => {
   return (
-    <InfoBlock title={`New Connections (${consoleItems.length})`}>
+    <InfoBlock
+      title={
+        <div
+          css={css`
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          `}
+        >
+          <div>New Connections ({consoleItems.length})</div>
+          {isScanning && <CircularProgress size={16} thickness={6} color="inherit" />}
+        </div>
+      }
+    >
       <div
         css={css`
           display: flex;

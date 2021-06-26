@@ -32,6 +32,7 @@ const Outer = styled.div`
 `;
 
 export const Console: React.FC = () => {
+  const [isScanning, setIsScanning] = React.useState(false);
   const [modalOpen, setModalOpen] = React.useState(false);
   const [currentFormValues, setCurrentFormValues] = React.useState<Partial<StoredConnection> | null>(null);
   const savedConnections = useSettings((store) => store.connections);
@@ -42,15 +43,19 @@ export const Console: React.FC = () => {
 
   React.useEffect(() => {
     // Start scanning for new consoles
-    startDiscovery.renderer!.trigger({}).catch((err) => {
-      addToast(err.message ?? JSON.stringify(err), { appearance: "error" });
-    });
+    setIsScanning(false);
+    startDiscovery
+      .renderer!.trigger({})
+      .then(() => setIsScanning(true))
+      .catch((err) => {
+        addToast(err.message ?? JSON.stringify(err), { appearance: "error" });
+      });
 
     // Stop scanning on component unmount
     return () => {
       void stopDiscovery.renderer!.trigger({});
     };
-  }, []);
+  }, [addToast]);
 
   const onCancel = () => {
     setModalOpen(false);
@@ -112,6 +117,7 @@ export const Console: React.FC = () => {
               `}
             >
               <NewConnectionList
+                isScanning={isScanning}
                 consoleItems={consoleItemsToShow}
                 onClick={(item) => {
                   setCurrentFormValues({ ipAddress: item.ip });
