@@ -15,7 +15,7 @@ export interface ConfirmationModalProps {
   title: string;
   confirmText?: string;
   cancelText?: string;
-  cancelColor?: "secondary" | "inherit" | "default" | "primary" | undefined;
+  cancelColor?: "secondary" | "inherit" | "default" | "primary";
   fullWidth?: boolean;
 }
 

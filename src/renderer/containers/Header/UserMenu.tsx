@@ -3,7 +3,6 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
 import { slippiActivationUrl } from "common/constants";
 import { shell } from "electron";
 import firebase from "firebase";
@@ -96,7 +95,7 @@ export const UserMenu: React.FC<{
               setOpenNameChangePrompt(true);
             }}
           >
-            Edit Name
+            Change display name
           </MenuItem>
         )}
         <MenuItem
@@ -109,22 +108,21 @@ export const UserMenu: React.FC<{
         </MenuItem>
       </Menu>
       <ConfirmationModal
-        title="Change your Display Name"
+        title="Change display name"
         open={openNameChangePrompt}
         onClose={handleClose}
         onSubmit={onChangeName}
         fullWidth={false}
       >
-        <Typography paragraph={true}>Enter the new name in the field below</Typography>
         <TextField
           required={true}
           id="displayName"
-          variant="outlined"
+          variant="filled"
           autoFocus={true}
           key={`displayName`} // Change key on new mode to force field to reset
           name="displayName"
           value={nameChange || name}
-          label="Display Name"
+          label="Display name"
           fullWidth={true}
           onChange={(event) => setNameChange(event.target.value)}
         />
