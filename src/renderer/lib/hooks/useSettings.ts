@@ -1,6 +1,7 @@
 import { DolphinLaunchType } from "@dolphin/types";
 import {
   setIsoPath,
+  setLaunchMeleeOnPlay,
   setNetplayDolphinPath,
   setPlaybackDolphinPath,
   setRootSlpPath,
@@ -83,4 +84,16 @@ export const useDolphinPath = (dolphinType: DolphinLaunchType) => {
       return [playbackDolphinPath, setDolphinPath] as const;
     }
   }
+};
+
+export const useLaunchMeleeOnPlay = () => {
+  const launchMeleeOnPlay = useSettings((store) => store.settings.launchMeleeOnPlay);
+  const setLaunchMelee = async (launchMelee: boolean) => {
+    const setResult = await setLaunchMeleeOnPlay.renderer!.trigger({ launchMelee });
+    if (!setResult.result) {
+      throw new Error("Error setting launch melee on Play");
+    }
+  };
+
+  return [launchMeleeOnPlay, setLaunchMelee] as const;
 };
