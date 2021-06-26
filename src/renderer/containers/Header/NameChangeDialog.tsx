@@ -32,6 +32,9 @@ export const NameChangeDialog: React.FC<{
           value={name}
           label="Display name"
           fullWidth={true}
+          inputProps={{
+            maxLength: 15,
+          }}
           onChange={(event) => setName(event.target.value)}
         />
       </ConfirmationModal>
