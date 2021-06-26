@@ -12,8 +12,8 @@ import { useToasts } from "react-toast-notifications";
 
 import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { logout } from "@/lib/firebase";
-import { changeDisplayName } from "@/lib/gql";
 import { useAccount } from "@/lib/hooks/useAccount";
+import { changeDisplayName } from "@/lib/slippiBackend";
 
 import { UserInfo } from "./UserInfo";
 

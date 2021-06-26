@@ -16,11 +16,11 @@ import React from "react";
 import { useToasts } from "react-toast-notifications";
 
 import { PlayIcon } from "@/components/PlayIcon";
-import { assertPlayKey } from "@/lib/gql";
 import { useAccount } from "@/lib/hooks/useAccount";
 import { useLoginModal } from "@/lib/hooks/useLoginModal";
 import { useSettings } from "@/lib/hooks/useSettings";
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
+import { assertPlayKey } from "@/lib/slippiBackend";
 import slippiLogo from "@/styles/images/slippi-logo.svg";
 
 import { ActivateOnlineDialog } from "./ActivateOnlineDialog";

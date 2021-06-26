@@ -3,7 +3,7 @@ import firebase from "firebase";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
-import { fetchPlayKey } from "../gql";
+import { fetchPlayKey } from "../slippiBackend";
 
 export const useAccount = create(
   combine(
