@@ -71,7 +71,7 @@ export const MeleeOptions: React.FC = () => {
           }
         />
       </SettingItem>
-      <SettingItem name="Play Button Functionality">
+      <SettingItem name="Play Button Action" description="Choose what happens when the Play button is pressed.">
         <RadioGroup value={launchMeleeOnPlay} onChange={(_event, value) => onLaunchMeleeChange(value)}>
           <FormControlLabel value={true} label="Launch Melee" control={<Radio />} />
           <FormControlLabel value={false} label="Launch Dolphin" control={<Radio />} />
