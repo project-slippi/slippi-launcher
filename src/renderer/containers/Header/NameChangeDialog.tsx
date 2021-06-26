@@ -15,23 +15,12 @@ export const NameChangeDialog: React.FC<{
   };
   return (
     <div>
-      <ConfirmationModal
-        title="Change display name"
-        open={open}
-        onClose={handleClose}
-        onSubmit={onSubmitHandler}
-        fullWidth={false}
-      >
+      <ConfirmationModal title="Change display name" open={open} onClose={handleClose} onSubmit={onSubmitHandler}>
         <TextField
           required={true}
-          id="displayName"
-          variant="filled"
           autoFocus={true}
-          key={`displayName`} // Change key on new mode to force field to reset
-          name="displayName"
           value={name}
           label="Display name"
-          fullWidth={true}
           inputProps={{
             maxLength: 15,
           }}
