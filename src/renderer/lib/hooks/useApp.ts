@@ -6,7 +6,7 @@ import { combine } from "zustand/middleware";
 
 import { initializeFirebase } from "@/lib/firebase";
 import { useAccount } from "@/lib/hooks/useAccount";
-import { fetchPlayKey } from "@/lib/playkey";
+import { fetchPlayKey } from "@/lib/slippiBackend";
 
 export const useAppStore = create(
   combine(

@@ -11,7 +11,7 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-const getUserKey = gql`
+const getUserKeyQuery = gql`
   query GetUserKey($uid: String!) {
     user(uid: $uid) {
       connectCode
@@ -19,6 +19,15 @@ const getUserKey = gql`
       private {
         playKey
       }
+    }
+  }
+`;
+
+const renameUserMutation = gql`
+  mutation RenameUser($uid: String!, $displayName: String!) {
+    user_rename(uid: $uid, displayName: $displayName) {
+      uid
+      displayName
     }
   }
 `;
@@ -45,7 +54,7 @@ export async function fetchPlayKey(): Promise<PlayKey> {
   client.setLink(authLink.concat(httpLink));
 
   const res = await client.query({
-    query: getUserKey,
+    query: getUserKeyQuery,
     variables: {
       uid: user.uid,
     },
@@ -86,4 +95,18 @@ export async function deletePlayKey(): Promise<void> {
     log.error("Error deleting play key", deleteResult.errors);
     throw new Error("Error deleting play key");
   }
+}
+
+export async function changeDisplayName(name: string) {
+  const user = firebase.auth().currentUser;
+  if (!user) {
+    throw new Error("Failed to change display name. User is not logged in");
+  }
+  const res = await client.mutate({ mutation: renameUserMutation, variables: { uid: user.uid, displayName: name } });
+
+  if (res.data.user_rename.displayName !== name) {
+    throw new Error("Could not change name.");
+  }
+
+  await user.updateProfile({ displayName: name });
 }

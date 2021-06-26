@@ -20,7 +20,7 @@ import { useAccount } from "@/lib/hooks/useAccount";
 import { useLoginModal } from "@/lib/hooks/useLoginModal";
 import { useSettings } from "@/lib/hooks/useSettings";
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
-import { assertPlayKey } from "@/lib/playkey";
+import { assertPlayKey } from "@/lib/slippiBackend";
 import slippiLogo from "@/styles/images/slippi-logo.svg";
 
 import { ActivateOnlineDialog } from "./ActivateOnlineDialog";
@@ -48,7 +48,7 @@ export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
   const meleeIsoPath = useSettings((store) => store.settings.isoPath) || undefined;
   const { addToast } = useToasts();
 
-  const handleError = (errMsg: string) => addToast(errMsg, { appearance: "error" });
+  const handleError = (err: any) => addToast(err.message ?? JSON.stringify(err), { appearance: "error" });
 
   const onPlay = async (offlineOnly?: boolean) => {
     if (!offlineOnly) {

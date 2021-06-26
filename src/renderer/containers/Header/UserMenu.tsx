@@ -1,23 +1,18 @@
-import Button from "@material-ui/core/Button";
 import ButtonBase from "@material-ui/core/ButtonBase";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-import { useTheme } from "@material-ui/core/styles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { slippiActivationUrl } from "common/constants";
 import { shell } from "electron";
 import firebase from "firebase";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
 
+import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { logout } from "@/lib/firebase";
 import { useAccount } from "@/lib/hooks/useAccount";
 
+import { NameChangeDialog } from "./NameChangeDialog";
 import { UserInfo } from "./UserInfo";
 
 export const UserMenu: React.FC<{
@@ -25,11 +20,11 @@ export const UserMenu: React.FC<{
   handleError: (error: any) => void;
 }> = ({ user, handleError }) => {
   const playKey = useAccount((store) => store.playKey);
+  const displayName = useAccount((store) => store.displayName);
   const refreshPlayKey = useAccount((store) => store.refreshPlayKey);
   const loading = useAccount((store) => store.loading);
   const [openLogoutPrompt, setOpenLogoutPrompt] = React.useState(false);
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
+  const [openNameChangePrompt, setOpenNameChangePrompt] = React.useState(false);
   const { addToast } = useToasts();
   const onLogout = async () => {
     try {
@@ -50,15 +45,24 @@ export const UserMenu: React.FC<{
     setAnchorEl(null);
   };
   const handleClose = () => {
+    setOpenNameChangePrompt(false);
     setOpenLogoutPrompt(false);
   };
 
   return (
     <div>
       <ButtonBase onClick={handleClick}>
-        <UserInfo user={user} playKey={playKey} loading={loading} />
+        <UserInfo uid={user.uid} displayName={displayName} playKey={playKey} loading={loading} />
       </ButtonBase>
-      <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={closeMenu}>
+      <Menu
+        anchorEl={anchorEl}
+        getContentAnchorEl={null}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        transformOrigin={{ vertical: "top", horizontal: "left" }}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={closeMenu}
+      >
         {!playKey && (
           <MenuItem
             onClick={() => {
@@ -79,6 +83,16 @@ export const UserMenu: React.FC<{
             Refresh activation status
           </MenuItem>
         )}
+        {playKey && (
+          <MenuItem
+            onClick={() => {
+              closeMenu();
+              setOpenNameChangePrompt(true);
+            }}
+          >
+            Change display name
+          </MenuItem>
+        )}
         <MenuItem
           onClick={() => {
             closeMenu();
@@ -88,25 +102,17 @@ export const UserMenu: React.FC<{
           Logout
         </MenuItem>
       </Menu>
-      <Dialog
-        fullScreen={fullScreen}
+      <NameChangeDialog displayName={displayName} open={openNameChangePrompt} handleClose={handleClose} />
+      <ConfirmationModal
+        title="Are you sure you want to log out?"
+        confirmText="Log out"
         open={openLogoutPrompt}
         onClose={handleClose}
-        aria-labelledby="responsive-dialog-title"
+        onSubmit={onLogout}
+        fullWidth={false}
       >
-        <DialogTitle id="responsive-dialog-title">Are you sure you want to log out?</DialogTitle>
-        <DialogContent>
-          <DialogContentText>You will need to log in again next time you want to play.</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={onLogout} color="primary">
-            Log out
-          </Button>
-        </DialogActions>
-      </Dialog>
+        <DialogContentText>You will need to log in again next time you want to play.</DialogContentText>
+      </ConfirmationModal>
     </div>
   );
 };

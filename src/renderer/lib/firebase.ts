@@ -1,6 +1,6 @@
 import firebase from "firebase";
 
-import { deletePlayKey } from "./playkey";
+import { deletePlayKey } from "./slippiBackend";
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
