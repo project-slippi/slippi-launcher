@@ -47,7 +47,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth={fullWidth} fullScreen={fullScreen} disableBackdropClick={true}>
+    <Dialog open={open} onClose={onClose} fullWidth={fullWidth} fullScreen={fullScreen}>
       <form onSubmit={handleSubmit}>
         <StyledDialogTitle id="responsive-dialog-title">{title}</StyledDialogTitle>
         <DialogContent>{children}</DialogContent>
