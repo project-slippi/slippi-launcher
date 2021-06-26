@@ -2,6 +2,7 @@ import { DolphinLaunchType } from "@dolphin/types";
 import React from "react";
 
 import { DolphinSettings } from "./DolphinSettings";
+import { FaqPage } from "./FaqPage";
 import { MeleeOptions } from "./MeleeOptions";
 import { SettingSection } from "./types";
 
@@ -28,6 +29,15 @@ export const settings: SettingSection[] = [
         name: "Playback",
         path: "playback-dolphin-settings",
         component: <DolphinSettings dolphinType={DolphinLaunchType.PLAYBACK} />,
+      },
+    ],
+  },
+  {
+    items: [
+      {
+        name: "FAQ",
+        path: "faq",
+        component: <FaqPage />,
       },
     ],
   },
