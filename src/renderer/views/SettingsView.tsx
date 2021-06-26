@@ -87,7 +87,9 @@ export const SettingsView: React.FC = () => {
                     key={`section-${section.title}${i}`}
                     component="nav"
                     css={css`
+                      margin: 0 10px;
                       padding-bottom: 10px;
+                      border-bottom: solid 1px rgba(255, 255, 255, 0.1);
                     `}
                     subheader={
                       section.title ? (
@@ -96,6 +98,8 @@ export const SettingsView: React.FC = () => {
                           disableSticky={true}
                           css={css`
                             line-height: 20px;
+                            margin-top: 10px;
+                            margin-bottom: 5px;
                             font-size: 14px;
                             color: ${colors.purpleLight};
                           `}
@@ -114,8 +118,10 @@ export const SettingsView: React.FC = () => {
                           component={Link}
                           to={`${path}/${item.path}`}
                           css={css`
+                            border-radius: 10px;
                             padding-top: 4px;
                             padding-bottom: 4px;
+                            margin: 2px 0;
                           `}
                         >
                           {item.icon ? <ListItemIcon>{item.icon}</ListItemIcon> : null}
