@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import Button from "@material-ui/core/Button";
+import Button, { ButtonProps } from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -13,9 +13,11 @@ export interface ConfirmationModalProps {
   onClose: () => void;
   onSubmit: () => void;
   title: string;
-  confirmText?: string;
-  cancelText?: string;
-  cancelColor?: "secondary" | "inherit" | "default" | "primary";
+  closeOnSubmit?: boolean;
+  confirmText?: React.ReactNode;
+  confirmProps?: ButtonProps;
+  cancelText?: React.ReactNode;
+  cancelProps?: ButtonProps;
   fullWidth?: boolean;
 }
 
@@ -27,7 +29,9 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   children,
   confirmText = "Confirm",
   cancelText = "Cancel",
-  cancelColor = "secondary",
+  confirmProps,
+  cancelProps,
+  closeOnSubmit = true,
   fullWidth = true,
 }) => {
   const theme = useTheme();
@@ -37,7 +41,9 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     e.preventDefault();
     console.log("submitting form...");
     onSubmit();
-    onClose();
+    if (closeOnSubmit) {
+      onClose();
+    }
   };
 
   return (
@@ -46,10 +52,10 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         <StyledDialogTitle id="responsive-dialog-title">{title}</StyledDialogTitle>
         <DialogContent>{children}</DialogContent>
         <DialogActions>
-          <Button onClick={onClose} color={cancelColor}>
+          <Button onClick={onClose} color="secondary" {...cancelProps}>
             {cancelText}
           </Button>
-          <Button color="primary" type="submit">
+          <Button color="primary" type="submit" {...confirmProps}>
             {confirmText}
           </Button>
         </DialogActions>

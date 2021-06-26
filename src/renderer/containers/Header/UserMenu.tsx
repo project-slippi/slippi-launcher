@@ -119,7 +119,6 @@ export const UserMenu: React.FC<{
         onClose={handleClose}
         onSubmit={onLogout}
         fullWidth={false}
-        cancelColor="primary"
       >
         <DialogContentText>You will need to log in again next time you want to play.</DialogContentText>
       </ConfirmationModal>
