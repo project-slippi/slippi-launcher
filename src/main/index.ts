@@ -1,5 +1,5 @@
 import { dolphinManager } from "@dolphin/manager";
-import { showStatsPage } from "@replays/ipc";
+import { ipc_statsPageRequestedEvent } from "@replays/ipc";
 import { colors } from "common/colors";
 import { isDevelopment, isMac } from "common/constants";
 import { delay } from "common/delay";
@@ -263,5 +263,5 @@ const playReplayAndShowStats = async (filePath: string) => {
     mode: "normal",
     replay: filePath,
   });
-  await showStatsPage.main!.trigger({ filePath });
+  await ipc_statsPageRequestedEvent.main!.trigger({ filePath });
 };

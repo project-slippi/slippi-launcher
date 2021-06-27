@@ -6,7 +6,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import ErrorIcon from "@material-ui/icons/Error";
 import FolderIcon from "@material-ui/icons/Folder";
 import HelpIcon from "@material-ui/icons/Help";
-import { calculateGameStats } from "@replays/ipc";
+import { ipc_calculateGameStats } from "@replays/ipc";
 import { FileResult } from "@replays/types";
 import { colors } from "common/colors";
 import { shell } from "electron";
@@ -52,7 +52,7 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
   const { filePath } = props;
 
   const gameStatsQuery = useQuery(["loadStatsQuery", filePath], async () => {
-    const queryRes = await calculateGameStats.renderer!.trigger({ filePath: filePath });
+    const queryRes = await ipc_calculateGameStats.renderer!.trigger({ filePath: filePath });
     if (!queryRes.result) {
       console.error(`Error calculating game stats: ${filePath}`, queryRes.errors);
       throw new Error(`Error calculating game stats ${filePath}`);

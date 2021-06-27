@@ -1,5 +1,5 @@
 import { ApolloClient, ApolloLink, gql, HttpLink, InMemoryCache } from "@apollo/client";
-import { checkPlayKeyExists, removePlayKeyFile, storePlayKeyFile } from "@dolphin/ipc";
+import { ipc_checkPlayKeyExists, ipc_removePlayKeyFile, ipc_storePlayKeyFile } from "@dolphin/ipc";
 import { PlayKey } from "@dolphin/types";
 import log from "electron-log";
 import firebase from "firebase";
@@ -72,7 +72,7 @@ export async function fetchPlayKey(): Promise<PlayKey> {
 }
 
 export async function assertPlayKey(playKey: PlayKey) {
-  const playKeyExistsResult = await checkPlayKeyExists.renderer!.trigger({});
+  const playKeyExistsResult = await ipc_checkPlayKeyExists.renderer!.trigger({});
   if (!playKeyExistsResult.result) {
     log.error("Error checking for play key.", playKeyExistsResult.errors);
     throw new Error("Error checking for play key");
@@ -82,7 +82,7 @@ export async function assertPlayKey(playKey: PlayKey) {
     return;
   }
 
-  const storeResult = await storePlayKeyFile.renderer!.trigger({ key: playKey });
+  const storeResult = await ipc_storePlayKeyFile.renderer!.trigger({ key: playKey });
   if (!storeResult.result) {
     log.error("Error saving play key", storeResult.errors);
     throw new Error("Error saving play key");
@@ -90,7 +90,7 @@ export async function assertPlayKey(playKey: PlayKey) {
 }
 
 export async function deletePlayKey(): Promise<void> {
-  const deleteResult = await removePlayKeyFile.renderer!.trigger({});
+  const deleteResult = await ipc_removePlayKeyFile.renderer!.trigger({});
   if (!deleteResult.result) {
     log.error("Error deleting play key", deleteResult.errors);
     throw new Error("Error deleting play key");

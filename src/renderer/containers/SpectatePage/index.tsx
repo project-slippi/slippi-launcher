@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { watchBroadcast } from "@broadcast/ipc";
+import { ipc_watchBroadcast } from "@broadcast/ipc";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
@@ -31,7 +31,7 @@ export const SpectatePage: React.FC = () => {
         autoDismiss: true,
       });
     }
-    await watchBroadcast.renderer!.trigger({ broadcasterId: id });
+    await ipc_watchBroadcast.renderer!.trigger({ broadcasterId: id });
   };
 
   if (!user) {

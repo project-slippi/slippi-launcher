@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { startDiscovery, stopDiscovery } from "@console/ipc";
+import { ipc_startDiscovery, ipc_stopDiscovery } from "@console/ipc";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import AddIcon from "@material-ui/icons/Add";
@@ -44,7 +44,7 @@ export const Console: React.FC = () => {
   React.useEffect(() => {
     // Start scanning for new consoles
     setIsScanning(false);
-    startDiscovery
+    ipc_startDiscovery
       .renderer!.trigger({})
       .then(() => setIsScanning(true))
       .catch((err) => {
@@ -53,7 +53,7 @@ export const Console: React.FC = () => {
 
     // Stop scanning on component unmount
     return () => {
-      void stopDiscovery.renderer!.trigger({});
+      void ipc_stopDiscovery.renderer!.trigger({});
     };
   }, [addToast]);
 

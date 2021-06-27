@@ -1,4 +1,4 @@
-import { dolphinDownloadFinished, downloadDolphin } from "dolphin/ipc";
+import { ipc_dolphinDownloadFinishedEvent, ipc_downloadDolphin } from "dolphin/ipc";
 import log from "electron-log";
 import firebase from "firebase";
 import create from "zustand";
@@ -60,7 +60,7 @@ export const useAppInitialization = () => {
 
     promises.push(
       new Promise<void>((resolve) => {
-        const handler = dolphinDownloadFinished.renderer!.handle(async ({ error }) => {
+        const handler = ipc_dolphinDownloadFinishedEvent.renderer!.handle(async ({ error }) => {
           // We only want to handle this event once so immediately destroy
           handler.destroy();
 
@@ -75,7 +75,7 @@ export const useAppInitialization = () => {
     );
 
     // Download Dolphin if necessary
-    promises.push(downloadDolphin.renderer!.trigger({}));
+    promises.push(ipc_downloadDolphin.renderer!.trigger({}));
 
     // Wait for all the promises to complete before completing
     try {

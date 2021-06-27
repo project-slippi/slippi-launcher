@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
-  broadcastErrorOccurred,
-  broadcastListUpdated,
-  dolphinStatusChanged,
-  slippiStatusChanged,
+  ipc_broadcastErrorOccurredEvent,
+  ipc_broadcastListUpdatedEvent,
+  ipc_dolphinStatusChangedEvent,
+  ipc_slippiStatusChangedEvent,
 } from "@broadcast/ipc";
-import { consoleMirrorStatusUpdated, discoveredConsolesUpdated } from "@console/ipc";
-import { dolphinDownloadLogReceived } from "@dolphin/ipc";
-import { loadProgressUpdated, showStatsPage } from "@replays/ipc";
-import { settingsUpdated } from "@settings/ipc";
-import { checkValidIso } from "common/ipc";
+import { ipc_consoleMirrorStatusUpdatedEvent, ipc_discoveredConsolesUpdatedEvent } from "@console/ipc";
+import { ipc_dolphinDownloadLogReceivedEvent } from "@dolphin/ipc";
+import { ipc_loadProgressUpdatedEvent, ipc_statsPageRequestedEvent } from "@replays/ipc";
+import { ipc_settingsUpdatedEvent } from "@settings/ipc";
+import { ipc_checkValidIso } from "common/ipc";
 import log from "electron-log";
 import firebase from "firebase";
 import throttle from "lodash/throttle";
@@ -63,52 +63,52 @@ export const useAppListeners = () => {
   }, [initialized]);
 
   const setLogMessage = useAppStore((store) => store.setLogMessage);
-  dolphinDownloadLogReceived.renderer!.useEvent(async ({ message }) => {
+  ipc_dolphinDownloadLogReceivedEvent.renderer!.useEvent(async ({ message }) => {
     log.info(message);
     setLogMessage(message);
   }, []);
 
   const setSlippiConnectionStatus = useConsole((store) => store.setSlippiConnectionStatus);
-  slippiStatusChanged.renderer!.useEvent(async ({ status }) => {
+  ipc_slippiStatusChangedEvent.renderer!.useEvent(async ({ status }) => {
     setSlippiConnectionStatus(status);
   }, []);
 
   const setDolphinConnectionStatus = useConsole((store) => store.setDolphinConnectionStatus);
-  dolphinStatusChanged.renderer!.useEvent(async ({ status }) => {
+  ipc_dolphinStatusChangedEvent.renderer!.useEvent(async ({ status }) => {
     setDolphinConnectionStatus(status);
   }, []);
 
   const setBroadcastError = useConsole((store) => store.setBroadcastError);
-  broadcastErrorOccurred.renderer!.useEvent(async ({ errorMessage }) => {
+  ipc_broadcastErrorOccurredEvent.renderer!.useEvent(async ({ errorMessage }) => {
     setBroadcastError(errorMessage);
   }, []);
 
   const updateProgress = useReplays((store) => store.updateProgress);
   const throttledUpdateProgress = throttle(updateProgress, 50);
-  loadProgressUpdated.renderer!.useEvent(async (progress) => {
+  ipc_loadProgressUpdatedEvent.renderer!.useEvent(async (progress) => {
     throttledUpdateProgress(progress);
   }, []);
 
   const updateSettings = useSettings((store) => store.updateSettings);
-  settingsUpdated.renderer!.useEvent(async (newSettings) => {
+  ipc_settingsUpdatedEvent.renderer!.useEvent(async (newSettings) => {
     updateSettings(newSettings);
   }, []);
 
   // Listen to when the list of broadcasting users has changed
   const updateBroadcastingList = useBroadcastListStore((store) => store.setItems);
-  broadcastListUpdated.renderer!.useEvent(async ({ items }) => {
+  ipc_broadcastListUpdatedEvent.renderer!.useEvent(async ({ items }) => {
     updateBroadcastingList(items);
   }, []);
 
   // Update the discovered console list
   const updateConsoleItems = useConsoleDiscoveryStore((store) => store.updateConsoleItems);
-  discoveredConsolesUpdated.renderer!.handle(async ({ consoles }) => {
+  ipc_discoveredConsolesUpdatedEvent.renderer!.handle(async ({ consoles }) => {
     updateConsoleItems(consoles);
   });
 
   // Update the mirroring console status
   const updateConsoleStatus = useConsoleDiscoveryStore((store) => store.updateConsoleStatus);
-  consoleMirrorStatusUpdated.renderer!.handle(async ({ ip, info }) => {
+  ipc_consoleMirrorStatusUpdatedEvent.renderer!.handle(async ({ ip, info }) => {
     updateConsoleStatus(ip, info);
   });
 
@@ -125,7 +125,7 @@ export const useAppListeners = () => {
 
     // Start iso validation
     setIsValidating(true);
-    checkValidIso
+    ipc_checkValidIso
       .renderer!.trigger({ path: isoPath })
       .then((isoCheckResult) => {
         if (!isoCheckResult.result) {
@@ -148,7 +148,7 @@ export const useAppListeners = () => {
 
   const clearSelectedFile = useReplays((store) => store.clearSelectedFile);
   const { goToReplayStatsPage } = useReplayBrowserNavigation();
-  showStatsPage.renderer!.handle(async ({ filePath }) => {
+  ipc_statsPageRequestedEvent.renderer!.handle(async ({ filePath }) => {
     await clearSelectedFile();
     goToReplayStatsPage(filePath);
   });

@@ -2,7 +2,7 @@ import dgram from "dgram";
 import log from "electron-log";
 import moment from "moment";
 
-import { discoveredConsolesUpdated } from "./ipc";
+import { ipc_discoveredConsolesUpdatedEvent } from "./ipc";
 import { DiscoveredConsoleInfo } from "./types";
 
 const SECONDS = 1000;
@@ -85,7 +85,7 @@ export class ConnectionScanner {
 
   private _emitConsoleListUpdatedEvent() {
     const consoleList = Object.values(this.availableConnectionsByIp) as DiscoveredConsoleInfo[];
-    discoveredConsolesUpdated.main!.trigger({ consoles: consoleList }).catch(log.warn);
+    ipc_discoveredConsolesUpdatedEvent.main!.trigger({ consoles: consoleList }).catch(log.warn);
   }
 
   private _handleError = (err: Error) => {

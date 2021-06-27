@@ -3,35 +3,41 @@ import { BroadcasterItem, StartBroadcastConfig } from "./types";
 
 // Handlers
 
-export const refreshBroadcastList = makeEndpoint.main(
+export const ipc_refreshBroadcastList = makeEndpoint.main(
   "refreshBroadcastList",
   <{ authToken: string }>_,
   <SuccessPayload>_,
 );
 
-export const watchBroadcast = makeEndpoint.main("watchBroadcast", <{ broadcasterId: string }>_, <SuccessPayload>_);
+export const ipc_watchBroadcast = makeEndpoint.main("watchBroadcast", <{ broadcasterId: string }>_, <SuccessPayload>_);
 
-export const startBroadcast = makeEndpoint.main("startBroadcast", <StartBroadcastConfig>_, <SuccessPayload>_);
+export const ipc_startBroadcast = makeEndpoint.main("startBroadcast", <StartBroadcastConfig>_, <SuccessPayload>_);
 
-export const stopBroadcast = makeEndpoint.main("stopBroadcast", <EmptyPayload>_, <SuccessPayload>_);
+export const ipc_stopBroadcast = makeEndpoint.main("stopBroadcast", <EmptyPayload>_, <SuccessPayload>_);
 
 // Events
 
-export const broadcastListUpdated = makeEndpoint.renderer(
+export const ipc_broadcastListUpdatedEvent = makeEndpoint.renderer(
   "broadcast_broadcastListUpdated",
   <{ items: BroadcasterItem[] }>_,
 );
 
-export const spectateErrorOccurred = makeEndpoint.renderer(
+export const ipc_spectateErrorOccurredEvent = makeEndpoint.renderer(
   "broadcast_spectateErrorOccurred",
   <{ errorMessage: string | null }>_,
 );
 
-export const broadcastErrorOccurred = makeEndpoint.renderer(
+export const ipc_broadcastErrorOccurredEvent = makeEndpoint.renderer(
   "broadcast_broadcastErrorOccurred",
   <{ errorMessage: string | null }>_,
 );
 
-export const slippiStatusChanged = makeEndpoint.renderer("broadcast_slippiStatusChanged", <{ status: number }>_);
+export const ipc_slippiStatusChangedEvent = makeEndpoint.renderer(
+  "broadcast_slippiStatusChanged",
+  <{ status: number }>_,
+);
 
-export const dolphinStatusChanged = makeEndpoint.renderer("broadcast_dolphinStatusChanged", <{ status: number }>_);
+export const ipc_dolphinStatusChangedEvent = makeEndpoint.renderer(
+  "broadcast_dolphinStatusChanged",
+  <{ status: number }>_,
+);

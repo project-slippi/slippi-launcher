@@ -1,4 +1,4 @@
-import { startBroadcast, stopBroadcast } from "@broadcast/ipc";
+import { ipc_startBroadcast, ipc_stopBroadcast } from "@broadcast/ipc";
 import { StartBroadcastConfig } from "@broadcast/types";
 import log from "electron-log";
 
@@ -14,7 +14,7 @@ export const useBroadcast = () => {
 
     const authToken = await user.getIdToken();
     log.info("[Broadcast] Starting broadcast");
-    const res = await startBroadcast.renderer!.trigger({
+    const res = await ipc_startBroadcast.renderer!.trigger({
       ...config,
       authToken,
     });
@@ -26,7 +26,7 @@ export const useBroadcast = () => {
   };
 
   const stopBroadcasting = async () => {
-    const res = await stopBroadcast.renderer!.trigger({});
+    const res = await ipc_stopBroadcast.renderer!.trigger({});
     if (!res.result) {
       log.error("Error stopping broadcast", res.errors);
       throw new Error("Error stopping broadcast");

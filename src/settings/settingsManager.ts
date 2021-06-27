@@ -5,7 +5,7 @@ import merge from "lodash/merge";
 import set from "lodash/set";
 
 import { defaultAppSettings } from "./defaultSettings";
-import { settingsUpdated } from "./ipc";
+import { ipc_settingsUpdatedEvent } from "./ipc";
 import { AppSettings, StoredConnection } from "./types";
 
 electronSettings.configure({
@@ -99,7 +99,7 @@ export class SettingsManager {
   private async _set(objectPath: string, value: any) {
     await electronSettings.set(objectPath, value);
     set(this.appSettings, objectPath, value);
-    await settingsUpdated.main!.trigger(this.get());
+    await ipc_settingsUpdatedEvent.main!.trigger(this.get());
   }
 }
 

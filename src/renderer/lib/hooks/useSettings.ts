@@ -1,11 +1,11 @@
 import { DolphinLaunchType } from "@dolphin/types";
 import {
-  setIsoPath,
-  setLaunchMeleeOnPlay,
-  setNetplayDolphinPath,
-  setPlaybackDolphinPath,
-  setRootSlpPath,
-  setSpectateSlpPath,
+  ipc_setIsoPath,
+  ipc_setLaunchMeleeOnPlay,
+  ipc_setNetplayDolphinPath,
+  ipc_setPlaybackDolphinPath,
+  ipc_setRootSlpPath,
+  ipc_setSpectateSlpPath,
 } from "@settings/ipc";
 import { AppSettings } from "@settings/types";
 import { ipcRenderer } from "electron";
@@ -29,7 +29,7 @@ export const useSettings = create(
 export const useIsoPath = () => {
   const isoPath = useSettings((store) => store.settings.isoPath);
   const setPath = async (isoPath: string | null) => {
-    const setResult = await setIsoPath.renderer!.trigger({ isoPath });
+    const setResult = await ipc_setIsoPath.renderer!.trigger({ isoPath });
     if (!setResult.result) {
       throw new Error("Error setting ISO path");
     }
@@ -40,7 +40,7 @@ export const useIsoPath = () => {
 export const useRootSlpPath = () => {
   const rootSlpPath = useSettings((store) => store.settings.rootSlpPath);
   const setReplayDir = async (path: string) => {
-    const setResult = await setRootSlpPath.renderer!.trigger({ path });
+    const setResult = await ipc_setRootSlpPath.renderer!.trigger({ path });
     if (!setResult.result) {
       throw new Error("Error setting root SLP path");
     }
@@ -51,7 +51,7 @@ export const useRootSlpPath = () => {
 export const useSpectateSlpPath = () => {
   const spectateSlpPath = useSettings((store) => store.settings.spectateSlpPath);
   const setSpectateDir = async (path: string) => {
-    const setResult = await setSpectateSlpPath.renderer!.trigger({ path });
+    const setResult = await ipc_setSpectateSlpPath.renderer!.trigger({ path });
     if (!setResult.result) {
       throw new Error("Error setting spectate SLP path");
     }
@@ -62,7 +62,7 @@ export const useSpectateSlpPath = () => {
 export const useDolphinPath = (dolphinType: DolphinLaunchType) => {
   const netplayDolphinPath = useSettings((store) => store.settings.netplayDolphinPath);
   const setNetplayPath = async (path: string) => {
-    const setResult = await setNetplayDolphinPath.renderer!.trigger({ path });
+    const setResult = await ipc_setNetplayDolphinPath.renderer!.trigger({ path });
     if (!setResult.result) {
       throw new Error("Error setting netplay dolphin path");
     }
@@ -70,7 +70,7 @@ export const useDolphinPath = (dolphinType: DolphinLaunchType) => {
 
   const playbackDolphinPath = useSettings((store) => store.settings.playbackDolphinPath);
   const setDolphinPath = async (path: string) => {
-    const setResult = await setPlaybackDolphinPath.renderer!.trigger({ path });
+    const setResult = await ipc_setPlaybackDolphinPath.renderer!.trigger({ path });
     if (!setResult.result) {
       throw new Error("Error setting playback dolphin path");
     }
@@ -89,7 +89,7 @@ export const useDolphinPath = (dolphinType: DolphinLaunchType) => {
 export const useLaunchMeleeOnPlay = () => {
   const launchMeleeOnPlay = useSettings((store) => store.settings.launchMeleeOnPlay);
   const setLaunchMelee = async (launchMelee: boolean) => {
-    const setResult = await setLaunchMeleeOnPlay.renderer!.trigger({ launchMelee });
+    const setResult = await ipc_setLaunchMeleeOnPlay.renderer!.trigger({ launchMelee });
     if (!setResult.result) {
       throw new Error("Error setting launch melee on Play");
     }

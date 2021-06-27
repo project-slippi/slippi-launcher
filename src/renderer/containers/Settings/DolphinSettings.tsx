@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { clearDolphinCache, configureDolphin, reinstallDolphin } from "@dolphin/ipc";
+import { ipc_clearDolphinCache, ipc_configureDolphin, ipc_reinstallDolphin } from "@dolphin/ipc";
 import { DolphinLaunchType } from "@dolphin/types";
 import { css, jsx } from "@emotion/react";
 import Button from "@material-ui/core/Button";
@@ -58,16 +58,16 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
         autoDismiss: true,
       });
     }
-    await configureDolphin.renderer!.trigger({ dolphinType });
+    await ipc_configureDolphin.renderer!.trigger({ dolphinType });
   };
 
   const reinstallDolphinHandler = async () => {
     console.log("reinstall button clicked");
-    await reinstallDolphin.renderer!.trigger({ dolphinType });
+    await ipc_reinstallDolphin.renderer!.trigger({ dolphinType });
   };
 
   const clearDolphinCacheHandler = async () => {
-    await clearDolphinCache.renderer!.trigger({ dolphinType });
+    await ipc_clearDolphinCache.renderer!.trigger({ dolphinType });
   };
 
   return (
