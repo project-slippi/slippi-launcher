@@ -14,10 +14,12 @@ import { verifyIso } from "./verifyIso";
 
 export function setupListeners() {
   ipcMain.on("onDragStart", (event, filePaths: string[]) => {
-    event.sender.startDrag({
+    const dragArguments: any = {
       files: filePaths, // if this shows an error, its due to the development api being outdated
       icon: nativeImage.createFromPath(path.join(__static, "images", "file.png")),
-    });
+    };
+
+    event.sender.startDrag(dragArguments);
   });
 
   ipcMain.on("getAppSettingsSync", (event) => {
