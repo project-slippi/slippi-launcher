@@ -33,7 +33,7 @@ export const useAppListeners = () => {
   const initializeApp = useAppInitialization();
   React.useEffect(() => {
     void initializeApp();
-  }, []);
+  }, [initializeApp]);
 
   // Subscribe to user auth changes to keep store up to date
   const setUser = useAccount((store) => store.setUser);
@@ -60,7 +60,7 @@ export const useAppListeners = () => {
     }
 
     return;
-  }, [initialized]);
+  }, [initialized, refreshPlayKey, setUser]);
 
   const setLogMessage = useAppStore((store) => store.setLogMessage);
   ipc_dolphinDownloadLogReceivedEvent.renderer!.useEvent(async ({ message }) => {
@@ -144,7 +144,7 @@ export const useAppListeners = () => {
       .finally(() => {
         setIsValidating(false);
       });
-  }, [isoPath]);
+  }, [isoPath, setIsValid, setIsValidating]);
 
   const clearSelectedFile = useReplays((store) => store.clearSelectedFile);
   const { goToReplayStatsPage } = useReplayBrowserNavigation();
@@ -157,5 +157,5 @@ export const useAppListeners = () => {
   const updateNewsFeed = useNewsFeed((store) => store.update);
   React.useEffect(() => {
     updateNewsFeed();
-  }, []);
+  }, [updateNewsFeed]);
 };
