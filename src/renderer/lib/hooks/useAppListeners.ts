@@ -102,15 +102,15 @@ export const useAppListeners = () => {
 
   // Update the discovered console list
   const updateConsoleItems = useConsoleDiscoveryStore((store) => store.updateConsoleItems);
-  ipc_discoveredConsolesUpdatedEvent.renderer!.handle(async ({ consoles }) => {
+  ipc_discoveredConsolesUpdatedEvent.renderer!.useEvent(async ({ consoles }) => {
     updateConsoleItems(consoles);
-  });
+  }, []);
 
   // Update the mirroring console status
   const updateConsoleStatus = useConsoleDiscoveryStore((store) => store.updateConsoleStatus);
-  ipc_consoleMirrorStatusUpdatedEvent.renderer!.handle(async ({ ip, info }) => {
+  ipc_consoleMirrorStatusUpdatedEvent.renderer!.useEvent(async ({ ip, info }) => {
     updateConsoleStatus(ip, info);
-  });
+  }, []);
 
   // Automatically run ISO verification whenever the isoPath changes
   const isoPath = useSettings((store) => store.settings.isoPath);
@@ -148,10 +148,10 @@ export const useAppListeners = () => {
 
   const clearSelectedFile = useReplays((store) => store.clearSelectedFile);
   const { goToReplayStatsPage } = useReplayBrowserNavigation();
-  ipc_statsPageRequestedEvent.renderer!.handle(async ({ filePath }) => {
-    await clearSelectedFile();
+  ipc_statsPageRequestedEvent.renderer!.useEvent(async ({ filePath }) => {
+    clearSelectedFile();
     goToReplayStatsPage(filePath);
-  });
+  }, []);
 
   // Load the news articles once on app load
   const updateNewsFeed = useNewsFeed((store) => store.update);
