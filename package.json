@@ -130,7 +130,7 @@
   "husky": {
     "hooks": {
       "pre-commit": "pretty-quick --staged",
-      "pre-push": "yarn lint"
+      "pre-push": "yarn lint --quiet"
     }
   },
   "repository": {
