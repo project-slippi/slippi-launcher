@@ -67,7 +67,7 @@ export const FileSelectionToolbar: React.FC<FileSelectionToolbarProps> = ({
                 cursor: inherit;
               `}
             >
-              Drag & Drop Replays
+              Share
             </Button>
           </DraggableFiles>
           <Button color="secondary" variant="contained" size="small" startIcon={<DeleteIcon />}>
