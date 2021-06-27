@@ -145,11 +145,16 @@ export class DolphinManager extends EventEmitter {
     return meleeIsoPath;
   }
 
-  public async copyDolphin(launchType: DolphinLaunchType, fromPath: string) {
-    const dolphinPath = path.join(app.getPath("userData"), launchType);
-    const userFolder = path.join(fromPath, "User");
+  public async copyDolphinConfig(launchType: DolphinLaunchType, fromPath: string) {
+    const newUserFolder = path.join(app.getPath("userData"), launchType, "User");
+    const oldUserFolder = path.join(fromPath, "User");
 
-    await fs.move(userFolder, dolphinPath, { overwrite: true });
+    log.info(oldUserFolder, newUserFolder);
+
+    if (await fs.pathExists(newUserFolder)) {
+      await fs.remove(newUserFolder);
+    }
+    await fs.copy(oldUserFolder, newUserFolder, { overwrite: true });
     await fs.remove(fromPath, (err) => {
       throw new Error(`Could not remove old dolphin ${err}`);
     });
