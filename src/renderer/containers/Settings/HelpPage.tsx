@@ -28,6 +28,12 @@ export const HelpPage: React.FC = () => {
           h6 {
             color: white;
           }
+
+          h2:not(:first-child) {
+            border-top: solid 1px rgba(255, 255, 255, 0.15);
+            margin-top: 50px;
+            padding-top: 50px;
+          }
         `}
       />
     </div>
