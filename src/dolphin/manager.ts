@@ -1,4 +1,5 @@
 import { settingsManager } from "@settings/settingsManager";
+import { app } from "electron";
 import log from "electron-log";
 import { EventEmitter } from "events";
 import * as fs from "fs-extra";
@@ -142,6 +143,16 @@ export class DolphinManager extends EventEmitter {
       }
     }
     return meleeIsoPath;
+  }
+
+  public async copyDolphin(launchType: DolphinLaunchType, fromPath: string) {
+    const dolphinPath = path.join(app.getPath("userData"), launchType);
+    const userFolder = path.join(fromPath, "User");
+
+    await fs.move(userFolder, dolphinPath, { overwrite: true });
+    await fs.remove(fromPath, (err) => {
+      throw new Error(`Could not remove old dolphin ${err}`);
+    });
   }
 }
 

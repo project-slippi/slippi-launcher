@@ -7,6 +7,7 @@ import { useAccount } from "./useAccount";
 
 export enum QuickStartStep {
   LOGIN = "LOGIN",
+  MIGRATE_DOLPHIN = "MIGRATE_DOLPHIN",
   ACTIVATE_ONLINE = "ACTIVATE_ONLINE",
   SET_ISO_PATH = "SET_ISO_PATH",
   COMPLETE = "COMPLETE",
@@ -17,6 +18,7 @@ function generateSteps(
     hasUser: boolean;
     hasPlayKey: boolean;
     hasIso: boolean;
+    hasOldDesktopApp: boolean;
   }>,
 ): QuickStartStep[] {
   // Build the steps in reverse order
@@ -24,6 +26,10 @@ function generateSteps(
 
   if (!options.hasIso) {
     steps.unshift(QuickStartStep.SET_ISO_PATH);
+  }
+
+  if (options.hasOldDesktopApp) {
+    steps.unshift(QuickStartStep.MIGRATE_DOLPHIN);
   }
 
   if (!options.hasPlayKey) {
@@ -42,10 +48,12 @@ export const useQuickStart = () => {
   const savedIsoPath = useSettings((store) => store.settings.isoPath);
   const user = useAccount((store) => store.user);
   const playKey = useAccount((store) => store.playKey);
+  const desktopAppPathExists = oldDesktopApp.exists;
   const options = {
     hasUser: Boolean(user),
     hasIso: Boolean(savedIsoPath),
     hasPlayKey: Boolean(playKey),
+    hasOldDesktopApp: desktopAppPathExists,
   };
   const [steps] = React.useState(generateSteps(options));
   const [currentStep, setCurrentStep] = React.useState<QuickStartStep | null>(null);
@@ -62,6 +70,10 @@ export const useQuickStart = () => {
       stepToShow = QuickStartStep.SET_ISO_PATH;
     }
 
+    if (options.hasOldDesktopApp) {
+      stepToShow = QuickStartStep.MIGRATE_DOLPHIN;
+    }
+
     if (!options.hasPlayKey) {
       stepToShow = QuickStartStep.ACTIVATE_ONLINE;
     }
@@ -70,10 +82,12 @@ export const useQuickStart = () => {
       stepToShow = QuickStartStep.LOGIN;
     }
     setCurrentStep(stepToShow);
-  }, [options.hasIso, options.hasPlayKey, options.hasUser]);
+  }, [history, steps, options.hasIso, options.hasOldDesktopApp, options.hasPlayKey, options.hasUser]);
 
   return {
     allSteps: steps,
     currentStep,
   };
 };
+
+export const oldDesktopApp = { path: "", exists: false };

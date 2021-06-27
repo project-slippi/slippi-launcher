@@ -8,3 +8,9 @@ export const ipc_checkValidIso = makeEndpoint.main(
   <{ path: string }>_,
   <{ path: string; valid: boolean }>_,
 );
+
+export const ipc_getDesktopAppPath = makeEndpoint.main(
+  "getDesktopAppPath",
+  <EmptyPayload>_,
+  <{ path: string; exists: boolean }>_,
+);
