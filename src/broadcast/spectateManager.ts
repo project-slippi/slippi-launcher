@@ -7,7 +7,7 @@ import _ from "lodash";
 import { client as WebSocketClient, connection, IMessage } from "websocket";
 
 import { dolphinManager, ReplayCommunication } from "../dolphin";
-import { broadcastListUpdated, spectateErrorOccurred } from "./ipc";
+import { ipc_broadcastListUpdatedEvent, ipc_spectateErrorOccurredEvent } from "./ipc";
 import { BroadcasterItem } from "./types";
 
 const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
@@ -335,9 +335,9 @@ export const spectateManager = new SpectateManager();
 
 // Forward the events to the renderer
 spectateManager.on(SpectateManagerEvent.BROADCAST_LIST_UPDATE, async (data: BroadcasterItem[]) => {
-  await broadcastListUpdated.main!.trigger({ items: data });
+  await ipc_broadcastListUpdatedEvent.main!.trigger({ items: data });
 });
 
 spectateManager.on(SpectateManagerEvent.ERROR, async (error) => {
-  await spectateErrorOccurred.main!.trigger({ errorMessage: error.message ?? JSON.stringify(error) });
+  await ipc_spectateErrorOccurredEvent.main!.trigger({ errorMessage: error.message ?? JSON.stringify(error) });
 });

@@ -1,4 +1,4 @@
-import { viewSlpReplay } from "@dolphin/ipc";
+import { ipc_viewSlpReplay } from "@dolphin/ipc";
 import { ReplayQueueItem } from "@dolphin/types";
 import { useToasts } from "react-toast-notifications";
 
@@ -7,7 +7,7 @@ export const usePlayFiles = () => {
 
   const playFiles = async (files: ReplayQueueItem[]) => {
     try {
-      const viewResult = await viewSlpReplay.renderer!.trigger({ files });
+      const viewResult = await ipc_viewSlpReplay.renderer!.trigger({ files });
       if (!viewResult.result) {
         console.error(`Error playing file(s): ${files.join(", ")}`, viewResult.errors);
         throw new Error(`Error playing file(s): ${files.join(", ")}`);

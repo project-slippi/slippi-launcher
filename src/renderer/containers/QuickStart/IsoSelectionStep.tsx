@@ -11,7 +11,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { colors } from "common/colors";
-import { checkValidIso } from "common/ipc";
+import { ipc_checkValidIso } from "common/ipc";
 import React from "react";
 import { useDropzone } from "react-dropzone";
 import { useToasts } from "react-toast-notifications";
@@ -56,7 +56,7 @@ const Container = styled.div`
 
 export const IsoSelectionStep: React.FC = () => {
   const [tempIsoPath, setTempIsoPath] = React.useState("");
-  const verification = checkValidIso.renderer!.useValue({ path: tempIsoPath }, { path: tempIsoPath, valid: false });
+  const verification = ipc_checkValidIso.renderer!.useValue({ path: tempIsoPath }, { path: tempIsoPath, valid: false });
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
   const loading = verification.isUpdating;

@@ -5,7 +5,7 @@ import "@settings/main";
 import "@console/main";
 
 import { settingsManager } from "@settings/settingsManager";
-import { checkValidIso, fetchNewsFeed } from "common/ipc";
+import { ipc_checkValidIso, ipc_fetchNewsFeed } from "common/ipc";
 import { ipcMain, nativeImage } from "electron";
 import path from "path";
 
@@ -25,12 +25,12 @@ export function setupListeners() {
     event.returnValue = settings;
   });
 
-  fetchNewsFeed.main!.handle(async () => {
+  ipc_fetchNewsFeed.main!.handle(async () => {
     const result = await fetchNewsFeedData();
     return result;
   });
 
-  checkValidIso.main!.handle(async ({ path }) => {
+  ipc_checkValidIso.main!.handle(async ({ path }) => {
     // Make sure we have a valid path
     if (!path) {
       return { path, valid: false };

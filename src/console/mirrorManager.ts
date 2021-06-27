@@ -18,7 +18,7 @@ import path from "path";
 
 import { AutoSwitcher } from "./autoSwitcher";
 import { ConsoleRelay } from "./consoleRelay";
-import { consoleMirrorStatusUpdated } from "./ipc";
+import { ipc_consoleMirrorStatusUpdatedEvent } from "./ipc";
 import { MirrorConfig, MirrorDetails } from "./types";
 
 /**
@@ -63,7 +63,7 @@ export class MirrorManager {
       this._playFile(currFilePath, config.ipAddress).catch(log.warn);
 
       // Let the front-end know of the new file that we're writing too
-      consoleMirrorStatusUpdated
+      ipc_consoleMirrorStatusUpdatedEvent
         .main!.trigger({
           ip: config.ipAddress,
           info: {
@@ -75,7 +75,7 @@ export class MirrorManager {
 
     // Clear the current writing file
     fileWriter.on(SlpFileWriterEvent.FILE_COMPLETE, () => {
-      consoleMirrorStatusUpdated
+      ipc_consoleMirrorStatusUpdatedEvent
         .main!.trigger({
           ip: config.ipAddress,
           info: {
@@ -99,7 +99,7 @@ export class MirrorManager {
         log.info(details);
         fileWriter.updateSettings({ consoleNickname: details.consoleNick });
 
-        consoleMirrorStatusUpdated
+        ipc_consoleMirrorStatusUpdatedEvent
           .main!.trigger({
             ip: config.ipAddress,
             info: {
@@ -111,7 +111,7 @@ export class MirrorManager {
 
       connection.on(ConnectionEvent.STATUS_CHANGE, (status) => {
         log.info(`${config.ipAddress} status changed: ${status}`);
-        consoleMirrorStatusUpdated
+        ipc_consoleMirrorStatusUpdatedEvent
           .main!.trigger({
             ip: config.ipAddress,
             info: {
@@ -195,7 +195,7 @@ export class MirrorManager {
 
     // FIXME: Not sure why the disconnected status update isn't working
     // For now let's just manually show the disconnected status
-    consoleMirrorStatusUpdated
+    ipc_consoleMirrorStatusUpdatedEvent
       .main!.trigger({
         ip,
         info: {

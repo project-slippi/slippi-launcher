@@ -2,15 +2,15 @@ import { addGamePathToInis } from "@dolphin/util";
 import path from "path";
 
 import {
-  addNewConnection,
-  deleteConnection,
-  editConnection,
-  setIsoPath,
-  setLaunchMeleeOnPlay,
-  setNetplayDolphinPath,
-  setPlaybackDolphinPath,
-  setRootSlpPath,
-  setSpectateSlpPath,
+  ipc_addNewConnection,
+  ipc_deleteConnection,
+  ipc_editConnection,
+  ipc_setIsoPath,
+  ipc_setLaunchMeleeOnPlay,
+  ipc_setNetplayDolphinPath,
+  ipc_setPlaybackDolphinPath,
+  ipc_setRootSlpPath,
+  ipc_setSpectateSlpPath,
 } from "./ipc";
 import { settingsManager } from "./settingsManager";
 
@@ -19,7 +19,7 @@ import { settingsManager } from "./settingsManager";
 //   return settings;
 // });
 
-setIsoPath.main!.handle(async ({ isoPath }) => {
+ipc_setIsoPath.main!.handle(async ({ isoPath }) => {
   await settingsManager.setIsoPath(isoPath);
   if (isoPath) {
     const gameDir = path.dirname(isoPath);
@@ -28,42 +28,42 @@ setIsoPath.main!.handle(async ({ isoPath }) => {
   return { success: true };
 });
 
-setRootSlpPath.main!.handle(async ({ path }) => {
+ipc_setRootSlpPath.main!.handle(async ({ path }) => {
   await settingsManager.setRootSlpPath(path);
   return { success: true };
 });
 
-setSpectateSlpPath.main!.handle(async ({ path }) => {
+ipc_setSpectateSlpPath.main!.handle(async ({ path }) => {
   await settingsManager.setSpectateSlpPath(path);
   return { success: true };
 });
 
-setNetplayDolphinPath.main!.handle(async ({ path }) => {
+ipc_setNetplayDolphinPath.main!.handle(async ({ path }) => {
   await settingsManager.setNetplayDolphinPath(path);
   return { success: true };
 });
 
-setPlaybackDolphinPath.main!.handle(async ({ path }) => {
+ipc_setPlaybackDolphinPath.main!.handle(async ({ path }) => {
   await settingsManager.setPlaybackDolphinPath(path);
   return { success: true };
 });
 
-addNewConnection.main!.handle(async ({ connection }) => {
+ipc_addNewConnection.main!.handle(async ({ connection }) => {
   await settingsManager.addConsoleConnection(connection);
   return { success: true };
 });
 
-editConnection.main!.handle(async ({ id, connection }) => {
+ipc_editConnection.main!.handle(async ({ id, connection }) => {
   await settingsManager.editConsoleConnection(id, connection);
   return { success: true };
 });
 
-deleteConnection.main!.handle(async ({ id }) => {
+ipc_deleteConnection.main!.handle(async ({ id }) => {
   await settingsManager.deleteConsoleConnection(id);
   return { success: true };
 });
 
-setLaunchMeleeOnPlay.main!.handle(async ({ launchMelee }) => {
+ipc_setLaunchMeleeOnPlay.main!.handle(async ({ launchMelee }) => {
   await settingsManager.setLaunchMeleeOnPlay(launchMelee);
   return { success: true };
 });

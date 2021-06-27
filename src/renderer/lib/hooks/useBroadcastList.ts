@@ -1,4 +1,4 @@
-import { refreshBroadcastList } from "@broadcast/ipc";
+import { ipc_refreshBroadcastList } from "@broadcast/ipc";
 import { BroadcasterItem } from "@broadcast/types";
 import throttle from "lodash/throttle";
 import create from "zustand";
@@ -26,7 +26,7 @@ export const useBroadcastList = () => {
       throw new Error("User is not logged in");
     }
     const authToken = await currentUser.getIdToken();
-    const broadcastListResult = await refreshBroadcastList.renderer!.trigger({ authToken });
+    const broadcastListResult = await ipc_refreshBroadcastList.renderer!.trigger({ authToken });
     if (!broadcastListResult.result) {
       throw new Error("Error refreshing broadcast list");
     }
