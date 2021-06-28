@@ -40,13 +40,15 @@ export const MigrateDolphinStep: React.FC = () => {
     await deleteOldDesktopAppFolder();
   };
 
+  const defaultValues = { netplayPath: "" };
+
   const {
     handleSubmit,
     watch,
     control,
     setValue,
     formState: { errors },
-  } = useForm<{ netplayPath: string }>();
+  } = useForm<{ netplayPath: string }>({ defaultValues });
   const netplayPath = watch("netplayPath");
 
   const onNetplaySubmit = handleSubmit(migrateNetplayDolphin);
