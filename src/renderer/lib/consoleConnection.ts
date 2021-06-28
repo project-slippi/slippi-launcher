@@ -3,7 +3,6 @@ import { MirrorConfig } from "@console/types";
 import { ipc_addNewConnection, ipc_deleteConnection, ipc_editConnection } from "@settings/ipc";
 import { StoredConnection } from "@settings/types";
 import { Ports } from "@slippi/slippi-js";
-import * as fs from "fs-extra";
 
 export type EditConnectionType = Omit<StoredConnection, "id">;
 
@@ -48,8 +47,6 @@ export const connectToConsole = async (conn: StoredConnection) => {
       sourceName: conn.obsSourceName,
     };
   }
-
-  fs.ensureDirSync(config.folderPath);
 
   const res = await ipc_connectToConsoleMirror.renderer!.trigger({ config });
   if (!res.result) {

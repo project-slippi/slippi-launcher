@@ -6,7 +6,7 @@ import styled from "@emotion/styled";
 import Box from "@material-ui/core/Box";
 import Container from "@material-ui/core/Container";
 import FormHelperText from "@material-ui/core/FormHelperText";
-import * as fs from "fs-extra";
+import { ipc_deleteFolder } from "common/ipc";
 import path from "path";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -29,7 +29,7 @@ export const MigrateDolphinStep: React.FC = () => {
   };
 
   const deleteOldDesktopAppFolder = async () => {
-    await fs.remove(oldDesktopAppPath);
+    await ipc_deleteFolder.renderer!.trigger({ path: oldDesktopAppPath });
     setExists(false);
   };
   const migratePlaybackDolphin = async () => {

@@ -5,7 +5,13 @@ import "@settings/main";
 import "@console/main";
 
 import { settingsManager } from "@settings/settingsManager";
-import { ipc_checkValidIso, ipc_fetchNewsFeed, ipc_getDesktopAppPath } from "common/ipc";
+import {
+  ipc_checkValidIso,
+  ipc_deleteFolder,
+  ipc_fetchNewsFeed,
+  ipc_getDesktopAppPath,
+  ipc_getFolderContents,
+} from "common/ipc";
 import { app, ipcMain, nativeImage } from "electron";
 import * as fs from "fs-extra";
 import path from "path";
@@ -51,5 +57,19 @@ export function setupListeners() {
     const exists = await fs.pathExists(desktopAppPath);
 
     return { path: desktopAppPath, exists: exists };
+  });
+
+  ipc_deleteFolder.main!.handle(async ({ path }) => {
+    await fs.remove(path).catch((err) => {
+      throw new Error(err);
+    });
+    return { success: true };
+  });
+
+  ipc_getFolderContents.main!.handle(async ({ path }) => {
+    const contents = await fs.readdir(path, { withFileTypes: true }).catch((err) => {
+      throw new Error(err);
+    });
+    return { success: true, contents };
   });
 }
