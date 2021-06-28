@@ -17,9 +17,6 @@ import { useDesktopApp } from "@/lib/hooks/useQuickStart";
 
 import { QuickStartHeader } from "./QuickStartHeader";
 
-const MIGRATE_TEXT = "Migrate Dolphin";
-const SKIP_TEXT = "Skip Migration";
-
 export const MigrateDolphinStep: React.FC = () => {
   const [netplayMigration, setNetplayMigration] = React.useState(true);
   const oldDesktopAppPath = useDesktopApp((store) => store.path);
@@ -96,7 +93,7 @@ export const MigrateDolphinStep: React.FC = () => {
                   `}
                 >
                   <Button type="submit" variant="contained" color="primary">
-                    {MIGRATE_TEXT}
+                    Migrate Dolphin
                   </Button>
                   <Button
                     color="secondary"
@@ -106,7 +103,7 @@ export const MigrateDolphinStep: React.FC = () => {
                       margin-top: 10px;
                     `}
                   >
-                    {SKIP_TEXT}
+                    Skip Migration
                   </Button>
                 </div>
               </form>
@@ -130,7 +127,7 @@ export const MigrateDolphinStep: React.FC = () => {
               `}
             >
               <Button onClick={migratePlaybackDolphin} variant="contained" color="primary">
-                {MIGRATE_TEXT}
+                Migrate Dolphin
               </Button>
               <Button
                 color="secondary"
@@ -140,7 +137,7 @@ export const MigrateDolphinStep: React.FC = () => {
                   margin-top: 10px;
                 `}
               >
-                {SKIP_TEXT}
+                Skip Migration
               </Button>
             </div>
           </Outer>
