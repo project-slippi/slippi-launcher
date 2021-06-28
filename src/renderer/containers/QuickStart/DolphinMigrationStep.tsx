@@ -14,7 +14,8 @@ import { useDesktopApp } from "@/lib/hooks/useQuickStart";
 import { QuickStartHeader } from "./QuickStartHeader";
 
 export const MigrateDolphinStep: React.FC = () => {
-  const [oldDesktopAppPath, setExists] = useDesktopApp((store) => [store.path, store.setExists]);
+  const oldDesktopAppPath = useDesktopApp((store) => store.path);
+  const setExists = useDesktopApp((store) => store.setExists);
   const oldDesktopDolphin = path.join(oldDesktopAppPath, "dolphin");
   const deleteOldDesktopAppFolder = async () => {
     await fs.remove(oldDesktopAppPath);
@@ -28,7 +29,9 @@ export const MigrateDolphinStep: React.FC = () => {
     <Box display="flex" flexDirection="column" flexGrow="1">
       <Container>
         <QuickStartHeader>Migrate Dolphin</QuickStartHeader>
-        <div>We found an old installation of the Slippi Desktop App, would you like to migrate Dolphin?</div>
+        <div>
+          We found an old installation of the Slippi Desktop App, would you like to migrate your old Dolphin settings?
+        </div>
         <div
           css={css`
             display: flex;
@@ -40,7 +43,7 @@ export const MigrateDolphinStep: React.FC = () => {
           `}
         >
           <Button variant="contained" color="primary" onClick={migratePlaybackDolphin}>
-            Yes
+            Migrate
           </Button>
           <Button
             color="secondary"
@@ -50,7 +53,7 @@ export const MigrateDolphinStep: React.FC = () => {
               margin-top: 10px;
             `}
           >
-            No
+            Skip Migration
           </Button>
         </div>
       </Container>
