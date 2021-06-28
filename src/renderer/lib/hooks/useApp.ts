@@ -9,7 +9,7 @@ import { initializeFirebase } from "@/lib/firebase";
 import { useAccount } from "@/lib/hooks/useAccount";
 import { fetchPlayKey } from "@/lib/slippiBackend";
 
-import { oldDesktopApp } from "./useQuickStart";
+import { useDesktopApp } from "./useQuickStart";
 
 export const useAppStore = create(
   combine(
@@ -30,6 +30,7 @@ export const useAppInitialization = () => {
   const setLogMessage = useAppStore((store) => store.setLogMessage);
   const setUser = useAccount((store) => store.setUser);
   const setPlayKey = useAccount((store) => store.setPlayKey);
+  const [setPath, setExists] = useDesktopApp((store) => [store.setPath, store.setExists]);
 
   const initialize = async () => {
     if (initialized) {
@@ -87,8 +88,8 @@ export const useAppInitialization = () => {
           if (!result) {
             throw new Error("Could not get old desktop app path");
           }
-          oldDesktopApp.exists = result.exists;
-          oldDesktopApp.path = result.path;
+          setExists(result.exists);
+          setPath(result.path);
         })
         .catch(console.error),
     );

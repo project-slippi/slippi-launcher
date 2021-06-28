@@ -149,8 +149,6 @@ export class DolphinManager extends EventEmitter {
     const newUserFolder = path.join(app.getPath("userData"), launchType, "User");
     const oldUserFolder = path.join(fromPath, "User");
 
-    log.info(oldUserFolder, newUserFolder);
-
     if (await fs.pathExists(newUserFolder)) {
       await fs.remove(newUserFolder);
     }

@@ -1,5 +1,7 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
+import create from "zustand";
+import { combine } from "zustand/middleware";
 
 import { useSettings } from "@/lib/hooks/useSettings";
 
@@ -48,7 +50,7 @@ export const useQuickStart = () => {
   const savedIsoPath = useSettings((store) => store.settings.isoPath);
   const user = useAccount((store) => store.user);
   const playKey = useAccount((store) => store.playKey);
-  const desktopAppPathExists = oldDesktopApp.exists;
+  const desktopAppPathExists = useDesktopApp((store) => store.exists);
   const options = {
     hasUser: Boolean(user),
     hasIso: Boolean(savedIsoPath),
@@ -91,3 +93,16 @@ export const useQuickStart = () => {
 };
 
 export const oldDesktopApp = { path: "", exists: false };
+
+export const useDesktopApp = create(
+  combine(
+    {
+      path: "",
+      exists: false,
+    },
+    (set) => ({
+      setExists: (exists: boolean) => set({ exists }),
+      setPath: (path: string) => set({ path }),
+    }),
+  ),
+);

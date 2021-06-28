@@ -9,19 +9,20 @@ import path from "path";
 import React from "react";
 
 import { Button } from "@/components/FormInputs/Button";
-import { oldDesktopApp } from "@/lib/hooks/useQuickStart";
+import { useDesktopApp } from "@/lib/hooks/useQuickStart";
 
 import { QuickStartHeader } from "./QuickStartHeader";
 
 export const MigrateDolphinStep: React.FC = () => {
-  const oldDesktopDolphin = path.join(oldDesktopApp.path, "dolphin");
+  const [oldDesktopAppPath, setExists] = useDesktopApp((store) => [store.path, store.setExists]);
+  const oldDesktopDolphin = path.join(oldDesktopAppPath, "dolphin");
   const deleteOldDesktopAppFolder = async () => {
-    await fs.remove(oldDesktopApp.path);
-    oldDesktopApp.exists = false;
+    await fs.remove(oldDesktopAppPath);
+    setExists(false);
   };
   const migratePlaybackDolphin = async () => {
     await ipc_copyDolphin.renderer!.trigger({ dolphinType: DolphinLaunchType.PLAYBACK, userPath: oldDesktopDolphin });
-    await deleteOldDesktopAppFolder();
+    // await deleteOldDesktopAppFolder();
   };
   return (
     <Box display="flex" flexDirection="column" flexGrow="1">
