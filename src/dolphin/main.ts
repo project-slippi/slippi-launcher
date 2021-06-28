@@ -4,7 +4,7 @@ import {
   ipc_checkPlayKeyExists,
   ipc_clearDolphinCache,
   ipc_configureDolphin,
-  ipc_copyDolphin as ipc_copyDolphinConfig,
+  ipc_copyDolphinConfig,
   ipc_downloadDolphin,
   ipc_launchNetplayDolphin,
   ipc_reinstallDolphin,

@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { ipc_copyDolphin } from "@dolphin/ipc";
+import { ipc_copyDolphinConfig } from "@dolphin/ipc";
 import { DolphinLaunchType } from "@dolphin/types";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
@@ -27,7 +27,7 @@ export const MigrateDolphinStep: React.FC = () => {
   const oldDesktopDolphin = path.join(oldDesktopAppPath, "dolphin");
 
   const migrateNetplayDolphin = async () => {
-    await ipc_copyDolphin.renderer!.trigger({ dolphinType: DolphinLaunchType.NETPLAY, userPath: netplayPath });
+    await ipc_copyDolphinConfig.renderer!.trigger({ dolphinType: DolphinLaunchType.NETPLAY, userPath: netplayPath });
     setNetplayMigration(false);
   };
 
@@ -36,7 +36,10 @@ export const MigrateDolphinStep: React.FC = () => {
     setExists(false);
   };
   const migratePlaybackDolphin = async () => {
-    await ipc_copyDolphin.renderer!.trigger({ dolphinType: DolphinLaunchType.PLAYBACK, userPath: oldDesktopDolphin });
+    await ipc_copyDolphinConfig.renderer!.trigger({
+      dolphinType: DolphinLaunchType.PLAYBACK,
+      userPath: oldDesktopDolphin,
+    });
     await deleteOldDesktopAppFolder();
   };
 

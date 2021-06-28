@@ -33,7 +33,7 @@ export const ipc_viewSlpReplay = makeEndpoint.main("viewSlpReplay", <{ files: Re
 
 export const ipc_launchNetplayDolphin = makeEndpoint.main("launchNetplayDolphin", <EmptyPayload>_, <SuccessPayload>_);
 
-export const ipc_copyDolphin = makeEndpoint.main(
+export const ipc_copyDolphinConfig = makeEndpoint.main(
   "copyDolphin",
   <{ dolphinType: DolphinLaunchType; userPath: string }>_,
   <SuccessPayload>_,
