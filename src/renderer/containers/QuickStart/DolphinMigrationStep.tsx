@@ -12,32 +12,35 @@ import React from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import { Button } from "@/components/FormInputs/Button";
+import { Checkbox } from "@/components/FormInputs/Checkbox";
 import { PathInput } from "@/components/PathInput";
 import { useDesktopApp } from "@/lib/hooks/useQuickStart";
 
 import { QuickStartHeader } from "./QuickStartHeader";
 
 export const MigrateDolphinStep: React.FC = () => {
-  const [netplayMigration, setNetplayMigration] = React.useState(true);
+  const [migrateNetplay, setMigrateNetplay] = React.useState(false);
+  const [migratePlayback, setMigratePlayback] = React.useState(false);
   const oldDesktopAppPath = useDesktopApp((store) => store.path);
   const setExists = useDesktopApp((store) => store.setExists);
   const oldDesktopDolphin = path.join(oldDesktopAppPath, "dolphin");
 
-  const migrateNetplayDolphin = async () => {
-    await ipc_copyDolphinConfig.renderer!.trigger({ dolphinType: DolphinLaunchType.NETPLAY, userPath: netplayPath });
-    setNetplayMigration(false);
+  const migrateDolphin = async () => {
+    if (migrateNetplay) {
+      await ipc_copyDolphinConfig.renderer!.trigger({ dolphinType: DolphinLaunchType.NETPLAY, userPath: netplayPath });
+    }
+    if (migratePlayback) {
+      await ipc_copyDolphinConfig.renderer!.trigger({
+        dolphinType: DolphinLaunchType.PLAYBACK,
+        userPath: oldDesktopDolphin,
+      });
+    }
+    await deleteOldDesktopAppFolder();
   };
 
   const deleteOldDesktopAppFolder = async () => {
     await ipc_deleteFolder.renderer!.trigger({ path: oldDesktopAppPath });
     setExists(false);
-  };
-  const migratePlaybackDolphin = async () => {
-    await ipc_copyDolphinConfig.renderer!.trigger({
-      dolphinType: DolphinLaunchType.PLAYBACK,
-      userPath: oldDesktopDolphin,
-    });
-    await deleteOldDesktopAppFolder();
   };
 
   const defaultValues = { netplayPath: "" };
@@ -51,15 +54,26 @@ export const MigrateDolphinStep: React.FC = () => {
   } = useForm<{ netplayPath: string }>({ defaultValues });
   const netplayPath = watch("netplayPath");
 
-  const onNetplaySubmit = handleSubmit(migrateNetplayDolphin);
+  const onNetplaySubmit = handleSubmit(migrateDolphin);
 
   return (
     <Box display="flex" flexDirection="column" flexGrow="1">
       <Container>
         <QuickStartHeader>Migrate Dolphin</QuickStartHeader>
-        {netplayMigration && (
+        <div>Would you like to migrate your old Slippi Dolphin settings?</div>
+        <div
+          css={css`
+            display: flex;
+            flex-direction: column;
+            margin-top: 15px;
+          `}
+        >
+          <Checkbox label="Netplay" checked={migrateNetplay} onChange={() => setMigrateNetplay(!migrateNetplay)} />
+          <Checkbox label="Playback" checked={migratePlayback} onChange={() => setMigratePlayback(!migratePlayback)} />
+        </div>
+
+        {migrateNetplay && (
           <Outer>
-            <div>Would you like to migrate your old netplay Slippi Dolphin settings?</div>
             <div
               css={css`
                 margin-top: 20px;
@@ -97,7 +111,7 @@ export const MigrateDolphinStep: React.FC = () => {
                   </Button>
                   <Button
                     color="secondary"
-                    onClick={() => setNetplayMigration(false)}
+                    onClick={deleteOldDesktopAppFolder}
                     css={css`
                       text-transform: initial;
                       margin-top: 10px;
@@ -110,12 +124,8 @@ export const MigrateDolphinStep: React.FC = () => {
             </div>
           </Outer>
         )}
-        {!netplayMigration && (
+        {!migrateNetplay && (
           <Outer>
-            <div>
-              We found an old installation of the Slippi Desktop App, would you like to migrate your old playback Slippi
-              Dolphin settings?
-            </div>
             <div
               css={css`
                 display: flex;
@@ -126,7 +136,7 @@ export const MigrateDolphinStep: React.FC = () => {
                 width: 400px;
               `}
             >
-              <Button onClick={migratePlaybackDolphin} variant="contained" color="primary">
+              <Button onClick={migrateDolphin} variant="contained" color="primary">
                 Migrate Dolphin
               </Button>
               <Button
