@@ -22,7 +22,7 @@ export const MigrateDolphinStep: React.FC = () => {
   };
   const migratePlaybackDolphin = async () => {
     await ipc_copyDolphin.renderer!.trigger({ dolphinType: DolphinLaunchType.PLAYBACK, userPath: oldDesktopDolphin });
-    // await deleteOldDesktopAppFolder();
+    await deleteOldDesktopAppFolder();
   };
   return (
     <Box display="flex" flexDirection="column" flexGrow="1">

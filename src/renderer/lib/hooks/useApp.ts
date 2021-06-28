@@ -30,7 +30,8 @@ export const useAppInitialization = () => {
   const setLogMessage = useAppStore((store) => store.setLogMessage);
   const setUser = useAccount((store) => store.setUser);
   const setPlayKey = useAccount((store) => store.setPlayKey);
-  const [setPath, setExists] = useDesktopApp((store) => [store.setPath, store.setExists]);
+  const setDesktopAppPath = useDesktopApp((store) => store.setPath);
+  const setDesktopAppExists = useDesktopApp((store) => store.setExists);
 
   const initialize = async () => {
     if (initialized) {
@@ -88,8 +89,8 @@ export const useAppInitialization = () => {
           if (!result) {
             throw new Error("Could not get old desktop app path");
           }
-          setExists(result.exists);
-          setPath(result.path);
+          setDesktopAppPath(result.path);
+          setDesktopAppExists(result.exists);
         })
         .catch(console.error),
     );
