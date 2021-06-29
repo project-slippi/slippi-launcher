@@ -7,6 +7,7 @@ import "@console/main";
 import { dolphinManager } from "@dolphin/manager";
 import { DolphinLaunchType } from "@dolphin/types";
 import { settingsManager } from "@settings/settingsManager";
+import { isLinux } from "common/constants";
 import {
   ipc_checkValidIso,
   ipc_fetchNewsFeed,
@@ -57,6 +58,11 @@ export function setupListeners() {
     // get the path and check existence
     const desktopAppPath = path.join(app.getPath("appData"), "Slippi Desktop App");
     const exists = await fs.pathExists(desktopAppPath);
+
+    if (isLinux && exists) {
+      await fs.remove(desktopAppPath);
+      return { exists: false };
+    }
 
     return { exists: exists };
   });
