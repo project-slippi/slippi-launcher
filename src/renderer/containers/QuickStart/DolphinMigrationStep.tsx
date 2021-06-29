@@ -53,7 +53,7 @@ export const MigrateDolphinStep: React.FC = () => {
   const migrateNetplay = watch("shouldImportNetplay");
   const migratePlayback = watch("shouldImportPlayback");
 
-  const onNetplaySubmit = handleSubmit((values) => migrateDolphin(values));
+  const onFormSubmit = handleSubmit((values) => migrateDolphin(values));
 
   return (
     <Box display="flex" flexDirection="column" flexGrow="1">
@@ -87,7 +87,7 @@ export const MigrateDolphinStep: React.FC = () => {
             margin-top: 20px;
           `}
         >
-          <form className="form" onSubmit={onNetplaySubmit}>
+          <form className="form" onSubmit={onFormSubmit}>
             {migrateNetplay && (
               <div>
                 <div

@@ -28,7 +28,6 @@ export async function generateSubFolderTree(folder: string, childrenToExpand?: s
   const results = await fs.readdir(folder, { withFileTypes: true });
   const subdirectories = results
     .filter((dirent) => {
-      console.log(dirent);
       return dirent.isDirectory();
     })
     .map(
