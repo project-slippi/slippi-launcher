@@ -3,6 +3,7 @@ import { css, jsx } from "@emotion/react";
 import React from "react";
 
 import { BouncingSlippiLogo } from "@/components/BouncingSlippiLogo";
+import { BuildInfo } from "@/containers/Settings/BuildInfo";
 
 import { Message } from "./Message";
 
@@ -24,6 +25,15 @@ export const LoadingScreen: React.FC<{
       >
         {message}
       </p>
+      <div
+        css={css`
+          position: fixed;
+          bottom: 0;
+          left: 0;
+        `}
+      >
+        <BuildInfo />
+      </div>
     </Message>
   );
 };
