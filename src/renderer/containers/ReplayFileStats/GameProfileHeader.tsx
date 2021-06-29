@@ -186,7 +186,11 @@ const GameDetails: React.FC<{
     console.error(err);
   }
 
-  const platform = _.get(file.metadata, "playedOn") || "Unknown";
+  let platform = _.get(file.metadata, "playedOn") || "Unknown";
+  const consoleNick = _.get(file.metadata, "consoleNick");
+  if (consoleNick !== "unknown") {
+    platform = consoleNick || platform;
+  }
 
   const startAtDisplay = new Date(file.startTime ? Date.parse(file.startTime) : 0);
 
