@@ -3,6 +3,7 @@ import { ipc_clearDolphinCache, ipc_configureDolphin, ipc_reinstallDolphin } fro
 import { DolphinLaunchType } from "@dolphin/types";
 import { css, jsx } from "@emotion/react";
 import Button from "@material-ui/core/Button";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import { isLinux } from "common/constants";
@@ -43,6 +44,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolphinType }) => {
   const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
   const [modalOpen, setModalOpen] = React.useState(false);
+  const [isResetting, setIsResetting] = React.useState(false);
   const classes = useStyles();
   const { addToast } = useToasts();
 
@@ -63,7 +65,9 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
 
   const reinstallDolphinHandler = async () => {
     console.log("reinstall button clicked");
+    setIsResetting(true);
     await ipc_reinstallDolphin.renderer!.trigger({ dolphinType });
+    setIsResetting(false);
   };
 
   const clearDolphinCacheHandler = async () => {
@@ -94,10 +98,10 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
             }
           `}
         >
-          <Button variant="contained" color="primary" onClick={configureDolphinHandler}>
+          <Button variant="contained" color="primary" onClick={configureDolphinHandler} disabled={isResetting}>
             Configure Dolphin
           </Button>
-          <Button variant="outlined" color="secondary" onClick={openDolphinDirectoryHandler}>
+          <Button variant="outlined" color="secondary" onClick={openDolphinDirectoryHandler} disabled={isResetting}>
             Open containing folder
           </Button>
         </div>
@@ -119,11 +123,21 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
             }
           `}
         >
-          <Button variant="contained" color="secondary" onClick={clearDolphinCacheHandler}>
+          <Button variant="contained" color="secondary" onClick={clearDolphinCacheHandler} disabled={isResetting}>
             Clear cache
           </Button>
-          <Button variant="outlined" color="secondary" onClick={() => setModalOpen(true)}>
-            Reset everything
+          <Button variant="outlined" color="secondary" onClick={() => setModalOpen(true)} disabled={isResetting}>
+            Reset everything{" "}
+            {isResetting && (
+              <CircularProgress
+                css={css`
+                  margin-left: 10px;
+                `}
+                size={16}
+                thickness={6}
+                color="inherit"
+              />
+            )}
           </Button>
         </div>
       </SettingItem>
