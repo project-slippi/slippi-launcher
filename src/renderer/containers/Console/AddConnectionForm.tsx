@@ -47,7 +47,6 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
   const folderPath = watch("folderPath");
   const isRealTimeMode = watch("isRealTimeMode");
   const enableAutoSwitcher = watch("enableAutoSwitcher");
-  log.info(enableAutoSwitcher);
   const obsPassword = watch("obsPassword");
   const obsSourceName = watch("obsSourceName");
   const enableRelay = watch("enableRelay");
