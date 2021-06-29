@@ -5,10 +5,11 @@ export interface StoredConnection {
   isRealTimeMode: boolean;
   port?: number;
   consoleNick?: string;
+  enableAutoSwitcher: boolean;
   obsIP?: string;
   obsSourceName?: string;
   obsPassword?: string;
-  enableRelay?: boolean;
+  enableRelay: boolean;
 }
 
 export type AppSettings = {

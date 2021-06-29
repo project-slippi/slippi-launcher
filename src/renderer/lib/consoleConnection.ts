@@ -41,7 +41,7 @@ export const connectToConsole = async (conn: StoredConnection) => {
   };
 
   // Add OBS config if necessary
-  if (conn.obsIP && conn.obsSourceName) {
+  if (conn.enableAutoSwitcher && conn.obsIP && conn.obsSourceName) {
     config.autoSwitcherSettings = {
       ip: conn.obsIP,
       sourceName: conn.obsSourceName,

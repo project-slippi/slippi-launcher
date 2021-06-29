@@ -36,7 +36,13 @@ export const AddConnectionDialog: React.FC<AddConnectionDialogProps> = ({
     setTitle(isEditing ? "Edit Connection" : "New Connection");
   };
   const defaultValues: Partial<StoredConnection> = merge(
-    { isRealTimeMode: false, folderPath: spectateFolder, port: Ports.DEFAULT },
+    {
+      isRealTimeMode: false,
+      folderPath: spectateFolder,
+      port: Ports.DEFAULT,
+      enableRelay: false,
+      enableAutoSwitcher: false,
+    },
     selectedConnection,
   );
   return (
