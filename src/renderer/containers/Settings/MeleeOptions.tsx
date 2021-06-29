@@ -32,6 +32,7 @@ const useStyles = makeStyles((theme: Theme) =>
       color: "white",
     },
     validationText: {
+      "text-transform": "capitalize",
       marginRight: 5,
       fontWeight: 500,
     },
@@ -46,20 +47,6 @@ export const MeleeOptions: React.FC = () => {
   const [replayDir, setReplayDir] = useRootSlpPath();
   const [spectateDir, setSpectateDir] = useSpectateSlpPath();
   const classes = useStyles();
-
-  const getValidityIconClass = () => {
-    switch (isoValidity) {
-      case IsoValidity.VALID: {
-        return "valid";
-      }
-      case IsoValidity.UNKNOWN: {
-        return "unknown";
-      }
-      case IsoValidity.INVALID: {
-        return "invalid";
-      }
-    }
-  };
 
   const renderValidityStatus = () => {
     switch (isoValidity) {
@@ -89,16 +76,8 @@ export const MeleeOptions: React.FC = () => {
           placeholder="No file set"
           disabled={verifying}
           endAdornment={
-            <div className={`${classes.validation} ${verifying ? "" : classes[getValidityIconClass()]}`}>
-              <span className={classes.validationText}>
-                {verifying
-                  ? "Verifying..."
-                  : isoValidity !== IsoValidity.INVALID
-                  ? isoValidity === IsoValidity.VALID
-                    ? "Valid"
-                    : "Unknown"
-                  : "Invalid"}
-              </span>
+            <div className={`${classes.validation} ${verifying ? "" : classes[isoValidity.toLowerCase()]}`}>
+              <span className={classes.validationText}>{verifying ? "Verifying..." : isoValidity.toLowerCase()}</span>
               {verifying ? <CircularProgress size={25} color="inherit" /> : renderValidityStatus()}
             </div>
           }
