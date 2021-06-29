@@ -58,7 +58,7 @@ export class MirrorManager {
 
     log.info("[Mirroring] Setting up mirror");
 
-    fs.ensureDirSync(config.folderPath);
+    await fs.ensureDir(config.folderPath);
 
     const fileWriter = new SlpFileWriter({ folderPath: config.folderPath, consoleNickname: "unknown" });
     fileWriter.on(SlpFileWriterEvent.NEW_FILE, (currFilePath) => {
