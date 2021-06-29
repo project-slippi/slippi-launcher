@@ -10,6 +10,7 @@ import { ipc_dolphinDownloadLogReceivedEvent } from "@dolphin/ipc";
 import { ipc_loadProgressUpdatedEvent, ipc_statsPageRequestedEvent } from "@replays/ipc";
 import { ipc_settingsUpdatedEvent } from "@settings/ipc";
 import { ipc_checkValidIso } from "common/ipc";
+import { IsoValidity } from "common/types";
 import log from "electron-log";
 import firebase from "firebase";
 import throttle from "lodash/throttle";
@@ -118,7 +119,7 @@ export const useAppListeners = () => {
   const setIsValid = useIsoVerification((store) => store.setIsValid);
   React.useEffect(() => {
     if (!isoPath) {
-      setIsValid(null);
+      setIsValid(IsoValidity.INVALID);
       setIsValidating(false);
       return;
     }

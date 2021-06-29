@@ -5,6 +5,8 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import ErrorIcon from "@material-ui/icons/Error";
+import Help from "@material-ui/icons/Help";
+import { IsoValidity } from "common/types";
 import React from "react";
 
 import { PathInput } from "@/components/PathInput";
@@ -26,7 +28,11 @@ const useStyles = makeStyles((theme: Theme) =>
     valid: {
       color: theme.palette.success.main,
     },
+    unknown: {
+      color: "white",
+    },
     validationText: {
+      "text-transform": "capitalize",
       marginRight: 5,
       fontWeight: 500,
     },
@@ -35,12 +41,26 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const MeleeOptions: React.FC = () => {
   const verifying = useIsoVerification((state) => state.isValidating);
-  const isValidIso = useIsoVerification((state) => state.isValid);
+  const isoValidity = useIsoVerification((state) => state.validity);
   const [isoPath, setIsoPath] = useIsoPath();
   const [launchMeleeOnPlay, setLaunchMelee] = useLaunchMeleeOnPlay();
   const [replayDir, setReplayDir] = useRootSlpPath();
   const [spectateDir, setSpectateDir] = useSpectateSlpPath();
   const classes = useStyles();
+
+  const renderValidityStatus = () => {
+    switch (isoValidity) {
+      case IsoValidity.VALID: {
+        return <CheckCircleIcon />;
+      }
+      case IsoValidity.UNKNOWN: {
+        return <Help />;
+      }
+      case IsoValidity.INVALID: {
+        return <ErrorIcon />;
+      }
+    }
+  };
 
   const onLaunchMeleeChange = async (value: string) => {
     const launchMelee = value === "true";
@@ -56,17 +76,9 @@ export const MeleeOptions: React.FC = () => {
           placeholder="No file set"
           disabled={verifying}
           endAdornment={
-            <div className={`${classes.validation} ${verifying ? "" : classes[isValidIso ? "valid" : "invalid"]}`}>
-              <span className={classes.validationText}>
-                {verifying ? "Verifying..." : isValidIso ? "Valid" : "Invalid"}
-              </span>
-              {verifying ? (
-                <CircularProgress size={25} color="inherit" />
-              ) : isValidIso ? (
-                <CheckCircleIcon />
-              ) : (
-                <ErrorIcon />
-              )}
+            <div className={`${classes.validation} ${verifying ? "" : classes[isoValidity.toLowerCase()]}`}>
+              <span className={classes.validationText}>{verifying ? "Verifying..." : isoValidity.toLowerCase()}</span>
+              {verifying ? <CircularProgress size={25} color="inherit" /> : renderValidityStatus()}
             </div>
           }
         />

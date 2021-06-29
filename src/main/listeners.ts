@@ -7,6 +7,7 @@ import "@console/main";
 import { settingsManager } from "@settings/settingsManager";
 import { isLinux } from "common/constants";
 import { ipc_checkValidIso, ipc_fetchNewsFeed, ipc_getDesktopAppPath } from "common/ipc";
+import { IsoValidity } from "common/types";
 import { app, ipcMain, nativeImage } from "electron";
 import * as fs from "fs-extra";
 import os from "os";
@@ -43,14 +44,14 @@ export function setupListeners() {
   ipc_checkValidIso.main!.handle(async ({ path }) => {
     // Make sure we have a valid path
     if (!path) {
-      return { path, valid: false };
+      return { path, valid: IsoValidity.INVALID };
     }
 
     try {
       const result = await verifyIso(path);
-      return { path, valid: result.valid };
+      return { path, valid: result };
     } catch (err) {
-      return { path, valid: false };
+      return { path, valid: IsoValidity.INVALID };
     }
   });
 
