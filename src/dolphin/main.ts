@@ -81,7 +81,11 @@ ipc_migrateDolphin.main!.handle(async ({ migrateNetplay, migratePlayback }) => {
     await dolphinManager.copyDolphinConfig(DolphinLaunchType.NETPLAY, baseNetplayPath);
   }
   if (migratePlayback) {
-    const oldPlaybackDolphinPath = path.join(desktopAppPath, "dolphin");
+    const dolphinDir = ["dolphin"];
+    if (isMac) {
+      dolphinDir.push("Slippi Dolphin.app", "Contents", "Resources");
+    }
+    const oldPlaybackDolphinPath = path.join(desktopAppPath, ...dolphinDir);
     await dolphinManager.copyDolphinConfig(DolphinLaunchType.PLAYBACK, oldPlaybackDolphinPath);
   }
   if (desktopAppPath) {
