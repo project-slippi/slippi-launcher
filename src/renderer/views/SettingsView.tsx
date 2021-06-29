@@ -140,7 +140,7 @@ export const SettingsView: React.FC = () => {
                 );
               })}
             </div>
-            <BuildInfo />
+            <BuildInfo enableAdvancedUserClick={true} />
           </MenuColumn>
         }
         rightSide={

@@ -9,6 +9,8 @@ import { isLinux } from "common/constants";
 import { ipc_checkValidIso, ipc_fetchNewsFeed, ipc_getDesktopAppPath } from "common/ipc";
 import { app, ipcMain, nativeImage } from "electron";
 import * as fs from "fs-extra";
+import os from "os";
+import osName from "os-name";
 import path from "path";
 
 import { fetchNewsFeedData } from "./newsFeed";
@@ -20,6 +22,12 @@ export function setupListeners() {
       file: filePath,
       icon: nativeImage.createFromPath(path.join(__static, "images", "file.png")),
     });
+  });
+
+  ipcMain.on("getOsInfoSync", (event) => {
+    const release = os.release();
+    const name = osName(os.platform(), release);
+    event.returnValue = `${name} (${release})`;
   });
 
   ipcMain.on("getAppSettingsSync", (event) => {
