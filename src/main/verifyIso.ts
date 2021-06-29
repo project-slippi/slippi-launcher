@@ -95,14 +95,24 @@ export async function verifyIso(isoPath: string): Promise<IsoValidity> {
   return new Promise((resolve, reject) => {
     const hash = crypto.createHash("sha1");
     const input = fs.createReadStream(isoPath);
+    let checkedRevision = false;
 
     input.on("error", (err) => {
       reject(`Error reading ISO file ${isoPath}: ${err}`);
     });
 
     input.on("readable", () => {
-      const data = input.read();
+      const data: Buffer = input.read();
       if (data) {
+        if (!checkedRevision) {
+          checkedRevision = true;
+          const revision = data.readInt8(7);
+          if (revision !== 2) {
+            resolve(IsoValidity.INVALID);
+            return;
+          }
+        }
+
         hash.update(data);
         return;
       }
