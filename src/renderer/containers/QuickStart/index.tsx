@@ -10,7 +10,7 @@ import { useMousetrap } from "@/lib/hooks/useMousetrap";
 import { QuickStartStep } from "@/lib/hooks/useQuickStart";
 
 import { ActivateOnlineStep } from "./ActivateOnlineStep";
-import { MigrateDolphinStep } from "./DolphinMigrationStep";
+import { ImportDolphinSettingsStep } from "./ImportDolphinSettingsStep";
 import { IsoSelectionStep } from "./IsoSelectionStep";
 import { LoginStep } from "./LoginStep";
 import { SetupCompleteStep } from "./SetupCompleteStep";
@@ -37,7 +37,7 @@ const getStepContent = (step: QuickStartStep | null) => {
     case QuickStartStep.ACTIVATE_ONLINE:
       return <ActivateOnlineStep />;
     case QuickStartStep.MIGRATE_DOLPHIN:
-      return <MigrateDolphinStep />;
+      return <ImportDolphinSettingsStep />;
     case QuickStartStep.SET_ISO_PATH:
       return <IsoSelectionStep />;
     case QuickStartStep.COMPLETE:

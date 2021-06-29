@@ -21,7 +21,7 @@ type FormValues = {
   shouldImportNetplay: boolean;
 };
 
-export const MigrateDolphinStep: React.FC = () => {
+export const ImportDolphinSettingsStep: React.FC = () => {
   const setExists = useDesktopApp((store) => store.setExists);
 
   const migrateDolphin = async (values: FormValues) => {
