@@ -6,11 +6,11 @@ export const useIsoVerification = create(
   combine(
     {
       isValidating: false,
-      isValid: IsoValidity.INVALID,
+      validity: IsoValidity.INVALID,
     },
     (set) => ({
       setIsValidating: (val: boolean) => set({ isValidating: val }),
-      setIsValid: (val: IsoValidity) => set({ isValid: val }),
+      setIsValid: (val: IsoValidity) => set({ validity: val }),
     }),
   ),
 );
