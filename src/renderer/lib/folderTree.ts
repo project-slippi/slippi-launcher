@@ -1,5 +1,5 @@
 import { FolderResult } from "@replays/types";
-import { ipc_getFolderContents } from "common/ipc";
+import * as fs from "fs-extra";
 import path from "path";
 
 export function findChild(tree: FolderResult, childToFind: string): FolderResult | null {
@@ -25,13 +25,12 @@ export function findChild(tree: FolderResult, childToFind: string): FolderResult
 export async function generateSubFolderTree(folder: string, childrenToExpand?: string[]): Promise<FolderResult[]> {
   console.log(`generating subfolder tree for folder: ${folder} with children: ${childrenToExpand}`);
   // Only generate the tree for a single level
-  const getResult = await ipc_getFolderContents.renderer!.trigger({ path: folder });
-  if (!getResult.result) {
-    throw new Error("could not get directory contents");
-  }
-  const contents = getResult.result.contents;
-  const subdirectories = contents
-    .filter((dirent) => dirent.isDirectory())
+  const results = await fs.readdir(folder, { withFileTypes: true });
+  const subdirectories = results
+    .filter((dirent) => {
+      console.log(dirent);
+      return dirent.isDirectory();
+    })
     .map(
       async (dirent): Promise<FolderResult> => {
         const fullPath = path.join(folder, dirent.name);

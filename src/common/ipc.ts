@@ -1,5 +1,3 @@
-import { Dirent } from "fs-extra";
-
 import { _, EmptyPayload, makeEndpoint, SuccessPayload } from "../ipc";
 import { NewsItem } from "./types";
 
@@ -17,10 +15,4 @@ export const ipc_migrateDolphin = makeEndpoint.main(
   "migrateDolphin",
   <{ migrateNetplay: string | null; migratePlayback: boolean }>_,
   <SuccessPayload>_,
-);
-
-export const ipc_getFolderContents = makeEndpoint.main(
-  "getFolderContents",
-  <{ path: string }>_,
-  <{ success: boolean; contents: Dirent[] }>_,
 );

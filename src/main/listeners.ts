@@ -8,13 +8,7 @@ import { dolphinManager } from "@dolphin/manager";
 import { DolphinLaunchType } from "@dolphin/types";
 import { settingsManager } from "@settings/settingsManager";
 import { isLinux } from "common/constants";
-import {
-  ipc_checkValidIso,
-  ipc_fetchNewsFeed,
-  ipc_getDesktopAppPath,
-  ipc_getFolderContents,
-  ipc_migrateDolphin,
-} from "common/ipc";
+import { ipc_checkValidIso, ipc_fetchNewsFeed, ipc_getDesktopAppPath, ipc_migrateDolphin } from "common/ipc";
 import { app, ipcMain, nativeImage } from "electron";
 import * as fs from "fs-extra";
 import path from "path";
@@ -81,12 +75,5 @@ export function setupListeners() {
       await fs.remove(desktopAppPath);
     }
     return { success: true };
-  });
-
-  ipc_getFolderContents.main!.handle(async ({ path }) => {
-    const contents = await fs.readdir(path, { withFileTypes: true }).catch((err) => {
-      throw new Error(err);
-    });
-    return { success: true, contents };
   });
 }
