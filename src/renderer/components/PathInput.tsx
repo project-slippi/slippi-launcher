@@ -69,14 +69,7 @@ export const PathInput = React.forwardRef<HTMLInputElement, PathInputProps>((pro
   return (
     <Box display="flex">
       <Paper className={classes.root}>
-        <InputBase
-          inputRef={ref}
-          disabled={true}
-          className={classes.input}
-          value={value}
-          placeholder={placeholder}
-          inputProps={{ "aria-label": "search google maps" }}
-        />
+        <InputBase inputRef={ref} disabled={true} className={classes.input} value={value} placeholder={placeholder} />
         {endAdornment}
       </Paper>
       <Button color="secondary" variant="contained" onClick={onClick} disabled={disabled}>
