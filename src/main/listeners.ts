@@ -4,13 +4,15 @@ import "@replays/main";
 import "@settings/main";
 import "@console/main";
 
+import { dolphinManager } from "@dolphin/manager";
+import { DolphinLaunchType } from "@dolphin/types";
 import { settingsManager } from "@settings/settingsManager";
 import {
   ipc_checkValidIso,
-  ipc_deleteFolder,
   ipc_fetchNewsFeed,
   ipc_getDesktopAppPath,
   ipc_getFolderContents,
+  ipc_migrateDolphin,
 } from "common/ipc";
 import { app, ipcMain, nativeImage } from "electron";
 import * as fs from "fs-extra";
@@ -59,10 +61,18 @@ export function setupListeners() {
     return { path: desktopAppPath, exists: exists };
   });
 
-  ipc_deleteFolder.main!.handle(async ({ path }) => {
-    await fs.remove(path).catch((err) => {
-      throw new Error(err);
-    });
+  ipc_migrateDolphin.main!.handle(async ({ migrateNetplay, migratePlayback, desktopAppPath }) => {
+    if (migrateNetplay) {
+      await dolphinManager.copyDolphinConfig(DolphinLaunchType.NETPLAY, migrateNetplay);
+    }
+    if (migratePlayback) {
+      await dolphinManager.copyDolphinConfig(DolphinLaunchType.PLAYBACK, migratePlayback);
+    }
+    if (desktopAppPath) {
+      await fs.remove(desktopAppPath).catch((err) => {
+        throw new Error(err);
+      });
+    }
     return { success: true };
   });
 

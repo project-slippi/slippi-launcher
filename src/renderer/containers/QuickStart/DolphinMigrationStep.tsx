@@ -1,12 +1,10 @@
 /** @jsx jsx */
-import { ipc_copyDolphinConfig } from "@dolphin/ipc";
-import { DolphinLaunchType } from "@dolphin/types";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Box from "@material-ui/core/Box";
 import Container from "@material-ui/core/Container";
 import FormHelperText from "@material-ui/core/FormHelperText";
-import { ipc_deleteFolder } from "common/ipc";
+import { ipc_migrateDolphin } from "common/ipc";
 import path from "path";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -26,20 +24,20 @@ export const MigrateDolphinStep: React.FC = () => {
   const oldDesktopDolphin = path.join(oldDesktopAppPath, "dolphin");
 
   const migrateDolphin = async () => {
-    if (migrateNetplay) {
-      await ipc_copyDolphinConfig.renderer!.trigger({ dolphinType: DolphinLaunchType.NETPLAY, userPath: netplayPath });
-    }
-    if (migratePlayback) {
-      await ipc_copyDolphinConfig.renderer!.trigger({
-        dolphinType: DolphinLaunchType.PLAYBACK,
-        userPath: oldDesktopDolphin,
-      });
-    }
-    await deleteOldDesktopAppFolder();
+    await ipc_migrateDolphin.renderer!.trigger({
+      migrateNetplay: migrateNetplay ? netplayPath : null,
+      migratePlayback: migrateNetplay ? oldDesktopDolphin : null,
+      desktopAppPath: oldDesktopAppPath,
+    });
+    setExists(false);
   };
 
   const deleteOldDesktopAppFolder = async () => {
-    await ipc_deleteFolder.renderer!.trigger({ path: oldDesktopAppPath });
+    await ipc_migrateDolphin.renderer!.trigger({
+      migrateNetplay: null,
+      migratePlayback: null,
+      desktopAppPath: oldDesktopAppPath,
+    });
     setExists(false);
   };
 
@@ -96,6 +94,11 @@ export const MigrateDolphinStep: React.FC = () => {
                   rules={{ validate: (val) => val.length > 0 || "Must select a path to migrate from" }}
                 ></Controller>
                 <FormHelperText error={Boolean(errors?.netplayPath)}>{errors?.netplayPath?.message}</FormHelperText>
+                <Checkbox
+                  label="Playback"
+                  checked={migratePlayback}
+                  onChange={() => setMigratePlayback(!migratePlayback)}
+                />
                 <div
                   css={css`
                     display: flex;
