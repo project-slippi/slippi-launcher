@@ -15,7 +15,7 @@ import { Controller, useForm } from "react-hook-form";
 import { ExternalLink as A } from "@/components/ExternalLink";
 import { Toggle } from "@/components/FormInputs/Toggle";
 import { PathInput } from "@/components/PathInput";
-import { isValidIpAddress } from "@/lib/validate";
+import { isValidIpAddress, isValidIpAndPort } from "@/lib/validate";
 
 type FormValues = {
   ipAddress: string;
@@ -150,11 +150,27 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
                     margin: 10px 0px 10px;
                   `}
                 >
-                  <TextField
-                    label="OBS Websocket IP:Port"
-                    value={obsIP ?? ""}
-                    required={showAutoswitcher}
-                    onChange={(e) => setValue("obsIP", e.target.value)}
+                  <Controller
+                    name="obsIP"
+                    control={control}
+                    defaultValue=""
+                    render={({ field, fieldState: { error } }) => (
+                      <TextField
+                        {...field}
+                        label="OBS Websocket IP:Port"
+                        required={showAutoswitcher}
+                        error={Boolean(error)}
+                        helperText={error ? error.message : undefined}
+                      />
+                    )}
+                    rules={{
+                      validate: (val) => {
+                        if (!val) {
+                          return false;
+                        }
+                        return isValidIpAndPort(val) || "Invalid IP address";
+                      },
+                    }}
                   />
                   <TextField
                     label="OBS Password"
