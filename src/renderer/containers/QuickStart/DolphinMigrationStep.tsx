@@ -1,34 +1,37 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/react";
-import styled from "@emotion/styled";
 import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import { ipc_migrateDolphin } from "common/ipc";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 
-import { Button } from "@/components/FormInputs/Button";
 import { Checkbox } from "@/components/FormInputs/Checkbox";
 import { PathInput } from "@/components/PathInput";
 import { useDesktopApp } from "@/lib/hooks/useQuickStart";
 
 import { QuickStartHeader } from "./QuickStartHeader";
 
+type FormValues = {
+  netplayPath: string;
+  shouldImportPlayback: boolean;
+  shouldImportNetplay: boolean;
+};
+
 export const MigrateDolphinStep: React.FC = () => {
-  const [migrateNetplay, setMigrateNetplay] = React.useState(false);
-  const [migratePlayback, setMigratePlayback] = React.useState(false);
   const setExists = useDesktopApp((store) => store.setExists);
 
-  const migrateDolphin = async () => {
+  const migrateDolphin = async (values: FormValues) => {
     await ipc_migrateDolphin.renderer!.trigger({
-      migrateNetplay: migrateNetplay ? netplayPath : null,
-      migratePlayback: migratePlayback,
+      migrateNetplay: values.shouldImportNetplay ? values.netplayPath : null,
+      migratePlayback: values.shouldImportPlayback,
     });
     setExists(false);
   };
 
-  const deleteOldDesktopAppFolder = async () => {
+  const skipMigration = async () => {
     await ipc_migrateDolphin.renderer!.trigger({
       migrateNetplay: null,
       migratePlayback: false,
@@ -36,61 +39,56 @@ export const MigrateDolphinStep: React.FC = () => {
     setExists(false);
   };
 
-  const defaultValues = { netplayPath: "" };
-
   const {
     handleSubmit,
     watch,
     control,
     setValue,
     formState: { errors },
-  } = useForm<{ netplayPath: string }>({ defaultValues });
+  } = useForm<FormValues>({
+    defaultValues: { netplayPath: "", shouldImportNetplay: false, shouldImportPlayback: false },
+  });
   const netplayPath = watch("netplayPath");
+  const migrateNetplay = watch("shouldImportNetplay");
+  const migratePlayback = watch("shouldImportPlayback");
 
-  const onNetplaySubmit = handleSubmit(migrateDolphin);
+  const onNetplaySubmit = handleSubmit((values) => migrateDolphin(values));
 
   return (
     <Box display="flex" flexDirection="column" flexGrow="1">
       <Container>
-        <QuickStartHeader>Migrate Dolphin</QuickStartHeader>
-        <div>Would you like to migrate your old Slippi Dolphin settings?</div>
+        <QuickStartHeader>Import old Dolphin settings</QuickStartHeader>
+        <div>Select which Dolphin settings you want to import:</div>
 
-        {!migrateNetplay && (
-          <Outer>
-            <div
-              css={css`
-                display: flex;
-                flex-direction: column;
-                margin-top: 15px;
-              `}
-            >
-              <Checkbox label="Netplay" checked={migrateNetplay} onChange={() => setMigrateNetplay(!migrateNetplay)} />
-              <Checkbox
-                label="Playback"
-                checked={migratePlayback}
-                onChange={() => setMigratePlayback(!migratePlayback)}
-              />
-            </div>
-          </Outer>
-        )}
-
-        {migrateNetplay && (
-          <Outer>
-            <div
-              css={css`
-                display: flex;
-                flex-direction: column;
-                margin-top: 15px;
-              `}
-            >
-              <Checkbox label="Netplay" checked={migrateNetplay} onChange={() => setMigrateNetplay(!migrateNetplay)} />
-            </div>
-            <div
-              css={css`
-                margin-top: 20px;
-              `}
-            >
-              <form className="form" onSubmit={onNetplaySubmit}>
+        <div
+          css={css`
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            & > * {
+              margin-top: 5px;
+            }
+          `}
+        >
+          <Checkbox
+            label="Playback"
+            checked={migratePlayback}
+            onChange={() => setValue("shouldImportPlayback", !migratePlayback)}
+          />
+          <Checkbox
+            label="Netplay"
+            checked={migrateNetplay}
+            onChange={() => setValue("shouldImportNetplay", !migrateNetplay)}
+          />
+        </div>
+        <div
+          css={css`
+            margin-top: 20px;
+          `}
+        >
+          <form className="form" onSubmit={onNetplaySubmit}>
+            {migrateNetplay && (
+              <div>
                 <Controller
                   name="netplayPath"
                   control={control}
@@ -104,84 +102,45 @@ export const MigrateDolphinStep: React.FC = () => {
                       options={{ properties: ["openDirectory"] }}
                     />
                   )}
-                  rules={{ validate: (val) => val.length > 0 || "Must select a path to migrate from" }}
+                  rules={{ validate: (val) => val.length > 0 || "No path selected" }}
                 ></Controller>
-                <FormHelperText error={Boolean(errors?.netplayPath)}>{errors?.netplayPath?.message}</FormHelperText>
                 <div
                   css={css`
-                    margin-top: 20px;
+                    min-height: 25px;
                   `}
                 >
-                  <Checkbox
-                    label="Playback"
-                    checked={migratePlayback}
-                    onChange={() => setMigratePlayback(!migratePlayback)}
-                  />
+                  <FormHelperText error={Boolean(errors?.netplayPath)}>{errors?.netplayPath?.message}</FormHelperText>
                 </div>
+              </div>
+            )}
 
-                <div
-                  css={css`
-                    display: flex;
-                    flex-direction: column;
-                    margin-top: 50px;
-                    margin-left: auto;
-                    margin-right: auto;
-                    width: 400px;
-                  `}
-                >
-                  <Button type="submit" variant="contained" color="primary">
-                    Migrate Dolphin
-                  </Button>
-                  <Button
-                    color="secondary"
-                    onClick={deleteOldDesktopAppFolder}
-                    css={css`
-                      text-transform: initial;
-                      margin-top: 10px;
-                    `}
-                  >
-                    Skip Migration
-                  </Button>
-                </div>
-              </form>
-            </div>
-          </Outer>
-        )}
-        {!migrateNetplay && (
-          <Outer>
             <div
               css={css`
                 display: flex;
                 flex-direction: column;
+                margin-top: 25px;
                 margin-left: auto;
                 margin-right: auto;
-                margin-top: 50px;
                 width: 400px;
               `}
             >
-              <Button onClick={migrateDolphin} variant="contained" color="primary">
-                Migrate Dolphin
+              <Button type="submit" variant="contained" color="primary">
+                Import settings
               </Button>
               <Button
                 color="secondary"
-                onClick={deleteOldDesktopAppFolder}
+                onClick={skipMigration}
                 css={css`
                   text-transform: initial;
                   margin-top: 10px;
                 `}
               >
-                Skip Migration
+                Skip import
               </Button>
             </div>
-          </Outer>
-        )}
+          </form>
+        </div>
       </Container>
     </Box>
   );
 };
-
-const Outer = styled.div`
-  form section {
-    margin-bottom: 15px;
-  }
-`;
