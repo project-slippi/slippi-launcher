@@ -7,10 +7,12 @@ export interface CheckboxProps {
   label: string;
   checked: boolean;
   onChange: () => void;
+  className?: string;
 }
 
-export const Checkbox: React.FC<CheckboxProps> = ({ checked, onChange, label }) => (
+export const Checkbox: React.FC<CheckboxProps> = ({ checked, onChange, label, className }) => (
   <FormControlLabel
+    className={className}
     control={<MatCheckbox size="small" checked={checked} onChange={onChange} />}
     label={label}
     css={css`
@@ -18,9 +20,6 @@ export const Checkbox: React.FC<CheckboxProps> = ({ checked, onChange, label }) 
       .MuiCheckbox-root {
         padding: 0;
         padding-right: 5px;
-      }
-      .MuiFormControlLabel-label {
-        font-size: 12px;
       }
     `}
   />

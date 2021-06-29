@@ -113,6 +113,11 @@ export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarPro
           label="Hide short games"
           checked={hideShortGames}
           onChange={() => setHideShortGames(!hideShortGames)}
+          css={css`
+            .MuiFormControlLabel-label {
+              font-size: 12px;
+            }
+          `}
         />
       </ButtonContainer>
       <div>
