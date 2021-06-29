@@ -59,19 +59,37 @@ export const MigrateDolphinStep: React.FC = () => {
       <Container>
         <QuickStartHeader>Migrate Dolphin</QuickStartHeader>
         <div>Would you like to migrate your old Slippi Dolphin settings?</div>
-        <div
-          css={css`
-            display: flex;
-            flex-direction: column;
-            margin-top: 15px;
-          `}
-        >
-          <Checkbox label="Netplay" checked={migrateNetplay} onChange={() => setMigrateNetplay(!migrateNetplay)} />
-          <Checkbox label="Playback" checked={migratePlayback} onChange={() => setMigratePlayback(!migratePlayback)} />
-        </div>
+
+        {!migrateNetplay && (
+          <Outer>
+            <div
+              css={css`
+                display: flex;
+                flex-direction: column;
+                margin-top: 15px;
+              `}
+            >
+              <Checkbox label="Netplay" checked={migrateNetplay} onChange={() => setMigrateNetplay(!migrateNetplay)} />
+              <Checkbox
+                label="Playback"
+                checked={migratePlayback}
+                onChange={() => setMigratePlayback(!migratePlayback)}
+              />
+            </div>
+          </Outer>
+        )}
 
         {migrateNetplay && (
           <Outer>
+            <div
+              css={css`
+                display: flex;
+                flex-direction: column;
+                margin-top: 15px;
+              `}
+            >
+              <Checkbox label="Netplay" checked={migrateNetplay} onChange={() => setMigrateNetplay(!migrateNetplay)} />
+            </div>
             <div
               css={css`
                 margin-top: 20px;
@@ -94,11 +112,18 @@ export const MigrateDolphinStep: React.FC = () => {
                   rules={{ validate: (val) => val.length > 0 || "Must select a path to migrate from" }}
                 ></Controller>
                 <FormHelperText error={Boolean(errors?.netplayPath)}>{errors?.netplayPath?.message}</FormHelperText>
-                <Checkbox
-                  label="Playback"
-                  checked={migratePlayback}
-                  onChange={() => setMigratePlayback(!migratePlayback)}
-                />
+                <div
+                  css={css`
+                    margin-top: 20px;
+                  `}
+                >
+                  <Checkbox
+                    label="Playback"
+                    checked={migratePlayback}
+                    onChange={() => setMigratePlayback(!migratePlayback)}
+                  />
+                </div>
+
                 <div
                   css={css`
                     display: flex;
