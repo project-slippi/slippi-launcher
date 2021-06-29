@@ -4,7 +4,6 @@ import {
   ipc_checkPlayKeyExists,
   ipc_clearDolphinCache,
   ipc_configureDolphin,
-  ipc_copyDolphinConfig,
   ipc_downloadDolphin,
   ipc_launchNetplayDolphin,
   ipc_reinstallDolphin,
@@ -64,10 +63,5 @@ ipc_viewSlpReplay.main!.handle(async ({ files }) => {
 
 ipc_launchNetplayDolphin.main!.handle(async () => {
   await dolphinManager.launchNetplayDolphin();
-  return { success: true };
-});
-
-ipc_copyDolphinConfig.main!.handle(async ({ dolphinType, userPath }) => {
-  await dolphinManager.copyDolphinConfig(dolphinType, userPath);
   return { success: true };
 });
