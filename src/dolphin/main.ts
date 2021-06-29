@@ -1,3 +1,4 @@
+import { isMac } from "common/constants";
 import { app } from "electron";
 import * as fs from "fs-extra";
 import path from "path";
@@ -76,7 +77,7 @@ ipc_migrateDolphin.main!.handle(async ({ migrateNetplay, migratePlayback }) => {
   const desktopAppPath = path.join(app.getPath("appData"), "Slippi Desktop App");
 
   if (migrateNetplay) {
-    const baseNetplayPath = path.dirname(migrateNetplay);
+    const baseNetplayPath = isMac ? path.join(migrateNetplay, "Contents", "Resources") : path.dirname(migrateNetplay);
     await dolphinManager.copyDolphinConfig(DolphinLaunchType.NETPLAY, baseNetplayPath);
   }
   if (migratePlayback) {
