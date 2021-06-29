@@ -1,4 +1,5 @@
 import { settingsManager } from "@settings/settingsManager";
+import { app } from "electron";
 import log from "electron-log";
 import { EventEmitter } from "events";
 import * as fs from "fs-extra";
@@ -142,6 +143,13 @@ export class DolphinManager extends EventEmitter {
       }
     }
     return meleeIsoPath;
+  }
+
+  public async copyDolphinConfig(launchType: DolphinLaunchType, fromPath: string) {
+    const newUserFolder = path.join(app.getPath("userData"), launchType, "User");
+    const oldUserFolder = path.join(fromPath, "User");
+
+    await fs.copy(oldUserFolder, newUserFolder, { overwrite: true });
   }
 }
 

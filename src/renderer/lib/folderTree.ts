@@ -27,7 +27,9 @@ export async function generateSubFolderTree(folder: string, childrenToExpand?: s
   // Only generate the tree for a single level
   const results = await fs.readdir(folder, { withFileTypes: true });
   const subdirectories = results
-    .filter((dirent) => dirent.isDirectory())
+    .filter((dirent) => {
+      return dirent.isDirectory();
+    })
     .map(
       async (dirent): Promise<FolderResult> => {
         const fullPath = path.join(folder, dirent.name);

@@ -55,14 +55,8 @@ export interface PathInputProps {
   disabled?: boolean;
 }
 
-export const PathInput: React.FC<PathInputProps> = ({
-  value,
-  placeholder,
-  endAdornment,
-  onSelect,
-  options,
-  disabled,
-}) => {
+export const PathInput = React.forwardRef<HTMLInputElement, PathInputProps>((props, ref) => {
+  const { value, placeholder, endAdornment, onSelect, options, disabled } = props;
   const classes = useStyles();
   const onClick = async () => {
     const result = await remote.dialog.showOpenDialog(options ?? { properties: ["openFile"] });
@@ -76,6 +70,7 @@ export const PathInput: React.FC<PathInputProps> = ({
     <Box display="flex">
       <Paper className={classes.root}>
         <InputBase
+          inputRef={ref}
           disabled={true}
           className={classes.input}
           value={value}
@@ -89,4 +84,4 @@ export const PathInput: React.FC<PathInputProps> = ({
       </Button>
     </Box>
   );
-};
+});

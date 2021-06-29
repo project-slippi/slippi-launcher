@@ -14,6 +14,7 @@ import {
   SlpStreamEvent,
 } from "@slippi/slippi-js";
 import log from "electron-log";
+import * as fs from "fs-extra";
 import path from "path";
 
 import { AutoSwitcher } from "./autoSwitcher";
@@ -50,13 +51,14 @@ export class MirrorManager {
   }
 
   public async connect(config: MirrorConfig) {
-    log.info(config.id);
     if (this.mirrors[config.ipAddress]) {
       log.info(`[Mirroring] already connected to Wii @ ${config.ipAddress}`);
       return;
     }
 
     log.info("[Mirroring] Setting up mirror");
+
+    await fs.ensureDir(config.folderPath);
 
     const fileWriter = new SlpFileWriter({ folderPath: config.folderPath, consoleNickname: "unknown" });
     fileWriter.on(SlpFileWriterEvent.NEW_FILE, (currFilePath) => {

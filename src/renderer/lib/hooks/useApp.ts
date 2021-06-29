@@ -1,3 +1,4 @@
+import { ipc_getDesktopAppPath } from "common/ipc";
 import { ipc_dolphinDownloadFinishedEvent, ipc_downloadDolphin } from "dolphin/ipc";
 import log from "electron-log";
 import firebase from "firebase";
@@ -7,6 +8,8 @@ import { combine } from "zustand/middleware";
 import { initializeFirebase } from "@/lib/firebase";
 import { useAccount } from "@/lib/hooks/useAccount";
 import { fetchPlayKey } from "@/lib/slippiBackend";
+
+import { useDesktopApp } from "./useQuickStart";
 
 export const useAppStore = create(
   combine(
@@ -27,6 +30,7 @@ export const useAppInitialization = () => {
   const setLogMessage = useAppStore((store) => store.setLogMessage);
   const setUser = useAccount((store) => store.setUser);
   const setPlayKey = useAccount((store) => store.setPlayKey);
+  const setDesktopAppExists = useDesktopApp((store) => store.setExists);
 
   const initialize = async () => {
     if (initialized) {
@@ -76,6 +80,18 @@ export const useAppInitialization = () => {
 
     // Download Dolphin if necessary
     promises.push(ipc_downloadDolphin.renderer!.trigger({}));
+
+    promises.push(
+      ipc_getDesktopAppPath
+        .renderer!.trigger({})
+        .then(({ result }) => {
+          if (!result) {
+            throw new Error("Could not get old desktop app path");
+          }
+          setDesktopAppExists(result.exists);
+        })
+        .catch(console.error),
+    );
 
     // Wait for all the promises to complete before completing
     try {
