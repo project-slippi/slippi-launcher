@@ -97,12 +97,10 @@ export const oldDesktopApp = { path: "", exists: false };
 export const useDesktopApp = create(
   combine(
     {
-      path: "",
       exists: false,
     },
     (set) => ({
       setExists: (exists: boolean) => set({ exists }),
-      setPath: (path: string) => set({ path }),
     }),
   ),
 );

@@ -58,15 +58,18 @@ export function setupListeners() {
     const desktopAppPath = path.join(app.getPath("appData"), "Slippi Desktop App");
     const exists = await fs.pathExists(desktopAppPath);
 
-    return { path: desktopAppPath, exists: exists };
+    return { exists: exists };
   });
 
-  ipc_migrateDolphin.main!.handle(async ({ migrateNetplay, migratePlayback, desktopAppPath }) => {
+  ipc_migrateDolphin.main!.handle(async ({ migrateNetplay, migratePlayback }) => {
+    const desktopAppPath = path.join(app.getPath("appData"), "Slippi Desktop App");
+
     if (migrateNetplay) {
       await dolphinManager.copyDolphinConfig(DolphinLaunchType.NETPLAY, migrateNetplay);
     }
     if (migratePlayback) {
-      await dolphinManager.copyDolphinConfig(DolphinLaunchType.PLAYBACK, migratePlayback);
+      const oldPlaybackDolphinPath = path.join(desktopAppPath, "dolphin");
+      await dolphinManager.copyDolphinConfig(DolphinLaunchType.PLAYBACK, oldPlaybackDolphinPath);
     }
     if (desktopAppPath) {
       await fs.remove(desktopAppPath);

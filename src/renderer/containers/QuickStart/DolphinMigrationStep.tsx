@@ -5,7 +5,6 @@ import Box from "@material-ui/core/Box";
 import Container from "@material-ui/core/Container";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import { ipc_migrateDolphin } from "common/ipc";
-import path from "path";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 
@@ -19,15 +18,12 @@ import { QuickStartHeader } from "./QuickStartHeader";
 export const MigrateDolphinStep: React.FC = () => {
   const [migrateNetplay, setMigrateNetplay] = React.useState(false);
   const [migratePlayback, setMigratePlayback] = React.useState(false);
-  const oldDesktopAppPath = useDesktopApp((store) => store.path);
   const setExists = useDesktopApp((store) => store.setExists);
-  const oldDesktopDolphin = path.join(oldDesktopAppPath, "dolphin");
 
   const migrateDolphin = async () => {
     await ipc_migrateDolphin.renderer!.trigger({
       migrateNetplay: migrateNetplay ? netplayPath : null,
-      migratePlayback: migrateNetplay ? oldDesktopDolphin : null,
-      desktopAppPath: oldDesktopAppPath,
+      migratePlayback: migratePlayback,
     });
     setExists(false);
   };
@@ -35,8 +31,7 @@ export const MigrateDolphinStep: React.FC = () => {
   const deleteOldDesktopAppFolder = async () => {
     await ipc_migrateDolphin.renderer!.trigger({
       migrateNetplay: null,
-      migratePlayback: null,
-      desktopAppPath: oldDesktopAppPath,
+      migratePlayback: false,
     });
     setExists(false);
   };

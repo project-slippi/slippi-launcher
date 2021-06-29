@@ -11,15 +11,11 @@ export const ipc_checkValidIso = makeEndpoint.main(
   <{ path: string; valid: boolean }>_,
 );
 
-export const ipc_getDesktopAppPath = makeEndpoint.main(
-  "getDesktopAppPath",
-  <EmptyPayload>_,
-  <{ path: string; exists: boolean }>_,
-);
+export const ipc_getDesktopAppPath = makeEndpoint.main("getDesktopAppPath", <EmptyPayload>_, <{ exists: boolean }>_);
 
 export const ipc_migrateDolphin = makeEndpoint.main(
   "migrateDolphin",
-  <{ migrateNetplay: string | null; migratePlayback: string | null; desktopAppPath: string | null }>_,
+  <{ migrateNetplay: string | null; migratePlayback: boolean }>_,
   <SuccessPayload>_,
 );
 
