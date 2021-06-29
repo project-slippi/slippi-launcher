@@ -14,8 +14,8 @@ export interface MirrorConfig {
   ipAddress: string;
   port: number;
   folderPath: string;
-  isRealTimeMode?: boolean;
-  enableRelay?: boolean;
+  isRealTimeMode: boolean;
+  enableRelay: boolean;
   autoSwitcherSettings?: AutoSwitcherSettings;
 }
 

@@ -9,6 +9,7 @@ import Typography from "@material-ui/core/Typography";
 import WarningIcon from "@material-ui/icons/Warning";
 import { Ports } from "@slippi/slippi-js";
 import { colors } from "common/colors";
+import log from "electron-log";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 
@@ -22,10 +23,11 @@ type FormValues = {
   port: number;
   folderPath: string;
   isRealTimeMode: boolean;
+  enableAutoSwitcher: boolean;
   obsIP?: string;
   obsSourceName?: string;
   obsPassword?: string;
-  enableRelay?: boolean;
+  enableRelay: boolean;
 };
 
 export interface AddConnectionFormProps {
@@ -44,12 +46,11 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
   } = useForm<FormValues>({ defaultValues });
   const folderPath = watch("folderPath");
   const isRealTimeMode = watch("isRealTimeMode");
-  const obsIP = watch("obsIP");
+  const enableAutoSwitcher = watch("enableAutoSwitcher");
+  log.info(enableAutoSwitcher);
   const obsPassword = watch("obsPassword");
   const obsSourceName = watch("obsSourceName");
   const enableRelay = watch("enableRelay");
-
-  const [showAutoswitcher, setShowAutoswitcher] = React.useState(Boolean(obsIP && obsSourceName));
 
   const onFormSubmit = handleSubmit(onSubmit);
 
@@ -124,8 +125,10 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
               Only modify these values if you know what you're doing.
             </Notice>
             <Toggle
-              value={showAutoswitcher}
-              onChange={() => setShowAutoswitcher(!showAutoswitcher)}
+              value={enableAutoSwitcher}
+              onChange={(checked) => {
+                setValue("enableAutoSwitcher", checked);
+              }}
               label="Enable Autoswitcher"
               description={
                 <span
@@ -141,7 +144,7 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
               }
             />
             <section>
-              <Collapse in={showAutoswitcher}>
+              <Collapse in={enableAutoSwitcher}>
                 <div
                   css={css`
                     display: grid;
@@ -158,13 +161,17 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
                       <TextField
                         {...field}
                         label="OBS Websocket IP:Port"
-                        required={showAutoswitcher}
+                        required={enableAutoSwitcher}
                         error={Boolean(error)}
                         helperText={error ? error.message : undefined}
                       />
                     )}
                     rules={{
+                      required: !enableAutoSwitcher || "Please fill out this field",
                       validate: (val) => {
+                        if (!enableAutoSwitcher) {
+                          return true;
+                        }
                         if (!val) {
                           return false;
                         }
@@ -182,7 +189,7 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
                 <TextField
                   label="OBS Source Name"
                   value={obsSourceName ?? ""}
-                  required={showAutoswitcher}
+                  required={enableAutoSwitcher}
                   onChange={(e) => setValue("obsSourceName", e.target.value)}
                 />
               </Collapse>
