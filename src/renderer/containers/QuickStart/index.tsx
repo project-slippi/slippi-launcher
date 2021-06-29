@@ -50,9 +50,11 @@ const getStepContent = (step: QuickStartStep | null) => {
 export interface QuickStartProps {
   allSteps: QuickStartStep[];
   currentStep: QuickStartStep | null;
+  onNext?: () => void;
+  onPrev?: () => void;
 }
 
-export const QuickStart: React.FC<QuickStartProps> = ({ allSteps: steps, currentStep }) => {
+export const QuickStart: React.FC<QuickStartProps> = ({ allSteps: steps, currentStep, onNext, onPrev }) => {
   const history = useHistory();
 
   const skipSetup = () => history.push("/main");
@@ -78,7 +80,12 @@ export const QuickStart: React.FC<QuickStartProps> = ({ allSteps: steps, current
       <Box display="flex" flex="1" alignSelf="stretch" paddingTop="40px">
         {getStepContent(currentStep)}
       </Box>
-      <StepperDots steps={steps.length} activeStep={steps.indexOf(currentStep)} />
+      <StepperDots
+        steps={steps.length}
+        activeStep={steps.indexOf(currentStep)}
+        handleNext={onNext}
+        handleBack={onPrev}
+      />
     </OuterBox>
   );
 };
