@@ -57,9 +57,10 @@ export const BuildInfo: React.FC<BuildInfoProps> = ({ className, enableAdvancedU
       <div>
         Version {appVersion} ({commitHash})
       </div>
-      <div onClick={handleBuildNumberClick}>
+      <div>
         Build
         <span
+          onClick={handleBuildNumberClick}
           css={css`
             text-decoration: ${enableAdvancedUserClick && isAdvancedUser ? "underline" : "initial"};
             margin-left: 4px;
