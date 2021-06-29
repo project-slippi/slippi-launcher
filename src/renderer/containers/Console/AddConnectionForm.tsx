@@ -167,7 +167,7 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
                       />
                     )}
                     rules={{
-                      required: !enableAutoSwitcher || "Please fill out this field",
+                      required: enableAutoSwitcher,
                       validate: (val) => {
                         if (!enableAutoSwitcher) {
                           return true;
