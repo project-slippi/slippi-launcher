@@ -1,11 +1,11 @@
 /** @jsx jsx */
+import { ipc_migrateDolphin } from "@dolphin/ipc";
 import { css, jsx } from "@emotion/react";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import { isMac } from "common/constants";
-import { ipc_migrateDolphin } from "common/ipc";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 

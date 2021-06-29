@@ -4,11 +4,9 @@ import "@replays/main";
 import "@settings/main";
 import "@console/main";
 
-import { dolphinManager } from "@dolphin/manager";
-import { DolphinLaunchType } from "@dolphin/types";
 import { settingsManager } from "@settings/settingsManager";
 import { isLinux } from "common/constants";
-import { ipc_checkValidIso, ipc_fetchNewsFeed, ipc_getDesktopAppPath, ipc_migrateDolphin } from "common/ipc";
+import { ipc_checkValidIso, ipc_fetchNewsFeed, ipc_getDesktopAppPath } from "common/ipc";
 import { app, ipcMain, nativeImage } from "electron";
 import * as fs from "fs-extra";
 import path from "path";
@@ -59,22 +57,5 @@ export function setupListeners() {
     }
 
     return { exists: exists };
-  });
-
-  ipc_migrateDolphin.main!.handle(async ({ migrateNetplay, migratePlayback }) => {
-    const desktopAppPath = path.join(app.getPath("appData"), "Slippi Desktop App");
-
-    if (migrateNetplay) {
-      const baseNetplayPath = path.dirname(migrateNetplay);
-      await dolphinManager.copyDolphinConfig(DolphinLaunchType.NETPLAY, baseNetplayPath);
-    }
-    if (migratePlayback) {
-      const oldPlaybackDolphinPath = path.join(desktopAppPath, "dolphin");
-      await dolphinManager.copyDolphinConfig(DolphinLaunchType.PLAYBACK, oldPlaybackDolphinPath);
-    }
-    if (desktopAppPath) {
-      await fs.remove(desktopAppPath);
-    }
-    return { success: true };
   });
 }
