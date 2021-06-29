@@ -4,6 +4,7 @@ import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
 import FormHelperText from "@material-ui/core/FormHelperText";
+import { isMac } from "common/constants";
 import { ipc_migrateDolphin } from "common/ipc";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -58,7 +59,7 @@ export const MigrateDolphinStep: React.FC = () => {
     <Box display="flex" flexDirection="column" flexGrow="1">
       <Container>
         <QuickStartHeader>Import old Dolphin settings</QuickStartHeader>
-        <div>Select which Dolphin settings you want to import:</div>
+        <div>Which Dolphin settings would you like to import?</div>
 
         <div
           css={css`
@@ -89,6 +90,13 @@ export const MigrateDolphinStep: React.FC = () => {
           <form className="form" onSubmit={onNetplaySubmit}>
             {migrateNetplay && (
               <div>
+                <div
+                  css={css`
+                    margin-bottom: 5px;
+                  `}
+                >
+                  Select the location of your old Netplay Dolphin app.
+                </div>
                 <Controller
                   name="netplayPath"
                   control={control}
@@ -98,12 +106,15 @@ export const MigrateDolphinStep: React.FC = () => {
                       {...field}
                       value={netplayPath}
                       onSelect={(newPath) => setValue("netplayPath", newPath)}
-                      placeholder="No folder set"
-                      options={{ properties: ["openDirectory"] }}
+                      placeholder="No Netplay Dolphin selected"
+                      options={{
+                        properties: ["openFile"],
+                        filters: [{ name: "Slippi Dolphin", extensions: [isMac ? "app" : "exe"] }],
+                      }}
                     />
                   )}
                   rules={{ validate: (val) => val.length > 0 || "No path selected" }}
-                ></Controller>
+                />
                 <div
                   css={css`
                     min-height: 25px;

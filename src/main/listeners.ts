@@ -65,7 +65,8 @@ export function setupListeners() {
     const desktopAppPath = path.join(app.getPath("appData"), "Slippi Desktop App");
 
     if (migrateNetplay) {
-      await dolphinManager.copyDolphinConfig(DolphinLaunchType.NETPLAY, migrateNetplay);
+      const baseNetplayPath = path.dirname(migrateNetplay);
+      await dolphinManager.copyDolphinConfig(DolphinLaunchType.NETPLAY, baseNetplayPath);
     }
     if (migratePlayback) {
       const oldPlaybackDolphinPath = path.join(desktopAppPath, "dolphin");
