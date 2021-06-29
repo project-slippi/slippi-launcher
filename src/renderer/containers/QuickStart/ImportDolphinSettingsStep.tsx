@@ -8,6 +8,7 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import { isMac } from "common/constants";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
+import { useToasts } from "react-toast-notifications";
 
 import { Checkbox } from "@/components/FormInputs/Checkbox";
 import { PathInput } from "@/components/PathInput";
@@ -23,6 +24,7 @@ type FormValues = {
 
 export const ImportDolphinSettingsStep: React.FC = () => {
   const setExists = useDesktopApp((store) => store.setExists);
+  const { addToast } = useToasts();
 
   const migrateDolphin = async (values: FormValues) => {
     await ipc_migrateDolphin.renderer!.trigger({
@@ -53,7 +55,11 @@ export const ImportDolphinSettingsStep: React.FC = () => {
   const migrateNetplay = watch("shouldImportNetplay");
   const migratePlayback = watch("shouldImportPlayback");
 
-  const onFormSubmit = handleSubmit((values) => migrateDolphin(values));
+  const handleError = (err: any) => addToast(err.message ?? JSON.stringify(err), { appearance: "error" });
+
+  const onFormSubmit = handleSubmit((values) => {
+    migrateDolphin(values).catch(handleError);
+  });
 
   return (
     <Box display="flex" flexDirection="column" flexGrow="1">
@@ -140,7 +146,7 @@ export const ImportDolphinSettingsStep: React.FC = () => {
               </Button>
               <Button
                 color="secondary"
-                onClick={skipMigration}
+                onClick={() => skipMigration().catch(handleError)}
                 css={css`
                   text-transform: initial;
                   margin-top: 10px;
