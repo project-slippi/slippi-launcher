@@ -69,9 +69,7 @@ export function setupListeners() {
       await dolphinManager.copyDolphinConfig(DolphinLaunchType.PLAYBACK, migratePlayback);
     }
     if (desktopAppPath) {
-      await fs.remove(desktopAppPath).catch((err) => {
-        throw new Error(err);
-      });
+      await fs.remove(desktopAppPath);
     }
     return { success: true };
   });

@@ -18,7 +18,7 @@ export const ipc_getDesktopAppPath = makeEndpoint.main(
 );
 
 export const ipc_migrateDolphin = makeEndpoint.main(
-  "deleteFolder",
+  "migrateDolphin",
   <{ migrateNetplay: string | null; migratePlayback: string | null; desktopAppPath: string | null }>_,
   <SuccessPayload>_,
 );
