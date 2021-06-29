@@ -9,7 +9,6 @@ import Typography from "@material-ui/core/Typography";
 import WarningIcon from "@material-ui/icons/Warning";
 import { Ports } from "@slippi/slippi-js";
 import { colors } from "common/colors";
-import log from "electron-log";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 
