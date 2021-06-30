@@ -77,7 +77,7 @@ ipc_launchNetplayDolphin.main!.handle(async () => {
 
 ipc_importDolphinSettings.main!.handle(async ({ toImportDolphinPath, type }) => {
   if (isMac) {
-    toImportDolphinPath = path.join("Contents", "Resources");
+    toImportDolphinPath = path.join(toImportDolphinPath, "Contents", "Resources");
   } else {
     toImportDolphinPath = path.dirname(toImportDolphinPath);
   }
