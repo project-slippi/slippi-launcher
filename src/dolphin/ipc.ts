@@ -33,9 +33,16 @@ export const ipc_viewSlpReplay = makeEndpoint.main("viewSlpReplay", <{ files: Re
 
 export const ipc_launchNetplayDolphin = makeEndpoint.main("launchNetplayDolphin", <EmptyPayload>_, <SuccessPayload>_);
 
-export const ipc_migrateDolphin = makeEndpoint.main(
-  "migrateDolphin",
-  <{ migrateNetplay: string | null; migratePlayback: boolean }>_,
+export const ipc_checkDesktopAppDolphin = makeEndpoint.main(
+  "getDesktopAppDolphinPath",
+  <EmptyPayload>_,
+  <{ dolphinPath: string; exists: boolean }>_,
+);
+
+// toImportDolphin path must point to a "Slippi Dolphin.{exe,app}"
+export const ipc_importDolphinSettings = makeEndpoint.main(
+  "importDolphinSettings",
+  <{ toImportDolphinPath: string; type: DolphinLaunchType }>_,
   <SuccessPayload>_,
 );
 

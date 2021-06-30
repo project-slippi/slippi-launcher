@@ -1,5 +1,4 @@
-import { ipc_getDesktopAppPath } from "common/ipc";
-import { ipc_dolphinDownloadFinishedEvent, ipc_downloadDolphin } from "dolphin/ipc";
+import { ipc_checkDesktopAppDolphin, ipc_dolphinDownloadFinishedEvent, ipc_downloadDolphin } from "dolphin/ipc";
 import log from "electron-log";
 import firebase from "firebase";
 import create from "zustand";
@@ -31,6 +30,7 @@ export const useAppInitialization = () => {
   const setUser = useAccount((store) => store.setUser);
   const setPlayKey = useAccount((store) => store.setPlayKey);
   const setDesktopAppExists = useDesktopApp((store) => store.setExists);
+  const setDesktopAppDolphinPath = useDesktopApp((store) => store.setDolphinPath);
 
   const initialize = async () => {
     if (initialized) {
@@ -82,13 +82,14 @@ export const useAppInitialization = () => {
     promises.push(ipc_downloadDolphin.renderer!.trigger({}));
 
     promises.push(
-      ipc_getDesktopAppPath
+      ipc_checkDesktopAppDolphin
         .renderer!.trigger({})
         .then(({ result }) => {
           if (!result) {
             throw new Error("Could not get old desktop app path");
           }
           setDesktopAppExists(result.exists);
+          setDesktopAppDolphinPath(result.dolphinPath);
         })
         .catch(console.error),
     );

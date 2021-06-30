@@ -1,14 +1,23 @@
 /** @jsx jsx */
-import { ipc_clearDolphinCache, ipc_configureDolphin, ipc_reinstallDolphin } from "@dolphin/ipc";
+import {
+  ipc_clearDolphinCache,
+  ipc_configureDolphin,
+  ipc_importDolphinSettings,
+  ipc_reinstallDolphin,
+} from "@dolphin/ipc";
 import { DolphinLaunchType } from "@dolphin/types";
 import { css, jsx } from "@emotion/react";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import FormHelperText from "@material-ui/core/FormHelperText";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
-import { isLinux } from "common/constants";
+import { isLinux, isMac } from "common/constants";
 import { shell } from "electron";
+import log from "electron-log";
+import capitalize from "lodash/capitalize";
 import React from "react";
+import { Controller, useForm } from "react-hook-form";
 import { useToasts } from "react-toast-notifications";
 
 import { ConfirmationModal } from "@/components/ConfirmationModal";
@@ -43,17 +52,18 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolphinType }) => {
   const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
-  const [modalOpen, setModalOpen] = React.useState(false);
+  const [resetModalOpen, setResetModalOpen] = React.useState(false);
+  const [importModalOpen, setImportModalOpen] = React.useState(false);
   const [isResetting, setIsResetting] = React.useState(false);
   const classes = useStyles();
   const { addToast } = useToasts();
+  const handleError = (err: any) => addToast(err.message ?? JSON.stringify(err), { appearance: "error" });
 
   const openDolphinDirectoryHandler = async () => {
     shell.openItem(dolphinPath);
   };
 
   const configureDolphinHandler = async () => {
-    console.log("configure dolphin pressed");
     if (process.platform === "darwin") {
       addToast("Dolphin may open in the background, please check the app bar", {
         appearance: "info",
@@ -64,7 +74,6 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   };
 
   const reinstallDolphinHandler = async () => {
-    console.log("reinstall button clicked");
     setIsResetting(true);
     await ipc_reinstallDolphin.renderer!.trigger({ dolphinType });
     setIsResetting(false);
@@ -73,6 +82,29 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   const clearDolphinCacheHandler = async () => {
     await ipc_clearDolphinCache.renderer!.trigger({ dolphinType });
   };
+
+  const importDolphinHandler = async (importPath: string) => {
+    log.info(`importing dolphin from ${importPath}`);
+
+    await ipc_importDolphinSettings.renderer!.trigger({ toImportDolphinPath: importPath, type: dolphinType });
+    setImportModalOpen(false);
+  };
+
+  const {
+    handleSubmit,
+    watch,
+    control,
+    setValue,
+    formState: { errors },
+  } = useForm<{ importPath: string }>({
+    defaultValues: { importPath: "" },
+  });
+
+  const importPath = watch("importPath", "");
+
+  const onImportFormSubmit = handleSubmit((values) => {
+    importDolphinHandler(values.importPath).catch(handleError);
+  });
 
   return (
     <div>
@@ -108,8 +140,8 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
       </SettingItem>
       <SettingItem name={`Reset ${dolphinType} Dolphin`}>
         <ConfirmationModal
-          open={modalOpen}
-          onClose={() => setModalOpen(false)}
+          open={resetModalOpen}
+          onClose={() => setResetModalOpen(false)}
           onSubmit={reinstallDolphinHandler}
           title="Are you sure?"
         >
@@ -126,7 +158,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           <Button variant="contained" color="secondary" onClick={clearDolphinCacheHandler} disabled={isResetting}>
             Clear cache
           </Button>
-          <Button variant="outlined" color="secondary" onClick={() => setModalOpen(true)} disabled={isResetting}>
+          <Button variant="outlined" color="secondary" onClick={() => setResetModalOpen(true)} disabled={isResetting}>
             Reset everything{" "}
             {isResetting && (
               <CircularProgress
@@ -141,6 +173,48 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           </Button>
         </div>
       </SettingItem>
+      {!isLinux && (
+        <SettingItem name={`Import ${dolphinType} Dolphin Settings`}>
+          <ConfirmationModal
+            title="Import Dolphin Settings"
+            open={importModalOpen}
+            onClose={() => setImportModalOpen(false)}
+            onSubmit={onImportFormSubmit}
+            confirmText="Import"
+            closeOnSubmit={false}
+          >
+            Select the location of your old {capitalize(dolphinType)} Dolphin app.
+            <div
+              css={css`
+                margin-top: 20px;
+              `}
+            >
+              <Controller
+                name="importPath"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <PathInput
+                    {...field}
+                    value={importPath}
+                    onSelect={(newPath) => setValue("importPath", newPath)}
+                    placeholder={`No ${capitalize(dolphinType)} Dolphin selected`}
+                    options={{
+                      properties: ["openFile"],
+                      filters: [{ name: "Slippi Dolphin", extensions: [isMac ? "app" : "exe"] }],
+                    }}
+                  />
+                )}
+                rules={{ validate: (val) => val.length > 0 || "No path selected" }}
+              />
+              <FormHelperText error={Boolean(errors?.importPath)}>{errors?.importPath?.message}</FormHelperText>
+            </div>
+          </ConfirmationModal>
+          <Button variant="contained" color="secondary" onClick={() => setImportModalOpen(true)} disabled={isResetting}>
+            Import
+          </Button>
+        </SettingItem>
+      )}
     </div>
   );
 };

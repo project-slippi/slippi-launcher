@@ -1,11 +1,13 @@
 /** @jsx jsx */
-import { ipc_migrateDolphin } from "@dolphin/ipc";
+import { ipc_importDolphinSettings } from "@dolphin/ipc";
+import { DolphinLaunchType } from "@dolphin/types";
 import { css, jsx } from "@emotion/react";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import { isMac } from "common/constants";
+import { ipc_deleteDesktopAppPath } from "common/ipc";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useToasts } from "react-toast-notifications";
@@ -24,21 +26,29 @@ type FormValues = {
 
 export const ImportDolphinSettingsStep: React.FC = () => {
   const setExists = useDesktopApp((store) => store.setExists);
+  const desktopAppDolphinPath = useDesktopApp((store) => store.dolphinPath);
   const { addToast } = useToasts();
 
   const migrateDolphin = async (values: FormValues) => {
-    await ipc_migrateDolphin.renderer!.trigger({
-      migrateNetplay: values.shouldImportNetplay ? values.netplayPath : null,
-      migratePlayback: values.shouldImportPlayback,
-    });
-    setExists(false);
+    if (values.shouldImportNetplay) {
+      await ipc_importDolphinSettings.renderer!.trigger({
+        toImportDolphinPath: values.netplayPath,
+        type: DolphinLaunchType.NETPLAY,
+      });
+    }
+    if (values.shouldImportPlayback) {
+      await ipc_importDolphinSettings.renderer!.trigger({
+        toImportDolphinPath: desktopAppDolphinPath,
+        type: DolphinLaunchType.PLAYBACK,
+      });
+    }
+
+    await finishMigration();
   };
 
-  const skipMigration = async () => {
-    await ipc_migrateDolphin.renderer!.trigger({
-      migrateNetplay: null,
-      migratePlayback: false,
-    });
+  const finishMigration = async () => {
+    // delete desktop app path
+    await ipc_deleteDesktopAppPath.renderer!.trigger({});
     setExists(false);
   };
 
@@ -146,7 +156,7 @@ export const ImportDolphinSettingsStep: React.FC = () => {
               </Button>
               <Button
                 color="secondary"
-                onClick={() => skipMigration().catch(handleError)}
+                onClick={() => finishMigration().catch(handleError)}
                 css={css`
                   text-transform: initial;
                   margin-top: 10px;

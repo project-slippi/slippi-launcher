@@ -5,8 +5,7 @@ import "@settings/main";
 import "@console/main";
 
 import { settingsManager } from "@settings/settingsManager";
-import { isLinux } from "common/constants";
-import { ipc_checkValidIso, ipc_fetchNewsFeed, ipc_getDesktopAppPath } from "common/ipc";
+import { ipc_checkValidIso, ipc_deleteDesktopAppPath, ipc_fetchNewsFeed } from "common/ipc";
 import { IsoValidity } from "common/types";
 import { app, ipcMain, nativeImage } from "electron";
 import * as fs from "fs-extra";
@@ -55,16 +54,11 @@ export function setupListeners() {
     }
   });
 
-  ipc_getDesktopAppPath.main!.handle(async () => {
-    // get the path and check existence
+  ipc_deleteDesktopAppPath.main!.handle(async () => {
+    // get the path and remove
     const desktopAppPath = path.join(app.getPath("appData"), "Slippi Desktop App");
-    const exists = await fs.pathExists(desktopAppPath);
+    await fs.remove(desktopAppPath);
 
-    if (isLinux && exists) {
-      await fs.remove(desktopAppPath);
-      return { exists: false };
-    }
-
-    return { exists: exists };
+    return { success: true };
   });
 }
