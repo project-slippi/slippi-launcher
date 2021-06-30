@@ -6,7 +6,6 @@ import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
-import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import { NewsItem } from "common/types";
 import { shell } from "electron";
@@ -19,21 +18,22 @@ export interface NewsArticleProps {
   item: NewsItem;
 }
 
-const useStyles = makeStyles({
-  media: {
-    height: 200,
-  },
-});
-
 export const NewsArticle: React.FC<NewsArticleProps> = ({ item }) => {
-  const classes = useStyles();
   const { imageUrl, title, subtitle, permalink, body, publishedAt } = item;
 
   const onClick = () => shell.openExternal(permalink);
   return (
     <Outer>
       <Card>
-        {imageUrl && <CardMedia className={classes.media} image={imageUrl} title={title} />}
+        {imageUrl && (
+          <CardMedia
+            css={css`
+              height: 200px;
+            `}
+            image={imageUrl}
+            title={title}
+          />
+        )}
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
             {title}

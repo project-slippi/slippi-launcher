@@ -4,7 +4,6 @@ import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List";
-import { createStyles, makeStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import FolderIcon from "@material-ui/icons/Folder";
@@ -226,13 +225,20 @@ const EmptyFolder: React.FC<{
   hiddenFileCount: number;
   onClearFilter: () => void;
 }> = ({ hiddenFileCount, onClearFilter }) => {
-  const classes = useStyles();
   return (
     <IconMessage Icon={SearchIcon} label="No SLP files found">
       {hiddenFileCount > 0 && (
         <div style={{ textAlign: "center" }}>
           <Typography style={{ marginTop: 20, opacity: 0.6 }}>{hiddenFileCount} files hidden</Typography>
-          <Button className={classes.label} color="primary" onClick={onClearFilter} size="small">
+          <Button
+            css={css`
+              text-transform: lowercase;
+              font-size: 12px;
+            `}
+            color="primary"
+            onClick={onClearFilter}
+            size="small"
+          >
             clear filter
           </Button>
         </div>
@@ -240,15 +246,6 @@ const EmptyFolder: React.FC<{
     </IconMessage>
   );
 };
-
-const useStyles = makeStyles(() =>
-  createStyles({
-    label: {
-      textTransform: "lowercase",
-      fontSize: 12,
-    },
-  }),
-);
 
 const Outer = styled.div`
   display: flex;

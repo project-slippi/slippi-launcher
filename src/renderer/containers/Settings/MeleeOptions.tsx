@@ -1,8 +1,10 @@
+/** @jsx jsx */
+import { css, jsx } from "@emotion/react";
+import styled from "@emotion/styled";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import ErrorIcon from "@material-ui/icons/Error";
 import Help from "@material-ui/icons/Help";
@@ -15,29 +17,19 @@ import { useIsoPath, useLaunchMeleeOnPlay, useRootSlpPath, useSpectateSlpPath } 
 
 import { SettingItem } from "./SettingItem";
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    validation: {
-      display: "flex",
-      alignItems: "center",
-      marginRight: 10,
-    },
-    invalid: {
-      color: theme.palette.error.main,
-    },
-    valid: {
-      color: theme.palette.success.main,
-    },
-    unknown: {
-      color: "white",
-    },
-    validationText: {
-      "text-transform": "capitalize",
-      marginRight: 5,
-      fontWeight: 500,
-    },
-  }),
-);
+const renderValidityStatus = (isoValidity: IsoValidity) => {
+  switch (isoValidity) {
+    case IsoValidity.VALID: {
+      return <CheckCircleIcon />;
+    }
+    case IsoValidity.UNKNOWN: {
+      return <Help />;
+    }
+    case IsoValidity.INVALID: {
+      return <ErrorIcon />;
+    }
+  }
+};
 
 export const MeleeOptions: React.FC = () => {
   const verifying = useIsoVerification((state) => state.isValidating);
@@ -46,21 +38,6 @@ export const MeleeOptions: React.FC = () => {
   const [launchMeleeOnPlay, setLaunchMelee] = useLaunchMeleeOnPlay();
   const [replayDir, setReplayDir] = useRootSlpPath();
   const [spectateDir, setSpectateDir] = useSpectateSlpPath();
-  const classes = useStyles();
-
-  const renderValidityStatus = () => {
-    switch (isoValidity) {
-      case IsoValidity.VALID: {
-        return <CheckCircleIcon />;
-      }
-      case IsoValidity.UNKNOWN: {
-        return <Help />;
-      }
-      case IsoValidity.INVALID: {
-        return <ErrorIcon />;
-      }
-    }
-  };
 
   const onLaunchMeleeChange = async (value: string) => {
     const launchMelee = value === "true";
@@ -76,10 +53,18 @@ export const MeleeOptions: React.FC = () => {
           placeholder="No file set"
           disabled={verifying}
           endAdornment={
-            <div className={`${classes.validation} ${verifying ? "" : classes[isoValidity.toLowerCase()]}`}>
-              <span className={classes.validationText}>{verifying ? "Verifying..." : isoValidity.toLowerCase()}</span>
-              {verifying ? <CircularProgress size={25} color="inherit" /> : renderValidityStatus()}
-            </div>
+            <ValidationContainer className={verifying ? undefined : isoValidity.toLowerCase()}>
+              <span
+                css={css`
+                  text-transform: capitalize;
+                  margin-right: 5px;
+                  font-weight: 500;
+                `}
+              >
+                {verifying ? "Verifying..." : isoValidity.toLowerCase()}
+              </span>
+              {verifying ? <CircularProgress size={25} color="inherit" /> : renderValidityStatus(isoValidity)}
+            </ValidationContainer>
           }
         />
       </SettingItem>
@@ -112,3 +97,16 @@ export const MeleeOptions: React.FC = () => {
     </div>
   );
 };
+
+const ValidationContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+  color: white;
+  &.invalid {
+    color: ${({ theme }) => theme.palette.error.main};
+  }
+  &.valid {
+    color: ${({ theme }) => theme.palette.success.main};
+  }
+`;
