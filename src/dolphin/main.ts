@@ -73,21 +73,31 @@ ipc_launchNetplayDolphin.main!.handle(async () => {
   return { success: true };
 });
 
-ipc_migrateDolphin.main!.handle(async ({ migrateNetplay, migratePlayback }) => {
+ipc_migrateDolphin.main!.handle(async ({ migrateNetplay, migratePlayback, migratePlaybackPath }) => {
   const desktopAppPath = path.join(app.getPath("appData"), "Slippi Desktop App");
 
   if (migrateNetplay) {
     const baseNetplayPath = isMac ? path.join(migrateNetplay, "Contents", "Resources") : path.dirname(migrateNetplay);
     await dolphinManager.copyDolphinConfig(DolphinLaunchType.NETPLAY, baseNetplayPath);
   }
+
   if (migratePlayback) {
+    let oldPlaybackDolphinPath = desktopAppPath;
     const dolphinDir = ["dolphin"];
+
+    if (migratePlaybackPath) {
+      dolphinDir.pop();
+      oldPlaybackDolphinPath = path.dirname(migratePlaybackPath);
+    }
+
     if (isMac) {
       dolphinDir.push("Slippi Dolphin.app", "Contents", "Resources");
     }
-    const oldPlaybackDolphinPath = path.join(desktopAppPath, ...dolphinDir);
+
+    oldPlaybackDolphinPath = path.join(oldPlaybackDolphinPath, ...dolphinDir);
     await dolphinManager.copyDolphinConfig(DolphinLaunchType.PLAYBACK, oldPlaybackDolphinPath);
   }
+
   if (desktopAppPath) {
     await fs.remove(desktopAppPath);
   }

@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { ipc_clearDolphinCache, ipc_configureDolphin, ipc_reinstallDolphin } from "@dolphin/ipc";
+import { ipc_clearDolphinCache, ipc_configureDolphin, ipc_migrateDolphin, ipc_reinstallDolphin } from "@dolphin/ipc";
 import { DolphinLaunchType } from "@dolphin/types";
 import { css, jsx } from "@emotion/react";
 import Button from "@material-ui/core/Button";
@@ -8,6 +8,7 @@ import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import { isLinux } from "common/constants";
 import { shell } from "electron";
+import _ from "lodash";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
 
@@ -43,7 +44,9 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolphinType }) => {
   const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
-  const [modalOpen, setModalOpen] = React.useState(false);
+  const [resetModalOpen, setResetModalOpen] = React.useState(false);
+  const [importModalOpen, setImportModalOpen] = React.useState(false);
+  const [importPath, setImportPath] = React.useState("");
   const [isResetting, setIsResetting] = React.useState(false);
   const classes = useStyles();
   const { addToast } = useToasts();
@@ -53,7 +56,6 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   };
 
   const configureDolphinHandler = async () => {
-    console.log("configure dolphin pressed");
     if (process.platform === "darwin") {
       addToast("Dolphin may open in the background, please check the app bar", {
         appearance: "info",
@@ -64,7 +66,6 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   };
 
   const reinstallDolphinHandler = async () => {
-    console.log("reinstall button clicked");
     setIsResetting(true);
     await ipc_reinstallDolphin.renderer!.trigger({ dolphinType });
     setIsResetting(false);
@@ -72,6 +73,16 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
 
   const clearDolphinCacheHandler = async () => {
     await ipc_clearDolphinCache.renderer!.trigger({ dolphinType });
+  };
+
+  const importDolphinHandler = async () => {
+    const importObj =
+      dolphinType === DolphinLaunchType.NETPLAY
+        ? { migrateNetplay: importPath }
+        : { migratePlayback: true, migratePlaybackPath: importPath };
+    const importSettings = Object.assign({ migrateNetplay: null, migratePlayback: false }, importObj);
+    await ipc_migrateDolphin.renderer!.trigger(importSettings);
+    setImportPath("");
   };
 
   return (
@@ -108,8 +119,8 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
       </SettingItem>
       <SettingItem name={`Reset ${dolphinType} Dolphin`}>
         <ConfirmationModal
-          open={modalOpen}
-          onClose={() => setModalOpen(false)}
+          open={resetModalOpen}
+          onClose={() => setResetModalOpen(false)}
           onSubmit={reinstallDolphinHandler}
           title="Are you sure?"
         >
@@ -126,7 +137,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           <Button variant="contained" color="secondary" onClick={clearDolphinCacheHandler} disabled={isResetting}>
             Clear cache
           </Button>
-          <Button variant="outlined" color="secondary" onClick={() => setModalOpen(true)} disabled={isResetting}>
+          <Button variant="outlined" color="secondary" onClick={() => setResetModalOpen(true)} disabled={isResetting}>
             Reset everything{" "}
             {isResetting && (
               <CircularProgress
@@ -141,6 +152,33 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           </Button>
         </div>
       </SettingItem>
+      {!isLinux && (
+        <SettingItem name={`Import ${dolphinType} Dolphin Settings`}>
+          <ConfirmationModal
+            title="Import Dolphin Settings"
+            open={importModalOpen}
+            onClose={() => setImportModalOpen(false)}
+            onSubmit={importDolphinHandler}
+            confirmText="Import"
+          >
+            Select the location of your old {_.capitalize(dolphinType)} Dolphin app.
+            <div
+              css={css`
+                margin-top: 20px;
+              `}
+            >
+              <PathInput
+                onSelect={(path) => setImportPath(path)}
+                placeholder={`No ${_.capitalize(dolphinType)} Dolphin selected`}
+                value={importPath}
+              />
+            </div>
+          </ConfirmationModal>
+          <Button variant="contained" color="secondary" onClick={() => setImportModalOpen(true)} disabled={isResetting}>
+            Import
+          </Button>
+        </SettingItem>
+      )}
     </div>
   );
 };

@@ -35,7 +35,7 @@ export const ipc_launchNetplayDolphin = makeEndpoint.main("launchNetplayDolphin"
 
 export const ipc_migrateDolphin = makeEndpoint.main(
   "migrateDolphin",
-  <{ migrateNetplay: string | null; migratePlayback: boolean }>_,
+  <{ migrateNetplay: string | null; migratePlayback: boolean; migratePlaybackPath?: string }>_,
   <SuccessPayload>_,
 );
 
