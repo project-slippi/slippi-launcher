@@ -1,8 +1,3 @@
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import { withStyles } from "@material-ui/core/styles";
 import DeleteIcon from "@material-ui/icons/Delete";
 import FolderIcon from "@material-ui/icons/Folder";
 import { FileResult } from "@replays/types";
@@ -13,16 +8,11 @@ import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as List } from "react-window";
 
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { IconMenu } from "@/components/IconMenu";
 
 import { ReplayFile } from "./ReplayFile";
 
 const REPLAY_FILE_ITEM_SIZE = 90;
-
-const StyledListItemIcon = withStyles(() => ({
-  root: {
-    marginRight: "10px",
-  },
-}))(ListItemIcon);
 
 // This is the container for all the replays visible, the autosizer will handle the virtualization portion
 const FileListResults: React.FC<{
@@ -169,20 +159,23 @@ export const FileList: React.FC<{
           setScrollRowItem={setScrollRowItem}
         />
       </div>
-      <Menu anchorEl={menuItem ? menuItem.anchorEl : null} open={Boolean(menuItem)} onClose={handleClose}>
-        <MenuItem onClick={handleRevealLocation}>
-          <StyledListItemIcon>
-            <FolderIcon fontSize="small" />
-          </StyledListItemIcon>
-          <ListItemText primary="Reveal location" />
-        </MenuItem>
-        <MenuItem onClick={handleDelete}>
-          <StyledListItemIcon>
-            <DeleteIcon fontSize="small" />
-          </StyledListItemIcon>
-          <ListItemText primary="Delete" />
-        </MenuItem>
-      </Menu>
+      <IconMenu
+        anchorEl={menuItem ? menuItem.anchorEl : null}
+        open={Boolean(menuItem)}
+        onClose={handleClose}
+        items={[
+          {
+            onClick: handleRevealLocation,
+            icon: <FolderIcon fontSize="small" />,
+            label: "Reveal location",
+          },
+          {
+            onClick: handleDelete,
+            icon: <DeleteIcon fontSize="small" />,
+            label: "Delete",
+          },
+        ]}
+      />
     </div>
   );
 };
