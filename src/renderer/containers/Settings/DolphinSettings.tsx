@@ -15,7 +15,7 @@ import Typography from "@material-ui/core/Typography";
 import { isLinux, isMac } from "common/constants";
 import { shell } from "electron";
 import log from "electron-log";
-import _ from "lodash";
+import capitalize from "lodash/capitalize";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useToasts } from "react-toast-notifications";
@@ -183,7 +183,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
             confirmText="Import"
             closeOnSubmit={false}
           >
-            Select the location of your old {_.capitalize(dolphinType)} Dolphin app.
+            Select the location of your old {capitalize(dolphinType)} Dolphin app.
             <div
               css={css`
                 margin-top: 20px;
@@ -198,7 +198,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
                     {...field}
                     value={importPath}
                     onSelect={(newPath) => setValue("importPath", newPath)}
-                    placeholder={`No ${_.capitalize(dolphinType)} Dolphin selected`}
+                    placeholder={`No ${capitalize(dolphinType)} Dolphin selected`}
                     options={{
                       properties: ["openFile"],
                       filters: [{ name: "Slippi Dolphin", extensions: [isMac ? "app" : "exe"] }],
