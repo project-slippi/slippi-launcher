@@ -1,9 +1,5 @@
 import { DiscoveredConsoleInfo } from "@console/types";
 import styled from "@emotion/styled";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
 import CreateIcon from "@material-ui/icons/Create";
 import DeleteIcon from "@material-ui/icons/Delete";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
@@ -11,6 +7,7 @@ import { StoredConnection } from "@settings/types";
 import { ConnectionStatus } from "@slippi/slippi-js";
 import React from "react";
 
+import { IconMenu } from "@/components/IconMenu";
 import { IconMessage } from "@/components/Message";
 import { useConsoleDiscoveryStore } from "@/lib/hooks/useConsoleDiscovery";
 import { useSettings } from "@/lib/hooks/useSettings";
@@ -82,27 +79,26 @@ export const SavedConnectionsList: React.FC<SavedConnectionsListProps> = ({ avai
           })}
         </div>
       )}
-      <Menu anchorEl={menuItem ? menuItem.anchorEl : null} open={Boolean(menuItem)} onClose={handleClose}>
-        <MenuItem onClick={handleEdit}>
-          <StyledListItemIcon>
-            <CreateIcon fontSize="small" />
-          </StyledListItemIcon>
-          <ListItemText primary="Edit" />
-        </MenuItem>
-        <MenuItem onClick={handleDelete}>
-          <StyledListItemIcon>
-            <DeleteIcon fontSize="small" />
-          </StyledListItemIcon>
-          <ListItemText primary="Delete" />
-        </MenuItem>
-      </Menu>
+      <IconMenu
+        anchorEl={menuItem ? menuItem.anchorEl : null}
+        open={Boolean(menuItem)}
+        onClose={handleClose}
+        items={[
+          {
+            onClick: handleEdit,
+            icon: <CreateIcon fontSize="small" />,
+            label: "Edit",
+          },
+          {
+            onClick: handleDelete,
+            icon: <DeleteIcon fontSize="small" />,
+            label: "Delete",
+          },
+        ]}
+      />
     </Outer>
   );
 };
-
-const StyledListItemIcon = styled(ListItemIcon)`
-  margin-right: 10px;
-`;
 
 const Outer = styled.div`
   display: flex;
