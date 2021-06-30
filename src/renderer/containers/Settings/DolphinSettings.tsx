@@ -197,7 +197,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
                     {...field}
                     value={importPath}
                     onSelect={(newPath) => setValue("importPath", newPath)}
-                    placeholder="No Netplay Dolphin selected"
+                    placeholder={`No ${_.capitalize(dolphinType)} Dolphin selected`}
                     options={{
                       properties: ["openFile"],
                       filters: [{ name: "Slippi Dolphin", extensions: [isMac ? "app" : "exe"] }],
