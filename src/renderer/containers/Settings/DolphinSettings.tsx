@@ -54,19 +54,10 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
     await ipc_clearDolphinCache.renderer!.trigger({ dolphinType });
   };
 
+  const dolphinTypeName = capitalize(dolphinType);
   return (
     <div>
-      <Typography variant="h5">{capitalize(dolphinType)} Dolphin Settings</Typography>
-      <DevGuard show={isLinux}>
-        <SettingItem name={`${dolphinType} Dolphin Directory`} description="The path to Dolphin.">
-          <PathInput
-            value={dolphinPath ?? ""}
-            onSelect={setDolphinPath}
-            placeholder="No folder set"
-            options={{ properties: ["openDirectory"] }}
-          />
-        </SettingItem>
-      </DevGuard>
+      <Typography variant="h5">{dolphinTypeName} Dolphin Settings</Typography>
       <SettingItem name={`Configure ${dolphinType} Dolphin`}>
         <div
           css={css`
@@ -79,11 +70,25 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           <Button variant="contained" color="primary" onClick={configureDolphinHandler} disabled={isResetting}>
             Configure Dolphin
           </Button>
-          <Button variant="outlined" color="secondary" onClick={openDolphinDirectoryHandler} disabled={isResetting}>
+          <Button variant="outlined" color="primary" onClick={openDolphinDirectoryHandler} disabled={isResetting}>
             Open containing folder
           </Button>
         </div>
       </SettingItem>
+      <DevGuard show={isLinux}>
+        <SettingItem
+          name={`${dolphinType} Dolphin Directory`}
+          description={`The path containing the ${dolphinTypeName} Dolphin executable.`}
+        >
+          <PathInput
+            value={dolphinPath ?? ""}
+            onSelect={setDolphinPath}
+            placeholder="No folder set"
+            options={{ properties: ["openDirectory"] }}
+          />
+        </SettingItem>
+      </DevGuard>
+      {!isLinux && <ImportDolphinConfigForm dolphinType={dolphinType} />}
       <SettingItem name={`Reset ${dolphinType} Dolphin`}>
         <ConfirmationModal
           open={resetModalOpen}
@@ -119,7 +124,6 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           </Button>
         </div>
       </SettingItem>
-      {!isLinux && <ImportDolphinConfigForm dolphinType={dolphinType} />}
     </div>
   );
 };
