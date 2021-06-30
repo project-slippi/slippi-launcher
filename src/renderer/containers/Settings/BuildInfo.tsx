@@ -37,7 +37,7 @@ export const BuildInfo: React.FC<BuildInfoProps> = ({ className, enableAdvancedU
     }
 
     if (!isAdvancedUser) {
-      addToast("I hope you know what you're doing...", { appearance: "info", autoDismiss: true });
+      addToast("I hope you know what you're doing...", { appearance: "warning", autoDismiss: true });
     }
 
     setIsAdvancedUser(!isAdvancedUser);
