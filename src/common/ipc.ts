@@ -9,10 +9,4 @@ export const ipc_checkValidIso = makeEndpoint.main(
   <{ path: string; valid: IsoValidity }>_,
 );
 
-export const ipc_getDesktopAppPath = makeEndpoint.main(
-  "getDesktopAppPath",
-  <EmptyPayload>_,
-  <{ dolphinPath: string; exists: boolean }>_,
-);
-
 export const ipc_deleteDesktopAppPath = makeEndpoint.main("deleteDesktopAppPath", <EmptyPayload>_, <SuccessPayload>_);

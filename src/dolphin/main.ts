@@ -1,4 +1,6 @@
-import { isMac } from "common/constants";
+import { isLinux, isMac } from "common/constants";
+import { app } from "electron";
+import * as fs from "fs-extra";
 import path from "path";
 
 import { fileExists } from "../main/fileExists";
@@ -8,6 +10,7 @@ import {
   ipc_clearDolphinCache,
   ipc_configureDolphin,
   ipc_downloadDolphin,
+  ipc_getDesktopAppDolphinInfo,
   ipc_importDolphinSettings,
   ipc_launchNetplayDolphin,
   ipc_reinstallDolphin,
@@ -17,6 +20,8 @@ import {
 } from "./ipc";
 import { dolphinManager } from "./manager";
 import { deletePlayKeyFile, findPlayKey, writePlayKeyFile } from "./playkey";
+import { DolphinLaunchType } from "./types";
+import { findDolphinExecutable } from "./util";
 
 ipc_downloadDolphin.main!.handle(async () => {
   await assertDolphinInstallations();
@@ -80,4 +85,27 @@ ipc_importDolphinSettings.main!.handle(async ({ toImportDolphinPath, type }) => 
   await dolphinManager.copyDolphinConfig(type, toImportDolphinPath);
 
   return { success: true };
+});
+
+ipc_getDesktopAppDolphinInfo.main!.handle(async () => {
+  // get the path and check existence
+  const desktopAppPath = path.join(app.getPath("appData"), "Slippi Desktop App");
+  let exists = await fs.pathExists(desktopAppPath);
+
+  if (!exists) {
+    return { dolphinPath: "", exists: false };
+  }
+
+  // Linux doesn't need to do anything because their dolphin settings are in a user config dir
+  if (isLinux && exists) {
+    await fs.remove(desktopAppPath);
+    return { dolphinPath: "", exists: false };
+  }
+
+  const dolphinFolderPath = path.join(desktopAppPath, "dolphin");
+  exists = await fs.pathExists(dolphinFolderPath);
+
+  const dolphinExecutablePath = await findDolphinExecutable(DolphinLaunchType.NETPLAY, dolphinFolderPath);
+
+  return { dolphinPath: dolphinExecutablePath, exists: exists };
 });

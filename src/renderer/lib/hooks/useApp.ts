@@ -1,5 +1,4 @@
-import { ipc_getDesktopAppPath } from "common/ipc";
-import { ipc_dolphinDownloadFinishedEvent, ipc_downloadDolphin } from "dolphin/ipc";
+import { ipc_dolphinDownloadFinishedEvent, ipc_downloadDolphin, ipc_getDesktopAppDolphinInfo } from "dolphin/ipc";
 import log from "electron-log";
 import firebase from "firebase";
 import create from "zustand";
@@ -83,7 +82,7 @@ export const useAppInitialization = () => {
     promises.push(ipc_downloadDolphin.renderer!.trigger({}));
 
     promises.push(
-      ipc_getDesktopAppPath
+      ipc_getDesktopAppDolphinInfo
         .renderer!.trigger({})
         .then(({ result }) => {
           if (!result) {
