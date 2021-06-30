@@ -4,12 +4,15 @@ import { DolphinLaunchType } from "@dolphin/types";
 import { css, jsx } from "@emotion/react";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import FormHelperText from "@material-ui/core/FormHelperText";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
-import { isLinux } from "common/constants";
+import { isLinux, isMac } from "common/constants";
 import { shell } from "electron";
+import log from "electron-log";
 import _ from "lodash";
 import React from "react";
+import { Controller, useForm } from "react-hook-form";
 import { useToasts } from "react-toast-notifications";
 
 import { ConfirmationModal } from "@/components/ConfirmationModal";
@@ -46,10 +49,10 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
   const [resetModalOpen, setResetModalOpen] = React.useState(false);
   const [importModalOpen, setImportModalOpen] = React.useState(false);
-  const [importPath, setImportPath] = React.useState("");
   const [isResetting, setIsResetting] = React.useState(false);
   const classes = useStyles();
   const { addToast } = useToasts();
+  const handleError = (err: any) => addToast(err.message ?? JSON.stringify(err), { appearance: "error" });
 
   const openDolphinDirectoryHandler = async () => {
     shell.openItem(dolphinPath);
@@ -75,15 +78,32 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
     await ipc_clearDolphinCache.renderer!.trigger({ dolphinType });
   };
 
-  const importDolphinHandler = async () => {
+  const importDolphinHandler = async (importPath: string) => {
+    log.info(`importing dolphin from ${importPath}`);
     const importObj =
       dolphinType === DolphinLaunchType.NETPLAY
         ? { migrateNetplay: importPath }
         : { migratePlayback: true, migratePlaybackPath: importPath };
     const importSettings = Object.assign({ migrateNetplay: null, migratePlayback: false }, importObj);
     await ipc_migrateDolphin.renderer!.trigger(importSettings);
-    setImportPath("");
+    setImportModalOpen(false);
   };
+
+  const {
+    handleSubmit,
+    watch,
+    control,
+    setValue,
+    formState: { errors },
+  } = useForm<{ importPath: string }>({
+    defaultValues: { importPath: "" },
+  });
+
+  const importPath = watch("importPath", "");
+
+  const onImportFormSubmit = handleSubmit((values) => {
+    importDolphinHandler(values.importPath).catch(handleError);
+  });
 
   return (
     <div>
@@ -158,8 +178,9 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
             title="Import Dolphin Settings"
             open={importModalOpen}
             onClose={() => setImportModalOpen(false)}
-            onSubmit={importDolphinHandler}
+            onSubmit={onImportFormSubmit}
             confirmText="Import"
+            closeOnSubmit={false}
           >
             Select the location of your old {_.capitalize(dolphinType)} Dolphin app.
             <div
@@ -167,11 +188,25 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
                 margin-top: 20px;
               `}
             >
-              <PathInput
-                onSelect={(path) => setImportPath(path)}
-                placeholder={`No ${_.capitalize(dolphinType)} Dolphin selected`}
-                value={importPath}
+              <Controller
+                name="importPath"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <PathInput
+                    {...field}
+                    value={importPath}
+                    onSelect={(newPath) => setValue("importPath", newPath)}
+                    placeholder="No Netplay Dolphin selected"
+                    options={{
+                      properties: ["openFile"],
+                      filters: [{ name: "Slippi Dolphin", extensions: [isMac ? "app" : "exe"] }],
+                    }}
+                  />
+                )}
+                rules={{ validate: (val) => val.length > 0 || "No path selected" }}
               />
+              <FormHelperText error={Boolean(errors?.importPath)}>{errors?.importPath?.message}</FormHelperText>
             </div>
           </ConfirmationModal>
           <Button variant="contained" color="secondary" onClick={() => setImportModalOpen(true)} disabled={isResetting}>

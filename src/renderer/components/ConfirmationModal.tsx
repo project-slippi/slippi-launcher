@@ -52,7 +52,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         <StyledDialogTitle id="responsive-dialog-title">{title}</StyledDialogTitle>
         <DialogContent>{children}</DialogContent>
         <DialogActions>
-          <Button onClick={onClose} color="secondary" {...cancelProps}>
+          <Button type="submit" onClick={onClose} color="secondary" {...cancelProps}>
             {cancelText}
           </Button>
           <Button color="primary" type="submit" {...confirmProps}>
