@@ -9,7 +9,6 @@ import { DolphinLaunchType } from "@dolphin/types";
 import { css, jsx } from "@emotion/react";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import { isLinux, isMac } from "common/constants";
 import { remote, shell } from "electron";
@@ -25,35 +24,11 @@ import { useDolphinPath } from "@/lib/hooks/useSettings";
 
 import { SettingItem } from "./SettingItem";
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    validation: {
-      display: "flex",
-      alignItems: "center",
-      marginRight: 10,
-    },
-    invalid: {
-      color: theme.palette.error.main,
-    },
-    valid: {
-      color: theme.palette.success.main,
-    },
-    validationText: {
-      marginRight: 5,
-      fontWeight: 500,
-    },
-    title: {
-      textTransform: "capitalize",
-    },
-  }),
-);
-
 export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolphinType }) => {
   const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
   const [resetModalOpen, setResetModalOpen] = React.useState(false);
   const [isResetting, setIsResetting] = React.useState(false);
   const { addToast } = useToasts();
-  const classes = useStyles();
 
   const openDolphinDirectoryHandler = async () => {
     shell.openItem(dolphinPath);
@@ -81,9 +56,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
 
   return (
     <div>
-      <Typography variant="h5" className={classes.title}>
-        {dolphinType} Dolphin Settings
-      </Typography>
+      <Typography variant="h5">{capitalize(dolphinType)} Dolphin Settings</Typography>
       <DevGuard show={isLinux}>
         <SettingItem name={`${dolphinType} Dolphin Directory`} description="The path to Dolphin.">
           <PathInput
