@@ -6,11 +6,11 @@ import path from "path";
 import { fileExists } from "../main/fileExists";
 import { assertDolphinInstallations } from "./downloadDolphin";
 import {
+  ipc_checkDesktopAppDolphin,
   ipc_checkPlayKeyExists,
   ipc_clearDolphinCache,
   ipc_configureDolphin,
   ipc_downloadDolphin,
-  ipc_getDesktopAppDolphinInfo,
   ipc_importDolphinSettings,
   ipc_launchNetplayDolphin,
   ipc_reinstallDolphin,
@@ -87,7 +87,7 @@ ipc_importDolphinSettings.main!.handle(async ({ toImportDolphinPath, type }) => 
   return { success: true };
 });
 
-ipc_getDesktopAppDolphinInfo.main!.handle(async () => {
+ipc_checkDesktopAppDolphin.main!.handle(async () => {
   // get the path and check existence
   const desktopAppPath = path.join(app.getPath("appData"), "Slippi Desktop App");
   let exists = await fs.pathExists(desktopAppPath);
