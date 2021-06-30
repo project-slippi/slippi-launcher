@@ -12,7 +12,7 @@ export const ipc_checkValidIso = makeEndpoint.main(
 export const ipc_getDesktopAppPath = makeEndpoint.main(
   "getDesktopAppPath",
   <EmptyPayload>_,
-  <{ path: string; exists: boolean }>_,
+  <{ dolphinPath: string; exists: boolean }>_,
 );
 
 export const ipc_deleteDesktopAppPath = makeEndpoint.main("deleteDesktopAppPath", <EmptyPayload>_, <SuccessPayload>_);

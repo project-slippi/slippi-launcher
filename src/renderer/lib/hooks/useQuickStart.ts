@@ -114,11 +114,11 @@ export const useDesktopApp = create(
   combine(
     {
       exists: false,
-      path: "",
+      dolphinPath: "",
     },
     (set) => ({
       setExists: (exists: boolean) => set({ exists }),
-      setPath: (path: string) => set({ path }),
+      setDolphinPath: (dolphinPath: string) => set({ dolphinPath }),
     }),
   ),
 );

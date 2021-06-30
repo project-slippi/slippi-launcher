@@ -8,7 +8,6 @@ import Container from "@material-ui/core/Container";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import { isMac } from "common/constants";
 import { ipc_deleteDesktopAppPath } from "common/ipc";
-import path from "path";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useToasts } from "react-toast-notifications";
@@ -27,7 +26,7 @@ type FormValues = {
 
 export const ImportDolphinSettingsStep: React.FC = () => {
   const setExists = useDesktopApp((store) => store.setExists);
-  const desktopAppPath = useDesktopApp((store) => store.path);
+  const desktopAppDolphinPath = useDesktopApp((store) => store.dolphinPath);
   const { addToast } = useToasts();
 
   const migrateDolphin = async (values: FormValues) => {
@@ -38,11 +37,8 @@ export const ImportDolphinSettingsStep: React.FC = () => {
       });
     }
     if (values.shouldImportPlayback) {
-      const binaryName = isMac ? "Slippi Dolphin.app" : "Slippi Dolphin.exe";
-      const playbackPath = path.join(desktopAppPath, "dolphin", binaryName);
-
       await ipc_importDolphinSettings.renderer!.trigger({
-        toImportDolphinPath: playbackPath,
+        toImportDolphinPath: desktopAppDolphinPath,
         type: DolphinLaunchType.PLAYBACK,
       });
     }
