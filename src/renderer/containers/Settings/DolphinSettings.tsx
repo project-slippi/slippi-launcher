@@ -133,6 +133,7 @@ const ImportDolphinConfigForm: React.FC<{
 }> = ({ dolphinType }) => {
   const { addToast } = useToasts();
   const dolphinTypeName = capitalize(dolphinType);
+  const extension = isMac ? "app" : "exe";
   const importDolphinHandler = async (importPath: string) => {
     log.info(`importing dolphin from ${importPath}`);
     await ipc_importDolphinSettings.renderer!.trigger({ toImportDolphinPath: importPath, type: dolphinType });
@@ -159,7 +160,7 @@ const ImportDolphinConfigForm: React.FC<{
   return (
     <SettingItem
       name={`Import ${dolphinTypeName} Dolphin Settings`}
-      description={`Replaces the ${dolphinTypeName} Dolphin settings with those from a different Dolphin application.`}
+      description={`Replace the ${dolphinTypeName} Dolphin settings with those from a different Dolphin application. To do this, select the Dolphin.${extension} with the desired configuration.`}
     >
       <Button variant="contained" color="secondary" onClick={onImportClick}>
         Import Dolphin settings
