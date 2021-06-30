@@ -1,6 +1,4 @@
 import { isMac } from "common/constants";
-import { app } from "electron";
-import * as fs from "fs-extra";
 import path from "path";
 
 import { fileExists } from "../main/fileExists";
@@ -10,8 +8,8 @@ import {
   ipc_clearDolphinCache,
   ipc_configureDolphin,
   ipc_downloadDolphin,
+  ipc_importDolphinSettings,
   ipc_launchNetplayDolphin,
-  ipc_migrateDolphin,
   ipc_reinstallDolphin,
   ipc_removePlayKeyFile,
   ipc_storePlayKeyFile,
@@ -19,7 +17,6 @@ import {
 } from "./ipc";
 import { dolphinManager } from "./manager";
 import { deletePlayKeyFile, findPlayKey, writePlayKeyFile } from "./playkey";
-import { DolphinLaunchType } from "./types";
 
 ipc_downloadDolphin.main!.handle(async () => {
   await assertDolphinInstallations();
@@ -73,33 +70,14 @@ ipc_launchNetplayDolphin.main!.handle(async () => {
   return { success: true };
 });
 
-ipc_migrateDolphin.main!.handle(async ({ migrateNetplay, migratePlayback, migratePlaybackPath }) => {
-  const desktopAppPath = path.join(app.getPath("appData"), "Slippi Desktop App");
-
-  if (migrateNetplay) {
-    const baseNetplayPath = isMac ? path.join(migrateNetplay, "Contents", "Resources") : path.dirname(migrateNetplay);
-    await dolphinManager.copyDolphinConfig(DolphinLaunchType.NETPLAY, baseNetplayPath);
+ipc_importDolphinSettings.main!.handle(async ({ toImportDolphinPath, type }) => {
+  if (isMac) {
+    toImportDolphinPath = path.join("Contents", "Resources");
+  } else {
+    toImportDolphinPath = path.dirname(toImportDolphinPath);
   }
 
-  if (migratePlayback) {
-    let oldPlaybackDolphinPath = desktopAppPath;
-    const dolphinDir = ["dolphin"];
+  await dolphinManager.copyDolphinConfig(type, toImportDolphinPath);
 
-    if (migratePlaybackPath) {
-      dolphinDir.pop();
-      oldPlaybackDolphinPath = path.dirname(migratePlaybackPath);
-    }
-
-    if (isMac) {
-      dolphinDir.push("Slippi Dolphin.app", "Contents", "Resources");
-    }
-
-    oldPlaybackDolphinPath = path.join(oldPlaybackDolphinPath, ...dolphinDir);
-    await dolphinManager.copyDolphinConfig(DolphinLaunchType.PLAYBACK, oldPlaybackDolphinPath);
-  }
-
-  if (desktopAppPath) {
-    await fs.remove(desktopAppPath);
-  }
   return { success: true };
 });

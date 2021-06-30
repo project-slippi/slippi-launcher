@@ -31,6 +31,7 @@ export const useAppInitialization = () => {
   const setUser = useAccount((store) => store.setUser);
   const setPlayKey = useAccount((store) => store.setPlayKey);
   const setDesktopAppExists = useDesktopApp((store) => store.setExists);
+  const setDesktopAppPath = useDesktopApp((store) => store.setPath);
 
   const initialize = async () => {
     if (initialized) {
@@ -89,6 +90,7 @@ export const useAppInitialization = () => {
             throw new Error("Could not get old desktop app path");
           }
           setDesktopAppExists(result.exists);
+          setDesktopAppPath(result.path);
         })
         .catch(console.error),
     );

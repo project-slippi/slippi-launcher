@@ -114,9 +114,11 @@ export const useDesktopApp = create(
   combine(
     {
       exists: false,
+      path: "",
     },
     (set) => ({
       setExists: (exists: boolean) => set({ exists }),
+      setPath: (path: string) => set({ path }),
     }),
   ),
 );

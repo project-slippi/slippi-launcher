@@ -1,5 +1,10 @@
 /** @jsx jsx */
-import { ipc_clearDolphinCache, ipc_configureDolphin, ipc_migrateDolphin, ipc_reinstallDolphin } from "@dolphin/ipc";
+import {
+  ipc_clearDolphinCache,
+  ipc_configureDolphin,
+  ipc_importDolphinSettings,
+  ipc_reinstallDolphin,
+} from "@dolphin/ipc";
 import { DolphinLaunchType } from "@dolphin/types";
 import { css, jsx } from "@emotion/react";
 import Button from "@material-ui/core/Button";
@@ -80,12 +85,8 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
 
   const importDolphinHandler = async (importPath: string) => {
     log.info(`importing dolphin from ${importPath}`);
-    const importObj =
-      dolphinType === DolphinLaunchType.NETPLAY
-        ? { migrateNetplay: importPath }
-        : { migratePlayback: true, migratePlaybackPath: importPath };
-    const importSettings = Object.assign({ migrateNetplay: null, migratePlayback: false }, importObj);
-    await ipc_migrateDolphin.renderer!.trigger(importSettings);
+
+    await ipc_importDolphinSettings.renderer!.trigger({ toImportDolphinPath: importPath, type: dolphinType });
     setImportModalOpen(false);
   };
 
