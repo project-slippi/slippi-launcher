@@ -19,7 +19,7 @@ export const isValidIpAndPort = (ip: string) => {
   }
   [ip, port] = ipPort;
 
-  if (parseInt(port) <= 1 || parseInt(port) >= 65535) {
+  if (parseInt(port) < 1 || parseInt(port) > 65535) {
     return "Invalid Port";
   }
 
