@@ -90,7 +90,7 @@ export const UserMenu: React.FC<{
               setOpenNameChangePrompt(true);
             }}
           >
-            Change display name
+            Edit display name
           </MenuItem>
         )}
         <MenuItem
