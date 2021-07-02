@@ -3,7 +3,7 @@ import { ipc_statsPageRequestedEvent } from "@replays/ipc";
 import { colors } from "common/colors";
 import { isDevelopment, isMac } from "common/constants";
 import { delay } from "common/delay";
-import { app, BrowserWindow, shell } from "electron";
+import { app, BrowserWindow, Menu, shell } from "electron";
 import contextMenu from "electron-context-menu";
 import log from "electron-log";
 import { autoUpdater } from "electron-updater";
@@ -15,10 +15,14 @@ import url, { format as formatUrl } from "url";
 import { download } from "./download";
 import { fileExists } from "./fileExists";
 import { setupListeners } from "./listeners";
+import { menu } from "./menu";
 
 // Check for updates
 autoUpdater.logger = log;
 autoUpdater.checkForUpdatesAndNotify().catch(log.warn);
+
+// Set the menu options
+Menu.setApplicationMenu(menu);
 
 // global reference to mainWindow (necessary to prevent window from being garbage collected)
 let mainWindow: BrowserWindow | null = null;
