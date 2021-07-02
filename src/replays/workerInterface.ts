@@ -29,5 +29,8 @@ export const worker: Promise<Thread & WorkerMethods> = new Promise((resolve, rej
 
       resolve(worker);
     })
-    .catch(reject);
+    .catch((err) => {
+      log.error(err);
+      reject(err);
+    });
 });
