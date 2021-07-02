@@ -160,7 +160,7 @@ const ImportDolphinConfigForm: React.FC<{
   return (
     <SettingItem
       name={`Import ${dolphinTypeName} Dolphin Settings`}
-      description={`Replace the ${dolphinTypeName} Dolphin settings with those from a different Dolphin application. To do this, select the Dolphin.${extension} with the desired configuration.`}
+      description={`Replace the ${dolphinTypeName} Dolphin settings with those from a different Dolphin application. To do this, select the Dolphin.${extension} with the desired ${dolphinType} settings.`}
     >
       <Button variant="contained" color="secondary" onClick={onImportClick}>
         Import Dolphin settings

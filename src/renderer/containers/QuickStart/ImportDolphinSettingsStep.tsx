@@ -71,6 +71,7 @@ export const ImportDolphinSettingsStep: React.FC = () => {
     migrateDolphin(values).catch(handleError);
   });
 
+  const extension = isMac ? "app" : "exe";
   return (
     <Box display="flex" flexDirection="column" flexGrow="1">
       <Container>
@@ -111,7 +112,7 @@ export const ImportDolphinSettingsStep: React.FC = () => {
                     margin-bottom: 5px;
                   `}
                 >
-                  Select the location of your old Netplay Dolphin app.
+                  Select the Dolphin.{extension} with the desired netplay settings.
                 </div>
                 <Controller
                   name="netplayPath"
