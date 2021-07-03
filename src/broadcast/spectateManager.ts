@@ -88,6 +88,7 @@ export class SpectateManager extends EventEmitter {
     events.forEach((event: any) => {
       switch (event.type) {
         case "start_game": {
+          log.info("[Spectate] Game start explicit");
           broadcastInfo.gameStarted = true;
           break;
         }
@@ -99,26 +100,10 @@ export class SpectateManager extends EventEmitter {
           break;
         }
         case "game_event": {
-          const payloadStart = event.payload.substring(0, 4);
-          const payloadStartBuf = Buffer.from(payloadStart, "base64");
-          const command = payloadStartBuf[0];
-
-          if (command === 0x35) {
-            broadcastInfo.gameStarted = true;
-            log.info("[Spectate] Game start");
-          }
-
           // Only forward data to the file writer when it's an active game
           if (broadcastInfo.gameStarted) {
             const buf = Buffer.from(event.payload, "base64");
             broadcastInfo.fileWriter.write(buf);
-          }
-
-          if (command === 0x39) {
-            // End the current game if it's not already ended
-            log.info("[Spectate] Game end 0x39");
-            broadcastInfo.fileWriter.endCurrentFile();
-            broadcastInfo.gameStarted = false;
           }
 
           break;
