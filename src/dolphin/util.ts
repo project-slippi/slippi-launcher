@@ -1,4 +1,5 @@
 import { settingsManager } from "@settings/settingsManager";
+import { app } from "electron";
 import log from "electron-log";
 import * as fs from "fs-extra";
 import * as ini from "ini";
@@ -67,6 +68,31 @@ export async function findUserFolder(type: DolphinLaunchType): Promise<string> {
   await fs.ensureDir(userPath);
 
   return userPath;
+}
+
+export async function findSysFolder(type: DolphinLaunchType): Promise<string> {
+  let sysPath = "";
+  const dolphinPath = settingsManager.getDolphinPath(type);
+  switch (process.platform) {
+    case "win32": {
+      sysPath = path.join(dolphinPath, "Sys");
+      break;
+    }
+    case "darwin": {
+      sysPath = path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "Resources", "Sys");
+      break;
+    }
+    case "linux": {
+      sysPath = path.join(app.getPath("userData"), type, "Sys");
+      break;
+    }
+    default:
+      break;
+  }
+
+  await fs.ensureDir(sysPath);
+
+  return sysPath;
 }
 
 export async function addGamePathToInis(gameDir: string): Promise<void> {
