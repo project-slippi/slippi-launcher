@@ -13,9 +13,9 @@ import { fetchNewsFeedData } from "./newsFeed";
 import { verifyIso } from "./verifyIso";
 
 export function setupListeners() {
-  ipcMain.on("onDragStart", (event, filePaths: string[]) => {
+  ipcMain.on("onDragStart", (event, filePaths) => {
     const dragArguments: any = {
-      files: filePaths, // if this shows an error, its due to the development api being outdated
+      files: filePaths,
       icon: nativeImage.createFromPath(path.join(__static, "images", "file.png")),
     };
 

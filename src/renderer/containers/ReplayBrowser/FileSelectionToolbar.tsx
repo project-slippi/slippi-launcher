@@ -4,13 +4,11 @@ import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
 import BlockIcon from "@material-ui/icons/Block";
 import DeleteIcon from "@material-ui/icons/Delete";
-import DragIndicatorIcon from "@material-ui/icons/DragIndicator";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import SelectAllIcon from "@material-ui/icons/SelectAll";
 import React from "react";
 
 import { ConfirmationModal } from "@/components/ConfirmationModal";
-import { DraggableFiles } from "@/components/DraggableFiles";
 
 export interface FileSelectionToolbarProps {
   totalSelected: number;
@@ -23,7 +21,6 @@ export interface FileSelectionToolbarProps {
 
 export const FileSelectionToolbar: React.FC<FileSelectionToolbarProps> = ({
   totalSelected,
-  filePaths,
   onSelectAll,
   onPlay,
   onClear,
@@ -57,19 +54,6 @@ export const FileSelectionToolbar: React.FC<FileSelectionToolbarProps> = ({
           {totalSelected} files selected
         </div>
         <div>
-          <DraggableFiles fullPaths={filePaths}>
-            <Button
-              color="secondary"
-              variant="contained"
-              size="small"
-              startIcon={<DragIndicatorIcon />}
-              css={css`
-                cursor: inherit;
-              `}
-            >
-              Share
-            </Button>
-          </DraggableFiles>
           <Button color="secondary" variant="contained" size="small" startIcon={<DeleteIcon />}>
             Delete
           </Button>

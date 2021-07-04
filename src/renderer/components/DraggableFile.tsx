@@ -11,8 +11,10 @@ const DraggableLink = styled.a`
   -webkit-app-region: drag;
 `;
 
-export interface DraggableFilesProps {
-  fullPaths: string[];
+export interface DraggableFileProps {
+  filePath: string;
+  selected: boolean;
+  selectedFiles: string[];
   className?: string;
   style?: React.CSSProperties;
 }
@@ -21,10 +23,18 @@ export interface DraggableFilesProps {
  * DraggableFile accepts the `fullPath` prop and allows that file to be dragged into other contexts
  * such as copied to a different folder or dragged into web-sites etc.
  */
-export const DraggableFiles: React.FC<DraggableFilesProps> = ({ fullPaths, children, className, style }) => {
+export const DraggableFile: React.FC<DraggableFileProps> = ({
+  children,
+  selected,
+  selectedFiles,
+  className,
+  style,
+}) => {
   const handleDragStart = (e: React.DragEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    ipcRenderer.send("onDragStart", fullPaths);
+    if (selected) {
+      ipcRenderer.send("onDragStart", selectedFiles);
+    }
   };
   return (
     <DraggableLink
