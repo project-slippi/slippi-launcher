@@ -2,8 +2,7 @@ import styled from "@emotion/styled";
 import { ipcRenderer } from "electron";
 import React from "react";
 
-const DraggableLink = styled.a`
-  text-decoration: none;
+const Outer = styled.div`
   color: inherit;
   cursor: grab;
   user-select: auto;
@@ -12,29 +11,31 @@ const DraggableLink = styled.a`
 `;
 
 export interface DraggableFileProps {
-  fullPath: string;
+  filePaths: string[];
   className?: string;
   style?: React.CSSProperties;
 }
 
 /**
- * DraggableFile accepts the `fullPath` prop and allows that file to be dragged into other contexts
+ * DraggableFile accepts the `filePaths` prop and allows those files to be dragged into other contexts
  * such as copied to a different folder or dragged into web-sites etc.
  */
-export const DraggableFile: React.FC<DraggableFileProps> = ({ fullPath, children, className, style }) => {
-  const handleDragStart = (e: React.DragEvent<HTMLAnchorElement>) => {
+export const DraggableFile: React.FC<DraggableFileProps> = ({ children, filePaths, className, style }) => {
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    ipcRenderer.send("onDragStart", fullPath);
+    if (filePaths.length > 0) {
+      ipcRenderer.send("onDragStart", filePaths);
+    }
   };
+
   return (
-    <DraggableLink
+    <Outer
       className={className}
       style={style}
-      href="#"
       onDragStart={(e) => handleDragStart(e)}
       onClick={(e) => e.preventDefault()}
     >
       {children}
-    </DraggableLink>
+    </Outer>
   );
 };

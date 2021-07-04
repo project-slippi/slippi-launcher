@@ -17,11 +17,13 @@ import { fetchNewsFeedData } from "./newsFeed";
 import { verifyIso } from "./verifyIso";
 
 export function setupListeners() {
-  ipcMain.on("onDragStart", (event, filePath: string) => {
-    event.sender.startDrag({
-      file: filePath,
+  ipcMain.on("onDragStart", (event, files: string[]) => {
+    // The Electron.Item type declaration is missing the files attribute
+    // so we'll just cast it as unknown for now.
+    event.sender.startDrag(({
+      files,
       icon: nativeImage.createFromPath(path.join(__static, "images", "file.png")),
-    });
+    } as unknown) as Electron.Item);
   });
 
   ipcMain.on("getOsInfoSync", (event) => {

@@ -46,6 +46,7 @@ const FileListResults: React.FC<{
             style={props.style}
             onSelect={() => onSelect(props.index)}
             onClick={() => onClick(props.index)}
+            selectedFiles={selectedFiles}
             selectedIndex={selectedIndex}
             onPlay={() => onPlay(props.index)}
             {...file}
