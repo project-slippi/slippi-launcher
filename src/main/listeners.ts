@@ -13,13 +13,11 @@ import { fetchNewsFeedData } from "./newsFeed";
 import { verifyIso } from "./verifyIso";
 
 export function setupListeners() {
-  ipcMain.on("onDragStart", (event, filePaths) => {
-    const dragArguments: any = {
-      files: filePaths,
+  ipcMain.on("onDragStart", (event, file: string | string[]) => {
+    event.sender.startDrag({
+      file,
       icon: nativeImage.createFromPath(path.join(__static, "images", "file.png")),
-    };
-
-    event.sender.startDrag(dragArguments);
+    });
   });
 
   ipcMain.on("getAppSettingsSync", (event) => {
