@@ -12,7 +12,6 @@ import { ConfirmationModal } from "@/components/ConfirmationModal";
 
 export interface FileSelectionToolbarProps {
   totalSelected: number;
-  filePaths: string[];
   onSelectAll: () => void;
   onPlay: () => void;
   onClear: () => void;
@@ -54,7 +53,13 @@ export const FileSelectionToolbar: React.FC<FileSelectionToolbarProps> = ({
           {totalSelected} files selected
         </div>
         <div>
-          <Button color="secondary" variant="contained" size="small" startIcon={<DeleteIcon />}>
+          <Button
+            color="secondary"
+            variant="contained"
+            size="small"
+            onClick={() => setShowDeletePrompt(true)}
+            startIcon={<DeleteIcon />}
+          >
             Delete
           </Button>
           <Button color="secondary" variant="contained" size="small" onClick={onClear} startIcon={<BlockIcon />}>
