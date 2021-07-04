@@ -1,4 +1,4 @@
-import { dolphinDownloadFinished, downloadDolphin } from "dolphin/ipc";
+import { ipc_checkDesktopAppDolphin, ipc_dolphinDownloadFinishedEvent, ipc_downloadDolphin } from "dolphin/ipc";
 import log from "electron-log";
 import firebase from "firebase";
 import create from "zustand";
@@ -7,6 +7,8 @@ import { combine } from "zustand/middleware";
 import { initializeFirebase } from "@/lib/firebase";
 import { useAccount } from "@/lib/hooks/useAccount";
 import { fetchPlayKey } from "@/lib/slippiBackend";
+
+import { useDesktopApp } from "./useQuickStart";
 
 export const useAppStore = create(
   combine(
@@ -27,6 +29,8 @@ export const useAppInitialization = () => {
   const setLogMessage = useAppStore((store) => store.setLogMessage);
   const setUser = useAccount((store) => store.setUser);
   const setPlayKey = useAccount((store) => store.setPlayKey);
+  const setDesktopAppExists = useDesktopApp((store) => store.setExists);
+  const setDesktopAppDolphinPath = useDesktopApp((store) => store.setDolphinPath);
 
   const initialize = async () => {
     if (initialized) {
@@ -60,7 +64,7 @@ export const useAppInitialization = () => {
 
     promises.push(
       new Promise<void>((resolve) => {
-        const handler = dolphinDownloadFinished.renderer!.handle(async ({ error }) => {
+        const handler = ipc_dolphinDownloadFinishedEvent.renderer!.handle(async ({ error }) => {
           // We only want to handle this event once so immediately destroy
           handler.destroy();
 
@@ -75,7 +79,20 @@ export const useAppInitialization = () => {
     );
 
     // Download Dolphin if necessary
-    promises.push(downloadDolphin.renderer!.trigger({}));
+    promises.push(ipc_downloadDolphin.renderer!.trigger({}));
+
+    promises.push(
+      ipc_checkDesktopAppDolphin
+        .renderer!.trigger({})
+        .then(({ result }) => {
+          if (!result) {
+            throw new Error("Could not get old desktop app path");
+          }
+          setDesktopAppExists(result.exists);
+          setDesktopAppDolphinPath(result.dolphinPath);
+        })
+        .catch(console.error),
+    );
 
     // Wait for all the promises to complete before completing
     try {

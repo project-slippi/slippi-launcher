@@ -54,5 +54,6 @@ const Outer = styled.div`
 
   a {
     text-decoration: underline;
+    word-break: break-all;
   }
 `;

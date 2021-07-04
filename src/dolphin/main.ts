@@ -1,59 +1,68 @@
+import { isLinux, isMac } from "common/constants";
+import { app } from "electron";
+import * as fs from "fs-extra";
+import path from "path";
+
 import { fileExists } from "../main/fileExists";
 import { assertDolphinInstallations } from "./downloadDolphin";
 import {
-  checkPlayKeyExists,
-  clearDolphinCache,
-  configureDolphin,
-  downloadDolphin,
-  launchNetplayDolphin,
-  reinstallDolphin,
-  removePlayKeyFile,
-  storePlayKeyFile,
-  viewSlpReplay,
+  ipc_checkDesktopAppDolphin,
+  ipc_checkPlayKeyExists,
+  ipc_clearDolphinCache,
+  ipc_configureDolphin,
+  ipc_downloadDolphin,
+  ipc_importDolphinSettings,
+  ipc_launchNetplayDolphin,
+  ipc_reinstallDolphin,
+  ipc_removePlayKeyFile,
+  ipc_storePlayKeyFile,
+  ipc_viewSlpReplay,
 } from "./ipc";
 import { dolphinManager } from "./manager";
 import { deletePlayKeyFile, findPlayKey, writePlayKeyFile } from "./playkey";
+import { DolphinLaunchType } from "./types";
+import { findDolphinExecutable } from "./util";
 
-downloadDolphin.main!.handle(async () => {
+ipc_downloadDolphin.main!.handle(async () => {
   await assertDolphinInstallations();
   return { success: true };
 });
 
-configureDolphin.main!.handle(async ({ dolphinType }) => {
+ipc_configureDolphin.main!.handle(async ({ dolphinType }) => {
   console.log("configuring dolphin...");
   await dolphinManager.configureDolphin(dolphinType);
   return { success: true };
 });
 
-reinstallDolphin.main!.handle(async ({ dolphinType }) => {
+ipc_reinstallDolphin.main!.handle(async ({ dolphinType }) => {
   console.log("reinstalling dolphin...");
   await dolphinManager.reinstallDolphin(dolphinType);
   return { success: true };
 });
 
-clearDolphinCache.main!.handle(async ({ dolphinType }) => {
+ipc_clearDolphinCache.main!.handle(async ({ dolphinType }) => {
   console.log("clearing dolphin cache...");
   await dolphinManager.clearCache(dolphinType);
   return { success: true };
 });
 
-storePlayKeyFile.main!.handle(async ({ key }) => {
+ipc_storePlayKeyFile.main!.handle(async ({ key }) => {
   await writePlayKeyFile(key);
   return { success: true };
 });
 
-checkPlayKeyExists.main!.handle(async () => {
+ipc_checkPlayKeyExists.main!.handle(async () => {
   const keyPath = await findPlayKey();
   const exists = await fileExists(keyPath);
   return { exists };
 });
 
-removePlayKeyFile.main!.handle(async () => {
+ipc_removePlayKeyFile.main!.handle(async () => {
   await deletePlayKeyFile();
   return { success: true };
 });
 
-viewSlpReplay.main!.handle(async ({ files }) => {
+ipc_viewSlpReplay.main!.handle(async ({ files }) => {
   await dolphinManager.launchPlaybackDolphin("playback", {
     mode: "queue",
     queue: files,
@@ -61,7 +70,42 @@ viewSlpReplay.main!.handle(async ({ files }) => {
   return { success: true };
 });
 
-launchNetplayDolphin.main!.handle(async () => {
+ipc_launchNetplayDolphin.main!.handle(async () => {
   await dolphinManager.launchNetplayDolphin();
   return { success: true };
+});
+
+ipc_importDolphinSettings.main!.handle(async ({ toImportDolphinPath, type }) => {
+  if (isMac) {
+    toImportDolphinPath = path.join(toImportDolphinPath, "Contents", "Resources");
+  } else {
+    toImportDolphinPath = path.dirname(toImportDolphinPath);
+  }
+
+  await dolphinManager.copyDolphinConfig(type, toImportDolphinPath);
+
+  return { success: true };
+});
+
+ipc_checkDesktopAppDolphin.main!.handle(async () => {
+  // get the path and check existence
+  const desktopAppPath = path.join(app.getPath("appData"), "Slippi Desktop App");
+  let exists = await fs.pathExists(desktopAppPath);
+
+  if (!exists) {
+    return { dolphinPath: "", exists: false };
+  }
+
+  // Linux doesn't need to do anything because their dolphin settings are in a user config dir
+  if (isLinux && exists) {
+    await fs.remove(desktopAppPath);
+    return { dolphinPath: "", exists: false };
+  }
+
+  const dolphinFolderPath = path.join(desktopAppPath, "dolphin");
+  exists = await fs.pathExists(dolphinFolderPath);
+
+  const dolphinExecutablePath = await findDolphinExecutable(DolphinLaunchType.NETPLAY, dolphinFolderPath);
+
+  return { dolphinPath: dolphinExecutablePath, exists: exists };
 });

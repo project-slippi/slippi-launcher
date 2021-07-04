@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { launchNetplayDolphin } from "@dolphin/ipc";
+import { ipc_launchNetplayDolphin } from "@dolphin/ipc";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Box from "@material-ui/core/Box";
@@ -79,7 +79,7 @@ export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
     }
 
     try {
-      const launchResult = await launchNetplayDolphin.renderer!.trigger({});
+      const launchResult = await ipc_launchNetplayDolphin.renderer!.trigger({});
       if (!launchResult.result) {
         log.info("Error launching netplay dolphin", launchResult.errors);
         throw new Error("Error launching netplay dolphin");

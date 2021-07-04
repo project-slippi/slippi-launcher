@@ -1,4 +1,4 @@
-import { loadReplayFolder } from "@replays/ipc";
+import { ipc_loadReplayFolder } from "@replays/ipc";
 import { FileLoadResult, FileResult, FolderResult, Progress } from "@replays/types";
 import { produce } from "immer";
 import path from "path";
@@ -192,7 +192,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
 }));
 
 const handleReplayFolderLoading = async (folderPath: string): Promise<FileLoadResult> => {
-  const loadFolderResult = await loadReplayFolder.renderer!.trigger({ folderPath });
+  const loadFolderResult = await ipc_loadReplayFolder.renderer!.trigger({ folderPath });
   if (!loadFolderResult.result) {
     console.error(`Error loading folder: ${folderPath}`, loadFolderResult.errors);
     throw new Error(`Error loading folder: ${folderPath}`);

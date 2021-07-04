@@ -7,3 +7,9 @@ export interface NewsItem {
   imageUrl?: string;
   body?: string;
 }
+
+export enum IsoValidity {
+  VALID = "VALID",
+  UNKNOWN = "UNKNOWN",
+  INVALID = "INVALID",
+}

@@ -1,7 +1,9 @@
 import ButtonBase from "@material-ui/core/ButtonBase";
 import DialogContentText from "@material-ui/core/DialogContentText";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
+import EditIcon from "@material-ui/icons/Edit";
+import EjectIcon from "@material-ui/icons/Eject";
+import LanguageIcon from "@material-ui/icons/Language";
+import RefreshIcon from "@material-ui/icons/Refresh";
 import { slippiActivationUrl } from "common/constants";
 import { shell } from "electron";
 import firebase from "firebase";
@@ -9,6 +11,7 @@ import React from "react";
 import { useToasts } from "react-toast-notifications";
 
 import { ConfirmationModal } from "@/components/ConfirmationModal";
+import { IconMenu, IconMenuItem } from "@/components/IconMenu";
 import { logout } from "@/lib/firebase";
 import { useAccount } from "@/lib/hooks/useAccount";
 
@@ -49,12 +52,56 @@ export const UserMenu: React.FC<{
     setOpenLogoutPrompt(false);
   };
 
+  const generateMenuItems = (): IconMenuItem[] => {
+    const items: IconMenuItem[] = [];
+
+    if (!playKey) {
+      items.push({
+        onClick: () => {
+          closeMenu();
+          void shell.openExternal(slippiActivationUrl);
+        },
+        icon: <LanguageIcon fontSize="small" />,
+        label: "Activate online play",
+      });
+      items.push({
+        onClick: () => {
+          closeMenu();
+          refreshPlayKey().catch((err) => addToast(err.message, { appearance: "error" }));
+        },
+        label: "Refresh activation status",
+        icon: <RefreshIcon fontSize="small" />,
+      });
+    }
+
+    if (playKey) {
+      items.push({
+        onClick: () => {
+          closeMenu();
+          setOpenNameChangePrompt(true);
+        },
+        label: "Edit display name",
+        icon: <EditIcon fontSize="small" />,
+      });
+    }
+
+    items.push({
+      onClick: () => {
+        closeMenu();
+        setOpenLogoutPrompt(true);
+      },
+      label: "Log out",
+      icon: <EjectIcon fontSize="small" style={{ transform: "rotate(270deg)" }} />,
+    });
+    return items;
+  };
+
   return (
     <div>
       <ButtonBase onClick={handleClick}>
         <UserInfo uid={user.uid} displayName={displayName} playKey={playKey} loading={loading} />
       </ButtonBase>
-      <Menu
+      <IconMenu
         anchorEl={anchorEl}
         getContentAnchorEl={null}
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
@@ -62,46 +109,8 @@ export const UserMenu: React.FC<{
         keepMounted
         open={Boolean(anchorEl)}
         onClose={closeMenu}
-      >
-        {!playKey && (
-          <MenuItem
-            onClick={() => {
-              closeMenu();
-              void shell.openExternal(slippiActivationUrl);
-            }}
-          >
-            Activate online play
-          </MenuItem>
-        )}
-        {!playKey && (
-          <MenuItem
-            onClick={() => {
-              closeMenu();
-              refreshPlayKey().catch((err) => addToast(err.message, { appearance: "error" }));
-            }}
-          >
-            Refresh activation status
-          </MenuItem>
-        )}
-        {playKey && (
-          <MenuItem
-            onClick={() => {
-              closeMenu();
-              setOpenNameChangePrompt(true);
-            }}
-          >
-            Change display name
-          </MenuItem>
-        )}
-        <MenuItem
-          onClick={() => {
-            closeMenu();
-            setOpenLogoutPrompt(true);
-          }}
-        >
-          Logout
-        </MenuItem>
-      </Menu>
+        items={generateMenuItems()}
+      />
       <NameChangeDialog displayName={displayName} open={openNameChangePrompt} handleClose={handleClose} />
       <ConfirmationModal
         title="Are you sure you want to log out?"

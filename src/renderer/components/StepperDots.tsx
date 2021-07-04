@@ -1,5 +1,8 @@
+import Button from "@material-ui/core/Button";
 import MobileStepper from "@material-ui/core/MobileStepper";
 import { withStyles } from "@material-ui/core/styles";
+import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
+import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import { colors } from "common/colors";
 import React from "react";
 
@@ -21,15 +24,31 @@ const StyledStepper = withStyles({
 export const StepperDots: React.FC<{
   steps: number;
   activeStep: number;
-}> = ({ steps, activeStep }) => {
+  handleNext?: () => void;
+  handleBack?: () => void;
+}> = ({ steps, activeStep, handleNext, handleBack }) => {
   return (
     <StyledStepper
       variant="dots"
       steps={steps}
       position="static"
       activeStep={activeStep}
-      nextButton={null}
-      backButton={null}
+      nextButton={
+        handleBack ? (
+          <Button size="small" onClick={handleNext} disabled={activeStep === steps - 1}>
+            Next
+            <KeyboardArrowRight />
+          </Button>
+        ) : null
+      }
+      backButton={
+        handleBack ? (
+          <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
+            <KeyboardArrowLeft />
+            Back
+          </Button>
+        ) : null
+      }
     />
   );
 };

@@ -102,6 +102,7 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
                 justify-content: space-between;
                 margin-top: 5px;
                 font-size: 14px;
+                white-space: nowrap;
               `}
             >
               <div

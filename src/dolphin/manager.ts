@@ -46,7 +46,8 @@ export class DolphinManager extends EventEmitter {
 
     const dolphinPath = await findDolphinExecutable(DolphinLaunchType.NETPLAY);
     log.info(`Launching dolphin at path: ${dolphinPath}`);
-    const meleeIsoPath = await this._getIsoPath();
+    const launchMeleeOnPlay = settingsManager.get().settings.launchMeleeOnPlay;
+    const meleeIsoPath = launchMeleeOnPlay ? await this._getIsoPath() : undefined;
 
     // Create the Dolphin instance and start it
     this.netplayDolphinInstance = new DolphinInstance(dolphinPath, meleeIsoPath);
@@ -141,6 +142,13 @@ export class DolphinManager extends EventEmitter {
       }
     }
     return meleeIsoPath;
+  }
+
+  public async copyDolphinConfig(launchType: DolphinLaunchType, fromPath: string) {
+    const newUserFolder = await findUserFolder(launchType);
+    const oldUserFolder = path.join(fromPath, "User");
+
+    await fs.copy(oldUserFolder, newUserFolder, { overwrite: true });
   }
 }
 

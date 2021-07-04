@@ -7,7 +7,7 @@ import { Methods as WorkerMethods, WorkerSpec } from "./worker";
 export const worker: Promise<Thread & WorkerMethods> = new Promise((resolve, reject) => {
   log.debug("replayBrowser: Spawning worker");
 
-  spawn<WorkerSpec>(new Worker("./worker"))
+  spawn<WorkerSpec>(new Worker("./worker"), { timeout: 30000 })
     .then((worker) => {
       log.debug("replayBrowser: Spawning worker: Done");
 
@@ -29,5 +29,8 @@ export const worker: Promise<Thread & WorkerMethods> = new Promise((resolve, rej
 
       resolve(worker);
     })
-    .catch(reject);
+    .catch((err) => {
+      log.error(err);
+      reject(err);
+    });
 });

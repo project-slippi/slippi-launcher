@@ -34,7 +34,7 @@ export const NameChangeDialog: React.FC<{
   return (
     <div>
       <ConfirmationModal
-        title="Change display name"
+        title="Edit display name"
         open={open}
         onClose={handleClose}
         closeOnSubmit={false}

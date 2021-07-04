@@ -5,9 +5,9 @@ import { FileLoadResult, FileResult, Progress } from "./types";
 
 // Handlers
 
-export const loadReplayFolder = makeEndpoint.main("loadReplayFolder", <{ folderPath: string }>_, <FileLoadResult>_);
+export const ipc_loadReplayFolder = makeEndpoint.main("loadReplayFolder", <{ folderPath: string }>_, <FileLoadResult>_);
 
-export const calculateGameStats = makeEndpoint.main(
+export const ipc_calculateGameStats = makeEndpoint.main(
   "calculateGameStats",
   <{ filePath: string }>_,
   <{ file: FileResult; stats: StatsType | null }>_,
@@ -15,6 +15,6 @@ export const calculateGameStats = makeEndpoint.main(
 
 // Events
 
-export const loadProgressUpdated = makeEndpoint.renderer("replays_loadProgressUpdated", <Progress>_);
+export const ipc_loadProgressUpdatedEvent = makeEndpoint.renderer("replays_loadProgressUpdated", <Progress>_);
 
-export const showStatsPage = makeEndpoint.renderer("replays_showStatsPage", <{ filePath: string }>_);
+export const ipc_statsPageRequestedEvent = makeEndpoint.renderer("replays_showStatsPage", <{ filePath: string }>_);

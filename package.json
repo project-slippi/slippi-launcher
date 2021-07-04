@@ -45,6 +45,7 @@
     "moment": "^2.29.1",
     "mousetrap": "^1.6.5",
     "obs-websocket-js": "^4.0.2",
+    "os-name": "^4.0.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-dropzone": "^11.2.4",
@@ -130,7 +131,7 @@
   "husky": {
     "hooks": {
       "pre-commit": "pretty-quick --staged",
-      "pre-push": "yarn lint"
+      "pre-push": "yarn lint --quiet"
     }
   },
   "repository": {

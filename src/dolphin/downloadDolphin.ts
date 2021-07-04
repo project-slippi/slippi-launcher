@@ -10,12 +10,12 @@ import { lt } from "semver";
 
 import { fileExists } from "../main/fileExists";
 import { getLatestRelease } from "../main/github";
-import { dolphinDownloadFinished, dolphinDownloadLogReceived } from "./ipc";
+import { ipc_dolphinDownloadFinishedEvent, ipc_dolphinDownloadLogReceivedEvent } from "./ipc";
 import { DolphinLaunchType } from "./types";
 import { findDolphinExecutable } from "./util";
 
 function logDownloadInfo(message: string): void {
-  void dolphinDownloadLogReceived.main!.trigger({ message });
+  void ipc_dolphinDownloadLogReceivedEvent.main!.trigger({ message });
 }
 
 export async function assertDolphinInstallation(
@@ -57,10 +57,10 @@ export async function assertDolphinInstallations(): Promise<void> {
   try {
     await assertDolphinInstallation(DolphinLaunchType.NETPLAY, logDownloadInfo);
     await assertDolphinInstallation(DolphinLaunchType.PLAYBACK, logDownloadInfo);
-    await dolphinDownloadFinished.main!.trigger({ error: null });
+    await ipc_dolphinDownloadFinishedEvent.main!.trigger({ error: null });
   } catch (err) {
     console.error(err);
-    await dolphinDownloadFinished.main!.trigger({ error: err.message });
+    await ipc_dolphinDownloadFinishedEvent.main!.trigger({ error: err.message });
   }
   return;
 }

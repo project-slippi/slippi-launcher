@@ -1,4 +1,4 @@
-import { fetchNewsFeed } from "common/ipc";
+import { ipc_fetchNewsFeed } from "common/ipc";
 import { NewsItem } from "common/types";
 import log from "electron-log";
 import create from "zustand";
@@ -16,7 +16,7 @@ export const useNewsFeed = create(
         log.info("Fetching news articles...");
         set({ fetching: true });
 
-        fetchNewsFeed
+        ipc_fetchNewsFeed
           .renderer!.trigger({})
           .then((articlesResult) => {
             if (!articlesResult.result) {
