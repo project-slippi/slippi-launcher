@@ -18,6 +18,7 @@ import moment from "moment";
 import React from "react";
 
 import { DraggableFile } from "@/components/DraggableFile";
+import { DraggableFileName } from "@/components/DraggableFileName";
 import { getStageImage } from "@/lib/utils";
 
 import { TeamElements } from "./TeamElements";
@@ -56,19 +57,7 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
   const stageName = stageInfo !== null ? stageInfo.name : "Unknown Stage";
 
   return (
-    <DraggableFile
-      filePath={fullPath}
-      selected={selected}
-      selectedFiles={selectedFiles}
-      css={css`
-        opacity: 0.9;
-        transition: opacity 0.2s ease-in-out;
-        &:hover {
-          opacity: 1;
-          text-decoration: underline;
-        }
-      `}
-    >
+    <DraggableFile filePath={fullPath} selected={selected} selectedFiles={selectedFiles}>
       <div onClick={onClick} style={style}>
         <Outer backgroundImage={stageImageUrl ?? undefined} selected={selected}>
           <div
@@ -132,7 +121,21 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
                 )}
                 <InfoItem label={<LandscapeIcon />}>{stageName}</InfoItem>
               </div>
-              {name}
+              <DraggableFileName
+                filePath={fullPath}
+                selected={selected}
+                selectedFiles={selectedFiles}
+                css={css`
+                  opacity: 0.9;
+                  transition: opacity 0.2s ease-in-out;
+                  &:hover {
+                    opacity: 1;
+                    text-decoration: underline;
+                  }
+                `}
+              >
+                {name}
+              </DraggableFileName>
             </div>
           </div>
         </Outer>
