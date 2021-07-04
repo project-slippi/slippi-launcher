@@ -2,8 +2,7 @@ import styled from "@emotion/styled";
 import { ipcRenderer } from "electron";
 import React from "react";
 
-const DraggableLink = styled.a`
-  text-decoration: none;
+const Outer = styled.div`
   color: inherit;
   cursor: grab;
   user-select: auto;
@@ -22,7 +21,7 @@ export interface DraggableFileProps {
  * such as copied to a different folder or dragged into web-sites etc.
  */
 export const DraggableFile: React.FC<DraggableFileProps> = ({ children, filePaths, className, style }) => {
-  const handleDragStart = (e: React.DragEvent<HTMLAnchorElement>) => {
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     if (filePaths.length > 0) {
       ipcRenderer.send("onDragStart", filePaths);
@@ -30,14 +29,13 @@ export const DraggableFile: React.FC<DraggableFileProps> = ({ children, filePath
   };
 
   return (
-    <DraggableLink
+    <Outer
       className={className}
       style={style}
-      href="#"
       onDragStart={(e) => handleDragStart(e)}
       onClick={(e) => e.preventDefault()}
     >
       {children}
-    </DraggableLink>
+    </Outer>
   );
 };
