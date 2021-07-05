@@ -247,7 +247,7 @@ export class BroadcastManager {
 
               const newFirstEvent = _.first(this.incomingEvents);
               if (!newFirstEvent) {
-                log.info("[Broadcast] Missing new first event");
+                log.warn("[Broadcast] Missing new first event");
                 return;
               }
               const newFirstCursor = newFirstEvent.cursor;
