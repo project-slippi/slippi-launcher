@@ -4,8 +4,8 @@ import * as fs from "fs-extra";
 export async function readLastLines(
   inputFilePath: string,
   maxLineCount: number,
-  encoding: BufferEncoding | "buffer" = "utf-8",
-) {
+  encoding: BufferEncoding = "utf-8",
+): Promise<string> {
   const exists = await fs.pathExists(inputFilePath);
   if (!exists) {
     throw new Error("file does not exist");
@@ -50,9 +50,5 @@ export async function readLastLines(
   // Reverse the array
   allBytes.reverse();
 
-  if (encoding === "buffer") {
-    return Buffer.from(allBytes);
-  } else {
-    return Buffer.from(allBytes).toString(encoding);
-  }
+  return Buffer.from(allBytes).toString(encoding);
 }
