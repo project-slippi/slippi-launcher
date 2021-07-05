@@ -4,7 +4,6 @@ import React from "react";
 import { DolphinSettings } from "./DolphinSettings";
 import { HelpPage } from "./HelpPage";
 import { MeleeOptions } from "./MeleeOptions";
-import { SupportPage } from "./SupportPage";
 import { SettingSection } from "./types";
 
 export const settings: SettingSection[] = [
@@ -41,8 +40,5 @@ export const settings: SettingSection[] = [
         component: <HelpPage />,
       },
     ],
-  },
-  {
-    items: [{ name: "Support", path: "support", component: <SupportPage /> }],
   },
 ];

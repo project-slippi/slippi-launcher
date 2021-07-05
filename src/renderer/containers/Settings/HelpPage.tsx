@@ -1,18 +1,26 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/react";
+import styled from "@emotion/styled";
 import faqMarkdown from "raw-loader!../../../../FAQ.md";
 import React from "react";
 
 import { MarkdownContent } from "@/components/MarkdownContent";
 
+import { SupportBox } from "./SupportBox";
+
 export const HelpPage: React.FC = () => {
   return (
-    <div>
+    <Outer>
       <h1>Help</h1>
+      <SupportBox
+        css={css`
+          margin-top: 10px;
+          margin-bottom: 40px;
+        `}
+      />
       <MarkdownContent
         content={faqMarkdown}
         css={css`
-          max-width: 800px;
           border-radius: 10px;
           background-color: rgba(0, 0, 0, 0.7);
           padding: 10px 20px;
@@ -36,6 +44,10 @@ export const HelpPage: React.FC = () => {
           }
         `}
       />
-    </div>
+    </Outer>
   );
 };
+
+const Outer = styled.div`
+  max-width: 800px;
+`;
