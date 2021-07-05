@@ -46,6 +46,7 @@ export async function findDolphinExecutable(type: DolphinLaunchType, dolphinPath
 
 export async function findUserFolder(type: DolphinLaunchType): Promise<string> {
   let userPath = "";
+  console.log(settingsManager);
   const dolphinPath = settingsManager.getDolphinPath(type);
   switch (process.platform) {
     case "win32": {
@@ -168,4 +169,29 @@ async function bootToCss(globalIniPath: string, localIniPath: string, enable: bo
   saveCodes(localIni, geckoCodes);
 
   localIni.save(localIniPath);
+}
+
+// /**
+//  * writes a gecko code by appending it to the end of the [Gecko] section
+//  * of the ini file
+//  * @param geckoIniPath - the path to the gecko file
+//  * @param geckoRaw - the full gecko code
+//  */
+// export const writeGecko = async (geckoIniPath: string, geckoRaw: string): Promise<boolean> => {
+//   const geckoLines = geckoRaw.split("\n");
+//   const geckoIni = new IniFile();
+//   await geckoIni.load(geckoIniPath, false);
+//   const enabledLines = geckoIni.getLines("Gecko_Enabled", false);
+//   enabledLines.push(geckoName);
+//   geckoIni.setLines("Gecko_Enabled", enabledLines);
+//   const geckoBodyLines = geckoIni.getLines("Gecko", false);
+//   geckoBodyLines.push(fullGecko);
+//   geckoIni.setLines("Gecko", geckoBodyLines);
+//   geckoIni.save(geckoIniPath);
+
+//   return true;
+// };
+
+export function testfunc(): void {
+  console.log("test");
 }

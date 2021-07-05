@@ -135,7 +135,7 @@ export function saveCodes(iniFile: IniFile, codes: GeckoCode[]) {
     makeGeckoCode(code, lines);
   });
 
-  iniFile.setLines("Gecko", lines);
   iniFile.setLines("Gecko_Enabled", enabledLines);
   iniFile.setLines("Gecko_Disabled", disabledLines);
+  iniFile.setLines("Gecko", lines);
 }
