@@ -58,7 +58,6 @@
     "react-toast-notifications": "^2.4.4",
     "react-virtualized-auto-sizer": "^1.0.3",
     "react-window": "^1.8.6",
-    "read-last-lines": "^1.8.0",
     "semver": "^7.3.4",
     "source-map-support": "^0.5.16",
     "threads": "^1.6.3",

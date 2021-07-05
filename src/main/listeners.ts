@@ -13,9 +13,9 @@ import * as fs from "fs-extra";
 import os from "os";
 import osName from "os-name";
 import path from "path";
-import { read as readLastLines } from "read-last-lines";
 
 import { fetchNewsFeedData } from "./newsFeed";
+import { readLastLines } from "./util";
 import { verifyIso } from "./verifyIso";
 
 export function setupListeners() {
