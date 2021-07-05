@@ -186,7 +186,6 @@ export class SpectateManager extends EventEmitter {
             return;
           }
 
-          // console.log(`[Spectator] ${message.utf8Data}`);
           let obj;
           if (message.utf8Data) {
             obj = JSON.parse(message.utf8Data);
@@ -211,6 +210,7 @@ export class SpectateManager extends EventEmitter {
         resolve();
       });
       if (SLIPPI_WS_SERVER) {
+        log.info("[Spectate] Connecting to spectate server");
         socket.connect(SLIPPI_WS_SERVER, "spectate-protocol", undefined, headers);
       }
     });
@@ -263,6 +263,7 @@ export class SpectateManager extends EventEmitter {
     const existingBroadcasts = Object.keys(this.broadcastInfo);
     if (existingBroadcasts.includes(broadcastId)) {
       // We're already watching this broadcast!
+      log.warn(`[Spectate] We are already watching the selected broadcast`);
       return;
     }
 

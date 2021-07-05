@@ -5,16 +5,20 @@ import "@settings/main";
 import "@console/main";
 
 import { settingsManager } from "@settings/settingsManager";
-import { ipc_checkValidIso, ipc_deleteDesktopAppPath, ipc_fetchNewsFeed } from "common/ipc";
+import { isDevelopment } from "common/constants";
+import { ipc_checkValidIso, ipc_copyLogsToClipboard, ipc_deleteDesktopAppPath, ipc_fetchNewsFeed } from "common/ipc";
 import { IsoValidity } from "common/types";
-import { app, ipcMain, nativeImage } from "electron";
+import { app, clipboard, ipcMain, nativeImage } from "electron";
 import * as fs from "fs-extra";
 import os from "os";
 import osName from "os-name";
 import path from "path";
 
 import { fetchNewsFeedData } from "./newsFeed";
+import { readLastLines } from "./util";
 import { verifyIso } from "./verifyIso";
+
+const LINES_TO_READ = 200;
 
 export function setupListeners() {
   ipcMain.on("onDragStart", (event, files: string[]) => {
@@ -60,6 +64,24 @@ export function setupListeners() {
     // get the path and remove
     const desktopAppPath = path.join(app.getPath("appData"), "Slippi Desktop App");
     await fs.remove(desktopAppPath);
+
+    return { success: true };
+  });
+
+  ipc_copyLogsToClipboard.main!.handle(async () => {
+    let logsFolder = "";
+    if (isDevelopment) {
+      logsFolder = path.join(app.getPath("appData"), "Slippi Launcher", "logs");
+    } else {
+      logsFolder = path.join(app.getPath("userData"), "logs");
+    }
+    const mainLog = path.join(logsFolder, "main.log");
+    const rendererLog = path.join(logsFolder, "renderer.log");
+
+    const mainLogs = await readLastLines(mainLog, LINES_TO_READ);
+    const rendererLogs = await readLastLines(rendererLog, LINES_TO_READ);
+
+    clipboard.writeText(`MAIN START\n---------------\n${mainLogs}\n\nRENDERER START\n---------------\n${rendererLogs}`);
 
     return { success: true };
   });
