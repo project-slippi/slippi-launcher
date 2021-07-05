@@ -18,6 +18,8 @@ import { fetchNewsFeedData } from "./newsFeed";
 import { readLastLines } from "./util";
 import { verifyIso } from "./verifyIso";
 
+const LINES_TO_READ = 200;
+
 export function setupListeners() {
   ipcMain.on("onDragStart", (event, files: string[]) => {
     // The Electron.Item type declaration is missing the files attribute
@@ -76,8 +78,8 @@ export function setupListeners() {
     const mainLog = path.join(logsFolder, "main.log");
     const rendererLog = path.join(logsFolder, "renderer.log");
 
-    const mainLogs = (await readLastLines(mainLog, 500, "utf-8")).toString();
-    const rendererLogs = (await readLastLines(rendererLog, 500, "utf-8")).toString();
+    const mainLogs = await readLastLines(mainLog, LINES_TO_READ);
+    const rendererLogs = await readLastLines(rendererLog, LINES_TO_READ);
 
     clipboard.writeText(`MAIN START\n---------------\n${mainLogs}\n\nRENDERER START\n---------------\n${rendererLogs}`);
 
