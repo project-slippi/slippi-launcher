@@ -173,7 +173,6 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
 
   const writeGeckoCode = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("writing to gecko ini");
     const rawGecko = newGeckoCode.split("\n");
     let newCode: GeckoCode = {
       name: "",
