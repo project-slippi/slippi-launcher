@@ -233,7 +233,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
     addToast(`Updated ${userIniPath.substring(userIniPath.lastIndexOf("\\") + 1)}`);
   };
 
-  const handleTabChange = (newValue: number) => {
+  const handleTabChange = (event: React.ChangeEvent<unknown>, newValue: number) => {
     setTabValue(newValue);
   };
 
