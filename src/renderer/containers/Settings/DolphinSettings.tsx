@@ -233,7 +233,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
     addToast(`Updated ${userIniPath.substring(userIniPath.lastIndexOf("\\") + 1)}`);
   };
 
-  const handleTabChange = (e: React.ChangeEvent<{}>, newValue: number) => {
+  const handleTabChange = (newValue: number) => {
     setTabValue(newValue);
   };
 
@@ -358,7 +358,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
                 label="Paste Gecko Code Here"
                 variant="outlined"
                 margin="normal"
-                rows="19"
+                rows="18"
                 onChange={({ target: { value } }) => setNewGeckoCode(value)}
                 multiline
                 fullWidth

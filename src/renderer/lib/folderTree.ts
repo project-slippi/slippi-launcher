@@ -30,22 +30,20 @@ export async function generateSubFolderTree(folder: string, childrenToExpand?: s
     .filter((dirent) => {
       return dirent.isDirectory();
     })
-    .map(
-      async (dirent): Promise<FolderResult> => {
-        const fullPath = path.join(folder, dirent.name);
-        let subdirs: FolderResult[] = [];
-        if (childrenToExpand && childrenToExpand.length > 0 && childrenToExpand[0] === dirent.name) {
-          subdirs = await generateSubFolderTree(fullPath, childrenToExpand.slice(1));
-        }
+    .map(async (dirent): Promise<FolderResult> => {
+      const fullPath = path.join(folder, dirent.name);
+      let subdirs: FolderResult[] = [];
+      if (childrenToExpand && childrenToExpand.length > 0 && childrenToExpand[0] === dirent.name) {
+        subdirs = await generateSubFolderTree(fullPath, childrenToExpand.slice(1));
+      }
 
-        return {
-          name: dirent.name,
-          fullPath,
-          subdirectories: subdirs,
-          collapsed: false,
-        };
-      },
-    );
+      return {
+        name: dirent.name,
+        fullPath,
+        subdirectories: subdirs,
+        collapsed: false,
+      };
+    });
 
   return Promise.all(subdirectories);
 }
