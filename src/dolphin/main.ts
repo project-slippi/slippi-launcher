@@ -21,7 +21,7 @@ import {
 import { dolphinManager } from "./manager";
 import { deletePlayKeyFile, findPlayKey, writePlayKeyFile } from "./playkey";
 import { DolphinLaunchType } from "./types";
-import { findDolphinExecutable } from "./util";
+import { findDolphinExecutable, updateBootToCssCode } from "./util";
 
 ipc_downloadDolphin.main!.handle(async () => {
   await assertDolphinInstallations();
@@ -70,7 +70,11 @@ ipc_viewSlpReplay.main!.handle(async ({ files }) => {
   return { success: true };
 });
 
-ipc_launchNetplayDolphin.main!.handle(async () => {
+ipc_launchNetplayDolphin.main!.handle(async ({ bootToCss }) => {
+  // Boot straight to CSS if necessary
+  await updateBootToCssCode({ enable: Boolean(bootToCss) });
+
+  // Actually launch Dolphin
   await dolphinManager.launchNetplayDolphin();
   return { success: true };
 });

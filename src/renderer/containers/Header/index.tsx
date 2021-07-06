@@ -79,7 +79,7 @@ export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
     }
 
     try {
-      const launchResult = await ipc_launchNetplayDolphin.renderer!.trigger({});
+      const launchResult = await ipc_launchNetplayDolphin.renderer!.trigger({ bootToCss: offlineOnly });
       if (!launchResult.result) {
         log.info("Error launching netplay dolphin", launchResult.errors);
         throw new Error("Error launching netplay dolphin");

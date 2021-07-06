@@ -122,15 +122,15 @@ export async function addGamePathToIni(type: DolphinLaunchType, gameDir: string)
   log.info(`Finished updating ${type} dolphin...`);
 }
 
-export async function updateOnlineBoot(enable = false) {
+export async function updateBootToCssCode(options: { enable: boolean }) {
   const userPath = await findUserFolder(DolphinLaunchType.NETPLAY);
   const sysPath = await findSysFolder(DolphinLaunchType.NETPLAY);
   const globalIniPath = path.join(sysPath, "GameSettings", "GALE01r2.ini");
   const localIniPath = path.join(userPath, "GameSettings", "GALE01.ini");
-  await bootToCSS(globalIniPath, localIniPath, enable);
+  await bootToCss(globalIniPath, localIniPath, options.enable);
 }
 
-async function bootToCSS(globalIniPath: string, localIniPath: string, enable: boolean) {
+async function bootToCss(globalIniPath: string, localIniPath: string, enable: boolean) {
   const globalIni = new IniFile();
   const localIni = new IniFile();
   if (await fs.pathExists(globalIniPath)) {
@@ -143,9 +143,6 @@ async function bootToCSS(globalIniPath: string, localIniPath: string, enable: bo
   }
 
   const geckoCodes = loadGeckoCodes(globalIni, localIni);
-
-  log.info(geckoCodes);
-
   const bootCodeIdx = geckoCodes.findIndex((code) => code.name === "Boot to CSS");
 
   if (bootCodeIdx === -1) {
@@ -165,6 +162,8 @@ async function bootToCSS(globalIniPath: string, localIniPath: string, enable: bo
     }
     geckoCodes[bootCodeIdx].enabled = enable;
   }
+
+  log.debug(geckoCodes);
 
   saveCodes(localIni, geckoCodes);
 
