@@ -1,11 +1,13 @@
 import { settingsManager } from "@settings/settingsManager";
+import { app } from "electron";
 import log from "electron-log";
 import * as fs from "fs-extra";
-import * as ini from "ini";
 import { fileExists } from "main/fileExists";
 import os from "os";
 import path from "path";
 
+import { GeckoCode, loadGeckoCodes, saveCodes } from "./geckoCode";
+import { IniFile } from "./iniFile";
 import { DolphinLaunchType } from "./types";
 
 export async function findDolphinExecutable(type: DolphinLaunchType, dolphinPath?: string): Promise<string> {
@@ -69,6 +71,31 @@ export async function findUserFolder(type: DolphinLaunchType): Promise<string> {
   return userPath;
 }
 
+export async function findSysFolder(type: DolphinLaunchType): Promise<string> {
+  let sysPath = "";
+  const dolphinPath = settingsManager.getDolphinPath(type);
+  switch (process.platform) {
+    case "win32": {
+      sysPath = path.join(dolphinPath, "Sys");
+      break;
+    }
+    case "darwin": {
+      sysPath = path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "Resources", "Sys");
+      break;
+    }
+    case "linux": {
+      sysPath = path.join(app.getPath("userData"), type, "Sys");
+      break;
+    }
+    default:
+      break;
+  }
+
+  await fs.ensureDir(sysPath);
+
+  return sysPath;
+}
+
 export async function addGamePathToInis(gameDir: string): Promise<void> {
   await addGamePathToIni(DolphinLaunchType.NETPLAY, gameDir);
   await addGamePathToIni(DolphinLaunchType.PLAYBACK, gameDir);
@@ -77,20 +104,68 @@ export async function addGamePathToInis(gameDir: string): Promise<void> {
 export async function addGamePathToIni(type: DolphinLaunchType, gameDir: string): Promise<void> {
   const userFolder = await findUserFolder(type);
   const iniPath = path.join(userFolder, "Config", "Dolphin.ini");
+  const iniFile = new IniFile();
   if (await fileExists(iniPath)) {
     log.info("Found a Dolphin.ini to update...");
-    const dolphinINI = ini.parse(await fs.readFile(iniPath, "utf-8"));
-    dolphinINI.General.ISOPath0 = gameDir;
-    const numPaths = dolphinINI.General.ISOPaths;
-    dolphinINI.General.ISOPaths = numPaths !== "0" ? numPaths : "1";
-    const newINI = ini.encode(dolphinINI);
-    await fs.writeFile(iniPath, newINI);
+    await iniFile.load(iniPath, false);
+    const generalSection = iniFile.getOrCreateSection("General");
+    const numPaths = generalSection.get("ISOPaths", "0");
+    generalSection.set("ISOPaths", numPaths !== "0" ? numPaths : "1");
+    generalSection.set("ISOPath0", gameDir);
   } else {
     log.info("There isn't a Dolphin.ini to update...");
-    const configPath = path.join(userFolder, "Config");
-    const newINI = ini.encode({ General: { ISOPath0: gameDir, ISOPaths: 1 } });
-    await fs.ensureDir(configPath);
-    await fs.writeFile(iniPath, newINI);
+    const generalSection = iniFile.getOrCreateSection("General");
+    generalSection.set("ISOPaths", "1");
+    generalSection.set("ISOPath0", gameDir);
   }
+  iniFile.save(iniPath);
   log.info(`Finished updating ${type} dolphin...`);
+}
+
+export async function updateBootToCssCode(options: { enable: boolean }) {
+  const userPath = await findUserFolder(DolphinLaunchType.NETPLAY);
+  const sysPath = await findSysFolder(DolphinLaunchType.NETPLAY);
+  const globalIniPath = path.join(sysPath, "GameSettings", "GALE01r2.ini");
+  const localIniPath = path.join(userPath, "GameSettings", "GALE01.ini");
+  await bootToCss(globalIniPath, localIniPath, options.enable);
+}
+
+async function bootToCss(globalIniPath: string, localIniPath: string, enable: boolean) {
+  const globalIni = new IniFile();
+  const localIni = new IniFile();
+  if (await fs.pathExists(globalIniPath)) {
+    log.info(`found global ini file: ${globalIniPath}`);
+    await globalIni.load(globalIniPath);
+  }
+  if (await fs.pathExists(localIniPath)) {
+    log.info(`found local ini file: ${localIniPath}`);
+    await localIni.load(localIniPath);
+  }
+
+  const geckoCodes = loadGeckoCodes(globalIni, localIni);
+  const bootCodeIdx = geckoCodes.findIndex((code) => code.name === "Boot to CSS");
+
+  if (bootCodeIdx === -1) {
+    const bootToCssCode: GeckoCode = {
+      codeLines: ["041BFA20 38600002"],
+      creator: "Dan Salvato, Achilles",
+      defaultEnabled: false,
+      enabled: enable,
+      name: "Boot to CSS",
+      notes: [],
+      userDefined: true,
+    };
+    geckoCodes.push(bootToCssCode);
+  } else {
+    if (geckoCodes[bootCodeIdx].enabled === enable) {
+      return;
+    }
+    geckoCodes[bootCodeIdx].enabled = enable;
+  }
+
+  log.debug(geckoCodes);
+
+  saveCodes(localIni, geckoCodes);
+
+  localIni.save(localIniPath);
 }

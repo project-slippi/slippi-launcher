@@ -31,7 +31,11 @@ export const ipc_removePlayKeyFile = makeEndpoint.main("removePlayKeyFile", <Emp
 
 export const ipc_viewSlpReplay = makeEndpoint.main("viewSlpReplay", <{ files: ReplayQueueItem[] }>_, <SuccessPayload>_);
 
-export const ipc_launchNetplayDolphin = makeEndpoint.main("launchNetplayDolphin", <EmptyPayload>_, <SuccessPayload>_);
+export const ipc_launchNetplayDolphin = makeEndpoint.main(
+  "launchNetplayDolphin",
+  <{ bootToCss?: boolean }>_,
+  <SuccessPayload>_,
+);
 
 export const ipc_checkDesktopAppDolphin = makeEndpoint.main(
   "getDesktopAppDolphinPath",

@@ -61,7 +61,7 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
     const arr = _.get(stats, arrPath) || [];
     const itemsByPlayer = arr; // _.keyBy(arr, "playerIndex");
 
-    if (!arr || arr.length == 0) {
+    if (!arr || arr.length === 0) {
       return (
         <T.TableRow key={key}>
           <T.TableCell>{header}</T.TableCell>
