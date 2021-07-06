@@ -100,7 +100,7 @@ function readEnabledOrDisabled(iniFile: IniFile, section: string, enabled: boole
 
 function readEnabledAndDisabled(iniFile: IniFile, codes: GeckoCode[]) {
   readEnabledOrDisabled(iniFile, "Gecko_Enabled", true, codes);
-  readEnabledOrDisabled(iniFile, "Gecko_Disabled", true, codes);
+  readEnabledOrDisabled(iniFile, "Gecko_Disabled", false, codes);
 }
 
 function makeGeckoCodeTitle(code: GeckoCode): string {
