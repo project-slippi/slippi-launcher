@@ -62,7 +62,9 @@ export class MirrorManager {
 
     const fileWriter = new SlpFileWriter({ folderPath: config.folderPath, consoleNickname: "unknown" });
     fileWriter.on(SlpFileWriterEvent.NEW_FILE, (currFilePath) => {
-      this._playFile(currFilePath, config.ipAddress).catch(log.warn);
+      if (this.mirrors[config.ipAddress].isMirroring) {
+        this._playFile(currFilePath, config.ipAddress).catch(log.warn);
+      }
 
       // Let the front-end know of the new file that we're writing too
       ipc_consoleMirrorStatusUpdatedEvent
@@ -226,10 +228,6 @@ export class MirrorManager {
   }
 
   private async _playFile(filePath: string, playbackId: string) {
-    if (!this.mirrors[playbackId].isMirroring) {
-      return;
-    }
-
     const replayComm: ReplayCommunication = {
       mode: "mirror",
       isRealTimeMode: this.mirrors[playbackId].isRealTimeMode,
