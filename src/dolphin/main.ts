@@ -17,13 +17,14 @@ import {
   ipc_reinstallDolphin,
   ipc_removePlayKeyFile,
   ipc_storePlayKeyFile,
+  ipc_updateGeckos,
   ipc_viewSlpReplay,
 } from "./ipc";
 import { dolphinManager } from "./manager";
 import { deletePlayKeyFile, findPlayKey, writePlayKeyFile } from "./playkey";
 import { DolphinLaunchType } from "./types";
 import { findDolphinExecutable, updateBootToCssCode, findSysFolder, findUserFolder, getUserIni } from "./util";
-import { loadGeckoCodes } from "./geckoCode";
+import { loadGeckoCodes, saveCodes, GeckoCode } from "./geckoCode";
 import { IniFile } from "./iniFile";
 
 ipc_fetchGeckoCodes.main!.handle(async ({ dolphinType, iniName }) => {
@@ -41,6 +42,20 @@ ipc_fetchGeckoCodes.main!.handle(async ({ dolphinType, iniName }) => {
   const gCodes = loadGeckoCodes(sysIni, userIni);
   return { codes: gCodes };
 });
+
+ipc_updateGeckos.main!.handle(async ({ codes, iniName, dolphinType }) => {
+  const userIniPath = path.join(await findUserFolder(dolphinType), "GameSettings", getUserIni(iniName));
+  const userIni = new IniFile();
+  if (await fs.pathExists(userIniPath)) {
+    await userIni.load(userIniPath, false);
+  } else {
+    //create the iniFile if it does not exist
+    fs.writeFile(userIniPath, "", (err) => console.log(err));
+  }
+  saveCodes(userIni, codes);
+  return { success: true };
+});
+
 ipc_downloadDolphin.main!.handle(async () => {
   await assertDolphinInstallations();
   return { success: true };

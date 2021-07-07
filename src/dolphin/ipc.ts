@@ -56,6 +56,12 @@ export const ipc_fetchGeckoCodes = makeEndpoint.main(
   <{ dolphinType: DolphinLaunchType; iniName: string }>_,
   <{ codes: GeckoCode[] }>_,
 );
+
+export const ipc_updateGeckos = makeEndpoint.main(
+  "updateGeckos",
+  <{ codes: GeckoCode[]; iniName: string; dolphinType: DolphinLaunchType }>_,
+  <SuccessPayload>_,
+);
 // Events
 
 export const ipc_dolphinDownloadFinishedEvent = makeEndpoint.renderer(
