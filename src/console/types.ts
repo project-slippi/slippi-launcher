@@ -20,7 +20,7 @@ export interface MirrorConfig {
 }
 
 export interface MirrorDetails extends MirrorConfig {
-  isMirroring?: boolean;
+  isMirroring: boolean;
   connection: ConsoleConnection;
   fileWriter: SlpFileWriter;
   autoSwitcher: AutoSwitcher | null;

@@ -175,6 +175,7 @@ export class MirrorManager {
       connection,
       autoSwitcher,
       relay,
+      isMirroring: false,
     };
   }
 
@@ -225,6 +226,10 @@ export class MirrorManager {
   }
 
   private async _playFile(filePath: string, playbackId: string) {
+    if (!this.mirrors[playbackId].isMirroring) {
+      return;
+    }
+
     const replayComm: ReplayCommunication = {
       mode: "mirror",
       isRealTimeMode: this.mirrors[playbackId].isRealTimeMode,
