@@ -6,6 +6,8 @@ import {
   ipc_configureDolphin,
   ipc_importDolphinSettings,
   ipc_reinstallDolphin,
+  ipc_findSysFolder,
+  ipc_fetchGeckoCodes,
 } from "@dolphin/ipc";
 import { DolphinLaunchType } from "@dolphin/types";
 import { css, jsx } from "@emotion/react";
@@ -82,7 +84,9 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   const [iniSelect, setIniSelect] = React.useState(<div />);
 
   //set the paths for the userIniFolder and sysIniFolder when dolphinPath is updated
-  React.useEffect(() => {
+  React.useEffect(async () => {
+    const foo = await ipc_fetchGeckoCodes.renderer!.trigger({ dolphinType: dolphinType, iniName: "GALE01r2.ini" });
+    console.log(foo);
     switch (process.platform) {
       case "win32": {
         setUserIniFolder(path.join(dolphinPath, "User", "GameSettings"));
@@ -211,59 +215,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
 
   const writeGeckoCode = async (e: React.FormEvent) => {
     e.preventDefault();
-    const rawGecko = newGeckoCode.split("\n");
-    let newCode: GeckoCode = {
-      name: "",
-      creator: "",
-      enabled: true,
-      defaultEnabled: false,
-      userDefined: true,
-      notes: [],
-      codeLines: [],
-    };
 
-    //fill out gecko info
-    rawGecko.forEach((line) => {
-      switch (line[0]) {
-        // code name
-        case "$": {
-          if (newCode.name.length > 0) {
-            geckoCodes.push(newCode);
-          }
-          line = line.slice(1); // cut out the $
-
-          const creatorMatch = line.match(/\[(.*?)\]/); // searches for brackets, catches anything inside them
-          const creator = creatorMatch !== null ? creatorMatch[1] : creatorMatch;
-          const name = creator ? line.split("[")[0] : line;
-
-          newCode = {
-            ...newCode,
-            name: name,
-            creator: creator,
-            notes: [],
-            codeLines: [],
-          };
-          break;
-        }
-        // comments
-        case "*": {
-          newCode.notes.push(line.slice(1));
-          break;
-        }
-        default: {
-          newCode.codeLines.push(line);
-        }
-      }
-    });
-    if (newCode.name.length > 0) {
-      geckoCodes.push(newCode);
-    } else {
-      addToast(`Failed to write gecko`, {
-        appearance: "error",
-        autoDismiss: true,
-      });
-      return;
-    }
     void saveGeckos();
     document.getElementById("geckoForm").reset();
   };

@@ -139,3 +139,56 @@ export function saveCodes(iniFile: IniFile, codes: GeckoCode[]) {
   iniFile.setLines("Gecko_Disabled", disabledLines);
   iniFile.setLines("Gecko", lines);
 }
+
+export function addGeckoCode(rawGecko: string, codes: GeckoCode[]) {
+  const rawGeckoLines = rawGecko.split("\n");
+  let newCode: GeckoCode = {
+    name: "",
+    creator: "",
+    enabled: true,
+    defaultEnabled: false,
+    userDefined: true,
+    notes: [],
+    codeLines: [],
+  };
+
+  //fill out gecko info
+  rawGeckoLines.forEach((line) => {
+    switch (line[0]) {
+      // code name
+      case "$": {
+        if (newCode.name.length > 0) {
+          codes.push(newCode);
+        }
+        line = line.slice(1); // cut out the $
+
+        const creatorMatch = line.match(/\[(.*?)\]/); // searches for brackets, catches anything inside them
+        const creator = creatorMatch !== null ? creatorMatch[1] : creatorMatch;
+        const name = creator ? line.split("[")[0] : line;
+
+        newCode = {
+          ...newCode,
+          name: name,
+          creator: creator,
+          notes: [],
+          codeLines: [],
+        };
+        break;
+      }
+      // comments
+      case "*": {
+        newCode.notes.push(line.slice(1));
+        break;
+      }
+      default: {
+        newCode.codeLines.push(line);
+      }
+    }
+  });
+  if (newCode.name.length > 0) {
+    codes.push(newCode);
+    return true;
+  } else {
+    return false;
+  }
+}

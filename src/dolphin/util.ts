@@ -169,3 +169,22 @@ async function bootToCss(globalIniPath: string, localIniPath: string, enable: bo
 
   localIni.save(localIniPath);
 }
+
+//find out the appropriate user ini file given the sys ini file
+export function getUserIni(sysIniName: string) {
+  switch (sysIniName) {
+    case "GALE01r2.ini": {
+      return "GALE01.ini";
+    }
+    case "GALJ01r2.ini": {
+      return "GALJ01.ini";
+    }
+    default: {
+      return sysIniName;
+    }
+  }
+}
+
+export function foo() {
+  console.log("hello");
+}

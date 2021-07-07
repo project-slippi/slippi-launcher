@@ -11,6 +11,8 @@ import {
   ipc_clearDolphinCache,
   ipc_configureDolphin,
   ipc_downloadDolphin,
+  ipc_fetchGeckoCodes,
+  ipc_findSysFolder,
   ipc_importDolphinSettings,
   ipc_launchNetplayDolphin,
   ipc_reinstallDolphin,
@@ -21,8 +23,28 @@ import {
 import { dolphinManager } from "./manager";
 import { deletePlayKeyFile, findPlayKey, writePlayKeyFile } from "./playkey";
 import { DolphinLaunchType } from "./types";
-import { findDolphinExecutable, updateBootToCssCode } from "./util";
+import { findDolphinExecutable, updateBootToCssCode, findSysFolder, findUserFolder, foo, getUserIni } from "./util";
+import { loadGeckoCodes } from "./geckoCode";
+import { IniFile } from "./iniFile";
 
+ipc_findSysFolder.main!.handle(async ({ dolphinType }) => {
+  foo();
+  console.log("hello");
+  await findSysFolder(dolphinType);
+  return { success: true };
+});
+
+ipc_fetchGeckoCodes.main!.handle(async ({ dolphinType, iniName }) => {
+  foo();
+  const sysIniPath = path.join(await findSysFolder(dolphinType), "GameSettings", iniName);
+  const userIniPath = path.join(await findUserFolder(dolphinType), "GameSettings", getUserIni(iniName));
+  const sysIni = new IniFile();
+  const userIni = new IniFile();
+  await userIni.load(userIniPath, false);
+  await sysIni.load(sysIniPath, false);
+  const gCodes = loadGeckoCodes(sysIni, userIni);
+  return { codes: gCodes };
+});
 ipc_downloadDolphin.main!.handle(async () => {
   await assertDolphinInstallations();
   return { success: true };
