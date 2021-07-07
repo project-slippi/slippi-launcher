@@ -27,21 +27,18 @@ import { findDolphinExecutable, updateBootToCssCode, findSysFolder, findUserFold
 import { loadGeckoCodes } from "./geckoCode";
 import { IniFile } from "./iniFile";
 
-ipc_findSysFolder.main!.handle(async ({ dolphinType }) => {
-  foo();
-  console.log("hello");
-  await findSysFolder(dolphinType);
-  return { success: true };
-});
-
 ipc_fetchGeckoCodes.main!.handle(async ({ dolphinType, iniName }) => {
-  foo();
   const sysIniPath = path.join(await findSysFolder(dolphinType), "GameSettings", iniName);
   const userIniPath = path.join(await findUserFolder(dolphinType), "GameSettings", getUserIni(iniName));
   const sysIni = new IniFile();
-  const userIni = new IniFile();
-  await userIni.load(userIniPath, false);
   await sysIni.load(sysIniPath, false);
+  const userIni = new IniFile();
+  if (await fs.pathExists(userIniPath)) {
+    await userIni.load(userIniPath, false);
+  } else {
+    //create the iniFile if it does not exist
+    fs.writeFile(userIniPath, "", (err) => console.log(err));
+  }
   const gCodes = loadGeckoCodes(sysIni, userIni);
   return { codes: gCodes };
 });

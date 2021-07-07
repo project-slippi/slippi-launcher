@@ -6,7 +6,6 @@ import {
   ipc_configureDolphin,
   ipc_importDolphinSettings,
   ipc_reinstallDolphin,
-  ipc_findSysFolder,
   ipc_fetchGeckoCodes,
 } from "@dolphin/ipc";
 import { DolphinLaunchType } from "@dolphin/types";
@@ -74,7 +73,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   //vars for editing gecko codes
   const [tabValue, setTabValue] = React.useState(0);
   const [geckoFormOpen, setGeckoFormOpen] = React.useState(false);
-  const [newGeckoCode, setNewGeckoCode] = React.useState("");
+  //const [newGeckoCode, setNewGeckoCode] = React.useState("");
   const [geckoCodes, setGeckoCodes] = React.useState([]);
   const [userIniPath, setUserIniPath] = React.useState("");
   const [userIniFolder, setUserIniFolder] = React.useState("");
@@ -237,21 +236,6 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
     setGlobalIniPath(path.join(globalIniFolder, value));
     const userIniName = getUserIni(value);
     setUserIniPath(path.join(userIniFolder, userIniName));
-  };
-
-  //find out the appropriate user ini file given the sys ini file
-  const getUserIni = (sysIniName: string) => {
-    switch (sysIniName) {
-      case "GALE01r2.ini": {
-        return "GALE01.ini";
-      }
-      case "GALJ01r2.ini": {
-        return "GALJ01.ini";
-      }
-      default: {
-        return sysIniName;
-      }
-    }
   };
 
   const dolphinTypeName = capitalize(dolphinType);

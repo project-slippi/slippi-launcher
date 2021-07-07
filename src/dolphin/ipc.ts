@@ -51,12 +51,6 @@ export const ipc_importDolphinSettings = makeEndpoint.main(
   <SuccessPayload>_,
 );
 
-export const ipc_findSysFolder = makeEndpoint.main(
-  "findSysFolder",
-  <{ dolphinType: DolphinLaunchType }>_,
-  <SuccessPayload>_,
-);
-
 export const ipc_fetchGeckoCodes = makeEndpoint.main(
   "fetchGeckoCodes",
   <{ dolphinType: DolphinLaunchType; iniName: string }>_,
