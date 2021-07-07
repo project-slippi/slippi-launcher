@@ -12,7 +12,6 @@ import {
   ipc_configureDolphin,
   ipc_downloadDolphin,
   ipc_fetchGeckoCodes,
-  ipc_findSysFolder,
   ipc_importDolphinSettings,
   ipc_launchNetplayDolphin,
   ipc_reinstallDolphin,
@@ -23,7 +22,7 @@ import {
 import { dolphinManager } from "./manager";
 import { deletePlayKeyFile, findPlayKey, writePlayKeyFile } from "./playkey";
 import { DolphinLaunchType } from "./types";
-import { findDolphinExecutable, updateBootToCssCode, findSysFolder, findUserFolder, foo, getUserIni } from "./util";
+import { findDolphinExecutable, updateBootToCssCode, findSysFolder, findUserFolder, getUserIni } from "./util";
 import { loadGeckoCodes } from "./geckoCode";
 import { IniFile } from "./iniFile";
 
