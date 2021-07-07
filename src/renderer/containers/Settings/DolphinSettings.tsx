@@ -1,12 +1,13 @@
 /** @jsx jsx */
-import { GeckoCode, loadGeckoCodes, saveCodes } from "@dolphin/geckoCode";
-import { IniFile } from "@dolphin/iniFile";
+import { addGeckoCode, GeckoCode } from "@dolphin/geckoCode";
 import {
   ipc_clearDolphinCache,
   ipc_configureDolphin,
   ipc_importDolphinSettings,
   ipc_reinstallDolphin,
   ipc_fetchGeckoCodes,
+  ipc_fetchSysInis,
+  ipc_updateGeckos,
 } from "@dolphin/ipc";
 import { DolphinLaunchType } from "@dolphin/types";
 import { css, jsx } from "@emotion/react";
@@ -24,12 +25,9 @@ import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import { isLinux, isMac } from "common/constants";
-import { app, remote, shell } from "electron";
+import { remote, shell } from "electron";
 import log from "electron-log";
-import fs from "fs";
 import capitalize from "lodash/capitalize";
-import os from "os";
-import path from "path";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
 
@@ -73,96 +71,39 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   //vars for editing gecko codes
   const [tabValue, setTabValue] = React.useState(0);
   const [geckoFormOpen, setGeckoFormOpen] = React.useState(false);
-  //const [newGeckoCode, setNewGeckoCode] = React.useState("");
+  const [newGeckoCode, setNewGeckoCode] = React.useState("");
   const [geckoCodes, setGeckoCodes] = React.useState([]);
-  const [userIniPath, setUserIniPath] = React.useState("");
-  const [userIniFolder, setUserIniFolder] = React.useState("");
-  const [globalIniPath, setGlobalIniPath] = React.useState("");
-  const [globalIniFolder, setGlobalIniFolder] = React.useState("");
   const [geckoCheckboxes, setGeckoCheckboxes] = React.useState(<div />);
   const [iniSelect, setIniSelect] = React.useState(<div />);
+  const [sysIni, setSysIni] = React.useState("");
 
   //set the paths for the userIniFolder and sysIniFolder when dolphinPath is updated
   React.useEffect(async () => {
-    const foo = await ipc_fetchGeckoCodes.renderer!.trigger({ dolphinType: dolphinType, iniName: "GALE01r2.ini" });
-    console.log(foo);
-    switch (process.platform) {
-      case "win32": {
-        setUserIniFolder(path.join(dolphinPath, "User", "GameSettings"));
-        setGlobalIniFolder(path.join(dolphinPath, "Sys", "GameSettings"));
-        break;
-      }
-      case "darwin": {
-        setUserIniFolder(path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "Resources", "User", "GameSettings"));
-        setGlobalIniFolder(
-          path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "Resources", "Sys", "GameSettings"),
-        );
-        break;
-      }
-      case "linux": {
-        const configPath = path.join(os.homedir(), ".config");
-        const userFolderName = dolphinType === DolphinLaunchType.NETPLAY ? "SlippiOnline" : "SlippiPlayback";
-        setUserIniFolder(path.join(configPath, userFolderName));
-        setGlobalIniFolder(path.join(app.getPath("userData"), dolphinType, "Sys"));
-        break;
-      }
-      default:
-        break;
+    const sysFilesArray = (await ipc_fetchSysInis.renderer!.trigger({ dolphinType: dolphinType })).result?.sysInis;
+    const iniList =
+      !sysFilesArray || sysFilesArray.length === 0 ? (
+        <option key="loading.ini">loading</option>
+      ) : (
+        <Select labelId="ini-label" native={true} id="iniPicker" onChange={handleIniChange}>
+          {sysFilesArray.map((iniName: string, i: number) => (
+            <option key={`ini-${i}`} value={iniName}>
+              {iniName}
+            </option>
+          ))}
+        </Select>
+      );
+    setIniSelect(iniList);
+    if (sysFilesArray) {
+      setSysIni(sysFilesArray[0]);
+      setGeckoCodes(
+        (await ipc_fetchGeckoCodes.renderer!.trigger({ dolphinType: dolphinType, iniName: sysFilesArray[0] })).result
+          ?.codes,
+      );
     }
-  }, [dolphinPath, dolphinType]);
-
-  //populate the list of ini files
-  React.useEffect(() => {
-    if (globalIniFolder !== "" && userIniFolder !== "") {
-      const sysFilesArray = fs.readdirSync(globalIniFolder);
-      setGlobalIniPath(path.join(globalIniFolder, sysFilesArray[0]));
-      setUserIniPath(path.join(userIniFolder, getUserIni(sysFilesArray[0])));
-      const iniList =
-        !sysFilesArray || sysFilesArray.length === 0 ? (
-          <option key="loading.ini">loading</option>
-        ) : (
-          <Select labelId="ini-label" native={true} id="iniPicker" onChange={handleIniChange}>
-            {sysFilesArray.map((iniName: string, i: number) => (
-              <option key={`ini-${i}`} value={iniName}>
-                {iniName}
-              </option>
-            ))}
-          </Select>
-        );
-      setIniSelect(iniList);
-    }
-  }, [globalIniFolder, userIniFolder]);
-
-  //reload gecko codes whenever the paths to either ini change
-  React.useEffect(() => {
-    async function loadCodes() {
-      const sysIni = new IniFile();
-      const userIni = new IniFile();
-
-      if (globalIniPath !== "") {
-        await sysIni.load(globalIniPath, false);
-      }
-      if (userIniPath !== "") {
-        try {
-          //if the user ini does not exist, create one
-          if (fs.existsSync(userIniPath)) {
-            await userIni.load(userIniPath, false);
-          } else {
-            fs.writeFile(userIniPath, "", (err) => console.log(err));
-          }
-        } catch (err) {
-          console.log(err);
-        }
-      }
-      if (sysIni !== new IniFile()) {
-        const gcodes = loadGeckoCodes(sysIni, userIni !== new IniFile() ? userIni : undefined);
-        setGeckoCodes(gcodes);
-      }
-    }
-    void loadCodes();
-  }, [globalIniPath, userIniPath]);
+  }, []);
 
   React.useEffect(() => {
+    console.log(geckoCodes);
     const checkboxList = (
       <List>
         {!geckoCodes || geckoCodes.length === 0 ? (
@@ -214,28 +155,30 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
 
   const writeGeckoCode = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    void saveGeckos();
-    document.getElementById("geckoForm").reset();
+    if (addGeckoCode(newGeckoCode, geckoCodes)) {
+      setGeckoCodes([...geckoCodes]);
+      void saveGeckos();
+      addToast(`${sysIni} updated`, { appearance: "success", autoDismiss: true });
+      document.getElementById("geckoForm").reset();
+    } else {
+      addToast(`failed to write gecko`, { appearance: "error", autoDismiss: true });
+    }
   };
 
   //create a blank ini file and write our user.ini file info to it
   const saveGeckos = async () => {
-    const userIni = new IniFile();
-    saveCodes(userIni, geckoCodes);
-    userIni.save(userIniPath);
-    setGeckoCodes([...geckoCodes]);
-    addToast(`Updated ${userIniPath.substring(userIniPath.lastIndexOf("\\") + 1)}`, { autoDismiss: true });
+    await ipc_updateGeckos.renderer!.trigger({ codes: geckoCodes, iniName: sysIni, dolphinType: dolphinType });
   };
 
   const handleTabChange = (event: React.ChangeEvent<unknown>, newValue: number) => {
     setTabValue(newValue);
   };
 
-  const handleIniChange = ({ target: { value } }) => {
-    setGlobalIniPath(path.join(globalIniFolder, value));
-    const userIniName = getUserIni(value);
-    setUserIniPath(path.join(userIniFolder, userIniName));
+  const handleIniChange = async ({ target: { value } }) => {
+    setGeckoCodes(
+      (await ipc_fetchGeckoCodes.renderer!.trigger({ dolphinType: dolphinType, iniName: value })).result?.codes,
+    );
+    setSysIni(value);
   };
 
   const dolphinTypeName = capitalize(dolphinType);
@@ -343,6 +286,9 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
             {geckoCheckboxes}
             <Button color="secondary" variant="outlined" fullWidth onClick={saveGeckos}>
               Save
+            </Button>
+            <Button color="secondary" variant="outlined" fullWidth onClick={() => console.log(geckoCodes)}>
+              asd
             </Button>
           </TabPanel>
         </DialogContent>

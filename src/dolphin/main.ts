@@ -12,6 +12,7 @@ import {
   ipc_configureDolphin,
   ipc_downloadDolphin,
   ipc_fetchGeckoCodes,
+  ipc_fetchSysInis,
   ipc_importDolphinSettings,
   ipc_launchNetplayDolphin,
   ipc_reinstallDolphin,
@@ -40,11 +41,14 @@ ipc_fetchGeckoCodes.main!.handle(async ({ dolphinType, iniName }) => {
     fs.writeFile(userIniPath, "", (err) => console.log(err));
   }
   const gCodes = loadGeckoCodes(sysIni, userIni);
+  console.log(sysIniPath, userIniPath);
+  console.log(gCodes);
   return { codes: gCodes };
 });
 
 ipc_updateGeckos.main!.handle(async ({ codes, iniName, dolphinType }) => {
   const userIniPath = path.join(await findUserFolder(dolphinType), "GameSettings", getUserIni(iniName));
+  console.log(codes);
   const userIni = new IniFile();
   if (await fs.pathExists(userIniPath)) {
     await userIni.load(userIniPath, false);
@@ -53,7 +57,15 @@ ipc_updateGeckos.main!.handle(async ({ codes, iniName, dolphinType }) => {
     fs.writeFile(userIniPath, "", (err) => console.log(err));
   }
   saveCodes(userIni, codes);
+  userIni.save(userIniPath);
   return { success: true };
+});
+
+ipc_fetchSysInis.main!.handle(async ({ dolphinType }) => {
+  const sysIniFolderPath = path.join(await findSysFolder(dolphinType), "GameSettings");
+  console.log(sysIniFolderPath);
+  const sysFilesArray = fs.readdirSync(sysIniFolderPath);
+  return { sysInis: sysFilesArray };
 });
 
 ipc_downloadDolphin.main!.handle(async () => {
