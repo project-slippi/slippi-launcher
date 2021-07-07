@@ -74,11 +74,12 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   const [geckoFormOpen, setGeckoFormOpen] = React.useState(false);
   const [newGeckoCode, setNewGeckoCode] = React.useState("");
   const [geckoCodes, setGeckoCodes] = React.useState([]);
-  const [sysIniFiles, setSysIniFiles] = React.useState([]);
   const [userIniPath, setUserIniPath] = React.useState("");
   const [userIniFolder, setUserIniFolder] = React.useState("");
   const [globalIniPath, setGlobalIniPath] = React.useState("");
   const [globalIniFolder, setGlobalIniFolder] = React.useState("");
+  const [geckoCheckboxes, setGeckoCheckboxes] = React.useState(<div />);
+  const [iniSelect, setIniSelect] = React.useState(<div />);
 
   //set the paths for the userIniFolder and sysIniFolder when dolphinPath is updated
   React.useEffect(() => {
@@ -111,9 +112,21 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   React.useEffect(() => {
     if (globalIniFolder !== "" && userIniFolder !== "") {
       const sysFilesArray = fs.readdirSync(globalIniFolder);
-      setSysIniFiles(sysFilesArray);
       setGlobalIniPath(path.join(globalIniFolder, sysFilesArray[0]));
       setUserIniPath(path.join(userIniFolder, getUserIni(sysFilesArray[0])));
+      const iniList =
+        !sysFilesArray || sysFilesArray.length === 0 ? (
+          <option key="loading.ini">loading</option>
+        ) : (
+          <Select labelId="ini-label" native={true} id="iniPicker" onChange={handleIniChange}>
+            {sysFilesArray.map((iniName: string, i: number) => (
+              <option key={`ini-${i}`} value={iniName}>
+                {iniName}
+              </option>
+            ))}
+          </Select>
+        );
+      setIniSelect(iniList);
     }
   }, [globalIniFolder, userIniFolder]);
 
@@ -143,9 +156,34 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
         setGeckoCodes(gcodes);
       }
     }
-
     void loadCodes();
   }, [globalIniPath, userIniPath]);
+
+  React.useEffect(() => {
+    const checkboxList = (
+      <List>
+        {!geckoCodes || geckoCodes.length === 0 ? (
+          <ListItem>No Codes Found</ListItem>
+        ) : (
+          geckoCodes.map((gecko: GeckoCode, i: number) => (
+            <ListItem key={gecko.name} id={`checkbox-item-${i}`} dense>
+              <Checkbox
+                id={`checkbox-${i}`}
+                checked={gecko.enabled}
+                disableRipple
+                onChange={() => {
+                  gecko.enabled = !gecko.enabled;
+                  setGeckoCodes([...geckoCodes]);
+                }}
+              />
+              <ListItemText primary={gecko.name} />
+            </ListItem>
+          ))
+        )}
+      </List>
+    );
+    setGeckoCheckboxes(checkboxList);
+  }, [geckoCodes]);
 
   const openDolphinDirectoryHandler = async () => {
     shell.openItem(dolphinPath);
@@ -219,6 +257,12 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
     });
     if (newCode.name.length > 0) {
       geckoCodes.push(newCode);
+    } else {
+      addToast(`Failed to write gecko`, {
+        appearance: "error",
+        autoDismiss: true,
+      });
+      return;
     }
     void saveGeckos();
     document.getElementById("geckoForm").reset();
@@ -229,7 +273,8 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
     const userIni = new IniFile();
     saveCodes(userIni, geckoCodes);
     userIni.save(userIniPath);
-    addToast(`Updated ${userIniPath.substring(userIniPath.lastIndexOf("\\") + 1)}`);
+    setGeckoCodes([...geckoCodes]);
+    addToast(`Updated ${userIniPath.substring(userIniPath.lastIndexOf("\\") + 1)}`, { autoDismiss: true });
   };
 
   const handleTabChange = (event: React.ChangeEvent<unknown>, newValue: number) => {
@@ -338,17 +383,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
             <Tab label="Add" />
             <Tab label="Manage" />
           </Tabs>
-          <Select labelId="ini-label" native={true} id="iniPicker" onChange={handleIniChange}>
-            {!sysIniFiles ? (
-              <option key="loading.ini">loading</option>
-            ) : (
-              sysIniFiles.map((iniName: string, i: number) => (
-                <option key={`ini-${i}`} value={iniName}>
-                  {iniName}
-                </option>
-              ))
-            )}
-          </Select>
+          {iniSelect}
           <TabPanel value={tabValue} index={0}>
             <form id="geckoForm" onSubmit={writeGeckoCode}>
               <TextField
@@ -369,26 +404,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
             </form>
           </TabPanel>
           <TabPanel value={tabValue} index={1}>
-            <List>
-              {!geckoCodes || geckoCodes.length === 0 ? (
-                <ListItem>No Codes Found</ListItem>
-              ) : (
-                geckoCodes.map((gecko: GeckoCode, i: number) => (
-                  <ListItem key={gecko.name} id={`checkbox-item-${i}`} dense>
-                    <Checkbox
-                      id={`checkbox-${i}`}
-                      checked={gecko.enabled}
-                      disableRipple
-                      onChange={() => {
-                        gecko.enabled = !gecko.enabled;
-                        setGeckoCodes([...geckoCodes]);
-                      }}
-                    />
-                    <ListItemText primary={gecko.name} />
-                  </ListItem>
-                ))
-              )}
-            </List>
+            {geckoCheckboxes}
             <Button color="secondary" variant="outlined" fullWidth onClick={saveGeckos}>
               Save
             </Button>
