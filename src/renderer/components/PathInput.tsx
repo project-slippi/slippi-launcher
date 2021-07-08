@@ -17,7 +17,7 @@ export interface PathInputProps {
 export const PathInput = React.forwardRef<HTMLInputElement, PathInputProps>((props, ref) => {
   const { value, placeholder, endAdornment, onSelect, options, disabled } = props;
   const onClick = async () => {
-    const result = await remote.dialog.showOpenDialog(options ?? { properties: ["openFile"] });
+    const result = await remote.dialog.showOpenDialog({ properties: ["openFile"], ...options });
     const res = result.filePaths;
     if (result.canceled || res.length === 0) {
       return;
