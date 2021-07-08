@@ -52,6 +52,9 @@ export const MeleeOptions: React.FC = () => {
           onSelect={setIsoPath}
           placeholder="No file set"
           disabled={verifying}
+          options={{
+            filters: [{ name: "Melee ISO", extensions: ["iso", "gcm"] }],
+          }}
           endAdornment={
             <ValidationContainer className={verifying ? undefined : isoValidity.toLowerCase()}>
               <span
