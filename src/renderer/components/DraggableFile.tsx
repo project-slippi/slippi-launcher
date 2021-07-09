@@ -27,7 +27,7 @@ export const DraggableFile: React.FC<DraggableFileProps> = ({ children, filePath
 
     if (filePaths.length > 0) {
       // If we have selected non-zero files for dragging, update the count and then convert the div to a dataURL to send
-      document.getElementById("dragCount")!.innerHTML = filePaths.length.toString();
+      document.getElementById("dragCount")!.innerHTML = filePaths.length > 1 ? filePaths.length.toString() : "";
 
       void htmlToImage.toPng(document.getElementById("dragCountParent") as HTMLDivElement).then(function (dataURL) {
         ipcRenderer.send("onDragStart", filePaths, dataURL);
