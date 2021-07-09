@@ -87,7 +87,7 @@ export const MeleeOptions: React.FC = () => {
           }}
           placeholder="No folder set"
         />
-        <PathInputAddition onSelect={function () {}} />
+        <PathInputAddition />
       </SettingItem>
       <SettingItem name="Spectator SLP Directory" description="The folder where spectated games should be saved.">
         <PathInput

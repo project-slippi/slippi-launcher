@@ -8,7 +8,6 @@ import React from "react";
 import DeleteOutline from "@material-ui/icons/DeleteOutline";
 
 export interface PathInputAdditionProps {
-  onSelect: (filePath: string) => void;
   placeholder?: string;
   value?: string;
   options?: OpenDialogOptions;
@@ -17,14 +16,13 @@ export interface PathInputAdditionProps {
 }
 
 export const PathInputAddition = React.forwardRef<HTMLInputElement, PathInputAdditionProps>((props, ref) => {
-  const { value, placeholder, endAdornment, onSelect, options, disabled } = props;
+  const { value, placeholder, options, disabled } = props;
   const onClick = async () => {
     const result = await remote.dialog.showOpenDialog({ properties: ["openFile"], ...options });
     const res = result.filePaths;
     if (result.canceled || res.length === 0) {
       return;
     }
-    onSelect(res[0]);
   };
 
   const deleteRow = async () => {
