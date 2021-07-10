@@ -10,7 +10,7 @@ import { useAppStore } from "@/lib/hooks/useApp";
 export const Footer: React.FC = () => {
   const updateVersion = useAppStore((store) => store.updateVersion);
   const updateProgress = useAppStore((store) => store.updateDownloadProgress);
-  const showUpdateNotif = updateProgress.current === updateProgress.total;
+  const showUpdateNotif = useAppStore((store) => store.updateReady);
 
   const updateHandler = async () => {
     await ipc_installUpdate.renderer!.trigger({});
@@ -20,10 +20,7 @@ export const Footer: React.FC = () => {
     <BasicFooter>
       {updateVersion !== "" &&
         !showUpdateNotif &&
-        `Launcher update (${__VERSION__} -> ${updateVersion}) is downloading: ${(
-          (updateProgress.current / updateProgress.total) *
-          100
-        ).toFixed(0)}% downloaded`}
+        `Launcher update (${__VERSION__} -> ${updateVersion}) is downloading: ${updateProgress.toFixed(0)}% downloaded`}
       {showUpdateNotif && (
         <div>
           Update available ({__VERSION__} {"->"} {updateVersion}){" "}

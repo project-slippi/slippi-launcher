@@ -14,6 +14,7 @@ import {
   ipc_installUpdate,
   ipc_launcherUpdateDownloadingEvent,
   ipc_launcherUpdateFoundEvent,
+  ipc_launcherUpdateReadyEvent,
 } from "common/ipc";
 import { IsoValidity } from "common/types";
 import { app, clipboard, ipcMain, nativeImage } from "electron";
@@ -105,10 +106,14 @@ export function setupListeners() {
     if (progress.total !== 0) {
       ipc_launcherUpdateDownloadingEvent
         .main!.trigger({
-          progress: { total: progress.total, current: progress.transferred },
+          progressPercent: progress.percent,
         })
         .catch(log.warn);
     }
+  });
+
+  autoUpdater.on("update-downloaded", () => {
+    ipc_launcherUpdateReadyEvent.main!.trigger({}).catch(log.warn);
   });
 
   ipc_installUpdate.main!.handle(async () => {

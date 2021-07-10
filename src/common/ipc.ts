@@ -1,5 +1,5 @@
 import { _, EmptyPayload, makeEndpoint, SuccessPayload } from "../ipc";
-import { IsoValidity, NewsItem, Progress } from "./types";
+import { IsoValidity, NewsItem } from "./types";
 
 export const ipc_fetchNewsFeed = makeEndpoint.main("fetchNewsFeed", <EmptyPayload>_, <NewsItem[]>_);
 
@@ -21,5 +21,7 @@ export const ipc_launcherUpdateFoundEvent = makeEndpoint.renderer("launcherupdat
 
 export const ipc_launcherUpdateDownloadingEvent = makeEndpoint.renderer(
   "launcherupdate_download",
-  <{ progress: Progress }>_,
+  <{ progressPercent: number }>_,
 );
+
+export const ipc_launcherUpdateReadyEvent = makeEndpoint.renderer("launcherupdate_ready", <EmptyPayload>_);

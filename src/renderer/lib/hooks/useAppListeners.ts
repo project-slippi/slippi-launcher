@@ -9,7 +9,12 @@ import { ipc_consoleMirrorStatusUpdatedEvent, ipc_discoveredConsolesUpdatedEvent
 import { ipc_dolphinDownloadLogReceivedEvent } from "@dolphin/ipc";
 import { ipc_loadProgressUpdatedEvent, ipc_statsPageRequestedEvent } from "@replays/ipc";
 import { ipc_settingsUpdatedEvent } from "@settings/ipc";
-import { ipc_checkValidIso, ipc_launcherUpdateDownloadingEvent, ipc_launcherUpdateFoundEvent } from "common/ipc";
+import {
+  ipc_checkValidIso,
+  ipc_launcherUpdateDownloadingEvent,
+  ipc_launcherUpdateFoundEvent,
+  ipc_launcherUpdateReadyEvent,
+} from "common/ipc";
 import { IsoValidity } from "common/types";
 import log from "electron-log";
 import firebase from "firebase";
@@ -166,7 +171,12 @@ export const useAppListeners = () => {
   }, []);
 
   const setUpdateDownloadProgress = useAppStore((store) => store.setUpdateDownloadProgress);
-  ipc_launcherUpdateDownloadingEvent.renderer!.useEvent(async ({ progress }) => {
-    setUpdateDownloadProgress(progress);
+  ipc_launcherUpdateDownloadingEvent.renderer!.useEvent(async ({ progressPercent }) => {
+    setUpdateDownloadProgress(progressPercent);
+  }, []);
+
+  const setUpdateReady = useAppStore((store) => store.setUpdateReady);
+  ipc_launcherUpdateReadyEvent.renderer!.useEvent(async () => {
+    setUpdateReady(true);
   }, []);
 };
