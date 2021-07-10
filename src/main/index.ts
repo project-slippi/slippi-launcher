@@ -3,15 +3,10 @@ import { ipc_statsPageRequestedEvent } from "@replays/ipc";
 import { colors } from "common/colors";
 import { isDevelopment, isMac } from "common/constants";
 import { delay } from "common/delay";
-import {
-  ipc_installUpdate,
-  ipc_launcherUpdateDownloadCompleteEvent,
-  ipc_launcherUpdateDownloadingEvent,
-} from "common/ipc";
 import { app, BrowserWindow, Menu, shell } from "electron";
 import contextMenu from "electron-context-menu";
 import log from "electron-log";
-import { autoUpdater, ProgressInfo, UpdateInfo } from "electron-updater";
+import { autoUpdater } from "electron-updater";
 import get from "lodash/get";
 import last from "lodash/last";
 import path from "path";
@@ -93,23 +88,6 @@ function createMainWindow() {
 
   window.once("ready-to-show", () => {
     didFinishLoad = true;
-
-    // check for updates
-    autoUpdater.on("download-progress", async (progress: ProgressInfo) => {
-      if (progress.total !== 0) {
-        await ipc_launcherUpdateDownloadingEvent.main!.trigger({ progress: progress.percent.toFixed(0) });
-      }
-    });
-
-    autoUpdater.on("update-downloaded", async (info: UpdateInfo) => {
-      await ipc_launcherUpdateDownloadCompleteEvent.main!.trigger({ version: info.version });
-    });
-    ipc_installUpdate.main!.handle(async () => {
-      autoUpdater.quitAndInstall(false, true);
-      return {};
-    });
-    autoUpdater.checkForUpdatesAndNotify().catch(log.warn);
-
     window.show();
     window.focus();
   });
