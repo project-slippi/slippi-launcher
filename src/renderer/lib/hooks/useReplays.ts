@@ -1,5 +1,6 @@
 import { ipc_loadReplayFolder } from "@replays/ipc";
-import { FileLoadResult, FileResult, FolderResult, Progress } from "@replays/types";
+import { FileLoadResult, FileResult, FolderResult } from "@replays/types";
+import { Progress } from "common/types";
 import { produce } from "immer";
 import path from "path";
 import { useState } from "react";

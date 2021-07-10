@@ -13,3 +13,8 @@ export enum IsoValidity {
   UNKNOWN = "UNKNOWN",
   INVALID = "INVALID",
 }
+
+export interface Progress {
+  current: number;
+  total: number;
+}
