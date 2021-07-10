@@ -9,7 +9,6 @@ import DeleteOutline from "@material-ui/icons/DeleteOutline";
 import { SettingItem } from "./../containers/Settings/SettingItem";
 
 export interface PathInputAdditionProps {
-  paths: string[];
   placeholder?: string;
   value?: string;
   options?: OpenDialogOptions;
@@ -18,7 +17,7 @@ export interface PathInputAdditionProps {
 }
 
 export const PathInputAddition = React.forwardRef<HTMLInputElement, PathInputAdditionProps>((props, ref) => {
-  const { value, placeholder, options, disabled } = props;
+  const { placeholder, options, disabled } = props;
   const onClick = async () => {
     const result = await remote.dialog.showOpenDialog({ properties: ["openFile"], ...options });
     const res = result.filePaths;
@@ -29,16 +28,20 @@ export const PathInputAddition = React.forwardRef<HTMLInputElement, PathInputAdd
 
   const deleteRow = async () => {
     console.log("deleting existing row");
+    setAdditionalDirs(["deleted"]);
+    console.info({ additionalDirs });
   };
 
   const addRow = async () => {
-    console.log("adding new row");
+    setAdditionalDirs((additionalDirs) => [...additionalDirs, "test!"]);
+    console.info({ additionalDirs });
   };
 
   const [additionalDirs, setAdditionalDirs] = React.useState([""]);
 
   const Row = React.useCallback(
     (props: { style?: React.CSSProperties; index: number }) => {
+      const index = additionalDirs[props.index];
       return (
         <InputRowDiv>
           <InputContainer>
