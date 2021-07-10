@@ -1,3 +1,4 @@
+import { Progress } from "common/types";
 import { ipc_checkDesktopAppDolphin, ipc_dolphinDownloadFinishedEvent, ipc_downloadDolphin } from "dolphin/ipc";
 import log from "electron-log";
 import firebase from "firebase";
@@ -15,10 +16,14 @@ export const useAppStore = create(
     {
       initialized: false,
       logMessage: "",
+      updateVersion: "",
+      updateDownloadProgress: { current: 0, total: 0 } as Progress,
     },
     (set) => ({
       setInitialized: (initialized: boolean) => set({ initialized }),
       setLogMessage: (logMessage: string) => set({ logMessage }),
+      setUpdateVersion: (updateVersion: string) => set({ updateVersion }),
+      setUpdateDownloadProgress: (updateDownloadProgress: Progress) => set({ updateDownloadProgress }),
     }),
   ),
 );
