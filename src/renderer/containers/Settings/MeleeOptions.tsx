@@ -12,7 +12,7 @@ import { IsoValidity } from "common/types";
 import React from "react";
 
 import { PathInput } from "@/components/PathInput";
-import { PathInputAddition } from "@/components/PathInputAddition";
+import { PathInputAddition as PathInputExtras } from "@/components/PathInputExtras";
 import { useIsoVerification } from "@/lib/hooks/useIsoVerification";
 import { useIsoPath, useLaunchMeleeOnPlay, useRootSlpPath, useSpectateSlpPath } from "@/lib/hooks/useSettings";
 
@@ -78,7 +78,7 @@ export const MeleeOptions: React.FC = () => {
           <FormControlLabel value={false} label="Launch Dolphin" control={<Radio />} />
         </RadioGroup>
       </SettingItem>
-      <SettingItem name="Replay Root Directories" description="The folders where your SLP replays are stored.">
+      <SettingItem name="Netplay SLP Directory" description="The folder where your SLP replays should be saved.">
         <PathInput
           value={replayDir}
           onSelect={setReplayDir}
@@ -87,8 +87,8 @@ export const MeleeOptions: React.FC = () => {
           }}
           placeholder="No folder set"
         />
-        <PathInputAddition />
       </SettingItem>
+      <PathInputExtras paths={["test1", "test2", "test3"]} />
       <SettingItem name="Spectator SLP Directory" description="The folder where spectated games should be saved.">
         <PathInput
           value={spectateDir}

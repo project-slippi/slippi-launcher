@@ -6,8 +6,10 @@ import { OpenDialogOptions, remote } from "electron";
 import Add from "@material-ui/icons/Add";
 import React from "react";
 import DeleteOutline from "@material-ui/icons/DeleteOutline";
+import { SettingItem } from "./../containers/Settings/SettingItem";
 
 export interface PathInputAdditionProps {
+  paths: string[];
   placeholder?: string;
   value?: string;
   options?: OpenDialogOptions;
@@ -33,41 +35,54 @@ export const PathInputAddition = React.forwardRef<HTMLInputElement, PathInputAdd
     console.log("adding new row");
   };
 
+  const [additionalDirs, setAdditionalDirs] = React.useState([""]);
+
+  const Row = React.useCallback(
+    (props: { style?: React.CSSProperties; index: number }) => {
+      return (
+        <InputRowDiv>
+          <InputContainer>
+            <CustomInput
+              inputRef={ref}
+              disabled={true}
+              value={additionalDirs[index]}
+              placeholder={placeholder}
+              endAdornment={
+                <Button
+                  onClick={deleteRow}
+                  style={{
+                    color: "grey",
+                  }}
+                >
+                  <DeleteOutline />
+                </Button>
+              }
+            />
+          </InputContainer>
+          <Button color="secondary" variant="contained" onClick={onClick} disabled={disabled}>
+            Select
+          </Button>
+        </InputRowDiv>
+      );
+    },
+    [additionalDirs],
+  );
+
   return (
     <Outer>
-      <InputRowDiv>
-        <InputContainer>
-          <CustomInput
-            inputRef={ref}
-            disabled={true}
-            value={value}
-            placeholder={placeholder}
-            endAdornment={
-              <Button
-                onClick={deleteRow}
-                style={{
-                  color: "grey",
-                }}
-              >
-                <DeleteOutline />
-              </Button>
-            }
-          />
-        </InputContainer>
-        <Button color="secondary" variant="contained" onClick={onClick} disabled={disabled}>
-          Select
-        </Button>
-      </InputRowDiv>
-      <AddAdditional>
-        <Button
-          style={{
-            minWidth: "25px",
-          }}
-          onClick={addRow}
-        >
-          <Add />
-        </Button>
-      </AddAdditional>
+      <SettingItem name="Additional SLP Directories" description="Additional folders where SLP replays are stored.">
+        <AddAdditional>
+          <Button
+            style={{
+              minWidth: "25px",
+            }}
+            onClick={addRow}
+          >
+            {Row}
+            <Add />
+          </Button>
+        </AddAdditional>
+      </SettingItem>
     </Outer>
   );
 });
