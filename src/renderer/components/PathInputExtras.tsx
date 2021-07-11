@@ -8,7 +8,8 @@ import React from "react";
 
 import { SettingItem } from "./../containers/Settings/SettingItem";
 import { PathInput } from "./PathInput";
-import { useExtraSlpPaths } from "@/lib/hooks/useSettings";
+import { useRootSlpPath, useExtraSlpPaths } from "@/lib/hooks/useSettings";
+import { useToasts } from "react-toast-notifications";
 
 export interface PathInputExtrasProps {
   placeholder?: string;
@@ -22,6 +23,9 @@ export const PathInputExtras = React.forwardRef<HTMLInputElement, PathInputExtra
   const { placeholder } = props;
 
   const [additionalDirs, setAdditionalDirs] = useExtraSlpPaths();
+  const { addToast } = useToasts();
+
+  const rootPath = useRootSlpPath()[0];
 
   const deleteRow = async (index: number) => {
     const dirs = additionalDirs.filter((_, idx) => index !== idx);
@@ -33,9 +37,24 @@ export const PathInputExtras = React.forwardRef<HTMLInputElement, PathInputExtra
   };
 
   const setAdditionalDir = async (filePath: string, index: number) => {
-    const dirs = [...additionalDirs];
-    dirs[index] = filePath;
-    setAdditionalDirs(dirs);
+    if (
+      additionalDirs
+        .concat(rootPath)
+        .filter(Boolean)
+        .filter((dir) => {
+          return filePath.startsWith(dir);
+        }).length > 0
+    ) {
+      addToast("That directory is already included", {
+        appearance: "info",
+        autoDismiss: true,
+        autoDismissTimeout: 3000,
+      });
+    } else {
+      const dirs = [...additionalDirs];
+      dirs[index] = filePath;
+      setAdditionalDirs(dirs);
+    }
   };
 
   const Row = additionalDirs.map((dir, index) => {
@@ -78,14 +97,7 @@ export const PathInputExtras = React.forwardRef<HTMLInputElement, PathInputExtra
             }}
             onClick={addRow}
           >
-            {additionalDirs.slice(0, -1).includes(additionalDirs[additionalDirs.length - 1]) ? (
-              <div>
-                <ErrorIcon style={{ color: "#FF5555" }} />
-                Duplicate directory
-              </div>
-            ) : (
-              <Add />
-            )}
+            <Add />
           </Button>
         </AddAdditional>
       </SettingItem>
