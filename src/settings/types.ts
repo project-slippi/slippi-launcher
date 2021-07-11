@@ -19,6 +19,7 @@ export type AppSettings = {
     isoPath: string | null;
     rootSlpPath: string;
     spectateSlpPath: string;
+    extraSlpPaths: string[];
     netplayDolphinPath: string;
     playbackDolphinPath: string;
     launchMeleeOnPlay: boolean;

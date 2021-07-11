@@ -9,6 +9,8 @@ export const ipc_setRootSlpPath = makeEndpoint.main("setRootSlpPath", <{ path: s
 
 export const ipc_setSpectateSlpPath = makeEndpoint.main("setSpectateSlpPath", <{ path: string }>_, <SuccessPayload>_);
 
+export const ipc_setExtraSlpPaths = makeEndpoint.main("setExtraSlpPaths", <{ paths: string[] }>_, <SuccessPayload>_);
+
 export const ipc_setNetplayDolphinPath = makeEndpoint.main(
   "setNetplayDolphinPath",
   <{ path: string }>_,

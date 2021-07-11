@@ -8,6 +8,7 @@ import React from "react";
 
 import { SettingItem } from "./../containers/Settings/SettingItem";
 import { PathInput } from "./PathInput";
+import { useExtraSlpPaths } from "@/lib/hooks/useSettings";
 
 export interface PathInputExtrasProps {
   placeholder?: string;
@@ -20,7 +21,7 @@ export interface PathInputExtrasProps {
 export const PathInputExtras = React.forwardRef<HTMLInputElement, PathInputExtrasProps>((props) => {
   const { placeholder } = props;
 
-  const [additionalDirs, setAdditionalDirs] = React.useState([] as string[]);
+  const [additionalDirs, setAdditionalDirs] = useExtraSlpPaths();
 
   const deleteRow = async (index: number) => {
     const dirs = additionalDirs.filter((_, idx) => index !== idx);

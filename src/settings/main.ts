@@ -11,6 +11,7 @@ import {
   ipc_setPlaybackDolphinPath,
   ipc_setRootSlpPath,
   ipc_setSpectateSlpPath,
+  ipc_setExtraSlpPaths,
 } from "./ipc";
 import { settingsManager } from "./settingsManager";
 
@@ -35,6 +36,11 @@ ipc_setRootSlpPath.main!.handle(async ({ path }) => {
 
 ipc_setSpectateSlpPath.main!.handle(async ({ path }) => {
   await settingsManager.setSpectateSlpPath(path);
+  return { success: true };
+});
+
+ipc_setExtraSlpPaths.main!.handle(async ({ paths }) => {
+  await settingsManager.setExtraSlpPaths(paths);
   return { success: true };
 });
 
