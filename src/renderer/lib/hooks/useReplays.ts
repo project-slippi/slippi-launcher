@@ -78,7 +78,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
         subdirectories: [],
         collapsed: false,
       },
-      extraFolders: extraFolders.map(
+      extraFolders: extraFolders.filter(Boolean).map(
         (folder) =>
           ({
             name: path.basename(folder),
