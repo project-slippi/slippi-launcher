@@ -16,6 +16,7 @@ type StoreState = {
   progress: Progress | null;
   files: FileResult[];
   folders: FolderResult | null;
+  extraFolders: FolderResult[];
   currentRoot: string | null;
   currentFolder: string;
   fileErrorCount: number;
@@ -29,7 +30,7 @@ type StoreState = {
 };
 
 type StoreReducers = {
-  init: (rootFolder: string, forceReload?: boolean, currentFolder?: string) => Promise<void>;
+  init: (rootFolder: string, extraFolders: string[], forceReload?: boolean, currentFolder?: string) => Promise<void>;
   selectFile: (file: FileResult, index?: number | null, total?: number | null) => void;
   clearSelectedFile: () => void;
   removeFile: (filePath: string) => void;
@@ -46,6 +47,7 @@ const initialState: StoreState = {
   progress: null,
   files: [],
   folders: null,
+  extraFolders: [],
   currentRoot: null,
   currentFolder: useSettings.getState().settings.rootSlpPath,
   fileErrorCount: 0,
@@ -62,7 +64,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   // Set the initial state
   ...initialState,
 
-  init: async (rootFolder, forceReload, currentFolder) => {
+  init: async (rootFolder, extraFolders, forceReload, currentFolder) => {
     const { currentRoot, loadFolder, loadDirectoryList } = get();
     if (currentRoot === rootFolder && !forceReload) {
       return;
@@ -76,6 +78,15 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
         subdirectories: [],
         collapsed: false,
       },
+      extraFolders: extraFolders.map(
+        (folder) =>
+          ({
+            name: path.basename(folder),
+            fullPath: folder,
+            subdirectories: [],
+            collapsed: false,
+          } as FolderResult),
+      ),
     });
 
     await Promise.all([loadDirectoryList(currentFolder ?? rootFolder), loadFolder(currentFolder ?? rootFolder, true)]);
