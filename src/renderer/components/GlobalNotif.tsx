@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { jsx } from "@emotion/react";
+import { css, jsx } from "@emotion/react";
 import Button from "@material-ui/core/Button";
 import { ipc_installUpdate } from "common/ipc";
 import React from "react";
@@ -7,7 +7,7 @@ import React from "react";
 import { BasicFooter } from "@/components/Footer";
 import { useAppStore } from "@/lib/hooks/useApp";
 
-export const Footer: React.FC = () => {
+export const GlobalNotif: React.FC = () => {
   const updateVersion = useAppStore((store) => store.updateVersion);
   const updateProgress = useAppStore((store) => store.updateDownloadProgress);
   const showUpdateNotif = useAppStore((store) => store.updateReady);
@@ -17,7 +17,11 @@ export const Footer: React.FC = () => {
   };
 
   return (
-    <BasicFooter>
+    <BasicFooter
+      css={css`
+        height: fit-content;
+      `}
+    >
       {updateVersion !== "" &&
         !showUpdateNotif &&
         `Launcher update (${__VERSION__} -> ${updateVersion}) is downloading: ${updateProgress.toFixed(0)}% downloaded`}
