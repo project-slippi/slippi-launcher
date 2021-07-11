@@ -12,7 +12,7 @@ import { IsoValidity } from "common/types";
 import React from "react";
 
 import { PathInput } from "@/components/PathInput";
-import { PathInputAddition as PathInputExtras } from "@/components/PathInputExtras";
+import { PathInputExtras as PathInputExtras } from "@/components/PathInputExtras";
 import { useIsoVerification } from "@/lib/hooks/useIsoVerification";
 import { useIsoPath, useLaunchMeleeOnPlay, useRootSlpPath, useSpectateSlpPath } from "@/lib/hooks/useSettings";
 
@@ -88,7 +88,6 @@ export const MeleeOptions: React.FC = () => {
           placeholder="No folder set"
         />
       </SettingItem>
-      <PathInputExtras />
       <SettingItem name="Spectator SLP Directory" description="The folder where spectated games should be saved.">
         <PathInput
           value={spectateDir}
@@ -99,6 +98,7 @@ export const MeleeOptions: React.FC = () => {
           placeholder="No folder set"
         />
       </SettingItem>
+      <PathInputExtras />
     </div>
   );
 };

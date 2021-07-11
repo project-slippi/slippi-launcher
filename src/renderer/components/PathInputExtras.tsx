@@ -1,14 +1,14 @@
 import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
-import InputBase from "@material-ui/core/InputBase";
-import Paper from "@material-ui/core/Paper";
-import { OpenDialogOptions, remote } from "electron";
 import Add from "@material-ui/icons/Add";
-import React from "react";
 import DeleteOutline from "@material-ui/icons/DeleteOutline";
-import { SettingItem } from "./../containers/Settings/SettingItem";
+import { OpenDialogOptions } from "electron";
+import React from "react";
 
-export interface PathInputAdditionProps {
+import { SettingItem } from "./../containers/Settings/SettingItem";
+import { PathInput } from "./PathInput";
+
+export interface PathInputExtrasProps {
   placeholder?: string;
   value?: string;
   options?: OpenDialogOptions;
@@ -16,72 +16,69 @@ export interface PathInputAdditionProps {
   disabled?: boolean;
 }
 
-export const PathInputAddition = React.forwardRef<HTMLInputElement, PathInputAdditionProps>((props, ref) => {
-  const { placeholder, options, disabled } = props;
-  const onClick = async () => {
-    const result = await remote.dialog.showOpenDialog({ properties: ["openFile"], ...options });
-    const res = result.filePaths;
-    if (result.canceled || res.length === 0) {
-      return;
-    }
-  };
-
-  const deleteRow = async () => {
-    console.log("deleting existing row");
-    setAdditionalDirs(["deleted"]);
-    console.info({ additionalDirs });
-  };
-
-  const addRow = async () => {
-    setAdditionalDirs((additionalDirs) => [...additionalDirs, "test!"]);
-    console.info({ additionalDirs });
-  };
+export const PathInputExtras = React.forwardRef<HTMLInputElement, PathInputExtrasProps>((props) => {
+  const { placeholder } = props;
 
   const [additionalDirs, setAdditionalDirs] = React.useState([""]);
 
-  const Row = React.useCallback(
-    (props: { style?: React.CSSProperties; index: number }) => {
-      const index = additionalDirs[props.index];
-      return (
-        <InputRowDiv>
-          <InputContainer>
-            <CustomInput
-              inputRef={ref}
-              disabled={true}
-              value={additionalDirs[index]}
-              placeholder={placeholder}
-              endAdornment={
-                <Button
-                  onClick={deleteRow}
-                  style={{
-                    color: "grey",
-                  }}
-                >
-                  <DeleteOutline />
-                </Button>
-              }
-            />
-          </InputContainer>
-          <Button color="secondary" variant="contained" onClick={onClick} disabled={disabled}>
-            Select
-          </Button>
-        </InputRowDiv>
-      );
-    },
-    [additionalDirs],
-  );
+  const deleteRow = async (index: number) => {
+    const dirs = additionalDirs.filter((_, idx) => index !== idx);
+    if (dirs.length === 0) {
+      //dirs.push("");
+    }
+    setAdditionalDirs(dirs);
+  };
+
+  const addRow = async () => {
+    setAdditionalDirs([...additionalDirs, ""]);
+  };
+
+  const setAdditionalDir = async (filePath: string, index: number) => {
+    const dirs = [...additionalDirs];
+    dirs[index] = filePath;
+    setAdditionalDirs(dirs);
+  };
+
+  const Row = additionalDirs.map((dir, index) => {
+    return (
+      <InputRowDiv key={index}>
+        <PathInput
+          value={dir}
+          onSelect={(filePath) => setAdditionalDir(filePath, index)}
+          placeholder={placeholder}
+          options={{
+            properties: ["openDirectory"],
+          }}
+          endAdornment={
+            <Button
+              onClick={() => deleteRow(index)}
+              style={{
+                color: "grey",
+              }}
+            >
+              <DeleteOutline />
+            </Button>
+          }
+        />
+      </InputRowDiv>
+    );
+  });
 
   return (
     <Outer>
       <SettingItem name="Additional SLP Directories" description="Additional folders where SLP replays are stored.">
         <AddAdditional>
+          {...Row}
           <Button
+            disabled={
+              additionalDirs[additionalDirs.length - 1] === "" ||
+              additionalDirs.slice(0, -1).includes(additionalDirs[additionalDirs.length - 1])
+            }
             style={{
               minWidth: "25px",
             }}
             onClick={addRow}
           >
-            {Row}
             <Add />
           </Button>
         </AddAdditional>
@@ -96,34 +93,14 @@ const Outer = styled.div`
 `;
 
 const InputRowDiv = styled.div`
-  display: flex;
+  border: 0px dashed yellow;
   margin-top: 6px;
   margin-bottom: 6px;
 `;
 
-const InputContainer = styled(Paper)`
-  border: 0px solid red;
-  padding: 2px;
-  display: flex;
-  align-items: center;
-  width: 400;
-  flex: 1;
-  margin-right: 10px;
-  background-color: rgba(0, 0, 0, 0.7);
-`;
-
-const CustomInput = styled(InputBase)`
-  margin-left: 16px;
-  margin-right: 16px;
-  flex: 1;
-  font-weight: 300;
-  font-size: 14px;
-`;
-
 const AddAdditional = styled.div`
-  border: 0px solid purple;
+  border: 0px dashed purple;
   align-items: center;
   margin: 5px;
-  margin-left: 1%;
   margin-right: auto;
 `;
