@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
 import Add from "@material-ui/icons/Add";
+import ErrorIcon from "@material-ui/icons/Error";
 import DeleteOutline from "@material-ui/icons/DeleteOutline";
 import { OpenDialogOptions } from "electron";
 import React from "react";
@@ -19,13 +20,10 @@ export interface PathInputExtrasProps {
 export const PathInputExtras = React.forwardRef<HTMLInputElement, PathInputExtrasProps>((props) => {
   const { placeholder } = props;
 
-  const [additionalDirs, setAdditionalDirs] = React.useState([""]);
+  const [additionalDirs, setAdditionalDirs] = React.useState([] as string[]);
 
   const deleteRow = async (index: number) => {
     const dirs = additionalDirs.filter((_, idx) => index !== idx);
-    if (dirs.length === 0) {
-      //dirs.push("");
-    }
     setAdditionalDirs(dirs);
   };
 
@@ -79,7 +77,14 @@ export const PathInputExtras = React.forwardRef<HTMLInputElement, PathInputExtra
             }}
             onClick={addRow}
           >
-            <Add />
+            {additionalDirs.slice(0, -1).includes(additionalDirs[additionalDirs.length - 1]) ? (
+              <div>
+                <ErrorIcon style={{ color: "#FF5555" }} />
+                Duplicate directory
+              </div>
+            ) : (
+              <Add />
+            )}
           </Button>
         </AddAdditional>
       </SettingItem>
