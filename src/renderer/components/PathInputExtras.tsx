@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
 import Add from "@material-ui/icons/Add";
-import ErrorIcon from "@material-ui/icons/Error";
 import DeleteOutline from "@material-ui/icons/DeleteOutline";
 import { OpenDialogOptions } from "electron";
 import React from "react";
@@ -29,11 +28,11 @@ export const PathInputExtras = React.forwardRef<HTMLInputElement, PathInputExtra
 
   const deleteRow = async (index: number) => {
     const dirs = additionalDirs.filter((_, idx) => index !== idx);
-    setAdditionalDirs(dirs);
+    void setAdditionalDirs(dirs);
   };
 
   const addRow = async () => {
-    setAdditionalDirs([...additionalDirs, ""]);
+    void setAdditionalDirs([...additionalDirs, ""]);
   };
 
   const setAdditionalDir = async (filePath: string, index: number) => {
@@ -53,7 +52,7 @@ export const PathInputExtras = React.forwardRef<HTMLInputElement, PathInputExtra
     } else {
       const dirs = [...additionalDirs];
       dirs[index] = filePath;
-      setAdditionalDirs(dirs);
+      void setAdditionalDirs(dirs);
     }
   };
 

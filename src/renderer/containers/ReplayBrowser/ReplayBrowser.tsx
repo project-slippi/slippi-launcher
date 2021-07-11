@@ -116,7 +116,7 @@ export const ReplayBrowser: React.FC = () => {
               <div style={{ position: "relative", minHeight: "100%" }}>
                 <FolderTreeNode {...folders} />
                 {extraFolders.map((folder) => {
-                  return <FolderTreeNode {...folder} />;
+                  return <FolderTreeNode {...folder} key={folder.name} />;
                 })}
                 {loading && (
                   <div
