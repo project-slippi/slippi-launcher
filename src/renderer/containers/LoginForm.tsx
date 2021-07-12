@@ -71,9 +71,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({ className, onSuccess, disa
       if (password !== confirmPassword) {
         throw new Error("Passwords do not match");
       }
-      user = await signUp(email, displayName, password);
+      user = await signUp(email.trim(), displayName, password);
     } else {
-      user = await login(email, password);
+      user = await login(email.trim(), password);
     }
     if (user) {
       // Clear the form
