@@ -118,7 +118,7 @@ export function setupListeners() {
 
   ipc_installUpdate.main!.handle(async () => {
     autoUpdater.quitAndInstall(false, true);
-    return {};
+    return { success: true };
   });
   autoUpdater.checkForUpdatesAndNotify().catch(log.warn);
 }
