@@ -17,6 +17,9 @@ import { fileExists } from "./fileExists";
 import { setupListeners } from "./listeners";
 import { menu } from "./menu";
 
+// use console.log as log.debug for easier access to debug logging
+console.log = log.debug;
+
 // Check for updates
 autoUpdater.logger = log;
 autoUpdater.checkForUpdatesAndNotify().catch(log.warn);
