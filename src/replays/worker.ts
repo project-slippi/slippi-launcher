@@ -4,7 +4,6 @@
 
 // TODO: Make electron-log work somehow
 import { SlippiGame, StatsType } from "@slippi/slippi-js";
-import { Progress } from "common/types";
 import _ from "lodash";
 import { ModuleMethods } from "threads/dist/types/master";
 import { Observable, Subject } from "threads/observable";
@@ -12,7 +11,7 @@ import { expose } from "threads/worker";
 
 import { loadFile } from "./loadFile";
 import { loadFolder } from "./loadFolder";
-import { FileLoadResult, FileResult } from "./types";
+import { FileLoadResult, FileResult, Progress } from "./types";
 
 export interface Methods {
   destroyWorker: () => Promise<void>;

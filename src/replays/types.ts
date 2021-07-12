@@ -20,3 +20,8 @@ export interface FileLoadResult {
   files: FileResult[];
   fileErrorCount: number;
 }
+
+export interface Progress {
+  current: number;
+  total: number;
+}

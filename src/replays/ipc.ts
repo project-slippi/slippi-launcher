@@ -1,8 +1,7 @@
 import { StatsType } from "@slippi/slippi-js";
-import { Progress } from "common/types";
 
 import { _, makeEndpoint } from "../ipc";
-import { FileLoadResult, FileResult } from "./types";
+import { FileLoadResult, FileResult, Progress } from "./types";
 
 // Handlers
 
