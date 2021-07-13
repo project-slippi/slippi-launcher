@@ -6,9 +6,20 @@ import "@console/main";
 
 import { settingsManager } from "@settings/settingsManager";
 import { isDevelopment } from "common/constants";
-import { ipc_checkValidIso, ipc_copyLogsToClipboard, ipc_deleteDesktopAppPath, ipc_fetchNewsFeed } from "common/ipc";
+import {
+  ipc_checkValidIso,
+  ipc_copyLogsToClipboard,
+  ipc_deleteDesktopAppPath,
+  ipc_fetchNewsFeed,
+  ipc_installUpdate,
+  ipc_launcherUpdateDownloadingEvent,
+  ipc_launcherUpdateFoundEvent,
+  ipc_launcherUpdateReadyEvent,
+} from "common/ipc";
 import { IsoValidity } from "common/types";
 import { app, clipboard, ipcMain, nativeImage } from "electron";
+import log from "electron-log";
+import { autoUpdater, ProgressInfo, UpdateInfo } from "electron-updater";
 import * as fs from "fs-extra";
 import os from "os";
 import osName from "os-name";
@@ -85,4 +96,29 @@ export function setupListeners() {
 
     return { success: true };
   });
+
+  // check for updates
+  autoUpdater.on("update-available", (info: UpdateInfo) => {
+    ipc_launcherUpdateFoundEvent.main!.trigger({ version: info.version }).catch(log.warn);
+  });
+
+  autoUpdater.on("download-progress", async (progress: ProgressInfo) => {
+    if (progress.total !== 0) {
+      ipc_launcherUpdateDownloadingEvent
+        .main!.trigger({
+          progressPercent: progress.percent,
+        })
+        .catch(log.warn);
+    }
+  });
+
+  autoUpdater.on("update-downloaded", () => {
+    ipc_launcherUpdateReadyEvent.main!.trigger({}).catch(log.warn);
+  });
+
+  ipc_installUpdate.main!.handle(async () => {
+    autoUpdater.quitAndInstall(false, true);
+    return { success: true };
+  });
+  autoUpdater.checkForUpdatesAndNotify().catch(log.warn);
 }

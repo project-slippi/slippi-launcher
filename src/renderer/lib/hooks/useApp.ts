@@ -15,10 +15,16 @@ export const useAppStore = create(
     {
       initialized: false,
       logMessage: "",
+      updateVersion: "",
+      updateDownloadProgress: 0,
+      updateReady: false,
     },
     (set) => ({
       setInitialized: (initialized: boolean) => set({ initialized }),
       setLogMessage: (logMessage: string) => set({ logMessage }),
+      setUpdateVersion: (updateVersion: string) => set({ updateVersion }),
+      setUpdateDownloadProgress: (updateDownloadProgress: number) => set({ updateDownloadProgress }),
+      setUpdateReady: (updateReady: boolean) => set({ updateReady }),
     }),
   ),
 );

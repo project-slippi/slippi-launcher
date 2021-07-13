@@ -22,7 +22,7 @@ console.log = log.debug;
 
 // Check for updates
 autoUpdater.logger = log;
-autoUpdater.checkForUpdatesAndNotify().catch(log.warn);
+autoUpdater.autoInstallOnAppQuit = false;
 
 // Set the menu options
 Menu.setApplicationMenu(menu);
