@@ -14,11 +14,6 @@ body {
   color: white;
 }
 
-/* This fixes some strange margin behaviour with material-ui margins */
-#app {
-  display: inline-block;
-}
-
 *,
 *::after,
 *::before {
