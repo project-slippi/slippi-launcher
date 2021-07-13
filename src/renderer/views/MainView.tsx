@@ -5,7 +5,7 @@ import SlowMotionVideoIcon from "@material-ui/icons/SlowMotionVideo";
 import React from "react";
 import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
 
-import { GlobalNotif } from "@/components/GlobalNotif";
+import { PersistentNotification } from "@/components/PersistentNotification";
 import { PrivateRoute } from "@/components/PrivateRoute";
 import { Console } from "@/containers/Console";
 import { Header } from "@/containers/Header";
@@ -84,7 +84,7 @@ export const MainView: React.FC = () => {
         </Switch>
       </div>
       <LoginDialog />
-      <GlobalNotif />
+      <PersistentNotification />
     </div>
   );
 };
