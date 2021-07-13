@@ -1,7 +1,7 @@
 import { dolphinManager } from "@dolphin/manager";
 import { ipc_statsPageRequestedEvent } from "@replays/ipc";
 import { colors } from "common/colors";
-import { isDevelopment, isMac } from "common/constants";
+import { isDevelopment } from "common/constants";
 import { delay } from "common/delay";
 import { app, BrowserWindow, Menu, shell } from "electron";
 import contextMenu from "electron-context-menu";
@@ -102,7 +102,7 @@ function createMainWindow() {
 
 // quit application when all windows are closed
 app.on("window-all-closed", () => {
-    app.quit();
+  app.quit();
 });
 
 app.on("activate", () => {
