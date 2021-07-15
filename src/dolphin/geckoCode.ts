@@ -192,3 +192,14 @@ export function addGeckoCode(rawGecko: string, codes: GeckoCode[]) {
     return false;
   }
 }
+
+export function removeGeckoCode(geckoCodeName: string, codes: GeckoCode[]) {
+  return codes.filter((code) => code.name !== geckoCodeName);
+}
+
+export function geckoCodeToRaw(code: GeckoCode) {
+  let rawGecko = makeGeckoCodeTitle(code);
+  code.notes.forEach((line) => (rawGecko = rawGecko.concat("\n", `* ${line}`)));
+  code.codeLines.forEach((line) => (rawGecko = rawGecko.concat("\n", line)));
+  return rawGecko;
+}

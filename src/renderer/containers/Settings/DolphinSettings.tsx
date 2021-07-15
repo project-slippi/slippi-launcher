@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { addGeckoCode, GeckoCode } from "@dolphin/geckoCode";
+import { addGeckoCode, GeckoCode, removeGeckoCode, geckoCodeToRaw } from "@dolphin/geckoCode";
 import {
   ipc_clearDolphinCache,
   ipc_configureDolphin,
@@ -10,13 +10,16 @@ import {
   ipc_updateGeckos,
 } from "@dolphin/ipc";
 import { DolphinLaunchType } from "@dolphin/types";
+import AssignmentIcon from "@material-ui/icons/Assignment";
 import { css, jsx } from "@emotion/react";
 import { Box, Tab, Tabs } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import DeleteIcon from "@material-ui/icons/Delete";
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
+import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -121,6 +124,16 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
                 }}
               />
               <ListItemText primary={gecko.name} />
+              <IconButton>
+                <AssignmentIcon onClick={() => navigator.clipboard.writeText(geckoCodeToRaw(gecko))} />
+              </IconButton>
+              <IconButton>
+                <DeleteIcon
+                  onClick={() => {
+                    setGeckoCodes(removeGeckoCode(gecko.name, geckoCodes));
+                  }}
+                />
+              </IconButton>
             </ListItem>
           ))
         )}
@@ -158,7 +171,6 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
     if (addGeckoCode(newGeckoCode, geckoCodes)) {
       setGeckoCodes([...geckoCodes]);
       void saveGeckos();
-      addToast(`${sysIni} updated`, { appearance: "success", autoDismiss: true });
       document.getElementById("geckoForm").reset();
     } else {
       addToast(`failed to write gecko`, { appearance: "error", autoDismiss: true });
@@ -168,6 +180,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   //create a blank ini file and write our user.ini file info to it
   const saveGeckos = async () => {
     await ipc_updateGeckos.renderer!.trigger({ codes: geckoCodes, iniName: sysIni, dolphinType: dolphinType });
+    addToast(`${sysIni} updated`, { appearance: "success", autoDismiss: true });
   };
 
   const handleTabChange = (event: React.ChangeEvent<unknown>, newValue: number) => {
