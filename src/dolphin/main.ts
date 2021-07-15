@@ -29,6 +29,7 @@ import { loadGeckoCodes, saveCodes } from "./geckoCode";
 import { IniFile } from "./iniFile";
 
 ipc_fetchGeckoCodes.main!.handle(async ({ dolphinType, iniName }) => {
+  console.log("fetching gecko codes...");
   const sysIniPath = path.join(await findSysFolder(dolphinType), "GameSettings", iniName);
   const userIniPath = path.join(await findUserFolder(dolphinType), "GameSettings", getUserIni(iniName));
   const sysIni = new IniFile();
@@ -41,14 +42,12 @@ ipc_fetchGeckoCodes.main!.handle(async ({ dolphinType, iniName }) => {
     fs.writeFile(userIniPath, "", (err) => console.log(err));
   }
   const gCodes = loadGeckoCodes(sysIni, userIni);
-  console.log(sysIniPath, userIniPath);
-  console.log(gCodes);
   return { codes: gCodes };
 });
 
 ipc_updateGeckos.main!.handle(async ({ codes, iniName, dolphinType }) => {
+  console.log("updating gecko codes...");
   const userIniPath = path.join(await findUserFolder(dolphinType), "GameSettings", getUserIni(iniName));
-  console.log(codes);
   const userIni = new IniFile();
   if (await fs.pathExists(userIniPath)) {
     await userIni.load(userIniPath, false);
@@ -62,8 +61,8 @@ ipc_updateGeckos.main!.handle(async ({ codes, iniName, dolphinType }) => {
 });
 
 ipc_fetchSysInis.main!.handle(async ({ dolphinType }) => {
+  console.log("fetching sys inis...");
   const sysIniFolderPath = path.join(await findSysFolder(dolphinType), "GameSettings");
-  console.log(sysIniFolderPath);
   const sysFilesArray = fs.readdirSync(sysIniFolderPath);
   return { sysInis: sysFilesArray };
 });
