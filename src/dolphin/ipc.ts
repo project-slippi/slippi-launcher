@@ -68,6 +68,13 @@ export const ipc_fetchSysInis = makeEndpoint.main(
   <{ dolphinType: DolphinLaunchType }>_,
   <{ sysInis: string[] }>_,
 );
+
+export const ipc_convertGeckoToRaw = makeEndpoint.main(
+  "convertGeckoToRaw",
+  <{ code: GeckoCode }>_,
+  <{ rawGecko: string }>_,
+);
+
 // Events
 
 export const ipc_dolphinDownloadFinishedEvent = makeEndpoint.renderer(

@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { addGeckoCode, GeckoCode, removeGeckoCode, geckoCodeToRaw } from "@dolphin/geckoCode";
+import { addGeckoCode, GeckoCode, removeGeckoCode, geckoCodeToRaw, saveCodes } from "@dolphin/geckoCode";
 import {
   ipc_clearDolphinCache,
   ipc_configureDolphin,
@@ -8,6 +8,7 @@ import {
   ipc_fetchGeckoCodes,
   ipc_fetchSysInis,
   ipc_updateGeckos,
+  ipc_convertGeckoToRaw,
 } from "@dolphin/ipc";
 import { DolphinLaunchType } from "@dolphin/types";
 import AssignmentIcon from "@material-ui/icons/Assignment";
@@ -75,7 +76,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   const [tabValue, setTabValue] = React.useState(0);
   const [geckoFormOpen, setGeckoFormOpen] = React.useState(false);
   const [newGeckoCode, setNewGeckoCode] = React.useState("");
-  const [geckoCodes, setGeckoCodes] = React.useState([]);
+  const [geckoCodes, setGeckoCodes] = React.useState<GeckoCode[]>([]);
   const [geckoCheckboxes, setGeckoCheckboxes] = React.useState(<div />);
   const [iniSelect, setIniSelect] = React.useState(<div />);
   const [sysIni, setSysIni] = React.useState("");
@@ -98,7 +99,12 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
       setIniSelect(iniList);
       if (sysFilesArray) {
         setSysIni(sysFilesArray[0]);
-        setGeckoCodes((await fetchGeckoCodesHandler(sysFilesArray[0])).result?.codes);
+        const codes = (await fetchGeckoCodesHandler(sysFilesArray[0])).result?.codes;
+        if (codes) {
+          setGeckoCodes(codes);
+        } else {
+          setGeckoCodes([]);
+        }
       }
     })();
   }, [dolphinPath, geckoFormOpen]);
@@ -122,7 +128,12 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
               />
               <ListItemText primary={gecko.name} />
               <IconButton>
-                <AssignmentIcon onClick={() => navigator.clipboard.writeText(geckoCodeToRaw(gecko))} />
+                <AssignmentIcon
+                  onClick={async () => {
+                    const rawGecko = (await convertGeckoCodeToRawHandler(gecko)).result?.rawGecko;
+                    navigator.clipboard.writeText(rawGecko !== undefined ? rawGecko : "");
+                  }}
+                />
               </IconButton>
               <IconButton>
                 <DeleteIcon
@@ -171,6 +182,10 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
     return await ipc_fetchGeckoCodes.renderer!.trigger({ dolphinType: dolphinType, iniName: iniFileName });
   };
 
+  const convertGeckoCodeToRawHandler = async (gCode: GeckoCode) => {
+    return await ipc_convertGeckoToRaw.renderer!.trigger({ code: gCode });
+  };
+
   const saveGeckos = async () => {
     await ipc_updateGeckos.renderer!.trigger({ codes: geckoCodes, iniName: sysIni, dolphinType: dolphinType });
     addToast(`${sysIni} updated`, { appearance: "success", autoDismiss: true });
@@ -192,7 +207,12 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   };
 
   const handleIniChange = async ({ target: { value } }) => {
-    setGeckoCodes((await fetchGeckoCodesHandler(value)).result?.codes);
+    const codes = (await fetchGeckoCodesHandler(value)).result?.codes;
+    if (codes) {
+      setGeckoCodes(codes);
+    } else {
+      setGeckoCodes([]);
+    }
     setSysIni(value);
   };
 

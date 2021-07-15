@@ -20,12 +20,13 @@ import {
   ipc_storePlayKeyFile,
   ipc_updateGeckos,
   ipc_viewSlpReplay,
+  ipc_convertGeckoToRaw,
 } from "./ipc";
 import { dolphinManager } from "./manager";
 import { deletePlayKeyFile, findPlayKey, writePlayKeyFile } from "./playkey";
 import { DolphinLaunchType } from "./types";
 import { findDolphinExecutable, updateBootToCssCode, findSysFolder, findUserFolder, getUserIni } from "./util";
-import { loadGeckoCodes, saveCodes } from "./geckoCode";
+import { loadGeckoCodes, saveCodes, geckoCodeToRaw } from "./geckoCode";
 import { IniFile } from "./iniFile";
 
 ipc_fetchGeckoCodes.main!.handle(async ({ dolphinType, iniName }) => {
@@ -65,6 +66,12 @@ ipc_fetchSysInis.main!.handle(async ({ dolphinType }) => {
   const sysIniFolderPath = path.join(await findSysFolder(dolphinType), "GameSettings");
   const sysFilesArray = await fs.readdir(sysIniFolderPath);
   return { sysInis: sysFilesArray };
+});
+
+ipc_convertGeckoToRaw.main!.handle(async ({ code }) => {
+  console.log("converting gecko code to raw...");
+  const raw = geckoCodeToRaw(code);
+  return { rawGecko: raw };
 });
 
 ipc_downloadDolphin.main!.handle(async () => {
