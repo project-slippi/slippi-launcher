@@ -81,7 +81,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   const [sysIni, setSysIni] = React.useState("");
 
   React.useEffect(() => {
-    (async () => {
+    void (async () => {
       const sysFilesArray = (await fetchSysInisHandler()).result?.sysInis;
       const iniList =
         !sysFilesArray || sysFilesArray.length === 0 ? (

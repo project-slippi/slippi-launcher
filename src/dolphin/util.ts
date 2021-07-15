@@ -184,7 +184,3 @@ export function getUserIni(sysIniName: string) {
     }
   }
 }
-
-export function foo() {
-  console.log("hello");
-}

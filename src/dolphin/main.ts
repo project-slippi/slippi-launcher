@@ -63,7 +63,7 @@ ipc_updateGeckos.main!.handle(async ({ codes, iniName, dolphinType }) => {
 ipc_fetchSysInis.main!.handle(async ({ dolphinType }) => {
   console.log("fetching sys inis...");
   const sysIniFolderPath = path.join(await findSysFolder(dolphinType), "GameSettings");
-  const sysFilesArray = fs.readdirSync(sysIniFolderPath);
+  const sysFilesArray = await fs.readdir(sysIniFolderPath);
   return { sysInis: sysFilesArray };
 });
 
