@@ -41,10 +41,9 @@ import { IniFile } from "./iniFile";
 ipc_fetchGeckoCodes.main!.handle(async ({ dolphinType, iniName }) => {
   console.log("fetching gecko codes...");
   const gCodes = await loadCodes(dolphinType, iniName);
-  let tCodes: TruncGeckoCode[];
-  tCodes = [];
+  const tCodes: TruncGeckoCode[] = [];
   gCodes.forEach((gCode) => {
-    let tCode: TruncGeckoCode = {
+    const tCode: TruncGeckoCode = {
       name: gCode.name,
       enabled: gCode.enabled,
       userDefined: gCode.userDefined,

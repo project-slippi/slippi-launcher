@@ -134,7 +134,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
                 <AssignmentIcon
                   onClick={async () => {
                     const rawGecko = (await convertGeckoCodeToRawHandler(gecko.name)).result?.rawGecko;
-                    navigator.clipboard.writeText(rawGecko !== undefined ? rawGecko : "");
+                    await navigator.clipboard.writeText(rawGecko !== undefined ? rawGecko : "");
                     addToast(`Copied "${gecko.name}" To Clipboard`, { appearance: "success", autoDismiss: true });
                   }}
                 />
@@ -144,7 +144,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
                   <DeleteIcon
                     onClick={() => {
                       if (window.confirm(`Are You Sure You Want To Delete "${gecko.name}"?`)) {
-                        deleteGeckoHandler(gecko.name);
+                        await deleteGeckoHandler(gecko.name);
                       }
                     }}
                   />
@@ -224,14 +224,14 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
     e.preventDefault();
     const gCode = makeGeckoCodeFromRaw(newGeckoCodeRaw);
     if (gCode.name.length > 0) {
-      let tCode: TruncGeckoCode = {
+      const tCode: TruncGeckoCode = {
         name: gCode.name,
         enabled: gCode.enabled,
         userDefined: gCode.userDefined,
       };
       geckoCodes.push(tCode);
       setGeckoCodes([...geckoCodes]);
-      addGeckoCodeHandler(gCode);
+      await addGeckoCodeHandler(gCode);
       document.getElementById("geckoForm").reset();
     } else {
       addToast(`failed to write gecko`, { appearance: "error", autoDismiss: true });
