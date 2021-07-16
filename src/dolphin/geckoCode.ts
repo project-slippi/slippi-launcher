@@ -10,6 +10,12 @@ export interface GeckoCode {
   userDefined: boolean;
 }
 
+export interface TruncGeckoCode {
+  name: string;
+  enabled: boolean;
+  userDefined: boolean;
+}
+
 // this is very similar to LoadCodes in GeckoCodeConfig.cpp, but skips the address and data because we don't need them
 export function loadGeckoCodes(globalIni: IniFile, localIni?: IniFile): GeckoCode[] {
   const gcodes: GeckoCode[] = [];
@@ -140,7 +146,7 @@ export function saveCodes(iniFile: IniFile, codes: GeckoCode[]) {
   iniFile.setLines("Gecko", lines);
 }
 
-export function addGeckoCode(rawGecko: string, codes: GeckoCode[]) {
+export function makeGeckoCodeFromRaw(rawGecko: string) {
   const rawGeckoLines = rawGecko.split("\n");
   let newCode: GeckoCode = {
     name: "",
@@ -157,9 +163,6 @@ export function addGeckoCode(rawGecko: string, codes: GeckoCode[]) {
     switch (line[0]) {
       // code name
       case "$": {
-        if (newCode.name.length > 0) {
-          codes.push(newCode);
-        }
         line = line.slice(1); // cut out the $
 
         const creatorMatch = line.match(/\[(.*?)\]/); // searches for brackets, catches anything inside them
@@ -168,7 +171,7 @@ export function addGeckoCode(rawGecko: string, codes: GeckoCode[]) {
 
         newCode = {
           ...newCode,
-          name: name,
+          name: name.trim(),
           creator: creator,
           notes: [],
           codeLines: [],
@@ -185,12 +188,7 @@ export function addGeckoCode(rawGecko: string, codes: GeckoCode[]) {
       }
     }
   });
-  if (newCode.name.length > 0) {
-    codes.push(newCode);
-    return true;
-  } else {
-    return false;
-  }
+  return newCode;
 }
 
 export function removeGeckoCode(geckoCodeName: string, codes: GeckoCode[]) {
@@ -202,4 +200,13 @@ export function geckoCodeToRaw(code: GeckoCode) {
   code.notes.forEach((line) => (rawGecko = rawGecko.concat("\n", `* ${line}`)));
   code.codeLines.forEach((line) => (rawGecko = rawGecko.concat("\n", line)));
   return rawGecko;
+}
+
+export function setEnabledDisabled(gCodes: GeckoCode[], tCodes: TruncGeckoCode[]) {
+  tCodes.forEach((tCode) => {
+    const gCodeIndex = gCodes.findIndex((gCode) => gCode.name === tCode.name);
+    if (gCodeIndex !== -1) {
+      gCodes[gCodeIndex].enabled = tCode.enabled;
+    }
+  });
 }

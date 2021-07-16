@@ -21,44 +21,45 @@ import {
   ipc_updateGeckos,
   ipc_viewSlpReplay,
   ipc_convertGeckoToRaw,
+  ipc_toggleGeckos,
+  ipc_addGeckoCode,
+  ipc_deleteGecko,
 } from "./ipc";
 import { dolphinManager } from "./manager";
 import { deletePlayKeyFile, findPlayKey, writePlayKeyFile } from "./playkey";
 import { DolphinLaunchType } from "./types";
-import { findDolphinExecutable, updateBootToCssCode, findSysFolder, findUserFolder, getUserIni } from "./util";
-import { loadGeckoCodes, saveCodes, geckoCodeToRaw } from "./geckoCode";
+import {
+  findDolphinExecutable,
+  updateBootToCssCode,
+  findSysFolder,
+  findUserFolder,
+  getUserIni,
+  loadCodes,
+} from "./util";
+import {
+  loadGeckoCodes,
+  saveCodes,
+  geckoCodeToRaw,
+  setEnabledDisabled,
+  TruncGeckoCode,
+  removeGeckoCode,
+} from "./geckoCode";
 import { IniFile } from "./iniFile";
 
 ipc_fetchGeckoCodes.main!.handle(async ({ dolphinType, iniName }) => {
   console.log("fetching gecko codes...");
-  const sysIniPath = path.join(await findSysFolder(dolphinType), "GameSettings", iniName);
-  const userIniPath = path.join(await findUserFolder(dolphinType), "GameSettings", getUserIni(iniName));
-  const sysIni = new IniFile();
-  await sysIni.load(sysIniPath, false);
-  const userIni = new IniFile();
-  if (await fs.pathExists(userIniPath)) {
-    await userIni.load(userIniPath, false);
-  } else {
-    //create the iniFile if it does not exist
-    fs.writeFile(userIniPath, "", (err) => console.log(err));
-  }
-  const gCodes = loadGeckoCodes(sysIni, userIni);
-  return { codes: gCodes };
-});
-
-ipc_updateGeckos.main!.handle(async ({ codes, iniName, dolphinType }) => {
-  console.log("updating gecko codes...");
-  const userIniPath = path.join(await findUserFolder(dolphinType), "GameSettings", getUserIni(iniName));
-  const userIni = new IniFile();
-  if (await fs.pathExists(userIniPath)) {
-    await userIni.load(userIniPath, false);
-  } else {
-    //create the iniFile if it does not exist
-    fs.writeFile(userIniPath, "", (err) => console.log(err));
-  }
-  saveCodes(userIni, codes);
-  userIni.save(userIniPath);
-  return { success: true };
+  const gCodes = await loadCodes(dolphinType, iniName);
+  let tCodes: TruncGeckoCode[];
+  tCodes = [];
+  gCodes.forEach((gCode) => {
+    let tCode: TruncGeckoCode = {
+      name: gCode.name,
+      enabled: gCode.enabled,
+      userDefined: gCode.userDefined,
+    };
+    tCodes.push(tCode);
+  });
+  return { tCodes: tCodes };
 });
 
 ipc_fetchSysInis.main!.handle(async ({ dolphinType }) => {
@@ -68,10 +69,55 @@ ipc_fetchSysInis.main!.handle(async ({ dolphinType }) => {
   return { sysInis: sysFilesArray };
 });
 
-ipc_convertGeckoToRaw.main!.handle(async ({ code }) => {
+ipc_convertGeckoToRaw.main!.handle(async ({ geckoCodeName, iniName, dolphinType }) => {
   console.log("converting gecko code to raw...");
-  const raw = geckoCodeToRaw(code);
-  return { rawGecko: raw };
+  console.log(dolphinType);
+  console.log(iniName);
+  const gCodes = await loadCodes(dolphinType, iniName);
+  const code = gCodes.find((gCode) => gCode.name === geckoCodeName);
+  console.log(gCodes);
+  console.log(geckoCodeName);
+  let rawGecko = "";
+  if (code !== undefined) {
+    rawGecko = geckoCodeToRaw(code);
+  }
+  return { rawGecko: rawGecko };
+});
+
+ipc_toggleGeckos.main!.handle(async ({ tCodes, iniName, dolphinType }) => {
+  console.log("toggling gecko codes...");
+  const gCodes = await loadCodes(dolphinType, iniName);
+  const userIniPath = path.join(await findUserFolder(dolphinType), "GameSettings", getUserIni(iniName));
+  const userIni = new IniFile();
+  await userIni.load(userIniPath, false);
+  setEnabledDisabled(gCodes, tCodes);
+  saveCodes(userIni, gCodes);
+  userIni.save(userIniPath);
+  return { success: true };
+});
+
+ipc_addGeckoCode.main!.handle(async ({ gCode, iniName, dolphinType }) => {
+  console.log("adding gecko code...");
+  const gCodes = await loadCodes(dolphinType, iniName);
+  gCodes.push(gCode);
+  const userIniPath = path.join(await findUserFolder(dolphinType), "GameSettings", getUserIni(iniName));
+  const userIni = new IniFile();
+  await userIni.load(userIniPath, false);
+  saveCodes(userIni, gCodes);
+  userIni.save(userIniPath);
+  return { success: true };
+});
+
+ipc_deleteGecko.main!.handle(async ({ geckoCodeName, iniName, dolphinType }) => {
+  console.log("deleting gecko code...");
+  let gCodes = await loadCodes(dolphinType, iniName);
+  gCodes = removeGeckoCode(geckoCodeName, gCodes);
+  const userIniPath = path.join(await findUserFolder(dolphinType), "GameSettings", getUserIni(iniName));
+  const userIni = new IniFile();
+  await userIni.load(userIniPath, false);
+  saveCodes(userIni, gCodes);
+  userIni.save(userIniPath);
+  return { success: true };
 });
 
 ipc_downloadDolphin.main!.handle(async () => {

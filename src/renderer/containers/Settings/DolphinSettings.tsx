@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { addGeckoCode, GeckoCode, removeGeckoCode, geckoCodeToRaw, saveCodes } from "@dolphin/geckoCode";
+import { makeGeckoCodeFromRaw, GeckoCode, removeGeckoCode, TruncGeckoCode } from "@dolphin/geckoCode";
 import {
   ipc_clearDolphinCache,
   ipc_configureDolphin,
@@ -9,6 +9,9 @@ import {
   ipc_fetchSysInis,
   ipc_updateGeckos,
   ipc_convertGeckoToRaw,
+  ipc_toggleGeckos,
+  ipc_addGeckoCode,
+  ipc_deleteGecko,
 } from "@dolphin/ipc";
 import { DolphinLaunchType } from "@dolphin/types";
 import AssignmentIcon from "@material-ui/icons/Assignment";
@@ -24,6 +27,7 @@ import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
+import LockIcon from "@material-ui/icons/Lock";
 import Select from "@material-ui/core/Select";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
@@ -76,12 +80,13 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   const [tabValue, setTabValue] = React.useState(0);
   const [geckoFormOpen, setGeckoFormOpen] = React.useState(false);
   const [newGeckoCode, setNewGeckoCode] = React.useState("");
-  const [geckoCodes, setGeckoCodes] = React.useState<GeckoCode[]>([]);
+  const [geckoCodes, setGeckoCodes] = React.useState<TruncGeckoCode[]>([]);
   const [geckoCheckboxes, setGeckoCheckboxes] = React.useState(<div />);
   const [iniSelect, setIniSelect] = React.useState(<div />);
   const [sysIni, setSysIni] = React.useState("");
 
   React.useEffect(() => {
+    console.log("fired");
     void (async () => {
       const sysFilesArray = (await fetchSysInisHandler()).result?.sysInis;
       const iniList =
@@ -99,7 +104,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
       setIniSelect(iniList);
       if (sysFilesArray) {
         setSysIni(sysFilesArray[0]);
-        const codes = (await fetchGeckoCodesHandler(sysFilesArray[0])).result?.codes;
+        const codes = (await fetchGeckoCodesHandler(sysFilesArray[0])).result?.tCodes;
         if (codes) {
           setGeckoCodes(codes);
         } else {
@@ -115,7 +120,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
         {!geckoCodes || geckoCodes.length === 0 ? (
           <ListItem>No Codes Found</ListItem>
         ) : (
-          geckoCodes.map((gecko: GeckoCode, i: number) => (
+          geckoCodes.map((gecko: TruncGeckoCode, i: number) => (
             <ListItem key={gecko.name} id={`checkbox-item-${i}`} dense>
               <Checkbox
                 id={`checkbox-${i}`}
@@ -130,18 +135,24 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
               <IconButton>
                 <AssignmentIcon
                   onClick={async () => {
-                    const rawGecko = (await convertGeckoCodeToRawHandler(gecko)).result?.rawGecko;
+                    const rawGecko = (await convertGeckoCodeToRawHandler(gecko.name)).result?.rawGecko;
                     navigator.clipboard.writeText(rawGecko !== undefined ? rawGecko : "");
                   }}
                 />
               </IconButton>
-              <IconButton>
-                <DeleteIcon
-                  onClick={() => {
-                    setGeckoCodes(removeGeckoCode(gecko.name, geckoCodes));
-                  }}
-                />
-              </IconButton>
+              {gecko.userDefined ? (
+                <IconButton>
+                  <DeleteIcon
+                    onClick={() => {
+                      if (window.confirm(`Are you sure you want to delete ${gecko.name}?`)) {
+                        deleteGeckoHandler(gecko.name);
+                      }
+                    }}
+                  />
+                </IconButton>
+              ) : (
+                <LockIcon />
+              )}
             </ListItem>
           ))
         )}
@@ -182,20 +193,46 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
     return await ipc_fetchGeckoCodes.renderer!.trigger({ dolphinType: dolphinType, iniName: iniFileName });
   };
 
-  const convertGeckoCodeToRawHandler = async (gCode: GeckoCode) => {
-    return await ipc_convertGeckoToRaw.renderer!.trigger({ code: gCode });
+  const convertGeckoCodeToRawHandler = async (geckoCodeName: string) => {
+    return await ipc_convertGeckoToRaw.renderer!.trigger({
+      geckoCodeName: geckoCodeName,
+      iniName: sysIni,
+      dolphinType: dolphinType,
+    });
   };
 
-  const saveGeckos = async () => {
-    await ipc_updateGeckos.renderer!.trigger({ codes: geckoCodes, iniName: sysIni, dolphinType: dolphinType });
+  const toggleGeckosHandler = async () => {
+    await ipc_toggleGeckos.renderer!.trigger({ tCodes: geckoCodes, iniName: sysIni, dolphinType: dolphinType });
+    addToast(`${sysIni} updated`, { appearance: "success", autoDismiss: true });
+  };
+
+  const addGeckoCodeHandler = async (gCode: GeckoCode) => {
+    await ipc_addGeckoCode.renderer!.trigger({ gCode: gCode, iniName: sysIni, dolphinType: dolphinType });
+    addToast(`${sysIni} updated`, { appearance: "success", autoDismiss: true });
+  };
+
+  const deleteGeckoHandler = async (geckoCodeName: string) => {
+    await ipc_deleteGecko.renderer!.trigger({
+      geckoCodeName: geckoCodeName,
+      iniName: sysIni,
+      dolphinType: dolphinType,
+    });
+    setGeckoCodes(geckoCodes.filter((code) => code.name !== geckoCodeName));
     addToast(`${sysIni} updated`, { appearance: "success", autoDismiss: true });
   };
 
   const writeGeckoCode = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (addGeckoCode(newGeckoCode, geckoCodes)) {
+    const gCode = makeGeckoCodeFromRaw(newGeckoCode);
+    if (gCode.name.length > 0) {
+      let tCode: TruncGeckoCode = {
+        name: gCode.name,
+        enabled: gCode.enabled,
+        userDefined: gCode.userDefined,
+      };
+      geckoCodes.push(tCode);
       setGeckoCodes([...geckoCodes]);
-      void saveGeckos();
+      addGeckoCodeHandler(gCode);
       document.getElementById("geckoForm").reset();
     } else {
       addToast(`failed to write gecko`, { appearance: "error", autoDismiss: true });
@@ -207,13 +244,14 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   };
 
   const handleIniChange = async ({ target: { value } }) => {
-    const codes = (await fetchGeckoCodesHandler(value)).result?.codes;
+    setSysIni(value);
+    const codes = (await fetchGeckoCodesHandler(value)).result?.tCodes;
+    console.log(await fetchGeckoCodesHandler(value));
     if (codes) {
       setGeckoCodes(codes);
     } else {
       setGeckoCodes([]);
     }
-    setSysIni(value);
   };
 
   const dolphinTypeName = capitalize(dolphinType);
@@ -324,7 +362,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           </TabPanel>
           <TabPanel value={tabValue} index={1}>
             {geckoCheckboxes}
-            <Button color="secondary" variant="outlined" fullWidth onClick={saveGeckos}>
+            <Button color="secondary" variant="outlined" fullWidth onClick={toggleGeckosHandler}>
               Save
             </Button>
           </TabPanel>
