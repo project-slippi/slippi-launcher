@@ -224,7 +224,9 @@ export class MirrorManager {
       log.info("[Mirroring] Connecting to OBS");
       await details.autoSwitcher.connect();
     }
-    await this._playFile("", ip);
+
+    const currentFile = details.fileWriter.getCurrentFilename() || "";
+    await this._playFile(currentFile, ip);
   }
 
   private async _playFile(filePath: string, playbackId: string) {
