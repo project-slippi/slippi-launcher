@@ -18,7 +18,6 @@ import {
   ipc_reinstallDolphin,
   ipc_removePlayKeyFile,
   ipc_storePlayKeyFile,
-  ipc_updateGeckos,
   ipc_viewSlpReplay,
   ipc_convertGeckoToRaw,
   ipc_toggleGeckos,
@@ -36,14 +35,7 @@ import {
   getUserIni,
   loadCodes,
 } from "./util";
-import {
-  loadGeckoCodes,
-  saveCodes,
-  geckoCodeToRaw,
-  setEnabledDisabled,
-  TruncGeckoCode,
-  removeGeckoCode,
-} from "./geckoCode";
+import { saveCodes, geckoCodeToRaw, setEnabledDisabledFromTCodes, TruncGeckoCode, removeGeckoCode } from "./geckoCode";
 import { IniFile } from "./iniFile";
 
 ipc_fetchGeckoCodes.main!.handle(async ({ dolphinType, iniName }) => {
@@ -71,12 +63,8 @@ ipc_fetchSysInis.main!.handle(async ({ dolphinType }) => {
 
 ipc_convertGeckoToRaw.main!.handle(async ({ geckoCodeName, iniName, dolphinType }) => {
   console.log("converting gecko code to raw...");
-  console.log(dolphinType);
-  console.log(iniName);
   const gCodes = await loadCodes(dolphinType, iniName);
   const code = gCodes.find((gCode) => gCode.name === geckoCodeName);
-  console.log(gCodes);
-  console.log(geckoCodeName);
   let rawGecko = "";
   if (code !== undefined) {
     rawGecko = geckoCodeToRaw(code);
@@ -90,7 +78,7 @@ ipc_toggleGeckos.main!.handle(async ({ tCodes, iniName, dolphinType }) => {
   const userIniPath = path.join(await findUserFolder(dolphinType), "GameSettings", getUserIni(iniName));
   const userIni = new IniFile();
   await userIni.load(userIniPath, false);
-  setEnabledDisabled(gCodes, tCodes);
+  setEnabledDisabledFromTCodes(gCodes, tCodes);
   saveCodes(userIni, gCodes);
   userIni.save(userIniPath);
   return { success: true };

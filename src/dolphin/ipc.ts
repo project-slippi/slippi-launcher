@@ -57,22 +57,10 @@ export const ipc_fetchGeckoCodes = makeEndpoint.main(
   <{ tCodes: TruncGeckoCode[] }>_,
 );
 
-export const ipc_addGeckoCode = makeEndpoint.main(
-  "addGeckoCode",
-  <{ gCode: GeckoCode; iniName: string; dolphinType: DolphinLaunchType }>_,
-  <SuccessPayload>_,
-);
-
 export const ipc_fetchSysInis = makeEndpoint.main(
   "fetchSysInis",
   <{ dolphinType: DolphinLaunchType }>_,
   <{ sysInis: string[] }>_,
-);
-
-export const ipc_convertGeckoToRaw = makeEndpoint.main(
-  "convertGeckoToRaw",
-  <{ geckoCodeName: string; iniName: string; dolphinType: DolphinLaunchType }>_,
-  <{ rawGecko: string }>_,
 );
 
 export const ipc_toggleGeckos = makeEndpoint.main(
@@ -85,6 +73,18 @@ export const ipc_deleteGecko = makeEndpoint.main(
   "deleteGecko",
   <{ geckoCodeName: string; iniName: string; dolphinType: DolphinLaunchType }>_,
   <SuccessPayload>_,
+);
+
+export const ipc_addGeckoCode = makeEndpoint.main(
+  "addGeckoCode",
+  <{ gCode: GeckoCode; iniName: string; dolphinType: DolphinLaunchType }>_,
+  <SuccessPayload>_,
+);
+
+export const ipc_convertGeckoToRaw = makeEndpoint.main(
+  "convertGeckoToRaw",
+  <{ geckoCodeName: string; iniName: string; dolphinType: DolphinLaunchType }>_,
+  <{ rawGecko: string }>_,
 );
 
 // Events

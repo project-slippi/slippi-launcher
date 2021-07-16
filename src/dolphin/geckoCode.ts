@@ -124,7 +124,7 @@ function makeGeckoCode(code: GeckoCode, lines: string[]) {
 
   lines.push(makeGeckoCodeTitle(code));
 
-  code.notes.forEach((line) => lines.push(`* ${line}`));
+  code.notes.forEach((line) => lines.push(`*${line}`));
 
   code.codeLines.forEach((line) => lines.push(line));
 }
@@ -197,12 +197,12 @@ export function removeGeckoCode(geckoCodeName: string, codes: GeckoCode[]) {
 
 export function geckoCodeToRaw(code: GeckoCode) {
   let rawGecko = makeGeckoCodeTitle(code);
-  code.notes.forEach((line) => (rawGecko = rawGecko.concat("\n", `* ${line}`)));
+  code.notes.forEach((line) => (rawGecko = rawGecko.concat("\n", `*${line}`)));
   code.codeLines.forEach((line) => (rawGecko = rawGecko.concat("\n", line)));
   return rawGecko;
 }
 
-export function setEnabledDisabled(gCodes: GeckoCode[], tCodes: TruncGeckoCode[]) {
+export function setEnabledDisabledFromTCodes(gCodes: GeckoCode[], tCodes: TruncGeckoCode[]) {
   tCodes.forEach((tCode) => {
     const gCodeIndex = gCodes.findIndex((gCode) => gCode.name === tCode.name);
     if (gCodeIndex !== -1) {

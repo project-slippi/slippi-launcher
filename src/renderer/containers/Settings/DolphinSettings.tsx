@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { makeGeckoCodeFromRaw, GeckoCode, removeGeckoCode, TruncGeckoCode } from "@dolphin/geckoCode";
+import { makeGeckoCodeFromRaw, GeckoCode, TruncGeckoCode } from "@dolphin/geckoCode";
 import {
   ipc_clearDolphinCache,
   ipc_configureDolphin,
@@ -7,7 +7,6 @@ import {
   ipc_reinstallDolphin,
   ipc_fetchGeckoCodes,
   ipc_fetchSysInis,
-  ipc_updateGeckos,
   ipc_convertGeckoToRaw,
   ipc_toggleGeckos,
   ipc_addGeckoCode,
@@ -79,14 +78,13 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   //vars for editing gecko codes
   const [tabValue, setTabValue] = React.useState(0);
   const [geckoFormOpen, setGeckoFormOpen] = React.useState(false);
-  const [newGeckoCode, setNewGeckoCode] = React.useState("");
+  const [newGeckoCodeRaw, setNewGeckoCodeRaw] = React.useState("");
   const [geckoCodes, setGeckoCodes] = React.useState<TruncGeckoCode[]>([]);
   const [geckoCheckboxes, setGeckoCheckboxes] = React.useState(<div />);
   const [iniSelect, setIniSelect] = React.useState(<div />);
   const [sysIni, setSysIni] = React.useState("");
 
   React.useEffect(() => {
-    console.log("fired");
     void (async () => {
       const sysFilesArray = (await fetchSysInisHandler()).result?.sysInis;
       const iniList =
@@ -137,6 +135,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
                   onClick={async () => {
                     const rawGecko = (await convertGeckoCodeToRawHandler(gecko.name)).result?.rawGecko;
                     navigator.clipboard.writeText(rawGecko !== undefined ? rawGecko : "");
+                    addToast(`Copied "${gecko.name}" To Clipboard`, { appearance: "success", autoDismiss: true });
                   }}
                 />
               </IconButton>
@@ -144,7 +143,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
                 <IconButton>
                   <DeleteIcon
                     onClick={() => {
-                      if (window.confirm(`Are you sure you want to delete ${gecko.name}?`)) {
+                      if (window.confirm(`Are You Sure You Want To Delete "${gecko.name}"?`)) {
                         deleteGeckoHandler(gecko.name);
                       }
                     }}
@@ -223,7 +222,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
 
   const writeGeckoCode = async (e: React.FormEvent) => {
     e.preventDefault();
-    const gCode = makeGeckoCodeFromRaw(newGeckoCode);
+    const gCode = makeGeckoCodeFromRaw(newGeckoCodeRaw);
     if (gCode.name.length > 0) {
       let tCode: TruncGeckoCode = {
         name: gCode.name,
@@ -246,7 +245,6 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   const handleIniChange = async ({ target: { value } }) => {
     setSysIni(value);
     const codes = (await fetchGeckoCodesHandler(value)).result?.tCodes;
-    console.log(await fetchGeckoCodesHandler(value));
     if (codes) {
       setGeckoCodes(codes);
     } else {
@@ -350,7 +348,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
                 variant="outlined"
                 margin="normal"
                 rows="18"
-                onChange={({ target: { value } }) => setNewGeckoCode(value)}
+                onChange={({ target: { value } }) => setNewGeckoCodeRaw(value)}
                 multiline
                 fullWidth
                 required
