@@ -59,13 +59,6 @@ function TabPanel(props: any) {
   );
 }
 
-const useStyles = makeStyles({
-  geckoDialog: {
-    display: "flex",
-    flexDirection: "column",
-  },
-});
-
 export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolphinType }) => {
   const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
 
@@ -167,7 +160,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           </Button>
         </div>
       </SettingItem>
-      <EditGeckoCodes dolphinType={dolphinType} />
+      <EditGeckoCodesForm dolphinType={dolphinType} />
     </div>
   );
 };
@@ -213,12 +206,18 @@ const ImportDolphinConfigForm: React.FC<{
   );
 };
 
-const EditGeckoCodes: React.FC<{
+const useStyles = makeStyles({
+  geckoDialog: {
+    display: "flex",
+    flexDirection: "column",
+  },
+});
+
+const EditGeckoCodesForm: React.FC<{
   dolphinType: DolphinLaunchType;
 }> = ({ dolphinType }) => {
   const { addToast } = useToasts();
   const classes = useStyles();
-  const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
   //vars for editing gecko codes
   const [tabValue, setTabValue] = React.useState(0);
   const [geckoFormOpen, setGeckoFormOpen] = React.useState(false);
@@ -254,7 +253,7 @@ const EditGeckoCodes: React.FC<{
         }
       }
     })();
-  }, [dolphinPath, geckoFormOpen]);
+  }, [geckoFormOpen]);
 
   React.useEffect(() => {
     const checkboxList = (
