@@ -255,6 +255,10 @@ export const useReplaySelection = () => {
         filesToToggle.push(files[i].fullPath);
       }
 
+      if (lastClickIndex > index) {
+        filesToToggle.reverse();
+      }
+
       if (isCurrentSelected) {
         toggleFiles(filesToToggle, "deselect");
       } else {
