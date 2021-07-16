@@ -142,7 +142,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
               {gecko.userDefined ? (
                 <IconButton>
                   <DeleteIcon
-                    onClick={() => {
+                    onClick={async () => {
                       if (window.confirm(`Are You Sure You Want To Delete "${gecko.name}"?`)) {
                         await deleteGeckoHandler(gecko.name);
                       }
