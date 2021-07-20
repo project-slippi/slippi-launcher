@@ -167,7 +167,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   },
 
   loadDirectoryList: async (folder?: string) => {
-    const { currentRoot, folders } = get();
+    const { currentRoot, folders, extraFolders } = get();
     const rootSlpPath = useSettings.getState().settings.rootSlpPath;
 
     let currentTree = folders;
@@ -190,7 +190,23 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
       }
     });
 
+    let newExtraFolders = await Promise.all(
+      extraFolders.map(async (rootFolder) => {
+        const newFolders = await produce(rootFolder, async (draft: FolderResult) => {
+          const pathToLoad = folder ?? rootSlpPath;
+          const child = findChild(draft, pathToLoad) ?? draft;
+          const childPaths = path.relative(child.fullPath, pathToLoad);
+          const childrenToExpand = childPaths ? childPaths.split(path.sep) : [];
+          if (child && child.subdirectories.length === 0) {
+            child.subdirectories = await generateSubFolderTree(child.fullPath, childrenToExpand);
+          }
+        });
+        return newFolders;
+      }),
+    );
+
     set({ folders: newFolders });
+    set({ extraFolders: newExtraFolders });
   },
 
   setScrollRowItem: (rowItem) => {
