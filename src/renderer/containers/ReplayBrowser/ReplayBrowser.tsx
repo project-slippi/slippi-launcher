@@ -39,7 +39,7 @@ export const ReplayBrowser: React.FC = () => {
   const clearSelectedFile = useReplays((store) => store.clearSelectedFile);
   const loading = useReplays((store) => store.loading);
   const currentFolder = useReplays((store) => store.currentFolder);
-  const folders = useReplays((store) => store.folders);
+  const netplaySlpFolder = useReplays((store) => store.netplaySlpFolder);
   const extraFolders = useReplays((store) => store.extraFolders);
   const selectedFiles = useReplays((store) => store.selectedFiles);
   const fileSelection = useReplaySelection();
@@ -91,7 +91,7 @@ export const ReplayBrowser: React.FC = () => {
     addToast(message, { appearance: "success", autoDismiss: true });
   };
 
-  if (folders === null) {
+  if (netplaySlpFolder === null) {
     return null;
   }
 
@@ -114,7 +114,7 @@ export const ReplayBrowser: React.FC = () => {
           leftSide={
             <List dense={true} style={{ flex: 1, padding: 0 }}>
               <div style={{ position: "relative", minHeight: "100%" }}>
-                <FolderTreeNode {...folders} />
+                <FolderTreeNode {...netplaySlpFolder} />
                 {extraFolders.map((folder) => {
                   return <FolderTreeNode {...folder} key={folder.name} />;
                 })}
