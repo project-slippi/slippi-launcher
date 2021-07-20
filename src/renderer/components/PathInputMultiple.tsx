@@ -79,20 +79,24 @@ export const PathInputMultiple = React.forwardRef<HTMLInputElement, PathInputMul
 
   return (
     <Outer>
-      <InputContainer>{Rows}</InputContainer>
+      {Rows.length > 0 ? <InputContainer>{Rows}</InputContainer> : ""}
       <ButtonGroup>
         <Button color="secondary" variant="contained" onClick={onAddClick} style={{ margin: "2.5px", padding: "0px" }}>
           Add
         </Button>
-        <Button
-          color="secondary"
-          variant="contained"
-          onClick={onRemoveClick}
-          disabled={checkboxSelections.indexOf(true) === -1}
-          style={{ margin: "2.5px", padding: "0px", paddingLeft: "10px", paddingRight: "10px" }}
-        >
-          Remove
-        </Button>
+        {Rows.length > 0 ? (
+          <Button
+            color="secondary"
+            variant="contained"
+            onClick={onRemoveClick}
+            disabled={checkboxSelections.indexOf(true) === -1}
+            style={{ margin: "2.5px", padding: "0px", paddingLeft: "10px", paddingRight: "10px" }}
+          >
+            Remove
+          </Button>
+        ) : (
+          ""
+        )}
       </ButtonGroup>
     </Outer>
   );
