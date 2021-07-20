@@ -6,6 +6,7 @@ import { OpenDialogOptions, remote } from "electron";
 import React from "react";
 import { Checkbox } from "./FormInputs/Checkbox";
 import { useState } from "react";
+import { useToasts } from "react-toast-notifications";
 
 export interface PathInputMultipleProps {
   updatePaths: (paths: string[]) => void;
@@ -18,6 +19,7 @@ export interface PathInputMultipleProps {
 
 export const PathInputMultiple = React.forwardRef<HTMLInputElement, PathInputMultipleProps>((props) => {
   const { paths, updatePaths, options } = props;
+  const { addToast } = useToasts();
 
   const onAddClick = async () => {
     const result = await remote.dialog.showOpenDialog({ properties: ["openFile"], ...options });
@@ -25,6 +27,16 @@ export const PathInputMultiple = React.forwardRef<HTMLInputElement, PathInputMul
     if (result.canceled || res.length === 0) {
       return;
     }
+
+    if (paths.indexOf(res[0]) !== -1) {
+      addToast("That directory is already included", {
+        appearance: "info",
+        autoDismiss: true,
+        autoDismissTimeout: 3000,
+      });
+      return;
+    }
+
     updateCheckboxSelections((arr) => {
       return [...arr, false];
     });

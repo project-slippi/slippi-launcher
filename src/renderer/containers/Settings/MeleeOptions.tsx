@@ -105,7 +105,7 @@ export const MeleeOptions: React.FC = () => {
           placeholder="No folder set"
         />
       </SettingItem>
-      <SettingItem name="Extra SLP Directories" description="The folders where other SLP replays are stored.">
+      <SettingItem name="Extra SLP Directories" description="The folders where any other SLP replays are stored.">
         <PathInputMultiple
           paths={replayDirs}
           updatePaths={setReplayDirs}
