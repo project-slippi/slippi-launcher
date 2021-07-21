@@ -438,5 +438,3 @@ export class BroadcastManager {
     }
   }
 }
-
-export const broadcastManager = new BroadcastManager();
