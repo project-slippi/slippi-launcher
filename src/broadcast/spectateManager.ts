@@ -24,7 +24,7 @@ export enum SpectateManagerEvent {
 
 interface BroadcastInfo {
   broadcastId: string;
-  cursor: string | number;
+  cursor: string;
   fileWriter: SlpFileWriter;
   gameStarted: boolean;
   dolphinId: string;
@@ -161,11 +161,13 @@ export class SpectateManager extends EventEmitter {
 
                 // Reconnect to all the broadcasts that we were already watching
                 Object.entries(this.broadcastInfo).forEach(([broadcastId, info]) => {
-                  const watchMsg = {
+                  const watchMsg: { type: string; broadcastId: string; startCursor?: string } = {
                     type: "watch-broadcast",
                     broadcastId,
-                    startCursor: info.cursor,
                   };
+                  if (info.cursor !== "") {
+                    watchMsg.startCursor = info.cursor;
+                  }
                   log.info(`[Spectate] Picking up broadcast ${broadcastId} starting at: ${info.cursor}`);
                   if (this.wsConnection) {
                     this.wsConnection.sendUTF(JSON.stringify(watchMsg));
@@ -297,7 +299,7 @@ export class SpectateManager extends EventEmitter {
 
     this.broadcastInfo[broadcastId] = {
       broadcastId,
-      cursor: -1,
+      cursor: "",
       fileWriter: slpFileWriter,
       gameStarted: false,
       dolphinId: dolphinPlaybackId,
