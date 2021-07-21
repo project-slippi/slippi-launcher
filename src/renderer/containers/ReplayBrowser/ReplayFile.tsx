@@ -69,7 +69,7 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
               background-color: ${selected ? "rgba(180, 130, 176, 0.1)" : "transparent"};
             `}
           >
-            {selected && <SelectedNumber>{selectedIndex + 1}</SelectedNumber>}
+            {selected && <SelectedNumber num={selectedIndex + 1} />}
             <div
               css={css`
                 display: flex;
@@ -228,19 +228,35 @@ const ReplayActionButton: React.FC<{
   );
 };
 
-const SelectedNumber = styled.div`
-  position: absolute;
-  left: 50%;
-  line-height: 50px;
-  width: 50px;
-  height: 50px;
-  background-color: rgba(255, 255, 255, 0.9);
-  color: black;
-  mix-blend-mode: color-dodge;
-  font-weight: bold;
-  font-size: 30px;
-  border-radius: 50%;
-  text-align: center;
-  transform: translateX(-50%);
-  z-index: 1;
-`;
+const SelectedNumber: React.FC<{ num: number }> = ({ num }) => {
+  // Scale the font size based on the length of the number string
+  const chars = num.toString().length;
+  let fontSize = "1em";
+  if (chars > 2) {
+    fontSize = `${2 / chars}em`;
+  }
+  return (
+    <div
+      css={css`
+        position: absolute;
+        left: 50%;
+        width: 50px;
+        height: 50px;
+        background-color: rgba(255, 255, 255, 0.9);
+        color: black;
+        mix-blend-mode: color-dodge;
+        font-weight: bold;
+        font-size: 30px;
+        border-radius: 50%;
+        text-align: center;
+        transform: translateX(-50%);
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      `}
+    >
+      <span style={{ fontSize, lineHeight: fontSize }}>{num}</span>
+    </div>
+  );
+};
