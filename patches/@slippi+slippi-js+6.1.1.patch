@@ -1,0 +1,20 @@
+diff --git a/node_modules/@slippi/slippi-js/dist/index.es.js b/node_modules/@slippi/slippi-js/dist/index.es.js
+index ba1a67e..5bdd7cd 100644
+--- a/node_modules/@slippi/slippi-js/dist/index.es.js
++++ b/node_modules/@slippi/slippi-js/dist/index.es.js
+@@ -4,6 +4,7 @@ import fs from 'fs';
+ import moment from 'moment';
+ import { Writable } from 'stream';
+ import net from 'net';
++import enet from 'enet';
+ import inject from 'reconnect-core';
+ import { decode, encode } from '@shelacek/ubjson';
+ import iconv from 'iconv-lite';
+@@ -2081,7 +2082,6 @@ class DolphinConnection extends EventEmitter {
+         console.log(`Connecting to: ${ip}:${port}`);
+         this.ipAddress = ip;
+         this.port = port;
+-        const enet = await import('enet');
+         // Create the enet client
+         const client = enet.createClient({ peers: MAX_PEERS, channels: 3, down: 0, up: 0 }, (err) => {
+             if (err) {
