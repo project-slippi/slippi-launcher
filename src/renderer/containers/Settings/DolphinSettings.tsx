@@ -1,36 +1,36 @@
 /** @jsx jsx */
-import { makeGeckoCodeFromRaw, GeckoCode, TruncGeckoCode } from "@dolphin/geckoCode";
+import { GeckoCode, makeGeckoCodeFromRaw } from "@dolphin/geckoCode";
 import {
+  ipc_addGeckoCode,
   ipc_clearDolphinCache,
   ipc_configureDolphin,
-  ipc_importDolphinSettings,
-  ipc_reinstallDolphin,
+  ipc_convertGeckoToRaw,
+  ipc_deleteGecko,
   ipc_fetchGeckoCodes,
   ipc_fetchSysInis,
-  ipc_convertGeckoToRaw,
+  ipc_importDolphinSettings,
+  ipc_reinstallDolphin,
   ipc_toggleGeckos,
-  ipc_addGeckoCode,
-  ipc_deleteGecko,
 } from "@dolphin/ipc";
 import { DolphinLaunchType } from "@dolphin/types";
-import AssignmentIcon from "@material-ui/icons/Assignment";
 import { css, jsx } from "@emotion/react";
 import { Box, Tab, Tabs } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import DeleteIcon from "@material-ui/icons/Delete";
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import LockIcon from "@material-ui/icons/Lock";
 import Select from "@material-ui/core/Select";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
+import AssignmentIcon from "@material-ui/icons/Assignment";
+import DeleteIcon from "@material-ui/icons/Delete";
+import LockIcon from "@material-ui/icons/Lock";
 import { isLinux, isMac } from "common/constants";
 import { remote, shell } from "electron";
 import log from "electron-log";
@@ -222,7 +222,7 @@ const EditGeckoCodesForm: React.FC<{
   const [tabValue, setTabValue] = React.useState(0);
   const [geckoFormOpen, setGeckoFormOpen] = React.useState(false);
   const [newGeckoCodeRaw, setNewGeckoCodeRaw] = React.useState("");
-  const [geckoCodes, setGeckoCodes] = React.useState<TruncGeckoCode[]>([]);
+  const [geckoCodes, setGeckoCodes] = React.useState<GeckoCode[]>([]);
   const [geckoCheckboxes, setGeckoCheckboxes] = React.useState(<div />);
   const [iniSelect, setIniSelect] = React.useState(<div />);
   const [sysIni, setSysIni] = React.useState("");
@@ -261,7 +261,7 @@ const EditGeckoCodesForm: React.FC<{
         {!geckoCodes || geckoCodes.length === 0 ? (
           <ListItem>No Codes Found</ListItem>
         ) : (
-          geckoCodes.map((gecko: TruncGeckoCode, i: number) => (
+          geckoCodes.map((gecko: GeckoCode, i: number) => (
             <ListItem key={gecko.name} id={`checkbox-item-${i}`} dense>
               <Checkbox
                 id={`checkbox-${i}`}
@@ -343,10 +343,14 @@ const EditGeckoCodesForm: React.FC<{
     e.preventDefault();
     const gCode = makeGeckoCodeFromRaw(newGeckoCodeRaw);
     if (gCode.name.length > 0) {
-      const tCode: TruncGeckoCode = {
+      const tCode: GeckoCode = {
         name: gCode.name,
+        creator: gCode.creator,
         enabled: gCode.enabled,
         userDefined: gCode.userDefined,
+        defaultEnabled: gCode.defaultEnabled,
+        notes: [],
+        codeLines: [],
       };
       geckoCodes.push(tCode);
       setGeckoCodes([...geckoCodes]);

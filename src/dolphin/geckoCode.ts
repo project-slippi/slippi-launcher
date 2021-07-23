@@ -10,12 +10,6 @@ export interface GeckoCode {
   userDefined: boolean;
 }
 
-export interface TruncGeckoCode {
-  name: string;
-  enabled: boolean;
-  userDefined: boolean;
-}
-
 // this is very similar to LoadCodes in GeckoCodeConfig.cpp, but skips the address and data because we don't need them
 export function loadGeckoCodes(globalIni: IniFile, localIni?: IniFile): GeckoCode[] {
   const gcodes: GeckoCode[] = [];
@@ -202,7 +196,7 @@ export function geckoCodeToRaw(code: GeckoCode) {
   return rawGecko;
 }
 
-export function setEnabledDisabledFromTCodes(gCodes: GeckoCode[], tCodes: TruncGeckoCode[]) {
+export function setEnabledDisabledFromTCodes(gCodes: GeckoCode[], tCodes: GeckoCode[]) {
   tCodes.forEach((tCode) => {
     const gCodeIndex = gCodes.findIndex((gCode) => gCode.name === tCode.name);
     if (gCodeIndex !== -1) {

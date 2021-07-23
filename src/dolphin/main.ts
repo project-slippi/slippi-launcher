@@ -5,11 +5,16 @@ import path from "path";
 
 import { fileExists } from "../main/fileExists";
 import { assertDolphinInstallations } from "./downloadDolphin";
+import { GeckoCode, geckoCodeToRaw, removeGeckoCode, saveCodes, setEnabledDisabledFromTCodes } from "./geckoCode";
+import { IniFile } from "./iniFile";
 import {
+  ipc_addGeckoCode,
   ipc_checkDesktopAppDolphin,
   ipc_checkPlayKeyExists,
   ipc_clearDolphinCache,
   ipc_configureDolphin,
+  ipc_convertGeckoToRaw,
+  ipc_deleteGecko,
   ipc_downloadDolphin,
   ipc_fetchGeckoCodes,
   ipc_fetchSysInis,
@@ -18,35 +23,34 @@ import {
   ipc_reinstallDolphin,
   ipc_removePlayKeyFile,
   ipc_storePlayKeyFile,
-  ipc_viewSlpReplay,
-  ipc_convertGeckoToRaw,
   ipc_toggleGeckos,
-  ipc_addGeckoCode,
-  ipc_deleteGecko,
+  ipc_viewSlpReplay,
 } from "./ipc";
 import { dolphinManager } from "./manager";
 import { deletePlayKeyFile, findPlayKey, writePlayKeyFile } from "./playkey";
 import { DolphinLaunchType } from "./types";
 import {
   findDolphinExecutable,
-  updateBootToCssCode,
   findSysFolder,
   findUserFolder,
   getUserIni,
   loadCodes,
+  updateBootToCssCode,
 } from "./util";
-import { saveCodes, geckoCodeToRaw, setEnabledDisabledFromTCodes, TruncGeckoCode, removeGeckoCode } from "./geckoCode";
-import { IniFile } from "./iniFile";
 
 ipc_fetchGeckoCodes.main!.handle(async ({ dolphinType, iniName }) => {
   console.log("fetching gecko codes...");
   const gCodes = await loadCodes(dolphinType, iniName);
-  const tCodes: TruncGeckoCode[] = [];
+  const tCodes: GeckoCode[] = [];
   gCodes.forEach((gCode) => {
-    const tCode: TruncGeckoCode = {
+    const tCode: GeckoCode = {
       name: gCode.name,
+      creator: gCode.creator,
       enabled: gCode.enabled,
       userDefined: gCode.userDefined,
+      defaultEnabled: gCode.defaultEnabled,
+      notes: [],
+      codeLines: [],
     };
     tCodes.push(tCode);
   });
