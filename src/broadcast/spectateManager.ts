@@ -5,8 +5,7 @@ import * as fs from "fs-extra";
 import _ from "lodash";
 import { client as WebSocketClient, connection, IMessage } from "websocket";
 
-import { dolphinManager, ReplayCommunication } from "../dolphin";
-import { ipc_broadcastListUpdatedEvent, ipc_spectateErrorOccurredEvent } from "./ipc";
+import { ReplayCommunication } from "../dolphin";
 import { BroadcasterItem } from "./types";
 
 const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
@@ -16,6 +15,7 @@ const DOLPHIN_INSTANCE_ID = "spectate";
 export enum SpectateManagerEvent {
   ERROR = "error",
   BROADCAST_LIST_UPDATE = "broadcastListUpdate",
+  PLAY_FILE = "playFile",
 }
 
 interface BroadcastInfo {
@@ -38,25 +38,6 @@ export class SpectateManager extends EventEmitter {
 
   public constructor() {
     super();
-
-    // A connection can mirror its received gameplay
-    dolphinManager.on("dolphin-closed", (dolphinPlaybackId: string) => {
-      const broadcastInfo = Object.values(this.broadcastInfo).find((info) => info.dolphinId === dolphinPlaybackId);
-      if (!broadcastInfo) {
-        // This is not one of the spectator dolphin instances
-        return;
-      }
-
-      log.info("[Spectate] Dolphin closed");
-
-      // Stop watching channel
-      if (!this.wsConnection) {
-        log.error(`[Spectate] Could not close broadcast because connection is gone`);
-        return;
-      }
-
-      this.stopWatchingBroadcast(broadcastInfo.broadcastId);
-    });
   }
 
   private async _playFile(filePath: string, playbackId: string) {
@@ -64,7 +45,7 @@ export class SpectateManager extends EventEmitter {
       mode: "mirror",
       replay: filePath,
     };
-    return dolphinManager.launchPlaybackDolphin(playbackId, replayComm);
+    this.emit(SpectateManagerEvent.PLAY_FILE, playbackId, replayComm);
   }
 
   private _handleEvents(obj: { type: string; broadcastId: string; cursor: string; events: any[] }) {
@@ -306,15 +287,22 @@ export class SpectateManager extends EventEmitter {
     // by the fileWriter
     this._playFile("", dolphinPlaybackId).catch(log.warn);
   }
+
+  public handleClosedDolphin(playbackId: string) {
+    const broadcastInfo = Object.values(this.broadcastInfo).find((info) => info.dolphinId === playbackId);
+    if (!broadcastInfo) {
+      // This is not one of the spectator dolphin instances
+      return;
+    }
+
+    log.info("[Spectate] Dolphin closed");
+
+    // Stop watching channel
+    if (!this.wsConnection) {
+      log.error(`[Spectate] Could not close broadcast because connection is gone`);
+      return;
+    }
+
+    this.stopWatchingBroadcast(broadcastInfo.broadcastId);
+  }
 }
-
-export const spectateManager = new SpectateManager();
-
-// Forward the events to the renderer
-spectateManager.on(SpectateManagerEvent.BROADCAST_LIST_UPDATE, async (data: BroadcasterItem[]) => {
-  await ipc_broadcastListUpdatedEvent.main!.trigger({ items: data });
-});
-
-spectateManager.on(SpectateManagerEvent.ERROR, async (error) => {
-  await ipc_spectateErrorOccurredEvent.main!.trigger({ errorMessage: error.message ?? JSON.stringify(error) });
-});
