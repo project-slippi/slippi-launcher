@@ -15,8 +15,8 @@ export interface Methods {
   startBroadcast(config: StartBroadcastConfig): Promise<void>;
   stopBroadcast(): Promise<void>;
   getErrorObservable(): Observable<string>;
-  getSlippiStatusObservable(): Observable<ConnectionStatus>;
-  getDolphinStatusObservable(): Observable<ConnectionStatus>;
+  getSlippiStatusObservable(): Observable<{ status: ConnectionStatus }>;
+  getDolphinStatusObservable(): Observable<{ status: ConnectionStatus }>;
 }
 
 export type WorkerSpec = ModuleMethods & Methods;
@@ -24,17 +24,17 @@ export type WorkerSpec = ModuleMethods & Methods;
 const broadcastManager = new BroadcastManager();
 
 const errorSubject = new Subject<string>();
-const slippiStatusSubject = new Subject<ConnectionStatus>();
-const dolphinStatusSubject = new Subject<ConnectionStatus>();
+const slippiStatusSubject = new Subject<{ status: ConnectionStatus }>();
+const dolphinStatusSubject = new Subject<{ status: ConnectionStatus }>();
 
 broadcastManager.on(BroadcastEvent.error, (errorMsg: string) => {
   errorSubject.next(errorMsg);
 });
-broadcastManager.on(BroadcastEvent.slippiStatusChange, (status) => {
-  slippiStatusSubject.next(status);
+broadcastManager.on(BroadcastEvent.slippiStatusChange, (status: ConnectionStatus) => {
+  slippiStatusSubject.next({ status });
 });
-broadcastManager.on(BroadcastEvent.dolphinStatusChange, (status) => {
-  dolphinStatusSubject.next(status);
+broadcastManager.on(BroadcastEvent.dolphinStatusChange, (status: ConnectionStatus) => {
+  dolphinStatusSubject.next({ status });
 });
 
 const methods: WorkerSpec = {
@@ -50,10 +50,10 @@ const methods: WorkerSpec = {
   getErrorObservable(): Observable<string> {
     return Observable.from(errorSubject);
   },
-  getSlippiStatusObservable(): Observable<ConnectionStatus> {
+  getSlippiStatusObservable(): Observable<{ status: ConnectionStatus }> {
     return Observable.from(slippiStatusSubject);
   },
-  getDolphinStatusObservable(): Observable<ConnectionStatus> {
+  getDolphinStatusObservable(): Observable<{ status: ConnectionStatus }> {
     return Observable.from(dolphinStatusSubject);
   },
 };

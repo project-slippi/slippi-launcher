@@ -12,11 +12,11 @@ export const broadcastWorker: Promise<Thread & WorkerMethods> = new Promise((res
 
   spawn<WorkerSpec>(new Worker("./broadcastWorker"), { timeout: 30000 })
     .then((worker) => {
-      worker.getDolphinStatusObservable().subscribe((status) => {
+      worker.getDolphinStatusObservable().subscribe(({ status }) => {
         log.info(`got dolphin status: ${status}`);
         ipc_dolphinStatusChangedEvent.main!.trigger({ status }).catch(log.error);
       });
-      worker.getSlippiStatusObservable().subscribe((status) => {
+      worker.getSlippiStatusObservable().subscribe(({ status }) => {
         log.info(`got slippi status: ${status}`);
         ipc_slippiStatusChangedEvent.main!.trigger({ status }).catch(log.error);
       });
