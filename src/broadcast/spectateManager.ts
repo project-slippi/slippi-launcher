@@ -1,5 +1,4 @@
 import { SlpFileWriter, SlpFileWriterEvent } from "@slippi/slippi-js";
-import { app } from "electron";
 import log from "electron-log";
 import { EventEmitter } from "events";
 import * as fs from "fs-extra";
@@ -13,9 +12,6 @@ import { BroadcasterItem } from "./types";
 const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
 
 const DOLPHIN_INSTANCE_ID = "spectate";
-
-// Store written SLP files to the temp folder by default
-const DEFAULT_OUTPUT_PATH = app.getPath("temp");
 
 export enum SpectateManagerEvent {
   ERROR = "error",
@@ -253,11 +249,11 @@ export class SpectateManager extends EventEmitter {
    * Starts watching a broadcast
    *
    * @param {string} broadcastId The ID of the broadcast to watch
-   * @param {string} [targetPath] Where the SLP files should be stored
+   * @param {string} targetPath Where the SLP files should be stored
    * @param {true} [singleton] If true, it will open the broadcasts only
    * in a single Dolphin window. Opens each broadcast in their own window otherwise.
    */
-  public watchBroadcast(broadcastId: string, targetPath?: string, singleton?: true) {
+  public watchBroadcast(broadcastId: string, targetPath: string, singleton?: true) {
     if (!this.wsConnection) {
       throw new Error("No websocket connection");
     }
@@ -281,21 +277,14 @@ export class SpectateManager extends EventEmitter {
       dolphinPlaybackId = DOLPHIN_INSTANCE_ID;
     }
 
+    fs.ensureDirSync(targetPath);
     const slpFileWriter = new SlpFileWriter({
-      folderPath: DEFAULT_OUTPUT_PATH,
+      folderPath: targetPath,
     });
 
     slpFileWriter.on(SlpFileWriterEvent.NEW_FILE, (currFilePath) => {
       this._playFile(currFilePath, dolphinPlaybackId).catch(log.warn);
     });
-
-    if (targetPath) {
-      fs.ensureDirSync(targetPath);
-      // Set the path
-      slpFileWriter.updateSettings({
-        folderPath: targetPath,
-      });
-    }
 
     this.broadcastInfo[broadcastId] = {
       broadcastId,
