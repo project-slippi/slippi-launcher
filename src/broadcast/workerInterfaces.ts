@@ -79,10 +79,10 @@ export const spectateWorker: Promise<Thread & SpectateWorkerMethods> = new Promi
         worker.dolphinClosed(playbackId).catch(log.error);
       });
 
-      log.debug("broadcast: Spawning worker: Done");
+      log.debug("spectate: Spawning worker: Done");
 
       async function terminateWorker() {
-        log.debug("broadcast: Terminating worker");
+        log.debug("spectate: Terminating worker");
         try {
           await worker.destroyWorker();
         } finally {

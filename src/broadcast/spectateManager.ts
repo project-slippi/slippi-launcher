@@ -1,5 +1,5 @@
 import { SlpFileWriter, SlpFileWriterEvent } from "@slippi/slippi-js";
-import log from "electron-log";
+import electronLog from "electron-log";
 import { EventEmitter } from "events";
 import * as fs from "fs-extra";
 import _ from "lodash";
@@ -7,6 +7,8 @@ import { client as WebSocketClient, connection, IMessage } from "websocket";
 
 import { ReplayCommunication } from "../dolphin";
 import { BroadcasterItem } from "./types";
+
+const log = electronLog.scope("spectate");
 
 const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
 
@@ -65,13 +67,13 @@ export class SpectateManager extends EventEmitter {
     events.forEach((event: any) => {
       switch (event.type) {
         case "start_game": {
-          log.info("[Spectate] Game start explicit");
+          log.info("Game start explicit");
           broadcastInfo.gameStarted = true;
           break;
         }
         case "end_game": {
           // End the current game if it's not already ended
-          log.info("[Spectate] Game end explicit");
+          log.info("Game end explicit");
           broadcastInfo.fileWriter.endCurrentFile();
           broadcastInfo.gameStarted = false;
           break;
@@ -86,7 +88,7 @@ export class SpectateManager extends EventEmitter {
           break;
         }
         default:
-          log.error(`[Spectate] Event type ${event.type} not supported`);
+          log.error(`Event type ${event.type} not supported`);
           break;
       }
     });
@@ -109,22 +111,22 @@ export class SpectateManager extends EventEmitter {
       const socket = new WebSocketClient();
 
       socket.on("connectFailed", (error) => {
-        log.error(`[Spectate] WS connection failed\n`, error);
+        log.error(`WS connection failed\n`, error);
         this.emit(SpectateManagerEvent.ERROR, error);
         reject();
       });
 
       socket.on("connect", (connection) => {
-        log.info("[Spectate] WS connection successful");
+        log.info("WS connection successful");
         this.wsConnection = connection;
 
         connection.on("error", (err) => {
-          log.error("[Spectate] Error with WS connection\n", err);
+          log.error("Error with WS connection\n", err);
           this.emit(SpectateManagerEvent.ERROR, err);
         });
 
         connection.on("close", (code, reason) => {
-          log.info(`[Spectate] connection close: ${code}, ${reason}`);
+          log.info(`connection close: ${code}, ${reason}`);
           // Clear the socket and disconnect from Dolphin too if we're still connected
           this.wsConnection = null;
 
@@ -145,7 +147,7 @@ export class SpectateManager extends EventEmitter {
                   if (info.cursor !== "") {
                     watchMsg.startCursor = info.cursor;
                   }
-                  log.info(`[Spectate] Picking up broadcast ${broadcastId} starting at: ${info.cursor}`);
+                  log.info(`Picking up broadcast ${broadcastId} starting at: ${info.cursor}`);
                   if (this.wsConnection) {
                     this.wsConnection.sendUTF(JSON.stringify(watchMsg));
                   }
@@ -180,7 +182,7 @@ export class SpectateManager extends EventEmitter {
               break;
             }
             default: {
-              log.warn(`[Spectate] Ws resp type ${obj.type} not supported`);
+              log.warn(`Ws resp type ${obj.type} not supported`);
               break;
             }
           }
@@ -189,7 +191,7 @@ export class SpectateManager extends EventEmitter {
         resolve();
       });
       if (SLIPPI_WS_SERVER) {
-        log.info("[Spectate] Connecting to spectate server");
+        log.info("Connecting to spectate server");
         socket.connect(SLIPPI_WS_SERVER, "spectate-protocol", undefined, headers);
       }
     });
@@ -242,7 +244,7 @@ export class SpectateManager extends EventEmitter {
     const existingBroadcasts = Object.keys(this.broadcastInfo);
     if (existingBroadcasts.includes(broadcastId)) {
       // We're already watching this broadcast!
-      log.warn(`[Spectate] We are already watching the selected broadcast`);
+      log.warn(`We are already watching the selected broadcast`);
       return;
     }
 
@@ -295,11 +297,11 @@ export class SpectateManager extends EventEmitter {
       return;
     }
 
-    log.info("[Spectate] Dolphin closed");
+    log.info("Dolphin closed");
 
     // Stop watching channel
     if (!this.wsConnection) {
-      log.error(`[Spectate] Could not close broadcast because connection is gone`);
+      log.error(`Could not close broadcast because connection is gone`);
       return;
     }
 
