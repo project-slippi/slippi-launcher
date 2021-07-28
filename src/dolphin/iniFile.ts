@@ -5,6 +5,7 @@
 
 import log from "electron-log";
 import fs from "fs";
+import { ensureFileSync } from "fs-extra";
 import readline from "readline";
 
 /**
@@ -163,6 +164,7 @@ export class IniFile {
   }
 
   public save(filePath: string): boolean {
+    ensureFileSync(filePath);
     const out = fs.createWriteStream(filePath);
 
     out.on("error", (e) => {
