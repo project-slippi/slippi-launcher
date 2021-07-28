@@ -18,17 +18,17 @@ export interface StartBroadcastConfig {
 }
 
 export enum BroadcastEvent {
-  SLIPPI_STATUS_CHANGE = "slippiStatusChange",
-  DOLPHIN_STATUS_CHANGE = "dolphinStatusChange",
-  ERROR = "broadcastError",
-  LOG = "log",
+  SLIPPI_STATUS_CHANGE = "SLIPPI_STATUS_CHANGE",
+  DOLPHIN_STATUS_CHANGE = "DOLPHIN_STATUS_CHANGE",
+  ERROR = "ERROR",
+  LOG = "LOG",
 }
 
 export enum SpectateEvent {
-  ERROR = "error",
-  BROADCAST_LIST_UPDATE = "broadcastListUpdate",
-  NEW_FILE = "newFile",
-  LOG = "log",
+  ERROR = "ERROR",
+  BROADCAST_LIST_UPDATE = "BROADCAST_LIST_UPDATE",
+  NEW_FILE = "NEW_FILE",
+  LOG = "LOG",
 }
 
 type TypeMap<M extends { [index: string]: any }> = {
