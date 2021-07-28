@@ -69,7 +69,9 @@ export class BroadcastManager extends EventEmitter {
     });
     this.dolphinConnection.on(ConnectionEvent.ERROR, (err) => {
       // Log the error messages we get from Dolphin
-      this.emit(BroadcastEvent.LOG, "[Broadcast] Dolphin connection error\n", err);
+      const errMsg = err.message || JSON.stringify(err);
+      this.emit(BroadcastEvent.LOG, `[Broadcast] Dolphin connection error\n${errMsg}`);
+      this.emit(BroadcastEvent.ERROR, errMsg);
     });
   }
 
@@ -82,7 +84,9 @@ export class BroadcastManager extends EventEmitter {
       try {
         await this._connectToDolphin(config.ip, config.port);
       } catch (err) {
-        this.emit(BroadcastEvent.LOG, err);
+        const errMsg = err.message || JSON.stringify(err);
+        this.emit(BroadcastEvent.LOG, `Could not connect to Dolphin\n${errMsg}`);
+        this.emit(BroadcastEvent.LOG, errMsg);
         this.dolphinConnection.disconnect();
         throw err;
       }
@@ -109,14 +113,15 @@ export class BroadcastManager extends EventEmitter {
 
     const socket = new WebSocketClient({ disableNagleAlgorithm: true });
 
-    socket.on("connectFailed", (error: Error) => {
-      this.emit(BroadcastEvent.LOG, "[Broadcast] WS failed to connect\n", error);
+    socket.on("connectFailed", (err: Error) => {
+      const errMsg = err.message || JSON.stringify(err);
+      this.emit(BroadcastEvent.LOG, `[Broadcast] WS failed to connect\n${errMsg}`);
 
       const label = "x-websocket-reject-reason: ";
-      let message = error.message;
-      const pos = error.message.indexOf(label);
+      let message = err.message;
+      const pos = err.message.indexOf(label);
       if (pos >= 0) {
-        const endPos = error.message.indexOf("\n", pos + label.length);
+        const endPos = err.message.indexOf("\n", pos + label.length);
         message = message.substring(pos + label.length, endPos >= 0 ? endPos : undefined);
       }
 
@@ -170,8 +175,9 @@ export class BroadcastManager extends EventEmitter {
       };
 
       connection.on("error", (err: Error) => {
-        this.emit(BroadcastEvent.LOG, "[Broadcast] WS connection error encountered\n", err);
-        this.emit(BroadcastEvent.ERROR, err.message);
+        const errMsg = err.message || JSON.stringify(err);
+        this.emit(BroadcastEvent.LOG, `[Broadcast] WS connection error encountered\n${errMsg}`);
+        this.emit(BroadcastEvent.ERROR, errMsg);
       });
 
       connection.on("close", (code: number, reason: string) => {
@@ -210,7 +216,8 @@ export class BroadcastManager extends EventEmitter {
             return;
           }
         } catch (err) {
-          this.emit(BroadcastEvent.LOG, `[Broadcast] Failed to parse message from server\n`, err, data.utf8Data);
+          const errMsg = err.message || JSON.stringify(err);
+          this.emit(BroadcastEvent.LOG, `[Broadcast] Failed to parse message from server\n${errMsg}\n${data.utf8Data}`);
           return;
         }
 
@@ -427,8 +434,9 @@ export class BroadcastManager extends EventEmitter {
 
             this.wsConnection.send(JSON.stringify(message), (err) => {
               if (err) {
-                this.emit(BroadcastEvent.LOG, "[Broadcast] WS send error encountered\n", err);
-                // return;
+                const errMsg = err.message || JSON.stringify(err);
+                this.emit(BroadcastEvent.LOG, `[Broadcast] WS send error encountered\n${errMsg}`);
+                this.emit(BroadcastEvent.ERROR, errMsg);
               }
             });
             break;

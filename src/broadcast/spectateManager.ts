@@ -98,9 +98,10 @@ export class SpectateManager extends EventEmitter {
     await new Promise<void>((resolve, reject) => {
       const socket = new WebSocketClient();
 
-      socket.on("connectFailed", (error) => {
-        this.emit(SpectateEvent.LOG, `WS connection failed\n`, error);
-        this.emit(SpectateEvent.ERROR, error);
+      socket.on("connectFailed", (err) => {
+        const errMsg = err.message || JSON.stringify(err);
+        this.emit(SpectateEvent.LOG, `WS connection failed\n${errMsg}`);
+        this.emit(SpectateEvent.ERROR, errMsg);
         reject();
       });
 
@@ -109,8 +110,9 @@ export class SpectateManager extends EventEmitter {
         this.wsConnection = connection;
 
         connection.on("error", (err) => {
-          this.emit(SpectateEvent.LOG, "Error with WS connection\n", err);
-          this.emit(SpectateEvent.ERROR, err);
+          const errMsg = err.message || JSON.stringify(err);
+          this.emit(SpectateEvent.LOG, `Error with WS connection\n${errMsg}`);
+          this.emit(SpectateEvent.ERROR, errMsg);
         });
 
         connection.on("close", (code, reason) => {
@@ -142,7 +144,9 @@ export class SpectateManager extends EventEmitter {
                 });
               })
               .catch((err) => {
-                this.emit(SpectateEvent.LOG, `[Specate] Error while reconnecting to broadcast.\n`, err);
+                const errMsg = err.message || JSON.stringify(err);
+                this.emit(SpectateEvent.LOG, `[Specate] Error while reconnecting to broadcast.\n${errMsg}`);
+                this.emit(SpectateEvent.ERROR, errMsg);
               });
           } else {
             // TODO: Somehow kill dolphin? Or maybe reconnect to a person's broadcast when it
