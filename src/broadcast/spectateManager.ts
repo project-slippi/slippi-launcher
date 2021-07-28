@@ -23,6 +23,8 @@ const generatePlaybackId = (broadcastId: string) => `spectate-${broadcastId}`;
 /**
  * Responsible for retrieving Dolphin game data over enet and sending the data
  * to the Slippi server over websockets.
+ * TODO: Have SpectateManager only care about reading the data stream and writing it to a file.
+ * Dealing with dolphin related details should be handled elsewhere.
  */
 export class SpectateManager extends EventEmitter {
   private broadcastInfo: Record<string, BroadcastInfo> = {};
