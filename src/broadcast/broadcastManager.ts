@@ -41,7 +41,7 @@ export class BroadcastManager extends EventEmitter {
     this.dolphinConnection = new DolphinConnection();
     this.dolphinConnection.on(ConnectionEvent.STATUS_CHANGE, (status: number) => {
       this.emit(BroadcastEvent.LOG, `[Broadcast] Dolphin status change: ${status}`);
-      this.emit(BroadcastEvent.dolphinStatusChange, status);
+      this.emit(BroadcastEvent.DOLPHIN_STATUS_CHANGE, status);
 
       // Disconnect from Slippi server when we disconnect from Dolphin
       if (status === ConnectionStatus.DISCONNECTED) {
@@ -95,7 +95,7 @@ export class BroadcastManager extends EventEmitter {
     }
 
     // Indicate we're connecting to the Slippi server
-    this.emit(BroadcastEvent.slippiStatusChange, ConnectionStatus.CONNECTING);
+    this.emit(BroadcastEvent.SLIPPI_STATUS_CHANGE, ConnectionStatus.CONNECTING);
 
     const headers = {
       target: config.viewerId,
@@ -120,8 +120,8 @@ export class BroadcastManager extends EventEmitter {
         message = message.substring(pos + label.length, endPos >= 0 ? endPos : undefined);
       }
 
-      this.emit(BroadcastEvent.slippiStatusChange, ConnectionStatus.DISCONNECTED);
-      this.emit(BroadcastEvent.error, message);
+      this.emit(BroadcastEvent.SLIPPI_STATUS_CHANGE, ConnectionStatus.DISCONNECTED);
+      this.emit(BroadcastEvent.ERROR, message);
     });
 
     socket.on("connect", (connection: connection) => {
@@ -163,7 +163,7 @@ export class BroadcastManager extends EventEmitter {
         this.isBroadcastReady = true;
 
         this.broadcastId = broadcastId;
-        this.emit(BroadcastEvent.slippiStatusChange, ConnectionStatus.CONNECTED);
+        this.emit(BroadcastEvent.SLIPPI_STATUS_CHANGE, ConnectionStatus.CONNECTED);
 
         // Process any events that may have been missed when we disconnected
         this._handleGameData();
@@ -171,12 +171,12 @@ export class BroadcastManager extends EventEmitter {
 
       connection.on("error", (err: Error) => {
         this.emit(BroadcastEvent.LOG, "[Broadcast] WS connection error encountered\n", err);
-        this.emit(BroadcastEvent.error, err.message);
+        this.emit(BroadcastEvent.ERROR, err.message);
       });
 
       connection.on("close", (code: number, reason: string) => {
         this.emit(BroadcastEvent.LOG, `[Broadcast] WS connection closed: ${code}, ${reason}`);
-        this.emit(BroadcastEvent.slippiStatusChange, ConnectionStatus.DISCONNECTED);
+        this.emit(BroadcastEvent.SLIPPI_STATUS_CHANGE, ConnectionStatus.DISCONNECTED);
 
         // Clear the socket and disconnect from Dolphin too if we're still connected
         this.wsConnection = null;

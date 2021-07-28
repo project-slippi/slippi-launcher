@@ -18,9 +18,9 @@ export interface StartBroadcastConfig {
 }
 
 export enum BroadcastEvent {
-  slippiStatusChange = "slippiStatusChange",
-  dolphinStatusChange = "dolphinStatusChange",
-  error = "broadcastError",
+  SLIPPI_STATUS_CHANGE = "slippiStatusChange",
+  DOLPHIN_STATUS_CHANGE = "dolphinStatusChange",
+  ERROR = "broadcastError",
   LOG = "log",
 }
 

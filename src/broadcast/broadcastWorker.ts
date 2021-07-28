@@ -32,13 +32,13 @@ const dolphinStatusSubject = new Subject<{ status: ConnectionStatus }>();
 broadcastManager.on(BroadcastEvent.LOG, (msg: string) => {
   logSubject.next(msg);
 });
-broadcastManager.on(BroadcastEvent.error, (errorMsg: string) => {
+broadcastManager.on(BroadcastEvent.ERROR, (errorMsg: string) => {
   errorSubject.next(errorMsg);
 });
-broadcastManager.on(BroadcastEvent.slippiStatusChange, (status: ConnectionStatus) => {
+broadcastManager.on(BroadcastEvent.SLIPPI_STATUS_CHANGE, (status: ConnectionStatus) => {
   slippiStatusSubject.next({ status });
 });
-broadcastManager.on(BroadcastEvent.dolphinStatusChange, (status: ConnectionStatus) => {
+broadcastManager.on(BroadcastEvent.DOLPHIN_STATUS_CHANGE, (status: ConnectionStatus) => {
   dolphinStatusSubject.next({ status });
 });
 
