@@ -23,18 +23,15 @@ export const broadcastWorker: Promise<Thread & BroadcastWorkerMethods> = new Pro
   spawn<BroadcastWorkerSpec>(new Worker("./broadcastWorker"), { timeout: 30000 })
     .then((worker) => {
       worker.getDolphinStatusObservable().subscribe(({ status }) => {
-        log.info(`got dolphin status: ${status}`);
         ipc_dolphinStatusChangedEvent.main!.trigger({ status }).catch(log.error);
       });
       worker.getSlippiStatusObservable().subscribe(({ status }) => {
-        log.info(`got slippi status: ${status}`);
         ipc_slippiStatusChangedEvent.main!.trigger({ status }).catch(log.error);
       });
       worker.getLogObservable().subscribe((logMessage) => {
         broadcastLog.info(logMessage);
       });
       worker.getErrorObservable().subscribe((errorMessage) => {
-        log.info(`got error message: ${errorMessage}`);
         ipc_broadcastErrorOccurredEvent.main!.trigger({ errorMessage }).catch(log.error);
       });
 
@@ -76,7 +73,6 @@ export const spectateWorker: Promise<Thread & SpectateWorkerMethods> = new Promi
         spectateLog.info(logMessage);
       });
       worker.getErrorObservable().subscribe((errorMessage) => {
-        log.info(`got error message: ${errorMessage}`);
         ipc_broadcastErrorOccurredEvent.main!.trigger({ errorMessage }).catch(log.error);
       });
       worker.getSpectateDetailsObservable().subscribe(({ playbackId, replayComm }) => {
