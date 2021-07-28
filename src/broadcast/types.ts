@@ -21,6 +21,14 @@ export enum BroadcastEvent {
   slippiStatusChange = "slippiStatusChange",
   dolphinStatusChange = "dolphinStatusChange",
   error = "broadcastError",
+  LOG = "log",
+}
+
+export enum SpectateEvent {
+  ERROR = "error",
+  BROADCAST_LIST_UPDATE = "broadcastListUpdate",
+  PLAY_FILE = "playFile",
+  LOG = "log",
 }
 
 type TypeMap<M extends { [index: string]: any }> = {

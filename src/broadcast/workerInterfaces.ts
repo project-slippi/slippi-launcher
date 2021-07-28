@@ -14,6 +14,8 @@ import { Methods as SpectateWorkerMethods, WorkerSpec as SpectateWorkerSpec } fr
 import { BroadcasterItem } from "./types";
 
 const log = electronLog.scope("broadcast/workerInterface");
+const broadcastLog = electronLog.scope("broadcastManager");
+const spectateLog = electronLog.scope("spectateManager");
 
 export const broadcastWorker: Promise<Thread & BroadcastWorkerMethods> = new Promise((resolve, reject) => {
   log.debug("broadcast: Spawning worker");
@@ -27,6 +29,9 @@ export const broadcastWorker: Promise<Thread & BroadcastWorkerMethods> = new Pro
       worker.getSlippiStatusObservable().subscribe(({ status }) => {
         log.info(`got slippi status: ${status}`);
         ipc_slippiStatusChangedEvent.main!.trigger({ status }).catch(log.error);
+      });
+      worker.getLogObservable().subscribe((logMessage) => {
+        broadcastLog.info(logMessage);
       });
       worker.getErrorObservable().subscribe((errorMessage) => {
         log.info(`got error message: ${errorMessage}`);
@@ -66,6 +71,9 @@ export const spectateWorker: Promise<Thread & SpectateWorkerMethods> = new Promi
     .then((worker) => {
       worker.getBroadcastListObservable().subscribe((data: BroadcasterItem[]) => {
         ipc_broadcastListUpdatedEvent.main!.trigger({ items: data }).catch(log.error);
+      });
+      worker.getLogObservable().subscribe((logMessage) => {
+        spectateLog.info(logMessage);
       });
       worker.getErrorObservable().subscribe((errorMessage) => {
         log.info(`got error message: ${errorMessage}`);
