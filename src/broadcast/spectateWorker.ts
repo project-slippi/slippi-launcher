@@ -2,7 +2,6 @@
 // fails to obtain the paths required for file transport to work
 // when in Node worker context.
 
-import { ReplayCommunication } from "@dolphin/types";
 import { ModuleMethods } from "threads/dist/types/master";
 import { Observable, Subject } from "threads/observable";
 import { expose } from "threads/worker";
@@ -19,7 +18,7 @@ export interface Methods {
   getLogObservable(): Observable<string>;
   getErrorObservable(): Observable<string>;
   getBroadcastListObservable(): Observable<BroadcasterItem[]>;
-  getSpectateDetailsObservable(): Observable<{ playbackId: string; replayComm: ReplayCommunication }>;
+  getSpectateDetailsObservable(): Observable<{ playbackId: string; filePath: string }>;
 }
 
 export type WorkerSpec = ModuleMethods & Methods;
@@ -29,7 +28,7 @@ const spectateManager = new SpectateManager();
 const logSubject = new Subject<string>();
 const errorSubject = new Subject<string>();
 const broadcastListSubject = new Subject<BroadcasterItem[]>();
-const spectateDetailsSubject = new Subject<{ playbackId: string; replayComm: ReplayCommunication }>();
+const spectateDetailsSubject = new Subject<{ playbackId: string; filePath: string }>();
 
 // Forward the events to the renderer
 spectateManager.on(SpectateEvent.BROADCAST_LIST_UPDATE, async (data: BroadcasterItem[]) => {
@@ -44,8 +43,8 @@ spectateManager.on(SpectateEvent.ERROR, async (errorMsg: string) => {
   errorSubject.next(errorMsg);
 });
 
-spectateManager.on(SpectateEvent.PLAY_FILE, async (playbackId: string, replayComm: ReplayCommunication) => {
-  spectateDetailsSubject.next({ playbackId, replayComm });
+spectateManager.on(SpectateEvent.NEW_FILE, async (playbackId: string, filePath: string) => {
+  spectateDetailsSubject.next({ playbackId, filePath });
 });
 
 const methods: WorkerSpec = {
@@ -74,7 +73,7 @@ const methods: WorkerSpec = {
   getBroadcastListObservable(): Observable<BroadcasterItem[]> {
     return Observable.from(broadcastListSubject);
   },
-  getSpectateDetailsObservable(): Observable<{ playbackId: string; replayComm: ReplayCommunication }> {
+  getSpectateDetailsObservable(): Observable<{ playbackId: string; filePath: string }> {
     return Observable.from(spectateDetailsSubject);
   },
 };

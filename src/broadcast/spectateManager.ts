@@ -4,7 +4,6 @@ import * as fs from "fs-extra";
 import _ from "lodash";
 import { client as WebSocketClient, connection, IMessage } from "websocket";
 
-import { ReplayCommunication } from "../dolphin";
 import { BroadcasterItem, SpectateEvent } from "./types";
 
 const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
@@ -34,11 +33,7 @@ export class SpectateManager extends EventEmitter {
   }
 
   private async _playFile(filePath: string, playbackId: string) {
-    const replayComm: ReplayCommunication = {
-      mode: "mirror",
-      replay: filePath,
-    };
-    this.emit(SpectateEvent.PLAY_FILE, playbackId, replayComm);
+    this.emit(SpectateEvent.NEW_FILE, playbackId, filePath);
   }
 
   private _handleEvents(obj: { type: string; broadcastId: string; cursor: string; events: any[] }) {

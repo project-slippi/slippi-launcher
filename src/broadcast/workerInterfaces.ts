@@ -1,4 +1,5 @@
 import { dolphinManager } from "@dolphin/manager";
+import { ReplayCommunication } from "@dolphin/types";
 import { app } from "electron";
 import electronLog from "electron-log";
 import { spawn, Thread, Worker } from "threads";
@@ -75,7 +76,11 @@ export const spectateWorker: Promise<Thread & SpectateWorkerMethods> = new Promi
       worker.getErrorObservable().subscribe((errorMessage) => {
         ipc_broadcastErrorOccurredEvent.main!.trigger({ errorMessage }).catch(log.error);
       });
-      worker.getSpectateDetailsObservable().subscribe(({ playbackId, replayComm }) => {
+      worker.getSpectateDetailsObservable().subscribe(({ playbackId, filePath }) => {
+        const replayComm: ReplayCommunication = {
+          mode: "mirror",
+          replay: filePath,
+        };
         dolphinManager.launchPlaybackDolphin(playbackId, replayComm).catch(log.error);
       });
 

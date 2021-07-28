@@ -27,7 +27,7 @@ export enum BroadcastEvent {
 export enum SpectateEvent {
   ERROR = "error",
   BROADCAST_LIST_UPDATE = "broadcastListUpdate",
-  PLAY_FILE = "playFile",
+  NEW_FILE = "newFile",
   LOG = "log",
 }
 
