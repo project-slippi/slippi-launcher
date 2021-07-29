@@ -1,5 +1,3 @@
-import { dolphinManager } from "@dolphin/manager";
-import { ReplayCommunication } from "@dolphin/types";
 import {
   Command,
   ConnectionDetails,
@@ -13,116 +11,94 @@ import {
   SlpFileWriterEvent,
   SlpStreamEvent,
 } from "@slippi/slippi-js";
-import log from "electron-log";
+import { EventEmitter } from "events";
 import * as fs from "fs-extra";
 import path from "path";
 
 import { AutoSwitcher } from "./autoSwitcher";
 import { ConsoleRelay } from "./consoleRelay";
-import { ipc_consoleMirrorStatusUpdatedEvent } from "./ipc";
-import { MirrorConfig, MirrorDetails } from "./types";
+import { MirrorConfig, MirrorDetails, MirrorEvent } from "./types";
 
 /**
  * Responsible for setting up and keeping track of active console connections and mirroring.
  */
-export class MirrorManager {
+export class MirrorManager extends EventEmitter {
   private mirrors: Record<string, MirrorDetails> = {};
 
   public constructor() {
-    dolphinManager.on("dolphin-closed", (dolphinPlaybackId: string) => {
-      const broadcastInfo = Object.values(this.mirrors).find((info) => info.ipAddress === dolphinPlaybackId);
-      if (!broadcastInfo) {
-        // This is not one of the spectator dolphin instances
-        return;
-      }
-
-      log.info("[Mirroring] Dolphin closed");
-
-      const details = this.mirrors[dolphinPlaybackId];
-      if (!details) {
-        return;
-      }
-
-      details.isMirroring = false;
-      if (details.autoSwitcher) {
-        details.autoSwitcher.disconnect();
-      }
-    });
+    super();
   }
 
   public async connect(config: MirrorConfig) {
     if (this.mirrors[config.ipAddress]) {
-      log.info(`[Mirroring] already connected to Wii @ ${config.ipAddress}`);
+      this.emit(MirrorEvent.LOG, `Already connected to Wii @ ${config.ipAddress}`);
       return;
     }
 
-    log.info("[Mirroring] Setting up mirror");
+    this.emit(MirrorEvent.LOG, "Setting up mirror");
 
     await fs.ensureDir(config.folderPath);
 
     const fileWriter = new SlpFileWriter({ folderPath: config.folderPath, consoleNickname: "unknown" });
     fileWriter.on(SlpFileWriterEvent.NEW_FILE, (currFilePath) => {
       if (this.mirrors[config.ipAddress].isMirroring) {
-        this._playFile(currFilePath, config.ipAddress).catch(log.warn);
+        this._playFile(currFilePath, config.ipAddress).catch((err) => {
+          const errMsg = err.message || JSON.stringify(err);
+          this.emit(MirrorEvent.ERROR, errMsg);
+        });
       }
 
       // Let the front-end know of the new file that we're writing too
-      ipc_consoleMirrorStatusUpdatedEvent
-        .main!.trigger({
-          ip: config.ipAddress,
-          info: {
-            filename: path.basename(currFilePath),
-          },
-        })
-        .catch(log.warn);
+      this.emit(MirrorEvent.MIRROR_STATUS_CHANGE, {
+        ip: config.ipAddress,
+        info: {
+          filename: path.basename(currFilePath),
+        },
+      });
     });
 
     // Clear the current writing file
     fileWriter.on(SlpFileWriterEvent.FILE_COMPLETE, () => {
-      ipc_consoleMirrorStatusUpdatedEvent
-        .main!.trigger({
-          ip: config.ipAddress,
-          info: {
-            filename: null,
-          },
-        })
-        .catch((err) => log.warn(err));
+      this.emit(MirrorEvent.MIRROR_STATUS_CHANGE, {
+        ip: config.ipAddress,
+        info: {
+          filename: null,
+        },
+      });
     });
 
     let relay: ConsoleRelay | null = null;
     if (config.enableRelay) {
-      log.info("starting relay");
+      this.emit(MirrorEvent.LOG, "Starting relay");
       relay = new ConsoleRelay(config.id);
+      relay.on(MirrorEvent.LOG, (msg) => this.emit(MirrorEvent.LOG, msg));
+      relay.on(MirrorEvent.ERROR, (errMsg) => this.emit(MirrorEvent.ERROR, errMsg));
     }
 
     const connection = new ConsoleConnection();
     connection.once("connect", () => {
-      log.info("[Mirroring] Connecting to Wii");
+      this.emit(MirrorEvent.LOG, "Connecting to Wii");
       connection.on(ConnectionEvent.HANDSHAKE, (details: ConnectionDetails) => {
-        log.info("[Mirroring] Got handshake from wii");
-        log.info(details);
+        this.emit(MirrorEvent.LOG, "Got handshake from wii");
+        this.emit(MirrorEvent.LOG, details);
         fileWriter.updateSettings({ consoleNickname: details.consoleNick });
 
-        ipc_consoleMirrorStatusUpdatedEvent
-          .main!.trigger({
-            ip: config.ipAddress,
-            info: {
-              nickname: details.consoleNick,
-            },
-          })
-          .catch((err) => log.warn(err));
+        this.emit(MirrorEvent.MIRROR_STATUS_CHANGE, {
+          ip: config.ipAddress,
+          info: {
+            nickname: details.consoleNick,
+          },
+        });
       });
 
-      connection.on(ConnectionEvent.STATUS_CHANGE, (status) => {
-        log.info(`${config.ipAddress} status changed: ${status}`);
-        ipc_consoleMirrorStatusUpdatedEvent
-          .main!.trigger({
-            ip: config.ipAddress,
-            info: {
-              status,
-            },
-          })
-          .catch((err) => log.warn(err));
+      connection.on(ConnectionEvent.STATUS_CHANGE, (status: ConnectionStatus) => {
+        this.emit(MirrorEvent.LOG, `${config.ipAddress} status changed: ${status}`);
+        this.emit(MirrorEvent.MIRROR_STATUS_CHANGE, {
+          ip: config.ipAddress,
+          info: {
+            status,
+          },
+        });
       });
 
       connection.on(ConnectionEvent.DATA, (data: Buffer) => {
@@ -132,12 +108,14 @@ export class MirrorManager {
         }
       });
     });
-    log.info(config.port);
+    this.emit(MirrorEvent.LOG, config.port);
     connection.connect(config.ipAddress, config.port ?? Ports.DEFAULT);
 
     let autoSwitcher: AutoSwitcher | null = null;
     if (config.autoSwitcherSettings) {
       autoSwitcher = new AutoSwitcher(config.autoSwitcherSettings);
+      autoSwitcher.on(MirrorEvent.LOG, (msg) => this.emit(MirrorEvent.LOG, msg));
+      autoSwitcher.on(MirrorEvent.ERROR, (errMsg) => this.emit(MirrorEvent.ERROR, errMsg));
     }
 
     fileWriter.on(SlpStreamEvent.COMMAND, (data) => {
@@ -163,7 +141,10 @@ export class MirrorManager {
             }
           }
           if (relay) {
-            relay.clearBuffer().catch(log.warn); // clear buffer after each game to avoid concating a gigantic array
+            relay.clearBuffer().catch((err) => {
+              const errMsg = err.message || JSON.stringify(err);
+              this.emit(MirrorEvent.ERROR, errMsg);
+            }); // clear buffer after each game to avoid concating a gigantic array
           }
           break;
         }
@@ -182,10 +163,10 @@ export class MirrorManager {
   }
 
   public disconnect(ip: string) {
-    log.info("[Mirroring] Disconnect request");
+    this.emit(MirrorEvent.LOG, "Disconnect requested");
     const details = this.mirrors[ip];
     if (!details) {
-      log.warn(`Error disconnecting. No mirror details found for: ${ip}`);
+      this.emit(MirrorEvent.ERROR, `Error disconnecting. No mirror details found for: ${ip}`);
       return;
     }
 
@@ -200,28 +181,26 @@ export class MirrorManager {
 
     // FIXME: Not sure why the disconnected status update isn't working
     // For now let's just manually show the disconnected status
-    ipc_consoleMirrorStatusUpdatedEvent
-      .main!.trigger({
-        ip,
-        info: {
-          status: ConnectionStatus.DISCONNECTED,
-          filename: null,
-        },
-      })
-      .catch((err) => log.warn(err));
+    this.emit(MirrorEvent.MIRROR_STATUS_CHANGE, {
+      ip,
+      info: {
+        status: ConnectionStatus.DISCONNECTED,
+        filename: null,
+      },
+    });
   }
 
   public async startMirroring(ip: string) {
-    log.info("[Mirroring] Mirroring start");
+    this.emit(MirrorEvent.LOG, "Mirroring starting");
     const details = this.mirrors[ip];
     if (!details) {
-      log.warn(`Could not start mirroring. No mirror details found for: ${ip}`);
+      this.emit(MirrorEvent.ERROR, `Could not start mirroring. No mirror details found for: ${ip}`);
       return;
     }
 
     details.isMirroring = true;
     if (details.autoSwitcher) {
-      log.info("[Mirroring] Connecting to OBS");
+      this.emit(MirrorEvent.LOG, "Connecting to OBS");
       await details.autoSwitcher.connect();
     }
 
@@ -230,12 +209,25 @@ export class MirrorManager {
   }
 
   private async _playFile(filePath: string, playbackId: string) {
-    const replayComm: ReplayCommunication = {
-      mode: "mirror",
-      isRealTimeMode: this.mirrors[playbackId].isRealTimeMode,
-      replay: filePath,
-    };
-    return dolphinManager.launchPlaybackDolphin(playbackId, replayComm);
+    return this.emit(MirrorEvent.NEW_FILE, playbackId, filePath, this.mirrors[playbackId].isRealTimeMode);
+  }
+
+  public async handleClosedDolphin(playbackId: string) {
+    const broadcastInfo = Object.values(this.mirrors).find((info) => info.ipAddress === playbackId);
+    if (!broadcastInfo) {
+      // This is not one of the spectator dolphin instances
+      return;
+    }
+
+    const details = this.mirrors[playbackId];
+    if (!details) {
+      return;
+    }
+
+    details.isMirroring = false;
+    if (details.autoSwitcher) {
+      details.autoSwitcher.disconnect();
+    }
   }
 }
 

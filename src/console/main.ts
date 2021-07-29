@@ -6,20 +6,23 @@ import {
   ipc_startMirroring,
   ipc_stopDiscovery,
 } from "./ipc";
-import { mirrorManager } from "./mirrorManager";
+import { mirrorWorker } from "./workerInterface";
 
 ipc_connectToConsoleMirror.main!.handle(async ({ config }) => {
-  await mirrorManager.connect(config);
+  const mWorker = await mirrorWorker;
+  await mWorker.connectToConsole(config);
   return { success: true };
 });
 
 ipc_disconnectFromConsoleMirror.main!.handle(async ({ ip }) => {
-  mirrorManager.disconnect(ip);
+  const mWorker = await mirrorWorker;
+  await mWorker.disconnectFromConsole(ip);
   return { success: true };
 });
 
 ipc_startMirroring.main!.handle(async ({ ip }) => {
-  await mirrorManager.startMirroring(ip);
+  const mWorker = await mirrorWorker;
+  await mWorker.startMirroring(ip);
   return { success: true };
 });
 

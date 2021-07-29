@@ -1,9 +1,9 @@
-import log from "electron-log";
+import { EventEmitter } from "events";
 import OBSWebSocket from "obs-websocket-js";
 
-import { AutoSwitcherSettings } from "./types";
+import { AutoSwitcherSettings, MirrorEvent } from "./types";
 
-export class AutoSwitcher {
+export class AutoSwitcher extends EventEmitter {
   private obs: OBSWebSocket;
   private obsSourceName: string;
   private obsIP: string;
@@ -12,6 +12,7 @@ export class AutoSwitcher {
   private obsPairs: { scene: string; source: string }[];
 
   public constructor(settings: AutoSwitcherSettings) {
+    super();
     this.obs = new OBSWebSocket();
     this.obsSourceName = settings.sourceName;
     this.obsIP = settings.ip;
@@ -55,7 +56,13 @@ export class AutoSwitcher {
           address: this.obsIP,
           password: this.obsPassword,
         },
-        (err) => log.error(err?.message),
+        (err) => {
+          if (!err) {
+            return;
+          }
+          const errMsg = err.message || JSON.stringify(err);
+          this.emit(MirrorEvent.ERROR, errMsg);
+        },
       );
       this.obs.on("SceneItemAdded", async () => this._getSceneSources());
       this.obs.on("SceneItemRemoved", async () => this._getSceneSources());
@@ -71,9 +78,15 @@ export class AutoSwitcher {
           item: { name: pair.source },
           visible: show,
         } as any)
-        .catch(log.warn);
+        .catch((err) => {
+          const errMsg = err.message || JSON.stringify(err);
+          this.emit(MirrorEvent.ERROR, errMsg);
+        });
     });
-    Promise.all(promises).catch(log.warn);
+    Promise.all(promises).catch((err) => {
+      const errMsg = err.message || JSON.stringify(err);
+      this.emit(MirrorEvent.ERROR, errMsg);
+    });
   }
 
   private _setStatus(value: boolean) {
@@ -93,7 +106,6 @@ export class AutoSwitcher {
 
       this.statusOutput.timeout = setTimeout(() => {
         // If we timeout, set and set status
-        log.info("we timed out");
         this._setStatus(false);
       }, timeoutLength);
     };
