@@ -1,27 +1,29 @@
 import { settingsManager } from "@settings/settingsManager";
 
-import { broadcastManager } from "./broadcastManager";
 import { ipc_refreshBroadcastList, ipc_startBroadcast, ipc_stopBroadcast, ipc_watchBroadcast } from "./ipc";
-import { spectateManager } from "./spectateManager";
+import { broadcastWorker, spectateWorker } from "./workerInterfaces";
 
 ipc_refreshBroadcastList.main!.handle(async ({ authToken }) => {
-  await spectateManager.connect(authToken);
-  await spectateManager.refreshBroadcastList();
+  const sWorker = await spectateWorker;
+  await sWorker.refreshBroadcastList(authToken);
   return { success: true };
 });
 
 ipc_watchBroadcast.main!.handle(async ({ broadcasterId }) => {
+  const sWorker = await spectateWorker;
   const folderPath = settingsManager.get().settings.spectateSlpPath;
-  spectateManager.watchBroadcast(broadcasterId, folderPath, true);
+  await sWorker.startSpectate(broadcasterId, folderPath);
   return { success: true };
 });
 
 ipc_startBroadcast.main!.handle(async (config) => {
-  await broadcastManager.start(config);
+  const bWorker = await broadcastWorker;
+  await bWorker.startBroadcast(config);
   return { success: true };
 });
 
 ipc_stopBroadcast.main!.handle(async () => {
-  broadcastManager.stop();
+  const bWorker = await broadcastWorker;
+  await bWorker.stopBroadcast();
   return { success: true };
 });

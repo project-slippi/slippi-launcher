@@ -1,11 +1,9 @@
 import { ConnectionEvent, ConnectionStatus, DolphinConnection, DolphinMessageType } from "@slippi/slippi-js";
-import log from "electron-log";
+import { EventEmitter } from "events";
 import _ from "lodash";
 import { client as WebSocketClient, connection, IMessage } from "websocket";
 
-import { SlippiBroadcastEvent } from "../main/types";
-import { ipc_broadcastErrorOccurredEvent, ipc_dolphinStatusChangedEvent, ipc_slippiStatusChangedEvent } from "./ipc";
-import { StartBroadcastConfig } from "./types";
+import { BroadcastEvent, SlippiBroadcastPayloadEvent, StartBroadcastConfig } from "./types";
 
 const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
 
@@ -17,17 +15,18 @@ const BACKUP_MAX_LENGTH = 1800;
  * Responsible for retrieving Dolphin game data over enet and sending the data
  * to the Slippi server over websockets.
  */
-export class BroadcastManager {
+export class BroadcastManager extends EventEmitter {
   private broadcastId: string | null;
   private isBroadcastReady: boolean;
-  private incomingEvents: SlippiBroadcastEvent[];
-  private backupEvents: SlippiBroadcastEvent[];
+  private incomingEvents: SlippiBroadcastPayloadEvent[];
+  private backupEvents: SlippiBroadcastPayloadEvent[];
   private nextGameCursor: number | null;
 
   private wsConnection: connection | null;
   private dolphinConnection: DolphinConnection;
 
   public constructor() {
+    super();
     this.broadcastId = null;
     this.isBroadcastReady = false;
     this.wsConnection = null;
@@ -41,8 +40,8 @@ export class BroadcastManager {
 
     this.dolphinConnection = new DolphinConnection();
     this.dolphinConnection.on(ConnectionEvent.STATUS_CHANGE, (status: number) => {
-      log.info(`[Broadcast] Dolphin status change: ${status}`);
-      ipc_dolphinStatusChangedEvent.main!.trigger({ status }).catch(log.warn);
+      this.emit(BroadcastEvent.LOG, `Dolphin status change: ${status}`);
+      this.emit(BroadcastEvent.DOLPHIN_STATUS_CHANGE, status);
 
       // Disconnect from Slippi server when we disconnect from Dolphin
       if (status === ConnectionStatus.DISCONNECTED) {
@@ -70,7 +69,8 @@ export class BroadcastManager {
     });
     this.dolphinConnection.on(ConnectionEvent.ERROR, (err) => {
       // Log the error messages we get from Dolphin
-      log.error("[Broadcast] Dolphin connection error\n", err);
+      const errMsg = err.message || JSON.stringify(err);
+      this.emit(BroadcastEvent.ERROR, errMsg);
     });
   }
 
@@ -83,7 +83,9 @@ export class BroadcastManager {
       try {
         await this._connectToDolphin(config.ip, config.port);
       } catch (err) {
-        log.warn(err);
+        const errMsg = err.message || JSON.stringify(err);
+        this.emit(BroadcastEvent.LOG, `Could not connect to Dolphin\n${errMsg}`);
+        this.emit(BroadcastEvent.LOG, errMsg);
         this.dolphinConnection.disconnect();
         throw err;
       }
@@ -91,12 +93,12 @@ export class BroadcastManager {
 
     if (this.wsConnection) {
       // We're already connected
-      log.info("[Broadcast] we are already connected");
+      this.emit(BroadcastEvent.LOG, "we are already connected");
       return;
     }
 
     // Indicate we're connecting to the Slippi server
-    await ipc_slippiStatusChangedEvent.main!.trigger({ status: ConnectionStatus.CONNECTING });
+    this.emit(BroadcastEvent.SLIPPI_STATUS_CHANGE, ConnectionStatus.CONNECTING);
 
     const headers = {
       target: config.viewerId,
@@ -110,28 +112,29 @@ export class BroadcastManager {
 
     const socket = new WebSocketClient({ disableNagleAlgorithm: true });
 
-    socket.on("connectFailed", (error: Error) => {
-      log.error("[Broadcast] WS failed to connect\n", error);
+    socket.on("connectFailed", (err: Error) => {
+      const errMsg = err.message || JSON.stringify(err);
+      this.emit(BroadcastEvent.LOG, `WS failed to connect\n${errMsg}`);
 
       const label = "x-websocket-reject-reason: ";
-      let message = error.message;
-      const pos = error.message.indexOf(label);
+      let message = err.message;
+      const pos = err.message.indexOf(label);
       if (pos >= 0) {
-        const endPos = error.message.indexOf("\n", pos + label.length);
+        const endPos = err.message.indexOf("\n", pos + label.length);
         message = message.substring(pos + label.length, endPos >= 0 ? endPos : undefined);
       }
 
-      ipc_slippiStatusChangedEvent.main!.trigger({ status: ConnectionStatus.DISCONNECTED }).catch(log.warn);
-      ipc_broadcastErrorOccurredEvent.main!.trigger({ errorMessage: message }).catch(log.warn);
+      this.emit(BroadcastEvent.SLIPPI_STATUS_CHANGE, ConnectionStatus.DISCONNECTED);
+      this.emit(BroadcastEvent.ERROR, message);
     });
 
     socket.on("connect", (connection: connection) => {
-      log.info("[Broadcast] WS connection successful");
+      this.emit(BroadcastEvent.LOG, "WS connection successful");
       this.wsConnection = connection;
 
       const getBroadcasts = async () => {
         if (!this.wsConnection) {
-          log.info("[Broadcast] WS connection failed");
+          this.emit(BroadcastEvent.LOG, "WS connection failed");
           return;
         }
         this.wsConnection.send(
@@ -143,7 +146,7 @@ export class BroadcastManager {
 
       const startBroadcast = async (broadcastId: string | null, name?: string) => {
         if (!this.wsConnection) {
-          log.info("[Broadcast] WS connection failed");
+          this.emit(BroadcastEvent.LOG, "WS connection failed");
           return;
         }
         this.wsConnection.send(
@@ -156,7 +159,7 @@ export class BroadcastManager {
       };
 
       const connectionComplete = (broadcastId: string) => {
-        log.info(`[Broadcast] Starting broadcast to: ${broadcastId}`);
+        this.emit(BroadcastEvent.LOG, `Starting broadcast to: ${broadcastId}`);
 
         // Clear backup events when a connection completes. The backup events should already have
         // been added back to the events to process at this point if that is relevant
@@ -164,20 +167,20 @@ export class BroadcastManager {
         this.isBroadcastReady = true;
 
         this.broadcastId = broadcastId;
-        ipc_slippiStatusChangedEvent.main!.trigger({ status: ConnectionStatus.CONNECTED }).catch(log.warn);
+        this.emit(BroadcastEvent.SLIPPI_STATUS_CHANGE, ConnectionStatus.CONNECTED);
 
         // Process any events that may have been missed when we disconnected
         this._handleGameData();
       };
 
       connection.on("error", (err: Error) => {
-        log.error("[Broadcast] WS connection error encountered\n", err);
-        ipc_broadcastErrorOccurredEvent.main!.trigger({ errorMessage: err.message }).catch(log.warn);
+        const errMsg = err.message || JSON.stringify(err);
+        this.emit(BroadcastEvent.ERROR, errMsg);
       });
 
       connection.on("close", (code: number, reason: string) => {
-        log.info(`[Broadcast] WS connection closed: ${code}, ${reason}`);
-        ipc_slippiStatusChangedEvent.main!.trigger({ status: ConnectionStatus.DISCONNECTED }).catch(log.warn);
+        this.emit(BroadcastEvent.LOG, `WS connection closed: ${code}, ${reason}`);
+        this.emit(BroadcastEvent.SLIPPI_STATUS_CHANGE, ConnectionStatus.DISCONNECTED);
 
         // Clear the socket and disconnect from Dolphin too if we're still connected
         this.wsConnection = null;
@@ -211,11 +214,12 @@ export class BroadcastManager {
             return;
           }
         } catch (err) {
-          log.error(`[Broadcast] Failed to parse message from server\n`, err, data.utf8Data);
+          const errMsg = err.message || JSON.stringify(err);
+          this.emit(BroadcastEvent.LOG, `Failed to parse message from server\n${errMsg}\n${data.utf8Data}`);
           return;
         }
 
-        log.info(message);
+        this.emit(BroadcastEvent.LOG, message);
 
         switch (message.type) {
           case "start-broadcast-resp": {
@@ -226,8 +230,9 @@ export class BroadcastManager {
                 firstCursor = firstIncoming.cursor;
               }
 
-              log.info(
-                `[Broadcast] Picking broadcast back up from ${message.recoveryGameCursor}. Last not sent: ${firstCursor}`,
+              this.emit(
+                BroadcastEvent.LOG,
+                `Picking broadcast back up from ${message.recoveryGameCursor}. Last not sent: ${firstCursor}`,
               );
 
               // Add any events that didn't make it to the server to the front of the event queue
@@ -247,7 +252,7 @@ export class BroadcastManager {
 
               const newFirstEvent = _.first(this.incomingEvents);
               if (!newFirstEvent) {
-                log.warn("[Broadcast] Missing new first event");
+                this.emit(BroadcastEvent.LOG, "Missing new first event");
                 return;
               }
               const newFirstCursor = newFirstEvent.cursor;
@@ -255,8 +260,9 @@ export class BroadcastManager {
               const firstBackupCursor = (_.first(this.backupEvents) || {}).cursor;
               const lastBackupCursor = (_.last(this.backupEvents) || {}).cursor;
 
-              log.info(
-                `[Broadcast] Backup events include range from: [${firstBackupCursor}, ${lastBackupCursor}]. Next cursor to be sent: ${newFirstCursor}`,
+              this.emit(
+                BroadcastEvent.LOG,
+                `Backup events include range from: [${firstBackupCursor}, ${lastBackupCursor}]. Next cursor to be sent: ${newFirstCursor}`,
               );
             }
             if (message.broadcastId !== undefined) {
@@ -275,37 +281,37 @@ export class BroadcastManager {
 
               if (prevBroadcast) {
                 // TODO: Figure out if this config.name guaranteed to be the correct name?
-                startBroadcast(prevBroadcast.id, config.name).catch(log.warn);
+                startBroadcast(prevBroadcast.id, config.name).catch(console.warn);
                 return;
               }
             }
 
             // Pass in null as the broadcast ID to tell the server to generate an ID for us
-            startBroadcast(null, config.name).catch(log.warn);
+            startBroadcast(null, config.name).catch(console.warn);
             break;
           }
 
           default: {
-            log.error(`[Broadcast] Ws resp type ${message.type} not supported`);
+            this.emit(BroadcastEvent.LOG, `Ws resp type ${message.type} not supported`);
             break;
           }
         }
       });
 
-      getBroadcasts().catch(log.warn);
+      getBroadcasts().catch(console.warn);
     });
 
-    log.info("[Broadcast] Connecting to WS service");
+    this.emit(BroadcastEvent.LOG, "Connecting to WS service");
     socket.connect(SLIPPI_WS_SERVER, "broadcast-protocol", undefined, headers);
   }
 
   public stop() {
     // TODO: Handle cancelling the retry case
 
-    log.info("[Broadcast] Service stop message received");
+    this.emit(BroadcastEvent.LOG, "Service stop message received");
 
     if (this.dolphinConnection.getStatus() === ConnectionStatus.CONNECTED) {
-      log.info("[Broadcast] Disconnecting dolphin connection...");
+      this.emit(BroadcastEvent.LOG, "Disconnecting dolphin connection...");
 
       this.dolphinConnection.disconnect();
 
@@ -315,7 +321,7 @@ export class BroadcastManager {
     }
 
     if (this.wsConnection && this.broadcastId) {
-      log.info("[Broadcast] Disconnecting ws connection...");
+      this.emit(BroadcastEvent.LOG, "Disconnecting ws connection...");
 
       this.wsConnection.send(
         JSON.stringify({
@@ -389,7 +395,7 @@ export class BroadcastManager {
     while (!_.isEmpty(this.incomingEvents)) {
       const event = this.incomingEvents.shift();
       if (!event) {
-        log.error("No incoming events");
+        this.emit(BroadcastEvent.LOG, "No incoming events");
         return;
       }
       this.backupEvents.push(event);
@@ -426,8 +432,8 @@ export class BroadcastManager {
 
             this.wsConnection.send(JSON.stringify(message), (err) => {
               if (err) {
-                log.error("[Broadcast] WS send error encountered\n", err);
-                // return;
+                const errMsg = err.message || JSON.stringify(err);
+                this.emit(BroadcastEvent.ERROR, errMsg);
               }
             });
             break;
@@ -438,5 +444,3 @@ export class BroadcastManager {
     }
   }
 }
-
-export const broadcastManager = new BroadcastManager();
