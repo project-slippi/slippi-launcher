@@ -100,7 +100,6 @@ export class SpectateManager extends EventEmitter {
 
       socket.on("connectFailed", (err) => {
         const errMsg = err.message || JSON.stringify(err);
-        this.emit(SpectateEvent.LOG, `WS connection failed\n${errMsg}`);
         this.emit(SpectateEvent.ERROR, errMsg);
         reject();
       });
@@ -111,7 +110,6 @@ export class SpectateManager extends EventEmitter {
 
         connection.on("error", (err) => {
           const errMsg = err.message || JSON.stringify(err);
-          this.emit(SpectateEvent.LOG, `Error with WS connection\n${errMsg}`);
           this.emit(SpectateEvent.ERROR, errMsg);
         });
 
@@ -145,7 +143,6 @@ export class SpectateManager extends EventEmitter {
               })
               .catch((err) => {
                 const errMsg = err.message || JSON.stringify(err);
-                this.emit(SpectateEvent.LOG, `[Specate] Error while reconnecting to broadcast.\n${errMsg}`);
                 this.emit(SpectateEvent.ERROR, errMsg);
               });
           } else {

@@ -24,16 +24,17 @@ export const broadcastWorker: Promise<Thread & BroadcastWorkerMethods> = new Pro
   spawn<BroadcastWorkerSpec>(new Worker("./broadcastWorker"), { timeout: 30000 })
     .then((worker) => {
       worker.getDolphinStatusObservable().subscribe(({ status }) => {
-        ipc_dolphinStatusChangedEvent.main!.trigger({ status }).catch(log.error);
+        ipc_dolphinStatusChangedEvent.main!.trigger({ status }).catch(broadcastLog.error);
       });
       worker.getSlippiStatusObservable().subscribe(({ status }) => {
-        ipc_slippiStatusChangedEvent.main!.trigger({ status }).catch(log.error);
+        ipc_slippiStatusChangedEvent.main!.trigger({ status }).catch(broadcastLog.error);
       });
       worker.getLogObservable().subscribe((logMessage) => {
         broadcastLog.info(logMessage);
       });
       worker.getErrorObservable().subscribe((errorMessage) => {
-        ipc_broadcastErrorOccurredEvent.main!.trigger({ errorMessage }).catch(log.error);
+        broadcastLog.error(errorMessage);
+        ipc_broadcastErrorOccurredEvent.main!.trigger({ errorMessage }).catch(broadcastLog.error);
       });
 
       log.debug("broadcast: Spawning worker: Done");
@@ -68,24 +69,25 @@ export const spectateWorker: Promise<Thread & SpectateWorkerMethods> = new Promi
   spawn<SpectateWorkerSpec>(new Worker("./spectateWorker"), { timeout: 30000 })
     .then((worker) => {
       worker.getBroadcastListObservable().subscribe((data: BroadcasterItem[]) => {
-        ipc_broadcastListUpdatedEvent.main!.trigger({ items: data }).catch(log.error);
+        ipc_broadcastListUpdatedEvent.main!.trigger({ items: data }).catch(spectateLog.error);
       });
       worker.getLogObservable().subscribe((logMessage) => {
         spectateLog.info(logMessage);
       });
       worker.getErrorObservable().subscribe((errorMessage) => {
-        ipc_broadcastErrorOccurredEvent.main!.trigger({ errorMessage }).catch(log.error);
+        spectateLog.error(errorMessage);
+        ipc_broadcastErrorOccurredEvent.main!.trigger({ errorMessage }).catch(spectateLog.error);
       });
       worker.getSpectateDetailsObservable().subscribe(({ playbackId, filePath }) => {
         const replayComm: ReplayCommunication = {
           mode: "mirror",
           replay: filePath,
         };
-        dolphinManager.launchPlaybackDolphin(playbackId, replayComm).catch(log.error);
+        dolphinManager.launchPlaybackDolphin(playbackId, replayComm).catch(spectateLog.error);
       });
 
       dolphinManager.on("dolphin-closed", (playbackId: string) => {
-        worker.dolphinClosed(playbackId).catch(log.error);
+        worker.dolphinClosed(playbackId).catch(spectateLog.error);
       });
 
       log.debug("spectate: Spawning worker: Done");

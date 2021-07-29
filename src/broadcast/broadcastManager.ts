@@ -70,7 +70,6 @@ export class BroadcastManager extends EventEmitter {
     this.dolphinConnection.on(ConnectionEvent.ERROR, (err) => {
       // Log the error messages we get from Dolphin
       const errMsg = err.message || JSON.stringify(err);
-      this.emit(BroadcastEvent.LOG, `Dolphin connection error\n${errMsg}`);
       this.emit(BroadcastEvent.ERROR, errMsg);
     });
   }
@@ -176,7 +175,6 @@ export class BroadcastManager extends EventEmitter {
 
       connection.on("error", (err: Error) => {
         const errMsg = err.message || JSON.stringify(err);
-        this.emit(BroadcastEvent.LOG, `WS connection error encountered\n${errMsg}`);
         this.emit(BroadcastEvent.ERROR, errMsg);
       });
 
@@ -435,7 +433,6 @@ export class BroadcastManager extends EventEmitter {
             this.wsConnection.send(JSON.stringify(message), (err) => {
               if (err) {
                 const errMsg = err.message || JSON.stringify(err);
-                this.emit(BroadcastEvent.LOG, `WS send error encountered\n${errMsg}`);
                 this.emit(BroadcastEvent.ERROR, errMsg);
               }
             });
