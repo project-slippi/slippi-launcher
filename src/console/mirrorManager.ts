@@ -76,7 +76,15 @@ export class MirrorManager extends EventEmitter {
     }
 
     const connection = new ConsoleConnection();
-    connection.once("connect", () => {
+    connection.on(ConnectionEvent.ERROR, (errMsg: string) => {
+      this.emit(MirrorEvent.ERROR, errMsg);
+
+      const status = connection.getStatus();
+      if (status === ConnectionStatus.DISCONNECTED) {
+        this.disconnect(config.ipAddress);
+      }
+    });
+    connection.once(ConnectionEvent.CONNECT, () => {
       this.emit(MirrorEvent.LOG, "Connecting to Wii");
       connection.on(ConnectionEvent.HANDSHAKE, (details: ConnectionDetails) => {
         this.emit(MirrorEvent.LOG, "Got handshake from wii");
