@@ -1,8 +1,11 @@
 import { ApolloClient, ApolloLink, gql, HttpLink, InMemoryCache } from "@apollo/client";
 import { ipc_checkPlayKeyExists, ipc_removePlayKeyFile, ipc_storePlayKeyFile } from "@dolphin/ipc";
 import { PlayKey } from "@dolphin/types";
-import log from "electron-log";
+import electronLog from "electron-log";
 import firebase from "firebase";
+import { GraphQLError } from "graphql";
+
+const log = electronLog.scope("slippiBackend");
 
 const httpLink = new HttpLink({ uri: process.env.SLIPPI_GRAPHQL_ENDPOINT });
 
@@ -32,6 +35,37 @@ const renameUserMutation = gql`
   }
 `;
 
+export const setUserIsOnlineEnabledMutation = gql`
+  mutation SetUserIsOnlineEnabled($uid: String!) {
+    insert_users(
+      objects: [{ uid: $uid, isOnlineEnabled: true }]
+      on_conflict: { constraint: users_pkey, update_columns: [isOnlineEnabled] }
+    ) {
+      returning {
+        uid
+      }
+    }
+  }
+`;
+
+export const initNetplayMutation = gql`
+  mutation InitNetplay($codeStart: String!) {
+    user_init_netplay(codeStart: $codeStart) {
+      uid
+    }
+  }
+`;
+
+const handleErrors = (errors: readonly GraphQLError[] | undefined) => {
+  if (errors) {
+    let errMsgs = "";
+    errors.forEach((err) => {
+      errMsgs += `${err.message}\n`;
+    });
+    throw new Error(errMsgs);
+  }
+};
+
 export async function fetchPlayKey(): Promise<PlayKey> {
   const user = firebase.auth().currentUser;
   if (!user) {
@@ -60,6 +94,8 @@ export async function fetchPlayKey(): Promise<PlayKey> {
     },
     fetchPolicy: "network-only",
   });
+
+  handleErrors(res.errors);
   if (!res.data.user.isOnlineEnabled) {
     throw new Error("User is not allowed online");
   }
@@ -104,9 +140,24 @@ export async function changeDisplayName(name: string) {
   }
   const res = await client.mutate({ mutation: renameUserMutation, variables: { uid: user.uid, displayName: name } });
 
+  handleErrors(res.errors);
+
   if (res.data.user_rename.displayName !== name) {
     throw new Error("Could not change name.");
   }
 
   await user.updateProfile({ displayName: name });
+}
+
+export async function initNetplay(codeStart: string): Promise<void> {
+  const user = firebase.auth().currentUser;
+  if (!user) {
+    throw new Error("Failed to set connect code. User is not logged in");
+  }
+
+  let res = await client.mutate({ mutation: initNetplayMutation, variables: { codeStart } });
+  handleErrors(res.errors);
+
+  res = await client.mutate({ mutation: setUserIsOnlineEnabledMutation, variables: { uid: user.uid } });
+  handleErrors(res.errors);
 }
