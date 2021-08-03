@@ -15,7 +15,7 @@ export const ActivateOnlineStep: React.FC = () => {
   return (
     <Box display="flex" flexDirection="column" flexGrow="1">
       <Container>
-        <QuickStartHeader>Choose a Connect Code</QuickStartHeader>
+        <QuickStartHeader>Choose a connect code</QuickStartHeader>
         <ActivateOnlineForm />
       </Container>
     </Box>

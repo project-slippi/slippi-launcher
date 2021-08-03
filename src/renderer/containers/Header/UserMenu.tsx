@@ -3,9 +3,6 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import EditIcon from "@material-ui/icons/Edit";
 import EjectIcon from "@material-ui/icons/Eject";
 import LanguageIcon from "@material-ui/icons/Language";
-import RefreshIcon from "@material-ui/icons/Refresh";
-import { slippiActivationUrl } from "common/constants";
-import { shell } from "electron";
 import firebase from "firebase";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
@@ -15,6 +12,7 @@ import { IconMenu, IconMenuItem } from "@/components/IconMenu";
 import { logout } from "@/lib/firebase";
 import { useAccount } from "@/lib/hooks/useAccount";
 
+import { ActivateOnlineDialog } from "./ActivateOnlineDialog";
 import { NameChangeDialog } from "./NameChangeDialog";
 import { UserInfo } from "./UserInfo";
 
@@ -28,6 +26,7 @@ export const UserMenu: React.FC<{
   const loading = useAccount((store) => store.loading);
   const [openLogoutPrompt, setOpenLogoutPrompt] = React.useState(false);
   const [openNameChangePrompt, setOpenNameChangePrompt] = React.useState(false);
+  const [openActivationDialog, setOpenActivationDialog] = React.useState(false);
   const { addToast } = useToasts();
   const onLogout = async () => {
     try {
@@ -59,18 +58,10 @@ export const UserMenu: React.FC<{
       items.push({
         onClick: () => {
           closeMenu();
-          void shell.openExternal(slippiActivationUrl);
+          setOpenActivationDialog(true);
         },
         icon: <LanguageIcon fontSize="small" />,
         label: "Activate online play",
-      });
-      items.push({
-        onClick: () => {
-          closeMenu();
-          refreshPlayKey().catch((err) => addToast(err.message, { appearance: "error" }));
-        },
-        label: "Refresh activation status",
-        icon: <RefreshIcon fontSize="small" />,
       });
     }
 
@@ -112,6 +103,14 @@ export const UserMenu: React.FC<{
         items={generateMenuItems()}
       />
       <NameChangeDialog displayName={displayName} open={openNameChangePrompt} handleClose={handleClose} />
+      <ActivateOnlineDialog
+        open={openActivationDialog}
+        onClose={() => setOpenActivationDialog(false)}
+        onSubmit={() => {
+          refreshPlayKey().catch((err) => addToast(err.message, { appearance: "error" }));
+          setOpenActivationDialog(false);
+        }}
+      />
       <ConfirmationModal
         title="Are you sure you want to log out?"
         confirmText="Log out"
