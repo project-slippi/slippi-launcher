@@ -9,7 +9,7 @@ var InstallType
 Page custom InstTypePageCreate InstTypePageLeave
 
 Function InstTypePageCreate
-!insertmacro MUI_HEADER_TEXT "Slippi Launcher Installation" "Select components to install"
+!insertmacro MUI_HEADER_TEXT "Select components to install" ""
 nsDialogs::Create 1018
 Pop $0
 ${NSD_CreateRadioButton} 0 50u 100% 10u "Also install GameCube adapter drivers (optional)"
@@ -21,7 +21,7 @@ ${If} $InstallType == SKIP
 ${Else}
     ${NSD_Check} $1 ; Select install drivers by default
 ${EndIf}
-${NSD_CreateLabel} 0 0 100% 30u "Would you like to also install GameCube adapter drivers? This would allow you to use GameCube controllers with a compatible adapter (in Wii U mode) on your PC. Skip this if you already have GameCube adapter drivers installed."
+${NSD_CreateLabel} 0 0 100% 30u "Would you like to also install GameCube adapter drivers? This would allow you to use GameCube controllers with a compatible adapter (in Switch/Wii U mode) on your PC. Skip this if you already have GameCube adapter drivers installed."
 pop $3
 nsDialogs::Show
 FunctionEnd
