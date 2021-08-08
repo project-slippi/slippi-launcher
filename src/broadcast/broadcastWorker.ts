@@ -15,7 +15,7 @@ export interface Methods {
   startBroadcast(config: StartBroadcastConfig): Promise<void>;
   stopBroadcast(): Promise<void>;
   getLogObservable(): Observable<string>;
-  getErrorObservable(): Observable<string>;
+  getErrorObservable(): Observable<Error | string>;
   getSlippiStatusObservable(): Observable<{ status: ConnectionStatus }>;
   getDolphinStatusObservable(): Observable<{ status: ConnectionStatus }>;
 }
@@ -25,15 +25,15 @@ export type WorkerSpec = ModuleMethods & Methods;
 const broadcastManager = new BroadcastManager();
 
 const logSubject = new Subject<string>();
-const errorSubject = new Subject<string>();
+const errorSubject = new Subject<Error | string>();
 const slippiStatusSubject = new Subject<{ status: ConnectionStatus }>();
 const dolphinStatusSubject = new Subject<{ status: ConnectionStatus }>();
 
 broadcastManager.on(BroadcastEvent.LOG, (msg: string) => {
   logSubject.next(msg);
 });
-broadcastManager.on(BroadcastEvent.ERROR, (errorMsg: string) => {
-  errorSubject.next(errorMsg);
+broadcastManager.on(BroadcastEvent.ERROR, (err: Error | string) => {
+  errorSubject.next(err);
 });
 broadcastManager.on(BroadcastEvent.SLIPPI_STATUS_CHANGE, (status: ConnectionStatus) => {
   slippiStatusSubject.next({ status });
@@ -55,7 +55,7 @@ const methods: WorkerSpec = {
   getLogObservable(): Observable<string> {
     return Observable.from(logSubject);
   },
-  getErrorObservable(): Observable<string> {
+  getErrorObservable(): Observable<Error | string> {
     return Observable.from(errorSubject);
   },
   getSlippiStatusObservable(): Observable<{ status: ConnectionStatus }> {

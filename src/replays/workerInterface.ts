@@ -1,8 +1,10 @@
 import { app } from "electron";
-import log from "electron-log";
+import electronLog from "electron-log";
 import { spawn, Thread, Worker } from "threads";
 
 import { Methods as WorkerMethods, WorkerSpec } from "./worker";
+
+const log = electronLog.scope("workerInterface/replays");
 
 export const worker: Promise<Thread & WorkerMethods> = new Promise((resolve, reject) => {
   log.debug("replayBrowser: Spawning worker");

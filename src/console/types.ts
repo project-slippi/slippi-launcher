@@ -39,3 +39,10 @@ export interface DiscoveredConsoleInfo {
   name: string | undefined;
   firstFound: string;
 }
+
+export enum MirrorEvent {
+  LOG = "LOG",
+  ERROR = "ERROR",
+  NEW_FILE = "NEW_FILE",
+  MIRROR_STATUS_CHANGE = "MIRROR_STATUS_CHANGE",
+}

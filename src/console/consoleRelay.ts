@@ -1,18 +1,21 @@
 import { Ports } from "@slippi/slippi-js";
-import log from "electron-log";
+import { EventEmitter } from "events";
 import net from "net";
+
+import { MirrorEvent } from "./types";
 
 interface ConsoleDataBuffer {
   buffersToConcat: Buffer[];
   fullBuffer: Buffer;
 }
 
-export class ConsoleRelay {
+export class ConsoleRelay extends EventEmitter {
   private server: net.Server | null;
   private dataBuffer: ConsoleDataBuffer;
   private clients: net.Socket[];
 
   public constructor(id: number) {
+    super();
     this.clients = [];
     this.dataBuffer = {
       buffersToConcat: [],
@@ -49,11 +52,11 @@ export class ConsoleRelay {
     this.dataBuffer.buffersToConcat.push(newData);
     if (this.clients) {
       this.clients.forEach((client) => {
-        try {
-          client.write(newData);
-        } catch (err) {
-          log.warn(`Could not write to a client...${err}`);
-        }
+        client.write(newData, (err) => {
+          if (err) {
+            this.emit(MirrorEvent.ERROR, err);
+          }
+        });
       });
     }
   }
