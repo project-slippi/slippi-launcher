@@ -9,6 +9,7 @@ import { downloadAndInstallDolphin } from "./downloadDolphin";
 import { DolphinInstance, PlaybackDolphinInstance } from "./instance";
 import { DolphinLaunchType, ReplayCommunication } from "./types";
 import { addGamePathToIni, findDolphinExecutable, findUserFolder } from "./util";
+import { updateDolphinReplayPath } from "@dolphin/util";
 
 const log = electronLog.scope("dolphin/manager");
 
@@ -46,6 +47,8 @@ export class DolphinManager extends EventEmitter {
       throw new Error("Netplay dolphin is already open!");
     }
 
+    this.syncDolphinPath();
+
     const dolphinPath = await findDolphinExecutable(DolphinLaunchType.NETPLAY);
     log.info(`Launching dolphin at path: ${dolphinPath}`);
     const launchMeleeOnPlay = settingsManager.get().settings.launchMeleeOnPlay;
@@ -62,6 +65,9 @@ export class DolphinManager extends EventEmitter {
 
   public async configureDolphin(launchType: DolphinLaunchType) {
     log.debug(`configuring ${launchType} dolphin...`);
+
+    this.syncDolphinPath();
+
     const dolphinPath = await findDolphinExecutable(launchType);
     if (launchType === DolphinLaunchType.NETPLAY && !this.netplayDolphinInstance) {
       const instance = new DolphinInstance(dolphinPath);
@@ -125,6 +131,12 @@ export class DolphinManager extends EventEmitter {
       const gameDir = path.dirname(isoPath);
       await addGamePathToIni(launchType, gameDir);
     }
+  }
+
+  private async syncDolphinPath() {
+    // It's possible for the Launcher and Dolphin's replay direcories to become
+    // desynced if the user sets the directory via Dolphin, so update Dolphin's to match the launcher
+    updateDolphinReplayPath(settingsManager.getRootSlpPath());
   }
 
   public async clearCache(launchType: DolphinLaunchType) {
