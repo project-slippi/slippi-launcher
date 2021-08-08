@@ -26,8 +26,10 @@ export async function findDolphinExecutable(type: DolphinLaunchType, dolphinPath
         return filename.endsWith("Dolphin.exe");
       case "darwin":
         return filename.endsWith("Dolphin.app");
-      case "linux":
-        return filename.endsWith(".AppImage") || filename.endsWith("dolphin-emu");
+      case "linux": {
+        const userDolphinName = type === DolphinLaunchType.NETPLAY ? "Slippi_Online-x86_64.AppImage" : "Slippi_Playback-x86_64.AppImage";
+        return filename === userDolphinName || filename.endsWith("dolphin-emu");
+      }
       default:
         return false;
     }
