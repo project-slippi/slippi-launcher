@@ -57,11 +57,9 @@ export class AutoSwitcher extends EventEmitter {
           password: this.obsPassword,
         },
         (err) => {
-          if (!err) {
-            return;
+          if (err) {
+            this.emit(MirrorEvent.ERROR, err);
           }
-          const errMsg = err.message || JSON.stringify(err);
-          this.emit(MirrorEvent.ERROR, errMsg);
         },
       );
       this.obs.on("SceneItemAdded", async () => this._getSceneSources());
@@ -79,13 +77,15 @@ export class AutoSwitcher extends EventEmitter {
           visible: show,
         } as any)
         .catch((err) => {
-          const errMsg = err.message || JSON.stringify(err);
-          this.emit(MirrorEvent.ERROR, errMsg);
+          if (err) {
+            this.emit(MirrorEvent.ERROR, err);
+          }
         });
     });
     Promise.all(promises).catch((err) => {
-      const errMsg = err.message || JSON.stringify(err);
-      this.emit(MirrorEvent.ERROR, errMsg);
+      if (err) {
+        this.emit(MirrorEvent.ERROR, err);
+      }
     });
   }
 

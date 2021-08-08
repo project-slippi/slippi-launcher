@@ -32,8 +32,9 @@ export const broadcastWorker: Promise<Thread & BroadcastWorkerMethods> = new Pro
       worker.getLogObservable().subscribe((logMessage) => {
         broadcastLog.info(logMessage);
       });
-      worker.getErrorObservable().subscribe((errorMessage) => {
-        broadcastLog.error(errorMessage);
+      worker.getErrorObservable().subscribe((err) => {
+        broadcastLog.error(err);
+        const errorMessage = err instanceof Error ? err.message : err;
         ipc_broadcastErrorOccurredEvent.main!.trigger({ errorMessage }).catch(broadcastLog.error);
       });
 
@@ -74,8 +75,9 @@ export const spectateWorker: Promise<Thread & SpectateWorkerMethods> = new Promi
       worker.getLogObservable().subscribe((logMessage) => {
         spectateLog.info(logMessage);
       });
-      worker.getErrorObservable().subscribe((errorMessage) => {
-        spectateLog.error(errorMessage);
+      worker.getErrorObservable().subscribe((err) => {
+        spectateLog.error(err);
+        const errorMessage = err instanceof Error ? err.message : err;
         ipc_broadcastErrorOccurredEvent.main!.trigger({ errorMessage }).catch(spectateLog.error);
       });
       worker.getSpectateDetailsObservable().subscribe(({ playbackId, filePath }) => {

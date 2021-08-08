@@ -99,8 +99,7 @@ export class SpectateManager extends EventEmitter {
       const socket = new WebSocketClient();
 
       socket.on("connectFailed", (err) => {
-        const errMsg = err.message || JSON.stringify(err);
-        this.emit(SpectateEvent.ERROR, errMsg);
+        this.emit(SpectateEvent.ERROR, err);
         reject();
       });
 
@@ -109,8 +108,7 @@ export class SpectateManager extends EventEmitter {
         this.wsConnection = connection;
 
         connection.on("error", (err) => {
-          const errMsg = err.message || JSON.stringify(err);
-          this.emit(SpectateEvent.ERROR, errMsg);
+          this.emit(SpectateEvent.ERROR, err);
         });
 
         connection.on("close", (code, reason) => {
@@ -142,8 +140,9 @@ export class SpectateManager extends EventEmitter {
                 });
               })
               .catch((err) => {
-                const errMsg = err.message || JSON.stringify(err);
-                this.emit(SpectateEvent.ERROR, errMsg);
+                if (err) {
+                  this.emit(SpectateEvent.ERROR, err);
+                }
               });
           } else {
             // TODO: Somehow kill dolphin? Or maybe reconnect to a person's broadcast when it

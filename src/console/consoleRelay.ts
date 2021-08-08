@@ -52,12 +52,11 @@ export class ConsoleRelay extends EventEmitter {
     this.dataBuffer.buffersToConcat.push(newData);
     if (this.clients) {
       this.clients.forEach((client) => {
-        try {
-          client.write(newData);
-        } catch (err) {
-          const errMsg = err.message || JSON.stringify(err);
-          this.emit(MirrorEvent.ERROR, errMsg);
-        }
+        client.write(newData, (err) => {
+          if (err) {
+            this.emit(MirrorEvent.ERROR, err);
+          }
+        });
       });
     }
   }

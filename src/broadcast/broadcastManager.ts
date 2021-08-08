@@ -69,8 +69,9 @@ export class BroadcastManager extends EventEmitter {
     });
     this.dolphinConnection.on(ConnectionEvent.ERROR, (err) => {
       // Log the error messages we get from Dolphin
-      const errMsg = err.message || JSON.stringify(err);
-      this.emit(BroadcastEvent.ERROR, errMsg);
+      if (err) {
+        this.emit(BroadcastEvent.ERROR, err);
+      }
     });
   }
 
@@ -112,9 +113,8 @@ export class BroadcastManager extends EventEmitter {
 
     const socket = new WebSocketClient({ disableNagleAlgorithm: true });
 
-    socket.on("connectFailed", (err: Error) => {
-      const errMsg = err.message || JSON.stringify(err);
-      this.emit(BroadcastEvent.LOG, `WS failed to connect\n${errMsg}`);
+    socket.on("connectFailed", (err) => {
+      this.emit(BroadcastEvent.LOG, `WS failed to connect`);
 
       const label = "x-websocket-reject-reason: ";
       let message = err.message;
@@ -173,9 +173,8 @@ export class BroadcastManager extends EventEmitter {
         this._handleGameData();
       };
 
-      connection.on("error", (err: Error) => {
-        const errMsg = err.message || JSON.stringify(err);
-        this.emit(BroadcastEvent.ERROR, errMsg);
+      connection.on("error", (err) => {
+        this.emit(BroadcastEvent.ERROR, err);
       });
 
       connection.on("close", (code: number, reason: string) => {
@@ -432,8 +431,7 @@ export class BroadcastManager extends EventEmitter {
 
             this.wsConnection.send(JSON.stringify(message), (err) => {
               if (err) {
-                const errMsg = err.message || JSON.stringify(err);
-                this.emit(BroadcastEvent.ERROR, errMsg);
+                this.emit(BroadcastEvent.ERROR, err);
               }
             });
             break;

@@ -16,7 +16,7 @@ export interface Methods {
   dolphinClosed(playbackId: string): Promise<void>;
   refreshBroadcastList(authToken: string): Promise<void>;
   getLogObservable(): Observable<string>;
-  getErrorObservable(): Observable<string>;
+  getErrorObservable(): Observable<Error | string>;
   getBroadcastListObservable(): Observable<BroadcasterItem[]>;
   getSpectateDetailsObservable(): Observable<{ playbackId: string; filePath: string }>;
 }
@@ -26,7 +26,7 @@ export type WorkerSpec = ModuleMethods & Methods;
 const spectateManager = new SpectateManager();
 
 const logSubject = new Subject<string>();
-const errorSubject = new Subject<string>();
+const errorSubject = new Subject<Error | string>();
 const broadcastListSubject = new Subject<BroadcasterItem[]>();
 const spectateDetailsSubject = new Subject<{ playbackId: string; filePath: string }>();
 
@@ -39,8 +39,8 @@ spectateManager.on(SpectateEvent.LOG, async (msg: string) => {
   logSubject.next(msg);
 });
 
-spectateManager.on(SpectateEvent.ERROR, async (errorMsg: string) => {
-  errorSubject.next(errorMsg);
+spectateManager.on(SpectateEvent.ERROR, async (err: Error | string) => {
+  errorSubject.next(err);
 });
 
 spectateManager.on(SpectateEvent.NEW_FILE, async (playbackId: string, filePath: string) => {
@@ -67,7 +67,7 @@ const methods: WorkerSpec = {
   getLogObservable(): Observable<string> {
     return Observable.from(logSubject);
   },
-  getErrorObservable(): Observable<string> {
+  getErrorObservable(): Observable<Error | string> {
     return Observable.from(errorSubject);
   },
   getBroadcastListObservable(): Observable<BroadcasterItem[]> {

@@ -43,8 +43,9 @@ export class MirrorManager extends EventEmitter {
     fileWriter.on(SlpFileWriterEvent.NEW_FILE, (currFilePath) => {
       if (this.mirrors[config.ipAddress].isMirroring) {
         this._playFile(currFilePath, config.ipAddress).catch((err) => {
-          const errMsg = err.message || JSON.stringify(err);
-          this.emit(MirrorEvent.ERROR, errMsg);
+          if (err) {
+            this.emit(MirrorEvent.ERROR, err);
+          }
         });
       }
 
@@ -72,12 +73,12 @@ export class MirrorManager extends EventEmitter {
       this.emit(MirrorEvent.LOG, "Starting relay");
       relay = new ConsoleRelay(config.id);
       relay.on(MirrorEvent.LOG, (msg) => this.emit(MirrorEvent.LOG, msg));
-      relay.on(MirrorEvent.ERROR, (errMsg) => this.emit(MirrorEvent.ERROR, errMsg));
+      relay.on(MirrorEvent.ERROR, (err) => this.emit(MirrorEvent.ERROR, err));
     }
 
     const connection = new ConsoleConnection();
-    connection.on(ConnectionEvent.ERROR, (errMsg: string) => {
-      this.emit(MirrorEvent.ERROR, errMsg);
+    connection.on(ConnectionEvent.ERROR, (err) => {
+      this.emit(MirrorEvent.ERROR, err);
 
       const status = connection.getStatus();
       if (status === ConnectionStatus.DISCONNECTED) {
@@ -123,7 +124,7 @@ export class MirrorManager extends EventEmitter {
     if (config.autoSwitcherSettings) {
       autoSwitcher = new AutoSwitcher(config.autoSwitcherSettings);
       autoSwitcher.on(MirrorEvent.LOG, (msg) => this.emit(MirrorEvent.LOG, msg));
-      autoSwitcher.on(MirrorEvent.ERROR, (errMsg) => this.emit(MirrorEvent.ERROR, errMsg));
+      autoSwitcher.on(MirrorEvent.ERROR, (err) => this.emit(MirrorEvent.ERROR, err));
     }
 
     fileWriter.on(SlpStreamEvent.COMMAND, (data) => {
@@ -150,8 +151,9 @@ export class MirrorManager extends EventEmitter {
           }
           if (relay) {
             relay.clearBuffer().catch((err) => {
-              const errMsg = err.message || JSON.stringify(err);
-              this.emit(MirrorEvent.ERROR, errMsg);
+              if (err) {
+                this.emit(MirrorEvent.ERROR, err);
+              }
             }); // clear buffer after each game to avoid concating a gigantic array
           }
           break;
