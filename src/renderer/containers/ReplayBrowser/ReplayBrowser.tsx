@@ -39,12 +39,14 @@ export const ReplayBrowser: React.FC = () => {
   const clearSelectedFile = useReplays((store) => store.clearSelectedFile);
   const loading = useReplays((store) => store.loading);
   const currentFolder = useReplays((store) => store.currentFolder);
-  const folders = useReplays((store) => store.folders);
+  const netplaySlpFolder = useReplays((store) => store.netplaySlpFolder);
+  const extraFolders = useReplays((store) => store.extraFolders);
   const selectedFiles = useReplays((store) => store.selectedFiles);
   const fileSelection = useReplaySelection();
   const init = useReplays((store) => store.init);
   const fileErrorCount = useReplays((store) => store.fileErrorCount);
   const rootSlpPath = useSettings((store) => store.settings.rootSlpPath);
+  const extraSlpPaths = useSettings((store) => store.settings.extraSlpPaths);
   const { addToast } = useToasts();
 
   const resetFilter = useReplayFilter((store) => store.resetFilter);
@@ -52,8 +54,8 @@ export const ReplayBrowser: React.FC = () => {
   const { goToReplayStatsPage } = useReplayBrowserNavigation();
 
   React.useEffect(() => {
-    init(rootSlpPath).catch((err) => addToast(err.message, { appearance: "error" }));
-  }, [rootSlpPath, init, addToast]);
+    init(rootSlpPath, extraSlpPaths).catch((err) => addToast(err.message, { appearance: "error" }));
+  }, [rootSlpPath, extraSlpPaths, init, addToast]);
 
   const setSelectedItem = (index: number | null) => {
     if (index === null) {
@@ -89,7 +91,7 @@ export const ReplayBrowser: React.FC = () => {
     addToast(message, { appearance: "success", autoDismiss: true });
   };
 
-  if (folders === null) {
+  if (netplaySlpFolder === null) {
     return null;
   }
 
@@ -112,7 +114,10 @@ export const ReplayBrowser: React.FC = () => {
           leftSide={
             <List dense={true} style={{ flex: 1, padding: 0 }}>
               <div style={{ position: "relative", minHeight: "100%" }}>
-                <FolderTreeNode {...folders} />
+                <FolderTreeNode {...netplaySlpFolder} />
+                {extraFolders.map((folder) => {
+                  return <FolderTreeNode {...folder} key={folder.name} />;
+                })}
                 {loading && (
                   <div
                     style={{

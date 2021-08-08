@@ -6,6 +6,7 @@ import {
   ipc_setPlaybackDolphinPath,
   ipc_setRootSlpPath,
   ipc_setSpectateSlpPath,
+  ipc_setExtraSlpPaths,
 } from "@settings/ipc";
 import { AppSettings } from "@settings/types";
 import { ipcRenderer } from "electron";
@@ -57,6 +58,17 @@ export const useSpectateSlpPath = () => {
     }
   };
   return [spectateSlpPath, setSpectateDir] as const;
+};
+
+export const useExtraSlpPaths = () => {
+  const extraSlpPaths = useSettings((store) => store.settings.extraSlpPaths);
+  const setExtraSlpDirs = async (paths: string[]) => {
+    const setResult = await ipc_setExtraSlpPaths.renderer!.trigger({ paths });
+    if (!setResult.result) {
+      throw new Error("Error setting extra SLP paths");
+    }
+  };
+  return [extraSlpPaths, setExtraSlpDirs] as const;
 };
 
 export const useDolphinPath = (dolphinType: DolphinLaunchType) => {

@@ -57,6 +57,10 @@ export class SettingsManager {
     await this._set("settings.spectateSlpPath", slpPath);
   }
 
+  public async setExtraSlpPaths(slpPaths: string[]): Promise<void> {
+    await this._set("settings.extraSlpPaths", slpPaths);
+  }
+
   public async setNetplayDolphinPath(dolphinPath: string): Promise<void> {
     await this._set("settings.netplayDolphinPath", dolphinPath);
   }
