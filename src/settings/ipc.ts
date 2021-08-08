@@ -7,6 +7,12 @@ export const ipc_setIsoPath = makeEndpoint.main("setIsoPath", <{ isoPath: string
 
 export const ipc_setRootSlpPath = makeEndpoint.main("setRootSlpPath", <{ path: string }>_, <SuccessPayload>_);
 
+export const ipc_setUseMonthlySubfolders = makeEndpoint.main(
+  "setUseMonthlySubfolders",
+  <{ toggle: boolean }>_,
+  <SuccessPayload>_,
+);
+
 export const ipc_setSpectateSlpPath = makeEndpoint.main("setSpectateSlpPath", <{ path: string }>_, <SuccessPayload>_);
 
 export const ipc_setExtraSlpPaths = makeEndpoint.main("setExtraSlpPaths", <{ paths: string[] }>_, <SuccessPayload>_);

@@ -7,7 +7,7 @@ import set from "lodash/set";
 import { defaultAppSettings } from "./defaultSettings";
 import { ipc_settingsUpdatedEvent } from "./ipc";
 import { AppSettings, StoredConnection } from "./types";
-import { updateDolphinReplayPath } from "@dolphin/util";
+import { updateDolphinSettings } from "@dolphin/util";
 
 electronSettings.configure({
   fileName: "Settings",
@@ -50,13 +50,22 @@ export class SettingsManager {
     return this.appSettings.settings?.rootSlpPath as string;
   }
 
+  public getUseMonthlySubfolders(): boolean {
+    return this.appSettings.settings?.useMonthlySubfolders as boolean;
+  }
+
   public async setIsoPath(isoPath: string | null): Promise<void> {
     await this._set("settings.isoPath", isoPath);
   }
 
   public async setRootSlpPath(slpPath: string): Promise<void> {
-    await updateDolphinReplayPath(slpPath);
+    await updateDolphinSettings(slpPath, null);
     await this._set("settings.rootSlpPath", slpPath);
+  }
+
+  public async setUseMonthlySubfolders(toggle: boolean): Promise<void> {
+    await updateDolphinSettings(null, toggle);
+    await this._set("settings.useMonthlySubfolders", toggle);
   }
 
   public async setSpectateSlpPath(slpPath: string): Promise<void> {

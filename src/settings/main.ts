@@ -12,6 +12,7 @@ import {
   ipc_setRootSlpPath,
   ipc_setSpectateSlpPath,
   ipc_setExtraSlpPaths,
+  ipc_setUseMonthlySubfolders,
 } from "./ipc";
 import { settingsManager } from "./settingsManager";
 
@@ -31,6 +32,11 @@ ipc_setIsoPath.main!.handle(async ({ isoPath }) => {
 
 ipc_setRootSlpPath.main!.handle(async ({ path }) => {
   await settingsManager.setRootSlpPath(path);
+  return { success: true };
+});
+
+ipc_setUseMonthlySubfolders.main!.handle(async ({ toggle }) => {
+  await settingsManager.setUseMonthlySubfolders(toggle);
   return { success: true };
 });
 

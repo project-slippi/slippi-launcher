@@ -126,7 +126,10 @@ export async function addGamePathToIni(type: DolphinLaunchType, gameDir: string)
   log.info(`Finished updating ${type} dolphin...`);
 }
 
-export async function updateDolphinReplayPath(replayPath: string): Promise<void> {
+export async function updateDolphinSettings(
+  replayPath: string | null,
+  useMonthlySubfolders: boolean | null,
+): Promise<void> {
   const userFolder = await findUserFolder(DolphinLaunchType.NETPLAY);
   const iniPath = path.join(userFolder, "Config", "Dolphin.ini");
   const iniFile = new IniFile();
@@ -134,11 +137,21 @@ export async function updateDolphinReplayPath(replayPath: string): Promise<void>
     log.info("Found a Dolphin.ini to update...");
     await iniFile.load(iniPath, false);
     const coreSelection = iniFile.getOrCreateSection("Core");
-    coreSelection.set("SlippiReplayDir", replayPath);
+    if (replayPath != null) {
+      coreSelection.set("SlippiReplayDir", replayPath);
+    }
+    if (useMonthlySubfolders != null) {
+      coreSelection.set("SlippiReplayMonthFolders", useMonthlySubfolders ? "True" : "False");
+    }
   } else {
     log.info("There isn't a Dolphin.ini to update...");
     const coreSelection = iniFile.getOrCreateSection("Core");
-    coreSelection.set("SlippiReplayDir", replayPath);
+    if (replayPath != null) {
+      coreSelection.set("SlippiReplayDir", replayPath);
+    }
+    if (useMonthlySubfolders != null) {
+      coreSelection.set("SlippiReplayMonthFolders", useMonthlySubfolders ? "True" : "False");
+    }
   }
   iniFile.save(iniPath);
   log.info(`Finished updating ${DolphinLaunchType.NETPLAY} dolphin...`);
