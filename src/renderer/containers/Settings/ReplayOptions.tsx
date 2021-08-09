@@ -13,7 +13,7 @@ export const ReplayOptions: React.FC = () => {
 
   return (
     <div>
-      <SettingItem name="Local SLP Directory" description="The folder where your SLP replays should be saved.">
+      <SettingItem name="Root SLP Directory" description="The folder where your SLP replays should be saved.">
         <PathInput
           value={localReplayDir}
           onSelect={setLocalReplayDir}
@@ -33,14 +33,16 @@ export const ReplayOptions: React.FC = () => {
           placeholder="No folder set"
         />
       </SettingItem>
-      <SettingItem name="Extra SLP Directories" description="The folders where any other SLP replays are stored.">
+      <SettingItem
+        name="Additional SLP Directories"
+        description="Choose any additional SLP directories that should show up in the replay browser."
+      >
         <PathInputMultiple
           paths={replayDirs}
           updatePaths={setReplayDirs}
           options={{
             properties: ["openDirectory"],
           }}
-          placeholder="No folder set"
         />
       </SettingItem>
     </div>

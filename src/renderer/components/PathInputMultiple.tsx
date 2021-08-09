@@ -1,24 +1,19 @@
-import styled from "@emotion/styled";
+/** @jsx jsx */
+import { css, jsx } from "@emotion/react";
 import Button from "@material-ui/core/Button";
+import MatCheckbox from "@material-ui/core/Checkbox";
 import InputBase from "@material-ui/core/InputBase";
-import Paper from "@material-ui/core/Paper";
 import { OpenDialogOptions, remote } from "electron";
 import React, { useState } from "react";
 import { useToasts } from "react-toast-notifications";
 
-import { Checkbox } from "./FormInputs/Checkbox";
-
 export interface PathInputMultipleProps {
   updatePaths: (paths: string[]) => void;
-  placeholder?: string;
   paths: string[];
   options?: OpenDialogOptions;
-  endAdornment?: JSX.Element;
-  disabled?: boolean;
 }
 
-export const PathInputMultiple = React.forwardRef<HTMLInputElement, PathInputMultipleProps>((props) => {
-  const { paths, updatePaths, options } = props;
+export const PathInputMultiple: React.FC<PathInputMultipleProps> = ({ paths, updatePaths, options }) => {
   const { addToast } = useToasts();
 
   const onAddClick = async () => {
@@ -28,7 +23,7 @@ export const PathInputMultiple = React.forwardRef<HTMLInputElement, PathInputMul
       return;
     }
 
-    if (paths.indexOf(res[0]) !== -1) {
+    if (paths.includes(res[0])) {
       addToast("That directory is already included", {
         appearance: "info",
         autoDismiss: true,
@@ -50,13 +45,13 @@ export const PathInputMultiple = React.forwardRef<HTMLInputElement, PathInputMul
     });
 
     updateCheckboxSelections(() => {
-      return Array(paths?.length).fill(false);
+      return Array(paths.length).fill(false);
     });
 
     updatePaths(filteredList);
   };
 
-  const [checkboxSelections, updateCheckboxSelections] = useState(Array(paths?.length).fill(false));
+  const [checkboxSelections, updateCheckboxSelections] = useState(Array(paths.length).fill(false));
 
   const onToggle = (index: number) => {
     updateCheckboxSelections((arr) => {
@@ -66,82 +61,63 @@ export const PathInputMultiple = React.forwardRef<HTMLInputElement, PathInputMul
     });
   };
 
-  const Rows = paths?.map((path, index) => {
+  const Rows = paths.map((path, index) => {
     return (
-      <MultiRowEntry key={index}>
-        <MultiRowInput value={path} disabled={true} endAdornment={null} />
-        <Check>
-          <Checkbox label={""} checked={checkboxSelections[index]} onChange={() => onToggle(index)} />
-        </Check>
-      </MultiRowEntry>
+      <div key={index}>
+        <InputBase
+          css={css`
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            border-radius: 10px;
+            font-size: 14px;
+            margin-bottom: 5px;
+            padding-right: 10px;
+          `}
+          value={path}
+          disabled={true}
+          startAdornment={
+            <MatCheckbox checked={checkboxSelections[index]} onChange={() => onToggle(index)} size="small" />
+          }
+        />
+      </div>
     );
   });
 
   return (
-    <Outer>
-      {Rows.length > 0 ? <InputContainer>{Rows}</InputContainer> : ""}
-      <ButtonGroup>
-        <Button color="secondary" variant="contained" onClick={onAddClick} style={{ margin: "2.5px", padding: "0px" }}>
+    <div>
+      {Rows.length > 0 ? (
+        <div>{Rows}</div>
+      ) : (
+        <div
+          css={css`
+            font-size: 14px;
+            font-style: italic;
+            opacity: 0.7;
+          `}
+        >
+          No additional directories added.
+        </div>
+      )}
+      <div
+        css={css`
+          margin-top: 10px;
+        `}
+      >
+        <Button color="secondary" variant="contained" onClick={onAddClick}>
           Add
         </Button>
-        {Rows.length > 0 ? (
-          <Button
-            color="secondary"
-            variant="contained"
-            onClick={onRemoveClick}
-            disabled={checkboxSelections.indexOf(true) === -1}
-            style={{ margin: "2.5px", padding: "0px", paddingLeft: "10px", paddingRight: "10px" }}
-          >
-            Remove
-          </Button>
-        ) : (
-          ""
-        )}
-      </ButtonGroup>
-    </Outer>
+        <Button
+          color="secondary"
+          variant="outlined"
+          onClick={onRemoveClick}
+          disabled={checkboxSelections.indexOf(true) === -1}
+          css={css`
+            margin-left: 10px;
+          `}
+        >
+          Remove
+        </Button>
+      </div>
+    </div>
   );
-});
-
-const Outer = styled.div`
-  display: block;
-`;
-
-const InputContainer = styled(Paper)`
-  padding: 2px;
-  display: flex;
-  align-items: center;
-  width: 400;
-  flex: 1;
-  margin-right: 10px;
-  background-color: rgba(0, 0, 0, 0.7);
-  border: 0px dashed yellow;
-  display: block;
-`;
-
-const MultiRowEntry = styled.div`
-  border: 0px dashed purple;
-  display: block;
-`;
-
-const MultiRowInput = styled(InputBase)`
-  margin-left: 16px;
-  margin-right: 16px;
-  flex: 1;
-  width: 70%;
-  font-weight: 300;
-  font-size: 14px;
-  border: 0px dashed green;
-  padding-top: 6px;
-`;
-
-const Check = styled.div`
-  border: 0px solid yellow;
-  float: right;
-  border-radius: 25%;
-  padding: 5px;
-`;
-
-const ButtonGroup = styled.div`
-  float: right;
-  padding: 5px;
-`;
+};
