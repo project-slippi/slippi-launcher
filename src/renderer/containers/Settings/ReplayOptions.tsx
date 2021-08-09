@@ -1,7 +1,7 @@
 import React from "react";
 
+import { MultiPathInput } from "@/components/MultiPathInput";
 import { PathInput } from "@/components/PathInput";
-import { PathInputMultiple } from "@/components/PathInputMultiple";
 import { useExtraSlpPaths, useRootSlpPath, useSpectateSlpPath } from "@/lib/hooks/useSettings";
 
 import { SettingItem } from "./SettingItem";
@@ -37,7 +37,7 @@ export const ReplayOptions: React.FC = () => {
         name="Additional SLP Directories"
         description="Choose any additional SLP directories that should show up in the replay browser."
       >
-        <PathInputMultiple
+        <MultiPathInput
           paths={replayDirs}
           updatePaths={setReplayDirs}
           options={{

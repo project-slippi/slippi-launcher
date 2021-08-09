@@ -7,13 +7,13 @@ import { OpenDialogOptions, remote } from "electron";
 import React, { useState } from "react";
 import { useToasts } from "react-toast-notifications";
 
-export interface PathInputMultipleProps {
+export interface MultiPathInputProps {
   updatePaths: (paths: string[]) => void;
   paths: string[];
   options?: OpenDialogOptions;
 }
 
-export const PathInputMultiple: React.FC<PathInputMultipleProps> = ({ paths, updatePaths, options }) => {
+export const MultiPathInput: React.FC<MultiPathInputProps> = ({ paths, updatePaths, options }) => {
   const { addToast } = useToasts();
 
   const onAddClick = async () => {
