@@ -4,6 +4,7 @@ import React from "react";
 import { DolphinSettings } from "./DolphinSettings";
 import { HelpPage } from "./HelpPage";
 import { MeleeOptions } from "./MeleeOptions";
+import { ReplayOptions } from "./ReplayOptions";
 import { SettingSection } from "./types";
 
 export const settings: SettingSection[] = [
@@ -11,9 +12,14 @@ export const settings: SettingSection[] = [
     title: "General Settings",
     items: [
       {
-        name: "Game & Replays",
+        name: "Game",
         path: "melee-options",
         component: <MeleeOptions />,
+      },
+      {
+        name: "Replays",
+        path: "replay-options",
+        component: <ReplayOptions />,
       },
     ],
   },

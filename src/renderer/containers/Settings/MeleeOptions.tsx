@@ -13,16 +13,9 @@ import React from "react";
 
 import { PathInput } from "@/components/PathInput";
 import { useIsoVerification } from "@/lib/hooks/useIsoVerification";
-import {
-  useExtraSlpPaths,
-  useIsoPath,
-  useLaunchMeleeOnPlay,
-  useRootSlpPath,
-  useSpectateSlpPath,
-} from "@/lib/hooks/useSettings";
+import { useIsoPath, useLaunchMeleeOnPlay } from "@/lib/hooks/useSettings";
 
 import { SettingItem } from "./SettingItem";
-import { PathInputMultiple } from "@/components/PathInputMultiple";
 
 const renderValidityStatus = (isoValidity: IsoValidity) => {
   switch (isoValidity) {
@@ -43,9 +36,6 @@ export const MeleeOptions: React.FC = () => {
   const isoValidity = useIsoVerification((state) => state.validity);
   const [isoPath, setIsoPath] = useIsoPath();
   const [launchMeleeOnPlay, setLaunchMelee] = useLaunchMeleeOnPlay();
-  const [localReplayDir, setLocalReplayDir] = useRootSlpPath();
-  const [replayDirs, setReplayDirs] = useExtraSlpPaths();
-  const [spectateDir, setSpectateDir] = useSpectateSlpPath();
 
   const onLaunchMeleeChange = async (value: string) => {
     const launchMelee = value === "true";
@@ -84,36 +74,6 @@ export const MeleeOptions: React.FC = () => {
           <FormControlLabel value={true} label="Launch Melee" control={<Radio />} />
           <FormControlLabel value={false} label="Launch Dolphin" control={<Radio />} />
         </RadioGroup>
-      </SettingItem>
-      <SettingItem name="Local SLP Directory" description="The folder where your SLP replays should be saved.">
-        <PathInput
-          value={localReplayDir}
-          onSelect={setLocalReplayDir}
-          options={{
-            properties: ["openDirectory"],
-          }}
-          placeholder="No folder set"
-        />
-      </SettingItem>
-      <SettingItem name="Spectator SLP Directory" description="The folder where spectated games should be saved.">
-        <PathInput
-          value={spectateDir}
-          onSelect={setSpectateDir}
-          options={{
-            properties: ["openDirectory"],
-          }}
-          placeholder="No folder set"
-        />
-      </SettingItem>
-      <SettingItem name="Extra SLP Directories" description="The folders where any other SLP replays are stored.">
-        <PathInputMultiple
-          paths={replayDirs}
-          updatePaths={setReplayDirs}
-          options={{
-            properties: ["openDirectory"],
-          }}
-          placeholder="No folder set"
-        />
       </SettingItem>
     </div>
   );

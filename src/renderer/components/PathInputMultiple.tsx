@@ -3,10 +3,10 @@ import Button from "@material-ui/core/Button";
 import InputBase from "@material-ui/core/InputBase";
 import Paper from "@material-ui/core/Paper";
 import { OpenDialogOptions, remote } from "electron";
-import React from "react";
-import { Checkbox } from "./FormInputs/Checkbox";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useToasts } from "react-toast-notifications";
+
+import { Checkbox } from "./FormInputs/Checkbox";
 
 export interface PathInputMultipleProps {
   updatePaths: (paths: string[]) => void;
