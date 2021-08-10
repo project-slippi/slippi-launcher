@@ -41,59 +41,29 @@ const ConnectCodeSetter: React.FC<ConnectCodeSetterProps> = ({ displayName, onSu
     return matches.join("").toUpperCase().substring(0, 4);
   };
 
-  const [isWorking, setIsWorking] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
   const [errMessage, setErrMessage] = React.useState("");
 
-  const { handleSubmit, watch, control, setValue } = useForm<{ tag: string }>({
+  const { handleSubmit, control } = useForm<{ tag: string }>({
     defaultValues: { tag: getStartTag() },
   });
-  const tag = watch("tag");
 
-  // const prevTagRef = React.useRef();
-  // React.useEffect(() => {
-  //   const prevTag = prevTagRef.current;
-  //   ((prevTagRef.current as unknown) as string) = tag;
-
-  //   // If tag hasn't changed, do nothing
-  //   if (prevTag === tag) {
-  //     return;
-  //   }
-
-  //   const state = tag.length < 2 ? "Too short" : "";
-  //   setTagState(state);
-  // }, [tag, displayName]);
-
-  // const handleTagChange = (event: any) => {
-  //   let newTag = event.target.value;
-
-  //   // Only allow english characters and capitalize them
-  //   const safeTag = newTag || "";
-  //   const matches = safeTag.match(/[a-zA-Z]+/g) || [];
-  //   newTag = matches.join("").toUpperCase().substring(0, 4);
-  //   event.target.value = newTag;
-
-  //   setTag(newTag);
-  //   setErrMessage("");
-  // };
-
-  const onConfirmTag = () => {
+  const onFormSubmit = handleSubmit(({ tag }) => {
     setErrMessage("");
-    setIsWorking(true);
+    setIsLoading(true);
 
     initNetplay(tag).then(
       () => {
         onSuccess();
-        setIsWorking(false);
+        setIsLoading(false);
       },
       (err: Error) => {
         setErrMessage(err.message);
         log.error(err);
-        setIsWorking(false);
+        setIsLoading(false);
       },
     );
-  };
-
-  const onFormSubmit = handleSubmit(onConfirmTag);
+  });
 
   let errorDisplay = null;
   if (errMessage) {
@@ -139,30 +109,31 @@ const ConnectCodeSetter: React.FC<ConnectCodeSetterProps> = ({ displayName, onSu
           name="tag"
           control={control}
           defaultValue=""
-          render={({ field, fieldState: { error } }) => (
-            <TextField
-              {...field}
-              required={true}
-              css={css`
-                max-width: 200px;
-                margin: 20px auto 10px auto;
-                padding-bottom: 20px;
-              `}
-              label="Connect Code"
-              InputProps={{
-                endAdornment: <InputAdornment position="end">#123</InputAdornment>,
-              }}
-              variant="outlined"
-              error={Boolean(error)}
-              helperText={error ? error.message : undefined}
-            />
-          )}
+          render={({ field, fieldState: { error } }) => {
+            return (
+              <TextField
+                {...field}
+                onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                required={true}
+                css={css`
+                  max-width: 200px;
+                  margin: 20px auto 10px auto;
+                  padding-bottom: 20px;
+                `}
+                inputProps={{
+                  maxLength: 4,
+                }}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">#123</InputAdornment>,
+                }}
+                variant="outlined"
+                error={Boolean(error)}
+                helperText={error ? error.message : undefined}
+              />
+            );
+          }}
           rules={{
-            validate: (val) => {
-              const adjustedCode = val.toUpperCase().substring(0, 4);
-              setValue("tag", adjustedCode);
-              return isValidConnectCodeStart(adjustedCode);
-            },
+            validate: (val) => isValidConnectCodeStart(val),
           }}
         />
 
@@ -176,11 +147,10 @@ const ConnectCodeSetter: React.FC<ConnectCodeSetterProps> = ({ displayName, onSu
           variant="contained"
           color="primary"
           size="large"
-          onClick={onConfirmTag}
-          disabled={isWorking}
+          disabled={isLoading}
           type="submit"
         >
-          {isWorking ? <CircularProgress color="inherit" size={29} /> : "Confirm code"}
+          {isLoading ? <CircularProgress color="inherit" size={29} /> : "Confirm code"}
         </Button>
       </div>
       {errorDisplay}
