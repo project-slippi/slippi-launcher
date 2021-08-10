@@ -1,16 +1,15 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/react";
-import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
-import Alert from "@material-ui/lab/Alert";
 import electronLog from "electron-log";
 import firebase from "firebase";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
+import { useToasts } from "react-toast-notifications";
 
 import { useAccount } from "@/lib/hooks/useAccount";
 import { initNetplay } from "@/lib/slippiBackend";
@@ -35,6 +34,7 @@ interface ConnectCodeSetterProps {
 }
 
 const ConnectCodeSetter: React.FC<ConnectCodeSetterProps> = ({ displayName, onSuccess }) => {
+  const { addToast } = useToasts();
   const getStartTag = () => {
     const safeName = displayName;
     const matches = safeName.match(/[a-zA-Z]+/g) || [];
@@ -42,14 +42,12 @@ const ConnectCodeSetter: React.FC<ConnectCodeSetterProps> = ({ displayName, onSu
   };
 
   const [isLoading, setIsLoading] = React.useState(false);
-  const [errMessage, setErrMessage] = React.useState("");
 
   const { handleSubmit, control } = useForm<{ tag: string }>({
     defaultValues: { tag: getStartTag() },
   });
 
   const onFormSubmit = handleSubmit(({ tag }) => {
-    setErrMessage("");
     setIsLoading(true);
 
     initNetplay(tag).then(
@@ -58,40 +56,22 @@ const ConnectCodeSetter: React.FC<ConnectCodeSetterProps> = ({ displayName, onSu
         setIsLoading(false);
       },
       (err: Error) => {
-        setErrMessage(err.message);
         log.error(err);
+        addToast(err.message ?? JSON.stringify(err), {
+          appearance: "error",
+        });
         setIsLoading(false);
       },
     );
   });
 
-  let errorDisplay = null;
-  if (errMessage) {
-    errorDisplay = (
-      <Alert
-        css={css`
-          margin-top: 8px;
-        `}
-        variant="outlined"
-        severity="error"
-      >
-        {errMessage}
-      </Alert>
-    );
-  }
-
   return (
-    <form className="form" onSubmit={onFormSubmit}>
+    <form onSubmit={onFormSubmit}>
       <Typography component="div" variant="body2" color="textSecondary">
-        <ul
-          css={css`
-            padding-left: 33px;
-            margin: 6px 0;
-          `}
-        >
-          <StyledListItem>2-4 uppercase English characters</StyledListItem>
-          <StyledListItem>Trailing numbers will be auto-generated</StyledListItem>
-          <StyledListItem>Can be changed later for a one-time payment</StyledListItem>
+        <ul>
+          <li>2-4 uppercase English characters</li>
+          <li>Trailing numbers will be auto-generated</li>
+          <li>Can be changed later for a one-time payment</li>
         </ul>
       </Typography>
       <div
@@ -153,11 +133,6 @@ const ConnectCodeSetter: React.FC<ConnectCodeSetterProps> = ({ displayName, onSu
           {isLoading ? <CircularProgress color="inherit" size={29} /> : "Confirm code"}
         </Button>
       </div>
-      {errorDisplay}
     </form>
   );
 };
-
-const StyledListItem = styled.li`
-  margin: 4px 0;
-`;
