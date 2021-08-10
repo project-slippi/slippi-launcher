@@ -1,5 +1,6 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/react";
+import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -74,31 +75,23 @@ const ConnectCodeSetter: React.FC<ConnectCodeSetterProps> = ({ displayName, onSu
           <li>Can be changed later for a one-time payment</li>
         </ul>
       </Typography>
-      <div
-        css={css`
-          display: flex;
-          margin-left: auto;
-          margin-right: auto;
-          width: 400px;
-          height: 150px;
-          flex-direction: column;
-          position: relative;
-        `}
-      >
-        <Controller
-          name="tag"
-          control={control}
-          defaultValue=""
-          render={({ field, fieldState: { error } }) => {
-            return (
+      <Controller
+        name="tag"
+        control={control}
+        defaultValue=""
+        render={({ field, fieldState: { error } }) => {
+          return (
+            <div
+              css={css`
+                text-align: center;
+              `}
+            >
               <TextField
                 {...field}
                 onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                 required={true}
                 css={css`
                   max-width: 200px;
-                  margin: 20px auto 10px auto;
-                  padding-bottom: 20px;
                 `}
                 inputProps={{
                   maxLength: 4,
@@ -108,31 +101,35 @@ const ConnectCodeSetter: React.FC<ConnectCodeSetterProps> = ({ displayName, onSu
                 }}
                 variant="outlined"
                 error={Boolean(error)}
-                helperText={error ? error.message : undefined}
               />
-            );
-          }}
-          rules={{
-            validate: (val) => isValidConnectCodeStart(val),
-          }}
-        />
-
-        <Button
-          css={css`
-            margin: 10px auto 0 auto;
-            position: absolute;
-            width: 400px;
-            bottom: 0px;
-          `}
-          variant="contained"
-          color="primary"
-          size="large"
-          disabled={isLoading}
-          type="submit"
-        >
+              {error && <ErrorContainer>{error.message}</ErrorContainer>}
+            </div>
+          );
+        }}
+        rules={{
+          validate: (val) => isValidConnectCodeStart(val),
+        }}
+      />
+      <div
+        css={css`
+          display: flex;
+          flex-direction: column;
+          margin-left: auto;
+          margin-right: auto;
+          margin-top: 20px;
+          max-width: 400px;
+        `}
+      >
+        <Button variant="contained" color="primary" size="large" disabled={isLoading} type="submit">
           {isLoading ? <CircularProgress color="inherit" size={29} /> : "Confirm code"}
         </Button>
       </div>
     </form>
   );
 };
+
+const ErrorContainer = styled.div`
+  margin: 5px 0;
+  font-size: 13px;
+  color: ${({ theme }) => theme.palette.error.main};
+`;
