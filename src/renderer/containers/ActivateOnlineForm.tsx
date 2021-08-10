@@ -10,9 +10,11 @@ import Alert from "@material-ui/lab/Alert";
 import electronLog from "electron-log";
 import firebase from "firebase";
 import React from "react";
+import { Controller, useForm } from "react-hook-form";
 
 import { useAccount } from "@/lib/hooks/useAccount";
 import { initNetplay } from "@/lib/slippiBackend";
+import { isValidConnectCodeStart } from "@/lib/validate";
 
 const log = electronLog.scope("ActivateOnlineForm");
 
@@ -39,39 +41,40 @@ const ConnectCodeSetter: React.FC<ConnectCodeSetterProps> = ({ displayName, onSu
     return matches.join("").toUpperCase().substring(0, 4);
   };
 
-  const startTag = getStartTag();
-
-  const [tag, setTag] = React.useState(startTag);
   const [isWorking, setIsWorking] = React.useState(false);
   const [errMessage, setErrMessage] = React.useState("");
-  const [tagState, setTagState] = React.useState("short");
 
-  const prevTagRef = React.useRef();
-  React.useEffect(() => {
-    const prevTag = prevTagRef.current;
-    ((prevTagRef.current as unknown) as string) = tag;
+  const { handleSubmit, watch, control, setValue } = useForm<{ tag: string }>({
+    defaultValues: { tag: getStartTag() },
+  });
+  const tag = watch("tag");
 
-    // If tag hasn't changed, do nothing
-    if (prevTag === tag) {
-      return;
-    }
+  // const prevTagRef = React.useRef();
+  // React.useEffect(() => {
+  //   const prevTag = prevTagRef.current;
+  //   ((prevTagRef.current as unknown) as string) = tag;
 
-    const state = tag.length < 2 ? "Too short" : "";
-    setTagState(state);
-  }, [tag, displayName]);
+  //   // If tag hasn't changed, do nothing
+  //   if (prevTag === tag) {
+  //     return;
+  //   }
 
-  const handleTagChange = (event: any) => {
-    let newTag = event.target.value;
+  //   const state = tag.length < 2 ? "Too short" : "";
+  //   setTagState(state);
+  // }, [tag, displayName]);
 
-    // Only allow english characters and capitalize them
-    const safeTag = newTag || "";
-    const matches = safeTag.match(/[a-zA-Z]+/g) || [];
-    newTag = matches.join("").toUpperCase().substring(0, 4);
-    event.target.value = newTag;
+  // const handleTagChange = (event: any) => {
+  //   let newTag = event.target.value;
 
-    setTag(newTag);
-    setErrMessage("");
-  };
+  //   // Only allow english characters and capitalize them
+  //   const safeTag = newTag || "";
+  //   const matches = safeTag.match(/[a-zA-Z]+/g) || [];
+  //   newTag = matches.join("").toUpperCase().substring(0, 4);
+  //   event.target.value = newTag;
+
+  //   setTag(newTag);
+  //   setErrMessage("");
+  // };
 
   const onConfirmTag = () => {
     setErrMessage("");
@@ -90,6 +93,8 @@ const ConnectCodeSetter: React.FC<ConnectCodeSetterProps> = ({ displayName, onSu
     );
   };
 
+  const onFormSubmit = handleSubmit(onConfirmTag);
+
   let errorDisplay = null;
   if (errMessage) {
     errorDisplay = (
@@ -106,7 +111,7 @@ const ConnectCodeSetter: React.FC<ConnectCodeSetterProps> = ({ displayName, onSu
   }
 
   return (
-    <form>
+    <form className="form" onSubmit={onFormSubmit}>
       <Typography component="div" variant="body2" color="textSecondary">
         <ul
           css={css`
@@ -130,22 +135,35 @@ const ConnectCodeSetter: React.FC<ConnectCodeSetterProps> = ({ displayName, onSu
           position: relative;
         `}
       >
-        <TextField
-          css={css`
-            max-width: 200px;
-            margin: 20px auto 10px auto;
-            padding-bottom: 20px;
-          `}
-          label="Connect code"
-          defaultValue={startTag}
-          error={Boolean(tagState)}
-          helperText={tagState}
-          InputLabelProps={{ shrink: true }}
-          InputProps={{
-            endAdornment: <InputAdornment position="end">#123</InputAdornment>,
+        <Controller
+          name="tag"
+          control={control}
+          defaultValue=""
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              {...field}
+              required={true}
+              css={css`
+                max-width: 200px;
+                margin: 20px auto 10px auto;
+                padding-bottom: 20px;
+              `}
+              label="Connect Code"
+              InputProps={{
+                endAdornment: <InputAdornment position="end">#123</InputAdornment>,
+              }}
+              variant="outlined"
+              error={Boolean(error)}
+              helperText={error ? error.message : undefined}
+            />
+          )}
+          rules={{
+            validate: (val) => {
+              const adjustedCode = val.toUpperCase().substring(0, 4);
+              setValue("tag", adjustedCode);
+              return isValidConnectCodeStart(adjustedCode);
+            },
           }}
-          variant="outlined"
-          onChange={handleTagChange}
         />
 
         <Button
@@ -159,7 +177,8 @@ const ConnectCodeSetter: React.FC<ConnectCodeSetterProps> = ({ displayName, onSu
           color="primary"
           size="large"
           onClick={onConfirmTag}
-          disabled={Boolean(tagState) || isWorking}
+          disabled={isWorking}
+          type="submit"
         >
           {isWorking ? <CircularProgress color="inherit" size={29} /> : "Confirm code"}
         </Button>
