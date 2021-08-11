@@ -112,7 +112,8 @@ async function downloadLatestDolphin(
   log: (status: string) => void = console.log,
 ): Promise<string> {
   const asset = await getLatestDolphinAsset(type);
-  const downloadDir = app.getPath("temp");
+  const downloadDir = path.join(app.getPath("userData"), "temp");
+  await fs.ensureDir(downloadDir);
   const downloadLocation = path.join(downloadDir, asset.name);
   const exists = await fileExists(downloadLocation);
   if (!exists) {
