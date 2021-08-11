@@ -84,7 +84,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
             name: path.basename(folder),
             fullPath: folder,
             subdirectories: [],
-            collapsed: false,
+            collapsed: true,
           } as FolderResult),
       ),
     });
@@ -155,12 +155,19 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   toggleFolder: (folder) => {
     set((state) =>
       produce(state, (draft) => {
-        const currentTree = draft.netplaySlpFolder;
+        const currentTree = [draft.netplaySlpFolder, ...draft.extraFolders];
         if (currentTree) {
-          const child = findChild(currentTree, folder);
-          if (child) {
-            child.collapsed = !child.collapsed;
-          }
+          currentTree.some((parent) => {
+            if (!parent) {
+              return false;
+            }
+            const child = findChild(parent, folder);
+            if (child) {
+              child.collapsed = !child.collapsed;
+              return true;
+            }
+            return false;
+          });
         }
       }),
     );
