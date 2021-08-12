@@ -26,7 +26,10 @@ export const clearTempCommsDirectory = () => {
 
   try {
     fs.removeSync(tempCommsDirectoryPath);
-  } catch (err) {}
+  } catch (err) {
+    // Silence the linter; this is probably fine if it fails (e.g, it doesn't exist).
+    console.log("");
+  }
 };
 
 // Implemenation taken from https://github.com/alexbbt/read-last-lines/blob/11945800b013fe5016c4ea36e49d28c67aa75e7c/src/index.js
