@@ -1,4 +1,33 @@
+import { app } from "electron";
 import * as fs from "fs-extra";
+import path from "path";
+
+// Returns a standard location for the temporary slippi comms files used to
+// communicate with and instruct Slippi Dolphin.
+export const generateTempCommsDirectoryPath = (): string => {
+  const tmpDir = app.getPath("temp");
+  return path.join(tmpDir, "slippi-comms");
+};
+
+// Cleans up any temp comms files that have been written to the temp
+// folder that might still be lingering around, and reinitializes the directory.
+//
+// This really only needs to happen on macOS due to the way that the subprocess handling
+// of Dolphin playback instances works - there's no graceful way at the moment to detect
+// Dolphin close, so we just leave the files in there and expect that either:
+//
+// - The temp directory will be cleared at some point, as macOS eventually does
+// - The eventual restart of this app will clear them up
+//
+// As this is a filesystem call it should be fine to happen relatively immediately
+// and not require being a part of anything Electron-ready.
+export const clearTempCommsDirectory = () => {
+  const tempCommsDirectoryPath = generateTempCommsDirectoryPath();
+
+  try {
+    fs.removeSync(tempCommsDirectoryPath);
+  } catch (err) {}
+};
 
 // Implemenation taken from https://github.com/alexbbt/read-last-lines/blob/11945800b013fe5016c4ea36e49d28c67aa75e7c/src/index.js
 export async function readLastLines(

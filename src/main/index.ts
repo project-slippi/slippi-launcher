@@ -16,9 +16,14 @@ import { download } from "./download";
 import { fileExists } from "./fileExists";
 import { setupListeners } from "./listeners";
 import { menu } from "./menu";
+import { clearTempCommsDirectory } from "./util";
 
 // use console.log as log.debug for easier access to debug logging
 console.log = log.debug;
+
+// Clearing this should be a quick operation, but do it before anything else
+// can work with the temp comms directory.
+clearTempCommsDirectory();
 
 // Check for updates
 autoUpdater.logger = log;

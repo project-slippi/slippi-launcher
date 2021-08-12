@@ -7,6 +7,7 @@ import path from "path";
 
 import { downloadAndInstallDolphin } from "./downloadDolphin";
 import { DolphinInstance, PlaybackDolphinInstance } from "./instance";
+import { isMac } from "../common/constants";
 import { DolphinLaunchType, ReplayCommunication } from "./types";
 import { addGamePathToIni, findDolphinExecutable, findUserFolder } from "./util";
 
@@ -24,16 +25,23 @@ export class DolphinManager extends EventEmitter {
     if (configuring) {
       throw new Error("Cannot open dolphin if a configuring dolphin is open.");
     }
+
     let playbackInstance = this.playbackDolphinInstances.get(id);
     if (!playbackInstance) {
       playbackInstance = new PlaybackDolphinInstance(dolphinPath, meleeIsoPath);
-      playbackInstance.on("close", () => {
-        this.emit("dolphin-closed", id);
 
-        // Remove the instance from the map on close
-        this.playbackDolphinInstances.delete(id);
-      });
-      this.playbackDolphinInstances.set(id, playbackInstance);
+      // macOS needs to route through `open` for platform/performance reasons, and `open` will
+      // route a user to an existing open (netplay|playback) build already - so just ignore the tracking/
+      // maintaining on macOS.
+      if (!isMac) {
+        playbackInstance.on("close", () => {
+          this.emit("dolphin-closed", id);
+
+          // Remove the instance from the map on close
+          this.playbackDolphinInstances.delete(id);
+        });
+        this.playbackDolphinInstances.set(id, playbackInstance);
+      }
     }
 
     await playbackInstance.play(replayComm);
@@ -50,47 +58,66 @@ export class DolphinManager extends EventEmitter {
     const meleeIsoPath = launchMeleeOnPlay ? await this._getIsoPath() : undefined;
 
     // Create the Dolphin instance and start it
-    this.netplayDolphinInstance = new DolphinInstance(dolphinPath, meleeIsoPath);
-    this.netplayDolphinInstance.on("close", () => {
-      this.netplayDolphinInstance = null;
-    });
-    this.netplayDolphinInstance.start();
+    const netplayDolphinInstance = new DolphinInstance(dolphinPath, meleeIsoPath);
+
+    //  On macOS, we don't control the resulting process once it goes through `open`, so
+    //  don't bother tracking it. `open` will route a user to the correct already-open instance
+    //  if they click the button again anyway.
+    if (!isMac) {
+      this.netplayDolphinInstance = netplayDolphinInstance;
+      this.netplayDolphinInstance.on("close", () => {
+        this.netplayDolphinInstance = null;
+      });
+    }
+
+    netplayDolphinInstance.start();
   }
 
+  // macOS needs to route through `open` for performance reasons (see comments in dolphin/instance.ts).
+  // `open` will already route the user back to an existing open Dolphin (netplay|playback), if one is open,
+  // so we can ignore the tracking instance logic without too much issue here.
   public async configureDolphin(launchType: DolphinLaunchType) {
     log.debug(`configuring ${launchType} dolphin...`);
     const dolphinPath = await findDolphinExecutable(launchType);
     if (launchType === DolphinLaunchType.NETPLAY && !this.netplayDolphinInstance) {
       const instance = new DolphinInstance(dolphinPath);
-      this.netplayDolphinInstance = instance;
-      instance.on("close", () => {
-        this.netplayDolphinInstance = null;
-      });
-      instance.on("error", (err: Error) => {
-        this.netplayDolphinInstance = null;
 
-        log.error(err);
-        throw err;
-      });
+      if (!isMac) {
+        this.netplayDolphinInstance = instance;
+        instance.on("close", () => {
+          this.netplayDolphinInstance = null;
+        });
+        instance.on("error", (err: Error) => {
+          this.netplayDolphinInstance = null;
+
+          log.error(err);
+          throw err;
+        });
+      }
+
       instance.start();
     } else if (launchType === DolphinLaunchType.PLAYBACK && this.playbackDolphinInstances.size === 0) {
       const instance = new PlaybackDolphinInstance(dolphinPath);
-      this.playbackDolphinInstances.set("configure", instance);
-      instance.on("close", () => {
-        this.emit("dolphin-closed", "configure");
 
-        // Remove the instance from the map on close
-        this.playbackDolphinInstances.delete("configure");
-      });
-      instance.on("error", (err: Error) => {
-        this.emit("dolphin-closed", "configure");
+      if (!isMac) {
+        this.playbackDolphinInstances.set("configure", instance);
+        instance.on("close", () => {
+          this.emit("dolphin-closed", "configure");
 
-        // Remove the instance from the map on close
-        this.playbackDolphinInstances.delete("configure");
+          // Remove the instance from the map on close
+          this.playbackDolphinInstances.delete("configure");
+        });
+        instance.on("error", (err: Error) => {
+          this.emit("dolphin-closed", "configure");
 
-        log.error(err);
-        throw err;
-      });
+          // Remove the instance from the map on close
+          this.playbackDolphinInstances.delete("configure");
+
+          log.error(err);
+          throw err;
+        });
+      }
+
       instance.start();
     }
   }
