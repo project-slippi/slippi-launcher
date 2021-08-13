@@ -22,6 +22,7 @@ import { useSettings } from "@/lib/hooks/useSettings";
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
 import { assertPlayKey } from "@/lib/slippiBackend";
 import slippiLogo from "@/styles/images/slippi-logo.svg";
+import platformTitleBarStyles from "@/styles/platformTitleBarStyles";
 
 import { ActivateOnlineDialog } from "./ActivateOnlineDialog";
 import { MainMenu, MenuItem } from "./MainMenu";
@@ -97,12 +98,14 @@ export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
       css={css`
         display: flex;
         justify-content: space-between;
+        ${platformTitleBarStyles}
       `}
     >
       <div
         css={css`
           display: flex;
           align-items: center;
+          padding-left: 5px;
         `}
       >
         <Tooltip title="Open Slippi.gg">

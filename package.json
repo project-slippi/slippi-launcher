@@ -30,6 +30,7 @@
     "compare-func": "^2.0.0",
     "cross-fetch": "^3.0.6",
     "electron-context-menu": "^2.3.0",
+    "electron-default-menu": "^1.0.2",
     "electron-dl": "^3.0.2",
     "electron-log": "^4.3.1",
     "electron-settings": "^4.0.2",

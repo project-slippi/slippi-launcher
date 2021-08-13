@@ -46,3 +46,5 @@ export const ipc_deleteConnection = makeEndpoint.main("deleteConnection", <{ id:
 // Events
 
 export const ipc_settingsUpdatedEvent = makeEndpoint.renderer("settings_settingsUpdated", <AppSettings>_);
+
+export const ipc_openSettingsModalEvent = makeEndpoint.renderer("openSettingsModal", <{}>_);

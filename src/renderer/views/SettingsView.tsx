@@ -18,6 +18,7 @@ import { BuildInfo } from "@/containers/Settings/BuildInfo";
 import { useMousetrap } from "@/lib/hooks/useMousetrap";
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
 import { withSlippiBackground } from "@/styles/withSlippiBackground";
+import platformTitleBarStyles from "@/styles/platformTitleBarStyles";
 
 import { settings } from "../containers/Settings";
 
@@ -34,6 +35,7 @@ const MenuColumn = styled.div`
   flex-direction: column;
   flex: 1;
   padding-top: 20px;
+  ${platformTitleBarStyles}
 `;
 
 const ContentColumn = styled.div`
@@ -41,6 +43,7 @@ const ContentColumn = styled.div`
   overflow-x: hidden;
   padding: 30px;
   padding-right: 100px;
+  ${platformTitleBarStyles}
 `;
 
 const CloseButton = styled(IconButton)`
