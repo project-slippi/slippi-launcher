@@ -43,7 +43,7 @@
     },
     "hardenedRuntime": true,
     "entitlements": "./build/entitlements.macos.plist",
-    "category": "public.app-category.video",
+    "category": "public.app-category.games",
     "target": ["dmg", "zip"],
     "extendInfo": {
       "NSAppTransportSecurity": {
