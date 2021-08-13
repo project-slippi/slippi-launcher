@@ -11,6 +11,11 @@ const bounceAnimation = keyframes`
   100%     { bottom: 0; }
 `;
 
+const barrelRollAnimation = keyframes`
+  0%   { transform: rotate(0); }
+  100% { transform: rotate(720deg); }
+`;
+
 const Outer = styled.div<{
   size: string;
 }>`
@@ -27,10 +32,15 @@ const Logo = styled.div<{
   background-image: url("${slippiLogo}");
   background-size: contain;
   background-repeat: no-repeat;
-  animation: ${bounceAnimation} 1.2s infinite;
+  animation: ${bounceAnimation} 1.2s infinite forwards;
   position: absolute;
-  height: ${(props) => props.size};
+  // logo is proportionally smaller to size by a factor of 0.75
+  // so we need to scale it down to avoid pivotal animations
+  height: calc(${(props) => props.size}*0.75);
   width: ${(props) => props.size};
+  &:hover {
+    animation: ${barrelRollAnimation} 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) alternate forwards;
+  }
 `;
 
 export interface BouncingSlippiLogoProps {
