@@ -1,4 +1,4 @@
-import { ChildProcessWithoutNullStreams, spawn } from "child_process";
+import { ChildProcess, spawn, execFile } from "child_process";
 import { randomBytes } from "crypto";
 import { app } from "electron";
 import log from "electron-log";
@@ -6,6 +6,7 @@ import { EventEmitter } from "events";
 import * as fs from "fs-extra";
 import path from "path";
 
+import { isMac } from "../common/constants";
 import { fileExists } from "../main/fileExists";
 import { ReplayCommunication } from "./types";
 
@@ -18,7 +19,7 @@ const generateTempCommunicationFile = (): string => {
 };
 
 export class DolphinInstance extends EventEmitter {
-  protected process: ChildProcessWithoutNullStreams | null = null;
+  protected process: ChildProcess | null = null;
   private executablePath: string;
   private isoPath: string | null = null;
 
@@ -44,7 +45,24 @@ export class DolphinInstance extends EventEmitter {
       params.push(...additionalParams);
     }
 
-    this.process = spawn(this.executablePath, params);
+    // On macOS, the default process.spawn seems to have odd overhead and causes deadlocks in Dolphin's rendering
+    // process - as best I can tell, it's not separating the event loops and just choking immediately.
+    //
+    // If you read the Node.js source, execFile basically goes through `.spawn` as well, but sets a few
+    // different options along the way. Notably, there's a number of option flags that aren't available on the
+    // SpawnOptions TypeScript hint, for whatever reason... so trying to pass them here blows up.
+    //
+    // tl;dr: for macOS, pass through execFile and set a massively high buffer for performance reasons. The returned
+    // child process is ultimately the same, or close enough for now, and keeps the rest of the codebase intact.
+    if (isMac) {
+      this.process = execFile(this.executablePath, params, {
+        // 100MB
+        maxBuffer: 1000 * 1000 * 100,
+      });
+    } else {
+      this.process = spawn(this.executablePath, params);
+    }
+
     this.process.on("close", () => {
       this.emit("close");
     });
