@@ -102,12 +102,20 @@ function createMainWindow() {
 
   window.once("ready-to-show", () => {
     didFinishLoad = true;
-    //window.show();
-    //window.focus();
+
+    // Avoid paint flash in Windows by showing when ready.
+    if (!isMac) {
+      window.show();
+      window.focus();
+    }
   });
 
-  window.show();
-  window.focus();
+  // macOS doesn't seem to suffer from the paint flash, and since a user can close and reopen the
+  // window without killing the process, this should be a bit faster.
+  if (isMac) {
+    window.show();
+    window.focus();
+  }
 
   setupListeners();
 
