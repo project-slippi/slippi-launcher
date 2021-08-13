@@ -17,6 +17,12 @@ import { fileExists } from "./fileExists";
 import { setupListeners } from "./listeners";
 import { menu } from "./menu";
 
+// On macOS, we need to force Electron to use Metal if possible. Without this flag, OpenGL will be used...
+// in software rendering mode. This has a notable impact on animations on Catalina and Big Sur.
+if (isMac) {
+  app.commandLine.appendSwitch("enable-features", "Metal");
+}
+
 // use console.log as log.debug for easier access to debug logging
 console.log = log.debug;
 
