@@ -18,7 +18,7 @@ import { BuildInfo } from "@/containers/Settings/BuildInfo";
 import { useMousetrap } from "@/lib/hooks/useMousetrap";
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
 import { withSlippiBackground } from "@/styles/withSlippiBackground";
-import platformTitleBarStyles from "@/styles/platformTitleBarStyles";
+import { platformTitleBarStyles } from "@/styles/platformTitleBarStyles";
 
 import { settings } from "../containers/Settings";
 

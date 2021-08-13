@@ -8,7 +8,7 @@ import { useHistory } from "react-router-dom";
 import { StepperDots } from "@/components/StepperDots";
 import { useMousetrap } from "@/lib/hooks/useMousetrap";
 import { QuickStartStep } from "@/lib/hooks/useQuickStart";
-import platformTitleBarStyles from "@/styles/platformTitleBarStyles";
+import { platformTitleBarStyles } from "@/styles/platformTitleBarStyles";
 
 import { ActivateOnlineStep } from "./ActivateOnlineStep";
 import { ImportDolphinSettingsStep } from "./ImportDolphinSettingsStep";

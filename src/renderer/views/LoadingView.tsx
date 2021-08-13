@@ -6,7 +6,7 @@ import { LoadingScreen } from "@/components/LoadingScreen";
 import { BuildInfo } from "@/containers/Settings/BuildInfo";
 import { useAppStore } from "@/lib/hooks/useApp";
 import { withSlippiBackground } from "@/styles/withSlippiBackground";
-import platformTitleBarStyles from "@/styles/platformTitleBarStyles";
+import { platformTitleBarStyles } from "@/styles/platformTitleBarStyles";
 
 export const LoadingView: React.FC = () => {
   const installStatus = useAppStore((store) => store.logMessage);

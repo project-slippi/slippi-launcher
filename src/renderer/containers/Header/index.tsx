@@ -22,7 +22,7 @@ import { useSettings } from "@/lib/hooks/useSettings";
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
 import { assertPlayKey } from "@/lib/slippiBackend";
 import slippiLogo from "@/styles/images/slippi-logo.svg";
-import platformTitleBarStyles from "@/styles/platformTitleBarStyles";
+import { platformTitleBarStyles } from "@/styles/platformTitleBarStyles";
 
 import { ActivateOnlineDialog } from "./ActivateOnlineDialog";
 import { MainMenu, MenuItem } from "./MainMenu";

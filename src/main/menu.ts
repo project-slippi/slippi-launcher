@@ -34,7 +34,7 @@ function getPreferencesItems(): Array<MenuItemConstructorOptions> {
         // but is here for the cases where the user closed the window but hits preferences
         // or the key command and we need to reopen it.
         createRootWindow();
-        ipc_openSettingsModalEvent.main!.trigger({}).then(() => {});
+        void ipc_openSettingsModalEvent.main!.trigger({}); //.then(() => {});
       },
     },
     {
@@ -70,7 +70,7 @@ function getFileMenu(): MenuItemConstructorOptions {
     {
       label: "Open Slippi Replay",
       click: () => {
-        dialog.showOpenDialog({ properties: ["openFile"] }).then(function (response) {
+        void dialog.showOpenDialog({ properties: ["openFile"] }).then(function (response) {
           if (!response.canceled) {
             handleSlippiURI(response.filePaths[0]);
           }
