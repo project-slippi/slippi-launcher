@@ -25,13 +25,11 @@ Set your adapter to Wii U/Switch mode and then follow the section for your OS.
 
 ### macOS
 
+Download and install [GCAdapterDriver](https://secretkeys.io/gcadapterdriver/). Ask in our Discord's #mac-support channel for further help.
+
 #### High Sierra to Mojave (10.13 - 10.15)
 
-Download and install [GCAdapterDriver](https://github.com/secretkeysio/GCAdapterDriver/releases/download/1.0/GCAdapterDriverInstaller.pkg).
-
-#### Big Sur
-
-Read the installation instructions for [GCAdapterDriver](https://github.com/secretkeysio/GCAdapterDriver/releases#:~:text=with%20existing%20installations.-,Installation,-macOS%2010.13-10.15). Ask in our Discord's #mac-support channel for further help.
+Make sure to check the "overclock" option when installing your driver. This will bump your controller poll rate up to 1000hz.
 
 ### Linux
 
