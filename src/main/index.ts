@@ -102,9 +102,12 @@ function createMainWindow() {
 
   window.once("ready-to-show", () => {
     didFinishLoad = true;
-    window.show();
-    window.focus();
+    //window.show();
+    //window.focus();
   });
+
+  window.show();
+  window.focus();
 
   setupListeners();
 
