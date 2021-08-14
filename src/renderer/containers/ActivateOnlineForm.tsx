@@ -7,7 +7,6 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import electronLog from "electron-log";
-import firebase from "firebase";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useToasts } from "react-toast-notifications";
@@ -19,25 +18,25 @@ import { isValidConnectCodeStart } from "@/lib/validate";
 const log = electronLog.scope("ActivateOnlineForm");
 
 export const ActivateOnlineForm: React.FC = () => {
-  const user = useAccount((store) => store.user) as firebase.User;
+  const user = useAccount((store) => store.user);
   const refreshActivation = useAccount((store) => store.refreshPlayKey);
   return (
     <div>
       <div>Your connect code is used for players to connect with you directly.</div>
-      <ConnectCodeSetter displayName={user.displayName || ""} onSuccess={refreshActivation} />
+      <ConnectCodeSetter displayName={user ? user.displayName : null} onSuccess={refreshActivation} />
     </div>
   );
 };
 
 interface ConnectCodeSetterProps {
-  displayName: string;
+  displayName: string | null;
   onSuccess: () => void;
 }
 
 const ConnectCodeSetter: React.FC<ConnectCodeSetterProps> = ({ displayName, onSuccess }) => {
   const { addToast } = useToasts();
   const getStartTag = () => {
-    const safeName = displayName;
+    const safeName = displayName ?? "";
     const matches = safeName.match(/[a-zA-Z]+/g) || [];
     return matches.join("").toUpperCase().substring(0, 4);
   };
