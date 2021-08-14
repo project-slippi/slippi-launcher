@@ -25,7 +25,16 @@ export function findChild(tree: FolderResult, childToFind: string): FolderResult
 export async function generateSubFolderTree(folder: string, childrenToExpand?: string[]): Promise<FolderResult[]> {
   console.log(`generating subfolder tree for folder: ${folder} with children: ${childrenToExpand}`);
   // Only generate the tree for a single level
-  const results = await fs.readdir(folder, { withFileTypes: true });
+  let results: fs.Dirent[] = [];
+  try {
+    // The directory we're expanding might not actually exist.
+    results = await fs.readdir(folder, { withFileTypes: true });
+  } catch (err) {
+    // If it doesn't exist, just return an empty list.
+    console.warn(err);
+    return [];
+  }
+
   const subdirectories = results
     .filter((dirent) => {
       return dirent.isDirectory();
