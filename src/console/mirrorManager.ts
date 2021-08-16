@@ -118,7 +118,7 @@ export class MirrorManager extends EventEmitter {
       });
     });
     this.emit(MirrorEvent.LOG, config.port);
-    connection.connect(config.ipAddress, config.port ?? Ports.DEFAULT);
+    connection.connect(config.ipAddress, config.port ?? Ports.DEFAULT, config.isRealtime);
 
     let autoSwitcher: AutoSwitcher | null = null;
     if (config.autoSwitcherSettings) {
@@ -219,7 +219,7 @@ export class MirrorManager extends EventEmitter {
   }
 
   private async _playFile(filePath: string, playbackId: string) {
-    return this.emit(MirrorEvent.NEW_FILE, playbackId, filePath, this.mirrors[playbackId].isRealTimeMode);
+    return this.emit(MirrorEvent.NEW_FILE, playbackId, filePath, this.mirrors[playbackId].isRealtime);
   }
 
   public async handleClosedDolphin(playbackId: string) {

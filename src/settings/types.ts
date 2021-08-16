@@ -2,7 +2,7 @@ export interface StoredConnection {
   id: number;
   ipAddress: string;
   folderPath: string;
-  isRealTimeMode: boolean;
+  isRealtime: boolean;
   port?: number;
   consoleNick?: string;
   enableAutoSwitcher: boolean;

@@ -37,7 +37,7 @@ export const AddConnectionDialog: React.FC<AddConnectionDialogProps> = ({
   };
   const defaultValues: Partial<StoredConnection> = merge(
     {
-      isRealTimeMode: false,
+      isRealtime: false,
       folderPath: spectateFolder,
       port: Ports.DEFAULT,
       enableRelay: false,

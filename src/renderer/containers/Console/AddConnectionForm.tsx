@@ -21,7 +21,7 @@ type FormValues = {
   ipAddress: string;
   port: number;
   folderPath: string;
-  isRealTimeMode: boolean;
+  isRealtime: boolean;
   enableAutoSwitcher: boolean;
   obsIP?: string;
   obsSourceName?: string;
@@ -44,7 +44,7 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
     formState: { errors },
   } = useForm<FormValues>({ defaultValues });
   const folderPath = watch("folderPath");
-  const isRealTimeMode = watch("isRealTimeMode");
+  const isRealtime = watch("isRealtime");
   const enableAutoSwitcher = watch("enableAutoSwitcher");
   const obsPassword = watch("obsPassword");
   const obsSourceName = watch("obsSourceName");
@@ -87,8 +87,8 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
         </section>
         <section>
           <Toggle
-            value={Boolean(isRealTimeMode)}
-            onChange={(checked) => setValue("isRealTimeMode", checked)}
+            value={Boolean(isRealtime)}
+            onChange={(checked) => setValue("isRealtime", checked)}
             label="Enable Real-time Mode"
             description="Prevents delay from accumulating when mirroring. Keep this off unless both the Wii and computer are on a wired LAN connection."
           />
