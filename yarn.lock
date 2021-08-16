@@ -2332,10 +2332,10 @@
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.14.0.tgz#9fb3a3cf3132328151f353de4632e01e52102bea"
   integrity sha512-9NET910DNaIPngYnLLPeg+Ogzqsi9uM4mSboU5y6p8S5DzMTVEsJZrawi+BoDNUVBa2DhJqQYUFvMDfgU062LQ==
 
-"@slippi/slippi-js@^6.1.1":
-  version "6.1.1"
-  resolved "https://registry.yarnpkg.com/@slippi/slippi-js/-/slippi-js-6.1.1.tgz#b99e520d2bd71ffd7f99099362afc01b638c2a26"
-  integrity sha512-14Ob9GB4j+PGHAr6OMLHDOKxD9W7Z8ll6YxgSQD01tI6yJ10G2LRtL0rjuUKG2tcC+rcuqrkJ8H81UUM3d7uZg==
+"@slippi/slippi-js@6.1.2":
+  version "6.1.2"
+  resolved "https://registry.yarnpkg.com/@slippi/slippi-js/-/slippi-js-6.1.2.tgz#6cedd18d54ead123a9ed40f1f2e514b7bbb4d770"
+  integrity sha512-cZEWKJWRB61ZZEUBIsRi1TPcmWFIU+Z9fQd650jyxFJAS9j0xWWAZypd5TM9TfhaMyOU73XsQ5DLoeH7BPumXw==
   dependencies:
     "@shelacek/ubjson" "^1.0.1"
     enet "^0.2.9"
