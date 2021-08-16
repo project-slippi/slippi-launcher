@@ -36,7 +36,7 @@ export const connectToConsole = async (conn: StoredConnection) => {
     ipAddress: conn.ipAddress,
     port: conn.port ?? Ports.DEFAULT,
     folderPath: conn.folderPath,
-    isRealTimeMode: conn.isRealTimeMode,
+    isRealtime: conn.isRealtime,
     enableRelay: conn.enableRelay,
   };
 

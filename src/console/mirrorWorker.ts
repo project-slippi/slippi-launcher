@@ -17,7 +17,7 @@ export interface Methods {
   dolphinClosed(playbackId: string): Promise<void>;
   getLogObservable(): Observable<string>;
   getErrorObservable(): Observable<Error | string>;
-  getMirrorDetailsObservable(): Observable<{ playbackId: string; filePath: string; isRealTimeMode: boolean }>;
+  getMirrorDetailsObservable(): Observable<{ playbackId: string; filePath: string; isRealtime: boolean }>;
   getMirrorStatusObservable(): Observable<{ ip: string; info: Partial<ConsoleMirrorStatusUpdate> }>;
 }
 
@@ -27,7 +27,7 @@ const mirrorManager = new MirrorManager();
 
 const logSubject = new Subject<string>();
 const errorSubject = new Subject<Error | string>();
-const mirrorDetailsSubject = new Subject<{ playbackId: string; filePath: string; isRealTimeMode: boolean }>();
+const mirrorDetailsSubject = new Subject<{ playbackId: string; filePath: string; isRealtime: boolean }>();
 const mirrorStatusSubject = new Subject<{ ip: string; info: Partial<ConsoleMirrorStatusUpdate> }>();
 
 // Forward the events to the renderer
@@ -39,8 +39,8 @@ mirrorManager.on(MirrorEvent.ERROR, async (error: Error | string) => {
   errorSubject.next(error);
 });
 
-mirrorManager.on(MirrorEvent.NEW_FILE, async (playbackId: string, filePath: string, isRealTimeMode: boolean) => {
-  mirrorDetailsSubject.next({ playbackId, filePath, isRealTimeMode });
+mirrorManager.on(MirrorEvent.NEW_FILE, async (playbackId: string, filePath: string, isRealtime: boolean) => {
+  mirrorDetailsSubject.next({ playbackId, filePath, isRealtime });
 });
 
 mirrorManager.on(
@@ -72,7 +72,7 @@ const methods: WorkerSpec = {
   getErrorObservable(): Observable<Error | string> {
     return Observable.from(errorSubject);
   },
-  getMirrorDetailsObservable(): Observable<{ playbackId: string; filePath: string; isRealTimeMode: boolean }> {
+  getMirrorDetailsObservable(): Observable<{ playbackId: string; filePath: string; isRealtime: boolean }> {
     return Observable.from(mirrorDetailsSubject);
   },
   getMirrorStatusObservable(): Observable<{ ip: string; info: Partial<ConsoleMirrorStatusUpdate> }> {
