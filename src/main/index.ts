@@ -18,8 +18,11 @@ import { setupListeners } from "./listeners";
 import { menu } from "./menu";
 
 // On macOS, we need to force Electron to use Metal if possible. Without this flag, OpenGL will be used...
-// in software rendering mode. This has a notable impact on animations on Catalina and Big Sur.
-if (isMac) {
+// in software rendering mode. This has a notable impact on animations on Catalina and (Intel) Big Sur.
+//
+// This is explicitly avoided on M1 devices, as OpenGL is just a shim to Metal, and Electron seems to implode
+// if passed this flag on M1 devices.
+if (isMac && process.arch !== "arm64") {
   app.commandLine.appendSwitch("enable-features", "Metal");
 }
 
@@ -57,6 +60,7 @@ function createMainWindow() {
     titleBarStyle: "hiddenInset",
 
     webPreferences: {
+      contextIsolation: false,
       nodeIntegration: true,
       nodeIntegrationInWorker: true,
       enableRemoteModule: true,
@@ -118,8 +122,10 @@ app.on("window-all-closed", () => {
   // recreate the window on-demand.
   if (isMac) {
     const macMenuItem = menu.getMenuItemById("macos-window-toggle");
-    macMenuItem.enabled = true;
-    macMenuItem.visible = true;
+    if (macMenuItem != null) {
+      macMenuItem.enabled = true;
+      macMenuItem.visible = true;
+    }
     return;
   }
 
