@@ -17,6 +17,7 @@ import { DualPane } from "@/components/DualPane";
 import { BuildInfo } from "@/containers/Settings/BuildInfo";
 import { useMousetrap } from "@/lib/hooks/useMousetrap";
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
+import { platformTitleBarStyles } from "@/styles/platformTitleBarStyles";
 import { withSlippiBackground } from "@/styles/withSlippiBackground";
 
 import { settings } from "../containers/Settings";
@@ -33,12 +34,13 @@ const MenuColumn = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-  padding-top: 20px;
+  ${() => platformTitleBarStyles(30)}
 `;
 
 const ContentColumn = styled.div`
   flex: 1;
   overflow-x: hidden;
+  ${() => platformTitleBarStyles()}
   padding: 30px;
   padding-right: 100px;
 `;
@@ -46,7 +48,7 @@ const ContentColumn = styled.div`
 const CloseButton = styled(IconButton)`
   opacity: 0.5;
   position: absolute;
-  top: 5px;
+  top: 20px;
   right: 10px;
   z-index: 1;
 `;

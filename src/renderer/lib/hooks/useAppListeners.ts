@@ -8,7 +8,7 @@ import {
 import { ipc_consoleMirrorStatusUpdatedEvent, ipc_discoveredConsolesUpdatedEvent } from "@console/ipc";
 import { ipc_dolphinDownloadLogReceivedEvent } from "@dolphin/ipc";
 import { ipc_loadProgressUpdatedEvent, ipc_statsPageRequestedEvent } from "@replays/ipc";
-import { ipc_settingsUpdatedEvent } from "@settings/ipc";
+import { ipc_settingsUpdatedEvent, ipc_openSettingsModalEvent } from "@settings/ipc";
 import {
   ipc_checkValidIso,
   ipc_launcherUpdateDownloadingEvent,
@@ -32,6 +32,7 @@ import { useIsoVerification } from "./useIsoVerification";
 import { useNewsFeed } from "./useNewsFeed";
 import { useReplayBrowserNavigation } from "./useReplayBrowserList";
 import { useSettings } from "./useSettings";
+import { useSettingsModal } from "./useSettingsModal";
 
 export const useAppListeners = () => {
   // Handle app initalization
@@ -157,6 +158,11 @@ export const useAppListeners = () => {
   ipc_statsPageRequestedEvent.renderer!.useEvent(async ({ filePath }) => {
     clearSelectedFile();
     goToReplayStatsPage(filePath);
+  }, []);
+
+  const { open } = useSettingsModal();
+  ipc_openSettingsModalEvent.renderer!.useEvent(async () => {
+    open();
   }, []);
 
   // Load the news articles once on app load

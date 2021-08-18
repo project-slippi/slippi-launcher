@@ -8,6 +8,7 @@ import { useHistory } from "react-router-dom";
 import { StepperDots } from "@/components/StepperDots";
 import { useMousetrap } from "@/lib/hooks/useMousetrap";
 import { QuickStartStep } from "@/lib/hooks/useQuickStart";
+import { platformTitleBarStyles } from "@/styles/platformTitleBarStyles";
 
 import { ActivateOnlineStep } from "./ActivateOnlineStep";
 import { ImportDolphinSettingsStep } from "./ImportDolphinSettingsStep";
@@ -19,6 +20,7 @@ const OuterBox = styled(Box)`
   flex: 1;
   align-self: stretch;
   padding: 5% 10%;
+  ${() => platformTitleBarStyles(0)}
 `;
 
 function getStepHeader(step: QuickStartStep): string {

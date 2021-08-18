@@ -1,7 +1,7 @@
 import { dolphinManager } from "@dolphin/manager";
 import { ipc_statsPageRequestedEvent } from "@replays/ipc";
 import { colors } from "common/colors";
-import { isDevelopment } from "common/constants";
+import { isDevelopment, isMac } from "common/constants";
 import { delay } from "common/delay";
 import { app, BrowserWindow, Menu, shell } from "electron";
 import contextMenu from "electron-context-menu";
@@ -16,6 +16,12 @@ import { download } from "./download";
 import { fileExists } from "./fileExists";
 import { setupListeners } from "./listeners";
 import { menu } from "./menu";
+
+// On macOS, we need to force Electron to use Metal if possible. Without this flag, OpenGL will be used...
+// in software rendering mode. This has a notable impact on animations on Catalina and Big Sur.
+if (isMac) {
+  app.commandLine.appendSwitch("enable-features", "Metal");
+}
 
 // use console.log as log.debug for easier access to debug logging
 console.log = log.debug;
@@ -45,6 +51,11 @@ function createMainWindow() {
     minHeight: isDevelopment ? undefined : 450,
     minWidth: isDevelopment ? undefined : 900,
     backgroundColor: colors.purpleDarker,
+
+    // This setting only takes effect on macOS, and simply opts it into the modern
+    // Big-Sur frame UI for the window style.
+    titleBarStyle: "hiddenInset",
+
     webPreferences: {
       nodeIntegration: true,
       nodeIntegrationInWorker: true,
@@ -102,15 +113,28 @@ function createMainWindow() {
 
 // quit application when all windows are closed
 app.on("window-all-closed", () => {
+  // On macOS, the window closing shouldn't quit the actual process.
+  // Instead, grab and activate a hidden menu item to enable the user to
+  // recreate the window on-demand.
+  if (isMac) {
+    const macMenuItem = menu.getMenuItemById("macos-window-toggle");
+    macMenuItem.enabled = true;
+    macMenuItem.visible = true;
+    return;
+  }
+
   app.quit();
 });
 
-app.on("activate", () => {
-  // on macOS it is common to re-create a window even after all windows have been closed
+function createRootWindow() {
+  // On macOS, the general pattern is that the app remains open even if all windows
+  // are closed - so support recreating if null.
   if (mainWindow === null) {
     mainWindow = createMainWindow();
   }
-});
+}
+
+app.on("activate", createRootWindow);
 
 const onReady = () => {
   if (!lockObtained) {
@@ -176,6 +200,8 @@ const handleSlippiURIAsync = async (aUrl: string) => {
       mainWindow.restore();
     }
     mainWindow.focus();
+  } else {
+    createRootWindow();
   }
 
   switch (protocol) {
@@ -269,3 +295,5 @@ const playReplayAndShowStats = async (filePath: string) => {
   });
   await ipc_statsPageRequestedEvent.main!.trigger({ filePath });
 };
+
+export { createRootWindow, handleSlippiURI };
