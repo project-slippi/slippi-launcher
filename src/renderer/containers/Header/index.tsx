@@ -9,7 +9,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 import SettingsOutlinedIcon from "@material-ui/icons/SettingsOutlined";
 import { colors } from "common/colors";
-import { slippiHomepage } from "common/constants";
+import { isMac, slippiHomepage } from "common/constants";
 import { shell } from "electron";
 import log from "electron-log";
 import React from "react";
@@ -98,7 +98,7 @@ export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
       css={css`
         display: flex;
         justify-content: space-between;
-        ${platformTitleBarStyles}
+        ${platformTitleBarStyles()}
       `}
     >
       <div
@@ -109,8 +109,8 @@ export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
         `}
       >
         <Tooltip title="Open Slippi.gg">
-          <Button onClick={() => shell.openExternal(slippiHomepage)}>
-            <img src={slippiLogo} width="43px" />
+          <Button onClick={() => shell.openExternal(slippiHomepage)} style={isMac ? { marginTop: 10 } : undefined}>
+            <img src={slippiLogo} width="38px" />
           </Button>
         </Tooltip>
         <div
@@ -144,6 +144,7 @@ export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
             onClick={() => open()}
             css={css`
               opacity: 0.5;
+              margin-right: 10px;
             `}
           >
             <SettingsOutlinedIcon />

@@ -20,7 +20,7 @@ const OuterBox = styled(Box)`
   flex: 1;
   align-self: stretch;
   padding: 5% 10%;
-  ${platformTitleBarStyles}
+  ${() => platformTitleBarStyles(0)}
 `;
 
 function getStepHeader(step: QuickStartStep): string {

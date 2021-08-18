@@ -6,7 +6,6 @@ import { LoadingScreen } from "@/components/LoadingScreen";
 import { BuildInfo } from "@/containers/Settings/BuildInfo";
 import { useAppStore } from "@/lib/hooks/useApp";
 import { withSlippiBackground } from "@/styles/withSlippiBackground";
-import { platformTitleBarStyles } from "@/styles/platformTitleBarStyles";
 
 export const LoadingView: React.FC = () => {
   const installStatus = useAppStore((store) => store.logMessage);
@@ -15,7 +14,6 @@ export const LoadingView: React.FC = () => {
       css={css`
         height: 100%;
         width: 100%;
-        ${platformTitleBarStyles}
       `}
     >
       <LoadingScreen css={withSlippiBackground} message={installStatus ? installStatus : "Just a sec..."} />
