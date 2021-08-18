@@ -75,14 +75,13 @@ export const ReplayBrowser: React.FC = () => {
   const deleteFiles = (filePaths: string[]) => {
     let errCount = 0;
     filePaths.forEach((filePath) => {
-      shell.trashItem(filePath).then(
-        () => {
-          removeFile(filePath);
-        },
-        () => {
-          errCount += 1;
-        },
-      );
+      const success = shell.moveItemToTrash(filePath);
+      if (success) {
+        // Remove the file from the store
+        removeFile(filePath);
+      } else {
+        errCount += 1;
+      }
     });
 
     let message = `${filePaths.length - errCount} file(s) deleted successfully.`;
@@ -191,7 +190,7 @@ export const ReplayBrowser: React.FC = () => {
         >
           <div>
             <Tooltip title="Reveal location">
-              <IconButton onClick={() => shell.openPath(currentFolder)} size="small">
+              <IconButton onClick={() => shell.openItem(currentFolder)} size="small">
                 <FolderIcon
                   css={css`
                     color: ${colors.purpleLight};

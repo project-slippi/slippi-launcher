@@ -15,13 +15,6 @@ jobs:
       matrix:
         node-version: [14.x]
         os: [ubuntu-latest, windows-latest, macOS-latest]
-        include:
-          - os: windows-latest
-            package_command: yarn run package --publish never
-          - os: ubuntu-latest
-            package_command: yarn run package --publish never
-          - os: macOS-latest
-            package_command: yarn run package-mac --publish never
     steps:
       - uses: actions/checkout@v1
       - name: Use Node.js ${{ matrix.node-version }} on ${{ matrix.os }}
@@ -63,7 +56,7 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: |
           echo ${{ secrets.ENVFILE }} > .env
-          ${{ matrix.package_command }}
+          yarn run package --publish never
         env:
           CI: true
       - name: Prepare artifacts
