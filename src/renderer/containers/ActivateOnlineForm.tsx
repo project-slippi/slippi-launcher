@@ -89,6 +89,7 @@ const ConnectCodeSetter: React.FC<ConnectCodeSetterProps> = ({ displayName, onSu
                 {...field}
                 onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                 required={true}
+                autoFocus={true}
                 css={css`
                   max-width: 200px;
                 `}
