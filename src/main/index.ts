@@ -15,7 +15,7 @@ import url, { format as formatUrl } from "url";
 import { download } from "./download";
 import { fileExists } from "./fileExists";
 import { setupListeners } from "./listeners";
-import { menu } from "./menu";
+import { generateMenu } from "./menu";
 
 // On macOS, we need to force Electron to use Metal if possible. Without this flag, OpenGL will be used...
 // in software rendering mode. This has a notable impact on animations on Catalina and Big Sur.
@@ -29,9 +29,6 @@ console.log = log.debug;
 // Check for updates
 autoUpdater.logger = log;
 autoUpdater.autoInstallOnAppQuit = false;
-
-// Set the menu options
-Menu.setApplicationMenu(menu);
 
 // global reference to mainWindow (necessary to prevent window from being garbage collected)
 let mainWindow: BrowserWindow | null = null;
@@ -296,4 +293,6 @@ const playReplayAndShowStats = async (filePath: string) => {
   await ipc_statsPageRequestedEvent.main!.trigger({ filePath });
 };
 
-export { createRootWindow, handleSlippiURI };
+// Set the menu options
+const menu = generateMenu(createRootWindow, handleSlippiURI);
+Menu.setApplicationMenu(menu);

@@ -1,8 +1,6 @@
-import { app, Menu, MenuItemConstructorOptions, shell, dialog } from "electron";
-import defaultMenu from "electron-default-menu";
-
 import { isMac } from "common/constants";
-import { createRootWindow, handleSlippiURI } from "main/index";
+import { app, dialog, Menu, MenuItemConstructorOptions, shell } from "electron";
+import defaultMenu from "electron-default-menu";
 import { ipc_openSettingsModalEvent } from "settings/ipc";
 
 /**
@@ -21,7 +19,7 @@ function isSubmenu(submenu?: Array<MenuItemConstructorOptions> | Menu): submenu 
  *
  * @returns {Array<Electron.MenuItemConstructorOptions>}
  */
-function getPreferencesItems(): Array<MenuItemConstructorOptions> {
+function getPreferencesItems(createRootWindow: () => void): Array<MenuItemConstructorOptions> {
   return [
     {
       type: "separator",
@@ -65,7 +63,10 @@ function getQuitItems(): Array<MenuItemConstructorOptions> {
  *
  * @returns {Array<Electron.MenuItemConstructorOptions>}
  */
-function getFileMenu(): MenuItemConstructorOptions {
+function getFileMenu(
+  createRootWindow: () => void,
+  handleSlippiURI: (filePath: string) => void,
+): MenuItemConstructorOptions {
   const fileMenu: Array<MenuItemConstructorOptions> = [
     {
       label: "Open Slippi Replay",
@@ -85,7 +86,7 @@ function getFileMenu(): MenuItemConstructorOptions {
 
   // macOS has these items in the "Application" menu
   if (!isMac) {
-    fileMenu.splice(fileMenu.length, 0, ...getPreferencesItems(), ...getQuitItems());
+    fileMenu.splice(fileMenu.length, 0, ...getPreferencesItems(createRootWindow), ...getQuitItems());
   }
 
   return {
@@ -129,13 +130,16 @@ function getHelpItems(): Array<MenuItemConstructorOptions> {
   return items;
 }
 
-const generateMenuTemplate = (): MenuItemConstructorOptions[] => {
+const generateMenuTemplate = (
+  createRootWindow: () => void,
+  handleSlippiURI: (filePath: string) => void,
+): MenuItemConstructorOptions[] => {
   const menu = (defaultMenu(app, shell) as Array<MenuItemConstructorOptions>).map((item) => {
     const { label } = item;
 
     // Append the "Settings" item
     if (isMac && label === app.name && isSubmenu(item.submenu)) {
-      item.submenu.splice(2, 0, ...getPreferencesItems());
+      item.submenu.splice(2, 0, ...getPreferencesItems(createRootWindow));
     }
 
     // Tweak "View" menu
@@ -166,10 +170,13 @@ const generateMenuTemplate = (): MenuItemConstructorOptions[] => {
     return item;
   });
 
-  menu.splice(isMac ? 1 : 0, 0, getFileMenu());
+  menu.splice(isMac ? 1 : 0, 0, getFileMenu(createRootWindow, handleSlippiURI));
 
   return menu;
 };
 
-const template = generateMenuTemplate();
-export const menu = Menu.buildFromTemplate(template);
+export const generateMenu = (createRootWindow: () => void, handleSlippiURI: (filePath: string) => void) => {
+  const template = generateMenuTemplate(createRootWindow, handleSlippiURI);
+  const menu = Menu.buildFromTemplate(template);
+  return menu;
+};
