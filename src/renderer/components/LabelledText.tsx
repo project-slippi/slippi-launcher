@@ -34,7 +34,6 @@ export const LabelledText: React.FC<LabelledTextProps> = ({ label, children, cla
       <div
         css={css`
           color: white;
-          font-weight: lighter;
         `}
       >
         {children}

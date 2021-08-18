@@ -34,7 +34,8 @@ const MenuColumn = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-  ${() => platformTitleBarStyles(30)}
+  padding-top: 30px;
+  ${() => platformTitleBarStyles(50)}
 `;
 
 const ContentColumn = styled.div`

@@ -51,7 +51,6 @@ const CustomInput = styled(InputBase)`
   margin-left: 16px;
   margin-right: 16px;
   flex: 1;
-  font-weight: 300;
   font-size: 14px;
 `;
 const Outer = styled.div`

@@ -15,7 +15,7 @@ export const BasicFooter = styled.div`
   display: flex;
   padding: 0 20px;
   height: 50px;
-  whitespace: nowrap;
+  white-space: nowrap;
   align-items: center;
   background-color: black;
   font-size: 14px;
