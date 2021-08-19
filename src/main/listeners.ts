@@ -25,6 +25,7 @@ import os from "os";
 import osName from "os-name";
 import path from "path";
 
+import { fileExists } from "./fileExists";
 import { fetchNewsFeedData } from "./newsFeed";
 import { readLastLines } from "./util";
 import { verifyIso } from "./verifyIso";
@@ -86,14 +87,22 @@ export function setupListeners() {
     } else {
       logsFolder = path.join(app.getPath("userData"), "logs");
     }
-    const mainLog = path.join(logsFolder, "main.log");
-    const rendererLog = path.join(logsFolder, "renderer.log");
+    const mainLogPath = path.join(logsFolder, "main.log");
+    const rendererLogPath = path.join(logsFolder, "renderer.log");
 
-    const mainLogs = await readLastLines(mainLog, LINES_TO_READ);
-    const rendererLogs = await readLastLines(rendererLog, LINES_TO_READ);
+    // Fetch log contents in parallel
+    const [mainLogs, rendererLogs] = await Promise.all(
+      [mainLogPath, rendererLogPath].map(
+        async (logPath): Promise<string> => {
+          if (await fileExists(logPath)) {
+            return await readLastLines(logPath, LINES_TO_READ);
+          }
+          return "";
+        },
+      ),
+    );
 
     clipboard.writeText(`MAIN START\n---------------\n${mainLogs}\n\nRENDERER START\n---------------\n${rendererLogs}`);
-
     return { success: true };
   });
 

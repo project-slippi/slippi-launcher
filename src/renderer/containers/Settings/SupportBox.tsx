@@ -23,7 +23,7 @@ export const SupportBox: React.FC<{ className?: string }> = ({ className }) => {
 
   const handleError = (err: any) => {
     log.error("Error copying logs", err);
-    addToast("Error copying logs");
+    addToast(err.message || JSON.stringify(err), { appearance: "error" });
   };
 
   const onCopy = async () => {
@@ -104,7 +104,7 @@ export const SupportBox: React.FC<{ className?: string }> = ({ className }) => {
 
 const Outer = styled.div`
   background-color: ${colors.purpleLight};
-  color: ${colors.purpleDarker};
+  color: ${colors.offWhite};
   border-radius: 10px;
   padding: 15px;
 
