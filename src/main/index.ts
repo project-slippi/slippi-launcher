@@ -118,8 +118,10 @@ app.on("window-all-closed", () => {
   // recreate the window on-demand.
   if (isMac) {
     const macMenuItem = menu.getMenuItemById("macos-window-toggle");
-    macMenuItem.enabled = true;
-    macMenuItem.visible = true;
+    if (macMenuItem != null) {
+      macMenuItem.enabled = true;
+      macMenuItem.visible = true;
+    }
     return;
   }
 
