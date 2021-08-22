@@ -329,7 +329,7 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
         {renderHigherSimpleRatioField("Inputs / Minute", "inputsPerMinute")}
         {renderHigherSimpleRatioField("Digital Inputs / Minute", "digitalInputsPerMinute")}
         {renderMultiStatField(
-          "L-Cancels (Succeeded / Failed)",
+          "L-Cancel Success Rate",
           "actionCounts",
           null,
           undefined,
@@ -341,7 +341,7 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
             const { fail, success } = val;
             const total = success + fail;
             const rate = total === 0 ? 0 : (success / (success + fail)) * 100;
-            return `${success} / ${fail} (${Math.round(rate)}%)`;
+            return `${rate.toFixed(0)}% (${success} / ${total})`;
           },
           "lCancelCount",
         )}
