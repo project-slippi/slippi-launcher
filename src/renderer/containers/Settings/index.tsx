@@ -2,6 +2,7 @@ import { DolphinLaunchType } from "@dolphin/types";
 import React from "react";
 
 import { DolphinSettings } from "./DolphinSettings";
+import { DriverOptions } from "./DriverOptions";
 import { HelpPage } from "./HelpPage";
 import { MeleeOptions } from "./MeleeOptions";
 import { ReplayOptions } from "./ReplayOptions";
@@ -35,6 +36,11 @@ export const settings: SettingSection[] = [
         name: "Playback",
         path: "playback-dolphin-settings",
         component: <DolphinSettings dolphinType={DolphinLaunchType.PLAYBACK} />,
+      },
+      {
+        name: "Drivers",
+        path: "driver-options",
+        component: <DriverOptions />,
       },
     ],
   },
