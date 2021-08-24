@@ -2,10 +2,6 @@
 
 Rollback is a superior netcode implementation to the delay based netcode that everyone is used to. It provides smooth gameplay for a larger variety of situations. It also allows for playing with people much further away.
 
-## How do I get started?
-
-Head on over to <https://slippi.gg/downloads> and download the Slippi Launcher. Walk through its setup and you should be good to go.
-
 ## What versions of Melee does Slippi support
 
 We only support NTSC-U/J 1.02.
@@ -91,6 +87,6 @@ If changing ports doesn't work then try the following:
 
 <https://www.reddit.com/r/fastermelee/comments/d6o332/controller_issueneutralize_inputs_on_ryzen_fix/>
 
-## Where did my replays go?
+## Where are my replays?
 
-Replays have moved to `Documents/Slippi` on Windows and `~/Slippi` on macOS and Linux. The replay directory is configurable in `Config->Slippi` of the netplay Dolphin.
+Replays are stored by default in `Documents/Slippi` on Windows and `~/Slippi` on macOS and Linux. The replay directory is configurable in `Config->Slippi` of the netplay Dolphin.
