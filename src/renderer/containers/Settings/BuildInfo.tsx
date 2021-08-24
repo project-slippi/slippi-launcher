@@ -56,17 +56,21 @@ export const BuildInfo: React.FC<BuildInfoProps> = ({ className, enableAdvancedU
     >
       <div>
         Version {appVersion} (
-        <a
-          css={css`
-            text-decoration: underline;
-            cursor: pointer;
-          `}
-          onClick={() =>
-            void shell.openExternal(`https://github.com/project-slippi/slippi-launcher/commit/${commitHash}`)
-          }
-        >
-          {commitHash}
-        </a>
+        {isAdvancedUser ? (
+          <a
+            css={css`
+              text-decoration: underline;
+              cursor: pointer;
+            `}
+            onClick={() =>
+              void shell.openExternal(`https://github.com/project-slippi/slippi-launcher/commit/${commitHash}`)
+            }
+          >
+            {commitHash}
+          </a>
+        ) : (
+          `${commitHash}`
+        )}
         )
       </div>
       <div>
