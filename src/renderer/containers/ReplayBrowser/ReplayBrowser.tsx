@@ -22,7 +22,6 @@ import { usePlayFiles } from "@/lib/hooks/usePlayFiles";
 import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/useReplayBrowserList";
 import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
 import { useReplays, useReplaySelection } from "@/lib/hooks/useReplays";
-import { useSettings } from "@/lib/hooks/useSettings";
 
 import { FileList } from "./FileList";
 import { FileSelectionToolbar } from "./FileSelectionToolbar";
@@ -43,19 +42,12 @@ export const ReplayBrowser: React.FC = () => {
   const extraFolders = useReplays((store) => store.extraFolders);
   const selectedFiles = useReplays((store) => store.selectedFiles);
   const fileSelection = useReplaySelection();
-  const init = useReplays((store) => store.init);
   const fileErrorCount = useReplays((store) => store.fileErrorCount);
-  const rootSlpPath = useSettings((store) => store.settings.rootSlpPath);
-  const extraSlpPaths = useSettings((store) => store.settings.extraSlpPaths);
   const { addToast } = useToasts();
 
   const resetFilter = useReplayFilter((store) => store.resetFilter);
   const { files: filteredFiles, hiddenFileCount } = useReplayBrowserList();
   const { goToReplayStatsPage } = useReplayBrowserNavigation();
-
-  React.useEffect(() => {
-    init(rootSlpPath, extraSlpPaths).catch((err) => addToast(err.message, { appearance: "error" }));
-  }, [rootSlpPath, extraSlpPaths, init, addToast]);
 
   const setSelectedItem = (index: number | null) => {
     if (index === null) {

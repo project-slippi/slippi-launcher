@@ -8,7 +8,7 @@ import {
 import { ipc_consoleMirrorStatusUpdatedEvent, ipc_discoveredConsolesUpdatedEvent } from "@console/ipc";
 import { ipc_dolphinDownloadLogReceivedEvent } from "@dolphin/ipc";
 import { ipc_loadProgressUpdatedEvent, ipc_statsPageRequestedEvent } from "@replays/ipc";
-import { ipc_settingsUpdatedEvent, ipc_openSettingsModalEvent } from "@settings/ipc";
+import { ipc_openSettingsModalEvent, ipc_settingsUpdatedEvent } from "@settings/ipc";
 import {
   ipc_checkValidIso,
   ipc_launcherUpdateDownloadingEvent,
@@ -185,4 +185,12 @@ export const useAppListeners = () => {
   ipc_launcherUpdateReadyEvent.renderer!.useEvent(async () => {
     setUpdateReady(true);
   }, []);
+
+  // Initialize the replay browser once and refresh on SLP path changes
+  const init = useReplays((store) => store.init);
+  const rootSlpPath = useSettings((store) => store.settings.rootSlpPath);
+  const extraSlpPaths = useSettings((store) => store.settings.extraSlpPaths);
+  React.useEffect(() => {
+    init(rootSlpPath, extraSlpPaths, true).catch(console.error);
+  }, [rootSlpPath, extraSlpPaths, init]);
 };
