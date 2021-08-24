@@ -78,15 +78,12 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
         subdirectories: [],
         collapsed: false,
       },
-      extraFolders: extraFolders.filter(Boolean).map(
-        (folder) =>
-          ({
-            name: path.basename(folder),
-            fullPath: folder,
-            subdirectories: [],
-            collapsed: true,
-          } as FolderResult),
-      ),
+      extraFolders: extraFolders.map((folder) => ({
+        name: path.basename(folder),
+        fullPath: folder,
+        subdirectories: [],
+        collapsed: true,
+      })),
     });
 
     await Promise.all([loadDirectoryList(currentFolder ?? rootFolder), loadFolder(currentFolder ?? rootFolder, true)]);
@@ -202,10 +199,8 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
         const newFolders = await produce(rootFolder, async (draft: FolderResult) => {
           const pathToLoad = folder ?? rootSlpPath;
           const child = findChild(draft, pathToLoad) ?? draft;
-          const childPaths = path.relative(child.fullPath, pathToLoad);
-          const childrenToExpand = childPaths ? childPaths.split(path.sep) : [];
           if (child && child.subdirectories.length === 0) {
-            child.subdirectories = await generateSubFolderTree(child.fullPath, childrenToExpand);
+            child.subdirectories = await generateSubFolderTree(child.fullPath);
           }
         });
         return newFolders;
