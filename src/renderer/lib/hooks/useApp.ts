@@ -1,3 +1,4 @@
+import { ipc_checkForUpdate } from "common/ipc";
 import { ipc_checkDesktopAppDolphin, ipc_dolphinDownloadFinishedEvent, ipc_downloadDolphin } from "dolphin/ipc";
 import log from "electron-log";
 import firebase from "firebase";
@@ -99,6 +100,9 @@ export const useAppInitialization = () => {
         })
         .catch(console.error),
     );
+
+    // Check if there is an update to the launcher
+    promises.push(ipc_checkForUpdate.renderer!.trigger({}));
 
     // Wait for all the promises to complete before completing
     try {

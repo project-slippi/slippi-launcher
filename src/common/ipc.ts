@@ -13,6 +13,8 @@ export const ipc_deleteDesktopAppPath = makeEndpoint.main("deleteDesktopAppPath"
 
 export const ipc_copyLogsToClipboard = makeEndpoint.main("copyLogsToClipboard", <EmptyPayload>_, <SuccessPayload>_);
 
+export const ipc_checkForUpdate = makeEndpoint.main("checkForUpdate", <EmptyPayload>_, <SuccessPayload>_);
+
 export const ipc_installUpdate = makeEndpoint.main("installUpdate", <EmptyPayload>_, <SuccessPayload>_);
 
 // Events

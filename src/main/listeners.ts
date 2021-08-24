@@ -7,6 +7,7 @@ import "@console/main";
 import { settingsManager } from "@settings/settingsManager";
 import { isDevelopment } from "common/constants";
 import {
+  ipc_checkForUpdate,
   ipc_checkValidIso,
   ipc_copyLogsToClipboard,
   ipc_deleteDesktopAppPath,
@@ -129,5 +130,8 @@ export function setupListeners() {
     autoUpdater.quitAndInstall(false, true);
     return { success: true };
   });
-  autoUpdater.checkForUpdatesAndNotify().catch(log.warn);
+  ipc_checkForUpdate.main!.handle(async () => {
+    autoUpdater.checkForUpdatesAndNotify().catch(log.warn);
+    return { success: true };
+  });
 }
