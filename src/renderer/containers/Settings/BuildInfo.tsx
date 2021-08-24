@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/react";
-import { ipcRenderer } from "electron";
+import { ipcRenderer, shell } from "electron";
 import moment from "moment";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
@@ -55,7 +55,19 @@ export const BuildInfo: React.FC<BuildInfoProps> = ({ className, enableAdvancedU
       `}
     >
       <div>
-        Version {appVersion} ({commitHash})
+        Version {appVersion} (
+        <a
+          css={css`
+            text-decoration: underline;
+            cursor: pointer;
+          `}
+          onClick={() =>
+            void shell.openExternal(`https://github.com/project-slippi/slippi-launcher/commit/${commitHash}`)
+          }
+        >
+          {commitHash}
+        </a>
+        )
       </div>
       <div>
         Build
