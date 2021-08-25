@@ -7,6 +7,8 @@ import { OpenDialogOptions, remote } from "electron";
 import React, { useState } from "react";
 import { useToasts } from "react-toast-notifications";
 
+import { useSettings } from "@/lib/hooks/useSettings";
+
 export interface MultiPathInputProps {
   updatePaths: (paths: string[]) => void;
   paths: string[];
@@ -15,6 +17,7 @@ export interface MultiPathInputProps {
 
 export const MultiPathInput: React.FC<MultiPathInputProps> = ({ paths, updatePaths, options }) => {
   const { addToast } = useToasts();
+  const rootFolder = useSettings((store) => store.settings.rootSlpPath);
 
   const onAddClick = async () => {
     const result = await remote.dialog.showOpenDialog({ properties: ["openFile"], ...options });
@@ -23,13 +26,43 @@ export const MultiPathInput: React.FC<MultiPathInputProps> = ({ paths, updatePat
       return;
     }
 
-    if (paths.includes(res[0])) {
-      addToast("That directory is already included", {
+    const newPath = res[0];
+
+    if (paths.includes(newPath)) {
+      addToast("That directory is already included.", {
         appearance: "info",
         autoDismiss: true,
         autoDismissTimeout: 3000,
       });
       return;
+    }
+
+    if (newPath.includes(rootFolder)) {
+      addToast("Cannot add sub directories of the Root SLP Directory.", {
+        appearance: "error",
+        autoDismiss: true,
+        autoDismissTimeout: 5000,
+      });
+      return;
+    }
+
+    for (let i = 0; i < paths.length; i++) {
+      const path = paths[i];
+      if (newPath.includes(path)) {
+        addToast("Cannot add sub directories of an existing path.", {
+          appearance: "error",
+          autoDismiss: true,
+          autoDismissTimeout: 5000,
+        });
+        return;
+      } else if (path.includes(newPath)) {
+        addToast("Cannot add parent directories of an existing path.", {
+          appearance: "error",
+          autoDismiss: true,
+          autoDismissTimeout: 5000,
+        });
+        return;
+      }
     }
 
     updateCheckboxSelections((arr) => {
