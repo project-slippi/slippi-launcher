@@ -14,12 +14,17 @@ import {
 } from "@dolphin/ipc";
 import { DolphinLaunchType } from "@dolphin/types";
 import { css, jsx } from "@emotion/react";
-import { Box, Tab, Tabs } from "@material-ui/core";
+import Box from "@material-ui/core/Box";
+import Tab from "@material-ui/core/Tab";
+import Tabs from "@material-ui/core/Tabs";
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
 import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -44,20 +49,6 @@ import { PathInput } from "@/components/PathInput";
 import { useDolphinPath } from "@/lib/hooks/useSettings";
 
 import { SettingItem } from "./SettingItem";
-
-function TabPanel(props: any) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div role="tabpanel" hidden={value !== index} id={`full-width-tabpanel-${index}`} {...other}>
-      {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
 
 export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolphinType }) => {
   const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
@@ -213,6 +204,16 @@ const useStyles = makeStyles({
   },
 });
 
+function TabPanel(props: any) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div role="tabpanel" hidden={value !== index} id={`full-width-tabpanel-${index}`} {...other}>
+      {value === index && <Box p={3}>{children}</Box>}
+    </div>
+  );
+}
+
 const EditGeckoCodesForm: React.FC<{
   dolphinType: DolphinLaunchType;
 }> = ({ dolphinType }) => {
@@ -226,6 +227,8 @@ const EditGeckoCodesForm: React.FC<{
   const [geckoCheckboxes, setGeckoCheckboxes] = React.useState(<div />);
   const [iniSelect, setIniSelect] = React.useState(<div />);
   const [sysIni, setSysIni] = React.useState("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
+  const [selectedCode, setSelectedCode] = React.useState("");
 
   React.useEffect(() => {
     void (async () => {
@@ -273,27 +276,28 @@ const EditGeckoCodesForm: React.FC<{
                 }}
               />
               <ListItemText primary={gecko.name} />
-              <IconButton>
-                <AssignmentIcon
-                  onClick={async () => {
-                    const rawGecko = (await convertGeckoCodeToRawHandler(gecko.name)).result?.rawGecko;
-                    await navigator.clipboard.writeText(rawGecko !== undefined ? rawGecko : "");
-                    addToast(`Copied "${gecko.name}" To Clipboard`, { appearance: "success", autoDismiss: true });
-                  }}
-                />
+              <IconButton
+                onClick={async () => {
+                  const rawGecko = (await convertGeckoCodeToRawHandler(gecko.name)).result?.rawGecko;
+                  await navigator.clipboard.writeText(rawGecko !== undefined ? rawGecko : "");
+                  addToast(`Copied "${gecko.name}" To Clipboard`, { appearance: "success", autoDismiss: true });
+                }}
+              >
+                <AssignmentIcon />
               </IconButton>
               {gecko.userDefined ? (
-                <IconButton>
-                  <DeleteIcon
-                    onClick={async () => {
-                      if (window.confirm(`Are You Sure You Want To Delete "${gecko.name}"?`)) {
-                        await deleteGeckoHandler(gecko.name);
-                      }
-                    }}
-                  />
+                <IconButton
+                  onClick={() => {
+                    setSelectedCode(gecko.name);
+                    setDeleteDialogOpen(true);
+                  }}
+                >
+                  <DeleteIcon />
                 </IconButton>
               ) : (
-                <LockIcon />
+                <IconButton disableRipple style={{ backgroundColor: "transparent" }}>
+                  <LockIcon />
+                </IconButton>
               )}
             </ListItem>
           ))
@@ -343,12 +347,9 @@ const EditGeckoCodesForm: React.FC<{
     e.preventDefault();
     const gCode = makeGeckoCodeFromRaw(newGeckoCodeRaw);
     if (gCode.name.length > 0) {
+      //tCodes are just gecko codes with the notes and codeLines empty
       const tCode: GeckoCode = {
-        name: gCode.name,
-        creator: gCode.creator,
-        enabled: gCode.enabled,
-        userDefined: gCode.userDefined,
-        defaultEnabled: gCode.defaultEnabled,
+        ...gCode,
         notes: [],
         codeLines: [],
       };
@@ -395,31 +396,59 @@ const EditGeckoCodesForm: React.FC<{
           </Tabs>
           {iniSelect}
           <TabPanel value={tabValue} index={0}>
-            <form id="geckoForm" onSubmit={writeGeckoCode}>
-              <TextField
-                type="textarea"
-                id="geckoCode"
-                label="Paste Gecko Code Here"
-                variant="outlined"
-                margin="normal"
-                rows="18"
-                onChange={({ target: { value } }) => setNewGeckoCodeRaw(value)}
-                multiline
-                fullWidth
-                required
-              ></TextField>
-              <Button type="submit" fullWidth variant="outlined" color="secondary">
-                Add
-              </Button>
-            </form>
+            <Box textAlign="center">
+              <form id="geckoForm" onSubmit={writeGeckoCode}>
+                <TextField
+                  type="textarea"
+                  id="geckoCode"
+                  label="Paste Gecko Code Here"
+                  variant="outlined"
+                  margin="normal"
+                  rows="18"
+                  onChange={({ target: { value } }) => setNewGeckoCodeRaw(value)}
+                  multiline
+                  fullWidth
+                  required
+                ></TextField>
+                <Button type="submit" fullWidth variant="contained" color="secondary">
+                  Add
+                </Button>
+              </form>
+            </Box>
           </TabPanel>
-          <TabPanel value={tabValue} index={1}>
-            {geckoCheckboxes}
-            <Button color="secondary" variant="outlined" fullWidth onClick={toggleGeckosHandler}>
-              Save
-            </Button>
+          <TabPanel style={{ alignItems: "center" }} value={tabValue} index={1}>
+            <Box textAlign="center">
+              {geckoCheckboxes}
+              <Button color="secondary" variant="contained" onClick={toggleGeckosHandler}>
+                Save
+              </Button>
+            </Box>
           </TabPanel>
         </DialogContent>
+      </Dialog>
+      <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+        <DialogTitle>{"Confirm"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Delete the Following Code? <br />
+            <b>{selectedCode}</b>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)} variant="contained">
+            No
+          </Button>
+          <Button
+            onClick={async () => {
+              await deleteGeckoHandler(selectedCode);
+              setDeleteDialogOpen(false);
+            }}
+            variant="contained"
+            autoFocus
+          >
+            Yes
+          </Button>
+        </DialogActions>
       </Dialog>
     </div>
   );

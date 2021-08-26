@@ -41,14 +41,11 @@ import {
 ipc_fetchGeckoCodes.main!.handle(async ({ dolphinType, iniName }) => {
   console.log("fetching gecko codes...");
   const gCodes = await loadCodes(dolphinType, iniName);
+  //tCodes are just gecko codes with the notes and codeLines empty
   const tCodes: GeckoCode[] = [];
   gCodes.forEach((gCode) => {
     const tCode: GeckoCode = {
-      name: gCode.name,
-      creator: gCode.creator,
-      enabled: gCode.enabled,
-      userDefined: gCode.userDefined,
-      defaultEnabled: gCode.defaultEnabled,
+      ...gCode,
       notes: [],
       codeLines: [],
     };
