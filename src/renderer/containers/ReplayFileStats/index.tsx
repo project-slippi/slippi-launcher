@@ -165,7 +165,6 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
           <div
             css={css`
               color: white;
-              font-weight: lighter;
             `}
           >
             {filePath}
