@@ -232,7 +232,7 @@ const handleSlippiURIAsync = async (aUrl: string) => {
         replayPath = replayPath.slice(1);
       }
 
-      const tmpDir = app.getPath("temp");
+      const tmpDir = path.join(app.getPath("userData"), "temp");
       const destination = path.join(tmpDir, path.basename(replayPath));
 
       const fileAlreadyExists = await fileExists(destination);

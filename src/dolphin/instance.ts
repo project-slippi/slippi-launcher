@@ -1,4 +1,4 @@
-import { ChildProcess, spawn, execFile } from "child_process";
+import { ChildProcess, execFile, spawn } from "child_process";
 import { randomBytes } from "crypto";
 import { app } from "electron";
 import log from "electron-log";
@@ -11,7 +11,7 @@ import { fileExists } from "../main/fileExists";
 import { ReplayCommunication } from "./types";
 
 const generateTempCommunicationFile = (): string => {
-  const tmpDir = app.getPath("temp");
+  const tmpDir = path.join(app.getPath("userData"), "temp");
   const uniqueId = randomBytes(12).toString("hex");
   const commFileName = `slippi-comms-${uniqueId}.json`;
   const commFileFullPath = path.join(tmpDir, commFileName);
