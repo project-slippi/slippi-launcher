@@ -1,10 +1,11 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/react";
-import { ipcRenderer, shell } from "electron";
+import { ipcRenderer } from "electron";
 import moment from "moment";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
 
+import { ExternalLink as A } from "@/components/ExternalLink";
 import { useAdvancedUser } from "@/lib/useAdvancedUser";
 
 const osInfo = ipcRenderer.sendSync("getOsInfoSync") as string;
@@ -57,17 +58,15 @@ export const BuildInfo: React.FC<BuildInfoProps> = ({ className, enableAdvancedU
       <div>
         Version {appVersion} (
         {isAdvancedUser ? (
-          <a
+          <A
             css={css`
               text-decoration: underline;
               cursor: pointer;
             `}
-            onClick={() =>
-              void shell.openExternal(`https://github.com/project-slippi/slippi-launcher/commit/${commitHash}`)
-            }
+            href={`https://github.com/project-slippi/slippi-launcher/commit/${commitHash}`}
           >
             {commitHash}
-          </a>
+          </A>
         ) : (
           `${commitHash}`
         )}
