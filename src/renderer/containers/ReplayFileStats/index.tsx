@@ -1,6 +1,7 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
+import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 import ErrorIcon from "@material-ui/icons/Error";
@@ -84,6 +85,27 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
   });
 
   const handleRevealLocation = () => shell.showItemInFolder(filePath);
+
+  // We only want to show this full-screen error if we don't have a
+  // file in the prop. i.e. the SLP manually opened.
+  if (!props.file && error) {
+    return (
+      <IconMessage Icon={ErrorIcon}>
+        <div
+          css={css`
+            max-width: 800px;
+            word-break: break-word;
+            text-align: center;
+          `}
+        >
+          <p>Uh oh. We couldn't open that file. It's probably corrupted.</p>
+          <Button color="secondary" onClick={props.onClose}>
+            Go back
+          </Button>
+        </div>
+      </IconMessage>
+    );
+  }
 
   if (!file) {
     return <LoadingScreen message="Loading..." />;
