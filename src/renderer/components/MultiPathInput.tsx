@@ -48,12 +48,8 @@ export const MultiPathInput: React.FC<MultiPathInputProps> = ({ paths, updatePat
         });
         return false;
       } else if (path.includes(newPath)) {
-        addToast("Cannot add parent directories of an existing path.", {
-          appearance: "error",
-          autoDismiss: true,
-          autoDismissTimeout: 5000,
-        });
-        return false;
+        updatePaths(paths.splice(i, 1));
+        return true;
       }
     }
     return true;
