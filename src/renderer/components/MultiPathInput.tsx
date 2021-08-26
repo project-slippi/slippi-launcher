@@ -44,7 +44,7 @@ export const MultiPathInput: React.FC<MultiPathInputProps> = ({ paths, updatePat
         return false;
       } else if (path.includes(newPath)) {
         updatePaths(paths.splice(i, 1));
-        return true;
+        paths = paths.splice(i--, 1); //decrement i because we are dropping an entry
       }
     }
     return true;
