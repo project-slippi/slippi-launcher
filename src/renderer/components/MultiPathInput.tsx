@@ -19,22 +19,14 @@ export const MultiPathInput: React.FC<MultiPathInputProps> = ({ paths, updatePat
   const { addToast } = useToasts();
   const rootFolder = useSettings((store) => store.settings.rootSlpPath);
 
-  const onAddClick = async () => {
-    const result = await remote.dialog.showOpenDialog({ properties: ["openFile"], ...options });
-    const res = result.filePaths;
-    if (result.canceled || res.length === 0) {
-      return;
-    }
-
-    const newPath = res[0];
-
+  const assertValidPath = (newPath: string): boolean => {
     if (paths.includes(newPath)) {
       addToast("That directory is already included.", {
-        appearance: "info",
+        appearance: "error",
         autoDismiss: true,
         autoDismissTimeout: 3000,
       });
-      return;
+      return false;
     }
 
     if (newPath.includes(rootFolder)) {
@@ -43,7 +35,7 @@ export const MultiPathInput: React.FC<MultiPathInputProps> = ({ paths, updatePat
         autoDismiss: true,
         autoDismissTimeout: 5000,
       });
-      return;
+      return false;
     }
 
     for (let i = 0; i < paths.length; i++) {
@@ -54,22 +46,37 @@ export const MultiPathInput: React.FC<MultiPathInputProps> = ({ paths, updatePat
           autoDismiss: true,
           autoDismissTimeout: 5000,
         });
-        return;
+        return false;
       } else if (path.includes(newPath)) {
         addToast("Cannot add parent directories of an existing path.", {
           appearance: "error",
           autoDismiss: true,
           autoDismissTimeout: 5000,
         });
-        return;
+        return false;
       }
+    }
+    return true;
+  };
+
+  const onAddClick = async () => {
+    const result = await remote.dialog.showOpenDialog({ properties: ["openFile"], ...options });
+    const res = result.filePaths;
+    if (result.canceled || res.length === 0) {
+      return;
+    }
+
+    const newPath = res[0];
+    const isValidPath = assertValidPath(newPath);
+    if (!isValidPath) {
+      return;
     }
 
     updateCheckboxSelections((arr) => {
       return [...arr, false];
     });
 
-    updatePaths([...paths, res[0]]);
+    updatePaths([...paths, newPath]);
   };
 
   const onRemoveClick = async () => {
