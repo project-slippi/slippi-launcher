@@ -7,6 +7,8 @@ import { OpenDialogOptions, remote } from "electron";
 import React, { useState } from "react";
 import { useToasts } from "react-toast-notifications";
 
+import { useSettings } from "@/lib/hooks/useSettings";
+
 export interface MultiPathInputProps {
   updatePaths: (paths: string[]) => void;
   paths: string[];
@@ -15,6 +17,38 @@ export interface MultiPathInputProps {
 
 export const MultiPathInput: React.FC<MultiPathInputProps> = ({ paths, updatePaths, options }) => {
   const { addToast } = useToasts();
+  const rootFolder = useSettings((store) => store.settings.rootSlpPath);
+
+  const assertValidPath = (newPath: string): boolean => {
+    const addErrorToast = (description: string) => {
+      addToast(description, {
+        appearance: "error",
+        autoDismiss: true,
+        autoDismissTimeout: 5000,
+      });
+    };
+    if (paths.includes(newPath)) {
+      addErrorToast("That directory is already included.");
+      return false;
+    }
+
+    if (newPath.includes(rootFolder)) {
+      addErrorToast("Cannot add sub directories of the Root SLP Directory.");
+      return false;
+    }
+
+    for (let i = 0; i < paths.length; i++) {
+      const path = paths[i];
+      if (newPath.includes(path)) {
+        addErrorToast("Cannot add sub directories of the Root SLP Directory.");
+        return false;
+      } else if (path.includes(newPath)) {
+        updatePaths(paths.splice(i, 1));
+        paths = paths.splice(i--, 1); //decrement i because we are dropping an entry
+      }
+    }
+    return true;
+  };
 
   const onAddClick = async () => {
     const result = await remote.dialog.showOpenDialog({ properties: ["openFile"], ...options });
@@ -23,12 +57,9 @@ export const MultiPathInput: React.FC<MultiPathInputProps> = ({ paths, updatePat
       return;
     }
 
-    if (paths.includes(res[0])) {
-      addToast("That directory is already included", {
-        appearance: "info",
-        autoDismiss: true,
-        autoDismissTimeout: 3000,
-      });
+    const newPath = res[0];
+    const isValidPath = assertValidPath(newPath);
+    if (!isValidPath) {
       return;
     }
 
@@ -36,7 +67,7 @@ export const MultiPathInput: React.FC<MultiPathInputProps> = ({ paths, updatePat
       return [...arr, false];
     });
 
-    updatePaths([...paths, res[0]]);
+    updatePaths([...paths, newPath]);
   };
 
   const onRemoveClick = async () => {
