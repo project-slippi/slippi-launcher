@@ -100,7 +100,11 @@ function createMainWindow() {
     void shell.openExternal(url);
   });
 
-  window.once("ready-to-show", () => {
+  // We can't use the window.on('ready-to-show') event because there are issues with it firing
+  // consistently. It seems that when you call `window.restore()`, the `ready-to-show` event will
+  // never fire. So instead, we switch to using the `dom-ready` event.
+  // For more info, see: https://github.com/electron/electron/issues/7779
+  window.webContents.once("dom-ready", () => {
     didFinishLoad = true;
 
     // Avoid paint flash in Windows by showing when ready.
