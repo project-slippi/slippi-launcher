@@ -98,7 +98,7 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
             text-align: center;
           `}
         >
-          <p>Uh oh. We couldn't open that file. It's probably corrupted.</p>
+          <h2>Uh oh. We couldn't open that file. It's probably corrupted.</h2>
           <Button color="secondary" onClick={props.onClose}>
             Go back
           </Button>
