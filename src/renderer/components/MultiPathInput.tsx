@@ -20,32 +20,27 @@ export const MultiPathInput: React.FC<MultiPathInputProps> = ({ paths, updatePat
   const rootFolder = useSettings((store) => store.settings.rootSlpPath);
 
   const assertValidPath = (newPath: string): boolean => {
-    if (paths.includes(newPath)) {
-      addToast("That directory is already included.", {
-        appearance: "error",
-        autoDismiss: true,
-        autoDismissTimeout: 3000,
-      });
-      return false;
-    }
-
-    if (newPath.includes(rootFolder)) {
-      addToast("Cannot add sub directories of the Root SLP Directory.", {
+    const addErrorToast = (description: string) => {
+      addToast(description, {
         appearance: "error",
         autoDismiss: true,
         autoDismissTimeout: 5000,
       });
+    };
+    if (paths.includes(newPath)) {
+      addErrorToast("That directory is already included.");
+      return false;
+    }
+
+    if (newPath.includes(rootFolder)) {
+      addErrorToast("Cannot add sub directories of the Root SLP Directory.");
       return false;
     }
 
     for (let i = 0; i < paths.length; i++) {
       const path = paths[i];
       if (newPath.includes(path)) {
-        addToast("Cannot add sub directories of an existing path.", {
-          appearance: "error",
-          autoDismiss: true,
-          autoDismissTimeout: 5000,
-        });
+        addErrorToast("Cannot add sub directories of the Root SLP Directory.");
         return false;
       } else if (path.includes(newPath)) {
         updatePaths(paths.splice(i, 1));
