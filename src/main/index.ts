@@ -7,6 +7,7 @@ import { app, BrowserWindow, Menu, shell } from "electron";
 import contextMenu from "electron-context-menu";
 import log from "electron-log";
 import { autoUpdater } from "electron-updater";
+import * as fs from "fs-extra";
 import get from "lodash/get";
 import last from "lodash/last";
 import path from "path";
@@ -233,6 +234,7 @@ const handleSlippiURIAsync = async (aUrl: string) => {
       }
 
       const tmpDir = path.join(app.getPath("userData"), "temp");
+      await fs.ensureDir(tmpDir);
       const destination = path.join(tmpDir, path.basename(replayPath));
 
       const fileAlreadyExists = await fileExists(destination);

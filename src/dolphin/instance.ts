@@ -12,6 +12,7 @@ import { ReplayCommunication } from "./types";
 
 const generateTempCommunicationFile = (): string => {
   const tmpDir = path.join(app.getPath("userData"), "temp");
+  fs.ensureDirSync(tmpDir);
   const uniqueId = randomBytes(12).toString("hex");
   const commFileName = `slippi-comms-${uniqueId}.json`;
   const commFileFullPath = path.join(tmpDir, commFileName);
