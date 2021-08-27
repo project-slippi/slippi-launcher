@@ -15,15 +15,12 @@ import React from "react";
 import { PathInput } from "@/components/PathInput";
 import { useIsoVerification } from "@/lib/hooks/useIsoVerification";
 import {
-  useExtraSlpPaths,
   useIsoPath,
   useLaunchMeleeOnPlay,
   useRootSlpPath,
   useSpectateSlpPath,
   useMonthlySubfolders,
 } from "@/lib/hooks/useSettings";
-import { useIsoPath, useLaunchMeleeOnPlay } from "@/lib/hooks/useSettings";
-
 import { SettingItem } from "./SettingItem";
 
 const renderValidityStatus = (isoValidity: IsoValidity) => {
@@ -47,7 +44,6 @@ export const MeleeOptions: React.FC = () => {
   const [launchMeleeOnPlay, setLaunchMelee] = useLaunchMeleeOnPlay();
   const [localReplayDir, setLocalReplayDir] = useRootSlpPath();
   const [enableMonthlySubfolders, setUseMonthlySubfolders] = useMonthlySubfolders();
-  const [replayDirs, setReplayDirs] = useExtraSlpPaths();
   const [spectateDir, setSpectateDir] = useSpectateSlpPath();
 
   const onLaunchMeleeChange = async (value: string) => {
@@ -112,16 +108,6 @@ export const MeleeOptions: React.FC = () => {
         <PathInput
           value={spectateDir}
           onSelect={setSpectateDir}
-          options={{
-            properties: ["openDirectory"],
-          }}
-          placeholder="No folder set"
-        />
-      </SettingItem>
-      <SettingItem name="Extra SLP Directories" description="The folders where any other SLP replays are stored.">
-        <PathInputMultiple
-          paths={replayDirs}
-          updatePaths={setReplayDirs}
           options={{
             properties: ["openDirectory"],
           }}
