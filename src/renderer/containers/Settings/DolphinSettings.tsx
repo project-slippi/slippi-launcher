@@ -371,17 +371,19 @@ const EditGeckoCodesForm: React.FC<{
       });
       setGeckoCodes([...geckoCodes]);
       await addGeckoCodeHandler(codesToAdd);
-      document.getElementById("geckoForm").reset();
+      (e.target as HTMLFormElement).reset();
     } else {
       addToast(`failed to write gecko`, { appearance: "error", autoDismiss: true });
     }
   };
 
   const handleTabChange = (event: React.ChangeEvent<unknown>, newValue: number) => {
+    event.preventDefault();
     setTabValue(newValue);
   };
 
-  const handleIniChange = async ({ target: { value } }) => {
+  const handleIniChange = async (event: React.ChangeEvent<{ value: unknown }>) => {
+    const value = event.target.value as string;
     setSysIni(value);
     const codes = (await fetchGeckoCodesHandler(value)).result?.tCodes;
     if (codes) {
