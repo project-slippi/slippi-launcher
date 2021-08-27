@@ -77,7 +77,7 @@ export const ipc_deleteGecko = makeEndpoint.main(
 
 export const ipc_addGeckoCode = makeEndpoint.main(
   "addGeckoCode",
-  <{ gCode: GeckoCode; iniName: string; dolphinType: DolphinLaunchType }>_,
+  <{ codesToAdd: GeckoCode[]; iniName: string; dolphinType: DolphinLaunchType }>_,
   <SuccessPayload>_,
 );
 

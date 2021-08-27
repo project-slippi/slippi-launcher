@@ -20,7 +20,7 @@ export function loadGeckoCodes(globalIni: IniFile, localIni?: IniFile): GeckoCod
     const lines: string[] = ini.getLines("Gecko", false).filter((line) => {
       return line.length !== 0 || line[0] !== "#";
     });
-    let gcode: GeckoCode = {
+    const gcode: GeckoCode = {
       name: "",
       creator: "",
       enabled: false,
@@ -30,41 +30,7 @@ export function loadGeckoCodes(globalIni: IniFile, localIni?: IniFile): GeckoCod
       codeLines: [],
     };
 
-    lines.forEach((line) => {
-      switch (line[0]) {
-        // code name
-        case "$": {
-          if (gcode.name.length > 0) {
-            gcodes.push(gcode);
-          }
-          line = line.slice(1); // cut out the $
-
-          const creatorMatch = line.match(/\[(.*?)\]/); // searches for brackets, catches anything inside them
-          const creator = creatorMatch !== null ? creatorMatch[1] : creatorMatch;
-          const name = creator ? line.split("[")[0] : line;
-
-          gcode = {
-            ...gcode,
-            name: name.trim(),
-            creator: creator,
-            notes: [],
-            codeLines: [],
-          };
-          break;
-        }
-        // comments
-        case "*": {
-          gcode.notes.push(line.slice(1));
-          break;
-        }
-        default: {
-          gcode.codeLines.push(line);
-        }
-      }
-    });
-    if (gcode.name.length > 0) {
-      gcodes.push(gcode);
-    }
+    makeGeckoCodesFromRaw(gcode, gcodes, lines);
 
     //update enabled flags
 
@@ -140,51 +106,6 @@ export function saveCodes(iniFile: IniFile, codes: GeckoCode[]) {
   iniFile.setLines("Gecko", lines);
 }
 
-export function makeGeckoCodeFromRaw(rawGecko: string) {
-  const rawGeckoLines = rawGecko.split("\n");
-  let newCode: GeckoCode = {
-    name: "",
-    creator: "",
-    enabled: true,
-    defaultEnabled: false,
-    userDefined: true,
-    notes: [],
-    codeLines: [],
-  };
-
-  //fill out gecko info
-  rawGeckoLines.forEach((line) => {
-    switch (line[0]) {
-      // code name
-      case "$": {
-        line = line.slice(1); // cut out the $
-
-        const creatorMatch = line.match(/\[(.*?)\]/); // searches for brackets, catches anything inside them
-        const creator = creatorMatch !== null ? creatorMatch[1] : creatorMatch;
-        const name = creator ? line.split("[")[0] : line;
-
-        newCode = {
-          ...newCode,
-          name: name.trim(),
-          creator: creator,
-          notes: [],
-          codeLines: [],
-        };
-        break;
-      }
-      // comments
-      case "*": {
-        newCode.notes.push(line.slice(1));
-        break;
-      }
-      default: {
-        newCode.codeLines.push(line);
-      }
-    }
-  });
-  return newCode;
-}
-
 export function removeGeckoCode(geckoCodeName: string, codes: GeckoCode[]) {
   return codes.filter((code) => code.name !== geckoCodeName);
 }
@@ -203,4 +124,43 @@ export function setEnabledDisabledFromTCodes(gCodes: GeckoCode[], tCodes: GeckoC
       gCodes[gCodeIndex].enabled = tCode.enabled;
     }
   });
+}
+
+//using a template gecko code, pushes newly-made codes from lines into the array specified by gCodes
+export function makeGeckoCodesFromRaw(gCode: GeckoCode, gCodes: GeckoCode[], lines: string[]) {
+  lines.forEach((line) => {
+    switch (line[0]) {
+      // code name
+      case "$": {
+        if (gCode.name.length > 0) {
+          gCodes.push(gCode);
+        }
+        line = line.slice(1); // cut out the $
+
+        const creatorMatch = line.match(/\[(.*?)\]/); // searches for brackets, catches anything inside them
+        const creator = creatorMatch !== null ? creatorMatch[1] : creatorMatch;
+        const name = creator ? line.split("[")[0] : line;
+
+        gCode = {
+          ...gCode,
+          name: name.trim(),
+          creator: creator,
+          notes: [],
+          codeLines: [],
+        };
+        break;
+      }
+      // comments
+      case "*": {
+        gCode.notes.push(line.slice(1));
+        break;
+      }
+      default: {
+        gCode.codeLines.push(line);
+      }
+    }
+  });
+  if (gCode.name.length > 0) {
+    gCodes.push(gCode);
+  }
 }

@@ -84,10 +84,12 @@ ipc_toggleGeckos.main!.handle(async ({ tCodes, iniName, dolphinType }) => {
   return { success: true };
 });
 
-ipc_addGeckoCode.main!.handle(async ({ gCode, iniName, dolphinType }) => {
+ipc_addGeckoCode.main!.handle(async ({ codesToAdd, iniName, dolphinType }) => {
   console.log("adding gecko code...");
   const gCodes = await loadCodes(dolphinType, iniName);
-  gCodes.push(gCode);
+  codesToAdd.forEach((newCode: GeckoCode) => {
+    gCodes.push(newCode);
+  });
   const userIniPath = path.join(await findUserFolder(dolphinType), "GameSettings", getUserIni(iniName));
   const userIni = new IniFile();
   await userIni.load(userIniPath, false);

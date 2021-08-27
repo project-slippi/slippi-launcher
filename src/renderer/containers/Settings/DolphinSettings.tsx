@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { GeckoCode, makeGeckoCodeFromRaw } from "@dolphin/geckoCode";
+import { GeckoCode, makeGeckoCodesFromRaw } from "@dolphin/geckoCode";
 import {
   ipc_addGeckoCode,
   ipc_clearDolphinCache,
@@ -328,8 +328,8 @@ const EditGeckoCodesForm: React.FC<{
     addToast(`${sysIni} updated`, { appearance: "success", autoDismiss: true });
   };
 
-  const addGeckoCodeHandler = async (gCode: GeckoCode) => {
-    await ipc_addGeckoCode.renderer!.trigger({ gCode: gCode, iniName: sysIni, dolphinType: dolphinType });
+  const addGeckoCodeHandler = async (codesToAdd: GeckoCode[]) => {
+    await ipc_addGeckoCode.renderer!.trigger({ codesToAdd: codesToAdd, iniName: sysIni, dolphinType: dolphinType });
     addToast(`${sysIni} updated`, { appearance: "success", autoDismiss: true });
   };
 
@@ -345,17 +345,32 @@ const EditGeckoCodesForm: React.FC<{
 
   const writeGeckoCode = async (e: React.FormEvent) => {
     e.preventDefault();
-    const gCode = makeGeckoCodeFromRaw(newGeckoCodeRaw);
-    if (gCode.name.length > 0) {
-      //tCodes are just gecko codes with the notes and codeLines empty
-      const tCode: GeckoCode = {
-        ...gCode,
-        notes: [],
-        codeLines: [],
-      };
-      geckoCodes.push(tCode);
+    const rawGeckoLines = newGeckoCodeRaw.split("\n");
+    const gCodeTemplate: GeckoCode = {
+      name: "",
+      creator: "",
+      enabled: true,
+      defaultEnabled: false,
+      userDefined: true,
+      notes: [],
+      codeLines: [],
+    };
+    const codesToAdd: GeckoCode[] = [];
+    makeGeckoCodesFromRaw(gCodeTemplate, codesToAdd, rawGeckoLines);
+    if (codesToAdd.length > 0) {
+      codesToAdd.forEach((newCode: GeckoCode) => {
+        if (newCode.name.length > 0) {
+          //tCodes are just gecko codes with the notes and codeLines empty
+          const tCode: GeckoCode = {
+            ...newCode,
+            notes: [],
+            codeLines: [],
+          };
+          geckoCodes.push(tCode);
+        }
+      });
       setGeckoCodes([...geckoCodes]);
-      await addGeckoCodeHandler(gCode);
+      await addGeckoCodeHandler(codesToAdd);
       document.getElementById("geckoForm").reset();
     } else {
       addToast(`failed to write gecko`, { appearance: "error", autoDismiss: true });
