@@ -422,6 +422,7 @@ const EditGeckoCodesForm: React.FC<{
                   variant="outlined"
                   margin="normal"
                   rows="18"
+                  InputProps={{ style: { fontFamily: '"Space Mono", monospace' } }}
                   onChange={({ target: { value } }) => setNewGeckoCodeRaw(value)}
                   multiline
                   fullWidth
