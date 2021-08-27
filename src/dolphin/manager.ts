@@ -148,6 +148,10 @@ export class DolphinManager extends EventEmitter {
     const newUserFolder = await findUserFolder(launchType);
     const oldUserFolder = path.join(fromPath, "User");
 
+    if (!(await fs.pathExists(oldUserFolder))) {
+      return;
+    }
+
     await fs.copy(oldUserFolder, newUserFolder, { overwrite: true });
   }
 }
