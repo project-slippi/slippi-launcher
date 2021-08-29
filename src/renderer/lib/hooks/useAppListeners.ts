@@ -5,7 +5,11 @@ import {
   ipc_dolphinStatusChangedEvent,
   ipc_slippiStatusChangedEvent,
 } from "@broadcast/ipc";
-import { ipc_consoleMirrorStatusUpdatedEvent, ipc_discoveredConsolesUpdatedEvent } from "@console/ipc";
+import {
+  ipc_consoleMirrorErrorMessageEvent,
+  ipc_consoleMirrorStatusUpdatedEvent,
+  ipc_discoveredConsolesUpdatedEvent,
+} from "@console/ipc";
 import { ipc_dolphinDownloadLogReceivedEvent } from "@dolphin/ipc";
 import { ipc_loadProgressUpdatedEvent, ipc_statsPageRequestedEvent } from "@replays/ipc";
 import { ipc_openSettingsModalEvent, ipc_settingsUpdatedEvent } from "@settings/ipc";
@@ -20,6 +24,7 @@ import log from "electron-log";
 import firebase from "firebase";
 import throttle from "lodash/throttle";
 import React from "react";
+import { useToasts } from "react-toast-notifications";
 
 import { useAppInitialization, useAppStore } from "@/lib/hooks/useApp";
 import { useConsole } from "@/lib/hooks/useConsole";
@@ -193,4 +198,13 @@ export const useAppListeners = () => {
   React.useEffect(() => {
     init(rootSlpPath, extraSlpPaths, true).catch(console.error);
   }, [rootSlpPath, extraSlpPaths, init]);
+
+  const { addToast } = useToasts();
+  ipc_consoleMirrorErrorMessageEvent.renderer!.useEvent(async ({ message }) => {
+    addToast(message, {
+      id: message,
+      appearance: "error",
+      autoDismiss: true,
+    });
+  }, []);
 };
