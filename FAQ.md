@@ -12,12 +12,14 @@ Set your adapter to Wii U/Switch mode and then follow the section for your OS.
 
 ### Windows
 
-1. Close Dolphin.
-2. Download [slippi-zadig](https://github.com/project-slippi/libwdi/releases/download/slippi-v1/slippi-zadig.exe) and run it.
-3. If any device shows up, hit Replace Driver.
-4. You may get a prompt about modifying system drivers after hitting "Replace Driver", select "Yes" to finish the installation.
-5. Start Dolphin and go to the Controllers -> Configure and make sure your poll rate is around 125hz.
-6. (Optional) Install [drivers](https://docs.google.com/document/d/1cQ3pbKZm_yUtcLK9ZIXyPzVbTJkvnfxKIyvuFMwzWe0/edit?usp=sharing) to overclock the poll rate to up to 1000hz.
+When installing Slippi Launcher you would have seen an option to also `install Gamecube adapter drivers`. If you selected this, your adapter should already work once plugged into your computer. If you didn't select this option, you can just reinstall the latest version of the Slippi Launcher by downloading the installer from the [official Slippi website](https://slippi.gg). Make sure to select the `install Gamecube adapter drivers` option once the installer is run.
+
+You can confirm your controller adapters work by doing the following:
+
+1. Start Dolphin (Settings -> Netplay -> Configure Dolphin)
+2. Go to the Controllers -> Configure and make sure your poll rate is around 125hz.
+
+You can also optionally [overclock](https://docs.google.com/document/d/1cQ3pbKZm_yUtcLK9ZIXyPzVbTJkvnfxKIyvuFMwzWe0/edit?usp=sharing) your adapter drivers to increase the poll rate to up to 1000hz.
 
 ### macOS
 
