@@ -14,6 +14,7 @@ import { StoredConnection } from "@settings/types";
 import { ConnectionStatus, Ports } from "@slippi/slippi-js";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
+import { lt } from "semver";
 
 import { LabelledText } from "@/components/LabelledText";
 import { connectToConsole, disconnectFromConsole, startConsoleMirror } from "@/lib/consoleConnection";
@@ -26,6 +27,7 @@ export interface SavedConnectionItemProps {
   isMirroring: boolean;
   nickname?: string;
   currentFilename: string | null;
+  nintendontVersion: string | null;
   connection: StoredConnection;
   onOpenMenu: (index: number, element: HTMLElement) => void;
 }
@@ -39,6 +41,7 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
   nickname,
   isAvailable,
   currentFilename,
+  nintendontVersion,
 }) => {
   const { addToast } = useToasts();
   const onConnect = () => connectToConsole(connection);
@@ -53,6 +56,7 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
   const statusName = status === ConnectionStatus.DISCONNECTED && isAvailable ? "Available" : renderStatusName(status);
   const isConnected = status !== ConnectionStatus.DISCONNECTED;
   const title = nickname ? `${connection.ipAddress} (${nickname})` : connection.ipAddress;
+  const oldNintendont = lt(nintendontVersion ?? "1.8.0", "1.9.1");
   return (
     <Outer>
       <CardHeader
@@ -122,6 +126,7 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
             </span>
           </LabelledText>
         )}
+        {oldNintendont && "You are using an old Nintendont version, please update it."}
       </CardContent>
       <CardActions>
         <Button

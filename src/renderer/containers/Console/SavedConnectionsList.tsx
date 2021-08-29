@@ -72,6 +72,7 @@ export const SavedConnectionsList: React.FC<SavedConnectionsListProps> = ({ avai
                 isMirroring={isMirroring ?? false}
                 isAvailable={Boolean(consoleInfo)}
                 currentFilename={consoleStatus?.filename ?? null}
+                nintendontVersion={consoleStatus.nintendontVersion ?? null}
                 nickname={consoleStatus?.nickname ?? consoleInfo?.name}
                 connection={conn}
                 index={index}

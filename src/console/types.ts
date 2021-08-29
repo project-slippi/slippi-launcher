@@ -8,6 +8,7 @@ export interface ConsoleMirrorStatusUpdate {
   isMirroring: boolean;
   filename: string | null;
   nickname: string;
+  nintendontVersion: string | null;
 }
 
 export interface MirrorConfig {

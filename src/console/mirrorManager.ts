@@ -96,6 +96,7 @@ export class MirrorManager extends EventEmitter {
           ip: config.ipAddress,
           info: {
             nickname: details.consoleNick,
+            nintendontVersion: details.version,
           },
         });
       });
@@ -197,6 +198,7 @@ export class MirrorManager extends EventEmitter {
         status: ConnectionStatus.DISCONNECTED,
         isMirroring: false,
         filename: null,
+        nintendontVersion: null,
       },
     });
   }
