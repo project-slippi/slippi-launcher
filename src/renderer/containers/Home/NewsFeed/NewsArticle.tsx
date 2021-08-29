@@ -6,9 +6,11 @@ import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
+import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import { NewsItem } from "common/types";
 import { shell } from "electron";
+import moment from "moment";
 import React from "react";
 import TimeAgo from "react-timeago";
 
@@ -20,6 +22,7 @@ export interface NewsArticleProps {
 
 export const NewsArticle: React.FC<NewsArticleProps> = ({ item }) => {
   const { imageUrl, title, subtitle, permalink, body, publishedAt } = item;
+  const localDateString = moment(publishedAt).format("LLL");
 
   const onClick = () => shell.openExternal(permalink);
   return (
@@ -54,9 +57,11 @@ export const NewsArticle: React.FC<NewsArticleProps> = ({ item }) => {
           )}
         </CardContent>
         <CardActions disableSpacing={true}>
-          <DateInfo>
-            Posted <TimeAgo date={new Date(publishedAt)} />
-          </DateInfo>
+          <Tooltip title={localDateString}>
+            <DateInfo>
+              Posted <TimeAgo date={new Date(publishedAt)} title="" />
+            </DateInfo>
+          </Tooltip>
           <Button size="small" color="primary" onClick={onClick}>
             Read more
           </Button>
