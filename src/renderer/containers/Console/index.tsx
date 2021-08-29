@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { ipc_startDiscovery, ipc_stopDiscovery } from "@console/ipc";
+import { ipc_consoleMirrorErrorMessageEvent, ipc_startDiscovery, ipc_stopDiscovery } from "@console/ipc";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import AddIcon from "@material-ui/icons/Add";
@@ -74,6 +74,15 @@ export const Console: React.FC = () => {
     // Close the dialog
     onCancel();
   };
+
+  ipc_consoleMirrorErrorMessageEvent.renderer!.handle(async ({ message }) => {
+    addToast(message, {
+      id: message,
+      appearance: "error",
+      autoDismiss: true,
+    });
+  });
+
   return (
     <Outer>
       <div

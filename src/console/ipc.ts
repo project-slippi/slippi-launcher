@@ -32,3 +32,8 @@ export const ipc_consoleMirrorStatusUpdatedEvent = makeEndpoint.renderer(
   "console_consoleMirrorStatusUpdated",
   <{ ip: string; info: Partial<ConsoleMirrorStatusUpdate> }>_,
 );
+
+export const ipc_consoleMirrorErrorMessageEvent = makeEndpoint.renderer(
+  "console_consoleMirrorErrorMessageEvent",
+  <{ message: string }>_,
+);

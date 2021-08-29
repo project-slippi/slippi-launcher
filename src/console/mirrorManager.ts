@@ -31,7 +31,7 @@ export class MirrorManager extends EventEmitter {
 
   public async connect(config: MirrorConfig) {
     if (this.mirrors[config.ipAddress]) {
-      this.emit(MirrorEvent.LOG, `Already connected to Wii @ ${config.ipAddress}`);
+      this.emit(MirrorEvent.ERROR, `Already connected to Wii @ ${config.ipAddress}`);
       return;
     }
 
