@@ -28,19 +28,12 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
   const [resetModalOpen, setResetModalOpen] = React.useState(false);
   const [isResetting, setIsResetting] = React.useState(false);
-  const { addToast } = useToasts();
 
   const openDolphinDirectoryHandler = async () => {
     shell.openItem(dolphinPath);
   };
 
   const configureDolphinHandler = async () => {
-    if (process.platform === "darwin") {
-      addToast("Dolphin may open in the background, please check the app bar", {
-        appearance: "info",
-        autoDismiss: true,
-      });
-    }
     await ipc_configureDolphin.renderer!.trigger({ dolphinType });
   };
 

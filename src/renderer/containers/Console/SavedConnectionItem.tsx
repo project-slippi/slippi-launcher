@@ -12,7 +12,6 @@ import Tooltip from "@material-ui/core/Tooltip";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { StoredConnection } from "@settings/types";
 import { ConnectionStatus, Ports } from "@slippi/slippi-js";
-import { isMac } from "common/constants";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
 
@@ -44,12 +43,6 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
   const { addToast } = useToasts();
   const onConnect = () => connectToConsole(connection);
   const onMirror = () => {
-    if (isMac) {
-      addToast("Dolphin may open in the background, please check the app bar", {
-        appearance: "info",
-        autoDismiss: true,
-      });
-    }
     startConsoleMirror(connection.ipAddress).catch((err) => {
       addToast(err.message ?? JSON.stringify(err), {
         appearance: "error",
