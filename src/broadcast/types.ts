@@ -30,6 +30,7 @@ export enum SpectateEvent {
   BROADCAST_LIST_UPDATE = "BROADCAST_LIST_UPDATE",
   NEW_FILE = "NEW_FILE",
   LOG = "LOG",
+  RECONNECT = "RECONNECT",
 }
 
 type TypeMap<M extends { [index: string]: any }> = {

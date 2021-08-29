@@ -11,6 +11,7 @@ import {
   ipc_broadcastReconnect,
   ipc_dolphinStatusChangedEvent,
   ipc_slippiStatusChangedEvent,
+  ipc_spectateReconnect,
 } from "./ipc";
 import { Methods as SpectateWorkerMethods, WorkerSpec as SpectateWorkerSpec } from "./spectateWorker";
 import { BroadcasterItem } from "./types";
@@ -90,6 +91,9 @@ export const spectateWorker: Promise<Thread & SpectateWorkerMethods> = new Promi
           replay: filePath,
         };
         dolphinManager.launchPlaybackDolphin(playbackId, replayComm).catch(spectateLog.error);
+      });
+      worker.getReconnectObservable().subscribe(() => {
+        ipc_spectateReconnect.main!.trigger({}).catch(spectateLog.error);
       });
 
       dolphinManager.on("dolphin-closed", (playbackId: string) => {

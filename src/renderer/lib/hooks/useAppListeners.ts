@@ -5,6 +5,7 @@ import {
   ipc_broadcastReconnect,
   ipc_dolphinStatusChangedEvent,
   ipc_slippiStatusChangedEvent,
+  ipc_spectateReconnect,
 } from "@broadcast/ipc";
 import {
   ipc_consoleMirrorErrorMessageEvent,
@@ -33,7 +34,7 @@ import { useReplays } from "@/lib/hooks/useReplays";
 
 import { useAccount } from "./useAccount";
 import { useBroadcast } from "./useBroadcast";
-import { useBroadcastListStore } from "./useBroadcastList";
+import { useBroadcastList, useBroadcastListStore } from "./useBroadcastList";
 import { useConsoleDiscoveryStore } from "./useConsoleDiscovery";
 import { useIsoVerification } from "./useIsoVerification";
 import { useNewsFeed } from "./useNewsFeed";
@@ -219,4 +220,9 @@ export const useAppListeners = () => {
     },
     [startBroadcast],
   );
+
+  const [, refreshBroadcasts] = useBroadcastList();
+  ipc_spectateReconnect.renderer!.useEvent(async () => {
+    refreshBroadcasts()?.catch(log.error);
+  }, [refreshBroadcasts]);
 };
