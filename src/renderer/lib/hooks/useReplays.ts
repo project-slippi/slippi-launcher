@@ -136,7 +136,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
       return;
     }
 
-    set({ currentFolder: folderToLoad });
+    set({ currentFolder: folderToLoad, selectedFiles: [] });
 
     set({ loading: true, progress: null });
     try {
