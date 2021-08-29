@@ -187,7 +187,9 @@ export class BroadcastManager extends EventEmitter {
 
         if (code === 1006) {
           // Here we have an abnormal disconnect... try to reconnect?
-          this.start(config).catch(console.error);
+          // This error seems to occur primarily when the auth token for firebase expires,
+          // which lasts 1 hour, so the plan is to get a new token, use the same config, and reconnect.
+          this.emit(BroadcastEvent.RECONNECT, config);
         } else {
           // If normal close, disconnect from dolphin
           this.dolphinConnection.disconnect();

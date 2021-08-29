@@ -8,6 +8,7 @@ import { Methods as BroadcastWorkerMethods, WorkerSpec as BroadcastWorkerSpec } 
 import {
   ipc_broadcastErrorOccurredEvent,
   ipc_broadcastListUpdatedEvent,
+  ipc_broadcastReconnect,
   ipc_dolphinStatusChangedEvent,
   ipc_slippiStatusChangedEvent,
 } from "./ipc";
@@ -36,6 +37,9 @@ export const broadcastWorker: Promise<Thread & BroadcastWorkerMethods> = new Pro
         broadcastLog.error(err);
         const errorMessage = err instanceof Error ? err.message : err;
         ipc_broadcastErrorOccurredEvent.main!.trigger({ errorMessage }).catch(broadcastLog.error);
+      });
+      worker.getReconnectObservable().subscribe(({ config }) => {
+        ipc_broadcastReconnect.main!.trigger({ config }).catch(broadcastLog.error);
       });
 
       log.debug("broadcast: Spawning worker: Done");

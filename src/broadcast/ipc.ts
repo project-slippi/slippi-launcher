@@ -32,6 +32,8 @@ export const ipc_broadcastErrorOccurredEvent = makeEndpoint.renderer(
   <{ errorMessage: string | null }>_,
 );
 
+export const ipc_broadcastReconnect = makeEndpoint.renderer("broadcast_Reconnect", <{ config: StartBroadcastConfig }>_);
+
 export const ipc_slippiStatusChangedEvent = makeEndpoint.renderer(
   "broadcast_slippiStatusChanged",
   <{ status: number }>_,

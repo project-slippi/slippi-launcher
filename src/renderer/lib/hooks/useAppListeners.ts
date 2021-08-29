@@ -2,6 +2,7 @@
 import {
   ipc_broadcastErrorOccurredEvent,
   ipc_broadcastListUpdatedEvent,
+  ipc_broadcastReconnect,
   ipc_dolphinStatusChangedEvent,
   ipc_slippiStatusChangedEvent,
 } from "@broadcast/ipc";
@@ -20,7 +21,7 @@ import {
   ipc_launcherUpdateReadyEvent,
 } from "common/ipc";
 import { IsoValidity } from "common/types";
-import log from "electron-log";
+import electronLog from "electron-log";
 import firebase from "firebase";
 import throttle from "lodash/throttle";
 import React from "react";
@@ -31,6 +32,7 @@ import { useConsole } from "@/lib/hooks/useConsole";
 import { useReplays } from "@/lib/hooks/useReplays";
 
 import { useAccount } from "./useAccount";
+import { useBroadcast } from "./useBroadcast";
 import { useBroadcastListStore } from "./useBroadcastList";
 import { useConsoleDiscoveryStore } from "./useConsoleDiscovery";
 import { useIsoVerification } from "./useIsoVerification";
@@ -38,6 +40,8 @@ import { useNewsFeed } from "./useNewsFeed";
 import { useReplayBrowserNavigation } from "./useReplayBrowserList";
 import { useSettings } from "./useSettings";
 import { useSettingsModal } from "./useSettingsModal";
+
+const log = electronLog.scope("useAppListeners");
 
 export const useAppListeners = () => {
   // Handle app initalization
@@ -207,4 +211,12 @@ export const useAppListeners = () => {
       autoDismiss: true,
     });
   }, []);
+
+  const [startBroadcast] = useBroadcast();
+  ipc_broadcastReconnect.renderer!.useEvent(
+    async ({ config }) => {
+      startBroadcast(config).catch(log.error);
+    },
+    [startBroadcast],
+  );
 };

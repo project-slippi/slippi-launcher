@@ -1,8 +1,10 @@
 import { ipc_startBroadcast, ipc_stopBroadcast } from "@broadcast/ipc";
 import { StartBroadcastConfig } from "@broadcast/types";
-import log from "electron-log";
+import electronLog from "electron-log";
 
 import { useAccount } from "./useAccount";
+
+const log = electronLog.scope("useBroadcast");
 
 export const useBroadcast = () => {
   const user = useAccount((store) => store.user);
@@ -13,7 +15,7 @@ export const useBroadcast = () => {
     }
 
     const authToken = await user.getIdToken();
-    log.info("[Broadcast] Starting broadcast");
+    log.info("Starting broadcast");
     const res = await ipc_startBroadcast.renderer!.trigger({
       ...config,
       authToken,

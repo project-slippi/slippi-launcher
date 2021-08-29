@@ -22,6 +22,7 @@ export enum BroadcastEvent {
   DOLPHIN_STATUS_CHANGE = "DOLPHIN_STATUS_CHANGE",
   ERROR = "ERROR",
   LOG = "LOG",
+  RECONNECT = "RECONNECT",
 }
 
 export enum SpectateEvent {
