@@ -24,6 +24,7 @@ export interface SavedConnectionItemProps {
   index: number;
   isAvailable?: boolean;
   status: number;
+  isMirroring: boolean;
   nickname?: string;
   currentFilename: string | null;
   connection: StoredConnection;
@@ -35,6 +36,7 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
   connection,
   onOpenMenu,
   status,
+  isMirroring,
   nickname,
   isAvailable,
   currentFilename,
@@ -136,7 +138,7 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
         >
           {isConnected ? "Disconnect" : "Connect"}
         </Button>
-        <Button size="small" onClick={onMirror} color="primary" disabled={!isConnected}>
+        <Button size="small" onClick={onMirror} color="primary" disabled={!isConnected || isMirroring}>
           Mirror
         </Button>
       </CardActions>

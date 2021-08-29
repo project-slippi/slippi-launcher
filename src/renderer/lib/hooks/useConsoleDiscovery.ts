@@ -22,6 +22,7 @@ export const useConsoleDiscoveryStore = create(
 
             draft.connectedConsoles[ip].nickname = info.nickname ?? existing?.nickname;
             draft.connectedConsoles[ip].status = info.status ?? existing?.status;
+            draft.connectedConsoles[ip].isMirroring = info.isMirroring ?? existing?.isMirroring;
 
             // This value can be null so check against undefined
             if (info.filename !== undefined) {

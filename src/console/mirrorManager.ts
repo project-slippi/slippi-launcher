@@ -195,6 +195,7 @@ export class MirrorManager extends EventEmitter {
       ip,
       info: {
         status: ConnectionStatus.DISCONNECTED,
+        isMirroring: false,
         filename: null,
       },
     });
@@ -216,6 +217,13 @@ export class MirrorManager extends EventEmitter {
 
     const currentFile = details.fileWriter.getCurrentFilename() || "";
     await this._playFile(currentFile, ip);
+
+    this.emit(MirrorEvent.MIRROR_STATUS_CHANGE, {
+      ip,
+      info: {
+        isMirroring: details.isMirroring,
+      },
+    });
   }
 
   private async _playFile(filePath: string, playbackId: string) {
@@ -238,6 +246,13 @@ export class MirrorManager extends EventEmitter {
     if (details.autoSwitcher) {
       details.autoSwitcher.disconnect();
     }
+
+    this.emit(MirrorEvent.MIRROR_STATUS_CHANGE, {
+      ip: details.ipAddress,
+      info: {
+        isMirroring: details.isMirroring,
+      },
+    });
   }
 }
 

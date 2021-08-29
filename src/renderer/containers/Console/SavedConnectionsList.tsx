@@ -63,11 +63,13 @@ export const SavedConnectionsList: React.FC<SavedConnectionsListProps> = ({ avai
           {savedConnections.map((conn, index) => {
             const consoleStatus = connectedConsoles[conn.ipAddress];
             const status = consoleStatus?.status;
+            const isMirroring = consoleStatus?.isMirroring;
             const consoleInfo = availableConsoles.find((item) => item.ip === conn.ipAddress);
             return (
               <SavedConnectionItem
                 key={conn.id}
                 status={status ?? ConnectionStatus.DISCONNECTED}
+                isMirroring={isMirroring ?? false}
                 isAvailable={Boolean(consoleInfo)}
                 currentFilename={consoleStatus?.filename ?? null}
                 nickname={consoleStatus?.nickname ?? consoleInfo?.name}

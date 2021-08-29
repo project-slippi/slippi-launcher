@@ -5,6 +5,7 @@ import { ConsoleRelay } from "./consoleRelay";
 
 export interface ConsoleMirrorStatusUpdate {
   status: number;
+  isMirroring: boolean;
   filename: string | null;
   nickname: string;
 }
