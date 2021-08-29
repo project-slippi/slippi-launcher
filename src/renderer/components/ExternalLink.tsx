@@ -4,10 +4,10 @@
 
 import React from "react";
 
-export const ExternalLink: React.FC<React.HTMLProps<HTMLAnchorElement>> = (props) => {
+export const ExternalLink: React.FC<React.HTMLProps<HTMLAnchorElement>> = ({ href, children, ...rest }) => {
   return (
-    <a {...props} target="_blank" rel="noopener noreferrer">
-      {props.children}
+    <a target="_blank" rel="noopener noreferrer" title={href} href={href} {...rest}>
+      {children}
     </a>
   );
 };
