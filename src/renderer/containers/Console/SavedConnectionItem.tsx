@@ -179,6 +179,7 @@ const OutdatedNintendontWarning: React.FC = () => {
         border: solid 2px #8d571a;
         border-radius: 10px;
         font-size: 14px;
+        font-weight: 500;
         svg {
           padding: 5px;
           margin-right: 5px;
