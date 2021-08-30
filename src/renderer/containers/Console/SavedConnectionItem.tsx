@@ -192,7 +192,7 @@ const OutdatedNintendontWarning: React.FC = () => {
     >
       <WarningIcon />
       <span>
-        Your Nintendont is out of date and is no longer supported. Download the latest version from{" "}
+        Your Nintendont is out of date and no longer supported. Download the latest version from{" "}
         <A href="https://slippi.gg/downloads">the Slippi website</A>.
       </span>
     </div>
