@@ -10,11 +10,14 @@ import CardHeader from "@material-ui/core/CardHeader";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
+import WarningIcon from "@material-ui/icons/Warning";
 import { StoredConnection } from "@settings/types";
 import { ConnectionStatus, Ports } from "@slippi/slippi-js";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
+import { lt } from "semver";
 
+import { ExternalLink as A } from "@/components/ExternalLink";
 import { LabelledText } from "@/components/LabelledText";
 import { connectToConsole, disconnectFromConsole, startConsoleMirror } from "@/lib/consoleConnection";
 import { ReactComponent as WiiIcon } from "@/styles/images/wii-icon.svg";
@@ -26,6 +29,7 @@ export interface SavedConnectionItemProps {
   isMirroring: boolean;
   nickname?: string;
   currentFilename: string | null;
+  nintendontVersion: string | null;
   connection: StoredConnection;
   onOpenMenu: (index: number, element: HTMLElement) => void;
 }
@@ -39,6 +43,7 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
   nickname,
   isAvailable,
   currentFilename,
+  nintendontVersion,
 }) => {
   const { addToast } = useToasts();
   const onConnect = () => connectToConsole(connection);
@@ -53,6 +58,7 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
   const statusName = status === ConnectionStatus.DISCONNECTED && isAvailable ? "Available" : renderStatusName(status);
   const isConnected = status !== ConnectionStatus.DISCONNECTED;
   const title = nickname ? `${connection.ipAddress} (${nickname})` : connection.ipAddress;
+  const nintendontIsOutdated = nintendontVersion !== null && lt(nintendontVersion, "1.9.1");
   return (
     <Outer>
       <CardHeader
@@ -77,6 +83,7 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
           }
         `}
       >
+        {nintendontIsOutdated && <OutdatedNintendontWarning />}
         <div
           css={css`
             display: flex;
@@ -158,4 +165,36 @@ const renderStatusName = (status: number) => {
     default:
       return `Unknown status: ${status}`;
   }
+};
+
+const OutdatedNintendontWarning: React.FC = () => {
+  return (
+    <div
+      css={css`
+        display: flex;
+        align-items: center;
+        padding: 5px 10px;
+        background-color: #f2d994;
+        color: #8d571a;
+        border: solid 2px #8d571a;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 500;
+        svg {
+          padding: 5px;
+          margin-right: 5px;
+        }
+        margin-bottom: 20px;
+        a {
+          text-decoration: underline;
+        }
+      `}
+    >
+      <WarningIcon />
+      <span>
+        Your Nintendont is out of date and no longer supported. Download the latest version from{" "}
+        <A href="https://slippi.gg/downloads">the Slippi website</A>.
+      </span>
+    </div>
+  );
 };
