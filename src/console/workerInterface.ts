@@ -4,7 +4,7 @@ import { app } from "electron";
 import electronLog from "electron-log";
 import { spawn, Thread, Worker } from "threads";
 
-import { ipc_consoleMirrorStatusUpdatedEvent } from "./ipc";
+import { ipc_consoleMirrorErrorMessageEvent, ipc_consoleMirrorStatusUpdatedEvent } from "./ipc";
 import { Methods as MirrorWorkerMethods, WorkerSpec as MirrorWorkerSpec } from "./mirrorWorker";
 
 const log = electronLog.scope("console/workerInterface");
@@ -20,6 +20,8 @@ export const mirrorWorker: Promise<Thread & MirrorWorkerMethods> = new Promise((
       });
       worker.getErrorObservable().subscribe((errorMessage) => {
         mirrorLog.error(errorMessage);
+        const message = errorMessage instanceof Error ? errorMessage.message : errorMessage;
+        ipc_consoleMirrorErrorMessageEvent.main!.trigger({ message }).catch(mirrorLog.error);
       });
       worker.getMirrorDetailsObservable().subscribe(({ playbackId, filePath, isRealtime }) => {
         const replayComm: ReplayCommunication = {

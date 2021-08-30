@@ -74,6 +74,7 @@ export const Console: React.FC = () => {
     // Close the dialog
     onCancel();
   };
+
   return (
     <Outer>
       <div
