@@ -19,7 +19,7 @@ import {
 } from "common/ipc";
 import { IsoValidity } from "common/types";
 import { app, clipboard, ipcMain, nativeImage } from "electron";
-import log from "electron-log";
+import electronLog from "electron-log";
 import { autoUpdater, ProgressInfo, UpdateInfo } from "electron-updater";
 import * as fs from "fs-extra";
 import os from "os";
@@ -30,6 +30,10 @@ import { fileExists } from "./fileExists";
 import { fetchNewsFeedData } from "./newsFeed";
 import { readLastLines } from "./util";
 import { verifyIso } from "./verifyIso";
+
+const log = electronLog.scope("main/listeners");
+
+autoUpdater.logger = log;
 
 const LINES_TO_READ = 200;
 

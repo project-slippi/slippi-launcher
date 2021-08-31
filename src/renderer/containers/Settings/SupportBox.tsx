@@ -8,13 +8,15 @@ import { colors } from "common/colors";
 import { socials } from "common/constants";
 import { ipc_copyLogsToClipboard } from "common/ipc";
 import { shell } from "electron";
-import log from "electron-log";
+import electronLog from "electron-log";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
 
 import { ExternalLink as A } from "@/components/ExternalLink";
 import { Button } from "@/components/FormInputs";
 import { ReactComponent as DiscordIcon } from "@/styles/images/discord.svg";
+
+const log = electronLog.scope("SupportBox");
 
 export const SupportBox: React.FC<{ className?: string }> = ({ className }) => {
   const [isCopying, setCopying] = React.useState(false);

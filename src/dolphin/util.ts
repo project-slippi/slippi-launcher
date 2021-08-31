@@ -1,6 +1,6 @@
 import { settingsManager } from "@settings/settingsManager";
 import { app } from "electron";
-import log from "electron-log";
+import electronLog from "electron-log";
 import * as fs from "fs-extra";
 import { fileExists } from "main/fileExists";
 import os from "os";
@@ -9,6 +9,8 @@ import path from "path";
 import { GeckoCode, loadGeckoCodes, saveCodes } from "./geckoCode";
 import { IniFile } from "./iniFile";
 import { DolphinLaunchType } from "./types";
+
+const log = electronLog.scope("dolphin/utils");
 
 export async function findDolphinExecutable(type: DolphinLaunchType, dolphinPath?: string): Promise<string> {
   // Make sure the directory actually exists

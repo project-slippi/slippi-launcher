@@ -1,7 +1,7 @@
 import { ChildProcess, execFile, spawn } from "child_process";
 import { randomBytes } from "crypto";
 import { app } from "electron";
-import log from "electron-log";
+import electronLog from "electron-log";
 import { EventEmitter } from "events";
 import * as fs from "fs-extra";
 import path from "path";
@@ -9,6 +9,8 @@ import path from "path";
 import { isMac } from "../common/constants";
 import { fileExists } from "../main/fileExists";
 import { ReplayCommunication } from "./types";
+
+const log = electronLog.scope("dolphin/instance");
 
 const generateTempCommunicationFile = (): string => {
   const tmpDir = path.join(app.getPath("userData"), "temp");

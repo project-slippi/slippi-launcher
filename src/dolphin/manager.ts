@@ -1,5 +1,5 @@
 import { settingsManager } from "@settings/settingsManager";
-import log from "electron-log";
+import electronLog from "electron-log";
 import { EventEmitter } from "events";
 import * as fs from "fs-extra";
 import { fileExists } from "main/fileExists";
@@ -9,6 +9,8 @@ import { downloadAndInstallDolphin } from "./downloadDolphin";
 import { DolphinInstance, PlaybackDolphinInstance } from "./instance";
 import { DolphinLaunchType, ReplayCommunication } from "./types";
 import { addGamePathToIni, findDolphinExecutable, findUserFolder } from "./util";
+
+const log = electronLog.scope("dolphin/manager");
 
 // DolphinManager should be in control of all dolphin instances that get opened for actual use.
 // This includes playing netplay, viewing replays, watching broadcasts (spectating), and configuring Dolphin.

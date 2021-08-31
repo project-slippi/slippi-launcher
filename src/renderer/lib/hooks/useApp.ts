@@ -1,6 +1,6 @@
 import { ipc_checkForUpdate } from "common/ipc";
 import { ipc_checkDesktopAppDolphin, ipc_dolphinDownloadFinishedEvent, ipc_downloadDolphin } from "dolphin/ipc";
-import log from "electron-log";
+import electronLog from "electron-log";
 import firebase from "firebase";
 import create from "zustand";
 import { combine } from "zustand/middleware";
@@ -10,6 +10,8 @@ import { useAccount } from "@/lib/hooks/useAccount";
 import { fetchPlayKey } from "@/lib/slippiBackend";
 
 import { useDesktopApp } from "./useQuickStart";
+
+const log = electronLog.scope("useApp");
 
 export const useAppStore = create(
   combine(
