@@ -223,6 +223,6 @@ export const useAppListeners = () => {
 
   const [, refreshBroadcasts] = useBroadcastList();
   ipc_spectateReconnect.renderer!.useEvent(async () => {
-    refreshBroadcasts()?.catch(log.error);
+    refreshBroadcasts();
   }, [refreshBroadcasts]);
 };
