@@ -21,6 +21,7 @@ export class BroadcastManager extends EventEmitter {
   private incomingEvents: SlippiBroadcastPayloadEvent[];
   private backupEvents: SlippiBroadcastPayloadEvent[];
   private nextGameCursor: number | null;
+  private slippiStatus: ConnectionStatus;
 
   private wsConnection: connection | null;
   private dolphinConnection: DolphinConnection;
@@ -31,6 +32,7 @@ export class BroadcastManager extends EventEmitter {
     this.isBroadcastReady = false;
     this.wsConnection = null;
     this.incomingEvents = [];
+    this.slippiStatus = ConnectionStatus.DISCONNECTED;
 
     // We need to store events as we process them in the event that we get a disconnect and
     // we need to re-send some events to the server
@@ -99,7 +101,7 @@ export class BroadcastManager extends EventEmitter {
     }
 
     // Indicate we're connecting to the Slippi server
-    this.emit(BroadcastEvent.SLIPPI_STATUS_CHANGE, ConnectionStatus.CONNECTING);
+    void this._setSlippiStatus(ConnectionStatus.CONNECTING);
 
     const headers = {
       target: config.viewerId,
@@ -124,7 +126,7 @@ export class BroadcastManager extends EventEmitter {
         message = message.substring(pos + label.length, endPos >= 0 ? endPos : undefined);
       }
 
-      this.emit(BroadcastEvent.SLIPPI_STATUS_CHANGE, ConnectionStatus.DISCONNECTED);
+      void this._setSlippiStatus(ConnectionStatus.DISCONNECTED);
       this.emit(BroadcastEvent.ERROR, message);
     });
 
@@ -167,7 +169,7 @@ export class BroadcastManager extends EventEmitter {
         this.isBroadcastReady = true;
 
         this.broadcastId = broadcastId;
-        this.emit(BroadcastEvent.SLIPPI_STATUS_CHANGE, ConnectionStatus.CONNECTED);
+        void this._setSlippiStatus(ConnectionStatus.CONNECTED);
 
         // Process any events that may have been missed when we disconnected
         this._handleGameData();
@@ -179,9 +181,8 @@ export class BroadcastManager extends EventEmitter {
 
       connection.on("close", (code: number, reason: string) => {
         this.emit(BroadcastEvent.LOG, `WS connection closed: ${code}, ${reason}`);
-        this.emit(BroadcastEvent.SLIPPI_STATUS_CHANGE, ConnectionStatus.DISCONNECTED);
 
-        // Clear the socket and disconnect from Dolphin too if we're still connected
+        // Clear the socket
         this.wsConnection = null;
         this.isBroadcastReady = false;
 
@@ -189,10 +190,12 @@ export class BroadcastManager extends EventEmitter {
           // Here we have an abnormal disconnect... try to reconnect?
           // This error seems to occur primarily when the auth token for firebase expires,
           // which lasts 1 hour, so the plan is to get a new token, use the same config, and reconnect.
+          void this._setSlippiStatus(ConnectionStatus.RECONNECT_WAIT);
           this.emit(BroadcastEvent.RECONNECT, config);
         } else {
           // If normal close, disconnect from dolphin
           this.dolphinConnection.disconnect();
+          void this._setSlippiStatus(ConnectionStatus.DISCONNECTED);
         }
       });
 
@@ -442,5 +445,13 @@ export class BroadcastManager extends EventEmitter {
         }
       }
     }
+  }
+
+  private async _setSlippiStatus(status: ConnectionStatus) {
+    if (this.slippiStatus === ConnectionStatus.RECONNECT_WAIT && status === ConnectionStatus.CONNECTING) {
+      return;
+    }
+    this.slippiStatus = status;
+    this.emit(BroadcastEvent.SLIPPI_STATUS_CHANGE, status);
   }
 }
