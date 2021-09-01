@@ -30,6 +30,7 @@ export interface SavedConnectionItemProps {
   nickname?: string;
   currentFilename: string | null;
   nintendontVersion: string | null;
+  latestVersion: string;
   connection: StoredConnection;
   onOpenMenu: (index: number, element: HTMLElement) => void;
 }
@@ -44,6 +45,7 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
   isAvailable,
   currentFilename,
   nintendontVersion,
+  latestVersion,
 }) => {
   const { addToast } = useToasts();
   const onConnect = () => connectToConsole(connection);
@@ -58,7 +60,7 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
   const statusName = status === ConnectionStatus.DISCONNECTED && isAvailable ? "Available" : renderStatusName(status);
   const isConnected = status !== ConnectionStatus.DISCONNECTED;
   const title = nickname ? `${connection.ipAddress} (${nickname})` : connection.ipAddress;
-  const nintendontIsOutdated = nintendontVersion !== null && lt(nintendontVersion, "1.9.1");
+  const nintendontIsOutdated = nintendontVersion !== null && lt(nintendontVersion, latestVersion);
   return (
     <Outer>
       <CardHeader

@@ -5,6 +5,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import { StoredConnection } from "@settings/types";
 import { ConnectionStatus } from "@slippi/slippi-js";
+import { ipc_getLatestGitHubReleaseVersion } from "common/ipc";
 import React from "react";
 
 import { IconMenu } from "@/components/IconMenu";
@@ -54,6 +55,11 @@ export const SavedConnectionsList: React.FC<SavedConnectionsListProps> = ({ avai
     handleClose();
   };
 
+  const { value: versionData } = ipc_getLatestGitHubReleaseVersion.renderer!.useValue(
+    { owner: "project-slippi", repo: "Nintendont" },
+    { version: "1.8.0" },
+  );
+
   return (
     <Outer>
       {savedConnections.length === 0 ? (
@@ -73,6 +79,7 @@ export const SavedConnectionsList: React.FC<SavedConnectionsListProps> = ({ avai
                 isAvailable={Boolean(consoleInfo)}
                 currentFilename={consoleStatus?.filename ?? null}
                 nintendontVersion={consoleStatus?.nintendontVersion ?? null}
+                latestVersion={versionData.version}
                 nickname={consoleStatus?.nickname ?? consoleInfo?.name}
                 connection={conn}
                 index={index}

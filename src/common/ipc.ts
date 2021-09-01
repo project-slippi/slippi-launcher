@@ -17,6 +17,12 @@ export const ipc_checkForUpdate = makeEndpoint.main("checkForUpdate", <EmptyPayl
 
 export const ipc_installUpdate = makeEndpoint.main("installUpdate", <EmptyPayload>_, <SuccessPayload>_);
 
+export const ipc_getLatestGitHubReleaseVersion = makeEndpoint.main(
+  "getLatestGitHubReleaseVersion",
+  <{ owner: string; repo: string }>_,
+  <{ version: string }>_,
+);
+
 // Events
 
 export const ipc_launcherUpdateFoundEvent = makeEndpoint.renderer("launcherupdate_found", <{ version: string }>_);

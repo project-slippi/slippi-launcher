@@ -12,6 +12,7 @@ import {
   ipc_copyLogsToClipboard,
   ipc_deleteDesktopAppPath,
   ipc_fetchNewsFeed,
+  ipc_getLatestGitHubReleaseVersion,
   ipc_installUpdate,
   ipc_launcherUpdateDownloadingEvent,
   ipc_launcherUpdateFoundEvent,
@@ -27,6 +28,7 @@ import osName from "os-name";
 import path from "path";
 
 import { fileExists } from "./fileExists";
+import { getLatestRelease } from "./github";
 import { fetchNewsFeedData } from "./newsFeed";
 import { readLastLines } from "./util";
 import { verifyIso } from "./verifyIso";
@@ -137,5 +139,12 @@ export function setupListeners() {
   ipc_checkForUpdate.main!.handle(async () => {
     autoUpdater.checkForUpdatesAndNotify().catch(log.warn);
     return { success: true };
+  });
+
+  ipc_getLatestGitHubReleaseVersion.main!.handle(async ({ owner, repo }) => {
+    const release = await getLatestRelease(owner, repo);
+    const tag: string = release.tag_name;
+    const version = tag.slice(1);
+    return { version };
   });
 }
