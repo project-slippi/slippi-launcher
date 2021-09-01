@@ -53,7 +53,7 @@ export const useConsole = create<StoreState & StoreReducers>((set, get) => ({
   setSlippiConnectionStatus: (connectionStatus) => {
     const { dolphinConnectionStatus, setIsBroadcasting } = get();
     const dolphinConnected = dolphinConnectionStatus === ConnectionStatus.CONNECTED;
-    const isBroadcasting = dolphinConnected && connectionStatus === ConnectionStatus.CONNECTED;
+    const isBroadcasting = dolphinConnected && connectionStatus !== ConnectionStatus.DISCONNECTED;
     set({
       slippiConnectionStatus: connectionStatus,
     });
@@ -63,7 +63,7 @@ export const useConsole = create<StoreState & StoreReducers>((set, get) => ({
   setDolphinConnectionStatus: (connectionStatus) => {
     const { slippiConnectionStatus, setIsBroadcasting } = get();
     const slippiConnected = slippiConnectionStatus === ConnectionStatus.CONNECTED;
-    const isBroadcasting = slippiConnected && connectionStatus === ConnectionStatus.CONNECTED;
+    const isBroadcasting = slippiConnected && connectionStatus !== ConnectionStatus.DISCONNECTED;
     set({
       dolphinConnectionStatus: connectionStatus,
     });

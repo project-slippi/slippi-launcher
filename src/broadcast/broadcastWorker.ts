@@ -18,6 +18,7 @@ export interface Methods {
   getErrorObservable(): Observable<Error | string>;
   getSlippiStatusObservable(): Observable<{ status: ConnectionStatus }>;
   getDolphinStatusObservable(): Observable<{ status: ConnectionStatus }>;
+  getReconnectObservable(): Observable<{ config: StartBroadcastConfig }>;
 }
 
 export type WorkerSpec = ModuleMethods & Methods;
@@ -28,6 +29,7 @@ const logSubject = new Subject<string>();
 const errorSubject = new Subject<Error | string>();
 const slippiStatusSubject = new Subject<{ status: ConnectionStatus }>();
 const dolphinStatusSubject = new Subject<{ status: ConnectionStatus }>();
+const reconnectSubject = new Subject<{ config: StartBroadcastConfig }>();
 
 broadcastManager.on(BroadcastEvent.LOG, (msg: string) => {
   logSubject.next(msg);
@@ -40,6 +42,9 @@ broadcastManager.on(BroadcastEvent.SLIPPI_STATUS_CHANGE, (status: ConnectionStat
 });
 broadcastManager.on(BroadcastEvent.DOLPHIN_STATUS_CHANGE, (status: ConnectionStatus) => {
   dolphinStatusSubject.next({ status });
+});
+broadcastManager.on(BroadcastEvent.RECONNECT, (config: StartBroadcastConfig) => {
+  reconnectSubject.next({ config });
 });
 
 const methods: WorkerSpec = {
@@ -63,6 +68,9 @@ const methods: WorkerSpec = {
   },
   getDolphinStatusObservable(): Observable<{ status: ConnectionStatus }> {
     return Observable.from(dolphinStatusSubject);
+  },
+  getReconnectObservable(): Observable<{ config: StartBroadcastConfig }> {
+    return Observable.from(reconnectSubject);
   },
 };
 

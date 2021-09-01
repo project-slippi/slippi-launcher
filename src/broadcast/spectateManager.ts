@@ -29,6 +29,7 @@ const generatePlaybackId = (broadcastId: string) => `spectate-${broadcastId}`;
 export class SpectateManager extends EventEmitter {
   private broadcastInfo: Record<string, BroadcastInfo> = {};
   private wsConnection: connection | null = null;
+  private test = false;
 
   public constructor() {
     super();
@@ -86,6 +87,11 @@ export class SpectateManager extends EventEmitter {
    * Connects to the Slippi server and the local Dolphin instance
    */
   public async connect(authToken: string) {
+    if (this.test) {
+      return;
+    }
+    this.emit(SpectateEvent.RECONNECT);
+    this.test = true;
     if (this.wsConnection) {
       return;
     }
@@ -107,6 +113,21 @@ export class SpectateManager extends EventEmitter {
         this.emit(SpectateEvent.LOG, "WS connection successful");
         this.wsConnection = connection;
 
+        // Reconnect to all the broadcasts that we were already watching
+        Object.entries(this.broadcastInfo).forEach(([broadcastId, info]) => {
+          const watchMsg: { type: string; broadcastId: string; startCursor?: string } = {
+            type: "watch-broadcast",
+            broadcastId,
+          };
+          if (info.cursor !== "") {
+            watchMsg.startCursor = info.cursor;
+          }
+          if (this.wsConnection) {
+            this.emit(SpectateEvent.LOG, `Picking up broadcast ${broadcastId} starting at: ${info.cursor}`);
+            this.wsConnection.sendUTF(JSON.stringify(watchMsg));
+          }
+        });
+
         connection.on("error", (err) => {
           this.emit(SpectateEvent.ERROR, err);
         });
@@ -118,32 +139,10 @@ export class SpectateManager extends EventEmitter {
 
           if (code === 1006) {
             // Here we have an abnormal disconnect... try to reconnect?
-            this.connect(authToken)
-              .then(() => {
-                if (!this.wsConnection) {
-                  return;
-                }
-
-                // Reconnect to all the broadcasts that we were already watching
-                Object.entries(this.broadcastInfo).forEach(([broadcastId, info]) => {
-                  const watchMsg: { type: string; broadcastId: string; startCursor?: string } = {
-                    type: "watch-broadcast",
-                    broadcastId,
-                  };
-                  if (info.cursor !== "") {
-                    watchMsg.startCursor = info.cursor;
-                  }
-                  this.emit(SpectateEvent.LOG, `Picking up broadcast ${broadcastId} starting at: ${info.cursor}`);
-                  if (this.wsConnection) {
-                    this.wsConnection.sendUTF(JSON.stringify(watchMsg));
-                  }
-                });
-              })
-              .catch((err) => {
-                if (err) {
-                  this.emit(SpectateEvent.ERROR, err);
-                }
-              });
+            // This error seems to occur primarily when the auth token for firebase expires,
+            // which lasts 1 hour, so the plan is to get a new token and reconnect.
+            this.emit(SpectateEvent.LOG, "Auth token expired, reconencting...");
+            this.emit(SpectateEvent.RECONNECT, authToken);
           } else {
             // TODO: Somehow kill dolphin? Or maybe reconnect to a person's broadcast when it
             // TODO: comes back up?

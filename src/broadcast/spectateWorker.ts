@@ -19,6 +19,7 @@ export interface Methods {
   getErrorObservable(): Observable<Error | string>;
   getBroadcastListObservable(): Observable<BroadcasterItem[]>;
   getSpectateDetailsObservable(): Observable<{ playbackId: string; filePath: string }>;
+  getReconnectObservable(): Observable<Record<never, never>>;
 }
 
 export type WorkerSpec = ModuleMethods & Methods;
@@ -29,6 +30,7 @@ const logSubject = new Subject<string>();
 const errorSubject = new Subject<Error | string>();
 const broadcastListSubject = new Subject<BroadcasterItem[]>();
 const spectateDetailsSubject = new Subject<{ playbackId: string; filePath: string }>();
+const reconnectSubject = new Subject<Record<never, never>>();
 
 // Forward the events to the renderer
 spectateManager.on(SpectateEvent.BROADCAST_LIST_UPDATE, async (data: BroadcasterItem[]) => {
@@ -45,6 +47,10 @@ spectateManager.on(SpectateEvent.ERROR, async (err: Error | string) => {
 
 spectateManager.on(SpectateEvent.NEW_FILE, async (playbackId: string, filePath: string) => {
   spectateDetailsSubject.next({ playbackId, filePath });
+});
+
+spectateManager.on(SpectateEvent.RECONNECT, async () => {
+  reconnectSubject.next({});
 });
 
 const methods: WorkerSpec = {
@@ -75,6 +81,9 @@ const methods: WorkerSpec = {
   },
   getSpectateDetailsObservable(): Observable<{ playbackId: string; filePath: string }> {
     return Observable.from(spectateDetailsSubject);
+  },
+  getReconnectObservable(): Observable<Record<never, never>> {
+    return Observable.from(reconnectSubject);
   },
 };
 

@@ -8,8 +8,10 @@ import { Methods as BroadcastWorkerMethods, WorkerSpec as BroadcastWorkerSpec } 
 import {
   ipc_broadcastErrorOccurredEvent,
   ipc_broadcastListUpdatedEvent,
+  ipc_broadcastReconnect,
   ipc_dolphinStatusChangedEvent,
   ipc_slippiStatusChangedEvent,
+  ipc_spectateReconnect,
 } from "./ipc";
 import { Methods as SpectateWorkerMethods, WorkerSpec as SpectateWorkerSpec } from "./spectateWorker";
 import { BroadcasterItem } from "./types";
@@ -36,6 +38,9 @@ export const broadcastWorker: Promise<Thread & BroadcastWorkerMethods> = new Pro
         broadcastLog.error(err);
         const errorMessage = err instanceof Error ? err.message : err;
         ipc_broadcastErrorOccurredEvent.main!.trigger({ errorMessage }).catch(broadcastLog.error);
+      });
+      worker.getReconnectObservable().subscribe(({ config }) => {
+        ipc_broadcastReconnect.main!.trigger({ config }).catch(broadcastLog.error);
       });
 
       log.debug("broadcast: Spawning worker: Done");
@@ -86,6 +91,9 @@ export const spectateWorker: Promise<Thread & SpectateWorkerMethods> = new Promi
           replay: filePath,
         };
         dolphinManager.launchPlaybackDolphin(playbackId, replayComm).catch(spectateLog.error);
+      });
+      worker.getReconnectObservable().subscribe(() => {
+        ipc_spectateReconnect.main!.trigger({}).catch(spectateLog.error);
       });
 
       dolphinManager.on("dolphin-closed", (playbackId: string) => {
