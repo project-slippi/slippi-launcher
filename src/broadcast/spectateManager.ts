@@ -29,7 +29,6 @@ const generatePlaybackId = (broadcastId: string) => `spectate-${broadcastId}`;
 export class SpectateManager extends EventEmitter {
   private broadcastInfo: Record<string, BroadcastInfo> = {};
   private wsConnection: connection | null = null;
-  private test = false;
 
   public constructor() {
     super();
@@ -87,11 +86,6 @@ export class SpectateManager extends EventEmitter {
    * Connects to the Slippi server and the local Dolphin instance
    */
   public async connect(authToken: string) {
-    if (this.test) {
-      return;
-    }
-    this.emit(SpectateEvent.RECONNECT);
-    this.test = true;
     if (this.wsConnection) {
       return;
     }
