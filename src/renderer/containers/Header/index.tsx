@@ -11,7 +11,7 @@ import SettingsOutlinedIcon from "@material-ui/icons/SettingsOutlined";
 import { colors } from "common/colors";
 import { isMac, slippiHomepage } from "common/constants";
 import { shell } from "electron";
-import log from "electron-log";
+import electronLog from "electron-log";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
 
@@ -28,6 +28,8 @@ import { ActivateOnlineDialog } from "./ActivateOnlineDialog";
 import { MainMenu, MenuItem } from "./MainMenu";
 import { StartGameDialog } from "./StartGameDialog";
 import { UserMenu } from "./UserMenu";
+
+const log = electronLog.scope("Header/index");
 
 const OuterBox = styled(Box)`
   background: radial-gradient(circle at left, #5c1394, transparent 30%);

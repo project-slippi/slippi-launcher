@@ -8,8 +8,10 @@
 
 import crypto from "crypto";
 import { BrowserWindow, ipcMain, IpcMainInvokeEvent, ipcRenderer, IpcRendererEvent } from "electron";
-import log from "electron-log";
+import electronLog from "electron-log";
 import { useEffect, useState } from "react";
+
+const log = electronLog.scope("ipc");
 
 // TODO: No need to segregate them by process type here?
 const endpointsRegistered: { [key in Exclude<typeof process.type, "worker">]: string[] } = {

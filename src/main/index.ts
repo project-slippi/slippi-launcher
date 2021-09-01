@@ -5,7 +5,7 @@ import { isDevelopment, isMac } from "common/constants";
 import { delay } from "common/delay";
 import { app, BrowserWindow, Menu, shell } from "electron";
 import contextMenu from "electron-context-menu";
-import log from "electron-log";
+import electronLog from "electron-log";
 import { autoUpdater } from "electron-updater";
 import * as fs from "fs-extra";
 import get from "lodash/get";
@@ -28,6 +28,7 @@ if (isMac && process.arch !== "arm64") {
 }
 
 // use console.log as log.debug for easier access to debug logging
+const log = electronLog.scope("devMain");
 console.log = log.debug;
 
 // Check for updates

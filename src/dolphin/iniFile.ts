@@ -3,10 +3,12 @@
  * https://github.com/dolphin-emu/dolphin/blob/master/Source/Core/Common/IniFile.cpp
  */
 
-import log from "electron-log";
+import electronLog from "electron-log";
 import fs from "fs";
 import { ensureFileSync } from "fs-extra";
 import readline from "readline";
+
+const log = electronLog.scope("iniFile");
 
 /**
  * The IniFile Class, contains a Section subclass

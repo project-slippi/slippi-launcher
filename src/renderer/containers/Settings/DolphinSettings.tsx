@@ -12,7 +12,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
 import { isLinux, isMac } from "common/constants";
 import { remote, shell } from "electron";
-import log from "electron-log";
+import electronLog from "electron-log";
 import capitalize from "lodash/capitalize";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
@@ -23,6 +23,8 @@ import { PathInput } from "@/components/PathInput";
 import { useDolphinPath } from "@/lib/hooks/useSettings";
 
 import { SettingItem } from "./SettingItem";
+
+const log = electronLog.scope("DolphinSettings");
 
 export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolphinType }) => {
   const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);

@@ -1,9 +1,11 @@
 import dgram from "dgram";
-import log from "electron-log";
+import electronLog from "electron-log";
 import moment from "moment";
 
 import { ipc_discoveredConsolesUpdatedEvent } from "./ipc";
 import { DiscoveredConsoleInfo } from "./types";
+
+const log = electronLog.scope("connectionScanner");
 
 const SECONDS = 1000;
 const CONSOLE_EXPIRY_TIMEOUT = 35 * SECONDS;

@@ -1,5 +1,7 @@
 import { fetch } from "cross-fetch";
-import log from "electron-log";
+import electronLog from "electron-log";
+
+const log = electronLog.scope("main/github");
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
