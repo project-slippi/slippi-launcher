@@ -19,9 +19,13 @@ const getUserKeyQuery = gql`
     user(uid: $uid) {
       connectCode
       isOnlineEnabled
+      displayName
       private {
         playKey
       }
+    }
+    dolphinVersions(order_by: { releasedAt: desc }, where: { type: { _in: ["ishii"] } }, limit: 1) {
+      version
     }
   }
 `;
@@ -104,6 +108,8 @@ export async function fetchPlayKey(): Promise<PlayKey> {
     uid: user.uid,
     connectCode: res.data.user.connectCode,
     playKey: res.data.user.private.playKey,
+    displayName: res.data.user.displayName,
+    latestVersion: res.data.dolphinVersions[0].version,
   };
 }
 

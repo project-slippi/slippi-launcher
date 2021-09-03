@@ -35,4 +35,6 @@ export interface PlayKey {
   uid: string;
   playKey: string;
   connectCode: string;
+  displayName: string;
+  latestVersion: string;
 }
