@@ -33,13 +33,13 @@ export const ImportDolphinSettingsStep: React.FC = () => {
     if (values.shouldImportNetplay) {
       await ipc_importDolphinSettings.renderer!.trigger({
         toImportDolphinPath: values.netplayPath,
-        type: DolphinLaunchType.NETPLAY,
+        dolphinType: DolphinLaunchType.NETPLAY,
       });
     }
     if (values.shouldImportPlayback) {
       await ipc_importDolphinSettings.renderer!.trigger({
         toImportDolphinPath: desktopAppDolphinPath,
-        type: DolphinLaunchType.PLAYBACK,
+        dolphinType: DolphinLaunchType.PLAYBACK,
       });
     }
 

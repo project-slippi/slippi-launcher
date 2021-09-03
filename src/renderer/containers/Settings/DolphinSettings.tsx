@@ -131,7 +131,7 @@ const ImportDolphinConfigForm: React.FC<{
   const extension = isMac ? "app" : "exe";
   const importDolphinHandler = async (importPath: string) => {
     log.info(`importing dolphin from ${importPath}`);
-    await ipc_importDolphinSettings.renderer!.trigger({ toImportDolphinPath: importPath, type: dolphinType });
+    await ipc_importDolphinSettings.renderer!.trigger({ toImportDolphinPath: importPath, dolphinType });
   };
 
   const onImportClick = async () => {

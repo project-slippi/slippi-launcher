@@ -12,7 +12,7 @@ import {
   ipc_consoleMirrorStatusUpdatedEvent,
   ipc_discoveredConsolesUpdatedEvent,
 } from "@console/ipc";
-import { ipc_dolphinDownloadLogReceivedEvent } from "@dolphin/ipc";
+import { ipc_dolphinClosedEvent, ipc_dolphinDownloadLogReceivedEvent } from "@dolphin/ipc";
 import { ipc_loadProgressUpdatedEvent, ipc_statsPageRequestedEvent } from "@replays/ipc";
 import { ipc_openSettingsModalEvent, ipc_settingsUpdatedEvent } from "@settings/ipc";
 import {
@@ -36,6 +36,7 @@ import { useAccount } from "./useAccount";
 import { useBroadcast } from "./useBroadcast";
 import { useBroadcastList, useBroadcastListStore } from "./useBroadcastList";
 import { useConsoleDiscoveryStore } from "./useConsoleDiscovery";
+import { useDolphinStore } from "./useDolphin";
 import { useIsoVerification } from "./useIsoVerification";
 import { useNewsFeed } from "./useNewsFeed";
 import { useReplayBrowserNavigation } from "./useReplayBrowserList";
@@ -225,4 +226,12 @@ export const useAppListeners = () => {
   ipc_spectateReconnect.renderer!.useEvent(async () => {
     refreshBroadcasts();
   }, [refreshBroadcasts]);
+
+  const setDolphinOpen = useDolphinStore((store) => store.setDolphinOpen);
+  ipc_dolphinClosedEvent.renderer!.useEvent(
+    async ({ dolphinType }) => {
+      setDolphinOpen(dolphinType, false);
+    },
+    [setDolphinOpen],
+  );
 };
