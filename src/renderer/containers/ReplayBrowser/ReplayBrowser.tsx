@@ -18,7 +18,7 @@ import { BasicFooter } from "@/components/Footer";
 import { LabelledText } from "@/components/LabelledText";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { IconMessage } from "@/components/Message";
-import { usePlayFiles } from "@/lib/hooks/usePlayFiles";
+import { useDolphin } from "@/lib/hooks/useDolphin";
 import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/useReplayBrowserList";
 import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
 import { useReplays, useReplaySelection } from "@/lib/hooks/useReplays";
@@ -34,7 +34,7 @@ export const ReplayBrowser: React.FC = () => {
   const setScrollRowItem = useReplays((store) => store.setScrollRowItem);
   const removeFile = useReplays((store) => store.removeFile);
   const selectFile = useReplays((store) => store.selectFile);
-  const playFiles = usePlayFiles();
+  const { viewReplays } = useDolphin();
   const clearSelectedFile = useReplays((store) => store.clearSelectedFile);
   const loading = useReplays((store) => store.loading);
   const currentFolder = useReplays((store) => store.currentFolder);
@@ -61,7 +61,7 @@ export const ReplayBrowser: React.FC = () => {
 
   const playSelectedFile = (index: number) => {
     const filePath = filteredFiles[index].fullPath;
-    playFiles([{ path: filePath }]);
+    viewReplays([{ path: filePath }]);
   };
 
   const deleteFiles = (filePaths: string[]) => {
@@ -161,7 +161,7 @@ export const ReplayBrowser: React.FC = () => {
               <FileSelectionToolbar
                 totalSelected={selectedFiles.length}
                 onSelectAll={fileSelection.selectAll}
-                onPlay={() => playFiles(selectedFiles.map((path) => ({ path })))}
+                onPlay={() => viewReplays(selectedFiles.map((path) => ({ path })))}
                 onClear={fileSelection.clearSelection}
                 onDelete={() => {
                   deleteFiles(selectedFiles);
