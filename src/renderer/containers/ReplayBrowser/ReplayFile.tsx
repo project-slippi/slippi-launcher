@@ -28,7 +28,7 @@ export interface ReplayFileProps extends FileResult {
   onSelect: () => void;
   onPlay: () => void;
   onOpenMenu: (index: number, element: HTMLElement) => void;
-  onClick: () => void;
+  onClick: React.MouseEventHandler<HTMLDivElement>;
   selectedFiles: string[];
   selectedIndex: number;
 }

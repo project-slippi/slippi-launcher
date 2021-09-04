@@ -8,7 +8,6 @@ import create from "zustand";
 import { useSettings } from "@/lib/hooks/useSettings";
 
 import { findChild, generateSubFolderTree } from "../folderTree";
-import { useMousetrap } from "./useMousetrap";
 import { useReplayBrowserList } from "./useReplayBrowserList";
 
 type StoreState = {
@@ -240,9 +239,6 @@ export const useReplaySelection = () => {
   const setSelectedFiles = useReplays((store) => store.setSelectedFiles);
 
   const [lastClickIndex, setLastClickIndex] = useState<number | null>(null);
-  const [shiftHeld, setShiftHeld] = useState(false);
-  useMousetrap("shift", () => setShiftHeld(true));
-  useMousetrap("shift", () => setShiftHeld(false), "keyup");
 
   const toggleFiles = (fileNames: string[], mode: "toggle" | "select" | "deselect" = "toggle") => {
     const newSelection = Array.from(selectedFiles);
@@ -276,9 +272,9 @@ export const useReplaySelection = () => {
     setSelectedFiles(newSelection);
   };
 
-  const onFileClick = (index: number) => {
+  const onFileClick = (index: number, isShiftHeld: boolean) => {
     const isCurrentSelected = selectedFiles.includes(files[index].fullPath);
-    if (lastClickIndex !== null && shiftHeld) {
+    if (lastClickIndex !== null && isShiftHeld) {
       // Shift is held
       // Find all the files between the last clicked file and the current one
       const startIndex = Math.min(index, lastClickIndex);

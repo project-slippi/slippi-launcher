@@ -20,7 +20,7 @@ const FileListResults: React.FC<{
   files: FileResult[];
   scrollRowItem: number;
   selectedFiles: Array<string>;
-  onClick: (index: number) => void;
+  onClick: (index: number, isShiftHeld: boolean) => void;
   onOpenMenu: (index: number, element: HTMLElement) => void;
   onSelect: (index: number) => void;
   onPlay: (index: number) => void;
@@ -45,7 +45,7 @@ const FileListResults: React.FC<{
             index={props.index}
             style={props.style}
             onSelect={() => onSelect(props.index)}
-            onClick={() => onClick(props.index)}
+            onClick={(e) => onClick(props.index, e.shiftKey)}
             selectedFiles={selectedFiles}
             selectedIndex={selectedIndex}
             onPlay={() => onPlay(props.index)}
@@ -101,7 +101,7 @@ export const FileList: React.FC<{
   setScrollRowItem: (row: number) => void;
   onDelete: (filepath: string) => void;
   onSelect: (index: number) => void;
-  onFileClick: (index: number) => void;
+  onFileClick: (index: number, isShiftHeld: boolean) => void;
   selectedFiles: Array<string>;
   onPlay: (index: number) => void;
 }> = ({
