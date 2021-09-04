@@ -1,5 +1,4 @@
 /** @jsx jsx */
-import { ipc_importDolphinSettings } from "@dolphin/ipc";
 import { DolphinLaunchType } from "@dolphin/types";
 import { css, jsx } from "@emotion/react";
 import Box from "@material-ui/core/Box";
@@ -14,6 +13,7 @@ import { useToasts } from "react-toast-notifications";
 
 import { Checkbox } from "@/components/FormInputs/Checkbox";
 import { PathInput } from "@/components/PathInput";
+import { useDolphin } from "@/lib/hooks/useDolphin";
 import { useDesktopApp } from "@/lib/hooks/useQuickStart";
 
 import { QuickStartHeader } from "./QuickStartHeader";
@@ -28,19 +28,14 @@ export const ImportDolphinSettingsStep: React.FC = () => {
   const setExists = useDesktopApp((store) => store.setExists);
   const desktopAppDolphinPath = useDesktopApp((store) => store.dolphinPath);
   const { addToast } = useToasts();
+  const { importDolphin } = useDolphin();
 
   const migrateDolphin = async (values: FormValues) => {
     if (values.shouldImportNetplay) {
-      await ipc_importDolphinSettings.renderer!.trigger({
-        toImportDolphinPath: values.netplayPath,
-        dolphinType: DolphinLaunchType.NETPLAY,
-      });
+      importDolphin(values.netplayPath, DolphinLaunchType.NETPLAY);
     }
     if (values.shouldImportPlayback) {
-      await ipc_importDolphinSettings.renderer!.trigger({
-        toImportDolphinPath: desktopAppDolphinPath,
-        dolphinType: DolphinLaunchType.PLAYBACK,
-      });
+      importDolphin(desktopAppDolphinPath, DolphinLaunchType.PLAYBACK);
     }
 
     await finishMigration();
