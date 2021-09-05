@@ -3,18 +3,16 @@ import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import { colors } from "common/colors";
-import { ipc_installUpdate } from "common/ipc";
 import React from "react";
 
 import { useAppStore } from "@/lib/hooks/useApp";
+import { useUpdateHandler } from "@/lib/hooks/useUpdateHandler";
 
 export const PersistentNotification: React.FC = () => {
   const updateVersion = useAppStore((store) => store.updateVersion);
   const updateReady = useAppStore((store) => store.updateReady);
 
-  const updateHandler = async () => {
-    await ipc_installUpdate.renderer!.trigger({});
-  };
+  const updateHandler = useUpdateHandler();
 
   if (!updateVersion || !updateReady) {
     return null;
