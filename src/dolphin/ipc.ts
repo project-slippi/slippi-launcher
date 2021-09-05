@@ -46,7 +46,7 @@ export const ipc_checkDesktopAppDolphin = makeEndpoint.main(
 // toImportDolphin path must point to a "Slippi Dolphin.{exe,app}"
 export const ipc_importDolphinSettings = makeEndpoint.main(
   "importDolphinSettings",
-  <{ toImportDolphinPath: string; type: DolphinLaunchType }>_,
+  <{ toImportDolphinPath: string; dolphinType: DolphinLaunchType }>_,
   <SuccessPayload>_,
 );
 
@@ -60,4 +60,9 @@ export const ipc_dolphinDownloadFinishedEvent = makeEndpoint.renderer(
 export const ipc_dolphinDownloadLogReceivedEvent = makeEndpoint.renderer(
   "dolphin_dolphinDownloadLogReceived",
   <{ message: string }>_,
+);
+
+export const ipc_dolphinClosedEvent = makeEndpoint.renderer(
+  "dolphin_dolphinClosed",
+  <{ dolphinType: DolphinLaunchType }>_,
 );

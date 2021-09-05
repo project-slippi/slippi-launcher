@@ -36,7 +36,7 @@ export const mirrorWorker: Promise<Thread & MirrorWorkerMethods> = new Promise((
         ipc_consoleMirrorStatusUpdatedEvent.main!.trigger(statusUpdate).catch(mirrorLog.error);
       });
 
-      dolphinManager.on("dolphin-closed", (playbackId: string) => {
+      dolphinManager.on("playback-dolphin-closed", (playbackId: string) => {
         worker.dolphinClosed(playbackId).catch(mirrorLog.error);
       });
 

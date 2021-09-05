@@ -96,7 +96,7 @@ export const spectateWorker: Promise<Thread & SpectateWorkerMethods> = new Promi
         ipc_spectateReconnect.main!.trigger({}).catch(spectateLog.error);
       });
 
-      dolphinManager.on("dolphin-closed", (playbackId: string) => {
+      dolphinManager.on("playback-dolphin-closed", (playbackId: string) => {
         worker.dolphinClosed(playbackId).catch(spectateLog.error);
       });
 
