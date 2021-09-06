@@ -1,10 +1,10 @@
 import { ipc_installUpdate } from "common/ipc";
 import { useToasts } from "react-toast-notifications";
 
-export const useUpdateHandler = () => {
+export const useInstallAppUpdate = () => {
   const { addToast } = useToasts();
 
-  const updateHandler = async () => {
+  const installAppUpdate = async () => {
     try {
       await ipc_installUpdate.renderer!.trigger({});
     } catch (err) {
@@ -15,6 +15,6 @@ export const useUpdateHandler = () => {
   };
 
   return () => {
-    void updateHandler();
+    void installAppUpdate();
   };
 };

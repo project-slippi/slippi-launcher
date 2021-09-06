@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import React from "react";
 
-import { useHandleDragStart } from "@/lib/hooks/useHandleDragStart";
+import { useFileDrag } from "@/lib/hooks/useFileDrag";
 
 const Outer = styled.div`
   color: inherit;
@@ -22,14 +22,14 @@ export interface DraggableFileProps {
  * such as copied to a different folder or dragged into web-sites etc.
  */
 export const DraggableFile: React.FC<DraggableFileProps> = ({ children, filePaths, className, style }) => {
-  const handleDragStart = useHandleDragStart();
+  const fileDrag = useFileDrag();
 
   return (
     <Outer
       className={className}
       style={style}
-      onDragStart={(e) => handleDragStart(e, filePaths)}
-      onClick={(e) => e.preventDefault()}
+      onDragStart={(event) => fileDrag(event, filePaths)}
+      onClick={(event) => event.preventDefault()}
     >
       {children}
     </Outer>

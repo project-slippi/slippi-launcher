@@ -6,13 +6,13 @@ import { colors } from "common/colors";
 import React from "react";
 
 import { useAppStore } from "@/lib/hooks/useApp";
-import { useUpdateHandler } from "@/lib/hooks/useUpdateHandler";
+import { useInstallAppUpdate } from "@/lib/hooks/useInstallAppUpdate";
 
 export const PersistentNotification: React.FC = () => {
   const updateVersion = useAppStore((store) => store.updateVersion);
   const updateReady = useAppStore((store) => store.updateReady);
 
-  const updateHandler = useUpdateHandler();
+  const installAppUpdate = useInstallAppUpdate();
 
   if (!updateVersion || !updateReady) {
     return null;
@@ -33,7 +33,7 @@ export const PersistentNotification: React.FC = () => {
         >
           Version {updateVersion} is now available!
         </span>
-        <RestartButton onClick={updateHandler}>Install update</RestartButton>
+        <RestartButton onClick={installAppUpdate}>Install update</RestartButton>
       </div>
     </Outer>
   );

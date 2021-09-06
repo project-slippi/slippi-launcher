@@ -1,12 +1,12 @@
 import { ipcRenderer } from "electron";
 import { useToasts } from "react-toast-notifications";
 
-export const useHandleDragStart = () => {
+export const useFileDrag = () => {
   const { addToast } = useToasts();
 
-  const handleDragStart = async (e: React.DragEvent<HTMLDivElement>, filePaths: string[]) => {
+  const fileDrag = async (event: React.DragEvent<HTMLDivElement>, filePaths: string[]) => {
     try {
-      e.preventDefault();
+      event.preventDefault();
       if (filePaths.length > 0) {
         ipcRenderer.send("onDragStart", filePaths);
       }
@@ -17,7 +17,7 @@ export const useHandleDragStart = () => {
     }
   };
 
-  return (e: React.DragEvent<HTMLDivElement>, filePaths: string[]) => {
-    void handleDragStart(e, filePaths);
+  return (event: React.DragEvent<HTMLDivElement>, filePaths: string[]) => {
+    void fileDrag(event, filePaths);
   };
 };
