@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
-import { ipcRenderer } from "electron";
 import React from "react";
+
+import { useFileDrag } from "@/lib/hooks/useFileDrag";
 
 const Outer = styled.div`
   color: inherit;
@@ -21,19 +22,14 @@ export interface DraggableFileProps {
  * such as copied to a different folder or dragged into web-sites etc.
  */
 export const DraggableFile: React.FC<DraggableFileProps> = ({ children, filePaths, className, style }) => {
-  const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    if (filePaths.length > 0) {
-      ipcRenderer.send("onDragStart", filePaths);
-    }
-  };
+  const fileDrag = useFileDrag();
 
   return (
     <Outer
       className={className}
       style={style}
-      onDragStart={(e) => handleDragStart(e)}
-      onClick={(e) => e.preventDefault()}
+      onDragStart={(event) => fileDrag(event, filePaths)}
+      onClick={(event) => event.preventDefault()}
     >
       {children}
     </Outer>
