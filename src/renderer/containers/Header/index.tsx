@@ -1,5 +1,4 @@
 /** @jsx jsx */
-import { ipc_launchNetplayDolphin } from "@dolphin/ipc";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Box from "@material-ui/core/Box";
@@ -11,12 +10,12 @@ import SettingsOutlinedIcon from "@material-ui/icons/SettingsOutlined";
 import { colors } from "common/colors";
 import { isMac, slippiHomepage } from "common/constants";
 import { shell } from "electron";
-import electronLog from "electron-log";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
 
 import { PlayIcon } from "@/components/PlayIcon";
 import { useAccount } from "@/lib/hooks/useAccount";
+import { useDolphin } from "@/lib/hooks/useDolphin";
 import { useLoginModal } from "@/lib/hooks/useLoginModal";
 import { useSettings } from "@/lib/hooks/useSettings";
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
@@ -28,8 +27,6 @@ import { ActivateOnlineDialog } from "./ActivateOnlineDialog";
 import { MainMenu, MenuItem } from "./MainMenu";
 import { StartGameDialog } from "./StartGameDialog";
 import { UserMenu } from "./UserMenu";
-
-const log = electronLog.scope("Header/index");
 
 const OuterBox = styled(Box)`
   background: radial-gradient(circle at left, #5c1394, transparent 30%);
@@ -50,6 +47,7 @@ export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
   const playKey = useAccount((store) => store.playKey);
   const meleeIsoPath = useSettings((store) => store.settings.isoPath) || undefined;
   const { addToast } = useToasts();
+  const { launchNetplay } = useDolphin();
 
   const handleError = (err: any) => addToast(err.message ?? JSON.stringify(err), { appearance: "error" });
 
@@ -81,16 +79,7 @@ export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
       return;
     }
 
-    try {
-      const launchResult = await ipc_launchNetplayDolphin.renderer!.trigger({ bootToCss: offlineOnly });
-      if (!launchResult.result) {
-        log.info("Error launching netplay dolphin", launchResult.errors);
-        throw new Error("Error launching netplay dolphin");
-      }
-    } catch (err) {
-      handleError(err.message);
-      return;
-    }
+    launchNetplay(offlineOnly ?? false);
 
     return;
   };

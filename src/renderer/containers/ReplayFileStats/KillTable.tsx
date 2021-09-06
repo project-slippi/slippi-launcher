@@ -19,7 +19,7 @@ import { convertFrameCountToDurationString } from "common/time";
 import _ from "lodash";
 import React from "react";
 
-import { usePlayFiles } from "@/lib/hooks/usePlayFiles";
+import { useDolphin } from "@/lib/hooks/useDolphin";
 import { getCharacterIcon } from "@/lib/utils";
 
 import * as T from "./TableStyles";
@@ -33,7 +33,7 @@ export interface KillTableProps {
 }
 
 export const KillTable: React.FC<KillTableProps> = ({ file, stats, player, opp }) => {
-  const playFiles = usePlayFiles();
+  const { viewReplays } = useDolphin();
   const names = extractPlayerNames(player.playerIndex, file.settings, file.metadata);
   const playerDisplay = (
     <div style={{ display: "flex", alignItems: "center" }}>
@@ -71,7 +71,7 @@ export const KillTable: React.FC<KillTableProps> = ({ file, stats, player, opp }
     }
 
     const playPunish = () => {
-      playFiles([{ path: file.fullPath, startFrame: stock.startFrame }]);
+      viewReplays([{ path: file.fullPath, startFrame: stock.startFrame }]);
     };
 
     return (

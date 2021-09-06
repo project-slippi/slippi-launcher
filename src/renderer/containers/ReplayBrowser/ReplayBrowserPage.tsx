@@ -1,7 +1,7 @@
 import React from "react";
 import { Redirect, Route, Switch, useHistory, useParams, useRouteMatch } from "react-router-dom";
 
-import { usePlayFiles } from "@/lib/hooks/usePlayFiles";
+import { useDolphin } from "@/lib/hooks/useDolphin";
 import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/useReplayBrowserList";
 import { useReplays } from "@/lib/hooks/useReplays";
 
@@ -32,12 +32,12 @@ const ChildPage: React.FC<{ parent: string; goBack: () => void }> = () => {
   const { filePath } = useParams<Record<string, any>>();
   const selectedFile = useReplays((store) => store.selectedFile);
   const decodedFilePath = decodeURIComponent(filePath);
-  const playFiles = usePlayFiles();
+  const { viewReplays } = useDolphin();
   const nav = useReplayBrowserList();
   const { goToReplayList } = useReplayBrowserNavigation();
 
   const onPlay = () => {
-    playFiles([{ path: decodedFilePath }]);
+    viewReplays([{ path: decodedFilePath }]);
   };
 
   return (

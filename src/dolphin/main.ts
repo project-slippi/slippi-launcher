@@ -10,6 +10,7 @@ import {
   ipc_checkPlayKeyExists,
   ipc_clearDolphinCache,
   ipc_configureDolphin,
+  ipc_dolphinClosedEvent,
   ipc_downloadDolphin,
   ipc_importDolphinSettings,
   ipc_launchNetplayDolphin,
@@ -79,14 +80,14 @@ ipc_launchNetplayDolphin.main!.handle(async ({ bootToCss }) => {
   return { success: true };
 });
 
-ipc_importDolphinSettings.main!.handle(async ({ toImportDolphinPath, type }) => {
+ipc_importDolphinSettings.main!.handle(async ({ toImportDolphinPath, dolphinType }) => {
   if (isMac) {
     toImportDolphinPath = path.join(toImportDolphinPath, "Contents", "Resources");
   } else {
     toImportDolphinPath = path.dirname(toImportDolphinPath);
   }
 
-  await dolphinManager.copyDolphinConfig(type, toImportDolphinPath);
+  await dolphinManager.copyDolphinConfig(dolphinType, toImportDolphinPath);
 
   return { success: true };
 });
@@ -112,4 +113,12 @@ ipc_checkDesktopAppDolphin.main!.handle(async () => {
   const dolphinExecutablePath = await findDolphinExecutable(DolphinLaunchType.NETPLAY, dolphinFolderPath);
 
   return { dolphinPath: dolphinExecutablePath, exists: exists };
+});
+
+dolphinManager.on("playback-dolphin-closed", async () => {
+  void ipc_dolphinClosedEvent.main!.trigger({ dolphinType: DolphinLaunchType.PLAYBACK });
+});
+
+dolphinManager.on("netplay-dolphin-closed", async () => {
+  void ipc_dolphinClosedEvent.main!.trigger({ dolphinType: DolphinLaunchType.NETPLAY });
 });

@@ -8,7 +8,7 @@ import { convertFrameCountToDurationString } from "common/time";
 import _ from "lodash";
 import React from "react";
 
-import { usePlayFiles } from "@/lib/hooks/usePlayFiles";
+import { useDolphin } from "@/lib/hooks/useDolphin";
 import { getCharacterIcon, toOrdinal } from "@/lib/utils";
 
 import * as T from "./TableStyles";
@@ -23,7 +23,7 @@ export interface PunishTableProps {
 }
 
 export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, player, opp }) => {
-  const playFiles = usePlayFiles();
+  const { viewReplays } = useDolphin();
   const names = extractPlayerNames(player.playerIndex, file.settings, file.metadata);
   const playerDisplay = (
     <div style={{ display: "flex", alignItems: "center" }}>
@@ -52,7 +52,7 @@ export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, player, o
     }
 
     const playPunish = () => {
-      playFiles([{ path: file.fullPath, startFrame: punish.startFrame }]);
+      viewReplays([{ path: file.fullPath, startFrame: punish.startFrame }]);
     };
 
     return (

@@ -1,10 +1,4 @@
 /** @jsx jsx */
-import {
-  ipc_clearDolphinCache,
-  ipc_configureDolphin,
-  ipc_importDolphinSettings,
-  ipc_reinstallDolphin,
-} from "@dolphin/ipc";
 import { DolphinLaunchType } from "@dolphin/types";
 import { css, jsx } from "@emotion/react";
 import Button from "@material-ui/core/Button";
@@ -15,11 +9,11 @@ import { remote, shell } from "electron";
 import electronLog from "electron-log";
 import capitalize from "lodash/capitalize";
 import React from "react";
-import { useToasts } from "react-toast-notifications";
 
 import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { DevGuard } from "@/components/DevGuard";
 import { PathInput } from "@/components/PathInput";
+import { useDolphin, useDolphinStore } from "@/lib/hooks/useDolphin";
 import { useDolphinPath } from "@/lib/hooks/useSettings";
 
 import { SettingItem } from "./SettingItem";
@@ -30,23 +24,27 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
   const [resetModalOpen, setResetModalOpen] = React.useState(false);
   const [isResetting, setIsResetting] = React.useState(false);
+  const dolphinIsOpen = useDolphinStore((store) =>
+    dolphinType === DolphinLaunchType.NETPLAY ? store.netplayDolphinOpen : store.playbackDolphinOpen,
+  );
+  const { openConfigureDolphin, reinstallDolphin, clearDolphinCache } = useDolphin();
 
   const openDolphinDirectoryHandler = async () => {
     shell.openItem(dolphinPath);
   };
 
   const configureDolphinHandler = async () => {
-    await ipc_configureDolphin.renderer!.trigger({ dolphinType });
+    openConfigureDolphin(dolphinType);
   };
 
   const reinstallDolphinHandler = async () => {
     setIsResetting(true);
-    await ipc_reinstallDolphin.renderer!.trigger({ dolphinType });
+    reinstallDolphin(dolphinType);
     setIsResetting(false);
   };
 
   const clearDolphinCacheHandler = async () => {
-    await ipc_clearDolphinCache.renderer!.trigger({ dolphinType });
+    clearDolphinCache(dolphinType);
   };
 
   const dolphinTypeName = capitalize(dolphinType);
@@ -62,7 +60,12 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
             }
           `}
         >
-          <Button variant="contained" color="primary" onClick={configureDolphinHandler} disabled={isResetting}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={configureDolphinHandler}
+            disabled={isResetting || dolphinIsOpen}
+          >
             Configure Dolphin
           </Button>
           <Button variant="outlined" color="primary" onClick={openDolphinDirectoryHandler} disabled={isResetting}>
@@ -101,10 +104,20 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
             }
           `}
         >
-          <Button variant="contained" color="secondary" onClick={clearDolphinCacheHandler} disabled={isResetting}>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={clearDolphinCacheHandler}
+            disabled={isResetting || dolphinIsOpen}
+          >
             Clear cache
           </Button>
-          <Button variant="outlined" color="secondary" onClick={() => setResetModalOpen(true)} disabled={isResetting}>
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={() => setResetModalOpen(true)}
+            disabled={isResetting || dolphinIsOpen}
+          >
             Reset everything
             {isResetting && (
               <CircularProgress
@@ -126,12 +139,15 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
 const ImportDolphinConfigForm: React.FC<{
   dolphinType: DolphinLaunchType;
 }> = ({ dolphinType }) => {
-  const { addToast } = useToasts();
+  const { importDolphin } = useDolphin();
+  const dolphinIsOpen = useDolphinStore((store) =>
+    dolphinType === DolphinLaunchType.NETPLAY ? store.netplayDolphinOpen : store.playbackDolphinOpen,
+  );
   const dolphinTypeName = capitalize(dolphinType);
   const extension = isMac ? "app" : "exe";
-  const importDolphinHandler = async (importPath: string) => {
+  const importDolphinHandler = (importPath: string) => {
     log.info(`importing dolphin from ${importPath}`);
-    await ipc_importDolphinSettings.renderer!.trigger({ toImportDolphinPath: importPath, type: dolphinType });
+    importDolphin(importPath, dolphinType);
   };
 
   const onImportClick = async () => {
@@ -142,13 +158,7 @@ const ImportDolphinConfigForm: React.FC<{
     if (result.canceled || res.length === 0) {
       return;
     }
-    importDolphinHandler(res[0])
-      .then(() => {
-        addToast(`${dolphinTypeName} Dolphin settings successfully imported`, { appearance: "success" });
-      })
-      .catch((err) => {
-        addToast(err.message ?? JSON.stringify(err), { appearance: "error" });
-      });
+    importDolphinHandler(res[0]);
   };
 
   return (
@@ -156,7 +166,7 @@ const ImportDolphinConfigForm: React.FC<{
       name={`Import ${dolphinTypeName} Dolphin Settings`}
       description={`Replace the ${dolphinTypeName} Dolphin settings with those from a different Dolphin application. To do this, select the Dolphin.${extension} with the desired ${dolphinType} settings.`}
     >
-      <Button variant="contained" color="secondary" onClick={onImportClick}>
+      <Button variant="contained" color="secondary" onClick={onImportClick} disabled={dolphinIsOpen}>
         Import Dolphin settings
       </Button>
     </SettingItem>
