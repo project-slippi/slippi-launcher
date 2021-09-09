@@ -1,6 +1,7 @@
 import { keyframes } from "@emotion/react";
 import styled from "@emotion/styled";
 import React from "react";
+
 import slippiLogo from "../styles/images/slippi-logo.svg";
 
 const bounceAnimation = keyframes`
@@ -50,7 +51,9 @@ export const BouncingSlippiLogo: React.FC<BouncingSlippiLogoProps> = ({ size = "
   const [roll, setRoll] = React.useState(false);
 
   const onMouseOver = () => {
-    if (!roll) setRoll(true);
+    if (!roll) {
+      setRoll(true);
+    }
   };
 
   return (
