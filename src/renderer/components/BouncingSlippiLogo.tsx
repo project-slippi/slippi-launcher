@@ -49,7 +49,7 @@ export interface BouncingSlippiLogoProps {
 export const BouncingSlippiLogo: React.FC<BouncingSlippiLogoProps> = ({ size = "80px" }) => {
   const [roll, setRoll] = React.useState(false);
 
-  let onMouseOver = () => {
+  const onMouseOver = () => {
     if (!roll) setRoll(true);
   };
 
