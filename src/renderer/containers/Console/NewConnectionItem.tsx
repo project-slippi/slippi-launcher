@@ -23,6 +23,7 @@ export const NewConnectionItem: React.FC<NewConnectionItemProps> = ({ ip, onAdd,
         background-color: rgba(255, 255, 255, 0.1);
         padding: 10px;
         border-radius: 10px;
+        margin-bottom: 10px;
       `}
     >
       <div
