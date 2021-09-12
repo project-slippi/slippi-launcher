@@ -26,19 +26,19 @@ const Outer = styled.div<{
   padding-top: 20px;
 `;
 
+// logo is proportionally smaller to size by a factor of 0.75
+// so we need to scale it down to avoid pivotal animations
 const Logo = styled.div<{
   size: string;
-  roll: boolean;
+  rollAnimationState: "running" | "paused";
 }>`
   background-image: url("${slippiLogo}");
   background-size: contain;
   background-repeat: no-repeat;
   animation: ${bounceAnimation} 1.2s infinite forwards,
     ${barrelRollAnimation} 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) alternate forwards;
-  animation-play-state: running, ${(props) => (props.roll ? "running" : "paused")};
+  animation-play-state: running, ${(props) => props.rollAnimationState};
   position: absolute;
-  // logo is proportionally smaller to size by a factor of 0.75
-  // so we need to scale it down to avoid pivotal animations
   height: calc(${(props) => props.size}*0.75);
   width: ${(props) => props.size};
 `;
@@ -58,7 +58,7 @@ export const BouncingSlippiLogo: React.FC<BouncingSlippiLogoProps> = ({ size = "
 
   return (
     <Outer size={size}>
-      <Logo size={size} roll={roll} onMouseOver={onMouseOver} />
+      <Logo size={size} rollAnimationState={roll ? "running" : "paused"} onMouseOver={onMouseOver} />
     </Outer>
   );
 };
