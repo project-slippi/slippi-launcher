@@ -3,7 +3,6 @@ import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
@@ -14,13 +13,7 @@ import React from "react";
 
 import { PathInput } from "@/components/PathInput";
 import { useIsoVerification } from "@/lib/hooks/useIsoVerification";
-import {
-  useIsoPath,
-  useLaunchMeleeOnPlay,
-  useRootSlpPath,
-  useSpectateSlpPath,
-  useMonthlySubfolders,
-} from "@/lib/hooks/useSettings";
+import { useIsoPath, useLaunchMeleeOnPlay } from "@/lib/hooks/useSettings";
 import { SettingItem } from "./SettingItem";
 
 const renderValidityStatus = (isoValidity: IsoValidity) => {
@@ -42,17 +35,10 @@ export const MeleeOptions: React.FC = () => {
   const isoValidity = useIsoVerification((state) => state.validity);
   const [isoPath, setIsoPath] = useIsoPath();
   const [launchMeleeOnPlay, setLaunchMelee] = useLaunchMeleeOnPlay();
-  const [localReplayDir, setLocalReplayDir] = useRootSlpPath();
-  const [enableMonthlySubfolders, setUseMonthlySubfolders] = useMonthlySubfolders();
-  const [spectateDir, setSpectateDir] = useSpectateSlpPath();
 
   const onLaunchMeleeChange = async (value: string) => {
     const launchMelee = value === "true";
     await setLaunchMelee(launchMelee);
-  };
-
-  const onUseMonthlySubfoldersToggle = async () => {
-    await setUseMonthlySubfolders(!enableMonthlySubfolders);
   };
 
   return (
@@ -88,32 +74,6 @@ export const MeleeOptions: React.FC = () => {
           <FormControlLabel value={false} label="Launch Dolphin" control={<Radio />} />
         </RadioGroup>
       </SettingItem>
-      <SettingItem name="Local SLP Directory" description="The folder where your SLP replays should be saved.">
-        <PathInput
-          value={localReplayDir}
-          onSelect={setLocalReplayDir}
-          options={{
-            properties: ["openDirectory"],
-          }}
-          placeholder="No folder set"
-        />
-        <MonthlySubfolders>
-          Save replays to monthly subfolders
-          <CheckboxDiv>
-            <Checkbox onChange={() => onUseMonthlySubfoldersToggle()} checked={enableMonthlySubfolders} />
-          </CheckboxDiv>
-        </MonthlySubfolders>
-      </SettingItem>
-      <SettingItem name="Spectator SLP Directory" description="The folder where spectated games should be saved.">
-        <PathInput
-          value={spectateDir}
-          onSelect={setSpectateDir}
-          options={{
-            properties: ["openDirectory"],
-          }}
-          placeholder="No folder set"
-        />
-      </SettingItem>
     </div>
   );
 };
@@ -129,17 +89,4 @@ const ValidationContainer = styled.div`
   &.valid {
     color: ${({ theme }) => theme.palette.success.main};
   }
-`;
-
-const MonthlySubfolders = styled.div`
-  margin-top: 4px;
-  font-size: 14px;
-  color: ${({ theme }) => theme.palette.text.disabled};
-`;
-
-const CheckboxDiv = styled.div`
-  padding-left: 5px;
-  align-items: right;
-  display: inline-block;
-  height: 50%;
 `;
