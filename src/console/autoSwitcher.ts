@@ -57,13 +57,11 @@ export class AutoSwitcher extends EventEmitter {
           password: this.obsPassword,
         });
       } catch (err) {
-        if (err) {
-          this.emit(
-            MirrorEvent.ERROR,
-            "Could not connect to OBS, ensure you have OBS websocket installed and OBS is open.",
-          );
-          return;
-        }
+        this.emit(
+          MirrorEvent.ERROR,
+          "Could not connect to OBS, ensure you have OBS websocket installed and OBS is open.",
+        );
+        return;
       }
 
       this.obs.on("SceneItemAdded", async () => this._getSceneSources());
