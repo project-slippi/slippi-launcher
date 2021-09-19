@@ -1,4 +1,5 @@
 import { DolphinLaunchType } from "@dolphin/types";
+import { updateDolphinSettings } from "@dolphin/util";
 import electronSettings from "electron-settings";
 import fs from "fs";
 import merge from "lodash/merge";
@@ -7,7 +8,6 @@ import set from "lodash/set";
 import { defaultAppSettings } from "./defaultSettings";
 import { ipc_settingsUpdatedEvent } from "./ipc";
 import { AppSettings, StoredConnection } from "./types";
-import { updateDolphinSettings } from "@dolphin/util";
 
 electronSettings.configure({
   fileName: "Settings",
@@ -59,13 +59,13 @@ export class SettingsManager {
   }
 
   public async setRootSlpPath(slpPath: string): Promise<void> {
-    await updateDolphinSettings(slpPath, null);
     await this._set("settings.rootSlpPath", slpPath);
+    await updateDolphinSettings();
   }
 
   public async setUseMonthlySubfolders(toggle: boolean): Promise<void> {
-    await updateDolphinSettings(null, toggle);
     await this._set("settings.useMonthlySubfolders", toggle);
+    await updateDolphinSettings();
   }
 
   public async setSpectateSlpPath(slpPath: string): Promise<void> {

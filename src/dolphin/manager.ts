@@ -47,7 +47,7 @@ export class DolphinManager extends EventEmitter {
       throw new Error("Netplay dolphin is already open!");
     }
 
-    void this.syncDolphinPath();
+    void updateDolphinSettings();
 
     const dolphinPath = await findDolphinExecutable(DolphinLaunchType.NETPLAY);
     log.info(`Launching dolphin at path: ${dolphinPath}`);
@@ -66,7 +66,7 @@ export class DolphinManager extends EventEmitter {
   public async configureDolphin(launchType: DolphinLaunchType) {
     log.debug(`configuring ${launchType} dolphin...`);
 
-    void this.syncDolphinPath();
+    void updateDolphinSettings();
 
     const dolphinPath = await findDolphinExecutable(launchType);
     if (launchType === DolphinLaunchType.NETPLAY && !this.netplayDolphinInstance) {
