@@ -13,10 +13,11 @@ export interface PathInputProps {
   options?: OpenDialogOptions;
   endAdornment?: JSX.Element;
   disabled?: boolean;
+  tooltipText?: string;
 }
 
 export const PathInput = React.forwardRef<HTMLInputElement, PathInputProps>((props, ref) => {
-  const { value, placeholder, endAdornment, onSelect, options, disabled } = props;
+  const { value, placeholder, endAdornment, onSelect, options, disabled, tooltipText } = props;
   const onClick = async () => {
     const result = await remote.dialog.showOpenDialog({ properties: ["openFile"], ...options });
     const res = result.filePaths;
@@ -31,7 +32,7 @@ export const PathInput = React.forwardRef<HTMLInputElement, PathInputProps>((pro
         <CustomInput inputRef={ref} disabled={true} value={value} placeholder={placeholder} />
         {endAdornment}
       </InputContainer>
-      <Tooltip title={disabled ? "Can't change this setting while Dolphin is open." : ""}>
+      <Tooltip title={(disabled && tooltipText) ?? ""}>
         <span>
           <Button color="secondary" variant="contained" onClick={onClick} disabled={disabled}>
             Select

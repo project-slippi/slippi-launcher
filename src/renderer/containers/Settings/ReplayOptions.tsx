@@ -26,6 +26,7 @@ export const ReplayOptions: React.FC = () => {
       <SettingItem name="Root SLP Directory" description="The folder where your SLP replays should be saved.">
         <PathInput
           disabled={netplayDolphinOpen}
+          tooltipText="Can't change this setting while Dolphin is open"
           value={localReplayDir}
           onSelect={setLocalReplayDir}
           options={{
@@ -36,7 +37,7 @@ export const ReplayOptions: React.FC = () => {
       </SettingItem>
       <MonthlySubfolders>
         Save replays to monthly subfolders
-        <Tooltip title={netplayDolphinOpen ? "Can't change this setting while Dolphin is open." : ""}>
+        <Tooltip title={netplayDolphinOpen ? "Can't change this setting while Dolphin is open" : ""}>
           <CheckboxDiv>
             <Checkbox
               onChange={() => onUseMonthlySubfoldersToggle()}
@@ -73,7 +74,7 @@ export const ReplayOptions: React.FC = () => {
 };
 
 const MonthlySubfolders = styled.div`
-  margin-top: 4px;
+  margin-top: -20px;
   font-size: 14px;
   color: ${({ theme }) => theme.palette.text.disabled};
 `;
