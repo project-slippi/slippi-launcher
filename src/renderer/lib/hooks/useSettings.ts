@@ -1,12 +1,12 @@
 import { DolphinLaunchType } from "@dolphin/types";
 import {
+  ipc_setExtraSlpPaths,
   ipc_setIsoPath,
   ipc_setLaunchMeleeOnPlay,
   ipc_setNetplayDolphinPath,
   ipc_setPlaybackDolphinPath,
   ipc_setRootSlpPath,
   ipc_setSpectateSlpPath,
-  ipc_setExtraSlpPaths,
   ipc_setUseMonthlySubfolders,
 } from "@settings/ipc";
 import { AppSettings } from "@settings/types";

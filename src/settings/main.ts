@@ -5,13 +5,13 @@ import {
   ipc_addNewConnection,
   ipc_deleteConnection,
   ipc_editConnection,
+  ipc_setExtraSlpPaths,
   ipc_setIsoPath,
   ipc_setLaunchMeleeOnPlay,
   ipc_setNetplayDolphinPath,
   ipc_setPlaybackDolphinPath,
   ipc_setRootSlpPath,
   ipc_setSpectateSlpPath,
-  ipc_setExtraSlpPaths,
   ipc_setUseMonthlySubfolders,
 } from "./ipc";
 import { settingsManager } from "./settingsManager";

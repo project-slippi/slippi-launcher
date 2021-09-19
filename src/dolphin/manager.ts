@@ -1,3 +1,4 @@
+import { addGamePathToIni, findDolphinExecutable, findUserFolder, updateDolphinSettings } from "@dolphin/util";
 import { settingsManager } from "@settings/settingsManager";
 import electronLog from "electron-log";
 import { EventEmitter } from "events";
@@ -8,8 +9,6 @@ import path from "path";
 import { downloadAndInstallDolphin } from "./downloadDolphin";
 import { DolphinInstance, PlaybackDolphinInstance } from "./instance";
 import { DolphinLaunchType, ReplayCommunication } from "./types";
-import { addGamePathToIni, findDolphinExecutable, findUserFolder } from "./util";
-import { updateDolphinSettings } from "@dolphin/util";
 
 const log = electronLog.scope("dolphin/manager");
 
@@ -131,12 +130,6 @@ export class DolphinManager extends EventEmitter {
       const gameDir = path.dirname(isoPath);
       await addGamePathToIni(launchType, gameDir);
     }
-  }
-
-  private async syncDolphinPath() {
-    // It's possible for the Launcher and Dolphin's replay direcories to become
-    // desynced if the user sets settings via Dolphin, so update Dolphin's to match the launcher
-    void updateDolphinSettings(settingsManager.getRootSlpPath(), settingsManager.getUseMonthlySubfolders());
   }
 
   public async clearCache(launchType: DolphinLaunchType) {

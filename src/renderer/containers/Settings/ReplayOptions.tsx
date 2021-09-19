@@ -1,12 +1,12 @@
-import React from "react";
+import styled from "@emotion/styled";
 import Checkbox from "@material-ui/core/Checkbox";
 import Tooltip from "@material-ui/core/Tooltip";
-import styled from "@emotion/styled";
+import React from "react";
 
 import { MultiPathInput } from "@/components/MultiPathInput";
 import { PathInput } from "@/components/PathInput";
-import { useExtraSlpPaths, useRootSlpPath, useSpectateSlpPath, useMonthlySubfolders } from "@/lib/hooks/useSettings";
 import { useDolphinStore } from "@/lib/hooks/useDolphin";
+import { useExtraSlpPaths, useMonthlySubfolders, useRootSlpPath, useSpectateSlpPath } from "@/lib/hooks/useSettings";
 
 import { SettingItem } from "./SettingItem";
 

@@ -14,6 +14,7 @@ import React from "react";
 import { PathInput } from "@/components/PathInput";
 import { useIsoVerification } from "@/lib/hooks/useIsoVerification";
 import { useIsoPath, useLaunchMeleeOnPlay } from "@/lib/hooks/useSettings";
+
 import { SettingItem } from "./SettingItem";
 
 const renderValidityStatus = (isoValidity: IsoValidity) => {
