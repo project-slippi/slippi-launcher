@@ -26,7 +26,7 @@ export const ReplayOptions: React.FC = () => {
       <SettingItem name="Root SLP Directory" description="The folder where your SLP replays should be saved.">
         <PathInput
           disabled={netplayDolphinOpen}
-          tooltipText="Can't change this setting while Dolphin is open"
+          tooltipText={netplayDolphinOpen ? "Can't change this setting while Dolphin is open" : ""}
           value={localReplayDir}
           onSelect={setLocalReplayDir}
           options={{

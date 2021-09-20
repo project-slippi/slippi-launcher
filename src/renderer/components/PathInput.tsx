@@ -32,7 +32,7 @@ export const PathInput = React.forwardRef<HTMLInputElement, PathInputProps>((pro
         <CustomInput inputRef={ref} disabled={true} value={value} placeholder={placeholder} />
         {endAdornment}
       </InputContainer>
-      <Tooltip title={(disabled && tooltipText) ?? ""}>
+      <Tooltip title={tooltipText ?? ""}>
         <span>
           <Button color="secondary" variant="contained" onClick={onClick} disabled={disabled}>
             Select
