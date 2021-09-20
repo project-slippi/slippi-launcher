@@ -47,11 +47,11 @@ export class SettingsManager {
   }
 
   public getRootSlpPath(): string {
-    return this.appSettings.settings?.rootSlpPath as string;
+    return this.get().settings.rootSlpPath;
   }
 
   public getUseMonthlySubfolders(): boolean {
-    return this.appSettings.settings?.useMonthlySubfolders as boolean;
+    return this.get().settings.useMonthlySubfolders;
   }
 
   public async setIsoPath(isoPath: string | null): Promise<void> {
