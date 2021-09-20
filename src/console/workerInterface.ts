@@ -20,7 +20,12 @@ export const mirrorWorker: Promise<Thread & MirrorWorkerMethods> = new Promise((
       });
       worker.getErrorObservable().subscribe((errorMessage) => {
         mirrorLog.error(errorMessage);
-        const message = errorMessage instanceof Error ? errorMessage.message : errorMessage;
+        const message =
+          errorMessage instanceof Error
+            ? errorMessage.message
+            : typeof errorMessage === "string"
+            ? errorMessage
+            : JSON.stringify(errorMessage);
         ipc_consoleMirrorErrorMessageEvent.main!.trigger({ message }).catch(mirrorLog.error);
       });
       worker.getMirrorDetailsObservable().subscribe(({ playbackId, filePath, isRealtime }) => {
