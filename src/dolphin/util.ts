@@ -127,19 +127,19 @@ export async function addGamePathToIni(type: DolphinLaunchType, gameDir: string)
 }
 
 export async function updateDolphinSettings(): Promise<void> {
-  const replayPath = settingsManager.getRootSlpPath();
-  const useMonthlySubfolders = settingsManager.getUseMonthlySubfolders() ? "True" : "False";
   const userFolder = await findUserFolder(DolphinLaunchType.NETPLAY);
   const iniPath = path.join(userFolder, "Config", "Dolphin.ini");
   const iniFile = new IniFile();
   const updateSettings = () => {
-    const coreSelection = iniFile.getOrCreateSection("Core");
-    coreSelection.set("SlippiReplayDir", replayPath);
-    coreSelection.set("SlippiReplayMonthFolders", useMonthlySubfolders);
+    const replayPath = settingsManager.getRootSlpPath();
+    const useMonthlySubfolders = settingsManager.getUseMonthlySubfolders() ? "True" : "False";
+    const coreSection = iniFile.getOrCreateSection("Core");
+    coreSection.set("SlippiReplayDir", replayPath);
+    coreSection.set("SlippiReplayMonthFolders", useMonthlySubfolders);
   };
   if (await fileExists(iniPath)) {
     log.info("Found a Dolphin.ini to update...");
-    await iniFile.load(iniPath, false);
+    await iniFile.load(iniPath);
     updateSettings();
   } else {
     log.info("There isn't a Dolphin.ini to update...");
