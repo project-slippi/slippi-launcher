@@ -32,9 +32,10 @@ type FormValues = {
 export interface AddConnectionFormProps {
   defaultValues?: Partial<FormValues>;
   onSubmit: (values: FormValues) => void;
+  disabled: boolean;
 }
 
-export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultValues, onSubmit }) => {
+export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultValues, onSubmit, disabled }) => {
   const [showAdvanced, setShowAdvanced] = React.useState(false);
   const {
     handleSubmit,
@@ -67,6 +68,7 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
                 required={true}
                 error={Boolean(error)}
                 helperText={error ? error.message : undefined}
+                disabled={disabled}
               />
             )}
             rules={{ validate: (val) => isValidIpAddress(val) || "Invalid IP address" }}
@@ -82,6 +84,7 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
             options={{
               properties: ["openDirectory"],
             }}
+            disabled={disabled}
           />
           <FormHelperText error={Boolean(errors?.folderPath)}>{errors?.folderPath?.message}</FormHelperText>
         </section>
@@ -91,6 +94,7 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
             onChange={(checked) => setValue("isRealtime", checked)}
             label="Enable Real-time Mode"
             description="Prevents delay from accumulating when mirroring. Keep this off unless both the Wii and computer are on a wired LAN connection."
+            disabled={disabled}
           />
         </section>
 
@@ -140,6 +144,7 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
                   active. Requires <A href="https://github.com/Palakis/obs-websocket">OBS Websocket Plugin</A>.
                 </span>
               }
+              disabled={disabled}
             />
             <section>
               <Collapse in={enableAutoSwitcher}>
@@ -162,6 +167,7 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
                         required={enableAutoSwitcher}
                         error={Boolean(error)}
                         helperText={error ? error.message : undefined}
+                        disabled={disabled}
                       />
                     )}
                     rules={{
@@ -182,6 +188,7 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
                     value={obsPassword ?? ""}
                     onChange={(e) => setValue("obsPassword", e.target.value)}
                     type="password"
+                    disabled={disabled}
                   />
                 </div>
                 <TextField
@@ -189,6 +196,7 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
                   value={obsSourceName ?? ""}
                   required={enableAutoSwitcher}
                   onChange={(e) => setValue("obsSourceName", e.target.value)}
+                  disabled={disabled}
                 />
               </Collapse>
             </section>
@@ -198,6 +206,7 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
                 onChange={(checked) => setValue("enableRelay", checked)}
                 label="Enable Console Relay"
                 description="Allows external programs to read live game data by connecting to a local endpoint."
+                disabled={disabled}
               />
             </section>
             <section>
@@ -224,6 +233,7 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
                     error={!!error}
                     helperText={error ? error.message : null}
                     type="number"
+                    disabled={disabled}
                   />
                 )}
                 rules={{ validate: (val) => !isNaN(val) || "Invalid port number" }}
@@ -232,7 +242,7 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
           </Collapse>
         </div>
 
-        <Button type="submit" variant="contained" color="primary">
+        <Button type="submit" variant="contained" color="primary" disabled={disabled}>
           Submit
         </Button>
       </form>

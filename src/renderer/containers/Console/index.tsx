@@ -34,6 +34,7 @@ const Outer = styled.div`
 export const Console: React.FC = () => {
   const [isScanning, setIsScanning] = React.useState(false);
   const [modalOpen, setModalOpen] = React.useState(false);
+  const [disabled, setDisabled] = React.useState(false);
   const [currentFormValues, setCurrentFormValues] = React.useState<Partial<StoredConnection> | null>(null);
   const savedConnections = useSettings((store) => store.connections);
   const savedIps = savedConnections.map((conn) => conn.ipAddress);
@@ -101,8 +102,9 @@ export const Console: React.FC = () => {
               </Button>
               <SavedConnectionsList
                 availableConsoles={availableConsoles}
-                onEdit={(conn) => {
+                onEdit={(conn, disableForm) => {
                   setCurrentFormValues(conn);
+                  setDisabled(disableForm);
                   setModalOpen(true);
                 }}
                 onDelete={(conn) => deleteConsoleConnection(conn.id)}
@@ -136,6 +138,7 @@ export const Console: React.FC = () => {
         selectedConnection={currentFormValues}
         onSubmit={onSubmit}
         onCancel={onCancel}
+        disabled={disabled}
       />
     </Outer>
   );

@@ -10,6 +10,7 @@ export interface IconMenuItem {
   label: string;
   onClick: () => void;
   icon: React.ReactNode;
+  disabled?: boolean;
 }
 
 export interface IconMenuProps extends MenuProps {
@@ -21,7 +22,7 @@ export const IconMenu: React.FC<IconMenuProps> = (props) => {
   return (
     <Menu {...rest}>
       {items.map((item) => (
-        <MenuItem key={item.label} onClick={item.onClick}>
+        <MenuItem key={item.label} onClick={item.onClick} disabled={item.disabled}>
           <ListItemIcon
             css={css`
               margin-right: 10px;

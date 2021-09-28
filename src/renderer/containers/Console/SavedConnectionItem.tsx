@@ -8,7 +8,6 @@ import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import CardHeader from "@material-ui/core/CardHeader";
 import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import WarningIcon from "@material-ui/icons/Warning";
 import { StoredConnection } from "@settings/types";
@@ -32,7 +31,7 @@ export interface SavedConnectionItemProps {
   nintendontVersion: string | null;
   latestVersion: string;
   connection: StoredConnection;
-  onOpenMenu: (index: number, element: HTMLElement) => void;
+  onOpenMenu: (index: number, element: HTMLElement, isConnected: boolean) => void;
 }
 
 export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
@@ -66,13 +65,9 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
       <CardHeader
         avatar={<WiiIcon fill="#ffffff" width="40px" />}
         action={
-          <Tooltip disableHoverListener={!isConnected} title="Options disabled while connected">
-            <div>
-              <IconButton disabled={isConnected} onClick={(e) => onOpenMenu(index, e.currentTarget as HTMLElement)}>
-                <MoreVertIcon />
-              </IconButton>
-            </div>
-          </Tooltip>
+          <IconButton onClick={(e) => onOpenMenu(index, e.currentTarget as HTMLElement, isConnected)}>
+            <MoreVertIcon />
+          </IconButton>
         }
         title={title}
         subheader={statusName}

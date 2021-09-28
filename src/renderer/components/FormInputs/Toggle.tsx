@@ -10,14 +10,17 @@ export interface ToggleProps {
   description: string | React.ReactNode;
   value: boolean;
   onChange: (val: boolean) => void;
+  disabled?: boolean;
 }
 
-export const Toggle: React.FC<ToggleProps> = ({ label, description, value, onChange }) => {
+export const Toggle: React.FC<ToggleProps> = ({ label, description, value, onChange, disabled }) => {
   return (
     <div>
       <FormControlLabel
         labelPlacement="start"
-        control={<Switch checked={value} onChange={(e) => onChange(e.target.checked)} color="primary" />}
+        control={
+          <Switch checked={value} onChange={(e) => onChange(e.target.checked)} color="primary" disabled={disabled} />
+        }
         label={label}
         css={css`
           margin-left: 0;

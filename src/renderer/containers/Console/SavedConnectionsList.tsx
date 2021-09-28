@@ -18,19 +18,21 @@ import { SavedConnectionItem } from "./SavedConnectionItem";
 export interface SavedConnectionsListProps {
   availableConsoles: DiscoveredConsoleInfo[];
   onDelete: (conn: StoredConnection) => void;
-  onEdit: (conn: StoredConnection) => void;
+  onEdit: (conn: StoredConnection, disableForm: boolean) => void;
 }
 
 export const SavedConnectionsList: React.FC<SavedConnectionsListProps> = ({ availableConsoles, onEdit, onDelete }) => {
   const [menuItem, setMenuItem] = React.useState<null | {
     index: number;
     anchorEl: HTMLElement;
+    isConnected: boolean;
   }>(null);
 
-  const onOpenMenu = React.useCallback((index: number, target: any) => {
+  const onOpenMenu = React.useCallback((index: number, target: any, isConnected: boolean) => {
     setMenuItem({
       index,
       anchorEl: target,
+      isConnected,
     });
   }, []);
 
@@ -42,7 +44,7 @@ export const SavedConnectionsList: React.FC<SavedConnectionsListProps> = ({ avai
   };
 
   const handleDelete = () => {
-    if (menuItem && menuItem.index >= 0) {
+    if (menuItem && menuItem.index >= 0 && !menuItem.isConnected) {
       onDelete(savedConnections[menuItem.index]);
     }
     handleClose();
@@ -50,7 +52,7 @@ export const SavedConnectionsList: React.FC<SavedConnectionsListProps> = ({ avai
 
   const handleEdit = () => {
     if (menuItem && menuItem.index >= 0) {
-      onEdit(savedConnections[menuItem.index]);
+      onEdit(savedConnections[menuItem.index], menuItem.isConnected);
     }
     handleClose();
   };
@@ -103,6 +105,7 @@ export const SavedConnectionsList: React.FC<SavedConnectionsListProps> = ({ avai
             onClick: handleDelete,
             icon: <DeleteIcon fontSize="small" />,
             label: "Delete",
+            disabled: menuItem?.isConnected ?? false,
           },
         ]}
       />
