@@ -10,6 +10,7 @@ export interface StoredConnection {
   obsSourceName?: string;
   obsPassword?: string;
   enableRelay: boolean;
+  useNicknameFolders: boolean;
 }
 
 export type AppSettings = {

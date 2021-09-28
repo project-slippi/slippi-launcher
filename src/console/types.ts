@@ -19,6 +19,7 @@ export interface MirrorConfig {
   isRealtime: boolean;
   enableRelay: boolean;
   autoSwitcherSettings?: AutoSwitcherSettings;
+  useNicknameFolders: boolean;
 }
 
 export interface MirrorDetails extends MirrorConfig {

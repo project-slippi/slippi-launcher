@@ -27,6 +27,7 @@ type FormValues = {
   obsSourceName?: string;
   obsPassword?: string;
   enableRelay: boolean;
+  useNicknameFolders: boolean;
 };
 
 export interface AddConnectionFormProps {

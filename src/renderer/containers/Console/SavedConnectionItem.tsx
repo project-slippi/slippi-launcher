@@ -96,7 +96,7 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
                 font-size: 14px;
               `}
             >
-              {path.join(connection.folderPath, nickname ?? "")}
+              {connection.useNicknameFolders ? path.join(connection.folderPath, nickname ?? "") : connection.folderPath}
             </span>
           </LabelledText>
           {connection.enableRelay && (

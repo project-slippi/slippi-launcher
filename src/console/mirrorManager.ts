@@ -90,11 +90,12 @@ export class MirrorManager extends EventEmitter {
       connection.on(ConnectionEvent.HANDSHAKE, (details: ConnectionDetails) => {
         this.emit(MirrorEvent.LOG, "Got handshake from wii");
         this.emit(MirrorEvent.LOG, details);
+        if (config.useNicknameFolders) {
+          const replayFolder = path.join(config.folderPath, details.consoleNick);
+          fs.ensureDirSync(replayFolder);
 
-        const replayFolder = path.join(config.folderPath, details.consoleNick);
-        fs.ensureDirSync(replayFolder);
-
-        fileWriter.updateSettings({ consoleNickname: details.consoleNick, folderPath: replayFolder });
+          fileWriter.updateSettings({ consoleNickname: details.consoleNick, folderPath: replayFolder });
+        }
 
         this.emit(MirrorEvent.MIRROR_STATUS_CHANGE, {
           ip: config.ipAddress,

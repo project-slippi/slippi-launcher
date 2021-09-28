@@ -38,6 +38,7 @@ export const connectToConsole = async (conn: StoredConnection) => {
     folderPath: conn.folderPath,
     isRealtime: conn.isRealtime,
     enableRelay: conn.enableRelay,
+    useNicknameFolders: conn.useNicknameFolders,
   };
 
   // Add OBS config if necessary

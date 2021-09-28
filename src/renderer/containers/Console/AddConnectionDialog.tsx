@@ -44,6 +44,7 @@ export const AddConnectionDialog: React.FC<AddConnectionDialogProps> = ({
       port: Ports.DEFAULT,
       enableRelay: false,
       enableAutoSwitcher: false,
+      useNicknameFolders: true,
     },
     selectedConnection,
   );
