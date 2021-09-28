@@ -12,6 +12,7 @@ import MoreVertIcon from "@material-ui/icons/MoreVert";
 import WarningIcon from "@material-ui/icons/Warning";
 import { StoredConnection } from "@settings/types";
 import { ConnectionStatus, Ports } from "@slippi/slippi-js";
+import path from "path";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
 import { lt } from "semver";
@@ -95,7 +96,7 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
                 font-size: 14px;
               `}
             >
-              {connection.folderPath}
+              {path.join(connection.folderPath, nickname ?? "")}
             </span>
           </LabelledText>
           {connection.enableRelay && (
