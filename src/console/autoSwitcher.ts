@@ -59,7 +59,7 @@ export class AutoSwitcher extends EventEmitter {
       } catch (err) {
         this.emit(
           MirrorEvent.ERROR,
-          "Could not connect to OBS, ensure you have OBS websocket installed and OBS is open.",
+          "Could not connect to OBS, ensure you have OBS websocket installed, OBS is open, and the password is correct if using one.",
         );
         return;
       }

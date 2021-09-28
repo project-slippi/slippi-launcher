@@ -44,6 +44,7 @@ export const connectToConsole = async (conn: StoredConnection) => {
   if (conn.enableAutoSwitcher && conn.obsIP && conn.obsSourceName) {
     config.autoSwitcherSettings = {
       ip: conn.obsIP,
+      password: conn.obsPassword,
       sourceName: conn.obsSourceName,
     };
   }
