@@ -13,6 +13,7 @@ import React from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import { ExternalLink as A } from "@/components/ExternalLink";
+import { Checkbox } from "@/components/FormInputs/Checkbox";
 import { Toggle } from "@/components/FormInputs/Toggle";
 import { PathInput } from "@/components/PathInput";
 import { isValidIpAddress, isValidIpAndPort } from "@/lib/validate";
@@ -51,6 +52,7 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
   const obsPassword = watch("obsPassword");
   const obsSourceName = watch("obsSourceName");
   const enableRelay = watch("enableRelay");
+  const useNicknameFolders = watch("useNicknameFolders");
 
   const onFormSubmit = handleSubmit(onSubmit);
 
@@ -88,6 +90,12 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
             disabled={disabled}
           />
           <FormHelperText error={Boolean(errors?.folderPath)}>{errors?.folderPath?.message}</FormHelperText>
+          <Checkbox
+            onChange={() => setValue("useNicknameFolders", !useNicknameFolders)}
+            checked={useNicknameFolders}
+            disabled={disabled}
+            label={<CheckboxDescription>Save replays to subfolders based on console nickname</CheckboxDescription>}
+          />
         </section>
         <section>
           <Toggle
@@ -283,4 +291,9 @@ const Notice = styled.div`
     margin-right: 5px;
   }
   margin-bottom: 20px;
+`;
+
+const CheckboxDescription = styled.span`
+  font-size: 14px;
+  color: ${({ theme }) => theme.palette.text.disabled};
 `;
