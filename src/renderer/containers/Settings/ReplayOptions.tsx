@@ -36,7 +36,6 @@ export const ReplayOptions: React.FC = () => {
         />
       </SettingItem>
       <MonthlySubfolders>
-        Save replays to monthly subfolders
         <Tooltip title={netplayDolphinOpen ? "Can't change this setting while Dolphin is open" : ""}>
           <CheckboxDiv>
             <Checkbox
@@ -46,6 +45,7 @@ export const ReplayOptions: React.FC = () => {
             />
           </CheckboxDiv>
         </Tooltip>
+        Save replays to monthly subfolders
       </MonthlySubfolders>
       <SettingItem name="Spectator SLP Directory" description="The folder where spectated games should be saved.">
         <PathInput
@@ -80,7 +80,7 @@ const MonthlySubfolders = styled.div`
 `;
 
 const CheckboxDiv = styled.div`
-  padding-left: 5px;
+  padding-right: 5px;
   align-items: right;
   display: inline-block;
   height: 50%;
