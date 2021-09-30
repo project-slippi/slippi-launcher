@@ -1,8 +1,9 @@
+/** @jsx jsx */
+import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
-import Checkbox from "@material-ui/core/Checkbox";
-import Tooltip from "@material-ui/core/Tooltip";
 import React from "react";
 
+import { Checkbox } from "@/components/FormInputs/Checkbox";
 import { MultiPathInput } from "@/components/MultiPathInput";
 import { PathInput } from "@/components/PathInput";
 import { useDolphinStore } from "@/lib/hooks/useDolphin";
@@ -26,7 +27,7 @@ export const ReplayOptions: React.FC = () => {
       <SettingItem name="Root SLP Directory" description="The folder where your SLP replays should be saved.">
         <PathInput
           disabled={netplayDolphinOpen}
-          tooltipText={netplayDolphinOpen ? "Can't change this setting while Dolphin is open" : ""}
+          tooltipText={netplayDolphinOpen ? "Close Dolphin to change this setting" : ""}
           value={localReplayDir}
           onSelect={setLocalReplayDir}
           options={{
@@ -34,19 +35,17 @@ export const ReplayOptions: React.FC = () => {
           }}
           placeholder="No folder set"
         />
+        <Checkbox
+          css={css`
+            margin-top: 5px;
+          `}
+          onChange={() => onUseMonthlySubfoldersToggle()}
+          checked={enableMonthlySubfolders}
+          disabled={netplayDolphinOpen}
+          hoverText={netplayDolphinOpen ? "Close Dolphin to change this setting" : ""}
+          label={<CheckboxDescription>Save replays to monthly subfolders</CheckboxDescription>}
+        />
       </SettingItem>
-      <MonthlySubfolders>
-        <Tooltip title={netplayDolphinOpen ? "Can't change this setting while Dolphin is open" : ""}>
-          <CheckboxDiv>
-            <Checkbox
-              onChange={() => onUseMonthlySubfoldersToggle()}
-              checked={enableMonthlySubfolders}
-              disabled={netplayDolphinOpen}
-            />
-          </CheckboxDiv>
-        </Tooltip>
-        Save replays to monthly subfolders
-      </MonthlySubfolders>
       <SettingItem name="Spectator SLP Directory" description="The folder where spectated games should be saved.">
         <PathInput
           value={spectateDir}
@@ -73,15 +72,7 @@ export const ReplayOptions: React.FC = () => {
   );
 };
 
-const MonthlySubfolders = styled.div`
-  margin-top: -20px;
+const CheckboxDescription = styled.span`
   font-size: 14px;
   color: ${({ theme }) => theme.palette.text.disabled};
-`;
-
-const CheckboxDiv = styled.div`
-  margin-left: -10px;
-  align-items: right;
-  display: inline-block;
-  height: 50%;
 `;
