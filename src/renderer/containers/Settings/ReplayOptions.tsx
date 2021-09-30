@@ -80,7 +80,7 @@ const MonthlySubfolders = styled.div`
 `;
 
 const CheckboxDiv = styled.div`
-  padding-right: 5px;
+  margin-left: -10px;
   align-items: right;
   display: inline-block;
   height: 50%;
