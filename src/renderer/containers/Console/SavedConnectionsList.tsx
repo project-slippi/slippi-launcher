@@ -18,7 +18,7 @@ import { SavedConnectionItem } from "./SavedConnectionItem";
 export interface SavedConnectionsListProps {
   availableConsoles: DiscoveredConsoleInfo[];
   onDelete: (conn: StoredConnection) => void;
-  onEdit: (conn: StoredConnection, disableForm: boolean) => void;
+  onEdit: (conn: StoredConnection & { isConnected: boolean }) => void;
 }
 
 export const SavedConnectionsList: React.FC<SavedConnectionsListProps> = ({ availableConsoles, onEdit, onDelete }) => {
@@ -52,7 +52,7 @@ export const SavedConnectionsList: React.FC<SavedConnectionsListProps> = ({ avai
 
   const handleEdit = () => {
     if (menuItem && menuItem.index >= 0) {
-      onEdit(savedConnections[menuItem.index], menuItem.isConnected);
+      onEdit({ ...savedConnections[menuItem.index], isConnected: menuItem.isConnected });
     }
     handleClose();
   };
@@ -105,7 +105,7 @@ export const SavedConnectionsList: React.FC<SavedConnectionsListProps> = ({ avai
             onClick: handleDelete,
             icon: <DeleteIcon fontSize="small" />,
             label: "Delete",
-            disabled: menuItem?.isConnected ?? false,
+            disabled: menuItem?.isConnected,
           },
         ]}
       />

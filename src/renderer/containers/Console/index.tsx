@@ -102,9 +102,9 @@ export const Console: React.FC = () => {
               </Button>
               <SavedConnectionsList
                 availableConsoles={availableConsoles}
-                onEdit={(conn, disableForm) => {
+                onEdit={(conn) => {
                   setCurrentFormValues(conn);
-                  setDisabled(disableForm);
+                  setDisabled(conn.isConnected);
                   setModalOpen(true);
                 }}
                 onDelete={(conn) => deleteConsoleConnection(conn.id)}
