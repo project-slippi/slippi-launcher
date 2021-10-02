@@ -12,7 +12,12 @@ import {
   ipc_consoleMirrorStatusUpdatedEvent,
   ipc_discoveredConsolesUpdatedEvent,
 } from "@console/ipc";
-import { ipc_dolphinClosedEvent, ipc_dolphinDownloadLogReceivedEvent } from "@dolphin/ipc";
+import {
+  ipc_dolphinClosedEvent,
+  ipc_dolphinDownloadLogReceivedEvent,
+  ipc_externalDolphinClosedEvent,
+  ipc_externalDolphinOpenedEvent,
+} from "@dolphin/ipc";
 import { ipc_loadProgressUpdatedEvent, ipc_statsPageRequestedEvent } from "@replays/ipc";
 import { ipc_openSettingsModalEvent, ipc_settingsUpdatedEvent } from "@settings/ipc";
 import {
@@ -229,6 +234,20 @@ export const useAppListeners = () => {
 
   const setDolphinOpen = useDolphinStore((store) => store.setDolphinOpen);
   ipc_dolphinClosedEvent.renderer!.useEvent(
+    async ({ dolphinType }) => {
+      setDolphinOpen(dolphinType, false);
+    },
+    [setDolphinOpen],
+  );
+
+  ipc_externalDolphinOpenedEvent.renderer!.useEvent(
+    async ({ dolphinType }) => {
+      setDolphinOpen(dolphinType, true);
+    },
+    [setDolphinOpen],
+  );
+
+  ipc_externalDolphinClosedEvent.renderer!.useEvent(
     async ({ dolphinType }) => {
       setDolphinOpen(dolphinType, false);
     },

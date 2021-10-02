@@ -36,6 +36,7 @@
     "electron-settings": "^4.0.2",
     "electron-updater": "^4.3.9",
     "extract-dmg": "^1.0.0",
+    "find-process": "^1.4.5",
     "firebase": "^8.1.2",
     "fs-extra": "^9.0.1",
     "graphql": "^15.4.0",
