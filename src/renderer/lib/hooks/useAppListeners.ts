@@ -240,17 +240,18 @@ export const useAppListeners = () => {
     [setDolphinOpen],
   );
 
+  const setExternalDolphinOpen = useDolphinStore((store) => store.setExternalDolphinOpen);
   ipc_externalDolphinOpenedEvent.renderer!.useEvent(
     async ({ dolphinType }) => {
-      setDolphinOpen(dolphinType, true);
+      setExternalDolphinOpen(dolphinType, true);
     },
-    [setDolphinOpen],
+    [setExternalDolphinOpen],
   );
 
   ipc_externalDolphinClosedEvent.renderer!.useEvent(
     async ({ dolphinType }) => {
-      setDolphinOpen(dolphinType, false);
+      setExternalDolphinOpen(dolphinType, false);
     },
-    [setDolphinOpen],
+    [setExternalDolphinOpen],
   );
 };

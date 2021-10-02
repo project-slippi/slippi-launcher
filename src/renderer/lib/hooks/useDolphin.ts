@@ -20,13 +20,36 @@ export const useDolphinStore = create(
     {
       netplayDolphinOpen: false,
       playbackDolphinOpen: false,
+      internalNetplayOpen: false,
+      internalPlaybackOpen: false,
+      externalNetplayOpen: false,
+      externalPlaybackOpen: false,
     },
-    (set) => ({
+    (set, get) => ({
       setDolphinOpen: (dolphinType: DolphinLaunchType, val = true) => {
         if (dolphinType === DolphinLaunchType.NETPLAY) {
-          set({ netplayDolphinOpen: val });
+          set({ internalNetplayOpen: val });
+          if (val || !get().externalNetplayOpen) {
+            set({ netplayDolphinOpen: val });
+          }
         } else {
-          set({ playbackDolphinOpen: val });
+          set({ internalPlaybackOpen: val });
+          if (val || !get().externalNetplayOpen) {
+            set({ playbackDolphinOpen: val });
+          }
+        }
+      },
+      setExternalDolphinOpen: (dolphinType: DolphinLaunchType, val = true) => {
+        if (dolphinType === DolphinLaunchType.NETPLAY) {
+          set({ externalNetplayOpen: val });
+          if (val || !get().internalNetplayOpen) {
+            set({ netplayDolphinOpen: val });
+          }
+        } else {
+          set({ externalPlaybackOpen: val });
+          if (val || !get().internalPlaybackOpen) {
+            set({ playbackDolphinOpen: val });
+          }
         }
       },
     }),
