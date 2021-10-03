@@ -32,7 +32,7 @@ export interface SavedConnectionItemProps {
   nintendontVersion: string | null;
   latestVersion: string;
   connection: StoredConnection;
-  onOpenMenu: (index: number, element: HTMLElement, isConnected: boolean) => void;
+  onOpenMenu: (index: number, element: HTMLElement, ipAddress: string) => void;
 }
 
 export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
@@ -66,7 +66,7 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
       <CardHeader
         avatar={<WiiIcon fill="#ffffff" width="40px" />}
         action={
-          <IconButton onClick={(e) => onOpenMenu(index, e.currentTarget as HTMLElement, isConnected)}>
+          <IconButton onClick={(e) => onOpenMenu(index, e.currentTarget as HTMLElement, connection.ipAddress)}>
             <MoreVertIcon />
           </IconButton>
         }
