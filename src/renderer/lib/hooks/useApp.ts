@@ -43,7 +43,6 @@ export const useAppInitialization = () => {
 
   const initialize = async () => {
     if (initialized) {
-      console.log("App is already initialized!");
       return;
     }
 
