@@ -25,24 +25,37 @@ export const SavedConnectionsList: React.FC<SavedConnectionsListProps> = ({ avai
   const [menuItem, setMenuItem] = React.useState<null | {
     index: number;
     anchorEl: HTMLElement;
+    ipAddress: string;
   }>(null);
 
-  const onOpenMenu = React.useCallback((index: number, target: any) => {
+  const onOpenMenu = React.useCallback((index: number, target: any, ipAddress: string) => {
     setMenuItem({
       index,
       anchorEl: target,
+      ipAddress,
     });
   }, []);
 
   const connectedConsoles = useConsoleDiscoveryStore((store) => store.connectedConsoles);
   const savedConnections = useSettings((store) => store.connections);
 
+  const consoleIsConnected = React.useCallback(
+    (ipAddress?: string): boolean => {
+      if (!ipAddress) {
+        return false;
+      }
+      const status = connectedConsoles[ipAddress]?.status ?? null;
+      return status !== null && status !== ConnectionStatus.DISCONNECTED;
+    },
+    [connectedConsoles],
+  );
+
   const handleClose = () => {
     setMenuItem(null);
   };
 
   const handleDelete = () => {
-    if (menuItem && menuItem.index >= 0) {
+    if (menuItem && menuItem.index >= 0 && !consoleIsConnected(menuItem.ipAddress)) {
       onDelete(savedConnections[menuItem.index]);
     }
     handleClose();
@@ -103,6 +116,7 @@ export const SavedConnectionsList: React.FC<SavedConnectionsListProps> = ({ avai
             onClick: handleDelete,
             icon: <DeleteIcon fontSize="small" />,
             label: "Delete",
+            disabled: consoleIsConnected(menuItem?.ipAddress),
           },
         ]}
       />

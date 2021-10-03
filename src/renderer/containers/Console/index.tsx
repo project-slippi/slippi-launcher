@@ -4,6 +4,7 @@ import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import AddIcon from "@material-ui/icons/Add";
 import { StoredConnection } from "@settings/types";
+import { ConnectionStatus } from "@slippi/slippi-js";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
 
@@ -38,7 +39,19 @@ export const Console: React.FC = () => {
   const savedConnections = useSettings((store) => store.connections);
   const savedIps = savedConnections.map((conn) => conn.ipAddress);
   const availableConsoles = useConsoleDiscoveryStore((store) => store.consoleItems);
+  const connectedConsoles = useConsoleDiscoveryStore((store) => store.connectedConsoles);
   const consoleItemsToShow = availableConsoles.filter((item) => !savedIps.includes(item.ip));
+  const consoleIsConnected = React.useCallback(
+    (ipAddress?: string): boolean => {
+      if (!ipAddress) {
+        return false;
+      }
+      const status = connectedConsoles[ipAddress]?.status ?? null;
+      return status !== null && status !== ConnectionStatus.DISCONNECTED;
+    },
+    [connectedConsoles],
+  );
+
   const { addToast } = useToasts();
 
   React.useEffect(() => {
@@ -136,6 +149,7 @@ export const Console: React.FC = () => {
         selectedConnection={currentFormValues}
         onSubmit={onSubmit}
         onCancel={onCancel}
+        disabled={consoleIsConnected(currentFormValues?.ipAddress)}
       />
     </Outer>
   );

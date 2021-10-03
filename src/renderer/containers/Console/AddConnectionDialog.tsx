@@ -19,6 +19,7 @@ export interface AddConnectionDialogProps {
   selectedConnection: Partial<StoredConnection> | null;
   onSubmit: (conn: Omit<StoredConnection, "id">) => void;
   onCancel: () => void;
+  disabled: boolean;
 }
 
 export const AddConnectionDialog: React.FC<AddConnectionDialogProps> = ({
@@ -26,6 +27,7 @@ export const AddConnectionDialog: React.FC<AddConnectionDialogProps> = ({
   selectedConnection,
   onSubmit,
   onCancel,
+  disabled,
 }) => {
   const spectateFolder = useSettings((store) => store.settings.spectateSlpPath);
   const isEditing = Boolean(selectedConnection && selectedConnection.id);
@@ -42,6 +44,7 @@ export const AddConnectionDialog: React.FC<AddConnectionDialogProps> = ({
       port: Ports.DEFAULT,
       enableRelay: false,
       enableAutoSwitcher: false,
+      useNicknameFolders: true,
     },
     selectedConnection,
   );
@@ -61,7 +64,7 @@ export const AddConnectionDialog: React.FC<AddConnectionDialogProps> = ({
             padding-bottom: 20px;
           `}
         >
-          <AddConnectionForm defaultValues={defaultValues} onSubmit={onSubmit} />
+          <AddConnectionForm defaultValues={defaultValues} onSubmit={onSubmit} disabled={disabled} />
         </div>
       </DialogContent>
     </Dialog>
