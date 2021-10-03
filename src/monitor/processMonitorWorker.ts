@@ -3,6 +3,7 @@
 // when in Node worker context.
 
 import { DolphinLaunchType } from "@dolphin/types";
+import { isLinux } from "common/constants";
 import find from "find-process";
 import { ModuleMethods } from "threads/dist/types/master";
 import { Observable, Subject } from "threads/observable";
@@ -23,6 +24,7 @@ const dolphinProcessId = {
 };
 
 const processMonitor = async () => {
+  const binaryName = isLinux ? "Slippi_Online" : "Slippi Dolphin";
   if (dolphinProcessId.netplay) {
     const process = await find("pid", dolphinProcessId.netplay);
     if (process.length === 0) {
@@ -39,10 +41,12 @@ const processMonitor = async () => {
   }
 
   if (!dolphinProcessId.netplay || !dolphinProcessId.playback) {
-    const processes = await find("name", "Slippi Dolphin");
+    const processes = await find("name", binaryName);
     processes.forEach(async (process) => {
-      // break early if the parent is the launcher cause then we have control of the process already
-      if (process.ppid !== undefined) {
+      // break early if the parent is the launcher cause then we have control of the process already.
+      // on linux the Launcher doesn't seem to be the parent so skip this.
+      // we will end up  double counting because of that but it is probably fine.
+      if (!isLinux && process.ppid !== undefined) {
         const parentProcess = await find("pid", process.ppid);
         if (
           parentProcess &&
@@ -69,7 +73,7 @@ const logSubject = new Subject<string>();
 const errorSubject = new Subject<Error | string>();
 const processStatusSubject = new Subject<{ isRunning: boolean; dolphinType: DolphinLaunchType }>();
 
-const timer: NodeJS.Timeout | null = setInterval(processMonitor, 10000);
+const timer = setInterval(processMonitor, 10000);
 
 const methods: WorkerSpec = {
   async destroyWorker(): Promise<void> {
