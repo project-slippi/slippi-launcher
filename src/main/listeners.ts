@@ -3,7 +3,6 @@ import "@dolphin/main";
 import "@replays/main";
 import "@settings/main";
 import "@console/main";
-import "@monitor/main";
 
 import { settingsManager } from "@settings/settingsManager";
 import { isDevelopment } from "common/constants";

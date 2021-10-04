@@ -1,3 +1,5 @@
+import "./workerInterface";
+
 import { isLinux, isMac } from "common/constants";
 import { app } from "electron";
 import * as fs from "fs-extra";
