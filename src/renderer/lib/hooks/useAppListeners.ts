@@ -241,17 +241,11 @@ export const useAppListeners = () => {
   );
 
   const setExternalDolphinOpen = useDolphinStore((store) => store.setExternalDolphinOpen);
-  ipc_externalDolphinOpenedEvent.renderer!.useEvent(
-    async ({ dolphinType }) => {
-      setExternalDolphinOpen(dolphinType, true);
-    },
-    [setExternalDolphinOpen],
-  );
+  ipc_externalDolphinOpenedEvent.renderer!.useEvent(async () => {
+    setExternalDolphinOpen(true);
+  }, [setExternalDolphinOpen]);
 
-  ipc_externalDolphinClosedEvent.renderer!.useEvent(
-    async ({ dolphinType }) => {
-      setExternalDolphinOpen(dolphinType, false);
-    },
-    [setExternalDolphinOpen],
-  );
+  ipc_externalDolphinClosedEvent.renderer!.useEvent(async () => {
+    setExternalDolphinOpen(false);
+  }, [setExternalDolphinOpen]);
 };

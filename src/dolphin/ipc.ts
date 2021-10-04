@@ -62,17 +62,17 @@ export const ipc_dolphinDownloadLogReceivedEvent = makeEndpoint.renderer(
   <{ message: string }>_,
 );
 
-export const ipc_externalDolphinOpenedEvent = makeEndpoint.renderer(
-  "dolphin_externalDolphinOpenedEvent",
-  <{ dolphinType: DolphinLaunchType }>_,
-);
-
 export const ipc_dolphinClosedEvent = makeEndpoint.renderer(
   "dolphin_dolphinClosed",
   <{ dolphinType: DolphinLaunchType }>_,
 );
 
+export const ipc_externalDolphinOpenedEvent = makeEndpoint.renderer(
+  "dolphin_externalDolphinOpenedEvent",
+  <EmptyPayload>_,
+);
+
 export const ipc_externalDolphinClosedEvent = makeEndpoint.renderer(
   "dolphin_externalDolphinClosedEvent",
-  <{ dolphinType: DolphinLaunchType }>_,
+  <EmptyPayload>_,
 );

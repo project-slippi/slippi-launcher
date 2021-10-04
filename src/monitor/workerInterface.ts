@@ -19,12 +19,11 @@ export const processMonitorWorker: Promise<Thread & ProcessMonitorWorkerMethods>
       worker.getErrorObservable().subscribe((errorMessage) => {
         processMonitorLog.error(errorMessage);
       });
-      worker.getProcessStatusObservable().subscribe(({ isRunning, dolphinType }) => {
-        processMonitorLog.info(`${dolphinType} is ${isRunning ? "open" : "closed"}`);
-        if (isRunning) {
-          void ipc_externalDolphinOpenedEvent.main!.trigger({ dolphinType });
+      worker.getProcessStatusObservable().subscribe(({ externalOpened }) => {
+        if (externalOpened) {
+          void ipc_externalDolphinOpenedEvent.main!.trigger({});
         } else {
-          void ipc_externalDolphinClosedEvent.main!.trigger({ dolphinType });
+          void ipc_externalDolphinClosedEvent.main!.trigger({});
         }
       });
 
