@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
 import InputBase from "@material-ui/core/InputBase";
 import Paper from "@material-ui/core/Paper";
+import Tooltip from "@material-ui/core/Tooltip";
 import { OpenDialogOptions, remote } from "electron";
 import React from "react";
 
@@ -12,10 +13,11 @@ export interface PathInputProps {
   options?: OpenDialogOptions;
   endAdornment?: JSX.Element;
   disabled?: boolean;
+  tooltipText?: string;
 }
 
 export const PathInput = React.forwardRef<HTMLInputElement, PathInputProps>((props, ref) => {
-  const { value, placeholder, endAdornment, onSelect, options, disabled } = props;
+  const { value, placeholder, endAdornment, onSelect, options, disabled, tooltipText } = props;
   const onClick = async () => {
     const result = await remote.dialog.showOpenDialog({ properties: ["openFile"], ...options });
     const res = result.filePaths;
@@ -30,9 +32,13 @@ export const PathInput = React.forwardRef<HTMLInputElement, PathInputProps>((pro
         <CustomInput inputRef={ref} disabled={true} value={value} placeholder={placeholder} />
         {endAdornment}
       </InputContainer>
-      <Button color="secondary" variant="contained" onClick={onClick} disabled={disabled}>
-        Select
-      </Button>
+      <Tooltip title={tooltipText ?? ""}>
+        <span>
+          <Button color="secondary" variant="contained" onClick={onClick} disabled={disabled}>
+            Select
+          </Button>
+        </span>
+      </Tooltip>
     </Outer>
   );
 });

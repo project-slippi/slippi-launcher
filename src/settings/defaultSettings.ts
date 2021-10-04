@@ -16,6 +16,7 @@ export const defaultAppSettings: AppSettings = {
   settings: {
     isoPath: null,
     rootSlpPath: getDefaultRootSlpPath(),
+    useMonthlySubfolders: false,
     spectateSlpPath: path.join(getDefaultRootSlpPath(), "Spectate"),
     extraSlpPaths: [],
     netplayDolphinPath: path.join(app.getPath("userData"), "netplay"),

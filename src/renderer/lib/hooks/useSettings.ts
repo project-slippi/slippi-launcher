@@ -1,12 +1,13 @@
 import { DolphinLaunchType } from "@dolphin/types";
 import {
+  ipc_setExtraSlpPaths,
   ipc_setIsoPath,
   ipc_setLaunchMeleeOnPlay,
   ipc_setNetplayDolphinPath,
   ipc_setPlaybackDolphinPath,
   ipc_setRootSlpPath,
   ipc_setSpectateSlpPath,
-  ipc_setExtraSlpPaths,
+  ipc_setUseMonthlySubfolders,
 } from "@settings/ipc";
 import { AppSettings } from "@settings/types";
 import { ipcRenderer } from "electron";
@@ -47,6 +48,17 @@ export const useRootSlpPath = () => {
     }
   };
   return [rootSlpPath, setReplayDir] as const;
+};
+
+export const useMonthlySubfolders = () => {
+  const useMonthlySubfolders = useSettings((store) => store.settings.useMonthlySubfolders);
+  const setUseMonthlySubfolders = async (toggle: boolean) => {
+    const setResult = await ipc_setUseMonthlySubfolders.renderer!.trigger({ toggle });
+    if (!setResult.result) {
+      throw new Error("Error setting use monthly subfolders");
+    }
+  };
+  return [useMonthlySubfolders, setUseMonthlySubfolders] as const;
 };
 
 export const useSpectateSlpPath = () => {

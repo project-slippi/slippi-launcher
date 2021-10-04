@@ -19,6 +19,7 @@ export type AppSettings = {
   settings: {
     isoPath: string | null;
     rootSlpPath: string;
+    useMonthlySubfolders: boolean;
     spectateSlpPath: string;
     extraSlpPaths: string[];
     netplayDolphinPath: string;

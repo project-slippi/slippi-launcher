@@ -1,3 +1,4 @@
+import { addGamePathToIni, findDolphinExecutable, findUserFolder, updateDolphinSettings } from "@dolphin/util";
 import { settingsManager } from "@settings/settingsManager";
 import electronLog from "electron-log";
 import { EventEmitter } from "events";
@@ -8,7 +9,6 @@ import path from "path";
 import { downloadAndInstallDolphin } from "./downloadDolphin";
 import { DolphinInstance, PlaybackDolphinInstance } from "./instance";
 import { DolphinLaunchType, ReplayCommunication } from "./types";
-import { addGamePathToIni, findDolphinExecutable, findUserFolder } from "./util";
 
 const log = electronLog.scope("dolphin/manager");
 
@@ -46,6 +46,8 @@ export class DolphinManager extends EventEmitter {
       throw new Error("Netplay dolphin is already open!");
     }
 
+    await updateDolphinSettings();
+
     const dolphinPath = await findDolphinExecutable(DolphinLaunchType.NETPLAY);
     log.info(`Launching dolphin at path: ${dolphinPath}`);
     const launchMeleeOnPlay = settingsManager.get().settings.launchMeleeOnPlay;
@@ -62,6 +64,9 @@ export class DolphinManager extends EventEmitter {
 
   public async configureDolphin(launchType: DolphinLaunchType) {
     log.debug(`configuring ${launchType} dolphin...`);
+
+    await updateDolphinSettings();
+
     const dolphinPath = await findDolphinExecutable(launchType);
     if (launchType === DolphinLaunchType.NETPLAY && !this.netplayDolphinInstance) {
       const instance = new DolphinInstance(dolphinPath);

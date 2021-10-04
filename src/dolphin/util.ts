@@ -126,6 +126,29 @@ export async function addGamePathToIni(type: DolphinLaunchType, gameDir: string)
   log.info(`Finished updating ${type} dolphin...`);
 }
 
+export async function updateDolphinSettings(): Promise<void> {
+  const userFolder = await findUserFolder(DolphinLaunchType.NETPLAY);
+  const iniPath = path.join(userFolder, "Config", "Dolphin.ini");
+  const iniFile = new IniFile();
+  const updateSettings = () => {
+    const replayPath = settingsManager.getRootSlpPath();
+    const useMonthlySubfolders = settingsManager.getUseMonthlySubfolders() ? "True" : "False";
+    const coreSection = iniFile.getOrCreateSection("Core");
+    coreSection.set("SlippiReplayDir", replayPath);
+    coreSection.set("SlippiReplayMonthFolders", useMonthlySubfolders);
+  };
+  if (await fileExists(iniPath)) {
+    log.info("Found a Dolphin.ini to update...");
+    await iniFile.load(iniPath);
+    updateSettings();
+  } else {
+    log.info("There isn't a Dolphin.ini to update...");
+    updateSettings();
+  }
+  iniFile.save(iniPath);
+  log.info(`Finished updating ${DolphinLaunchType.NETPLAY} dolphin settings...`);
+}
+
 export async function updateBootToCssCode(options: { enable: boolean }) {
   // Update vanilla ISO configs
   ["GALE01", "GALJ01"].forEach(async (id) => {
