@@ -35,6 +35,10 @@ export class DolphinManager extends EventEmitter {
         // Remove the instance from the map on close
         this.playbackDolphinInstances.delete(id);
       });
+      playbackInstance.on("error", (err: Error) => {
+        throw err;
+      });
+
       this.playbackDolphinInstances.set(id, playbackInstance);
     }
 
@@ -58,6 +62,9 @@ export class DolphinManager extends EventEmitter {
     this.netplayDolphinInstance.on("close", () => {
       this.emit("netplay-dolphin-closed");
       this.netplayDolphinInstance = null;
+    });
+    this.netplayDolphinInstance.on("error", (err: Error) => {
+      throw err;
     });
     this.netplayDolphinInstance.start();
   }
