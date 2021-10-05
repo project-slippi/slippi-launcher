@@ -36,6 +36,7 @@ export class DolphinManager extends EventEmitter {
         this.playbackDolphinInstances.delete(id);
       });
       playbackInstance.on("error", (err: Error) => {
+        log.error(err);
         throw err;
       });
 
@@ -64,6 +65,7 @@ export class DolphinManager extends EventEmitter {
       this.netplayDolphinInstance = null;
     });
     this.netplayDolphinInstance.on("error", (err: Error) => {
+      log.error(err);
       throw err;
     });
     this.netplayDolphinInstance.start();
@@ -83,9 +85,6 @@ export class DolphinManager extends EventEmitter {
         this.netplayDolphinInstance = null;
       });
       instance.on("error", (err: Error) => {
-        this.emit("netplay-dolphin-closed");
-        this.netplayDolphinInstance = null;
-
         log.error(err);
         throw err;
       });
@@ -100,11 +99,6 @@ export class DolphinManager extends EventEmitter {
         this.playbackDolphinInstances.delete("configure");
       });
       instance.on("error", (err: Error) => {
-        this.emit("playback-dolphin-closed", "configure");
-
-        // Remove the instance from the map on close
-        this.playbackDolphinInstances.delete("configure");
-
         log.error(err);
         throw err;
       });
