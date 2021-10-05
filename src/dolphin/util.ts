@@ -38,7 +38,7 @@ export async function findDolphinExecutable(type: DolphinLaunchType, dolphinPath
   });
 
   if (!result) {
-    throw new Error(`No Dolphin found in: ${dolphinPath}`);
+    throw new Error(`No ${type} Dolphin found in: ${dolphinPath}, try resetting dolphin`);
   }
 
   if (process.platform === "darwin") {
