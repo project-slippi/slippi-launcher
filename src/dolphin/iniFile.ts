@@ -36,7 +36,7 @@ export class IniFile {
       retValueOut = line
         .substring(firstEquals + 1)
         .trim()
-        .replace(/(^"|"$)/g, "");
+        .replace(/(^"|"$)/g, ""); // remove quotes at the start or end of the string but not inside
     }
 
     return [keyOut, retValueOut] as const;
