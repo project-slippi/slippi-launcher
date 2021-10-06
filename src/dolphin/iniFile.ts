@@ -35,7 +35,7 @@ export class IniFile {
       keyOut = line.substring(0, firstEquals).replace(/\s+/g, "");
       retValueOut = line
         .substring(firstEquals + 1)
-        .replace(/\s+/g, "")
+        .trim()
         .replace(/['"]+/g, "");
     }
 
