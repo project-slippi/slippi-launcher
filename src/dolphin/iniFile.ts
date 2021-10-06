@@ -186,9 +186,8 @@ export class IniFile {
       } else {
         section.keysOrder.forEach((kvit) => {
           const value = section.values.get(kvit);
-          out.write(`${kvit}=${value}\n`);
+          out.write(`${kvit} = ${value}\n`);
         });
-        out.write("\n");
       }
     });
 
