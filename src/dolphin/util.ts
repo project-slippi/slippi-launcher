@@ -110,7 +110,7 @@ export async function addGamePathToIni(type: DolphinLaunchType, gameDir: string)
   const iniPath = path.join(userFolder, "Config", "Dolphin.ini");
   const iniFile = new IniFile();
   if (await fileExists(iniPath)) {
-    log.info("Found a Dolphin.ini to update...");
+    log.info("Updating game path...");
     await iniFile.load(iniPath, false);
     const generalSection = iniFile.getOrCreateSection("General");
     const numPaths = generalSection.get("ISOPaths", "0");
@@ -138,7 +138,7 @@ export async function updateDolphinSettings(): Promise<void> {
     coreSection.set("SlippiReplayMonthFolders", useMonthlySubfolders);
   };
   if (await fileExists(iniPath)) {
-    log.info("Found a Dolphin.ini to update...");
+    log.info("Updating dolphin settings...");
     await iniFile.load(iniPath);
     updateSettings();
   } else {
