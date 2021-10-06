@@ -36,7 +36,7 @@ export class IniFile {
       retValueOut = line
         .substring(firstEquals + 1)
         .trim()
-        .replace(/['"]+/g, "");
+        .replace(/(^"|"$)/g, "");
     }
 
     return [keyOut, retValueOut] as const;
