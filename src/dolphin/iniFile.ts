@@ -32,7 +32,7 @@ export class IniFile {
 
     const firstEquals = line.indexOf("=");
     if (firstEquals !== -1) {
-      keyOut = line.substring(0, firstEquals).replace(/\s+/g, "");
+      keyOut = line.substring(0, firstEquals).trim();
       retValueOut = line
         .substring(firstEquals + 1)
         .trim()
