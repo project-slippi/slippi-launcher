@@ -37,19 +37,6 @@ var InstallType
 
   Page custom InstTypePageLeave
   Function InstTypePageLeave
-    ${NSD_GetState} $1 $0
-    ${If} $0 = ${BST_CHECKED}
-      ; Skip was selected
-      StrCpy $InstallType SKIP
-    ${Else}
-      ${NSD_GetState} $2 $0
-      ${If} $0 = ${BST_CHECKED}
-        ; Install was selected
-        StrCpy $InstallType INSTALL
-      ${Else}
-        ; Nothing was selected
-      ${EndIf}
-    ${EndIf}
     ${if} ${isUpdated}
       StrCpy $1 "--updated"
     ${else}
