@@ -62,7 +62,8 @@
     "warningsAsErrors": false,
     "allowElevation": true,
     "allowToChangeInstallationDirectory": true,
-    "oneClick": false
+    "oneClick": false,
+    "runAfterFinish": true
   },
   "linux": {
     "target": ["AppImage"],
