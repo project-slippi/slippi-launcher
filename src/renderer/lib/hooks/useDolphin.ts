@@ -94,7 +94,7 @@ export const useDolphin = () => {
   return {
     openConfigureDolphin: (dolphinType: DolphinLaunchType) => void openConfigureDolphin(dolphinType),
     clearDolphinCache: (dolphinType: DolphinLaunchType) => void clearDolphinCache(dolphinType),
-    reinstallDolphin: (dolphinType: DolphinLaunchType) => void reinstallDolphin(dolphinType),
+    reinstallDolphin,
     launchNetplay: (bootToCss: boolean) => void launchNetplay(bootToCss),
     viewReplays: (files: ReplayQueueItem[]) => void viewReplays(files),
     importDolphin: (importPath: string, dolphinType: DolphinLaunchType) => void importDolphin(importPath, dolphinType),

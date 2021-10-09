@@ -39,7 +39,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
 
   const reinstallDolphinHandler = async () => {
     setIsResetting(true);
-    reinstallDolphin(dolphinType);
+    await reinstallDolphin(dolphinType);
     setIsResetting(false);
   };
 
