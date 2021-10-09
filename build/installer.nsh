@@ -7,7 +7,7 @@
 ; The result of whether we should install drivers or not
 var InstallType
 
-!macro customWelcomePage
+!macro customPageAfterChangeDir
 
   Page custom InstTypePageCreate InstTypePageLeave
   Function InstTypePageCreate

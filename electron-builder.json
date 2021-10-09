@@ -60,7 +60,9 @@
     "perMachine": true,
     "include": "./build/installer.nsh",
     "warningsAsErrors": false,
-    "allowElevation": true
+    "allowElevation": true,
+    "allowToChangeInstallationDirectory": true,
+    "oneClick": false
   },
   "linux": {
     "target": ["AppImage"],
