@@ -64,7 +64,7 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
   const error = gameStatsQuery.error as any;
 
   const file = gameStatsQuery.data?.file ?? props.file;
-  const numPlayers = file?.settings.players.length;
+  const numPlayers = file?.details?.settings.players.length;
   const gameStats = gameStatsQuery.data?.stats ?? null;
 
   // Add key bindings
@@ -88,7 +88,7 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
 
   // We only want to show this full-screen error if we don't have a
   // file in the prop. i.e. the SLP manually opened.
-  if (!props.file && error) {
+  if (!props.file?.details && error) {
     return (
       <IconMessage Icon={ErrorIcon}>
         <div
@@ -107,7 +107,7 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
     );
   }
 
-  if (!file) {
+  if (!file?.details) {
     return <LoadingScreen message="Loading..." />;
   }
 
@@ -115,20 +115,20 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
     <Outer>
       <GameProfileHeader
         {...props}
-        file={file}
+        file={file.details}
         disabled={loading}
         stats={gameStatsQuery.data?.stats ?? null}
         onPlay={props.onPlay}
       />
       <Content>
-        {!file || loading ? (
+        {loading ? (
           <LoadingScreen message={"Crunching numbers..."} />
         ) : numPlayers !== 2 ? (
           <IconMessage Icon={ErrorIcon} label="Game stats for doubles is unsupported" />
         ) : error ? (
           <IconMessage Icon={ErrorIcon} label={`Error: ${error.message ?? JSON.stringify(error, null, 2)}`} />
         ) : gameStats ? (
-          <GameProfile file={file} stats={gameStats}></GameProfile>
+          <GameProfile fileHeader={file.header} fileDetails={file.details} stats={gameStats}></GameProfile>
         ) : (
           <IconMessage Icon={HelpIcon} label="No stats computed" />
         )}

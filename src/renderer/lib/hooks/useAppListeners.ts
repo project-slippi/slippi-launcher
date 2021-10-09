@@ -13,7 +13,12 @@ import {
   ipc_discoveredConsolesUpdatedEvent,
 } from "@console/ipc";
 import { ipc_dolphinClosedEvent, ipc_dolphinDownloadLogReceivedEvent } from "@dolphin/ipc";
-import { ipc_loadProgressUpdatedEvent, ipc_statsPageRequestedEvent } from "@replays/ipc";
+import {
+  ipc_loadProgressUpdatedEvent,
+  ipc_fileLoadCompleteEvent,
+  ipc_fileLoadErrorEvent,
+  ipc_statsPageRequestedEvent,
+} from "@replays/ipc";
 import { ipc_openSettingsModalEvent, ipc_settingsUpdatedEvent } from "@settings/ipc";
 import {
   ipc_checkValidIso,
@@ -105,6 +110,16 @@ export const useAppListeners = () => {
   const throttledUpdateProgress = throttle(updateProgress, 50);
   ipc_loadProgressUpdatedEvent.renderer!.useEvent(async (progress) => {
     throttledUpdateProgress(progress);
+  }, []);
+
+  const updateFileDetails = useReplays((store) => store.updateFileDetails);
+  ipc_fileLoadCompleteEvent.renderer!.useEvent(async (fileLoadComplete) => {
+    updateFileDetails(fileLoadComplete);
+  }, []);
+
+  const updateFileLoadError = useReplays((store) => store.updateFileLoadError);
+  ipc_fileLoadErrorEvent.renderer!.useEvent(async (fileLoadError) => {
+    updateFileLoadError(fileLoadError);
   }, []);
 
   const updateSettings = useSettings((store) => store.updateSettings);

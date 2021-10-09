@@ -3,6 +3,7 @@ import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
+import Typography from "@material-ui/core/Typography";
 import EqualizerIcon from "@material-ui/icons/Equalizer";
 import EventIcon from "@material-ui/icons/Event";
 import LandscapeIcon from "@material-ui/icons/Landscape";
@@ -42,104 +43,111 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
   onClick,
   selectedFiles,
   selectedIndex,
-  startTime,
-  settings,
-  name,
-  metadata,
-  lastFrame,
-  fullPath,
+  header,
+  details,
 }) => {
   const selected = selectedIndex !== -1;
-  const date = new Date(startTime ? Date.parse(startTime) : 0);
-  const stageInfo = settings.stageId !== null ? stageUtils.getStageInfo(settings.stageId) : null;
-  const stageImageUrl = stageInfo !== null && stageInfo.id !== -1 ? getStageImage(stageInfo.id) : undefined;
-  const stageName = stageInfo !== null ? stageInfo.name : "Unknown Stage";
+  if (details !== null) {
+    const date = new Date(details.startTime ? Date.parse(details.startTime) : 0);
+    const stageInfo = details.settings.stageId !== null ? stageUtils.getStageInfo(details.settings.stageId) : null;
+    const stageImageUrl = stageInfo !== null && stageInfo.id !== -1 ? getStageImage(stageInfo.id) : undefined;
+    const stageName = stageInfo !== null ? stageInfo.name : "Unknown Stage";
 
-  return (
-    <DraggableFile filePaths={selected && selectedFiles.length > 0 ? selectedFiles : []}>
-      <div onClick={onClick} style={style}>
-        <Outer backgroundImage={stageImageUrl ?? undefined} selected={selected}>
-          <div
-            css={css`
-              display: flex;
-              flex: 1;
-              flex-direction: column;
-              justify-content: center;
-              padding: 10px;
-              background-color: ${selected ? "rgba(180, 130, 176, 0.1)" : "transparent"};
-            `}
-          >
-            {selected && <SelectedNumber num={selectedIndex + 1} />}
+    return (
+      <DraggableFile filePaths={selected && selectedFiles.length > 0 ? selectedFiles : []}>
+        <div onClick={onClick} style={style}>
+          <Outer backgroundImage={stageImageUrl ?? undefined} selected={selected}>
             <div
               css={css`
                 display: flex;
-                align-items: center;
-                justify-content: space-between;
+                flex: 1;
+                flex-direction: column;
+                justify-content: center;
+                padding: 10px;
+                background-color: ${selected ? "rgba(180, 130, 176, 0.1)" : "transparent"};
               `}
             >
-              <TeamElements settings={settings} metadata={metadata} />
-              <div
-                css={css`
-                  display: flex;
-                `}
-              >
-                <ReplayActionButton label="More options" onClick={(e) => onOpenMenu(index, e.currentTarget as any)}>
-                  <MoreHorizIcon />
-                </ReplayActionButton>
-                <ReplayActionButton label="Show stats" onClick={onSelect}>
-                  <EqualizerIcon />
-                </ReplayActionButton>
-                <ReplayActionButton label="Launch replay" onClick={onPlay} color={colors.greenDark}>
-                  <PlayCircleOutlineIcon />
-                </ReplayActionButton>
-              </div>
-            </div>
-
-            <div
-              css={css`
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                margin-top: 5px;
-                font-size: 14px;
-                white-space: nowrap;
-              `}
-            >
+              {selected && <SelectedNumber num={selectedIndex + 1} />}
               <div
                 css={css`
                   display: flex;
                   align-items: center;
-                  flex: 1;
+                  justify-content: space-between;
                 `}
               >
-                <InfoItem label={<EventIcon />}>{monthDayHourFormat(moment(date))}</InfoItem>
-
-                {lastFrame !== null && (
-                  <InfoItem label={<TimerIcon />}>
-                    {convertFrameCountToDurationString(lastFrame, "m[m] ss[s]")}
-                  </InfoItem>
-                )}
-                <InfoItem label={<LandscapeIcon />}>{stageName}</InfoItem>
+                <TeamElements settings={details.settings} metadata={details.metadata} />
+                <div
+                  css={css`
+                    display: flex;
+                  `}
+                >
+                  <ReplayActionButton label="More options" onClick={(e) => onOpenMenu(index, e.currentTarget as any)}>
+                    <MoreHorizIcon />
+                  </ReplayActionButton>
+                  <ReplayActionButton label="Show stats" onClick={onSelect}>
+                    <EqualizerIcon />
+                  </ReplayActionButton>
+                  <ReplayActionButton label="Launch replay" onClick={onPlay} color={colors.greenDark}>
+                    <PlayCircleOutlineIcon />
+                  </ReplayActionButton>
+                </div>
               </div>
-              <DraggableFile
-                filePaths={[fullPath]}
+
+              <div
                 css={css`
-                  opacity: 0.9;
-                  transition: opacity 0.2s ease-in-out;
-                  &:hover {
-                    opacity: 1;
-                    text-decoration: underline;
-                  }
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  margin-top: 5px;
+                  font-size: 14px;
+                  white-space: nowrap;
                 `}
               >
-                {name}
-              </DraggableFile>
+                <div
+                  css={css`
+                    display: flex;
+                    align-items: center;
+                    flex: 1;
+                  `}
+                >
+                  <InfoItem label={<EventIcon />}>{monthDayHourFormat(moment(date))}</InfoItem>
+
+                  {details.lastFrame !== null && (
+                    <InfoItem label={<TimerIcon />}>
+                      {convertFrameCountToDurationString(details.lastFrame, "m[m] ss[s]")}
+                    </InfoItem>
+                  )}
+                  <InfoItem label={<LandscapeIcon />}>{stageName}</InfoItem>
+                </div>
+                <DraggableFile
+                  filePaths={[header.fullPath]}
+                  css={css`
+                    opacity: 0.9;
+                    transition: opacity 0.2s ease-in-out;
+                    &:hover {
+                      opacity: 1;
+                      text-decoration: underline;
+                    }
+                  `}
+                >
+                  {header.name}
+                </DraggableFile>
+              </div>
             </div>
-          </div>
-        </Outer>
-      </div>
-    </DraggableFile>
-  );
+          </Outer>
+        </div>
+      </DraggableFile>
+    );
+  } else {
+    const message = `Loading ${header.name}...`;
+    return (
+      <DraggableFile filePaths={selected && selectedFiles.length > 0 ? selectedFiles : []}>
+        <Typography variant="h6" style={{ marginTop: 20 }}>
+          {message}
+        </Typography>
+      </DraggableFile>
+    );
+  }
 };
 
 const Outer = styled.div<{

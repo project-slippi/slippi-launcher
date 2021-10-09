@@ -12,7 +12,7 @@ import LandscapeIcon from "@material-ui/icons/Landscape";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import SportsEsportsIcon from "@material-ui/icons/SportsEsports";
 import TimerIcon from "@material-ui/icons/Timer";
-import { FileResult } from "@replays/types";
+import { FileDetails } from "@replays/types";
 import { GameStartType, MetadataType, stages as stageUtils, StatsType } from "@slippi/slippi-js";
 import { colors } from "common/colors";
 import { extractPlayerNames } from "common/matchNames";
@@ -88,7 +88,7 @@ const PlayerInfoDisplay: React.FC<PlayerInfoDisplayProps> = ({ settings, metadat
 };
 
 export interface GameProfileHeaderProps {
-  file: FileResult;
+  file: FileDetails;
   index: number | null;
   total: number | null;
   onNext: () => void;
@@ -176,7 +176,7 @@ const Header = styled.div<{
 `;
 
 const GameDetails: React.FC<{
-  file: FileResult;
+  file: FileDetails;
   stats: StatsType | null;
 }> = ({ file, stats }) => {
   let stageName = "Unknown";

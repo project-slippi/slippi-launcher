@@ -1,5 +1,6 @@
-import fs from "fs";
 import moment from "moment";
+
+import { FileHeader } from "../replays/types";
 
 export function convertFrameCountToDurationString(frameCount: number, format = "m:ss"): string {
   const duration = moment.duration((frameCount + 123) / 60, "seconds");
@@ -17,12 +18,11 @@ function convertToDateAndTime(dateTimeString: moment.MomentInput): moment.Moment
 
 export function fileToDateAndTime(
   dateTimeString: string | undefined | null,
-  fileName: string,
-  fullPath: string,
+  fileHeader: FileHeader,
 ): moment.Moment | null {
   const startAt = convertToDateAndTime(dateTimeString);
-  const getTimeFromFileName = () => filenameToDateAndTime(fileName);
-  const getTimeFromBirthTime = () => convertToDateAndTime(fs.statSync(fullPath).birthtime);
+  const getTimeFromFileName = () => filenameToDateAndTime(fileHeader.name);
+  const getTimeFromBirthTime = () => convertToDateAndTime(fileHeader.birthtimeMs);
 
   return startAt || getTimeFromFileName() || getTimeFromBirthTime() || null;
 }

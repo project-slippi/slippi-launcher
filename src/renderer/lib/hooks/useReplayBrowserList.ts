@@ -54,12 +54,13 @@ export const useReplayBrowserList = () => {
   const sortBy = useReplayFilter((store) => store.sortBy);
   const searchText = useReplayFilter((store) => store.searchText);
   const hideShortGames = useReplayFilter((store) => store.hideShortGames);
-  const filteredFiles = files
+  const filteredFiles = Array.from(files, ([_, result]) => result)
     .filter(replayFileFilter({ searchText, hideShortGames }))
     .sort(replayFileSort(sortBy, sortDirection));
-  const numHiddenFiles = files.length - filteredFiles.length;
+  const numHiddenFiles = Array.from(files).length - filteredFiles.length;
   const { index, total } = useReplays((store) => store.selectedFile);
   const { goToReplayStatsPage } = useReplayBrowserNavigation();
+  useReplays((store) => store.forceRender);
 
   const setSelectedItem = (index: number | null) => {
     if (index === null) {
@@ -68,7 +69,7 @@ export const useReplayBrowserList = () => {
     }
     const file = filteredFiles[index];
     selectFile(file, index, filteredFiles.length);
-    goToReplayStatsPage(file.fullPath);
+    goToReplayStatsPage(file.header.fullPath);
   };
 
   const selectNextFile = () => {

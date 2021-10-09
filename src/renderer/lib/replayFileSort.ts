@@ -42,14 +42,14 @@ export function replayFileSort(
   };
 }
 
-const sortByValue = (key: ReplaySortOption): ((val: FileResult) => any) => {
+const sortByValue = (key: ReplaySortOption): ((file: FileResult) => any) => {
   return (file) => {
     switch (key) {
       case ReplaySortOption.GAME_DURATION: {
-        return file.lastFrame ?? Frames.FIRST;
+        return file.details?.lastFrame ?? Frames.FIRST;
       }
       case ReplaySortOption.DATE: {
-        return file.startTime ? Date.parse(file.startTime) : 0;
+        return file.details?.startTime ? Date.parse(file.details.startTime) : new Date(file.header.birthtimeMs);
       }
     }
   };
@@ -71,15 +71,19 @@ export interface ReplayFilterOptions {
 }
 
 export const replayFileFilter = (filterOptions: ReplayFilterOptions): ((file: FileResult) => boolean) => (file) => {
+  if (file.details === null) {
+    return false;
+  }
+  const details = file.details;
   if (filterOptions.hideShortGames) {
-    if (file.lastFrame !== null && file.lastFrame <= MIN_GAME_DURATION_FRAMES) {
+    if (details.lastFrame !== null && details.lastFrame <= MIN_GAME_DURATION_FRAMES) {
       return false;
     }
   }
 
   // First try to match names
   const playerNamesMatch = (): boolean => {
-    const matchable = extractAllPlayerNames(file.settings, file.metadata);
+    const matchable = extractAllPlayerNames(details.settings, details.metadata);
     if (!filterOptions.searchText) {
       return true;
     } else if (matchable.length === 0) {
@@ -92,7 +96,7 @@ export const replayFileFilter = (filterOptions: ReplayFilterOptions): ((file: Fi
   }
 
   // Match filenames
-  if (file.name.toLowerCase().includes(filterOptions.searchText.toLowerCase())) {
+  if (file.header.name.toLowerCase().includes(filterOptions.searchText.toLowerCase())) {
     return true;
   }
 

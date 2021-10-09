@@ -5,7 +5,7 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
-import { FileResult } from "@replays/types";
+import { FileHeader, FileDetails } from "@replays/types";
 import {
   animations as animationUtils,
   Frames,
@@ -26,15 +26,16 @@ import * as T from "./TableStyles";
 
 const columnCount = 5;
 export interface KillTableProps {
-  file: FileResult;
+  fileHeader: FileHeader;
+  fileDetails: FileDetails;
   stats: StatsType;
   player: PlayerType;
   opp: PlayerType;
 }
 
-export const KillTable: React.FC<KillTableProps> = ({ file, stats, player, opp }) => {
+export const KillTable: React.FC<KillTableProps> = ({ fileHeader, fileDetails, stats, player, opp }) => {
   const { viewReplays } = useDolphin();
-  const names = extractPlayerNames(player.playerIndex, file.settings, file.metadata);
+  const names = extractPlayerNames(player.playerIndex, fileDetails.settings, fileDetails.metadata);
   const playerDisplay = (
     <div style={{ display: "flex", alignItems: "center" }}>
       <img
@@ -71,7 +72,7 @@ export const KillTable: React.FC<KillTableProps> = ({ file, stats, player, opp }
     }
 
     const playPunish = () => {
-      viewReplays([{ path: file.fullPath, startFrame: stock.startFrame }]);
+      viewReplays([{ path: fileHeader.fullPath, startFrame: stock.startFrame }]);
     };
 
     return (

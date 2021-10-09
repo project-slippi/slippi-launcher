@@ -55,12 +55,12 @@ export const ReplayBrowser: React.FC = () => {
     } else {
       const file = filteredFiles[index];
       void selectFile(file, index, filteredFiles.length);
-      goToReplayStatsPage(file.fullPath);
+      goToReplayStatsPage(file.header.fullPath);
     }
   };
 
   const playSelectedFile = (index: number) => {
-    const filePath = filteredFiles[index].fullPath;
+    const filePath = filteredFiles[index].header.fullPath;
     viewReplays([{ path: filePath }]);
   };
 

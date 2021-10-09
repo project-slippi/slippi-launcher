@@ -1,22 +1,55 @@
 import { GameStartType, MetadataType, SlippiGame } from "@slippi/slippi-js";
 import { fileToDateAndTime } from "common/time";
 import _ from "lodash";
-import path from "path";
 
-import { FileResult } from "./types";
+import { FileDetails, FileHeader, FileLoadComplete, FileLoadError } from "./types";
 
-export async function loadFile(fullPath: string): Promise<FileResult> {
-  const filename = path.basename(fullPath);
-  const game = new SlippiGame(fullPath);
+export async function loadFiles(
+  fileHeaders: FileHeader[],
+  batcherId: number,
+  completeCallback: (_: FileLoadComplete) => void,
+  errorCallback: (_: FileLoadError) => void,
+  shouldCancel: () => boolean,
+): Promise<void> {
+  for (const header of fileHeaders) {
+    if (shouldCancel()) {
+      break;
+    }
+    try {
+      const details = loadFile(header);
+      completeCallback({
+        path: header.fullPath,
+        details: details,
+        batcherId: batcherId,
+      });
+    } catch (err) {
+      errorCallback({
+        path: header.fullPath,
+        error: err,
+        batcherId: batcherId,
+      });
+    }
+    // Yield control before the next loop. This gives the worker a chance to do
+    // other work.
+    await setImmediatePromise();
+  }
+}
+
+function setImmediatePromise(): Promise<void> {
+  return new Promise((resolve) => {
+    setImmediate(() => resolve());
+  });
+}
+
+export function loadFile(fileHeader: FileHeader): FileDetails {
+  const game = new SlippiGame(fileHeader.fullPath);
   // Load settings
   const settings: GameStartType | null = game.getSettings();
   if (!settings || _.isEmpty(settings.players)) {
     throw new Error("Game settings could not be properly loaded.");
   }
 
-  const result: FileResult = {
-    name: filename,
-    fullPath,
+  const details: FileDetails = {
     settings,
     startTime: null,
     lastFrame: null,
@@ -26,18 +59,18 @@ export async function loadFile(fullPath: string): Promise<FileResult> {
   // Load metadata
   const metadata: MetadataType | null = game.getMetadata();
   if (metadata) {
-    result.metadata = metadata;
+    details.metadata = metadata;
 
     if (metadata.lastFrame !== undefined) {
-      result.lastFrame = metadata.lastFrame;
+      details.lastFrame = metadata.lastFrame;
     }
   }
 
-  const startAtTime = fileToDateAndTime(metadata ? metadata.startAt : null, filename, result.fullPath);
+  const startAtTime = fileToDateAndTime(metadata ? metadata.startAt : null, fileHeader);
 
   if (startAtTime) {
-    result.startTime = startAtTime.toISOString();
+    details.startTime = startAtTime.toISOString();
   }
 
-  return result;
+  return details;
 }

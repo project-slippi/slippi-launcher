@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/react";
 import Tooltip from "@material-ui/core/Tooltip";
-import { FileResult } from "@replays/types";
+import { FileHeader, FileDetails } from "@replays/types";
 import { ConversionType, PlayerType, StatsType, StockType } from "@slippi/slippi-js";
 import { extractPlayerNames } from "common/matchNames";
 import { convertFrameCountToDurationString } from "common/time";
@@ -16,15 +16,16 @@ import * as T from "./TableStyles";
 const columnCount = 6;
 
 export interface PunishTableProps {
-  file: FileResult;
+  fileHeader: FileHeader;
+  fileDetails: FileDetails;
   stats: StatsType;
   player: PlayerType;
   opp: PlayerType;
 }
 
-export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, player, opp }) => {
+export const PunishTable: React.FC<PunishTableProps> = ({ fileHeader, fileDetails, stats, player, opp }) => {
   const { viewReplays } = useDolphin();
-  const names = extractPlayerNames(player.playerIndex, file.settings, file.metadata);
+  const names = extractPlayerNames(player.playerIndex, fileDetails.settings, fileDetails.metadata);
   const playerDisplay = (
     <div style={{ display: "flex", alignItems: "center" }}>
       <img
@@ -52,7 +53,7 @@ export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, player, o
     }
 
     const playPunish = () => {
-      viewReplays([{ path: file.fullPath, startFrame: punish.startFrame }]);
+      viewReplays([{ path: fileHeader.fullPath, startFrame: punish.startFrame }]);
     };
 
     return (
@@ -124,7 +125,7 @@ export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, player, o
   };
 
   const getPlayer = (playerIndex: number) => {
-    const players = file.settings.players || [];
+    const players = fileDetails.settings.players || [];
     const playersByIndex = _.keyBy(players, "playerIndex");
     return playersByIndex[playerIndex];
   };

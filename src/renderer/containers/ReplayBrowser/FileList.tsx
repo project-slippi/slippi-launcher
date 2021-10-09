@@ -37,7 +37,7 @@ const FileListResults: React.FC<{
   const Row = React.useCallback(
     (props: { style?: React.CSSProperties; index: number }) => {
       const file = files[props.index];
-      const selectedIndex = selectedFiles.indexOf(file.fullPath);
+      const selectedIndex = selectedFiles.indexOf(file.header.fullPath);
       return (
         <ErrorBoundary>
           <ReplayFile
@@ -129,14 +129,14 @@ export const FileList: React.FC<{
 
   const handleRevealLocation = () => {
     if (menuItem) {
-      shell.showItemInFolder(files[menuItem.index].fullPath);
+      shell.showItemInFolder(files[menuItem.index].header.fullPath);
     }
     handleClose();
   };
 
   const handleDelete = () => {
     if (menuItem) {
-      onDelete(files[menuItem.index].fullPath);
+      onDelete(files[menuItem.index].header.fullPath);
     }
     handleClose();
   };

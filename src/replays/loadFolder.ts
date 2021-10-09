@@ -1,13 +1,12 @@
 import * as fs from "fs-extra";
 import path from "path";
 
-import { loadFile } from "./loadFile";
-import { FileLoadResult, FileResult } from "./types";
+import { FolderLoadResult, FileHeader } from "./types";
 
 export async function loadFolder(
   folder: string,
   callback: (current: number, total: number) => void = () => null,
-): Promise<FileLoadResult> {
+): Promise<FolderLoadResult> {
   // If the folder does not exist, return empty
   if (!(await fs.pathExists(folder))) {
     return {
@@ -24,16 +23,20 @@ export async function loadFolder(
   let fileValidCount = 0;
   callback(0, total);
 
-  const process = async (path: string) => {
-    return new Promise<FileResult | null>((resolve) => {
+  const process = async (fullPath: string) => {
+    return new Promise<FileHeader | null>((resolve) => {
       setImmediate(async () => {
         try {
-          const res = await loadFile(path);
-          fileValidCount += 1;
+          const result: FileHeader = {
+            name: path.basename(fullPath),
+            fullPath: fullPath,
+            birthtimeMs: (await fs.stat(fullPath)).birthtimeMs,
+          };
+          fileValidCount++;
           callback(fileValidCount, total);
-          resolve(res);
+          resolve(result);
         } catch (err) {
-          fileErrorCount += 1;
+          fileErrorCount++;
           resolve(null);
         }
       });
@@ -47,7 +50,7 @@ export async function loadFolder(
         return process(fullPath);
       }),
     )
-  ).filter((g) => g !== null) as FileResult[];
+  ).filter((g) => g !== null) as FileHeader[];
 
   // Indicate that loading is complete
   callback(total, total);

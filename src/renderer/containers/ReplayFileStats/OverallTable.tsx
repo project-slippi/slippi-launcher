@@ -1,4 +1,4 @@
-import { FileResult } from "@replays/types";
+import { FileDetails } from "@replays/types";
 import { RatioType, StatsType } from "@slippi/slippi-js";
 import { extractPlayerNames } from "common/matchNames";
 import _ from "lodash";
@@ -11,7 +11,7 @@ import * as T from "./TableStyles";
 const columnCount = 5; // Unfortunately there is no way to specify a col span of "all" max cols there will be is 5
 
 export interface OverallTableProps {
-  file: FileResult;
+  file: FileDetails;
   stats: StatsType;
 }
 
