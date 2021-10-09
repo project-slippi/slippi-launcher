@@ -9,7 +9,7 @@ var InstallType
 
 !macro customPageAfterChangeDir
 
-  Page custom InstTypePageCreate InstTypePageLeave
+  Page custom InstTypePageCreate
   Function InstTypePageCreate
     ${If} ${isUpdated}
       Abort
@@ -31,6 +31,11 @@ var InstallType
     nsDialogs::Show
   FunctionEnd
 
+!macroend
+
+!macro customFinishPage
+
+  Page custom InstTypePageLeave
   Function InstTypePageLeave
     ${NSD_GetState} $1 $0
     ${If} $0 = ${BST_CHECKED}
@@ -45,7 +50,14 @@ var InstallType
         ; Nothing was selected
       ${EndIf}
     ${EndIf}
+    ${if} ${isUpdated}
+      StrCpy $1 "--updated"
+    ${else}
+      StrCpy $1 ""
+    ${endif}
+    ${StdUtils.ExecShellAsUser} $0 "$launchLink" "open" "$1"
   FunctionEnd
+
 !macroend
 
 !macro customInstall

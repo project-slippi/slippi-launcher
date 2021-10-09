@@ -61,7 +61,6 @@
     "include": "./build/installer.nsh",
     "warningsAsErrors": false,
     "allowElevation": true,
-    "allowToChangeInstallationDirectory": true,
     "oneClick": false,
     "runAfterFinish": true
   },
