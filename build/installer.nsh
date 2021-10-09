@@ -9,37 +9,37 @@ var InstallType
 Page custom InstTypePageCreate InstTypePageLeave
 
 Function InstTypePageCreate
-!insertmacro MUI_HEADER_TEXT "Select components to install" ""
-nsDialogs::Create 1018
-Pop $0
-${NSD_CreateRadioButton} 0 50u 100% 10u "Only install Slippi Launcher"
-pop $1
-${NSD_CreateRadioButton} 0 70u 100% 10u "Also install GameCube adapter drivers (optional)"
-pop $2
-${If} $InstallType == INSTALL
-    ${NSD_Check} $2 ; Select install drivers
-${Else}
-    ${NSD_Check} $1 ; Select skip by default
-${EndIf}
-${NSD_CreateLabel} 0 0 100% 30u "Would you like to also install GameCube adapter drivers? This would allow you to use GameCube controllers with a compatible adapter (in Switch/Wii U mode) on your PC. Skip this if you already have GameCube adapter drivers installed."
-pop $3
-nsDialogs::Show
+  !insertmacro MUI_HEADER_TEXT "Select components to install" ""
+  nsDialogs::Create 1018
+  Pop $0
+  ${NSD_CreateRadioButton} 0 50u 100% 10u "Only install Slippi Launcher"
+  pop $1
+  ${NSD_CreateRadioButton} 0 70u 100% 10u "Also install GameCube adapter drivers (optional)"
+  pop $2
+  ${If} $InstallType == INSTALL
+      ${NSD_Check} $2 ; Select install drivers
+  ${Else}
+      ${NSD_Check} $1 ; Select skip by default
+  ${EndIf}
+  ${NSD_CreateLabel} 0 0 100% 30u "Would you like to also install GameCube adapter drivers? This would allow you to use GameCube controllers with a compatible adapter (in Switch/Wii U mode) on your PC. Skip this if you already have GameCube adapter drivers installed."
+  pop $3
+  nsDialogs::Show
 FunctionEnd
 
 Function InstTypePageLeave
-${NSD_GetState} $1 $0
-${If} $0 = ${BST_CHECKED}
-  ; Skip was selected
-  StrCpy $InstallType SKIP
-${Else}
-  ${NSD_GetState} $2 $0
+  ${NSD_GetState} $1 $0
   ${If} $0 = ${BST_CHECKED}
-    ; Install was selected
-    StrCpy $InstallType INSTALL
+    ; Skip was selected
+    StrCpy $InstallType SKIP
   ${Else}
-    ; Nothing was selected
+    ${NSD_GetState} $2 $0
+    ${If} $0 = ${BST_CHECKED}
+      ; Install was selected
+      StrCpy $InstallType INSTALL
+    ${Else}
+      ; Nothing was selected
+    ${EndIf}
   ${EndIf}
-${EndIf}
 FunctionEnd
 
 !macro customInstall
