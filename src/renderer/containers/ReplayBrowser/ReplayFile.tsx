@@ -3,7 +3,6 @@ import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
-import Typography from "@material-ui/core/Typography";
 import EqualizerIcon from "@material-ui/icons/Equalizer";
 import EventIcon from "@material-ui/icons/Event";
 import LandscapeIcon from "@material-ui/icons/Landscape";
@@ -46,8 +45,12 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
   header,
   details,
 }) => {
-  const selected = selectedIndex !== -1;
-  if (details !== null) {
+  if (details === null) {
+    // Hide replay files that haven't finished loading. If we would like to
+    // display a loading card instead this can be changed in the future.
+    return null;
+  } else {
+    const selected = selectedIndex !== -1;
     const date = new Date(details.startTime ? Date.parse(details.startTime) : 0);
     const stageInfo = details.settings.stageId !== null ? stageUtils.getStageInfo(details.settings.stageId) : null;
     const stageImageUrl = stageInfo !== null && stageInfo.id !== -1 ? getStageImage(stageInfo.id) : undefined;
@@ -136,15 +139,6 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
             </div>
           </Outer>
         </div>
-      </DraggableFile>
-    );
-  } else {
-    const message = `Loading ${header.name}...`;
-    return (
-      <DraggableFile filePaths={selected && selectedFiles.length > 0 ? selectedFiles : []}>
-        <Typography variant="h6" style={{ marginTop: 20 }}>
-          {message}
-        </Typography>
       </DraggableFile>
     );
   }

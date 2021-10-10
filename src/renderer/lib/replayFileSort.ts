@@ -72,7 +72,7 @@ export interface ReplayFilterOptions {
 
 export const replayFileFilter = (filterOptions: ReplayFilterOptions): ((file: FileResult) => boolean) => (file) => {
   if (file.details === null) {
-    return false;
+    return true;
   }
   const details = file.details;
   if (filterOptions.hideShortGames) {
