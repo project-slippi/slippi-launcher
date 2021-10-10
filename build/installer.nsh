@@ -1,46 +1,49 @@
 !include MUI2.nsh
 !include nsDialogs.nsh
+!include StdUtils.nsh
 
 !define GC_INSTALLER "gc-driver-install.exe"
 
 ; The result of whether we should install drivers or not
 var InstallType
 
-Page custom InstTypePageCreate InstTypePageLeave
+!macro customPageAfterChangeDir
+  Page custom InstTypePageCreate
+  Function InstTypePageCreate
+    ${If} ${isUpdated}
+      Abort
+    ${EndIf}
+    !insertmacro MUI_HEADER_TEXT "Select components to install" ""
+    nsDialogs::Create /NOUNLOAD 1018
+    Pop $0
+    ${NSD_CreateRadioButton} 0 50u 100% 10u "Only install Slippi Launcher"
+    pop $1
+    ${NSD_CreateRadioButton} 0 70u 100% 10u "Also install GameCube adapter drivers (optional)"
+    pop $2
+    ${If} $InstallType == INSTALL
+        ${NSD_Check} $2 ; Select install drivers
+    ${Else}
+        ${NSD_Check} $1 ; Select skip by default
+    ${EndIf}
+    ${NSD_CreateLabel} 0 0 100% 30u "Would you like to also install GameCube adapter drivers? This would allow you to use GameCube controllers with a compatible adapter (in Switch/Wii U mode) on your PC. Skip this if you already have GameCube adapter drivers installed."
+    pop $3
+    nsDialogs::Show
+  FunctionEnd
+!macroend
 
-Function InstTypePageCreate
-!insertmacro MUI_HEADER_TEXT "Select components to install" ""
-nsDialogs::Create 1018
-Pop $0
-${NSD_CreateRadioButton} 0 50u 100% 10u "Only install Slippi Launcher"
-pop $1
-${NSD_CreateRadioButton} 0 70u 100% 10u "Also install GameCube adapter drivers (optional)"
-pop $2
-${If} $InstallType == INSTALL
-    ${NSD_Check} $2 ; Select install drivers
-${Else}
-    ${NSD_Check} $1 ; Select skip by default
-${EndIf}
-${NSD_CreateLabel} 0 0 100% 30u "Would you like to also install GameCube adapter drivers? This would allow you to use GameCube controllers with a compatible adapter (in Switch/Wii U mode) on your PC. Skip this if you already have GameCube adapter drivers installed."
-pop $3
-nsDialogs::Show
-FunctionEnd
-
-Function InstTypePageLeave
-${NSD_GetState} $1 $0
-${If} $0 = ${BST_CHECKED}
-  ; Skip was selected
-  StrCpy $InstallType SKIP
-${Else}
-  ${NSD_GetState} $2 $0
-  ${If} $0 = ${BST_CHECKED}
-    ; Install was selected
-    StrCpy $InstallType INSTALL
-  ${Else}
-    ; Nothing was selected
-  ${EndIf}
-${EndIf}
-FunctionEnd
+!macro customFinishPage
+  Page custom InstTypePageLeave
+  Function InstTypePageLeave
+    ; https://github.com/electron-userland/electron-builder/blob/7327025ad0a63ec999ade43347e5c8ffea90e08b/packages/app-builder-lib/templates/nsis/assistedInstaller.nsh#L54-L60
+    ; this triggers the app opening when the installer reaches the final page which doesn't really exist
+    ${if} ${isUpdated}
+      StrCpy $1 "--updated"
+    ${else}
+      StrCpy $1 ""
+    ${endif}
+    ${StdUtils.ExecShellAsUser} $0 "$launchLink" "open" "$1"
+  FunctionEnd
+!macroend
 
 !macro customInstall
   ; Add slippi URI Handling

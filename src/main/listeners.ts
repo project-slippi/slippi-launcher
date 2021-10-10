@@ -133,7 +133,7 @@ export function setupListeners() {
   });
 
   ipc_installUpdate.main!.handle(async () => {
-    autoUpdater.quitAndInstall(true, true);
+    autoUpdater.quitAndInstall(false, true);
     return { success: true };
   });
   ipc_checkForUpdate.main!.handle(async () => {
