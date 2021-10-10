@@ -1,6 +1,6 @@
 !include MUI2.nsh
 !include nsDialogs.nsh
-!include 'StdUtils.nsh'
+!include StdUtils.nsh
 
 !define GC_INSTALLER "gc-driver-install.exe"
 
@@ -8,7 +8,6 @@
 var InstallType
 
 !macro customPageAfterChangeDir
-
   Page custom InstTypePageCreate
   Function InstTypePageCreate
     ${If} ${isUpdated}
@@ -30,11 +29,9 @@ var InstallType
     pop $3
     nsDialogs::Show
   FunctionEnd
-
 !macroend
 
 !macro customFinishPage
-
   Page custom InstTypePageLeave
   Function InstTypePageLeave
     ; https://github.com/electron-userland/electron-builder/blob/7327025ad0a63ec999ade43347e5c8ffea90e08b/packages/app-builder-lib/templates/nsis/assistedInstaller.nsh#L54-L60
@@ -46,7 +43,6 @@ var InstallType
     ${endif}
     ${StdUtils.ExecShellAsUser} $0 "$launchLink" "open" "$1"
   FunctionEnd
-
 !macroend
 
 !macro customInstall
