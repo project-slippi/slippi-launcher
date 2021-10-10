@@ -61,8 +61,7 @@
     "include": "./build/installer.nsh",
     "warningsAsErrors": false,
     "allowElevation": true,
-    "oneClick": false,
-    "runAfterFinish": true
+    "oneClick": false
   },
   "linux": {
     "target": ["AppImage"],

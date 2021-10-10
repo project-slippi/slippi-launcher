@@ -37,6 +37,8 @@ var InstallType
 
   Page custom InstTypePageLeave
   Function InstTypePageLeave
+    ; https://github.com/electron-userland/electron-builder/blob/7327025ad0a63ec999ade43347e5c8ffea90e08b/packages/app-builder-lib/templates/nsis/assistedInstaller.nsh#L54-L60
+    ; this triggers the app opening when the installer reaches the final page which doesn't really exist
     ${if} ${isUpdated}
       StrCpy $1 "--updated"
     ${else}
