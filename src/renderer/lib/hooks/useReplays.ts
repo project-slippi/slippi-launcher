@@ -45,7 +45,7 @@ type StoreReducers = {
   removeFile: (filePath: string) => void;
   loadDirectoryList: (folder: string) => Promise<void>;
   loadFolder: (childPath?: string, forceReload?: boolean) => Promise<void>;
-  loadFiles: (results: Map<string, FileResult>) => void;
+  loadFiles: (results: Map<string, FileResult>) => Promise<void>;
   toggleFolder: (fullPath: string) => void;
   setScrollRowItem: (offset: number) => void;
   updateProgress: (progress: Progress | null) => void;
@@ -238,7 +238,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => {
           loading: false,
           fileErrorCount: result.fileErrorCount,
         });
-        loadFiles(newFiles);
+        await loadFiles(newFiles);
       } catch (err) {
         console.warn(err);
         set({ loading: false, progress: null });
@@ -273,7 +273,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => {
       });
     },
 
-    loadFiles: (results: Map<string, FileResult>) => {
+    loadFiles: async (results: Map<string, FileResult>) => {
       // Sort headers so files will load in approximately display order (nothing
       // will be filtered at this point since details are empty).
       const sortedHeaders = Array.from(results, ([_, result]) => result)
@@ -282,7 +282,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => {
 
       batcher.reset(sortedHeaders.length);
 
-      ipc_loadReplayFiles.renderer!.trigger({
+      await ipc_loadReplayFiles.renderer!.trigger({
         fileHeaders: sortedHeaders,
         batcherId: batcher.getId(),
       });

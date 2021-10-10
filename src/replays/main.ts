@@ -30,7 +30,7 @@ ipc_loadReplayFiles.main!.handle(async ({ fileHeaders, batcherId }) => {
     });
     hasStartedObservers = true;
   }
-  w.loadReplayFiles(fileHeaders, batcherId);
+  await w.loadReplayFiles(fileHeaders, batcherId);
   return {};
 });
 

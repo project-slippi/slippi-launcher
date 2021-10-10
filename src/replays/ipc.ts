@@ -14,7 +14,7 @@ export const ipc_loadReplayFolder = makeEndpoint.main(
 export const ipc_loadReplayFiles = makeEndpoint.main(
   "loadReplayFiles",
   <{ fileHeaders: FileHeader[]; batcherId: number }>_,
-  <{}>_,
+  <Record<string, never>>_,
 );
 
 export const ipc_calculateGameStats = makeEndpoint.main(

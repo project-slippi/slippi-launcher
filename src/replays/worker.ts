@@ -30,8 +30,8 @@ export interface Methods {
 export type WorkerSpec = ModuleMethods & Methods;
 
 let progressSubject: Subject<Progress> = new Subject();
-let fileLoadSubject: Subject<FileLoadComplete> = new Subject();
-let fileErrorSubject: Subject<FileLoadError> = new Subject();
+const fileLoadSubject: Subject<FileLoadComplete> = new Subject();
+const fileErrorSubject: Subject<FileLoadError> = new Subject();
 
 let latestBatcherId = 0;
 
@@ -78,7 +78,7 @@ const methods: WorkerSpec = {
 
   async loadReplayFiles(fileHeaders: FileHeader[], batcherId: number): Promise<void> {
     latestBatcherId = batcherId;
-    loadFiles(
+    await loadFiles(
       fileHeaders,
       batcherId,
       (fileLoadComplete: FileLoadComplete) => {
