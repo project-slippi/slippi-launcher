@@ -8,7 +8,7 @@
 var InstallType
 
 !macro customPageAfterChangeDir
-  Page custom InstTypePageCreate
+  Page custom InstTypePageCreate InstTypePageLeave
   Function InstTypePageCreate
     ${If} ${isUpdated}
       Abort
@@ -29,19 +29,21 @@ var InstallType
     pop $3
     nsDialogs::Show
   FunctionEnd
-!macroend
 
-!macro customFinishPage
-  Page custom InstTypePageLeave
   Function InstTypePageLeave
-    ; https://github.com/electron-userland/electron-builder/blob/7327025ad0a63ec999ade43347e5c8ffea90e08b/packages/app-builder-lib/templates/nsis/assistedInstaller.nsh#L54-L60
-    ; this triggers the app opening when the installer reaches the final page which doesn't really exist
-    ${if} ${isUpdated}
-      StrCpy $1 "--updated"
-    ${else}
-      StrCpy $1 ""
-    ${endif}
-    ${StdUtils.ExecShellAsUser} $0 "$launchLink" "open" "$1"
+    ${NSD_GetState} $1 $0
+    ${If} $0 = ${BST_CHECKED}
+      ; Skip was selected
+      StrCpy $InstallType SKIP
+    ${Else}
+      ${NSD_GetState} $2 $0
+      ${If} $0 = ${BST_CHECKED}
+        ; Install was selected
+        StrCpy $InstallType INSTALL
+      ${Else}
+        ; Nothing was selected
+      ${EndIf}
+    ${EndIf}
   FunctionEnd
 !macroend
 
