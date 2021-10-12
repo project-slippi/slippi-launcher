@@ -51,8 +51,13 @@ export function setupListeners() {
 
   ipcMain.on("getOsInfoSync", (event) => {
     const release = os.release();
-    const name = osName(os.platform(), release);
-    event.returnValue = `${name} (${release})`;
+    try {
+      const name = osName(os.platform(), release);
+      event.returnValue = `${name} (${release})`;
+    } catch (err) {
+      log.error(err);
+      event.returnValue = release;
+    }
   });
 
   ipcMain.on("getAppSettingsSync", (event) => {
