@@ -2,6 +2,10 @@
 !include nsDialogs.nsh
 !include StdUtils.nsh
 
+; https://github.com/electron-userland/electron-builder/tree/master/packages/app-builder-lib/templates/nsis
+; if future changes need to be made, this is an important reference for what options electron-builder provides
+; because their docs aren't all encompassing.
+
 !define GC_INSTALLER "gc-driver-install.exe"
 
 ; The result of whether we should install drivers or not
