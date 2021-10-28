@@ -2,7 +2,7 @@
 
 Rollback is a superior netcode implementation to the delay based netcode that everyone is used to. It provides smooth gameplay for a larger variety of situations. It also allows for playing with people much further away.
 
-## What versions of Melee does Slippi support
+## What versions of Melee does Slippi support?
 
 We only support NTSC-U/J 1.02.
 
@@ -67,7 +67,7 @@ Yes. To enable Widescreen for Slippi Online follow these steps. Open Dolphin, ri
 
 Yes, we currently ship with UCF 0.8 and it is applied everywhere by default.
 
-## Where can I find a Melee ISO
+## Where can I find a Melee ISO?
 
 We cannot help you find an ISO, you will need to acquire one yourself. This website may be a starting point: <https://wiki.dolphin-emu.org/index.php?title=Ripping_Games>.
 
