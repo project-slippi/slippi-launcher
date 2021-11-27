@@ -76,7 +76,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
       <DevGuard show={isLinux}>
         <SettingItem
           name={`${dolphinType} Dolphin Directory`}
-          description={`The path containing the ${dolphinTypeName} Dolphin executable.`}
+          description={`The path to the folder containing the ${dolphinTypeName} Dolphin executable.`}
         >
           <PathInput
             value={dolphinPath ?? ""}
@@ -87,14 +87,14 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
         </SettingItem>
       </DevGuard>
       {!isLinux && <ImportDolphinConfigForm dolphinType={dolphinType} />}
-      <SettingItem name={`Reset ${dolphinType} Dolphin`}>
+      <SettingItem name={`Reset ${dolphinTypeName} Dolphin`}>
         <ConfirmationModal
           open={resetModalOpen}
           onClose={() => setResetModalOpen(false)}
           onSubmit={reinstallDolphinHandler}
           title="Are you sure?"
         >
-          This will remove all your {dolphinType} dolphin settings.
+          This will remove all your {dolphinTypeName} Dolphin settings.
         </ConfirmationModal>
         <div
           css={css`
