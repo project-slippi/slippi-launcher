@@ -87,7 +87,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => {
     // This parameter balances the responsiveness of the replays list versus the
     // total loading time. A smaller value will update the list more frequency,
     // but will delay further loads while the list is re-rendered.
-    const UPDATE_BATCH_SIZE = 400;
+    const UPDATE_BATCH_SIZE = 1000;
 
     // Making the first batch smaller improves the perceived responsiveness.
     // This value is chosen to be slightly larger than the likely first page

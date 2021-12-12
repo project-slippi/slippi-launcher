@@ -1,6 +1,7 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 import EqualizerIcon from "@material-ui/icons/Equalizer";
@@ -45,17 +46,16 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
   header,
   details,
 }) => {
-  if (!details) {
-    // Hide replay files that haven't finished loading. If we would like to
-    // display a loading card instead this can be changed in the future.
-    return null;
-  }
-
   const selected = selectedIndex !== -1;
-  const date = new Date(details.startTime ? Date.parse(details.startTime) : 0);
-  const stageInfo = details.settings.stageId !== null ? stageUtils.getStageInfo(details.settings.stageId) : null;
+  const date = details && details.startTime ? Date.parse(details.startTime) : new Date(header.birthtimeMs);
+  const stageInfo =
+    details && details.settings.stageId !== null ? stageUtils.getStageInfo(details.settings.stageId) : null;
   const stageImageUrl = stageInfo !== null && stageInfo.id !== -1 ? getStageImage(stageInfo.id) : undefined;
   const stageName = stageInfo !== null ? stageInfo.name : "Unknown Stage";
+  const duration =
+    details && details.lastFrame !== null && details.lastFrame !== 0
+      ? convertFrameCountToDurationString(details.lastFrame, "m[m] ss[s]")
+      : "Unknown";
 
   return (
     <DraggableFile filePaths={selected && selectedFiles.length > 0 ? selectedFiles : []}>
@@ -79,7 +79,8 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
                 justify-content: space-between;
               `}
             >
-              <TeamElements settings={details.settings} metadata={details.metadata} />
+              {details && <TeamElements settings={details.settings} metadata={details.metadata} />}
+              {!details && <CircularProgress size={30} color="inherit" />}
               <div
                 css={css`
                   display: flex;
@@ -115,12 +116,7 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
                 `}
               >
                 <InfoItem label={<EventIcon />}>{monthDayHourFormat(moment(date))}</InfoItem>
-
-                {details.lastFrame !== null && (
-                  <InfoItem label={<TimerIcon />}>
-                    {convertFrameCountToDurationString(details.lastFrame, "m[m] ss[s]")}
-                  </InfoItem>
-                )}
+                <InfoItem label={<TimerIcon />}>{duration}</InfoItem>
                 <InfoItem label={<LandscapeIcon />}>{stageName}</InfoItem>
               </div>
               <DraggableFile
