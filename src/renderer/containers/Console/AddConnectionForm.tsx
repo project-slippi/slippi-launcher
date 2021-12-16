@@ -188,7 +188,7 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
                         if (!val) {
                           return false;
                         }
-                        return validateIpAndPort(val) || "Invalid IP address";
+                        return validateIpAndPort(val);
                       },
                     }}
                   />

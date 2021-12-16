@@ -11,7 +11,7 @@ export const isValidIpAddress = (ip: string): boolean => {
   return chunks.map((n) => parseInt(n)).every((n) => n >= 0 && n <= 255);
 };
 
-export const validateIpAndPort = (ip: string): string | boolean => {
+export const validateIpAndPort = (ip: string): string | true => {
   const ipPort = ip.split(":");
   let port = "";
   if (ipPort.length !== 2) {
@@ -23,7 +23,11 @@ export const validateIpAndPort = (ip: string): string | boolean => {
     return "Invalid Port";
   }
 
-  return isValidIpAddress(ip);
+  if (!isValidIpAddress(ip)) {
+    return "Invalid IP address";
+  }
+
+  return true;
 };
 
 export const validateConnectCodeStart = (codeStart: string): string | true => {
