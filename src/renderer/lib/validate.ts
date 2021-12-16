@@ -1,4 +1,4 @@
-export const validateIpAddress = (ip: string) => {
+export const validateIpAddress = (ip: string): boolean => {
   if (ip === "localhost") {
     return true;
   }
@@ -11,7 +11,7 @@ export const validateIpAddress = (ip: string) => {
   return chunks.map((n) => parseInt(n)).every((n) => n >= 0 && n <= 255);
 };
 
-export const validateIpAndPort = (ip: string) => {
+export const validateIpAndPort = (ip: string): string | boolean => {
   const ipPort = ip.split(":");
   let port = "";
   if (ipPort.length !== 2) {
@@ -26,7 +26,7 @@ export const validateIpAndPort = (ip: string) => {
   return validateIpAddress(ip);
 };
 
-export const validateConnectCodeStart = (codeStart: string) => {
+export const validateConnectCodeStart = (codeStart: string): string | true => {
   if (codeStart.length === 0) {
     return "Invalid code";
   }
