@@ -2,7 +2,7 @@ import { validateDisplayName } from "./validate";
 
 describe("when validating display names", () => {
   it("should reject names with invalid characters", () => {
-    expect(validateDisplayName("}|\\}|\\|}|\\|}\\")).not.toEqual(true);
+    expect(validateDisplayName("`}|\\}|\\|}|\\|}\\")).not.toEqual(true);
     expect(validateDisplayName("😀😁`")).not.toEqual(true);
     expect(validateDisplayName("攻撃")).not.toEqual(true);
   });
