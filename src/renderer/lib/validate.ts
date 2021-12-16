@@ -1,4 +1,4 @@
-export const validateIpAddress = (ip: string): boolean => {
+export const isValidIpAddress = (ip: string): boolean => {
   if (ip === "localhost") {
     return true;
   }
@@ -23,7 +23,7 @@ export const validateIpAndPort = (ip: string): string | boolean => {
     return "Invalid Port";
   }
 
-  return validateIpAddress(ip);
+  return isValidIpAddress(ip);
 };
 
 export const validateConnectCodeStart = (codeStart: string): string | true => {
