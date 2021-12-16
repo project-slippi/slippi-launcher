@@ -53,6 +53,10 @@ jobs:
       - name: Lint
         if: matrix.os == 'ubuntu-latest'
         run: |
+          yarn run test
+      - name: Lint
+        if: matrix.os == 'ubuntu-latest'
+        run: |
           yarn run lint
       - name: Load macOS signing certificates and secrets
         if: matrix.os == 'macOS-latest' && env.CERTIFICATE_MACOS_PASSWORD != null
