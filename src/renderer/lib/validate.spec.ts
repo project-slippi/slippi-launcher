@@ -1,11 +1,11 @@
-import { isValidDisplayName } from "./validate";
+import { validateDisplayName } from "./validate";
 
 describe("when validating display names", () => {
   it("should reject names with invalid characters", () => {
-    expect(isValidDisplayName("}|\\}|\\|}|\\|}\\")).not.toEqual(true);
+    expect(validateDisplayName("}|\\}|\\|}|\\|}\\")).not.toEqual(true);
   });
 
   it("should reject names that are longer than 15 characters", () => {
-    expect(isValidDisplayName("a".repeat(16))).not.toEqual(true);
+    expect(validateDisplayName("a".repeat(16))).not.toEqual(true);
   });
 });

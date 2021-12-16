@@ -13,7 +13,7 @@ import { useToasts } from "react-toast-notifications";
 
 import { useAccount } from "@/lib/hooks/useAccount";
 import { initNetplay } from "@/lib/slippiBackend";
-import { isValidConnectCodeStart } from "@/lib/validate";
+import { validateConnectCodeStart } from "@/lib/validate";
 
 const log = electronLog.scope("ActivateOnlineForm");
 
@@ -107,7 +107,7 @@ const ConnectCodeSetter: React.FC<ConnectCodeSetterProps> = ({ displayName, onSu
           );
         }}
         rules={{
-          validate: (val) => isValidConnectCodeStart(val),
+          validate: (val) => validateConnectCodeStart(val),
         }}
       />
       <div

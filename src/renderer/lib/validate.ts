@@ -1,4 +1,4 @@
-export const isValidIpAddress = (ip: string) => {
+export const validateIpAddress = (ip: string) => {
   if (ip === "localhost") {
     return true;
   }
@@ -11,7 +11,7 @@ export const isValidIpAddress = (ip: string) => {
   return chunks.map((n) => parseInt(n)).every((n) => n >= 0 && n <= 255);
 };
 
-export const isValidIpAndPort = (ip: string) => {
+export const validateIpAndPort = (ip: string) => {
   const ipPort = ip.split(":");
   let port = "";
   if (ipPort.length !== 2) {
@@ -23,10 +23,10 @@ export const isValidIpAndPort = (ip: string) => {
     return "Invalid Port";
   }
 
-  return isValidIpAddress(ip);
+  return validateIpAddress(ip);
 };
 
-export const isValidConnectCodeStart = (codeStart: string) => {
+export const validateConnectCodeStart = (codeStart: string) => {
   if (codeStart.length === 0) {
     return "Invalid code";
   }
@@ -46,7 +46,7 @@ export const isValidConnectCodeStart = (codeStart: string) => {
   return true;
 };
 
-export const isValidDisplayName = (displayName: string): string | true => {
+export const validateDisplayName = (displayName: string): string | true => {
   displayName = displayName.trim();
   // these characters are confirmed to work in game
   if (!/^[ぁ-んァ-ン!-_a-~ ]+$/u.test(displayName)) {

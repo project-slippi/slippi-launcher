@@ -10,7 +10,7 @@ import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { useAccount } from "@/lib/hooks/useAccount";
 import { useAsync } from "@/lib/hooks/useAsync";
 import { changeDisplayName } from "@/lib/slippiBackend";
-import { isValidDisplayName } from "@/lib/validate";
+import { validateDisplayName } from "@/lib/validate";
 
 export const NameChangeDialog: React.FC<{
   displayName: string;
@@ -88,7 +88,7 @@ export const NameChangeDialog: React.FC<{
               }}
             />
           )}
-          rules={{ validate: isValidDisplayName }}
+          rules={{ validate: validateDisplayName }}
         />
       </ConfirmationModal>
     </div>
