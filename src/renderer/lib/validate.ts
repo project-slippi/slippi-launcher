@@ -52,7 +52,7 @@ export const validateConnectCodeStart = (codeStart: string): string | true => {
 
 export const validateDisplayName = (displayName: string): string | true => {
   // these characters are confirmed to work in game
-  if (!/^[ぁ-んァ-ン -[\]-_a-~]+$/u.test(displayName)) {
+  if (!/^[ぁ-んァ-ン -~][^\\`]+$/u.test(displayName)) {
     return "Display names can only contain letters, numbers, Hiragana, Katakana, and special characters";
   }
 
