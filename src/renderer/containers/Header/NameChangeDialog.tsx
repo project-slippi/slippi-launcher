@@ -88,7 +88,7 @@ export const NameChangeDialog: React.FC<{
               }}
             />
           )}
-          rules={{ validate: (val) => isValidDisplayName(val) }}
+          rules={{ validate: isValidDisplayName }}
         />
       </ConfirmationModal>
     </div>
