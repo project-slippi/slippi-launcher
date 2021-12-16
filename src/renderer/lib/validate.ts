@@ -45,3 +45,21 @@ export const isValidConnectCodeStart = (codeStart: string) => {
 
   return true;
 };
+
+export const isValidDisplayName = (displayName: string) => {
+  displayName = displayName.trim();
+  // these characters are confirmed to work in game
+  if (!/^[ぁ-んァ-ン!-_a-~ ]+$/u.test(displayName)) {
+    return "Display names can only contain letters, numbers, Hiragana, Katakana, and special characters";
+  }
+
+  if (displayName.length === 0) {
+    return "Display name is too short";
+  }
+
+  if (displayName.length > 15) {
+    return "Display name is too long";
+  }
+
+  return true;
+};

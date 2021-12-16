@@ -3,19 +3,24 @@ import { css, jsx } from "@emotion/react";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import TextField from "@material-ui/core/TextField";
 import React from "react";
+import { Controller, useForm } from "react-hook-form";
 import { useToasts } from "react-toast-notifications";
 
 import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { useAccount } from "@/lib/hooks/useAccount";
 import { useAsync } from "@/lib/hooks/useAsync";
 import { changeDisplayName } from "@/lib/slippiBackend";
+import { isValidDisplayName } from "@/lib/validate";
 
 export const NameChangeDialog: React.FC<{
   displayName: string;
   open: boolean;
   handleClose: () => void;
 }> = ({ displayName, open, handleClose }) => {
-  const [name, setName] = React.useState(displayName);
+  const { handleSubmit, watch, control } = useForm<{ displayName: string }>({ defaultValues: { displayName } });
+
+  const name = watch("displayName");
+
   const setDisplayName = useAccount((store) => store.setDisplayName);
   const { addToast } = useToasts();
 
@@ -31,6 +36,8 @@ export const NameChangeDialog: React.FC<{
     }
   });
 
+  const onFormSubmit = handleSubmit(() => void submitNameChange.execute());
+
   return (
     <div>
       <ConfirmationModal
@@ -38,7 +45,7 @@ export const NameChangeDialog: React.FC<{
         open={open}
         onClose={handleClose}
         closeOnSubmit={false}
-        onSubmit={() => void submitNameChange.execute()}
+        onSubmit={onFormSubmit}
         confirmProps={{
           disabled: submitNameChange.loading,
         }}
@@ -64,15 +71,24 @@ export const NameChangeDialog: React.FC<{
           )
         }
       >
-        <TextField
-          required={true}
-          autoFocus={true}
-          value={name}
-          label="Display name"
-          inputProps={{
-            maxLength: 15,
-          }}
-          onChange={(event) => setName(event.target.value)}
+        <Controller
+          name="displayName"
+          control={control}
+          defaultValue=""
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              {...field}
+              label="Display Name"
+              required={true}
+              error={Boolean(error)}
+              helperText={error ? error.message : undefined}
+              autoFocus={true}
+              inputProps={{
+                maxLength: 15,
+              }}
+            />
+          )}
+          rules={{ validate: (val) => isValidDisplayName(val) }}
         />
       </ConfirmationModal>
     </div>
