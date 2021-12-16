@@ -46,7 +46,7 @@ export const isValidConnectCodeStart = (codeStart: string) => {
   return true;
 };
 
-export const isValidDisplayName = (displayName: string) => {
+export const isValidDisplayName = (displayName: string): string | true => {
   displayName = displayName.trim();
   // these characters are confirmed to work in game
   if (!/^[ぁ-んァ-ン!-_a-~ ]+$/u.test(displayName)) {
