@@ -50,7 +50,7 @@ jobs:
       - name: Install dependencies
         run: |
           yarn install
-      - name: Lint
+      - name: Run tests
         if: matrix.os == 'ubuntu-latest'
         run: |
           yarn run test
