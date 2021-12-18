@@ -60,7 +60,6 @@ export const useReplayBrowserList = () => {
   const numHiddenFiles = Array.from(files).length - filteredFiles.length;
   const { index, total } = useReplays((store) => store.selectedFile);
   const { goToReplayStatsPage } = useReplayBrowserNavigation();
-  useReplays((store) => store.forceRender);
 
   const setSelectedItem = (index: number | null) => {
     if (index === null) {

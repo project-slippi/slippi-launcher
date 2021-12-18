@@ -1,6 +1,7 @@
 import { ipc_loadReplayFolder, ipc_loadReplayFiles } from "@replays/ipc";
 import { FileLoadComplete, FileLoadError, FileResult, FolderResult, FolderLoadResult, Progress } from "@replays/types";
 import { produce, setAutoFreeze } from "immer";
+import { Map as immutableMap } from "immutable";
 import path from "path";
 import { useState } from "react";
 import create from "zustand";
@@ -18,7 +19,7 @@ setAutoFreeze(false);
 type StoreState = {
   loading: boolean;
   progress: Progress | null;
-  files: Map<string, FileResult>;
+  files: immutableMap<string, FileResult>;
   netplaySlpFolder: FolderResult | null;
   extraFolders: FolderResult[];
   currentRoot: string | null;
@@ -31,11 +32,6 @@ type StoreState = {
     total: number | null;
     fileResult: FileResult | null;
   };
-  // Can be incremented to force ReplayBrowser to re-render. This is useful
-  // because we can significantly improve performance by updating files in place
-  // (without copying the map), but this will not normally trigger a render
-  // because React does not recognize it as a state change.
-  forceRender: number;
 };
 
 type StoreReducers = {
@@ -57,7 +53,7 @@ type StoreReducers = {
 const initialState: StoreState = {
   loading: false,
   progress: null,
-  files: new Map(),
+  files: immutableMap(),
   netplaySlpFolder: null,
   extraFolders: [],
   currentRoot: null,
@@ -70,7 +66,6 @@ const initialState: StoreState = {
     total: null,
     fileResult: null,
   },
-  forceRender: 0,
 };
 
 // Subset of StoreState that is allowed to be modified in this function.
@@ -104,7 +99,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => {
 
     const reset = (finalSize_: number) => {
       const indexState = get();
-      state = { files: indexState.files, fileErrorCount: indexState.fileErrorCount };
+      state = { files: new Map(indexState.files), fileErrorCount: indexState.fileErrorCount };
       thisFolder = indexState.currentFolder;
       finalSize = finalSize_;
       id++;
@@ -117,7 +112,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => {
       // The current folder may change while we are loading files. If it does
       // so, ignore state changes.
       if (get().currentFolder == thisFolder) {
-        set((oldState) => ({ ...state, forceRender: oldState.forceRender + 1 }));
+        set((_) => ({ files: immutableMap(state.files), fileErrorCount: state.fileErrorCount }));
         batchSize = 0;
       }
     };
@@ -234,7 +229,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => {
         const newFiles = new Map(result.files.map((header) => [header.fullPath, { header: header, details: null }]));
         set({
           scrollRowItem: 0,
-          files: newFiles,
+          files: immutableMap(newFiles),
           loading: false,
           fileErrorCount: result.fileErrorCount,
         });
