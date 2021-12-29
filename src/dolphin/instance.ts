@@ -66,8 +66,8 @@ export class DolphinInstance extends EventEmitter {
       this.process = spawn(this.executablePath, params);
     }
 
-    this.process.on("close", () => {
-      this.emit("close");
+    this.process.on("close", (code) => {
+      this.emit("close", code);
     });
     this.process.on("error", (err) => {
       this.emit("error", err);

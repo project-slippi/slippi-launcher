@@ -115,10 +115,10 @@ ipc_checkDesktopAppDolphin.main!.handle(async () => {
   return { dolphinPath: dolphinExecutablePath, exists: exists };
 });
 
-dolphinManager.on("playback-dolphin-closed", async () => {
-  void ipc_dolphinClosedEvent.main!.trigger({ dolphinType: DolphinLaunchType.PLAYBACK });
+dolphinManager.on("playback-dolphin-closed", async (_playbackId: string, code: number) => {
+  void ipc_dolphinClosedEvent.main!.trigger({ dolphinType: DolphinLaunchType.PLAYBACK, exitCode: code });
 });
 
-dolphinManager.on("netplay-dolphin-closed", async () => {
-  void ipc_dolphinClosedEvent.main!.trigger({ dolphinType: DolphinLaunchType.NETPLAY });
+dolphinManager.on("netplay-dolphin-closed", async (code: number) => {
+  void ipc_dolphinClosedEvent.main!.trigger({ dolphinType: DolphinLaunchType.NETPLAY, exitCode: code });
 });

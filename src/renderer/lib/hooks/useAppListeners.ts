@@ -229,7 +229,28 @@ export const useAppListeners = () => {
 
   const setDolphinOpen = useDolphinStore((store) => store.setDolphinOpen);
   ipc_dolphinClosedEvent.renderer!.useEvent(
-    async ({ dolphinType }) => {
+    async ({ dolphinType, exitCode }) => {
+      if (exitCode === 0xc0000135) {
+        addToast(
+          `Necessary DLLs for launching Dolphin are missing. Head to the FAQ in the settings to find out how to install them.`,
+          {
+            id: `dolphin-error-0x${exitCode.toString(16)}`,
+            appearance: "error",
+            autoDismiss: false,
+          },
+        );
+      } else if (exitCode) {
+        addToast(
+          `Dolphin encountered an error with code: 0x${exitCode.toString(16)}.
+          If you are having issues, please screenshot this and post it in a support channel in the
+          Slippi Discord.`,
+          {
+            id: `dolphin-error-0x${exitCode.toString(16)}`,
+            appearance: "error",
+            autoDismiss: false,
+          },
+        );
+      }
       setDolphinOpen(dolphinType, false);
     },
     [setDolphinOpen],
