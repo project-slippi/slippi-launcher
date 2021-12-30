@@ -15,16 +15,17 @@ const client = new ApolloClient({
 });
 
 const getUserKeyQuery = gql`
-  query GetUserKey($uid: String!) {
-    user(uid: $uid) {
-      connectCode
-      isOnlineEnabled
+  query getUserKeyQuery($fbUid: String) {
+    getUser(fbUid: $fbUid) {
       displayName
+      connectCode {
+        code
+      }
       private {
         playKey
       }
     }
-    dolphinVersions(order_by: { releasedAt: desc }, where: { type: { _in: ["ishii"] } }, limit: 1) {
+    getLatestDolphin {
       version
     }
   }
@@ -81,22 +82,18 @@ export async function fetchPlayKey(): Promise<PlayKey> {
   const res = await client.query({
     query: getUserKeyQuery,
     variables: {
-      uid: user.uid,
+      fbUid: user.uid,
     },
-    fetchPolicy: "network-only",
   });
 
   handleErrors(res.errors);
-  if (!res.data.user.isOnlineEnabled) {
-    throw new Error("User is not allowed online");
-  }
 
   return {
     uid: user.uid,
-    connectCode: res.data.user.connectCode,
-    playKey: res.data.user.private.playKey,
-    displayName: res.data.user.displayName,
-    latestVersion: res.data.dolphinVersions[0].version,
+    connectCode: res.data.getUser.connectCode.code,
+    playKey: res.data.getUser.private.playKey,
+    displayName: res.data.getUser.displayName,
+    latestVersion: res.data.getLatestDolphin.version,
   };
 }
 
