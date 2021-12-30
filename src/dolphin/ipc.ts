@@ -64,5 +64,5 @@ export const ipc_dolphinDownloadLogReceivedEvent = makeEndpoint.renderer(
 
 export const ipc_dolphinClosedEvent = makeEndpoint.renderer(
   "dolphin_dolphinClosed",
-  <{ dolphinType: DolphinLaunchType; exitCode: number }>_,
+  <{ dolphinType: DolphinLaunchType; exitCode: number | null }>_,
 );

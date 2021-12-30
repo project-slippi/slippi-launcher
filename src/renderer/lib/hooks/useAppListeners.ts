@@ -229,32 +229,30 @@ export const useAppListeners = () => {
   }, [refreshBroadcasts]);
 
   const setDolphinOpen = useDolphinStore((store) => store.setDolphinOpen);
+  const handleDolphinExitCode = (exitCode: number | null) => {
+    // ignore some situations
+    const ignore = [
+      exitCode === 3 && !isLinux && !isMac, // when selecting Update in game on windows, dolphin returns 3
+    ];
+
+    if (exitCode === 0xc0000135) {
+      return `Necessary DLLs for launching Dolphin are missing. Head to the FAQ in the settings to find out how to install them. 
+      Required DLLs for launching Dolphin are missing. Check the Help section in the settings page to fix this issue.`;
+    } else if (exitCode !== null && !ignore.includes(true)) {
+      return `Dolphin exited with error code: 0x${exitCode.toString(16)}.
+      Please screenshot this and post it in a support channel in the Slippi Discord for assistance.`;
+    }
+    return null;
+  };
   ipc_dolphinClosedEvent.renderer!.useEvent(
     async ({ dolphinType, exitCode }) => {
-      // ignore some situations
-      const ignore = [
-        exitCode === 3 && !isLinux && !isMac, // when selecting Update in game on windows, dolphin returns 3
-      ];
-      if (exitCode === 0xc0000135) {
-        addToast(
-          `Necessary DLLs for launching Dolphin are missing. Head to the FAQ in the settings to find out how to install them.
-          Required DLLs for launching Dolphin are missing. Check the Help section in the settings page to fix this issue.`,
-          {
-            id: `dolphin-error-0x${exitCode.toString(16)}`,
-            appearance: "error",
-            autoDismiss: false,
-          },
-        );
-      } else if (exitCode && !ignore.includes(true)) {
-        addToast(
-          `Dolphin exited with error code: 0x${exitCode.toString(16)}.
-          Please screenshot this and post it in a support channel in the Slippi Discord for assistance.`,
-          {
-            id: `dolphin-error-0x${exitCode.toString(16)}`,
-            appearance: "error",
-            autoDismiss: false,
-          },
-        );
+      const errMsg = handleDolphinExitCode(exitCode);
+      if (errMsg) {
+        addToast(errMsg, {
+          id: errMsg,
+          appearance: "error",
+          autoDismiss: false,
+        });
       }
       setDolphinOpen(dolphinType, false);
     },
