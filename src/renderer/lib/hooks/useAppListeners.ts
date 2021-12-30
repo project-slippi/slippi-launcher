@@ -248,7 +248,7 @@ export const useAppListeners = () => {
 };
 
 const handleDolphinExitCode = (exitCode: number | null) => {
-  if (exitCode === null) {
+  if (exitCode === null || exitCode === 0) {
     return null;
   }
 
