@@ -229,21 +229,11 @@ export const useAppListeners = () => {
   }, [refreshBroadcasts]);
 
   const setDolphinOpen = useDolphinStore((store) => store.setDolphinOpen);
-  const handleDolphinExitCode = (exitCode: number | null) => {
-    if (exitCode === 0xc0000135) {
-      return `Necessary DLLs for launching Dolphin are missing. Head to the FAQ in the settings to find out how to install them. 
-      Required DLLs for launching Dolphin are missing. Check the Help section in the settings page to fix this issue.`;
-    } else if (exitCode === 3 && isWindows) {
-      // when selecting Update in game on Windows, dolphin returns 3 which we don't want to send an error toast for
-      return null;
-    } else if (exitCode !== null) {
-      return `Dolphin exited with error code: 0x${exitCode.toString(16)}.
-      Please screenshot this and post it in a support channel in the Slippi Discord for assistance.`;
-    }
-    return null;
-  };
   ipc_dolphinClosedEvent.renderer!.useEvent(
     async ({ dolphinType, exitCode }) => {
+      setDolphinOpen(dolphinType, false);
+
+      // Check if it exited cleanly
       const errMsg = handleDolphinExitCode(exitCode);
       if (errMsg) {
         addToast(errMsg, {
@@ -252,8 +242,25 @@ export const useAppListeners = () => {
           autoDismiss: false,
         });
       }
-      setDolphinOpen(dolphinType, false);
     },
     [setDolphinOpen],
   );
+};
+
+const handleDolphinExitCode = (exitCode: number | null) => {
+  if (exitCode === null) {
+    return null;
+  }
+
+  // Dolphin returns 3 when selecting Update in game on Windows
+  if (exitCode === 3 && isWindows) {
+    return null;
+  }
+
+  if (exitCode === 0xc0000135) {
+    return `Required DLLs for launching Dolphin are missing. Check the Help section in the settings page to fix this issue.`;
+  }
+
+  return `Dolphin exited with error code: 0x${exitCode.toString(16)}.
+    Please screenshot this and post it in a support channel in the Slippi Discord for assistance.`;
 };
