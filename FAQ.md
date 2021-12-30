@@ -6,7 +6,7 @@ Rollback is a superior netcode implementation to the delay based netcode that ev
 
 We only support NTSC-U/J 1.02.
 
-## Nothing happens when I hit Play/Necessary DLLs are missing
+## It says "Required DLLs are missing" when I hit Play!
 
 You are missing DLLs necessary for Dolphin to run, download and install the file at the link: <https://aka.ms/vs/17/release/vc_redist.x64.exe>
 
