@@ -5,7 +5,7 @@ import "@settings/main";
 import "@console/main";
 
 import { settingsManager } from "@settings/settingsManager";
-import { isDevelopment } from "common/constants";
+import { isDevelopment, isMac } from "common/constants";
 import {
   ipc_checkForUpdate,
   ipc_checkValidIso,
@@ -94,10 +94,19 @@ export function setupListeners() {
 
   ipc_copyLogsToClipboard.main!.handle(async () => {
     let logsFolder = "";
+    // why does macOS decide it needs to be difficult?
     if (isDevelopment) {
-      logsFolder = path.join(app.getPath("appData"), "Slippi Launcher", "logs");
+      if (isMac) {
+        logsFolder = path.join(app.getPath("logs"), "..", "Slippi Launcher");
+      } else {
+        logsFolder = path.join(app.getPath("logs"), "../../../", "Slippi Launcher", "logs");
+      }
     } else {
-      logsFolder = path.join(app.getPath("userData"), "logs");
+      if (isMac) {
+        logsFolder = app.getPath("logs");
+      } else {
+        logsFolder = path.join(app.getPath("logs"), "../../", "logs");
+      }
     }
     const mainLogPath = path.join(logsFolder, "main.log");
     const rendererLogPath = path.join(logsFolder, "renderer.log");
