@@ -15,6 +15,7 @@ import {
 import { ipc_dolphinClosedEvent, ipc_dolphinDownloadLogReceivedEvent } from "@dolphin/ipc";
 import { ipc_loadProgressUpdatedEvent, ipc_statsPageRequestedEvent } from "@replays/ipc";
 import { ipc_openSettingsModalEvent, ipc_settingsUpdatedEvent } from "@settings/ipc";
+import { isWindows } from "common/constants";
 import {
   ipc_checkValidIso,
   ipc_launcherUpdateDownloadingEvent,
@@ -229,9 +230,37 @@ export const useAppListeners = () => {
 
   const setDolphinOpen = useDolphinStore((store) => store.setDolphinOpen);
   ipc_dolphinClosedEvent.renderer!.useEvent(
-    async ({ dolphinType }) => {
+    async ({ dolphinType, exitCode }) => {
       setDolphinOpen(dolphinType, false);
+
+      // Check if it exited cleanly
+      const errMsg = handleDolphinExitCode(exitCode);
+      if (errMsg) {
+        addToast(errMsg, {
+          id: errMsg,
+          appearance: "error",
+          autoDismiss: false,
+        });
+      }
     },
     [setDolphinOpen],
   );
+};
+
+const handleDolphinExitCode = (exitCode: number | null) => {
+  if (exitCode === null) {
+    return null;
+  }
+
+  // Dolphin returns 3 when selecting Update in game on Windows
+  if (exitCode === 3 && isWindows) {
+    return null;
+  }
+
+  if (exitCode === 0xc0000135) {
+    return `Required DLLs for launching Dolphin are missing. Check the Help section in the settings page to fix this issue.`;
+  }
+
+  return `Dolphin exited with error code: 0x${exitCode.toString(16)}.
+    Please screenshot this and post it in a support channel in the Slippi Discord for assistance.`;
 };
