@@ -39,19 +39,6 @@ const renameUserMutation = gql`
   }
 `;
 
-export const setUserIsOnlineEnabledMutation = gql`
-  mutation SetUserIsOnlineEnabled($uid: String!) {
-    insert_users(
-      objects: [{ uid: $uid, isOnlineEnabled: true }]
-      on_conflict: { constraint: users_pkey, update_columns: [isOnlineEnabled] }
-    ) {
-      returning {
-        uid
-      }
-    }
-  }
-`;
-
 export const initNetplayMutation = gql`
   mutation InitNetplay($codeStart: String!) {
     user_init_netplay(codeStart: $codeStart) {
@@ -161,9 +148,6 @@ export async function initNetplay(codeStart: string): Promise<void> {
     throw new Error("Failed to set connect code. User is not logged in");
   }
 
-  let res = await client.mutate({ mutation: initNetplayMutation, variables: { codeStart } });
-  handleErrors(res.errors);
-
-  res = await client.mutate({ mutation: setUserIsOnlineEnabledMutation, variables: { uid: user.uid } });
+  const res = await client.mutate({ mutation: initNetplayMutation, variables: { codeStart } });
   handleErrors(res.errors);
 }
