@@ -15,7 +15,7 @@ import {
 import { ipc_dolphinClosedEvent, ipc_dolphinDownloadLogReceivedEvent } from "@dolphin/ipc";
 import { ipc_loadProgressUpdatedEvent, ipc_statsPageRequestedEvent } from "@replays/ipc";
 import { ipc_openSettingsModalEvent, ipc_settingsUpdatedEvent } from "@settings/ipc";
-import { isLinux, isMac } from "common/constants";
+import { isWindows } from "common/constants";
 import {
   ipc_checkValidIso,
   ipc_launcherUpdateDownloadingEvent,
@@ -230,15 +230,13 @@ export const useAppListeners = () => {
 
   const setDolphinOpen = useDolphinStore((store) => store.setDolphinOpen);
   const handleDolphinExitCode = (exitCode: number | null) => {
-    // ignore some situations
-    const ignore = [
-      exitCode === 3 && !isLinux && !isMac, // when selecting Update in game on windows, dolphin returns 3
-    ];
-
     if (exitCode === 0xc0000135) {
       return `Necessary DLLs for launching Dolphin are missing. Head to the FAQ in the settings to find out how to install them. 
       Required DLLs for launching Dolphin are missing. Check the Help section in the settings page to fix this issue.`;
-    } else if (exitCode !== null && !ignore.includes(true)) {
+    } else if (exitCode === 3 && isWindows) {
+      // when selecting Update in game on Windows, dolphin returns 3 which we don't want to send an error toast for
+      return null;
+    } else if (exitCode !== null) {
       return `Dolphin exited with error code: 0x${exitCode.toString(16)}.
       Please screenshot this and post it in a support channel in the Slippi Discord for assistance.`;
     }
