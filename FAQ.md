@@ -77,7 +77,7 @@ No, only singles (1v1) and teams (2v2, 3v1, 2v1v1) is supported at this time. Fr
 
 ## I get a VCRUNTIME error whenever I launch Dolphin
 
-Install this: <https://aka.ms/vs/16/release/vc_redist.x64.exe>
+Install this: <https://aka.ms/vs/17/release/vc_redist.x64.exe>
 
 ## Some of my inputs aren't going through correctly
 
