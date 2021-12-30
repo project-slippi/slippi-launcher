@@ -257,7 +257,7 @@ const handleDolphinExitCode = (exitCode: number | null) => {
     return null;
   }
 
-  if (exitCode === 0xc0000135) {
+  if (exitCode === 0xc0000135 || exitCode === 0xc0000409) {
     return `Required DLLs for launching Dolphin are missing. Check the Help section in the settings page to fix this issue.`;
   }
 
