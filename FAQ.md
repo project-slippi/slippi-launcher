@@ -6,6 +6,10 @@ Rollback is a superior netcode implementation to the delay based netcode that ev
 
 We only support NTSC-U/J 1.02.
 
+## Nothing happens when I hit Play/Necessary DLLs are missing
+
+You are missing DLLs necessary for Dolphin to run, download and install the file at the link: <https://aka.ms/vs/17/release/vc_redist.x64.exe>
+
 ## How do I setup my GameCube Controller Adapter?
 
 Set your adapter to Wii U/Switch mode and then follow the section for your OS.
@@ -74,10 +78,6 @@ We cannot help you find an ISO, you will need to acquire one yourself. This webs
 ## Can I play Free For All with Slippi Online?
 
 No, only singles (1v1) and teams (2v2, 3v1, 2v1v1) is supported at this time. Free For All won't be added in the near future, but is not off the table entirely.
-
-## I get a VCRUNTIME error whenever I launch Dolphin
-
-Install this: <https://aka.ms/vs/17/release/vc_redist.x64.exe>
 
 ## Some of my inputs aren't going through correctly
 
