@@ -41,8 +41,8 @@ const renameUserMutation = gql`
 
 export const initNetplayMutation = gql`
   mutation InitNetplay($codeStart: String!) {
-    user_init_netplay(codeStart: $codeStart) {
-      uid
+    userInitNetplay(codeStart: $codeStart) {
+      fbUid
     }
   }
 `;
