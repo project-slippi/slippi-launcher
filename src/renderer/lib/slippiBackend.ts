@@ -32,9 +32,8 @@ const getUserKeyQuery = gql`
 `;
 
 const renameUserMutation = gql`
-  mutation RenameUser($uid: String!, $displayName: String!) {
-    user_rename(uid: $uid, displayName: $displayName) {
-      uid
+  mutation RenameUser($fbUid: String!, $displayName: String!) {
+    userRename(fbUid: $fbUid, displayName: $displayName) {
       displayName
     }
   }
@@ -128,11 +127,11 @@ export async function changeDisplayName(name: string) {
   if (!user) {
     throw new Error("Failed to change display name. User is not logged in");
   }
-  const res = await client.mutate({ mutation: renameUserMutation, variables: { uid: user.uid, displayName: name } });
+  const res = await client.mutate({ mutation: renameUserMutation, variables: { fbUid: user.uid, displayName: name } });
 
   handleErrors(res.errors);
 
-  if (res.data.user_rename.displayName !== name) {
+  if (res.data.userRename.displayName !== name) {
     throw new Error("Could not change name.");
   }
 
