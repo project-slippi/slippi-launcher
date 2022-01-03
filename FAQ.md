@@ -6,9 +6,17 @@ Rollback is a superior netcode implementation to the delay based netcode that ev
 
 We only support NTSC-U/J 1.02.
 
-## It says "Required DLLs are missing" when I hit Play!
+## It says "Required DLLs/libraries are missing" when I hit Play!
 
-You are missing DLLs necessary for Dolphin to run, download and install the file at the link: <https://aka.ms/vs/17/release/vc_redist.x64.exe>
+### Windows
+
+Download and install the file at the link: <https://aka.ms/vs/17/release/vc_redist.x64.exe>
+
+### Linux
+
+If you are on Ubuntu, PopOS, or similar, open a terminal and run
+
+> sudo apt install libopengl0
 
 ## How do I setup my GameCube Controller Adapter?
 

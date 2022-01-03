@@ -15,7 +15,7 @@ import {
 import { ipc_dolphinClosedEvent, ipc_dolphinDownloadLogReceivedEvent } from "@dolphin/ipc";
 import { ipc_loadProgressUpdatedEvent, ipc_statsPageRequestedEvent } from "@replays/ipc";
 import { ipc_openSettingsModalEvent, ipc_settingsUpdatedEvent } from "@settings/ipc";
-import { isWindows } from "common/constants";
+import { isLinux, isWindows } from "common/constants";
 import {
   ipc_checkValidIso,
   ipc_launcherUpdateDownloadingEvent,
@@ -259,6 +259,10 @@ const handleDolphinExitCode = (exitCode: number | null) => {
 
   if (exitCode === 0xc0000135 || exitCode === 0xc0000409) {
     return `Required DLLs for launching Dolphin are missing. Check the Help section in the settings page to fix this issue.`;
+  }
+
+  if (exitCode === 0x7f && isLinux) {
+    return `Required libraries for launching Dolphin may be missing. Check the Help section in the settings page for guidance. Post in the Slippi Discord's linux-support channel for further assistance if needed.`;
   }
 
   return `Dolphin exited with error code: 0x${exitCode.toString(16)}.
