@@ -50,6 +50,10 @@ jobs:
       - name: Install dependencies
         run: |
           yarn install
+      - name: Run tests
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          yarn run test
       - name: Lint
         if: matrix.os == 'ubuntu-latest'
         run: |
@@ -76,6 +80,7 @@ jobs:
           yarn run package --publish never
         env:
           CI: true
+          NODE_OPTIONS: "--max-old-space-size=8192"
       - name: Prepare artifacts
         shell: bash
         run: |
