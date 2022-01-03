@@ -16,7 +16,6 @@ module.exports = {
       typescript: {},
     },
   },
-  ignorePatterns: ["/*.js"],
   plugins: ["simple-import-sort", "strict-booleans", "react-hooks"],
   extends: [
     "plugin:react/recommended",
