@@ -2,7 +2,7 @@
   "name": "slippi-launcher",
   "productName": "Slippi Launcher",
   "description": "Launch Slippi Online, browse and watch saved replays",
-  "version": "2.1.9",
+  "version": "2.1.10",
   "license": "GPL-3.0",
   "engines": {
     "node": ">=14"
