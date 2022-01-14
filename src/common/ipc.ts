@@ -23,6 +23,8 @@ export const ipc_getLatestGitHubReleaseVersion = makeEndpoint.main(
   <{ version: string }>_,
 );
 
+export const ipc_clearTempFolder = makeEndpoint.main("clearTempFolder", <EmptyPayload>_, <SuccessPayload>_);
+
 // Events
 
 export const ipc_launcherUpdateFoundEvent = makeEndpoint.renderer("launcherupdate_found", <{ version: string }>_);
