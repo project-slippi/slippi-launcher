@@ -1,5 +1,6 @@
 import { DolphinLaunchType } from "@dolphin/types";
 import {
+  ipc_setAutoUpdateLauncher,
   ipc_setExtraSlpPaths,
   ipc_setIsoPath,
   ipc_setLaunchMeleeOnPlay,
@@ -120,4 +121,16 @@ export const useLaunchMeleeOnPlay = () => {
   };
 
   return [launchMeleeOnPlay, setLaunchMelee] as const;
+};
+
+export const useAutoUpdateLauncher = () => {
+  const autoUpdateLauncher = useSettings((store) => store.settings.autoUpdateLauncher);
+  const setAutoUpdateLauncher = async (autoUpdateLauncher: boolean) => {
+    const setResult = await ipc_setAutoUpdateLauncher.renderer!.trigger({ autoUpdateLauncher });
+    if (!setResult.result) {
+      throw new Error("Error setting launcher auto updates");
+    }
+  };
+
+  return [autoUpdateLauncher, setAutoUpdateLauncher] as const;
 };

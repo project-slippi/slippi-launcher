@@ -88,6 +88,10 @@ export class SettingsManager {
     await this._set("settings.launchMeleeOnPlay", launchMelee);
   }
 
+  public async setAutoUpdateLauncher(autoUpdateLauncher: boolean): Promise<void> {
+    await this._set("settings.autoUpdateLauncher", autoUpdateLauncher);
+  }
+
   public async addConsoleConnection(conn: Omit<StoredConnection, "id">): Promise<void> {
     const connections = this.get().connections;
     // Auto-generate an ID

@@ -1,10 +1,12 @@
 import { addGamePathToInis } from "@dolphin/util";
+import { autoUpdater } from "electron-updater";
 import path from "path";
 
 import {
   ipc_addNewConnection,
   ipc_deleteConnection,
   ipc_editConnection,
+  ipc_setAutoUpdateLauncher,
   ipc_setExtraSlpPaths,
   ipc_setIsoPath,
   ipc_setLaunchMeleeOnPlay,
@@ -77,5 +79,11 @@ ipc_deleteConnection.main!.handle(async ({ id }) => {
 
 ipc_setLaunchMeleeOnPlay.main!.handle(async ({ launchMelee }) => {
   await settingsManager.setLaunchMeleeOnPlay(launchMelee);
+  return { success: true };
+});
+
+ipc_setAutoUpdateLauncher.main!.handle(async ({ autoUpdateLauncher }) => {
+  await settingsManager.setAutoUpdateLauncher(autoUpdateLauncher);
+  autoUpdater.autoInstallOnAppQuit = autoUpdateLauncher;
   return { success: true };
 });

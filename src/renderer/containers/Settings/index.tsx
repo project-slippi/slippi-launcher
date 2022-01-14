@@ -3,6 +3,7 @@ import React from "react";
 
 import { DolphinSettings } from "./DolphinSettings";
 import { HelpPage } from "./HelpPage";
+import { LauncherOptions } from "./LauncherOptions";
 import { MeleeOptions } from "./MeleeOptions";
 import { ReplayOptions } from "./ReplayOptions";
 import { SettingSection } from "./types";
@@ -20,6 +21,11 @@ export const settings: SettingSection[] = [
         name: "Replays",
         path: "replay-options",
         component: <ReplayOptions />,
+      },
+      {
+        name: "Launcher",
+        path: "launcher-options",
+        component: <LauncherOptions />,
       },
     ],
   },
