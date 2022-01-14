@@ -15,47 +15,34 @@ const client = new ApolloClient({
 });
 
 const getUserKeyQuery = gql`
-  query GetUserKey($uid: String!) {
-    user(uid: $uid) {
-      connectCode
-      isOnlineEnabled
+  query getUserKeyQuery($fbUid: String) {
+    getUser(fbUid: $fbUid) {
       displayName
+      connectCode {
+        code
+      }
       private {
         playKey
       }
     }
-    dolphinVersions(order_by: { releasedAt: desc }, where: { type: { _in: ["ishii"] } }, limit: 1) {
+    getLatestDolphin {
       version
     }
   }
 `;
 
 const renameUserMutation = gql`
-  mutation RenameUser($uid: String!, $displayName: String!) {
-    user_rename(uid: $uid, displayName: $displayName) {
-      uid
+  mutation RenameUser($fbUid: String!, $displayName: String!) {
+    userRename(fbUid: $fbUid, displayName: $displayName) {
       displayName
-    }
-  }
-`;
-
-export const setUserIsOnlineEnabledMutation = gql`
-  mutation SetUserIsOnlineEnabled($uid: String!) {
-    insert_users(
-      objects: [{ uid: $uid, isOnlineEnabled: true }]
-      on_conflict: { constraint: users_pkey, update_columns: [isOnlineEnabled] }
-    ) {
-      returning {
-        uid
-      }
     }
   }
 `;
 
 export const initNetplayMutation = gql`
   mutation InitNetplay($codeStart: String!) {
-    user_init_netplay(codeStart: $codeStart) {
-      uid
+    userInitNetplay(codeStart: $codeStart) {
+      fbUid
     }
   }
 `;
@@ -94,22 +81,18 @@ export async function fetchPlayKey(): Promise<PlayKey> {
   const res = await client.query({
     query: getUserKeyQuery,
     variables: {
-      uid: user.uid,
+      fbUid: user.uid,
     },
-    fetchPolicy: "network-only",
   });
 
   handleErrors(res.errors);
-  if (!res.data.user.isOnlineEnabled) {
-    throw new Error("User is not allowed online");
-  }
 
   return {
     uid: user.uid,
-    connectCode: res.data.user.connectCode,
-    playKey: res.data.user.private.playKey,
-    displayName: res.data.user.displayName,
-    latestVersion: res.data.dolphinVersions[0].version,
+    connectCode: res.data.getUser.connectCode.code,
+    playKey: res.data.getUser.private.playKey,
+    displayName: res.data.getUser.displayName,
+    latestVersion: res.data.getLatestDolphin.version,
   };
 }
 
@@ -144,11 +127,11 @@ export async function changeDisplayName(name: string) {
   if (!user) {
     throw new Error("Failed to change display name. User is not logged in");
   }
-  const res = await client.mutate({ mutation: renameUserMutation, variables: { uid: user.uid, displayName: name } });
+  const res = await client.mutate({ mutation: renameUserMutation, variables: { fbUid: user.uid, displayName: name } });
 
   handleErrors(res.errors);
 
-  if (res.data.user_rename.displayName !== name) {
+  if (res.data.userRename.displayName !== name) {
     throw new Error("Could not change name.");
   }
 
@@ -161,9 +144,6 @@ export async function initNetplay(codeStart: string): Promise<void> {
     throw new Error("Failed to set connect code. User is not logged in");
   }
 
-  let res = await client.mutate({ mutation: initNetplayMutation, variables: { codeStart } });
-  handleErrors(res.errors);
-
-  res = await client.mutate({ mutation: setUserIsOnlineEnabledMutation, variables: { uid: user.uid } });
+  const res = await client.mutate({ mutation: initNetplayMutation, variables: { codeStart } });
   handleErrors(res.errors);
 }
