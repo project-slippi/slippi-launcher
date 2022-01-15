@@ -1,15 +1,14 @@
-/** @jsx jsx */
-import { css, jsx } from "@emotion/react";
 import Button from "@material-ui/core/Button";
 import { ipc_clearTempFolder } from "common/ipc";
 import React from "react";
+import { useToasts } from "react-toast-notifications";
 
 import { Toggle } from "@/components/FormInputs/Toggle";
 import { useAutoUpdateLauncher } from "@/lib/hooks/useSettings";
 
 import { SettingItem } from "./SettingItem";
 
-export const LauncherOptions: React.FC = () => {
+export const LauncherOptions = React.memo(() => {
   const [autoUpdateLauncher, setAutoUpdateLauncher] = useAutoUpdateLauncher();
 
   return (
@@ -18,20 +17,36 @@ export const LauncherOptions: React.FC = () => {
         <Toggle
           value={autoUpdateLauncher}
           onChange={(checked) => setAutoUpdateLauncher(checked)}
-          label="Launcher Auto Updates"
-          description="Toggle updating the Launcher automatically when an update is available."
+          label="Enable Auto Updates"
+          description="Automatically install Slippi Launcher updates when they become available."
         />
-        <Button
-          css={css`
-            margin-top: 20px;
-          `}
-          variant="contained"
-          color="secondary"
-          onClick={() => ipc_clearTempFolder.renderer!.trigger({})}
-        >
-          Clear temp files
-        </Button>
       </SettingItem>
+      <ClearTempFilesForm />
     </div>
   );
-};
+});
+
+const ClearTempFilesForm = React.memo(() => {
+  const { addToast } = useToasts();
+  const onClear = React.useCallback(() => {
+    ipc_clearTempFolder
+      .renderer!.trigger({})
+      .then(() => {
+        addToast("Successfully cleared temporary files.", { autoDismiss: true });
+      })
+      .catch((err) => {
+        const message = err instanceof Error ? err.message : JSON.stringify(err);
+        addToast(message, { appearance: "error" });
+      });
+  }, []);
+  return (
+    <SettingItem
+      name="Clear Temporary Files"
+      description="Removes temporary downloads, files used for Dolphin communication, and files streamed from Slippi.gg."
+    >
+      <Button variant="contained" color="secondary" onClick={onClear}>
+        Clear files
+      </Button>
+    </SettingItem>
+  );
+});

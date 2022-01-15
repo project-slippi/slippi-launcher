@@ -22,11 +22,6 @@ export const settings: SettingSection[] = [
         path: "replay-options",
         component: <ReplayOptions />,
       },
-      {
-        name: "Launcher",
-        path: "launcher-options",
-        component: <LauncherOptions />,
-      },
     ],
   },
   {
@@ -41,6 +36,16 @@ export const settings: SettingSection[] = [
         name: "Playback",
         path: "playback-dolphin-settings",
         component: <DolphinSettings dolphinType={DolphinLaunchType.PLAYBACK} />,
+      },
+    ],
+  },
+  {
+    title: "App Settings",
+    items: [
+      {
+        name: "Advanced",
+        path: "advanced-settings",
+        component: <LauncherOptions />,
       },
     ],
   },

@@ -12,6 +12,7 @@ import {
 } from "@settings/ipc";
 import { AppSettings } from "@settings/types";
 import { ipcRenderer } from "electron";
+import { useCallback } from "react";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
@@ -125,12 +126,12 @@ export const useLaunchMeleeOnPlay = () => {
 
 export const useAutoUpdateLauncher = () => {
   const autoUpdateLauncher = useSettings((store) => store.settings.autoUpdateLauncher);
-  const setAutoUpdateLauncher = async (autoUpdateLauncher: boolean) => {
+  const setAutoUpdateLauncher = useCallback(async (autoUpdateLauncher: boolean) => {
     const setResult = await ipc_setAutoUpdateLauncher.renderer!.trigger({ autoUpdateLauncher });
     if (!setResult.result) {
       throw new Error("Error setting launcher auto updates");
     }
-  };
+  }, []);
 
   return [autoUpdateLauncher, setAutoUpdateLauncher] as const;
 };
