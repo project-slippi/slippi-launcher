@@ -42,7 +42,12 @@ export async function findDolphinExecutable(type: DolphinLaunchType, dolphinPath
   }
 
   if (process.platform === "darwin") {
-    return path.join(dolphinPath, result, "Contents", "MacOS", "Slippi Dolphin");
+    const dolphinBinaryPath = path.join(dolphinPath, result, "Contents", "MacOS", "Slippi Dolphin");
+    const dolphinExists = await fs.pathExists(dolphinBinaryPath);
+    if (!dolphinExists) {
+      throw new Error(`No ${type} Dolphin found in: ${dolphinPath}, try resetting dolphin`);
+    }
+    return dolphinBinaryPath;
   }
 
   return path.join(dolphinPath, result);
