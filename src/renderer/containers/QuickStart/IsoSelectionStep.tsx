@@ -59,6 +59,8 @@ const ErrorMessage = styled.div`
 
 export const IsoSelectionStep: React.FC = () => {
   const [tempIsoPath, setTempIsoPath] = React.useState("");
+  const [errMsg, setErrMsg] = React.useState("");
+  const [forceErr, setForceErr] = React.useState(false);
   const verification = ipc_checkValidIso.renderer!.useValue(
     { path: tempIsoPath },
     { path: tempIsoPath, valid: IsoValidity.INVALID },
@@ -74,12 +76,20 @@ export const IsoSelectionStep: React.FC = () => {
     }
 
     const filePath = acceptedFiles[0].path;
+    if (filePath.endsWith(".7z")) {
+      setErrMsg("7z files must be uncompressed with 7-zip to be used in Dolphin.");
+      setForceErr(true);
+      return;
+    }
+    setErrMsg("Provided ISO will not work with Slippi Online. Please provide an NTSC 1.02 ISO.");
+    setForceErr(false);
+
     setTempIsoPath(filePath);
   };
   const validIsoPath = verification.value.valid;
 
   const { open, getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
-    accept: [".iso", ".gcm", ".gcz"],
+    accept: [".iso", ".gcm", ".gcz", ".7z"],
     onDrop: onDrop,
     multiple: false,
     noClick: true,
@@ -119,9 +129,7 @@ export const IsoSelectionStep: React.FC = () => {
           </Button>
         )}
         <p>{loading ? "Verifying ISO..." : "or drag and drop here"}</p>
-        {invalidIso && (
-          <ErrorMessage>Provided ISO will not work with Slippi Online. Please provide an NTSC 1.02 ISO.</ErrorMessage>
-        )}
+        {(invalidIso || forceErr) && <ErrorMessage>{errMsg}</ErrorMessage>}
       </Container>
 
       <ConfirmationModal
