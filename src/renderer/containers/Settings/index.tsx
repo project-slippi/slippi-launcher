@@ -1,9 +1,9 @@
 import { DolphinLaunchType } from "@dolphin/types";
 import React from "react";
 
+import { AdvancedAppSettings } from "./AdvancedAppSettings";
 import { DolphinSettings } from "./DolphinSettings";
 import { HelpPage } from "./HelpPage";
-import { LauncherOptions } from "./LauncherOptions";
 import { MeleeOptions } from "./MeleeOptions";
 import { ReplayOptions } from "./ReplayOptions";
 import { SettingSection } from "./types";
@@ -45,7 +45,7 @@ export const settings: SettingSection[] = [
       {
         name: "Advanced",
         path: "advanced-settings",
-        component: <LauncherOptions />,
+        component: <AdvancedAppSettings />,
       },
     ],
   },

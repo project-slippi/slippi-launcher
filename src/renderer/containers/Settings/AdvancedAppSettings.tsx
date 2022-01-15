@@ -8,7 +8,7 @@ import { useAutoUpdateLauncher } from "@/lib/hooks/useSettings";
 
 import { SettingItem } from "./SettingItem";
 
-export const LauncherOptions = React.memo(() => {
+export const AdvancedAppSettings = React.memo(() => {
   const [autoUpdateLauncher, setAutoUpdateLauncher] = useAutoUpdateLauncher();
 
   return (
