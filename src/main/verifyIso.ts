@@ -19,6 +19,10 @@ isoHashes.set("6e83240872d47cd080a28dea7b8907140c44bef5", {
   valid: IsoValidity.VALID,
   name: "NTSC-U 1.02 NKIT",
 });
+isoHashes.set("3bf23f7c87caadfc983954eb8c6cf2823fa8713b", {
+  valid: IsoValidity.VALID,
+  name: "NTSC-U 1.02 GCZ",
+});
 isoHashes.set("e63d50e63a0cdd357f867342d542e7cec0c3a7c7", {
   valid: IsoValidity.VALID,
   name: "NTSC-U 1.02 Scrubbed #1",
@@ -38,6 +42,10 @@ isoHashes.set("49a04772e0a5d1974a4b1c8a7c0d1d71184f3978", {
 isoHashes.set("71255a30a47b4c6aabb90308d7a514d09d93a7b5", {
   valid: IsoValidity.VALID,
   name: "NTSC-J 1.02",
+});
+isoHashes.set("e9ab27b4f8fdfb72adae214f834e201d14944f50", {
+  valid: IsoValidity.VALID,
+  name: "NTSC-J 1.02 GCZ",
 });
 
 // Invalid ISOs
@@ -104,7 +112,7 @@ export async function verifyIso(isoPath: string): Promise<IsoValidity> {
     input.on("readable", () => {
       const data: Buffer = input.read();
       if (data) {
-        if (!checkedRevision) {
+        if (!checkedRevision && !isoPath.endsWith(".gcz")) {
           checkedRevision = true;
           const revision = data.readInt8(7);
           if (revision !== 2) {
