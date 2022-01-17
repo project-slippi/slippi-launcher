@@ -12,6 +12,7 @@ import { IsoValidity } from "common/types";
 import React from "react";
 
 import { PathInput } from "@/components/PathInput";
+import { useDolphinStore } from "@/lib/hooks/useDolphin";
 import { useIsoVerification } from "@/lib/hooks/useIsoVerification";
 import { useIsoPath, useLaunchMeleeOnPlay } from "@/lib/hooks/useSettings";
 
@@ -36,6 +37,8 @@ export const MeleeOptions: React.FC = () => {
   const isoValidity = useIsoVerification((state) => state.validity);
   const [isoPath, setIsoPath] = useIsoPath();
   const [launchMeleeOnPlay, setLaunchMelee] = useLaunchMeleeOnPlay();
+  const netplayDolphinOpen = useDolphinStore((store) => store.netplayDolphinOpen);
+  const playbackDolphinOpen = useDolphinStore((store) => store.playbackDolphinOpen);
 
   const onLaunchMeleeChange = async (value: string) => {
     const launchMelee = value === "true";
@@ -46,10 +49,11 @@ export const MeleeOptions: React.FC = () => {
     <div>
       <SettingItem name="Melee ISO File" description="The path to an NTSC Melee 1.02 ISO.">
         <PathInput
+          tooltipText={netplayDolphinOpen || playbackDolphinOpen ? "Close Dolphin to change this setting" : ""}
           value={isoPath !== null ? isoPath : ""}
           onSelect={setIsoPath}
           placeholder="No file set"
-          disabled={verifying}
+          disabled={verifying || netplayDolphinOpen || playbackDolphinOpen}
           options={{
             filters: [{ name: "Melee ISO", extensions: ["iso", "gcm", "gcz"] }],
           }}
