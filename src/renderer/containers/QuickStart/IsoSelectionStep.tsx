@@ -51,13 +51,8 @@ const Container = styled.div`
   }
 `;
 
-const ErrorMessage = styled.div`
-  margin-top: 10px;
-  color: ${({ theme }) => theme.palette.error.main};
-  font-size: 16px;
-`;
-
 export const IsoSelectionStep: React.FC = () => {
+  const { addToast } = useToasts();
   const [tempIsoPath, setTempIsoPath] = React.useState("");
   const verification = ipc_checkValidIso.renderer!.useValue(
     { path: tempIsoPath },
@@ -74,12 +69,20 @@ export const IsoSelectionStep: React.FC = () => {
     }
 
     const filePath = acceptedFiles[0].path;
+    if (filePath.endsWith(".7z")) {
+      addToast("7z files must be uncompressed to be used in Dolphin.", {
+        id: "7z",
+        appearance: "error",
+      });
+      return;
+    }
+
     setTempIsoPath(filePath);
   };
   const validIsoPath = verification.value.valid;
 
   const { open, getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
-    accept: [".iso", ".gcm", ".gcz"],
+    accept: [".iso", ".gcm", ".gcz", ".7z"],
     onDrop: onDrop,
     multiple: false,
     noClick: true,
@@ -89,10 +92,18 @@ export const IsoSelectionStep: React.FC = () => {
   const invalidIso = Boolean(tempIsoPath) && !loading && validIsoPath === IsoValidity.INVALID;
   const unknownIso = Boolean(tempIsoPath) && !loading && validIsoPath === IsoValidity.UNKNOWN;
   const handleClose = () => setTempIsoPath("");
-  const { addToast } = useToasts();
   const onConfirm = useCallback(() => {
     setIsoPath(tempIsoPath).catch((err) => addToast(err.message, { appearance: "error" }));
   }, [addToast, setIsoPath, tempIsoPath]);
+
+  React.useEffect(() => {
+    if (invalidIso) {
+      addToast("Provided ISO will not work with Slippi Online. Please provide an NTSC 1.02 ISO.", {
+        id: "invalidISO",
+        appearance: "error",
+      });
+    }
+  }, [addToast, invalidIso]);
 
   React.useEffect(() => {
     // Auto-confirm ISO if it's valid
@@ -119,9 +130,6 @@ export const IsoSelectionStep: React.FC = () => {
           </Button>
         )}
         <p>{loading ? "Verifying ISO..." : "or drag and drop here"}</p>
-        {invalidIso && (
-          <ErrorMessage>Provided ISO will not work with Slippi Online. Please provide an NTSC 1.02 ISO.</ErrorMessage>
-        )}
       </Container>
 
       <ConfirmationModal
