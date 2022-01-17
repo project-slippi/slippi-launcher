@@ -35,6 +35,12 @@ export const ipc_setLaunchMeleeOnPlay = makeEndpoint.main(
   <SuccessPayload>_,
 );
 
+export const ipc_setAutoUpdateLauncher = makeEndpoint.main(
+  "setAutoUpdateLauncher",
+  <{ autoUpdateLauncher: boolean }>_,
+  <SuccessPayload>_,
+);
+
 export const ipc_addNewConnection = makeEndpoint.main(
   "addNewConnection",
   <{ connection: Omit<StoredConnection, "id"> }>_,

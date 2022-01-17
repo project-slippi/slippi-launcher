@@ -25,5 +25,6 @@ export type AppSettings = {
     netplayDolphinPath: string;
     playbackDolphinPath: string;
     launchMeleeOnPlay: boolean;
+    autoUpdateLauncher: boolean;
   };
 };

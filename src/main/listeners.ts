@@ -9,6 +9,7 @@ import { isDevelopment, isMac } from "common/constants";
 import {
   ipc_checkForUpdate,
   ipc_checkValidIso,
+  ipc_clearTempFolder,
   ipc_copyLogsToClipboard,
   ipc_deleteDesktopAppPath,
   ipc_fetchNewsFeed,
@@ -160,5 +161,17 @@ export function setupListeners() {
     const tag: string = release.tag_name;
     const version = tag.slice(1);
     return { version };
+  });
+
+  ipc_clearTempFolder.main!.handle(async () => {
+    const tmpDir = path.join(app.getPath("userData"), "temp");
+    try {
+      await fs.remove(tmpDir);
+      await fs.ensureDir(tmpDir);
+    } catch (err) {
+      log.error(err);
+      throw err;
+    }
+    return { success: true };
   });
 }
