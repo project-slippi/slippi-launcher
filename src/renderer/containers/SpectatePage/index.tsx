@@ -5,7 +5,7 @@ import styled from "@emotion/styled";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import SyncIcon from "@material-ui/icons/Sync";
-import React from "react";
+import React, { useCallback } from "react";
 
 import { DualPane } from "@/components/DualPane";
 import { Button } from "@/components/FormInputs";
@@ -22,9 +22,9 @@ export const SpectatePage: React.FC = () => {
   const user = useAccount((store) => store.user);
   const [currentBroadcasts, refreshBroadcasts] = useBroadcastList();
 
-  const startWatching = async (id: string) => {
+  const startWatching = useCallback(async (id: string) => {
     await ipc_watchBroadcast.renderer!.trigger({ broadcasterId: id });
-  };
+  }, []);
 
   if (!user) {
     return <IconMessage Icon={AccountCircleIcon} label="You must be logged in to use this feature" />;

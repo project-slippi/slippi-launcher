@@ -2,6 +2,7 @@ import { ipc_checkForUpdate } from "common/ipc";
 import { ipc_checkDesktopAppDolphin, ipc_dolphinDownloadFinishedEvent, ipc_downloadDolphin } from "dolphin/ipc";
 import electronLog from "electron-log";
 import firebase from "firebase";
+import { useCallback } from "react";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
@@ -45,7 +46,7 @@ export const useAppInitialization = () => {
   const setDesktopAppExists = useDesktopApp((store) => store.setExists);
   const setDesktopAppDolphinPath = useDesktopApp((store) => store.setDolphinPath);
 
-  const initialize = async () => {
+  const initialize = useCallback(async () => {
     if (initializing || initialized) {
       return;
     }
@@ -119,7 +120,17 @@ export const useAppInitialization = () => {
     } finally {
       setInitialized(true);
     }
-  };
+  }, [
+    initialized,
+    initializing,
+    setDesktopAppDolphinPath,
+    setDesktopAppExists,
+    setInitialized,
+    setInitializing,
+    setLogMessage,
+    setPlayKey,
+    setUser,
+  ]);
 
   return initialize;
 };

@@ -10,7 +10,7 @@ import SettingsOutlinedIcon from "@material-ui/icons/SettingsOutlined";
 import { colors } from "common/colors";
 import { isMac, slippiHomepage } from "common/constants";
 import { shell } from "electron";
-import React from "react";
+import React, { useCallback } from "react";
 import { useToasts } from "react-toast-notifications";
 
 import { PlayIcon } from "@/components/PlayIcon";
@@ -49,40 +49,45 @@ export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
   const { addToast } = useToasts();
   const { launchNetplay } = useDolphin();
 
-  const handleError = (err: any) => addToast(err.message ?? JSON.stringify(err), { appearance: "error" });
+  const handleError = useCallback((err: any) => addToast(err.message ?? JSON.stringify(err), { appearance: "error" }), [
+    addToast,
+  ]);
 
-  const onPlay = async (offlineOnly?: boolean) => {
-    if (!offlineOnly) {
-      // Ensure user is logged in
-      if (!currentUser) {
-        setStartGameModalOpen(true);
+  const onPlay = useCallback(
+    async (offlineOnly?: boolean) => {
+      if (!offlineOnly) {
+        // Ensure user is logged in
+        if (!currentUser) {
+          setStartGameModalOpen(true);
+          return;
+        }
+
+        // Ensure user has a valid play key
+        if (!playKey) {
+          setActivateOnlineModal(true);
+          return;
+        }
+
+        // Ensure the play key is saved to disk
+        try {
+          await assertPlayKey(playKey);
+        } catch (err) {
+          handleError(err.message);
+          return;
+        }
+      }
+
+      if (!meleeIsoPath) {
+        handleError("No Melee ISO file specified");
         return;
       }
 
-      // Ensure user has a valid play key
-      if (!playKey) {
-        setActivateOnlineModal(true);
-        return;
-      }
+      launchNetplay(offlineOnly ?? false);
 
-      // Ensure the play key is saved to disk
-      try {
-        await assertPlayKey(playKey);
-      } catch (err) {
-        handleError(err.message);
-        return;
-      }
-    }
-
-    if (!meleeIsoPath) {
-      handleError("No Melee ISO file specified");
       return;
-    }
-
-    launchNetplay(offlineOnly ?? false);
-
-    return;
-  };
+    },
+    [currentUser, handleError, launchNetplay, meleeIsoPath, playKey],
+  );
 
   return (
     <OuterBox

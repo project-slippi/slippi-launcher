@@ -63,22 +63,25 @@ export const IsoSelectionStep: React.FC = () => {
   const loading = verification.isUpdating;
   const [, setIsoPath] = useIsoPath();
 
-  const onDrop = (acceptedFiles: File[]) => {
-    if (loading || acceptedFiles.length === 0) {
-      return;
-    }
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      if (loading || acceptedFiles.length === 0) {
+        return;
+      }
 
-    const filePath = acceptedFiles[0].path;
-    if (filePath.endsWith(".7z")) {
-      addToast("7z files must be uncompressed to be used in Dolphin.", {
-        id: "7z",
-        appearance: "error",
-      });
-      return;
-    }
+      const filePath = acceptedFiles[0].path;
+      if (filePath.endsWith(".7z")) {
+        addToast("7z files must be uncompressed to be used in Dolphin.", {
+          id: "7z",
+          appearance: "error",
+        });
+        return;
+      }
 
-    setTempIsoPath(filePath);
-  };
+      setTempIsoPath(filePath);
+    },
+    [loading, addToast],
+  );
   const validIsoPath = verification.value.valid;
 
   const { open, getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
@@ -91,7 +94,7 @@ export const IsoSelectionStep: React.FC = () => {
 
   const invalidIso = Boolean(tempIsoPath) && !loading && validIsoPath === IsoValidity.INVALID;
   const unknownIso = Boolean(tempIsoPath) && !loading && validIsoPath === IsoValidity.UNKNOWN;
-  const handleClose = () => setTempIsoPath("");
+  const handleClose = useCallback(() => setTempIsoPath(""), [setTempIsoPath]);
   const onConfirm = useCallback(() => {
     setIsoPath(tempIsoPath).catch((err) => addToast(err.message, { appearance: "error" }));
   }, [addToast, setIsoPath, tempIsoPath]);

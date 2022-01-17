@@ -3,7 +3,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import MatSelect from "@material-ui/core/Select";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import { colors } from "common/colors";
-import React from "react";
+import React, { useCallback } from "react";
 
 export interface DropdownProps {
   value: any;
@@ -15,9 +15,12 @@ export interface DropdownProps {
 }
 
 export const Dropdown: React.FC<DropdownProps> = ({ value, options, onChange }) => {
-  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    onChange(JSON.parse(event.target.value as string));
-  };
+  const handleChange = useCallback(
+    (event: React.ChangeEvent<{ value: unknown }>) => {
+      onChange(JSON.parse(event.target.value as string));
+    },
+    [onChange],
+  );
 
   return (
     <Select

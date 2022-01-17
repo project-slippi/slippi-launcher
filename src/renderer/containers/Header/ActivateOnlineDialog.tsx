@@ -4,7 +4,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import React from "react";
+import React, { useCallback } from "react";
 import { useToasts } from "react-toast-notifications";
 
 import { useAccount } from "@/lib/hooks/useAccount";
@@ -23,7 +23,7 @@ export const ActivateOnlineDialog: React.FC<ActivateOnlineDialogProps> = ({ open
   const refreshPlayKey = useAccount((store) => store.refreshPlayKey);
   const { addToast } = useToasts();
 
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
     refreshPlayKey()
       .then(() => {
         onClose();
@@ -32,7 +32,7 @@ export const ActivateOnlineDialog: React.FC<ActivateOnlineDialogProps> = ({ open
       .catch((err) => {
         addToast(err.message, { apperance: "error" });
       });
-  };
+  }, [addToast, onClose, onSubmit, refreshPlayKey]);
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth={true} fullScreen={fullScreen} disableBackdropClick={false}>

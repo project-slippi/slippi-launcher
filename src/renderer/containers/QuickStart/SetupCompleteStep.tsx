@@ -3,7 +3,7 @@ import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
-import React from "react";
+import React, { useCallback } from "react";
 import { useHistory } from "react-router-dom";
 
 import { QuickStartHeader } from "./QuickStartHeader";
@@ -16,9 +16,9 @@ const Container = styled.div`
 
 export const SetupCompleteStep: React.FC = () => {
   const history = useHistory();
-  const onClick = () => {
+  const onClick = useCallback(() => {
     history.push("/main");
-  };
+  }, [history]);
   return (
     <Box display="flex" flexDirection="column" flexGrow="1">
       <Container>

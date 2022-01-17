@@ -3,7 +3,7 @@ import FolderIcon from "@material-ui/icons/Folder";
 import { FileResult } from "@replays/types";
 import { shell } from "electron";
 import { debounce } from "lodash";
-import React from "react";
+import React, { useCallback } from "react";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as List } from "react-window";
 
@@ -54,7 +54,7 @@ const FileListResults: React.FC<{
         </ErrorBoundary>
       );
     },
-    [files, onSelect, onPlay, onOpenMenu, selectedFiles],
+    [files, selectedFiles, onOpenMenu, onSelect, onClick, onPlay],
   );
 
   // Store the latest scroll row item on unmount
@@ -127,23 +127,23 @@ export const FileList: React.FC<{
     });
   }, []);
 
-  const handleRevealLocation = () => {
+  const handleClose = useCallback(() => {
+    setMenuItem(null);
+  }, []);
+
+  const handleRevealLocation = useCallback(() => {
     if (menuItem) {
       shell.showItemInFolder(files[menuItem.index].fullPath);
     }
     handleClose();
-  };
+  }, [files, handleClose, menuItem]);
 
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     if (menuItem) {
       onDelete(files[menuItem.index].fullPath);
     }
     handleClose();
-  };
-
-  const handleClose = () => {
-    setMenuItem(null);
-  };
+  }, [files, handleClose, menuItem, onDelete]);
 
   return (
     <div style={{ display: "flex", flexFlow: "column", height: "100%", flex: "1" }}>

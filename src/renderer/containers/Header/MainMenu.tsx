@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
 import Tooltip from "@material-ui/core/Tooltip";
 import { colors } from "common/colors";
-import React from "react";
+import React, { useCallback } from "react";
 import { Link, useHistory } from "react-router-dom";
 
 export interface MenuItem {
@@ -20,9 +20,12 @@ export interface MainMenuProps {
 
 export const MainMenu: React.FC<MainMenuProps> = ({ path, menuItems }) => {
   const history = useHistory();
-  const isActive = (name: string): boolean => {
-    return history.location.pathname.startsWith(`${path}/${name}`);
-  };
+  const isActive = useCallback(
+    (name: string): boolean => {
+      return history.location.pathname.startsWith(`${path}/${name}`);
+    },
+    [history.location.pathname, path],
+  );
 
   return (
     <div

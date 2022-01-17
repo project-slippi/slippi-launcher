@@ -8,7 +8,7 @@ import TextField from "@material-ui/core/TextField";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import firebase from "firebase";
-import React from "react";
+import React, { useCallback } from "react";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
@@ -62,7 +62,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ className, onSuccess, disa
   const [showPassword, setShowPassword] = React.useState(false);
   const [showPasswordResetForm, setShowPasswordResetForm] = React.useState(false);
   const [isSignUp, setIsSignUp] = React.useState(false);
-  const toggleSignUp = () => setIsSignUp(!isSignUp);
+  const toggleSignUp = useCallback(() => setIsSignUp(!isSignUp), [isSignUp]);
   const classes = useStyles();
 
   const { execute, loading, error, clearError } = useAsync(async () => {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Redirect, Route, Switch, useHistory, useParams, useRouteMatch } from "react-router-dom";
 
 import { useDolphin } from "@/lib/hooks/useDolphin";
@@ -36,9 +36,9 @@ const ChildPage: React.FC<{ parent: string; goBack: () => void }> = () => {
   const nav = useReplayBrowserList();
   const { goToReplayList } = useReplayBrowserNavigation();
 
-  const onPlay = () => {
+  const onPlay = useCallback(() => {
     viewReplays([{ path: decodedFilePath }]);
-  };
+  }, [decodedFilePath, viewReplays]);
 
   return (
     <ReplayFileStats

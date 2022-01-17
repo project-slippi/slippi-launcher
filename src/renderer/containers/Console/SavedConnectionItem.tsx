@@ -13,7 +13,7 @@ import WarningIcon from "@material-ui/icons/Warning";
 import { StoredConnection } from "@settings/types";
 import { ConnectionStatus, Ports } from "@slippi/slippi-js";
 import path from "path";
-import React from "react";
+import React, { useCallback } from "react";
 import { useToasts } from "react-toast-notifications";
 import { lt } from "semver";
 
@@ -48,15 +48,15 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
   latestVersion,
 }) => {
   const { addToast } = useToasts();
-  const onConnect = () => connectToConsole(connection);
-  const onMirror = () => {
+  const onConnect = useCallback(() => connectToConsole(connection), [connection]);
+  const onMirror = useCallback(() => {
     startConsoleMirror(connection.ipAddress).catch((err) => {
       addToast(err.message ?? JSON.stringify(err), {
         appearance: "error",
       });
     });
-  };
-  const onDisconnect = () => disconnectFromConsole(connection.ipAddress);
+  }, [addToast, connection.ipAddress]);
+  const onDisconnect = useCallback(() => disconnectFromConsole(connection.ipAddress), [connection.ipAddress]);
   const statusName = status === ConnectionStatus.DISCONNECTED && isAvailable ? "Available" : renderStatusName(status);
   const isConnected = status !== ConnectionStatus.DISCONNECTED;
   const title = nickname ? `${connection.ipAddress} (${nickname})` : connection.ipAddress;

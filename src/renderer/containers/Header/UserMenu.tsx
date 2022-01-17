@@ -4,7 +4,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import EjectIcon from "@material-ui/icons/Eject";
 import LanguageIcon from "@material-ui/icons/Language";
 import firebase from "firebase";
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 
 import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { IconMenu, IconMenuItem } from "@/components/IconMenu";
@@ -25,7 +25,25 @@ export const UserMenu: React.FC<{
   const [openLogoutPrompt, setOpenLogoutPrompt] = React.useState(false);
   const [openNameChangePrompt, setOpenNameChangePrompt] = React.useState(false);
   const [openActivationDialog, setOpenActivationDialog] = React.useState(false);
-  const onLogout = async () => {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const handleClick = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      setAnchorEl(event.currentTarget);
+    },
+    [setAnchorEl],
+  );
+
+  const closeMenu = useCallback(() => {
+    setAnchorEl(null);
+  }, [setAnchorEl]);
+
+  const handleClose = useCallback(() => {
+    setOpenNameChangePrompt(false);
+    setOpenLogoutPrompt(false);
+  }, [setOpenNameChangePrompt, setOpenLogoutPrompt]);
+
+  const onLogout = useCallback(async () => {
     try {
       await logout();
     } catch (err) {
@@ -34,21 +52,9 @@ export const UserMenu: React.FC<{
     } finally {
       handleClose();
     }
-  };
+  }, [handleClose, handleError]);
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const closeMenu = () => {
-    setAnchorEl(null);
-  };
-  const handleClose = () => {
-    setOpenNameChangePrompt(false);
-    setOpenLogoutPrompt(false);
-  };
-
-  const generateMenuItems = (): IconMenuItem[] => {
+  const menuItems = useMemo((): IconMenuItem[] => {
     const items: IconMenuItem[] = [];
 
     if (!playKey) {
@@ -82,7 +88,10 @@ export const UserMenu: React.FC<{
       icon: <EjectIcon fontSize="small" style={{ transform: "rotate(270deg)" }} />,
     });
     return items;
-  };
+  }, [closeMenu, playKey, setOpenActivationDialog, setOpenNameChangePrompt, setOpenLogoutPrompt]);
+
+  const onActivationDialogClose = useCallback(() => setOpenActivationDialog(false), [setOpenActivationDialog]);
+  const onActivationDialogSubmit = useCallback(() => setOpenActivationDialog(false), [setOpenActivationDialog]);
 
   return (
     <div>
@@ -97,15 +106,13 @@ export const UserMenu: React.FC<{
         keepMounted
         open={Boolean(anchorEl)}
         onClose={closeMenu}
-        items={generateMenuItems()}
+        items={menuItems}
       />
       <NameChangeDialog displayName={displayName} open={openNameChangePrompt} handleClose={handleClose} />
       <ActivateOnlineDialog
         open={openActivationDialog}
-        onClose={() => setOpenActivationDialog(false)}
-        onSubmit={() => {
-          setOpenActivationDialog(false);
-        }}
+        onClose={onActivationDialogClose}
+        onSubmit={onActivationDialogSubmit}
       />
       <ConfirmationModal
         title="Are you sure you want to log out?"

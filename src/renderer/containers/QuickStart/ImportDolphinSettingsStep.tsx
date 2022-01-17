@@ -7,7 +7,7 @@ import Container from "@material-ui/core/Container";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import { isMac } from "common/constants";
 import { ipc_deleteDesktopAppPath } from "common/ipc";
-import React from "react";
+import React, { useCallback } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useToasts } from "react-toast-notifications";
 
@@ -30,22 +30,25 @@ export const ImportDolphinSettingsStep: React.FC = () => {
   const { addToast } = useToasts();
   const { importDolphin } = useDolphin();
 
-  const migrateDolphin = async (values: FormValues) => {
-    if (values.shouldImportNetplay) {
-      importDolphin(values.netplayPath, DolphinLaunchType.NETPLAY);
-    }
-    if (values.shouldImportPlayback) {
-      importDolphin(desktopAppDolphinPath, DolphinLaunchType.PLAYBACK);
-    }
-
-    await finishMigration();
-  };
-
-  const finishMigration = async () => {
+  const finishMigration = useCallback(async () => {
     // delete desktop app path
     await ipc_deleteDesktopAppPath.renderer!.trigger({});
     setExists(false);
-  };
+  }, [setExists]);
+
+  const migrateDolphin = useCallback(
+    async (values: FormValues) => {
+      if (values.shouldImportNetplay) {
+        importDolphin(values.netplayPath, DolphinLaunchType.NETPLAY);
+      }
+      if (values.shouldImportPlayback) {
+        importDolphin(desktopAppDolphinPath, DolphinLaunchType.PLAYBACK);
+      }
+
+      await finishMigration();
+    },
+    [desktopAppDolphinPath, finishMigration, importDolphin],
+  );
 
   const {
     handleSubmit,
@@ -60,7 +63,9 @@ export const ImportDolphinSettingsStep: React.FC = () => {
   const migrateNetplay = watch("shouldImportNetplay");
   const migratePlayback = watch("shouldImportPlayback");
 
-  const handleError = (err: any) => addToast(err.message ?? JSON.stringify(err), { appearance: "error" });
+  const handleError = useCallback((err: any) => addToast(err.message ?? JSON.stringify(err), { appearance: "error" }), [
+    addToast,
+  ]);
 
   const onFormSubmit = handleSubmit((values) => {
     migrateDolphin(values).catch(handleError);

@@ -1,6 +1,7 @@
 import { ipc_refreshBroadcastList } from "@broadcast/ipc";
 import { BroadcasterItem } from "@broadcast/types";
 import throttle from "lodash/throttle";
+import { useCallback } from "react";
 import { useToasts } from "react-toast-notifications";
 import create from "zustand";
 import { combine } from "zustand/middleware";
@@ -23,7 +24,7 @@ export const useBroadcastList = () => {
   const items = useBroadcastListStore((store) => store.items);
   const { addToast } = useToasts();
 
-  const refresh = async () => {
+  const refresh = useCallback(async () => {
     if (!currentUser) {
       throw new Error("User is not logged in");
     }
@@ -32,7 +33,7 @@ export const useBroadcastList = () => {
     if (!broadcastListResult.result) {
       throw new Error("Error refreshing broadcast list");
     }
-  };
+  }, [currentUser]);
 
   // Limit refreshing to once every 2 seconds
   const throttledRefresh = throttle(() => {

@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import create from "zustand";
 
@@ -35,15 +36,18 @@ export const useSettingsModal = () => {
   const setLastModalPage = useModalStore((store) => store.setLastModalPage);
   const history = useHistory();
   const location = useLocation();
-  const open = (modalPage?: string) => {
-    setLastPage(location.pathname);
-    history.push(modalPage || lastModalPage || "/settings");
-  };
+  const open = useCallback(
+    (modalPage?: string) => {
+      setLastPage(location.pathname);
+      history.push(modalPage || lastModalPage || "/settings");
+    },
+    [history, lastModalPage, location.pathname, setLastPage],
+  );
 
-  const close = () => {
+  const close = useCallback(() => {
     setLastModalPage(location.pathname);
     history.push(lastPage || "/");
-  };
+  }, [history, lastPage, location.pathname, setLastModalPage]);
 
   return {
     open,

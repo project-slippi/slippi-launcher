@@ -12,7 +12,7 @@ import { FileResult } from "@replays/types";
 import { colors } from "common/colors";
 import { shell } from "electron";
 import _ from "lodash";
-import React from "react";
+import React, { useCallback } from "react";
 import { useQuery } from "react-query";
 
 import { BasicFooter } from "@/components/Footer";
@@ -84,7 +84,7 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
     }
   });
 
-  const handleRevealLocation = () => shell.showItemInFolder(filePath);
+  const handleRevealLocation = useCallback(() => shell.showItemInFolder(filePath), [filePath]);
 
   // We only want to show this full-screen error if we don't have a
   // file in the prop. i.e. the SLP manually opened.

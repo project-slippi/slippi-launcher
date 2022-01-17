@@ -1,6 +1,6 @@
 import { keyframes } from "@emotion/react";
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useCallback } from "react";
 
 import slippiLogo from "../styles/images/slippi-logo.svg";
 
@@ -50,11 +50,11 @@ export interface BouncingSlippiLogoProps {
 export const BouncingSlippiLogo: React.FC<BouncingSlippiLogoProps> = ({ size = "80px" }) => {
   const [roll, setRoll] = React.useState(false);
 
-  const onMouseOver = () => {
+  const onMouseOver = useCallback(() => {
     if (!roll) {
       setRoll(true);
     }
-  };
+  }, [roll]);
 
   return (
     <Outer size={size}>

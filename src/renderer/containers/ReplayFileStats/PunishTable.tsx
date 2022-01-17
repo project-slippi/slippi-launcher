@@ -6,7 +6,7 @@ import { ConversionType, PlayerType, StatsType, StockType } from "@slippi/slippi
 import { extractPlayerNames } from "common/matchNames";
 import { convertFrameCountToDurationString } from "common/time";
 import _ from "lodash";
-import React from "react";
+import React, { useCallback } from "react";
 
 import { useDolphin } from "@/lib/hooks/useDolphin";
 import { getCharacterIcon, toOrdinal } from "@/lib/utils";
@@ -25,111 +25,65 @@ export interface PunishTableProps {
 export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, player, opp }) => {
   const { viewReplays } = useDolphin();
   const names = extractPlayerNames(player.playerIndex, file.settings, file.metadata);
-  const playerDisplay = (
-    <div style={{ display: "flex", alignItems: "center" }}>
-      <img
-        src={getCharacterIcon(player.characterId, player.characterColor)}
-        height={24}
-        width={24}
-        style={{
-          marginRight: 10,
-        }}
-      />
-      <div style={{ fontWeight: 500 }}>{names.name || names.tag || `Player ${player.playerIndex + 1}`}</div>
-    </div>
+
+  const getPlayer = useCallback(
+    (playerIndex: number) => {
+      const players = file.settings.players || [];
+      const playersByIndex = _.keyBy(players, "playerIndex");
+      return playersByIndex[playerIndex];
+    },
+    [file.settings.players],
   );
 
-  const generatePunishRow = (punish: ConversionType) => {
-    const start = convertFrameCountToDurationString(punish.startFrame);
-    let end = "–";
+  const generateEmptyRow = useCallback(
+    (stock: StockType) => {
+      const player = getPlayer(stock.playerIndex);
+      let stockIndex = 0;
+      if (player.startStocks !== null) {
+        stockIndex = player.startStocks - stock.count + 1;
+      }
 
-    const damage = renderDamageCell(punish);
-    const damageRange = renderDamageRangeCell(punish);
-    const openingType = renderOpeningTypeCell(punish);
-
-    if (punish.endFrame !== null && punish.endFrame !== undefined) {
-      end = convertFrameCountToDurationString(punish.endFrame);
-    }
-
-    const playPunish = () => {
-      viewReplays([{ path: file.fullPath, startFrame: punish.startFrame }]);
-    };
-
-    return (
-      <T.TableRow key={`${punish.playerIndex}-punish-${punish.startFrame}`}>
-        <T.TableCell>
-          <Tooltip title="Play from here">
-            <span
-              onClick={playPunish}
-              css={css`
-                &:hover {
-                  cursor: pointer;
-                  text-decoration: underline;
-                }
-              `}
-            >
-              {start}
-            </span>
-          </Tooltip>
-        </T.TableCell>
-        <T.TableCell>{end}</T.TableCell>
-        <T.TableCell>{damage}</T.TableCell>
-        <T.TableCell>{damageRange}</T.TableCell>
-        <T.TableCell>{punish.moves.length}</T.TableCell>
-        <T.TableCell>{openingType}</T.TableCell>
-      </T.TableRow>
-    );
-  };
-
-  const generateEmptyRow = (stock: StockType) => {
-    const player = getPlayer(stock.playerIndex);
-    let stockIndex = 0;
-    if (player.startStocks !== null) {
-      stockIndex = player.startStocks - stock.count + 1;
-    }
-
-    return (
-      <T.TableRow key={`no-punishes-${stock.count}`}>
-        <T.TableCell colSpan={columnCount}>{"No punishes on opponent's " + toOrdinal(stockIndex)} stock</T.TableCell>
-      </T.TableRow>
-    );
-  };
-
-  const generateStockRow = (stock: StockType) => {
-    const player = getPlayer(stock.playerIndex);
-
-    const totalStocks = _.get(player, "startStocks");
-    const currentStocks = stock.count - 1;
-
-    const stockIcons = _.range(1, totalStocks !== null ? totalStocks + 1 : 1).map((stockNum) => {
       return (
-        <T.GrayableImage
-          key={`stock-image-${stock.playerIndex}-${stockNum}`}
-          gray={stockNum > currentStocks}
-          src={getCharacterIcon(player.characterId, player.characterColor)}
-          height={20}
-          width={20}
-        />
+        <T.TableRow key={`no-punishes-${stock.count}`}>
+          <T.TableCell colSpan={columnCount}>{"No punishes on opponent's " + toOrdinal(stockIndex)} stock</T.TableCell>
+        </T.TableRow>
       );
-    });
+    },
+    [getPlayer],
+  );
 
-    const key = `${stock.playerIndex}-stock-lost-${currentStocks}`;
-    return (
-      <T.TableRow key={key}>
-        <T.TableCell colSpan={columnCount}>
-          <div>{stockIcons}</div>
-        </T.TableCell>
-      </T.TableRow>
-    );
-  };
+  const generateStockRow = useCallback(
+    (stock: StockType) => {
+      const player = getPlayer(stock.playerIndex);
 
-  const getPlayer = (playerIndex: number) => {
-    const players = file.settings.players || [];
-    const playersByIndex = _.keyBy(players, "playerIndex");
-    return playersByIndex[playerIndex];
-  };
+      const totalStocks = _.get(player, "startStocks");
+      const currentStocks = stock.count - 1;
 
-  const renderDamageCell = (punish: ConversionType) => {
+      const stockIcons = _.range(1, totalStocks !== null ? totalStocks + 1 : 1).map((stockNum) => {
+        return (
+          <T.GrayableImage
+            key={`stock-image-${stock.playerIndex}-${stockNum}`}
+            gray={stockNum > currentStocks}
+            src={getCharacterIcon(player.characterId, player.characterColor)}
+            height={20}
+            width={20}
+          />
+        );
+      });
+
+      const key = `${stock.playerIndex}-stock-lost-${currentStocks}`;
+      return (
+        <T.TableRow key={key}>
+          <T.TableCell colSpan={columnCount}>
+            <div>{stockIcons}</div>
+          </T.TableCell>
+        </T.TableRow>
+      );
+    },
+    [getPlayer],
+  );
+
+  const renderDamageCell = useCallback((punish: ConversionType) => {
     const difference = punish.currentPercent - punish.startPercent;
 
     let diffColor = "green";
@@ -142,13 +96,13 @@ export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, player, o
     const diffDisplay = `${Math.trunc(difference)}%`;
 
     return <div style={{ color: diffColor }}>{diffDisplay}</div>;
-  };
+  }, []);
 
-  const renderDamageRangeCell = (punish: ConversionType) => {
+  const renderDamageRangeCell = useCallback((punish: ConversionType) => {
     return <div>{`(${Math.trunc(punish.startPercent)}% - ${Math.trunc(punish.currentPercent)}%)`}</div>;
-  };
+  }, []);
 
-  const renderOpeningTypeCell = (punish: ConversionType) => {
+  const renderOpeningTypeCell = useCallback((punish: ConversionType) => {
     const textTranslation = {
       "counter-attack": "Counter Hit",
       "neutral-win": "Neutral",
@@ -156,17 +110,31 @@ export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, player, o
     };
 
     return <div>{textTranslation[punish.openingType]}</div>;
-  };
+  }, []);
 
-  const renderHeaderPlayer = () => {
+  const renderHeaderPlayer = useCallback(() => {
+    const playerDisplay = (
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <img
+          src={getCharacterIcon(player.characterId, player.characterColor)}
+          height={24}
+          width={24}
+          style={{
+            marginRight: 10,
+          }}
+        />
+        <div style={{ fontWeight: 500 }}>{names.name || names.tag || `Player ${player.playerIndex + 1}`}</div>
+      </div>
+    );
+
     return (
       <T.TableRow>
         <T.TableHeaderCell colSpan={columnCount}>{playerDisplay}</T.TableHeaderCell>
       </T.TableRow>
     );
-  };
+  }, [names.name, names.tag, player.characterColor, player.characterId, player.playerIndex]);
 
-  const renderHeaderColumns = () => {
+  const renderHeaderColumns = useCallback(() => {
     return (
       <T.TableRow>
         <T.TableSubHeaderCell>Start</T.TableSubHeaderCell>
@@ -176,9 +144,54 @@ export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, player, o
         <T.TableSubHeaderCell>Opening</T.TableSubHeaderCell>
       </T.TableRow>
     );
-  };
+  }, []);
 
-  const renderPunishRows = () => {
+  const generatePunishRow = useCallback(
+    (punish: ConversionType) => {
+      const start = convertFrameCountToDurationString(punish.startFrame);
+      let end = "–";
+
+      const damage = renderDamageCell(punish);
+      const damageRange = renderDamageRangeCell(punish);
+      const openingType = renderOpeningTypeCell(punish);
+
+      if (punish.endFrame !== null && punish.endFrame !== undefined) {
+        end = convertFrameCountToDurationString(punish.endFrame);
+      }
+
+      const playPunish = () => {
+        viewReplays([{ path: file.fullPath, startFrame: punish.startFrame }]);
+      };
+
+      return (
+        <T.TableRow key={`${punish.playerIndex}-punish-${punish.startFrame}`}>
+          <T.TableCell>
+            <Tooltip title="Play from here">
+              <span
+                onClick={playPunish}
+                css={css`
+                  &:hover {
+                    cursor: pointer;
+                    text-decoration: underline;
+                  }
+                `}
+              >
+                {start}
+              </span>
+            </Tooltip>
+          </T.TableCell>
+          <T.TableCell>{end}</T.TableCell>
+          <T.TableCell>{damage}</T.TableCell>
+          <T.TableCell>{damageRange}</T.TableCell>
+          <T.TableCell>{punish.moves.length}</T.TableCell>
+          <T.TableCell>{openingType}</T.TableCell>
+        </T.TableRow>
+      );
+    },
+    [file.fullPath, renderDamageCell, renderDamageRangeCell, renderOpeningTypeCell, viewReplays],
+  );
+
+  const renderPunishRows = useCallback(() => {
     const punishes = _.get(stats, "conversions") || [];
     const punishesByPlayer = _.groupBy(punishes, "playerIndex");
     const playerPunishes = punishesByPlayer[opp.playerIndex] || [];
@@ -252,7 +265,7 @@ export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, player, o
     addStockRows();
 
     return elements;
-  };
+  }, [generateEmptyRow, generatePunishRow, generateStockRow, opp.playerIndex, stats]);
 
   return (
     <T.Table>

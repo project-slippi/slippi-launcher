@@ -9,7 +9,7 @@ import { socials } from "common/constants";
 import { ipc_copyLogsToClipboard } from "common/ipc";
 import { shell } from "electron";
 import electronLog from "electron-log";
-import React from "react";
+import React, { useCallback } from "react";
 import { useToasts } from "react-toast-notifications";
 
 import { ExternalLink as A } from "@/components/ExternalLink";
@@ -23,12 +23,15 @@ export const SupportBox: React.FC<{ className?: string }> = ({ className }) => {
   const [copied, setCopied] = React.useState(false);
   const { addToast } = useToasts();
 
-  const handleError = (err: any) => {
-    log.error("Error copying logs", err);
-    addToast(err.message || JSON.stringify(err), { appearance: "error" });
-  };
+  const handleError = useCallback(
+    (err: any) => {
+      log.error("Error copying logs", err);
+      addToast(err.message || JSON.stringify(err), { appearance: "error" });
+    },
+    [addToast],
+  );
 
-  const onCopy = async () => {
+  const onCopy = useCallback(async () => {
     // Set the clipboard text
     setCopying(true);
     try {
@@ -45,7 +48,7 @@ export const SupportBox: React.FC<{ className?: string }> = ({ className }) => {
     } finally {
       setCopying(false);
     }
-  };
+  }, [handleError]);
 
   return (
     <Outer className={className}>

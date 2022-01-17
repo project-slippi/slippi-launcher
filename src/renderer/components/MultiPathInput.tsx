@@ -4,7 +4,7 @@ import Button from "@material-ui/core/Button";
 import MatCheckbox from "@material-ui/core/Checkbox";
 import InputBase from "@material-ui/core/InputBase";
 import { OpenDialogOptions, remote } from "electron";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useToasts } from "react-toast-notifications";
 
 import { useSettings } from "@/lib/hooks/useSettings";
@@ -19,38 +19,48 @@ export const MultiPathInput: React.FC<MultiPathInputProps> = ({ paths, updatePat
   const { addToast } = useToasts();
   const rootFolder = useSettings((store) => store.settings.rootSlpPath);
 
-  const assertValidPath = (newPath: string): boolean => {
-    const addErrorToast = (description: string) => {
+  const addErrorToast = useCallback(
+    (description: string) => {
       addToast(description, {
         appearance: "error",
         autoDismiss: true,
         autoDismissTimeout: 5000,
       });
-    };
-    if (paths.includes(newPath)) {
-      addErrorToast("That directory is already included.");
-      return false;
-    }
+    },
+    [addToast],
+  );
 
-    if (newPath.includes(rootFolder)) {
-      addErrorToast("Cannot add sub directories of the Root SLP Directory.");
-      return false;
-    }
+  const assertValidPath = useCallback(
+    (newPath: string): boolean => {
+      if (paths.includes(newPath)) {
+        addErrorToast("That directory is already included.");
+        return false;
+      }
 
-    for (let i = 0; i < paths.length; i++) {
-      const path = paths[i];
-      if (newPath.includes(path)) {
+      if (newPath.includes(rootFolder)) {
         addErrorToast("Cannot add sub directories of the Root SLP Directory.");
         return false;
-      } else if (path.includes(newPath)) {
-        updatePaths(paths.splice(i, 1));
-        paths = paths.splice(i--, 1); //decrement i because we are dropping an entry
       }
-    }
-    return true;
-  };
 
-  const onAddClick = async () => {
+      let localPaths = [...paths];
+      for (let i = 0; i < localPaths.length; i++) {
+        const path = localPaths[i];
+        if (newPath.includes(path)) {
+          addErrorToast("Cannot add sub directories of the Root SLP Directory.");
+          return false;
+        } else if (path.includes(newPath)) {
+          updatePaths(localPaths.splice(i, 1));
+          localPaths = localPaths.splice(i--, 1); //decrement i because we are dropping an entry
+        }
+      }
+      return true;
+    },
+    [addErrorToast, paths, rootFolder, updatePaths],
+  );
+
+  const [checkboxSelections, updateCheckboxSelections] = useState(Array(paths.length).fill(false));
+
+  const onAddClick = useCallback(async () => {
     const result = await remote.dialog.showOpenDialog({ properties: ["openFile"], ...options });
     const res = result.filePaths;
     if (result.canceled || res.length === 0) {
@@ -68,9 +78,9 @@ export const MultiPathInput: React.FC<MultiPathInputProps> = ({ paths, updatePat
     });
 
     updatePaths([...paths, newPath]);
-  };
+  }, [assertValidPath, options, paths, updatePaths]);
 
-  const onRemoveClick = async () => {
+  const onRemoveClick = useCallback(async () => {
     const filteredList = paths.filter((_path, index) => {
       return !checkboxSelections[index];
     });
@@ -80,17 +90,15 @@ export const MultiPathInput: React.FC<MultiPathInputProps> = ({ paths, updatePat
     });
 
     updatePaths(filteredList);
-  };
+  }, [checkboxSelections, paths, updatePaths]);
 
-  const [checkboxSelections, updateCheckboxSelections] = useState(Array(paths.length).fill(false));
-
-  const onToggle = (index: number) => {
+  const onToggle = useCallback((index: number) => {
     updateCheckboxSelections((arr) => {
       const newArr = arr;
       newArr[index] = !newArr[index];
       return [...newArr];
     });
-  };
+  }, []);
 
   const Rows = paths.map((path, index) => {
     return (

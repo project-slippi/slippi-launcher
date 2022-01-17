@@ -6,7 +6,7 @@ import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import { StoredConnection } from "@settings/types";
 import { ConnectionStatus } from "@slippi/slippi-js";
 import { ipc_getLatestGitHubReleaseVersion } from "common/ipc";
-import React from "react";
+import React, { useCallback } from "react";
 
 import { IconMenu } from "@/components/IconMenu";
 import { IconMessage } from "@/components/Message";
@@ -50,23 +50,23 @@ export const SavedConnectionsList: React.FC<SavedConnectionsListProps> = ({ avai
     [connectedConsoles],
   );
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setMenuItem(null);
-  };
+  }, []);
 
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     if (menuItem && menuItem.index >= 0 && !consoleIsConnected(menuItem.ipAddress)) {
       onDelete(savedConnections[menuItem.index]);
     }
     handleClose();
-  };
+  }, [consoleIsConnected, handleClose, menuItem, onDelete, savedConnections]);
 
-  const handleEdit = () => {
+  const handleEdit = useCallback(() => {
     if (menuItem && menuItem.index >= 0) {
       onEdit(savedConnections[menuItem.index]);
     }
     handleClose();
-  };
+  }, [handleClose, menuItem, onEdit, savedConnections]);
 
   const { value: versionData } = ipc_getLatestGitHubReleaseVersion.renderer!.useValue(
     { owner: "project-slippi", repo: "Nintendont" },

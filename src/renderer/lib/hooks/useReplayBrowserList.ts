@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import create from "zustand";
 import { combine } from "zustand/middleware";
@@ -23,21 +24,27 @@ export const useReplayBrowserNavigation = () => {
   const lastPath = useReplayBrowserNavigationStore((store) => store.lastPath);
   const setLastPath = useReplayBrowserNavigationStore((store) => store.setLastPath);
 
-  const navigate = (pageUrl: string) => {
-    setLastPath(pageUrl);
-    history.push(pageUrl);
-  };
+  const navigate = useCallback(
+    (pageUrl: string) => {
+      setLastPath(pageUrl);
+      history.push(pageUrl);
+    },
+    [history, setLastPath],
+  );
 
-  const goToReplayStatsPage = (filePath: string) => {
-    const encodedPath = encodeURIComponent(filePath);
-    const pageUrl = `/main/replays/${encodedPath}`;
-    navigate(pageUrl);
-  };
+  const goToReplayStatsPage = useCallback(
+    (filePath: string) => {
+      const encodedPath = encodeURIComponent(filePath);
+      const pageUrl = `/main/replays/${encodedPath}`;
+      navigate(pageUrl);
+    },
+    [navigate],
+  );
 
-  const goToReplayList = () => {
+  const goToReplayList = useCallback(() => {
     const pageUrl = `/main/replays/list`;
     navigate(pageUrl);
-  };
+  }, [navigate]);
 
   return {
     lastPath,
@@ -61,33 +68,36 @@ export const useReplayBrowserList = () => {
   const { index, total } = useReplays((store) => store.selectedFile);
   const { goToReplayStatsPage } = useReplayBrowserNavigation();
 
-  const setSelectedItem = (index: number | null) => {
-    if (index === null) {
-      clearSelectedFile();
-      return;
-    }
-    const file = filteredFiles[index];
-    selectFile(file, index, filteredFiles.length);
-    goToReplayStatsPage(file.fullPath);
-  };
+  const setSelectedItem = useCallback(
+    (index: number | null) => {
+      if (index === null) {
+        clearSelectedFile();
+        return;
+      }
+      const file = filteredFiles[index];
+      selectFile(file, index, filteredFiles.length);
+      goToReplayStatsPage(file.fullPath);
+    },
+    [clearSelectedFile, filteredFiles, goToReplayStatsPage, selectFile],
+  );
 
-  const selectNextFile = () => {
+  const selectNextFile = useCallback(() => {
     if (index === null) {
       return;
     }
     if (index < filteredFiles.length - 1) {
       setSelectedItem(index + 1);
     }
-  };
+  }, [filteredFiles.length, index, setSelectedItem]);
 
-  const selectPrevFile = () => {
+  const selectPrevFile = useCallback(() => {
     if (index === null) {
       return;
     }
     if (index > 0) {
       setSelectedItem(index - 1);
     }
-  };
+  }, [index, setSelectedItem]);
 
   return {
     hiddenFileCount: numHiddenFiles,

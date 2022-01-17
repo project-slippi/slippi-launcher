@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import create from "zustand";
 import { combine } from "zustand/middleware";
@@ -86,19 +86,19 @@ export const useQuickStart = () => {
     setCurrentStep(stepToShow);
   }, [history, steps, options.hasIso, options.hasOldDesktopApp, options.hasPlayKey, options.hasUser]);
 
-  const nextStep = () => {
+  const nextStep = useCallback(() => {
     const currentIndex = steps.findIndex((s) => s === currentStep);
     if (currentIndex !== -1 && currentIndex + 1 < steps.length) {
       setCurrentStep(steps[currentIndex + 1]);
     }
-  };
+  }, [currentStep, steps]);
 
-  const prevStep = () => {
+  const prevStep = useCallback(() => {
     const currentIndex = steps.findIndex((s) => s === currentStep);
     if (currentIndex > 0) {
       setCurrentStep(steps[currentIndex - 1]);
     }
-  };
+  }, [currentStep, steps]);
 
   return {
     allSteps: steps,

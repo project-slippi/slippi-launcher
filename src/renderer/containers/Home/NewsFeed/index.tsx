@@ -2,7 +2,7 @@
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
-import React from "react";
+import React, { useCallback } from "react";
 
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { useNewsFeed } from "@/lib/hooks/useNewsFeed";
@@ -31,6 +31,10 @@ export const NewsFeed: React.FC<NewsFeedProps> = ({ numItemsToShow = 7, batchSiz
   const mainRef = React.createRef<HTMLDivElement>();
   usePageScrollingShortcuts(mainRef);
 
+  const onShowMore = useCallback(() => {
+    setNumItems(numItems + batchSize);
+  }, [batchSize, numItems]);
+
   if (isLoading) {
     return <LoadingScreen message="Loading..." />;
   }
@@ -38,10 +42,6 @@ export const NewsFeed: React.FC<NewsFeedProps> = ({ numItemsToShow = 7, batchSiz
   if (didError) {
     return <div>Failed to fetch news articles.</div>;
   }
-
-  const onShowMore = () => {
-    setNumItems(numItems + batchSize);
-  };
 
   const postsToShow = numItems <= 0 ? allPosts : allPosts.slice(0, numItems);
 

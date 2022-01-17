@@ -11,7 +11,7 @@ import Typography from "@material-ui/core/Typography";
 import { NewsItem } from "common/types";
 import { shell } from "electron";
 import moment from "moment";
-import React from "react";
+import React, { useCallback } from "react";
 import TimeAgo from "react-timeago";
 
 import { MarkdownContent } from "@/components/MarkdownContent";
@@ -24,7 +24,7 @@ export const NewsArticle: React.FC<NewsArticleProps> = ({ item }) => {
   const { imageUrl, title, subtitle, permalink, body, publishedAt } = item;
   const localDateString = moment(publishedAt).format("LLL");
 
-  const onClick = () => shell.openExternal(permalink);
+  const onClick = useCallback(() => shell.openExternal(permalink), [permalink]);
   return (
     <Outer>
       <Card>

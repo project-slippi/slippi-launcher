@@ -19,7 +19,7 @@ import HelpIcon from "@material-ui/icons/Help";
 import { clipboard } from "electron";
 import electronLog from "electron-log";
 import debounce from "lodash/debounce";
-import React from "react";
+import React, { useCallback } from "react";
 import { useQuery } from "react-query";
 
 import { validateUserId } from "@/lib/validateUserId";
@@ -74,12 +74,15 @@ export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({
     [fetchUser, skipUserValidation, userQuery],
   );
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("submitting form...");
-    onSubmit(value);
-    onClose();
-  };
+  const handleSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      console.log("submitting form...");
+      onSubmit(value);
+      onClose();
+    },
+    [onClose, onSubmit, value],
+  );
 
   const showErrorStatus = value.length > 0 && userQuery.isError;
   if (showErrorStatus) {

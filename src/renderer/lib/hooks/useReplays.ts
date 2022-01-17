@@ -2,7 +2,7 @@ import { ipc_loadReplayFolder } from "@replays/ipc";
 import { FileLoadResult, FileResult, FolderResult, Progress } from "@replays/types";
 import { produce } from "immer";
 import path from "path";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import create from "zustand";
 
 import { useSettings } from "@/lib/hooks/useSettings";
@@ -243,75 +243,81 @@ export const useReplaySelection = () => {
 
   const [lastClickIndex, setLastClickIndex] = useState<number | null>(null);
 
-  const toggleFiles = (fileNames: string[], mode: "toggle" | "select" | "deselect" = "toggle") => {
-    const newSelection = Array.from(selectedFiles);
+  const toggleFiles = useCallback(
+    (fileNames: string[], mode: "toggle" | "select" | "deselect" = "toggle") => {
+      const newSelection = Array.from(selectedFiles);
 
-    fileNames.forEach((fileName) => {
-      const alreadySelectedIndex = newSelection.findIndex((f) => f === fileName);
-      switch (mode) {
-        case "toggle": {
-          if (alreadySelectedIndex !== -1) {
-            newSelection.splice(alreadySelectedIndex, 1);
-          } else {
-            newSelection.push(fileName);
+      fileNames.forEach((fileName) => {
+        const alreadySelectedIndex = newSelection.findIndex((f) => f === fileName);
+        switch (mode) {
+          case "toggle": {
+            if (alreadySelectedIndex !== -1) {
+              newSelection.splice(alreadySelectedIndex, 1);
+            } else {
+              newSelection.push(fileName);
+            }
+            break;
           }
-          break;
-        }
-        case "select": {
-          if (alreadySelectedIndex === -1) {
-            newSelection.push(fileName);
+          case "select": {
+            if (alreadySelectedIndex === -1) {
+              newSelection.push(fileName);
+            }
+            break;
           }
-          break;
-        }
-        case "deselect": {
-          if (alreadySelectedIndex !== -1) {
-            newSelection.splice(alreadySelectedIndex, 1);
+          case "deselect": {
+            if (alreadySelectedIndex !== -1) {
+              newSelection.splice(alreadySelectedIndex, 1);
+            }
+            break;
           }
-          break;
         }
-      }
-    });
+      });
 
-    setSelectedFiles(newSelection);
-  };
+      setSelectedFiles(newSelection);
+    },
+    [selectedFiles, setSelectedFiles],
+  );
 
-  const onFileClick = (index: number, isShiftHeld: boolean) => {
-    const isCurrentSelected = selectedFiles.includes(files[index].fullPath);
-    if (lastClickIndex !== null && isShiftHeld) {
-      // Shift is held
-      // Find all the files between the last clicked file and the current one
-      const startIndex = Math.min(index, lastClickIndex);
-      const endIndex = Math.max(index, lastClickIndex);
+  const onFileClick = useCallback(
+    (index: number, isShiftHeld: boolean) => {
+      const isCurrentSelected = selectedFiles.includes(files[index].fullPath);
+      if (lastClickIndex !== null && isShiftHeld) {
+        // Shift is held
+        // Find all the files between the last clicked file and the current one
+        const startIndex = Math.min(index, lastClickIndex);
+        const endIndex = Math.max(index, lastClickIndex);
 
-      const filesToToggle: string[] = [];
-      for (let i = startIndex; i <= endIndex; i++) {
-        filesToToggle.push(files[i].fullPath);
-      }
+        const filesToToggle: string[] = [];
+        for (let i = startIndex; i <= endIndex; i++) {
+          filesToToggle.push(files[i].fullPath);
+        }
 
-      if (lastClickIndex > index) {
-        filesToToggle.reverse();
-      }
+        if (lastClickIndex > index) {
+          filesToToggle.reverse();
+        }
 
-      if (isCurrentSelected) {
-        toggleFiles(filesToToggle, "deselect");
+        if (isCurrentSelected) {
+          toggleFiles(filesToToggle, "deselect");
+        } else {
+          toggleFiles(filesToToggle, "select");
+        }
       } else {
-        toggleFiles(filesToToggle, "select");
+        toggleFiles([files[index].fullPath]);
       }
-    } else {
-      toggleFiles([files[index].fullPath]);
-    }
 
-    // Update the click index when we're done
-    setLastClickIndex(index);
-  };
+      // Update the click index when we're done
+      setLastClickIndex(index);
+    },
+    [files, lastClickIndex, selectedFiles, toggleFiles],
+  );
 
-  const clearSelection = () => {
+  const clearSelection = useCallback(() => {
     setSelectedFiles([]);
-  };
+  }, [setSelectedFiles]);
 
-  const selectAll = () => {
+  const selectAll = useCallback(() => {
     setSelectedFiles(files.map((f) => f.fullPath));
-  };
+  }, [files, setSelectedFiles]);
 
   return {
     onFileClick,

@@ -8,7 +8,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import SearchIcon from "@material-ui/icons/Search";
 import SyncIcon from "@material-ui/icons/Sync";
 import debounce from "lodash/debounce";
-import React from "react";
+import React, { useCallback } from "react";
 import { useToasts } from "react-toast-notifications";
 
 import { Button, Checkbox, Dropdown } from "@/components/FormInputs";
@@ -61,10 +61,13 @@ export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarPro
     setStoreSearchText(text);
   }, 100);
 
-  const setNameFilter = (name: string) => {
-    setSearchText(name);
-    debounceChange(name);
-  };
+  const setNameFilter = useCallback(
+    (name: string) => {
+      setSearchText(name);
+      debounceChange(name);
+    },
+    [debounceChange],
+  );
 
   return (
     <Outer>

@@ -7,7 +7,7 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import electronLog from "electron-log";
-import React from "react";
+import React, { useCallback } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useToasts } from "react-toast-notifications";
 
@@ -35,11 +35,11 @@ interface ConnectCodeSetterProps {
 
 const ConnectCodeSetter: React.FC<ConnectCodeSetterProps> = ({ displayName, onSuccess }) => {
   const { addToast } = useToasts();
-  const getStartTag = () => {
+  const getStartTag = useCallback(() => {
     const safeName = displayName ?? "";
     const matches = safeName.match(/[a-zA-Z]+/g) || [];
     return matches.join("").toUpperCase().substring(0, 4);
-  };
+  }, [displayName]);
 
   const [isLoading, setIsLoading] = React.useState(false);
 

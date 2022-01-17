@@ -11,7 +11,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import { colors } from "common/colors";
 import { exists } from "common/exists";
 import { shell } from "electron";
-import React from "react";
+import React, { useCallback } from "react";
 import { useToasts } from "react-toast-notifications";
 
 import { DualPane } from "@/components/DualPane";
@@ -52,39 +52,48 @@ export const ReplayBrowser: React.FC = () => {
   const { files: filteredFiles, hiddenFileCount } = useReplayBrowserList();
   const { goToReplayStatsPage } = useReplayBrowserNavigation();
 
-  const setSelectedItem = (index: number | null) => {
-    if (index === null) {
-      void clearSelectedFile();
-    } else {
-      const file = filteredFiles[index];
-      void selectFile(file, index, filteredFiles.length);
-      goToReplayStatsPage(file.fullPath);
-    }
-  };
-
-  const playSelectedFile = (index: number) => {
-    const filePath = filteredFiles[index].fullPath;
-    viewReplays([{ path: filePath }]);
-  };
-
-  const deleteFiles = (filePaths: string[]) => {
-    let errCount = 0;
-    filePaths.forEach((filePath) => {
-      const success = shell.moveItemToTrash(filePath);
-      if (success) {
-        // Remove the file from the store
-        removeFile(filePath);
+  const setSelectedItem = useCallback(
+    (index: number | null) => {
+      if (index === null) {
+        void clearSelectedFile();
       } else {
-        errCount += 1;
+        const file = filteredFiles[index];
+        void selectFile(file, index, filteredFiles.length);
+        goToReplayStatsPage(file.fullPath);
       }
-    });
+    },
+    [clearSelectedFile, filteredFiles, goToReplayStatsPage, selectFile],
+  );
 
-    let message = `${filePaths.length - errCount} file(s) deleted successfully.`;
-    if (errCount > 0) {
-      message += ` ${errCount} file(s) couldn't be deleted.`;
-    }
-    addToast(message, { appearance: "success", autoDismiss: true });
-  };
+  const playSelectedFile = useCallback(
+    (index: number) => {
+      const filePath = filteredFiles[index].fullPath;
+      viewReplays([{ path: filePath }]);
+    },
+    [filteredFiles, viewReplays],
+  );
+
+  const deleteFiles = useCallback(
+    (filePaths: string[]) => {
+      let errCount = 0;
+      filePaths.forEach((filePath) => {
+        const success = shell.moveItemToTrash(filePath);
+        if (success) {
+          // Remove the file from the store
+          removeFile(filePath);
+        } else {
+          errCount += 1;
+        }
+      });
+
+      let message = `${filePaths.length - errCount} file(s) deleted successfully.`;
+      if (errCount > 0) {
+        message += ` ${errCount} file(s) couldn't be deleted.`;
+      }
+      addToast(message, { appearance: "success", autoDismiss: true });
+    },
+    [addToast, removeFile],
+  );
 
   if (netplaySlpFolder === null) {
     return null;

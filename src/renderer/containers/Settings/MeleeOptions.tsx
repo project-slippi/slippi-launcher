@@ -9,7 +9,7 @@ import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import ErrorIcon from "@material-ui/icons/Error";
 import Help from "@material-ui/icons/Help";
 import { IsoValidity } from "common/types";
-import React from "react";
+import React, { useCallback } from "react";
 
 import { PathInput } from "@/components/PathInput";
 import { useDolphinStore } from "@/lib/hooks/useDolphin";
@@ -40,10 +40,13 @@ export const MeleeOptions: React.FC = () => {
   const netplayDolphinOpen = useDolphinStore((store) => store.netplayDolphinOpen);
   const playbackDolphinOpen = useDolphinStore((store) => store.playbackDolphinOpen);
 
-  const onLaunchMeleeChange = async (value: string) => {
-    const launchMelee = value === "true";
-    await setLaunchMelee(launchMelee);
-  };
+  const onLaunchMeleeChange = useCallback(
+    async (value: string) => {
+      const launchMelee = value === "true";
+      await setLaunchMelee(launchMelee);
+    },
+    [setLaunchMelee],
+  );
 
   return (
     <div>

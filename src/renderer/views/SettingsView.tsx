@@ -10,7 +10,7 @@ import ListSubheader from "@material-ui/core/ListSubheader";
 import Tooltip from "@material-ui/core/Tooltip";
 import CloseIcon from "@material-ui/icons/Close";
 import { colors } from "common/colors";
-import React from "react";
+import React, { useCallback } from "react";
 import { Link, Redirect, Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
 
 import { DualPane } from "@/components/DualPane";
@@ -61,9 +61,12 @@ export const SettingsView: React.FC = () => {
   const { path } = useRouteMatch();
   const { close } = useSettingsModal();
 
-  const isActive = (name: string): boolean => {
-    return history.location.pathname === `${path}/${name}`;
-  };
+  const isActive = useCallback(
+    (name: string): boolean => {
+      return history.location.pathname === `${path}/${name}`;
+    },
+    [history.location.pathname, path],
+  );
 
   useMousetrap("escape", close);
 

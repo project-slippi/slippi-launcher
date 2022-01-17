@@ -8,7 +8,7 @@ import { isLinux, isMac } from "common/constants";
 import { remote, shell } from "electron";
 import electronLog from "electron-log";
 import capitalize from "lodash/capitalize";
-import React from "react";
+import React, { useCallback } from "react";
 
 import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { DevGuard } from "@/components/DevGuard";
@@ -29,23 +29,23 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   );
   const { openConfigureDolphin, reinstallDolphin, clearDolphinCache } = useDolphin();
 
-  const openDolphinDirectoryHandler = async () => {
+  const openDolphinDirectoryHandler = useCallback(async () => {
     shell.openItem(dolphinPath);
-  };
+  }, [dolphinPath]);
 
-  const configureDolphinHandler = async () => {
+  const configureDolphinHandler = useCallback(async () => {
     openConfigureDolphin(dolphinType);
-  };
+  }, [dolphinType, openConfigureDolphin]);
 
-  const reinstallDolphinHandler = async () => {
+  const reinstallDolphinHandler = useCallback(async () => {
     setIsResetting(true);
     await reinstallDolphin(dolphinType);
     setIsResetting(false);
-  };
+  }, [dolphinType, reinstallDolphin]);
 
-  const clearDolphinCacheHandler = async () => {
+  const clearDolphinCacheHandler = useCallback(async () => {
     clearDolphinCache(dolphinType);
-  };
+  }, [clearDolphinCache, dolphinType]);
 
   const dolphinTypeName = capitalize(dolphinType);
   return (
@@ -143,12 +143,15 @@ const ImportDolphinConfigForm: React.FC<{
   const { importDolphin } = useDolphin();
   const dolphinTypeName = capitalize(dolphinType);
   const extension = isMac ? "app" : "exe";
-  const importDolphinHandler = (importPath: string) => {
-    log.info(`importing dolphin from ${importPath}`);
-    importDolphin(importPath, dolphinType);
-  };
+  const importDolphinHandler = useCallback(
+    (importPath: string) => {
+      log.info(`importing dolphin from ${importPath}`);
+      importDolphin(importPath, dolphinType);
+    },
+    [dolphinType, importDolphin],
+  );
 
-  const onImportClick = async () => {
+  const onImportClick = useCallback(async () => {
     const result = await remote.dialog.showOpenDialog({
       filters: [{ name: "Slippi Dolphin", extensions: [isMac ? "app" : "exe"] }],
     });
@@ -157,7 +160,7 @@ const ImportDolphinConfigForm: React.FC<{
       return;
     }
     importDolphinHandler(res[0]);
-  };
+  }, [importDolphinHandler]);
 
   return (
     <SettingItem

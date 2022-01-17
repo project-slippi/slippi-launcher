@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useCallback } from "react";
 
 import { Checkbox } from "@/components/FormInputs/Checkbox";
 import { MultiPathInput } from "@/components/MultiPathInput";
@@ -18,9 +18,9 @@ export const ReplayOptions: React.FC = () => {
   const [enableMonthlySubfolders, setUseMonthlySubfolders] = useMonthlySubfolders();
   const netplayDolphinOpen = useDolphinStore((store) => store.netplayDolphinOpen);
 
-  const onUseMonthlySubfoldersToggle = async () => {
+  const onUseMonthlySubfoldersToggle = useCallback(async () => {
     await setUseMonthlySubfolders(!enableMonthlySubfolders);
-  };
+  }, [enableMonthlySubfolders, setUseMonthlySubfolders]);
 
   return (
     <div>

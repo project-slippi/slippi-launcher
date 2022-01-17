@@ -2,7 +2,7 @@
 import { css, jsx } from "@emotion/react";
 import { ipcRenderer } from "electron";
 import moment from "moment";
-import React from "react";
+import React, { useCallback } from "react";
 import { useToasts } from "react-toast-notifications";
 
 import { ExternalLink as A } from "@/components/ExternalLink";
@@ -26,7 +26,7 @@ export const BuildInfo: React.FC<BuildInfoProps> = ({ className, enableAdvancedU
   const isAdvancedUser = useAdvancedUser((store) => store.isAdvancedUser);
   const setIsAdvancedUser = useAdvancedUser((store) => store.setIsAdvancedUser);
   const { addToast } = useToasts();
-  const handleBuildNumberClick = () => {
+  const handleBuildNumberClick = useCallback(() => {
     if (!enableAdvancedUserClick) {
       return;
     }
@@ -43,7 +43,7 @@ export const BuildInfo: React.FC<BuildInfoProps> = ({ className, enableAdvancedU
 
     setIsAdvancedUser(!isAdvancedUser);
     setClickCount(0);
-  };
+  }, [addToast, clickCount, enableAdvancedUserClick, isAdvancedUser, setIsAdvancedUser]);
 
   return (
     <div

@@ -2,6 +2,7 @@ import { FileResult } from "@replays/types";
 import { Frames } from "@slippi/slippi-js";
 import { extractAllPlayerNames, namesMatch } from "common/matchNames";
 import compareFunc from "compare-func";
+import { useCallback } from "react";
 
 // The minimum duration of games when filtering out short games
 const MIN_GAME_DURATION_FRAMES = 30 * 60;
@@ -78,7 +79,7 @@ export const replayFileFilter = (filterOptions: ReplayFilterOptions): ((file: Fi
   }
 
   // First try to match names
-  const playerNamesMatch = (): boolean => {
+  const playerNamesMatch = useCallback((): boolean => {
     const matchable = extractAllPlayerNames(file.settings, file.metadata);
     if (!filterOptions.searchText) {
       return true;
@@ -86,7 +87,7 @@ export const replayFileFilter = (filterOptions: ReplayFilterOptions): ((file: Fi
       return false;
     }
     return namesMatch([filterOptions.searchText], matchable);
-  };
+  }, [file.metadata, file.settings]);
   if (playerNamesMatch()) {
     return true;
   }

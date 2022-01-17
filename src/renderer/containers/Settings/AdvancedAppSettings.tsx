@@ -38,7 +38,7 @@ const ClearTempFilesForm = React.memo(() => {
         const message = err instanceof Error ? err.message : JSON.stringify(err);
         addToast(message, { appearance: "error" });
       });
-  }, []);
+  }, [addToast]);
   return (
     <SettingItem
       name="Clear Temporary Files"

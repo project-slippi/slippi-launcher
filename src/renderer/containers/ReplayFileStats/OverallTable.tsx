@@ -2,7 +2,7 @@ import { FileResult } from "@replays/types";
 import { RatioType, StatsType } from "@slippi/slippi-js";
 import { extractPlayerNames } from "common/matchNames";
 import _ from "lodash";
-import React from "react";
+import React, { useCallback } from "react";
 
 import { getCharacterIcon } from "@/lib/utils";
 
@@ -17,7 +17,7 @@ export interface OverallTableProps {
 
 export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
   //RENDER HELPERS
-  const renderPlayerHeaders = () => {
+  const renderPlayerHeaders = useCallback(() => {
     const tableHeaders = [];
     for (const p of file.settings.players) {
       const names = extractPlayerNames(p.playerIndex, file.settings, file.metadata);
@@ -46,218 +46,230 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
         </T.TableRow>
       </thead>
     );
-  };
+  }, [file.metadata, file.settings]);
 
-  const renderMultiStatField = (
-    header: string,
-    arrPath: string | string[],
-    fieldPaths: string | string[] | null,
-    highlight?: (v: any[], ov: any[]) => boolean,
-    valueMapper?: (a: any) => string,
-    arrPathExtension?: string | string[],
-  ) => {
-    const key = `standard-field-${header}`;
+  const renderMultiStatField = useCallback(
+    (
+      header: string,
+      arrPath: string | string[],
+      fieldPaths: string | string[] | null,
+      highlight?: (v: any[], ov: any[]) => boolean,
+      valueMapper?: (a: any) => string,
+      arrPathExtension?: string | string[],
+    ) => {
+      const key = `standard-field-${header}`;
 
-    const arr = _.get(stats, arrPath) || [];
-    const itemsByPlayer = arr; // _.keyBy(arr, "playerIndex");
+      const arr = _.get(stats, arrPath) || [];
+      const itemsByPlayer = arr; // _.keyBy(arr, "playerIndex");
 
-    if (!arr || arr.length === 0) {
+      if (!arr || arr.length === 0) {
+        return (
+          <T.TableRow key={key}>
+            <T.TableCell>{header}</T.TableCell>
+            <T.TableCell>Doubles is not supported for this field</T.TableCell>
+          </T.TableRow>
+        );
+      }
+      const player1Item = arrPathExtension ? _.get(itemsByPlayer[0], arrPathExtension) : itemsByPlayer[0] || {};
+      const player2Item = arrPathExtension ? _.get(itemsByPlayer[1], arrPathExtension) : itemsByPlayer[1] || {};
+      const generateValues = (item: any) => {
+        if (fieldPaths !== null) {
+          return _.chain(item)
+            .pick(fieldPaths)
+            .toArray()
+            .map((v) => (valueMapper ? valueMapper(v) : v))
+            .value();
+        }
+
+        if (valueMapper) {
+          return [valueMapper(item)];
+        }
+
+        return [item];
+      };
+
+      const p1Values = generateValues(player1Item);
+      const p2Values = generateValues(player2Item);
+
       return (
         <T.TableRow key={key}>
           <T.TableCell>{header}</T.TableCell>
-          <T.TableCell>Doubles is not supported for this field</T.TableCell>
+          <T.TableCell highlight={highlight && highlight(p1Values, p2Values)}>
+            <div>{p1Values.join(" / ")}</div>
+          </T.TableCell>
+          <T.TableCell highlight={highlight && highlight(p2Values, p1Values)}>
+            <div>{p2Values.join(" / ")}</div>
+          </T.TableCell>
         </T.TableRow>
       );
-    }
-    const player1Item = arrPathExtension ? _.get(itemsByPlayer[0], arrPathExtension) : itemsByPlayer[0] || {};
-    const player2Item = arrPathExtension ? _.get(itemsByPlayer[1], arrPathExtension) : itemsByPlayer[1] || {};
-    const generateValues = (item: any) => {
-      if (fieldPaths !== null) {
-        return _.chain(item)
-          .pick(fieldPaths)
-          .toArray()
-          .map((v) => (valueMapper ? valueMapper(v) : v))
-          .value();
-      }
+    },
+    [stats],
+  );
 
-      if (valueMapper) {
-        return [valueMapper(item)];
-      }
+  const renderRatioStatField = useCallback(
+    (
+      header: string,
+      arrPath: string,
+      fieldPath: string,
+      ratioRenderer: (ratio: RatioType, oppRatio: RatioType) => JSX.Element,
+    ) => {
+      const arr = _.get(stats, arrPath) || [];
+      const itemsByPlayer = arr; // _.keyBy(arr, "playerIndex");
 
-      return [item];
-    };
+      const player1Item = itemsByPlayer[0] || {};
+      const player2Item = itemsByPlayer[1] || {};
 
-    const p1Values = generateValues(player1Item);
-    const p2Values = generateValues(player2Item);
+      const displayRenderer = (firstPlayer: boolean) => {
+        const item = firstPlayer ? player1Item : player2Item;
+        const oppItem = firstPlayer ? player2Item : player1Item;
 
-    return (
-      <T.TableRow key={key}>
-        <T.TableCell>{header}</T.TableCell>
-        <T.TableCell highlight={highlight && highlight(p1Values, p2Values)}>
-          <div>{p1Values.join(" / ")}</div>
-        </T.TableCell>
-        <T.TableCell highlight={highlight && highlight(p2Values, p1Values)}>
-          <div>{p2Values.join(" / ")}</div>
-        </T.TableCell>
-      </T.TableRow>
-    );
-  };
+        const ratio = _.get(item, fieldPath);
+        const oppRatio = _.get(oppItem, fieldPath);
 
-  const renderRatioStatField = (
-    header: string,
-    arrPath: string,
-    fieldPath: string,
-    ratioRenderer: (ratio: RatioType, oppRatio: RatioType) => JSX.Element,
-  ) => {
-    const arr = _.get(stats, arrPath) || [];
-    const itemsByPlayer = arr; // _.keyBy(arr, "playerIndex");
+        return ratioRenderer(ratio, oppRatio);
+      };
 
-    const player1Item = itemsByPlayer[0] || {};
-    const player2Item = itemsByPlayer[1] || {};
-
-    const displayRenderer = (firstPlayer: boolean) => {
-      const item = firstPlayer ? player1Item : player2Item;
-      const oppItem = firstPlayer ? player2Item : player1Item;
-
-      const ratio = _.get(item, fieldPath);
-      const oppRatio = _.get(oppItem, fieldPath);
-
-      return ratioRenderer(ratio, oppRatio);
-    };
-
-    const key = `standard-field-${header.toLowerCase()}`;
-    return (
-      <T.TableRow key={key}>
-        <T.TableCell>{header}</T.TableCell>
-        {displayRenderer(true)}
-        {displayRenderer(false)}
-      </T.TableRow>
-    );
-  };
-
-  const renderSimpleRatioField = (
-    header: string,
-    arrPath: string,
-    fieldPath: string,
-    highlightCondition: (a: number, b: number) => boolean,
-  ) => {
-    return renderRatioStatField(header, arrPath, fieldPath, (ratio: RatioType, oppRatio: RatioType) => {
-      const playerRatio = _.get(ratio, "ratio", null);
-      const oppRatioType = _.get(oppRatio, "ratio", null);
-
-      if (playerRatio === null) {
-        return (
-          <T.TableCell>
-            <div>N/A</div>
-          </T.TableCell>
-        );
-      }
-      const fixedPlayerRatio = playerRatio.toFixed(1);
-      const fixedOppRatio = oppRatioType !== null ? oppRatioType.toFixed(1) : "Infinity";
+      const key = `standard-field-${header.toLowerCase()}`;
       return (
-        <T.TableCell highlight={highlightCondition(parseFloat(fixedPlayerRatio), parseFloat(fixedOppRatio))}>
-          <div>{fixedPlayerRatio}</div>
-        </T.TableCell>
+        <T.TableRow key={key}>
+          <T.TableCell>{header}</T.TableCell>
+          {displayRenderer(true)}
+          {displayRenderer(false)}
+        </T.TableRow>
       );
-    });
-  };
+    },
+    [stats],
+  );
 
-  const renderPercentFractionField = (
-    header: string,
-    arrPath: string,
-    fieldPath: string,
-    highlightCondition: (a: number, b: number) => boolean,
-  ) => {
-    return renderRatioStatField(header, arrPath, fieldPath, (ratio, oppRatio) => {
-      const playerRatio = _.get(ratio, "ratio", null);
-      const oppRatioType = _.get(oppRatio, "ratio", null);
+  const renderSimpleRatioField = useCallback(
+    (header: string, arrPath: string, fieldPath: string, highlightCondition: (a: number, b: number) => boolean) => {
+      return renderRatioStatField(header, arrPath, fieldPath, (ratio: RatioType, oppRatio: RatioType) => {
+        const playerRatio = _.get(ratio, "ratio", null);
+        const oppRatioType = _.get(oppRatio, "ratio", null);
 
-      if (playerRatio === null || oppRatioType === null) {
+        if (playerRatio === null) {
+          return (
+            <T.TableCell>
+              <div>N/A</div>
+            </T.TableCell>
+          );
+        }
+        const fixedPlayerRatio = playerRatio.toFixed(1);
+        const fixedOppRatio = oppRatioType !== null ? oppRatioType.toFixed(1) : "Infinity";
         return (
-          <T.TableCell>
-            <div>N/A</div>
+          <T.TableCell highlight={highlightCondition(parseFloat(fixedPlayerRatio), parseFloat(fixedOppRatio))}>
+            <div>{fixedPlayerRatio}</div>
           </T.TableCell>
         );
-      }
-      const fixedPlayerRatio = playerRatio.toFixed(3);
-      const fixedOppRatio = oppRatioType.toFixed(3);
+      });
+    },
+    [renderRatioStatField],
+  );
 
-      const playerCount = _.get(ratio, "count");
-      const playerTotal = _.get(ratio, "total");
+  const renderPercentFractionField = useCallback(
+    (header: string, arrPath: string, fieldPath: string, highlightCondition: (a: number, b: number) => boolean) => {
+      return renderRatioStatField(header, arrPath, fieldPath, (ratio, oppRatio) => {
+        const playerRatio = _.get(ratio, "ratio", null);
+        const oppRatioType = _.get(oppRatio, "ratio", null);
 
-      return (
-        <T.TableCell highlight={highlightCondition(parseFloat(fixedPlayerRatio), parseFloat(fixedOppRatio))}>
-          <div>
-            <div style={{ display: "inline-block", marginRight: "8px" }}>{Math.round(playerRatio * 1000) / 10}%</div>
-            <div style={{ display: "inline-block" }}>
-              ({playerCount} / {playerTotal})
+        if (playerRatio === null || oppRatioType === null) {
+          return (
+            <T.TableCell>
+              <div>N/A</div>
+            </T.TableCell>
+          );
+        }
+        const fixedPlayerRatio = playerRatio.toFixed(3);
+        const fixedOppRatio = oppRatioType.toFixed(3);
+
+        const playerCount = _.get(ratio, "count");
+        const playerTotal = _.get(ratio, "total");
+
+        return (
+          <T.TableCell highlight={highlightCondition(parseFloat(fixedPlayerRatio), parseFloat(fixedOppRatio))}>
+            <div>
+              <div style={{ display: "inline-block", marginRight: "8px" }}>{Math.round(playerRatio * 1000) / 10}%</div>
+              <div style={{ display: "inline-block" }}>
+                ({playerCount} / {playerTotal})
+              </div>
             </div>
-          </div>
-        </T.TableCell>
-      );
-    });
-  };
+          </T.TableCell>
+        );
+      });
+    },
+    [renderRatioStatField],
+  );
 
-  const renderHigherSimpleRatioField = (header: string, field: string) => {
-    return renderSimpleRatioField(header, "overall", field, (fixedPlayerRatio: number, fixedOppRatio: number) => {
-      const oppIsNull = fixedPlayerRatio && Number.isNaN(fixedOppRatio);
-      const isHigher = fixedPlayerRatio > fixedOppRatio;
-      return oppIsNull || isHigher;
-    });
-  };
+  const renderHigherSimpleRatioField = useCallback(
+    (header: string, field: string) => {
+      return renderSimpleRatioField(header, "overall", field, (fixedPlayerRatio: number, fixedOppRatio: number) => {
+        const oppIsNull = fixedPlayerRatio && Number.isNaN(fixedOppRatio);
+        const isHigher = fixedPlayerRatio > fixedOppRatio;
+        return oppIsNull || isHigher;
+      });
+    },
+    [renderSimpleRatioField],
+  );
 
-  const renderLowerSimpleRatioField = (header: string, field: string) => {
-    return renderSimpleRatioField(header, "overall", field, (fixedPlayerRatio: number, fixedOppRatio: number) => {
-      const oppIsNull = fixedPlayerRatio && Number.isNaN(fixedOppRatio);
-      const isLower = fixedPlayerRatio < fixedOppRatio;
-      return oppIsNull || isLower;
-    });
-  };
+  const renderLowerSimpleRatioField = useCallback(
+    (header: string, field: string) => {
+      return renderSimpleRatioField(header, "overall", field, (fixedPlayerRatio: number, fixedOppRatio: number) => {
+        const oppIsNull = fixedPlayerRatio && Number.isNaN(fixedOppRatio);
+        const isLower = fixedPlayerRatio < fixedOppRatio;
+        return oppIsNull || isLower;
+      });
+    },
+    [renderSimpleRatioField],
+  );
 
-  const renderHigherPercentFractionField = (header: string, field: string) => {
-    return renderPercentFractionField(header, "overall", field, (fixedPlayerRatio: number, fixedOppRatio: number) => {
-      const oppIsNull = fixedPlayerRatio && Number.isNaN(fixedOppRatio);
-      const isHigher = fixedPlayerRatio > fixedOppRatio;
-      return oppIsNull || isHigher;
-    });
-  };
+  const renderHigherPercentFractionField = useCallback(
+    (header: string, field: string) => {
+      return renderPercentFractionField(header, "overall", field, (fixedPlayerRatio: number, fixedOppRatio: number) => {
+        const oppIsNull = fixedPlayerRatio && Number.isNaN(fixedOppRatio);
+        const isHigher = fixedPlayerRatio > fixedOppRatio;
+        return oppIsNull || isHigher;
+      });
+    },
+    [renderPercentFractionField],
+  );
 
-  const renderCountPercentField = (
-    header: string,
-    arrPath: string,
-    fieldPath: string,
-    highlightCondition: (a: number, b: number) => boolean,
-  ) => {
-    return renderRatioStatField(header, arrPath, fieldPath, (ratio: RatioType, oppRatio: RatioType) => {
-      const playerCount = _.get(ratio, "count") || 0;
-      const playerRatio = _.get(ratio, "ratio");
+  const renderCountPercentField = useCallback(
+    (header: string, arrPath: string, fieldPath: string, highlightCondition: (a: number, b: number) => boolean) => {
+      return renderRatioStatField(header, arrPath, fieldPath, (ratio: RatioType, oppRatio: RatioType) => {
+        const playerCount = _.get(ratio, "count") || 0;
+        const playerRatio = _.get(ratio, "ratio");
 
-      const oppCount = _.get(oppRatio, "count") || 0;
+        const oppCount = _.get(oppRatio, "count") || 0;
 
-      let secondaryDisplay = null;
-      if (playerRatio !== null) {
-        secondaryDisplay = <div style={{ display: "inline-block" }}>({Math.round(playerRatio * 100)}%)</div>;
-      }
+        let secondaryDisplay = null;
+        if (playerRatio !== null) {
+          secondaryDisplay = <div style={{ display: "inline-block" }}>({Math.round(playerRatio * 100)}%)</div>;
+        }
 
-      return (
-        <T.TableCell highlight={highlightCondition(playerCount, oppCount)}>
-          <div>
-            <div style={{ display: "inline-block", marginRight: "8px" }}>{playerCount}</div>
-            {secondaryDisplay}
-          </div>
-        </T.TableCell>
-      );
-    });
-  };
+        return (
+          <T.TableCell highlight={highlightCondition(playerCount, oppCount)}>
+            <div>
+              <div style={{ display: "inline-block", marginRight: "8px" }}>{playerCount}</div>
+              {secondaryDisplay}
+            </div>
+          </T.TableCell>
+        );
+      });
+    },
+    [renderRatioStatField],
+  );
 
-  const renderOpeningField = (header: string, field: string) => {
-    return renderCountPercentField(header, "overall", field, (playerCount, oppCount) => playerCount > oppCount);
-  };
+  const renderOpeningField = useCallback(
+    (header: string, field: string) => {
+      return renderCountPercentField(header, "overall", field, (playerCount, oppCount) => playerCount > oppCount);
+    },
+    [renderCountPercentField],
+  );
 
   //
   // RENDER SECTIONS
   //
-  const renderOffenseSection = () => {
+  const renderOffenseSection = useCallback(() => {
     return [
       <thead key="offense-header">
         <tr>
@@ -278,9 +290,14 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
         {renderHigherSimpleRatioField("Damage / Opening", "damagePerOpening")}
       </tbody>,
     ];
-  };
+  }, [
+    renderHigherPercentFractionField,
+    renderHigherSimpleRatioField,
+    renderLowerSimpleRatioField,
+    renderMultiStatField,
+  ]);
 
-  const renderDefenseSection = () => {
+  const renderDefenseSection = useCallback(() => {
     return [
       <thead key="defense-header">
         <tr>
@@ -295,9 +312,9 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
         ])}
       </tbody>,
     ];
-  };
+  }, [renderMultiStatField]);
 
-  const renderNeutralSection = () => {
+  const renderNeutralSection = useCallback(() => {
     return [
       <thead key="neutral-header">
         <tr key="neutral-header">
@@ -316,9 +333,9 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
         ])}
       </tbody>,
     ];
-  };
+  }, [renderMultiStatField, renderOpeningField]);
 
-  const renderGeneralSection = () => {
+  const renderGeneralSection = useCallback(() => {
     return [
       <thead key="general-header">
         <tr>
@@ -347,7 +364,7 @@ export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
         )}
       </tbody>,
     ];
-  };
+  }, [renderHigherSimpleRatioField, renderMultiStatField]);
 
   return (
     <T.Table>

@@ -5,7 +5,7 @@ import styled from "@emotion/styled";
 import AddIcon from "@material-ui/icons/Add";
 import { StoredConnection } from "@settings/types";
 import { ConnectionStatus } from "@slippi/slippi-js";
-import React from "react";
+import React, { useCallback } from "react";
 import { useToasts } from "react-toast-notifications";
 
 import { DualPane } from "@/components/DualPane";
@@ -70,23 +70,26 @@ export const Console: React.FC = () => {
     };
   }, [addToast]);
 
-  const onCancel = () => {
+  const onCancel = useCallback(() => {
     setModalOpen(false);
     setCurrentFormValues(null);
-  };
+  }, []);
 
-  const onSubmit = async (data: EditConnectionType) => {
-    if (currentFormValues && currentFormValues.id !== undefined) {
-      // We're editing an existing connection
-      await editConsoleConnection(currentFormValues.id, data);
-    } else {
-      // This is a new connection
-      await addConsoleConnection(data);
-    }
+  const onSubmit = useCallback(
+    async (data: EditConnectionType) => {
+      if (currentFormValues && currentFormValues.id !== undefined) {
+        // We're editing an existing connection
+        await editConsoleConnection(currentFormValues.id, data);
+      } else {
+        // This is a new connection
+        await addConsoleConnection(data);
+      }
 
-    // Close the dialog
-    onCancel();
-  };
+      // Close the dialog
+      onCancel();
+    },
+    [currentFormValues, onCancel],
+  );
 
   return (
     <Outer>

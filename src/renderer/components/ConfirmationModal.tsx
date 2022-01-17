@@ -6,7 +6,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import React from "react";
+import React, { useCallback } from "react";
 
 export interface ConfirmationModalProps {
   open: boolean;
@@ -37,14 +37,17 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("submitting form...");
-    onSubmit();
-    if (closeOnSubmit) {
-      onClose();
-    }
-  };
+  const handleSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      console.log("submitting form...");
+      onSubmit();
+      if (closeOnSubmit) {
+        onClose();
+      }
+    },
+    [closeOnSubmit, onClose, onSubmit],
+  );
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth={fullWidth} fullScreen={fullScreen}>

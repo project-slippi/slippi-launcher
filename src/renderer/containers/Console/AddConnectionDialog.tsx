@@ -8,7 +8,7 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { StoredConnection } from "@settings/types";
 import { Ports } from "@slippi/slippi-js";
 import merge from "lodash/merge";
-import React from "react";
+import React, { useCallback } from "react";
 
 import { useSettings } from "@/lib/hooks/useSettings";
 
@@ -34,9 +34,9 @@ export const AddConnectionDialog: React.FC<AddConnectionDialogProps> = ({
   const [title, setTitle] = React.useState("");
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
-  const updateTitle = () => {
+  const updateTitle = useCallback(() => {
     setTitle(isEditing ? "Edit Connection" : "New Connection");
-  };
+  }, [isEditing]);
   const defaultValues: Partial<StoredConnection> = merge(
     {
       isRealtime: false,

@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { colors } from "common/colors";
 import { debounce } from "lodash";
-import React from "react";
+import React, { useCallback } from "react";
 
 const Outer = styled.div`
   position: relative;
@@ -74,26 +74,29 @@ export const DualPane: React.FC<{
 }) => {
   const [panelWidth, setPanelWidth] = React.useState<number>(restoreWidth(id, width));
 
+  // Where the magic happens. i.e. when they're actually resizing
+  const onMouseMove = useCallback(
+    (e: any) => {
+      const maxPaneWidth = maxWidth ?? window.innerWidth;
+      const minPaneWidth = minWidth ?? 0;
+      let value = Math.min(maxPaneWidth - resizeHandleWidth, e.clientX);
+      value = Math.max(minPaneWidth, value);
+      setPanelWidth(value);
+      saveWidth(id, value);
+    },
+    [id, maxWidth, minWidth, resizeHandleWidth],
+  );
+
   // Clean up event listeners, classes, etc.
-  const onMouseUp = () => {
+  const onMouseUp = useCallback(() => {
     window.removeEventListener("mousemove", onMouseMove);
     window.removeEventListener("mouseup", onMouseUp);
-  };
+  }, [onMouseMove]);
 
-  // Where the magic happens. i.e. when they're actually resizing
-  const onMouseMove = (e: any) => {
-    const maxPaneWidth = maxWidth ?? window.innerWidth;
-    const minPaneWidth = minWidth ?? 0;
-    let value = Math.min(maxPaneWidth - resizeHandleWidth, e.clientX);
-    value = Math.max(minPaneWidth, value);
-    setPanelWidth(value);
-    saveWidth(id, value);
-  };
-
-  const initResize = () => {
+  const initResize = useCallback(() => {
     window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("mouseup", onMouseUp);
-  };
+  }, [onMouseMove, onMouseUp]);
 
   const gridTemplateColumns = `${resizable ? panelWidth : width}px auto`;
 
