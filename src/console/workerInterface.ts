@@ -31,7 +31,7 @@ export const mirrorWorker: Promise<Thread & MirrorWorkerMethods> = new Promise((
       worker.getMirrorDetailsObservable().subscribe(({ playbackId, filePath, isRealtime }) => {
         const replayComm: ReplayCommunication = {
           mode: "mirror",
-          isRealtime: isRealtime,
+          isRealTimeMode: isRealtime,
           replay: filePath,
         };
         dolphinManager.launchPlaybackDolphin(playbackId, replayComm).catch(mirrorLog.error);

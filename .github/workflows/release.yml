@@ -6,7 +6,7 @@ on:
 
 jobs:
   package:
-    name: Release New Desktop App
+    name: Release Launcher
     runs-on: ubuntu-latest
     steps:
       - name: Download latest artifacts

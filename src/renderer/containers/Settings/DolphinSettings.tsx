@@ -76,7 +76,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
       <DevGuard show={isLinux}>
         <SettingItem
           name={`${dolphinType} Dolphin Directory`}
-          description={`The path containing the ${dolphinTypeName} Dolphin executable.`}
+          description={`The path to the folder containing the ${dolphinTypeName} Dolphin executable.`}
         >
           <PathInput
             value={dolphinPath ?? ""}
@@ -86,15 +86,15 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           />
         </SettingItem>
       </DevGuard>
-      {!isLinux && <ImportDolphinConfigForm dolphinType={dolphinType} />}
-      <SettingItem name={`Reset ${dolphinType} Dolphin`}>
+      {!isLinux && <ImportDolphinConfigForm dolphinType={dolphinType} disabled={dolphinIsOpen || isResetting} />}
+      <SettingItem name={`Reset ${dolphinTypeName} Dolphin`}>
         <ConfirmationModal
           open={resetModalOpen}
           onClose={() => setResetModalOpen(false)}
           onSubmit={reinstallDolphinHandler}
           title="Are you sure?"
         >
-          This will remove all your {dolphinType} dolphin settings.
+          This will remove all your {dolphinTypeName} Dolphin settings.
         </ConfirmationModal>
         <div
           css={css`
@@ -138,11 +138,9 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
 
 const ImportDolphinConfigForm: React.FC<{
   dolphinType: DolphinLaunchType;
-}> = ({ dolphinType }) => {
+  disabled: boolean;
+}> = ({ dolphinType, disabled }) => {
   const { importDolphin } = useDolphin();
-  const dolphinIsOpen = useDolphinStore((store) =>
-    dolphinType === DolphinLaunchType.NETPLAY ? store.netplayDolphinOpen : store.playbackDolphinOpen,
-  );
   const dolphinTypeName = capitalize(dolphinType);
   const extension = isMac ? "app" : "exe";
   const importDolphinHandler = (importPath: string) => {
@@ -166,7 +164,7 @@ const ImportDolphinConfigForm: React.FC<{
       name={`Import ${dolphinTypeName} Dolphin Settings`}
       description={`Replace the ${dolphinTypeName} Dolphin settings with those from a different Dolphin application. To do this, select the Dolphin.${extension} with the desired ${dolphinType} settings.`}
     >
-      <Button variant="contained" color="secondary" onClick={onImportClick} disabled={dolphinIsOpen}>
+      <Button variant="contained" color="secondary" onClick={onImportClick} disabled={disabled}>
         Import Dolphin settings
       </Button>
     </SettingItem>

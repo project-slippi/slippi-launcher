@@ -29,8 +29,8 @@ export class DolphinManager extends EventEmitter {
     let playbackInstance = this.playbackDolphinInstances.get(id);
     if (!playbackInstance) {
       playbackInstance = new PlaybackDolphinInstance(dolphinPath, meleeIsoPath);
-      playbackInstance.on("close", () => {
-        this.emit("playback-dolphin-closed", id);
+      playbackInstance.on("close", (code) => {
+        this.emit("playback-dolphin-closed", id, code);
 
         // Remove the instance from the map on close
         this.playbackDolphinInstances.delete(id);
@@ -60,9 +60,10 @@ export class DolphinManager extends EventEmitter {
 
     // Create the Dolphin instance and start it
     this.netplayDolphinInstance = new DolphinInstance(dolphinPath, meleeIsoPath);
-    this.netplayDolphinInstance.on("close", () => {
-      this.emit("netplay-dolphin-closed");
+    this.netplayDolphinInstance.on("close", (code) => {
+      this.emit("netplay-dolphin-closed", code);
       this.netplayDolphinInstance = null;
+      log.warn(`Dolphin exit code: ${code}`);
     });
     this.netplayDolphinInstance.on("error", (err: Error) => {
       log.error(err);
@@ -92,8 +93,8 @@ export class DolphinManager extends EventEmitter {
     } else if (launchType === DolphinLaunchType.PLAYBACK && this.playbackDolphinInstances.size === 0) {
       const instance = new PlaybackDolphinInstance(dolphinPath);
       this.playbackDolphinInstances.set("configure", instance);
-      instance.on("close", () => {
-        this.emit("playback-dolphin-closed", "configure");
+      instance.on("close", (code) => {
+        this.emit("playback-dolphin-closed", "configure", code);
 
         // Remove the instance from the map on close
         this.playbackDolphinInstances.delete("configure");

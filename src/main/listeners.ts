@@ -5,10 +5,11 @@ import "@settings/main";
 import "@console/main";
 
 import { settingsManager } from "@settings/settingsManager";
-import { isDevelopment } from "common/constants";
+import { isDevelopment, isMac } from "common/constants";
 import {
   ipc_checkForUpdate,
   ipc_checkValidIso,
+  ipc_clearTempFolder,
   ipc_copyLogsToClipboard,
   ipc_deleteDesktopAppPath,
   ipc_fetchNewsFeed,
@@ -51,8 +52,13 @@ export function setupListeners() {
 
   ipcMain.on("getOsInfoSync", (event) => {
     const release = os.release();
-    const name = osName(os.platform(), release);
-    event.returnValue = `${name} (${release})`;
+    try {
+      const name = osName(os.platform(), release);
+      event.returnValue = `${name} (${release})`;
+    } catch (err) {
+      log.error(err);
+      event.returnValue = release;
+    }
   });
 
   ipcMain.on("getAppSettingsSync", (event) => {
@@ -89,10 +95,19 @@ export function setupListeners() {
 
   ipc_copyLogsToClipboard.main!.handle(async () => {
     let logsFolder = "";
+    // why does macOS decide it needs to be difficult?
     if (isDevelopment) {
-      logsFolder = path.join(app.getPath("appData"), "Slippi Launcher", "logs");
+      if (isMac) {
+        logsFolder = path.join(app.getPath("logs"), "..", "Slippi Launcher");
+      } else {
+        logsFolder = path.join(app.getPath("logs"), "../../../", "Slippi Launcher", "logs");
+      }
     } else {
-      logsFolder = path.join(app.getPath("userData"), "logs");
+      if (isMac) {
+        logsFolder = app.getPath("logs");
+      } else {
+        logsFolder = path.join(app.getPath("logs"), "../../", "logs");
+      }
     }
     const mainLogPath = path.join(logsFolder, "main.log");
     const rendererLogPath = path.join(logsFolder, "renderer.log");
@@ -133,7 +148,7 @@ export function setupListeners() {
   });
 
   ipc_installUpdate.main!.handle(async () => {
-    autoUpdater.quitAndInstall(true, true);
+    autoUpdater.quitAndInstall(false, true);
     return { success: true };
   });
   ipc_checkForUpdate.main!.handle(async () => {
@@ -146,5 +161,17 @@ export function setupListeners() {
     const tag: string = release.tag_name;
     const version = tag.slice(1);
     return { version };
+  });
+
+  ipc_clearTempFolder.main!.handle(async () => {
+    const tmpDir = path.join(app.getPath("userData"), "temp");
+    try {
+      await fs.remove(tmpDir);
+      await fs.ensureDir(tmpDir);
+    } catch (err) {
+      log.error(err);
+      throw err;
+    }
+    return { success: true };
   });
 }

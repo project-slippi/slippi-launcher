@@ -16,6 +16,7 @@ const log = electronLog.scope("useApp");
 export const useAppStore = create(
   combine(
     {
+      initializing: false,
       initialized: false,
       logMessage: "",
       updateVersion: "",
@@ -23,6 +24,7 @@ export const useAppStore = create(
       updateReady: false,
     },
     (set) => ({
+      setInitializing: (initializing: boolean) => set({ initializing }),
       setInitialized: (initialized: boolean) => set({ initialized }),
       setLogMessage: (logMessage: string) => set({ logMessage }),
       setUpdateVersion: (updateVersion: string) => set({ updateVersion }),
@@ -33,7 +35,9 @@ export const useAppStore = create(
 );
 
 export const useAppInitialization = () => {
+  const initializing = useAppStore((store) => store.initializing);
   const initialized = useAppStore((store) => store.initialized);
+  const setInitializing = useAppStore((store) => store.setInitializing);
   const setInitialized = useAppStore((store) => store.setInitialized);
   const setLogMessage = useAppStore((store) => store.setLogMessage);
   const setUser = useAccount((store) => store.setUser);
@@ -42,9 +46,11 @@ export const useAppInitialization = () => {
   const setDesktopAppDolphinPath = useDesktopApp((store) => store.setDolphinPath);
 
   const initialize = async () => {
-    if (initialized) {
+    if (initializing || initialized) {
       return;
     }
+
+    setInitializing(true);
 
     console.log("Initializing app...");
 

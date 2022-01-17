@@ -1,5 +1,6 @@
 import { dolphinManager } from "@dolphin/manager";
 import { ipc_statsPageRequestedEvent } from "@replays/ipc";
+import { settingsManager } from "@settings/settingsManager";
 import { colors } from "common/colors";
 import { isDevelopment, isMac } from "common/constants";
 import { delay } from "common/delay";
@@ -33,7 +34,7 @@ console.log = log.debug;
 
 // Check for updates
 autoUpdater.logger = log;
-autoUpdater.autoInstallOnAppQuit = false;
+autoUpdater.autoInstallOnAppQuit = settingsManager.get().settings.autoUpdateLauncher;
 
 // global reference to mainWindow (necessary to prevent window from being garbage collected)
 let mainWindow: BrowserWindow | null = null;

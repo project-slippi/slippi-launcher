@@ -1,5 +1,6 @@
 import AdmZip from "adm-zip";
 import { ChildProcessWithoutNullStreams, spawn, spawnSync } from "child_process";
+import { isLinux } from "common/constants";
 import { app, BrowserWindow } from "electron";
 import { download } from "electron-dl";
 import extractDmg from "extract-dmg";
@@ -145,100 +146,92 @@ async function installDolphin(
 
   if (cleanInstall) {
     await fs.remove(dolphinPath);
+    if (isLinux) {
+      const userFolder = type === DolphinLaunchType.NETPLAY ? "SlippiOnline" : "SlippiPlayback";
+      await fs.remove(path.join(app.getPath("home"), ".config", userFolder));
+    }
   }
 
   switch (process.platform) {
     case "win32": {
       // don't need to backup user files since our zips don't contain them
-      // and the overwrite won't make them disappear.
       log(`Extracting to: ${dolphinPath}`);
       const zip = new AdmZip(assetPath);
       zip.extractAllTo(dolphinPath, true);
       break;
     }
     case "darwin": {
-      const backupLocation = dolphinPath + "_old";
-      const dolphinResourcesPath = path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "Resources");
-
-      const alreadyInstalled = await fs.pathExists(dolphinResourcesPath);
-      if (alreadyInstalled) {
-        log(`${dolphinResourcesPath} already exists. Moving...`);
-        await fs.move(dolphinPath, backupLocation);
-      }
-
-      log(`Extracting to: ${dolphinPath}`);
-      await extractDmg(assetPath, dolphinPath);
-      await fs.readdir(dolphinPath, (err, files) => {
-        if (err) {
-          log(err.message);
-        }
-        if (files) {
-          files.forEach(async (file) => {
-            if (file !== "Slippi Dolphin.app") {
-              try {
-                await fs.unlink(path.join(dolphinPath, file));
-              } catch (err) {
-                fs.removeSync(path.join(dolphinPath, file));
-              }
-            }
-          });
-        }
-      });
-      const binaryLocation = path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "MacOS", "Slippi Dolphin");
-      const userInfo = os.userInfo();
-      try {
-        await fs.chmod(path.join(dolphinPath, "Slippi Dolphin.app"), "777");
-        await fs.chown(path.join(dolphinPath, "Slippi Dolphin.app"), userInfo.uid, userInfo.gid);
-        await fs.chmod(binaryLocation, "777");
-        await fs.chown(binaryLocation, userInfo.uid, userInfo.gid);
-      } catch (err) {
-        log(`could not chmod/chown ${type} Dolphin\n${err}`);
-      }
-
-      // Move backed up User folder and user.json
-      if (alreadyInstalled) {
-        const oldUserFolder = path.join(backupLocation, "Slippi Dolphin.app", "Contents", "Resources", "User");
-        const newUserFolder = path.join(dolphinResourcesPath, "User");
-
-        if (await fs.pathExists(oldUserFolder)) {
-          log("moving User folder...");
-          await fs.move(oldUserFolder, newUserFolder);
-        } else {
-          log("no old User folder to move");
-        }
-        await fs.remove(backupLocation);
-      }
+      await installDolphinOnMac(assetPath, dolphinPath, log);
       break;
     }
     case "linux": {
-      // Delete the existing app image if there is one
-      try {
-        const dolphinAppImagePath = await findDolphinExecutable(type);
-        // Delete the existing app image if it already exists
-        if (await fileExists(dolphinAppImagePath)) {
-          log(`${dolphinAppImagePath} already exists. Deleting...`);
-          await fs.remove(dolphinAppImagePath);
-        }
-      } catch (err) {
-        log("No existing AppImage found");
-      }
-
-      if (cleanInstall) {
-        const userFolder = type === DolphinLaunchType.NETPLAY ? "SlippiOnline" : "SlippiPlayback";
-        await fs.remove(path.join(app.getPath("home"), ".config", userFolder));
-      }
-
-      const zip = new AdmZip(assetPath);
-      zip.extractAllTo(dolphinPath, true);
-
-      // Make the file executable
-      const dolphinAppImagePath = await findDolphinExecutable(type);
-      log(`Setting executable permissions...`);
-      await fs.chmod(dolphinAppImagePath, "755");
+      await installDolphinOnLinux(type, assetPath, dolphinPath, log);
       break;
     }
     default: {
       throw new Error(`Installing Netplay is not supported on this platform: ${process.platform}`);
     }
   }
+}
+
+async function installDolphinOnMac(assetPath: string, dolphinPath: string, log: (message: string) => void) {
+  const backupLocation = dolphinPath + "_old";
+  const dolphinResourcesPath = path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "Resources");
+
+  const alreadyInstalled = await fs.pathExists(dolphinResourcesPath);
+  if (alreadyInstalled) {
+    log(`${dolphinResourcesPath} already exists. Moving...`);
+    await fs.move(dolphinPath, backupLocation);
+  }
+
+  log(`Extracting to: ${dolphinPath}`);
+  await extractDmg(assetPath, dolphinPath);
+  const files = await fs.readdir(dolphinPath);
+  await Promise.all(
+    files
+      .filter((file) => file !== "Slippi Dolphin.app")
+      .map(async (file) => {
+        await fs.remove(path.join(dolphinPath, file));
+      }),
+  );
+
+  // sometimes permissions aren't set properly after the extraction so we will forcibly set them on install
+  const binaryLocation = path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "MacOS", "Slippi Dolphin");
+  const userInfo = os.userInfo();
+  await fs.chmod(path.join(dolphinPath, "Slippi Dolphin.app"), "777");
+  await fs.chown(path.join(dolphinPath, "Slippi Dolphin.app"), userInfo.uid, userInfo.gid);
+  await fs.chmod(binaryLocation, "777");
+  await fs.chown(binaryLocation, userInfo.uid, userInfo.gid);
+
+  // move backed up User folder and user.json
+  if (alreadyInstalled) {
+    const oldUserFolder = path.join(backupLocation, "Slippi Dolphin.app", "Contents", "Resources", "User");
+    const newUserFolder = path.join(dolphinResourcesPath, "User");
+    log("moving User folder...");
+    await fs.move(oldUserFolder, newUserFolder);
+    await fs.remove(backupLocation);
+  }
+}
+
+async function installDolphinOnLinux(
+  type: DolphinLaunchType,
+  assetPath: string,
+  dolphinPath: string,
+  log: (message: string) => void,
+) {
+  try {
+    const dolphinAppImagePath = await findDolphinExecutable(type);
+    log(`${dolphinAppImagePath} already exists. Deleting...`);
+    await fs.remove(dolphinAppImagePath);
+  } catch (err) {
+    log("No existing AppImage found");
+  }
+
+  const zip = new AdmZip(assetPath);
+  zip.extractAllTo(dolphinPath, true);
+
+  // make the appimage executable because sometimes it doesn't have the right perms out the gate
+  const dolphinAppImagePath = await findDolphinExecutable(type);
+  log(`Setting executable permissions...`);
+  await fs.chmod(dolphinAppImagePath, "755");
 }

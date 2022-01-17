@@ -1,6 +1,7 @@
 import { DolphinLaunchType } from "@dolphin/types";
 import React from "react";
 
+import { AdvancedAppSettings } from "./AdvancedAppSettings";
 import { DolphinSettings } from "./DolphinSettings";
 import { HelpPage } from "./HelpPage";
 import { MeleeOptions } from "./MeleeOptions";
@@ -35,6 +36,16 @@ export const settings: SettingSection[] = [
         name: "Playback",
         path: "playback-dolphin-settings",
         component: <DolphinSettings dolphinType={DolphinLaunchType.PLAYBACK} />,
+      },
+    ],
+  },
+  {
+    title: "App Settings",
+    items: [
+      {
+        name: "Advanced",
+        path: "advanced-settings",
+        component: <AdvancedAppSettings />,
       },
     ],
   },

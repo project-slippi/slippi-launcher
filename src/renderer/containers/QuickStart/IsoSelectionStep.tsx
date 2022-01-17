@@ -79,7 +79,7 @@ export const IsoSelectionStep: React.FC = () => {
   const validIsoPath = verification.value.valid;
 
   const { open, getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
-    accept: [".iso", ".gcm"],
+    accept: [".iso", ".gcm", ".gcz"],
     onDrop: onDrop,
     multiple: false,
     noClick: true,

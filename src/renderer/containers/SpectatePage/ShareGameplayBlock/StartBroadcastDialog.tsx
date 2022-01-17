@@ -17,12 +17,14 @@ import CloseIcon from "@material-ui/icons/Close";
 import ErrorIcon from "@material-ui/icons/Error";
 import HelpIcon from "@material-ui/icons/Help";
 import { clipboard } from "electron";
+import electronLog from "electron-log";
 import debounce from "lodash/debounce";
 import React from "react";
 import { useQuery } from "react-query";
 
 import { validateUserId } from "@/lib/validateUserId";
 
+const log = electronLog.scope("StartBroadcastDialog");
 export interface StartBroadcastDialogProps {
   open: boolean;
   onClose: () => void;
@@ -80,6 +82,10 @@ export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({
   };
 
   const showErrorStatus = value.length > 0 && userQuery.isError;
+  if (showErrorStatus) {
+    log.error(`could not get details about spectator: ${userQuery.error}`);
+  }
+
   return (
     <Dialog open={open} onClose={onClose} fullWidth={true} fullScreen={fullScreen} disableBackdropClick={true}>
       <form onSubmit={handleSubmit}>
