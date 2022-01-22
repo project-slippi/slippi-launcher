@@ -23,8 +23,7 @@ export const ActivateOnlineDialog: React.FC<ActivateOnlineDialogProps> = ({ open
   const refreshPlayKey = useAccount((store) => store.refreshPlayKey);
   const { addToast } = useToasts();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     refreshPlayKey()
       .then(() => {
         onClose();
@@ -37,12 +36,10 @@ export const ActivateOnlineDialog: React.FC<ActivateOnlineDialogProps> = ({ open
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth={true} fullScreen={fullScreen} disableBackdropClick={false}>
-      <form onSubmit={handleSubmit}>
-        <StyledDialogTitle>Choose a connect code</StyledDialogTitle>
-        <DialogContent style={{ display: "flex", paddingBottom: 30 }}>
-          <ActivateOnlineForm />
-        </DialogContent>
-      </form>
+      <StyledDialogTitle>Choose a connect code</StyledDialogTitle>
+      <DialogContent style={{ display: "flex", paddingBottom: 30 }}>
+        <ActivateOnlineForm onSubmit={handleSubmit} />
+      </DialogContent>
     </Dialog>
   );
 };

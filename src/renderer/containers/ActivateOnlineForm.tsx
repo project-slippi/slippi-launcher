@@ -17,13 +17,13 @@ import { validateConnectCodeStart } from "@/lib/validate";
 
 const log = electronLog.scope("ActivateOnlineForm");
 
-export const ActivateOnlineForm: React.FC = () => {
+export const ActivateOnlineForm: React.FC<{ onSubmit?: () => void }> = ({ onSubmit }) => {
   const user = useAccount((store) => store.user);
   const refreshActivation = useAccount((store) => store.refreshPlayKey);
   return (
     <div>
       <div>Your connect code is used for players to connect with you directly.</div>
-      <ConnectCodeSetter displayName={user ? user.displayName : null} onSuccess={refreshActivation} />
+      <ConnectCodeSetter displayName={user ? user.displayName : null} onSuccess={onSubmit || refreshActivation} />
     </div>
   );
 };

@@ -5,7 +5,6 @@ import EjectIcon from "@material-ui/icons/Eject";
 import LanguageIcon from "@material-ui/icons/Language";
 import firebase from "firebase";
 import React from "react";
-import { useToasts } from "react-toast-notifications";
 
 import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { IconMenu, IconMenuItem } from "@/components/IconMenu";
@@ -22,12 +21,10 @@ export const UserMenu: React.FC<{
 }> = ({ user, handleError }) => {
   const playKey = useAccount((store) => store.playKey);
   const displayName = useAccount((store) => store.displayName);
-  const refreshPlayKey = useAccount((store) => store.refreshPlayKey);
   const loading = useAccount((store) => store.loading);
   const [openLogoutPrompt, setOpenLogoutPrompt] = React.useState(false);
   const [openNameChangePrompt, setOpenNameChangePrompt] = React.useState(false);
   const [openActivationDialog, setOpenActivationDialog] = React.useState(false);
-  const { addToast } = useToasts();
   const onLogout = async () => {
     try {
       await logout();
@@ -107,7 +104,6 @@ export const UserMenu: React.FC<{
         open={openActivationDialog}
         onClose={() => setOpenActivationDialog(false)}
         onSubmit={() => {
-          refreshPlayKey().catch((err) => addToast(err.message, { appearance: "error" }));
           setOpenActivationDialog(false);
         }}
       />
