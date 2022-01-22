@@ -181,7 +181,7 @@ async function installDolphinOnMac(assetPath: string, dolphinPath: string, log: 
   const alreadyInstalled = await fs.pathExists(dolphinResourcesPath);
   if (alreadyInstalled) {
     log(`${dolphinResourcesPath} already exists. Moving...`);
-    await fs.move(dolphinPath, backupLocation);
+    await fs.move(dolphinPath, backupLocation, { overwrite: true });
   }
 
   log(`Extracting to: ${dolphinPath}`);
@@ -208,7 +208,7 @@ async function installDolphinOnMac(assetPath: string, dolphinPath: string, log: 
     const oldUserFolder = path.join(backupLocation, "Slippi Dolphin.app", "Contents", "Resources", "User");
     const newUserFolder = path.join(dolphinResourcesPath, "User");
     log("moving User folder...");
-    await fs.move(oldUserFolder, newUserFolder);
+    await fs.move(oldUserFolder, newUserFolder, { overwrite: true });
     await fs.remove(backupLocation);
   }
 }
