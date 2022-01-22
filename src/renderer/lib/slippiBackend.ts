@@ -90,6 +90,7 @@ export async function fetchPlayKey(): Promise<PlayKey> {
     variables: {
       fbUid: user.uid,
     },
+    fetchPolicy: "network-only",
   });
 
   handleErrors(res.errors);
