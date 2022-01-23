@@ -9,9 +9,13 @@ const log = electronLog.scope("slippiBackend");
 
 const httpLink = new HttpLink({ uri: process.env.SLIPPI_GRAPHQL_ENDPOINT });
 
+const appVersion = __VERSION__;
+
 const client = new ApolloClient({
   link: httpLink,
   cache: new InMemoryCache(),
+  name: "slippi-launcher",
+  version: appVersion,
 });
 
 const getUserKeyQuery = gql`
