@@ -23,6 +23,9 @@ import { withFont } from "@/styles/withFont";
 
 import { GameProfile } from "./GameProfile";
 import { GameProfileHeader } from "./GameProfileHeader";
+import { TargetTestProfile } from "./TargetTestProfile";
+import { HomeRunProfile } from "./HomeRunProfile";
+import { GameMode } from "@slippi/slippi-js";
 
 const Outer = styled.div<{
   backgroundImage?: any;
@@ -140,6 +143,10 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
       <Content>
         {!file || loading ? (
           <LoadingScreen message={"Crunching numbers..."} />
+        ) : file.settings.gameMode == GameMode.TARGET_TEST && gameStats ? (
+          <TargetTestProfile file={file} stats={gameStats}></TargetTestProfile>
+        ) : file.settings.gameMode == GameMode.HOME_RUN_CONTEST && gameStats ? (
+          <HomeRunProfile file={file} stats={gameStats}></HomeRunProfile>
         ) : numPlayers !== 2 ? (
           <IconMessage Icon={ErrorIcon} label="Game stats for doubles is unsupported" />
         ) : error ? (

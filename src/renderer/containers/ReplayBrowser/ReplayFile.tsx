@@ -1,6 +1,19 @@
 import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
+import IconButton from "@material-ui/core/IconButton";
+import Tooltip from "@material-ui/core/Tooltip";
+import EqualizerIcon from "@material-ui/icons/Equalizer";
+import EventIcon from "@material-ui/icons/Event";
+import LandscapeIcon from "@material-ui/icons/Landscape";
+import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
+import PlayCircleOutlineIcon from "@material-ui/icons/PlayCircleOutline";
+import TimerIcon from "@material-ui/icons/Timer";
+import TrackChangesIcon from "@material-ui/icons/TrackChanges";
+import { FileResult } from "@replays/types";
+import { frameToGameTimer, GameMode, stages as stageUtils } from "@slippi/slippi-js";
+import { colors } from "common/colors";
+import { convertFrameCountToDurationString, monthDayHourFormat } from "common/time";
 import EqualizerIcon from "@mui/icons-material/Equalizer";
 import EventIcon from "@mui/icons-material/Event";
 import LandscapeIcon from "@mui/icons-material/Landscape";
@@ -21,6 +34,8 @@ import { extractPlayerNames } from "@/lib/matchNames";
 import { convertFrameCountToDurationString, monthDayHourFormat } from "@/lib/time";
 import { getStageImage } from "@/lib/utils";
 
+import { TeamElements } from "./TeamElements";
+import { SportsCricket } from "@material-ui/icons";
 import type { PlayerInfo } from "./replay_file/team_elements/TeamElements";
 import { TeamElements } from "./replay_file/team_elements/TeamElements";
 
@@ -73,6 +88,7 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
   const stageInfo = settings.stageId !== null ? stageUtils.getStageInfo(settings.stageId) : null;
   const stageImageUrl = stageInfo !== null && stageInfo.id !== -1 ? getStageImage(stageInfo.id) : undefined;
   const stageName = stageInfo !== null ? stageInfo.name : "Unknown Stage";
+  const gameMode = settings.gameMode;
 
   const teams: PlayerInfo[][] = _.chain(settings.players)
     .groupBy((player) => (settings.isTeams ? player.teamId : player.port))
@@ -154,10 +170,14 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
                 <InfoItem label={<EventIcon />}>{monthDayHourFormat(moment(date))}</InfoItem>
 
                 {lastFrame !== null && (
-                  <InfoItem label={<TimerOutlinedIcon />}>
-                    {convertFrameCountToDurationString(lastFrame, "m[m] ss[s]")}
+                  <InfoItem label={<TimerIcon />}>
+                    {settings.gameMode == GameMode.TARGET_TEST
+                      ? frameToGameTimer(lastFrame, settings)
+                      : convertFrameCountToDurationString(lastFrame, "m[m] ss[s]")}
                   </InfoItem>
                 )}
+                {gameMode == GameMode.TARGET_TEST && <InfoItem label={<TrackChangesIcon />}>{"BTT"}</InfoItem>}
+                {gameMode == GameMode.HOME_RUN_CONTEST && <InfoItem label={<SportsCricket />}>{"HRC"}</InfoItem>}
                 <InfoItem label={<LandscapeIcon />}>{stageName}</InfoItem>
               </div>
               <DraggableFile

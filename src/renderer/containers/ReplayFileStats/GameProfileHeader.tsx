@@ -1,5 +1,29 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
+import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
+import Tooltip from "@material-ui/core/Tooltip";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
+import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
+import EventIcon from "@material-ui/icons/Event";
+import LandscapeIcon from "@material-ui/icons/Landscape";
+import PlayArrowIcon from "@material-ui/icons/PlayArrow";
+import SportsEsportsIcon from "@material-ui/icons/SportsEsports";
+import TimerIcon from "@material-ui/icons/Timer";
+import TrackChangesIcon from "@material-ui/icons/TrackChanges";
+import { FileResult } from "@replays/types";
+import {
+  frameToGameTimer,
+  GameMode,
+  GameStartType,
+  MetadataType,
+  stages as stageUtils,
+  StatsType,
+} from "@slippi/slippi-js";
+import { colors } from "common/colors";
+import { extractPlayerNames } from "common/matchNames";
+import { convertFrameCountToDurationString, monthDayHourFormat } from "common/time";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
@@ -23,6 +47,7 @@ import { extractPlayerNames } from "@/lib/matchNames";
 import { convertFrameCountToDurationString, monthDayHourFormat } from "@/lib/time";
 
 import { PlayerInfo } from "./PlayerInfo";
+import { SportsCricket } from "@material-ui/icons";
 
 const Outer = styled.div`
   margin-top: 10px;
@@ -158,6 +183,7 @@ export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
 
 const GameDetails: React.FC<{
   file: FileResult;
+  settings: GameStartType;
   stats: StatsType | null;
 }> = ({ file, stats }) => {
   let stageName = "Unknown";
@@ -183,7 +209,11 @@ const GameDetails: React.FC<{
     duration = _.get(stats, "lastFrame");
   }
   const durationLength =
-    duration !== null && duration !== undefined ? convertFrameCountToDurationString(duration, "m[m] ss[s]") : "Unknown";
+    duration !== null && duration !== undefined
+      ? file.settings.gameMode == GameMode.TARGET_TEST && file.metadata
+        ? frameToGameTimer(file.metadata?.lastFrame as number, file.settings)
+        : convertFrameCountToDurationString(duration, "m[m] ss[s]")
+      : "Unknown";
 
   const displayData = [
     {
@@ -203,6 +233,43 @@ const GameDetails: React.FC<{
       content: platform,
     },
   ];
+
+  const eventDisplay = {
+    label: <EventIcon />,
+    content: monthDayHourFormat(moment(startAtDisplay)) as string,
+  };
+
+  const timerDisplay = {
+    label: <TimerIcon />,
+    content: durationLength,
+  };
+
+  const stageDisplay = {
+    label: <LandscapeIcon />,
+    content: stageName,
+  };
+
+  const platformDisplay = {
+    label: <SportsEsportsIcon />,
+    content: platform,
+  };
+
+  const targetTestDisplay = {
+    label: <TrackChangesIcon />,
+    content: "Break the Targets",
+  };
+
+  const homerunDisplay = {
+    label: <SportsCricket />,
+    content: "Home Run Contest",
+  };
+
+  const displayData =
+    gameMode == GameMode.TARGET_TEST
+      ? [eventDisplay, timerDisplay, stageDisplay, targetTestDisplay, platformDisplay]
+      : gameMode == GameMode.HOME_RUN_CONTEST
+      ? [eventDisplay, timerDisplay, stageDisplay, homerunDisplay, platformDisplay]
+      : [eventDisplay, timerDisplay, stageDisplay, platformDisplay];
 
   const metadataElements = displayData.map((details, i) => {
     return (
