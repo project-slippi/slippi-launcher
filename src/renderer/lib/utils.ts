@@ -44,3 +44,16 @@ export const toOrdinal = (i: number): string => {
   }
   return i + "th";
 };
+
+// Converts number of bytes into a human readable format.
+// Based on code available from:
+// https://coderrocketfuel.com/article/get-the-total-size-of-all-files-in-a-directory-using-node-js
+export const humanReadableBytes = (bytes: number): string => {
+  const sizes = ["bytes", "KB", "MB", "GB", "TB"];
+  if (bytes > 0) {
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${sizes[i]}`;
+  }
+
+  return `0 ${sizes[0]}`;
+};

@@ -9,6 +9,7 @@ import Typography from "@material-ui/core/Typography";
 import FolderIcon from "@material-ui/icons/Folder";
 import SearchIcon from "@material-ui/icons/Search";
 import { colors } from "common/colors";
+import { exists } from "common/exists";
 import { shell } from "electron";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
@@ -22,6 +23,7 @@ import { useDolphin } from "@/lib/hooks/useDolphin";
 import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/useReplayBrowserList";
 import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
 import { useReplays, useReplaySelection } from "@/lib/hooks/useReplays";
+import { humanReadableBytes } from "@/lib/utils";
 
 import { FileList } from "./FileList";
 import { FileSelectionToolbar } from "./FileSelectionToolbar";
@@ -41,6 +43,7 @@ export const ReplayBrowser: React.FC = () => {
   const netplaySlpFolder = useReplays((store) => store.netplaySlpFolder);
   const extraFolders = useReplays((store) => store.extraFolders);
   const selectedFiles = useReplays((store) => store.selectedFiles);
+  const totalBytes = useReplays((store) => store.totalBytes);
   const fileSelection = useReplaySelection();
   const fileErrorCount = useReplays((store) => store.fileErrorCount);
   const { addToast } = useToasts();
@@ -202,7 +205,8 @@ export const ReplayBrowser: React.FC = () => {
         </div>
         <div style={{ textAlign: "right" }}>
           {filteredFiles.length} files found. {hiddenFileCount} files filtered.{" "}
-          {fileErrorCount > 0 ? `${fileErrorCount} files had errors.` : ""}
+          {fileErrorCount > 0 ? `${fileErrorCount} files had errors. ` : ""}
+          {exists(totalBytes) ? `Total size: ${humanReadableBytes(totalBytes)}` : ""}
         </div>
       </Footer>
     </Outer>

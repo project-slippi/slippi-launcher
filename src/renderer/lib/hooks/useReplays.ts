@@ -15,6 +15,7 @@ type StoreState = {
   progress: Progress | null;
   files: FileResult[];
   netplaySlpFolder: FolderResult | null;
+  totalBytes: number | null;
   extraFolders: FolderResult[];
   currentRoot: string | null;
   currentFolder: string;
@@ -45,6 +46,7 @@ const initialState: StoreState = {
   loading: false,
   progress: null,
   files: [],
+  totalBytes: null,
   netplaySlpFolder: null,
   extraFolders: [],
   currentRoot: null,
@@ -145,6 +147,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
         files: result.files,
         loading: false,
         fileErrorCount: result.fileErrorCount,
+        totalBytes: result.totalBytes,
       });
     } catch (err) {
       set({ loading: false, progress: null });

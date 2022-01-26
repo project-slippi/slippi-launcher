@@ -13,14 +13,16 @@ export async function loadFolder(
     return {
       files: [],
       fileErrorCount: 0,
+      totalBytes: 0,
     };
   }
 
   const results = await fs.readdir(folder, { withFileTypes: true });
-  const slpFiles = results.filter((dirent) => dirent.isFile() && path.extname(dirent.name) === ".slp");
-  const total = slpFiles.length;
+  const fullSlpPaths = results
+    .filter((dirent) => dirent.isFile() && path.extname(dirent.name) === ".slp")
+    .map((dirent) => path.resolve(folder, dirent.name));
+  const total = fullSlpPaths.length;
 
-  let fileErrorCount = 0;
   let fileValidCount = 0;
   callback(0, total);
 
@@ -33,27 +35,34 @@ export async function loadFolder(
           callback(fileValidCount, total);
           resolve(res);
         } catch (err) {
-          fileErrorCount += 1;
           resolve(null);
         }
       });
     });
   };
 
-  const slpGames = (
-    await Promise.all(
-      slpFiles.map((dirent) => {
-        const fullPath = path.resolve(folder, dirent.name);
-        return process(fullPath);
-      }),
-    )
-  ).filter((g) => g !== null) as FileResult[];
+  const slpGamesPromise = Promise.all(
+    fullSlpPaths.map((fullPath) => {
+      return process(fullPath);
+    }),
+  );
+  const fileSizesPromise = Promise.all(
+    fullSlpPaths.map(
+      async (fullPath): Promise<number> => {
+        const stat = await fs.stat(fullPath);
+        return stat.size;
+      },
+    ),
+  );
+
+  const [slpGames, fileSizes] = await Promise.all([slpGamesPromise, fileSizesPromise]);
 
   // Indicate that loading is complete
   callback(total, total);
 
   return {
-    files: slpGames,
-    fileErrorCount,
+    files: slpGames.filter((g) => g !== null) as FileResult[],
+    fileErrorCount: total - fileValidCount,
+    totalBytes: fileSizes.reduce((acc, size) => acc + size, 0),
   };
 }
