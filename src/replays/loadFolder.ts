@@ -1,3 +1,4 @@
+import { exists } from "common/exists";
 import * as fs from "fs-extra";
 import path from "path";
 
@@ -61,7 +62,7 @@ export async function loadFolder(
   callback(total, total);
 
   return {
-    files: slpGames.filter((g) => g !== null) as FileResult[],
+    files: slpGames.filter(exists),
     fileErrorCount: total - fileValidCount,
     totalBytes: fileSizes.reduce((acc, size) => acc + size, 0),
   };
