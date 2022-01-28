@@ -6,6 +6,7 @@ import * as fs from "fs-extra";
 import { fileExists } from "main/fileExists";
 import path from "path";
 
+import { fetchLatestDolphin } from "./checkVersion";
 import { downloadAndInstallDolphin } from "./downloadDolphin";
 import { DolphinInstance, PlaybackDolphinInstance } from "./instance";
 import { DolphinLaunchType, ReplayCommunication } from "./types";
@@ -126,7 +127,8 @@ export class DolphinManager extends EventEmitter {
     }
 
     // No dolphins of launchType are open so lets reinstall
-    await downloadAndInstallDolphin(launchType, log.info, true);
+    const releaseInfo = await fetchLatestDolphin(launchType);
+    await downloadAndInstallDolphin(launchType, releaseInfo, log.info, true);
     const isoPath = settingsManager.get().settings.isoPath;
     if (isoPath) {
       const gameDir = path.dirname(isoPath);

@@ -38,3 +38,12 @@ export interface PlayKey {
   displayName: string;
   latestVersion: string;
 }
+
+export interface DolphinVersionResponse {
+  version: string;
+  downloadUrls: {
+    darwin: string;
+    linux: string;
+    win32: string;
+  };
+}

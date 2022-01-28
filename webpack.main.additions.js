@@ -1,6 +1,8 @@
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const ThreadsPlugin = require("threads-plugin");
 const Dotenv = require("dotenv-webpack");
+const { DefinePlugin } = require("webpack");
+const pkg = require("./package.json");
 
 module.exports = function (context) {
   // Enforce chunkhash when building output files.
@@ -27,6 +29,12 @@ module.exports = function (context) {
     new ThreadsPlugin({ target: "electron-node-worker" }),
     // Expose dotenv variables
     new Dotenv(),
+  );
+
+  context.plugins.push(
+    new DefinePlugin({
+      __VERSION__: JSON.stringify(pkg.version),
+    }),
   );
 
   return context;
