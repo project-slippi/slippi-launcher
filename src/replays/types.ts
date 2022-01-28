@@ -18,6 +18,7 @@ export interface FolderResult {
 
 export interface FileLoadResult {
   files: FileResult[];
+  totalBytes: number;
   fileErrorCount: number;
 }
 
