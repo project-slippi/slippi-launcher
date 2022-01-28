@@ -1,5 +1,5 @@
 import AdmZip from "adm-zip";
-import { ChildProcessWithoutNullStreams, spawn, spawnSync } from "child_process";
+import { spawnSync } from "child_process";
 import { isLinux } from "common/constants";
 import { app, BrowserWindow } from "electron";
 import { download } from "electron-dl";
@@ -10,48 +10,13 @@ import path from "path";
 import { lt } from "semver";
 
 import { fileExists } from "../main/fileExists";
-import { getLatestRelease } from "../main/github";
+import { fetchLatestDolphin } from "./checkVersion";
 import { ipc_dolphinDownloadFinishedEvent, ipc_dolphinDownloadLogReceivedEvent } from "./ipc";
-import { DolphinLaunchType } from "./types";
+import { DolphinLaunchType, DolphinVersionResponse } from "./types";
 import { findDolphinExecutable } from "./util";
 
 function logDownloadInfo(message: string): void {
   void ipc_dolphinDownloadLogReceivedEvent.main!.trigger({ message });
-}
-
-export async function assertDolphinInstallation(
-  type: DolphinLaunchType,
-  log: (message: string) => void,
-): Promise<void> {
-  try {
-    await findDolphinExecutable(type);
-    log(`Found existing ${type} Dolphin executable.`);
-    log(`Checking if we need to update ${type} Dolphin`);
-    const data = await getLatestReleaseData(type);
-    const latestVersion = data.tag_name;
-    const isOutdated = await compareDolphinVersion(type, latestVersion);
-    if (isOutdated) {
-      log(`${type} Dolphin installation is outdated. Downloading latest...`);
-      await downloadAndInstallDolphin(type, log);
-      return;
-    }
-    log("No update found...");
-    return;
-  } catch (err) {
-    log(`Could not find ${type} Dolphin installation. Downloading...`);
-    await downloadAndInstallDolphin(type, log);
-  }
-}
-
-export async function downloadAndInstallDolphin(
-  type: DolphinLaunchType,
-  log: (message: string) => void,
-  cleanInstall = false,
-): Promise<void> {
-  const downloadedAsset = await downloadLatestDolphin(type, log);
-  log(`Installing ${type} Dolphin...`);
-  await installDolphin(type, downloadedAsset, log, cleanInstall);
-  log(`Finished ${type} installing`);
 }
 
 export async function assertDolphinInstallations(): Promise<void> {
@@ -66,67 +31,71 @@ export async function assertDolphinInstallations(): Promise<void> {
   return;
 }
 
+export async function assertDolphinInstallation(
+  type: DolphinLaunchType,
+  log: (message: string) => void,
+): Promise<void> {
+  try {
+    await findDolphinExecutable(type);
+    log(`Found existing ${type} Dolphin executable.`);
+    log(`Checking if we need to update ${type} Dolphin`);
+    const data = await fetchLatestDolphin(type);
+    const latestVersion = data.version;
+    const isOutdated = await compareDolphinVersion(type, latestVersion);
+    if (isOutdated) {
+      log(`${type} Dolphin installation is outdated. Downloading latest...`);
+      await downloadAndInstallDolphin(type, data, log);
+      return;
+    }
+    log("No update found...");
+    return;
+  } catch (err) {
+    log(`Could not find ${type} Dolphin installation. Downloading...`);
+    const data = await fetchLatestDolphin(type);
+    await downloadAndInstallDolphin(type, data, log);
+  }
+}
+
 async function compareDolphinVersion(type: DolphinLaunchType, latestVersion: string): Promise<boolean> {
   const dolphinPath = await findDolphinExecutable(type);
   const dolphinVersion = spawnSync(dolphinPath, ["--version"]).stdout.toString();
   return lt(dolphinVersion, latestVersion);
 }
 
-export async function openDolphin(type: DolphinLaunchType, params?: string[]): Promise<ChildProcessWithoutNullStreams> {
-  const dolphinPath = await findDolphinExecutable(type);
-  return spawn(dolphinPath, params);
-}
-
-async function getLatestDolphinAsset(type: DolphinLaunchType): Promise<any> {
-  const release = await getLatestReleaseData(type);
-  const asset = release.assets.find((a: any) => matchesPlatform(a.name));
-  if (!asset) {
-    throw new Error(`No release asset matched the current platform: ${process.platform}`);
-  }
-  return asset;
-}
-
-async function getLatestReleaseData(type: DolphinLaunchType): Promise<any> {
-  const owner = "project-slippi";
-  let repo = "Ishiiruka";
-  if (type === DolphinLaunchType.PLAYBACK) {
-    repo += "-Playback";
-  }
-  return getLatestRelease(owner, repo);
-}
-
-function matchesPlatform(releaseName: string): boolean {
-  switch (process.platform) {
-    case "win32":
-      return releaseName.endsWith("Win.zip");
-    case "darwin":
-      return releaseName.endsWith("Mac.dmg");
-    case "linux":
-      return releaseName.endsWith("Linux.zip");
-    default:
-      return false;
-  }
+export async function downloadAndInstallDolphin(
+  type: DolphinLaunchType,
+  releaseInfo: DolphinVersionResponse,
+  log: (message: string) => void,
+  cleanInstall = false,
+): Promise<void> {
+  const downloadedAsset = await downloadLatestDolphin(releaseInfo, log);
+  log(`Installing v${releaseInfo.version} ${type} Dolphin...`);
+  await installDolphin(type, downloadedAsset, log, cleanInstall);
+  log(`Finished v${releaseInfo.version} ${type} Dolphin install`);
 }
 
 async function downloadLatestDolphin(
-  type: DolphinLaunchType,
+  releaseInfo: DolphinVersionResponse,
   log: (status: string) => void = console.log,
 ): Promise<string> {
-  const asset = await getLatestDolphinAsset(type);
+  const downloadUrl = releaseInfo.downloadUrls[process.platform];
+  const parsedUrl = new URL(downloadUrl);
+  const filename = path.basename(parsedUrl.pathname);
+
   const downloadDir = path.join(app.getPath("userData"), "temp");
   await fs.ensureDir(downloadDir);
-  const downloadLocation = path.join(downloadDir, asset.name);
+  const downloadLocation = path.join(downloadDir, filename);
   const exists = await fileExists(downloadLocation);
   if (!exists) {
-    log(`Downloading ${asset.browser_download_url} to ${downloadLocation}`);
+    log(`Downloading ${downloadUrl} to ${downloadLocation}`);
     const win = BrowserWindow.getFocusedWindow();
     if (win) {
-      await download(win, asset.browser_download_url, {
-        filename: asset.name,
+      await download(win, downloadUrl, {
+        filename: filename,
         directory: downloadDir,
         onProgress: (progress) => log(`Downloading... ${(progress.percent * 100).toFixed(0)}%`),
       });
-      log(`Successfully downloaded ${asset.browser_download_url} to ${downloadLocation}`);
+      log(`Successfully downloaded ${downloadUrl} to ${downloadLocation}`);
     } else {
       log("I dunno how we got here, but apparently there isn't a browser window /shrug");
     }
