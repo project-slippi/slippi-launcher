@@ -1,4 +1,5 @@
 import { ApolloClient, gql, HttpLink, InMemoryCache } from "@apollo/client";
+import { isDevelopment } from "common/constants";
 import { fetch } from "cross-fetch";
 import { GraphQLError } from "graphql";
 
@@ -12,7 +13,7 @@ const client = new ApolloClient({
   link: httpLink,
   cache: new InMemoryCache(),
   name: "slippi-launcher",
-  version: appVersion,
+  version: `${appVersion}${isDevelopment ? "-dev" : ""}`,
 });
 
 const getLatestDolphinQuery = gql`
