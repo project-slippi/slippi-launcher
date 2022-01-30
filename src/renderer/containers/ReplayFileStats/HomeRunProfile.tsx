@@ -16,7 +16,9 @@ const StatSection: React.FC<{
   return <IconMessage Icon={Warning} label="🛠 This page is under construction" />;
 };
 
-export const HomeRunProfile: React.FC<GameProfileProps> = () => {
+export const HomeRunProfile: React.FC<GameProfileProps> = ({ file, stats }) => {
+  const [firstPlayer] = file.settings.players;
+
   return (
     <div style={{ flex: "1", margin: 20 }}>
       <StatSection title="Home Run"></StatSection>
