@@ -28,7 +28,6 @@ export async function assertDolphinInstallations(): Promise<void> {
     console.error(err);
     await ipc_dolphinDownloadFinishedEvent.main!.trigger({ error: err.message });
   }
-  return;
 }
 
 export async function assertDolphinInstallation(
@@ -39,20 +38,20 @@ export async function assertDolphinInstallation(
     await findDolphinExecutable(type);
     log(`Found existing ${type} Dolphin executable.`);
     log(`Checking if we need to update ${type} Dolphin`);
-    const data = await fetchLatestDolphin(type);
-    const latestVersion = data.version;
+    const dolphinDownloadInfo = await fetchLatestDolphin(type);
+    const latestVersion = dolphinDownloadInfo.version;
     const isOutdated = await compareDolphinVersion(type, latestVersion);
     if (isOutdated) {
       log(`${type} Dolphin installation is outdated. Downloading latest...`);
-      await downloadAndInstallDolphin(type, data, log);
+      await downloadAndInstallDolphin(type, dolphinDownloadInfo, log);
       return;
     }
     log("No update found...");
     return;
   } catch (err) {
     log(`Could not find ${type} Dolphin installation. Downloading...`);
-    const data = await fetchLatestDolphin(type);
-    await downloadAndInstallDolphin(type, data, log);
+    const dolphinDownloadInfo = await fetchLatestDolphin(type);
+    await downloadAndInstallDolphin(type, dolphinDownloadInfo, log);
   }
 }
 
@@ -68,17 +67,17 @@ export async function downloadAndInstallDolphin(
   log: (message: string) => void,
   cleanInstall = false,
 ): Promise<void> {
-  const downloadedAsset = await downloadLatestDolphin(releaseInfo, log);
+  const downloadUrl = releaseInfo.downloadUrls[process.platform];
+  const downloadedAsset = await downloadLatestDolphin(downloadUrl, log);
   log(`Installing v${releaseInfo.version} ${type} Dolphin...`);
   await installDolphin(type, downloadedAsset, log, cleanInstall);
   log(`Finished v${releaseInfo.version} ${type} Dolphin install`);
 }
 
 async function downloadLatestDolphin(
-  releaseInfo: DolphinVersionResponse,
+  downloadUrl: string,
   log: (status: string) => void = console.log,
 ): Promise<string> {
-  const downloadUrl = releaseInfo.downloadUrls[process.platform];
   const parsedUrl = new URL(downloadUrl);
   const filename = path.basename(parsedUrl.pathname);
 
