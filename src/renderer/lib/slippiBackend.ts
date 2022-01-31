@@ -1,6 +1,7 @@
 import { ApolloClient, ApolloLink, gql, HttpLink, InMemoryCache } from "@apollo/client";
 import { ipc_checkPlayKeyExists, ipc_removePlayKeyFile, ipc_storePlayKeyFile } from "@dolphin/ipc";
 import { PlayKey } from "@dolphin/types";
+import { isDevelopment } from "common/constants";
 import electronLog from "electron-log";
 import firebase from "firebase";
 import { GraphQLError } from "graphql";
@@ -15,7 +16,7 @@ const client = new ApolloClient({
   link: httpLink,
   cache: new InMemoryCache(),
   name: "slippi-launcher",
-  version: appVersion,
+  version: `${appVersion}${isDevelopment ? "-dev" : ""}`,
 });
 
 const getUserKeyQuery = gql`
