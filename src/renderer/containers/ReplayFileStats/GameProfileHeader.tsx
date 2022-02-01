@@ -212,6 +212,8 @@ const GameDetails: React.FC<{
     duration !== null && duration !== undefined
       ? file.settings.gameMode == GameMode.TARGET_TEST && file.metadata
         ? frameToGameTimer(file.metadata?.lastFrame as number, file.settings)
+        : file.settings.gameMode == GameMode.HOME_RUN_CONTEST
+        ? `${stats?.homerunDistance} ft.`
         : convertFrameCountToDurationString(duration, "m[m] ss[s]")
       : "Unknown";
 
