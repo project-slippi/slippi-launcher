@@ -2,6 +2,7 @@ import { ipc_checkForUpdate } from "common/ipc";
 import { ipc_checkDesktopAppDolphin, ipc_dolphinDownloadFinishedEvent, ipc_downloadDolphin } from "dolphin/ipc";
 import electronLog from "electron-log";
 import firebase from "firebase";
+import { useToasts } from "react-toast-notifications";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
@@ -35,6 +36,8 @@ export const useAppStore = create(
 );
 
 export const useAppInitialization = () => {
+  const { addToast } = useToasts();
+
   const initializing = useAppStore((store) => store.initializing);
   const initialized = useAppStore((store) => store.initialized);
   const setInitializing = useAppStore((store) => store.setInitializing);
@@ -42,6 +45,7 @@ export const useAppInitialization = () => {
   const setLogMessage = useAppStore((store) => store.setLogMessage);
   const setUser = useAccount((store) => store.setUser);
   const setPlayKey = useAccount((store) => store.setPlayKey);
+  const setIsServerError = useAccount((store) => store.setIsServerError);
   const setDesktopAppExists = useDesktopApp((store) => store.setExists);
   const setDesktopAppDolphinPath = useDesktopApp((store) => store.setDolphinPath);
 
@@ -69,9 +73,21 @@ export const useAppInitialization = () => {
     if (user) {
       promises.push(
         fetchPlayKey()
-          .then((key) => setPlayKey(key))
+          .then((key) => {
+            setIsServerError(false);
+            setPlayKey(key);
+          })
           .catch((err) => {
+            setIsServerError(true);
             console.warn(err);
+
+            const message = `Failed to communicate with Slippi servers. You either have no internet
+              connection or Slippi is experiencing some downtime. Playing online may or may not work.`;
+            addToast(message, {
+              id: "server-communication-error",
+              appearance: "error",
+              autoDismiss: false,
+            });
           }),
       );
     }

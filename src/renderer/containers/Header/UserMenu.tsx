@@ -22,6 +22,7 @@ export const UserMenu: React.FC<{
   const playKey = useAccount((store) => store.playKey);
   const displayName = useAccount((store) => store.displayName);
   const loading = useAccount((store) => store.loading);
+  const isServerError = useAccount((store) => store.isServerError);
   const [openLogoutPrompt, setOpenLogoutPrompt] = React.useState(false);
   const [openNameChangePrompt, setOpenNameChangePrompt] = React.useState(false);
   const [openActivationDialog, setOpenActivationDialog] = React.useState(false);
@@ -51,7 +52,7 @@ export const UserMenu: React.FC<{
   const generateMenuItems = (): IconMenuItem[] => {
     const items: IconMenuItem[] = [];
 
-    if (!playKey) {
+    if (!playKey && !isServerError) {
       items.push({
         onClick: () => {
           closeMenu();
@@ -87,7 +88,13 @@ export const UserMenu: React.FC<{
   return (
     <div>
       <ButtonBase onClick={handleClick}>
-        <UserInfo uid={user.uid} displayName={displayName} playKey={playKey} loading={loading} />
+        <UserInfo
+          uid={user.uid}
+          displayName={displayName}
+          playKey={playKey}
+          isServerError={isServerError}
+          loading={loading}
+        />
       </ButtonBase>
       <IconMenu
         anchorEl={anchorEl}

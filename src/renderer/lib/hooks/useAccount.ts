@@ -11,6 +11,7 @@ export const useAccount = create(
       user: null as firebase.User | null,
       loading: false,
       playKey: null as PlayKey | null,
+      isServerError: false as boolean | null,
       displayName: "",
     },
     (set, get) => ({
@@ -25,6 +26,7 @@ export const useAccount = create(
         }),
       setLoading: (loading: boolean) => set({ loading }),
       setPlayKey: (playKey: PlayKey | null) => set({ playKey }),
+      setIsServerError: (isServerError: boolean | null) => set({ isServerError }),
       setDisplayName: (displayName: string) => set({ displayName }),
       refreshPlayKey: async (): Promise<void> => {
         // We're already refreshing the key
@@ -34,10 +36,10 @@ export const useAccount = create(
 
         set({ loading: true });
         await fetchPlayKey()
-          .then((playKey) => set({ playKey }))
+          .then((playKey) => set({ playKey, isServerError: false }))
           .catch((err) => {
             console.warn("Error fetching play key: ", err);
-            set({ playKey: null });
+            set({ playKey: null, isServerError: true });
           })
           .finally(() => set({ loading: false }));
       },
