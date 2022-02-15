@@ -45,7 +45,7 @@ export const useAppInitialization = () => {
   const setLogMessage = useAppStore((store) => store.setLogMessage);
   const setUser = useAccount((store) => store.setUser);
   const setPlayKey = useAccount((store) => store.setPlayKey);
-  const setIsServerError = useAccount((store) => store.setIsServerError);
+  const setServerError = useAccount((store) => store.setServerError);
   const setDesktopAppExists = useDesktopApp((store) => store.setExists);
   const setDesktopAppDolphinPath = useDesktopApp((store) => store.setDolphinPath);
 
@@ -74,11 +74,11 @@ export const useAppInitialization = () => {
       promises.push(
         fetchPlayKey()
           .then((key) => {
-            setIsServerError(false);
+            setServerError(false);
             setPlayKey(key);
           })
           .catch((err) => {
-            setIsServerError(true);
+            setServerError(true);
             console.warn(err);
 
             const message = `Failed to communicate with Slippi servers. You either have no internet

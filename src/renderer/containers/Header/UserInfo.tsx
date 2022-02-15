@@ -11,12 +11,12 @@ export const UserInfo: React.FC<{
   uid: string;
   displayName: string | null;
   playKey: PlayKey | null;
-  isServerError: boolean | null;
+  serverError: boolean | null;
   loading: boolean;
-}> = ({ uid, displayName, playKey, isServerError, loading }) => {
-  const isErrorText = isServerError || !playKey;
+}> = ({ uid, displayName, playKey, serverError, loading }) => {
+  const isErrorText = serverError || !playKey;
   let subtext = "";
-  if (isServerError) {
+  if (serverError) {
     subtext = "Slippi server error";
   } else if (!playKey) {
     subtext = "Online activation required";
