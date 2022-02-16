@@ -102,6 +102,7 @@ export async function fetchPlayKey(): Promise<PlayKey | null> {
 
   const connectCode = res.data.getUser?.connectCode?.code;
   const playKey = res.data.getUser?.private?.playKey;
+  const displayName = res.data.getUser?.displayName || "";
   if (!connectCode || !playKey) {
     // If we don't have a connect code or play key, return this as null such that logic that
     // handles it will cause the user to set them up.
@@ -110,9 +111,9 @@ export async function fetchPlayKey(): Promise<PlayKey | null> {
 
   return {
     uid: user.uid,
-    connectCode: connectCode,
-    playKey: playKey,
-    displayName: res.data.getUser?.displayName,
+    connectCode,
+    playKey,
+    displayName,
     latestVersion: res.data.getLatestDolphin?.version,
   };
 }
