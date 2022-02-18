@@ -4,11 +4,11 @@ import Tooltip from "@material-ui/core/Tooltip";
 import { FileResult } from "@replays/types";
 import { ConversionType, PlayerType, StatsType, StockType } from "@slippi/slippi-js";
 import { extractPlayerNames } from "common/matchNames";
-import { convertFrameCountToDurationString } from "common/time";
 import _ from "lodash";
 import React from "react";
 
 import { useDolphin } from "@/lib/hooks/useDolphin";
+import { convertFrameCountToDurationString } from "@/lib/time";
 import { getCharacterIcon, toOrdinal } from "@/lib/utils";
 
 import * as T from "./TableStyles";

@@ -15,11 +15,11 @@ import {
   StockType,
 } from "@slippi/slippi-js";
 import { extractPlayerNames } from "common/matchNames";
-import { convertFrameCountToDurationString } from "common/time";
 import _ from "lodash";
 import React from "react";
 
 import { useDolphin } from "@/lib/hooks/useDolphin";
+import { convertFrameCountToDurationString } from "@/lib/time";
 import { getCharacterIcon } from "@/lib/utils";
 
 import * as T from "./TableStyles";
