@@ -73,11 +73,11 @@ export const MainView: React.FC = () => {
       <div style={{ flex: 1, overflow: "auto", display: "flex" }}>
         <Switch>
           {menuItems.map((item) => {
-            const RouteToUse = item.private ? PrivateRoute : Route;
+            const element = item.private ? <PrivateRoute>{item.component}</PrivateRoute> : item.component;
             return (
-              <RouteToUse key={item.subpath} path={`${path}/${item.subpath}`}>
-                {item.component}
-              </RouteToUse>
+              <Route key={item.subpath} path={`${path}/${item.subpath}`}>
+                {element}
+              </Route>
             );
           })}
           {defaultRoute && (
