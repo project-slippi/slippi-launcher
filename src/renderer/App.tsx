@@ -47,7 +47,7 @@ const App: React.FC = () => {
       <Route path="/main" component={MainView} />
       <Route path="/landing" component={LandingView} />
       <Route path="/settings" component={SettingsView} />
-      <Redirect exact from="/" to="/landing" />
+      <Route exact path="/" component={() => <Redirect to="/landing" />} />
       <Route component={NotFoundView} />
     </Switch>
   );

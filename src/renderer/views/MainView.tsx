@@ -80,7 +80,9 @@ export const MainView: React.FC = () => {
               </RouteToUse>
             );
           })}
-          {defaultRoute && <Redirect exact from={path} to={`${path}/${defaultRoute.subpath}`} />}
+          {defaultRoute && (
+            <Route exact path={path} component={() => <Redirect to={`${path}/${defaultRoute.subpath}`} />} />
+          )}
         </Switch>
       </div>
       <LoginDialog />
