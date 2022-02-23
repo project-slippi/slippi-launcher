@@ -16,11 +16,11 @@ import { FileResult } from "@replays/types";
 import { GameStartType, MetadataType, stages as stageUtils, StatsType } from "@slippi/slippi-js";
 import { colors } from "common/colors";
 import { extractPlayerNames } from "common/matchNames";
-import { convertFrameCountToDurationString, monthDayHourFormat } from "common/time";
 import _ from "lodash";
 import moment from "moment";
 import React from "react";
 
+import { convertFrameCountToDurationString, monthDayHourFormat } from "@/lib/time";
 import { getStageImage } from "@/lib/utils";
 
 import { PlayerInfo } from "./PlayerInfo";
