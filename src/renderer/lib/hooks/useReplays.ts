@@ -68,22 +68,25 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
       return;
     }
 
-    const folders = [rootFolder, ...extraFolders];
-    const folderInitResult = await ipc_initializeFolderTree.renderer!.trigger({ folders });
-    if (!folderInitResult.result) {
-      throw new Error(`Error initializing folder tree`);
-    }
-    const selectRootFolderResult = await ipc_selectTreeFolder.renderer!.trigger({ folderPath: rootFolder });
-    if (!selectRootFolderResult.result) {
-      throw new Error(`Error loading folder tree for: ${rootFolder}`);
-    }
+    const loadFolderList = async () => {
+      const folders = [rootFolder, ...extraFolders];
+      const folderInitResult = await ipc_initializeFolderTree.renderer!.trigger({ folders });
+      if (!folderInitResult.result) {
+        throw new Error(`Error initializing folder tree`);
+      }
+      const selectRootFolderResult = await ipc_selectTreeFolder.renderer!.trigger({ folderPath: rootFolder });
+      if (!selectRootFolderResult.result) {
+        throw new Error(`Error loading folder tree for: ${rootFolder}`);
+      }
 
-    set({
-      currentRoot: rootFolder,
-      folderTree: selectRootFolderResult.result,
-    });
+      set({
+        currentRoot: rootFolder,
+        folderTree: selectRootFolderResult.result,
+        collapsedFolders: [],
+      });
+    };
 
-    await Promise.all([loadFolder(currentFolder ?? rootFolder, true)]);
+    await Promise.all([loadFolderList(), loadFolder(currentFolder ?? rootFolder, true)]);
   },
 
   selectFile: (file, index = null, total = null) => {
@@ -125,33 +128,38 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     }
 
     const folderToLoad = childPath ?? currentFolder;
-
-    const selectFolderResult = await ipc_selectTreeFolder.renderer!.trigger({ folderPath: folderToLoad });
-    if (!selectFolderResult.result) {
-      throw new Error(`Error loading folder tree: ${folderToLoad}`);
-    }
-    set({ folderTree: selectFolderResult.result });
-
-    if (currentFolder === folderToLoad && !forceReload) {
-      console.warn(`${currentFolder} is already loaded. Set forceReload to true to reload anyway.`);
-      return;
-    }
-
     set({ currentFolder: folderToLoad, selectedFiles: [] });
 
-    set({ loading: true, progress: null });
-    try {
-      const result = await handleReplayFolderLoading(folderToLoad);
-      set({
-        scrollRowItem: 0,
-        files: result.files,
-        loading: false,
-        fileErrorCount: result.fileErrorCount,
-        totalBytes: result.totalBytes,
-      });
-    } catch (err) {
-      set({ loading: false, progress: null });
-    }
+    const loadFolderTree = async () => {
+      const selectFolderResult = await ipc_selectTreeFolder.renderer!.trigger({ folderPath: folderToLoad });
+      if (!selectFolderResult.result) {
+        throw new Error(`Error loading folder tree: ${folderToLoad}`);
+      }
+      set({ folderTree: selectFolderResult.result });
+    };
+
+    const loadFolderDetails = async () => {
+      if (currentFolder === folderToLoad && !forceReload) {
+        console.warn(`${currentFolder} is already loaded. Set forceReload to true to reload anyway.`);
+        return;
+      }
+
+      set({ loading: true, progress: null });
+      try {
+        const result = await handleReplayFolderLoading(folderToLoad);
+        set({
+          scrollRowItem: 0,
+          files: result.files,
+          loading: false,
+          fileErrorCount: result.fileErrorCount,
+          totalBytes: result.totalBytes,
+        });
+      } catch (err) {
+        set({ loading: false, progress: null });
+      }
+    };
+
+    await Promise.all([loadFolderTree(), loadFolderDetails()]);
   },
 
   toggleFolder: (folder) => {
