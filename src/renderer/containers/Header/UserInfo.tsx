@@ -14,7 +14,7 @@ export const UserInfo: React.FC<{
   serverError: boolean | null;
   loading: boolean;
 }> = ({ uid, displayName, playKey, serverError, loading }) => {
-  const isErrorText = serverError || !playKey;
+  const showError = serverError || !playKey;
   let subtext = "";
   if (serverError) {
     subtext = "Slippi server error";
@@ -61,7 +61,7 @@ export const UserInfo: React.FC<{
             css={css`
               font-weight: bold;
               font-size: 14px;
-              color: ${isErrorText ? "red" : colors.purpleLight};
+              color: ${showError ? "red" : colors.purpleLight};
             `}
           >
             {subtext}
