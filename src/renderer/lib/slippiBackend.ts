@@ -87,7 +87,7 @@ async function refreshFirebaseAuth(): Promise<firebase.User> {
   return user;
 }
 
-export async function fetchPlayKey(): Promise<PlayKey> {
+export async function fetchPlayKey(): Promise<PlayKey | null> {
   const user = await refreshFirebaseAuth();
 
   const res = await client.query({
@@ -100,12 +100,21 @@ export async function fetchPlayKey(): Promise<PlayKey> {
 
   handleErrors(res.errors);
 
+  const connectCode = res.data.getUser?.connectCode?.code;
+  const playKey = res.data.getUser?.private?.playKey;
+  const displayName = res.data.getUser?.displayName || "";
+  if (!connectCode || !playKey) {
+    // If we don't have a connect code or play key, return this as null such that logic that
+    // handles it will cause the user to set them up.
+    return null;
+  }
+
   return {
     uid: user.uid,
-    connectCode: res.data.getUser.connectCode.code,
-    playKey: res.data.getUser.private.playKey,
-    displayName: res.data.getUser.displayName,
-    latestVersion: res.data.getLatestDolphin.version,
+    connectCode,
+    playKey,
+    displayName,
+    latestVersion: res.data.getLatestDolphin?.version,
   };
 }
 

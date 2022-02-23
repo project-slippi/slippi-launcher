@@ -19,6 +19,7 @@ function generateSteps(
   options: Partial<{
     hasUser: boolean;
     hasPlayKey: boolean;
+    serverError: boolean;
     hasIso: boolean;
     hasOldDesktopApp: boolean;
   }>,
@@ -34,7 +35,7 @@ function generateSteps(
     steps.unshift(QuickStartStep.MIGRATE_DOLPHIN);
   }
 
-  if (!options.hasPlayKey) {
+  if (!options.hasPlayKey && !options.serverError) {
     steps.unshift(QuickStartStep.ACTIVATE_ONLINE);
   }
 
@@ -50,11 +51,13 @@ export const useQuickStart = () => {
   const savedIsoPath = useSettings((store) => store.settings.isoPath);
   const user = useAccount((store) => store.user);
   const playKey = useAccount((store) => store.playKey);
+  const serverError = useAccount((store) => store.serverError);
   const desktopAppPathExists = useDesktopApp((store) => store.exists);
   const options = {
     hasUser: Boolean(user),
     hasIso: Boolean(savedIsoPath),
     hasPlayKey: Boolean(playKey),
+    serverError: Boolean(serverError),
     hasOldDesktopApp: desktopAppPathExists,
   };
   const [steps] = React.useState(generateSteps(options));
@@ -76,15 +79,24 @@ export const useQuickStart = () => {
       stepToShow = QuickStartStep.MIGRATE_DOLPHIN;
     }
 
-    if (!options.hasPlayKey) {
+    if (!options.hasPlayKey && !options.serverError) {
       stepToShow = QuickStartStep.ACTIVATE_ONLINE;
     }
 
     if (!options.hasUser) {
       stepToShow = QuickStartStep.LOGIN;
     }
+
     setCurrentStep(stepToShow);
-  }, [history, steps, options.hasIso, options.hasOldDesktopApp, options.hasPlayKey, options.hasUser]);
+  }, [
+    history,
+    steps,
+    options.hasIso,
+    options.hasOldDesktopApp,
+    options.hasPlayKey,
+    options.hasUser,
+    options.serverError,
+  ]);
 
   const nextStep = () => {
     const currentIndex = steps.findIndex((s) => s === currentStep);

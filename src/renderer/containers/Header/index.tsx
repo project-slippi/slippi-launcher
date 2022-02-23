@@ -45,6 +45,7 @@ export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
   const { open } = useSettingsModal();
   const currentUser = useAccount((store) => store.user);
   const playKey = useAccount((store) => store.playKey);
+  const serverError = useAccount((store) => store.serverError);
   const meleeIsoPath = useSettings((store) => store.settings.isoPath) || undefined;
   const { addToast } = useToasts();
   const { launchNetplay } = useDolphin();
@@ -60,17 +61,19 @@ export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
       }
 
       // Ensure user has a valid play key
-      if (!playKey) {
+      if (!playKey && !serverError) {
         setActivateOnlineModal(true);
         return;
       }
 
-      // Ensure the play key is saved to disk
-      try {
-        await assertPlayKey(playKey);
-      } catch (err) {
-        handleError(err.message);
-        return;
+      if (playKey) {
+        // Ensure the play key is saved to disk
+        try {
+          await assertPlayKey(playKey);
+        } catch (err) {
+          handleError(err.message);
+          return;
+        }
       }
     }
 

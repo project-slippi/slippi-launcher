@@ -11,8 +11,19 @@ export const UserInfo: React.FC<{
   uid: string;
   displayName: string | null;
   playKey: PlayKey | null;
+  serverError: boolean | null;
   loading: boolean;
-}> = ({ uid, displayName, playKey, loading }) => {
+}> = ({ uid, displayName, playKey, serverError, loading }) => {
+  const showError = serverError || !playKey;
+  let subtext = "";
+  if (serverError) {
+    subtext = "Slippi server error";
+  } else if (!playKey) {
+    subtext = "Online activation required";
+  } else {
+    subtext = playKey.connectCode;
+  }
+
   return (
     <div
       css={css`
@@ -50,10 +61,10 @@ export const UserInfo: React.FC<{
             css={css`
               font-weight: bold;
               font-size: 14px;
-              color: ${playKey ? colors.purpleLight : "red"};
+              color: ${showError ? "red" : colors.purpleLight};
             `}
           >
-            {playKey ? playKey.connectCode : "Online activation required"}
+            {subtext}
           </div>
         )}
       </div>

@@ -36,7 +36,7 @@ export interface PlayKey {
   playKey: string;
   connectCode: string;
   displayName: string;
-  latestVersion: string;
+  latestVersion?: string;
 }
 
 export interface DolphinVersionResponse {
