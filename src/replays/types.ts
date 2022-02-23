@@ -13,7 +13,6 @@ export interface FolderResult {
   name: string;
   fullPath: string;
   subdirectories: FolderResult[];
-  collapsed: boolean;
 }
 
 export interface FileLoadResult {

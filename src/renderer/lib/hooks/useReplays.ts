@@ -1,27 +1,25 @@
-import { ipc_loadReplayFolder } from "@replays/ipc";
+import { ipc_initializeFolderTree, ipc_loadReplayFolder, ipc_selectTreeFolder } from "@replays/ipc";
 import { FileLoadResult, FileResult, FolderResult, Progress } from "@replays/types";
 import { produce } from "immer";
-import path from "path";
 import { useState } from "react";
 import create from "zustand";
 
 import { useSettings } from "@/lib/hooks/useSettings";
 
-import { findChild, generateSubFolderTree } from "../folderTree";
 import { useReplayBrowserList } from "./useReplayBrowserList";
 
 type StoreState = {
   loading: boolean;
   progress: Progress | null;
   files: FileResult[];
-  netplaySlpFolder: FolderResult | null;
   totalBytes: number | null;
-  extraFolders: FolderResult[];
   currentRoot: string | null;
   currentFolder: string;
   fileErrorCount: number;
   scrollRowItem: number;
   selectedFiles: string[];
+  folderTree: readonly FolderResult[];
+  collapsedFolders: readonly string[];
   selectedFile: {
     index: number | null;
     total: number | null;
@@ -34,7 +32,6 @@ type StoreReducers = {
   selectFile: (file: FileResult, index?: number | null, total?: number | null) => void;
   clearSelectedFile: () => void;
   removeFile: (filePath: string) => void;
-  loadDirectoryList: (folder: string) => Promise<void>;
   loadFolder: (childPath?: string, forceReload?: boolean) => Promise<void>;
   toggleFolder: (fullPath: string) => void;
   setScrollRowItem: (offset: number) => void;
@@ -47,8 +44,8 @@ const initialState: StoreState = {
   progress: null,
   files: [],
   totalBytes: null,
-  netplaySlpFolder: null,
-  extraFolders: [],
+  folderTree: [],
+  collapsedFolders: [],
   currentRoot: null,
   currentFolder: useSettings.getState().settings.rootSlpPath,
   fileErrorCount: 0,
@@ -66,31 +63,27 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   ...initialState,
 
   init: async (rootFolder, extraFolders, forceReload, currentFolder) => {
-    const { currentRoot, loadFolder, loadDirectoryList } = get();
+    const { currentRoot, loadFolder } = get();
     if (currentRoot === rootFolder && !forceReload) {
       return;
     }
 
+    const folders = [rootFolder, ...extraFolders];
+    const folderInitResult = await ipc_initializeFolderTree.renderer!.trigger({ folders });
+    if (!folderInitResult.result) {
+      throw new Error(`Error initializing folder tree`);
+    }
+    const selectRootFolderResult = await ipc_selectTreeFolder.renderer!.trigger({ folderPath: rootFolder });
+    if (!selectRootFolderResult.result) {
+      throw new Error(`Error loading folder tree for: ${rootFolder}`);
+    }
+
     set({
       currentRoot: rootFolder,
-      netplaySlpFolder: {
-        name: path.basename(rootFolder),
-        fullPath: rootFolder,
-        subdirectories: [],
-        collapsed: false,
-      },
-      extraFolders: extraFolders.filter(Boolean).map(
-        (folder) =>
-          ({
-            name: path.basename(folder),
-            fullPath: folder,
-            subdirectories: [],
-            collapsed: true,
-          } as FolderResult),
-      ),
+      folderTree: selectRootFolderResult.result,
     });
 
-    await Promise.all([loadDirectoryList(currentFolder ?? rootFolder), loadFolder(currentFolder ?? rootFolder, true)]);
+    await Promise.all([loadFolder(currentFolder ?? rootFolder, true)]);
   },
 
   selectFile: (file, index = null, total = null) => {
@@ -132,6 +125,13 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     }
 
     const folderToLoad = childPath ?? currentFolder;
+
+    const selectFolderResult = await ipc_selectTreeFolder.renderer!.trigger({ folderPath: folderToLoad });
+    if (!selectFolderResult.result) {
+      throw new Error(`Error loading folder tree: ${folderToLoad}`);
+    }
+    set({ folderTree: selectFolderResult.result });
+
     if (currentFolder === folderToLoad && !forceReload) {
       console.warn(`${currentFolder} is already loaded. Set forceReload to true to reload anyway.`);
       return;
@@ -157,65 +157,13 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
   toggleFolder: (folder) => {
     set((state) =>
       produce(state, (draft) => {
-        const currentTree = [draft.netplaySlpFolder, ...draft.extraFolders];
-        if (currentTree) {
-          currentTree.some((parent) => {
-            if (!parent) {
-              return false;
-            }
-            const child = findChild(parent, folder);
-            if (child) {
-              child.collapsed = !child.collapsed;
-              return true;
-            }
-            return false;
-          });
+        if (draft.collapsedFolders.includes(folder)) {
+          draft.collapsedFolders = draft.collapsedFolders.filter((f) => f !== folder);
+        } else {
+          draft.collapsedFolders = [...draft.collapsedFolders, folder];
         }
       }),
     );
-  },
-
-  loadDirectoryList: async (folder?: string) => {
-    const { currentRoot, netplaySlpFolder: folders, extraFolders } = get();
-    const rootSlpPath = useSettings.getState().settings.rootSlpPath;
-
-    let currentTree = folders;
-    if (currentTree === null || currentRoot !== rootSlpPath) {
-      currentTree = {
-        name: path.basename(rootSlpPath),
-        fullPath: rootSlpPath,
-        subdirectories: [],
-        collapsed: false,
-      };
-    }
-
-    const newFolders = await produce(currentTree, async (draft: FolderResult) => {
-      const pathToLoad = folder ?? rootSlpPath;
-      const child = findChild(draft, pathToLoad) ?? draft;
-      const childPaths = path.relative(child.fullPath, pathToLoad);
-      const childrenToExpand = childPaths ? childPaths.split(path.sep) : [];
-      if (child && child.subdirectories.length === 0) {
-        child.subdirectories = await generateSubFolderTree(child.fullPath, childrenToExpand);
-      }
-    });
-
-    const newExtraFolders = await Promise.all(
-      extraFolders.map(async (rootFolder) => {
-        const newFolders = await produce(rootFolder, async (draft: FolderResult) => {
-          const pathToLoad = folder ?? rootSlpPath;
-          const child = findChild(draft, pathToLoad) ?? draft;
-          const childPaths = path.relative(child.fullPath, pathToLoad);
-          const childrenToExpand = childPaths ? childPaths.split(path.sep) : [];
-          if (child && child.subdirectories.length === 0) {
-            child.subdirectories = await generateSubFolderTree(child.fullPath, childrenToExpand);
-          }
-        });
-        return newFolders;
-      }),
-    );
-
-    set({ netplaySlpFolder: newFolders });
-    set({ extraFolders: newExtraFolders });
   },
 
   setScrollRowItem: (rowItem) => {

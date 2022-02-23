@@ -1,7 +1,7 @@
 {
   "extends": "./node_modules/electron-webpack/tsconfig-base.json",
   "compilerOptions": {
-    "lib": ["dom", "es2019"],
+    "lib": ["dom", "esnext"],
     "paths": {
       "@/*": ["renderer/*"],
       "common/*": ["common/*"],
