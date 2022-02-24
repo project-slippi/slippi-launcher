@@ -21,7 +21,7 @@ export class FolderTreeService {
   }
 
   private _findChild(folder: string, nodes: readonly FolderResult[]): FolderResult {
-    const res = nodes.find(({ fullPath }) => folder.startsWith(fullPath));
+    const res = nodes.find(({ fullPath }) => fullPath === folder || isSubdirectory(fullPath, folder));
     if (!res) {
       throw new Error(`Could not find folder ${folder}`);
     }
@@ -69,3 +69,10 @@ export async function generateSubFolderTree(folder: string): Promise<FolderResul
 
   return Promise.all(subdirectories);
 }
+
+// Taken from: https://stackoverflow.com/questions/37521893/determine-if-a-path-is-subdirectory-of-another-in-node-js
+const isSubdirectory = (parent: string, dir: string): boolean => {
+  const relative = path.relative(parent, dir);
+  const isSubdir = Boolean(relative) && !relative.startsWith("..") && !path.isAbsolute(relative);
+  return isSubdir;
+};
