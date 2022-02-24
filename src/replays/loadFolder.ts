@@ -22,7 +22,16 @@ export async function loadFolder(
   const fullSlpPaths = results
     .filter((dirent) => dirent.isFile() && path.extname(dirent.name) === ".slp")
     .map((dirent) => path.resolve(folder, dirent.name));
+
+  // Ensure we actually have files to process
   const total = fullSlpPaths.length;
+  if (total === 0) {
+    return {
+      files: [],
+      fileErrorCount: 0,
+      totalBytes: 0,
+    };
+  }
 
   let fileValidCount = 0;
   callback(0, total);

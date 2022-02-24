@@ -40,8 +40,10 @@ export const ReplayBrowser: React.FC = () => {
   const clearSelectedFile = useReplays((store) => store.clearSelectedFile);
   const loading = useReplays((store) => store.loading);
   const currentFolder = useReplays((store) => store.currentFolder);
-  const netplaySlpFolder = useReplays((store) => store.netplaySlpFolder);
-  const extraFolders = useReplays((store) => store.extraFolders);
+  const folderTree = useReplays((store) => store.folderTree);
+  const loadFolder = useReplays((store) => store.loadFolder);
+  const collapsedFolders = useReplays((store) => store.collapsedFolders);
+  const toggleFolder = useReplays((store) => store.toggleFolder);
   const selectedFiles = useReplays((store) => store.selectedFiles);
   const totalBytes = useReplays((store) => store.totalBytes);
   const fileSelection = useReplaySelection();
@@ -60,6 +62,12 @@ export const ReplayBrowser: React.FC = () => {
       void selectFile(file, index, filteredFiles.length);
       goToReplayStatsPage(file.fullPath);
     }
+  };
+
+  const onFolderTreeNodeClick = (fullPath: string) => {
+    loadFolder(fullPath).catch((err) => {
+      addToast(`Error loading folder: ${err.message ?? JSON.stringify(err)}`, { appearance: "error" });
+    });
   };
 
   const playSelectedFile = (index: number) => {
@@ -86,10 +94,6 @@ export const ReplayBrowser: React.FC = () => {
     addToast(message, { appearance: "success", autoDismiss: true });
   };
 
-  if (netplaySlpFolder === null) {
-    return null;
-  }
-
   return (
     <Outer>
       <div
@@ -109,9 +113,16 @@ export const ReplayBrowser: React.FC = () => {
           leftSide={
             <List dense={true} style={{ flex: 1, padding: 0 }}>
               <div style={{ position: "relative", minHeight: "100%" }}>
-                <FolderTreeNode {...netplaySlpFolder} />
-                {extraFolders.map((folder) => {
-                  return <FolderTreeNode {...folder} key={folder.name} />;
+                {folderTree.map((folder) => {
+                  return (
+                    <FolderTreeNode
+                      folder={folder}
+                      key={folder.name}
+                      collapsedFolders={collapsedFolders}
+                      onClick={onFolderTreeNodeClick}
+                      onToggle={toggleFolder}
+                    />
+                  );
                 })}
                 {loading && (
                   <div

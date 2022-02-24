@@ -1,5 +1,22 @@
-import { ipc_calculateGameStats, ipc_loadProgressUpdatedEvent, ipc_loadReplayFolder } from "./ipc";
+import { FolderTreeService } from "./folderTreeService";
+import {
+  ipc_calculateGameStats,
+  ipc_initializeFolderTree,
+  ipc_loadProgressUpdatedEvent,
+  ipc_loadReplayFolder,
+  ipc_selectTreeFolder,
+} from "./ipc";
 import { worker as replayBrowserWorker } from "./workerInterface";
+
+const treeService = new FolderTreeService();
+
+ipc_initializeFolderTree.main!.handle(async ({ folders }) => {
+  return treeService.init(folders);
+});
+
+ipc_selectTreeFolder.main!.handle(async ({ folderPath }) => {
+  return await treeService.select(folderPath);
+});
 
 ipc_loadReplayFolder.main!.handle(async ({ folderPath }) => {
   const w = await replayBrowserWorker;
