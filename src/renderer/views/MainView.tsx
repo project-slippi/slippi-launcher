@@ -5,8 +5,8 @@ import SlowMotionVideoIcon from "@material-ui/icons/SlowMotionVideo";
 import React from "react";
 import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
 
+import { AuthGuard } from "@/components/AuthGuard";
 import { PersistentNotification } from "@/components/PersistentNotification";
-import { PrivateRoute } from "@/components/PrivateRoute";
 import { Console } from "@/containers/Console";
 import { Header } from "@/containers/Header";
 import { LoginDialog } from "@/containers/Header/LoginDialog";
@@ -73,14 +73,16 @@ export const MainView: React.FC = () => {
       <div style={{ flex: 1, overflow: "auto", display: "flex" }}>
         <Switch>
           {menuItems.map((item) => {
-            const RouteToUse = item.private ? PrivateRoute : Route;
+            const element = item.private ? <AuthGuard>{item.component}</AuthGuard> : item.component;
             return (
-              <RouteToUse key={item.subpath} path={`${path}/${item.subpath}`}>
-                {item.component}
-              </RouteToUse>
+              <Route key={item.subpath} path={`${path}/${item.subpath}`}>
+                {element}
+              </Route>
             );
           })}
-          {defaultRoute && <Redirect exact from={path} to={`${path}/${defaultRoute.subpath}`} />}
+          {defaultRoute && (
+            <Route exact path={path} component={() => <Redirect to={`${path}/${defaultRoute.subpath}`} />} />
+          )}
         </Switch>
       </div>
       <LoginDialog />

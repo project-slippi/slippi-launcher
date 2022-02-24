@@ -158,9 +158,7 @@ export const SettingsView: React.FC = () => {
                 );
               })}
               {settingItems.length > 0 && (
-                <Route exact path={path}>
-                  <Redirect to={`${path}/${settingItems[0].path}`} />
-                </Route>
+                <Route exact path={path} component={() => <Redirect to={`${path}/${settingItems[0].path}`} />} />
               )}
             </Switch>
           </ContentColumn>

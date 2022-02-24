@@ -21,9 +21,7 @@ export const ReplayBrowserPage: React.FC = () => {
       <Route path={`${path}/:filePath`}>
         <ChildPage goBack={() => history.push(path)} parent={path} />
       </Route>
-      <Route exact path={path}>
-        <Redirect to={lastPath} />
-      </Route>
+      <Route exact path={path} component={() => <Redirect to={lastPath} />} />
     </Switch>
   );
 };
