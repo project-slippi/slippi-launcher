@@ -117,6 +117,9 @@ const configuration: webpack.Configuration = {
 
     new webpack.NoEmitOnErrorsPlugin(),
     new NodePolyfillPlugin(),
+    new webpack.NormalModuleReplacementPlugin(/(.*)installServices(\.*)/, function (resource) {
+      resource.request = resource.request.replace(/installServices/, `installServices.mock`);
+    }),
 
     /**
      * Create global constants which can be configured at compile time.
