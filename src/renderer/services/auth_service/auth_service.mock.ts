@@ -8,7 +8,7 @@ export class MockAuthService implements IAuthService {
   private _onAuthStateChanged = multicast(this._userSubject);
 
   public async logout(): Promise<void> {
-    this._userSubject.next(null);
+    this._setCurrentUser(null);
   }
 
   public getCurrentUser(): AuthUser | null {
@@ -38,8 +38,16 @@ export class MockAuthService implements IAuthService {
   }
 
   private _mockUser(displayName = "Demo user") {
-    const fakeUser = { uid: "userid", displayName };
-    this._userSubject.next(fakeUser);
+    const fakeUser = {
+      uid: "userid",
+      displayName,
+    };
+    this._setCurrentUser(fakeUser);
     return fakeUser;
+  }
+
+  private _setCurrentUser(user: AuthUser | null) {
+    this._currentUser = user;
+    this._userSubject.next(user);
   }
 }
