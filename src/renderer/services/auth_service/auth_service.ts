@@ -67,11 +67,7 @@ export class AuthService implements IAuthService {
   public async signUp({ email, displayName, password }: { email: string; displayName: string; password: string }) {
     const createUser = firebase.functions().httpsCallable("createUser");
     await createUser({ email, password, displayName });
-    const { user } = await firebase.auth().signInWithEmailAndPassword(email, password);
-    if (!user) {
-      return null;
-    }
-    return this._mapFirebaseUserToAuthUser(user);
+    return this.login({ email, password });
   }
 
   public async login({ email, password }: { email: string; password: string }) {
