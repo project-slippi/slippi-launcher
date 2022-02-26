@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 
-import type { Services } from "./installServices";
+import type { Services } from "./types";
 
 const ServiceContext = createContext<Services>({
   authService: null,

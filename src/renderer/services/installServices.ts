@@ -1,14 +1,11 @@
+/* eslint-disable import/no-default-export */
 import { AuthService } from "./auth_service/auth_service";
-import type { IAuthService } from "./auth_service/types";
+import type { Services } from "./types";
 
-export type Services = {
-  authService: IAuthService;
-};
-
-export const installServices = (): Services => {
+export default function installServices(): Services {
   const authService = new AuthService();
 
   return {
     authService,
   };
-};
+}

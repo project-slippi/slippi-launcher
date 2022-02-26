@@ -1,7 +1,7 @@
 import { render } from "react-dom";
 
 import App from "./App";
-import { installServices } from "./services/installServices";
+import installServices from "./services/installServices";
 import { ServiceProvider } from "./services/serviceContext";
 
 const services = installServices();
