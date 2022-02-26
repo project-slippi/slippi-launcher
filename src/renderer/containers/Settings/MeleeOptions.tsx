@@ -26,7 +26,8 @@ const renderValidityStatus = (isoValidity: IsoValidity) => {
     case IsoValidity.UNKNOWN: {
       return <Help />;
     }
-    case IsoValidity.INVALID: {
+    case IsoValidity.INVALID:
+    case IsoValidity.UNVALIDATED: {
       return <ErrorIcon />;
     }
   }

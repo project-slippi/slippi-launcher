@@ -56,7 +56,7 @@ export const IsoSelectionStep: React.FC = () => {
   const [tempIsoPath, setTempIsoPath] = React.useState("");
   const verification = ipc_checkValidIso.renderer!.useValue(
     { path: tempIsoPath },
-    { path: tempIsoPath, valid: IsoValidity.INVALID },
+    { path: tempIsoPath, valid: IsoValidity.UNVALIDATED },
   );
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));

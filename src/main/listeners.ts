@@ -74,7 +74,7 @@ export function setupListeners() {
   ipc_checkValidIso.main!.handle(async ({ path }) => {
     // Make sure we have a valid path
     if (!path) {
-      return { path, valid: IsoValidity.INVALID };
+      return { path, valid: IsoValidity.UNVALIDATED };
     }
 
     try {

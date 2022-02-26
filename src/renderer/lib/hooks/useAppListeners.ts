@@ -137,7 +137,7 @@ export const useAppListeners = () => {
   const setIsValid = useIsoVerification((store) => store.setIsValid);
   React.useEffect(() => {
     if (!isoPath) {
-      setIsValid(IsoValidity.INVALID);
+      setIsValid(IsoValidity.UNVALIDATED);
       setIsValidating(false);
       return;
     }
