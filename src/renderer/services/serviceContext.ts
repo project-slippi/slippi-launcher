@@ -2,9 +2,7 @@ import { createContext, useContext } from "react";
 
 import type { Services } from "./types";
 
-const ServiceContext = createContext<Services>({
-  authService: null,
-} as unknown as Services);
+const ServiceContext = createContext<Services>(null as unknown as Services);
 
 export const ServiceProvider = ServiceContext.Provider;
 

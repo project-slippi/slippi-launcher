@@ -1,5 +1,6 @@
-import firebase from "firebase";
-import { multicast, Subject } from "observable-fns";
+import firebase from "firebase/app";
+import multicast from "observable-fns/multicast";
+import Subject from "observable-fns/subject";
 
 import type { AuthUser, IAuthService } from "./types";
 

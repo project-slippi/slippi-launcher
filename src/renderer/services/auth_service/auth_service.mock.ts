@@ -1,4 +1,5 @@
-import { multicast, Subject } from "observable-fns";
+import multicast from "observable-fns/multicast";
+import Subject from "observable-fns/subject";
 
 import type { AuthUser, IAuthService } from "./types";
 
