@@ -25,7 +25,11 @@ export const ipc_clearDolphinCache = makeEndpoint.main(
 
 export const ipc_storePlayKeyFile = makeEndpoint.main("storePlayKeyFile", <{ key: PlayKey }>_, <SuccessPayload>_);
 
-export const ipc_checkPlayKeyExists = makeEndpoint.main("checkPlayKeyExists", <EmptyPayload>_, <{ exists: boolean }>_);
+export const ipc_checkPlayKeyExists = makeEndpoint.main(
+  "checkPlayKeyExists",
+  <{ key: PlayKey }>_,
+  <{ exists: boolean }>_,
+);
 
 export const ipc_removePlayKeyFile = makeEndpoint.main("removePlayKeyFile", <EmptyPayload>_, <SuccessPayload>_);
 
