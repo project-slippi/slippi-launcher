@@ -37,7 +37,7 @@ export class MockAuthService implements IAuthService {
     return this._mockUser(args.displayName);
   }
 
-  private _mockUser(displayName = "Demo user") {
+  private _mockUser(displayName: string) {
     const fakeUser = {
       uid: "userid",
       displayName,
