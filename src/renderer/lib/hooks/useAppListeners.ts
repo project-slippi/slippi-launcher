@@ -15,7 +15,6 @@ import {
 import { ipc_dolphinClosedEvent, ipc_dolphinDownloadLogReceivedEvent } from "@dolphin/ipc";
 import { ipc_loadProgressUpdatedEvent, ipc_statsPageRequestedEvent } from "@replays/ipc";
 import { ipc_openSettingsModalEvent, ipc_settingsUpdatedEvent } from "@settings/ipc";
-import { isLinux, isWindows } from "common/constants";
 import {
   ipc_checkValidIso,
   ipc_launcherUpdateDownloadingEvent,
@@ -252,17 +251,32 @@ const handleDolphinExitCode = (exitCode: number | null) => {
     return null;
   }
 
-  // Dolphin returns 3 when selecting Update in game on Windows
-  if (exitCode === 3 && isWindows) {
-    return null;
-  }
-
-  if (exitCode === 0xc0000135 || exitCode === 0xc0000409) {
-    return `Required DLLs for launching Dolphin are missing. Check the Help section in the settings page to fix this issue.`;
-  }
-
-  if (exitCode === 0x7f && isLinux) {
-    return `Required libraries for launching Dolphin may be missing. Check the Help section in the settings page for guidance. Post in the Slippi Discord's linux-support channel for further assistance if needed.`;
+  switch (process.platform) {
+    case "win32": {
+      switch (exitCode) {
+        case 0x3: {
+          // returned when selecting update in game
+          return null;
+        }
+        case 0xc0000135:
+        case 0xc0000409:
+        case 0xc000007b: {
+          return "Required DLLs for launching Dolphin are missing. Check the Help section in the settings page to fix this issue.";
+        }
+        case 0xc0000005: {
+          return "Install the latest Windows update available and then restart your computer.";
+        }
+      }
+      break;
+    }
+    case "linux": {
+      switch (exitCode) {
+        case 0x7f: {
+          return "Required libraries for launching Dolphin may be missing. Check the Help section in the settings page for guidance. Post in the Slippi Discord's linux-support channel for further assistance if needed.";
+        }
+      }
+      break;
+    }
   }
 
   return `Dolphin exited with error code: 0x${exitCode.toString(16)}.
