@@ -73,11 +73,7 @@ export const handleDolphinExitCode = (exitCode: number | null): string | null =>
     err = handleLinuxExitCode(exitCode);
   }
 
-  return (
-    err ??
-    `Dolphin exited with error code: 0x${exitCode.toString(16)}.
-    Please screenshot this and post it in a support channel in the Slippi Discord for assistance.`
-  );
+  return err;
 };
 
 export const handleWindowsExitCode = (exitCode: number): string | null => {
@@ -94,8 +90,11 @@ export const handleWindowsExitCode = (exitCode: number): string | null => {
     case 0xc0000005: {
       return "Install the latest Windows update available and then restart your computer.";
     }
+    default: {
+      return `Dolphin exited with error code: 0x${exitCode.toString(16)}.
+      Please screenshot this and post it in a support channel in the Slippi Discord for assistance.`;
+    }
   }
-  return null;
 };
 
 export const handleLinuxExitCode = (exitCode: number): string | null => {
@@ -103,6 +102,9 @@ export const handleLinuxExitCode = (exitCode: number): string | null => {
     case 0x7f: {
       return "Required libraries for launching Dolphin may be missing. Check the Help section in the settings page for guidance. Post in the Slippi Discord's linux-support channel for further assistance if needed.";
     }
+    default: {
+      return `Dolphin exited with error code: 0x${exitCode.toString(16)}.
+      Please screenshot this and post it in a support channel in the Slippi Discord for assistance.`;
+    }
   }
-  return null;
 };
