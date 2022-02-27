@@ -1,6 +1,7 @@
 import { socials } from "@common/constants";
 import styled from "@emotion/styled";
 import React from "react";
+import { TwitterTimelineEmbed } from "react-twitter-embed";
 
 const TwitterFeedContainer = styled.div`
   transition: opacity 1s ease-in-out;
@@ -14,27 +15,21 @@ const TwitterFeedContainer = styled.div`
 const Outer = styled.div`
   position: relative;
   flex: 1;
-  overflow: hidden;
+  overflow-x: hidden;
 `;
 
 export const TwitterFeed: React.FC = () => {
-  const params = new URLSearchParams({
+  const params = {
     screenName: socials.twitterId,
     theme: "dark",
-    noHeader: "true",
-    noFooter: "true",
-    transparent: "true",
-  });
+    noHeader: true,
+    noFooter: true,
+    transparent: true,
+  };
   return (
     <Outer>
       <TwitterFeedContainer>
-        <iframe
-          sandbox="allow-scripts allow-same-origin allow-popups"
-          src={`https://vinceau.github.io/twitter-embed/?${params.toString()}`}
-          height="100%"
-          width="100%"
-          frameBorder="none"
-        />
+        <TwitterTimelineEmbed sourceType="profile" {...params} />
       </TwitterFeedContainer>
     </Outer>
   );
