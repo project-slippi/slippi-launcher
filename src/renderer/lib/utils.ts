@@ -97,7 +97,7 @@ export const handleWindowsExitCode = (exitCode: number): string | null => {
   }
 };
 
-export const handleLinuxExitCode = (exitCode: number): string | null => {
+export const handleLinuxExitCode = (exitCode: number): string => {
   switch (exitCode) {
     case 0x7f: {
       return "Required libraries for launching Dolphin may be missing. Check the Help section in the settings page for guidance. Post in the Slippi Discord's linux-support channel for further assistance if needed.";
