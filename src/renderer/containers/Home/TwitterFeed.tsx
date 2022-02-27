@@ -1,5 +1,5 @@
+import { socials } from "@common/constants";
 import styled from "@emotion/styled";
-import { socials } from "common/constants";
 import React from "react";
 
 const TwitterFeedContainer = styled.div`

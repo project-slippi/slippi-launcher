@@ -1,4 +1,5 @@
 /** @jsx jsx */
+import { IsoValidity } from "@common/types";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -8,7 +9,6 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import ErrorIcon from "@material-ui/icons/Error";
 import Help from "@material-ui/icons/Help";
-import { IsoValidity } from "common/types";
 import React from "react";
 
 import { PathInput } from "@/components/PathInput";

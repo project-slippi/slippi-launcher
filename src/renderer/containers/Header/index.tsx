@@ -1,4 +1,6 @@
 /** @jsx jsx */
+import { colors } from "@common/colors";
+import { isMac, slippiHomepage } from "@common/constants";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Box from "@material-ui/core/Box";
@@ -7,8 +9,6 @@ import ButtonBase from "@material-ui/core/ButtonBase";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 import SettingsOutlinedIcon from "@material-ui/icons/SettingsOutlined";
-import { colors } from "common/colors";
-import { isMac, slippiHomepage } from "common/constants";
 import { shell } from "electron";
 import React from "react";
 import { useToasts } from "react-toast-notifications";

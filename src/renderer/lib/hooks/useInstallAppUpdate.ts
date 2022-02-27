@@ -1,4 +1,4 @@
-import { ipc_installUpdate } from "common/ipc";
+import { ipc_installUpdate } from "@common/ipc";
 import { useToasts } from "react-toast-notifications";
 
 export const useInstallAppUpdate = () => {

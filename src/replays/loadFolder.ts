@@ -1,4 +1,4 @@
-import { exists } from "common/exists";
+import { exists } from "@common/exists";
 import * as fs from "fs-extra";
 import path from "path";
 

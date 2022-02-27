@@ -1,4 +1,4 @@
-import { IsoValidity } from "common/types";
+import { IsoValidity } from "@common/types";
 import crypto from "crypto";
 import fs from "fs";
 

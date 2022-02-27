@@ -1,9 +1,9 @@
+import { colors } from "@common/colors";
+import { isDevelopment, isMac } from "@common/constants";
+import { delay } from "@common/delay";
 import { dolphinManager } from "@dolphin/manager";
 import { ipc_statsPageRequestedEvent } from "@replays/ipc";
 import { settingsManager } from "@settings/settingsManager";
-import { colors } from "common/colors";
-import { isDevelopment, isMac } from "common/constants";
-import { delay } from "common/delay";
 import { app, BrowserWindow, Menu, shell } from "electron";
 import contextMenu from "electron-context-menu";
 import electronLog from "electron-log";

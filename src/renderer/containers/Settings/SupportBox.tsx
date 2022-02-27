@@ -1,12 +1,12 @@
 /** @jsx jsx */
+import { colors } from "@common/colors";
+import { socials } from "@common/constants";
+import { ipc_copyLogsToClipboard } from "@common/ipc";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import LiveHelpIcon from "@material-ui/icons/LiveHelp";
-import { colors } from "common/colors";
-import { socials } from "common/constants";
-import { ipc_copyLogsToClipboard } from "common/ipc";
 import { shell } from "electron";
 import electronLog from "electron-log";
 import React from "react";

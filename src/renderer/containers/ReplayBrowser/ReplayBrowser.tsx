@@ -1,4 +1,6 @@
 /** @jsx jsx */
+import { colors } from "@common/colors";
+import { exists } from "@common/exists";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
@@ -8,8 +10,6 @@ import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import FolderIcon from "@material-ui/icons/Folder";
 import SearchIcon from "@material-ui/icons/Search";
-import { colors } from "common/colors";
-import { exists } from "common/exists";
 import { shell } from "electron";
 import React from "react";
 import { useToasts } from "react-toast-notifications";

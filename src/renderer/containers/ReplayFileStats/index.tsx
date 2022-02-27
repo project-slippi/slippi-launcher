@@ -1,4 +1,5 @@
 /** @jsx jsx */
+import { colors } from "@common/colors";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
@@ -9,7 +10,6 @@ import FolderIcon from "@material-ui/icons/Folder";
 import HelpIcon from "@material-ui/icons/Help";
 import { ipc_calculateGameStats } from "@replays/ipc";
 import { FileResult } from "@replays/types";
-import { colors } from "common/colors";
 import { shell } from "electron";
 import _ from "lodash";
 import React from "react";

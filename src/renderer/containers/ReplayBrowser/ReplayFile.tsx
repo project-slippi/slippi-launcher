@@ -1,4 +1,5 @@
 /** @jsx jsx */
+import { colors } from "@common/colors";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import IconButton from "@material-ui/core/IconButton";
@@ -11,7 +12,6 @@ import PlayCircleOutlineIcon from "@material-ui/icons/PlayCircleOutline";
 import TimerIcon from "@material-ui/icons/Timer";
 import { FileResult } from "@replays/types";
 import { stages as stageUtils } from "@slippi/slippi-js";
-import { colors } from "common/colors";
 import _ from "lodash";
 import moment from "moment";
 import React from "react";

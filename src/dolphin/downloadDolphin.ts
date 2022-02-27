@@ -1,6 +1,6 @@
+import { isLinux } from "@common/constants";
 import AdmZip from "adm-zip";
 import { spawnSync } from "child_process";
-import { isLinux } from "common/constants";
 import { app, BrowserWindow } from "electron";
 import { download } from "electron-dl";
 import extractDmg from "extract-dmg";

@@ -1,4 +1,5 @@
 /** @jsx jsx */
+import { NewsItem } from "@common/types";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
@@ -8,7 +9,6 @@ import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
-import { NewsItem } from "common/types";
 import { shell } from "electron";
 import moment from "moment";
 import React from "react";

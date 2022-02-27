@@ -1,9 +1,9 @@
 /** @jsx jsx */
+import { extractPlayerNames } from "@common/matchNames";
 import { css, jsx } from "@emotion/react";
 import Tooltip from "@material-ui/core/Tooltip";
 import { FileResult } from "@replays/types";
 import { ConversionType, PlayerType, StatsType, StockType } from "@slippi/slippi-js";
-import { extractPlayerNames } from "common/matchNames";
 import _ from "lodash";
 import React from "react";
 

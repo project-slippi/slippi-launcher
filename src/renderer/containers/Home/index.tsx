@@ -1,7 +1,7 @@
 /** @jsx jsx */
+import { colors } from "@common/colors";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
-import { colors } from "common/colors";
 import React from "react";
 
 import { DualPane } from "@/components/DualPane";

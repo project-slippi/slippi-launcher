@@ -1,4 +1,4 @@
-import { isLinux, isMac } from "common/constants";
+import { isLinux, isMac } from "@common/constants";
 import { app } from "electron";
 import * as fs from "fs-extra";
 import { isEqual } from "lodash";

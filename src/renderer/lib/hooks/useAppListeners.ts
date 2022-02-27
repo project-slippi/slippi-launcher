@@ -8,6 +8,13 @@ import {
   ipc_spectateReconnect,
 } from "@broadcast/ipc";
 import {
+  ipc_checkValidIso,
+  ipc_launcherUpdateDownloadingEvent,
+  ipc_launcherUpdateFoundEvent,
+  ipc_launcherUpdateReadyEvent,
+} from "@common/ipc";
+import { IsoValidity } from "@common/types";
+import {
   ipc_consoleMirrorErrorMessageEvent,
   ipc_consoleMirrorStatusUpdatedEvent,
   ipc_discoveredConsolesUpdatedEvent,
@@ -15,13 +22,6 @@ import {
 import { ipc_dolphinClosedEvent, ipc_dolphinDownloadLogReceivedEvent } from "@dolphin/ipc";
 import { ipc_loadProgressUpdatedEvent, ipc_statsPageRequestedEvent } from "@replays/ipc";
 import { ipc_openSettingsModalEvent, ipc_settingsUpdatedEvent } from "@settings/ipc";
-import {
-  ipc_checkValidIso,
-  ipc_launcherUpdateDownloadingEvent,
-  ipc_launcherUpdateFoundEvent,
-  ipc_launcherUpdateReadyEvent,
-} from "common/ipc";
-import { IsoValidity } from "common/types";
 import electronLog from "electron-log";
 import firebase from "firebase";
 import throttle from "lodash/throttle";

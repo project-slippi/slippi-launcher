@@ -1,4 +1,4 @@
-import { ipc_checkForUpdate } from "common/ipc";
+import { ipc_checkForUpdate } from "@common/ipc";
 import { ipc_checkDesktopAppDolphin, ipc_dolphinDownloadFinishedEvent, ipc_downloadDolphin } from "dolphin/ipc";
 import electronLog from "electron-log";
 import firebase from "firebase";

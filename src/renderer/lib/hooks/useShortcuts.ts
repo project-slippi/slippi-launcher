@@ -1,4 +1,4 @@
-import { isMac } from "common/constants";
+import { isMac } from "@common/constants";
 import mousetrap from "mousetrap";
 import { RefObject, useCallback, useEffect } from "react";
 import { useHistory } from "react-router-dom";

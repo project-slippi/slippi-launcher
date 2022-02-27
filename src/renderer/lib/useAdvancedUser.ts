@@ -1,4 +1,4 @@
-import { isDevelopment } from "common/constants";
+import { isDevelopment } from "@common/constants";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 

@@ -1,3 +1,4 @@
+import { colors } from "@common/colors";
 import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -7,7 +8,6 @@ import FolderIcon from "@material-ui/icons/Folder";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import { FolderResult } from "@replays/types";
-import { colors } from "common/colors";
 import React from "react";
 
 import { useReplays } from "@/lib/hooks/useReplays";

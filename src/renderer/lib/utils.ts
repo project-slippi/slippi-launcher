@@ -1,5 +1,5 @@
+import { isDevelopment, isLinux, isWindows } from "@common/constants";
 import { characters as charUtils } from "@slippi/slippi-js";
-import { isDevelopment, isLinux, isWindows } from "common/constants";
 import path from "path";
 import url from "url";
 

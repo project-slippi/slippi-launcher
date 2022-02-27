@@ -4,8 +4,7 @@ import "@replays/main";
 import "@settings/main";
 import "@console/main";
 
-import { settingsManager } from "@settings/settingsManager";
-import { isDevelopment, isMac } from "common/constants";
+import { isDevelopment, isMac } from "@common/constants";
 import {
   ipc_checkForUpdate,
   ipc_checkValidIso,
@@ -18,8 +17,9 @@ import {
   ipc_launcherUpdateDownloadingEvent,
   ipc_launcherUpdateFoundEvent,
   ipc_launcherUpdateReadyEvent,
-} from "common/ipc";
-import { IsoValidity } from "common/types";
+} from "@common/ipc";
+import { IsoValidity } from "@common/types";
+import { settingsManager } from "@settings/settingsManager";
 import { app, clipboard, ipcMain, nativeImage } from "electron";
 import electronLog from "electron-log";
 import { autoUpdater, ProgressInfo, UpdateInfo } from "electron-updater";

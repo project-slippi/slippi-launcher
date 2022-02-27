@@ -4,7 +4,7 @@
     "lib": ["dom", "esnext"],
     "paths": {
       "@/*": ["renderer/*"],
-      "common/*": ["common/*"],
+      "@common/*": ["common/*"],
       "@broadcast/*": ["broadcast/*"],
       "@dolphin/*": ["dolphin/*"],
       "@replays/*": ["replays/*"],

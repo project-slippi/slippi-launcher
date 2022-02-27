@@ -1,10 +1,10 @@
 /** @jsx jsx */
+import { colors } from "@common/colors";
+import { isDevelopment } from "@common/constants";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
 import { ConnectionStatus } from "@slippi/slippi-js";
-import { colors } from "common/colors";
-import { isDevelopment } from "common/constants";
 import moment from "moment";
 import React from "react";
 import TimeAgo from "react-timeago";

@@ -1,3 +1,4 @@
+import { ipc_getLatestGitHubReleaseVersion } from "@common/ipc";
 import { DiscoveredConsoleInfo } from "@console/types";
 import styled from "@emotion/styled";
 import CreateIcon from "@material-ui/icons/Create";
@@ -5,7 +6,6 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import { StoredConnection } from "@settings/types";
 import { ConnectionStatus } from "@slippi/slippi-js";
-import { ipc_getLatestGitHubReleaseVersion } from "common/ipc";
 import React from "react";
 
 import { IconMenu } from "@/components/IconMenu";

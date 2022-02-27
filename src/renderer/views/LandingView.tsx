@@ -1,7 +1,7 @@
 /** @jsx jsx */
+import { isDevelopment } from "@common/constants";
 import { jsx } from "@emotion/react";
 import Box from "@material-ui/core/Box";
-import { isDevelopment } from "common/constants";
 import React from "react";
 
 import { QuickStart } from "@/containers/QuickStart";

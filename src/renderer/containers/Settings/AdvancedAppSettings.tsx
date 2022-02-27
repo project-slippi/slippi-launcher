@@ -1,5 +1,5 @@
+import { ipc_clearTempFolder } from "@common/ipc";
 import Button from "@material-ui/core/Button";
-import { ipc_clearTempFolder } from "common/ipc";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
 

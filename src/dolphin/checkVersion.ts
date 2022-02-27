@@ -1,5 +1,5 @@
 import { ApolloClient, gql, HttpLink, InMemoryCache } from "@apollo/client";
-import { isDevelopment } from "common/constants";
+import { isDevelopment } from "@common/constants";
 import { fetch } from "cross-fetch";
 import { GraphQLError } from "graphql";
 

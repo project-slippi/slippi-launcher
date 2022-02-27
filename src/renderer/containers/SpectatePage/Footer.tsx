@@ -1,10 +1,10 @@
 /** @jsx jsx */
+import { colors } from "@common/colors";
 import { css, jsx } from "@emotion/react";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 import FolderIcon from "@material-ui/icons/Folder";
-import { colors } from "common/colors";
 import { remote, shell } from "electron";
 import React from "react";
 

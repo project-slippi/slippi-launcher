@@ -1,4 +1,5 @@
 /** @jsx jsx */
+import { colors } from "@common/colors";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import IconButton from "@material-ui/core/IconButton";
@@ -9,7 +10,6 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import Tooltip from "@material-ui/core/Tooltip";
 import CloseIcon from "@material-ui/icons/Close";
-import { colors } from "common/colors";
 import React from "react";
 import { Link, Redirect, Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
 

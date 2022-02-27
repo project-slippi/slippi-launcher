@@ -1,9 +1,9 @@
+import { colors } from "@common/colors";
 import Button from "@material-ui/core/Button";
 import MobileStepper from "@material-ui/core/MobileStepper";
 import { withStyles } from "@material-ui/core/styles";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
-import { colors } from "common/colors";
 import React from "react";
 
 const StyledStepper = withStyles({
