@@ -118,7 +118,7 @@ export const ReplayBrowser: React.FC = () => {
                   return (
                     <FolderTreeNode
                       folder={folder}
-                      key={folder.name}
+                      key={folder.fullPath}
                       collapsedFolders={collapsedFolders}
                       onClick={onFolderTreeNodeClick}
                       onToggle={toggleFolder}
