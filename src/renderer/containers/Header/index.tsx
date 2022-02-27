@@ -71,7 +71,7 @@ export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
         try {
           await assertPlayKey(playKey);
         } catch (err) {
-          handleError(err.message);
+          handleError(err);
           return;
         }
       }
