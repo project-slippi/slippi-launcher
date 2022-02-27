@@ -35,6 +35,8 @@ export const useDolphinStore = create(
 
 export const useDolphin = () => {
   const { addToast } = useToasts();
+  const handleError = (err: any) => addToast(err.message ?? JSON.stringify(err), { appearance: "error" });
+
   const setDolphinOpen = useDolphinStore((store) => store.setDolphinOpen);
 
   const handleResult = <T>(res: MainEndpointResponse<T>, errLog: string): boolean => {
@@ -53,41 +55,68 @@ export const useDolphin = () => {
   };
 
   const openConfigureDolphin = async (dolphinType: DolphinLaunchType) => {
-    const configureResult = await ipc_configureDolphin.renderer!.trigger({ dolphinType });
-    const success = handleResult(configureResult, `Error launching ${dolphinType} Dolphin`);
-    if (success) {
-      setDolphinOpen(dolphinType);
+    try {
+      const configureResult = await ipc_configureDolphin.renderer!.trigger({ dolphinType });
+      const success = handleResult(configureResult, `Error launching ${dolphinType} Dolphin`);
+      if (success) {
+        setDolphinOpen(dolphinType);
+      }
+    } catch (err) {
+      handleError(err);
     }
   };
+
   const clearDolphinCache = async (dolphinType: DolphinLaunchType) => {
-    const clearCacheResult = await ipc_clearDolphinCache.renderer!.trigger({ dolphinType });
-    handleResult(clearCacheResult, `Error clearing ${dolphinType} Dolphin cache`);
+    try {
+      const clearCacheResult = await ipc_clearDolphinCache.renderer!.trigger({ dolphinType });
+      handleResult(clearCacheResult, `Error clearing ${dolphinType} Dolphin cache`);
+    } catch (err) {
+      handleError(err);
+    }
   };
+
   const reinstallDolphin = async (dolphinType: DolphinLaunchType) => {
-    const reinstallResult = await ipc_reinstallDolphin.renderer!.trigger({ dolphinType });
-    handleResult(reinstallResult, `Error reinstalling netplay Dolphin`);
+    try {
+      const reinstallResult = await ipc_reinstallDolphin.renderer!.trigger({ dolphinType });
+      handleResult(reinstallResult, `Error reinstalling netplay Dolphin`);
+    } catch (err) {
+      handleError(err);
+    }
   };
+
   const launchNetplay = async (bootToCss: boolean) => {
-    const launchResult = await ipc_launchNetplayDolphin.renderer!.trigger({ bootToCss });
-    const success = handleResult(launchResult, `Error launching netplay Dolphin`);
-    if (success) {
-      setDolphinOpen(DolphinLaunchType.NETPLAY);
+    try {
+      const launchResult = await ipc_launchNetplayDolphin.renderer!.trigger({ bootToCss });
+      const success = handleResult(launchResult, `Error launching netplay Dolphin`);
+      if (success) {
+        setDolphinOpen(DolphinLaunchType.NETPLAY);
+      }
+    } catch (err) {
+      handleError(err);
     }
   };
 
   const viewReplays = async (files: ReplayQueueItem[]) => {
-    const viewResult = await ipc_viewSlpReplay.renderer!.trigger({ files });
-    const success = handleResult(viewResult, `Error playing file(s): ${files.join(", ")}`);
-    if (success) {
-      setDolphinOpen(DolphinLaunchType.PLAYBACK);
+    try {
+      const viewResult = await ipc_viewSlpReplay.renderer!.trigger({ files });
+      const success = handleResult(viewResult, `Error playing file(s): ${files.join(", ")}`);
+      if (success) {
+        setDolphinOpen(DolphinLaunchType.PLAYBACK);
+      }
+    } catch (err) {
+      handleError(err);
     }
   };
 
   const importDolphin = async (toImportDolphinPath: string, dolphinType: DolphinLaunchType) => {
-    const importResult = await ipc_importDolphinSettings.renderer!.trigger({ toImportDolphinPath, dolphinType });
-    const success = handleResult(importResult, `Error importing ${dolphinType} dolphin settings`);
-    if (success) {
-      addToast(`${dolphinType} Dolphin settings successfully imported`, { appearance: "success" });
+    try {
+      const importResult = await ipc_importDolphinSettings.renderer!.trigger({ toImportDolphinPath, dolphinType });
+      const success = handleResult(importResult, `Error importing ${dolphinType} dolphin settings`);
+      if (success) {
+        addToast(`${dolphinType} Dolphin settings successfully imported`, { appearance: "success" });
+      }
+    } catch (err) {
+      handleError(err);
     }
   };
 
