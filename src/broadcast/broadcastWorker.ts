@@ -2,13 +2,14 @@
 // fails to obtain the paths required for file transport to work
 // when in Node worker context.
 
-import { ConnectionStatus } from "@slippi/slippi-js";
-import { ModuleMethods } from "threads/dist/types/master";
+import type { ConnectionStatus } from "@slippi/slippi-js";
+import type { ModuleMethods } from "threads/dist/types/master";
 import { Observable, Subject } from "threads/observable";
 import { expose } from "threads/worker";
 
 import { BroadcastManager } from "./broadcastManager";
-import { BroadcastEvent, StartBroadcastConfig } from "./types";
+import type { StartBroadcastConfig } from "./types";
+import { BroadcastEvent } from "./types";
 
 export interface Methods {
   destroyWorker: () => Promise<void>;

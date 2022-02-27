@@ -3,7 +3,8 @@ import { css, jsx } from "@emotion/react";
 import Button from "@material-ui/core/Button";
 import MatCheckbox from "@material-ui/core/Checkbox";
 import InputBase from "@material-ui/core/InputBase";
-import { OpenDialogOptions, remote } from "electron";
+import type { OpenDialogOptions } from "electron";
+import { remote } from "electron";
 import React, { useState } from "react";
 import { useToasts } from "react-toast-notifications";
 

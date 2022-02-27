@@ -1,9 +1,11 @@
 import { ConnectionEvent, ConnectionStatus, DolphinConnection, DolphinMessageType } from "@slippi/slippi-js";
 import { EventEmitter } from "events";
 import _ from "lodash";
-import { client as WebSocketClient, connection, IMessage } from "websocket";
+import type { connection, IMessage } from "websocket";
+import { client as WebSocketClient } from "websocket";
 
-import { BroadcastEvent, SlippiBroadcastPayloadEvent, StartBroadcastConfig } from "./types";
+import type { SlippiBroadcastPayloadEvent, StartBroadcastConfig } from "./types";
+import { BroadcastEvent } from "./types";
 
 const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
 

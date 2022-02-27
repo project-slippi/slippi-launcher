@@ -1,5 +1,5 @@
-import { PlayKey } from "@dolphin/types";
-import firebase from "firebase";
+import type { PlayKey } from "@dolphin/types";
+import type firebase from "firebase";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 

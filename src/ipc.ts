@@ -7,7 +7,8 @@
  */
 
 import crypto from "crypto";
-import { BrowserWindow, ipcMain, IpcMainInvokeEvent, ipcRenderer, IpcRendererEvent } from "electron";
+import type { IpcMainInvokeEvent, IpcRendererEvent } from "electron";
+import { BrowserWindow, ipcMain, ipcRenderer } from "electron";
 import electronLog from "electron-log";
 import { useEffect, useState } from "react";
 

@@ -1,5 +1,6 @@
 import { isMac } from "@common/constants";
-import { app, dialog, Menu, MenuItemConstructorOptions, shell } from "electron";
+import type { MenuItemConstructorOptions } from "electron";
+import { app, dialog, Menu, shell } from "electron";
 import defaultMenu from "electron-default-menu";
 import { ipc_openSettingsModalEvent } from "settings/ipc";
 

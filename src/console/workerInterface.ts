@@ -1,11 +1,11 @@
 import { dolphinManager } from "@dolphin/manager";
-import { ReplayCommunication } from "@dolphin/types";
+import type { ReplayCommunication } from "@dolphin/types";
 import { app } from "electron";
 import electronLog from "electron-log";
 import { spawn, Thread, Worker } from "threads";
 
 import { ipc_consoleMirrorErrorMessageEvent, ipc_consoleMirrorStatusUpdatedEvent } from "./ipc";
-import { Methods as MirrorWorkerMethods, WorkerSpec as MirrorWorkerSpec } from "./mirrorWorker";
+import type { Methods as MirrorWorkerMethods, WorkerSpec as MirrorWorkerSpec } from "./mirrorWorker";
 
 const log = electronLog.scope("console/workerInterface");
 const mirrorLog = electronLog.scope("mirrorManager");

@@ -12,7 +12,8 @@ import { lt } from "semver";
 import { fileExists } from "../main/fileExists";
 import { fetchLatestDolphin } from "./checkVersion";
 import { ipc_dolphinDownloadFinishedEvent, ipc_dolphinDownloadLogReceivedEvent } from "./ipc";
-import { DolphinLaunchType, DolphinVersionResponse } from "./types";
+import type { DolphinVersionResponse } from "./types";
+import { DolphinLaunchType } from "./types";
 import { findDolphinExecutable } from "./util";
 
 function logDownloadInfo(message: string): void {

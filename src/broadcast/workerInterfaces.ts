@@ -1,10 +1,10 @@
 import { dolphinManager } from "@dolphin/manager";
-import { ReplayCommunication } from "@dolphin/types";
+import type { ReplayCommunication } from "@dolphin/types";
 import { app } from "electron";
 import electronLog from "electron-log";
 import { spawn, Thread, Worker } from "threads";
 
-import { Methods as BroadcastWorkerMethods, WorkerSpec as BroadcastWorkerSpec } from "./broadcastWorker";
+import type { Methods as BroadcastWorkerMethods, WorkerSpec as BroadcastWorkerSpec } from "./broadcastWorker";
 import {
   ipc_broadcastErrorOccurredEvent,
   ipc_broadcastListUpdatedEvent,
@@ -13,8 +13,8 @@ import {
   ipc_slippiStatusChangedEvent,
   ipc_spectateReconnect,
 } from "./ipc";
-import { Methods as SpectateWorkerMethods, WorkerSpec as SpectateWorkerSpec } from "./spectateWorker";
-import { BroadcasterItem } from "./types";
+import type { Methods as SpectateWorkerMethods, WorkerSpec as SpectateWorkerSpec } from "./spectateWorker";
+import type { BroadcasterItem } from "./types";
 
 const log = electronLog.scope("broadcast/workerInterface");
 const broadcastLog = electronLog.scope("broadcastManager");

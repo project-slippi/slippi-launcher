@@ -6,9 +6,10 @@ import {
   ipc_reinstallDolphin,
   ipc_viewSlpReplay,
 } from "@dolphin/ipc";
-import { DolphinLaunchType, ReplayQueueItem } from "@dolphin/types";
+import type { ReplayQueueItem } from "@dolphin/types";
+import { DolphinLaunchType } from "@dolphin/types";
 import electronLog from "electron-log";
-import { MainEndpointResponse } from "ipc";
+import type { MainEndpointResponse } from "ipc";
 import { useToasts } from "react-toast-notifications";
 import create from "zustand";
 import { combine } from "zustand/middleware";

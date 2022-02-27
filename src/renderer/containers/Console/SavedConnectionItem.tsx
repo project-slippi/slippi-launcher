@@ -10,7 +10,7 @@ import CardHeader from "@material-ui/core/CardHeader";
 import IconButton from "@material-ui/core/IconButton";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import WarningIcon from "@material-ui/icons/Warning";
-import { StoredConnection } from "@settings/types";
+import type { StoredConnection } from "@settings/types";
 import { ConnectionStatus, Ports } from "@slippi/slippi-js";
 import path from "path";
 import React from "react";

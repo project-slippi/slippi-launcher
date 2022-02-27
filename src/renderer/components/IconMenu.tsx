@@ -2,7 +2,8 @@
 import { css, jsx } from "@emotion/react";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import Menu, { MenuProps } from "@material-ui/core/Menu";
+import type { MenuProps } from "@material-ui/core/Menu";
+import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import React from "react";
 

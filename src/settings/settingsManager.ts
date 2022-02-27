@@ -7,7 +7,7 @@ import set from "lodash/set";
 
 import { defaultAppSettings } from "./defaultSettings";
 import { ipc_settingsUpdatedEvent } from "./ipc";
-import { AppSettings, StoredConnection } from "./types";
+import type { AppSettings, StoredConnection } from "./types";
 
 electronSettings.configure({
   fileName: "Settings",

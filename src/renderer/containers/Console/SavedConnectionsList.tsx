@@ -1,10 +1,10 @@
 import { ipc_getLatestGitHubReleaseVersion } from "@common/ipc";
-import { DiscoveredConsoleInfo } from "@console/types";
+import type { DiscoveredConsoleInfo } from "@console/types";
 import styled from "@emotion/styled";
 import CreateIcon from "@material-ui/icons/Create";
 import DeleteIcon from "@material-ui/icons/Delete";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
-import { StoredConnection } from "@settings/types";
+import type { StoredConnection } from "@settings/types";
 import { ConnectionStatus } from "@slippi/slippi-js";
 import React from "react";
 

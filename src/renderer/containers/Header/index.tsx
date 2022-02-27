@@ -24,7 +24,8 @@ import slippiLogo from "@/styles/images/slippi-logo.svg";
 import { platformTitleBarStyles } from "@/styles/platformTitleBarStyles";
 
 import { ActivateOnlineDialog } from "./ActivateOnlineDialog";
-import { MainMenu, MenuItem } from "./MainMenu";
+import type { MenuItem } from "./MainMenu";
+import { MainMenu } from "./MainMenu";
 import { StartGameDialog } from "./StartGameDialog";
 import { UserMenu } from "./UserMenu";
 

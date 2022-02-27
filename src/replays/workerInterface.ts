@@ -2,7 +2,7 @@ import { app } from "electron";
 import electronLog from "electron-log";
 import { spawn, Thread, Worker } from "threads";
 
-import { Methods as WorkerMethods, WorkerSpec } from "./worker";
+import type { Methods as WorkerMethods, WorkerSpec } from "./worker";
 
 const log = electronLog.scope("replays/workerInterface");
 

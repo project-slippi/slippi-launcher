@@ -1,7 +1,7 @@
 import { ipc_connectToConsoleMirror, ipc_disconnectFromConsoleMirror, ipc_startMirroring } from "@console/ipc";
-import { MirrorConfig } from "@console/types";
+import type { MirrorConfig } from "@console/types";
 import { ipc_addNewConnection, ipc_deleteConnection, ipc_editConnection } from "@settings/ipc";
-import { StoredConnection } from "@settings/types";
+import type { StoredConnection } from "@settings/types";
 import { Ports } from "@slippi/slippi-js";
 
 export type EditConnectionType = Omit<StoredConnection, "id">;

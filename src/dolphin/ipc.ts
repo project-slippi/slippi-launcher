@@ -1,5 +1,6 @@
-import { _, EmptyPayload, makeEndpoint, SuccessPayload } from "../ipc";
-import { DolphinLaunchType, PlayKey, ReplayQueueItem } from "./types";
+import type { EmptyPayload, SuccessPayload } from "../ipc";
+import { _, makeEndpoint } from "../ipc";
+import type { DolphinLaunchType, PlayKey, ReplayQueueItem } from "./types";
 
 // Handlers
 

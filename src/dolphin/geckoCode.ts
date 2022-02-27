@@ -1,4 +1,4 @@
-import { IniFile } from "./iniFile";
+import type { IniFile } from "./iniFile";
 
 export interface GeckoCode {
   name: string;

@@ -3,7 +3,7 @@ import * as fs from "fs-extra";
 import path from "path";
 
 import { loadFile } from "./loadFile";
-import { FileLoadResult, FileResult } from "./types";
+import type { FileLoadResult, FileResult } from "./types";
 
 export async function loadFolder(
   folder: string,

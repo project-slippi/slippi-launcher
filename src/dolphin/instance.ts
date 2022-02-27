@@ -1,4 +1,5 @@
-import { ChildProcess, execFile, spawn } from "child_process";
+import type { ChildProcess } from "child_process";
+import { execFile, spawn } from "child_process";
 import { randomBytes } from "crypto";
 import { app } from "electron";
 import electronLog from "electron-log";
@@ -8,7 +9,7 @@ import path from "path";
 
 import { isMac } from "../common/constants";
 import { fileExists } from "../main/fileExists";
-import { ReplayCommunication } from "./types";
+import type { ReplayCommunication } from "./types";
 
 const log = electronLog.scope("dolphin/instance");
 

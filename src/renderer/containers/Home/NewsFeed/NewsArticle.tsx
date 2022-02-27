@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { NewsItem } from "@common/types";
+import type { NewsItem } from "@common/types";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";

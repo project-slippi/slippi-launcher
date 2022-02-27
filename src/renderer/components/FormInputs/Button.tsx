@@ -1,7 +1,8 @@
 /** @jsx jsx */
 import { colors } from "@common/colors";
 import { css, jsx } from "@emotion/react";
-import MatButton, { ButtonProps } from "@material-ui/core/Button";
+import type { ButtonProps } from "@material-ui/core/Button";
+import MatButton from "@material-ui/core/Button";
 
 export const Button: React.FC<ButtonProps> = (props) => {
   const { children, ...rest } = props;

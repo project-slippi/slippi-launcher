@@ -10,7 +10,7 @@ import LandscapeIcon from "@material-ui/icons/Landscape";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import PlayCircleOutlineIcon from "@material-ui/icons/PlayCircleOutline";
 import TimerIcon from "@material-ui/icons/Timer";
-import { FileResult } from "@replays/types";
+import type { FileResult } from "@replays/types";
 import { stages as stageUtils } from "@slippi/slippi-js";
 import _ from "lodash";
 import moment from "moment";

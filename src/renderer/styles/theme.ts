@@ -1,5 +1,6 @@
 import { colors } from "@common/colors";
-import { createMuiTheme, Theme } from "@material-ui/core/styles";
+import type { Theme } from "@material-ui/core/styles";
+import { createMuiTheme } from "@material-ui/core/styles";
 
 import { withFont } from "./withFont";
 

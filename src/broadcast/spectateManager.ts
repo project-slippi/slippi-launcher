@@ -2,9 +2,11 @@ import { SlpFileWriter, SlpFileWriterEvent } from "@slippi/slippi-js";
 import { EventEmitter } from "events";
 import * as fs from "fs-extra";
 import _ from "lodash";
-import { client as WebSocketClient, connection, IMessage } from "websocket";
+import type { connection, IMessage } from "websocket";
+import { client as WebSocketClient } from "websocket";
 
-import { BroadcasterItem, SpectateEvent } from "./types";
+import type { BroadcasterItem } from "./types";
+import { SpectateEvent } from "./types";
 
 const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
 

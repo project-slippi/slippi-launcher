@@ -1,6 +1,7 @@
 import { isMac } from "@common/constants";
 import mousetrap from "mousetrap";
-import { RefObject, useCallback, useEffect } from "react";
+import type { RefObject } from "react";
+import { useCallback, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 
 // Map Ctrl + 1 to be the first page, Ctrl + 2 to be the second page etc.

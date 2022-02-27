@@ -1,7 +1,7 @@
 import { app } from "electron";
 import path from "path";
 
-import { AppSettings } from "./types";
+import type { AppSettings } from "./types";
 
 function getDefaultRootSlpPath(): string {
   let root = app.getPath("home");

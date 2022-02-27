@@ -1,6 +1,7 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/react";
-import MatCheckbox, { CheckboxProps as MatCheckboxProps } from "@material-ui/core/Checkbox";
+import type { CheckboxProps as MatCheckboxProps } from "@material-ui/core/Checkbox";
+import MatCheckbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Tooltip from "@material-ui/core/Tooltip";
 

@@ -1,5 +1,5 @@
 import { ipc_refreshBroadcastList } from "@broadcast/ipc";
-import { BroadcasterItem } from "@broadcast/types";
+import type { BroadcasterItem } from "@broadcast/types";
 import throttle from "lodash/throttle";
 import { useToasts } from "react-toast-notifications";
 import create from "zustand";

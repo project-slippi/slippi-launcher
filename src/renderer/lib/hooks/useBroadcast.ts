@@ -1,5 +1,5 @@
 import { ipc_startBroadcast, ipc_stopBroadcast } from "@broadcast/ipc";
-import { StartBroadcastConfig } from "@broadcast/types";
+import type { StartBroadcastConfig } from "@broadcast/types";
 import electronLog from "electron-log";
 
 import { useAccount } from "./useAccount";

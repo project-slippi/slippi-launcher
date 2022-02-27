@@ -10,7 +10,7 @@ import {
   ipc_setSpectateSlpPath,
   ipc_setUseMonthlySubfolders,
 } from "@settings/ipc";
-import { AppSettings } from "@settings/types";
+import type { AppSettings } from "@settings/types";
 import { ipcRenderer } from "electron";
 import { useCallback } from "react";
 import create from "zustand";

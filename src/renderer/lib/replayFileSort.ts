@@ -1,5 +1,5 @@
 import { extractAllPlayerNames, namesMatch } from "@common/matchNames";
-import { FileResult } from "@replays/types";
+import type { FileResult } from "@replays/types";
 import { Frames } from "@slippi/slippi-js";
 import compareFunc from "compare-func";
 

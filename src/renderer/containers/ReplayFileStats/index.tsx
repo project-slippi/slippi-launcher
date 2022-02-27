@@ -9,7 +9,7 @@ import ErrorIcon from "@material-ui/icons/Error";
 import FolderIcon from "@material-ui/icons/Folder";
 import HelpIcon from "@material-ui/icons/Help";
 import { ipc_calculateGameStats } from "@replays/ipc";
-import { FileResult } from "@replays/types";
+import type { FileResult } from "@replays/types";
 import { shell } from "electron";
 import _ from "lodash";
 import React from "react";

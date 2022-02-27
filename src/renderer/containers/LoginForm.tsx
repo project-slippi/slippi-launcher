@@ -7,7 +7,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
-import firebase from "firebase";
+import type firebase from "firebase";
 import React from "react";
 import create from "zustand";
 import { combine } from "zustand/middleware";

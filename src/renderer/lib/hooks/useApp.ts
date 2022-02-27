@@ -1,7 +1,7 @@
 import { ipc_checkForUpdate } from "@common/ipc";
 import { ipc_checkDesktopAppDolphin, ipc_dolphinDownloadFinishedEvent, ipc_downloadDolphin } from "dolphin/ipc";
 import electronLog from "electron-log";
-import firebase from "firebase";
+import type firebase from "firebase";
 import { useToasts } from "react-toast-notifications";
 import create from "zustand";
 import { combine } from "zustand/middleware";

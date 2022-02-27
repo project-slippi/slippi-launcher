@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
-import { OverridableComponent } from "@material-ui/core/OverridableComponent";
-import { SvgIconTypeMap } from "@material-ui/core/SvgIcon";
+import type { OverridableComponent } from "@material-ui/core/OverridableComponent";
+import type { SvgIconTypeMap } from "@material-ui/core/SvgIcon";
 import Typography from "@material-ui/core/Typography";
 import React from "react";
 

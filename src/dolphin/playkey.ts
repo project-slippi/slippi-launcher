@@ -1,4 +1,5 @@
-import { DolphinLaunchType, PlayKey } from "@dolphin/types";
+import type { PlayKey } from "@dolphin/types";
+import { DolphinLaunchType } from "@dolphin/types";
 import * as fs from "fs-extra";
 import os from "os";
 import path from "path";

@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { DiscoveredConsoleInfo } from "@console/types";
+import type { DiscoveredConsoleInfo } from "@console/types";
 import { css, jsx } from "@emotion/react";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import React from "react";

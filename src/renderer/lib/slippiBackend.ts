@@ -1,10 +1,10 @@
 import { ApolloClient, ApolloLink, gql, HttpLink, InMemoryCache } from "@apollo/client";
 import { isDevelopment } from "@common/constants";
 import { ipc_checkPlayKeyExists, ipc_removePlayKeyFile, ipc_storePlayKeyFile } from "@dolphin/ipc";
-import { PlayKey } from "@dolphin/types";
+import type { PlayKey } from "@dolphin/types";
 import electronLog from "electron-log";
 import firebase from "firebase";
-import { GraphQLError } from "graphql";
+import type { GraphQLError } from "graphql";
 
 const log = electronLog.scope("slippiBackend");
 

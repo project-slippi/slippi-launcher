@@ -1,5 +1,5 @@
 import { ipc_initializeFolderTree, ipc_loadReplayFolder, ipc_selectTreeFolder } from "@replays/ipc";
-import { FileLoadResult, FileResult, FolderResult, Progress } from "@replays/types";
+import type { FileLoadResult, FileResult, FolderResult, Progress } from "@replays/types";
 import { produce } from "immer";
 import { useState } from "react";
 import create from "zustand";

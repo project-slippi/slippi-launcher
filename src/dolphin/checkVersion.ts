@@ -1,9 +1,9 @@
 import { ApolloClient, gql, HttpLink, InMemoryCache } from "@apollo/client";
 import { isDevelopment } from "@common/constants";
 import { fetch } from "cross-fetch";
-import { GraphQLError } from "graphql";
+import type { GraphQLError } from "graphql";
 
-import { DolphinLaunchType, DolphinVersionResponse } from "./types";
+import type { DolphinLaunchType, DolphinVersionResponse } from "./types";
 
 const httpLink = new HttpLink({ uri: process.env.SLIPPI_GRAPHQL_ENDPOINT, fetch });
 

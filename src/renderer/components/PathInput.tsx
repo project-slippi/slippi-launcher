@@ -3,7 +3,8 @@ import Button from "@material-ui/core/Button";
 import InputBase from "@material-ui/core/InputBase";
 import Paper from "@material-ui/core/Paper";
 import Tooltip from "@material-ui/core/Tooltip";
-import { OpenDialogOptions, remote } from "electron";
+import type { OpenDialogOptions } from "electron";
+import { remote } from "electron";
 import React from "react";
 
 export interface PathInputProps {

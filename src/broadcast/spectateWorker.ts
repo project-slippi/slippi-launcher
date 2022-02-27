@@ -2,12 +2,13 @@
 // fails to obtain the paths required for file transport to work
 // when in Node worker context.
 
-import { ModuleMethods } from "threads/dist/types/master";
+import type { ModuleMethods } from "threads/dist/types/master";
 import { Observable, Subject } from "threads/observable";
 import { expose } from "threads/worker";
 
 import { SpectateManager } from "./spectateManager";
-import { BroadcasterItem, SpectateEvent } from "./types";
+import type { BroadcasterItem } from "./types";
+import { SpectateEvent } from "./types";
 
 export interface Methods {
   destroyWorker: () => Promise<void>;

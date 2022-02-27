@@ -1,5 +1,6 @@
-import { _, makeEndpoint, SuccessPayload } from "../ipc";
-import { AppSettings, StoredConnection } from "./types";
+import type { SuccessPayload } from "../ipc";
+import { _, makeEndpoint } from "../ipc";
+import type { AppSettings, StoredConnection } from "./types";
 
 // Handlers
 

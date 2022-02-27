@@ -1,12 +1,10 @@
+import type { ConnectionDetails, GameEndType, PostFrameUpdateType } from "@slippi/slippi-js";
 import {
   Command,
-  ConnectionDetails,
   ConnectionEvent,
   ConnectionStatus,
   ConsoleConnection,
-  GameEndType,
   Ports,
-  PostFrameUpdateType,
   SlpFileWriter,
   SlpFileWriterEvent,
   SlpStreamEvent,
@@ -17,7 +15,8 @@ import path from "path";
 
 import { AutoSwitcher } from "./autoSwitcher";
 import { ConsoleRelay } from "./consoleRelay";
-import { MirrorConfig, MirrorDetails, MirrorEvent } from "./types";
+import type { MirrorConfig, MirrorDetails } from "./types";
+import { MirrorEvent } from "./types";
 
 /**
  * Responsible for setting up and keeping track of active console connections and mirroring.

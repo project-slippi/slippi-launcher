@@ -2,12 +2,13 @@
 // fails to obtain the paths required for file transport to work
 // when in Node worker context.
 
-import { ModuleMethods } from "threads/dist/types/master";
+import type { ModuleMethods } from "threads/dist/types/master";
 import { Observable, Subject } from "threads/observable";
 import { expose } from "threads/worker";
 
 import { MirrorManager } from "./mirrorManager";
-import { ConsoleMirrorStatusUpdate, MirrorConfig, MirrorEvent } from "./types";
+import type { ConsoleMirrorStatusUpdate, MirrorConfig } from "./types";
+import { MirrorEvent } from "./types";
 
 export interface Methods {
   destroyWorker: () => Promise<void>;

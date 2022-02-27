@@ -6,7 +6,8 @@ import { fileExists } from "main/fileExists";
 import os from "os";
 import path from "path";
 
-import { GeckoCode, loadGeckoCodes, saveCodes } from "./geckoCode";
+import type { GeckoCode } from "./geckoCode";
+import { loadGeckoCodes, saveCodes } from "./geckoCode";
 import { IniFile } from "./iniFile";
 import { DolphinLaunchType } from "./types";
 

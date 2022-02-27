@@ -3,11 +3,12 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import EditIcon from "@material-ui/icons/Edit";
 import EjectIcon from "@material-ui/icons/Eject";
 import LanguageIcon from "@material-ui/icons/Language";
-import firebase from "firebase";
+import type firebase from "firebase";
 import React from "react";
 
 import { ConfirmationModal } from "@/components/ConfirmationModal";
-import { IconMenu, IconMenuItem } from "@/components/IconMenu";
+import type { IconMenuItem } from "@/components/IconMenu";
+import { IconMenu } from "@/components/IconMenu";
 import { logout } from "@/lib/firebase";
 import { useAccount } from "@/lib/hooks/useAccount";
 

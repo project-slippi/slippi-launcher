@@ -1,5 +1,6 @@
-import { _, EmptyPayload, makeEndpoint, SuccessPayload } from "../ipc";
-import { BroadcasterItem, StartBroadcastConfig } from "./types";
+import type { EmptyPayload, SuccessPayload } from "../ipc";
+import { _, makeEndpoint } from "../ipc";
+import type { BroadcasterItem, StartBroadcastConfig } from "./types";
 
 // Handlers
 
