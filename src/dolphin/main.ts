@@ -1,6 +1,7 @@
 import { isLinux, isMac } from "common/constants";
 import { app } from "electron";
 import * as fs from "fs-extra";
+import { isEqual } from "lodash";
 import path from "path";
 
 import { fileExists } from "../main/fileExists";
@@ -52,9 +53,14 @@ ipc_storePlayKeyFile.main!.handle(async ({ key }) => {
   return { success: true };
 });
 
-ipc_checkPlayKeyExists.main!.handle(async () => {
+ipc_checkPlayKeyExists.main!.handle(async ({ key }) => {
   const keyPath = await findPlayKey();
   const exists = await fileExists(keyPath);
+  if (exists) {
+    const jsonKey = await fs.readFile(keyPath);
+    const storedKey = JSON.parse(jsonKey.toString());
+    return { exists: isEqual(storedKey, key) };
+  }
   return { exists };
 });
 

@@ -119,7 +119,7 @@ export async function fetchPlayKey(): Promise<PlayKey | null> {
 }
 
 export async function assertPlayKey(playKey: PlayKey) {
-  const playKeyExistsResult = await ipc_checkPlayKeyExists.renderer!.trigger({});
+  const playKeyExistsResult = await ipc_checkPlayKeyExists.renderer!.trigger({ key: playKey });
   if (!playKeyExistsResult.result) {
     log.error("Error checking for play key.", playKeyExistsResult.errors);
     throw new Error("Error checking for play key");
