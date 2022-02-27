@@ -38,7 +38,9 @@ export async function findDolphinExecutable(type: DolphinLaunchType, dolphinPath
   });
 
   if (!result) {
-    throw new Error(`No ${type} Dolphin found in: ${dolphinPath}, try resetting dolphin`);
+    throw new Error(
+      `No ${type} Dolphin found in: ${dolphinPath}, try restarting the launcher. Ask in the Slippi Discord's support channels for further help`,
+    );
   }
 
   if (process.platform === "darwin") {
