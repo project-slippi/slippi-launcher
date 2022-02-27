@@ -1,4 +1,3 @@
-import { ipc_clearTempFolder } from "@common/ipc";
 import Button from "@material-ui/core/Button";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
@@ -29,8 +28,8 @@ export const AdvancedAppSettings = React.memo(() => {
 const ClearTempFilesForm = React.memo(() => {
   const { addToast } = useToasts();
   const onClear = React.useCallback(() => {
-    ipc_clearTempFolder
-      .renderer!.trigger({})
+    window.electron.common
+      .clearTempFolder()
       .then(() => {
         addToast("Successfully cleared temporary files.", { autoDismiss: true });
       })

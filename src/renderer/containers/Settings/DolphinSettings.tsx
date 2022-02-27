@@ -5,8 +5,6 @@ import { css, jsx } from "@emotion/react";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
-import { remote, shell } from "electron";
-import electronLog from "electron-log";
 import capitalize from "lodash/capitalize";
 import React from "react";
 
@@ -18,7 +16,7 @@ import { useDolphinPath } from "@/lib/hooks/useSettings";
 
 import { SettingItem } from "./SettingItem";
 
-const log = electronLog.scope("DolphinSettings");
+const log = console;
 
 export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolphinType }) => {
   const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
@@ -30,7 +28,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   const { openConfigureDolphin, reinstallDolphin, clearDolphinCache } = useDolphin();
 
   const openDolphinDirectoryHandler = async () => {
-    shell.openItem(dolphinPath);
+    window.electron.shell.openPath(dolphinPath);
   };
 
   const configureDolphinHandler = async () => {
@@ -149,7 +147,7 @@ const ImportDolphinConfigForm: React.FC<{
   };
 
   const onImportClick = async () => {
-    const result = await remote.dialog.showOpenDialog({
+    const result = await window.electron.dialog.showOpenDialog({
       filters: [{ name: "Slippi Dolphin", extensions: [isMac ? "app" : "exe"] }],
     });
     const res = result.filePaths;

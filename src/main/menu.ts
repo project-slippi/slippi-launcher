@@ -1,183 +1,268 @@
-import { isMac } from "@common/constants";
-import type { MenuItemConstructorOptions } from "electron";
-import { app, dialog, Menu, shell } from "electron";
-import defaultMenu from "electron-default-menu";
-import { ipc_openSettingsModalEvent } from "settings/ipc";
+/* eslint-disable import/no-default-export */
+import type { BrowserWindow, MenuItemConstructorOptions } from "electron";
+import { app, Menu, shell } from "electron";
 
-/**
- * Is the passed object a constructor for an Electron Menu?
- *
- * @param {(Array<Electron.MenuItemConstructorOptions> | Electron.Menu)} [submenu]
- * @returns {submenu is Array<Electron.MenuItemConstructorOptions>}
- */
-function isSubmenu(submenu?: Array<MenuItemConstructorOptions> | Menu): submenu is Array<MenuItemConstructorOptions> {
-  return !!submenu && Array.isArray(submenu);
+interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
+  selector?: string;
+  submenu?: DarwinMenuItemConstructorOptions[] | Menu;
 }
 
-/**
- * Depending on the OS, the `Preferences` either go into the `Slippi Launcher`
- * menu (macOS) or under `File` (Linux, Windows).
- *
- * @returns {Array<Electron.MenuItemConstructorOptions>}
- */
-function getPreferencesItems(createRootWindow: () => void): Array<MenuItemConstructorOptions> {
-  return [
-    {
-      type: "separator",
-    },
-    {
-      label: "Preferences",
-      accelerator: "CmdOrCtrl+,",
-      click() {
-        // This should effectively noop if the root window is already open,
-        // but is here for the cases where the user closed the window but hits preferences
-        // or the key command and we need to reopen it.
-        createRootWindow();
-        void ipc_openSettingsModalEvent.main!.trigger({}); //.then(() => {});
-      },
-    },
-    {
-      type: "separator",
-    },
-  ];
-}
+export default class MenuBuilder {
+  public mainWindow: BrowserWindow;
 
-/**
- * Depending on the OS, the `Quit` item either goes into the `Slippi Launcher`
- * menu (macOS) or under `File` (Linux, Windows).
- *
- * @returns {Array<Electron.MenuItemConstructorOptions>}
- */
-function getQuitItems(): Array<MenuItemConstructorOptions> {
-  return [
-    {
-      type: "separator",
-    },
-    {
-      role: "quit",
-    },
-  ];
-}
-
-/**
- * Returns the top-level "File" menu.
- *
- * @returns {Array<Electron.MenuItemConstructorOptions>}
- */
-function getFileMenu(
-  createRootWindow: () => void,
-  handleSlippiURI: (filePath: string) => void,
-): MenuItemConstructorOptions {
-  const fileMenu: Array<MenuItemConstructorOptions> = [
-    {
-      label: "Open Slippi Replay",
-      click: () => {
-        void dialog.showOpenDialog({ properties: ["openFile"] }).then(function (response) {
-          if (!response.canceled) {
-            handleSlippiURI(response.filePaths[0]);
-          }
-        });
-      },
-      accelerator: "CmdOrCtrl+O",
-    },
-    {
-      type: "separator",
-    },
-  ];
-
-  // macOS has these items in the "Application" menu
-  if (!isMac) {
-    fileMenu.splice(fileMenu.length, 0, ...getPreferencesItems(createRootWindow), ...getQuitItems());
+  public constructor(mainWindow: BrowserWindow) {
+    this.mainWindow = mainWindow;
   }
 
-  return {
-    label: "File",
-    submenu: fileMenu,
-  };
-}
+  public buildMenu(): Menu {
+    if (process.env.NODE_ENV === "development" || process.env.DEBUG_PROD === "true") {
+      this.setupDevelopmentEnvironment();
+    }
 
-/**
- * Returns additional items for the help menu
- *
- * @returns {Array<Electron.MenuItemConstructorOptions>}
- */
-function getHelpItems(): Array<MenuItemConstructorOptions> {
-  const items: MenuItemConstructorOptions[] = [];
+    const template = process.platform === "darwin" ? this.buildDarwinTemplate() : this.buildDefaultTemplate();
 
-  items.push(
-    { type: "separator" },
-    {
-      label: "Open Slippi Discord Server",
-      click() {
-        void shell.openExternal("http://discord.gg/pPfEaW5");
-      },
-    },
-  );
+    const menu = Menu.buildFromTemplate(template);
+    Menu.setApplicationMenu(menu);
 
-  // on macOS, there's already the About Slippi Launcher menu item
-  // under the first submenu set by the electron-default-menu package
-  if (!isMac) {
-    items.push(
-      { type: "separator" },
+    return menu;
+  }
+
+  public setupDevelopmentEnvironment(): void {
+    this.mainWindow.webContents.on("context-menu", (_, props) => {
+      const { x, y } = props;
+
+      Menu.buildFromTemplate([
+        {
+          label: "Inspect element",
+          click: () => {
+            this.mainWindow.webContents.inspectElement(x, y);
+          },
+        },
+      ]).popup({ window: this.mainWindow });
+    });
+  }
+
+  public buildDarwinTemplate(): MenuItemConstructorOptions[] {
+    const subMenuAbout: DarwinMenuItemConstructorOptions = {
+      label: "Electron",
+      submenu: [
+        {
+          label: "About ElectronReact",
+          selector: "orderFrontStandardAboutPanel:",
+        },
+        { type: "separator" },
+        { label: "Services", submenu: [] },
+        { type: "separator" },
+        {
+          label: "Hide ElectronReact",
+          accelerator: "Command+H",
+          selector: "hide:",
+        },
+        {
+          label: "Hide Others",
+          accelerator: "Command+Shift+H",
+          selector: "hideOtherApplications:",
+        },
+        { label: "Show All", selector: "unhideAllApplications:" },
+        { type: "separator" },
+        {
+          label: "Quit",
+          accelerator: "Command+Q",
+          click: () => {
+            app.quit();
+          },
+        },
+      ],
+    };
+    const subMenuEdit: DarwinMenuItemConstructorOptions = {
+      label: "Edit",
+      submenu: [
+        { label: "Undo", accelerator: "Command+Z", selector: "undo:" },
+        { label: "Redo", accelerator: "Shift+Command+Z", selector: "redo:" },
+        { type: "separator" },
+        { label: "Cut", accelerator: "Command+X", selector: "cut:" },
+        { label: "Copy", accelerator: "Command+C", selector: "copy:" },
+        { label: "Paste", accelerator: "Command+V", selector: "paste:" },
+        {
+          label: "Select All",
+          accelerator: "Command+A",
+          selector: "selectAll:",
+        },
+      ],
+    };
+    const subMenuViewDev: MenuItemConstructorOptions = {
+      label: "View",
+      submenu: [
+        {
+          label: "Reload",
+          accelerator: "Command+R",
+          click: () => {
+            this.mainWindow.webContents.reload();
+          },
+        },
+        {
+          label: "Toggle Full Screen",
+          accelerator: "Ctrl+Command+F",
+          click: () => {
+            this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
+          },
+        },
+        {
+          label: "Toggle Developer Tools",
+          accelerator: "Alt+Command+I",
+          click: () => {
+            this.mainWindow.webContents.toggleDevTools();
+          },
+        },
+      ],
+    };
+    const subMenuViewProd: MenuItemConstructorOptions = {
+      label: "View",
+      submenu: [
+        {
+          label: "Toggle Full Screen",
+          accelerator: "Ctrl+Command+F",
+          click: () => {
+            this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
+          },
+        },
+      ],
+    };
+    const subMenuWindow: DarwinMenuItemConstructorOptions = {
+      label: "Window",
+      submenu: [
+        {
+          label: "Minimize",
+          accelerator: "Command+M",
+          selector: "performMiniaturize:",
+        },
+        { label: "Close", accelerator: "Command+W", selector: "performClose:" },
+        { type: "separator" },
+        { label: "Bring All to Front", selector: "arrangeInFront:" },
+      ],
+    };
+    const subMenuHelp: MenuItemConstructorOptions = {
+      label: "Help",
+      submenu: [
+        {
+          label: "Learn More",
+          click() {
+            void shell.openExternal("https://electronjs.org");
+          },
+        },
+        {
+          label: "Documentation",
+          click() {
+            void shell.openExternal("https://github.com/electron/electron/tree/main/docs#readme");
+          },
+        },
+        {
+          label: "Community Discussions",
+          click() {
+            void shell.openExternal("https://www.electronjs.org/community");
+          },
+        },
+        {
+          label: "Search Issues",
+          click() {
+            void shell.openExternal("https://github.com/electron/electron/issues");
+          },
+        },
+      ],
+    };
+
+    const subMenuView =
+      process.env.NODE_ENV === "development" || process.env.DEBUG_PROD === "true" ? subMenuViewDev : subMenuViewProd;
+
+    return [subMenuAbout, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
+  }
+
+  public buildDefaultTemplate() {
+    const templateDefault = [
       {
-        label: "About Slippi Launcher",
-        click() {
-          app.showAboutPanel();
-        },
+        label: "&File",
+        submenu: [
+          {
+            label: "&Open",
+            accelerator: "Ctrl+O",
+          },
+          {
+            label: "&Close",
+            accelerator: "Ctrl+W",
+            click: () => {
+              this.mainWindow.close();
+            },
+          },
+        ],
       },
-    );
+      {
+        label: "&View",
+        submenu:
+          process.env.NODE_ENV === "development" || process.env.DEBUG_PROD === "true"
+            ? [
+                {
+                  label: "&Reload",
+                  accelerator: "Ctrl+R",
+                  click: () => {
+                    this.mainWindow.webContents.reload();
+                  },
+                },
+                {
+                  label: "Toggle &Full Screen",
+                  accelerator: "F11",
+                  click: () => {
+                    this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
+                  },
+                },
+                {
+                  label: "Toggle &Developer Tools",
+                  accelerator: "Alt+Ctrl+I",
+                  click: () => {
+                    this.mainWindow.webContents.toggleDevTools();
+                  },
+                },
+              ]
+            : [
+                {
+                  label: "Toggle &Full Screen",
+                  accelerator: "F11",
+                  click: () => {
+                    this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
+                  },
+                },
+              ],
+      },
+      {
+        label: "Help",
+        submenu: [
+          {
+            label: "Learn More",
+            click() {
+              void shell.openExternal("https://electronjs.org");
+            },
+          },
+          {
+            label: "Documentation",
+            click() {
+              void shell.openExternal("https://github.com/electron/electron/tree/main/docs#readme");
+            },
+          },
+          {
+            label: "Community Discussions",
+            click() {
+              void shell.openExternal("https://www.electronjs.org/community");
+            },
+          },
+          {
+            label: "Search Issues",
+            click() {
+              void shell.openExternal("https://github.com/electron/electron/issues");
+            },
+          },
+        ],
+      },
+    ];
+
+    return templateDefault;
   }
-
-  return items;
 }
-
-const generateMenuTemplate = (
-  createRootWindow: () => void,
-  handleSlippiURI: (filePath: string) => void,
-): MenuItemConstructorOptions[] => {
-  const menu = (defaultMenu(app, shell) as Array<MenuItemConstructorOptions>).map((item) => {
-    const { label } = item;
-
-    // Append the "Settings" item
-    if (isMac && label === app.name && isSubmenu(item.submenu)) {
-      item.submenu.splice(2, 0, ...getPreferencesItems(createRootWindow));
-    }
-
-    // Tweak "View" menu
-    if (label === "View" && isSubmenu(item.submenu)) {
-      item.submenu.push({ type: "separator" }, { role: "resetZoom" }, { role: "zoomIn" }, { role: "zoomOut" });
-    }
-
-    if (isMac && label === "Window" && isSubmenu(item.submenu)) {
-      item.submenu.push({
-        id: "macos-window-toggle",
-        label: "Slippi Launcher",
-        accelerator: "Cmd+0",
-        visible: false,
-        enabled: false,
-        click(menuItem) {
-          menuItem.enabled = false;
-          menuItem.visible = false;
-          createRootWindow();
-        },
-      });
-    }
-
-    // Append items to "Help"
-    if (label === "Help" && isSubmenu(item.submenu)) {
-      item.submenu = getHelpItems();
-    }
-
-    return item;
-  });
-
-  menu.splice(isMac ? 1 : 0, 0, getFileMenu(createRootWindow, handleSlippiURI));
-
-  return menu;
-};
-
-export const generateMenu = (createRootWindow: () => void, handleSlippiURI: (filePath: string) => void) => {
-  const template = generateMenuTemplate(createRootWindow, handleSlippiURI);
-  const menu = Menu.buildFromTemplate(template);
-  return menu;
-};

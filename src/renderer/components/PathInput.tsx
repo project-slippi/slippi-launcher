@@ -4,7 +4,6 @@ import InputBase from "@material-ui/core/InputBase";
 import Paper from "@material-ui/core/Paper";
 import Tooltip from "@material-ui/core/Tooltip";
 import type { OpenDialogOptions } from "electron";
-import { remote } from "electron";
 import React from "react";
 
 export interface PathInputProps {
@@ -20,7 +19,7 @@ export interface PathInputProps {
 export const PathInput = React.forwardRef<HTMLInputElement, PathInputProps>((props, ref) => {
   const { value, placeholder, endAdornment, onSelect, options, disabled, tooltipText } = props;
   const onClick = async () => {
-    const result = await remote.dialog.showOpenDialog({ properties: ["openFile"], ...options });
+    const result = await window.electron.dialog.showOpenDialog({ properties: ["openFile"], ...options });
     const res = result.filePaths;
     if (result.canceled || res.length === 0) {
       return;

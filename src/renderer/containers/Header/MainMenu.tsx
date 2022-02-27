@@ -5,7 +5,8 @@ import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
 import Tooltip from "@material-ui/core/Tooltip";
 import React from "react";
-import { Link, useHistory } from "react-router-dom";
+import type { LinkProps } from "react-router-dom";
+import { Link, useMatch, useResolvedPath } from "react-router-dom";
 
 export interface MenuItem {
   subpath: string;
@@ -18,12 +19,7 @@ export interface MainMenuProps {
   menuItems: MenuItem[];
 }
 
-export const MainMenu: React.FC<MainMenuProps> = ({ path, menuItems }) => {
-  const history = useHistory();
-  const isActive = (name: string): boolean => {
-    return history.location.pathname.startsWith(`${path}/${name}`);
-  };
-
+export const MainMenu: React.FC<MainMenuProps> = ({ menuItems }) => {
   return (
     <div
       css={css`
@@ -33,16 +29,33 @@ export const MainMenu: React.FC<MainMenuProps> = ({ path, menuItems }) => {
     >
       {menuItems.map((item) => {
         return (
-          <MenuButton key={item.subpath} selected={isActive(item.subpath)}>
-            <Tooltip title={item.title}>
-              <Button component={Link} to={`${path}/${item.subpath}`}>
-                {item.icon ? item.icon : item.title}
-              </Button>
-            </Tooltip>
-          </MenuButton>
+          <div key={item.subpath}>
+            <CustomLink to={item.subpath} title={item.title}>
+              {item.icon ? item.icon : item.title}
+            </CustomLink>
+          </div>
         );
       })}
     </div>
+  );
+};
+
+interface CustomLinkProps extends LinkProps {
+  title: string;
+}
+
+const CustomLink = ({ title, children, to, ...props }: CustomLinkProps) => {
+  const resolved = useResolvedPath(to);
+  const match = useMatch({ path: resolved.pathname, end: false });
+
+  return (
+    <MenuButton selected={match !== null}>
+      <Tooltip title={title}>
+        <Button component={Link} to={to} {...(props as any)}>
+          {children}
+        </Button>
+      </Tooltip>
+    </MenuButton>
   );
 };
 

@@ -1,4 +1,3 @@
-import { ipc_installUpdate } from "@common/ipc";
 import { useToasts } from "react-toast-notifications";
 
 export const useInstallAppUpdate = () => {
@@ -6,11 +5,15 @@ export const useInstallAppUpdate = () => {
 
   const installAppUpdate = async () => {
     try {
-      await ipc_installUpdate.renderer!.trigger({});
+      await window.electron.common.installAppUpdate();
     } catch (err) {
-      addToast(err.message ?? JSON.stringify(err), {
-        appearance: "error",
-      });
+      let message: string;
+      if (err instanceof Error) {
+        message = err.message;
+      } else {
+        message = JSON.stringify(err);
+      }
+      addToast(message, { appearance: "error" });
     }
   };
 

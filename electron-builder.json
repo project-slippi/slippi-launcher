@@ -1,22 +1,22 @@
 {
-  "productName": "Slippi Launcher",
-  "appId": "com.github.projectslippi.slippidesktopapp",
-  "afterSign": "build/afterSignHook.macos.js",
-  "directories": {
-    "buildResources": "resources",
-    "output": "release"
+  "productName": "ElectronReact",
+  "appId": "org.erb.ElectronReact",
+  "asar": true,
+  "asarUnpack": ["**\\*.{node,dll}", "**\\*.worker.js"],
+  "files": ["dist", "node_modules", "package.json"],
+  "afterSign": ".erb/scripts/notarize.js",
+  "mac": {
+    "target": {
+      "target": "default",
+      "arch": "universal"
+    },
+    "type": "distribution",
+    "hardenedRuntime": true,
+    "entitlements": "assets/entitlements.mac.plist",
+    "entitlementsInherit": "assets/entitlements.mac.plist",
+    "gatekeeperAssess": false
   },
-  "asarUnpack": [
-    "**/*.node",
-    "**/*.worker.js*",
-    "node_modules/source-map/**/*",
-    "node_modules/source-map-support/**/*",
-    "node_modules/buffer-from/**/*"
-  ],
-  "artifactName": "Slippi-Launcher-${version}-${os}.${ext}",
   "dmg": {
-    "artifactName": "Slippi-Launcher-${version}.${ext}",
-    "icon": "resources/icon.icns",
     "contents": [
       {
         "x": 130,
@@ -30,53 +30,22 @@
       }
     ]
   },
-  "fileAssociations": {
-    "ext": "slp",
-    "name": "slp",
-    "description": "Slippi File Format",
-    "icon": "./resources/file.ico"
-  },
-  "mac": {
-    "fileAssociations": {
-      "ext": "slp",
-      "role": "Viewer"
-    },
-    "hardenedRuntime": true,
-    "entitlements": "./build/entitlements.macos.plist",
-    "category": "public.app-category.games",
-    "target": ["dmg", "zip"],
-    "extendInfo": {
-      "NSAppTransportSecurity": {
-        "NSAllowsArbitraryLoads": true
-      }
-    },
-    "minimumSystemVersion": "10.13.6"
-  },
   "win": {
-    "target": ["nsis"],
-    "icon": "resources/icon.ico"
-  },
-  "nsis": {
-    "artifactName": "Slippi-Launcher-Setup-${version}.${ext}",
-    "perMachine": true,
-    "include": "./build/installer.nsh",
-    "warningsAsErrors": false,
-    "allowElevation": true,
-    "oneClick": false,
-    "allowToChangeInstallationDirectory": true
+    "target": ["nsis"]
   },
   "linux": {
     "target": ["AppImage"],
     "category": "Development"
   },
-  "appImage": {
-    "artifactName": "Slippi-Launcher-${version}-x86_64.${ext}"
+  "directories": {
+    "app": "release/app",
+    "buildResources": "assets",
+    "output": "release/build"
   },
-  "protocols": [
-    {
-      "name": "slippi",
-      "role": "Viewer",
-      "schemes": ["slippi"]
-    }
-  ]
+  "extraResources": ["./assets/**"],
+  "publish": {
+    "provider": "github",
+    "owner": "electron-react-boilerplate",
+    "repo": "electron-react-boilerplate"
+  }
 }

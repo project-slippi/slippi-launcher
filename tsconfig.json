@@ -1,6 +1,7 @@
 {
-  "extends": "./node_modules/electron-webpack/tsconfig-base.json",
   "compilerOptions": {
+    "target": "es2021",
+    "module": "commonjs",
     "lib": ["dom", "esnext"],
     "paths": {
       "@/*": ["renderer/*"],
@@ -9,27 +10,31 @@
       "@dolphin/*": ["dolphin/*"],
       "@replays/*": ["replays/*"],
       "@settings/*": ["settings/*"],
-      "@console/*": ["console/*"]
+      "@console/*": ["console/*"],
+      "@counter/*": ["counter/*"]
     },
-    "baseUrl": "src/",
-    "jsx": "react",
-    "noEmit": false,
-    "noEmitOnError": false,
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "strictPropertyInitialization": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
+    "declaration": true,
+    "declarationMap": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "@emotion/react",
     "strict": true,
-    "resolveJsonModule": true,
-    "alwaysStrict": true,
-    "strictFunctionTypes": true,
+    "pretty": true,
+    "sourceMap": true,
+    "baseUrl": "./src",
     "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "outDir": "release/app/dist"
   },
-  "exclude": ["node_modules", "packaging"]
+  "ts-node": {
+    "transpileOnly": true,
+    "require": ["tsconfig-paths/register"]
+  },
+  "exclude": ["test", "release/build", "release/app/dist", ".erb/dll"]
 }

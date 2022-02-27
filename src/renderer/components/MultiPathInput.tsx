@@ -4,7 +4,6 @@ import Button from "@material-ui/core/Button";
 import MatCheckbox from "@material-ui/core/Checkbox";
 import InputBase from "@material-ui/core/InputBase";
 import type { OpenDialogOptions } from "electron";
-import { remote } from "electron";
 import React, { useState } from "react";
 import { useToasts } from "react-toast-notifications";
 
@@ -52,7 +51,7 @@ export const MultiPathInput: React.FC<MultiPathInputProps> = ({ paths, updatePat
   };
 
   const onAddClick = async () => {
-    const result = await remote.dialog.showOpenDialog({ properties: ["openFile"], ...options });
+    const result = await window.electron.dialog.showOpenDialog({ properties: ["openFile"], ...options });
     const res = result.filePaths;
     if (result.canceled || res.length === 0) {
       return;

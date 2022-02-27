@@ -7,7 +7,7 @@ import type { DolphinLaunchType, DolphinVersionResponse } from "./types";
 
 const httpLink = new HttpLink({ uri: process.env.SLIPPI_GRAPHQL_ENDPOINT, fetch });
 
-const appVersion = __VERSION__;
+const appVersion = "1.0.0"; // __VERSION__;
 
 const client = new ApolloClient({
   link: httpLink,

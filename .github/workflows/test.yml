@@ -1,0 +1,47 @@
+name: Test
+
+on:
+  # Trigger the workflow on push or pull request
+  push:
+    branches:
+      - next
+      - "erb/**"
+
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - name: Install Node.js and yarn
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+          cache: yarn
+
+      - name: yarn install
+        run: |
+          yarn install
+
+      - name: yarn test
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          yarn run package
+          yarn run lint
+      - name: Prepare artifacts
+        shell: bash
+        run: |
+          mkdir artifacts
+          mv release/build/{*.exe*,*.deb,*.AppImage,*.dmg*,*.zip,*.yml} artifacts || true
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{matrix.os}}
+          path: artifacts

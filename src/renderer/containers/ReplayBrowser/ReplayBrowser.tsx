@@ -10,7 +10,6 @@ import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import FolderIcon from "@material-ui/icons/Folder";
 import SearchIcon from "@material-ui/icons/Search";
-import { shell } from "electron";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
 
@@ -78,13 +77,15 @@ export const ReplayBrowser: React.FC = () => {
   const deleteFiles = (filePaths: string[]) => {
     let errCount = 0;
     filePaths.forEach((filePath) => {
-      const success = shell.moveItemToTrash(filePath);
-      if (success) {
-        // Remove the file from the store
-        removeFile(filePath);
-      } else {
-        errCount += 1;
-      }
+      window.electron.shell
+        .trashItem(filePath)
+        .then(() => {
+          removeFile(filePath);
+        })
+        .catch((err) => {
+          console.warn(err);
+          errCount += 1;
+        });
     });
 
     let message = `${filePaths.length - errCount} file(s) deleted successfully.`;
@@ -196,7 +197,7 @@ export const ReplayBrowser: React.FC = () => {
         >
           <div>
             <Tooltip title="Reveal location">
-              <IconButton onClick={() => shell.openItem(currentFolder)} size="small">
+              <IconButton onClick={() => window.electron.shell.openPath(currentFolder)} size="small">
                 <FolderIcon
                   css={css`
                     color: ${colors.purpleLight};

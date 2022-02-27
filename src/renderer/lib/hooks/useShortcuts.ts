@@ -2,11 +2,11 @@ import { isMac } from "@common/constants";
 import mousetrap from "mousetrap";
 import type { RefObject } from "react";
 import { useCallback, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // Map Ctrl + 1 to be the first page, Ctrl + 2 to be the second page etc.
 export const usePageNavigationShortcuts = (paths: string[]) => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   // Only take the first 9 elements to map from 1-9
   // so we don't try to match Ctrl+10 etc.
@@ -15,7 +15,7 @@ export const usePageNavigationShortcuts = (paths: string[]) => {
     return {
       keys: isMac ? `meta+${oneIndexed}` : `ctrl+${oneIndexed}`,
       handler: () => {
-        history.push(path);
+        navigate(path);
       },
     };
   });

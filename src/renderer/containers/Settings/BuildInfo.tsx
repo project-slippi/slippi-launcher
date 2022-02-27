@@ -1,6 +1,5 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/react";
-import { ipcRenderer } from "electron";
 import moment from "moment";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
@@ -8,7 +7,7 @@ import { useToasts } from "react-toast-notifications";
 import { ExternalLink as A } from "@/components/ExternalLink";
 import { useAdvancedUser } from "@/lib/useAdvancedUser";
 
-const osInfo = ipcRenderer.sendSync("getOsInfoSync") as string;
+const osInfo = window.electron.common.getOsInfoSync();
 
 const appVersion = __VERSION__;
 const buildDate = moment.utc(__DATE__);

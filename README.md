@@ -14,14 +14,14 @@ This repository is part of the Project Slippi ecosystem. For more information ab
 These are the applications you will need to install in order to build this project:
 
 - [Git](https://git-scm.com/downloads)
-- [Node v14+](https://nodejs.org/en/)
+- [Node v16+](https://nodejs.org/en/)
 - [Yarn](https://yarnpkg.com/getting-started/install)
 
 ### Build Steps
 
 - Clone the repo via: `git clone https://github.com/project-slippi/slippi-launcher.git`
 - Navigate into the directory and run: `yarn install` to install all dependencies
-- Use `yarn run dev` to develop
+- Use `yarn run start` to run the app in develop mode
 - Use `yarn run package` to build a release
 
 #### Recommended IDE

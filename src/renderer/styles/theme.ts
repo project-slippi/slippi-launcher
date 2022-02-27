@@ -1,13 +1,13 @@
 import { colors } from "@common/colors";
 import type { Theme } from "@material-ui/core/styles";
-import { createMuiTheme } from "@material-ui/core/styles";
+import { createTheme } from "@material-ui/core/styles";
 
 import { withFont } from "./withFont";
 
 const rubikFont = withFont("Rubik");
 const mavenProFont = withFont("Maven Pro");
 
-const theme = createMuiTheme({
+const theme = createTheme({
   palette: {
     type: "dark",
     text: {
@@ -54,7 +54,7 @@ const theme = createMuiTheme({
 });
 
 const addOverrides = (theme: Theme) => {
-  return createMuiTheme({
+  return createTheme({
     ...theme,
     props: {
       MuiTooltip: {

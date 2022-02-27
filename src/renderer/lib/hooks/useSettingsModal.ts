@@ -1,4 +1,4 @@
-import { useHistory, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import create from "zustand";
 
 type StoreState = {
@@ -33,16 +33,16 @@ export const useSettingsModal = () => {
   const lastPage = useModalStore((store) => store.lastPage);
   const setLastPage = useModalStore((store) => store.setLastPage);
   const setLastModalPage = useModalStore((store) => store.setLastModalPage);
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
   const open = (modalPage?: string) => {
     setLastPage(location.pathname);
-    history.push(modalPage || lastModalPage || "/settings");
+    navigate(modalPage || lastModalPage || "/settings");
   };
 
   const close = () => {
     setLastModalPage(location.pathname);
-    history.push(lastPage || "/");
+    navigate(lastPage || "/");
   };
 
   return {

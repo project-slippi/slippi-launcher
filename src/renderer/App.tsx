@@ -3,9 +3,8 @@ import "./styles/styles.scss";
 import { ThemeProvider } from "@emotion/react";
 import { MuiThemeProvider, StylesProvider } from "@material-ui/core/styles";
 import React from "react";
-import { hot } from "react-hot-loader/root";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { HashRouter as Router, Redirect, Route, Switch } from "react-router-dom";
+import { HashRouter as Router, Navigate, Route, Routes } from "react-router-dom";
 import { ToastProvider } from "react-toast-notifications";
 
 import { useAppStore } from "@/lib/hooks/useApp";
@@ -43,13 +42,13 @@ const App: React.FC = () => {
   }
 
   return (
-    <Switch>
-      <Route path="/main" component={MainView} />
-      <Route path="/landing" component={LandingView} />
-      <Route path="/settings" component={SettingsView} />
-      <Route exact path="/" component={() => <Redirect to="/landing" />} />
-      <Route component={NotFoundView} />
-    </Switch>
+    <Routes>
+      <Route path="/main/*" element={<MainView />} />
+      <Route path="/landing" element={<LandingView />} />
+      <Route path="/settings/*" element={<SettingsView />} />
+      <Route path="/" element={<Navigate replace to="/landing" />} />
+      <Route element={<NotFoundView />} />
+    </Routes>
   );
 };
 
@@ -73,4 +72,4 @@ const AppWithProviders: React.FC = () => {
 };
 
 // eslint-disable-next-line import/no-default-export
-export default hot(AppWithProviders);
+export default AppWithProviders;

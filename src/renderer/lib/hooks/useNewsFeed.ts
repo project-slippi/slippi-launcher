@@ -1,10 +1,8 @@
-import { ipc_fetchNewsFeed } from "@common/ipc";
 import type { NewsItem } from "@common/types";
-import electronLog from "electron-log";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
-const log = electronLog.scope("useNewsFeed");
+const log = console;
 
 export const useNewsFeed = create(
   combine(
@@ -18,15 +16,9 @@ export const useNewsFeed = create(
         log.info("Fetching news articles...");
         set({ fetching: true });
 
-        ipc_fetchNewsFeed
-          .renderer!.trigger({})
-          .then((articlesResult) => {
-            if (!articlesResult.result) {
-              log.warn("NewsFeed: error fetching news articles", articlesResult.errors);
-              set({ error: articlesResult.errors });
-              return;
-            }
-            const newsItems = articlesResult.result;
+        window.electron.common
+          .fetchNewsFeed()
+          .then((newsItems) => {
             set({ newsItems });
           })
           .finally(() => {

@@ -4,7 +4,7 @@ import path from "path";
 import type { FolderResult } from "./types";
 
 export class FolderTreeService {
-  public tree: readonly FolderResult[] = [];
+  private tree: readonly FolderResult[] = [];
 
   public init(rootFolders: readonly string[]): readonly FolderResult[] {
     this.tree = rootFolders.map((fullPath) => {
@@ -61,15 +61,13 @@ export async function generateSubFolderTree(folder: string): Promise<FolderResul
     .filter((dirent) => {
       return dirent.isDirectory();
     })
-    .map(
-      async (dirent): Promise<FolderResult> => {
-        return {
-          name: dirent.name,
-          fullPath: path.join(folder, dirent.name),
-          subdirectories: [],
-        };
-      },
-    );
+    .map(async (dirent): Promise<FolderResult> => {
+      return {
+        name: dirent.name,
+        fullPath: path.join(folder, dirent.name),
+        subdirectories: [],
+      };
+    });
 
   return Promise.all(subdirectories);
 }

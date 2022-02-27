@@ -11,7 +11,7 @@ export const useConsoleDiscoveryStore = create(
     },
     (set) => ({
       updateConsoleItems: (consoleItems: DiscoveredConsoleInfo[]) => set({ consoleItems }),
-      updateConsoleStatus: (ip: string, info: Partial<ConsoleMirrorStatusUpdate>) =>
+      updateConsoleStatus: ({ ip, info }: { ip: string; info: Partial<ConsoleMirrorStatusUpdate> }) =>
         set((state) =>
           produce(state, (draft) => {
             const existing = draft.connectedConsoles[ip];

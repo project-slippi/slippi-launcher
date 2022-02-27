@@ -5,7 +5,6 @@ import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 import FolderIcon from "@material-ui/icons/Folder";
-import { remote, shell } from "electron";
 import React from "react";
 
 import { BasicFooter } from "@/components/Footer";
@@ -15,7 +14,7 @@ import { useSpectateSlpPath } from "@/lib/hooks/useSettings";
 export const Footer: React.FC = () => {
   const [spectateSlpFolder, setSpectateSlpFolder] = useSpectateSlpPath();
   const onClick = async () => {
-    const result = await remote.dialog.showOpenDialog({
+    const result = await window.electron.dialog.showOpenDialog({
       properties: ["openDirectory"],
     });
     const res = result.filePaths;
@@ -29,7 +28,7 @@ export const Footer: React.FC = () => {
       <Tooltip title="Reveal location">
         <IconButton
           size="small"
-          onClick={() => shell.openItem(spectateSlpFolder)}
+          onClick={() => window.electron.shell.openPath(spectateSlpFolder)}
           css={css`
             color: ${colors.purpleLight};
           `}
