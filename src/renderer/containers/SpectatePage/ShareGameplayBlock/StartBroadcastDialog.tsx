@@ -85,7 +85,16 @@ export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({
   }
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth={true} fullScreen={fullScreen} disableBackdropClick={true}>
+    <Dialog
+      open={open}
+      onClose={(_, reason) => {
+        if (reason !== "backdropClick") {
+          onClose();
+        }
+      }}
+      fullWidth={true}
+      fullScreen={fullScreen}
+    >
       <form onSubmit={handleSubmit}>
         <StyledDialogTitle>
           Enter Spectator ID

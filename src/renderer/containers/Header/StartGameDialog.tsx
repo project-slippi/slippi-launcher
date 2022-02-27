@@ -25,7 +25,16 @@ export const StartGameDialog: React.FC<StartGameDialogProps> = ({ open, onClose,
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth={true} fullScreen={fullScreen} disableBackdropClick={true}>
+    <Dialog
+      open={open}
+      onClose={(_, reason) => {
+        if (reason !== "backdropClick") {
+          onClose();
+        }
+      }}
+      fullWidth={true}
+      fullScreen={fullScreen}
+    >
       <form onSubmit={handleSubmit}>
         <StyledDialogTitle>You are not logged in</StyledDialogTitle>
         <DialogContent style={{ display: "flex" }}>
