@@ -1,28 +1,41 @@
-const { notarize } = require("electron-notarize");
-const { build } = require("../../package.json");
+/* eslint-disable @typescript-eslint/no-var-requires */
+const fs = require("fs");
+const path = require("path");
+const electronNotarize = require("electron-notarize");
+const electronBuilderConfig = require("../electron-builder.json");
 
-exports.default = async function notarizeMacos(context) {
-  const { electronPlatformName, appOutDir } = context;
-  if (electronPlatformName !== "darwin") {
+module.exports = async function (params) {
+  if (process.platform !== "darwin") {
     return;
   }
 
-  if (process.env.CI !== "true") {
-    console.warn("Skipping notarizing step. Packaging is not running in CI");
+  console.log("afterSign hook triggered", params);
+
+  // Bail early if this is a fork-caused PR build, which doesn't get
+  // secrets.
+  if (!process.env.APPLE_TEAM_PROVIDER_ID || !process.env.APPLE_API_KEY || !process.env.APPLE_ISSUER_ID) {
+    console.log("Bailing, no secrets found.");
     return;
   }
 
-  if (!("APPLE_ID" in process.env && "APPLE_ID_PASS" in process.env)) {
-    console.warn("Skipping notarizing step. APPLE_ID and APPLE_ID_PASS env variables must be set");
-    return;
+  const appId = electronBuilderConfig.appId;
+  const appPath = path.join(params.appOutDir, `${params.packager.appInfo.productFilename}.app`);
+  if (!fs.existsSync(appPath)) {
+    throw new Error(`Cannot find application at: ${appPath}`);
   }
 
-  const appName = context.packager.appInfo.productFilename;
+  console.log(`Notarizing ${appId} found at ${appPath} (this could take awhile, get some coffee...)`);
 
-  await notarize({
-    appBundleId: build.appId,
-    appPath: `${appOutDir}/${appName}.app`,
-    appleId: process.env.APPLE_ID,
-    appleIdPassword: process.env.APPLE_ID_PASS,
-  });
+  try {
+    await electronNotarize.notarize({
+      appBundleId: appId,
+      appPath: appPath,
+      appleApiKey: process.env.APPLE_API_KEY,
+      appleApiIssuer: process.env.APPLE_ISSUER_ID,
+    });
+
+    console.log(`Successfully notarized ${appId}`);
+  } catch (error) {
+    console.error(error);
+  }
 };
