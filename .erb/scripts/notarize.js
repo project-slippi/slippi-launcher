@@ -2,7 +2,7 @@
 const fs = require("fs");
 const path = require("path");
 const electronNotarize = require("electron-notarize");
-const electronBuilderConfig = require("../electron-builder.json");
+const electronBuilderConfig = require("../../electron-builder.json");
 
 module.exports = async function (params) {
   if (process.platform !== "darwin") {

@@ -79,6 +79,7 @@ const createWindow = async () => {
     // This setting only takes effect on macOS, and simply opts it into the modern
     // Big-Sur frame UI for the window style.
     titleBarStyle: "hiddenInset",
+    autoHideMenuBar: true,
 
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
