@@ -59,6 +59,7 @@ module.exports = {
       },
     ],
     "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/explicit-member-accessibility": "error",
     "@typescript-eslint/no-floating-promises": "error",
     "@typescript-eslint/consistent-type-imports": "warn",
@@ -69,13 +70,13 @@ module.exports = {
         allowFinally: true,
       },
     ],
-    "import/no-default-export": "error",
     "import/no-named-as-default-member": "off",
     "simple-import-sort/imports": "warn",
     "simple-import-sort/exports": "warn",
     "strict-booleans/no-nullable-numbers": "error",
     "no-undef": "off",
     "new-cap": "error",
+    "@typescript-eslint/consistent-type-imports": "warn",
     "@typescript-eslint/no-non-null-assertion": "off",
     "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
     "react-hooks/exhaustive-deps": "warn", // Checks effect dependencies
