@@ -1,7 +1,7 @@
 import { settingsManager } from "@settings/settingsManager";
 
-import { ipc_refreshBroadcastList, ipc_startBroadcast, ipc_stopBroadcast, ipc_watchBroadcast } from "./ipc";
 import { broadcastWorker } from "./broadcast.worker.interface";
+import { ipc_refreshBroadcastList, ipc_startBroadcast, ipc_stopBroadcast, ipc_watchBroadcast } from "./ipc";
 import { spectateWorker } from "./spectate.worker.interface";
 
 export default function installBroadcastIpc() {

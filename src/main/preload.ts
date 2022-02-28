@@ -1,12 +1,12 @@
-import type { IpcRendererEvent } from "electron";
-import { clipboard, contextBridge, dialog, ipcRenderer, shell } from "electron";
-import path from "path";
-
 import broadcast from "@broadcast/api";
 import console from "@console/api";
 import dolphin from "@dolphin/api";
 import replays from "@replays/api";
 import settings from "@settings/api";
+import type { IpcRendererEvent } from "electron";
+import { clipboard, contextBridge, dialog, ipcRenderer, shell } from "electron";
+import path from "path";
+
 import common from "./api";
 
 type IpcEventListener = (event: IpcRendererEvent, ...args: any[]) => void;

@@ -28,7 +28,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   const { openConfigureDolphin, reinstallDolphin, clearDolphinCache } = useDolphin();
 
   const openDolphinDirectoryHandler = async () => {
-    window.electron.shell.openPath(dolphinPath);
+    await window.electron.shell.openPath(dolphinPath);
   };
 
   const configureDolphinHandler = async () => {

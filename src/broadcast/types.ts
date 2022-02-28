@@ -1,4 +1,4 @@
-import { DolphinMessageType } from "@slippi/slippi-js";
+import type { DolphinMessageType } from "@slippi/slippi-js";
 
 export interface BroadcasterItem {
   broadcaster: {
@@ -60,4 +60,5 @@ type SlippiBroadcastEventPayload = {
   [DolphinMessageType.START_GAME]: SlippiPlayload;
 };
 
-export type SlippiBroadcastPayloadEvent = TypeMap<SlippiBroadcastEventPayload>[keyof TypeMap<SlippiBroadcastEventPayload>];
+export type SlippiBroadcastPayloadEvent =
+  TypeMap<SlippiBroadcastEventPayload>[keyof TypeMap<SlippiBroadcastEventPayload>];

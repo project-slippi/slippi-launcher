@@ -9,10 +9,10 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import Tooltip from "@material-ui/core/Tooltip";
-import type { LinkProps } from "react-router-dom";
 import CloseIcon from "@material-ui/icons/Close";
 import React from "react";
-import { Link, Routes, Route, Navigate, useResolvedPath, useMatch } from "react-router-dom";
+import type { LinkProps } from "react-router-dom";
+import { Link, Navigate, Route, Routes, useMatch, useResolvedPath } from "react-router-dom";
 
 import { DualPane } from "@/components/DualPane";
 import { BuildInfo } from "@/containers/Settings/BuildInfo";

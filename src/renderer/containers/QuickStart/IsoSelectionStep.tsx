@@ -7,9 +7,9 @@ import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { useQuery } from "react-query";
 import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
+import { useQuery } from "react-query";
 import { useToasts } from "react-toast-notifications";
 
 import { ConfirmationModal } from "@/components/ConfirmationModal";

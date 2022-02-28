@@ -13,8 +13,9 @@ import { DolphinLaunchType } from "./types";
 
 const log = electronLog.scope("dolphin/utils");
 
-export async function findDolphinExecutable(type: DolphinLaunchType, dolphinPath?: string): Promise<string> {
+export async function findDolphinExecutable(type: DolphinLaunchType, folder?: string): Promise<string> {
   // Make sure the directory actually exists
+  let dolphinPath = folder;
   if (!dolphinPath) {
     dolphinPath = settingsManager.getDolphinPath(type);
   }

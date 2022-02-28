@@ -57,12 +57,10 @@ export async function loadFolder(
     }),
   );
   const fileSizesPromise = Promise.all(
-    fullSlpPaths.map(
-      async (fullPath): Promise<number> => {
-        const stat = await fs.stat(fullPath);
-        return stat.size;
-      },
-    ),
+    fullSlpPaths.map(async (fullPath): Promise<number> => {
+      const stat = await fs.stat(fullPath);
+      return stat.size;
+    }),
   );
 
   const [slpGames, fileSizes] = await Promise.all([slpGamesPromise, fileSizesPromise]);

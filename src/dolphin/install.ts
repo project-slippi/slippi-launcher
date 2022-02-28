@@ -88,13 +88,14 @@ export default function installDolphinIpc() {
   });
 
   ipc_importDolphinSettings.main!.handle(async ({ toImportDolphinPath, dolphinType }) => {
+    let dolphinPath = toImportDolphinPath;
     if (isMac) {
-      toImportDolphinPath = path.join(toImportDolphinPath, "Contents", "Resources");
+      dolphinPath = path.join(dolphinPath, "Contents", "Resources");
     } else {
-      toImportDolphinPath = path.dirname(toImportDolphinPath);
+      dolphinPath = path.dirname(dolphinPath);
     }
 
-    await dolphinManager.copyDolphinConfig(dolphinType, toImportDolphinPath);
+    await dolphinManager.copyDolphinConfig(dolphinType, dolphinPath);
 
     return { success: true };
   });

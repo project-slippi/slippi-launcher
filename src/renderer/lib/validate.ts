@@ -11,13 +11,12 @@ export const isValidIpAddress = (ip: string): boolean => {
   return chunks.map((n) => parseInt(n)).every((n) => n >= 0 && n <= 255);
 };
 
-export const validateIpAndPort = (ip: string): string | true => {
-  const ipPort = ip.split(":");
-  let port = "";
+export const validateIpAndPort = (ipAddressWithPort: string): string | true => {
+  const ipPort = ipAddressWithPort.split(":");
   if (ipPort.length !== 2) {
     return "No Port provided or missing colon (:)";
   }
-  [ip, port] = ipPort;
+  const [ip, port] = ipPort;
 
   if (parseInt(port) < 1 || parseInt(port) > 65535) {
     return "Invalid Port";

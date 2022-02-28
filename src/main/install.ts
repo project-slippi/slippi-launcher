@@ -1,17 +1,4 @@
 import { isDevelopment, isMac } from "@common/constants";
-import {
-  ipc_checkForUpdate,
-  ipc_checkValidIso,
-  ipc_clearTempFolder,
-  ipc_copyLogsToClipboard,
-  ipc_deleteDesktopAppPath,
-  ipc_fetchNewsFeed,
-  ipc_getLatestGitHubReleaseVersion,
-  ipc_installUpdate,
-  ipc_launcherUpdateDownloadingEvent,
-  ipc_launcherUpdateFoundEvent,
-  ipc_launcherUpdateReadyEvent,
-} from "./ipc";
 import { IsoValidity } from "@common/types";
 import { settingsManager } from "@settings/settingsManager";
 import { app, clipboard, ipcMain, nativeImage } from "electron";
@@ -25,6 +12,19 @@ import path from "path";
 
 import { fileExists } from "./fileExists";
 import { getLatestRelease } from "./github";
+import {
+  ipc_checkForUpdate,
+  ipc_checkValidIso,
+  ipc_clearTempFolder,
+  ipc_copyLogsToClipboard,
+  ipc_deleteDesktopAppPath,
+  ipc_fetchNewsFeed,
+  ipc_getLatestGitHubReleaseVersion,
+  ipc_installUpdate,
+  ipc_launcherUpdateDownloadingEvent,
+  ipc_launcherUpdateFoundEvent,
+  ipc_launcherUpdateReadyEvent,
+} from "./ipc";
 import { fetchNewsFeedData } from "./newsFeed";
 import { getAssetPath, readLastLines } from "./util";
 import { verifyIso } from "./verifyIso";

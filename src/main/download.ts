@@ -8,8 +8,9 @@ import { URL } from "url";
 
 const TIMEOUT = 10000;
 
-export function download(url: string, dest: string): Promise<void> {
+export function download(url: string, destination: string): Promise<void> {
   const uri = new URL(url);
+  let dest = destination;
   if (!dest) {
     dest = basename(uri.pathname);
   }
