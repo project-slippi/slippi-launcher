@@ -6,7 +6,7 @@ import React from "react";
 
 export const Table: React.FC = (props) => {
   return (
-    <Paper component="table" style={{ borderCollapse: "collapse" }}>
+    <Paper component="table" style={{ borderCollapse: "collapse", height: "fit-content" }}>
       {props.children}
     </Paper>
   );
