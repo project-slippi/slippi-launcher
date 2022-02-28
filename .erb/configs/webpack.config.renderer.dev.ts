@@ -11,6 +11,9 @@ import checkNodeEnv from "../scripts/check-node-env";
 import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
 import NodePolyfillPlugin from "node-polyfill-webpack-plugin";
 
+// We need to import dotenv here in order to for env variables to be passed into our development main process.
+import "dotenv/config";
+
 // When an ESLint server is running, we can't set the NODE_ENV so we'll check if it's
 // at the dev webpack config is not accidentally run in a production environment
 if (process.env.NODE_ENV === "production") {
@@ -175,7 +178,7 @@ const configuration: webpack.Configuration = {
     },
     onBeforeSetupMiddleware() {
       console.log("Starting Main Process...");
-      spawn("npm", ["run", "start:main"], {
+      spawn("yarn", ["run", "start:main"], {
         shell: true,
         env: process.env,
         stdio: "inherit",
