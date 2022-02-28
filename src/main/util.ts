@@ -24,7 +24,7 @@ const RESOURCES_PATH = app.isPackaged
   : path.join(__dirname, "../../assets");
 
 export const getAssetPath = (...paths: string[]): string => {
-  return path.join(RESOURCES_PATH, ...paths);
+  return path.resolve(path.join(RESOURCES_PATH, ...paths));
 };
 
 // Implemenation taken from https://github.com/alexbbt/read-last-lines/blob/11945800b013fe5016c4ea36e49d28c67aa75e7c/src/index.js

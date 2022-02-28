@@ -9,6 +9,7 @@ import * as fs from "fs-extra";
 import os from "os";
 import osName from "os-name";
 import path from "path";
+import { pathToFileURL } from "url";
 
 import { fileExists } from "./fileExists";
 import { getLatestRelease } from "./github";
@@ -57,7 +58,8 @@ export default function installMainIpc() {
   });
 
   ipcMain.on("getAssetPathSync", (event, paths: string[]) => {
-    event.returnValue = getAssetPath(...paths);
+    const urlPath = pathToFileURL(getAssetPath(...paths));
+    event.returnValue = urlPath.toString();
   });
 
   ipcMain.on("getAppSettingsSync", (event) => {
