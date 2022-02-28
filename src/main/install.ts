@@ -56,6 +56,10 @@ export default function installMainIpc() {
     }
   });
 
+  ipcMain.on("getAssetPathSync", (event, paths: string[]) => {
+    event.returnValue = getAssetPath(...paths);
+  });
+
   ipcMain.on("getAppSettingsSync", (event) => {
     const settings = settingsManager.get();
     event.returnValue = settings;
