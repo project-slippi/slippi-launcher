@@ -14,7 +14,7 @@ import { useSpectateSlpPath } from "@/lib/hooks/useSettings";
 export const Footer: React.FC = () => {
   const [spectateSlpFolder, setSpectateSlpFolder] = useSpectateSlpPath();
   const onClick = async () => {
-    const result = await window.electron.dialog.showOpenDialog({
+    const result = await window.electron.common.showOpenDialog({
       properties: ["openDirectory"],
     });
     const res = result.filePaths;

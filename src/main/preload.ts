@@ -4,7 +4,7 @@ import dolphin from "@dolphin/api";
 import replays from "@replays/api";
 import settings from "@settings/api";
 import type { IpcRendererEvent } from "electron";
-import { clipboard, contextBridge, dialog, ipcRenderer, shell } from "electron";
+import { clipboard, contextBridge, ipcRenderer, shell } from "electron";
 import path from "path";
 
 import common from "./api";
@@ -35,11 +35,6 @@ const api = {
     openPath: shell.openPath,
     showItemInFolder: shell.showItemInFolder,
     trashItem: shell.trashItem,
-  },
-  dialog: {
-    showOpenDialog: async (options: Electron.OpenDialogOptions) => {
-      return await dialog.showOpenDialog(options);
-    },
   },
   ipcRenderer: {
     myPing() {

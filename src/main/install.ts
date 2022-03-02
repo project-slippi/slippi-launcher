@@ -1,7 +1,7 @@
 import { isDevelopment, isMac } from "@common/constants";
 import { IsoValidity } from "@common/types";
 import { settingsManager } from "@settings/settingsManager";
-import { app, clipboard, ipcMain, nativeImage } from "electron";
+import { app, clipboard, dialog, ipcMain, nativeImage } from "electron";
 import electronLog from "electron-log";
 import type { ProgressInfo, UpdateInfo } from "electron-updater";
 import { autoUpdater } from "electron-updater";
@@ -25,6 +25,7 @@ import {
   ipc_launcherUpdateDownloadingEvent,
   ipc_launcherUpdateFoundEvent,
   ipc_launcherUpdateReadyEvent,
+  ipc_showOpenDialog,
 } from "./ipc";
 import { fetchNewsFeedData } from "./newsFeed";
 import { getAssetPath, readLastLines } from "./util";
@@ -172,5 +173,10 @@ export default function installMainIpc() {
       throw err;
     }
     return { success: true };
+  });
+
+  ipc_showOpenDialog.main!.handle(async (options) => {
+    const { canceled, filePaths } = await dialog.showOpenDialog(options);
+    return { canceled, filePaths };
   });
 }

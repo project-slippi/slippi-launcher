@@ -15,6 +15,7 @@ import {
   ipc_launcherUpdateDownloadingEvent,
   ipc_launcherUpdateFoundEvent,
   ipc_launcherUpdateReadyEvent,
+  ipc_showOpenDialog,
 } from "./ipc";
 
 export default {
@@ -57,6 +58,10 @@ export default {
   },
   async clearTempFolder() {
     const { result } = await ipc_clearTempFolder.renderer!.trigger({});
+    return result;
+  },
+  async showOpenDialog(options: Electron.OpenDialogOptions) {
+    const { result } = await ipc_showOpenDialog.renderer!.trigger(options);
     return result;
   },
   onAppUpdateFound(handle: (version: string) => void) {

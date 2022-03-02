@@ -52,7 +52,7 @@ export const MultiPathInput: React.FC<MultiPathInputProps> = ({ paths, updatePat
   };
 
   const onAddClick = async () => {
-    const result = await window.electron.dialog.showOpenDialog({ properties: ["openFile"], ...options });
+    const result = await window.electron.common.showOpenDialog({ properties: ["openFile"], ...options });
     const res = result.filePaths;
     if (result.canceled || res.length === 0) {
       return;

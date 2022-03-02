@@ -147,7 +147,7 @@ const ImportDolphinConfigForm: React.FC<{
   };
 
   const onImportClick = async () => {
-    const result = await window.electron.dialog.showOpenDialog({
+    const result = await window.electron.common.showOpenDialog({
       filters: [{ name: "Slippi Dolphin", extensions: [isMac ? "app" : "exe"] }],
     });
     const res = result.filePaths;

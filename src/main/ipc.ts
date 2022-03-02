@@ -25,6 +25,12 @@ export const ipc_getLatestGitHubReleaseVersion = makeEndpoint.main(
   <{ version: string }>_,
 );
 
+export const ipc_showOpenDialog = makeEndpoint.main(
+  "showOpenDialog",
+  <Electron.OpenDialogOptions>_,
+  <{ filePaths: string[]; canceled: boolean }>_,
+);
+
 export const ipc_clearTempFolder = makeEndpoint.main("clearTempFolder", <EmptyPayload>_, <SuccessPayload>_);
 
 // Events
