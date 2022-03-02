@@ -58,6 +58,7 @@
     "@types/react-window": "^1.8.2",
     "@types/terser-webpack-plugin": "^5.0.4",
     "@types/webpack-env": "^1.16.3",
+    "@types/websocket": "^1.0.5",
     "@typescript-eslint/eslint-plugin": "^5.8.1",
     "@typescript-eslint/parser": "^5.8.1",
     "browserslist-config-erb": "^0.0.3",
