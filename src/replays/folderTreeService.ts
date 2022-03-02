@@ -15,12 +15,12 @@ export class FolderTreeService {
   }
 
   public async select(folder: string): Promise<readonly FolderResult[]> {
-    const childNode = this._findChild(folder, this.tree);
+    const childNode = await this._findChild(folder, this.tree);
     childNode.subdirectories = await generateSubFolderTree(folder);
     return this.tree;
   }
 
-  private _findChild(folder: string, nodes: readonly FolderResult[]): FolderResult {
+  private async _findChild(folder: string, nodes: readonly FolderResult[]): Promise<FolderResult> {
     const res = nodes.find(({ fullPath }) => fullPath === folder || isSubdirectory(fullPath, folder));
     if (!res) {
       throw new Error(`Could not find folder ${folder}`);
@@ -31,6 +31,11 @@ export class FolderTreeService {
       return res;
     }
 
+    // Expand the subdirectories if necessary
+    if (res.subdirectories.length === 0) {
+      res.subdirectories = await generateSubFolderTree(res.fullPath);
+    }
+
     return this._findChild(folder, res.subdirectories);
   }
 }
@@ -38,7 +43,6 @@ export class FolderTreeService {
 /**
  * Returns the tree structure of a folder
  * @param folder Details including name, and subdirectories
- * @param childrenToExpand The name of the subdirectories to expand.
  */
 export async function generateSubFolderTree(folder: string): Promise<FolderResult[]> {
   console.log(`generating subfolder tree for folder: ${folder}`);

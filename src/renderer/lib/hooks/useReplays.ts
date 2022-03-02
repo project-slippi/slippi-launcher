@@ -74,7 +74,9 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
       if (!folderInitResult.result) {
         throw new Error(`Error initializing folder tree`);
       }
-      const selectRootFolderResult = await ipc_selectTreeFolder.renderer!.trigger({ folderPath: rootFolder });
+      const selectRootFolderResult = await ipc_selectTreeFolder.renderer!.trigger({
+        folderPath: currentFolder ?? rootFolder,
+      });
       if (!selectRootFolderResult.result) {
         throw new Error(`Error loading folder tree for: ${rootFolder}`);
       }
