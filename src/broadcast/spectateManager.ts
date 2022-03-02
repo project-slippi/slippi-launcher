@@ -2,7 +2,7 @@ import { SlpFileWriter, SlpFileWriterEvent } from "@slippi/slippi-js";
 import { EventEmitter } from "events";
 import * as fs from "fs-extra";
 import _ from "lodash";
-import type { connection, IMessage } from "websocket";
+import type { connection, Message } from "websocket";
 import { client as WebSocketClient } from "websocket";
 
 import type { BroadcasterItem } from "./types";
@@ -145,7 +145,7 @@ export class SpectateManager extends EventEmitter {
           }
         });
 
-        connection.on("message", (message: IMessage) => {
+        connection.on("message", (message: Message) => {
           if (message.type !== "utf8") {
             return;
           }
