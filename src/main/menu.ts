@@ -7,15 +7,11 @@ interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
   submenu?: DarwinMenuItemConstructorOptions[] | Menu;
 }
 
-export default class MenuBuilder {
-  public mainWindow: BrowserWindow;
+export class MenuBuilder {
+  public constructor(private mainWindow: BrowserWindow) {}
 
-  public constructor(mainWindow: BrowserWindow) {
-    this.mainWindow = mainWindow;
-  }
-
-  public buildMenu(): Menu {
-    if (process.env.NODE_ENV === "development" || process.env.DEBUG_PROD === "true") {
+  public buildMenu({ enableDevTools }: Partial<{ enableDevTools: boolean }>): Menu {
+    if (enableDevTools) {
       this.setupDevelopmentEnvironment();
     }
 
@@ -27,7 +23,7 @@ export default class MenuBuilder {
     return menu;
   }
 
-  public setupDevelopmentEnvironment(): void {
+  private setupDevelopmentEnvironment(): void {
     this.mainWindow.webContents.on("context-menu", (_, props) => {
       const { x, y } = props;
 
@@ -42,7 +38,7 @@ export default class MenuBuilder {
     });
   }
 
-  public buildDarwinTemplate(): MenuItemConstructorOptions[] {
+  private buildDarwinTemplate(): MenuItemConstructorOptions[] {
     const subMenuAbout: DarwinMenuItemConstructorOptions = {
       label: "Electron",
       submenu: [
@@ -177,7 +173,7 @@ export default class MenuBuilder {
     return [subMenuAbout, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
   }
 
-  public buildDefaultTemplate() {
+  private buildDefaultTemplate() {
     const templateDefault = [
       {
         label: "&File",

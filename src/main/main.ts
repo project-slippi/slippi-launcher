@@ -15,7 +15,7 @@ import log from "electron-log";
 import { autoUpdater } from "electron-updater";
 import path from "path";
 
-import MenuBuilder from "./menu";
+import { MenuBuilder } from "./menu";
 import { setupIpc } from "./setupIpc";
 import { getAssetPath, resolveHtmlPath } from "./util";
 
@@ -104,7 +104,9 @@ const createWindow = async () => {
   });
 
   const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
+  menuBuilder.buildMenu({
+    enableDevTools: isDevelopment,
+  });
 
   // Open urls in the user's browser
   mainWindow.webContents.setWindowOpenHandler((edata) => {
