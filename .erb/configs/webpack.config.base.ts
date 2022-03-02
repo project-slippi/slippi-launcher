@@ -4,7 +4,6 @@
 
 import webpack from "webpack";
 import webpackPaths from "./webpack.paths";
-import { dependencies as externals } from "../../release/app/package.json";
 import { TsconfigPathsPlugin } from "tsconfig-paths-webpack-plugin";
 import pkg from "../../release/app/package.json";
 import Dotenv from "dotenv-webpack";
@@ -17,7 +16,7 @@ const buildDate = moment().toISOString();
 const commitHash = execSync("git rev-parse --short HEAD").toString().trim();
 
 const configuration: webpack.Configuration = {
-  externals: [...Object.keys(externals || {})],
+  externals: [...Object.keys(pkg.dependencies || {})],
 
   stats: "errors-only",
 
