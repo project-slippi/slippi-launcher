@@ -12,7 +12,7 @@
     "node_modules": true,
     "npm-debug.log.*": true,
     "test/**/__snapshots__": true,
-    "yarn.lock": true
+    "src/main/preload.js": true
   },
   "files.eol": "\n",
   "editor.detectIndentation": true,
