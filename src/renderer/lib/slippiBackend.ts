@@ -13,6 +13,17 @@ const client = new ApolloClient({
   version: `${appVersion}${isDevelopment ? "-dev" : ""}`,
 });
 
+const validateUserIdQuery = gql`
+  query validateUserIdQuery($fbUid: String) {
+    getUser(fbUid: $fbUid) {
+      displayName
+      connectCode {
+        code
+      }
+    }
+  }
+`;
+
 const getUserKeyQuery = gql`
   query getUserKeyQuery($fbUid: String) {
     getUser(fbUid: $fbUid) {
@@ -79,6 +90,28 @@ async function refreshFirebaseAuth(): Promise<firebase.User> {
   client.setLink(authLink.concat(httpLink));
 
   return user;
+}
+
+export async function validateUserId(userId: string): Promise<{ displayName: string; connectCode: string }> {
+  const res = await client.query({
+    query: validateUserIdQuery,
+    variables: {
+      fbUid: userId,
+    },
+    fetchPolicy: "network-only",
+  });
+
+  if (res.data?.getUser) {
+    const { connectCode, displayName } = res.data.getUser;
+    if (connectCode.code) {
+      return {
+        connectCode: connectCode.code,
+        displayName,
+      };
+    }
+  }
+
+  throw new Error("No user with that ID");
 }
 
 export async function fetchPlayKey(): Promise<PlayKey | null> {

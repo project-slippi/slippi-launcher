@@ -20,7 +20,7 @@ import debounce from "lodash/debounce";
 import React from "react";
 import { useQuery } from "react-query";
 
-import { validateUserId } from "@/lib/validateUserId";
+import { validateUserId } from "@/lib/slippiBackend";
 
 const log = console;
 export interface StartBroadcastDialogProps {
