@@ -32,7 +32,6 @@ jobs:
       - name: yarn test
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          USE_HARD_LINKS: false
         run: |
           yarn run package
           yarn run lint
