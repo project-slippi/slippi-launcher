@@ -26,7 +26,7 @@ import { download } from "./download";
 import { fileExists } from "./fileExists";
 import { MenuBuilder } from "./menu";
 import { setupIpc } from "./setupIpc";
-import { getAssetPath, resolveHtmlPath } from "./util";
+import { resolveHtmlPath } from "./util";
 
 let mainWindow: BrowserWindow | null = null;
 let didFinishLoad = false;
@@ -84,8 +84,6 @@ const createWindow = async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    icon: getAssetPath("icon.png"),
-
     width: 1100,
     height: 728,
     minHeight: isDevelopment ? undefined : 450,
