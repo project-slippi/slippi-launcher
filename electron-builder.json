@@ -2,7 +2,7 @@
   "productName": "Slippi Launcher",
   "appId": "com.github.projectslippi.slippidesktopapp",
   "asar": true,
-  "asarUnpack": ["**\\*.{node,dll}", "**\\*.js", "./node_modules/**/*"],
+  "asarUnpack": ["**\\*.{node,dll}", "./dist/main/*.js", "./node_modules/**/*"],
   "files": ["dist", "node_modules", "package.json"],
   "afterSign": ".erb/scripts/notarize.js",
   "fileAssociations": {
