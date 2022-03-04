@@ -82,7 +82,7 @@
     "buildResources": "assets",
     "output": "release/build"
   },
-  "extraResources": ["./assets/**"],
+  "extraResources": ["./assets/images/**"],
   "publish": {
     "provider": "github",
     "owner": "project-slippi",
