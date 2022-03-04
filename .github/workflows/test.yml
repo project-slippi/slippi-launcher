@@ -34,6 +34,7 @@ jobs:
           USE_HARD_LINKS: false # because of https://github.com/electron-userland/electron-builder/issues/3179
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          echo ${{ secrets.ENVFILE }} > .env
           yarn run package
           yarn run lint
       - name: Prepare artifacts
