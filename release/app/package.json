@@ -1,7 +1,8 @@
 {
   "name": "slippi-launcher",
-  "version": "2.5.0",
+  "productName": "Slippi Launcher",
   "description": "Launch Slippi Online, browse and watch saved replays",
+  "version": "2.5.0",
   "main": "./dist/main/main.js",
   "author": {
     "name": "Jas Laferriere",
