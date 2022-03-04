@@ -13,6 +13,7 @@ import { colors } from "@common/colors";
 import { delay } from "@common/delay";
 import { dolphinManager } from "@dolphin/manager";
 import { ipc_statsPageRequestedEvent } from "@replays/ipc";
+import { ipc_openSettingsModalEvent } from "@settings/ipc";
 import { app, BrowserWindow, ipcMain, shell } from "electron";
 import log from "electron-log";
 import { autoUpdater } from "electron-updater";
@@ -119,7 +120,13 @@ const createWindow = async () => {
     mainWindow = null;
   });
 
-  const menuBuilder = new MenuBuilder(mainWindow);
+  const menuBuilder = new MenuBuilder(
+    mainWindow,
+    () => {
+      void ipc_openSettingsModalEvent.main!.trigger({});
+    },
+    playReplayAndShowStats,
+  );
   menuBuilder.buildMenu({
     enableDevTools: isDevelopment,
   });
@@ -217,24 +224,12 @@ const handleSlippiURIAsync = async (aUrl: string) => {
       } else {
         log.info(`${destination} already exists. Skipping download...`);
       }
-
-      // Wait until mainWindow exists so that we can send an IPC to play.
-      // We are willing to wait for a few seconds before timing out
-      await waitForMainWindow();
-      if (mainWindow) {
-        await playReplayAndShowStats(destination);
-      }
-
+      await playReplayAndShowStats(destination);
       break;
     }
     case "file:": {
       log.info(myUrl.pathname);
-      await waitForMainWindow();
-      if (mainWindow) {
-        // mainWindow.webContents.send("play-replay", aUrl);
-        await playReplayAndShowStats(aUrl);
-      }
-
+      await playReplayAndShowStats(aUrl);
       break;
     }
     default: {
@@ -278,11 +273,14 @@ app.on("second-instance", (_, argv) => {
 });
 
 const playReplayAndShowStats = async (filePath: string) => {
-  await dolphinManager.launchPlaybackDolphin("playback", {
-    mode: "normal",
-    replay: filePath,
-  });
-  await ipc_statsPageRequestedEvent.main!.trigger({ filePath });
+  await waitForMainWindow();
+  if (mainWindow) {
+    await dolphinManager.launchPlaybackDolphin("playback", {
+      mode: "normal",
+      replay: filePath,
+    });
+    await ipc_statsPageRequestedEvent.main!.trigger({ filePath });
+  }
 };
 
 app

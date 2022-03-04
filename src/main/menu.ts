@@ -1,6 +1,6 @@
 /* eslint-disable import/no-default-export */
 import type { BrowserWindow, MenuItemConstructorOptions } from "electron";
-import { app, Menu, shell } from "electron";
+import { app, dialog, Menu, shell } from "electron";
 
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
   selector?: string;
@@ -8,7 +8,11 @@ interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
 }
 
 export class MenuBuilder {
-  public constructor(private mainWindow: BrowserWindow) {}
+  public constructor(
+    private mainWindow: BrowserWindow,
+    private onOpenPreferences: () => void,
+    private onOpenReplayFile: (filePath: string) => void,
+  ) {}
 
   public buildMenu({ enableDevTools }: Partial<{ enableDevTools: boolean }>): Menu {
     if (enableDevTools) {
@@ -40,13 +44,23 @@ export class MenuBuilder {
 
   private buildDarwinTemplate(): MenuItemConstructorOptions[] {
     const subMenuAbout: DarwinMenuItemConstructorOptions = {
-      label: "Electron",
+      label: "Slippi Launcher",
       submenu: [
         {
-          label: "About ElectronReact",
+          label: "About Slippi Launcher",
           selector: "orderFrontStandardAboutPanel:",
         },
         { type: "separator" },
+        {
+          label: "Preferences",
+          accelerator: "Cmd+,",
+          click: () => {
+            this.onOpenPreferences();
+          },
+        },
+        {
+          type: "separator",
+        },
         { label: "Services", submenu: [] },
         { type: "separator" },
         {
@@ -66,6 +80,22 @@ export class MenuBuilder {
           accelerator: "Command+Q",
           click: () => {
             app.quit();
+          },
+        },
+      ],
+    };
+    const subMenuFile: DarwinMenuItemConstructorOptions = {
+      label: "File",
+      submenu: [
+        {
+          label: "Open Replay",
+          accelerator: "Command+O",
+          click: () => {
+            void dialog.showOpenDialog({ properties: ["openFile"] }).then((response) => {
+              if (!response.canceled) {
+                this.onOpenReplayFile(response.filePaths[0]);
+              }
+            });
           },
         },
       ],
@@ -141,27 +171,9 @@ export class MenuBuilder {
       label: "Help",
       submenu: [
         {
-          label: "Learn More",
+          label: "Open Slippi Discord Server",
           click() {
-            void shell.openExternal("https://electronjs.org");
-          },
-        },
-        {
-          label: "Documentation",
-          click() {
-            void shell.openExternal("https://github.com/electron/electron/tree/main/docs#readme");
-          },
-        },
-        {
-          label: "Community Discussions",
-          click() {
-            void shell.openExternal("https://www.electronjs.org/community");
-          },
-        },
-        {
-          label: "Search Issues",
-          click() {
-            void shell.openExternal("https://github.com/electron/electron/issues");
+            void shell.openExternal("http://discord.gg/pPfEaW5");
           },
         },
       ],
@@ -170,7 +182,7 @@ export class MenuBuilder {
     const subMenuView =
       process.env.NODE_ENV === "development" || process.env.DEBUG_PROD === "true" ? subMenuViewDev : subMenuViewProd;
 
-    return [subMenuAbout, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
+    return [subMenuAbout, subMenuFile, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
   }
 
   private buildDefaultTemplate() {
@@ -181,6 +193,13 @@ export class MenuBuilder {
           {
             label: "&Open",
             accelerator: "Ctrl+O",
+            click: () => {
+              void dialog.showOpenDialog({ properties: ["openFile"] }).then((response) => {
+                if (!response.canceled) {
+                  this.onOpenReplayFile(response.filePaths[0]);
+                }
+              });
+            },
           },
           {
             label: "&Close",
@@ -232,27 +251,9 @@ export class MenuBuilder {
         label: "Help",
         submenu: [
           {
-            label: "Learn More",
+            label: "Open Slippi Discord Server",
             click() {
-              void shell.openExternal("https://electronjs.org");
-            },
-          },
-          {
-            label: "Documentation",
-            click() {
-              void shell.openExternal("https://github.com/electron/electron/tree/main/docs#readme");
-            },
-          },
-          {
-            label: "Community Discussions",
-            click() {
-              void shell.openExternal("https://www.electronjs.org/community");
-            },
-          },
-          {
-            label: "Search Issues",
-            click() {
-              void shell.openExternal("https://github.com/electron/electron/issues");
+              void shell.openExternal("http://discord.gg/pPfEaW5");
             },
           },
         ],
