@@ -11,8 +11,6 @@ import TimeAgo from "react-timeago";
 
 import { StartBroadcastDialog } from "./StartBroadcastDialog";
 
-const skipUserValidation = isDevelopment && !process.env.SLIPPI_USER_SERVER;
-
 export interface BroadcastPanelProps {
   dolphinStatus: ConnectionStatus;
   slippiServerStatus: ConnectionStatus;
@@ -98,7 +96,7 @@ export const BroadcastPanel: React.FC<BroadcastPanelProps> = ({
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         onSubmit={onStartBroadcast}
-        skipUserValidation={skipUserValidation}
+        skipUserValidation={isDevelopment}
       />
     </div>
   );
