@@ -31,6 +31,7 @@ jobs:
 
       - name: yarn test
         env:
+          USE_HARD_LINKS: false # because of https://github.com/electron-userland/electron-builder/issues/3179
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           yarn run package
