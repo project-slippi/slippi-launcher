@@ -43,6 +43,10 @@ export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({
   const userQuery = useQuery(
     ["userId", value],
     async () => {
+      // First check that the user id is only alphanumeric
+      if (!value.match(/^[0-9a-zA-Z]+$/)) {
+        throw new Error("Invalid user ID format");
+      }
       console.log("starting fetch: ", JSON.stringify(new Date()));
       const result = await validateUserId(value);
       console.log("finished fetch: ", JSON.stringify(new Date()));
