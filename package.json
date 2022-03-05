@@ -14,7 +14,7 @@
     "postinstall": "ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps && cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.ts",
     "dev": "yarn run start",
     "start": "ts-node ./.erb/scripts/check-port-in-use.js && yarn run start:renderer",
-    "start:main": "yarn run start:preload && cross-env NODE_ENV=development electron -r ts-node/register/transpile-only ./src/main/main.ts",
+    "start:main": "yarn run start:preload && cross-env NODE_ENV=development electron -r dotenv/config -r ts-node/register/transpile-only ./src/main/main.ts",
     "start:preload": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.preload.ts",
     "start:renderer": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
     "test": "jest --verbose"
