@@ -1,4 +1,3 @@
-import { isLinux, isMac } from "@common/constants";
 import { app } from "electron";
 import * as fs from "fs-extra";
 import { isEqual } from "lodash";
@@ -24,6 +23,9 @@ import { dolphinManager } from "./manager";
 import { deletePlayKeyFile, findPlayKey, writePlayKeyFile } from "./playkey";
 import { DolphinLaunchType } from "./types";
 import { findDolphinExecutable, updateBootToCssCode } from "./util";
+
+const isMac = process.platform === "darwin";
+const isLinux = process.platform === "linux";
 
 export default function installDolphinIpc() {
   ipc_downloadDolphin.main!.handle(async () => {

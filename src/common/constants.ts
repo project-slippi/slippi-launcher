@@ -2,12 +2,6 @@ import pkg from "../../release/app/package.json";
 
 export const appVersion = pkg.version;
 
-export const isDevelopment = process.env.NODE_ENV !== "production";
-
-export const isMac = process.platform === "darwin";
-export const isLinux = process.platform === "linux";
-export const isWindows = process.platform === "win32";
-
 export const slippiHomepage = "https://slippi.gg";
 export const slippiActivationUrl = "https://slippi.gg/online/enable";
 

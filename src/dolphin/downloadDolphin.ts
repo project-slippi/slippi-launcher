@@ -1,4 +1,3 @@
-import { isLinux } from "@common/constants";
 import AdmZip from "adm-zip";
 import { spawnSync } from "child_process";
 import { app, BrowserWindow } from "electron";
@@ -16,6 +15,8 @@ import type { DolphinVersionResponse } from "./types";
 import { DolphinLaunchType } from "./types";
 import { findDolphinExecutable } from "./util";
 
+const isLinux = process.platform === "linux";
+
 function logDownloadInfo(message: string): void {
   void ipc_dolphinDownloadLogReceivedEvent.main!.trigger({ message });
 }
@@ -25,7 +26,7 @@ export async function assertDolphinInstallations(): Promise<void> {
     await assertDolphinInstallation(DolphinLaunchType.NETPLAY, logDownloadInfo);
     await assertDolphinInstallation(DolphinLaunchType.PLAYBACK, logDownloadInfo);
     await ipc_dolphinDownloadFinishedEvent.main!.trigger({ error: null });
-  } catch (err) {
+  } catch (err: any) {
     console.error(err);
     await ipc_dolphinDownloadFinishedEvent.main!.trigger({ error: err.message });
   }
@@ -68,11 +69,20 @@ export async function downloadAndInstallDolphin(
   log: (message: string) => void,
   cleanInstall = false,
 ): Promise<void> {
-  const downloadUrl = releaseInfo.downloadUrls[process.platform];
-  const downloadedAsset = await downloadLatestDolphin(downloadUrl, log);
-  log(`Installing v${releaseInfo.version} ${type} Dolphin...`);
-  await installDolphin(type, downloadedAsset, log, cleanInstall);
-  log(`Finished v${releaseInfo.version} ${type} Dolphin install`);
+  switch (process.platform) {
+    case "win32":
+    case "linux":
+    case "darwin": {
+      const downloadUrl = releaseInfo.downloadUrls[process.platform];
+      const downloadedAsset = await downloadLatestDolphin(downloadUrl, log);
+      log(`Installing v${releaseInfo.version} ${type} Dolphin...`);
+      await installDolphin(type, downloadedAsset, log, cleanInstall);
+      log(`Finished v${releaseInfo.version} ${type} Dolphin install`);
+      break;
+    }
+    default:
+      throw new Error(`Unsupported platform: ${process.platform}`);
+  }
 }
 
 async function downloadLatestDolphin(

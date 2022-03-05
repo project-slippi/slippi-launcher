@@ -10,7 +10,6 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import { colors } from "@common/colors";
-import { isMac } from "@common/constants";
 import { delay } from "@common/delay";
 import { dolphinManager } from "@dolphin/manager";
 import { ipc_statsPageRequestedEvent } from "@replays/ipc";
@@ -31,6 +30,8 @@ import { fileExists } from "./fileExists";
 import { MenuBuilder } from "./menu";
 import { setupIpc } from "./setupIpc";
 import { resolveHtmlPath } from "./util";
+
+const isMac = process.platform === "darwin";
 
 // On macOS, we need to force Electron to use Metal if possible. Without this flag, OpenGL will be used...
 // in software rendering mode. This has a notable impact on animations on Catalina and (Intel) Big Sur.

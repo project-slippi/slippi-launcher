@@ -1,6 +1,5 @@
 /** @jsx jsx */
 import { colors } from "@common/colors";
-import { isDevelopment } from "@common/constants";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
@@ -96,7 +95,7 @@ export const BroadcastPanel: React.FC<BroadcastPanelProps> = ({
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         onSubmit={onStartBroadcast}
-        skipUserValidation={isDevelopment}
+        skipUserValidation={window.electron.common.isDevelopment}
       />
     </div>
   );

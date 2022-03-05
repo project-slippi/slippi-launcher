@@ -1,8 +1,9 @@
-import { isMac } from "@common/constants";
 import mousetrap from "mousetrap";
 import type { RefObject } from "react";
 import { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
+const isMac = window.electron.common.isMac;
 
 // Map Ctrl + 1 to be the first page, Ctrl + 2 to be the second page etc.
 export const usePageNavigationShortcuts = (paths: string[]) => {

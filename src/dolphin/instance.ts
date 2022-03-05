@@ -7,11 +7,11 @@ import { EventEmitter } from "events";
 import * as fs from "fs-extra";
 import path from "path";
 
-import { isMac } from "../common/constants";
 import { fileExists } from "../main/fileExists";
 import type { ReplayCommunication } from "./types";
 
 const log = electronLog.scope("dolphin/instance");
+const isMac = process.platform === "darwin";
 
 const generateTempCommunicationFile = (): string => {
   const tmpDir = path.join(app.getPath("userData"), "temp");

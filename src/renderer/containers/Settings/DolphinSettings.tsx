@@ -1,5 +1,4 @@
 /** @jsx jsx */
-import { isLinux, isMac } from "@common/constants";
 import { DolphinLaunchType } from "@dolphin/types";
 import { css, jsx } from "@emotion/react";
 import Button from "@material-ui/core/Button";
@@ -16,6 +15,7 @@ import { useDolphinPath } from "@/lib/hooks/useSettings";
 
 import { SettingItem } from "./SettingItem";
 
+const { isLinux, isMac } = window.electron.common;
 const log = console;
 
 export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolphinType }) => {

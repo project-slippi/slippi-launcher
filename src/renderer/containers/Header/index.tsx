@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { colors } from "@common/colors";
-import { isMac, slippiHomepage } from "@common/constants";
+import { slippiHomepage } from "@common/constants";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Box from "@material-ui/core/Box";
@@ -27,6 +27,8 @@ import type { MenuItem } from "./MainMenu";
 import { MainMenu } from "./MainMenu";
 import { StartGameDialog } from "./StartGameDialog";
 import { UserMenu } from "./UserMenu";
+
+const isMac = window.electron.common.isMac;
 
 const OuterBox = styled(Box)`
   background: radial-gradient(circle at left, #5c1394, transparent 30%);

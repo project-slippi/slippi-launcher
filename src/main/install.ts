@@ -1,4 +1,3 @@
-import { isDevelopment, isMac } from "@common/constants";
 import { IsoValidity } from "@common/types";
 import { settingsManager } from "@settings/settingsManager";
 import { app, clipboard, dialog, ipcMain, nativeImage } from "electron";
@@ -31,6 +30,8 @@ import { getAssetPath, readLastLines } from "./util";
 import { verifyIso } from "./verifyIso";
 
 const log = electronLog.scope("main/listeners");
+const isDevelopment = process.env.NODE_ENV !== "production";
+const isMac = process.platform === "darwin";
 
 autoUpdater.logger = log;
 

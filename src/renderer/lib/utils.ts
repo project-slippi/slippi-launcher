@@ -1,7 +1,8 @@
-import { isLinux, isWindows } from "@common/constants";
 import { characters as charUtils, stages as stageUtils } from "@slippi/slippi-js";
 
 import unknownCharacterIcon from "@/styles/images/unknown.png";
+
+const { isLinux, isWindows } = window.electron.common;
 
 const characterIcons = require.context("../styles/images/characters", true);
 const stageIcons = require.context("../styles/images/stages");

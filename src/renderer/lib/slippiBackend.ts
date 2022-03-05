@@ -1,10 +1,11 @@
 import { ApolloClient, ApolloLink, gql, HttpLink, InMemoryCache } from "@apollo/client";
-import { appVersion, isDevelopment } from "@common/constants";
+import { appVersion } from "@common/constants";
 import type { PlayKey } from "@dolphin/types";
 import firebase from "firebase";
 import type { GraphQLError } from "graphql";
 
 const httpLink = new HttpLink({ uri: process.env.SLIPPI_GRAPHQL_ENDPOINT });
+const isDevelopment = window.electron.common.isDevelopment;
 
 const client = new ApolloClient({
   link: httpLink,

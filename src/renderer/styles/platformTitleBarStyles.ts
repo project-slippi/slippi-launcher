@@ -1,5 +1,6 @@
-import { isMac } from "@common/constants";
 import { css } from "@emotion/react";
+
+const isMac = window.electron.common.isMac;
 
 // Some platforms, like macOS, need to account for extra padding at the top of the window for
 // the proper OS styling.
