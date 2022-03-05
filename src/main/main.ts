@@ -330,11 +330,6 @@ app
       // dock icon is clicked and there are no other windows open.
       if (mainWindow === null) {
         void createWindow();
-      } else {
-        if (mainWindow.isMinimized()) {
-          mainWindow.restore();
-        }
-        mainWindow.focus();
       }
     });
   })
