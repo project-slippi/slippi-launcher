@@ -1,6 +1,3 @@
-/* eslint-disable import/no-default-export */
-
-import { isDevelopment } from "@common/constants";
 import { ipcRenderer } from "electron";
 
 import {
