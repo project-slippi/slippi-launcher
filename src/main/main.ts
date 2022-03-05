@@ -33,15 +33,6 @@ import { resolveHtmlPath } from "./util";
 
 const isMac = process.platform === "darwin";
 
-// On macOS, we need to force Electron to use Metal if possible. Without this flag, OpenGL will be used...
-// in software rendering mode. This has a notable impact on animations on Catalina and (Intel) Big Sur.
-//
-// This is explicitly avoided on M1 devices, as OpenGL is just a shim to Metal, and Electron seems to implode
-// if passed this flag on M1 devices.
-if (isMac && process.arch !== "arm64") {
-  app.commandLine.appendSwitch("enable-features", "Metal");
-}
-
 let menu: CrossProcessExports.Menu | null = null;
 let mainWindow: BrowserWindow | null = null;
 let didFinishLoad = false;
