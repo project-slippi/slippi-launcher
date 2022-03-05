@@ -118,7 +118,9 @@ export default function installMainIpc() {
       }),
     );
 
-    clipboard.writeText(`MAIN START\n---------------\n${mainLogs}\n\nRENDERER START\n---------------\n${rendererLogs}`);
+    clipboard.writeText(
+      `MAIN START (${mainLogPath})\n---------------\n${mainLogs}\n\nRENDERER START (${rendererLogPath})\n---------------\n${rendererLogs}`,
+    );
     return { success: true };
   });
 
