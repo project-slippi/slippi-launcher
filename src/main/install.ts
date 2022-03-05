@@ -90,21 +90,16 @@ export default function installMainIpc() {
   });
 
   ipc_copyLogsToClipboard.main!.handle(async () => {
-    let logsFolder = "";
+    let logsFolder = app.getPath("logs");
     // why does macOS decide it needs to be difficult?
     if (isDevelopment) {
       if (isMac) {
-        logsFolder = path.join(app.getPath("logs"), "..", "Slippi Launcher");
+        logsFolder = path.join(logsFolder, "..", "Slippi Launcher");
       } else {
-        logsFolder = path.join(app.getPath("logs"), "../../../", "Slippi Launcher", "logs");
-      }
-    } else {
-      if (isMac) {
-        logsFolder = app.getPath("logs");
-      } else {
-        logsFolder = path.join(app.getPath("logs"), "../../", "logs");
+        logsFolder = path.join(logsFolder, "../../", "Slippi Launcher", "logs");
       }
     }
+
     const mainLogPath = path.join(logsFolder, "main.log");
     const rendererLogPath = path.join(logsFolder, "renderer.log");
 
