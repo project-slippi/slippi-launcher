@@ -140,7 +140,6 @@ const createWindow = async () => {
     onOpenPreferences: async () => {
       if (!mainWindow) {
         await createWindow();
-        await waitForMainWindow();
       }
       await ipc_openSettingsModalEvent.main!.trigger({});
     },
