@@ -16,6 +16,7 @@ import { dolphinManager } from "@dolphin/manager";
 import { ipc_statsPageRequestedEvent } from "@replays/ipc";
 import { ipc_openSettingsModalEvent } from "@settings/ipc";
 import { settingsManager } from "@settings/settingsManager";
+import type CrossProcessExports from "electron";
 import { app, BrowserWindow, ipcMain, shell } from "electron";
 import log from "electron-log";
 import { autoUpdater } from "electron-updater";
@@ -40,6 +41,7 @@ if (isMac && process.arch !== "arm64") {
   app.commandLine.appendSwitch("enable-features", "Metal");
 }
 
+let menu: CrossProcessExports.Menu | null = null;
 let mainWindow: BrowserWindow | null = null;
 let didFinishLoad = false;
 
@@ -132,16 +134,20 @@ const createWindow = async () => {
     mainWindow = null;
   });
 
-  const menuBuilder = new MenuBuilder(
+  const menuBuilder = new MenuBuilder({
     mainWindow,
-    () => {
-      void ipc_openSettingsModalEvent.main!.trigger({});
+    onOpenPreferences: async () => {
+      if (!mainWindow) {
+        await createWindow();
+        await waitForMainWindow();
+      }
+      await ipc_openSettingsModalEvent.main!.trigger({});
     },
-    playReplayAndShowStats,
-  );
-  menuBuilder.buildMenu({
+    onOpenReplayFile: playReplayAndShowStats,
+    createWindow,
     enableDevTools: isDevelopment,
   });
+  menu = menuBuilder.buildMenu();
 
   // Open urls in the user's browser
   mainWindow.webContents.setWindowOpenHandler((edata) => {
@@ -159,11 +165,19 @@ const createWindow = async () => {
  */
 
 app.on("window-all-closed", () => {
-  // Respect the OSX convention of having the application in memory even
-  // after all windows have been closed
-  if (process.platform !== "darwin") {
-    app.quit();
+  // On macOS, the window closing shouldn't quit the actual process.
+  // Instead, grab and activate a hidden menu item to enable the user to
+  // recreate the window on-demand.
+  if (isMac && menu) {
+    const macMenuItem = menu.getMenuItemById("macos-window-toggle");
+    if (macMenuItem) {
+      macMenuItem.enabled = true;
+      macMenuItem.visible = true;
+    }
+    return;
   }
+
+  app.quit();
 });
 
 const slippiProtocol = "slippi";
@@ -316,6 +330,11 @@ app
       // dock icon is clicked and there are no other windows open.
       if (mainWindow === null) {
         void createWindow();
+      } else {
+        if (mainWindow.isMinimized()) {
+          mainWindow.restore();
+        }
+        mainWindow.focus();
       }
     });
   })

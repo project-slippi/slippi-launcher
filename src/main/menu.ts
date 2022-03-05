@@ -8,14 +8,28 @@ interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
 }
 
 export class MenuBuilder {
-  public constructor(
-    private mainWindow: BrowserWindow,
-    private onOpenPreferences: () => void,
-    private onOpenReplayFile: (filePath: string) => void,
-  ) {}
+  private mainWindow: BrowserWindow;
+  private onOpenPreferences: () => void;
+  private onOpenReplayFile: (filePath: string) => void;
+  private createWindow: () => Promise<void>;
+  private enableDevTools?: boolean;
 
-  public buildMenu({ enableDevTools }: Partial<{ enableDevTools: boolean }>): Menu {
-    if (enableDevTools) {
+  public constructor(options: {
+    mainWindow: BrowserWindow;
+    onOpenPreferences: () => void;
+    onOpenReplayFile: (filePath: string) => void;
+    createWindow: () => Promise<void>;
+    enableDevTools?: boolean;
+  }) {
+    this.mainWindow = options.mainWindow;
+    this.enableDevTools = options.enableDevTools;
+    this.onOpenPreferences = options.onOpenPreferences;
+    this.onOpenReplayFile = options.onOpenReplayFile;
+    this.createWindow = options.createWindow;
+  }
+
+  public buildMenu(): Menu {
+    if (this.enableDevTools) {
       this.setupDevelopmentEnvironment();
     }
 
@@ -64,7 +78,7 @@ export class MenuBuilder {
         { label: "Services", submenu: [] },
         { type: "separator" },
         {
-          label: "Hide ElectronReact",
+          label: "Hide Slippi Launcher",
           accelerator: "Command+H",
           selector: "hide:",
         },
@@ -116,35 +130,29 @@ export class MenuBuilder {
         },
       ],
     };
-    const subMenuViewDev: MenuItemConstructorOptions = {
+    const subMenuViewDev: DarwinMenuItemConstructorOptions[] = [
+      {
+        label: "Reload",
+        accelerator: "Command+R",
+        click: () => {
+          this.mainWindow.webContents.reload();
+        },
+      },
+      {
+        label: "Toggle Developer Tools",
+        accelerator: "Alt+Command+I",
+        click: () => {
+          this.mainWindow.webContents.toggleDevTools();
+        },
+      },
+      { type: "separator" },
+    ];
+    const subMenuViewItems = this.enableDevTools ? subMenuViewDev : [];
+
+    const subMenuView: DarwinMenuItemConstructorOptions = {
       label: "View",
       submenu: [
-        {
-          label: "Reload",
-          accelerator: "Command+R",
-          click: () => {
-            this.mainWindow.webContents.reload();
-          },
-        },
-        {
-          label: "Toggle Full Screen",
-          accelerator: "Ctrl+Command+F",
-          click: () => {
-            this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
-          },
-        },
-        {
-          label: "Toggle Developer Tools",
-          accelerator: "Alt+Command+I",
-          click: () => {
-            this.mainWindow.webContents.toggleDevTools();
-          },
-        },
-      ],
-    };
-    const subMenuViewProd: MenuItemConstructorOptions = {
-      label: "View",
-      submenu: [
+        ...subMenuViewItems,
         {
           label: "Toggle Full Screen",
           accelerator: "Ctrl+Command+F",
@@ -165,6 +173,18 @@ export class MenuBuilder {
         { label: "Close", accelerator: "Command+W", selector: "performClose:" },
         { type: "separator" },
         { label: "Bring All to Front", selector: "arrangeInFront:" },
+        {
+          id: "macos-window-toggle",
+          label: "Slippi Launcher",
+          accelerator: "Cmd+0",
+          visible: false,
+          enabled: false,
+          click: (menuItem) => {
+            menuItem.enabled = false;
+            menuItem.visible = false;
+            void this.createWindow();
+          },
+        },
       ],
     };
     const subMenuHelp: MenuItemConstructorOptions = {
@@ -178,9 +198,6 @@ export class MenuBuilder {
         },
       ],
     };
-
-    const subMenuView =
-      process.env.NODE_ENV === "development" || process.env.DEBUG_PROD === "true" ? subMenuViewDev : subMenuViewProd;
 
     return [subMenuAbout, subMenuFile, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
   }
