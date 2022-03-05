@@ -128,11 +128,8 @@ const createWindow = async () => {
 
   const menuBuilder = new MenuBuilder({
     mainWindow,
-    onOpenPreferences: async () => {
-      if (!mainWindow) {
-        await createWindow();
-      }
-      await ipc_openSettingsModalEvent.main!.trigger({});
+    onOpenPreferences: () => {
+      void openPreferences().catch(log.error);
     },
     onOpenReplayFile: playReplayAndShowStats,
     createWindow,
@@ -325,3 +322,10 @@ app
     });
   })
   .catch(console.log);
+
+const openPreferences = async () => {
+  if (!mainWindow) {
+    await createWindow();
+  }
+  await ipc_openSettingsModalEvent.main!.trigger({});
+};
