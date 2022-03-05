@@ -72,6 +72,7 @@ const configuration: webpack.Configuration = {
 
     new Dotenv({
       path: path.join(webpackPaths.rootPath, ".env"),
+      silent: true,
     }),
   ],
 };
