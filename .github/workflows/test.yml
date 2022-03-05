@@ -32,7 +32,7 @@ jobs:
       - name: Load macOS signing certificates and secrets
         if: matrix.os == 'macOS-latest' && env.CERTIFICATE_MACOS_PASSWORD != null
         run: |
-          chmod +x build/load-macos-certs-ci.sh && ./build/load-macos-certs-ci.sh
+          chmod +x ./.erb/scripts/load-macos-certs-ci.sh && ./.erb/scripts/load-macos-certs-ci.sh
           mkdir -p ~/private_keys/
           echo '${{ secrets.APPLE_CONNECT_API_KEY }}' > ~/private_keys/AuthKey_${{ secrets.APPLE_API_KEY_ID }}.p8
           echo "CSC_LINK=${{ secrets.CERTIFICATE_MACOS_APPLICATION }}" >> $GITHUB_ENV
