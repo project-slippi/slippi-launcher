@@ -16,7 +16,7 @@ import { ipc_statsPageRequestedEvent } from "@replays/ipc";
 import { ipc_openSettingsModalEvent } from "@settings/ipc";
 import { settingsManager } from "@settings/settingsManager";
 import type CrossProcessExports from "electron";
-import { app, BrowserWindow, ipcMain, shell } from "electron";
+import { app, BrowserWindow, shell } from "electron";
 import log from "electron-log";
 import { autoUpdater } from "electron-updater";
 import * as fs from "fs-extra";
@@ -53,12 +53,6 @@ class AppUpdater {
     autoUpdater.checkForUpdatesAndNotify().catch(log.error);
   }
 }
-
-ipcMain.on("ipc-example", async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply("ipc-example", msgTemplate("pong"));
-});
 
 if (process.env.NODE_ENV === "production") {
   const sourceMapSupport = require("source-map-support");
@@ -321,7 +315,7 @@ app
       }
     });
   })
-  .catch(console.log);
+  .catch(log.error);
 
 const openPreferences = async () => {
   if (!mainWindow) {
