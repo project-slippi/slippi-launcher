@@ -18,7 +18,7 @@ const Outer = styled.div`
   overflow-x: hidden;
 `;
 
-export const TwitterFeed: React.FC = () => {
+export const TwitterFeed = React.memo(() => {
   const params = {
     screenName: socials.twitterId,
     theme: "dark",
@@ -33,4 +33,4 @@ export const TwitterFeed: React.FC = () => {
       </TwitterFeedContainer>
     </Outer>
   );
-};
+});
