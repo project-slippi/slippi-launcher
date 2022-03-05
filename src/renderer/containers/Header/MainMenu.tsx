@@ -15,7 +15,6 @@ export interface MenuItem {
 }
 
 export interface MainMenuProps {
-  path: string;
   menuItems: MenuItem[];
 }
 
