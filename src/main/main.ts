@@ -14,6 +14,7 @@ import { delay } from "@common/delay";
 import { dolphinManager } from "@dolphin/manager";
 import { ipc_statsPageRequestedEvent } from "@replays/ipc";
 import { ipc_openSettingsModalEvent } from "@settings/ipc";
+import { settingsManager } from "@settings/settingsManager";
 import { app, BrowserWindow, ipcMain, shell } from "electron";
 import log from "electron-log";
 import { autoUpdater } from "electron-updater";
@@ -44,6 +45,7 @@ class AppUpdater {
   public constructor() {
     log.transports.file.level = "info";
     autoUpdater.logger = log;
+    autoUpdater.autoInstallOnAppQuit = settingsManager.get().settings.autoUpdateLauncher;
     autoUpdater.checkForUpdatesAndNotify().catch(log.error);
   }
 }
