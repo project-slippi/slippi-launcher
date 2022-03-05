@@ -25,13 +25,6 @@ export default {
   onDragState(filePaths: string[]) {
     ipcRenderer.send("onDragStart", filePaths);
   },
-  getAssetPath(path: string) {
-    if (isDevelopment) {
-      // We serve the assets folder using webpack-dev-server so it should already be accessible.
-      return path;
-    }
-    return ipcRenderer.sendSync("getAssetPathSync", [path]) as string;
-  },
   async fetchNewsFeed() {
     const { result } = await ipc_fetchNewsFeed.renderer!.trigger({});
     return result;
