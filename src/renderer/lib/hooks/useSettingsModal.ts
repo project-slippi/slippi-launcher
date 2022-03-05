@@ -16,22 +16,16 @@ const initialState: StoreState = {
   lastPage: "/",
 };
 
-const useModalStore = create<StoreState & StoreReducers>((set, get) => ({
+const useModalStore = create<StoreState & StoreReducers>((set) => ({
   // Set the initial state
   ...initialState,
 
   // Reducers
   setLastModalPage: (page) => {
-    const { lastModalPage } = get();
-    if (page !== lastModalPage) {
-      set({ lastModalPage: page });
-    }
+    set({ lastModalPage: page });
   },
   setLastPage: (page) => {
-    const { lastPage } = get();
-    if (page !== lastPage) {
-      set({ lastPage: page });
-    }
+    set({ lastPage: page });
   },
 }));
 
