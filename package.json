@@ -1,5 +1,6 @@
 {
   "name": "slippi-launcher",
+  "productName": "Slippi Launcher",
   "description": "Launch Slippi Online, browse and watch saved replays",
   "license": "GPL-3.0",
   "scripts": {
