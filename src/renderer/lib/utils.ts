@@ -1,7 +1,10 @@
 import { isLinux, isWindows } from "@common/constants";
-import { characters as charUtils } from "@slippi/slippi-js";
+import { characters as charUtils, stages as stageUtils } from "@slippi/slippi-js";
 
-const getAssetPath = window.electron.common.getAssetPath;
+import unknownCharacterIcon from "@/styles/images/unknown.png";
+
+const characterIcons = require.context("../styles/images/characters", true);
+const stageIcons = require.context("../styles/images/stages");
 
 export const getCharacterIcon = (characterId: number | null, characterColor: number | null = 0): string => {
   if (characterId !== null) {
@@ -10,14 +13,18 @@ export const getCharacterIcon = (characterId: number | null, characterColor: num
       const allColors = characterInfo.colors;
       // Make sure it's a valid color, otherwise use the default color
       const color = characterColor !== null && characterColor <= allColors.length - 1 ? characterColor : 0;
-      return getAssetPath(`/images/characters/${characterId}/${color}/stock.png`);
+      return characterIcons(`./${characterId}/${color}/stock.png`);
     }
   }
-  return getAssetPath(`/images/unknown.png`);
+  return unknownCharacterIcon;
 };
 
 export const getStageImage = (stageId: number): string => {
-  return getAssetPath(`/images/stages/${stageId}.png`);
+  const stageInfo = stageUtils.getStageInfo(stageId);
+  if (stageInfo.id !== stageUtils.UnknownStage.id) {
+    return stageIcons(`./${stageId}.png`);
+  }
+  return "";
 };
 
 export const toOrdinal = (i: number): string => {
