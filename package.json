@@ -34,7 +34,9 @@
   "devEngines": {
     "node": ">=14.x"
   },
-  "browserslist": [],
+  "browserslist": [
+    "chrome 91"
+  ],
   "husky": {
     "hooks": {
       "pre-commit": "pretty-quick --staged",
