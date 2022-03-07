@@ -11,7 +11,7 @@ import create from "zustand";
 import { combine } from "zustand/middleware";
 
 import { useAsync } from "@/lib/hooks/useAsync";
-import type { AuthUser } from "@/services/auth_service/types";
+import type { AuthUser } from "@/services/authService/types";
 import { useServices } from "@/services/serviceContext";
 
 import { QuickStartHeader } from "./QuickStart/QuickStartHeader";

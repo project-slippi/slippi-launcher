@@ -3,7 +3,7 @@ export type AuthUser = {
   displayName: string;
 };
 
-export interface IAuthService {
+export interface AuthService {
   logout(): Promise<void>;
   getCurrentUser(): AuthUser | null;
   onUserChange(onChange: (user: AuthUser | null) => void): () => void;

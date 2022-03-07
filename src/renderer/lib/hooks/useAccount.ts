@@ -2,7 +2,7 @@ import type { PlayKey } from "@dolphin/types";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
-import type { AuthUser } from "@/services/auth_service/types";
+import type { AuthUser } from "@/services/authService/types";
 
 import { fetchPlayKey } from "../slippiBackend";
 

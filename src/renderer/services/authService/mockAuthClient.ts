@@ -1,9 +1,9 @@
 import multicast from "observable-fns/multicast";
 import Subject from "observable-fns/subject";
 
-import type { AuthUser, IAuthService } from "./types";
+import type { AuthService, AuthUser } from "./types";
 
-export class MockAuthService implements IAuthService {
+export class MockAuthClient implements AuthService {
   private _currentUser: AuthUser | null = null;
   private _userSubject = new Subject<AuthUser | null>();
   private _onAuthStateChanged = multicast(this._userSubject);

@@ -2,7 +2,7 @@ import firebase from "firebase/app";
 import multicast from "observable-fns/multicast";
 import Subject from "observable-fns/subject";
 
-import type { AuthUser, IAuthService } from "./types";
+import type { AuthService, AuthUser } from "./types";
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -19,7 +19,7 @@ const firebaseConfig = {
  * Initialize Firebase
  */
 
-export class AuthService implements IAuthService {
+export class AuthClient implements AuthService {
   private _userSubject = new Subject<AuthUser | null>();
   private _onAuthStateChanged = multicast(this._userSubject);
 

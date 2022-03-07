@@ -1,9 +1,9 @@
 /* eslint-disable import/no-default-export */
-import { AuthService } from "./auth_service/auth_service";
+import { AuthClient } from "./authService/authClient";
 import type { Services } from "./types";
 
 export default function installServices(): Services {
-  const authService = new AuthService();
+  const authService = new AuthClient();
 
   return {
     authService,

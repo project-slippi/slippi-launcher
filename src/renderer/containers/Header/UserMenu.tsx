@@ -9,7 +9,7 @@ import { ConfirmationModal } from "@/components/ConfirmationModal";
 import type { IconMenuItem } from "@/components/IconMenu";
 import { IconMenu } from "@/components/IconMenu";
 import { useAccount } from "@/lib/hooks/useAccount";
-import type { AuthUser } from "@/services/auth_service/types";
+import type { AuthUser } from "@/services/authService/types";
 import { useServices } from "@/services/serviceContext";
 
 import { ActivateOnlineDialog } from "./ActivateOnlineDialog";

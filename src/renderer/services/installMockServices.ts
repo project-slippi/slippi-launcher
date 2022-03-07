@@ -1,9 +1,8 @@
-/* eslint-disable import/no-default-export */
-import { MockAuthService } from "./auth_service/auth_service.mock";
+import { MockAuthClient } from "./authService/mockAuthClient";
 import type { Services } from "./types";
 
 export default function installMockServices(): Services {
-  const authService = new MockAuthService();
+  const authService = new MockAuthClient();
 
   return {
     authService,

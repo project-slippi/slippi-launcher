@@ -1,5 +1,5 @@
-import type { IAuthService } from "./auth_service/types";
+import type { AuthService } from "./authService/types";
 
 export type Services = {
-  authService: IAuthService;
+  authService: AuthService;
 };
