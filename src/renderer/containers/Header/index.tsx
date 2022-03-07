@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { colors } from "@common/colors";
-import { isMac, slippiHomepage } from "@common/constants";
+import { slippiHomepage } from "@common/constants";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Box from "@material-ui/core/Box";
@@ -9,7 +9,6 @@ import ButtonBase from "@material-ui/core/ButtonBase";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 import SettingsOutlinedIcon from "@material-ui/icons/SettingsOutlined";
-import { shell } from "electron";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
 
@@ -29,17 +28,18 @@ import { MainMenu } from "./MainMenu";
 import { StartGameDialog } from "./StartGameDialog";
 import { UserMenu } from "./UserMenu";
 
+const isMac = window.electron.common.isMac;
+
 const OuterBox = styled(Box)`
   background: radial-gradient(circle at left, #5c1394, transparent 30%);
   background-color: ${colors.purple};
   height: 70px;
 `;
 export interface HeaderProps {
-  path: string;
   menuItems: MenuItem[];
 }
 
-export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
+export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
   const [startGameModalOpen, setStartGameModalOpen] = React.useState(false);
   const [activateOnlineModal, setActivateOnlineModal] = React.useState(false);
   const openModal = useLoginModal((store) => store.openModal);
@@ -104,7 +104,10 @@ export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
         `}
       >
         <Tooltip title="Open Slippi.gg">
-          <Button onClick={() => shell.openExternal(slippiHomepage)} style={isMac ? { marginTop: 10 } : undefined}>
+          <Button
+            onClick={() => window.electron.shell.openPath(slippiHomepage)}
+            style={isMac ? { marginTop: 10 } : undefined}
+          >
             <img src={slippiLogo} width="38px" />
           </Button>
         </Tooltip>
@@ -126,7 +129,7 @@ export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
             </PlayIcon>
           </ButtonBase>
         </div>
-        <MainMenu path={path} menuItems={menuItems} />
+        <MainMenu menuItems={menuItems} />
       </div>
       <Box display="flex" alignItems="center">
         {currentUser ? (

@@ -1,4 +1,3 @@
-import { ipc_getLatestGitHubReleaseVersion } from "@common/ipc";
 import type { DiscoveredConsoleInfo } from "@console/types";
 import styled from "@emotion/styled";
 import CreateIcon from "@material-ui/icons/Create";
@@ -22,6 +21,7 @@ export interface SavedConnectionsListProps {
 }
 
 export const SavedConnectionsList: React.FC<SavedConnectionsListProps> = ({ availableConsoles, onEdit, onDelete }) => {
+  const [nintendontVersion, setNintendontVersion] = React.useState("1.8.0");
   const [menuItem, setMenuItem] = React.useState<null | {
     index: number;
     anchorEl: HTMLElement;
@@ -68,10 +68,14 @@ export const SavedConnectionsList: React.FC<SavedConnectionsListProps> = ({ avai
     handleClose();
   };
 
-  const { value: versionData } = ipc_getLatestGitHubReleaseVersion.renderer!.useValue(
-    { owner: "project-slippi", repo: "Nintendont" },
-    { version: "1.8.0" },
-  );
+  React.useEffect(() => {
+    window.electron.common
+      .getLatestGithubReleaseVersion("project-slippi", "Nintendont")
+      .then((version) => {
+        setNintendontVersion(version);
+      })
+      .catch(console.error);
+  });
 
   return (
     <Outer>
@@ -92,7 +96,7 @@ export const SavedConnectionsList: React.FC<SavedConnectionsListProps> = ({ avai
                 isAvailable={Boolean(consoleInfo)}
                 currentFilename={consoleStatus?.filename ?? null}
                 nintendontVersion={consoleStatus?.nintendontVersion ?? null}
-                latestVersion={versionData.version}
+                latestVersion={nintendontVersion}
                 nickname={consoleStatus?.nickname ?? consoleInfo?.name}
                 connection={conn}
                 index={index}

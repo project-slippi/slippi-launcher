@@ -1,6 +1,4 @@
 /** @jsx jsx */
-import { isMac } from "@common/constants";
-import { ipc_deleteDesktopAppPath } from "@common/ipc";
 import { DolphinLaunchType } from "@dolphin/types";
 import { css, jsx } from "@emotion/react";
 import Box from "@material-ui/core/Box";
@@ -17,6 +15,8 @@ import { useDolphin } from "@/lib/hooks/useDolphin";
 import { useDesktopApp } from "@/lib/hooks/useQuickStart";
 
 import { QuickStartHeader } from "./QuickStartHeader";
+
+const isMac = window.electron.common.isMac;
 
 type FormValues = {
   netplayPath: string;
@@ -43,7 +43,7 @@ export const ImportDolphinSettingsStep: React.FC = () => {
 
   const finishMigration = async () => {
     // delete desktop app path
-    await ipc_deleteDesktopAppPath.renderer!.trigger({});
+    await window.electron.common.deleteDesktopAppPath();
     setExists(false);
   };
 

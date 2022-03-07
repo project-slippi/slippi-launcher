@@ -1,5 +1,5 @@
 import type { GameStartType, MetadataType } from "@slippi/slippi-js";
-import { get } from "lodash";
+import get from "lodash/get";
 
 export interface PlayerNames {
   name: string | null;

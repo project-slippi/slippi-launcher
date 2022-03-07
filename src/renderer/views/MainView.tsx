@@ -3,7 +3,7 @@ import HomeOutlinedIcon from "@material-ui/icons/HomeOutlined";
 import LiveTvOutlinedIcon from "@material-ui/icons/LiveTvOutlined";
 import SlowMotionVideoIcon from "@material-ui/icons/SlowMotionVideo";
 import React from "react";
-import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 import { AuthGuard } from "@/components/AuthGuard";
 import { PersistentNotification } from "@/components/PersistentNotification";
@@ -53,10 +53,8 @@ const menuItems: MainMenuItem[] = [
 ];
 
 export const MainView: React.FC = () => {
-  const { path } = useRouteMatch();
   const defaultRoute = menuItems.find((item) => item.default);
-
-  usePageNavigationShortcuts(menuItems.map((item) => `${path}/${item.subpath}`));
+  usePageNavigationShortcuts(menuItems.map((item) => `${item.subpath}`));
 
   return (
     <div
@@ -68,22 +66,16 @@ export const MainView: React.FC = () => {
       }}
     >
       <div style={{ flexShrink: 0 }}>
-        <Header path={path} menuItems={menuItems} />
+        <Header menuItems={menuItems} />
       </div>
       <div style={{ flex: 1, overflow: "auto", display: "flex" }}>
-        <Switch>
+        <Routes>
           {menuItems.map((item) => {
             const element = item.private ? <AuthGuard>{item.component}</AuthGuard> : item.component;
-            return (
-              <Route key={item.subpath} path={`${path}/${item.subpath}`}>
-                {element}
-              </Route>
-            );
+            return <Route key={item.subpath} path={`${item.subpath}/*`} element={element} />;
           })}
-          {defaultRoute && (
-            <Route exact path={path} component={() => <Redirect to={`${path}/${defaultRoute.subpath}`} />} />
-          )}
-        </Switch>
+          {defaultRoute && <Route path="*" element={<Navigate replace to={`${defaultRoute.subpath}`} />} />}
+        </Routes>
       </div>
       <LoginDialog />
       <PersistentNotification />

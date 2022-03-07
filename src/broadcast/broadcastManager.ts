@@ -1,7 +1,7 @@
 import { ConnectionEvent, ConnectionStatus, DolphinConnection, DolphinMessageType } from "@slippi/slippi-js";
 import { EventEmitter } from "events";
 import _ from "lodash";
-import type { connection, IMessage } from "websocket";
+import type { connection, Message } from "websocket";
 import { client as WebSocketClient } from "websocket";
 
 import type { SlippiBroadcastPayloadEvent, StartBroadcastConfig } from "./types";
@@ -87,7 +87,7 @@ export class BroadcastManager extends EventEmitter {
     if (this.dolphinConnection.getStatus() === ConnectionStatus.DISCONNECTED) {
       try {
         await this._connectToDolphin(config.ip, config.port);
-      } catch (err) {
+      } catch (err: any) {
         const errMsg = err.message || JSON.stringify(err);
         this.emit(BroadcastEvent.LOG, `Could not connect to Dolphin\n${errMsg}`);
         this.emit(BroadcastEvent.LOG, errMsg);
@@ -201,7 +201,7 @@ export class BroadcastManager extends EventEmitter {
         }
       });
 
-      connection.on("message", (data: IMessage) => {
+      connection.on("message", (data: Message) => {
         if (data.type !== "utf8") {
           return;
         }
@@ -219,7 +219,7 @@ export class BroadcastManager extends EventEmitter {
           } else {
             return;
           }
-        } catch (err) {
+        } catch (err: any) {
           const errMsg = err.message || JSON.stringify(err);
           this.emit(BroadcastEvent.LOG, `Failed to parse message from server\n${errMsg}\n${data.utf8Data}`);
           return;
@@ -432,8 +432,8 @@ export class BroadcastManager extends EventEmitter {
               break;
             }
 
-            if (event["next_cursor"]) {
-              this.nextGameCursor = event["next_cursor"];
+            if (event.nextCursor) {
+              this.nextGameCursor = event.nextCursor;
             }
 
             this.wsConnection.send(JSON.stringify(message), (err) => {

@@ -259,8 +259,8 @@ export class Section {
    */
   public getLines(removeComments: boolean): string[] {
     const lines: string[] = [];
-    this.lines.forEach((line) => {
-      line = line.trim();
+    this.lines.forEach((l) => {
+      let line = l.trim();
       if (removeComments) {
         const commentPos = line.indexOf("#");
         if (commentPos === 0) {

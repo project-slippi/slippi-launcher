@@ -35,7 +35,7 @@ export const ActivateOnlineDialog: React.FC<ActivateOnlineDialogProps> = ({ open
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth={true} fullScreen={fullScreen} disableBackdropClick={false}>
+    <Dialog open={open} onClose={onClose} fullWidth={true} fullScreen={fullScreen}>
       <StyledDialogTitle>Choose a connect code</StyledDialogTitle>
       <DialogContent style={{ display: "flex", paddingBottom: 30 }}>
         <ActivateOnlineForm onSubmit={handleSubmit} />

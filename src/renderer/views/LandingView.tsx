@@ -1,12 +1,11 @@
-/** @jsx jsx */
-import { isDevelopment } from "@common/constants";
-import { jsx } from "@emotion/react";
 import Box from "@material-ui/core/Box";
 import React from "react";
 
 import { QuickStart } from "@/containers/QuickStart";
 import { useQuickStart } from "@/lib/hooks/useQuickStart";
 import { withSlippiBackground } from "@/styles/withSlippiBackground";
+
+const isDevelopment = window.electron.common.isDevelopment;
 
 export const LandingView: React.FC = () => {
   const { allSteps, currentStep, nextStep, prevStep } = useQuickStart();

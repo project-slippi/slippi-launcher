@@ -1,6 +1,3 @@
-import { ipc_checkForUpdate } from "@common/ipc";
-import { ipc_checkDesktopAppDolphin, ipc_dolphinDownloadFinishedEvent, ipc_downloadDolphin } from "dolphin/ipc";
-import electronLog from "electron-log";
 import type firebase from "firebase";
 import { useToasts } from "react-toast-notifications";
 import create from "zustand";
@@ -12,7 +9,7 @@ import { fetchPlayKey } from "@/lib/slippiBackend";
 
 import { useDesktopApp } from "./useQuickStart";
 
-const log = electronLog.scope("useApp");
+const log = console;
 
 export const useAppStore = create(
   combine(
@@ -94,9 +91,9 @@ export const useAppInitialization = () => {
 
     promises.push(
       new Promise<void>((resolve) => {
-        const handler = ipc_dolphinDownloadFinishedEvent.renderer!.handle(async ({ error }) => {
+        const destroy = window.electron.dolphin.onDolphinDownloadFinished((error) => {
           // We only want to handle this event once so immediately destroy
-          handler.destroy();
+          destroy();
 
           if (error) {
             const errMsg = "Error occurred while downloading Dolphin";
@@ -109,23 +106,20 @@ export const useAppInitialization = () => {
     );
 
     // Download Dolphin if necessary
-    promises.push(ipc_downloadDolphin.renderer!.trigger({}));
+    promises.push(window.electron.dolphin.downloadDolphin());
 
     promises.push(
-      ipc_checkDesktopAppDolphin
-        .renderer!.trigger({})
-        .then(({ result }) => {
-          if (!result) {
-            throw new Error("Could not get old desktop app path");
-          }
-          setDesktopAppExists(result.exists);
-          setDesktopAppDolphinPath(result.dolphinPath);
+      window.electron.dolphin
+        .checkDesktopAppDolphin()
+        .then(({ exists, dolphinPath }) => {
+          setDesktopAppExists(exists);
+          setDesktopAppDolphinPath(dolphinPath);
         })
         .catch(console.error),
     );
 
     // Check if there is an update to the launcher
-    promises.push(ipc_checkForUpdate.renderer!.trigger({}));
+    promises.push(window.electron.common.checkForAppUpdates());
 
     // Wait for all the promises to complete before completing
     try {

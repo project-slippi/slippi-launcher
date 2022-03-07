@@ -1,4 +1,3 @@
-import { ipc_refreshBroadcastList } from "@broadcast/ipc";
 import type { BroadcasterItem } from "@broadcast/types";
 import throttle from "lodash/throttle";
 import { useToasts } from "react-toast-notifications";
@@ -28,10 +27,7 @@ export const useBroadcastList = () => {
       throw new Error("User is not logged in");
     }
     const authToken = await currentUser.getIdToken();
-    const broadcastListResult = await ipc_refreshBroadcastList.renderer!.trigger({ authToken });
-    if (!broadcastListResult.result) {
-      throw new Error("Error refreshing broadcast list");
-    }
+    await window.electron.broadcast.refreshBroadcastList(authToken);
   };
 
   // Limit refreshing to once every 2 seconds

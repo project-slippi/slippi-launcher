@@ -16,15 +16,13 @@ import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import CloseIcon from "@material-ui/icons/Close";
 import ErrorIcon from "@material-ui/icons/Error";
 import HelpIcon from "@material-ui/icons/Help";
-import { clipboard } from "electron";
-import electronLog from "electron-log";
 import debounce from "lodash/debounce";
 import React from "react";
 import { useQuery } from "react-query";
 
-import { validateUserId } from "@/lib/validateUserId";
+import { validateUserId } from "@/lib/slippiBackend";
 
-const log = electronLog.scope("StartBroadcastDialog");
+const log = console;
 export interface StartBroadcastDialogProps {
   open: boolean;
   onClose: () => void;
@@ -45,6 +43,10 @@ export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({
   const userQuery = useQuery(
     ["userId", value],
     async () => {
+      // First check that the user id is only alphanumeric
+      if (!value.match(/^[0-9a-zA-Z]+$/)) {
+        throw new Error("Invalid user ID format");
+      }
       console.log("starting fetch: ", JSON.stringify(new Date()));
       const result = await validateUserId(value);
       console.log("finished fetch: ", JSON.stringify(new Date()));
@@ -87,7 +89,16 @@ export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({
   }
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth={true} fullScreen={fullScreen} disableBackdropClick={true}>
+    <Dialog
+      open={open}
+      onClose={(_, reason) => {
+        if (reason !== "backdropClick") {
+          onClose();
+        }
+      }}
+      fullWidth={true}
+      fullScreen={fullScreen}
+    >
       <form onSubmit={handleSubmit}>
         <StyledDialogTitle>
           Enter Spectator ID
@@ -124,7 +135,7 @@ export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({
                       <IconButton
                         size="small"
                         onClick={() => {
-                          const text = clipboard.readText();
+                          const text = window.electron.clipboard.readText();
                           if (text) {
                             handleChange(text);
                           }

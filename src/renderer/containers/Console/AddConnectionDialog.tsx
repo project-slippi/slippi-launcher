@@ -55,7 +55,9 @@ export const AddConnectionDialog: React.FC<AddConnectionDialogProps> = ({
       fullWidth={true}
       fullScreen={fullScreen}
       closeAfterTransition={true}
-      onEntering={updateTitle}
+      TransitionProps={{
+        onEntering: updateTitle,
+      }}
     >
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>

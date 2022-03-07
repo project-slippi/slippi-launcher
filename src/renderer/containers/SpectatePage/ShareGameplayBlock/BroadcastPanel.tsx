@@ -1,6 +1,5 @@
 /** @jsx jsx */
 import { colors } from "@common/colors";
-import { isDevelopment } from "@common/constants";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
@@ -10,8 +9,6 @@ import React from "react";
 import TimeAgo from "react-timeago";
 
 import { StartBroadcastDialog } from "./StartBroadcastDialog";
-
-const skipUserValidation = isDevelopment && !process.env.SLIPPI_USER_SERVER;
 
 export interface BroadcastPanelProps {
   dolphinStatus: ConnectionStatus;
@@ -98,7 +95,7 @@ export const BroadcastPanel: React.FC<BroadcastPanelProps> = ({
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         onSubmit={onStartBroadcast}
-        skipUserValidation={skipUserValidation}
+        skipUserValidation={window.electron.common.isDevelopment}
       />
     </div>
   );

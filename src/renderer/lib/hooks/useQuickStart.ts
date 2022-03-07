@@ -1,5 +1,5 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
@@ -47,7 +47,7 @@ function generateSteps(
 }
 
 export const useQuickStart = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const savedIsoPath = useSettings((store) => store.settings.isoPath);
   const user = useAccount((store) => store.user);
   const playKey = useAccount((store) => store.playKey);
@@ -66,7 +66,7 @@ export const useQuickStart = () => {
   React.useEffect(() => {
     // If we only have the complete step then just go to the main page
     if (steps.length === 1 && steps[0] === QuickStartStep.COMPLETE) {
-      history.push("/main");
+      navigate("/main");
       return;
     }
 

@@ -1,4 +1,3 @@
-import { isDevelopment } from "@common/constants";
 import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
 import Collapse from "@material-ui/core/Collapse";
@@ -51,7 +50,7 @@ export class ErrorBoundary extends React.Component<any, ErrorBoundaryState> {
           <WarningIcon />
           <span style={{ marginLeft: 10 }}>Uh oh... Something went wrong!</span>
         </h2>
-        {isDevelopment && this.state.errorInfo !== null && (
+        {window.electron.common.isDevelopment && this.state.errorInfo !== null && (
           <div>
             <Button onClick={() => this.setState({ showStackTrace: !this.state.showStackTrace })} size="small">
               Toggle stack trace

@@ -1,14 +1,11 @@
 /** @jsx jsx */
 import { colors } from "@common/colors";
 import { socials } from "@common/constants";
-import { ipc_copyLogsToClipboard } from "@common/ipc";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import LiveHelpIcon from "@material-ui/icons/LiveHelp";
-import { shell } from "electron";
-import electronLog from "electron-log";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
 
@@ -16,7 +13,7 @@ import { ExternalLink as A } from "@/components/ExternalLink";
 import { Button } from "@/components/FormInputs";
 import { ReactComponent as DiscordIcon } from "@/styles/images/discord.svg";
 
-const log = electronLog.scope("SupportBox");
+const log = console;
 
 export const SupportBox: React.FC<{ className?: string }> = ({ className }) => {
   const [isCopying, setCopying] = React.useState(false);
@@ -32,14 +29,9 @@ export const SupportBox: React.FC<{ className?: string }> = ({ className }) => {
     // Set the clipboard text
     setCopying(true);
     try {
-      const res = await ipc_copyLogsToClipboard.renderer!.trigger({});
-      if (!res.result) {
-        handleError(res.errors);
-      } else {
-        // Set copied indication
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      }
+      await window.electron.common.copyLogsToClipboard();
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       handleError(err);
     } finally {
@@ -81,7 +73,7 @@ export const SupportBox: React.FC<{ className?: string }> = ({ className }) => {
       >
         <Button
           startIcon={<DiscordIcon fill={colors.purpleLighter} style={{ height: 18, width: 18 }} />}
-          onClick={() => void shell.openExternal(socials.discordUrl)}
+          onClick={() => void window.electron.shell.openPath(socials.discordUrl)}
         >
           Join the Discord
         </Button>

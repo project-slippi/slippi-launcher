@@ -6,7 +6,6 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
-import electronLog from "electron-log";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useToasts } from "react-toast-notifications";
@@ -15,7 +14,7 @@ import { useAccount } from "@/lib/hooks/useAccount";
 import { initNetplay } from "@/lib/slippiBackend";
 import { validateConnectCodeStart } from "@/lib/validate";
 
-const log = electronLog.scope("ActivateOnlineForm");
+const log = console;
 
 export const ActivateOnlineForm: React.FC<{ onSubmit?: () => void }> = ({ onSubmit }) => {
   const user = useAccount((store) => store.user);

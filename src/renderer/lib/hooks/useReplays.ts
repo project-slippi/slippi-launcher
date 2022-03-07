@@ -1,4 +1,3 @@
-import { ipc_initializeFolderTree, ipc_loadReplayFolder, ipc_selectTreeFolder } from "@replays/ipc";
 import type { FileLoadResult, FileResult, FolderResult, Progress } from "@replays/types";
 import { produce } from "immer";
 import { useState } from "react";
@@ -70,20 +69,15 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
 
     const loadFolderList = async () => {
       const folders = [rootFolder, ...extraFolders];
-      const folderInitResult = await ipc_initializeFolderTree.renderer!.trigger({ folders });
-      if (!folderInitResult.result) {
-        throw new Error(`Error initializing folder tree`);
-      }
-      const selectRootFolderResult = await ipc_selectTreeFolder.renderer!.trigger({
-        folderPath: currentFolder ?? rootFolder,
-      });
-      if (!selectRootFolderResult.result) {
-        throw new Error(`Error loading folder tree for: ${rootFolder}`);
-      }
+      // Init the folder tree
+      await window.electron.replays.initializeFolderTree(folders);
+
+      // Get the result after folder selection
+      const folderTree = await window.electron.replays.selectTreeFolder(currentFolder ?? rootFolder);
 
       set({
         currentRoot: rootFolder,
-        folderTree: selectRootFolderResult.result,
+        folderTree,
         collapsedFolders: [],
       });
     };
@@ -133,11 +127,8 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     set({ currentFolder: folderToLoad, selectedFiles: [] });
 
     const loadFolderTree = async () => {
-      const selectFolderResult = await ipc_selectTreeFolder.renderer!.trigger({ folderPath: folderToLoad });
-      if (!selectFolderResult.result) {
-        throw new Error(`Error loading folder tree: ${folderToLoad}`);
-      }
-      set({ folderTree: selectFolderResult.result });
+      const folderTree = await window.electron.replays.selectTreeFolder(folderToLoad);
+      set({ folderTree });
     };
 
     const loadFolderDetails = async () => {
@@ -186,12 +177,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
 }));
 
 const handleReplayFolderLoading = async (folderPath: string): Promise<FileLoadResult> => {
-  const loadFolderResult = await ipc_loadReplayFolder.renderer!.trigger({ folderPath });
-  if (!loadFolderResult.result) {
-    console.error(`Error loading folder: ${folderPath}`, loadFolderResult.errors);
-    throw new Error(`Error loading folder: ${folderPath}`);
-  }
-  return loadFolderResult.result;
+  return window.electron.replays.loadReplayFolder(folderPath);
 };
 
 export const useReplaySelection = () => {

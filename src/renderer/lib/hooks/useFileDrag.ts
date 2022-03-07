@@ -1,4 +1,3 @@
-import { ipcRenderer } from "electron";
 import { useToasts } from "react-toast-notifications";
 
 export const useFileDrag = () => {
@@ -8,9 +7,9 @@ export const useFileDrag = () => {
     try {
       event.preventDefault();
       if (filePaths.length > 0) {
-        ipcRenderer.send("onDragStart", filePaths);
+        window.electron.common.onDragState(filePaths);
       }
-    } catch (err) {
+    } catch (err: any) {
       addToast(err.message ?? JSON.stringify(err), {
         appearance: "error",
       });

@@ -30,7 +30,8 @@ export function loadGeckoCodes(globalIni: IniFile, localIni?: IniFile): GeckoCod
       codeLines: [],
     };
 
-    lines.forEach((line) => {
+    lines.forEach((l) => {
+      let line = l;
       switch (line[0]) {
         // code name
         case "$": {

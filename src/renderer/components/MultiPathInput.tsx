@@ -4,7 +4,6 @@ import Button from "@material-ui/core/Button";
 import MatCheckbox from "@material-ui/core/Checkbox";
 import InputBase from "@material-ui/core/InputBase";
 import type { OpenDialogOptions } from "electron";
-import { remote } from "electron";
 import React, { useState } from "react";
 import { useToasts } from "react-toast-notifications";
 
@@ -38,21 +37,22 @@ export const MultiPathInput: React.FC<MultiPathInputProps> = ({ paths, updatePat
       return false;
     }
 
-    for (let i = 0; i < paths.length; i++) {
-      const path = paths[i];
+    let pathsToCheck = paths;
+    for (let i = 0; i < pathsToCheck.length; i++) {
+      const path = pathsToCheck[i];
       if (newPath.includes(path)) {
         addErrorToast("Cannot add sub directories of the Root SLP Directory.");
         return false;
       } else if (path.includes(newPath)) {
-        updatePaths(paths.splice(i, 1));
-        paths = paths.splice(i--, 1); //decrement i because we are dropping an entry
+        updatePaths(pathsToCheck.splice(i, 1));
+        pathsToCheck = pathsToCheck.splice(i--, 1); //decrement i because we are dropping an entry
       }
     }
     return true;
   };
 
   const onAddClick = async () => {
-    const result = await remote.dialog.showOpenDialog({ properties: ["openFile"], ...options });
+    const result = await window.electron.common.showOpenDialog({ properties: ["openFile"], ...options });
     const res = result.filePaths;
     if (result.canceled || res.length === 0) {
       return;

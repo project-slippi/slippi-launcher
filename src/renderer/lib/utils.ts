@@ -1,17 +1,11 @@
-import { isDevelopment, isLinux, isWindows } from "@common/constants";
-import { characters as charUtils } from "@slippi/slippi-js";
-import path from "path";
-import url from "url";
+import { characters as charUtils, stages as stageUtils } from "@slippi/slippi-js";
 
-// Fix static folder access in development. For more information see:
-// https://github.com/electron-userland/electron-webpack/issues/99#issuecomment-459251702
-export const getStatic = (val: string): string => {
-  if (isDevelopment) {
-    return url.resolve(window.location.origin, val);
-  }
-  // Escape the backslashes or they won't work as CSS background images
-  return path.resolve(path.join(__static, val)).replace(/\\/g, "/");
-};
+import unknownCharacterIcon from "@/styles/images/unknown.png";
+
+const { isLinux, isWindows } = window.electron.common;
+
+const characterIcons = require.context("../styles/images/characters", true);
+const stageIcons = require.context("../styles/images/stages");
 
 export const getCharacterIcon = (characterId: number | null, characterColor: number | null = 0): string => {
   if (characterId !== null) {
@@ -20,14 +14,18 @@ export const getCharacterIcon = (characterId: number | null, characterColor: num
       const allColors = characterInfo.colors;
       // Make sure it's a valid color, otherwise use the default color
       const color = characterColor !== null && characterColor <= allColors.length - 1 ? characterColor : 0;
-      return getStatic(`/images/characters/${characterId}/${color}/stock.png`);
+      return characterIcons(`./${characterId}/${color}/stock.png`);
     }
   }
-  return getStatic(`/images/unknown.png`);
+  return unknownCharacterIcon;
 };
 
 export const getStageImage = (stageId: number): string => {
-  return getStatic(`/images/stages/${stageId}.png`);
+  const stageInfo = stageUtils.getStageInfo(stageId);
+  if (stageInfo.id !== stageUtils.UnknownStage.id) {
+    return stageIcons(`./${stageId}.png`);
+  }
+  return "";
 };
 
 export const toOrdinal = (i: number): string => {

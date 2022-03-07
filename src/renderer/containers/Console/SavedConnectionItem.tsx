@@ -12,7 +12,6 @@ import MoreVertIcon from "@material-ui/icons/MoreVert";
 import WarningIcon from "@material-ui/icons/Warning";
 import type { StoredConnection } from "@settings/types";
 import { ConnectionStatus, Ports } from "@slippi/slippi-js";
-import path from "path";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
 import { lt } from "semver";
@@ -21,6 +20,8 @@ import { ExternalLink as A } from "@/components/ExternalLink";
 import { LabelledText } from "@/components/LabelledText";
 import { connectToConsole, disconnectFromConsole, startConsoleMirror } from "@/lib/consoleConnection";
 import { ReactComponent as WiiIcon } from "@/styles/images/wii-icon.svg";
+
+const path = window.electron.path;
 
 export interface SavedConnectionItemProps {
   index: number;
