@@ -40,7 +40,7 @@
     "strictPropertyInitialization": true,
     "skipLibCheck": true,
     "alwaysStrict": true,
-    "strictFunctionTypes": true,
+    "strictFunctionTypes": true
   },
   "ts-node": {
     "transpileOnly": true,
