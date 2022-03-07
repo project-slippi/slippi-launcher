@@ -7,7 +7,7 @@ module.exports = {
     tsconfigRootDir: __dirname,
     createDefaultProgram: true,
   },
-  plugins: ["simple-import-sort", "strict-booleans", "react-hooks"],
+  plugins: ["simple-import-sort", "strict-booleans", "react-hooks", "prettier"],
   extends: [
     "plugin:react/recommended",
     "eslint:recommended",
@@ -19,11 +19,8 @@ module.exports = {
     "plugin:import/typescript",
     "plugin:jest/recommended",
     "plugin:promise/recommended",
+    // Make sure prettier goes last
     "prettier",
-    // Enables eslint-plugin-prettier and eslint-config-prettier.
-    // This will display prettier errors as ESLint errors.
-    // Make sure this is always the last configuration in the extends array.
-    "plugin:prettier/recommended",
   ],
   settings: {
     react: {
@@ -46,6 +43,18 @@ module.exports = {
     node: true,
   },
   rules: {
+    "prettier/prettier": [
+      "error",
+      {
+        semi: true,
+        trailingComma: "all",
+        singleQuote: false,
+        printWidth: 120,
+        tabWidth: 2,
+      },
+    ],
+    "arrow-body-style": "off",
+    "prefer-arrow-callback": "off",
     // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
     // e.g. "@typescript-eslint/explicit-function-return-type": "off",
     "react/prop-types": "off",
@@ -89,5 +98,5 @@ module.exports = {
     // Since React 17 and typescript 4.1 you can safely disable the rule
     "react/react-in-jsx-scope": "off",
   },
-  ignorePatterns: ["/*.js"],
+  ignorePatterns: ["/*.js", "node_modules"],
 };
