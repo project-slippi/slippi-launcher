@@ -23,21 +23,39 @@ export class AuthClient implements AuthService {
   private _userSubject = new Subject<AuthUser | null>();
   private _onAuthStateChanged = multicast(this._userSubject);
 
-  public constructor() {
-    try {
-      firebase.initializeApp(firebaseConfig);
-
-      firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
-          this._userSubject.next(this._mapFirebaseUserToAuthUser(user));
-        } else {
-          this._userSubject.next(null);
-        }
-      });
-    } catch (err) {
-      console.warn("Error initializing firebase. Did you create a .env file from .env.example?");
-      throw err;
+  public init(): Promise<AuthUser | null> {
+    // Initialize the Firebase app if we haven't already
+    if (firebase.apps.length !== 0) {
+      // We've already initialized the app before so just return the current user
+      const currentUser = firebase.auth().currentUser;
+      return Promise.resolve(currentUser ? this._mapFirebaseUserToAuthUser(currentUser) : null);
     }
+
+    return new Promise((resolve, reject) => {
+      try {
+        firebase.initializeApp(firebaseConfig);
+
+        // Setup the listener
+        firebase.auth().onAuthStateChanged((user) => {
+          if (user) {
+            this._userSubject.next(this._mapFirebaseUserToAuthUser(user));
+          } else {
+            this._userSubject.next(null);
+          }
+        });
+
+        // Complete the promise
+        const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+          // Unsubscribe after the first event
+          unsubscribe();
+
+          resolve(user ? this._mapFirebaseUserToAuthUser(user) : null);
+        });
+      } catch (err) {
+        console.warn("Error initializing firebase. Did you create a .env file from .env.example?");
+        reject(err);
+      }
+    });
   }
 
   private _mapFirebaseUserToAuthUser(user: firebase.User): AuthUser {

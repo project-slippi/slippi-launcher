@@ -4,6 +4,7 @@ export type AuthUser = {
 };
 
 export interface AuthService {
+  init(): Promise<AuthUser | null>;
   logout(): Promise<void>;
   getCurrentUser(): AuthUser | null;
   onUserChange(onChange: (user: AuthUser | null) => void): () => void;

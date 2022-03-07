@@ -1,3 +1,4 @@
+import { delay } from "@common/delay";
 import multicast from "observable-fns/multicast";
 import Subject from "observable-fns/subject";
 
@@ -7,6 +8,11 @@ export class MockAuthClient implements AuthService {
   private _currentUser: AuthUser | null = null;
   private _userSubject = new Subject<AuthUser | null>();
   private _onAuthStateChanged = multicast(this._userSubject);
+
+  public async init(): Promise<AuthUser | null> {
+    await delay(3000);
+    return null;
+  }
 
   public async logout(): Promise<void> {
     this._setCurrentUser(null);

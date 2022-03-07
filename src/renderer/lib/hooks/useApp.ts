@@ -4,6 +4,7 @@ import { combine } from "zustand/middleware";
 
 import { useAccount } from "@/lib/hooks/useAccount";
 import { fetchPlayKey } from "@/lib/slippiBackend";
+import type { AuthUser } from "@/services/authService/types";
 import { useServices } from "@/services/serviceContext";
 
 import { useDesktopApp } from "./useQuickStart";
@@ -40,6 +41,7 @@ export const useAppInitialization = () => {
   const setInitialized = useAppStore((store) => store.setInitialized);
   const setLogMessage = useAppStore((store) => store.setLogMessage);
   const setPlayKey = useAccount((store) => store.setPlayKey);
+  const setUser = useAccount((store) => store.setUser);
   const setServerError = useAccount((store) => store.setServerError);
   const setDesktopAppExists = useDesktopApp((store) => store.setExists);
   const setDesktopAppDolphinPath = useDesktopApp((store) => store.setDolphinPath);
@@ -53,10 +55,18 @@ export const useAppInitialization = () => {
 
     console.log("Initializing app...");
 
+    let user: AuthUser | null = null;
+    try {
+      user = await authService.init();
+      setUser(user);
+    } catch (err) {
+      console.warn(err);
+    }
+
     const promises: Promise<any>[] = [];
 
     // If we're logged in, check they have a valid play key
-    if (authService.getCurrentUser()) {
+    if (user) {
       promises.push(
         fetchPlayKey()
           .then((key) => {
