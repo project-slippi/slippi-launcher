@@ -35,7 +35,7 @@ if (!requiredByDLLConfig && !(fs.existsSync(webpackPaths.dllPath) && fs.existsSy
 
 export default (env) => {
   let useMockServices = false;
-  const { mode } = env;
+  const mode = env?.mode;
   if (mode) {
     if (mode !== "prod" && mode !== "mock") {
       throw new Error(`Invalid environment mode ${mode}. Expected 'prod' or 'mock'.`);
