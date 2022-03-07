@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { IsoValidity } from "@common/types";
-import firebase from "firebase";
 import throttle from "lodash/throttle";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
@@ -8,6 +7,7 @@ import { useToasts } from "react-toast-notifications";
 import { useAppInitialization, useAppStore } from "@/lib/hooks/useApp";
 import { useConsole } from "@/lib/hooks/useConsole";
 import { useReplays } from "@/lib/hooks/useReplays";
+import { useServices } from "@/services/serviceContext";
 
 import { handleDolphinExitCode } from "../utils";
 import { useAccount } from "./useAccount";
@@ -25,6 +25,7 @@ const log = console;
 
 export const useAppListeners = () => {
   // Handle app initalization
+  const { authService } = useServices();
   const initialized = useAppStore((store) => store.initialized);
   const initializeApp = useAppInitialization();
   React.useEffect(() => {
@@ -41,8 +42,7 @@ export const useAppListeners = () => {
     }
 
     try {
-      const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-        // Update the user
+      const unsubscribe = authService.onUserChange((user) => {
         setUser(user);
 
         // Refresh the play key
@@ -56,7 +56,7 @@ export const useAppListeners = () => {
     }
 
     return;
-  }, [initialized, refreshPlayKey, setUser]);
+  }, [initialized, refreshPlayKey, setUser, authService]);
 
   const setLogMessage = useAppStore((store) => store.setLogMessage);
   const dolphinDownloadLogHandler = React.useCallback(

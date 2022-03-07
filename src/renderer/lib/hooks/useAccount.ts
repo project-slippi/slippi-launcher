@@ -1,21 +1,22 @@
 import type { PlayKey } from "@dolphin/types";
-import type firebase from "firebase";
 import create from "zustand";
 import { combine } from "zustand/middleware";
+
+import type { AuthUser } from "@/services/auth_service/types";
 
 import { fetchPlayKey } from "../slippiBackend";
 
 export const useAccount = create(
   combine(
     {
-      user: null as firebase.User | null,
+      user: null as AuthUser | null,
       loading: false,
       playKey: null as PlayKey | null,
       serverError: false,
       displayName: "",
     },
     (set, get) => ({
-      setUser: (user: firebase.User | null) =>
+      setUser: (user: AuthUser | null) =>
         set((store) => {
           store.user = user;
           if (user) {

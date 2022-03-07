@@ -1,11 +1,10 @@
-import type firebase from "firebase";
 import { useToasts } from "react-toast-notifications";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
-import { initializeFirebase } from "@/lib/firebase";
 import { useAccount } from "@/lib/hooks/useAccount";
 import { fetchPlayKey } from "@/lib/slippiBackend";
+import { useServices } from "@/services/serviceContext";
 
 import { useDesktopApp } from "./useQuickStart";
 
@@ -33,14 +32,13 @@ export const useAppStore = create(
 );
 
 export const useAppInitialization = () => {
+  const { authService } = useServices();
   const { addToast } = useToasts();
-
   const initializing = useAppStore((store) => store.initializing);
   const initialized = useAppStore((store) => store.initialized);
   const setInitializing = useAppStore((store) => store.setInitializing);
   const setInitialized = useAppStore((store) => store.setInitialized);
   const setLogMessage = useAppStore((store) => store.setLogMessage);
-  const setUser = useAccount((store) => store.setUser);
   const setPlayKey = useAccount((store) => store.setPlayKey);
   const setServerError = useAccount((store) => store.setServerError);
   const setDesktopAppExists = useDesktopApp((store) => store.setExists);
@@ -55,19 +53,10 @@ export const useAppInitialization = () => {
 
     console.log("Initializing app...");
 
-    // Initialize firebase first
-    let user: firebase.User | null = null;
-    try {
-      user = await initializeFirebase();
-      setUser(user);
-    } catch (err) {
-      console.warn(err);
-    }
-
     const promises: Promise<any>[] = [];
 
     // If we're logged in, check they have a valid play key
-    if (user) {
+    if (authService.getCurrentUser()) {
       promises.push(
         fetchPlayKey()
           .then((key) => {
