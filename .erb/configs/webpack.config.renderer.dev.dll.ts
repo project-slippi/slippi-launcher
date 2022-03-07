@@ -9,69 +9,74 @@ import baseConfig from "./webpack.config.base";
 import webpackPaths from "./webpack.paths";
 import { dependencies } from "../../package.json";
 import checkNodeEnv from "../scripts/check-node-env";
+import webpackConfig from "./webpack.config.renderer.dev";
 
 checkNodeEnv("development");
 
 const dist = webpackPaths.dllPath;
 
-const configuration: webpack.Configuration = {
-  context: webpackPaths.rootPath,
+export default (env: any, argv: any) => {
+  const rendererDevConfig = webpackConfig(env, argv);
 
-  devtool: "eval",
+  const configuration: webpack.Configuration = {
+    context: webpackPaths.rootPath,
 
-  mode: "development",
+    devtool: "eval",
 
-  target: "electron-renderer",
+    mode: "development",
 
-  externals: ["fsevents", "crypto-browserify"],
+    target: "electron-renderer",
 
-  /**
-   * Use `module` from `webpack.config.renderer.dev.js`
-   */
-  module: require("./webpack.config.renderer.dev").default.module,
-
-  entry: {
-    renderer: Object.keys(dependencies || {}),
-  },
-
-  output: {
-    path: dist,
-    filename: "[name].dev.dll.js",
-    library: {
-      name: "renderer",
-      type: "var",
-    },
-  },
-
-  plugins: [
-    new webpack.DllPlugin({
-      path: path.join(dist, "[name].json"),
-      name: "[name]",
-    }),
+    externals: ["fsevents", "crypto-browserify"],
 
     /**
-     * Create global constants which can be configured at compile time.
-     *
-     * Useful for allowing different behaviour between development builds and
-     * release builds
-     *
-     * NODE_ENV should be production so that modules do not perform certain
-     * development checks
+     * Use `module` from `webpack.config.renderer.dev.js`
      */
-    new webpack.EnvironmentPlugin({
-      NODE_ENV: "development",
-    }),
+    module: rendererDevConfig.module,
 
-    new webpack.LoaderOptionsPlugin({
-      debug: true,
-      options: {
-        context: webpackPaths.srcPath,
-        output: {
-          path: webpackPaths.dllPath,
-        },
+    entry: {
+      renderer: Object.keys(dependencies || {}),
+    },
+
+    output: {
+      path: dist,
+      filename: "[name].dev.dll.js",
+      library: {
+        name: "renderer",
+        type: "var",
       },
-    }),
-  ],
-};
+    },
 
-export default merge(baseConfig, configuration);
+    plugins: [
+      new webpack.DllPlugin({
+        path: path.join(dist, "[name].json"),
+        name: "[name]",
+      }),
+
+      /**
+       * Create global constants which can be configured at compile time.
+       *
+       * Useful for allowing different behaviour between development builds and
+       * release builds
+       *
+       * NODE_ENV should be production so that modules do not perform certain
+       * development checks
+       */
+      new webpack.EnvironmentPlugin({
+        NODE_ENV: "development",
+      }),
+
+      new webpack.LoaderOptionsPlugin({
+        debug: true,
+        options: {
+          context: webpackPaths.srcPath,
+          output: {
+            path: webpackPaths.dllPath,
+          },
+        },
+      }),
+    ],
+  };
+
+  return merge(baseConfig, configuration);
+}

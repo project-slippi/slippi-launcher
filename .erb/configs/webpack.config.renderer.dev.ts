@@ -33,7 +33,7 @@ if (!requiredByDLLConfig && !(fs.existsSync(webpackPaths.dllPath) && fs.existsSy
   execSync("yarn run postinstall");
 }
 
-export default (env) => {
+export default (env: any, _argv: any) => {
   let useMockServices = false;
   const mode = env?.mode;
   if (mode) {
