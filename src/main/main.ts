@@ -302,7 +302,6 @@ app
 
     // Handle Slippi URI if provided
     const argURI = get(process.argv, 1);
-    log.info(process.argv);
     if (argURI) {
       handleSlippiURI(argURI);
     }
