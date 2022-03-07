@@ -24,7 +24,7 @@ export class MockAuthClient implements AuthService {
   }
 
   public async resetPassword(): Promise<void> {
-    // Do nothin
+    throw new Error("Mock reset password is not implemented");
   }
 
   public async login(args: { email: string; password: string }): Promise<AuthUser | null> {
