@@ -1,4 +1,4 @@
-# ![Launcher icon](resources/icons/48x48.png) Slippi Launcher
+# ![Launcher icon](assets/icons/48x48.png) Slippi Launcher
 
 [![Build Status](https://github.com/project-slippi/slippi-launcher/workflows/build/badge.svg)](https://github.com/project-slippi/slippi-launcher/actions?workflow=build)
 [![License](https://img.shields.io/badge/license-GPLv3-blue)](https://github.com/project-slippi/slippi-launcher/blob/master/LICENSE)
