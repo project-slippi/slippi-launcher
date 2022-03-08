@@ -19,6 +19,8 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
+  "javascript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": false,
+  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": false,
   "editor.formatOnSave": false,
   "[javascript]": {
     "editor.formatOnSave": true,
@@ -29,10 +31,12 @@
     "editor.tabSize": 2
   },
   "[typescript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
     "editor.formatOnSave": true,
     "editor.tabSize": 2
   },
   "[typescriptreact]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
     "editor.formatOnSave": true,
     "editor.tabSize": 2
   },
