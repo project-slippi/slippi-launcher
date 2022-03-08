@@ -28,8 +28,8 @@ const configuration: webpack.Configuration = {
         use: {
           loader: "ts-loader",
           options: {
-            // Remove this line to enable type checking in webpack builds
-            transpileOnly: true,
+            // By default, ts-loader compiles absolutely everything and we don't want that
+            onlyCompileBundledFiles: true
           },
         },
       },
