@@ -1,4 +1,4 @@
-import firebase from "firebase/app";
+import firebase from "firebase";
 import multicast from "observable-fns/multicast";
 import Subject from "observable-fns/subject";
 
