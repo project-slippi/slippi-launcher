@@ -2,7 +2,6 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import React from "react";
 
 import { LoginForm } from "@/containers/LoginForm";
 import { useLoginModal } from "@/lib/hooks/useLoginModal";

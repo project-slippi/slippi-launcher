@@ -1,5 +1,4 @@
 import { DolphinLaunchType } from "@dolphin/types";
-import React from "react";
 
 import { AdvancedAppSettings } from "./AdvancedAppSettings";
 import { DolphinSettings } from "./DolphinSettings";

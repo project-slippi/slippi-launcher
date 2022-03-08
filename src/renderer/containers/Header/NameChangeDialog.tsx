@@ -27,7 +27,7 @@ export const NameChangeDialog: React.FC<{
     try {
       await changeDisplayName(name);
       setDisplayName(name);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
       addToast(err.message, { appearance: "error" });
     } finally {
