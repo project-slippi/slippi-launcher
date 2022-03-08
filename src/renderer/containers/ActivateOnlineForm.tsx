@@ -13,7 +13,7 @@ import { useAccount } from "@/lib/hooks/useAccount";
 import { initNetplay } from "@/lib/slippiBackend";
 import { validateConnectCodeStart } from "@/lib/validate";
 
-const log = console;
+const log = window.electron.log;
 
 export const ActivateOnlineForm: React.FC<{ onSubmit?: () => void }> = ({ onSubmit }) => {
   const user = useAccount((store) => store.user);

@@ -4,6 +4,7 @@ import dolphin from "@dolphin/api";
 import replays from "@replays/api";
 import settings from "@settings/api";
 import { clipboard, contextBridge, shell } from "electron";
+import log from "electron-log";
 import path from "path";
 
 import common from "./api";
@@ -31,6 +32,7 @@ const api = {
     showItemInFolder: shell.showItemInFolder,
     trashItem: shell.trashItem,
   },
+  log: log.functions,
 };
 
 contextBridge.exposeInMainWorld("electron", api);

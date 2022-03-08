@@ -2,7 +2,7 @@ import type { NewsItem } from "@common/types";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
-const log = console;
+const log = window.electron.log;
 
 export const useNewsFeed = create(
   combine(

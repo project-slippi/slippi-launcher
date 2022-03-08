@@ -9,7 +9,7 @@ import { useServices } from "@/services/serviceContext";
 
 import { useDesktopApp } from "./useQuickStart";
 
-const log = console;
+const log = window.electron.log;
 
 export const useAppStore = create(
   combine(

@@ -2,7 +2,7 @@ import type { StartBroadcastConfig } from "@broadcast/types";
 
 import { useServices } from "@/services/serviceContext";
 
-const log = console;
+const log = window.electron.log;
 
 export const useBroadcast = () => {
   const { authService } = useServices();

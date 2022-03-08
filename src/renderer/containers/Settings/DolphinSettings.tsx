@@ -15,7 +15,7 @@ import { useDolphinPath } from "@/lib/hooks/useSettings";
 import { SettingItem } from "./SettingItem";
 
 const { isLinux, isMac } = window.electron.common;
-const log = console;
+const log = window.electron.log;
 
 export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolphinType }) => {
   const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);

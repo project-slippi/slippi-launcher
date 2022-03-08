@@ -22,7 +22,7 @@ import { useQuery } from "react-query";
 
 import { validateUserId } from "@/lib/slippiBackend";
 
-const log = console;
+const log = window.electron.log;
 export interface StartBroadcastDialogProps {
   open: boolean;
   onClose: () => void;

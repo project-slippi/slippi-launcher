@@ -12,7 +12,7 @@ import { ExternalLink as A } from "@/components/ExternalLink";
 import { Button } from "@/components/FormInputs";
 import { ReactComponent as DiscordIcon } from "@/styles/images/discord.svg";
 
-const log = console;
+const log = window.electron.log;
 
 export const SupportBox: React.FC<{ className?: string }> = ({ className }) => {
   const [isCopying, setCopying] = React.useState(false);

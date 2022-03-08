@@ -9,7 +9,7 @@ import { useConsole } from "@/lib/hooks/useConsole";
 
 import { BroadcastPanel } from "./BroadcastPanel";
 
-const log = console;
+const log = window.electron.log;
 
 // These are the default params for broadcasting Netplay Dolphin
 const ip = "127.0.0.1";

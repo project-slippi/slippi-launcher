@@ -21,7 +21,7 @@ import { useReplayBrowserNavigation } from "./useReplayBrowserList";
 import { useSettings } from "./useSettings";
 import { useSettingsModal } from "./useSettingsModal";
 
-const log = console;
+const log = window.electron.log;
 
 export const useAppListeners = () => {
   // Handle app initalization
