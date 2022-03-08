@@ -1,54 +1,16 @@
 import type { NormalizedCacheObject } from "@apollo/client";
-import { ApolloClient, ApolloLink, gql, HttpLink, InMemoryCache } from "@apollo/client";
+import { ApolloClient, ApolloLink, HttpLink, InMemoryCache } from "@apollo/client";
 import type { PlayKey } from "@dolphin/types";
 import type { GraphQLError } from "graphql";
 
 import type { AuthService, AuthUser } from "../authService/types";
+import {
+  MUTATION_INIT_NETPLAY,
+  MUTATION_RENAME_USER,
+  QUERY_GET_USER_KEY,
+  QUERY_VALIDATE_USER_ID,
+} from "./graphqlEndpoints";
 import type { SlippiBackendService } from "./types";
-
-const validateUserIdQuery = gql`
-  query validateUserIdQuery($fbUid: String) {
-    getUser(fbUid: $fbUid) {
-      displayName
-      connectCode {
-        code
-      }
-    }
-  }
-`;
-
-const getUserKeyQuery = gql`
-  query getUserKeyQuery($fbUid: String) {
-    getUser(fbUid: $fbUid) {
-      displayName
-      connectCode {
-        code
-      }
-      private {
-        playKey
-      }
-    }
-    getLatestDolphin {
-      version
-    }
-  }
-`;
-
-const renameUserMutation = gql`
-  mutation RenameUser($fbUid: String!, $displayName: String!) {
-    userRename(fbUid: $fbUid, displayName: $displayName) {
-      displayName
-    }
-  }
-`;
-
-const initNetplayMutation = gql`
-  mutation InitNetplay($codeStart: String!) {
-    userInitNetplay(codeStart: $codeStart) {
-      fbUid
-    }
-  }
-`;
 
 const handleErrors = (errors: readonly GraphQLError[] | undefined) => {
   if (errors) {
@@ -102,19 +64,19 @@ export class SlippiBackendClient implements SlippiBackendService {
 
   public async validateUserId(userId: string): Promise<{ displayName: string; connectCode: string }> {
     const res = await this._client.query({
-      query: validateUserIdQuery,
+      query: QUERY_VALIDATE_USER_ID,
       variables: {
         fbUid: userId,
       },
       fetchPolicy: "network-only",
     });
 
-    if (res.data?.getUser) {
+    if (res.data.getUser) {
       const { connectCode, displayName } = res.data.getUser;
-      if (connectCode.code) {
+      if (connectCode?.code) {
         return {
           connectCode: connectCode.code,
-          displayName,
+          displayName: displayName ?? "",
         };
       }
     }
@@ -126,7 +88,7 @@ export class SlippiBackendClient implements SlippiBackendService {
     const user = await this._refreshAuthToken();
 
     const res = await this._client.query({
-      query: getUserKeyQuery,
+      query: QUERY_GET_USER_KEY,
       variables: {
         fbUid: user.uid,
       },
@@ -169,13 +131,13 @@ export class SlippiBackendClient implements SlippiBackendService {
     const user = await this._refreshAuthToken();
 
     const res = await this._client.mutate({
-      mutation: renameUserMutation,
+      mutation: MUTATION_RENAME_USER,
       variables: { fbUid: user.uid, displayName: name },
     });
 
     handleErrors(res.errors);
 
-    if (res.data.userRename.displayName !== name) {
+    if (res.data?.userRename?.displayName !== name) {
       throw new Error("Could not change name.");
     }
 
@@ -185,7 +147,7 @@ export class SlippiBackendClient implements SlippiBackendService {
   public async initializeNetplay(codeStart: string): Promise<void> {
     await this._refreshAuthToken();
 
-    const res = await this._client.mutate({ mutation: initNetplayMutation, variables: { codeStart } });
+    const res = await this._client.mutate({ mutation: MUTATION_INIT_NETPLAY, variables: { codeStart } });
     handleErrors(res.errors);
   }
 }
