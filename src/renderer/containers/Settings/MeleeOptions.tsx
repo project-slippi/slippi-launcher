@@ -1,6 +1,5 @@
-/** @jsx jsx */
 import { IsoValidity } from "@common/types";
-import { css, jsx } from "@emotion/react";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import FormControlLabel from "@material-ui/core/FormControlLabel";

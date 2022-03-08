@@ -1,5 +1,4 @@
-/** @jsx jsx */
-import { css, jsx } from "@emotion/react";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import AddIcon from "@material-ui/icons/Add";
 import type { StoredConnection } from "@settings/types";

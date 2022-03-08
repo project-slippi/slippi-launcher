@@ -1,7 +1,6 @@
-/** @jsx jsx */
 import { colors } from "@common/colors";
 import { socials } from "@common/constants";
-import { css, jsx } from "@emotion/react";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import Tooltip from "@material-ui/core/Tooltip";
 import TwitterIcon from "@material-ui/icons/Twitter";

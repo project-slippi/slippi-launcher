@@ -1,6 +1,5 @@
-/** @jsx jsx */
 import { getColor } from "@common/colors";
-import { css, jsx } from "@emotion/react";
+import { css } from "@emotion/react";
 import type { PlayerType } from "@slippi/slippi-js";
 import _ from "lodash";
 import React from "react";

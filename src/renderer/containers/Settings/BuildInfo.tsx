@@ -1,5 +1,4 @@
-/** @jsx jsx */
-import { css, jsx } from "@emotion/react";
+import { css } from "@emotion/react";
 import moment from "moment";
 import React from "react";
 import { useToasts } from "react-toast-notifications";

@@ -1,6 +1,5 @@
-/** @jsx jsx */
 import { colors } from "@common/colors";
-import { css, jsx } from "@emotion/react";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import React from "react";

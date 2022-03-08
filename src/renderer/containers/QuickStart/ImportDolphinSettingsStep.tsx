@@ -1,6 +1,5 @@
-/** @jsx jsx */
 import { DolphinLaunchType } from "@dolphin/types";
-import { css, jsx } from "@emotion/react";
+import { css } from "@emotion/react";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";

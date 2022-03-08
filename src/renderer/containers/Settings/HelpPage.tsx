@@ -1,5 +1,4 @@
-/** @jsx jsx */
-import { css, jsx } from "@emotion/react";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import faqMarkdown from "raw-loader!../../../../FAQ.md";
 import React from "react";

@@ -1,6 +1,5 @@
-/** @jsx jsx */
 import { colors } from "@common/colors";
-import { css, jsx } from "@emotion/react";
+import { css } from "@emotion/react";
 import Identicon from "react-identicons";
 
 export interface UserIconProps {

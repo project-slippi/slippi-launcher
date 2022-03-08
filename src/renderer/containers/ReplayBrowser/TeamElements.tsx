@@ -1,6 +1,5 @@
-/** @jsx jsx */
 import { extractPlayerNames } from "@common/matchNames";
-import { css, jsx } from "@emotion/react";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import type { GameStartType, MetadataType } from "@slippi/slippi-js";
 import _ from "lodash";

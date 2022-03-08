@@ -1,7 +1,6 @@
-/** @jsx jsx */
 import { colors } from "@common/colors";
 import { socials } from "@common/constants";
-import { css, jsx } from "@emotion/react";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import FileCopyIcon from "@material-ui/icons/FileCopy";

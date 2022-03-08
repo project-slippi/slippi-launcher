@@ -1,6 +1,5 @@
-/** @jsx jsx */
 import { extractPlayerNames } from "@common/matchNames";
-import { css, jsx } from "@emotion/react";
+import { css } from "@emotion/react";
 import Tooltip from "@material-ui/core/Tooltip";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";

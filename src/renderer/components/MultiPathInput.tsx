@@ -1,5 +1,4 @@
-/** @jsx jsx */
-import { css, jsx } from "@emotion/react";
+import { css } from "@emotion/react";
 import Button from "@material-ui/core/Button";
 import MatCheckbox from "@material-ui/core/Checkbox";
 import InputBase from "@material-ui/core/InputBase";
