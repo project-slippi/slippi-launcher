@@ -32,6 +32,7 @@ import { verifyIso } from "./verifyIso";
 const log = electronLog.scope("main/listeners");
 const isDevelopment = process.env.NODE_ENV !== "production";
 const isMac = process.platform === "darwin";
+const isWindows = process.platform === "win32";
 
 autoUpdater.logger = log;
 
@@ -91,7 +92,7 @@ export default function installMainIpc() {
   });
 
   ipc_copyLogsToClipboard.main!.handle(async () => {
-    let logsFolder = app.getPath("logs");
+    let logsFolder = isWindows ? path.resolve(app.getPath("userData"), "logs") : app.getPath("logs");
     // why does macOS decide it needs to be difficult?
     if (isDevelopment) {
       if (isMac) {
