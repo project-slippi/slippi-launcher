@@ -9,14 +9,8 @@ const isDevelopment = window.electron.common.isDevelopment;
 
 export default function installServices(): Services {
   const authService = new AuthClient();
-  const slippiBackendUrl = process.env.SLIPPI_GRAPHQL_ENDPOINT;
-  if (!slippiBackendUrl) {
-    throw new Error("process.env.SLIPPI_GRAPHQL_ENDPOINT is not defined!");
-  }
-
   const slippiBackendService = new SlippiBackendClient({
     authService,
-    slippiBackendUrl,
     clientVersion: `${appVersion}${isDevelopment ? "-dev" : ""}`,
   });
 

@@ -12,6 +12,8 @@ import {
 } from "./graphqlEndpoints";
 import type { SlippiBackendService } from "./types";
 
+const SLIPPI_BACKEND_URL = process.env.SLIPPI_GRAPHQL_ENDPOINT;
+
 const handleErrors = (errors: readonly GraphQLError[] | undefined) => {
   if (errors) {
     let errMsgs = "";
@@ -27,9 +29,9 @@ export class SlippiBackendClient implements SlippiBackendService {
   private _httpLink: HttpLink;
   private _client: ApolloClient<NormalizedCacheObject>;
 
-  public constructor(options: { authService: AuthService; slippiBackendUrl: string; clientVersion?: string }) {
+  public constructor(options: { authService: AuthService; clientVersion?: string }) {
     this._authService = options.authService;
-    this._httpLink = new HttpLink({ uri: options.slippiBackendUrl });
+    this._httpLink = new HttpLink({ uri: SLIPPI_BACKEND_URL });
     this._client = new ApolloClient({
       link: this._httpLink,
       cache: new InMemoryCache(),
