@@ -1,20 +1,10 @@
+import type { NormalizedCacheObject } from "@apollo/client";
 import { ApolloClient, ApolloLink, gql, HttpLink, InMemoryCache } from "@apollo/client";
-import { appVersion } from "@common/constants";
 import type { PlayKey } from "@dolphin/types";
 import type { GraphQLError } from "graphql";
 
 import type { AuthService, AuthUser } from "../authService/types";
 import type { SlippiBackendService } from "./types";
-
-const httpLink = new HttpLink({ uri: process.env.SLIPPI_GRAPHQL_ENDPOINT });
-const isDevelopment = window.electron.common.isDevelopment;
-
-const client = new ApolloClient({
-  link: httpLink,
-  cache: new InMemoryCache(),
-  name: "slippi-launcher",
-  version: `${appVersion}${isDevelopment ? "-dev" : ""}`,
-});
 
 const validateUserIdQuery = gql`
   query validateUserIdQuery($fbUid: String) {
@@ -71,15 +61,28 @@ const handleErrors = (errors: readonly GraphQLError[] | undefined) => {
 };
 
 export class SlippiBackendClient implements SlippiBackendService {
-  public constructor(private authService: AuthService) {}
+  private _authService: AuthService;
+  private _httpLink: HttpLink;
+  private _client: ApolloClient<NormalizedCacheObject>;
+
+  public constructor(options: { authService: AuthService; slippiBackendUrl: string; clientVersion?: string }) {
+    this._authService = options.authService;
+    this._httpLink = new HttpLink({ uri: options.slippiBackendUrl });
+    this._client = new ApolloClient({
+      link: this._httpLink,
+      cache: new InMemoryCache(),
+      name: "slippi-launcher",
+      version: options.clientVersion,
+    });
+  }
 
   // The firebase ID token expires after 1 hour so we will refresh it for actions that require it.
   private async _refreshAuthToken(): Promise<AuthUser> {
-    const user = this.authService.getCurrentUser();
+    const user = this._authService.getCurrentUser();
     if (!user) {
       throw new Error("User is not logged in.");
     }
-    const token = await this.authService.getUserToken();
+    const token = await this._authService.getUserToken();
 
     const authLink = new ApolloLink((operation, forward) => {
       // Use the setContext method to set the HTTP headers.
@@ -92,13 +95,13 @@ export class SlippiBackendClient implements SlippiBackendService {
       // Call the next link in the middleware chain.
       return forward(operation);
     });
-    client.setLink(authLink.concat(httpLink));
+    this._client.setLink(authLink.concat(this._httpLink));
 
     return user;
   }
 
   public async validateUserId(userId: string): Promise<{ displayName: string; connectCode: string }> {
-    const res = await client.query({
+    const res = await this._client.query({
       query: validateUserIdQuery,
       variables: {
         fbUid: userId,
@@ -122,7 +125,7 @@ export class SlippiBackendClient implements SlippiBackendService {
   public async fetchPlayKey(): Promise<PlayKey | null> {
     const user = await this._refreshAuthToken();
 
-    const res = await client.query({
+    const res = await this._client.query({
       query: getUserKeyQuery,
       variables: {
         fbUid: user.uid,
@@ -165,7 +168,7 @@ export class SlippiBackendClient implements SlippiBackendService {
   public async changeDisplayName(name: string) {
     const user = await this._refreshAuthToken();
 
-    const res = await client.mutate({
+    const res = await this._client.mutate({
       mutation: renameUserMutation,
       variables: { fbUid: user.uid, displayName: name },
     });
@@ -176,13 +179,13 @@ export class SlippiBackendClient implements SlippiBackendService {
       throw new Error("Could not change name.");
     }
 
-    await this.authService.updateDisplayName(name);
+    await this._authService.updateDisplayName(name);
   }
 
   public async initializeNetplay(codeStart: string): Promise<void> {
     await this._refreshAuthToken();
 
-    const res = await client.mutate({ mutation: initNetplayMutation, variables: { codeStart } });
+    const res = await this._client.mutate({ mutation: initNetplayMutation, variables: { codeStart } });
     handleErrors(res.errors);
   }
 }
