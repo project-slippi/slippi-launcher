@@ -6,13 +6,13 @@ import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
-import type firebase from "firebase";
 import React from "react";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
-import { login, resetPassword, signUp } from "@/lib/firebase";
 import { useAsync } from "@/lib/hooks/useAsync";
+import type { AuthUser } from "@/services/authService/types";
+import { useServices } from "@/services/serviceContext";
 
 import { QuickStartHeader } from "./QuickStart/QuickStartHeader";
 
@@ -50,6 +50,7 @@ export interface LoginFormProps {
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({ className, onSuccess, disableAutoFocus }) => {
+  const { authService } = useServices();
   const email = useLoginStore((store) => store.email);
   const setEmail = useLoginStore((store) => store.setEmail);
   const displayName = useLoginStore((store) => store.displayName);
@@ -65,14 +66,14 @@ export const LoginForm: React.FC<LoginFormProps> = ({ className, onSuccess, disa
   const classes = useStyles();
 
   const { execute, loading, error, clearError } = useAsync(async () => {
-    let user: firebase.auth.UserCredential;
+    let user: AuthUser | null;
     if (isSignUp) {
       if (password !== confirmPassword) {
         throw new Error("Passwords do not match");
       }
-      user = await signUp(email.trim(), displayName, password);
+      user = await authService.signUp({ email: email.trim(), displayName, password });
     } else {
-      user = await login(email.trim(), password);
+      user = await authService.login({ email: email.trim(), password });
     }
     if (user) {
       // Clear the form
@@ -242,6 +243,7 @@ const ForgotPasswordForm: React.FC<{
   className?: string;
   onClose: () => void;
 }> = ({ className, onClose }) => {
+  const { authService } = useServices();
   const email = useLoginStore((store) => store.email);
   const setEmail = useLoginStore((store) => store.setEmail);
   const [success, setSuccess] = React.useState(false);
@@ -249,7 +251,7 @@ const ForgotPasswordForm: React.FC<{
 
   const { execute, loading, error } = useAsync(async () => {
     setSuccess(false);
-    await resetPassword(email);
+    await authService.resetPassword(email);
     setSuccess(true);
   });
 

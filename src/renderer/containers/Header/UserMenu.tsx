@@ -3,23 +3,24 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import EditIcon from "@material-ui/icons/Edit";
 import EjectIcon from "@material-ui/icons/Eject";
 import LanguageIcon from "@material-ui/icons/Language";
-import type firebase from "firebase";
 import React from "react";
 
 import { ConfirmationModal } from "@/components/ConfirmationModal";
 import type { IconMenuItem } from "@/components/IconMenu";
 import { IconMenu } from "@/components/IconMenu";
-import { logout } from "@/lib/firebase";
 import { useAccount } from "@/lib/hooks/useAccount";
+import type { AuthUser } from "@/services/authService/types";
+import { useServices } from "@/services/serviceContext";
 
 import { ActivateOnlineDialog } from "./ActivateOnlineDialog";
 import { NameChangeDialog } from "./NameChangeDialog";
 import { UserInfo } from "./UserInfo";
 
 export const UserMenu: React.FC<{
-  user: firebase.User;
+  user: AuthUser;
   handleError: (error: any) => void;
 }> = ({ user, handleError }) => {
+  const { authService } = useServices();
   const playKey = useAccount((store) => store.playKey);
   const displayName = useAccount((store) => store.displayName);
   const loading = useAccount((store) => store.loading);
@@ -29,7 +30,7 @@ export const UserMenu: React.FC<{
   const [openActivationDialog, setOpenActivationDialog] = React.useState(false);
   const onLogout = async () => {
     try {
-      await logout();
+      await authService.logout();
     } catch (err) {
       console.error(err);
       handleError(err);

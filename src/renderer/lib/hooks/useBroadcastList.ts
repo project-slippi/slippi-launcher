@@ -4,7 +4,7 @@ import { useToasts } from "react-toast-notifications";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
-import { useAccount } from "./useAccount";
+import { useServices } from "@/services/serviceContext";
 
 export const useBroadcastListStore = create(
   combine(
@@ -18,15 +18,12 @@ export const useBroadcastListStore = create(
 );
 
 export const useBroadcastList = () => {
-  const currentUser = useAccount((store) => store.user);
+  const { authService } = useServices();
   const items = useBroadcastListStore((store) => store.items);
   const { addToast } = useToasts();
 
   const refresh = async () => {
-    if (!currentUser) {
-      throw new Error("User is not logged in");
-    }
-    const authToken = await currentUser.getIdToken();
+    const authToken = await authService.getUserToken();
     await window.electron.broadcast.refreshBroadcastList(authToken);
   };
 
