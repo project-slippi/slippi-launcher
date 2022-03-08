@@ -9,15 +9,15 @@ import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useToasts } from "react-toast-notifications";
 
-import { useAccount } from "@/lib/hooks/useAccount";
-import { initNetplay } from "@/lib/slippiBackend";
+import { useAccount, usePlayKey } from "@/lib/hooks/useAccount";
 import { validateConnectCodeStart } from "@/lib/validate";
+import { useServices } from "@/services/serviceContext";
 
 const log = console;
 
 export const ActivateOnlineForm: React.FC<{ onSubmit?: () => void }> = ({ onSubmit }) => {
   const user = useAccount((store) => store.user);
-  const refreshActivation = useAccount((store) => store.refreshPlayKey);
+  const refreshActivation = usePlayKey();
   return (
     <div>
       <div>Your connect code is used for players to connect with you directly.</div>
@@ -32,6 +32,7 @@ interface ConnectCodeSetterProps {
 }
 
 const ConnectCodeSetter: React.FC<ConnectCodeSetterProps> = ({ displayName, onSuccess }) => {
+  const { slippiBackendService } = useServices();
   const { addToast } = useToasts();
   const getStartTag = () => {
     const safeName = displayName ?? "";
@@ -48,19 +49,22 @@ const ConnectCodeSetter: React.FC<ConnectCodeSetterProps> = ({ displayName, onSu
   const onFormSubmit = handleSubmit(({ tag }) => {
     setIsLoading(true);
 
-    initNetplay(tag).then(
-      () => {
-        onSuccess();
-        setIsLoading(false);
-      },
-      (err: Error) => {
-        log.error(err);
-        addToast(err.message ?? JSON.stringify(err), {
-          appearance: "error",
-        });
-        setIsLoading(false);
-      },
-    );
+    slippiBackendService
+      .initializeNetplay(tag)
+      .then(
+        () => {
+          onSuccess();
+          setIsLoading(false);
+        },
+        (err: Error) => {
+          log.error(err);
+          addToast(err.message ?? JSON.stringify(err), {
+            appearance: "error",
+          });
+          setIsLoading(false);
+        },
+      )
+      .catch(log.error);
   });
 
   return (

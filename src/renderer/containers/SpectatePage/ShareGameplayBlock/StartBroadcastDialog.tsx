@@ -20,7 +20,7 @@ import debounce from "lodash/debounce";
 import React from "react";
 import { useQuery } from "react-query";
 
-import { validateUserId } from "@/lib/slippiBackend";
+import { useServices } from "@/services/serviceContext";
 
 const log = console;
 export interface StartBroadcastDialogProps {
@@ -36,6 +36,7 @@ export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({
   onSubmit,
   skipUserValidation,
 }) => {
+  const { slippiBackendService } = useServices();
   const [value, setValue] = React.useState("");
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
@@ -48,7 +49,7 @@ export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({
         throw new Error("Invalid user ID format");
       }
       console.log("starting fetch: ", JSON.stringify(new Date()));
-      const result = await validateUserId(value);
+      const result = await slippiBackendService.validateUserId(value);
       console.log("finished fetch: ", JSON.stringify(new Date()));
       return result;
     },

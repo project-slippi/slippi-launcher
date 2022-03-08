@@ -17,7 +17,7 @@ import { useDolphin } from "@/lib/hooks/useDolphin";
 import { useLoginModal } from "@/lib/hooks/useLoginModal";
 import { useSettings } from "@/lib/hooks/useSettings";
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
-import { assertPlayKey } from "@/lib/slippiBackend";
+import { useServices } from "@/services/serviceContext";
 import slippiLogo from "@/styles/images/slippi-logo.svg";
 import { platformTitleBarStyles } from "@/styles/platformTitleBarStyles";
 
@@ -39,6 +39,7 @@ export interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
+  const { slippiBackendService } = useServices();
   const [startGameModalOpen, setStartGameModalOpen] = React.useState(false);
   const [activateOnlineModal, setActivateOnlineModal] = React.useState(false);
   const openModal = useLoginModal((store) => store.openModal);
@@ -69,7 +70,7 @@ export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
       if (playKey) {
         // Ensure the play key is saved to disk
         try {
-          await assertPlayKey(playKey);
+          await slippiBackendService.assertPlayKey(playKey);
         } catch (err) {
           handleError(err);
           return;

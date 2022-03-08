@@ -10,7 +10,7 @@ import { useReplays } from "@/lib/hooks/useReplays";
 import { useServices } from "@/services/serviceContext";
 
 import { handleDolphinExitCode } from "../utils";
-import { useAccount } from "./useAccount";
+import { useAccount, usePlayKey } from "./useAccount";
 import { useBroadcast } from "./useBroadcast";
 import { useBroadcastList, useBroadcastListStore } from "./useBroadcastList";
 import { useConsoleDiscoveryStore } from "./useConsoleDiscovery";
@@ -34,7 +34,7 @@ export const useAppListeners = () => {
 
   // Subscribe to user auth changes to keep store up to date
   const setUser = useAccount((store) => store.setUser);
-  const refreshPlayKey = useAccount((store) => store.refreshPlayKey);
+  const refreshPlayKey = usePlayKey();
   React.useEffect(() => {
     // Only start subscribing to user change events after we've finished initializing
     if (!initialized) {
@@ -138,6 +138,7 @@ export const useAppListeners = () => {
 
         setIsValid(isoCheckResult.valid);
       })
+      .catch(log.error)
       .finally(() => {
         setIsValidating(false);
       });

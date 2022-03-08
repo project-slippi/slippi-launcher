@@ -1,10 +1,10 @@
 import type { PlayKey } from "@dolphin/types";
+import { useCallback } from "react";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
 import type { AuthUser } from "@/services/authService/types";
-
-import { fetchPlayKey } from "../slippiBackend";
+import { useServices } from "@/services/serviceContext";
 
 export const useAccount = create(
   combine(
@@ -15,7 +15,7 @@ export const useAccount = create(
       serverError: false,
       displayName: "",
     },
-    (set, get) => ({
+    (set) => ({
       setUser: (user: AuthUser | null) =>
         set((store) => {
           store.user = user;
@@ -29,21 +29,37 @@ export const useAccount = create(
       setPlayKey: (playKey: PlayKey | null) => set({ playKey }),
       setServerError: (serverError: boolean) => set({ serverError }),
       setDisplayName: (displayName: string) => set({ displayName }),
-      refreshPlayKey: async (): Promise<void> => {
-        // We're already refreshing the key
-        if (get().loading) {
-          return;
-        }
-
-        set({ loading: true });
-        await fetchPlayKey()
-          .then((playKey) => set({ playKey, serverError: false }))
-          .catch((err) => {
-            console.warn("Error fetching play key: ", err);
-            set({ playKey: null, serverError: true });
-          })
-          .finally(() => set({ loading: false }));
-      },
     }),
   ),
 );
+
+export const usePlayKey = () => {
+  const { slippiBackendService } = useServices();
+  const loading = useAccount((store) => store.loading);
+  const setLoading = useAccount((store) => store.setLoading);
+  const setPlayKey = useAccount((store) => store.setPlayKey);
+  const setServerError = useAccount((store) => store.setServerError);
+
+  const refreshPlayKey = useCallback(async () => {
+    // We're already refreshing the key
+    if (loading) {
+      return;
+    }
+
+    setLoading(true);
+    await slippiBackendService
+      .fetchPlayKey()
+      .then((playKey) => {
+        setPlayKey(playKey);
+        setServerError(false);
+      })
+      .catch((err) => {
+        console.warn("Error fetching play key: ", err);
+        setPlayKey(null);
+        setServerError(true);
+      })
+      .finally(() => setLoading(false));
+  }, [loading, setLoading, setPlayKey, setServerError, slippiBackendService]);
+
+  return refreshPlayKey;
+};
