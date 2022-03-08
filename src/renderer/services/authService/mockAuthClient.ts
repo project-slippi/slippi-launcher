@@ -10,7 +10,7 @@ export class MockAuthClient implements AuthService {
   private _onAuthStateChanged = multicast(this._userSubject);
 
   public async init(): Promise<AuthUser | null> {
-    await delay(3000);
+    await delay(1000);
     return null;
   }
 
@@ -42,6 +42,19 @@ export class MockAuthClient implements AuthService {
 
   public async signUp(args: { email: string; password: string; displayName: string }): Promise<AuthUser | null> {
     return this._mockUser(args.displayName);
+  }
+
+  public async getUserToken(): Promise<string> {
+    return "dummyToken";
+  }
+
+  public async updateDisplayName(displayName: string): Promise<void> {
+    if (this._currentUser) {
+      this._userSubject.next({
+        ...this._currentUser,
+        displayName,
+      });
+    }
   }
 
   private _mockUser(displayName: string) {

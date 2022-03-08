@@ -103,4 +103,21 @@ export class AuthClient implements AuthService {
   public async resetPassword(email: string) {
     await firebase.auth().sendPasswordResetEmail(email);
   }
+
+  public async getUserToken(): Promise<string> {
+    const user = firebase.auth().currentUser;
+    if (!user) {
+      throw new Error("User is not logged in.");
+    }
+    const token = await user.getIdToken();
+    return token;
+  }
+
+  public async updateDisplayName(displayName: string): Promise<void> {
+    const user = firebase.auth().currentUser;
+    if (!user) {
+      throw Error("User is not logged in.");
+    }
+    await user.updateProfile({ displayName });
+  }
 }

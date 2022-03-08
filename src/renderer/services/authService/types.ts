@@ -4,11 +4,13 @@ export type AuthUser = {
 };
 
 export interface AuthService {
-  init(): Promise<AuthUser | null>;
-  logout(): Promise<void>;
   getCurrentUser(): AuthUser | null;
+  getUserToken(): Promise<string>;
+  init(): Promise<AuthUser | null>;
+  login(args: { email: string; password: string }): Promise<AuthUser | null>;
+  logout(): Promise<void>;
   onUserChange(onChange: (user: AuthUser | null) => void): () => void;
   resetPassword(email: string): Promise<void>;
-  login(args: { email: string; password: string }): Promise<AuthUser | null>;
   signUp(args: { email: string; password: string; displayName: string }): Promise<AuthUser | null>;
+  updateDisplayName(displayName: string): Promise<void>;
 }
