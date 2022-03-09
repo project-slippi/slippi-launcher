@@ -3,8 +3,8 @@ import { useCallback } from "react";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
+import { useServices } from "@/services";
 import type { AuthUser } from "@/services/authService/types";
-import { useServices } from "@/services/serviceContext";
 
 export const useAccount = create(
   combine(

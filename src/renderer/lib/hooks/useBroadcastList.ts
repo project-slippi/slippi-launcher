@@ -4,7 +4,7 @@ import { useToasts } from "react-toast-notifications";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
-import { useServices } from "@/services/serviceContext";
+import { useServices } from "@/services";
 
 export const useBroadcastListStore = create(
   combine(

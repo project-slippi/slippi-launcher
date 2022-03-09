@@ -9,7 +9,7 @@ import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { useAccount } from "@/lib/hooks/useAccount";
 import { useAsync } from "@/lib/hooks/useAsync";
 import { validateDisplayName } from "@/lib/validate";
-import { useServices } from "@/services/serviceContext";
+import { useServices } from "@/services";
 
 export const NameChangeDialog: React.FC<{
   displayName: string;

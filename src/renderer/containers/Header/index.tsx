@@ -17,7 +17,7 @@ import { useDolphin } from "@/lib/hooks/useDolphin";
 import { useLoginModal } from "@/lib/hooks/useLoginModal";
 import { useSettings } from "@/lib/hooks/useSettings";
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
-import { useServices } from "@/services/serviceContext";
+import { useServices } from "@/services";
 import slippiLogo from "@/styles/images/slippi-logo.svg";
 import { platformTitleBarStyles } from "@/styles/platformTitleBarStyles";
 

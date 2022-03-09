@@ -7,7 +7,7 @@ import { useToasts } from "react-toast-notifications";
 import { useAppInitialization, useAppStore } from "@/lib/hooks/useApp";
 import { useConsole } from "@/lib/hooks/useConsole";
 import { useReplays } from "@/lib/hooks/useReplays";
-import { useServices } from "@/services/serviceContext";
+import { useServices } from "@/services";
 
 import { handleDolphinExitCode } from "../utils";
 import { useAccount, usePlayKey } from "./useAccount";

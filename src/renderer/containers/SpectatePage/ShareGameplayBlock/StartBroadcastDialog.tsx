@@ -20,7 +20,7 @@ import debounce from "lodash/debounce";
 import React from "react";
 import { useQuery } from "react-query";
 
-import { useServices } from "@/services/serviceContext";
+import { useServices } from "@/services";
 
 const log = window.electron.log;
 export interface StartBroadcastDialogProps {

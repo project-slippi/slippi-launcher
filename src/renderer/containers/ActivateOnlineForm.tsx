@@ -11,7 +11,7 @@ import { useToasts } from "react-toast-notifications";
 
 import { useAccount, usePlayKey } from "@/lib/hooks/useAccount";
 import { validateConnectCodeStart } from "@/lib/validate";
-import { useServices } from "@/services/serviceContext";
+import { useServices } from "@/services";
 
 const log = window.electron.log;
 

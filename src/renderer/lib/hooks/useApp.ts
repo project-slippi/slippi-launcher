@@ -3,8 +3,8 @@ import create from "zustand";
 import { combine } from "zustand/middleware";
 
 import { useAccount } from "@/lib/hooks/useAccount";
+import { useServices } from "@/services";
 import type { AuthUser } from "@/services/authService/types";
-import { useServices } from "@/services/serviceContext";
 
 import { useDesktopApp } from "./useQuickStart";
 

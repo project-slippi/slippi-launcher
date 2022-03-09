@@ -1,6 +1,6 @@
 import type { StartBroadcastConfig } from "@broadcast/types";
 
-import { useServices } from "@/services/serviceContext";
+import { useServices } from "@/services";
 
 const log = window.electron.log;
 
