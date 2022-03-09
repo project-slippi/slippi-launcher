@@ -18,5 +18,6 @@ export default function installServices(): Services {
     authService,
     slippiBackendService,
     broadcastService: window.electron.broadcast,
+    consoleService: window.electron.console,
   };
 }

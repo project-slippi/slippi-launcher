@@ -49,3 +49,16 @@ export enum MirrorEvent {
   NEW_FILE = "NEW_FILE",
   MIRROR_STATUS_CHANGE = "MIRROR_STATUS_CHANGE",
 }
+
+export interface ConsoleService {
+  connectToConsoleMirror(config: MirrorConfig): Promise<void>;
+  disconnectFromConsole(ip: string): Promise<void>;
+  startMirroring(ip: string): Promise<void>;
+  startDiscovery(): Promise<void>;
+  stopDiscovery(): Promise<void>;
+  onDiscoveredConsolesUpdated(handle: (consoles: DiscoveredConsoleInfo[]) => void): () => void;
+  onConsoleMirrorErrorMessage(handle: (message: string) => void): () => void;
+  onConsoleMirrorStatusUpdated(
+    handle: (result: { ip: string; info: Partial<ConsoleMirrorStatusUpdate> }) => void,
+  ): () => void;
+}

@@ -25,7 +25,7 @@ const log = window.electron.log;
 
 export const useAppListeners = () => {
   // Handle app initalization
-  const { authService, broadcastService } = useServices();
+  const { authService, broadcastService, consoleService } = useServices();
   const initialized = useAppStore((store) => store.initialized);
   const initializeApp = useAppInitialization();
   React.useEffect(() => {
@@ -105,14 +105,14 @@ export const useAppListeners = () => {
   // Update the discovered console list
   const updateConsoleItems = useConsoleDiscoveryStore((store) => store.updateConsoleItems);
   React.useEffect(() => {
-    return window.electron.console.onDiscoveredConsolesUpdated(updateConsoleItems);
-  }, [updateConsoleItems]);
+    return consoleService.onDiscoveredConsolesUpdated(updateConsoleItems);
+  }, [updateConsoleItems, consoleService]);
 
   // Update the mirroring console status
   const updateConsoleStatus = useConsoleDiscoveryStore((store) => store.updateConsoleStatus);
   React.useEffect(() => {
-    return window.electron.console.onConsoleMirrorStatusUpdated(updateConsoleStatus);
-  }, [updateConsoleStatus]);
+    return consoleService.onConsoleMirrorStatusUpdated(updateConsoleStatus);
+  }, [updateConsoleStatus, consoleService]);
 
   // Automatically run ISO verification whenever the isoPath changes
   const isoPath = useSettings((store) => store.settings.isoPath);
@@ -206,8 +206,8 @@ export const useAppListeners = () => {
     [addToast],
   );
   React.useEffect(() => {
-    return window.electron.console.onConsoleMirrorErrorMessage(consoleMirrorErrorHandler);
-  }, [consoleMirrorErrorHandler]);
+    return consoleService.onConsoleMirrorErrorMessage(consoleMirrorErrorHandler);
+  }, [consoleMirrorErrorHandler, consoleService]);
 
   const [startBroadcast] = useBroadcast();
   React.useEffect(() => {
