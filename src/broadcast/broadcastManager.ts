@@ -128,8 +128,8 @@ export class BroadcastManager extends EventEmitter {
         message = message.substring(pos + label.length, endPos >= 0 ? endPos : undefined);
       }
 
-      void this._setSlippiStatus(ConnectionStatus.DISCONNECTED);
       this.emit(BroadcastEvent.ERROR, message);
+      this.stop();
     });
 
     socket.on("connect", (connection: connection) => {
