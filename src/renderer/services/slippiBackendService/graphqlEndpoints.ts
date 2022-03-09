@@ -19,10 +19,7 @@ type User = {
 };
 
 type DolphinRelease = {
-  linuxDownloadUrl: Nullable<string>;
-  macDownloadUrl: Nullable<string>;
   version: string;
-  windowsDownloadUrl: Nullable<string>;
 };
 
 export const QUERY_VALIDATE_USER_ID: TypedDocumentNode<
