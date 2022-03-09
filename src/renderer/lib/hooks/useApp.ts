@@ -3,7 +3,6 @@ import create from "zustand";
 import { combine } from "zustand/middleware";
 
 import { useAccount } from "@/lib/hooks/useAccount";
-import { fetchPlayKey } from "@/lib/slippiBackend";
 import type { AuthUser } from "@/services/authService/types";
 import { useServices } from "@/services/serviceContext";
 
@@ -33,7 +32,7 @@ export const useAppStore = create(
 );
 
 export const useAppInitialization = () => {
-  const { authService } = useServices();
+  const { authService, slippiBackendService } = useServices();
   const { addToast } = useToasts();
   const initializing = useAppStore((store) => store.initializing);
   const initialized = useAppStore((store) => store.initialized);
@@ -68,7 +67,8 @@ export const useAppInitialization = () => {
     // If we're logged in, check they have a valid play key
     if (user) {
       promises.push(
-        fetchPlayKey()
+        slippiBackendService
+          .fetchPlayKey()
           .then((key) => {
             setServerError(false);
             setPlayKey(key);

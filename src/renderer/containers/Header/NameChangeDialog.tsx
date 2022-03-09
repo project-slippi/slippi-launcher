@@ -8,14 +8,15 @@ import { useToasts } from "react-toast-notifications";
 import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { useAccount } from "@/lib/hooks/useAccount";
 import { useAsync } from "@/lib/hooks/useAsync";
-import { changeDisplayName } from "@/lib/slippiBackend";
 import { validateDisplayName } from "@/lib/validate";
+import { useServices } from "@/services/serviceContext";
 
 export const NameChangeDialog: React.FC<{
   displayName: string;
   open: boolean;
   handleClose: () => void;
 }> = ({ displayName, open, handleClose }) => {
+  const { slippiBackendService } = useServices();
   const { handleSubmit, watch, control } = useForm<{ displayName: string }>({ defaultValues: { displayName } });
 
   const name = watch("displayName");
@@ -25,7 +26,7 @@ export const NameChangeDialog: React.FC<{
 
   const submitNameChange = useAsync(async () => {
     try {
-      await changeDisplayName(name);
+      await slippiBackendService.changeDisplayName(name);
       setDisplayName(name);
     } catch (err: any) {
       console.error(err);

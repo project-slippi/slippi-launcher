@@ -20,22 +20,17 @@ import debounce from "lodash/debounce";
 import React from "react";
 import { useQuery } from "react-query";
 
-import { validateUserId } from "@/lib/slippiBackend";
+import { useServices } from "@/services/serviceContext";
 
 const log = window.electron.log;
 export interface StartBroadcastDialogProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (value: string) => void;
-  skipUserValidation?: boolean;
 }
 
-export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({
-  open,
-  onClose,
-  onSubmit,
-  skipUserValidation,
-}) => {
+export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({ open, onClose, onSubmit }) => {
+  const { slippiBackendService } = useServices();
   const [value, setValue] = React.useState("");
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
@@ -48,7 +43,7 @@ export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({
         throw new Error("Invalid user ID format");
       }
       console.log("starting fetch: ", JSON.stringify(new Date()));
-      const result = await validateUserId(value);
+      const result = await slippiBackendService.validateUserId(value);
       console.log("finished fetch: ", JSON.stringify(new Date()));
       return result;
     },
@@ -69,11 +64,9 @@ export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({
       // First clear the react-query state
       userQuery.remove();
       setValue(inputText);
-      if (!skipUserValidation) {
-        void fetchUser();
-      }
+      void fetchUser();
     },
-    [fetchUser, skipUserValidation, userQuery],
+    [fetchUser, userQuery],
   );
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -149,7 +142,7 @@ export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({
               ),
             }}
           />
-          <div style={{ opacity: skipUserValidation || value.length === 0 ? 0 : 1 }}>
+          <div style={{ opacity: value.length === 0 ? 0 : 1 }}>
             <div style={{ margin: 12, marginRight: 0 }}>
               {userQuery.data ? (
                 <CheckCircleIcon
@@ -173,7 +166,7 @@ export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({
           <Button onClick={onClose} color="secondary">
             Cancel
           </Button>
-          <Button color="primary" disabled={!skipUserValidation && !userQuery.isSuccess} type="submit">
+          <Button color="primary" disabled={!userQuery.isSuccess} type="submit">
             Confirm
           </Button>
         </DialogActions>

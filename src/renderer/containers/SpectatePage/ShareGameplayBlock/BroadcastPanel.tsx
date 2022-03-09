@@ -90,12 +90,7 @@ export const BroadcastPanel: React.FC<BroadcastPanelProps> = ({
         )}
         {isDisconnected && broadcastDuration && <div>Broadcast ended after {broadcastDuration.humanize()}</div>}
       </div>
-      <StartBroadcastDialog
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onSubmit={onStartBroadcast}
-        skipUserValidation={window.electron.common.isDevelopment}
-      />
+      <StartBroadcastDialog open={modalOpen} onClose={() => setModalOpen(false)} onSubmit={onStartBroadcast} />
     </div>
   );
 };
