@@ -10,6 +10,7 @@ import { Button } from "@/components/FormInputs";
 import { IconMessage } from "@/components/Message";
 import { useAccount } from "@/lib/hooks/useAccount";
 import { useBroadcastList } from "@/lib/hooks/useBroadcastList";
+import { useServices } from "@/services";
 
 import { Footer } from "./Footer";
 import { ShareGameplayBlock } from "./ShareGameplayBlock";
@@ -18,10 +19,11 @@ import { SpectatorIdBlock } from "./SpectatorIdBlock";
 
 export const SpectatePage: React.FC = () => {
   const user = useAccount((store) => store.user);
+  const { broadcastService } = useServices();
   const [currentBroadcasts, refreshBroadcasts] = useBroadcastList();
 
   const startWatching = async (id: string) => {
-    await window.electron.broadcast.watchBroadcast(id);
+    await broadcastService.watchBroadcast(id);
   };
 
   if (!user) {

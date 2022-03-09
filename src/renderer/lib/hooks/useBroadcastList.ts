@@ -18,13 +18,13 @@ export const useBroadcastListStore = create(
 );
 
 export const useBroadcastList = () => {
-  const { authService } = useServices();
+  const { authService, broadcastService } = useServices();
   const items = useBroadcastListStore((store) => store.items);
   const { addToast } = useToasts();
 
   const refresh = async () => {
     const authToken = await authService.getUserToken();
-    await window.electron.broadcast.refreshBroadcastList(authToken);
+    await broadcastService.refreshBroadcastList(authToken);
   };
 
   // Limit refreshing to once every 2 seconds
