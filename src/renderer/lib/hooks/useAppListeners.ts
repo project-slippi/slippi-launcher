@@ -25,7 +25,7 @@ const log = window.electron.log;
 
 export const useAppListeners = () => {
   // Handle app initalization
-  const { authService } = useServices();
+  const { authService, broadcastService, consoleService } = useServices();
   const initialized = useAppStore((store) => store.initialized);
   const initializeApp = useAppInitialization();
   React.useEffect(() => {
@@ -72,18 +72,18 @@ export const useAppListeners = () => {
 
   const setSlippiConnectionStatus = useConsole((store) => store.setSlippiConnectionStatus);
   React.useEffect(() => {
-    return window.electron.broadcast.onSlippiStatusChanged(setSlippiConnectionStatus);
-  }, [setSlippiConnectionStatus]);
+    return broadcastService.onSlippiStatusChanged(setSlippiConnectionStatus);
+  }, [setSlippiConnectionStatus, broadcastService]);
 
   const setDolphinConnectionStatus = useConsole((store) => store.setDolphinConnectionStatus);
   React.useEffect(() => {
-    return window.electron.broadcast.onDolphinStatusChanged(setDolphinConnectionStatus);
-  }, [setDolphinConnectionStatus]);
+    return broadcastService.onDolphinStatusChanged(setDolphinConnectionStatus);
+  }, [setDolphinConnectionStatus, broadcastService]);
 
   const setBroadcastError = useConsole((store) => store.setBroadcastError);
   React.useEffect(() => {
-    return window.electron.broadcast.onBroadcastErrorMessage(setBroadcastError);
-  }, [setBroadcastError]);
+    return broadcastService.onBroadcastErrorMessage(setBroadcastError);
+  }, [setBroadcastError, broadcastService]);
 
   const updateProgress = useReplays((store) => store.updateProgress);
   const throttledUpdateProgress = throttle(updateProgress, 50);
@@ -99,20 +99,20 @@ export const useAppListeners = () => {
   // Listen to when the list of broadcasting users has changed
   const updateBroadcastingList = useBroadcastListStore((store) => store.setItems);
   React.useEffect(() => {
-    return window.electron.broadcast.onBroadcastListUpdated(updateBroadcastingList);
-  }, [updateBroadcastingList]);
+    return broadcastService.onBroadcastListUpdated(updateBroadcastingList);
+  }, [updateBroadcastingList, broadcastService]);
 
   // Update the discovered console list
   const updateConsoleItems = useConsoleDiscoveryStore((store) => store.updateConsoleItems);
   React.useEffect(() => {
-    return window.electron.console.onDiscoveredConsolesUpdated(updateConsoleItems);
-  }, [updateConsoleItems]);
+    return consoleService.onDiscoveredConsolesUpdated(updateConsoleItems);
+  }, [updateConsoleItems, consoleService]);
 
   // Update the mirroring console status
   const updateConsoleStatus = useConsoleDiscoveryStore((store) => store.updateConsoleStatus);
   React.useEffect(() => {
-    return window.electron.console.onConsoleMirrorStatusUpdated(updateConsoleStatus);
-  }, [updateConsoleStatus]);
+    return consoleService.onConsoleMirrorStatusUpdated(updateConsoleStatus);
+  }, [updateConsoleStatus, consoleService]);
 
   // Automatically run ISO verification whenever the isoPath changes
   const isoPath = useSettings((store) => store.settings.isoPath);
@@ -206,20 +206,20 @@ export const useAppListeners = () => {
     [addToast],
   );
   React.useEffect(() => {
-    return window.electron.console.onConsoleMirrorErrorMessage(consoleMirrorErrorHandler);
-  }, [consoleMirrorErrorHandler]);
+    return consoleService.onConsoleMirrorErrorMessage(consoleMirrorErrorHandler);
+  }, [consoleMirrorErrorHandler, consoleService]);
 
   const [startBroadcast] = useBroadcast();
   React.useEffect(() => {
-    return window.electron.broadcast.onBroadcastReconnect((config) => {
+    return broadcastService.onBroadcastReconnect((config) => {
       startBroadcast(config).catch(console.error);
     });
-  }, [startBroadcast]);
+  }, [startBroadcast, broadcastService]);
 
   const [, refreshBroadcasts] = useBroadcastList();
   React.useEffect(() => {
-    return window.electron.broadcast.onSpectateReconnect(refreshBroadcasts);
-  }, [refreshBroadcasts]);
+    return broadcastService.onSpectateReconnect(refreshBroadcasts);
+  }, [refreshBroadcasts, broadcastService]);
 
   const setDolphinOpen = useDolphinStore((store) => store.setDolphinOpen);
   const dolphinClosedHandler = React.useCallback(

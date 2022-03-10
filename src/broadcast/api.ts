@@ -13,9 +13,9 @@ import {
   ipc_stopBroadcast,
   ipc_watchBroadcast,
 } from "./ipc";
-import type { BroadcasterItem, StartBroadcastConfig } from "./types";
+import type { BroadcasterItem, BroadcastService, StartBroadcastConfig } from "./types";
 
-export default {
+const broadcastApi: BroadcastService = {
   onSpectateReconnect(handle: () => void) {
     const { destroy } = ipc_spectateReconnectEvent.renderer!.handle(async () => {
       handle();
@@ -71,3 +71,5 @@ export default {
     await ipc_stopBroadcast.renderer!.trigger({});
   },
 };
+
+export default broadcastApi;

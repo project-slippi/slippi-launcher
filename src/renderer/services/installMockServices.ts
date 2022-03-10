@@ -9,5 +9,9 @@ export default function installMockServices(): Services {
   return {
     authService,
     slippiBackendService,
+
+    // TODO: Mock these services
+    broadcastService: window.electron.broadcast,
+    consoleService: window.electron.console,
   };
 }

@@ -10,9 +10,9 @@ import {
   ipc_startMirroring,
   ipc_stopDiscovery,
 } from "./ipc";
-import type { ConsoleMirrorStatusUpdate, DiscoveredConsoleInfo, MirrorConfig } from "./types";
+import type { ConsoleMirrorStatusUpdate, ConsoleService, DiscoveredConsoleInfo, MirrorConfig } from "./types";
 
-export default {
+const consoleApi: ConsoleService = {
   async connectToConsoleMirror(config: MirrorConfig) {
     await ipc_connectToConsoleMirror.renderer!.trigger({ config });
   },
@@ -47,3 +47,5 @@ export default {
     return destroy;
   },
 };
+
+export default consoleApi;

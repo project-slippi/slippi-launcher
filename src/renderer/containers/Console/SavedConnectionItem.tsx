@@ -1,3 +1,4 @@
+import type { MirrorConfig } from "@console/types";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
@@ -16,7 +17,7 @@ import { lt } from "semver";
 
 import { ExternalLink as A } from "@/components/ExternalLink";
 import { LabelledText } from "@/components/LabelledText";
-import { connectToConsole, disconnectFromConsole, startConsoleMirror } from "@/lib/consoleConnection";
+import { useServices } from "@/services";
 import { ReactComponent as WiiIcon } from "@/styles/images/wii-icon.svg";
 
 const path = window.electron.path;
@@ -47,15 +48,38 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
   latestVersion,
 }) => {
   const { addToast } = useToasts();
-  const onConnect = () => connectToConsole(connection);
-  const onMirror = () => {
-    startConsoleMirror(connection.ipAddress).catch((err) => {
+  const { consoleService } = useServices();
+  const onConnect = React.useCallback(async () => {
+    const conn = connection;
+    const config: MirrorConfig = {
+      id: conn.id,
+      ipAddress: conn.ipAddress,
+      port: conn.port ?? Ports.DEFAULT,
+      folderPath: conn.folderPath,
+      isRealtime: conn.isRealtime,
+      enableRelay: conn.enableRelay,
+      useNicknameFolders: conn.useNicknameFolders,
+    };
+
+    // Add OBS config if necessary
+    if (conn.enableAutoSwitcher && conn.obsIP && conn.obsSourceName) {
+      config.autoSwitcherSettings = {
+        ip: conn.obsIP,
+        password: conn.obsPassword,
+        sourceName: conn.obsSourceName,
+      };
+    }
+
+    await consoleService.connectToConsoleMirror(config);
+  }, [consoleService, connection]);
+  const onMirror = React.useCallback(() => {
+    consoleService.startMirroring(connection.ipAddress).catch((err: any) => {
       addToast(err.message ?? JSON.stringify(err), {
         appearance: "error",
       });
     });
-  };
-  const onDisconnect = () => disconnectFromConsole(connection.ipAddress);
+  }, [consoleService, connection, addToast]);
+  const onDisconnect = () => consoleService.disconnectFromConsole(connection.ipAddress);
   const statusName = status === ConnectionStatus.DISCONNECTED && isAvailable ? "Available" : renderStatusName(status);
   const isConnected = status !== ConnectionStatus.DISCONNECTED;
   const title = nickname ? `${connection.ipAddress} (${nickname})` : connection.ipAddress;

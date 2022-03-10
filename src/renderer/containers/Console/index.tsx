@@ -13,6 +13,7 @@ import type { EditConnectionType } from "@/lib/consoleConnection";
 import { addConsoleConnection, deleteConsoleConnection, editConsoleConnection } from "@/lib/consoleConnection";
 import { useConsoleDiscoveryStore } from "@/lib/hooks/useConsoleDiscovery";
 import { useSettings } from "@/lib/hooks/useSettings";
+import { useServices } from "@/services";
 
 import { AddConnectionDialog } from "./AddConnectionDialog";
 import { NewConnectionList } from "./NewConnectionList";
@@ -27,6 +28,7 @@ const Outer = styled.div`
 `;
 
 export const Console: React.FC = () => {
+  const { consoleService } = useServices();
   const [isScanning, setIsScanning] = React.useState(false);
   const [modalOpen, setModalOpen] = React.useState(false);
   const [currentFormValues, setCurrentFormValues] = React.useState<Partial<StoredConnection> | null>(null);
@@ -51,7 +53,7 @@ export const Console: React.FC = () => {
   React.useEffect(() => {
     // Start scanning for new consoles
     setIsScanning(false);
-    window.electron.console
+    consoleService
       .startDiscovery()
       .then(() => setIsScanning(true))
       .catch((err) => {
@@ -60,9 +62,9 @@ export const Console: React.FC = () => {
 
     // Stop scanning on component unmount
     return () => {
-      void window.electron.console.stopDiscovery();
+      void consoleService.stopDiscovery();
     };
-  }, [addToast]);
+  }, [addToast, consoleService]);
 
   const onCancel = () => {
     setModalOpen(false);
