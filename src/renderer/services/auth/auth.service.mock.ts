@@ -6,7 +6,7 @@ import type { AuthService, AuthUser } from "./types";
 
 const SHOULD_ERROR = false;
 
-export class MockAuthClient implements AuthService {
+class MockAuthClient implements AuthService {
   private _currentUser: AuthUser | null = null;
   private _userSubject = new Subject<AuthUser | null>();
   private _onAuthStateChanged = multicast(this._userSubject);
@@ -79,3 +79,5 @@ export class MockAuthClient implements AuthService {
     this._userSubject.next(user);
   }
 }
+
+export default MockAuthClient;

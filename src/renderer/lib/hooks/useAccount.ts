@@ -4,7 +4,7 @@ import create from "zustand";
 import { combine } from "zustand/middleware";
 
 import { useServices } from "@/services";
-import type { AuthUser } from "@/services/authService/types";
+import type { AuthUser } from "@/services/auth/types";
 
 export const useAccount = create(
   combine(

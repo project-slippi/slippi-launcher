@@ -33,18 +33,44 @@ if (!requiredByDLLConfig && !(fs.existsSync(webpackPaths.dllPath) && fs.existsSy
   execSync("yarn run postinstall");
 }
 
-export default (env: any, _argv: any) => {
-  let useMockServices = false;
-  const mode = env?.mode;
-  if (mode) {
-    if (mode !== "prod" && mode !== "mock") {
-      throw new Error(`Invalid environment mode ${mode}. Expected 'prod' or 'mock'.`);
-    }
-    if (mode === "mock") {
-      useMockServices = true;
-      console.log(chalk.yellow.bgBlack.bold('Using mock services.'));
-    }
+const allMockableServices: readonly string[] = ["auth", "slippi"];
+
+const parseMockServices = (envString?: string | true): readonly string[] => {
+  if (envString === true) {
+    // Mock everything
+    return allMockableServices;
   }
+
+  if (typeof envString === "string") {
+    return envString.split(" ").filter((service) => {
+      const validService = allMockableServices.includes(service);
+      if (!validService) {
+        console.log(chalk.yellow.bgBlack.bold(`Cannot mock unknown service: ${service}. Ignoring...`));
+      }
+      return validService;
+    })
+  }
+
+  return [];
+};
+
+
+const generateMockModuleReplacementPlugin = (servicesToMock: readonly string[]): webpack.WebpackPluginInstance[] => {
+  if (servicesToMock.length === 0) {
+    return [];
+  }
+
+  console.log(chalk.yellow.bgBlack.bold(`Mocking services: ${servicesToMock.join(', ')}`));
+  const regexSearch = `.*(${servicesToMock.join("|")})/\\1.service$`;
+  const plugin = new webpack.NormalModuleReplacementPlugin(new RegExp(regexSearch), (resource) => {
+    resource.request = resource.request.replace(/\.service$/, ".service.mock");
+  });
+  return [plugin];
+}
+
+
+export default (env?: Record<string, string | true>, _argv?: any) => {
+  const servicesToMock = parseMockServices(env?.mock);
 
   const configuration: webpack.Configuration = {
     devtool: "inline-source-map",
@@ -131,11 +157,7 @@ export default (env: any, _argv: any) => {
       new webpack.NoEmitOnErrorsPlugin(),
       new NodePolyfillPlugin(),
 
-      ...(useMockServices ?
-        [new webpack.NormalModuleReplacementPlugin(/(.*)installServices(\.*)/, function (resource) {
-          resource.request = resource.request.replace(/installServices/, `installMockServices`);
-        })]
-        : []),
+      ...(generateMockModuleReplacementPlugin(servicesToMock)),
 
       /**
        * Create global constants which can be configured at compile time.
