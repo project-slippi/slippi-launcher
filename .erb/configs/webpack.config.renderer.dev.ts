@@ -61,8 +61,12 @@ const generateMockModuleReplacementPlugin = (servicesToMock: readonly string[]):
   }
 
   console.log(chalk.yellow.bgBlack.bold(`Mocking services: ${servicesToMock.join(', ')}`));
+  // This regex essentially matches for: "auth/auth.service" but for all the mockable services.
+  // We also join the services using | in order to match the possible groups. e.g. (auth|slippi).
+  // Then, using group matching we can make sure the folder also matches the service name.
   const regexSearch = `.*(${servicesToMock.join("|")})/\\1.service$`;
   const plugin = new webpack.NormalModuleReplacementPlugin(new RegExp(regexSearch), (resource) => {
+    // This regex just replaces things that end in ".service" with ".service.mock".
     resource.request = resource.request.replace(/\.service$/, ".service.mock");
   });
   return [plugin];
