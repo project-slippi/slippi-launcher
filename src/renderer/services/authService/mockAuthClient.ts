@@ -1,19 +1,22 @@
-import { delay } from "@common/delay";
 import multicast from "observable-fns/multicast";
 import Subject from "observable-fns/subject";
 
+import { delayAndMaybeError } from "../utils";
 import type { AuthService, AuthUser } from "./types";
+
+const SHOULD_ERROR = false;
 
 export class MockAuthClient implements AuthService {
   private _currentUser: AuthUser | null = null;
   private _userSubject = new Subject<AuthUser | null>();
   private _onAuthStateChanged = multicast(this._userSubject);
 
+  @delayAndMaybeError(SHOULD_ERROR)
   public async init(): Promise<AuthUser | null> {
-    await delay(1000);
     return null;
   }
 
+  @delayAndMaybeError(SHOULD_ERROR)
   public async logout(): Promise<void> {
     this._setCurrentUser(null);
   }
@@ -29,10 +32,12 @@ export class MockAuthClient implements AuthService {
     };
   }
 
+  @delayAndMaybeError(SHOULD_ERROR)
   public async resetPassword(): Promise<void> {
     throw new Error("Mock reset password is not implemented");
   }
 
+  @delayAndMaybeError(SHOULD_ERROR)
   public async login(args: { email: string; password: string }): Promise<AuthUser | null> {
     if (args.email === "test" && args.password === "test") {
       return this._mockUser("Demo user");
@@ -40,14 +45,17 @@ export class MockAuthClient implements AuthService {
     throw new Error("Invalid username or password. Try 'test' and 'test'.");
   }
 
+  @delayAndMaybeError(SHOULD_ERROR)
   public async signUp(args: { email: string; password: string; displayName: string }): Promise<AuthUser | null> {
     return this._mockUser(args.displayName);
   }
 
+  @delayAndMaybeError(SHOULD_ERROR)
   public async getUserToken(): Promise<string> {
     return "dummyToken";
   }
 
+  @delayAndMaybeError(SHOULD_ERROR)
   public async updateDisplayName(displayName: string): Promise<void> {
     if (this._currentUser) {
       this._userSubject.next({

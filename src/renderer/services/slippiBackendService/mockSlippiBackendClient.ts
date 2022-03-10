@@ -1,7 +1,10 @@
 import type { PlayKey } from "@dolphin/types";
 
 import type { AuthService } from "../authService/types";
+import { delayAndMaybeError } from "../utils";
 import type { SlippiBackendService } from "./types";
+
+const SHOULD_ERROR = false;
 
 const fakeUsers: PlayKey[] = [
   {
@@ -14,6 +17,8 @@ const fakeUsers: PlayKey[] = [
 
 export class MockSlippiBackendClient implements SlippiBackendService {
   public constructor(private authService: AuthService) {}
+
+  @delayAndMaybeError(SHOULD_ERROR)
   public async validateUserId(userId: string): Promise<{ displayName: string; connectCode: string }> {
     const key = fakeUsers.find((key) => key.uid === userId);
     if (!key) {
@@ -26,6 +31,7 @@ export class MockSlippiBackendClient implements SlippiBackendService {
     };
   }
 
+  @delayAndMaybeError(SHOULD_ERROR)
   public async fetchPlayKey(): Promise<PlayKey | null> {
     const user = this.authService.getCurrentUser();
     if (!user) {
@@ -35,18 +41,22 @@ export class MockSlippiBackendClient implements SlippiBackendService {
     return key ?? null;
   }
 
+  @delayAndMaybeError(SHOULD_ERROR)
   public async assertPlayKey(_playKey: PlayKey) {
     // Do nothing
   }
 
+  @delayAndMaybeError(SHOULD_ERROR)
   public async deletePlayKey(): Promise<void> {
     // Do nothing
   }
 
+  @delayAndMaybeError(SHOULD_ERROR)
   public async changeDisplayName(name: string) {
     await this.authService.updateDisplayName(name);
   }
 
+  @delayAndMaybeError(SHOULD_ERROR)
   public async initializeNetplay(_codeStart: string): Promise<void> {
     // Do nothing
   }
