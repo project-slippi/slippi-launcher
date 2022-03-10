@@ -3,7 +3,7 @@ import { ApolloClient, ApolloLink, HttpLink, InMemoryCache } from "@apollo/clien
 import type { PlayKey } from "@dolphin/types";
 import type { GraphQLError } from "graphql";
 
-import type { AuthService, AuthUser } from "../authService/types";
+import type { AuthService, AuthUser } from "../auth/types";
 import {
   MUTATION_INIT_NETPLAY,
   MUTATION_RENAME_USER,
@@ -24,19 +24,19 @@ const handleErrors = (errors: readonly GraphQLError[] | undefined) => {
   }
 };
 
-export class SlippiBackendClient implements SlippiBackendService {
+class SlippiBackendClient implements SlippiBackendService {
   private _authService: AuthService;
   private _httpLink: HttpLink;
   private _client: ApolloClient<NormalizedCacheObject>;
 
-  public constructor(options: { authService: AuthService; clientVersion?: string }) {
-    this._authService = options.authService;
+  public constructor(authService: AuthService, clientVersion?: string) {
+    this._authService = authService;
     this._httpLink = new HttpLink({ uri: SLIPPI_BACKEND_URL });
     this._client = new ApolloClient({
       link: this._httpLink,
       cache: new InMemoryCache(),
       name: "slippi-launcher",
-      version: options.clientVersion,
+      version: clientVersion,
     });
   }
 
@@ -153,3 +153,5 @@ export class SlippiBackendClient implements SlippiBackendService {
     handleErrors(res.errors);
   }
 }
+
+export default SlippiBackendClient;

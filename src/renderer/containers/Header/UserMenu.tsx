@@ -10,7 +10,7 @@ import type { IconMenuItem } from "@/components/IconMenu";
 import { IconMenu } from "@/components/IconMenu";
 import { useAccount } from "@/lib/hooks/useAccount";
 import { useServices } from "@/services";
-import type { AuthUser } from "@/services/authService/types";
+import type { AuthUser } from "@/services/auth/types";
 
 import { ActivateOnlineDialog } from "./ActivateOnlineDialog";
 import { NameChangeDialog } from "./NameChangeDialog";

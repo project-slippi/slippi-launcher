@@ -19,7 +19,7 @@ const firebaseConfig = {
  * Initialize Firebase
  */
 
-export class AuthClient implements AuthService {
+class AuthClient implements AuthService {
   private _userSubject = new Subject<AuthUser | null>();
   private _onAuthStateChanged = multicast(this._userSubject);
 
@@ -121,3 +121,5 @@ export class AuthClient implements AuthService {
     await user.updateProfile({ displayName });
   }
 }
+
+export default AuthClient;

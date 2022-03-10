@@ -4,7 +4,7 @@ import { combine } from "zustand/middleware";
 
 import { useAccount } from "@/lib/hooks/useAccount";
 import { useServices } from "@/services";
-import type { AuthUser } from "@/services/authService/types";
+import type { AuthUser } from "@/services/auth/types";
 
 import { useDesktopApp } from "./useQuickStart";
 

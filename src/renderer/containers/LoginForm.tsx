@@ -12,7 +12,7 @@ import { combine } from "zustand/middleware";
 
 import { useAsync } from "@/lib/hooks/useAsync";
 import { useServices } from "@/services";
-import type { AuthUser } from "@/services/authService/types";
+import type { AuthUser } from "@/services/auth/types";
 
 import { QuickStartHeader } from "./QuickStart/QuickStartHeader";
 

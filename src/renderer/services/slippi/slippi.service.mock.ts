@@ -1,6 +1,6 @@
 import type { PlayKey } from "@dolphin/types";
 
-import type { AuthService } from "../authService/types";
+import type { AuthService } from "../auth/types";
 import { delayAndMaybeError } from "../utils";
 import type { SlippiBackendService } from "./types";
 
@@ -15,7 +15,7 @@ const fakeUsers: PlayKey[] = [
   },
 ];
 
-export class MockSlippiBackendClient implements SlippiBackendService {
+class MockSlippiBackendClient implements SlippiBackendService {
   public constructor(private authService: AuthService) {}
 
   @delayAndMaybeError(SHOULD_ERROR)
@@ -61,3 +61,5 @@ export class MockSlippiBackendClient implements SlippiBackendService {
     // Do nothing
   }
 }
+
+export default MockSlippiBackendClient;
