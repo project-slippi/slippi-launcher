@@ -16,7 +16,7 @@ const log = electronLog.scope("iniFile");
 export class IniFile {
   private sections: Section[];
 
-  public constructor() {
+  constructor() {
     this.sections = [];
   }
 
@@ -207,7 +207,7 @@ export class Section {
   public lines: string[];
   public values: Map<string, string>;
 
-  public constructor(name: string) {
+  constructor(name: string) {
     this.name = name;
     this.keysOrder = [];
     this.lines = [];

@@ -16,7 +16,7 @@ const fakeUsers: PlayKey[] = [
 ];
 
 class MockSlippiBackendClient implements SlippiBackendService {
-  public constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) {}
 
   @delayAndMaybeError(SHOULD_ERROR)
   public async validateUserId(userId: string): Promise<{ displayName: string; connectCode: string }> {

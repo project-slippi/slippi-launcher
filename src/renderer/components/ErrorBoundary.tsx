@@ -19,7 +19,7 @@ interface ErrorBoundaryState {
 }
 
 export class ErrorBoundary extends React.Component<any, ErrorBoundaryState> {
-  public constructor(props: any) {
+  constructor(props: any) {
     super(props);
     this.state = {
       hasError: false,

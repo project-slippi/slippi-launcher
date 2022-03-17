@@ -29,7 +29,7 @@ class SlippiBackendClient implements SlippiBackendService {
   private _httpLink: HttpLink;
   private _client: ApolloClient<NormalizedCacheObject>;
 
-  public constructor(authService: AuthService, clientVersion?: string) {
+  constructor(authService: AuthService, clientVersion?: string) {
     this._authService = authService;
     this._httpLink = new HttpLink({ uri: SLIPPI_BACKEND_URL });
     this._client = new ApolloClient({

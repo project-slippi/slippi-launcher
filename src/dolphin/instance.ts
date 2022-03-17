@@ -27,7 +27,7 @@ export class DolphinInstance extends EventEmitter {
   private executablePath: string;
   private isoPath: string | null = null;
 
-  public constructor(execPath: string, isoPath?: string) {
+  constructor(execPath: string, isoPath?: string) {
     super();
     this.isoPath = isoPath ?? null;
     this.executablePath = execPath;
@@ -79,7 +79,7 @@ export class DolphinInstance extends EventEmitter {
 export class PlaybackDolphinInstance extends DolphinInstance {
   private commPath: string;
 
-  public constructor(execPath: string, isoPath?: string) {
+  constructor(execPath: string, isoPath?: string) {
     super(execPath, isoPath);
     this.commPath = generateTempCommunicationFile();
 

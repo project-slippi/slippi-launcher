@@ -18,7 +18,7 @@ export class SettingsManager {
   // This only stores the actually modified settings
   private appSettings: Partial<AppSettings>;
 
-  public constructor() {
+  constructor() {
     const restoredSettings = electronSettings.getSync() as Partial<AppSettings>;
 
     // If the ISO file no longer exists, don't restore it

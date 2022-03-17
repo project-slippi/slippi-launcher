@@ -32,7 +32,7 @@ export class SpectateManager extends EventEmitter {
   private broadcastInfo: Record<string, BroadcastInfo> = {};
   private wsConnection: connection | null = null;
 
-  public constructor() {
+  constructor() {
     super();
   }
 

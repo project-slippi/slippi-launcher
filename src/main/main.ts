@@ -46,7 +46,7 @@ if (!lockObtained) {
 setupIpc();
 
 class AppUpdater {
-  public constructor() {
+  constructor() {
     log.transports.file.level = "info";
     autoUpdater.logger = log;
     autoUpdater.autoInstallOnAppQuit = settingsManager.get().settings.autoUpdateLauncher;

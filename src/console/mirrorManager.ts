@@ -24,7 +24,7 @@ import { MirrorEvent } from "./types";
 export class MirrorManager extends EventEmitter {
   private mirrors: Record<string, MirrorDetails> = {};
 
-  public constructor() {
+  constructor() {
     super();
   }
 

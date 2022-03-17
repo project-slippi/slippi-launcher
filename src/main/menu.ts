@@ -14,7 +14,7 @@ export class MenuBuilder {
   private createWindow: () => Promise<void>;
   private enableDevTools?: boolean;
 
-  public constructor(options: {
+  constructor(options: {
     mainWindow: BrowserWindow;
     onOpenPreferences: () => void;
     onOpenReplayFile: (filePath: string) => void;

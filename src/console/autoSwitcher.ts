@@ -12,7 +12,7 @@ export class AutoSwitcher extends EventEmitter {
   private statusOutput: { status: boolean; timeout: NodeJS.Timeout | null };
   private obsPairs: { scene: string; source: string }[];
 
-  public constructor(settings: AutoSwitcherSettings) {
+  constructor(settings: AutoSwitcherSettings) {
     super();
     this.obs = new OBSWebSocket();
     this.obsSourceName = settings.sourceName;
