@@ -1,4 +1,12 @@
-import firebase from "firebase";
+import { getApps, initializeApp } from "firebase/app";
+import {
+  getAuth,
+  onAuthStateChanged,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { getFunctions, httpsCallable } from "firebase/functions";
 import multicast from "observable-fns/multicast";
 import Subject from "observable-fns/subject";
 
@@ -25,18 +33,18 @@ class AuthClient implements AuthService {
 
   public init(): Promise<AuthUser | null> {
     // Initialize the Firebase app if we haven't already
-    if (firebase.apps.length !== 0) {
+    if (getApps().length !== 0) {
       // We've already initialized the app before so just return the current user
-      const currentUser = firebase.auth().currentUser;
-      return Promise.resolve(currentUser ? this._mapFirebaseUserToAuthUser(currentUser) : null);
+      return Promise.resolve(this.getCurrentUser());
     }
 
     return new Promise((resolve, reject) => {
       try {
-        firebase.initializeApp(firebaseConfig);
+        const firebaseApp = initializeApp(firebaseConfig);
 
+        const auth = getAuth(firebaseApp);
         // Setup the listener
-        firebase.auth().onAuthStateChanged((user) => {
+        onAuthStateChanged(auth, (user) => {
           if (user) {
             this._userSubject.next(this._mapFirebaseUserToAuthUser(user));
           } else {
@@ -45,7 +53,7 @@ class AuthClient implements AuthService {
         });
 
         // Complete the promise
-        const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
           // Unsubscribe after the first event
           unsubscribe();
 
@@ -58,12 +66,11 @@ class AuthClient implements AuthService {
     });
   }
 
-  private _mapFirebaseUserToAuthUser(user: firebase.User): AuthUser {
+  private _mapFirebaseUserToAuthUser(user: { uid: string; displayName: string | null }): AuthUser {
     const userObject = {
       uid: user.uid,
       displayName: user.displayName ?? "",
     };
-    console.log({ userObject });
     return userObject;
   }
 
@@ -75,7 +82,8 @@ class AuthClient implements AuthService {
   }
 
   public getCurrentUser(): AuthUser | null {
-    const user = firebase.auth().currentUser;
+    const auth = getAuth();
+    const user = auth.currentUser;
     if (!user) {
       return null;
     }
@@ -83,13 +91,15 @@ class AuthClient implements AuthService {
   }
 
   public async signUp({ email, displayName, password }: { email: string; displayName: string; password: string }) {
-    const createUser = firebase.functions().httpsCallable("createUser");
+    const functions = getFunctions();
+    const createUser = httpsCallable(functions, "createUser");
     await createUser({ email, password, displayName });
     return this.login({ email, password });
   }
 
   public async login({ email, password }: { email: string; password: string }) {
-    const { user } = await firebase.auth().signInWithEmailAndPassword(email, password);
+    const auth = getAuth();
+    const { user } = await signInWithEmailAndPassword(auth, email, password);
     if (!user) {
       return null;
     }
@@ -97,15 +107,18 @@ class AuthClient implements AuthService {
   }
 
   public async logout() {
-    await firebase.auth().signOut();
+    const auth = getAuth();
+    await auth.signOut();
   }
 
   public async resetPassword(email: string) {
-    await firebase.auth().sendPasswordResetEmail(email);
+    const auth = getAuth();
+    await sendPasswordResetEmail(auth, email);
   }
 
   public async getUserToken(): Promise<string> {
-    const user = firebase.auth().currentUser;
+    const auth = getAuth();
+    const user = auth.currentUser;
     if (!user) {
       throw new Error("User is not logged in.");
     }
@@ -114,11 +127,12 @@ class AuthClient implements AuthService {
   }
 
   public async updateDisplayName(displayName: string): Promise<void> {
-    const user = firebase.auth().currentUser;
+    const auth = getAuth();
+    const user = auth.currentUser;
     if (!user) {
       throw Error("User is not logged in.");
     }
-    await user.updateProfile({ displayName });
+    await updateProfile(user, { displayName });
   }
 }
 

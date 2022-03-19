@@ -15,6 +15,10 @@ checkNodeEnv("development");
 
 const dist = webpackPaths.dllPath;
 
+// For some reason firebase has issues with ERB and it gives a weird "Package path . is not exported" error.
+// So we're just gonna ignore it for now and hope it's okay.
+const depsToIgnore = ["firebase"];
+
 export default (env: any, argv: any) => {
   const rendererDevConfig = webpackConfig(env, argv);
 
@@ -35,7 +39,7 @@ export default (env: any, argv: any) => {
     module: rendererDevConfig.module,
 
     entry: {
-      renderer: Object.keys(dependencies || {}),
+      renderer: Object.keys(dependencies || {}).filter(dep => !depsToIgnore.includes(dep)),
     },
 
     output: {
