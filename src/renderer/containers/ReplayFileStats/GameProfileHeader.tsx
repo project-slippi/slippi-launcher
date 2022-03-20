@@ -1,4 +1,3 @@
-import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -21,7 +20,6 @@ import React from "react";
 
 import { extractPlayerNames } from "@/lib/matchNames";
 import { convertFrameCountToDurationString, monthDayHourFormat } from "@/lib/time";
-import { getStageImage } from "@/lib/utils";
 
 import { PlayerInfo } from "./PlayerInfo";
 
@@ -111,9 +109,8 @@ export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
   onClose,
 }) => {
   const { metadata, settings } = file;
-  const stageImage = settings.stageId !== null ? getStageImage(settings.stageId) : undefined;
   return (
-    <Header backgroundImage={stageImage}>
+    <Header>
       <div
         css={css`
           display: flex;
@@ -159,21 +156,11 @@ export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
   );
 };
 
-const Header = styled.div<{
-  backgroundImage?: any;
-}>`
+const Header = styled.div`
   z-index: 1;
   top: 0;
   width: 100%;
-  border-bottom: solid 2px ${colors.purpleDark};
-  background-size: cover;
-  background-position: center center;
-  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0 30%, rgba(0, 0, 0, 0.8) 90%)
-    ${(p) =>
-      p.backgroundImage
-        ? `,
-    url("${p.backgroundImage}")`
-        : ""};
+  background-color: rgba(0, 0, 0, 0.5);
 `;
 
 const GameDetails: React.FC<{
