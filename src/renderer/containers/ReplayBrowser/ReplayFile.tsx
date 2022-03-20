@@ -6,7 +6,7 @@ import EventIcon from "@mui/icons-material/Event";
 import LandscapeIcon from "@mui/icons-material/Landscape";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
-import TimerIcon from "@mui/icons-material/Timer";
+import TimerOutlinedIcon from "@mui/icons-material/TimerOutlined";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import type { FileResult } from "@replays/types";
@@ -114,7 +114,7 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
                 <InfoItem label={<EventIcon />}>{monthDayHourFormat(moment(date))}</InfoItem>
 
                 {lastFrame !== null && (
-                  <InfoItem label={<TimerIcon />}>
+                  <InfoItem label={<TimerOutlinedIcon />}>
                     {convertFrameCountToDurationString(lastFrame, "m[m] ss[s]")}
                   </InfoItem>
                 )}

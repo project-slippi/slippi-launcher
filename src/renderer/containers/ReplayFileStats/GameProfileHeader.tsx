@@ -9,7 +9,7 @@ import EventIcon from "@mui/icons-material/Event";
 import LandscapeIcon from "@mui/icons-material/Landscape";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
-import TimerIcon from "@mui/icons-material/Timer";
+import TimerOutlinedIcon from "@mui/icons-material/TimerOutlined";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
@@ -211,7 +211,7 @@ const GameDetails: React.FC<{
       content: monthDayHourFormat(moment(startAtDisplay)) as string,
     },
     {
-      label: <TimerIcon />,
+      label: <TimerOutlinedIcon />,
       content: durationLength,
     },
     {
