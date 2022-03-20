@@ -1,10 +1,10 @@
 import { extractPlayerNames } from "@common/matchNames";
 import { css } from "@emotion/react";
-import Tooltip from "@material-ui/core/Tooltip";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
-import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
-import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import Tooltip from "@mui/material/Tooltip";
 import type { FileResult } from "@replays/types";
 import type { PlayerType, StatsType, StockType } from "@slippi/slippi-js";
 import { animations as animationUtils, Frames, moves as moveUtils } from "@slippi/slippi-js";

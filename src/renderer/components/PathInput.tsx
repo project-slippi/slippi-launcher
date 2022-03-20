@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
-import Button from "@material-ui/core/Button";
-import InputBase from "@material-ui/core/InputBase";
-import Paper from "@material-ui/core/Paper";
-import Tooltip from "@material-ui/core/Tooltip";
+import Button from "@mui/material/Button";
+import InputBase from "@mui/material/InputBase";
+import Paper from "@mui/material/Paper";
+import Tooltip from "@mui/material/Tooltip";
 import type { OpenDialogOptions } from "electron";
 import React from "react";
 

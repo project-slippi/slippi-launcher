@@ -1,9 +1,9 @@
 import { css } from "@emotion/react";
-import Dialog from "@material-ui/core/Dialog";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import { useTheme } from "@material-ui/core/styles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import type { StoredConnection } from "@settings/types";
 import { Ports } from "@slippi/slippi-js";
 import merge from "lodash/merge";
@@ -32,7 +32,7 @@ export const AddConnectionDialog: React.FC<AddConnectionDialogProps> = ({
   const isEditing = Boolean(selectedConnection && selectedConnection.id);
   const [title, setTitle] = React.useState("");
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
+  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const updateTitle = () => {
     setTitle(isEditing ? "Edit Connection" : "New Connection");
   };

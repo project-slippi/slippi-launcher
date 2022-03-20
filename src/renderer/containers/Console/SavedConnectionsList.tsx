@@ -1,8 +1,8 @@
 import type { DiscoveredConsoleInfo } from "@console/types";
 import styled from "@emotion/styled";
-import CreateIcon from "@material-ui/icons/Create";
-import DeleteIcon from "@material-ui/icons/Delete";
-import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
+import CreateIcon from "@mui/icons-material/Create";
+import DeleteIcon from "@mui/icons-material/Delete";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import type { StoredConnection } from "@settings/types";
 import { ConnectionStatus } from "@slippi/slippi-js";
 import React from "react";

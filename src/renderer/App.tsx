@@ -1,7 +1,7 @@
 import "./styles/styles.scss";
 
 import { ThemeProvider } from "@emotion/react";
-import { MuiThemeProvider, StylesProvider } from "@material-ui/core/styles";
+import { StyledEngineProvider, ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { HashRouter as Router, Navigate, Route, Routes } from "react-router-dom";
@@ -55,9 +55,9 @@ const App: React.FC = () => {
 // Providers need to be initialized before the rest of the app can use them
 const AppWithProviders: React.FC = () => {
   return (
-    <StylesProvider injectFirst>
+    <StyledEngineProvider injectFirst>
       <MuiThemeProvider theme={slippiTheme}>
-        <ThemeProvider theme={slippiTheme}>
+        <ThemeProvider theme={slippiTheme as any}>
           <QueryClientProvider client={queryClient}>
             <ToastProvider components={{ Toast: CustomToast }} placement="bottom-right">
               <Router>
@@ -67,7 +67,7 @@ const AppWithProviders: React.FC = () => {
           </QueryClientProvider>
         </ThemeProvider>
       </MuiThemeProvider>
-    </StylesProvider>
+    </StyledEngineProvider>
   );
 };
 

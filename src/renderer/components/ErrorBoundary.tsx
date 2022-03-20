@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
-import Button from "@material-ui/core/Button";
-import Collapse from "@material-ui/core/Collapse";
-import WarningIcon from "@material-ui/icons/Warning";
+import WarningIcon from "@mui/icons-material/Warning";
+import Button from "@mui/material/Button";
+import Collapse from "@mui/material/Collapse";
 import React from "react";
 
 const StackTraceContainer = styled.div`

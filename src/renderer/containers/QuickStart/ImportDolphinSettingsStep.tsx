@@ -1,9 +1,9 @@
 import { DolphinLaunchType } from "@dolphin/types";
 import { css } from "@emotion/react";
-import Box from "@material-ui/core/Box";
-import Button from "@material-ui/core/Button";
-import Container from "@material-ui/core/Container";
-import FormHelperText from "@material-ui/core/FormHelperText";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import FormHelperText from "@mui/material/FormHelperText";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useToasts } from "react-toast-notifications";

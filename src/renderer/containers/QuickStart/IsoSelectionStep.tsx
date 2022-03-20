@@ -2,10 +2,10 @@ import { colors } from "@common/colors";
 import { IsoValidity } from "@common/types";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import Box from "@material-ui/core/Box";
-import Button from "@material-ui/core/Button";
-import { useTheme } from "@material-ui/core/styles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { useQuery } from "react-query";
@@ -64,7 +64,7 @@ export const IsoSelectionStep: React.FC = () => {
   });
 
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
+  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const loading = validIsoPathQuery.isLoading;
   const [, setIsoPath] = useIsoPath();
 

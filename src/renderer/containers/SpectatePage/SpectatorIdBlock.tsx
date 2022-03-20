@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
-import Button from "@material-ui/core/Button";
-import InputBase from "@material-ui/core/InputBase";
+import Button from "@mui/material/Button";
+import InputBase from "@mui/material/InputBase";
 import React from "react";
 
 import { InfoBlock } from "@/components/InfoBlock";

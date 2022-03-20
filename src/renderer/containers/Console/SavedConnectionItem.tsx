@@ -1,14 +1,14 @@
 import type { MirrorConfig } from "@console/types";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import Button from "@material-ui/core/Button";
-import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import CardHeader from "@material-ui/core/CardHeader";
-import IconButton from "@material-ui/core/IconButton";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import WarningIcon from "@material-ui/icons/Warning";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import WarningIcon from "@mui/icons-material/Warning";
+import Button from "@mui/material/Button";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import CardHeader from "@mui/material/CardHeader";
+import IconButton from "@mui/material/IconButton";
 import type { StoredConnection } from "@settings/types";
 import { ConnectionStatus, Ports } from "@slippi/slippi-js";
 import React from "react";
@@ -89,7 +89,10 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
       <CardHeader
         avatar={<WiiIcon fill="#ffffff" width="40px" />}
         action={
-          <IconButton onClick={(e) => onOpenMenu(index, e.currentTarget as HTMLElement, connection.ipAddress)}>
+          <IconButton
+            onClick={(e) => onOpenMenu(index, e.currentTarget as HTMLElement, connection.ipAddress)}
+            size="large"
+          >
             <MoreVertIcon />
           </IconButton>
         }

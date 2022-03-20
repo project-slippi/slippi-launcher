@@ -2,9 +2,9 @@ import { colors } from "@common/colors";
 import { socials } from "@common/constants";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import FileCopyIcon from "@material-ui/icons/FileCopy";
-import LiveHelpIcon from "@material-ui/icons/LiveHelp";
+import FileCopyIcon from "@mui/icons-material/FileCopy";
+import LiveHelpIcon from "@mui/icons-material/LiveHelp";
+import CircularProgress from "@mui/material/CircularProgress";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
 
@@ -64,32 +64,36 @@ export const SupportBox: React.FC<{ className?: string }> = ({ className }) => {
       <div
         css={css`
           margin-top: 5px;
-          & > * {
+          & > div {
+            display: inline-block;
             margin-top: 10px;
             margin-right: 10px;
           }
         `}
       >
-        <Button
-          startIcon={<DiscordIcon fill={colors.purpleLighter} style={{ height: 18, width: 18 }} />}
-          onClick={() => void window.electron.shell.openPath(socials.discordUrl)}
-        >
-          Join the Discord
-        </Button>
-
-        <Button startIcon={<FileCopyIcon />} disabled={isCopying || copied} onClick={onCopy}>
-          {copied ? "Copied!" : "Copy logs"}
-          {isCopying && (
-            <CircularProgress
-              css={css`
-                margin-left: 10px;
-              `}
-              size={16}
-              thickness={6}
-              color="inherit"
-            />
-          )}
-        </Button>
+        <div>
+          <Button
+            startIcon={<DiscordIcon fill={colors.purpleLighter} style={{ height: 18, width: 18 }} />}
+            onClick={() => void window.electron.shell.openPath(socials.discordUrl)}
+          >
+            Join the Discord
+          </Button>
+        </div>
+        <div>
+          <Button startIcon={<FileCopyIcon />} disabled={isCopying || copied} onClick={onCopy}>
+            {copied ? "Copied!" : "Copy logs"}
+            {isCopying && (
+              <CircularProgress
+                css={css`
+                  margin-left: 10px;
+                `}
+                size={16}
+                thickness={6}
+                color="inherit"
+              />
+            )}
+          </Button>
+        </div>
       </div>
     </Outer>
   );

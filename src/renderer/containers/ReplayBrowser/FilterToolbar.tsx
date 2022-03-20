@@ -1,11 +1,11 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import IconButton from "@material-ui/core/IconButton";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import InputBase from "@material-ui/core/InputBase";
-import CloseIcon from "@material-ui/icons/Close";
-import SearchIcon from "@material-ui/icons/Search";
-import SyncIcon from "@material-ui/icons/Sync";
+import CloseIcon from "@mui/icons-material/Close";
+import SearchIcon from "@mui/icons-material/Search";
+import SyncIcon from "@mui/icons-material/Sync";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+import InputBase from "@mui/material/InputBase";
 import debounce from "lodash/debounce";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
@@ -68,9 +68,11 @@ export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarPro
   return (
     <Outer>
       <ButtonContainer>
-        <Button onClick={refresh} disabled={disabled} startIcon={<SyncIcon />}>
-          Refresh
-        </Button>
+        <div style={{ display: "inline-block" }}>
+          <Button onClick={refresh} disabled={disabled} startIcon={<SyncIcon />}>
+            Refresh
+          </Button>
+        </div>
         <Dropdown
           value={{
             key: sortBy,

@@ -1,14 +1,14 @@
 import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
-import EqualizerIcon from "@material-ui/icons/Equalizer";
-import EventIcon from "@material-ui/icons/Event";
-import LandscapeIcon from "@material-ui/icons/Landscape";
-import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
-import PlayCircleOutlineIcon from "@material-ui/icons/PlayCircleOutline";
-import TimerIcon from "@material-ui/icons/Timer";
+import EqualizerIcon from "@mui/icons-material/Equalizer";
+import EventIcon from "@mui/icons-material/Event";
+import LandscapeIcon from "@mui/icons-material/Landscape";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
+import TimerIcon from "@mui/icons-material/Timer";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 import type { FileResult } from "@replays/types";
 import { stages as stageUtils } from "@slippi/slippi-js";
 import _ from "lodash";
@@ -220,6 +220,7 @@ const ReplayActionButton: React.FC<{
           margin: 0 5px;
           color: ${color ?? colors.purplePrimary};
         `}
+        size="large"
       >
         {children}
       </IconButton>

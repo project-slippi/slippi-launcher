@@ -1,8 +1,8 @@
-import ButtonBase from "@material-ui/core/ButtonBase";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import EditIcon from "@material-ui/icons/Edit";
-import EjectIcon from "@material-ui/icons/Eject";
-import LanguageIcon from "@material-ui/icons/Language";
+import EditIcon from "@mui/icons-material/Edit";
+import EjectIcon from "@mui/icons-material/Eject";
+import LanguageIcon from "@mui/icons-material/Language";
+import ButtonBase from "@mui/material/ButtonBase";
+import DialogContentText from "@mui/material/DialogContentText";
 import React from "react";
 
 import { ConfirmationModal } from "@/components/ConfirmationModal";
@@ -100,7 +100,6 @@ export const UserMenu: React.FC<{
       </ButtonBase>
       <IconMenu
         anchorEl={anchorEl}
-        getContentAnchorEl={null}
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
         transformOrigin={{ vertical: "top", horizontal: "left" }}
         keepMounted
