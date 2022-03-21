@@ -75,7 +75,7 @@ export const SavedConnectionsList: React.FC<SavedConnectionsListProps> = ({ avai
         setNintendontVersion(version);
       })
       .catch(console.error);
-  });
+  }, []);
 
   return (
     <Outer>
