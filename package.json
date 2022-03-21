@@ -40,8 +40,7 @@
   ],
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged --quiet",
-      "pre-push": "yarn lint --quiet"
+      "pre-commit": "lint-staged --quiet"
     }
   },
   "lint-staged": {
