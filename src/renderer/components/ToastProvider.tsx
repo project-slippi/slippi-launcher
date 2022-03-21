@@ -42,6 +42,11 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
         error: CustomToast,
         warning: CustomToast,
       }}
+      TransitionProps={{
+        direction: "up",
+        mountOnEnter: true,
+        unmountOnExit: true,
+      }}
     >
       {children}
     </SnackbarProvider>
