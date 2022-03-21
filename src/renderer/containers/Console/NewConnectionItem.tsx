@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
-import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
-import AddIcon from "@material-ui/icons/Add";
+import AddIcon from "@mui/icons-material/Add";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 
 import { ReactComponent as WiiIcon } from "@/styles/images/wii-icon.svg";
 

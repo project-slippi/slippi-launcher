@@ -1,7 +1,7 @@
 import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import ButtonBase from "@material-ui/core/ButtonBase";
+import ButtonBase from "@mui/material/ButtonBase";
 import React from "react";
 
 import { useAppStore } from "@/lib/hooks/useApp";

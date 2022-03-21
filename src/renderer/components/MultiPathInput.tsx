@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
-import Button from "@material-ui/core/Button";
-import MatCheckbox from "@material-ui/core/Checkbox";
-import InputBase from "@material-ui/core/InputBase";
+import Button from "@mui/material/Button";
+import MatCheckbox from "@mui/material/Checkbox";
+import InputBase from "@mui/material/InputBase";
 import type { OpenDialogOptions } from "electron";
 import React, { useState } from "react";
 import { useToasts } from "react-toast-notifications";

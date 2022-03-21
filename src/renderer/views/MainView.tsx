@@ -1,7 +1,7 @@
-import CastOutlinedIcon from "@material-ui/icons/CastOutlined";
-import HomeOutlinedIcon from "@material-ui/icons/HomeOutlined";
-import LiveTvOutlinedIcon from "@material-ui/icons/LiveTvOutlined";
-import SlowMotionVideoIcon from "@material-ui/icons/SlowMotionVideo";
+import CastOutlinedIcon from "@mui/icons-material/CastOutlined";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import LiveTvOutlinedIcon from "@mui/icons-material/LiveTvOutlined";
+import SlowMotionVideoIcon from "@mui/icons-material/SlowMotionVideo";
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 

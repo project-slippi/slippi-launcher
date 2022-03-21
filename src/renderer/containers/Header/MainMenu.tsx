@@ -1,8 +1,8 @@
 import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import Button from "@material-ui/core/Button";
-import Tooltip from "@material-ui/core/Tooltip";
+import Button from "@mui/material/Button";
+import Tooltip from "@mui/material/Tooltip";
 import React from "react";
 import type { LinkProps } from "react-router-dom";
 import { Link, useMatch, useResolvedPath } from "react-router-dom";
@@ -49,7 +49,12 @@ const CustomLink = ({ title, children, to, ...props }: CustomLinkProps) => {
   return (
     <MenuButton selected={match !== null}>
       <Tooltip title={title}>
-        <Button component={Link} to={to} {...(props as any)}>
+        <Button
+          component={Link}
+          to={to}
+          {...(props as any)}
+          sx={{ color: "white", "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.16)" } }}
+        >
           {children}
         </Button>
       </Tooltip>

@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import React from "react";
 
 export interface SettingItemProps {

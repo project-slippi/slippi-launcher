@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import type { FileResult } from "@replays/types";
 import type { StatsType } from "@slippi/slippi-js";
 import _ from "lodash";

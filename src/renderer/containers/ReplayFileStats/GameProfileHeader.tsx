@@ -2,17 +2,17 @@ import { colors } from "@common/colors";
 import { extractPlayerNames } from "@common/matchNames";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import Button from "@material-ui/core/Button";
-import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
-import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
-import EventIcon from "@material-ui/icons/Event";
-import LandscapeIcon from "@material-ui/icons/Landscape";
-import PlayArrowIcon from "@material-ui/icons/PlayArrow";
-import SportsEsportsIcon from "@material-ui/icons/SportsEsports";
-import TimerIcon from "@material-ui/icons/Timer";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import EventIcon from "@mui/icons-material/Event";
+import LandscapeIcon from "@mui/icons-material/Landscape";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
+import TimerOutlinedIcon from "@mui/icons-material/TimerOutlined";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 import type { FileResult } from "@replays/types";
 import type { GameStartType, MetadataType, StatsType } from "@slippi/slippi-js";
 import { stages as stageUtils } from "@slippi/slippi-js";
@@ -142,6 +142,7 @@ export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
                     css={css`
                       padding: 8px;
                     `}
+                    size="large"
                   >
                     <ArrowBackIcon />
                   </IconButton>
@@ -210,7 +211,7 @@ const GameDetails: React.FC<{
       content: monthDayHourFormat(moment(startAtDisplay)) as string,
     },
     {
-      label: <TimerIcon />,
+      label: <TimerOutlinedIcon />,
       content: durationLength,
     },
     {

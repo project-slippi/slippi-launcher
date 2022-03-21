@@ -1,12 +1,12 @@
 import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import Button from "@material-ui/core/Button";
-import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
-import ErrorIcon from "@material-ui/icons/Error";
-import FolderIcon from "@material-ui/icons/Folder";
-import HelpIcon from "@material-ui/icons/Help";
+import ErrorIcon from "@mui/icons-material/Error";
+import FolderIcon from "@mui/icons-material/Folder";
+import HelpIcon from "@mui/icons-material/Help";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 import type { FileResult } from "@replays/types";
 import _ from "lodash";
 import React from "react";

@@ -1,7 +1,7 @@
 import { colors } from "@common/colors";
 import type { PlayKey } from "@dolphin/types";
 import { css } from "@emotion/react";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import CircularProgress from "@mui/material/CircularProgress";
 import React from "react";
 
 import { UserIcon } from "@/components/UserIcon";

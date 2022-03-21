@@ -1,5 +1,5 @@
-import DeleteIcon from "@material-ui/icons/Delete";
-import FolderIcon from "@material-ui/icons/Folder";
+import DeleteIcon from "@mui/icons-material/Delete";
+import FolderIcon from "@mui/icons-material/Folder";
 import type { FileResult } from "@replays/types";
 import { debounce } from "lodash";
 import React from "react";

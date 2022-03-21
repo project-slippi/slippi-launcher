@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import Box from "@material-ui/core/Box";
+import Box from "@mui/material/Box";
 import React from "react";
 
 import { ActivateOnlineForm } from "../ActivateOnlineForm";

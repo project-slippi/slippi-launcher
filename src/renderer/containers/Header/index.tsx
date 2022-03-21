@@ -2,12 +2,12 @@ import { colors } from "@common/colors";
 import { slippiHomepage } from "@common/constants";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import Box from "@material-ui/core/Box";
-import Button from "@material-ui/core/Button";
-import ButtonBase from "@material-ui/core/ButtonBase";
-import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
-import SettingsOutlinedIcon from "@material-ui/icons/SettingsOutlined";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import ButtonBase from "@mui/material/ButtonBase";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
 
@@ -135,7 +135,9 @@ export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
         {currentUser ? (
           <UserMenu user={currentUser} handleError={handleError} />
         ) : (
-          <Button onClick={openModal}>Log in</Button>
+          <Button onClick={openModal} sx={{ color: "white" }}>
+            Log in
+          </Button>
         )}
         <Tooltip title="Settings">
           <IconButton
@@ -144,6 +146,7 @@ export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
               opacity: 0.5;
               margin-right: 10px;
             `}
+            size="large"
           >
             <SettingsOutlinedIcon />
           </IconButton>

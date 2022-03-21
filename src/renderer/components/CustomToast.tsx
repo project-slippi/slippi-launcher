@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
-import Collapse from "@material-ui/core/Collapse";
-import Alert from "@material-ui/lab/Alert";
+import Alert from "@mui/material/Alert";
+import Collapse from "@mui/material/Collapse";
 import React from "react";
 import type { ToastProps } from "react-toast-notifications";
 

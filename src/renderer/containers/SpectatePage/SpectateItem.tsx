@@ -1,8 +1,8 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import Button from "@material-ui/core/Button";
-import Paper from "@material-ui/core/Paper";
-import PlayCircleOutlineIcon from "@material-ui/icons/PlayCircleOutline";
+import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
+import Button from "@mui/material/Button";
+import Paper from "@mui/material/Paper";
 import React from "react";
 
 import { UserIcon } from "@/components/UserIcon";

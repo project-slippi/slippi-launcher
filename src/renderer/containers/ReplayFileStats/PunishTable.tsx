@@ -1,6 +1,6 @@
 import { extractPlayerNames } from "@common/matchNames";
 import { css } from "@emotion/react";
-import Tooltip from "@material-ui/core/Tooltip";
+import Tooltip from "@mui/material/Tooltip";
 import type { FileResult } from "@replays/types";
 import type { ConversionType, PlayerType, StatsType, StockType } from "@slippi/slippi-js";
 import _ from "lodash";

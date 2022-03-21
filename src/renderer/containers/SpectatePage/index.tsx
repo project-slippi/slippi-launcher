@@ -1,8 +1,8 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
-import SyncIcon from "@material-ui/icons/Sync";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import SyncIcon from "@mui/icons-material/Sync";
 import React from "react";
 
 import { DualPane } from "@/components/DualPane";
