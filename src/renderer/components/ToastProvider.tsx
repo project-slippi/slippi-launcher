@@ -1,7 +1,7 @@
 import Alert from "@mui/material/Alert";
 import type { CustomContentProps } from "notistack";
-import { SnackbarContent, useSnackbar } from "notistack";
-import { forwardRef, memo } from "react";
+import { SnackbarContent, SnackbarProvider, useSnackbar } from "notistack";
+import React, { forwardRef, memo } from "react";
 
 const CustomSnackbarContent = forwardRef<HTMLDivElement, CustomContentProps>((props, forwardedRef) => {
   const { closeSnackbar } = useSnackbar();
@@ -25,4 +25,25 @@ const CustomSnackbarContent = forwardRef<HTMLDivElement, CustomContentProps>((pr
   );
 });
 
-export const CustomToast = memo(CustomSnackbarContent);
+const CustomToast = memo(CustomSnackbarContent);
+
+export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <SnackbarProvider
+      maxSnack={3}
+      preventDuplicate={true}
+      anchorOrigin={{
+        vertical: "bottom",
+        horizontal: "right",
+      }}
+      Components={{
+        default: CustomToast,
+        success: CustomToast,
+        error: CustomToast,
+        warning: CustomToast,
+      }}
+    >
+      {children}
+    </SnackbarProvider>
+  );
+};
