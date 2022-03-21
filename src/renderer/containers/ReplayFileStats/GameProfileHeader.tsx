@@ -110,58 +110,49 @@ export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
 }) => {
   const { metadata, settings } = file;
   return (
-    <Header>
+    <div
+      css={css`
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      `}
+    >
       <div
         css={css`
           display: flex;
-          justify-content: space-between;
-          align-items: center;
+          flex-direction: column;
         `}
       >
         <div
           css={css`
             display: flex;
-            flex-direction: column;
+            align-items: center;
           `}
         >
-          <div
-            css={css`
-              display: flex;
-              align-items: center;
-            `}
-          >
-            <div>
-              <Tooltip title="Back to replays">
-                <span>
-                  <IconButton
-                    onClick={onClose}
-                    disabled={disabled}
-                    css={css`
-                      padding: 8px;
-                    `}
-                    size="large"
-                  >
-                    <ArrowBackIcon />
-                  </IconButton>
-                </span>
-              </Tooltip>
-            </div>
-            <PlayerInfoDisplay metadata={metadata} settings={settings} />
+          <div>
+            <Tooltip title="Back to replays">
+              <span>
+                <IconButton
+                  onClick={onClose}
+                  disabled={disabled}
+                  css={css`
+                    padding: 8px;
+                  `}
+                  size="large"
+                >
+                  <ArrowBackIcon />
+                </IconButton>
+              </span>
+            </Tooltip>
           </div>
-          <GameDetails file={file} stats={stats} />
+          <PlayerInfoDisplay metadata={metadata} settings={settings} />
         </div>
-        <Controls disabled={disabled} index={index} total={total} onNext={onNext} onPrev={onPrev} onPlay={onPlay} />
+        <GameDetails file={file} stats={stats} />
       </div>
-    </Header>
+      <Controls disabled={disabled} index={index} total={total} onNext={onNext} onPrev={onPrev} onPlay={onPlay} />
+    </div>
   );
 };
-
-const Header = styled.div`
-  z-index: 1;
-  top: 0;
-  width: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-`;
 
 const GameDetails: React.FC<{
   file: FileResult;
