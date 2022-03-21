@@ -15,7 +15,7 @@ import { useToasts } from "react-toast-notifications";
 import { DualPane } from "@/components/DualPane";
 import { BasicFooter } from "@/components/Footer";
 import { LabelledText } from "@/components/LabelledText";
-import { LoadingScreen } from "@/components/LoadingScreen";
+import { LoadingScreenWithProgress } from "@/components/LoadingScreen";
 import { IconMessage } from "@/components/Message";
 import { useDolphin } from "@/lib/hooks/useDolphin";
 import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/useReplayBrowserList";
@@ -224,14 +224,10 @@ export const ReplayBrowser: React.FC = () => {
   );
 };
 
-const LoadingBox: React.FC = () => {
+const LoadingBox = React.memo(function LoadingBox() {
   const progress = useReplays((store) => store.progress);
-  let message = "Loading...";
-  if (progress !== null) {
-    message += ` ${Math.floor((progress.current / progress.total) * 100)}%`;
-  }
-  return <LoadingScreen message={message} />;
-};
+  return <LoadingScreenWithProgress current={progress?.current} total={progress?.total} />;
+});
 
 const EmptyFolder: React.FC<{
   hiddenFileCount: number;
