@@ -30,7 +30,7 @@ type StoreReducers = {
   init: (rootFolder: string, extraFolders: string[], forceReload?: boolean, currentFolder?: string) => Promise<void>;
   selectFile: (file: FileResult, index?: number | null, total?: number | null) => void;
   clearSelectedFile: () => void;
-  removeFile: (filePath: string) => void;
+  removeFiles: (filePaths: string[]) => void;
   loadFolder: (childPath?: string, forceReload?: boolean) => Promise<void>;
   toggleFolder: (fullPath: string) => void;
   setScrollRowItem: (offset: number) => void;
@@ -101,12 +101,10 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     });
   },
 
-  removeFile: (filePath: string) => {
+  removeFiles: (filePaths: string[]) => {
     set((state) =>
       produce(state, (draft) => {
-        const index = draft.files.findIndex((f) => f.fullPath === filePath);
-        // Modify the array in place
-        draft.files.splice(index, 1);
+        draft.files = draft.files.filter(({ fullPath }) => !filePaths.includes(fullPath));
       }),
     );
   },

@@ -32,7 +32,7 @@ export const ReplayBrowser: React.FC = () => {
   const searchInputRef = React.createRef<HTMLInputElement>();
   const scrollRowItem = useReplays((store) => store.scrollRowItem);
   const setScrollRowItem = useReplays((store) => store.setScrollRowItem);
-  const removeFile = useReplays((store) => store.removeFile);
+  const removeFiles = useReplays((store) => store.removeFiles);
   const selectFile = useReplays((store) => store.selectFile);
   const { viewReplays } = useDolphin();
   const clearSelectedFile = useReplays((store) => store.clearSelectedFile);
@@ -73,26 +73,25 @@ export const ReplayBrowser: React.FC = () => {
     viewReplays([{ path: filePath }]);
   };
 
-  const deleteFiles = (filePaths: string[]) => {
-    let errCount = 0;
-    filePaths.forEach((filePath) => {
-      window.electron.shell
-        .trashItem(filePath)
-        .then(() => {
-          removeFile(filePath);
-        })
-        .catch((err) => {
-          console.warn(err);
-          errCount += 1;
-        });
-    });
+  const deleteFiles = React.useCallback(
+    async (filePaths: string[]) => {
+      // Optimistically remove the files first
+      removeFiles(filePaths);
 
-    let message = `${filePaths.length - errCount} file(s) deleted successfully.`;
-    if (errCount > 0) {
-      message += ` ${errCount} file(s) couldn't be deleted.`;
-    }
-    addToast(message, { appearance: "success", autoDismiss: true });
-  };
+      const promises = await Promise.allSettled(
+        filePaths.map(async (filePath) => {
+          await window.electron.shell.trashItem(filePath);
+        }),
+      );
+      const errCount = promises.reduce((curr, res) => (res.status === "rejected" ? curr + 1 : curr), 0);
+      if (errCount > 0) {
+        addToast(`${errCount} file(s) failed to delete.`, { appearance: "error", autoDismiss: true });
+      } else {
+        addToast(`${filePaths.length} file(s) successfully deleted.`, { appearance: "success", autoDismiss: true });
+      }
+    },
+    [addToast, removeFiles],
+  );
 
   return (
     <Outer>
@@ -178,8 +177,8 @@ export const ReplayBrowser: React.FC = () => {
                 onPlay={() => viewReplays(selectedFiles.map((path) => ({ path })))}
                 onClear={fileSelection.clearSelection}
                 onDelete={() => {
-                  deleteFiles(selectedFiles);
                   fileSelection.clearSelection();
+                  void deleteFiles(selectedFiles);
                 }}
               />
             </div>
