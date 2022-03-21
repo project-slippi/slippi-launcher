@@ -1,7 +1,7 @@
-import { useToasts } from "react-toast-notifications";
+import { useToasts } from "@/lib/hooks/useToasts";
 
 export const useFileDrag = () => {
-  const { addToast } = useToasts();
+  const { showError } = useToasts();
 
   const fileDrag = async (event: React.DragEvent<HTMLDivElement>, filePaths: string[]) => {
     try {
@@ -10,9 +10,7 @@ export const useFileDrag = () => {
         window.electron.common.onDragState(filePaths);
       }
     } catch (err: any) {
-      addToast(err.message ?? JSON.stringify(err), {
-        appearance: "error",
-      });
+      showError(err.message ?? JSON.stringify(err));
     }
   };
 

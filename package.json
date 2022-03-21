@@ -155,6 +155,7 @@
     "lodash": "^4.17.21",
     "medium-json-feed": "^0.0.3",
     "mousetrap": "^1.6.5",
+    "notistack": "^3.0.0-alpha.2",
     "observable-fns": "^0.6.1",
     "os-name": "^4.0.0",
     "react": "^17.0.2",

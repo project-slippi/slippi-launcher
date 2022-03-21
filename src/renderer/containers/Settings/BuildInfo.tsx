@@ -1,9 +1,9 @@
 import { css } from "@emotion/react";
 import moment from "moment";
 import React from "react";
-import { useToasts } from "react-toast-notifications";
 
 import { ExternalLink as A } from "@/components/ExternalLink";
+import { useToasts } from "@/lib/hooks/useToasts";
 import { useAdvancedUser } from "@/lib/useAdvancedUser";
 
 const osInfo = window.electron.common.getOsInfoSync();
@@ -23,7 +23,7 @@ export const BuildInfo: React.FC<BuildInfoProps> = ({ className, enableAdvancedU
   const [clickCount, setClickCount] = React.useState(0);
   const isAdvancedUser = useAdvancedUser((store) => store.isAdvancedUser);
   const setIsAdvancedUser = useAdvancedUser((store) => store.setIsAdvancedUser);
-  const { addToast } = useToasts();
+  const { showWarning } = useToasts();
   const handleBuildNumberClick = () => {
     if (!enableAdvancedUserClick) {
       return;
@@ -36,7 +36,7 @@ export const BuildInfo: React.FC<BuildInfoProps> = ({ className, enableAdvancedU
     }
 
     if (!isAdvancedUser) {
-      addToast("I hope you know what you're doing...", { appearance: "warning", autoDismiss: true });
+      showWarning("I hope you know what you're doing...");
     }
 
     setIsAdvancedUser(!isAdvancedUser);

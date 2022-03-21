@@ -1,9 +1,9 @@
 import Button from "@mui/material/Button";
 import React from "react";
-import { useToasts } from "react-toast-notifications";
 
 import { Toggle } from "@/components/FormInputs/Toggle";
 import { useAutoUpdateLauncher } from "@/lib/hooks/useSettings";
+import { useToasts } from "@/lib/hooks/useToasts";
 
 import { SettingItem } from "./SettingItem";
 
@@ -26,16 +26,16 @@ export const AdvancedAppSettings = React.memo(() => {
 });
 
 const ClearTempFilesForm = React.memo(() => {
-  const { addToast } = useToasts();
+  const { showSuccess, showError } = useToasts();
   const onClear = React.useCallback(() => {
     window.electron.common
       .clearTempFolder()
       .then(() => {
-        addToast("Successfully cleared temporary files.", { autoDismiss: true });
+        showSuccess("Successfully cleared temporary files.");
       })
       .catch((err) => {
         const message = err instanceof Error ? err.message : JSON.stringify(err);
-        addToast(message, { appearance: "error" });
+        showError(message);
       });
   }, []);
   return (

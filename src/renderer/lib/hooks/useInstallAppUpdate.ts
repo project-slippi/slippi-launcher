@@ -1,7 +1,7 @@
-import { useToasts } from "react-toast-notifications";
+import { useToasts } from "@/lib/hooks/useToasts";
 
 export const useInstallAppUpdate = () => {
-  const { addToast } = useToasts();
+  const { showError } = useToasts();
 
   const installAppUpdate = async () => {
     try {
@@ -13,7 +13,7 @@ export const useInstallAppUpdate = () => {
       } else {
         message = JSON.stringify(err);
       }
-      addToast(message, { appearance: "error" });
+      showError(message);
     }
   };
 

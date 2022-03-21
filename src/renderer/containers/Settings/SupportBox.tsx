@@ -6,10 +6,10 @@ import FileCopyIcon from "@mui/icons-material/FileCopy";
 import LiveHelpIcon from "@mui/icons-material/LiveHelp";
 import CircularProgress from "@mui/material/CircularProgress";
 import React from "react";
-import { useToasts } from "react-toast-notifications";
 
 import { ExternalLink as A } from "@/components/ExternalLink";
 import { Button } from "@/components/FormInputs";
+import { useToasts } from "@/lib/hooks/useToasts";
 import { ReactComponent as DiscordIcon } from "@/styles/images/discord.svg";
 
 const log = window.electron.log;
@@ -17,11 +17,11 @@ const log = window.electron.log;
 export const SupportBox: React.FC<{ className?: string }> = ({ className }) => {
   const [isCopying, setCopying] = React.useState(false);
   const [copied, setCopied] = React.useState(false);
-  const { addToast } = useToasts();
+  const { showError } = useToasts();
 
   const handleError = (err: any) => {
     log.error("Error copying logs", err);
-    addToast(err.message || JSON.stringify(err), { appearance: "error" });
+    showError(err.message || JSON.stringify(err));
   };
 
   const onCopy = async () => {

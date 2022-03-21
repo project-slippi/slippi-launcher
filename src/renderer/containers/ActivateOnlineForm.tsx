@@ -7,9 +7,9 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useToasts } from "react-toast-notifications";
 
 import { useAccount, usePlayKey } from "@/lib/hooks/useAccount";
+import { useToasts } from "@/lib/hooks/useToasts";
 import { validateConnectCodeStart } from "@/lib/validate";
 import { useServices } from "@/services";
 
@@ -33,7 +33,7 @@ interface ConnectCodeSetterProps {
 
 const ConnectCodeSetter: React.FC<ConnectCodeSetterProps> = ({ displayName, onSuccess }) => {
   const { slippiBackendService } = useServices();
-  const { addToast } = useToasts();
+  const { showError } = useToasts();
   const getStartTag = () => {
     const safeName = displayName ?? "";
     const matches = safeName.match(/[a-zA-Z]+/g) || [];
@@ -58,9 +58,7 @@ const ConnectCodeSetter: React.FC<ConnectCodeSetterProps> = ({ displayName, onSu
         },
         (err: Error) => {
           log.error(err);
-          addToast(err.message ?? JSON.stringify(err), {
-            appearance: "error",
-          });
+          showError(err.message ?? JSON.stringify(err));
           setIsLoading(false);
         },
       )

@@ -9,7 +9,6 @@ import ButtonBase from "@mui/material/ButtonBase";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import React from "react";
-import { useToasts } from "react-toast-notifications";
 
 import { PlayIcon } from "@/components/PlayIcon";
 import { useAccount } from "@/lib/hooks/useAccount";
@@ -17,6 +16,7 @@ import { useDolphin } from "@/lib/hooks/useDolphin";
 import { useLoginModal } from "@/lib/hooks/useLoginModal";
 import { useSettings } from "@/lib/hooks/useSettings";
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
+import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";
 import slippiLogo from "@/styles/images/slippi-logo.svg";
 import { platformTitleBarStyles } from "@/styles/platformTitleBarStyles";
@@ -48,10 +48,10 @@ export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
   const playKey = useAccount((store) => store.playKey);
   const serverError = useAccount((store) => store.serverError);
   const meleeIsoPath = useSettings((store) => store.settings.isoPath) || undefined;
-  const { addToast } = useToasts();
+  const { showError } = useToasts();
   const { launchNetplay } = useDolphin();
 
-  const handleError = (err: any) => addToast(err.message ?? JSON.stringify(err), { appearance: "error" });
+  const handleError = React.useCallback((err: any) => showError(err.message ?? JSON.stringify(err)), [showError]);
 
   const onPlay = async (offlineOnly?: boolean) => {
     if (!offlineOnly) {

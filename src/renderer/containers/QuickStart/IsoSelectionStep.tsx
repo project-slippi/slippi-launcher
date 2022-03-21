@@ -9,10 +9,10 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { useQuery } from "react-query";
-import { useToasts } from "react-toast-notifications";
 
 import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { useIsoPath } from "@/lib/hooks/useSettings";
+import { useToasts } from "@/lib/hooks/useToasts";
 import { hasBorder } from "@/styles/hasBorder";
 
 import { QuickStartHeader } from "./QuickStartHeader";
@@ -51,7 +51,7 @@ const Container = styled.div`
 `;
 
 export const IsoSelectionStep: React.FC = () => {
-  const { addToast } = useToasts();
+  const { showError } = useToasts();
   const [tempIsoPath, setTempIsoPath] = React.useState("");
   const validIsoPathQuery = useQuery(["validIsoPathQuery", tempIsoPath], async () => {
     if (!tempIsoPath) {
@@ -75,10 +75,7 @@ export const IsoSelectionStep: React.FC = () => {
 
     const filePath = acceptedFiles[0].path;
     if (filePath.endsWith(".7z")) {
-      addToast("7z files must be uncompressed to be used in Dolphin.", {
-        id: "7z",
-        appearance: "error",
-      });
+      showError("7z files must be uncompressed to be used in Dolphin.");
       return;
     }
 
@@ -98,17 +95,14 @@ export const IsoSelectionStep: React.FC = () => {
   const unknownIso = Boolean(tempIsoPath) && !loading && validIsoPath === IsoValidity.UNKNOWN;
   const handleClose = () => setTempIsoPath("");
   const onConfirm = useCallback(() => {
-    setIsoPath(tempIsoPath).catch((err) => addToast(err.message, { appearance: "error" }));
-  }, [addToast, setIsoPath, tempIsoPath]);
+    setIsoPath(tempIsoPath).catch((err) => showError(err.message));
+  }, [showError, setIsoPath, tempIsoPath]);
 
   React.useEffect(() => {
     if (invalidIso) {
-      addToast("Provided ISO will not work with Slippi Online. Please provide an NTSC 1.02 ISO.", {
-        id: "invalidISO",
-        appearance: "error",
-      });
+      showError("Provided ISO will not work with Slippi Online. Please provide an NTSC 1.02 ISO.");
     }
-  }, [addToast, invalidIso]);
+  }, [showError, invalidIso]);
 
   React.useEffect(() => {
     // Auto-confirm ISO if it's valid

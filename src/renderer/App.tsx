@@ -2,10 +2,10 @@ import "./styles/styles.scss";
 
 import { ThemeProvider } from "@emotion/react";
 import { StyledEngineProvider, ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
+import { SnackbarProvider } from "notistack";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { HashRouter as Router, Navigate, Route, Routes } from "react-router-dom";
-import { ToastProvider } from "react-toast-notifications";
 
 import { useAppStore } from "@/lib/hooks/useApp";
 
@@ -59,11 +59,19 @@ const AppWithProviders: React.FC = () => {
       <MuiThemeProvider theme={slippiTheme}>
         <ThemeProvider theme={slippiTheme as any}>
           <QueryClientProvider client={queryClient}>
-            <ToastProvider components={{ Toast: CustomToast }} placement="bottom-right">
+            <SnackbarProvider
+              maxSnack={3}
+              preventDuplicate={true}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "right",
+              }}
+              Components={{ default: CustomToast, success: CustomToast, error: CustomToast, warning: CustomToast }}
+            >
               <Router>
                 <App />
               </Router>
-            </ToastProvider>
+            </SnackbarProvider>
           </QueryClientProvider>
         </ThemeProvider>
       </MuiThemeProvider>

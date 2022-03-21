@@ -1,24 +1,28 @@
-import { css } from "@emotion/react";
 import Alert from "@mui/material/Alert";
-import Collapse from "@mui/material/Collapse";
-import React from "react";
-import type { ToastProps } from "react-toast-notifications";
+import type { CustomContentProps } from "notistack";
+import { SnackbarContent, useSnackbar } from "notistack";
+import { forwardRef, memo } from "react";
 
-// The appearance prop matches one the severity types: 'error' | 'info' | 'success' | 'warning'
-export const CustomToast: React.ComponentType<ToastProps> = ({ appearance, children, onDismiss, transitionState }) => {
+const CustomSnackbarContent = forwardRef<HTMLDivElement, CustomContentProps>((props, forwardedRef) => {
+  const { closeSnackbar } = useSnackbar();
+
+  const { id, message, variant } = props;
+
   return (
-    <Collapse in={transitionState === "entered"} mountOnEnter unmountOnExit>
+    <SnackbarContent ref={forwardedRef}>
       <Alert
         variant="standard"
-        severity={appearance}
-        onClose={() => onDismiss()}
-        css={css`
-          margin-bottom: 5px;
-          max-width: 500px;
-        `}
+        severity={variant === "default" ? "info" : variant}
+        onClose={() => closeSnackbar(id)}
+        sx={{
+          maxWidth: 500,
+          width: "100%",
+        }}
       >
-        {children}
+        {message}
       </Alert>
-    </Collapse>
+    </SnackbarContent>
   );
-};
+});
+
+export const CustomToast = memo(CustomSnackbarContent);

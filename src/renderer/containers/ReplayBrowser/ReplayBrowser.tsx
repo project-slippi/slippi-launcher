@@ -10,7 +10,6 @@ import List from "@mui/material/List";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import React from "react";
-import { useToasts } from "react-toast-notifications";
 
 import { DualPane } from "@/components/DualPane";
 import { BasicFooter } from "@/components/Footer";
@@ -21,6 +20,7 @@ import { useDolphin } from "@/lib/hooks/useDolphin";
 import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/useReplayBrowserList";
 import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
 import { useReplays, useReplaySelection } from "@/lib/hooks/useReplays";
+import { useToasts } from "@/lib/hooks/useToasts";
 import { humanReadableBytes } from "@/lib/utils";
 
 import { FileList } from "./FileList";
@@ -46,7 +46,7 @@ export const ReplayBrowser: React.FC = () => {
   const totalBytes = useReplays((store) => store.totalBytes);
   const fileSelection = useReplaySelection();
   const fileErrorCount = useReplays((store) => store.fileErrorCount);
-  const { addToast } = useToasts();
+  const { showError, showSuccess } = useToasts();
 
   const resetFilter = useReplayFilter((store) => store.resetFilter);
   const { files: filteredFiles, hiddenFileCount } = useReplayBrowserList();
@@ -64,7 +64,7 @@ export const ReplayBrowser: React.FC = () => {
 
   const onFolderTreeNodeClick = (fullPath: string) => {
     loadFolder(fullPath).catch((err) => {
-      addToast(`Error loading folder: ${err.message ?? JSON.stringify(err)}`, { appearance: "error" });
+      showError(`Error loading folder: ${err.message ?? JSON.stringify(err)}`);
     });
   };
 
@@ -85,12 +85,12 @@ export const ReplayBrowser: React.FC = () => {
       );
       const errCount = promises.reduce((curr, res) => (res.status === "rejected" ? curr + 1 : curr), 0);
       if (errCount > 0) {
-        addToast(`${errCount} file(s) failed to delete.`, { appearance: "error", autoDismiss: true });
+        showError(`${errCount} file(s) failed to delete.`);
       } else {
-        addToast(`${filePaths.length} file(s) successfully deleted.`, { appearance: "success", autoDismiss: true });
+        showSuccess(`${filePaths.length} file(s) successfully deleted.`);
       }
     },
-    [addToast, removeFiles],
+    [showError, showSuccess, removeFiles],
   );
 
   return (
