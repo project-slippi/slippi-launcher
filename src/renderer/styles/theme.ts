@@ -91,7 +91,6 @@ const addOverrides = (theme: Theme) => {
             borderStyle: "solid",
             borderWidth: "1px",
             borderColor: "transparent",
-            backgroundImage: "unset",
           },
           rounded: {
             borderRadius: "10px",
