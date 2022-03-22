@@ -1,9 +1,9 @@
-import { getColor } from "@common/colors";
 import { css } from "@emotion/react";
 import type { PlayerType } from "@slippi/slippi-js";
 import _ from "lodash";
 import React from "react";
 
+import { getColor } from "@/lib/playerColors";
 import { getCharacterIcon } from "@/lib/utils";
 
 export interface PlayerIndicatorProps {
