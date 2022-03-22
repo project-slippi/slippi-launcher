@@ -115,6 +115,7 @@ export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
         display: flex;
         justify-content: space-between;
         align-items: center;
+        border-bottom: solid 3px rgba(255, 255, 255, 0.5);
       `}
     >
       <div
