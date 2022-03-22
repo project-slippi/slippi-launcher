@@ -5,7 +5,7 @@ import { QuickStart } from "@/containers/QuickStart";
 import { useQuickStart } from "@/lib/hooks/useQuickStart";
 import { withSlippiBackground } from "@/styles/withSlippiBackground";
 
-const isDevelopment = false; // window.electron.common.isDevelopment;
+const isDevelopment = window.electron.common.isDevelopment;
 
 export const LandingView: React.FC = () => {
   const { allSteps, currentStep, nextStep, prevStep } = useQuickStart();
