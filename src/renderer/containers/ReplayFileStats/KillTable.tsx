@@ -1,4 +1,3 @@
-import { extractPlayerNames } from "@common/matchNames";
 import { css } from "@emotion/react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
@@ -12,6 +11,7 @@ import _ from "lodash";
 import React from "react";
 
 import { useDolphin } from "@/lib/hooks/useDolphin";
+import { extractPlayerNames } from "@/lib/matchNames";
 import { convertFrameCountToDurationString } from "@/lib/time";
 import { getCharacterIcon } from "@/lib/utils";
 

@@ -1,5 +1,4 @@
 import { colors } from "@common/colors";
-import { extractPlayerNames } from "@common/matchNames";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -20,6 +19,7 @@ import _ from "lodash";
 import moment from "moment";
 import React from "react";
 
+import { extractPlayerNames } from "@/lib/matchNames";
 import { convertFrameCountToDurationString, monthDayHourFormat } from "@/lib/time";
 import { getStageImage } from "@/lib/utils";
 

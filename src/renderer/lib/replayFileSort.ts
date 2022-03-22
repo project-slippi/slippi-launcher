@@ -1,7 +1,8 @@
-import { extractAllPlayerNames, namesMatch } from "@common/matchNames";
 import type { FileResult } from "@replays/types";
 import { Frames } from "@slippi/slippi-js";
 import compareFunc from "compare-func";
+
+import { extractAllPlayerNames, namesMatch } from "@/lib/matchNames";
 
 // The minimum duration of games when filtering out short games
 const MIN_GAME_DURATION_FRAMES = 30 * 60;

@@ -1,4 +1,3 @@
-import { extractPlayerNames } from "@common/matchNames";
 import { css } from "@emotion/react";
 import Tooltip from "@mui/material/Tooltip";
 import type { FileResult } from "@replays/types";
@@ -7,6 +6,7 @@ import _ from "lodash";
 import React from "react";
 
 import { useDolphin } from "@/lib/hooks/useDolphin";
+import { extractPlayerNames } from "@/lib/matchNames";
 import { convertFrameCountToDurationString } from "@/lib/time";
 import { getCharacterIcon, toOrdinal } from "@/lib/utils";
 

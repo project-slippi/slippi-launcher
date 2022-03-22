@@ -1,4 +1,3 @@
-import { extractPlayerNames } from "@common/matchNames";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import type { GameStartType, MetadataType } from "@slippi/slippi-js";
@@ -6,6 +5,7 @@ import _ from "lodash";
 import React from "react";
 
 import { PlayerIndicator } from "@/components/PlayerIndicator";
+import { extractPlayerNames } from "@/lib/matchNames";
 
 const Outer = styled.div`
   display: flex;
