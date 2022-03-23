@@ -12,11 +12,11 @@ import IconButton from "@mui/material/IconButton";
 import type { StoredConnection } from "@settings/types";
 import { ConnectionStatus, Ports } from "@slippi/slippi-js";
 import React from "react";
-import { useToasts } from "react-toast-notifications";
 import { lt } from "semver";
 
 import { ExternalLink as A } from "@/components/ExternalLink";
 import { LabelledText } from "@/components/LabelledText";
+import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";
 import { ReactComponent as WiiIcon } from "@/styles/images/wii-icon.svg";
 
@@ -47,7 +47,7 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
   nintendontVersion,
   latestVersion,
 }) => {
-  const { addToast } = useToasts();
+  const { showError } = useToasts();
   const { consoleService } = useServices();
   const onConnect = React.useCallback(async () => {
     const conn = connection;
@@ -74,11 +74,9 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
   }, [consoleService, connection]);
   const onMirror = React.useCallback(() => {
     consoleService.startMirroring(connection.ipAddress).catch((err: any) => {
-      addToast(err.message ?? JSON.stringify(err), {
-        appearance: "error",
-      });
+      showError(err.message ?? JSON.stringify(err));
     });
-  }, [consoleService, connection, addToast]);
+  }, [consoleService, connection, showError]);
   const onDisconnect = () => consoleService.disconnectFromConsole(connection.ipAddress);
   const statusName = status === ConnectionStatus.DISCONNECTED && isAvailable ? "Available" : renderStatusName(status);
   const isConnected = status !== ConnectionStatus.DISCONNECTED;

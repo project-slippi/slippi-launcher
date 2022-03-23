@@ -1,8 +1,9 @@
 import type { ReplayQueueItem } from "@dolphin/types";
 import { DolphinLaunchType } from "@dolphin/types";
-import { useToasts } from "react-toast-notifications";
 import create from "zustand";
 import { combine } from "zustand/middleware";
+
+import { useToasts } from "@/lib/hooks/useToasts";
 
 export const useDolphinStore = create(
   combine(
@@ -23,8 +24,8 @@ export const useDolphinStore = create(
 );
 
 export const useDolphin = () => {
-  const { addToast } = useToasts();
-  const handleError = (err: any) => addToast(err.message ?? JSON.stringify(err), { appearance: "error" });
+  const { showError, showSuccess } = useToasts();
+  const handleError = (err: any) => showError(err.message ?? JSON.stringify(err));
 
   const setDolphinOpen = useDolphinStore((store) => store.setDolphinOpen);
 
@@ -74,7 +75,7 @@ export const useDolphin = () => {
   const importDolphin = async (toImportDolphinPath: string, dolphinType: DolphinLaunchType) => {
     try {
       await window.electron.dolphin.importDolphinSettings({ toImportDolphinPath, dolphinType });
-      addToast(`${dolphinType} Dolphin settings successfully imported`, { appearance: "success" });
+      showSuccess(`${dolphinType} Dolphin settings successfully imported`);
     } catch (err) {
       handleError(err);
     }

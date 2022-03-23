@@ -5,11 +5,10 @@ import { StyledEngineProvider, ThemeProvider as MuiThemeProvider } from "@mui/ma
 import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { HashRouter as Router, Navigate, Route, Routes } from "react-router-dom";
-import { ToastProvider } from "react-toast-notifications";
 
 import { useAppStore } from "@/lib/hooks/useApp";
 
-import { CustomToast } from "./components/CustomToast";
+import { ToastProvider } from "./components/ToastProvider";
 import { useAppListeners } from "./lib/hooks/useAppListeners";
 import { slippiTheme } from "./styles/theme";
 import { LandingView } from "./views/LandingView";
@@ -59,7 +58,7 @@ const AppWithProviders: React.FC = () => {
       <MuiThemeProvider theme={slippiTheme}>
         <ThemeProvider theme={slippiTheme as any}>
           <QueryClientProvider client={queryClient}>
-            <ToastProvider components={{ Toast: CustomToast }} placement="bottom-right">
+            <ToastProvider>
               <Router>
                 <App />
               </Router>

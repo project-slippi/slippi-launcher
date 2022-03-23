@@ -6,12 +6,12 @@ import Container from "@mui/material/Container";
 import FormHelperText from "@mui/material/FormHelperText";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useToasts } from "react-toast-notifications";
 
 import { Checkbox } from "@/components/FormInputs/Checkbox";
 import { PathInput } from "@/components/PathInput";
 import { useDolphin } from "@/lib/hooks/useDolphin";
 import { useDesktopApp } from "@/lib/hooks/useQuickStart";
+import { useToasts } from "@/lib/hooks/useToasts";
 
 import { QuickStartHeader } from "./QuickStartHeader";
 
@@ -26,7 +26,7 @@ type FormValues = {
 export const ImportDolphinSettingsStep: React.FC = () => {
   const setExists = useDesktopApp((store) => store.setExists);
   const desktopAppDolphinPath = useDesktopApp((store) => store.dolphinPath);
-  const { addToast } = useToasts();
+  const { showError } = useToasts();
   const { importDolphin } = useDolphin();
 
   const migrateDolphin = async (values: FormValues) => {
@@ -59,7 +59,7 @@ export const ImportDolphinSettingsStep: React.FC = () => {
   const migrateNetplay = watch("shouldImportNetplay");
   const migratePlayback = watch("shouldImportPlayback");
 
-  const handleError = (err: any) => addToast(err.message ?? JSON.stringify(err), { appearance: "error" });
+  const handleError = React.useCallback((err: any) => showError(err.message ?? JSON.stringify(err)), [showError]);
 
   const onFormSubmit = handleSubmit((values) => {
     migrateDolphin(values).catch(handleError);

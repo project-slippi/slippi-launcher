@@ -1,8 +1,8 @@
-import { useToasts } from "react-toast-notifications";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
 import { useAccount } from "@/lib/hooks/useAccount";
+import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";
 import type { AuthUser } from "@/services/auth/types";
 
@@ -33,7 +33,7 @@ export const useAppStore = create(
 
 export const useAppInitialization = () => {
   const { authService, slippiBackendService } = useServices();
-  const { addToast } = useToasts();
+  const { showError } = useToasts();
   const initializing = useAppStore((store) => store.initializing);
   const initialized = useAppStore((store) => store.initialized);
   const setInitializing = useAppStore((store) => store.setInitializing);
@@ -79,11 +79,7 @@ export const useAppInitialization = () => {
 
             const message = `Failed to communicate with Slippi servers. You either have no internet
               connection or Slippi is experiencing some downtime. Playing online may or may not work.`;
-            addToast(message, {
-              id: "server-communication-error",
-              appearance: "error",
-              autoDismiss: false,
-            });
+            showError(message);
           }),
       );
     }

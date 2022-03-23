@@ -2,11 +2,11 @@
 import { IsoValidity } from "@common/types";
 import throttle from "lodash/throttle";
 import React from "react";
-import { useToasts } from "react-toast-notifications";
 
 import { useAppInitialization, useAppStore } from "@/lib/hooks/useApp";
 import { useConsole } from "@/lib/hooks/useConsole";
 import { useReplays } from "@/lib/hooks/useReplays";
+import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";
 
 import { handleDolphinExitCode } from "../utils";
@@ -194,16 +194,12 @@ export const useAppListeners = () => {
     init(rootSlpPath, extraSlpPaths, true).catch(console.error);
   }, [rootSlpPath, extraSlpPaths, init]);
 
-  const { addToast } = useToasts();
+  const { showError } = useToasts();
   const consoleMirrorErrorHandler = React.useCallback(
     (message: string) => {
-      addToast(message, {
-        id: message,
-        appearance: "error",
-        autoDismiss: true,
-      });
+      showError(message);
     },
-    [addToast],
+    [showError],
   );
   React.useEffect(() => {
     return consoleService.onConsoleMirrorErrorMessage(consoleMirrorErrorHandler);
@@ -229,14 +225,10 @@ export const useAppListeners = () => {
       // Check if it exited cleanly
       const errMsg = handleDolphinExitCode(exitCode);
       if (errMsg) {
-        addToast(errMsg, {
-          id: errMsg,
-          appearance: "error",
-          autoDismiss: false,
-        });
+        showError(errMsg);
       }
     },
-    [addToast, setDolphinOpen],
+    [showError, setDolphinOpen],
   );
   React.useEffect(() => {
     return window.electron.dolphin.onDolphinClosed(dolphinClosedHandler);

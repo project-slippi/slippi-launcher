@@ -4,9 +4,9 @@ import MatCheckbox from "@mui/material/Checkbox";
 import InputBase from "@mui/material/InputBase";
 import type { OpenDialogOptions } from "electron";
 import React, { useState } from "react";
-import { useToasts } from "react-toast-notifications";
 
 import { useSettings } from "@/lib/hooks/useSettings";
+import { useToasts } from "@/lib/hooks/useToasts";
 
 export interface MultiPathInputProps {
   updatePaths: (paths: string[]) => void;
@@ -15,16 +15,12 @@ export interface MultiPathInputProps {
 }
 
 export const MultiPathInput: React.FC<MultiPathInputProps> = ({ paths, updatePaths, options }) => {
-  const { addToast } = useToasts();
+  const { showError } = useToasts();
   const rootFolder = useSettings((store) => store.settings.rootSlpPath);
 
   const assertValidPath = (newPath: string): boolean => {
     const addErrorToast = (description: string) => {
-      addToast(description, {
-        appearance: "error",
-        autoDismiss: true,
-        autoDismissTimeout: 5000,
-      });
+      showError(description);
     };
     if (paths.includes(newPath)) {
       addErrorToast("That directory is already included.");

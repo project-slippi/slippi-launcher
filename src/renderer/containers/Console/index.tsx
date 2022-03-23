@@ -4,7 +4,6 @@ import AddIcon from "@mui/icons-material/Add";
 import type { StoredConnection } from "@settings/types";
 import { ConnectionStatus } from "@slippi/slippi-js";
 import React from "react";
-import { useToasts } from "react-toast-notifications";
 
 import { DualPane } from "@/components/DualPane";
 import { Footer } from "@/components/Footer";
@@ -13,6 +12,7 @@ import type { EditConnectionType } from "@/lib/consoleConnection";
 import { addConsoleConnection, deleteConsoleConnection, editConsoleConnection } from "@/lib/consoleConnection";
 import { useConsoleDiscoveryStore } from "@/lib/hooks/useConsoleDiscovery";
 import { useSettings } from "@/lib/hooks/useSettings";
+import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";
 
 import { AddConnectionDialog } from "./AddConnectionDialog";
@@ -48,7 +48,7 @@ export const Console: React.FC = () => {
     [connectedConsoles],
   );
 
-  const { addToast } = useToasts();
+  const { showError } = useToasts();
 
   React.useEffect(() => {
     // Start scanning for new consoles
@@ -57,14 +57,14 @@ export const Console: React.FC = () => {
       .startDiscovery()
       .then(() => setIsScanning(true))
       .catch((err) => {
-        addToast(err.message ?? JSON.stringify(err), { appearance: "error" });
+        showError(err.message ?? JSON.stringify(err));
       });
 
     // Stop scanning on component unmount
     return () => {
       void consoleService.stopDiscovery();
     };
-  }, [addToast, consoleService]);
+  }, [showError, consoleService]);
 
   const onCancel = () => {
     setModalOpen(false);

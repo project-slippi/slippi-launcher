@@ -1,9 +1,9 @@
 import type { BroadcasterItem } from "@broadcast/types";
 import throttle from "lodash/throttle";
-import { useToasts } from "react-toast-notifications";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
+import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";
 
 export const useBroadcastListStore = create(
@@ -20,7 +20,7 @@ export const useBroadcastListStore = create(
 export const useBroadcastList = () => {
   const { authService, broadcastService } = useServices();
   const items = useBroadcastListStore((store) => store.items);
-  const { addToast } = useToasts();
+  const { showError } = useToasts();
 
   const refresh = async () => {
     const authToken = await authService.getUserToken();
@@ -31,11 +31,7 @@ export const useBroadcastList = () => {
   const throttledRefresh = throttle(() => {
     refresh().catch((err) => {
       const errMessage = err.message ?? JSON.stringify(err);
-      addToast(errMessage, {
-        autoDismiss: true,
-        appearance: "error",
-        id: errMessage,
-      });
+      showError(errMessage);
     });
   }, 2000);
 

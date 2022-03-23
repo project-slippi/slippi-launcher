@@ -8,12 +8,12 @@ import InputAdornment from "@mui/material/InputAdornment";
 import InputBase from "@mui/material/InputBase";
 import debounce from "lodash/debounce";
 import React from "react";
-import { useToasts } from "react-toast-notifications";
 
 import { Button, Checkbox, Dropdown } from "@/components/FormInputs";
 import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
 import { useReplays } from "@/lib/hooks/useReplays";
 import { useSettings } from "@/lib/hooks/useSettings";
+import { useToasts } from "@/lib/hooks/useToasts";
 import { ReplaySortOption, SortDirection } from "@/lib/replayFileSort";
 
 const Outer = styled.div`
@@ -48,13 +48,11 @@ export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarPro
   const sortDirection = useReplayFilter((store) => store.sortDirection);
   const setSortDirection = useReplayFilter((store) => store.setSortDirection);
   const [searchText, setSearchText] = React.useState(storeSearchText ?? "");
-  const { addToast } = useToasts();
+  const { showError } = useToasts();
 
   const refresh = React.useCallback(() => {
-    init(rootSlpPath, extraSlpPaths, true, currentFolder).catch((err) =>
-      addToast(err.message, { appearance: "error" }),
-    );
-  }, [rootSlpPath, extraSlpPaths, init, currentFolder, addToast]);
+    init(rootSlpPath, extraSlpPaths, true, currentFolder).catch((err) => showError(err.message));
+  }, [rootSlpPath, extraSlpPaths, init, currentFolder, showError]);
 
   const debounceChange = debounce((text: string) => {
     setStoreSearchText(text);
