@@ -19,9 +19,9 @@ export function extractPlayerNames(
   };
 
   const player = settings.players.find((player) => player.playerIndex === index);
-  result.tag = player ? player.nametag : null;
-  result.name = player?.displayName ?? get(metadata, ["players", index, "names", "netplay"], null);
-  result.code = player?.connectCode ?? get(metadata, ["players", index, "names", "code"], null);
+  result.tag = player?.nametag || null;
+  result.name = player?.displayName || get(metadata, ["players", index, "names", "netplay"], null);
+  result.code = player?.connectCode || get(metadata, ["players", index, "names", "code"], null);
   return result;
 }
 
