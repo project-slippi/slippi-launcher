@@ -21,6 +21,10 @@ export const useNewsFeed = create(
           .then((newsItems) => {
             set({ newsItems });
           })
+          .catch((err) => {
+            log.error(err);
+            set({ error: err });
+          })
           .finally(() => {
             set({ fetching: false });
           });
