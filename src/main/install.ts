@@ -1,6 +1,6 @@
 import { IsoValidity } from "@common/types";
 import { settingsManager } from "@settings/settingsManager";
-import { app, clipboard, dialog, ipcMain, nativeImage } from "electron";
+import { app, clipboard, dialog, ipcMain, nativeImage, shell } from "electron";
 import electronLog from "electron-log";
 import type { ProgressInfo, UpdateInfo } from "electron-updater";
 import { autoUpdater } from "electron-updater";
@@ -17,6 +17,7 @@ import {
   ipc_clearTempFolder,
   ipc_copyLogsToClipboard,
   ipc_deleteDesktopAppPath,
+  ipc_deleteFiles,
   ipc_fetchNewsFeed,
   ipc_getLatestGitHubReleaseVersion,
   ipc_installUpdate,
@@ -67,6 +68,15 @@ export default function installMainIpc() {
   ipc_fetchNewsFeed.main!.handle(async () => {
     const result = await fetchNewsFeedData();
     return result;
+  });
+
+  ipc_deleteFiles.main!.handle(async ({ filePaths }) => {
+    const promises = await Promise.allSettled(filePaths.map((filePath) => shell.trashItem(filePath)));
+    const errCount = promises.reduce((curr, { status }) => (status === "rejected" ? curr + 1 : curr), 0);
+    if (errCount > 0) {
+      throw new Error(`${errCount} file(s) failed to delete`);
+    }
+    return { success: true };
   });
 
   ipc_checkValidIso.main!.handle(async ({ path }) => {

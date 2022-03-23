@@ -74,21 +74,18 @@ export const ReplayBrowser: React.FC = () => {
   };
 
   const deleteFiles = React.useCallback(
-    async (filePaths: string[]) => {
+    (filePaths: string[]) => {
       // Optimistically remove the files first
       removeFiles(filePaths);
 
-      const promises = await Promise.allSettled(
-        filePaths.map(async (filePath) => {
-          await window.electron.shell.trashItem(filePath);
-        }),
-      );
-      const errCount = promises.reduce((curr, res) => (res.status === "rejected" ? curr + 1 : curr), 0);
-      if (errCount > 0) {
-        showError(`${errCount} file(s) failed to delete.`);
-      } else {
-        showSuccess(`${filePaths.length} file(s) successfully deleted.`);
-      }
+      window.electron.common
+        .deleteFiles(filePaths)
+        .then(() => {
+          showSuccess(`${filePaths.length} file(s) successfully deleted.`);
+        })
+        .catch((err) => {
+          showError(err instanceof Error ? err.message : JSON.stringify(err));
+        });
     },
     [showError, showSuccess, removeFiles],
   );

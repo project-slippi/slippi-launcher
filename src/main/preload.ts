@@ -30,7 +30,6 @@ const api = {
   shell: {
     openPath: shell.openPath,
     showItemInFolder: shell.showItemInFolder,
-    trashItem: shell.trashItem,
   },
   log: log.functions,
 };
