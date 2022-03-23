@@ -16,17 +16,33 @@ import { BasicFooter } from "@/components/Footer";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { IconMessage } from "@/components/Message";
 import { useMousetrap } from "@/lib/hooks/useMousetrap";
+import { getStageImage } from "@/lib/utils";
 import { withFont } from "@/styles/withFont";
 
 import { GameProfile } from "./GameProfile";
 import { GameProfileHeader } from "./GameProfileHeader";
 
-const Outer = styled.div`
+const Outer = styled.div<{
+  backgroundImage?: any;
+}>`
   position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  &::before {
+    z-index: -1;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    content: "";
+    background-size: cover;
+    background-position: center center;
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0 100%),
+      ${(p) => (p.backgroundImage ? `url("${p.backgroundImage}")` : "")};
+    box-shadow: inset 0 0 2000px rgba(255, 255, 255, 0.2);
+    filter: blur(10px);
+  }
 `;
 
 const Content = styled.div`
@@ -104,8 +120,11 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
     return <LoadingScreen message="Loading..." />;
   }
 
+  const { settings } = file;
+  const stageImage = settings.stageId !== null ? getStageImage(settings.stageId) : undefined;
+
   return (
-    <Outer>
+    <Outer backgroundImage={stageImage}>
       <GameProfileHeader
         {...props}
         file={file}
