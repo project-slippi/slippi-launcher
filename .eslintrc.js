@@ -17,6 +17,7 @@ module.exports = {
     "plugin:import/errors",
     "plugin:import/warnings",
     "plugin:import/typescript",
+    "plugin:storybook/recommended",
     "plugin:jest/recommended",
     "plugin:promise/recommended",
     // Make sure prettier goes last

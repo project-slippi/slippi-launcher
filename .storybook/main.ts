@@ -6,7 +6,7 @@ import fs from "fs";
 import { merge } from "webpack-merge";
 import type { RuleSetRule } from 'webpack';
 
-// Fix emotion not workingin storybook
+// Helper for fixing emotion dependency
 // Taken from: https://stackoverflow.com/a/65970945
 function getPackageDir(filepath: string) {
   let currDir = path.dirname(require.resolve(filepath));
