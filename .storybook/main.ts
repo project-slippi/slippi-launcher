@@ -1,10 +1,10 @@
-import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
-import type { StorybookConfig } from '@storybook/core-common';
+import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
+import type { StorybookConfig } from "@storybook/core-common";
 import path from "path";
 import polyfills from "../.erb/configs/webpack.config.renderer.polyfills";
 import fs from "fs";
 import { merge } from "webpack-merge";
-import type { RuleSetRule } from 'webpack';
+import type { RuleSetRule } from "webpack";
 
 // Helper for fixing emotion dependency
 // Taken from: https://stackoverflow.com/a/65970945
