@@ -18,7 +18,9 @@
     "start:main": "yarn run start:preload && cross-env NODE_ENV=development electron -r dotenv/config -r ts-node/register/transpile-only ./src/main/main.ts",
     "start:preload": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.preload.ts",
     "start:renderer": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
-    "test": "jest --verbose"
+    "test": "jest --verbose",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "repository": {
     "type": "git",
@@ -47,7 +49,18 @@
     "*.{js,ts,jsx,tsx}": "eslint --cache --fix"
   },
   "devDependencies": {
+    "@babel/core": "^7.17.5",
+    "@emotion/babel-preset-css-prop": "^11.2.0",
     "@pmmmwh/react-refresh-webpack-plugin": "0.5.4",
+    "@storybook/addon-actions": "^6.5.0-alpha.49",
+    "@storybook/addon-essentials": "^6.5.0-alpha.49",
+    "@storybook/addon-interactions": "^6.5.0-alpha.49",
+    "@storybook/addon-links": "^6.5.0-alpha.49",
+    "@storybook/builder-webpack5": "^6.5.0-alpha.49",
+    "@storybook/manager-webpack5": "^6.5.0-alpha.49",
+    "@storybook/preset-scss": "^1.0.3",
+    "@storybook/react": "^6.5.0-alpha.49",
+    "@storybook/testing-library": "^0.0.9",
     "@svgr/webpack": "^6.1.2",
     "@teamsupercell/typings-for-css-modules-loader": "^2.5.1",
     "@testing-library/jest-dom": "^5.16.1",
@@ -69,6 +82,7 @@
     "@types/websocket": "^1.0.5",
     "@typescript-eslint/eslint-plugin": "^5.8.1",
     "@typescript-eslint/parser": "^5.8.1",
+    "babel-loader": "^8.2.3",
     "chalk": "^4.1.2",
     "concurrently": "^6.5.1",
     "cross-env": "^7.0.3",
@@ -95,6 +109,7 @@
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
+    "eslint-plugin-storybook": "^0.5.7",
     "eslint-plugin-strict-booleans": "^1.0.1",
     "fdir": "^5.1.0",
     "file-loader": "^6.2.0",
