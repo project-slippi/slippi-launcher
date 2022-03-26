@@ -6,10 +6,10 @@ import chalk from "chalk";
 import { merge } from "webpack-merge";
 import { spawn, execSync } from "child_process";
 import baseConfig from "./webpack.config.base";
+import polyfills from "./webpack.config.renderer.polyfills";
 import webpackPaths from "./webpack.paths";
 import checkNodeEnv from "../scripts/check-node-env";
 import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
-import NodePolyfillPlugin from "node-polyfill-webpack-plugin";
 
 // When an ESLint server is running, we can't set the NODE_ENV so we'll check if it's
 // at the dev webpack config is not accidentally run in a production environment
@@ -139,14 +139,6 @@ export default (env?: Record<string, string | true>, _argv?: any) => {
       ],
     },
 
-    resolve: {
-      fallback: {
-        net: false,
-        dgram: false,
-        fs: false,
-      },
-    },
-
     plugins: [
       ...(requiredByDLLConfig
         ? []
@@ -159,7 +151,6 @@ export default (env?: Record<string, string | true>, _argv?: any) => {
         ]),
 
       new webpack.NoEmitOnErrorsPlugin(),
-      new NodePolyfillPlugin(),
 
       ...(generateMockModuleReplacementPlugin(servicesToMock)),
 
@@ -230,5 +221,5 @@ export default (env?: Record<string, string | true>, _argv?: any) => {
     },
   };
 
-  return merge(baseConfig, configuration);
+  return merge(baseConfig, polyfills, configuration);
 }
