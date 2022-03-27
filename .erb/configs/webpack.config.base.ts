@@ -12,6 +12,7 @@ import path from "path";
 import moment from "moment";
 import { execSync } from "child_process";
 
+const isDevelop = process.env.NODE_ENV === "development";
 const buildDate = moment().toISOString();
 const commitHash = execSync("git rev-parse --short HEAD").toString().trim();
 
@@ -28,8 +29,10 @@ const configuration: webpack.Configuration = {
         use: {
           loader: "ts-loader",
           options: {
+            // Whether or not we should disable type-checking
+            transpileOnly: isDevelop,
             // By default, ts-loader compiles absolutely everything and we don't want that
-            onlyCompileBundledFiles: true
+            onlyCompileBundledFiles: true,
           },
         },
       },
