@@ -29,5 +29,12 @@ export const NewsFeedContainer = React.memo(function NewsFeedContainer() {
     return <div>Failed to fetch news articles.</div>;
   }
 
-  return <NewsFeed ref={mainRef} posts={postsToShow.slice(0, numItemsToShow)} total={0} onShowMore={onShowMore} />;
+  return (
+    <NewsFeed
+      ref={mainRef}
+      posts={postsToShow.slice(0, numItemsToShow)}
+      total={allPosts.length}
+      onShowMore={onShowMore}
+    />
+  );
 });
