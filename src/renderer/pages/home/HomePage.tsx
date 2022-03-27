@@ -6,8 +6,8 @@ import React from "react";
 import { DualPane } from "@/components/DualPane";
 import { Footer } from "@/components/Footer";
 
-import { NewsFeed } from "./NewsFeed";
-import { SideBar } from "./SideBar";
+import { NewsFeed } from "./news_feed";
+import { TwitterFeed } from "./TwitterFeed";
 
 const Outer = styled.div`
   display: flex;
@@ -17,7 +17,7 @@ const Outer = styled.div`
   min-width: 0;
 `;
 
-export const Home: React.FC = () => {
+export const HomePage = React.memo(function HomePage() {
   return (
     <Outer>
       <div
@@ -31,7 +31,7 @@ export const Home: React.FC = () => {
         <DualPane
           id="home-page"
           leftSide={<NewsFeed />}
-          rightSide={<SideBar />}
+          rightSide={<TwitterFeed />}
           rightStyle={{ backgroundColor: colors.purpleDark }}
           style={{ gridTemplateColumns: "auto 300px" }}
         />
@@ -39,4 +39,4 @@ export const Home: React.FC = () => {
       <Footer />
     </Outer>
   );
-};
+});

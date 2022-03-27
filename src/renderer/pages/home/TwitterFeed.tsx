@@ -18,7 +18,7 @@ const Outer = styled.div`
   overflow-x: hidden;
 `;
 
-export const TwitterFeed = React.memo(() => {
+export const TwitterFeed = React.memo(function TwitterFeed() {
   const params = {
     screenName: socials.twitterId,
     theme: "dark",
