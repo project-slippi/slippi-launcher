@@ -53,7 +53,7 @@ export const NewsArticle = React.memo(function NewsArticle({ item }: { item: New
         <CardActions disableSpacing={true}>
           <Tooltip title={localDateString}>
             <DateInfo>
-              Posted <TimeAgo date={new Date(publishedAt)} title="" />
+              Posted <TimeAgo date={publishedAt} title="" live={false} />
             </DateInfo>
           </Tooltip>
           <Button LinkComponent={ExternalLink} size="small" color="primary" href={permalink}>
