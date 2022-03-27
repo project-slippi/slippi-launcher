@@ -6,7 +6,7 @@ import React from "react";
 import { DualPane } from "@/components/DualPane";
 import { Footer } from "@/components/Footer";
 
-import { NewsFeed } from "./news_feed";
+import { NewsFeedContainer } from "./news_feed/NewsFeed.container";
 import { TwitterFeed } from "./TwitterFeed";
 
 const Outer = styled.div`
@@ -30,7 +30,7 @@ export const HomePage = React.memo(function HomePage() {
       >
         <DualPane
           id="home-page"
-          leftSide={<NewsFeed />}
+          leftSide={<NewsFeedContainer />}
           rightSide={<TwitterFeed />}
           rightStyle={{ backgroundColor: colors.purpleDark }}
           style={{ gridTemplateColumns: "auto 300px" }}
