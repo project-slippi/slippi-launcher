@@ -56,9 +56,7 @@ export const Console: React.FC = () => {
     consoleService
       .startDiscovery()
       .then(() => setIsScanning(true))
-      .catch((err) => {
-        showError(err.message ?? JSON.stringify(err));
-      });
+      .catch(showError);
 
     // Stop scanning on component unmount
     return () => {

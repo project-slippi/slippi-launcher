@@ -59,10 +59,8 @@ export const ImportDolphinSettingsStep: React.FC = () => {
   const migrateNetplay = watch("shouldImportNetplay");
   const migratePlayback = watch("shouldImportPlayback");
 
-  const handleError = React.useCallback((err: any) => showError(err.message ?? JSON.stringify(err)), [showError]);
-
   const onFormSubmit = handleSubmit((values) => {
-    migrateDolphin(values).catch(handleError);
+    migrateDolphin(values).catch(showError);
   });
 
   const extension = isMac ? "app" : "exe";
@@ -150,7 +148,7 @@ export const ImportDolphinSettingsStep: React.FC = () => {
               </Button>
               <Button
                 color="secondary"
-                onClick={() => finishMigration().catch(handleError)}
+                onClick={() => finishMigration().catch(showError)}
                 css={css`
                   text-transform: initial;
                   margin-top: 10px;

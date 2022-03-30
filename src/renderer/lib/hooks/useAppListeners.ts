@@ -188,15 +188,9 @@ export const useAppListeners = () => {
   }, [rootSlpPath, extraSlpPaths, init]);
 
   const { showError } = useToasts();
-  const consoleMirrorErrorHandler = React.useCallback(
-    (message: string) => {
-      showError(message);
-    },
-    [showError],
-  );
   React.useEffect(() => {
-    return consoleService.onConsoleMirrorErrorMessage(consoleMirrorErrorHandler);
-  }, [consoleMirrorErrorHandler, consoleService]);
+    return consoleService.onConsoleMirrorErrorMessage(showError);
+  }, [showError, consoleService]);
 
   const [startBroadcast] = useBroadcast();
   React.useEffect(() => {

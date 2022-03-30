@@ -29,10 +29,7 @@ export const useBroadcastList = () => {
 
   // Limit refreshing to once every 2 seconds
   const throttledRefresh = throttle(() => {
-    refresh().catch((err) => {
-      const errMessage = err.message ?? JSON.stringify(err);
-      showError(errMessage);
-    });
+    refresh().catch(showError);
   }, 2000);
 
   return [items, throttledRefresh] as const;

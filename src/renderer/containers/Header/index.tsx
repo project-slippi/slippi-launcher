@@ -52,8 +52,6 @@ export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
   const { showError } = useToasts();
   const { launchNetplay } = useDolphin();
 
-  const handleError = React.useCallback((err: any) => showError(err.message ?? JSON.stringify(err)), [showError]);
-
   const onPlay = async (offlineOnly?: boolean) => {
     if (!offlineOnly) {
       // Ensure user is logged in
@@ -73,14 +71,14 @@ export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
         try {
           await slippiBackendService.assertPlayKey(playKey);
         } catch (err) {
-          handleError(err);
+          showError(err);
           return;
         }
       }
     }
 
     if (!meleeIsoPath) {
-      handleError("No Melee ISO file specified");
+      showError("No Melee ISO file specified");
       return;
     }
 
@@ -131,7 +129,7 @@ export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
       </div>
       <Box display="flex" alignItems="center">
         {currentUser ? (
-          <UserMenu user={currentUser} handleError={handleError} />
+          <UserMenu user={currentUser} handleError={showError} />
         ) : (
           <Button onClick={openModal} sx={{ color: "white" }}>
             Log in

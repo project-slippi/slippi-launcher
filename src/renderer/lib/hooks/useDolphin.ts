@@ -25,7 +25,6 @@ export const useDolphinStore = create(
 
 export const useDolphin = () => {
   const { showError, showSuccess } = useToasts();
-  const handleError = (err: any) => showError(err.message ?? JSON.stringify(err));
 
   const setDolphinOpen = useDolphinStore((store) => store.setDolphinOpen);
 
@@ -34,7 +33,7 @@ export const useDolphin = () => {
       await window.electron.dolphin.configureDolphin(dolphinType);
       setDolphinOpen(dolphinType);
     } catch (err) {
-      handleError(err);
+      showError(err);
     }
   };
 
@@ -42,7 +41,7 @@ export const useDolphin = () => {
     try {
       await window.electron.dolphin.clearDolphinCache(dolphinType);
     } catch (err) {
-      handleError(err);
+      showError(err);
     }
   };
 
@@ -50,7 +49,7 @@ export const useDolphin = () => {
     try {
       await window.electron.dolphin.reinstallDolphin(dolphinType);
     } catch (err) {
-      handleError(err);
+      showError(err);
     }
   };
 
@@ -59,7 +58,7 @@ export const useDolphin = () => {
       await window.electron.dolphin.launchNetplayDolphin({ bootToCss });
       setDolphinOpen(DolphinLaunchType.NETPLAY);
     } catch (err) {
-      handleError(err);
+      showError(err);
     }
   };
 
@@ -68,7 +67,7 @@ export const useDolphin = () => {
       await window.electron.dolphin.viewSlpReplay(files);
       setDolphinOpen(DolphinLaunchType.PLAYBACK);
     } catch (err) {
-      handleError(err);
+      showError(err);
     }
   };
 
@@ -77,7 +76,7 @@ export const useDolphin = () => {
       await window.electron.dolphin.importDolphinSettings({ toImportDolphinPath, dolphinType });
       showSuccess(`${dolphinType} Dolphin settings successfully imported`);
     } catch (err) {
-      handleError(err);
+      showError(err);
     }
   };
 

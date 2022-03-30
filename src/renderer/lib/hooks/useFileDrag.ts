@@ -9,8 +9,8 @@ export const useFileDrag = () => {
       if (filePaths.length > 0) {
         window.electron.common.onDragState(filePaths);
       }
-    } catch (err: any) {
-      showError(err.message ?? JSON.stringify(err));
+    } catch (err) {
+      showError(err);
     }
   };
 

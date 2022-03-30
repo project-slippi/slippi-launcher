@@ -56,9 +56,9 @@ const ConnectCodeSetter: React.FC<ConnectCodeSetterProps> = ({ displayName, onSu
           onSuccess();
           setIsLoading(false);
         },
-        (err: Error) => {
+        (err) => {
           log.error(err);
-          showError(err.message ?? JSON.stringify(err));
+          showError(err);
           setIsLoading(false);
         },
       )

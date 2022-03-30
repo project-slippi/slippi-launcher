@@ -95,7 +95,7 @@ export const IsoSelectionStep: React.FC = () => {
   const unknownIso = Boolean(tempIsoPath) && !loading && validIsoPath === IsoValidity.UNKNOWN;
   const handleClose = () => setTempIsoPath("");
   const onConfirm = useCallback(() => {
-    setIsoPath(tempIsoPath).catch((err) => showError(err.message));
+    setIsoPath(tempIsoPath).catch(showError);
   }, [showError, setIsoPath, tempIsoPath]);
 
   React.useEffect(() => {

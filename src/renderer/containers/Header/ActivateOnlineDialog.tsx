@@ -29,9 +29,7 @@ export const ActivateOnlineDialog: React.FC<ActivateOnlineDialogProps> = ({ open
         onClose();
         onSubmit();
       })
-      .catch((err) => {
-        showError(err.message);
-      });
+      .catch(showError);
   };
 
   return (

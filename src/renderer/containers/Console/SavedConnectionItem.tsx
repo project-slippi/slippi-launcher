@@ -73,9 +73,7 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
     await consoleService.connectToConsoleMirror(config);
   }, [consoleService, connection]);
   const onMirror = React.useCallback(() => {
-    consoleService.startMirroring(connection.ipAddress).catch((err: any) => {
-      showError(err.message ?? JSON.stringify(err));
-    });
+    consoleService.startMirroring(connection.ipAddress).catch(showError);
   }, [consoleService, connection, showError]);
   const onDisconnect = () => consoleService.disconnectFromConsole(connection.ipAddress);
   const statusName = status === ConnectionStatus.DISCONNECTED && isAvailable ? "Available" : renderStatusName(status);

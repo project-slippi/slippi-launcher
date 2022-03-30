@@ -63,9 +63,7 @@ export const ReplayBrowser: React.FC = () => {
   };
 
   const onFolderTreeNodeClick = (fullPath: string) => {
-    loadFolder(fullPath).catch((err) => {
-      showError(`Error loading folder: ${err.message ?? JSON.stringify(err)}`);
-    });
+    loadFolder(fullPath).catch(showError);
   };
 
   const playSelectedFile = (index: number) => {
@@ -83,9 +81,7 @@ export const ReplayBrowser: React.FC = () => {
         .then(() => {
           showSuccess(`${filePaths.length} file(s) successfully deleted.`);
         })
-        .catch((err) => {
-          showError(err instanceof Error ? err.message : JSON.stringify(err));
-        });
+        .catch(showError);
     },
     [showError, showSuccess, removeFiles],
   );

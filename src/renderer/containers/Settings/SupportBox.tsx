@@ -24,7 +24,7 @@ export const SupportBox = () => {
       })
       .catch((err) => {
         log.error(err);
-        showError(err instanceof Error ? err.message : JSON.stringify(err));
+        showError(err);
       });
   };
 
@@ -41,7 +41,13 @@ export const SupportBox = () => {
         <LiveHelpIcon style={{ marginRight: 8 }} />
         Need help?
       </h2>
-      <div>
+      <div
+        css={css`
+          a {
+            text-decoration: underline;
+          }
+        `}
+      >
         The best way to get support is to first{" "}
         <A
           title={socials.discordUrl}
@@ -91,8 +97,4 @@ const Outer = styled.div`
   color: ${colors.offWhite};
   border-radius: 10px;
   padding: 15px;
-
-  a {
-    text-decoration: underline;
-  }
 `;

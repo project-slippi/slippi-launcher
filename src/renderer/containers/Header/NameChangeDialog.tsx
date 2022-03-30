@@ -28,9 +28,9 @@ export const NameChangeDialog: React.FC<{
     try {
       await slippiBackendService.changeDisplayName(name);
       setDisplayName(name);
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      showError(err.message);
+      showError(err);
     } finally {
       handleClose();
     }

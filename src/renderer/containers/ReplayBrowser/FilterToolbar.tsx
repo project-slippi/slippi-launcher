@@ -51,7 +51,7 @@ export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarPro
   const { showError } = useToasts();
 
   const refresh = React.useCallback(() => {
-    init(rootSlpPath, extraSlpPaths, true, currentFolder).catch((err) => showError(err.message));
+    init(rootSlpPath, extraSlpPaths, true, currentFolder).catch(showError);
   }, [rootSlpPath, extraSlpPaths, init, currentFolder, showError]);
 
   const debounceChange = debounce((text: string) => {
