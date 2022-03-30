@@ -13,14 +13,14 @@ import { ReactComponent as DiscordIcon } from "@/styles/images/discord.svg";
 const log = window.electron.log;
 
 export const SupportBox = () => {
-  const { showError, showInfo } = useToasts();
+  const { showError, showSuccess } = useToasts();
 
   const onCopy = () => {
     // Set the clipboard text
     window.electron.common
       .copyLogsToClipboard()
       .then(() => {
-        showInfo("Logs successfully copied to clipboard");
+        showSuccess("Successfully copied logs to clipboard");
       })
       .catch((err) => {
         log.error(err);
