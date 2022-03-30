@@ -52,9 +52,11 @@ const menuItems: MainMenuItem[] = [
   },
 ];
 
+const navigationPaths = menuItems.map((item) => `${item.subpath}`);
+const defaultRoute = menuItems.find((item) => item.default);
+
 export const MainView: React.FC = () => {
-  const defaultRoute = menuItems.find((item) => item.default);
-  usePageNavigationShortcuts(menuItems.map((item) => `${item.subpath}`));
+  usePageNavigationShortcuts(navigationPaths);
 
   return (
     <div
