@@ -12,17 +12,13 @@ import moment from "moment";
 import React from "react";
 import TimeAgo from "react-timeago";
 
+import { ExternalLink } from "@/components/ExternalLink";
 import { MarkdownContent } from "@/components/MarkdownContent";
 
-export interface NewsArticleProps {
-  item: NewsItem;
-}
-
-export const NewsArticle: React.FC<NewsArticleProps> = ({ item }) => {
+export const NewsArticle = React.memo(function NewsArticle({ item }: { item: NewsItem }) {
   const { imageUrl, title, subtitle, permalink, body, publishedAt } = item;
   const localDateString = moment(publishedAt).format("LLL");
 
-  const onClick = () => window.electron.shell.openPath(permalink);
   return (
     <Outer>
       <Card>
@@ -57,17 +53,17 @@ export const NewsArticle: React.FC<NewsArticleProps> = ({ item }) => {
         <CardActions disableSpacing={true}>
           <Tooltip title={localDateString}>
             <DateInfo>
-              Posted <TimeAgo date={new Date(publishedAt)} title="" />
+              Posted <TimeAgo date={publishedAt} title="" live={false} />
             </DateInfo>
           </Tooltip>
-          <Button size="small" color="primary" onClick={onClick}>
+          <Button LinkComponent={ExternalLink} size="small" color="primary" href={permalink}>
             Read more
           </Button>
         </CardActions>
       </Card>
     </Outer>
   );
-};
+});
 
 const Outer = styled.div`
   margin-bottom: 20px;

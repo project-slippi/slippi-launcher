@@ -16,7 +16,6 @@ import { useBroadcastList, useBroadcastListStore } from "./useBroadcastList";
 import { useConsoleDiscoveryStore } from "./useConsoleDiscovery";
 import { useDolphinStore } from "./useDolphin";
 import { useIsoVerification } from "./useIsoVerification";
-import { useNewsFeed } from "./useNewsFeed";
 import { useReplayBrowserNavigation } from "./useReplayBrowserList";
 import { useSettings } from "./useSettings";
 import { useSettingsModal } from "./useSettingsModal";
@@ -161,12 +160,6 @@ export const useAppListeners = () => {
   React.useEffect(() => {
     return window.electron.settings.onOpenSettingsPageRequest(open);
   }, [open]);
-
-  // Load the news articles once on app load
-  const updateNewsFeed = useNewsFeed((store) => store.update);
-  React.useEffect(() => {
-    updateNewsFeed();
-  }, [updateNewsFeed]);
 
   const setUpdateVersion = useAppStore((store) => store.setUpdateVersion);
   React.useEffect(() => {
