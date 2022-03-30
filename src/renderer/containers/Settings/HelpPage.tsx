@@ -10,12 +10,14 @@ import { SupportBox } from "./SupportBox";
 export const HelpPage: React.FC = () => {
   return (
     <Outer>
-      <SupportBox
+      <div
         css={css`
           margin-top: 10px;
           margin-bottom: 40px;
         `}
-      />
+      >
+        <SupportBox />
+      </div>
       <h1>FAQ</h1>
       <MarkdownContent
         content={faqMarkdown}

@@ -4,8 +4,6 @@ import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
 import LiveHelpIcon from "@mui/icons-material/LiveHelp";
-import CircularProgress from "@mui/material/CircularProgress";
-import React from "react";
 
 import { ExternalLink as A } from "@/components/ExternalLink";
 import { Button } from "@/components/FormInputs";
@@ -14,32 +12,24 @@ import { ReactComponent as DiscordIcon } from "@/styles/images/discord.svg";
 
 const log = window.electron.log;
 
-export const SupportBox: React.FC<{ className?: string }> = ({ className }) => {
-  const [isCopying, setCopying] = React.useState(false);
-  const [copied, setCopied] = React.useState(false);
-  const { showError } = useToasts();
+export const SupportBox = () => {
+  const { showError, showInfo } = useToasts();
 
-  const handleError = (err: any) => {
-    log.error("Error copying logs", err);
-    showError(err.message || JSON.stringify(err));
-  };
-
-  const onCopy = async () => {
+  const onCopy = () => {
     // Set the clipboard text
-    setCopying(true);
-    try {
-      await window.electron.common.copyLogsToClipboard();
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      handleError(err);
-    } finally {
-      setCopying(false);
-    }
+    window.electron.common
+      .copyLogsToClipboard()
+      .then(() => {
+        showInfo("Logs successfully copied to clipboard");
+      })
+      .catch((err) => {
+        log.error(err);
+        showError(err instanceof Error ? err.message : JSON.stringify(err));
+      });
   };
 
   return (
-    <Outer className={className}>
+    <Outer>
       <h2
         css={css`
           display: flex;
@@ -53,7 +43,13 @@ export const SupportBox: React.FC<{ className?: string }> = ({ className }) => {
       </h2>
       <div>
         The best way to get support is to first{" "}
-        <A title={socials.discordUrl} href={socials.discordUrl}>
+        <A
+          title={socials.discordUrl}
+          href={socials.discordUrl}
+          css={css`
+            text-decoration: underline;
+          `}
+        >
           join the Slippi Discord
         </A>
         , then read the information in the <b>#support-portal</b> channel before posting your issue in the appropriate
@@ -81,18 +77,8 @@ export const SupportBox: React.FC<{ className?: string }> = ({ className }) => {
           </Button>
         </div>
         <div>
-          <Button startIcon={<FileCopyIcon />} disabled={isCopying || copied} onClick={onCopy}>
-            {copied ? "Copied!" : "Copy logs"}
-            {isCopying && (
-              <CircularProgress
-                css={css`
-                  margin-left: 10px;
-                `}
-                size={16}
-                thickness={6}
-                color="inherit"
-              />
-            )}
+          <Button startIcon={<FileCopyIcon />} onClick={onCopy}>
+            Copy logs
           </Button>
         </div>
       </div>
