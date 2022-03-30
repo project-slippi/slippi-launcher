@@ -6,7 +6,7 @@ import React from "react";
 import { DualPane } from "@/components/DualPane";
 import { Footer } from "@/components/Footer";
 
-import { NewsFeedContainer } from "./news_feed/NewsFeed.container";
+import { NewsFeedContainer } from "./news_feed/NewsFeedContainer";
 import { TwitterFeed } from "./TwitterFeed";
 
 const Outer = styled.div`

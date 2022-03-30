@@ -13,13 +13,16 @@ export const NewsFeedContainer = React.memo(function NewsFeedContainer() {
   const mainRef = React.createRef<HTMLDivElement>();
   const [numItemsToShow, setNumItemsToShow] = React.useState(ITEMS_TO_SHOW);
   const newsFeedQuery = useQuery(["newsFeedQuery"], window.electron.common.fetchNewsFeed);
+  const { isLoading, error, data: allPosts = [] } = newsFeedQuery;
+  usePageScrollingShortcuts(mainRef);
+
   const onShowMore = React.useCallback(() => {
     setNumItemsToShow(numItemsToShow + BATCH_SIZE);
   }, [setNumItemsToShow, numItemsToShow]);
-  const { isLoading, error, data } = newsFeedQuery;
-  const allPosts = data ?? [];
-  const postsToShow = numItemsToShow <= 0 ? allPosts : allPosts.slice(0, numItemsToShow);
-  usePageScrollingShortcuts(mainRef);
+
+  const postsToShow = React.useMemo(() => {
+    return numItemsToShow <= 0 ? allPosts : allPosts.slice(0, numItemsToShow);
+  }, [allPosts, numItemsToShow]);
 
   if (isLoading) {
     return <LoadingScreen message="Loading..." />;
@@ -29,12 +32,5 @@ export const NewsFeedContainer = React.memo(function NewsFeedContainer() {
     return <div>Failed to fetch news articles.</div>;
   }
 
-  return (
-    <NewsFeed
-      ref={mainRef}
-      posts={postsToShow.slice(0, numItemsToShow)}
-      total={allPosts.length}
-      onShowMore={onShowMore}
-    />
-  );
+  return <NewsFeed ref={mainRef} posts={postsToShow} total={allPosts.length} onShowMore={onShowMore} />;
 });
