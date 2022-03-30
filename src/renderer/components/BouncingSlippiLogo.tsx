@@ -4,10 +4,8 @@ import React from "react";
 import slippiLogo from "@/styles/images/slippi-logo.svg";
 
 const bounceAnimation = keyframes`
-  0%       { bottom: 5px; }
-  25%, 75% { bottom: 15px; }
-  50%      { bottom: 20px; }
-  100%     { bottom: 0; }
+  0%  { bottom: 0px; }
+  100%  { bottom: 25px; }
 `;
 
 const barrelRollAnimation = keyframes`
@@ -16,11 +14,11 @@ const barrelRollAnimation = keyframes`
 `;
 
 const onlyBounce = css`
-  animation: ${bounceAnimation} 1.2s infinite forwards;
+  animation: ${bounceAnimation} 0.6s infinite alternate;
 `;
 
 const bouncePlusSpin = css`
-  animation: ${bounceAnimation} 1.2s infinite forwards,
+  animation: ${bounceAnimation} 0.6s infinite alternate,
     ${barrelRollAnimation} 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) alternate forwards;
 `;
 
