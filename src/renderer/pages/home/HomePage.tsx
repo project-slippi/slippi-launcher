@@ -5,8 +5,9 @@ import React from "react";
 
 import { DualPane } from "@/components/DualPane";
 import { Footer } from "@/components/Footer";
+import { usePageScrollingShortcuts } from "@/lib/hooks/useShortcuts";
 
-import { NewsFeedContainer } from "./news_feed/NewsFeedContainer";
+import { NewsFeedContainer } from "./NewsFeed";
 import { TwitterFeed } from "./TwitterFeed";
 
 const Outer = styled.div`
@@ -17,7 +18,19 @@ const Outer = styled.div`
   min-width: 0;
 `;
 
+const Main = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-x: hidden;
+  padding: 20px;
+  padding-top: 0;
+`;
+
 export const HomePage = React.memo(function HomePage() {
+  const mainRef = React.createRef<HTMLDivElement>();
+  usePageScrollingShortcuts(mainRef);
+
   return (
     <Outer>
       <div
@@ -30,7 +43,12 @@ export const HomePage = React.memo(function HomePage() {
       >
         <DualPane
           id="home-page"
-          leftSide={<NewsFeedContainer />}
+          leftSide={
+            <Main ref={mainRef}>
+              <h1>Latest News</h1>
+              <NewsFeedContainer />
+            </Main>
+          }
           rightSide={<TwitterFeed />}
           rightStyle={{ backgroundColor: colors.purpleDark }}
           style={{ gridTemplateColumns: "auto 300px" }}
