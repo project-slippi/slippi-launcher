@@ -73,8 +73,9 @@ export const SupportBox: React.FC<{ className?: string }> = ({ className }) => {
       >
         <div>
           <Button
+            LinkComponent={A}
             startIcon={<DiscordIcon fill={colors.purpleLighter} style={{ height: 18, width: 18 }} />}
-            onClick={() => void window.electron.shell.openPath(socials.discordUrl)}
+            href={socials.discordUrl}
           >
             Join the Discord
           </Button>

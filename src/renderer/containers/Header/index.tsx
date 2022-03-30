@@ -10,6 +10,7 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import React from "react";
 
+import { ExternalLink } from "@/components/ExternalLink";
 import { PlayIcon } from "@/components/PlayIcon";
 import { useAccount } from "@/lib/hooks/useAccount";
 import { useDolphin } from "@/lib/hooks/useDolphin";
@@ -104,10 +105,7 @@ export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
         `}
       >
         <Tooltip title="Open Slippi.gg">
-          <Button
-            onClick={() => window.electron.shell.openPath(slippiHomepage)}
-            style={isMac ? { marginTop: 10 } : undefined}
-          >
+          <Button LinkComponent={ExternalLink} href={slippiHomepage} style={isMac ? { marginTop: 10 } : undefined}>
             <img src={slippiLogo} width="38px" />
           </Button>
         </Tooltip>
