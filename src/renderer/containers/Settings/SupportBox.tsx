@@ -41,13 +41,7 @@ export const SupportBox = () => {
         <LiveHelpIcon style={{ marginRight: 8 }} />
         Need help?
       </h2>
-      <div
-        css={css`
-          a {
-            text-decoration: underline;
-          }
-        `}
-      >
+      <div>
         The best way to get support is to first{" "}
         <A
           title={socials.discordUrl}
