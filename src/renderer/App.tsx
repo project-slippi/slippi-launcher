@@ -52,15 +52,15 @@ const App: React.FC = () => {
 };
 
 // Providers need to be initialized before the rest of the app can use them
-const AppWithProviders: React.FC = () => {
-  return (
+const withProviders = (Component: React.ComponentType) => {
+  return () => (
     <StyledEngineProvider injectFirst>
       <MuiThemeProvider theme={slippiTheme}>
         <ThemeProvider theme={slippiTheme as any}>
           <QueryClientProvider client={queryClient}>
             <ToastProvider>
               <Router>
-                <App />
+                <Component />
               </Router>
             </ToastProvider>
           </QueryClientProvider>
@@ -71,4 +71,4 @@ const AppWithProviders: React.FC = () => {
 };
 
 // eslint-disable-next-line import/no-default-export
-export default AppWithProviders;
+export default withProviders(App);
