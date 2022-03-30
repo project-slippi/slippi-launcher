@@ -38,6 +38,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
       }}
       Components={{
         default: CustomToast,
+        info: CustomToast,
         success: CustomToast,
         error: CustomToast,
         warning: CustomToast,

@@ -8,6 +8,7 @@ export const useToasts = () => {
       showError: (message: string) => enqueueSnackbar(message, { variant: "error" }),
       showSuccess: (message: string) => enqueueSnackbar(message, { variant: "success" }),
       showWarning: (message: string) => enqueueSnackbar(message, { variant: "warning" }),
+      showInfo: (message: string) => enqueueSnackbar(message, { variant: "info" }),
     }),
     [enqueueSnackbar],
   );
