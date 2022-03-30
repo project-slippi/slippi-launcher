@@ -10,7 +10,7 @@ import { NewsArticle } from "./news_article/NewsArticle";
 const ITEMS_TO_SHOW = 7;
 const BATCH_SIZE = 5;
 
-export const NewsFeedContainer = React.memo(function NewsFeedContainer() {
+export const NewsFeed = React.memo(function NewsFeedContainer() {
   const [numItemsToShow, setNumItemsToShow] = React.useState(ITEMS_TO_SHOW);
   const newsFeedQuery = useQuery(["newsFeedQuery"], window.electron.common.fetchNewsFeed);
   const { isLoading, error, data: allPosts = [], refetch } = newsFeedQuery;

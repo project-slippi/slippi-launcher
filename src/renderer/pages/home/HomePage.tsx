@@ -7,7 +7,7 @@ import { DualPane } from "@/components/DualPane";
 import { Footer } from "@/components/Footer";
 import { usePageScrollingShortcuts } from "@/lib/hooks/useShortcuts";
 
-import { NewsFeedContainer } from "./NewsFeed";
+import { NewsFeed } from "./NewsFeed";
 import { TwitterFeed } from "./TwitterFeed";
 
 const Outer = styled.div`
@@ -46,7 +46,7 @@ export const HomePage = React.memo(function HomePage() {
           leftSide={
             <Main ref={mainRef}>
               <h1>Latest News</h1>
-              <NewsFeedContainer />
+              <NewsFeed />
             </Main>
           }
           rightSide={<TwitterFeed />}
