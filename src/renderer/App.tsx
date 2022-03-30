@@ -10,6 +10,7 @@ import { useAppStore } from "@/lib/hooks/useApp";
 
 import { ToastProvider } from "./components/ToastProvider";
 import { useAppListeners } from "./lib/hooks/useAppListeners";
+import { ServiceProvider } from "./services";
 import { slippiTheme } from "./styles/theme";
 import { LandingView } from "./views/LandingView";
 import { LoadingView } from "./views/LoadingView";
@@ -30,7 +31,7 @@ const queryClient = new QueryClient({
   },
 });
 
-const App: React.FC = () => {
+const App = () => {
   const initialized = useAppStore((state) => state.initialized);
 
   // Then add the rest of the app listeners
@@ -59,9 +60,11 @@ const withProviders = (Component: React.ComponentType) => {
         <ThemeProvider theme={slippiTheme as any}>
           <QueryClientProvider client={queryClient}>
             <ToastProvider>
-              <Router>
-                <Component />
-              </Router>
+              <ServiceProvider>
+                <Router>
+                  <Component />
+                </Router>
+              </ServiceProvider>
             </ToastProvider>
           </QueryClientProvider>
         </ThemeProvider>
@@ -70,5 +73,4 @@ const withProviders = (Component: React.ComponentType) => {
   );
 };
 
-// eslint-disable-next-line import/no-default-export
 export default withProviders(App);

@@ -7,7 +7,7 @@ import type { Services } from "./types";
 
 const isDevelopment = window.electron.common.isDevelopment;
 
-export function installServices(): Services {
+export async function installServices(): Promise<Services> {
   const authService = new AuthClient();
   const slippiBackendService = new SlippiBackendClient(authService, `${appVersion}${isDevelopment ? "-dev" : ""}`);
 
