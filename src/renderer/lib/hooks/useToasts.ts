@@ -14,9 +14,10 @@ export const useToasts = () => {
         } else {
           message = JSON.stringify(error);
         }
-        enqueueSnackbar(message, { variant: "error" });
+        // Let's not automatically hide error messages
+        enqueueSnackbar(message, { variant: "error", persist: true });
       },
-      showSuccess: (message: string) => enqueueSnackbar(message, { variant: "success" }),
+      showSuccess: (message: string) => enqueueSnackbar(message, { variant: "success", autoHideDuration: 2500 }),
       showWarning: (message: string) => enqueueSnackbar(message, { variant: "warning" }),
       showInfo: (message: string) => enqueueSnackbar(message, { variant: "info" }),
     }),
