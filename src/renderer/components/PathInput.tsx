@@ -50,7 +50,6 @@ const InputContainer = styled(Paper)`
   width: 400;
   flex: 1;
   margin-right: 10px;
-  background-color: rgba(0, 0, 0, 0.7);
 `;
 
 const CustomInput = styled(InputBase)`

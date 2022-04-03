@@ -22,7 +22,7 @@ const theme = createTheme({
     },
     divider: "rgba(255,255,255)",
     background: {
-      paper: colors.purpleDark,
+      paper: colors.purpleDarker,
       default: colors.purple,
     },
   },
