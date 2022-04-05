@@ -2323,15 +2323,16 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@slippi/slippi-js@^6.1.3":
-  version "6.1.3"
-  resolved "https://registry.yarnpkg.com/@slippi/slippi-js/-/slippi-js-6.1.3.tgz#212b4531f76cabd3d6e6f259c4222ec8e47b1561"
-  integrity sha512-BevtDEzS1Gu6ShIU/lGsncpvWfhoI7+dnLfUaRi3T7LLIUASsUxKISqKnlWCbnAvG+bWL0CSGuQicPdRmtji9w==
+"@slippi/slippi-js@^6.2.1":
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/@slippi/slippi-js/-/slippi-js-6.2.1.tgz#94f297ebfa2389193cb9ecbe537e6ea69470b652"
+  integrity sha512-uRbiKp3CEULVjbUEepGFf623z3ulZp8IoQsav6ZWZ4Jcpk2psdPKmdxUZslNADxXemySlVJn0Tb+c7lYowskVg==
   dependencies:
     "@shelacek/ubjson" "^1.0.1"
     enet "^0.2.9"
     iconv-lite "^0.6.2"
-    lodash "^4.17.19"
+    lodash "^4.17.21"
+    lodash-es "^4.17.21"
     moment "^2.27.0"
     reconnect-core "^1.3.0"
     semver "^7.3.2"
@@ -11109,6 +11110,11 @@ locate-path@^6.0.0:
   integrity sha512-iPZK6eYjbxRu3uB4/WZ3EsEIMJFMqAoopl3R+zuq0UjcAm/MO6KCweDgPfP3elTztoKP3KtnVHxTn2NHBSDVUw==
   dependencies:
     p-locate "^5.0.0"
+
+lodash-es@^4.17.21:
+  version "4.17.21"
+  resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.21.tgz#43e626c46e6591b7750beb2b50117390c609e3ee"
+  integrity sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==
 
 lodash.camelcase@^4.3.0:
   version "4.3.0"
