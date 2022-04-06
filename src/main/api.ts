@@ -25,7 +25,7 @@ export default {
   getOsInfoSync() {
     return ipcRenderer.sendSync("getOsInfoSync") as string;
   },
-  onDragState(filePaths: string[]) {
+  onDragStart(filePaths: string[]) {
     ipcRenderer.send("onDragStart", filePaths);
   },
   async fetchNewsFeed() {
