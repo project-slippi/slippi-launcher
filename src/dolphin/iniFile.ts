@@ -8,15 +8,19 @@ import fs from "fs";
 import { ensureFileSync } from "fs-extra";
 import readline from "readline";
 
+import { fileExists } from "../main/fileExists";
+
 const log = electronLog.scope("iniFile");
 
 /**
  * The IniFile Class, contains a Section subclass
  */
 export class IniFile {
+  private filePath: string;
   private sections: Section[];
 
-  constructor() {
+  private constructor(filePath: string) {
+    this.filePath = filePath;
     this.sections = [];
   }
 
@@ -113,9 +117,12 @@ export class IniFile {
     return lines;
   }
 
-  public async load(fileName: string, keepCurrentData = true): Promise<boolean> {
-    if (!keepCurrentData) {
-      this.sections = [];
+  public static async init(fileName: string): Promise<IniFile> {
+    const iniFile = new IniFile(fileName);
+    const fileAlreadyExists = await fileExists(fileName);
+    if (!fileAlreadyExists) {
+      // We don't have anything to load so just return
+      return iniFile;
     }
 
     const ins = fs.createReadStream(fileName);
@@ -141,11 +148,11 @@ export class IniFile {
         if (endpos !== -1) {
           //we have a new section
           const sub = line.substr(1, endpos - 1);
-          currentSection = this.getOrCreateSection(sub);
+          currentSection = iniFile.getOrCreateSection(sub);
         }
       } else {
         if (currentSection !== undefined) {
-          const [key, value] = this.parseLine(line);
+          const [key, value] = iniFile.parseLine(line);
 
           // Lines starting with '$', '*' or '+' are kept verbatim.
           // Kind of a hack, but the support for raw lines inside an
@@ -162,12 +169,12 @@ export class IniFile {
       }
     }
 
-    return true;
+    return iniFile;
   }
 
-  public save(filePath: string): boolean {
-    ensureFileSync(filePath);
-    const out = fs.createWriteStream(filePath);
+  public save(): boolean {
+    ensureFileSync(this.filePath);
+    const out = fs.createWriteStream(this.filePath);
 
     out.on("error", (e) => {
       log.error("failed to write file with error", e);
@@ -201,7 +208,7 @@ export class IniFile {
 /**
  * The Section class
  */
-export class Section {
+class Section {
   public name: string;
   public keysOrder: string[];
   public lines: string[];
