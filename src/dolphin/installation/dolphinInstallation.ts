@@ -1,0 +1,206 @@
+import { findDolphinExecutable } from "@dolphin/util";
+import { spawnSync } from "child_process";
+import { app } from "electron";
+import * as fs from "fs-extra";
+import os from "os";
+import path from "path";
+import { lt } from "semver";
+
+import { DolphinLaunchType } from "../types";
+import { downloadLatestDolphin, getLatestReleaseData } from "./download";
+import { installDolphinOnLinux } from "./linux";
+import { installDolphinOnMac } from "./macos";
+import { installDolphinOnWindows } from "./windows";
+
+const isLinux = process.platform === "linux";
+
+export class DolphinInstallation {
+  public readonly dolphinLaunchType: DolphinLaunchType;
+  public readonly installationFolder: string;
+
+  constructor(dolphinLaunchType: DolphinLaunchType, installationFolder: string) {
+    this.dolphinLaunchType = dolphinLaunchType;
+    this.installationFolder = installationFolder;
+  }
+
+  public get userFolder(): string {
+    let userPath = "";
+    switch (process.platform) {
+      case "win32": {
+        userPath = path.join(this.installationFolder, "User");
+        break;
+      }
+      case "darwin": {
+        userPath = path.join(this.installationFolder, "Slippi Dolphin.app", "Contents", "Resources", "User");
+        break;
+      }
+      case "linux": {
+        const configPath = path.join(os.homedir(), ".config");
+        const userFolderName = this.dolphinLaunchType === DolphinLaunchType.NETPLAY ? "SlippiOnline" : "SlippiPlayback";
+        userPath = path.join(configPath, userFolderName);
+        break;
+      }
+      default:
+        throw new Error(`Unsupported operating system: ${process.platform}`);
+    }
+
+    return userPath;
+  }
+
+  public async findDolphinExecutable(): Promise<string> {
+    const dolphinPath = this.installationFolder;
+    const type = this.dolphinLaunchType;
+
+    return findDolphinExecutable(type, dolphinPath);
+  }
+
+  public async findUserFolder(): Promise<string> {
+    let userPath = "";
+    const dolphinPath = this.installationFolder;
+    const type = this.dolphinLaunchType;
+    switch (process.platform) {
+      case "win32": {
+        userPath = path.join(dolphinPath, "User");
+        break;
+      }
+      case "darwin": {
+        userPath = path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "Resources", "User");
+        break;
+      }
+      case "linux": {
+        const configPath = path.join(os.homedir(), ".config");
+        const userFolderName = type === DolphinLaunchType.NETPLAY ? "SlippiOnline" : "SlippiPlayback";
+        userPath = path.join(configPath, userFolderName);
+        break;
+      }
+      default:
+        break;
+    }
+
+    await fs.ensureDir(userPath);
+
+    return userPath;
+  }
+
+  public async findSysFolder(): Promise<string> {
+    let sysPath = "";
+    const dolphinPath = this.installationFolder;
+    const type = this.dolphinLaunchType;
+    switch (process.platform) {
+      case "win32": {
+        sysPath = path.join(dolphinPath, "Sys");
+        break;
+      }
+      case "darwin": {
+        sysPath = path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "Resources", "Sys");
+        break;
+      }
+      case "linux": {
+        sysPath = path.join(app.getPath("userData"), type, "Sys");
+        break;
+      }
+      default:
+        break;
+    }
+
+    await fs.ensureDir(sysPath);
+
+    return sysPath;
+  }
+
+  public async clearCache() {
+    const cacheFolder = path.join(this.userFolder, "Cache");
+    await fs.remove(cacheFolder);
+  }
+
+  public async copyDolphinConfig(fromPath: string) {
+    const newUserFolder = this.userFolder;
+    await fs.ensureDir(this.userFolder);
+    const oldUserFolder = path.join(fromPath, "User");
+
+    if (!(await fs.pathExists(oldUserFolder))) {
+      return;
+    }
+
+    await fs.copy(oldUserFolder, newUserFolder, { overwrite: true });
+  }
+
+  public async validate(log: (message: string) => void): Promise<void> {
+    const type = this.dolphinLaunchType;
+    try {
+      await this.findDolphinExecutable();
+      log(`Found existing ${type} Dolphin executable.`);
+      log(`Checking if we need to update ${type} Dolphin`);
+      const data = await getLatestReleaseData(type);
+      const latestVersion = data.tag_name;
+      const isOutdated = await this._isOutOfDate(latestVersion);
+      if (!isOutdated) {
+        // We're all up to date.
+        log("No update found...");
+        return;
+      }
+    } catch (err) {
+      log(`Could not find existing ${type} Dolphin installation.`);
+    }
+
+    // Start the download
+    await this.downloadAndInstall(log);
+  }
+
+  public async downloadAndInstall(log: (message: string) => void, cleanInstall = false): Promise<void> {
+    const type = this.dolphinLaunchType;
+    const onProgress = (current: number, total: number) =>
+      log(`Downloading... ${((current / total) * 100).toFixed(0)}%`);
+    const downloadDir = path.join(app.getPath("userData"), "temp");
+    const downloadedAsset = await downloadLatestDolphin(type, downloadDir, onProgress, log);
+    log(`Installing ${type} Dolphin...`);
+    await this._installDolphin(downloadedAsset, log, cleanInstall);
+    log(`Finished ${type} installing`);
+  }
+
+  private async _isOutOfDate(latestVersion: string): Promise<boolean> {
+    const dolphinPath = await this.findDolphinExecutable();
+    const dolphinVersion = spawnSync(dolphinPath, ["--version"]).stdout.toString();
+    return lt(dolphinVersion, latestVersion);
+  }
+
+  private async _uninstallDolphin() {
+    await fs.remove(this.installationFolder);
+    if (isLinux) {
+      const userFolder = this.dolphinLaunchType === DolphinLaunchType.NETPLAY ? "SlippiOnline" : "SlippiPlayback";
+      await fs.remove(path.join(app.getPath("home"), ".config", userFolder));
+    }
+  }
+
+  private async _installDolphin(assetPath: string, log: (message: string) => void, cleanInstall = false) {
+    const dolphinPath = this.installationFolder;
+
+    if (cleanInstall) {
+      await this._uninstallDolphin();
+    }
+
+    switch (process.platform) {
+      case "win32": {
+        await installDolphinOnWindows({ assetPath, destinationFolder: dolphinPath, log });
+        break;
+      }
+      case "darwin": {
+        await installDolphinOnMac({ assetPath, destinationFolder: dolphinPath, log });
+        break;
+      }
+      case "linux": {
+        const dolphinAppImagePath = await this.findDolphinExecutable();
+        await installDolphinOnLinux({
+          dolphinAppImagePath,
+          assetPath,
+          destinationFolder: dolphinPath,
+          log,
+        });
+        break;
+      }
+      default: {
+        throw new Error(`Installing Netplay is not supported on this platform: ${process.platform}`);
+      }
+    }
+  }
+}

@@ -4,13 +4,13 @@ import { isEqual } from "lodash";
 import path from "path";
 import { fileExists } from "utils/fileExists";
 
-import { assertDolphinInstallations } from "./downloadDolphin";
 import {
   ipc_checkDesktopAppDolphin,
   ipc_checkPlayKeyExists,
   ipc_clearDolphinCache,
   ipc_configureDolphin,
   ipc_dolphinClosedEvent,
+  ipc_dolphinDownloadLogReceivedEvent,
   ipc_downloadDolphin,
   ipc_importDolphinSettings,
   ipc_launchNetplayDolphin,
@@ -27,11 +27,20 @@ import { findDolphinExecutable, updateBootToCssCode } from "./util";
 const isMac = process.platform === "darwin";
 const isLinux = process.platform === "linux";
 
-export default function setupDolphinIpc(): { dolphinManager: DolphinManager } {
-  const dolphinManager = new DolphinManager();
+const NETPLAY_INSTALLATION_FOLDER = path.join(app.getPath("userData"), "netplay");
+const PLAYBACK_INSTALLATION_FOLDER = path.join(app.getPath("userData"), "playback");
 
-  ipc_downloadDolphin.main!.handle(async () => {
-    await assertDolphinInstallations();
+export default function setupDolphinIpc(): { dolphinManager: DolphinManager } {
+  const dolphinManager = new DolphinManager({
+    netplayDolphinPath: NETPLAY_INSTALLATION_FOLDER,
+    playbackDolphinPath: PLAYBACK_INSTALLATION_FOLDER,
+  });
+
+  ipc_downloadDolphin.main!.handle(async ({ dolphinType }) => {
+    const logDownloadInfo = (message: string) => {
+      void ipc_dolphinDownloadLogReceivedEvent.main!.trigger({ message });
+    };
+    await dolphinManager.installDolphin(dolphinType, logDownloadInfo);
     return { success: true };
   });
 

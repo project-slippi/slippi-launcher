@@ -1,4 +1,4 @@
-import { addGamePathToIni, findDolphinExecutable, findUserFolder, updateDolphinSettings } from "@dolphin/util";
+import { addGamePathToIni, updateDolphinSettings } from "@dolphin/util";
 import { settingsManager } from "@settings/settingsManager";
 import electronLog from "electron-log";
 import { EventEmitter } from "events";
@@ -6,8 +6,7 @@ import * as fs from "fs-extra";
 import path from "path";
 import { fileExists } from "utils/fileExists";
 
-import { fetchLatestDolphin } from "./checkVersion";
-import { downloadAndInstallDolphin } from "./downloadDolphin";
+import { DolphinInstallation } from "./installation/dolphinInstallation";
 import { DolphinInstance, PlaybackDolphinInstance } from "./instance";
 import type { ReplayCommunication } from "./types";
 import { DolphinLaunchType } from "./types";
@@ -17,11 +16,43 @@ const log = electronLog.scope("dolphin/manager");
 // DolphinManager should be in control of all dolphin instances that get opened for actual use.
 // This includes playing netplay, viewing replays, watching broadcasts (spectating), and configuring Dolphin.
 export class DolphinManager extends EventEmitter {
+  private dolphinInstallationMap: Map<DolphinLaunchType, DolphinInstallation>;
   private playbackDolphinInstances = new Map<string, PlaybackDolphinInstance>();
   private netplayDolphinInstance: DolphinInstance | null = null;
 
+  constructor({
+    netplayDolphinPath,
+    playbackDolphinPath,
+  }: {
+    netplayDolphinPath: string;
+    playbackDolphinPath: string;
+  }) {
+    super();
+    const netplayInstall = new DolphinInstallation(DolphinLaunchType.NETPLAY, netplayDolphinPath);
+    const playbackInstall = new DolphinInstallation(DolphinLaunchType.PLAYBACK, playbackDolphinPath);
+    this.dolphinInstallationMap = new Map<DolphinLaunchType, DolphinInstallation>([
+      [DolphinLaunchType.NETPLAY, netplayInstall],
+      [DolphinLaunchType.PLAYBACK, playbackInstall],
+    ]);
+  }
+
+  public async installDolphin(
+    dolphinType: DolphinLaunchType,
+    onLogMessage: (message: string) => void = log.info,
+  ): Promise<void> {
+    const dolphinInstall = this.dolphinInstallationMap.get(dolphinType);
+    if (!dolphinInstall) {
+      throw new Error(`No dolphin installation of type: ${dolphinType}`);
+    }
+    await dolphinInstall.validate(onLogMessage);
+  }
+
   public async launchPlaybackDolphin(id: string, replayComm: ReplayCommunication): Promise<void> {
-    const dolphinPath = await findDolphinExecutable(DolphinLaunchType.PLAYBACK);
+    const playbackInstallation = this.dolphinInstallationMap.get(DolphinLaunchType.PLAYBACK);
+    if (!playbackInstallation) {
+      throw new Error("Could not find playback dolphin installation");
+    }
+    const dolphinPath = await playbackInstallation.findDolphinExecutable();
     const meleeIsoPath = await this._getIsoPath();
 
     const configuring = this.playbackDolphinInstances.get("configure");
@@ -55,7 +86,11 @@ export class DolphinManager extends EventEmitter {
 
     await updateDolphinSettings();
 
-    const dolphinPath = await findDolphinExecutable(DolphinLaunchType.NETPLAY);
+    const netplayInstallation = this.dolphinInstallationMap.get(DolphinLaunchType.NETPLAY);
+    if (!netplayInstallation) {
+      throw new Error("Could not find playback dolphin installation");
+    }
+    const dolphinPath = await netplayInstallation.findDolphinExecutable();
     log.info(`Launching dolphin at path: ${dolphinPath}`);
     const launchMeleeOnPlay = settingsManager.get().settings.launchMeleeOnPlay;
     const meleeIsoPath = launchMeleeOnPlay ? await this._getIsoPath() : undefined;
@@ -79,7 +114,11 @@ export class DolphinManager extends EventEmitter {
 
     await updateDolphinSettings();
 
-    const dolphinPath = await findDolphinExecutable(launchType);
+    const installation = this.dolphinInstallationMap.get(launchType);
+    if (!installation) {
+      throw new Error(`Could not find ${launchType} dolphin installation`);
+    }
+    const dolphinPath = await installation.findDolphinExecutable();
     if (launchType === DolphinLaunchType.NETPLAY && !this.netplayDolphinInstance) {
       const instance = new DolphinInstance(dolphinPath);
       this.netplayDolphinInstance = instance;
@@ -127,9 +166,12 @@ export class DolphinManager extends EventEmitter {
       }
     }
 
-    // No dolphins of launchType are open so lets reinstall
-    const releaseInfo = await fetchLatestDolphin(launchType);
-    await downloadAndInstallDolphin(launchType, releaseInfo, log.info, true);
+    const installation = this.dolphinInstallationMap.get(launchType);
+    if (!installation) {
+      throw new Error(`Could not find ${launchType} dolphin installation`);
+    }
+
+    await installation.downloadAndInstall(log.info, true);
     const isoPath = settingsManager.get().settings.isoPath;
     if (isoPath) {
       const gameDir = path.dirname(isoPath);
@@ -138,14 +180,11 @@ export class DolphinManager extends EventEmitter {
   }
 
   public async clearCache(launchType: DolphinLaunchType) {
-    const userFolder = await findUserFolder(launchType);
-    const cacheFolder = path.join(userFolder, "Cache");
-    try {
-      await fs.remove(cacheFolder);
-    } catch (err) {
-      log.error(err);
-      throw err;
+    const installation = this.dolphinInstallationMap.get(launchType);
+    if (!installation) {
+      throw new Error(`Could not find ${launchType} dolphin installation`);
     }
+    await installation.clearCache();
   }
 
   private async _getIsoPath(): Promise<string | undefined> {
@@ -160,7 +199,11 @@ export class DolphinManager extends EventEmitter {
   }
 
   public async copyDolphinConfig(launchType: DolphinLaunchType, fromPath: string) {
-    const newUserFolder = await findUserFolder(launchType);
+    const installation = this.dolphinInstallationMap.get(launchType);
+    if (!installation) {
+      throw new Error(`Could not find ${launchType} dolphin installation`);
+    }
+    const newUserFolder = await installation.findUserFolder();
     const oldUserFolder = path.join(fromPath, "User");
 
     if (!(await fs.pathExists(oldUserFolder))) {
