@@ -1,5 +1,5 @@
 import type { GeckoCode } from "./geckoCode";
-import { loadGeckoCodes, saveCodes } from "./geckoCode";
+import { loadGeckoCodes, setCodes } from "./geckoCode";
 import type { IniFile } from "./iniFile";
 
 export async function addGamePath(iniFile: IniFile, gameDir: string): Promise<void> {
@@ -46,7 +46,7 @@ export async function setBootToCss(globalIni: IniFile, localIni: IniFile, enable
     geckoCodes.push(bootToCssCode);
   }
 
-  saveCodes(localIni, geckoCodes);
+  setCodes(localIni, geckoCodes);
 
   localIni.save();
 }

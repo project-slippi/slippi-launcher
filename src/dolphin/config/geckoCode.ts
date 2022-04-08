@@ -68,7 +68,6 @@ export function loadGeckoCodes(globalIni: IniFile, localIni?: IniFile): GeckoCod
     }
 
     //update enabled flags
-
     readEnabledAndDisabled(ini, gcodes);
 
     //set default enabled
@@ -79,6 +78,23 @@ export function loadGeckoCodes(globalIni: IniFile, localIni?: IniFile): GeckoCod
     }
   });
   return gcodes;
+}
+
+export function setCodes(iniFile: IniFile, codes: GeckoCode[]) {
+  const lines: string[] = [];
+  const enabledLines: string[] = [];
+  const disabledLines: string[] = [];
+
+  codes.forEach((code) => {
+    if (code.enabled !== code.defaultEnabled) {
+      (code.enabled ? enabledLines : disabledLines).push("$" + code.name);
+    }
+    makeGeckoCode(code, lines);
+  });
+
+  iniFile.setLines("Gecko", lines);
+  iniFile.setLines("Gecko_Enabled", enabledLines);
+  iniFile.setLines("Gecko_Disabled", disabledLines);
 }
 
 function readEnabledOrDisabled(iniFile: IniFile, section: string, enabled: boolean, codes: GeckoCode[]) {
@@ -118,25 +134,6 @@ function makeGeckoCode(code: GeckoCode, lines: string[]) {
   }
 
   lines.push(makeGeckoCodeTitle(code));
-
   code.notes.forEach((line) => lines.push(`* ${line}`));
-
   code.codeLines.forEach((line) => lines.push(line));
-}
-
-export function saveCodes(iniFile: IniFile, codes: GeckoCode[]) {
-  const lines: string[] = [];
-  const enabledLines: string[] = [];
-  const disabledLines: string[] = [];
-
-  codes.forEach((code) => {
-    if (code.enabled !== code.defaultEnabled) {
-      (code.enabled ? enabledLines : disabledLines).push("$" + code.name);
-    }
-    makeGeckoCode(code, lines);
-  });
-
-  iniFile.setLines("Gecko", lines);
-  iniFile.setLines("Gecko_Enabled", enabledLines);
-  iniFile.setLines("Gecko_Disabled", disabledLines);
 }
