@@ -12,7 +12,7 @@ import type { StartBroadcastConfig } from "./types";
 import { BroadcastEvent } from "./types";
 
 export interface Methods {
-  destroyWorker: () => Promise<void>;
+  dispose: () => Promise<void>;
   startBroadcast(config: StartBroadcastConfig): Promise<void>;
   stopBroadcast(): Promise<void>;
   getLogObservable(): Observable<string>;
@@ -49,8 +49,15 @@ broadcastManager.on(BroadcastEvent.RECONNECT, (config: StartBroadcastConfig) => 
 });
 
 const methods: WorkerSpec = {
-  async destroyWorker(): Promise<void> {
+  async dispose(): Promise<void> {
     // Clean up worker
+    logSubject.complete();
+    errorSubject.complete();
+    slippiStatusSubject.complete();
+    dolphinStatusSubject.complete();
+    reconnectSubject.complete();
+
+    broadcastManager.removeAllListeners();
   },
   async startBroadcast(config: StartBroadcastConfig): Promise<void> {
     await broadcastManager.start(config);

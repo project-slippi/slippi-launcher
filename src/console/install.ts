@@ -1,3 +1,5 @@
+import { dolphinManager } from "@dolphin/manager";
+
 import { connectionScanner } from "./connectionScanner";
 import {
   ipc_connectToConsoleMirror,
@@ -6,24 +8,42 @@ import {
   ipc_startMirroring,
   ipc_stopDiscovery,
 } from "./ipc";
-import { mirrorWorker } from "./mirror.worker.interface";
+import type { MirrorWorker } from "./mirror.worker.interface";
+import { createMirrorWorker } from "./mirror.worker.interface";
 
 export default function installConsoleIpc() {
+  let mirrorWorker: MirrorWorker | null;
+
   ipc_connectToConsoleMirror.main!.handle(async ({ config }) => {
-    const mWorker = await mirrorWorker;
-    await mWorker.connectToConsole(config);
+    if (!mirrorWorker) {
+      // Only initialize the worker when we actually start connecting
+      mirrorWorker = await createMirrorWorker(dolphinManager);
+    }
+
+    await mirrorWorker.worker.connectToConsole(config);
     return { success: true };
   });
 
   ipc_disconnectFromConsoleMirror.main!.handle(async ({ ip }) => {
-    const mWorker = await mirrorWorker;
-    await mWorker.disconnectFromConsole(ip);
+    if (!mirrorWorker) {
+      throw new Error("Failed to disconnect from console. Was the console connected to begin with?");
+    }
+
+    await mirrorWorker.worker.disconnectFromConsole(ip);
+
+    // Clean up the worker
+    await mirrorWorker.terminate();
+    mirrorWorker = null;
+
     return { success: true };
   });
 
   ipc_startMirroring.main!.handle(async ({ ip }) => {
-    const mWorker = await mirrorWorker;
-    await mWorker.startMirroring(ip);
+    if (!mirrorWorker) {
+      throw new Error("Failed to start mirroring. Is the console connected?");
+    }
+
+    await mirrorWorker.worker.startMirroring(ip);
     return { success: true };
   });
 

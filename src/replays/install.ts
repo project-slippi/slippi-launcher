@@ -6,10 +6,11 @@ import {
   ipc_loadReplayFolder,
   ipc_selectTreeFolder,
 } from "./ipc";
-import { worker as replayBrowserWorker } from "./replays.worker.interface";
+import { createReplayWorker } from "./replays.worker.interface";
 
 export default function installReplaysIpc() {
   const treeService = new FolderTreeService();
+  const replayBrowserWorker = createReplayWorker();
 
   ipc_initializeFolderTree.main!.handle(async ({ folders }) => {
     return treeService.init(folders);
@@ -20,18 +21,18 @@ export default function installReplaysIpc() {
   });
 
   ipc_loadReplayFolder.main!.handle(async ({ folderPath }) => {
-    const w = await replayBrowserWorker;
-    w.getProgressObservable().subscribe((progress) => {
+    const { worker } = await replayBrowserWorker;
+    worker.getProgressObservable().subscribe((progress) => {
       ipc_loadProgressUpdatedEvent.main!.trigger(progress).catch(console.warn);
     });
-    const result = await w.loadReplayFolder(folderPath);
+    const result = await worker.loadReplayFolder(folderPath);
     return result;
   });
 
   ipc_calculateGameStats.main!.handle(async ({ filePath }) => {
-    const w = await replayBrowserWorker;
-    const result = await w.calculateGameStats(filePath);
-    const fileResult = await w.loadSingleFile(filePath);
+    const { worker } = await replayBrowserWorker;
+    const result = await worker.calculateGameStats(filePath);
+    const fileResult = await worker.loadSingleFile(filePath);
     return { file: fileResult, stats: result };
   });
 }

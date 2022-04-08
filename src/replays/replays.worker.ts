@@ -15,7 +15,7 @@ import { loadFolder } from "./loadFolder";
 import type { FileLoadResult, FileResult, Progress } from "./types";
 
 export interface Methods {
-  destroyWorker: () => Promise<void>;
+  dispose: () => Promise<void>;
   loadSingleFile(filePath: string): Promise<FileResult>;
   loadReplayFolder(folder: string): Promise<FileLoadResult>;
   calculateGameStats(fullPath: string): Promise<StatsType | null>;
@@ -27,8 +27,9 @@ export type WorkerSpec = ModuleMethods & Methods;
 let progressSubject: Subject<Progress> = new Subject();
 
 const methods: WorkerSpec = {
-  async destroyWorker(): Promise<void> {
+  async dispose(): Promise<void> {
     // Clean up worker
+    progressSubject.complete();
   },
   getProgressObservable(): Observable<Progress> {
     return Observable.from(progressSubject);

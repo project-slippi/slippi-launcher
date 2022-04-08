@@ -11,7 +11,7 @@ import type { ConsoleMirrorStatusUpdate, MirrorConfig } from "./types";
 import { MirrorEvent } from "./types";
 
 export interface Methods {
-  destroyWorker: () => Promise<void>;
+  dispose: () => Promise<void>;
   connectToConsole(config: MirrorConfig): Promise<void>;
   disconnectFromConsole(ip: string): Promise<void>;
   startMirroring(id: string): Promise<void>;
@@ -52,8 +52,14 @@ mirrorManager.on(
 );
 
 const methods: WorkerSpec = {
-  async destroyWorker(): Promise<void> {
+  async dispose(): Promise<void> {
     // Clean up worker
+    logSubject.complete();
+    errorSubject.complete();
+    mirrorDetailsSubject.complete();
+    mirrorStatusSubject.complete();
+
+    mirrorManager.removeAllListeners();
   },
   async connectToConsole(config: MirrorConfig): Promise<void> {
     await mirrorManager.connect(config);

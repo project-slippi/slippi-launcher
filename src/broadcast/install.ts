@@ -1,32 +1,50 @@
+import { dolphinManager } from "@dolphin/manager";
 import { settingsManager } from "@settings/settingsManager";
 
-import { broadcastWorker } from "./broadcast.worker.interface";
+import type { BroadcastWorker } from "./broadcast.worker.interface";
+import { createBroadcastWorker } from "./broadcast.worker.interface";
 import { ipc_refreshBroadcastList, ipc_startBroadcast, ipc_stopBroadcast, ipc_watchBroadcast } from "./ipc";
-import { spectateWorker } from "./spectate.worker.interface";
+import type { SpectateWorker } from "./spectate.worker.interface";
+import { createSpectateWorker } from "./spectate.worker.interface";
 
 export default function installBroadcastIpc() {
+  let spectateWorker: SpectateWorker | null = null;
+  let broadcastWorker: BroadcastWorker | null = null;
+
   ipc_refreshBroadcastList.main!.handle(async ({ authToken }) => {
-    const sWorker = await spectateWorker;
-    await sWorker.refreshBroadcastList(authToken);
+    if (!spectateWorker) {
+      spectateWorker = await createSpectateWorker(dolphinManager);
+    }
+    await spectateWorker.worker.refreshBroadcastList(authToken);
     return { success: true };
   });
 
   ipc_watchBroadcast.main!.handle(async ({ broadcasterId }) => {
-    const sWorker = await spectateWorker;
+    if (!spectateWorker) {
+      throw new Error("Could not watch broadcast. Try refreshing the broadcast list and try again.");
+    }
     const folderPath = settingsManager.get().settings.spectateSlpPath;
-    await sWorker.startSpectate(broadcasterId, folderPath);
+    await spectateWorker.worker.startSpectate(broadcasterId, folderPath);
     return { success: true };
   });
 
   ipc_startBroadcast.main!.handle(async (config) => {
-    const bWorker = await broadcastWorker;
-    await bWorker.startBroadcast(config);
+    if (!broadcastWorker) {
+      broadcastWorker = await createBroadcastWorker();
+    }
+
+    await broadcastWorker.worker.startBroadcast(config);
     return { success: true };
   });
 
   ipc_stopBroadcast.main!.handle(async () => {
-    const bWorker = await broadcastWorker;
-    await bWorker.stopBroadcast();
+    if (!broadcastWorker) {
+      throw new Error("Error stopping broadcast. Was the broadcast started to begin with?");
+    }
+
+    await broadcastWorker.worker.stopBroadcast();
+    await broadcastWorker.terminate();
+
     return { success: true };
   });
 }
