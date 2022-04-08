@@ -1,4 +1,5 @@
-import { addGamePathToInis } from "@dolphin/util";
+import { DolphinLaunchType } from "@dolphin/types";
+import { addGamePathToIni } from "@dolphin/util";
 import { autoUpdater } from "electron-updater";
 import path from "path";
 
@@ -28,7 +29,10 @@ export default function installSettingsIpc() {
     await settingsManager.setIsoPath(isoPath);
     if (isoPath) {
       const gameDir = path.dirname(isoPath);
-      await addGamePathToInis(gameDir);
+      await Promise.all([
+        addGamePathToIni(DolphinLaunchType.NETPLAY, gameDir),
+        addGamePathToIni(DolphinLaunchType.PLAYBACK, gameDir),
+      ]);
     }
     return { success: true };
   });
