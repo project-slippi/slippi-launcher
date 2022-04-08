@@ -15,7 +15,7 @@ const log = electronLog.scope("broadcast.worker");
 
 export type BroadcastWorker = RegisteredWorker<BroadcastWorkerSpec>;
 
-export const createBroadcastWorker = async (): Promise<BroadcastWorker> => {
+export async function createBroadcastWorker(): Promise<BroadcastWorker> {
   log.debug("broadcast: Spawning worker");
 
   const worker = await registerWorker<BroadcastWorkerSpec>(new Worker("./broadcast.worker"));
@@ -39,4 +39,4 @@ export const createBroadcastWorker = async (): Promise<BroadcastWorker> => {
     ipc_broadcastReconnectEvent.main!.trigger({ config }).catch(log.error);
   });
   return worker;
-};
+}

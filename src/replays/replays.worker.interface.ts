@@ -9,11 +9,11 @@ export type ReplayWorker = RegisteredWorker<WorkerSpec>;
 
 const log = electronLog.scope("replays.worker");
 
-export const createReplayWorker = async () => {
+export async function createReplayWorker(): Promise<ReplayWorker> {
   log.debug("replays: Spawning worker");
 
   const replayWorker = await registerWorker<WorkerSpec>(new Worker("./replays.worker"));
   log.debug("replays: Spawning worker: Done");
 
   return replayWorker;
-};
+}

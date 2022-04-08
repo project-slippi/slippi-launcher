@@ -12,7 +12,7 @@ const log = electronLog.scope("mirror.worker");
 
 export type MirrorWorker = RegisteredWorker<MirrorWorkerSpec>;
 
-export const createMirrorWorker = async (dolphinManager: DolphinManager): Promise<MirrorWorker> => {
+export async function createMirrorWorker(dolphinManager: DolphinManager): Promise<MirrorWorker> {
   log.debug("mirror: Spawning worker");
 
   const worker = await registerWorker<MirrorWorkerSpec>(new Worker("./mirror.worker"));
@@ -51,4 +51,4 @@ export const createMirrorWorker = async (dolphinManager: DolphinManager): Promis
   });
 
   return worker;
-};
+}

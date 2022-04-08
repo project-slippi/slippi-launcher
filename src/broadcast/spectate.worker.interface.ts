@@ -13,7 +13,7 @@ const log = electronLog.scope("spectate.worker");
 
 export type SpectateWorker = RegisteredWorker<SpectateWorkerSpec>;
 
-export const createSpectateWorker = async (dolphinManager: DolphinManager): Promise<SpectateWorker> => {
+export async function createSpectateWorker(dolphinManager: DolphinManager): Promise<SpectateWorker> {
   log.debug("spectate: Spawning worker");
 
   const worker = await registerWorker<SpectateWorkerSpec>(new Worker("./spectate.worker"));
@@ -46,4 +46,4 @@ export const createSpectateWorker = async (dolphinManager: DolphinManager): Prom
   });
 
   return worker;
-};
+}
