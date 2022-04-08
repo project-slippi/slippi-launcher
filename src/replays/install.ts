@@ -21,7 +21,7 @@ export default function installReplaysIpc() {
   });
 
   ipc_loadReplayFolder.main!.handle(async ({ folderPath }) => {
-    const { worker } = await replayBrowserWorker;
+    const worker = await replayBrowserWorker;
     worker.getProgressObservable().subscribe((progress) => {
       ipc_loadProgressUpdatedEvent.main!.trigger(progress).catch(console.warn);
     });
@@ -30,7 +30,7 @@ export default function installReplaysIpc() {
   });
 
   ipc_calculateGameStats.main!.handle(async ({ filePath }) => {
-    const { worker } = await replayBrowserWorker;
+    const worker = await replayBrowserWorker;
     const result = await worker.calculateGameStats(filePath);
     const fileResult = await worker.loadSingleFile(filePath);
     return { file: fileResult, stats: result };

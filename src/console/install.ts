@@ -20,7 +20,7 @@ export default function installConsoleIpc() {
       mirrorWorker = await createMirrorWorker(dolphinManager);
     }
 
-    await mirrorWorker.worker.connectToConsole(config);
+    await mirrorWorker.connectToConsole(config);
     return { success: true };
   });
 
@@ -29,11 +29,7 @@ export default function installConsoleIpc() {
       throw new Error("Failed to disconnect from console. Was the console connected to begin with?");
     }
 
-    await mirrorWorker.worker.disconnectFromConsole(ip);
-
-    // Clean up the worker
-    await mirrorWorker.terminate();
-    mirrorWorker = null;
+    await mirrorWorker.disconnectFromConsole(ip);
 
     return { success: true };
   });
@@ -43,7 +39,7 @@ export default function installConsoleIpc() {
       throw new Error("Failed to start mirroring. Is the console connected?");
     }
 
-    await mirrorWorker.worker.startMirroring(ip);
+    await mirrorWorker.startMirroring(ip);
     return { success: true };
   });
 

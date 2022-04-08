@@ -16,10 +16,9 @@ export type SpectateWorker = RegisteredWorker<SpectateWorkerSpec>;
 export const createSpectateWorker = async (dolphinManager: DolphinManager): Promise<SpectateWorker> => {
   log.debug("spectate: Spawning worker");
 
-  const spectateWorker = await registerWorker<SpectateWorkerSpec>(new Worker("./spectate.worker"));
+  const worker = await registerWorker<SpectateWorkerSpec>(new Worker("./spectate.worker"));
   log.debug("spectate: Spawning worker: Done");
 
-  const { worker } = spectateWorker;
   worker.getBroadcastListObservable().subscribe((data: BroadcasterItem[]) => {
     ipc_broadcastListUpdatedEvent.main!.trigger({ items: data }).catch(log.error);
   });
@@ -46,5 +45,5 @@ export const createSpectateWorker = async (dolphinManager: DolphinManager): Prom
     worker.dolphinClosed(playbackId).catch(log.error);
   });
 
-  return spectateWorker;
+  return worker;
 };

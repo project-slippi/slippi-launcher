@@ -15,10 +15,9 @@ export type MirrorWorker = RegisteredWorker<MirrorWorkerSpec>;
 export const createMirrorWorker = async (dolphinManager: DolphinManager): Promise<MirrorWorker> => {
   log.debug("mirror: Spawning worker");
 
-  const customWorker = await registerWorker<MirrorWorkerSpec>(new Worker("./mirror.worker"));
+  const worker = await registerWorker<MirrorWorkerSpec>(new Worker("./mirror.worker"));
   log.debug("mirror: Spawning worker: Done");
 
-  const { worker } = customWorker;
   worker.getLogObservable().subscribe((logMessage) => {
     log.info(logMessage);
   });
@@ -51,5 +50,5 @@ export const createMirrorWorker = async (dolphinManager: DolphinManager): Promis
     worker.dolphinClosed(playbackId).catch(log.error);
   });
 
-  return customWorker;
+  return worker;
 };

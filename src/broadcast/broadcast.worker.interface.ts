@@ -18,10 +18,9 @@ export type BroadcastWorker = RegisteredWorker<BroadcastWorkerSpec>;
 export const createBroadcastWorker = async (): Promise<BroadcastWorker> => {
   log.debug("broadcast: Spawning worker");
 
-  const broadcastWorker = await registerWorker<BroadcastWorkerSpec>(new Worker("./broadcast.worker"));
+  const worker = await registerWorker<BroadcastWorkerSpec>(new Worker("./broadcast.worker"));
   log.debug("broadcast: Spawning worker: Done");
 
-  const { worker } = broadcastWorker;
   worker.getDolphinStatusObservable().subscribe(({ status }) => {
     ipc_dolphinStatusChangedEvent.main!.trigger({ status }).catch(log.error);
   });
@@ -39,5 +38,5 @@ export const createBroadcastWorker = async (): Promise<BroadcastWorker> => {
   worker.getReconnectObservable().subscribe(({ config }) => {
     ipc_broadcastReconnectEvent.main!.trigger({ config }).catch(log.error);
   });
-  return broadcastWorker;
+  return worker;
 };

@@ -6,10 +6,7 @@ import type { ModuleMethods } from "threads/dist/types/master";
 
 type WorkerMethods = { dispose: () => Promise<void> } & ModuleMethods;
 
-export type RegisteredWorker<T> = {
-  worker: Thread & T;
-  terminate: () => Promise<void>;
-};
+export type RegisteredWorker<T> = Thread & T;
 
 /**
  * Spawns and registers a worker to automatically terminate once the app is quit.
@@ -27,10 +24,7 @@ export async function registerWorker<T extends WorkerMethods>(worker: Worker): P
 
     app.on("quit", terminateWorker);
 
-    return {
-      worker: registeredWorker,
-      terminate: terminateWorker,
-    };
+    return registeredWorker;
   } catch (err) {
     log.error(err);
     throw err;

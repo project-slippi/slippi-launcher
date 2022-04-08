@@ -15,7 +15,7 @@ export default function installBroadcastIpc() {
     if (!spectateWorker) {
       spectateWorker = await createSpectateWorker(dolphinManager);
     }
-    await spectateWorker.worker.refreshBroadcastList(authToken);
+    await spectateWorker.refreshBroadcastList(authToken);
     return { success: true };
   });
 
@@ -24,7 +24,7 @@ export default function installBroadcastIpc() {
       throw new Error("Could not watch broadcast. Try refreshing the broadcast list and try again.");
     }
     const folderPath = settingsManager.get().settings.spectateSlpPath;
-    await spectateWorker.worker.startSpectate(broadcasterId, folderPath);
+    await spectateWorker.startSpectate(broadcasterId, folderPath);
     return { success: true };
   });
 
@@ -33,7 +33,7 @@ export default function installBroadcastIpc() {
       broadcastWorker = await createBroadcastWorker();
     }
 
-    await broadcastWorker.worker.startBroadcast(config);
+    await broadcastWorker.startBroadcast(config);
     return { success: true };
   });
 
@@ -42,8 +42,7 @@ export default function installBroadcastIpc() {
       throw new Error("Error stopping broadcast. Was the broadcast started to begin with?");
     }
 
-    await broadcastWorker.worker.stopBroadcast();
-    await broadcastWorker.terminate();
+    await broadcastWorker.stopBroadcast();
 
     return { success: true };
   });
