@@ -8,8 +8,8 @@ import type { SpectateWorker } from "./spectate.worker.interface";
 import { createSpectateWorker } from "./spectate.worker.interface";
 
 export default function installBroadcastIpc() {
-  let spectateWorker: SpectateWorker | null = null;
-  let broadcastWorker: BroadcastWorker | null = null;
+  let spectateWorker: SpectateWorker | undefined;
+  let broadcastWorker: BroadcastWorker | undefined;
 
   ipc_refreshBroadcastList.main!.handle(async ({ authToken }) => {
     if (!spectateWorker) {

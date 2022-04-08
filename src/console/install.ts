@@ -12,7 +12,7 @@ import type { MirrorWorker } from "./mirror.worker.interface";
 import { createMirrorWorker } from "./mirror.worker.interface";
 
 export default function installConsoleIpc() {
-  let mirrorWorker: MirrorWorker | null;
+  let mirrorWorker: MirrorWorker | undefined;
 
   ipc_connectToConsoleMirror.main!.handle(async ({ config }) => {
     if (!mirrorWorker) {
