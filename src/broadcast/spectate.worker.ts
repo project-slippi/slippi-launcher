@@ -10,7 +10,7 @@ import { SpectateManager } from "./spectateManager";
 import type { BroadcasterItem } from "./types";
 import { SpectateEvent } from "./types";
 
-export interface Methods {
+interface Methods {
   dispose: () => Promise<void>;
   startSpectate(broadcastId: string, targetPath: string): Promise<void>;
   stopSpectate(broadcastId: string): Promise<void>;

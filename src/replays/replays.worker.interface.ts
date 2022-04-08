@@ -1,45 +1,19 @@
-import { app } from "electron";
 import electronLog from "electron-log";
-import { spawn, Thread, Worker } from "threads";
+import { Worker } from "threads";
+import type { RegisteredWorker } from "utils/registerWorker";
+import { registerWorker } from "utils/registerWorker";
 
-import type { Methods as WorkerMethods, WorkerSpec } from "./replays.worker";
+import type { WorkerSpec } from "./replays.worker";
 
-const log = electronLog.scope("replays/workerInterface");
+export type ReplayWorker = RegisteredWorker<WorkerSpec>;
 
-export type ReplayWorker = {
-  worker: Thread & WorkerMethods;
-  terminate: () => Promise<void>;
-};
+const log = electronLog.scope("replays.worker");
 
-export const createReplayWorker = async (): Promise<ReplayWorker> => {
-  log.debug("replayBrowser: Spawning worker");
+export const createReplayWorker = async () => {
+  log.debug("replays: Spawning worker");
 
-  try {
-    const worker = await spawn<WorkerSpec>(new Worker("./replays.worker"), { timeout: 30000 });
-    log.debug("replayBrowser: Spawning worker: Done");
+  const replayWorker = await registerWorker<WorkerSpec>(new Worker("./replays.worker"));
+  log.debug("replays: Spawning worker: Done");
 
-    const terminateWorker = async () => {
-      log.debug("replayBrowser: Terminating worker");
-      try {
-        await worker.dispose();
-      } finally {
-        await Thread.terminate(worker);
-      }
-    };
-
-    app.on("quit", terminateWorker);
-
-    // Thread.events(worker).subscribe((evt) => {
-    //   log.debug("replayBrowser: Worker event:", evt);
-    //   // TODO: Respawn on worker exit?
-    // });
-
-    return {
-      worker,
-      terminate: terminateWorker,
-    };
-  } catch (err) {
-    log.error(err);
-    throw err;
-  }
+  return replayWorker;
 };

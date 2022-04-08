@@ -10,7 +10,7 @@ import { MirrorManager } from "./mirrorManager";
 import type { ConsoleMirrorStatusUpdate, MirrorConfig } from "./types";
 import { MirrorEvent } from "./types";
 
-export interface Methods {
+interface Methods {
   dispose: () => Promise<void>;
   connectToConsole(config: MirrorConfig): Promise<void>;
   disconnectFromConsole(ip: string): Promise<void>;

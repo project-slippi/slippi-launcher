@@ -11,7 +11,7 @@ import { BroadcastManager } from "./broadcastManager";
 import type { StartBroadcastConfig } from "./types";
 import { BroadcastEvent } from "./types";
 
-export interface Methods {
+interface Methods {
   dispose: () => Promise<void>;
   startBroadcast(config: StartBroadcastConfig): Promise<void>;
   stopBroadcast(): Promise<void>;

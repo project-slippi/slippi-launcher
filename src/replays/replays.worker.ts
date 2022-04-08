@@ -14,7 +14,7 @@ import { loadFile } from "./loadFile";
 import { loadFolder } from "./loadFolder";
 import type { FileLoadResult, FileResult, Progress } from "./types";
 
-export interface Methods {
+interface Methods {
   dispose: () => Promise<void>;
   loadSingleFile(filePath: string): Promise<FileResult>;
   loadReplayFolder(folder: string): Promise<FileLoadResult>;
