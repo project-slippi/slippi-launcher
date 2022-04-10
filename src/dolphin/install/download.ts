@@ -3,8 +3,8 @@ import { BrowserWindow } from "electron";
 import { download } from "electron-dl";
 import * as fs from "fs-extra";
 import path from "path";
+import { fileExists } from "utils/fileExists";
 
-import { fileExists } from "../../main/fileExists";
 import { getLatestRelease } from "../../main/github";
 
 async function getLatestDolphinAsset(type: DolphinLaunchType): Promise<any> {

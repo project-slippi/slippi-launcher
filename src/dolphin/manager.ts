@@ -6,7 +6,7 @@ import * as fs from "fs-extra";
 import path from "path";
 import { fileExists } from "utils/fileExists";
 
-import { DolphinInstallation } from "./installation/dolphinInstallation";
+import { DolphinInstallation } from "./install/installation";
 import { DolphinInstance, PlaybackDolphinInstance } from "./instance";
 import type { ReplayCommunication } from "./types";
 import { DolphinLaunchType } from "./types";
