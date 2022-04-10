@@ -26,7 +26,7 @@ export class IniFile {
 
   /** Differs from IniFile.cpp via:
    * Instead of editing keyOut and valueOut by reference, return them */
-  private parseLine(line: string): readonly [string, string] | readonly [null, null] {
+  private static parseLine(line: string): readonly [string, string] | readonly [null, null] {
     let retValueOut = "";
     let keyOut = "";
 
@@ -75,7 +75,7 @@ export class IniFile {
     return true;
   }
 
-  public exists(sectionName: string): boolean {
+  public hasSection(sectionName: string): boolean {
     return this.getSection(sectionName) != undefined;
   }
 
@@ -152,7 +152,7 @@ export class IniFile {
         }
       } else {
         if (currentSection !== undefined) {
-          const [key, value] = iniFile.parseLine(line);
+          const [key, value] = IniFile.parseLine(line);
 
           // Lines starting with '$', '*' or '+' are kept verbatim.
           // Kind of a hack, but the support for raw lines inside an
