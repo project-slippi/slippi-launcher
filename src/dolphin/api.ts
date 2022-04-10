@@ -6,7 +6,6 @@ import {
   ipc_clearDolphinCache,
   ipc_configureDolphin,
   ipc_dolphinClosedEvent,
-  ipc_dolphinDownloadFinishedEvent,
   ipc_dolphinDownloadLogReceivedEvent,
   ipc_downloadDolphin,
   ipc_importDolphinSettings,
@@ -53,12 +52,6 @@ export default {
   },
   async importDolphinSettings(options: { toImportDolphinPath: string; dolphinType: DolphinLaunchType }): Promise<void> {
     await ipc_importDolphinSettings.renderer!.trigger(options);
-  },
-  onDolphinDownloadFinished(handle: (error: string | null) => void) {
-    const { destroy } = ipc_dolphinDownloadFinishedEvent.renderer!.handle(async ({ error }) => {
-      handle(error);
-    });
-    return destroy;
   },
   onDolphinDownloadLogMessage(handle: (message: string) => void) {
     const { destroy } = ipc_dolphinDownloadLogReceivedEvent.renderer!.handle(async ({ message }) => {
