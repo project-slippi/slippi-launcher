@@ -1,3 +1,4 @@
+import { DolphinLaunchType } from "@dolphin/types";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
@@ -101,7 +102,12 @@ export const useAppInitialization = () => {
     );
 
     // Download Dolphin if necessary
-    promises.push(window.electron.dolphin.downloadDolphin());
+    promises.push(
+      (async () => {
+        await window.electron.dolphin.downloadDolphin(DolphinLaunchType.NETPLAY);
+        await window.electron.dolphin.downloadDolphin(DolphinLaunchType.PLAYBACK);
+      })(),
+    );
 
     promises.push(
       window.electron.dolphin

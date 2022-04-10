@@ -19,8 +19,8 @@ import {
 import type { DolphinLaunchType, PlayKey, ReplayQueueItem } from "./types";
 
 export default {
-  async downloadDolphin() {
-    await ipc_downloadDolphin.renderer!.trigger({});
+  async downloadDolphin(dolphinType: DolphinLaunchType) {
+    await ipc_downloadDolphin.renderer!.trigger({ dolphinType });
   },
   async configureDolphin(dolphinType: DolphinLaunchType) {
     await ipc_configureDolphin.renderer!.trigger({ dolphinType });
