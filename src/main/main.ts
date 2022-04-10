@@ -26,8 +26,8 @@ import url from "url";
 
 import { download } from "./download";
 import { fileExists } from "./fileExists";
+import { installModules } from "./installModules";
 import { MenuBuilder } from "./menu";
-import { setupIpc } from "./setupIpc";
 import { resolveHtmlPath } from "./util";
 
 const isMac = process.platform === "darwin";
@@ -42,7 +42,7 @@ if (!lockObtained) {
   app.quit();
 }
 
-const { dolphinManager } = setupIpc();
+const { dolphinManager } = installModules();
 
 class AppUpdater {
   constructor() {

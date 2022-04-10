@@ -7,7 +7,7 @@ import { ipc_refreshBroadcastList, ipc_startBroadcast, ipc_stopBroadcast, ipc_wa
 import type { SpectateWorker } from "./spectate.worker.interface";
 import { createSpectateWorker } from "./spectate.worker.interface";
 
-export default function installBroadcastIpc({ dolphinManager }: { dolphinManager: DolphinManager }) {
+export default function setupBroadcastIpc({ dolphinManager }: { dolphinManager: DolphinManager }) {
   let spectateWorker: SpectateWorker | undefined;
   let broadcastWorker: BroadcastWorker | undefined;
 

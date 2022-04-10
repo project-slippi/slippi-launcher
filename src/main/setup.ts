@@ -39,7 +39,7 @@ autoUpdater.logger = log;
 
 const LINES_TO_READ = 200;
 
-export default function installMainIpc() {
+export default function setupMainIpc() {
   ipcMain.on("onDragStart", (event, files: string[]) => {
     // The Electron.Item type declaration is missing the files attribute
     // so we'll just cast it as unknown for now.

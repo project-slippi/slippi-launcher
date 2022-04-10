@@ -11,7 +11,7 @@ import {
 import type { MirrorWorker } from "./mirror.worker.interface";
 import { createMirrorWorker } from "./mirror.worker.interface";
 
-export default function installConsoleIpc({ dolphinManager }: { dolphinManager: DolphinManager }) {
+export default function setupConsoleIpc({ dolphinManager }: { dolphinManager: DolphinManager }) {
   let mirrorWorker: MirrorWorker | undefined;
 
   ipc_connectToConsoleMirror.main!.handle(async ({ config }) => {

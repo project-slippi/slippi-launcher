@@ -8,7 +8,7 @@ import {
 } from "./ipc";
 import { createReplayWorker } from "./replays.worker.interface";
 
-export default function installReplaysIpc() {
+export default function setupReplaysIpc() {
   const treeService = new FolderTreeService();
   const replayBrowserWorker = createReplayWorker();
 

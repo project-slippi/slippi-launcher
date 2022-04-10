@@ -27,7 +27,7 @@ import { findDolphinExecutable, updateBootToCssCode } from "./util";
 const isMac = process.platform === "darwin";
 const isLinux = process.platform === "linux";
 
-export default function installDolphinIpc(): { dolphinManager: DolphinManager } {
+export default function setupDolphinIpc(): { dolphinManager: DolphinManager } {
   const dolphinManager = new DolphinManager();
 
   ipc_downloadDolphin.main!.handle(async () => {

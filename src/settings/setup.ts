@@ -19,7 +19,7 @@ import {
 } from "./ipc";
 import { settingsManager } from "./settingsManager";
 
-export default function installSettingsIpc() {
+export default function setupSettingsIpc() {
   // getAppSettings.main!.handle(async () => {
   //   const settings = settingsManager.get();
   //   return settings;
