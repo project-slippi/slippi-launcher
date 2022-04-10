@@ -10,8 +10,8 @@ import { SpectateManager } from "./spectateManager";
 import type { BroadcasterItem } from "./types";
 import { SpectateEvent } from "./types";
 
-export interface Methods {
-  destroyWorker: () => Promise<void>;
+interface Methods {
+  dispose: () => Promise<void>;
   startSpectate(broadcastId: string, targetPath: string): Promise<void>;
   stopSpectate(broadcastId: string): Promise<void>;
   dolphinClosed(playbackId: string): Promise<void>;
@@ -55,8 +55,15 @@ spectateManager.on(SpectateEvent.RECONNECT, async () => {
 });
 
 const methods: WorkerSpec = {
-  async destroyWorker(): Promise<void> {
+  async dispose(): Promise<void> {
     // Clean up worker
+    logSubject.complete();
+    errorSubject.complete();
+    broadcastListSubject.complete();
+    spectateDetailsSubject.complete();
+    reconnectSubject.complete();
+
+    spectateManager.removeAllListeners();
   },
   async startSpectate(broadcastId: string, targetPath: string): Promise<void> {
     await spectateManager.watchBroadcast(broadcastId, targetPath);

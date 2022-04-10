@@ -1,69 +1,49 @@
-import { dolphinManager } from "@dolphin/manager";
+import type { DolphinManager } from "@dolphin/manager";
 import type { ReplayCommunication } from "@dolphin/types";
-import { app } from "electron";
 import electronLog from "electron-log";
-import { spawn, Thread, Worker } from "threads";
+import { Worker } from "threads";
+import type { RegisteredWorker } from "utils/registerWorker";
+import { registerWorker } from "utils/registerWorker";
 
 import { ipc_broadcastErrorOccurredEvent, ipc_broadcastListUpdatedEvent, ipc_spectateReconnectEvent } from "./ipc";
-import type { Methods as SpectateWorkerMethods, WorkerSpec as SpectateWorkerSpec } from "./spectate.worker";
+import type { WorkerSpec as SpectateWorkerSpec } from "./spectate.worker";
 import type { BroadcasterItem } from "./types";
 
-const log = electronLog.scope("broadcast/spectate.worker.interface");
-const spectateLog = electronLog.scope("spectateManager");
+const log = electronLog.scope("spectate.worker");
 
-export const spectateWorker: Promise<Thread & SpectateWorkerMethods> = new Promise((resolve, reject) => {
+export type SpectateWorker = RegisteredWorker<SpectateWorkerSpec>;
+
+export async function createSpectateWorker(dolphinManager: DolphinManager): Promise<SpectateWorker> {
   log.debug("spectate: Spawning worker");
 
-  spawn<SpectateWorkerSpec>(new Worker("./spectate.worker"), { timeout: 30000 })
-    .then((worker) => {
-      worker.getBroadcastListObservable().subscribe((data: BroadcasterItem[]) => {
-        ipc_broadcastListUpdatedEvent.main!.trigger({ items: data }).catch(spectateLog.error);
-      });
-      worker.getLogObservable().subscribe((logMessage) => {
-        spectateLog.info(logMessage);
-      });
-      worker.getErrorObservable().subscribe((err) => {
-        spectateLog.error(err);
-        const errorMessage = err instanceof Error ? err.message : err;
-        ipc_broadcastErrorOccurredEvent.main!.trigger({ errorMessage }).catch(spectateLog.error);
-      });
-      worker.getSpectateDetailsObservable().subscribe(({ playbackId, filePath }) => {
-        const replayComm: ReplayCommunication = {
-          mode: "mirror",
-          replay: filePath,
-        };
-        dolphinManager.launchPlaybackDolphin(playbackId, replayComm).catch(spectateLog.error);
-      });
-      worker.getReconnectObservable().subscribe(() => {
-        ipc_spectateReconnectEvent.main!.trigger({}).catch(spectateLog.error);
-      });
+  const worker = await registerWorker<SpectateWorkerSpec>(new Worker("./spectate.worker"));
+  log.debug("spectate: Spawning worker: Done");
 
-      dolphinManager.on("playback-dolphin-closed", (playbackId: string) => {
-        worker.dolphinClosed(playbackId).catch(spectateLog.error);
-      });
+  worker.getBroadcastListObservable().subscribe((data: BroadcasterItem[]) => {
+    ipc_broadcastListUpdatedEvent.main!.trigger({ items: data }).catch(log.error);
+  });
+  worker.getLogObservable().subscribe((logMessage) => {
+    log.info(logMessage);
+  });
+  worker.getErrorObservable().subscribe((err) => {
+    log.error(err);
+    const errorMessage = err instanceof Error ? err.message : err;
+    ipc_broadcastErrorOccurredEvent.main!.trigger({ errorMessage }).catch(log.error);
+  });
+  worker.getSpectateDetailsObservable().subscribe(({ playbackId, filePath }) => {
+    const replayComm: ReplayCommunication = {
+      mode: "mirror",
+      replay: filePath,
+    };
+    dolphinManager.launchPlaybackDolphin(playbackId, replayComm).catch(log.error);
+  });
+  worker.getReconnectObservable().subscribe(() => {
+    ipc_spectateReconnectEvent.main!.trigger({}).catch(log.error);
+  });
 
-      log.debug("spectate: Spawning worker: Done");
+  dolphinManager.on("playback-dolphin-closed", (playbackId: string) => {
+    worker.dolphinClosed(playbackId).catch(log.error);
+  });
 
-      async function terminateWorker() {
-        log.debug("spectate: Terminating worker");
-        try {
-          await worker.destroyWorker();
-        } finally {
-          await Thread.terminate(worker);
-        }
-      }
-
-      app.on("quit", terminateWorker);
-
-      // Thread.events(worker).subscribe((evt) => {
-      //   log.debug("replayBrowser: Worker event:", evt);
-      //   // TODO: Respawn on worker exit?
-      // });
-
-      resolve(worker);
-    })
-    .catch((err) => {
-      log.error(err);
-      reject(err);
-    });
-});
+  return worker;
+}
