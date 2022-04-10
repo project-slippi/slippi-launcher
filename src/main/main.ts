@@ -11,7 +11,6 @@
  */
 import { colors } from "@common/colors";
 import { delay } from "@common/delay";
-import { dolphinManager } from "@dolphin/manager";
 import { ipc_statsPageRequestedEvent } from "@replays/ipc";
 import { ipc_openSettingsModalEvent } from "@settings/ipc";
 import { settingsManager } from "@settings/settingsManager";
@@ -43,7 +42,7 @@ if (!lockObtained) {
   app.quit();
 }
 
-setupIpc();
+const { dolphinManager } = setupIpc();
 
 class AppUpdater {
   constructor() {

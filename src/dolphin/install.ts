@@ -19,7 +19,7 @@ import {
   ipc_storePlayKeyFile,
   ipc_viewSlpReplay,
 } from "./ipc";
-import { dolphinManager } from "./manager";
+import { DolphinManager } from "./manager";
 import { deletePlayKeyFile, findPlayKey, writePlayKeyFile } from "./playkey";
 import { DolphinLaunchType } from "./types";
 import { findDolphinExecutable, updateBootToCssCode } from "./util";
@@ -27,7 +27,9 @@ import { findDolphinExecutable, updateBootToCssCode } from "./util";
 const isMac = process.platform === "darwin";
 const isLinux = process.platform === "linux";
 
-export default function installDolphinIpc() {
+export default function installDolphinIpc(): { dolphinManager: DolphinManager } {
+  const dolphinManager = new DolphinManager();
+
   ipc_downloadDolphin.main!.handle(async () => {
     await assertDolphinInstallations();
     return { success: true };
@@ -132,4 +134,6 @@ export default function installDolphinIpc() {
   dolphinManager.on("netplay-dolphin-closed", async (code = 0) => {
     void ipc_dolphinClosedEvent.main!.trigger({ dolphinType: DolphinLaunchType.NETPLAY, exitCode: code });
   });
+
+  return { dolphinManager };
 }

@@ -170,5 +170,3 @@ export class DolphinManager extends EventEmitter {
     await fs.copy(oldUserFolder, newUserFolder, { overwrite: true });
   }
 }
-
-export const dolphinManager = new DolphinManager();
