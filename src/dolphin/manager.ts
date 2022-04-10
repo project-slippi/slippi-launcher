@@ -3,8 +3,8 @@ import { settingsManager } from "@settings/settingsManager";
 import electronLog from "electron-log";
 import { EventEmitter } from "events";
 import * as fs from "fs-extra";
-import { fileExists } from "main/fileExists";
 import path from "path";
+import { fileExists } from "utils/fileExists";
 
 import { fetchLatestDolphin } from "./checkVersion";
 import { downloadAndInstallDolphin } from "./downloadDolphin";

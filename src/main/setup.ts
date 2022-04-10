@@ -8,8 +8,8 @@ import * as fs from "fs-extra";
 import os from "os";
 import osName from "os-name";
 import path from "path";
+import { fileExists } from "utils/fileExists";
 
-import { fileExists } from "./fileExists";
 import { getLatestRelease } from "./github";
 import {
   ipc_checkForUpdate,

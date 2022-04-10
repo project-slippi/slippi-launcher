@@ -6,8 +6,8 @@ import electronLog from "electron-log";
 import { EventEmitter } from "events";
 import * as fs from "fs-extra";
 import path from "path";
+import { fileExists } from "utils/fileExists";
 
-import { fileExists } from "../main/fileExists";
 import type { ReplayCommunication } from "./types";
 
 const log = electronLog.scope("dolphin/instance");

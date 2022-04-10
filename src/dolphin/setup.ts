@@ -2,8 +2,8 @@ import { app } from "electron";
 import * as fs from "fs-extra";
 import { isEqual } from "lodash";
 import path from "path";
+import { fileExists } from "utils/fileExists";
 
-import { fileExists } from "../main/fileExists";
 import { assertDolphinInstallations } from "./downloadDolphin";
 import {
   ipc_checkDesktopAppDolphin,

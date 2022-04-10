@@ -3,8 +3,8 @@ import { DolphinLaunchType } from "@dolphin/types";
 import * as fs from "fs-extra";
 import os from "os";
 import path from "path";
+import { fileExists } from "utils/fileExists";
 
-import { fileExists } from "../main/fileExists";
 import { findDolphinExecutable } from "./util";
 
 export async function writePlayKeyFile(playKey: PlayKey): Promise<void> {

@@ -7,8 +7,8 @@ import * as fs from "fs-extra";
 import os from "os";
 import path from "path";
 import { lt } from "semver";
+import { fileExists } from "utils/fileExists";
 
-import { fileExists } from "../main/fileExists";
 import { fetchLatestDolphin } from "./checkVersion";
 import { ipc_dolphinDownloadFinishedEvent, ipc_dolphinDownloadLogReceivedEvent } from "./ipc";
 import type { DolphinVersionResponse } from "./types";

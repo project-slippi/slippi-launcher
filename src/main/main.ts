@@ -23,9 +23,9 @@ import get from "lodash/get";
 import last from "lodash/last";
 import path from "path";
 import url from "url";
+import { fileExists } from "utils/fileExists";
 
 import { download } from "./download";
-import { fileExists } from "./fileExists";
 import { installModules } from "./installModules";
 import { MenuBuilder } from "./menu";
 import { resolveHtmlPath } from "./util";

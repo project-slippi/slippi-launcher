@@ -7,8 +7,7 @@ import electronLog from "electron-log";
 import fs from "fs";
 import { ensureFileSync } from "fs-extra";
 import readline from "readline";
-
-import { fileExists } from "../../main/fileExists";
+import { fileExists } from "utils/fileExists";
 
 const log = electronLog.scope("iniFile");
 
