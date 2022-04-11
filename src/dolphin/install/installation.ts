@@ -10,9 +10,6 @@ import type { DolphinVersionResponse } from "../types";
 import { DolphinLaunchType } from "../types";
 import { downloadLatestDolphin } from "./download";
 import { fetchLatestVersion } from "./fetchLatestVersion";
-import { installDolphinOnLinux } from "./linux";
-import { installDolphinOnMac } from "./macos";
-import { installDolphinOnWindows } from "./windows";
 
 const isLinux = process.platform === "linux";
 
@@ -194,17 +191,19 @@ export class DolphinInstallation {
 
     switch (process.platform) {
       case "win32": {
+        const { installDolphinOnWindows } = await import("./windows");
         await installDolphinOnWindows({ assetPath, destinationFolder: dolphinPath, log });
         break;
       }
       case "darwin": {
+        const { installDolphinOnMac } = await import("./macos");
         await installDolphinOnMac({ assetPath, destinationFolder: dolphinPath, log });
         break;
       }
       case "linux": {
-        const dolphinAppImagePath = await this.findDolphinExecutable();
+        const { installDolphinOnLinux } = await import("./linux");
         await installDolphinOnLinux({
-          dolphinAppImagePath,
+          type: this.dolphinLaunchType,
           assetPath,
           destinationFolder: dolphinPath,
           log,
