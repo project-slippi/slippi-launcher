@@ -189,7 +189,8 @@ export class DolphinManager extends EventEmitter {
 
   public async copyDolphinConfig(launchType: DolphinLaunchType, fromPath: string) {
     const installation = this.getInstallation(launchType);
-    const newUserFolder = await installation.findUserFolder();
+    const newUserFolder = installation.userFolder;
+    await fs.ensureDir(newUserFolder);
     const oldUserFolder = path.join(fromPath, "User");
 
     if (!(await fs.pathExists(oldUserFolder))) {

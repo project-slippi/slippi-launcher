@@ -76,34 +76,6 @@ export class DolphinInstallation {
     return findDolphinExecutable(type, dolphinPath);
   }
 
-  public async findUserFolder(): Promise<string> {
-    let userPath = "";
-    const dolphinPath = this.installationFolder;
-    const type = this.dolphinLaunchType;
-    switch (process.platform) {
-      case "win32": {
-        userPath = path.join(dolphinPath, "User");
-        break;
-      }
-      case "darwin": {
-        userPath = path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "Resources", "User");
-        break;
-      }
-      case "linux": {
-        const configPath = path.join(os.homedir(), ".config");
-        const userFolderName = type === DolphinLaunchType.NETPLAY ? "SlippiOnline" : "SlippiPlayback";
-        userPath = path.join(configPath, userFolderName);
-        break;
-      }
-      default:
-        break;
-    }
-
-    await fs.ensureDir(userPath);
-
-    return userPath;
-  }
-
   public async clearCache() {
     const cacheFolder = path.join(this.userFolder, "Cache");
     await fs.remove(cacheFolder);
