@@ -3,7 +3,7 @@ import AdmZip from "adm-zip";
 export async function installDolphinOnWindows({
   assetPath,
   destinationFolder,
-  log = () => null,
+  log = console.log,
 }: {
   assetPath: string;
   destinationFolder: string;

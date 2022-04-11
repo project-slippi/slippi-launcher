@@ -6,7 +6,7 @@ import path from "path";
 export async function installDolphinOnMac({
   assetPath,
   destinationFolder,
-  log = () => null,
+  log = console.log,
 }: {
   assetPath: string;
   destinationFolder: string;
