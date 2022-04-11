@@ -62,6 +62,10 @@ These extensions will provide automatic formatting and warnings about code quali
 
 Contributions are welcome! The [issues section](https://github.com/project-slippi/slippi-launcher/issues) contains some good first ideas. When making a PR, ensure you are not PRing your `main` branch and always describe the feature and what testing you've done so far.
 
+## Acknowledgements
+
+This application uses [Electron React Boilerplate](https://github.com/electron-react-boilerplate/electron-react-boilerplate) as a base and includes most changes up to commit [10c22e5](https://github.com/electron-react-boilerplate/electron-react-boilerplate/commit/10c22e5).
+
 ## License
 
 Slippi Launcher is released as open source software under the [GPL v3](https://opensource.org/licenses/gpl-3.0.html) license. See the [LICENSE](./LICENSE) file in the project root for the full license text.
