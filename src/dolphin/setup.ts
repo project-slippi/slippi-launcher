@@ -50,7 +50,8 @@ export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: Do
 
   ipc_clearDolphinCache.main!.handle(async ({ dolphinType }) => {
     console.log("clearing dolphin cache...");
-    await dolphinManager.clearCache(dolphinType);
+    const installation = dolphinManager.getInstallation(dolphinType);
+    await installation.clearCache();
     return { success: true };
   });
 
@@ -104,8 +105,8 @@ export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: Do
       dolphinPath = path.dirname(dolphinPath);
     }
 
-    await dolphinManager.copyDolphinConfig(dolphinType, dolphinPath);
-
+    const installation = dolphinManager.getInstallation(dolphinType);
+    await installation.importConfig(dolphinPath);
     return { success: true };
   });
 

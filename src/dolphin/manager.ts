@@ -2,7 +2,6 @@ import { addGamePathToIni, updateDolphinSettings } from "@dolphin/util";
 import type { SettingsManager } from "@settings/settingsManager";
 import electronLog from "electron-log";
 import { EventEmitter } from "events";
-import * as fs from "fs-extra";
 import path from "path";
 import { fileExists } from "utils/fileExists";
 
@@ -155,11 +154,6 @@ export class DolphinManager extends EventEmitter {
     }
   }
 
-  public async clearCache(launchType: DolphinLaunchType) {
-    const installation = this.getInstallation(launchType);
-    await installation.clearCache();
-  }
-
   private async _getIsoPath(): Promise<string | undefined> {
     const meleeIsoPath = this.settingsManager.get().settings.isoPath ?? undefined;
     if (meleeIsoPath) {
@@ -169,19 +163,6 @@ export class DolphinManager extends EventEmitter {
       }
     }
     return meleeIsoPath;
-  }
-
-  public async copyDolphinConfig(launchType: DolphinLaunchType, fromPath: string) {
-    const installation = this.getInstallation(launchType);
-    const newUserFolder = installation.userFolder;
-    await fs.ensureDir(newUserFolder);
-    const oldUserFolder = path.join(fromPath, "User");
-
-    if (!(await fs.pathExists(oldUserFolder))) {
-      return;
-    }
-
-    await fs.copy(oldUserFolder, newUserFolder, { overwrite: true });
   }
 
   private async _updateDolphinSettings(launchType: DolphinLaunchType) {
