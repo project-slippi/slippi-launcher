@@ -13,7 +13,6 @@ import { colors } from "@common/colors";
 import { delay } from "@common/delay";
 import { ipc_statsPageRequestedEvent } from "@replays/ipc";
 import { ipc_openSettingsModalEvent } from "@settings/ipc";
-import { settingsManager } from "@settings/settingsManager";
 import type CrossProcessExports from "electron";
 import { app, BrowserWindow, shell } from "electron";
 import log from "electron-log";
@@ -42,7 +41,7 @@ if (!lockObtained) {
   app.quit();
 }
 
-const { dolphinManager } = installModules();
+const { dolphinManager, settingsManager } = installModules();
 
 class AppUpdater {
   constructor() {

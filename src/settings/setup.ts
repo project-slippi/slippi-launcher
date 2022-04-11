@@ -1,6 +1,7 @@
 import type { DolphinManager } from "@dolphin/manager";
 import { DolphinLaunchType } from "@dolphin/types";
 import { addGamePathToIni, updateDolphinSettings } from "@dolphin/util";
+import { ipcMain } from "electron";
 import { autoUpdater } from "electron-updater";
 import path from "path";
 
@@ -18,13 +19,24 @@ import {
   ipc_setSpectateSlpPath,
   ipc_setUseMonthlySubfolders,
 } from "./ipc";
-import { settingsManager } from "./settingsManager";
+import type { SettingsManager } from "./settingsManager";
 
-export default function setupSettingsIpc({ dolphinManager }: { dolphinManager: DolphinManager }) {
+export default function setupSettingsIpc({
+  settingsManager,
+  dolphinManager,
+}: {
+  settingsManager: SettingsManager;
+  dolphinManager: DolphinManager;
+}) {
   // getAppSettings.main!.handle(async () => {
   //   const settings = settingsManager.get();
   //   return settings;
   // });
+
+  ipcMain.on("getAppSettingsSync", (event) => {
+    const settings = settingsManager.get();
+    event.returnValue = settings;
+  });
 
   ipc_setIsoPath.main!.handle(async ({ isoPath }) => {
     await settingsManager.setIsoPath(isoPath);

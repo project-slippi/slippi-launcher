@@ -122,5 +122,3 @@ export class SettingsManager {
     await ipc_settingsUpdatedEvent.main!.trigger(this.get());
   }
 }
-
-export const settingsManager = new SettingsManager();

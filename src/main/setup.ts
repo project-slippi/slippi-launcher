@@ -1,5 +1,4 @@
 import { IsoValidity } from "@common/types";
-import { settingsManager } from "@settings/settingsManager";
 import { app, clipboard, dialog, ipcMain, nativeImage, shell } from "electron";
 import electronLog from "electron-log";
 import type { ProgressInfo, UpdateInfo } from "electron-updater";
@@ -58,11 +57,6 @@ export default function setupMainIpc() {
       log.error(err);
       event.returnValue = release;
     }
-  });
-
-  ipcMain.on("getAppSettingsSync", (event) => {
-    const settings = settingsManager.get();
-    event.returnValue = settings;
   });
 
   ipc_fetchNewsFeed.main!.handle(async () => {

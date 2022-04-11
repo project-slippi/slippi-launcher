@@ -19,7 +19,7 @@ import {
   ipc_storePlayKeyFile,
   ipc_viewSlpReplay,
 } from "./ipc";
-import { DolphinManager } from "./manager";
+import type { DolphinManager } from "./manager";
 import { deletePlayKeyFile, findPlayKey, writePlayKeyFile } from "./playkey";
 import { DolphinLaunchType } from "./types";
 import { findDolphinExecutable, updateBootToCssCode } from "./util";
@@ -27,15 +27,7 @@ import { findDolphinExecutable, updateBootToCssCode } from "./util";
 const isMac = process.platform === "darwin";
 const isLinux = process.platform === "linux";
 
-const NETPLAY_INSTALLATION_FOLDER = path.join(app.getPath("userData"), "netplay");
-const PLAYBACK_INSTALLATION_FOLDER = path.join(app.getPath("userData"), "playback");
-
-export default function setupDolphinIpc(): { dolphinManager: DolphinManager } {
-  const dolphinManager = new DolphinManager({
-    netplayDolphinPath: NETPLAY_INSTALLATION_FOLDER,
-    playbackDolphinPath: PLAYBACK_INSTALLATION_FOLDER,
-  });
-
+export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: DolphinManager }) {
   ipc_downloadDolphin.main!.handle(async ({ dolphinType }) => {
     const logDownloadInfo = (message: string) => {
       void ipc_dolphinDownloadLogReceivedEvent.main!.trigger({ message });

@@ -155,8 +155,7 @@ export class DolphinInstallation {
   private async _uninstallDolphin() {
     await fs.remove(this.installationFolder);
     if (isLinux) {
-      const userFolder = this.dolphinLaunchType === DolphinLaunchType.NETPLAY ? "SlippiOnline" : "SlippiPlayback";
-      await fs.remove(path.join(app.getPath("home"), ".config", userFolder));
+      await fs.remove(this.userFolder);
     }
   }
 

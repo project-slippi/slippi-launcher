@@ -1,5 +1,5 @@
 import { addGamePathToIni, updateDolphinSettings } from "@dolphin/util";
-import { settingsManager } from "@settings/settingsManager";
+import type { SettingsManager } from "@settings/settingsManager";
 import electronLog from "electron-log";
 import { EventEmitter } from "events";
 import * as fs from "fs-extra";
@@ -16,32 +16,16 @@ const log = electronLog.scope("dolphin/manager");
 // DolphinManager should be in control of all dolphin instances that get opened for actual use.
 // This includes playing netplay, viewing replays, watching broadcasts (spectating), and configuring Dolphin.
 export class DolphinManager extends EventEmitter {
-  private dolphinInstallationMap: Map<DolphinLaunchType, DolphinInstallation>;
   private playbackDolphinInstances = new Map<string, PlaybackDolphinInstance>();
   private netplayDolphinInstance: DolphinInstance | null = null;
 
-  constructor({
-    netplayDolphinPath,
-    playbackDolphinPath,
-  }: {
-    netplayDolphinPath: string;
-    playbackDolphinPath: string;
-  }) {
+  constructor(private settingsManager: SettingsManager) {
     super();
-    const netplayInstall = new DolphinInstallation(DolphinLaunchType.NETPLAY, netplayDolphinPath);
-    const playbackInstall = new DolphinInstallation(DolphinLaunchType.PLAYBACK, playbackDolphinPath);
-    this.dolphinInstallationMap = new Map<DolphinLaunchType, DolphinInstallation>([
-      [DolphinLaunchType.NETPLAY, netplayInstall],
-      [DolphinLaunchType.PLAYBACK, playbackInstall],
-    ]);
   }
 
   public getInstallation(launchType: DolphinLaunchType): DolphinInstallation {
-    const dolphinInstall = this.dolphinInstallationMap.get(launchType);
-    if (!dolphinInstall) {
-      throw new Error(`No dolphin installation of type: ${launchType}`);
-    }
-    return dolphinInstall;
+    const dolphinPath = this.settingsManager.getDolphinPath(launchType);
+    return new DolphinInstallation(launchType, dolphinPath);
   }
 
   public async installDolphin(
@@ -91,7 +75,7 @@ export class DolphinManager extends EventEmitter {
     const netplayInstallation = this.getInstallation(DolphinLaunchType.NETPLAY);
     const dolphinPath = await netplayInstallation.findDolphinExecutable();
     log.info(`Launching dolphin at path: ${dolphinPath}`);
-    const launchMeleeOnPlay = settingsManager.get().settings.launchMeleeOnPlay;
+    const launchMeleeOnPlay = this.settingsManager.get().settings.launchMeleeOnPlay;
     const meleeIsoPath = launchMeleeOnPlay ? await this._getIsoPath() : undefined;
 
     // Create the Dolphin instance and start it
@@ -164,7 +148,7 @@ export class DolphinManager extends EventEmitter {
 
     const installation = this.getInstallation(launchType);
     await installation.downloadAndInstall({ log: log.info, cleanInstall: true });
-    const isoPath = settingsManager.get().settings.isoPath;
+    const isoPath = this.settingsManager.get().settings.isoPath;
     if (isoPath) {
       const gameDir = path.dirname(isoPath);
       await addGamePathToIni(installation, gameDir);
@@ -177,7 +161,7 @@ export class DolphinManager extends EventEmitter {
   }
 
   private async _getIsoPath(): Promise<string | undefined> {
-    const meleeIsoPath = settingsManager.get().settings.isoPath ?? undefined;
+    const meleeIsoPath = this.settingsManager.get().settings.isoPath ?? undefined;
     if (meleeIsoPath) {
       // Make sure the file actually exists
       if (!(await fileExists(meleeIsoPath))) {
@@ -203,8 +187,8 @@ export class DolphinManager extends EventEmitter {
   private async _updateDolphinSettings(launchType: DolphinLaunchType) {
     const installation = this.getInstallation(launchType);
     await updateDolphinSettings(installation, {
-      replayPath: settingsManager.getRootSlpPath(),
-      useMonthlySubfolders: settingsManager.getUseMonthlySubfolders(),
+      replayPath: this.settingsManager.getRootSlpPath(),
+      useMonthlySubfolders: this.settingsManager.getUseMonthlySubfolders(),
     });
   }
 }
