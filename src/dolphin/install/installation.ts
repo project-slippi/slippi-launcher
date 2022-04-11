@@ -6,8 +6,10 @@ import os from "os";
 import path from "path";
 import { lt } from "semver";
 
+import type { DolphinVersionResponse } from "../types";
 import { DolphinLaunchType } from "../types";
-import { downloadLatestDolphin, getLatestReleaseData } from "./download";
+import { downloadLatestDolphin } from "./download";
+import { fetchLatestVersion } from "./fetchLatestVersion";
 import { installDolphinOnLinux } from "./linux";
 import { installDolphinOnMac } from "./macos";
 import { installDolphinOnWindows } from "./windows";
@@ -127,35 +129,46 @@ export class DolphinInstallation {
 
   public async validate(log: (message: string) => void): Promise<void> {
     const type = this.dolphinLaunchType;
+    const dolphinDownloadInfo = await fetchLatestVersion(type);
+
     try {
-      await this.findDolphinExecutable();
+      await findDolphinExecutable(type);
       log(`Found existing ${type} Dolphin executable.`);
       log(`Checking if we need to update ${type} Dolphin`);
-      const data = await getLatestReleaseData(type);
-      const latestVersion = data.tag_name;
+      const latestVersion = dolphinDownloadInfo.version;
       const isOutdated = await this._isOutOfDate(latestVersion);
       if (!isOutdated) {
-        // We're all up to date.
         log("No update found...");
         return;
       }
+
+      log(`${type} Dolphin installation is outdated. Downloading latest...`);
     } catch (err) {
-      log(`Could not find existing ${type} Dolphin installation.`);
+      log(`Could not find ${type} Dolphin installation. Downloading...`);
     }
 
     // Start the download
-    await this.downloadAndInstall(log);
+    await this.downloadAndInstall(dolphinDownloadInfo, log);
   }
 
-  public async downloadAndInstall(log: (message: string) => void, cleanInstall = false): Promise<void> {
+  public async downloadAndInstall(
+    releaseInfo: DolphinVersionResponse,
+    log: (message: string) => void,
+    cleanInstall = false,
+  ): Promise<void> {
     const type = this.dolphinLaunchType;
+    const downloadUrl = releaseInfo.downloadUrls[process.platform];
+    if (!downloadUrl) {
+      throw new Error(`Could not find latest Dolphin download url for ${process.platform}`);
+    }
+
     const onProgress = (current: number, total: number) =>
       log(`Downloading... ${((current / total) * 100).toFixed(0)}%`);
     const downloadDir = path.join(app.getPath("userData"), "temp");
-    const downloadedAsset = await downloadLatestDolphin(type, downloadDir, onProgress, log);
-    log(`Installing ${type} Dolphin...`);
+    const downloadedAsset = await downloadLatestDolphin(downloadUrl, downloadDir, onProgress, log);
+    log(`Installing v${releaseInfo.version} ${type} Dolphin...`);
     await this._installDolphin(downloadedAsset, log, cleanInstall);
-    log(`Finished ${type} installing`);
+    log(`Finished v${releaseInfo.version} ${type} Dolphin install`);
   }
 
   private async _isOutOfDate(latestVersion: string): Promise<boolean> {
