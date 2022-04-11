@@ -1,3 +1,5 @@
+import { addGamePath, setSlippiSettings } from "@dolphin/config/config";
+import { IniFile } from "@dolphin/config/iniFile";
 import { findDolphinExecutable } from "@dolphin/util";
 import { spawnSync } from "child_process";
 import { app } from "electron";
@@ -127,6 +129,18 @@ export class DolphinInstallation {
     log(`Installing v${dolphinDownloadInfo.version} ${type} Dolphin...`);
     await this._installDolphin(downloadedAsset, log, cleanInstall);
     log(`Finished v${dolphinDownloadInfo.version} ${type} Dolphin install`);
+  }
+
+  public async addGamePath(gameDir: string): Promise<void> {
+    const iniPath = path.join(this.userFolder, "Config", "Dolphin.ini");
+    const iniFile = await IniFile.init(iniPath);
+    await addGamePath(iniFile, gameDir);
+  }
+
+  public async updateSettings(options: Partial<{ useMonthlySubfolders: boolean; replayPath: string }>): Promise<void> {
+    const iniPath = path.join(this.userFolder, "Config", "Dolphin.ini");
+    const iniFile = await IniFile.init(iniPath);
+    await setSlippiSettings(iniFile, options);
   }
 
   private async _isOutOfDate(latestVersion: string): Promise<boolean> {

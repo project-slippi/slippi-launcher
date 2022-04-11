@@ -1,13 +1,10 @@
-import electronLog from "electron-log";
 import * as fs from "fs-extra";
 import path from "path";
 
-import { addGamePath, setBootToCss, setSlippiSettings } from "./config/config";
+import { setBootToCss } from "./config/config";
 import { IniFile } from "./config/iniFile";
 import type { DolphinInstallation } from "./install/installation";
 import { DolphinLaunchType } from "./types";
-
-const log = electronLog.scope("dolphin/utils");
 
 export async function findDolphinExecutable(type: DolphinLaunchType, dolphinPath: string): Promise<string> {
   // Make sure the directory actually exists
@@ -46,26 +43,6 @@ export async function findDolphinExecutable(type: DolphinLaunchType, dolphinPath
   }
 
   return path.join(dolphinPath, result);
-}
-
-export async function addGamePathToIni(installation: DolphinInstallation, gameDir: string): Promise<void> {
-  const iniPath = path.join(installation.userFolder, "Config", "Dolphin.ini");
-  const iniFile = await IniFile.init(iniPath);
-  await addGamePath(iniFile, gameDir);
-}
-
-export async function updateDolphinSettings(
-  installation: DolphinInstallation,
-  options: Partial<{
-    useMonthlySubfolders: boolean;
-    replayPath: string;
-  }>,
-): Promise<void> {
-  const userFolder = installation.userFolder;
-  const iniPath = path.join(userFolder, "Config", "Dolphin.ini");
-  const iniFile = await IniFile.init(iniPath);
-  await setSlippiSettings(iniFile, options);
-  log.info(`Finished updating dolphin settings...`);
 }
 
 export async function updateBootToCssCode(installation: DolphinInstallation, options: { enable: boolean }) {

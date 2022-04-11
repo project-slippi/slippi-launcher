@@ -1,4 +1,3 @@
-import { addGamePathToIni, updateDolphinSettings } from "@dolphin/util";
 import type { SettingsManager } from "@settings/settingsManager";
 import electronLog from "electron-log";
 import { EventEmitter } from "events";
@@ -150,7 +149,7 @@ export class DolphinManager extends EventEmitter {
     const isoPath = this.settingsManager.get().settings.isoPath;
     if (isoPath) {
       const gameDir = path.dirname(isoPath);
-      await addGamePathToIni(installation, gameDir);
+      await installation.addGamePath(gameDir);
     }
   }
 
@@ -167,7 +166,7 @@ export class DolphinManager extends EventEmitter {
 
   private async _updateDolphinSettings(launchType: DolphinLaunchType) {
     const installation = this.getInstallation(launchType);
-    await updateDolphinSettings(installation, {
+    await installation.updateSettings({
       replayPath: this.settingsManager.getRootSlpPath(),
       useMonthlySubfolders: this.settingsManager.getUseMonthlySubfolders(),
     });
