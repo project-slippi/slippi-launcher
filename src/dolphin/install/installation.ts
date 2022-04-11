@@ -14,59 +14,42 @@ import { fetchLatestVersion } from "./fetchLatestVersion";
 const isLinux = process.platform === "linux";
 
 export class DolphinInstallation {
-  public readonly dolphinLaunchType: DolphinLaunchType;
-  public readonly installationFolder: string;
-
-  constructor(dolphinLaunchType: DolphinLaunchType, installationFolder: string) {
-    this.dolphinLaunchType = dolphinLaunchType;
-    this.installationFolder = installationFolder;
-  }
+  constructor(private dolphinLaunchType: DolphinLaunchType, private installationFolder: string) {}
 
   public get userFolder(): string {
-    let userPath = "";
     switch (process.platform) {
       case "win32": {
-        userPath = path.join(this.installationFolder, "User");
-        break;
+        return path.join(this.installationFolder, "User");
       }
       case "darwin": {
-        userPath = path.join(this.installationFolder, "Slippi Dolphin.app", "Contents", "Resources", "User");
-        break;
+        return path.join(this.installationFolder, "Slippi Dolphin.app", "Contents", "Resources", "User");
       }
       case "linux": {
         const configPath = path.join(os.homedir(), ".config");
         const userFolderName = this.dolphinLaunchType === DolphinLaunchType.NETPLAY ? "SlippiOnline" : "SlippiPlayback";
-        userPath = path.join(configPath, userFolderName);
-        break;
+        return path.join(configPath, userFolderName);
       }
       default:
         throw new Error(`Unsupported operating system: ${process.platform}`);
     }
-
-    return userPath;
   }
 
   public get sysFolder(): string {
-    let sysPath = "";
     const dolphinPath = this.installationFolder;
     const type = this.dolphinLaunchType;
     switch (process.platform) {
       case "win32": {
-        sysPath = path.join(dolphinPath, "Sys");
-        break;
+        return path.join(dolphinPath, "Sys");
       }
       case "darwin": {
-        sysPath = path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "Resources", "Sys");
-        break;
+        return path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "Resources", "Sys");
       }
       case "linux": {
-        sysPath = path.join(app.getPath("userData"), type, "Sys");
-        break;
+        return path.join(app.getPath("userData"), type, "Sys");
       }
       default:
         throw new Error(`Unsupported operating system: ${process.platform}`);
     }
-    return sysPath;
   }
 
   public async findDolphinExecutable(): Promise<string> {
@@ -188,7 +171,9 @@ export class DolphinInstallation {
         break;
       }
       default: {
-        throw new Error(`Installing Netplay is not supported on this platform: ${process.platform}`);
+        throw new Error(
+          `Installing ${this.dolphinLaunchType} Dolphin is not supported on this platform: ${process.platform}`,
+        );
       }
     }
   }

@@ -65,7 +65,7 @@ export async function updateDolphinSettings(
   const iniPath = path.join(userFolder, "Config", "Dolphin.ini");
   const iniFile = await IniFile.init(iniPath);
   await setSlippiSettings(iniFile, options);
-  log.info(`Finished updating ${installation.dolphinLaunchType} dolphin settings...`);
+  log.info(`Finished updating dolphin settings...`);
 }
 
 export async function updateBootToCssCode(installation: DolphinInstallation, options: { enable: boolean }) {
