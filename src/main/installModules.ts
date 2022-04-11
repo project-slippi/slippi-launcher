@@ -11,7 +11,7 @@ export function installModules(): { dolphinManager: DolphinManager } {
   const { dolphinManager } = setupDolphinIpc();
   setupBroadcastIpc({ dolphinManager });
   setupReplaysIpc();
-  setupSettingsIpc();
+  setupSettingsIpc({ dolphinManager });
   setupConsoleIpc({ dolphinManager });
   setupMainIpc();
   return { dolphinManager };

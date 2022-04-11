@@ -46,6 +46,29 @@ export class DolphinInstallation {
     return userPath;
   }
 
+  public get sysFolder(): string {
+    let sysPath = "";
+    const dolphinPath = this.installationFolder;
+    const type = this.dolphinLaunchType;
+    switch (process.platform) {
+      case "win32": {
+        sysPath = path.join(dolphinPath, "Sys");
+        break;
+      }
+      case "darwin": {
+        sysPath = path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "Resources", "Sys");
+        break;
+      }
+      case "linux": {
+        sysPath = path.join(app.getPath("userData"), type, "Sys");
+        break;
+      }
+      default:
+        throw new Error(`Unsupported operating system: ${process.platform}`);
+    }
+    return sysPath;
+  }
+
   public async findDolphinExecutable(): Promise<string> {
     const dolphinPath = this.installationFolder;
     const type = this.dolphinLaunchType;
@@ -81,38 +104,12 @@ export class DolphinInstallation {
     return userPath;
   }
 
-  public async findSysFolder(): Promise<string> {
-    let sysPath = "";
-    const dolphinPath = this.installationFolder;
-    const type = this.dolphinLaunchType;
-    switch (process.platform) {
-      case "win32": {
-        sysPath = path.join(dolphinPath, "Sys");
-        break;
-      }
-      case "darwin": {
-        sysPath = path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "Resources", "Sys");
-        break;
-      }
-      case "linux": {
-        sysPath = path.join(app.getPath("userData"), type, "Sys");
-        break;
-      }
-      default:
-        break;
-    }
-
-    await fs.ensureDir(sysPath);
-
-    return sysPath;
-  }
-
   public async clearCache() {
     const cacheFolder = path.join(this.userFolder, "Cache");
     await fs.remove(cacheFolder);
   }
 
-  public async copyDolphinConfig(fromPath: string) {
+  public async importConfig(fromPath: string) {
     const newUserFolder = this.userFolder;
     await fs.ensureDir(this.userFolder);
     const oldUserFolder = path.join(fromPath, "User");
@@ -129,7 +126,7 @@ export class DolphinInstallation {
     const dolphinDownloadInfo = await fetchLatestVersion(type);
 
     try {
-      await findDolphinExecutable(type);
+      await this.findDolphinExecutable();
       log(`Found existing ${type} Dolphin executable.`);
       log(`Checking if we need to update ${type} Dolphin`);
       const latestVersion = dolphinDownloadInfo.version;

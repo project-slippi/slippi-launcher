@@ -16,7 +16,7 @@ export async function installDolphinOnLinux({
   log?: (message: string) => void;
 }) {
   try {
-    const dolphinAppImagePath = await findDolphinExecutable(type);
+    const dolphinAppImagePath = await findDolphinExecutable(type, destinationFolder);
     log(`${dolphinAppImagePath} already exists. Deleting...`);
     await fs.remove(dolphinAppImagePath);
   } catch (err) {
@@ -27,7 +27,7 @@ export async function installDolphinOnLinux({
   zip.extractAllTo(destinationFolder, true);
 
   // make the appimage executable because sometimes it doesn't have the right perms out the gate
-  const dolphinAppImagePath = await findDolphinExecutable(type);
+  const dolphinAppImagePath = await findDolphinExecutable(type, destinationFolder);
   log(`Setting executable permissions...`);
   await fs.chmod(dolphinAppImagePath, "755");
 }

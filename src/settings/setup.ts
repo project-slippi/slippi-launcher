@@ -1,5 +1,6 @@
+import type { DolphinManager } from "@dolphin/manager";
 import { DolphinLaunchType } from "@dolphin/types";
-import { addGamePathToIni } from "@dolphin/util";
+import { addGamePathToIni, updateDolphinSettings } from "@dolphin/util";
 import { autoUpdater } from "electron-updater";
 import path from "path";
 
@@ -19,7 +20,7 @@ import {
 } from "./ipc";
 import { settingsManager } from "./settingsManager";
 
-export default function setupSettingsIpc() {
+export default function setupSettingsIpc({ dolphinManager }: { dolphinManager: DolphinManager }) {
   // getAppSettings.main!.handle(async () => {
   //   const settings = settingsManager.get();
   //   return settings;
@@ -30,8 +31,8 @@ export default function setupSettingsIpc() {
     if (isoPath) {
       const gameDir = path.dirname(isoPath);
       await Promise.all([
-        addGamePathToIni(DolphinLaunchType.NETPLAY, gameDir),
-        addGamePathToIni(DolphinLaunchType.PLAYBACK, gameDir),
+        addGamePathToIni(dolphinManager.getInstallation(DolphinLaunchType.NETPLAY), gameDir),
+        addGamePathToIni(dolphinManager.getInstallation(DolphinLaunchType.PLAYBACK), gameDir),
       ]);
     }
     return { success: true };
@@ -39,11 +40,19 @@ export default function setupSettingsIpc() {
 
   ipc_setRootSlpPath.main!.handle(async ({ path }) => {
     await settingsManager.setRootSlpPath(path);
+    const installation = dolphinManager.getInstallation(DolphinLaunchType.NETPLAY);
+    await updateDolphinSettings(installation, {
+      replayPath: path,
+    });
     return { success: true };
   });
 
   ipc_setUseMonthlySubfolders.main!.handle(async ({ toggle }) => {
     await settingsManager.setUseMonthlySubfolders(toggle);
+    const installation = dolphinManager.getInstallation(DolphinLaunchType.NETPLAY);
+    await updateDolphinSettings(installation, {
+      useMonthlySubfolders: toggle,
+    });
     return { success: true };
   });
 

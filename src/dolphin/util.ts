@@ -1,23 +1,16 @@
-import { settingsManager } from "@settings/settingsManager";
-import { app } from "electron";
 import electronLog from "electron-log";
 import * as fs from "fs-extra";
-import os from "os";
 import path from "path";
 
 import { addGamePath, setBootToCss, setSlippiSettings } from "./config/config";
 import { IniFile } from "./config/iniFile";
+import type { DolphinInstallation } from "./install/installation";
 import { DolphinLaunchType } from "./types";
 
 const log = electronLog.scope("dolphin/utils");
 
-export async function findDolphinExecutable(type: DolphinLaunchType, folder?: string): Promise<string> {
+export async function findDolphinExecutable(type: DolphinLaunchType, dolphinPath: string): Promise<string> {
   // Make sure the directory actually exists
-  let dolphinPath = folder;
-  if (!dolphinPath) {
-    dolphinPath = settingsManager.getDolphinPath(type);
-  }
-
   await fs.ensureDir(dolphinPath);
 
   // Check the directory contents
@@ -55,81 +48,31 @@ export async function findDolphinExecutable(type: DolphinLaunchType, folder?: st
   return path.join(dolphinPath, result);
 }
 
-export async function findUserFolder(type: DolphinLaunchType): Promise<string> {
-  let userPath = "";
-  const dolphinPath = settingsManager.getDolphinPath(type);
-  switch (process.platform) {
-    case "win32": {
-      userPath = path.join(dolphinPath, "User");
-      break;
-    }
-    case "darwin": {
-      userPath = path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "Resources", "User");
-      break;
-    }
-    case "linux": {
-      const configPath = path.join(os.homedir(), ".config");
-      const userFolderName = type === DolphinLaunchType.NETPLAY ? "SlippiOnline" : "SlippiPlayback";
-      userPath = path.join(configPath, userFolderName);
-      break;
-    }
-    default:
-      break;
-  }
-
-  await fs.ensureDir(userPath);
-
-  return userPath;
+export async function addGamePathToIni(installation: DolphinInstallation, gameDir: string): Promise<void> {
+  const iniPath = path.join(installation.userFolder, "Config", "Dolphin.ini");
+  const iniFile = await IniFile.init(iniPath);
+  await addGamePath(iniFile, gameDir);
 }
 
-export async function findSysFolder(type: DolphinLaunchType): Promise<string> {
-  let sysPath = "";
-  const dolphinPath = settingsManager.getDolphinPath(type);
-  switch (process.platform) {
-    case "win32": {
-      sysPath = path.join(dolphinPath, "Sys");
-      break;
-    }
-    case "darwin": {
-      sysPath = path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "Resources", "Sys");
-      break;
-    }
-    case "linux": {
-      sysPath = path.join(app.getPath("userData"), type, "Sys");
-      break;
-    }
-    default:
-      break;
-  }
-
-  await fs.ensureDir(sysPath);
-
-  return sysPath;
-}
-
-export async function addGamePathToIni(type: DolphinLaunchType, gameDir: string): Promise<void> {
-  const userFolder = await findUserFolder(type);
+export async function updateDolphinSettings(
+  installation: DolphinInstallation,
+  options: Partial<{
+    useMonthlySubfolders: boolean;
+    replayPath: string;
+  }>,
+): Promise<void> {
+  const userFolder = installation.userFolder;
   const iniPath = path.join(userFolder, "Config", "Dolphin.ini");
   const iniFile = await IniFile.init(iniPath);
-  return addGamePath(iniFile, gameDir);
+  await setSlippiSettings(iniFile, options);
+  log.info(`Finished updating ${installation.dolphinLaunchType} dolphin settings...`);
 }
 
-export async function updateDolphinSettings(): Promise<void> {
-  const userFolder = await findUserFolder(DolphinLaunchType.NETPLAY);
-  const iniPath = path.join(userFolder, "Config", "Dolphin.ini");
-  const iniFile = await IniFile.init(iniPath);
-  await setSlippiSettings(iniFile, {
-    replayPath: settingsManager.getRootSlpPath(),
-    useMonthlySubfolders: settingsManager.getUseMonthlySubfolders(),
-  });
-  log.info(`Finished updating ${DolphinLaunchType.NETPLAY} dolphin settings...`);
-}
+export async function updateBootToCssCode(installation: DolphinInstallation, options: { enable: boolean }) {
+  const userPath = installation.userFolder;
+  const sysPath = installation.sysFolder;
 
-export async function updateBootToCssCode(options: { enable: boolean }) {
-  const [userPath, sysPath] = await Promise.all([
-    findUserFolder(DolphinLaunchType.NETPLAY),
-    findSysFolder(DolphinLaunchType.NETPLAY),
-  ]);
+  await Promise.all([fs.ensureDir(userPath), fs.ensureDir(sysPath)]);
 
   // Update vanilla ISO configs
   await Promise.all(

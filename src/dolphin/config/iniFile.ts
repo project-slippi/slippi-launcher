@@ -5,7 +5,7 @@
 
 import electronLog from "electron-log";
 import fs from "fs";
-import { ensureFileSync } from "fs-extra";
+import { ensureFile } from "fs-extra";
 import readline from "readline";
 import { fileExists } from "utils/fileExists";
 
@@ -171,36 +171,39 @@ export class IniFile {
     return iniFile;
   }
 
-  public save(): boolean {
-    ensureFileSync(this.filePath);
-    const out = fs.createWriteStream(this.filePath);
+  public async save(): Promise<void> {
+    await ensureFile(this.filePath);
 
-    out.on("error", (e) => {
-      log.error("failed to write file with error", e);
+    return new Promise((resolve, reject) => {
+      const out = fs.createWriteStream(this.filePath);
+      out.on("error", reject);
+      this.sections.forEach((section) => {
+        // originally section.name was only written if the section was non-empty,
+        // but that goes against us wanting to always show the Gecko section
+        out.write(`[${section.name}]\n`);
+
+        if (section.keysOrder.length === 0) {
+          section.lines.forEach((line) => {
+            out.write(`${line}\n`);
+          });
+          out.write("\n");
+        } else {
+          section.keysOrder.forEach((kvit) => {
+            const value = section.values.get(kvit);
+            out.write(`${kvit} = ${value}\n`);
+          });
+        }
+      });
+
+      out.end();
+      out.close((err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
     });
-
-    this.sections.forEach((section) => {
-      // originally section.name was only written if the section was non-empty,
-      // but that goes against us wanting to always show the Gecko section
-      out.write(`[${section.name}]\n`);
-
-      if (section.keysOrder.length === 0) {
-        section.lines.forEach((line) => {
-          out.write(`${line}\n`);
-        });
-        out.write("\n");
-      } else {
-        section.keysOrder.forEach((kvit) => {
-          const value = section.values.get(kvit);
-          out.write(`${kvit} = ${value}\n`);
-        });
-      }
-    });
-
-    out.end();
-    out.close();
-
-    return true;
   }
 }
 

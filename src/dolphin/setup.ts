@@ -63,12 +63,14 @@ export default function setupDolphinIpc(): { dolphinManager: DolphinManager } {
   });
 
   ipc_storePlayKeyFile.main!.handle(async ({ key }) => {
-    await writePlayKeyFile(key);
+    const installation = dolphinManager.getInstallation(DolphinLaunchType.NETPLAY);
+    await writePlayKeyFile(installation, key);
     return { success: true };
   });
 
   ipc_checkPlayKeyExists.main!.handle(async ({ key }) => {
-    const keyPath = await findPlayKey();
+    const installation = dolphinManager.getInstallation(DolphinLaunchType.NETPLAY);
+    const keyPath = await findPlayKey(installation);
     const exists = await fileExists(keyPath);
     if (exists) {
       const jsonKey = await fs.readFile(keyPath);
@@ -79,7 +81,8 @@ export default function setupDolphinIpc(): { dolphinManager: DolphinManager } {
   });
 
   ipc_removePlayKeyFile.main!.handle(async () => {
-    await deletePlayKeyFile();
+    const installation = dolphinManager.getInstallation(DolphinLaunchType.NETPLAY);
+    await deletePlayKeyFile(installation);
     return { success: true };
   });
 
@@ -93,7 +96,8 @@ export default function setupDolphinIpc(): { dolphinManager: DolphinManager } {
 
   ipc_launchNetplayDolphin.main!.handle(async ({ bootToCss }) => {
     // Boot straight to CSS if necessary
-    await updateBootToCssCode({ enable: Boolean(bootToCss) });
+    const installation = dolphinManager.getInstallation(DolphinLaunchType.NETPLAY);
+    await updateBootToCssCode(installation, { enable: Boolean(bootToCss) });
 
     // Actually launch Dolphin
     await dolphinManager.launchNetplayDolphin();
