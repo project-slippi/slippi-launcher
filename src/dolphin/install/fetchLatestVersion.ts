@@ -3,7 +3,16 @@ import { appVersion } from "@common/constants";
 import { fetch } from "cross-fetch";
 import type { GraphQLError } from "graphql";
 
-import type { DolphinLaunchType, DolphinVersionResponse } from "../types";
+import type { DolphinLaunchType } from "../types";
+
+export type DolphinVersionResponse = {
+  version: string;
+  downloadUrls: {
+    darwin: string;
+    linux: string;
+    win32: string;
+  };
+};
 
 const httpLink = new HttpLink({ uri: process.env.SLIPPI_GRAPHQL_ENDPOINT, fetch });
 const isDevelopment = process.env.NODE_ENV !== "production";

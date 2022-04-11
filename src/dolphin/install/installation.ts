@@ -6,9 +6,9 @@ import os from "os";
 import path from "path";
 import { lt } from "semver";
 
-import type { DolphinVersionResponse } from "../types";
 import { DolphinLaunchType } from "../types";
 import { downloadLatestDolphin } from "./download";
+import type { DolphinVersionResponse } from "./fetchLatestVersion";
 import { fetchLatestVersion } from "./fetchLatestVersion";
 
 const isLinux = process.platform === "linux";
