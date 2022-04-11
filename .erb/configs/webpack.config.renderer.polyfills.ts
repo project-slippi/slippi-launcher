@@ -2,8 +2,8 @@
  * Base build config for electron renderer process
  */
 
-import webpack from "webpack";
 import NodePolyfillPlugin from "node-polyfill-webpack-plugin";
+import type webpack from "webpack";
 
 const polyfills: webpack.Configuration = {
   resolve: {
@@ -15,9 +15,7 @@ const polyfills: webpack.Configuration = {
     },
   },
 
-  plugins: [
-    new NodePolyfillPlugin(),
-  ],
+  plugins: [new NodePolyfillPlugin()],
 };
 
 export default polyfills;

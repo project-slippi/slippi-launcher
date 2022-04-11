@@ -2,14 +2,15 @@
  * Builds the DLL for development electron renderer process
  */
 
-import webpack from "webpack";
 import path from "path";
+import webpack from "webpack";
 import { merge } from "webpack-merge";
-import baseConfig from "./webpack.config.base";
-import webpackPaths from "./webpack.paths";
+
 import { dependencies } from "../../package.json";
 import checkNodeEnv from "../scripts/check-node-env";
+import baseConfig from "./webpack.config.base";
 import webpackConfig from "./webpack.config.renderer.dev";
+import webpackPaths from "./webpack.paths";
 
 checkNodeEnv("development");
 
@@ -39,7 +40,7 @@ export default (env: any, argv: any) => {
     module: rendererDevConfig.module,
 
     entry: {
-      renderer: Object.keys(dependencies || {}).filter(dep => !depsToIgnore.includes(dep)),
+      renderer: Object.keys(dependencies || {}).filter((dep) => !depsToIgnore.includes(dep)),
     },
 
     output: {
@@ -83,4 +84,4 @@ export default (env: any, argv: any) => {
   };
 
   return merge(baseConfig, configuration);
-}
+};
