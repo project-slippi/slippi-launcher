@@ -4,20 +4,22 @@
 
 import { fdir } from "fdir";
 import path from "path";
-import webpack from "webpack";
-import { merge } from "webpack-merge";
 import TerserPlugin from "terser-webpack-plugin";
+import webpack from "webpack";
 import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
-import baseConfig from "./webpack.config.base";
-import webpackPaths from "./webpack.paths";
+import { merge } from "webpack-merge";
+
 import checkNodeEnv from "../scripts/check-node-env";
 import deleteSourceMaps from "../scripts/delete-source-maps";
+import baseConfig from "./webpack.config.base";
+import webpackPaths from "./webpack.paths";
 
 checkNodeEnv("production");
 deleteSourceMaps();
 
 function resolveWorkers(rootFolder: string): Record<string, string> {
   const workers: Record<string, string> = {};
+  // eslint-disable-next-line new-cap
   const crawler = new fdir().glob("./**/*.worker.ts").withFullPaths();
   const files = crawler.crawl(rootFolder).sync() as string[];
   files.forEach((filename) => {
@@ -43,6 +45,7 @@ const configuration: webpack.Configuration = {
 
   entry: {
     main: path.join(webpackPaths.srcMainPath, "main.ts"),
+    preload: path.join(webpackPaths.srcMainPath, "preload.ts"),
     ...resolveWorkers(webpackPaths.srcPath),
   },
 

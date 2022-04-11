@@ -28,8 +28,5 @@ npm-debug.log.*
 *.sass.d.ts
 *.scss.d.ts
 
-# Automatically generate preload.js in development
-src/main/preload.js
-
 # Ignore env variables
 .env

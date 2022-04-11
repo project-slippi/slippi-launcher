@@ -7419,6 +7419,16 @@ electron@^13.6.9:
     "@types/node" "^14.6.2"
     extract-zip "^1.0.3"
 
+electronmon@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/electronmon/-/electronmon-2.0.2.tgz#082cb4c7cd5eee0602308c3253b17ecbef77aea8"
+  integrity sha512-Yw1CXEp5HJT9P6Sns3UP3Krwm5eb2JKqTRAVczKdsUa+U/dMTgONwKIHkPbKSSmtyTV+5JwobxkhFPiRgegObA==
+  dependencies:
+    chalk "^3.0.0"
+    import-from "^3.0.0"
+    runtime-required "^1.1.0"
+    watchboy "^0.4.3"
+
 elliptic@^6.5.3:
   version "6.5.4"
   resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.5.4.tgz#da37cebd31e79a1367e941b592ed1fbebd58abbb"
@@ -9564,6 +9574,13 @@ import-fresh@^3.0.0, import-fresh@^3.1.0, import-fresh@^3.2.1:
     parent-module "^1.0.0"
     resolve-from "^4.0.0"
 
+import-from@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/import-from/-/import-from-3.0.0.tgz#055cfec38cd5a27d8057ca51376d7d3bf0891966"
+  integrity sha512-CiuXOFFSzkU5x/CR0+z7T91Iht4CXgfCxVOFRhh2Zyhg5wOpWvvDLQUsWl+gcN+QscYBjez8hDCt85O7RLDttQ==
+  dependencies:
+    resolve-from "^5.0.0"
+
 import-lazy@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/import-lazy/-/import-lazy-2.1.0.tgz#05698e3d45c88e8d7e9d92cb0584e77f096f3e43"
@@ -11125,6 +11142,11 @@ lodash.debounce@^4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
   integrity sha1-gteb/zCmfEAF/9XiUVMArZyk168=
+
+lodash.difference@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.difference/-/lodash.difference-4.5.0.tgz#9ccb4e505d486b91651345772885a2df27fd017c"
+  integrity sha1-nMtOUF1Ia5FlE0V3KIWi3yf9AXw=
 
 lodash.escaperegexp@^4.1.2:
   version "4.1.2"
@@ -14164,6 +14186,11 @@ run-queue@^1.0.0, run-queue@^1.0.3:
   dependencies:
     aproba "^1.1.1"
 
+runtime-required@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/runtime-required/-/runtime-required-1.1.0.tgz#a000a50c2748dba123f4dac5105e66d4599519c4"
+  integrity sha512-yX97f5E0WfNpcQnfVjap6vzQcvErkYYCx6eTK4siqGEdC8lglwypUFgZVTX7ShvIlgfkC4XGFl9O1KTYcff0pw==
+
 rxjs@^6.6.3:
   version "6.6.7"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.6.7.tgz#90ac018acabf491bf65044235d5863c4dab804c9"
@@ -15851,6 +15878,13 @@ universalify@^2.0.0:
   resolved "https://registry.yarnpkg.com/universalify/-/universalify-2.0.0.tgz#75a4984efedc4b08975c5aeb73f530d02df25717"
   integrity sha512-hAZsKq7Yy11Zu1DE0OzWjw7nnLZmJZYTDZZyEFHZdUhV8FkH5MCfoU1XMaxXovpyW5nq5scPqq0ZDP9Zyl04oQ==
 
+unixify@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/unixify/-/unixify-1.0.0.tgz#3a641c8c2ffbce4da683a5c70f03a462940c2090"
+  integrity sha1-OmQcjC/7zk2mg6XHDwOkYpQMIJA=
+  dependencies:
+    normalize-path "^2.1.1"
+
 unload@2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/unload/-/unload-2.2.0.tgz#ccc88fdcad345faa06a92039ec0f80b488880ef7"
@@ -16120,6 +16154,16 @@ walker@^1.0.7, walker@~1.0.5:
   integrity sha512-ts/8E8l5b7kY0vlWLewOkDXMmPdLcVV4GmOQLyxuSswIJsweeFZtAsMF7k1Nszz+TYBQrlYRmzOnr398y1JemQ==
   dependencies:
     makeerror "1.0.12"
+
+watchboy@^0.4.3:
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/watchboy/-/watchboy-0.4.3.tgz#4b766e7923d8122e5811a6b9736a8e3e5943838c"
+  integrity sha512-GHs1HxwvxSMBsqd/WfTOZhj5gBdMqf5HQpfgtKxDfZRxrlYPDdVLRB61LCeRzJaWANmvSIMlfmRVDwVmJFgAKA==
+  dependencies:
+    lodash.difference "^4.5.0"
+    micromatch "^4.0.2"
+    pify "^4.0.1"
+    unixify "^1.0.0"
 
 watchpack-chokidar2@^2.0.1:
   version "2.0.1"
