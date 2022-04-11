@@ -171,7 +171,7 @@ export class DolphinManager extends EventEmitter {
       throw new Error(`Could not find ${launchType} dolphin installation`);
     }
 
-    await installation.downloadAndInstall(log.info, true);
+    await installation.downloadAndInstall({ log: log.info, cleanInstall: true });
     const isoPath = settingsManager.get().settings.isoPath;
     if (isoPath) {
       const gameDir = path.dirname(isoPath);
