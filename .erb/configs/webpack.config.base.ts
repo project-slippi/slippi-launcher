@@ -2,15 +2,15 @@
  * Base webpack config used across other specific configs
  */
 
-import webpack from "webpack";
-import webpackPaths from "./webpack.paths";
-import { TsconfigPathsPlugin } from "tsconfig-paths-webpack-plugin";
-import pkg from "../../release/app/package.json";
-import Dotenv from "dotenv-webpack";
-import path from "path";
-
-import moment from "moment";
 import { execSync } from "child_process";
+import Dotenv from "dotenv-webpack";
+import moment from "moment";
+import path from "path";
+import { TsconfigPathsPlugin } from "tsconfig-paths-webpack-plugin";
+import webpack from "webpack";
+
+import pkg from "../../release/app/package.json";
+import webpackPaths from "./webpack.paths";
 
 const isDevelop = process.env.NODE_ENV === "development";
 const buildDate = moment().toISOString();

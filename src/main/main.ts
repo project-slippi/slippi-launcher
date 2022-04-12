@@ -95,7 +95,7 @@ const createWindow = async () => {
     autoHideMenuBar: true,
 
     webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
+      preload: app.isPackaged ? path.join(__dirname, "preload.js") : path.join(__dirname, "../../.erb/dll/preload.js"),
     },
   });
 

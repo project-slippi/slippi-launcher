@@ -11,8 +11,7 @@
     "release": true,
     "node_modules": true,
     "npm-debug.log.*": true,
-    "test/**/__snapshots__": true,
-    "src/main/preload.js": true
+    "test/**/__snapshots__": true
   },
   "files.eol": "\n",
   "editor.detectIndentation": true,

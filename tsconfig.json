@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es2021",
     "module": "commonjs",
-    "lib": ["dom", "esnext"],
+    "lib": ["dom", "es2021"],
     "paths": {
       "@/*": ["renderer/*"],
       "@common/*": ["common/*"],
@@ -45,7 +45,7 @@
   },
   "ts-node": {
     "transpileOnly": true,
-    "require": ["tsconfig-paths/register"]
+    "require": ["dotenv/config", "tsconfig-paths/register"]
   },
   "exclude": ["test", "release/build", "release/app/dist", ".erb/dll"]
 }
