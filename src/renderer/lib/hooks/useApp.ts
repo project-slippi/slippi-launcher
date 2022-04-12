@@ -1,3 +1,4 @@
+import { DolphinLaunchType } from "@dolphin/types";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
@@ -84,24 +85,19 @@ export const useAppInitialization = () => {
       );
     }
 
-    promises.push(
-      new Promise<void>((resolve) => {
-        const destroy = window.electron.dolphin.onDolphinDownloadFinished((error) => {
-          // We only want to handle this event once so immediately destroy
-          destroy();
-
-          if (error) {
-            const errMsg = "Error occurred while downloading Dolphin";
-            log.error(errMsg, error);
-            setLogMessage(errMsg);
-          }
-          resolve();
-        });
-      }),
-    );
-
     // Download Dolphin if necessary
-    promises.push(window.electron.dolphin.downloadDolphin());
+    promises.push(
+      (async () => {
+        try {
+          await window.electron.dolphin.downloadDolphin(DolphinLaunchType.NETPLAY);
+          await window.electron.dolphin.downloadDolphin(DolphinLaunchType.PLAYBACK);
+        } catch (err) {
+          const errMsg = "Error occurred while downloading Dolphin";
+          log.error(errMsg, err);
+          setLogMessage(errMsg);
+        }
+      })(),
+    );
 
     promises.push(
       window.electron.dolphin

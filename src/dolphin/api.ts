@@ -6,7 +6,6 @@ import {
   ipc_clearDolphinCache,
   ipc_configureDolphin,
   ipc_dolphinClosedEvent,
-  ipc_dolphinDownloadFinishedEvent,
   ipc_dolphinDownloadLogReceivedEvent,
   ipc_downloadDolphin,
   ipc_importDolphinSettings,
@@ -19,8 +18,8 @@ import {
 import type { DolphinLaunchType, PlayKey, ReplayQueueItem } from "./types";
 
 export default {
-  async downloadDolphin() {
-    await ipc_downloadDolphin.renderer!.trigger({});
+  async downloadDolphin(dolphinType: DolphinLaunchType) {
+    await ipc_downloadDolphin.renderer!.trigger({ dolphinType });
   },
   async configureDolphin(dolphinType: DolphinLaunchType) {
     await ipc_configureDolphin.renderer!.trigger({ dolphinType });
@@ -53,12 +52,6 @@ export default {
   },
   async importDolphinSettings(options: { toImportDolphinPath: string; dolphinType: DolphinLaunchType }): Promise<void> {
     await ipc_importDolphinSettings.renderer!.trigger(options);
-  },
-  onDolphinDownloadFinished(handle: (error: string | null) => void) {
-    const { destroy } = ipc_dolphinDownloadFinishedEvent.renderer!.handle(async ({ error }) => {
-      handle(error);
-    });
-    return destroy;
   },
   onDolphinDownloadLogMessage(handle: (message: string) => void) {
     const { destroy } = ipc_dolphinDownloadLogReceivedEvent.renderer!.handle(async ({ message }) => {

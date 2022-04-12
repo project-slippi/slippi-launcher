@@ -1,5 +1,6 @@
+import type { DolphinManager } from "@dolphin/manager";
 import { DolphinLaunchType } from "@dolphin/types";
-import { addGamePathToIni } from "@dolphin/util";
+import { ipcMain } from "electron";
 import { autoUpdater } from "electron-updater";
 import path from "path";
 
@@ -17,33 +18,47 @@ import {
   ipc_setSpectateSlpPath,
   ipc_setUseMonthlySubfolders,
 } from "./ipc";
-import { settingsManager } from "./settingsManager";
+import type { SettingsManager } from "./settingsManager";
 
-export default function setupSettingsIpc() {
+export default function setupSettingsIpc({
+  settingsManager,
+  dolphinManager,
+}: {
+  settingsManager: SettingsManager;
+  dolphinManager: DolphinManager;
+}) {
   // getAppSettings.main!.handle(async () => {
   //   const settings = settingsManager.get();
   //   return settings;
   // });
 
+  ipcMain.on("getAppSettingsSync", (event) => {
+    const settings = settingsManager.get();
+    event.returnValue = settings;
+  });
+
   ipc_setIsoPath.main!.handle(async ({ isoPath }) => {
     await settingsManager.setIsoPath(isoPath);
     if (isoPath) {
       const gameDir = path.dirname(isoPath);
-      await Promise.all([
-        addGamePathToIni(DolphinLaunchType.NETPLAY, gameDir),
-        addGamePathToIni(DolphinLaunchType.PLAYBACK, gameDir),
-      ]);
+      const netplayInstall = dolphinManager.getInstallation(DolphinLaunchType.NETPLAY);
+      const playbackInstall = dolphinManager.getInstallation(DolphinLaunchType.PLAYBACK);
+      await Promise.all([netplayInstall.addGamePath(gameDir), playbackInstall.addGamePath(gameDir)]);
     }
     return { success: true };
   });
 
   ipc_setRootSlpPath.main!.handle(async ({ path }) => {
     await settingsManager.setRootSlpPath(path);
+    const installation = dolphinManager.getInstallation(DolphinLaunchType.NETPLAY);
+    await installation.updateSettings({ replayPath: path });
     return { success: true };
   });
 
   ipc_setUseMonthlySubfolders.main!.handle(async ({ toggle }) => {
     await settingsManager.setUseMonthlySubfolders(toggle);
+    const installation = dolphinManager.getInstallation(DolphinLaunchType.NETPLAY);
+    await installation.updateSettings({ useMonthlySubfolders: toggle });
     return { success: true };
   });
 

@@ -7,21 +7,25 @@ export async function addGamePath(iniFile: IniFile, gameDir: string): Promise<vo
   const numPaths = generalSection.get("ISOPaths", "0");
   generalSection.set("ISOPaths", numPaths !== "0" ? numPaths : "1");
   generalSection.set("ISOPath0", gameDir);
-  iniFile.save();
+  await iniFile.save();
 }
 
 export async function setSlippiSettings(
   iniFile: IniFile,
-  options: {
+  options: Partial<{
     useMonthlySubfolders: boolean;
     replayPath: string;
-  },
+  }>,
 ): Promise<void> {
   const useMonthlySubfolders = options.useMonthlySubfolders ? "True" : "False";
   const coreSection = iniFile.getOrCreateSection("Core");
-  coreSection.set("SlippiReplayDir", options.replayPath);
-  coreSection.set("SlippiReplayMonthFolders", useMonthlySubfolders);
-  iniFile.save();
+  if (options.replayPath !== undefined) {
+    coreSection.set("SlippiReplayDir", options.replayPath);
+  }
+  if (options.useMonthlySubfolders !== undefined) {
+    coreSection.set("SlippiReplayMonthFolders", useMonthlySubfolders);
+  }
+  await iniFile.save();
 }
 
 export async function setBootToCss(globalIni: IniFile, localIni: IniFile, enable: boolean): Promise<void> {
@@ -48,5 +52,5 @@ export async function setBootToCss(globalIni: IniFile, localIni: IniFile, enable
 
   setCodes(localIni, geckoCodes);
 
-  localIni.save();
+  await localIni.save();
 }

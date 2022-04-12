@@ -5,7 +5,11 @@ import type { DolphinLaunchType, PlayKey, ReplayQueueItem } from "./types";
 
 // Handlers
 
-export const ipc_downloadDolphin = makeEndpoint.main("downloadDolphin", <EmptyPayload>_, <SuccessPayload>_);
+export const ipc_downloadDolphin = makeEndpoint.main(
+  "downloadDolphin",
+  <{ dolphinType: DolphinLaunchType }>_,
+  <SuccessPayload>_,
+);
 
 export const ipc_configureDolphin = makeEndpoint.main(
   "configureDolphin",
@@ -57,11 +61,6 @@ export const ipc_importDolphinSettings = makeEndpoint.main(
 );
 
 // Events
-
-export const ipc_dolphinDownloadFinishedEvent = makeEndpoint.renderer(
-  "dolphin_dolphinDownloadFinished",
-  <{ error: string | null }>_,
-);
 
 export const ipc_dolphinDownloadLogReceivedEvent = makeEndpoint.renderer(
   "dolphin_dolphinDownloadLogReceived",

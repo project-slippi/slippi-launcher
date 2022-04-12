@@ -1,13 +1,10 @@
-import { addGamePathToIni, findDolphinExecutable, findUserFolder, updateDolphinSettings } from "@dolphin/util";
-import { settingsManager } from "@settings/settingsManager";
+import type { SettingsManager } from "@settings/settingsManager";
 import electronLog from "electron-log";
 import { EventEmitter } from "events";
-import * as fs from "fs-extra";
 import path from "path";
 import { fileExists } from "utils/fileExists";
 
-import { fetchLatestDolphin } from "./checkVersion";
-import { downloadAndInstallDolphin } from "./downloadDolphin";
+import { DolphinInstallation } from "./install/installation";
 import { DolphinInstance, PlaybackDolphinInstance } from "./instance";
 import type { ReplayCommunication } from "./types";
 import { DolphinLaunchType } from "./types";
@@ -20,8 +17,26 @@ export class DolphinManager extends EventEmitter {
   private playbackDolphinInstances = new Map<string, PlaybackDolphinInstance>();
   private netplayDolphinInstance: DolphinInstance | null = null;
 
+  constructor(private settingsManager: SettingsManager) {
+    super();
+  }
+
+  public getInstallation(launchType: DolphinLaunchType): DolphinInstallation {
+    const dolphinPath = this.settingsManager.getDolphinPath(launchType);
+    return new DolphinInstallation(launchType, dolphinPath);
+  }
+
+  public async installDolphin(
+    dolphinType: DolphinLaunchType,
+    onLogMessage: (message: string) => void = log.info,
+  ): Promise<void> {
+    const dolphinInstall = this.getInstallation(dolphinType);
+    await dolphinInstall.validate(onLogMessage);
+  }
+
   public async launchPlaybackDolphin(id: string, replayComm: ReplayCommunication): Promise<void> {
-    const dolphinPath = await findDolphinExecutable(DolphinLaunchType.PLAYBACK);
+    const playbackInstallation = this.getInstallation(DolphinLaunchType.PLAYBACK);
+    const dolphinPath = await playbackInstallation.findDolphinExecutable();
     const meleeIsoPath = await this._getIsoPath();
 
     const configuring = this.playbackDolphinInstances.get("configure");
@@ -53,11 +68,12 @@ export class DolphinManager extends EventEmitter {
       throw new Error("Netplay dolphin is already open!");
     }
 
-    await updateDolphinSettings();
+    await this._updateDolphinSettings(DolphinLaunchType.NETPLAY);
 
-    const dolphinPath = await findDolphinExecutable(DolphinLaunchType.NETPLAY);
+    const netplayInstallation = this.getInstallation(DolphinLaunchType.NETPLAY);
+    const dolphinPath = await netplayInstallation.findDolphinExecutable();
     log.info(`Launching dolphin at path: ${dolphinPath}`);
-    const launchMeleeOnPlay = settingsManager.get().settings.launchMeleeOnPlay;
+    const launchMeleeOnPlay = this.settingsManager.get().settings.launchMeleeOnPlay;
     const meleeIsoPath = launchMeleeOnPlay ? await this._getIsoPath() : undefined;
 
     // Create the Dolphin instance and start it
@@ -77,9 +93,10 @@ export class DolphinManager extends EventEmitter {
   public async configureDolphin(launchType: DolphinLaunchType) {
     log.debug(`configuring ${launchType} dolphin...`);
 
-    await updateDolphinSettings();
+    await this._updateDolphinSettings(launchType);
 
-    const dolphinPath = await findDolphinExecutable(launchType);
+    const installation = this.getInstallation(launchType);
+    const dolphinPath = await installation.findDolphinExecutable();
     if (launchType === DolphinLaunchType.NETPLAY && !this.netplayDolphinInstance) {
       const instance = new DolphinInstance(dolphinPath);
       this.netplayDolphinInstance = instance;
@@ -127,29 +144,17 @@ export class DolphinManager extends EventEmitter {
       }
     }
 
-    // No dolphins of launchType are open so lets reinstall
-    const releaseInfo = await fetchLatestDolphin(launchType);
-    await downloadAndInstallDolphin(launchType, releaseInfo, log.info, true);
-    const isoPath = settingsManager.get().settings.isoPath;
+    const installation = this.getInstallation(launchType);
+    await installation.downloadAndInstall({ log: log.info, cleanInstall: true });
+    const isoPath = this.settingsManager.get().settings.isoPath;
     if (isoPath) {
       const gameDir = path.dirname(isoPath);
-      await addGamePathToIni(launchType, gameDir);
-    }
-  }
-
-  public async clearCache(launchType: DolphinLaunchType) {
-    const userFolder = await findUserFolder(launchType);
-    const cacheFolder = path.join(userFolder, "Cache");
-    try {
-      await fs.remove(cacheFolder);
-    } catch (err) {
-      log.error(err);
-      throw err;
+      await installation.addGamePath(gameDir);
     }
   }
 
   private async _getIsoPath(): Promise<string | undefined> {
-    const meleeIsoPath = settingsManager.get().settings.isoPath ?? undefined;
+    const meleeIsoPath = this.settingsManager.get().settings.isoPath ?? undefined;
     if (meleeIsoPath) {
       // Make sure the file actually exists
       if (!(await fileExists(meleeIsoPath))) {
@@ -159,14 +164,11 @@ export class DolphinManager extends EventEmitter {
     return meleeIsoPath;
   }
 
-  public async copyDolphinConfig(launchType: DolphinLaunchType, fromPath: string) {
-    const newUserFolder = await findUserFolder(launchType);
-    const oldUserFolder = path.join(fromPath, "User");
-
-    if (!(await fs.pathExists(oldUserFolder))) {
-      return;
-    }
-
-    await fs.copy(oldUserFolder, newUserFolder, { overwrite: true });
+  private async _updateDolphinSettings(launchType: DolphinLaunchType) {
+    const installation = this.getInstallation(launchType);
+    await installation.updateSettings({
+      replayPath: this.settingsManager.getRootSlpPath(),
+      useMonthlySubfolders: this.settingsManager.getUseMonthlySubfolders(),
+    });
   }
 }
