@@ -33,7 +33,7 @@ export const useAppStore = create(
 );
 
 export const useAppInitialization = () => {
-  const { authService, slippiBackendService } = useServices();
+  const { authService, slippiBackendService, dolphinService } = useServices();
   const { showError } = useToasts();
   const initializing = useAppStore((store) => store.initializing);
   const initialized = useAppStore((store) => store.initialized);
@@ -89,8 +89,8 @@ export const useAppInitialization = () => {
     promises.push(
       (async () => {
         try {
-          await window.electron.dolphin.downloadDolphin(DolphinLaunchType.NETPLAY);
-          await window.electron.dolphin.downloadDolphin(DolphinLaunchType.PLAYBACK);
+          await dolphinService.downloadDolphin(DolphinLaunchType.NETPLAY);
+          await dolphinService.downloadDolphin(DolphinLaunchType.PLAYBACK);
         } catch (err) {
           const errMsg = "Error occurred while downloading Dolphin";
           log.error(errMsg, err);
@@ -100,7 +100,7 @@ export const useAppInitialization = () => {
     );
 
     promises.push(
-      window.electron.dolphin
+      dolphinService
         .checkDesktopAppDolphin()
         .then(({ exists, dolphinPath }) => {
           setDesktopAppExists(exists);

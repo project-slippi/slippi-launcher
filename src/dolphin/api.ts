@@ -5,8 +5,7 @@ import {
   ipc_checkPlayKeyExists,
   ipc_clearDolphinCache,
   ipc_configureDolphin,
-  ipc_dolphinClosedEvent,
-  ipc_dolphinDownloadLogReceivedEvent,
+  ipc_dolphinEvent,
   ipc_downloadDolphin,
   ipc_importDolphinSettings,
   ipc_launchNetplayDolphin,
@@ -15,9 +14,16 @@ import {
   ipc_storePlayKeyFile,
   ipc_viewSlpReplay,
 } from "./ipc";
-import type { DolphinLaunchType, PlayKey, ReplayQueueItem } from "./types";
+import type {
+  DolphinEventMap,
+  DolphinEventType,
+  DolphinLaunchType,
+  DolphinService,
+  PlayKey,
+  ReplayQueueItem,
+} from "./types";
 
-export default {
+const dolphinApi: DolphinService = {
   async downloadDolphin(dolphinType: DolphinLaunchType) {
     await ipc_downloadDolphin.renderer!.trigger({ dolphinType });
   },
@@ -53,16 +59,14 @@ export default {
   async importDolphinSettings(options: { toImportDolphinPath: string; dolphinType: DolphinLaunchType }): Promise<void> {
     await ipc_importDolphinSettings.renderer!.trigger(options);
   },
-  onDolphinDownloadLogMessage(handle: (message: string) => void) {
-    const { destroy } = ipc_dolphinDownloadLogReceivedEvent.renderer!.handle(async ({ message }) => {
-      handle(message);
-    });
-    return destroy;
-  },
-  onDolphinClosed(handle: (result: { dolphinType: DolphinLaunchType; exitCode: number | null }) => void) {
-    const { destroy } = ipc_dolphinClosedEvent.renderer!.handle(async (result) => {
-      handle(result);
+  onEvent<T extends DolphinEventType>(eventType: T, handle: (event: DolphinEventMap[T]) => void) {
+    const { destroy } = ipc_dolphinEvent.renderer!.handle(async (result) => {
+      if (result.type === eventType) {
+        handle(result as DolphinEventMap[T]);
+      }
     });
     return destroy;
   },
 };
+
+export default dolphinApi;

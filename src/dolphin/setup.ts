@@ -9,8 +9,7 @@ import {
   ipc_checkPlayKeyExists,
   ipc_clearDolphinCache,
   ipc_configureDolphin,
-  ipc_dolphinClosedEvent,
-  ipc_dolphinDownloadLogReceivedEvent,
+  ipc_dolphinEvent,
   ipc_downloadDolphin,
   ipc_importDolphinSettings,
   ipc_launchNetplayDolphin,
@@ -21,7 +20,7 @@ import {
 } from "./ipc";
 import type { DolphinManager } from "./manager";
 import { deletePlayKeyFile, findPlayKey, writePlayKeyFile } from "./playkey";
-import { DolphinLaunchType } from "./types";
+import { DolphinEventType, DolphinLaunchType } from "./types";
 import { findDolphinExecutable, updateBootToCssCode } from "./util";
 
 const isMac = process.platform === "darwin";
@@ -30,7 +29,11 @@ const isLinux = process.platform === "linux";
 export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: DolphinManager }) {
   ipc_downloadDolphin.main!.handle(async ({ dolphinType }) => {
     const logDownloadInfo = (message: string) => {
-      void ipc_dolphinDownloadLogReceivedEvent.main!.trigger({ message });
+      void ipc_dolphinEvent.main!.trigger({
+        type: DolphinEventType.DOWNLOAD_LOG,
+        dolphinType,
+        message,
+      });
     };
     await dolphinManager.installDolphin(dolphinType, logDownloadInfo);
     return { success: true };
@@ -133,12 +136,20 @@ export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: Do
     return { dolphinPath: dolphinExecutablePath, exists: exists };
   });
 
-  dolphinManager.on("playback-dolphin-closed", async (_playbackId: string, code = 0) => {
-    void ipc_dolphinClosedEvent.main!.trigger({ dolphinType: DolphinLaunchType.PLAYBACK, exitCode: code });
+  dolphinManager.on("playback-dolphin-closed", async (_playbackId: string, exitCode = 0) => {
+    void ipc_dolphinEvent.main!.trigger({
+      type: DolphinEventType.CLOSED,
+      dolphinType: DolphinLaunchType.PLAYBACK,
+      exitCode,
+    });
   });
 
-  dolphinManager.on("netplay-dolphin-closed", async (code = 0) => {
-    void ipc_dolphinClosedEvent.main!.trigger({ dolphinType: DolphinLaunchType.NETPLAY, exitCode: code });
+  dolphinManager.on("netplay-dolphin-closed", async (exitCode = 0) => {
+    void ipc_dolphinEvent.main!.trigger({
+      type: DolphinEventType.CLOSED,
+      dolphinType: DolphinLaunchType.NETPLAY,
+      exitCode,
+    });
   });
 
   return { dolphinManager };

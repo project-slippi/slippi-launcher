@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { IsoValidity } from "@common/types";
+import { DolphinEventType } from "@dolphin/types";
 import throttle from "lodash/throttle";
 import React from "react";
 
@@ -24,7 +25,7 @@ const log = window.electron.log;
 
 export const useAppListeners = () => {
   // Handle app initalization
-  const { authService, broadcastService, consoleService } = useServices();
+  const { authService, broadcastService, consoleService, dolphinService } = useServices();
   const initialized = useAppStore((store) => store.initialized);
   const initializeApp = useAppInitialization();
   React.useEffect(() => {
@@ -59,15 +60,15 @@ export const useAppListeners = () => {
 
   const setLogMessage = useAppStore((store) => store.setLogMessage);
   const dolphinDownloadLogHandler = React.useCallback(
-    (message: string) => {
+    ({ message }: { message: string }) => {
       log.info(message);
       setLogMessage(message);
     },
     [setLogMessage],
   );
   React.useEffect(() => {
-    return window.electron.dolphin.onDolphinDownloadLogMessage(dolphinDownloadLogHandler);
-  }, [dolphinDownloadLogHandler]);
+    return dolphinService.onEvent(DolphinEventType.DOWNLOAD_LOG, dolphinDownloadLogHandler);
+  }, [dolphinService, dolphinDownloadLogHandler]);
 
   const setSlippiConnectionStatus = useConsole((store) => store.setSlippiConnectionStatus);
   React.useEffect(() => {
@@ -218,6 +219,6 @@ export const useAppListeners = () => {
     [showError, setDolphinOpen],
   );
   React.useEffect(() => {
-    return window.electron.dolphin.onDolphinClosed(dolphinClosedHandler);
-  }, [dolphinClosedHandler]);
+    return dolphinService.onEvent(DolphinEventType.CLOSED, dolphinClosedHandler);
+  }, [dolphinClosedHandler, dolphinService]);
 };
