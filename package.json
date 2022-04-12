@@ -91,7 +91,7 @@
     "dotenv": "^16.0.0",
     "dotenv-webpack": "^7.1.0",
     "electron": "^13.6.9",
-    "electron-builder": "^23.0.3",
+    "electron-builder": "^22.14.13",
     "electron-devtools-installer": "^3.2.0",
     "electron-notarize": "^1.2.1",
     "electron-rebuild": "^3.2.7",
