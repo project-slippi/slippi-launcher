@@ -14,6 +14,7 @@ import { PunishTable } from "./PunishTable";
 export interface GameProfileProps {
   file: FileResult;
   stats: StatsType;
+  onPlay: (options: { path: string; startFrame: number }) => void;
 }
 
 const TableContainer = styled.div`
@@ -35,7 +36,7 @@ const StatSection: React.FC<{
   );
 };
 
-export const GameProfile: React.FC<GameProfileProps> = ({ file, stats }) => {
+export const GameProfile: React.FC<GameProfileProps> = ({ file, stats, onPlay }) => {
   const [firstPlayer, secondPlayer] = file.settings.players;
 
   return (
@@ -46,12 +47,12 @@ export const GameProfile: React.FC<GameProfileProps> = ({ file, stats }) => {
         </ErrorBoundary>
       </StatSection>
       <StatSection title="Kills">
-        <KillTable file={file} stats={stats} player={firstPlayer} opp={secondPlayer} />
-        <KillTable file={file} stats={stats} player={secondPlayer} opp={firstPlayer} />
+        <KillTable file={file} stats={stats} player={firstPlayer} opp={secondPlayer} onPlay={onPlay} />
+        <KillTable file={file} stats={stats} player={secondPlayer} opp={firstPlayer} onPlay={onPlay} />
       </StatSection>
       <StatSection title="Openings &amp; Conversions">
-        <PunishTable file={file} stats={stats} player={firstPlayer} opp={secondPlayer} />
-        <PunishTable file={file} stats={stats} player={secondPlayer} opp={firstPlayer} />
+        <PunishTable file={file} stats={stats} player={firstPlayer} opp={secondPlayer} onPlay={onPlay} />
+        <PunishTable file={file} stats={stats} player={secondPlayer} opp={firstPlayer} onPlay={onPlay} />
       </StatSection>
     </div>
   );

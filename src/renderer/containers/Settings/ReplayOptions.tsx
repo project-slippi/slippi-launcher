@@ -5,7 +5,7 @@ import React from "react";
 import { Checkbox } from "@/components/FormInputs/Checkbox";
 import { MultiPathInput } from "@/components/MultiPathInput";
 import { PathInput } from "@/components/PathInput";
-import { useDolphinStore } from "@/lib/hooks/useDolphin";
+import { useDolphinStore } from "@/lib/dolphin/useDolphinStore";
 import { useExtraSlpPaths, useMonthlySubfolders, useRootSlpPath, useSpectateSlpPath } from "@/lib/hooks/useSettings";
 
 import { SettingItem } from "./SettingItem";
@@ -15,7 +15,7 @@ export const ReplayOptions: React.FC = () => {
   const [replayDirs, setReplayDirs] = useExtraSlpPaths();
   const [spectateDir, setSpectateDir] = useSpectateSlpPath();
   const [enableMonthlySubfolders, setUseMonthlySubfolders] = useMonthlySubfolders();
-  const netplayDolphinOpen = useDolphinStore((store) => store.netplayDolphinOpen);
+  const netplayDolphinOpen = useDolphinStore((store) => store.netplayOpened);
 
   const onUseMonthlySubfoldersToggle = async () => {
     await setUseMonthlySubfolders(!enableMonthlySubfolders);

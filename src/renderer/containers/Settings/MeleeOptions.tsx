@@ -11,7 +11,7 @@ import RadioGroup from "@mui/material/RadioGroup";
 import React from "react";
 
 import { PathInput } from "@/components/PathInput";
-import { useDolphinStore } from "@/lib/hooks/useDolphin";
+import { useDolphinStore } from "@/lib/dolphin/useDolphinStore";
 import { useIsoVerification } from "@/lib/hooks/useIsoVerification";
 import { useIsoPath, useLaunchMeleeOnPlay } from "@/lib/hooks/useSettings";
 
@@ -37,8 +37,8 @@ export const MeleeOptions: React.FC = () => {
   const isoValidity = useIsoVerification((state) => state.validity);
   const [isoPath, setIsoPath] = useIsoPath();
   const [launchMeleeOnPlay, setLaunchMelee] = useLaunchMeleeOnPlay();
-  const netplayDolphinOpen = useDolphinStore((store) => store.netplayDolphinOpen);
-  const playbackDolphinOpen = useDolphinStore((store) => store.playbackDolphinOpen);
+  const netplayDolphinOpen = useDolphinStore((store) => store.netplayOpened);
+  const playbackDolphinOpen = useDolphinStore((store) => store.playbackOpened);
 
   const onLaunchMeleeChange = async (value: string) => {
     const launchMelee = value === "true";

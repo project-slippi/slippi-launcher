@@ -70,7 +70,7 @@ export const useDolphinActions = (dolphinService: DolphinService) => {
   );
 
   const viewReplays = useCallback(
-    async (files: ReplayQueueItem[]) => {
+    (...files: ReplayQueueItem[]) => {
       assertReady(DolphinLaunchType.PLAYBACK);
       dolphinService
         .viewSlpReplay(files)
@@ -83,7 +83,7 @@ export const useDolphinActions = (dolphinService: DolphinService) => {
   );
 
   const importDolphin = useCallback(
-    async (toImportDolphinPath: string, dolphinType: DolphinLaunchType) => {
+    (toImportDolphinPath: string, dolphinType: DolphinLaunchType) => {
       dolphinService
         .importDolphinSettings({ toImportDolphinPath, dolphinType })
         .then(() => {

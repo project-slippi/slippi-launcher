@@ -86,18 +86,20 @@ export const useAppInitialization = () => {
     }
 
     // Download Dolphin if necessary
-    promises.push(
-      (async () => {
-        try {
-          await dolphinService.downloadDolphin(DolphinLaunchType.NETPLAY);
-          await dolphinService.downloadDolphin(DolphinLaunchType.PLAYBACK);
-        } catch (err) {
-          const errMsg = "Error occurred while downloading Dolphin";
-          log.error(errMsg, err);
-          setLogMessage(errMsg);
-        }
-      })(),
-    );
+    void dolphinService.downloadDolphin(DolphinLaunchType.NETPLAY);
+    void dolphinService.downloadDolphin(DolphinLaunchType.PLAYBACK);
+    // promises.push(
+    //   (async () => {
+    //     try {
+    //       await dolphinService.downloadDolphin(DolphinLaunchType.NETPLAY);
+    //       await dolphinService.downloadDolphin(DolphinLaunchType.PLAYBACK);
+    //     } catch (err) {
+    //       const errMsg = "Error occurred while downloading Dolphin";
+    //       log.error(errMsg, err);
+    //       setLogMessage(errMsg);
+    //     }
+    //   })(),
+    // );
 
     promises.push(
       dolphinService

@@ -16,12 +16,13 @@ import { BasicFooter } from "@/components/Footer";
 import { LabelledText } from "@/components/LabelledText";
 import { LoadingScreenWithProgress } from "@/components/LoadingScreen";
 import { IconMessage } from "@/components/Message";
-import { useDolphin } from "@/lib/hooks/useDolphin";
+import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/useReplayBrowserList";
 import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
 import { useReplays, useReplaySelection } from "@/lib/hooks/useReplays";
 import { useToasts } from "@/lib/hooks/useToasts";
 import { humanReadableBytes } from "@/lib/utils";
+import { useServices } from "@/services";
 
 import { FileList } from "./FileList";
 import { FileSelectionToolbar } from "./FileSelectionToolbar";
@@ -34,7 +35,8 @@ export const ReplayBrowser: React.FC = () => {
   const setScrollRowItem = useReplays((store) => store.setScrollRowItem);
   const removeFiles = useReplays((store) => store.removeFiles);
   const selectFile = useReplays((store) => store.selectFile);
-  const { viewReplays } = useDolphin();
+  const { dolphinService } = useServices();
+  const { viewReplays } = useDolphinActions(dolphinService);
   const clearSelectedFile = useReplays((store) => store.clearSelectedFile);
   const loading = useReplays((store) => store.loading);
   const currentFolder = useReplays((store) => store.currentFolder);
@@ -68,7 +70,7 @@ export const ReplayBrowser: React.FC = () => {
 
   const playSelectedFile = (index: number) => {
     const filePath = filteredFiles[index].fullPath;
-    viewReplays([{ path: filePath }]);
+    viewReplays({ path: filePath });
   };
 
   const deleteFiles = React.useCallback(
@@ -167,7 +169,7 @@ export const ReplayBrowser: React.FC = () => {
               <FileSelectionToolbar
                 totalSelected={selectedFiles.length}
                 onSelectAll={fileSelection.selectAll}
-                onPlay={() => viewReplays(selectedFiles.map((path) => ({ path })))}
+                onPlay={() => viewReplays(...selectedFiles.map((path) => ({ path })))}
                 onClear={fileSelection.clearSelection}
                 onDelete={() => {
                   fileSelection.clearSelection();

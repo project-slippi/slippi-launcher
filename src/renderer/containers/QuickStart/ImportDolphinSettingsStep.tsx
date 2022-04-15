@@ -9,9 +9,10 @@ import { Controller, useForm } from "react-hook-form";
 
 import { Checkbox } from "@/components/FormInputs/Checkbox";
 import { PathInput } from "@/components/PathInput";
-import { useDolphin } from "@/lib/hooks/useDolphin";
+import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { useDesktopApp } from "@/lib/hooks/useQuickStart";
 import { useToasts } from "@/lib/hooks/useToasts";
+import { useServices } from "@/services";
 
 import { QuickStartHeader } from "./QuickStartHeader";
 
@@ -27,7 +28,8 @@ export const ImportDolphinSettingsStep: React.FC = () => {
   const setExists = useDesktopApp((store) => store.setExists);
   const desktopAppDolphinPath = useDesktopApp((store) => store.dolphinPath);
   const { showError } = useToasts();
-  const { importDolphin } = useDolphin();
+  const { dolphinService } = useServices();
+  const { importDolphin } = useDolphinActions(dolphinService);
 
   const migrateDolphin = async (values: FormValues) => {
     if (values.shouldImportNetplay) {

@@ -15,8 +15,10 @@ import { useQuery } from "react-query";
 import { BasicFooter } from "@/components/Footer";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { IconMessage } from "@/components/Message";
+import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { useMousetrap } from "@/lib/hooks/useMousetrap";
 import { getStageImage } from "@/lib/utils";
+import { useServices } from "@/services";
 import { withFont } from "@/styles/withFont";
 
 import { GameProfile } from "./GameProfile";
@@ -65,10 +67,13 @@ export interface ReplayFileStatsProps {
 export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
   const { filePath } = props;
 
+  const { dolphinService } = useServices();
+  const { viewReplays } = useDolphinActions(dolphinService);
   const gameStatsQuery = useQuery(["loadStatsQuery", filePath], async () => {
     const result = window.electron.replays.calculateGameStats(filePath);
     return result;
   });
+
   const loading = gameStatsQuery.isLoading;
   const error = gameStatsQuery.error as any;
 
@@ -140,7 +145,7 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
         ) : error ? (
           <IconMessage Icon={ErrorIcon} label={`Error: ${error.message ?? JSON.stringify(error, null, 2)}`} />
         ) : gameStats ? (
-          <GameProfile file={file} stats={gameStats}></GameProfile>
+          <GameProfile file={file} stats={gameStats} onPlay={viewReplays} />
         ) : (
           <IconMessage Icon={HelpIcon} label="No stats computed" />
         )}
