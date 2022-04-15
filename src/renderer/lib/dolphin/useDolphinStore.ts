@@ -1,4 +1,5 @@
 import { DolphinLaunchType } from "@dolphin/types";
+import { unstable_batchedUpdates } from "react-dom";
 import create from "zustand";
 
 export enum DolphinStatus {
@@ -38,5 +39,7 @@ export const setDolphinComplete = (dolphinType: DolphinLaunchType, status: Dolph
 };
 
 export const updateNetplayDownloadProgress = (progress: { current: number; total: number } | null) => {
-  useDolphinStore.setState({ netplayDownloadProgress: progress });
+  unstable_batchedUpdates(() => {
+    useDolphinStore.setState({ netplayDownloadProgress: progress });
+  });
 };
