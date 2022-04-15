@@ -78,7 +78,15 @@ export class DolphinInstallation {
     await fs.copy(oldUserFolder, newUserFolder, { overwrite: true });
   }
 
-  public async validate(log: (message: string) => void): Promise<void> {
+  public async validate({
+    onProgress,
+    onLogMessage: log,
+    onComplete,
+  }: {
+    onProgress: (current: number, total: number) => void;
+    onLogMessage: (message: string) => void;
+    onComplete: () => void;
+  }): Promise<void> {
     const type = this.dolphinLaunchType;
     const dolphinDownloadInfo = await fetchLatestVersion(type);
 
@@ -99,16 +107,25 @@ export class DolphinInstallation {
     }
 
     // Start the download
-    await this.downloadAndInstall({ releaseInfo: dolphinDownloadInfo, log });
+    await this.downloadAndInstall({
+      releaseInfo: dolphinDownloadInfo,
+      onProgress,
+      onLogMessage: log,
+      onComplete,
+    });
   }
 
   public async downloadAndInstall({
     releaseInfo,
-    log = console.log,
+    onProgress,
+    onComplete,
+    onLogMessage: log = console.log,
     cleanInstall,
   }: {
     releaseInfo?: DolphinVersionResponse;
-    log?: (message: string) => void;
+    onProgress: (current: number, total: number) => void;
+    onComplete: () => void;
+    onLogMessage?: (message: string) => void;
     cleanInstall?: boolean;
   }): Promise<void> {
     const type = this.dolphinLaunchType;
@@ -122,13 +139,12 @@ export class DolphinInstallation {
       throw new Error(`Could not find latest Dolphin download url for ${process.platform}`);
     }
 
-    const onProgress = (current: number, total: number) =>
-      log(`Downloading... ${((current / total) * 100).toFixed(0)}%`);
     const downloadDir = path.join(app.getPath("userData"), "temp");
     const downloadedAsset = await downloadLatestDolphin(downloadUrl, downloadDir, onProgress, log);
     log(`Installing v${dolphinDownloadInfo.version} ${type} Dolphin...`);
     await this._installDolphin(downloadedAsset, log, cleanInstall);
     log(`Finished v${dolphinDownloadInfo.version} ${type} Dolphin install`);
+    onComplete();
   }
 
   public async addGamePath(gameDir: string): Promise<void> {

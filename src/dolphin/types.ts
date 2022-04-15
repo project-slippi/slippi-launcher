@@ -42,12 +42,20 @@ export interface PlayKey {
 export enum DolphinEventType {
   CLOSED = "CLOSED",
   DOWNLOAD_PROGRESS = "DOWNLOAD_PROGRESS",
+  DOWNLOAD_COMPLETE = "DOWNLOAD_COMPLETE",
   DOWNLOAD_LOG = "DOWNLOAD_LOG",
 }
 
-export type DolphinClosedEvent = {
+export type DolphinNetplayClosedEvent = {
   type: DolphinEventType.CLOSED;
-  dolphinType: DolphinLaunchType;
+  dolphinType: DolphinLaunchType.NETPLAY;
+  exitCode: number | null;
+};
+
+export type DolphinPlaybackClosedEvent = {
+  type: DolphinEventType.CLOSED;
+  dolphinType: DolphinLaunchType.PLAYBACK;
+  instanceId: string;
   exitCode: number | null;
 };
 
@@ -66,10 +74,16 @@ export type DolphinDownloadProgressEvent = {
   };
 };
 
+export type DolphinDownloadCompleteEvent = {
+  type: DolphinEventType.DOWNLOAD_COMPLETE;
+  dolphinType: DolphinLaunchType;
+};
+
 export type DolphinEventMap = {
-  [DolphinEventType.CLOSED]: DolphinClosedEvent;
+  [DolphinEventType.CLOSED]: DolphinNetplayClosedEvent | DolphinPlaybackClosedEvent;
   [DolphinEventType.DOWNLOAD_LOG]: DolphinDownloadLogEvent;
   [DolphinEventType.DOWNLOAD_PROGRESS]: DolphinDownloadProgressEvent;
+  [DolphinEventType.DOWNLOAD_COMPLETE]: DolphinDownloadCompleteEvent;
 };
 
 export type DolphinEvent = DolphinEventMap[DolphinEventType];

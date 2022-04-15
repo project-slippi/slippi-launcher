@@ -1,4 +1,7 @@
 import type { DolphinManager } from "@dolphin/manager";
+import type { DolphinPlaybackClosedEvent } from "@dolphin/types";
+import { DolphinEventType, DolphinLaunchType } from "@dolphin/types";
+import log from "electron-log";
 
 import { connectionScanner } from "./connectionScanner";
 import {
@@ -13,6 +16,16 @@ import { createMirrorWorker } from "./mirror.worker.interface";
 
 export default function setupConsoleIpc({ dolphinManager }: { dolphinManager: DolphinManager }) {
   let mirrorWorker: MirrorWorker | undefined;
+
+  dolphinManager.events
+    .filter<DolphinPlaybackClosedEvent>((event) => {
+      return event.type === DolphinEventType.CLOSED && event.dolphinType === DolphinLaunchType.PLAYBACK;
+    })
+    .subscribe((event) => {
+      if (mirrorWorker) {
+        void mirrorWorker.dolphinClosed(event.instanceId).catch(log.error);
+      }
+    });
 
   ipc_connectToConsoleMirror.main!.handle(async ({ config }) => {
     if (!mirrorWorker) {

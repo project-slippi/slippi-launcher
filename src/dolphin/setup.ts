@@ -1,4 +1,5 @@
 import { app } from "electron";
+import log from "electron-log";
 import * as fs from "fs-extra";
 import { isEqual } from "lodash";
 import path from "path";
@@ -20,22 +21,19 @@ import {
 } from "./ipc";
 import type { DolphinManager } from "./manager";
 import { deletePlayKeyFile, findPlayKey, writePlayKeyFile } from "./playkey";
-import { DolphinEventType, DolphinLaunchType } from "./types";
+import { DolphinLaunchType } from "./types";
 import { findDolphinExecutable, updateBootToCssCode } from "./util";
 
 const isMac = process.platform === "darwin";
 const isLinux = process.platform === "linux";
 
 export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: DolphinManager }) {
+  dolphinManager.events.subscribe((event) => {
+    void ipc_dolphinEvent.main!.trigger(event).catch(log.error);
+  });
+
   ipc_downloadDolphin.main!.handle(async ({ dolphinType }) => {
-    const logDownloadInfo = (message: string) => {
-      void ipc_dolphinEvent.main!.trigger({
-        type: DolphinEventType.DOWNLOAD_LOG,
-        dolphinType,
-        message,
-      });
-    };
-    await dolphinManager.installDolphin(dolphinType, logDownloadInfo);
+    await dolphinManager.installDolphin(dolphinType);
     return { success: true };
   });
 
@@ -134,22 +132,6 @@ export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: Do
     const dolphinExecutablePath = await findDolphinExecutable(DolphinLaunchType.NETPLAY, dolphinFolderPath);
 
     return { dolphinPath: dolphinExecutablePath, exists: exists };
-  });
-
-  dolphinManager.on("playback-dolphin-closed", async (_playbackId: string, exitCode = 0) => {
-    void ipc_dolphinEvent.main!.trigger({
-      type: DolphinEventType.CLOSED,
-      dolphinType: DolphinLaunchType.PLAYBACK,
-      exitCode,
-    });
-  });
-
-  dolphinManager.on("netplay-dolphin-closed", async (exitCode = 0) => {
-    void ipc_dolphinEvent.main!.trigger({
-      type: DolphinEventType.CLOSED,
-      dolphinType: DolphinLaunchType.NETPLAY,
-      exitCode,
-    });
   });
 
   return { dolphinManager };
