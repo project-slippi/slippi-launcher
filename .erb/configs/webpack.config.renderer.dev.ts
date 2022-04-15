@@ -36,7 +36,7 @@ if (!requiredByDLLConfig && !(fs.existsSync(webpackPaths.dllPath) && fs.existsSy
   execSync("yarn run postinstall");
 }
 
-const allMockableServices: readonly string[] = ["auth", "slippi"];
+const allMockableServices: readonly string[] = ["auth", "slippi", "dolphin"];
 
 const parseMockServices = (envString?: string | true): readonly string[] => {
   if (envString === true) {
