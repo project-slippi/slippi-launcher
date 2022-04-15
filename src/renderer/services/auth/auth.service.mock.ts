@@ -80,4 +80,6 @@ class MockAuthClient implements AuthService {
   }
 }
 
-export default MockAuthClient;
+export default function createMockAuthClient(): AuthService {
+  return new MockAuthClient();
+}

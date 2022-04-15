@@ -62,4 +62,6 @@ class MockSlippiBackendClient implements SlippiBackendService {
   }
 }
 
-export default MockSlippiBackendClient;
+export default function createMockSlippiClient(authService: AuthService): SlippiBackendService {
+  return new MockSlippiBackendClient(authService);
+}

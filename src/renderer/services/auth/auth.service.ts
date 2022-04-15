@@ -136,4 +136,6 @@ class AuthClient implements AuthService {
   }
 }
 
-export default AuthClient;
+export default function createAuthClient(): AuthService {
+  return new AuthClient();
+}

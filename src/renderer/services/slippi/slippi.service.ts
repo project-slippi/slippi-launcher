@@ -154,4 +154,6 @@ class SlippiBackendClient implements SlippiBackendService {
   }
 }
 
-export default SlippiBackendClient;
+export default function createSlippiClient(authService: AuthService, clientVersion?: string): SlippiBackendService {
+  return new SlippiBackendClient(authService, clientVersion);
+}
