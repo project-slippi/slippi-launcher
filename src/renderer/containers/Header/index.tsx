@@ -11,8 +11,8 @@ import React from "react";
 
 import { ExternalLink } from "@/components/ExternalLink";
 import { PlayButton } from "@/components/play_button/PlayButton";
+import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { useAccount } from "@/lib/hooks/useAccount";
-import { useDolphin } from "@/lib/hooks/useDolphin";
 import { useLoginModal } from "@/lib/hooks/useLoginModal";
 import { useSettings } from "@/lib/hooks/useSettings";
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
@@ -39,7 +39,7 @@ export interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
-  const { slippiBackendService } = useServices();
+  const { dolphinService, slippiBackendService } = useServices();
   const [startGameModalOpen, setStartGameModalOpen] = React.useState(false);
   const [activateOnlineModal, setActivateOnlineModal] = React.useState(false);
   const openModal = useLoginModal((store) => store.openModal);
@@ -49,7 +49,7 @@ export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
   const serverError = useAccount((store) => store.serverError);
   const meleeIsoPath = useSettings((store) => store.settings.isoPath) || undefined;
   const { showError } = useToasts();
-  const { launchNetplay } = useDolphin();
+  const { launchNetplay } = useDolphinActions(dolphinService);
 
   const onPlay = async (offlineOnly?: boolean) => {
     if (!offlineOnly) {

@@ -10,12 +10,11 @@ import { useReplays } from "@/lib/hooks/useReplays";
 import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";
 
-import { handleDolphinExitCode } from "../utils";
+import { useDolphinListeners } from "../dolphin/useDolphinListeners";
 import { useAccount, usePlayKey } from "./useAccount";
 import { useBroadcast } from "./useBroadcast";
 import { useBroadcastList, useBroadcastListStore } from "./useBroadcastList";
 import { useConsoleDiscoveryStore } from "./useConsoleDiscovery";
-import { useDolphinStore } from "./useDolphin";
 import { useIsoVerification } from "./useIsoVerification";
 import { useReplayBrowserNavigation } from "./useReplayBrowserList";
 import { useSettings } from "./useSettings";
@@ -31,6 +30,8 @@ export const useAppListeners = () => {
   React.useEffect(() => {
     void initializeApp();
   }, [initializeApp]);
+
+  useDolphinListeners(dolphinService);
 
   // Subscribe to user auth changes to keep store up to date
   const setUser = useAccount((store) => store.setUser);
@@ -204,21 +205,4 @@ export const useAppListeners = () => {
   React.useEffect(() => {
     return broadcastService.onSpectateReconnect(refreshBroadcasts);
   }, [refreshBroadcasts, broadcastService]);
-
-  const setDolphinOpen = useDolphinStore((store) => store.setDolphinOpen);
-  const dolphinClosedHandler = React.useCallback(
-    ({ dolphinType, exitCode }) => {
-      setDolphinOpen(dolphinType, false);
-
-      // Check if it exited cleanly
-      const errMsg = handleDolphinExitCode(exitCode);
-      if (errMsg) {
-        showError(errMsg);
-      }
-    },
-    [showError, setDolphinOpen],
-  );
-  React.useEffect(() => {
-    return dolphinService.onEvent(DolphinEventType.CLOSED, dolphinClosedHandler);
-  }, [dolphinClosedHandler, dolphinService]);
 };
