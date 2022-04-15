@@ -5,10 +5,10 @@ import { useToasts } from "@/lib/hooks/useToasts";
 export const useFileDrag = () => {
   const { showError } = useToasts();
 
-  const fileDrag = useCallback(
-    async (event: React.DragEvent<HTMLDivElement>, filePaths: string[]) => {
+  const handleDrag = useCallback(
+    (event: React.DragEvent<HTMLDivElement>, filePaths: string[]) => {
+      event.preventDefault();
       try {
-        event.preventDefault();
         if (filePaths.length > 0) {
           window.electron.common.onDragStart(filePaths);
         }
@@ -17,13 +17,6 @@ export const useFileDrag = () => {
       }
     },
     [showError],
-  );
-
-  const handleDrag = useCallback(
-    (event: React.DragEvent<HTMLDivElement>, filePaths: string[]) => {
-      void fileDrag(event, filePaths);
-    },
-    [fileDrag],
   );
 
   return handleDrag;

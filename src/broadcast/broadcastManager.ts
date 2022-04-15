@@ -103,7 +103,7 @@ export class BroadcastManager extends EventEmitter {
     }
 
     // Indicate we're connecting to the Slippi server
-    void this._setSlippiStatus(ConnectionStatus.CONNECTING);
+    this._setSlippiStatus(ConnectionStatus.CONNECTING);
 
     const headers = {
       target: config.viewerId,
@@ -171,7 +171,7 @@ export class BroadcastManager extends EventEmitter {
         this.isBroadcastReady = true;
 
         this.broadcastId = broadcastId;
-        void this._setSlippiStatus(ConnectionStatus.CONNECTED);
+        this._setSlippiStatus(ConnectionStatus.CONNECTED);
 
         // Process any events that may have been missed when we disconnected
         this._handleGameData();
@@ -192,12 +192,12 @@ export class BroadcastManager extends EventEmitter {
           // Here we have an abnormal disconnect... try to reconnect?
           // This error seems to occur primarily when the auth token for firebase expires,
           // which lasts 1 hour, so the plan is to get a new token, use the same config, and reconnect.
-          void this._setSlippiStatus(ConnectionStatus.RECONNECT_WAIT);
+          this._setSlippiStatus(ConnectionStatus.RECONNECT_WAIT);
           this.emit(BroadcastEvent.RECONNECT, config);
         } else {
           // If normal close, disconnect from dolphin
           this.dolphinConnection.disconnect();
-          void this._setSlippiStatus(ConnectionStatus.DISCONNECTED);
+          this._setSlippiStatus(ConnectionStatus.DISCONNECTED);
         }
       });
 
@@ -449,7 +449,7 @@ export class BroadcastManager extends EventEmitter {
     }
   }
 
-  private async _setSlippiStatus(status: ConnectionStatus) {
+  private _setSlippiStatus(status: ConnectionStatus) {
     if (this.slippiStatus === ConnectionStatus.RECONNECT_WAIT && status === ConnectionStatus.CONNECTING) {
       return;
     }
