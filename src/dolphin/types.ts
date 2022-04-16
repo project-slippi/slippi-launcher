@@ -43,7 +43,6 @@ export enum DolphinEventType {
   CLOSED = "CLOSED",
   DOWNLOAD_PROGRESS = "DOWNLOAD_PROGRESS",
   DOWNLOAD_COMPLETE = "DOWNLOAD_COMPLETE",
-  DOWNLOAD_LOG = "DOWNLOAD_LOG",
 }
 
 export type DolphinNetplayClosedEvent = {
@@ -57,12 +56,6 @@ export type DolphinPlaybackClosedEvent = {
   dolphinType: DolphinLaunchType.PLAYBACK;
   instanceId: string;
   exitCode: number | null;
-};
-
-export type DolphinDownloadLogEvent = {
-  type: DolphinEventType.DOWNLOAD_LOG;
-  dolphinType: DolphinLaunchType;
-  message: string;
 };
 
 export type DolphinDownloadProgressEvent = {
@@ -81,7 +74,6 @@ export type DolphinDownloadCompleteEvent = {
 
 export type DolphinEventMap = {
   [DolphinEventType.CLOSED]: DolphinNetplayClosedEvent | DolphinPlaybackClosedEvent;
-  [DolphinEventType.DOWNLOAD_LOG]: DolphinDownloadLogEvent;
   [DolphinEventType.DOWNLOAD_PROGRESS]: DolphinDownloadProgressEvent;
   [DolphinEventType.DOWNLOAD_COMPLETE]: DolphinDownloadCompleteEvent;
 };

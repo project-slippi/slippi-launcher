@@ -16,7 +16,6 @@ export const useAppStore = create(
     {
       initializing: false,
       initialized: false,
-      logMessage: "",
       updateVersion: "",
       updateDownloadProgress: 0,
       updateReady: false,
@@ -24,7 +23,6 @@ export const useAppStore = create(
     (set) => ({
       setInitializing: (initializing: boolean) => set({ initializing }),
       setInitialized: (initialized: boolean) => set({ initialized }),
-      setLogMessage: (logMessage: string) => set({ logMessage }),
       setUpdateVersion: (updateVersion: string) => set({ updateVersion }),
       setUpdateDownloadProgress: (updateDownloadProgress: number) => set({ updateDownloadProgress }),
       setUpdateReady: (updateReady: boolean) => set({ updateReady }),

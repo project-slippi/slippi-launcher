@@ -3,6 +3,7 @@ import { IniFile } from "@dolphin/config/iniFile";
 import { findDolphinExecutable } from "@dolphin/util";
 import { spawnSync } from "child_process";
 import { app } from "electron";
+import log from "electron-log";
 import * as fs from "fs-extra";
 import os from "os";
 import path from "path";
@@ -80,11 +81,9 @@ export class DolphinInstallation {
 
   public async validate({
     onProgress,
-    onLogMessage: log,
     onComplete,
   }: {
     onProgress: (current: number, total: number) => void;
-    onLogMessage: (message: string) => void;
     onComplete: () => void;
   }): Promise<void> {
     const type = this.dolphinLaunchType;
@@ -92,25 +91,25 @@ export class DolphinInstallation {
 
     try {
       await this.findDolphinExecutable();
-      log(`Found existing ${type} Dolphin executable.`);
-      log(`Checking if we need to update ${type} Dolphin`);
+      log.info(`Found existing ${type} Dolphin executable.`);
+      log.info(`Checking if we need to update ${type} Dolphin`);
       const latestVersion = dolphinDownloadInfo.version;
       const isOutdated = await this._isOutOfDate(latestVersion);
       if (!isOutdated) {
-        log("No update found...");
+        log.info("No update found...");
+        onComplete();
         return;
       }
 
-      log(`${type} Dolphin installation is outdated. Downloading latest...`);
+      log.info(`${type} Dolphin installation is outdated. Downloading latest...`);
     } catch (err) {
-      log(`Could not find ${type} Dolphin installation. Downloading...`);
+      log.info(`Could not find ${type} Dolphin installation. Downloading...`);
     }
 
     // Start the download
     await this.downloadAndInstall({
       releaseInfo: dolphinDownloadInfo,
       onProgress,
-      onLogMessage: log,
       onComplete,
     });
   }
@@ -119,13 +118,11 @@ export class DolphinInstallation {
     releaseInfo,
     onProgress,
     onComplete,
-    onLogMessage: log = console.log,
     cleanInstall,
   }: {
     releaseInfo?: DolphinVersionResponse;
     onProgress: (current: number, total: number) => void;
     onComplete: () => void;
-    onLogMessage?: (message: string) => void;
     cleanInstall?: boolean;
   }): Promise<void> {
     const type = this.dolphinLaunchType;
@@ -140,10 +137,10 @@ export class DolphinInstallation {
     }
 
     const downloadDir = path.join(app.getPath("userData"), "temp");
-    const downloadedAsset = await downloadLatestDolphin(downloadUrl, downloadDir, onProgress, log);
-    log(`Installing v${dolphinDownloadInfo.version} ${type} Dolphin...`);
-    await this._installDolphin(downloadedAsset, log, cleanInstall);
-    log(`Finished v${dolphinDownloadInfo.version} ${type} Dolphin install`);
+    const downloadedAsset = await downloadLatestDolphin(downloadUrl, downloadDir, onProgress);
+    log.info(`Installing v${dolphinDownloadInfo.version} ${type} Dolphin...`);
+    await this._installDolphin(downloadedAsset, cleanInstall);
+    log.info(`Finished v${dolphinDownloadInfo.version} ${type} Dolphin install`);
     onComplete();
   }
 
@@ -172,7 +169,7 @@ export class DolphinInstallation {
     }
   }
 
-  private async _installDolphin(assetPath: string, log: (message: string) => void, cleanInstall = false) {
+  private async _installDolphin(assetPath: string, cleanInstall = false) {
     const dolphinPath = this.installationFolder;
 
     if (cleanInstall) {
@@ -182,12 +179,12 @@ export class DolphinInstallation {
     switch (process.platform) {
       case "win32": {
         const { installDolphinOnWindows } = await import("./windows");
-        await installDolphinOnWindows({ assetPath, destinationFolder: dolphinPath, log });
+        await installDolphinOnWindows({ assetPath, destinationFolder: dolphinPath });
         break;
       }
       case "darwin": {
         const { installDolphinOnMac } = await import("./macos");
-        await installDolphinOnMac({ assetPath, destinationFolder: dolphinPath, log });
+        await installDolphinOnMac({ assetPath, destinationFolder: dolphinPath });
         break;
       }
       case "linux": {
@@ -196,7 +193,6 @@ export class DolphinInstallation {
           type: this.dolphinLaunchType,
           assetPath,
           destinationFolder: dolphinPath,
-          log,
         });
         break;
       }

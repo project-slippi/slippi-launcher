@@ -30,7 +30,6 @@ export class DolphinManager {
     const dolphinInstall = this.getInstallation(dolphinType);
     await dolphinInstall.validate({
       onProgress: (current, total) => this._onProgress(dolphinType, current, total),
-      onLogMessage: (message) => this._onLogMessage(dolphinType, message),
       onComplete: () => this._onComplete(dolphinType),
     });
   }
@@ -167,7 +166,6 @@ export class DolphinManager {
 
     const installation = this.getInstallation(launchType);
     await installation.downloadAndInstall({
-      onLogMessage: (message) => this._onLogMessage(launchType, message),
       cleanInstall: true,
       onProgress: (current, total) => this._onProgress(launchType, current, total),
       onComplete: () => this._onComplete(launchType),
@@ -208,14 +206,6 @@ export class DolphinManager {
       type: DolphinEventType.DOWNLOAD_PROGRESS,
       dolphinType,
       progress: { current, total },
-    });
-  }
-
-  private _onLogMessage(dolphinType: DolphinLaunchType, message: string) {
-    this.eventSubject.next({
-      type: DolphinEventType.DOWNLOAD_LOG,
-      dolphinType,
-      message,
     });
   }
 

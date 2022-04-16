@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { IsoValidity } from "@common/types";
-import { DolphinEventType } from "@dolphin/types";
 import throttle from "lodash/throttle";
 import React from "react";
 
@@ -58,18 +57,6 @@ export const useAppListeners = () => {
 
     return;
   }, [initialized, refreshPlayKey, setUser, authService]);
-
-  const setLogMessage = useAppStore((store) => store.setLogMessage);
-  const dolphinDownloadLogHandler = React.useCallback(
-    ({ message }: { message: string }) => {
-      log.info(message);
-      setLogMessage(message);
-    },
-    [setLogMessage],
-  );
-  React.useEffect(() => {
-    return dolphinService.onEvent(DolphinEventType.DOWNLOAD_LOG, dolphinDownloadLogHandler);
-  }, [dolphinService, dolphinDownloadLogHandler]);
 
   const setSlippiConnectionStatus = useConsole((store) => store.setSlippiConnectionStatus);
   React.useEffect(() => {
