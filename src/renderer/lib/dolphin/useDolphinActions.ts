@@ -23,20 +23,13 @@ export const useDolphinActions = (dolphinService: DolphinService) => {
     [netplayStatus, playbackStatus],
   );
 
-  const assertReady = useCallback(
-    (dolphinType: DolphinLaunchType) => {
-      if (getInstallStatus(dolphinType) !== DolphinStatus.READY) {
-        const msg = "Dolphin is busy. Try again later.";
-        showError(msg);
-        throw new Error(msg);
-      }
-    },
-    [getInstallStatus, showError],
-  );
-
   const openConfigureDolphin = useCallback(
     (dolphinType: DolphinLaunchType) => {
-      assertReady(dolphinType);
+      if (getInstallStatus(dolphinType) !== DolphinStatus.READY) {
+        showError("Dolphin is updating. Try again later.");
+        return;
+      }
+
       dolphinService
         .configureDolphin(dolphinType)
         .then(() => {
@@ -44,7 +37,7 @@ export const useDolphinActions = (dolphinService: DolphinService) => {
         })
         .catch(showError);
     },
-    [assertReady, dolphinService, showError],
+    [getInstallStatus, dolphinService, showError],
   );
 
   const clearDolphinCache = useCallback(
@@ -63,15 +56,23 @@ export const useDolphinActions = (dolphinService: DolphinService) => {
 
   const launchNetplay = useCallback(
     (bootToCss: boolean) => {
-      assertReady(DolphinLaunchType.NETPLAY);
+      if (getInstallStatus(DolphinLaunchType.NETPLAY) !== DolphinStatus.READY) {
+        showError("Dolphin is updating. Try again later.");
+        return;
+      }
+
       dolphinService.launchNetplayDolphin({ bootToCss }).catch(showError);
     },
-    [assertReady, dolphinService, showError],
+    [getInstallStatus, dolphinService, showError],
   );
 
   const viewReplays = useCallback(
     (...files: ReplayQueueItem[]) => {
-      assertReady(DolphinLaunchType.PLAYBACK);
+      if (getInstallStatus(DolphinLaunchType.PLAYBACK) !== DolphinStatus.READY) {
+        showError("Dolphin is updating. Try again later.");
+        return;
+      }
+
       dolphinService
         .viewSlpReplay(files)
         .then(() => {
@@ -79,7 +80,7 @@ export const useDolphinActions = (dolphinService: DolphinService) => {
         })
         .catch(showError);
     },
-    [assertReady, dolphinService, showError],
+    [getInstallStatus, dolphinService, showError],
   );
 
   const importDolphin = useCallback(
