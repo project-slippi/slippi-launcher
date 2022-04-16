@@ -52,37 +52,37 @@ export const useAppInitialization = () => {
 
     setInitializing(true);
 
-    console.log("Initializing app...");
+    log.info("Initializing app...");
 
-    let user: AuthUser | null = null;
-    try {
-      user = await authService.init();
-      setUser(user);
-    } catch (err) {
-      console.warn(err);
-    }
-
-    const promises: Promise<any>[] = [];
+    const promises: Promise<void>[] = [];
 
     // If we're logged in, check they have a valid play key
-    if (user) {
-      promises.push(
-        slippiBackendService
-          .fetchPlayKey()
-          .then((key) => {
+    promises.push(
+      (async () => {
+        let user: AuthUser | null = null;
+        try {
+          user = await authService.init();
+          setUser(user);
+        } catch (err) {
+          log.warn(err);
+        }
+
+        if (user) {
+          try {
+            const key = await slippiBackendService.fetchPlayKey();
             setServerError(false);
             setPlayKey(key);
-          })
-          .catch((err) => {
+          } catch (err) {
             setServerError(true);
-            console.warn(err);
+            log.warn(err);
 
             const message = `Failed to communicate with Slippi servers. You either have no internet
               connection or Slippi is experiencing some downtime. Playing online may or may not work.`;
             showError(message);
-          }),
-      );
-    }
+          }
+        }
+      })(),
+    );
 
     // Download Dolphins if necessary
     [DolphinLaunchType.NETPLAY, DolphinLaunchType.PLAYBACK].map(async (dolphinType) => {
@@ -103,7 +103,7 @@ export const useAppInitialization = () => {
           setDesktopAppExists(exists);
           setDesktopAppDolphinPath(dolphinPath);
         })
-        .catch(console.error),
+        .catch(log.error),
     );
 
     // Check if there is an update to the launcher
@@ -113,7 +113,7 @@ export const useAppInitialization = () => {
     try {
       await Promise.all(promises);
     } catch (err) {
-      console.error(err);
+      log.error(err);
     } finally {
       setInitialized(true);
     }
