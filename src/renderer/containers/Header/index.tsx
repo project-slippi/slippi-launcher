@@ -5,13 +5,12 @@ import styled from "@emotion/styled";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import ButtonBase from "@mui/material/ButtonBase";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import React from "react";
 
 import { ExternalLink } from "@/components/ExternalLink";
-import { PlayIcon } from "@/components/PlayIcon";
+import { PlayButton } from "@/components/play_button/PlayButton";
 import { useAccount } from "@/lib/hooks/useAccount";
 import { useDolphin } from "@/lib/hooks/useDolphin";
 import { useLoginModal } from "@/lib/hooks/useLoginModal";
@@ -112,18 +111,7 @@ export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
             margin: 0 10px;
           `}
         >
-          <ButtonBase onClick={() => onPlay()}>
-            <PlayIcon
-              css={css`
-                &:hover {
-                  opacity: 0.8;
-                  transition: opacity 0.2s ease-in-out;
-                }
-              `}
-            >
-              Play
-            </PlayIcon>
-          </ButtonBase>
+          <PlayButton onClick={() => onPlay()} />
         </div>
         <MainMenu menuItems={menuItems} />
       </div>
