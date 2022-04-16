@@ -4,15 +4,10 @@ import React from "react";
 
 import { withFont } from "@/styles/withFont";
 
-export const PlayIcon: React.FC<{ className?: string; fillPercent?: number }> = ({
-  fillPercent = 1,
-  className,
-  children,
-}) => {
+export const PlayIcon = ({ children, fillPercent = 1 }: React.PropsWithChildren<{ fillPercent?: number }>) => {
   const offset = `${(fillPercent * 100).toFixed(2)}%`;
   return (
     <div
-      className={className}
       css={css`
         position: relative;
       `}
