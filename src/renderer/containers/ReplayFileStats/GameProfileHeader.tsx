@@ -18,6 +18,7 @@ import _ from "lodash";
 import moment from "moment";
 import React from "react";
 
+import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
 import { extractPlayerNames } from "@/lib/matchNames";
 import { convertFrameCountToDurationString, monthDayHourFormat } from "@/lib/time";
 
@@ -232,6 +233,26 @@ const GameDetails: React.FC<{
   );
 };
 
+const LaunchReplayButton = React.memo(({ onClick }: { onClick: () => void }) => {
+  const playbackStatus = useDolphinStore((store) => store.playbackStatus);
+  const title = playbackStatus === DolphinStatus.READY ? "" : "Dolphin is updating";
+  return (
+    <Tooltip title={title}>
+      <span>
+        <Button
+          variant="contained"
+          onClick={onClick}
+          color="primary"
+          startIcon={<PlayArrowIcon />}
+          disabled={playbackStatus !== DolphinStatus.READY}
+        >
+          Launch Replay
+        </Button>
+      </span>
+    </Tooltip>
+  );
+});
+
 const Controls: React.FC<{
   disabled?: boolean;
   index: number | null;
@@ -252,9 +273,7 @@ const Controls: React.FC<{
       `}
     >
       <div>
-        <Button variant="contained" onClick={onPlay} color="primary" startIcon={<PlayArrowIcon />}>
-          Launch Replay
-        </Button>
+        <LaunchReplayButton onClick={onPlay} />
       </div>
       <div
         css={css`
