@@ -16,6 +16,7 @@ import moment from "moment";
 import React from "react";
 
 import { DraggableFile } from "@/components/DraggableFile";
+import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
 import { convertFrameCountToDurationString, monthDayHourFormat } from "@/lib/time";
 import { getStageImage } from "@/lib/utils";
 
@@ -31,6 +32,22 @@ export interface ReplayFileProps extends FileResult {
   selectedFiles: string[];
   selectedIndex: number;
 }
+
+const LaunchReplayButton = React.memo(({ onClick }: { onClick: () => void }) => {
+  const playbackStatus = useDolphinStore((store) => store.playbackStatus);
+  const label = playbackStatus === DolphinStatus.READY ? "Launch replay" : "Dolphin is updating";
+
+  return (
+    <ReplayActionButton
+      label={label}
+      onClick={onClick}
+      color={colors.greenDark}
+      disabled={playbackStatus !== DolphinStatus.READY}
+    >
+      <PlayCircleOutlineIcon />
+    </ReplayActionButton>
+  );
+});
 
 export const ReplayFile: React.FC<ReplayFileProps> = ({
   index,
@@ -88,9 +105,7 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
                 <ReplayActionButton label="Show stats" onClick={onSelect}>
                   <EqualizerIcon />
                 </ReplayActionButton>
-                <ReplayActionButton label="Launch replay" onClick={onPlay} color={colors.greenDark}>
-                  <PlayCircleOutlineIcon />
-                </ReplayActionButton>
+                <LaunchReplayButton onClick={onPlay} />
               </div>
             </div>
 
@@ -201,32 +216,32 @@ const InfoItem: React.FC<{
   );
 };
 
-const ReplayActionButton: React.FC<{
+type ReplayActionButtonProps = Omit<React.ComponentProps<typeof IconButton>, "color"> & {
   label: string;
   color?: string;
-  onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-}> = ({ label, children, onClick, color }) => {
+};
+
+const ReplayActionButton = React.memo(({ label, color, onClick, ...rest }: ReplayActionButtonProps) => {
   return (
     <Tooltip title={label}>
-      <IconButton
-        onClick={(e) => {
-          e.stopPropagation();
-          if (onClick) {
-            onClick(e);
-          }
-        }}
-        css={css`
-          padding: 5px;
-          margin: 0 5px;
-          color: ${color ?? colors.purplePrimary};
-        `}
-        size="large"
-      >
-        {children}
-      </IconButton>
+      <span>
+        <IconButton
+          css={css`
+            padding: 5px;
+            margin: 0 5px;
+            color: ${color ?? colors.purplePrimary};
+          `}
+          size="large"
+          onClick={(e) => {
+            e.stopPropagation();
+            onClick && onClick(e);
+          }}
+          {...rest}
+        />
+      </span>
     </Tooltip>
   );
-};
+});
 
 const SelectedNumber: React.FC<{ num: number }> = ({ num }) => {
   // Scale the font size based on the length of the number string
