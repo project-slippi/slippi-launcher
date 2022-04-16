@@ -32,6 +32,11 @@ export class DolphinManager {
       onProgress: (current, total) => this._onProgress(dolphinType, current, total),
       onComplete: () => this._onComplete(dolphinType),
     });
+    const isoPath = this.settingsManager.get().settings.isoPath;
+    if (isoPath) {
+      const gameDir = path.dirname(isoPath);
+      await dolphinInstall.addGamePath(gameDir);
+    }
   }
 
   public async launchPlaybackDolphin(id: string, replayComm: ReplayCommunication): Promise<void> {
