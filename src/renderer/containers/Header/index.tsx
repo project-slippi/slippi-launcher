@@ -10,7 +10,7 @@ import Tooltip from "@mui/material/Tooltip";
 import React, { useCallback, useMemo } from "react";
 
 import { ExternalLink } from "@/components/ExternalLink";
-import { InstallingButton, PlayButton } from "@/components/play_button/PlayButton";
+import { PlayButton, UpdatingButton } from "@/components/play_button/PlayButton";
 import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
 import { useAccount } from "@/lib/hooks/useAccount";
@@ -171,5 +171,5 @@ const ConnectedPlayButton = React.memo(({ onClick }: { onClick: () => void }) =>
     return <PlayButton onClick={onClick} />;
   }
 
-  return <InstallingButton onClick={onClick} fillPercent={fillPercent} />;
+  return <UpdatingButton onClick={onClick} fillPercent={fillPercent} />;
 });

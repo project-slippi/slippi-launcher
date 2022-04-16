@@ -1,7 +1,7 @@
 import type { ComponentMeta, ComponentStory } from "@storybook/react";
 import React from "react";
 
-import { InstallingButton, PlayButton } from "./PlayButton";
+import { PlayButton, UpdatingButton } from "./PlayButton";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -23,7 +23,7 @@ Disabled.args = {
   disabled: true,
 };
 
-export const Installing = () => {
+export const Updating = () => {
   const [percent, setPercent] = React.useState(0);
   const timer = React.useRef<number | undefined>();
 
@@ -54,7 +54,7 @@ export const Installing = () => {
 
   return (
     <div>
-      <InstallingButton fillPercent={percent / 100} />
+      <UpdatingButton fillPercent={percent / 100} />
       <div>
         <button onClick={reset}>reset</button>
       </div>
