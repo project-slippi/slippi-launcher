@@ -39,7 +39,6 @@ export const useAppInitialization = () => {
   const initialized = useAppStore((store) => store.initialized);
   const setInitializing = useAppStore((store) => store.setInitializing);
   const setInitialized = useAppStore((store) => store.setInitialized);
-  const setLogMessage = useAppStore((store) => store.setLogMessage);
   const setPlayKey = useAccount((store) => store.setPlayKey);
   const setUser = useAccount((store) => store.setUser);
   const setServerError = useAccount((store) => store.setServerError);
@@ -85,21 +84,17 @@ export const useAppInitialization = () => {
       );
     }
 
-    // Download Dolphin if necessary
-    void dolphinService.downloadDolphin(DolphinLaunchType.NETPLAY);
-    void dolphinService.downloadDolphin(DolphinLaunchType.PLAYBACK);
-    // promises.push(
-    //   (async () => {
-    //     try {
-    //       await dolphinService.downloadDolphin(DolphinLaunchType.NETPLAY);
-    //       await dolphinService.downloadDolphin(DolphinLaunchType.PLAYBACK);
-    //     } catch (err) {
-    //       const errMsg = "Error occurred while downloading Dolphin";
-    //       log.error(errMsg, err);
-    //       setLogMessage(errMsg);
-    //     }
-    //   })(),
-    // );
+    // Download Dolphins if necessary
+    [DolphinLaunchType.NETPLAY, DolphinLaunchType.PLAYBACK].map(async (dolphinType) => {
+      return dolphinService.downloadDolphin(dolphinType).catch((err) => {
+        log.error(err);
+        showError(
+          `Failed to install ${dolphinType} Dolphin. Try closing all Dolphin instances and restarting the launcher. Error: ${
+            err instanceof Error ? err.message : JSON.stringify(err)
+          }`,
+        );
+      });
+    });
 
     promises.push(
       dolphinService
