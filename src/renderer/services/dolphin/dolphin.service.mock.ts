@@ -11,10 +11,15 @@ import type {
 import { DolphinEventType } from "@dolphin/types";
 import { Observable, Subject } from "observable-fns";
 
+import { delayAndMaybeError } from "../utils";
+
+const SHOULD_ERROR = false;
+
 class MockDolphinClient implements DolphinService {
   private eventSubject = new Subject<DolphinEvent>();
   private events = Observable.from(this.eventSubject);
 
+  @delayAndMaybeError(SHOULD_ERROR)
   public async downloadDolphin(dolphinType: DolphinLaunchType): Promise<void> {
     // Mock installation percentage
     for (let i = 0; i <= 100; i++) {
@@ -36,35 +41,53 @@ class MockDolphinClient implements DolphinService {
       dolphinType,
     });
   }
+
+  @delayAndMaybeError(SHOULD_ERROR)
   public async configureDolphin(_dolphinType: DolphinLaunchType): Promise<void> {
     throw new Error("Method not implemented.");
   }
 
+  @delayAndMaybeError(SHOULD_ERROR)
   public async reinstallDolphin(dolphinType: DolphinLaunchType): Promise<void> {
     await this.downloadDolphin(dolphinType);
   }
 
+  @delayAndMaybeError(SHOULD_ERROR)
   public async clearDolphinCache(_dolphinType: DolphinLaunchType): Promise<void> {
     throw new Error("Method not implemented.");
   }
+
+  @delayAndMaybeError(SHOULD_ERROR)
   public async storePlayKeyFile(_key: PlayKey): Promise<void> {
     throw new Error("Method not implemented.");
   }
+
+  @delayAndMaybeError(SHOULD_ERROR)
   public async checkPlayKeyExists(_key: PlayKey): Promise<boolean> {
     throw new Error("Method not implemented.");
   }
+
+  @delayAndMaybeError(SHOULD_ERROR)
   public async removePlayKeyFile(): Promise<void> {
     throw new Error("Method not implemented.");
   }
+
+  @delayAndMaybeError(SHOULD_ERROR)
   public async viewSlpReplay(_files: ReplayQueueItem[]): Promise<void> {
     throw new Error("Method not implemented.");
   }
+
+  @delayAndMaybeError(SHOULD_ERROR)
   public async launchNetplayDolphin(_options: { bootToCss?: boolean | undefined }): Promise<void> {
     throw new Error("Method not implemented.");
   }
+
+  @delayAndMaybeError(SHOULD_ERROR)
   public async checkDesktopAppDolphin(): Promise<{ dolphinPath: string; exists: boolean }> {
     throw new Error("Method not implemented.");
   }
+
+  @delayAndMaybeError(SHOULD_ERROR)
   public async importDolphinSettings(_options: {
     toImportDolphinPath: string;
     dolphinType: DolphinLaunchType;
