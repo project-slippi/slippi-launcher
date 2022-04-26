@@ -121,8 +121,8 @@ export class DolphinInstallation {
     cleanInstall,
   }: {
     releaseInfo?: DolphinVersionResponse;
-    onProgress: (current: number, total: number) => void;
-    onComplete: () => void;
+    onProgress?: (current: number, total: number) => void;
+    onComplete?: () => void;
     cleanInstall?: boolean;
   }): Promise<void> {
     const type = this.dolphinLaunchType;
@@ -141,7 +141,10 @@ export class DolphinInstallation {
     log.info(`Installing v${dolphinDownloadInfo.version} ${type} Dolphin...`);
     await this._installDolphin(downloadedAsset, cleanInstall);
     log.info(`Finished v${dolphinDownloadInfo.version} ${type} Dolphin install`);
-    onComplete();
+
+    if (onComplete) {
+      onComplete();
+    }
   }
 
   public async addGamePath(gameDir: string): Promise<void> {
