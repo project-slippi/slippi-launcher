@@ -173,18 +173,15 @@ export class DolphinManager {
     await installation.downloadAndInstall({
       cleanInstall: true,
       onProgress: (current, total) => this._onProgress(launchType, current, total),
-      onComplete: () => this._onComplete(launchType),
     });
+
     const isoPath = this.settingsManager.get().settings.isoPath;
     if (isoPath) {
       const gameDir = path.dirname(isoPath);
       await installation.addGamePath(gameDir);
     }
 
-    this.eventSubject.next({
-      type: DolphinEventType.DOWNLOAD_COMPLETE,
-      dolphinType: launchType,
-    });
+    this._onComplete(launchType);
   }
 
   private async _getIsoPath(): Promise<string | undefined> {
