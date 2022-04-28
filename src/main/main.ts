@@ -22,9 +22,9 @@ import get from "lodash/get";
 import last from "lodash/last";
 import path from "path";
 import url from "url";
+import { download } from "utils/download";
 import { fileExists } from "utils/fileExists";
 
-import { download } from "./download";
 import { installModules } from "./installModules";
 import { MenuBuilder } from "./menu";
 import { resolveHtmlPath } from "./util";
