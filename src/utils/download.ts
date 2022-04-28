@@ -21,12 +21,12 @@ export async function download(
   await fs.ensureDir(dirname(destination));
 
   const usesHttps = url.toLowerCase().startsWith("https:");
-  const pkg = usesHttps ? await import("https") : await import("http");
+  const { get } = usesHttps ? await import("https") : await import("http");
   let totalBytes = 0;
   let transferredBytes = 0;
 
   return new Promise((resolve, reject) => {
-    const request = pkg.get(uri.href).on("response", (res) => {
+    const request = get(uri.href).on("response", (res) => {
       const statusCode = res.statusCode ?? -1;
 
       switch (statusCode) {
