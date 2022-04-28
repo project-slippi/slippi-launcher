@@ -9,7 +9,7 @@ const TIMEOUT = 10000;
 export async function download(
   url: string,
   destination: string,
-  onProgress?: (current: number, total: number) => void,
+  onProgress?: (progress: { transferredBytes: number; totalBytes: number }) => void,
 ): Promise<void> {
   const uri = new URL(url);
   let dest = destination;
@@ -23,7 +23,7 @@ export async function download(
   const usesHttps = url.toLowerCase().startsWith("https:");
   const pkg = usesHttps ? await import("https") : await import("http");
   let totalBytes = 0;
-  let receivedBytes = 0;
+  let transferredBytes = 0;
 
   return new Promise((resolve, reject) => {
     const request = pkg.get(uri.href).on("response", (res) => {
@@ -39,8 +39,8 @@ export async function download(
           res
             .on("data", (chunk) => {
               file.write(chunk);
-              receivedBytes += chunk.length;
-              onProgress && onProgress(receivedBytes, totalBytes);
+              transferredBytes += chunk.length;
+              onProgress && onProgress({ transferredBytes, totalBytes });
             })
             .on("end", () => {
               file.end();
