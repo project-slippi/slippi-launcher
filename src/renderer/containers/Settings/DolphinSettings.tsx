@@ -10,7 +10,7 @@ import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { DevGuard } from "@/components/DevGuard";
 import { PathInput } from "@/components/PathInput";
 import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
-import { useDolphinStore } from "@/lib/dolphin/useDolphinStore";
+import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
 import { useDolphinPath } from "@/lib/hooks/useSettings";
 import { useServices } from "@/services";
 
@@ -20,15 +20,20 @@ const { isLinux, isMac } = window.electron.common;
 const log = window.electron.log;
 
 export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolphinType }) => {
-  const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
-  const [resetModalOpen, setResetModalOpen] = React.useState(false);
-  const [isResetting, setIsResetting] = React.useState(false);
+  const dolphinStatus = useDolphinStore((store) =>
+    dolphinType === DolphinLaunchType.PLAYBACK ? store.playbackStatus : store.netplayStatus,
+  );
   const dolphinIsOpen = useDolphinStore((store) =>
     dolphinType === DolphinLaunchType.NETPLAY ? store.netplayOpened : store.playbackOpened,
   );
+  const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
+  const [resetModalOpen, setResetModalOpen] = React.useState(false);
+  const [isResetting, setIsResetting] = React.useState(false);
   const { dolphinService } = useServices();
   const { openConfigureDolphin, reinstallDolphin, clearDolphinCache, importDolphin } =
     useDolphinActions(dolphinService);
+
+  const dolphinIsReady = dolphinStatus === DolphinStatus.READY && !dolphinIsOpen && !isResetting;
 
   const openDolphinDirectoryHandler = async () => {
     await window.electron.shell.openPath(dolphinPath);
@@ -66,12 +71,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
             }
           `}
         >
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={configureDolphinHandler}
-            disabled={isResetting || dolphinIsOpen}
-          >
+          <Button variant="contained" color="primary" onClick={configureDolphinHandler} disabled={!dolphinIsReady}>
             Configure Dolphin
           </Button>
           <Button variant="outlined" color="primary" onClick={openDolphinDirectoryHandler} disabled={isResetting}>
@@ -95,7 +95,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
       {!isLinux && (
         <ImportDolphinConfigForm
           dolphinType={dolphinType}
-          disabled={dolphinIsOpen || isResetting}
+          disabled={!dolphinIsReady}
           onImportDolphin={importDolphinHandler}
         />
       )}
