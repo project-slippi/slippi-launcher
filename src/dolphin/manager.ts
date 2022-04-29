@@ -135,8 +135,8 @@ export class DolphinManager {
       instance.on("close", (exitCode) => {
         this.eventSubject.next({
           type: DolphinEventType.CLOSED,
-          instanceId: instanceId,
           dolphinType: DolphinLaunchType.PLAYBACK,
+          instanceId,
           exitCode,
         });
 
