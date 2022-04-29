@@ -53,9 +53,7 @@ export async function download(options: {
               onProgress && onProgress({ transferredBytes, totalBytes });
             })
             .on("end", () => {
-              file.end();
-              // console.log(`${uri.pathname} downloaded to: ${path}`)
-              resolve();
+              file.end(() => resolve());
             })
             .on("error", (err) => {
               file.destroy();
