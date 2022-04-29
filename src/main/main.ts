@@ -22,9 +22,9 @@ import get from "lodash/get";
 import last from "lodash/last";
 import path from "path";
 import url from "url";
+import { download } from "utils/download";
 import { fileExists } from "utils/fileExists";
 
-import { download } from "./download";
 import { installModules } from "./installModules";
 import { MenuBuilder } from "./menu";
 import { resolveHtmlPath } from "./util";
@@ -225,7 +225,7 @@ const handleSlippiURIAsync = async (aUrl: string) => {
         const dlUrl = `https://storage.googleapis.com/slippi.appspot.com/${replayPath}`;
         log.info(`Downloading file ${replayPath} to ${destination}`);
         // Dowload file
-        await download(dlUrl, destination);
+        await download({ url: dlUrl, destinationFile: destination, overwrite: true });
         log.info(`Finished download`);
       } else {
         log.info(`${destination} already exists. Skipping download...`);
