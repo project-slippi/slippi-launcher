@@ -21,7 +21,7 @@ export async function download(
   // Make sure the folder exists
   await fs.ensureDir(dirname(destination));
 
-  const usesHttps = url.toLowerCase().startsWith("https:");
+  const usesHttps = uri.protocol.startsWith("https");
   const { get } = usesHttps ? await import("https") : await import("http");
   let totalBytes = 0;
   let transferredBytes = 0;
