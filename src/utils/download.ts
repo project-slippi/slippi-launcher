@@ -4,7 +4,8 @@ import * as fs from "fs-extra";
 import { basename, dirname } from "path";
 import { URL } from "url";
 
-const TIMEOUT = 10000;
+const SECOND = 1000;
+const TIMEOUT = 30 * SECOND;
 
 export async function download(
   url: string,
@@ -73,7 +74,7 @@ export async function download(
 
     request.setTimeout(TIMEOUT, () => {
       request.destroy();
-      reject(new Error(`Request timeout after ${TIMEOUT / 1000.0}s`));
+      reject(new Error(`Request timeout after ${TIMEOUT / SECOND}s`));
     });
   });
 }
