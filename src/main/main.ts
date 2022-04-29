@@ -225,7 +225,7 @@ const handleSlippiURIAsync = async (aUrl: string) => {
         const dlUrl = `https://storage.googleapis.com/slippi.appspot.com/${replayPath}`;
         log.info(`Downloading file ${replayPath} to ${destination}`);
         // Dowload file
-        await download(dlUrl, destination);
+        await download({ url: dlUrl, destinationFile: destination, overwrite: true });
         log.info(`Finished download`);
       } else {
         log.info(`${destination} already exists. Skipping download...`);

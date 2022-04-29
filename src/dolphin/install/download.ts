@@ -14,9 +14,12 @@ export async function downloadLatestDolphin(
   const exists = await fileExists(downloadLocation);
   if (!exists) {
     log(`Downloading ${downloadUrl} to ${downloadLocation}`);
-    await download(downloadUrl, downloadLocation, (progress) =>
-      onProgress(progress.transferredBytes, progress.totalBytes),
-    );
+    await download({
+      url: downloadUrl,
+      destinationFile: downloadLocation,
+      overwrite: true,
+      onProgress: ({ transferredBytes, totalBytes }) => onProgress(transferredBytes, totalBytes),
+    });
     log(`Successfully downloaded ${downloadUrl} to ${downloadLocation}`);
   } else {
     log(`${downloadLocation} already exists. Skipping download.`);

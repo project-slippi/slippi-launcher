@@ -1,25 +1,29 @@
 // Based on https://stackoverflow.com/a/66507546
 
 import * as fs from "fs-extra";
-import { basename, dirname } from "path";
+import { dirname } from "path";
 import { URL } from "url";
+
+import { fileExists } from "./fileExists";
 
 const SECOND = 1000;
 const TIMEOUT = 30 * SECOND;
 
-export async function download(
-  url: string,
-  destination: string,
-  onProgress?: (progress: { transferredBytes: number; totalBytes: number }) => void,
-): Promise<void> {
+export async function download(options: {
+  url: string;
+  destinationFile: string;
+  onProgress?: (progress: { transferredBytes: number; totalBytes: number }) => void;
+  overwrite?: boolean;
+}): Promise<void> {
+  const { url, destinationFile, onProgress, overwrite } = options;
   const uri = new URL(url);
-  let dest = destination;
-  if (!dest) {
-    dest = basename(uri.pathname);
+
+  if (!overwrite && (await fileExists(destinationFile))) {
+    throw new Error(`Could not download to ${destinationFile}. File already exists!`);
   }
 
   // Make sure the folder exists
-  await fs.ensureDir(dirname(destination));
+  await fs.ensureDir(dirname(destinationFile));
 
   const usesHttps = uri.protocol.startsWith("https");
   const { get } = usesHttps ? await import("https") : await import("http");
@@ -29,9 +33,7 @@ export async function download(
   return new Promise((resolve, _reject) => {
     const reject = (err: Error) => {
       // Clean up our file
-      fs.removeSync(destination);
-
-      _reject(err);
+      fs.unlink(destinationFile, () => _reject(err));
     };
 
     const request = get(uri.href).on("response", (res) => {
@@ -43,7 +45,7 @@ export async function download(
           if (contentLength) {
             totalBytes = parseInt(contentLength);
           }
-          const file = fs.createWriteStream(dest, { flags: "wx" });
+          const file = fs.createWriteStream(destinationFile, { flags: "wx" });
           res
             .on("data", (chunk) => {
               file.write(chunk);
@@ -57,7 +59,7 @@ export async function download(
             })
             .on("error", (err) => {
               file.destroy();
-              fs.unlink(dest, () => reject(err));
+              reject(err);
             });
           break;
         }
@@ -70,7 +72,7 @@ export async function download(
             return;
           }
 
-          void download(nextUrl, dest, onProgress).then(() => resolve());
+          void download({ ...options, url: nextUrl }).then(() => resolve());
           break;
         }
         default:
