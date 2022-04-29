@@ -26,7 +26,14 @@ export async function download(
   let totalBytes = 0;
   let transferredBytes = 0;
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, _reject) => {
+    const reject = (err: Error) => {
+      // Clean up our file
+      fs.removeSync(destination);
+
+      _reject(err);
+    };
+
     const request = get(uri.href).on("response", (res) => {
       const statusCode = res.statusCode ?? -1;
 
