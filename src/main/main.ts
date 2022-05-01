@@ -11,6 +11,7 @@
  */
 import { colors } from "@common/colors";
 import { delay } from "@common/delay";
+import { DolphinLaunchType } from "@dolphin/types";
 import { ipc_statsPageRequestedEvent } from "@replays/ipc";
 import { ipc_openSettingsModalEvent } from "@settings/ipc";
 import type CrossProcessExports from "electron";
@@ -279,12 +280,18 @@ app.on("second-instance", (_, argv) => {
 });
 
 const playReplayAndShowStats = async (filePath: string) => {
+  // Ensure playback dolphin is actually installed
+  await dolphinManager.installDolphin(DolphinLaunchType.PLAYBACK);
+
+  // Launch the replay
+  await dolphinManager.launchPlaybackDolphin("playback", {
+    mode: "normal",
+    replay: filePath,
+  });
+
+  // Show the stats page
   await waitForMainWindow();
   if (mainWindow) {
-    await dolphinManager.launchPlaybackDolphin("playback", {
-      mode: "normal",
-      replay: filePath,
-    });
     await ipc_statsPageRequestedEvent.main!.trigger({ filePath });
   }
 };

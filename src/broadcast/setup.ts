@@ -1,5 +1,8 @@
 import type { DolphinManager } from "@dolphin/manager";
+import type { DolphinPlaybackClosedEvent } from "@dolphin/types";
+import { DolphinEventType, DolphinLaunchType } from "@dolphin/types";
 import type { SettingsManager } from "@settings/settingsManager";
+import log from "electron-log";
 
 import type { BroadcastWorker } from "./broadcast.worker.interface";
 import { createBroadcastWorker } from "./broadcast.worker.interface";
@@ -16,6 +19,16 @@ export default function setupBroadcastIpc({
 }) {
   let spectateWorker: SpectateWorker | undefined;
   let broadcastWorker: BroadcastWorker | undefined;
+
+  dolphinManager.events
+    .filter<DolphinPlaybackClosedEvent>((event) => {
+      return event.type === DolphinEventType.CLOSED && event.dolphinType === DolphinLaunchType.PLAYBACK;
+    })
+    .subscribe((event) => {
+      if (spectateWorker) {
+        void spectateWorker.dolphinClosed(event.instanceId).catch(log.error);
+      }
+    });
 
   ipc_refreshBroadcastList.main!.handle(async ({ authToken }) => {
     if (!spectateWorker) {

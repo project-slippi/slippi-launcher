@@ -5,7 +5,6 @@ import type { ConversionType, PlayerType, StatsType, StockType } from "@slippi/s
 import _ from "lodash";
 import React from "react";
 
-import { useDolphin } from "@/lib/hooks/useDolphin";
 import { extractPlayerNames } from "@/lib/matchNames";
 import { convertFrameCountToDurationString } from "@/lib/time";
 import { getCharacterIcon, toOrdinal } from "@/lib/utils";
@@ -19,10 +18,10 @@ export interface PunishTableProps {
   stats: StatsType;
   player: PlayerType;
   opp: PlayerType;
+  onPlay: (options: { path: string; startFrame: number }) => void;
 }
 
-export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, player, opp }) => {
-  const { viewReplays } = useDolphin();
+export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, player, opp, onPlay }) => {
   const names = extractPlayerNames(player.playerIndex, file.settings, file.metadata);
   const playerDisplay = (
     <div style={{ display: "flex", alignItems: "center" }}>
@@ -51,7 +50,7 @@ export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, player, o
     }
 
     const playPunish = () => {
-      viewReplays([{ path: file.fullPath, startFrame: punish.startFrame }]);
+      onPlay({ path: file.fullPath, startFrame: punish.startFrame });
     };
 
     return (

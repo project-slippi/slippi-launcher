@@ -16,7 +16,6 @@ export const useAppStore = create(
     {
       initializing: false,
       initialized: false,
-      logMessage: "",
       updateVersion: "",
       updateDownloadProgress: 0,
       updateReady: false,
@@ -24,7 +23,6 @@ export const useAppStore = create(
     (set) => ({
       setInitializing: (initializing: boolean) => set({ initializing }),
       setInitialized: (initialized: boolean) => set({ initialized }),
-      setLogMessage: (logMessage: string) => set({ logMessage }),
       setUpdateVersion: (updateVersion: string) => set({ updateVersion }),
       setUpdateDownloadProgress: (updateDownloadProgress: number) => set({ updateDownloadProgress }),
       setUpdateReady: (updateReady: boolean) => set({ updateReady }),
@@ -33,13 +31,12 @@ export const useAppStore = create(
 );
 
 export const useAppInitialization = () => {
-  const { authService, slippiBackendService } = useServices();
+  const { authService, slippiBackendService, dolphinService } = useServices();
   const { showError } = useToasts();
   const initializing = useAppStore((store) => store.initializing);
   const initialized = useAppStore((store) => store.initialized);
   const setInitializing = useAppStore((store) => store.setInitializing);
   const setInitialized = useAppStore((store) => store.setInitialized);
-  const setLogMessage = useAppStore((store) => store.setLogMessage);
   const setPlayKey = useAccount((store) => store.setPlayKey);
   const setUser = useAccount((store) => store.setUser);
   const setServerError = useAccount((store) => store.setServerError);
@@ -53,60 +50,58 @@ export const useAppInitialization = () => {
 
     setInitializing(true);
 
-    console.log("Initializing app...");
+    log.info("Initializing app...");
 
-    let user: AuthUser | null = null;
-    try {
-      user = await authService.init();
-      setUser(user);
-    } catch (err) {
-      console.warn(err);
-    }
-
-    const promises: Promise<any>[] = [];
+    const promises: Promise<void>[] = [];
 
     // If we're logged in, check they have a valid play key
-    if (user) {
-      promises.push(
-        slippiBackendService
-          .fetchPlayKey()
-          .then((key) => {
+    promises.push(
+      (async () => {
+        let user: AuthUser | null = null;
+        try {
+          user = await authService.init();
+          setUser(user);
+        } catch (err) {
+          log.warn(err);
+        }
+
+        if (user) {
+          try {
+            const key = await slippiBackendService.fetchPlayKey();
             setServerError(false);
             setPlayKey(key);
-          })
-          .catch((err) => {
+          } catch (err) {
             setServerError(true);
-            console.warn(err);
+            log.warn(err);
 
             const message = `Failed to communicate with Slippi servers. You either have no internet
               connection or Slippi is experiencing some downtime. Playing online may or may not work.`;
             showError(message);
-          }),
-      );
-    }
-
-    // Download Dolphin if necessary
-    promises.push(
-      (async () => {
-        try {
-          await window.electron.dolphin.downloadDolphin(DolphinLaunchType.NETPLAY);
-          await window.electron.dolphin.downloadDolphin(DolphinLaunchType.PLAYBACK);
-        } catch (err) {
-          const errMsg = "Error occurred while downloading Dolphin";
-          log.error(errMsg, err);
-          setLogMessage(errMsg);
+          }
         }
       })(),
     );
 
+    // Download Dolphins if necessary
+    [DolphinLaunchType.NETPLAY, DolphinLaunchType.PLAYBACK].map(async (dolphinType) => {
+      return dolphinService.downloadDolphin(dolphinType).catch((err) => {
+        log.error(err);
+        showError(
+          `Failed to install ${dolphinType} Dolphin. Try closing all Dolphin instances and restarting the launcher. Error: ${
+            err instanceof Error ? err.message : JSON.stringify(err)
+          }`,
+        );
+      });
+    });
+
     promises.push(
-      window.electron.dolphin
+      dolphinService
         .checkDesktopAppDolphin()
         .then(({ exists, dolphinPath }) => {
           setDesktopAppExists(exists);
           setDesktopAppDolphinPath(dolphinPath);
         })
-        .catch(console.error),
+        .catch(log.error),
     );
 
     // Check if there is an update to the launcher
@@ -116,7 +111,7 @@ export const useAppInitialization = () => {
     try {
       await Promise.all(promises);
     } catch (err) {
-      console.error(err);
+      log.error(err);
     } finally {
       setInitialized(true);
     }

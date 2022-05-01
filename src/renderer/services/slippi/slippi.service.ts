@@ -1,6 +1,6 @@
 import type { NormalizedCacheObject } from "@apollo/client";
 import { ApolloClient, ApolloLink, HttpLink, InMemoryCache } from "@apollo/client";
-import type { PlayKey } from "@dolphin/types";
+import type { DolphinService, PlayKey } from "@dolphin/types";
 import type { GraphQLError } from "graphql";
 
 import type { AuthService, AuthUser } from "../auth/types";
@@ -25,15 +25,17 @@ const handleErrors = (errors: readonly GraphQLError[] | undefined) => {
 };
 
 class SlippiBackendClient implements SlippiBackendService {
-  private _authService: AuthService;
-  private _httpLink: HttpLink;
-  private _client: ApolloClient<NormalizedCacheObject>;
+  private httpLink: HttpLink;
+  private client: ApolloClient<NormalizedCacheObject>;
 
-  constructor(authService: AuthService, clientVersion?: string) {
-    this._authService = authService;
-    this._httpLink = new HttpLink({ uri: SLIPPI_BACKEND_URL });
-    this._client = new ApolloClient({
-      link: this._httpLink,
+  constructor(
+    private readonly authService: AuthService,
+    private readonly dolphinService: DolphinService,
+    clientVersion?: string,
+  ) {
+    this.httpLink = new HttpLink({ uri: SLIPPI_BACKEND_URL });
+    this.client = new ApolloClient({
+      link: this.httpLink,
       cache: new InMemoryCache(),
       name: "slippi-launcher",
       version: clientVersion,
@@ -42,11 +44,11 @@ class SlippiBackendClient implements SlippiBackendService {
 
   // The firebase ID token expires after 1 hour so we will refresh it for actions that require it.
   private async _refreshAuthToken(): Promise<AuthUser> {
-    const user = this._authService.getCurrentUser();
+    const user = this.authService.getCurrentUser();
     if (!user) {
       throw new Error("User is not logged in.");
     }
-    const token = await this._authService.getUserToken();
+    const token = await this.authService.getUserToken();
 
     const authLink = new ApolloLink((operation, forward) => {
       // Use the setContext method to set the HTTP headers.
@@ -59,13 +61,13 @@ class SlippiBackendClient implements SlippiBackendService {
       // Call the next link in the middleware chain.
       return forward(operation);
     });
-    this._client.setLink(authLink.concat(this._httpLink));
+    this.client.setLink(authLink.concat(this.httpLink));
 
     return user;
   }
 
   public async validateUserId(userId: string): Promise<{ displayName: string; connectCode: string }> {
-    const res = await this._client.query({
+    const res = await this.client.query({
       query: QUERY_VALIDATE_USER_ID,
       variables: {
         fbUid: userId,
@@ -89,7 +91,7 @@ class SlippiBackendClient implements SlippiBackendService {
   public async fetchPlayKey(): Promise<PlayKey | null> {
     const user = await this._refreshAuthToken();
 
-    const res = await this._client.query({
+    const res = await this.client.query({
       query: QUERY_GET_USER_KEY,
       variables: {
         fbUid: user.uid,
@@ -117,22 +119,22 @@ class SlippiBackendClient implements SlippiBackendService {
     };
   }
   public async assertPlayKey(playKey: PlayKey) {
-    const playKeyExists = await window.electron.dolphin.checkPlayKeyExists(playKey);
+    const playKeyExists = await this.dolphinService.checkPlayKeyExists(playKey);
     if (playKeyExists) {
       return;
     }
 
-    await window.electron.dolphin.storePlayKeyFile(playKey);
+    await this.dolphinService.storePlayKeyFile(playKey);
   }
 
   public async deletePlayKey(): Promise<void> {
-    await window.electron.dolphin.removePlayKeyFile();
+    await this.dolphinService.removePlayKeyFile();
   }
 
   public async changeDisplayName(name: string) {
     const user = await this._refreshAuthToken();
 
-    const res = await this._client.mutate({
+    const res = await this.client.mutate({
       mutation: MUTATION_RENAME_USER,
       variables: { fbUid: user.uid, displayName: name },
     });
@@ -143,17 +145,21 @@ class SlippiBackendClient implements SlippiBackendService {
       throw new Error("Could not change name.");
     }
 
-    await this._authService.updateDisplayName(name);
+    await this.authService.updateDisplayName(name);
   }
 
   public async initializeNetplay(codeStart: string): Promise<void> {
     await this._refreshAuthToken();
 
-    const res = await this._client.mutate({ mutation: MUTATION_INIT_NETPLAY, variables: { codeStart } });
+    const res = await this.client.mutate({ mutation: MUTATION_INIT_NETPLAY, variables: { codeStart } });
     handleErrors(res.errors);
   }
 }
 
-export default function createSlippiClient(authService: AuthService, clientVersion?: string): SlippiBackendService {
-  return new SlippiBackendClient(authService, clientVersion);
+export default function createSlippiClient(
+  authService: AuthService,
+  dolphinService: DolphinService,
+  clientVersion?: string,
+): SlippiBackendService {
+  return new SlippiBackendClient(authService, dolphinService, clientVersion);
 }

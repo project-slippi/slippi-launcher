@@ -34,9 +34,9 @@ export const PlayButton = React.memo((props: PlayButtonProps) => {
   return <MainButton {...props}>Play</MainButton>;
 });
 
-type InstallingButtonProps = Omit<MainButtonProps, "children">;
+type UpdatingButtonProps = Omit<MainButtonProps, "children">;
 
-export const InstallingButton = React.memo((props: InstallingButtonProps) => {
+export const UpdatingButton = React.memo((props: UpdatingButtonProps) => {
   return (
     <MainButton disabled={true} {...props}>
       <span
@@ -44,7 +44,7 @@ export const InstallingButton = React.memo((props: InstallingButtonProps) => {
           font-size: 0.9em;
         `}
       >
-        Installing
+        Updating
       </span>
     </MainButton>
   );

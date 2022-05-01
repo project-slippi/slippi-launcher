@@ -9,12 +9,11 @@ import { useReplays } from "@/lib/hooks/useReplays";
 import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";
 
-import { handleDolphinExitCode } from "../utils";
+import { useDolphinListeners } from "../dolphin/useDolphinListeners";
 import { useAccount, usePlayKey } from "./useAccount";
 import { useBroadcast } from "./useBroadcast";
 import { useBroadcastList, useBroadcastListStore } from "./useBroadcastList";
 import { useConsoleDiscoveryStore } from "./useConsoleDiscovery";
-import { useDolphinStore } from "./useDolphin";
 import { useIsoVerification } from "./useIsoVerification";
 import { useReplayBrowserNavigation } from "./useReplayBrowserList";
 import { useSettings } from "./useSettings";
@@ -24,12 +23,14 @@ const log = window.electron.log;
 
 export const useAppListeners = () => {
   // Handle app initalization
-  const { authService, broadcastService, consoleService } = useServices();
+  const { authService, broadcastService, consoleService, dolphinService } = useServices();
   const initialized = useAppStore((store) => store.initialized);
   const initializeApp = useAppInitialization();
   React.useEffect(() => {
     void initializeApp();
   }, [initializeApp]);
+
+  useDolphinListeners(dolphinService);
 
   // Subscribe to user auth changes to keep store up to date
   const setUser = useAccount((store) => store.setUser);
@@ -56,18 +57,6 @@ export const useAppListeners = () => {
 
     return;
   }, [initialized, refreshPlayKey, setUser, authService]);
-
-  const setLogMessage = useAppStore((store) => store.setLogMessage);
-  const dolphinDownloadLogHandler = React.useCallback(
-    (message: string) => {
-      log.info(message);
-      setLogMessage(message);
-    },
-    [setLogMessage],
-  );
-  React.useEffect(() => {
-    return window.electron.dolphin.onDolphinDownloadLogMessage(dolphinDownloadLogHandler);
-  }, [dolphinDownloadLogHandler]);
 
   const setSlippiConnectionStatus = useConsole((store) => store.setSlippiConnectionStatus);
   React.useEffect(() => {
@@ -203,21 +192,4 @@ export const useAppListeners = () => {
   React.useEffect(() => {
     return broadcastService.onSpectateReconnect(refreshBroadcasts);
   }, [refreshBroadcasts, broadcastService]);
-
-  const setDolphinOpen = useDolphinStore((store) => store.setDolphinOpen);
-  const dolphinClosedHandler = React.useCallback(
-    ({ dolphinType, exitCode }) => {
-      setDolphinOpen(dolphinType, false);
-
-      // Check if it exited cleanly
-      const errMsg = handleDolphinExitCode(exitCode);
-      if (errMsg) {
-        showError(errMsg);
-      }
-    },
-    [showError, setDolphinOpen],
-  );
-  React.useEffect(() => {
-    return window.electron.dolphin.onDolphinClosed(dolphinClosedHandler);
-  }, [dolphinClosedHandler]);
 };

@@ -10,7 +10,7 @@ export async function installDolphinOnWindows({
   log?: (message: string) => void;
 }) {
   // don't need to backup user files since our zips don't contain them
-  log(`Extracting to: ${destinationFolder}`);
+  log(`Extracting ${assetPath} to: ${destinationFolder}`);
   const zip = new AdmZip(assetPath);
   zip.extractAllTo(destinationFolder, true);
 }

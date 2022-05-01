@@ -1,7 +1,7 @@
 import type { EmptyPayload, SuccessPayload } from "utils/ipc";
 import { _, makeEndpoint } from "utils/ipc";
 
-import type { DolphinLaunchType, PlayKey, ReplayQueueItem } from "./types";
+import type { DolphinEvent, DolphinLaunchType, PlayKey, ReplayQueueItem } from "./types";
 
 // Handlers
 
@@ -62,12 +62,4 @@ export const ipc_importDolphinSettings = makeEndpoint.main(
 
 // Events
 
-export const ipc_dolphinDownloadLogReceivedEvent = makeEndpoint.renderer(
-  "dolphin_dolphinDownloadLogReceived",
-  <{ message: string }>_,
-);
-
-export const ipc_dolphinClosedEvent = makeEndpoint.renderer(
-  "dolphin_dolphinClosed",
-  <{ dolphinType: DolphinLaunchType; exitCode: number | null }>_,
-);
+export const ipc_dolphinEvent = makeEndpoint.renderer("dolphin_dolphinEvent", <DolphinEvent>_);

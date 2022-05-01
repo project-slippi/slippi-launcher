@@ -46,9 +46,5 @@ export async function createMirrorWorker(dolphinManager: DolphinManager): Promis
     ipc_consoleMirrorStatusUpdatedEvent.main!.trigger(statusUpdate).catch(log.error);
   });
 
-  dolphinManager.on("playback-dolphin-closed", (playbackId: string) => {
-    worker.dolphinClosed(playbackId).catch(log.error);
-  });
-
   return worker;
 }

@@ -1,4 +1,5 @@
 import { app } from "electron";
+import log from "electron-log";
 import * as fs from "fs-extra";
 import { isEqual } from "lodash";
 import path from "path";
@@ -9,8 +10,7 @@ import {
   ipc_checkPlayKeyExists,
   ipc_clearDolphinCache,
   ipc_configureDolphin,
-  ipc_dolphinClosedEvent,
-  ipc_dolphinDownloadLogReceivedEvent,
+  ipc_dolphinEvent,
   ipc_downloadDolphin,
   ipc_importDolphinSettings,
   ipc_launchNetplayDolphin,
@@ -28,11 +28,12 @@ const isMac = process.platform === "darwin";
 const isLinux = process.platform === "linux";
 
 export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: DolphinManager }) {
+  dolphinManager.events.subscribe((event) => {
+    void ipc_dolphinEvent.main!.trigger(event).catch(log.error);
+  });
+
   ipc_downloadDolphin.main!.handle(async ({ dolphinType }) => {
-    const logDownloadInfo = (message: string) => {
-      void ipc_dolphinDownloadLogReceivedEvent.main!.trigger({ message });
-    };
-    await dolphinManager.installDolphin(dolphinType, logDownloadInfo);
+    await dolphinManager.installDolphin(dolphinType);
     return { success: true };
   });
 
@@ -131,14 +132,6 @@ export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: Do
     const dolphinExecutablePath = await findDolphinExecutable(DolphinLaunchType.NETPLAY, dolphinFolderPath);
 
     return { dolphinPath: dolphinExecutablePath, exists: exists };
-  });
-
-  dolphinManager.on("playback-dolphin-closed", async (_playbackId: string, code = 0) => {
-    void ipc_dolphinClosedEvent.main!.trigger({ dolphinType: DolphinLaunchType.PLAYBACK, exitCode: code });
-  });
-
-  dolphinManager.on("netplay-dolphin-closed", async (code = 0) => {
-    void ipc_dolphinClosedEvent.main!.trigger({ dolphinType: DolphinLaunchType.NETPLAY, exitCode: code });
   });
 
   return { dolphinManager };

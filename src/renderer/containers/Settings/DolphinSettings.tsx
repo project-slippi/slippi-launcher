@@ -9,8 +9,10 @@ import React from "react";
 import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { DevGuard } from "@/components/DevGuard";
 import { PathInput } from "@/components/PathInput";
-import { useDolphin, useDolphinStore } from "@/lib/hooks/useDolphin";
+import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
+import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
 import { useDolphinPath } from "@/lib/hooks/useSettings";
+import { useServices } from "@/services";
 
 import { SettingItem } from "./SettingItem";
 
@@ -18,13 +20,20 @@ const { isLinux, isMac } = window.electron.common;
 const log = window.electron.log;
 
 export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolphinType }) => {
+  const dolphinStatus = useDolphinStore((store) =>
+    dolphinType === DolphinLaunchType.PLAYBACK ? store.playbackStatus : store.netplayStatus,
+  );
+  const dolphinIsOpen = useDolphinStore((store) =>
+    dolphinType === DolphinLaunchType.NETPLAY ? store.netplayOpened : store.playbackOpened,
+  );
   const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
   const [resetModalOpen, setResetModalOpen] = React.useState(false);
   const [isResetting, setIsResetting] = React.useState(false);
-  const dolphinIsOpen = useDolphinStore((store) =>
-    dolphinType === DolphinLaunchType.NETPLAY ? store.netplayDolphinOpen : store.playbackDolphinOpen,
-  );
-  const { openConfigureDolphin, reinstallDolphin, clearDolphinCache } = useDolphin();
+  const { dolphinService } = useServices();
+  const { openConfigureDolphin, reinstallDolphin, clearDolphinCache, importDolphin } =
+    useDolphinActions(dolphinService);
+
+  const dolphinIsReady = dolphinStatus === DolphinStatus.READY && !dolphinIsOpen && !isResetting;
 
   const openDolphinDirectoryHandler = async () => {
     await window.electron.shell.openPath(dolphinPath);
@@ -44,6 +53,11 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
     clearDolphinCache(dolphinType);
   };
 
+  const importDolphinHandler = (importPath: string) => {
+    log.info(`importing dolphin from ${importPath}`);
+    importDolphin(importPath, dolphinType);
+  };
+
   const dolphinTypeName = capitalize(dolphinType);
   return (
     <div>
@@ -57,12 +71,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
             }
           `}
         >
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={configureDolphinHandler}
-            disabled={isResetting || dolphinIsOpen}
-          >
+          <Button variant="contained" color="primary" onClick={configureDolphinHandler} disabled={!dolphinIsReady}>
             Configure Dolphin
           </Button>
           <Button variant="outlined" color="primary" onClick={openDolphinDirectoryHandler} disabled={isResetting}>
@@ -83,7 +92,13 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           />
         </SettingItem>
       </DevGuard>
-      {!isLinux && <ImportDolphinConfigForm dolphinType={dolphinType} disabled={dolphinIsOpen || isResetting} />}
+      {!isLinux && (
+        <ImportDolphinConfigForm
+          dolphinType={dolphinType}
+          disabled={!dolphinIsReady}
+          onImportDolphin={importDolphinHandler}
+        />
+      )}
       <SettingItem name={`Reset ${dolphinTypeName} Dolphin`}>
         <ConfirmationModal
           open={resetModalOpen}
@@ -135,15 +150,11 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
 
 const ImportDolphinConfigForm: React.FC<{
   dolphinType: DolphinLaunchType;
-  disabled: boolean;
-}> = ({ dolphinType, disabled }) => {
-  const { importDolphin } = useDolphin();
+  disabled?: boolean;
+  onImportDolphin: (importPath: string) => void;
+}> = ({ dolphinType, disabled, onImportDolphin }) => {
   const dolphinTypeName = capitalize(dolphinType);
   const extension = isMac ? "app" : "exe";
-  const importDolphinHandler = (importPath: string) => {
-    log.info(`importing dolphin from ${importPath}`);
-    importDolphin(importPath, dolphinType);
-  };
 
   const onImportClick = async () => {
     const result = await window.electron.common.showOpenDialog({
@@ -153,7 +164,7 @@ const ImportDolphinConfigForm: React.FC<{
     if (result.canceled || res.length === 0) {
       return;
     }
-    importDolphinHandler(res[0]);
+    onImportDolphin(res[0]);
   };
 
   return (

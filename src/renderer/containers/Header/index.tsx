@@ -7,12 +7,13 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 
 import { ExternalLink } from "@/components/ExternalLink";
-import { PlayButton } from "@/components/play_button/PlayButton";
+import { PlayButton, UpdatingButton } from "@/components/play_button/PlayButton";
+import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
+import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
 import { useAccount } from "@/lib/hooks/useAccount";
-import { useDolphin } from "@/lib/hooks/useDolphin";
 import { useLoginModal } from "@/lib/hooks/useLoginModal";
 import { useSettings } from "@/lib/hooks/useSettings";
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
@@ -39,7 +40,7 @@ export interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
-  const { slippiBackendService } = useServices();
+  const { dolphinService, slippiBackendService } = useServices();
   const [startGameModalOpen, setStartGameModalOpen] = React.useState(false);
   const [activateOnlineModal, setActivateOnlineModal] = React.useState(false);
   const openModal = useLoginModal((store) => store.openModal);
@@ -49,42 +50,45 @@ export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
   const serverError = useAccount((store) => store.serverError);
   const meleeIsoPath = useSettings((store) => store.settings.isoPath) || undefined;
   const { showError } = useToasts();
-  const { launchNetplay } = useDolphin();
+  const { launchNetplay } = useDolphinActions(dolphinService);
 
-  const onPlay = async (offlineOnly?: boolean) => {
-    if (!offlineOnly) {
-      // Ensure user is logged in
-      if (!currentUser) {
-        setStartGameModalOpen(true);
-        return;
-      }
-
-      // Ensure user has a valid play key
-      if (!playKey && !serverError) {
-        setActivateOnlineModal(true);
-        return;
-      }
-
-      if (playKey) {
-        // Ensure the play key is saved to disk
-        try {
-          await slippiBackendService.assertPlayKey(playKey);
-        } catch (err) {
-          showError(err);
+  const onPlay = useCallback(
+    async (offlineOnly?: boolean) => {
+      if (!offlineOnly) {
+        // Ensure user is logged in
+        if (!currentUser) {
+          setStartGameModalOpen(true);
           return;
         }
+
+        // Ensure user has a valid play key
+        if (!playKey && !serverError) {
+          setActivateOnlineModal(true);
+          return;
+        }
+
+        if (playKey) {
+          // Ensure the play key is saved to disk
+          try {
+            await slippiBackendService.assertPlayKey(playKey);
+          } catch (err) {
+            showError(err);
+            return;
+          }
+        }
       }
-    }
 
-    if (!meleeIsoPath) {
-      showError("No Melee ISO file specified");
+      if (!meleeIsoPath) {
+        showError("No Melee ISO file specified");
+        return;
+      }
+
+      launchNetplay(offlineOnly ?? false);
+
       return;
-    }
-
-    launchNetplay(offlineOnly ?? false);
-
-    return;
-  };
+    },
+    [currentUser, launchNetplay, meleeIsoPath, playKey, serverError, showError, slippiBackendService],
+  );
 
   return (
     <OuterBox
@@ -111,7 +115,7 @@ export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
             margin: 0 10px;
           `}
         >
-          <PlayButton onClick={() => onPlay()} />
+          <ConnectedPlayButton onClick={() => onPlay()} />
         </div>
         <MainMenu menuItems={menuItems} />
       </div>
@@ -149,3 +153,23 @@ export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
     </OuterBox>
   );
 };
+
+const ConnectedPlayButton = React.memo(({ onClick }: { onClick: () => void }) => {
+  const installStatus = useDolphinStore((store) => store.netplayStatus);
+  const installProgress = useDolphinStore((store) => store.netplayDownloadProgress);
+  const fillPercent = useMemo(() => {
+    if (installStatus === DolphinStatus.READY) {
+      return 1;
+    }
+    if (installProgress && installProgress.total > 0) {
+      return installProgress.current / installProgress.total;
+    }
+    return 0;
+  }, [installProgress, installStatus]);
+
+  if (installStatus === DolphinStatus.READY) {
+    return <PlayButton onClick={onClick} />;
+  }
+
+  return <UpdatingButton onClick={onClick} fillPercent={fillPercent} />;
+});

@@ -38,3 +38,59 @@ export interface PlayKey {
   displayName: string;
   latestVersion?: string;
 }
+
+export enum DolphinEventType {
+  CLOSED = "CLOSED",
+  DOWNLOAD_PROGRESS = "DOWNLOAD_PROGRESS",
+  DOWNLOAD_COMPLETE = "DOWNLOAD_COMPLETE",
+}
+
+export type DolphinNetplayClosedEvent = {
+  type: DolphinEventType.CLOSED;
+  dolphinType: DolphinLaunchType.NETPLAY;
+  exitCode: number | null;
+};
+
+export type DolphinPlaybackClosedEvent = {
+  type: DolphinEventType.CLOSED;
+  dolphinType: DolphinLaunchType.PLAYBACK;
+  instanceId: string;
+  exitCode: number | null;
+};
+
+export type DolphinDownloadProgressEvent = {
+  type: DolphinEventType.DOWNLOAD_PROGRESS;
+  dolphinType: DolphinLaunchType;
+  progress: {
+    current: number;
+    total: number;
+  };
+};
+
+export type DolphinDownloadCompleteEvent = {
+  type: DolphinEventType.DOWNLOAD_COMPLETE;
+  dolphinType: DolphinLaunchType;
+};
+
+export type DolphinEventMap = {
+  [DolphinEventType.CLOSED]: DolphinNetplayClosedEvent | DolphinPlaybackClosedEvent;
+  [DolphinEventType.DOWNLOAD_PROGRESS]: DolphinDownloadProgressEvent;
+  [DolphinEventType.DOWNLOAD_COMPLETE]: DolphinDownloadCompleteEvent;
+};
+
+export type DolphinEvent = DolphinEventMap[DolphinEventType];
+
+export interface DolphinService {
+  downloadDolphin(dolphinType: DolphinLaunchType): Promise<void>;
+  configureDolphin(dolphinType: DolphinLaunchType): Promise<void>;
+  reinstallDolphin(dolphinType: DolphinLaunchType): Promise<void>;
+  clearDolphinCache(dolphinType: DolphinLaunchType): Promise<void>;
+  storePlayKeyFile(key: PlayKey): Promise<void>;
+  checkPlayKeyExists(key: PlayKey): Promise<boolean>;
+  removePlayKeyFile(): Promise<void>;
+  viewSlpReplay(files: ReplayQueueItem[]): Promise<void>;
+  launchNetplayDolphin(options: { bootToCss?: boolean }): Promise<void>;
+  checkDesktopAppDolphin(): Promise<{ dolphinPath: string; exists: boolean }>;
+  importDolphinSettings(options: { toImportDolphinPath: string; dolphinType: DolphinLaunchType }): Promise<void>;
+  onEvent<T extends DolphinEventType>(eventType: T, handle: (event: DolphinEventMap[T]) => void): () => void;
+}
