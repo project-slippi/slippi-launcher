@@ -12,7 +12,11 @@ export const getCharacterIcon = (characterId: number | null, characterColor: num
       const allColors = characterInfo.colors;
       // Make sure it's a valid color, otherwise use the default color
       const color = characterColor !== null && characterColor <= allColors.length - 1 ? characterColor : 0;
-      return characterIcons(`./${characterId}/${color}/stock.png`);
+      try {
+        return characterIcons(`./${characterId}/${color}/stock.png`);
+      } catch (err) {
+        console.warn(`Failed to find stock icon for character ID ${characterId} and color ${color}.`);
+      }
     }
   }
   return unknownCharacterIcon;
@@ -21,7 +25,11 @@ export const getCharacterIcon = (characterId: number | null, characterColor: num
 export const getStageImage = (stageId: number): string => {
   const stageInfo = stageUtils.getStageInfo(stageId);
   if (stageInfo.id !== stageUtils.UnknownStage.id) {
-    return stageIcons(`./${stageId}.png`);
+    try {
+      return stageIcons(`./${stageId}.png`);
+    } catch (err) {
+      console.warn(`Failed to find stage image for stage ID ${stageId}`);
+    }
   }
   return "";
 };
