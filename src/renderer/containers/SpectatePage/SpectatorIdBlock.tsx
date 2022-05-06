@@ -19,7 +19,7 @@ export const SpectatorIdBlock: React.FC<SpectatorIdBlockProps> = ({ userId, clas
 
     // Set copied indication
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    window.setTimeout(() => setCopied(false), 2000);
   }, [userId]);
 
   return (

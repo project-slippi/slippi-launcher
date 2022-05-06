@@ -35,8 +35,7 @@ export const Updating = () => {
         clearTimeout(timer.current);
       }
     };
-    // TODO: figure out how to get the proper typing of setTimeout
-    timer.current = setTimeout(incPercent, 20) as unknown as number;
+    timer.current = window.setTimeout(incPercent, 20);
   }, [percent]);
 
   const reset = React.useCallback(() => {
