@@ -1,26 +1,22 @@
-import broadcast from "@broadcast/api";
-import console from "@console/api";
-import dolphin from "@dolphin/api";
-import replays from "@replays/api";
-import settings from "@settings/api";
+import broadcastApi from "@broadcast/api";
+import consoleApi from "@console/api";
+import dolphinApi from "@dolphin/api";
+import replaysApi from "@replays/api";
+import settingsApi from "@settings/api";
 import { clipboard, contextBridge, shell } from "electron";
 import log from "electron-log";
 import path from "path";
 
-import common from "./api";
+import commonApi from "./api";
 
 const api = {
-  common,
-  console,
-  settings,
-  broadcast,
-  dolphin,
-  replays,
+  common: commonApi,
+  console: consoleApi,
+  settings: settingsApi,
+  broadcast: broadcastApi,
+  dolphin: dolphinApi,
+  replays: replaysApi,
   path: {
-    sep: path.sep,
-    basename: path.basename,
-    resolve: path.resolve,
-    relative: path.relative,
     join: path.join,
   },
   clipboard: {
