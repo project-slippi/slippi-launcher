@@ -8,6 +8,7 @@ import React from "react";
 import { DualPane } from "@/components/DualPane";
 import { Button } from "@/components/FormInputs";
 import { IconMessage } from "@/components/Message";
+import { generateDisplayPicture } from "@/lib/displayPicture";
 import { useAccount } from "@/lib/hooks/useAccount";
 import { useBroadcastList } from "@/lib/hooks/useBroadcastList";
 import { useServices } from "@/services";
@@ -68,7 +69,7 @@ export const SpectatePage: React.FC = () => {
                       return (
                         <SpectateItem
                           key={id}
-                          broadcasterId={broadcaster.uid}
+                          broadcasterPicture={generateDisplayPicture(broadcaster.uid)}
                           broadcasterName={broadcaster.name}
                           name={name}
                           onWatch={() => startWatching(id)}

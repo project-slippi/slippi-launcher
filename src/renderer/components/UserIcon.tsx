@@ -1,16 +1,9 @@
 import { colors } from "@common/colors";
 import { css } from "@emotion/react";
-import Identicon from "react-identicons";
 
-export interface UserIconProps {
-  userId: string;
-  size?: number;
-  className?: string;
-}
-export const UserIcon: React.FC<UserIconProps> = ({ userId, className, size = 45 }) => {
+export const UserIcon = ({ imageUrl, size = 45 }: { imageUrl: string; size?: number }) => {
   return (
     <div
-      className={className}
       css={css`
         border: solid 3px ${colors.purpleLight};
         background-color: white;
@@ -20,7 +13,7 @@ export const UserIcon: React.FC<UserIconProps> = ({ userId, className, size = 45
         width: ${size}px;
       `}
     >
-      <Identicon string={userId} size={size} />
+      <img src={imageUrl} height={size} width={size} />
     </div>
   );
 };

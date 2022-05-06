@@ -1,6 +1,7 @@
 export type AuthUser = {
   uid: string;
   displayName: string;
+  displayPicture: string;
 };
 
 export interface AuthService {

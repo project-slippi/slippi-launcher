@@ -91,8 +91,8 @@ export const UserMenu: React.FC<{
     <div>
       <ButtonBase onClick={handleClick}>
         <UserInfo
-          uid={user.uid}
           displayName={displayName}
+          displayPicture={user.displayPicture}
           playKey={playKey}
           serverError={serverError}
           loading={loading}
