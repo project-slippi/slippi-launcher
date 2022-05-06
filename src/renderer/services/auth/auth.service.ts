@@ -10,6 +10,8 @@ import { getFunctions, httpsCallable } from "firebase/functions";
 import multicast from "observable-fns/multicast";
 import Subject from "observable-fns/subject";
 
+import { generateDisplayPicture } from "@/lib/displayPicture";
+
 import type { AuthService, AuthUser } from "./types";
 
 const firebaseConfig = {
@@ -67,9 +69,11 @@ class AuthClient implements AuthService {
   }
 
   private _mapFirebaseUserToAuthUser(user: { uid: string; displayName: string | null }): AuthUser {
+    const displayPicture = generateDisplayPicture(user.uid);
     const userObject = {
       uid: user.uid,
       displayName: user.displayName ?? "",
+      displayPicture,
     };
     return userObject;
   }

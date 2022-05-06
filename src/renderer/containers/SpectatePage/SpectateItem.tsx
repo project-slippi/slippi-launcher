@@ -3,18 +3,20 @@ import styled from "@emotion/styled";
 import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
-import React from "react";
 
 import { UserIcon } from "@/components/UserIcon";
 
-export interface SpectateItemProps {
+export const SpectateItem = ({
+  broadcasterPicture,
+  broadcasterName,
+  name,
+  onWatch,
+}: {
   broadcasterName: string;
-  broadcasterId: string;
+  broadcasterPicture: string;
   name: string;
   onWatch: () => void;
-}
-
-export const SpectateItem: React.FC<SpectateItemProps> = ({ broadcasterName, broadcasterId, name, onWatch }) => {
+}) => {
   return (
     <Outer>
       <div
@@ -23,13 +25,13 @@ export const SpectateItem: React.FC<SpectateItemProps> = ({ broadcasterName, bro
           align-items: center;
         `}
       >
-        <UserIcon
-          userId={broadcasterId}
-          size={40}
+        <div
           css={css`
             margin-right: 10px;
           `}
-        />
+        >
+          <UserIcon imageUrl={broadcasterPicture} size={40} />
+        </div>
         <div
           css={css`
             display: flex;

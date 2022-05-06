@@ -1,6 +1,8 @@
 import multicast from "observable-fns/multicast";
 import Subject from "observable-fns/subject";
 
+import { generateDisplayPicture } from "@/lib/displayPicture";
+
 import { delayAndMaybeError } from "../utils";
 import type { AuthService, AuthUser } from "./types";
 
@@ -66,9 +68,11 @@ class MockAuthClient implements AuthService {
   }
 
   private _mockUser(displayName: string) {
+    const displayPicture = generateDisplayPicture("userid");
     const fakeUser = {
       uid: "userid",
       displayName,
+      displayPicture,
     };
     this._setCurrentUser(fakeUser);
     return fakeUser;

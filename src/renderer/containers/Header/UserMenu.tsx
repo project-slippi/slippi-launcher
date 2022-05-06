@@ -93,6 +93,7 @@ export const UserMenu: React.FC<{
         <UserInfo
           uid={user.uid}
           displayName={displayName}
+          displayPicture={user.displayPicture}
           playKey={playKey}
           serverError={serverError}
           loading={loading}

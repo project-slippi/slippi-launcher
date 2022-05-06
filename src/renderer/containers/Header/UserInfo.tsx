@@ -9,10 +9,11 @@ import { UserIcon } from "@/components/UserIcon";
 export const UserInfo: React.FC<{
   uid: string;
   displayName: string | null;
+  displayPicture: string;
   playKey: PlayKey | null;
   serverError: boolean | null;
   loading: boolean;
-}> = ({ uid, displayName, playKey, serverError, loading }) => {
+}> = ({ displayPicture, displayName, playKey, serverError, loading }) => {
   const showError = serverError || !playKey;
   let subtext = "";
   if (serverError) {
@@ -35,7 +36,7 @@ export const UserInfo: React.FC<{
         }
       `}
     >
-      {loading ? <CircularProgress color="inherit" /> : <UserIcon userId={uid} size={38} />}
+      {loading ? <CircularProgress color="inherit" /> : <UserIcon imageUrl={displayPicture} size={38} />}
       <div
         css={css`
           display: flex;
