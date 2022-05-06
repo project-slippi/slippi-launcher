@@ -2,18 +2,22 @@ import { colors } from "@common/colors";
 import type { PlayKey } from "@dolphin/types";
 import { css } from "@emotion/react";
 import CircularProgress from "@mui/material/CircularProgress";
-import React from "react";
 
 import { UserIcon } from "@/components/UserIcon";
 
-export const UserInfo: React.FC<{
-  uid: string;
+export const UserInfo = ({
+  displayName,
+  displayPicture,
+  playKey,
+  serverError,
+  loading,
+}: {
   displayName: string | null;
   displayPicture: string;
   playKey: PlayKey | null;
   serverError: boolean | null;
   loading: boolean;
-}> = ({ displayPicture, displayName, playKey, serverError, loading }) => {
+}) => {
   const showError = serverError || !playKey;
   let subtext = "";
   if (serverError) {
