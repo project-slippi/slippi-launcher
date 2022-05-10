@@ -205,5 +205,6 @@ export class DolphinInstallation {
         );
       }
     }
+    await fs.remove(assetPath, (err) => log.error(`Could not delete dolphin asset: ${err}`));
   }
 }
