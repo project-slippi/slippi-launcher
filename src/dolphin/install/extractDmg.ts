@@ -2,6 +2,7 @@
 // The included typings for extract-dmg are wrong!! It's actually an async function that needs awaiting!
 // But the function is simple enough so let's just maintain it ourselves and fix the typing.
 
+import dmg from "dmg";
 import * as fs from "fs-extra";
 
 export async function extractDmg(filename: string, destination: string): Promise<string[]> {
@@ -13,8 +14,7 @@ export async function extractDmg(filename: string, destination: string): Promise
     throw new TypeError(`Expected the destination to be a string, got ${typeof destination}`);
   }
 
-  const dmg = await import("dmg");
-  const mountPath = await dmg.mount(filename);
+  const mountPath = await mountDmg(filename);
   const files = await fs.readdir(mountPath);
 
   if (destination) {
@@ -23,7 +23,31 @@ export async function extractDmg(filename: string, destination: string): Promise
     });
   }
 
-  await dmg.unmount(mountPath);
+  await unmountDmg(mountPath);
 
   return files;
+}
+
+async function mountDmg(filename: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    dmg.mount(filename, (err, value) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(value);
+      }
+    });
+  });
+}
+
+async function unmountDmg(mountPath: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    dmg.unmount(mountPath, (err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
 }
