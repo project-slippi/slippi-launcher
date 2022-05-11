@@ -1,19 +1,17 @@
-/** @jsx jsx */
-import { css, jsx } from "@emotion/react";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import Button from "@material-ui/core/Button";
-import IconButton from "@material-ui/core/IconButton";
-import { makeStyles } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField";
-import Visibility from "@material-ui/icons/Visibility";
-import VisibilityOff from "@material-ui/icons/VisibilityOff";
-import firebase from "firebase";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import TextField from "@mui/material/TextField";
 import React from "react";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
-import { login, resetPassword, signUp } from "@/lib/firebase";
 import { useAsync } from "@/lib/hooks/useAsync";
+import { useServices } from "@/services";
+import type { AuthUser } from "@/services/auth/types";
 
 import { QuickStartHeader } from "./QuickStart/QuickStartHeader";
 
@@ -35,15 +33,6 @@ const useLoginStore = create(
   ),
 );
 
-const useStyles = makeStyles(() => ({
-  cssLabel: {
-    color: "#dddddd",
-    "&.Mui-focused": {
-      color: "#ffffff",
-    },
-  },
-}));
-
 export interface LoginFormProps {
   className?: string;
   disableAutoFocus?: boolean;
@@ -51,6 +40,7 @@ export interface LoginFormProps {
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({ className, onSuccess, disableAutoFocus }) => {
+  const { authService } = useServices();
   const email = useLoginStore((store) => store.email);
   const setEmail = useLoginStore((store) => store.setEmail);
   const displayName = useLoginStore((store) => store.displayName);
@@ -63,17 +53,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({ className, onSuccess, disa
   const [showPasswordResetForm, setShowPasswordResetForm] = React.useState(false);
   const [isSignUp, setIsSignUp] = React.useState(false);
   const toggleSignUp = () => setIsSignUp(!isSignUp);
-  const classes = useStyles();
 
   const { execute, loading, error, clearError } = useAsync(async () => {
-    let user: firebase.auth.UserCredential;
+    let user: AuthUser | null;
     if (isSignUp) {
       if (password !== confirmPassword) {
         throw new Error("Passwords do not match");
       }
-      user = await signUp(email.trim(), displayName, password);
+      user = await authService.signUp({ email: email.trim(), displayName, password });
     } else {
-      user = await login(email.trim(), password);
+      user = await authService.login({ email: email.trim(), password });
     }
     if (user) {
       // Clear the form
@@ -123,11 +112,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({ className, onSuccess, disa
               fullWidth={true}
               required={true}
               onChange={(e) => setDisplayName(e.target.value)}
-              InputLabelProps={{
-                classes: {
-                  root: classes.cssLabel,
-                },
-              }}
             />
           )}
           <TextField
@@ -139,11 +123,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({ className, onSuccess, disa
             fullWidth={true}
             required={true}
             onChange={(e) => setEmail(e.target.value)}
-            InputLabelProps={{
-              classes: {
-                root: classes.cssLabel,
-              },
-            }}
           />
           <TextField
             disabled={loading}
@@ -154,11 +133,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({ className, onSuccess, disa
             type={!isSignUp && showPassword ? "text" : "password"}
             fullWidth={true}
             required={true}
-            InputLabelProps={{
-              classes: {
-                root: classes.cssLabel,
-              },
-            }}
             InputProps={{
               endAdornment: !isSignUp ? (
                 <IconButton
@@ -166,6 +140,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ className, onSuccess, disa
                   onClick={() => setShowPassword(!showPassword)}
                   onMouseDown={(e) => e.preventDefault()}
                   edge="end"
+                  size="large"
                 >
                   {showPassword ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
@@ -182,11 +157,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({ className, onSuccess, disa
               type={"password"}
               fullWidth={true}
               required={true}
-              InputLabelProps={{
-                classes: {
-                  root: classes.cssLabel,
-                },
-              }}
             />
           )}
         </div>
@@ -243,14 +213,14 @@ const ForgotPasswordForm: React.FC<{
   className?: string;
   onClose: () => void;
 }> = ({ className, onClose }) => {
+  const { authService } = useServices();
   const email = useLoginStore((store) => store.email);
   const setEmail = useLoginStore((store) => store.setEmail);
   const [success, setSuccess] = React.useState(false);
-  const classes = useStyles();
 
   const { execute, loading, error } = useAsync(async () => {
     setSuccess(false);
-    await resetPassword(email);
+    await authService.resetPassword(email);
     setSuccess(true);
   });
 
@@ -279,11 +249,6 @@ const ForgotPasswordForm: React.FC<{
             fullWidth={true}
             required={true}
             onChange={(e) => setEmail(e.target.value)}
-            InputLabelProps={{
-              classes: {
-                root: classes.cssLabel,
-              },
-            }}
           />
         )}
         {error && <ErrorMessage>{error.message}</ErrorMessage>}

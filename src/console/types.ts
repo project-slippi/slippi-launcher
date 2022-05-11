@@ -1,7 +1,7 @@
-import { ConsoleConnection, SlpFileWriter } from "@slippi/slippi-js";
+import type { ConsoleConnection, SlpFileWriter } from "@slippi/slippi-js";
 
-import { AutoSwitcher } from "./autoSwitcher";
-import { ConsoleRelay } from "./consoleRelay";
+import type { AutoSwitcher } from "./autoSwitcher";
+import type { ConsoleRelay } from "./consoleRelay";
 
 export interface ConsoleMirrorStatusUpdate {
   status: number;
@@ -48,4 +48,17 @@ export enum MirrorEvent {
   ERROR = "ERROR",
   NEW_FILE = "NEW_FILE",
   MIRROR_STATUS_CHANGE = "MIRROR_STATUS_CHANGE",
+}
+
+export interface ConsoleService {
+  connectToConsoleMirror(config: MirrorConfig): Promise<void>;
+  disconnectFromConsole(ip: string): Promise<void>;
+  startMirroring(ip: string): Promise<void>;
+  startDiscovery(): Promise<void>;
+  stopDiscovery(): Promise<void>;
+  onDiscoveredConsolesUpdated(handle: (consoles: DiscoveredConsoleInfo[]) => void): () => void;
+  onConsoleMirrorErrorMessage(handle: (message: string) => void): () => void;
+  onConsoleMirrorStatusUpdated(
+    handle: (result: { ip: string; info: Partial<ConsoleMirrorStatusUpdate> }) => void,
+  ): () => void;
 }

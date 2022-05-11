@@ -1,4 +1,4 @@
-# ![Launcher icon](resources/icons/48x48.png) Slippi Launcher
+# ![Launcher icon](assets/icons/48x48.png) Slippi Launcher
 
 [![Build Status](https://github.com/project-slippi/slippi-launcher/workflows/build/badge.svg)](https://github.com/project-slippi/slippi-launcher/actions?workflow=build)
 [![License](https://img.shields.io/badge/license-GPLv3-blue)](https://github.com/project-slippi/slippi-launcher/blob/master/LICENSE)
@@ -14,14 +14,14 @@ This repository is part of the Project Slippi ecosystem. For more information ab
 These are the applications you will need to install in order to build this project:
 
 - [Git](https://git-scm.com/downloads)
-- [Node v14+](https://nodejs.org/en/)
+- [Node v16+](https://nodejs.org/en/)
 - [Yarn](https://yarnpkg.com/getting-started/install)
 
 ### Build Steps
 
 - Clone the repo via: `git clone https://github.com/project-slippi/slippi-launcher.git`
 - Navigate into the directory and run: `yarn install` to install all dependencies
-- Use `yarn run dev` to develop
+- Use `yarn run start` to run the app in develop mode
 - Use `yarn run package` to build a release
 
 #### Recommended IDE
@@ -29,7 +29,6 @@ These are the applications you will need to install in order to build this proje
 For development, we recommend using [VSCode](https://code.visualstudio.com/) with the following plugins:
 
 - [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
-- [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
 
 These extensions will provide automatic formatting and warnings about code quality issues before you commit/push.
 
@@ -62,6 +61,10 @@ These extensions will provide automatic formatting and warnings about code quali
 ## Contributing
 
 Contributions are welcome! The [issues section](https://github.com/project-slippi/slippi-launcher/issues) contains some good first ideas. When making a PR, ensure you are not PRing your `main` branch and always describe the feature and what testing you've done so far.
+
+## Acknowledgements
+
+This application uses [Electron React Boilerplate](https://github.com/electron-react-boilerplate/electron-react-boilerplate) as a base and includes most changes up to commit [10c22e5](https://github.com/electron-react-boilerplate/electron-react-boilerplate/commit/10c22e5).
 
 ## License
 

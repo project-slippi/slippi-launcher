@@ -1,9 +1,9 @@
-import { FileDetails } from "@replays/types";
-import { RatioType, StatsType } from "@slippi/slippi-js";
-import { extractPlayerNames } from "common/matchNames";
+import type { FileDetails } from "@replays/types";
+import type { RatioType, StatsType } from "@slippi/slippi-js";
 import _ from "lodash";
 import React from "react";
 
+import { extractPlayerNames } from "@/lib/matchNames";
 import { getCharacterIcon } from "@/lib/utils";
 
 import * as T from "./TableStyles";

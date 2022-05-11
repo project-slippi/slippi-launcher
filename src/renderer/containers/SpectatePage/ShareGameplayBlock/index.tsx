@@ -1,16 +1,15 @@
 import { Ports } from "@slippi/slippi-js";
-import electronLog from "electron-log";
 import React from "react";
-import { useToasts } from "react-toast-notifications";
 
 import { InfoBlock } from "@/components/InfoBlock";
 import { useAccount } from "@/lib/hooks/useAccount";
 import { useBroadcast } from "@/lib/hooks/useBroadcast";
 import { useConsole } from "@/lib/hooks/useConsole";
+import { useToasts } from "@/lib/hooks/useToasts";
 
 import { BroadcastPanel } from "./BroadcastPanel";
 
-const log = electronLog.scope("ShareGameplayBlock/index");
+const log = window.electron.log;
 
 // These are the default params for broadcasting Netplay Dolphin
 const ip = "127.0.0.1";
@@ -23,7 +22,7 @@ export const ShareGameplayBlock: React.FC<{ className?: string }> = ({ className
   const slippiStatus = useConsole((store) => store.slippiConnectionStatus);
   const dolphinStatus = useConsole((store) => store.dolphinConnectionStatus);
   const [start, stop] = useBroadcast();
-  const { addToast } = useToasts();
+  const { showError } = useToasts();
 
   return (
     <InfoBlock title="Share your gameplay" className={className}>
@@ -43,7 +42,7 @@ export const ShareGameplayBlock: React.FC<{ className?: string }> = ({ className
             });
           } catch (err) {
             log.error(err);
-            addToast("Error connecting to Dolphin. Ensure Dolphin is running and try again.", { appearance: "error" });
+            showError("Error connecting to Dolphin. Ensure Dolphin is running and try again.");
           }
         }}
       />

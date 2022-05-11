@@ -1,11 +1,10 @@
-import { isDevelopment } from "common/constants";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
 const ADVANCED_USER_STORAGE_KEY = "IS_ADVANCED_USER";
 
 const result = localStorage.getItem(ADVANCED_USER_STORAGE_KEY);
-const startingValue = result === "true" || isDevelopment;
+const startingValue = result === "true" || window.electron.common.isDevelopment;
 
 export const useAdvancedUser = create(
   combine(

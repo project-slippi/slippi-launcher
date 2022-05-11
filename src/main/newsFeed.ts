@@ -1,4 +1,4 @@
-import { NewsItem } from "common/types";
+import type { NewsItem } from "@common/types";
 import mediumJSONFeed from "medium-json-feed";
 
 import { getAllReleases } from "./github";

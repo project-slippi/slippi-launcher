@@ -1,17 +1,16 @@
 import "./styles/styles.scss";
 
 import { ThemeProvider } from "@emotion/react";
-import { MuiThemeProvider, StylesProvider } from "@material-ui/core/styles";
+import { StyledEngineProvider, ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
 import React from "react";
-import { hot } from "react-hot-loader/root";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { HashRouter as Router, Redirect, Route, Switch } from "react-router-dom";
-import { ToastProvider } from "react-toast-notifications";
+import { HashRouter as Router, Navigate, Route, Routes } from "react-router-dom";
 
 import { useAppStore } from "@/lib/hooks/useApp";
 
-import { CustomToast } from "./components/CustomToast";
+import { ToastProvider } from "./components/ToastProvider";
 import { useAppListeners } from "./lib/hooks/useAppListeners";
+import { ServiceProvider } from "./services";
 import { slippiTheme } from "./styles/theme";
 import { LandingView } from "./views/LandingView";
 import { LoadingView } from "./views/LoadingView";
@@ -32,7 +31,7 @@ const queryClient = new QueryClient({
   },
 });
 
-const App: React.FC = () => {
+const App = () => {
   const initialized = useAppStore((state) => state.initialized);
 
   // Then add the rest of the app listeners
@@ -43,34 +42,35 @@ const App: React.FC = () => {
   }
 
   return (
-    <Switch>
-      <Route path="/main" component={MainView} />
-      <Route path="/landing" component={LandingView} />
-      <Route path="/settings" component={SettingsView} />
-      <Redirect exact from="/" to="/landing" />
-      <Route component={NotFoundView} />
-    </Switch>
+    <Routes>
+      <Route path="/main/*" element={<MainView />} />
+      <Route path="/landing" element={<LandingView />} />
+      <Route path="/settings/*" element={<SettingsView />} />
+      <Route path="/" element={<Navigate replace to="/landing" />} />
+      <Route element={<NotFoundView />} />
+    </Routes>
   );
 };
 
 // Providers need to be initialized before the rest of the app can use them
-const AppWithProviders: React.FC = () => {
-  return (
-    <StylesProvider injectFirst>
+const withProviders = (Component: React.ComponentType) => {
+  return () => (
+    <StyledEngineProvider injectFirst>
       <MuiThemeProvider theme={slippiTheme}>
-        <ThemeProvider theme={slippiTheme}>
+        <ThemeProvider theme={slippiTheme as any}>
           <QueryClientProvider client={queryClient}>
-            <ToastProvider components={{ Toast: CustomToast }} placement="bottom-right">
-              <Router>
-                <App />
-              </Router>
+            <ToastProvider>
+              <ServiceProvider>
+                <Router>
+                  <Component />
+                </Router>
+              </ServiceProvider>
             </ToastProvider>
           </QueryClientProvider>
         </ThemeProvider>
       </MuiThemeProvider>
-    </StylesProvider>
+    </StyledEngineProvider>
   );
 };
 
-// eslint-disable-next-line import/no-default-export
-export default hot(AppWithProviders);
+export default withProviders(App);

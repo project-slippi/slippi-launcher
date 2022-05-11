@@ -1,7 +1,6 @@
-/** @jsx jsx */
-import { css, jsx } from "@emotion/react";
-import MatButton, { ButtonProps } from "@material-ui/core/Button";
-import { colors } from "common/colors";
+import { colors } from "@common/colors";
+import type { ButtonProps } from "@mui/material/Button";
+import MatButton from "@mui/material/Button";
 
 export const Button: React.FC<ButtonProps> = (props) => {
   const { children, ...rest } = props;
@@ -9,17 +8,14 @@ export const Button: React.FC<ButtonProps> = (props) => {
     <MatButton
       variant="contained"
       color="inherit"
-      css={css`
-        .MuiButton-label {
-          color: ${colors.purpleDarker};
-          font-weight: 500;
-          font-size: 12px;
-
-          .MuiButton-startIcon {
-            color: ${colors.purpleLighter};
-          }
-        }
-      `}
+      sx={{
+        color: colors.purpleDarker,
+        fontWeight: 500,
+        fontSize: 12,
+        "& .MuiButton-startIcon": {
+          color: colors.purpleLighter,
+        },
+      }}
       {...rest}
     >
       {children}

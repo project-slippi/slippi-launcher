@@ -1,43 +1,38 @@
 import React from "react";
-import { Redirect, Route, Switch, useHistory, useParams, useRouteMatch } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
 
-import { useDolphin } from "@/lib/hooks/useDolphin";
+import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/useReplayBrowserList";
 import { useReplays } from "@/lib/hooks/useReplays";
+import { useServices } from "@/services";
 
 import { ReplayFileStats } from "../ReplayFileStats";
 import { ReplayBrowser } from "./ReplayBrowser";
 
 export const ReplayBrowserPage: React.FC = () => {
   const { lastPath } = useReplayBrowserNavigation();
-  const { path } = useRouteMatch();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   return (
-    <Switch>
-      <Route path={`${path}/list`}>
-        <ReplayBrowser />
-      </Route>
-      <Route path={`${path}/:filePath`}>
-        <ChildPage goBack={() => history.push(path)} parent={path} />
-      </Route>
-      <Route exact path={path}>
-        <Redirect to={lastPath} />
-      </Route>
-    </Switch>
+    <Routes>
+      <Route path="list" element={<ReplayBrowser />} />
+      <Route path=":filePath" element={<ChildPage goBack={() => navigate("..")} />} />
+      <Route path="*" element={<Navigate replace to={lastPath} />} />
+    </Routes>
   );
 };
 
-const ChildPage: React.FC<{ parent: string; goBack: () => void }> = () => {
+const ChildPage: React.FC<{ goBack: () => void }> = () => {
   const { filePath } = useParams<Record<string, any>>();
   const selectedFile = useReplays((store) => store.selectedFile);
   const decodedFilePath = decodeURIComponent(filePath);
-  const { viewReplays } = useDolphin();
+  const { dolphinService } = useServices();
+  const { viewReplays } = useDolphinActions(dolphinService);
   const nav = useReplayBrowserList();
   const { goToReplayList } = useReplayBrowserNavigation();
 
   const onPlay = () => {
-    viewReplays([{ path: decodedFilePath }]);
+    viewReplays({ path: decodedFilePath });
   };
 
   return (

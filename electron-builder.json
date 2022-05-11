@@ -1,22 +1,42 @@
 {
   "productName": "Slippi Launcher",
   "appId": "com.github.projectslippi.slippidesktopapp",
-  "afterSign": "build/afterSignHook.macos.js",
-  "directories": {
-    "buildResources": "resources",
-    "output": "release"
+  "asar": true,
+  "asarUnpack": ["**\\*.{node,dll}", "./dist/main/*.js", "./node_modules/**/*"],
+  "files": ["dist", "node_modules", "package.json"],
+  "afterSign": ".erb/scripts/notarize.js",
+  "fileAssociations": {
+    "ext": "slp",
+    "name": "slp",
+    "description": "Slippi File Format",
+    "icon": "./assets/file.ico"
   },
-  "asarUnpack": [
-    "**/*.node",
-    "**/*.worker.js*",
-    "node_modules/source-map/**/*",
-    "node_modules/source-map-support/**/*",
-    "node_modules/buffer-from/**/*"
-  ],
   "artifactName": "Slippi-Launcher-${version}-${os}.${ext}",
+  "mac": {
+    "target": {
+      "target": "default",
+      "arch": "universal"
+    },
+    "fileAssociations": {
+      "ext": "slp",
+      "role": "Viewer"
+    },
+    "type": "distribution",
+    "hardenedRuntime": true,
+    "entitlements": "assets/entitlements.mac.plist",
+    "entitlementsInherit": "assets/entitlements.mac.plist",
+    "category": "public.app-category.games",
+    "gatekeeperAssess": false,
+    "extendInfo": {
+      "NSAppTransportSecurity": {
+        "NSAllowsArbitraryLoads": true
+      }
+    },
+    "minimumSystemVersion": "10.13.6"
+  },
   "dmg": {
     "artifactName": "Slippi-Launcher-${version}.${ext}",
-    "icon": "resources/icon.icns",
+    "icon": "assets/icon.icns",
     "contents": [
       {
         "x": 130,
@@ -30,35 +50,13 @@
       }
     ]
   },
-  "fileAssociations": {
-    "ext": "slp",
-    "name": "slp",
-    "description": "Slippi File Format",
-    "icon": "./resources/file.ico"
-  },
-  "mac": {
-    "fileAssociations": {
-      "ext": "slp",
-      "role": "Viewer"
-    },
-    "hardenedRuntime": true,
-    "entitlements": "./build/entitlements.macos.plist",
-    "category": "public.app-category.games",
-    "target": ["dmg", "zip"],
-    "extendInfo": {
-      "NSAppTransportSecurity": {
-        "NSAllowsArbitraryLoads": true
-      }
-    }
-  },
   "win": {
     "target": ["nsis"],
-    "icon": "resources/icon.ico"
+    "icon": "assets/icon.ico"
   },
   "nsis": {
     "artifactName": "Slippi-Launcher-Setup-${version}.${ext}",
-    "perMachine": true,
-    "include": "./build/installer.nsh",
+    "include": ".erb/scripts/installer.nsh",
     "warningsAsErrors": false,
     "allowElevation": true,
     "oneClick": false,
@@ -77,5 +75,16 @@
       "role": "Viewer",
       "schemes": ["slippi"]
     }
-  ]
+  ],
+  "directories": {
+    "app": "release/app",
+    "buildResources": "assets",
+    "output": "release/build"
+  },
+  "extraResources": ["./assets/include/**"],
+  "publish": {
+    "provider": "github",
+    "owner": "project-slippi",
+    "repo": "slippi-launcher"
+  }
 }

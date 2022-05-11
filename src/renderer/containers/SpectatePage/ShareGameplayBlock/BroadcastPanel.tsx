@@ -1,17 +1,13 @@
-/** @jsx jsx */
-import { css, jsx } from "@emotion/react";
+import { colors } from "@common/colors";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import { ConnectionStatus } from "@slippi/slippi-js";
-import { colors } from "common/colors";
-import { isDevelopment } from "common/constants";
 import moment from "moment";
 import React from "react";
 import TimeAgo from "react-timeago";
 
 import { StartBroadcastDialog } from "./StartBroadcastDialog";
-
-const skipUserValidation = isDevelopment && !process.env.SLIPPI_USER_SERVER;
 
 export interface BroadcastPanelProps {
   dolphinStatus: ConnectionStatus;
@@ -94,12 +90,7 @@ export const BroadcastPanel: React.FC<BroadcastPanelProps> = ({
         )}
         {isDisconnected && broadcastDuration && <div>Broadcast ended after {broadcastDuration.humanize()}</div>}
       </div>
-      <StartBroadcastDialog
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onSubmit={onStartBroadcast}
-        skipUserValidation={skipUserValidation}
-      />
+      <StartBroadcastDialog open={modalOpen} onClose={() => setModalOpen(false)} onSubmit={onStartBroadcast} />
     </div>
   );
 };

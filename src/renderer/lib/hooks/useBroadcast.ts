@@ -1,38 +1,23 @@
-import { ipc_startBroadcast, ipc_stopBroadcast } from "@broadcast/ipc";
-import { StartBroadcastConfig } from "@broadcast/types";
-import electronLog from "electron-log";
+import type { StartBroadcastConfig } from "@broadcast/types";
 
-import { useAccount } from "./useAccount";
+import { useServices } from "@/services";
 
-const log = electronLog.scope("useBroadcast");
+const log = window.electron.log;
 
 export const useBroadcast = () => {
-  const user = useAccount((store) => store.user);
+  const { authService, broadcastService } = useServices();
 
   const startBroadcasting = async (config: Omit<StartBroadcastConfig, "authToken">) => {
-    if (!user) {
-      throw new Error("User is not logged in!");
-    }
-
-    const authToken = await user.getIdToken();
+    const authToken = await authService.getUserToken();
     log.info("Starting broadcast");
-    const res = await ipc_startBroadcast.renderer!.trigger({
+    await broadcastService.startBroadcast({
       ...config,
       authToken,
     });
-
-    if (!res.result) {
-      log.error("Error starting broadcast", res.errors);
-      throw new Error("Error starting broadcast");
-    }
   };
 
   const stopBroadcasting = async () => {
-    const res = await ipc_stopBroadcast.renderer!.trigger({});
-    if (!res.result) {
-      log.error("Error stopping broadcast", res.errors);
-      throw new Error("Error stopping broadcast");
-    }
+    await broadcastService.stopBroadcast();
   };
 
   return [startBroadcasting, stopBroadcasting] as const;

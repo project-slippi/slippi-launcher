@@ -1,11 +1,12 @@
 import styled from "@emotion/styled";
-import Button, { ButtonProps } from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import { useTheme } from "@material-ui/core/styles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
+import type { ButtonProps } from "@mui/material/Button";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import React from "react";
 
 export interface ConfirmationModalProps {
@@ -35,7 +36,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   fullWidth = true,
 }) => {
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
+  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

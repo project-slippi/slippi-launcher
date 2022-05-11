@@ -1,17 +1,17 @@
-/** @jsx jsx */
-import { ipc_watchBroadcast } from "@broadcast/ipc";
-import { css, jsx } from "@emotion/react";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
-import SyncIcon from "@material-ui/icons/Sync";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import SyncIcon from "@mui/icons-material/Sync";
 import React from "react";
 
 import { DualPane } from "@/components/DualPane";
 import { Button } from "@/components/FormInputs";
 import { IconMessage } from "@/components/Message";
+import { generateDisplayPicture } from "@/lib/displayPicture";
 import { useAccount } from "@/lib/hooks/useAccount";
 import { useBroadcastList } from "@/lib/hooks/useBroadcastList";
+import { useServices } from "@/services";
 
 import { Footer } from "./Footer";
 import { ShareGameplayBlock } from "./ShareGameplayBlock";
@@ -20,10 +20,11 @@ import { SpectatorIdBlock } from "./SpectatorIdBlock";
 
 export const SpectatePage: React.FC = () => {
   const user = useAccount((store) => store.user);
+  const { broadcastService } = useServices();
   const [currentBroadcasts, refreshBroadcasts] = useBroadcastList();
 
   const startWatching = async (id: string) => {
-    await ipc_watchBroadcast.renderer!.trigger({ broadcasterId: id });
+    await broadcastService.watchBroadcast(id);
   };
 
   if (!user) {
@@ -68,7 +69,7 @@ export const SpectatePage: React.FC = () => {
                       return (
                         <SpectateItem
                           key={id}
-                          broadcasterId={broadcaster.uid}
+                          broadcasterPicture={generateDisplayPicture(broadcaster.uid)}
                           broadcasterName={broadcaster.name}
                           name={name}
                           onWatch={() => startWatching(id)}

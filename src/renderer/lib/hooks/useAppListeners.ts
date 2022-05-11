@@ -1,67 +1,40 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import {
-  ipc_broadcastErrorOccurredEvent,
-  ipc_broadcastListUpdatedEvent,
-  ipc_broadcastReconnect,
-  ipc_dolphinStatusChangedEvent,
-  ipc_slippiStatusChangedEvent,
-  ipc_spectateReconnect,
-} from "@broadcast/ipc";
-import {
-  ipc_consoleMirrorErrorMessageEvent,
-  ipc_consoleMirrorStatusUpdatedEvent,
-  ipc_discoveredConsolesUpdatedEvent,
-} from "@console/ipc";
-import { ipc_dolphinClosedEvent, ipc_dolphinDownloadLogReceivedEvent } from "@dolphin/ipc";
-import {
-  ipc_loadProgressUpdatedEvent,
-  ipc_fileLoadCompleteEvent,
-  ipc_fileLoadErrorEvent,
-  ipc_statsPageRequestedEvent,
-} from "@replays/ipc";
-import { ipc_openSettingsModalEvent, ipc_settingsUpdatedEvent } from "@settings/ipc";
-import { isLinux, isWindows } from "common/constants";
-import {
-  ipc_checkValidIso,
-  ipc_launcherUpdateDownloadingEvent,
-  ipc_launcherUpdateFoundEvent,
-  ipc_launcherUpdateReadyEvent,
-} from "common/ipc";
-import { IsoValidity } from "common/types";
-import electronLog from "electron-log";
-import firebase from "firebase";
+import { IsoValidity } from "@common/types";
 import throttle from "lodash/throttle";
 import React from "react";
-import { useToasts } from "react-toast-notifications";
 
 import { useAppInitialization, useAppStore } from "@/lib/hooks/useApp";
 import { useConsole } from "@/lib/hooks/useConsole";
 import { useReplays } from "@/lib/hooks/useReplays";
+import { useToasts } from "@/lib/hooks/useToasts";
+import { useServices } from "@/services";
 
-import { useAccount } from "./useAccount";
+import { useDolphinListeners } from "../dolphin/useDolphinListeners";
+import { useAccount, usePlayKey } from "./useAccount";
 import { useBroadcast } from "./useBroadcast";
 import { useBroadcastList, useBroadcastListStore } from "./useBroadcastList";
 import { useConsoleDiscoveryStore } from "./useConsoleDiscovery";
-import { useDolphinStore } from "./useDolphin";
 import { useIsoVerification } from "./useIsoVerification";
-import { useNewsFeed } from "./useNewsFeed";
 import { useReplayBrowserNavigation } from "./useReplayBrowserList";
 import { useSettings } from "./useSettings";
 import { useSettingsModal } from "./useSettingsModal";
 
-const log = electronLog.scope("useAppListeners");
+const log = window.electron.log;
 
 export const useAppListeners = () => {
   // Handle app initalization
+  const { authService, broadcastService, consoleService, dolphinService } = useServices();
   const initialized = useAppStore((store) => store.initialized);
   const initializeApp = useAppInitialization();
   React.useEffect(() => {
     void initializeApp();
   }, [initializeApp]);
 
+  useDolphinListeners(dolphinService);
+
   // Subscribe to user auth changes to keep store up to date
   const setUser = useAccount((store) => store.setUser);
-  const refreshPlayKey = useAccount((store) => store.refreshPlayKey);
+  const refreshPlayKey = usePlayKey();
   React.useEffect(() => {
     // Only start subscribing to user change events after we've finished initializing
     if (!initialized) {
@@ -69,8 +42,7 @@ export const useAppListeners = () => {
     }
 
     try {
-      const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-        // Update the user
+      const unsubscribe = authService.onUserChange((user) => {
         setUser(user);
 
         // Refresh the play key
@@ -84,67 +56,61 @@ export const useAppListeners = () => {
     }
 
     return;
-  }, [initialized, refreshPlayKey, setUser]);
-
-  const setLogMessage = useAppStore((store) => store.setLogMessage);
-  ipc_dolphinDownloadLogReceivedEvent.renderer!.useEvent(async ({ message }) => {
-    log.info(message);
-    setLogMessage(message);
-  }, []);
+  }, [initialized, refreshPlayKey, setUser, authService]);
 
   const setSlippiConnectionStatus = useConsole((store) => store.setSlippiConnectionStatus);
-  ipc_slippiStatusChangedEvent.renderer!.useEvent(async ({ status }) => {
-    setSlippiConnectionStatus(status);
-  }, []);
+  React.useEffect(() => {
+    return broadcastService.onSlippiStatusChanged(setSlippiConnectionStatus);
+  }, [setSlippiConnectionStatus, broadcastService]);
 
   const setDolphinConnectionStatus = useConsole((store) => store.setDolphinConnectionStatus);
-  ipc_dolphinStatusChangedEvent.renderer!.useEvent(async ({ status }) => {
-    setDolphinConnectionStatus(status);
-  }, []);
+  React.useEffect(() => {
+    return broadcastService.onDolphinStatusChanged(setDolphinConnectionStatus);
+  }, [setDolphinConnectionStatus, broadcastService]);
 
   const setBroadcastError = useConsole((store) => store.setBroadcastError);
-  ipc_broadcastErrorOccurredEvent.renderer!.useEvent(async ({ errorMessage }) => {
-    setBroadcastError(errorMessage);
-  }, []);
+  React.useEffect(() => {
+    return broadcastService.onBroadcastErrorMessage(setBroadcastError);
+  }, [setBroadcastError, broadcastService]);
 
   const updateProgress = useReplays((store) => store.updateProgress);
   const throttledUpdateProgress = throttle(updateProgress, 50);
-  ipc_loadProgressUpdatedEvent.renderer!.useEvent(async (progress) => {
-    throttledUpdateProgress(progress);
-  }, []);
+  React.useEffect(() => {
+    return window.electron.replays.onReplayLoadProgressUpdate(throttledUpdateProgress);
+  }, [throttledUpdateProgress]);
 
   const updateFileDetails = useReplays((store) => store.updateFileDetails);
-  ipc_fileLoadCompleteEvent.renderer!.useEvent(async (fileLoadComplete) => {
-    updateFileDetails(fileLoadComplete);
-  }, []);
+  React.useEffect(() => {
+    return window.electron.replays.onFileLoadComplete(updateFileDetails);
+  }, [updateFileDetails]);
 
   const updateFileLoadError = useReplays((store) => store.updateFileLoadError);
-  ipc_fileLoadErrorEvent.renderer!.useEvent(async (fileLoadError) => {
-    updateFileLoadError(fileLoadError);
-  }, []);
+  React.useEffect(() => {
+    return window.electron.replays.onFileLoadError(updateFileLoadError);
+  }, [updateFileLoadError]);
 
   const updateSettings = useSettings((store) => store.updateSettings);
-  ipc_settingsUpdatedEvent.renderer!.useEvent(async (newSettings) => {
-    updateSettings(newSettings);
-  }, []);
+  React.useEffect(() => {
+    return window.electron.settings.onSettingsUpdated(updateSettings);
+  }, [updateSettings]);
 
   // Listen to when the list of broadcasting users has changed
   const updateBroadcastingList = useBroadcastListStore((store) => store.setItems);
-  ipc_broadcastListUpdatedEvent.renderer!.useEvent(async ({ items }) => {
-    updateBroadcastingList(items);
-  }, []);
+  React.useEffect(() => {
+    return broadcastService.onBroadcastListUpdated(updateBroadcastingList);
+  }, [updateBroadcastingList, broadcastService]);
 
   // Update the discovered console list
   const updateConsoleItems = useConsoleDiscoveryStore((store) => store.updateConsoleItems);
-  ipc_discoveredConsolesUpdatedEvent.renderer!.useEvent(async ({ consoles }) => {
-    updateConsoleItems(consoles);
-  }, []);
+  React.useEffect(() => {
+    return consoleService.onDiscoveredConsolesUpdated(updateConsoleItems);
+  }, [updateConsoleItems, consoleService]);
 
   // Update the mirroring console status
   const updateConsoleStatus = useConsoleDiscoveryStore((store) => store.updateConsoleStatus);
-  ipc_consoleMirrorStatusUpdatedEvent.renderer!.useEvent(async ({ ip, info }) => {
-    updateConsoleStatus(ip, info);
-  }, []);
+  React.useEffect(() => {
+    return consoleService.onConsoleMirrorStatusUpdated(updateConsoleStatus);
+  }, [updateConsoleStatus, consoleService]);
 
   // Automatically run ISO verification whenever the isoPath changes
   const isoPath = useSettings((store) => store.settings.isoPath);
@@ -152,29 +118,25 @@ export const useAppListeners = () => {
   const setIsValid = useIsoVerification((store) => store.setIsValid);
   React.useEffect(() => {
     if (!isoPath) {
-      setIsValid(IsoValidity.INVALID);
+      setIsValid(IsoValidity.UNVALIDATED);
       setIsValidating(false);
       return;
     }
 
     // Start iso validation
     setIsValidating(true);
-    ipc_checkValidIso
-      .renderer!.trigger({ path: isoPath })
+    window.electron.common
+      .checkValidIso(isoPath)
       .then((isoCheckResult) => {
-        if (!isoCheckResult.result) {
-          console.warn(`Error checking iso validation: ${isoPath}`, isoCheckResult.errors);
-          return;
-        }
-
-        if (isoCheckResult.result.path !== isoPath) {
+        if (isoCheckResult.path !== isoPath) {
           // The ISO path changed before verification completed
           // so just do nothing.
           return;
         }
 
-        setIsValid(isoCheckResult.result.valid);
+        setIsValid(isoCheckResult.valid);
       })
+      .catch(log.error)
       .finally(() => {
         setIsValidating(false);
       });
@@ -182,36 +144,39 @@ export const useAppListeners = () => {
 
   const clearSelectedFile = useReplays((store) => store.clearSelectedFile);
   const { goToReplayStatsPage } = useReplayBrowserNavigation();
-  ipc_statsPageRequestedEvent.renderer!.useEvent(async ({ filePath }) => {
-    clearSelectedFile();
-    goToReplayStatsPage(filePath);
-  }, []);
+  const moveToStatsPage = React.useCallback(
+    (filePath: string) => {
+      clearSelectedFile();
+      goToReplayStatsPage(filePath);
+    },
+    [clearSelectedFile, goToReplayStatsPage],
+  );
+  React.useEffect(() => {
+    return window.electron.replays.onStatsPageRequest(moveToStatsPage);
+  }, [moveToStatsPage]);
 
   const { open } = useSettingsModal();
-  ipc_openSettingsModalEvent.renderer!.useEvent(async () => {
-    open();
-  }, []);
-
-  // Load the news articles once on app load
-  const updateNewsFeed = useNewsFeed((store) => store.update);
   React.useEffect(() => {
-    updateNewsFeed();
-  }, [updateNewsFeed]);
+    return window.electron.settings.onOpenSettingsPageRequest(open);
+  }, [open]);
 
   const setUpdateVersion = useAppStore((store) => store.setUpdateVersion);
-  ipc_launcherUpdateFoundEvent.renderer!.useEvent(async ({ version }) => {
-    setUpdateVersion(version);
-  }, []);
+  React.useEffect(() => {
+    return window.electron.common.onAppUpdateFound(setUpdateVersion);
+  }, [setUpdateVersion]);
 
   const setUpdateDownloadProgress = useAppStore((store) => store.setUpdateDownloadProgress);
-  ipc_launcherUpdateDownloadingEvent.renderer!.useEvent(async ({ progressPercent }) => {
-    setUpdateDownloadProgress(progressPercent);
-  }, []);
+  React.useEffect(() => {
+    return window.electron.common.onAppUpdateDownloadProgress(setUpdateDownloadProgress);
+  }, [setUpdateDownloadProgress]);
 
   const setUpdateReady = useAppStore((store) => store.setUpdateReady);
-  ipc_launcherUpdateReadyEvent.renderer!.useEvent(async () => {
+  const setIsReady = React.useCallback(() => {
     setUpdateReady(true);
-  }, []);
+  }, [setUpdateReady]);
+  React.useEffect(() => {
+    return window.electron.common.onAppUpdateReady(setIsReady);
+  }, [setIsReady]);
 
   // Initialize the replay browser once and refresh on SLP path changes
   const init = useReplays((store) => store.init);
@@ -221,65 +186,20 @@ export const useAppListeners = () => {
     init(rootSlpPath, extraSlpPaths, true).catch(console.error);
   }, [rootSlpPath, extraSlpPaths, init]);
 
-  const { addToast } = useToasts();
-  ipc_consoleMirrorErrorMessageEvent.renderer!.useEvent(async ({ message }) => {
-    addToast(message, {
-      id: message,
-      appearance: "error",
-      autoDismiss: true,
-    });
-  }, []);
+  const { showError } = useToasts();
+  React.useEffect(() => {
+    return consoleService.onConsoleMirrorErrorMessage(showError);
+  }, [showError, consoleService]);
 
   const [startBroadcast] = useBroadcast();
-  ipc_broadcastReconnect.renderer!.useEvent(
-    async ({ config }) => {
-      startBroadcast(config).catch(log.error);
-    },
-    [startBroadcast],
-  );
+  React.useEffect(() => {
+    return broadcastService.onBroadcastReconnect((config) => {
+      startBroadcast(config).catch(console.error);
+    });
+  }, [startBroadcast, broadcastService]);
 
   const [, refreshBroadcasts] = useBroadcastList();
-  ipc_spectateReconnect.renderer!.useEvent(async () => {
-    refreshBroadcasts();
-  }, [refreshBroadcasts]);
-
-  const setDolphinOpen = useDolphinStore((store) => store.setDolphinOpen);
-  ipc_dolphinClosedEvent.renderer!.useEvent(
-    async ({ dolphinType, exitCode }) => {
-      setDolphinOpen(dolphinType, false);
-
-      // Check if it exited cleanly
-      const errMsg = handleDolphinExitCode(exitCode);
-      if (errMsg) {
-        addToast(errMsg, {
-          id: errMsg,
-          appearance: "error",
-          autoDismiss: false,
-        });
-      }
-    },
-    [setDolphinOpen],
-  );
-};
-
-const handleDolphinExitCode = (exitCode: number | null) => {
-  if (exitCode === null || exitCode === 0) {
-    return null;
-  }
-
-  // Dolphin returns 3 when selecting Update in game on Windows
-  if (exitCode === 3 && isWindows) {
-    return null;
-  }
-
-  if (exitCode === 0xc0000135 || exitCode === 0xc0000409) {
-    return `Required DLLs for launching Dolphin are missing. Check the Help section in the settings page to fix this issue.`;
-  }
-
-  if (exitCode === 0x7f && isLinux) {
-    return `Required libraries for launching Dolphin may be missing. Check the Help section in the settings page for guidance. Post in the Slippi Discord's linux-support channel for further assistance if needed.`;
-  }
-
-  return `Dolphin exited with error code: 0x${exitCode.toString(16)}.
-    Please screenshot this and post it in a support channel in the Slippi Discord for assistance.`;
+  React.useEffect(() => {
+    return broadcastService.onSpectateReconnect(refreshBroadcasts);
+  }, [refreshBroadcasts, broadcastService]);
 };

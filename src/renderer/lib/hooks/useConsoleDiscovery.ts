@@ -1,4 +1,4 @@
-import { ConsoleMirrorStatusUpdate, DiscoveredConsoleInfo } from "@console/types";
+import type { ConsoleMirrorStatusUpdate, DiscoveredConsoleInfo } from "@console/types";
 import produce from "immer";
 import create from "zustand";
 import { combine } from "zustand/middleware";
@@ -11,7 +11,7 @@ export const useConsoleDiscoveryStore = create(
     },
     (set) => ({
       updateConsoleItems: (consoleItems: DiscoveredConsoleInfo[]) => set({ consoleItems }),
-      updateConsoleStatus: (ip: string, info: Partial<ConsoleMirrorStatusUpdate>) =>
+      updateConsoleStatus: ({ ip, info }: { ip: string; info: Partial<ConsoleMirrorStatusUpdate> }) =>
         set((state) =>
           produce(state, (draft) => {
             const existing = draft.connectedConsoles[ip];

@@ -8,7 +8,7 @@ const Outer = styled.div`
   cursor: grab;
   user-select: auto;
   -webkit-user-drag: element;
-  -webkit-app-region: drag;
+  -webkit-app-region: no-drag;
 `;
 
 export interface DraggableFileProps {

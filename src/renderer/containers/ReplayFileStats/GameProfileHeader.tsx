@@ -1,27 +1,26 @@
-/** @jsx jsx */
-import { css, jsx } from "@emotion/react";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import Button from "@material-ui/core/Button";
-import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
-import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
-import EventIcon from "@material-ui/icons/Event";
-import LandscapeIcon from "@material-ui/icons/Landscape";
-import PlayArrowIcon from "@material-ui/icons/PlayArrow";
-import SportsEsportsIcon from "@material-ui/icons/SportsEsports";
-import TimerIcon from "@material-ui/icons/Timer";
-import { FileDetails } from "@replays/types";
-import { GameStartType, MetadataType, stages as stageUtils, StatsType } from "@slippi/slippi-js";
-import { colors } from "common/colors";
-import { extractPlayerNames } from "common/matchNames";
-import { convertFrameCountToDurationString, monthDayHourFormat } from "common/time";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import EventIcon from "@mui/icons-material/Event";
+import LandscapeIcon from "@mui/icons-material/Landscape";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
+import TimerOutlinedIcon from "@mui/icons-material/TimerOutlined";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
+import type { FileDetails } from "@replays/types";
+import type { GameStartType, MetadataType, StatsType } from "@slippi/slippi-js";
+import { stages as stageUtils } from "@slippi/slippi-js";
 import _ from "lodash";
 import moment from "moment";
 import React from "react";
 
-import { getStageImage } from "@/lib/utils";
+import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
+import { extractPlayerNames } from "@/lib/matchNames";
+import { convertFrameCountToDurationString, monthDayHourFormat } from "@/lib/time";
 
 import { PlayerInfo } from "./PlayerInfo";
 
@@ -111,69 +110,51 @@ export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
   onClose,
 }) => {
   const { metadata, settings } = file;
-  const stageImage = settings.stageId !== null ? getStageImage(settings.stageId) : undefined;
   return (
-    <Header backgroundImage={stageImage}>
+    <div
+      css={css`
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: solid 3px rgba(255, 255, 255, 0.5);
+      `}
+    >
       <div
         css={css`
           display: flex;
-          justify-content: space-between;
-          align-items: center;
+          flex-direction: column;
         `}
       >
         <div
           css={css`
             display: flex;
-            flex-direction: column;
+            align-items: center;
           `}
         >
-          <div
-            css={css`
-              display: flex;
-              align-items: center;
-            `}
-          >
-            <div>
-              <Tooltip title="Back to replays">
-                <span>
-                  <IconButton
-                    onClick={onClose}
-                    disabled={disabled}
-                    css={css`
-                      padding: 8px;
-                    `}
-                  >
-                    <ArrowBackIcon />
-                  </IconButton>
-                </span>
-              </Tooltip>
-            </div>
-            <PlayerInfoDisplay metadata={metadata} settings={settings} />
+          <div>
+            <Tooltip title="Back to replays">
+              <span>
+                <IconButton
+                  onClick={onClose}
+                  disabled={disabled}
+                  css={css`
+                    padding: 8px;
+                  `}
+                  size="large"
+                >
+                  <ArrowBackIcon />
+                </IconButton>
+              </span>
+            </Tooltip>
           </div>
-          <GameDetails file={file} stats={stats} />
+          <PlayerInfoDisplay metadata={metadata} settings={settings} />
         </div>
-        <Controls disabled={disabled} index={index} total={total} onNext={onNext} onPrev={onPrev} onPlay={onPlay} />
+        <GameDetails file={file} stats={stats} />
       </div>
-    </Header>
+      <Controls disabled={disabled} index={index} total={total} onNext={onNext} onPrev={onPrev} onPlay={onPlay} />
+    </div>
   );
 };
-
-const Header = styled.div<{
-  backgroundImage?: any;
-}>`
-  z-index: 1;
-  top: 0;
-  width: 100%;
-  border-bottom: solid 2px ${colors.purpleDark};
-  background-size: cover;
-  background-position: center center;
-  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0 30%, rgba(0, 0, 0, 0.8) 90%)
-    ${(p) =>
-      p.backgroundImage
-        ? `,
-    url("${p.backgroundImage}")`
-        : ""};
-`;
 
 const GameDetails: React.FC<{
   file: FileDetails;
@@ -210,7 +191,7 @@ const GameDetails: React.FC<{
       content: monthDayHourFormat(moment(startAtDisplay)) as string,
     },
     {
-      label: <TimerIcon />,
+      label: <TimerOutlinedIcon />,
       content: durationLength,
     },
     {
@@ -252,6 +233,26 @@ const GameDetails: React.FC<{
   );
 };
 
+const LaunchReplayButton = React.memo(({ onClick }: { onClick: () => void }) => {
+  const playbackStatus = useDolphinStore((store) => store.playbackStatus);
+  const title = playbackStatus === DolphinStatus.READY ? "" : "Dolphin is updating";
+  return (
+    <Tooltip title={title}>
+      <span>
+        <Button
+          variant="contained"
+          onClick={onClick}
+          color="primary"
+          startIcon={<PlayArrowIcon />}
+          disabled={playbackStatus !== DolphinStatus.READY}
+        >
+          Launch Replay
+        </Button>
+      </span>
+    </Tooltip>
+  );
+});
+
 const Controls: React.FC<{
   disabled?: boolean;
   index: number | null;
@@ -272,9 +273,7 @@ const Controls: React.FC<{
       `}
     >
       <div>
-        <Button variant="contained" onClick={onPlay} color="primary" startIcon={<PlayArrowIcon />}>
-          Launch Replay
-        </Button>
+        <LaunchReplayButton onClick={onPlay} />
       </div>
       <div
         css={css`

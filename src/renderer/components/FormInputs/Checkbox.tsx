@@ -1,11 +1,11 @@
-/** @jsx jsx */
-import { css, jsx } from "@emotion/react";
-import MatCheckbox, { CheckboxProps as MatCheckboxProps } from "@material-ui/core/Checkbox";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Tooltip from "@material-ui/core/Tooltip";
+import { css } from "@emotion/react";
+import type { CheckboxProps as MatCheckboxProps } from "@mui/material/Checkbox";
+import MatCheckbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Tooltip from "@mui/material/Tooltip";
 
 export interface CheckboxProps extends MatCheckboxProps {
-  label: React.ReactNode;
+  label: any;
   className?: string;
   hoverText?: string;
 }
@@ -18,7 +18,7 @@ export const Checkbox: React.FC<CheckboxProps> = (props) => {
       control={
         <Tooltip title={hoverText ?? ""} style={{ cursor: disabled ? "initial" : "pointer" }}>
           <div>
-            <MatCheckbox size="small" disabled={disabled} {...rest} />
+            <MatCheckbox size="small" disabled={disabled} {...rest} color="secondary" />
           </div>
         </Tooltip>
       }

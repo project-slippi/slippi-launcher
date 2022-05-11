@@ -1,10 +1,9 @@
-/** @jsx jsx */
-import { css, jsx } from "@emotion/react";
+import { colors } from "@common/colors";
+import { socials } from "@common/constants";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import Tooltip from "@material-ui/core/Tooltip";
-import TwitterIcon from "@material-ui/icons/Twitter";
-import { colors } from "common/colors";
-import { socials } from "common/constants";
+import TwitterIcon from "@mui/icons-material/Twitter";
+import Tooltip from "@mui/material/Tooltip";
 import React from "react";
 
 import { ExternalLink as A } from "@/components/ExternalLink";

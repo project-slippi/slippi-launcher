@@ -1,29 +1,27 @@
-/** @jsx jsx */
-import { css, jsx } from "@emotion/react";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import Button from "@material-ui/core/Button";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
-import electronLog from "electron-log";
+import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
+import InputAdornment from "@mui/material/InputAdornment";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useToasts } from "react-toast-notifications";
 
-import { useAccount } from "@/lib/hooks/useAccount";
-import { initNetplay } from "@/lib/slippiBackend";
+import { useAccount, usePlayKey } from "@/lib/hooks/useAccount";
+import { useToasts } from "@/lib/hooks/useToasts";
 import { validateConnectCodeStart } from "@/lib/validate";
+import { useServices } from "@/services";
 
-const log = electronLog.scope("ActivateOnlineForm");
+const log = window.electron.log;
 
-export const ActivateOnlineForm: React.FC = () => {
+export const ActivateOnlineForm: React.FC<{ onSubmit?: () => void }> = ({ onSubmit }) => {
   const user = useAccount((store) => store.user);
-  const refreshActivation = useAccount((store) => store.refreshPlayKey);
+  const refreshActivation = usePlayKey();
   return (
     <div>
       <div>Your connect code is used for players to connect with you directly.</div>
-      <ConnectCodeSetter displayName={user ? user.displayName : null} onSuccess={refreshActivation} />
+      <ConnectCodeSetter displayName={user ? user.displayName : null} onSuccess={onSubmit || refreshActivation} />
     </div>
   );
 };
@@ -34,7 +32,8 @@ interface ConnectCodeSetterProps {
 }
 
 const ConnectCodeSetter: React.FC<ConnectCodeSetterProps> = ({ displayName, onSuccess }) => {
-  const { addToast } = useToasts();
+  const { slippiBackendService } = useServices();
+  const { showError } = useToasts();
   const getStartTag = () => {
     const safeName = displayName ?? "";
     const matches = safeName.match(/[a-zA-Z]+/g) || [];
@@ -50,19 +49,20 @@ const ConnectCodeSetter: React.FC<ConnectCodeSetterProps> = ({ displayName, onSu
   const onFormSubmit = handleSubmit(({ tag }) => {
     setIsLoading(true);
 
-    initNetplay(tag).then(
-      () => {
-        onSuccess();
-        setIsLoading(false);
-      },
-      (err: Error) => {
-        log.error(err);
-        addToast(err.message ?? JSON.stringify(err), {
-          appearance: "error",
-        });
-        setIsLoading(false);
-      },
-    );
+    slippiBackendService
+      .initializeNetplay(tag)
+      .then(
+        () => {
+          onSuccess();
+          setIsLoading(false);
+        },
+        (err) => {
+          log.error(err);
+          showError(err);
+          setIsLoading(false);
+        },
+      )
+      .catch(log.error);
   });
 
   return (

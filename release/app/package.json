@@ -1,0 +1,23 @@
+{
+  "name": "slippi-launcher",
+  "productName": "Slippi Launcher",
+  "description": "Launch Slippi Online, browse and watch saved replays",
+  "version": "2.5.0",
+  "main": "./dist/main/main.js",
+  "author": {
+    "name": "Jas Laferriere",
+    "email": "jas.laferriere@gmail.com",
+    "url": "https://github.com/jlaferri"
+  },
+  "scripts": {
+    "electron-rebuild": "node -r ts-node/register ../../.erb/scripts/electron-rebuild.js",
+    "link-modules": "node -r ts-node/register ../../.erb/scripts/link-modules.ts",
+    "postinstall": "yarn run electron-rebuild && yarn run link-modules"
+  },
+  "dependencies": {
+    "obs-websocket-js": "^4.0.3",
+    "threads": "^1.6.5",
+    "websocket": "^1.0.34"
+  },
+  "license": "GPL-3.0"
+}

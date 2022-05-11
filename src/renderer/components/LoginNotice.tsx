@@ -1,9 +1,8 @@
-/** @jsx jsx */
-import { css, jsx } from "@emotion/react";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
-import PersonOutlineIcon from "@material-ui/icons/PersonOutline";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 import React from "react";
 
 import { useLoginModal } from "@/lib/hooks/useLoginModal";

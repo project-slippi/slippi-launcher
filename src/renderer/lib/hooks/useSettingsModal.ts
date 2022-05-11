@@ -1,4 +1,5 @@
-import { useHistory, useLocation } from "react-router-dom";
+import { useCallback } from "react";
+import { useLocation, useMatch, useNavigate, useResolvedPath } from "react-router-dom";
 import create from "zustand";
 
 type StoreState = {
@@ -33,19 +34,31 @@ export const useSettingsModal = () => {
   const lastPage = useModalStore((store) => store.lastPage);
   const setLastPage = useModalStore((store) => store.setLastPage);
   const setLastModalPage = useModalStore((store) => store.setLastModalPage);
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
-  const open = (modalPage?: string) => {
-    setLastPage(location.pathname);
-    history.push(modalPage || lastModalPage || "/settings");
-  };
+  const resolved = useResolvedPath("/settings/*");
+  const match = useMatch({ path: resolved.pathname });
+  const isOpen = match !== null;
 
-  const close = () => {
+  const open = useCallback(
+    (modalPage?: string) => {
+      if (!isOpen) {
+        setLastPage(location.pathname);
+      }
+      const nextPage = modalPage || lastModalPage || "/settings";
+      navigate(nextPage);
+    },
+    [setLastPage, navigate, isOpen, lastModalPage, location.pathname],
+  );
+
+  const close = useCallback(() => {
     setLastModalPage(location.pathname);
-    history.push(lastPage || "/");
-  };
+    const nextPage = lastPage || "/";
+    navigate(nextPage);
+  }, [setLastModalPage, navigate, lastPage, location.pathname]);
 
   return {
+    isOpen,
     open,
     close,
   };

@@ -1,8 +1,7 @@
-import { IsoValidity } from "common/types";
+import { IsoValidity } from "@common/types";
 import crypto from "crypto";
 import fs from "fs";
-
-import { fileExists } from "./fileExists";
+import { fileExists } from "utils/fileExists";
 interface IsoHashInfo {
   valid: IsoValidity;
   name: string;

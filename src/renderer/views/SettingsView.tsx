@@ -1,17 +1,17 @@
-/** @jsx jsx */
-import { css, jsx } from "@emotion/react";
+import { colors } from "@common/colors";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import IconButton from "@material-ui/core/IconButton";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListSubheader from "@material-ui/core/ListSubheader";
-import Tooltip from "@material-ui/core/Tooltip";
-import CloseIcon from "@material-ui/icons/Close";
-import { colors } from "common/colors";
+import CloseIcon from "@mui/icons-material/Close";
+import IconButton from "@mui/material/IconButton";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import ListSubheader from "@mui/material/ListSubheader";
+import Tooltip from "@mui/material/Tooltip";
 import React from "react";
-import { Link, Redirect, Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
+import type { LinkProps } from "react-router-dom";
+import { Link, Navigate, Route, Routes, useMatch, useResolvedPath } from "react-router-dom";
 
 import { DualPane } from "@/components/DualPane";
 import { BuildInfo } from "@/containers/Settings/BuildInfo";
@@ -57,14 +57,7 @@ const CloseButton = styled(IconButton)`
 const settingItems = settings.flatMap((section) => section.items);
 
 export const SettingsView: React.FC = () => {
-  const history = useHistory();
-  const { path } = useRouteMatch();
   const { close } = useSettingsModal();
-
-  const isActive = (name: string): boolean => {
-    return history.location.pathname === `${path}/${name}`;
-  };
-
   useMousetrap("escape", close);
 
   return (
@@ -114,29 +107,19 @@ export const SettingsView: React.FC = () => {
                   >
                     {section.items.map((item) => {
                       return (
-                        <ListItem
-                          button
-                          key={item.name}
-                          selected={isActive(item.path)}
-                          component={Link}
-                          to={`${path}/${item.path}`}
-                          css={css`
-                            border-radius: 10px;
-                            padding-top: 4px;
-                            padding-bottom: 4px;
-                            margin: 2px 0;
-                          `}
-                        >
-                          {item.icon ? <ListItemIcon>{item.icon}</ListItemIcon> : null}
-                          <ListItemText
-                            primary={item.name}
-                            css={css`
-                              .MuiTypography-body1 {
-                                font-size: 16px;
-                              }
-                            `}
-                          />
-                        </ListItem>
+                        <div key={item.name}>
+                          <CustomLink to={item.path}>
+                            {item.icon ? <ListItemIcon>{item.icon}</ListItemIcon> : null}
+                            <ListItemText
+                              primary={item.name}
+                              css={css`
+                                .MuiTypography-body1 {
+                                  font-size: 16px;
+                                }
+                              `}
+                            />
+                          </CustomLink>
+                        </div>
                       );
                     })}
                   </List>
@@ -148,24 +131,38 @@ export const SettingsView: React.FC = () => {
         }
         rightSide={
           <ContentColumn>
-            <Switch>
+            <Routes>
               {settingItems.map((item) => {
-                const fullItemPath = `${path}/${item.path}`;
-                return (
-                  <Route key={fullItemPath} path={fullItemPath}>
-                    {item.component}
-                  </Route>
-                );
+                return <Route key={item.path} path={item.path} element={item.component} />;
               })}
-              {settingItems.length > 0 && (
-                <Route exact path={path}>
-                  <Redirect to={`${path}/${settingItems[0].path}`} />
-                </Route>
-              )}
-            </Switch>
+              {settingItems.length > 0 && <Route path="*" element={<Navigate to={settingItems[0].path} />} />}
+            </Routes>
           </ContentColumn>
         }
       />
     </Outer>
+  );
+};
+
+const CustomLink = ({ children, to, ...props }: LinkProps) => {
+  const resolved = useResolvedPath(to);
+  const match = useMatch({ path: resolved.pathname, end: true });
+
+  return (
+    <ListItem
+      button
+      selected={match !== null}
+      component={Link}
+      to={to}
+      {...(props as any)}
+      css={css`
+        border-radius: 10px;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        margin: 2px 0;
+      `}
+    >
+      {children}
+    </ListItem>
   );
 };

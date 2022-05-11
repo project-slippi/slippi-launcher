@@ -1,24 +1,19 @@
-/** @jsx jsx */
-import { ipc_startDiscovery, ipc_stopDiscovery } from "@console/ipc";
-import { css, jsx } from "@emotion/react";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import AddIcon from "@material-ui/icons/Add";
-import { StoredConnection } from "@settings/types";
+import AddIcon from "@mui/icons-material/Add";
+import type { StoredConnection } from "@settings/types";
 import { ConnectionStatus } from "@slippi/slippi-js";
 import React from "react";
-import { useToasts } from "react-toast-notifications";
 
 import { DualPane } from "@/components/DualPane";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/FormInputs";
-import {
-  addConsoleConnection,
-  deleteConsoleConnection,
-  EditConnectionType,
-  editConsoleConnection,
-} from "@/lib/consoleConnection";
+import type { EditConnectionType } from "@/lib/consoleConnection";
+import { addConsoleConnection, deleteConsoleConnection, editConsoleConnection } from "@/lib/consoleConnection";
 import { useConsoleDiscoveryStore } from "@/lib/hooks/useConsoleDiscovery";
 import { useSettings } from "@/lib/hooks/useSettings";
+import { useToasts } from "@/lib/hooks/useToasts";
+import { useServices } from "@/services";
 
 import { AddConnectionDialog } from "./AddConnectionDialog";
 import { NewConnectionList } from "./NewConnectionList";
@@ -33,6 +28,7 @@ const Outer = styled.div`
 `;
 
 export const Console: React.FC = () => {
+  const { consoleService } = useServices();
   const [isScanning, setIsScanning] = React.useState(false);
   const [modalOpen, setModalOpen] = React.useState(false);
   const [currentFormValues, setCurrentFormValues] = React.useState<Partial<StoredConnection> | null>(null);
@@ -52,23 +48,21 @@ export const Console: React.FC = () => {
     [connectedConsoles],
   );
 
-  const { addToast } = useToasts();
+  const { showError } = useToasts();
 
   React.useEffect(() => {
     // Start scanning for new consoles
     setIsScanning(false);
-    ipc_startDiscovery
-      .renderer!.trigger({})
+    consoleService
+      .startDiscovery()
       .then(() => setIsScanning(true))
-      .catch((err) => {
-        addToast(err.message ?? JSON.stringify(err), { appearance: "error" });
-      });
+      .catch(showError);
 
     // Stop scanning on component unmount
     return () => {
-      void ipc_stopDiscovery.renderer!.trigger({});
+      void consoleService.stopDiscovery();
     };
-  }, [addToast]);
+  }, [showError, consoleService]);
 
   const onCancel = () => {
     setModalOpen(false);

@@ -1,13 +1,12 @@
-/** @jsx jsx */
-import { css, jsx } from "@emotion/react";
-import Button from "@material-ui/core/Button";
-import MatCheckbox from "@material-ui/core/Checkbox";
-import InputBase from "@material-ui/core/InputBase";
-import { OpenDialogOptions, remote } from "electron";
+import { css } from "@emotion/react";
+import Button from "@mui/material/Button";
+import MatCheckbox from "@mui/material/Checkbox";
+import InputBase from "@mui/material/InputBase";
+import type { OpenDialogOptions } from "electron";
 import React, { useState } from "react";
-import { useToasts } from "react-toast-notifications";
 
 import { useSettings } from "@/lib/hooks/useSettings";
+import { useToasts } from "@/lib/hooks/useToasts";
 
 export interface MultiPathInputProps {
   updatePaths: (paths: string[]) => void;
@@ -16,16 +15,12 @@ export interface MultiPathInputProps {
 }
 
 export const MultiPathInput: React.FC<MultiPathInputProps> = ({ paths, updatePaths, options }) => {
-  const { addToast } = useToasts();
+  const { showError } = useToasts();
   const rootFolder = useSettings((store) => store.settings.rootSlpPath);
 
   const assertValidPath = (newPath: string): boolean => {
     const addErrorToast = (description: string) => {
-      addToast(description, {
-        appearance: "error",
-        autoDismiss: true,
-        autoDismissTimeout: 5000,
-      });
+      showError(description);
     };
     if (paths.includes(newPath)) {
       addErrorToast("That directory is already included.");
@@ -37,21 +32,22 @@ export const MultiPathInput: React.FC<MultiPathInputProps> = ({ paths, updatePat
       return false;
     }
 
-    for (let i = 0; i < paths.length; i++) {
-      const path = paths[i];
+    let pathsToCheck = paths;
+    for (let i = 0; i < pathsToCheck.length; i++) {
+      const path = pathsToCheck[i];
       if (newPath.includes(path)) {
         addErrorToast("Cannot add sub directories of the Root SLP Directory.");
         return false;
       } else if (path.includes(newPath)) {
-        updatePaths(paths.splice(i, 1));
-        paths = paths.splice(i--, 1); //decrement i because we are dropping an entry
+        updatePaths(pathsToCheck.splice(i, 1));
+        pathsToCheck = pathsToCheck.splice(i--, 1); //decrement i because we are dropping an entry
       }
     }
     return true;
   };
 
   const onAddClick = async () => {
-    const result = await remote.dialog.showOpenDialog({ properties: ["openFile"], ...options });
+    const result = await window.electron.common.showOpenDialog({ properties: ["openFile"], ...options });
     const res = result.filePaths;
     if (result.canceled || res.length === 0) {
       return;

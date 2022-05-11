@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
-import { OverridableComponent } from "@material-ui/core/OverridableComponent";
-import { SvgIconTypeMap } from "@material-ui/core/SvgIcon";
-import Typography from "@material-ui/core/Typography";
+import type { OverridableComponent } from "@mui/material/OverridableComponent";
+import type { SvgIconTypeMap } from "@mui/material/SvgIcon";
+import Typography from "@mui/material/Typography";
 import React from "react";
 
 const Outer = styled.div`

@@ -1,18 +1,33 @@
-/** @jsx jsx */
-import { PlayKey } from "@dolphin/types";
-import { css, jsx } from "@emotion/react";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import { colors } from "common/colors";
-import React from "react";
+import { colors } from "@common/colors";
+import type { PlayKey } from "@dolphin/types";
+import { css } from "@emotion/react";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import { UserIcon } from "@/components/UserIcon";
 
-export const UserInfo: React.FC<{
-  uid: string;
+export const UserInfo = ({
+  displayName,
+  displayPicture,
+  playKey,
+  serverError,
+  loading,
+}: {
   displayName: string | null;
+  displayPicture: string;
   playKey: PlayKey | null;
+  serverError: boolean | null;
   loading: boolean;
-}> = ({ uid, displayName, playKey, loading }) => {
+}) => {
+  const showError = serverError || !playKey;
+  let subtext = "";
+  if (serverError) {
+    subtext = "Slippi server error";
+  } else if (!playKey) {
+    subtext = "Online activation required";
+  } else {
+    subtext = playKey.connectCode;
+  }
+
   return (
     <div
       css={css`
@@ -25,7 +40,7 @@ export const UserInfo: React.FC<{
         }
       `}
     >
-      {loading ? <CircularProgress color="inherit" /> : <UserIcon userId={uid} size={38} />}
+      {loading ? <CircularProgress color="inherit" /> : <UserIcon imageUrl={displayPicture} size={38} />}
       <div
         css={css`
           display: flex;
@@ -50,10 +65,10 @@ export const UserInfo: React.FC<{
             css={css`
               font-weight: bold;
               font-size: 14px;
-              color: ${playKey ? colors.purpleLight : "red"};
+              color: ${showError ? "red" : colors.purpleLight};
             `}
           >
-            {playKey ? playKey.connectCode : "Online activation required"}
+            {subtext}
           </div>
         )}
       </div>

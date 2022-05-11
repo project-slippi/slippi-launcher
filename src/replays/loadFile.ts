@@ -1,8 +1,11 @@
-import { GameStartType, MetadataType, SlippiGame } from "@slippi/slippi-js";
-import { fileToDateAndTime } from "common/time";
+import type { GameStartType, MetadataType } from "@slippi/slippi-js";
+import { SlippiGame } from "@slippi/slippi-js";
+import * as fs from "fs-extra";
 import _ from "lodash";
+import moment from "moment";
+import path from "path";
 
-import { FileDetails, FileHeader, FileLoadComplete, FileLoadError } from "./types";
+import type { FileDetails, FileHeader, FileLoadComplete, FileLoadError } from "./types";
 
 export async function loadFiles(
   fileHeaders: FileHeader[],
@@ -73,4 +76,44 @@ export function loadFile(fileHeader: FileHeader): FileDetails {
   }
 
   return details;
+}
+
+function convertToDateAndTime(dateTimeString: moment.MomentInput): moment.Moment | null {
+  const asMoment = moment(dateTimeString);
+  if (asMoment.isValid()) {
+    return asMoment.local();
+  }
+
+  return null;
+}
+
+function fileToDateAndTime(
+  dateTimeString: string | undefined | null,
+  fileHeader: FileHeader,
+): Promise<moment.Moment | null> {
+  let startAt = convertToDateAndTime(dateTimeString);
+  if (startAt) {
+    return startAt;
+  }
+
+  startAt = filenameToDateAndTime(fileHeader.name);
+  if (startAt) {
+    return startAt;
+  }
+
+  startAt = convertToDateAndTime(fileHeader.birthtimeMs);
+
+  return startAt;
+}
+
+function filenameToDateAndTime(fileName: string): moment.Moment | null {
+  const timeReg = /\d{8}T\d{6}/g;
+  const filenameTime = fileName.match(timeReg);
+
+  if (filenameTime === null) {
+    return null;
+  }
+
+  const time = moment(filenameTime[0]).local();
+  return time;
 }

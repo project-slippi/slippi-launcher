@@ -1,8 +1,8 @@
+import { colors } from "@common/colors";
 import styled from "@emotion/styled";
-import MenuItem from "@material-ui/core/MenuItem";
-import MatSelect from "@material-ui/core/Select";
-import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
-import { colors } from "common/colors";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import MenuItem from "@mui/material/MenuItem";
+import MatSelect from "@mui/material/Select";
 import React from "react";
 
 export interface DropdownProps {
@@ -15,9 +15,12 @@ export interface DropdownProps {
 }
 
 export const Dropdown: React.FC<DropdownProps> = ({ value, options, onChange }) => {
-  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    onChange(JSON.parse(event.target.value as string));
-  };
+  const handleChange = React.useCallback(
+    (event: any) => {
+      onChange(JSON.parse(event.target.value));
+    },
+    [onChange],
+  );
 
   return (
     <Select

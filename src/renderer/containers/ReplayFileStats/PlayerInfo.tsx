@@ -1,11 +1,11 @@
-/** @jsx jsx */
-import { css, jsx } from "@emotion/react";
+import { colors } from "@common/colors";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import { PlayerType } from "@slippi/slippi-js";
-import { colors, getColor } from "common/colors";
-import { PlayerNames } from "common/matchNames";
+import type { PlayerType } from "@slippi/slippi-js";
 import React from "react";
 
+import type { PlayerNames } from "@/lib/matchNames";
+import { getColor } from "@/lib/playerColors";
 import { getCharacterIcon } from "@/lib/utils";
 import { withFont } from "@/styles/withFont";
 

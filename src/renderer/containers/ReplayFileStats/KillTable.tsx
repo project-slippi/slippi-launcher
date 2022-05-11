@@ -1,25 +1,17 @@
-/** @jsx jsx */
-import { css, jsx } from "@emotion/react";
-import Tooltip from "@material-ui/core/Tooltip";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
-import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
-import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
-import { FileHeader, FileDetails } from "@replays/types";
-import {
-  animations as animationUtils,
-  Frames,
-  moves as moveUtils,
-  PlayerType,
-  StatsType,
-  StockType,
-} from "@slippi/slippi-js";
-import { extractPlayerNames } from "common/matchNames";
-import { convertFrameCountToDurationString } from "common/time";
+import { css } from "@emotion/react";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import Tooltip from "@mui/material/Tooltip";
+import type { FileDetails, FileHeader } from "@replays/types";
+import type { PlayerType, StatsType, StockType } from "@slippi/slippi-js";
+import { animations as animationUtils, Frames, moves as moveUtils } from "@slippi/slippi-js";
 import _ from "lodash";
 import React from "react";
 
-import { useDolphin } from "@/lib/hooks/useDolphin";
+import { extractPlayerNames } from "@/lib/matchNames";
+import { convertFrameCountToDurationString } from "@/lib/time";
 import { getCharacterIcon } from "@/lib/utils";
 
 import * as T from "./TableStyles";
@@ -31,10 +23,10 @@ export interface KillTableProps {
   stats: StatsType;
   player: PlayerType;
   opp: PlayerType;
+  onPlay: (options: { path: string; startFrame: number }) => void;
 }
 
-export const KillTable: React.FC<KillTableProps> = ({ fileHeader, fileDetails, stats, player, opp }) => {
-  const { viewReplays } = useDolphin();
+export const KillTable: React.FC<KillTableProps> = ({ fileHeader, fileDetails, stats, player, opp, onPlay }) => {
   const names = extractPlayerNames(player.playerIndex, fileDetails.settings, fileDetails.metadata);
   const playerDisplay = (
     <div style={{ display: "flex", alignItems: "center" }}>
@@ -72,7 +64,7 @@ export const KillTable: React.FC<KillTableProps> = ({ fileHeader, fileDetails, s
     }
 
     const playPunish = () => {
-      viewReplays([{ path: fileHeader.fullPath, startFrame: stock.startFrame }]);
+      onPlay({ path: fileHeader.fullPath, startFrame: stock.startFrame });
     };
 
     return (

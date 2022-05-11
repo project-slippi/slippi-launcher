@@ -1,16 +1,13 @@
-/** @jsx jsx */
-import { css, jsx } from "@emotion/react";
+import { colors } from "@common/colors";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import Button from "@material-ui/core/Button";
-import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
-import ErrorIcon from "@material-ui/icons/Error";
-import FolderIcon from "@material-ui/icons/Folder";
-import HelpIcon from "@material-ui/icons/Help";
-import { ipc_calculateGameStats } from "@replays/ipc";
-import { FileResult } from "@replays/types";
-import { colors } from "common/colors";
-import { shell } from "electron";
+import ErrorIcon from "@mui/icons-material/Error";
+import FolderIcon from "@mui/icons-material/Folder";
+import HelpIcon from "@mui/icons-material/Help";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
+import type { FileResult } from "@replays/types";
 import _ from "lodash";
 import React from "react";
 import { useQuery } from "react-query";
@@ -18,18 +15,36 @@ import { useQuery } from "react-query";
 import { BasicFooter } from "@/components/Footer";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { IconMessage } from "@/components/Message";
+import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { useMousetrap } from "@/lib/hooks/useMousetrap";
+import { getStageImage } from "@/lib/utils";
+import { useServices } from "@/services";
 import { withFont } from "@/styles/withFont";
 
 import { GameProfile } from "./GameProfile";
 import { GameProfileHeader } from "./GameProfileHeader";
 
-const Outer = styled.div`
+const Outer = styled.div<{
+  backgroundImage?: any;
+}>`
   position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  &::before {
+    z-index: -1;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    content: "";
+    background-size: cover;
+    background-position: center center;
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0 100%),
+      ${(p) => (p.backgroundImage ? `url("${p.backgroundImage}")` : "")};
+    box-shadow: inset 0 0 2000px rgba(255, 255, 255, 0.2);
+    filter: blur(10px);
+  }
 `;
 
 const Content = styled.div`
@@ -52,14 +67,13 @@ export interface ReplayFileStatsProps {
 export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
   const { filePath } = props;
 
+  const { dolphinService } = useServices();
+  const { viewReplays } = useDolphinActions(dolphinService);
   const gameStatsQuery = useQuery(["loadStatsQuery", filePath], async () => {
-    const queryRes = await ipc_calculateGameStats.renderer!.trigger({ filePath: filePath });
-    if (!queryRes.result) {
-      console.error(`Error calculating game stats: ${filePath}`, queryRes.errors);
-      throw new Error(`Error calculating game stats ${filePath}`);
-    }
-    return queryRes.result;
+    const result = window.electron.replays.calculateGameStats(filePath);
+    return result;
   });
+
   const loading = gameStatsQuery.isLoading;
   const error = gameStatsQuery.error as any;
 
@@ -84,7 +98,7 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
     }
   });
 
-  const handleRevealLocation = () => shell.showItemInFolder(filePath);
+  const handleRevealLocation = () => window.electron.shell.showItemInFolder(filePath);
 
   // We only want to show this full-screen error if we don't have a
   // file in the prop. i.e. the SLP manually opened.
@@ -111,8 +125,11 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
     return <LoadingScreen message="Loading..." />;
   }
 
+  const { settings } = file;
+  const stageImage = settings.stageId !== null ? getStageImage(settings.stageId) : undefined;
+
   return (
-    <Outer>
+    <Outer backgroundImage={stageImage}>
       <GameProfileHeader
         {...props}
         file={file.details}
@@ -128,7 +145,7 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
         ) : error ? (
           <IconMessage Icon={ErrorIcon} label={`Error: ${error.message ?? JSON.stringify(error, null, 2)}`} />
         ) : gameStats ? (
-          <GameProfile fileHeader={file.header} fileDetails={file.details} stats={gameStats}></GameProfile>
+          <GameProfile fileHeader={file.header} fileDetails={file.details} stats={gameStats} onPlay={viewReplays} />
         ) : (
           <IconMessage Icon={HelpIcon} label="No stats computed" />
         )}

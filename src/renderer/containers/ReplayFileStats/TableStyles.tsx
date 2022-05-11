@@ -1,20 +1,29 @@
-/** @jsx jsx */
-import { css, jsx } from "@emotion/react";
+import { colors } from "@common/colors";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import Paper from "@material-ui/core/Paper";
+import Paper from "@mui/material/Paper";
+import { alpha } from "@mui/material/styles";
 import React from "react";
 
 export const Table: React.FC = (props) => {
   return (
-    <Paper component="table" style={{ borderCollapse: "collapse" }}>
+    <Paper
+      component="table"
+      style={{
+        borderCollapse: "collapse",
+        height: "fit-content",
+        borderRadius: 4,
+        border: "none",
+        backgroundColor: alpha(colors.purpleDark, 0.9),
+      }}
+    >
       {props.children}
     </Paper>
   );
 };
 
 export const TableHeaderCell = styled.td`
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  border-style: none solid;
+  border: none;
   background-color: rgba(255, 255, 255, 0.2);
   height: 40px;
   text-align: left;
@@ -23,21 +32,22 @@ export const TableHeaderCell = styled.td`
 `;
 
 export const TableSubHeaderCell = styled.td`
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  border-style: none solid;
+  border: none;
   background-color: rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.8);
   height: 25px;
   font-size: 14px;
   font-weight: 500;
   padding: 5px 10px;
+  &:not(:first-of-type) {
+    border-left: solid 2px rgba(255, 255, 255, 0.1);
+  }
 `;
 
 export const TableCell = styled.td<{
   highlight?: boolean;
 }>`
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  border-style: none solid;
+  border: none;
   color: rgba(255, 255, 255, 0.6);
   padding: 10px;
   font-size: 16px;
@@ -47,9 +57,13 @@ export const TableCell = styled.td<{
       font-weight: 500;
       color: #ffe21f;
     `};
+  &:not(:first-of-type) {
+    border-left: solid 2px rgba(255, 255, 255, 0.1);
+  }
 `;
 
 export const TableRow = styled.tr`
+  border: none;
   &:nth-of-type(even) {
     background-color: rgba(255, 255, 255, 0.05);
   }

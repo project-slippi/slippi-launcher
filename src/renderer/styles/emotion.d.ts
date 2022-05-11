@@ -1,6 +1,6 @@
 import "@emotion/react";
 
-import { Theme as MatTheme } from "@material-ui/core/styles";
+import type { Theme as MatTheme } from "@mui/material/styles";
 
 declare module "@emotion/react" {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface

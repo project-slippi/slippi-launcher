@@ -1,9 +1,9 @@
 import styled from "@emotion/styled";
-import Box from "@material-ui/core/Box";
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { StepperDots } from "@/components/StepperDots";
 import { useMousetrap } from "@/lib/hooks/useMousetrap";
@@ -57,9 +57,9 @@ export interface QuickStartProps {
 }
 
 export const QuickStart: React.FC<QuickStartProps> = ({ allSteps: steps, currentStep, onNext, onPrev }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
-  const skipSetup = () => history.push("/main");
+  const skipSetup = () => navigate("/main");
 
   useMousetrap("escape", skipSetup);
 

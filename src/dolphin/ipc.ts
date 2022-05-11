@@ -1,9 +1,15 @@
-import { _, EmptyPayload, makeEndpoint, SuccessPayload } from "../ipc";
-import { DolphinLaunchType, PlayKey, ReplayQueueItem } from "./types";
+import type { EmptyPayload, SuccessPayload } from "utils/ipc";
+import { _, makeEndpoint } from "utils/ipc";
+
+import type { DolphinEvent, DolphinLaunchType, PlayKey, ReplayQueueItem } from "./types";
 
 // Handlers
 
-export const ipc_downloadDolphin = makeEndpoint.main("downloadDolphin", <EmptyPayload>_, <SuccessPayload>_);
+export const ipc_downloadDolphin = makeEndpoint.main(
+  "downloadDolphin",
+  <{ dolphinType: DolphinLaunchType }>_,
+  <SuccessPayload>_,
+);
 
 export const ipc_configureDolphin = makeEndpoint.main(
   "configureDolphin",
@@ -25,7 +31,11 @@ export const ipc_clearDolphinCache = makeEndpoint.main(
 
 export const ipc_storePlayKeyFile = makeEndpoint.main("storePlayKeyFile", <{ key: PlayKey }>_, <SuccessPayload>_);
 
-export const ipc_checkPlayKeyExists = makeEndpoint.main("checkPlayKeyExists", <EmptyPayload>_, <{ exists: boolean }>_);
+export const ipc_checkPlayKeyExists = makeEndpoint.main(
+  "checkPlayKeyExists",
+  <{ key: PlayKey }>_,
+  <{ exists: boolean }>_,
+);
 
 export const ipc_removePlayKeyFile = makeEndpoint.main("removePlayKeyFile", <EmptyPayload>_, <SuccessPayload>_);
 
@@ -52,17 +62,4 @@ export const ipc_importDolphinSettings = makeEndpoint.main(
 
 // Events
 
-export const ipc_dolphinDownloadFinishedEvent = makeEndpoint.renderer(
-  "dolphin_dolphinDownloadFinished",
-  <{ error: string | null }>_,
-);
-
-export const ipc_dolphinDownloadLogReceivedEvent = makeEndpoint.renderer(
-  "dolphin_dolphinDownloadLogReceived",
-  <{ message: string }>_,
-);
-
-export const ipc_dolphinClosedEvent = makeEndpoint.renderer(
-  "dolphin_dolphinClosed",
-  <{ dolphinType: DolphinLaunchType; exitCode: number | null }>_,
-);
+export const ipc_dolphinEvent = makeEndpoint.renderer("dolphin_dolphinEvent", <DolphinEvent>_);

@@ -1,6 +1,7 @@
 // Based on: https://github.com/olup/react-hook-mousetrap/blob/3138bf87a421385393c0ace20d4f3b424a5cad40/index.js
 
-import mousetrap, { ExtendedKeyboardEvent } from "mousetrap";
+import type { ExtendedKeyboardEvent } from "mousetrap";
+import mousetrap from "mousetrap";
 import { useEffect, useRef } from "react";
 
 export type MousetrapCallback = (e: ExtendedKeyboardEvent, combo: string) => void;

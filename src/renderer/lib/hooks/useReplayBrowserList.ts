@@ -1,4 +1,4 @@
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
@@ -19,24 +19,24 @@ const useReplayBrowserNavigationStore = create(
 );
 
 export const useReplayBrowserNavigation = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const lastPath = useReplayBrowserNavigationStore((store) => store.lastPath);
   const setLastPath = useReplayBrowserNavigationStore((store) => store.setLastPath);
 
-  const navigate = (pageUrl: string) => {
+  const goToPage = (pageUrl: string) => {
     setLastPath(pageUrl);
-    history.push(pageUrl);
+    navigate(pageUrl);
   };
 
   const goToReplayStatsPage = (filePath: string) => {
     const encodedPath = encodeURIComponent(filePath);
     const pageUrl = `/main/replays/${encodedPath}`;
-    navigate(pageUrl);
+    goToPage(pageUrl);
   };
 
   const goToReplayList = () => {
     const pageUrl = `/main/replays/list`;
-    navigate(pageUrl);
+    goToPage(pageUrl);
   };
 
   return {

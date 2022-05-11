@@ -1,11 +1,9 @@
-/** @jsx jsx */
-import { css, jsx } from "@emotion/react";
-import Button from "@material-ui/core/Button";
-import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
-import FolderIcon from "@material-ui/icons/Folder";
-import { colors } from "common/colors";
-import { remote, shell } from "electron";
+import { colors } from "@common/colors";
+import { css } from "@emotion/react";
+import FolderIcon from "@mui/icons-material/Folder";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 import React from "react";
 
 import { BasicFooter } from "@/components/Footer";
@@ -15,7 +13,7 @@ import { useSpectateSlpPath } from "@/lib/hooks/useSettings";
 export const Footer: React.FC = () => {
   const [spectateSlpFolder, setSpectateSlpFolder] = useSpectateSlpPath();
   const onClick = async () => {
-    const result = await remote.dialog.showOpenDialog({
+    const result = await window.electron.common.showOpenDialog({
       properties: ["openDirectory"],
     });
     const res = result.filePaths;
@@ -29,7 +27,7 @@ export const Footer: React.FC = () => {
       <Tooltip title="Reveal location">
         <IconButton
           size="small"
-          onClick={() => shell.openItem(spectateSlpFolder)}
+          onClick={() => window.electron.shell.openPath(spectateSlpFolder)}
           css={css`
             color: ${colors.purpleLight};
           `}

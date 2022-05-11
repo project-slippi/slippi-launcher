@@ -1,20 +1,20 @@
-import CastOutlinedIcon from "@material-ui/icons/CastOutlined";
-import HomeOutlinedIcon from "@material-ui/icons/HomeOutlined";
-import LiveTvOutlinedIcon from "@material-ui/icons/LiveTvOutlined";
-import SlowMotionVideoIcon from "@material-ui/icons/SlowMotionVideo";
+import CastOutlinedIcon from "@mui/icons-material/CastOutlined";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import LiveTvOutlinedIcon from "@mui/icons-material/LiveTvOutlined";
+import SlowMotionVideoIcon from "@mui/icons-material/SlowMotionVideo";
 import React from "react";
-import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 
+import { AuthGuard } from "@/components/AuthGuard";
 import { PersistentNotification } from "@/components/PersistentNotification";
-import { PrivateRoute } from "@/components/PrivateRoute";
 import { Console } from "@/containers/Console";
 import { Header } from "@/containers/Header";
 import { LoginDialog } from "@/containers/Header/LoginDialog";
-import { MenuItem } from "@/containers/Header/MainMenu";
-import { Home } from "@/containers/Home";
+import type { MenuItem } from "@/containers/Header/MainMenu";
 import { ReplayBrowserPage } from "@/containers/ReplayBrowser/ReplayBrowserPage";
 import { SpectatePage } from "@/containers/SpectatePage";
 import { usePageNavigationShortcuts } from "@/lib/hooks/useShortcuts";
+import { HomePage } from "@/pages/home/HomePage";
 
 interface MainMenuItem extends MenuItem {
   component: React.ReactNode;
@@ -26,7 +26,7 @@ const menuItems: MainMenuItem[] = [
   {
     subpath: "home",
     title: "Home",
-    component: <Home />,
+    component: <HomePage />,
     icon: <HomeOutlinedIcon />,
     default: true,
   },
@@ -52,11 +52,11 @@ const menuItems: MainMenuItem[] = [
   },
 ];
 
-export const MainView: React.FC = () => {
-  const { path } = useRouteMatch();
-  const defaultRoute = menuItems.find((item) => item.default);
+const navigationPaths = menuItems.map((item) => `${item.subpath}`);
+const defaultRoute = menuItems.find((item) => item.default);
 
-  usePageNavigationShortcuts(menuItems.map((item) => `${path}/${item.subpath}`));
+export const MainView: React.FC = () => {
+  usePageNavigationShortcuts(navigationPaths);
 
   return (
     <div
@@ -68,20 +68,16 @@ export const MainView: React.FC = () => {
       }}
     >
       <div style={{ flexShrink: 0 }}>
-        <Header path={path} menuItems={menuItems} />
+        <Header menuItems={menuItems} />
       </div>
       <div style={{ flex: 1, overflow: "auto", display: "flex" }}>
-        <Switch>
+        <Routes>
           {menuItems.map((item) => {
-            const RouteToUse = item.private ? PrivateRoute : Route;
-            return (
-              <RouteToUse key={item.subpath} path={`${path}/${item.subpath}`}>
-                {item.component}
-              </RouteToUse>
-            );
+            const element = item.private ? <AuthGuard>{item.component}</AuthGuard> : item.component;
+            return <Route key={item.subpath} path={`${item.subpath}/*`} element={element} />;
           })}
-          {defaultRoute && <Redirect exact from={path} to={`${path}/${defaultRoute.subpath}`} />}
-        </Switch>
+          {defaultRoute && <Route path="*" element={<Navigate replace to={`${defaultRoute.subpath}`} />} />}
+        </Routes>
       </div>
       <LoginDialog />
       <PersistentNotification />

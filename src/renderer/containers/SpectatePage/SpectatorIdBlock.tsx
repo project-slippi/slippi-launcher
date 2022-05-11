@@ -1,8 +1,6 @@
-/** @jsx jsx */
-import { css, jsx } from "@emotion/react";
-import Button from "@material-ui/core/Button";
-import InputBase from "@material-ui/core/InputBase";
-import { clipboard } from "electron";
+import { css } from "@emotion/react";
+import Button from "@mui/material/Button";
+import InputBase from "@mui/material/InputBase";
 import React from "react";
 
 import { InfoBlock } from "@/components/InfoBlock";
@@ -17,11 +15,11 @@ export const SpectatorIdBlock: React.FC<SpectatorIdBlockProps> = ({ userId, clas
 
   const onCopy = React.useCallback(() => {
     // Set the clipboard text
-    clipboard.writeText(userId);
+    window.electron.clipboard.writeText(userId);
 
     // Set copied indication
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    window.setTimeout(() => setCopied(false), 2000);
   }, [userId]);
 
   return (

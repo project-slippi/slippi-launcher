@@ -1,23 +1,23 @@
-import { ipcRenderer } from "electron";
-import { useToasts } from "react-toast-notifications";
+import { useCallback } from "react";
+
+import { useToasts } from "@/lib/hooks/useToasts";
 
 export const useFileDrag = () => {
-  const { addToast } = useToasts();
+  const { showError } = useToasts();
 
-  const fileDrag = async (event: React.DragEvent<HTMLDivElement>, filePaths: string[]) => {
-    try {
+  const handleDrag = useCallback(
+    (event: React.DragEvent<HTMLDivElement>, filePaths: string[]) => {
       event.preventDefault();
-      if (filePaths.length > 0) {
-        ipcRenderer.send("onDragStart", filePaths);
+      try {
+        if (filePaths.length > 0) {
+          window.electron.common.onDragStart(filePaths);
+        }
+      } catch (err) {
+        showError(err);
       }
-    } catch (err) {
-      addToast(err.message ?? JSON.stringify(err), {
-        appearance: "error",
-      });
-    }
-  };
+    },
+    [showError],
+  );
 
-  return (event: React.DragEvent<HTMLDivElement>, filePaths: string[]) => {
-    void fileDrag(event, filePaths);
-  };
+  return handleDrag;
 };

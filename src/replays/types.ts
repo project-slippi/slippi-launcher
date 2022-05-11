@@ -1,4 +1,4 @@
-import { GameStartType, MetadataType } from "@slippi/slippi-js";
+import type { GameStartType, MetadataType } from "@slippi/slippi-js";
 
 // Note that only basic types can be sent over IPC (JSON basically).
 
@@ -24,11 +24,11 @@ export interface FolderResult {
   name: string;
   fullPath: string;
   subdirectories: FolderResult[];
-  collapsed: boolean;
 }
 
 export interface FolderLoadResult {
   files: FileHeader[];
+  totalBytes: number;
   fileErrorCount: number;
 }
 

@@ -1,23 +1,29 @@
-import { isMac } from "common/constants";
 import mousetrap from "mousetrap";
-import { RefObject, useCallback, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import type { RefObject } from "react";
+import { useCallback, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+
+const isMac = window.electron.common.isMac;
 
 // Map Ctrl + 1 to be the first page, Ctrl + 2 to be the second page etc.
 export const usePageNavigationShortcuts = (paths: string[]) => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   // Only take the first 9 elements to map from 1-9
   // so we don't try to match Ctrl+10 etc.
-  const handlers = paths.slice(0, 9).map((path, i) => {
-    const oneIndexed = i + 1;
-    return {
-      keys: isMac ? `meta+${oneIndexed}` : `ctrl+${oneIndexed}`,
-      handler: () => {
-        history.push(path);
-      },
-    };
-  });
+  const handlers = useMemo(
+    () =>
+      paths.slice(0, 9).map((path, i) => {
+        const oneIndexed = i + 1;
+        return {
+          keys: isMac ? `meta+${oneIndexed}` : `ctrl+${oneIndexed}`,
+          handler: () => {
+            navigate(path);
+          },
+        };
+      }),
+    [navigate, paths],
+  );
 
   useEffect(() => {
     handlers.forEach((handler) => {
@@ -29,7 +35,7 @@ export const usePageNavigationShortcuts = (paths: string[]) => {
         mousetrap.unbind(handler.keys);
       });
     };
-  }, [paths]);
+  }, [handlers, paths]);
 };
 
 // Add vim key bindings

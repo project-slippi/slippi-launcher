@@ -1,7 +1,7 @@
-import { StatsType } from "@slippi/slippi-js";
+import type { StatsType } from "@slippi/slippi-js";
+import { _, makeEndpoint } from "utils/ipc";
 
-import { _, makeEndpoint } from "../ipc";
-import { FolderLoadResult, FileResult, FileHeader, Progress, FileLoadComplete, FileLoadError } from "./types";
+import type { FileHeader, FileLoadComplete, FileLoadError, FileResult, FolderResult, Progress } from "./types";
 
 // Handlers
 
@@ -15,6 +15,18 @@ export const ipc_loadReplayFiles = makeEndpoint.main(
   "loadReplayFiles",
   <{ fileHeaders: FileHeader[]; batcherId: number }>_,
   <Record<string, never>>_,
+);
+
+export const ipc_initializeFolderTree = makeEndpoint.main(
+  "initializeFolderTree",
+  <{ folders: readonly string[] }>_,
+  <readonly FolderResult[]>_,
+);
+
+export const ipc_selectTreeFolder = makeEndpoint.main(
+  "selectTreeFolder",
+  <{ folderPath: string }>_,
+  <readonly FolderResult[]>_,
 );
 
 export const ipc_calculateGameStats = makeEndpoint.main(

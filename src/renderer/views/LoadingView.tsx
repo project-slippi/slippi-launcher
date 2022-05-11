@@ -1,14 +1,10 @@
-/** @jsx jsx */
-import { css, jsx } from "@emotion/react";
-import React from "react";
+import { css } from "@emotion/react";
 
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { BuildInfo } from "@/containers/Settings/BuildInfo";
-import { useAppStore } from "@/lib/hooks/useApp";
 import { withSlippiBackground } from "@/styles/withSlippiBackground";
 
-export const LoadingView: React.FC = () => {
-  const installStatus = useAppStore((store) => store.logMessage);
+export const LoadingView = () => {
   return (
     <div
       css={css`
@@ -16,7 +12,7 @@ export const LoadingView: React.FC = () => {
         width: 100%;
       `}
     >
-      <LoadingScreen css={withSlippiBackground} message={installStatus ? installStatus : "Just a sec..."} />
+      <LoadingScreen css={withSlippiBackground} message="Just a sec..." />
       <div
         css={css`
           position: fixed;

@@ -1,4 +1,4 @@
-import { DolphinMessageType } from "@slippi/slippi-js";
+import type { DolphinMessageType } from "@slippi/slippi-js";
 
 export interface BroadcasterItem {
   broadcaster: {
@@ -60,4 +60,19 @@ type SlippiBroadcastEventPayload = {
   [DolphinMessageType.START_GAME]: SlippiPlayload;
 };
 
-export type SlippiBroadcastPayloadEvent = TypeMap<SlippiBroadcastEventPayload>[keyof TypeMap<SlippiBroadcastEventPayload>];
+export type SlippiBroadcastPayloadEvent =
+  TypeMap<SlippiBroadcastEventPayload>[keyof TypeMap<SlippiBroadcastEventPayload>];
+
+export interface BroadcastService {
+  onSpectateReconnect(handle: () => void): () => void;
+  onBroadcastReconnect(handle: (config: StartBroadcastConfig) => void): () => void;
+  onBroadcastErrorMessage(handle: (message: string | null) => void): () => void;
+  onBroadcastListUpdated(handle: (items: BroadcasterItem[]) => void): () => void;
+  onDolphinStatusChanged(handle: (status: number) => void): () => void;
+  onSlippiStatusChanged(handle: (status: number) => void): () => void;
+  onSpectateErrorMessage(handle: (message: string | null) => void): () => void;
+  refreshBroadcastList(authToken: string): Promise<void>;
+  watchBroadcast(broadcasterId: string): Promise<void>;
+  startBroadcast(config: StartBroadcastConfig): Promise<void>;
+  stopBroadcast(): Promise<void>;
+}

@@ -1,16 +1,17 @@
-import { ChildProcess, execFile, spawn } from "child_process";
+import type { ChildProcess } from "child_process";
+import { execFile, spawn } from "child_process";
 import { randomBytes } from "crypto";
 import { app } from "electron";
 import electronLog from "electron-log";
 import { EventEmitter } from "events";
 import * as fs from "fs-extra";
 import path from "path";
+import { fileExists } from "utils/fileExists";
 
-import { isMac } from "../common/constants";
-import { fileExists } from "../main/fileExists";
-import { ReplayCommunication } from "./types";
+import type { ReplayCommunication } from "./types";
 
 const log = electronLog.scope("dolphin/instance");
+const isMac = process.platform === "darwin";
 
 const generateTempCommunicationFile = (): string => {
   const tmpDir = path.join(app.getPath("userData"), "temp");
@@ -26,7 +27,7 @@ export class DolphinInstance extends EventEmitter {
   private executablePath: string;
   private isoPath: string | null = null;
 
-  public constructor(execPath: string, isoPath?: string) {
+  constructor(execPath: string, isoPath?: string) {
     super();
     this.isoPath = isoPath ?? null;
     this.executablePath = execPath;
@@ -78,7 +79,7 @@ export class DolphinInstance extends EventEmitter {
 export class PlaybackDolphinInstance extends DolphinInstance {
   private commPath: string;
 
-  public constructor(execPath: string, isoPath?: string) {
+  constructor(execPath: string, isoPath?: string) {
     super(execPath, isoPath);
     this.commPath = generateTempCommunicationFile();
 

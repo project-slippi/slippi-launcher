@@ -1,17 +1,14 @@
-import { ipc_loadReplayFolder, ipc_loadReplayFiles } from "@replays/ipc";
-import { FileLoadComplete, FileLoadError, FileResult, FolderResult, FolderLoadResult, Progress } from "@replays/types";
+import type { FileLoadComplete, FileLoadError, FileResult, FolderResult, Progress } from "@replays/types";
 import { produce, setAutoFreeze } from "immer";
 import { Map as immutableMap } from "immutable";
-import path from "path";
 import { useState } from "react";
 import create from "zustand";
 
-import { useReplayBrowserList } from "@/lib/hooks/useReplayBrowserList";
 import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
 import { useSettings } from "@/lib/hooks/useSettings";
 
-import { findChild, generateSubFolderTree } from "../folderTree";
 import { replayFileSort } from "../replayFileSort";
+import { useReplayBrowserList } from "./useReplayBrowserList";
 
 // Necessary because freezing the state causes errors in loadFiles.
 setAutoFreeze(false);
@@ -20,13 +17,14 @@ type StoreState = {
   loading: boolean;
   progress: Progress | null;
   files: immutableMap<string, FileResult>;
-  netplaySlpFolder: FolderResult | null;
-  extraFolders: FolderResult[];
+  totalBytes: number | null;
   currentRoot: string | null;
   currentFolder: string;
   fileErrorCount: number;
   scrollRowItem: number;
   selectedFiles: string[];
+  folderTree: readonly FolderResult[];
+  collapsedFolders: readonly string[];
   selectedFile: {
     index: number | null;
     total: number | null;
@@ -38,10 +36,8 @@ type StoreReducers = {
   init: (rootFolder: string, extraFolders: string[], forceReload?: boolean, currentFolder?: string) => Promise<void>;
   selectFile: (file: FileResult, index?: number | null, total?: number | null) => void;
   clearSelectedFile: () => void;
-  removeFile: (filePath: string) => void;
-  loadDirectoryList: (folder: string) => Promise<void>;
+  removeFiles: (filePaths: string[]) => void;
   loadFolder: (childPath?: string, forceReload?: boolean) => Promise<void>;
-  loadFiles: (results: Map<string, FileResult>) => Promise<void>;
   toggleFolder: (fullPath: string) => void;
   setScrollRowItem: (offset: number) => void;
   updateProgress: (progress: Progress | null) => void;
@@ -54,8 +50,9 @@ const initialState: StoreState = {
   loading: false,
   progress: null,
   files: immutableMap(),
-  netplaySlpFolder: null,
-  extraFolders: [],
+  totalBytes: null,
+  folderTree: [],
+  collapsedFolders: [],
   currentRoot: null,
   currentFolder: useSettings.getState().settings.rootSlpPath,
   fileErrorCount: 0,
@@ -148,34 +145,27 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => {
     ...initialState,
 
     init: async (rootFolder, extraFolders, forceReload, currentFolder) => {
-      const { currentRoot, loadFolder, loadDirectoryList } = get();
+      const { currentRoot, loadFolder } = get();
       if (currentRoot === rootFolder && !forceReload) {
         return;
       }
 
-      set({
-        currentRoot: rootFolder,
-        netplaySlpFolder: {
-          name: path.basename(rootFolder),
-          fullPath: rootFolder,
-          subdirectories: [],
-          collapsed: false,
-        },
-        extraFolders: extraFolders.filter(Boolean).map(
-          (folder) =>
-            ({
-              name: path.basename(folder),
-              fullPath: folder,
-              subdirectories: [],
-              collapsed: true,
-            } as FolderResult),
-        ),
-      });
+      const loadFolderList = async () => {
+        const folders = [rootFolder, ...extraFolders];
+        // Init the folder tree
+        await window.electron.replays.initializeFolderTree(folders);
 
-      await Promise.all([
-        loadDirectoryList(currentFolder ?? rootFolder),
-        loadFolder(currentFolder ?? rootFolder, true),
-      ]);
+        // Get the result after folder selection
+        const folderTree = await window.electron.replays.selectTreeFolder(currentFolder ?? rootFolder);
+
+        set({
+          currentRoot: rootFolder,
+          folderTree,
+          collapsedFolders: [],
+        });
+      };
+
+      await Promise.all([loadFolderList(), loadFolder(currentFolder ?? rootFolder, true)]);
     },
 
     selectFile: (file, index = null, total = null) => {
@@ -194,11 +184,10 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => {
       });
     },
 
-    removeFile: (filePath: string) => {
+    removeFiles: (filePaths: string[]) => {
       set((state) =>
         produce(state, (draft) => {
-          // Modify the array in place
-          draft.files.delete(filePath);
+          draft.files = draft.files.filter(({ fullPath }) => !filePaths.includes(fullPath));
         }),
       );
     },
@@ -208,7 +197,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => {
     },
 
     loadFolder: async (childPath, forceReload) => {
-      const { currentFolder, loading, loadFiles } = get();
+      const { currentFolder, loading } = get();
 
       if (loading) {
         console.warn("A folder is already loading! Please wait for it to finish first.");
@@ -216,28 +205,50 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => {
       }
 
       const folderToLoad = childPath ?? currentFolder;
-      if (currentFolder === folderToLoad && !forceReload) {
-        console.warn(`${currentFolder} is already loaded. Set forceReload to true to reload anyway.`);
-        return;
-      }
-
       set({ currentFolder: folderToLoad, selectedFiles: [] });
 
-      set({ loading: true, progress: null });
-      try {
-        const result = await handleReplayFolderLoading(folderToLoad);
-        const newFiles = new Map(result.files.map((header) => [header.fullPath, { header: header, details: null }]));
-        set({
-          scrollRowItem: 0,
-          files: immutableMap(newFiles),
-          loading: false,
-          fileErrorCount: result.fileErrorCount,
-        });
-        await loadFiles(newFiles);
-      } catch (err) {
-        console.warn(err);
-        set({ loading: false, progress: null });
-      }
+      const loadFolderTree = async () => {
+        const folderTree = await window.electron.replays.selectTreeFolder(folderToLoad);
+        set({ folderTree });
+      };
+
+      const loadFolderDetails = async () => {
+        if (currentFolder === folderToLoad && !forceReload) {
+          console.warn(`${currentFolder} is already loaded. Set forceReload to true to reload anyway.`);
+          return;
+        }
+
+        set({ loading: true, progress: null });
+        try {
+          const result = await handleReplayFolderLoading(folderToLoad);
+          const newFiles = new Map(result.files.map((header) => [header.fullPath, { header: header, details: null }]));
+          set({
+            scrollRowItem: 0,
+            files: immutableMap(newFiles),
+            loading: false,
+            fileErrorCount: result.fileErrorCount,
+            totalBytes: result.totalBytes,
+          });
+          await loadFiles(newFiles);
+        } catch (err) {
+          console.warn(err);
+          set({ loading: false, progress: null });
+        }
+      };
+
+      const loadFiles = async (results: Map<string, FileResult>) => {
+        // Sort headers so files will load in approximately display order (nothing
+        // will be filtered at this point since details are empty).
+        const sortedHeaders = Array.from(results, ([_, result]) => result)
+          .sort(replayFileSort(useReplayFilter.getState().sortBy, useReplayFilter.getState().sortDirection))
+          .map((result) => result.header);
+
+        batcher.reset(sortedHeaders.length);
+
+        await window.electron.replays.loadReplayFiles(sortedHeaders, batcher.getId());
+      };
+
+      await Promise.all([loadFolderTree(), loadFolderDetails()]);
     },
 
     updateFileDetails: (fileLoadComplete: FileLoadComplete) => {
@@ -268,83 +279,16 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => {
       });
     },
 
-    loadFiles: async (results: Map<string, FileResult>) => {
-      // Sort headers so files will load in approximately display order (nothing
-      // will be filtered at this point since details are empty).
-      const sortedHeaders = Array.from(results, ([_, result]) => result)
-        .sort(replayFileSort(useReplayFilter.getState().sortBy, useReplayFilter.getState().sortDirection))
-        .map((result) => result.header);
-
-      batcher.reset(sortedHeaders.length);
-
-      await ipc_loadReplayFiles.renderer!.trigger({
-        fileHeaders: sortedHeaders,
-        batcherId: batcher.getId(),
-      });
-    },
-
     toggleFolder: (folder) => {
       set((state) =>
         produce(state, (draft) => {
-          const currentTree = [draft.netplaySlpFolder, ...draft.extraFolders];
-          if (currentTree) {
-            currentTree.some((parent) => {
-              if (!parent) {
-                return false;
-              }
-              const child = findChild(parent, folder);
-              if (child) {
-                child.collapsed = !child.collapsed;
-                return true;
-              }
-              return false;
-            });
+          if (draft.collapsedFolders.includes(folder)) {
+            draft.collapsedFolders = draft.collapsedFolders.filter((f) => f !== folder);
+          } else {
+            draft.collapsedFolders = [...draft.collapsedFolders, folder];
           }
         }),
       );
-    },
-
-    loadDirectoryList: async (folder?: string) => {
-      const { currentRoot, netplaySlpFolder: folders, extraFolders } = get();
-      const rootSlpPath = useSettings.getState().settings.rootSlpPath;
-
-      let currentTree = folders;
-      if (currentTree === null || currentRoot !== rootSlpPath) {
-        currentTree = {
-          name: path.basename(rootSlpPath),
-          fullPath: rootSlpPath,
-          subdirectories: [],
-          collapsed: false,
-        };
-      }
-
-      const newFolders = await produce(currentTree, async (draft: FolderResult) => {
-        const pathToLoad = folder ?? rootSlpPath;
-        const child = findChild(draft, pathToLoad) ?? draft;
-        const childPaths = path.relative(child.fullPath, pathToLoad);
-        const childrenToExpand = childPaths ? childPaths.split(path.sep) : [];
-        if (child && child.subdirectories.length === 0) {
-          child.subdirectories = await generateSubFolderTree(child.fullPath, childrenToExpand);
-        }
-      });
-
-      const newExtraFolders = await Promise.all(
-        extraFolders.map(async (rootFolder) => {
-          const newFolders = await produce(rootFolder, async (draft: FolderResult) => {
-            const pathToLoad = folder ?? rootSlpPath;
-            const child = findChild(draft, pathToLoad) ?? draft;
-            const childPaths = path.relative(child.fullPath, pathToLoad);
-            const childrenToExpand = childPaths ? childPaths.split(path.sep) : [];
-            if (child && child.subdirectories.length === 0) {
-              child.subdirectories = await generateSubFolderTree(child.fullPath, childrenToExpand);
-            }
-          });
-          return newFolders;
-        }),
-      );
-
-      set({ netplaySlpFolder: newFolders });
-      set({ extraFolders: newExtraFolders });
     },
 
     setScrollRowItem: (rowItem) => {
@@ -357,13 +301,8 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => {
   };
 });
 
-const handleReplayFolderLoading = async (folderPath: string): Promise<FolderLoadResult> => {
-  const loadFolderResult = await ipc_loadReplayFolder.renderer!.trigger({ folderPath });
-  if (!loadFolderResult.result) {
-    console.error(`Error loading folder: ${folderPath}`, loadFolderResult.errors);
-    throw new Error(`Error loading folder: ${folderPath}`);
-  }
-  return loadFolderResult.result;
+const handleReplayFolderLoading = async (folderPath: string): Promise<FileLoadResult> => {
+  return window.electron.replays.loadReplayFolder(folderPath);
 };
 
 export const useReplaySelection = () => {

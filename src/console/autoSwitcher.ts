@@ -1,7 +1,8 @@
 import { EventEmitter } from "events";
 import OBSWebSocket from "obs-websocket-js";
 
-import { AutoSwitcherSettings, MirrorEvent } from "./types";
+import type { AutoSwitcherSettings } from "./types";
+import { MirrorEvent } from "./types";
 
 export class AutoSwitcher extends EventEmitter {
   private obs: OBSWebSocket;
@@ -11,7 +12,7 @@ export class AutoSwitcher extends EventEmitter {
   private statusOutput: { status: boolean; timeout: NodeJS.Timeout | null };
   private obsPairs: { scene: string; source: string }[];
 
-  public constructor(settings: AutoSwitcherSettings) {
+  constructor(settings: AutoSwitcherSettings) {
     super();
     this.obs = new OBSWebSocket();
     this.obsSourceName = settings.sourceName;

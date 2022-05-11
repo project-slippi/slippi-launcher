@@ -1,19 +1,18 @@
-/** @jsx jsx */
-import { css, jsx } from "@emotion/react";
+import { colors } from "@common/colors";
+import { IsoValidity } from "@common/types";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import Box from "@material-ui/core/Box";
-import Button from "@material-ui/core/Button";
-import { useTheme } from "@material-ui/core/styles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { colors } from "common/colors";
-import { ipc_checkValidIso } from "common/ipc";
-import { IsoValidity } from "common/types";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import { useToasts } from "react-toast-notifications";
+import { useQuery } from "react-query";
 
 import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { useIsoPath } from "@/lib/hooks/useSettings";
+import { useToasts } from "@/lib/hooks/useToasts";
 import { hasBorder } from "@/styles/hasBorder";
 
 import { QuickStartHeader } from "./QuickStartHeader";
@@ -51,21 +50,22 @@ const Container = styled.div`
   }
 `;
 
-const ErrorMessage = styled.div`
-  margin-top: 10px;
-  color: ${({ theme }) => theme.palette.error.main};
-  font-size: 16px;
-`;
-
 export const IsoSelectionStep: React.FC = () => {
+  const { showError } = useToasts();
   const [tempIsoPath, setTempIsoPath] = React.useState("");
-  const verification = ipc_checkValidIso.renderer!.useValue(
-    { path: tempIsoPath },
-    { path: tempIsoPath, valid: IsoValidity.INVALID },
-  );
+  const validIsoPathQuery = useQuery(["validIsoPathQuery", tempIsoPath], async () => {
+    if (!tempIsoPath) {
+      return {
+        path: tempIsoPath,
+        valid: IsoValidity.UNVALIDATED,
+      };
+    }
+    return window.electron.common.checkValidIso(tempIsoPath);
+  });
+
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
-  const loading = verification.isUpdating;
+  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const loading = validIsoPathQuery.isLoading;
   const [, setIsoPath] = useIsoPath();
 
   const onDrop = (acceptedFiles: File[]) => {
@@ -74,12 +74,17 @@ export const IsoSelectionStep: React.FC = () => {
     }
 
     const filePath = acceptedFiles[0].path;
+    if (filePath.endsWith(".7z")) {
+      showError("7z files must be uncompressed to be used in Dolphin.");
+      return;
+    }
+
     setTempIsoPath(filePath);
   };
-  const validIsoPath = verification.value.valid;
+  const validIsoPath = validIsoPathQuery.data?.valid ?? IsoValidity.UNVALIDATED;
 
   const { open, getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
-    accept: [".iso", ".gcm", ".gcz"],
+    accept: [".iso", ".gcm", ".gcz", ".7z"],
     onDrop: onDrop,
     multiple: false,
     noClick: true,
@@ -89,17 +94,22 @@ export const IsoSelectionStep: React.FC = () => {
   const invalidIso = Boolean(tempIsoPath) && !loading && validIsoPath === IsoValidity.INVALID;
   const unknownIso = Boolean(tempIsoPath) && !loading && validIsoPath === IsoValidity.UNKNOWN;
   const handleClose = () => setTempIsoPath("");
-  const { addToast } = useToasts();
   const onConfirm = useCallback(() => {
-    setIsoPath(tempIsoPath).catch((err) => addToast(err.message, { appearance: "error" }));
-  }, [addToast, setIsoPath, tempIsoPath]);
+    setIsoPath(tempIsoPath).catch(showError);
+  }, [showError, setIsoPath, tempIsoPath]);
+
+  React.useEffect(() => {
+    if (invalidIso) {
+      showError("Provided ISO will not work with Slippi Online. Please provide an NTSC 1.02 ISO.");
+    }
+  }, [showError, invalidIso]);
 
   React.useEffect(() => {
     // Auto-confirm ISO if it's valid
-    if (verification.value.valid === IsoValidity.VALID) {
+    if (validIsoPath === IsoValidity.VALID) {
       onConfirm();
     }
-  }, [onConfirm, verification.value.valid]);
+  }, [onConfirm, validIsoPath]);
 
   return (
     <Box display="flex" flexDirection="column" flexGrow="1" maxWidth="800px" marginLeft="auto" marginRight="auto">
@@ -119,9 +129,6 @@ export const IsoSelectionStep: React.FC = () => {
           </Button>
         )}
         <p>{loading ? "Verifying ISO..." : "or drag and drop here"}</p>
-        {invalidIso && (
-          <ErrorMessage>Provided ISO will not work with Slippi Online. Please provide an NTSC 1.02 ISO.</ErrorMessage>
-        )}
       </Container>
 
       <ConfirmationModal

@@ -1,9 +1,11 @@
 import { ConnectionEvent, ConnectionStatus, DolphinConnection, DolphinMessageType } from "@slippi/slippi-js";
 import { EventEmitter } from "events";
 import _ from "lodash";
-import { client as WebSocketClient, connection, IMessage } from "websocket";
+import type { connection, Message } from "websocket";
+import { client as WebSocketClient } from "websocket";
 
-import { BroadcastEvent, SlippiBroadcastPayloadEvent, StartBroadcastConfig } from "./types";
+import type { SlippiBroadcastPayloadEvent, StartBroadcastConfig } from "./types";
+import { BroadcastEvent } from "./types";
 
 const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
 
@@ -26,7 +28,7 @@ export class BroadcastManager extends EventEmitter {
   private wsConnection: connection | null;
   private dolphinConnection: DolphinConnection;
 
-  public constructor() {
+  constructor() {
     super();
     this.broadcastId = null;
     this.isBroadcastReady = false;
@@ -85,7 +87,7 @@ export class BroadcastManager extends EventEmitter {
     if (this.dolphinConnection.getStatus() === ConnectionStatus.DISCONNECTED) {
       try {
         await this._connectToDolphin(config.ip, config.port);
-      } catch (err) {
+      } catch (err: any) {
         const errMsg = err.message || JSON.stringify(err);
         this.emit(BroadcastEvent.LOG, `Could not connect to Dolphin\n${errMsg}`);
         this.emit(BroadcastEvent.LOG, errMsg);
@@ -101,7 +103,7 @@ export class BroadcastManager extends EventEmitter {
     }
 
     // Indicate we're connecting to the Slippi server
-    void this._setSlippiStatus(ConnectionStatus.CONNECTING);
+    this._setSlippiStatus(ConnectionStatus.CONNECTING);
 
     const headers = {
       target: config.viewerId,
@@ -126,8 +128,8 @@ export class BroadcastManager extends EventEmitter {
         message = message.substring(pos + label.length, endPos >= 0 ? endPos : undefined);
       }
 
-      void this._setSlippiStatus(ConnectionStatus.DISCONNECTED);
       this.emit(BroadcastEvent.ERROR, message);
+      this.stop();
     });
 
     socket.on("connect", (connection: connection) => {
@@ -169,7 +171,7 @@ export class BroadcastManager extends EventEmitter {
         this.isBroadcastReady = true;
 
         this.broadcastId = broadcastId;
-        void this._setSlippiStatus(ConnectionStatus.CONNECTED);
+        this._setSlippiStatus(ConnectionStatus.CONNECTED);
 
         // Process any events that may have been missed when we disconnected
         this._handleGameData();
@@ -190,16 +192,16 @@ export class BroadcastManager extends EventEmitter {
           // Here we have an abnormal disconnect... try to reconnect?
           // This error seems to occur primarily when the auth token for firebase expires,
           // which lasts 1 hour, so the plan is to get a new token, use the same config, and reconnect.
-          void this._setSlippiStatus(ConnectionStatus.RECONNECT_WAIT);
+          this._setSlippiStatus(ConnectionStatus.RECONNECT_WAIT);
           this.emit(BroadcastEvent.RECONNECT, config);
         } else {
           // If normal close, disconnect from dolphin
           this.dolphinConnection.disconnect();
-          void this._setSlippiStatus(ConnectionStatus.DISCONNECTED);
+          this._setSlippiStatus(ConnectionStatus.DISCONNECTED);
         }
       });
 
-      connection.on("message", (data: IMessage) => {
+      connection.on("message", (data: Message) => {
         if (data.type !== "utf8") {
           return;
         }
@@ -217,7 +219,7 @@ export class BroadcastManager extends EventEmitter {
           } else {
             return;
           }
-        } catch (err) {
+        } catch (err: any) {
           const errMsg = err.message || JSON.stringify(err);
           this.emit(BroadcastEvent.LOG, `Failed to parse message from server\n${errMsg}\n${data.utf8Data}`);
           return;
@@ -430,8 +432,8 @@ export class BroadcastManager extends EventEmitter {
               break;
             }
 
-            if (event["next_cursor"]) {
-              this.nextGameCursor = event["next_cursor"];
+            if (event.nextCursor) {
+              this.nextGameCursor = event.nextCursor;
             }
 
             this.wsConnection.send(JSON.stringify(message), (err) => {
@@ -447,7 +449,7 @@ export class BroadcastManager extends EventEmitter {
     }
   }
 
-  private async _setSlippiStatus(status: ConnectionStatus) {
+  private _setSlippiStatus(status: ConnectionStatus) {
     if (this.slippiStatus === ConnectionStatus.RECONNECT_WAIT && status === ConnectionStatus.CONNECTING) {
       return;
     }

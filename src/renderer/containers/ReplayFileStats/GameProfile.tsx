@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
-import Typography from "@material-ui/core/Typography";
-import { FileHeader, FileDetails } from "@replays/types";
-import { StatsType } from "@slippi/slippi-js";
+import Typography from "@mui/material/Typography";
+import type { FileDetails, FileHeader } from "@replays/types";
+import type { StatsType } from "@slippi/slippi-js";
 import _ from "lodash";
 import React from "react";
 
@@ -15,6 +15,7 @@ export interface GameProfileProps {
   fileHeader: FileHeader;
   fileDetails: FileDetails;
   stats: StatsType;
+  onPlay: (options: { path: string; startFrame: number }) => void;
 }
 
 const TableContainer = styled.div`
@@ -36,7 +37,7 @@ const StatSection: React.FC<{
   );
 };
 
-export const GameProfile: React.FC<GameProfileProps> = ({ fileHeader, fileDetails, stats }) => {
+export const GameProfile: React.FC<GameProfileProps> = ({ fileHeader, fileDetails, stats, onPlay }) => {
   const [firstPlayer, secondPlayer] = fileDetails.settings.players;
 
   return (
@@ -53,6 +54,7 @@ export const GameProfile: React.FC<GameProfileProps> = ({ fileHeader, fileDetail
           stats={stats}
           player={firstPlayer}
           opp={secondPlayer}
+          onPlay={onPlay}
         />
         <KillTable
           fileHeader={fileHeader}
@@ -60,6 +62,7 @@ export const GameProfile: React.FC<GameProfileProps> = ({ fileHeader, fileDetail
           stats={stats}
           player={secondPlayer}
           opp={firstPlayer}
+          onPlay={onPlay}
         />
       </StatSection>
       <StatSection title="Openings &amp; Conversions">
@@ -69,6 +72,7 @@ export const GameProfile: React.FC<GameProfileProps> = ({ fileHeader, fileDetail
           stats={stats}
           player={firstPlayer}
           opp={secondPlayer}
+          onPlay={onPlay}
         />
         <PunishTable
           fileHeader={fileHeader}
@@ -76,6 +80,7 @@ export const GameProfile: React.FC<GameProfileProps> = ({ fileHeader, fileDetail
           stats={stats}
           player={secondPlayer}
           opp={firstPlayer}
+          onPlay={onPlay}
         />
       </StatSection>
     </div>

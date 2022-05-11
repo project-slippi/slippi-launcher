@@ -1,6 +1,5 @@
-/** @jsx jsx */
-import { css, jsx } from "@emotion/react";
-import { colors } from "common/colors";
+import { colors } from "@common/colors";
+import { css } from "@emotion/react";
 import React from "react";
 
 import { withFont } from "@/styles/withFont";

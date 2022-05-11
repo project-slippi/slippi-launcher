@@ -1,52 +1,49 @@
 import styled from "@emotion/styled";
-import Button from "@material-ui/core/Button";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import IconButton from "@material-ui/core/IconButton";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import { useTheme } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField";
-import Tooltip from "@material-ui/core/Tooltip";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import AssignmentIcon from "@material-ui/icons/Assignment";
-import CheckCircleIcon from "@material-ui/icons/CheckCircle";
-import CloseIcon from "@material-ui/icons/Close";
-import ErrorIcon from "@material-ui/icons/Error";
-import HelpIcon from "@material-ui/icons/Help";
-import { clipboard } from "electron";
-import electronLog from "electron-log";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CloseIcon from "@mui/icons-material/Close";
+import ErrorIcon from "@mui/icons-material/Error";
+import HelpIcon from "@mui/icons-material/Help";
+import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+import { useTheme } from "@mui/material/styles";
+import TextField from "@mui/material/TextField";
+import Tooltip from "@mui/material/Tooltip";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import debounce from "lodash/debounce";
 import React from "react";
 import { useQuery } from "react-query";
 
-import { validateUserId } from "@/lib/validateUserId";
+import { useServices } from "@/services";
 
-const log = electronLog.scope("StartBroadcastDialog");
+const log = window.electron.log;
 export interface StartBroadcastDialogProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (value: string) => void;
-  skipUserValidation?: boolean;
 }
 
-export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({
-  open,
-  onClose,
-  onSubmit,
-  skipUserValidation,
-}) => {
+export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({ open, onClose, onSubmit }) => {
+  const { slippiBackendService } = useServices();
   const [value, setValue] = React.useState("");
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
+  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   const userQuery = useQuery(
     ["userId", value],
     async () => {
+      // First check that the user id is only alphanumeric
+      if (!value.match(/^[0-9a-zA-Z]+$/)) {
+        throw new Error("Invalid user ID format");
+      }
       console.log("starting fetch: ", JSON.stringify(new Date()));
-      const result = await validateUserId(value);
+      const result = await slippiBackendService.validateUserId(value);
       console.log("finished fetch: ", JSON.stringify(new Date()));
       return result;
     },
@@ -67,11 +64,9 @@ export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({
       // First clear the react-query state
       userQuery.remove();
       setValue(inputText);
-      if (!skipUserValidation) {
-        void fetchUser();
-      }
+      void fetchUser();
     },
-    [fetchUser, skipUserValidation, userQuery],
+    [fetchUser, userQuery],
   );
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -87,7 +82,16 @@ export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({
   }
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth={true} fullScreen={fullScreen} disableBackdropClick={true}>
+    <Dialog
+      open={open}
+      onClose={(_, reason) => {
+        if (reason !== "backdropClick") {
+          onClose();
+        }
+      }}
+      fullWidth={true}
+      fullScreen={fullScreen}
+    >
       <form onSubmit={handleSubmit}>
         <StyledDialogTitle>
           Enter Spectator ID
@@ -124,7 +128,7 @@ export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({
                       <IconButton
                         size="small"
                         onClick={() => {
-                          const text = clipboard.readText();
+                          const text = window.electron.clipboard.readText();
                           if (text) {
                             handleChange(text);
                           }
@@ -138,7 +142,7 @@ export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({
               ),
             }}
           />
-          <div style={{ opacity: skipUserValidation || value.length === 0 ? 0 : 1 }}>
+          <div style={{ opacity: value.length === 0 ? 0 : 1 }}>
             <div style={{ margin: 12, marginRight: 0 }}>
               {userQuery.data ? (
                 <CheckCircleIcon
@@ -162,7 +166,7 @@ export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({
           <Button onClick={onClose} color="secondary">
             Cancel
           </Button>
-          <Button color="primary" disabled={!skipUserValidation && !userQuery.isSuccess} type="submit">
+          <Button color="primary" disabled={!userQuery.isSuccess} type="submit">
             Confirm
           </Button>
         </DialogActions>

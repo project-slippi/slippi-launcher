@@ -1,24 +1,21 @@
-import { ipc_checkForUpdate } from "common/ipc";
-import { ipc_checkDesktopAppDolphin, ipc_dolphinDownloadFinishedEvent, ipc_downloadDolphin } from "dolphin/ipc";
-import electronLog from "electron-log";
-import firebase from "firebase";
+import { DolphinLaunchType } from "@dolphin/types";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
-import { initializeFirebase } from "@/lib/firebase";
 import { useAccount } from "@/lib/hooks/useAccount";
-import { fetchPlayKey } from "@/lib/slippiBackend";
+import { useToasts } from "@/lib/hooks/useToasts";
+import { useServices } from "@/services";
+import type { AuthUser } from "@/services/auth/types";
 
 import { useDesktopApp } from "./useQuickStart";
 
-const log = electronLog.scope("useApp");
+const log = window.electron.log;
 
 export const useAppStore = create(
   combine(
     {
       initializing: false,
       initialized: false,
-      logMessage: "",
       updateVersion: "",
       updateDownloadProgress: 0,
       updateReady: false,
@@ -26,7 +23,6 @@ export const useAppStore = create(
     (set) => ({
       setInitializing: (initializing: boolean) => set({ initializing }),
       setInitialized: (initialized: boolean) => set({ initialized }),
-      setLogMessage: (logMessage: string) => set({ logMessage }),
       setUpdateVersion: (updateVersion: string) => set({ updateVersion }),
       setUpdateDownloadProgress: (updateDownloadProgress: number) => set({ updateDownloadProgress }),
       setUpdateReady: (updateReady: boolean) => set({ updateReady }),
@@ -35,13 +31,15 @@ export const useAppStore = create(
 );
 
 export const useAppInitialization = () => {
+  const { authService, slippiBackendService, dolphinService } = useServices();
+  const { showError } = useToasts();
   const initializing = useAppStore((store) => store.initializing);
   const initialized = useAppStore((store) => store.initialized);
   const setInitializing = useAppStore((store) => store.setInitializing);
   const setInitialized = useAppStore((store) => store.setInitialized);
-  const setLogMessage = useAppStore((store) => store.setLogMessage);
-  const setUser = useAccount((store) => store.setUser);
   const setPlayKey = useAccount((store) => store.setPlayKey);
+  const setUser = useAccount((store) => store.setUser);
+  const setServerError = useAccount((store) => store.setServerError);
   const setDesktopAppExists = useDesktopApp((store) => store.setExists);
   const setDesktopAppDolphinPath = useDesktopApp((store) => store.setDolphinPath);
 
@@ -52,70 +50,68 @@ export const useAppInitialization = () => {
 
     setInitializing(true);
 
-    console.log("Initializing app...");
+    log.info("Initializing app...");
 
-    // Initialize firebase first
-    let user: firebase.User | null = null;
-    try {
-      user = await initializeFirebase();
-      setUser(user);
-    } catch (err) {
-      console.warn(err);
-    }
-
-    const promises: Promise<any>[] = [];
+    const promises: Promise<void>[] = [];
 
     // If we're logged in, check they have a valid play key
-    if (user) {
-      promises.push(
-        fetchPlayKey()
-          .then((key) => setPlayKey(key))
-          .catch((err) => {
-            console.warn(err);
-          }),
-      );
-    }
-
     promises.push(
-      new Promise<void>((resolve) => {
-        const handler = ipc_dolphinDownloadFinishedEvent.renderer!.handle(async ({ error }) => {
-          // We only want to handle this event once so immediately destroy
-          handler.destroy();
+      (async () => {
+        let user: AuthUser | null = null;
+        try {
+          user = await authService.init();
+          setUser(user);
+        } catch (err) {
+          log.warn(err);
+        }
 
-          if (error) {
-            const errMsg = "Error occurred while downloading Dolphin";
-            log.error(errMsg, error);
-            setLogMessage(errMsg);
+        if (user) {
+          try {
+            const key = await slippiBackendService.fetchPlayKey();
+            setServerError(false);
+            setPlayKey(key);
+          } catch (err) {
+            setServerError(true);
+            log.warn(err);
+
+            const message = `Failed to communicate with Slippi servers. You either have no internet
+              connection or Slippi is experiencing some downtime. Playing online may or may not work.`;
+            showError(message);
           }
-          resolve();
-        });
-      }),
+        }
+      })(),
     );
 
-    // Download Dolphin if necessary
-    promises.push(ipc_downloadDolphin.renderer!.trigger({}));
+    // Download Dolphins if necessary
+    [DolphinLaunchType.NETPLAY, DolphinLaunchType.PLAYBACK].map(async (dolphinType) => {
+      return dolphinService.downloadDolphin(dolphinType).catch((err) => {
+        log.error(err);
+        showError(
+          `Failed to install ${dolphinType} Dolphin. Try closing all Dolphin instances and restarting the launcher. Error: ${
+            err instanceof Error ? err.message : JSON.stringify(err)
+          }`,
+        );
+      });
+    });
 
     promises.push(
-      ipc_checkDesktopAppDolphin
-        .renderer!.trigger({})
-        .then(({ result }) => {
-          if (!result) {
-            throw new Error("Could not get old desktop app path");
-          }
-          setDesktopAppExists(result.exists);
-          setDesktopAppDolphinPath(result.dolphinPath);
+      dolphinService
+        .checkDesktopAppDolphin()
+        .then(({ exists, dolphinPath }) => {
+          setDesktopAppExists(exists);
+          setDesktopAppDolphinPath(dolphinPath);
         })
-        .catch(console.error),
+        .catch(log.error),
     );
 
     // Check if there is an update to the launcher
-    promises.push(ipc_checkForUpdate.renderer!.trigger({}));
+    promises.push(window.electron.common.checkForAppUpdates());
 
     // Wait for all the promises to complete before completing
     try {
       await Promise.all(promises);
     } catch (err) {
-      console.error(err);
+      log.error(err);
     } finally {
       setInitialized(true);
     }

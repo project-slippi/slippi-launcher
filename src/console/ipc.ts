@@ -1,5 +1,7 @@
-import { _, EmptyPayload, makeEndpoint, SuccessPayload } from "../ipc";
-import { ConsoleMirrorStatusUpdate, DiscoveredConsoleInfo, MirrorConfig } from "./types";
+import type { EmptyPayload, SuccessPayload } from "utils/ipc";
+import { _, makeEndpoint } from "utils/ipc";
+
+import type { ConsoleMirrorStatusUpdate, DiscoveredConsoleInfo, MirrorConfig } from "./types";
 
 // Endpoints
 

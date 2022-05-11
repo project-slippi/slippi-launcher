@@ -1,5 +1,5 @@
-/** @jsx jsx */
-import { css, jsx } from "@emotion/react";
+import { css } from "@emotion/react";
+import LinearProgress from "@mui/material/LinearProgress";
 import React from "react";
 
 import { BouncingSlippiLogo } from "@/components/BouncingSlippiLogo";
@@ -27,3 +27,32 @@ export const LoadingScreen: React.FC<{
     </Message>
   );
 };
+
+export function LoadingScreenWithProgress({ current = 0, total = 100 }: { current?: number; total?: number }) {
+  return (
+    <Message icon={<BouncingSlippiLogo />}>
+      <div
+        style={{
+          color: "white",
+          padding: 3,
+          borderRadius: 10,
+          borderStyle: "solid",
+          borderWidth: 2,
+          width: 180,
+          marginTop: 30,
+        }}
+      >
+        <LinearProgress
+          variant="determinate"
+          value={(current / total) * 100}
+          sx={{
+            borderRadius: 10,
+            height: 8,
+            "& .MuiLinearProgress-bar": { borderRadius: 10, transitionDuration: "50ms" },
+          }}
+          color="inherit"
+        />
+      </div>
+    </Message>
+  );
+}

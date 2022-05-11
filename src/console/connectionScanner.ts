@@ -3,7 +3,7 @@ import electronLog from "electron-log";
 import moment from "moment";
 
 import { ipc_discoveredConsolesUpdatedEvent } from "./ipc";
-import { DiscoveredConsoleInfo } from "./types";
+import type { DiscoveredConsoleInfo } from "./types";
 
 const log = electronLog.scope("connectionScanner");
 

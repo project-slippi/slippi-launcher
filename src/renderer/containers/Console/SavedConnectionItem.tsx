@@ -1,26 +1,26 @@
-/** @jsx jsx */
-
-import { css, jsx } from "@emotion/react";
+import type { MirrorConfig } from "@console/types";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import Button from "@material-ui/core/Button";
-import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import CardHeader from "@material-ui/core/CardHeader";
-import IconButton from "@material-ui/core/IconButton";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import WarningIcon from "@material-ui/icons/Warning";
-import { StoredConnection } from "@settings/types";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import WarningIcon from "@mui/icons-material/Warning";
+import Button from "@mui/material/Button";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import CardHeader from "@mui/material/CardHeader";
+import IconButton from "@mui/material/IconButton";
+import type { StoredConnection } from "@settings/types";
 import { ConnectionStatus, Ports } from "@slippi/slippi-js";
-import path from "path";
 import React from "react";
-import { useToasts } from "react-toast-notifications";
 import { lt } from "semver";
 
 import { ExternalLink as A } from "@/components/ExternalLink";
 import { LabelledText } from "@/components/LabelledText";
-import { connectToConsole, disconnectFromConsole, startConsoleMirror } from "@/lib/consoleConnection";
+import { useToasts } from "@/lib/hooks/useToasts";
+import { useServices } from "@/services";
 import { ReactComponent as WiiIcon } from "@/styles/images/wii-icon.svg";
+
+const path = window.electron.path;
 
 export interface SavedConnectionItemProps {
   index: number;
@@ -47,16 +47,35 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
   nintendontVersion,
   latestVersion,
 }) => {
-  const { addToast } = useToasts();
-  const onConnect = () => connectToConsole(connection);
-  const onMirror = () => {
-    startConsoleMirror(connection.ipAddress).catch((err) => {
-      addToast(err.message ?? JSON.stringify(err), {
-        appearance: "error",
-      });
-    });
-  };
-  const onDisconnect = () => disconnectFromConsole(connection.ipAddress);
+  const { showError } = useToasts();
+  const { consoleService } = useServices();
+  const onConnect = React.useCallback(async () => {
+    const conn = connection;
+    const config: MirrorConfig = {
+      id: conn.id,
+      ipAddress: conn.ipAddress,
+      port: conn.port ?? Ports.DEFAULT,
+      folderPath: conn.folderPath,
+      isRealtime: conn.isRealtime,
+      enableRelay: conn.enableRelay,
+      useNicknameFolders: conn.useNicknameFolders,
+    };
+
+    // Add OBS config if necessary
+    if (conn.enableAutoSwitcher && conn.obsIP && conn.obsSourceName) {
+      config.autoSwitcherSettings = {
+        ip: conn.obsIP,
+        password: conn.obsPassword,
+        sourceName: conn.obsSourceName,
+      };
+    }
+
+    await consoleService.connectToConsoleMirror(config);
+  }, [consoleService, connection]);
+  const onMirror = React.useCallback(() => {
+    consoleService.startMirroring(connection.ipAddress).catch(showError);
+  }, [consoleService, connection, showError]);
+  const onDisconnect = () => consoleService.disconnectFromConsole(connection.ipAddress);
   const statusName = status === ConnectionStatus.DISCONNECTED && isAvailable ? "Available" : renderStatusName(status);
   const isConnected = status !== ConnectionStatus.DISCONNECTED;
   const title = nickname ? `${connection.ipAddress} (${nickname})` : connection.ipAddress;
@@ -66,7 +85,10 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
       <CardHeader
         avatar={<WiiIcon fill="#ffffff" width="40px" />}
         action={
-          <IconButton onClick={(e) => onOpenMenu(index, e.currentTarget as HTMLElement, connection.ipAddress)}>
+          <IconButton
+            onClick={(e) => onOpenMenu(index, e.currentTarget as HTMLElement, connection.ipAddress)}
+            size="large"
+          >
             <MoreVertIcon />
           </IconButton>
         }

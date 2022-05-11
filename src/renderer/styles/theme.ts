@@ -1,14 +1,15 @@
-import { createMuiTheme, Theme } from "@material-ui/core/styles";
-import { colors } from "common/colors";
+import { colors } from "@common/colors";
+import type { Theme } from "@mui/material/styles";
+import { createTheme } from "@mui/material/styles";
 
 import { withFont } from "./withFont";
 
 const rubikFont = withFont("Rubik");
 const mavenProFont = withFont("Maven Pro");
 
-const theme = createMuiTheme({
+const theme = createTheme({
   palette: {
-    type: "dark",
+    mode: "dark",
     text: {
       primary: "#E9EAEA",
       secondary: "#B4B4B4",
@@ -21,7 +22,7 @@ const theme = createMuiTheme({
     },
     divider: "rgba(255,255,255)",
     background: {
-      paper: colors.purpleDark,
+      paper: colors.purpleDarker,
       default: colors.purple,
     },
   },
@@ -53,76 +54,119 @@ const theme = createMuiTheme({
 });
 
 const addOverrides = (theme: Theme) => {
-  return createMuiTheme({
+  return createTheme({
     ...theme,
-    props: {
+    components: {
       MuiTooltip: {
-        arrow: true,
+        defaultProps: {
+          arrow: true,
+        },
+        styleOverrides: {
+          arrow: {
+            color: colors.offWhite,
+          },
+          tooltip: {
+            backgroundColor: colors.offWhite,
+            color: colors.purpleDarker,
+            boxShadow: theme.shadows[1],
+            fontSize: 13,
+          },
+        },
       },
       MuiTextField: {
-        variant: "filled",
-        fullWidth: true,
-        size: "small",
+        defaultProps: {
+          variant: "filled",
+          fullWidth: true,
+          size: "small",
+        },
       },
       MuiRadio: {
-        color: "primary",
+        defaultProps: {
+          color: "primary",
+        },
       },
-    },
-    overrides: {
       MuiPaper: {
-        root: {
-          borderStyle: "solid",
-          borderWidth: "1px",
-          borderColor: "transparent",
-        },
-        rounded: {
-          borderRadius: "10px",
-          overflow: "hidden",
-        },
-      },
-      MuiCheckbox: {
-        root: {
-          color: colors.purplePrimary,
+        styleOverrides: {
+          root: {
+            borderStyle: "solid",
+            borderWidth: "1px",
+            borderColor: "transparent",
+          },
+          rounded: {
+            borderRadius: "10px",
+            overflow: "hidden",
+          },
         },
       },
       MuiTableCell: {
-        root: {
-          borderBottomColor: "#1E1F25",
+        styleOverrides: {
+          root: {
+            borderBottomColor: "#1E1F25",
+          },
+        },
+      },
+      MuiInputLabel: {
+        styleOverrides: {
+          root: {
+            color: "#dddddd",
+            "&.Mui-focused": {
+              color: "#ffffff",
+            },
+          },
         },
       },
       MuiListItemIcon: {
-        root: {
-          minWidth: "initial",
+        styleOverrides: {
+          root: {
+            minWidth: "initial",
+          },
         },
       },
-      MuiTooltip: {
-        arrow: {
-          color: colors.offWhite,
+      MuiMenuItem: {
+        styleOverrides: {
+          root: {
+            "&.Mui-selected": {
+              backgroundColor: "rgba(255, 255, 255, 0.16)",
+            },
+            "&.Mui-selected:hover": {
+              backgroundColor: "rgba(255, 255, 255, 0.16)",
+            },
+          },
         },
-        tooltip: {
-          backgroundColor: colors.offWhite,
-          color: colors.purpleDarker,
-          boxShadow: theme.shadows[1],
-          fontSize: 13,
+      },
+      MuiListItem: {
+        styleOverrides: {
+          root: {
+            "&.Mui-selected": {
+              backgroundColor: "rgba(255, 255, 255, 0.16)",
+            },
+            "&.Mui-selected:hover": {
+              backgroundColor: "rgba(255, 255, 255, 0.16)",
+            },
+          },
         },
       },
       MuiButtonBase: {
-        root: {
-          fontFamily: rubikFont,
+        styleOverrides: {
+          root: {
+            fontFamily: rubikFont,
+          },
         },
       },
       MuiButton: {
-        root: {
-          borderRadius: "10px",
-        },
-        contained: {
-          fontWeight: 700,
-          textTransform: "initial",
-          borderRadius: "10px",
-        },
-        outlined: {
-          textTransform: "initial",
-          borderRadius: "10px",
+        styleOverrides: {
+          root: {
+            borderRadius: "10px",
+          },
+          contained: {
+            fontWeight: 700,
+            textTransform: "initial",
+            borderRadius: "10px",
+          },
+          outlined: {
+            textTransform: "initial",
+            borderRadius: "10px",
+          },
         },
       },
     },

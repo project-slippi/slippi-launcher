@@ -14,7 +14,7 @@ export class ConsoleRelay extends EventEmitter {
   private dataBuffer: ConsoleDataBuffer;
   private clients: net.Socket[];
 
-  public constructor(id: number) {
+  constructor(id: number) {
     super();
     this.clients = [];
     this.dataBuffer = {

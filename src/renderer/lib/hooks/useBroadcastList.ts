@@ -1,11 +1,10 @@
-import { ipc_refreshBroadcastList } from "@broadcast/ipc";
-import { BroadcasterItem } from "@broadcast/types";
+import type { BroadcasterItem } from "@broadcast/types";
 import throttle from "lodash/throttle";
-import { useToasts } from "react-toast-notifications";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
-import { useAccount } from "./useAccount";
+import { useToasts } from "@/lib/hooks/useToasts";
+import { useServices } from "@/services";
 
 export const useBroadcastListStore = create(
   combine(
@@ -19,31 +18,18 @@ export const useBroadcastListStore = create(
 );
 
 export const useBroadcastList = () => {
-  const currentUser = useAccount((store) => store.user);
+  const { authService, broadcastService } = useServices();
   const items = useBroadcastListStore((store) => store.items);
-  const { addToast } = useToasts();
+  const { showError } = useToasts();
 
   const refresh = async () => {
-    if (!currentUser) {
-      throw new Error("User is not logged in");
-    }
-    const authToken = await currentUser.getIdToken();
-    const broadcastListResult = await ipc_refreshBroadcastList.renderer!.trigger({ authToken });
-    if (!broadcastListResult.result) {
-      throw new Error("Error refreshing broadcast list");
-    }
+    const authToken = await authService.getUserToken();
+    await broadcastService.refreshBroadcastList(authToken);
   };
 
   // Limit refreshing to once every 2 seconds
   const throttledRefresh = throttle(() => {
-    refresh().catch((err) => {
-      const errMessage = err.message ?? JSON.stringify(err);
-      addToast(errMessage, {
-        autoDismiss: true,
-        appearance: "error",
-        id: errMessage,
-      });
-    });
+    refresh().catch(showError);
   }, 2000);
 
   return [items, throttledRefresh] as const;

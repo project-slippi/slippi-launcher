@@ -1,7 +1,6 @@
-import DeleteIcon from "@material-ui/icons/Delete";
-import FolderIcon from "@material-ui/icons/Folder";
-import { FileResult } from "@replays/types";
-import { shell } from "electron";
+import DeleteIcon from "@mui/icons-material/Delete";
+import FolderIcon from "@mui/icons-material/Folder";
+import type { FileResult } from "@replays/types";
 import { debounce } from "lodash";
 import React from "react";
 import AutoSizer from "react-virtualized-auto-sizer";
@@ -129,7 +128,7 @@ export const FileList: React.FC<{
 
   const handleRevealLocation = () => {
     if (menuItem) {
-      shell.showItemInFolder(files[menuItem.index].header.fullPath);
+      window.electron.shell.showItemInFolder(files[menuItem.index].header.fullPath);
     }
     handleClose();
   };

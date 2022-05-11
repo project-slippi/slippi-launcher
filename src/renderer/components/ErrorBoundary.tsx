@@ -1,8 +1,7 @@
 import styled from "@emotion/styled";
-import Button from "@material-ui/core/Button";
-import Collapse from "@material-ui/core/Collapse";
-import WarningIcon from "@material-ui/icons/Warning";
-import { isDevelopment } from "common/constants";
+import WarningIcon from "@mui/icons-material/Warning";
+import Button from "@mui/material/Button";
+import Collapse from "@mui/material/Collapse";
 import React from "react";
 
 const StackTraceContainer = styled.div`
@@ -20,7 +19,7 @@ interface ErrorBoundaryState {
 }
 
 export class ErrorBoundary extends React.Component<any, ErrorBoundaryState> {
-  public constructor(props: any) {
+  constructor(props: any) {
     super(props);
     this.state = {
       hasError: false,
@@ -51,7 +50,7 @@ export class ErrorBoundary extends React.Component<any, ErrorBoundaryState> {
           <WarningIcon />
           <span style={{ marginLeft: 10 }}>Uh oh... Something went wrong!</span>
         </h2>
-        {isDevelopment && this.state.errorInfo !== null && (
+        {window.electron.common.isDevelopment && this.state.errorInfo !== null && (
           <div>
             <Button onClick={() => this.setState({ showStackTrace: !this.state.showStackTrace })} size="small">
               Toggle stack trace

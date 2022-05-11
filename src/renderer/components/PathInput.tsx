@@ -1,9 +1,9 @@
 import styled from "@emotion/styled";
-import Button from "@material-ui/core/Button";
-import InputBase from "@material-ui/core/InputBase";
-import Paper from "@material-ui/core/Paper";
-import Tooltip from "@material-ui/core/Tooltip";
-import { OpenDialogOptions, remote } from "electron";
+import Button from "@mui/material/Button";
+import InputBase from "@mui/material/InputBase";
+import Paper from "@mui/material/Paper";
+import Tooltip from "@mui/material/Tooltip";
+import type { OpenDialogOptions } from "electron";
 import React from "react";
 
 export interface PathInputProps {
@@ -19,7 +19,7 @@ export interface PathInputProps {
 export const PathInput = React.forwardRef<HTMLInputElement, PathInputProps>((props, ref) => {
   const { value, placeholder, endAdornment, onSelect, options, disabled, tooltipText } = props;
   const onClick = async () => {
-    const result = await remote.dialog.showOpenDialog({ properties: ["openFile"], ...options });
+    const result = await window.electron.common.showOpenDialog({ properties: ["openFile"], ...options });
     const res = result.filePaths;
     if (result.canceled || res.length === 0) {
       return;
@@ -50,7 +50,6 @@ const InputContainer = styled(Paper)`
   width: 400;
   flex: 1;
   margin-right: 10px;
-  background-color: rgba(0, 0, 0, 0.7);
 `;
 
 const CustomInput = styled(InputBase)`

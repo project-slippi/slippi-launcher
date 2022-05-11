@@ -2,9 +2,11 @@ import { SlpFileWriter, SlpFileWriterEvent } from "@slippi/slippi-js";
 import { EventEmitter } from "events";
 import * as fs from "fs-extra";
 import _ from "lodash";
-import { client as WebSocketClient, connection, IMessage } from "websocket";
+import type { connection, Message } from "websocket";
+import { client as WebSocketClient } from "websocket";
 
-import { BroadcasterItem, SpectateEvent } from "./types";
+import type { BroadcasterItem } from "./types";
+import { SpectateEvent } from "./types";
 
 const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
 
@@ -30,7 +32,7 @@ export class SpectateManager extends EventEmitter {
   private broadcastInfo: Record<string, BroadcastInfo> = {};
   private wsConnection: connection | null = null;
 
-  public constructor() {
+  constructor() {
     super();
   }
 
@@ -143,7 +145,7 @@ export class SpectateManager extends EventEmitter {
           }
         });
 
-        connection.on("message", (message: IMessage) => {
+        connection.on("message", (message: Message) => {
           if (message.type !== "utf8") {
             return;
           }

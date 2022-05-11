@@ -1,16 +1,13 @@
-import { ipc_installUpdate } from "common/ipc";
-import { useToasts } from "react-toast-notifications";
+import { useToasts } from "@/lib/hooks/useToasts";
 
 export const useInstallAppUpdate = () => {
-  const { addToast } = useToasts();
+  const { showError } = useToasts();
 
   const installAppUpdate = async () => {
     try {
-      await ipc_installUpdate.renderer!.trigger({});
+      await window.electron.common.installAppUpdate();
     } catch (err) {
-      addToast(err.message ?? JSON.stringify(err), {
-        appearance: "error",
-      });
+      showError(err);
     }
   };
 

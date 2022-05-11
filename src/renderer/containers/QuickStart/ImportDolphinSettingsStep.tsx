@@ -1,22 +1,22 @@
-/** @jsx jsx */
 import { DolphinLaunchType } from "@dolphin/types";
-import { css, jsx } from "@emotion/react";
-import Box from "@material-ui/core/Box";
-import Button from "@material-ui/core/Button";
-import Container from "@material-ui/core/Container";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import { isMac } from "common/constants";
-import { ipc_deleteDesktopAppPath } from "common/ipc";
+import { css } from "@emotion/react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import FormHelperText from "@mui/material/FormHelperText";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useToasts } from "react-toast-notifications";
 
 import { Checkbox } from "@/components/FormInputs/Checkbox";
 import { PathInput } from "@/components/PathInput";
-import { useDolphin } from "@/lib/hooks/useDolphin";
+import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { useDesktopApp } from "@/lib/hooks/useQuickStart";
+import { useToasts } from "@/lib/hooks/useToasts";
+import { useServices } from "@/services";
 
 import { QuickStartHeader } from "./QuickStartHeader";
+
+const isMac = window.electron.common.isMac;
 
 type FormValues = {
   netplayPath: string;
@@ -27,8 +27,9 @@ type FormValues = {
 export const ImportDolphinSettingsStep: React.FC = () => {
   const setExists = useDesktopApp((store) => store.setExists);
   const desktopAppDolphinPath = useDesktopApp((store) => store.dolphinPath);
-  const { addToast } = useToasts();
-  const { importDolphin } = useDolphin();
+  const { showError } = useToasts();
+  const { dolphinService } = useServices();
+  const { importDolphin } = useDolphinActions(dolphinService);
 
   const migrateDolphin = async (values: FormValues) => {
     if (values.shouldImportNetplay) {
@@ -43,7 +44,7 @@ export const ImportDolphinSettingsStep: React.FC = () => {
 
   const finishMigration = async () => {
     // delete desktop app path
-    await ipc_deleteDesktopAppPath.renderer!.trigger({});
+    await window.electron.common.deleteDesktopAppPath();
     setExists(false);
   };
 
@@ -60,10 +61,8 @@ export const ImportDolphinSettingsStep: React.FC = () => {
   const migrateNetplay = watch("shouldImportNetplay");
   const migratePlayback = watch("shouldImportPlayback");
 
-  const handleError = (err: any) => addToast(err.message ?? JSON.stringify(err), { appearance: "error" });
-
   const onFormSubmit = handleSubmit((values) => {
-    migrateDolphin(values).catch(handleError);
+    migrateDolphin(values).catch(showError);
   });
 
   const extension = isMac ? "app" : "exe";
@@ -151,7 +150,7 @@ export const ImportDolphinSettingsStep: React.FC = () => {
               </Button>
               <Button
                 color="secondary"
-                onClick={() => finishMigration().catch(handleError)}
+                onClick={() => finishMigration().catch(showError)}
                 css={css`
                   text-transform: initial;
                   margin-top: 10px;

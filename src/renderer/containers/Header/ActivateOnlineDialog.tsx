@@ -1,13 +1,13 @@
 import styled from "@emotion/styled";
-import Dialog from "@material-ui/core/Dialog";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import { useTheme } from "@material-ui/core/styles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import React from "react";
-import { useToasts } from "react-toast-notifications";
 
-import { useAccount } from "@/lib/hooks/useAccount";
+import { usePlayKey } from "@/lib/hooks/useAccount";
+import { useToasts } from "@/lib/hooks/useToasts";
 
 import { ActivateOnlineForm } from "../ActivateOnlineForm";
 
@@ -19,30 +19,25 @@ export interface ActivateOnlineDialogProps {
 
 export const ActivateOnlineDialog: React.FC<ActivateOnlineDialogProps> = ({ open, onClose, onSubmit }) => {
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
-  const refreshPlayKey = useAccount((store) => store.refreshPlayKey);
-  const { addToast } = useToasts();
+  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const refreshPlayKey = usePlayKey();
+  const { showError } = useToasts();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     refreshPlayKey()
       .then(() => {
         onClose();
         onSubmit();
       })
-      .catch((err) => {
-        addToast(err.message, { apperance: "error" });
-      });
+      .catch(showError);
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth={true} fullScreen={fullScreen} disableBackdropClick={false}>
-      <form onSubmit={handleSubmit}>
-        <StyledDialogTitle>Choose a connect code</StyledDialogTitle>
-        <DialogContent style={{ display: "flex", paddingBottom: 30 }}>
-          <ActivateOnlineForm />
-        </DialogContent>
-      </form>
+    <Dialog open={open} onClose={onClose} fullWidth={true} fullScreen={fullScreen}>
+      <StyledDialogTitle>Choose a connect code</StyledDialogTitle>
+      <DialogContent style={{ display: "flex", paddingBottom: 30 }}>
+        <ActivateOnlineForm onSubmit={handleSubmit} />
+      </DialogContent>
     </Dialog>
   );
 };
