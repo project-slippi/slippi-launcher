@@ -6,12 +6,8 @@ import dmg from "dmg";
 import * as fs from "fs-extra";
 
 export async function extractDmg(filename: string, destination: string): Promise<string[]> {
-  if (typeof filename !== "string" || !filename.endsWith(".dmg")) {
-    throw new TypeError(`Expected the path of a dmg file, got ${typeof filename}`);
-  }
-
-  if (destination && typeof destination !== "string") {
-    throw new TypeError(`Expected the destination to be a string, got ${typeof destination}`);
+  if (!filename.endsWith(".dmg")) {
+    throw new Error(`Expected a dmg file, got ${filename}`);
   }
 
   const mountPath = await mountDmg(filename);
