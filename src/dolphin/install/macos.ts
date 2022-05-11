@@ -22,7 +22,7 @@ export async function installDolphinOnMac({
   }
 
   log(`Extracting to: ${destinationFolder}`);
-  extractDmg(assetPath, destinationFolder);
+  await extractDmg(assetPath, destinationFolder);
   const files = await fs.readdir(destinationFolder);
   await Promise.all(
     files

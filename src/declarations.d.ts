@@ -11,3 +11,10 @@ declare module "raw-loader!*.md" {
   const content: string;
   export default content;
 }
+
+declare module "extract-dmg" {
+  // The included typings for extract-dmg are wrong!!
+  // It's actually an async function that needs awaiting so let's fix the typing ourselves.
+  declare async function extractDmg(filename: string, destination?: string): Promise<string[]>;
+  export default extractDmg;
+}
