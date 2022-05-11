@@ -187,7 +187,9 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => {
     removeFiles: (filePaths: string[]) => {
       set((state) =>
         produce(state, (draft) => {
-          draft.files = draft.files.filter(({ fullPath }) => !filePaths.includes(fullPath));
+          for (const filePath of filePaths) {
+            draft.files.delete(filePath);
+          }
         }),
       );
     },
@@ -221,7 +223,9 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => {
         set({ loading: true, progress: null });
         try {
           const result = await handleReplayFolderLoading(folderToLoad);
-          const newFiles = new Map(result.files.map((header) => [header.fullPath, { header: header, details: null }]));
+          const newFiles = new Map(
+            result.files.map((header: FileHeader) => [header.fullPath, { header: header, details: null }]),
+          );
           set({
             scrollRowItem: 0,
             files: immutableMap(newFiles),
@@ -301,7 +305,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => {
   };
 });
 
-const handleReplayFolderLoading = async (folderPath: string): Promise<FileLoadResult> => {
+const handleReplayFolderLoading = async (folderPath: string): Promise<FolderLoadResult> => {
   return window.electron.replays.loadReplayFolder(folderPath);
 };
 

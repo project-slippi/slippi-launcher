@@ -1,7 +1,15 @@
 import type { StatsType } from "@slippi/slippi-js";
 import { _, makeEndpoint } from "utils/ipc";
 
-import type { FileHeader, FileLoadComplete, FileLoadError, FileResult, FolderResult, Progress } from "./types";
+import type {
+  FileHeader,
+  FileLoadComplete,
+  FileLoadError,
+  FileResult,
+  FolderLoadResult,
+  FolderResult,
+  Progress,
+} from "./types";
 
 // Handlers
 

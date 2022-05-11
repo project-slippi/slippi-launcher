@@ -125,7 +125,7 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
     return <LoadingScreen message="Loading..." />;
   }
 
-  const { settings } = file;
+  const { settings } = file.details;
   const stageImage = settings.stageId !== null ? getStageImage(settings.stageId) : undefined;
 
   return (

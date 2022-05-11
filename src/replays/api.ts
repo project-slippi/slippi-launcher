@@ -10,7 +10,7 @@ import {
   ipc_selectTreeFolder,
   ipc_statsPageRequestedEvent,
 } from "./ipc";
-import type { FileLoadComplete, FileLoadError, Progress } from "./types";
+import type { FileHeader, FileLoadComplete, FileLoadError, Progress } from "./types";
 
 export default {
   async loadReplayFolder(folderPath: string) {

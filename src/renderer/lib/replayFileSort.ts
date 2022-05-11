@@ -86,7 +86,7 @@ export const replayFileFilter =
 
     // First try to match names
     const playerNamesMatch = (): boolean => {
-      const matchable = extractAllPlayerNames(details.settings, file.metadata);
+      const matchable = extractAllPlayerNames(details.settings, details.metadata);
       if (!filterOptions.searchText) {
         return true;
       } else if (matchable.length === 0) {
