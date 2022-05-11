@@ -47,14 +47,10 @@ export async function download(options: {
           }
 
           const file = fs.createWriteStream(destinationFile, { flags: "wx" });
-          file
-            .on("close", () => {
-              resolve();
-            })
-            .on("error", (err) => {
-              file.destroy();
-              reject(err);
-            });
+          file.on("error", (err) => {
+            file.destroy();
+            reject(err);
+          });
 
           res
             .on("data", (chunk) => {
@@ -66,6 +62,13 @@ export async function download(options: {
               });
             })
             .on("end", () => {
+              // Only resolve the promise once the file has completely finished writing.
+              // We attach this listener here since calling file.destroy() also triggers the close event.
+              file.on("close", () => {
+                resolve();
+              });
+
+              // Indicate we're done writing
               file.end();
             })
             .on("error", (err) => {
