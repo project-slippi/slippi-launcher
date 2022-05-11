@@ -45,15 +45,28 @@ export async function download(options: {
           if (contentLength) {
             totalBytes = parseInt(contentLength);
           }
+
           const file = fs.createWriteStream(destinationFile, { flags: "wx" });
+          file
+            .on("close", () => {
+              resolve();
+            })
+            .on("error", (err) => {
+              file.destroy();
+              reject(err);
+            });
+
           res
             .on("data", (chunk) => {
-              file.write(chunk);
-              transferredBytes += chunk.length;
-              onProgress && onProgress({ transferredBytes, totalBytes });
+              file.write(chunk, (err) => {
+                if (!err) {
+                  transferredBytes += chunk.length;
+                  onProgress && onProgress({ transferredBytes, totalBytes });
+                }
+              });
             })
             .on("end", () => {
-              file.end(() => resolve());
+              file.end();
             })
             .on("error", (err) => {
               file.destroy();
