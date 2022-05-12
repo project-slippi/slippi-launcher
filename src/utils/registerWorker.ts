@@ -1,4 +1,5 @@
 import { ipc_fileLoadCompleteEvent, ipc_fileLoadErrorEvent } from "@replays/ipc";
+import type { FileLoadComplete, FileLoadError } from "@replays/types";
 import { app } from "electron";
 import log from "electron-log";
 import type { Worker } from "threads";
@@ -26,10 +27,10 @@ export async function registerWorker<T extends WorkerMethods>(worker: Worker): P
     app.on("quit", terminateWorker);
 
     // Set up the file load completion handlers in main.
-    registeredWorker.getFileLoadCompleteObservable().subscribe((fileLoadComplete) => {
+    registeredWorker.getFileLoadCompleteObservable().subscribe((fileLoadComplete: FileLoadComplete) => {
       ipc_fileLoadCompleteEvent.main!.trigger(fileLoadComplete).catch(console.warn);
     });
-    registeredWorker.getFileLoadErrorObservable().subscribe((fileLoadError) => {
+    registeredWorker.getFileLoadErrorObservable().subscribe((fileLoadError: FileLoadError) => {
       ipc_fileLoadErrorEvent.main!.trigger(fileLoadError).catch(console.warn);
     });
 

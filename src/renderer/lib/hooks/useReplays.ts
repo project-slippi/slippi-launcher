@@ -1,4 +1,12 @@
-import type { FileLoadComplete, FileLoadError, FileResult, FolderResult, Progress } from "@replays/types";
+import type {
+  FileHeader,
+  FileLoadComplete,
+  FileLoadError,
+  FileResult,
+  FolderLoadResult,
+  FolderResult,
+  Progress,
+} from "@replays/types";
 import { produce, setAutoFreeze } from "immer";
 import { Map as immutableMap } from "immutable";
 import { useState } from "react";
@@ -223,7 +231,7 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => {
         set({ loading: true, progress: null });
         try {
           const result = await handleReplayFolderLoading(folderToLoad);
-          const newFiles = new Map(
+          const newFiles = new Map<string, FileResult>(
             result.files.map((header: FileHeader) => [header.fullPath, { header: header, details: null }]),
           );
           set({

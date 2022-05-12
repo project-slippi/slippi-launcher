@@ -1,9 +1,7 @@
 import type { GameStartType, MetadataType } from "@slippi/slippi-js";
 import { SlippiGame } from "@slippi/slippi-js";
-import * as fs from "fs-extra";
 import _ from "lodash";
 import moment from "moment";
-import path from "path";
 
 import type { FileDetails, FileHeader, FileLoadComplete, FileLoadError } from "./types";
 
@@ -28,7 +26,7 @@ export async function loadFiles(
     } catch (err) {
       errorCallback({
         path: header.fullPath,
-        error: err,
+        error: err as Error,
         batcherId: batcherId,
       });
     }
@@ -87,10 +85,7 @@ function convertToDateAndTime(dateTimeString: moment.MomentInput): moment.Moment
   return null;
 }
 
-function fileToDateAndTime(
-  dateTimeString: string | undefined | null,
-  fileHeader: FileHeader,
-): Promise<moment.Moment | null> {
+function fileToDateAndTime(dateTimeString: string | undefined | null, fileHeader: FileHeader): moment.Moment | null {
   let startAt = convertToDateAndTime(dateTimeString);
   if (startAt) {
     return startAt;
