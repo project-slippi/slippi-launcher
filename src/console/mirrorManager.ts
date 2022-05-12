@@ -36,7 +36,13 @@ export class MirrorManager extends EventEmitter {
 
     this.emit(MirrorEvent.LOG, "Setting up mirror");
 
-    await fs.ensureDir(config.folderPath);
+    try {
+      await fs.ensureDir(config.folderPath);
+    } catch (err) {
+      if (err) {
+        this.emit(MirrorEvent.ERROR, err);
+      }
+    }
 
     const fileWriter = new SlpFileWriter({ folderPath: config.folderPath, consoleNickname: "unknown" });
     fileWriter.on(SlpFileWriterEvent.NEW_FILE, (currFilePath) => {
