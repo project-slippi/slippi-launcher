@@ -12,15 +12,8 @@ export async function extractDmg(filename: string, destination: string): Promise
 
   const mountPath = await mountDmg(filename);
   const files = await fs.readdir(mountPath);
-
-  if (destination) {
-    await fs.copy(mountPath, destination, {
-      recursive: true,
-    });
-  }
-
+  await fs.copy(mountPath, destination, { recursive: true });
   await unmountDmg(mountPath);
-
   return files;
 }
 
