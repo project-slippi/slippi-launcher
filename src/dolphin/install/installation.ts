@@ -87,13 +87,22 @@ export class DolphinInstallation {
     onComplete: () => void;
   }): Promise<void> {
     const type = this.dolphinLaunchType;
-    const dolphinDownloadInfo = await fetchLatestVersion(type);
+    let dolphinDownloadInfo: DolphinVersionResponse | undefined = undefined;
 
     try {
       await this.findDolphinExecutable();
       log.info(`Found existing ${type} Dolphin executable.`);
       log.info(`Checking if we need to update ${type} Dolphin`);
-      const latestVersion = dolphinDownloadInfo.version;
+
+      try {
+        dolphinDownloadInfo = await fetchLatestVersion(type);
+      } catch (err) {
+        log.error(`Failed to fetch latest Dolphin version: ${err}`);
+        onComplete();
+        return;
+      }
+
+      const latestVersion = dolphinDownloadInfo?.version ?? "9.9.9";
       const isOutdated = await this._isOutOfDate(latestVersion);
       if (!isOutdated) {
         log.info("No update found...");
@@ -128,7 +137,12 @@ export class DolphinInstallation {
     const type = this.dolphinLaunchType;
     let dolphinDownloadInfo = releaseInfo;
     if (!dolphinDownloadInfo) {
-      dolphinDownloadInfo = await fetchLatestVersion(type);
+      try {
+        dolphinDownloadInfo = await fetchLatestVersion(type);
+      } catch (err) {
+        log.error(`Failed to fetch latest Dolphin version: ${err}`);
+        return;
+      }
     }
 
     const downloadUrl = dolphinDownloadInfo.downloadUrls[process.platform];
