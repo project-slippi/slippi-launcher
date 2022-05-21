@@ -11,6 +11,7 @@ import { Console } from "@/containers/Console";
 import { Header } from "@/containers/Header";
 import { LoginDialog } from "@/containers/Header/LoginDialog";
 import type { MenuItem } from "@/containers/Header/MainMenu";
+import { PatchNotesDialog } from "@/containers/Header/PatchNotesDialog";
 import { ReplayBrowserPage } from "@/containers/ReplayBrowser/ReplayBrowserPage";
 import { SpectatePage } from "@/containers/SpectatePage";
 import { usePageNavigationShortcuts } from "@/lib/hooks/useShortcuts";
@@ -80,6 +81,7 @@ export const MainView: React.FC = () => {
         </Routes>
       </div>
       <LoginDialog />
+      <PatchNotesDialog />
       <PersistentNotification />
     </div>
   );

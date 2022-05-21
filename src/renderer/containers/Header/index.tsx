@@ -15,6 +15,7 @@ import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
 import { useAccount } from "@/lib/hooks/useAccount";
 import { useLoginModal } from "@/lib/hooks/useLoginModal";
+import { usePatchNotesModal } from "@/lib/hooks/usePatchNotesModal";
 import { useSettings } from "@/lib/hooks/useSettings";
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
 import { useToasts } from "@/lib/hooks/useToasts";
@@ -44,6 +45,7 @@ export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
   const [startGameModalOpen, setStartGameModalOpen] = React.useState(false);
   const [activateOnlineModal, setActivateOnlineModal] = React.useState(false);
   const openModal = useLoginModal((store) => store.openModal);
+  const openPatchNotesModal = usePatchNotesModal((store) => store.openPatchNotesModal);
   const { open } = useSettingsModal();
   const currentUser = useAccount((store) => store.user);
   const playKey = useAccount((store) => store.playKey);
@@ -127,6 +129,9 @@ export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
             Log in
           </Button>
         )}
+        <Button onClick={openPatchNotesModal} sx={{ color: "white" }}>
+          Patch Notes
+        </Button>
         <Tooltip title="Settings">
           <IconButton
             onClick={() => open()}
