@@ -102,8 +102,8 @@ export class DolphinInstallation {
         return;
       }
 
-      const latestVersion = dolphinDownloadInfo?.version ?? "9.9.9";
-      const isOutdated = await this._isOutOfDate(latestVersion);
+      const latestVersion = dolphinDownloadInfo?.version;
+      const isOutdated = !latestVersion || (await this._isOutOfDate(latestVersion));
       if (!isOutdated) {
         log.info("No update found...");
         onComplete();
@@ -141,7 +141,7 @@ export class DolphinInstallation {
         dolphinDownloadInfo = await fetchLatestVersion(type);
       } catch (err) {
         log.error(`Failed to fetch latest Dolphin version: ${err}`);
-        return;
+        throw new Error(`Failed to fetch latest Dolphin version`);
       }
     }
 
