@@ -137,12 +137,7 @@ export class DolphinInstallation {
     const type = this.dolphinLaunchType;
     let dolphinDownloadInfo = releaseInfo;
     if (!dolphinDownloadInfo) {
-      try {
-        dolphinDownloadInfo = await fetchLatestVersion(type);
-      } catch (err) {
-        log.error(`Failed to fetch latest Dolphin version: ${err}`);
-        throw new Error(`Failed to fetch latest Dolphin version`);
-      }
+      dolphinDownloadInfo = await fetchLatestVersion(type);
     }
 
     const downloadUrl = dolphinDownloadInfo.downloadUrls[process.platform];
