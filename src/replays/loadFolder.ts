@@ -3,10 +3,11 @@ import * as fs from "fs-extra";
 import path from "path";
 
 import { worker } from "./db.worker.interface";
+import type { ReplayWorker } from "./replays.worker.interface";
 import { createReplayWorker } from "./replays.worker.interface";
 import type { FileLoadResult, FileResult } from "./types";
 
-const replayBrowserWorker = createReplayWorker();
+let replayBrowserWorker: ReplayWorker | undefined;
 
 const filterReplays = async (folder: string, loadedFiles: string[]) => {
   const dirfiles = await fs.readdir(folder, { withFileTypes: true });
@@ -25,7 +26,10 @@ const loadReplays = async (
   progressCallback: (count: number) => Promise<void>,
 ): Promise<{ files: FileResult[]; totalBytes: number }> => {
   let count = 0;
-  const w = await replayBrowserWorker;
+  if (!replayBrowserWorker) {
+    replayBrowserWorker = await createReplayWorker();
+  }
+  const w = replayBrowserWorker;
   const fileSizesPromise = Promise.all(
     files.map(async (fullPath): Promise<number> => {
       const stat = await fs.stat(fullPath);
