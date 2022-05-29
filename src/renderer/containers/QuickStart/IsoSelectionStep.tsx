@@ -1,19 +1,18 @@
-import Box from "@material-ui/core/Box";
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import { useTheme } from "@material-ui/core/styles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { colors } from "common/colors";
-import { checkValidIso } from "common/ipc";
-import React from "react";
+import { colors } from "@common/colors";
+import { IsoValidity } from "@common/types";
+import { css } from "@emotion/react";
+import styled from "@emotion/styled";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import styled from "styled-components";
+import { useQuery } from "react-query";
 
+import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { useIsoPath } from "@/lib/hooks/useSettings";
+import { useToasts } from "@/lib/hooks/useToasts";
 import { hasBorder } from "@/styles/hasBorder";
 
 import { QuickStartHeader } from "./QuickStartHeader";
@@ -47,17 +46,26 @@ const Container = styled.div`
   transition: border 0.24s ease-in-out;
   p {
     text-align: center;
-    text-transform: uppercase;
-    font-weight: bold;
+    font-weight: 500;
   }
 `;
 
 export const IsoSelectionStep: React.FC = () => {
+  const { showError } = useToasts();
   const [tempIsoPath, setTempIsoPath] = React.useState("");
-  const verification = checkValidIso.renderer!.useValue({ path: tempIsoPath }, { path: tempIsoPath, valid: false });
+  const validIsoPathQuery = useQuery(["validIsoPathQuery", tempIsoPath], async () => {
+    if (!tempIsoPath) {
+      return {
+        path: tempIsoPath,
+        valid: IsoValidity.UNVALIDATED,
+      };
+    }
+    return window.electron.common.checkValidIso(tempIsoPath);
+  });
+
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
-  const loading = verification.isUpdating;
+  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const loading = validIsoPathQuery.isLoading;
   const [, setIsoPath] = useIsoPath();
 
   const onDrop = (acceptedFiles: File[]) => {
@@ -66,56 +74,73 @@ export const IsoSelectionStep: React.FC = () => {
     }
 
     const filePath = acceptedFiles[0].path;
+    if (filePath.endsWith(".7z")) {
+      showError("7z files must be uncompressed to be used in Dolphin.");
+      return;
+    }
+
     setTempIsoPath(filePath);
   };
-  const validIsoPath = verification.value.valid;
+  const validIsoPath = validIsoPathQuery.data?.valid ?? IsoValidity.UNVALIDATED;
 
   const { open, getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
-    accept: ".iso",
+    accept: [".iso", ".gcm", ".gcz", ".7z"],
     onDrop: onDrop,
     multiple: false,
     noClick: true,
     noKeyboard: true,
   });
-  const invalidIso = Boolean(tempIsoPath) && !loading && !validIsoPath;
+
+  const invalidIso = Boolean(tempIsoPath) && !loading && validIsoPath === IsoValidity.INVALID;
+  const unknownIso = Boolean(tempIsoPath) && !loading && validIsoPath === IsoValidity.UNKNOWN;
   const handleClose = () => setTempIsoPath("");
-  const onConfirm = () => setIsoPath(tempIsoPath);
+  const onConfirm = useCallback(() => {
+    setIsoPath(tempIsoPath).catch(showError);
+  }, [showError, setIsoPath, tempIsoPath]);
+
+  React.useEffect(() => {
+    if (invalidIso) {
+      showError("Provided ISO will not work with Slippi Online. Please provide an NTSC 1.02 ISO.");
+    }
+  }, [showError, invalidIso]);
 
   React.useEffect(() => {
     // Auto-confirm ISO if it's valid
-    if (verification.value.valid) {
+    if (validIsoPath === IsoValidity.VALID) {
       onConfirm();
     }
-  }, [verification.value.valid]);
+  }, [onConfirm, validIsoPath]);
 
   return (
-    <Box display="flex" flexDirection="column" flexGrow="1">
-      <QuickStartHeader>Select Melee ISO</QuickStartHeader>
+    <Box display="flex" flexDirection="column" flexGrow="1" maxWidth="800px" marginLeft="auto" marginRight="auto">
+      <div
+        css={css`
+          margin-bottom: 20px;
+        `}
+      >
+        <QuickStartHeader>Select Melee ISO</QuickStartHeader>
+        <div>This application uses an NTSC 1.02 game backup.</div>
+      </div>
       <Container {...getRootProps({ isDragActive, isDragAccept, isDragReject })}>
         <input {...getInputProps()} />
         {!loading && (
-          <Button color="primary" variant="contained" onClick={open} style={{ textTransform: "none" }}>
+          <Button color="primary" variant="contained" onClick={open}>
             Select
           </Button>
         )}
-        <p>{loading ? "Verifying ISO..." : "Or drag and drop here"}</p>
+        <p>{loading ? "Verifying ISO..." : "or drag and drop here"}</p>
       </Container>
-      <Dialog fullScreen={fullScreen} open={invalidIso} onClose={handleClose}>
-        <DialogTitle>Invalid ISO</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Your ISO is unsupported. Using this ISO will likely cause issues and no support will be given.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="secondary">
-            Cancel
-          </Button>
-          <Button onClick={onConfirm} color="primary">
-            Use anyway
-          </Button>
-        </DialogActions>
-      </Dialog>
+
+      <ConfirmationModal
+        fullWidth={fullScreen}
+        open={unknownIso}
+        onClose={handleClose}
+        onSubmit={onConfirm}
+        confirmText="Use anyway"
+        title="Unknown ISO"
+      >
+        Your ISO is unsupported. Using this ISO may cause issues and no support will be given.
+      </ConfirmationModal>
     </Box>
   );
 };

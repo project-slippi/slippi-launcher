@@ -1,9 +1,12 @@
+import { exists } from "@common/exists";
 import * as fs from "fs-extra";
 import path from "path";
 
 import { worker } from "./dbWorkerInterface";
-import { FileLoadResult, FileResult } from "./types";
-import { worker as replayBrowserWorker } from "./workerInterface";
+import { createReplayWorker } from "./replays.worker.interface";
+import type { FileLoadResult, FileResult } from "./types";
+
+const replayBrowserWorker = createReplayWorker();
 
 const filterReplays = async (folder: string, loadedFiles: string[]) => {
   const dirfiles = await fs.readdir(folder, { withFileTypes: true });
@@ -20,28 +23,42 @@ const filterReplays = async (folder: string, loadedFiles: string[]) => {
 const loadReplays = async (
   files: string[],
   progressCallback: (count: number) => Promise<void>,
-): Promise<FileResult[]> => {
+): Promise<{ files: FileResult[]; totalBytes: number }> => {
   let count = 0;
   const w = await replayBrowserWorker;
-  const parsed = await Promise.all(
+  const fileSizesPromise = Promise.all(
+    files.map(async (fullPath): Promise<number> => {
+      const stat = await fs.stat(fullPath);
+      return stat.size;
+    }),
+  );
+
+  const slpGamesPromise = Promise.all(
     files.map(async (file) => {
       const res = await w.loadReplayFile(file);
       await progressCallback(count++);
       return res;
     }),
   );
-  return parsed.filter((f) => f) as FileResult[];
+
+  const [slpGames, fileSizes] = await Promise.all([slpGamesPromise, fileSizesPromise]);
+
+  return {
+    files: slpGames.filter(exists),
+    totalBytes: fileSizes.reduce((acc, size) => acc + size, 0),
+  };
 };
 
 export async function loadFolder(
   folder: string,
-  callback?: (current: number, total: number) => Promise<void>,
+  callback?: (current: number, total: number) => void,
 ): Promise<FileLoadResult> {
   // If the folder does not exist, return empty
   if (!(await fs.pathExists(folder))) {
     return {
       files: [],
       fileErrorCount: 0,
+      totalBytes: 0,
     };
   }
 
@@ -57,18 +74,18 @@ export async function loadFolder(
     console.log(`deleted ${toDelete.length} replays from the db`);
   }
   let fileErrorCount = 0;
+  let totalBytes = 0;
   if (toLoad.length > 0) {
     const parsed = await loadReplays(toLoad, async (count) => {
-      if (callback) {
-        await callback(count, toLoad.length);
-      }
+      callback && callback(count, toLoad.length);
     });
-    fileErrorCount = toLoad.length - parsed.length;
-    await w.saveReplays(parsed);
+    fileErrorCount = toLoad.length - parsed.files.length;
+    totalBytes = parsed.totalBytes;
+    await w.saveReplays(parsed.files);
   }
 
   const files = await w.getFolderReplays(folder);
   console.log(`loaded ${files.length} replays in ${folder} from the db`);
 
-  return { files, fileErrorCount };
+  return { files, fileErrorCount, totalBytes };
 }

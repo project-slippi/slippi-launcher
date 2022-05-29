@@ -1,33 +1,22 @@
-import Box from "@material-ui/core/Box";
+import Box from "@mui/material/Box";
 import React from "react";
-import styled from "styled-components";
 
 import { QuickStart } from "@/containers/QuickStart";
-import { useApp } from "@/store/app";
-import slippiLogo from "@/styles/images/slippi-logo.svg";
+import { useQuickStart } from "@/lib/hooks/useQuickStart";
+import { withSlippiBackground } from "@/styles/withSlippiBackground";
 
-const OuterBox = styled(Box)`
-  position: relative;
-  &::before {
-    content: "";
-    background-image: url("${slippiLogo}");
-    background-size: 50%;
-    background-position: 110% 120%;
-    background-repeat: no-repeat;
-    position: absolute;
-    top: 0;
-    height: 100%;
-    width: 100%;
-    opacity: 0.2;
-    z-index: -1;
-  }
-`;
+const isDevelopment = window.electron.common.isDevelopment;
 
 export const LandingView: React.FC = () => {
-  const user = useApp((store) => store.user);
+  const { allSteps, currentStep, nextStep, prevStep } = useQuickStart();
   return (
-    <OuterBox display="flex" style={{ height: "100%", width: "100%" }}>
-      <QuickStart user={user} />
-    </OuterBox>
+    <Box css={withSlippiBackground} display="flex" style={{ height: "100%", width: "100%" }}>
+      <QuickStart
+        allSteps={allSteps}
+        currentStep={currentStep}
+        onNext={isDevelopment ? nextStep : undefined}
+        onPrev={isDevelopment ? prevStep : undefined}
+      />
+    </Box>
   );
 };

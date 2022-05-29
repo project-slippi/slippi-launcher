@@ -5,8 +5,8 @@ import merge from "lodash/merge";
 import set from "lodash/set";
 
 import { defaultAppSettings } from "./defaultSettings";
-import { settingsUpdated } from "./ipc";
-import { AppSettings } from "./types";
+import { ipc_settingsUpdatedEvent } from "./ipc";
+import type { AppSettings, StoredConnection } from "./types";
 
 electronSettings.configure({
   fileName: "Settings",
@@ -17,7 +17,7 @@ export class SettingsManager {
   // This only stores the actually modified settings
   private appSettings: Partial<AppSettings>;
 
-  public constructor() {
+  constructor() {
     const restoredSettings = electronSettings.getSync() as Partial<AppSettings>;
 
     // If the ISO file no longer exists, don't restore it
@@ -45,6 +45,14 @@ export class SettingsManager {
     }
   }
 
+  public getRootSlpPath(): string {
+    return this.get().settings.rootSlpPath;
+  }
+
+  public getUseMonthlySubfolders(): boolean {
+    return this.get().settings.useMonthlySubfolders;
+  }
+
   public async setIsoPath(isoPath: string | null): Promise<void> {
     await this._set("settings.isoPath", isoPath);
   }
@@ -53,8 +61,16 @@ export class SettingsManager {
     await this._set("settings.rootSlpPath", slpPath);
   }
 
+  public async setUseMonthlySubfolders(toggle: boolean): Promise<void> {
+    await this._set("settings.useMonthlySubfolders", toggle);
+  }
+
   public async setSpectateSlpPath(slpPath: string): Promise<void> {
     await this._set("settings.spectateSlpPath", slpPath);
+  }
+
+  public async setExtraSlpPaths(slpPaths: string[]): Promise<void> {
+    await this._set("settings.extraSlpPaths", slpPaths);
   }
 
   public async setNetplayDolphinPath(dolphinPath: string): Promise<void> {
@@ -65,11 +81,44 @@ export class SettingsManager {
     await this._set("settings.playbackDolphinPath", dolphinPath);
   }
 
+  public async setLaunchMeleeOnPlay(launchMelee: boolean): Promise<void> {
+    await this._set("settings.launchMeleeOnPlay", launchMelee);
+  }
+
+  public async setAutoUpdateLauncher(autoUpdateLauncher: boolean): Promise<void> {
+    await this._set("settings.autoUpdateLauncher", autoUpdateLauncher);
+  }
+
+  public async addConsoleConnection(conn: Omit<StoredConnection, "id">): Promise<void> {
+    const connections = this.get().connections;
+    // Auto-generate an ID
+    let prevId = 0;
+    if (connections.length > 0) {
+      prevId = Math.max(...connections.map((c) => c.id));
+    }
+    connections.push({ id: prevId + 1, ...conn });
+    await this._set("connections", connections);
+  }
+
+  public async editConsoleConnection(id: number, conn: Omit<StoredConnection, "id">): Promise<void> {
+    const connections = this.get().connections;
+    const index = connections.findIndex((c) => c.id === id);
+    if (index === -1) {
+      throw new Error(`Could not find console connection with id: ${id}`);
+    }
+
+    connections[index] = { id, ...conn };
+    await this._set("connections", connections);
+  }
+
+  public async deleteConsoleConnection(id: number): Promise<void> {
+    const connections = this.get().connections.filter((c) => c.id !== id);
+    await this._set("connections", connections);
+  }
+
   private async _set(objectPath: string, value: any) {
     await electronSettings.set(objectPath, value);
     set(this.appSettings, objectPath, value);
-    await settingsUpdated.main!.trigger(this.get());
+    await ipc_settingsUpdatedEvent.main!.trigger(this.get());
   }
 }
-
-export const settingsManager = new SettingsManager();

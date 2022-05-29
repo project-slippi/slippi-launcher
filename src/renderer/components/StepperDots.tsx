@@ -1,35 +1,46 @@
-import MobileStepper from "@material-ui/core/MobileStepper";
-import { withStyles } from "@material-ui/core/styles";
-import { colors } from "common/colors";
+import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
+import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
+import Button from "@mui/material/Button";
+import MobileStepper from "@mui/material/MobileStepper";
 import React from "react";
-
-const StyledStepper = withStyles({
-  root: {
-    background: "transparent",
-    border: "none",
-    padding: "0",
-    marginTop: "25px",
-  },
-  dotActive: {
-    backgroundColor: colors.greenPrimary,
-  },
-  dots: {
-    margin: "auto auto",
-  },
-})(MobileStepper);
 
 export const StepperDots: React.FC<{
   steps: number;
   activeStep: number;
-}> = ({ steps, activeStep }) => {
+  handleNext?: () => void;
+  handleBack?: () => void;
+}> = ({ steps, activeStep, handleNext, handleBack }) => {
   return (
-    <StyledStepper
+    <MobileStepper
+      sx={{
+        background: "transparent",
+        border: "none",
+        padding: "0",
+        marginTop: "25px",
+        "& .MuiMobileStepper-dots": {
+          margin: "auto auto",
+        },
+      }}
       variant="dots"
       steps={steps}
       position="static"
       activeStep={activeStep}
-      nextButton={null}
-      backButton={null}
+      nextButton={
+        handleBack ? (
+          <Button size="small" onClick={handleNext} disabled={activeStep === steps - 1}>
+            Next
+            <KeyboardArrowRight />
+          </Button>
+        ) : null
+      }
+      backButton={
+        handleBack ? (
+          <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
+            <KeyboardArrowLeft />
+            Back
+          </Button>
+        ) : null
+      }
     />
   );
 };

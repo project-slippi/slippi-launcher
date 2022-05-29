@@ -1,9 +1,11 @@
-import Typography from "@material-ui/core/Typography";
-import { FileResult } from "@replays/types";
-import { StatsType } from "@slippi/slippi-js";
+import styled from "@emotion/styled";
+import Typography from "@mui/material/Typography";
+import type { FileResult } from "@replays/types";
+import type { StatsType } from "@slippi/slippi-js";
 import _ from "lodash";
 import React from "react";
-import styled from "styled-components";
+
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 import { KillTable } from "./KillTable";
 import { OverallTable } from "./OverallTable";
@@ -12,6 +14,7 @@ import { PunishTable } from "./PunishTable";
 export interface GameProfileProps {
   file: FileResult;
   stats: StatsType;
+  onPlay: (options: { path: string; startFrame: number }) => void;
 }
 
 const TableContainer = styled.div`
@@ -33,19 +36,23 @@ const StatSection: React.FC<{
   );
 };
 
-export const GameProfile: React.FC<GameProfileProps> = ({ file, stats }) => {
+export const GameProfile: React.FC<GameProfileProps> = ({ file, stats, onPlay }) => {
+  const [firstPlayer, secondPlayer] = file.settings.players;
+
   return (
     <div style={{ flex: "1", margin: 20 }}>
       <StatSection title="Overall">
-        <OverallTable file={file} stats={stats} />
+        <ErrorBoundary>
+          <OverallTable file={file} stats={stats} />
+        </ErrorBoundary>
       </StatSection>
       <StatSection title="Kills">
-        <KillTable file={file} stats={stats} playerIndex={0} />
-        <KillTable file={file} stats={stats} playerIndex={1} />
+        <KillTable file={file} stats={stats} player={firstPlayer} opp={secondPlayer} onPlay={onPlay} />
+        <KillTable file={file} stats={stats} player={secondPlayer} opp={firstPlayer} onPlay={onPlay} />
       </StatSection>
       <StatSection title="Openings &amp; Conversions">
-        <PunishTable file={file} stats={stats} playerIndex={0} />
-        <PunishTable file={file} stats={stats} playerIndex={1} />
+        <PunishTable file={file} stats={stats} player={firstPlayer} opp={secondPlayer} onPlay={onPlay} />
+        <PunishTable file={file} stats={stats} player={secondPlayer} opp={firstPlayer} onPlay={onPlay} />
       </StatSection>
     </div>
   );

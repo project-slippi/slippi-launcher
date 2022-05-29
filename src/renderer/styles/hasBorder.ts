@@ -1,10 +1,10 @@
-import { css } from "styled-components";
+import { css } from "@emotion/react";
 
 export const hasBorder = ({
   width = 1,
   radius = 0,
   color = "black",
-  linecap = "square", // Can be either "round", "butt", or "square"
+  linecap = "square" as "square" | "round" | "butt",
   dashArray = [10, 50],
   dashOffset = 0,
 }) => {

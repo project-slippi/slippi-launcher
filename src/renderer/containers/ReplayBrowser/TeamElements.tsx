@@ -1,55 +1,18 @@
-import Avatar from "@material-ui/core/Avatar";
-import Badge from "@material-ui/core/Badge";
-import Chip from "@material-ui/core/Chip";
-import { makeStyles } from "@material-ui/core/styles";
-import { GameStartType, MetadataType, PlayerType } from "@slippi/slippi-js";
-import { getPortColor, getTeamColor } from "common/colors";
-import { extractPlayerNames } from "common/matchNames";
+import { css } from "@emotion/react";
+import styled from "@emotion/styled";
+import type { GameStartType, MetadataType } from "@slippi/slippi-js";
 import _ from "lodash";
 import React from "react";
-import styled from "styled-components";
 
-import { getCharacterIcon } from "@/lib/utils";
-
-function getColor(port: number, teamId: number | null) {
-  if (teamId !== null) {
-    return getTeamColor(teamId);
-  }
-  return getPortColor(port);
-}
-
-const useStyles = makeStyles<any, { backgroundColor: string }>({
-  badge: {
-    backgroundColor: (props) => props.backgroundColor,
-  },
-});
-
-interface PlayerIndicatorProps {
-  player: PlayerType;
-  name: string;
-  isTeams?: boolean;
-}
-
-const PlayerIndicator: React.FC<PlayerIndicatorProps> = ({ player, name, isTeams }) => {
-  const charIcon = getCharacterIcon(player.characterId, player.characterColor);
-  const teamId = isTeams ? player.teamId : null;
-  const color = getColor(player.port, teamId);
-  const classes = useStyles({ backgroundColor: color });
-
-  return (
-    <Badge component="div" classes={{ badge: classes.badge }} badgeContent={`P${player.port}`}>
-      <Chip avatar={<Avatar alt="Natacha" src={charIcon} variant="square" />} label={name} />
-    </Badge>
-  );
-};
+import { PlayerIndicator } from "@/components/PlayerIndicator";
+import { extractPlayerNames } from "@/lib/matchNames";
 
 const Outer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-top: 15px;
   & > div {
-    margin-right: 15px;
+    margin-right: 8px;
   }
 `;
 
@@ -57,6 +20,22 @@ export interface TeamElementProps {
   settings: GameStartType;
   metadata: MetadataType | null;
 }
+
+const PlayerCode: React.FC<{ code: string }> = ({ code }) => {
+  const [text, numbers] = code.split("#");
+  return (
+    <React.Fragment>
+      <span>{text}</span>
+      <span
+        css={css`
+          color: rgba(255, 255, 255, 0.6);
+        `}
+      >
+        #{numbers}
+      </span>
+    </React.Fragment>
+  );
+};
 
 export const TeamElements: React.FC<TeamElementProps> = ({ settings, metadata }) => {
   // If this is a teams game, group by teamId, otherwise group players individually
@@ -68,15 +47,12 @@ export const TeamElements: React.FC<TeamElementProps> = ({ settings, metadata })
   const elements: JSX.Element[] = [];
   teams.forEach((team, idx) => {
     team.forEach((player) => {
-      const backupName = player.type === 1 ? "CPU" : "Player";
+      const backupName = player.type === 1 ? "CPU" : `Player ${player.playerIndex + 1}`;
       const names = extractPlayerNames(player.playerIndex, settings, metadata);
       elements.push(
-        <PlayerIndicator
-          key={`player-${player.playerIndex}`}
-          player={player}
-          isTeams={Boolean(settings.isTeams)}
-          name={names.code || names.tag || backupName}
-        />,
+        <PlayerIndicator key={`player-${player.playerIndex}`} player={player} isTeams={Boolean(settings.isTeams)}>
+          {names.code ? <PlayerCode code={names.code} /> : <span>{names.tag || backupName}</span>}
+        </PlayerIndicator>,
       );
     });
 

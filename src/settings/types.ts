@@ -2,8 +2,15 @@ export interface StoredConnection {
   id: number;
   ipAddress: string;
   folderPath: string;
-  isRealTimeMode: boolean;
-  consoleNick: string;
+  isRealtime: boolean;
+  port?: number;
+  consoleNick?: string;
+  enableAutoSwitcher: boolean;
+  obsIP?: string;
+  obsSourceName?: string;
+  obsPassword?: string;
+  enableRelay: boolean;
+  useNicknameFolders: boolean;
 }
 
 export type AppSettings = {
@@ -12,8 +19,12 @@ export type AppSettings = {
   settings: {
     isoPath: string | null;
     rootSlpPath: string;
+    useMonthlySubfolders: boolean;
     spectateSlpPath: string;
+    extraSlpPaths: string[];
     netplayDolphinPath: string;
     playbackDolphinPath: string;
+    launchMeleeOnPlay: boolean;
+    autoUpdateLauncher: boolean;
   };
 };

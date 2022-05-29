@@ -1,45 +1,73 @@
+import { css, keyframes } from "@emotion/react";
 import React from "react";
-import styled, { keyframes } from "styled-components";
 
-import slippiLogo from "../styles/images/slippi-logo.svg";
+import slippiLogo from "@/styles/images/slippi-logo.svg";
 
 const bounceAnimation = keyframes`
-  0%       { bottom: 5px; }
-  25%, 75% { bottom: 15px; }
-  50%      { bottom: 20px; }
-  100%     { bottom: 0; }
+  0%  { bottom: 0px; }
+  100%  { bottom: 25px; }
 `;
 
-const Outer = styled.div<{
-  size: string;
-}>`
-  display: flex;
-  position: relative;
-  height: ${(props) => props.size};
-  width: ${(props) => props.size};
-  padding-top: 20px;
+const barrelRollAnimation = keyframes`
+  0%   { transform: rotate(0); }
+  100% { transform: rotate(720deg); }
 `;
 
-const Logo = styled.div<{
-  size: string;
-}>`
-  background-image: url("${slippiLogo}");
-  background-size: contain;
-  background-repeat: no-repeat;
-  animation: ${bounceAnimation} 1.2s infinite;
-  position: absolute;
-  height: ${(props) => props.size};
-  width: ${(props) => props.size};
+const onlyBounce = css`
+  animation: ${bounceAnimation} 0.6s infinite alternate;
 `;
 
-export interface BouncingSlippiLogoProps {
-  size?: string;
-}
+const bouncePlusSpin = css`
+  animation: ${bounceAnimation} 0.6s infinite alternate,
+    ${barrelRollAnimation} 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) alternate forwards;
+`;
 
-export const BouncingSlippiLogo: React.FC<BouncingSlippiLogoProps> = ({ size = "80px" }) => {
+export const BouncingSlippiLogo = ({ size = "80px" }: { size?: string }) => {
+  const ref = React.createRef<HTMLDivElement>();
+  const [animationState, setAnimationState] = React.useState<"running" | "ready">("ready");
+
+  React.useEffect(() => {
+    if (!ref.current) {
+      return;
+    }
+
+    const el = ref.current;
+    const onAnimationEnd = () => setAnimationState("ready");
+    el.addEventListener("animationend", onAnimationEnd, false);
+    return () => {
+      el.removeEventListener("animationend", onAnimationEnd);
+    };
+  }, [ref, animationState]);
+
+  const onMouseOver = React.useCallback(() => {
+    if (animationState === "ready") {
+      setAnimationState("running");
+    }
+  }, [animationState, setAnimationState]);
+
   return (
-    <Outer size={size}>
-      <Logo size={size} />
-    </Outer>
+    <div
+      css={css`
+        display: flex;
+        position: relative;
+        padding-top: 20px;
+        height: ${size};
+        width: ${size};
+      `}
+    >
+      <div
+        css={css`
+          background-image: url("${slippiLogo}");
+          background-size: contain;
+          background-repeat: no-repeat;
+          ${animationState === "ready" ? onlyBounce : bouncePlusSpin}
+          position: absolute;
+          height: calc(${size}*0.75);
+          width: ${size};
+        `}
+        ref={ref}
+        onMouseOver={onMouseOver}
+      />
+    </div>
   );
 };

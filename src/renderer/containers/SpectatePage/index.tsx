@@ -1,67 +1,112 @@
-import { fetchBroadcastList, watchBroadcast } from "@broadcast/ipc";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import { css } from "@emotion/react";
+import styled from "@emotion/styled";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import SyncIcon from "@mui/icons-material/Sync";
 import React from "react";
-import { useQuery } from "react-query";
 
-import { useApp } from "@/store/app";
+import { DualPane } from "@/components/DualPane";
+import { Button } from "@/components/FormInputs";
+import { IconMessage } from "@/components/Message";
+import { generateDisplayPicture } from "@/lib/displayPicture";
+import { useAccount } from "@/lib/hooks/useAccount";
+import { useBroadcastList } from "@/lib/hooks/useBroadcastList";
+import { useServices } from "@/services";
 
-const SECOND = 1000;
-const AUTO_REFRESH_INTERVAL = 30 * SECOND;
+import { Footer } from "./Footer";
+import { ShareGameplayBlock } from "./ShareGameplayBlock";
+import { SpectateItem } from "./SpectateItem";
+import { SpectatorIdBlock } from "./SpectatorIdBlock";
 
 export const SpectatePage: React.FC = () => {
-  const currentUser = useApp((store) => store.user);
-  const broadcastListQuery = useQuery(["broadcastList", currentUser], async () => {
-    if (!currentUser) {
-      throw new Error("User is not logged in");
-    }
-    const authToken = await currentUser.getIdToken();
-    const broadcastListResult = await fetchBroadcastList.renderer!.trigger({ authToken });
-    if (!broadcastListResult.result) {
-      throw new Error("Error fetching broadcast list");
-    }
-    return broadcastListResult.result.items;
-  });
-
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      broadcastListQuery.refetch();
-    }, AUTO_REFRESH_INTERVAL);
-    return () => clearInterval(interval);
-  }, []);
+  const user = useAccount((store) => store.user);
+  const { broadcastService } = useServices();
+  const [currentBroadcasts, refreshBroadcasts] = useBroadcastList();
 
   const startWatching = async (id: string) => {
-    await watchBroadcast.renderer!.trigger({ broadcasterId: id });
+    await broadcastService.watchBroadcast(id);
   };
-  const currentBroadcasts = broadcastListQuery.data ?? [];
+
+  if (!user) {
+    return <IconMessage Icon={AccountCircleIcon} label="You must be logged in to use this feature" />;
+  }
 
   return (
-    <div>
-      <h1>Spectate</h1>
-      <div>
-        <div style={{ display: "flex" }}>
-          {broadcastListQuery.isFetching && (
-            <div style={{ color: "white", marginRight: 5 }}>
-              <CircularProgress color="inherit" size={20} />
-            </div>
-          )}
-          <button onClick={() => broadcastListQuery.refetch()} disabled={broadcastListQuery.isFetching}>
-            refresh
-          </button>
-        </div>
-        {currentBroadcasts.length === 0 ? (
-          <div>No users broadcasting to you.</div>
-        ) : (
-          currentBroadcasts.map((data) => {
-            return (
-              <div key={data.id}>
-                <div>{data.broadcaster.name}</div>
-                <div>{data.name}</div>
-                <button onClick={() => startWatching(data.id)}>watch</button>
+    <Outer>
+      <div
+        css={css`
+          display: flex;
+          flex: 1;
+          position: relative;
+          overflow: hidden;
+        `}
+      >
+        <DualPane
+          id="spectate-page"
+          leftSide={
+            <div
+              css={css`
+                padding-left: 20px;
+                padding-right: 10px;
+                width: 100%;
+              `}
+            >
+              <h1>Spectate</h1>
+              <div>
+                <Button startIcon={<SyncIcon />} onClick={refreshBroadcasts}>
+                  Refresh
+                </Button>
+                <div
+                  css={css`
+                    padding-top: 20px;
+                    padding-bottom: 20px;
+                  `}
+                >
+                  {currentBroadcasts.length === 0 ? (
+                    <IconMessage Icon={HelpOutlineIcon} label="No users are broadcasting to you" />
+                  ) : (
+                    currentBroadcasts.map(({ id, broadcaster, name }) => {
+                      return (
+                        <SpectateItem
+                          key={id}
+                          broadcasterPicture={generateDisplayPicture(broadcaster.uid)}
+                          broadcasterName={broadcaster.name}
+                          name={name}
+                          onWatch={() => startWatching(id)}
+                        />
+                      );
+                    })
+                  )}
+                </div>
               </div>
-            );
-          })
-        )}
+            </div>
+          }
+          rightSide={
+            <div
+              css={css`
+                padding-left: 10px;
+                padding-right: 20px;
+                & > * {
+                  margin-top: 20px;
+                }
+              `}
+            >
+              <SpectatorIdBlock userId={user.uid} />
+              <ShareGameplayBlock />
+            </div>
+          }
+          style={{ gridTemplateColumns: "auto 400px" }}
+        />
       </div>
-    </div>
+      <Footer />
+    </Outer>
   );
 };
+
+const Outer = styled.div`
+  display: flex;
+  flex-flow: column;
+  flex: 1;
+  position: relative;
+  min-width: 0;
+`;

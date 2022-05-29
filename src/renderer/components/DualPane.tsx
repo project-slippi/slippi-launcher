@@ -1,6 +1,7 @@
+import { colors } from "@common/colors";
+import styled from "@emotion/styled";
 import { debounce } from "lodash";
 import React from "react";
-import styled from "styled-components";
 
 const Outer = styled.div`
   position: relative;
@@ -19,12 +20,12 @@ const Column = styled.div`
 const ResizeHandle = styled.div`
   position: absolute;
   cursor: e-resize;
-  background-color: black;
+  background-color: ${colors.offWhite};
   top: 0;
   height: 100%;
   opacity: 0;
   &:hover {
-    opacity: 0.9;
+    opacity: 0.7;
   }
 `;
 
@@ -67,7 +68,7 @@ export const DualPane: React.FC<{
   minWidth,
   maxWidth,
   width = 250,
-  resizeHandleWidth = 8,
+  resizeHandleWidth = 6,
   className,
   style,
 }) => {

@@ -1,15 +1,42 @@
 {
   "productName": "Slippi Launcher",
-  "appId": "gg.slippi.launcher",
-  "afterSign": "build/afterSignHook.macos.js",
-  "directories": {
-    "buildResources": "resources",
-    "output": "release"
+  "appId": "com.github.projectslippi.slippidesktopapp",
+  "asar": true,
+  "asarUnpack": ["**\\*.{node,dll}", "./dist/main/*.js", "./node_modules/**/*"],
+  "files": ["dist", "node_modules", "package.json"],
+  "afterSign": ".erb/scripts/notarize.js",
+  "fileAssociations": {
+    "ext": "slp",
+    "name": "slp",
+    "description": "Slippi File Format",
+    "icon": "./assets/file.ico"
   },
-  "asarUnpack": ["**/*.node", "**/*.worker.js*"],
+  "artifactName": "Slippi-Launcher-${version}-${os}.${ext}",
+  "mac": {
+    "target": {
+      "target": "default",
+      "arch": "universal"
+    },
+    "fileAssociations": {
+      "ext": "slp",
+      "role": "Viewer"
+    },
+    "type": "distribution",
+    "hardenedRuntime": true,
+    "entitlements": "assets/entitlements.mac.plist",
+    "entitlementsInherit": "assets/entitlements.mac.plist",
+    "category": "public.app-category.games",
+    "gatekeeperAssess": false,
+    "extendInfo": {
+      "NSAppTransportSecurity": {
+        "NSAllowsArbitraryLoads": true
+      }
+    },
+    "minimumSystemVersion": "10.13.6"
+  },
   "dmg": {
     "artifactName": "Slippi-Launcher-${version}.${ext}",
-    "icon": "resources/icon.icns",
+    "icon": "assets/icon.icns",
     "contents": [
       {
         "x": 130,
@@ -23,23 +50,17 @@
       }
     ]
   },
-  "mac": {
-    "hardenedRuntime": true,
-    "entitlements": "./build/entitlements.macos.plist",
-    "category": "public.app-category.video",
-    "target": ["dmg", "zip"],
-    "extendInfo": {
-      "NSAppTransportSecurity": {
-        "NSAllowsArbitraryLoads": true
-      }
-    }
-  },
   "win": {
     "target": ["nsis"],
-    "icon": "resources/icon.ico"
+    "icon": "assets/icon.ico"
   },
   "nsis": {
-    "artifactName": "Slippi-Launcher-Setup-${version}.${ext}"
+    "artifactName": "Slippi-Launcher-Setup-${version}.${ext}",
+    "include": ".erb/scripts/installer.nsh",
+    "warningsAsErrors": false,
+    "allowElevation": true,
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true
   },
   "linux": {
     "target": ["AppImage"],
@@ -47,5 +68,23 @@
   },
   "appImage": {
     "artifactName": "Slippi-Launcher-${version}-x86_64.${ext}"
+  },
+  "protocols": [
+    {
+      "name": "slippi",
+      "role": "Viewer",
+      "schemes": ["slippi"]
+    }
+  ],
+  "directories": {
+    "app": "release/app",
+    "buildResources": "assets",
+    "output": "release/build"
+  },
+  "extraResources": ["./assets/include/**"],
+  "publish": {
+    "provider": "github",
+    "owner": "project-slippi",
+    "repo": "slippi-launcher"
   }
 }

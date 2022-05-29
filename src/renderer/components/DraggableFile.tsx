@@ -1,40 +1,37 @@
-import { ipcRenderer } from "electron";
+import styled from "@emotion/styled";
 import React from "react";
-import styled from "styled-components";
 
-const DraggableLink = styled.a`
-  text-decoration: none;
+import { useFileDrag } from "@/lib/hooks/useFileDrag";
+
+const Outer = styled.div`
   color: inherit;
   cursor: grab;
   user-select: auto;
   -webkit-user-drag: element;
-  -webkit-app-region: drag;
+  -webkit-app-region: no-drag;
 `;
 
 export interface DraggableFileProps {
-  fullPath: string;
+  filePaths: string[];
   className?: string;
   style?: React.CSSProperties;
 }
 
 /**
- * DraggableFile accepts the `fullPath` prop and allows that file to be dragged into other contexts
+ * DraggableFile accepts the `filePaths` prop and allows those files to be dragged into other contexts
  * such as copied to a different folder or dragged into web-sites etc.
  */
-export const DraggableFile: React.FC<DraggableFileProps> = ({ fullPath, children, className, style }) => {
-  const handleDragStart = (e: React.DragEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    ipcRenderer.send("onDragStart", fullPath);
-  };
+export const DraggableFile: React.FC<DraggableFileProps> = ({ children, filePaths, className, style }) => {
+  const fileDrag = useFileDrag();
+
   return (
-    <DraggableLink
+    <Outer
       className={className}
       style={style}
-      href="#"
-      onDragStart={(e) => handleDragStart(e)}
-      onClick={(e) => e.preventDefault()}
+      onDragStart={(event) => fileDrag(event, filePaths)}
+      onClick={(event) => event.preventDefault()}
     >
       {children}
-    </DraggableLink>
+    </Outer>
   );
 };

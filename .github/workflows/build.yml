@@ -1,57 +1,61 @@
-name: Release Builds
+name: build
 
 on:
+  pull_request:
+    branches:
+      - main
   push:
-    branches-ignore:
-      - "refactor/rewrite"
-      - "rewrite/**"
+    branches:
+      - "**"
     paths-ignore:
       - "**.md"
 
 jobs:
-  package:
-    name: Build and package on node ${{ matrix.node-version }} and ${{ matrix.os }}
+  skip_duplicates:
+    name: Skip Duplicate Runs
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@master
+        with:
+          concurrent_skipping: "same_content"
+          do_not_skip: '["push", "workflow_dispatch", "schedule"]'
+
+  build:
+    needs: skip_duplicates
+    if: ${{ needs.skip_duplicates.outputs.should_skip != 'true' }}
+    name: Test on node ${{ matrix.node-version }} and ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: false
       matrix:
-        node-version: [10.x]
+        node-version: [16.x]
         os: [ubuntu-latest, windows-latest, macOS-latest]
-        include:
-          - os: windows-latest
-            playback_image: windows64-playback
-            playback_dolphin_path: app/dolphin-dev/windows/
-          - os: ubuntu-latest
-            playback_image: linux-playback
-            playback_dolphin_path: app/dolphin-dev/linux/
-          - os: macOS-latest
-            playback_image: macOS-playback
-            playback_dolphin_path: app/dolphin-dev/osx/
+
     steps:
-      - name: Use Node.js ${{ matrix.node-version }} on ${{ matrix.os }}
-        uses: actions/setup-node@v1
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - name: Install Node.js and yarn
+        uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Checkout
-        uses: actions/checkout@v2.3.1
-      - name: Fetch Git Tags
-        if: success()
-        shell: bash
-        run: |
-          git fetch --prune --unshallow
-          echo "GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
-          echo "GIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-          echo "GIT_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
+          cache: yarn
+
       - name: Cache node modules
         uses: actions/cache@v1
         id: cache
         with:
           path: node_modules
-          key: ${{ runner.OS }}-build-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.OS }}-build-${{ secrets.CACHE_CONTROL }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.OS }}-build-${{ env.cache-name }}-
-            ${{ runner.OS }}-build-
-            ${{ runner.OS }}-
+            ${{ runner.OS }}-build-${{ secrets.CACHE_CONTROL }}-${{ env.cache-name }}-
+            ${{ runner.OS }}-build-${{ secrets.CACHE_CONTROL }}
+
+      - name: Install dependencies
+        run: |
+          yarn install
       - name: Load macOS signing certificates and secrets
         if: matrix.os == 'macOS-latest' && env.CERTIFICATE_MACOS_PASSWORD != null
         run: |
@@ -66,38 +70,32 @@ jobs:
         env:
           CERTIFICATE_MACOS_APPLICATION: ${{ secrets.CERTIFICATE_MACOS_APPLICATION }}
           CERTIFICATE_MACOS_PASSWORD: ${{ secrets.CERTIFICATE_MACOS_PASSWORD }}
-      - name: Install dependencies
-        run: |
-          yarn install
-      - name: Download playback artifact
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          workflow: pr-build.yml
-          branch: slippi
-          name: ${{ matrix.playback_image }}
-          path: ${{ matrix.playback_dolphin_path }}
-          repo: project-slippi/Ishiiruka
-      - name: Unzip
-        shell: bash
-        working-directory: ${{ matrix.playback_dolphin_path }}
-        run: |
-          unzip *
-          rm *.zip
-      - name: Package
+      - name: Build App
         shell: bash
         working-directory: ${{ github.workspace }}
         run: |
           echo ${{ secrets.ENVFILE }} > .env
-          yarn package
-          mkdir artifact
-          cp ./release/Slippi* ./artifact
-          cp ./release/*.yml ./artifact
+          yarn run package
         env:
-          USE_HARD_LINKS: false
+          CI: true
+          NODE_OPTIONS: "--max-old-space-size=8192"
+          USE_HARD_LINKS: false # because of https://github.com/electron-userland/electron-builder/issues/3179
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run tests
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          yarn run test
+      - name: Lint
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          yarn run lint
+      - name: Prepare artifacts
+        shell: bash
+        run: |
+          mkdir artifacts
+          mv release/build/{*.exe*,*.deb,*.AppImage,*.dmg*,*.zip,*.yml} artifacts || true
       - name: Upload artifacts
-        if: success()
-        uses: actions/upload-artifact@v2-preview
+        uses: actions/upload-artifact@v1
         with:
-          name: ${{ matrix.os }}
-          path: "./artifact/"
+          name: ${{matrix.os}}
+          path: artifacts

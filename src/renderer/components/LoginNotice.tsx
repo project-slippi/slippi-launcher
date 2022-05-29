@@ -1,8 +1,9 @@
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
-import PersonOutlineIcon from "@material-ui/icons/PersonOutline";
+import { css } from "@emotion/react";
+import styled from "@emotion/styled";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 import React from "react";
-import styled from "styled-components";
 
 import { useLoginModal } from "@/lib/hooks/useLoginModal";
 
@@ -13,8 +14,15 @@ export const LoginNotice: React.FC = () => {
       <div>
         <PersonOutlineIcon style={{ fontSize: 100 }} />
       </div>
-      <Typography variant="h6">User is not logged in</Typography>
-      <Button type="button" color="primary" variant="contained" style={{ textTransform: "none" }} onClick={openModal}>
+      <Typography
+        variant="h6"
+        css={css`
+          margin-bottom: 20px;
+        `}
+      >
+        User is not logged in
+      </Typography>
+      <Button type="button" color="primary" variant="contained" onClick={openModal}>
         Log in
       </Button>
     </Outer>

@@ -1,9 +1,8 @@
-import Box from "@material-ui/core/Box";
+import styled from "@emotion/styled";
+import Box from "@mui/material/Box";
 import React from "react";
-import styled from "styled-components";
 
 import { LoginForm } from "../LoginForm";
-import { QuickStartHeader } from "./QuickStartHeader";
 
 const FormContainer = styled.div`
   margin: 0 auto;
@@ -15,8 +14,7 @@ export const LoginStep: React.FC = () => {
   return (
     <Box display="flex" flexDirection="column" flexGrow="1">
       <FormContainer>
-        <QuickStartHeader>Login</QuickStartHeader>
-        <LoginForm />
+        <LoginForm disableAutoFocus={true} />
       </FormContainer>
     </Box>
   );

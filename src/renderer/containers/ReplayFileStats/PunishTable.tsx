@@ -1,10 +1,12 @@
-import { FileResult } from "@replays/types";
-import { ConversionType, StatsType, StockType } from "@slippi/slippi-js";
-import { extractPlayerNames } from "common/matchNames";
-import { convertFrameCountToDurationString } from "common/time";
+import { css } from "@emotion/react";
+import Tooltip from "@mui/material/Tooltip";
+import type { FileResult } from "@replays/types";
+import type { ConversionType, PlayerType, StatsType, StockType } from "@slippi/slippi-js";
 import _ from "lodash";
 import React from "react";
 
+import { extractPlayerNames } from "@/lib/matchNames";
+import { convertFrameCountToDurationString } from "@/lib/time";
 import { getCharacterIcon, toOrdinal } from "@/lib/utils";
 
 import * as T from "./TableStyles";
@@ -14,12 +16,13 @@ const columnCount = 6;
 export interface PunishTableProps {
   file: FileResult;
   stats: StatsType;
-  playerIndex: number;
+  player: PlayerType;
+  opp: PlayerType;
+  onPlay: (options: { path: string; startFrame: number }) => void;
 }
 
-export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, playerIndex }) => {
-  const player = file.settings.players[playerIndex];
-  const names = extractPlayerNames(playerIndex, file.settings, file.metadata);
+export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, player, opp, onPlay }) => {
+  const names = extractPlayerNames(player.playerIndex, file.settings, file.metadata);
   const playerDisplay = (
     <div style={{ display: "flex", alignItems: "center" }}>
       <img
@@ -30,7 +33,7 @@ export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, playerInd
           marginRight: 10,
         }}
       />
-      <div style={{ fontWeight: 500 }}>{names.name ? names.name : "Player " + (playerIndex + 1)}</div>
+      <div style={{ fontWeight: 500 }}>{names.name || names.tag || `Player ${player.playerIndex + 1}`}</div>
     </div>
   );
 
@@ -46,9 +49,27 @@ export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, playerInd
       end = convertFrameCountToDurationString(punish.endFrame);
     }
 
+    const playPunish = () => {
+      onPlay({ path: file.fullPath, startFrame: punish.startFrame });
+    };
+
     return (
       <T.TableRow key={`${punish.playerIndex}-punish-${punish.startFrame}`}>
-        <T.TableCell>{start}</T.TableCell>
+        <T.TableCell>
+          <Tooltip title="Play from here">
+            <span
+              onClick={playPunish}
+              css={css`
+                &:hover {
+                  cursor: pointer;
+                  text-decoration: underline;
+                }
+              `}
+            >
+              {start}
+            </span>
+          </Tooltip>
+        </T.TableCell>
         <T.TableCell>{end}</T.TableCell>
         <T.TableCell>{damage}</T.TableCell>
         <T.TableCell>{damageRange}</T.TableCell>
@@ -158,11 +179,11 @@ export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, playerInd
   const renderPunishRows = () => {
     const punishes = _.get(stats, "conversions") || [];
     const punishesByPlayer = _.groupBy(punishes, "playerIndex");
-    const playerPunishes = punishesByPlayer[playerIndex] || [];
+    const playerPunishes = punishesByPlayer[opp.playerIndex] || [];
 
     const stocks = _.get(stats, "stocks") || [];
-    const stocksByOpponent = _.groupBy(stocks, "opponentIndex");
-    const opponentStocks = stocksByOpponent[playerIndex] || [];
+    const stocksTakenFromPlayer = _.groupBy(stocks, "playerIndex");
+    const opponentStocks = stocksTakenFromPlayer[opp.playerIndex] || [];
 
     const elements: JSX.Element[] = [];
 

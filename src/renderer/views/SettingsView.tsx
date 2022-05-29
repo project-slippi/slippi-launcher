@@ -1,18 +1,24 @@
-import IconButton from "@material-ui/core/IconButton";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListSubheader from "@material-ui/core/ListSubheader";
-import Tooltip from "@material-ui/core/Tooltip";
-import CloseIcon from "@material-ui/icons/Close";
-import { colors } from "common/colors";
+import { colors } from "@common/colors";
+import { css } from "@emotion/react";
+import styled from "@emotion/styled";
+import CloseIcon from "@mui/icons-material/Close";
+import IconButton from "@mui/material/IconButton";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import ListSubheader from "@mui/material/ListSubheader";
+import Tooltip from "@mui/material/Tooltip";
 import React from "react";
-import { Link, Redirect, Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
-import styled from "styled-components";
+import type { LinkProps } from "react-router-dom";
+import { Link, Navigate, Route, Routes, useMatch, useResolvedPath } from "react-router-dom";
 
 import { DualPane } from "@/components/DualPane";
+import { BuildInfo } from "@/containers/Settings/BuildInfo";
+import { useMousetrap } from "@/lib/hooks/useMousetrap";
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
+import { platformTitleBarStyles } from "@/styles/platformTitleBarStyles";
+import { withSlippiBackground } from "@/styles/withSlippiBackground";
 
 import { settings } from "../containers/Settings";
 
@@ -21,23 +27,29 @@ const Outer = styled.div`
   display: flex;
   height: 100%;
   width: 100%;
+  ${withSlippiBackground}
 `;
 
 const MenuColumn = styled.div`
+  display: flex;
+  flex-direction: column;
   flex: 1;
+  padding-top: 30px;
+  ${() => platformTitleBarStyles(50)}
 `;
 
 const ContentColumn = styled.div`
   flex: 1;
-  padding-top: 30px;
-  padding-bottom: 30px;
-  padding-left: 30px;
+  overflow-x: hidden;
+  ${() => platformTitleBarStyles()}
+  padding: 30px;
   padding-right: 100px;
 `;
 
 const CloseButton = styled(IconButton)`
+  opacity: 0.5;
   position: absolute;
-  top: 5px;
+  top: 20px;
   right: 10px;
   z-index: 1;
 `;
@@ -45,25 +57,8 @@ const CloseButton = styled(IconButton)`
 const settingItems = settings.flatMap((section) => section.items);
 
 export const SettingsView: React.FC = () => {
-  const history = useHistory();
-  const { path } = useRouteMatch();
   const { close } = useSettingsModal();
-
-  const isActive = (name: string): boolean => {
-    return history.location.pathname === `${path}/${name}`;
-  };
-
-  const keyDownFunction = (event: KeyboardEvent) => {
-    // ignore depercation warning, it works everywhere
-    if (event.keyCode === 27) {
-      close();
-    }
-  };
-
-  React.useEffect(() => {
-    document.addEventListener("keydown", keyDownFunction, false);
-    return () => document.removeEventListener("keydown", keyDownFunction, false);
-  }, [keyDownFunction]);
+  useMousetrap("escape", close);
 
   return (
     <Outer>
@@ -74,61 +69,100 @@ export const SettingsView: React.FC = () => {
       </Tooltip>
       <DualPane
         id="settings-view"
-        leftStyle={{ backgroundColor: colors.grayDark }}
+        leftStyle={{ backgroundColor: colors.purpleDark }}
         leftSide={
           <MenuColumn>
-            {settings.map((section, i) => {
-              return (
-                <List
-                  key={`section-${section.title}${i}`}
-                  component="nav"
-                  subheader={
-                    section.title ? (
-                      <ListSubheader component="div" disableSticky={true}>
-                        {section.title}
-                      </ListSubheader>
-                    ) : undefined
-                  }
-                >
-                  {section.items.map((item) => {
-                    return (
-                      <ListItem
-                        button
-                        key={item.name}
-                        selected={isActive(item.path)}
-                        component={Link}
-                        to={`${path}/${item.path}`}
-                      >
-                        {item.icon ? <ListItemIcon>{item.icon}</ListItemIcon> : null}
-                        <ListItemText primary={item.name} />
-                      </ListItem>
-                    );
-                  })}
-                </List>
-              );
-            })}
+            <div
+              css={css`
+                flex: 1;
+              `}
+            >
+              {settings.map((section, i) => {
+                return (
+                  <List
+                    key={`section-${section.title}${i}`}
+                    component="nav"
+                    css={css`
+                      margin: 0 10px;
+                      padding-bottom: 10px;
+                      border-bottom: solid 1px rgba(255, 255, 255, 0.1);
+                    `}
+                    subheader={
+                      section.title ? (
+                        <ListSubheader
+                          component="div"
+                          disableSticky={true}
+                          css={css`
+                            line-height: 20px;
+                            margin-top: 10px;
+                            margin-bottom: 5px;
+                            font-size: 14px;
+                            color: ${colors.purpleLight};
+                          `}
+                        >
+                          {section.title}
+                        </ListSubheader>
+                      ) : undefined
+                    }
+                  >
+                    {section.items.map((item) => {
+                      return (
+                        <div key={item.name}>
+                          <CustomLink to={item.path}>
+                            {item.icon ? <ListItemIcon>{item.icon}</ListItemIcon> : null}
+                            <ListItemText
+                              primary={item.name}
+                              css={css`
+                                .MuiTypography-body1 {
+                                  font-size: 16px;
+                                }
+                              `}
+                            />
+                          </CustomLink>
+                        </div>
+                      );
+                    })}
+                  </List>
+                );
+              })}
+            </div>
+            <BuildInfo enableAdvancedUserClick={true} />
           </MenuColumn>
         }
         rightSide={
           <ContentColumn>
-            <Switch>
+            <Routes>
               {settingItems.map((item) => {
-                const fullItemPath = `${path}/${item.path}`;
-                return (
-                  <Route key={fullItemPath} path={fullItemPath}>
-                    {item.component}
-                  </Route>
-                );
+                return <Route key={item.path} path={item.path} element={item.component} />;
               })}
-              {settingItems.length > 0 && (
-                <Route exact path={path}>
-                  <Redirect to={`${path}/${settingItems[0].path}`} />
-                </Route>
-              )}
-            </Switch>
+              {settingItems.length > 0 && <Route path="*" element={<Navigate to={settingItems[0].path} />} />}
+            </Routes>
           </ContentColumn>
         }
       />
     </Outer>
+  );
+};
+
+const CustomLink = ({ children, to, ...props }: LinkProps) => {
+  const resolved = useResolvedPath(to);
+  const match = useMatch({ path: resolved.pathname, end: true });
+
+  return (
+    <ListItem
+      button
+      selected={match !== null}
+      component={Link}
+      to={to}
+      {...(props as any)}
+      css={css`
+        border-radius: 10px;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        margin: 2px 0;
+      `}
+    >
+      {children}
+    </ListItem>
   );
 };

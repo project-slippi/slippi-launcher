@@ -1,29 +1,20 @@
 import { SlpFileWriter, SlpFileWriterEvent } from "@slippi/slippi-js";
-import { app } from "electron";
-import log from "electron-log";
 import { EventEmitter } from "events";
 import * as fs from "fs-extra";
 import _ from "lodash";
-import { client as WebSocketClient, connection, IMessage } from "websocket";
+import type { connection, Message } from "websocket";
+import { client as WebSocketClient } from "websocket";
 
-import { dolphinManager, ReplayCommunication } from "../dolphin";
-import { BroadcasterItem } from "./types";
+import type { BroadcasterItem } from "./types";
+import { SpectateEvent } from "./types";
 
 const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
 
 const DOLPHIN_INSTANCE_ID = "spectate";
 
-// Store written SLP files to the temp folder by default
-const DEFAULT_OUTPUT_PATH = app.getPath("temp");
-
-export enum SpectateManagerEvent {
-  ERROR = "error",
-  BROADCAST_LIST_UPDATE = "broadcastListUpdate",
-}
-
 interface BroadcastInfo {
   broadcastId: string;
-  cursor: string | number;
+  cursor: string;
   fileWriter: SlpFileWriter;
   gameStarted: boolean;
   dolphinId: string;
@@ -34,40 +25,19 @@ const generatePlaybackId = (broadcastId: string) => `spectate-${broadcastId}`;
 /**
  * Responsible for retrieving Dolphin game data over enet and sending the data
  * to the Slippi server over websockets.
+ * TODO: Have SpectateManager only care about reading the data stream and writing it to a file.
+ * Dealing with dolphin related details should be handled elsewhere.
  */
 export class SpectateManager extends EventEmitter {
   private broadcastInfo: Record<string, BroadcastInfo> = {};
   private wsConnection: connection | null = null;
 
-  public constructor() {
+  constructor() {
     super();
-
-    // A connection can mirror its received gameplay
-    dolphinManager.on("dolphin-closed", (dolphinPlaybackId: string) => {
-      const broadcastInfo = Object.values(this.broadcastInfo).find((info) => info.dolphinId === dolphinPlaybackId);
-      if (!broadcastInfo) {
-        // This is not one of the spectator dolphin instances
-        return;
-      }
-
-      log.info("[Spectate] Dolphin closed");
-
-      // Stop watching channel
-      if (!this.wsConnection) {
-        log.error(`[Spectate] Could not close broadcast because connection is gone`);
-        return;
-      }
-
-      this.stopWatchingBroadcast(broadcastInfo.broadcastId);
-    });
   }
 
-  private _playFile(filePath: string, playbackId: string) {
-    const replayComm: ReplayCommunication = {
-      mode: "mirror",
-      replay: filePath,
-    };
-    dolphinManager.launchPlaybackDolphin(playbackId, replayComm);
+  private async _playFile(filePath: string, playbackId: string) {
+    this.emit(SpectateEvent.NEW_FILE, playbackId, filePath);
   }
 
   private _handleEvents(obj: { type: string; broadcastId: string; cursor: string; events: any[] }) {
@@ -87,43 +57,28 @@ export class SpectateManager extends EventEmitter {
     events.forEach((event: any) => {
       switch (event.type) {
         case "start_game": {
+          this.emit(SpectateEvent.LOG, "Game start explicit");
           broadcastInfo.gameStarted = true;
           break;
         }
         case "end_game": {
           // End the current game if it's not already ended
-          log.info("[Spectate] Game end explicit");
+          this.emit(SpectateEvent.LOG, "Game end explicit");
           broadcastInfo.fileWriter.endCurrentFile();
           broadcastInfo.gameStarted = false;
           break;
         }
         case "game_event": {
-          const payloadStart = event.payload.substring(0, 4);
-          const payloadStartBuf = Buffer.from(payloadStart, "base64");
-          const command = payloadStartBuf[0];
-
-          if (command === 0x35) {
-            broadcastInfo.gameStarted = true;
-            log.info("[Spectate] Game start");
-          }
-
           // Only forward data to the file writer when it's an active game
           if (broadcastInfo.gameStarted) {
             const buf = Buffer.from(event.payload, "base64");
             broadcastInfo.fileWriter.write(buf);
           }
 
-          if (command === 0x39) {
-            // End the current game if it's not already ended
-            log.info("[Spectate] Game end 0x39");
-            broadcastInfo.fileWriter.endCurrentFile();
-            broadcastInfo.gameStarted = false;
-          }
-
           break;
         }
         default:
-          log.error(`[Spectate] Event type ${event.type} not supported`);
+          this.emit(SpectateEvent.LOG, `Event type ${event.type} not supported`);
           break;
       }
     });
@@ -134,8 +89,6 @@ export class SpectateManager extends EventEmitter {
    */
   public async connect(authToken: string) {
     if (this.wsConnection) {
-      // We're already connected
-      console.log("Skipping websocket connection since we're already connected");
       return;
     }
 
@@ -147,62 +100,56 @@ export class SpectateManager extends EventEmitter {
     await new Promise<void>((resolve, reject) => {
       const socket = new WebSocketClient();
 
-      socket.on("connectFailed", (error) => {
-        log.error(`[Spectate] WS connection failed\n`, error);
-        this.emit(SpectateManagerEvent.ERROR, error);
+      socket.on("connectFailed", (err) => {
+        this.emit(SpectateEvent.ERROR, err);
         reject();
       });
 
       socket.on("connect", (connection) => {
-        log.info("[Spectate] WS connection successful");
+        this.emit(SpectateEvent.LOG, "WS connection successful");
         this.wsConnection = connection;
 
+        // Reconnect to all the broadcasts that we were already watching
+        Object.entries(this.broadcastInfo).forEach(([broadcastId, info]) => {
+          const watchMsg: { type: string; broadcastId: string; startCursor?: string } = {
+            type: "watch-broadcast",
+            broadcastId,
+          };
+          if (info.cursor !== "") {
+            watchMsg.startCursor = info.cursor;
+          }
+          if (this.wsConnection) {
+            this.emit(SpectateEvent.LOG, `Picking up broadcast ${broadcastId} starting at: ${info.cursor}`);
+            this.wsConnection.sendUTF(JSON.stringify(watchMsg));
+          }
+        });
+
         connection.on("error", (err) => {
-          log.error("[Spectate] Error with WS connection\n", err);
-          this.emit(SpectateManagerEvent.ERROR, err);
+          this.emit(SpectateEvent.ERROR, err);
         });
 
         connection.on("close", (code, reason) => {
-          log.info(`[Spectate] connection close: ${code}, ${reason}`);
+          this.emit(SpectateEvent.LOG, `connection close: ${code}, ${reason}`);
           // Clear the socket and disconnect from Dolphin too if we're still connected
           this.wsConnection = null;
 
           if (code === 1006) {
             // Here we have an abnormal disconnect... try to reconnect?
-            this.connect(authToken)
-              .then(() => {
-                if (!this.wsConnection) {
-                  return;
-                }
-
-                // Reconnect to all the broadcasts that we were already watching
-                Object.entries(this.broadcastInfo).forEach(([broadcastId, info]) => {
-                  const watchMsg = {
-                    type: "watch-broadcast",
-                    broadcastId,
-                    startCursor: info.cursor,
-                  };
-                  log.info(`[Spectate] Picking up broadcast ${broadcastId} starting at: ${info.cursor}`);
-                  if (this.wsConnection) {
-                    this.wsConnection.sendUTF(JSON.stringify(watchMsg));
-                  }
-                });
-              })
-              .catch((err) => {
-                log.error(`[Specate] Error while reconnecting to broadcast.\n`, err);
-              });
+            // This error seems to occur primarily when the auth token for firebase expires,
+            // which lasts 1 hour, so the plan is to get a new token and reconnect.
+            this.emit(SpectateEvent.LOG, "Auth token expired, reconencting...");
+            this.emit(SpectateEvent.RECONNECT, authToken);
           } else {
             // TODO: Somehow kill dolphin? Or maybe reconnect to a person's broadcast when it
             // TODO: comes back up?
           }
         });
 
-        connection.on("message", (message: IMessage) => {
+        connection.on("message", (message: Message) => {
           if (message.type !== "utf8") {
             return;
           }
 
-          // console.log(`[Spectator] ${message.utf8Data}`);
           let obj;
           if (message.utf8Data) {
             obj = JSON.parse(message.utf8Data);
@@ -210,7 +157,7 @@ export class SpectateManager extends EventEmitter {
           switch (obj.type) {
             case "list-broadcasts-resp": {
               const broadcasts: BroadcasterItem[] = obj.broadcasts ?? [];
-              this.emit(SpectateManagerEvent.BROADCAST_LIST_UPDATE, broadcasts);
+              this.emit(SpectateEvent.BROADCAST_LIST_UPDATE, broadcasts);
               break;
             }
             case "events": {
@@ -218,7 +165,7 @@ export class SpectateManager extends EventEmitter {
               break;
             }
             default: {
-              log.warn(`[Spectate] Ws resp type ${obj.type} not supported`);
+              this.emit(SpectateEvent.LOG, `Ws resp type ${obj.type} not supported`);
               break;
             }
           }
@@ -227,27 +174,22 @@ export class SpectateManager extends EventEmitter {
         resolve();
       });
       if (SLIPPI_WS_SERVER) {
+        this.emit(SpectateEvent.LOG, "Connecting to spectate server");
         socket.connect(SLIPPI_WS_SERVER, "spectate-protocol", undefined, headers);
       }
     });
   }
 
-  public async fetchBroadcastList(): Promise<BroadcasterItem[]> {
-    return new Promise((resolve, reject) => {
-      if (!this.wsConnection) {
-        reject(new Error("No websocket connection"));
-        return;
-      }
+  public async refreshBroadcastList(): Promise<void> {
+    if (!this.wsConnection) {
+      throw new Error("No websocket connection");
+    }
 
-      this.once(SpectateManagerEvent.BROADCAST_LIST_UPDATE, (data: BroadcasterItem[]) => resolve(data));
-      this.once(SpectateManagerEvent.ERROR, reject);
-
-      this.wsConnection.sendUTF(
-        JSON.stringify({
-          type: "list-broadcasts",
-        }),
-      );
-    });
+    this.wsConnection.sendUTF(
+      JSON.stringify({
+        type: "list-broadcasts",
+      }),
+    );
   }
 
   public stopWatchingBroadcast(broadcastId: string) {
@@ -273,11 +215,11 @@ export class SpectateManager extends EventEmitter {
    * Starts watching a broadcast
    *
    * @param {string} broadcastId The ID of the broadcast to watch
-   * @param {string} [targetPath] Where the SLP files should be stored
+   * @param {string} targetPath Where the SLP files should be stored
    * @param {true} [singleton] If true, it will open the broadcasts only
    * in a single Dolphin window. Opens each broadcast in their own window otherwise.
    */
-  public watchBroadcast(broadcastId: string, targetPath?: string, singleton?: true) {
+  public watchBroadcast(broadcastId: string, targetPath: string, singleton?: true) {
     if (!this.wsConnection) {
       throw new Error("No websocket connection");
     }
@@ -285,6 +227,7 @@ export class SpectateManager extends EventEmitter {
     const existingBroadcasts = Object.keys(this.broadcastInfo);
     if (existingBroadcasts.includes(broadcastId)) {
       // We're already watching this broadcast!
+      this.emit(SpectateEvent.LOG, `We are already watching the selected broadcast`);
       return;
     }
 
@@ -300,25 +243,18 @@ export class SpectateManager extends EventEmitter {
       dolphinPlaybackId = DOLPHIN_INSTANCE_ID;
     }
 
+    fs.ensureDirSync(targetPath);
     const slpFileWriter = new SlpFileWriter({
-      folderPath: DEFAULT_OUTPUT_PATH,
+      folderPath: targetPath,
     });
 
     slpFileWriter.on(SlpFileWriterEvent.NEW_FILE, (currFilePath) => {
-      this._playFile(currFilePath, dolphinPlaybackId);
+      this._playFile(currFilePath, dolphinPlaybackId).catch(console.warn);
     });
-
-    if (targetPath) {
-      fs.ensureDirSync(targetPath);
-      // Set the path
-      slpFileWriter.updateSettings({
-        folderPath: targetPath,
-      });
-    }
 
     this.broadcastInfo[broadcastId] = {
       broadcastId,
-      cursor: -1,
+      cursor: "",
       fileWriter: slpFileWriter,
       gameStarted: false,
       dolphinId: dolphinPlaybackId,
@@ -334,8 +270,24 @@ export class SpectateManager extends EventEmitter {
     // Play an empty file such that we just launch into the waiting for game screen, this is
     // used to clear out any previous file that we were reading for. The file will get updated
     // by the fileWriter
-    this._playFile("", dolphinPlaybackId);
+    this._playFile("", dolphinPlaybackId).catch(console.warn);
+  }
+
+  public handleClosedDolphin(playbackId: string) {
+    const broadcastInfo = Object.values(this.broadcastInfo).find((info) => info.dolphinId === playbackId);
+    if (!broadcastInfo) {
+      // This is not one of the spectator dolphin instances
+      return;
+    }
+
+    this.emit(SpectateEvent.LOG, "Dolphin closed");
+
+    // Stop watching channel
+    if (!this.wsConnection) {
+      this.emit(SpectateEvent.LOG, `Could not close broadcast because connection is gone`);
+      return;
+    }
+
+    this.stopWatchingBroadcast(broadcastInfo.broadcastId);
   }
 }
-
-export const spectateManager = new SpectateManager();

@@ -1,15 +1,27 @@
-import { colors } from "common/colors";
-import React from "react";
+import { css } from "@emotion/react";
 
 import { LoadingScreen } from "@/components/LoadingScreen";
-import { useApp } from "@/store/app";
+import { BuildInfo } from "@/containers/Settings/BuildInfo";
+import { withSlippiBackground } from "@/styles/withSlippiBackground";
 
-export const LoadingView: React.FC = () => {
-  const installStatus = useApp((store) => store.logMessage);
+export const LoadingView = () => {
   return (
-    <LoadingScreen
-      style={{ backgroundColor: colors.offGray }}
-      message={installStatus ? installStatus : "Just a sec..."}
-    />
+    <div
+      css={css`
+        height: 100%;
+        width: 100%;
+      `}
+    >
+      <LoadingScreen css={withSlippiBackground} message="Just a sec..." />
+      <div
+        css={css`
+          position: fixed;
+          bottom: 0;
+          left: 0;
+        `}
+      >
+        <BuildInfo />
+      </div>
+    </div>
   );
 };

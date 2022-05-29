@@ -1,20 +1,34 @@
-import Typography from "@material-ui/core/Typography";
+import { css } from "@emotion/react";
+import Typography from "@mui/material/Typography";
 import React from "react";
 
 export interface SettingItemProps {
-  name: string;
-  description?: string;
+  name: React.ReactNode | string;
+  description?: React.ReactNode | string;
 }
 
 export const SettingItem: React.FC<SettingItemProps> = (props) => {
   return (
-    <div style={{ margin: "20px 0" }}>
-      <Typography variant="subtitle1">{props.name}</Typography>
-      {props.description && (
-        <div style={{ paddingBottom: 5, opacity: 0.6 }}>
-          <Typography variant="caption">{props.description}</Typography>
-        </div>
-      )}
+    <div
+      css={css`
+        margin: 20px 0;
+      `}
+    >
+      <div
+        css={css`
+          padding-bottom: 10px;
+        `}
+      >
+        <Typography
+          variant="subtitle1"
+          css={css`
+            text-transform: capitalize;
+          `}
+        >
+          {props.name}
+        </Typography>
+        {props.description && <Typography variant="caption">{props.description}</Typography>}
+      </div>
       {props.children}
     </div>
   );

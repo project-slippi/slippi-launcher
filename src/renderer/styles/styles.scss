@@ -10,13 +10,9 @@ body,
 }
 
 body {
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-family: "Rubik", "Helvetica", "Arial", sans-serif;
   color: white;
-}
-
-/* This fixes some strange margin behaviour with material-ui margins */
-#app {
-  display: inline-block;
+  background-color: #1B0B28,
 }
 
 *,
@@ -25,6 +21,19 @@ body {
   user-select: none;
   -webkit-user-drag: none;
   -webkit-app-region: no-drag;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+  -webkit-focus-ring-color: rgba(255, 255, 255, 0);
+
+  /**
+   * This should only affect rendering on macOS. Light text on dark backgrounds can appear
+   * to render in a less-than-ideal-manner on macOS due to the way font rendering works on 
+   * that platform. Setting this across the board makes the text on the app much more readable.
+   *
+   * For more context: https://usabilitypost.com/2012/11/05/stop-fixing-font-smoothing/
+   */
+  -webkit-font-smoothing: antialiased;
+
+  outline: none;
 }
 
 h1,
@@ -33,5 +42,11 @@ h3,
 h4,
 h5,
 h6 {
+  font-family: "Maven Pro", "Helvetica", "Arial", sans-serif;
   font-weight: 400;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
 }
