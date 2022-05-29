@@ -3,7 +3,7 @@ import log from "electron-log";
 import path from "path";
 import { spawn, Thread, Worker } from "threads";
 
-import { Methods, WorkerSpec } from "./dbWorker";
+import type { Methods, WorkerSpec } from "./db.worker";
 
 let w: Thread & Methods;
 
@@ -13,7 +13,7 @@ export const worker: Promise<Thread & Methods> = new Promise((resolve, reject) =
   }
   log.debug("db: Spawning worker");
 
-  spawn<WorkerSpec>(new Worker("./dbWorker"))
+  spawn<WorkerSpec>(new Worker("./db.worker"))
     .then((worker) => {
       log.debug("db: Spawning worker: Done");
 

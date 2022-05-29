@@ -2,7 +2,7 @@ import { exists } from "@common/exists";
 import * as fs from "fs-extra";
 import path from "path";
 
-import { worker } from "./dbWorkerInterface";
+import { worker } from "./db.worker.interface";
 import { createReplayWorker } from "./replays.worker.interface";
 import type { FileLoadResult, FileResult } from "./types";
 
