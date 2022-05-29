@@ -2,12 +2,6 @@ declare module "react-twitter-embed";
 declare module "medium-json-feed";
 declare module "react-identicons";
 
-// Allow importing SQL files as text
-declare module "*.sql" {
-  const content: string;
-  export default content;
-}
-
 // Injected through webpack.DefinePlugin
 declare const __VERSION__: string; // App version number
 declare const __DATE__: string; // ISO timestamp of build date
