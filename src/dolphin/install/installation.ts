@@ -16,6 +16,10 @@ import { fetchLatestVersion } from "./fetchLatestVersion";
 
 const isLinux = process.platform === "linux";
 
+// taken from https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
+const semverRegex =
+  /(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-((?:0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?/;
+
 export class DolphinInstallation {
   constructor(private dolphinLaunchType: DolphinLaunchType, private installationFolder: string) {}
 
@@ -113,6 +117,7 @@ export class DolphinInstallation {
       log.info(`${type} Dolphin installation is outdated. Downloading latest...`);
     } catch (err) {
       log.info(`Could not find ${type} Dolphin installation. Downloading...`);
+      log.error(err);
     }
 
     // Start the download
@@ -170,7 +175,9 @@ export class DolphinInstallation {
 
   private async _isOutOfDate(latestVersion: string): Promise<boolean> {
     const dolphinPath = await this.findDolphinExecutable();
-    const dolphinVersion = spawnSync(dolphinPath, ["--version"]).stdout.toString();
+    const dolphinVersionOut = spawnSync(dolphinPath, ["--version"]).stdout.toString();
+    const match = dolphinVersionOut.match(semverRegex);
+    const dolphinVersion = match?.[0] ?? "";
     return lt(dolphinVersion, latestVersion);
   }
 
