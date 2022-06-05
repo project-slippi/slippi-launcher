@@ -28,8 +28,8 @@ const retryLink = new RetryLink({
     jitter: true,
   },
   attempts: {
-    max: 5,
-    retryIf: (error, _operation) => !!error,
+    max: 3,
+    retryIf: (error) => Boolean(error),
   },
 });
 const errorLink = onError(({ graphQLErrors, networkError }) => {

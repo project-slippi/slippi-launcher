@@ -36,7 +36,6 @@ class SlippiBackendClient implements SlippiBackendService {
     private readonly dolphinService: DolphinService,
     clientVersion?: string,
   ) {
-    this.authService = authService;
     const httpLink = new HttpLink({ uri: SLIPPI_BACKEND_URL });
     const authLink = setContext(async () => {
       // The firebase ID token expires after 1 hour so we will update the header on all actions
@@ -56,7 +55,7 @@ class SlippiBackendClient implements SlippiBackendService {
       },
       attempts: {
         max: 3,
-        retryIf: (error) => !!error,
+        retryIf: (error) => Boolean(error),
       },
     });
     const errorLink = onError(({ graphQLErrors, networkError }) => {
