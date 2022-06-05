@@ -20,7 +20,7 @@ export class ConnectionScanner {
   }
 
   public getIsScanning() {
-    return !!this.server;
+    return Boolean(this.server);
   }
 
   private _handleMessageReceive = (msg: Buffer, rinfo: dgram.RemoteInfo) => {
