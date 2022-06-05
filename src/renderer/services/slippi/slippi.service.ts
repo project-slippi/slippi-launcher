@@ -1,9 +1,12 @@
 import type { NormalizedCacheObject } from "@apollo/client";
 import { ApolloClient, ApolloLink, HttpLink, InMemoryCache } from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
+import { onError } from "@apollo/client/link/error";
+import { RetryLink } from "@apollo/client/link/retry";
 import type { DolphinService, PlayKey } from "@dolphin/types";
 import type { GraphQLError } from "graphql";
 
-import type { AuthService, AuthUser } from "../auth/types";
+import type { AuthService } from "../auth/types";
 import {
   MUTATION_INIT_NETPLAY,
   MUTATION_RENAME_USER,
@@ -12,6 +15,7 @@ import {
 } from "./graphqlEndpoints";
 import type { SlippiBackendService } from "./types";
 
+const log = window.electron.log;
 const SLIPPI_BACKEND_URL = process.env.SLIPPI_GRAPHQL_ENDPOINT;
 
 const handleErrors = (errors: readonly GraphQLError[] | undefined) => {
@@ -25,7 +29,6 @@ const handleErrors = (errors: readonly GraphQLError[] | undefined) => {
 };
 
 class SlippiBackendClient implements SlippiBackendService {
-  private httpLink: HttpLink;
   private client: ApolloClient<NormalizedCacheObject>;
 
   constructor(
@@ -33,37 +36,50 @@ class SlippiBackendClient implements SlippiBackendService {
     private readonly dolphinService: DolphinService,
     clientVersion?: string,
   ) {
-    this.httpLink = new HttpLink({ uri: SLIPPI_BACKEND_URL });
-    this.client = new ApolloClient({
-      link: this.httpLink,
+    this.client = this._createApolloClient(clientVersion);
+  }
+
+  private _createApolloClient(clientVersion?: string) {
+    const httpLink = new HttpLink({ uri: SLIPPI_BACKEND_URL });
+    const authLink = setContext(async () => {
+      // The firebase ID token expires after 1 hour so we will update the header on all actions
+      const token = await this.authService.getUserToken();
+
+      return {
+        headers: {
+          authorization: token ? `Bearer ${token}` : undefined,
+        },
+      };
+    });
+    const retryLink = new RetryLink({
+      delay: {
+        initial: 300,
+        max: Infinity,
+        jitter: true,
+      },
+      attempts: {
+        max: 3,
+        retryIf: (error) => Boolean(error),
+      },
+    });
+    const errorLink = onError(({ graphQLErrors, networkError }) => {
+      if (graphQLErrors) {
+        graphQLErrors.map(({ message, locations, path }) =>
+          log.error(`Apollo GQL Error: Message: ${message}, Location: ${locations}, Path: ${path}`),
+        );
+      }
+      if (networkError) {
+        log.error(`Apollo Network Error: ${networkError}`);
+      }
+    });
+
+    const apolloLink = ApolloLink.from([authLink, errorLink, retryLink, httpLink]);
+    return new ApolloClient({
+      link: apolloLink,
       cache: new InMemoryCache(),
       name: "slippi-launcher",
       version: clientVersion,
     });
-  }
-
-  // The firebase ID token expires after 1 hour so we will refresh it for actions that require it.
-  private async _refreshAuthToken(): Promise<AuthUser> {
-    const user = this.authService.getCurrentUser();
-    if (!user) {
-      throw new Error("User is not logged in.");
-    }
-    const token = await this.authService.getUserToken();
-
-    const authLink = new ApolloLink((operation, forward) => {
-      // Use the setContext method to set the HTTP headers.
-      operation.setContext({
-        headers: {
-          authorization: token ? `Bearer ${token}` : "",
-        },
-      });
-
-      // Call the next link in the middleware chain.
-      return forward(operation);
-    });
-    this.client.setLink(authLink.concat(this.httpLink));
-
-    return user;
   }
 
   public async validateUserId(userId: string): Promise<{ displayName: string; connectCode: string }> {
@@ -89,7 +105,10 @@ class SlippiBackendClient implements SlippiBackendService {
   }
 
   public async fetchPlayKey(): Promise<PlayKey | null> {
-    const user = await this._refreshAuthToken();
+    const user = this.authService.getCurrentUser();
+    if (!user) {
+      throw new Error("User is not logged in");
+    }
 
     const res = await this.client.query({
       query: QUERY_GET_USER_KEY,
@@ -132,7 +151,10 @@ class SlippiBackendClient implements SlippiBackendService {
   }
 
   public async changeDisplayName(name: string) {
-    const user = await this._refreshAuthToken();
+    const user = this.authService.getCurrentUser();
+    if (!user) {
+      throw new Error("User is not logged in");
+    }
 
     const res = await this.client.mutate({
       mutation: MUTATION_RENAME_USER,
@@ -149,8 +171,6 @@ class SlippiBackendClient implements SlippiBackendService {
   }
 
   public async initializeNetplay(codeStart: string): Promise<void> {
-    await this._refreshAuthToken();
-
     const res = await this.client.mutate({ mutation: MUTATION_INIT_NETPLAY, variables: { codeStart } });
     handleErrors(res.errors);
   }

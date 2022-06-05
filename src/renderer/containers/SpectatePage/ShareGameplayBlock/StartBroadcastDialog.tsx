@@ -54,9 +54,7 @@ export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({ open
   );
 
   const fetchUser = debounce(async () => {
-    console.log("start debounced code");
     await userQuery.refetch();
-    console.log("end debounced code");
   }, 200);
 
   const handleChange = React.useCallback(
