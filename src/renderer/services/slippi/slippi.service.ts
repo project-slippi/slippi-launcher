@@ -36,6 +36,10 @@ class SlippiBackendClient implements SlippiBackendService {
     private readonly dolphinService: DolphinService,
     clientVersion?: string,
   ) {
+    this.client = this._createApolloClient(clientVersion);
+  }
+
+  private _createApolloClient(clientVersion?: string) {
     const httpLink = new HttpLink({ uri: SLIPPI_BACKEND_URL });
     const authLink = setContext(async () => {
       // The firebase ID token expires after 1 hour so we will update the header on all actions
@@ -70,7 +74,7 @@ class SlippiBackendClient implements SlippiBackendService {
     });
 
     const apolloLink = ApolloLink.from([authLink, errorLink, retryLink, httpLink]);
-    this.client = new ApolloClient({
+    return new ApolloClient({
       link: apolloLink,
       cache: new InMemoryCache(),
       name: "slippi-launcher",
