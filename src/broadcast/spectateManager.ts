@@ -30,14 +30,15 @@ const generatePlaybackId = (broadcastId: string) => `spectate-${broadcastId}`;
  */
 export class SpectateManager extends EventEmitter {
   private broadcastInfo: Record<string, BroadcastInfo> = {};
+  private broadcastList: Record<string, BroadcasterItem> = {};
   private wsConnection: connection | null = null;
 
   constructor() {
     super();
   }
 
-  private async _playFile(filePath: string, playbackId: string) {
-    this.emit(SpectateEvent.NEW_FILE, playbackId, filePath);
+  private async _playFile(filePath: string, playbackId: string, broadcasterName: string) {
+    this.emit(SpectateEvent.NEW_FILE, playbackId, filePath, broadcasterName);
   }
 
   private _handleEvents(obj: { type: string; broadcastId: string; cursor: string; events: any[] }) {
@@ -158,6 +159,8 @@ export class SpectateManager extends EventEmitter {
             case "list-broadcasts-resp": {
               const broadcasts: BroadcasterItem[] = obj.broadcasts ?? [];
               this.emit(SpectateEvent.BROADCAST_LIST_UPDATE, broadcasts);
+              this.broadcastList = {};
+              broadcasts.forEach((broadcast) => (this.broadcastList[broadcast.id] = broadcast));
               break;
             }
             case "events": {
@@ -248,8 +251,9 @@ export class SpectateManager extends EventEmitter {
       folderPath: targetPath,
     });
 
+    const broadcasterName = this.broadcastList[broadcastId].name;
     slpFileWriter.on(SlpFileWriterEvent.NEW_FILE, (currFilePath) => {
-      this._playFile(currFilePath, dolphinPlaybackId).catch(console.warn);
+      this._playFile(currFilePath, dolphinPlaybackId, broadcasterName).catch(console.warn);
     });
 
     this.broadcastInfo[broadcastId] = {
@@ -270,7 +274,7 @@ export class SpectateManager extends EventEmitter {
     // Play an empty file such that we just launch into the waiting for game screen, this is
     // used to clear out any previous file that we were reading for. The file will get updated
     // by the fileWriter
-    this._playFile("", dolphinPlaybackId).catch(console.warn);
+    this._playFile("", dolphinPlaybackId, broadcasterName).catch(console.warn);
   }
 
   public handleClosedDolphin(playbackId: string) {
