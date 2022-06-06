@@ -59,6 +59,7 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
       isRealtime: conn.isRealtime,
       enableRelay: conn.enableRelay,
       useNicknameFolders: conn.useNicknameFolders,
+      consoleNick: nickname,
     };
 
     // Add OBS config if necessary
@@ -71,7 +72,7 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
     }
 
     await consoleService.connectToConsoleMirror(config);
-  }, [consoleService, connection]);
+  }, [consoleService, connection, nickname]);
   const onMirror = React.useCallback(() => {
     consoleService.startMirroring(connection.ipAddress).catch(showError);
   }, [consoleService, connection, showError]);

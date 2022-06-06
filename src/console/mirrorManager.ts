@@ -239,7 +239,13 @@ export class MirrorManager extends EventEmitter {
   }
 
   private async _playFile(filePath: string, playbackId: string) {
-    return this.emit(MirrorEvent.NEW_FILE, playbackId, filePath, this.mirrors[playbackId].isRealtime);
+    return this.emit(
+      MirrorEvent.NEW_FILE,
+      playbackId,
+      filePath,
+      this.mirrors[playbackId].isRealtime,
+      this.mirrors[playbackId].consoleNick,
+    );
   }
 
   public async handleClosedDolphin(playbackId: string) {

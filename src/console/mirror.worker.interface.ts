@@ -33,11 +33,12 @@ export async function createMirrorWorker(dolphinManager: DolphinManager): Promis
     ipc_consoleMirrorErrorMessageEvent.main!.trigger({ message }).catch(log.error);
   });
 
-  worker.getMirrorDetailsObservable().subscribe(({ playbackId, filePath, isRealtime }) => {
+  worker.getMirrorDetailsObservable().subscribe(({ playbackId, filePath, isRealtime, consoleNick }) => {
     const replayComm: ReplayCommunication = {
       mode: "mirror",
       isRealTimeMode: isRealtime,
       replay: filePath,
+      gameStation: consoleNick,
     };
     dolphinManager.launchPlaybackDolphin(playbackId, replayComm).catch(log.error);
   });

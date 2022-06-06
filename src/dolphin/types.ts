@@ -8,6 +8,7 @@ export interface ReplayCommunication {
   isRealTimeMode?: boolean; // default false; keeps dolphin fairly close to real time (about 2-3 frames); only relevant in mirror mode
   shouldResync?: boolean; // default true; disables the resync functionality
   rollbackDisplayMethod?: "off" | "normal" | "visible"; // default off; normal shows like a player experienced it, visible shows ALL frames (normal and rollback)
+  gameStation?: string;
   queue?: ReplayQueueItem[];
 }
 
