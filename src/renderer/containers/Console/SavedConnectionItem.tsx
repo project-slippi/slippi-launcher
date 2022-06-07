@@ -59,7 +59,7 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
       isRealtime: conn.isRealtime,
       enableRelay: conn.enableRelay,
       useNicknameFolders: conn.useNicknameFolders,
-      consoleNick: nickname,
+      nickname,
     };
 
     // Add OBS config if necessary

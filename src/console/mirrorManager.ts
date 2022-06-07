@@ -244,7 +244,7 @@ export class MirrorManager extends EventEmitter {
       playbackId,
       filePath,
       this.mirrors[playbackId].isRealtime,
-      this.mirrors[playbackId].consoleNick,
+      this.mirrors[playbackId].nickname,
     );
   }
 

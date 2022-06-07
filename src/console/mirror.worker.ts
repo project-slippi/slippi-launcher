@@ -22,7 +22,7 @@ interface Methods {
     playbackId: string;
     filePath: string;
     isRealtime: boolean;
-    consoleNick?: string;
+    nickname?: string;
   }>;
   getMirrorStatusObservable(): Observable<{ ip: string; info: Partial<ConsoleMirrorStatusUpdate> }>;
 }
@@ -37,7 +37,7 @@ const mirrorDetailsSubject = new Subject<{
   playbackId: string;
   filePath: string;
   isRealtime: boolean;
-  consoleNick?: string;
+  nickname?: string;
 }>();
 const mirrorStatusSubject = new Subject<{ ip: string; info: Partial<ConsoleMirrorStatusUpdate> }>();
 
@@ -52,8 +52,8 @@ mirrorManager.on(MirrorEvent.ERROR, async (error: Error | string) => {
 
 mirrorManager.on(
   MirrorEvent.NEW_FILE,
-  async (playbackId: string, filePath: string, isRealtime: boolean, consoleNick?: string) => {
-    mirrorDetailsSubject.next({ playbackId, filePath, isRealtime, consoleNick });
+  async (playbackId: string, filePath: string, isRealtime: boolean, nickname?: string) => {
+    mirrorDetailsSubject.next({ playbackId, filePath, isRealtime, nickname: nickname });
   },
 );
 
@@ -96,7 +96,7 @@ const methods: WorkerSpec = {
     playbackId: string;
     filePath: string;
     isRealtime: boolean;
-    consoleNick?: string;
+    nickname?: string;
   }> {
     return Observable.from(mirrorDetailsSubject);
   },
