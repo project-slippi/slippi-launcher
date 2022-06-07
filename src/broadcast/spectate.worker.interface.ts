@@ -30,10 +30,11 @@ export async function createSpectateWorker(dolphinManager: DolphinManager): Prom
     const errorMessage = err instanceof Error ? err.message : err;
     void ipc_spectateErrorOccurredEvent.main!.trigger({ errorMessage });
   });
-  worker.getSpectateDetailsObservable().subscribe(({ playbackId, filePath }) => {
+  worker.getSpectateDetailsObservable().subscribe(({ playbackId, filePath, broadcasterName }) => {
     const replayComm: ReplayCommunication = {
       mode: "mirror",
       replay: filePath,
+      gameStation: broadcasterName,
     };
     dolphinManager.launchPlaybackDolphin(playbackId, replayComm).catch(log.error);
   });

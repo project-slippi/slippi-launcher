@@ -19,7 +19,7 @@ interface Methods {
   getLogObservable(): Observable<string>;
   getErrorObservable(): Observable<Error | string>;
   getBroadcastListObservable(): Observable<BroadcasterItem[]>;
-  getSpectateDetailsObservable(): Observable<{ playbackId: string; filePath: string }>;
+  getSpectateDetailsObservable(): Observable<{ playbackId: string; filePath: string; broadcasterName: string }>;
   getReconnectObservable(): Observable<Record<never, never>>;
 }
 
@@ -30,7 +30,7 @@ const spectateManager = new SpectateManager();
 const logSubject = new Subject<string>();
 const errorSubject = new Subject<Error | string>();
 const broadcastListSubject = new Subject<BroadcasterItem[]>();
-const spectateDetailsSubject = new Subject<{ playbackId: string; filePath: string }>();
+const spectateDetailsSubject = new Subject<{ playbackId: string; filePath: string; broadcasterName: string }>();
 const reconnectSubject = new Subject<Record<never, never>>();
 
 // Forward the events to the renderer
@@ -46,8 +46,8 @@ spectateManager.on(SpectateEvent.ERROR, async (err: Error | string) => {
   errorSubject.next(err);
 });
 
-spectateManager.on(SpectateEvent.NEW_FILE, async (playbackId: string, filePath: string) => {
-  spectateDetailsSubject.next({ playbackId, filePath });
+spectateManager.on(SpectateEvent.NEW_FILE, async (playbackId: string, filePath: string, broadcasterName: string) => {
+  spectateDetailsSubject.next({ playbackId, filePath, broadcasterName });
 });
 
 spectateManager.on(SpectateEvent.RECONNECT, async () => {
@@ -87,7 +87,7 @@ const methods: WorkerSpec = {
   getBroadcastListObservable(): Observable<BroadcasterItem[]> {
     return Observable.from(broadcastListSubject);
   },
-  getSpectateDetailsObservable(): Observable<{ playbackId: string; filePath: string }> {
+  getSpectateDetailsObservable(): Observable<{ playbackId: string; filePath: string; broadcasterName: string }> {
     return Observable.from(spectateDetailsSubject);
   },
   getReconnectObservable(): Observable<Record<never, never>> {
