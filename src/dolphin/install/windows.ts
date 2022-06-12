@@ -1,4 +1,4 @@
-import StreamZip from "node-stream-zip";
+import { async as AsyncStreamZip } from "node-stream-zip";
 
 export async function installDolphinOnWindows({
   assetPath,
@@ -11,8 +11,7 @@ export async function installDolphinOnWindows({
 }) {
   // don't need to backup user files since our zips don't contain them
   log(`Extracting ${assetPath} to: ${destinationFolder}`);
-  // eslint-disable-next-line new-cap
-  const zip = new StreamZip.async({ file: assetPath });
+  const zip = new AsyncStreamZip({ file: assetPath });
   await zip.extract(null, destinationFolder);
   await zip.close();
 }

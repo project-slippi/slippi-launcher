@@ -1,7 +1,7 @@
 import type { DolphinLaunchType } from "@dolphin/types";
 import { findDolphinExecutable } from "@dolphin/util";
 import * as fs from "fs-extra";
-import StreamZip from "node-stream-zip";
+import { async as AsyncStreamZip } from "node-stream-zip";
 
 // TODO: Figure out how to make this not depend on DolphinLaunchType
 export async function installDolphinOnLinux({
@@ -23,8 +23,7 @@ export async function installDolphinOnLinux({
     log("No existing AppImage found");
   }
 
-  // eslint-disable-next-line new-cap
-  const zip = new StreamZip.async({ file: assetPath });
+  const zip = new AsyncStreamZip({ file: assetPath });
   await zip.extract(null, destinationFolder);
   await zip.close();
 
