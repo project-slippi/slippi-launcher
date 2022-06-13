@@ -1,4 +1,4 @@
-import AdmZip from "adm-zip";
+import { async as AsyncStreamZip } from "node-stream-zip";
 
 export async function installDolphinOnWindows({
   assetPath,
@@ -11,6 +11,7 @@ export async function installDolphinOnWindows({
 }) {
   // don't need to backup user files since our zips don't contain them
   log(`Extracting ${assetPath} to: ${destinationFolder}`);
-  const zip = new AdmZip(assetPath);
-  zip.extractAllTo(destinationFolder, true);
+  const zip = new AsyncStreamZip({ file: assetPath });
+  await zip.extract(null, destinationFolder);
+  await zip.close();
 }
