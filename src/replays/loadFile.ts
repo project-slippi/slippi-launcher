@@ -13,7 +13,7 @@ export async function loadFile(fullPath: string): Promise<FileResult> {
   // Load settings
   const settings: GameStartType | null = game.getSettings();
   if (!settings || _.isEmpty(settings.players)) {
-    throw new Error("Game settings could not be properly loaded.");
+    throw new Error(`Could not load settings for ${fullPath}`);
   }
 
   const result: FileResult = {

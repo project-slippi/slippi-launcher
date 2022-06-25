@@ -11,13 +11,13 @@ import { Observable, Subject } from "threads/observable";
 import { expose } from "threads/worker";
 
 import { loadFile } from "./loadFile";
-import { loadFolder } from "./loadFolder";
+import { loadReplays } from "./loadFolder";
 import type { FileLoadResult, FileResult, Progress } from "./types";
 
 interface Methods {
   dispose: () => Promise<void>;
   loadSingleFile(filePath: string): Promise<FileResult>;
-  loadReplayFolder(folder: string): Promise<FileLoadResult>;
+  loadReplays(files: string[]): Promise<FileLoadResult>;
   calculateGameStats(fullPath: string): Promise<StatsType | null>;
   getProgressObservable(): Observable<Progress>;
 }
@@ -38,15 +38,14 @@ const methods: WorkerSpec = {
     const result = await loadFile(filePath);
     return result;
   },
-  async loadReplayFolder(folder: string): Promise<FileLoadResult> {
-    const result = await loadFolder(folder, (current, total) => {
+  async loadReplays(files: string[]): Promise<FileLoadResult> {
+    const result = await loadReplays(files, (current, total) => {
       progressSubject.next({ current, total });
     });
 
     // Reset the progress subject
     progressSubject.complete();
     progressSubject = new Subject();
-
     return result;
   },
   async calculateGameStats(fullPath: string): Promise<StatsType | null> {

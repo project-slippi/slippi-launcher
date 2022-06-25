@@ -3,18 +3,11 @@
 // when in Node worker context.
 
 // TODO: Make electron-log work somehow
+import Database from "better-sqlite3";
+import path from "path";
 import type { ModuleMethods } from "threads/dist/types/master";
 import { expose } from "threads/worker";
 
-import {
-  connect,
-  deleteReplays,
-  getFolderFiles,
-  getFolderReplays,
-  getFullReplay,
-  pruneFolders,
-  saveReplays,
-} from "./db";
 import type { FileResult } from "./types";
 
 export interface Methods {
@@ -30,34 +23,131 @@ export interface Methods {
 
 export type WorkerSpec = ModuleMethods & Methods;
 
+const createTablesSql = `
+CREATE TABLE IF NOT EXISTS replays (
+    fullPath      TEXT PRIMARY KEY,
+    name          TEXT,
+    folder        TEXT
+);
+
+CREATE INDEX IF NOT EXISTS folder_idx ON replays(folder);
+
+CREATE TABLE IF NOT EXISTS replay_data (
+    fullPath      TEXT PRIMARY KEY,
+    startTime     TEXT,
+    lastFrame     INTEGER,
+    settings      JSON,
+    metadata      JSON,
+    FOREIGN KEY (fullPath) REFERENCES replays(fullPath) ON DELETE CASCADE
+);
+`;
+
+let db: Database.Database;
+
+const parseRow = (row: any) => {
+  return {
+    name: row.name,
+    fullPath: row.fullPath,
+    settings: JSON.parse(row.settings),
+    startTime: row.startTime,
+    lastFrame: row.lastFrame,
+    metadata: JSON.parse(row.metadata),
+    stats: JSON.parse(row.stats || null),
+    folder: row.folder,
+  } as FileResult;
+};
+
+/**
+ * This retrieves all the replays in a given folder and returns their full paths.
+ */
+const getFolderFiles = async (folder: string): Promise<string[]> => {
+  const files = db
+    .prepare(
+      `
+      SELECT fullPath
+      FROM replays 
+      WHERE folder = ?`,
+    )
+    .all(folder);
+  return files ? files.map((f: any) => f.fullPath) : [];
+};
+
+const getFolderReplays = async (folder: string) => {
+  const docs = db
+    .prepare(
+      `
+    SELECT fullPath, name, folder, startTime, lastFrame, 
+    settings, metadata 
+    FROM replays 
+    JOIN replay_data USING (fullPath)
+    WHERE folder = ?
+    ORDER by startTime DESC`,
+    )
+    .all(folder);
+  const files = docs.map(parseRow);
+  return docs ? files : [];
+};
+
+const getFullReplay = async (file: string) => {
+  const doc = db.prepare("SELECT * from replays JOIN replay_data USING (fullPath) WHERE fullPath = ?").get(file);
+  return parseRow(doc);
+};
+
+const saveReplays = async (replays: FileResult[]) => {
+  db.transaction(() => {
+    let insert = db.prepare(`INSERT INTO replays(fullPath, name, folder) VALUES (?, ?, ?)`);
+    const docs1 = replays.map((replay: FileResult) => {
+      const folder = path.dirname(replay.fullPath);
+      return [replay.fullPath, replay.name, folder];
+    });
+    docs1.forEach((d) => insert.run(...d));
+
+    insert = db.prepare(`
+      INSERT INTO replay_data(
+        fullPath, startTime, lastFrame, 
+        settings, metadata)
+        VALUES (?, ?, ?, ?, ?)`);
+    const docs2 = replays.map((replay: FileResult) => [
+      replay.fullPath,
+      replay.startTime,
+      replay.lastFrame,
+      JSON.stringify(replay.settings),
+      JSON.stringify(replay.metadata),
+    ]);
+    docs2.forEach((d) => insert.run(...d));
+  })();
+};
+
+const deleteReplays = async (files: string[]) => {
+  const qfmt = files.map(() => "?").join(",");
+  db.prepare(`DELETE FROM replays WHERE fullPath IN (${qfmt})`).run(files);
+};
+
+const pruneFolders = async (existingFolders: string[]) => {
+  const qfmt = existingFolders.map(() => "?").join(", ");
+  db.prepare(`DELETE FROM replays WHERE folder NOT IN (${qfmt})`).run(existingFolders);
+};
+
 const methods: WorkerSpec = {
   async dispose() {
     // Clean up anything
+    if (db) {
+      db.close();
+    }
+  },
+  disconnect() {
+    db.close();
   },
   connect(path: string) {
-    connect(path);
+    db = new Database(path);
+    db.exec(createTablesSql);
   },
-  async getFolderFiles(folder: string): Promise<string[]> {
-    return getFolderFiles(folder);
-  },
-  async getFolderReplays(folder: string) {
-    return getFolderReplays(folder);
-  },
-  async getFullReplay(file: string): Promise<FileResult | null> {
-    return getFullReplay(file);
-  },
-  // async getPlayerReplays(player: string): Promise<FileResult[]> {
-  //   return getPlayerReplays(player)
-  // },
-  async saveReplays(replays: FileResult[]): Promise<void> {
-    return saveReplays(replays);
-  },
-  async deleteReplays(files: string[]): Promise<void> {
-    return deleteReplays(files);
-  },
-  async pruneFolders(existingFolders: string[]): Promise<void> {
-    return pruneFolders(existingFolders);
-  },
+  getFolderFiles,
+  getFolderReplays,
+  getFullReplay,
+  saveReplays,
+  deleteReplays,
+  pruneFolders,
 };
 
 expose(methods);

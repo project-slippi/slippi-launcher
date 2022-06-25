@@ -9,13 +9,16 @@ export type DatabaseWorker = RegisteredWorker<WorkerSpec>;
 
 const log = electronLog.scope("db.worker");
 
-export async function createDatabaseWorker(): Promise<DatabaseWorker> {
+export async function createDatabaseWorker(databasePath: string): Promise<DatabaseWorker> {
   log.debug("Spawning worker");
 
-  const replayWorker = await registerWorker<WorkerSpec>(new Worker("./db.worker"));
+  const worker = await registerWorker<WorkerSpec>(new Worker("./db.worker"));
   log.debug("Spawning worker: Done");
 
-  return replayWorker;
+  worker.connect(databasePath);
+  log.debug("Spawning worker: Connected to database");
+
+  return worker;
 }
 
 // w.connect(path.join(app.getPath("userData"), "sqlippi.db"));
