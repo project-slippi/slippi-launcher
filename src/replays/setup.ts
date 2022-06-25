@@ -68,8 +68,7 @@ export default function setupReplaysIpc() {
     return {
       files,
       totalBytes,
-      // FIXME: This value is incorrect
-      fileErrorCount: parsed.fileErrorCount,
+      fileErrorCount: totalCount - files.length,
     };
   });
 
