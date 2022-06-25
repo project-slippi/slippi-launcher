@@ -20,6 +20,7 @@ export interface MirrorConfig {
   enableRelay: boolean;
   autoSwitcherSettings?: AutoSwitcherSettings;
   useNicknameFolders: boolean;
+  nickname?: string;
 }
 
 export interface MirrorDetails extends MirrorConfig {

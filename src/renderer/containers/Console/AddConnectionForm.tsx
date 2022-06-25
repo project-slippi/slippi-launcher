@@ -238,7 +238,7 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
                     required={true}
                     value={isNaN(value) ? "" : value.toString()}
                     onChange={(e) => onChange(parseInt(e.target.value))}
-                    error={!!error}
+                    error={Boolean(error)}
                     helperText={error ? error.message : null}
                     type="number"
                     disabled={disabled}

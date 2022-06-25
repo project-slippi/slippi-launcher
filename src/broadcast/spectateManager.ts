@@ -29,22 +29,23 @@ const generatePlaybackId = (broadcastId: string) => `spectate-${broadcastId}`;
  * Dealing with dolphin related details should be handled elsewhere.
  */
 export class SpectateManager extends EventEmitter {
-  private broadcastInfo: Record<string, BroadcastInfo> = {};
+  private openBroadcasts: Record<string, BroadcastInfo> = {};
+  private availableBroadcasts: Record<string, BroadcasterItem> = {};
   private wsConnection: connection | null = null;
 
   constructor() {
     super();
   }
 
-  private async _playFile(filePath: string, playbackId: string) {
-    this.emit(SpectateEvent.NEW_FILE, playbackId, filePath);
+  private async _playFile(filePath: string, playbackId: string, broadcasterName: string) {
+    this.emit(SpectateEvent.NEW_FILE, playbackId, filePath, broadcasterName);
   }
 
   private _handleEvents(obj: { type: string; broadcastId: string; cursor: string; events: any[] }) {
     const events = obj.events ?? [];
     const broadcastId: string = obj.broadcastId;
 
-    const broadcastInfo = this.broadcastInfo[broadcastId];
+    const broadcastInfo = this.openBroadcasts[broadcastId];
     if (!broadcastInfo) {
       // We've stopped watching this broadcast already
       return;
@@ -110,7 +111,7 @@ export class SpectateManager extends EventEmitter {
         this.wsConnection = connection;
 
         // Reconnect to all the broadcasts that we were already watching
-        Object.entries(this.broadcastInfo).forEach(([broadcastId, info]) => {
+        Object.entries(this.openBroadcasts).forEach(([broadcastId, info]) => {
           const watchMsg: { type: string; broadcastId: string; startCursor?: string } = {
             type: "watch-broadcast",
             broadcastId,
@@ -158,6 +159,10 @@ export class SpectateManager extends EventEmitter {
             case "list-broadcasts-resp": {
               const broadcasts: BroadcasterItem[] = obj.broadcasts ?? [];
               this.emit(SpectateEvent.BROADCAST_LIST_UPDATE, broadcasts);
+              this.availableBroadcasts = {};
+              broadcasts.forEach((broadcast) => {
+                this.availableBroadcasts[broadcast.id] = broadcast;
+              });
               break;
             }
             case "events": {
@@ -204,10 +209,10 @@ export class SpectateManager extends EventEmitter {
     }
 
     // End the file writing and remove from the map
-    const info = this.broadcastInfo[broadcastId];
+    const info = this.openBroadcasts[broadcastId];
     if (info) {
       info.fileWriter.endCurrentFile();
-      delete this.broadcastInfo[broadcastId];
+      delete this.openBroadcasts[broadcastId];
     }
   }
 
@@ -224,7 +229,7 @@ export class SpectateManager extends EventEmitter {
       throw new Error("No websocket connection");
     }
 
-    const existingBroadcasts = Object.keys(this.broadcastInfo);
+    const existingBroadcasts = Object.keys(this.openBroadcasts);
     if (existingBroadcasts.includes(broadcastId)) {
       // We're already watching this broadcast!
       this.emit(SpectateEvent.LOG, `We are already watching the selected broadcast`);
@@ -248,11 +253,12 @@ export class SpectateManager extends EventEmitter {
       folderPath: targetPath,
     });
 
+    const broadcasterName = this.availableBroadcasts[broadcastId].name;
     slpFileWriter.on(SlpFileWriterEvent.NEW_FILE, (currFilePath) => {
-      this._playFile(currFilePath, dolphinPlaybackId).catch(console.warn);
+      this._playFile(currFilePath, dolphinPlaybackId, broadcasterName).catch(console.warn);
     });
 
-    this.broadcastInfo[broadcastId] = {
+    this.openBroadcasts[broadcastId] = {
       broadcastId,
       cursor: "",
       fileWriter: slpFileWriter,
@@ -270,11 +276,11 @@ export class SpectateManager extends EventEmitter {
     // Play an empty file such that we just launch into the waiting for game screen, this is
     // used to clear out any previous file that we were reading for. The file will get updated
     // by the fileWriter
-    this._playFile("", dolphinPlaybackId).catch(console.warn);
+    this._playFile("", dolphinPlaybackId, broadcasterName).catch(console.warn);
   }
 
   public handleClosedDolphin(playbackId: string) {
-    const broadcastInfo = Object.values(this.broadcastInfo).find((info) => info.dolphinId === playbackId);
+    const broadcastInfo = Object.values(this.openBroadcasts).find((info) => info.dolphinId === playbackId);
     if (!broadcastInfo) {
       // This is not one of the spectator dolphin instances
       return;
