@@ -1,4 +1,5 @@
 import { app } from "electron";
+import log from "electron-log";
 import * as fs from "fs-extra";
 import path from "path";
 
@@ -42,17 +43,17 @@ export default function setupReplaysIpc() {
     }
     const [worker, dbWorker] = await Promise.all([replayBrowserWorker, databaseBrowserWorker]);
     const loadedFiles = await dbWorker.getFolderFiles(folderPath);
-    const { total, toLoad, toDelete } = await filterReplays(folderPath, loadedFiles);
-    console.log(
-      `found ${total} files in ${folderPath}, ${toLoad.length} are new. ${toDelete.length} will be removed from the DB`,
+    const { totalCount, toLoad, toDelete, totalBytes } = await filterReplays(folderPath, loadedFiles);
+    log.info(
+      `Found ${totalCount} files in ${folderPath}, ${toLoad.length} are new. ${toDelete.length} will be removed from the DB`,
     );
     if (toDelete.length > 0) {
       await dbWorker.deleteReplays(toDelete);
-      console.log(`deleted ${toDelete.length} replays from the db`);
+      log.info(`Deleted ${toDelete.length} replays from the db`);
     }
 
     worker.getProgressObservable().subscribe((progress) => {
-      ipc_loadProgressUpdatedEvent.main!.trigger(progress).catch(console.warn);
+      ipc_loadProgressUpdatedEvent.main!.trigger(progress).catch(log.warn);
     });
 
     // Save the new replays into the database
@@ -60,13 +61,13 @@ export default function setupReplaysIpc() {
     await dbWorker.saveReplays(parsed.files);
 
     const files = await dbWorker.getFolderReplays(folderPath);
-    console.log(`loaded ${files.length} replays in ${folderPath} from the db`);
+    log.info(`Loaded ${files.length} replays in ${folderPath} from the db`);
 
     return {
       files,
-      // FIXME: These values are incorrect.
+      totalBytes,
+      // FIXME: This value is incorrect
       fileErrorCount: parsed.fileErrorCount,
-      totalBytes: parsed.totalBytes,
     };
   });
 
@@ -78,12 +79,17 @@ export default function setupReplaysIpc() {
   });
 }
 
-const filterReplays = async (folder: string, loadedFiles: string[]) => {
+async function filterReplays(folder: string, loadedFiles: string[]) {
   // Find which files still actually exist
   const dirfiles = await fs.readdir(folder, { withFileTypes: true });
   const slpFiles = dirfiles
     .filter((dirent) => dirent.isFile() && path.extname(dirent.name) === ".slp")
     .map((d) => path.resolve(folder, d.name));
+
+  const stats = slpFiles.map((filename) => fs.stat(filename));
+  const totalBytes = (await Promise.allSettled(stats))
+    .map((res) => (res.status === "fulfilled" ? res.value.size : 0))
+    .reduce((acc, size) => acc + size, 0);
 
   // These are the new files that we haven't indexed
   const toLoad = slpFiles.filter((file) => !loadedFiles.includes(file));
@@ -91,5 +97,5 @@ const filterReplays = async (folder: string, loadedFiles: string[]) => {
   // These are the files no longer exist so we should delete them
   const toDelete = loadedFiles.filter((file) => !slpFiles.includes(file));
 
-  return { total: slpFiles.length, toLoad, toDelete };
-};
+  return { totalCount: slpFiles.length, toLoad, toDelete, totalBytes };
+}
