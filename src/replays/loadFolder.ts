@@ -2,7 +2,6 @@ import { exists } from "@common/exists";
 import * as fs from "fs-extra";
 import path from "path";
 
-import { worker } from "./db.worker.interface";
 import { loadFile } from "./loadFile";
 import type { FileLoadResult, FileResult } from "./types";
 
@@ -50,16 +49,6 @@ export async function loadFolder(
   folder: string,
   callback?: (current: number, total: number) => void,
 ): Promise<FileLoadResult> {
-  // If the folder does not exist, return empty
-  if (!(await fs.pathExists(folder))) {
-    return {
-      files: [],
-      fileErrorCount: 0,
-      totalBytes: 0,
-    };
-  }
-
-  const w = await worker;
   const loadedFiles = await w.getFolderFiles(folder);
   const { total, toLoad, toDelete } = await filterReplays(folder, loadedFiles);
   console.log(

@@ -18,11 +18,11 @@ import {
 import type { FileResult } from "./types";
 
 export interface Methods {
+  dispose(): Promise<void>;
   connect(path: string): void;
   getFolderFiles(folder: string): Promise<string[]>;
   getFolderReplays(folder: string): Promise<FileResult[]>;
   getFullReplay(file: string): Promise<FileResult | null>;
-  // getPlayerReplays(_: string): Promise<FileResult[]>;
   saveReplays(replays: FileResult[]): Promise<void>;
   deleteReplays(files: string[]): Promise<void>;
   pruneFolders(existingFolders: string[]): Promise<void>;
@@ -31,6 +31,9 @@ export interface Methods {
 export type WorkerSpec = ModuleMethods & Methods;
 
 const methods: WorkerSpec = {
+  async dispose() {
+    // Clean up anything
+  },
   connect(path: string) {
     connect(path);
   },

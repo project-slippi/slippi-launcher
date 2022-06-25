@@ -1,3 +1,6 @@
+import * as fs from "fs-extra";
+
+import { createDatabaseWorker } from "./db.worker.interface";
 import { FolderTreeService } from "./folderTreeService";
 import {
   ipc_calculateGameStats,
@@ -11,6 +14,7 @@ import { createReplayWorker } from "./replays.worker.interface";
 export default function setupReplaysIpc() {
   const treeService = new FolderTreeService();
   const replayBrowserWorker = createReplayWorker();
+  const databaseBrowserWorker = createDatabaseWorker();
 
   ipc_initializeFolderTree.main!.handle(async ({ folders }) => {
     return treeService.init(folders);
@@ -21,7 +25,18 @@ export default function setupReplaysIpc() {
   });
 
   ipc_loadReplayFolder.main!.handle(async ({ folderPath }) => {
+    // If the folder does not exist, return empty
+    if (!(await fs.pathExists(folderPath))) {
+      return {
+        files: [],
+        fileErrorCount: 0,
+        totalBytes: 0,
+      };
+    }
     const worker = await replayBrowserWorker;
+    const dbWorker = await databaseBrowserWorker;
+    const loadedFiles = dbWorker.getFolderFiles(folderPath);
+
     worker.getProgressObservable().subscribe((progress) => {
       ipc_loadProgressUpdatedEvent.main!.trigger(progress).catch(console.warn);
     });

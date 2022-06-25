@@ -1,41 +1,22 @@
-import { app } from "electron";
-import log from "electron-log";
-import path from "path";
-import { spawn, Thread, Worker } from "threads";
+import electronLog from "electron-log";
+import { Worker } from "threads";
+import type { RegisteredWorker } from "utils/registerWorker";
+import { registerWorker } from "utils/registerWorker";
 
-import type { Methods, WorkerSpec } from "./db.worker";
+import type { WorkerSpec } from "./db.worker";
 
-let w: Thread & Methods;
+export type DatabaseWorker = RegisteredWorker<WorkerSpec>;
 
-export const worker: Promise<Thread & Methods> = new Promise((resolve, reject) => {
-  if (w) {
-    resolve(w);
-  }
-  log.debug("db: Spawning worker");
+const log = electronLog.scope("db.worker");
 
-  spawn<WorkerSpec>(new Worker("./db.worker"))
-    .then((worker) => {
-      log.debug("db: Spawning worker: Done");
+export async function createDatabaseWorker(): Promise<DatabaseWorker> {
+  log.debug("Spawning worker");
 
-      async function terminateWorker() {
-        log.debug("db: Terminating worker");
-        try {
-          await worker.destroyWorker();
-        } finally {
-          await Thread.terminate(worker);
-        }
-      }
+  const replayWorker = await registerWorker<WorkerSpec>(new Worker("./db.worker"));
+  log.debug("Spawning worker: Done");
 
-      app.on("quit", terminateWorker);
+  return replayWorker;
+}
 
-      // Thread.events(worker).subscribe((evt) => {
-      //   log.debug("replayBrowser: Worker event:", evt);
-      //   // TODO: Respawn on worker exit?
-      // });
-
-      w = worker;
-      w.connect(path.join(app.getPath("userData"), "sqlippi.db"));
-      resolve(worker);
-    })
-    .catch(reject);
-});
+// w.connect(path.join(app.getPath("userData"), "sqlippi.db"));
+// resolve(worker);
