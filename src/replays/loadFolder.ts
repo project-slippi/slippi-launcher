@@ -2,13 +2,15 @@ import { exists } from "@common/exists";
 import * as fs from "fs-extra";
 
 import { loadFile } from "./loadFile";
-import type { FileLoadResult } from "./types";
+import type { FileLoadResult, FileResult } from "./types";
 
 export async function loadReplays(
   filesToLoad: string[],
   callback?: (current: number, total: number) => void,
 ): Promise<FileLoadResult> {
   let count = 0;
+  const total = filesToLoad.length;
+
   const fileSizesPromise = Promise.all(
     filesToLoad.map(async (fullPath): Promise<number> => {
       const stat = await fs.stat(fullPath);
@@ -16,15 +18,23 @@ export async function loadReplays(
     }),
   );
 
+  const process = async (path: string) => {
+    return new Promise<FileResult | null>((resolve) => {
+      setImmediate(async () => {
+        try {
+          resolve(await loadFile(path));
+        } catch (err) {
+          resolve(null);
+        } finally {
+          callback && callback(count++, total);
+        }
+      });
+    });
+  };
+
   const slpGamesPromise = Promise.all(
-    filesToLoad.map(async (file) => {
-      try {
-        const res = await loadFile(file);
-        callback && callback(count++, filesToLoad.length);
-        return res;
-      } catch (err) {
-        return null;
-      }
+    filesToLoad.map((fullPath) => {
+      return process(fullPath);
     }),
   );
 
