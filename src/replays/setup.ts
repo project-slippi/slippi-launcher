@@ -13,8 +13,11 @@ import {
 } from "./ipc";
 import { createReplayWorker } from "./replays.worker.interface";
 
+const isDevelopment = process.env.NODE_ENV === "development";
+
 export default function setupReplaysIpc() {
-  const databasePath = path.join(app.getPath("userData"), "slippi.db");
+  const databaseFile = isDevelopment ? "test.db" : "slippi.db";
+  const databasePath = path.join(app.getPath("userData"), databaseFile);
 
   const treeService = new FolderTreeService();
   const replayBrowserWorker = createReplayWorker();
