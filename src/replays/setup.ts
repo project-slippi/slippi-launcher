@@ -52,7 +52,7 @@ export default function setupReplaysIpc() {
       log.info(`Deleted ${toDelete.length} replays from the db`);
     }
 
-    worker.getProgressObservable().subscribe((progress) => {
+    const sub = worker.getProgressObservable().subscribe((progress) => {
       ipc_loadProgressUpdatedEvent.main!.trigger(progress).catch(log.warn);
     });
 
@@ -62,6 +62,8 @@ export default function setupReplaysIpc() {
 
     const files = await dbWorker.getFolderReplays(folderPath);
     log.info(`Loaded ${files.length} replays in ${folderPath} from the db`);
+
+    sub.unsubscribe();
 
     return {
       files,
