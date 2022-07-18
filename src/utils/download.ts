@@ -22,7 +22,11 @@ export async function download(options: {
   return new Promise((resolve, reject) => {
     let totalBytes = 0;
     const downloader = wgetDownload(url, destinationFile);
-    downloader.on("error", reject);
+    downloader.on("error", (err) => {
+      fs.unlink(destinationFile, () => {
+        reject(err);
+      });
+    });
     downloader.on("start", (fileSize: number | null) => {
       totalBytes = fileSize ?? 0;
     });
