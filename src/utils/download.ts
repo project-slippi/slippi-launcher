@@ -28,7 +28,9 @@ export async function download(options: {
       });
     });
     downloader.on("start", (fileSize: number | null) => {
-      totalBytes = fileSize ?? 0;
+      if (fileSize !== null) {
+        totalBytes = fileSize;
+      }
     });
     downloader.on("end", () => {
       resolve();
