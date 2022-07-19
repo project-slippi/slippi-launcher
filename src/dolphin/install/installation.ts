@@ -117,7 +117,6 @@ export class DolphinInstallation {
       log.info(`${type} Dolphin installation is outdated. Downloading latest...`);
     } catch (err) {
       log.info(`Could not find ${type} Dolphin installation. Downloading...`);
-      log.error(err);
     }
 
     // Start the download

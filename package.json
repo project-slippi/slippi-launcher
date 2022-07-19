@@ -182,6 +182,7 @@
     "react-twitter-embed": "^4.0.4",
     "react-virtualized-auto-sizer": "^1.0.3",
     "react-window": "^1.8.6",
+    "wget-improved": "^3.3.1",
     "zustand": "^3.2.0"
   }
 }
