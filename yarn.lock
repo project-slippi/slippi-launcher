@@ -2328,17 +2328,17 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@slippi/slippi-js@^6.2.1":
-  version "6.2.1"
-  resolved "https://registry.yarnpkg.com/@slippi/slippi-js/-/slippi-js-6.2.1.tgz#94f297ebfa2389193cb9ecbe537e6ea69470b652"
-  integrity sha512-uRbiKp3CEULVjbUEepGFf623z3ulZp8IoQsav6ZWZ4Jcpk2psdPKmdxUZslNADxXemySlVJn0Tb+c7lYowskVg==
+"@slippi/slippi-js@^6.3.0":
+  version "6.3.0"
+  resolved "https://registry.yarnpkg.com/@slippi/slippi-js/-/slippi-js-6.3.0.tgz#5714930791a47bd0045ee365c23eabf153ccfc31"
+  integrity sha512-qew/lCDzXJY5XHURw1/HwyHXV1TSqFhsMm/tTpyTaLY0NewV6ggYaYisOhJNtjKpnfgyNZekNYwlOu6ffn9S0g==
   dependencies:
     "@shelacek/ubjson" "^1.0.1"
+    date-fns "^2.28.0"
     enet "^0.2.9"
     iconv-lite "^0.6.2"
     lodash "^4.17.21"
     lodash-es "^4.17.21"
-    moment "^2.27.0"
     reconnect-core "^1.3.0"
     semver "^7.3.2"
 
@@ -5228,7 +5228,7 @@ babel-preset-jest@^27.5.1:
 backoff@~2.5.0:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/backoff/-/backoff-2.5.0.tgz#f616eda9d3e4b66b8ca7fca79f695722c5f8e26f"
-  integrity sha1-9hbtqdPktmuMp/ynn2lXIsX44m8=
+  integrity sha512-wC5ihrnUXmR2douXmXLCe5O3zg3GKIyvRi/hi58a/XyRxVI+3/yM0PYueQOZXPXQ9pxBislYkw+sF9b7C/RuMA==
   dependencies:
     precond "0.2"
 
@@ -6772,6 +6772,11 @@ date-fns@^2.16.1:
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.28.0.tgz#9570d656f5fc13143e50c975a3b6bbeb46cd08b2"
   integrity sha512-8d35hViGYx/QH0icHYCeLmsLmMUheMmTyV9Fcm6gvNwdw31yXXH+O85sOBJ+OLnLQMKZowvpKb6FgMIQjcpvQw==
 
+date-fns@^2.28.0:
+  version "2.29.1"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.29.1.tgz#9667c2615525e552b5135a3116b95b1961456e60"
+  integrity sha512-dlLD5rKaKxpFdnjrs+5azHDFOPEu4ANy/LTh04A1DTzMM7qoajmKCBc8pkKRFT41CNzw+4gQh79X5C+Jq27HAw==
+
 debug@2.6.9, debug@^2.2.0, debug@^2.3.3, debug@^2.6.0, debug@^2.6.8, debug@^2.6.9:
   version "2.6.9"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.9.tgz#5d128515df134ff327e90a4c93f4e077a536341f"
@@ -7460,7 +7465,7 @@ endent@^2.0.1:
 enet@^0.2.9:
   version "0.2.9"
   resolved "https://registry.yarnpkg.com/enet/-/enet-0.2.9.tgz#d7fd68a0bf8bb3891408ea465e26ed6955822a1a"
-  integrity sha1-1/1ooL+Ls4kUCOpGXibtaVWCKho=
+  integrity sha512-V3qaPJEHY1Bl9F1nEY4thQV2fKkwS+I8Xpss4/91Hyi6JHagB7Ur6bROyVp4wqO74cPbF0ptgyyYh0L0Sky4Lw==
 
 enhanced-resolve@^0.9.1:
   version "0.9.1"
@@ -11717,11 +11722,6 @@ mkdirp@^1.0.3, mkdirp@^1.0.4:
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-1.0.4.tgz#3eb5ed62622756d79a5f0e2a221dfebad75c2f7e"
   integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
 
-moment@^2.27.0:
-  version "2.29.4"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.4.tgz#3dbe052889fe7c1b2ed966fcb3a77328964ef108"
-  integrity sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==
-
 mousetrap@^1.6.5:
   version "1.6.5"
   resolved "https://registry.yarnpkg.com/mousetrap/-/mousetrap-1.6.5.tgz#8a766d8c272b08393d5f56074e0b5ec183485bf9"
@@ -13081,7 +13081,7 @@ postcss@^8.2.15, postcss@^8.3.5, postcss@^8.4.7:
 precond@0.2:
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/precond/-/precond-0.2.3.tgz#aa9591bcaa24923f1e0f4849d240f47efc1075ac"
-  integrity sha1-qpWRvKokkj8eD0hJ0kD0fvwQdaw=
+  integrity sha512-QCYG84SgGyGzqJ/vlMsxeXd/pgL/I94ixdNFyh1PusWmTCyVfPJjZ1K1jvHtsbfnXQs2TSkEP2fR7QiMZAnKFQ==
 
 prelude-ls@^1.2.1:
   version "1.2.1"
@@ -13689,7 +13689,7 @@ rechoir@^0.7.0:
 reconnect-core@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/reconnect-core/-/reconnect-core-1.3.0.tgz#fbae52919a7877d844e3246d01a2f26701c833c8"
-  integrity sha1-+65SkZp4d9hE4yRtAaLyZwHIM8g=
+  integrity sha512-+gLKwmyRf2tjl6bLR03DoeWELzyN6LW9Xgr3vh7NXHHwPi0JC0N2TwPyf90oUEBkCRcD+bgQ+s3HORoG3nwHDg==
   dependencies:
     backoff "~2.5.0"
 
@@ -14286,7 +14286,7 @@ semver@7.0.0:
   resolved "https://registry.yarnpkg.com/semver/-/semver-7.0.0.tgz#5f3ca35761e47e05b206c6daff2cf814f0316b8e"
   integrity sha512-+GB6zVA9LWh6zovYQLALHwv5rb2PHGlJi3lfiqIHxR0uuwCgefcOJc59v9fv1w8GbStwxuuqqAjI9NMAOOgq1A==
 
-semver@7.3.5, semver@7.x, semver@^7.2.1, semver@^7.3.2, semver@^7.3.4, semver@^7.3.5:
+semver@7.3.5, semver@7.x, semver@^7.2.1, semver@^7.3.4, semver@^7.3.5:
   version "7.3.5"
   resolved "https://registry.yarnpkg.com/semver/-/semver-7.3.5.tgz#0b621c879348d8998e4b0e4be94b3f12e6018ef7"
   integrity sha512-PoeGJYh8HK4BTO/a9Tf6ZG3veo/A7ZVsYrSA6J8ny9nb3B1VrpkuN+z9OE5wfE5p6H4LchYZsegiQgbJD94ZFQ==
@@ -14297,6 +14297,13 @@ semver@^6.0.0, semver@^6.1.1, semver@^6.1.2, semver@^6.2.0, semver@^6.3.0:
   version "6.3.0"
   resolved "https://registry.yarnpkg.com/semver/-/semver-6.3.0.tgz#ee0a64c8af5e8ceea67687b133761e1becbd1d3d"
   integrity sha512-b39TBaTSfV6yBrapU89p5fKekE2m/NwnDocOVruQFS1/veMgdzuPcnOM34M6CwxW8jH/lxEa5rBoDeUwu5HHTw==
+
+semver@^7.3.2:
+  version "7.3.7"
+  resolved "https://registry.yarnpkg.com/semver/-/semver-7.3.7.tgz#12c5b649afdbf9049707796e22a4028814ce523f"
+  integrity sha512-QlYTucUYOews+WeEujDoEGziz4K6c47V/Bd+LjSSYcA94p+DmINdf7ncaUinThfvZyu13lN9OY1XDxt8C0Tw0g==
+  dependencies:
+    lru-cache "^6.0.0"
 
 send@0.17.2:
   version "0.17.2"

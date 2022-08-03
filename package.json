@@ -150,7 +150,7 @@
     "@fontsource/rubik": "^4.4.2",
     "@mui/icons-material": "^5.5.1",
     "@mui/material": "^5.5.1",
-    "@slippi/slippi-js": "^6.2.1",
+    "@slippi/slippi-js": "^6.3.0",
     "compare-func": "^2.0.0",
     "cross-fetch": "^3.1.5",
     "dmg": "^0.1.0",
