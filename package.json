@@ -166,6 +166,7 @@
     "jdenticon": "^3.1.1",
     "lodash": "^4.17.21",
     "medium-json-feed": "^0.0.3",
+    "moment": "^2.29.4",
     "mousetrap": "^1.6.5",
     "node-stream-zip": "^1.15.0",
     "notistack": "^3.0.0-alpha.2",
