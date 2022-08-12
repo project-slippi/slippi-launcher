@@ -1,11 +1,17 @@
+import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import AddIcon from "@mui/icons-material/Add";
+import HelpOutline from "@mui/icons-material/HelpOutline";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
 import type { StoredConnection } from "@settings/types";
 import { ConnectionStatus } from "@slippi/slippi-js";
 import React from "react";
 
 import { DualPane } from "@/components/DualPane";
+import { ExternalLink as A } from "@/components/ExternalLink";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/FormInputs";
 import type { EditConnectionType } from "@/lib/consoleConnection";
@@ -31,6 +37,7 @@ export const Console: React.FC = () => {
   const { consoleService } = useServices();
   const [isScanning, setIsScanning] = React.useState(false);
   const [modalOpen, setModalOpen] = React.useState(false);
+  const [helpModalOpen, setHelpModalOpen] = React.useState(false);
   const [currentFormValues, setCurrentFormValues] = React.useState<Partial<StoredConnection> | null>(null);
   const savedConnections = useSettings((store) => store.connections);
   const savedIps = savedConnections.map((conn) => conn.ipAddress);
@@ -102,7 +109,26 @@ export const Console: React.FC = () => {
                 flex: 1;
               `}
             >
-              <h1>Console Mirror</h1>
+              <div
+                css={css`
+                  display: flex;
+                  flex-direction: row;
+                  align-items: center;
+                `}
+              >
+                <h1>Console Mirror</h1>{" "}
+                <div onClick={() => setHelpModalOpen(true)}>
+                  <HelpOutline
+                    css={css`
+                      padding-left: 5px;
+                      padding-top: 17px;
+                      cursor: pointer;
+                      opacity: 0.5;
+                      transform: scale(0.7);
+                    `}
+                  ></HelpOutline>
+                </div>
+              </div>
               <Button onClick={() => setModalOpen(true)} startIcon={<AddIcon />}>
                 New connection
               </Button>
@@ -145,6 +171,24 @@ export const Console: React.FC = () => {
         onCancel={onCancel}
         disabled={consoleIsConnected(currentFormValues?.ipAddress)}
       />
+      <Dialog open={helpModalOpen} closeAfterTransition={true} onClose={() => setHelpModalOpen(false)}>
+        <DialogTitle>What is Mirroring?</DialogTitle>
+        <DialogContent>
+          <div>
+            Slippi Mirroring allows for streaming replays from a console to a PC for real time playback. Checkout the{" "}
+            <A
+              href="https://docs.google.com/document/d/1ezavBjqVGbVO8aqSa5EHfq7ZflrTCvezRYjOf51MOWg/edit"
+              css={css`
+                color: ${colors.greenDark};
+                text-decoration: underline;
+              `}
+            >
+              mirroring guide
+            </A>{" "}
+            for setup instructions.
+          </div>
+        </DialogContent>
+      </Dialog>
     </Outer>
   );
 };
