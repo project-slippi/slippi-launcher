@@ -139,7 +139,6 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
                 filePaths={[fullPath]}
                 css={css`
                   opacity: 0.9;
-                  transition: opacity 0.2s ease-in-out;
                   &:hover {
                     opacity: 1;
                     text-decoration: underline;
