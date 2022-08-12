@@ -37,7 +37,6 @@ export const Console: React.FC = () => {
   const { consoleService } = useServices();
   const [isScanning, setIsScanning] = React.useState(false);
   const [modalOpen, setModalOpen] = React.useState(false);
-  const [helpModalOpen, setHelpModalOpen] = React.useState(false);
   const [currentFormValues, setCurrentFormValues] = React.useState<Partial<StoredConnection> | null>(null);
   const savedConnections = useSettings((store) => store.connections);
   const savedIps = savedConnections.map((conn) => conn.ipAddress);
@@ -116,18 +115,7 @@ export const Console: React.FC = () => {
                   align-items: center;
                 `}
               >
-                <h1>Console Mirror</h1>{" "}
-                <div onClick={() => setHelpModalOpen(true)}>
-                  <HelpOutline
-                    css={css`
-                      padding-left: 5px;
-                      padding-top: 17px;
-                      cursor: pointer;
-                      opacity: 0.5;
-                      transform: scale(0.7);
-                    `}
-                  ></HelpOutline>
-                </div>
+                <h1>Console Mirror</h1> <MirroringHelp />
               </div>
               <Button onClick={() => setModalOpen(true)} startIcon={<AddIcon />}>
                 New connection
@@ -171,7 +159,26 @@ export const Console: React.FC = () => {
         onCancel={onCancel}
         disabled={consoleIsConnected(currentFormValues?.ipAddress)}
       />
-      <Dialog open={helpModalOpen} closeAfterTransition={true} onClose={() => setHelpModalOpen(false)}>
+    </Outer>
+  );
+};
+
+const MirroringHelp = () => {
+  const [modalOpen, setModalOpen] = React.useState(false);
+  return (
+    <>
+      <div onClick={() => setModalOpen(true)}>
+        <HelpOutline
+          css={css`
+            padding-left: 5px;
+            padding-top: 17px;
+            cursor: pointer;
+            opacity: 0.5;
+            transform: scale(0.7);
+          `}
+        ></HelpOutline>
+      </div>
+      <Dialog open={modalOpen} closeAfterTransition={true} onClose={() => setModalOpen(false)}>
         <DialogTitle>What is Mirroring?</DialogTitle>
         <DialogContent>
           <div>
@@ -189,6 +196,6 @@ export const Console: React.FC = () => {
           </div>
         </DialogContent>
       </Dialog>
-    </Outer>
+    </>
   );
 };
