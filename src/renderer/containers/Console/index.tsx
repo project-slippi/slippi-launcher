@@ -111,7 +111,6 @@ export const Console: React.FC = () => {
               <div
                 css={css`
                   display: flex;
-                  flex-direction: row;
                   align-items: center;
                 `}
               >
