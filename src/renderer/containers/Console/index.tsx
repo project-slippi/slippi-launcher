@@ -1,8 +1,8 @@
-import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import AddIcon from "@mui/icons-material/Add";
 import HelpOutline from "@mui/icons-material/HelpOutline";
+import { IconButton } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -166,33 +166,35 @@ const MirroringHelp = () => {
   const [modalOpen, setModalOpen] = React.useState(false);
   return (
     <>
-      <div onClick={() => setModalOpen(true)}>
+      <IconButton
+        onClick={() => setModalOpen(true)}
+        css={css`
+          opacity: 0.5;
+          margin-top: 10px;
+        `}
+      >
         <HelpOutline
           css={css`
-            padding-left: 5px;
-            padding-top: 17px;
-            cursor: pointer;
-            opacity: 0.5;
-            transform: scale(0.7);
+            font-size: 20px;
           `}
-        ></HelpOutline>
-      </div>
+        />
+      </IconButton>
       <Dialog open={modalOpen} closeAfterTransition={true} onClose={() => setModalOpen(false)}>
         <DialogTitle>What is Mirroring?</DialogTitle>
         <DialogContent>
-          <div>
-            Slippi Mirroring allows for streaming replays from a console to a PC for real time playback. Checkout the{" "}
-            <A
-              href="https://docs.google.com/document/d/1ezavBjqVGbVO8aqSa5EHfq7ZflrTCvezRYjOf51MOWg/edit"
-              css={css`
-                color: ${colors.greenDark};
+          <span
+            css={css`
+              a {
                 text-decoration: underline;
-              `}
-            >
+              }
+            `}
+          >
+            Slippi Mirroring allows for streaming replays from a console to a PC for real time playback. Checkout the{" "}
+            <A href="https://docs.google.com/document/d/1ezavBjqVGbVO8aqSa5EHfq7ZflrTCvezRYjOf51MOWg">
               mirroring guide
             </A>{" "}
             for setup instructions.
-          </div>
+          </span>
         </DialogContent>
       </Dialog>
     </>
