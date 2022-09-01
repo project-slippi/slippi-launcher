@@ -10,7 +10,7 @@ export class AutoSwitcher extends EventEmitter {
   private obsIP: string;
   private obsPassword?: string;
   private statusOutput: { status: boolean; timeout: NodeJS.Timeout | null };
-  private obsPairs: { scene: string; id: number; name: string }[];
+  private obsPairs: { scene: string; id: number }[];
 
   constructor(settings: AutoSwitcherSettings) {
     super();
@@ -43,13 +43,13 @@ export class AutoSwitcher extends EventEmitter {
       const sceneItemListRes = await this.obs.call("GetSceneItemList", { sceneName });
       const sources = sceneItemListRes.sceneItems;
       sources.forEach((source) => {
-        if (source.sourceName!.toString() === this.obsSourceName) {
-          this.obsPairs.push({
-            scene: sceneName,
-            id: +source.sceneItemId!.toString(),
-            name: source.sourceName!.toString(),
-          });
+        if (source.sourceName!.toString() !== this.obsSourceName) {
+          return;
         }
+        this.obsPairs.push({
+          scene: sceneName,
+          id: +source.sceneItemId!.toString(),
+        });
       });
     });
   };
@@ -76,15 +76,19 @@ export class AutoSwitcher extends EventEmitter {
       }
 
       this.obs.on("SceneItemCreated", async (data) => {
-        if (data.sourceName === this.obsSourceName) {
-          this.obsPairs.push({ scene: data.sceneName, id: data.sceneItemId, name: data.sourceName });
+        if (data.sourceName !== this.obsSourceName) {
+          return;
         }
+        this.obsPairs.push({ scene: data.sceneName, id: data.sceneItemId });
       });
-      this.obs.on(
-        "SceneItemRemoved",
-        async (data) =>
-          (this.obsPairs = this.obsPairs.filter((val) => val.scene !== data.sceneName && val.id !== data.sceneItemId)),
-      );
+
+      this.obs.on("SceneItemRemoved", async (data) => {
+        if (data.sourceName !== this.obsSourceName) {
+          return;
+        }
+        this.obsPairs = this.obsPairs.filter((val) => val.scene !== data.sceneName || val.id !== data.sceneItemId);
+      });
+
       await this._getSceneSources();
     }
   }
