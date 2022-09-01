@@ -48,7 +48,7 @@ export class AutoSwitcher extends EventEmitter {
         }
         this.obsPairs.push({
           scene: sceneName,
-          id: +source.sceneItemId!.toString(),
+          id: parseInt(source.sceneItemId!.toString()),
         });
       });
     });
