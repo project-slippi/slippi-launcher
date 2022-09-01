@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import OBSWebSocket from "obs-websocket-js";
+import OBSWebSocket, { EventSubscription } from "obs-websocket-js";
 
 import type { AutoSwitcherSettings } from "./types";
 import { MirrorEvent } from "./types";
@@ -10,7 +10,7 @@ export class AutoSwitcher extends EventEmitter {
   private obsIP: string;
   private obsPassword?: string;
   private statusOutput: { status: boolean; timeout: NodeJS.Timeout | null };
-  private obsPairs: { scene: string; source: string }[];
+  private obsPairs: { scene: string; id: number; name: string }[];
 
   constructor(settings: AutoSwitcherSettings) {
     super();
@@ -25,8 +25,8 @@ export class AutoSwitcher extends EventEmitter {
     this.obsPairs = [];
   }
 
-  public disconnect() {
-    this.obs.disconnect();
+  public async disconnect() {
+    await this.obs.disconnect();
   }
 
   public updateSettings(settings: AutoSwitcherSettings) {
@@ -36,27 +36,37 @@ export class AutoSwitcher extends EventEmitter {
   }
 
   private _getSceneSources = async () => {
-    // eslint-disable-line
-    const res = await this.obs.send("GetSceneList");
+    const res = await this.obs.call("GetSceneList");
     const scenes = res.scenes || [];
-    const pairs = scenes.flatMap((scene) => {
-      const sources = scene.sources || [];
-      return sources.map((source) => ({
-        scene: scene.name,
-        source: source.name,
-      }));
+    scenes.forEach(async (scene) => {
+      const sceneName = scene.sceneName!.toString();
+      const sceneItemListRes = await this.obs.call("GetSceneItemList", { sceneName });
+      const sources = sceneItemListRes.sceneItems;
+      sources.forEach((source) => {
+        if (source.sourceName!.toString() === this.obsSourceName) {
+          this.obsPairs.push({
+            scene: sceneName,
+            id: +source.sceneItemId!.toString(),
+            name: source.sourceName!.toString(),
+          });
+        }
+      });
     });
-    this.obsPairs = pairs.filter((pair) => pair.source === this.obsSourceName);
   };
 
   public async connect() {
     if (this.obsIP && this.obsSourceName) {
       // if you send a password when authentication is disabled, OBS will still connect
       try {
-        await this.obs.connect({
-          address: this.obsIP,
-          password: this.obsPassword,
-        });
+        const { obsWebSocketVersion, negotiatedRpcVersion } = await this.obs.connect(
+          `ws://${this.obsIP}`,
+          this.obsPassword,
+          {
+            rpcVersion: 1,
+            eventSubscriptions: EventSubscription.All | EventSubscription.SceneItems,
+          },
+        );
+        this.emit(MirrorEvent.LOG, `Connected to OBS Websocket ${obsWebSocketVersion} (RPC ${negotiatedRpcVersion})`);
       } catch (err) {
         this.emit(
           MirrorEvent.ERROR,
@@ -65,8 +75,16 @@ export class AutoSwitcher extends EventEmitter {
         return;
       }
 
-      this.obs.on("SceneItemAdded", async () => this._getSceneSources());
-      this.obs.on("SceneItemRemoved", async () => this._getSceneSources());
+      this.obs.on("SceneItemCreated", async (data) => {
+        if (data.sourceName === this.obsSourceName) {
+          this.obsPairs.push({ scene: data.sceneName, id: data.sceneItemId, name: data.sourceName });
+        }
+      });
+      this.obs.on(
+        "SceneItemRemoved",
+        async (data) =>
+          (this.obsPairs = this.obsPairs.filter((val) => val.scene !== data.sceneName && val.id !== data.sceneItemId)),
+      );
       await this._getSceneSources();
     }
   }
@@ -74,11 +92,11 @@ export class AutoSwitcher extends EventEmitter {
   private _updateSourceVisibility(show: boolean) {
     const promises = this.obsPairs.map((pair) => {
       return this.obs
-        .send("SetSceneItemProperties", {
-          "scene-name": pair.scene,
-          item: { name: pair.source },
-          visible: show,
-        } as any)
+        .call("SetSceneItemEnabled", {
+          sceneName: pair.scene,
+          sceneItemId: pair.id,
+          sceneItemEnabled: show,
+        })
         .catch((err) => {
           if (err) {
             this.emit(MirrorEvent.ERROR, err);

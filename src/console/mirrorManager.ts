@@ -193,7 +193,7 @@ export class MirrorManager extends EventEmitter {
 
     details.connection.disconnect();
     if (details.autoSwitcher) {
-      details.autoSwitcher.disconnect();
+      void details.autoSwitcher.disconnect();
     }
     if (details.relay) {
       details.relay.stopRelay();
@@ -262,7 +262,7 @@ export class MirrorManager extends EventEmitter {
 
     details.isMirroring = false;
     if (details.autoSwitcher) {
-      details.autoSwitcher.disconnect();
+      void details.autoSwitcher.disconnect();
     }
 
     this.emit(MirrorEvent.MIRROR_STATUS_CHANGE, {
