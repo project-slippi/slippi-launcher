@@ -1,3 +1,6 @@
+import { defaultAppSettings } from "@settings/defaultSettings";
+import { SettingsManager } from "@settings/settingsManager";
+
 import type { GeckoCode } from "./geckoCode";
 import { loadGeckoCodes, setCodes } from "./geckoCode";
 import type { IniFile } from "./iniFile";
@@ -26,6 +29,16 @@ export async function setSlippiSettings(
     coreSection.set("SlippiReplayMonthFolders", useMonthlySubfolders);
   }
   await iniFile.save();
+}
+
+export async function getSlippiSettings(iniFile: IniFile) {
+  const coreSection = iniFile.getOrCreateSection("Core");
+  const useMonthlySubfolders = coreSection.get("SlippiReplayMonthFolders", "False") === "True";
+  const slippiReplayDir = coreSection.get("SlippiReplayDir", defaultAppSettings.settings.rootSlpPath);
+
+  const settingsManager = new SettingsManager();
+  await settingsManager.setRootSlpPath(slippiReplayDir);
+  await settingsManager.setUseMonthlySubfolders(useMonthlySubfolders);
 }
 
 export async function setBootToCss(globalIni: IniFile, localIni: IniFile, enable: boolean): Promise<void> {
