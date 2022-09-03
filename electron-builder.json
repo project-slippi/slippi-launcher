@@ -2,7 +2,11 @@
   "productName": "Slippi Launcher",
   "appId": "com.github.projectslippi.slippidesktopapp",
   "asar": true,
-  "asarUnpack": ["**\\*.{node,dll}", "./dist/main/*.js", "./node_modules/**/*"],
+  "asarUnpack": [
+    "**\\*.{node,dll}",
+    "./dist/main/*.js",
+    "./node_modules/**/*.{js,json}"
+  ],
   "files": ["dist", "node_modules", "package.json"],
   "afterSign": ".erb/scripts/notarize.js",
   "fileAssociations": {
@@ -22,6 +26,7 @@
       "role": "Viewer"
     },
     "type": "distribution",
+    "mergeASARs": false,
     "hardenedRuntime": true,
     "entitlements": "assets/entitlements.mac.plist",
     "entitlementsInherit": "assets/entitlements.mac.plist",
