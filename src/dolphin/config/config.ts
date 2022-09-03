@@ -1,6 +1,13 @@
+import { defaultAppSettings } from "@settings/defaultSettings";
+
 import type { GeckoCode } from "./geckoCode";
 import { loadGeckoCodes, setCodes } from "./geckoCode";
 import type { IniFile } from "./iniFile";
+
+export type SyncedDolphinSettings = {
+  useMonthlySubfolders: boolean;
+  replayPath: string;
+};
 
 export async function addGamePath(iniFile: IniFile, gameDir: string): Promise<void> {
   const generalSection = iniFile.getOrCreateSection("General");
@@ -10,13 +17,7 @@ export async function addGamePath(iniFile: IniFile, gameDir: string): Promise<vo
   await iniFile.save();
 }
 
-export async function setSlippiSettings(
-  iniFile: IniFile,
-  options: Partial<{
-    useMonthlySubfolders: boolean;
-    replayPath: string;
-  }>,
-): Promise<void> {
+export async function setSlippiSettings(iniFile: IniFile, options: Partial<SyncedDolphinSettings>): Promise<void> {
   const useMonthlySubfolders = options.useMonthlySubfolders ? "True" : "False";
   const coreSection = iniFile.getOrCreateSection("Core");
   if (options.replayPath !== undefined) {
@@ -26,6 +27,14 @@ export async function setSlippiSettings(
     coreSection.set("SlippiReplayMonthFolders", useMonthlySubfolders);
   }
   await iniFile.save();
+}
+
+export async function getSlippiSettings(iniFile: IniFile): Promise<SyncedDolphinSettings> {
+  const coreSection = iniFile.getOrCreateSection("Core");
+  const useMonthlySubfolders = coreSection.get("SlippiReplayMonthFolders", "False") === "True";
+  const replayPath = coreSection.get("SlippiReplayDir", defaultAppSettings.settings.rootSlpPath);
+
+  return { useMonthlySubfolders, replayPath };
 }
 
 export async function setBootToCss(globalIni: IniFile, localIni: IniFile, enable: boolean): Promise<void> {
