@@ -1,21 +1,23 @@
 diff --git a/node_modules/app-builder-lib/templates/nsis/include/installUtil.nsh b/node_modules/app-builder-lib/templates/nsis/include/installUtil.nsh
-index 0d6f293..e2d4d95 100644
+index 4736774..e917caa 100644
 --- a/node_modules/app-builder-lib/templates/nsis/include/installUtil.nsh
 +++ b/node_modules/app-builder-lib/templates/nsis/include/installUtil.nsh
-@@ -206,11 +206,11 @@ Function uninstallOldVersion
-   StrCpy $uninstallerFileNameTemp "$PLUGINSDIR\old-uninstaller.exe"
-   !insertmacro copyFile "$uninstallerFileName" "$uninstallerFileNameTemp"
+@@ -221,13 +221,13 @@ Function uninstallOldVersion
+     ${endIf}
  
--  ExecWait '"$uninstallerFileNameTemp" /S /KEEP_APP_DATA $0 _?=$installationDir' $R0
-+  ExecWait '"$uninstallerFileNameTemp" /S /KEEP_APP_DATA $0' $R0
-   ifErrors 0 Done
-     # the execution failed - might have been caused by some group policy restrictions
-     # we try to execute the uninstaller in place
--    ExecWait '"$uninstallerFileName" /S /KEEP_APP_DATA $0 _?=$installationDir' $R0
-+    ExecWait '"$uninstallerFileName" /S /KEEP_APP_DATA $0' $R0
-   Done:
- FunctionEnd
+   OneMoreAttempt:
+-    ExecWait '"$uninstallerFileNameTemp" /S /KEEP_APP_DATA $0 _?=$installationDir' $R0
++    ExecWait '"$uninstallerFileNameTemp" /S /KEEP_APP_DATA $0' $R0
+     ifErrors TryInPlace CheckResult
  
+     TryInPlace:
+       # the execution failed - might have been caused by some group policy restrictions
+       # we try to execute the uninstaller in place
+-      ExecWait '"$uninstallerFileName" /S /KEEP_APP_DATA $0 _?=$installationDir' $R0
++      ExecWait '"$uninstallerFileName" /S /KEEP_APP_DATA $0' $R0
+       ifErrors DoesNotExist
+ 
+     CheckResult:
 diff --git a/node_modules/app-builder-lib/templates/nsis/installSection.nsh b/node_modules/app-builder-lib/templates/nsis/installSection.nsh
 index 96f913a..ea3e230 100644
 --- a/node_modules/app-builder-lib/templates/nsis/installSection.nsh
