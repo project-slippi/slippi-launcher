@@ -81,6 +81,9 @@ export class DolphinInstallation {
     }
 
     await fs.copy(oldUserFolder, newUserFolder, { overwrite: true });
+
+    // we shouldn't keep the old cache folder since it might be out of date
+    await this.clearCache();
   }
 
   public async validate({
