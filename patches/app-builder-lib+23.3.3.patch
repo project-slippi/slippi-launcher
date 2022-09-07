@@ -1,0 +1,33 @@
+diff --git a/node_modules/app-builder-lib/templates/nsis/include/installUtil.nsh b/node_modules/app-builder-lib/templates/nsis/include/installUtil.nsh
+index 4736774..e917caa 100644
+--- a/node_modules/app-builder-lib/templates/nsis/include/installUtil.nsh
++++ b/node_modules/app-builder-lib/templates/nsis/include/installUtil.nsh
+@@ -221,13 +221,13 @@ Function uninstallOldVersion
+     ${endIf}
+ 
+   OneMoreAttempt:
+-    ExecWait '"$uninstallerFileNameTemp" /S /KEEP_APP_DATA $0 _?=$installationDir' $R0
++    ExecWait '"$uninstallerFileNameTemp" /S /KEEP_APP_DATA $0' $R0
+     ifErrors TryInPlace CheckResult
+ 
+     TryInPlace:
+       # the execution failed - might have been caused by some group policy restrictions
+       # we try to execute the uninstaller in place
+-      ExecWait '"$uninstallerFileName" /S /KEEP_APP_DATA $0 _?=$installationDir' $R0
++      ExecWait '"$uninstallerFileName" /S /KEEP_APP_DATA $0' $R0
+       ifErrors DoesNotExist
+ 
+     CheckResult:
+diff --git a/node_modules/app-builder-lib/templates/nsis/installSection.nsh b/node_modules/app-builder-lib/templates/nsis/installSection.nsh
+index 96f913a..ea3e230 100644
+--- a/node_modules/app-builder-lib/templates/nsis/installSection.nsh
++++ b/node_modules/app-builder-lib/templates/nsis/installSection.nsh
+@@ -3,7 +3,7 @@
+ InitPluginsDir
+ 
+ ${IfNot} ${Silent}
+-  SetDetailsPrint none
++  SetDetailsPrint both
+ ${endif}
+ 
+ StrCpy $appExe "$INSTDIR\${APP_EXECUTABLE_FILENAME}"

@@ -11,6 +11,11 @@
 ; The result of whether we should install drivers or not
 var InstallType
 
+!macro customHeader
+  ShowInstDetails show
+  ShowUninstDetails show
+!macroend
+
 !macro customPageAfterChangeDir
   Page custom InstTypePageCreate InstTypePageLeave
   Function InstTypePageCreate
