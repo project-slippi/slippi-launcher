@@ -195,6 +195,8 @@ export class DolphinInstallation {
 
     if (cleanInstall) {
       await this._uninstallDolphin();
+    } else {
+      await this.clearCache(); // clear cache to avoid shader issues on new versions
     }
 
     switch (process.platform) {
