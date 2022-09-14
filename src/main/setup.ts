@@ -144,8 +144,9 @@ export default function setupMainIpc() {
     autoUpdater.quitAndInstall(false, true);
     return { success: true };
   });
+
   ipc_checkForUpdate.main!.handle(async () => {
-    autoUpdater.checkForUpdates().catch(log.warn);
+    autoUpdater.checkForUpdatesAndNotify().catch(log.error);
     return { success: true };
   });
 

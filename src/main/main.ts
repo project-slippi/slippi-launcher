@@ -49,7 +49,6 @@ class AppUpdater {
     log.transports.file.level = "info";
     autoUpdater.logger = log;
     autoUpdater.autoInstallOnAppQuit = settingsManager.get().settings.autoUpdateLauncher;
-    autoUpdater.checkForUpdatesAndNotify().catch(log.error);
   }
 }
 
