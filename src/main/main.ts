@@ -177,6 +177,35 @@ const waitForMainWindow = async () => {
   log.info(`Found mainWindow after ${retryIdx} tries.`);
 };
 
+const launchCloudReplay = async (replayPathIn: string) => {
+  let replayPath = replayPathIn;
+  if (!replayPath) {
+    return;
+  }
+  // For some reason the file refuses to download if it's prefixed with "/"
+  if (replayPath[0] === "/") {
+    replayPath = replayPath.slice(1);
+  }
+
+  const tmpDir = path.join(app.getPath("userData"), "temp");
+  await fs.ensureDir(tmpDir);
+  const destination = path.join(tmpDir, path.basename(replayPath));
+
+  const fileAlreadyExists = await fileExists(destination);
+  if (!fileAlreadyExists) {
+    const dlUrl = replayPath.startsWith("http")
+      ? replayPath
+      : `https://storage.googleapis.com/slippi.appspot.com/${replayPath}`;
+    log.info(`Downloading file ${replayPath} to ${destination}`);
+    // Dowload file
+    await download({ url: dlUrl, destinationFile: destination, overwrite: true });
+    log.info(`Finished download`);
+  } else {
+    log.info(`${destination} already exists. Skipping download...`);
+  }
+  await playReplayAndShowStats(destination);
+};
+
 const handleSlippiURIAsync = async (aUrl: string) => {
   log.info("Handling URL...");
   log.info(aUrl);
@@ -184,8 +213,9 @@ const handleSlippiURIAsync = async (aUrl: string) => {
   // Check if the input is
   // Specifying a base will provide sane defaults if the input is null or wrong
   const myUrl = new url.URL(aUrl, `null://null`);
+  const hostname = myUrl.hostname;
   let protocol = myUrl.protocol;
-  log.info(`protocol: ${myUrl.protocol}, hostname: ${myUrl.hostname}`);
+  log.info(`protocol: ${myUrl.protocol}, hostname: ${hostname}`);
   if (myUrl.protocol !== `${slippiProtocol}:`) {
     if (await fileExists(aUrl)) {
       log.info(`File ${aUrl} exists`);
@@ -207,32 +237,14 @@ const handleSlippiURIAsync = async (aUrl: string) => {
 
   switch (protocol) {
     case "slippi:": {
-      let replayPath = myUrl.searchParams.get("path");
-      if (!replayPath) {
-        return;
+      switch (hostname) {
+        case "play":
+          await launchCloudReplay(myUrl.searchParams.get("path") ?? "");
+          break;
+        case "update":
+          await dolphinManager.installDolphin(DolphinLaunchType.NETPLAY);
+          break;
       }
-      // For some reason the file refuses to download if it's prefixed with "/"
-      if (replayPath[0] === "/") {
-        replayPath = replayPath.slice(1);
-      }
-
-      const tmpDir = path.join(app.getPath("userData"), "temp");
-      await fs.ensureDir(tmpDir);
-      const destination = path.join(tmpDir, path.basename(replayPath));
-
-      const fileAlreadyExists = await fileExists(destination);
-      if (!fileAlreadyExists) {
-        const dlUrl = replayPath.startsWith("http")
-          ? replayPath
-          : `https://storage.googleapis.com/slippi.appspot.com/${replayPath}`;
-        log.info(`Downloading file ${replayPath} to ${destination}`);
-        // Dowload file
-        await download({ url: dlUrl, destinationFile: destination, overwrite: true });
-        log.info(`Finished download`);
-      } else {
-        log.info(`${destination} already exists. Skipping download...`);
-      }
-      await playReplayAndShowStats(destination);
       break;
     }
     case "file:": {
