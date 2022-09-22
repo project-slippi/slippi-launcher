@@ -3,14 +3,14 @@
 import {
   ipc_checkDesktopAppDolphin,
   ipc_checkPlayKeyExists,
-  ipc_clearDolphinCache,
   ipc_configureDolphin,
   ipc_dolphinEvent,
   ipc_downloadDolphin,
+  ipc_hardResetDolphin,
   ipc_importDolphinSettings,
   ipc_launchNetplayDolphin,
-  ipc_reinstallDolphin,
   ipc_removePlayKeyFile,
+  ipc_softResetDolphin,
   ipc_storePlayKeyFile,
   ipc_viewSlpReplay,
 } from "./ipc";
@@ -30,11 +30,11 @@ const dolphinApi: DolphinService = {
   async configureDolphin(dolphinType: DolphinLaunchType) {
     await ipc_configureDolphin.renderer!.trigger({ dolphinType });
   },
-  async reinstallDolphin(dolphinType: DolphinLaunchType) {
-    await ipc_reinstallDolphin.renderer!.trigger({ dolphinType });
+  async softResetDolphin(dolphinType: DolphinLaunchType) {
+    await ipc_softResetDolphin.renderer!.trigger({ dolphinType });
   },
-  async clearDolphinCache(dolphinType: DolphinLaunchType) {
-    await ipc_clearDolphinCache.renderer!.trigger({ dolphinType });
+  async hardResetDolphin(dolphinType: DolphinLaunchType) {
+    await ipc_hardResetDolphin.renderer!.trigger({ dolphinType });
   },
   async storePlayKeyFile(key: PlayKey) {
     await ipc_storePlayKeyFile.renderer!.trigger({ key });

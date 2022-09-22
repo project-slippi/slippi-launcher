@@ -40,16 +40,16 @@ export const useDolphinActions = (dolphinService: DolphinService) => {
     [getInstallStatus, dolphinService, showError],
   );
 
-  const clearDolphinCache = useCallback(
+  const softResetDolphin = useCallback(
     (dolphinType: DolphinLaunchType) => {
-      dolphinService.clearDolphinCache(dolphinType).catch(showError);
+      dolphinService.softResetDolphin(dolphinType).catch(showError);
     },
     [dolphinService, showError],
   );
 
-  const reinstallDolphin = useCallback(
+  const hardResetDolphin = useCallback(
     (dolphinType: DolphinLaunchType) => {
-      dolphinService.reinstallDolphin(dolphinType).catch(showError);
+      dolphinService.hardResetDolphin(dolphinType).catch(showError);
     },
     [dolphinService, showError],
   );
@@ -97,8 +97,8 @@ export const useDolphinActions = (dolphinService: DolphinService) => {
 
   return {
     openConfigureDolphin,
-    clearDolphinCache,
-    reinstallDolphin,
+    softResetDolphin,
+    hardResetDolphin,
     launchNetplay,
     viewReplays,
     importDolphin,

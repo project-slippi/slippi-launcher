@@ -30,8 +30,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   const [resetModalOpen, setResetModalOpen] = React.useState(false);
   const [isResetting, setIsResetting] = React.useState(false);
   const { dolphinService } = useServices();
-  const { openConfigureDolphin, reinstallDolphin, clearDolphinCache, importDolphin } =
-    useDolphinActions(dolphinService);
+  const { openConfigureDolphin, hardResetDolphin, softResetDolphin, importDolphin } = useDolphinActions(dolphinService);
 
   const dolphinIsReady = dolphinStatus === DolphinStatus.READY && !dolphinIsOpen && !isResetting;
 
@@ -43,14 +42,16 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
     openConfigureDolphin(dolphinType);
   };
 
-  const reinstallDolphinHandler = async () => {
+  const softResetDolphinHandler = async () => {
     setIsResetting(true);
-    await reinstallDolphin(dolphinType);
+    await softResetDolphin(dolphinType);
     setIsResetting(false);
   };
 
-  const clearDolphinCacheHandler = async () => {
-    clearDolphinCache(dolphinType);
+  const hardResetDolphinHandler = async () => {
+    setIsResetting(true);
+    await hardResetDolphin(dolphinType);
+    setIsResetting(false);
   };
 
   const importDolphinHandler = (importPath: string) => {
@@ -103,7 +104,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
         <ConfirmationModal
           open={resetModalOpen}
           onClose={() => setResetModalOpen(false)}
-          onSubmit={reinstallDolphinHandler}
+          onSubmit={hardResetDolphinHandler}
           title="Are you sure?"
         >
           This will remove all your {dolphinTypeName} Dolphin settings.
@@ -119,10 +120,10 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           <Button
             variant="contained"
             color="secondary"
-            onClick={clearDolphinCacheHandler}
+            onClick={softResetDolphinHandler}
             disabled={isResetting || dolphinIsOpen}
           >
-            Clear cache
+            Soft Reset
           </Button>
           <Button
             variant="outlined"
@@ -130,7 +131,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
             onClick={() => setResetModalOpen(true)}
             disabled={isResetting || dolphinIsOpen}
           >
-            Reset everything
+            Hard Reset
             {isResetting && (
               <CircularProgress
                 css={css`
