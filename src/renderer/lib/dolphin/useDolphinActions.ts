@@ -41,15 +41,23 @@ export const useDolphinActions = (dolphinService: DolphinService) => {
   );
 
   const softResetDolphin = useCallback(
-    (dolphinType: DolphinLaunchType) => {
-      dolphinService.softResetDolphin(dolphinType).catch(showError);
+    async (dolphinType: DolphinLaunchType) => {
+      try {
+        await dolphinService.softResetDolphin(dolphinType);
+      } catch (err) {
+        showError(err);
+      }
     },
     [dolphinService, showError],
   );
 
   const hardResetDolphin = useCallback(
-    (dolphinType: DolphinLaunchType) => {
-      dolphinService.hardResetDolphin(dolphinType).catch(showError);
+    async (dolphinType: DolphinLaunchType) => {
+      try {
+        await dolphinService.hardResetDolphin(dolphinType);
+      } catch (err) {
+        showError(err);
+      }
     },
     [dolphinService, showError],
   );
