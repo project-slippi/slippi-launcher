@@ -19,6 +19,12 @@ import { SettingItem } from "./SettingItem";
 const { isLinux, isMac } = window.electron.common;
 const log = window.electron.log;
 
+enum ResetType {
+  NONE,
+  SOFT,
+  HARD,
+}
+
 export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolphinType }) => {
   const dolphinStatus = useDolphinStore((store) =>
     dolphinType === DolphinLaunchType.PLAYBACK ? store.playbackStatus : store.netplayStatus,
@@ -28,11 +34,11 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   );
   const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
   const [resetModalOpen, setResetModalOpen] = React.useState(false);
-  const [isResetting, setIsResetting] = React.useState(false);
+  const [isResetting, setIsResetting] = React.useState(ResetType.NONE);
   const { dolphinService } = useServices();
   const { openConfigureDolphin, hardResetDolphin, softResetDolphin, importDolphin } = useDolphinActions(dolphinService);
 
-  const dolphinIsReady = dolphinStatus === DolphinStatus.READY && !dolphinIsOpen && !isResetting;
+  const dolphinIsReady = dolphinStatus === DolphinStatus.READY && !dolphinIsOpen && isResetting === ResetType.NONE;
 
   const openDolphinDirectoryHandler = async () => {
     await window.electron.shell.openPath(dolphinPath);
@@ -43,15 +49,15 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   };
 
   const softResetDolphinHandler = async () => {
-    setIsResetting(true);
+    setIsResetting(ResetType.SOFT);
     await softResetDolphin(dolphinType);
-    setIsResetting(false);
+    setIsResetting(ResetType.NONE);
   };
 
   const hardResetDolphinHandler = async () => {
-    setIsResetting(true);
+    setIsResetting(ResetType.HARD);
     await hardResetDolphin(dolphinType);
-    setIsResetting(false);
+    setIsResetting(ResetType.NONE);
   };
 
   const importDolphinHandler = (importPath: string) => {
@@ -75,7 +81,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           <Button variant="contained" color="primary" onClick={configureDolphinHandler} disabled={!dolphinIsReady}>
             Configure Dolphin
           </Button>
-          <Button variant="outlined" color="primary" onClick={openDolphinDirectoryHandler} disabled={isResetting}>
+          <Button variant="outlined" color="primary" onClick={openDolphinDirectoryHandler} disabled={!dolphinIsReady}>
             Open containing folder
           </Button>
         </div>
@@ -121,18 +127,34 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
             variant="contained"
             color="secondary"
             onClick={softResetDolphinHandler}
-            disabled={isResetting || dolphinIsOpen}
+            disabled={!dolphinIsReady}
+            css={css`
+              min-width: 145px;
+            `}
           >
             Soft Reset
+            {isResetting === ResetType.SOFT && (
+              <CircularProgress
+                css={css`
+                  margin-left: 10px;
+                `}
+                size={16}
+                thickness={6}
+                color="inherit"
+              />
+            )}
           </Button>
           <Button
             variant="outlined"
             color="secondary"
             onClick={() => setResetModalOpen(true)}
-            disabled={isResetting || dolphinIsOpen}
+            disabled={!dolphinIsReady}
+            css={css`
+              min-width: 145px;
+            `}
           >
             Hard Reset
-            {isResetting && (
+            {isResetting === ResetType.HARD && (
               <CircularProgress
                 css={css`
                   margin-left: 10px;
