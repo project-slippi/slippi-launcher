@@ -151,7 +151,7 @@ export class DolphinManager {
     }
   }
 
-  public async reinstallDolphin(launchType: DolphinLaunchType) {
+  public async reinstallDolphin(launchType: DolphinLaunchType, cleanInstall?: boolean) {
     switch (launchType) {
       case DolphinLaunchType.NETPLAY: {
         if (this.netplayDolphinInstance !== null) {
@@ -171,7 +171,7 @@ export class DolphinManager {
 
     const installation = this.getInstallation(launchType);
     await installation.downloadAndInstall({
-      cleanInstall: true,
+      cleanInstall,
       onProgress: (current, total) => this._onProgress(launchType, current, total),
     });
 
