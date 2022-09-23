@@ -68,8 +68,14 @@ export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: Do
     const exists = await fileExists(keyPath);
     if (exists) {
       const jsonKey = await fs.readFile(keyPath);
-      const storedKey = JSON.parse(jsonKey.toString());
-      return { exists: isEqual(storedKey, key) };
+      const fileContents = jsonKey.toString();
+      try {
+        const storedKey = JSON.parse(fileContents);
+        return { exists: isEqual(storedKey, key) };
+      } catch (err) {
+        log.warn(`Error parsing file contents: ${fileContents}`, err);
+        return { exists: false };
+      }
     }
     return { exists };
   });
