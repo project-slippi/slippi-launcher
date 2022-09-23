@@ -151,7 +151,7 @@ export class DolphinManager {
     }
   }
 
-  public async reinstallDolphin(launchType: DolphinLaunchType, cleanInstall: boolean) {
+  public async reinstallDolphin(launchType: DolphinLaunchType, cleanInstall?: boolean) {
     switch (launchType) {
       case DolphinLaunchType.NETPLAY: {
         if (this.netplayDolphinInstance !== null) {

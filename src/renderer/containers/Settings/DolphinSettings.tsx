@@ -20,7 +20,6 @@ const { isLinux, isMac } = window.electron.common;
 const log = window.electron.log;
 
 enum ResetType {
-  NONE,
   SOFT,
   HARD,
 }
@@ -34,11 +33,11 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   );
   const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
   const [resetModalOpen, setResetModalOpen] = React.useState(false);
-  const [isResetting, setIsResetting] = React.useState(ResetType.NONE);
+  const [isResetType, setResetType] = React.useState<ResetType | null>(null);
   const { dolphinService } = useServices();
   const { openConfigureDolphin, hardResetDolphin, softResetDolphin, importDolphin } = useDolphinActions(dolphinService);
 
-  const dolphinIsReady = dolphinStatus === DolphinStatus.READY && !dolphinIsOpen && isResetting === ResetType.NONE;
+  const dolphinIsReady = dolphinStatus === DolphinStatus.READY && !dolphinIsOpen && isResetType === null;
 
   const openDolphinDirectoryHandler = async () => {
     await window.electron.shell.openPath(dolphinPath);
@@ -49,15 +48,15 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   };
 
   const softResetDolphinHandler = async () => {
-    setIsResetting(ResetType.SOFT);
+    setResetType(ResetType.SOFT);
     await softResetDolphin(dolphinType);
-    setIsResetting(ResetType.NONE);
+    setResetType(null);
   };
 
   const hardResetDolphinHandler = async () => {
-    setIsResetting(ResetType.HARD);
+    setResetType(ResetType.HARD);
     await hardResetDolphin(dolphinType);
-    setIsResetting(ResetType.NONE);
+    setResetType(null);
   };
 
   const importDolphinHandler = (importPath: string) => {
@@ -133,7 +132,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
             `}
           >
             Soft Reset
-            {isResetting === ResetType.SOFT && (
+            {isResetType === ResetType.SOFT && (
               <CircularProgress
                 css={css`
                   margin-left: 10px;
@@ -154,7 +153,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
             `}
           >
             Hard Reset
-            {isResetting === ResetType.HARD && (
+            {isResetType === ResetType.HARD && (
               <CircularProgress
                 css={css`
                   margin-left: 10px;
