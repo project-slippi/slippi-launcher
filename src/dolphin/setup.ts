@@ -66,18 +66,19 @@ export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: Do
     const installation = dolphinManager.getInstallation(DolphinLaunchType.NETPLAY);
     const keyPath = await findPlayKey(installation);
     const exists = await fileExists(keyPath);
-    if (exists) {
+    if (!exists) {
+      return { exists: false };
+    }
+
+    try {
       const jsonKey = await fs.readFile(keyPath);
       const fileContents = jsonKey.toString();
-      try {
-        const storedKey = JSON.parse(fileContents);
-        return { exists: isEqual(storedKey, key) };
-      } catch (err) {
-        log.warn(`Error parsing file contents: ${fileContents}`, err);
-        return { exists: false };
-      }
+      const storedKey = JSON.parse(fileContents);
+      return { exists: isEqual(storedKey, key) };
+    } catch (err) {
+      log.warn(err);
+      return { exists: false };
     }
-    return { exists };
   });
 
   ipc_removePlayKeyFile.main!.handle(async () => {
