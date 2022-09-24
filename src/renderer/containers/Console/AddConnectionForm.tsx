@@ -149,8 +149,8 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
                   `}
                 >
                   Allows automatic hiding and showing of an OBS source (e.g. your Dolphin capture) when the game is
-                  active. Requires <A href="https://github.com/obsproject/obs-websocket">OBS Websocket Plugin</A>, which
-                  comes preinstalled on OBS 28+.
+                  active. Requires <A href="https://github.com/obsproject/obs-websocket/releases">OBS Websocket 5.0+</A>
+                  , which comes preinstalled on OBS 28+.
                 </span>
               }
               disabled={disabled}
