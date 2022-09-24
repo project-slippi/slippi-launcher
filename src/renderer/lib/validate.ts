@@ -1,18 +1,21 @@
-export const isValidIpAddress = (ip: string): boolean => {
-  if (ip === "localhost") {
-    return true;
-  }
+import { isIP } from "net";
 
-  const chunks = ip.split(".");
-  if (chunks.length !== 4) {
-    return false;
-  }
+export const isValidIpv4Address = (ip: string): boolean => {
+  return ip === "localhost" || isIP(ip) === 4;
+};
 
-  return chunks.map((n) => parseInt(n)).every((n) => n >= 0 && n <= 255);
+const isValidIpv6Address = (ip: string): boolean => {
+  return isIP(ip) === 6;
 };
 
 export const validateIpAndPort = (ipAddressWithPort: string): string | true => {
-  const ipPort = ipAddressWithPort.split(":");
+  // ipv6 addrs are surrounded by brackets when including ports
+  // ipv4 will cover the localhost case since it matches syntactically
+  const ipv6Port = ipAddressWithPort.split("]:");
+  ipv6Port[0] = ipv6Port[0].replace("[", "");
+  const ipv4Port = ipAddressWithPort.split(":");
+  const ipPort = ipv6Port.length !== 2 ? ipv4Port : ipv6Port;
+
   if (ipPort.length !== 2) {
     return "No Port provided or missing colon (:)";
   }
@@ -22,7 +25,7 @@ export const validateIpAndPort = (ipAddressWithPort: string): string | true => {
     return "Invalid Port";
   }
 
-  if (!isValidIpAddress(ip)) {
+  if (!isValidIpv4Address(ip) || !isValidIpv6Address(ip)) {
     return "Invalid IP address";
   }
 
