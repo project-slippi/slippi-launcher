@@ -7,6 +7,7 @@ export interface StoredConnection {
   consoleNick?: string;
   enableAutoSwitcher: boolean;
   obsIP?: string;
+  obsPort?: string;
   obsSourceName?: string;
   obsPassword?: string;
   enableRelay: boolean;

@@ -1,4 +1,5 @@
 import { EventEmitter } from "events";
+import { isIPv6 } from "net";
 import OBSWebSocket, { EventSubscription } from "obs-websocket-js";
 
 import type { AutoSwitcherSettings } from "./types";
@@ -6,18 +7,20 @@ import { MirrorEvent } from "./types";
 
 export class AutoSwitcher extends EventEmitter {
   private obs: OBSWebSocket;
-  private obsSourceName: string;
   private obsIP: string;
+  private obsPort: string;
   private obsPassword?: string;
+  private obsSourceName: string;
   private statusOutput: { status: boolean; timeout: NodeJS.Timeout | null };
   private obsPairs: { scene: string; id: number }[];
 
   constructor(settings: AutoSwitcherSettings) {
     super();
     this.obs = new OBSWebSocket();
-    this.obsSourceName = settings.sourceName;
     this.obsIP = settings.ip;
+    this.obsPort = settings.port;
     this.obsPassword = settings.password;
+    this.obsSourceName = settings.sourceName;
     this.statusOutput = {
       status: false,
       timeout: null,
@@ -31,6 +34,7 @@ export class AutoSwitcher extends EventEmitter {
 
   public updateSettings(settings: AutoSwitcherSettings) {
     this.obsIP = settings.ip;
+    this.obsPort = settings.port;
     this.obsSourceName = settings.sourceName;
     this.obsPassword = settings.password;
   }
@@ -55,11 +59,12 @@ export class AutoSwitcher extends EventEmitter {
   };
 
   public async connect() {
-    if (this.obsIP && this.obsSourceName) {
+    if (this.obsIP && this.obsPort && this.obsSourceName) {
       // if you send a password when authentication is disabled, OBS will still connect
       try {
+        const obsAddress = isIPv6(this.obsIP) ? `[${this.obsIP}]:${this.obsPort}` : `${this.obsIP}:${this.obsPort}`;
         const { obsWebSocketVersion, negotiatedRpcVersion } = await this.obs.connect(
-          `ws://${this.obsIP}`,
+          `ws://${obsAddress}`,
           this.obsPassword,
           {
             rpcVersion: 1,
@@ -119,9 +124,7 @@ export class AutoSwitcher extends EventEmitter {
     this._updateSourceVisibility(value);
   }
 
-  /*
-  As long as we are receiving data from the console, show the source feed in OBS.
-  */
+  // As long as we are receiving data from the console, show the source feed in OBS.
   public handleStatusOutput(timeoutLength = 200) {
     const setTimer = () => {
       if (this.statusOutput.timeout) {
