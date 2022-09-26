@@ -63,9 +63,10 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
     };
 
     // Add OBS config if necessary
-    if (conn.enableAutoSwitcher && conn.obsIP && conn.obsSourceName) {
+    if (conn.enableAutoSwitcher && conn.obsIP && conn.obsPort && conn.obsSourceName) {
       config.autoSwitcherSettings = {
         ip: conn.obsIP,
+        port: conn.obsPort,
         password: conn.obsPassword,
         sourceName: conn.obsSourceName,
       };
