@@ -15,7 +15,7 @@ import { ExternalLink as A } from "@/components/ExternalLink";
 import { Checkbox } from "@/components/FormInputs/Checkbox";
 import { Toggle } from "@/components/FormInputs/Toggle";
 import { PathInput } from "@/components/PathInput";
-import { isValidIpAddress } from "@/lib/validate";
+import { isValidIpAddress, isValidPort } from "@/lib/validate";
 
 type FormValues = {
   ipAddress: string;
@@ -216,8 +216,7 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
                         if (!val) {
                           return false;
                         }
-                        const port = parseInt(val);
-                        return (port > 0 && port < 65535) || "Invalid Port";
+                        return isValidPort(val) || "Invalid Port";
                       },
                     }}
                   />

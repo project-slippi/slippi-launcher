@@ -16,6 +16,11 @@ export const isValidIpAddress = (ip: string): string | true => {
   return true;
 };
 
+export function isValidPort(value: string | number) {
+  const port = typeof value === "string" ? parseInt(value) : value;
+  return port > 0 && port < 65535;
+}
+
 export const validateConnectCodeStart = (codeStart: string): string | true => {
   if (codeStart.length === 0) {
     return "Invalid code";
