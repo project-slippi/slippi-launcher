@@ -27,4 +27,5 @@ module.exports = {
   moduleDirectories: ["node_modules", "release/app/node_modules"],
   testPathIgnorePatterns: ["release/app/dist"],
   setupFiles: ["./.erb/scripts/check-build-exists.ts"],
+  transformIgnorePatterns: ["node_modules/(?!is-ip|ip-regex|super-regex|function-timeout|time-span|convert-hrtime|is-regexp|clone-regexp)"],
 };
