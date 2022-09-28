@@ -7727,10 +7727,10 @@ electron-to-chromium@^1.4.202:
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.211.tgz#afaa8b58313807501312d598d99b953568d60f91"
   integrity sha512-BZSbMpyFQU0KBJ1JG26XGeFI3i4op+qOYGxftmZXFZoHkhLgsSv4DHDJfl8ogII3hIuzGt51PaZ195OVu0yJ9A==
 
-electron-updater@^5.2.3:
-  version "5.2.3"
-  resolved "https://registry.yarnpkg.com/electron-updater/-/electron-updater-5.2.3.tgz#c6785b72d4c333250b8fdb4d825915997fcc47e8"
-  integrity sha512-w22pR90KJdZskrS98kcMT7nS2KGUJaHTizuDuUgfRNzOV7Zu3vKIHvJpGVALVfXTNZ9TG9YfCzlUzKpI35V9sA==
+electron-updater@^5.2.4:
+  version "5.2.4"
+  resolved "https://registry.yarnpkg.com/electron-updater/-/electron-updater-5.2.4.tgz#15b050e21c85a263193cb8847ae016639b9a25eb"
+  integrity sha512-AE+I4cEagOJvHvtkBvJCp+hu1mrpinCt7PMmEOsDcpfayrPvWLuxeFVR9BzRvZVbz0eAqpRQjcEuR8gK80K7lQ==
   dependencies:
     "@types/semver" "^7.3.6"
     builder-util-runtime "9.1.1"
