@@ -164,6 +164,7 @@
     "graphql": "^15.4.0",
     "history": "^5.3.0",
     "immer": "^9.0.7",
+    "is-ip": "^5.0.0",
     "jdenticon": "^3.1.1",
     "lodash": "^4.17.21",
     "medium-json-feed": "^0.0.3",

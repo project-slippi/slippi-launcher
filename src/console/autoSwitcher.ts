@@ -1,23 +1,26 @@
 import { EventEmitter } from "events";
-import OBSWebSocket from "obs-websocket-js";
+import { isIPv6 } from "net";
+import OBSWebSocket, { EventSubscription } from "obs-websocket-js";
 
 import type { AutoSwitcherSettings } from "./types";
 import { MirrorEvent } from "./types";
 
 export class AutoSwitcher extends EventEmitter {
   private obs: OBSWebSocket;
-  private obsSourceName: string;
   private obsIP: string;
+  private obsPort: string;
   private obsPassword?: string;
+  private obsSourceName: string;
   private statusOutput: { status: boolean; timeout: NodeJS.Timeout | null };
-  private obsPairs: { scene: string; source: string }[];
+  private obsPairs: { scene: string; id: number }[];
 
   constructor(settings: AutoSwitcherSettings) {
     super();
     this.obs = new OBSWebSocket();
-    this.obsSourceName = settings.sourceName;
     this.obsIP = settings.ip;
+    this.obsPort = settings.port;
     this.obsPassword = settings.password;
+    this.obsSourceName = settings.sourceName;
     this.statusOutput = {
       status: false,
       timeout: null,
@@ -25,38 +28,50 @@ export class AutoSwitcher extends EventEmitter {
     this.obsPairs = [];
   }
 
-  public disconnect() {
-    this.obs.disconnect();
+  public async disconnect() {
+    await this.obs.disconnect();
   }
 
   public updateSettings(settings: AutoSwitcherSettings) {
     this.obsIP = settings.ip;
+    this.obsPort = settings.port;
     this.obsSourceName = settings.sourceName;
     this.obsPassword = settings.password;
   }
 
   private _getSceneSources = async () => {
-    // eslint-disable-line
-    const res = await this.obs.send("GetSceneList");
+    const res = await this.obs.call("GetSceneList");
     const scenes = res.scenes || [];
-    const pairs = scenes.flatMap((scene) => {
-      const sources = scene.sources || [];
-      return sources.map((source) => ({
-        scene: scene.name,
-        source: source.name,
-      }));
+    scenes.forEach(async (scene) => {
+      const sceneName = scene.sceneName!.toString();
+      const sceneItemListRes = await this.obs.call("GetSceneItemList", { sceneName });
+      const sources = sceneItemListRes.sceneItems;
+      sources.forEach((source) => {
+        if (source.sourceName!.toString() !== this.obsSourceName) {
+          return;
+        }
+        this.obsPairs.push({
+          scene: sceneName,
+          id: parseInt(source.sceneItemId!.toString()),
+        });
+      });
     });
-    this.obsPairs = pairs.filter((pair) => pair.source === this.obsSourceName);
   };
 
   public async connect() {
-    if (this.obsIP && this.obsSourceName) {
+    if (this.obsIP && this.obsPort && this.obsSourceName) {
       // if you send a password when authentication is disabled, OBS will still connect
       try {
-        await this.obs.connect({
-          address: this.obsIP,
-          password: this.obsPassword,
-        });
+        const obsAddress = isIPv6(this.obsIP) ? `[${this.obsIP}]:${this.obsPort}` : `${this.obsIP}:${this.obsPort}`;
+        const { obsWebSocketVersion, negotiatedRpcVersion } = await this.obs.connect(
+          `ws://${obsAddress}`,
+          this.obsPassword,
+          {
+            rpcVersion: 1,
+            eventSubscriptions: EventSubscription.All | EventSubscription.SceneItems,
+          },
+        );
+        this.emit(MirrorEvent.LOG, `Connected to OBS Websocket ${obsWebSocketVersion} (RPC ${negotiatedRpcVersion})`);
       } catch (err) {
         this.emit(
           MirrorEvent.ERROR,
@@ -65,8 +80,20 @@ export class AutoSwitcher extends EventEmitter {
         return;
       }
 
-      this.obs.on("SceneItemAdded", async () => this._getSceneSources());
-      this.obs.on("SceneItemRemoved", async () => this._getSceneSources());
+      this.obs.on("SceneItemCreated", async (data) => {
+        if (data.sourceName !== this.obsSourceName) {
+          return;
+        }
+        this.obsPairs.push({ scene: data.sceneName, id: data.sceneItemId });
+      });
+
+      this.obs.on("SceneItemRemoved", async (data) => {
+        if (data.sourceName !== this.obsSourceName) {
+          return;
+        }
+        this.obsPairs = this.obsPairs.filter((val) => val.scene !== data.sceneName || val.id !== data.sceneItemId);
+      });
+
       await this._getSceneSources();
     }
   }
@@ -74,11 +101,11 @@ export class AutoSwitcher extends EventEmitter {
   private _updateSourceVisibility(show: boolean) {
     const promises = this.obsPairs.map((pair) => {
       return this.obs
-        .send("SetSceneItemProperties", {
-          "scene-name": pair.scene,
-          item: { name: pair.source },
-          visible: show,
-        } as any)
+        .call("SetSceneItemEnabled", {
+          sceneName: pair.scene,
+          sceneItemId: pair.id,
+          sceneItemEnabled: show,
+        })
         .catch((err) => {
           if (err) {
             this.emit(MirrorEvent.ERROR, err);
@@ -97,9 +124,7 @@ export class AutoSwitcher extends EventEmitter {
     this._updateSourceVisibility(value);
   }
 
-  /*
-  As long as we are receiving data from the console, show the source feed in OBS.
-  */
+  // As long as we are receiving data from the console, show the source feed in OBS.
   public handleStatusOutput(timeoutLength = 200) {
     const setTimer = () => {
       if (this.statusOutput.timeout) {

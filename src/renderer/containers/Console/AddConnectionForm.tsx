@@ -15,7 +15,7 @@ import { ExternalLink as A } from "@/components/ExternalLink";
 import { Checkbox } from "@/components/FormInputs/Checkbox";
 import { Toggle } from "@/components/FormInputs/Toggle";
 import { PathInput } from "@/components/PathInput";
-import { isValidIpAddress, validateIpAndPort } from "@/lib/validate";
+import { isValidIpAddress, isValidPort } from "@/lib/validate";
 
 type FormValues = {
   ipAddress: string;
@@ -24,6 +24,7 @@ type FormValues = {
   isRealtime: boolean;
   enableAutoSwitcher: boolean;
   obsIP?: string;
+  obsPort?: string;
   obsSourceName?: string;
   obsPassword?: string;
   enableRelay: boolean;
@@ -73,7 +74,7 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
                 disabled={disabled}
               />
             )}
-            rules={{ validate: (val) => isValidIpAddress(val) || "Invalid IP address" }}
+            rules={{ validate: (val) => isValidIpAddress(val) }}
           />
         </section>
 
@@ -149,7 +150,8 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
                   `}
                 >
                   Allows automatic hiding and showing of an OBS source (e.g. your Dolphin capture) when the game is
-                  active. Requires <A href="https://github.com/Palakis/obs-websocket">OBS Websocket Plugin</A>.
+                  active. Requires <A href="https://github.com/obsproject/obs-websocket/releases">OBS Websocket 5.0+</A>
+                  , which comes preinstalled on OBS 28+.
                 </span>
               }
               disabled={disabled}
@@ -171,7 +173,7 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
                     render={({ field, fieldState: { error } }) => (
                       <TextField
                         {...field}
-                        label="OBS Websocket IP:Port"
+                        label="OBS Websocket IP"
                         required={enableAutoSwitcher}
                         error={Boolean(error)}
                         helperText={error ? error.message : undefined}
@@ -187,7 +189,34 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
                         if (!val) {
                           return false;
                         }
-                        return validateIpAndPort(val);
+                        return isValidIpAddress(val);
+                      },
+                    }}
+                  />
+                  <Controller
+                    name="obsPort"
+                    control={control}
+                    defaultValue=""
+                    render={({ field, fieldState: { error } }) => (
+                      <TextField
+                        {...field}
+                        label="OBS Websocket Port"
+                        required={enableAutoSwitcher}
+                        error={Boolean(error)}
+                        helperText={error ? error.message : undefined}
+                        disabled={disabled}
+                      />
+                    )}
+                    rules={{
+                      required: enableAutoSwitcher,
+                      validate: (val) => {
+                        if (!enableAutoSwitcher) {
+                          return true;
+                        }
+                        if (!val) {
+                          return false;
+                        }
+                        return isValidPort(val) || "Invalid Port";
                       },
                     }}
                   />
@@ -198,14 +227,14 @@ export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultVal
                     type="password"
                     disabled={disabled}
                   />
+                  <TextField
+                    label="OBS Source Name"
+                    value={obsSourceName ?? ""}
+                    required={enableAutoSwitcher}
+                    onChange={(e) => setValue("obsSourceName", e.target.value)}
+                    disabled={disabled}
+                  />
                 </div>
-                <TextField
-                  label="OBS Source Name"
-                  value={obsSourceName ?? ""}
-                  required={enableAutoSwitcher}
-                  onChange={(e) => setValue("obsSourceName", e.target.value)}
-                  disabled={disabled}
-                />
               </Collapse>
             </section>
             <section>
