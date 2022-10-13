@@ -32,12 +32,13 @@ export const OBSWebsocketNotice = () => {
             }
           `}
         >
-          We've updated to support OBS Websocket 5.0+ which comes standard in OBS 28+, but no longer support version
-          4.9.1.
+          Slippi Launcher now supports OBS Websocket 5.0+ which comes standard in OBS 28+, but no longer supports
+          version 4.9.1.
           <br />
           <br />
           If you are still on OBS 27, install{" "}
-          <A href="https://github.com/obsproject/obs-websocket/releases/tag/5.0.1">OBS Websocket 5.0.1</A>.
+          <A href="https://github.com/obsproject/obs-websocket/releases/tag/5.0.1">OBS Websocket 5.0.1</A>. You can
+          install the 5.0 and 4.9-compat versions at the same time if needed.
           <br />
           <br />
           You will also need to update your console connection settings if you use the Autoswitcher because the OBS IP
