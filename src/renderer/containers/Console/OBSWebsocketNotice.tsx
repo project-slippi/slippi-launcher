@@ -16,6 +16,11 @@ export const OBSWebsocketNotice = () => {
     localStorage.setItem(OBS_WEBSOCKET_NOTICE_KEY, "true");
     setSeenNotice(true);
   };
+
+  if (seenNotice) {
+    return null;
+  }
+
   return (
     <Dialog open={!seenNotice} closeAfterTransition={true} onClose={onClose}>
       <DialogTitle>OBS Websocket 5.0 Update</DialogTitle>
