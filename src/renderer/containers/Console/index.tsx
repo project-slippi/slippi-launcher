@@ -23,6 +23,7 @@ import { useServices } from "@/services";
 
 import { AddConnectionDialog } from "./AddConnectionDialog";
 import { NewConnectionList } from "./NewConnectionList";
+import { OBSWebsocketNotice } from "./OBSWebsocketNotice";
 import { SavedConnectionsList } from "./SavedConnectionsList";
 
 const Outer = styled.div`
@@ -158,6 +159,7 @@ export const Console: React.FC = () => {
         onCancel={onCancel}
         disabled={consoleIsConnected(currentFormValues?.ipAddress)}
       />
+      <OBSWebsocketNotice />
     </Outer>
   );
 };
