@@ -34,6 +34,7 @@ export interface MirrorDetails extends MirrorConfig {
 export interface AutoSwitcherSettings {
   sourceName: string;
   ip: string;
+  port: string;
   password?: string;
 }
 

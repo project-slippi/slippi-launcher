@@ -1,11 +1,17 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import AddIcon from "@mui/icons-material/Add";
+import HelpOutline from "@mui/icons-material/HelpOutline";
+import { IconButton } from "@mui/material";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
 import type { StoredConnection } from "@settings/types";
 import { ConnectionStatus } from "@slippi/slippi-js";
 import React from "react";
 
 import { DualPane } from "@/components/DualPane";
+import { ExternalLink as A } from "@/components/ExternalLink";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/FormInputs";
 import type { EditConnectionType } from "@/lib/consoleConnection";
@@ -17,6 +23,7 @@ import { useServices } from "@/services";
 
 import { AddConnectionDialog } from "./AddConnectionDialog";
 import { NewConnectionList } from "./NewConnectionList";
+import { OBSWebsocketNotice } from "./OBSWebsocketNotice";
 import { SavedConnectionsList } from "./SavedConnectionsList";
 
 const Outer = styled.div`
@@ -102,7 +109,14 @@ export const Console: React.FC = () => {
                 flex: 1;
               `}
             >
-              <h1>Console Mirror</h1>
+              <div
+                css={css`
+                  display: flex;
+                  align-items: center;
+                `}
+              >
+                <h1>Console Mirror</h1> <MirroringHelp />
+              </div>
               <Button onClick={() => setModalOpen(true)} startIcon={<AddIcon />}>
                 New connection
               </Button>
@@ -145,6 +159,46 @@ export const Console: React.FC = () => {
         onCancel={onCancel}
         disabled={consoleIsConnected(currentFormValues?.ipAddress)}
       />
+      <OBSWebsocketNotice />
     </Outer>
+  );
+};
+
+const MirroringHelp = () => {
+  const [modalOpen, setModalOpen] = React.useState(false);
+  return (
+    <>
+      <IconButton
+        onClick={() => setModalOpen(true)}
+        css={css`
+          opacity: 0.5;
+          margin-top: 10px;
+        `}
+      >
+        <HelpOutline
+          css={css`
+            font-size: 20px;
+          `}
+        />
+      </IconButton>
+      <Dialog open={modalOpen} closeAfterTransition={true} onClose={() => setModalOpen(false)}>
+        <DialogTitle>What is Mirroring?</DialogTitle>
+        <DialogContent>
+          <span
+            css={css`
+              a {
+                text-decoration: underline;
+              }
+            `}
+          >
+            Slippi Mirroring allows for streaming replays from a console to a PC for real time playback. Checkout the{" "}
+            <A href="https://docs.google.com/document/d/1ezavBjqVGbVO8aqSa5EHfq7ZflrTCvezRYjOf51MOWg">
+              mirroring guide
+            </A>{" "}
+            for setup instructions.
+          </span>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };

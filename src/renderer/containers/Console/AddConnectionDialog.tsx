@@ -44,6 +44,7 @@ export const AddConnectionDialog: React.FC<AddConnectionDialogProps> = ({
       enableRelay: false,
       enableAutoSwitcher: false,
       useNicknameFolders: true,
+      obsPort: 4455,
     },
     selectedConnection,
   );

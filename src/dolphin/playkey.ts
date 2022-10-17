@@ -13,27 +13,28 @@ export async function writePlayKeyFile(installation: DolphinInstallation, playKe
 }
 
 export async function findPlayKey(installation: DolphinInstallation): Promise<string> {
-  let dolphinDir = "";
+  let slippiDir = "";
   switch (process.platform) {
     case "win32": {
       const dolphinPath = await installation.findDolphinExecutable();
-      dolphinDir = path.dirname(dolphinPath);
+      const dolphinFolder = path.dirname(dolphinPath);
+      slippiDir = path.join(dolphinFolder, "User", "Slippi");
       break;
     }
     case "darwin": {
-      dolphinDir = path.join(os.homedir(), "Library", "Application Support", "com.project-slippi.dolphin", "Slippi");
+      slippiDir = path.join(os.homedir(), "Library", "Application Support", "com.project-slippi.dolphin", "Slippi");
       break;
     }
     case "linux": {
-      dolphinDir = path.join(os.homedir(), ".config", "SlippiOnline");
+      slippiDir = path.join(os.homedir(), ".config", "SlippiOnline", "Slippi");
       break;
     }
     default: {
       break;
     }
   }
-  await fs.ensureDir(dolphinDir);
-  return path.resolve(dolphinDir, "user.json");
+  await fs.ensureDir(slippiDir);
+  return path.resolve(slippiDir, "user.json");
 }
 
 export async function deletePlayKeyFile(installation: DolphinInstallation): Promise<void> {

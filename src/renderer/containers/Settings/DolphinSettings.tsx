@@ -19,6 +19,11 @@ import { SettingItem } from "./SettingItem";
 const { isLinux, isMac } = window.electron.common;
 const log = window.electron.log;
 
+enum ResetType {
+  SOFT,
+  HARD,
+}
+
 export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolphinType }) => {
   const dolphinStatus = useDolphinStore((store) =>
     dolphinType === DolphinLaunchType.PLAYBACK ? store.playbackStatus : store.netplayStatus,
@@ -28,12 +33,11 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   );
   const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
   const [resetModalOpen, setResetModalOpen] = React.useState(false);
-  const [isResetting, setIsResetting] = React.useState(false);
+  const [isResetType, setResetType] = React.useState<ResetType | null>(null);
   const { dolphinService } = useServices();
-  const { openConfigureDolphin, reinstallDolphin, clearDolphinCache, importDolphin } =
-    useDolphinActions(dolphinService);
+  const { openConfigureDolphin, hardResetDolphin, softResetDolphin, importDolphin } = useDolphinActions(dolphinService);
 
-  const dolphinIsReady = dolphinStatus === DolphinStatus.READY && !dolphinIsOpen && !isResetting;
+  const dolphinIsReady = dolphinStatus === DolphinStatus.READY && !dolphinIsOpen && isResetType === null;
 
   const openDolphinDirectoryHandler = async () => {
     await window.electron.shell.openPath(dolphinPath);
@@ -43,14 +47,16 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
     openConfigureDolphin(dolphinType);
   };
 
-  const reinstallDolphinHandler = async () => {
-    setIsResetting(true);
-    await reinstallDolphin(dolphinType);
-    setIsResetting(false);
+  const softResetDolphinHandler = async () => {
+    setResetType(ResetType.SOFT);
+    await softResetDolphin(dolphinType);
+    setResetType(null);
   };
 
-  const clearDolphinCacheHandler = async () => {
-    clearDolphinCache(dolphinType);
+  const hardResetDolphinHandler = async () => {
+    setResetType(ResetType.HARD);
+    await hardResetDolphin(dolphinType);
+    setResetType(null);
   };
 
   const importDolphinHandler = (importPath: string) => {
@@ -74,7 +80,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           <Button variant="contained" color="primary" onClick={configureDolphinHandler} disabled={!dolphinIsReady}>
             Configure Dolphin
           </Button>
-          <Button variant="outlined" color="primary" onClick={openDolphinDirectoryHandler} disabled={isResetting}>
+          <Button variant="outlined" color="primary" onClick={openDolphinDirectoryHandler} disabled={!dolphinIsReady}>
             Open containing folder
           </Button>
         </div>
@@ -103,7 +109,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
         <ConfirmationModal
           open={resetModalOpen}
           onClose={() => setResetModalOpen(false)}
-          onSubmit={reinstallDolphinHandler}
+          onSubmit={hardResetDolphinHandler}
           title="Are you sure?"
         >
           This will remove all your {dolphinTypeName} Dolphin settings.
@@ -119,19 +125,35 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           <Button
             variant="contained"
             color="secondary"
-            onClick={clearDolphinCacheHandler}
-            disabled={isResetting || dolphinIsOpen}
+            onClick={softResetDolphinHandler}
+            disabled={!dolphinIsReady}
+            css={css`
+              min-width: 145px;
+            `}
           >
-            Clear cache
+            Soft Reset
+            {isResetType === ResetType.SOFT && (
+              <CircularProgress
+                css={css`
+                  margin-left: 10px;
+                `}
+                size={16}
+                thickness={6}
+                color="inherit"
+              />
+            )}
           </Button>
           <Button
             variant="outlined"
             color="secondary"
             onClick={() => setResetModalOpen(true)}
-            disabled={isResetting || dolphinIsOpen}
+            disabled={!dolphinIsReady}
+            css={css`
+              min-width: 145px;
+            `}
           >
-            Reset everything
-            {isResetting && (
+            Hard Reset
+            {isResetType === ResetType.HARD && (
               <CircularProgress
                 css={css`
                   margin-left: 10px;

@@ -84,8 +84,8 @@ export type DolphinEvent = DolphinEventMap[DolphinEventType];
 export interface DolphinService {
   downloadDolphin(dolphinType: DolphinLaunchType): Promise<void>;
   configureDolphin(dolphinType: DolphinLaunchType): Promise<void>;
-  reinstallDolphin(dolphinType: DolphinLaunchType): Promise<void>;
-  clearDolphinCache(dolphinType: DolphinLaunchType): Promise<void>;
+  softResetDolphin(dolphinType: DolphinLaunchType): Promise<void>;
+  hardResetDolphin(dolphinType: DolphinLaunchType): Promise<void>;
   storePlayKeyFile(key: PlayKey): Promise<void>;
   checkPlayKeyExists(key: PlayKey): Promise<boolean>;
   removePlayKeyFile(): Promise<void>;

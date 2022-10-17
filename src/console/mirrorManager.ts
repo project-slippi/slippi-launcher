@@ -82,12 +82,12 @@ export class MirrorManager extends EventEmitter {
     }
 
     const connection = new ConsoleConnection();
-    connection.on(ConnectionEvent.ERROR, (err) => {
+    connection.on(ConnectionEvent.ERROR, async (err) => {
       this.emit(MirrorEvent.ERROR, err);
 
       const status = connection.getStatus();
       if (status === ConnectionStatus.DISCONNECTED) {
-        this.disconnect(config.ipAddress);
+        await this.disconnect(config.ipAddress);
       }
     });
     connection.once(ConnectionEvent.CONNECT, () => {
@@ -183,7 +183,7 @@ export class MirrorManager extends EventEmitter {
     };
   }
 
-  public disconnect(ip: string) {
+  public async disconnect(ip: string) {
     this.emit(MirrorEvent.LOG, "Disconnect requested");
     const details = this.mirrors[ip];
     if (!details) {
@@ -193,7 +193,7 @@ export class MirrorManager extends EventEmitter {
 
     details.connection.disconnect();
     if (details.autoSwitcher) {
-      details.autoSwitcher.disconnect();
+      await details.autoSwitcher.disconnect();
     }
     if (details.relay) {
       details.relay.stopRelay();
@@ -262,7 +262,7 @@ export class MirrorManager extends EventEmitter {
 
     details.isMirroring = false;
     if (details.autoSwitcher) {
-      details.autoSwitcher.disconnect();
+      await details.autoSwitcher.disconnect();
     }
 
     this.emit(MirrorEvent.MIRROR_STATUS_CHANGE, {

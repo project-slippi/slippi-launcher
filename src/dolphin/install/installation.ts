@@ -81,6 +81,9 @@ export class DolphinInstallation {
     }
 
     await fs.copy(oldUserFolder, newUserFolder, { overwrite: true });
+
+    // we shouldn't keep the old cache folder since it might be out of date
+    await this.clearCache();
   }
 
   public async validate({
@@ -117,7 +120,6 @@ export class DolphinInstallation {
       log.info(`${type} Dolphin installation is outdated. Downloading latest...`);
     } catch (err) {
       log.info(`Could not find ${type} Dolphin installation. Downloading...`);
-      log.error(err);
     }
 
     // Start the download
@@ -193,6 +195,8 @@ export class DolphinInstallation {
 
     if (cleanInstall) {
       await this._uninstallDolphin();
+    } else {
+      await this.clearCache(); // clear cache to avoid shader issues on new versions
     }
 
     switch (process.platform) {

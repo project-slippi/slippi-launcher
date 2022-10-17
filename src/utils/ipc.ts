@@ -214,11 +214,14 @@ export const makeEndpoint: EndpointMaker = {
             // Calling someEndpoint.main.handle(...) again will silently replace existing handler, if any.
 
             async function _handler(_: IpcMainInvokeEvent, payload: I): Promise<MainEndpointResponse<O>> {
-              const result: O | undefined = await handler(payload);
-
-              const payloadSnapshot = toJSONPreservingUndefined(payload);
-
-              return { result, payloadHash: hash(payloadSnapshot) };
+              try {
+                const result: O | undefined = await handler(payload);
+                const payloadSnapshot = toJSONPreservingUndefined(payload);
+                return { result, payloadHash: hash(payloadSnapshot) };
+              } catch (err) {
+                log.error(err);
+                throw err;
+              }
             }
 
             ipcMain.removeHandler(name);

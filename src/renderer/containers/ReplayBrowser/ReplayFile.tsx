@@ -139,7 +139,6 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
                 filePaths={[fullPath]}
                 css={css`
                   opacity: 0.9;
-                  transition: opacity 0.2s ease-in-out;
                   &:hover {
                     opacity: 1;
                     text-decoration: underline;
@@ -243,20 +242,20 @@ const ReplayActionButton = React.memo(({ label, color, onClick, ...rest }: Repla
   );
 });
 
-const SelectedNumber: React.FC<{ num: number }> = ({ num }) => {
+const SelectedNumber = ({ num }: { num: number }) => {
   // Scale the font size based on the length of the number string
   const chars = num.toString().length;
-  let fontSize = "1em";
-  if (chars > 2) {
-    fontSize = `${2 / chars}em`;
-  }
+  const fontSize = chars > 2 ? `${2 / chars}em` : "1em";
   return (
     <div
       css={css`
         position: absolute;
-        left: 50%;
         width: 50px;
         height: 50px;
+        margin-left: auto;
+        margin-right: auto;
+        left: 0;
+        right: 0;
         background-color: rgba(255, 255, 255, 0.9);
         color: black;
         mix-blend-mode: color-dodge;
@@ -264,7 +263,6 @@ const SelectedNumber: React.FC<{ num: number }> = ({ num }) => {
         font-size: 30px;
         border-radius: 50%;
         text-align: center;
-        transform: translateX(-50%);
         z-index: 1;
         display: flex;
         align-items: center;

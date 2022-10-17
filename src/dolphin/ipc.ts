@@ -17,14 +17,14 @@ export const ipc_configureDolphin = makeEndpoint.main(
   <SuccessPayload>_,
 );
 
-export const ipc_reinstallDolphin = makeEndpoint.main(
-  "reinstallDolphin",
+export const ipc_hardResetDolphin = makeEndpoint.main(
+  "hardResetDolphin",
   <{ dolphinType: DolphinLaunchType }>_,
   <SuccessPayload>_,
 );
 
-export const ipc_clearDolphinCache = makeEndpoint.main(
-  "clearDolphinCache",
+export const ipc_softResetDolphin = makeEndpoint.main(
+  "softResetDolphin",
   <{ dolphinType: DolphinLaunchType }>_,
   <SuccessPayload>_,
 );

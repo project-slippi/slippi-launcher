@@ -1,33 +1,25 @@
-export const isValidIpAddress = (ip: string): boolean => {
-  if (ip === "localhost") {
-    return true;
-  }
+import { isIPv4, isIPv6 } from "is-ip";
 
-  const chunks = ip.split(".");
-  if (chunks.length !== 4) {
-    return false;
-  }
-
-  return chunks.map((n) => parseInt(n)).every((n) => n >= 0 && n <= 255);
+export const isValidIpv4Address = (ip: string): boolean => {
+  return ip === "localhost" || isIPv4(ip);
 };
 
-export const validateIpAndPort = (ipAddressWithPort: string): string | true => {
-  const ipPort = ipAddressWithPort.split(":");
-  if (ipPort.length !== 2) {
-    return "No Port provided or missing colon (:)";
-  }
-  const [ip, port] = ipPort;
+export const isValidIpv6Address = (ip: string): boolean => {
+  return isIPv6(ip);
+};
 
-  if (parseInt(port) < 1 || parseInt(port) > 65535) {
-    return "Invalid Port";
-  }
-
-  if (!isValidIpAddress(ip)) {
+export const isValidIpAddress = (ip: string): string | true => {
+  if (!isValidIpv4Address(ip) && !isValidIpv6Address(ip)) {
     return "Invalid IP address";
   }
 
   return true;
 };
+
+export function isValidPort(value: string | number) {
+  const port = typeof value === "string" ? parseInt(value) : value;
+  return port > 0 && port < 65535;
+}
 
 export const validateConnectCodeStart = (codeStart: string): string | true => {
   if (codeStart.length === 0) {

@@ -48,13 +48,13 @@ class MockDolphinClient implements DolphinService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async reinstallDolphin(dolphinType: DolphinLaunchType): Promise<void> {
-    await this.downloadDolphin(dolphinType);
+  public async softResetDolphin(_dolphinType: DolphinLaunchType): Promise<void> {
+    throw new Error("Method not implemented.");
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async clearDolphinCache(_dolphinType: DolphinLaunchType): Promise<void> {
-    throw new Error("Method not implemented.");
+  public async hardResetDolphin(dolphinType: DolphinLaunchType): Promise<void> {
+    await this.downloadDolphin(dolphinType);
   }
 
   @delayAndMaybeError(SHOULD_ERROR)

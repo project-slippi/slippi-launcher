@@ -8,14 +8,14 @@ import { fileExists } from "utils/fileExists";
 import {
   ipc_checkDesktopAppDolphin,
   ipc_checkPlayKeyExists,
-  ipc_clearDolphinCache,
   ipc_configureDolphin,
   ipc_dolphinEvent,
   ipc_downloadDolphin,
+  ipc_hardResetDolphin,
   ipc_importDolphinSettings,
   ipc_launchNetplayDolphin,
-  ipc_reinstallDolphin,
   ipc_removePlayKeyFile,
+  ipc_softResetDolphin,
   ipc_storePlayKeyFile,
   ipc_viewSlpReplay,
 } from "./ipc";
@@ -43,16 +43,15 @@ export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: Do
     return { success: true };
   });
 
-  ipc_reinstallDolphin.main!.handle(async ({ dolphinType }) => {
-    console.log("reinstalling dolphin...");
-    await dolphinManager.reinstallDolphin(dolphinType);
+  ipc_softResetDolphin.main!.handle(async ({ dolphinType }) => {
+    console.log("soft resetting dolphin...");
+    await dolphinManager.reinstallDolphin(dolphinType, false);
     return { success: true };
   });
 
-  ipc_clearDolphinCache.main!.handle(async ({ dolphinType }) => {
-    console.log("clearing dolphin cache...");
-    const installation = dolphinManager.getInstallation(dolphinType);
-    await installation.clearCache();
+  ipc_hardResetDolphin.main!.handle(async ({ dolphinType }) => {
+    console.log("hard resetting dolphin...");
+    await dolphinManager.reinstallDolphin(dolphinType, true);
     return { success: true };
   });
 
@@ -66,12 +65,19 @@ export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: Do
     const installation = dolphinManager.getInstallation(DolphinLaunchType.NETPLAY);
     const keyPath = await findPlayKey(installation);
     const exists = await fileExists(keyPath);
-    if (exists) {
-      const jsonKey = await fs.readFile(keyPath);
-      const storedKey = JSON.parse(jsonKey.toString());
-      return { exists: isEqual(storedKey, key) };
+    if (!exists) {
+      return { exists: false };
     }
-    return { exists };
+
+    try {
+      const jsonKey = await fs.readFile(keyPath);
+      const fileContents = jsonKey.toString();
+      const storedKey = JSON.parse(fileContents);
+      return { exists: isEqual(storedKey, key) };
+    } catch (err) {
+      log.warn(err);
+      return { exists: false };
+    }
   });
 
   ipc_removePlayKeyFile.main!.handle(async () => {

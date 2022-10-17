@@ -49,7 +49,6 @@ class AppUpdater {
     log.transports.file.level = "info";
     autoUpdater.logger = log;
     autoUpdater.autoInstallOnAppQuit = settingsManager.get().settings.autoUpdateLauncher;
-    autoUpdater.checkForUpdatesAndNotify().catch(log.error);
   }
 }
 
@@ -223,7 +222,9 @@ const handleSlippiURIAsync = async (aUrl: string) => {
 
       const fileAlreadyExists = await fileExists(destination);
       if (!fileAlreadyExists) {
-        const dlUrl = `https://storage.googleapis.com/slippi.appspot.com/${replayPath}`;
+        const dlUrl = replayPath.startsWith("http")
+          ? replayPath
+          : `https://storage.googleapis.com/slippi.appspot.com/${replayPath}`;
         log.info(`Downloading file ${replayPath} to ${destination}`);
         // Dowload file
         await download({ url: dlUrl, destinationFile: destination, overwrite: true });

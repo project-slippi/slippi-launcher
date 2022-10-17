@@ -34,7 +34,7 @@ const handleWindowsExitCode = (exitCode: number): string | null => {
     }
     default: {
       return `Dolphin exited with error code: 0x${exitCode.toString(16)}.
-      Please screenshot this and post it in a support channel in the Slippi Discord for assistance.`;
+      If you're in need of assistance, screenshot this and post it in a support channel in the Slippi Discord.`;
     }
   }
 };
@@ -46,7 +46,7 @@ const handleLinuxExitCode = (exitCode: number): string => {
     }
     default: {
       return `Dolphin exited with error code: 0x${exitCode.toString(16)}.
-      Please screenshot this and post it in a support channel in the Slippi Discord for assistance.`;
+      If you're in need of assistance, screenshot this and post it in a support channel in the Slippi Discord.`;
     }
   }
 };

@@ -56,6 +56,15 @@ jobs:
       - name: Install dependencies
         run: |
           yarn install
+      - name: Load Windows signing certificate and secret
+        if: matrix.os == 'windows-latest' && env.CERTIFICATE_WINDOWS_PASSWORD != null
+        shell: bash
+        run: |
+          echo "CSC_LINK=${{ secrets.CERTIFICATE_WINDOWS_APPLICATION }}" >> $GITHUB_ENV
+          echo "CSC_KEY_PASSWORD=${{ secrets.CERTIFICATE_WINDOWS_PASSWORD }}" >> $GITHUB_ENV
+        env:
+          CERTIFICATE_WINDOWS_APPLICATION: ${{ secrets.CERTIFICATE_WINDOWS_APPLICATION }}
+          CERTIFICATE_WINDOWS_PASSWORD: ${{ secrets.CERTIFICATE_WINDOWS_PASSWORD }}
       - name: Load macOS signing certificates and secrets
         if: matrix.os == 'macOS-latest' && env.CERTIFICATE_MACOS_PASSWORD != null
         run: |
