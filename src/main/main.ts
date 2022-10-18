@@ -206,6 +206,13 @@ const launchCloudReplay = async (replayPathIn: string) => {
   await playReplayAndShowStats(destination);
 };
 
+const updateNetplayDolphin = async () => {
+  const sub = dolphinManager.events.subscribe((evt) => log.info(evt));
+  await dolphinManager.killNetplayDolphin();
+  await dolphinManager.installDolphin(DolphinLaunchType.NETPLAY);
+  sub.unsubscribe();
+};
+
 const handleSlippiURIAsync = async (aUrl: string) => {
   log.info("Handling URL...");
   log.info(aUrl);
@@ -241,9 +248,10 @@ const handleSlippiURIAsync = async (aUrl: string) => {
         case "play":
           await launchCloudReplay(myUrl.searchParams.get("path") ?? "");
           break;
-        case "update":
-          await dolphinManager.installDolphin(DolphinLaunchType.NETPLAY);
+        case "update": {
+          await updateNetplayDolphin();
           break;
+        }
       }
       break;
     }

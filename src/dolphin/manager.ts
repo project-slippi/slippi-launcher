@@ -26,6 +26,14 @@ export class DolphinManager {
     return new DolphinInstallation(launchType, dolphinPath);
   }
 
+  public async killNetplayDolphin(): Promise<void> {
+    if (!this.netplayDolphinInstance) {
+      return;
+    }
+
+    await this.netplayDolphinInstance.stop();
+  }
+
   public async installDolphin(dolphinType: DolphinLaunchType): Promise<void> {
     const dolphinInstall = this.getInstallation(dolphinType);
     await dolphinInstall.validate({
