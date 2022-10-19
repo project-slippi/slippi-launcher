@@ -15,7 +15,6 @@
     "postinstall": "yarn run electron-rebuild && yarn run link-modules"
   },
   "dependencies": {
-    "obs-websocket-js": "^5.0.1",
     "threads": "^1.6.5",
     "websocket": "^1.0.34"
   },
