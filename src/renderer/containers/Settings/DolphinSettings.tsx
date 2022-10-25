@@ -33,20 +33,27 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   );
   const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
   const [resetModalOpen, setResetModalOpen] = React.useState(false);
+
   const [isResetType, setResetType] = React.useState<ResetType | null>(null);
   const { dolphinService } = useServices();
-  const { openConfigureDolphin, hardResetDolphin, softResetDolphin, importDolphin } = useDolphinActions(dolphinService);
+  const { openConfigureDolphin, hardResetDolphin, softResetDolphin, importDolphin, getDolphinVersion } =
+    useDolphinActions(dolphinService);
+  const [version, setVersion] = React.useState("");
 
   const dolphinIsReady = dolphinStatus === DolphinStatus.READY && !dolphinIsOpen && isResetType === null;
-
   const openDolphinDirectoryHandler = async () => {
     await window.electron.shell.openPath(dolphinPath);
   };
-
   const configureDolphinHandler = async () => {
     openConfigureDolphin(dolphinType);
   };
-
+  const getVersionHandler = async () => {
+    const ver = await getDolphinVersion(dolphinType);
+    setVersion(ver);
+  };
+  React.useEffect(() => {
+    getVersionHandler();
+  });
   const softResetDolphinHandler = async () => {
     setResetType(ResetType.SOFT);
     await softResetDolphin(dolphinType);
@@ -68,6 +75,8 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   return (
     <div>
       <Typography variant="h5">{dolphinTypeName} Dolphin Settings</Typography>
+      <Typography variant="caption">{version}</Typography>
+
       <SettingItem name={`Configure ${dolphinType} Dolphin`}>
         <div
           css={css`

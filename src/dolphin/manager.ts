@@ -72,7 +72,11 @@ export class DolphinManager {
 
     await playbackInstance.play(replayComm);
   }
-
+  public async getDolphinVersion(launchType: DolphinLaunchType): Promise<string> {
+    const install = this.getInstallation(launchType);
+    const version = await install.getDolphinVersion();
+    return version;
+  }
   public async launchNetplayDolphin() {
     if (this.netplayDolphinInstance) {
       throw new Error("Netplay dolphin is already open!");

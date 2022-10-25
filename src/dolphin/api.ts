@@ -6,6 +6,7 @@ import {
   ipc_configureDolphin,
   ipc_dolphinEvent,
   ipc_downloadDolphin,
+  ipc_getDolphinVersion,
   ipc_hardResetDolphin,
   ipc_importDolphinSettings,
   ipc_launchNetplayDolphin,
@@ -32,6 +33,9 @@ const dolphinApi: DolphinService = {
   },
   async softResetDolphin(dolphinType: DolphinLaunchType) {
     await ipc_softResetDolphin.renderer!.trigger({ dolphinType });
+  },
+  async getDolphinVersion(dolphinType: DolphinLaunchType) {
+    return await ipc_getDolphinVersion.renderer!.trigger({ dolphinType });
   },
   async hardResetDolphin(dolphinType: DolphinLaunchType) {
     await ipc_hardResetDolphin.renderer!.trigger({ dolphinType });
