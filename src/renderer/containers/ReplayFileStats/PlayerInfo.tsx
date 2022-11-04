@@ -54,7 +54,7 @@ export const PlayerInfo: React.FC<PlayerInfoProps> = ({ player, names, isTeams }
               display: inline-block;
               color: ${colors.grayDark};
               font-weight: bold;
-              background-color: ${getColor(player.port, teamId)};
+              background-color: ${getColor(player.port, teamId ?? undefined)};
               padding: 2px 6px;
               font-size: 12px;
               border-radius: 100px;
