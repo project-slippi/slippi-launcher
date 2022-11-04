@@ -1,3 +1,5 @@
+import { exists } from "@common/exists";
+
 function getPortColor(port?: number): string {
   switch (port) {
     case 1:
@@ -26,8 +28,8 @@ function getTeamColor(teamId: number): string {
   }
 }
 
-export function getColor(port: number, teamId: number | null) {
-  if (teamId !== null) {
+export function getColor(port: number, teamId?: number) {
+  if (exists(teamId)) {
     return getTeamColor(teamId);
   }
   return getPortColor(port);
