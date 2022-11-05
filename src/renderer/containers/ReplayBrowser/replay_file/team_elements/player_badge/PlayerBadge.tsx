@@ -3,12 +3,16 @@ import React from "react";
 
 import { getColor } from "@/lib/playerColors";
 import { getCharacterIcon } from "@/lib/utils";
+import { ReactComponent as CrownIcon } from "@/styles/images/crown.svg";
+
+const WINNER_COLOR = "#ffb433";
 
 type CommonPlayerBadgeProps = {
   characterId: number | null;
   characterColor: number | null;
   port: number;
   teamId?: number;
+  isWinner?: boolean;
 };
 
 const InternalPlayerBadge = ({
@@ -16,6 +20,7 @@ const InternalPlayerBadge = ({
   characterColor,
   characterId,
   teamId,
+  isWinner,
   children,
 }: React.PropsWithChildren<CommonPlayerBadgeProps>) => {
   const charIcon = getCharacterIcon(characterId, characterColor);
@@ -33,6 +38,7 @@ const InternalPlayerBadge = ({
         font-size: 13px;
         font-weight: 500;
         padding: 2px;
+        ${isWinner ? `box-shadow: 0 0 2px 1px rgba(255, 255, 255, 0.9), 0 0 6px 3px ${WINNER_COLOR};` : ""}
       `}
     >
       <img
@@ -54,6 +60,19 @@ const InternalPlayerBadge = ({
       >
         {children}
       </div>
+      {isWinner && (
+        <div
+          css={css`
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin-top: -6px;
+            transform: rotate(20deg);
+          `}
+        >
+          <CrownIcon fill={WINNER_COLOR} style={{ height: 12 }} />
+        </div>
+      )}
     </div>
   );
 };
