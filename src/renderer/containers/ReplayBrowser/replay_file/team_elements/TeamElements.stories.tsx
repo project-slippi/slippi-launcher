@@ -9,7 +9,7 @@ export default {
 
 export const OneVsOne = () => {
   const oneVsOneTeams: PlayerInfo[][] = [
-    [generatePlayer({ text: "Player 1", port: 1 })],
+    [generatePlayer({ text: "Player 1", port: 1, isWinner: true })],
     [generatePlayer({ text: "Player 2", port: 2 })],
   ];
   return <TeamElements teams={oneVsOneTeams} />;
@@ -22,8 +22,8 @@ export const TwoVsTwo = () => {
       generatePlayer({ text: "Player 2", port: 2, teamId: 0 }),
     ],
     [
-      generatePlayer({ text: "Player 3", port: 3, teamId: 1 }),
-      generatePlayer({ text: "Player 4", port: 4, teamId: 1 }),
+      generatePlayer({ text: "Player 3", port: 3, teamId: 1, isWinner: true }),
+      generatePlayer({ text: "Player 4", port: 4, teamId: 1, isWinner: true }),
     ],
   ];
   return <TeamElements teams={twoVsTwoTeams} />;
@@ -32,7 +32,7 @@ export const TwoVsTwo = () => {
 export const FreeForAll = () => {
   const freeForAllTeams: PlayerInfo[][] = [
     [generatePlayer({ text: "Player 1", port: 1 })],
-    [generatePlayer({ text: "Player 2", port: 2 })],
+    [generatePlayer({ text: "Player 2", port: 2, isWinner: true })],
     [generatePlayer({ text: "Player 3", port: 3 })],
     [generatePlayer({ text: "Player 4", port: 4 })],
   ];
