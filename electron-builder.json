@@ -65,7 +65,8 @@
     "warningsAsErrors": false,
     "allowElevation": true,
     "oneClick": false,
-    "allowToChangeInstallationDirectory": true
+    "allowToChangeInstallationDirectory": true,
+    "deleteAppDataOnUninstall": true
   },
   "linux": {
     "target": ["AppImage"],

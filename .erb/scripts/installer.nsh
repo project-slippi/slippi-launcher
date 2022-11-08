@@ -84,3 +84,9 @@ var InstallType
     ExecShellWait "" "$PLUGINSDIR\${GC_INSTALLER}" SW_HIDE
   ${EndIf}
 !macroend
+
+!macro customUnInstall
+  ; Clean up Slippi URI Handling
+  DeleteRegKey HKCR "slippi"
+  DeleteRegKey HKCU "SOFTWARE\Classes\slippi"
+!macroend
