@@ -9,6 +9,7 @@ import { useAccount } from "./useAccount";
 
 export enum QuickStartStep {
   LOGIN = "LOGIN",
+  VERIFY_EMAIL = "VERIFY_EMAIL",
   MIGRATE_DOLPHIN = "MIGRATE_DOLPHIN",
   ACTIVATE_ONLINE = "ACTIVATE_ONLINE",
   SET_ISO_PATH = "SET_ISO_PATH",
@@ -19,6 +20,7 @@ function generateSteps(
   options: Partial<{
     hasUser: boolean;
     hasPlayKey: boolean;
+    hasVerifiedEmail: boolean;
     serverError: boolean;
     hasIso: boolean;
     hasOldDesktopApp: boolean;
@@ -39,6 +41,10 @@ function generateSteps(
     steps.unshift(QuickStartStep.ACTIVATE_ONLINE);
   }
 
+  if (!options.hasVerifiedEmail) {
+    steps.unshift(QuickStartStep.VERIFY_EMAIL);
+  }
+
   if (!options.hasUser) {
     steps.unshift(QuickStartStep.LOGIN);
   }
@@ -56,6 +62,7 @@ export const useQuickStart = () => {
   const options = {
     hasUser: Boolean(user),
     hasIso: Boolean(savedIsoPath),
+    hasVerifiedEmail: Boolean(user?.emailVerified),
     hasPlayKey: Boolean(playKey),
     serverError: Boolean(serverError),
     hasOldDesktopApp: desktopAppPathExists,
@@ -83,6 +90,10 @@ export const useQuickStart = () => {
       stepToShow = QuickStartStep.ACTIVATE_ONLINE;
     }
 
+    if (!options.hasVerifiedEmail) {
+      stepToShow = QuickStartStep.VERIFY_EMAIL;
+    }
+
     if (!options.hasUser) {
       stepToShow = QuickStartStep.LOGIN;
     }
@@ -92,6 +103,7 @@ export const useQuickStart = () => {
     history,
     steps,
     options.hasIso,
+    options.hasVerifiedEmail,
     options.hasOldDesktopApp,
     options.hasPlayKey,
     options.hasUser,

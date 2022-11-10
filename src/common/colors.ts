@@ -13,4 +13,10 @@ export const colors = {
   purpleDarker: "#1B0B28",
   offGray: "#2D313A",
   offWhite: "#E0E0E0",
+
+  // From slippi website
+  textPrimary: "#E9EAEA",
+  textSecondary: "#B4B4B4",
+  textDim: "#939599",
+  textVeryDim: "#5E6066",
 };

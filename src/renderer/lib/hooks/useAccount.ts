@@ -14,10 +14,21 @@ export const useAccount = create(
       playKey: null as PlayKey | null,
       serverError: false,
       displayName: "",
+      emailVerificationSent: false,
     },
     (set) => ({
       setUser: (user: AuthUser | null) =>
         set((store) => {
+          if (store.user?.uid !== user?.uid) {
+            console.log("Init verification sent to false");
+            store.emailVerificationSent = false;
+          }
+
+          console.log({
+            loc: "setUser function",
+            user: user,
+          });
+
           store.user = user;
           if (user) {
             store.displayName = user.displayName || "";
@@ -29,6 +40,7 @@ export const useAccount = create(
       setPlayKey: (playKey: PlayKey | null) => set({ playKey }),
       setServerError: (serverError: boolean) => set({ serverError }),
       setDisplayName: (displayName: string) => set({ displayName }),
+      setEmailVerificationSent: (emailVerificationSent: boolean) => set({ emailVerificationSent }),
     }),
   ),
 );

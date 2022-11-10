@@ -2,6 +2,7 @@ import { getApps, initializeApp } from "firebase/app";
 import {
   getAuth,
   onAuthStateChanged,
+  sendEmailVerification,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   updateProfile,
@@ -68,12 +69,19 @@ class AuthClient implements AuthService {
     });
   }
 
-  private _mapFirebaseUserToAuthUser(user: { uid: string; displayName: string | null }): AuthUser {
+  private _mapFirebaseUserToAuthUser(user: {
+    uid: string;
+    displayName: string | null;
+    email: string | null;
+    emailVerified: boolean;
+  }): AuthUser {
     const displayPicture = generateDisplayPicture(user.uid);
     const userObject = {
       uid: user.uid,
       displayName: user.displayName ?? "",
       displayPicture,
+      email: user.email ?? "",
+      emailVerified: user.emailVerified,
     };
     return userObject;
   }
@@ -107,7 +115,39 @@ class AuthClient implements AuthService {
     if (!user) {
       return null;
     }
+
     return this._mapFirebaseUserToAuthUser(user);
+  }
+
+  public async verifyEmail() {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) {
+      throw new Error("User is not logged in.");
+    }
+
+    if (user.emailVerified) {
+      return;
+    }
+
+    console.log("Sending email verification");
+
+    await sendEmailVerification(user);
+  }
+
+  public async reloadUser(): Promise<AuthUser | null> {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) {
+      throw new Error("User is not logged in.");
+    }
+
+    await user.reload();
+    console.log({
+      loc: "reloadUser func",
+      user: auth.currentUser,
+    });
+    return auth.currentUser ? this._mapFirebaseUserToAuthUser(auth.currentUser) : null;
   }
 
   public async logout() {
