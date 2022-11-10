@@ -12,8 +12,14 @@ export const NullValues = () => {
   return generateBadge({ characterId: null, characterColor: null });
 };
 
-export const TagVariant = () => {
-  return generateBadge({});
+export const TagVariants = () => {
+  return (
+    <div>
+      <div style={{ padding: "10px 0" }}>{generateBadge({ isWinner: true, text: "A" })}</div>
+      <div style={{ padding: "10px 0" }}>{generateBadge({ isWinner: true, text: "A longer tag" })}</div>
+      <div style={{ padding: "10px 0" }}>{generateBadge({ isWinner: true, text: "A really really long tag" })}</div>
+    </div>
+  );
 };
 
 export const ConnectCodeVariant = () => {
