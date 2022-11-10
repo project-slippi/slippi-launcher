@@ -32,8 +32,8 @@ export const TwoVsTwo = () => {
 export const FreeForAll = () => {
   const freeForAllTeams: PlayerInfo[][] = [
     [generatePlayer({ text: "Player 1", port: 1 })],
-    [generatePlayer({ text: "Player 2", port: 2, isWinner: true })],
-    [generatePlayer({ text: "Player 3", port: 3 })],
+    [generatePlayer({ text: "Player 2", port: 2 })],
+    [generatePlayer({ text: "Player 3", port: 3, isWinner: true })],
     [generatePlayer({ text: "Player 4", port: 4 })],
   ];
   return <TeamElements teams={freeForAllTeams} />;

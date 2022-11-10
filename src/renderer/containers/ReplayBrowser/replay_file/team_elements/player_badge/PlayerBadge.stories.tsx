@@ -20,8 +20,8 @@ export const ConnectCodeVariant = () => {
   return generateBadge({ variant: "code", text: "ABC#123" });
 };
 
-export const WinnerVariant = () => {
-  return generateBadge({ variant: "code", text: "ABC#123", isWinner: true });
+export const WinnerVariants = () => {
+  return generateBadgeRow({ variant: "code", text: "ABC#123", isWinner: true });
 };
 
 export const AllCharacterBadges = () => {
@@ -48,7 +48,7 @@ function generateBadgeRow(options: Partial<PlayerBadgeProps>) {
   const badges = [1, 2, 3, 4].map((port) => {
     return (
       <div style={{ display: "inline-block", padding: "0 5px" }} key={port}>
-        {generateBadge({ ...options, port, text: `Player ${port}` })}
+        {generateBadge({ port, text: `Player ${port}`, ...options })}
       </div>
     );
   });
