@@ -16,26 +16,28 @@ export const useAccount = create(
       displayName: "",
       emailVerificationSent: false,
     },
-    (set) => ({
-      setUser: (user: AuthUser | null) =>
-        set((store) => {
-          if (store.user?.uid !== user?.uid) {
-            console.log("Init verification sent to false");
-            store.emailVerificationSent = false;
-          }
+    (set, get) => ({
+      setUser: (user: AuthUser | null) => {
+        if (!user) {
+          set({ user: null });
+          return;
+        }
 
-          console.log({
-            loc: "setUser function",
-            user: user,
-          });
+        let emailVerificationSent = get().emailVerificationSent;
+        const currentUid = get().user?.uid;
+        if (currentUid !== user?.uid) {
+          console.log("Init verification sent to false");
+          emailVerificationSent = false;
+        }
 
-          store.user = user;
-          if (user) {
-            store.displayName = user.displayName || "";
-          }
+        console.log({
+          loc: "setUser function",
+          user: user,
+        });
 
-          return store;
-        }),
+        const displayName = user.displayName || "";
+        set({ user, displayName, emailVerificationSent });
+      },
       setLoading: (loading: boolean) => set({ loading }),
       setPlayKey: (playKey: PlayKey | null) => set({ playKey }),
       setServerError: (serverError: boolean) => set({ serverError }),
