@@ -52,6 +52,18 @@ const classes = {
       color: ${colors.purplePrimary};
     }
   `,
+  confirmationContainer: css`
+    margin-top: 30px;
+    font-size: 28px;
+    color: ${colors.greenPrimary};
+    display: grid;
+    align-items: center;
+    gap: 8px;
+    grid-template-columns: auto auto 1fr;
+    > svg {
+      font-size: 40px;
+    }
+  `,
 };
 
 export const VerifyEmailStep: React.FC = () => {
@@ -107,7 +119,7 @@ export const VerifyEmailStep: React.FC = () => {
   );
 
   const postVerification = (
-    <div>
+    <div css={classes.confirmationContainer}>
       <CheckCircleOutlineIcon />
       Email verified
     </div>
