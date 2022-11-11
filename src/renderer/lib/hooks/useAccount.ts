@@ -26,14 +26,8 @@ export const useAccount = create(
         let emailVerificationSent = get().emailVerificationSent;
         const currentUid = get().user?.uid;
         if (currentUid !== user?.uid) {
-          console.log("Init verification sent to false");
           emailVerificationSent = false;
         }
-
-        console.log({
-          loc: "setUser function",
-          user: user,
-        });
 
         const displayName = user.displayName || "";
         set({ user, displayName, emailVerificationSent });

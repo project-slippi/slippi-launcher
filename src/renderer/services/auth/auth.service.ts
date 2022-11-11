@@ -15,6 +15,8 @@ import { generateDisplayPicture } from "@/lib/displayPicture";
 
 import type { AuthService, AuthUser } from "./types";
 
+const log = window.electron.log;
+
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
   authDomain: process.env.FIREBASE_AUTH_DOMAIN,
@@ -130,7 +132,7 @@ class AuthClient implements AuthService {
       return;
     }
 
-    console.log("Sending email verification");
+    log.info(`Sending email verification to ${user.email}`);
 
     await sendEmailVerification(user);
   }
@@ -143,10 +145,6 @@ class AuthClient implements AuthService {
     }
 
     await user.reload();
-    console.log({
-      loc: "reloadUser func",
-      user: auth.currentUser,
-    });
     return auth.currentUser ? this._mapFirebaseUserToAuthUser(auth.currentUser) : null;
   }
 

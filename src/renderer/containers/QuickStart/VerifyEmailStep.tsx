@@ -74,9 +74,6 @@ export const VerifyEmailStep: React.FC = () => {
   const emailVerificationSent = useAccount((store) => store.emailVerificationSent);
   const setEmailVerificationSent = useAccount((store) => store.setEmailVerificationSent);
 
-  console.log(emailVerificationSent);
-  console.log(user);
-
   const profileUrl = "https://slippi.gg/profile";
 
   const handleCheckVerification = async () => {
