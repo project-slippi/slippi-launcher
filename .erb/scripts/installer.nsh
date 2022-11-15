@@ -86,6 +86,10 @@ var InstallType
 !macroend
 
 !macro customUnInstall
+  ; Clean up Slippi URI Handling
+  DeleteRegKey HKCR "slippi"
+  DeleteRegKey HKCU "SOFTWARE\Classes\slippi"
+
   MessageBox MB_YESNO "Would you like to delete config files and Slippi Dolphin installs as well?" \
     /SD IDNO IDNO Done IDYES Accepted
 
