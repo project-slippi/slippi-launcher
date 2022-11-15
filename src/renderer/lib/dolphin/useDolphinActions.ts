@@ -52,13 +52,13 @@ export const useDolphinActions = (dolphinService: DolphinService) => {
   );
 
   const getDolphinVersion = useCallback(
-    async (dolphinType: DolphinLaunchType) => {
+    async (dolphinType: DolphinLaunchType): Promise<string> => {
       try {
         const version = await dolphinService.getDolphinVersion(dolphinType);
-        const rtn = version["result"]["version"];
-        return "Dolphin Version " + rtn;
+        const rtn: string = version["result"]["version"];
+        return rtn;
       } catch (err) {
-        return "No Dolphin Version Found";
+        return "Couldn't Get Version";
       }
     },
     [dolphinService],
