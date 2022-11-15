@@ -43,11 +43,14 @@ export const useDolphinListeners = (dolphinService: DolphinService) => {
     }
   }, []);
 
-  const dolphinCompleteHandler = useCallback(async (event: DolphinDownloadCompleteEvent) => {
-    setDolphinComplete(event.dolphinType, DolphinStatus.READY);
-    const version = await getDolphinVersion(event.dolphinType);
-    setDolphinVersion(version);
-  }, []);
+  const dolphinCompleteHandler = useCallback(
+    async (event: DolphinDownloadCompleteEvent) => {
+      setDolphinComplete(event.dolphinType, DolphinStatus.READY);
+      const version = await getDolphinVersion(event.dolphinType);
+      setDolphinVersion(version, event.dolphinType);
+    },
+    [getDolphinVersion],
+  );
 
   useEffect(() => {
     const subs: Array<() => void> = [];

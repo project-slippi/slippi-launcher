@@ -31,9 +31,10 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   const dolphinIsOpen = useDolphinStore((store) =>
     dolphinType === DolphinLaunchType.NETPLAY ? store.netplayOpened : store.playbackOpened,
   );
-  const dolphinVersion: string = useDolphinStore((store) => {
-    return store.dolphinVersion;
-  });
+  const dolphinVersion: string = useDolphinStore((store) =>
+    dolphinType === DolphinLaunchType.NETPLAY ? store.netplayDolphinVersion : store.playbackDolphinVersion,
+  );
+
   const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
   const [resetModalOpen, setResetModalOpen] = React.useState(false);
 
