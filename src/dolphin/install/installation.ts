@@ -176,10 +176,7 @@ export class DolphinInstallation {
   }
 
   private async _isOutOfDate(latestVersion: string): Promise<boolean> {
-    const dolphinPath = await this.findDolphinExecutable();
-    const dolphinVersionOut = spawnSync(dolphinPath, ["--version"]).stdout.toString();
-    const match = dolphinVersionOut.match(semverRegex);
-    const dolphinVersion = match?.[0] ?? "";
+    const dolphinVersion = await this.getDolphinVersion();
     return lt(dolphinVersion, latestVersion);
   }
 
@@ -188,7 +185,6 @@ export class DolphinInstallation {
     const dolphinVersionOut = spawnSync(dolphinPath, ["--version"]).stdout.toString();
     const match = dolphinVersionOut.match(semverRegex);
     const dolphinVersion = match?.[0] ?? "";
-    console.log(dolphinVersion);
     return dolphinVersion;
   }
 
