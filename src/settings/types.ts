@@ -17,7 +17,7 @@ export interface StoredConnection {
 export type AppSettings = {
   previousVersion?: string;
   connections: StoredConnection[];
-  dolphinVersion: string;
+  dolphinVersion?: string;
   settings: {
     isoPath: string | null;
     rootSlpPath: string;

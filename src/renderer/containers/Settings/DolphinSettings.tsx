@@ -69,7 +69,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   return (
     <div>
       <Typography variant="h5">{dolphinTypeName} Dolphin Settings</Typography>
-      <Typography variant="caption">Version: {dolphinVersion}</Typography>
+      {dolphinVersion && <Typography variant="caption">Version: {dolphinVersion}</Typography>}
 
       <SettingItem name={`Configure ${dolphinType} Dolphin`}>
         <div
