@@ -84,3 +84,15 @@ var InstallType
     ExecShellWait "" "$PLUGINSDIR\${GC_INSTALLER}" SW_HIDE
   ${EndIf}
 !macroend
+
+!macro customUnInstall
+  MessageBox MB_YESNO "Would you like to delete config files and Slippi Dolphin installs as well?" \
+    /SD IDNO IDNO Done IDYES Accepted
+
+  Accepted:
+    RMDir /r "$APPDATA\${APP_FILENAME}"
+    !ifdef APP_PRODUCT_FILENAME
+      RMDir /r "$APPDATA\${APP_PRODUCT_FILENAME}"
+    !endif
+  Done:
+!macroend
