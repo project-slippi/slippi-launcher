@@ -188,15 +188,6 @@ export class DolphinInstallation {
     return dolphinVersion;
   }
 
-  public async getDolphinVersion(): Promise<string> {
-    const dolphinPath = await this.findDolphinExecutable();
-    const dolphinVersionOut = spawnSync(dolphinPath, ["--version"]).stdout.toString();
-    const match = dolphinVersionOut.match(semverRegex);
-    const dolphinVersion = match?.[0] ?? "";
-    console.log(dolphinVersion);
-    return dolphinVersion;
-  }
-
   private async _uninstallDolphin() {
     await fs.remove(this.installationFolder);
     if (isLinux) {
