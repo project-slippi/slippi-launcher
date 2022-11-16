@@ -14,8 +14,8 @@ export const useDolphinStore = create(() => ({
   netplayOpened: false,
   playbackOpened: false,
   netplayDownloadProgress: null as { current: number; total: number } | null,
-  netplayDolphinVersion: "",
-  playbackDolphinVersion: "",
+  netplayDolphinVersion: "Not Found",
+  playbackDolphinVersion: "Not Found",
 }));
 
 export const setDolphinOpened = (dolphinType: DolphinLaunchType, isOpened = true) => {

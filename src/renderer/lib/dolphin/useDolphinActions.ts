@@ -56,9 +56,12 @@ export const useDolphinActions = (dolphinService: DolphinService) => {
       try {
         const version = await dolphinService.getDolphinVersion(dolphinType);
         const rtn: string = version["result"]["version"];
+        if (rtn === "") {
+          return "Unkown";
+        }
         return rtn;
       } catch (err) {
-        return "Couldn't Get Version";
+        return "Unkown";
       }
     },
     [dolphinService],
