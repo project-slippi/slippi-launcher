@@ -90,7 +90,7 @@ var InstallType
   DeleteRegKey HKCR "slippi"
   DeleteRegKey HKCU "SOFTWARE\Classes\slippi"
 
-  MessageBox MB_YESNO|MB_DEFBUTTON2|MB_ICONQUESTION "Would you like to delete config files and Slippi Dolphin installs as well?" \
+  MessageBox MB_YESNO|MB_DEFBUTTON2|MB_ICONQUESTION "Would you like to also clear Slippi Launcher and Slippi Dolphin application data?" \
     /SD IDNO IDNO Done IDYES Accepted
 
   Accepted:
