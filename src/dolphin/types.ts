@@ -71,6 +71,7 @@ export type DolphinDownloadProgressEvent = {
 export type DolphinDownloadCompleteEvent = {
   type: DolphinEventType.DOWNLOAD_COMPLETE;
   dolphinType: DolphinLaunchType;
+  dolphinVersion: string;
 };
 
 export type DolphinEventMap = {
@@ -85,7 +86,6 @@ export interface DolphinService {
   downloadDolphin(dolphinType: DolphinLaunchType): Promise<void>;
   configureDolphin(dolphinType: DolphinLaunchType): Promise<void>;
   softResetDolphin(dolphinType: DolphinLaunchType): Promise<void>;
-  getDolphinVersion(dolphinType: DolphinLaunchType): Promise<object>;
   hardResetDolphin(dolphinType: DolphinLaunchType): Promise<void>;
   storePlayKeyFile(key: PlayKey): Promise<void>;
   checkPlayKeyExists(key: PlayKey): Promise<boolean>;

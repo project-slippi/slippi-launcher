@@ -8,7 +8,6 @@ import type {
 import { DolphinEventType, DolphinLaunchType } from "@dolphin/types";
 import { useCallback, useEffect } from "react";
 
-import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { useToasts } from "@/lib/hooks/useToasts";
 
 import { handleDolphinExitCode } from "./handleDolphinExitCode";
@@ -22,7 +21,6 @@ import {
 
 // Setup listeners for DolphinService
 export const useDolphinListeners = (dolphinService: DolphinService) => {
-  const { getDolphinVersion } = useDolphinActions(dolphinService);
   const { showError } = useToasts();
   const dolphinClosedHandler = useCallback(
     ({ dolphinType, exitCode }: DolphinNetplayClosedEvent | DolphinPlaybackClosedEvent) => {
@@ -43,14 +41,10 @@ export const useDolphinListeners = (dolphinService: DolphinService) => {
     }
   }, []);
 
-  const dolphinCompleteHandler = useCallback(
-    async (event: DolphinDownloadCompleteEvent) => {
-      setDolphinComplete(event.dolphinType, DolphinStatus.READY);
-      const version = await getDolphinVersion(event.dolphinType);
-      setDolphinVersion(version, event.dolphinType);
-    },
-    [getDolphinVersion],
-  );
+  const dolphinCompleteHandler = useCallback(async (event: DolphinDownloadCompleteEvent) => {
+    setDolphinComplete(event.dolphinType, DolphinStatus.READY);
+    setDolphinVersion(event.dolphinVersion, event.dolphinType);
+  }, []);
 
   useEffect(() => {
     const subs: Array<() => void> = [];

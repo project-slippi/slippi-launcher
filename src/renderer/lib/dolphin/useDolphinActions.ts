@@ -51,22 +51,6 @@ export const useDolphinActions = (dolphinService: DolphinService) => {
     [dolphinService, showError],
   );
 
-  const getDolphinVersion = useCallback(
-    async (dolphinType: DolphinLaunchType): Promise<string> => {
-      try {
-        const version = await dolphinService.getDolphinVersion(dolphinType);
-        const rtn: string = version["result"]["version"];
-        if (rtn === "") {
-          return "Unkown";
-        }
-        return rtn;
-      } catch (err) {
-        return "Unkown";
-      }
-    },
-    [dolphinService],
-  );
-
   const hardResetDolphin = useCallback(
     async (dolphinType: DolphinLaunchType) => {
       try {
@@ -123,7 +107,6 @@ export const useDolphinActions = (dolphinService: DolphinService) => {
     openConfigureDolphin,
     softResetDolphin,
     hardResetDolphin,
-    getDolphinVersion,
     launchNetplay,
     viewReplays,
     importDolphin,

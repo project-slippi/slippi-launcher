@@ -30,7 +30,7 @@ export class DolphinManager {
     const dolphinInstall = this.getInstallation(dolphinType);
     await dolphinInstall.validate({
       onProgress: (current, total) => this._onProgress(dolphinType, current, total),
-      onComplete: () => this._onComplete(dolphinType),
+      onComplete: async () => this._onComplete(dolphinType, await dolphinInstall.getDolphinVersion()),
     });
     const isoPath = this.settingsManager.get().settings.isoPath;
     if (isoPath) {
@@ -71,11 +71,6 @@ export class DolphinManager {
     }
 
     await playbackInstance.play(replayComm);
-  }
-  public async getDolphinVersion(launchType: DolphinLaunchType): Promise<string> {
-    const install = this.getInstallation(launchType);
-    const version = await install.getDolphinVersion();
-    return version;
   }
   public async launchNetplayDolphin() {
     if (this.netplayDolphinInstance) {
@@ -184,8 +179,8 @@ export class DolphinManager {
       const gameDir = path.dirname(isoPath);
       await installation.addGamePath(gameDir);
     }
-
-    this._onComplete(launchType);
+    const version = await installation.getDolphinVersion();
+    this._onComplete(launchType, version);
   }
 
   private async _getIsoPath(): Promise<string | undefined> {
@@ -215,10 +210,11 @@ export class DolphinManager {
     });
   }
 
-  private _onComplete(dolphinType: DolphinLaunchType) {
+  private _onComplete(dolphinType: DolphinLaunchType, dolphinVersion: string) {
     this.eventSubject.next({
       type: DolphinEventType.DOWNLOAD_COMPLETE,
       dolphinType,
+      dolphinVersion,
     });
   }
 }

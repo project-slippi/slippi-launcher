@@ -17,12 +17,6 @@ export const ipc_configureDolphin = makeEndpoint.main(
   <SuccessPayload>_,
 );
 
-export const ipc_getDolphinVersion = makeEndpoint.main(
-  "getDolphinVersion",
-  <{ dolphinType: DolphinLaunchType }>_,
-  <{ version: string }>_,
-);
-
 export const ipc_hardResetDolphin = makeEndpoint.main(
   "hardResetDolphin",
   <{ dolphinType: DolphinLaunchType }>_,

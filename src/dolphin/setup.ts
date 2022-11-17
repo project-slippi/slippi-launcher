@@ -11,7 +11,6 @@ import {
   ipc_configureDolphin,
   ipc_dolphinEvent,
   ipc_downloadDolphin,
-  ipc_getDolphinVersion,
   ipc_hardResetDolphin,
   ipc_importDolphinSettings,
   ipc_launchNetplayDolphin,
@@ -48,11 +47,6 @@ export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: Do
     console.log("soft resetting dolphin...");
     await dolphinManager.reinstallDolphin(dolphinType, false);
     return { success: true };
-  });
-
-  ipc_getDolphinVersion.main!.handle(async ({ dolphinType }) => {
-    const vers = await dolphinManager.getDolphinVersion(dolphinType);
-    return { version: vers };
   });
 
   ipc_hardResetDolphin.main!.handle(async ({ dolphinType }) => {

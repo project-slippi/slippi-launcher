@@ -40,13 +40,13 @@ export const setDolphinComplete = (dolphinType: DolphinLaunchType, status: Dolph
   }
 };
 
-export const setDolphinVersion = (version: string, dolphinType: DolphinLaunchType) => {
+export const setDolphinVersion = (dolphinVersion: string, dolphinType: DolphinLaunchType) => {
   switch (dolphinType) {
     case DolphinLaunchType.NETPLAY:
-      useDolphinStore.setState({ netplayDolphinVersion: version });
+      useDolphinStore.setState({ netplayDolphinVersion: dolphinVersion });
       break;
     case DolphinLaunchType.PLAYBACK:
-      useDolphinStore.setState({ playbackDolphinVersion: version });
+      useDolphinStore.setState({ playbackDolphinVersion: dolphinVersion });
       break;
   }
 };
