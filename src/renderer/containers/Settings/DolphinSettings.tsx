@@ -34,21 +34,22 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   const dolphinVersion: string = useDolphinStore((store) =>
     dolphinType === DolphinLaunchType.NETPLAY ? store.netplayDolphinVersion : store.playbackDolphinVersion,
   );
-
   const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
   const [resetModalOpen, setResetModalOpen] = React.useState(false);
-
   const [isResetType, setResetType] = React.useState<ResetType | null>(null);
   const { dolphinService } = useServices();
   const { openConfigureDolphin, hardResetDolphin, softResetDolphin, importDolphin } = useDolphinActions(dolphinService);
 
   const dolphinIsReady = dolphinStatus === DolphinStatus.READY && !dolphinIsOpen && isResetType === null;
+
   const openDolphinDirectoryHandler = async () => {
     await window.electron.shell.openPath(dolphinPath);
   };
+
   const configureDolphinHandler = async () => {
     openConfigureDolphin(dolphinType);
   };
+
   const softResetDolphinHandler = async () => {
     setResetType(ResetType.SOFT);
     await softResetDolphin(dolphinType);
@@ -71,7 +72,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
     <div>
       <Typography variant="h5">{dolphinTypeName} Dolphin Settings</Typography>
       <Typography variant="caption">
-        Version: {!dolphinVersion && "Unkown"}
+        Version: {!dolphinVersion && "Unknown"}
         {dolphinVersion}
       </Typography>
 

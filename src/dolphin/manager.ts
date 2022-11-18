@@ -72,6 +72,7 @@ export class DolphinManager {
 
     await playbackInstance.play(replayComm);
   }
+
   public async launchNetplayDolphin() {
     if (this.netplayDolphinInstance) {
       throw new Error("Netplay dolphin is already open!");
