@@ -177,15 +177,15 @@ export class DolphinInstallation {
 
   private async _isOutOfDate(latestVersion: string): Promise<boolean> {
     const dolphinVersion = await this.getDolphinVersion();
-    return lt(dolphinVersion, latestVersion);
+    return !dolphinVersion || lt(dolphinVersion, latestVersion);
   }
 
-  public async getDolphinVersion(): Promise<string> {
+  public async getDolphinVersion(): Promise<string | null> {
     const dolphinPath = await this.findDolphinExecutable();
     const dolphinVersionOut = spawnSync(dolphinPath, ["--version"]).stdout.toString();
     const match = dolphinVersionOut.match(semverRegex);
     const dolphinVersion = match?.[0] ?? "";
-    return dolphinVersion;
+    return dolphinVersion || null;
   }
 
   private async _uninstallDolphin() {

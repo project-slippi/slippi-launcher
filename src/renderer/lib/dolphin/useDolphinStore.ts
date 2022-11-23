@@ -14,8 +14,8 @@ export const useDolphinStore = create(() => ({
   netplayOpened: false,
   playbackOpened: false,
   netplayDownloadProgress: null as { current: number; total: number } | null,
-  netplayDolphinVersion: "Not Found",
-  playbackDolphinVersion: "Not Found",
+  netplayDolphinVersion: "Not Found" as string | null,
+  playbackDolphinVersion: "Not Found" as string | null,
 }));
 
 export const setDolphinOpened = (dolphinType: DolphinLaunchType, isOpened = true) => {
@@ -40,7 +40,7 @@ export const setDolphinComplete = (dolphinType: DolphinLaunchType, status: Dolph
   }
 };
 
-export const setDolphinVersion = (dolphinVersion: string, dolphinType: DolphinLaunchType) => {
+export const setDolphinVersion = (dolphinVersion: string | null, dolphinType: DolphinLaunchType) => {
   switch (dolphinType) {
     case DolphinLaunchType.NETPLAY:
       useDolphinStore.setState({ netplayDolphinVersion: dolphinVersion });

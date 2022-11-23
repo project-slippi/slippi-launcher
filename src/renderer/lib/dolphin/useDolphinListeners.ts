@@ -41,7 +41,7 @@ export const useDolphinListeners = (dolphinService: DolphinService) => {
     }
   }, []);
 
-  const dolphinCompleteHandler = useCallback(async (event: DolphinDownloadCompleteEvent) => {
+  const dolphinCompleteHandler = useCallback((event: DolphinDownloadCompleteEvent) => {
     setDolphinComplete(event.dolphinType, DolphinStatus.READY);
     setDolphinVersion(event.dolphinVersion, event.dolphinType);
   }, []);
