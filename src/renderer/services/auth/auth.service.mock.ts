@@ -87,8 +87,8 @@ class MockAuthClient implements AuthService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async reloadUser(): Promise<AuthUser | null> {
-    return this._updateCurrentUser({ emailVerified: true });
+  public async refreshUser(): Promise<void> {
+    this._updateCurrentUser({ emailVerified: true });
   }
 
   @delayAndMaybeError(SHOULD_ERROR)

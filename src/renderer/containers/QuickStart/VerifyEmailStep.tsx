@@ -70,18 +70,14 @@ const classes = {
 export const VerifyEmailStep: React.FC = () => {
   const { authService } = useServices();
   const setServerError = useAccount((store) => store.setServerError);
-  const setUser = useAccount((store) => store.setUser);
   const user = useAccount((store) => store.user);
   const emailVerificationSent = useAccount((store) => store.emailVerificationSent);
   const setEmailVerificationSent = useAccount((store) => store.setEmailVerificationSent);
 
   const handleCheckVerification = async () => {
-    try {
-      const newUser = await authService.reloadUser();
-      setUser(newUser);
-    } catch (err: any) {
+    authService.refreshUser().catch((err) => {
       setServerError(err.message);
-    }
+    });
   };
 
   useEffect(() => {

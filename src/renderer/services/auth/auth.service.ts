@@ -137,7 +137,7 @@ class AuthClient implements AuthService {
     await sendEmailVerification(user);
   }
 
-  public async reloadUser(): Promise<AuthUser | null> {
+  public async refreshUser(): Promise<void> {
     const auth = getAuth();
     const user = auth.currentUser;
     if (!user) {
@@ -145,7 +145,8 @@ class AuthClient implements AuthService {
     }
 
     await user.reload();
-    return auth.currentUser ? this._mapFirebaseUserToAuthUser(auth.currentUser) : null;
+    // Notify listeners of the new user object
+    this._userSubject.next(this.getCurrentUser());
   }
 
   public async logout() {

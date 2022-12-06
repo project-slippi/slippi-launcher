@@ -12,7 +12,7 @@ export interface AuthService {
   init(): Promise<AuthUser | null>;
   login(args: { email: string; password: string }): Promise<AuthUser | null>;
   logout(): Promise<void>;
-  reloadUser(): Promise<AuthUser | null>;
+  refreshUser(): Promise<void>;
   sendVerificationEmail(): Promise<void>;
   onUserChange(onChange: (user: AuthUser | null) => void): () => void;
   resetPassword(email: string): Promise<void>;
