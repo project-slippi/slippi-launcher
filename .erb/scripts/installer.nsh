@@ -84,3 +84,19 @@ var InstallType
     ExecShellWait "" "$PLUGINSDIR\${GC_INSTALLER}" SW_HIDE
   ${EndIf}
 !macroend
+
+!macro customUnInstall
+  ; Clean up Slippi URI Handling
+  DeleteRegKey HKCR "slippi"
+  DeleteRegKey HKCU "SOFTWARE\Classes\slippi"
+
+  MessageBox MB_YESNO|MB_DEFBUTTON2|MB_ICONQUESTION "Would you like to also clear Slippi Launcher and Slippi Dolphin application data?" \
+    /SD IDNO IDNO Done IDYES Accepted
+
+  Accepted:
+    RMDir /r "$APPDATA\${APP_FILENAME}"
+    !ifdef APP_PRODUCT_FILENAME
+      RMDir /r "$APPDATA\${APP_PRODUCT_FILENAME}"
+    !endif
+  Done:
+!macroend
