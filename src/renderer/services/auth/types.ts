@@ -13,7 +13,7 @@ export interface AuthService {
   login(args: { email: string; password: string }): Promise<AuthUser | null>;
   logout(): Promise<void>;
   reloadUser(): Promise<AuthUser | null>;
-  verifyEmail(): Promise<void>;
+  sendVerificationEmail(): Promise<void>;
   onUserChange(onChange: (user: AuthUser | null) => void): () => void;
   resetPassword(email: string): Promise<void>;
   signUp(args: { email: string; password: string; displayName: string }): Promise<AuthUser | null>;

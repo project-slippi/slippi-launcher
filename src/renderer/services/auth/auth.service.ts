@@ -121,7 +121,7 @@ class AuthClient implements AuthService {
     return this._mapFirebaseUserToAuthUser(user);
   }
 
-  public async verifyEmail() {
+  public async sendVerificationEmail() {
     const auth = getAuth();
     const user = auth.currentUser;
     if (!user) {
@@ -132,7 +132,7 @@ class AuthClient implements AuthService {
       return;
     }
 
-    log.info(`Sending email verification to ${user.email}`);
+    log.info(`Sending email verification`);
 
     await sendEmailVerification(user);
   }

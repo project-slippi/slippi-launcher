@@ -1,4 +1,5 @@
 import { colors } from "@common/colors";
+import { slippiManagePage } from "@common/constants";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
@@ -74,8 +75,6 @@ export const VerifyEmailStep: React.FC = () => {
   const emailVerificationSent = useAccount((store) => store.emailVerificationSent);
   const setEmailVerificationSent = useAccount((store) => store.setEmailVerificationSent);
 
-  const profileUrl = "https://slippi.gg/profile";
-
   const handleCheckVerification = async () => {
     try {
       const newUser = await authService.reloadUser();
@@ -86,16 +85,18 @@ export const VerifyEmailStep: React.FC = () => {
   };
 
   useEffect(() => {
-    void (async () => {
-      if (user && !user.emailVerified && !emailVerificationSent) {
-        try {
-          await authService.verifyEmail();
-          setEmailVerificationSent(true);
-        } catch (err: any) {
-          setServerError(err.message);
-        }
+    const sendVerificationEmail = async () => {
+      try {
+        await authService.sendVerificationEmail();
+        setEmailVerificationSent(true);
+      } catch (err: any) {
+        setServerError(err.message);
       }
-    })();
+    };
+
+    if (user && !user.emailVerified && !emailVerificationSent) {
+      void sendVerificationEmail();
+    }
   }, [emailVerificationSent, setEmailVerificationSent, setServerError, user, authService]);
 
   const preVerification = (
@@ -108,7 +109,7 @@ export const VerifyEmailStep: React.FC = () => {
       </Button>
       <div css={classes.emailNotFoundContainer}>
         Not finding email?{" "}
-        <a href="#" onClick={authService.verifyEmail}>
+        <a href="#" onClick={authService.sendVerificationEmail}>
           send again
         </a>
       </div>
@@ -125,11 +126,11 @@ export const VerifyEmailStep: React.FC = () => {
   return (
     <Box display="flex" flexDirection="column" flexGrow="1">
       <Container>
-        <QuickStartHeader>Verify Email</QuickStartHeader>
+        <QuickStartHeader>Verify your email</QuickStartHeader>
         <div css={classes.message}>A confirmation email has been sent to</div>
         <div css={classes.emailContainer}>{user?.email}</div>
         <div css={classes.incorrectEmailContainer}>
-          Wrong email? <A href={profileUrl}>change email</A>
+          Wrong email? <A href={slippiManagePage}>change email</A>
         </div>
         {user?.emailVerified ? postVerification : preVerification}
       </Container>

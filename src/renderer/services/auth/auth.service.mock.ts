@@ -92,7 +92,7 @@ class MockAuthClient implements AuthService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async verifyEmail(): Promise<void> {
+  public async sendVerificationEmail(): Promise<void> {
     // Do nothing
   }
 
