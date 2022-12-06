@@ -119,16 +119,27 @@ export const VerifyEmailStep: React.FC = () => {
     </div>
   );
 
+  let stepBody = null;
+  if (user) {
+    stepBody = (
+      <>
+        <div css={classes.message}>A confirmation email has been sent to</div>
+        <div css={classes.emailContainer}>{user.email}</div>
+        <div css={classes.incorrectEmailContainer}>
+          Wrong email? <A href={slippiManagePage}>change email</A>
+        </div>
+        {user.emailVerified ? postVerification : preVerification}
+      </>
+    );
+  } else {
+    stepBody = <div>An error occurred. The application does not have a user.</div>;
+  }
+
   return (
     <Box display="flex" flexDirection="column" flexGrow="1">
       <Container>
         <QuickStartHeader>Verify your email</QuickStartHeader>
-        <div css={classes.message}>A confirmation email has been sent to</div>
-        <div css={classes.emailContainer}>{user?.email}</div>
-        <div css={classes.incorrectEmailContainer}>
-          Wrong email? <A href={slippiManagePage}>change email</A>
-        </div>
-        {user?.emailVerified ? postVerification : preVerification}
+        {stepBody}
       </Container>
     </Box>
   );
