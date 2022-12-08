@@ -14,7 +14,7 @@ import type { AuthUser } from "@/services/auth/types";
 
 import { ActivateOnlineDialog } from "./ActivateOnlineDialog";
 import { NameChangeDialog } from "./NameChangeDialog";
-import { UserInfo } from "./UserInfo";
+import { UserInfo } from "./UserInfo/UserInfo";
 
 export const UserMenu: React.FC<{
   user: AuthUser;
@@ -87,14 +87,21 @@ export const UserMenu: React.FC<{
     return items;
   };
 
+  let errMessage: string | undefined = undefined;
+  if (serverError) {
+    errMessage = "Slippi server error";
+  } else if (!playKey) {
+    errMessage = "Online activation required";
+  }
+
   return (
     <div>
       <ButtonBase onClick={handleClick}>
         <UserInfo
           displayName={displayName}
           displayPicture={user.displayPicture}
-          playKey={playKey}
-          serverError={serverError}
+          connectCode={playKey?.connectCode}
+          errorMessage={errMessage}
           loading={loading}
         />
       </ButtonBase>

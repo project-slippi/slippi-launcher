@@ -1,32 +1,24 @@
 import { colors } from "@common/colors";
-import type { PlayKey } from "@dolphin/types";
 import { css } from "@emotion/react";
 import CircularProgress from "@mui/material/CircularProgress";
+import * as React from "react";
 
 import { UserIcon } from "@/components/UserIcon";
 
-export const UserInfo = ({
+export const UserInfo = React.memo(function UserInfo({
   displayName,
   displayPicture,
-  playKey,
-  serverError,
+  connectCode,
+  errorMessage,
   loading,
 }: {
-  displayName: string | null;
+  displayName: string;
   displayPicture: string;
-  playKey: PlayKey | null;
-  serverError: boolean | null;
-  loading: boolean;
-}) => {
-  const showError = serverError || !playKey;
-  let subtext = "";
-  if (serverError) {
-    subtext = "Slippi server error";
-  } else if (!playKey) {
-    subtext = "Online activation required";
-  } else {
-    subtext = playKey.connectCode;
-  }
+  connectCode?: string;
+  errorMessage?: string;
+  loading?: boolean;
+}) {
+  const subtext = errorMessage ? errorMessage : connectCode || "";
 
   return (
     <div
@@ -65,7 +57,7 @@ export const UserInfo = ({
             css={css`
               font-weight: bold;
               font-size: 14px;
-              color: ${showError ? "red" : colors.purpleLight};
+              color: ${errorMessage ? "red" : colors.purpleLight};
             `}
           >
             {subtext}
@@ -74,4 +66,4 @@ export const UserInfo = ({
       </div>
     </div>
   );
-};
+});
