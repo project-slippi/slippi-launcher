@@ -8,10 +8,27 @@ import type { AuthService, AuthUser } from "./types";
 
 const SHOULD_ERROR = false;
 
+const testUserEmail = "test";
+const testUserPassword = "test";
+
 class MockAuthClient implements AuthService {
+  private _usersMap = new Map<string, AuthUser>();
   private _currentUser: AuthUser | null = null;
   private _userSubject = new Subject<AuthUser | null>();
   private _onAuthStateChanged = multicast(this._userSubject);
+
+  constructor() {
+    // Add our fake user
+    const testUser = generateFakeUser({
+      email: testUserEmail,
+      emailVerified: true,
+    });
+    this._usersMap.set(this._hashEmailPassword(testUserEmail, testUserPassword), testUser);
+  }
+
+  private _hashEmailPassword(email: string, password: string): string {
+    return `email:${email}+password:${password}`;
+  }
 
   @delayAndMaybeError(SHOULD_ERROR)
   public async init(): Promise<AuthUser | null> {
@@ -41,15 +58,22 @@ class MockAuthClient implements AuthService {
 
   @delayAndMaybeError(SHOULD_ERROR)
   public async login(args: { email: string; password: string }): Promise<AuthUser | null> {
-    if (args.email === "test" && args.password === "test") {
-      return this._mockUser("Demo user");
+    const hash = this._hashEmailPassword(args.email, args.password);
+    const user = this._usersMap.get(hash);
+    if (!user) {
+      throw new Error(`Invalid username or password. Try '${testUserEmail}' and '${testUserPassword}'.`);
     }
-    throw new Error("Invalid username or password. Try 'test' and 'test'.");
+    this._setCurrentUser(user);
+    return user;
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
   public async signUp(args: { email: string; password: string; displayName: string }): Promise<AuthUser | null> {
-    return this._mockUser(args.displayName);
+    const uid = args.email + args.displayName;
+    const newUser = generateFakeUser({ ...args, uid });
+    this._usersMap.set(this._hashEmailPassword(args.email, args.password), newUser);
+    this._setCurrentUser(newUser);
+    return newUser;
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
@@ -59,29 +83,53 @@ class MockAuthClient implements AuthService {
 
   @delayAndMaybeError(SHOULD_ERROR)
   public async updateDisplayName(displayName: string): Promise<void> {
-    if (this._currentUser) {
-      this._userSubject.next({
-        ...this._currentUser,
-        displayName,
-      });
-    }
+    this._updateCurrentUser({ displayName });
   }
 
-  private _mockUser(displayName: string) {
-    const displayPicture = generateDisplayPicture("userid");
-    const fakeUser = {
-      uid: "userid",
-      displayName,
-      displayPicture,
-    };
-    this._setCurrentUser(fakeUser);
-    return fakeUser;
+  @delayAndMaybeError(SHOULD_ERROR)
+  public async refreshUser(): Promise<void> {
+    this._updateCurrentUser({ emailVerified: true });
+  }
+
+  @delayAndMaybeError(SHOULD_ERROR)
+  public async sendVerificationEmail(): Promise<void> {
+    // Do nothing
+  }
+
+  private _updateCurrentUser(newUserDetails: Partial<AuthUser>): AuthUser {
+    const user = this._currentUser;
+    if (!user) {
+      throw new Error("User is not logged in.");
+    }
+
+    const maybeUserRecord = Array.from(this._usersMap.entries()).find(([_, u]) => user.uid === u.uid);
+    if (!maybeUserRecord) {
+      throw new Error(`Error updating user with id: ${user.uid}`);
+    }
+
+    const [key, userRecord] = maybeUserRecord;
+    const updatedUser: AuthUser = { ...userRecord, ...newUserDetails };
+    this._usersMap.set(key, updatedUser);
+    this._setCurrentUser(updatedUser);
+    return updatedUser;
   }
 
   private _setCurrentUser(user: AuthUser | null) {
     this._currentUser = user;
     this._userSubject.next(user);
   }
+}
+
+function generateFakeUser(options: Partial<AuthUser>): AuthUser {
+  const uid = options.uid ?? "userid";
+  const fakeUser: AuthUser = {
+    uid,
+    displayName: options.displayName ?? "Demo user",
+    displayPicture: options.displayPicture ?? generateDisplayPicture(uid),
+    email: options.email ?? "fake@user.com",
+    emailVerified: options.emailVerified ?? false,
+  };
+  return fakeUser;
 }
 
 export default function createMockAuthClient(): AuthService {

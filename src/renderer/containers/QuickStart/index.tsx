@@ -15,6 +15,7 @@ import { ImportDolphinSettingsStep } from "./ImportDolphinSettingsStep";
 import { IsoSelectionStep } from "./IsoSelectionStep";
 import { LoginStep } from "./LoginStep";
 import { SetupCompleteStep } from "./SetupCompleteStep";
+import { VerifyEmailStep } from "./VerifyEmailStep";
 
 const OuterBox = styled(Box)`
   flex: 1;
@@ -36,6 +37,8 @@ const getStepContent = (step: QuickStartStep | null) => {
   switch (step) {
     case QuickStartStep.LOGIN:
       return <LoginStep />;
+    case QuickStartStep.VERIFY_EMAIL:
+      return <VerifyEmailStep />;
     case QuickStartStep.ACTIVATE_ONLINE:
       return <ActivateOnlineStep />;
     case QuickStartStep.MIGRATE_DOLPHIN:

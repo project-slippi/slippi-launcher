@@ -14,21 +14,29 @@ export const useAccount = create(
       playKey: null as PlayKey | null,
       serverError: false,
       displayName: "",
+      emailVerificationSent: false,
     },
-    (set) => ({
-      setUser: (user: AuthUser | null) =>
-        set((store) => {
-          store.user = user;
-          if (user) {
-            store.displayName = user.displayName || "";
-          }
+    (set, get) => ({
+      setUser: (user: AuthUser | null) => {
+        if (!user) {
+          set({ user: null });
+          return;
+        }
 
-          return store;
-        }),
+        let emailVerificationSent = get().emailVerificationSent;
+        const currentUid = get().user?.uid;
+        if (currentUid !== user?.uid) {
+          emailVerificationSent = false;
+        }
+
+        const displayName = user.displayName || "";
+        set({ user, displayName, emailVerificationSent });
+      },
       setLoading: (loading: boolean) => set({ loading }),
       setPlayKey: (playKey: PlayKey | null) => set({ playKey }),
       setServerError: (serverError: boolean) => set({ serverError }),
       setDisplayName: (displayName: string) => set({ displayName }),
+      setEmailVerificationSent: (emailVerificationSent: boolean) => set({ emailVerificationSent }),
     }),
   ),
 );
