@@ -8,7 +8,17 @@ import type { DolphinInstallation } from "./install/installation";
 
 export async function writePlayKeyFile(installation: DolphinInstallation, playKey: PlayKey): Promise<void> {
   const keyPath = await findPlayKey(installation);
-  const contents = JSON.stringify(playKey, null, 2);
+  const contents = JSON.stringify(
+    {
+      uid: playKey.uid,
+      playKey: playKey.playKey,
+      connectCode: playKey.connectCode,
+      displayName: playKey.displayName,
+      latestVersion: playKey.latestVersion,
+    },
+    null,
+    2,
+  );
   await fs.writeFile(keyPath, contents);
 }
 
