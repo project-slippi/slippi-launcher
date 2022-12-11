@@ -6,5 +6,6 @@ export interface SlippiBackendService {
   assertPlayKey(playKey: PlayKey): Promise<void>;
   deletePlayKey(): Promise<void>;
   changeDisplayName(name: string): Promise<void>;
+  acceptRules(): Promise<void>;
   initializeNetplay(codeStart: string): Promise<void>;
 }

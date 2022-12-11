@@ -3,11 +3,13 @@ import { ApolloClient, ApolloLink, HttpLink, InMemoryCache } from "@apollo/clien
 import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
 import { RetryLink } from "@apollo/client/link/retry";
+import { currentRulesVersion } from "@common/constants";
 import type { DolphinService, PlayKey } from "@dolphin/types";
 import type { GraphQLError } from "graphql";
 
 import type { AuthService } from "../auth/types";
 import {
+  MUTATION_ACCEPT_RULES,
   MUTATION_INIT_NETPLAY,
   MUTATION_RENAME_USER,
   QUERY_GET_USER_KEY,
@@ -135,6 +137,7 @@ class SlippiBackendClient implements SlippiBackendService {
       playKey,
       displayName,
       latestVersion: res.data.getLatestDolphin?.version,
+      rulesAccepted: res.data.getUser?.rulesAccepted ?? 0,
     };
   }
   public async assertPlayKey(playKey: PlayKey) {
@@ -168,6 +171,24 @@ class SlippiBackendClient implements SlippiBackendService {
     }
 
     await this.authService.updateDisplayName(name);
+  }
+
+  public async acceptRules() {
+    const user = this.authService.getCurrentUser();
+    if (!user) {
+      throw new Error("User is not logged in");
+    }
+
+    const res = await this.client.mutate({
+      mutation: MUTATION_ACCEPT_RULES,
+      variables: { num: currentRulesVersion },
+    });
+
+    handleErrors(res.errors);
+
+    if (res.data?.userAcceptRules?.rulesAccepted !== currentRulesVersion) {
+      throw new Error("Could not accept rules");
+    }
   }
 
   public async initializeNetplay(codeStart: string): Promise<void> {

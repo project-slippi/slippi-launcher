@@ -12,6 +12,7 @@ const fakeUsers: PlayKey[] = [
     connectCode: "DEMO#000",
     playKey: "playkey",
     displayName: "Demo user",
+    rulesAccepted: 0,
   },
 ];
 
@@ -54,6 +55,11 @@ class MockSlippiBackendClient implements SlippiBackendService {
   @delayAndMaybeError(SHOULD_ERROR)
   public async changeDisplayName(name: string) {
     await this.authService.updateDisplayName(name);
+  }
+
+  @delayAndMaybeError(SHOULD_ERROR)
+  public async acceptRules() {
+    // Do nothing? Not sure how this should work
   }
 
   @delayAndMaybeError(SHOULD_ERROR)

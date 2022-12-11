@@ -9,6 +9,7 @@ import React, { useEffect } from "react";
 
 import { ExternalLink as A } from "@/components/ExternalLink";
 import { useAccount } from "@/lib/hooks/useAccount";
+import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";
 
 import { QuickStartHeader } from "./QuickStartHeader";
@@ -69,14 +70,14 @@ const classes = {
 
 export const VerifyEmailStep: React.FC = () => {
   const { authService } = useServices();
-  const setServerError = useAccount((store) => store.setServerError);
+  const { showError } = useToasts();
   const user = useAccount((store) => store.user);
   const emailVerificationSent = useAccount((store) => store.emailVerificationSent);
   const setEmailVerificationSent = useAccount((store) => store.setEmailVerificationSent);
 
   const handleCheckVerification = async () => {
     authService.refreshUser().catch((err) => {
-      setServerError(err.message);
+      showError(err.message);
     });
   };
 
@@ -86,14 +87,14 @@ export const VerifyEmailStep: React.FC = () => {
         await authService.sendVerificationEmail();
         setEmailVerificationSent(true);
       } catch (err: any) {
-        setServerError(err.message);
+        showError(err.message);
       }
     };
 
     if (user && !user.emailVerified && !emailVerificationSent) {
       void sendVerificationEmail();
     }
-  }, [emailVerificationSent, setEmailVerificationSent, setServerError, user, authService]);
+  }, [emailVerificationSent, setEmailVerificationSent, showError, user, authService]);
 
   const preVerification = (
     <>

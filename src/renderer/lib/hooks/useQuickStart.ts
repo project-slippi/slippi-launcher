@@ -1,3 +1,4 @@
+import { currentRulesVersion } from "@common/constants";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import create from "zustand";
@@ -10,6 +11,7 @@ import { useAccount } from "./useAccount";
 export enum QuickStartStep {
   LOGIN = "LOGIN",
   VERIFY_EMAIL = "VERIFY_EMAIL",
+  ACCEPT_RULES = "ACCEPT_RULES",
   MIGRATE_DOLPHIN = "MIGRATE_DOLPHIN",
   ACTIVATE_ONLINE = "ACTIVATE_ONLINE",
   SET_ISO_PATH = "SET_ISO_PATH",
@@ -21,6 +23,7 @@ function generateSteps(
     hasUser: boolean;
     hasPlayKey: boolean;
     hasVerifiedEmail: boolean;
+    rulesAccepted: number;
     serverError: boolean;
     hasIso: boolean;
     hasOldDesktopApp: boolean;
@@ -41,7 +44,12 @@ function generateSteps(
     steps.unshift(QuickStartStep.ACTIVATE_ONLINE);
   }
 
-  if (!options.hasVerifiedEmail) {
+  // TODO: Don't know why I need to default to 0 here. It says it could be undefined
+  if ((options.rulesAccepted ?? 0) < currentRulesVersion && !options.serverError) {
+    steps.unshift(QuickStartStep.ACCEPT_RULES);
+  }
+
+  if (!options.hasVerifiedEmail && !options.serverError) {
     steps.unshift(QuickStartStep.VERIFY_EMAIL);
   }
 
@@ -64,6 +72,7 @@ export const useQuickStart = () => {
     hasIso: Boolean(savedIsoPath),
     hasVerifiedEmail: Boolean(user?.emailVerified),
     hasPlayKey: Boolean(playKey),
+    rulesAccepted: playKey?.rulesAccepted ?? 0,
     serverError: Boolean(serverError),
     hasOldDesktopApp: desktopAppPathExists,
   };
@@ -90,7 +99,11 @@ export const useQuickStart = () => {
       stepToShow = QuickStartStep.ACTIVATE_ONLINE;
     }
 
-    if (!options.hasVerifiedEmail) {
+    if (options.rulesAccepted < currentRulesVersion && !options.serverError) {
+      stepToShow = QuickStartStep.ACCEPT_RULES;
+    }
+
+    if (!options.hasVerifiedEmail && !options.serverError) {
       stepToShow = QuickStartStep.VERIFY_EMAIL;
     }
 
@@ -107,6 +120,7 @@ export const useQuickStart = () => {
     options.hasOldDesktopApp,
     options.hasPlayKey,
     options.hasUser,
+    options.rulesAccepted,
     options.serverError,
   ]);
 

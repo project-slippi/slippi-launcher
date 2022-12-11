@@ -38,6 +38,7 @@ export interface PlayKey {
   connectCode: string;
   displayName: string;
   latestVersion?: string;
+  rulesAccepted: number;
 }
 
 export enum DolphinEventType {
