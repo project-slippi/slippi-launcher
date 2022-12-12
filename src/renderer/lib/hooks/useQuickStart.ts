@@ -112,7 +112,6 @@ export const useQuickStart = () => {
 
     setCurrentStep(stepToShow);
   }, [
-    history,
     steps,
     options.hasIso,
     options.hasVerifiedEmail,
@@ -121,6 +120,7 @@ export const useQuickStart = () => {
     options.hasUser,
     options.rulesAccepted,
     options.serverError,
+    navigate,
   ]);
 
   const nextStep = () => {
