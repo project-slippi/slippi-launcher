@@ -44,7 +44,6 @@ function generateSteps(
     steps.unshift(QuickStartStep.ACTIVATE_ONLINE);
   }
 
-  // TODO: Don't know why I need to default to 0 here. It says it could be undefined
   if ((options.rulesAccepted ?? 0) < currentRulesVersion && !options.serverError) {
     steps.unshift(QuickStartStep.ACCEPT_RULES);
   }
