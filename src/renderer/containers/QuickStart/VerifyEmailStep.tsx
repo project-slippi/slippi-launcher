@@ -105,7 +105,7 @@ export const VerifyEmailStep: React.FC = () => {
         Check Verification
       </Button>
       <div css={classes.emailNotFoundContainer}>
-        Not finding email? Check spam folder. Still missing?{" "}
+        Can't find the email? Check your spam folder. Still missing?{" "}
         <a href="#" onClick={authService.sendVerificationEmail}>
           send again
         </a>
