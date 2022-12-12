@@ -23,8 +23,8 @@ class MockSlippiBackendClient implements SlippiBackendService {
 
   @delayAndMaybeError(SHOULD_ERROR)
   public async validateUserId(userId: string): Promise<{ displayName: string; connectCode: string }> {
-    const userData = fakeUsers.find((userData) => userData.playKey.uid === userId);
-    if (!userData) {
+    const userData = fakeUsers.find((userData) => userData.playKey?.uid === userId);
+    if (!userData || !userData.playKey) {
       throw new Error("No user with that ID");
     }
 
@@ -40,7 +40,7 @@ class MockSlippiBackendClient implements SlippiBackendService {
     if (!user) {
       throw new Error("No user logged in");
     }
-    const userData = fakeUsers.find((userData) => userData.playKey.uid === user.uid);
+    const userData = fakeUsers.find((userData) => userData.playKey?.uid === user.uid);
     return userData ?? null;
   }
 
@@ -61,7 +61,7 @@ class MockSlippiBackendClient implements SlippiBackendService {
 
   @delayAndMaybeError(SHOULD_ERROR)
   public async acceptRules() {
-    // Do nothing? Not sure how this should work
+    // TODO: make it possible to accept the rules in the mock
   }
 
   @delayAndMaybeError(SHOULD_ERROR)

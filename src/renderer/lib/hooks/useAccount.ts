@@ -41,14 +41,14 @@ export const useAccount = create(
   ),
 );
 
-export const usePlayKey = () => {
+export const useUserData = () => {
   const { slippiBackendService } = useServices();
   const loading = useAccount((store) => store.loading);
   const setLoading = useAccount((store) => store.setLoading);
   const setUserData = useAccount((store) => store.setUserData);
   const setServerError = useAccount((store) => store.setServerError);
 
-  const refreshPlayKey = useCallback(async () => {
+  const refreshUserData = useCallback(async () => {
     // We're already refreshing the key
     if (loading) {
       return;
@@ -69,5 +69,5 @@ export const usePlayKey = () => {
       .finally(() => setLoading(false));
   }, [loading, setLoading, setUserData, setServerError, slippiBackendService]);
 
-  return refreshPlayKey;
+  return refreshUserData;
 };

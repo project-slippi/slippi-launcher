@@ -6,7 +6,7 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import React from "react";
 
-import { usePlayKey } from "@/lib/hooks/useAccount";
+import { useUserData } from "@/lib/hooks/useAccount";
 import { useToasts } from "@/lib/hooks/useToasts";
 
 import { ActivateOnlineForm } from "../ActivateOnlineForm";
@@ -20,11 +20,11 @@ export interface ActivateOnlineDialogProps {
 export const ActivateOnlineDialog: React.FC<ActivateOnlineDialogProps> = ({ open, onClose, onSubmit }) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  const refreshPlayKey = usePlayKey();
+  const refreshUserData = useUserData();
   const { showError } = useToasts();
 
   const handleSubmit = () => {
-    refreshPlayKey()
+    refreshUserData()
       .then(() => {
         onClose();
         onSubmit();

@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import React, { useState } from "react";
 
 import { ExternalLink as A } from "@/components/ExternalLink";
-import { useAccount, usePlayKey } from "@/lib/hooks/useAccount";
+import { useAccount, useUserData } from "@/lib/hooks/useAccount";
 import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";
 
@@ -61,7 +61,7 @@ const classes = {
 export const AcceptRulesStep: React.FC = () => {
   const { slippiBackendService } = useServices();
   const { showError } = useToasts();
-  const refreshPlayKey = usePlayKey();
+  const refreshUserData = useUserData();
   const user = useAccount((store) => store.user);
   const [rulesChecked, setRulesChecked] = useState(false);
   const [policiesChecked, setPoliciesChecked] = useState(false);
@@ -72,7 +72,7 @@ export const AcceptRulesStep: React.FC = () => {
 
     try {
       await slippiBackendService.acceptRules();
-      await refreshPlayKey();
+      await refreshUserData();
     } catch (err: any) {
       showError(err.message);
     } finally {
