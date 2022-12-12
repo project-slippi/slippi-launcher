@@ -125,20 +125,22 @@ class SlippiBackendClient implements SlippiBackendService {
     const connectCode = res.data.getUser?.connectCode?.code;
     const playKey = res.data.getUser?.private?.playKey;
     const displayName = res.data.getUser?.displayName || "";
-    if (!connectCode || !playKey) {
-      // If we don't have a connect code or play key, return this as null such that logic that
-      // handles it will cause the user to set them up.
-      return { playKey: null, rulesAccepted: res.data.getUser?.rulesAccepted ?? 0 };
-    }
 
-    return {
-      playKey: {
+    // If we don't have a connect code or play key, return it as null such that logic that
+    // handles it will cause the user to set them up.
+    let playKeyObj: PlayKey | null = null;
+    if (connectCode && playKey) {
+      playKeyObj = {
         uid: user.uid,
         connectCode,
         playKey,
         displayName,
         latestVersion: res.data.getLatestDolphin?.version,
-      },
+      };
+    }
+
+    return {
+      playKey: playKeyObj,
       rulesAccepted: res.data.getUser?.rulesAccepted ?? 0,
     };
   }
