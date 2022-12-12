@@ -44,7 +44,7 @@ function generateSteps(
     steps.unshift(QuickStartStep.ACTIVATE_ONLINE);
   }
 
-  if ((options.rulesAccepted ?? 0) < currentRulesVersion && !options.serverError) {
+  if (options.rulesAccepted && !options.serverError) {
     steps.unshift(QuickStartStep.ACCEPT_RULES);
   }
 
