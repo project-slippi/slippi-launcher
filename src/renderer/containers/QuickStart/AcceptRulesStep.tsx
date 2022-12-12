@@ -105,9 +105,7 @@ export const AcceptRulesStep: React.FC = () => {
               circumvent these systems is not allowed.
             </Typography>
             <Typography>3.</Typography>
-            <Typography>
-              Intentionally manipulating your internet connection for your own gain is not allowed.
-            </Typography>
+            <Typography>Intentionally manipulating the game performance for your own gain is not allowed.</Typography>
             <Typography>4.</Typography>
             <Typography>Macros and bots are not allowed.</Typography>
           </div>
