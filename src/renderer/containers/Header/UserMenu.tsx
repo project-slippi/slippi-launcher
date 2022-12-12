@@ -54,7 +54,7 @@ export const UserMenu: React.FC<{
   const generateMenuItems = (): IconMenuItem[] => {
     const items: IconMenuItem[] = [];
 
-    if (!userData && !serverError) {
+    if (!userData?.playKey && !serverError) {
       items.push({
         onClick: () => {
           closeMenu();
@@ -90,7 +90,7 @@ export const UserMenu: React.FC<{
   let errMessage: string | undefined = undefined;
   if (serverError) {
     errMessage = "Slippi server error";
-  } else if (!userData) {
+  } else if (!userData?.playKey) {
     errMessage = "Online activation required";
   }
 

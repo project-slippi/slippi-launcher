@@ -128,7 +128,7 @@ class SlippiBackendClient implements SlippiBackendService {
     if (!connectCode || !playKey) {
       // If we don't have a connect code or play key, return this as null such that logic that
       // handles it will cause the user to set them up.
-      return null;
+      return { playKey: null, rulesAccepted: res.data.getUser?.rulesAccepted ?? 0 };
     }
 
     return {

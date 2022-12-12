@@ -62,7 +62,7 @@ export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
         }
 
         // Ensure user has a valid play key
-        if (!userData && !serverError) {
+        if (!userData?.playKey && !serverError) {
           setActivateOnlineModal(true);
           return;
         }

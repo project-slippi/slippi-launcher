@@ -1,7 +1,7 @@
 import type { PlayKey } from "@dolphin/types";
 
 export interface UserData {
-  playKey: PlayKey;
+  playKey: PlayKey | null;
   rulesAccepted: number;
 }
 
