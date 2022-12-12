@@ -46,7 +46,7 @@ export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
   const openModal = useLoginModal((store) => store.openModal);
   const { open } = useSettingsModal();
   const currentUser = useAccount((store) => store.user);
-  const playKey = useAccount((store) => store.playKey);
+  const userData = useAccount((store) => store.userData);
   const serverError = useAccount((store) => store.serverError);
   const meleeIsoPath = useSettings((store) => store.settings.isoPath) || undefined;
   const { showError } = useToasts();
@@ -62,15 +62,15 @@ export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
         }
 
         // Ensure user has a valid play key
-        if (!playKey && !serverError) {
+        if (!userData?.playKey && !serverError) {
           setActivateOnlineModal(true);
           return;
         }
 
-        if (playKey) {
+        if (userData?.playKey) {
           // Ensure the play key is saved to disk
           try {
-            await slippiBackendService.assertPlayKey(playKey);
+            await slippiBackendService.assertPlayKey(userData.playKey);
           } catch (err) {
             showError(err);
             return;
@@ -87,7 +87,7 @@ export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
 
       return;
     },
-    [currentUser, launchNetplay, meleeIsoPath, playKey, serverError, showError, slippiBackendService],
+    [currentUser, launchNetplay, meleeIsoPath, userData, serverError, showError, slippiBackendService],
   );
 
   return (

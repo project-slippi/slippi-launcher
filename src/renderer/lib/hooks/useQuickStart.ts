@@ -1,3 +1,4 @@
+import { currentRulesVersion } from "@common/constants";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import create from "zustand";
@@ -10,6 +11,7 @@ import { useAccount } from "./useAccount";
 export enum QuickStartStep {
   LOGIN = "LOGIN",
   VERIFY_EMAIL = "VERIFY_EMAIL",
+  ACCEPT_RULES = "ACCEPT_RULES",
   MIGRATE_DOLPHIN = "MIGRATE_DOLPHIN",
   ACTIVATE_ONLINE = "ACTIVATE_ONLINE",
   SET_ISO_PATH = "SET_ISO_PATH",
@@ -21,6 +23,7 @@ function generateSteps(
     hasUser: boolean;
     hasPlayKey: boolean;
     hasVerifiedEmail: boolean;
+    showRules: boolean;
     serverError: boolean;
     hasIso: boolean;
     hasOldDesktopApp: boolean;
@@ -41,7 +44,11 @@ function generateSteps(
     steps.unshift(QuickStartStep.ACTIVATE_ONLINE);
   }
 
-  if (!options.hasVerifiedEmail) {
+  if (options.showRules && !options.serverError) {
+    steps.unshift(QuickStartStep.ACCEPT_RULES);
+  }
+
+  if (!options.hasVerifiedEmail && !options.serverError) {
     steps.unshift(QuickStartStep.VERIFY_EMAIL);
   }
 
@@ -56,14 +63,15 @@ export const useQuickStart = () => {
   const navigate = useNavigate();
   const savedIsoPath = useSettings((store) => store.settings.isoPath);
   const user = useAccount((store) => store.user);
-  const playKey = useAccount((store) => store.playKey);
+  const userData = useAccount((store) => store.userData);
   const serverError = useAccount((store) => store.serverError);
   const desktopAppPathExists = useDesktopApp((store) => store.exists);
   const options = {
     hasUser: Boolean(user),
     hasIso: Boolean(savedIsoPath),
     hasVerifiedEmail: Boolean(user?.emailVerified),
-    hasPlayKey: Boolean(playKey),
+    hasPlayKey: Boolean(userData?.playKey),
+    showRules: Boolean((userData?.rulesAccepted ?? 0) < currentRulesVersion),
     serverError: Boolean(serverError),
     hasOldDesktopApp: desktopAppPathExists,
   };
@@ -90,7 +98,11 @@ export const useQuickStart = () => {
       stepToShow = QuickStartStep.ACTIVATE_ONLINE;
     }
 
-    if (!options.hasVerifiedEmail) {
+    if (options.showRules && !options.serverError) {
+      stepToShow = QuickStartStep.ACCEPT_RULES;
+    }
+
+    if (!options.hasVerifiedEmail && !options.serverError) {
       stepToShow = QuickStartStep.VERIFY_EMAIL;
     }
 
@@ -100,14 +112,15 @@ export const useQuickStart = () => {
 
     setCurrentStep(stepToShow);
   }, [
-    history,
     steps,
     options.hasIso,
     options.hasVerifiedEmail,
     options.hasOldDesktopApp,
     options.hasPlayKey,
     options.hasUser,
+    options.showRules,
     options.serverError,
+    navigate,
   ]);
 
   const nextStep = () => {

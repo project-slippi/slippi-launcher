@@ -16,7 +16,7 @@ const ip = "127.0.0.1";
 const port = Ports.DEFAULT;
 
 export const ShareGameplayBlock: React.FC<{ className?: string }> = ({ className }) => {
-  const playKey = useAccount((store) => store.playKey);
+  const userData = useAccount((store) => store.userData);
   const startTime = useConsole((store) => store.startTime);
   const endTime = useConsole((store) => store.endTime);
   const slippiStatus = useConsole((store) => store.slippiConnectionStatus);
@@ -38,7 +38,7 @@ export const ShareGameplayBlock: React.FC<{ className?: string }> = ({ className
               ip,
               port,
               viewerId,
-              name: playKey ? playKey.connectCode : undefined,
+              name: userData?.playKey ? userData.playKey.connectCode : undefined,
             });
           } catch (err) {
             log.error(err);

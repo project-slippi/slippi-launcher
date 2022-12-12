@@ -8,7 +8,7 @@ import Typography from "@mui/material/Typography";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 
-import { useAccount, usePlayKey } from "@/lib/hooks/useAccount";
+import { useAccount, useUserData } from "@/lib/hooks/useAccount";
 import { useToasts } from "@/lib/hooks/useToasts";
 import { validateConnectCodeStart } from "@/lib/validate";
 import { useServices } from "@/services";
@@ -17,7 +17,7 @@ const log = window.electron.log;
 
 export const ActivateOnlineForm: React.FC<{ onSubmit?: () => void }> = ({ onSubmit }) => {
   const user = useAccount((store) => store.user);
-  const refreshActivation = usePlayKey();
+  const refreshActivation = useUserData();
   return (
     <div>
       <div>Your connect code is used for players to connect with you directly.</div>

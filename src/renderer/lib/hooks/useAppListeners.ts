@@ -10,7 +10,7 @@ import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";
 
 import { useDolphinListeners } from "../dolphin/useDolphinListeners";
-import { useAccount, usePlayKey } from "./useAccount";
+import { useAccount, useUserData } from "./useAccount";
 import { useBroadcast } from "./useBroadcast";
 import { useBroadcastList, useBroadcastListStore } from "./useBroadcastList";
 import { useConsoleDiscoveryStore } from "./useConsoleDiscovery";
@@ -34,7 +34,7 @@ export const useAppListeners = () => {
 
   // Subscribe to user auth changes to keep store up to date
   const setUser = useAccount((store) => store.setUser);
-  const refreshPlayKey = usePlayKey();
+  const refreshUserData = useUserData();
   React.useEffect(() => {
     // Only start subscribing to user change events after we've finished initializing
     if (!initialized) {
@@ -46,7 +46,7 @@ export const useAppListeners = () => {
         setUser(user);
 
         // Refresh the play key
-        void refreshPlayKey();
+        void refreshUserData();
       });
 
       // Unsubscribe on unmount
@@ -56,7 +56,7 @@ export const useAppListeners = () => {
     }
 
     return;
-  }, [initialized, refreshPlayKey, setUser, authService]);
+  }, [initialized, refreshUserData, setUser, authService]);
 
   const setSlippiConnectionStatus = useConsole((store) => store.setSlippiConnectionStatus);
   React.useEffect(() => {

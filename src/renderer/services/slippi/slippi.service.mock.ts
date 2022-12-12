@@ -2,16 +2,19 @@ import type { PlayKey } from "@dolphin/types";
 
 import type { AuthService } from "../auth/types";
 import { delayAndMaybeError } from "../utils";
-import type { SlippiBackendService } from "./types";
+import type { SlippiBackendService, UserData } from "./types";
 
 const SHOULD_ERROR = false;
 
-const fakeUsers: PlayKey[] = [
+const fakeUsers: UserData[] = [
   {
-    uid: "userid",
-    connectCode: "DEMO#000",
-    playKey: "playkey",
-    displayName: "Demo user",
+    playKey: {
+      uid: "userid",
+      connectCode: "DEMO#000",
+      playKey: "playkey",
+      displayName: "Demo user",
+    },
+    rulesAccepted: 0,
   },
 ];
 
@@ -20,25 +23,25 @@ class MockSlippiBackendClient implements SlippiBackendService {
 
   @delayAndMaybeError(SHOULD_ERROR)
   public async validateUserId(userId: string): Promise<{ displayName: string; connectCode: string }> {
-    const key = fakeUsers.find((key) => key.uid === userId);
-    if (!key) {
+    const userData = fakeUsers.find((userData) => userData.playKey?.uid === userId);
+    if (!userData || !userData.playKey) {
       throw new Error("No user with that ID");
     }
 
     return {
-      displayName: key.displayName,
-      connectCode: key.connectCode,
+      displayName: userData.playKey.displayName,
+      connectCode: userData.playKey.connectCode,
     };
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async fetchPlayKey(): Promise<PlayKey | null> {
+  public async fetchUserData(): Promise<UserData | null> {
     const user = this.authService.getCurrentUser();
     if (!user) {
       throw new Error("No user logged in");
     }
-    const key = fakeUsers.find((key) => key.uid === user.uid);
-    return key ?? null;
+    const userData = fakeUsers.find((userData) => userData.playKey?.uid === user.uid);
+    return userData ?? null;
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
@@ -54,6 +57,11 @@ class MockSlippiBackendClient implements SlippiBackendService {
   @delayAndMaybeError(SHOULD_ERROR)
   public async changeDisplayName(name: string) {
     await this.authService.updateDisplayName(name);
+  }
+
+  @delayAndMaybeError(SHOULD_ERROR)
+  public async acceptRules() {
+    // TODO: make it possible to accept the rules in the mock
   }
 
   @delayAndMaybeError(SHOULD_ERROR)

@@ -3,17 +3,19 @@ import { ApolloClient, ApolloLink, HttpLink, InMemoryCache } from "@apollo/clien
 import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
 import { RetryLink } from "@apollo/client/link/retry";
+import { currentRulesVersion } from "@common/constants";
 import type { DolphinService, PlayKey } from "@dolphin/types";
 import type { GraphQLError } from "graphql";
 
 import type { AuthService } from "../auth/types";
 import {
+  MUTATION_ACCEPT_RULES,
   MUTATION_INIT_NETPLAY,
   MUTATION_RENAME_USER,
-  QUERY_GET_USER_KEY,
+  QUERY_GET_USER_DATA,
   QUERY_VALIDATE_USER_ID,
 } from "./graphqlEndpoints";
-import type { SlippiBackendService } from "./types";
+import type { SlippiBackendService, UserData } from "./types";
 
 const log = window.electron.log;
 const SLIPPI_BACKEND_URL = process.env.SLIPPI_GRAPHQL_ENDPOINT;
@@ -104,14 +106,14 @@ class SlippiBackendClient implements SlippiBackendService {
     throw new Error("No user with that ID");
   }
 
-  public async fetchPlayKey(): Promise<PlayKey | null> {
+  public async fetchUserData(): Promise<UserData | null> {
     const user = this.authService.getCurrentUser();
     if (!user) {
       throw new Error("User is not logged in");
     }
 
     const res = await this.client.query({
-      query: QUERY_GET_USER_KEY,
+      query: QUERY_GET_USER_DATA,
       variables: {
         fbUid: user.uid,
       },
@@ -123,18 +125,23 @@ class SlippiBackendClient implements SlippiBackendService {
     const connectCode = res.data.getUser?.connectCode?.code;
     const playKey = res.data.getUser?.private?.playKey;
     const displayName = res.data.getUser?.displayName || "";
-    if (!connectCode || !playKey) {
-      // If we don't have a connect code or play key, return this as null such that logic that
-      // handles it will cause the user to set them up.
-      return null;
+
+    // If we don't have a connect code or play key, return it as null such that logic that
+    // handles it will cause the user to set them up.
+    let playKeyObj: PlayKey | null = null;
+    if (connectCode && playKey) {
+      playKeyObj = {
+        uid: user.uid,
+        connectCode,
+        playKey,
+        displayName,
+        latestVersion: res.data.getLatestDolphin?.version,
+      };
     }
 
     return {
-      uid: user.uid,
-      connectCode,
-      playKey,
-      displayName,
-      latestVersion: res.data.getLatestDolphin?.version,
+      playKey: playKeyObj,
+      rulesAccepted: res.data.getUser?.rulesAccepted ?? 0,
     };
   }
   public async assertPlayKey(playKey: PlayKey) {
@@ -168,6 +175,24 @@ class SlippiBackendClient implements SlippiBackendService {
     }
 
     await this.authService.updateDisplayName(name);
+  }
+
+  public async acceptRules() {
+    const user = this.authService.getCurrentUser();
+    if (!user) {
+      throw new Error("User is not logged in");
+    }
+
+    const res = await this.client.mutate({
+      mutation: MUTATION_ACCEPT_RULES,
+      variables: { num: currentRulesVersion },
+    });
+
+    handleErrors(res.errors);
+
+    if (res.data?.userAcceptRules?.rulesAccepted !== currentRulesVersion) {
+      throw new Error("Could not accept rules");
+    }
   }
 
   public async initializeNetplay(codeStart: string): Promise<void> {

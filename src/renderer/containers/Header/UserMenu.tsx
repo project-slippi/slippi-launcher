@@ -21,7 +21,7 @@ export const UserMenu: React.FC<{
   handleError: (error: any) => void;
 }> = ({ user, handleError }) => {
   const { authService } = useServices();
-  const playKey = useAccount((store) => store.playKey);
+  const userData = useAccount((store) => store.userData);
   const displayName = useAccount((store) => store.displayName);
   const loading = useAccount((store) => store.loading);
   const serverError = useAccount((store) => store.serverError);
@@ -54,7 +54,7 @@ export const UserMenu: React.FC<{
   const generateMenuItems = (): IconMenuItem[] => {
     const items: IconMenuItem[] = [];
 
-    if (!playKey && !serverError) {
+    if (!userData?.playKey && !serverError) {
       items.push({
         onClick: () => {
           closeMenu();
@@ -65,7 +65,7 @@ export const UserMenu: React.FC<{
       });
     }
 
-    if (playKey) {
+    if (userData) {
       items.push({
         onClick: () => {
           closeMenu();
@@ -90,7 +90,7 @@ export const UserMenu: React.FC<{
   let errMessage: string | undefined = undefined;
   if (serverError) {
     errMessage = "Slippi server error";
-  } else if (!playKey) {
+  } else if (!userData?.playKey) {
     errMessage = "Online activation required";
   }
 
@@ -100,7 +100,7 @@ export const UserMenu: React.FC<{
         <UserInfo
           displayName={displayName}
           displayPicture={user.displayPicture}
-          connectCode={playKey?.connectCode}
+          connectCode={userData?.playKey?.connectCode}
           errorMessage={errMessage}
           loading={loading}
         />

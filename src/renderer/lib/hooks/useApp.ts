@@ -37,7 +37,7 @@ export const useAppInitialization = () => {
   const initialized = useAppStore((store) => store.initialized);
   const setInitializing = useAppStore((store) => store.setInitializing);
   const setInitialized = useAppStore((store) => store.setInitialized);
-  const setPlayKey = useAccount((store) => store.setPlayKey);
+  const setUserData = useAccount((store) => store.setUserData);
   const setUser = useAccount((store) => store.setUser);
   const setServerError = useAccount((store) => store.setServerError);
   const setDesktopAppExists = useDesktopApp((store) => store.setExists);
@@ -67,9 +67,9 @@ export const useAppInitialization = () => {
 
         if (user) {
           try {
-            const key = await slippiBackendService.fetchPlayKey();
+            const userData = await slippiBackendService.fetchUserData();
             setServerError(false);
-            setPlayKey(key);
+            setUserData(userData);
           } catch (err) {
             setServerError(true);
             log.warn(err);

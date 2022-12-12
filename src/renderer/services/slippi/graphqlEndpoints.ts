@@ -15,6 +15,7 @@ type User = {
   connectCode: Nullable<ConnectCode>;
   displayName: Nullable<string>;
   fbUid: string;
+  rulesAccepted: number;
   private: Nullable<PrivateUserInfo>;
 };
 
@@ -36,9 +37,9 @@ export const QUERY_VALIDATE_USER_ID: TypedDocumentNode<
   }
 `;
 
-export const QUERY_GET_USER_KEY: TypedDocumentNode<
+export const QUERY_GET_USER_DATA: TypedDocumentNode<
   {
-    getUser: Nullable<Pick<User, "displayName" | "connectCode" | "private">>;
+    getUser: Nullable<Pick<User, "displayName" | "connectCode" | "private" | "rulesAccepted">>;
     getLatestDolphin: Nullable<Pick<DolphinRelease, "version">>;
   },
   {
@@ -54,6 +55,7 @@ export const QUERY_GET_USER_KEY: TypedDocumentNode<
       private {
         playKey
       }
+      rulesAccepted
     }
     getLatestDolphin {
       version
@@ -70,6 +72,19 @@ export const MUTATION_RENAME_USER: TypedDocumentNode<
   mutation RenameUser($fbUid: String!, $displayName: String!) {
     userRename(fbUid: $fbUid, displayName: $displayName) {
       displayName
+    }
+  }
+`;
+
+export const MUTATION_ACCEPT_RULES: TypedDocumentNode<
+  {
+    userAcceptRules: Nullable<Pick<User, "rulesAccepted">>;
+  },
+  { num: number }
+> = gql`
+  mutation AcceptRules($num: Int!) {
+    userAcceptRules(num: $num) {
+      rulesAccepted
     }
   }
 `;
