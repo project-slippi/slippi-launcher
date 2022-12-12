@@ -12,10 +12,10 @@ import {
   MUTATION_ACCEPT_RULES,
   MUTATION_INIT_NETPLAY,
   MUTATION_RENAME_USER,
-  QUERY_GET_USER_KEY,
+  QUERY_GET_USER_DATA,
   QUERY_VALIDATE_USER_ID,
 } from "./graphqlEndpoints";
-import type { SlippiBackendService } from "./types";
+import type { SlippiBackendService, UserData } from "./types";
 
 const log = window.electron.log;
 const SLIPPI_BACKEND_URL = process.env.SLIPPI_GRAPHQL_ENDPOINT;
@@ -106,14 +106,14 @@ class SlippiBackendClient implements SlippiBackendService {
     throw new Error("No user with that ID");
   }
 
-  public async fetchPlayKey(): Promise<PlayKey | null> {
+  public async fetchUserData(): Promise<UserData | null> {
     const user = this.authService.getCurrentUser();
     if (!user) {
       throw new Error("User is not logged in");
     }
 
     const res = await this.client.query({
-      query: QUERY_GET_USER_KEY,
+      query: QUERY_GET_USER_DATA,
       variables: {
         fbUid: user.uid,
       },
@@ -132,11 +132,13 @@ class SlippiBackendClient implements SlippiBackendService {
     }
 
     return {
-      uid: user.uid,
-      connectCode,
-      playKey,
-      displayName,
-      latestVersion: res.data.getLatestDolphin?.version,
+      playKey: {
+        uid: user.uid,
+        connectCode,
+        playKey,
+        displayName,
+        latestVersion: res.data.getLatestDolphin?.version,
+      },
       rulesAccepted: res.data.getUser?.rulesAccepted ?? 0,
     };
   }

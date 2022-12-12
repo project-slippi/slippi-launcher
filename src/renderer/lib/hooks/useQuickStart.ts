@@ -23,7 +23,7 @@ function generateSteps(
     hasUser: boolean;
     hasPlayKey: boolean;
     hasVerifiedEmail: boolean;
-    rulesAccepted: number;
+    rulesAccepted: boolean;
     serverError: boolean;
     hasIso: boolean;
     hasOldDesktopApp: boolean;
@@ -64,15 +64,15 @@ export const useQuickStart = () => {
   const navigate = useNavigate();
   const savedIsoPath = useSettings((store) => store.settings.isoPath);
   const user = useAccount((store) => store.user);
-  const playKey = useAccount((store) => store.playKey);
+  const userData = useAccount((store) => store.userData);
   const serverError = useAccount((store) => store.serverError);
   const desktopAppPathExists = useDesktopApp((store) => store.exists);
   const options = {
     hasUser: Boolean(user),
     hasIso: Boolean(savedIsoPath),
     hasVerifiedEmail: Boolean(user?.emailVerified),
-    hasPlayKey: Boolean(playKey),
-    rulesAccepted: playKey?.rulesAccepted ?? 0,
+    hasPlayKey: Boolean(userData?.playKey),
+    rulesAccepted: Boolean(userData?.rulesAccepted ?? 0 < currentRulesVersion),
     serverError: Boolean(serverError),
     hasOldDesktopApp: desktopAppPathExists,
   };
@@ -99,7 +99,7 @@ export const useQuickStart = () => {
       stepToShow = QuickStartStep.ACTIVATE_ONLINE;
     }
 
-    if (options.rulesAccepted < currentRulesVersion && !options.serverError) {
+    if (options.rulesAccepted && !options.serverError) {
       stepToShow = QuickStartStep.ACCEPT_RULES;
     }
 

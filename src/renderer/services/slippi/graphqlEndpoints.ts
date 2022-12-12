@@ -37,7 +37,7 @@ export const QUERY_VALIDATE_USER_ID: TypedDocumentNode<
   }
 `;
 
-export const QUERY_GET_USER_KEY: TypedDocumentNode<
+export const QUERY_GET_USER_DATA: TypedDocumentNode<
   {
     getUser: Nullable<Pick<User, "displayName" | "connectCode" | "private" | "rulesAccepted">>;
     getLatestDolphin: Nullable<Pick<DolphinRelease, "version">>;
