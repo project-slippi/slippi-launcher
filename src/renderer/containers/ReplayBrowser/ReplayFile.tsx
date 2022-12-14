@@ -60,10 +60,8 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
   selectedIndex,
   startTime,
   settings,
-  name,
   metadata,
   lastFrame,
-  fullPath,
 }) => {
   const selected = selectedIndex !== -1;
   const date = new Date(startTime ? Date.parse(startTime) : 0);
@@ -79,7 +77,7 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
             css={css`
               display: flex;
               flex: 1;
-              flex-direction: column;
+              flex-direction: row;
               justify-content: center;
               padding: 10px;
               background-color: ${selected ? "rgba(180, 130, 176, 0.1)" : "transparent"};
@@ -89,11 +87,42 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
             <div
               css={css`
                 display: flex;
+                flex-direction: row;
+                flex: 1;
+              `}
+            >
+              <div
+                css={css`
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                `}
+              >
+                <TeamElements settings={settings} metadata={metadata} />
+              </div>
+              <div
+                css={css`
+                  display: flex;
+                  font-size: 14px;
+                `}
+              >
+                <InfoItem label={<EventIcon />}>{monthDayHourFormat(moment(date))}</InfoItem>
+
+                {lastFrame !== null && (
+                  <InfoItem label={<TimerOutlinedIcon />}>
+                    {convertFrameCountToDurationString(lastFrame, "m[m] ss[s]")}
+                  </InfoItem>
+                )}
+                <InfoItem label={<LandscapeIcon />}>{stageName}</InfoItem>
+              </div>
+            </div>
+            <div
+              css={css`
+                display: flex;
                 align-items: center;
                 justify-content: space-between;
               `}
             >
-              <TeamElements settings={settings} metadata={metadata} />
               <div
                 css={css`
                   display: flex;
@@ -107,46 +136,6 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
                 </ReplayActionButton>
                 <LaunchReplayButton onClick={onPlay} />
               </div>
-            </div>
-
-            <div
-              css={css`
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                margin-top: 5px;
-                font-size: 14px;
-                white-space: nowrap;
-              `}
-            >
-              <div
-                css={css`
-                  display: flex;
-                  align-items: center;
-                  flex: 1;
-                `}
-              >
-                <InfoItem label={<EventIcon />}>{monthDayHourFormat(moment(date))}</InfoItem>
-
-                {lastFrame !== null && (
-                  <InfoItem label={<TimerOutlinedIcon />}>
-                    {convertFrameCountToDurationString(lastFrame, "m[m] ss[s]")}
-                  </InfoItem>
-                )}
-                <InfoItem label={<LandscapeIcon />}>{stageName}</InfoItem>
-              </div>
-              <DraggableFile
-                filePaths={[fullPath]}
-                css={css`
-                  opacity: 0.9;
-                  &:hover {
-                    opacity: 1;
-                    text-decoration: underline;
-                  }
-                `}
-              >
-                {name}
-              </DraggableFile>
             </div>
           </div>
         </Outer>

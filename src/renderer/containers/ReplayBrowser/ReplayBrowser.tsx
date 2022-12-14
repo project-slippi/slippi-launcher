@@ -4,19 +4,19 @@ import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import FolderIcon from "@mui/icons-material/Folder";
 import SearchIcon from "@mui/icons-material/Search";
+import { CircularProgress, Link } from "@mui/material";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
-import List from "@mui/material/List";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import React from "react";
 
-import { DualPane } from "@/components/DualPane";
 import { BasicFooter } from "@/components/Footer";
 import { LabelledText } from "@/components/LabelledText";
 import { LoadingScreenWithProgress } from "@/components/LoadingScreen";
 import { IconMessage } from "@/components/Message";
 import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
+import { useGlobalStats } from "@/lib/hooks/useGlobalStats";
 import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/useReplayBrowserList";
 import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
 import { useReplays, useReplaySelection } from "@/lib/hooks/useReplays";
@@ -27,7 +27,7 @@ import { useServices } from "@/services";
 import { FileList } from "./FileList";
 import { FileSelectionToolbar } from "./FileSelectionToolbar";
 import { FilterToolbar } from "./FilterToolbar";
-import { FolderTreeNode } from "./FolderTreeNode";
+import { PlayerDashboard } from "./PlayerDashboard";
 
 export const ReplayBrowser: React.FC = () => {
   const searchInputRef = React.createRef<HTMLInputElement>();
@@ -40,10 +40,6 @@ export const ReplayBrowser: React.FC = () => {
   const clearSelectedFile = useReplays((store) => store.clearSelectedFile);
   const loading = useReplays((store) => store.loading);
   const currentFolder = useReplays((store) => store.currentFolder);
-  const folderTree = useReplays((store) => store.folderTree);
-  const loadFolder = useReplays((store) => store.loadFolder);
-  const collapsedFolders = useReplays((store) => store.collapsedFolders);
-  const toggleFolder = useReplays((store) => store.toggleFolder);
   const selectedFiles = useReplays((store) => store.selectedFiles);
   const totalBytes = useReplays((store) => store.totalBytes);
   const fileSelection = useReplaySelection();
@@ -52,7 +48,7 @@ export const ReplayBrowser: React.FC = () => {
 
   const resetFilter = useReplayFilter((store) => store.resetFilter);
   const { files: filteredFiles, hiddenFileCount } = useReplayBrowserList();
-  const { goToReplayStatsPage } = useReplayBrowserNavigation();
+  const { goToReplayStatsPage, goToGlobalStatsPage } = useReplayBrowserNavigation();
 
   const setSelectedItem = (index: number | null) => {
     if (index === null) {
@@ -62,10 +58,6 @@ export const ReplayBrowser: React.FC = () => {
       void selectFile(file, index, filteredFiles.length);
       goToReplayStatsPage(file.fullPath);
     }
-  };
-
-  const onFolderTreeNodeClick = (fullPath: string) => {
-    loadFolder(fullPath).catch(showError);
   };
 
   const playSelectedFile = (index: number) => {
@@ -88,132 +80,117 @@ export const ReplayBrowser: React.FC = () => {
     [showError, showSuccess, removeFiles],
   );
 
+  const computeGlobal = useGlobalStats((store) => store.computeGlobal);
+  const loadedStats = useGlobalStats((store) => store.loaded);
+  console.log("loadedStats", loadedStats);
+  const loadingStats = useGlobalStats((store) => store.loading);
+  console.log("loadingStats", loadingStats);
+  const progress = useGlobalStats((store) => store.progress);
+  console.log(progress);
+
   return (
     <Outer>
       <div
-        style={{
-          display: "flex",
-          flex: "1",
-          position: "relative",
-          overflow: "hidden",
-        }}
+        css={css`
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+        `}
       >
-        <DualPane
-          id="replay-browser"
-          resizable={true}
-          minWidth={0}
-          maxWidth={300}
-          leftStyle={{ backgroundColor: "rgba(0,0,0, 0.3)" }}
-          leftSide={
-            <List dense={true} style={{ flex: 1, padding: 0 }}>
-              <div style={{ position: "relative", minHeight: "100%" }}>
-                {folderTree.map((folder) => {
-                  return (
-                    <FolderTreeNode
-                      folder={folder}
-                      key={folder.fullPath}
-                      collapsedFolders={collapsedFolders}
-                      onClick={onFolderTreeNodeClick}
-                      onToggle={toggleFolder}
-                    />
-                  );
-                })}
-                {loading && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      height: "100%",
-                      width: "100%",
-                      top: 0,
-                      backgroundColor: "rgba(0, 0, 0, 0.5)",
-                    }}
-                  />
-                )}
-              </div>
-            </List>
-          }
-          rightSide={
-            <div
-              css={css`
-                display: flex;
-                flex-direction: column;
-                flex: 1;
-              `}
-            >
-              <FilterToolbar disabled={loading} ref={searchInputRef} />
-              {loading ? (
-                <LoadingBox />
-              ) : filteredFiles.length === 0 ? (
-                <EmptyFolder
-                  hiddenFileCount={hiddenFileCount}
-                  onClearFilter={() => {
-                    if (searchInputRef.current) {
-                      searchInputRef.current.value = "";
-                    }
-                    resetFilter();
-                  }}
-                />
-              ) : (
-                <FileList
-                  folderPath={currentFolder}
-                  onDelete={(filePath) => deleteFiles([filePath])}
-                  onFileClick={fileSelection.onFileClick}
-                  selectedFiles={selectedFiles}
-                  onSelect={(index: number) => setSelectedItem(index)}
-                  onPlay={(index: number) => playSelectedFile(index)}
-                  files={filteredFiles}
-                  scrollRowItem={scrollRowItem}
-                  setScrollRowItem={setScrollRowItem}
-                />
-              )}
-              <FileSelectionToolbar
-                totalSelected={selectedFiles.length}
-                onSelectAll={fileSelection.selectAll}
-                onPlay={() => viewReplays(...selectedFiles.map((path) => ({ path })))}
-                onClear={fileSelection.clearSelection}
-                onDelete={() => {
-                  fileSelection.clearSelection();
-                  void deleteFiles(selectedFiles);
-                }}
-              />
-            </div>
-          }
-        />
-      </div>
-
-      <Footer>
-        <div
-          css={css`
-            display: flex;
-            align-items: center;
-          `}
-        >
-          <div>
-            <Tooltip title="Reveal location">
-              <IconButton onClick={() => window.electron.shell.openPath(currentFolder)} size="small">
-                <FolderIcon
-                  css={css`
-                    color: ${colors.purpleLight};
-                  `}
-                />
-              </IconButton>
-            </Tooltip>
-          </div>
-          <LabelledText
-            label="Current folder"
+        <Footer>
+          <div
             css={css`
-              margin-left: 10px;
+              display: flex;
+              align-items: center;
             `}
           >
-            {currentFolder}
-          </LabelledText>
-        </div>
-        <div style={{ textAlign: "right" }}>
-          {filteredFiles.length} files found. {hiddenFileCount} files filtered.{" "}
-          {fileErrorCount > 0 ? `${fileErrorCount} files had errors. ` : ""}
-          {exists(totalBytes) ? `Total size: ${humanReadableBytes(totalBytes)}` : ""}
-        </div>
-      </Footer>
+            <div>
+              <Tooltip title="Reveal location">
+                <IconButton onClick={() => window.electron.shell.openPath(currentFolder)} size="small">
+                  <FolderIcon
+                    css={css`
+                      color: ${colors.purpleLight};
+                    `}
+                  />
+                </IconButton>
+              </Tooltip>
+            </div>
+            <LabelledText
+              label="Current folder"
+              css={css`
+                margin-left: 10px;
+              `}
+            >
+              {currentFolder}
+            </LabelledText>
+          </div>
+          <div style={{ textAlign: "right" }}>
+            {filteredFiles.length} files found -{" "}
+            {hiddenFileCount > 0 ? `${hiddenFileCount} file${hiddenFileCount > 1 ? "s" : ""} filtered - ` : ""}
+            {fileErrorCount > 0 ? `${fileErrorCount} files had errors - ` : ""}
+            {exists(totalBytes) ? `Total size: ${humanReadableBytes(totalBytes)}` + (loadedStats ? "" : " - ") : ""}
+            {!loadedStats && !loadingStats ? <Link onClick={computeGlobal}>{"Enable global stats"}</Link> : ""}
+            {!loadedStats && loadingStats ? (
+              <>
+                [ "Caching stats... ",
+                <div
+                  css={css`
+                    display: inline-flex;
+                    vertical-align: top;
+                  `}
+                >
+                  <CircularProgress
+                    variant="determinate"
+                    size={20}
+                    value={(progress.current / progress.total) * 100}
+                    color="primary"
+                  />
+                </div>
+                , ]
+              </>
+            ) : (
+              ""
+            )}
+          </div>
+        </Footer>
+        <PlayerDashboard disabled={false} onSelectGlobal={() => goToGlobalStatsPage()} />
+        <FilterToolbar disabled={loading} ref={searchInputRef} />
+        {loading ? (
+          <LoadingBox />
+        ) : filteredFiles.length === 0 ? (
+          <EmptyFolder
+            hiddenFileCount={hiddenFileCount}
+            onClearFilter={() => {
+              if (searchInputRef.current) {
+                searchInputRef.current.value = "";
+              }
+              resetFilter();
+            }}
+          />
+        ) : (
+          <FileList
+            folderPath={currentFolder}
+            onDelete={(filePath) => deleteFiles([filePath])}
+            onFileClick={fileSelection.onFileClick}
+            selectedFiles={selectedFiles}
+            onSelect={(index: number) => setSelectedItem(index)}
+            onPlay={(index: number) => playSelectedFile(index)}
+            files={filteredFiles}
+            scrollRowItem={scrollRowItem}
+            setScrollRowItem={setScrollRowItem}
+          />
+        )}
+        <FileSelectionToolbar
+          totalSelected={selectedFiles.length}
+          onSelectAll={fileSelection.selectAll}
+          onPlay={() => viewReplays(...selectedFiles.map((path) => ({ path })))}
+          onClear={fileSelection.clearSelection}
+          onDelete={() => {
+            fileSelection.clearSelection();
+            void deleteFiles(selectedFiles);
+          }}
+        />
+      </div>
     </Outer>
   );
 };

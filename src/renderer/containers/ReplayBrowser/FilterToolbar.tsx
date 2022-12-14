@@ -20,7 +20,8 @@ const Outer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 10px;
+  margin-top: 10px;
+  padding: 00px 20px;
 `;
 
 const ButtonContainer = styled.div`

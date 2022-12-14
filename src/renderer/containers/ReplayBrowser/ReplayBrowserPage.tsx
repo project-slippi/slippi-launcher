@@ -7,14 +7,16 @@ import { useReplays } from "@/lib/hooks/useReplays";
 import { useServices } from "@/services";
 
 import { ReplayFileStats } from "../ReplayFileStats";
+import { GlobalStats } from "./GlobalStats";
 import { ReplayBrowser } from "./ReplayBrowser";
 
 export const ReplayBrowserPage: React.FC = () => {
-  const { lastPath } = useReplayBrowserNavigation();
+  const { lastPath, goToReplayList } = useReplayBrowserNavigation();
   const navigate = useNavigate();
 
   return (
     <Routes>
+      <Route path="global" element={<GlobalStats filePath={""} index={null} total={null} onClose={goToReplayList} />} />
       <Route path="list" element={<ReplayBrowser />} />
       <Route path=":filePath" element={<ChildPage goBack={() => navigate("..")} />} />
       <Route path="*" element={<Navigate replace to={lastPath} />} />

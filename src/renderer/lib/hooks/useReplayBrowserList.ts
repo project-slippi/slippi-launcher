@@ -34,6 +34,10 @@ export const useReplayBrowserNavigation = () => {
     goToPage(pageUrl);
   };
 
+  const goToGlobalStatsPage = () => {
+    goToPage("/main/replays/global");
+  };
+
   const goToReplayList = () => {
     const pageUrl = `/main/replays/list`;
     goToPage(pageUrl);
@@ -43,6 +47,7 @@ export const useReplayBrowserNavigation = () => {
     lastPath,
     goToReplayStatsPage,
     goToReplayList,
+    goToGlobalStatsPage,
   };
 };
 
