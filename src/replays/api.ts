@@ -1,11 +1,13 @@
 /* eslint-disable import/no-default-export */
 import {
   ipc_calculateGameStats,
+  ipc_computeStatsCache,
   ipc_initializeFolderTree,
   ipc_loadProgressUpdatedEvent,
   ipc_loadReplayFolder,
   ipc_selectTreeFolder,
   ipc_statsPageRequestedEvent,
+  ipc_statsProgressUpdatedEvent,
 } from "./ipc";
 import type { Progress } from "./types";
 
@@ -26,8 +28,17 @@ export default {
     const { result } = await ipc_calculateGameStats.renderer!.trigger({ filePath });
     return result;
   },
+  async computeStatsCache() {
+    await ipc_computeStatsCache.renderer!.trigger({});
+  },
   onReplayLoadProgressUpdate(handle: (progress: Progress) => void) {
     const { destroy } = ipc_loadProgressUpdatedEvent.renderer!.handle(async (progress) => {
+      handle(progress);
+    });
+    return destroy;
+  },
+  onStatsProgressUpdate(handle: (progress: Progress) => void) {
+    const { destroy } = ipc_statsProgressUpdatedEvent.renderer!.handle(async (progress) => {
       handle(progress);
     });
     return destroy;

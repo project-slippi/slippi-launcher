@@ -7,10 +7,12 @@ import { createDatabaseWorker } from "./db.worker.interface";
 import { FolderTreeService } from "./folderTreeService";
 import {
   ipc_calculateGameStats,
+  ipc_computeStatsCache,
   ipc_initializeFolderTree,
   ipc_loadProgressUpdatedEvent,
   ipc_loadReplayFolder,
   ipc_selectTreeFolder,
+  ipc_statsProgressUpdatedEvent,
 } from "./ipc";
 import { createReplayWorker } from "./replays.worker.interface";
 
@@ -70,6 +72,22 @@ export default function setupReplaysIpc() {
       totalBytes,
       fileErrorCount: totalCount - files.length,
     };
+  });
+
+  ipc_computeStatsCache.main!.handle(async () => {
+    console.log("Computing stats cache");
+    const [worker, dbWorker] = await Promise.all([replayBrowserWorker, databaseBrowserWorker]);
+    const sub = worker.getGlobalStatsObservable().subscribe((progress) => {
+      ipc_statsProgressUpdatedEvent.main!.trigger(progress).catch(log.warn);
+    });
+    const files = await dbWorker.getAllFiles();
+    console.log("got files", files);
+    const filesWithStats = await worker.computeAllStats(files);
+    console.log("got stats");
+    await dbWorker.storeStatsCache(filesWithStats);
+    console.log("stored stats");
+    sub.unsubscribe();
+    return { sub };
   });
 
   ipc_calculateGameStats.main!.handle(async ({ filePath }) => {

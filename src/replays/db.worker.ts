@@ -4,6 +4,7 @@
 
 // TODO: Make electron-log work somehow
 import Database from "better-sqlite3";
+import _ from "lodash";
 import path from "path";
 import type { ModuleMethods } from "threads/dist/types/master";
 import { expose } from "threads/worker";
@@ -38,6 +39,7 @@ CREATE TABLE IF NOT EXISTS replay_data (
     lastFrame     INTEGER,
     settings      JSON,
     metadata      JSON,
+    stats         JSON,
     FOREIGN KEY (fullPath) REFERENCES replays(fullPath) ON DELETE CASCADE
 );
 `;
@@ -52,7 +54,7 @@ const parseRow = (row: any) => {
     startTime: row.startTime,
     lastFrame: row.lastFrame,
     metadata: JSON.parse(row.metadata),
-    stats: JSON.parse(row.stats || null),
+    stats: JSON.parse(row.stats),
     folder: row.folder,
   } as FileResult;
 };
@@ -72,12 +74,25 @@ const getFolderFiles = async (folder: string): Promise<string[]> => {
   return files ? files.map((f: any) => f.fullPath) : [];
 };
 
+const getAllFiles = async (): Promise<string[]> => {
+  const files = db
+    .prepare(
+      `
+      SELECT fullPath
+      FROM replays
+      JOIN replay_data USING (fullPath)
+      WHERE stats is NULL
+      `,
+    )
+    .all();
+  return files ? files.map((f: any) => f.fullPath) : [];
+};
+
 const getFolderReplays = async (folder: string) => {
   const docs = db
     .prepare(
       `
-    SELECT fullPath, name, folder, startTime, lastFrame, 
-    settings, metadata 
+    SELECT fullPath, name, folder, startTime, lastFrame, settings, metadata, stats
     FROM replays 
     JOIN replay_data USING (fullPath)
     WHERE folder = ?
@@ -118,6 +133,13 @@ const saveReplays = async (replays: FileResult[]) => {
   })();
 };
 
+const storeStatsCache = async (replays: FileResult[]): Promise<void> => {
+  db.transaction(() => {
+    const update = db.prepare(`UPDATE replay_data SET stats = ? WHERE fullPath = ?`);
+    replays.forEach((r) => update.run(JSON.stringify(r.stats), r.fullPath));
+  })();
+};
+
 const deleteReplays = async (files: string[]) => {
   const qfmt = files.map(() => "?").join(",");
   db.prepare(`DELETE FROM replays WHERE fullPath IN (${qfmt})`).run(files);
@@ -139,15 +161,18 @@ const methods: WorkerSpec = {
     db.close();
   },
   connect(path: string) {
+    console.log(path);
     db = new Database(path);
     db.exec(createTablesSql);
   },
+  getAllFiles,
   getFolderFiles,
   getFolderReplays,
   getFullReplay,
   saveReplays,
   deleteReplays,
   pruneFolders,
+  storeStatsCache,
 };
 
 expose(methods);

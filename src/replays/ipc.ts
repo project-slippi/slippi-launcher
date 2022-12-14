@@ -28,8 +28,11 @@ export const ipc_calculateGameStats = makeEndpoint.main(
   <{ file: FileResult; stats: StatsType | null }>_,
 );
 
+export const ipc_computeStatsCache = makeEndpoint.main("computeStatsCache", <any>_, <any>_);
+
 // Events
 
 export const ipc_loadProgressUpdatedEvent = makeEndpoint.renderer("replays_loadProgressUpdated", <Progress>_);
+export const ipc_statsProgressUpdatedEvent = makeEndpoint.renderer("replays_statsProgressUpdated", <Progress>_);
 
 export const ipc_statsPageRequestedEvent = makeEndpoint.renderer("replays_showStatsPage", <{ filePath: string }>_);
