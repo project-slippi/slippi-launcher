@@ -10,6 +10,5 @@ export const currentRulesVersion = 1;
 
 export const socials = {
   twitterId: "ProjectSlippi",
-  discordUrl: "https://slippi.gg/discord",
-  patreonUrl: "https://www.patreon.com/fizzi36",
+  discordUrl: "https://slippi.gg/discord"
 };
