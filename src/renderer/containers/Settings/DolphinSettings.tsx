@@ -80,7 +80,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           <Button variant="contained" color="primary" onClick={configureDolphinHandler} disabled={!dolphinIsReady}>
             Configure Dolphin
           </Button>
-          <Button variant="outlined" color="primary" onClick={openDolphinDirectoryHandler} disabled={!dolphinIsReady}>
+          <Button variant="outlined" color="primary" onClick={openDolphinDirectoryHandler}>
             Open containing folder
           </Button>
         </div>
