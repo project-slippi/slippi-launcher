@@ -21,7 +21,7 @@ interface Methods {
   calculateGameStats(fullPath: string): Promise<StatsType | null>;
   getProgressObservable(): Observable<Progress>;
   getGlobalStatsObservable(): Observable<Progress>;
-  computeAllStats(filesToLoad: string[]): Promise<FileResult[]>;
+  computeAllStats(filesToLoad: string[], progress: number, totalCount: number): Promise<FileResult[]>;
 }
 
 export type WorkerSpec = ModuleMethods & Methods;
@@ -73,7 +73,7 @@ const methods: WorkerSpec = {
 
     return game.getStats();
   },
-  async computeAllStats(filesToLoad: string[]): Promise<FileResult[]> {
+  async computeAllStats(filesToLoad: string[], progress: number, totalCount: number): Promise<FileResult[]> {
     let count = 0;
     const process = async (file: string) => {
       return new Promise<FileResult | null>((resolve) => {
@@ -93,14 +93,16 @@ const methods: WorkerSpec = {
             })
             .catch(() => resolve(null))
             .finally(() => {
-              globalStatsProgressSubject.next({ current: count++, total: filesToLoad.length });
+              globalStatsProgressSubject.next({ current: progress + count++, total: totalCount });
             });
         });
       });
     };
     const games = await Promise.all(filesToLoad.map(process));
-    globalStatsProgressSubject.complete();
-    globalStatsProgressSubject = new Subject();
+    if (count == totalCount) {
+      globalStatsProgressSubject.complete();
+      globalStatsProgressSubject = new Subject();
+    }
     return games.filter((g) => g != null) as FileResult[];
   },
 };

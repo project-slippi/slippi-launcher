@@ -74,18 +74,22 @@ const getFolderFiles = async (folder: string): Promise<string[]> => {
   return files ? files.map((f: any) => f.fullPath) : [];
 };
 
-const getAllFiles = async (): Promise<string[]> => {
+const getAllFiles = async () => {
+  const count = db.prepare("SELECT COUNT(*) AS CNT FROM replays").get().CNT;
   const files = db
     .prepare(
       `
       SELECT fullPath
       FROM replays
       JOIN replay_data USING (fullPath)
-      WHERE stats is NULL
+      WHERE stats IS NULL
       `,
     )
     .all();
-  return files ? files.map((f: any) => f.fullPath) : [];
+  return {
+    count,
+    toCompute: files ? files.map((f: any) => f.fullPath) : [],
+  };
 };
 
 const getFolderReplays = async (folder: string) => {

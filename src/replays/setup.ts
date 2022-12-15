@@ -80,18 +80,28 @@ export default function setupReplaysIpc() {
     const sub = worker.getGlobalStatsObservable().subscribe((progress) => {
       ipc_statsProgressUpdatedEvent.main!.trigger(progress).catch(log.warn);
     });
-    const files = await dbWorker.getAllFiles();
-    console.log("got files", files);
-    const filesWithStats = await worker.computeAllStats(files);
-    console.log("got stats");
-    await dbWorker.storeStatsCache(filesWithStats);
-    console.log("stored stats");
+    const { count, toCompute } = await dbWorker.getAllFiles();
+    console.log("got files", toCompute);
+    const progress = count - toCompute.length;
+    for (let i = 0; i < toCompute.length; i += 20) {
+      const files = toCompute.slice(i, i + 20);
+      console.log("caching batch", files);
+      const filesWithStats = await worker.computeAllStats(files, progress + i, count);
+      console.log("got stats");
+      await dbWorker.storeStatsCache(filesWithStats);
+      console.log("stored stats");
+    }
     sub.unsubscribe();
     return { sub };
   });
 
   ipc_calculateGameStats.main!.handle(async ({ filePath }) => {
-    const worker = await replayBrowserWorker;
+    const [worker, dbWorker] = await Promise.all([replayBrowserWorker, databaseBrowserWorker]);
+    const dbResult = await dbWorker.getFullReplay(filePath);
+    if (dbResult && dbResult.stats) {
+      console.log("using db cache");
+      return { file: dbResult, stats: dbResult?.stats };
+    }
     const result = await worker.calculateGameStats(filePath);
     const fileResult = await worker.loadSingleFile(filePath);
     return { file: fileResult, stats: result };
