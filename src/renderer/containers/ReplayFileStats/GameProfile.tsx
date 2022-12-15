@@ -24,7 +24,7 @@ const TableContainer = styled.div`
 `;
 
 export const StatSection: React.FC<{
-  title: string;
+  title?: string;
 }> = (props) => {
   return (
     <div style={{ padding: 10 }}>

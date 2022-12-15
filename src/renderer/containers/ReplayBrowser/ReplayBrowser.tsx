@@ -128,15 +128,16 @@ export const ReplayBrowser: React.FC = () => {
             {filteredFiles.length} files found -{" "}
             {hiddenFileCount > 0 ? `${hiddenFileCount} file${hiddenFileCount > 1 ? "s" : ""} filtered - ` : ""}
             {fileErrorCount > 0 ? `${fileErrorCount} files had errors - ` : ""}
-            {exists(totalBytes) ? `Total size: ${humanReadableBytes(totalBytes)}` + (loadedStats ? "" : " - ") : ""}
+            {exists(totalBytes) ? `Total size: ${humanReadableBytes(totalBytes)}` + " - " : ""}
             {!loadedStats && !loadingStats ? <Link onClick={computeGlobal}>{"Enable global stats"}</Link> : ""}
             {!loadedStats && loadingStats ? (
               <>
-                [ "Caching stats... ",
+                Caching stats... {progress.current} / {progress.total}
                 <div
                   css={css`
                     display: inline-flex;
                     vertical-align: top;
+                    margin-left: 5px;
                   `}
                 >
                   <CircularProgress
@@ -146,14 +147,14 @@ export const ReplayBrowser: React.FC = () => {
                     color="primary"
                   />
                 </div>
-                , ]
               </>
             ) : (
               ""
             )}
+            {loadedStats ? <Link onClick={goToGlobalStatsPage}>{"Explore Stats"}</Link> : ""}
           </div>
         </Footer>
-        <PlayerDashboard disabled={false} onSelectGlobal={() => goToGlobalStatsPage()} />
+        <PlayerDashboard disabled={false} loadedStats={loadedStats} />
         <FilterToolbar disabled={loading} ref={searchInputRef} />
         {loading ? (
           <LoadingBox />

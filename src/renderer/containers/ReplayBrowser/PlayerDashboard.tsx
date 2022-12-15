@@ -1,9 +1,7 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import EqualizerIcon from "@mui/icons-material/Equalizer";
 import EventIcon from "@mui/icons-material/Event";
 import LandscapeIcon from "@mui/icons-material/Landscape";
-import IconButton from "@mui/material/IconButton";
 import React from "react";
 
 const Outer = styled.div`
@@ -14,8 +12,8 @@ const Outer = styled.div`
 `;
 
 export interface PlayerDashboardProps {
-  onSelectGlobal: () => void;
   disabled?: boolean;
+  loadedStats?: boolean;
 }
 
 const InfoItem: React.FC<{
@@ -46,7 +44,7 @@ const InfoItem: React.FC<{
   );
 };
 
-export const PlayerDashboard = React.forwardRef<HTMLInputElement, PlayerDashboardProps>((props, _) => {
+export const PlayerDashboard = React.forwardRef<HTMLInputElement, PlayerDashboardProps>((_) => {
   return (
     <Outer>
       <div
@@ -54,13 +52,50 @@ export const PlayerDashboard = React.forwardRef<HTMLInputElement, PlayerDashboar
           display: flex;
           flex-direction: column;
           flex: 1;
-          padding: 00px;
           padding: 20px;
-          font-size: 30px;
+          text-align: center;
         `}
       >
-        <div>eastballz (RANK ICON)</div>
-        <div>EAST#312)</div>
+        <div
+          css={css`
+            font-size: 36px;
+          `}
+        >
+          (RANK)
+        </div>
+        <div
+          css={css`
+            font-size: 28px;
+            color: rgba(255, 255, 255, 0.6);
+          `}
+        >
+          1435 ELO
+        </div>
+      </div>
+      <div
+        css={css`
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+          padding: 20px;
+          text-align: center;
+        `}
+      >
+        <div
+          css={css`
+            font-size: 36px;
+          `}
+        >
+          eastballz
+        </div>
+        <div
+          css={css`
+            font-size: 28px;
+            color: rgba(255, 255, 255, 0.6);
+          `}
+        >
+          EAST#312
+        </div>
       </div>
       <div
         css={css`
@@ -69,7 +104,7 @@ export const PlayerDashboard = React.forwardRef<HTMLInputElement, PlayerDashboar
           font-size: 14px;
           flex-direction: column;
           align-items: center;
-          margin-top: 30px;
+          margin-top: 37px;
         `}
       >
         <div
@@ -92,18 +127,6 @@ export const PlayerDashboard = React.forwardRef<HTMLInputElement, PlayerDashboar
           <InfoItem label={<EventIcon />}>34h played</InfoItem>
           <InfoItem label={<LandscapeIcon />}>3,523 kills</InfoItem>
           <InfoItem label={<LandscapeIcon />}>3,123 deaths</InfoItem>
-          <IconButton
-            css={css`
-              display: inline-flex;
-              vertical-align: top;
-            `}
-            onClick={(e) => {
-              e.stopPropagation();
-              // onClick && onClick(e);
-            }}
-          >
-            <EqualizerIcon onClick={() => props.onSelectGlobal()} />
-          </IconButton>
         </div>
       </div>
     </Outer>
