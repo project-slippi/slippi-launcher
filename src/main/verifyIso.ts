@@ -1,12 +1,14 @@
 import { IsoValidity } from "@common/types";
 import crypto from "crypto";
 import fs from "fs";
+import { some } from "lodash";
 import { fileExists } from "utils/fileExists";
 interface IsoHashInfo {
   valid: IsoValidity;
   name: string;
 }
 
+const compressedExts = [".gcz", ".ciso"];
 const isoHashes = new Map<string, IsoHashInfo>();
 
 // Valid ISOs
@@ -21,6 +23,10 @@ isoHashes.set("6e83240872d47cd080a28dea7b8907140c44bef5", {
 isoHashes.set("3bf23f7c87caadfc983954eb8c6cf2823fa8713b", {
   valid: IsoValidity.VALID,
   name: "NTSC-U 1.02 GCZ",
+});
+isoHashes.set("2a2a5d42b0d4f8773e313c29ab0df095392f20d4", {
+  valid: IsoValidity.VALID,
+  name: "NTSC-U 1.02 CISO",
 });
 isoHashes.set("e63d50e63a0cdd357f867342d542e7cec0c3a7c7", {
   valid: IsoValidity.VALID,
@@ -111,7 +117,8 @@ export async function verifyIso(isoPath: string): Promise<IsoValidity> {
     input.on("readable", () => {
       const data: Buffer = input.read();
       if (data) {
-        if (!checkedRevision && !isoPath.endsWith(".gcz")) {
+        if (!checkedRevision && !some(compressedExts, (ext) => isoPath.endsWith(ext))) {
+          // fast invalidation for things like 1.00, 1.01, and PAL
           checkedRevision = true;
           const revision = data.readInt8(7);
           if (revision !== 2) {

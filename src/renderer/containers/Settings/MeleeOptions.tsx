@@ -55,7 +55,7 @@ export const MeleeOptions: React.FC = () => {
           placeholder="No file set"
           disabled={verifying || netplayDolphinOpen || playbackDolphinOpen}
           options={{
-            filters: [{ name: "Melee ISO", extensions: ["iso", "gcm", "gcz"] }],
+            filters: [{ name: "Melee ISO", extensions: ["iso", "gcm", "gcz", "ciso"] }],
           }}
           endAdornment={
             <ValidationContainer className={verifying ? undefined : isoValidity.toLowerCase()}>

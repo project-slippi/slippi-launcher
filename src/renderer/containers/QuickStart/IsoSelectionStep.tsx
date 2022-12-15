@@ -84,7 +84,7 @@ export const IsoSelectionStep: React.FC = () => {
   const validIsoPath = validIsoPathQuery.data?.valid ?? IsoValidity.UNVALIDATED;
 
   const { open, getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
-    accept: [".iso", ".gcm", ".gcz", ".7z"],
+    accept: [".iso", ".gcm", ".gcz", ".ciso", ".7z"],
     onDrop: onDrop,
     multiple: false,
     noClick: true,
