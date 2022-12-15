@@ -31,7 +31,9 @@ export class DolphinInstallation {
         return path.join(this.installationFolder, "User");
       }
       case "darwin": {
-        return path.join(this.installationFolder, "Slippi Dolphin.app", "Contents", "Resources", "User");
+        const configPath = path.join(os.homedir(), "Library", "Application Support", "com.project-slippi.dolphin");
+        const userFolderName = this.dolphinLaunchType === DolphinLaunchType.NETPLAY ? "netplay/User" : "playback/User";
+        return path.join(configPath, userFolderName);
       }
       case "linux": {
         const configPath = path.join(os.homedir(), ".config");
