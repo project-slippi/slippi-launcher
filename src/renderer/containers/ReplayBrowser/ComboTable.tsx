@@ -10,8 +10,6 @@ import { getCharacterIcon } from "@/lib/utils";
 
 import * as T from "../ReplayFileStats/TableStyles";
 
-const columnCount = 8;
-
 export const ComboTable: React.FC<{ player: string; stats: GlobalStats }> = ({ player, stats }) => {
   const generatePunishRow = (game: Game, punish: ConversionType) => {
     const start = convertFrameCountToDurationString(punish.startFrame);
@@ -31,10 +29,31 @@ export const ComboTable: React.FC<{ player: string; stats: GlobalStats }> = ({ p
       >
         <T.TableCell>{getPlayerCard(game, false)}</T.TableCell>
         <T.TableCell>{getPlayerCard(game, true)}</T.TableCell>
-        <T.TableCell>{openingType}</T.TableCell>
-        <T.TableCell>{damage}</T.TableCell>
-        <T.TableCell>{damageRange}</T.TableCell>
+        <T.TableCell>
+          <div
+            css={css`
+              display: flex;
+            `}
+          >
+            <div
+              css={css`
+                margin-left: auto;
+                margin-right: 5px;
+              `}
+            >
+              {damage}
+            </div>
+            <div
+              css={css`
+                margin-right: auto;
+              `}
+            >
+              {damageRange}
+            </div>
+          </div>
+        </T.TableCell>
         <T.TableCell>{punish.moves.length}</T.TableCell>
+        <T.TableCell>{openingType}</T.TableCell>
         <T.TableCell>{start}</T.TableCell>
         <T.TableCell>{end}</T.TableCell>
       </T.TableRow>
@@ -115,26 +134,17 @@ export const ComboTable: React.FC<{ player: string; stats: GlobalStats }> = ({ p
     return <div style={{ textAlign: "center" }}>{textTranslation[punish.openingType]}</div>;
   };
 
-  const renderHeaderTitle = () => {
-    return (
-      <T.TableRow>
-        <T.TableHeaderCell colSpan={columnCount}>Top Punishes</T.TableHeaderCell>
-      </T.TableRow>
-    );
-  };
-
   const renderHeaderColumns = () => {
     return (
       <T.TableRow>
-        <T.TableHeaderCell style={{ textAlign: "center" }}>P</T.TableHeaderCell>
+        <T.TableHeaderCell style={{ textAlign: "center" }}>Character</T.TableHeaderCell>
         <T.TableHeaderCell style={{ textAlign: "center" }}>Opponent</T.TableHeaderCell>
+        <T.TableHeaderCell style={{ textAlign: "center" }}>Damage</T.TableHeaderCell>
+        <T.TableHeaderCell style={{ textAlign: "center" }}>Moves</T.TableHeaderCell>
         <T.TableHeaderCell style={{ textAlign: "center" }}>Opening</T.TableHeaderCell>
         <T.TableHeaderCell style={{ textAlign: "center" }} colSpan={2}>
-          Damage
+          Time
         </T.TableHeaderCell>
-        <T.TableHeaderCell style={{ textAlign: "center" }}>Moves</T.TableHeaderCell>
-        <T.TableHeaderCell style={{ textAlign: "center" }}>Start</T.TableHeaderCell>
-        <T.TableHeaderCell style={{ textAlign: "center" }}>End</T.TableHeaderCell>
       </T.TableRow>
     );
   };
@@ -143,13 +153,12 @@ export const ComboTable: React.FC<{ player: string; stats: GlobalStats }> = ({ p
     const diff = (p: ConversionType) => p.currentPercent - p.startPercent;
     return stats.punishes
       .sort((a, b) => diff(b.punish) - diff(a.punish))
-      .slice(0, 19)
+      .slice(0, 15)
       .map((punish) => generatePunishRow(punish.game, punish.punish));
   };
 
   return (
     <T.Table>
-      {renderHeaderTitle()}
       {renderHeaderColumns()}
       {renderPunishRows()}
     </T.Table>

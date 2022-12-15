@@ -2,7 +2,7 @@ import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ErrorIcon from "@mui/icons-material/Error";
-import { IconButton } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 import type { FileResult } from "@replays/types";
 import _ from "lodash";
 import React from "react";
@@ -91,6 +91,14 @@ export const GlobalStats: React.FC<GlobalStatsProps> = (props) => {
             Back
           </div>
         </div>
+        <div
+          css={css`
+            margin-left: auto;
+            margin-right: 50px;
+          `}
+        >
+          <Button css={css``}>Filter</Button>
+        </div>
       </BasicFooter>
       <Content>
         {error ? (
@@ -98,7 +106,7 @@ export const GlobalStats: React.FC<GlobalStatsProps> = (props) => {
         ) : !stats ? (
           <IconMessage Icon={ErrorIcon} label={`Error: ${error ?? JSON.stringify(error, null, 2)}`} />
         ) : (
-          <PlayerProfile player={"EAST#312"!} stats={stats} filters={filters}></PlayerProfile>
+          <PlayerProfile player={"EAST#312"!} stats={stats}></PlayerProfile>
         )}
       </Content>
     </Outer>

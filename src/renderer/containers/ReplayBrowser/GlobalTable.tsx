@@ -1,9 +1,8 @@
-import type { GlobalStats } from "@replays/stats";
+import { css } from "@mui/material";
+import type { GlobalStats, Ratio } from "@replays/stats";
 import React from "react";
 
-import { convertFrameCountToDurationString } from "@/lib/time";
-
-import * as T from "../ReplayFileStats/TableStyles";
+import { StatSection } from "../ReplayFileStats/GameProfile";
 
 export function toOrdinal(n: number) {
   const s = ["th", "st", "nd", "rd"];
@@ -15,115 +14,116 @@ export function formatPercent(n: number, fractionalDigits: number | 2) {
   return `${(n * 100).toFixed(fractionalDigits)}%`;
 }
 
-const columnCount = 3;
-
 export interface GlobalTableProps {
   stats: GlobalStats;
 }
 
+const H1: React.FC<{ content: any }> = ({ content }) => (
+  <div
+    css={css`
+      font-size: 30px;
+      text-align: center;
+      font-weight: bold;
+    `}
+  >
+    {" "}
+    {content}{" "}
+  </div>
+);
+
+const H2: React.FC<{ content: any }> = ({ content }) => (
+  <div
+    css={css`
+      font-size: 30px;
+      text-align: center;
+    `}
+  >
+    {" "}
+    {content}{" "}
+  </div>
+);
+
+const S1: React.FC<{ content: any }> = ({ content }) => (
+  <div
+    css={css`
+      font-size: 20px;
+      text-align: center;
+    `}
+  >
+    {" "}
+    {content}{" "}
+  </div>
+);
+
+const showRatioBasic = (ratio: Ratio, decimals: number) => (ratio.count / ratio.total).toFixed(decimals);
+const showRatio = (ratio: Ratio, decimals: number) => ((ratio.count / ratio.total) * 100).toFixed(decimals) + "%";
+const showTime = (time: number) => (time / 216000).toFixed(0);
+
 export const GlobalTable: React.FC<GlobalTableProps> = ({ stats }) => {
-  const renderStatField = (header: string, value: number | string) => {
-    const key = `standard-field-${header}`;
-    return (
-      <T.TableRow key={key}>
-        <T.TableCell>{header}</T.TableCell>
-        <T.TableCell>{value}</T.TableCell>
-      </T.TableRow>
-    );
-  };
-
-  const renderRatioStatField = (header: string, value: number, total: number) => {
-    const key = `standard-field-${header}`;
-
-    return (
-      <T.TableRow key={key}>
-        <T.TableCell>{header}</T.TableCell>
-        <T.TableCell>
-          <div>
-            <div>
-              {value} ({formatPercent(value / total, 2)})
-            </div>
-          </div>
-        </T.TableCell>
-      </T.TableRow>
-    );
-  };
-
-  const renderOverallSection = () => {
-    return [
-      <thead key="overall-header">
-        <tr>
-          <T.TableSubHeaderCell colSpan={columnCount}>Overall</T.TableSubHeaderCell>
-        </tr>
-      </thead>,
-      <tbody key="overall-body">
-        {renderStatField("Games Played", stats.count)}
-        {renderRatioStatField("Games Won", stats.wins, stats.count)}
-        {renderStatField("Opponents Played", Object.keys(stats.opponents).length)}
-        {renderStatField("Average Games / Opponent", (stats.count / Object.keys(stats.opponents).length).toFixed(2))}
-        {renderStatField("Total Play Time", convertFrameCountToDurationString(stats.time))}
-      </tbody>,
-    ];
-  };
-
-  const renderOffenseSection = () => {
-    return [
-      <thead key="offense-header">
-        <tr>
-          <T.TableSubHeaderCell colSpan={columnCount}>Offsense</T.TableSubHeaderCell>
-        </tr>
-      </thead>,
-      <tbody key="offsense-body">
-        {renderStatField("Total Kills", `${stats.kills.toLocaleString(undefined, { maximumFractionDigits: 0 })}`)}
-        {renderStatField("Total Deaths", `${stats.deaths.toLocaleString(undefined, { maximumFractionDigits: 0 })}`)}
-        {renderStatField(
-          "Total Damage Done",
-          `${stats.damageDone.toLocaleString(undefined, { maximumFractionDigits: 0 })}%`,
-        )}
-        {renderStatField(
-          "Total Damage Received",
-          `${stats.damageReceived.toLocaleString(undefined, { maximumFractionDigits: 0 })}%`,
-        )}
-        {renderStatField("Average Opening Conversion Rate", formatPercent(stats.conversionRate.ratio, 2))}
-        {renderStatField("Average Openings / Kill", stats.openingsPerKill.ratio.toFixed(2))}
-        {renderStatField("Average Damage / Opening", stats.damagePerOpening.ratio.toFixed(2))}
-      </tbody>,
-    ];
-  };
-
-  const renderNeutralSection = () => {
-    return [
-      <thead key="neutral-header">
-        <tr>
-          <T.TableSubHeaderCell colSpan={columnCount}>Neutral</T.TableSubHeaderCell>
-        </tr>
-      </thead>,
-      <tbody key="neutral-body">
-        {renderStatField("Neutral Winrate", formatPercent(stats.neutralWinrate.ratio, 2))}
-      </tbody>,
-    ];
-  };
-
-  const renderGeneralSection = () => {
-    return [
-      <thead key="general-header">
-        <tr>
-          <T.TableSubHeaderCell colSpan={columnCount}>General</T.TableSubHeaderCell>
-        </tr>
-      </thead>,
-      <tbody key="general-body">
-        {renderStatField("Inputs / Minute", stats.inputsPerMinute.ratio.toFixed(0))}
-        {renderStatField("Digital Inputs / Minute", stats.digitalInputsPerMinute.ratio.toFixed(0))}
-      </tbody>,
-    ];
-  };
-
   return (
-    <T.Table>
-      {renderOverallSection()}
-      {renderOffenseSection()}
-      {renderNeutralSection()}
-      {renderGeneralSection()}
-    </T.Table>
+    <>
+      <StatSection>
+        <div>
+          <H1 content={stats.count} />
+          <H2 content="GAMES" />
+          <S1 content={`${stats.wins}W ${stats.count - stats.wins}L`} />
+        </div>
+        <div>
+          <H1 content={showTime(stats.time)} />
+          <H2 content="HOURS PLAYED" />
+        </div>
+        <div>
+          <H1 content={showRatioBasic(stats.inputsPerMinute, 0)} />
+          <H2 content="INPUTS / MIN" />
+          <S1 content={showRatioBasic(stats.digitalInputsPerMinute, 0) + " digital"} />
+        </div>
+      </StatSection>
+
+      <StatSection>
+        <div>
+          <H1 content={stats.kills} />
+          <H2 content="KILLS" />
+        </div>
+        <div>
+          <H1 content={parseInt(stats.damageDone.toFixed(0)).toLocaleString() + "%"} />
+          <H2 content="DAMAGE DEALT" />
+          <S1 content={parseInt(stats.damageDone.toFixed(0)).toLocaleString() + "% Received"} />
+        </div>
+        <div>
+          <H1 content={stats.deaths} />
+          <H2 content="DEATHS" />
+        </div>
+      </StatSection>
+
+      <StatSection>
+        <div>
+          <H1 content={showRatio(stats.conversionRate, 2)} />
+          <H2 content="CONVERSION RATE" />
+        </div>
+        <div>
+          <H1 content={showRatioBasic(stats.openingsPerKill, 2)} />
+          <H2 content="OPENINGS / KILL" />
+        </div>
+        <div>
+          <H1 content={showRatioBasic(stats.damagePerOpening, 2) + "%"} />
+          <H2 content="DAMAGE / OPENING" />
+        </div>
+      </StatSection>
+
+      <StatSection>
+        <div>
+          <H1 content={showRatio(stats.neutralWinrate, 2)} />
+          <H2 content="NEUTRAL WINRATE" />
+        </div>
+        <div>
+          <H1 content={showRatio(stats.counterhitWinrate, 2)} />
+          <H2 content="COUNTER HITS" />
+        </div>
+        <div>
+          <H1 content={showRatio(stats.tradeWinrate, 2)} />
+          <H2 content="BENEFICIAL TRADES" />
+        </div>
+      </StatSection>
+    </>
   );
 };

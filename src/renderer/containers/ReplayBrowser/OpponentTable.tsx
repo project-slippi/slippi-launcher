@@ -17,11 +17,11 @@ export const OpponentTable: React.FC<{ stats: GlobalStats }> = ({ stats }) => {
         won: op.won + 2,
         lost: op.count - op.won,
       };
-    });
-  console.log(data);
+    })
+    .slice(0, 15);
 
   return (
-    <ResponsiveContainer height={500}>
+    <ResponsiveContainer height={600}>
       <BarChart
         css={css`
             text-color: {colors.offWhite};
@@ -31,8 +31,16 @@ export const OpponentTable: React.FC<{ stats: GlobalStats }> = ({ stats }) => {
         margin={{ top: 0, right: 50, left: 0, bottom: 0 }}
       >
         <XAxis type="number" hide />
-        <YAxis tickLine={false} axisLine={false} stroke="#ccc" type="category" dataKey="playerTag" interval={0} />
-        <Bar stackId="1" dataKey="lost" fill={colors.offGray} label="" />
+        <YAxis
+          width={140}
+          tickLine={false}
+          axisLine={false}
+          stroke="#ccc"
+          type="category"
+          dataKey="playerTag"
+          interval={0}
+        />
+        <Bar stackId="1" dataKey="lost" fill="red" label="" />
         <Bar stackId="1" dataKey="won" fill={colors.greenDark} label="" />
       </BarChart>
     </ResponsiveContainer>

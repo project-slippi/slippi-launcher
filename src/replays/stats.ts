@@ -30,11 +30,14 @@ export interface GlobalStats {
   openingsPerKill: Ratio;
   damagePerOpening: Ratio;
   neutralWinrate: Ratio;
+  counterhitWinrate: Ratio;
+  tradeWinrate: Ratio;
   inputsPerMinute: Ratio;
   digitalInputsPerMinute: Ratio;
   characters: CharacterStats;
   opponents: OpponentStats;
   opponentChars: CharacterStats;
+  stages: StageStats;
   punishes: Conversion[];
 }
 
@@ -44,6 +47,15 @@ export interface CharacterStats {
 
 export interface OpponentStats {
   [Key: string]: MatchupAggregate;
+}
+
+export interface StageStats {
+  [Key: string]: StageAggregate;
+}
+
+export interface StageAggregate {
+  count: number;
+  won: number;
 }
 
 export interface MatchupAggregate {
@@ -75,7 +87,7 @@ const characterFilter = (game: Game, p: string, opponent: boolean, filtered: num
   let index = getGamePlayerCodeIndex(game, p);
   index = opponent ? 1 - index : index;
   const players = game.settings.players;
-  if (players.length !== 2) {
+  if (players.length !== 2 || index < 0) {
     return false;
   }
   const charId = players[index].characterId!;
@@ -147,6 +159,16 @@ export function getGlobalStats(gs: Game[], playerCode: string, filters: GameFilt
         characterAggregates(agg.characters, playerCode, charId, won);
         characterAggregates(agg.opponentChars, opp, oppCharId, won);
 
+        const stage = game.settings.stageId;
+        if (stage !== null) {
+          agg.stages[stage] = agg.stages[stage] || {
+            count: 0,
+            won: 0,
+          };
+          agg.stages[stage].count += 1;
+          agg.stages[stage].won += won ? 1 : 0;
+        }
+
         // Punishes
         agg.punishes = [
           ...agg.punishes,
@@ -168,6 +190,7 @@ export function getGlobalStats(gs: Game[], playerCode: string, filters: GameFilt
         agg.deaths += oOverall.killCount;
         agg.damageDone += pOverall.totalDamage;
         agg.damageReceived += oOverall.totalDamage;
+        stats.overall;
 
         agg.conversionRate.count += pOverall.successfulConversions.count;
         agg.conversionRate.total += pOverall.successfulConversions.total;
@@ -177,6 +200,10 @@ export function getGlobalStats(gs: Game[], playerCode: string, filters: GameFilt
         agg.openingsPerKill.total += pOverall.openingsPerKill.total;
         agg.neutralWinrate.count += pOverall.neutralWinRatio.count;
         agg.neutralWinrate.total += pOverall.neutralWinRatio.total;
+        agg.counterhitWinrate.count += pOverall.counterHitRatio.count;
+        agg.counterhitWinrate.total += pOverall.counterHitRatio.total;
+        agg.tradeWinrate.count += pOverall.beneficialTradeRatio.count;
+        agg.tradeWinrate.total += pOverall.beneficialTradeRatio.total;
 
         agg.inputsPerMinute.count += pOverall.inputsPerMinute.count;
         agg.inputsPerMinute.total += pOverall.inputsPerMinute.total;
@@ -202,22 +229,27 @@ export function getGlobalStats(gs: Game[], playerCode: string, filters: GameFilt
       openingsPerKill: { count: 0, total: 0, ratio: 0 },
       damagePerOpening: { count: 0, total: 0, ratio: 0 },
       neutralWinrate: { count: 0, total: 0, ratio: 0 },
+      counterhitWinrate: { count: 0, total: 0, ratio: 0 },
+      tradeWinrate: { count: 0, total: 0, ratio: 0 },
       inputsPerMinute: { count: 0, total: 0, ratio: 0 },
       digitalInputsPerMinute: { count: 0, total: 0, ratio: 0 },
       characters: {},
       opponents: {},
       opponentChars: {},
+      stages: {},
       punishes: [] as Conversion[],
     },
   );
 
   const diff = (p: ConversionType) => p.currentPercent - p.startPercent;
-  aggs.punishes = aggs.punishes.sort((a, b) => diff(b.punish) - diff(a.punish)).slice(0, 20);
+  aggs.punishes = aggs.punishes.sort((a, b) => diff(b.punish) - diff(a.punish)).slice(0, 50);
 
   aggs.conversionRate.ratio = aggs.conversionRate.count / aggs.conversionRate.total;
   aggs.openingsPerKill.ratio = aggs.openingsPerKill.count / aggs.openingsPerKill.total;
   aggs.damagePerOpening.ratio = aggs.damagePerOpening.count / aggs.damagePerOpening.total;
   aggs.neutralWinrate.ratio = aggs.neutralWinrate.count / aggs.neutralWinrate.total;
+  aggs.counterhitWinrate.ratio = aggs.neutralWinrate.count / aggs.neutralWinrate.total;
+  aggs.tradeWinrate.ratio = aggs.neutralWinrate.count / aggs.neutralWinrate.total;
   aggs.inputsPerMinute.ratio = aggs.inputsPerMinute.count / aggs.inputsPerMinute.total;
   aggs.digitalInputsPerMinute.ratio = aggs.digitalInputsPerMinute.count / aggs.digitalInputsPerMinute.total;
   return aggs;
