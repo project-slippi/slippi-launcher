@@ -76,9 +76,17 @@ export const VerifyEmailStep: React.FC = () => {
   const setEmailVerificationSent = useAccount((store) => store.setEmailVerificationSent);
 
   const handleCheckVerification = async () => {
-    authService.refreshUser().catch((err) => {
+    try {
+      await authService.refreshUser();
+
+      // Get current user manually since the user variable above hasn't updated yet
+      const newUser = authService.getCurrentUser();
+      if (!newUser?.emailVerified) {
+        showError("Email still not verified. Check spam folder?");
+      }
+    } catch (err: any) {
       showError(err.message);
-    });
+    }
   };
 
   useEffect(() => {
