@@ -1,5 +1,4 @@
-import { css } from "@emotion/react";
-import { Button } from "@mui/material";
+import { css } from "@mui/material";
 import type { GlobalStats } from "@replays/stats";
 import React from "react";
 
@@ -11,71 +10,14 @@ import { GlobalTable } from "./GlobalTable";
 import { OpponentTable } from "./OpponentTable";
 import { StageTable } from "./StageTable";
 
-interface GemeralStatsProps {
+interface GeneralStatsProps {
   player: string;
   stats: GlobalStats;
 }
 
-export const GeneralStats: React.FC<GemeralStatsProps> = (props) => {
+export const GeneralStats: React.FC<GeneralStatsProps> = (props) => {
   return (
-    <div style={{ flex: "1", margin: "auto", maxWidth: 1500 }}>
-      <StatSection>
-        <div
-          css={css`
-            display: flex;
-            flex-direction: row;
-            flex: 1;
-            align-items: center;
-          `}
-        >
-          <Button
-            variant="contained"
-            css={css`
-              margin: auto;
-            `}
-          >
-            {" "}
-            General{" "}
-          </Button>
-          <Button
-            css={css`
-              margin: auto;
-              border: 2px solid;
-            `}
-          >
-            {" "}
-            Progression{" "}
-          </Button>
-          <Button
-            css={css`
-              margin: auto;
-              border: 2px solid;
-            `}
-          >
-            {" "}
-            Matchups{" "}
-          </Button>
-          <Button
-            css={css`
-              margin: auto;
-              border: 2px solid;
-            `}
-          >
-            {" "}
-            Interactions{" "}
-          </Button>
-          <Button
-            css={css`
-              margin: auto;
-              border: 2px solid;
-            `}
-          >
-            {" "}
-            Random{" "}
-          </Button>
-        </div>
-      </StatSection>
-
+    <>
       <StatSection>
         <StatSection>
           <StatSection title="Player Characters">
@@ -99,6 +41,11 @@ export const GeneralStats: React.FC<GemeralStatsProps> = (props) => {
       <StatSection title="Top Conversions">
         <ComboTable player={props.player} stats={props.stats} />
       </StatSection>
-    </div>
+      <div
+        css={css`
+          min-height: 50px;
+        `}
+      />
+    </>
   );
 };

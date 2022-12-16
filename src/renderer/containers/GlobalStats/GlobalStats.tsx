@@ -12,7 +12,9 @@ import { IconMessage } from "@/components/Message";
 import { useGlobalStats } from "@/lib/hooks/useGlobalStats";
 import { useReplays } from "@/lib/hooks/useReplays";
 
+import { StatSection } from "../ReplayFileStats/GameProfile";
 import { GeneralStats } from "./general/GeneralStats";
+import { ProgressionStats } from "./general/ProgressionStats";
 
 const Outer = styled.div<{
   backgroundImage?: any;
@@ -50,6 +52,8 @@ export interface GlobalStatsProps {
 
 export const GlobalStats: React.FC<GlobalStatsProps> = ({ onClose }) => {
   const compute = useGlobalStats((store) => store.compute);
+  const setActive = useGlobalStats((store) => store.setActiveView);
+  const activeView = useGlobalStats((store) => store.active);
   const stats = useGlobalStats((store) => store.stats);
   const oldFiles = useGlobalStats((store) => store.files);
   const filters = {
@@ -63,6 +67,8 @@ export const GlobalStats: React.FC<GlobalStatsProps> = ({ onClose }) => {
   if (files !== oldFiles) {
     compute(files, filters);
   }
+
+  const getButtonVariant = (view: string) => (view == activeView ? "contained" : "outlined");
 
   return (
     <Outer>
@@ -103,7 +109,71 @@ export const GlobalStats: React.FC<GlobalStatsProps> = ({ onClose }) => {
         ) : !stats ? (
           <IconMessage Icon={ErrorIcon} label={`Error: ${error ?? JSON.stringify(error, null, 2)}`} />
         ) : (
-          <GeneralStats player={"EAST#312"!} stats={stats}></GeneralStats>
+          <>
+            <div style={{ flex: "1", margin: "auto", maxWidth: 1500 }}>
+              <StatSection>
+                <div
+                  css={css`
+                    display: flex;
+                    flex-direction: row;
+                    flex: 1;
+                    align-items: center;
+                  `}
+                >
+                  <Button
+                    onClick={() => setActive("general")}
+                    variant={getButtonVariant("general")}
+                    css={css`
+                      margin: auto;
+                    `}
+                  >
+                    General
+                  </Button>
+                  <Button
+                    onClick={() => setActive("progression")}
+                    variant={getButtonVariant("progression")}
+                    css={css`
+                      margin: auto;
+                    `}
+                  >
+                    Progression
+                  </Button>
+                  <Button
+                    onClick={() => setActive("matchups")}
+                    variant={getButtonVariant("matchups")}
+                    css={css`
+                      margin: auto;
+                    `}
+                  >
+                    Matchups
+                  </Button>
+                  <Button
+                    onClick={() => setActive("interactions")}
+                    variant={getButtonVariant("interactions")}
+                    css={css`
+                      margin: auto;
+                    `}
+                  >
+                    Interactions
+                  </Button>
+                  <Button
+                    onClick={() => setActive("random")}
+                    variant={getButtonVariant("random")}
+                    css={css`
+                      margin: auto;
+                    `}
+                  >
+                    Random
+                  </Button>
+                </div>
+              </StatSection>
+              {activeView == "general" ? (
+                <GeneralStats player={"EAST#312"!} stats={stats}></GeneralStats>
+              ) : activeView == "progression" ? (
+                <ProgressionStats player={"EAST#312"!} stats={stats}></ProgressionStats>
+              ) : null}
+            </div>
+          </>
         )}
       </Content>
     </Outer>

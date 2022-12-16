@@ -61,7 +61,12 @@ const showTime = (time: number) => (time / 216000).toFixed(0);
 
 export const GlobalTable: React.FC<GlobalTableProps> = ({ stats }) => {
   return (
-    <>
+    <div
+      css={css`
+        padding-top: 80px;
+        padding-bottom: 80px;
+      `}
+    >
       <StatSection>
         <div>
           <H1 content={stats.count} />
@@ -124,6 +129,6 @@ export const GlobalTable: React.FC<GlobalTableProps> = ({ stats }) => {
           <H2 content="BENEFICIAL TRADES" />
         </div>
       </StatSection>
-    </>
+    </div>
   );
 };
