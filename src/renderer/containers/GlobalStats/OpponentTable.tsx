@@ -4,6 +4,19 @@ import type { GlobalStats } from "@replays/stats";
 import _ from "lodash";
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 
+const CustomizedLabel: React.FC<any> = (props) => {
+  const { height, width, key, x, y, value, color } = props;
+  if (width < 20) {
+    return <text />;
+  } else {
+    return (
+      <text style={{ fill: color, fontWeight: "bold" }} {...props} key={key} x={x + 5} y={y + (height * 1.25) / 2}>
+        {value}
+      </text>
+    );
+  }
+};
+
 export const OpponentTable: React.FC<{ stats: GlobalStats }> = ({ stats }) => {
   const oppStats = stats.opponents;
   const data = Object.keys(oppStats)
@@ -40,8 +53,8 @@ export const OpponentTable: React.FC<{ stats: GlobalStats }> = ({ stats }) => {
           dataKey="playerTag"
           interval={0}
         />
-        <Bar stackId="1" dataKey="lost" fill="red" label="" />
-        <Bar stackId="1" dataKey="won" fill={colors.greenDark} label="" />
+        <Bar stackId="1" dataKey="lost" fill="red" label={<CustomizedLabel label="20" color={colors.greenDark} />} />
+        <Bar stackId="1" dataKey="won" fill={colors.greenDark} label={<CustomizedLabel label="20" color="red" />} />
       </BarChart>
     </ResponsiveContainer>
   );

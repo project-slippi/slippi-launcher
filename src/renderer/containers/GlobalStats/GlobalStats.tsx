@@ -14,8 +14,6 @@ import { useReplays } from "@/lib/hooks/useReplays";
 
 import { GeneralStats } from "./GeneralStats";
 
-// import { getPlayerStocks } from "../../../replays/stats";
-
 const Outer = styled.div<{
   backgroundImage?: any;
 }>`

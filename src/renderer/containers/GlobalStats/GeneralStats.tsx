@@ -14,6 +14,7 @@ interface GemeralStatsProps {
   player: string;
   stats: GlobalStats;
 }
+
 export const GeneralStats: React.FC<GemeralStatsProps> = (props) => {
   return (
     <div style={{ flex: "1", margin: "auto", maxWidth: 1500 }}>
