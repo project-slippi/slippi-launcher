@@ -12,7 +12,7 @@ import { IconMessage } from "@/components/Message";
 import { useGlobalStats } from "@/lib/hooks/useGlobalStats";
 import { useReplays } from "@/lib/hooks/useReplays";
 
-import { GeneralStats } from "./GeneralStats";
+import { GeneralStats } from "./general/GeneralStats";
 
 const Outer = styled.div<{
   backgroundImage?: any;

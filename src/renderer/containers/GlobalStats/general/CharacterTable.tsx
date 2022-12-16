@@ -6,16 +6,11 @@ import _, { parseInt } from "lodash";
 import React from "react";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 
-import { getStageImage } from "@/lib/utils";
+import * as T from "@/containers/ReplayFileStats/TableStyles";
+import { getCharacterIcon } from "@/lib/utils";
 
-import * as T from "../ReplayFileStats/TableStyles";
-
-const stagePiechart: React.FC<{ char: number; wins: number; total: number }> = ({ char, wins, total }) => (
-  <div
-    css={css`
-      margin: auto;
-    `}
-  >
+const characterPiechart: React.FC<{ char: number; wins: number; total: number }> = ({ char, wins, total }) => (
+  <div css={css``}>
     <div
       key="row,char"
       css={css`
@@ -55,7 +50,7 @@ const stagePiechart: React.FC<{ char: number; wins: number; total: number }> = (
           top: -0px;
           left: -70px;
         `}
-        src={getStageImage(char)}
+        src={getCharacterIcon(char, 0)}
         height={24}
         width={24}
       />
@@ -71,15 +66,16 @@ const stagePiechart: React.FC<{ char: number; wins: number; total: number }> = (
   </div>
 );
 
-export const StageTable: React.FC<{
+export const CharacterTable: React.FC<{
+  opponent: boolean;
   stats: GlobalStats;
-}> = ({ stats }) => {
-  const stageStats = stats.stages;
-  const data = Object.keys(stageStats)
-    .sort((a, b) => stageStats[b].count - stageStats[a].count)
+}> = ({ opponent, stats }) => {
+  const charStats = opponent ? stats.opponentChars : stats.characters;
+  const data = Object.keys(charStats)
+    .sort((a, b) => charStats[b].count - charStats[a].count)
     .slice(0, 26)
     .map((k) => {
-      const op = stageStats[k];
+      const op = charStats[k];
       return {
         char: parseInt(k),
         count: op.count,
@@ -97,7 +93,7 @@ export const StageTable: React.FC<{
           align-items: center;
         `}
       >
-        {data.map((row) => stagePiechart({ char: row.char, wins: row.wins, total: row.count }))}
+        {data.map((row) => characterPiechart({ char: row.char, wins: row.wins, total: row.count }))}
       </div>
     </ResponsiveContainer>
   );

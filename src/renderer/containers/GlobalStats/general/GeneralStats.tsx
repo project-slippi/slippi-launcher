@@ -3,7 +3,8 @@ import { Button } from "@mui/material";
 import type { GlobalStats } from "@replays/stats";
 import React from "react";
 
-import { StatSection } from "../../containers/ReplayFileStats/GameProfile";
+import { StatSection } from "@/containers/ReplayFileStats/GameProfile";
+
 import { CharacterTable } from "./CharacterTable";
 import { ComboTable } from "./ComboTable";
 import { GlobalTable } from "./GlobalTable";

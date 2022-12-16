@@ -5,10 +5,9 @@ import type { ConversionType } from "@slippi/slippi-js";
 import _ from "lodash";
 import React from "react";
 
+import * as T from "@/containers/ReplayFileStats/TableStyles";
 import { convertFrameCountToDurationString } from "@/lib/time";
 import { getCharacterIcon } from "@/lib/utils";
-
-import * as T from "../ReplayFileStats/TableStyles";
 
 export const ComboTable: React.FC<{ player: string; stats: GlobalStats }> = ({ player, stats }) => {
   const generatePunishRow = (game: Game, punish: ConversionType) => {

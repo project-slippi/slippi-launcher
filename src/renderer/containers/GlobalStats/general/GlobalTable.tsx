@@ -2,7 +2,7 @@ import { css } from "@mui/material";
 import type { GlobalStats, Ratio } from "@replays/stats";
 import React from "react";
 
-import { StatSection } from "../ReplayFileStats/GameProfile";
+import { StatSection } from "@/containers/ReplayFileStats/GameProfile";
 
 export function toOrdinal(n: number) {
   const s = ["th", "st", "nd", "rd"];
