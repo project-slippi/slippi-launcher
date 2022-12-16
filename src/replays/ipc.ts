@@ -29,6 +29,7 @@ export const ipc_calculateGameStats = makeEndpoint.main(
 );
 
 export const ipc_computeStatsCache = makeEndpoint.main("computeStatsCache", <any>_, <any>_);
+export const ipc_getStatsStatus = makeEndpoint.main("getStatsStatus", <any>_, <{ loaded: boolean }>_);
 
 // Events
 

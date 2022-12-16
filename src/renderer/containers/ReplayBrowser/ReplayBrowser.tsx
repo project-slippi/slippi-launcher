@@ -80,13 +80,13 @@ export const ReplayBrowser: React.FC = () => {
     [showError, showSuccess, removeFiles],
   );
 
+  const init = useGlobalStats((store) => store.init);
+  init();
+  React.useEffect(init);
   const computeGlobal = useGlobalStats((store) => store.computeGlobal);
   const loadedStats = useGlobalStats((store) => store.loaded);
-  console.log("loadedStats", loadedStats);
   const loadingStats = useGlobalStats((store) => store.loading);
-  console.log("loadingStats", loadingStats);
   const progress = useGlobalStats((store) => store.progress);
-  console.log(progress);
 
   return (
     <Outer>

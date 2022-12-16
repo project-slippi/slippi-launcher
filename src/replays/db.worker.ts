@@ -25,6 +25,10 @@ export interface Methods {
 export type WorkerSpec = ModuleMethods & Methods;
 
 const createTablesSql = `
+CREATE TABLE IF NOT EXISTS metadata (
+    loaded      INTEGER
+);
+
 CREATE TABLE IF NOT EXISTS replays (
     fullPath      TEXT PRIMARY KEY,
     name          TEXT,
@@ -154,6 +158,18 @@ const pruneFolders = async (existingFolders: string[]) => {
   db.prepare(`DELETE FROM replays WHERE folder NOT IN (${qfmt})`).run(existingFolders);
 };
 
+const getStatsStatus = async (): Promise<boolean> => {
+  return (await db.prepare("SELECT loaded FROM metadata").get())?.loaded || false;
+};
+
+const setStatsStatus = async (status: boolean): Promise<void> => {
+  if (db.prepare("SELECT loaded FROM metadata").all().length == 0) {
+    db.prepare("INSERT INTO metadata(loaded) VALUES (?)").run(status ? 1 : 0);
+  } else {
+    db.prepare("UPDATE metadata SET loaded = ?").run(status ? 1 : 0);
+  }
+};
+
 const methods: WorkerSpec = {
   async dispose() {
     // Clean up anything
@@ -177,6 +193,8 @@ const methods: WorkerSpec = {
   deleteReplays,
   pruneFolders,
   storeStatsCache,
+  getStatsStatus,
+  setStatsStatus,
 };
 
 expose(methods);

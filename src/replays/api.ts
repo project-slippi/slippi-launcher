@@ -2,6 +2,7 @@
 import {
   ipc_calculateGameStats,
   ipc_computeStatsCache,
+  ipc_getStatsStatus,
   ipc_initializeFolderTree,
   ipc_loadProgressUpdatedEvent,
   ipc_loadReplayFolder,
@@ -30,6 +31,9 @@ export default {
   },
   async computeStatsCache() {
     await ipc_computeStatsCache.renderer!.trigger({});
+  },
+  async getGlobalStatsStatus() {
+    return await ipc_getStatsStatus.renderer!.trigger({});
   },
   onReplayLoadProgressUpdate(handle: (progress: Progress) => void) {
     const { destroy } = ipc_loadProgressUpdatedEvent.renderer!.handle(async (progress) => {

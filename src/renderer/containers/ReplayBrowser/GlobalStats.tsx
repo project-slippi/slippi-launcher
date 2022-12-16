@@ -45,16 +45,14 @@ const Content = styled.div`
 `;
 
 export interface GlobalStatsProps {
-  filePath: string;
-  file?: FileResult;
-  index: number | null;
-  total: number | null;
+  files: FileResult[];
   onClose: () => void;
 }
 
-export const GlobalStats: React.FC<GlobalStatsProps> = (props) => {
+export const GlobalStats: React.FC<GlobalStatsProps> = ({ onClose }) => {
   const compute = useGlobalStats((store) => store.compute);
   const stats = useGlobalStats((store) => store.stats);
+  const oldFiles = useGlobalStats((store) => store.files);
   const filters = {
     characters: [],
     opponentCharacters: [],
@@ -63,7 +61,7 @@ export const GlobalStats: React.FC<GlobalStatsProps> = (props) => {
   const error = undefined;
 
   const files = useReplays((store) => store.files);
-  if (stats == null) {
+  if (files !== oldFiles) {
     compute(files, filters);
   }
 
@@ -85,7 +83,7 @@ export const GlobalStats: React.FC<GlobalStatsProps> = (props) => {
               color: white;
             `}
           >
-            <IconButton onClick={props.onClose} disabled={false} css={css``} size="large">
+            <IconButton onClick={onClose} disabled={false} css={css``} size="large">
               <ArrowBackIosIcon fontSize="small" />
             </IconButton>
             Back

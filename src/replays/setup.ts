@@ -8,6 +8,7 @@ import { FolderTreeService } from "./folderTreeService";
 import {
   ipc_calculateGameStats,
   ipc_computeStatsCache,
+  ipc_getStatsStatus,
   ipc_initializeFolderTree,
   ipc_loadProgressUpdatedEvent,
   ipc_loadReplayFolder,
@@ -87,19 +88,23 @@ export default function setupReplaysIpc() {
       const files = toCompute.slice(i, i + 20);
       console.log("caching batch", files);
       const filesWithStats = await worker.computeAllStats(files, progress + i, count);
-      console.log("got stats");
       await dbWorker.storeStatsCache(filesWithStats);
-      console.log("stored stats");
     }
     sub.unsubscribe();
+    dbWorker.setStatsStatus(true);
     return { sub };
+  });
+
+  ipc_getStatsStatus.main!.handle(async () => {
+    const dbWorker = await databaseBrowserWorker;
+    const status = await dbWorker.getStatsStatus();
+    return { loaded: status };
   });
 
   ipc_calculateGameStats.main!.handle(async ({ filePath }) => {
     const [worker, dbWorker] = await Promise.all([replayBrowserWorker, databaseBrowserWorker]);
     const dbResult = await dbWorker.getFullReplay(filePath);
     if (dbResult && dbResult.stats) {
-      console.log("using db cache");
       return { file: dbResult, stats: dbResult?.stats };
     }
     const result = await worker.calculateGameStats(filePath);
