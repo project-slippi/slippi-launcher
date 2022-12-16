@@ -12,7 +12,8 @@ import { IconMessage } from "@/components/Message";
 import { useGlobalStats } from "@/lib/hooks/useGlobalStats";
 import { useReplays } from "@/lib/hooks/useReplays";
 
-import { PlayerProfile } from "./PlayerProfile";
+import { GeneralStats } from "./GeneralStats";
+
 // import { getPlayerStocks } from "../../../replays/stats";
 
 const Outer = styled.div<{
@@ -104,7 +105,7 @@ export const GlobalStats: React.FC<GlobalStatsProps> = ({ onClose }) => {
         ) : !stats ? (
           <IconMessage Icon={ErrorIcon} label={`Error: ${error ?? JSON.stringify(error, null, 2)}`} />
         ) : (
-          <PlayerProfile player={"EAST#312"!} stats={stats}></PlayerProfile>
+          <GeneralStats player={"EAST#312"!} stats={stats}></GeneralStats>
         )}
       </Content>
     </Outer>

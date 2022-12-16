@@ -10,11 +10,11 @@ import { GlobalTable } from "./GlobalTable";
 import { OpponentTable } from "./OpponentTable";
 import { StageTable } from "./StageTable";
 
-interface PlayerProfileProps {
+interface GemeralStatsProps {
   player: string;
   stats: GlobalStats;
 }
-export const PlayerProfile: React.FC<PlayerProfileProps> = (props) => {
+export const GeneralStats: React.FC<GemeralStatsProps> = (props) => {
   return (
     <div style={{ flex: "1", margin: "auto", maxWidth: 1500 }}>
       <StatSection>
@@ -32,7 +32,8 @@ export const PlayerProfile: React.FC<PlayerProfileProps> = (props) => {
               margin: auto;
             `}
           >
-            General
+            {" "}
+            General{" "}
           </Button>
           <Button
             css={css`
@@ -40,7 +41,8 @@ export const PlayerProfile: React.FC<PlayerProfileProps> = (props) => {
               border: 2px solid;
             `}
           >
-            Progression
+            {" "}
+            Progression{" "}
           </Button>
           <Button
             css={css`
@@ -48,7 +50,8 @@ export const PlayerProfile: React.FC<PlayerProfileProps> = (props) => {
               border: 2px solid;
             `}
           >
-            Matchups
+            {" "}
+            Matchups{" "}
           </Button>
           <Button
             css={css`
@@ -56,7 +59,8 @@ export const PlayerProfile: React.FC<PlayerProfileProps> = (props) => {
               border: 2px solid;
             `}
           >
-            Interactions
+            {" "}
+            Interactions{" "}
           </Button>
           <Button
             css={css`
@@ -64,7 +68,8 @@ export const PlayerProfile: React.FC<PlayerProfileProps> = (props) => {
               border: 2px solid;
             `}
           >
-            Random
+            {" "}
+            Random{" "}
           </Button>
         </div>
       </StatSection>
