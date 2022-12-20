@@ -1,9 +1,9 @@
 import { css } from "@mui/material";
-import type { Game, GlobalStats } from "@replays/stats";
-import { getGamePlayerCodeIndex, getPlayerName } from "@replays/stats";
 import type { ConversionType } from "@slippi/slippi-js";
 import _ from "lodash";
 import React from "react";
+import type { Game, GlobalStats } from "stats/stats";
+import { getGamePlayerCodeIndex, getPlayerName } from "stats/stats";
 
 import * as T from "@/containers/ReplayFileStats/TableStyles";
 import { convertFrameCountToDurationString } from "@/lib/time";
@@ -72,6 +72,16 @@ export const ComboTable: React.FC<{ player: string; stats: GlobalStats }> = ({ p
     return (
       <div style={{ alignItems: "center" }}>
         <div style={{ display: "flex", alignItems: "center" }}>
+          {isOpponent ? (
+            <div
+              css={css`
+                margin-left: auto;
+                margin-right: 10px;
+              `}
+            >
+              {tag}
+            </div>
+          ) : null}
           <T.GrayableImage
             css={
               !isOpponent
@@ -79,22 +89,13 @@ export const ComboTable: React.FC<{ player: string; stats: GlobalStats }> = ({ p
                     margin: auto;
                   `
                 : css`
-                    margin-left: auto;
+                    margin-right: auto;
                   `
             }
             src={getCharacterIcon(p.characterId, p.characterColor)}
             height={24}
             width={24}
           />
-          {isOpponent ? (
-            <div
-              css={css`
-                margin-right: auto;
-              `}
-            >
-              {tag}
-            </div>
-          ) : null}
         </div>
       </div>
     );

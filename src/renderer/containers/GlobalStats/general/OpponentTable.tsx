@@ -1,21 +1,8 @@
 import { colors } from "@common/colors";
 import { css } from "@emotion/react";
-import type { GlobalStats } from "@replays/stats";
 import _ from "lodash";
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
-
-const CustomizedLabel: React.FC<any> = (props) => {
-  const { height, width, key, x, y, value, color } = props;
-  if (width < 20) {
-    return <text />;
-  } else {
-    return (
-      <text style={{ fill: color, fontWeight: "bold" }} {...props} key={key} x={x + 5} y={y + (height * 1.25) / 2}>
-        {value}
-      </text>
-    );
-  }
-};
+import type { GlobalStats } from "stats/general";
 
 export const OpponentTable: React.FC<{ stats: GlobalStats }> = ({ stats }) => {
   const oppStats = stats.opponents;
@@ -23,7 +10,6 @@ export const OpponentTable: React.FC<{ stats: GlobalStats }> = ({ stats }) => {
     .sort((a, b) => oppStats[b].count - oppStats[a].count)
     .slice(0, 26)
     .map((k) => {
-      console.log(k);
       const op = oppStats[k];
       return {
         playerTag: k,
@@ -53,8 +39,8 @@ export const OpponentTable: React.FC<{ stats: GlobalStats }> = ({ stats }) => {
           dataKey="playerTag"
           interval={0}
         />
-        <Bar stackId="1" dataKey="lost" fill="red" label={<CustomizedLabel label="20" color={colors.greenDark} />} />
-        <Bar stackId="1" dataKey="won" fill={colors.greenDark} label={<CustomizedLabel label="20" color="red" />} />
+        <Bar stackId="1" dataKey="lost" fill="red" />
+        <Bar stackId="1" dataKey="won" fill={colors.greenDark} />
       </BarChart>
     </ResponsiveContainer>
   );

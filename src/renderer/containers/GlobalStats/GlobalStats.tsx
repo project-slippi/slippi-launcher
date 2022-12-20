@@ -10,11 +10,13 @@ import React from "react";
 import { BasicFooter } from "@/components/Footer";
 import { IconMessage } from "@/components/Message";
 import { useGlobalStats } from "@/lib/hooks/useGlobalStats";
-import { useReplays } from "@/lib/hooks/useReplays";
 
+import { LoadingBox } from "../ReplayBrowser/ReplayBrowser";
 import { StatSection } from "../ReplayFileStats/GameProfile";
+import { AnalysisStats } from "./analysis/AnalysisStats";
 import { GeneralStats } from "./general/GeneralStats";
-import { ProgressionStats } from "./general/ProgressionStats";
+import { ProgressionStats } from "./progression/ProgressionStats";
+import { RandomStats } from "./random/RandomStats";
 
 const Outer = styled.div<{
   backgroundImage?: any;
@@ -51,22 +53,18 @@ export interface GlobalStatsProps {
 }
 
 export const GlobalStats: React.FC<GlobalStatsProps> = ({ onClose }) => {
-  const compute = useGlobalStats((store) => store.compute);
   const setActive = useGlobalStats((store) => store.setActiveView);
   const activeView = useGlobalStats((store) => store.active);
+  const isLoading = useGlobalStats((store) => store.loading);
   const stats = useGlobalStats((store) => store.stats);
-  const oldFiles = useGlobalStats((store) => store.files);
-  const filters = {
-    characters: [],
-    opponentCharacters: [],
-    opponents: [],
-  };
+  const progressionStats = useGlobalStats((store) => store.progression);
+  // const filters = {
+  //   characters: [],
+  //   opponentCharacters: [],
+  //   opponents: [],
+  //   stages: [],
+  // };
   const error = undefined;
-
-  const files = useReplays((store) => store.files);
-  if (files !== oldFiles) {
-    compute(files, filters);
-  }
 
   const getButtonVariant = (view: string) => (view == activeView ? "contained" : "outlined");
 
@@ -106,8 +104,8 @@ export const GlobalStats: React.FC<GlobalStatsProps> = ({ onClose }) => {
       <Content>
         {error ? (
           <IconMessage Icon={ErrorIcon} label={`Error: ${error ?? JSON.stringify(error, null, 2)}`} />
-        ) : !stats ? (
-          <IconMessage Icon={ErrorIcon} label={`Error: ${error ?? JSON.stringify(error, null, 2)}`} />
+        ) : isLoading || !stats ? (
+          <LoadingBox />
         ) : (
           <>
             <div style={{ flex: "1", margin: "auto", maxWidth: 1500 }}>
@@ -139,22 +137,13 @@ export const GlobalStats: React.FC<GlobalStatsProps> = ({ onClose }) => {
                     Progression
                   </Button>
                   <Button
-                    onClick={() => setActive("matchups")}
-                    variant={getButtonVariant("matchups")}
+                    onClick={() => setActive("analysis")}
+                    variant={getButtonVariant("analysis")}
                     css={css`
                       margin: auto;
                     `}
                   >
-                    Matchups
-                  </Button>
-                  <Button
-                    onClick={() => setActive("interactions")}
-                    variant={getButtonVariant("interactions")}
-                    css={css`
-                      margin: auto;
-                    `}
-                  >
-                    Interactions
+                    Analysis
                   </Button>
                   <Button
                     onClick={() => setActive("random")}
@@ -170,7 +159,11 @@ export const GlobalStats: React.FC<GlobalStatsProps> = ({ onClose }) => {
               {activeView == "general" ? (
                 <GeneralStats player={"EAST#312"!} stats={stats}></GeneralStats>
               ) : activeView == "progression" ? (
-                <ProgressionStats player={"EAST#312"!} stats={stats}></ProgressionStats>
+                <ProgressionStats player={"EAST#312"!} stats={progressionStats}></ProgressionStats>
+              ) : activeView == "analysis" ? (
+                <AnalysisStats player={"EAST#312"!} stats={stats}></AnalysisStats>
+              ) : activeView == "random" ? (
+                <RandomStats player={"EAST#312"!} stats={progressionStats}></RandomStats>
               ) : null}
             </div>
           </>

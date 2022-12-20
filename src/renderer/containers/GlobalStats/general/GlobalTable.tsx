@@ -1,6 +1,6 @@
 import { css } from "@mui/material";
-import type { GlobalStats, Ratio } from "@replays/stats";
 import React from "react";
+import type { GlobalStats, Ratio } from "stats/stats";
 
 import { StatSection } from "@/containers/ReplayFileStats/GameProfile";
 
@@ -26,8 +26,7 @@ const H1: React.FC<{ content: any }> = ({ content }) => (
       font-weight: bold;
     `}
   >
-    {" "}
-    {content}{" "}
+    {content}
   </div>
 );
 
@@ -38,8 +37,7 @@ const H2: React.FC<{ content: any }> = ({ content }) => (
       text-align: center;
     `}
   >
-    {" "}
-    {content}{" "}
+    {content}
   </div>
 );
 
@@ -50,8 +48,7 @@ const S1: React.FC<{ content: any }> = ({ content }) => (
       text-align: center;
     `}
   >
-    {" "}
-    {content}{" "}
+    {content}
   </div>
 );
 
@@ -78,9 +75,8 @@ export const GlobalTable: React.FC<GlobalTableProps> = ({ stats }) => {
           <H2 content="HOURS PLAYED" />
         </div>
         <div>
-          <H1 content={showRatioBasic(stats.inputsPerMinute, 0)} />
-          <H2 content="INPUTS / MIN" />
-          <S1 content={showRatioBasic(stats.digitalInputsPerMinute, 0) + " digital"} />
+          <H1 content={Object.keys(stats.opponents).length} />
+          <H2 content="OPPONENTS FOUGHT" />
         </div>
       </StatSection>
 
@@ -88,6 +84,7 @@ export const GlobalTable: React.FC<GlobalTableProps> = ({ stats }) => {
         <div>
           <H1 content={stats.kills} />
           <H2 content="KILLS" />
+          <S1 content={stats.deaths + " Deaths"} />
         </div>
         <div>
           <H1 content={parseInt(stats.damageDone.toFixed(0)).toLocaleString() + "%"} />
@@ -95,8 +92,9 @@ export const GlobalTable: React.FC<GlobalTableProps> = ({ stats }) => {
           <S1 content={parseInt(stats.damageDone.toFixed(0)).toLocaleString() + "% Received"} />
         </div>
         <div>
-          <H1 content={stats.deaths} />
-          <H2 content="DEATHS" />
+          <H1 content={showRatioBasic(stats.inputsPerMinute, 0)} />
+          <H2 content="INPUTS / MIN" />
+          <S1 content={showRatioBasic(stats.digitalInputsPerMinute, 0) + " digital"} />
         </div>
       </StatSection>
 

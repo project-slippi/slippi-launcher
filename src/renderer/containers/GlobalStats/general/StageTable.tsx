@@ -1,10 +1,10 @@
 // import { GlobalStats, MatchupAggregate } from "common/game";
 import { colors } from "@common/colors";
 import { css } from "@emotion/react";
-import type { GlobalStats } from "@replays/stats";
 import _, { parseInt } from "lodash";
 import React from "react";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
+import type { GlobalStats } from "stats/stats";
 
 import * as T from "@/containers/ReplayFileStats/TableStyles";
 import { getStageImage } from "@/lib/utils";
@@ -64,8 +64,14 @@ const stagePiechart: React.FC<{ char: number; wins: number; total: number }> = (
         text-align: center;
       `}
     >
-      {" "}
-      {total}{" "}
+      {total} G
+    </div>
+    <div
+      css={css`
+        text-align: center;
+      `}
+    >
+      {wins} W / {total - wins} L
     </div>
   </div>
 );

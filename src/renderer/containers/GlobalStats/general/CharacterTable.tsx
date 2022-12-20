@@ -1,10 +1,9 @@
-// import { GlobalStats, MatchupAggregate } from "common/game";
 import { colors } from "@common/colors";
 import { css } from "@emotion/react";
-import type { GlobalStats } from "@replays/stats";
 import _, { parseInt } from "lodash";
 import React from "react";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
+import type { GlobalStats } from "stats/stats";
 
 import * as T from "@/containers/ReplayFileStats/TableStyles";
 import { getCharacterIcon } from "@/lib/utils";
@@ -14,18 +13,12 @@ const characterPiechart: React.FC<{ char: number; wins: number; total: number }>
     <div
       key="row,char"
       css={css`
-        width: 100px;
+        width: 150px;
         display: flex;
         align-items: center;
       `}
     >
-      <PieChart
-        css={css`
-          width: 100px;
-        `}
-        width={100}
-        height={100}
-      >
+      <PieChart css={css``} width={150} height={150}>
         <Pie
           data={[
             { char: char, count: wins },
@@ -48,7 +41,7 @@ const characterPiechart: React.FC<{ char: number; wins: number; total: number }>
           height: 40px;
           position: relative;
           top: -0px;
-          left: -70px;
+          left: -95px;
         `}
         src={getCharacterIcon(char, 0)}
         height={24}
@@ -60,8 +53,14 @@ const characterPiechart: React.FC<{ char: number; wins: number; total: number }>
         text-align: center;
       `}
     >
-      {" "}
-      {total}{" "}
+      {total} G
+    </div>
+    <div
+      css={css`
+        text-align: center;
+      `}
+    >
+      {wins} W / {total - wins} L
     </div>
   </div>
 );
