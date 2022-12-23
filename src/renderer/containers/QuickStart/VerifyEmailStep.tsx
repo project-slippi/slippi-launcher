@@ -82,7 +82,7 @@ export const VerifyEmailStep: React.FC = () => {
       // Get current user manually since the user variable above hasn't updated yet
       const newUser = authService.getCurrentUser();
       if (!newUser?.emailVerified) {
-        showError("Email still not verified. Check spam folder?");
+        showError("Email is not yet verified. Have you checked your spam folder?");
       }
     } catch (err: any) {
       showError(err.message);
