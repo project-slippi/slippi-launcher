@@ -71,6 +71,7 @@ export type DolphinDownloadProgressEvent = {
 export type DolphinDownloadCompleteEvent = {
   type: DolphinEventType.DOWNLOAD_COMPLETE;
   dolphinType: DolphinLaunchType;
+  dolphinVersion: string | null;
 };
 
 export type DolphinEventMap = {

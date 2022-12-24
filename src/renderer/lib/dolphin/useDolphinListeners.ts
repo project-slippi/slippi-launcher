@@ -11,7 +11,13 @@ import { useCallback, useEffect } from "react";
 import { useToasts } from "@/lib/hooks/useToasts";
 
 import { handleDolphinExitCode } from "./handleDolphinExitCode";
-import { DolphinStatus, setDolphinComplete, setDolphinOpened, updateNetplayDownloadProgress } from "./useDolphinStore";
+import {
+  DolphinStatus,
+  setDolphinComplete,
+  setDolphinOpened,
+  setDolphinVersion,
+  updateNetplayDownloadProgress,
+} from "./useDolphinStore";
 
 // Setup listeners for DolphinService
 export const useDolphinListeners = (dolphinService: DolphinService) => {
@@ -37,6 +43,7 @@ export const useDolphinListeners = (dolphinService: DolphinService) => {
 
   const dolphinCompleteHandler = useCallback((event: DolphinDownloadCompleteEvent) => {
     setDolphinComplete(event.dolphinType, DolphinStatus.READY);
+    setDolphinVersion(event.dolphinVersion, event.dolphinType);
   }, []);
 
   useEffect(() => {
