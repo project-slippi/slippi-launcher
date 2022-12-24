@@ -1,5 +1,5 @@
 import { colors } from "@common/colors";
-import { slippiSupportUrl, socials } from "@common/constants";
+import { slippiDonateUrl, socials } from "@common/constants";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import TwitterIcon from "@mui/icons-material/Twitter";
@@ -43,7 +43,7 @@ export const Footer: React.FC = () => {
           margin-left: 20px;
         `}
       >
-        <Social url={slippiSupportUrl} title="Support Project Slippi on slippi.gg">
+        <Social url={slippiDonateUrl} title="Support Project Slippi on slippi.gg">
           <div
             css={css`
               text-transform: uppercase;
