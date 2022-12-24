@@ -1,3 +1,4 @@
+import { currentRulesVersion } from "@common/constants";
 import type { PlayKey } from "@dolphin/types";
 
 import type { AuthService } from "../auth/types";
@@ -6,26 +7,33 @@ import type { SlippiBackendService, UserData } from "./types";
 
 const SHOULD_ERROR = false;
 
-const fakeUsers: UserData[] = [
-  {
-    playKey: {
-      uid: "userid",
-      connectCode: "DEMO#000",
-      playKey: "playkey",
-      displayName: "Demo user",
-    },
-    rulesAccepted: 0,
-  },
-];
+const fakeUserId = "userid";
 
 class MockSlippiBackendClient implements SlippiBackendService {
-  constructor(private authService: AuthService) {}
+  private fakeUsers: Map<string, UserData> = new Map();
+
+  constructor(private authService: AuthService) {
+    this.addFakeSlippiUser(fakeUserId);
+  }
+
+  private addFakeSlippiUser(userId: string, displayName?: string): void {
+    const numUsers = this.fakeUsers.size;
+    this.fakeUsers.set(userId, {
+      playKey: {
+        uid: userId,
+        connectCode: `DEMO#${numUsers}`,
+        playKey: "playkey",
+        displayName: displayName ?? `Demo user ${numUsers}`,
+      },
+      rulesAccepted: 0,
+    });
+  }
 
   @delayAndMaybeError(SHOULD_ERROR)
   public async validateUserId(userId: string): Promise<{ displayName: string; connectCode: string }> {
-    const userData = fakeUsers.find((userData) => userData.playKey?.uid === userId);
+    const userData = this.fakeUsers.get(userId);
     if (!userData || !userData.playKey) {
-      throw new Error("No user with that ID");
+      throw new Error(`No user with ID: ${userId}`);
     }
 
     return {
@@ -40,7 +48,10 @@ class MockSlippiBackendClient implements SlippiBackendService {
     if (!user) {
       throw new Error("No user logged in");
     }
-    const userData = fakeUsers.find((userData) => userData.playKey?.uid === user.uid);
+    if (!this.fakeUsers.has(user.uid)) {
+      this.addFakeSlippiUser(user.uid, user.displayName);
+    }
+    const userData = this.fakeUsers.get(user.uid);
     return userData ?? null;
   }
 
@@ -61,7 +72,18 @@ class MockSlippiBackendClient implements SlippiBackendService {
 
   @delayAndMaybeError(SHOULD_ERROR)
   public async acceptRules() {
-    // TODO: make it possible to accept the rules in the mock
+    const user = this.authService.getCurrentUser();
+    if (!user) {
+      throw new Error("No user logged in");
+    }
+
+    const userData = this.fakeUsers.get(user.uid);
+    if (!userData) {
+      throw new Error(`No user with id: ${user.uid}`);
+    }
+
+    userData.rulesAccepted = currentRulesVersion;
+    this.fakeUsers.set(user.uid, userData);
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
