@@ -87,6 +87,7 @@ export interface DolphinService {
   configureDolphin(dolphinType: DolphinLaunchType): Promise<void>;
   softResetDolphin(dolphinType: DolphinLaunchType): Promise<void>;
   hardResetDolphin(dolphinType: DolphinLaunchType): Promise<void>;
+  getUserFolderPath(dolphinType: DolphinLaunchType): Promise<string>;
   storePlayKeyFile(key: PlayKey): Promise<void>;
   checkPlayKeyExists(key: PlayKey): Promise<boolean>;
   removePlayKeyFile(): Promise<void>;

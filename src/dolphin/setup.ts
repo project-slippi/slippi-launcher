@@ -11,6 +11,7 @@ import {
   ipc_configureDolphin,
   ipc_dolphinEvent,
   ipc_downloadDolphin,
+  ipc_getUserFolderPath,
   ipc_hardResetDolphin,
   ipc_importDolphinSettings,
   ipc_launchNetplayDolphin,
@@ -47,6 +48,11 @@ export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: Do
     console.log("soft resetting dolphin...");
     await dolphinManager.reinstallDolphin(dolphinType, false);
     return { success: true };
+  });
+
+  ipc_getUserFolderPath.main!.handle(async ({ dolphinType }) => {
+    const path = await dolphinManager.getInstallation(dolphinType).userFolder;
+    return { path };
   });
 
   ipc_hardResetDolphin.main!.handle(async ({ dolphinType }) => {

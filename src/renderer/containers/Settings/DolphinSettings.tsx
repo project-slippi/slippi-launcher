@@ -16,7 +16,7 @@ import { useServices } from "@/services";
 
 import { SettingItem } from "./SettingItem";
 
-const { isLinux, isMac } = window.electron.common;
+const { isLinux, isMac, isWindows } = window.electron.common;
 const log = window.electron.log;
 
 enum ResetType {
@@ -38,7 +38,8 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   const [resetModalOpen, setResetModalOpen] = React.useState(false);
   const [isResetType, setResetType] = React.useState<ResetType | null>(null);
   const { dolphinService } = useServices();
-  const { openConfigureDolphin, hardResetDolphin, softResetDolphin, importDolphin } = useDolphinActions(dolphinService);
+  const { openConfigureDolphin, hardResetDolphin, softResetDolphin, importDolphin, getDolphinUserPath } =
+    useDolphinActions(dolphinService);
 
   const dolphinIsReady = dolphinStatus === DolphinStatus.READY && !dolphinIsOpen && isResetType === null;
   const versionString: string =
@@ -50,6 +51,11 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
 
   const configureDolphinHandler = async () => {
     openConfigureDolphin(dolphinType);
+  };
+
+  const openDolphinSettingsHandler = async () => {
+    const userSettingsPath = await getDolphinUserPath(dolphinType);
+    await window.electron.shell.openPath(userSettingsPath);
   };
 
   const softResetDolphinHandler = async () => {
@@ -90,6 +96,11 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           <Button variant="outlined" color="primary" onClick={openDolphinDirectoryHandler}>
             Open containing folder
           </Button>
+          {!isWindows && (
+            <Button variant="outlined" color="primary" onClick={openDolphinSettingsHandler}>
+              Open User Settings folder
+            </Button>
+          )}
         </div>
       </SettingItem>
       <DevGuard show={isLinux}>
