@@ -1,7 +1,6 @@
 import { IsoValidity } from "@common/types";
 import crypto from "crypto";
 import fs from "fs";
-import { some } from "lodash";
 import { fileExists } from "utils/fileExists";
 interface IsoHashInfo {
   valid: IsoValidity;
@@ -117,7 +116,7 @@ export async function verifyIso(isoPath: string): Promise<IsoValidity> {
     input.on("readable", () => {
       const data: Buffer = input.read();
       if (data) {
-        if (!checkedRevision && !some(compressedExts, (ext) => isoPath.endsWith(ext))) {
+        if (!checkedRevision && compressedExts.some((ext) => isoPath.endsWith(ext))) {
           // fast invalidation for things like 1.00, 1.01, and PAL
           checkedRevision = true;
           const revision = data.readInt8(7);
