@@ -5,13 +5,13 @@ import ButtonBase from "@mui/material/ButtonBase";
 import React from "react";
 
 import { useAppStore } from "@/lib/hooks/useApp";
-import { useInstallAppUpdate } from "@/lib/hooks/useInstallAppUpdate";
+import { useAppUpdate } from "@/lib/hooks/useAppUpdate";
 
 export const PersistentNotification: React.FC = () => {
   const updateVersion = useAppStore((store) => store.updateVersion);
   const updateReady = useAppStore((store) => store.updateReady);
 
-  const installAppUpdate = useInstallAppUpdate();
+  const { installAppUpdate } = useAppUpdate();
 
   if (!updateVersion || !updateReady) {
     return null;

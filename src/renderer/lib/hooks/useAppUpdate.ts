@@ -1,7 +1,15 @@
 import { useToasts } from "@/lib/hooks/useToasts";
 
-export const useInstallAppUpdate = () => {
+export const useAppUpdate = () => {
   const { showError } = useToasts();
+
+  const checkForAppUpdates = async () => {
+    try {
+      await window.electron.common.checkForAppUpdates();
+    } catch (err) {
+      showError(err);
+    }
+  };
 
   const installAppUpdate = async () => {
     try {
@@ -11,7 +19,8 @@ export const useInstallAppUpdate = () => {
     }
   };
 
-  return () => {
-    void installAppUpdate();
+  return {
+    checkForAppUpdates,
+    installAppUpdate,
   };
 };
