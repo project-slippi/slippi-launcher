@@ -3,7 +3,7 @@ import { IniFile } from "@dolphin/config/iniFile";
 import { findDolphinExecutable } from "@dolphin/util";
 import { spawnSync } from "child_process";
 import { app } from "electron";
-import log from "electron-log";
+import electronLog from "electron-log";
 import * as fs from "fs-extra";
 import os from "os";
 import path from "path";
@@ -13,6 +13,8 @@ import { DolphinLaunchType } from "../types";
 import { downloadLatestDolphin } from "./download";
 import type { DolphinVersionResponse } from "./fetchLatestVersion";
 import { fetchLatestVersion } from "./fetchLatestVersion";
+
+const log = electronLog.scope("dolphin/installation");
 
 const isLinux = process.platform === "linux";
 
