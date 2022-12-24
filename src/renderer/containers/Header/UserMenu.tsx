@@ -1,6 +1,7 @@
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import EditIcon from "@mui/icons-material/Edit";
-import EjectIcon from "@mui/icons-material/Eject";
 import LanguageIcon from "@mui/icons-material/Language";
+import LogoutIcon from "@mui/icons-material/Logout";
 import ButtonBase from "@mui/material/ButtonBase";
 import DialogContentText from "@mui/material/DialogContentText";
 import React from "react";
@@ -65,15 +66,26 @@ export const UserMenu: React.FC<{
       });
     }
 
-    if (userData) {
-      items.push({
-        onClick: () => {
-          closeMenu();
-          setOpenNameChangePrompt(true);
+    if (userData && userData.playKey) {
+      const profileUrl = `https://slippi.gg/user/${userData.playKey.connectCode.replace("#", "-")}`;
+      items.push(
+        {
+          onClick: () => {
+            closeMenu();
+            void window.electron.shell.openPath(profileUrl);
+          },
+          label: "View profile",
+          icon: <AccountBoxIcon fontSize="small" />,
         },
-        label: "Edit display name",
-        icon: <EditIcon fontSize="small" />,
-      });
+        {
+          onClick: () => {
+            closeMenu();
+            setOpenNameChangePrompt(true);
+          },
+          label: "Edit display name",
+          icon: <EditIcon fontSize="small" />,
+        },
+      );
     }
 
     items.push({
@@ -82,7 +94,7 @@ export const UserMenu: React.FC<{
         setOpenLogoutPrompt(true);
       },
       label: "Log out",
-      icon: <EjectIcon fontSize="small" style={{ transform: "rotate(270deg)" }} />,
+      icon: <LogoutIcon fontSize="small" />,
     });
     return items;
   };
