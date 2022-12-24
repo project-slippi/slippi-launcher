@@ -93,12 +93,14 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           <Button variant="contained" color="primary" onClick={configureDolphinHandler} disabled={!dolphinIsReady}>
             Configure Dolphin
           </Button>
-          <Button variant="outlined" color="primary" onClick={openDolphinDirectoryHandler}>
-            Open containing folder
-          </Button>
+          {!isLinux && (
+            <Button variant="outlined" color="primary" onClick={openDolphinDirectoryHandler}>
+              Open containing folder
+            </Button>
+          )}
           {!isWindows && (
             <Button variant="outlined" color="primary" onClick={openDolphinSettingsHandler}>
-              Open User Settings folder
+              Open user settings folder
             </Button>
           )}
         </div>
