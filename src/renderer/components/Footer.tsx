@@ -1,5 +1,5 @@
 import { colors } from "@common/colors";
-import { socials } from "@common/constants";
+import { slippiDonateUrl, socials } from "@common/constants";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import TwitterIcon from "@mui/icons-material/Twitter";
@@ -8,7 +8,6 @@ import React from "react";
 
 import { ExternalLink as A } from "@/components/ExternalLink";
 import { ReactComponent as DiscordIcon } from "@/styles/images/discord.svg";
-import { ReactComponent as PatreonIcon } from "@/styles/images/patreon.svg";
 
 export const BasicFooter = styled.div`
   display: flex;
@@ -44,17 +43,16 @@ export const Footer: React.FC = () => {
           margin-left: 20px;
         `}
       >
-        <Social url={socials.patreonUrl} title="Support Project Slippi on Patreon">
+        <Social url={slippiDonateUrl}>
           <div
             css={css`
               text-transform: uppercase;
               font-weight: bold;
-              margin-right: 20px;
+              margin-right: 5px;
             `}
           >
             Support Slippi
           </div>
-          <PatreonIcon fill={colors.purpleLight} />
         </Social>
       </div>
     </Outer>
@@ -72,7 +70,7 @@ const Outer = styled(BasicFooter)`
 
 const Social: React.FC<{
   url: string;
-  title: string;
+  title?: string;
 }> = ({ url, title, children }) => {
   return (
     <A
@@ -86,7 +84,7 @@ const Social: React.FC<{
       href={url}
     >
       <Tooltip
-        title={title}
+        title={title ?? ""}
         css={css`
           display: flex;
           align-items: center;
