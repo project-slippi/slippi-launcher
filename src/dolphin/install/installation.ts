@@ -181,11 +181,14 @@ export class DolphinInstallation {
   }
 
   public async getDolphinVersion(): Promise<string | null> {
-    const dolphinPath = await this.findDolphinExecutable();
-    const dolphinVersionOut = spawnSync(dolphinPath, ["--version"]).stdout.toString();
-    const match = dolphinVersionOut.match(semverRegex);
-    const dolphinVersion = match?.[0] ?? "";
-    return dolphinVersion || null;
+    try {
+      const dolphinPath = await this.findDolphinExecutable();
+      const dolphinVersionOut = spawnSync(dolphinPath, ["--version"]).stdout.toString();
+      const match = dolphinVersionOut.match(semverRegex);
+      return match?.[0] ?? null;
+    } catch (err) {
+      return null;
+    }
   }
 
   private async _uninstallDolphin() {
