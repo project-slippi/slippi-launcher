@@ -43,7 +43,7 @@ export const Footer: React.FC = () => {
           margin-left: 20px;
         `}
       >
-        <Social url={slippiDonateUrl} title="Support Project Slippi on slippi.gg">
+        <Social url={slippiDonateUrl}>
           <div
             css={css`
               text-transform: uppercase;
@@ -70,7 +70,7 @@ const Outer = styled(BasicFooter)`
 
 const Social: React.FC<{
   url: string;
-  title: string;
+  title?: string;
 }> = ({ url, title, children }) => {
   return (
     <A
@@ -84,7 +84,7 @@ const Social: React.FC<{
       href={url}
     >
       <Tooltip
-        title={title}
+        title={title ?? ""}
         css={css`
           display: flex;
           align-items: center;
