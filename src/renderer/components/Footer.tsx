@@ -1,5 +1,5 @@
 import { colors } from "@common/colors";
-import { socials, slippiManagePage } from "@common/constants";
+import { slippiSupportUrl, socials } from "@common/constants";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import TwitterIcon from "@mui/icons-material/Twitter";
@@ -8,7 +8,6 @@ import React from "react";
 
 import { ExternalLink as A } from "@/components/ExternalLink";
 import { ReactComponent as DiscordIcon } from "@/styles/images/discord.svg";
-import slippiLogo from "@/styles/images/slippi-logo-purple.svg";
 
 export const BasicFooter = styled.div`
   display: flex;
@@ -44,17 +43,16 @@ export const Footer: React.FC = () => {
           margin-left: 20px;
         `}
       >
-        <Social url={slippiManagePage} title="Support Project Slippi on slippi.gg">
+        <Social url={slippiSupportUrl} title="Support Project Slippi on slippi.gg">
           <div
             css={css`
               text-transform: uppercase;
               font-weight: bold;
-              margin-right: 20px;
+              margin-right: 5px;
             `}
           >
             Support Slippi
           </div>
-          <img src={slippiLogo} width="25px" />
         </Social>
       </div>
     </Outer>
