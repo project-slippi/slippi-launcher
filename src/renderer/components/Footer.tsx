@@ -10,6 +10,7 @@ import React from "react";
 import { ExternalLink as A } from "@/components/ExternalLink";
 import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { useAppUpdate } from "@/lib/hooks/useAppUpdate";
+import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";
 import { ReactComponent as DiscordIcon } from "@/styles/images/discord.svg";
 
@@ -30,13 +31,23 @@ export const BasicFooter = styled.div`
 `;
 
 export const Footer: React.FC = () => {
+  const { showInfo, showError } = useToasts();
   const { dolphinService } = useServices();
   const { checkForAppUpdates } = useAppUpdate();
   const { updateDolphin } = useDolphinActions(dolphinService);
+  const [checkingForUpdates, setCheckingForUpdates] = React.useState(false);
   const checkForUpdatesHandler = React.useCallback(async () => {
-    void checkForAppUpdates();
-    void updateDolphin();
-  }, [checkForAppUpdates, updateDolphin]);
+    setCheckingForUpdates(true);
+    try {
+      showInfo("Checking for updates...");
+      await checkForAppUpdates();
+      await updateDolphin();
+    } catch (err) {
+      window.electron.log.error(err);
+      showError("Failed to get updates");
+    }
+    setTimeout(() => setCheckingForUpdates(false), 10000);
+  }, [checkForAppUpdates, updateDolphin, showInfo, showError]);
 
   return (
     <Outer>
@@ -50,6 +61,7 @@ export const Footer: React.FC = () => {
           color: ${colors.purpleLight};
         `}
         onClick={checkForUpdatesHandler}
+        disabled={checkingForUpdates}
       >
         Check for updates
       </Button>
