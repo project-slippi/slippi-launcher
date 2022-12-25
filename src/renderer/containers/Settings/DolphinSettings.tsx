@@ -16,7 +16,7 @@ import { useServices } from "@/services";
 
 import { SettingItem } from "./SettingItem";
 
-const { isLinux, isMac, isWindows } = window.electron.common;
+const { isLinux, isMac } = window.electron.common;
 const log = window.electron.log;
 
 enum ResetType {
@@ -46,16 +46,15 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
     dolphinStatus === DolphinStatus.UNKNOWN ? "Not found" : !dolphinVersion ? "Unknown" : dolphinVersion;
 
   const openDolphinDirectoryHandler = async () => {
+    if (isMac || isLinux) {
+      const userSettingsPath = await getDolphinUserPath(dolphinType);
+      await window.electron.shell.openPath(userSettingsPath);
+    }
     await window.electron.shell.openPath(dolphinPath);
   };
 
   const configureDolphinHandler = async () => {
     openConfigureDolphin(dolphinType);
-  };
-
-  const openDolphinSettingsHandler = async () => {
-    const userSettingsPath = await getDolphinUserPath(dolphinType);
-    await window.electron.shell.openPath(userSettingsPath);
   };
 
   const softResetDolphinHandler = async () => {
@@ -93,16 +92,9 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           <Button variant="contained" color="primary" onClick={configureDolphinHandler} disabled={!dolphinIsReady}>
             Configure Dolphin
           </Button>
-          {!isLinux && (
-            <Button variant="outlined" color="primary" onClick={openDolphinDirectoryHandler}>
-              Open containing folder
-            </Button>
-          )}
-          {!isWindows && (
-            <Button variant="outlined" color="primary" onClick={openDolphinSettingsHandler}>
-              Open user settings folder
-            </Button>
-          )}
+          <Button variant="outlined" color="primary" onClick={openDolphinDirectoryHandler}>
+            Open folder
+          </Button>
         </div>
       </SettingItem>
       <DevGuard show={isLinux}>
