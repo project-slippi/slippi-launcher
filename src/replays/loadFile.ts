@@ -23,7 +23,13 @@ export async function loadFile(fullPath: string): Promise<FileResult> {
     startTime: null,
     lastFrame: null,
     metadata: null,
+    winners: null,
   };
+
+  const winners = game.getWinners();
+  if (winners) {
+    result.winners = winners.map((winner) => winner.playerIndex);
+  }
 
   // Load metadata
   const metadata: MetadataType | null = game.getMetadata();
