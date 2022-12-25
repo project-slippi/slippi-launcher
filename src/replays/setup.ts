@@ -2,11 +2,13 @@ import { app } from "electron";
 import log from "electron-log";
 import * as fs from "fs-extra";
 import path from "path";
+import type { MultiStats } from "stats/stats";
 
 import { createDatabaseWorker } from "./db.worker.interface";
 import { FolderTreeService } from "./folderTreeService";
 import {
   ipc_calculateGameStats,
+  ipc_calculateGlobalStats,
   ipc_computeStatsCache,
   ipc_getStatsStatus,
   ipc_initializeFolderTree,
@@ -45,7 +47,9 @@ export default function setupReplaysIpc() {
       };
     }
     const [worker, dbWorker] = await Promise.all([replayBrowserWorker, databaseBrowserWorker]);
+    log.info(`loading files`);
     const loadedFiles = await dbWorker.getFolderFiles(folderPath);
+    log.info(`loading files`);
     const { totalCount, toLoad, toDelete, totalBytes } = await filterReplays(folderPath, loadedFiles);
     log.info(
       `Found ${totalCount} files in ${folderPath}, ${toLoad.length} are new. ${toDelete.length} will be removed from the DB`,
@@ -111,6 +115,17 @@ export default function setupReplaysIpc() {
     const fileResult = await worker.loadSingleFile(filePath);
     return { file: fileResult, stats: result };
   });
+
+  ipc_calculateGlobalStats.main!.handle(async ({ files, filters }) => {
+    const dbWorker = await databaseBrowserWorker;
+    // console.log("COMPUTING")
+    const stats = (await dbWorker.computeStats(files, filters)) as MultiStats;
+    // console.log("STATS SIZE: ", JSON.stringify(stats).length)
+    // console.log("GENERAL SIZE: ", JSON.stringify(stats.global).length)
+    // console.log("PROGRESS SIZE: ", JSON.stringify(stats.timeseries).length)
+    // console.log("COMPUTED")
+    return { stats };
+  });
 }
 
 async function filterReplays(folder: string, loadedFiles: string[]) {
@@ -125,11 +140,14 @@ async function filterReplays(folder: string, loadedFiles: string[]) {
     .map((res) => (res.status === "fulfilled" ? res.value.size : 0))
     .reduce((acc, size) => acc + size, 0);
 
-  // These are the new files that we haven't indexed
-  const toLoad = slpFiles.filter((file) => !loadedFiles.includes(file));
+  const freqs = {};
+  slpFiles.forEach((file) => (freqs[file] = 1));
+  loadedFiles.forEach((file) => (freqs[file] = (freqs[file] || 0) - 1));
 
-  // These are the files no longer exist so we should delete them
-  const toDelete = loadedFiles.filter((file) => !slpFiles.includes(file));
+  // In slpFiles but not loadedFiles
+  const toLoad = Object.keys(freqs).filter((file) => freqs[file] == 1);
+  // In loadedFiles not slpFiles
+  const toDelete = Object.keys(freqs).filter((file) => freqs[file] == -1);
 
   return { totalCount: slpFiles.length, toLoad, toDelete, totalBytes };
 }

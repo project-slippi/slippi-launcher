@@ -25,9 +25,10 @@ const TableContainer = styled.div`
 
 export const StatSection: React.FC<{
   title?: string;
+  align?: "left" | "center" | "right";
 }> = (props) => {
   return (
-    <div style={{ padding: 10 }}>
+    <div style={{ padding: 10, textAlign: props.align || "left" }}>
       <Typography variant="h5" style={{ marginBottom: 10 }}>
         {props.title}
       </Typography>

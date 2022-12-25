@@ -69,7 +69,7 @@ export const PlayerDashboard = React.forwardRef<HTMLInputElement, PlayerDashboar
             color: rgba(255, 255, 255, 0.6);
           `}
         >
-          1435 ELO
+          1535 ELO
         </div>
       </div>
       <div

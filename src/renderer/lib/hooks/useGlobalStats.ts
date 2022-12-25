@@ -1,6 +1,6 @@
-import type { Game, GameFilters, GlobalStats } from "@replays/stats";
-import { getGlobalStats } from "@replays/stats";
 import type { FileResult, Progress } from "@replays/types";
+import type { ProgressionStat } from "stats/progression";
+import type { GameFilters, GlobalStats } from "stats/stats";
 import create from "zustand";
 
 type StoreState = {
@@ -9,6 +9,8 @@ type StoreState = {
   loading: boolean;
   files: FileResult[];
   stats: GlobalStats | null;
+  general: GlobalStats | null;
+  progression: ProgressionStat[];
   progress: Progress;
 };
 
@@ -18,6 +20,8 @@ const initialState: StoreState = {
   loading: false,
   files: [],
   stats: null,
+  general: null,
+  progression: [],
   progress: { current: 0, total: 1 },
 };
 
@@ -28,7 +32,7 @@ type StoreReducers = {
   setActiveView: (active: string) => void;
 };
 
-export const useGlobalStats = create<StoreState & StoreReducers>((set) => ({
+export const useGlobalStats = create<StoreState & StoreReducers>((set, get) => ({
   // Set the initial state
   ...initialState,
 
@@ -37,15 +41,25 @@ export const useGlobalStats = create<StoreState & StoreReducers>((set) => ({
     set({ loaded });
   },
 
-  compute: (files: FileResult[], filters: GameFilters) => {
-    const games = files.map(
-      (file) => ({ stats: file.stats, metadata: file.metadata, settings: file.settings } as Game),
-    );
-    const stats = getGlobalStats(games, "EAST#312", filters);
+  compute: async (files: FileResult[], filters: GameFilters) => {
+    const oldFiles = get().files;
+    if (files.length == oldFiles.length) {
+      console.log("No new files to compute");
+      return;
+    }
+    console.log("Computing stats");
+    set({ loading: true });
+    const names = files.map((f) => f.fullPath);
+    const startTime = performance.now();
+    const { stats } = await window.electron.replays.calculateGlobalStats(names, filters);
+    const endTime = performance.now();
+    console.log(`Computed stats in ${endTime - startTime} milliseconds`);
     set({
       loading: false,
       files,
-      stats,
+      stats: stats.global,
+      general: stats.global,
+      progression: stats.timeseries,
     });
   },
 

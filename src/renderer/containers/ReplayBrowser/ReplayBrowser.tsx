@@ -80,10 +80,23 @@ export const ReplayBrowser: React.FC = () => {
     [showError, showSuccess, removeFiles],
   );
 
+  const exploreStats = () => {
+    console.log("selectedFiles", selectedFiles);
+    if (selectedFiles.length > 0) {
+      compute(
+        filteredFiles.filter((f) => selectedFiles.includes(f.fullPath)),
+        { characters: [], opponents: [], stages: [], opponentCharacters: [] },
+      );
+    } else {
+      compute(filteredFiles, { characters: [], opponents: [], stages: [], opponentCharacters: [] });
+    }
+    goToGlobalStatsPage();
+  };
+
   const init = useGlobalStats((store) => store.init);
   init();
-  React.useEffect(init);
   const computeGlobal = useGlobalStats((store) => store.computeGlobal);
+  const compute = useGlobalStats((store) => store.compute);
   const loadedStats = useGlobalStats((store) => store.loaded);
   const loadingStats = useGlobalStats((store) => store.loading);
   const progress = useGlobalStats((store) => store.progress);
@@ -151,7 +164,7 @@ export const ReplayBrowser: React.FC = () => {
             ) : (
               ""
             )}
-            {loadedStats ? <Link onClick={goToGlobalStatsPage}>{"Explore Stats"}</Link> : ""}
+            {loadedStats ? <Link onClick={exploreStats}>{"Explore Stats"}</Link> : ""}
           </div>
         </Footer>
         <PlayerDashboard disabled={false} loadedStats={loadedStats} />
@@ -196,7 +209,7 @@ export const ReplayBrowser: React.FC = () => {
   );
 };
 
-const LoadingBox = React.memo(function LoadingBox() {
+export const LoadingBox = React.memo(function LoadingBox() {
   const progress = useReplays((store) => store.progress);
   return <LoadingScreenWithProgress current={progress?.current} total={progress?.total} />;
 });

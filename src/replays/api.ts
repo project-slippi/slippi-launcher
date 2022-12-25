@@ -1,6 +1,9 @@
 /* eslint-disable import/no-default-export */
+import type { GameFilters } from "stats/stats";
+
 import {
   ipc_calculateGameStats,
+  ipc_calculateGlobalStats,
   ipc_computeStatsCache,
   ipc_getStatsStatus,
   ipc_initializeFolderTree,
@@ -27,6 +30,10 @@ export default {
   },
   async calculateGameStats(filePath: string) {
     const { result } = await ipc_calculateGameStats.renderer!.trigger({ filePath });
+    return result;
+  },
+  async calculateGlobalStats(files: string[], filters: GameFilters) {
+    const { result } = await ipc_calculateGlobalStats.renderer!.trigger({ files, filters });
     return result;
   },
   async computeStatsCache() {

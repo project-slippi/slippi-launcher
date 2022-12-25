@@ -1,4 +1,5 @@
 import type { StatsType } from "@slippi/slippi-js";
+import type { GameFilters, MultiStats } from "stats/stats";
 import type { SuccessPayload } from "utils/ipc";
 import { _, makeEndpoint } from "utils/ipc";
 
@@ -30,6 +31,11 @@ export const ipc_calculateGameStats = makeEndpoint.main(
 
 export const ipc_computeStatsCache = makeEndpoint.main("computeStatsCache", <any>_, <any>_);
 export const ipc_getStatsStatus = makeEndpoint.main("getStatsStatus", <any>_, <{ loaded: boolean }>_);
+export const ipc_calculateGlobalStats = makeEndpoint.main(
+  "calculateGlobalStats",
+  <{ files: string[]; filters: GameFilters }>_,
+  <{ stats: MultiStats }>_,
+);
 
 // Events
 

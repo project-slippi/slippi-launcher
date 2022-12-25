@@ -6,6 +6,9 @@
 import Database from "better-sqlite3";
 import _ from "lodash";
 import path from "path";
+import { getProgressionStatsComputer } from "stats/progression";
+import type { Game, GameFilters, MultiStats } from "stats/stats";
+import { characterFilter, getGlobalStatsComputer, opponentFilter, stageFilter } from "stats/stats";
 import type { ModuleMethods } from "threads/dist/types/master";
 import { expose } from "threads/worker";
 
@@ -20,15 +23,12 @@ export interface Methods {
   saveReplays(replays: FileResult[]): Promise<void>;
   deleteReplays(files: string[]): Promise<void>;
   pruneFolders(existingFolders: string[]): Promise<void>;
+  computeStats(files: string[], filters: GameFilters): Promise<MultiStats>;
 }
 
 export type WorkerSpec = ModuleMethods & Methods;
 
 const createTablesSql = `
-CREATE TABLE IF NOT EXISTS metadata (
-    loaded      INTEGER
-);
-
 CREATE TABLE IF NOT EXISTS replays (
     fullPath      TEXT PRIMARY KEY,
     name          TEXT,
@@ -43,8 +43,16 @@ CREATE TABLE IF NOT EXISTS replay_data (
     lastFrame     INTEGER,
     settings      JSON,
     metadata      JSON,
-    stats         JSON,
     FOREIGN KEY (fullPath) REFERENCES replays(fullPath) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS stats (
+    fullPath      TEXT PRIMARY KEY,
+    data          JSON NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS metadata (
+    loaded INTEGER
 );
 `;
 
@@ -85,8 +93,9 @@ const getAllFiles = async () => {
       `
       SELECT fullPath
       FROM replays
-      JOIN replay_data USING (fullPath)
-      WHERE stats IS NULL
+      LEFT JOIN replay_data USING (fullPath)
+      LEFT JOIN stats USING (fullPath)
+      WHERE data IS NULL
       `,
     )
     .all();
@@ -100,9 +109,10 @@ const getFolderReplays = async (folder: string) => {
   const docs = db
     .prepare(
       `
-    SELECT fullPath, name, folder, startTime, lastFrame, settings, metadata, stats
+    SELECT fullPath, name, folder, startTime, lastFrame, settings, metadata, null as stats
     FROM replays 
     JOIN replay_data USING (fullPath)
+    LEFT JOIN stats USING (fullPath)
     WHERE folder = ?
     ORDER by startTime DESC`,
     )
@@ -112,7 +122,15 @@ const getFolderReplays = async (folder: string) => {
 };
 
 const getFullReplay = async (file: string) => {
-  const doc = db.prepare("SELECT * from replays JOIN replay_data USING (fullPath) WHERE fullPath = ?").get(file);
+  const doc = db
+    .prepare(
+      `SELECT fullPath, name, folder, startTime, lastFrame, settings, metadata, data as stats 
+                          FROM replays 
+                          JOIN replay_data USING (fullPath) 
+                          LEFT JOIN stats USING (fullPath) 
+                          WHERE fullPath = ?`,
+    )
+    .get(file);
   return parseRow(doc);
 };
 
@@ -143,8 +161,8 @@ const saveReplays = async (replays: FileResult[]) => {
 
 const storeStatsCache = async (replays: FileResult[]): Promise<void> => {
   db.transaction(() => {
-    const update = db.prepare(`UPDATE replay_data SET stats = ? WHERE fullPath = ?`);
-    replays.forEach((r) => update.run(JSON.stringify(r.stats), r.fullPath));
+    const update = db.prepare(`INSERT INTO stats (fullPath, data) VALUES (?, ?)`);
+    replays.forEach((r) => update.run(r.fullPath, JSON.stringify(r.stats)));
   })();
 };
 
@@ -168,6 +186,51 @@ const setStatsStatus = async (status: boolean): Promise<void> => {
   } else {
     db.prepare("UPDATE metadata SET loaded = ?").run(status ? 1 : 0);
   }
+};
+
+const computeStats = async (files: string[], filters: GameFilters): Promise<MultiStats> => {
+  const playerCode = "EAST#312";
+  const generalComputer = getGlobalStatsComputer("EAST#312", filters);
+  const progressComputer = getProgressionStatsComputer("EAST#312", filters);
+
+  const stmt = () =>
+    db.prepare(`SELECT fullPath, name, folder, startTime, lastFrame, settings, metadata, data as stats 
+                           FROM replays 
+                           JOIN replay_data USING (fullPath) 
+                           LEFT JOIN stats USING (fullPath) 
+                           WHERE fullpath = ?
+                          `);
+  files.reverse();
+  files.forEach((f) => {
+    try {
+      const row = stmt().get(f);
+      const file = parseRow(row);
+      const game = { stats: file.stats, metadata: file.metadata, settings: file.settings } as Game;
+
+      if (
+        !(
+          opponentFilter(game, playerCode, filters.opponents) &&
+          characterFilter(game, playerCode, false, filters.characters) &&
+          characterFilter(game, playerCode, true, filters.opponentCharacters) &&
+          stageFilter(game, filters.stages)
+        )
+      ) {
+        return;
+      }
+      generalComputer.reducer(generalComputer.initialState, game, playerCode);
+      progressComputer.reducer(progressComputer.initialState, game, playerCode);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+  generalComputer.postProcessor(generalComputer.initialState);
+  progressComputer.postProcessor(progressComputer.initialState);
+  console.log("Done");
+  return {
+    global: generalComputer.initialState,
+    timeseries: progressComputer.initialState.single,
+  };
 };
 
 const methods: WorkerSpec = {
@@ -195,6 +258,7 @@ const methods: WorkerSpec = {
   storeStatsCache,
   getStatsStatus,
   setStatsStatus,
+  computeStats,
 };
 
 expose(methods);
