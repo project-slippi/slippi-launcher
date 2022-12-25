@@ -10,8 +10,24 @@ import { useAppUpdate } from "@/lib/hooks/useAppUpdate";
 export const PersistentNotification: React.FC = () => {
   const updateVersion = useAppStore((store) => store.updateVersion);
   const updateReady = useAppStore((store) => store.updateReady);
+  const updateDownloadProgress = useAppStore((store) => store.updateDownloadProgress);
 
   const { installAppUpdate } = useAppUpdate();
+
+  if (!updateReady && updateDownloadProgress) {
+    return (
+      <Outer>
+        <div
+          css={css`
+            display: flex;
+            justify-content: center;
+          `}
+        >
+          Downloading Version {updateVersion}...
+        </div>
+      </Outer>
+    );
+  }
 
   if (!updateVersion || !updateReady) {
     return null;
