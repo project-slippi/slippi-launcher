@@ -7,6 +7,7 @@ export interface FileResult {
   startTime: string | null;
   lastFrame: number | null;
   metadata: MetadataType | null;
+  winnerIndices: number[];
 }
 
 export interface FolderResult {
