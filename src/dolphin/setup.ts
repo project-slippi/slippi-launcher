@@ -1,4 +1,4 @@
-import { app } from "electron";
+import { app, shell } from "electron";
 import log from "electron-log";
 import * as fs from "fs-extra";
 import { isEqual } from "lodash";
@@ -11,10 +11,10 @@ import {
   ipc_configureDolphin,
   ipc_dolphinEvent,
   ipc_downloadDolphin,
-  ipc_getUserFolderPath,
   ipc_hardResetDolphin,
   ipc_importDolphinSettings,
   ipc_launchNetplayDolphin,
+  ipc_openDolphinSettingsFolder,
   ipc_removePlayKeyFile,
   ipc_softResetDolphin,
   ipc_storePlayKeyFile,
@@ -50,9 +50,10 @@ export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: Do
     return { success: true };
   });
 
-  ipc_getUserFolderPath.main!.handle(async ({ dolphinType }) => {
+  ipc_openDolphinSettingsFolder.main!.handle(async ({ dolphinType }) => {
     const path = await dolphinManager.getInstallation(dolphinType).userFolder;
-    return { path };
+    await shell.openPath(path);
+    return { success: true };
   });
 
   ipc_hardResetDolphin.main!.handle(async ({ dolphinType }) => {

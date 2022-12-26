@@ -6,10 +6,10 @@ import {
   ipc_configureDolphin,
   ipc_dolphinEvent,
   ipc_downloadDolphin,
-  ipc_getUserFolderPath,
   ipc_hardResetDolphin,
   ipc_importDolphinSettings,
   ipc_launchNetplayDolphin,
+  ipc_openDolphinSettingsFolder,
   ipc_removePlayKeyFile,
   ipc_softResetDolphin,
   ipc_storePlayKeyFile,
@@ -37,9 +37,8 @@ const dolphinApi: DolphinService = {
   async hardResetDolphin(dolphinType: DolphinLaunchType) {
     await ipc_hardResetDolphin.renderer!.trigger({ dolphinType });
   },
-  async getUserFolderPath(dolphinType: DolphinLaunchType) {
-    const { result } = await ipc_getUserFolderPath.renderer!.trigger({ dolphinType });
-    return result.path;
+  async openDolphinSettingsFolder(dolphinType: DolphinLaunchType) {
+    await ipc_openDolphinSettingsFolder.renderer!.trigger({ dolphinType });
   },
   async storePlayKeyFile(key: PlayKey) {
     await ipc_storePlayKeyFile.renderer!.trigger({ key });

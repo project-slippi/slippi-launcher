@@ -38,20 +38,18 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   const [resetModalOpen, setResetModalOpen] = React.useState(false);
   const [isResetType, setResetType] = React.useState<ResetType | null>(null);
   const { dolphinService } = useServices();
-  const { openConfigureDolphin, hardResetDolphin, softResetDolphin, importDolphin, getDolphinUserPath } =
-    useDolphinActions(dolphinService);
+  const { openConfigureDolphin, hardResetDolphin, softResetDolphin, importDolphin } = useDolphinActions(dolphinService);
 
   const dolphinIsReady = dolphinStatus === DolphinStatus.READY && !dolphinIsOpen && isResetType === null;
   const versionString: string =
     dolphinStatus === DolphinStatus.UNKNOWN ? "Not found" : !dolphinVersion ? "Unknown" : dolphinVersion;
 
-  const openDolphinDirectoryHandler = async () => {
-    if (isMac || isLinux) {
-      const userSettingsPath = await getDolphinUserPath(dolphinType);
-      await window.electron.shell.openPath(userSettingsPath);
+  const openDolphinDirectoryHandler = React.useCallback(async () => {
+    if (isMac || !isLinux) {
+      await dolphinService.openDolphinSettingsFolder(dolphinType);
     }
     await window.electron.shell.openPath(dolphinPath);
-  };
+  }, [dolphinPath, dolphinService, dolphinType]);
 
   const configureDolphinHandler = async () => {
     openConfigureDolphin(dolphinType);

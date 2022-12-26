@@ -23,13 +23,6 @@ export const useDolphinActions = (dolphinService: DolphinService) => {
     [netplayStatus, playbackStatus],
   );
 
-  const getDolphinUserPath = useCallback(
-    async (dolphinType: DolphinLaunchType): Promise<string> => {
-      return await dolphinService.getUserFolderPath(dolphinType);
-    },
-    [dolphinService],
-  );
-
   const openConfigureDolphin = useCallback(
     (dolphinType: DolphinLaunchType) => {
       if (getInstallStatus(dolphinType) !== DolphinStatus.READY) {
@@ -117,6 +110,5 @@ export const useDolphinActions = (dolphinService: DolphinService) => {
     launchNetplay,
     viewReplays,
     importDolphin,
-    getDolphinUserPath,
   };
 };
