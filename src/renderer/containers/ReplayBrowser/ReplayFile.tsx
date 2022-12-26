@@ -66,7 +66,7 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
   metadata,
   lastFrame,
   fullPath,
-  winners,
+  winnerIndices,
 }) => {
   const selected = selectedIndex !== -1;
   const date = new Date(startTime ? Date.parse(startTime) : 0);
@@ -83,7 +83,7 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
         const backupName = player.type === 1 ? "CPU" : `Player ${player.playerIndex + 1}`;
         const names = extractPlayerNames(player.playerIndex, settings, metadata);
         const teamId = settings.isTeams ? player.teamId : undefined;
-        const isWinner = winners.includes(player.playerIndex);
+        const isWinner = winnerIndices.includes(player.playerIndex);
         return {
           characterId: player.characterId,
           characterColor: player.characterColor,

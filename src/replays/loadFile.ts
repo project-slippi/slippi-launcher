@@ -23,10 +23,10 @@ export async function loadFile(fullPath: string): Promise<FileResult> {
     startTime: null,
     lastFrame: null,
     metadata: null,
-    winners: [],
+    winnerIndices: [],
   };
 
-  result.winners = game.getWinners().map((winner) => winner.playerIndex);
+  result.winnerIndices = game.getWinners().map((winner) => winner.playerIndex);
 
   // Load metadata
   const metadata: MetadataType | null = game.getMetadata();
