@@ -23,7 +23,7 @@ export async function loadFile(fullPath: string): Promise<FileResult> {
     startTime: null,
     lastFrame: null,
     metadata: null,
-    winners: null,
+    winners: [],
   };
 
   const winners = game.getWinners();
