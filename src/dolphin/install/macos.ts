@@ -7,18 +7,18 @@ import { extractDmg } from "./extractDmg";
 export async function installDolphinOnMac({
   assetPath,
   destinationFolder,
-  skipUserFolderBkp,
+  shouldBackupUserFolder,
   log = console.log,
 }: {
   assetPath: string;
   destinationFolder: string;
-  skipUserFolderBkp: boolean;
+  shouldBackupUserFolder: boolean;
   log?: (message: string) => void;
 }) {
   const backupLocation = destinationFolder + "_old";
   const dolphinResourcesPath = path.join(destinationFolder, "Slippi Dolphin.app", "Contents", "Resources");
 
-  const bkpUserFolder = !skipUserFolderBkp && (await fs.pathExists(dolphinResourcesPath));
+  const bkpUserFolder = shouldBackupUserFolder && (await fs.pathExists(dolphinResourcesPath));
   if (bkpUserFolder) {
     log(`${dolphinResourcesPath} already exists. Moving...`);
     await fs.move(destinationFolder, backupLocation, { overwrite: true });

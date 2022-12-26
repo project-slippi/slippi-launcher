@@ -7,7 +7,7 @@ import electronLog from "electron-log";
 import * as fs from "fs-extra";
 import os from "os";
 import path from "path";
-import { gt, lt, lte } from "semver";
+import { lt } from "semver";
 
 import { DolphinLaunchType } from "../types";
 import { downloadLatestDolphin } from "./download";
@@ -224,13 +224,16 @@ export class DolphinInstallation {
       case "darwin": {
         const { installDolphinOnMac } = await import("./macos");
         const currentVersion = await this.getDolphinVersion();
-        const shouldMigrateUserFolder = currentVersion !== null && lte(currentVersion, "3.0.3");
-        if (shouldMigrateUserFolder) {
+        const userFolderInBundle = currentVersion !== null && lt(currentVersion, "3.0.4");
+        if (userFolderInBundle) {
           const oldUserFolder = path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "Resources", "User");
           await fs.copy(oldUserFolder, this.userFolder, { recursive: true, overwrite: true });
         }
-        const skipUserFolderBkp = currentVersion !== null && gt(currentVersion, "3.0.3");
-        await installDolphinOnMac({ assetPath, destinationFolder: dolphinPath, skipUserFolderBkp });
+        await installDolphinOnMac({
+          assetPath,
+          destinationFolder: dolphinPath,
+          shouldBackupUserFolder: userFolderInBundle,
+        });
         break;
       }
       case "linux": {
