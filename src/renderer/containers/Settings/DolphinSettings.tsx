@@ -47,8 +47,9 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   const openDolphinDirectoryHandler = React.useCallback(async () => {
     if (isMac || !isLinux) {
       await dolphinService.openDolphinSettingsFolder(dolphinType);
+    } else {
+      await window.electron.shell.openPath(dolphinPath);
     }
-    await window.electron.shell.openPath(dolphinPath);
   }, [dolphinPath, dolphinService, dolphinType]);
 
   const configureDolphinHandler = async () => {
@@ -91,7 +92,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
             Configure Dolphin
           </Button>
           <Button variant="outlined" color="primary" onClick={openDolphinDirectoryHandler}>
-            Open folder
+            Open settings folder
           </Button>
         </div>
       </SettingItem>
