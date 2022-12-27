@@ -18,6 +18,8 @@ const api = {
   replays: replaysApi,
   path: {
     join: path.join,
+    isAbsolute: path.isAbsolute,
+    relative: path.relative,
   },
   clipboard: {
     writeText: clipboard.writeText,

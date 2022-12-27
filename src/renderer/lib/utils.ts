@@ -1,10 +1,11 @@
 import { characters as charUtils, stages as stageUtils } from "@slippi/slippi-js";
-import path from "path";
 
 import unknownCharacterIcon from "@/styles/images/unknown.png";
 
 const characterIcons = require.context("../styles/images/characters", true);
 const stageIcons = require.context("../styles/images/stages");
+
+const path = window.electron.path;
 
 export const getCharacterIcon = (characterId: number | null, characterColor: number | null = 0): string => {
   if (characterId !== null) {
