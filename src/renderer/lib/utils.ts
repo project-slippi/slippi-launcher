@@ -63,11 +63,9 @@ export const humanReadableBytes = (bytes: number): string => {
   return `0 ${sizes[0]}`;
 };
 
-export const isSubdir = (parentPath: string, dirPath: string) => {
-  const relativePath = path.relative(parentPath, dirPath);
-  return (
-    relativePath && // value is "" when paths are identical
-    !relativePath.startsWith("..") &&
-    !path.isAbsolute(relativePath) // covers case where different drives are used e.g. 'C:\\A' vs 'D:\\A\\B'
-  );
+export const isSubdirectory = (parentPath: string, dirPath: string) => {
+  const relativePath = path.relative(parentPath, dirPath); // value is "" when paths are identical
+
+  // the absolute path condition covers the case where different drives are used e.g. 'C:\\A' vs 'D:\\A\\B'
+  return relativePath && !relativePath.startsWith("..") && !path.isAbsolute(relativePath);
 };
