@@ -8,7 +8,7 @@ import React, { useState } from "react";
 import { useSettings } from "@/lib/hooks/useSettings";
 import { useToasts } from "@/lib/hooks/useToasts";
 
-const utils = window.electron.utils;
+const { isSubdirectory } = window.electron.utils;
 
 export interface MultiPathInputProps {
   updatePaths: (paths: string[]) => void;

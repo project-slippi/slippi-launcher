@@ -1,6 +1,6 @@
 import * as fs from "fs-extra";
 import path from "path";
-import isSubdirectory from "utils/isSubdirectory";
+import { isSubdirectory } from "utils/isSubdirectory";
 
 import type { FolderResult } from "./types";
 
