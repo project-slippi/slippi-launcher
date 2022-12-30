@@ -6,4 +6,3 @@ export const isSubdirectory = (parent: string, dir: string): boolean => {
   const isSubdir = Boolean(relative) && !relative.startsWith("..") && !path.isAbsolute(relative);
   return isSubdir;
 };
-
