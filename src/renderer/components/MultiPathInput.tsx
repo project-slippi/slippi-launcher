@@ -29,7 +29,7 @@ export const MultiPathInput: React.FC<MultiPathInputProps> = ({ paths, updatePat
       return false;
     }
 
-    if (utils.isSubdirectory(rootFolder, newPath)) {
+    if (isSubdirectory(rootFolder, newPath)) {
       addErrorToast("Cannot add sub directories of the Root SLP Directory.");
       return false;
     }
@@ -37,10 +37,10 @@ export const MultiPathInput: React.FC<MultiPathInputProps> = ({ paths, updatePat
     let pathsToCheck = paths;
     for (let i = 0; i < pathsToCheck.length; i++) {
       const path = pathsToCheck[i];
-      if (utils.isSubdirectory(path, newPath)) {
+      if (isSubdirectory(path, newPath)) {
         addErrorToast("Cannot add sub directories of the Root SLP Directory.");
         return false;
-      } else if (utils.isSubdirectory(newPath, path)) {
+      } else if (isSubdirectory(newPath, path)) {
         updatePaths(pathsToCheck.splice(i, 1));
         pathsToCheck = pathsToCheck.splice(i--, 1); //decrement i because we are dropping an entry
       }
