@@ -6,6 +6,7 @@ import settingsApi from "@settings/api";
 import { clipboard, contextBridge, shell } from "electron";
 import log from "electron-log";
 import path from "path";
+import { isSubdirectory } from "utils/isSubdirectory";
 
 import commonApi from "./api";
 
@@ -16,6 +17,9 @@ const api = {
   broadcast: broadcastApi,
   dolphin: dolphinApi,
   replays: replaysApi,
+  utils: {
+    isSubdirectory,
+  },
   path: {
     join: path.join,
   },
