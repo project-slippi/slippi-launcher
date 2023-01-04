@@ -118,6 +118,11 @@ const createWindow = async () => {
     mainWindow = null;
   });
 
+  mainWindow.on("page-title-updated", (event) => {
+    // Always keep the initial window title
+    event.preventDefault();
+  });
+
   const menuBuilder = new MenuBuilder({
     mainWindow,
     onOpenPreferences: () => {
