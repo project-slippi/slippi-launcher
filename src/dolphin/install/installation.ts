@@ -89,9 +89,11 @@ export class DolphinInstallation {
   }
 
   public async validate({
+    onStart,
     onProgress,
     onComplete,
   }: {
+    onStart: () => void;
     onProgress: (current: number, total: number) => void;
     onComplete: () => void;
   }): Promise<void> {
@@ -118,6 +120,8 @@ export class DolphinInstallation {
         onComplete();
         return;
       }
+
+      onStart();
 
       log.info(`${type} Dolphin installation is outdated. Downloading latest...`);
     } catch (err) {

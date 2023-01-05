@@ -4,7 +4,7 @@ import { useCallback } from "react";
 
 import { useToasts } from "@/lib/hooks/useToasts";
 
-import { DolphinStatus, setDolphinOpened, setDolphinStatus, useDolphinStore } from "./useDolphinStore";
+import { DolphinStatus, setDolphinOpened, useDolphinStore } from "./useDolphinStore";
 
 export const useDolphinActions = (dolphinService: DolphinService) => {
   const { showError, showSuccess } = useToasts();
@@ -29,7 +29,6 @@ export const useDolphinActions = (dolphinService: DolphinService) => {
         if (getInstallStatus(dolphinType) !== DolphinStatus.READY) {
           return;
         }
-        setDolphinStatus(dolphinType, DolphinStatus.DOWNLOADING);
         return dolphinService.downloadDolphin(dolphinType).catch((err) => {
           showError(
             `Failed to install ${dolphinType} Dolphin. Try closing all Dolphin instances and restarting the launcher. Error: ${
