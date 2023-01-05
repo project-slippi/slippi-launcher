@@ -1,7 +1,7 @@
 import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import { SportsCricket } from "@mui/icons-material";
+import { Sports, SportsCricket, Straighten } from "@mui/icons-material";
 import EqualizerIcon from "@mui/icons-material/Equalizer";
 import EventIcon from "@mui/icons-material/Event";
 import LandscapeIcon from "@mui/icons-material/Landscape";
@@ -156,16 +156,33 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
               >
                 <InfoItem label={<EventIcon />}>{monthDayHourFormat(moment(date))}</InfoItem>
 
-                {lastFrame !== null && (
+                {lastFrame !== null && gameMode !== GameMode.HOME_RUN_CONTEST && (
                   <InfoItem label={<TimerIcon />}>
-                    {settings.gameMode == GameMode.TARGET_TEST
+                    {gameMode == GameMode.TARGET_TEST
                       ? frameToGameTimer(lastFrame, settings)
                       : convertFrameCountToDurationString(lastFrame, "m[m] ss[s]")}
                   </InfoItem>
                 )}
-                {gameMode == GameMode.TARGET_TEST && <InfoItem label={<TrackChangesIcon />}>{"BTT"}</InfoItem>}
-                {gameMode == GameMode.HOME_RUN_CONTEST && <InfoItem label={<SportsCricket />}>{"HRC"}</InfoItem>}
-                <InfoItem label={<LandscapeIcon />}>{stageName}</InfoItem>
+
+                {gameMode === GameMode.HOME_RUN_CONTEST && (
+                  <InfoItem label={<Straighten />}>
+                    I would like to get the HRC distance from getStadiumStats() here
+                  </InfoItem>
+                )}
+
+                <InfoItem
+                  label={
+                    gameMode === GameMode.TARGET_TEST ? (
+                      <TrackChangesIcon />
+                    ) : gameMode === GameMode.HOME_RUN_CONTEST ? (
+                      <SportsCricket />
+                    ) : (
+                      <LandscapeIcon />
+                    )
+                  }
+                >
+                  {stageName}
+                </InfoItem>
               </div>
               <DraggableFile
                 filePaths={[fullPath]}

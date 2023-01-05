@@ -73,11 +73,16 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
   const { dolphinService } = useServices();
   const { viewReplays } = useDolphinActions(dolphinService);
   const gameStatsQuery = useQuery(["loadStatsQuery", filePath], async () => {
-    const result = window.electron.replays.calculateGameStats(filePath);
+    const result = await window.electron.replays.calculateGameStats(filePath);
     return result;
   });
 
-  const loading = gameStatsQuery.isLoading;
+  const stadiumStatsQuery = useQuery(["loadStadiumStatsQuery", filePath], async () => {
+    const result = await window.electron.replays.calculateStadiumStats(filePath);
+    return result;
+  });
+
+  const loading = gameStatsQuery.isLoading && stadiumStatsQuery.isLoading;
   const error = gameStatsQuery.error as any;
 
   const file = gameStatsQuery.data?.file ?? props.file;
@@ -138,6 +143,7 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
         file={file}
         disabled={loading}
         stats={gameStatsQuery.data?.stats ?? null}
+        stadiumStats={stadiumStatsQuery.data?.stadiumStats ?? null}
         onPlay={props.onPlay}
       />
       <Content>

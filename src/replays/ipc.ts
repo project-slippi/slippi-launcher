@@ -1,4 +1,4 @@
-import type { StatsType } from "@slippi/slippi-js";
+import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
 import { _, makeEndpoint } from "utils/ipc";
 
 import type { FileLoadResult, FileResult, FolderResult, Progress } from "./types";
@@ -23,6 +23,12 @@ export const ipc_calculateGameStats = makeEndpoint.main(
   "calculateGameStats",
   <{ filePath: string }>_,
   <{ file: FileResult; stats: StatsType | null }>_,
+);
+
+export const ipc_calculateStadiumStats = makeEndpoint.main(
+  "calculateStadiumStats",
+  <{ filePath: string }>_,
+  <{ file: FileResult; stadiumStats: StadiumStatsType | null }>_,
 );
 
 // Events

@@ -1,6 +1,7 @@
 import { FolderTreeService } from "./folderTreeService";
 import {
   ipc_calculateGameStats,
+  ipc_calculateStadiumStats,
   ipc_initializeFolderTree,
   ipc_loadProgressUpdatedEvent,
   ipc_loadReplayFolder,
@@ -34,5 +35,12 @@ export default function setupReplaysIpc() {
     const result = await worker.calculateGameStats(filePath);
     const fileResult = await worker.loadSingleFile(filePath);
     return { file: fileResult, stats: result };
+  });
+
+  ipc_calculateStadiumStats.main!.handle(async ({ filePath }) => {
+    const worker = await replayBrowserWorker;
+    const result = await worker.calculateStadiumStats(filePath);
+    const fileResult = await worker.loadSingleFile(filePath);
+    return { file: fileResult, stadiumStats: result };
   });
 }
