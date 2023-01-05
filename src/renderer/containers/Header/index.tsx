@@ -1,5 +1,4 @@
 import { colors } from "@common/colors";
-import { slippiHomepage } from "@common/constants";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
@@ -9,11 +8,11 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import React, { useCallback, useMemo } from "react";
 
-import { ExternalLink } from "@/components/ExternalLink";
 import { PlayButton, UpdatingButton } from "@/components/play_button/PlayButton";
 import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
 import { useAccount } from "@/lib/hooks/useAccount";
+import { useAppUpdate } from "@/lib/hooks/useAppUpdate";
 import { useLoginModal } from "@/lib/hooks/useLoginModal";
 import { useSettings } from "@/lib/hooks/useSettings";
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
@@ -49,8 +48,23 @@ export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
   const userData = useAccount((store) => store.userData);
   const serverError = useAccount((store) => store.serverError);
   const meleeIsoPath = useSettings((store) => store.settings.isoPath) || undefined;
-  const { showError } = useToasts();
-  const { launchNetplay } = useDolphinActions(dolphinService);
+  const { showInfo, showError } = useToasts();
+  const { launchNetplay, updateDolphin } = useDolphinActions(dolphinService);
+  const { checkForAppUpdates } = useAppUpdate();
+  const [checkingForUpdates, setCheckingForUpdates] = React.useState(false);
+
+  const checkForUpdatesHandler = React.useCallback(async () => {
+    setCheckingForUpdates(true);
+    try {
+      showInfo("Checking for updates...");
+      await checkForAppUpdates();
+      await updateDolphin();
+    } catch (err) {
+      window.electron.log.error(err);
+      showError("Failed to get updates");
+    }
+    setTimeout(() => setCheckingForUpdates(false), 10000);
+  }, [checkForAppUpdates, updateDolphin, showInfo, showError]);
 
   const onPlay = useCallback(
     async (offlineOnly?: boolean) => {
@@ -105,8 +119,12 @@ export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
           padding-left: 5px;
         `}
       >
-        <Tooltip title="Open Slippi.gg">
-          <Button LinkComponent={ExternalLink} href={slippiHomepage} style={isMac ? { marginTop: 10 } : undefined}>
+        <Tooltip title="Check for updates">
+          <Button
+            style={isMac ? { marginTop: 10 } : undefined}
+            onClick={checkForUpdatesHandler}
+            disabled={checkingForUpdates}
+          >
             <img src={slippiLogo} width="38px" />
           </Button>
         </Tooltip>
