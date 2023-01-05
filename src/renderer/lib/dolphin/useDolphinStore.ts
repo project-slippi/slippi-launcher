@@ -29,7 +29,7 @@ export const setDolphinOpened = (dolphinType: DolphinLaunchType, isOpened = true
   }
 };
 
-export const setDolphinComplete = (dolphinType: DolphinLaunchType, status: DolphinStatus) => {
+export const setDolphinStatus = (dolphinType: DolphinLaunchType, status: DolphinStatus) => {
   switch (dolphinType) {
     case DolphinLaunchType.NETPLAY:
       useDolphinStore.setState({ netplayStatus: status });

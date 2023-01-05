@@ -13,8 +13,8 @@ import { useToasts } from "@/lib/hooks/useToasts";
 import { handleDolphinExitCode } from "./handleDolphinExitCode";
 import {
   DolphinStatus,
-  setDolphinComplete,
   setDolphinOpened,
+  setDolphinStatus,
   setDolphinVersion,
   updateNetplayDownloadProgress,
 } from "./useDolphinStore";
@@ -42,7 +42,7 @@ export const useDolphinListeners = (dolphinService: DolphinService) => {
   }, []);
 
   const dolphinCompleteHandler = useCallback((event: DolphinDownloadCompleteEvent) => {
-    setDolphinComplete(event.dolphinType, DolphinStatus.READY);
+    setDolphinStatus(event.dolphinType, DolphinStatus.READY);
     setDolphinVersion(event.dolphinVersion, event.dolphinType);
   }, []);
 
