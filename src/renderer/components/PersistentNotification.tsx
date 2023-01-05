@@ -23,7 +23,7 @@ export const PersistentNotification: React.FC = () => {
             justify-content: center;
           `}
         >
-          Downloading Version {updateVersion}...
+          Downloading version {updateVersion}...
         </div>
       </Outer>
     );
