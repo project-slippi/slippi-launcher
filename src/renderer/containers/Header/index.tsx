@@ -6,6 +6,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
+import { debounce } from "lodash";
 import React, { useCallback, useMemo } from "react";
 
 import { PlayButton, UpdatingButton } from "@/components/play_button/PlayButton";
@@ -53,7 +54,7 @@ export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
   const { checkForAppUpdates } = useAppUpdate();
   const [checkingForUpdates, setCheckingForUpdates] = React.useState(false);
 
-  const checkForUpdatesHandler = React.useCallback(async () => {
+  const checkForUpdates = React.useCallback(async () => {
     setCheckingForUpdates(true);
     try {
       showInfo("Checking for updates...");
@@ -62,9 +63,12 @@ export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
     } catch (err) {
       window.electron.log.error(err);
       showError("Failed to get updates");
+    } finally {
+      setCheckingForUpdates(false);
     }
-    setTimeout(() => setCheckingForUpdates(false), 10000);
   }, [checkForAppUpdates, updateDolphin, showInfo, showError]);
+
+  const checkForUpdatesHandler = debounce(checkForUpdates, 500);
 
   const onPlay = useCallback(
     async (offlineOnly?: boolean) => {
