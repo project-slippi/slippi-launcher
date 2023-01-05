@@ -1,8 +1,3 @@
-import { characters as charUtils } from "@slippi/slippi-js";
-import { isDevelopment } from "common/constants";
-import path from "path";
-import url from "url";
-import fs from "fs";
 import { characters as charUtils, stages as stageUtils } from "@slippi/slippi-js";
 
 import unknownCharacterIcon from "@/styles/images/unknown.png";

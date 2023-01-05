@@ -8,6 +8,7 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import type { FileResult } from "@replays/types";
+import { GameMode } from "@slippi/slippi-js";
 import _ from "lodash";
 import React from "react";
 import { useQuery } from "react-query";
@@ -23,9 +24,8 @@ import { withFont } from "@/styles/withFont";
 
 import { GameProfile } from "./GameProfile";
 import { GameProfileHeader } from "./GameProfileHeader";
-import { TargetTestProfile } from "./TargetTestProfile";
 import { HomeRunProfile } from "./HomeRunProfile";
-import { GameMode } from "@slippi/slippi-js";
+import { TargetTestProfile } from "./TargetTestProfile";
 
 const Outer = styled.div<{
   backgroundImage?: any;

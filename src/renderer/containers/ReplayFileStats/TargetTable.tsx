@@ -1,13 +1,13 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { FileResult } from "@replays/types";
-import { PlayerType, StatsType, frameToGameTimer } from "@slippi/slippi-js";
-import TrackChangesIcon from "@material-ui/icons/TrackChanges";
-import CancelIcon from "@material-ui/icons/Cancel";
+import styled from "@emotion/styled";
+import CancelIcon from "@mui/icons-material/Cancel";
+import TrackChangesIcon from "@mui/icons-material/TrackChanges";
+import type { FileResult } from "@replays/types";
+import type { PlayerType, StatsType } from "@slippi/slippi-js";
+import { frameToGameTimer } from "@slippi/slippi-js";
 import _ from "lodash";
 import React from "react";
-
-import styled from "@emotion/styled";
 
 export interface TargetTableProps {
   file: FileResult;
@@ -21,6 +21,7 @@ export const TargetTable: React.FC<TargetTableProps> = ({ file, stats }) => {
   const renderTimeline = () => {
     const TargetIconStyle = styled.div``;
 
+    /*
     const targetMarkers = stats.targetBreaks
       ?.filter((t) => t.frameDestroyed)
       .sort((a, b) => (a.frameDestroyed ?? replayLength + 1) - (b.frameDestroyed ?? replayLength + 1))
@@ -69,6 +70,7 @@ export const TargetTable: React.FC<TargetTableProps> = ({ file, stats }) => {
         <LeftoverCounter>{leftoverCount}</LeftoverCounter>
       </LeftoverIndicator>
     ) as React.ReactElement;
+    */
 
     const Timeline = styled.div`
       width: 100%;
@@ -122,7 +124,9 @@ export const TargetTable: React.FC<TargetTableProps> = ({ file, stats }) => {
         );
       }
     }
+    return <div />;
 
+    /*
     return (
       <TimelineContainer>
         <Timeline>
@@ -133,6 +137,7 @@ export const TargetTable: React.FC<TargetTableProps> = ({ file, stats }) => {
         {leftoverCount > 0 ? leftoverTargets : null}
       </TimelineContainer>
     );
+    */
   };
 
   const TimelineContainer = styled.div`

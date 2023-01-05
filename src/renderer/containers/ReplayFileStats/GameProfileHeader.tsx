@@ -1,43 +1,22 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import Button from "@material-ui/core/Button";
-import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
-import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
-import EventIcon from "@material-ui/icons/Event";
-import LandscapeIcon from "@material-ui/icons/Landscape";
-import PlayArrowIcon from "@material-ui/icons/PlayArrow";
-import SportsEsportsIcon from "@material-ui/icons/SportsEsports";
-import TimerIcon from "@material-ui/icons/Timer";
-import TrackChangesIcon from "@material-ui/icons/TrackChanges";
-import { FileResult } from "@replays/types";
-import {
-  frameToGameTimer,
-  GameMode,
-  GameStartType,
-  MetadataType,
-  stages as stageUtils,
-  StatsType,
-} from "@slippi/slippi-js";
-import { colors } from "common/colors";
-import { extractPlayerNames } from "common/matchNames";
-import { convertFrameCountToDurationString, monthDayHourFormat } from "common/time";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import EventIcon from "@mui/icons-material/Event";
 import LandscapeIcon from "@mui/icons-material/Landscape";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import SportsCricket from "@mui/icons-material/SportsCricket";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
+import TimerIcon from "@mui/icons-material/Timer";
 import TimerOutlinedIcon from "@mui/icons-material/TimerOutlined";
+import TrackChangesIcon from "@mui/icons-material/TrackChanges";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import type { FileResult } from "@replays/types";
 import type { GameStartType, MetadataType, StatsType } from "@slippi/slippi-js";
-import { stages as stageUtils } from "@slippi/slippi-js";
+import { frameToGameTimer, GameMode, stages as stageUtils } from "@slippi/slippi-js";
 import _ from "lodash";
 import moment from "moment";
 import React from "react";
@@ -47,7 +26,6 @@ import { extractPlayerNames } from "@/lib/matchNames";
 import { convertFrameCountToDurationString, monthDayHourFormat } from "@/lib/time";
 
 import { PlayerInfo } from "./PlayerInfo";
-import { SportsCricket } from "@material-ui/icons";
 
 const Outer = styled.div`
   margin-top: 10px;
@@ -174,7 +152,7 @@ export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
           </div>
           <PlayerInfoDisplay metadata={metadata} settings={settings} />
         </div>
-        <GameDetails file={file} stats={stats} />
+        <GameDetails file={file} stats={stats} settings={settings} />
       </div>
       <Controls disabled={disabled} index={index} total={total} onNext={onNext} onPrev={onPrev} onPlay={onPlay} />
     </div>
@@ -213,7 +191,8 @@ const GameDetails: React.FC<{
       ? file.settings.gameMode == GameMode.TARGET_TEST && file.metadata
         ? frameToGameTimer(file.metadata?.lastFrame as number, file.settings)
         : file.settings.gameMode == GameMode.HOME_RUN_CONTEST
-        ? `${stats?.homerunDistance} ft.`
+        ? //? `${stats?.homerunDistance} ft.`
+          `-infinity ft.`
         : convertFrameCountToDurationString(duration, "m[m] ss[s]")
       : "Unknown";
 
@@ -236,6 +215,7 @@ const GameDetails: React.FC<{
     },
   ];
 
+  /*
   const eventDisplay = {
     label: <EventIcon />,
     content: monthDayHourFormat(moment(startAtDisplay)) as string,
@@ -265,13 +245,16 @@ const GameDetails: React.FC<{
     label: <SportsCricket />,
     content: "Home Run Contest",
   };
+  */
 
+  /*
   const displayData =
     gameMode == GameMode.TARGET_TEST
       ? [eventDisplay, timerDisplay, stageDisplay, targetTestDisplay, platformDisplay]
       : gameMode == GameMode.HOME_RUN_CONTEST
       ? [eventDisplay, timerDisplay, stageDisplay, homerunDisplay, platformDisplay]
       : [eventDisplay, timerDisplay, stageDisplay, platformDisplay];
+      */
 
   const metadataElements = displayData.map((details, i) => {
     return (

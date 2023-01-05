@@ -1,9 +1,10 @@
-import { IconMessage } from "@/components/Message";
-import Warning from "@material-ui/icons/Warning";
-import { FileResult } from "@replays/types";
-import { StatsType } from "@slippi/slippi-js";
+import Warning from "@mui/icons-material/Warning";
+import type { FileResult } from "@replays/types";
+import type { StatsType } from "@slippi/slippi-js";
 import _ from "lodash";
 import React from "react";
+
+import { IconMessage } from "@/components/Message";
 
 export interface GameProfileProps {
   file: FileResult;

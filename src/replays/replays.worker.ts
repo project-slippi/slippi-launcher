@@ -3,9 +3,8 @@
 // when in Node worker context.
 
 // TODO: Make electron-log work somehow
-import type { StatsType } from "@slippi/slippi-js";
-import { SlippiGame } from "@slippi/slippi-js";
-import { GameMode, SlippiGame, StatsType } from "@slippi/slippi-js";
+import type { StatsType, StatsType } from "@slippi/slippi-js";
+import { GameMode, SlippiGame, SlippiGame } from "@slippi/slippi-js";
 import _ from "lodash";
 import type { ModuleMethods } from "threads/dist/types/master";
 import { Observable, Subject } from "threads/observable";
