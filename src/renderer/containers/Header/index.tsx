@@ -9,7 +9,7 @@ import Tooltip from "@mui/material/Tooltip";
 import { debounce } from "lodash";
 import React, { useCallback, useMemo } from "react";
 
-import { PlayButton, UpdatingButton } from "@/components/play_button/PlayButton";
+import { PlayButton as PlayButtonImpl, UpdatingButton } from "@/components/play_button/PlayButton";
 import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
 import { useAccount } from "@/lib/hooks/useAccount";
@@ -35,11 +35,8 @@ const OuterBox = styled(Box)`
   background-color: ${colors.purple};
   height: 70px;
 `;
-export interface HeaderProps {
-  menuItems: MenuItem[];
-}
 
-export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
+export const Header = ({ menuItems }: { menuItems: MenuItem[] }) => {
   const { dolphinService, slippiBackendService } = useServices();
   const [startGameModalOpen, setStartGameModalOpen] = React.useState(false);
   const [activateOnlineModal, setActivateOnlineModal] = React.useState(false);
@@ -49,26 +46,8 @@ export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
   const userData = useAccount((store) => store.userData);
   const serverError = useAccount((store) => store.serverError);
   const meleeIsoPath = useSettings((store) => store.settings.isoPath) || undefined;
-  const { showInfo, showError } = useToasts();
-  const { launchNetplay, updateDolphin } = useDolphinActions(dolphinService);
-  const { checkForAppUpdates } = useAppUpdate();
-  const [checkingForUpdates, setCheckingForUpdates] = React.useState(false);
-
-  const checkForUpdates = React.useCallback(async () => {
-    setCheckingForUpdates(true);
-    try {
-      showInfo("Checking for updates...");
-      await checkForAppUpdates();
-      await updateDolphin();
-    } catch (err) {
-      window.electron.log.error(err);
-      showError("Failed to get updates");
-    } finally {
-      setCheckingForUpdates(false);
-    }
-  }, [checkForAppUpdates, updateDolphin, showInfo, showError]);
-
-  const checkForUpdatesHandler = debounce(checkForUpdates, 500);
+  const { showError } = useToasts();
+  const { launchNetplay } = useDolphinActions(dolphinService);
 
   const onPlay = useCallback(
     async (offlineOnly?: boolean) => {
@@ -123,21 +102,13 @@ export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
           padding-left: 5px;
         `}
       >
-        <Tooltip title="Check for updates">
-          <Button
-            style={isMac ? { marginTop: 10 } : undefined}
-            onClick={checkForUpdatesHandler}
-            disabled={checkingForUpdates}
-          >
-            <img src={slippiLogo} width="38px" />
-          </Button>
-        </Tooltip>
+        <CheckForUpdatesButton />
         <div
           css={css`
             margin: 0 10px;
           `}
         >
-          <ConnectedPlayButton onClick={() => onPlay()} />
+          <PlayButton onClick={() => onPlay()} />
         </div>
         <MainMenu menuItems={menuItems} />
       </div>
@@ -176,7 +147,7 @@ export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
   );
 };
 
-const ConnectedPlayButton = React.memo(({ onClick }: { onClick: () => void }) => {
+const PlayButton = ({ onClick }: { onClick: () => void }) => {
   const installStatus = useDolphinStore((store) => store.netplayStatus);
   const installProgress = useDolphinStore((store) => store.netplayDownloadProgress);
   const fillPercent = useMemo(() => {
@@ -190,8 +161,45 @@ const ConnectedPlayButton = React.memo(({ onClick }: { onClick: () => void }) =>
   }, [installProgress, installStatus]);
 
   if (installStatus === DolphinStatus.READY) {
-    return <PlayButton onClick={onClick} />;
+    return <PlayButtonImpl onClick={onClick} />;
   }
 
   return <UpdatingButton onClick={onClick} fillPercent={fillPercent} />;
-});
+};
+
+const CheckForUpdatesButton = () => {
+  const { dolphinService } = useServices();
+  const { updateDolphin } = useDolphinActions(dolphinService);
+  const { checkForAppUpdates } = useAppUpdate();
+  const { showInfo, showError } = useToasts();
+  const [checkingForUpdates, setCheckingForUpdates] = React.useState(false);
+
+  const checkForUpdatesHandler = useMemo(() => {
+    const checkForUpdates = async () => {
+      setCheckingForUpdates(true);
+      try {
+        showInfo("Checking for updates...");
+        await checkForAppUpdates();
+        await updateDolphin();
+      } catch (err) {
+        window.electron.log.error(err);
+        showError("Failed to get updates");
+      } finally {
+        setCheckingForUpdates(false);
+      }
+    };
+    return debounce(checkForUpdates, 500);
+  }, [checkForAppUpdates, updateDolphin, showInfo, showError]);
+
+  return (
+    <Tooltip title="Check for updates">
+      <Button
+        style={isMac ? { marginTop: 10 } : undefined}
+        onClick={checkForUpdatesHandler}
+        disabled={checkingForUpdates}
+      >
+        <img src={slippiLogo} width="38px" />
+      </Button>
+    </Tooltip>
+  );
+};
