@@ -3,7 +3,7 @@ import { IniFile } from "@dolphin/config/iniFile";
 import { findDolphinExecutable } from "@dolphin/util";
 import { spawnSync } from "child_process";
 import { app } from "electron";
-import log from "electron-log";
+import electronLog from "electron-log";
 import * as fs from "fs-extra";
 import os from "os";
 import path from "path";
@@ -13,6 +13,8 @@ import { DolphinLaunchType } from "../types";
 import { downloadLatestDolphin } from "./download";
 import type { DolphinVersionResponse } from "./fetchLatestVersion";
 import { fetchLatestVersion } from "./fetchLatestVersion";
+
+const log = electronLog.scope("dolphin/installation");
 
 const isLinux = process.platform === "linux";
 
@@ -87,9 +89,11 @@ export class DolphinInstallation {
   }
 
   public async validate({
+    onStart,
     onProgress,
     onComplete,
   }: {
+    onStart: () => void;
     onProgress: (current: number, total: number) => void;
     onComplete: () => void;
   }): Promise<void> {
@@ -116,6 +120,8 @@ export class DolphinInstallation {
         onComplete();
         return;
       }
+
+      onStart();
 
       log.info(`${type} Dolphin installation is outdated. Downloading latest...`);
     } catch (err) {

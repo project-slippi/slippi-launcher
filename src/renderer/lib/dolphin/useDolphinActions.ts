@@ -23,6 +23,23 @@ export const useDolphinActions = (dolphinService: DolphinService) => {
     [netplayStatus, playbackStatus],
   );
 
+  const updateDolphin = useCallback(async () => {
+    return Promise.all(
+      [DolphinLaunchType.NETPLAY, DolphinLaunchType.PLAYBACK].map(async (dolphinType) => {
+        if (getInstallStatus(dolphinType) !== DolphinStatus.READY) {
+          return;
+        }
+        return dolphinService.downloadDolphin(dolphinType).catch((err) => {
+          showError(
+            `Failed to install ${dolphinType} Dolphin. Try closing all Dolphin instances and restarting the launcher. Error: ${
+              err instanceof Error ? err.message : JSON.stringify(err)
+            }`,
+          );
+        });
+      }),
+    );
+  }, [getInstallStatus, dolphinService, showError]);
+
   const openConfigureDolphin = useCallback(
     (dolphinType: DolphinLaunchType) => {
       if (getInstallStatus(dolphinType) !== DolphinStatus.READY) {
@@ -110,5 +127,6 @@ export const useDolphinActions = (dolphinService: DolphinService) => {
     launchNetplay,
     viewReplays,
     importDolphin,
+    updateDolphin,
   };
 };

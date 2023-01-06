@@ -1,6 +1,7 @@
 import type {
   DolphinDownloadCompleteEvent,
   DolphinDownloadProgressEvent,
+  DolphinDownloadStartEvent,
   DolphinNetplayClosedEvent,
   DolphinPlaybackClosedEvent,
   DolphinService,
@@ -13,8 +14,8 @@ import { useToasts } from "@/lib/hooks/useToasts";
 import { handleDolphinExitCode } from "./handleDolphinExitCode";
 import {
   DolphinStatus,
-  setDolphinComplete,
   setDolphinOpened,
+  setDolphinStatus,
   setDolphinVersion,
   updateNetplayDownloadProgress,
 } from "./useDolphinStore";
@@ -42,18 +43,29 @@ export const useDolphinListeners = (dolphinService: DolphinService) => {
   }, []);
 
   const dolphinCompleteHandler = useCallback((event: DolphinDownloadCompleteEvent) => {
-    setDolphinComplete(event.dolphinType, DolphinStatus.READY);
+    setDolphinStatus(event.dolphinType, DolphinStatus.READY);
     setDolphinVersion(event.dolphinVersion, event.dolphinType);
+  }, []);
+
+  const dolphinDownloadStartHandler = useCallback((event: DolphinDownloadStartEvent) => {
+    setDolphinStatus(event.dolphinType, DolphinStatus.DOWNLOADING);
   }, []);
 
   useEffect(() => {
     const subs: Array<() => void> = [];
     subs.push(dolphinService.onEvent(DolphinEventType.CLOSED, dolphinClosedHandler));
+    subs.push(dolphinService.onEvent(DolphinEventType.DOWNLOAD_START, dolphinDownloadStartHandler));
     subs.push(dolphinService.onEvent(DolphinEventType.DOWNLOAD_PROGRESS, dolphinProgressHandler));
     subs.push(dolphinService.onEvent(DolphinEventType.DOWNLOAD_COMPLETE, dolphinCompleteHandler));
 
     return () => {
       subs.forEach((unsub) => unsub());
     };
-  }, [dolphinService, dolphinClosedHandler, dolphinProgressHandler, dolphinCompleteHandler]);
+  }, [
+    dolphinService,
+    dolphinClosedHandler,
+    dolphinProgressHandler,
+    dolphinCompleteHandler,
+    dolphinDownloadStartHandler,
+  ]);
 };

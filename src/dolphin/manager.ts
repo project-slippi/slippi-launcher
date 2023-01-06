@@ -29,6 +29,7 @@ export class DolphinManager {
   public async installDolphin(dolphinType: DolphinLaunchType): Promise<void> {
     const dolphinInstall = this.getInstallation(dolphinType);
     await dolphinInstall.validate({
+      onStart: () => this._onStart(dolphinType),
       onProgress: (current, total) => this._onProgress(dolphinType, current, total),
       onComplete: () =>
         dolphinInstall.getDolphinVersion().then((version) => {
@@ -174,6 +175,7 @@ export class DolphinManager {
     }
 
     const installation = this.getInstallation(launchType);
+    this._onStart(launchType);
     await installation.downloadAndInstall({
       cleanInstall,
       onProgress: (current, total) => this._onProgress(launchType, current, total),
@@ -204,6 +206,13 @@ export class DolphinManager {
     await installation.updateSettings({
       replayPath: this.settingsManager.getRootSlpPath(),
       useMonthlySubfolders: this.settingsManager.getUseMonthlySubfolders(),
+    });
+  }
+
+  private _onStart(dolphinType: DolphinLaunchType) {
+    this.eventSubject.next({
+      type: DolphinEventType.DOWNLOAD_START,
+      dolphinType,
     });
   }
 
