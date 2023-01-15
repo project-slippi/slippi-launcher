@@ -74,6 +74,11 @@ export class DolphinInstance extends EventEmitter {
       this.emit("error", err);
     });
   }
+  public kill() {
+    if (this.process) {
+      this.process.kill("SIGINT");
+    }
+  }
 }
 
 export class PlaybackDolphinInstance extends DolphinInstance {

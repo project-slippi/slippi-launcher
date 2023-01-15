@@ -79,17 +79,22 @@ export class DolphinManager {
   }
 
   public async launchNetplayDolphin() {
-    if (this.netplayDolphinInstance) {
-      throw new Error("Netplay dolphin is already open!");
-    }
-
     await this._updateDolphinSettings(DolphinLaunchType.NETPLAY);
 
     const netplayInstallation = this.getInstallation(DolphinLaunchType.NETPLAY);
     const dolphinPath = await netplayInstallation.findDolphinExecutable();
     log.info(`Launching dolphin at path: ${dolphinPath}`);
     const launchMeleeOnPlay = this.settingsManager.get().settings.launchMeleeOnPlay;
-    const meleeIsoPath = launchMeleeOnPlay ? await this._getIsoPath() : undefined;
+    let meleeIsoPath = launchMeleeOnPlay ? await this._getIsoPath() : undefined;
+
+    if (this.netplayDolphinInstance) {
+      if (!launchMeleeOnPlay) {
+        this.netplayDolphinInstance.kill();
+        meleeIsoPath = await this._getIsoPath();
+      } else {
+        throw new Error("Netplay dolphin is already open!");
+      }
+    }
 
     // Create the Dolphin instance and start it
     this.netplayDolphinInstance = new DolphinInstance(dolphinPath, meleeIsoPath);
