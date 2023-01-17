@@ -84,7 +84,8 @@ export class DolphinManager {
     const netplayInstallation = this.getInstallation(DolphinLaunchType.NETPLAY);
     const dolphinPath = await netplayInstallation.findDolphinExecutable();
     log.info(`Launching dolphin at path: ${dolphinPath}`);
-    const launchMeleeOnPlay = this.settingsManager.get().settings.launchMeleeOnPlay;
+    const launchMeleeOnPlay = this.settingsManager.get().settings.launchMeleeOnPlay || 
+this.netplayDolphinInstance !== null;
     let meleeIsoPath = launchMeleeOnPlay ? await this._getIsoPath() : undefined;
 
     if (this.netplayDolphinInstance) {
