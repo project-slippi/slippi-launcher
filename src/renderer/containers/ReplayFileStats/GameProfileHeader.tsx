@@ -10,7 +10,6 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import SportsCricket from "@mui/icons-material/SportsCricket";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import TimerIcon from "@mui/icons-material/Timer";
-import TimerOutlinedIcon from "@mui/icons-material/TimerOutlined";
 import TrackChangesIcon from "@mui/icons-material/TrackChanges";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
@@ -199,6 +198,7 @@ const GameDetails: React.FC<{
       : "Unknown";
 
   const distance = _.get(stadiumStats, "distance");
+  const units = _.get(stadiumStats, "units");
 
   const eventDisplay = {
     label: <EventIcon />,
@@ -232,7 +232,7 @@ const GameDetails: React.FC<{
 
   const distanceDisplay = {
     label: <Straighten />,
-    content: distance as string,
+    content: `${distance} ${units}`,
   };
 
   const gameMode = file.settings.gameMode;

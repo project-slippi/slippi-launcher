@@ -1,7 +1,7 @@
 import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import { Sports, SportsCricket, Straighten } from "@mui/icons-material";
+import { SportsCricket } from "@mui/icons-material";
 import EqualizerIcon from "@mui/icons-material/Equalizer";
 import EventIcon from "@mui/icons-material/Event";
 import LandscapeIcon from "@mui/icons-material/Landscape";
@@ -161,12 +161,6 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
                     {gameMode == GameMode.TARGET_TEST
                       ? frameToGameTimer(lastFrame, settings)
                       : convertFrameCountToDurationString(lastFrame, "m[m] ss[s]")}
-                  </InfoItem>
-                )}
-
-                {gameMode === GameMode.HOME_RUN_CONTEST && (
-                  <InfoItem label={<Straighten />}>
-                    I would like to get the HRC distance from getStadiumStats() here
                   </InfoItem>
                 )}
 
