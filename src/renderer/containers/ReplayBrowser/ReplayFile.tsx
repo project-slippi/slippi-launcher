@@ -1,12 +1,12 @@
 import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import { SportsCricket } from "@mui/icons-material";
 import EqualizerIcon from "@mui/icons-material/Equalizer";
 import EventIcon from "@mui/icons-material/Event";
 import LandscapeIcon from "@mui/icons-material/Landscape";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
+import SportsCricket from "@mui/icons-material/SportsCricket";
 import TimerIcon from "@mui/icons-material/Timer";
 import TrackChangesIcon from "@mui/icons-material/TrackChanges";
 import IconButton from "@mui/material/IconButton";
@@ -76,6 +76,32 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
   const stageImageUrl = stageInfo !== null && stageInfo.id !== -1 ? getStageImage(stageInfo.id) : undefined;
   const stageName = stageInfo !== null ? stageInfo.name : "Unknown Stage";
   const gameMode = settings.gameMode;
+  let gameModeIcon;
+
+  switch (gameMode) {
+    case GameMode.HOME_RUN_CONTEST:
+      gameModeIcon = <SportsCricket />;
+      break;
+    case GameMode.TARGET_TEST:
+      gameModeIcon = <TrackChangesIcon />;
+      break;
+    case GameMode.ONLINE:
+    case GameMode.VS:
+    default:
+      gameModeIcon = <LandscapeIcon />;
+      break;
+  }
+
+  let detailDisplay;
+  if (lastFrame !== null && gameMode !== GameMode.HOME_RUN_CONTEST) {
+    detailDisplay = {
+      label: <TimerIcon />,
+      content:
+        gameMode === GameMode.TARGET_TEST
+          ? frameToGameTimer(lastFrame, settings)
+          : convertFrameCountToDurationString(lastFrame, "m[m] ss[s]"),
+    };
+  }
 
   const teams: PlayerInfo[][] = _.chain(settings.players)
     .groupBy((player) => (settings.isTeams ? player.teamId : player.port))
@@ -156,27 +182,9 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
               >
                 <InfoItem label={<EventIcon />}>{monthDayHourFormat(moment(date))}</InfoItem>
 
-                {lastFrame !== null && gameMode !== GameMode.HOME_RUN_CONTEST && (
-                  <InfoItem label={<TimerIcon />}>
-                    {gameMode == GameMode.TARGET_TEST
-                      ? frameToGameTimer(lastFrame, settings)
-                      : convertFrameCountToDurationString(lastFrame, "m[m] ss[s]")}
-                  </InfoItem>
-                )}
+                {detailDisplay !== null && <InfoItem label={detailDisplay?.label}>{detailDisplay?.content}</InfoItem>}
 
-                <InfoItem
-                  label={
-                    gameMode === GameMode.TARGET_TEST ? (
-                      <TrackChangesIcon />
-                    ) : gameMode === GameMode.HOME_RUN_CONTEST ? (
-                      <SportsCricket />
-                    ) : (
-                      <LandscapeIcon />
-                    )
-                  }
-                >
-                  {stageName}
-                </InfoItem>
+                <InfoItem label={gameModeIcon}>{stageName}</InfoItem>
               </div>
               <DraggableFile
                 filePaths={[fullPath]}
