@@ -236,12 +236,21 @@ const GameDetails: React.FC<{
   };
 
   const gameMode = file.settings.gameMode;
-  const displayData =
-    gameMode == GameMode.TARGET_TEST
-      ? [eventDisplay, timerDisplay, stageDisplay, targetTestDisplay, platformDisplay]
-      : gameMode == GameMode.HOME_RUN_CONTEST
-      ? [eventDisplay, distanceDisplay, homerunDisplay, platformDisplay]
-      : [eventDisplay, timerDisplay, stageDisplay, platformDisplay];
+
+  let displayData;
+  switch (gameMode) {
+    case GameMode.HOME_RUN_CONTEST:
+      displayData = [eventDisplay, distanceDisplay, homerunDisplay, platformDisplay];
+      break;
+    case GameMode.TARGET_TEST:
+      displayData = [eventDisplay, timerDisplay, stageDisplay, targetTestDisplay, platformDisplay];
+      break;
+    case GameMode.ONLINE:
+    case GameMode.VS:
+    default:
+      displayData = [eventDisplay, timerDisplay, stageDisplay, platformDisplay];
+      break;
+  }
 
   const metadataElements = displayData.map((details, i) => {
     return (
