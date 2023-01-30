@@ -45,7 +45,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
     dolphinStatus === DolphinStatus.UNKNOWN ? "Not found" : !dolphinVersion ? "Unknown" : dolphinVersion;
 
   const openDolphinDirectoryHandler = React.useCallback(async () => {
-    if (isMac || !isLinux) {
+    if (isMac || isLinux) {
       await dolphinService.openDolphinSettingsFolder(dolphinType);
     } else {
       await window.electron.shell.openPath(dolphinPath);
