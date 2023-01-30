@@ -1,4 +1,4 @@
-import { app } from "electron";
+import { app, shell } from "electron";
 import log from "electron-log";
 import * as fs from "fs-extra";
 import { isEqual } from "lodash";
@@ -14,6 +14,7 @@ import {
   ipc_hardResetDolphin,
   ipc_importDolphinSettings,
   ipc_launchNetplayDolphin,
+  ipc_openDolphinSettingsFolder,
   ipc_removePlayKeyFile,
   ipc_softResetDolphin,
   ipc_storePlayKeyFile,
@@ -46,6 +47,12 @@ export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: Do
   ipc_softResetDolphin.main!.handle(async ({ dolphinType }) => {
     console.log("soft resetting dolphin...");
     await dolphinManager.reinstallDolphin(dolphinType, false);
+    return { success: true };
+  });
+
+  ipc_openDolphinSettingsFolder.main!.handle(async ({ dolphinType }) => {
+    const path = await dolphinManager.getInstallation(dolphinType).userFolder;
+    await shell.openPath(path);
     return { success: true };
   });
 

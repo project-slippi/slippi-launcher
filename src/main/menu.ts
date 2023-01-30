@@ -11,6 +11,7 @@ export class MenuBuilder {
   private mainWindow: BrowserWindow;
   private onOpenPreferences: () => void;
   private onOpenReplayFile: (filePath: string) => void;
+  private onOpenAppSupportFolder: () => void;
   private createWindow: () => Promise<void>;
   private enableDevTools?: boolean;
 
@@ -18,6 +19,7 @@ export class MenuBuilder {
     mainWindow: BrowserWindow;
     onOpenPreferences: () => void;
     onOpenReplayFile: (filePath: string) => void;
+    onOpenAppSupportFolder: () => void;
     createWindow: () => Promise<void>;
     enableDevTools?: boolean;
   }) {
@@ -25,6 +27,7 @@ export class MenuBuilder {
     this.enableDevTools = options.enableDevTools;
     this.onOpenPreferences = options.onOpenPreferences;
     this.onOpenReplayFile = options.onOpenReplayFile;
+    this.onOpenAppSupportFolder = options.onOpenAppSupportFolder;
     this.createWindow = options.createWindow;
   }
 
@@ -70,6 +73,12 @@ export class MenuBuilder {
           accelerator: "Cmd+,",
           click: () => {
             this.onOpenPreferences();
+          },
+        },
+        {
+          label: "Open App Settings Folder",
+          click: () => {
+            this.onOpenAppSupportFolder();
           },
         },
         {

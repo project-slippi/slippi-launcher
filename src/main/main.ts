@@ -130,6 +130,10 @@ const createWindow = async () => {
     },
     onOpenReplayFile: playReplayAndShowStats,
     createWindow,
+    onOpenAppSupportFolder: () => {
+      const path = app.getPath("userData");
+      void shell.openPath(path);
+    },
     enableDevTools: isDevelopment,
   });
   menu = menuBuilder.buildMenu();

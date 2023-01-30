@@ -29,6 +29,12 @@ export const ipc_softResetDolphin = makeEndpoint.main(
   <SuccessPayload>_,
 );
 
+export const ipc_openDolphinSettingsFolder = makeEndpoint.main(
+  "openDolphinSettingsFolder",
+  <{ dolphinType: DolphinLaunchType }>_,
+  <SuccessPayload>_,
+);
+
 export const ipc_storePlayKeyFile = makeEndpoint.main("storePlayKeyFile", <{ key: PlayKey }>_, <SuccessPayload>_);
 
 export const ipc_checkPlayKeyExists = makeEndpoint.main(

@@ -9,6 +9,7 @@ import {
   ipc_hardResetDolphin,
   ipc_importDolphinSettings,
   ipc_launchNetplayDolphin,
+  ipc_openDolphinSettingsFolder,
   ipc_removePlayKeyFile,
   ipc_softResetDolphin,
   ipc_storePlayKeyFile,
@@ -35,6 +36,9 @@ const dolphinApi: DolphinService = {
   },
   async hardResetDolphin(dolphinType: DolphinLaunchType) {
     await ipc_hardResetDolphin.renderer!.trigger({ dolphinType });
+  },
+  async openDolphinSettingsFolder(dolphinType: DolphinLaunchType) {
+    await ipc_openDolphinSettingsFolder.renderer!.trigger({ dolphinType });
   },
   async storePlayKeyFile(key: PlayKey) {
     await ipc_storePlayKeyFile.renderer!.trigger({ key });
