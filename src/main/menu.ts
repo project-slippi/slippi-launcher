@@ -76,7 +76,7 @@ export class MenuBuilder {
           },
         },
         {
-          label: "Open Application Support Folder",
+          label: "Open App Settings Folder",
           click: () => {
             this.onOpenAppSupportFolder();
           },
