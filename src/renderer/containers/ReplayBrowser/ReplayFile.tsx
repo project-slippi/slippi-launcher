@@ -76,7 +76,7 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
   const stageImageUrl = stageInfo !== null && stageInfo.id !== -1 ? getStageImage(stageInfo.id) : undefined;
   const stageName = stageInfo !== null ? stageInfo.name : "Unknown Stage";
   const gameMode = settings.gameMode;
-  let gameModeIcon;
+  let gameModeIcon: React.ReactNode;
 
   switch (gameMode) {
     case GameMode.HOME_RUN_CONTEST:
@@ -92,7 +92,7 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
       break;
   }
 
-  let detailDisplay;
+  let detailDisplay: { label: React.ReactNode; content: React.ReactNode } | null = null;
   if (lastFrame !== null && gameMode !== GameMode.HOME_RUN_CONTEST) {
     detailDisplay = {
       label: <TimerIcon />,
@@ -182,7 +182,7 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
               >
                 <InfoItem label={<EventIcon />}>{monthDayHourFormat(moment(date))}</InfoItem>
 
-                {detailDisplay !== null && <InfoItem label={detailDisplay?.label}>{detailDisplay?.content}</InfoItem>}
+                {detailDisplay && <InfoItem label={detailDisplay.label}>{detailDisplay.content}</InfoItem>}
 
                 <InfoItem label={gameModeIcon}>{stageName}</InfoItem>
               </div>

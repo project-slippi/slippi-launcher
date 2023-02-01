@@ -202,7 +202,7 @@ const GameDetails: React.FC<{
 
   const eventDisplay = {
     label: <EventIcon />,
-    content: monthDayHourFormat(moment(startAtDisplay)) as string,
+    content: monthDayHourFormat(moment(startAtDisplay)),
   };
 
   const timerDisplay = {
@@ -237,7 +237,7 @@ const GameDetails: React.FC<{
 
   const gameMode = file.settings.gameMode;
 
-  let displayData;
+  let displayData: { label: React.ReactNode; content: React.ReactNode }[];
   switch (gameMode) {
     case GameMode.HOME_RUN_CONTEST:
       displayData = [eventDisplay, distanceDisplay, homerunDisplay, platformDisplay];
