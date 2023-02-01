@@ -1,4 +1,4 @@
-import Warning from "@mui/icons-material/Warning";
+import Construction from "@mui/icons-material/Construction";
 import type { FileResult } from "@replays/types";
 import type { StatsType } from "@slippi/slippi-js";
 import React from "react";
@@ -13,7 +13,7 @@ export interface GameProfileProps {
 const StatSection: React.FC<{
   title: string;
 }> = () => {
-  return <IconMessage Icon={Warning} label="🛠 This page is under construction" />;
+  return <IconMessage Icon={Construction} label="This page is under construction" />;
 };
 
 export const HomeRunProfile: React.FC<GameProfileProps> = () => {
