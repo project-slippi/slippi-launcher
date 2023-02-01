@@ -1,13 +1,13 @@
 import Construction from "@mui/icons-material/Construction";
 import type { FileResult } from "@replays/types";
-import type { StatsType } from "@slippi/slippi-js";
+import type { StadiumStatsType } from "@slippi/slippi-js";
 import React from "react";
 
 import { IconMessage } from "@/components/Message";
 
 export interface GameProfileProps {
   file: FileResult;
-  stats: StatsType;
+  stats: StadiumStatsType | null;
 }
 
 const StatSection: React.FC<{

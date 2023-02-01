@@ -88,6 +88,7 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
   const file = gameStatsQuery.data?.file ?? props.file;
   const numPlayers = file?.settings.players.length;
   const gameStats = gameStatsQuery.data?.stats ?? null;
+  const stadiumStats = stadiumStatsQuery.data?.stadiumStats ?? null;
 
   // Add key bindings
   useMousetrap("escape", () => {
@@ -149,10 +150,10 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
       <Content>
         {!file || loading ? (
           <LoadingScreen message={"Crunching numbers..."} />
-        ) : file.settings.gameMode == GameMode.TARGET_TEST && gameStats ? (
-          <TargetTestProfile file={file} stats={gameStats}></TargetTestProfile>
-        ) : file.settings.gameMode == GameMode.HOME_RUN_CONTEST && gameStats ? (
-          <HomeRunProfile file={file} stats={gameStats}></HomeRunProfile>
+        ) : file.settings.gameMode == GameMode.TARGET_TEST ? (
+          <TargetTestProfile file={file} stats={stadiumStats}></TargetTestProfile>
+        ) : file.settings.gameMode == GameMode.HOME_RUN_CONTEST ? (
+          <HomeRunProfile file={file} stats={stadiumStats}></HomeRunProfile>
         ) : numPlayers !== 2 ? (
           <IconMessage Icon={ErrorIcon} label="Game stats for doubles is unsupported" />
         ) : error ? (

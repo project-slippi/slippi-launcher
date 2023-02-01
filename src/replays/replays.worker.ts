@@ -4,7 +4,7 @@
 
 // TODO: Make electron-log work somehow
 import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
-import { GameMode, SlippiGame } from "@slippi/slippi-js";
+import { SlippiGame } from "@slippi/slippi-js";
 import _ from "lodash";
 import type { ModuleMethods } from "threads/dist/types/master";
 import { Observable, Subject } from "threads/observable";
@@ -58,7 +58,7 @@ const methods: WorkerSpec = {
       throw new Error("Game settings could not be properly loaded.");
     }
 
-    if (settings.players.length !== 2 && settings.gameMode != GameMode.TARGET_TEST) {
+    if (settings.players.length !== 2) {
       throw new Error("Stats can only be calculated for 1v1s.");
     }
 
