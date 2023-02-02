@@ -1,11 +1,12 @@
 import type { FileResult } from "@replays/types";
-import { Frames } from "@slippi/slippi-js";
+import { Frames, GameMode } from "@slippi/slippi-js";
 import compareFunc from "compare-func";
 
 import { extractAllPlayerNames, namesMatch } from "@/lib/matchNames";
 
 // The minimum duration of games when filtering out short games
 const MIN_GAME_DURATION_FRAMES = 30 * 60;
+const STADIUM_GAME_MODES = [GameMode.HOME_RUN_CONTEST, GameMode.TARGET_TEST];
 
 export enum ReplaySortOption {
   DATE = "DATE",
@@ -75,8 +76,10 @@ export const replayFileFilter =
   (filterOptions: ReplayFilterOptions): ((file: FileResult) => boolean) =>
   (file) => {
     if (filterOptions.hideShortGames) {
-      if (file.lastFrame !== null && file.lastFrame <= MIN_GAME_DURATION_FRAMES) {
-        return false;
+      if (STADIUM_GAME_MODES.every((stadiumGameMode) => file.settings.gameMode !== stadiumGameMode)) {
+        if (file.lastFrame !== null && file.lastFrame <= MIN_GAME_DURATION_FRAMES) {
+          return false;
+        }
       }
     }
 
