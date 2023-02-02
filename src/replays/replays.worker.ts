@@ -3,7 +3,7 @@
 // when in Node worker context.
 
 // TODO: Make electron-log work somehow
-import type { StatsType } from "@slippi/slippi-js";
+import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
 import { SlippiGame } from "@slippi/slippi-js";
 import _ from "lodash";
 import type { ModuleMethods } from "threads/dist/types/master";
@@ -19,6 +19,7 @@ interface Methods {
   loadSingleFile(filePath: string): Promise<FileResult>;
   loadReplayFolder(folder: string): Promise<FileLoadResult>;
   calculateGameStats(fullPath: string): Promise<StatsType | null>;
+  calculateStadiumStats(fullPath: string): Promise<StadiumStatsType | null>;
   getProgressObservable(): Observable<Progress>;
 }
 
@@ -62,6 +63,10 @@ const methods: WorkerSpec = {
     }
 
     return game.getStats();
+  },
+  async calculateStadiumStats(fullPath: string): Promise<StadiumStatsType | null> {
+    const game = new SlippiGame(fullPath);
+    return game.getStadiumStats();
   },
 };
 

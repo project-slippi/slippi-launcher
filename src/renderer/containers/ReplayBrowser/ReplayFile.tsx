@@ -6,11 +6,13 @@ import EventIcon from "@mui/icons-material/Event";
 import LandscapeIcon from "@mui/icons-material/Landscape";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
-import TimerOutlinedIcon from "@mui/icons-material/TimerOutlined";
+import SportsCricket from "@mui/icons-material/SportsCricket";
+import TimerIcon from "@mui/icons-material/Timer";
+import TrackChangesIcon from "@mui/icons-material/TrackChanges";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import type { FileResult } from "@replays/types";
-import { stages as stageUtils } from "@slippi/slippi-js";
+import { frameToGameTimer, GameMode, stages as stageUtils } from "@slippi/slippi-js";
 import _ from "lodash";
 import moment from "moment";
 import React from "react";
@@ -73,6 +75,33 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
   const stageInfo = settings.stageId !== null ? stageUtils.getStageInfo(settings.stageId) : null;
   const stageImageUrl = stageInfo !== null && stageInfo.id !== -1 ? getStageImage(stageInfo.id) : undefined;
   const stageName = stageInfo !== null ? stageInfo.name : "Unknown Stage";
+  const gameMode = settings.gameMode;
+  let gameModeIcon: React.ReactNode;
+
+  switch (gameMode) {
+    case GameMode.HOME_RUN_CONTEST:
+      gameModeIcon = <SportsCricket />;
+      break;
+    case GameMode.TARGET_TEST:
+      gameModeIcon = <TrackChangesIcon />;
+      break;
+    case GameMode.ONLINE:
+    case GameMode.VS:
+    default:
+      gameModeIcon = <LandscapeIcon />;
+      break;
+  }
+
+  let detailDisplay: { label: React.ReactNode; content: React.ReactNode } | null = null;
+  if (lastFrame !== null && gameMode !== GameMode.HOME_RUN_CONTEST) {
+    detailDisplay = {
+      label: <TimerIcon />,
+      content:
+        gameMode === GameMode.TARGET_TEST
+          ? frameToGameTimer(lastFrame, settings)
+          : convertFrameCountToDurationString(lastFrame, "m[m] ss[s]"),
+    };
+  }
 
   const teams: PlayerInfo[][] = _.chain(settings.players)
     .groupBy((player) => (settings.isTeams ? player.teamId : player.port))
@@ -153,12 +182,9 @@ export const ReplayFile: React.FC<ReplayFileProps> = ({
               >
                 <InfoItem label={<EventIcon />}>{monthDayHourFormat(moment(date))}</InfoItem>
 
-                {lastFrame !== null && (
-                  <InfoItem label={<TimerOutlinedIcon />}>
-                    {convertFrameCountToDurationString(lastFrame, "m[m] ss[s]")}
-                  </InfoItem>
-                )}
-                <InfoItem label={<LandscapeIcon />}>{stageName}</InfoItem>
+                {detailDisplay && <InfoItem label={detailDisplay.label}>{detailDisplay.content}</InfoItem>}
+
+                <InfoItem label={gameModeIcon}>{stageName}</InfoItem>
               </div>
               <DraggableFile
                 filePaths={[fullPath]}

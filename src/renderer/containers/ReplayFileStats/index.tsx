@@ -8,6 +8,7 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import type { FileResult } from "@replays/types";
+import { GameMode } from "@slippi/slippi-js";
 import _ from "lodash";
 import React from "react";
 import { useQuery } from "react-query";
@@ -23,6 +24,8 @@ import { withFont } from "@/styles/withFont";
 
 import { GameProfile } from "./GameProfile";
 import { GameProfileHeader } from "./GameProfileHeader";
+import { HomeRunProfile } from "./HomeRunProfile";
+import { TargetTestProfile } from "./TargetTestProfile";
 
 const Outer = styled.div<{
   backgroundImage?: any;
@@ -70,16 +73,22 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
   const { dolphinService } = useServices();
   const { viewReplays } = useDolphinActions(dolphinService);
   const gameStatsQuery = useQuery(["loadStatsQuery", filePath], async () => {
-    const result = window.electron.replays.calculateGameStats(filePath);
+    const result = await window.electron.replays.calculateGameStats(filePath);
     return result;
   });
 
-  const loading = gameStatsQuery.isLoading;
+  const stadiumStatsQuery = useQuery(["loadStadiumStatsQuery", filePath], async () => {
+    const result = await window.electron.replays.calculateStadiumStats(filePath);
+    return result;
+  });
+
+  const loading = gameStatsQuery.isLoading && stadiumStatsQuery.isLoading;
   const error = gameStatsQuery.error as any;
 
   const file = gameStatsQuery.data?.file ?? props.file;
   const numPlayers = file?.settings.players.length;
   const gameStats = gameStatsQuery.data?.stats ?? null;
+  const stadiumStats = stadiumStatsQuery.data?.stadiumStats ?? null;
 
   // Add key bindings
   useMousetrap("escape", () => {
@@ -135,11 +144,16 @@ export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
         file={file}
         disabled={loading}
         stats={gameStatsQuery.data?.stats ?? null}
+        stadiumStats={stadiumStatsQuery.data?.stadiumStats ?? null}
         onPlay={props.onPlay}
       />
       <Content>
         {!file || loading ? (
           <LoadingScreen message={"Crunching numbers..."} />
+        ) : file.settings.gameMode == GameMode.TARGET_TEST ? (
+          <TargetTestProfile file={file} stats={stadiumStats}></TargetTestProfile>
+        ) : file.settings.gameMode == GameMode.HOME_RUN_CONTEST ? (
+          <HomeRunProfile file={file} stats={stadiumStats}></HomeRunProfile>
         ) : numPlayers !== 2 ? (
           <IconMessage Icon={ErrorIcon} label="Game stats for doubles is unsupported" />
         ) : error ? (

@@ -25,6 +25,9 @@ export const getCharacterIcon = (characterId: number | null, characterColor: num
 export const getStageImage = (stageId: number): string => {
   const stageInfo = stageUtils.getStageInfo(stageId);
   if (stageInfo.id !== stageUtils.UnknownStage.id) {
+    if (stageInfo.id >= 33 && stageInfo.id <= 58) {
+      return stageIcons(`./targets.png`);
+    }
     try {
       return stageIcons(`./${stageId}.png`);
     } catch (err) {

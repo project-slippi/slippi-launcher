@@ -1,19 +1,22 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
+import { Straighten } from "@mui/icons-material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import EventIcon from "@mui/icons-material/Event";
 import LandscapeIcon from "@mui/icons-material/Landscape";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import SportsCricket from "@mui/icons-material/SportsCricket";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
-import TimerOutlinedIcon from "@mui/icons-material/TimerOutlined";
+import TimerIcon from "@mui/icons-material/Timer";
+import TrackChangesIcon from "@mui/icons-material/TrackChanges";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import type { FileResult } from "@replays/types";
-import type { GameStartType, MetadataType, StatsType } from "@slippi/slippi-js";
-import { stages as stageUtils } from "@slippi/slippi-js";
+import type { GameStartType, MetadataType, StadiumStatsType, StatsType } from "@slippi/slippi-js";
+import { frameToGameTimer, GameMode, stages as stageUtils } from "@slippi/slippi-js";
 import _ from "lodash";
 import moment from "moment";
 import React from "react";
@@ -96,10 +99,12 @@ export interface GameProfileHeaderProps {
   onClose: () => void;
   disabled?: boolean;
   stats: StatsType | null;
+  stadiumStats: StadiumStatsType | null;
 }
 
 export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
   stats,
+  stadiumStats,
   disabled,
   file,
   index,
@@ -149,7 +154,7 @@ export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
           </div>
           <PlayerInfoDisplay metadata={metadata} settings={settings} />
         </div>
-        <GameDetails file={file} stats={stats} />
+        <GameDetails file={file} stats={stats} stadiumStats={stadiumStats} settings={settings} />
       </div>
       <Controls disabled={disabled} index={index} total={total} onNext={onNext} onPrev={onPrev} onPlay={onPlay} />
     </div>
@@ -158,8 +163,10 @@ export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
 
 const GameDetails: React.FC<{
   file: FileResult;
+  settings: GameStartType;
   stats: StatsType | null;
-}> = ({ file, stats }) => {
+  stadiumStats: StadiumStatsType | null;
+}> = ({ file, stats, stadiumStats }) => {
   let stageName = "Unknown";
   try {
     stageName = stageUtils.getStageName(file.settings.stageId !== null ? file.settings.stageId : 0);
@@ -182,27 +189,68 @@ const GameDetails: React.FC<{
   if (duration === null || duration === undefined) {
     duration = _.get(stats, "lastFrame");
   }
-  const durationLength =
-    duration !== null && duration !== undefined ? convertFrameCountToDurationString(duration, "m[m] ss[s]") : "Unknown";
 
-  const displayData = [
-    {
-      label: <EventIcon />,
-      content: monthDayHourFormat(moment(startAtDisplay)) as string,
-    },
-    {
-      label: <TimerOutlinedIcon />,
-      content: durationLength,
-    },
-    {
-      label: <LandscapeIcon />,
-      content: stageName,
-    },
-    {
-      label: <SportsEsportsIcon />,
-      content: platform,
-    },
-  ];
+  const durationLength =
+    duration !== null && duration !== undefined
+      ? file.settings.gameMode == GameMode.TARGET_TEST && file.metadata
+        ? frameToGameTimer(file.metadata?.lastFrame as number, file.settings)
+        : convertFrameCountToDurationString(duration, "m[m] ss[s]")
+      : "Unknown";
+
+  const distance = _.get(stadiumStats, "distance");
+  const units = _.get(stadiumStats, "units");
+
+  const eventDisplay = {
+    label: <EventIcon />,
+    content: monthDayHourFormat(moment(startAtDisplay)),
+  };
+
+  const timerDisplay = {
+    label: <TimerIcon />,
+    content: durationLength,
+  };
+
+  const stageDisplay = {
+    label: <LandscapeIcon />,
+    content: stageName,
+  };
+
+  const platformDisplay = {
+    label: <SportsEsportsIcon />,
+    content: platform,
+  };
+
+  const targetTestDisplay = {
+    label: <TrackChangesIcon />,
+    content: "Break the Targets",
+  };
+
+  const homerunDisplay = {
+    label: <SportsCricket />,
+    content: "Home Run Contest",
+  };
+
+  const distanceDisplay = {
+    label: <Straighten />,
+    content: `${distance} ${units}`,
+  };
+
+  const gameMode = file.settings.gameMode;
+
+  let displayData: { label: React.ReactNode; content: React.ReactNode }[];
+  switch (gameMode) {
+    case GameMode.HOME_RUN_CONTEST:
+      displayData = [eventDisplay, distanceDisplay, homerunDisplay, platformDisplay];
+      break;
+    case GameMode.TARGET_TEST:
+      displayData = [eventDisplay, timerDisplay, stageDisplay, targetTestDisplay, platformDisplay];
+      break;
+    case GameMode.ONLINE:
+    case GameMode.VS:
+    default:
+      displayData = [eventDisplay, timerDisplay, stageDisplay, platformDisplay];
+      break;
+  }
 
   const metadataElements = displayData.map((details, i) => {
     return (
