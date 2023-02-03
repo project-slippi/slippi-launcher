@@ -31,7 +31,14 @@ type ReplayFileProps = {
   backgroundImage?: string;
 };
 
-export const ReplayFile = ({ selectedIndex, backgroundImage, actions, players, title, details }: ReplayFileProps) => {
+export const ReplayFile = React.memo(function ReplayFile({
+  selectedIndex,
+  backgroundImage,
+  actions,
+  players,
+  title,
+  details,
+}: ReplayFileProps) {
   const selected = exists(selectedIndex);
   return (
     <Outer backgroundImage={backgroundImage} selected={selected}>
@@ -99,7 +106,7 @@ export const ReplayFile = ({ selectedIndex, backgroundImage, actions, players, t
       </div>
     </Outer>
   );
-};
+});
 
 const Outer = styled.div<{
   backgroundImage?: string;
