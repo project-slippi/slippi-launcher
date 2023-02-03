@@ -21,7 +21,14 @@ export const Standard = () => {
 };
 
 export const Selected = () => {
-  return renderReplayFileWith({ selectedIndex: 1 });
+  return (
+    <div>
+      <div>{renderReplayFileWith({ selectedIndex: 1 })}</div>
+      <div>{renderReplayFileWith({ selectedIndex: 11 })}</div>
+      <div>{renderReplayFileWith({ selectedIndex: 111 })}</div>
+      <div>{renderReplayFileWith({ selectedIndex: 1111 })}</div>
+    </div>
+  );
 };
 
 export const ReallyLongReplayName = () => {
