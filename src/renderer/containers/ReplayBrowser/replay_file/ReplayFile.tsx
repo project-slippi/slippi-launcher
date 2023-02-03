@@ -9,17 +9,17 @@ import React from "react";
 import type { PlayerInfo } from "./team_elements/TeamElements";
 import { TeamElements } from "./team_elements/TeamElements";
 
-type ReplayDetail = {
+export type ReplayDetail = {
   Icon: React.ComponentType;
   label: string;
 };
 
-type ReplayFileAction = {
+export type ReplayFileAction = {
   Icon: React.ComponentType;
   primary?: boolean;
   disabled?: boolean;
   label: string;
-  onClick: () => void;
+  onClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 };
 
 type ReplayFileProps = {
@@ -39,7 +39,7 @@ export const ReplayFile = React.memo(function ReplayFile({
   title,
   details,
 }: ReplayFileProps) {
-  const selected = exists(selectedIndex);
+  const selected = exists(selectedIndex) && selectedIndex >= 0;
   return (
     <Outer backgroundImage={backgroundImage} selected={selected}>
       <div

@@ -9,7 +9,7 @@ import { FixedSizeList as List } from "react-window";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { IconMenu } from "@/components/IconMenu";
 
-import { ReplayFile } from "./ReplayFile";
+import { ReplayFileContainer } from "./replay_file/ReplayFile.container";
 
 const REPLAY_FILE_ITEM_SIZE = 90;
 
@@ -39,15 +39,15 @@ const FileListResults: React.FC<{
       const selectedIndex = selectedFiles.indexOf(file.fullPath);
       return (
         <ErrorBoundary>
-          <ReplayFile
+          <ReplayFileContainer
             onOpenMenu={onOpenMenu}
             index={props.index}
             style={props.style}
-            onSelect={() => onSelect(props.index)}
-            onClick={(e) => onClick(props.index, e.shiftKey)}
+            onSelect={onSelect}
+            onClick={onClick}
             selectedFiles={selectedFiles}
             selectedIndex={selectedIndex}
-            onPlay={() => onPlay(props.index)}
+            onPlay={onPlay}
             {...file}
           />
         </ErrorBoundary>
