@@ -1,0 +1,161 @@
+import type { GeckoCode } from "@dolphin/config/geckoCode";
+import type { DolphinLaunchType } from "@dolphin/types";
+import {
+  Box,
+  Button,
+  Checkbox,
+  css,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  List,
+  ListItem,
+  Tab,
+  Tabs,
+  TextField,
+} from "@mui/material";
+import React from "react";
+
+import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
+import { useServices } from "@/services";
+
+export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolphinType }) => {
+  const [geckoFormOpen, setGeckoFormOpen] = React.useState(false);
+  const [geckoCodes, setGeckoCodes] = React.useState([] as GeckoCode[]);
+  const [tabValue, setTabValue] = React.useState(0);
+
+  const { dolphinService } = useServices();
+  const { readAllGeckoCodes } = useDolphinActions(dolphinService);
+
+  const fetchAndOpenGeckoCodes = async () => {
+    const geckoCodes = await readAllGeckoCodes(dolphinType);
+    if (!geckoCodes) {
+      console.error("Failed to read gecko codes");
+      return;
+    }
+
+    setGeckoCodes(geckoCodes);
+    setGeckoFormOpen(true);
+  };
+
+  const handleTabChange = (event: React.ChangeEvent<unknown>, newValue: number) => {
+    event.preventDefault();
+    setTabValue(newValue);
+  };
+
+  function TabPanel(props: any) {
+    const { children, value, index, ...other } = props;
+
+    return (
+      <div role="tabpanel" hidden={value !== index} id={`full-width-tabpanel-${index}`} {...other}>
+        {value === index && <Box p={3}>{children}</Box>}
+      </div>
+    );
+  }
+
+  function geckoCodeItem(geckoCode: GeckoCode) {
+    return (
+      <ListItem
+        key={`code-${geckoCode.name}`}
+        css={css`
+          padding: 1px;
+          transform: scale(0.9);
+        `}
+      >
+        <Checkbox id={`checkbox`} checked={geckoCode.enabled} css={css``} />
+        {geckoCode.name}
+      </ListItem>
+    );
+  }
+
+  const codeList = <List>{geckoCodes.map((c) => geckoCodeItem(c))}</List>;
+  const managePanel = (
+    <TabPanel style={{ alignItems: "center" }} value={tabValue} index={0}>
+      <Box textAlign="center">
+        {codeList}
+        <Button color="secondary" variant="contained">
+          Save
+        </Button>
+      </Box>
+    </TabPanel>
+  );
+
+  const addPanel = (
+    <TabPanel value={tabValue} index={1}>
+      <Box textAlign="center">
+        <form id="geckoForm">
+          <TextField
+            type="textarea"
+            id="geckoCode"
+            label="Paste Gecko Code Here"
+            variant="outlined"
+            margin="normal"
+            rows="18"
+            InputProps={{ style: { fontFamily: '"Space Mono", monospace' } }}
+            //onChange={({ target: { value } }) => setNewGeckoCodeRaw(value)}
+            multiline
+            fullWidth
+            required
+          ></TextField>
+          <Button type="submit" fullWidth variant="contained" color="secondary">
+            Add
+          </Button>
+        </form>
+      </Box>
+    </TabPanel>
+  );
+
+  return (
+    <div>
+      <Button
+        variant="contained"
+        color="secondary"
+        css={css`
+          min-width: 145px;
+        `}
+        onClick={fetchAndOpenGeckoCodes}
+      >
+        Manage Gecko Codes
+      </Button>
+      <Dialog
+        open={geckoFormOpen}
+        onClose={() => {
+          setGeckoFormOpen(false);
+        }}
+      >
+        <DialogContent>
+          <Tabs value={tabValue} variant="fullWidth" onChange={handleTabChange}>
+            <Tab label="Manage" />
+            <Tab label="Add" />
+          </Tabs>
+          {managePanel}
+          {addPanel}
+        </DialogContent>
+      </Dialog>
+      <Dialog open={false}>
+        <DialogTitle>{"Confirm"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Delete the Following Code? <br />
+            <b>{/*selectedCode*/}</b>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained">No</Button>
+          <Button
+            onClick={async () => {
+              //await deleteGeckoHandler(selectedCode);
+              //setDeleteDialogOpen(false);
+            }}
+            variant="contained"
+            autoFocus
+          >
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
+};

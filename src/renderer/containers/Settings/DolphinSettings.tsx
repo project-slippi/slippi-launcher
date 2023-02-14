@@ -14,6 +14,7 @@ import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
 import { useDolphinPath } from "@/lib/hooks/useSettings";
 import { useServices } from "@/services";
 
+import { GeckoCodes } from "./GeckoCodes";
 import { SettingItem } from "./SettingItem";
 
 const { isLinux, isMac } = window.electron.common;
@@ -176,6 +177,9 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
             )}
           </Button>
         </div>
+      </SettingItem>
+      <SettingItem name={`Gecko Codes`}>
+        <GeckoCodes dolphinType={dolphinType} />
       </SettingItem>
     </div>
   );

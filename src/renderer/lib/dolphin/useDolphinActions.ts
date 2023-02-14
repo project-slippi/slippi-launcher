@@ -120,6 +120,17 @@ export const useDolphinActions = (dolphinService: DolphinService) => {
     [dolphinService, showError, showSuccess],
   );
 
+  const readAllGeckoCodes = useCallback(
+    async (dolphinType: DolphinLaunchType) => {
+      if (getInstallStatus(dolphinType) !== DolphinStatus.READY) {
+        showError("Dolphin is updating. Try again later.");
+        return;
+      }
+      return await dolphinService.fetchGeckoCodes(dolphinType);
+    },
+    [dolphinService, getInstallStatus, showError],
+  );
+
   return {
     openConfigureDolphin,
     softResetDolphin,
@@ -128,5 +139,6 @@ export const useDolphinActions = (dolphinService: DolphinService) => {
     viewReplays,
     importDolphin,
     updateDolphin,
+    readAllGeckoCodes,
   };
 };

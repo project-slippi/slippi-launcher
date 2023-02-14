@@ -2,6 +2,7 @@ import * as fs from "fs-extra";
 import path from "path";
 
 import { setBootToCss } from "./config/config";
+import { loadGeckoCodes } from "./config/geckoCode";
 import { IniFile } from "./config/iniFile";
 import type { DolphinInstallation } from "./install/installation";
 import { DolphinLaunchType } from "./types";
@@ -62,4 +63,18 @@ export async function updateBootToCssCode(installation: DolphinInstallation, opt
       return setBootToCss(globalIni, localIni, options.enable);
     }),
   );
+}
+
+export async function fetchAllGeckoCodes(installation: DolphinInstallation) {
+  const userPath = installation.userFolder;
+  const sysPath = installation.sysFolder;
+
+  await Promise.all([fs.ensureDir(userPath), fs.ensureDir(sysPath)]);
+
+  const globalIniPath = path.join(sysPath, "GameSettings", `GALE01r2.ini`);
+  const localIniPath = path.join(userPath, "GameSettings", `GALJ01.ini`);
+  const globalIni = await IniFile.init(globalIniPath);
+  const localIni = await IniFile.init(localIniPath);
+
+  return loadGeckoCodes(globalIni, localIni);
 }

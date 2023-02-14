@@ -11,6 +11,7 @@ import {
   ipc_configureDolphin,
   ipc_dolphinEvent,
   ipc_downloadDolphin,
+  ipc_fetchGeckoCodes,
   ipc_hardResetDolphin,
   ipc_importDolphinSettings,
   ipc_launchNetplayDolphin,
@@ -23,7 +24,7 @@ import {
 import type { DolphinManager } from "./manager";
 import { deletePlayKeyFile, findPlayKey, writePlayKeyFile } from "./playkey";
 import { DolphinLaunchType } from "./types";
-import { findDolphinExecutable, updateBootToCssCode } from "./util";
+import { fetchAllGeckoCodes, findDolphinExecutable, updateBootToCssCode } from "./util";
 
 const isMac = process.platform === "darwin";
 const isLinux = process.platform === "linux";
@@ -145,6 +146,12 @@ export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: Do
     const dolphinExecutablePath = await findDolphinExecutable(DolphinLaunchType.NETPLAY, dolphinFolderPath);
 
     return { dolphinPath: dolphinExecutablePath, exists: exists };
+  });
+
+  ipc_fetchGeckoCodes.main!.handle(async ({ dolphinType }) => {
+    const installation = dolphinManager.getInstallation(dolphinType);
+    const codes = await fetchAllGeckoCodes(installation);
+    return { codes };
   });
 
   return { dolphinManager };

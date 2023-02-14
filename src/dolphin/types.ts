@@ -1,3 +1,5 @@
+import type { GeckoCode } from "./config/geckoCode";
+
 export interface ReplayCommunication {
   mode: "normal" | "mirror" | "queue"; // default normal
   replay?: string; // path to the replay if in normal or mirror mode
@@ -102,5 +104,7 @@ export interface DolphinService {
   launchNetplayDolphin(options: { bootToCss?: boolean }): Promise<void>;
   checkDesktopAppDolphin(): Promise<{ dolphinPath: string; exists: boolean }>;
   importDolphinSettings(options: { toImportDolphinPath: string; dolphinType: DolphinLaunchType }): Promise<void>;
+  //fetchGeckoCodes(dolphinLaunchType: DolphinLaunchType): Promise<void>;
+  fetchGeckoCodes(dolphinLaunchType: DolphinLaunchType): Promise<GeckoCode[]>;
   onEvent<T extends DolphinEventType>(eventType: T, handle: (event: DolphinEventMap[T]) => void): () => void;
 }

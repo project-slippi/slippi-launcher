@@ -60,6 +60,11 @@ class MockDolphinClient implements DolphinService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
+  public async openDolphinSettingsFolder(_dolphinType: DolphinLaunchType): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+
+  @delayAndMaybeError(SHOULD_ERROR)
   public async storePlayKeyFile(_key: PlayKey): Promise<void> {
     throw new Error("Method not implemented.");
   }
