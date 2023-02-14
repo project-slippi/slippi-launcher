@@ -23,7 +23,7 @@ import { useServices } from "@/services";
 
 export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolphinType }) => {
   const [geckoFormOpen, setGeckoFormOpen] = React.useState(false);
-  const [geckoCodes, setGeckoCodes] = React.useState([] as GeckoCode[]);
+  const [geckoCodes, setGeckoCodes] = React.useState<GeckoCode[]>([]);
   const [tabValue, setTabValue] = React.useState(0);
 
   const { dolphinService } = useServices();
@@ -36,24 +36,13 @@ export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolph
       return;
     }
 
-    setGeckoCodes(geckoCodes);
+    setGeckoCodes(geckoCodes.slice(0, 3));
     setGeckoFormOpen(true);
   };
 
-  const handleTabChange = (event: React.ChangeEvent<unknown>, newValue: number) => {
-    event.preventDefault();
-    setTabValue(newValue);
+  const saveGeckoCodes = async () => {
+    setGeckoFormOpen(false);
   };
-
-  function TabPanel(props: any) {
-    const { children, value, index, ...other } = props;
-
-    return (
-      <div role="tabpanel" hidden={value !== index} id={`full-width-tabpanel-${index}`} {...other}>
-        {value === index && <Box p={3}>{children}</Box>}
-      </div>
-    );
-  }
 
   function geckoCodeItem(geckoCode: GeckoCode) {
     return (
@@ -64,7 +53,15 @@ export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolph
           transform: scale(0.9);
         `}
       >
-        <Checkbox id={`checkbox`} checked={geckoCode.enabled} css={css``} />
+        <Checkbox
+          id={`checkbox`}
+          checked={geckoCode.enabled}
+          css={css``}
+          onChange={() => {
+            geckoCode.enabled = !geckoCode.enabled;
+            setGeckoCodes([...geckoCodes]);
+          }}
+        />
         {geckoCode.name}
       </ListItem>
     );
@@ -75,7 +72,7 @@ export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolph
     <TabPanel style={{ alignItems: "center" }} value={tabValue} index={0}>
       <Box textAlign="center">
         {codeList}
-        <Button color="secondary" variant="contained">
+        <Button color="secondary" variant="contained" onClick={saveGeckoCodes}>
           Save
         </Button>
       </Box>
@@ -106,6 +103,21 @@ export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolph
       </Box>
     </TabPanel>
   );
+
+  function TabPanel(props: any) {
+    const { children, value, index, ...other } = props;
+
+    return (
+      <div role="tabpanel" hidden={value !== index} id={`full-width-tabpanel-${index}`} {...other}>
+        {value === index && <Box p={3}>{children}</Box>}
+      </div>
+    );
+  }
+
+  const handleTabChange = (event: React.ChangeEvent<unknown>, newValue: number) => {
+    event.preventDefault();
+    setTabValue(newValue);
+  };
 
   return (
     <div>

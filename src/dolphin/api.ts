@@ -13,6 +13,7 @@ import {
   ipc_launchNetplayDolphin,
   ipc_openDolphinSettingsFolder,
   ipc_removePlayKeyFile,
+  ipc_saveGeckoCodes,
   ipc_softResetDolphin,
   ipc_storePlayKeyFile,
   ipc_viewSlpReplay,
@@ -68,6 +69,9 @@ const dolphinApi: DolphinService = {
   async fetchGeckoCodes(dolphinType: DolphinLaunchType): Promise<GeckoCode[]> {
     const { result } = await ipc_fetchGeckoCodes.renderer!.trigger({ dolphinType });
     return result.codes;
+  },
+  async saveGeckoCodes(dolphinType: DolphinLaunchType): Promise<void> {
+    await ipc_saveGeckoCodes.renderer!.trigger({ dolphinType });
   },
   onEvent<T extends DolphinEventType>(eventType: T, handle: (event: DolphinEventMap[T]) => void) {
     const { destroy } = ipc_dolphinEvent.renderer!.handle(async (result) => {

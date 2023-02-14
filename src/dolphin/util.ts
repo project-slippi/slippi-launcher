@@ -78,3 +78,16 @@ export async function fetchAllGeckoCodes(installation: DolphinInstallation) {
 
   return loadGeckoCodes(globalIni, localIni);
 }
+
+export async function saveAllGeckoCodes(installation: DolphinInstallation) {
+  const userPath = installation.userFolder;
+  const sysPath = installation.sysFolder;
+
+  await Promise.all([fs.ensureDir(userPath), fs.ensureDir(sysPath)]);
+  const globalIniPath = path.join(sysPath, "GameSettings", `GALE01r2.ini`);
+  const localIniPath = path.join(userPath, "GameSettings", `GALJ01.ini`);
+  const globalIni = await IniFile.init(globalIniPath);
+  const localIni = await IniFile.init(localIniPath);
+
+  //save files here
+}

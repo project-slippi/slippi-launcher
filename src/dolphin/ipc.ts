@@ -73,6 +73,12 @@ export const ipc_fetchGeckoCodes = makeEndpoint.main(
   <{ codes: GeckoCode[] }>_,
 );
 
+export const ipc_saveGeckoCodes = makeEndpoint.main(
+  "saveGeckoCodes",
+  <{ dolphinType: DolphinLaunchType }>_,
+  <SuccessPayload>_,
+);
+
 /*
 export const ipc_fetchSysInis = makeEndpoint.main(
   "fetchSysInis",
