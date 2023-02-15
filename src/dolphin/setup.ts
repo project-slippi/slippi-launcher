@@ -25,7 +25,7 @@ import {
 import type { DolphinManager } from "./manager";
 import { deletePlayKeyFile, findPlayKey, writePlayKeyFile } from "./playkey";
 import { DolphinLaunchType } from "./types";
-import { fetchAllGeckoCodes, findDolphinExecutable, saveAllGeckoCodes, updateBootToCssCode } from "./util";
+import { fetchGeckoCodes, findDolphinExecutable, saveGeckoCodes, updateBootToCssCode } from "./util";
 
 const isMac = process.platform === "darwin";
 const isLinux = process.platform === "linux";
@@ -151,13 +151,13 @@ export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: Do
 
   ipc_fetchGeckoCodes.main!.handle(async ({ dolphinType }) => {
     const installation = dolphinManager.getInstallation(dolphinType);
-    const codes = await fetchAllGeckoCodes(installation);
+    const codes = await fetchGeckoCodes(installation);
     return { codes };
   });
 
-  ipc_saveGeckoCodes.main!.handle(async ({ dolphinType }) => {
+  ipc_saveGeckoCodes.main!.handle(async ({ dolphinType, geckoCodes }) => {
     const installation = dolphinManager.getInstallation(dolphinType);
-    await saveAllGeckoCodes(installation);
+    await saveGeckoCodes(installation, geckoCodes);
     return { success: true };
   });
 

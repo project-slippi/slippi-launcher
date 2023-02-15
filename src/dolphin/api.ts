@@ -70,8 +70,8 @@ const dolphinApi: DolphinService = {
     const { result } = await ipc_fetchGeckoCodes.renderer!.trigger({ dolphinType });
     return result.codes;
   },
-  async saveGeckoCodes(dolphinType: DolphinLaunchType): Promise<void> {
-    await ipc_saveGeckoCodes.renderer!.trigger({ dolphinType });
+  async saveGeckoCodes(dolphinType: DolphinLaunchType, geckoCodes: GeckoCode[]): Promise<void> {
+    await ipc_saveGeckoCodes.renderer!.trigger({ dolphinType, geckoCodes });
   },
   onEvent<T extends DolphinEventType>(eventType: T, handle: (event: DolphinEventMap[T]) => void) {
     const { destroy } = ipc_dolphinEvent.renderer!.handle(async (result) => {

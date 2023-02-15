@@ -105,6 +105,6 @@ export interface DolphinService {
   checkDesktopAppDolphin(): Promise<{ dolphinPath: string; exists: boolean }>;
   importDolphinSettings(options: { toImportDolphinPath: string; dolphinType: DolphinLaunchType }): Promise<void>;
   fetchGeckoCodes(dolphinLaunchType: DolphinLaunchType): Promise<GeckoCode[]>;
-  saveGeckoCodes(dolphinLaunchType: DolphinLaunchType): Promise<void>;
+  saveGeckoCodes(dolphinLaunchType: DolphinLaunchType, geckoCodes: GeckoCode[]): Promise<void>;
   onEvent<T extends DolphinEventType>(eventType: T, handle: (event: DolphinEventMap[T]) => void): () => void;
 }

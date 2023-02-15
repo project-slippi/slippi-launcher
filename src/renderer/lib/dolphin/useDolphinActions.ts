@@ -1,3 +1,4 @@
+import type { GeckoCode } from "@dolphin/config/geckoCode";
 import type { DolphinService, ReplayQueueItem } from "@dolphin/types";
 import { DolphinLaunchType } from "@dolphin/types";
 import { useCallback } from "react";
@@ -120,7 +121,7 @@ export const useDolphinActions = (dolphinService: DolphinService) => {
     [dolphinService, showError, showSuccess],
   );
 
-  const readAllGeckoCodes = useCallback(
+  const readGeckoCodes = useCallback(
     async (dolphinType: DolphinLaunchType) => {
       if (getInstallStatus(dolphinType) !== DolphinStatus.READY) {
         showError("Dolphin is updating. Try again later.");
@@ -131,13 +132,14 @@ export const useDolphinActions = (dolphinService: DolphinService) => {
     [dolphinService, getInstallStatus, showError],
   );
 
-  const saveAllGeckoCodes = useCallback(
-    async (dolphinType: DolphinLaunchType) => {
+  const saveGeckoCodes = useCallback(
+    async (dolphinType: DolphinLaunchType, geckoCodes: GeckoCode[]) => {
       if (getInstallStatus(dolphinType) !== DolphinStatus.READY) {
         showError("Dolphin is updating. Try again later.");
         return;
       }
-      return await dolphinService.saveGeckoCodes(dolphinType);
+
+      return await dolphinService.saveGeckoCodes(dolphinType, geckoCodes);
     },
     [dolphinService, getInstallStatus, showError],
   );
@@ -150,7 +152,7 @@ export const useDolphinActions = (dolphinService: DolphinService) => {
     viewReplays,
     importDolphin,
     updateDolphin,
-    readAllGeckoCodes,
-    saveAllGeckoCodes,
+    readGeckoCodes,
+    saveGeckoCodes,
   };
 };

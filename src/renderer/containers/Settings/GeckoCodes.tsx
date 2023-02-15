@@ -27,20 +27,21 @@ export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolph
   const [tabValue, setTabValue] = React.useState(0);
 
   const { dolphinService } = useServices();
-  const { readAllGeckoCodes } = useDolphinActions(dolphinService);
+  const { readGeckoCodes, saveGeckoCodes } = useDolphinActions(dolphinService);
 
-  const fetchAndOpenGeckoCodes = async () => {
-    const geckoCodes = await readAllGeckoCodes(dolphinType);
+  const openCodes = async () => {
+    const geckoCodes = await readGeckoCodes(dolphinType);
     if (!geckoCodes) {
       console.error("Failed to read gecko codes");
       return;
     }
 
-    setGeckoCodes(geckoCodes.slice(0, 3));
+    setGeckoCodes(geckoCodes);
     setGeckoFormOpen(true);
   };
 
-  const saveGeckoCodes = async () => {
+  const saveCodes = async () => {
+    await saveGeckoCodes(dolphinType, geckoCodes);
     setGeckoFormOpen(false);
   };
 
@@ -72,7 +73,7 @@ export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolph
     <TabPanel style={{ alignItems: "center" }} value={tabValue} index={0}>
       <Box textAlign="center">
         {codeList}
-        <Button color="secondary" variant="contained" onClick={saveGeckoCodes}>
+        <Button color="secondary" variant="contained" onClick={saveCodes}>
           Save
         </Button>
       </Box>
@@ -127,7 +128,7 @@ export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolph
         css={css`
           min-width: 145px;
         `}
-        onClick={fetchAndOpenGeckoCodes}
+        onClick={openCodes}
       >
         Manage Gecko Codes
       </Button>
