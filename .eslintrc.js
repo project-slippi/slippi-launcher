@@ -62,7 +62,7 @@ module.exports = {
     "react/display-name": "off",
     "react/no-unescaped-entities": "warn",
     "@typescript-eslint/no-unused-vars": [
-      "off",
+      "error",
       {
         argsIgnorePattern: "^_",
         varsIgnorePattern: "^_",

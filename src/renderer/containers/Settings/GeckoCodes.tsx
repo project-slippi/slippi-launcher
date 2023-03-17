@@ -1,5 +1,6 @@
 import type { GeckoCode } from "@dolphin/config/geckoCode";
 import type { DolphinLaunchType } from "@dolphin/types";
+import { DeleteForeverOutlined } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -45,25 +46,41 @@ export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolph
     setGeckoFormOpen(false);
   };
 
+  const deleteCode = async (c: GeckoCode) => {
+    // TODO: Add a confirmation prompt
+    setGeckoCodes([...geckoCodes.filter((e) => e !== c)]);
+  };
+
   function geckoCodeItem(geckoCode: GeckoCode) {
     return (
       <ListItem
         key={`code-${geckoCode.name}`}
         css={css`
+          display: flex;
+          flex-direction: row;
           padding: 1px;
           transform: scale(0.9);
         `}
       >
-        <Checkbox
-          id={`checkbox`}
-          checked={geckoCode.enabled}
-          css={css``}
-          onChange={() => {
-            geckoCode.enabled = !geckoCode.enabled;
-            setGeckoCodes([...geckoCodes]);
-          }}
-        />
-        {geckoCode.name}
+        <>
+          <Checkbox
+            id={`checkbox`}
+            checked={geckoCode.enabled}
+            css={css``}
+            onChange={() => {
+              geckoCode.enabled = !geckoCode.enabled;
+              setGeckoCodes([...geckoCodes]);
+            }}
+          />
+          {geckoCode.name}
+        </>
+        <Box
+          css={css`
+            margin-left: auto;
+          `}
+        >
+          <DeleteForeverOutlined onClick={() => deleteCode(geckoCode)} />
+        </Box>
       </ListItem>
     );
   }
