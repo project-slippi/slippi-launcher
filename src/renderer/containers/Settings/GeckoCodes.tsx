@@ -11,6 +11,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  IconButton,
   List,
   ListItem,
   Tab,
@@ -74,13 +75,15 @@ export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolph
           />
           {geckoCode.name}
         </>
-        <Box
+        <IconButton
           css={css`
             margin-left: auto;
           `}
+          disabled={geckoCode.userDefined === false}
+          onClick={() => deleteCode(geckoCode)}
         >
-          <DeleteForeverOutlined onClick={() => deleteCode(geckoCode)} />
-        </Box>
+          <DeleteForeverOutlined />
+        </IconButton>
       </ListItem>
     );
   }
