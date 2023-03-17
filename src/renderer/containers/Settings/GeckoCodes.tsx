@@ -25,6 +25,8 @@ import { useServices } from "@/services";
 
 export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolphinType }) => {
   const [geckoFormOpen, setGeckoFormOpen] = React.useState(false);
+  const [confirmationOpen, setConfirmationOpen] = React.useState(false);
+  const [interactingCode, setInteractingCode] = React.useState<GeckoCode>();
   const [geckoCodes, setGeckoCodes] = React.useState<GeckoCode[]>([]);
   const [tabValue, setTabValue] = React.useState(0);
 
@@ -47,9 +49,15 @@ export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolph
     setGeckoFormOpen(false);
   };
 
-  const deleteCode = async (c: GeckoCode) => {
-    // TODO: Add a confirmation prompt
-    setGeckoCodes([...geckoCodes.filter((e) => e !== c)]);
+  const openDeleteConfirmation = async (c: GeckoCode) => {
+    setInteractingCode(c);
+    setConfirmationOpen(true);
+  };
+
+  const deleteCode = async () => {
+    setConfirmationOpen(false);
+    setGeckoCodes([...geckoCodes.filter((e) => e !== interactingCode)]);
+    setInteractingCode(undefined);
   };
 
   function geckoCodeItem(geckoCode: GeckoCode) {
@@ -78,9 +86,10 @@ export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolph
         <IconButton
           css={css`
             margin-left: auto;
+            display: ${geckoCode.userDefined === false ? "none" : ""};
           `}
           disabled={geckoCode.userDefined === false}
-          onClick={() => deleteCode(geckoCode)}
+          onClick={() => openDeleteConfirmation(geckoCode)}
         >
           <DeleteForeverOutlined />
         </IconButton>
@@ -112,7 +121,6 @@ export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolph
             margin="normal"
             rows="18"
             InputProps={{ style: { fontFamily: '"Space Mono", monospace' } }}
-            //onChange={({ target: { value } }) => setNewGeckoCodeRaw(value)}
             multiline
             fullWidth
             required
@@ -167,20 +175,25 @@ export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolph
           {addPanel}
         </DialogContent>
       </Dialog>
-      <Dialog open={false}>
-        <DialogTitle>{"Confirm"}</DialogTitle>
+      <Dialog open={confirmationOpen}>
+        <DialogTitle>{"Delete code?"}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Delete the Following Code? <br />
-            <b>{/*selectedCode*/}</b>
+            <b>{interactingCode?.name}</b>
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button variant="contained">No</Button>
+          <Button
+            variant="contained"
+            onClick={async () => {
+              setConfirmationOpen(false);
+            }}
+          >
+            No
+          </Button>
           <Button
             onClick={async () => {
-              //await deleteGeckoHandler(selectedCode);
-              //setDeleteDialogOpen(false);
+              await deleteCode();
             }}
             variant="contained"
             autoFocus
