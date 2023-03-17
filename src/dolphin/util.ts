@@ -76,7 +76,7 @@ export async function fetchGeckoCodes(installation: DolphinInstallation) {
   const globalIni = await IniFile.init(globalIniPath);
   const localIni = await IniFile.init(localIniPath);
 
-  return loadGeckoCodes(globalIni, localIni).filter((c) => c.userDefined !== true);
+  return loadGeckoCodes(globalIni, localIni);
 }
 
 export async function saveGeckoCodes(installation: DolphinInstallation, geckoCodes: GeckoCode[]) {
