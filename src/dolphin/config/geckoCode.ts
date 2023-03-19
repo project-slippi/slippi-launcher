@@ -137,3 +137,56 @@ function makeGeckoCode(code: GeckoCode, lines: string[]) {
   code.notes.forEach((line) => lines.push(`* ${line}`));
   code.codeLines.forEach((line) => lines.push(line));
 }
+
+export function rawToGeckoCodes(s: string): GeckoCode[] {
+  const rawLines = s.split("\n");
+
+  const parsedCodes: GeckoCode[] = [];
+  let parsedCode: GeckoCode = {
+    name: "",
+    creator: "",
+    notes: [],
+    codeLines: [],
+    enabled: false,
+    defaultEnabled: false,
+    userDefined: true,
+  };
+
+  rawLines.forEach((line) => {
+    switch (line[0]) {
+      // code name
+      case "$": {
+        if (parsedCode.name.length > 0) {
+          // if we already have a name then we hit a new code, so push the code and start parsing a new one
+          parsedCodes.push(parsedCode);
+        }
+        const content = line.slice(1);
+        const creatorMatch = content.match(/\[(.*?)\]/); // searches for brackets, catches anything inside them
+        const creator = creatorMatch !== null ? creatorMatch[1] : creatorMatch;
+        const name = creator ? content.split("[")[0] : content;
+
+        parsedCode = {
+          ...parsedCode,
+          name: name,
+          creator: creator,
+          notes: [],
+          codeLines: [],
+        };
+        break;
+      }
+      // comments
+      case "*": {
+        parsedCode.notes.push(line.slice(1));
+        break;
+      }
+      default: {
+        parsedCode.codeLines.push(line);
+        break;
+      }
+    }
+  });
+
+  parsedCodes.push(parsedCode);
+
+  return parsedCodes;
+}

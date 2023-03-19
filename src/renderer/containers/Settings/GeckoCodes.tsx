@@ -1,4 +1,5 @@
 import type { GeckoCode } from "@dolphin/config/geckoCode";
+import { rawToGeckoCodes } from "@dolphin/config/geckoCode";
 import type { DolphinLaunchType } from "@dolphin/types";
 import { DeleteForeverOutlined } from "@mui/icons-material";
 import {
@@ -29,6 +30,7 @@ export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolph
   const [interactingCode, setInteractingCode] = React.useState<GeckoCode>();
   const [geckoCodes, setGeckoCodes] = React.useState<GeckoCode[]>([]);
   const [tabValue, setTabValue] = React.useState(0);
+  let rawCodeString = "";
 
   const { dolphinService } = useServices();
   const { readGeckoCodes, saveGeckoCodes } = useDolphinActions(dolphinService);
@@ -58,6 +60,16 @@ export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolph
     setConfirmationOpen(false);
     setGeckoCodes([...geckoCodes.filter((e) => e !== interactingCode)]);
     setInteractingCode(undefined);
+  };
+
+  const handleCodeChange = async (s: string) => {
+    rawCodeString = s;
+  };
+
+  const addCode = async () => {
+    // attempt to parse the code lines as gecko codes
+    setGeckoCodes([...geckoCodes.concat(rawToGeckoCodes(rawCodeString))]);
+    setTabValue(0);
   };
 
   function geckoCodeItem(geckoCode: GeckoCode) {
@@ -102,7 +114,7 @@ export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolph
     <TabPanel style={{ alignItems: "center" }} value={tabValue} index={0}>
       <Box textAlign="center">
         {codeList}
-        <Button color="secondary" variant="contained" onClick={saveCodes}>
+        <Button color="secondary" fullWidth variant="contained" onClick={saveCodes}>
           Save
         </Button>
       </Box>
@@ -112,23 +124,21 @@ export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolph
   const addPanel = (
     <TabPanel value={tabValue} index={1}>
       <Box textAlign="center">
-        <form id="geckoForm">
-          <TextField
-            type="textarea"
-            id="geckoCode"
-            label="Paste Gecko Code Here"
-            variant="outlined"
-            margin="normal"
-            rows="18"
-            InputProps={{ style: { fontFamily: '"Space Mono", monospace' } }}
-            multiline
-            fullWidth
-            required
-          ></TextField>
-          <Button type="submit" fullWidth variant="contained" color="secondary">
-            Add
-          </Button>
-        </form>
+        <TextField
+          type="textarea"
+          id="geckoCode"
+          label="Paste Gecko Codes Here"
+          variant="outlined"
+          margin="normal"
+          rows="25"
+          InputProps={{ style: { fontFamily: '"Space Mono", monospace', fontSize: "12px" } }}
+          multiline
+          fullWidth
+          onChange={(event) => handleCodeChange(event.target.value)}
+        ></TextField>
+        <Button type="submit" fullWidth variant="contained" color="secondary" onClick={addCode}>
+          Add
+        </Button>
       </Box>
     </TabPanel>
   );
