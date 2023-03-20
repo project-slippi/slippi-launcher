@@ -1,7 +1,8 @@
 import type { GeckoCode } from "@dolphin/config/geckoCode";
-import { rawToGeckoCodes } from "@dolphin/config/geckoCode";
+import { geckoCodeToRaw, rawToGeckoCodes } from "@dolphin/config/geckoCode";
 import type { DolphinLaunchType } from "@dolphin/types";
-import { DeleteForeverOutlined } from "@mui/icons-material";
+import { ContentCopy, DeleteForeverOutlined } from "@mui/icons-material";
+import InfoIcon from "@mui/icons-material/Info";
 import {
   Box,
   Button,
@@ -19,6 +20,7 @@ import {
   Tabs,
   TextField,
 } from "@mui/material";
+import Tooltip from "@mui/material/Tooltip";
 import React from "react";
 
 import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
@@ -69,6 +71,7 @@ export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolph
   const addCode = async () => {
     // attempt to parse the code lines as gecko codes
     setGeckoCodes([...geckoCodes.concat(rawToGeckoCodes(rawCodeString))]);
+    await saveGeckoCodes(dolphinType, geckoCodes);
     setTabValue(0);
   };
 
@@ -84,6 +87,16 @@ export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolph
         `}
       >
         <>
+          <Tooltip
+            title={`${geckoCode.notes.join("\n")}`}
+            css={css`
+              display: ${geckoCode.notes.length ? "" : "nne"};
+            `}
+          >
+            <IconButton disabled={!geckoCode.notes.length}>
+              <InfoIcon htmlColor="#ffffff66" />
+            </IconButton>
+          </Tooltip>
           <Checkbox
             id={`checkbox`}
             checked={geckoCode.enabled}
@@ -98,6 +111,13 @@ export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolph
         <IconButton
           css={css`
             margin-left: auto;
+          `}
+          onClick={() => navigator.clipboard.writeText(geckoCodeToRaw(geckoCode))}
+        >
+          <ContentCopy />
+        </IconButton>
+        <IconButton
+          css={css`
             display: ${geckoCode.userDefined === false ? "none" : ""};
           `}
           disabled={geckoCode.userDefined === false}

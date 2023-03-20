@@ -190,3 +190,17 @@ export function rawToGeckoCodes(s: string): GeckoCode[] {
 
   return parsedCodes;
 }
+
+export function geckoCodeToRaw(gc: GeckoCode): string {
+  let output = gc.name;
+  if (gc.creator) {
+    output += ` [${gc.creator}]`;
+  }
+  output += "\n";
+  if (gc.notes.length) {
+    gc.notes.forEach((n) => (output += `*${n}\n`));
+  }
+  gc.codeLines.forEach((c) => (output += `${c}\n`));
+
+  return output;
+}
