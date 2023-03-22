@@ -134,7 +134,7 @@ function makeGeckoCode(code: GeckoCode, lines: string[]) {
   }
 
   lines.push(makeGeckoCodeTitle(code));
-  code.notes.forEach((line) => lines.push(`* ${line}`));
+  code.notes.forEach((line) => lines.push(`*${line}`));
   code.codeLines.forEach((line) => lines.push(line));
 }
 
