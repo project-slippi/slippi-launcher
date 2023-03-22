@@ -71,10 +71,7 @@ export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolph
   };
 
   const copyCode = async (c: GeckoCode) => {
-    console.error("why the hell does the following line have whitespace inserted in the beginning??????");
-    console.info(c.notes);
-    console.log(c);
-    await navigator.clipboard.writeText(geckoCodeToRaw(c));
+    await navigator.clipboard.writeText(geckoCodeToRaw(c).trim());
     showSuccess("Code copied to clipboard!");
   };
 
