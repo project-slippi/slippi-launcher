@@ -24,6 +24,7 @@ import Tooltip from "@mui/material/Tooltip";
 import React from "react";
 
 import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
+import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";
 
 export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolphinType }) => {
@@ -32,6 +33,7 @@ export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolph
   const [interactingCode, setInteractingCode] = React.useState<GeckoCode>();
   const [geckoCodes, setGeckoCodes] = React.useState<GeckoCode[]>([]);
   const [tabValue, setTabValue] = React.useState(0);
+  const { showError, showSuccess } = useToasts();
   let rawCodeString = "";
 
   const { dolphinService } = useServices();
@@ -68,9 +70,36 @@ export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolph
     rawCodeString = s;
   };
 
+  const copyCode = async (c: GeckoCode) => {
+    console.error("why the hell does the following line have whitespace inserted in the beginning??????");
+    console.info(c.notes);
+    console.log(c);
+    await navigator.clipboard.writeText(geckoCodeToRaw(c));
+    showSuccess("Code copied to clipboard!");
+  };
+
   const addCode = async () => {
     // attempt to parse the code lines as gecko codes
-    setGeckoCodes([...geckoCodes.concat(rawToGeckoCodes(rawCodeString))]);
+    const parsedCodes: GeckoCode[] = rawToGeckoCodes(rawCodeString);
+    let error = false;
+
+    parsedCodes.forEach((newCode) => {
+      if (newCode.name.trim().length === 0) {
+        showError("Name is required");
+        error = true;
+        return;
+      } else if (geckoCodes.some((c) => c.name === newCode.name)) {
+        showError("Duplicate code name");
+        error = true;
+        return;
+      }
+    });
+
+    if (error) {
+      return;
+    }
+
+    setGeckoCodes([...geckoCodes.concat(parsedCodes)]);
     await saveGeckoCodes(dolphinType, geckoCodes);
     setTabValue(0);
   };
@@ -108,23 +137,24 @@ export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolph
           />
           {geckoCode.name}
         </>
-        <IconButton
+        <Box
           css={css`
             margin-left: auto;
           `}
-          onClick={() => navigator.clipboard.writeText(geckoCodeToRaw(geckoCode))}
         >
-          <ContentCopy />
-        </IconButton>
-        <IconButton
-          css={css`
-            display: ${geckoCode.userDefined === false ? "none" : ""};
-          `}
-          disabled={geckoCode.userDefined === false}
-          onClick={() => openDeleteConfirmation(geckoCode)}
-        >
-          <DeleteForeverOutlined />
-        </IconButton>
+          <IconButton
+            css={css`
+              display: ${geckoCode.userDefined === false ? "none" : ""};
+            `}
+            disabled={geckoCode.userDefined === false}
+            onClick={() => openDeleteConfirmation(geckoCode)}
+          >
+            <DeleteForeverOutlined />
+          </IconButton>
+          <IconButton onClick={() => copyCode(geckoCode)}>
+            <ContentCopy />
+          </IconButton>
+        </Box>
       </ListItem>
     );
   }

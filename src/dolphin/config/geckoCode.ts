@@ -163,7 +163,7 @@ export function rawToGeckoCodes(s: string): GeckoCode[] {
         const content = line.slice(1);
         const creatorMatch = content.match(/\[(.*?)\]/); // searches for brackets, catches anything inside them
         const creator = creatorMatch !== null ? creatorMatch[1] : creatorMatch;
-        const name = creator ? content.split("[")[0] : content;
+        const name = (creator ? content.split("[")[0] : content).trim();
 
         parsedCode = {
           ...parsedCode,
@@ -176,7 +176,7 @@ export function rawToGeckoCodes(s: string): GeckoCode[] {
       }
       // comments
       case "*": {
-        parsedCode.notes.push(line.slice(1));
+        parsedCode.notes.push(line.slice(1).trim());
         break;
       }
       default: {
@@ -192,15 +192,16 @@ export function rawToGeckoCodes(s: string): GeckoCode[] {
 }
 
 export function geckoCodeToRaw(gc: GeckoCode): string {
-  let output = gc.name;
+  let output = `$${gc.name.trim()}`;
   if (gc.creator) {
-    output += ` [${gc.creator}]`;
+    output += ` [${gc.creator.trim()}]`;
   }
   output += "\n";
   if (gc.notes.length) {
-    gc.notes.forEach((n) => (output += `*${n}\n`));
+    gc.notes.forEach((n) => (output += `*${n.trim()}\n`));
   }
-  gc.codeLines.forEach((c) => (output += `${c}\n`));
+  gc.codeLines.forEach((c) => (output += `${c.trim()}\n`));
+  output.trimEnd();
 
   return output;
 }
