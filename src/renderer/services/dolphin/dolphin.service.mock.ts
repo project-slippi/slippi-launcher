@@ -14,6 +14,7 @@ import { Observable, Subject } from "observable-fns";
 import { delayAndMaybeError } from "../utils";
 
 const SHOULD_ERROR = false;
+const DOLPHIN_VERSION = "2.3.4";
 
 class MockDolphinClient implements DolphinService {
   private eventSubject = new Subject<DolphinEvent>();
@@ -39,6 +40,7 @@ class MockDolphinClient implements DolphinService {
     this.eventSubject.next({
       type: DolphinEventType.DOWNLOAD_COMPLETE,
       dolphinType,
+      dolphinVersion: DOLPHIN_VERSION,
     });
   }
 
