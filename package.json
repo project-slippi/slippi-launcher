@@ -10,6 +10,7 @@
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir release/app",
     "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "yarn run lint --fix",
+    "typecheck": "yarn tsc --noEmit",
     "package": "ts-node ./.erb/scripts/clean.js dist && yarn run build && electron-builder build --publish never",
     "postinstall": "patch-package && ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps && cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.ts",
     "dev": "yarn run start --env mock",
