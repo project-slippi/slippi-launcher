@@ -46,7 +46,7 @@ const App = () => {
       <Route path="/main/*" element={<MainView />} />
       <Route path="/landing" element={<LandingView />} />
       <Route path="/settings/*" element={<SettingsView />} />
-      <Route path="/" element={<Navigate replace to="/landing" />} />
+      <Route path="/" element={<Navigate replace={true} to="/landing" />} />
       <Route element={<NotFoundView />} />
     </Routes>
   );
@@ -55,7 +55,7 @@ const App = () => {
 // Providers need to be initialized before the rest of the app can use them
 const withProviders = (Component: React.ComponentType) => {
   return () => (
-    <StyledEngineProvider injectFirst>
+    <StyledEngineProvider injectFirst={true}>
       <MuiThemeProvider theme={slippiTheme}>
         <ThemeProvider theme={slippiTheme as any}>
           <QueryClientProvider client={queryClient}>

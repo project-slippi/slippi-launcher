@@ -76,7 +76,7 @@ export const MainView: React.FC = () => {
             const element = item.private ? <AuthGuard>{item.component}</AuthGuard> : item.component;
             return <Route key={item.subpath} path={`${item.subpath}/*`} element={element} />;
           })}
-          {defaultRoute && <Route path="*" element={<Navigate replace to={`${defaultRoute.subpath}`} />} />}
+          {defaultRoute && <Route path="*" element={<Navigate replace={true} to={`${defaultRoute.subpath}`} />} />}
         </Routes>
       </div>
       <LoginDialog />

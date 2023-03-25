@@ -150,7 +150,7 @@ const CustomLink = ({ children, to, ...props }: LinkProps) => {
 
   return (
     <ListItem
-      button
+      button={true}
       selected={match !== null}
       component={Link}
       to={to}

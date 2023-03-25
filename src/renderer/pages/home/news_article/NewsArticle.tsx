@@ -32,7 +32,7 @@ export const NewsArticle = React.memo(function NewsArticle({ item }: { item: New
           />
         )}
         <CardContent>
-          <Typography gutterBottom variant="h5" component="h2">
+          <Typography gutterBottom={true} variant="h5" component="h2">
             {title}
           </Typography>
           {subtitle && (

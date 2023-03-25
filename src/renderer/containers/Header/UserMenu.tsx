@@ -121,7 +121,7 @@ export const UserMenu: React.FC<{
         anchorEl={anchorEl}
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
         transformOrigin={{ vertical: "top", horizontal: "left" }}
-        keepMounted
+        keepMounted={true}
         open={Boolean(anchorEl)}
         onClose={closeMenu}
         items={generateMenuItems()}

@@ -56,7 +56,7 @@ export class ErrorBoundary extends React.Component<any, ErrorBoundaryState> {
               Toggle stack trace
             </Button>
             <div style={{ width: "100%", overflow: "auto" }}>
-              <Collapse in={this.state.showStackTrace} timeout="auto" unmountOnExit>
+              <Collapse in={this.state.showStackTrace} timeout="auto" unmountOnExit={true}>
                 <StackTraceContainer>
                   <pre style={{ userSelect: "text" }}>{this.state.errorInfo.componentStack}</pre>
                 </StackTraceContainer>
