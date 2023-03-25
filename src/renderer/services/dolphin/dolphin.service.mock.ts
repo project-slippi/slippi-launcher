@@ -97,6 +97,11 @@ class MockDolphinClient implements DolphinService {
     throw new Error("Method not implemented.");
   }
 
+  @delayAndMaybeError(SHOULD_ERROR)
+  public async openDolphinSettingsFolder(_dolphinType: DolphinLaunchType): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+
   public onEvent<T extends DolphinEventType>(eventType: T, handle: (event: DolphinEventMap[T]) => void): () => void {
     const subscription = this.events.filter<DolphinEventMap[T]>((event) => event.type === eventType).subscribe(handle);
     return () => subscription.unsubscribe();
