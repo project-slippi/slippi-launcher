@@ -1,28 +1,25 @@
 import type { GeckoCode } from "@dolphin/config/geckoCode";
 import { geckoCodeToRaw, rawToGeckoCodes } from "@dolphin/config/geckoCode";
 import type { DolphinLaunchType } from "@dolphin/types";
+import { css } from "@emotion/react";
 import { ContentCopy, DeleteForeverOutlined } from "@mui/icons-material";
 import InfoIcon from "@mui/icons-material/Info";
-import {
-  Box,
-  Button,
-  Checkbox,
-  css,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  IconButton,
-  List,
-  ListItem,
-  Tab,
-  Tabs,
-  TextField,
-} from "@mui/material";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import IconButton from "@mui/material/IconButton";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
+import TextField from "@mui/material/TextField";
 import Tooltip from "@mui/material/Tooltip";
 import React from "react";
 
+import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";
@@ -55,8 +52,8 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
     setGeckoFormOpen(false);
   };
 
-  const openDeleteConfirmation = async (c: GeckoCode) => {
-    setInteractingCode(c);
+  const openDeleteConfirmation = async (geckoCode: GeckoCode) => {
+    setInteractingCode(geckoCode);
     setConfirmationOpen(true);
   };
 
@@ -78,22 +75,15 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
   const addCode = async () => {
     // attempt to parse the code lines as gecko codes
     const parsedCodes: GeckoCode[] = rawToGeckoCodes(rawCodeString);
-    let error = false;
 
-    parsedCodes.forEach((newCode) => {
+    for (const newCode of parsedCodes) {
       if (newCode.name.trim().length === 0) {
         showError("Name is required");
-        error = true;
         return;
       } else if (geckoCodes.some((c) => c.name === newCode.name)) {
         showError("Duplicate code name");
-        error = true;
         return;
       }
-    });
-
-    if (error) {
-      return;
     }
 
     setGeckoCodes([...geckoCodes.concat(parsedCodes)]);
@@ -137,15 +127,17 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
             margin-left: auto;
           `}
         >
-          <IconButton
-            css={css`
-              display: ${geckoCode.userDefined === false ? "none" : ""};
-            `}
-            disabled={geckoCode.userDefined === false}
-            onClick={() => openDeleteConfirmation(geckoCode)}
-          >
-            <DeleteForeverOutlined />
-          </IconButton>
+          <Tooltip title={"Delete Code"}>
+            <IconButton
+              css={css`
+                display: ${geckoCode.userDefined === false ? "none" : ""};
+              `}
+              disabled={geckoCode.userDefined === false}
+              onClick={() => openDeleteConfirmation(geckoCode)}
+            >
+              <DeleteForeverOutlined />
+            </IconButton>
+          </Tooltip>
           <Tooltip title={"Copy to Clipboard"}>
             <IconButton onClick={() => copyCode(geckoCode)}>
               <ContentCopy />
@@ -158,7 +150,7 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
 
   const codeList = <List>{geckoCodes.map((c) => geckoCodeItem(c))}</List>;
   const managePanel = (
-    <TabPanel style={{ alignItems: "center" }} value={tabValue} index={0}>
+    <TabPanel value={tabValue} index={0}>
       <Box textAlign="center">
         {codeList}
         <Button color="secondary" fullWidth variant="contained" onClick={saveCodes}>
@@ -173,7 +165,6 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
       <Box textAlign="center">
         <TextField
           type="textarea"
-          id="geckoCode"
           label="Paste Gecko Codes Here"
           variant="outlined"
           margin="normal"
@@ -182,7 +173,7 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
           multiline
           fullWidth
           onChange={(event) => handleCodeChange(event.target.value)}
-        ></TextField>
+        />
         <Button type="submit" fullWidth variant="contained" color="secondary" onClick={addCode}>
           Add
         </Button>
@@ -190,7 +181,7 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
     </TabPanel>
   );
 
-  function TabPanel(props: any) {
+  function TabPanel(props: { index: number; value: number; children: JSX.Element }) {
     const { children, value, index, ...other } = props;
 
     return (
@@ -232,33 +223,16 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
           {addPanel}
         </DialogContent>
       </Dialog>
-      <Dialog open={confirmationOpen}>
-        <DialogTitle>{"Delete code?"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            <b>{interactingCode?.name}</b>
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            variant="contained"
-            onClick={async () => {
-              setConfirmationOpen(false);
-            }}
-          >
-            No
-          </Button>
-          <Button
-            onClick={async () => {
-              await deleteCode();
-            }}
-            variant="contained"
-            autoFocus
-          >
-            Yes
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <ConfirmationModal
+        title="Are you sure you want to delete this code?"
+        confirmText="Delete"
+        open={confirmationOpen}
+        onClose={() => setConfirmationOpen(false)}
+        onSubmit={deleteCode}
+        fullWidth={false}
+      >
+        <DialogContentText>The code {interactingCode?.name} will be deleted. This cannot be undone.</DialogContentText>
+      </ConfirmationModal>
     </div>
   );
 };
