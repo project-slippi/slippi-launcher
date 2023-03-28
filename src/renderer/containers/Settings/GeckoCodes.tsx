@@ -27,7 +27,7 @@ import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";
 
-export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolphinType }) => {
+export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) => {
   const [geckoFormOpen, setGeckoFormOpen] = React.useState(false);
   const [confirmationOpen, setConfirmationOpen] = React.useState(false);
   const [interactingCode, setInteractingCode] = React.useState<GeckoCode>();
@@ -66,12 +66,12 @@ export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolph
     setInteractingCode(undefined);
   };
 
-  const handleCodeChange = async (s: string) => {
-    rawCodeString = s;
+  const handleCodeChange = async (input: string) => {
+    rawCodeString = input;
   };
 
-  const copyCode = async (c: GeckoCode) => {
-    await navigator.clipboard.writeText(geckoCodeToRaw(c).trim());
+  const copyCode = async (geckoCode: GeckoCode) => {
+    await navigator.clipboard.writeText(geckoCodeToRaw(geckoCode).trim());
     showSuccess("Code copied to clipboard!");
   };
 
@@ -113,20 +113,18 @@ export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolph
         `}
       >
         <>
-          <Tooltip
-            title={`${geckoCode.notes.join("\n")}`}
-            css={css`
-              display: ${geckoCode.notes.length ? "" : "nne"};
-            `}
-          >
-            <IconButton disabled={!geckoCode.notes.length}>
+          {geckoCode.notes.length > 0 && (
+            <Tooltip
+              title={`${geckoCode.notes.join("\n")}`}
+              css={css`
+                display: ${geckoCode.notes.length ? "" : "nne"};
+              `}
+            >
               <InfoIcon htmlColor="#ffffff66" />
-            </IconButton>
-          </Tooltip>
+            </Tooltip>
+          )}
           <Checkbox
-            id={`checkbox`}
             checked={geckoCode.enabled}
-            css={css``}
             onChange={() => {
               geckoCode.enabled = !geckoCode.enabled;
               setGeckoCodes([...geckoCodes]);
@@ -148,9 +146,11 @@ export const GeckoCodes: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolph
           >
             <DeleteForeverOutlined />
           </IconButton>
-          <IconButton onClick={() => copyCode(geckoCode)}>
-            <ContentCopy />
-          </IconButton>
+          <Tooltip title={"Copy to Clipboard"}>
+            <IconButton onClick={() => copyCode(geckoCode)}>
+              <ContentCopy />
+            </IconButton>
+          </Tooltip>
         </Box>
       </ListItem>
     );
