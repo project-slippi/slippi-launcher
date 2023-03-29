@@ -1,5 +1,5 @@
 import type { GeckoCode } from "@dolphin/config/geckoCode";
-import { geckoCodeToRaw, parseGeckoCodes } from "@dolphin/config/geckoCode";
+import { geckoCodeToString, parseGeckoCodes } from "@dolphin/config/geckoCode";
 import type { DolphinLaunchType } from "@dolphin/types";
 import { css } from "@emotion/react";
 import { ContentCopy, DeleteForeverOutlined } from "@mui/icons-material";
@@ -68,7 +68,7 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
   };
 
   const copyCode = async (geckoCode: GeckoCode) => {
-    await navigator.clipboard.writeText(geckoCodeToRaw(geckoCode).trim());
+    await navigator.clipboard.writeText(geckoCodeToString(geckoCode).trim());
     showSuccess("Code copied to clipboard!");
   };
 

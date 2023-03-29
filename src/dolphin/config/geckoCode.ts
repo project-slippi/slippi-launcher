@@ -150,7 +150,7 @@ export function parseGeckoCodes(input: string[], userDefined = true): GeckoCode[
   return parsedCodes;
 }
 
-export function geckoCodeToRaw(geckoCode: GeckoCode): string {
+export function geckoCodeToString(geckoCode: GeckoCode): string {
   let output = `$${geckoCode.name.trim()}`;
   if (geckoCode.creator) {
     output += ` [${geckoCode.creator.trim()}]`;
