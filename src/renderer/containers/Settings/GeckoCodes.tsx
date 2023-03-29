@@ -205,7 +205,12 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
           setGeckoFormOpen(false);
         }}
       >
-        <DialogContent>
+        <DialogContent
+          css={css`
+            min-width: 500px;
+            max-width: 500px;
+          `}
+        >
           <Tabs value={tabValue} variant="fullWidth" onChange={handleTabChange}>
             <Tab label="Manage" />
             <Tab label="Add" />
