@@ -144,7 +144,7 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
     <TabPanel value={tabValue} index={0}>
       <Box textAlign="center">
         {codeList}
-        <Button color="secondary" fullWidth variant="contained" onClick={saveCodes}>
+        <Button color="secondary" fullWidth={true} variant="contained" onClick={saveCodes}>
           Save
         </Button>
       </Box>
@@ -161,11 +161,11 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
           margin="normal"
           rows="25"
           InputProps={{ style: { fontFamily: '"Space Mono", monospace', fontSize: "12px" } }}
-          multiline
-          fullWidth
+          multiline={true}
+          fullWidth={true}
           onChange={(event) => handleCodeChange(event.target.value)}
         />
-        <Button type="submit" fullWidth variant="contained" color="secondary" onClick={addCode}>
+        <Button type="submit" fullWidth={true} variant="contained" color="secondary" onClick={addCode}>
           Add
         </Button>
       </Box>

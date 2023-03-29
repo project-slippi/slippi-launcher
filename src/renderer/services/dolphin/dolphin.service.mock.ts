@@ -108,7 +108,6 @@ class MockDolphinClient implements DolphinService {
     throw new Error("Method not implemented.");
   }
   @delayAndMaybeError(SHOULD_ERROR)
-
   public async saveGeckoCodes(_dolphinLaunchType: DolphinLaunchType, _geckoCodes: GeckoCode[]): Promise<void> {
     throw new Error("Method not implemented.");
   }
