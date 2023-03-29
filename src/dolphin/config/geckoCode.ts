@@ -12,7 +12,7 @@ export interface GeckoCode {
 
 // this is very similar to LoadCodes in GeckoCodeConfig.cpp, but skips the address and data because we don't need them
 export function loadGeckoCodes(globalIni: IniFile, localIni?: IniFile): GeckoCode[] {
-  const gcodes: GeckoCode[] = [];
+  let gcodes: GeckoCode[] = [];
   [globalIni, localIni].forEach((ini) => {
     if (ini === undefined) {
       return;
@@ -20,52 +20,9 @@ export function loadGeckoCodes(globalIni: IniFile, localIni?: IniFile): GeckoCod
     const lines: string[] = ini.getLines("Gecko", false).filter((line) => {
       return line.length !== 0 || line[0] !== "#";
     });
-    let gcode: GeckoCode = {
-      name: "",
-      creator: "",
-      enabled: false,
-      defaultEnabled: false,
-      userDefined: ini === localIni,
-      notes: [],
-      codeLines: [],
-    };
 
-    lines.forEach((l) => {
-      let line = l;
-      switch (line[0]) {
-        // code name
-        case "$": {
-          if (gcode.name.length > 0) {
-            gcodes.push(gcode);
-          }
-          line = line.slice(1); // cut out the $
-
-          const creatorMatch = line.match(/\[(.*?)\]/); // searches for brackets, catches anything inside them
-          const creator = creatorMatch !== null ? creatorMatch[1] : creatorMatch;
-          const name = creator ? line.split("[")[0] : line;
-
-          gcode = {
-            ...gcode,
-            name: name.trim(),
-            creator: creator,
-            notes: [],
-            codeLines: [],
-          };
-          break;
-        }
-        // comments
-        case "*": {
-          gcode.notes.push(line.slice(1));
-          break;
-        }
-        default: {
-          gcode.codeLines.push(line);
-        }
-      }
-    });
-    if (gcode.name.length > 0) {
-      gcodes.push(gcode);
-    }
+    const parsedCodes = parseGeckoCodes(lines, ini === localIni);
+    gcodes = gcodes.concat(parsedCodes);
 
     //update enabled flags
     readEnabledAndDisabled(ini, gcodes);
@@ -138,8 +95,8 @@ function makeGeckoCode(code: GeckoCode, lines: string[]) {
   code.codeLines.forEach((line) => lines.push(line));
 }
 
-export function rawToGeckoCodes(s: string): GeckoCode[] {
-  const rawLines = s.split("\n");
+export function parseGeckoCodes(input: string[], userDefined = true): GeckoCode[] {
+  const lines = input;
 
   const parsedCodes: GeckoCode[] = [];
   let parsedCode: GeckoCode = {
@@ -149,10 +106,10 @@ export function rawToGeckoCodes(s: string): GeckoCode[] {
     codeLines: [],
     enabled: false,
     defaultEnabled: false,
-    userDefined: true,
+    userDefined: userDefined,
   };
 
-  rawLines.forEach((line) => {
+  lines.forEach((line) => {
     switch (line[0]) {
       // code name
       case "$": {
@@ -163,11 +120,11 @@ export function rawToGeckoCodes(s: string): GeckoCode[] {
         const content = line.slice(1);
         const creatorMatch = content.match(/\[(.*?)\]/); // searches for brackets, catches anything inside them
         const creator = creatorMatch !== null ? creatorMatch[1] : creatorMatch;
-        const name = (creator ? content.split("[")[0] : content).trim();
+        const name = creator ? content.split("[")[0] : content;
 
         parsedCode = {
           ...parsedCode,
-          name: name,
+          name: name.trim(),
           creator: creator,
           notes: [],
           codeLines: [],
@@ -186,21 +143,23 @@ export function rawToGeckoCodes(s: string): GeckoCode[] {
     }
   });
 
-  parsedCodes.push(parsedCode);
+  if (parsedCode.name.length > 0) {
+    parsedCodes.push(parsedCode);
+  }
 
   return parsedCodes;
 }
 
-export function geckoCodeToRaw(gc: GeckoCode): string {
-  let output = `$${gc.name.trim()}`;
-  if (gc.creator) {
-    output += ` [${gc.creator.trim()}]`;
+export function geckoCodeToRaw(geckoCode: GeckoCode): string {
+  let output = `$${geckoCode.name.trim()}`;
+  if (geckoCode.creator) {
+    output += ` [${geckoCode.creator.trim()}]`;
   }
   output += "\n";
-  if (gc.notes.length) {
-    gc.notes.forEach((n) => (output += `*${n.trim()}\n`));
+  if (geckoCode.notes.length) {
+    geckoCode.notes.forEach((n) => (output += `*${n.trim()}\n`));
   }
-  gc.codeLines.forEach((c) => (output += `${c.trim()}\n`));
+  geckoCode.codeLines.forEach((c) => (output += `${c.trim()}\n`));
   output.trimEnd();
 
   return output;

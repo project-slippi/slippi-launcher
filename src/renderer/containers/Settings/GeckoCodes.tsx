@@ -1,5 +1,5 @@
 import type { GeckoCode } from "@dolphin/config/geckoCode";
-import { geckoCodeToRaw, rawToGeckoCodes } from "@dolphin/config/geckoCode";
+import { geckoCodeToRaw, parseGeckoCodes } from "@dolphin/config/geckoCode";
 import type { DolphinLaunchType } from "@dolphin/types";
 import { css } from "@emotion/react";
 import { ContentCopy, DeleteForeverOutlined } from "@mui/icons-material";
@@ -38,6 +38,7 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
 
   const openCodes = async () => {
     const geckoCodes = await readGeckoCodes(dolphinType);
+    console.table(geckoCodes);
     if (!geckoCodes) {
       console.error("Failed to read gecko codes");
       return;
@@ -74,7 +75,7 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
 
   const addCode = async () => {
     // attempt to parse the code lines as gecko codes
-    const parsedCodes: GeckoCode[] = rawToGeckoCodes(rawCodeString);
+    const parsedCodes: GeckoCode[] = parseGeckoCodes(rawCodeString.split("\n"));
 
     for (const newCode of parsedCodes) {
       if (newCode.name.trim().length === 0) {
@@ -104,12 +105,7 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
       >
         <>
           {geckoCode.notes.length > 0 && (
-            <Tooltip
-              title={`${geckoCode.notes.join("\n")}`}
-              css={css`
-                display: ${geckoCode.notes.length ? "" : "nne"};
-              `}
-            >
+            <Tooltip title={`${geckoCode.notes.join("\n")}`}>
               <InfoIcon htmlColor="#ffffff66" />
             </Tooltip>
           )}
@@ -127,17 +123,13 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
             margin-left: auto;
           `}
         >
-          <Tooltip title={"Delete Code"}>
-            <IconButton
-              css={css`
-                display: ${geckoCode.userDefined === false ? "none" : ""};
-              `}
-              disabled={geckoCode.userDefined === false}
-              onClick={() => openDeleteConfirmation(geckoCode)}
-            >
-              <DeleteForeverOutlined />
-            </IconButton>
-          </Tooltip>
+          {geckoCode.userDefined && (
+            <Tooltip title={"Delete Code"}>
+              <IconButton onClick={() => openDeleteConfirmation(geckoCode)}>
+                <DeleteForeverOutlined />
+              </IconButton>
+            </Tooltip>
+          )}
           <Tooltip title={"Copy to Clipboard"}>
             <IconButton onClick={() => copyCode(geckoCode)}>
               <ContentCopy />
@@ -165,7 +157,7 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
       <Box textAlign="center">
         <TextField
           type="textarea"
-          label="Paste Gecko Codes Here"
+          label="Paste Gecko Codes"
           variant="outlined"
           margin="normal"
           rows="25"
@@ -197,7 +189,7 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
   };
 
   return (
-    <div>
+    <>
       <Button
         variant="contained"
         color="secondary"
@@ -233,6 +225,6 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
       >
         <DialogContentText>The code {interactingCode?.name} will be deleted. This cannot be undone.</DialogContentText>
       </ConfirmationModal>
-    </div>
+    </>
   );
 };
