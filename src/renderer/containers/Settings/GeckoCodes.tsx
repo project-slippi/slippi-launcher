@@ -38,7 +38,6 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
 
   const openCodes = async () => {
     const geckoCodes = await readGeckoCodes(dolphinType);
-    console.table(geckoCodes);
     if (!geckoCodes) {
       console.error("Failed to read gecko codes");
       return;
