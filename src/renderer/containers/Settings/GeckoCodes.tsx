@@ -31,7 +31,7 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
   const [geckoCodes, setGeckoCodes] = React.useState<GeckoCode[]>([]);
   const [tabValue, setTabValue] = React.useState(0);
   const { showError, showSuccess } = useToasts();
-  let rawCodeString = "";
+  const [codeInput, setCodeInput] = React.useState("");
 
   const { dolphinService } = useServices();
   const { readGeckoCodes, saveGeckoCodes } = useDolphinActions(dolphinService);
@@ -63,10 +63,6 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
     setInteractingCode(undefined);
   };
 
-  const handleCodeChange = async (input: string) => {
-    rawCodeString = input;
-  };
-
   const copyCode = async (geckoCode: GeckoCode) => {
     await navigator.clipboard.writeText(geckoCodeToString(geckoCode).trim());
     showSuccess("Code copied to clipboard!");
@@ -74,7 +70,7 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
 
   const addCode = async () => {
     // attempt to parse the code lines as gecko codes
-    const parsedCodes: GeckoCode[] = parseGeckoCodes(rawCodeString.split("\n"));
+    const parsedCodes: GeckoCode[] = parseGeckoCodes(codeInput.split("\n"));
 
     for (const newCode of parsedCodes) {
       if (newCode.name.trim().length === 0) {
@@ -123,13 +119,13 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
           `}
         >
           {geckoCode.userDefined && (
-            <Tooltip title={"Delete Code"}>
+            <Tooltip title="Delete Code">
               <IconButton onClick={() => openDeleteConfirmation(geckoCode)}>
                 <DeleteForeverOutlined />
               </IconButton>
             </Tooltip>
           )}
-          <Tooltip title={"Copy to Clipboard"}>
+          <Tooltip title="Copy to Clipboard">
             <IconButton onClick={() => copyCode(geckoCode)}>
               <ContentCopy />
             </IconButton>
@@ -138,6 +134,16 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
       </ListItem>
     );
   }
+
+  const TabPanel = (props: React.PropsWithChildren<{ index: number; value: number }>) => {
+    const { children, value, index, ...other } = props;
+
+    return (
+      <div role="tabpanel" hidden={value !== index} id={`full-width-tabpanel-${index}`} {...other}>
+        {value === index && <Box p={3}>{children}</Box>}
+      </div>
+    );
+  };
 
   const codeList = <List>{geckoCodes.map((c) => geckoCodeItem(c))}</List>;
   const managePanel = (
@@ -163,7 +169,8 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
           InputProps={{ style: { fontFamily: '"Space Mono", monospace', fontSize: "12px" } }}
           multiline={true}
           fullWidth={true}
-          onChange={(event) => handleCodeChange(event.target.value)}
+          onChange={(event) => setCodeInput(event.target.value)}
+          value={codeInput}
         />
         <Button type="submit" fullWidth={true} variant="contained" color="secondary" onClick={addCode}>
           Add
@@ -171,16 +178,6 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
       </Box>
     </TabPanel>
   );
-
-  function TabPanel(props: { index: number; value: number; children: JSX.Element }) {
-    const { children, value, index, ...other } = props;
-
-    return (
-      <div role="tabpanel" hidden={value !== index} id={`full-width-tabpanel-${index}`} {...other}>
-        {value === index && <Box p={3}>{children}</Box>}
-      </div>
-    );
-  }
 
   const handleTabChange = (event: React.ChangeEvent<unknown>, newValue: number) => {
     event.preventDefault();

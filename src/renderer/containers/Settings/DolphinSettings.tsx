@@ -178,7 +178,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           </Button>
         </div>
       </SettingItem>
-      <SettingItem name={"Gecko Codes"}>
+      <SettingItem name="Gecko Codes">
         <GeckoCodes dolphinType={dolphinType} />
       </SettingItem>
     </div>

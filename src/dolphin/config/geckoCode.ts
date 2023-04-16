@@ -12,7 +12,7 @@ export interface GeckoCode {
 
 // this is very similar to LoadCodes in GeckoCodeConfig.cpp, but skips the address and data because we don't need them
 export function loadGeckoCodes(globalIni: IniFile, localIni?: IniFile): GeckoCode[] {
-  let gcodes: GeckoCode[] = [];
+  const gcodes: GeckoCode[] = [];
   [globalIni, localIni].forEach((ini) => {
     if (ini === undefined) {
       return;
@@ -22,7 +22,7 @@ export function loadGeckoCodes(globalIni: IniFile, localIni?: IniFile): GeckoCod
     });
 
     const parsedCodes = parseGeckoCodes(lines, ini === localIni);
-    gcodes = gcodes.concat(parsedCodes);
+    gcodes.push(...parsedCodes);
 
     //update enabled flags
     readEnabledAndDisabled(ini, gcodes);
