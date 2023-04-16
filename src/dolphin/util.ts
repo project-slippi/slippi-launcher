@@ -2,6 +2,8 @@ import * as fs from "fs-extra";
 import path from "path";
 
 import { setBootToCss } from "./config/config";
+import type { GeckoCode } from "./config/geckoCode";
+import { loadGeckoCodes, setCodes } from "./config/geckoCode";
 import { IniFile } from "./config/iniFile";
 import type { DolphinInstallation } from "./install/installation";
 import { DolphinLaunchType } from "./types";
@@ -47,19 +49,42 @@ export async function findDolphinExecutable(type: DolphinLaunchType, dolphinPath
 }
 
 export async function updateBootToCssCode(installation: DolphinInstallation, options: { enable: boolean }) {
-  const userPath = installation.userFolder;
-  const sysPath = installation.sysFolder;
+  const { userFolder, sysFolder } = installation;
 
-  await Promise.all([fs.ensureDir(userPath), fs.ensureDir(sysPath)]);
+  await Promise.all([fs.ensureDir(userFolder), fs.ensureDir(sysFolder)]);
 
   // Update vanilla ISO configs
   await Promise.all(
     ["GALE01", "GALJ01"].map(async (id) => {
-      const globalIniPath = path.join(sysPath, "GameSettings", `${id}r2.ini`);
-      const localIniPath = path.join(userPath, "GameSettings", `${id}.ini`);
+      const globalIniPath = path.join(sysFolder, "GameSettings", `${id}r2.ini`);
+      const localIniPath = path.join(userFolder, "GameSettings", `${id}.ini`);
       const globalIni = await IniFile.init(globalIniPath);
       const localIni = await IniFile.init(localIniPath);
       return setBootToCss(globalIni, localIni, options.enable);
     }),
   );
+}
+
+export async function fetchGeckoCodes(installation: DolphinInstallation) {
+  const { userFolder, sysFolder } = installation;
+
+  await Promise.all([fs.ensureDir(userFolder), fs.ensureDir(sysFolder)]);
+  const globalIniPath = path.join(sysFolder, "GameSettings", `GALE01r2.ini`);
+  const localIniPath = path.join(userFolder, "GameSettings", `GALE01.ini`);
+  const globalIni = await IniFile.init(globalIniPath);
+  const localIni = await IniFile.init(localIniPath);
+
+  return loadGeckoCodes(globalIni, localIni);
+}
+
+export async function saveGeckoCodes(installation: DolphinInstallation, geckoCodes: GeckoCode[]) {
+  const { userFolder, sysFolder } = installation;
+
+  await Promise.all([fs.ensureDir(userFolder), fs.ensureDir(sysFolder)]);
+  const localIniPath = path.join(userFolder, "GameSettings", `GALE01.ini`);
+  const localIni = await IniFile.init(localIniPath);
+
+  const localCodes = geckoCodes;
+  setCodes(localIni, localCodes);
+  return await localIni.save();
 }

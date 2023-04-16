@@ -1,16 +1,19 @@
 /* eslint-disable import/no-default-export */
 
+import type { GeckoCode } from "./config/geckoCode";
 import {
   ipc_checkDesktopAppDolphin,
   ipc_checkPlayKeyExists,
   ipc_configureDolphin,
   ipc_dolphinEvent,
   ipc_downloadDolphin,
+  ipc_fetchGeckoCodes,
   ipc_hardResetDolphin,
   ipc_importDolphinSettings,
   ipc_launchNetplayDolphin,
   ipc_openDolphinSettingsFolder,
   ipc_removePlayKeyFile,
+  ipc_saveGeckoCodes,
   ipc_softResetDolphin,
   ipc_storePlayKeyFile,
   ipc_viewSlpReplay,
@@ -62,6 +65,13 @@ const dolphinApi: DolphinService = {
   },
   async importDolphinSettings(options: { toImportDolphinPath: string; dolphinType: DolphinLaunchType }): Promise<void> {
     await ipc_importDolphinSettings.renderer!.trigger(options);
+  },
+  async fetchGeckoCodes(dolphinType: DolphinLaunchType): Promise<GeckoCode[]> {
+    const { result } = await ipc_fetchGeckoCodes.renderer!.trigger({ dolphinType });
+    return result.codes;
+  },
+  async saveGeckoCodes(dolphinType: DolphinLaunchType, geckoCodes: GeckoCode[]): Promise<void> {
+    await ipc_saveGeckoCodes.renderer!.trigger({ dolphinType, geckoCodes });
   },
   onEvent<T extends DolphinEventType>(eventType: T, handle: (event: DolphinEventMap[T]) => void) {
     const { destroy } = ipc_dolphinEvent.renderer!.handle(async (result) => {
