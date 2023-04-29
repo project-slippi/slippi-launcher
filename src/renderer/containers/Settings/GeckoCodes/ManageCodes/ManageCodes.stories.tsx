@@ -45,5 +45,4 @@ Primary.args = {
   handleToggle: action("handleToggle"),
   handleCopy: action("handleCopy"),
   handleDelete: action("handleDelete"),
-  onSave: action("onSave"),
 };
