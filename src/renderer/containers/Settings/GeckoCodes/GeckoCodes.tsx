@@ -6,6 +6,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import React from "react";
@@ -60,18 +61,6 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
     setTabValue(0);
   };
 
-  const managePanel = (
-    <TabPanel value={tabValue} index={0}>
-      <ManageCodesContainer geckoCodes={geckoCodes} onChange={setGeckoCodes} onSave={saveCodes} />
-    </TabPanel>
-  );
-
-  const addPanel = (
-    <TabPanel value={tabValue} index={1}>
-      <AddCodes onSubmit={(value) => addCode(value)} />
-    </TabPanel>
-  );
-
   const handleTabChange = (event: React.ChangeEvent<unknown>, newValue: number) => {
     event.preventDefault();
     setTabValue(newValue);
@@ -79,14 +68,7 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
 
   return (
     <>
-      <Button
-        variant="contained"
-        color="secondary"
-        css={css`
-          min-width: 145px;
-        `}
-        onClick={openCodes}
-      >
+      <Button variant="contained" color="secondary" onClick={openCodes}>
         Manage Gecko Codes
       </Button>
       <Dialog
@@ -94,18 +76,22 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
         onClose={() => {
           setGeckoFormOpen(false);
         }}
+        maxWidth="md"
+        fullWidth={true}
       >
-        <DialogContent
-          css={css`
-            width: 500px;
-          `}
-        >
+        <DialogTitle sx={{ padding: 0 }}>
           <Tabs value={tabValue} variant="fullWidth" onChange={handleTabChange}>
             <Tab label="Manage" />
             <Tab label="Add" />
           </Tabs>
-          {managePanel}
-          {addPanel}
+        </DialogTitle>
+        <DialogContent>
+          <TabPanel value={tabValue} index={0}>
+            <ManageCodesContainer geckoCodes={geckoCodes} onChange={setGeckoCodes} onSave={saveCodes} />
+          </TabPanel>
+          <TabPanel value={tabValue} index={1}>
+            <AddCodes onSubmit={(value) => addCode(value)} />
+          </TabPanel>
         </DialogContent>
       </Dialog>
     </>
@@ -114,8 +100,14 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
 
 const TabPanel = ({ value, index, children }: React.PropsWithChildren<{ index: number; value: number }>) => {
   return (
-    <div role="tabpanel" hidden={value !== index}>
-      {value === index && <Box>{children}</Box>}
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      css={css`
+        height: 70vh;
+      `}
+    >
+      {value === index && <Box sx={{ height: "100%" }}>{children}</Box>}
     </div>
   );
 };
