@@ -1,14 +1,16 @@
 import { css } from "@emotion/react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import React from "react";
 
-export const AddCodes = ({ onSubmit }: { onSubmit: (value: string) => void }) => {
-  const [value, onChange] = React.useState("");
-  const handleSubmit = () => {
-    onSubmit(value);
-  };
-
+export const AddCodes = ({
+  value,
+  onChange,
+  onSubmit,
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  onSubmit: () => void;
+}) => {
   return (
     <div
       css={css`
@@ -37,7 +39,7 @@ export const AddCodes = ({ onSubmit }: { onSubmit: (value: string) => void }) =>
           value={value}
         />
       </div>
-      <Button type="submit" fullWidth={true} variant="contained" color="secondary" onClick={handleSubmit}>
+      <Button type="submit" fullWidth={true} variant="contained" color="secondary" onClick={onSubmit}>
         Add
       </Button>
     </div>

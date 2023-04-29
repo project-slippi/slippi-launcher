@@ -21,6 +21,7 @@ import { ManageCodesContainer } from "./ManageCodes/ManageCodes.container";
 export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) => {
   const [geckoFormOpen, setGeckoFormOpen] = React.useState(false);
   const [geckoCodes, setGeckoCodes] = React.useState<GeckoCode[]>([]);
+  const [codeInput, setCodeInput] = React.useState("");
   const [tabValue, setTabValue] = React.useState(0);
   const { showError } = useToasts();
   const { dolphinService } = useServices();
@@ -42,7 +43,7 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
     setGeckoFormOpen(false);
   };
 
-  const addCode = async (codeInput: string) => {
+  const addCode = async () => {
     // attempt to parse the code lines as gecko codes
     const parsedCodes: GeckoCode[] = parseGeckoCodes(codeInput.split("\n"));
 
@@ -56,7 +57,7 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
       }
     }
 
-    setGeckoCodes([...geckoCodes.concat(parsedCodes)]);
+    setGeckoCodes(geckoCodes.concat(parsedCodes));
     await saveGeckoCodes(dolphinType, geckoCodes);
     setTabValue(0);
   };
@@ -90,7 +91,7 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
             <ManageCodesContainer geckoCodes={geckoCodes} onChange={setGeckoCodes} onSave={saveCodes} />
           </TabPanel>
           <TabPanel value={tabValue} index={1}>
-            <AddCodes onSubmit={(value) => addCode(value)} />
+            <AddCodes value={codeInput} onChange={setCodeInput} onSubmit={addCode} />
           </TabPanel>
         </DialogContent>
       </Dialog>
