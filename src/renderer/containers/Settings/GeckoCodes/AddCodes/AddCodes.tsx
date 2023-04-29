@@ -1,16 +1,14 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import React from "react";
 
-export const AddCodes = ({
-  value,
-  onChange,
-  onSubmit,
-}: {
-  value: string;
-  onChange: (val: string) => void;
-  onSubmit: () => void;
-}) => {
+export const AddCodes = ({ onSubmit }: { onSubmit: (value: string) => void }) => {
+  const [value, onChange] = React.useState("");
+  const handleSubmit = () => {
+    onSubmit(value);
+  };
+
   return (
     <Box textAlign="center">
       <TextField
@@ -25,7 +23,7 @@ export const AddCodes = ({
         onChange={(event) => onChange(event.target.value)}
         value={value}
       />
-      <Button type="submit" fullWidth={true} variant="contained" color="secondary" onClick={onSubmit}>
+      <Button type="submit" fullWidth={true} variant="contained" color="secondary" onClick={handleSubmit}>
         Add
       </Button>
     </Box>
