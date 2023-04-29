@@ -6,7 +6,7 @@ import { ManageCodes } from "./ManageCodes";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: "Components/ManageCodes",
+  title: "containers/Settings/ManageCodes",
   component: ManageCodes,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {},
@@ -28,13 +28,14 @@ const aFakeGeckoCodeWith = (opts: Partial<GeckoCode> = {}) => {
 const fakeGeckoCodes: GeckoCode[] = [
   aFakeGeckoCodeWith({ name: "Some super duper really really really really really really long name" }),
   aFakeGeckoCodeWith({
+    userDefined: true,
     notes: [
       "Some super duper really really really really really really long description.",
       "Some super duper really really really really really really long description.",
       "Some super duper really really really really really really long description.",
     ],
   }),
-  aFakeGeckoCodeWith(),
+  aFakeGeckoCodeWith({ userDefined: true }),
 ];
 
 export const Primary = Template.bind({});
