@@ -1,13 +1,6 @@
 import type { GeckoCode } from "@dolphin/config/geckoCode";
 import type { DolphinLaunchType } from "@dolphin/types";
-import { css } from "@emotion/react";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-import Tab from "@mui/material/Tab";
-import Tabs from "@mui/material/Tabs";
 import React from "react";
 
 import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
@@ -16,8 +9,10 @@ import { useServices } from "@/services";
 
 import { AddCodesContainer } from "./AddCodes/AddCodes.container";
 import { ManageCodesContainer } from "./ManageCodes/ManageCodes.container";
+import { TabbedDialog } from "./TabbedDialog";
 
 export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) => {
+  const [isLoading, setIsLoading] = React.useState(false);
   const [geckoFormOpen, setGeckoFormOpen] = React.useState(false);
   const [geckoCodes, setGeckoCodes] = React.useState<GeckoCode[]>([]);
   const [tabValue, setTabValue] = React.useState(0);
@@ -25,79 +20,75 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
   const { readGeckoCodes, saveGeckoCodes } = useDolphinActions(dolphinService);
   const { showError } = useToasts();
 
-  const openCodes = async () => {
-    const geckoCodes = await readGeckoCodes(dolphinType);
-    if (!geckoCodes) {
-      showError("Failed to read gecko codes");
-      return;
-    }
+  const openCodes = React.useCallback(async () => {
+    setIsLoading(true);
 
-    setGeckoCodes(geckoCodes);
-    setGeckoFormOpen(true);
-  };
-
-  const updateGeckoCodes = async (geckoCodesToSave: GeckoCode[]) => {
     try {
-      await saveGeckoCodes(dolphinType, geckoCodesToSave);
-      setGeckoCodes(geckoCodesToSave);
+      const geckoCodes = await readGeckoCodes(dolphinType);
+      if (!geckoCodes) {
+        showError("Failed to read gecko codes");
+        return;
+      }
+
+      setGeckoCodes(geckoCodes);
+      setGeckoFormOpen(true);
     } catch (err) {
-      showError(`Error saving gecko codes: ${err}`);
+      showError(`Error reading gecko codes: ${err}`);
+    } finally {
+      setIsLoading(false);
     }
-  };
+  }, [dolphinType, readGeckoCodes, showError]);
 
-  const addCode = async (codes: GeckoCode[]) => {
-    const newCodesList = geckoCodes.concat(codes);
-    await updateGeckoCodes(newCodesList);
-    setTabValue(0);
-  };
+  const updateGeckoCodes = React.useCallback(
+    async (geckoCodesToSave: GeckoCode[]) => {
+      try {
+        await saveGeckoCodes(dolphinType, geckoCodesToSave);
+        setGeckoCodes(geckoCodesToSave);
+      } catch (err) {
+        showError(`Error saving gecko codes: ${err}`);
+      }
+    },
+    [dolphinType, saveGeckoCodes, showError],
+  );
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    event.preventDefault();
-    setTabValue(newValue);
-  };
+  const addCode = React.useCallback(
+    async (codes: GeckoCode[]) => {
+      const newCodesList = geckoCodes.concat(codes);
+      await updateGeckoCodes(newCodesList);
+      setTabValue(0);
+    },
+    [geckoCodes, updateGeckoCodes],
+  );
+
+  const onClose = React.useCallback(() => setGeckoFormOpen(false), []);
+
+  const tabs = React.useMemo((): { name: string; Component: React.ComponentType }[] => {
+    return [
+      {
+        name: "Manage",
+        Component: () => <ManageCodesContainer geckoCodes={geckoCodes} onChange={updateGeckoCodes} />,
+      },
+      {
+        name: "Add",
+        Component: () => (
+          <AddCodesContainer existingGeckoCodeNames={geckoCodes.map(({ name }) => name)} onSubmit={addCode} />
+        ),
+      },
+    ];
+  }, [addCode, geckoCodes, updateGeckoCodes]);
 
   return (
     <>
-      <Button variant="contained" color="secondary" onClick={openCodes}>
+      <Button variant="contained" color="secondary" onClick={openCodes} disabled={isLoading}>
         Manage Gecko Codes
       </Button>
-      <Dialog
+      <TabbedDialog
         open={geckoFormOpen}
-        maxWidth="md"
-        fullWidth={true}
-        onClose={() => {
-          setGeckoFormOpen(false);
-        }}
-      >
-        <DialogTitle sx={{ padding: 0 }}>
-          <Tabs value={tabValue} variant="fullWidth" onChange={handleTabChange}>
-            <Tab label="Manage" />
-            <Tab label="Add" />
-          </Tabs>
-        </DialogTitle>
-        <DialogContent>
-          <TabPanel value={tabValue} index={0}>
-            <ManageCodesContainer geckoCodes={geckoCodes} onChange={updateGeckoCodes} />
-          </TabPanel>
-          <TabPanel value={tabValue} index={1}>
-            <AddCodesContainer existingGeckoCodeNames={geckoCodes.map(({ name }) => name)} onSubmit={addCode} />
-          </TabPanel>
-        </DialogContent>
-      </Dialog>
+        onClose={onClose}
+        tabs={tabs}
+        currentTab={tabValue}
+        setCurrentTab={setTabValue}
+      />
     </>
-  );
-};
-
-const TabPanel = ({ value, index, children }: React.PropsWithChildren<{ index: number; value: number }>) => {
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      css={css`
-        height: 70vh;
-      `}
-    >
-      {value === index && <Box sx={{ height: "100%" }}>{children}</Box>}
-    </div>
   );
 };
