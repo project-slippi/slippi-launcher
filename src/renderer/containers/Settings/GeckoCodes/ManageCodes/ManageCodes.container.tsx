@@ -8,11 +8,9 @@ import { ManageCodes } from "./ManageCodes";
 export const ManageCodesContainer = ({
   geckoCodes,
   onChange,
-  onSave,
 }: {
   geckoCodes: GeckoCode[];
   onChange: (codes: GeckoCode[]) => void;
-  onSave: () => void;
 }) => {
   const { showSuccess } = useToasts();
 
@@ -41,7 +39,6 @@ export const ManageCodesContainer = ({
       handleToggle={handleToggle}
       handleCopy={handleCopy}
       handleDelete={handleDelete}
-      onSave={onSave}
     />
   );
 };

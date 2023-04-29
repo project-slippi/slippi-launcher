@@ -1,5 +1,4 @@
 import type { GeckoCode } from "@dolphin/config/geckoCode";
-import { parseGeckoCodes } from "@dolphin/config/geckoCode";
 import type { DolphinLaunchType } from "@dolphin/types";
 import { css } from "@emotion/react";
 import Box from "@mui/material/Box";
@@ -15,22 +14,21 @@ import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";
 
-import { AddCodes } from "./AddCodes/AddCodes";
+import { AddCodesContainer } from "./AddCodes/AddCodes.container";
 import { ManageCodesContainer } from "./ManageCodes/ManageCodes.container";
 
 export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) => {
   const [geckoFormOpen, setGeckoFormOpen] = React.useState(false);
   const [geckoCodes, setGeckoCodes] = React.useState<GeckoCode[]>([]);
-  const [codeInput, setCodeInput] = React.useState("");
   const [tabValue, setTabValue] = React.useState(0);
-  const { showError } = useToasts();
   const { dolphinService } = useServices();
   const { readGeckoCodes, saveGeckoCodes } = useDolphinActions(dolphinService);
+  const { showError } = useToasts();
 
   const openCodes = async () => {
     const geckoCodes = await readGeckoCodes(dolphinType);
     if (!geckoCodes) {
-      console.error("Failed to read gecko codes");
+      showError("Failed to read gecko codes");
       return;
     }
 
@@ -38,31 +36,22 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
     setGeckoFormOpen(true);
   };
 
-  const saveCodes = async () => {
-    await saveGeckoCodes(dolphinType, geckoCodes);
-    setGeckoFormOpen(false);
+  const updateGeckoCodes = async (geckoCodesToSave: GeckoCode[]) => {
+    try {
+      await saveGeckoCodes(dolphinType, geckoCodesToSave);
+      setGeckoCodes(geckoCodesToSave);
+    } catch (err) {
+      showError(`Error saving gecko codes: ${err}`);
+    }
   };
 
-  const addCode = async () => {
-    // attempt to parse the code lines as gecko codes
-    const parsedCodes: GeckoCode[] = parseGeckoCodes(codeInput.split("\n"));
-
-    for (const newCode of parsedCodes) {
-      if (newCode.name.trim().length === 0) {
-        showError("Name is required");
-        return;
-      } else if (geckoCodes.some((c) => c.name === newCode.name)) {
-        showError("Duplicate code name");
-        return;
-      }
-    }
-
-    setGeckoCodes(geckoCodes.concat(parsedCodes));
-    await saveGeckoCodes(dolphinType, geckoCodes);
+  const addCode = async (codes: GeckoCode[]) => {
+    const newCodesList = geckoCodes.concat(codes);
+    await updateGeckoCodes(newCodesList);
     setTabValue(0);
   };
 
-  const handleTabChange = (event: React.ChangeEvent<unknown>, newValue: number) => {
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     event.preventDefault();
     setTabValue(newValue);
   };
@@ -74,11 +63,11 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
       </Button>
       <Dialog
         open={geckoFormOpen}
+        maxWidth="md"
+        fullWidth={true}
         onClose={() => {
           setGeckoFormOpen(false);
         }}
-        maxWidth="md"
-        fullWidth={true}
       >
         <DialogTitle sx={{ padding: 0 }}>
           <Tabs value={tabValue} variant="fullWidth" onChange={handleTabChange}>
@@ -88,10 +77,10 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
         </DialogTitle>
         <DialogContent>
           <TabPanel value={tabValue} index={0}>
-            <ManageCodesContainer geckoCodes={geckoCodes} onChange={setGeckoCodes} onSave={saveCodes} />
+            <ManageCodesContainer geckoCodes={geckoCodes} onChange={updateGeckoCodes} />
           </TabPanel>
           <TabPanel value={tabValue} index={1}>
-            <AddCodes value={codeInput} onChange={setCodeInput} onSubmit={addCode} />
+            <AddCodesContainer existingGeckoCodeNames={geckoCodes.map(({ name }) => name)} onSubmit={addCode} />
           </TabPanel>
         </DialogContent>
       </Dialog>

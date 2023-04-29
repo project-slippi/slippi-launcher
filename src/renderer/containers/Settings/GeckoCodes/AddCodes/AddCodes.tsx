@@ -1,47 +1,93 @@
 import { css } from "@emotion/react";
+import styled from "@emotion/styled";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import { Controller, useForm } from "react-hook-form";
 
 export const AddCodes = ({
-  value,
-  onChange,
+  validateCodeInput,
   onSubmit,
 }: {
-  value: string;
-  onChange: (val: string) => void;
-  onSubmit: () => void;
+  validateCodeInput: (codeInput: string) => string | true;
+  onSubmit: (codeInput: string) => void;
 }) => {
+  const { handleSubmit, control } = useForm<{ geckoCodeInput: string }>();
+  const onFormSubmit = handleSubmit(({ geckoCodeInput }) => onSubmit(geckoCodeInput));
+
   return (
-    <div
+    <form
+      onSubmit={onFormSubmit}
       css={css`
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
         height: 100%;
       `}
     >
       <div
         css={css`
-          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          height: 100%;
         `}
       >
-        <TextField
-          type="textarea"
-          label="Paste Gecko Codes"
-          variant="filled"
-          margin="normal"
-          rows="20"
-          sx={{ height: "100%" }}
-          InputProps={{ style: { fontFamily: '"Space Mono", monospace', fontSize: "12px" } }}
-          multiline={true}
-          fullWidth={true}
-          onChange={(event) => onChange(event.target.value)}
-          value={value}
-        />
+        <div
+          css={css`
+            flex: 1;
+          `}
+        >
+          <Controller
+            name="geckoCodeInput"
+            control={control}
+            defaultValue=""
+            render={({ field, fieldState: { error } }) => {
+              return (
+                <div
+                  css={css`
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    height: 100%;
+                  `}
+                >
+                  <div
+                    css={css`
+                      flex: 1;
+                    `}
+                  >
+                    <TextField
+                      {...field}
+                      type="textarea"
+                      label="Paste Gecko Codes"
+                      variant="filled"
+                      margin="normal"
+                      rows="20"
+                      sx={{ height: "100%" }}
+                      InputProps={{ style: { fontFamily: '"Space Mono", monospace', fontSize: "12px" } }}
+                      required={true}
+                      autoFocus={true}
+                      multiline={true}
+                      fullWidth={true}
+                      error={Boolean(error)}
+                    />
+                  </div>
+                  {error && <ErrorContainer>{error.message}</ErrorContainer>}
+                </div>
+              );
+            }}
+            rules={{
+              validate: validateCodeInput,
+            }}
+          />
+        </div>
+        <Button type="submit" fullWidth={true} variant="contained" color="secondary">
+          Add
+        </Button>
       </div>
-      <Button type="submit" fullWidth={true} variant="contained" color="secondary" onClick={onSubmit}>
-        Add
-      </Button>
-    </div>
+    </form>
   );
 };
+
+const ErrorContainer = styled.div`
+  margin: 5px 0;
+  font-size: 13px;
+  color: ${({ theme }) => theme.palette.error.main};
+`;
