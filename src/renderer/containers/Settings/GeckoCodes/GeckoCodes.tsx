@@ -1,5 +1,5 @@
 import type { GeckoCode } from "@dolphin/config/geckoCode";
-import { geckoCodeToString, parseGeckoCodes } from "@dolphin/config/geckoCode";
+import { parseGeckoCodes } from "@dolphin/config/geckoCode";
 import type { DolphinLaunchType } from "@dolphin/types";
 import { css } from "@emotion/react";
 import Box from "@mui/material/Box";
@@ -15,14 +15,13 @@ import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";
 
 import { AddCodes } from "./AddCodes/AddCodes";
-import { ManageCodes } from "./ManageCodes/ManageCodes";
+import { ManageCodesContainer } from "./ManageCodes/ManageCodes.container";
 
 export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) => {
   const [geckoFormOpen, setGeckoFormOpen] = React.useState(false);
   const [geckoCodes, setGeckoCodes] = React.useState<GeckoCode[]>([]);
   const [tabValue, setTabValue] = React.useState(0);
-  const { showError, showSuccess } = useToasts();
-
+  const { showError } = useToasts();
   const { dolphinService } = useServices();
   const { readGeckoCodes, saveGeckoCodes } = useDolphinActions(dolphinService);
 
@@ -40,15 +39,6 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
   const saveCodes = async () => {
     await saveGeckoCodes(dolphinType, geckoCodes);
     setGeckoFormOpen(false);
-  };
-
-  const deleteCode = (geckoCode: GeckoCode) => {
-    setGeckoCodes([...geckoCodes.filter((e) => e !== geckoCode)]);
-  };
-
-  const copyCode = async (geckoCode: GeckoCode) => {
-    await navigator.clipboard.writeText(geckoCodeToString(geckoCode).trim());
-    showSuccess("Code copied to clipboard!");
   };
 
   const addCode = async (codeInput: string) => {
@@ -70,25 +60,9 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
     setTabValue(0);
   };
 
-  const handleToggle = (code: GeckoCode) => {
-    const index = geckoCodes.findIndex((c) => c.name === code.name);
-    if (index !== -1) {
-      const geckoCode = geckoCodes[index];
-      geckoCode.enabled = !geckoCode.enabled;
-      geckoCodes[index] = geckoCode;
-      setGeckoCodes([...geckoCodes]);
-    }
-  };
-
   const managePanel = (
     <TabPanel value={tabValue} index={0}>
-      <ManageCodes
-        geckoCodes={geckoCodes}
-        handleToggle={handleToggle}
-        handleCopy={copyCode}
-        handleDelete={deleteCode}
-        onSave={saveCodes}
-      />
+      <ManageCodesContainer geckoCodes={geckoCodes} onChange={setGeckoCodes} onSave={saveCodes} />
     </TabPanel>
   );
 
