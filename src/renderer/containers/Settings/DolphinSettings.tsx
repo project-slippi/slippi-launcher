@@ -14,7 +14,7 @@ import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
 import { useDolphinPath } from "@/lib/hooks/useSettings";
 import { useServices } from "@/services";
 
-import { GeckoCodes } from "./GeckoCodes";
+import { GeckoCodes } from "./GeckoCodes/GeckoCodes";
 import { SettingItem } from "./SettingItem";
 
 const { isLinux, isMac } = window.electron.common;
