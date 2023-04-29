@@ -11,7 +11,7 @@ export const AddCodesContainer = ({
   onSubmit: (codes: GeckoCode[]) => void;
 }) => {
   const onFormSubmit = (geckoCodeInput: string) => {
-    const parsedCodes = parseGeckoCodes(geckoCodeInput.split("\n"));
+    const parsedCodes = parseGeckoCodes(geckoCodeInput.split("\n"), { enabled: true, userDefined: true });
     onSubmit(parsedCodes);
   };
 
@@ -26,7 +26,6 @@ export const AddCodesContainer = ({
 const validateGeckoCode = (codeInput: string, existingGeckoCodeNames: string[] = []): string | true => {
   // Attempt to parse the code lines as gecko codes
   const parsedCodes: GeckoCode[] = parseGeckoCodes(codeInput.split("\n"));
-  console.log({ parsedCodes });
   if (parsedCodes.length === 0) {
     return "Invalid Gecko code";
   }
