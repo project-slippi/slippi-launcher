@@ -26,7 +26,7 @@ export const TabbedDialog = React.memo(function TabbedDialog({
   };
 
   return (
-    <Dialog open={open} maxWidth="md" fullWidth={true} onClose={onClose}>
+    <Dialog open={open} fullWidth={true} onClose={onClose}>
       <DialogTitle sx={{ padding: 0 }}>
         <Tabs value={currentTab} variant="fullWidth" onChange={handleTabChange}>
           {tabs.map(({ name }, i) => (
