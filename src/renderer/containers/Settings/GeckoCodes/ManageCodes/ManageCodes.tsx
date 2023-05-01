@@ -87,6 +87,9 @@ const GeckoCodeListItem = React.memo(function GeckoCodeListItem({
         display: flex;
         flex-direction: row;
         justify-content: space-between;
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.1);
+        }
       `}
     >
       <div
