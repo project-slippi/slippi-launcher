@@ -15,7 +15,7 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
   const [isLoading, setIsLoading] = React.useState(false);
   const [geckoFormOpen, setGeckoFormOpen] = React.useState(false);
   const [geckoCodes, setGeckoCodes] = React.useState<GeckoCode[]>([]);
-  const [tabValue, setTabValue] = React.useState(0);
+  const [currentTab, setCurrentTab] = React.useState(0);
   const { dolphinService } = useServices();
   const { readGeckoCodes, saveGeckoCodes } = useDolphinActions(dolphinService);
   const { showError } = useToasts();
@@ -55,7 +55,7 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
     async (codes: GeckoCode[]) => {
       const newCodesList = geckoCodes.concat(codes);
       await updateGeckoCodes(newCodesList);
-      setTabValue(0);
+      setCurrentTab(0);
     },
     [geckoCodes, updateGeckoCodes],
   );
@@ -86,8 +86,8 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
         open={geckoFormOpen}
         onClose={onClose}
         tabs={tabs}
-        currentTab={tabValue}
-        setCurrentTab={setTabValue}
+        currentTab={currentTab}
+        setCurrentTab={setCurrentTab}
       />
     </>
   );
