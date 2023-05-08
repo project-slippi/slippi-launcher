@@ -11,7 +11,7 @@ import { AddCodesContainer } from "./AddCodes/AddCodes.container";
 import { ManageCodesContainer } from "./ManageCodes/ManageCodes.container";
 import { TabbedDialog } from "./TabbedDialog";
 
-export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) => {
+export const GeckoCodes = ({ dolphinType, disabled }: { dolphinType: DolphinLaunchType; disabled: boolean }) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [geckoFormOpen, setGeckoFormOpen] = React.useState(false);
   const [geckoCodes, setGeckoCodes] = React.useState<GeckoCode[]>([]);
@@ -79,7 +79,7 @@ export const GeckoCodes = ({ dolphinType }: { dolphinType: DolphinLaunchType }) 
 
   return (
     <>
-      <Button variant="contained" color="secondary" onClick={openCodes} disabled={isLoading}>
+      <Button variant="contained" color="secondary" onClick={openCodes} disabled={disabled || isLoading}>
         Manage Gecko Codes
       </Button>
       <TabbedDialog

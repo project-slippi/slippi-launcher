@@ -179,7 +179,7 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
         </div>
       </SettingItem>
       <SettingItem name="Gecko Codes">
-        <GeckoCodes dolphinType={dolphinType} />
+        <GeckoCodes dolphinType={dolphinType} disabled={!dolphinIsReady} />
       </SettingItem>
     </div>
   );
