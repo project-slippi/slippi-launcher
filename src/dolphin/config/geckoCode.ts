@@ -21,7 +21,7 @@ export function loadGeckoCodes(globalIni: IniFile, localIni?: IniFile): GeckoCod
       return line.length !== 0 || line[0] !== "#";
     });
 
-    const parsedCodes = parseGeckoCodes(lines, ini === localIni);
+    const parsedCodes = parseGeckoCodes(lines, { userDefined: ini === localIni });
     gcodes.push(...parsedCodes);
 
     //update enabled flags
@@ -95,7 +95,7 @@ function makeGeckoCode(code: GeckoCode, lines: string[]) {
   code.codeLines.forEach((line) => lines.push(line));
 }
 
-export function parseGeckoCodes(input: string[], userDefined = true): GeckoCode[] {
+export function parseGeckoCodes(input: string[], opts: { enabled?: boolean; userDefined?: boolean } = {}): GeckoCode[] {
   const lines = input;
 
   const parsedCodes: GeckoCode[] = [];
@@ -104,9 +104,9 @@ export function parseGeckoCodes(input: string[], userDefined = true): GeckoCode[
     creator: "",
     notes: [],
     codeLines: [],
-    enabled: false,
+    enabled: Boolean(opts?.enabled),
     defaultEnabled: false,
-    userDefined: userDefined,
+    userDefined: Boolean(opts?.userDefined),
   };
 
   lines.forEach((line) => {
