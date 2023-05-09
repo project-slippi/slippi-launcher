@@ -110,13 +110,9 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           />
         </SettingItem>
       </DevGuard>
-      {!isLinux && (
-        <ImportDolphinConfigForm
-          dolphinType={dolphinType}
-          disabled={!dolphinIsReady}
-          onImportDolphin={importDolphinHandler}
-        />
-      )}
+      <SettingItem name={`${dolphinTypeName} Gecko Codes`}>
+        <GeckoCodes dolphinType={dolphinType} disabled={!dolphinIsReady} />
+      </SettingItem>
       <SettingItem name={`Reset ${dolphinTypeName} Dolphin`}>
         <ConfirmationModal
           open={resetModalOpen}
@@ -178,9 +174,13 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           </Button>
         </div>
       </SettingItem>
-      <SettingItem name="Gecko Codes">
-        <GeckoCodes dolphinType={dolphinType} disabled={!dolphinIsReady} />
-      </SettingItem>
+      {!isLinux && (
+        <ImportDolphinConfigForm
+          dolphinType={dolphinType}
+          disabled={!dolphinIsReady}
+          onImportDolphin={importDolphinHandler}
+        />
+      )}
     </div>
   );
 };
