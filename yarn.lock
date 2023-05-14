@@ -2540,10 +2540,10 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@slippi/slippi-js@^6.6.1":
-  version "6.6.1"
-  resolved "https://registry.yarnpkg.com/@slippi/slippi-js/-/slippi-js-6.6.1.tgz#68da4edb4806700564a53515c61dba93ae356f1c"
-  integrity sha512-fR2UOhVwnNFD/Ma5LlKxoMlY6k8pR9XLNnFXSvo7FDrABr7GSRwrJRY9LbOlzaG2bnU1jinsiwTZcwsD84wZ2Q==
+"@slippi/slippi-js@^6.7.0":
+  version "6.7.0"
+  resolved "https://registry.yarnpkg.com/@slippi/slippi-js/-/slippi-js-6.7.0.tgz#6f19c148a3eccda7ff1c87fb1e2aaf34cea51568"
+  integrity sha512-fm3enFS9VA2DpnGqY2HS6sZaFAQwa+uBYdzkA3qRtwGOGmxvOJWrr/Is75a/eXBsHhKLHIzOoFWWqW3RfbvWqw==
   dependencies:
     "@shelacek/ubjson" "^1.0.1"
     date-fns "^2.28.0"
