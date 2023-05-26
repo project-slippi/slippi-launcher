@@ -114,7 +114,7 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
             port: player.port,
             teamId: teamId ?? undefined,
             variant: names.code ? "code" : "tag",
-            text: names.code ?? (names.tag || backupName),
+            text: names.code || names.tag || backupName,
             isWinner,
           };
         });
