@@ -1,6 +1,7 @@
 import { DolphinLaunchType } from "@dolphin/types";
 
 import { AdvancedAppSettings } from "./AdvancedAppSettings";
+import { ChatOptions } from "./ChatOptions";
 import { DolphinSettings } from "./DolphinSettings";
 import { HelpPage } from "./HelpPage";
 import { MeleeOptions } from "./MeleeOptions";
@@ -20,6 +21,11 @@ export const settings: SettingSection[] = [
         name: "Replays",
         path: "replay-options",
         component: <ReplayOptions />,
+      },
+      {
+        name: "Chat",
+        path: "chat-options",
+        component: <ChatOptions />,
       },
     ],
   },

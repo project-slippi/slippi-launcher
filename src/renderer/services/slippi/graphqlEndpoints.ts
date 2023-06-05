@@ -1,6 +1,8 @@
 import type { TypedDocumentNode } from "@apollo/client";
 import { gql } from "@apollo/client";
 
+import type { AvailableMessageType } from "./types";
+
 type Nullable<T> = T | null;
 
 type ConnectCode = {
@@ -17,6 +19,7 @@ type User = {
   fbUid: string;
   rulesAccepted: number;
   private: Nullable<PrivateUserInfo>;
+  activeChatMessages: string[];
 };
 
 type DolphinRelease = {
@@ -63,6 +66,29 @@ export const QUERY_GET_USER_DATA: TypedDocumentNode<
   }
 `;
 
+export const QUERY_CHAT_MESSAGE_DATA: TypedDocumentNode<
+  {
+    getUser: Nullable<{ activeSubscription: Nullable<{ level: number }>; activeChatMessages: string[] }>;
+    queryChatMessage: Nullable<Nullable<AvailableMessageType>[]>;
+  },
+  {
+    fbUid: string;
+  }
+> = gql`
+  query GetChatMessageConfigData($fbUid: String) {
+    getUser(fbUid: $fbUid) {
+      activeSubscription {
+        level
+      }
+      activeChatMessages
+    }
+    queryChatMessage {
+      isPaid
+      text
+    }
+  }
+`;
+
 export const MUTATION_RENAME_USER: TypedDocumentNode<
   {
     userRename: Nullable<Pick<User, "displayName">>;
@@ -100,6 +126,23 @@ export const MUTATION_INIT_NETPLAY: TypedDocumentNode<
   mutation InitNetplay($codeStart: String!) {
     userInitNetplay(codeStart: $codeStart) {
       fbUid
+    }
+  }
+`;
+
+export const MUTATION_SUBMIT_CHAT_MESSAGES: TypedDocumentNode<
+  {
+    userSetChatMessages: Nullable<Pick<User, "fbUid" | "activeChatMessages">>;
+  },
+  {
+    fbUid: string;
+    messages: string[];
+  }
+> = gql`
+  mutation UserSetChatMessages($fbUid: String!, $messages: [String!]!) {
+    userSetChatMessages(fbUid: $fbUid, messages: $messages) {
+      fbUid
+      activeChatMessages
     }
   }
 `;
