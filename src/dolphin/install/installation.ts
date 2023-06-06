@@ -31,7 +31,19 @@ export class DolphinInstallation {
         return path.join(this.installationFolder, "User");
       }
       case "darwin": {
-        return path.join(this.installationFolder, "Slippi Dolphin.app", "Contents", "Resources", "User");
+        const oldConfigPath = path.join(this.installationFolder, "Slippi Dolphin.app", "Contents", "Resources", "User");
+        const userFolderName = this.dolphinLaunchType === DolphinLaunchType.NETPLAY ? "netplay/User" : "playback/User";
+        const newConfigPath = path.join(
+          os.homedir(),
+          "Library",
+          "Application Support",
+          "com.project-slippi.dolphin",
+          userFolderName,
+        );
+
+        // TODO: remove this once we've deployed the new dolphin
+        const configPath = fs.pathExistsSync(newConfigPath) ? newConfigPath : oldConfigPath;
+        return configPath;
       }
       case "linux": {
         const configPath = path.join(os.homedir(), ".config");
@@ -221,7 +233,17 @@ export class DolphinInstallation {
       }
       case "darwin": {
         const { installDolphinOnMac } = await import("./macos");
-        await installDolphinOnMac({ assetPath, destinationFolder: dolphinPath });
+        const currentVersion = await this.getDolphinVersion();
+        const userFolderInBundle = currentVersion !== null && lt(currentVersion, "3.0.5");
+        if (userFolderInBundle) {
+          const oldUserFolder = path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "Resources", "User");
+          await fs.copy(oldUserFolder, this.userFolder, { recursive: true, overwrite: true });
+        }
+        await installDolphinOnMac({
+          assetPath,
+          destinationFolder: dolphinPath,
+          shouldBackupUserFolder: userFolderInBundle,
+        });
         break;
       }
       case "linux": {
