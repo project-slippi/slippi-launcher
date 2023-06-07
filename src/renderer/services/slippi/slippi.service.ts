@@ -12,10 +12,12 @@ import {
   MUTATION_ACCEPT_RULES,
   MUTATION_INIT_NETPLAY,
   MUTATION_RENAME_USER,
+  MUTATION_SUBMIT_CHAT_MESSAGES,
+  QUERY_CHAT_MESSAGE_DATA,
   QUERY_GET_USER_DATA,
   QUERY_VALIDATE_USER_ID,
 } from "./graphqlEndpoints";
-import type { SlippiBackendService, UserData } from "./types";
+import type { AvailableMessageType, ChatMessageData, SlippiBackendService, UserData } from "./types";
 
 const log = window.electron.log;
 const SLIPPI_BACKEND_URL = process.env.SLIPPI_GRAPHQL_ENDPOINT;
@@ -144,6 +146,35 @@ class SlippiBackendClient implements SlippiBackendService {
       rulesAccepted: res.data.getUser?.rulesAccepted ?? 0,
     };
   }
+
+  public async fetchChatMessageData(userId: string): Promise<ChatMessageData> {
+    const res = await this.client.query({
+      query: QUERY_CHAT_MESSAGE_DATA,
+      variables: {
+        fbUid: userId,
+      },
+      fetchPolicy: "network-only",
+    });
+
+    handleErrors(res.errors);
+
+    return {
+      level: res.data.getUser?.activeSubscription?.level ?? "NONE",
+      userMessages: res.data.getUser?.activeChatMessages ?? [],
+      availableMessages: (res.data.queryChatMessage ?? []).filter((msg) => msg) as AvailableMessageType[],
+    };
+  }
+
+  public async submitChatMessages(uid: string, messages: string[]): Promise<string[]> {
+    const res = await this.client.mutate({
+      mutation: MUTATION_SUBMIT_CHAT_MESSAGES,
+      variables: { fbUid: uid, messages },
+    });
+    handleErrors(res.errors);
+
+    return res.data?.userSetChatMessages?.activeChatMessages ?? [];
+  }
+
   public async assertPlayKey(playKey: PlayKey) {
     const playKeyExists = await this.dolphinService.checkPlayKeyExists(playKey);
     if (playKeyExists) {
