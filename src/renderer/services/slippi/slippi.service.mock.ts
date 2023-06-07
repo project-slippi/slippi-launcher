@@ -3,7 +3,7 @@ import type { PlayKey } from "@dolphin/types";
 
 import type { AuthService } from "../auth/types";
 import { delayAndMaybeError } from "../utils";
-import type { SlippiBackendService, UserData } from "./types";
+import type { ChatMessageData, SlippiBackendService, UserData } from "./types";
 
 const SHOULD_ERROR = false;
 
@@ -89,6 +89,14 @@ class MockSlippiBackendClient implements SlippiBackendService {
   @delayAndMaybeError(SHOULD_ERROR)
   public async initializeNetplay(_codeStart: string): Promise<void> {
     // Do nothing
+  }
+
+  public fetchChatMessageData(_userId: string): Promise<ChatMessageData> {
+    throw new Error("Method not implemented.");
+  }
+
+  public submitChatMessages(_uid: string, _messages: string[]): Promise<string[]> {
+    throw new Error("Method not implemented.");
   }
 }
 
