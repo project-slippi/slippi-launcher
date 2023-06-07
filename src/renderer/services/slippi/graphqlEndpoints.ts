@@ -68,7 +68,7 @@ export const QUERY_GET_USER_DATA: TypedDocumentNode<
 
 export const QUERY_CHAT_MESSAGE_DATA: TypedDocumentNode<
   {
-    getUser: Nullable<{ activeSubscription: Nullable<{ level: number }>; activeChatMessages: string[] }>;
+    getUser: Nullable<{ activeSubscription: Nullable<{ level: string }>; activeChatMessages: string[] }>;
     queryChatMessage: Nullable<Nullable<AvailableMessageType>[]>;
   },
   {

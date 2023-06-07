@@ -159,7 +159,7 @@ class SlippiBackendClient implements SlippiBackendService {
     handleErrors(res.errors);
 
     return {
-      level: res.data.getUser?.activeSubscription?.level ?? 0,
+      level: res.data.getUser?.activeSubscription?.level ?? "NONE",
       userMessages: res.data.getUser?.activeChatMessages ?? [],
       availableMessages: (res.data.queryChatMessage ?? []).filter((msg) => msg) as AvailableMessageType[],
     };
