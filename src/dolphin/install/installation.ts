@@ -31,19 +31,10 @@ export class DolphinInstallation {
         return path.join(this.installationFolder, "User");
       }
       case "darwin": {
-        const oldConfigPath = path.join(this.installationFolder, "Slippi Dolphin.app", "Contents", "Resources", "User");
+        const configPath = path.join(os.homedir(), "Library", "Application Support", "com.project-slippi.dolphin");
         const userFolderName = this.dolphinLaunchType === DolphinLaunchType.NETPLAY ? "netplay/User" : "playback/User";
-        const newConfigPath = path.join(
-          os.homedir(),
-          "Library",
-          "Application Support",
-          "com.project-slippi.dolphin",
-          userFolderName,
-        );
 
-        // TODO: remove this once we've deployed the new dolphin
-        const configPath = fs.pathExistsSync(newConfigPath) ? newConfigPath : oldConfigPath;
-        return configPath;
+        return path.join(configPath, userFolderName);
       }
       case "linux": {
         const configPath = path.join(os.homedir(), ".config");
