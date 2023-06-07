@@ -14,6 +14,7 @@ import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
 import { useDolphinPath } from "@/lib/hooks/useSettings";
 import { useServices } from "@/services";
 
+import { GeckoCodes } from "./GeckoCodes/GeckoCodes";
 import { SettingItem } from "./SettingItem";
 
 const { isLinux, isMac } = window.electron.common;
@@ -109,13 +110,9 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           />
         </SettingItem>
       </DevGuard>
-      {!isLinux && (
-        <ImportDolphinConfigForm
-          dolphinType={dolphinType}
-          disabled={!dolphinIsReady}
-          onImportDolphin={importDolphinHandler}
-        />
-      )}
+      <SettingItem name={`${dolphinTypeName} Gecko Codes`}>
+        <GeckoCodes dolphinType={dolphinType} disabled={!dolphinIsReady} />
+      </SettingItem>
       <SettingItem name={`Reset ${dolphinTypeName} Dolphin`}>
         <ConfirmationModal
           open={resetModalOpen}
@@ -177,6 +174,13 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
           </Button>
         </div>
       </SettingItem>
+      {!isLinux && (
+        <ImportDolphinConfigForm
+          dolphinType={dolphinType}
+          disabled={!dolphinIsReady}
+          onImportDolphin={importDolphinHandler}
+        />
+      )}
     </div>
   );
 };

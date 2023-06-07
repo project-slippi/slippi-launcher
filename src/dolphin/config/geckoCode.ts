@@ -20,52 +20,9 @@ export function loadGeckoCodes(globalIni: IniFile, localIni?: IniFile): GeckoCod
     const lines: string[] = ini.getLines("Gecko", false).filter((line) => {
       return line.length !== 0 || line[0] !== "#";
     });
-    let gcode: GeckoCode = {
-      name: "",
-      creator: "",
-      enabled: false,
-      defaultEnabled: false,
-      userDefined: ini === localIni,
-      notes: [],
-      codeLines: [],
-    };
 
-    lines.forEach((l) => {
-      let line = l;
-      switch (line[0]) {
-        // code name
-        case "$": {
-          if (gcode.name.length > 0) {
-            gcodes.push(gcode);
-          }
-          line = line.slice(1); // cut out the $
-
-          const creatorMatch = line.match(/\[(.*?)\]/); // searches for brackets, catches anything inside them
-          const creator = creatorMatch !== null ? creatorMatch[1] : creatorMatch;
-          const name = creator ? line.split("[")[0] : line;
-
-          gcode = {
-            ...gcode,
-            name: name.trim(),
-            creator: creator,
-            notes: [],
-            codeLines: [],
-          };
-          break;
-        }
-        // comments
-        case "*": {
-          gcode.notes.push(line.slice(1));
-          break;
-        }
-        default: {
-          gcode.codeLines.push(line);
-        }
-      }
-    });
-    if (gcode.name.length > 0) {
-      gcodes.push(gcode);
-    }
+    const parsedCodes = parseGeckoCodes(lines, { userDefined: ini === localIni });
+    gcodes.push(...parsedCodes);
 
     //update enabled flags
     readEnabledAndDisabled(ini, gcodes);
@@ -134,6 +91,76 @@ function makeGeckoCode(code: GeckoCode, lines: string[]) {
   }
 
   lines.push(makeGeckoCodeTitle(code));
-  code.notes.forEach((line) => lines.push(`* ${line}`));
+  code.notes.forEach((line) => lines.push(`*${line}`));
   code.codeLines.forEach((line) => lines.push(line));
+}
+
+export function parseGeckoCodes(input: string[], opts: { enabled?: boolean; userDefined?: boolean } = {}): GeckoCode[] {
+  const lines = input;
+
+  const parsedCodes: GeckoCode[] = [];
+  let parsedCode: GeckoCode = {
+    name: "",
+    creator: "",
+    notes: [],
+    codeLines: [],
+    enabled: Boolean(opts?.enabled),
+    defaultEnabled: false,
+    userDefined: Boolean(opts?.userDefined),
+  };
+
+  lines.forEach((line) => {
+    switch (line[0]) {
+      // code name
+      case "$": {
+        if (parsedCode.name.length > 0) {
+          // if we already have a name then we hit a new code, so push the code and start parsing a new one
+          parsedCodes.push(parsedCode);
+        }
+        const content = line.slice(1);
+        const creatorMatch = content.match(/\[(.*?)\]/); // searches for brackets, catches anything inside them
+        const creator = creatorMatch !== null ? creatorMatch[1] : creatorMatch;
+        const name = creator ? content.split("[")[0] : content;
+
+        parsedCode = {
+          ...parsedCode,
+          name: name.trim(),
+          creator: creator,
+          notes: [],
+          codeLines: [],
+        };
+        break;
+      }
+      // comments
+      case "*": {
+        parsedCode.notes.push(line.slice(1).trim());
+        break;
+      }
+      default: {
+        parsedCode.codeLines.push(line);
+        break;
+      }
+    }
+  });
+
+  if (parsedCode.name.length > 0) {
+    parsedCodes.push(parsedCode);
+  }
+
+  return parsedCodes;
+}
+
+export function geckoCodeToString(geckoCode: GeckoCode): string {
+  let output = `$${geckoCode.name.trim()}`;
+  if (geckoCode.creator) {
+    output += ` [${geckoCode.creator.trim()}]`;
+  }
+  output += "\n";
+  if (geckoCode.notes.length) {
+    geckoCode.notes.forEach((n) => (output += `*${n.trim()}\n`));
+  }
+  geckoCode.codeLines.forEach((c) => (output += `${c.trim()}\n`));
+  output.trimEnd();
+
+  return output;
 }

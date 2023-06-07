@@ -1,4 +1,5 @@
 import { delay } from "@common/delay";
+import type { GeckoCode } from "@dolphin/config/geckoCode";
 import type {
   DolphinDownloadProgressEvent,
   DolphinEvent,
@@ -99,6 +100,15 @@ class MockDolphinClient implements DolphinService {
 
   @delayAndMaybeError(SHOULD_ERROR)
   public async openDolphinSettingsFolder(_dolphinType: DolphinLaunchType): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+
+  @delayAndMaybeError(SHOULD_ERROR)
+  public async fetchGeckoCodes(_dolphinLaunchType: DolphinLaunchType): Promise<GeckoCode[]> {
+    throw new Error("Method not implemented.");
+  }
+  @delayAndMaybeError(SHOULD_ERROR)
+  public async saveGeckoCodes(_dolphinLaunchType: DolphinLaunchType, _geckoCodes: GeckoCode[]): Promise<void> {
     throw new Error("Method not implemented.");
   }
 
