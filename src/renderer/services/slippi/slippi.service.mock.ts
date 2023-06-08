@@ -12,7 +12,7 @@ const SHOULD_ERROR = false;
 
 const fakeUserId = "userid";
 
-type SavedUserData = UserData & { savedMessages: string[]; subscriptionTier: string };
+type SavedUserData = UserData & { savedMessages: string[] };
 
 class MockSlippiBackendClient implements SlippiBackendService {
   private fakeUsers: Map<string, SavedUserData> = new Map();
@@ -21,7 +21,7 @@ class MockSlippiBackendClient implements SlippiBackendService {
     this.addFakeSlippiUser(fakeUserId);
   }
 
-  private addFakeSlippiUser(userId: string, displayName?: string, isSub?: boolean): void {
+  private addFakeSlippiUser(userId: string, displayName?: string): void {
     const numUsers = this.fakeUsers.size;
     this.fakeUsers.set(userId, {
       playKey: {
@@ -32,7 +32,6 @@ class MockSlippiBackendClient implements SlippiBackendService {
       },
       rulesAccepted: 0,
       savedMessages: defaultMessages,
-      subscriptionTier: generateUserSubscriptionLevel(isSub),
     });
   }
 
@@ -74,6 +73,18 @@ class MockSlippiBackendClient implements SlippiBackendService {
 
   @delayAndMaybeError(SHOULD_ERROR)
   public async changeDisplayName(name: string) {
+    const user = this.authService.getCurrentUser();
+    if (!user) {
+      throw new Error("No user logged in");
+    }
+
+    const userData = this.fakeUsers.get(user.uid);
+    if (!userData) {
+      throw new Error(`No user with id: ${user.uid}`);
+    }
+
+    userData.playKey!.displayName = name;
+    this.fakeUsers.set(user.uid, userData);
     await this.authService.updateDisplayName(name);
   }
 
@@ -105,8 +116,11 @@ class MockSlippiBackendClient implements SlippiBackendService {
       throw new Error("User not found");
     }
 
+    const displayName = userData.playKey!.displayName.toLowerCase();
+    const subscriptionLevel = generateUserSubscriptionLevel(displayName.includes("sub"));
+
     return {
-      level: userData.subscriptionTier,
+      level: subscriptionLevel,
       availableMessages: [...generateMockChatMessage(10, false), ...generateMockChatMessage(20, true)],
       userMessages: userData.savedMessages,
     };
