@@ -12,7 +12,7 @@ const SHOULD_ERROR = false;
 
 const fakeUserId = "userid";
 
-type SavedUserData = UserData & { savedMessages: string[] };
+type SavedUserData = UserData & { savedMessages: string[]; subscriptionTier: string };
 
 class MockSlippiBackendClient implements SlippiBackendService {
   private fakeUsers: Map<string, SavedUserData> = new Map();
@@ -21,7 +21,7 @@ class MockSlippiBackendClient implements SlippiBackendService {
     this.addFakeSlippiUser(fakeUserId);
   }
 
-  private addFakeSlippiUser(userId: string, displayName?: string): void {
+  private addFakeSlippiUser(userId: string, displayName?: string, isSub?: boolean): void {
     const numUsers = this.fakeUsers.size;
     this.fakeUsers.set(userId, {
       playKey: {
@@ -32,6 +32,7 @@ class MockSlippiBackendClient implements SlippiBackendService {
       },
       rulesAccepted: 0,
       savedMessages: defaultMessages,
+      subscriptionTier: generateUserSubscriptionLevel(isSub),
     });
   }
 
@@ -105,7 +106,7 @@ class MockSlippiBackendClient implements SlippiBackendService {
     }
 
     return {
-      level: generateUserSubscriptionLevel(true),
+      level: userData.subscriptionTier,
       availableMessages: [...generateMockChatMessage(10, false), ...generateMockChatMessage(20, true)],
       userMessages: userData.savedMessages,
     };
