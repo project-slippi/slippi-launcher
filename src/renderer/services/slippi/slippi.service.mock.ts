@@ -1,16 +1,21 @@
 import { currentRulesVersion } from "@common/constants";
 import type { PlayKey } from "@dolphin/types";
 
+import { defaultMessages } from "@/lib/chat";
+
 import type { AuthService } from "../auth/types";
 import { delayAndMaybeError } from "../utils";
+import { generateMockChatMessage, generateUserSubscriptionLevel } from "./mockSlippiDataUtils";
 import type { ChatMessageData, SlippiBackendService, UserData } from "./types";
 
 const SHOULD_ERROR = false;
 
 const fakeUserId = "userid";
 
+type SavedUserData = UserData & { savedMessages: string[] };
+
 class MockSlippiBackendClient implements SlippiBackendService {
-  private fakeUsers: Map<string, UserData> = new Map();
+  private fakeUsers: Map<string, SavedUserData> = new Map();
 
   constructor(private authService: AuthService) {
     this.addFakeSlippiUser(fakeUserId);
@@ -26,6 +31,7 @@ class MockSlippiBackendClient implements SlippiBackendService {
         displayName: displayName ?? `Demo user ${numUsers}`,
       },
       rulesAccepted: 0,
+      savedMessages: defaultMessages,
     });
   }
 
@@ -91,12 +97,29 @@ class MockSlippiBackendClient implements SlippiBackendService {
     // Do nothing
   }
 
-  public fetchChatMessageData(_userId: string): Promise<ChatMessageData> {
-    throw new Error("Method not implemented.");
+  @delayAndMaybeError(SHOULD_ERROR)
+  public async fetchChatMessageData(userId: string): Promise<ChatMessageData> {
+    const userData = this.fakeUsers.get(userId);
+    if (!userData) {
+      throw new Error("User not found");
+    }
+
+    return {
+      level: generateUserSubscriptionLevel(true),
+      availableMessages: [...generateMockChatMessage(10, false), ...generateMockChatMessage(20, true)],
+      userMessages: userData.savedMessages,
+    };
   }
 
-  public submitChatMessages(_uid: string, _messages: string[]): Promise<string[]> {
-    throw new Error("Method not implemented.");
+  @delayAndMaybeError(SHOULD_ERROR)
+  public async submitChatMessages(userId: string, messages: string[]): Promise<string[]> {
+    const userData = this.fakeUsers.get(userId);
+    if (!userData) {
+      throw new Error("User not found");
+    }
+    userData.savedMessages = messages;
+    this.fakeUsers.set(userId, userData);
+    return messages;
   }
 }
 
