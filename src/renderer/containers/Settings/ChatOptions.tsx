@@ -8,7 +8,7 @@ import { useChatMessages } from "@/lib/hooks/useChatMessages";
 
 import { SettingItem } from "./SettingItem";
 
-export const ChatOptions: React.FC = () => {
+export const ChatOptions = React.memo(() => {
   const user = useAccount((store) => store.user);
   const {
     loading,
@@ -21,9 +21,11 @@ export const ChatOptions: React.FC = () => {
     discardLocalChanges,
   } = useChatMessages(user?.uid);
 
-  let footer = null;
-  if (dirty) {
-    footer = (
+  const footer: React.ReactNode = React.useMemo(() => {
+    if (!dirty) {
+      return null;
+    }
+    return (
       <>
         {/*Element makes space for the footer when we are scrolled all the way down*/}
         <div
@@ -51,7 +53,7 @@ export const ChatOptions: React.FC = () => {
         </div>
       </>
     );
-  }
+  }, [dirty, discardLocalChanges, loading, submitChatMessages]);
 
   return (
     <div
@@ -60,14 +62,18 @@ export const ChatOptions: React.FC = () => {
       `}
     >
       <SettingItem name="Chat Messages" description="Chat messages to use for netplay">
-        <ChatMessagesInput
-          messages={localMessages}
-          updateMessages={setLocalMessages}
-          availableMessages={availableMessages}
-          user={{ uid: user?.uid, subLevel }}
-        />
+        {user ? (
+          <ChatMessagesInput
+            messages={localMessages}
+            updateMessages={setLocalMessages}
+            availableMessages={availableMessages}
+            user={{ uid: user.uid, subLevel }}
+          />
+        ) : (
+          <div>Please log in to use this feature.</div>
+        )}
         {footer}
       </SettingItem>
     </div>
   );
-};
+});
