@@ -3,8 +3,8 @@ import { slippiManagePage } from "@common/constants";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import { Button } from "@mui/material";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import React, { useEffect } from "react";
 
 import { ExternalLink as A } from "@/components/ExternalLink";

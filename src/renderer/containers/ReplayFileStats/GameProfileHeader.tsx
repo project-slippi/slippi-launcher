@@ -1,6 +1,5 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import { Straighten } from "@mui/icons-material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
@@ -9,6 +8,7 @@ import LandscapeIcon from "@mui/icons-material/Landscape";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import SportsCricket from "@mui/icons-material/SportsCricket";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
+import Straighten from "@mui/icons-material/Straighten";
 import TimerIcon from "@mui/icons-material/Timer";
 import TrackChangesIcon from "@mui/icons-material/TrackChanges";
 import Button from "@mui/material/Button";
