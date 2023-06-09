@@ -1,5 +1,6 @@
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import EditIcon from "@mui/icons-material/Edit";
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import LanguageIcon from "@mui/icons-material/Language";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ButtonBase from "@mui/material/ButtonBase";
@@ -68,6 +69,7 @@ export const UserMenu: React.FC<{
 
     if (userData && userData.playKey) {
       const profileUrl = `https://slippi.gg/user/${userData.playKey.connectCode.replace("#", "-")}`;
+      const manageUrl = `https://slippi.gg/manage?expectedUid=${user.uid}`;
       items.push(
         {
           onClick: () => {
@@ -75,6 +77,14 @@ export const UserMenu: React.FC<{
             void window.electron.shell.openPath(profileUrl);
           },
           label: "View profile",
+          icon: <EmojiEventsIcon fontSize="small" />,
+        },
+        {
+          onClick: () => {
+            closeMenu();
+            void window.electron.shell.openPath(manageUrl);
+          },
+          label: "Manage account",
           icon: <AccountBoxIcon fontSize="small" />,
         },
         {
