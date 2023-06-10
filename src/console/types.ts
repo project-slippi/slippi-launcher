@@ -3,15 +3,15 @@ import type { ConsoleConnection, SlpFileWriter } from "@slippi/slippi-js";
 import type { AutoSwitcher } from "./autoSwitcher";
 import type { ConsoleRelay } from "./consoleRelay";
 
-export interface ConsoleMirrorStatusUpdate {
+export type ConsoleMirrorStatusUpdate = {
   status: number;
   isMirroring: boolean;
   filename: string | null;
   nickname: string;
   nintendontVersion: string | null;
-}
+};
 
-export interface MirrorConfig {
+export type MirrorConfig = {
   id: number;
   ipAddress: string;
   port: number;
@@ -21,29 +21,29 @@ export interface MirrorConfig {
   autoSwitcherSettings?: AutoSwitcherSettings;
   useNicknameFolders: boolean;
   nickname?: string;
-}
+};
 
-export interface MirrorDetails extends MirrorConfig {
+export type MirrorDetails = MirrorConfig & {
   isMirroring: boolean;
   connection: ConsoleConnection;
   fileWriter: SlpFileWriter;
   autoSwitcher: AutoSwitcher | null;
   relay: ConsoleRelay | null;
-}
+};
 
-export interface AutoSwitcherSettings {
+export type AutoSwitcherSettings = {
   sourceName: string;
   ip: string;
   port: string;
   password?: string;
-}
+};
 
-export interface DiscoveredConsoleInfo {
+export type DiscoveredConsoleInfo = {
   ip: string;
   mac: string;
   name: string | undefined;
   firstFound: string;
-}
+};
 
 export enum MirrorEvent {
   LOG = "LOG",
@@ -52,7 +52,7 @@ export enum MirrorEvent {
   MIRROR_STATUS_CHANGE = "MIRROR_STATUS_CHANGE",
 }
 
-export interface ConsoleService {
+export type ConsoleService = {
   connectToConsoleMirror(config: MirrorConfig): Promise<void>;
   disconnectFromConsole(ip: string): Promise<void>;
   startMirroring(ip: string): Promise<void>;
@@ -63,4 +63,4 @@ export interface ConsoleService {
   onConsoleMirrorStatusUpdated(
     handle: (result: { ip: string; info: Partial<ConsoleMirrorStatusUpdate> }) => void,
   ): () => void;
-}
+};

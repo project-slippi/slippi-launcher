@@ -10,7 +10,7 @@ import { BasicFooter } from "@/components/Footer";
 import { LabelledText } from "@/components/LabelledText";
 import { useSpectateSlpPath } from "@/lib/hooks/useSettings";
 
-export const Footer: React.FC = () => {
+export const Footer = React.memo(() => {
   const [spectateSlpFolder, setSpectateSlpFolder] = useSpectateSlpPath();
   const onClick = async () => {
     const result = await window.electron.common.showOpenDialog({
@@ -58,4 +58,4 @@ export const Footer: React.FC = () => {
       </Button>
     </BasicFooter>
   );
-};
+});

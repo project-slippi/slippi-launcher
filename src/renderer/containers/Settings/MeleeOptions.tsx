@@ -32,7 +32,7 @@ const renderValidityStatus = (isoValidity: IsoValidity) => {
   }
 };
 
-export const MeleeOptions: React.FC = () => {
+export const MeleeOptions = React.memo(() => {
   const verifying = useIsoVerification((state) => state.isValidating);
   const isoValidity = useIsoVerification((state) => state.validity);
   const [isoPath, setIsoPath] = useIsoPath();
@@ -81,7 +81,7 @@ export const MeleeOptions: React.FC = () => {
       </SettingItem>
     </div>
   );
-};
+});
 
 const ValidationContainer = styled.div`
   display: flex;

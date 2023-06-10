@@ -29,7 +29,7 @@ import { FileSelectionToolbar } from "./FileSelectionToolbar";
 import { FilterToolbar } from "./FilterToolbar";
 import { FolderTreeNode } from "./FolderTreeNode";
 
-export const ReplayBrowser: React.FC = () => {
+export const ReplayBrowser = React.memo(() => {
   const searchInputRef = React.createRef<HTMLInputElement>();
   const scrollRowItem = useReplays((store) => store.scrollRowItem);
   const setScrollRowItem = useReplays((store) => store.setScrollRowItem);
@@ -216,17 +216,14 @@ export const ReplayBrowser: React.FC = () => {
       </Footer>
     </Outer>
   );
-};
+});
 
 const LoadingBox = React.memo(function LoadingBox() {
   const progress = useReplays((store) => store.progress);
   return <LoadingScreenWithProgress current={progress?.current} total={progress?.total} />;
 });
 
-const EmptyFolder: React.FC<{
-  hiddenFileCount: number;
-  onClearFilter: () => void;
-}> = ({ hiddenFileCount, onClearFilter }) => {
+const EmptyFolder = ({ hiddenFileCount, onClearFilter }: { hiddenFileCount: number; onClearFilter: () => void }) => {
   return (
     <IconMessage Icon={SearchIcon} label="No SLP files found">
       {hiddenFileCount > 0 && (

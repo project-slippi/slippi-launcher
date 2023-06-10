@@ -10,7 +10,7 @@ const FormContainer = styled.div`
   max-width: 800px;
 `;
 
-export const LoginStep: React.FC = () => {
+export const LoginStep = React.memo(() => {
   return (
     <Box display="flex" flexDirection="column" flexGrow="1">
       <FormContainer>
@@ -18,4 +18,4 @@ export const LoginStep: React.FC = () => {
       </FormContainer>
     </Box>
   );
-};
+});

@@ -13,21 +13,21 @@ import { useSettings } from "@/lib/hooks/useSettings";
 
 import { AddConnectionForm } from "./AddConnectionForm";
 
-export interface AddConnectionDialogProps {
+type AddConnectionDialogProps = {
   open: boolean;
   selectedConnection: Partial<StoredConnection> | null;
   onSubmit: (conn: Omit<StoredConnection, "id">) => void;
   onCancel: () => void;
   disabled: boolean;
-}
+};
 
-export const AddConnectionDialog: React.FC<AddConnectionDialogProps> = ({
+export const AddConnectionDialog = ({
   open,
   selectedConnection,
   onSubmit,
   onCancel,
   disabled,
-}) => {
+}: AddConnectionDialogProps) => {
   const spectateFolder = useSettings((store) => store.settings.spectateSlpPath);
   const isEditing = Boolean(selectedConnection && selectedConnection.id);
   const [title, setTitle] = React.useState("");

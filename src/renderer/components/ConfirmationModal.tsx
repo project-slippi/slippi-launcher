@@ -9,7 +9,7 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import React from "react";
 
-export interface ConfirmationModalProps {
+type ConfirmationModalProps = {
   open: boolean;
   onClose: () => void;
   onSubmit: () => void;
@@ -20,9 +20,9 @@ export interface ConfirmationModalProps {
   cancelText?: React.ReactNode;
   cancelProps?: ButtonProps;
   fullWidth?: boolean;
-}
+};
 
-export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
+export const ConfirmationModal = ({
   open,
   onClose,
   onSubmit,
@@ -34,7 +34,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   cancelProps,
   closeOnSubmit = true,
   fullWidth = true,
-}) => {
+}: React.PropsWithChildren<ConfirmationModalProps>) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 

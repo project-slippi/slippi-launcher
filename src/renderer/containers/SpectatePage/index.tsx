@@ -18,7 +18,7 @@ import { ShareGameplayBlock } from "./ShareGameplayBlock";
 import { SpectateItem } from "./SpectateItem";
 import { SpectatorIdBlock } from "./SpectatorIdBlock";
 
-export const SpectatePage: React.FC = () => {
+export const SpectatePage = React.memo(() => {
   const user = useAccount((store) => store.user);
   const { broadcastService } = useServices();
   const [currentBroadcasts, refreshBroadcasts] = useBroadcastList();
@@ -101,7 +101,7 @@ export const SpectatePage: React.FC = () => {
       <Footer />
     </Outer>
   );
-};
+});
 
 const Outer = styled.div`
   display: flex;

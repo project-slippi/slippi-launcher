@@ -7,7 +7,7 @@ import React from "react";
 import { useAppStore } from "@/lib/hooks/useApp";
 import { useAppUpdate } from "@/lib/hooks/useAppUpdate";
 
-export const PersistentNotification: React.FC = () => {
+export const PersistentNotification = React.memo(() => {
   const updateVersion = useAppStore((store) => store.updateVersion);
   const updateReady = useAppStore((store) => store.updateReady);
   const updateDownloadProgress = useAppStore((store) => store.updateDownloadProgress);
@@ -52,7 +52,7 @@ export const PersistentNotification: React.FC = () => {
       </div>
     </Outer>
   );
-};
+});
 
 const Outer = styled.div`
   display: flex;

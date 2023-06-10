@@ -7,7 +7,7 @@ import { withSlippiBackground } from "@/styles/withSlippiBackground";
 
 const isDevelopment = window.electron.common.isDevelopment;
 
-export const LandingView: React.FC = () => {
+export const LandingView = React.memo(() => {
   const { allSteps, currentStep, nextStep, prevStep } = useQuickStart();
   return (
     <Box css={withSlippiBackground} display="flex" style={{ height: "100%", width: "100%" }}>
@@ -19,4 +19,4 @@ export const LandingView: React.FC = () => {
       />
     </Box>
   );
-};
+});

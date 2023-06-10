@@ -9,21 +9,21 @@ import React from "react";
 
 import { ConfirmationModal } from "@/components/ConfirmationModal";
 
-export interface FileSelectionToolbarProps {
+type FileSelectionToolbarProps = {
   totalSelected: number;
   onSelectAll: () => void;
   onPlay: () => void;
   onClear: () => void;
   onDelete: () => void;
-}
+};
 
-export const FileSelectionToolbar: React.FC<FileSelectionToolbarProps> = ({
+export const FileSelectionToolbar = ({
   totalSelected,
   onSelectAll,
   onPlay,
   onClear,
   onDelete,
-}) => {
+}: FileSelectionToolbarProps) => {
   const [showDeletePrompt, setShowDeletePrompt] = React.useState(false);
 
   if (totalSelected === 0) {

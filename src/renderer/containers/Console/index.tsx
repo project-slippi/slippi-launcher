@@ -2,10 +2,10 @@ import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import AddIcon from "@mui/icons-material/Add";
 import HelpOutline from "@mui/icons-material/HelpOutline";
-import { IconButton } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
+import IconButton from "@mui/material/IconButton";
 import type { StoredConnection } from "@settings/types";
 import { ConnectionStatus } from "@slippi/slippi-js";
 import React from "react";
@@ -34,7 +34,7 @@ const Outer = styled.div`
   min-width: 0;
 `;
 
-export const Console: React.FC = () => {
+export const Console = React.memo(() => {
   const { consoleService } = useServices();
   const [isScanning, setIsScanning] = React.useState(false);
   const [modalOpen, setModalOpen] = React.useState(false);
@@ -162,7 +162,7 @@ export const Console: React.FC = () => {
       <OBSWebsocketNotice />
     </Outer>
   );
-};
+});
 
 const MirroringHelp = () => {
   const [modalOpen, setModalOpen] = React.useState(false);

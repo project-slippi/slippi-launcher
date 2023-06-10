@@ -1,4 +1,4 @@
-export interface StoredConnection {
+export type StoredConnection = {
   id: number;
   ipAddress: string;
   folderPath: string;
@@ -12,7 +12,7 @@ export interface StoredConnection {
   obsPassword?: string;
   enableRelay: boolean;
   useNicknameFolders: boolean;
-}
+};
 
 export type AppSettings = {
   previousVersion?: string;

@@ -5,7 +5,7 @@ import Paper from "@mui/material/Paper";
 import { alpha } from "@mui/material/styles";
 import React from "react";
 
-export const Table: React.FC = (props) => {
+export const Table = ({ children }: { children: React.ReactNode }) => {
   return (
     <Paper
       component="table"
@@ -17,7 +17,7 @@ export const Table: React.FC = (props) => {
         backgroundColor: alpha(colors.purpleDark, 0.9),
       }}
     >
-      {props.children}
+      {children}
     </Paper>
   );
 };
@@ -69,9 +69,9 @@ export const TableRow = styled.tr`
   }
 `;
 
-interface GrayableImageProps {
+type GrayableImageProps = {
   gray?: boolean;
-}
+};
 export const GrayableImage = styled.img`
   ${(props: GrayableImageProps) =>
     props.gray &&

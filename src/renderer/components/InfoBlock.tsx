@@ -3,12 +3,12 @@ import styled from "@emotion/styled";
 import Paper from "@mui/material/Paper";
 import React from "react";
 
-export interface InfoBlockProps {
+type InfoBlockProps = {
   title: React.ReactNode | string;
   className?: string;
-}
+};
 
-export const InfoBlock: React.FC<InfoBlockProps> = ({ title, children, className }) => {
+export const InfoBlock = ({ title, children, className }: React.PropsWithChildren<InfoBlockProps>) => {
   return (
     <Block className={className}>
       <Header>{title}</Header>
@@ -21,7 +21,7 @@ const Block = styled(Paper)`
   padding: 20px;
 `;
 
-const Header: React.FC = ({ children }) => {
+const Header = ({ children }: { children: React.ReactNode }) => {
   return (
     <div
       css={css`

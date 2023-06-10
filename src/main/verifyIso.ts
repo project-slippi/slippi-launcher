@@ -2,10 +2,10 @@ import { IsoValidity } from "@common/types";
 import crypto from "crypto";
 import fs from "fs";
 import { fileExists } from "utils/fileExists";
-interface IsoHashInfo {
+type IsoHashInfo = {
   valid: IsoValidity;
   name: string;
-}
+};
 
 const compressedExts = [".gcz", ".ciso"];
 const isoHashes = new Map<string, IsoHashInfo>();

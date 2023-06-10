@@ -16,7 +16,7 @@ const Text = styled.h2`
   margin: 0;
 `;
 
-export const NotFoundView: React.FC = () => {
+export const NotFoundView = React.memo(() => {
   return (
     <OuterBox>
       <Typography variant="h2">Uh oh.</Typography>
@@ -28,4 +28,4 @@ export const NotFoundView: React.FC = () => {
       </div>
     </OuterBox>
   );
-};
+});

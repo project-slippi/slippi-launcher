@@ -14,7 +14,17 @@ import { ReplayFileContainer } from "./replay_file/ReplayFile.container";
 const REPLAY_FILE_ITEM_SIZE = 90;
 
 // This is the container for all the replays visible, the autosizer will handle the virtualization portion
-const FileListResults: React.FC<{
+const FileListResults = ({
+  folderPath,
+  scrollRowItem,
+  files,
+  onSelect,
+  onPlay,
+  onOpenMenu,
+  setScrollRowItem,
+  onClick,
+  selectedFiles,
+}: {
   folderPath: string;
   files: FileResult[];
   scrollRowItem: number;
@@ -24,7 +34,7 @@ const FileListResults: React.FC<{
   onSelect: (index: number) => void;
   onPlay: (index: number) => void;
   setScrollRowItem: (row: number) => void;
-}> = ({ folderPath, scrollRowItem, files, onSelect, onPlay, onOpenMenu, setScrollRowItem, onClick, selectedFiles }) => {
+}) => {
   // Keep a reference to the list so we can control the scroll position
   const listRef = React.createRef<List>();
   // Keep track of the latest scroll position
@@ -93,17 +103,7 @@ const FileListResults: React.FC<{
 
 // the container containing FileListResults. figure the rest out yourself
 // to simplify the DOM, the submenu for each row is essentially the same until you actually click on it for a given row.
-export const FileList: React.FC<{
-  folderPath: string;
-  files: FileResult[];
-  scrollRowItem?: number;
-  setScrollRowItem: (row: number) => void;
-  onDelete: (filepath: string) => void;
-  onSelect: (index: number) => void;
-  onFileClick: (index: number, isShiftHeld: boolean) => void;
-  selectedFiles: Array<string>;
-  onPlay: (index: number) => void;
-}> = ({
+export const FileList = ({
   scrollRowItem = 0,
   files,
   onSelect,
@@ -113,6 +113,16 @@ export const FileList: React.FC<{
   onFileClick,
   folderPath,
   selectedFiles,
+}: {
+  folderPath: string;
+  files: FileResult[];
+  scrollRowItem?: number;
+  setScrollRowItem: (row: number) => void;
+  onDelete: (filepath: string) => void;
+  onSelect: (index: number) => void;
+  onFileClick: (index: number, isShiftHeld: boolean) => void;
+  selectedFiles: Array<string>;
+  onPlay: (index: number) => void;
 }) => {
   const [menuItem, setMenuItem] = React.useState<null | {
     index: number;

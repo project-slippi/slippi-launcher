@@ -1,4 +1,4 @@
-export interface NewsItem {
+export type NewsItem = {
   id: string;
   title: string;
   permalink: string;
@@ -6,7 +6,7 @@ export interface NewsItem {
   subtitle?: string;
   imageUrl?: string;
   body?: string;
-}
+};
 
 export enum IsoValidity {
   VALID = "VALID",

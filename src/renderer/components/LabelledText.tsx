@@ -4,12 +4,12 @@ import React from "react";
 
 import { withFont } from "@/styles/withFont";
 
-export interface LabelledTextProps {
+type LabelledTextProps = {
   className?: string;
   label: string;
-}
+};
 
-export const LabelledText: React.FC<LabelledTextProps> = ({ label, children, className }) => {
+export const LabelledText = ({ label, children, className }: React.PropsWithChildren<LabelledTextProps>) => {
   return (
     <div
       className={className}

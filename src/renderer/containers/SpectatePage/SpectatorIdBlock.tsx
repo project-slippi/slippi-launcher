@@ -5,12 +5,12 @@ import React from "react";
 
 import { InfoBlock } from "@/components/InfoBlock";
 
-export interface SpectatorIdBlockProps {
+type SpectatorIdBlockProps = {
   userId: string;
   className?: string;
-}
+};
 
-export const SpectatorIdBlock: React.FC<SpectatorIdBlockProps> = ({ userId, className }) => {
+export const SpectatorIdBlock = ({ userId, className }: SpectatorIdBlockProps) => {
   const [copied, setCopied] = React.useState(false);
 
   const onCopy = React.useCallback(() => {

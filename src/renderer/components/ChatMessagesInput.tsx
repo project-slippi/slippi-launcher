@@ -136,23 +136,23 @@ const genChatMessageItem = (
   );
 };
 
-interface ChatMessageSelectorProps {
+type ChatMessageSelectorProps = {
   groupDirection: "up" | "left" | "right" | "down";
   direction: "up" | "left" | "right" | "down";
   message: string;
   availableMessages: AvailableMessageType[];
   updateMessage: (value: string) => void;
   user: { uid: string | undefined; subLevel: string };
-}
+};
 
-const ChatMessageSelector: React.FC<ChatMessageSelectorProps> = ({
+const ChatMessageSelector = ({
   groupDirection,
   direction,
   message,
   availableMessages,
   updateMessage,
   user,
-}) => {
+}: ChatMessageSelectorProps) => {
   const [hoverStates, setHoverStates] = useState({});
 
   const defaultMessage = defaultMessages[dirIdx[groupDirection] * 4 + dirIdx[direction]];
@@ -244,21 +244,21 @@ const ChatMessageSelector: React.FC<ChatMessageSelectorProps> = ({
   );
 };
 
-interface ChatMessagesSectionProps {
+type ChatMessagesSectionProps = {
   direction: "up" | "left" | "right" | "down";
   messages: string[];
   availableMessages: AvailableMessageType[];
   updateLocal: (idx: number, value: string) => void;
   user: { uid: string | undefined; subLevel: string };
-}
+};
 
-const ChatMessagesSection: React.FC<ChatMessagesSectionProps> = ({
+const ChatMessagesSection = ({
   direction,
   messages,
   availableMessages,
   updateLocal,
   user,
-}) => {
+}: ChatMessagesSectionProps) => {
   const updateMessage = (idx: number) => (value: string) => {
     updateLocal(idx, value);
   };
@@ -308,19 +308,14 @@ const ChatMessagesSection: React.FC<ChatMessagesSectionProps> = ({
   );
 };
 
-export interface ChatMessagesInputProps {
+type ChatMessagesInputProps = {
   updateMessages: (messages: string[]) => void;
   messages: string[];
   availableMessages: AvailableMessageType[];
   user: { uid: string | undefined; subLevel: string };
-}
+};
 
-export const ChatMessagesInput: React.FC<ChatMessagesInputProps> = ({
-  messages,
-  availableMessages,
-  updateMessages,
-  user,
-}) => {
+export const ChatMessagesInput = ({ messages, availableMessages, updateMessages, user }: ChatMessagesInputProps) => {
   // const { showError } = useToasts();
 
   if (messages.length !== 16 || availableMessages.length === 0) {

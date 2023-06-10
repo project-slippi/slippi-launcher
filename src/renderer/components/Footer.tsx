@@ -25,7 +25,7 @@ export const BasicFooter = styled.div`
   }
 `;
 
-export const Footer: React.FC = () => {
+export const Footer: React.ComponentType = () => {
   return (
     <Outer>
       <Social title="Follow Project Slippi on Twitter" url={`https://twitter.com/${socials.twitterId}`}>
@@ -68,10 +68,14 @@ const Outer = styled(BasicFooter)`
   }
 `;
 
-const Social: React.FC<{
+const Social = ({
+  url,
+  title,
+  children,
+}: React.PropsWithChildren<{
   url: string;
   title?: string;
-}> = ({ url, title, children }) => {
+}>) => {
   return (
     <A
       css={css`

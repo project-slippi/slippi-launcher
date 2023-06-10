@@ -9,23 +9,23 @@ import TimeAgo from "react-timeago";
 
 import { StartBroadcastDialog } from "./StartBroadcastDialog";
 
-export interface BroadcastPanelProps {
+type BroadcastPanelProps = {
   dolphinStatus: ConnectionStatus;
   slippiServerStatus: ConnectionStatus;
   startTime: Date | null;
   endTime: Date | null;
   onStartBroadcast: (viewerId: string) => void;
   onDisconnect: () => void;
-}
+};
 
-export const BroadcastPanel: React.FC<BroadcastPanelProps> = ({
+export const BroadcastPanel = ({
   slippiServerStatus,
   dolphinStatus,
   startTime,
   endTime,
   onStartBroadcast,
   onDisconnect,
-}) => {
+}: BroadcastPanelProps) => {
   const [modalOpen, setModalOpen] = React.useState(false);
   const isDisconnected =
     slippiServerStatus === ConnectionStatus.DISCONNECTED && dolphinStatus === ConnectionStatus.DISCONNECTED;

@@ -1,8 +1,12 @@
 import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import { Button, Checkbox, CircularProgress, FormControlLabel, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
+import CircularProgress from "@mui/material/CircularProgress";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
 
 import { ExternalLink as A } from "@/components/ExternalLink";
@@ -58,7 +62,7 @@ const classes = {
   `,
 };
 
-export const AcceptRulesStep: React.FC = () => {
+export const AcceptRulesStep = React.memo(() => {
   const { slippiBackendService } = useServices();
   const { showError } = useToasts();
   const refreshUserData = useUserData();
@@ -174,4 +178,4 @@ export const AcceptRulesStep: React.FC = () => {
       </Container>
     </Box>
   );
-};
+});

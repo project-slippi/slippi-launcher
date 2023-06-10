@@ -12,14 +12,14 @@ const appVersion = __VERSION__;
 const buildDate = moment.utc(__DATE__);
 const commitHash = __COMMIT__;
 
-export interface BuildInfoProps {
+type BuildInfoProps = {
   enableAdvancedUserClick?: boolean;
   className?: string;
-}
+};
 
 const DEV_THRESHOLD = 7;
 
-export const BuildInfo: React.FC<BuildInfoProps> = ({ className, enableAdvancedUserClick }) => {
+export const BuildInfo = ({ className, enableAdvancedUserClick }: BuildInfoProps) => {
   const [clickCount, setClickCount] = React.useState(0);
   const isAdvancedUser = useAdvancedUser((store) => store.isAdvancedUser);
   const setIsAdvancedUser = useAdvancedUser((store) => store.setIsAdvancedUser);

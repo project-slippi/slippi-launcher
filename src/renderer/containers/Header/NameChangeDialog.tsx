@@ -1,7 +1,6 @@
 import { css } from "@emotion/react";
 import CircularProgress from "@mui/material/CircularProgress";
 import TextField from "@mui/material/TextField";
-import React from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import { ConfirmationModal } from "@/components/ConfirmationModal";
@@ -11,11 +10,15 @@ import { useToasts } from "@/lib/hooks/useToasts";
 import { validateDisplayName } from "@/lib/validate";
 import { useServices } from "@/services";
 
-export const NameChangeDialog: React.FC<{
+export const NameChangeDialog = ({
+  displayName,
+  open,
+  handleClose,
+}: {
   displayName: string;
   open: boolean;
   handleClose: () => void;
-}> = ({ displayName, open, handleClose }) => {
+}) => {
   const { slippiBackendService } = useServices();
   const { handleSubmit, watch, control } = useForm<{ displayName: string }>({ defaultValues: { displayName } });
 

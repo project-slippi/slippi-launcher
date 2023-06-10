@@ -3,7 +3,6 @@ import Tooltip from "@mui/material/Tooltip";
 import type { FileResult } from "@replays/types";
 import type { ConversionType, PlayerType, StatsType, StockType } from "@slippi/slippi-js";
 import _ from "lodash";
-import React from "react";
 
 import { extractPlayerNames } from "@/lib/matchNames";
 import { convertFrameCountToDurationString } from "@/lib/time";
@@ -13,15 +12,15 @@ import * as T from "./TableStyles";
 
 const columnCount = 6;
 
-export interface PunishTableProps {
+type PunishTableProps = {
   file: FileResult;
   stats: StatsType;
   player: PlayerType;
   opp: PlayerType;
   onPlay: (options: { path: string; startFrame: number }) => void;
-}
+};
 
-export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, player, opp, onPlay }) => {
+export const PunishTable = ({ file, stats, player, opp, onPlay }: PunishTableProps) => {
   const names = extractPlayerNames(player.playerIndex, file.settings, file.metadata);
   const playerDisplay = (
     <div style={{ display: "flex", alignItems: "center" }}>

@@ -18,10 +18,7 @@ import { ActivateOnlineDialog } from "./ActivateOnlineDialog";
 import { NameChangeDialog } from "./NameChangeDialog";
 import { UserInfo } from "./UserInfo/UserInfo";
 
-export const UserMenu: React.FC<{
-  user: AuthUser;
-  handleError: (error: any) => void;
-}> = ({ user, handleError }) => {
+export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (error: any) => void }) => {
   const { authService } = useServices();
   const userData = useAccount((store) => store.userData);
   const displayName = useAccount((store) => store.displayName);

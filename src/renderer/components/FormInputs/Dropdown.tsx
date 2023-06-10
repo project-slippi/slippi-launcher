@@ -5,16 +5,16 @@ import MenuItem from "@mui/material/MenuItem";
 import MatSelect from "@mui/material/Select";
 import React from "react";
 
-export interface DropdownProps {
-  value: any;
+type DropdownProps<T> = {
+  value: T;
   options: Array<{
-    value: any;
+    value: T;
     label: string;
   }>;
-  onChange: (val: any) => void;
-}
+  onChange: (val: T) => void;
+};
 
-export const Dropdown: React.FC<DropdownProps> = ({ value, options, onChange }) => {
+export function Dropdown<T>({ value, options, onChange }: DropdownProps<T>) {
   const handleChange = React.useCallback(
     (event: any) => {
       onChange(JSON.parse(event.target.value));
@@ -38,7 +38,7 @@ export const Dropdown: React.FC<DropdownProps> = ({ value, options, onChange }) 
       })}
     </Select>
   );
-};
+}
 
 const Select = styled(MatSelect)`
   .MuiOutlinedInput-notchedOutline {

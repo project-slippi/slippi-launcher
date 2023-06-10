@@ -4,15 +4,15 @@ import Switch from "@mui/material/Switch";
 import Typography from "@mui/material/Typography";
 import React from "react";
 
-export interface ToggleProps {
+type ToggleProps = {
   label: string;
   description: string | React.ReactNode;
   value: boolean;
   onChange: (val: boolean) => void;
   disabled?: boolean;
-}
+};
 
-export const Toggle: React.FC<ToggleProps> = ({ label, description, value, onChange, disabled }) => {
+export const Toggle = ({ label, description, value, onChange, disabled }: ToggleProps) => {
   return (
     <div>
       <FormControlLabel

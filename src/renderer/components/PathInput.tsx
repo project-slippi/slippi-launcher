@@ -6,7 +6,7 @@ import Tooltip from "@mui/material/Tooltip";
 import type { OpenDialogOptions } from "electron";
 import React from "react";
 
-export interface PathInputProps {
+type PathInputProps = {
   onSelect: (filePath: string) => void;
   placeholder?: string;
   value?: string;
@@ -14,7 +14,7 @@ export interface PathInputProps {
   endAdornment?: JSX.Element;
   disabled?: boolean;
   tooltipText?: string;
-}
+};
 
 export const PathInput = React.forwardRef<HTMLInputElement, PathInputProps>((props, ref) => {
   const { value, placeholder, endAdornment, onSelect, options, disabled, tooltipText } = props;

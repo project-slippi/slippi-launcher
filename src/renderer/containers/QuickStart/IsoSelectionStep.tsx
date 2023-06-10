@@ -50,7 +50,7 @@ const Container = styled.div`
   }
 `;
 
-export const IsoSelectionStep: React.FC = () => {
+export const IsoSelectionStep = React.memo(() => {
   const { showError } = useToasts();
   const [tempIsoPath, setTempIsoPath] = React.useState("");
   const validIsoPathQuery = useQuery(["validIsoPathQuery", tempIsoPath], async () => {
@@ -143,4 +143,4 @@ export const IsoSelectionStep: React.FC = () => {
       </ConfirmationModal>
     </Box>
   );
-};
+});

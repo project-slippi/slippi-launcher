@@ -1,6 +1,6 @@
 import type { IniFile } from "./iniFile";
 
-export interface GeckoCode {
+export type GeckoCode = {
   name: string;
   creator: string | null;
   notes: string[];
@@ -8,7 +8,7 @@ export interface GeckoCode {
   enabled: boolean;
   defaultEnabled: boolean;
   userDefined: boolean;
-}
+};
 
 // this is very similar to LoadCodes in GeckoCodeConfig.cpp, but skips the address and data because we don't need them
 export function loadGeckoCodes(globalIni: IniFile, localIni?: IniFile): GeckoCode[] {

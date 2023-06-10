@@ -1,6 +1,5 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import { Straighten } from "@mui/icons-material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
@@ -9,6 +8,7 @@ import LandscapeIcon from "@mui/icons-material/Landscape";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import SportsCricket from "@mui/icons-material/SportsCricket";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
+import Straighten from "@mui/icons-material/Straighten";
 import TimerIcon from "@mui/icons-material/Timer";
 import TrackChangesIcon from "@mui/icons-material/TrackChanges";
 import Button from "@mui/material/Button";
@@ -33,12 +33,12 @@ const Outer = styled.div`
   align-items: center;
 `;
 
-interface PlayerInfoDisplayProps {
+type PlayerInfoDisplayProps = {
   settings: GameStartType;
   metadata: MetadataType | null;
-}
+};
 
-const PlayerInfoDisplay: React.FC<PlayerInfoDisplayProps> = ({ settings, metadata }) => {
+const PlayerInfoDisplay = ({ settings, metadata }: PlayerInfoDisplayProps) => {
   const teams = _.chain(settings.players)
     .groupBy((player) => (settings.isTeams ? player.teamId : player.port))
     .toArray()
@@ -89,7 +89,7 @@ const PlayerInfoDisplay: React.FC<PlayerInfoDisplayProps> = ({ settings, metadat
   return <Outer>{...elements}</Outer>;
 };
 
-export interface GameProfileHeaderProps {
+type GameProfileHeaderProps = {
   file: FileResult;
   index: number | null;
   total: number | null;
@@ -100,9 +100,9 @@ export interface GameProfileHeaderProps {
   disabled?: boolean;
   stats: StatsType | null;
   stadiumStats: StadiumStatsType | null;
-}
+};
 
-export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
+export const GameProfileHeader = ({
   stats,
   stadiumStats,
   disabled,
@@ -113,7 +113,7 @@ export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
   onPrev,
   onPlay,
   onClose,
-}) => {
+}: GameProfileHeaderProps) => {
   const { metadata, settings } = file;
   return (
     <div
@@ -161,12 +161,16 @@ export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
   );
 };
 
-const GameDetails: React.FC<{
+const GameDetails = ({
+  file,
+  stats,
+  stadiumStats,
+}: {
   file: FileResult;
   settings: GameStartType;
   stats: StatsType | null;
   stadiumStats: StadiumStatsType | null;
-}> = ({ file, stats, stadiumStats }) => {
+}) => {
   let stageName = "Unknown";
   try {
     stageName = stageUtils.getStageName(file.settings.stageId !== null ? file.settings.stageId : 0);
@@ -301,14 +305,21 @@ const LaunchReplayButton = React.memo(({ onClick }: { onClick: () => void }) => 
   );
 });
 
-const Controls: React.FC<{
+const Controls = ({
+  disabled,
+  index,
+  total,
+  onPlay,
+  onPrev,
+  onNext,
+}: {
   disabled?: boolean;
   index: number | null;
   total: number | null;
   onPlay: () => void;
   onPrev: () => void;
   onNext: () => void;
-}> = ({ disabled, index, total, onPlay, onPrev, onNext }) => {
+}) => {
   const indexLabel = index !== null && total !== null ? `${index + 1} / ${total}` : "1 / 1";
   const atStart = index === null || index === 0;
   const atEnd = total === null || index === total - 1;

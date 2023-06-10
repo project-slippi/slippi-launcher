@@ -12,13 +12,13 @@ const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
 
 const DOLPHIN_INSTANCE_ID = "spectate";
 
-interface BroadcastInfo {
+type BroadcastInfo = {
   broadcastId: string;
   cursor: string;
   fileWriter: SlpFileWriter;
   gameStarted: boolean;
   dolphinId: string;
-}
+};
 
 const generatePlaybackId = (broadcastId: string) => `spectate-${broadcastId}`;
 

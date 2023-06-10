@@ -67,10 +67,10 @@ const defaultSortOrder: Array<{
   },
 ];
 
-export interface ReplayFilterOptions {
+export type ReplayFilterOptions = {
   searchText: string;
   hideShortGames: boolean;
-}
+};
 
 export const replayFileFilter =
   (filterOptions: ReplayFilterOptions): ((file: FileResult) => boolean) =>

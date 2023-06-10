@@ -4,20 +4,19 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import React from "react";
 
 import { useUserData } from "@/lib/hooks/useAccount";
 import { useToasts } from "@/lib/hooks/useToasts";
 
 import { ActivateOnlineForm } from "../ActivateOnlineForm";
 
-export interface ActivateOnlineDialogProps {
+type ActivateOnlineDialogProps = {
   open: boolean;
   onClose: () => void;
   onSubmit: () => void;
-}
+};
 
-export const ActivateOnlineDialog: React.FC<ActivateOnlineDialogProps> = ({ open, onClose, onSubmit }) => {
+export const ActivateOnlineDialog = ({ open, onClose, onSubmit }: ActivateOnlineDialogProps) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const refreshUserData = useUserData();

@@ -2,12 +2,12 @@ import { css } from "@emotion/react";
 import Typography from "@mui/material/Typography";
 import React from "react";
 
-export interface SettingItemProps {
+type SettingItemProps = {
   name: React.ReactNode | string;
   description?: React.ReactNode | string;
-}
+};
 
-export const SettingItem: React.FC<SettingItemProps> = (props) => {
+export const SettingItem = (props: React.PropsWithChildren<SettingItemProps>) => {
   return (
     <div
       css={css`

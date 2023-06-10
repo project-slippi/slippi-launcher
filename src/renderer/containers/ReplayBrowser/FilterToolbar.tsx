@@ -29,9 +29,9 @@ const ButtonContainer = styled.div`
   }
 `;
 
-export interface FilterToolbarProps {
+type FilterToolbarProps = {
   disabled?: boolean;
-}
+};
 
 export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarProps>((props, ref) => {
   const { disabled } = props;

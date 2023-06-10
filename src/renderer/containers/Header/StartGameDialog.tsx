@@ -8,13 +8,13 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import React from "react";
 
-export interface StartGameDialogProps {
+type StartGameDialogProps = {
   open: boolean;
   onClose: () => void;
   onSubmit: () => void;
-}
+};
 
-export const StartGameDialog: React.FC<StartGameDialogProps> = ({ open, onClose, onSubmit }) => {
+export const StartGameDialog = ({ open, onClose, onSubmit }: StartGameDialogProps) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 

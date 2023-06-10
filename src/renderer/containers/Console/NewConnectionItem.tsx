@@ -5,13 +5,13 @@ import Tooltip from "@mui/material/Tooltip";
 
 import { ReactComponent as WiiIcon } from "@/styles/images/wii-icon.svg";
 
-export interface NewConnectionItemProps {
+type NewConnectionItemProps = {
   nickname?: string;
   ip: string;
   onAdd: () => void;
-}
+};
 
-export const NewConnectionItem: React.FC<NewConnectionItemProps> = ({ ip, onAdd, nickname }) => {
+export const NewConnectionItem = ({ ip, onAdd, nickname }: NewConnectionItemProps) => {
   const title = nickname ? `${ip} (${nickname})` : ip;
   return (
     <div

@@ -7,17 +7,17 @@ import React from "react";
 import type { LinkProps } from "react-router-dom";
 import { Link, useMatch, useResolvedPath } from "react-router-dom";
 
-export interface MenuItem {
+export type MenuItem = {
   subpath: string;
   title: string;
   icon: React.ReactNode;
-}
+};
 
-export interface MainMenuProps {
+type MainMenuProps = {
   menuItems: MenuItem[];
-}
+};
 
-export const MainMenu: React.FC<MainMenuProps> = ({ menuItems }) => {
+export const MainMenu = ({ menuItems }: MainMenuProps) => {
   return (
     <div
       css={css`
@@ -38,9 +38,9 @@ export const MainMenu: React.FC<MainMenuProps> = ({ menuItems }) => {
   );
 };
 
-interface CustomLinkProps extends LinkProps {
+type CustomLinkProps = LinkProps & {
   title: string;
-}
+};
 
 const CustomLink = ({ title, children, to, ...props }: CustomLinkProps) => {
   const resolved = useResolvedPath(to);

@@ -1,22 +1,15 @@
 import { css } from "@emotion/react";
-import { LoadingButton } from "@mui/lab";
-import { Button } from "@mui/material";
-import React from "react";
+import LoadingButton from "@mui/lab/LoadingButton";
+import Button from "@mui/material/Button";
 
-export interface ChatMessagesFooterProps {
+type ChatMessagesFooterProps = {
   loading: boolean;
   dirty: boolean;
   saveToDatabase: () => void;
   discardChanges: () => void;
-}
+};
 
-export const ChatMessagesFooter: React.FC<ChatMessagesFooterProps> = ({
-  loading,
-  dirty,
-  saveToDatabase,
-  discardChanges,
-}) => {
-  // const { showError } = useToasts();
+export const ChatMessagesFooter = ({ loading, dirty, saveToDatabase, discardChanges }: ChatMessagesFooterProps) => {
   return (
     <div
       css={css`

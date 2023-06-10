@@ -13,7 +13,7 @@ const Container = styled.div`
   max-width: 800px;
 `;
 
-export const SetupCompleteStep: React.FC = () => {
+export const SetupCompleteStep = React.memo(() => {
   const navigate = useNavigate();
   const onClick = () => {
     navigate("/main");
@@ -39,4 +39,4 @@ export const SetupCompleteStep: React.FC = () => {
       </Container>
     </Box>
   );
-};
+});

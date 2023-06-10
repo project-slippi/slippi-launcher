@@ -33,13 +33,13 @@ const useLoginStore = create(
   ),
 );
 
-export interface LoginFormProps {
+type LoginFormProps = {
   className?: string;
   disableAutoFocus?: boolean;
   onSuccess?: () => void;
-}
+};
 
-export const LoginForm: React.FC<LoginFormProps> = ({ className, onSuccess, disableAutoFocus }) => {
+export const LoginForm = ({ className, onSuccess, disableAutoFocus }: LoginFormProps) => {
   const { authService } = useServices();
   const email = useLoginStore((store) => store.email);
   const setEmail = useLoginStore((store) => store.setEmail);
@@ -209,10 +209,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ className, onSuccess, disa
   );
 };
 
-const ForgotPasswordForm: React.FC<{
-  className?: string;
-  onClose: () => void;
-}> = ({ className, onClose }) => {
+const ForgotPasswordForm = ({ className, onClose }: { className?: string; onClose: () => void }) => {
   const { authService } = useServices();
   const email = useLoginStore((store) => store.email);
   const setEmail = useLoginStore((store) => store.setEmail);

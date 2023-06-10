@@ -1,5 +1,5 @@
 import React from "react";
-import { Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
+import { Navigate, Route, Routes, useParams } from "react-router-dom";
 
 import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/useReplayBrowserList";
@@ -9,20 +9,19 @@ import { useServices } from "@/services";
 import { ReplayFileStats } from "../ReplayFileStats";
 import { ReplayBrowser } from "./ReplayBrowser";
 
-export const ReplayBrowserPage: React.FC = () => {
+export const ReplayBrowserPage = React.memo(() => {
   const { lastPath } = useReplayBrowserNavigation();
-  const navigate = useNavigate();
 
   return (
     <Routes>
       <Route path="list" element={<ReplayBrowser />} />
-      <Route path=":filePath" element={<ChildPage goBack={() => navigate("..")} />} />
+      <Route path=":filePath" element={<ChildPage />} />
       <Route path="*" element={<Navigate replace={true} to={lastPath} />} />
     </Routes>
   );
-};
+});
 
-const ChildPage: React.FC<{ goBack: () => void }> = () => {
+const ChildPage = () => {
   const { filePath } = useParams<Record<string, any>>();
   const selectedFile = useReplays((store) => store.selectedFile);
   const decodedFilePath = decodeURIComponent(filePath);

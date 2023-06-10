@@ -13,14 +13,14 @@ const Outer = styled.div`
   justify-content: center;
 `;
 
-export interface MessageProps {
+type MessageProps = {
   className?: string;
   style?: React.CSSProperties;
   icon?: React.ReactNode;
   label?: string;
-}
+};
 
-export const Message: React.FC<MessageProps> = ({ children, className, icon, label, style }) => {
+export const Message = ({ children, className, icon, label, style }: React.PropsWithChildren<MessageProps>) => {
   return (
     <Outer style={style} className={className}>
       {icon}
@@ -34,12 +34,11 @@ export const Message: React.FC<MessageProps> = ({ children, className, icon, lab
   );
 };
 
-export interface IconMessageProps extends Omit<MessageProps, "icon"> {
+type IconMessageProps = Omit<MessageProps, "icon"> & {
   Icon: OverridableComponent<SvgIconTypeMap>;
-}
+};
 
-export const IconMessage: React.FC<IconMessageProps> = (props) => {
-  const { Icon, ...rest } = props;
+export const IconMessage = ({ Icon, ...rest }: React.PropsWithChildren<IconMessageProps>) => {
   return (
     <Message
       icon={
