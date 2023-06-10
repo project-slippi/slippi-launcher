@@ -25,7 +25,7 @@ export const BasicFooter = styled.div`
   }
 `;
 
-export const Footer = () => {
+export const Footer: React.ComponentType = () => {
   return (
     <Outer>
       <Social title="Follow Project Slippi on Twitter" url={`https://twitter.com/${socials.twitterId}`}>
