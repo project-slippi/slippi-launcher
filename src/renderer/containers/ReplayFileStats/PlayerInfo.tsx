@@ -9,7 +9,7 @@ import { getColor } from "@/lib/playerColors";
 import { getCharacterIcon } from "@/lib/utils";
 import { withFont } from "@/styles/withFont";
 
-export type PlayerInfoProps = {
+type PlayerInfoProps = {
   player: PlayerType;
   names: PlayerNames;
   isTeams?: boolean;

@@ -11,7 +11,7 @@ import { KillTable } from "./KillTable";
 import { OverallTable } from "./OverallTable";
 import { PunishTable } from "./PunishTable";
 
-export type GameProfileProps = {
+type GameProfileProps = {
   file: FileResult;
   stats: StatsType;
   onPlay: (options: { path: string; startFrame: number }) => void;

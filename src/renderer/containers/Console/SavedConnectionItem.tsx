@@ -22,7 +22,7 @@ import { ReactComponent as WiiIcon } from "@/styles/images/wii-icon.svg";
 
 const path = window.electron.path;
 
-export type SavedConnectionItemProps = {
+type SavedConnectionItemProps = {
   index: number;
   isAvailable?: boolean;
   status: number;

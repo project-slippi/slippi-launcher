@@ -23,7 +23,7 @@ import { useQuery } from "react-query";
 import { useServices } from "@/services";
 
 const log = window.electron.log;
-export type StartBroadcastDialogProps = {
+type StartBroadcastDialogProps = {
   open: boolean;
   onClose: () => void;
   onSubmit: (value: string) => void;

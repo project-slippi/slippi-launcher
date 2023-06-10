@@ -10,7 +10,7 @@ import * as T from "./TableStyles";
 
 const columnCount = 5; // Unfortunately there is no way to specify a col span of "all" max cols there will be is 5
 
-export type OverallTableProps = {
+type OverallTableProps = {
   file: FileResult;
   stats: StatsType;
 };

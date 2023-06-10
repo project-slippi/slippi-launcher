@@ -5,7 +5,7 @@ import MenuItem from "@mui/material/MenuItem";
 import MatSelect from "@mui/material/Select";
 import React from "react";
 
-export type DropdownProps = {
+type DropdownProps = {
   value: any;
   options: Array<{
     value: any;

@@ -9,7 +9,7 @@ import TimeAgo from "react-timeago";
 
 import { StartBroadcastDialog } from "./StartBroadcastDialog";
 
-export type BroadcastPanelProps = {
+type BroadcastPanelProps = {
   dolphinStatus: ConnectionStatus;
   slippiServerStatus: ConnectionStatus;
   startTime: Date | null;

@@ -12,7 +12,7 @@ import React from "react";
 
 import { useReplays } from "@/lib/hooks/useReplays";
 
-export type FolderTreeNodeProps = {
+type FolderTreeNodeProps = {
   nestLevel?: number;
   folder: FolderResult;
   collapsedFolders: readonly string[];

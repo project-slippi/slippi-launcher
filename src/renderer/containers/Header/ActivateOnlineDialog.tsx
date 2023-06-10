@@ -11,7 +11,7 @@ import { useToasts } from "@/lib/hooks/useToasts";
 
 import { ActivateOnlineForm } from "../ActivateOnlineForm";
 
-export type ActivateOnlineDialogProps = {
+type ActivateOnlineDialogProps = {
   open: boolean;
   onClose: () => void;
   onSubmit: () => void;

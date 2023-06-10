@@ -5,7 +5,7 @@ import Tooltip from "@mui/material/Tooltip";
 
 import { ReactComponent as WiiIcon } from "@/styles/images/wii-icon.svg";
 
-export type NewConnectionItemProps = {
+type NewConnectionItemProps = {
   nickname?: string;
   ip: string;
   onAdd: () => void;

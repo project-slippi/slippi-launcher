@@ -4,7 +4,7 @@ import React from "react";
 
 import { withFont } from "@/styles/withFont";
 
-export type LabelledTextProps = {
+type LabelledTextProps = {
   className?: string;
   label: string;
 };

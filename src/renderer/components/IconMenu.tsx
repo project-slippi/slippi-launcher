@@ -13,7 +13,7 @@ export type IconMenuItem = {
   disabled?: boolean;
 };
 
-export type IconMenuProps = MenuProps & {
+type IconMenuProps = MenuProps & {
   items: IconMenuItem[];
 };
 

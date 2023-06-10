@@ -13,7 +13,7 @@ const Outer = styled.div`
   justify-content: center;
 `;
 
-export type MessageProps = {
+type MessageProps = {
   className?: string;
   style?: React.CSSProperties;
   icon?: React.ReactNode;

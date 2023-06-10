@@ -14,7 +14,7 @@ import { useSettings } from "@/lib/hooks/useSettings";
 
 import { SavedConnectionItem } from "./SavedConnectionItem";
 
-export type SavedConnectionsListProps = {
+type SavedConnectionsListProps = {
   availableConsoles: DiscoveredConsoleInfo[];
   onDelete: (conn: StoredConnection) => void;
   onEdit: (conn: StoredConnection) => void;

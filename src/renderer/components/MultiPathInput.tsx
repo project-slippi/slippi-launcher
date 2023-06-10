@@ -10,7 +10,7 @@ import { useToasts } from "@/lib/hooks/useToasts";
 
 const { isSubdirectory } = window.electron.utils;
 
-export type MultiPathInputProps = {
+type MultiPathInputProps = {
   updatePaths: (paths: string[]) => void;
   paths: string[];
   options?: OpenDialogOptions;

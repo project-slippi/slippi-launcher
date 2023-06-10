@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import Paper from "@mui/material/Paper";
 import React from "react";
 
-export type InfoBlockProps = {
+type InfoBlockProps = {
   title: React.ReactNode | string;
   className?: string;
 };

@@ -7,7 +7,7 @@ import { InfoBlock } from "@/components/InfoBlock";
 
 import { NewConnectionItem } from "./NewConnectionItem";
 
-export type NewConnectionListProps = {
+type NewConnectionListProps = {
   isScanning?: boolean;
   consoleItems: DiscoveredConsoleInfo[];
   onClick: (conn: DiscoveredConsoleInfo) => void;

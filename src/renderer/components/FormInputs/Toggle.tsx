@@ -4,7 +4,7 @@ import Switch from "@mui/material/Switch";
 import Typography from "@mui/material/Typography";
 import React from "react";
 
-export type ToggleProps = {
+type ToggleProps = {
   label: string;
   description: string | React.ReactNode;
   value: boolean;

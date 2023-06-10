@@ -31,7 +31,7 @@ type FormValues = {
   useNicknameFolders: boolean;
 };
 
-export type AddConnectionFormProps = {
+type AddConnectionFormProps = {
   defaultValues?: Partial<FormValues>;
   onSubmit: (values: FormValues) => void;
   disabled: boolean;

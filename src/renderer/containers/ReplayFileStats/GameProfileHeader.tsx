@@ -89,7 +89,7 @@ const PlayerInfoDisplay: React.FC<PlayerInfoDisplayProps> = ({ settings, metadat
   return <Outer>{...elements}</Outer>;
 };
 
-export type GameProfileHeaderProps = {
+type GameProfileHeaderProps = {
   file: FileResult;
   index: number | null;
   total: number | null;

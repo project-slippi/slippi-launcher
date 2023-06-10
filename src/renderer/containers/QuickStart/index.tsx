@@ -55,7 +55,7 @@ const getStepContent = (step: QuickStartStep | null) => {
   }
 };
 
-export type QuickStartProps = {
+type QuickStartProps = {
   allSteps: QuickStartStep[];
   currentStep: QuickStartStep | null;
   onNext?: () => void;

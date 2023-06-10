@@ -17,7 +17,7 @@ import { getCharacterIcon } from "@/lib/utils";
 import * as T from "./TableStyles";
 
 const columnCount = 5;
-export type KillTableProps = {
+type KillTableProps = {
   file: FileResult;
   stats: StatsType;
   player: PlayerType;

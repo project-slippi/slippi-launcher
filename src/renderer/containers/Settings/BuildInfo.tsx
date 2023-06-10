@@ -12,7 +12,7 @@ const appVersion = __VERSION__;
 const buildDate = moment.utc(__DATE__);
 const commitHash = __COMMIT__;
 
-export type BuildInfoProps = {
+type BuildInfoProps = {
   enableAdvancedUserClick?: boolean;
   className?: string;
 };

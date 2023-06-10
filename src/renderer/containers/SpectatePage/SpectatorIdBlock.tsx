@@ -5,7 +5,7 @@ import React from "react";
 
 import { InfoBlock } from "@/components/InfoBlock";
 
-export type SpectatorIdBlockProps = {
+type SpectatorIdBlockProps = {
   userId: string;
   className?: string;
 };

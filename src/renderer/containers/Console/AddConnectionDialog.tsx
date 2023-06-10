@@ -13,7 +13,7 @@ import { useSettings } from "@/lib/hooks/useSettings";
 
 import { AddConnectionForm } from "./AddConnectionForm";
 
-export type AddConnectionDialogProps = {
+type AddConnectionDialogProps = {
   open: boolean;
   selectedConnection: Partial<StoredConnection> | null;
   onSubmit: (conn: Omit<StoredConnection, "id">) => void;

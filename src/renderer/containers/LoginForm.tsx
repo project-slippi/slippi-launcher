@@ -33,7 +33,7 @@ const useLoginStore = create(
   ),
 );
 
-export type LoginFormProps = {
+type LoginFormProps = {
   className?: string;
   disableAutoFocus?: boolean;
   onSuccess?: () => void;

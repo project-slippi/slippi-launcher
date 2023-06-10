@@ -29,7 +29,7 @@ const ButtonContainer = styled.div`
   }
 `;
 
-export type FilterToolbarProps = {
+type FilterToolbarProps = {
   disabled?: boolean;
 };
 

@@ -13,7 +13,7 @@ import * as T from "./TableStyles";
 
 const columnCount = 6;
 
-export type PunishTableProps = {
+type PunishTableProps = {
   file: FileResult;
   stats: StatsType;
   player: PlayerType;

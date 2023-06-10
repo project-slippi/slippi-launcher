@@ -5,7 +5,7 @@ import React from "react";
 
 import { IconMessage } from "@/components/Message";
 
-export type GameProfileProps = {
+type GameProfileProps = {
   file: FileResult;
   stats: StadiumStatsType | null;
 };

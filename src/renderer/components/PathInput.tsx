@@ -6,7 +6,7 @@ import Tooltip from "@mui/material/Tooltip";
 import type { OpenDialogOptions } from "electron";
 import React from "react";
 
-export type PathInputProps = {
+type PathInputProps = {
   onSelect: (filePath: string) => void;
   placeholder?: string;
   value?: string;

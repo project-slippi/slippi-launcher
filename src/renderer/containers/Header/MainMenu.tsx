@@ -13,7 +13,7 @@ export type MenuItem = {
   icon: React.ReactNode;
 };
 
-export type MainMenuProps = {
+type MainMenuProps = {
   menuItems: MenuItem[];
 };
 

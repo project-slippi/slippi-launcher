@@ -2,7 +2,7 @@ import { css } from "@emotion/react";
 import Typography from "@mui/material/Typography";
 import React from "react";
 
-export type SettingItemProps = {
+type SettingItemProps = {
   name: React.ReactNode | string;
   description?: React.ReactNode | string;
 };

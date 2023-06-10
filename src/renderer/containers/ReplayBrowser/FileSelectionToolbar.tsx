@@ -9,7 +9,7 @@ import React from "react";
 
 import { ConfirmationModal } from "@/components/ConfirmationModal";
 
-export type FileSelectionToolbarProps = {
+type FileSelectionToolbarProps = {
   totalSelected: number;
   onSelectAll: () => void;
   onPlay: () => void;

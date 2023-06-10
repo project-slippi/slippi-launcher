@@ -56,7 +56,7 @@ const Content = styled.div`
   overflow: auto;
 `;
 
-export type ReplayFileStatsProps = {
+type ReplayFileStatsProps = {
   filePath: string;
   file?: FileResult;
   index: number | null;

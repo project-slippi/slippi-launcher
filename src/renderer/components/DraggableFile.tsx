@@ -11,7 +11,7 @@ const Outer = styled.div`
   -webkit-app-region: no-drag;
 `;
 
-export type DraggableFileProps = {
+type DraggableFileProps = {
   filePaths: string[];
   className?: string;
   style?: React.CSSProperties;

@@ -8,7 +8,7 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import React from "react";
 
-export type StartGameDialogProps = {
+type StartGameDialogProps = {
   open: boolean;
   onClose: () => void;
   onSubmit: () => void;

@@ -308,7 +308,7 @@ const ChatMessagesSection: React.FC<ChatMessagesSectionProps> = ({
   );
 };
 
-export type ChatMessagesInputProps = {
+type ChatMessagesInputProps = {
   updateMessages: (messages: string[]) => void;
   messages: string[];
   availableMessages: AvailableMessageType[];
