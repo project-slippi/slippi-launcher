@@ -56,7 +56,7 @@ const Content = styled.div`
   overflow: auto;
 `;
 
-export interface ReplayFileStatsProps {
+export type ReplayFileStatsProps = {
   filePath: string;
   file?: FileResult;
   index: number | null;
@@ -65,7 +65,7 @@ export interface ReplayFileStatsProps {
   onPrev: () => void;
   onClose: () => void;
   onPlay: () => void;
-}
+};
 
 export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
   const { filePath } = props;

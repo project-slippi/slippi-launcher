@@ -22,7 +22,7 @@ import { ReactComponent as WiiIcon } from "@/styles/images/wii-icon.svg";
 
 const path = window.electron.path;
 
-export interface SavedConnectionItemProps {
+export type SavedConnectionItemProps = {
   index: number;
   isAvailable?: boolean;
   status: number;
@@ -33,7 +33,7 @@ export interface SavedConnectionItemProps {
   latestVersion: string;
   connection: StoredConnection;
   onOpenMenu: (index: number, element: HTMLElement, ipAddress: string) => void;
-}
+};
 
 export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
   index,

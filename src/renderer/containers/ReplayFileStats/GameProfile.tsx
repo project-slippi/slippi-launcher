@@ -11,11 +11,11 @@ import { KillTable } from "./KillTable";
 import { OverallTable } from "./OverallTable";
 import { PunishTable } from "./PunishTable";
 
-export interface GameProfileProps {
+export type GameProfileProps = {
   file: FileResult;
   stats: StatsType;
   onPlay: (options: { path: string; startFrame: number }) => void;
-}
+};
 
 const TableContainer = styled.div`
   display: grid;

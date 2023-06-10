@@ -31,11 +31,11 @@ type FormValues = {
   useNicknameFolders: boolean;
 };
 
-export interface AddConnectionFormProps {
+export type AddConnectionFormProps = {
   defaultValues?: Partial<FormValues>;
   onSubmit: (values: FormValues) => void;
   disabled: boolean;
-}
+};
 
 export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultValues, onSubmit, disabled }) => {
   const [showAdvanced, setShowAdvanced] = React.useState(false);

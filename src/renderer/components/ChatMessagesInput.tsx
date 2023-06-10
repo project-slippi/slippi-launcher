@@ -136,14 +136,14 @@ const genChatMessageItem = (
   );
 };
 
-interface ChatMessageSelectorProps {
+type ChatMessageSelectorProps = {
   groupDirection: "up" | "left" | "right" | "down";
   direction: "up" | "left" | "right" | "down";
   message: string;
   availableMessages: AvailableMessageType[];
   updateMessage: (value: string) => void;
   user: { uid: string | undefined; subLevel: string };
-}
+};
 
 const ChatMessageSelector: React.FC<ChatMessageSelectorProps> = ({
   groupDirection,
@@ -244,13 +244,13 @@ const ChatMessageSelector: React.FC<ChatMessageSelectorProps> = ({
   );
 };
 
-interface ChatMessagesSectionProps {
+type ChatMessagesSectionProps = {
   direction: "up" | "left" | "right" | "down";
   messages: string[];
   availableMessages: AvailableMessageType[];
   updateLocal: (idx: number, value: string) => void;
   user: { uid: string | undefined; subLevel: string };
-}
+};
 
 const ChatMessagesSection: React.FC<ChatMessagesSectionProps> = ({
   direction,
@@ -308,12 +308,12 @@ const ChatMessagesSection: React.FC<ChatMessagesSectionProps> = ({
   );
 };
 
-export interface ChatMessagesInputProps {
+export type ChatMessagesInputProps = {
   updateMessages: (messages: string[]) => void;
   messages: string[];
   availableMessages: AvailableMessageType[];
   user: { uid: string | undefined; subLevel: string };
-}
+};
 
 export const ChatMessagesInput: React.FC<ChatMessagesInputProps> = ({
   messages,

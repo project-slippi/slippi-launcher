@@ -11,11 +11,11 @@ const Outer = styled.div`
   -webkit-app-region: no-drag;
 `;
 
-export interface DraggableFileProps {
+export type DraggableFileProps = {
   filePaths: string[];
   className?: string;
   style?: React.CSSProperties;
-}
+};
 
 /**
  * DraggableFile accepts the `filePaths` prop and allows those files to be dragged into other contexts

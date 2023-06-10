@@ -12,11 +12,11 @@ const StackTraceContainer = styled.div`
   border-radius: 5px;
 `;
 
-interface ErrorBoundaryState {
+type ErrorBoundaryState = {
   hasError: boolean;
   errorInfo: any;
   showStackTrace: boolean;
-}
+};
 
 export class ErrorBoundary extends React.Component<any, ErrorBoundaryState> {
   constructor(props: any) {

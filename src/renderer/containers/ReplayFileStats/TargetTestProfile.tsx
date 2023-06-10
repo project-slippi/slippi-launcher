@@ -5,10 +5,10 @@ import React from "react";
 
 import { IconMessage } from "@/components/Message";
 
-export interface GameProfileProps {
+export type GameProfileProps = {
   file: FileResult;
   stats: StadiumStatsType | null;
-}
+};
 
 const StatSection: React.FC<{
   title: string;

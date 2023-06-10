@@ -69,9 +69,9 @@ export const TableRow = styled.tr`
   }
 `;
 
-interface GrayableImageProps {
+type GrayableImageProps = {
   gray?: boolean;
-}
+};
 export const GrayableImage = styled.img`
   ${(props: GrayableImageProps) =>
     props.gray &&

@@ -9,11 +9,11 @@ import { getColor } from "@/lib/playerColors";
 import { getCharacterIcon } from "@/lib/utils";
 import { withFont } from "@/styles/withFont";
 
-export interface PlayerInfoProps {
+export type PlayerInfoProps = {
   player: PlayerType;
   names: PlayerNames;
   isTeams?: boolean;
-}
+};
 
 export const PlayerInfo: React.FC<PlayerInfoProps> = ({ player, names, isTeams }) => {
   const backupName = player.type === 1 ? "CPU" : `Player ${player.port}`;

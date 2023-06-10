@@ -10,11 +10,11 @@ import { useToasts } from "@/lib/hooks/useToasts";
 
 const { isSubdirectory } = window.electron.utils;
 
-export interface MultiPathInputProps {
+export type MultiPathInputProps = {
   updatePaths: (paths: string[]) => void;
   paths: string[];
   options?: OpenDialogOptions;
-}
+};
 
 export const MultiPathInput: React.FC<MultiPathInputProps> = ({ paths, updatePaths, options }) => {
   const { showError } = useToasts();

@@ -11,11 +11,11 @@ import { useToasts } from "@/lib/hooks/useToasts";
 
 import { ActivateOnlineForm } from "../ActivateOnlineForm";
 
-export interface ActivateOnlineDialogProps {
+export type ActivateOnlineDialogProps = {
   open: boolean;
   onClose: () => void;
   onSubmit: () => void;
-}
+};
 
 export const ActivateOnlineDialog: React.FC<ActivateOnlineDialogProps> = ({ open, onClose, onSubmit }) => {
   const theme = useTheme();

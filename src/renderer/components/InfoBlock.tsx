@@ -3,10 +3,10 @@ import styled from "@emotion/styled";
 import Paper from "@mui/material/Paper";
 import React from "react";
 
-export interface InfoBlockProps {
+export type InfoBlockProps = {
   title: React.ReactNode | string;
   className?: string;
-}
+};
 
 export const InfoBlock: React.FC<InfoBlockProps> = ({ title, children, className }) => {
   return (

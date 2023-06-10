@@ -6,16 +6,16 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import React from "react";
 
-export interface IconMenuItem {
+export type IconMenuItem = {
   label: string;
   onClick: () => void;
   icon: React.ReactNode;
   disabled?: boolean;
-}
+};
 
-export interface IconMenuProps extends MenuProps {
+export type IconMenuProps = MenuProps & {
   items: IconMenuItem[];
-}
+};
 
 export const IconMenu: React.FC<IconMenuProps> = (props) => {
   const { items, ...rest } = props;

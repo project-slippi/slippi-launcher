@@ -33,11 +33,11 @@ const useLoginStore = create(
   ),
 );
 
-export interface LoginFormProps {
+export type LoginFormProps = {
   className?: string;
   disableAutoFocus?: boolean;
   onSuccess?: () => void;
-}
+};
 
 export const LoginForm: React.FC<LoginFormProps> = ({ className, onSuccess, disableAutoFocus }) => {
   const { authService } = useServices();

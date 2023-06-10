@@ -4,10 +4,10 @@ import net from "net";
 
 import { MirrorEvent } from "./types";
 
-interface ConsoleDataBuffer {
+type ConsoleDataBuffer = {
   buffersToConcat: Buffer[];
   fullBuffer: Buffer;
-}
+};
 
 export class ConsoleRelay extends EventEmitter {
   private server: net.Server | null;

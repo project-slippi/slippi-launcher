@@ -26,10 +26,10 @@ export const ActivateOnlineForm: React.FC<{ onSubmit?: () => void }> = ({ onSubm
   );
 };
 
-interface ConnectCodeSetterProps {
+type ConnectCodeSetterProps = {
   displayName: string | null;
   onSuccess: () => void;
-}
+};
 
 const ConnectCodeSetter: React.FC<ConnectCodeSetterProps> = ({ displayName, onSuccess }) => {
   const { slippiBackendService } = useServices();

@@ -12,13 +12,13 @@ import React from "react";
 
 import { useReplays } from "@/lib/hooks/useReplays";
 
-export interface FolderTreeNodeProps {
+export type FolderTreeNodeProps = {
   nestLevel?: number;
   folder: FolderResult;
   collapsedFolders: readonly string[];
   onClick: (fullPath: string) => void;
   onToggle: (fullPath: string) => void;
-}
+};
 
 export const FolderTreeNode: React.FC<FolderTreeNodeProps> = ({
   nestLevel = 0,

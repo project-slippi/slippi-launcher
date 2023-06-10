@@ -9,10 +9,10 @@ const MINUTE = 60 * SECOND;
 const EXPIRES_IN = 10 * MINUTE;
 
 // Let's cache our Github responses so we don't exceed the 60 requests/hour rate limit
-interface ResponseCacheEntry {
+type ResponseCacheEntry = {
   time: number;
   response: any;
-}
+};
 
 const githubResponseCache: Record<string, ResponseCacheEntry> = {};
 

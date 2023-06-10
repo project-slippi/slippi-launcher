@@ -13,13 +13,13 @@ import { useSettings } from "@/lib/hooks/useSettings";
 
 import { AddConnectionForm } from "./AddConnectionForm";
 
-export interface AddConnectionDialogProps {
+export type AddConnectionDialogProps = {
   open: boolean;
   selectedConnection: Partial<StoredConnection> | null;
   onSubmit: (conn: Omit<StoredConnection, "id">) => void;
   onCancel: () => void;
   disabled: boolean;
-}
+};
 
 export const AddConnectionDialog: React.FC<AddConnectionDialogProps> = ({
   open,

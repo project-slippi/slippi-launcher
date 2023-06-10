@@ -1,6 +1,6 @@
 import type { GeckoCode } from "./config/geckoCode";
 
-export interface ReplayCommunication {
+export type ReplayCommunication = {
   mode: "normal" | "mirror" | "queue"; // default normal
   replay?: string; // path to the replay if in normal or mirror mode
   startFrame?: number; // when to start watching the replay
@@ -12,15 +12,15 @@ export interface ReplayCommunication {
   rollbackDisplayMethod?: "off" | "normal" | "visible"; // default off; normal shows like a player experienced it, visible shows ALL frames (normal and rollback)
   gameStation?: string;
   queue?: ReplayQueueItem[];
-}
+};
 
-export interface ReplayQueueItem {
+export type ReplayQueueItem = {
   path: string;
   startFrame?: number;
   endFrame?: number;
   gameStartAt?: string;
   gameStation?: string;
-}
+};
 
 export enum DolphinLaunchType {
   NETPLAY = "netplay",
@@ -34,13 +34,13 @@ export enum DolphinUseType {
   NETPLAY = "netplay",
 }
 
-export interface PlayKey {
+export type PlayKey = {
   uid: string;
   playKey: string;
   connectCode: string;
   displayName: string;
   latestVersion?: string;
-}
+};
 
 export enum DolphinEventType {
   CLOSED = "CLOSED",

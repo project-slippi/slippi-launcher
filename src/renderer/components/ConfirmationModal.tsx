@@ -9,7 +9,7 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import React from "react";
 
-export interface ConfirmationModalProps {
+export type ConfirmationModalProps = {
   open: boolean;
   onClose: () => void;
   onSubmit: () => void;
@@ -20,7 +20,7 @@ export interface ConfirmationModalProps {
   cancelText?: React.ReactNode;
   cancelProps?: ButtonProps;
   fullWidth?: boolean;
-}
+};
 
 export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   open,

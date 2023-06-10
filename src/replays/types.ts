@@ -1,6 +1,6 @@
 import type { GameStartType, MetadataType } from "@slippi/slippi-js";
 
-export interface FileResult {
+export type FileResult = {
   name: string;
   fullPath: string;
   settings: GameStartType;
@@ -8,21 +8,21 @@ export interface FileResult {
   lastFrame: number | null;
   metadata: MetadataType | null;
   winnerIndices: number[];
-}
+};
 
-export interface FolderResult {
+export type FolderResult = {
   name: string;
   fullPath: string;
   subdirectories: FolderResult[];
-}
+};
 
-export interface FileLoadResult {
+export type FileLoadResult = {
   files: FileResult[];
   totalBytes: number;
   fileErrorCount: number;
-}
+};
 
-export interface Progress {
+export type Progress = {
   current: number;
   total: number;
-}
+};

@@ -17,13 +17,13 @@ import { getCharacterIcon } from "@/lib/utils";
 import * as T from "./TableStyles";
 
 const columnCount = 5;
-export interface KillTableProps {
+export type KillTableProps = {
   file: FileResult;
   stats: StatsType;
   player: PlayerType;
   opp: PlayerType;
   onPlay: (options: { path: string; startFrame: number }) => void;
-}
+};
 
 export const KillTable: React.FC<KillTableProps> = ({ file, stats, player, opp, onPlay }) => {
   const names = extractPlayerNames(player.playerIndex, file.settings, file.metadata);

@@ -16,11 +16,11 @@ import { SpectatePage } from "@/containers/SpectatePage";
 import { usePageNavigationShortcuts } from "@/lib/hooks/useShortcuts";
 import { HomePage } from "@/pages/home/HomePage";
 
-interface MainMenuItem extends MenuItem {
+type MainMenuItem = MenuItem & {
   component: React.ReactNode;
   default?: boolean;
   private?: boolean;
-}
+};
 
 const menuItems: MainMenuItem[] = [
   {

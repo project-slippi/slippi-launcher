@@ -14,11 +14,11 @@ import { useSettings } from "@/lib/hooks/useSettings";
 
 import { SavedConnectionItem } from "./SavedConnectionItem";
 
-export interface SavedConnectionsListProps {
+export type SavedConnectionsListProps = {
   availableConsoles: DiscoveredConsoleInfo[];
   onDelete: (conn: StoredConnection) => void;
   onEdit: (conn: StoredConnection) => void;
-}
+};
 
 export const SavedConnectionsList: React.FC<SavedConnectionsListProps> = ({ availableConsoles, onEdit, onDelete }) => {
   const [nintendontVersion, setNintendontVersion] = React.useState("1.8.0");

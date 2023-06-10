@@ -2,10 +2,10 @@ import { css } from "@emotion/react";
 import Typography from "@mui/material/Typography";
 import React from "react";
 
-export interface SettingItemProps {
+export type SettingItemProps = {
   name: React.ReactNode | string;
   description?: React.ReactNode | string;
-}
+};
 
 export const SettingItem: React.FC<SettingItemProps> = (props) => {
   return (

@@ -33,10 +33,10 @@ const Outer = styled.div`
   align-items: center;
 `;
 
-interface PlayerInfoDisplayProps {
+type PlayerInfoDisplayProps = {
   settings: GameStartType;
   metadata: MetadataType | null;
-}
+};
 
 const PlayerInfoDisplay: React.FC<PlayerInfoDisplayProps> = ({ settings, metadata }) => {
   const teams = _.chain(settings.players)
@@ -89,7 +89,7 @@ const PlayerInfoDisplay: React.FC<PlayerInfoDisplayProps> = ({ settings, metadat
   return <Outer>{...elements}</Outer>;
 };
 
-export interface GameProfileHeaderProps {
+export type GameProfileHeaderProps = {
   file: FileResult;
   index: number | null;
   total: number | null;
@@ -100,7 +100,7 @@ export interface GameProfileHeaderProps {
   disabled?: boolean;
   stats: StatsType | null;
   stadiumStats: StadiumStatsType | null;
-}
+};
 
 export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
   stats,

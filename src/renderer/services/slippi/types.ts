@@ -1,20 +1,20 @@
 import type { PlayKey } from "@dolphin/types";
 
-export interface AvailableMessageType {
+export type AvailableMessageType = {
   text: string;
   isPaid: boolean;
-}
+};
 
-export interface UserData {
+export type UserData = {
   playKey: PlayKey | null;
   rulesAccepted: number;
-}
+};
 
-export interface ChatMessageData {
+export type ChatMessageData = {
   level: string;
   availableMessages: AvailableMessageType[];
   userMessages: string[];
-}
+};
 
 export interface SlippiBackendService {
   validateUserId(userId: string): Promise<{ displayName: string; connectCode: string }>;

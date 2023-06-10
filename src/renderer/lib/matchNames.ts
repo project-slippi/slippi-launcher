@@ -1,11 +1,11 @@
 import type { GameStartType, MetadataType } from "@slippi/slippi-js";
 import get from "lodash/get";
 
-export interface PlayerNames {
+export type PlayerNames = {
   name: string;
   code: string;
   tag: string;
-}
+};
 
 export function extractPlayerNames(
   index: number,

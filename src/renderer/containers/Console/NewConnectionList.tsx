@@ -7,11 +7,11 @@ import { InfoBlock } from "@/components/InfoBlock";
 
 import { NewConnectionItem } from "./NewConnectionItem";
 
-export interface NewConnectionListProps {
+export type NewConnectionListProps = {
   isScanning?: boolean;
   consoleItems: DiscoveredConsoleInfo[];
   onClick: (conn: DiscoveredConsoleInfo) => void;
-}
+};
 
 export const NewConnectionList: React.FC<NewConnectionListProps> = ({ consoleItems, isScanning, onClick }) => {
   return (

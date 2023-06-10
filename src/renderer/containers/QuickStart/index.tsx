@@ -55,12 +55,12 @@ const getStepContent = (step: QuickStartStep | null) => {
   }
 };
 
-export interface QuickStartProps {
+export type QuickStartProps = {
   allSteps: QuickStartStep[];
   currentStep: QuickStartStep | null;
   onNext?: () => void;
   onPrev?: () => void;
-}
+};
 
 export const QuickStart: React.FC<QuickStartProps> = ({ allSteps: steps, currentStep, onNext, onPrev }) => {
   const navigate = useNavigate();

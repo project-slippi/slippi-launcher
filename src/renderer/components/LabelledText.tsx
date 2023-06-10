@@ -4,10 +4,10 @@ import React from "react";
 
 import { withFont } from "@/styles/withFont";
 
-export interface LabelledTextProps {
+export type LabelledTextProps = {
   className?: string;
   label: string;
-}
+};
 
 export const LabelledText: React.FC<LabelledTextProps> = ({ label, children, className }) => {
   return (

@@ -12,10 +12,10 @@ const appVersion = __VERSION__;
 const buildDate = moment.utc(__DATE__);
 const commitHash = __COMMIT__;
 
-export interface BuildInfoProps {
+export type BuildInfoProps = {
   enableAdvancedUserClick?: boolean;
   className?: string;
-}
+};
 
 const DEV_THRESHOLD = 7;
 

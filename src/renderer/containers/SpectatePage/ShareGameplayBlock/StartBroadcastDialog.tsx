@@ -23,11 +23,11 @@ import { useQuery } from "react-query";
 import { useServices } from "@/services";
 
 const log = window.electron.log;
-export interface StartBroadcastDialogProps {
+export type StartBroadcastDialogProps = {
   open: boolean;
   onClose: () => void;
   onSubmit: (value: string) => void;
-}
+};
 
 export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({ open, onClose, onSubmit }) => {
   const { slippiBackendService } = useServices();

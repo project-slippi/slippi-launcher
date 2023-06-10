@@ -9,13 +9,13 @@ import React from "react";
 
 import { ConfirmationModal } from "@/components/ConfirmationModal";
 
-export interface FileSelectionToolbarProps {
+export type FileSelectionToolbarProps = {
   totalSelected: number;
   onSelectAll: () => void;
   onPlay: () => void;
   onClear: () => void;
   onDelete: () => void;
-}
+};
 
 export const FileSelectionToolbar: React.FC<FileSelectionToolbarProps> = ({
   totalSelected,

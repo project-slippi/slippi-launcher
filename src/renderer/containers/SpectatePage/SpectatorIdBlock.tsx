@@ -5,10 +5,10 @@ import React from "react";
 
 import { InfoBlock } from "@/components/InfoBlock";
 
-export interface SpectatorIdBlockProps {
+export type SpectatorIdBlockProps = {
   userId: string;
   className?: string;
-}
+};
 
 export const SpectatorIdBlock: React.FC<SpectatorIdBlockProps> = ({ userId, className }) => {
   const [copied, setCopied] = React.useState(false);

@@ -13,13 +13,13 @@ import * as T from "./TableStyles";
 
 const columnCount = 6;
 
-export interface PunishTableProps {
+export type PunishTableProps = {
   file: FileResult;
   stats: StatsType;
   player: PlayerType;
   opp: PlayerType;
   onPlay: (options: { path: string; startFrame: number }) => void;
-}
+};
 
 export const PunishTable: React.FC<PunishTableProps> = ({ file, stats, player, opp, onPlay }) => {
   const names = extractPlayerNames(player.playerIndex, file.settings, file.metadata);

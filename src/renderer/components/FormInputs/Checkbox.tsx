@@ -4,11 +4,11 @@ import MatCheckbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Tooltip from "@mui/material/Tooltip";
 
-export interface CheckboxProps extends MatCheckboxProps {
+type CheckboxProps = MatCheckboxProps & {
   label: any;
   className?: string;
   hoverText?: string;
-}
+};
 
 export const Checkbox: React.FC<CheckboxProps> = (props) => {
   const { label, className, disabled, hoverText, ...rest } = props;

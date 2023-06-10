@@ -1,11 +1,11 @@
-export interface SettingItem {
+export type SettingItem = {
   name: string;
   path: string;
   component: JSX.Element;
   icon?: JSX.Element;
-}
+};
 
-export interface SettingSection {
+export type SettingSection = {
   title?: string;
   items: SettingItem[];
-}
+};
