@@ -2,8 +2,12 @@ import { css } from "@emotion/react";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import LockIcon from "@mui/icons-material/Lock";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
-import type { SelectChangeEvent } from "@mui/material";
-import { FormControl, MenuItem, Select, Typography } from "@mui/material";
+import CircularProgress from "@mui/material/CircularProgress";
+import FormControl from "@mui/material/FormControl";
+import MenuItem from "@mui/material/MenuItem";
+import type { SelectChangeEvent } from "@mui/material/Select";
+import Select from "@mui/material/Select";
+import Typography from "@mui/material/Typography";
 import { capitalize, chain } from "lodash";
 import type { MouseEventHandler } from "react";
 import React, { useState } from "react";
@@ -320,7 +324,7 @@ export const ChatMessagesInput: React.FC<ChatMessagesInputProps> = ({
   // const { showError } = useToasts();
 
   if (messages.length !== 16 || availableMessages.length === 0) {
-    return <div>Loading...</div>;
+    return <CircularProgress color="inherit" size={29} />;
   }
 
   const onChange = (offset: number) => (idx: number, value: string) => {

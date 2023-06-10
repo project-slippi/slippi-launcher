@@ -2,8 +2,7 @@ import { colors } from "@common/colors";
 import type { ButtonProps } from "@mui/material/Button";
 import MatButton from "@mui/material/Button";
 
-export const Button: React.FC<ButtonProps> = (props) => {
-  const { children, ...rest } = props;
+export const Button = ({ children, ...rest }: ButtonProps) => {
   return (
     <MatButton
       variant="contained"
@@ -12,8 +11,12 @@ export const Button: React.FC<ButtonProps> = (props) => {
         color: colors.purpleDarker,
         fontWeight: 500,
         fontSize: 12,
+        backgroundColor: "white",
         "& .MuiButton-startIcon": {
           color: colors.purpleLighter,
+        },
+        "&:hover": {
+          backgroundColor: "rgba(255, 255, 255, 0.7)",
         },
       }}
       {...rest}
