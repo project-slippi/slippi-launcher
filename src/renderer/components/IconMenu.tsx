@@ -1,4 +1,5 @@
 import { css } from "@emotion/react";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import type { MenuProps } from "@mui/material/Menu";
@@ -11,6 +12,7 @@ export type IconMenuItem = {
   onClick: () => void;
   icon: React.ReactNode;
   disabled?: boolean;
+  external?: boolean;
 };
 
 type IconMenuProps = MenuProps & {
@@ -30,6 +32,17 @@ export const IconMenu = ({ items, ...rest }: IconMenuProps) => {
             {item.icon}
           </ListItemIcon>
           <ListItemText primary={item.label} />
+          {item.external && (
+            <span
+              css={css`
+                display: flex;
+                margin-left: 20px;
+                opacity: 0.8;
+              `}
+            >
+              <OpenInNewIcon fontSize="small" />
+            </span>
+          )}
         </MenuItem>
       ))}
     </Menu>

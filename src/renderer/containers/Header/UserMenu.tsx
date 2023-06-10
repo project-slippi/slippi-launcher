@@ -75,6 +75,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
           },
           label: "View profile",
           icon: <AccountBoxIcon fontSize="small" />,
+          external: true,
         },
         {
           onClick: () => {
@@ -83,6 +84,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
           },
           label: "Manage account",
           icon: <ManageAccountsIcon fontSize="small" />,
+          external: true,
         },
         {
           onClick: () => {
