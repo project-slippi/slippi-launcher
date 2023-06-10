@@ -62,13 +62,19 @@ export async function generateSubFolderTree(folder: string): Promise<FolderResul
     .filter((dirent) => {
       return dirent.isDirectory();
     })
-    .map(async (dirent): Promise<FolderResult> => {
+    .map((dirent): FolderResult => {
       return {
         name: dirent.name,
         fullPath: path.join(folder, dirent.name),
         subdirectories: [],
       };
+    })
+    .sort((a, b) => {
+      return a.name.localeCompare(b.name, undefined, {
+        numeric: true,
+        sensitivity: "base",
+      });
     });
 
-  return Promise.all(subdirectories);
+  return subdirectories;
 }
