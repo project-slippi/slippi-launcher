@@ -21,7 +21,12 @@ type DraggableFileProps = {
  * DraggableFile accepts the `filePaths` prop and allows those files to be dragged into other contexts
  * such as copied to a different folder or dragged into web-sites etc.
  */
-export const DraggableFile: React.FC<DraggableFileProps> = ({ children, filePaths, className, style }) => {
+export const DraggableFile = ({
+  children,
+  filePaths,
+  className,
+  style,
+}: React.PropsWithChildren<DraggableFileProps>) => {
   const fileDrag = useFileDrag();
 
   return (

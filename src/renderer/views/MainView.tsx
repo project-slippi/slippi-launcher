@@ -55,7 +55,7 @@ const menuItems: MainMenuItem[] = [
 const navigationPaths = menuItems.map((item) => `${item.subpath}`);
 const defaultRoute = menuItems.find((item) => item.default);
 
-export const MainView: React.FC = () => {
+export const MainView = React.memo(() => {
   usePageNavigationShortcuts(navigationPaths);
 
   return (
@@ -83,4 +83,4 @@ export const MainView: React.FC = () => {
       <PersistentNotification />
     </div>
   );
-};
+});

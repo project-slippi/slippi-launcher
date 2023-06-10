@@ -22,7 +22,7 @@ type ConfirmationModalProps = {
   fullWidth?: boolean;
 };
 
-export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
+export const ConfirmationModal = ({
   open,
   onClose,
   onSubmit,
@@ -34,7 +34,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   cancelProps,
   closeOnSubmit = true,
   fullWidth = true,
-}) => {
+}: React.PropsWithChildren<ConfirmationModalProps>) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 

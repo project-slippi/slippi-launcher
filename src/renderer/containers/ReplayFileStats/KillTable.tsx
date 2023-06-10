@@ -8,7 +8,6 @@ import type { FileResult } from "@replays/types";
 import type { PlayerType, StatsType, StockType } from "@slippi/slippi-js";
 import { animations as animationUtils, Frames, moves as moveUtils } from "@slippi/slippi-js";
 import _ from "lodash";
-import React from "react";
 
 import { extractPlayerNames } from "@/lib/matchNames";
 import { convertFrameCountToDurationString } from "@/lib/time";
@@ -25,7 +24,7 @@ type KillTableProps = {
   onPlay: (options: { path: string; startFrame: number }) => void;
 };
 
-export const KillTable: React.FC<KillTableProps> = ({ file, stats, player, opp, onPlay }) => {
+export const KillTable = ({ file, stats, player, opp, onPlay }: KillTableProps) => {
   const names = extractPlayerNames(player.playerIndex, file.settings, file.metadata);
   const playerDisplay = (
     <div style={{ display: "flex", alignItems: "center" }}>

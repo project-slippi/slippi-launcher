@@ -10,7 +10,7 @@ import { useExtraSlpPaths, useMonthlySubfolders, useRootSlpPath, useSpectateSlpP
 
 import { SettingItem } from "./SettingItem";
 
-export const ReplayOptions: React.FC = () => {
+export const ReplayOptions = React.memo(() => {
   const [localReplayDir, setLocalReplayDir] = useRootSlpPath();
   const [replayDirs, setReplayDirs] = useExtraSlpPaths();
   const [spectateDir, setSpectateDir] = useSpectateSlpPath();
@@ -69,7 +69,7 @@ export const ReplayOptions: React.FC = () => {
       </SettingItem>
     </div>
   );
-};
+});
 
 const CheckboxDescription = styled.span`
   font-size: 14px;

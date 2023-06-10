@@ -12,7 +12,7 @@ type ToggleProps = {
   disabled?: boolean;
 };
 
-export const Toggle: React.FC<ToggleProps> = ({ label, description, value, onChange, disabled }) => {
+export const Toggle = ({ label, description, value, onChange, disabled }: ToggleProps) => {
   return (
     <div>
       <FormControlLabel

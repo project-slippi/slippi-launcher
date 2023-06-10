@@ -34,7 +34,7 @@ const Outer = styled.div`
   min-width: 0;
 `;
 
-export const Console: React.FC = () => {
+export const Console = React.memo(() => {
   const { consoleService } = useServices();
   const [isScanning, setIsScanning] = React.useState(false);
   const [modalOpen, setModalOpen] = React.useState(false);
@@ -162,7 +162,7 @@ export const Console: React.FC = () => {
       <OBSWebsocketNotice />
     </Outer>
   );
-};
+});
 
 const MirroringHelp = () => {
   const [modalOpen, setModalOpen] = React.useState(false);

@@ -12,7 +12,7 @@ const Outer = styled.div`
   }
 `;
 
-type PlayerInfo = React.ComponentProps<typeof PlayerBadge>;
+export type PlayerInfo = React.ComponentProps<typeof PlayerBadge>;
 
 type TeamElementProps = {
   teams: PlayerInfo[][];

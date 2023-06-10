@@ -56,7 +56,7 @@ const CloseButton = styled(IconButton)`
 
 const settingItems = settings.flatMap((section) => section.items);
 
-export const SettingsView: React.FC = () => {
+export const SettingsView = React.memo(() => {
   const { close } = useSettingsModal();
   useMousetrap("escape", close);
 
@@ -142,7 +142,7 @@ export const SettingsView: React.FC = () => {
       />
     </Outer>
   );
-};
+});
 
 const CustomLink = ({ children, to, ...props }: LinkProps) => {
   const resolved = useResolvedPath(to);

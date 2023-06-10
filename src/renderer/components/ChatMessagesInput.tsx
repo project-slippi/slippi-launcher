@@ -145,14 +145,14 @@ type ChatMessageSelectorProps = {
   user: { uid: string | undefined; subLevel: string };
 };
 
-const ChatMessageSelector: React.FC<ChatMessageSelectorProps> = ({
+const ChatMessageSelector = ({
   groupDirection,
   direction,
   message,
   availableMessages,
   updateMessage,
   user,
-}) => {
+}: ChatMessageSelectorProps) => {
   const [hoverStates, setHoverStates] = useState({});
 
   const defaultMessage = defaultMessages[dirIdx[groupDirection] * 4 + dirIdx[direction]];
@@ -252,13 +252,13 @@ type ChatMessagesSectionProps = {
   user: { uid: string | undefined; subLevel: string };
 };
 
-const ChatMessagesSection: React.FC<ChatMessagesSectionProps> = ({
+const ChatMessagesSection = ({
   direction,
   messages,
   availableMessages,
   updateLocal,
   user,
-}) => {
+}: ChatMessagesSectionProps) => {
   const updateMessage = (idx: number) => (value: string) => {
     updateLocal(idx, value);
   };
@@ -315,12 +315,7 @@ type ChatMessagesInputProps = {
   user: { uid: string | undefined; subLevel: string };
 };
 
-export const ChatMessagesInput: React.FC<ChatMessagesInputProps> = ({
-  messages,
-  availableMessages,
-  updateMessages,
-  user,
-}) => {
+export const ChatMessagesInput = ({ messages, availableMessages, updateMessages, user }: ChatMessagesInputProps) => {
   // const { showError } = useToasts();
 
   if (messages.length !== 16 || availableMessages.length === 0) {

@@ -10,7 +10,6 @@ import Tooltip from "@mui/material/Tooltip";
 import type { FileResult } from "@replays/types";
 import { GameMode } from "@slippi/slippi-js";
 import _ from "lodash";
-import React from "react";
 import { useQuery } from "react-query";
 
 import { BasicFooter } from "@/components/Footer";
@@ -67,7 +66,7 @@ type ReplayFileStatsProps = {
   onPlay: () => void;
 };
 
-export const ReplayFileStats: React.FC<ReplayFileStatsProps> = (props) => {
+export const ReplayFileStats = (props: ReplayFileStatsProps) => {
   const { filePath } = props;
 
   const { dolphinService } = useServices();

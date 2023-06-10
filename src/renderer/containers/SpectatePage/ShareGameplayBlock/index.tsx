@@ -1,5 +1,4 @@
 import { Ports } from "@slippi/slippi-js";
-import React from "react";
 
 import { InfoBlock } from "@/components/InfoBlock";
 import { useAccount } from "@/lib/hooks/useAccount";
@@ -15,7 +14,7 @@ const log = window.electron.log;
 const ip = "127.0.0.1";
 const port = Ports.DEFAULT;
 
-export const ShareGameplayBlock: React.FC<{ className?: string }> = ({ className }) => {
+export const ShareGameplayBlock = ({ className }: { className?: string }) => {
   const userData = useAccount((store) => store.userData);
   const startTime = useConsole((store) => store.startTime);
   const endTime = useConsole((store) => store.endTime);

@@ -21,13 +21,13 @@ type AddConnectionDialogProps = {
   disabled: boolean;
 };
 
-export const AddConnectionDialog: React.FC<AddConnectionDialogProps> = ({
+export const AddConnectionDialog = ({
   open,
   selectedConnection,
   onSubmit,
   onCancel,
   disabled,
-}) => {
+}: AddConnectionDialogProps) => {
   const spectateFolder = useSettings((store) => store.settings.spectateSlpPath);
   const isEditing = Boolean(selectedConnection && selectedConnection.id);
   const [title, setTitle] = React.useState("");

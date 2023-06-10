@@ -14,7 +14,7 @@ type StartGameDialogProps = {
   onSubmit: () => void;
 };
 
-export const StartGameDialog: React.FC<StartGameDialogProps> = ({ open, onClose, onSubmit }) => {
+export const StartGameDialog = ({ open, onClose, onSubmit }: StartGameDialogProps) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 

@@ -1,7 +1,7 @@
 import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import CircularProgress from "@mui/material/CircularProgress";
-import * as React from "react";
+import React from "react";
 
 import { UserIcon } from "@/components/UserIcon";
 

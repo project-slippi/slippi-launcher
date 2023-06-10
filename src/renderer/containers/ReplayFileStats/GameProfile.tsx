@@ -23,9 +23,7 @@ const TableContainer = styled.div`
   grid-gap: 20px;
 `;
 
-const StatSection: React.FC<{
-  title: string;
-}> = (props) => {
+const StatSection = (props: React.PropsWithChildren<{ title: string }>) => {
   return (
     <div style={{ padding: 10 }}>
       <Typography variant="h5" style={{ marginBottom: 10 }}>
@@ -36,7 +34,7 @@ const StatSection: React.FC<{
   );
 };
 
-export const GameProfile: React.FC<GameProfileProps> = ({ file, stats, onPlay }) => {
+export const GameProfile = ({ file, stats, onPlay }: GameProfileProps) => {
   const [firstPlayer, secondPlayer] = file.settings.players;
 
   return (

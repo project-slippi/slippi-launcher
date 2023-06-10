@@ -35,7 +35,7 @@ type SavedConnectionItemProps = {
   onOpenMenu: (index: number, element: HTMLElement, ipAddress: string) => void;
 };
 
-export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
+export const SavedConnectionItem = ({
   index,
   connection,
   onOpenMenu,
@@ -46,7 +46,7 @@ export const SavedConnectionItem: React.FC<SavedConnectionItemProps> = ({
   currentFilename,
   nintendontVersion,
   latestVersion,
-}) => {
+}: SavedConnectionItemProps) => {
   const { showError } = useToasts();
   const { consoleService } = useServices();
   const onConnect = React.useCallback(async () => {
@@ -189,7 +189,7 @@ const renderStatusName = (status: number) => {
   }
 };
 
-const OutdatedNintendontWarning: React.FC = () => {
+const OutdatedNintendontWarning = () => {
   return (
     <div
       css={css`

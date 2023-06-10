@@ -1,7 +1,6 @@
 import type { DiscoveredConsoleInfo } from "@console/types";
 import { css } from "@emotion/react";
 import CircularProgress from "@mui/material/CircularProgress";
-import React from "react";
 
 import { InfoBlock } from "@/components/InfoBlock";
 
@@ -13,7 +12,7 @@ type NewConnectionListProps = {
   onClick: (conn: DiscoveredConsoleInfo) => void;
 };
 
-export const NewConnectionList: React.FC<NewConnectionListProps> = ({ consoleItems, isScanning, onClick }) => {
+export const NewConnectionList = ({ consoleItems, isScanning, onClick }: NewConnectionListProps) => {
   return (
     <InfoBlock
       title={

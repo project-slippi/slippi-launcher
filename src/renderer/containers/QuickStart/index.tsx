@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import React from "react";
 import { useNavigate } from "react-router-dom";
 
 import { StepperDots } from "@/components/StepperDots";
@@ -62,7 +61,7 @@ type QuickStartProps = {
   onPrev?: () => void;
 };
 
-export const QuickStart: React.FC<QuickStartProps> = ({ allSteps: steps, currentStep, onNext, onPrev }) => {
+export const QuickStart = ({ allSteps: steps, currentStep, onNext, onPrev }: QuickStartProps) => {
   const navigate = useNavigate();
 
   const skipSetup = () => navigate("/main");

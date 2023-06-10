@@ -25,7 +25,7 @@ enum ResetType {
   HARD,
 }
 
-export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ dolphinType }) => {
+export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchType }) => {
   const dolphinStatus = useDolphinStore((store) =>
     dolphinType === DolphinLaunchType.PLAYBACK ? store.playbackStatus : store.netplayStatus,
   );
@@ -185,11 +185,15 @@ export const DolphinSettings: React.FC<{ dolphinType: DolphinLaunchType }> = ({ 
   );
 };
 
-const ImportDolphinConfigForm: React.FC<{
+const ImportDolphinConfigForm = ({
+  dolphinType,
+  disabled,
+  onImportDolphin,
+}: {
   dolphinType: DolphinLaunchType;
   disabled?: boolean;
   onImportDolphin: (importPath: string) => void;
-}> = ({ dolphinType, disabled, onImportDolphin }) => {
+}) => {
   const dolphinTypeName = capitalize(dolphinType);
   const extension = isMac ? "app" : "exe";
 

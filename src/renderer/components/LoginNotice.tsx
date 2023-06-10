@@ -3,11 +3,10 @@ import styled from "@emotion/styled";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import React from "react";
 
 import { useLoginModal } from "@/lib/hooks/useLoginModal";
 
-export const LoginNotice: React.FC = () => {
+export const LoginNotice = () => {
   const openModal = useLoginModal((store) => store.openModal);
   return (
     <Outer>

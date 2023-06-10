@@ -24,7 +24,7 @@ type FormValues = {
   shouldImportNetplay: boolean;
 };
 
-export const ImportDolphinSettingsStep: React.FC = () => {
+export const ImportDolphinSettingsStep = React.memo(() => {
   const setExists = useDesktopApp((store) => store.setExists);
   const desktopAppDolphinPath = useDesktopApp((store) => store.dolphinPath);
   const { showError } = useToasts();
@@ -164,4 +164,4 @@ export const ImportDolphinSettingsStep: React.FC = () => {
       </Container>
     </Box>
   );
-};
+});

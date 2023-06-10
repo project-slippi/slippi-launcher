@@ -20,7 +20,7 @@ type SavedConnectionsListProps = {
   onEdit: (conn: StoredConnection) => void;
 };
 
-export const SavedConnectionsList: React.FC<SavedConnectionsListProps> = ({ availableConsoles, onEdit, onDelete }) => {
+export const SavedConnectionsList = ({ availableConsoles, onEdit, onDelete }: SavedConnectionsListProps) => {
   const [nintendontVersion, setNintendontVersion] = React.useState("1.8.0");
   const [menuItem, setMenuItem] = React.useState<null | {
     index: number;

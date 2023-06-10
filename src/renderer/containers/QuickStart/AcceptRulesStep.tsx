@@ -62,7 +62,7 @@ const classes = {
   `,
 };
 
-export const AcceptRulesStep: React.FC = () => {
+export const AcceptRulesStep = React.memo(() => {
   const { slippiBackendService } = useServices();
   const { showError } = useToasts();
   const refreshUserData = useUserData();
@@ -178,4 +178,4 @@ export const AcceptRulesStep: React.FC = () => {
       </Container>
     </Box>
   );
-};
+});

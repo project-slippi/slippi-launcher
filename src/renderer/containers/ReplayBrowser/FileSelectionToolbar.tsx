@@ -17,13 +17,13 @@ type FileSelectionToolbarProps = {
   onDelete: () => void;
 };
 
-export const FileSelectionToolbar: React.FC<FileSelectionToolbarProps> = ({
+export const FileSelectionToolbar = ({
   totalSelected,
   onSelectAll,
   onPlay,
   onClear,
   onDelete,
-}) => {
+}: FileSelectionToolbarProps) => {
   const [showDeletePrompt, setShowDeletePrompt] = React.useState(false);
 
   if (totalSelected === 0) {

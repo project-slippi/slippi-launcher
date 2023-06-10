@@ -68,7 +68,7 @@ const classes = {
   `,
 };
 
-export const VerifyEmailStep: React.FC = () => {
+export const VerifyEmailStep = React.memo(() => {
   const { authService } = useServices();
   const { showError } = useToasts();
   const user = useAccount((store) => store.user);
@@ -152,4 +152,4 @@ export const VerifyEmailStep: React.FC = () => {
       </Container>
     </Box>
   );
-};
+});

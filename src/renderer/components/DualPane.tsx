@@ -45,20 +45,7 @@ const saveWidth = debounce((paneId: string, width: number) => {
   localStorage.setItem(getStoreKey(paneId), width.toString());
 }, 100);
 
-export const DualPane: React.FC<{
-  id: string;
-  style?: React.CSSProperties;
-  className?: string;
-  resizable?: boolean;
-  leftSide: React.ReactNode;
-  rightSide: React.ReactNode;
-  leftStyle?: React.CSSProperties;
-  rightStyle?: React.CSSProperties;
-  width?: number;
-  minWidth?: number;
-  maxWidth?: number;
-  resizeHandleWidth?: number;
-}> = ({
+export const DualPane = ({
   id,
   resizable,
   leftStyle,
@@ -71,6 +58,19 @@ export const DualPane: React.FC<{
   resizeHandleWidth = 6,
   className,
   style,
+}: {
+  id: string;
+  style?: React.CSSProperties;
+  className?: string;
+  resizable?: boolean;
+  leftSide: React.ReactNode;
+  rightSide: React.ReactNode;
+  leftStyle?: React.CSSProperties;
+  rightStyle?: React.CSSProperties;
+  width?: number;
+  minWidth?: number;
+  maxWidth?: number;
+  resizeHandleWidth?: number;
 }) => {
   const [panelWidth, setPanelWidth] = React.useState<number>(restoreWidth(id, width));
 

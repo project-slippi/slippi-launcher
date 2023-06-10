@@ -10,8 +10,7 @@ type CheckboxProps = MatCheckboxProps & {
   hoverText?: string;
 };
 
-export const Checkbox: React.FC<CheckboxProps> = (props) => {
-  const { label, className, disabled, hoverText, ...rest } = props;
+export const Checkbox = ({ label, className, disabled, hoverText, ...rest }: CheckboxProps) => {
   return (
     <FormControlLabel
       className={className}

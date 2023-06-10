@@ -17,7 +17,7 @@ type MainMenuProps = {
   menuItems: MenuItem[];
 };
 
-export const MainMenu: React.FC<MainMenuProps> = ({ menuItems }) => {
+export const MainMenu = ({ menuItems }: MainMenuProps) => {
   return (
     <div
       css={css`

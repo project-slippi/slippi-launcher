@@ -38,7 +38,7 @@ type PlayerInfoDisplayProps = {
   metadata: MetadataType | null;
 };
 
-const PlayerInfoDisplay: React.FC<PlayerInfoDisplayProps> = ({ settings, metadata }) => {
+const PlayerInfoDisplay = ({ settings, metadata }: PlayerInfoDisplayProps) => {
   const teams = _.chain(settings.players)
     .groupBy((player) => (settings.isTeams ? player.teamId : player.port))
     .toArray()
@@ -102,7 +102,7 @@ type GameProfileHeaderProps = {
   stadiumStats: StadiumStatsType | null;
 };
 
-export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
+export const GameProfileHeader = ({
   stats,
   stadiumStats,
   disabled,
@@ -113,7 +113,7 @@ export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
   onPrev,
   onPlay,
   onClose,
-}) => {
+}: GameProfileHeaderProps) => {
   const { metadata, settings } = file;
   return (
     <div
@@ -161,12 +161,16 @@ export const GameProfileHeader: React.FC<GameProfileHeaderProps> = ({
   );
 };
 
-const GameDetails: React.FC<{
+const GameDetails = ({
+  file,
+  stats,
+  stadiumStats,
+}: {
   file: FileResult;
   settings: GameStartType;
   stats: StatsType | null;
   stadiumStats: StadiumStatsType | null;
-}> = ({ file, stats, stadiumStats }) => {
+}) => {
   let stageName = "Unknown";
   try {
     stageName = stageUtils.getStageName(file.settings.stageId !== null ? file.settings.stageId : 0);
@@ -301,14 +305,21 @@ const LaunchReplayButton = React.memo(({ onClick }: { onClick: () => void }) => 
   );
 });
 
-const Controls: React.FC<{
+const Controls = ({
+  disabled,
+  index,
+  total,
+  onPlay,
+  onPrev,
+  onNext,
+}: {
   disabled?: boolean;
   index: number | null;
   total: number | null;
   onPlay: () => void;
   onPrev: () => void;
   onNext: () => void;
-}> = ({ disabled, index, total, onPlay, onPrev, onNext }) => {
+}) => {
   const indexLabel = index !== null && total !== null ? `${index + 1} / ${total}` : "1 / 1";
   const atStart = index === null || index === 0;
   const atEnd = total === null || index === total - 1;

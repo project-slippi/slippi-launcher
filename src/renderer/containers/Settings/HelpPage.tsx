@@ -9,7 +9,7 @@ import { MarkdownContent } from "@/components/MarkdownContent";
 
 import { SupportBox } from "./SupportBox";
 
-export const HelpPage: React.FC = () => {
+export const HelpPage = React.memo(() => {
   return (
     <Outer>
       <div
@@ -50,7 +50,7 @@ export const HelpPage: React.FC = () => {
       </Paper>
     </Outer>
   );
-};
+});
 
 const Outer = styled.div`
   max-width: 800px;

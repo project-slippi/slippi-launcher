@@ -2,7 +2,6 @@ import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import type { PlayerType } from "@slippi/slippi-js";
-import React from "react";
 
 import type { PlayerNames } from "@/lib/matchNames";
 import { getColor } from "@/lib/playerColors";
@@ -15,7 +14,7 @@ type PlayerInfoProps = {
   isTeams?: boolean;
 };
 
-export const PlayerInfo: React.FC<PlayerInfoProps> = ({ player, names, isTeams }) => {
+export const PlayerInfo = ({ player, names, isTeams }: PlayerInfoProps) => {
   const backupName = player.type === 1 ? "CPU" : `Player ${player.port}`;
   const charIcon = getCharacterIcon(player.characterId, player.characterColor);
   const teamId = isTeams ? player.teamId : null;

@@ -3,7 +3,7 @@ import Button from "@mui/material/Button";
 import MatCheckbox from "@mui/material/Checkbox";
 import InputBase from "@mui/material/InputBase";
 import type { OpenDialogOptions } from "electron";
-import React, { useState } from "react";
+import { useState } from "react";
 
 import { useSettings } from "@/lib/hooks/useSettings";
 import { useToasts } from "@/lib/hooks/useToasts";
@@ -16,7 +16,7 @@ type MultiPathInputProps = {
   options?: OpenDialogOptions;
 };
 
-export const MultiPathInput: React.FC<MultiPathInputProps> = ({ paths, updatePaths, options }) => {
+export const MultiPathInput = ({ paths, updatePaths, options }: MultiPathInputProps) => {
   const { showError } = useToasts();
   const rootFolder = useSettings((store) => store.settings.rootSlpPath);
 

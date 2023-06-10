@@ -18,14 +18,14 @@ type BroadcastPanelProps = {
   onDisconnect: () => void;
 };
 
-export const BroadcastPanel: React.FC<BroadcastPanelProps> = ({
+export const BroadcastPanel = ({
   slippiServerStatus,
   dolphinStatus,
   startTime,
   endTime,
   onStartBroadcast,
   onDisconnect,
-}) => {
+}: BroadcastPanelProps) => {
   const [modalOpen, setModalOpen] = React.useState(false);
   const isDisconnected =
     slippiServerStatus === ConnectionStatus.DISCONNECTED && dolphinStatus === ConnectionStatus.DISCONNECTED;

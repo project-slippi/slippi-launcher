@@ -11,7 +11,7 @@ type NewConnectionItemProps = {
   onAdd: () => void;
 };
 
-export const NewConnectionItem: React.FC<NewConnectionItemProps> = ({ ip, onAdd, nickname }) => {
+export const NewConnectionItem = ({ ip, onAdd, nickname }: NewConnectionItemProps) => {
   const title = nickname ? `${ip} (${nickname})` : ip;
   return (
     <div

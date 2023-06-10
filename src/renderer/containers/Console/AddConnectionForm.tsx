@@ -37,7 +37,7 @@ type AddConnectionFormProps = {
   disabled: boolean;
 };
 
-export const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ defaultValues, onSubmit, disabled }) => {
+export const AddConnectionForm = ({ defaultValues, onSubmit, disabled }: AddConnectionFormProps) => {
   const [showAdvanced, setShowAdvanced] = React.useState(false);
   const {
     handleSubmit,
@@ -293,7 +293,11 @@ const Outer = styled.div`
   }
 `;
 
-const SettingDescription: React.FC<{ label: string; className?: string }> = ({ className, label, children }) => {
+const SettingDescription = ({
+  className,
+  label,
+  children,
+}: React.PropsWithChildren<{ label: string; className?: string }>) => {
   return (
     <div
       className={className}

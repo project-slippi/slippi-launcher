@@ -4,10 +4,7 @@ import ReactMarkdown from "react-markdown";
 import { ExternalLink as A } from "@/components/ExternalLink";
 import { withFont } from "@/styles/withFont";
 
-export const MarkdownContent: React.FC<{
-  className?: string;
-  content: string;
-}> = ({ content, className }) => {
+export const MarkdownContent = ({ content, className }: { className?: string; content: string }) => {
   return (
     <Outer className={className}>
       <ReactMarkdown

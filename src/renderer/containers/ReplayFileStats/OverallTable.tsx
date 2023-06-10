@@ -1,7 +1,6 @@
 import type { FileResult } from "@replays/types";
 import type { RatioType, StatsType } from "@slippi/slippi-js";
 import _ from "lodash";
-import React from "react";
 
 import { extractPlayerNames } from "@/lib/matchNames";
 import { getCharacterIcon } from "@/lib/utils";
@@ -15,7 +14,7 @@ type OverallTableProps = {
   stats: StatsType;
 };
 
-export const OverallTable: React.FC<OverallTableProps> = ({ file, stats }) => {
+export const OverallTable = ({ file, stats }: OverallTableProps) => {
   //RENDER HELPERS
   const renderPlayerHeaders = () => {
     const tableHeaders = [];

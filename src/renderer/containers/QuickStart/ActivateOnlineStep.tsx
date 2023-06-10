@@ -11,7 +11,7 @@ const Container = styled.div`
   max-width: 800px;
 `;
 
-export const ActivateOnlineStep: React.FC = () => {
+export const ActivateOnlineStep = React.memo(() => {
   return (
     <Box display="flex" flexDirection="column" flexGrow="1">
       <Container>
@@ -20,4 +20,4 @@ export const ActivateOnlineStep: React.FC = () => {
       </Container>
     </Box>
   );
-};
+});

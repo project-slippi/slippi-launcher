@@ -15,7 +15,7 @@ import { useServices } from "@/services";
 
 const log = window.electron.log;
 
-export const ActivateOnlineForm: React.FC<{ onSubmit?: () => void }> = ({ onSubmit }) => {
+export const ActivateOnlineForm = ({ onSubmit }: { onSubmit?: () => void }) => {
   const user = useAccount((store) => store.user);
   const refreshActivation = useUserData();
   return (
@@ -31,7 +31,7 @@ type ConnectCodeSetterProps = {
   onSuccess: () => void;
 };
 
-const ConnectCodeSetter: React.FC<ConnectCodeSetterProps> = ({ displayName, onSuccess }) => {
+const ConnectCodeSetter = ({ displayName, onSuccess }: ConnectCodeSetterProps) => {
   const { slippiBackendService } = useServices();
   const { showError } = useToasts();
   const getStartTag = () => {

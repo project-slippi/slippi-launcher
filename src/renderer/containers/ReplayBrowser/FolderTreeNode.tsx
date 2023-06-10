@@ -8,7 +8,6 @@ import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import type { FolderResult } from "@replays/types";
-import React from "react";
 
 import { useReplays } from "@/lib/hooks/useReplays";
 
@@ -20,13 +19,7 @@ type FolderTreeNodeProps = {
   onToggle: (fullPath: string) => void;
 };
 
-export const FolderTreeNode: React.FC<FolderTreeNodeProps> = ({
-  nestLevel = 0,
-  folder,
-  collapsedFolders,
-  onClick,
-  onToggle,
-}) => {
+export const FolderTreeNode = ({ nestLevel = 0, folder, collapsedFolders, onClick, onToggle }: FolderTreeNodeProps) => {
   const currentFolder = useReplays((store) => store.currentFolder);
   const hasChildren = folder.subdirectories.length > 0;
   const isCollapsed = collapsedFolders.includes(folder.fullPath);

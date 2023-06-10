@@ -9,7 +9,7 @@ type LabelledTextProps = {
   label: string;
 };
 
-export const LabelledText: React.FC<LabelledTextProps> = ({ label, children, className }) => {
+export const LabelledText = ({ label, children, className }: React.PropsWithChildren<LabelledTextProps>) => {
   return (
     <div
       className={className}

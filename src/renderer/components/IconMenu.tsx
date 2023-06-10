@@ -17,8 +17,7 @@ type IconMenuProps = MenuProps & {
   items: IconMenuItem[];
 };
 
-export const IconMenu: React.FC<IconMenuProps> = (props) => {
-  const { items, ...rest } = props;
+export const IconMenu = ({ items, ...rest }: IconMenuProps) => {
   return (
     <Menu {...rest}>
       {items.map((item) => (
