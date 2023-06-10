@@ -1,8 +1,8 @@
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import EditIcon from "@mui/icons-material/Edit";
-import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import LanguageIcon from "@mui/icons-material/Language";
 import LogoutIcon from "@mui/icons-material/Logout";
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import ButtonBase from "@mui/material/ButtonBase";
 import DialogContentText from "@mui/material/DialogContentText";
 import React from "react";
@@ -74,7 +74,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
             void window.electron.shell.openPath(profileUrl);
           },
           label: "View profile",
-          icon: <EmojiEventsIcon fontSize="small" />,
+          icon: <AccountBoxIcon fontSize="small" />,
         },
         {
           onClick: () => {
@@ -82,7 +82,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
             void window.electron.shell.openPath(manageUrl);
           },
           label: "Manage account",
-          icon: <AccountBoxIcon fontSize="small" />,
+          icon: <ManageAccountsIcon fontSize="small" />,
         },
         {
           onClick: () => {
