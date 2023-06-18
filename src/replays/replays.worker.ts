@@ -16,8 +16,8 @@ import type { FileLoadResult, FileResult, Progress } from "./types";
 
 interface Methods {
   dispose: () => Promise<void>;
-  loadSingleFile(filePath: string): Promise<FileResult>;
-  loadReplayFolder(folder: string): Promise<FileLoadResult>;
+  loadSingleFile(filePath: string, dbName: string): Promise<FileResult>;
+  loadReplayFolder(folder: string, dbName: string): Promise<FileLoadResult>;
   calculateGameStats(fullPath: string): Promise<StatsType | null>;
   calculateStadiumStats(fullPath: string): Promise<StadiumStatsType | null>;
   getProgressObservable(): Observable<Progress>;
@@ -35,12 +35,12 @@ const methods: WorkerSpec = {
   getProgressObservable(): Observable<Progress> {
     return Observable.from(progressSubject);
   },
-  async loadSingleFile(filePath: string): Promise<FileResult> {
-    const result = await loadFile(filePath);
+  async loadSingleFile(filePath: string, dbName: string): Promise<FileResult> {
+    const result = await loadFile(filePath, dbName);
     return result;
   },
-  async loadReplayFolder(folder: string): Promise<FileLoadResult> {
-    const result = await loadFolder(folder, (current, total) => {
+  async loadReplayFolder(folder: string, dbName: string): Promise<FileLoadResult> {
+    const result = await loadFolder(folder, dbName, (current, total) => {
       progressSubject.next({ current, total });
     });
 

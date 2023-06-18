@@ -9,7 +9,7 @@ import {
 } from "./ipc";
 import { createReplayWorker } from "./replays.worker.interface";
 
-export default function setupReplaysIpc() {
+export default function setupReplaysIpc({ dbName }: { dbName: string }) {
   const treeService = new FolderTreeService();
   const replayBrowserWorker = createReplayWorker();
 
@@ -26,21 +26,21 @@ export default function setupReplaysIpc() {
     worker.getProgressObservable().subscribe((progress) => {
       ipc_loadProgressUpdatedEvent.main!.trigger(progress).catch(console.warn);
     });
-    const result = await worker.loadReplayFolder(folderPath);
+    const result = await worker.loadReplayFolder(folderPath, dbName);
     return result;
   });
 
   ipc_calculateGameStats.main!.handle(async ({ filePath }) => {
     const worker = await replayBrowserWorker;
     const result = await worker.calculateGameStats(filePath);
-    const fileResult = await worker.loadSingleFile(filePath);
+    const fileResult = await worker.loadSingleFile(filePath, dbName);
     return { file: fileResult, stats: result };
   });
 
   ipc_calculateStadiumStats.main!.handle(async ({ filePath }) => {
     const worker = await replayBrowserWorker;
     const result = await worker.calculateStadiumStats(filePath);
-    const fileResult = await worker.loadSingleFile(filePath);
+    const fileResult = await worker.loadSingleFile(filePath, dbName);
     return { file: fileResult, stadiumStats: result };
   });
 }

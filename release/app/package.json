@@ -15,7 +15,9 @@
     "postinstall": "yarn run electron-rebuild && yarn run link-modules"
   },
   "dependencies": {
+    "sqlite3": "^5.1.6",
     "threads": "^1.6.5",
+    "typeorm": "^0.3.16",
     "websocket": "^1.0.34"
   },
   "license": "GPL-3.0"

@@ -11,9 +11,10 @@ import setupMainIpc from "./setup";
 export function installModules() {
   const settingsManager = new SettingsManager();
   const dolphinManager = new DolphinManager(settingsManager);
+  const dbName = settingsManager.get().settings.rootSlpPath + "/index.sqlite3";
   setupDolphinIpc({ dolphinManager });
   setupBroadcastIpc({ settingsManager, dolphinManager });
-  setupReplaysIpc();
+  setupReplaysIpc({ dbName });
   setupSettingsIpc({ settingsManager, dolphinManager });
   setupConsoleIpc({ dolphinManager });
   setupMainIpc();

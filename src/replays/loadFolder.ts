@@ -7,6 +7,7 @@ import type { FileLoadResult, FileResult } from "./types";
 
 export async function loadFolder(
   folder: string,
+  dbName: string,
   callback: (current: number, total: number) => void = () => null,
 ): Promise<FileLoadResult> {
   // If the folder does not exist, return empty
@@ -40,7 +41,7 @@ export async function loadFolder(
     return new Promise<FileResult | null>((resolve) => {
       setImmediate(async () => {
         try {
-          const res = await loadFile(path);
+          const res = await loadFile(path, dbName);
           fileValidCount += 1;
           callback(fileValidCount, total);
           resolve(res);
