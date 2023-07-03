@@ -19,6 +19,7 @@ export async function loadFile(fullPath: string): Promise<FileResult> {
   const result: FileResult = {
     name: filename,
     fullPath,
+    size: 0,
     settings,
     startTime: null,
     lastFrame: null,

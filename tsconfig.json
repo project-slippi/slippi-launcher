@@ -7,6 +7,7 @@
       "@/*": ["renderer/*"],
       "@common/*": ["common/*"],
       "@broadcast/*": ["broadcast/*"],
+      "@database/*": ["database/*"],
       "@dolphin/*": ["dolphin/*"],
       "@replays/*": ["replays/*"],
       "@settings/*": ["settings/*"],

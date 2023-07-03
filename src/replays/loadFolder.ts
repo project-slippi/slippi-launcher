@@ -79,10 +79,6 @@ export async function loadFolder(
   // Indicate that loading is complete
   callback(total, total);
 
-  console.log("end...................");
-  console.log(replaysIndexed);
-  console.log(replaysNew);
-
   return {
     files: replaysIndexed.concat(replaysNew),
     fileErrorCount: total - fileValidCount,

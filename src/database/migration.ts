@@ -1,21 +1,25 @@
-import { promises as fs } from "fs";
-import type { Kysely } from "kysely";
-import { FileMigrationProvider, Migrator } from "kysely";
-import * as path from "path";
+import type { Kysely, Migration, MigrationProvider } from "kysely";
+import { Migrator } from "kysely";
 
+import { migration1 } from "./migrations/20230701T171646-initial";
 import type { Database } from "./types"; // schema
 
-// Function taken from https://kysely.dev/docs/migrations
+const migrations = {
+  migration1: migration1,
+};
+
+// I'm not sure how to dynamically load migrations in electron
+// So we're just importing them all directly
+export class ConstMigrationProvider implements MigrationProvider {
+  public async getMigrations(): Promise<Record<string, Migration>> {
+    return migrations;
+  }
+}
+
 export async function migrateToLatest(db: Kysely<Database>) {
-  const migrationFolder = path.join(__dirname, "/migrations");
   const migrator = new Migrator({
     db,
-    provider: new FileMigrationProvider({
-      fs,
-      path,
-      // This needs to be an absolute path.
-      migrationFolder: migrationFolder,
-    }),
+    provider: new ConstMigrationProvider(),
   });
 
   const { error, results } = await migrator.migrateToLatest();

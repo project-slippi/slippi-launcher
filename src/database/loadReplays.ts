@@ -12,7 +12,6 @@ export async function loadReplays(database: Kysely<Database>, fullPaths: string[
     .innerJoin("replay_player", "replay_player.settingsId", "replay_game_start.id")
     .innerJoin("replay_metadata", "replay_metadata.replayId", "replay.id")
     .selectAll(["replay", "replay_game_start", "replay_player", "replay_metadata"])
-    .orderBy("replay.id", "asc")
     .execute();
   const replayGroups = Object.values(_.groupBy(replays, "id"));
   const replayObjs = replayGroups.map((replay) => {
