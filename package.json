@@ -153,6 +153,7 @@
     "@mui/icons-material": "^5.11.16",
     "@mui/lab": "^5.0.0-alpha.127",
     "@mui/material": "^5.12.1",
+    "@prisma/client": "4.15.0",
     "@slippi/slippi-js": "^6.7.0",
     "compare-func": "^2.0.0",
     "cross-fetch": "^3.1.5",
@@ -168,6 +169,8 @@
     "immer": "^9.0.7",
     "is-ip": "^5.0.0",
     "jdenticon": "^3.1.1",
+    "kysely": "^0.25.0",
+    "kysely-migration-cli": "^0.2.1",
     "lodash": "^4.17.21",
     "medium-json-feed": "^0.0.3",
     "moment": "^2.29.4",
@@ -177,6 +180,7 @@
     "obs-websocket-js": "^5.0.1",
     "observable-fns": "^0.6.1",
     "os-name": "^4.0.0",
+    "prisma-kysely": "^1.4.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-dropzone": "^11.2.4",
@@ -188,6 +192,7 @@
     "react-twitter-embed": "^4.0.4",
     "react-virtualized-auto-sizer": "^1.0.3",
     "react-window": "^1.8.6",
+    "synchronized-ts": "^1.0.0",
     "wget-improved": "^3.3.1",
     "zustand": "^3.2.0"
   }

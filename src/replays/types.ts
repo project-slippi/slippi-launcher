@@ -3,6 +3,7 @@ import type { GameStartType, MetadataType } from "@slippi/slippi-js";
 export type FileResult = {
   name: string;
   fullPath: string;
+  size: number;
   settings: GameStartType;
   startTime: string | null;
   lastFrame: number | null;

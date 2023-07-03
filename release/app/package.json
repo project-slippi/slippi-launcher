@@ -15,6 +15,10 @@
     "postinstall": "yarn run electron-rebuild && yarn run link-modules"
   },
   "dependencies": {
+    "@types/better-sqlite3": "^7.6.4",
+    "better-sqlite3": "^8.4.0",
+    "kysely": "^0.25.0",
+    "synchronized-ts": "^1.0.0",
     "threads": "^1.6.5",
     "websocket": "^1.0.34"
   },
