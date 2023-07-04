@@ -1,3 +1,4 @@
+import { exists } from "@common/exists";
 import type { GameStartType, MetadataType } from "@slippi/slippi-js";
 import { SlippiGame } from "@slippi/slippi-js";
 import * as fs from "fs-extra";
@@ -48,6 +49,10 @@ export async function loadFile(fullPath: string): Promise<FileResult> {
 }
 
 function convertToDateAndTime(dateTimeString: moment.MomentInput): moment.Moment | null {
+  if (!exists(dateTimeString)) {
+    return null;
+  }
+
   const asMoment = moment(dateTimeString);
   if (asMoment.isValid()) {
     return asMoment.local();
