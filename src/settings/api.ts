@@ -9,6 +9,7 @@ import {
   ipc_setAutoUpdateLauncher,
   ipc_setExtraSlpPaths,
   ipc_setIsoPath,
+  ipc_setJukeboxEnabled,
   ipc_setLaunchMeleeOnPlay,
   ipc_setNetplayDolphinPath,
   ipc_setPlaybackDolphinPath,
@@ -43,6 +44,9 @@ export default {
   },
   async setUseMonthlySubfolders(toggle: boolean): Promise<void> {
     await ipc_setUseMonthlySubfolders.renderer!.trigger({ toggle });
+  },
+  async setJukeboxEnabled(toggle: boolean): Promise<void> {
+    await ipc_setJukeboxEnabled.renderer!.trigger({ toggle });
   },
   async setSpectateSlpPath(spectateSlpPath: string): Promise<void> {
     await ipc_setSpectateSlpPath.renderer!.trigger({ path: spectateSlpPath });

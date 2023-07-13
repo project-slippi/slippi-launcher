@@ -65,6 +65,10 @@ export class SettingsManager {
     await this._set("settings.useMonthlySubfolders", toggle);
   }
 
+  public async setJukeboxEnabled(toggle: boolean): Promise<void> {
+    await this._set("settings.jukeboxEnabled", toggle);
+  }
+
   public async setSpectateSlpPath(slpPath: string): Promise<void> {
     await this._set("settings.spectateSlpPath", slpPath);
   }
