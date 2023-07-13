@@ -23,7 +23,7 @@ export const defaultAppSettings: AppSettings = {
     isoPath: null,
     rootSlpPath: getDefaultRootSlpPath(),
     useMonthlySubfolders: false,
-    jukeboxEnabled: true,
+    jukebox: true,
     spectateSlpPath: path.join(getDefaultRootSlpPath(), "Spectate"),
     extraSlpPaths: [],
     netplayDolphinPath: path.join(app.getPath("userData"), "netplay"),

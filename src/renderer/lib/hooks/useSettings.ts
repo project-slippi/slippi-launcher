@@ -42,12 +42,12 @@ export const useMonthlySubfolders = () => {
   return [useMonthlySubfolders, setUseMonthlySubfolders] as const;
 };
 
-export const useJukeboxEnabled = () => {
-  const jukeboxEnabled = useSettings((store) => store.settings.jukeboxEnabled);
-  const setJukeboxEnabled = async (toggle: boolean) => {
-    await window.electron.settings.setJukeboxEnabled(toggle);
+export const useJukebox = () => {
+  const jukebox = useSettings((store) => store.settings.jukebox);
+  const setJukebox = async (toggle: boolean) => {
+    await window.electron.settings.setJukebox(toggle);
   };
-  return [jukeboxEnabled, setJukeboxEnabled] as const;
+  return [jukebox, setJukebox] as const;
 };
 
 export const useSpectateSlpPath = () => {
