@@ -11,6 +11,7 @@ import {
   ipc_setAutoUpdateLauncher,
   ipc_setExtraSlpPaths,
   ipc_setIsoPath,
+  ipc_setJukebox,
   ipc_setLaunchMeleeOnPlay,
   ipc_setNetplayDolphinPath,
   ipc_setPlaybackDolphinPath,
@@ -59,6 +60,13 @@ export default function setupSettingsIpc({
     await settingsManager.setUseMonthlySubfolders(toggle);
     const installation = dolphinManager.getInstallation(DolphinLaunchType.NETPLAY);
     await installation.updateSettings({ useMonthlySubfolders: toggle });
+    return { success: true };
+  });
+
+  ipc_setJukebox.main!.handle(async ({ toggle }) => {
+    await settingsManager.setJukebox(toggle);
+    const installation = dolphinManager.getInstallation(DolphinLaunchType.NETPLAY);
+    await installation.updateSettings({ jukebox: toggle });
     return { success: true };
   });
 

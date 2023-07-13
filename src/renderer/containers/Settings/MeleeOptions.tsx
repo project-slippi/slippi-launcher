@@ -9,11 +9,13 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import React from "react";
+import { gte } from "semver";
 
+import { Toggle } from "@/components/FormInputs/Toggle";
 import { PathInput } from "@/components/PathInput";
 import { useDolphinStore } from "@/lib/dolphin/useDolphinStore";
 import { useIsoVerification } from "@/lib/hooks/useIsoVerification";
-import { useIsoPath, useLaunchMeleeOnPlay } from "@/lib/hooks/useSettings";
+import { useIsoPath, useJukebox, useLaunchMeleeOnPlay } from "@/lib/hooks/useSettings";
 
 import { SettingItem } from "./SettingItem";
 
@@ -37,8 +39,13 @@ export const MeleeOptions = React.memo(() => {
   const isoValidity = useIsoVerification((state) => state.validity);
   const [isoPath, setIsoPath] = useIsoPath();
   const [launchMeleeOnPlay, setLaunchMelee] = useLaunchMeleeOnPlay();
+  const [jukebox, setJukebox] = useJukebox();
   const netplayDolphinOpen = useDolphinStore((store) => store.netplayOpened);
   const playbackDolphinOpen = useDolphinStore((store) => store.playbackOpened);
+
+  const dolphinVersion = useDolphinStore((store) => store.netplayDolphinVersion);
+
+  const showJukeboxToggle = dolphinVersion !== null && gte(dolphinVersion, "3.2.0");
 
   const onLaunchMeleeChange = async (value: string) => {
     const launchMelee = value === "true";
@@ -79,6 +86,17 @@ export const MeleeOptions = React.memo(() => {
           <FormControlLabel value={false} label="Launch Dolphin" control={<Radio />} />
         </RadioGroup>
       </SettingItem>
+      {showJukeboxToggle && (
+        <SettingItem name="">
+          <Toggle
+            value={jukebox}
+            onChange={(checked) => setJukebox(checked)}
+            label="Enable Music"
+            description="Enable music in game via Slippi Jukebox. Incompatible with WASAPI."
+            disabled={netplayDolphinOpen}
+          />
+        </SettingItem>
+      )}
     </div>
   );
 });

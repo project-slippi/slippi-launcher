@@ -1,4 +1,5 @@
-import { addGamePath, setSlippiSettings } from "@dolphin/config/config";
+import type { SyncedDolphinSettings } from "@dolphin/config/config";
+import { addGamePath, getSlippiSettings, setSlippiSettings } from "@dolphin/config/config";
 import { IniFile } from "@dolphin/config/iniFile";
 import { findDolphinExecutable } from "@dolphin/util";
 import { spawnSync } from "child_process";
@@ -89,6 +90,13 @@ export class DolphinInstallation {
 
     // we shouldn't keep the old cache folder since it might be out of date
     await this.clearCache();
+
+    // read the settings from the ini and update any settings
+    if (this.dolphinLaunchType === DolphinLaunchType.NETPLAY) {
+      const iniPath = path.join(this.userFolder, "Config", "Dolphin.ini");
+      const iniFile = await IniFile.init(iniPath);
+      await getSlippiSettings(iniFile);
+    }
   }
 
   public async validate({
@@ -178,7 +186,13 @@ export class DolphinInstallation {
     await addGamePath(iniFile, gameDir);
   }
 
-  public async updateSettings(options: Partial<{ useMonthlySubfolders: boolean; replayPath: string }>): Promise<void> {
+  public async getSettings(): Promise<SyncedDolphinSettings> {
+    const iniPath = path.join(this.userFolder, "Config", "Dolphin.ini");
+    const iniFile = await IniFile.init(iniPath);
+    return await getSlippiSettings(iniFile);
+  }
+
+  public async updateSettings(options: Partial<SyncedDolphinSettings>): Promise<void> {
     const iniPath = path.join(this.userFolder, "Config", "Dolphin.ini");
     const iniFile = await IniFile.init(iniPath);
     await setSlippiSettings(iniFile, options);

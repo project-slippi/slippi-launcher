@@ -15,6 +15,8 @@ export const ipc_setUseMonthlySubfolders = makeEndpoint.main(
   <SuccessPayload>_,
 );
 
+export const ipc_setJukebox = makeEndpoint.main("setJukebox", <{ toggle: boolean }>_, <SuccessPayload>_);
+
 export const ipc_setSpectateSlpPath = makeEndpoint.main("setSpectateSlpPath", <{ path: string }>_, <SuccessPayload>_);
 
 export const ipc_setExtraSlpPaths = makeEndpoint.main("setExtraSlpPaths", <{ paths: string[] }>_, <SuccessPayload>_);

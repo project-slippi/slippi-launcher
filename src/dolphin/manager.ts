@@ -56,7 +56,8 @@ export class DolphinManager {
     let playbackInstance = this.playbackDolphinInstances.get(id);
     if (!playbackInstance) {
       playbackInstance = new PlaybackDolphinInstance(dolphinPath, meleeIsoPath);
-      playbackInstance.on("close", (exitCode) => {
+      playbackInstance.on("close", async (exitCode) => {
+        await this._updateLauncherSettings(DolphinLaunchType.PLAYBACK);
         this.eventSubject.next({
           type: DolphinEventType.CLOSED,
           instanceId: id,
@@ -93,7 +94,8 @@ export class DolphinManager {
 
     // Create the Dolphin instance and start it
     this.netplayDolphinInstance = new DolphinInstance(dolphinPath, meleeIsoPath);
-    this.netplayDolphinInstance.on("close", (exitCode) => {
+    this.netplayDolphinInstance.on("close", async (exitCode) => {
+      await this._updateLauncherSettings(DolphinLaunchType.NETPLAY);
       this.eventSubject.next({
         type: DolphinEventType.CLOSED,
         dolphinType: DolphinLaunchType.NETPLAY,
@@ -120,7 +122,8 @@ export class DolphinManager {
     if (launchType === DolphinLaunchType.NETPLAY && !this.netplayDolphinInstance) {
       const instance = new DolphinInstance(dolphinPath);
       this.netplayDolphinInstance = instance;
-      instance.on("close", (exitCode) => {
+      instance.on("close", async (exitCode) => {
+        await this._updateLauncherSettings(launchType);
         this.eventSubject.next({
           type: DolphinEventType.CLOSED,
           dolphinType: DolphinLaunchType.NETPLAY,
@@ -137,7 +140,8 @@ export class DolphinManager {
       const instanceId = "configure";
       const instance = new PlaybackDolphinInstance(dolphinPath);
       this.playbackDolphinInstances.set(instanceId, instance);
-      instance.on("close", (exitCode) => {
+      instance.on("close", async (exitCode) => {
+        await this._updateLauncherSettings(launchType);
         this.eventSubject.next({
           type: DolphinEventType.CLOSED,
           dolphinType: DolphinLaunchType.PLAYBACK,
@@ -207,6 +211,15 @@ export class DolphinManager {
       replayPath: this.settingsManager.getRootSlpPath(),
       useMonthlySubfolders: this.settingsManager.getUseMonthlySubfolders(),
     });
+  }
+
+  private async _updateLauncherSettings(launchType: DolphinLaunchType) {
+    const installation = this.getInstallation(launchType);
+    const newSettings = await installation.getSettings();
+
+    await this.settingsManager.setRootSlpPath(newSettings.replayPath);
+    await this.settingsManager.setUseMonthlySubfolders(newSettings.useMonthlySubfolders);
+    await this.settingsManager.setJukebox(newSettings.jukebox);
   }
 
   private _onStart(dolphinType: DolphinLaunchType) {

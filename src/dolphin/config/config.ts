@@ -1,6 +1,14 @@
+import { defaultAppSettings } from "@settings/defaultSettings";
+
 import type { GeckoCode } from "./geckoCode";
 import { loadGeckoCodes, setCodes } from "./geckoCode";
 import type { IniFile } from "./iniFile";
+
+export type SyncedDolphinSettings = {
+  useMonthlySubfolders: boolean;
+  replayPath: string;
+  jukebox: boolean;
+};
 
 export async function addGamePath(iniFile: IniFile, gameDir: string): Promise<void> {
   const generalSection = iniFile.getOrCreateSection("General");
@@ -10,14 +18,9 @@ export async function addGamePath(iniFile: IniFile, gameDir: string): Promise<vo
   await iniFile.save();
 }
 
-export async function setSlippiSettings(
-  iniFile: IniFile,
-  options: Partial<{
-    useMonthlySubfolders: boolean;
-    replayPath: string;
-  }>,
-): Promise<void> {
+export async function setSlippiSettings(iniFile: IniFile, options: Partial<SyncedDolphinSettings>): Promise<void> {
   const useMonthlySubfolders = options.useMonthlySubfolders ? "True" : "False";
+  const jukebox = options.jukebox ? "True" : "False";
   const coreSection = iniFile.getOrCreateSection("Core");
   if (options.replayPath !== undefined) {
     coreSection.set("SlippiReplayDir", options.replayPath);
@@ -25,7 +28,20 @@ export async function setSlippiSettings(
   if (options.useMonthlySubfolders !== undefined) {
     coreSection.set("SlippiReplayMonthFolders", useMonthlySubfolders);
   }
+  if (options.jukebox !== undefined) {
+    coreSection.set("SlippiJukeboxEnabled", jukebox);
+  }
   await iniFile.save();
+}
+
+export async function getSlippiSettings(iniFile: IniFile): Promise<SyncedDolphinSettings> {
+  const coreSection = iniFile.getOrCreateSection("Core");
+  const useMonthlySubfolders = coreSection.get("SlippiReplayMonthFolders", "False") === "True";
+  const replayPath = coreSection.get("SlippiReplayDir", defaultAppSettings.settings.rootSlpPath);
+
+  const jukebox = coreSection.get("SlippiJukeboxEnabled", "True") === "True";
+
+  return { useMonthlySubfolders, replayPath, jukebox };
 }
 
 export async function setBootToCss(globalIni: IniFile, localIni: IniFile, enable: boolean): Promise<void> {
