@@ -9,7 +9,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import React from "react";
-import { lt } from "semver";
+import { gte } from "semver";
 
 import { Toggle } from "@/components/FormInputs/Toggle";
 import { PathInput } from "@/components/PathInput";
@@ -45,7 +45,7 @@ export const MeleeOptions = React.memo(() => {
 
   const dolphinVersion = useDolphinStore((store) => store.netplayDolphinVersion);
 
-  const disableJukeboxToggle = dolphinVersion !== null && lt(dolphinVersion, "3.2.0");
+  const showJukeboxToggle = dolphinVersion !== null && gte(dolphinVersion, "3.2.0");
 
   const onLaunchMeleeChange = async (value: string) => {
     const launchMelee = value === "true";
@@ -86,15 +86,17 @@ export const MeleeOptions = React.memo(() => {
           <FormControlLabel value={false} label="Launch Dolphin" control={<Radio />} />
         </RadioGroup>
       </SettingItem>
-      <SettingItem name="">
-        <Toggle
-          value={jukeboxEnabled}
-          onChange={(checked) => setJukeboxEnabled(checked)}
-          label="Enable Music"
-          description="Enable music in game via Slippi Jukebox. Incompatible with WASAPI."
-          disabled={disableJukeboxToggle || netplayDolphinOpen}
-        />
-      </SettingItem>
+      {showJukeboxToggle && (
+        <SettingItem name="">
+          <Toggle
+            value={jukeboxEnabled}
+            onChange={(checked) => setJukeboxEnabled(checked)}
+            label="Enable Music"
+            description="Enable music in game via Slippi Jukebox. Incompatible with WASAPI."
+            disabled={netplayDolphinOpen}
+          />
+        </SettingItem>
+      )}
     </div>
   );
 });
