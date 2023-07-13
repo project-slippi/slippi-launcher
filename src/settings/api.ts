@@ -7,9 +7,9 @@ import {
   ipc_editConnection,
   ipc_openSettingsModalEvent,
   ipc_setAutoUpdateLauncher,
+  ipc_setEnableJukebox,
   ipc_setExtraSlpPaths,
   ipc_setIsoPath,
-  ipc_setJukebox,
   ipc_setLaunchMeleeOnPlay,
   ipc_setNetplayDolphinPath,
   ipc_setPlaybackDolphinPath,
@@ -45,8 +45,8 @@ export default {
   async setUseMonthlySubfolders(toggle: boolean): Promise<void> {
     await ipc_setUseMonthlySubfolders.renderer!.trigger({ toggle });
   },
-  async setJukebox(toggle: boolean): Promise<void> {
-    await ipc_setJukebox.renderer!.trigger({ toggle });
+  async setEnableJukebox(toggle: boolean): Promise<void> {
+    await ipc_setEnableJukebox.renderer!.trigger({ toggle });
   },
   async setSpectateSlpPath(spectateSlpPath: string): Promise<void> {
     await ipc_setSpectateSlpPath.renderer!.trigger({ path: spectateSlpPath });

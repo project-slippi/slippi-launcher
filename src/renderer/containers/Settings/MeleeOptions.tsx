@@ -15,7 +15,7 @@ import { Toggle } from "@/components/FormInputs/Toggle";
 import { PathInput } from "@/components/PathInput";
 import { useDolphinStore } from "@/lib/dolphin/useDolphinStore";
 import { useIsoVerification } from "@/lib/hooks/useIsoVerification";
-import { useIsoPath, useJukebox, useLaunchMeleeOnPlay } from "@/lib/hooks/useSettings";
+import { useEnableJukebox, useIsoPath, useLaunchMeleeOnPlay } from "@/lib/hooks/useSettings";
 
 import { SettingItem } from "./SettingItem";
 
@@ -39,7 +39,7 @@ export const MeleeOptions = React.memo(() => {
   const isoValidity = useIsoVerification((state) => state.validity);
   const [isoPath, setIsoPath] = useIsoPath();
   const [launchMeleeOnPlay, setLaunchMelee] = useLaunchMeleeOnPlay();
-  const [jukebox, setJukebox] = useJukebox();
+  const [enableJukebox, setEnableJukebox] = useEnableJukebox();
   const netplayDolphinOpen = useDolphinStore((store) => store.netplayOpened);
   const playbackDolphinOpen = useDolphinStore((store) => store.playbackOpened);
 
@@ -89,10 +89,10 @@ export const MeleeOptions = React.memo(() => {
       {showJukeboxToggle && (
         <SettingItem name="">
           <Toggle
-            value={jukebox}
-            onChange={(checked) => setJukebox(checked)}
+            value={enableJukebox}
+            onChange={(checked) => setEnableJukebox(checked)}
             label="Enable Music"
-            description="Enable music in game via Slippi Jukebox. Incompatible with WASAPI."
+            description="Enable in-game music via Slippi Jukebox. Incompatible with WASAPI."
             disabled={netplayDolphinOpen}
           />
         </SettingItem>

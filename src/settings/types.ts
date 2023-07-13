@@ -21,7 +21,7 @@ export type AppSettings = {
     isoPath: string | null;
     rootSlpPath: string;
     useMonthlySubfolders: boolean;
-    jukebox: boolean;
+    enableJukebox: boolean;
     spectateSlpPath: string;
     extraSlpPaths: string[];
     netplayDolphinPath: string;

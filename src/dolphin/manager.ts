@@ -219,7 +219,7 @@ export class DolphinManager {
 
     await this.settingsManager.setRootSlpPath(newSettings.replayPath);
     await this.settingsManager.setUseMonthlySubfolders(newSettings.useMonthlySubfolders);
-    await this.settingsManager.setJukebox(newSettings.jukebox);
+    await this.settingsManager.setEnableJukebox(newSettings.enableJukebox);
   }
 
   private _onStart(dolphinType: DolphinLaunchType) {
