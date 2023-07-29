@@ -36,9 +36,9 @@ export async function setSlippiSettings(iniFile: IniFile, options: Partial<Synce
 
 export async function getSlippiSettings(iniFile: IniFile): Promise<SyncedDolphinSettings> {
   const coreSection = iniFile.getOrCreateSection("Core");
+
   const useMonthlySubfolders = coreSection.get("SlippiReplayMonthFolders", "False") === "True";
   const replayPath = coreSection.get("SlippiReplayDir", defaultAppSettings.settings.rootSlpPath);
-
   const enableJukebox = coreSection.get("SlippiJukeboxEnabled", "True") === "True";
 
   return { useMonthlySubfolders, replayPath, enableJukebox };
