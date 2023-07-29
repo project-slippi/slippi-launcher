@@ -217,7 +217,7 @@ export class DolphinManager {
     const installation = this.getInstallation(launchType);
     const newSettings = await installation.getSettings();
 
-    await this.settingsManager.setRootSlpPath(newSettings.replayPath);
+    await this.settingsManager.setRootSlpPath(path.normalize(newSettings.replayPath));
     await this.settingsManager.setUseMonthlySubfolders(newSettings.useMonthlySubfolders);
     await this.settingsManager.setEnableJukebox(newSettings.enableJukebox);
   }
