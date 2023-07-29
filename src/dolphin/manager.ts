@@ -57,7 +57,6 @@ export class DolphinManager {
     if (!playbackInstance) {
       playbackInstance = new PlaybackDolphinInstance(dolphinPath, meleeIsoPath);
       playbackInstance.on("close", async (exitCode) => {
-        await this._updateLauncherSettings(DolphinLaunchType.PLAYBACK);
         this.eventSubject.next({
           type: DolphinEventType.CLOSED,
           instanceId: id,
@@ -123,7 +122,9 @@ export class DolphinManager {
       const instance = new DolphinInstance(dolphinPath);
       this.netplayDolphinInstance = instance;
       instance.on("close", async (exitCode) => {
-        await this._updateLauncherSettings(launchType);
+        if (launchType === DolphinLaunchType.NETPLAY) {
+          await this._updateLauncherSettings(launchType);
+        }
         this.eventSubject.next({
           type: DolphinEventType.CLOSED,
           dolphinType: DolphinLaunchType.NETPLAY,
