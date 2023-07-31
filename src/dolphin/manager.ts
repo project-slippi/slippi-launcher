@@ -57,7 +57,6 @@ export class DolphinManager {
     if (!playbackInstance) {
       playbackInstance = new PlaybackDolphinInstance(dolphinPath, meleeIsoPath);
       playbackInstance.on("close", async (exitCode) => {
-        await this._updateLauncherSettings(DolphinLaunchType.PLAYBACK);
         this.eventSubject.next({
           type: DolphinEventType.CLOSED,
           instanceId: id,
@@ -123,7 +122,9 @@ export class DolphinManager {
       const instance = new DolphinInstance(dolphinPath);
       this.netplayDolphinInstance = instance;
       instance.on("close", async (exitCode) => {
-        await this._updateLauncherSettings(launchType);
+        if (launchType === DolphinLaunchType.NETPLAY) {
+          await this._updateLauncherSettings(launchType);
+        }
         this.eventSubject.next({
           type: DolphinEventType.CLOSED,
           dolphinType: DolphinLaunchType.NETPLAY,
@@ -217,9 +218,28 @@ export class DolphinManager {
     const installation = this.getInstallation(launchType);
     const newSettings = await installation.getSettings();
 
-    await this.settingsManager.setRootSlpPath(newSettings.replayPath);
-    await this.settingsManager.setUseMonthlySubfolders(newSettings.useMonthlySubfolders);
-    await this.settingsManager.setEnableJukebox(newSettings.enableJukebox);
+    await this._updateLauncherSetting(
+      this.settingsManager.getRootSlpPath(),
+      path.normalize(newSettings.replayPath),
+      this.settingsManager.setRootSlpPath,
+    );
+    await this._updateLauncherSetting(
+      this.settingsManager.getUseMonthlySubfolders(),
+      newSettings.useMonthlySubfolders,
+      this.settingsManager.setUseMonthlySubfolders,
+    );
+    await this._updateLauncherSetting(
+      this.settingsManager.get().settings.enableJukebox,
+      newSettings.enableJukebox,
+      this.settingsManager.setEnableJukebox,
+    );
+  }
+
+  private async _updateLauncherSetting<T>(currentVal: T, newVal: T, update: (val: T) => Promise<void>) {
+    if (currentVal === newVal) {
+      return;
+    }
+    await update(newVal);
   }
 
   private _onStart(dolphinType: DolphinLaunchType) {
