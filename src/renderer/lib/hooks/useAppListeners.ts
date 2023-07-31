@@ -174,7 +174,7 @@ export const useAppListeners = () => {
   const extraSlpPaths = useSettings((store) => store.settings.extraSlpPaths);
   React.useEffect(() => {
     init(rootSlpPath, extraSlpPaths, true).catch(console.error);
-  }, [rootSlpPath, extraSlpPaths, init]);
+  }, [rootSlpPath, JSON.stringify(extraSlpPaths), init]);
 
   const { showError } = useToasts();
   React.useEffect(() => {
