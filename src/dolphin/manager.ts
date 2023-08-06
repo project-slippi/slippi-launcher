@@ -122,9 +122,7 @@ export class DolphinManager {
       const instance = new DolphinInstance(dolphinPath);
       this.netplayDolphinInstance = instance;
       instance.on("close", async (exitCode) => {
-        if (launchType === DolphinLaunchType.NETPLAY) {
-          await this._updateLauncherSettings(launchType);
-        }
+        await this._updateLauncherSettings(launchType);
         this.eventSubject.next({
           type: DolphinEventType.CLOSED,
           dolphinType: DolphinLaunchType.NETPLAY,
@@ -142,7 +140,6 @@ export class DolphinManager {
       const instance = new PlaybackDolphinInstance(dolphinPath);
       this.playbackDolphinInstances.set(instanceId, instance);
       instance.on("close", async (exitCode) => {
-        await this._updateLauncherSettings(launchType);
         this.eventSubject.next({
           type: DolphinEventType.CLOSED,
           dolphinType: DolphinLaunchType.PLAYBACK,
