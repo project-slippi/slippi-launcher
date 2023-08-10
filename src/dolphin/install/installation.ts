@@ -238,16 +238,9 @@ export class DolphinInstallation {
       }
       case "darwin": {
         const { installDolphinOnMac } = await import("./macos");
-        const currentVersion = await this.getDolphinVersion();
-        const userFolderInBundle = currentVersion !== null && lt(currentVersion, "3.0.5");
-        if (userFolderInBundle) {
-          const oldUserFolder = path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "Resources", "User");
-          await fs.copy(oldUserFolder, this.userFolder, { recursive: true, overwrite: true });
-        }
         await installDolphinOnMac({
           assetPath,
           destinationFolder: dolphinPath,
-          shouldBackupUserFolder: userFolderInBundle,
         });
         break;
       }
