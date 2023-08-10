@@ -94,7 +94,11 @@ export class DolphinManager {
     // Create the Dolphin instance and start it
     this.netplayDolphinInstance = new DolphinInstance(dolphinPath, meleeIsoPath);
     this.netplayDolphinInstance.on("close", async (exitCode) => {
-      await this._updateLauncherSettings(DolphinLaunchType.NETPLAY);
+      try {
+        await this._updateLauncherSettings(DolphinLaunchType.NETPLAY);
+      } catch (e) {
+        log.error("Error encountered updating launcher settings.", e);
+      }
       this.eventSubject.next({
         type: DolphinEventType.CLOSED,
         dolphinType: DolphinLaunchType.NETPLAY,
@@ -122,7 +126,11 @@ export class DolphinManager {
       const instance = new DolphinInstance(dolphinPath);
       this.netplayDolphinInstance = instance;
       instance.on("close", async (exitCode) => {
-        await this._updateLauncherSettings(launchType);
+        try {
+          await this._updateLauncherSettings(launchType);
+        } catch (e) {
+          log.error("Error encountered updating launcher settings.", e);
+        }
         this.eventSubject.next({
           type: DolphinEventType.CLOSED,
           dolphinType: DolphinLaunchType.NETPLAY,
@@ -218,17 +226,17 @@ export class DolphinManager {
     await this._updateLauncherSetting(
       this.settingsManager.getRootSlpPath(),
       path.normalize(newSettings.replayPath),
-      this.settingsManager.setRootSlpPath,
+      (val) => this.settingsManager.setRootSlpPath(val),
     );
     await this._updateLauncherSetting(
       this.settingsManager.getUseMonthlySubfolders(),
       newSettings.useMonthlySubfolders,
-      this.settingsManager.setUseMonthlySubfolders,
+      (val) => this.settingsManager.setUseMonthlySubfolders(val),
     );
     await this._updateLauncherSetting(
       this.settingsManager.get().settings.enableJukebox,
       newSettings.enableJukebox,
-      this.settingsManager.setEnableJukebox,
+      (val) => this.settingsManager.setEnableJukebox(val),
     );
   }
 
