@@ -65,15 +65,6 @@ A single delay frame is equal to 4 buffer in traditional Dolphin netplay. Our re
 
 If you want to change this value, first open Dolphin (if using the Launcher go to Settings -> Netplay -> Configure Dolphin) and go to `Config` -> `GameCube`. At the bottom you will see the option to update the Delay Frames. You can update this value at any time but it will only update for the next game you play.
 
-## Why is there no music?
-
-Game music breaks because of the changes required to support rollback so it isn't enabled in the current build at all. Replays will still have music when watching rollback replays.
-
-You can however play your own music for netplay with m'overlay which supports playing music based on the game state (like if you are on a specific stage or on the menus).
-Instructions can be found [here](https://github.com/bkacjios/m-overlay/wiki/Stage-music-for-Project-Slippi).
-
-Game music can be removed from replays by opening Dolphin (if using the Launcher go to Settings -> Netplay -> Configure Dolphin), right clicking Melee -> Properties -> Gecko Codes, and enabling the "Game Music OFF" gecko code.
-
 ## Can I use Widescreen when playing Slippi Online?
 
 Yes. To enable Widescreen for Slippi Online follow these steps. Open Dolphin (if using the Launcher go to Settings -> Netplay -> Configure Dolphin), right click on your Melee in the games list, go to Properties -> Gecko Codes. Then enable the Widescreen gecko code and set the Dolphin aspect ratio to 16:9 under the Graphics settings. Do not use the dolphin widescreen hack, it does not have the same effect as the gecko code.
