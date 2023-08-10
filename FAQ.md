@@ -87,4 +87,4 @@ Some computers will have issues polling the adapter at the correct rate on some 
 
 ## Where are my replays?
 
-Replays are stored by default in `Documents/Slippi` on Windows and `~/Slippi` on macOS and Linux. The replay directory is configurable in the Replays settings of the Launcher.
+Replays are stored by default in `Documents/Slippi` on Windows and `~/Slippi` on macOS and Linux. The replay directory is configurable in the `Replays` settings tab of the Launcher.
