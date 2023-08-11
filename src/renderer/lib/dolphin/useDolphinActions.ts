@@ -87,7 +87,12 @@ export const useDolphinActions = (dolphinService: DolphinService) => {
         return;
       }
 
-      dolphinService.launchNetplayDolphin({ bootToCss }).catch(showError);
+      dolphinService
+        .launchNetplayDolphin({ bootToCss })
+        .then(() => {
+          setDolphinOpened(DolphinLaunchType.NETPLAY);
+        })
+        .catch(showError);
     },
     [getInstallStatus, dolphinService, showError],
   );
