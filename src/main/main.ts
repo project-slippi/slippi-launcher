@@ -36,6 +36,8 @@ let menu: CrossProcessExports.Menu | null = null;
 let mainWindow: BrowserWindow | null = null;
 let didFinishLoad = false;
 
+log.catchErrors();
+
 // Only allow a single Slippi App instance
 const lockObtained = app.requestSingleInstanceLock();
 if (!lockObtained) {
