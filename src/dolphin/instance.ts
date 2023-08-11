@@ -5,6 +5,7 @@ import { app } from "electron";
 import electronLog from "electron-log";
 import { EventEmitter } from "events";
 import * as fs from "fs-extra";
+import { debounce } from "lodash";
 import path from "path";
 import { fileExists } from "utils/fileExists";
 
@@ -72,6 +73,18 @@ export class DolphinInstance extends EventEmitter {
     });
     this.process.on("error", (err) => {
       this.emit("error", err);
+    });
+
+    let combinedString = "";
+
+    const debouncedErrorLog = debounce((msg: string) => {
+      combinedString = "";
+      log.error(`Received Dolphin stderr message: ${msg}`);
+    }, 500);
+
+    this.process.stderr?.on("data", (data) => {
+      combinedString += data.toString();
+      debouncedErrorLog(combinedString);
     });
   }
 }
