@@ -29,7 +29,7 @@ const handleWindowsExitCode = (exitCode: number): string | null => {
       return "Required DLLs for launching Dolphin are missing. Check the Help section in the settings page to fix this issue.";
     }
     case 0xc0000409: {
-      return 'Dolphin has crashed. Please go to the Help section of the settings page, click "Copy logs", and paste them in the Slippi Discord.';
+      return 'Dolphin has crashed. Please go to the Help section of the settings page, click "Copy logs", and paste them in the Slippi Discord\'s #windows-support channel.';
     }
     case 0xc0000005: {
       return "Try a different video backend in Dolphin. If the issue persists, install the latest Windows update available and then restart your computer.";
