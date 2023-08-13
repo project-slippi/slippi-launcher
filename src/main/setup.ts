@@ -1,4 +1,7 @@
+import { exists } from "@common/exists";
 import { IsoValidity } from "@common/types";
+import type { DolphinManager } from "@dolphin/manager";
+import { DolphinLaunchType } from "@dolphin/types";
 import { app, clipboard, dialog, ipcMain, nativeImage, shell } from "electron";
 import electronLog from "electron-log";
 import type { ProgressInfo, UpdateInfo } from "electron-updater";
@@ -37,7 +40,7 @@ autoUpdater.logger = log;
 
 const LINES_TO_READ = 200;
 
-export default function setupMainIpc() {
+export default function setupMainIpc({ dolphinManager }: { dolphinManager: DolphinManager }) {
   ipcMain.on("onDragStart", (event, files: string[]) => {
     // The Electron.Item type declaration is missing the files attribute
     // so we'll just cast it as unknown for now.
@@ -107,17 +110,27 @@ export default function setupMainIpc() {
     const mainLogPath = path.join(logsFolder, "main.log");
     const rendererLogPath = path.join(logsFolder, "renderer.log");
 
+    const netplayDolphin = dolphinManager.getInstallation(DolphinLaunchType.NETPLAY);
+    let netplayUserPath = null;
+    try {
+      netplayUserPath = path.join(netplayDolphin.userFolder, "Logs", "dolphin.log");
+    } catch (e: any) {
+      log.error("Failed to get the userFolder: ", e);
+    }
+
     // Fetch log contents in parallel
-    const [mainLogs, rendererLogs] = await Promise.all(
-      [mainLogPath, rendererLogPath].map(async (logPath): Promise<string> => {
-        if (await fileExists(logPath)) {
+    const [mainLogs, rendererLogs, netplayLogs] = await Promise.all(
+      [mainLogPath, rendererLogPath, netplayUserPath].map(async (logPath): Promise<string> => {
+        if (exists(logPath) && (await fileExists(logPath))) {
           return await readLastLines(logPath, LINES_TO_READ);
         }
         return "";
       }),
     );
 
-    clipboard.writeText(`MAIN START\n---------------\n${mainLogs}\n\nRENDERER START\n---------------\n${rendererLogs}`);
+    clipboard.writeText(
+      `MAIN START\n---------------\n${mainLogs}\n\nRENDERER START\n---------------\n${rendererLogs}\n\nNETPLAY DOLPHIN START\n---------------\n${netplayLogs}`,
+    );
     return { success: true };
   });
 

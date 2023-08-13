@@ -16,6 +16,6 @@ export function installModules() {
   setupReplaysIpc();
   setupSettingsIpc({ settingsManager, dolphinManager });
   setupConsoleIpc({ dolphinManager });
-  setupMainIpc();
+  setupMainIpc({ dolphinManager });
   return { dolphinManager, settingsManager };
 }
