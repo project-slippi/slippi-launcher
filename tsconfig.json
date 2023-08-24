@@ -45,7 +45,7 @@
   },
   "ts-node": {
     "transpileOnly": true,
-    "require": ["dotenv/config", "tsconfig-paths/register", "./.erb/scripts/fix-esm"]
+    "require": ["dotenv/config", "tsconfig-paths/register"]
   },
   "exclude": ["test", "release/build", "release/app/dist", ".erb/dll"]
 }
