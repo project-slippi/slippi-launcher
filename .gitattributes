@@ -11,3 +11,4 @@
 *.ttf   binary
 *.woff  binary
 *.woff2 binary
+yarn.lock linguist-generated=true
