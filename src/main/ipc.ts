@@ -1,4 +1,4 @@
-import type { CgnatPresence, IsoValidity, NatType, NewsItem, PortMapping } from "@common/types";
+import type { IsoValidity, NatType, NewsItem, PortMapping, Presence } from "@common/types";
 import type { EmptyPayload, SuccessPayload } from "utils/ipc";
 import { _, makeEndpoint } from "utils/ipc";
 
@@ -42,11 +42,7 @@ export const ipc_diagnosticNat = makeEndpoint.main(
 
 export const ipc_diagnosticPortMapping = makeEndpoint.main("diagnosticPortMapping", <EmptyPayload>_, <PortMapping>_);
 
-export const ipc_diagnosticCgnat = makeEndpoint.main(
-  "diagnosticCgnat",
-  <{ address: string }>_,
-  <{ cgnat: CgnatPresence }>_,
-);
+export const ipc_diagnosticCgnat = makeEndpoint.main("diagnosticCgnat", <{ address: string }>_, <{ cgnat: Presence }>_);
 
 // Events
 

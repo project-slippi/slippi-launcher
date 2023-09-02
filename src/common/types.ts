@@ -19,27 +19,17 @@ export enum NatType {
   UNKNOWN = "UNKNOWN",
   NORMAL = "NORMAL",
   SYMMETRIC = "SYMMETRIC",
+  FAILED = "FAILED",
 }
 
-export enum UpnpPresence {
+export enum Presence {
   UNKNOWN = "UNKNOWN",
   ABSENT = "ABSENT",
   PRESENT = "PRESENT",
-}
-
-export enum NatpmpPresence {
-  UNKNOWN = "UNKNOWN",
-  ABSENT = "ABSENT",
-  PRESENT = "PRESENT",
+  FAILED = "FAILED",
 }
 
 export type PortMapping = {
-  upnp: UpnpPresence;
-  natpmp: NatpmpPresence;
+  upnp: Presence;
+  natpmp: Presence;
 };
-
-export enum CgnatPresence {
-  UNKNOWN = "UNKNOWN",
-  ABSENT = "ABSENT",
-  PRESENT = "PRESENT",
-}

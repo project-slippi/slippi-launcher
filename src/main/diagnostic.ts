@@ -1,5 +1,5 @@
 import type { PortMapping } from "@common/types";
-import { CgnatPresence, NatpmpPresence, NatType, UpnpPresence } from "@common/types";
+import { NatType, Presence } from "@common/types";
 import { createPmpClient, createUpnpClient } from "@xmcl/nat-api";
 import { gateway4async } from "default-gateway";
 import Tracer from "nodejs-traceroute-ts";
@@ -16,21 +16,21 @@ export async function natType(): Promise<{ address: string; natType: NatType }> 
 }
 
 export async function portMapping(): Promise<PortMapping> {
-  let upnpPresence = UpnpPresence.UNKNOWN;
+  let upnpPresence = Presence.UNKNOWN;
   const upnpClient = await createUpnpClient();
   const upnpPromise = upnpClient
     .externalIp()
     .then(() => {
-      upnpPresence = UpnpPresence.PRESENT;
+      upnpPresence = Presence.PRESENT;
     })
     .catch(() => {
-      upnpPresence = UpnpPresence.ABSENT;
+      upnpPresence = Presence.ABSENT;
     })
     .finally(() => {
       upnpClient.destroy();
     });
 
-  let natpmpPresence = NatpmpPresence.UNKNOWN;
+  let natpmpPresence = Presence.UNKNOWN;
   const pmpClient = await createPmpClient((await gateway4async()).gateway);
   const pmpPromise = new Promise((resolve, reject) => {
     // library does not use a timeout for NAT-PMP, so we do it ourselves.
@@ -46,10 +46,10 @@ export async function portMapping(): Promise<PortMapping> {
       });
   })
     .then(() => {
-      natpmpPresence = NatpmpPresence.PRESENT;
+      natpmpPresence = Presence.PRESENT;
     })
     .catch(() => {
-      natpmpPresence = NatpmpPresence.ABSENT;
+      natpmpPresence = Presence.ABSENT;
     })
     .finally(() => {
       pmpClient.close();
@@ -59,7 +59,7 @@ export async function portMapping(): Promise<PortMapping> {
   return { upnp: upnpPresence, natpmp: natpmpPresence } as PortMapping;
 }
 
-export async function cgnat(address: string): Promise<{ cgnat: CgnatPresence }> {
+export async function cgnat(address: string): Promise<{ cgnat: Presence }> {
   return new Promise((resolve, reject) => {
     let hops = 0;
     const tracer = new Tracer();
@@ -68,7 +68,7 @@ export async function cgnat(address: string): Promise<{ cgnat: CgnatPresence }> 
     });
     const timeout = setTimeout(() => {
       if (hops > 1) {
-        resolve({ cgnat: CgnatPresence.PRESENT });
+        resolve({ cgnat: Presence.PRESENT });
       } else {
         reject("CGNAT timeout");
       }
@@ -76,7 +76,7 @@ export async function cgnat(address: string): Promise<{ cgnat: CgnatPresence }> 
     tracer.on("close", (code) => {
       clearTimeout(timeout);
       if (code === 0 && hops > 0) {
-        resolve({ cgnat: hops === 1 ? CgnatPresence.ABSENT : CgnatPresence.PRESENT });
+        resolve({ cgnat: hops === 1 ? Presence.ABSENT : Presence.PRESENT });
       } else {
         reject(code);
       }

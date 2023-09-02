@@ -1,5 +1,5 @@
 import { exists } from "@common/exists";
-import { IsoValidity } from "@common/types";
+import { IsoValidity, NatType, Presence } from "@common/types";
 import type { DolphinManager } from "@dolphin/manager";
 import { DolphinLaunchType } from "@dolphin/types";
 import { app, clipboard, dialog, ipcMain, nativeImage, shell } from "electron";
@@ -192,17 +192,29 @@ export default function setupMainIpc({ dolphinManager }: { dolphinManager: Dolph
   });
 
   ipc_diagnosticNat.main!.handle(async () => {
-    const result = await natType();
-    return result;
+    try {
+      const result = await natType();
+      return result;
+    } catch {
+      return { address: "", natType: NatType.FAILED };
+    }
   });
 
   ipc_diagnosticPortMapping.main!.handle(async () => {
-    const result = await portMapping();
-    return result;
+    try {
+      const result = await portMapping();
+      return result;
+    } catch {
+      return { upnp: Presence.FAILED, natpmp: Presence.FAILED };
+    }
   });
 
   ipc_diagnosticCgnat.main!.handle(async ({ address }) => {
-    const result = await cgnat(address);
-    return result;
+    try {
+      const result = await cgnat(address);
+      return result;
+    } catch {
+      return { cgnat: Presence.FAILED };
+    }
   });
 }
