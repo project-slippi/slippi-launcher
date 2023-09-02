@@ -12,6 +12,7 @@ import osName from "os-name";
 import path from "path";
 import { fileExists } from "utils/fileExists";
 
+import { cgnat, natType, portMapping } from "./diagnostic";
 import { getLatestRelease } from "./github";
 import {
   ipc_checkForUpdate,
@@ -20,6 +21,9 @@ import {
   ipc_copyLogsToClipboard,
   ipc_deleteDesktopAppPath,
   ipc_deleteFiles,
+  ipc_diagnosticCgnat,
+  ipc_diagnosticNat,
+  ipc_diagnosticPortMapping,
   ipc_fetchNewsFeed,
   ipc_getLatestGitHubReleaseVersion,
   ipc_installUpdate,
@@ -185,5 +189,20 @@ export default function setupMainIpc({ dolphinManager }: { dolphinManager: Dolph
   ipc_showOpenDialog.main!.handle(async (options) => {
     const { canceled, filePaths } = await dialog.showOpenDialog(options);
     return { canceled, filePaths };
+  });
+
+  ipc_diagnosticNat.main!.handle(async () => {
+    const result = await natType();
+    return result;
+  });
+
+  ipc_diagnosticPortMapping.main!.handle(async () => {
+    const result = await portMapping();
+    return result;
+  });
+
+  ipc_diagnosticCgnat.main!.handle(async ({ address }) => {
+    const result = await cgnat(address);
+    return result;
   });
 }

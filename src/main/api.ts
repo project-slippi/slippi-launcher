@@ -7,6 +7,9 @@ import {
   ipc_copyLogsToClipboard,
   ipc_deleteDesktopAppPath,
   ipc_deleteFiles,
+  ipc_diagnosticCgnat,
+  ipc_diagnosticNat,
+  ipc_diagnosticPortMapping,
   ipc_fetchNewsFeed,
   ipc_getLatestGitHubReleaseVersion,
   ipc_installUpdate,
@@ -64,6 +67,18 @@ export default {
   },
   async showOpenDialog(options: Electron.OpenDialogOptions) {
     const { result } = await ipc_showOpenDialog.renderer!.trigger(options);
+    return result;
+  },
+  async diagnosticNat() {
+    const { result } = await ipc_diagnosticNat.renderer!.trigger({});
+    return result;
+  },
+  async diagnosticPortMapping() {
+    const { result } = await ipc_diagnosticPortMapping.renderer!.trigger({});
+    return result;
+  },
+  async diagnosticCgnat(address: string) {
+    const { result } = await ipc_diagnosticCgnat.renderer!.trigger({ address });
     return result;
   },
   onAppUpdateFound(handle: (version: string) => void) {
