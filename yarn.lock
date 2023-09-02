@@ -12942,6 +12942,13 @@ node-stream-zip@^1.15.0:
   resolved "https://registry.yarnpkg.com/node-stream-zip/-/node-stream-zip-1.15.0.tgz#158adb88ed8004c6c49a396b50a6a5de3bca33ea"
   integrity sha512-LN4fydt9TqhZhThkZIVQnF9cwjU3qmUH9h78Mx/K7d3VvfRqqwthLwJEUOEL0QPZ0XQmNN7be5Ggit5+4dq3Bw==
 
+nodejs-traceroute-ts@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/nodejs-traceroute-ts/-/nodejs-traceroute-ts-1.2.1.tgz#87be36471157a0be71b7ec41022c03414f4fc4d7"
+  integrity sha512-L9dqUbyubsPtTt8+FDY0P4v8zU735Fo7ZrTg/r+ZyokivhGc91M72ETrWaw5bzIJsDZylIEwzLKkKwfvWoyscQ==
+  dependencies:
+    validator "^13.7.0"
+
 nopt@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/nopt/-/nopt-5.0.0.tgz#530942bb58a512fccafe53fe210f13a25355dc88"
@@ -17279,6 +17286,11 @@ validate-npm-package-license@^3.0.1:
   dependencies:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
+
+validator@^13.7.0:
+  version "13.11.0"
+  resolved "https://registry.yarnpkg.com/validator/-/validator-13.11.0.tgz#23ab3fd59290c61248364eabf4067f04955fbb1b"
+  integrity sha512-Ii+sehpSfZy+At5nPdnyMhx78fEoPDkR2XW/zimHEL3MyGJQOCQ7WeP20jPYRz7ZCpcKLB21NxuXHF3bxjStBQ==
 
 vary@~1.1.2:
   version "1.1.2"

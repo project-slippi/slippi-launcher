@@ -2,6 +2,7 @@ import type { PortMapping } from "@common/types";
 import { CgnatPresence, NatpmpPresence, NatType, UpnpPresence } from "@common/types";
 import { createPmpClient, createUpnpClient } from "@xmcl/nat-api";
 import { gateway4async } from "default-gateway";
+import Tracer from "nodejs-traceroute-ts";
 import { createServer, request } from "stun";
 
 export async function natType(): Promise<{ address: string; natType: NatType }> {
@@ -59,9 +60,27 @@ export async function portMapping(): Promise<PortMapping> {
 }
 
 export async function cgnat(address: string): Promise<{ cgnat: CgnatPresence }> {
-  if (!address) {
-    return { cgnat: CgnatPresence.UNKNOWN };
-  }
-
-  return { cgnat: CgnatPresence.ABSENT };
+  return new Promise((resolve, reject) => {
+    let hops = 0;
+    const tracer = new Tracer();
+    tracer.on("hop", () => {
+      hops++;
+    });
+    const timeout = setTimeout(() => {
+      if (hops > 1) {
+        resolve({ cgnat: CgnatPresence.PRESENT });
+      } else {
+        reject("CGNAT timeout");
+      }
+    }, 9000);
+    tracer.on("close", (code) => {
+      clearTimeout(timeout);
+      if (code === 0 && hops > 0) {
+        resolve({ cgnat: hops === 1 ? CgnatPresence.ABSENT : CgnatPresence.PRESENT });
+      } else {
+        reject(code);
+      }
+    });
+    tracer.trace(address);
+  });
 }
