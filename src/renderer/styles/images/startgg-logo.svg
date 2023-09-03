@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 26.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="start.gg_icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+	 y="0px" viewBox="0 0 1001 1001" style="enable-background:new 0 0 1001 1001;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#3F80FF;}
+	.st1{fill:#FF2768;}
+</style>
+<g>
+	<path class="st0" d="M32.2,500h187.5c17.3,0,31.2-14,31.2-31.2V281.2c0-17.3,14-31.2,31.2-31.2h687.5c17.3,0,31.2-14,31.2-31.2
+		V31.2C1001,14,987,0,969.7,0H251C112.9,0,1,111.9,1,250v218.8C1,486,15,500,32.2,500z"/>
+	<path class="st1" d="M969.8,500H782.3c-17.3,0-31.2,14-31.2,31.2v187.5c0,17.3-14,31.2-31.2,31.2H32.3C15,750,1,764,1,781.2v187.5
+		C1,986,15,1000,32.3,1000H751c138.1,0,250-111.9,250-250V531.2C1001,514,987,500,969.8,500z"/>
+</g>
+</svg>
