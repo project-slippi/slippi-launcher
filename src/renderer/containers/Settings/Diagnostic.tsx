@@ -22,6 +22,12 @@ const inputBaseCss = css`
   margin: 8px 0;
 `;
 
+// This is used to correct an observed 1px vertical misalignment
+const AlignCenterDiv = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
 const DialogBody = styled.div`
   margin-bottom: 1em;
 `;
@@ -250,17 +256,12 @@ export const Diagnostic = React.memo(() => {
     cgnat === Presence.FAILED && ipAddress ? (
       <>
         <Typography variant="subtitle2">{"Run this command (Don't show publicly)"}</Typography>
-        <div
-          css={css`
-            display: flex;
-            align-items: center;
-          `}
-        >
+        <AlignCenterDiv>
           <InputBase css={inputBaseCss} disabled={true} value={displayedCgnatCommand} />
           <Button variant="contained" color="secondary" onClick={onCgnatCommandCopy} style={buttonStyle}>
             {cgnatCommandCopied ? "Copied!" : "Copy"}
           </Button>
-        </div>
+        </AlignCenterDiv>
         <DialogBody>
           {"More than one hop to your external IP address indicates CGNAT or Double NAT (or VPN)."}
         </DialogBody>
