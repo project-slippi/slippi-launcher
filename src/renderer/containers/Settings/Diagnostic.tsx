@@ -3,25 +3,48 @@ import { NatType, Presence } from "@common/types";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
 import InputBase from "@mui/material/InputBase";
 import Typography from "@mui/material/Typography";
 import React from "react";
 
 import { SettingItem } from "./SettingItem";
 
+const buttonStyle = { "margin-left": "8px", width: "96px" };
+const hiddenIpAddress = "***.***.***.***";
+
+const inputBaseCss = css`
+  padding: 4px 8px;
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.4);
+  font-size: 1em;
+  margin: 8px 0;
+`;
+
 const DialogBody = styled.div`
   margin-bottom: 1em;
 `;
+
+const getIpAddressTitle = (natType: NatType) => {
+  if (natType === NatType.FAILED) {
+    return "Faield to determine IP Address";
+  }
+  return "External IP Address (Don't show publicly)";
+};
+
+const getNatTypeTitle = (natType: NatType) => {
+  if (natType === NatType.FAILED) {
+    return "Failed to determine NAT type";
+  }
+  return "NAT Type";
+};
 
 const getNatTypeCommentary = (natType: NatType) => {
   switch (natType) {
     case NatType.NORMAL:
       return (
-        'Normal NAT - This is the most desirable NAT type. Also known as "easy", "full cone", "moderate", "open", ' +
+        'Normal NAT - This is the optimal result. Also known as "easy", "full cone", "moderate", "open", ' +
         '"port restricted cone", or "restricted cone" NAT.'
       );
     case NatType.SYMMETRIC:
@@ -38,6 +61,13 @@ const getNatTypeCommentary = (natType: NatType) => {
     default:
       return "";
   }
+};
+
+const getPortMappingTitle = (portMapping: PortMapping) => {
+  if (portMapping.upnp === Presence.FAILED || portMapping.natpmp === Presence.FAILED) {
+    return "Failed to determine port mapping availability";
+  }
+  return "Port mapping";
 };
 
 const getPortMappingCommentary = (portMapping: PortMapping) => {
@@ -59,16 +89,23 @@ const getPortMappingCommentary = (portMapping: PortMapping) => {
   return "";
 };
 
+const getCgnatTitle = (presence: Presence) => {
+  if (presence === Presence.FAILED) {
+    return "Failed to determine CGNAT or Double NAT presence";
+  }
+  return "CGNAT or Double NAT";
+};
+
 const getCgnatCommentary = (presence: Presence) => {
   switch (presence) {
     case Presence.ABSENT:
-      return "Not detected - This is the most desirable result.";
+      return "Not detected - This is the optimal result.";
     case Presence.PRESENT:
       return "Detected (it could also be a VPN) - You may have trouble connecting to other players.";
     case Presence.FAILED:
       return (
-        "Please try again later. If the failure persists, you can test this in your computer's terminal app. More " +
-        "than one hop to your external IP address indicates CGNAT, Double NAT, or VPN:"
+        "Please try again later. If the failure persists, you can test this in your computer's terminal app. See " +
+        "below:"
       );
     default:
       return "";
@@ -124,107 +161,158 @@ export const Diagnostic = React.memo(() => {
     return runDiagnostic();
   };
 
+  const ipAddressTitle = getIpAddressTitle(natType);
+  const [ipAddressCopied, setIpAddressCopied] = React.useState(false);
+  const onIpAddressCopy = React.useCallback(() => {
+    window.electron.clipboard.writeText(ipAddress);
+    setIpAddressCopied(true);
+    window.setTimeout(() => setIpAddressCopied(false), 2000);
+  }, [ipAddress]);
+  const [ipAddressHidden, setIpAddressHidden] = React.useState(true);
+  const onIpAddressShowHide = () => {
+    setIpAddressHidden(!ipAddressHidden);
+  };
+  const natTypeTitle = getNatTypeTitle(natType);
   const natTypeCommentary = getNatTypeCommentary(natType);
   const natTypeSection =
     natType === NatType.UNKNOWN ? (
       <>
-        <Typography variant="subtitle2">{"IP Address"}</Typography>
+        <Typography variant="subtitle2">{ipAddressTitle}</Typography>
         <LoadingButton loading={true} />
-        <Typography variant="subtitle2">{"NAT Type"}</Typography>
+        <Typography variant="subtitle2">{natTypeTitle}</Typography>
         <LoadingButton loading={true} />
       </>
     ) : natType === NatType.FAILED ? (
       <>
-        <Typography variant="subtitle2">{"Faield to determine IP Address"}</Typography>
-        <Typography variant="subtitle2">{"Failed to determine NAT type"}</Typography>
+        <Typography variant="subtitle2">{ipAddressTitle}</Typography>
+        <Typography variant="subtitle2">{natTypeTitle}</Typography>
         <DialogBody>{natTypeCommentary}</DialogBody>
       </>
     ) : (
       <>
-        <Typography variant="subtitle2">{"IP Address"}</Typography>
-        <DialogBody>{ipAddress}</DialogBody>
-        <Typography variant="subtitle2">{"NAT Type"}</Typography>
+        <Typography variant="subtitle2">{ipAddressTitle}</Typography>
+        <DialogBody>
+          <InputBase css={inputBaseCss} disabled={true} value={ipAddressHidden ? hiddenIpAddress : ipAddress} />
+          <Button variant="contained" color="secondary" onClick={onIpAddressCopy} style={buttonStyle}>
+            {ipAddressCopied ? "Copied!" : "Copy"}
+          </Button>
+          <Button variant="contained" color="secondary" onClick={onIpAddressShowHide} style={buttonStyle}>
+            {ipAddressHidden ? "Show" : "Hide"}
+          </Button>
+        </DialogBody>
+        <Typography variant="subtitle2">{natTypeTitle}</Typography>
         <DialogBody>{natTypeCommentary}</DialogBody>
       </>
     );
 
+  const portMappingTitle = getPortMappingTitle(portMapping);
   const portMappingCommentary = getPortMappingCommentary(portMapping);
   const portMappingSection =
     portMapping.upnp === Presence.UNKNOWN || portMapping.natpmp === Presence.UNKNOWN ? (
       <>
-        <Typography variant="subtitle2">{"Port mapping"}</Typography>
+        <Typography variant="subtitle2">{portMappingTitle}</Typography>
         <LoadingButton loading={true} />
-      </>
-    ) : portMapping.upnp === Presence.FAILED || portMapping.natpmp === Presence.FAILED ? (
-      <>
-        <Typography variant="subtitle2">{"Failed to determine port mapping availability"}</Typography>
-        <DialogBody>{portMappingCommentary}</DialogBody>
       </>
     ) : (
       <>
-        <Typography variant="subtitle2">{"Port mapping"}</Typography>
+        <Typography variant="subtitle2">{portMappingTitle}</Typography>
         <DialogBody>{portMappingCommentary}</DialogBody>
       </>
     );
 
+  const cgnatTitle = getCgnatTitle(cgnat);
   const cgnatCommentary = getCgnatCommentary(cgnat);
-  const cgnatCommand = (window.electron.common.isWindows ? "tracert " : "traceroute ") + ipAddress;
-  const [copied, setCopied] = React.useState(false);
-  const onCopy = React.useCallback(() => {
+  const tracerouteCommand = window.electron.common.isWindows ? "tracert" : "traceroute";
+  const cgnatCommand = tracerouteCommand + " " + ipAddress;
+  const displayedCgnatCommand = tracerouteCommand + " " + (ipAddressHidden ? hiddenIpAddress : ipAddress);
+  const [cgnatCommandCopied, setCgnatCommandCopied] = React.useState(false);
+  const onCgnatCommandCopy = React.useCallback(() => {
     window.electron.clipboard.writeText(cgnatCommand);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 2000);
+    setCgnatCommandCopied(true);
+    window.setTimeout(() => setCgnatCommandCopied(false), 2000);
   }, [cgnatCommand]);
   const cgnatSection =
     cgnat === Presence.UNKNOWN ? (
       <>
-        <Typography variant="subtitle2">{"CGNAT or Double NAT"}</Typography>
+        <Typography variant="subtitle2">{cgnatTitle}</Typography>
         <LoadingButton loading={true} />
       </>
-    ) : cgnat === Presence.FAILED && ipAddress ? (
-      <>
-        <Typography variant="subtitle2">{"Failed to determine CGNAT or Double NAT presence"}</Typography>
-        <DialogBody>{cgnatCommentary}</DialogBody>
-        <InputBase
-          css={css`
-            flex: 1;
-            padding: 5px 10px;
-            margin-right: 10px;
-            border-radius: 10px;
-            background-color: rgba(0, 0, 0, 0.4);
-            font-size: 14px;
-          `}
-          disabled={true}
-          value={cgnatCommand}
-        />
-        <Button variant="contained" color="secondary" onClick={onCopy}>
-          {copied ? "Copied!" : "Copy"}
-        </Button>
-      </>
-    ) : cgnat === Presence.FAILED ? (
+    ) : cgnat === Presence.FAILED && !ipAddress ? (
       <></>
     ) : (
       <>
-        <Typography variant="subtitle2">{"CGNAT or Double NAT"}</Typography>
+        <Typography variant="subtitle2">{cgnatTitle}</Typography>
         <DialogBody>{cgnatCommentary}</DialogBody>
       </>
     );
 
+  const cgnatCommandSection =
+    cgnat === Presence.FAILED && ipAddress ? (
+      <>
+        <Typography variant="subtitle2">{"Run this command (Don't show publicly)"}</Typography>
+        <div
+          css={css`
+            display: flex;
+            align-items: center;
+          `}
+        >
+          <InputBase css={inputBaseCss} disabled={true} value={displayedCgnatCommand} />
+          <Button variant="contained" color="secondary" onClick={onCgnatCommandCopy} style={buttonStyle}>
+            {cgnatCommandCopied ? "Copied!" : "Copy"}
+          </Button>
+        </div>
+        <DialogBody>
+          {"More than one hop to your external IP address indicates CGNAT or Double NAT (or VPN)."}
+        </DialogBody>
+      </>
+    ) : (
+      <></>
+    );
+
+  let diagnosticResults =
+    natTypeTitle + "\n" + natTypeCommentary + "\n\n" + portMappingTitle + "\n" + portMappingCommentary;
+  if (ipAddress) {
+    diagnosticResults += "\n\n" + cgnatTitle + "\n" + cgnatCommentary;
+  }
+  const [diagnosticResultsCopied, setDiagnosticResultsCopied] = React.useState(false);
+  const onFullCopy = React.useCallback(() => {
+    window.electron.clipboard.writeText(diagnosticResults);
+    setDiagnosticResultsCopied(true);
+    window.setTimeout(() => setDiagnosticResultsCopied(false), 2000);
+  }, [diagnosticResults]);
+
   return (
     <SettingItem
       name="Network Diagnostic"
-      description="Checks NAT type, port mapping capability, and CGNAT presence. Turn VPN off for accurate results."
+      description="Checks NAT type, port mapping availability, and CGNAT presence. Turn VPN off for accurate results."
     >
       <Button color="secondary" variant="contained" onClick={openDialog}>
         Run diagnostic
       </Button>
-      <Dialog open={dialogOpen} closeAfterTransition={true} onClose={() => setDialogOpen(false)}>
+      <Dialog open={dialogOpen} closeAfterTransition={true} onClose={() => setDialogOpen(false)} fullWidth={true}>
         <DialogTitle>Network Diagnostic</DialogTitle>
         <DialogContent>
           {natTypeSection}
           {portMappingSection}
           {cgnatSection}
+          {cgnatCommandSection}
         </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={onFullCopy}
+            disabled={
+              natType === NatType.UNKNOWN ||
+              portMapping.upnp === Presence.UNKNOWN ||
+              portMapping.natpmp === Presence.UNKNOWN ||
+              cgnat === Presence.UNKNOWN
+            }
+            style={{ width: "144px" }}
+          >
+            {diagnosticResultsCopied ? "Copied!" : "Copy results"}
+          </Button>
+        </DialogActions>
       </Dialog>
     </SettingItem>
   );
