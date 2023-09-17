@@ -12,7 +12,7 @@ import osName from "os-name";
 import path from "path";
 import { fileExists } from "utils/fileExists";
 
-import { cgnat, natType, portMapping } from "./diagnostic";
+import { getCgnatPresence, getNatType, getPortMappingPresence } from "./diagnostic";
 import { getLatestRelease } from "./github";
 import {
   ipc_checkForUpdate,
@@ -193,7 +193,7 @@ export default function setupMainIpc({ dolphinManager }: { dolphinManager: Dolph
 
   ipc_diagnosticNat.main!.handle(async () => {
     try {
-      const result = await natType();
+      const result = await getNatType();
       return result;
     } catch {
       return { address: "", natType: NatType.FAILED };
@@ -202,7 +202,7 @@ export default function setupMainIpc({ dolphinManager }: { dolphinManager: Dolph
 
   ipc_diagnosticPortMapping.main!.handle(async () => {
     try {
-      const result = await portMapping();
+      const result = await getPortMappingPresence();
       return result;
     } catch {
       return { upnp: Presence.FAILED, natpmp: Presence.FAILED };
@@ -211,7 +211,7 @@ export default function setupMainIpc({ dolphinManager }: { dolphinManager: Dolph
 
   ipc_diagnosticCgnat.main!.handle(async ({ address }) => {
     try {
-      const result = await cgnat(address);
+      const result = await getCgnatPresence(address);
       return result;
     } catch {
       return { cgnat: Presence.FAILED };

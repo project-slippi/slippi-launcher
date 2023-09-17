@@ -11,7 +11,7 @@ import React from "react";
 
 import { SettingItem } from "./SettingItem";
 
-const buttonStyle = { "margin-left": "8px", width: "96px" };
+const buttonStyle = { marginLeft: "8px", width: "96px" };
 const hiddenIpAddress = "***.***.***.***";
 
 const inputBaseCss = css`
@@ -34,7 +34,7 @@ const DialogBody = styled.div`
 
 const getIpAddressTitle = (natType: NatType) => {
   if (natType === NatType.FAILED) {
-    return "Faield to determine IP Address";
+    return "Failed to determine IP Address";
   }
   return "External IP Address (Don't show publicly)";
 };
@@ -46,24 +46,18 @@ const getNatTypeTitle = (natType: NatType) => {
   return "NAT Type";
 };
 
-const getNatTypeCommentary = (natType: NatType) => {
+const getNatTypeDescription = (natType: NatType) => {
   switch (natType) {
     case NatType.NORMAL:
-      return (
-        'Normal NAT - This is the optimal result. Also known as "easy", "full cone", "moderate", "open", ' +
-        '"port restricted cone", or "restricted cone" NAT.'
-      );
+      return `Normal NAT - This is the optimal result. Also known as "easy", "full cone", or "open" NAT.`;
     case NatType.SYMMETRIC:
-      return (
-        'Symmetric NAT - You may have trouble connecting to other players. Also known as "hard" or "strict" NAT. ' +
-        'If possible, please check your router settings to see if this can be changed to "easy", "full cone", ' +
-        '"moderate", "normal", "open", "port restricted cone", or "restricted cone" NAT.'
-      );
+      return `Symmetric NAT - You may have trouble connecting to other players.
+        Also known as "hard" or "strict" NAT.
+        If possible, please check your router settings to see if this can be changed to "easy", "full cone", "normal", or "open" NAT.`;
     case NatType.FAILED:
-      return (
-        "Please try again later. If the failure persists, this network may block UDP. In that case it will " +
-        "not be possible to use Slippi as well as many other online games and apps."
-      );
+      return `Please try again later.
+        If the failure persists, this network may block UDP.
+        In that case it will not be possible to use Slippi as well as many other online games and apps.`;
     default:
       return "";
   }
@@ -76,7 +70,7 @@ const getPortMappingTitle = (portMapping: PortMapping) => {
   return "Port mapping";
 };
 
-const getPortMappingCommentary = (portMapping: PortMapping) => {
+const getPortMappingDescription = (portMapping: PortMapping) => {
   if (portMapping.upnp === Presence.ABSENT && portMapping.natpmp === Presence.ABSENT) {
     return "Not available.";
   }
@@ -102,17 +96,16 @@ const getCgnatTitle = (presence: Presence) => {
   return "CGNAT or Double NAT";
 };
 
-const getCgnatCommentary = (presence: Presence) => {
+const getCgnatDescription = (presence: Presence) => {
   switch (presence) {
     case Presence.ABSENT:
       return "Not detected - This is the optimal result.";
     case Presence.PRESENT:
       return "Detected (it could also be a VPN) - You may have trouble connecting to other players.";
     case Presence.FAILED:
-      return (
-        "Please try again later. If the failure persists, you can test this in your computer's terminal app. See " +
-        "below:"
-      );
+      return `Please try again later.
+        If the failure persists, you can test this in your computer's terminal app.
+        See below:`;
     default:
       return "";
   }
@@ -179,7 +172,7 @@ export const Diagnostic = React.memo(() => {
     setIpAddressHidden(!ipAddressHidden);
   };
   const natTypeTitle = getNatTypeTitle(natType);
-  const natTypeCommentary = getNatTypeCommentary(natType);
+  const natTypeDescription = getNatTypeDescription(natType);
   const natTypeSection =
     natType === NatType.UNKNOWN ? (
       <>
@@ -192,7 +185,7 @@ export const Diagnostic = React.memo(() => {
       <>
         <Typography variant="subtitle2">{ipAddressTitle}</Typography>
         <Typography variant="subtitle2">{natTypeTitle}</Typography>
-        <DialogBody>{natTypeCommentary}</DialogBody>
+        <DialogBody>{natTypeDescription}</DialogBody>
       </>
     ) : (
       <>
@@ -207,12 +200,12 @@ export const Diagnostic = React.memo(() => {
           </Button>
         </DialogBody>
         <Typography variant="subtitle2">{natTypeTitle}</Typography>
-        <DialogBody>{natTypeCommentary}</DialogBody>
+        <DialogBody>{natTypeDescription}</DialogBody>
       </>
     );
 
   const portMappingTitle = getPortMappingTitle(portMapping);
-  const portMappingCommentary = getPortMappingCommentary(portMapping);
+  const portMappingDescription = getPortMappingDescription(portMapping);
   const portMappingSection =
     portMapping.upnp === Presence.UNKNOWN || portMapping.natpmp === Presence.UNKNOWN ? (
       <>
@@ -222,12 +215,12 @@ export const Diagnostic = React.memo(() => {
     ) : (
       <>
         <Typography variant="subtitle2">{portMappingTitle}</Typography>
-        <DialogBody>{portMappingCommentary}</DialogBody>
+        <DialogBody>{portMappingDescription}</DialogBody>
       </>
     );
 
   const cgnatTitle = getCgnatTitle(cgnat);
-  const cgnatCommentary = getCgnatCommentary(cgnat);
+  const cgnatDescription = getCgnatDescription(cgnat);
   const tracerouteCommand = window.electron.common.isWindows ? "tracert" : "traceroute";
   const cgnatCommand = tracerouteCommand + " " + ipAddress;
   const displayedCgnatCommand = tracerouteCommand + " " + (ipAddressHidden ? hiddenIpAddress : ipAddress);
@@ -248,7 +241,7 @@ export const Diagnostic = React.memo(() => {
     ) : (
       <>
         <Typography variant="subtitle2">{cgnatTitle}</Typography>
-        <DialogBody>{cgnatCommentary}</DialogBody>
+        <DialogBody>{cgnatDescription}</DialogBody>
       </>
     );
 
@@ -271,9 +264,9 @@ export const Diagnostic = React.memo(() => {
     );
 
   let diagnosticResults =
-    natTypeTitle + "\n" + natTypeCommentary + "\n\n" + portMappingTitle + "\n" + portMappingCommentary;
+    natTypeTitle + "\n" + natTypeDescription + "\n\n" + portMappingTitle + "\n" + portMappingDescription;
   if (ipAddress) {
-    diagnosticResults += "\n\n" + cgnatTitle + "\n" + cgnatCommentary;
+    diagnosticResults += "\n\n" + cgnatTitle + "\n" + cgnatDescription;
   }
   const [diagnosticResultsCopied, setDiagnosticResultsCopied] = React.useState(false);
   const onFullCopy = React.useCallback(() => {

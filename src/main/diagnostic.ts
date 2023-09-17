@@ -5,7 +5,7 @@ import { gateway4async } from "default-gateway";
 import Tracer from "nodejs-traceroute-ts";
 import { createServer, request } from "stun";
 
-export async function natType(): Promise<{ address: string; natType: NatType }> {
+export async function getNatType(): Promise<{ address: string; natType: NatType }> {
   const stunServer = createServer({ type: "udp4" });
   const stunResponse1 = await request("stun1.l.google.com:19302", { server: stunServer });
   const stunResponse2 = await request("stun2.l.google.com:19302", { server: stunServer });
@@ -15,7 +15,7 @@ export async function natType(): Promise<{ address: string; natType: NatType }> 
   return { address: address1.address, natType: address1.port === address2.port ? NatType.NORMAL : NatType.SYMMETRIC };
 }
 
-export async function portMapping(): Promise<PortMapping> {
+export async function getPortMappingPresence(): Promise<PortMapping> {
   let upnpPresence = Presence.UNKNOWN;
   const upnpClient = await createUpnpClient();
   const upnpPromise = upnpClient
@@ -59,7 +59,7 @@ export async function portMapping(): Promise<PortMapping> {
   return { upnp: upnpPresence, natpmp: natpmpPresence } as PortMapping;
 }
 
-export async function cgnat(address: string): Promise<{ cgnat: Presence }> {
+export async function getCgnatPresence(address: string): Promise<{ cgnat: Presence }> {
   return new Promise((resolve, reject) => {
     let hops = 0;
     const tracer = new Tracer();
