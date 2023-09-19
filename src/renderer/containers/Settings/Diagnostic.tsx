@@ -9,8 +9,6 @@ import InputBase from "@mui/material/InputBase";
 import Typography from "@mui/material/Typography";
 import React from "react";
 
-import { SettingItem } from "./SettingItem";
-
 const buttonStyle = { marginLeft: "8px", width: "96px" };
 const hiddenIpAddress = "***.***.***.***";
 
@@ -302,13 +300,14 @@ export const Diagnostic = React.memo(() => {
   ]);
 
   return (
-    <SettingItem
-      name="Network Diagnostic"
-      description="Checks NAT type, port mapping availability, and CGNAT presence. Turn VPN off for accurate results."
-    >
-      <Button color="secondary" variant="contained" onClick={openDialog}>
-        Run diagnostic
-      </Button>
+    <>
+      <h2>Network Diagnostic</h2>
+      <p>Checks NAT type, port mapping availability, and CGNAT presence. Turn VPN off for accurate results.</p>
+      <p>
+        <Button color="secondary" variant="contained" onClick={openDialog}>
+          Run diagnostic
+        </Button>
+      </p>
       <Dialog open={dialogOpen} closeAfterTransition={true} onClose={() => setDialogOpen(false)} fullWidth={true}>
         <DialogTitle>Network Diagnostic</DialogTitle>
         <DialogContent>
@@ -334,6 +333,6 @@ export const Diagnostic = React.memo(() => {
           </Button>
         </DialogActions>
       </Dialog>
-    </SettingItem>
+    </>
   );
 });

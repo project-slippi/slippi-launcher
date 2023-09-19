@@ -5,7 +5,6 @@ import { Toggle } from "@/components/FormInputs/Toggle";
 import { useAutoUpdateLauncher } from "@/lib/hooks/useSettings";
 import { useToasts } from "@/lib/hooks/useToasts";
 
-import { Diagnostic } from "./Diagnostic";
 import { SettingItem } from "./SettingItem";
 
 export const AdvancedAppSettings = React.memo(() => {
@@ -21,7 +20,6 @@ export const AdvancedAppSettings = React.memo(() => {
           description="Automatically install Slippi Launcher updates when they become available."
         />
       </SettingItem>
-      <Diagnostic />
       <ClearTempFilesForm />
     </div>
   );
