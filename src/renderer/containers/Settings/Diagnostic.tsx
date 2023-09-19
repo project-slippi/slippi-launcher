@@ -173,51 +173,63 @@ export const Diagnostic = React.memo(() => {
   };
   const natTypeTitle = getNatTypeTitle(natType);
   const natTypeDescription = getNatTypeDescription(natType);
-  const natTypeSection =
-    natType === NatType.UNKNOWN ? (
-      <>
-        <Typography variant="subtitle2">{ipAddressTitle}</Typography>
-        <LoadingButton loading={true} />
-        <Typography variant="subtitle2">{natTypeTitle}</Typography>
-        <LoadingButton loading={true} />
-      </>
-    ) : natType === NatType.FAILED ? (
-      <>
-        <Typography variant="subtitle2">{ipAddressTitle}</Typography>
-        <Typography variant="subtitle2">{natTypeTitle}</Typography>
-        <DialogBody>{natTypeDescription}</DialogBody>
-      </>
-    ) : (
-      <>
-        <Typography variant="subtitle2">{ipAddressTitle}</Typography>
-        <DialogBody>
-          <InputBase css={inputBaseCss} disabled={true} value={ipAddressHidden ? hiddenIpAddress : ipAddress} />
-          <Button variant="contained" color="secondary" onClick={onIpAddressCopy} style={buttonStyle}>
-            {ipAddressCopied ? "Copied!" : "Copy"}
-          </Button>
-          <Button variant="contained" color="secondary" onClick={onIpAddressShowHide} style={buttonStyle}>
-            {ipAddressHidden ? "Show" : "Hide"}
-          </Button>
-        </DialogBody>
-        <Typography variant="subtitle2">{natTypeTitle}</Typography>
-        <DialogBody>{natTypeDescription}</DialogBody>
-      </>
-    );
+  const getNatTypeSection = () => {
+    switch (natType) {
+      case NatType.UNKNOWN:
+        return (
+          <>
+            <Typography variant="subtitle2">{ipAddressTitle}</Typography>
+            <LoadingButton loading={true} />
+            <Typography variant="subtitle2">{natTypeTitle}</Typography>
+            <LoadingButton loading={true} />
+          </>
+        );
+      case NatType.FAILED:
+        return (
+          <>
+            <Typography variant="subtitle2">{ipAddressTitle}</Typography>
+            <Typography variant="subtitle2">{natTypeTitle}</Typography>
+            <DialogBody>{natTypeDescription}</DialogBody>
+          </>
+        );
+      default:
+        return (
+          <>
+            <Typography variant="subtitle2">{ipAddressTitle}</Typography>
+            <DialogBody>
+              <InputBase css={inputBaseCss} disabled={true} value={ipAddressHidden ? hiddenIpAddress : ipAddress} />
+              <Button variant="contained" color="secondary" onClick={onIpAddressCopy} style={buttonStyle}>
+                {ipAddressCopied ? "Copied!" : "Copy"}
+              </Button>
+              <Button variant="contained" color="secondary" onClick={onIpAddressShowHide} style={buttonStyle}>
+                {ipAddressHidden ? "Show" : "Hide"}
+              </Button>
+            </DialogBody>
+            <Typography variant="subtitle2">{natTypeTitle}</Typography>
+            <DialogBody>{natTypeDescription}</DialogBody>
+          </>
+        );
+    }
+  };
 
   const portMappingTitle = getPortMappingTitle(portMapping);
   const portMappingDescription = getPortMappingDescription(portMapping);
-  const portMappingSection =
-    portMapping.upnp === Presence.UNKNOWN || portMapping.natpmp === Presence.UNKNOWN ? (
-      <>
-        <Typography variant="subtitle2">{portMappingTitle}</Typography>
-        <LoadingButton loading={true} />
-      </>
-    ) : (
+  const getPortMappingSection = () => {
+    if (portMapping.upnp === Presence.UNKNOWN || portMapping.natpmp === Presence.UNKNOWN) {
+      return (
+        <>
+          <Typography variant="subtitle2">{portMappingTitle}</Typography>
+          <LoadingButton loading={true} />
+        </>
+      );
+    }
+    return (
       <>
         <Typography variant="subtitle2">{portMappingTitle}</Typography>
         <DialogBody>{portMappingDescription}</DialogBody>
       </>
     );
+  };
 
   const cgnatTitle = getCgnatTitle(cgnat);
   const cgnatDescription = getCgnatDescription(cgnat);
@@ -230,38 +242,45 @@ export const Diagnostic = React.memo(() => {
     setCgnatCommandCopied(true);
     window.setTimeout(() => setCgnatCommandCopied(false), 2000);
   }, [cgnatCommand]);
-  const cgnatSection =
-    cgnat === Presence.UNKNOWN ? (
-      <>
-        <Typography variant="subtitle2">{cgnatTitle}</Typography>
-        <LoadingButton loading={true} />
-      </>
-    ) : cgnat === Presence.FAILED && !ipAddress ? (
-      <></>
-    ) : (
+  const getCgnatSection = () => {
+    if (cgnat === Presence.UNKNOWN) {
+      return (
+        <>
+          <Typography variant="subtitle2">{cgnatTitle}</Typography>
+          <LoadingButton loading={true} />
+        </>
+      );
+    }
+    if (cgnat === Presence.FAILED && !ipAddress) {
+      return <></>;
+    }
+    return (
       <>
         <Typography variant="subtitle2">{cgnatTitle}</Typography>
         <DialogBody>{cgnatDescription}</DialogBody>
       </>
     );
+  };
 
-  const cgnatCommandSection =
-    cgnat === Presence.FAILED && ipAddress ? (
-      <>
-        <Typography variant="subtitle2">{"Run this command (Don't show publicly)"}</Typography>
-        <AlignCenterDiv>
-          <InputBase css={inputBaseCss} disabled={true} value={displayedCgnatCommand} />
-          <Button variant="contained" color="secondary" onClick={onCgnatCommandCopy} style={buttonStyle}>
-            {cgnatCommandCopied ? "Copied!" : "Copy"}
-          </Button>
-        </AlignCenterDiv>
-        <DialogBody>
-          {"More than one hop to your external IP address indicates CGNAT or Double NAT (or VPN)."}
-        </DialogBody>
-      </>
-    ) : (
-      <></>
-    );
+  const getCgnatCommandSection = () => {
+    if (cgnat === Presence.FAILED && ipAddress) {
+      return (
+        <>
+          <Typography variant="subtitle2">{"Run this command (Don't show publicly)"}</Typography>
+          <AlignCenterDiv>
+            <InputBase css={inputBaseCss} disabled={true} value={displayedCgnatCommand} />
+            <Button variant="contained" color="secondary" onClick={onCgnatCommandCopy} style={buttonStyle}>
+              {cgnatCommandCopied ? "Copied!" : "Copy"}
+            </Button>
+          </AlignCenterDiv>
+          <DialogBody>
+            {"More than one hop to your external IP address indicates CGNAT or Double NAT (or VPN)."}
+          </DialogBody>
+        </>
+      );
+    }
+    return <></>;
+  };
 
   const [diagnosticResultsCopied, setDiagnosticResultsCopied] = React.useState(false);
   const onDiagnosticResultsCopy = React.useCallback(() => {
@@ -293,10 +312,10 @@ export const Diagnostic = React.memo(() => {
       <Dialog open={dialogOpen} closeAfterTransition={true} onClose={() => setDialogOpen(false)} fullWidth={true}>
         <DialogTitle>Network Diagnostic</DialogTitle>
         <DialogContent>
-          {natTypeSection}
-          {portMappingSection}
-          {cgnatSection}
-          {cgnatCommandSection}
+          {getNatTypeSection()}
+          {getPortMappingSection()}
+          {getCgnatSection()}
+          {getCgnatCommandSection()}
         </DialogContent>
         <DialogActions>
           <Button
