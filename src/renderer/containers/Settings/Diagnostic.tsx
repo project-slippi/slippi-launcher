@@ -124,7 +124,7 @@ export const Diagnostic = React.memo(() => {
   const runNatCgnatDiagnostics = async () => {
     let resNat;
     try {
-      resNat = await window.electron.common.diagnosticNat();
+      resNat = await window.electron.common.runDiagnosticNat();
       setIpAddress(resNat.address);
       setNatType(resNat.natType);
     } catch {
@@ -132,7 +132,7 @@ export const Diagnostic = React.memo(() => {
       return;
     }
     try {
-      const resCgnat = await window.electron.common.diagnosticCgnat(resNat.address);
+      const resCgnat = await window.electron.common.runDiagnosticCgnat(resNat.address);
       setCgnat(resCgnat.cgnat);
     } catch {
       setCgnat(Presence.FAILED);
@@ -141,23 +141,23 @@ export const Diagnostic = React.memo(() => {
 
   const runDiagnostic = async () => {
     const portMappingPromise = window.electron.common
-      .diagnosticPortMapping()
+      .runDiagnosticPortMapping()
       .then((resPortMapping) => {
         setPortMapping(resPortMapping);
       })
       .catch(() => {
         setPortMapping({ upnp: Presence.FAILED, natpmp: Presence.FAILED });
       });
-    return Promise.all([runNatCgnatDiagnostics(), portMappingPromise]);
+    await Promise.all([runNatCgnatDiagnostics(), portMappingPromise]);
   };
 
-  const openDialog = () => {
+  const openDialog = async () => {
     setIpAddress("");
     setNatType(NatType.UNKNOWN);
     setPortMapping({ upnp: Presence.UNKNOWN, natpmp: Presence.UNKNOWN });
     setCgnat(Presence.UNKNOWN);
     setDialogOpen(true);
-    return runDiagnostic();
+    await runDiagnostic();
   };
 
   const ipAddressTitle = getIpAddressTitle(natType);

@@ -7,15 +7,15 @@ import {
   ipc_copyLogsToClipboard,
   ipc_deleteDesktopAppPath,
   ipc_deleteFiles,
-  ipc_diagnosticCgnat,
-  ipc_diagnosticNat,
-  ipc_diagnosticPortMapping,
   ipc_fetchNewsFeed,
   ipc_getLatestGitHubReleaseVersion,
   ipc_installUpdate,
   ipc_launcherUpdateDownloadingEvent,
   ipc_launcherUpdateFoundEvent,
   ipc_launcherUpdateReadyEvent,
+  ipc_runDiagnosticCgnat,
+  ipc_runDiagnosticNat,
+  ipc_runDiagnosticPortMapping,
   ipc_showOpenDialog,
 } from "./ipc";
 
@@ -69,16 +69,16 @@ export default {
     const { result } = await ipc_showOpenDialog.renderer!.trigger(options);
     return result;
   },
-  async diagnosticNat() {
-    const { result } = await ipc_diagnosticNat.renderer!.trigger({});
+  async runDiagnosticNat() {
+    const { result } = await ipc_runDiagnosticNat.renderer!.trigger({});
     return result;
   },
-  async diagnosticPortMapping() {
-    const { result } = await ipc_diagnosticPortMapping.renderer!.trigger({});
+  async runDiagnosticPortMapping() {
+    const { result } = await ipc_runDiagnosticPortMapping.renderer!.trigger({});
     return result;
   },
-  async diagnosticCgnat(address: string) {
-    const { result } = await ipc_diagnosticCgnat.renderer!.trigger({ address });
+  async runDiagnosticCgnat(address: string) {
+    const { result } = await ipc_runDiagnosticCgnat.renderer!.trigger({ address });
     return result;
   },
   onAppUpdateFound(handle: (version: string) => void) {

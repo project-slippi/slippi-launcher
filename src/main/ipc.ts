@@ -34,15 +34,23 @@ export const ipc_showOpenDialog = makeEndpoint.main(
 
 export const ipc_clearTempFolder = makeEndpoint.main("clearTempFolder", <EmptyPayload>_, <SuccessPayload>_);
 
-export const ipc_diagnosticNat = makeEndpoint.main(
-  "diagnosticNat",
+export const ipc_runDiagnosticNat = makeEndpoint.main(
+  "runDiagnosticNat",
   <EmptyPayload>_,
   <{ address: string; natType: NatType }>_,
 );
 
-export const ipc_diagnosticPortMapping = makeEndpoint.main("diagnosticPortMapping", <EmptyPayload>_, <PortMapping>_);
+export const ipc_runDiagnosticPortMapping = makeEndpoint.main(
+  "runDiagnosticPortMapping",
+  <EmptyPayload>_,
+  <PortMapping>_,
+);
 
-export const ipc_diagnosticCgnat = makeEndpoint.main("diagnosticCgnat", <{ address: string }>_, <{ cgnat: Presence }>_);
+export const ipc_runDiagnosticCgnat = makeEndpoint.main(
+  "runDiagnosticCgnat",
+  <{ address: string }>_,
+  <{ cgnat: Presence }>_,
+);
 
 // Events
 

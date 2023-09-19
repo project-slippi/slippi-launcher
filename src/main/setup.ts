@@ -21,15 +21,15 @@ import {
   ipc_copyLogsToClipboard,
   ipc_deleteDesktopAppPath,
   ipc_deleteFiles,
-  ipc_diagnosticCgnat,
-  ipc_diagnosticNat,
-  ipc_diagnosticPortMapping,
   ipc_fetchNewsFeed,
   ipc_getLatestGitHubReleaseVersion,
   ipc_installUpdate,
   ipc_launcherUpdateDownloadingEvent,
   ipc_launcherUpdateFoundEvent,
   ipc_launcherUpdateReadyEvent,
+  ipc_runDiagnosticCgnat,
+  ipc_runDiagnosticNat,
+  ipc_runDiagnosticPortMapping,
   ipc_showOpenDialog,
 } from "./ipc";
 import { fetchNewsFeedData } from "./newsFeed";
@@ -191,7 +191,7 @@ export default function setupMainIpc({ dolphinManager }: { dolphinManager: Dolph
     return { canceled, filePaths };
   });
 
-  ipc_diagnosticNat.main!.handle(async () => {
+  ipc_runDiagnosticNat.main!.handle(async () => {
     try {
       const result = await getNatType();
       return result;
@@ -200,7 +200,7 @@ export default function setupMainIpc({ dolphinManager }: { dolphinManager: Dolph
     }
   });
 
-  ipc_diagnosticPortMapping.main!.handle(async () => {
+  ipc_runDiagnosticPortMapping.main!.handle(async () => {
     try {
       const result = await getPortMappingPresence();
       return result;
@@ -209,7 +209,7 @@ export default function setupMainIpc({ dolphinManager }: { dolphinManager: Dolph
     }
   });
 
-  ipc_diagnosticCgnat.main!.handle(async ({ address }) => {
+  ipc_runDiagnosticCgnat.main!.handle(async ({ address }) => {
     try {
       const result = await getCgnatPresence(address);
       return result;
