@@ -12947,10 +12947,10 @@ node-stream-zip@^1.15.0:
   resolved "https://registry.yarnpkg.com/node-stream-zip/-/node-stream-zip-1.15.0.tgz#158adb88ed8004c6c49a396b50a6a5de3bca33ea"
   integrity sha512-LN4fydt9TqhZhThkZIVQnF9cwjU3qmUH9h78Mx/K7d3VvfRqqwthLwJEUOEL0QPZ0XQmNN7be5Ggit5+4dq3Bw==
 
-nodejs-traceroute-ts@^1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/nodejs-traceroute-ts/-/nodejs-traceroute-ts-1.2.1.tgz#87be36471157a0be71b7ec41022c03414f4fc4d7"
-  integrity sha512-L9dqUbyubsPtTt8+FDY0P4v8zU735Fo7ZrTg/r+ZyokivhGc91M72ETrWaw5bzIJsDZylIEwzLKkKwfvWoyscQ==
+nodejs-traceroute@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/nodejs-traceroute/-/nodejs-traceroute-2.0.0.tgz#1dea1bb1c83e9ea8a1e184e6bb0f34ac37533df7"
+  integrity sha512-9U7A7ygkdS/Ff1CyjdD26654mq5H4yqiXepn6gJPllEjo0LLV/Rcbm8m4tofH0KqebRYclzF+vwNM3HIU9k7aA==
   dependencies:
     validator "^13.7.0"
 

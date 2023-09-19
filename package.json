@@ -178,7 +178,7 @@
     "moment": "^2.29.4",
     "mousetrap": "^1.6.5",
     "node-stream-zip": "^1.15.0",
-    "nodejs-traceroute-ts": "^1.2.1",
+    "nodejs-traceroute": "2.0.0",
     "notistack": "^3.0.0-alpha.2",
     "obs-websocket-js": "^5.0.1",
     "observable-fns": "^0.6.1",

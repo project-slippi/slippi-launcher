@@ -2,7 +2,7 @@ import type { PortMapping } from "@common/types";
 import { NatType, Presence } from "@common/types";
 import { createPmpClient, createUpnpClient } from "@xmcl/nat-api";
 import { gateway4async } from "default-gateway";
-import Tracer from "nodejs-traceroute-ts";
+import Tracer from "nodejs-traceroute";
 import { createServer, request } from "stun";
 
 export async function getNatType(): Promise<{ address: string; natType: NatType }> {
