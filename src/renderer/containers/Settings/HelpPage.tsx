@@ -13,7 +13,10 @@ import { SupportBox } from "./SupportBox";
 const PaperInnerCss = css`
   border-radius: 10px;
   padding: 10px 20px;
-  * {
+
+  code,
+  li,
+  p {
     color: #bbb;
   }
 
