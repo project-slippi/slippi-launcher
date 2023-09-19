@@ -222,8 +222,8 @@ export const Diagnostic = React.memo(() => {
   const cgnatTitle = getCgnatTitle(cgnat);
   const cgnatDescription = getCgnatDescription(cgnat);
   const tracerouteCommand = window.electron.common.isWindows ? "tracert" : "traceroute";
-  const cgnatCommand = tracerouteCommand + " " + ipAddress;
-  const displayedCgnatCommand = tracerouteCommand + " " + (ipAddressHidden ? hiddenIpAddress : ipAddress);
+  const cgnatCommand = `${tracerouteCommand} ${ipAddress}`;
+  const displayedCgnatCommand = `${tracerouteCommand} ${ipAddressHidden ? hiddenIpAddress : ipAddress}`;
   const [cgnatCommandCopied, setCgnatCommandCopied] = React.useState(false);
   const onCgnatCommandCopy = React.useCallback(() => {
     window.electron.clipboard.writeText(cgnatCommand);
@@ -263,17 +263,24 @@ export const Diagnostic = React.memo(() => {
       <></>
     );
 
-  let diagnosticResults =
-    natTypeTitle + "\n" + natTypeDescription + "\n\n" + portMappingTitle + "\n" + portMappingDescription;
-  if (ipAddress) {
-    diagnosticResults += "\n\n" + cgnatTitle + "\n" + cgnatDescription;
-  }
   const [diagnosticResultsCopied, setDiagnosticResultsCopied] = React.useState(false);
-  const onFullCopy = React.useCallback(() => {
+  const onDiagnosticResultsCopy = React.useCallback(() => {
+    let diagnosticResults = `${natTypeTitle}\n${natTypeDescription}\n\n${portMappingTitle}\n${portMappingDescription}`;
+    if (ipAddress) {
+      diagnosticResults += `\n\n${cgnatTitle}\n${cgnatDescription}`;
+    }
     window.electron.clipboard.writeText(diagnosticResults);
     setDiagnosticResultsCopied(true);
     window.setTimeout(() => setDiagnosticResultsCopied(false), 2000);
-  }, [diagnosticResults]);
+  }, [
+    cgnatDescription,
+    cgnatTitle,
+    ipAddress,
+    natTypeDescription,
+    natTypeTitle,
+    portMappingDescription,
+    portMappingTitle,
+  ]);
 
   return (
     <SettingItem
@@ -295,7 +302,7 @@ export const Diagnostic = React.memo(() => {
           <Button
             variant="contained"
             color="secondary"
-            onClick={onFullCopy}
+            onClick={onDiagnosticResultsCopy}
             disabled={
               natType === NatType.UNKNOWN ||
               portMapping.upnp === Presence.UNKNOWN ||
