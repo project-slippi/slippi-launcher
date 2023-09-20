@@ -10,6 +10,8 @@ import { Button } from "@/components/FormInputs";
 import { useToasts } from "@/lib/hooks/useToasts";
 import { ReactComponent as DiscordIcon } from "@/styles/images/discord.svg";
 
+import { Diagnostic } from "./Diagnostic";
+
 const log = window.electron.log;
 
 export const SupportBox = () => {
@@ -80,6 +82,9 @@ export const SupportBox = () => {
           <Button startIcon={<FileCopyIcon />} onClick={onCopy}>
             Copy logs
           </Button>
+        </div>
+        <div>
+          <Diagnostic />
         </div>
       </div>
     </Outer>

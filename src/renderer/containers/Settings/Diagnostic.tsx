@@ -1,7 +1,9 @@
+import { colors } from "@common/colors";
 import type { PortMapping } from "@common/types";
 import { NatType, Presence } from "@common/types";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
+import NetworkCheckIcon from "@mui/icons-material/NetworkCheck";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import Button from "@mui/material/Button";
@@ -9,8 +11,10 @@ import InputBase from "@mui/material/InputBase";
 import Typography from "@mui/material/Typography";
 import React from "react";
 
+import { Button as ActionButton } from "@/components/FormInputs";
+
 const buttonStyle = { marginLeft: "8px", width: "96px" };
-const hiddenIpAddress = "***.***.***.***";
+const hiddenIpAddress = "···.···.···.···";
 
 const inputBaseCss = css`
   padding: 4px 8px;
@@ -34,7 +38,7 @@ const getIpAddressTitle = (natType: NatType) => {
   if (natType === NatType.FAILED) {
     return "Failed to determine IP Address";
   }
-  return "External IP Address (Don't show publicly)";
+  return "External IP Address";
 };
 
 const getNatTypeTitle = (natType: NatType) => {
@@ -196,11 +200,11 @@ export const Diagnostic = React.memo(() => {
             <Typography variant="subtitle2">{ipAddressTitle}</Typography>
             <DialogBody>
               <InputBase css={inputBaseCss} disabled={true} value={ipAddressHidden ? hiddenIpAddress : ipAddress} />
+              <Button variant="contained" color="secondary" onClick={onIpAddressShowHide} style={buttonStyle}>
+                {ipAddressHidden ? "Reveal" : "Hide"}
+              </Button>
               <Button variant="contained" color="secondary" onClick={onIpAddressCopy} style={buttonStyle}>
                 {ipAddressCopied ? "Copied!" : "Copy"}
-              </Button>
-              <Button variant="contained" color="secondary" onClick={onIpAddressShowHide} style={buttonStyle}>
-                {ipAddressHidden ? "Show" : "Hide"}
               </Button>
             </DialogBody>
             <Typography variant="subtitle2">{natTypeTitle}</Typography>
@@ -264,7 +268,7 @@ export const Diagnostic = React.memo(() => {
     if (cgnat === Presence.FAILED && ipAddress) {
       return (
         <>
-          <Typography variant="subtitle2">{"Run this command (Don't show publicly)"}</Typography>
+          <Typography variant="subtitle2">{"Run this command"}</Typography>
           <AlignCenterDiv>
             <InputBase css={inputBaseCss} disabled={true} value={displayedCgnatCommand} />
             <Button variant="contained" color="secondary" onClick={onCgnatCommandCopy} style={buttonStyle}>
@@ -301,13 +305,14 @@ export const Diagnostic = React.memo(() => {
 
   return (
     <>
-      <h2>Network Diagnostic</h2>
-      <p>Checks NAT type, port mapping availability, and CGNAT presence. Turn VPN off for accurate results.</p>
-      <p>
-        <Button color="secondary" variant="contained" onClick={openDialog}>
-          Run diagnostic
-        </Button>
-      </p>
+      <ActionButton
+        startIcon={<NetworkCheckIcon fill={colors.purpleLighter} style={{ height: 18, width: 18 }} />}
+        color="secondary"
+        variant="contained"
+        onClick={openDialog}
+      >
+        Check network issues
+      </ActionButton>
       <Dialog open={dialogOpen} closeAfterTransition={true} onClose={() => setDialogOpen(false)} fullWidth={true}>
         <DialogTitle>Network Diagnostic</DialogTitle>
         <DialogContent>
