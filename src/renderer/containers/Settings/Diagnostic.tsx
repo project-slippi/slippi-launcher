@@ -315,6 +315,13 @@ export const Diagnostic = React.memo(() => {
       </ActionButton>
       <Dialog open={dialogOpen} closeAfterTransition={true} onClose={() => setDialogOpen(false)} fullWidth={true}>
         <DialogTitle>Network Diagnostic</DialogTitle>
+        <DialogContent
+          css={css`
+            padding-bottom: 0;
+          `}
+        >
+          Checks NAT type, port mapping availability, and CGNAT presence. Turn VPN off for accurate results.
+        </DialogContent>
         <DialogContent>
           {getNatTypeSection()}
           {getPortMappingSection()}
