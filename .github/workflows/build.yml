@@ -84,7 +84,7 @@ jobs:
         shell: bash
         run: |
           msg="$(git log -1 --no-merges --pretty=%B)"
-          if [[ ! $msg =~ "^release.*" ]] then;
+          if [[ ! $msg =~ "^release.*" ]]; then
             exit 0;
           fi
           echo "ES_USERNAME=${{ secrets.ES_USERNAME }}" >> $GITHUB_ENV
