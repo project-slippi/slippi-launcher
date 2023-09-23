@@ -84,7 +84,9 @@ jobs:
         shell: bash
         run: |
           msg="$(git log -1 --no-merges --pretty=%B)"
-          if [[ ! $msg =~ "^release.*" ]]; then
+          if [[ ! $msg =~ "^release.*" ]];
+          then
+            echo "not a release, skipping code signing"
             exit 0;
           fi
           echo "ES_USERNAME=${{ secrets.ES_USERNAME }}" >> $GITHUB_ENV
