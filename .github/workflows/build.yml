@@ -118,7 +118,6 @@ jobs:
           echo ${{ secrets.ENVFILE }} > .env
           yarn run package
         env:
-          CI: true
           NODE_OPTIONS: "--max-old-space-size=8192"
           USE_HARD_LINKS: false # because of https://github.com/electron-userland/electron-builder/issues/3179
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
