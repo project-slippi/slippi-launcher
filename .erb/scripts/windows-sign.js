@@ -15,8 +15,7 @@ exports.default = async (config) => {
     process.platform !== "win32" ||
     [ES_CREDENTIAL_ID, ES_USERNAME, ES_PASSWORD, ES_TOTP_SECRET, CODESIGNTOOL_PATH, fileToSign].some((v) => !v)
   ) {
-    console.log("missing something");
-    return;
+    throw new Error("missing required secrets");
   }
 
   const output = execSync(
