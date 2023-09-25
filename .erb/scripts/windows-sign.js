@@ -3,12 +3,13 @@
 
 const { execSync } = require("child_process");
 
+const ES_CREDENTIAL_ID = process.env.ES_CREDENTIAL_ID;
+const ES_USERNAME = process.env.ES_USERNAME;
+const ES_PASSWORD = process.env.ES_PASSWORD;
+const ES_TOTP_SECRET = process.env.ES_TOTP_SECRET;
+const CODESIGNTOOL_PATH = process.env.CODESIGNTOOL_PATH;
+
 exports.default = async (config) => {
-  const ES_CREDENTIAL_ID = process.env.ES_CREDENTIAL_ID;
-  const ES_USERNAME = process.env.ES_USERNAME;
-  const ES_PASSWORD = process.env.ES_PASSWORD;
-  const ES_TOTP_SECRET = process.env.ES_TOTP_SECRET;
-  const CODESIGNTOOL_PATH = process.env.CODESIGNTOOL_PATH;
   const fileToSign = config.path ? String(config.path) : "";
 
   if (!ES_USERNAME) {
