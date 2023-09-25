@@ -11,11 +11,17 @@ exports.default = async (config) => {
   const CODESIGNTOOL_PATH = process.env.CODESIGNTOOL_PATH;
   const fileToSign = config.path ? String(config.path) : "";
 
+  if (!ES_USERNAME) {
+    // we're probably not trying to sign if this isn't set so just exit safely
+    console.log("not signing binaries");
+    return;
+  }
+
   if (process.platform !== "win32") {
     throw new Error(`unexpected platform: ${process.platform}`);
   }
 
-  if ([ES_CREDENTIAL_ID, ES_USERNAME, ES_PASSWORD, ES_TOTP_SECRET, CODESIGNTOOL_PATH, fileToSign].some((v) => !v)) {
+  if ([ES_CREDENTIAL_ID, ES_PASSWORD, ES_TOTP_SECRET, CODESIGNTOOL_PATH, fileToSign].some((v) => !v)) {
     throw new Error("missing required secrets");
   }
 
