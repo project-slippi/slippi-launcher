@@ -11,10 +11,11 @@ exports.default = async (config) => {
   const CODESIGNTOOL_PATH = process.env.CODESIGNTOOL_PATH;
   const fileToSign = config.path ? String(config.path) : "";
 
-  if (
-    process.platform !== "win32" ||
-    [ES_CREDENTIAL_ID, ES_USERNAME, ES_PASSWORD, ES_TOTP_SECRET, CODESIGNTOOL_PATH, fileToSign].some((v) => !v)
-  ) {
+  if (process.platform !== "win32") {
+    throw new Error(`unexpected platform: ${process.platform}`);
+  }
+
+  if ([ES_CREDENTIAL_ID, ES_USERNAME, ES_PASSWORD, ES_TOTP_SECRET, CODESIGNTOOL_PATH, fileToSign].some((v) => !v)) {
     throw new Error("missing required secrets");
   }
 
