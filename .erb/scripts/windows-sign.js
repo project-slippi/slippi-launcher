@@ -13,7 +13,6 @@ exports.default = async (config) => {
 
   if (!ES_USERNAME) {
     // we're probably not trying to sign if this isn't set so just exit safely
-    console.log("not signing binaries");
     return;
   }
 
