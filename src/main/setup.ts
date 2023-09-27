@@ -12,7 +12,6 @@ import osName from "os-name";
 import path from "path";
 import { fileExists } from "utils/fileExists";
 
-import { getCgnatPresence, getNatType, getPortMappingPresence } from "./diagnostic";
 import { getLatestRelease } from "./github";
 import {
   ipc_checkForUpdate,
@@ -32,6 +31,7 @@ import {
   ipc_runDiagnosticPortMapping,
   ipc_showOpenDialog,
 } from "./ipc";
+import { getCgnatPresence, getNatType, getPortMappingPresence } from "./networkDiagnostics";
 import { fetchNewsFeedData } from "./newsFeed";
 import { getAssetPath, readLastLines } from "./util";
 import { verifyIso } from "./verifyIso";
