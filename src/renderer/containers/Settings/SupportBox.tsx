@@ -10,7 +10,7 @@ import { Button } from "@/components/FormInputs";
 import { useToasts } from "@/lib/hooks/useToasts";
 import { ReactComponent as DiscordIcon } from "@/styles/images/discord.svg";
 
-import { Diagnostic } from "./Diagnostic";
+import { NetworkDiagnosticButton } from "./NetworkDiagnostic/NetworkDiagnosticButton";
 
 const log = window.electron.log;
 
@@ -84,7 +84,7 @@ export const SupportBox = () => {
           </Button>
         </div>
         <div>
-          <Diagnostic />
+          <NetworkDiagnosticButton />
         </div>
       </div>
     </Outer>
