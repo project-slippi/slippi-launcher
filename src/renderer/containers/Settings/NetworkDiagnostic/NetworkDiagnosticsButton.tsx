@@ -2,44 +2,17 @@ import { colors } from "@common/colors";
 import type { PortMapping } from "@common/types";
 import { NatType, Presence } from "@common/types";
 import { css } from "@emotion/react";
-import styled from "@emotion/styled";
 import NetworkCheckIcon from "@mui/icons-material/NetworkCheck";
-import LoadingButton from "@mui/lab/LoadingButton";
 import { Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import Button from "@mui/material/Button";
-import InputBase from "@mui/material/InputBase";
-import Typography from "@mui/material/Typography";
 import React from "react";
 
 import { Button as ActionButton } from "@/components/FormInputs";
 
-const buttonStyle = { marginLeft: "8px", width: "96px" };
-const hiddenIpAddress = "···.···.···.···";
-
-const inputBaseCss = css`
-  padding: 4px 8px;
-  border-radius: 10px;
-  background-color: rgba(0, 0, 0, 0.4);
-  font-size: 1em;
-  margin: 8px 0;
-`;
-
-// This is used to correct an observed 1px vertical misalignment
-const AlignCenterDiv = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-const DialogBody = styled.div`
-  margin-bottom: 1em;
-`;
-
-const getIpAddressTitle = (natType: NatType) => {
-  if (natType === NatType.FAILED) {
-    return "Failed to determine IP Address";
-  }
-  return "External IP Address";
-};
+import { CgnatCommandSection } from "./CgnatCommandSection";
+import { CgnatSection } from "./CgnatSection";
+import { NatTypeSection } from "./NatTypeSection";
+import { PortMappingSection } from "./PortMappingSection";
 
 const getNatTypeTitle = (natType: NatType) => {
   if (natType === NatType.FAILED) {
@@ -140,127 +113,12 @@ export const NetworkDiagnosticsButton = React.memo(() => {
     await runNetworkDiagnostics();
   };
 
-  const ipAddressTitle = getIpAddressTitle(natType);
-  const [ipAddressCopied, setIpAddressCopied] = React.useState(false);
-  const onIpAddressCopy = React.useCallback(() => {
-    window.electron.clipboard.writeText(ipAddress);
-    setIpAddressCopied(true);
-    window.setTimeout(() => setIpAddressCopied(false), 2000);
-  }, [ipAddress]);
-  const [ipAddressHidden, setIpAddressHidden] = React.useState(true);
-  const onIpAddressShowHide = () => {
-    setIpAddressHidden(!ipAddressHidden);
-  };
   const natTypeTitle = getNatTypeTitle(natType);
   const natTypeDescription = getNatTypeDescription(natType);
-  const getNatTypeSection = () => {
-    switch (natType) {
-      case NatType.UNKNOWN:
-        return (
-          <>
-            <Typography variant="subtitle2">{ipAddressTitle}</Typography>
-            <LoadingButton loading={true} />
-            <Typography variant="subtitle2">{natTypeTitle}</Typography>
-            <LoadingButton loading={true} />
-          </>
-        );
-      case NatType.FAILED:
-        return (
-          <>
-            <Typography variant="subtitle2">{ipAddressTitle}</Typography>
-            <Typography variant="subtitle2">{natTypeTitle}</Typography>
-            <DialogBody>{natTypeDescription}</DialogBody>
-          </>
-        );
-      default:
-        return (
-          <>
-            <Typography variant="subtitle2">{ipAddressTitle}</Typography>
-            <DialogBody>
-              <InputBase css={inputBaseCss} disabled={true} value={ipAddressHidden ? hiddenIpAddress : ipAddress} />
-              <Button variant="contained" color="secondary" onClick={onIpAddressShowHide} style={buttonStyle}>
-                {ipAddressHidden ? "Reveal" : "Hide"}
-              </Button>
-              <Button variant="contained" color="secondary" onClick={onIpAddressCopy} style={buttonStyle}>
-                {ipAddressCopied ? "Copied!" : "Copy"}
-              </Button>
-            </DialogBody>
-            <Typography variant="subtitle2">{natTypeTitle}</Typography>
-            <DialogBody>{natTypeDescription}</DialogBody>
-          </>
-        );
-    }
-  };
-
   const portMappingTitle = getPortMappingTitle(portMapping);
   const portMappingDescription = getPortMappingDescription(portMapping);
-  const getPortMappingSection = () => {
-    if (portMapping.upnp === Presence.UNKNOWN || portMapping.natpmp === Presence.UNKNOWN) {
-      return (
-        <>
-          <Typography variant="subtitle2">{portMappingTitle}</Typography>
-          <LoadingButton loading={true} />
-        </>
-      );
-    }
-    return (
-      <>
-        <Typography variant="subtitle2">{portMappingTitle}</Typography>
-        <DialogBody>{portMappingDescription}</DialogBody>
-      </>
-    );
-  };
-
   const cgnatTitle = getCgnatTitle(cgnat);
   const cgnatDescription = getCgnatDescription(cgnat);
-  const tracerouteCommand = window.electron.common.isWindows ? "tracert" : "traceroute";
-  const cgnatCommand = `${tracerouteCommand} ${ipAddress}`;
-  const displayedCgnatCommand = `${tracerouteCommand} ${ipAddressHidden ? hiddenIpAddress : ipAddress}`;
-  const [cgnatCommandCopied, setCgnatCommandCopied] = React.useState(false);
-  const onCgnatCommandCopy = React.useCallback(() => {
-    window.electron.clipboard.writeText(cgnatCommand);
-    setCgnatCommandCopied(true);
-    window.setTimeout(() => setCgnatCommandCopied(false), 2000);
-  }, [cgnatCommand]);
-  const getCgnatSection = () => {
-    if (cgnat === Presence.UNKNOWN) {
-      return (
-        <>
-          <Typography variant="subtitle2">{cgnatTitle}</Typography>
-          <LoadingButton loading={true} />
-        </>
-      );
-    }
-    if (cgnat === Presence.FAILED && !ipAddress) {
-      return <></>;
-    }
-    return (
-      <>
-        <Typography variant="subtitle2">{cgnatTitle}</Typography>
-        <DialogBody>{cgnatDescription}</DialogBody>
-      </>
-    );
-  };
-
-  const getCgnatCommandSection = () => {
-    if (cgnat === Presence.FAILED && ipAddress) {
-      return (
-        <>
-          <Typography variant="subtitle2">{"Run this command"}</Typography>
-          <AlignCenterDiv>
-            <InputBase css={inputBaseCss} disabled={true} value={displayedCgnatCommand} />
-            <Button variant="contained" color="secondary" onClick={onCgnatCommandCopy} style={buttonStyle}>
-              {cgnatCommandCopied ? "Copied!" : "Copy"}
-            </Button>
-          </AlignCenterDiv>
-          <DialogBody>
-            {"More than one hop to your external IP address indicates CGNAT or Double NAT (or VPN)."}
-          </DialogBody>
-        </>
-      );
-    }
-    return <></>;
-  };
 
   const [diagnosticResultsCopied, setDiagnosticResultsCopied] = React.useState(false);
   const onDiagnosticResultsCopy = React.useCallback(() => {
@@ -301,10 +159,10 @@ export const NetworkDiagnosticsButton = React.memo(() => {
           Checks NAT type, port mapping availability, and CGNAT presence. Turn VPN off for accurate results.
         </DialogContent>
         <DialogContent>
-          {getNatTypeSection()}
-          {getPortMappingSection()}
-          {getCgnatSection()}
-          {getCgnatCommandSection()}
+          <NatTypeSection address={ipAddress} description={natTypeDescription} natType={natType} title={natTypeTitle} />
+          <PortMappingSection description={portMappingDescription} portMapping={portMapping} title={portMappingTitle} />
+          <CgnatSection address={ipAddress} cgnat={cgnat} description={cgnatDescription} title={cgnatTitle} />
+          <CgnatCommandSection address={ipAddress} cgnat={cgnat} />
         </DialogContent>
         <DialogActions>
           <Button
