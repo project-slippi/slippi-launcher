@@ -5,10 +5,13 @@ import { gateway4async } from "default-gateway";
 import Tracer from "nodejs-traceroute";
 import { createServer, request } from "stun";
 
+const STUN_SERVER_URL1 = "stun1.l.google.com:19302";
+const STUN_SERVER_URL2 = "stun2.l.google.com:19302";
+
 export async function getNatType(): Promise<{ address: string; natType: NatType }> {
   const stunServer = createServer({ type: "udp4" });
-  const stunResponse1 = await request("stun1.l.google.com:19302", { server: stunServer });
-  const stunResponse2 = await request("stun2.l.google.com:19302", { server: stunServer });
+  const stunResponse1 = await request(STUN_SERVER_URL1, { server: stunServer });
+  const stunResponse2 = await request(STUN_SERVER_URL2, { server: stunServer });
   const address1 = stunResponse1.getXorAddress();
   const address2 = stunResponse2.getXorAddress();
   stunServer.close();
