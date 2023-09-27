@@ -13,9 +13,7 @@ import {
   ipc_launcherUpdateDownloadingEvent,
   ipc_launcherUpdateFoundEvent,
   ipc_launcherUpdateReadyEvent,
-  ipc_runDiagnosticCgnat,
-  ipc_runDiagnosticNat,
-  ipc_runDiagnosticPortMapping,
+  ipc_runNetworkDiagnostics,
   ipc_showOpenDialog,
 } from "./ipc";
 
@@ -69,16 +67,8 @@ export default {
     const { result } = await ipc_showOpenDialog.renderer!.trigger(options);
     return result;
   },
-  async runDiagnosticNat() {
-    const { result } = await ipc_runDiagnosticNat.renderer!.trigger({});
-    return result;
-  },
-  async runDiagnosticPortMapping() {
-    const { result } = await ipc_runDiagnosticPortMapping.renderer!.trigger({});
-    return result;
-  },
-  async runDiagnosticCgnat(address: string) {
-    const { result } = await ipc_runDiagnosticCgnat.renderer!.trigger({ address });
+  async runNetworkDiagnostics() {
+    const { result } = await ipc_runNetworkDiagnostics.renderer!.trigger({});
     return result;
   },
   onAppUpdateFound(handle: (version: string) => void) {

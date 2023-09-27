@@ -1,5 +1,5 @@
 import { exists } from "@common/exists";
-import { IsoValidity, NatType, Presence } from "@common/types";
+import { IsoValidity } from "@common/types";
 import type { DolphinManager } from "@dolphin/manager";
 import { DolphinLaunchType } from "@dolphin/types";
 import { app, clipboard, dialog, ipcMain, nativeImage, shell } from "electron";
@@ -26,12 +26,10 @@ import {
   ipc_launcherUpdateDownloadingEvent,
   ipc_launcherUpdateFoundEvent,
   ipc_launcherUpdateReadyEvent,
-  ipc_runDiagnosticCgnat,
-  ipc_runDiagnosticNat,
-  ipc_runDiagnosticPortMapping,
+  ipc_runNetworkDiagnostics,
   ipc_showOpenDialog,
 } from "./ipc";
-import { getCgnatPresence, getNatType, getPortMappingPresence } from "./networkDiagnostics";
+import { getNetworkDiagnostics } from "./networkDiagnostics";
 import { fetchNewsFeedData } from "./newsFeed";
 import { getAssetPath, readLastLines } from "./util";
 import { verifyIso } from "./verifyIso";
@@ -191,30 +189,7 @@ export default function setupMainIpc({ dolphinManager }: { dolphinManager: Dolph
     return { canceled, filePaths };
   });
 
-  ipc_runDiagnosticNat.main!.handle(async () => {
-    try {
-      const result = await getNatType();
-      return result;
-    } catch {
-      return { address: "", natType: NatType.FAILED };
-    }
-  });
-
-  ipc_runDiagnosticPortMapping.main!.handle(async () => {
-    try {
-      const result = await getPortMappingPresence();
-      return result;
-    } catch {
-      return { upnp: Presence.FAILED, natpmp: Presence.FAILED };
-    }
-  });
-
-  ipc_runDiagnosticCgnat.main!.handle(async ({ address }) => {
-    try {
-      const result = await getCgnatPresence(address);
-      return result;
-    } catch {
-      return { cgnat: Presence.FAILED };
-    }
+  ipc_runNetworkDiagnostics.main!.handle(async () => {
+    return getNetworkDiagnostics();
   });
 }
