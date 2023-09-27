@@ -113,7 +113,7 @@ const getCgnatDescription = (presence: Presence) => {
   }
 };
 
-export const NetworkDiagnosticButton = React.memo(() => {
+export const NetworkDiagnosticsButton = React.memo(() => {
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [ipAddress, setIpAddress] = React.useState("");
   const [natType, setNatType] = React.useState(NatType.UNKNOWN);
