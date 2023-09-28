@@ -13,8 +13,6 @@ import {
   ipc_setExtraSlpPaths,
   ipc_setIsoPath,
   ipc_setLaunchMeleeOnPlay,
-  ipc_setNetplayDolphinPath,
-  ipc_setPlaybackDolphinPath,
   ipc_setRootSlpPath,
   ipc_setSpectateSlpPath,
   ipc_setUseMonthlySubfolders,
@@ -79,16 +77,6 @@ export default function setupSettingsIpc({
 
   ipc_setExtraSlpPaths.main!.handle(async ({ paths }) => {
     await settingsManager.setExtraSlpPaths(paths);
-    return { success: true };
-  });
-
-  ipc_setNetplayDolphinPath.main!.handle(async ({ path }) => {
-    await settingsManager.setNetplayDolphinPath(path);
-    return { success: true };
-  });
-
-  ipc_setPlaybackDolphinPath.main!.handle(async ({ path }) => {
-    await settingsManager.setPlaybackDolphinPath(path);
     return { success: true };
   });
 

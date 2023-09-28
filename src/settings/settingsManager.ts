@@ -36,15 +36,6 @@ export class SettingsManager {
     return merge({}, defaultAppSettings, this.appSettings);
   }
 
-  public getDolphinPath(type: DolphinLaunchType): string {
-    switch (type) {
-      case DolphinLaunchType.NETPLAY:
-        return this.get().settings.netplayDolphinPath;
-      case DolphinLaunchType.PLAYBACK:
-        return this.get().settings.playbackDolphinPath;
-    }
-  }
-
   public getRootSlpPath(): string {
     return this.get().settings.rootSlpPath;
   }
@@ -54,11 +45,22 @@ export class SettingsManager {
   }
 
   public getUseDolphinBeta(type: DolphinLaunchType): boolean {
+    const dolphinSettings = this.get().settings.dolphin;
     switch (type) {
       case DolphinLaunchType.NETPLAY:
-        return this.get().settings.useNetplayBeta;
+        return dolphinSettings.netplay.useBeta;
       case DolphinLaunchType.PLAYBACK:
-        return this.get().settings.usePlaybackBeta;
+        return dolphinSettings.playback.useBeta;
+    }
+  }
+
+  public getDolphinBetaAvailable(type: DolphinLaunchType): boolean {
+    const dolphinSettings = this.get().settings.dolphin;
+    switch (type) {
+      case DolphinLaunchType.NETPLAY:
+        return dolphinSettings.netplay.betaAvailable;
+      case DolphinLaunchType.PLAYBACK:
+        return dolphinSettings.playback.betaAvailable;
     }
   }
 
@@ -86,14 +88,6 @@ export class SettingsManager {
     await this._set("settings.extraSlpPaths", slpPaths);
   }
 
-  public async setNetplayDolphinPath(dolphinPath: string): Promise<void> {
-    await this._set("settings.netplayDolphinPath", dolphinPath);
-  }
-
-  public async setPlaybackDolphinPath(dolphinPath: string): Promise<void> {
-    await this._set("settings.playbackDolphinPath", dolphinPath);
-  }
-
   public async setLaunchMeleeOnPlay(launchMelee: boolean): Promise<void> {
     await this._set("settings.launchMeleeOnPlay", launchMelee);
   }
@@ -102,12 +96,24 @@ export class SettingsManager {
     await this._set("settings.autoUpdateLauncher", autoUpdateLauncher);
   }
 
+  public async setDolphinBetaAvailable(type: DolphinLaunchType, betaAvailable: boolean): Promise<void> {
+    switch (type) {
+      case DolphinLaunchType.NETPLAY: {
+        await this._set("settings.dolphin.netplay.betaAvailable", betaAvailable);
+        break;
+      }
+      case DolphinLaunchType.PLAYBACK: {
+        await this._set("settings.dolphin.playback.betaAvailable", betaAvailable);
+      }
+    }
+  }
+
   public async setUseNetplayBeta(useBeta: boolean): Promise<void> {
-    await this._set("settings.useNetplayBeta", useBeta);
+    await this._set("settings.dolphin.netplay.useBeta", useBeta);
   }
 
   public async setUsePlaybackBeta(useBeta: boolean): Promise<void> {
-    await this._set("settings.usePlaybackBeta", useBeta);
+    await this._set("settings.dolphin.playback.useBeta", useBeta);
   }
 
   public async addConsoleConnection(conn: Omit<StoredConnection, "id">): Promise<void> {

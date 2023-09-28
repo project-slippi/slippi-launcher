@@ -53,8 +53,14 @@ export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: Do
   });
 
   ipc_openDolphinSettingsFolder.main!.handle(async ({ dolphinType }) => {
-    const path = await dolphinManager.getInstallation(dolphinType).userFolder;
-    await shell.openPath(path);
+    const dolphinInstall = dolphinManager.getInstallation(dolphinType);
+    if (process.platform === "win32") {
+      const path = dolphinInstall.installationFolder;
+      await shell.openPath(path);
+    } else {
+      const path = dolphinInstall.userFolder;
+      await shell.openPath(path);
+    }
     return { success: true };
   });
 

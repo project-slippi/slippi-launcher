@@ -11,8 +11,6 @@ import {
   ipc_setExtraSlpPaths,
   ipc_setIsoPath,
   ipc_setLaunchMeleeOnPlay,
-  ipc_setNetplayDolphinPath,
-  ipc_setPlaybackDolphinPath,
   ipc_setRootSlpPath,
   ipc_setSpectateSlpPath,
   ipc_settingsUpdatedEvent,
@@ -55,12 +53,6 @@ export default {
   },
   async setExtraSlpPaths(paths: string[]): Promise<void> {
     await ipc_setExtraSlpPaths.renderer!.trigger({ paths });
-  },
-  async setNetplayDolphinPath(netplayDolphinPath: string): Promise<void> {
-    await ipc_setNetplayDolphinPath.renderer!.trigger({ path: netplayDolphinPath });
-  },
-  async setPlaybackDolphinPath(playbackDolphinPath: string): Promise<void> {
-    await ipc_setPlaybackDolphinPath.renderer!.trigger({ path: playbackDolphinPath });
   },
   async setLaunchMeleeOnPlay(launchMelee: boolean): Promise<void> {
     await ipc_setLaunchMeleeOnPlay.renderer!.trigger({ launchMelee });

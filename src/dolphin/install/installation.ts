@@ -13,7 +13,6 @@ import { lt } from "semver";
 import { DolphinLaunchType } from "../types";
 import { downloadLatestDolphin } from "./download";
 import type { DolphinVersionResponse } from "./fetchLatestVersion";
-import { fetchLatestVersion } from "./fetchLatestVersion";
 
 const log = electronLog.scope("dolphin/installation");
 
@@ -24,11 +23,11 @@ const semverRegex =
   /(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-((?:0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?/;
 
 export class DolphinInstallation {
-  constructor(
-    private dolphinLaunchType: DolphinLaunchType,
-    private installationFolder: string,
-    private useBeta: boolean,
-  ) {}
+  public installationFolder: string;
+  constructor(private dolphinLaunchType: DolphinLaunchType, private useBeta: boolean) {
+    const betaSuffix = useBeta === true ? "-beta" : "";
+    this.installationFolder = path.join(app.getPath("userData"), `${dolphinLaunchType.toLowerCase()}${betaSuffix}`);
+  }
 
   public get userFolder(): string {
     switch (process.platform) {
@@ -36,14 +35,24 @@ export class DolphinInstallation {
         return path.join(this.installationFolder, "User");
       }
       case "darwin": {
-        const configPath = path.join(os.homedir(), "Library", "Application Support", "com.project-slippi.dolphin");
+        const betaSuffix = this.useBeta === true ? "-beta" : "";
+        const configPath = path.join(
+          os.homedir(),
+          "Library",
+          "Application Support",
+          `com.project-slippi.dolphin${betaSuffix}`,
+        );
         const userFolderName = this.dolphinLaunchType === DolphinLaunchType.NETPLAY ? "netplay/User" : "playback/User";
 
         return path.join(configPath, userFolderName);
       }
       case "linux": {
+        const betaSuffix = this.useBeta === true ? "-beta" : "";
         const configPath = path.join(os.homedir(), ".config");
-        const userFolderName = this.dolphinLaunchType === DolphinLaunchType.NETPLAY ? "SlippiOnline" : "SlippiPlayback";
+        const userFolderName =
+          this.dolphinLaunchType === DolphinLaunchType.NETPLAY
+            ? `SlippiOnline${betaSuffix}`
+            : `SlippiPlayback${betaSuffix}`;
         return path.join(configPath, userFolderName);
       }
       default:
@@ -53,16 +62,14 @@ export class DolphinInstallation {
 
   public get sysFolder(): string {
     const dolphinPath = this.installationFolder;
-    const type = this.dolphinLaunchType;
     switch (process.platform) {
+      case "linux":
       case "win32": {
         return path.join(dolphinPath, "Sys");
       }
       case "darwin": {
-        return path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "Resources", "Sys");
-      }
-      case "linux": {
-        return path.join(app.getPath("userData"), type, "Sys");
+        const dolphinApp = this.useBeta ? "Slippi_Dolphin.app" : "Slippi Dolphin.app";
+        return path.join(dolphinPath, dolphinApp, "Contents", "Resources", "Sys");
       }
       default:
         throw new Error(`Unsupported operating system: ${process.platform}`);
@@ -107,26 +114,19 @@ export class DolphinInstallation {
     onStart,
     onProgress,
     onComplete,
+    dolphinDownloadInfo,
   }: {
     onStart: () => void;
     onProgress: (current: number, total: number) => void;
     onComplete: () => void;
+    dolphinDownloadInfo: DolphinVersionResponse;
   }): Promise<void> {
     const type = this.dolphinLaunchType;
-    let dolphinDownloadInfo: DolphinVersionResponse | undefined = undefined;
 
     try {
       await this.findDolphinExecutable();
       log.info(`Found existing ${type} Dolphin executable.`);
       log.info(`Checking if we need to update ${type} Dolphin`);
-
-      try {
-        dolphinDownloadInfo = await fetchLatestVersion(type, this.useBeta);
-      } catch (err) {
-        log.error(`Failed to fetch latest Dolphin version: ${err}`);
-        onComplete();
-        return;
-      }
 
       const latestVersion = dolphinDownloadInfo?.version;
       const isOutdated = !latestVersion || (await this._isOutOfDate(latestVersion));
@@ -145,28 +145,24 @@ export class DolphinInstallation {
 
     // Start the download
     await this.downloadAndInstall({
-      releaseInfo: dolphinDownloadInfo,
+      dolphinDownloadInfo,
       onProgress,
       onComplete,
     });
   }
 
   public async downloadAndInstall({
-    releaseInfo,
+    dolphinDownloadInfo,
     onProgress,
     onComplete,
     cleanInstall,
   }: {
-    releaseInfo?: DolphinVersionResponse;
+    dolphinDownloadInfo: DolphinVersionResponse;
     onProgress?: (current: number, total: number) => void;
     onComplete?: () => void;
     cleanInstall?: boolean;
   }): Promise<void> {
     const type = this.dolphinLaunchType;
-    let dolphinDownloadInfo = releaseInfo;
-    if (!dolphinDownloadInfo) {
-      dolphinDownloadInfo = await fetchLatestVersion(type, this.useBeta);
-    }
 
     const downloadUrl = dolphinDownloadInfo.downloadUrls[process.platform];
     if (!downloadUrl) {

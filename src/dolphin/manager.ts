@@ -4,6 +4,7 @@ import { Observable, Subject } from "observable-fns";
 import path from "path";
 import { fileExists } from "utils/fileExists";
 
+import { type DolphinVersionResponse, fetchLatestVersion } from "./install/fetchLatestVersion";
 import { DolphinInstallation } from "./install/installation";
 import { DolphinInstance, PlaybackDolphinInstance } from "./instance";
 import type { DolphinEvent, ReplayCommunication } from "./types";
@@ -22,12 +23,21 @@ export class DolphinManager {
   constructor(private settingsManager: SettingsManager) {}
 
   public getInstallation(launchType: DolphinLaunchType): DolphinInstallation {
-    const dolphinPath = this.settingsManager.getDolphinPath(launchType);
     const useBeta = this.settingsManager.getUseDolphinBeta(launchType);
-    return new DolphinInstallation(launchType, dolphinPath, useBeta);
+    const betaAvailable = this.settingsManager.getDolphinBetaAvailable(launchType);
+    return new DolphinInstallation(launchType, useBeta && betaAvailable);
   }
 
   public async installDolphin(dolphinType: DolphinLaunchType): Promise<void> {
+    const useBeta = this.settingsManager.getUseDolphinBeta(dolphinType);
+    let dolphinDownloadInfo: DolphinVersionResponse | undefined = undefined;
+    try {
+      dolphinDownloadInfo = await fetchLatestVersion(dolphinType, useBeta, this.settingsManager);
+    } catch (err) {
+      log.error(`Failed to fetch latest Dolphin version: ${err}`);
+      return;
+    }
+
     const dolphinInstall = this.getInstallation(dolphinType);
     await dolphinInstall.validate({
       onStart: () => this._onStart(dolphinType),
@@ -36,6 +46,7 @@ export class DolphinManager {
         dolphinInstall.getDolphinVersion().then((version) => {
           this._onComplete(dolphinType, version);
         }),
+      dolphinDownloadInfo,
     });
 
     const isoPath = this.settingsManager.get().settings.isoPath;
@@ -186,9 +197,12 @@ export class DolphinManager {
       }
     }
 
+    const useBeta = this.settingsManager.getUseDolphinBeta(launchType);
+    const dolphinDownloadInfo = await fetchLatestVersion(launchType, useBeta, this.settingsManager);
     const installation = this.getInstallation(launchType);
     this._onStart(launchType);
     await installation.downloadAndInstall({
+      dolphinDownloadInfo,
       cleanInstall,
       onProgress: (current, total) => this._onProgress(launchType, current, total),
     });

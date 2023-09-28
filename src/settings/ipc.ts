@@ -21,18 +21,6 @@ export const ipc_setSpectateSlpPath = makeEndpoint.main("setSpectateSlpPath", <{
 
 export const ipc_setExtraSlpPaths = makeEndpoint.main("setExtraSlpPaths", <{ paths: string[] }>_, <SuccessPayload>_);
 
-export const ipc_setNetplayDolphinPath = makeEndpoint.main(
-  "setNetplayDolphinPath",
-  <{ path: string }>_,
-  <SuccessPayload>_,
-);
-
-export const ipc_setPlaybackDolphinPath = makeEndpoint.main(
-  "setPlaybackDolphinPath",
-  <{ path: string }>_,
-  <SuccessPayload>_,
-);
-
 export const ipc_setLaunchMeleeOnPlay = makeEndpoint.main(
   "setLaunchMeleeOnPlay",
   <{ launchMelee: boolean }>_,

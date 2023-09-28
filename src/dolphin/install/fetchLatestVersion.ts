@@ -2,6 +2,8 @@ import { ApolloClient, ApolloLink, gql, HttpLink, InMemoryCache } from "@apollo/
 import { onError } from "@apollo/client/link/error";
 import { RetryLink } from "@apollo/client/link/retry";
 import { appVersion } from "@common/constants";
+import { exists } from "@common/exists";
+import type { SettingsManager } from "@settings/settingsManager";
 import { fetch } from "cross-fetch";
 import electronLog from "electron-log";
 import type { GraphQLError } from "graphql";
@@ -73,21 +75,36 @@ const handleErrors = (errors: readonly GraphQLError[] | undefined) => {
   }
 };
 
+// this function is relied by getInstallation in DolphinManager to decide which dolphin (folder) to use
+// it isn't the prettiest execution but will suffice since we want to be able to let users play even if
+// the stable dolphin updates before the beta dolphin. The backend will interleave the versions from github
+// and return the version that is most recently published if includeBeta is true.
 export async function fetchLatestVersion(
   dolphinType: DolphinLaunchType,
-  useBeta = false,
+  includeBeta = false,
+  settingsManager: SettingsManager,
 ): Promise<DolphinVersionResponse> {
-  log.warn(`getting latest ${useBeta ? dolphinType + "-beta" : dolphinType} dolphin`);
+  log.warn(`getting latest ${includeBeta ? dolphinType + "-beta" : dolphinType} dolphin`);
   const res = await client.query({
     query: getLatestDolphinQuery,
     fetchPolicy: "network-only",
     variables: {
       purpose: dolphinType.toUpperCase(),
-      includeBeta: useBeta,
+      includeBeta: includeBeta,
     },
   });
 
   handleErrors(res.errors);
+
+  // this is how i would like to handle it if we can agree to it
+  // if (exists(res.data.getDolphinVersion.isBeta)) {
+  //   await settingsManager.setDolphinBetaAvailable(dolphinType, res.data.getDolphinVersion.isBeta);
+  // }
+
+  if (exists(res.data.getLatestDolphin.version)) {
+    const isBeta = (res.data.getLatestDolphin.version as string).includes("-beta");
+    await settingsManager.setDolphinBetaAvailable(dolphinType, isBeta);
+  }
 
   log.warn(`got url ${res.data.getLatestDolphin.windowsDownloadUrl} for v${res.data.getLatestDolphin.version}`);
   return {

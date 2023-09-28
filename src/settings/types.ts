@@ -24,11 +24,17 @@ export type AppSettings = {
     enableJukebox: boolean;
     spectateSlpPath: string;
     extraSlpPaths: string[];
-    netplayDolphinPath: string;
-    playbackDolphinPath: string;
     launchMeleeOnPlay: boolean;
     autoUpdateLauncher: boolean;
-    useNetplayBeta: boolean;
-    usePlaybackBeta: boolean;
+    dolphin: {
+      netplay: {
+        betaAvailable: boolean;
+        useBeta: boolean;
+      };
+      playback: {
+        betaAvailable: boolean;
+        useBeta: boolean;
+      };
+    };
   };
 };

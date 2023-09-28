@@ -26,11 +26,17 @@ export const defaultAppSettings: AppSettings = {
     enableJukebox: true,
     spectateSlpPath: path.join(getDefaultRootSlpPath(), "Spectate"),
     extraSlpPaths: [],
-    netplayDolphinPath: path.join(app.getPath("userData"), "netplay"),
-    playbackDolphinPath: path.join(app.getPath("userData"), "playback"),
     launchMeleeOnPlay: true,
     autoUpdateLauncher: true,
-    useNetplayBeta: false,
-    usePlaybackBeta: false,
+    dolphin: {
+      netplay: {
+        useBeta: false,
+        betaAvailable: false,
+      },
+      playback: {
+        useBeta: false,
+        betaAvailable: false,
+      },
+    },
   },
 };

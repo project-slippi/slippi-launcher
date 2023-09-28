@@ -11,17 +11,15 @@ import capitalize from "lodash/capitalize";
 import React from "react";
 
 import { ConfirmationModal } from "@/components/ConfirmationModal";
-import { DevGuard } from "@/components/DevGuard";
-import { PathInput } from "@/components/PathInput";
 import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
-import { useDolphinBeta, useDolphinPath } from "@/lib/hooks/useSettings";
+import { useDolphinBeta } from "@/lib/hooks/useSettings";
 import { useServices } from "@/services";
 
 import { GeckoCodes } from "./GeckoCodes/GeckoCodes";
 import { SettingItem } from "./SettingItem";
 
-const { isLinux, isMac, isWindows } = window.electron.bootstrap;
+const { isMac, isWindows } = window.electron.bootstrap;
 
 enum ResetType {
   SOFT,
@@ -38,7 +36,6 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
   const dolphinVersion = useDolphinStore((store) =>
     dolphinType === DolphinLaunchType.NETPLAY ? store.netplayDolphinVersion : store.playbackDolphinVersion,
   );
-  const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
   const [dolphinBeta, setDolphinBeta] = useDolphinBeta(dolphinType);
   const [resetModalOpen, setResetModalOpen] = React.useState(false);
   const [isResetType, setResetType] = React.useState<ResetType | null>(null);
@@ -58,12 +55,8 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
   };
 
   const openDolphinDirectoryHandler = React.useCallback(async () => {
-    if (isMac || isLinux) {
-      await dolphinService.openDolphinSettingsFolder(dolphinType);
-    } else {
-      await window.electron.shell.openPath(dolphinPath);
-    }
-  }, [dolphinPath, dolphinService, dolphinType]);
+    await dolphinService.openDolphinSettingsFolder(dolphinType);
+  }, [dolphinService, dolphinType]);
 
   const configureDolphinHandler = async () => {
     openConfigureDolphin(dolphinType);
@@ -109,19 +102,6 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
           </Button>
         </div>
       </SettingItem>
-      <DevGuard show={isLinux}>
-        <SettingItem
-          name={`${dolphinType} Dolphin Directory`}
-          description={`The path to the folder containing the ${dolphinTypeName} Dolphin executable.`}
-        >
-          <PathInput
-            value={dolphinPath ?? ""}
-            onSelect={setDolphinPath}
-            placeholder="No folder set"
-            options={{ properties: ["openDirectory"] }}
-          />
-        </SettingItem>
-      </DevGuard>
       <SettingItem name={`${dolphinTypeName} Gecko Codes`}>
         <GeckoCodes dolphinType={dolphinType} disabled={!dolphinIsReady} />
       </SettingItem>
