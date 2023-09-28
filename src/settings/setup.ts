@@ -9,8 +9,6 @@ import {
   ipc_deleteConnection,
   ipc_editConnection,
   ipc_setAutoUpdateLauncher,
-  ipc_setBetaNetplay,
-  ipc_setBetaPlayback,
   ipc_setEnableJukebox,
   ipc_setExtraSlpPaths,
   ipc_setIsoPath,
@@ -20,6 +18,8 @@ import {
   ipc_setRootSlpPath,
   ipc_setSpectateSlpPath,
   ipc_setUseMonthlySubfolders,
+  ipc_setUseNetplayBeta,
+  ipc_setUsePlaybackBeta,
 } from "./ipc";
 import type { SettingsManager } from "./settingsManager";
 
@@ -118,13 +118,13 @@ export default function setupSettingsIpc({
     return { success: true };
   });
 
-  ipc_setBetaNetplay.main!.handle(async ({ installBeta }) => {
-    await settingsManager.setBetaNetplay(installBeta);
+  ipc_setUseNetplayBeta.main!.handle(async ({ useBeta: installBeta }) => {
+    await settingsManager.setUseNetplayBeta(installBeta);
     return { success: true };
   });
 
-  ipc_setBetaPlayback.main!.handle(async ({ installBeta }) => {
-    await settingsManager.setBetaPlayback(installBeta);
+  ipc_setUsePlaybackBeta.main!.handle(async ({ useBeta: installBeta }) => {
+    await settingsManager.setUsePlaybackBeta(installBeta);
     return { success: true };
   });
 }

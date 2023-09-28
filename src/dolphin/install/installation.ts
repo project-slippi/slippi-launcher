@@ -24,7 +24,11 @@ const semverRegex =
   /(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-((?:0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?/;
 
 export class DolphinInstallation {
-  constructor(private dolphinLaunchType: DolphinLaunchType, private installationFolder: string) {}
+  constructor(
+    private dolphinLaunchType: DolphinLaunchType,
+    private installationFolder: string,
+    private useBeta: boolean,
+  ) {}
 
   public get userFolder(): string {
     switch (process.platform) {
@@ -117,7 +121,7 @@ export class DolphinInstallation {
       log.info(`Checking if we need to update ${type} Dolphin`);
 
       try {
-        dolphinDownloadInfo = await fetchLatestVersion(type);
+        dolphinDownloadInfo = await fetchLatestVersion(type, this.useBeta);
       } catch (err) {
         log.error(`Failed to fetch latest Dolphin version: ${err}`);
         onComplete();
@@ -161,7 +165,7 @@ export class DolphinInstallation {
     const type = this.dolphinLaunchType;
     let dolphinDownloadInfo = releaseInfo;
     if (!dolphinDownloadInfo) {
-      dolphinDownloadInfo = await fetchLatestVersion(type);
+      dolphinDownloadInfo = await fetchLatestVersion(type, this.useBeta);
     }
 
     const downloadUrl = dolphinDownloadInfo.downloadUrls[process.platform];

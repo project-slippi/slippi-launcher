@@ -7,8 +7,6 @@ import {
   ipc_editConnection,
   ipc_openSettingsModalEvent,
   ipc_setAutoUpdateLauncher,
-  ipc_setBetaNetplay,
-  ipc_setBetaPlayback,
   ipc_setEnableJukebox,
   ipc_setExtraSlpPaths,
   ipc_setIsoPath,
@@ -19,6 +17,8 @@ import {
   ipc_setSpectateSlpPath,
   ipc_settingsUpdatedEvent,
   ipc_setUseMonthlySubfolders,
+  ipc_setUseNetplayBeta,
+  ipc_setUsePlaybackBeta,
 } from "./ipc";
 import type { AppSettings, StoredConnection } from "./types";
 
@@ -68,11 +68,11 @@ export default {
   async setAutoUpdateLauncher(autoUpdateLauncher: boolean): Promise<void> {
     await ipc_setAutoUpdateLauncher.renderer!.trigger({ autoUpdateLauncher });
   },
-  async setBetaNetplayDolphin(installBeta: boolean): Promise<void> {
-    await ipc_setBetaNetplay.renderer!.trigger({ installBeta });
+  async setNetplayBetaDolphin(installBeta: boolean): Promise<void> {
+    await ipc_setUseNetplayBeta.renderer!.trigger({ useBeta: installBeta });
   },
-  async setBetaPlaybackDolphin(installBeta: boolean): Promise<void> {
-    await ipc_setBetaPlayback.renderer!.trigger({ installBeta });
+  async setPlaybackBetaDolphin(installBeta: boolean): Promise<void> {
+    await ipc_setUsePlaybackBeta.renderer!.trigger({ useBeta: installBeta });
   },
   async addNewConnection(connection: Omit<StoredConnection, "id">): Promise<void> {
     await ipc_addNewConnection.renderer!.trigger({ connection });

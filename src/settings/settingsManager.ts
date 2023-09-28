@@ -53,6 +53,15 @@ export class SettingsManager {
     return this.get().settings.useMonthlySubfolders;
   }
 
+  public getUseDolphinBeta(type: DolphinLaunchType): boolean {
+    switch (type) {
+      case DolphinLaunchType.NETPLAY:
+        return this.get().settings.useNetplayBeta;
+      case DolphinLaunchType.PLAYBACK:
+        return this.get().settings.usePlaybackBeta;
+    }
+  }
+
   public async setIsoPath(isoPath: string | null): Promise<void> {
     await this._set("settings.isoPath", isoPath);
   }
@@ -93,12 +102,12 @@ export class SettingsManager {
     await this._set("settings.autoUpdateLauncher", autoUpdateLauncher);
   }
 
-  public async setBetaNetplay(installBeta: boolean): Promise<void> {
-    await this._set("settings.betaNetplay", installBeta);
+  public async setUseNetplayBeta(useBeta: boolean): Promise<void> {
+    await this._set("settings.useNetplayBeta", useBeta);
   }
 
-  public async setBetaPlayback(installBeta: boolean): Promise<void> {
-    await this._set("settings.betaPlayback", installBeta);
+  public async setUsePlaybackBeta(useBeta: boolean): Promise<void> {
+    await this._set("settings.usePlaybackBeta", useBeta);
   }
 
   public async addConsoleConnection(conn: Omit<StoredConnection, "id">): Promise<void> {

@@ -15,7 +15,7 @@ import { DevGuard } from "@/components/DevGuard";
 import { PathInput } from "@/components/PathInput";
 import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
-import { useBetaDolphin, useDolphinPath } from "@/lib/hooks/useSettings";
+import { useDolphinBeta, useDolphinPath } from "@/lib/hooks/useSettings";
 import { useServices } from "@/services";
 
 import { GeckoCodes } from "./GeckoCodes/GeckoCodes";
@@ -39,7 +39,7 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
     dolphinType === DolphinLaunchType.NETPLAY ? store.netplayDolphinVersion : store.playbackDolphinVersion,
   );
   const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
-  const [betaDolphin, setBetaDolphin] = useBetaDolphin(dolphinType);
+  const [dolphinBeta, setDolphinBeta] = useDolphinBeta(dolphinType);
   const [resetModalOpen, setResetModalOpen] = React.useState(false);
   const [isResetType, setResetType] = React.useState<ResetType | null>(null);
   const { dolphinService } = useServices();
@@ -49,10 +49,10 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
   const versionString: string =
     dolphinStatus === DolphinStatus.UNKNOWN ? "Not found" : !dolphinVersion ? "Unknown" : dolphinVersion;
 
-  const onBetaDolphinChange = async (value: string) => {
+  const onDolphinBetaChange = async (value: string) => {
     setResetType(ResetType.SOFT);
     const useBeta = value === "true";
-    await setBetaDolphin(useBeta);
+    await setDolphinBeta(useBeta);
     await softResetDolphin(dolphinType);
     setResetType(null);
   };
@@ -191,7 +191,7 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
           name={`${dolphinTypeName} Dolphin Release Channel`}
           description="Choose which Slippi Dolphin version to install"
         >
-          <RadioGroup value={betaDolphin} onChange={(_event, value) => onBetaDolphinChange(value)}>
+          <RadioGroup value={dolphinBeta} onChange={(_event, value) => onDolphinBetaChange(value)}>
             <FormControlLabel
               value={false}
               label="Stable (Ishiiruka)"

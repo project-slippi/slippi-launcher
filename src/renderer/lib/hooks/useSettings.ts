@@ -105,34 +105,34 @@ export const useAutoUpdateLauncher = () => {
   return [autoUpdateLauncher, setAutoUpdateLauncher] as const;
 };
 
-export const useBetaDolphin = (dolphinType: DolphinLaunchType) => {
-  const betaNetplay = useSettings((state) => state.settings.betaNetplay);
+export const useDolphinBeta = (dolphinType: DolphinLaunchType) => {
+  const netplayBeta = useSettings((state) => state.settings.useNetplayBeta);
   const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
-  const setBetaNetplay = useCallback(
+  const setNetplayBeta = useCallback(
     async (useBeta: boolean) => {
       const newPath = useBeta ? `${dolphinPath}-beta` : dolphinPath.split("-beta")[0];
       await setDolphinPath(newPath);
-      await window.electron.settings.setBetaNetplayDolphin(useBeta);
+      await window.electron.settings.setNetplayBetaDolphin(useBeta);
     },
     [dolphinPath, setDolphinPath],
   );
 
-  const betaPlayback = useSettings((state) => state.settings.betaPlayback);
-  const setBetaPlayback = useCallback(
+  const playbackBeta = useSettings((state) => state.settings.usePlaybackBeta);
+  const setPlaybackBeta = useCallback(
     async (useBeta: boolean) => {
       const newPath = useBeta ? `${dolphinPath}-beta` : dolphinPath.split("-beta")[0];
       await setDolphinPath(newPath);
-      await window.electron.settings.setBetaPlaybackDolphin(useBeta);
+      await window.electron.settings.setPlaybackBetaDolphin(useBeta);
     },
     [dolphinPath, setDolphinPath],
   );
 
   switch (dolphinType) {
     case DolphinLaunchType.NETPLAY: {
-      return [betaNetplay, setBetaNetplay] as const;
+      return [netplayBeta, setNetplayBeta] as const;
     }
     case DolphinLaunchType.PLAYBACK: {
-      return [betaPlayback, setBetaPlayback] as const;
+      return [playbackBeta, setPlaybackBeta] as const;
     }
   }
 };

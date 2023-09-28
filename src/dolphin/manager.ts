@@ -23,7 +23,8 @@ export class DolphinManager {
 
   public getInstallation(launchType: DolphinLaunchType): DolphinInstallation {
     const dolphinPath = this.settingsManager.getDolphinPath(launchType);
-    return new DolphinInstallation(launchType, dolphinPath);
+    const useBeta = this.settingsManager.getUseDolphinBeta(launchType);
+    return new DolphinInstallation(launchType, dolphinPath, useBeta);
   }
 
   public async installDolphin(dolphinType: DolphinLaunchType): Promise<void> {

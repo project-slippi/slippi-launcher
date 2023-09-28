@@ -17,7 +17,7 @@ export type DolphinVersionResponse = {
   };
 };
 
-const log = electronLog.scope("dolphin/checkVersion");
+const log = electronLog.scope("dolphin/fetchLatestVersion");
 const isDevelopment = process.env.NODE_ENV !== "production";
 
 const httpLink = new HttpLink({ uri: process.env.SLIPPI_GRAPHQL_ENDPOINT, fetch });
@@ -75,19 +75,21 @@ const handleErrors = (errors: readonly GraphQLError[] | undefined) => {
 
 export async function fetchLatestVersion(
   dolphinType: DolphinLaunchType,
-  beta = false,
+  useBeta = false,
 ): Promise<DolphinVersionResponse> {
+  log.warn(`getting latest ${useBeta ? dolphinType + "-beta" : dolphinType} dolphin`);
   const res = await client.query({
     query: getLatestDolphinQuery,
     fetchPolicy: "network-only",
     variables: {
       purpose: dolphinType.toUpperCase(),
-      includeBeta: beta,
+      includeBeta: useBeta,
     },
   });
 
   handleErrors(res.errors);
 
+  log.warn(`got url ${res.data.getLatestDolphin.windowsDownloadUrl} for v${res.data.getLatestDolphin.version}`);
   return {
     version: res.data.getLatestDolphin.version,
     downloadUrls: {
