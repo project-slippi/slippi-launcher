@@ -50,8 +50,10 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
     dolphinStatus === DolphinStatus.UNKNOWN ? "Not found" : !dolphinVersion ? "Unknown" : dolphinVersion;
 
   const onBetaDolphinChange = async (value: string) => {
+    setIsResetting(true);
     const dolphinVersion = value === "true";
     await setBetaDolphin(dolphinVersion);
+    setIsResetting(false);
   };
 
   const openDolphinDirectoryHandler = React.useCallback(async () => {
@@ -196,8 +198,16 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
           description="Choose which Slippi Dolphin version to install"
         >
           <RadioGroup value={betaDolphin} onChange={(_event, value) => onBetaDolphinChange(value)}>
-            <FormControlLabel value={false} label="Stable (Ishiiruka)" control={<Radio />} />
-            <FormControlLabel value={true} label="Beta (Mainline)" control={<Radio />} />
+            <FormControlLabel
+              value={false}
+              label="Stable (Ishiiruka)"
+              control={<Radio disabled={dolphinIsOpen || isResetting} />}
+            />
+            <FormControlLabel
+              value={true}
+              label="Beta (Mainline)"
+              control={<Radio disabled={dolphinIsOpen || isResetting} />}
+            />
           </RadioGroup>
         </SettingItem>
       )}
