@@ -198,7 +198,14 @@ export class DolphinManager {
     }
 
     const useBeta = this.settingsManager.getUseDolphinBeta(launchType);
-    const dolphinDownloadInfo = await fetchLatestVersion(launchType, useBeta, this.settingsManager);
+
+    let dolphinDownloadInfo: DolphinVersionResponse | undefined = undefined;
+    try {
+      dolphinDownloadInfo = await fetchLatestVersion(launchType, useBeta, this.settingsManager);
+    } catch (err) {
+      log.error(`Failed to fetch latest Dolphin version: ${err}`);
+      return;
+    }
     const installation = this.getInstallation(launchType);
     this._onStart(launchType);
     await installation.downloadAndInstall({
