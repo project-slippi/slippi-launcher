@@ -107,8 +107,12 @@ export async function fetchLatestVersion(
       const betaPath = path.join(app.getPath("userData"), `${dolphinType.toLowerCase()}-beta`);
       const oldStablePath = path.join(app.getPath("userData"), dolphinType.toLowerCase());
       const legacyPath = path.join(app.getPath("userData"), `${dolphinType.toLowerCase()}-legacy`);
-      await remove(betaPath);
-      await move(oldStablePath, legacyPath, { overwrite: true });
+      try {
+        await remove(betaPath);
+        await move(oldStablePath, legacyPath, { overwrite: true });
+      } catch {
+        // likely a new install so skip this. ideally we update the promoteToStable default value
+      }
     }
     await settingsManager.setDolphinPromoteToStable(dolphinType, promoteToStable);
   }
