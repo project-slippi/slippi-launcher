@@ -156,7 +156,7 @@ export const NetworkDiagnosticsButton = React.memo(() => {
             padding-bottom: 0;
           `}
         >
-          Checks NAT type, port mapping availability, and CGNAT presence. Turn VPN off for accurate results.
+          Turn VPN off for accurate results
         </DialogContent>
         <DialogContent>
           <NatTypeSection address={ipAddress} description={natTypeDescription} natType={natType} title={natTypeTitle} />
