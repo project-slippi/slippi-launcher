@@ -60,10 +60,10 @@ export default {
   async setAutoUpdateLauncher(autoUpdateLauncher: boolean): Promise<void> {
     await ipc_setAutoUpdateLauncher.renderer!.trigger({ autoUpdateLauncher });
   },
-  async setNetplayBetaDolphin(installBeta: boolean): Promise<void> {
+  async setUseNetplayBeta(installBeta: boolean): Promise<void> {
     await ipc_setUseNetplayBeta.renderer!.trigger({ useBeta: installBeta });
   },
-  async setPlaybackBetaDolphin(installBeta: boolean): Promise<void> {
+  async setUsePlaybackBeta(installBeta: boolean): Promise<void> {
     await ipc_setUsePlaybackBeta.renderer!.trigger({ useBeta: installBeta });
   },
   async addNewConnection(connection: Omit<StoredConnection, "id">): Promise<void> {
