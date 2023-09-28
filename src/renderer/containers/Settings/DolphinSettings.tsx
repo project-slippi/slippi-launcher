@@ -50,10 +50,11 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
     dolphinStatus === DolphinStatus.UNKNOWN ? "Not found" : !dolphinVersion ? "Unknown" : dolphinVersion;
 
   const onBetaDolphinChange = async (value: string) => {
-    setIsResetting(true);
-    const dolphinVersion = value === "true";
-    await setBetaDolphin(dolphinVersion);
-    setIsResetting(false);
+    setResetType(ResetType.SOFT);
+    const useBeta = value === "true";
+    await setBetaDolphin(useBeta);
+    await softResetDolphin(dolphinType);
+    setResetType(null);
   };
 
   const openDolphinDirectoryHandler = React.useCallback(async () => {
@@ -194,12 +195,12 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
             <FormControlLabel
               value={false}
               label="Stable (Ishiiruka)"
-              control={<Radio disabled={dolphinIsOpen || isResetting} />}
+              control={<Radio disabled={dolphinIsOpen || isResetType !== null} />}
             />
             <FormControlLabel
               value={true}
               label="Beta (Mainline)"
-              control={<Radio disabled={dolphinIsOpen || isResetting} />}
+              control={<Radio disabled={dolphinIsOpen || isResetType !== null} />}
             />
           </RadioGroup>
         </SettingItem>
