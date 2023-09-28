@@ -93,6 +93,14 @@ export class SettingsManager {
     await this._set("settings.autoUpdateLauncher", autoUpdateLauncher);
   }
 
+  public async setBetaNetplay(installBeta: boolean): Promise<void> {
+    await this._set("settings.betaNetplay", installBeta);
+  }
+
+  public async setBetaPlayback(installBeta: boolean): Promise<void> {
+    await this._set("settings.betaPlayback", installBeta);
+  }
+
   public async addConsoleConnection(conn: Omit<StoredConnection, "id">): Promise<void> {
     const connections = this.get().connections;
     // Auto-generate an ID

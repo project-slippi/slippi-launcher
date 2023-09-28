@@ -45,6 +45,10 @@ export const ipc_setAutoUpdateLauncher = makeEndpoint.main(
   <SuccessPayload>_,
 );
 
+export const ipc_setBetaNetplay = makeEndpoint.main("setBetaNetplay", <{ installBeta: boolean }>_, <SuccessPayload>_);
+
+export const ipc_setBetaPlayback = makeEndpoint.main("setBetaPlayback", <{ installBeta: boolean }>_, <SuccessPayload>_);
+
 export const ipc_addNewConnection = makeEndpoint.main(
   "addNewConnection",
   <{ connection: Omit<StoredConnection, "id"> }>_,

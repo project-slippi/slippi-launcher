@@ -28,5 +28,7 @@ export type AppSettings = {
     playbackDolphinPath: string;
     launchMeleeOnPlay: boolean;
     autoUpdateLauncher: boolean;
+    betaNetplay: boolean;
+    betaPlayback: boolean;
   };
 };
