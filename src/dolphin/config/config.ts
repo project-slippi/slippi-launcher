@@ -21,14 +21,14 @@ export async function addGamePath(iniFile: IniFile, gameDir: string): Promise<vo
 export async function setSlippiSettings(
   iniFile: IniFile,
   options: Partial<SyncedDolphinSettings>,
-  useBeta: boolean,
+  useMainlineConfig: boolean,
 ): Promise<void> {
   const useMonthlySubfolders = options.useMonthlySubfolders ? "True" : "False";
   const enableJukebox = options.enableJukebox ? "True" : "False";
-  const sectionName = useBeta ? "Slippi" : "Core";
+  const sectionName = useMainlineConfig ? "Slippi" : "Core";
   const section = iniFile.getOrCreateSection(sectionName);
 
-  if (useBeta) {
+  if (useMainlineConfig) {
     if (options.replayPath !== undefined) {
       section.set("ReplayDir", options.replayPath);
     }
@@ -53,11 +53,11 @@ export async function setSlippiSettings(
   await iniFile.save();
 }
 
-export async function getSlippiSettings(iniFile: IniFile, useBeta: boolean): Promise<SyncedDolphinSettings> {
-  const sectionName = useBeta ? "Slippi" : "Core";
+export async function getSlippiSettings(iniFile: IniFile, useMainlineConfig: boolean): Promise<SyncedDolphinSettings> {
+  const sectionName = useMainlineConfig ? "Slippi" : "Core";
   const section = iniFile.getOrCreateSection(sectionName);
 
-  if (useBeta) {
+  if (useMainlineConfig) {
     const replayPath = section.get("ReplayDir", defaultAppSettings.settings.rootSlpPath);
     const useMonthlySubfolders = section.get("ReplayMonthlyFolders", "False") === "True";
     const enableJukebox = section.get("EnableJukebox", "True") === "True";

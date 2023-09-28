@@ -84,7 +84,6 @@ export async function fetchLatestVersion(
   includeBeta = false,
   settingsManager: SettingsManager,
 ): Promise<DolphinVersionResponse> {
-  log.warn(`getting latest ${includeBeta ? dolphinType + "-beta" : dolphinType} dolphin`);
   const res = await client.query({
     query: getLatestDolphinQuery,
     fetchPolicy: "network-only",
@@ -96,17 +95,16 @@ export async function fetchLatestVersion(
 
   handleErrors(res.errors);
 
-  // this is how i would like to handle it if we can agree to it
-  // if (exists(res.data.getDolphinVersion.isBeta)) {
-  //   await settingsManager.setDolphinBetaAvailable(dolphinType, res.data.getDolphinVersion.isBeta);
-  // }
+  if (exists(res.data.getLatestDolphin.promoteToStable)) {
+    const promoteToStable = (res.data.getLatestDolphin.promoteToStable as string) === "true";
+    await settingsManager.setDolphinPromoteToStable(dolphinType, promoteToStable);
+  }
 
   if (exists(res.data.getLatestDolphin.version)) {
     const isBeta = (res.data.getLatestDolphin.version as string).includes("-beta");
     await settingsManager.setDolphinBetaAvailable(dolphinType, isBeta);
   }
 
-  log.warn(`got url ${res.data.getLatestDolphin.windowsDownloadUrl} for v${res.data.getLatestDolphin.version}`);
   return {
     version: res.data.getLatestDolphin.version,
     downloadUrls: {

@@ -23,9 +23,9 @@ export class DolphinManager {
   constructor(private settingsManager: SettingsManager) {}
 
   public getInstallation(launchType: DolphinLaunchType): DolphinInstallation {
-    const useBeta = this.settingsManager.getUseDolphinBeta(launchType);
     const betaAvailable = this.settingsManager.getDolphinBetaAvailable(launchType);
-    return new DolphinInstallation(launchType, useBeta && betaAvailable);
+    const promoteToStable = this.settingsManager.getDolphinPromoteToStable(launchType);
+    return new DolphinInstallation(launchType, betaAvailable, promoteToStable);
   }
 
   public async installDolphin(dolphinType: DolphinLaunchType): Promise<void> {

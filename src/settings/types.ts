@@ -30,10 +30,12 @@ export type AppSettings = {
       netplay: {
         betaAvailable: boolean;
         useBeta: boolean;
+        promoteToStable: boolean;
       };
       playback: {
         betaAvailable: boolean;
         useBeta: boolean;
+        promoteToStable: boolean;
       };
     };
   };

@@ -32,10 +32,12 @@ export const defaultAppSettings: AppSettings = {
       netplay: {
         useBeta: false,
         betaAvailable: false,
+        promoteToStable: false,
       },
       playback: {
         useBeta: false,
         betaAvailable: false,
+        promoteToStable: false,
       },
     },
   },

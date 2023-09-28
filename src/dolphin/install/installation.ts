@@ -24,7 +24,11 @@ const semverRegex =
 
 export class DolphinInstallation {
   public installationFolder: string;
-  constructor(private dolphinLaunchType: DolphinLaunchType, private useBeta: boolean) {
+  constructor(
+    private dolphinLaunchType: DolphinLaunchType,
+    private useBeta: boolean,
+    private promoteToStable: boolean,
+  ) {
     const betaSuffix = useBeta === true ? "-beta" : "";
     this.installationFolder = path.join(app.getPath("userData"), `${dolphinLaunchType.toLowerCase()}${betaSuffix}`);
   }
@@ -68,7 +72,7 @@ export class DolphinInstallation {
         return path.join(dolphinPath, "Sys");
       }
       case "darwin": {
-        const dolphinApp = this.useBeta ? "Slippi_Dolphin.app" : "Slippi Dolphin.app";
+        const dolphinApp = this.useBeta || this.promoteToStable ? "Slippi_Dolphin.app" : "Slippi Dolphin.app";
         return path.join(dolphinPath, dolphinApp, "Contents", "Resources", "Sys");
       }
       default:
@@ -182,13 +186,13 @@ export class DolphinInstallation {
   public async getSettings(): Promise<SyncedDolphinSettings> {
     const iniPath = path.join(this.userFolder, "Config", "Dolphin.ini");
     const iniFile = await IniFile.init(iniPath);
-    return await getSlippiSettings(iniFile, this.useBeta);
+    return await getSlippiSettings(iniFile, this.useBeta || this.promoteToStable);
   }
 
   public async updateSettings(options: Partial<SyncedDolphinSettings>): Promise<void> {
     const iniPath = path.join(this.userFolder, "Config", "Dolphin.ini");
     const iniFile = await IniFile.init(iniPath);
-    await setSlippiSettings(iniFile, options, this.useBeta);
+    await setSlippiSettings(iniFile, options, this.useBeta || this.promoteToStable);
   }
 
   private async _isOutOfDate(latestVersion: string): Promise<boolean> {
@@ -231,9 +235,11 @@ export class DolphinInstallation {
       }
       case "darwin": {
         const { installDolphinOnMac } = await import("./macos");
+        const dolphinName = this.useBeta || this.promoteToStable ? "Slippi_Dolphin" : "Slippi Dolphin";
         await installDolphinOnMac({
           assetPath,
           destinationFolder: dolphinPath,
+          dolphinName,
         });
         break;
       }
