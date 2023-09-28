@@ -87,6 +87,7 @@ jobs:
           if [[ ! $msg =~ "^release.*" ]];
           then
             echo "not a release, skipping code signing"
+            echo "SKIP_CODE_SIGNING=yes" >> $GITHUB_ENV
             exit 0;
           fi
           echo "ES_USERNAME=${{ secrets.ES_USERNAME }}" >> $GITHUB_ENV

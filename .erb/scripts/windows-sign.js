@@ -12,8 +12,7 @@ const CODESIGNTOOL_PATH = process.env.CODESIGNTOOL_PATH;
 exports.default = async (config) => {
   const fileToSign = config.path ? String(config.path) : "";
 
-  if (!ES_USERNAME) {
-    // we're probably not trying to sign if this isn't set so just exit safely
+  if (process.env.SKIP_CODE_SIGNING === "yes") {
     return;
   }
 
@@ -21,7 +20,7 @@ exports.default = async (config) => {
     throw new Error(`unexpected platform: ${process.platform}`);
   }
 
-  if ([ES_CREDENTIAL_ID, ES_PASSWORD, ES_TOTP_SECRET, CODESIGNTOOL_PATH, fileToSign].some((v) => !v)) {
+  if ([ES_USERNAME, ES_CREDENTIAL_ID, ES_PASSWORD, ES_TOTP_SECRET, CODESIGNTOOL_PATH, fileToSign].some((v) => !v)) {
     throw new Error("missing required secrets");
   }
 
