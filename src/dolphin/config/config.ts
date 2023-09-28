@@ -18,28 +18,56 @@ export async function addGamePath(iniFile: IniFile, gameDir: string): Promise<vo
   await iniFile.save();
 }
 
-export async function setSlippiSettings(iniFile: IniFile, options: Partial<SyncedDolphinSettings>): Promise<void> {
+export async function setSlippiSettings(
+  iniFile: IniFile,
+  options: Partial<SyncedDolphinSettings>,
+  useBeta: boolean,
+): Promise<void> {
   const useMonthlySubfolders = options.useMonthlySubfolders ? "True" : "False";
   const enableJukebox = options.enableJukebox ? "True" : "False";
-  const coreSection = iniFile.getOrCreateSection("Core");
-  if (options.replayPath !== undefined) {
-    coreSection.set("SlippiReplayDir", options.replayPath);
+  const sectionName = useBeta ? "Slippi" : "Core";
+  const section = iniFile.getOrCreateSection(sectionName);
+
+  if (useBeta) {
+    if (options.replayPath !== undefined) {
+      section.set("ReplayDir", options.replayPath);
+    }
+    if (options.useMonthlySubfolders !== undefined) {
+      section.set("ReplayMonthlyFolders", useMonthlySubfolders);
+    }
+    if (options.enableJukebox !== undefined) {
+      section.set("EnableJukebox", enableJukebox);
+    }
+  } else {
+    if (options.replayPath !== undefined) {
+      section.set("SlippiReplayDir", options.replayPath);
+    }
+    if (options.useMonthlySubfolders !== undefined) {
+      section.set("SlippiReplayMonthFolders", useMonthlySubfolders);
+    }
+    if (options.enableJukebox !== undefined) {
+      section.set("SlippiJukeboxEnabled", enableJukebox);
+    }
   }
-  if (options.useMonthlySubfolders !== undefined) {
-    coreSection.set("SlippiReplayMonthFolders", useMonthlySubfolders);
-  }
-  if (options.enableJukebox !== undefined) {
-    coreSection.set("SlippiJukeboxEnabled", enableJukebox);
-  }
+
   await iniFile.save();
 }
 
-export async function getSlippiSettings(iniFile: IniFile): Promise<SyncedDolphinSettings> {
-  const coreSection = iniFile.getOrCreateSection("Core");
+export async function getSlippiSettings(iniFile: IniFile, useBeta: boolean): Promise<SyncedDolphinSettings> {
+  const sectionName = useBeta ? "Slippi" : "Core";
+  const section = iniFile.getOrCreateSection(sectionName);
 
-  const useMonthlySubfolders = coreSection.get("SlippiReplayMonthFolders", "False") === "True";
-  const replayPath = coreSection.get("SlippiReplayDir", defaultAppSettings.settings.rootSlpPath);
-  const enableJukebox = coreSection.get("SlippiJukeboxEnabled", "True") === "True";
+  if (useBeta) {
+    const replayPath = section.get("ReplayDir", defaultAppSettings.settings.rootSlpPath);
+    const useMonthlySubfolders = section.get("ReplayMonthlyFolders", "False") === "True";
+    const enableJukebox = section.get("EnableJukebox", "True") === "True";
+
+    return { useMonthlySubfolders, replayPath, enableJukebox };
+  }
+
+  const replayPath = section.get("SlippiReplayDir", defaultAppSettings.settings.rootSlpPath);
+  const useMonthlySubfolders = section.get("SlippiReplayMonthFolders", "False") === "True";
+  const enableJukebox = section.get("SlippiJukeboxEnabled", "True") === "True";
 
   return { useMonthlySubfolders, replayPath, enableJukebox };
 }

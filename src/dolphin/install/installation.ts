@@ -99,7 +99,7 @@ export class DolphinInstallation {
     if (this.dolphinLaunchType === DolphinLaunchType.NETPLAY) {
       const iniPath = path.join(this.userFolder, "Config", "Dolphin.ini");
       const iniFile = await IniFile.init(iniPath);
-      await getSlippiSettings(iniFile);
+      await getSlippiSettings(iniFile, this.useBeta);
     }
   }
 
@@ -193,13 +193,13 @@ export class DolphinInstallation {
   public async getSettings(): Promise<SyncedDolphinSettings> {
     const iniPath = path.join(this.userFolder, "Config", "Dolphin.ini");
     const iniFile = await IniFile.init(iniPath);
-    return await getSlippiSettings(iniFile);
+    return await getSlippiSettings(iniFile, this.useBeta);
   }
 
   public async updateSettings(options: Partial<SyncedDolphinSettings>): Promise<void> {
     const iniPath = path.join(this.userFolder, "Config", "Dolphin.ini");
     const iniFile = await IniFile.init(iniPath);
-    await setSlippiSettings(iniFile, options);
+    await setSlippiSettings(iniFile, options, this.useBeta);
   }
 
   private async _isOutOfDate(latestVersion: string): Promise<boolean> {

@@ -6,7 +6,7 @@ import { defaultMessages } from "@/lib/chat";
 import type { AuthService } from "../auth/types";
 import { delayAndMaybeError } from "../utils";
 import { generateMockChatMessage, generateUserSubscriptionLevel } from "./mockSlippiDataUtils";
-import { type ChatMessageData, type SlippiBackendService, type UserData, SubscriptionTier } from "./types";
+import { type ChatMessageData, type SlippiBackendService, type UserData } from "./types";
 
 const SHOULD_ERROR = false;
 
@@ -32,7 +32,6 @@ class MockSlippiBackendClient implements SlippiBackendService {
       },
       rulesAccepted: 0,
       savedMessages: defaultMessages,
-      subscriptionTier: SubscriptionTier.NONE,
     });
   }
 
