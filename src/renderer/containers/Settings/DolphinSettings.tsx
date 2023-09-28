@@ -2,6 +2,9 @@ import { DolphinLaunchType } from "@dolphin/types";
 import { css } from "@emotion/react";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
 import Typography from "@mui/material/Typography";
 import log from "electron-log";
 import capitalize from "lodash/capitalize";
@@ -12,13 +15,13 @@ import { DevGuard } from "@/components/DevGuard";
 import { PathInput } from "@/components/PathInput";
 import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
-import { useDolphinPath } from "@/lib/hooks/useSettings";
+import { useBetaDolphin, useDolphinPath } from "@/lib/hooks/useSettings";
 import { useServices } from "@/services";
 
 import { GeckoCodes } from "./GeckoCodes/GeckoCodes";
 import { SettingItem } from "./SettingItem";
 
-const { isLinux, isMac } = window.electron.bootstrap;
+const { isLinux, isMac, isWindows } = window.electron.bootstrap;
 
 enum ResetType {
   SOFT,
@@ -36,6 +39,7 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
     dolphinType === DolphinLaunchType.NETPLAY ? store.netplayDolphinVersion : store.playbackDolphinVersion,
   );
   const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
+  const [betaDolphin, setBetaDolphin] = useBetaDolphin(dolphinType);
   const [resetModalOpen, setResetModalOpen] = React.useState(false);
   const [isResetType, setResetType] = React.useState<ResetType | null>(null);
   const { dolphinService } = useServices();
@@ -44,6 +48,11 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
   const dolphinIsReady = dolphinStatus === DolphinStatus.READY && !dolphinIsOpen && isResetType === null;
   const versionString: string =
     dolphinStatus === DolphinStatus.UNKNOWN ? "Not found" : !dolphinVersion ? "Unknown" : dolphinVersion;
+
+  const onBetaDolphinChange = async (value: string) => {
+    const dolphinVersion = value === "true";
+    await setBetaDolphin(dolphinVersion);
+  };
 
   const openDolphinDirectoryHandler = React.useCallback(async () => {
     if (isMac || isLinux) {
@@ -174,12 +183,23 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
           </Button>
         </div>
       </SettingItem>
-      {!isLinux && (
+      {isWindows && (
         <ImportDolphinConfigForm
           dolphinType={dolphinType}
           disabled={!dolphinIsReady}
           onImportDolphin={importDolphinHandler}
         />
+      )}
+      {dolphinType === DolphinLaunchType.NETPLAY && (
+        <SettingItem
+          name={`${dolphinTypeName} Dolphin Release Channel`}
+          description="Choose which Slippi Dolphin version to install"
+        >
+          <RadioGroup value={betaDolphin} onChange={(_event, value) => onBetaDolphinChange(value)}>
+            <FormControlLabel value={false} label="Stable (Ishiiruka)" control={<Radio />} />
+            <FormControlLabel value={true} label="Beta (Mainline)" control={<Radio />} />
+          </RadioGroup>
+        </SettingItem>
       )}
     </div>
   );

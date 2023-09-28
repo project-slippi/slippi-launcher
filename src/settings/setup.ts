@@ -9,6 +9,8 @@ import {
   ipc_deleteConnection,
   ipc_editConnection,
   ipc_setAutoUpdateLauncher,
+  ipc_setBetaNetplay,
+  ipc_setBetaPlayback,
   ipc_setEnableJukebox,
   ipc_setExtraSlpPaths,
   ipc_setIsoPath,
@@ -113,6 +115,16 @@ export default function setupSettingsIpc({
   ipc_setAutoUpdateLauncher.main!.handle(async ({ autoUpdateLauncher }) => {
     await settingsManager.setAutoUpdateLauncher(autoUpdateLauncher);
     autoUpdater.autoInstallOnAppQuit = autoUpdateLauncher;
+    return { success: true };
+  });
+
+  ipc_setBetaNetplay.main!.handle(async ({ installBeta }) => {
+    await settingsManager.setBetaNetplay(installBeta);
+    return { success: true };
+  });
+
+  ipc_setBetaPlayback.main!.handle(async ({ installBeta }) => {
+    await settingsManager.setBetaPlayback(installBeta);
     return { success: true };
   });
 }
