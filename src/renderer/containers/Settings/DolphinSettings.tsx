@@ -185,13 +185,6 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
           </Button>
         </div>
       </SettingItem>
-      {isWindows && (
-        <ImportDolphinConfigForm
-          dolphinType={dolphinType}
-          disabled={!dolphinIsReady}
-          onImportDolphin={importDolphinHandler}
-        />
-      )}
       {dolphinType === DolphinLaunchType.NETPLAY && (
         <SettingItem
           name={`${dolphinTypeName} Dolphin Release Channel`}
@@ -210,6 +203,13 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
             />
           </RadioGroup>
         </SettingItem>
+      )}
+      {isWindows && (
+        <ImportDolphinConfigForm
+          dolphinType={dolphinType}
+          disabled={!dolphinIsReady}
+          onImportDolphin={importDolphinHandler}
+        />
       )}
     </div>
   );
