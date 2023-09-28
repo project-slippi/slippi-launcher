@@ -127,8 +127,7 @@ export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: Do
       dolphinPath = path.dirname(dolphinPath);
     }
 
-    const installation = dolphinManager.getInstallation(dolphinType);
-    await installation.importConfig(dolphinPath);
+    await dolphinManager.importConfig(dolphinType, dolphinPath);
     return { success: true };
   });
 

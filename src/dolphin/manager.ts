@@ -227,6 +227,14 @@ export class DolphinManager {
     return meleeIsoPath;
   }
 
+  public async importConfig(launchType: DolphinLaunchType, dolphinPath: string): Promise<void> {
+    const installation = this.getInstallation(launchType);
+    await installation.importConfig(dolphinPath);
+    if (launchType === DolphinLaunchType.NETPLAY) {
+      await this._updateLauncherSettings(launchType);
+    }
+  }
+
   private async _updateDolphinSettings(launchType: DolphinLaunchType) {
     const installation = this.getInstallation(launchType);
     await installation.updateSettings({

@@ -101,13 +101,6 @@ export class DolphinInstallation {
 
     // we shouldn't keep the old cache folder since it might be out of date
     await this.clearCache();
-
-    // read the settings from the ini and update any settings
-    if (this.dolphinLaunchType === DolphinLaunchType.NETPLAY) {
-      const iniPath = path.join(this.userFolder, "Config", "Dolphin.ini");
-      const iniFile = await IniFile.init(iniPath);
-      await getSlippiSettings(iniFile, this.useBeta);
-    }
   }
 
   public async validate({
