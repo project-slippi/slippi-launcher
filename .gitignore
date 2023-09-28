@@ -30,3 +30,6 @@ npm-debug.log.*
 
 # Ignore env variables
 .env
+
+# windows code signing tool
+CodeSignTool
