@@ -5,8 +5,11 @@ import { appVersion } from "@common/constants";
 import { exists } from "@common/exists";
 import type { SettingsManager } from "@settings/settingsManager";
 import { fetch } from "cross-fetch";
+import { app } from "electron";
 import electronLog from "electron-log";
+import { move, remove } from "fs-extra";
 import type { GraphQLError } from "graphql";
+import path from "path";
 
 import type { DolphinLaunchType } from "../types";
 
@@ -97,6 +100,16 @@ export async function fetchLatestVersion(
 
   if (exists(res.data.getLatestDolphin.promoteToStable)) {
     const promoteToStable = (res.data.getLatestDolphin.promoteToStable as string) === "true";
+    const currentPromoteToStable = settingsManager.getDolphinPromoteToStable(dolphinType);
+    if (promoteToStable && !currentPromoteToStable) {
+      // if this is the first time we're handling the promotion then delete {dolphinType}-beta and move {dolphinType}
+      // we want to delete the beta folder so that any defaults that got changed during the beta are properly updated
+      const betaPath = path.join(app.getPath("userData"), `${dolphinType.toLowerCase()}-beta`);
+      const oldStablePath = path.join(app.getPath("userData"), dolphinType.toLowerCase());
+      const legacyPath = path.join(app.getPath("userData"), `${dolphinType.toLowerCase()}-legacy`);
+      await remove(betaPath);
+      await move(oldStablePath, legacyPath, { overwrite: true });
+    }
     await settingsManager.setDolphinPromoteToStable(dolphinType, promoteToStable);
   }
 
