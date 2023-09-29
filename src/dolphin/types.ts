@@ -1,4 +1,6 @@
+import type { SyncedDolphinSettings } from "./config/config";
 import type { GeckoCode } from "./config/geckoCode";
+import type { DolphinVersionResponse } from "./install/fetchLatestVersion";
 
 export type ReplayCommunication = {
   mode: "normal" | "mirror" | "queue"; // default normal
@@ -107,4 +109,40 @@ export interface DolphinService {
   fetchGeckoCodes(dolphinLaunchType: DolphinLaunchType): Promise<GeckoCode[]>;
   saveGeckoCodes(dolphinLaunchType: DolphinLaunchType, geckoCodes: GeckoCode[]): Promise<void>;
   onEvent<T extends DolphinEventType>(eventType: T, handle: (event: DolphinEventMap[T]) => void): () => void;
+}
+
+export interface DolphinInstallation {
+  installationFolder: string;
+  get userFolder(): string;
+  get sysFolder(): string;
+
+  findDolphinExecutable(): Promise<string>;
+  clearCache(): Promise<void>;
+  importConfig(fromPath: string): Promise<void>;
+  validate({
+    onStart,
+    onProgress,
+    onComplete,
+    dolphinDownloadInfo,
+  }: {
+    onStart: () => void;
+    onProgress: (current: number, total: number) => void;
+    onComplete: () => void;
+    dolphinDownloadInfo: DolphinVersionResponse;
+  }): Promise<void>;
+  downloadAndInstall({
+    dolphinDownloadInfo,
+    onProgress,
+    onComplete,
+    cleanInstall,
+  }: {
+    dolphinDownloadInfo: DolphinVersionResponse;
+    onProgress?: (current: number, total: number) => void;
+    onComplete?: () => void;
+    cleanInstall?: boolean;
+  }): Promise<void>;
+  addGamePath(gameDir: string): Promise<void>;
+  getSettings(): Promise<SyncedDolphinSettings>;
+  updateSettings(options: Partial<SyncedDolphinSettings>): Promise<void>;
+  getDolphinVersion(): Promise<string | null>;
 }

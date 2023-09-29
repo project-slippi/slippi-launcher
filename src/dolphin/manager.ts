@@ -5,9 +5,10 @@ import path from "path";
 import { fileExists } from "utils/fileExists";
 
 import { type DolphinVersionResponse, fetchLatestVersion } from "./install/fetchLatestVersion";
-import { DolphinInstallation } from "./install/installation";
+import { IshiirukaDolphinInstallation } from "./install/ishiiInstallation";
+import { MainlineDolphinInstallation } from "./install/mainlineInstallation";
 import { DolphinInstance, PlaybackDolphinInstance } from "./instance";
-import type { DolphinEvent, ReplayCommunication } from "./types";
+import type { DolphinEvent, DolphinInstallation, ReplayCommunication } from "./types";
 import { DolphinEventType, DolphinLaunchType } from "./types";
 
 const log = electronLog.scope("dolphin/manager");
@@ -25,7 +26,10 @@ export class DolphinManager {
   public getInstallation(launchType: DolphinLaunchType): DolphinInstallation {
     const betaAvailable = this.settingsManager.getDolphinBetaAvailable(launchType);
     const promoteToStable = this.settingsManager.getDolphinPromoteToStable(launchType);
-    return new DolphinInstallation(launchType, betaAvailable, promoteToStable);
+    if (betaAvailable || promoteToStable) {
+      return new MainlineDolphinInstallation(launchType, promoteToStable ? "" : "-beta");
+    }
+    return new IshiirukaDolphinInstallation(launchType);
   }
 
   public async installDolphin(dolphinType: DolphinLaunchType): Promise<void> {

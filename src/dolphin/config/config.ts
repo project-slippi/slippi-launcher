@@ -18,56 +18,61 @@ export async function addGamePath(iniFile: IniFile, gameDir: string): Promise<vo
   await iniFile.save();
 }
 
-export async function setSlippiSettings(
-  iniFile: IniFile,
-  options: Partial<SyncedDolphinSettings>,
-  useMainlineConfig: boolean,
-): Promise<void> {
+export async function setSlippiIshiiSettings(iniFile: IniFile, options: Partial<SyncedDolphinSettings>): Promise<void> {
   const useMonthlySubfolders = options.useMonthlySubfolders ? "True" : "False";
   const enableJukebox = options.enableJukebox ? "True" : "False";
-  const sectionName = useMainlineConfig ? "Slippi" : "Core";
-  const section = iniFile.getOrCreateSection(sectionName);
+  const section = iniFile.getOrCreateSection("Core");
 
-  if (useMainlineConfig) {
-    if (options.replayPath !== undefined) {
-      section.set("ReplayDir", options.replayPath);
-    }
-    if (options.useMonthlySubfolders !== undefined) {
-      section.set("ReplayMonthlyFolders", useMonthlySubfolders);
-    }
-    if (options.enableJukebox !== undefined) {
-      section.set("EnableJukebox", enableJukebox);
-    }
-  } else {
-    if (options.replayPath !== undefined) {
-      section.set("SlippiReplayDir", options.replayPath);
-    }
-    if (options.useMonthlySubfolders !== undefined) {
-      section.set("SlippiReplayMonthFolders", useMonthlySubfolders);
-    }
-    if (options.enableJukebox !== undefined) {
-      section.set("SlippiJukeboxEnabled", enableJukebox);
-    }
+  if (options.replayPath !== undefined) {
+    section.set("SlippiReplayDir", options.replayPath);
+  }
+  if (options.useMonthlySubfolders !== undefined) {
+    section.set("SlippiReplayMonthFolders", useMonthlySubfolders);
+  }
+  if (options.enableJukebox !== undefined) {
+    section.set("SlippiJukeboxEnabled", enableJukebox);
   }
 
   await iniFile.save();
 }
 
-export async function getSlippiSettings(iniFile: IniFile, useMainlineConfig: boolean): Promise<SyncedDolphinSettings> {
-  const sectionName = useMainlineConfig ? "Slippi" : "Core";
-  const section = iniFile.getOrCreateSection(sectionName);
+export async function setSlippiMainlineSettings(
+  iniFile: IniFile,
+  options: Partial<SyncedDolphinSettings>,
+): Promise<void> {
+  const useMonthlySubfolders = options.useMonthlySubfolders ? "True" : "False";
+  const enableJukebox = options.enableJukebox ? "True" : "False";
+  const section = iniFile.getOrCreateSection("Slippi");
 
-  if (useMainlineConfig) {
-    const replayPath = section.get("ReplayDir", defaultAppSettings.settings.rootSlpPath);
-    const useMonthlySubfolders = section.get("ReplayMonthlyFolders", "False") === "True";
-    const enableJukebox = section.get("EnableJukebox", "True") === "True";
-
-    return { useMonthlySubfolders, replayPath, enableJukebox };
+  if (options.replayPath !== undefined) {
+    section.set("ReplayDir", options.replayPath);
   }
+  if (options.useMonthlySubfolders !== undefined) {
+    section.set("ReplayMonthlyFolders", useMonthlySubfolders);
+  }
+  if (options.enableJukebox !== undefined) {
+    section.set("EnableJukebox", enableJukebox);
+  }
+
+  await iniFile.save();
+}
+
+export async function getSlippiIshiiSettings(iniFile: IniFile): Promise<SyncedDolphinSettings> {
+  const section = iniFile.getOrCreateSection("Core");
 
   const replayPath = section.get("SlippiReplayDir", defaultAppSettings.settings.rootSlpPath);
   const useMonthlySubfolders = section.get("SlippiReplayMonthFolders", "False") === "True";
   const enableJukebox = section.get("SlippiJukeboxEnabled", "True") === "True";
+
+  return { useMonthlySubfolders, replayPath, enableJukebox };
+}
+
+export async function getSlippiMainlineSettings(iniFile: IniFile): Promise<SyncedDolphinSettings> {
+  const section = iniFile.getOrCreateSection("Slippi");
+
+  const replayPath = section.get("ReplayDir", defaultAppSettings.settings.rootSlpPath);
+  const useMonthlySubfolders = section.get("ReplayMonthlyFolders", "False") === "True";
+  const enableJukebox = section.get("EnableJukebox", "True") === "True";
 
   return { useMonthlySubfolders, replayPath, enableJukebox };
 }
