@@ -35,14 +35,14 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
         return path.join(this.installationFolder, "User");
       }
       case "darwin": {
-        const configPath = path.join(os.homedir(), "Library", "Application Support", `com.project-slippi.dolphin`);
+        const configPath = path.join(os.homedir(), "Library", "Application Support", "com.project-slippi.dolphin");
         const userFolderName = this.dolphinLaunchType === DolphinLaunchType.NETPLAY ? "netplay/User" : "playback/User";
 
         return path.join(configPath, userFolderName);
       }
       case "linux": {
         const configPath = path.join(os.homedir(), ".config");
-        const userFolderName = this.dolphinLaunchType === DolphinLaunchType.NETPLAY ? `SlippiOnline` : `SlippiPlayback`;
+        const userFolderName = this.dolphinLaunchType === DolphinLaunchType.NETPLAY ? "SlippiOnline" : "SlippiPlayback";
         return path.join(configPath, userFolderName);
       }
       default:
@@ -121,7 +121,6 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
       onStart();
 
       log.info(`${type} Dolphin installation is outdated. Downloading latest...`);
-      return;
     } catch (err) {
       log.info(`Could not find ${type} Dolphin installation. Downloading...`);
     }
