@@ -1,7 +1,7 @@
 import { colors } from "@common/colors";
 import type { NatType, PortMapping, Presence } from "@common/types";
-import { css } from "@emotion/react";
 import NetworkCheckIcon from "@mui/icons-material/NetworkCheck";
+import { Typography } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
@@ -25,7 +25,7 @@ export const NetworkDiagnosticsButton = React.memo(() => {
   const [isError, setIsError] = React.useState(false);
   const [networkInfo, setNetworkInfo] = React.useState<NetworkInformation | undefined>(undefined);
 
-  const runNetworkDiagnostics = async () => {
+  const runNetworkDiagnostics = React.useCallback(async () => {
     setIsLoading(true);
     setIsError(false);
     setNetworkInfo(undefined);
@@ -33,12 +33,14 @@ export const NetworkDiagnosticsButton = React.memo(() => {
       .runNetworkDiagnostics()
       .then(setNetworkInfo)
       .finally(() => setIsLoading(false));
-  };
+  }, []);
 
-  const openDialog = async () => {
+  const openDialog = React.useCallback(async () => {
     setDialogOpen(true);
     await runNetworkDiagnostics();
-  };
+  }, [runNetworkDiagnostics]);
+
+  const onClose = React.useCallback(() => setDialogOpen(false), []);
 
   const networkDiagnosticsContent = React.useMemo(() => {
     if (isLoading) {
@@ -68,16 +70,14 @@ export const NetworkDiagnosticsButton = React.memo(() => {
       >
         Check network issues
       </ActionButton>
-      <Dialog open={dialogOpen} closeAfterTransition={true} onClose={() => setDialogOpen(false)} fullWidth={true}>
+      <Dialog open={dialogOpen} closeAfterTransition={true} onClose={onClose} fullWidth={true}>
         <DialogTitle>Network Diagnostics</DialogTitle>
-        <DialogContent
-          css={css`
-            padding-bottom: 0;
-          `}
-        >
-          Turn VPN off for best results.
+        <DialogContent>
+          <Typography fontSize={14} marginBottom={1}>
+            Turn VPN off for best results.
+          </Typography>
+          <div>{networkDiagnosticsContent}</div>
         </DialogContent>
-        <DialogContent>{networkDiagnosticsContent}</DialogContent>
       </Dialog>
     </div>
   );
