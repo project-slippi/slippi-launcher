@@ -1,7 +1,6 @@
 import { NatType } from "@common/types";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import LoadingButton from "@mui/lab/LoadingButton";
 import Button from "@mui/material/Button";
 import InputBase from "@mui/material/InputBase";
 import Typography from "@mui/material/Typography";
@@ -46,40 +45,22 @@ export const NatTypeSection = ({ address, description, natType, title }: NatType
   const onIpAddressShowHide = () => {
     setIpAddressHidden(!ipAddressHidden);
   };
-  switch (natType) {
-    case NatType.UNKNOWN:
-      return (
-        <>
-          <Typography variant="subtitle2">{ipAddressTitle}</Typography>
-          <LoadingButton loading={true} />
-          <Typography variant="subtitle2">{title}</Typography>
-          <LoadingButton loading={true} />
-        </>
-      );
-    case NatType.FAILED:
-      return (
-        <>
-          <Typography variant="subtitle2">{ipAddressTitle}</Typography>
-          <Typography variant="subtitle2">{title}</Typography>
-          <DialogBody>{description}</DialogBody>
-        </>
-      );
-    default:
-      return (
-        <>
-          <Typography variant="subtitle2">{ipAddressTitle}</Typography>
-          <DialogBody>
-            <InputBase css={inputBaseCss} disabled={true} value={ipAddressHidden ? hiddenIpAddress : address} />
-            <Button variant="contained" color="secondary" onClick={onIpAddressShowHide} style={buttonStyle}>
-              {ipAddressHidden ? "Reveal" : "Hide"}
-            </Button>
-            <Button variant="contained" color="secondary" onClick={onIpAddressCopy} style={buttonStyle}>
-              {ipAddressCopied ? "Copied!" : "Copy"}
-            </Button>
-          </DialogBody>
-          <Typography variant="subtitle2">{title}</Typography>
-          <DialogBody>{description}</DialogBody>
-        </>
-      );
-  }
+  return (
+    <div>
+      <Typography variant="subtitle2">{ipAddressTitle}</Typography>
+      {natType !== NatType.FAILED && (
+        <DialogBody>
+          <InputBase css={inputBaseCss} disabled={true} value={ipAddressHidden ? hiddenIpAddress : address} />
+          <Button variant="contained" color="secondary" onClick={onIpAddressShowHide} style={buttonStyle}>
+            {ipAddressHidden ? "Reveal" : "Hide"}
+          </Button>
+          <Button variant="contained" color="secondary" onClick={onIpAddressCopy} style={buttonStyle}>
+            {ipAddressCopied ? "Copied!" : "Copy"}
+          </Button>
+        </DialogBody>
+      )}
+      <Typography variant="subtitle2">{title}</Typography>
+      <DialogBody>{description}</DialogBody>
+    </div>
+  );
 };

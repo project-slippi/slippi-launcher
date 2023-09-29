@@ -1,4 +1,3 @@
-import { Presence } from "@common/types";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import Button from "@mui/material/Button";
@@ -28,9 +27,8 @@ const DialogBody = styled.div`
 
 type CgnatCommandSectionProps = {
   address: string;
-  cgnat: Presence;
 };
-export const CgnatCommandSection = ({ address, cgnat }: CgnatCommandSectionProps) => {
+export const CgnatCommandSection = ({ address }: CgnatCommandSectionProps) => {
   const [cgnatCommandHidden, setCgnatCommandHidden] = React.useState(true);
   const onCgnatCommandShowHide = () => {
     setCgnatCommandHidden(!cgnatCommandHidden);
@@ -45,24 +43,19 @@ export const CgnatCommandSection = ({ address, cgnat }: CgnatCommandSectionProps
     window.setTimeout(() => setCgnatCommandCopied(false), 2000);
   }, [cgnatCommand]);
 
-  if (cgnat === Presence.FAILED && address) {
-    return (
-      <>
-        <Typography variant="subtitle2">{"Run this command"}</Typography>
-        <AlignCenterDiv>
-          <InputBase css={inputBaseCss} disabled={true} value={displayedCgnatCommand} />
-          <Button variant="contained" color="secondary" onClick={onCgnatCommandShowHide} style={buttonStyle}>
-            {cgnatCommandHidden ? "Reveal" : "Hide"}
-          </Button>
-          <Button variant="contained" color="secondary" onClick={onCgnatCommandCopy} style={buttonStyle}>
-            {cgnatCommandCopied ? "Copied!" : "Copy"}
-          </Button>
-        </AlignCenterDiv>
-        <DialogBody>
-          {"More than one hop to your external IP address indicates CGNAT or Double NAT (or VPN)."}
-        </DialogBody>
-      </>
-    );
-  }
-  return <></>;
+  return (
+    <div>
+      <Typography variant="subtitle2">{"Run this command"}</Typography>
+      <AlignCenterDiv>
+        <InputBase css={inputBaseCss} disabled={true} value={displayedCgnatCommand} />
+        <Button variant="contained" color="secondary" onClick={onCgnatCommandShowHide} style={buttonStyle}>
+          {cgnatCommandHidden ? "Reveal" : "Hide"}
+        </Button>
+        <Button variant="contained" color="secondary" onClick={onCgnatCommandCopy} style={buttonStyle}>
+          {cgnatCommandCopied ? "Copied!" : "Copy"}
+        </Button>
+      </AlignCenterDiv>
+      <DialogBody>More than one hop to your external IP address indicates CGNAT or Double NAT (or VPN).</DialogBody>
+    </div>
+  );
 };

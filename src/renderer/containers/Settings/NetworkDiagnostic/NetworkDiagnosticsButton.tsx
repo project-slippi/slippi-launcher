@@ -2,17 +2,22 @@ import { colors } from "@common/colors";
 import type { PortMapping } from "@common/types";
 import { NatType, Presence } from "@common/types";
 import { css } from "@emotion/react";
+import styled from "@emotion/styled";
 import NetworkCheckIcon from "@mui/icons-material/NetworkCheck";
+import LoadingButton from "@mui/lab/LoadingButton";
 import { Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 import React from "react";
 
 import { Button as ActionButton } from "@/components/FormInputs";
 
 import { CgnatCommandSection } from "./CgnatCommandSection";
-import { CgnatSection } from "./CgnatSection";
 import { NatTypeSection } from "./NatTypeSection";
-import { PortMappingSection } from "./PortMappingSection";
+
+const DialogBody = styled.div`
+  margin-bottom: 1em;
+`;
 
 const getNatTypeTitle = (natType: NatType) => {
   if (natType === NatType.FAILED) {
@@ -71,16 +76,19 @@ const getCgnatTitle = (presence: Presence) => {
   return "CGNAT or Double NAT";
 };
 
-const getCgnatDescription = (presence: Presence) => {
+const getCgnatDescription = (address: string, presence: Presence) => {
   switch (presence) {
     case Presence.ABSENT:
       return "Not detected - This is the optimal result.";
     case Presence.PRESENT:
       return "Detected (it could also be a VPN) - You may have trouble connecting to other players.";
-    case Presence.FAILED:
-      return `Please try again later.
-        If the failure persists, you can test this in your computer's terminal app.
-        See below:`;
+    case Presence.FAILED: {
+      let failedDescription = "Please try again later.";
+      if (address) {
+        failedDescription += "If the failure persists, you can test this in your computer's terminal app. See below:";
+      }
+      return failedDescription;
+    }
     default:
       return "";
   }
@@ -88,6 +96,7 @@ const getCgnatDescription = (presence: Presence) => {
 
 export const NetworkDiagnosticsButton = React.memo(() => {
   const [dialogOpen, setDialogOpen] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
   const [ipAddress, setIpAddress] = React.useState("");
   const [natType, setNatType] = React.useState(NatType.UNKNOWN);
   const [portMapping, setPortMapping] = React.useState({
@@ -98,6 +107,7 @@ export const NetworkDiagnosticsButton = React.memo(() => {
 
   const runNetworkDiagnostics = async () => {
     const { address, cgnat, natType, portMapping } = await window.electron.common.runNetworkDiagnostics();
+    setIsLoading(false);
     setIpAddress(address);
     setCgnat(cgnat);
     setNatType(natType);
@@ -110,6 +120,7 @@ export const NetworkDiagnosticsButton = React.memo(() => {
     setPortMapping({ upnp: Presence.UNKNOWN, natpmp: Presence.UNKNOWN });
     setCgnat(Presence.UNKNOWN);
     setDialogOpen(true);
+    setIsLoading(true);
     await runNetworkDiagnostics();
   };
 
@@ -118,26 +129,15 @@ export const NetworkDiagnosticsButton = React.memo(() => {
   const portMappingTitle = getPortMappingTitle(portMapping);
   const portMappingDescription = getPortMappingDescription(portMapping);
   const cgnatTitle = getCgnatTitle(cgnat);
-  const cgnatDescription = getCgnatDescription(cgnat);
+  const cgnatDescription = getCgnatDescription(ipAddress, cgnat);
 
   const [diagnosticResultsCopied, setDiagnosticResultsCopied] = React.useState(false);
   const onDiagnosticResultsCopy = React.useCallback(() => {
-    let diagnosticResults = `${natTypeTitle}\n${natTypeDescription}\n\n${portMappingTitle}\n${portMappingDescription}`;
-    if (ipAddress) {
-      diagnosticResults += `\n\n${cgnatTitle}\n${cgnatDescription}`;
-    }
+    const diagnosticResults = `${natTypeTitle}\n${natTypeDescription}\n\n${portMappingTitle}\n${portMappingDescription}\n\n${cgnatTitle}\n${cgnatDescription}`;
     window.electron.clipboard.writeText(diagnosticResults);
     setDiagnosticResultsCopied(true);
     window.setTimeout(() => setDiagnosticResultsCopied(false), 2000);
-  }, [
-    cgnatDescription,
-    cgnatTitle,
-    ipAddress,
-    natTypeDescription,
-    natTypeTitle,
-    portMappingDescription,
-    portMappingTitle,
-  ]);
+  }, [cgnatDescription, cgnatTitle, natTypeDescription, natTypeTitle, portMappingDescription, portMappingTitle]);
 
   return (
     <>
@@ -159,22 +159,30 @@ export const NetworkDiagnosticsButton = React.memo(() => {
           Turn VPN off for accurate results
         </DialogContent>
         <DialogContent>
-          <NatTypeSection address={ipAddress} description={natTypeDescription} natType={natType} title={natTypeTitle} />
-          <PortMappingSection description={portMappingDescription} portMapping={portMapping} title={portMappingTitle} />
-          <CgnatSection address={ipAddress} cgnat={cgnat} description={cgnatDescription} title={cgnatTitle} />
-          <CgnatCommandSection address={ipAddress} cgnat={cgnat} />
+          {isLoading ? (
+            <LoadingButton loading={true} />
+          ) : (
+            <div>
+              <NatTypeSection
+                address={ipAddress}
+                description={natTypeDescription}
+                natType={natType}
+                title={natTypeTitle}
+              />
+              <Typography variant="subtitle2">{portMappingTitle}</Typography>
+              <DialogBody>{portMappingDescription}</DialogBody>
+              <Typography variant="subtitle2">{cgnatTitle}</Typography>
+              <DialogBody>{cgnatDescription}</DialogBody>
+              {cgnat === Presence.FAILED && ipAddress && <CgnatCommandSection address={ipAddress} />}
+            </div>
+          )}
         </DialogContent>
         <DialogActions>
           <Button
             variant="contained"
             color="secondary"
             onClick={onDiagnosticResultsCopy}
-            disabled={
-              natType === NatType.UNKNOWN ||
-              portMapping.upnp === Presence.UNKNOWN ||
-              portMapping.natpmp === Presence.UNKNOWN ||
-              cgnat === Presence.UNKNOWN
-            }
+            disabled={isLoading}
             style={{ width: "144px" }}
           >
             {diagnosticResultsCopied ? "Copied!" : "Copy results"}
