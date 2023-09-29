@@ -45,7 +45,7 @@ export const CgnatCommandSection = ({ address }: CgnatCommandSectionProps) => {
 
   return (
     <div>
-      <Typography variant="subtitle2">{"Run this command"}</Typography>
+      <Typography variant="subtitle2">Run this command</Typography>
       <AlignCenterDiv>
         <InputBase css={inputBaseCss} disabled={true} value={displayedCgnatCommand} />
         <Button variant="contained" color="secondary" onClick={onCgnatCommandShowHide} style={buttonStyle}>
