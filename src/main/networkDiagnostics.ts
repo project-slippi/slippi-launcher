@@ -19,8 +19,8 @@ export async function getNetworkDiagnostics(): Promise<{
   let portMapping = { upnp: Presence.FAILED, natpmp: Presence.FAILED };
   let cgnat = Presence.FAILED;
   try {
-    ({ address, natType } = await getNatType());
     portMapping = await getPortMappingPresence();
+    ({ address, natType } = await getNatType());
     cgnat = await getCgnatPresence(address);
   } catch (err) {
     // just return what we have
