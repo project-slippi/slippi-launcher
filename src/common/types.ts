@@ -14,3 +14,22 @@ export enum IsoValidity {
   INVALID = "INVALID",
   UNVALIDATED = "UNVALIDATED",
 }
+
+export enum NatType {
+  UNKNOWN = "UNKNOWN",
+  NORMAL = "NORMAL",
+  SYMMETRIC = "SYMMETRIC",
+  FAILED = "FAILED",
+}
+
+export enum Presence {
+  UNKNOWN = "UNKNOWN",
+  ABSENT = "ABSENT",
+  PRESENT = "PRESENT",
+  FAILED = "FAILED",
+}
+
+export type PortMapping = {
+  upnp: Presence;
+  natpmp: Presence;
+};

@@ -13,6 +13,7 @@ import {
   ipc_launcherUpdateDownloadingEvent,
   ipc_launcherUpdateFoundEvent,
   ipc_launcherUpdateReadyEvent,
+  ipc_runNetworkDiagnostics,
   ipc_showOpenDialog,
 } from "./ipc";
 
@@ -64,6 +65,10 @@ export default {
   },
   async showOpenDialog(options: Electron.OpenDialogOptions) {
     const { result } = await ipc_showOpenDialog.renderer!.trigger(options);
+    return result;
+  },
+  async runNetworkDiagnostics() {
+    const { result } = await ipc_runNetworkDiagnostics.renderer!.trigger({});
     return result;
   },
   onAppUpdateFound(handle: (version: string) => void) {

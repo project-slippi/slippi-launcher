@@ -26,8 +26,10 @@ import {
   ipc_launcherUpdateDownloadingEvent,
   ipc_launcherUpdateFoundEvent,
   ipc_launcherUpdateReadyEvent,
+  ipc_runNetworkDiagnostics,
   ipc_showOpenDialog,
 } from "./ipc";
+import { getNetworkDiagnostics } from "./networkDiagnostics";
 import { fetchNewsFeedData } from "./newsFeed";
 import { getAssetPath, readLastLines } from "./util";
 import { verifyIso } from "./verifyIso";
@@ -185,5 +187,9 @@ export default function setupMainIpc({ dolphinManager }: { dolphinManager: Dolph
   ipc_showOpenDialog.main!.handle(async (options) => {
     const { canceled, filePaths } = await dialog.showOpenDialog(options);
     return { canceled, filePaths };
+  });
+
+  ipc_runNetworkDiagnostics.main!.handle(async () => {
+    return getNetworkDiagnostics();
   });
 }

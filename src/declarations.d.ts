@@ -15,3 +15,22 @@ declare module "dmg" {
   export declare function mount(filename: string, callback: (err: unknown, value: string) => void): string;
   export declare function unmount(mountPath: string, callback: (err: unknown) => void);
 }
+
+declare module "stun" {
+  export declare type AddressType = {
+    address: string;
+    port: number;
+    family: string;
+  };
+  export declare type RequestOptions = {
+    server: StunServer;
+  };
+  export declare class StunResponse {
+    public getXorAddress(): AddressType;
+  }
+  export declare class StunServer {
+    public close(): void;
+  }
+  export declare function createServer(options: { type: string }): StunServer;
+  export declare function request(url: string, options: RequestOptions): Promise<StunResponse>;
+}

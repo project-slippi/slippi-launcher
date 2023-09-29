@@ -1,4 +1,4 @@
-import type { IsoValidity, NewsItem } from "@common/types";
+import type { IsoValidity, NatType, NewsItem, PortMapping, Presence } from "@common/types";
 import type { EmptyPayload, SuccessPayload } from "utils/ipc";
 import { _, makeEndpoint } from "utils/ipc";
 
@@ -33,6 +33,12 @@ export const ipc_showOpenDialog = makeEndpoint.main(
 );
 
 export const ipc_clearTempFolder = makeEndpoint.main("clearTempFolder", <EmptyPayload>_, <SuccessPayload>_);
+
+export const ipc_runNetworkDiagnostics = makeEndpoint.main(
+  "runNetworkDiagnostics",
+  <EmptyPayload>_,
+  <{ address: string; cgnat: Presence; natType: NatType; portMapping: PortMapping }>_,
+);
 
 // Events
 
