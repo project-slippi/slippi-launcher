@@ -85,7 +85,7 @@ jobs:
         shell: bash
         run: |
           msg="$(git log -1 --no-merges --pretty=%B)"
-          if [[ ! $msg =~ "^release.*" ]];
+          if [[ "$FROM_FORK" = "true" ]] || [[ ! $msg =~ "^release.*" ]];
           then
             echo "not a release, skipping code signing"
             echo "SKIP_CODE_SIGNING=yes" >> $GITHUB_ENV
