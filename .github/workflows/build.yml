@@ -80,7 +80,8 @@ jobs:
       - name: Load Windows signing secrets
         env:
           ES_USERNAME: ${{ secrets.ES_USERNAME }}
-        if: matrix.os == 'windows-latest' && env.ES_USERNAME != null
+          FROM_FORK: ${{ github.event_name == 'pull_request' }} # pull request events from our repo are skipped in favor of push events
+        if: matrix.os == 'windows-latest' && (env.ES_USERNAME != null || github.event_name == 'pull_request')
         shell: bash
         run: |
           msg="$(git log -1 --no-merges --pretty=%B)"
