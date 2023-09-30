@@ -27,7 +27,8 @@ export class DolphinManager {
     const betaAvailable = this.settingsManager.getDolphinBetaAvailable(launchType);
     const promoteToStable = this.settingsManager.getDolphinPromoteToStable(launchType);
     if (betaAvailable || promoteToStable) {
-      return new MainlineDolphinInstallation(launchType, promoteToStable ? "" : "-beta");
+      const betaSuffix = promoteToStable ? "" : "-beta";
+      return new MainlineDolphinInstallation(launchType, betaSuffix);
     }
     return new IshiirukaDolphinInstallation(launchType);
   }
@@ -202,7 +203,6 @@ export class DolphinManager {
     }
 
     const useBeta = this.settingsManager.getUseDolphinBeta(launchType);
-
     let dolphinDownloadInfo: DolphinVersionResponse | undefined = undefined;
     try {
       dolphinDownloadInfo = await fetchLatestVersion(launchType, useBeta, this.settingsManager);
