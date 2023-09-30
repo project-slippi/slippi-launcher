@@ -48,7 +48,8 @@ export async function installMainlineDolphinOnMac({
     overwrite: true,
     dereference: true,
     filter: (src: string, _dest: string) => {
-      return src === "Slippi_Dolphin.app";
+      console.log(`[extractDmg.filter] src=${src}`);
+      return src.endsWith("/Slippi_Dolphin.app") || src.includes("/Slippi_Dolphin.app/");
     },
   });
   const files = await fs.readdir(destinationFolder);
