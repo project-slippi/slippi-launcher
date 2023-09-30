@@ -43,7 +43,14 @@ export async function installMainlineDolphinOnMac({
   log?: (message: string) => void;
 }) {
   log(`Extracting to: ${destinationFolder}`);
-  await extractDmg(assetPath, destinationFolder, { recursive: true, overwrite: true });
+  await extractDmg(assetPath, destinationFolder, {
+    recursive: true,
+    overwrite: true,
+    dereference: true,
+    filter: (src: string, _dest: string) => {
+      return src === "Slippi_Dolphin.app";
+    },
+  });
   const files = await fs.readdir(destinationFolder);
   await Promise.all(
     files
