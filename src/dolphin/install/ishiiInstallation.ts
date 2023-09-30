@@ -219,12 +219,10 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
         break;
       }
       case "darwin": {
-        const { installDolphinOnMac } = await import("./macos");
-        const dolphinName = "Slippi Dolphin";
-        await installDolphinOnMac({
+        const { installIshiirukaDolphinOnMac } = await import("./macos");
+        await installIshiirukaDolphinOnMac({
           assetPath,
           destinationFolder: dolphinPath,
-          dolphinName,
         });
         break;
       }

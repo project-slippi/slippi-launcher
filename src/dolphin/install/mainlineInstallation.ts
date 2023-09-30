@@ -270,12 +270,10 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
         break;
       }
       case "darwin": {
-        const { installDolphinOnMac } = await import("./macos");
-        const dolphinName = "Slippi_Dolphin.app";
-        await installDolphinOnMac({
+        const { installMainlineDolphinOnMac } = await import("./macos");
+        await installMainlineDolphinOnMac({
           assetPath,
           destinationFolder: dolphinPath,
-          dolphinName,
         });
         break;
       }

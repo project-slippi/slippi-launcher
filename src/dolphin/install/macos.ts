@@ -54,7 +54,7 @@ export async function installMainlineDolphinOnMac({
   );
 
   // sometimes permissions aren't set properly after the extraction so we will forcibly set them on install
-  const binaryLocation = path.join(destinationFolder, "Slippi Dolphin.app", "Contents", "MacOS", "Slippi_Dolphin");
+  const binaryLocation = path.join(destinationFolder, "Slippi_Dolphin.app", "Contents", "MacOS", "Slippi_Dolphin");
   const userInfo = os.userInfo();
   await fs.chmod(path.join(destinationFolder, "Slippi_Dolphin.app"), "777");
   await fs.chown(path.join(destinationFolder, "Slippi_Dolphin.app"), userInfo.uid, userInfo.gid);
