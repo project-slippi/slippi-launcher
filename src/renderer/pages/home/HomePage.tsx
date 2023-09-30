@@ -8,7 +8,7 @@ import { Footer } from "@/components/Footer";
 import { usePageScrollingShortcuts } from "@/lib/hooks/useShortcuts";
 
 import { NewsFeed } from "./NewsFeed";
-import { StartggLinks } from "./StartggLinks";
+import { TournamentLinks } from "./TournamentLinks";
 import { TwitterFeed } from "./TwitterFeed";
 
 const Outer = styled.div`
@@ -60,7 +60,7 @@ export const HomePage = React.memo(function HomePage() {
           rightSide={
             <Right>
               <TwitterFeed />
-              <StartggLinks />
+              <TournamentLinks />
             </Right>
           }
           rightStyle={{ backgroundColor: colors.purpleDark }}

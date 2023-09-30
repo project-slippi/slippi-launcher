@@ -37,16 +37,23 @@ const LinksGrid = styled.div`
   align-items: center;
 `;
 
-export const StartggLinks = React.memo(function StartggLinks() {
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+`;
+
+export const TournamentLinks = React.memo(function TournamentLinks() {
   return (
     <div>
       <LinksContainer>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+        <Header>
           <Typography variant="h2" fontSize={18} marginLeft={0.5}>
             Tournaments
           </Typography>
           <EmojiEventsIcon fontSize="small" />
-        </div>
+        </Header>
         <LinksGrid>
           <Button
             color="secondary"
