@@ -51,8 +51,8 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
         const configPath = path.join(os.homedir(), ".config");
         const userFolderName =
           this.dolphinLaunchType === DolphinLaunchType.NETPLAY
-            ? `SlippiOnline${this.betaSuffix}`
-            : `SlippiPlayback${this.betaSuffix}`;
+            ? `slippi-netplay${this.betaSuffix}`
+            : `slippi-playback${this.betaSuffix}`;
         return path.join(configPath, userFolderName);
       }
       default:
