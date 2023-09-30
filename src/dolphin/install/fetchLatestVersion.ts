@@ -111,7 +111,7 @@ export async function fetchLatestVersion(
         await remove(betaPath);
         await move(oldStablePath, legacyPath, { overwrite: true });
       } catch {
-        // likely a new install so skip this. ideally we update the promoteToStable default value
+        // likely a new install so ignore this
       }
     }
     await settingsManager.setDolphinPromoteToStable(dolphinType, promoteToStable);
