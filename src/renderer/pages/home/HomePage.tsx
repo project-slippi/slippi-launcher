@@ -8,6 +8,7 @@ import { Footer } from "@/components/Footer";
 import { usePageScrollingShortcuts } from "@/lib/hooks/useShortcuts";
 
 import { NewsFeed } from "./NewsFeed";
+import { TournamentLinks } from "./TournamentLinks";
 import { TwitterFeed } from "./TwitterFeed";
 
 const Outer = styled.div`
@@ -25,6 +26,13 @@ const Main = styled.div`
   overflow-x: hidden;
   padding: 20px;
   padding-top: 0;
+`;
+
+const Right = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  overflow-x: hidden;
 `;
 
 export const HomePage = React.memo(function HomePage() {
@@ -49,7 +57,12 @@ export const HomePage = React.memo(function HomePage() {
               <NewsFeed />
             </Main>
           }
-          rightSide={<TwitterFeed />}
+          rightSide={
+            <Right>
+              <TwitterFeed />
+              <TournamentLinks />
+            </Right>
+          }
           rightStyle={{ backgroundColor: colors.purpleDark }}
           style={{ gridTemplateColumns: "auto 300px" }}
         />
