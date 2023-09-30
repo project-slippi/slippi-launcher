@@ -25,7 +25,7 @@ const PoweredByContainer = styled.div`
   color: rgba(255, 255, 255, 0.6);
 `;
 
-const Outer = styled.div`
+const LinksContainer = styled.div`
   background-color: rgba(0, 0, 0, 0.35);
   padding: 15px;
 `;
@@ -40,7 +40,7 @@ const LinksGrid = styled.div`
 export const StartggLinks = React.memo(function StartggLinks() {
   return (
     <div>
-      <Outer>
+      <LinksContainer>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
           <Typography variant="h2" fontSize={18} marginLeft={0.5}>
             Tournaments
@@ -69,7 +69,7 @@ export const StartggLinks = React.memo(function StartggLinks() {
             Online
           </Button>
         </LinksGrid>
-      </Outer>
+      </LinksContainer>
       <PoweredByContainer>
         <div style={{ marginRight: 5 }}>powered by start.gg</div>
         <StartggLogo height="16px" width="16px" viewBox="0 0 1001 1001" aria-label="start.gg logo" role="image" />
