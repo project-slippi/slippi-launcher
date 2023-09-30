@@ -30,6 +30,7 @@ const Main = styled.div`
 
 const Right = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
   overflow-x: hidden;
 `;
@@ -58,8 +59,8 @@ export const HomePage = React.memo(function HomePage() {
           }
           rightSide={
             <Right>
-              <StartggLinks />
               <TwitterFeed />
+              <StartggLinks />
             </Right>
           }
           rightStyle={{ backgroundColor: colors.purpleDark }}

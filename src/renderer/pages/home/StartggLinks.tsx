@@ -1,51 +1,79 @@
+import styled from "@emotion/styled";
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
+import LanguageIcon from "@mui/icons-material/Language";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import { Typography } from "@mui/material";
 import Button from "@mui/material/Button";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardHeader from "@mui/material/CardHeader";
 import React from "react";
 
 import { ExternalLink } from "@/components/ExternalLink";
 import { ReactComponent as StartggLogo } from "@/styles/images/startgg-logo.svg";
 
 const NearMeUrl =
-  "https://www.start.gg/search/near_me" +
-  "?range%5BeffectiveRegistrationClosesAt%5D%5Bmin%5D=1" +
-  "&refinementList%5Bevents.videogame.id%5D=1" +
-  "&refinementList%5BhasOnlineEvents%5D=" +
-  "&refinementList%5Bstate%5D%5B0%5D=1" +
-  "&page=1" +
-  "&configure%5BhitsPerPage%5D=15" +
-  "&configure%5Bfilters%5D=profileType%3Atournament" +
-  "&configure%5BaroundLatLngViaIP%5D=true" +
-  "&configure%5BaroundRadius%5D=160934";
+  "https://start.gg/search/near_me?range%5BeffectiveRegistrationClosesAt%5D%5Bmin%5D=1&refinementList%5Bevents.videogame.id%5D=1&refinementList%5BhasOnlineEvents%5D=&refinementList%5Bstate%5D%5B0%5D=1&page=1&configure%5BhitsPerPage%5D=15&configure%5Bfilters%5D=profileType%3Atournament&configure%5BaroundLatLngViaIP%5D=true&configure%5BaroundRadius%5D=160934";
 
 const OnlineUrl =
-  "https://www.start.gg/search/tournaments" +
-  "?refinementList%5Bevents.videogame.id%5D=1" +
-  "&refinementList%5BhasOnlineEvents%5D%5B0%5D=true" +
-  "&page=1" +
-  "&configure%5BhitsPerPage%5D=15" +
-  "&configure%5Bfilters%5D=profileType%3Atournament" +
-  "&range%5BeffectiveRegistrationClosesAt%5D%5Bmin%5D=1";
+  "https://start.gg/search/tournaments?refinementList%5Bevents.videogame.id%5D=1&refinementList%5BhasOnlineEvents%5D%5B0%5D=true&page=1&configure%5BhitsPerPage%5D=15&configure%5Bfilters%5D=profileType%3Atournament&range%5BeffectiveRegistrationClosesAt%5D%5Bmin%5D=1";
+
+const PoweredByContainer = styled.div`
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  padding: 4px 10px;
+  font-size: 9pt;
+  color: rgba(255, 255, 255, 0.6);
+`;
+
+const Outer = styled.div`
+  background-color: rgba(0, 0, 0, 0.35);
+  padding: 15px;
+`;
+
+const LinksGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-items: center;
+  align-items: center;
+`;
 
 export const StartggLinks = React.memo(function StartggLinks() {
   return (
-    <Card style={{ margin: "20px" }}>
-      <CardHeader
-        avatar={
-          <StartggLogo height="40px" width="40px" viewBox="0 0 1001 1001" aria-label="start.gg logo" role="image" />
-        }
-        title="Tournaments"
-        titleTypographyProps={{ component: "h2", variant: "h5" }}
-      />
-      <CardActions>
-        <Button LinkComponent={ExternalLink} size="small" color="primary" href={NearMeUrl}>
-          Nearby
-        </Button>
-        <Button LinkComponent={ExternalLink} size="small" color="primary" href={OnlineUrl}>
-          Online
-        </Button>
-      </CardActions>
-    </Card>
+    <div>
+      <Outer>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+          <Typography variant="h2" fontSize={18} marginLeft={0.5}>
+            Tournaments
+          </Typography>
+          <EmojiEventsIcon fontSize="small" />
+        </div>
+        <LinksGrid>
+          <Button
+            color="secondary"
+            LinkComponent={ExternalLink}
+            size="small"
+            href={NearMeUrl}
+            startIcon={<LocationOnIcon />}
+            title="Show nearby tournaments in the browser"
+          >
+            Nearby
+          </Button>
+          <Button
+            color="secondary"
+            LinkComponent={ExternalLink}
+            size="small"
+            href={OnlineUrl}
+            startIcon={<LanguageIcon />}
+            title="Show online tournaments in the browser"
+          >
+            Online
+          </Button>
+        </LinksGrid>
+      </Outer>
+      <PoweredByContainer>
+        <div style={{ marginRight: 5 }}>powered by start.gg</div>
+        <StartggLogo height="16px" width="16px" viewBox="0 0 1001 1001" aria-label="start.gg logo" role="image" />
+      </PoweredByContainer>
+    </div>
   );
 });
