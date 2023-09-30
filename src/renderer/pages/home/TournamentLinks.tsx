@@ -20,7 +20,7 @@ const PoweredByContainer = styled.div`
   display: flex;
   justify-content: end;
   align-items: center;
-  padding: 4px 10px;
+  padding: 4px 15px;
   font-size: 9pt;
   color: rgba(255, 255, 255, 0.6);
 `;
@@ -78,7 +78,7 @@ export const TournamentLinks = React.memo(function TournamentLinks() {
         </LinksGrid>
       </LinksContainer>
       <PoweredByContainer>
-        <div style={{ marginRight: 5 }}>powered by start.gg</div>
+        <div style={{ marginRight: 8 }}>powered by start.gg</div>
         <StartggLogo height="16px" width="16px" viewBox="0 0 1001 1001" aria-label="start.gg logo" role="image" />
       </PoweredByContainer>
     </div>
