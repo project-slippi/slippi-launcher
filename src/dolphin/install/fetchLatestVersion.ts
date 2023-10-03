@@ -9,6 +9,7 @@ import { app } from "electron";
 import electronLog from "electron-log";
 import { move, remove } from "fs-extra";
 import type { GraphQLError } from "graphql";
+import os from "os";
 import path from "path";
 
 import type { DolphinLaunchType } from "../types";
@@ -110,6 +111,17 @@ export async function fetchLatestVersion(
       try {
         await remove(betaPath);
         await move(oldStablePath, legacyPath, { overwrite: true });
+        if (process.platform === "darwin") {
+          // mainline on macOS will take over the old user folder so move it on promotion
+          // windows keeps everything contained in the install dir
+          // linux will be using a new user folder path
+          const configPath = path.join(os.homedir(), "Library", "Application Support", "com.project-slippi.dolphin");
+          const oldUserFolderName = `${dolphinType.toLowerCase()}/User`;
+          const bkpFolderName = `${dolphinType.toLowerCase()}/User-bkp`;
+          const oldPath = path.join(configPath, oldUserFolderName);
+          const newPath = path.join(configPath, bkpFolderName);
+          await move(oldPath, newPath, { overwrite: true });
+        }
       } catch {
         // likely a new install so ignore this
       }
