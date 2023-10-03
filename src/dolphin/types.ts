@@ -145,4 +145,5 @@ export interface DolphinInstallation {
   getSettings(): Promise<SyncedDolphinSettings>;
   updateSettings(options: Partial<SyncedDolphinSettings>): Promise<void>;
   getDolphinVersion(): Promise<string | null>;
+  findPlayKey(): Promise<string>;
 }

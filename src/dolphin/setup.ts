@@ -23,7 +23,7 @@ import {
   ipc_viewSlpReplay,
 } from "./ipc";
 import type { DolphinManager } from "./manager";
-import { deletePlayKeyFile, findPlayKey, writePlayKeyFile } from "./playkey";
+import { deletePlayKeyFile, writePlayKeyFile } from "./playkey";
 import { DolphinLaunchType } from "./types";
 import { fetchGeckoCodes, findDolphinExecutable, saveGeckoCodes, updateBootToCssCode } from "./util";
 
@@ -78,7 +78,7 @@ export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: Do
 
   ipc_checkPlayKeyExists.main!.handle(async ({ key }) => {
     const installation = dolphinManager.getInstallation(DolphinLaunchType.NETPLAY);
-    const keyPath = await findPlayKey(installation);
+    const keyPath = await installation.findPlayKey();
     const exists = await fileExists(keyPath);
     if (!exists) {
       return { exists: false };

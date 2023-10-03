@@ -36,7 +36,7 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
       }
       case "darwin": {
         const configPath = path.join(os.homedir(), "Library", "Application Support", "com.project-slippi.dolphin");
-        const userFolderName = this.dolphinLaunchType === DolphinLaunchType.NETPLAY ? "netplay/User" : "playback/User";
+        const userFolderName = `${this.dolphinLaunchType.toLowerCase()}/User`;
 
         return path.join(configPath, userFolderName);
       }
@@ -194,6 +194,26 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
     } catch (err) {
       return null;
     }
+  }
+
+  public async findPlayKey(): Promise<string> {
+    let slippiDir = "";
+    switch (process.platform) {
+      case "linux":
+      case "win32": {
+        slippiDir = path.join(this.userFolder, "Slippi");
+        break;
+      }
+      case "darwin": {
+        slippiDir = path.join(os.homedir(), "Library", "Application Support", "com.project-slippi.dolphin", "Slippi");
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+    await fs.ensureDir(slippiDir);
+    return path.resolve(slippiDir, "user.json");
   }
 
   private async _uninstallDolphin() {

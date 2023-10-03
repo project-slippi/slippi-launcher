@@ -37,13 +37,11 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
         return path.join(this.installationFolder, "User");
       }
       case "darwin": {
-        const configPath = path.join(
-          os.homedir(),
-          "Library",
-          "Application Support",
-          `com.project-slippi.dolphin${this.betaSuffix}`,
-        );
-        const userFolderName = this.dolphinLaunchType === DolphinLaunchType.NETPLAY ? "netplay/User" : "playback/User";
+        const configPath = path.join(os.homedir(), "Library", "Application Support", `com.project-slippi.dolphin`);
+        const userFolderName =
+          this.dolphinLaunchType === DolphinLaunchType.NETPLAY
+            ? `netplay${this.betaSuffix}/User`
+            : `playback${this.betaSuffix}/User`;
 
         return path.join(configPath, userFolderName);
       }
@@ -51,8 +49,8 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
         const configPath = path.join(os.homedir(), ".config");
         const userFolderName =
           this.dolphinLaunchType === DolphinLaunchType.NETPLAY
-            ? `slippi-netplay${this.betaSuffix}`
-            : `slippi-playback${this.betaSuffix}`;
+            ? `slippi-dolphin/netplay${this.betaSuffix}`
+            : `slippi-dolphin/playback${this.betaSuffix}`;
         return path.join(configPath, userFolderName);
       }
       default:
@@ -245,6 +243,12 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
     } catch (err) {
       return null;
     }
+  }
+
+  public async findPlayKey(): Promise<string> {
+    const slippiDir = path.join(this.userFolder, "Slippi");
+    await fs.ensureDir(slippiDir);
+    return path.resolve(slippiDir, "user.json");
   }
 
   private async _uninstallDolphin() {
