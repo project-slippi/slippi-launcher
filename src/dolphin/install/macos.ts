@@ -14,15 +14,11 @@ export async function installIshiirukaDolphinOnMac({
   log?: (message: string) => void;
 }) {
   log(`Extracting to: ${destinationFolder}`);
-  await extractDmg(assetPath, destinationFolder);
-  const files = await fs.readdir(destinationFolder);
-  await Promise.all(
-    files
-      .filter((file) => file !== "Slippi Dolphin.app")
-      .map(async (file) => {
-        await fs.remove(path.join(destinationFolder, file));
-      }),
-  );
+  const filter = (src: string, _dest: string) => {
+    console.log(`[extractDmg.filter] src=${src}`);
+    return src.endsWith("/Slippi Dolphin.app") || src.includes("/Slippi Dolphin.app/");
+  };
+  await extractDmg(assetPath, destinationFolder, { filter });
 
   // sometimes permissions aren't set properly after the extraction so we will forcibly set them on install
   const binaryLocation = path.join(destinationFolder, "Slippi Dolphin.app", "Contents", "MacOS", "Slippi Dolphin");
@@ -43,23 +39,11 @@ export async function installMainlineDolphinOnMac({
   log?: (message: string) => void;
 }) {
   log(`Extracting to: ${destinationFolder}`);
-  await extractDmg(assetPath, destinationFolder, {
-    recursive: true,
-    overwrite: true,
-    dereference: true,
-    filter: (src: string, _dest: string) => {
-      console.log(`[extractDmg.filter] src=${src}`);
-      return src.endsWith("/Slippi_Dolphin.app") || src.includes("/Slippi_Dolphin.app/");
-    },
-  });
-  const files = await fs.readdir(destinationFolder);
-  await Promise.all(
-    files
-      .filter((file) => file !== "Slippi_Dolphin.app")
-      .map(async (file) => {
-        await fs.remove(path.join(destinationFolder, file));
-      }),
-  );
+  const filter = (src: string, _dest: string) => {
+    console.log(`[extractDmg.filter] src=${src}`);
+    return src.endsWith("/Slippi_Dolphin.app") || src.includes("/Slippi_Dolphin.app/");
+  };
+  await extractDmg(assetPath, destinationFolder, { dereference: true, filter });
 
   // sometimes permissions aren't set properly after the extraction so we will forcibly set them on install
   const binaryLocation = path.join(destinationFolder, "Slippi_Dolphin.app", "Contents", "MacOS", "Slippi_Dolphin");
