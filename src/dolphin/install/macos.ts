@@ -18,7 +18,7 @@ export async function installIshiirukaDolphinOnMac({
     console.log(`[extractDmg.filter] src=${src}`);
     return src.endsWith("/Slippi Dolphin.app") || src.includes("/Slippi Dolphin.app/");
   };
-  await extractDmg(assetPath, destinationFolder, { filter });
+  await extractDmg(assetPath, destinationFolder, { dereference: true, filter });
 
   // sometimes permissions aren't set properly after the extraction so we will forcibly set them on install
   const binaryLocation = path.join(destinationFolder, "Slippi Dolphin.app", "Contents", "MacOS", "Slippi Dolphin");
