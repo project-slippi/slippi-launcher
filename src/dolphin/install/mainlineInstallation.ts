@@ -90,7 +90,7 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
         case "darwin":
           return filename.endsWith("Dolphin.app");
         case "linux": {
-          const appimagePrefix = type === DolphinLaunchType.NETPLAY ? "Slippi_Online" : "Slippi_Playback";
+          const appimagePrefix = type === DolphinLaunchType.NETPLAY ? "Slippi_Netplay" : "Slippi_Playback";
           const isAppimage = filename.startsWith(appimagePrefix) && filename.endsWith("AppImage");
           return isAppimage || filename.endsWith("dolphin-emu");
         }
