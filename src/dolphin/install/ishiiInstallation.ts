@@ -22,7 +22,7 @@ const isLinux = process.platform === "linux";
 
 export class IshiirukaDolphinInstallation implements DolphinInstallation {
   public installationFolder: string;
-  constructor(private dolphinLaunchType: DolphinLaunchType) {
+  constructor(private readonly dolphinLaunchType: DolphinLaunchType) {
     this.installationFolder = path.join(app.getPath("userData"), `${dolphinLaunchType.toLowerCase()}`);
   }
 

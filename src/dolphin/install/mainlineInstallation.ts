@@ -20,8 +20,8 @@ const log = electronLog.scope("dolphin/installation");
 const isLinux = process.platform === "linux";
 
 export class MainlineDolphinInstallation implements DolphinInstallation {
-  public installationFolder: string;
-  constructor(private dolphinLaunchType: DolphinLaunchType, private betaSuffix: string) {
+  public readonly installationFolder: string;
+  constructor(private readonly dolphinLaunchType: DolphinLaunchType, private readonly betaSuffix: string) {
     this.installationFolder = path.join(
       app.getPath("userData"),
       `${dolphinLaunchType.toLowerCase()}${this.betaSuffix}`,

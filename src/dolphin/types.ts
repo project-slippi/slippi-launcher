@@ -112,30 +112,20 @@ export interface DolphinService {
 }
 
 export interface DolphinInstallation {
-  installationFolder: string;
+  readonly installationFolder: string;
   get userFolder(): string;
   get sysFolder(): string;
 
   findDolphinExecutable(): Promise<string>;
   clearCache(): Promise<void>;
   importConfig(fromPath: string): Promise<void>;
-  validate({
-    onStart,
-    onProgress,
-    onComplete,
-    dolphinDownloadInfo,
-  }: {
+  validate(options: {
     onStart: () => void;
     onProgress: (current: number, total: number) => void;
     onComplete: () => void;
     dolphinDownloadInfo: DolphinVersionResponse;
   }): Promise<void>;
-  downloadAndInstall({
-    dolphinDownloadInfo,
-    onProgress,
-    onComplete,
-    cleanInstall,
-  }: {
+  downloadAndInstall(options: {
     dolphinDownloadInfo: DolphinVersionResponse;
     onProgress?: (current: number, total: number) => void;
     onComplete?: () => void;
