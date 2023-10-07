@@ -5,18 +5,14 @@
 import dmg from "dmg";
 import * as fs from "fs-extra";
 
-export async function extractDmg(
-  filename: string,
-  destination: string,
-  copyOptions?: fs.CopyOptions,
-): Promise<string[]> {
+export async function extractDmg(filename: string, destination: string): Promise<string[]> {
   if (!filename.endsWith(".dmg")) {
     throw new Error(`Expected a dmg file, got ${filename}`);
   }
 
   const mountPath = await mountDmg(filename);
   const files = await fs.readdir(mountPath);
-  await fs.copy(mountPath, destination, { recursive: true, ...copyOptions });
+  await fs.copy(mountPath, destination, { recursive: true });
   await unmountDmg(mountPath);
   return files;
 }
