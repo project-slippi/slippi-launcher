@@ -9,6 +9,7 @@ import * as fs from "fs-extra";
 import os from "os";
 import path from "path";
 import { lt } from "semver";
+import semverRegex from "semver-regex";
 
 import type { DolphinInstallation } from "../types";
 import { DolphinLaunchType } from "../types";
@@ -18,10 +19,6 @@ import type { DolphinVersionResponse } from "./fetchLatestVersion";
 const log = electronLog.scope("dolphin/installation");
 
 const isLinux = process.platform === "linux";
-
-// taken from https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
-const semverRegex =
-  /(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-((?:0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?/;
 
 export class IshiirukaDolphinInstallation implements DolphinInstallation {
   public installationFolder: string;
@@ -189,7 +186,7 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
     try {
       const dolphinPath = await this.findDolphinExecutable();
       const dolphinVersionOut = spawnSync(dolphinPath, ["--version"]).stdout.toString();
-      const match = dolphinVersionOut.match(semverRegex);
+      const match = dolphinVersionOut.match(semverRegex());
       return match?.[0] ?? null;
     } catch (err) {
       return null;
