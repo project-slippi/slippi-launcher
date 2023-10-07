@@ -27,12 +27,12 @@ export function getConfigFlags({ env }: ProcessLike = process): ConfigFlags {
 }
 
 function parseBoolean(value: string | undefined, defaultValue: boolean): boolean {
-  if (value == null) {
+  if (value == null || value === "") {
     return defaultValue;
   }
 
-  if (value === "0" || value === "false" || value === "undefined") {
+  if (value === "0" || value.toLowerCase() === "false" || value.toLowerCase() === "undefined") {
     return false;
   }
-  return Boolean(value);
+  return true;
 }
