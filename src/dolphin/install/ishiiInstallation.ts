@@ -21,7 +21,7 @@ const log = electronLog.scope("dolphin/installation");
 const isLinux = process.platform === "linux";
 
 export class IshiirukaDolphinInstallation implements DolphinInstallation {
-  public installationFolder: string;
+  public readonly installationFolder: string;
   constructor(private readonly dolphinLaunchType: DolphinLaunchType) {
     this.installationFolder = path.join(app.getPath("userData"), `${dolphinLaunchType.toLowerCase()}`);
   }
