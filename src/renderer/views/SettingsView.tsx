@@ -125,7 +125,7 @@ export const SettingsView = React.memo(() => {
         }
         rightSide={
           <ContentColumn>
-            <div style={{ paddingLeft: 30, paddingBottom: 30, paddingTop: 0, paddingRight: 100, flex: 1 }}>
+            <div style={{ paddingLeft: 30, paddingBottom: 30, paddingRight: 100, flex: 1 }}>
               <Routes>
                 {settingItems.map((item) => {
                   return <Route key={item.path} path={item.path} element={item.component} />;
