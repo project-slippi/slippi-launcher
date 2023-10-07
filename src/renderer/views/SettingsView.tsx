@@ -41,6 +41,7 @@ const MenuColumn = styled.div`
 const ContentColumn = styled.div`
   width: 100%;
   display: flex;
+  padding-top: 30px;
   ${() => platformTitleBarStyles(50)}
 `;
 
