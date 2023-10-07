@@ -6,7 +6,7 @@ import setupReplaysIpc from "@replays/setup";
 import { SettingsManager } from "@settings/settingsManager";
 import setupSettingsIpc from "@settings/setup";
 
-import type { ConfigFlags } from "./flags";
+import type { ConfigFlags } from "./flags/flags";
 import setupMainIpc from "./setup";
 
 export function installModules(_flags: ConfigFlags) {

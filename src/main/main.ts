@@ -26,7 +26,7 @@ import url from "url";
 import { download } from "utils/download";
 import { fileExists } from "utils/fileExists";
 
-import { getConfigFlags } from "./flags";
+import { getConfigFlags } from "./flags/flags";
 import { installModules } from "./installModules";
 import { MenuBuilder } from "./menu";
 import { resolveHtmlPath } from "./util";
@@ -46,8 +46,7 @@ if (!lockObtained) {
   app.quit();
 }
 
-const isDevelopment = process.env.NODE_ENV === "development" || process.env.DEBUG_PROD === "true";
-const flags = getConfigFlags(isDevelopment);
+const flags = getConfigFlags();
 const { dolphinManager, settingsManager } = installModules(flags);
 
 class AppUpdater {
@@ -62,6 +61,8 @@ if (process.env.NODE_ENV === "production") {
   const sourceMapSupport = require("source-map-support");
   sourceMapSupport.install();
 }
+
+const isDevelopment = process.env.NODE_ENV === "development" || process.env.DEBUG_PROD === "true";
 
 if (isDevelopment) {
   require("electron-debug")();

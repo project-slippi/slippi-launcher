@@ -63,6 +63,10 @@ const configuration: webpack.Configuration = {
   plugins: [
     new webpack.EnvironmentPlugin({
       NODE_ENV: "production",
+
+      // Config flags
+      ENABLE_MAINLINE_DOLPHIN: "",
+      ENABLE_REPLAY_DATABASE: "",
     }),
 
     new webpack.DefinePlugin({
