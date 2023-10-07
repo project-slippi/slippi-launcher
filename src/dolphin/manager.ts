@@ -1,6 +1,9 @@
 import type { SettingsManager } from "@settings/settingsManager";
+import { app } from "electron";
 import electronLog from "electron-log";
+import { move, remove } from "fs-extra";
 import { Observable, Subject } from "observable-fns";
+import os from "os";
 import path from "path";
 import { fileExists } from "utils/fileExists";
 
@@ -37,7 +40,8 @@ export class DolphinManager {
     const useBeta = this.settingsManager.getUseDolphinBeta(dolphinType);
     let dolphinDownloadInfo: DolphinVersionResponse | undefined = undefined;
     try {
-      dolphinDownloadInfo = await fetchLatestVersion(dolphinType, useBeta, this.settingsManager);
+      dolphinDownloadInfo = await fetchLatestVersion(dolphinType, useBeta);
+      await this._updateDolphinFlags(dolphinDownloadInfo, dolphinType);
     } catch (err) {
       log.error(`Failed to fetch latest Dolphin version: ${err}`);
       return;
@@ -205,7 +209,8 @@ export class DolphinManager {
     const useBeta = this.settingsManager.getUseDolphinBeta(launchType);
     let dolphinDownloadInfo: DolphinVersionResponse | undefined = undefined;
     try {
-      dolphinDownloadInfo = await fetchLatestVersion(launchType, useBeta, this.settingsManager);
+      dolphinDownloadInfo = await fetchLatestVersion(launchType, useBeta);
+      await this._updateDolphinFlags(dolphinDownloadInfo, launchType);
     } catch (err) {
       log.error(`Failed to fetch latest Dolphin version: ${err}`);
       return;
@@ -303,5 +308,41 @@ export class DolphinManager {
       dolphinType,
       dolphinVersion,
     });
+  }
+
+  // Run after fetchLatestVersion to update the necessary flags
+  private async _updateDolphinFlags(downloadInfo: DolphinVersionResponse, dolphinType: DolphinLaunchType) {
+    if (downloadInfo.promoteToStable) {
+      const promoteToStable = downloadInfo.promoteToStable;
+      const currentPromoteToStable = this.settingsManager.getDolphinPromoteToStable(dolphinType);
+      if (promoteToStable && !currentPromoteToStable) {
+        // if this is the first time we're handling the promotion then delete {dolphinType}-beta and move {dolphinType}
+        // we want to delete the beta folder so that any defaults that got changed during the beta are properly updated
+        const betaPath = path.join(app.getPath("userData"), `${dolphinType.toLowerCase()}-beta`);
+        const oldStablePath = path.join(app.getPath("userData"), dolphinType.toLowerCase());
+        const legacyPath = path.join(app.getPath("userData"), `${dolphinType.toLowerCase()}-legacy`);
+        try {
+          await remove(betaPath);
+          await move(oldStablePath, legacyPath, { overwrite: true });
+          if (process.platform === "darwin") {
+            // mainline on macOS will take over the old user folder so move it on promotion
+            // windows keeps everything contained in the install dir
+            // linux will be using a new user folder path
+            const configPath = path.join(os.homedir(), "Library", "Application Support", "com.project-slippi.dolphin");
+            const oldUserFolderName = `${dolphinType.toLowerCase()}/User`;
+            const bkpFolderName = `${dolphinType.toLowerCase()}/User-bkp`;
+            const oldPath = path.join(configPath, oldUserFolderName);
+            const newPath = path.join(configPath, bkpFolderName);
+            await move(oldPath, newPath, { overwrite: true });
+          }
+        } catch (err) {
+          log.warn(`could not handle promotion: ${err}`);
+        }
+      }
+      await this.settingsManager.setDolphinPromoteToStable(dolphinType, promoteToStable);
+    }
+
+    const isBeta = (downloadInfo.version as string).includes("-beta");
+    await this.settingsManager.setDolphinBetaAvailable(dolphinType, isBeta);
   }
 }

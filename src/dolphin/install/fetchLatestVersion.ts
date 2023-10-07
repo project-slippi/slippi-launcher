@@ -2,20 +2,15 @@ import { ApolloClient, ApolloLink, gql, HttpLink, InMemoryCache } from "@apollo/
 import { onError } from "@apollo/client/link/error";
 import { RetryLink } from "@apollo/client/link/retry";
 import { appVersion } from "@common/constants";
-import { exists } from "@common/exists";
-import type { SettingsManager } from "@settings/settingsManager";
 import { fetch } from "cross-fetch";
-import { app } from "electron";
 import electronLog from "electron-log";
-import { move, remove } from "fs-extra";
 import type { GraphQLError } from "graphql";
-import os from "os";
-import path from "path";
 
 import type { DolphinLaunchType } from "../types";
 
 export type DolphinVersionResponse = {
   version: string;
+  promoteToStable: boolean;
   downloadUrls: {
     darwin: string;
     linux: string;
@@ -86,7 +81,6 @@ const handleErrors = (errors: readonly GraphQLError[] | undefined) => {
 export async function fetchLatestVersion(
   dolphinType: DolphinLaunchType,
   includeBeta = false,
-  settingsManager: SettingsManager,
 ): Promise<DolphinVersionResponse> {
   const res = await client.query({
     query: getLatestDolphinQuery,
@@ -99,43 +93,9 @@ export async function fetchLatestVersion(
 
   handleErrors(res.errors);
 
-  if (exists(res.data.getLatestDolphin.promoteToStable)) {
-    const promoteToStable = (res.data.getLatestDolphin.promoteToStable as string) === "true";
-    const currentPromoteToStable = settingsManager.getDolphinPromoteToStable(dolphinType);
-    if (promoteToStable && !currentPromoteToStable) {
-      // if this is the first time we're handling the promotion then delete {dolphinType}-beta and move {dolphinType}
-      // we want to delete the beta folder so that any defaults that got changed during the beta are properly updated
-      const betaPath = path.join(app.getPath("userData"), `${dolphinType.toLowerCase()}-beta`);
-      const oldStablePath = path.join(app.getPath("userData"), dolphinType.toLowerCase());
-      const legacyPath = path.join(app.getPath("userData"), `${dolphinType.toLowerCase()}-legacy`);
-      try {
-        await remove(betaPath);
-        await move(oldStablePath, legacyPath, { overwrite: true });
-        if (process.platform === "darwin") {
-          // mainline on macOS will take over the old user folder so move it on promotion
-          // windows keeps everything contained in the install dir
-          // linux will be using a new user folder path
-          const configPath = path.join(os.homedir(), "Library", "Application Support", "com.project-slippi.dolphin");
-          const oldUserFolderName = `${dolphinType.toLowerCase()}/User`;
-          const bkpFolderName = `${dolphinType.toLowerCase()}/User-bkp`;
-          const oldPath = path.join(configPath, oldUserFolderName);
-          const newPath = path.join(configPath, bkpFolderName);
-          await move(oldPath, newPath, { overwrite: true });
-        }
-      } catch {
-        // likely a new install so ignore this
-      }
-    }
-    await settingsManager.setDolphinPromoteToStable(dolphinType, promoteToStable);
-  }
-
-  if (exists(res.data.getLatestDolphin.version)) {
-    const isBeta = (res.data.getLatestDolphin.version as string).includes("-beta");
-    await settingsManager.setDolphinBetaAvailable(dolphinType, isBeta);
-  }
-
   return {
     version: res.data.getLatestDolphin.version,
+    promoteToStable: res.data.getLatestDolphin.promoteToStable ?? false,
     downloadUrls: {
       darwin: res.data.getLatestDolphin.macDownloadUrl,
       linux: res.data.getLatestDolphin.linuxDownloadUrl,
