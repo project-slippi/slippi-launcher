@@ -1,4 +1,5 @@
 import { DolphinLaunchType } from "@dolphin/types";
+import { Mutex } from "async-mutex";
 import electronSettings from "electron-settings";
 import fs from "fs";
 import merge from "lodash/merge";
@@ -16,8 +17,10 @@ electronSettings.configure({
 export class SettingsManager {
   // This only stores the actually modified settings
   private appSettings: Partial<AppSettings>;
+  private setMutex: Mutex;
 
   constructor() {
+    this.setMutex = new Mutex();
     const restoredSettings = electronSettings.getSync() as Partial<AppSettings>;
 
     // If the ISO file no longer exists, don't restore it
@@ -166,8 +169,10 @@ export class SettingsManager {
   }
 
   private async _set(objectPath: string, value: any) {
+    await this.setMutex.acquire();
     await electronSettings.set(objectPath, value);
     set(this.appSettings, objectPath, value);
     await ipc_settingsUpdatedEvent.main!.trigger(this.get());
+    this.setMutex.release();
   }
 }
