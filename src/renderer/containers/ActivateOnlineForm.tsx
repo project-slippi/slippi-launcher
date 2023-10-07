@@ -5,6 +5,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import log from "electron-log";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 
@@ -12,8 +13,6 @@ import { useAccount, useUserData } from "@/lib/hooks/useAccount";
 import { useToasts } from "@/lib/hooks/useToasts";
 import { validateConnectCodeStart } from "@/lib/validate";
 import { useServices } from "@/services";
-
-const log = window.electron.log;
 
 export const ActivateOnlineForm = ({ onSubmit }: { onSubmit?: () => void }) => {
   const user = useAccount((store) => store.user);

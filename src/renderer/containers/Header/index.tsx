@@ -6,6 +6,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
+import log from "electron-log";
 import { debounce } from "lodash";
 import React, { useCallback, useMemo } from "react";
 
@@ -182,7 +183,7 @@ const CheckForUpdatesButton = () => {
         await checkForAppUpdates();
         await updateDolphin();
       } catch (err) {
-        window.electron.log.error(err);
+        log.error(err);
         showError("Failed to get updates");
       } finally {
         setCheckingForUpdates(false);

@@ -1,4 +1,5 @@
 import { Ports } from "@slippi/slippi-js";
+import log from "electron-log";
 
 import { InfoBlock } from "@/components/InfoBlock";
 import { useAccount } from "@/lib/hooks/useAccount";
@@ -7,8 +8,6 @@ import { useConsole } from "@/lib/hooks/useConsole";
 import { useToasts } from "@/lib/hooks/useToasts";
 
 import { BroadcastPanel } from "./BroadcastPanel";
-
-const log = window.electron.log;
 
 // These are the default params for broadcasting Netplay Dolphin
 const ip = "127.0.0.1";

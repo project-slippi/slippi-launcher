@@ -16,13 +16,13 @@ import { useTheme } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Tooltip from "@mui/material/Tooltip";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import log from "electron-log";
 import debounce from "lodash/debounce";
 import React from "react";
 import { useQuery } from "react-query";
 
 import { useServices } from "@/services";
 
-const log = window.electron.log;
 type StartBroadcastDialogProps = {
   open: boolean;
   onClose: () => void;

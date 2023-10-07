@@ -1,4 +1,5 @@
 import { DolphinLaunchType } from "@dolphin/types";
+import log from "electron-log";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
@@ -8,8 +9,6 @@ import { useServices } from "@/services";
 import type { AuthUser } from "@/services/auth/types";
 
 import { useDesktopApp } from "./useQuickStart";
-
-const log = window.electron.log;
 
 export const useAppStore = create(
   combine(

@@ -5,6 +5,7 @@ import { onError } from "@apollo/client/link/error";
 import { RetryLink } from "@apollo/client/link/retry";
 import { currentRulesVersion } from "@common/constants";
 import type { DolphinService, PlayKey } from "@dolphin/types";
+import log from "electron-log";
 import type { GraphQLError } from "graphql";
 
 import type { AuthService } from "../auth/types";
@@ -19,7 +20,6 @@ import {
 } from "./graphqlEndpoints";
 import type { AvailableMessageType, ChatMessageData, SlippiBackendService, UserData } from "./types";
 
-const log = window.electron.log;
 const SLIPPI_BACKEND_URL = process.env.SLIPPI_GRAPHQL_ENDPOINT;
 
 const handleErrors = (errors: readonly GraphQLError[] | undefined) => {

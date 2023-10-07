@@ -3,6 +3,7 @@ import { css } from "@emotion/react";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
+import log from "electron-log";
 import capitalize from "lodash/capitalize";
 import React from "react";
 
@@ -18,7 +19,6 @@ import { GeckoCodes } from "./GeckoCodes/GeckoCodes";
 import { SettingItem } from "./SettingItem";
 
 const { isLinux, isMac } = window.electron.common;
-const log = window.electron.log;
 
 enum ResetType {
   SOFT,

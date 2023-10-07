@@ -4,7 +4,6 @@ import dolphinApi from "@dolphin/api";
 import replaysApi from "@replays/api";
 import settingsApi from "@settings/api";
 import { clipboard, contextBridge, shell } from "electron";
-import log from "electron-log";
 import path from "path";
 import { isSubdirectory } from "utils/isSubdirectory";
 
@@ -31,7 +30,6 @@ const api = {
     openPath: shell.openPath,
     showItemInFolder: shell.showItemInFolder,
   },
-  log: log.functions,
 };
 
 contextBridge.exposeInMainWorld("electron", api);

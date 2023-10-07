@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { IsoValidity } from "@common/types";
+import log from "electron-log";
 import throttle from "lodash/throttle";
 import React from "react";
 
@@ -18,8 +19,6 @@ import { useIsoVerification } from "./useIsoVerification";
 import { useReplayBrowserNavigation } from "./useReplayBrowserList";
 import { useSettings } from "./useSettings";
 import { useSettingsModal } from "./useSettingsModal";
-
-const log = window.electron.log;
 
 export const useAppListeners = () => {
   // Handle app initalization
