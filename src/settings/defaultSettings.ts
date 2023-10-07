@@ -28,13 +28,7 @@ export const defaultAppSettings: AppSettings = {
     extraSlpPaths: [],
     launchMeleeOnPlay: true,
     autoUpdateLauncher: true,
-    dolphin: {
-      netplay: {
-        useBeta: false,
-      },
-      playback: {
-        useBeta: false,
-      },
-    },
+    useNetplayBeta: false,
+    usePlaybackBeta: false,
   },
 };

@@ -1,4 +1,5 @@
 /* eslint-disable import/no-default-export */
+import type { DolphinLaunchType } from "@dolphin/types";
 import { ipcRenderer } from "electron";
 
 import {
@@ -14,9 +15,8 @@ import {
   ipc_setRootSlpPath,
   ipc_setSpectateSlpPath,
   ipc_settingsUpdatedEvent,
+  ipc_setUseDolphinBeta,
   ipc_setUseMonthlySubfolders,
-  ipc_setUseNetplayBeta,
-  ipc_setUsePlaybackBeta,
 } from "./ipc";
 import type { AppSettings, StoredConnection } from "./types";
 
@@ -60,11 +60,8 @@ export default {
   async setAutoUpdateLauncher(autoUpdateLauncher: boolean): Promise<void> {
     await ipc_setAutoUpdateLauncher.renderer!.trigger({ autoUpdateLauncher });
   },
-  async setUseNetplayBeta(installBeta: boolean): Promise<void> {
-    await ipc_setUseNetplayBeta.renderer!.trigger({ useBeta: installBeta });
-  },
-  async setUsePlaybackBeta(installBeta: boolean): Promise<void> {
-    await ipc_setUsePlaybackBeta.renderer!.trigger({ useBeta: installBeta });
+  async setUseDolphinBeta(dolphinType: DolphinLaunchType, installBeta: boolean): Promise<void> {
+    await ipc_setUseDolphinBeta.renderer!.trigger({ dolphinType, useBeta: installBeta });
   },
   async addNewConnection(connection: Omit<StoredConnection, "id">): Promise<void> {
     await ipc_addNewConnection.renderer!.trigger({ connection });

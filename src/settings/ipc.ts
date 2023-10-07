@@ -1,3 +1,4 @@
+import type { DolphinLaunchType } from "@dolphin/types";
 import type { SuccessPayload } from "utils/ipc";
 import { _, makeEndpoint } from "utils/ipc";
 
@@ -33,11 +34,9 @@ export const ipc_setAutoUpdateLauncher = makeEndpoint.main(
   <SuccessPayload>_,
 );
 
-export const ipc_setUseNetplayBeta = makeEndpoint.main("setUseNetplayBeta", <{ useBeta: boolean }>_, <SuccessPayload>_);
-
-export const ipc_setUsePlaybackBeta = makeEndpoint.main(
-  "setUsePlaybackBeta",
-  <{ useBeta: boolean }>_,
+export const ipc_setUseDolphinBeta = makeEndpoint.main(
+  "setUseNetplayBeta",
+  <{ dolphinType: DolphinLaunchType; useBeta: boolean }>_,
   <SuccessPayload>_,
 );
 

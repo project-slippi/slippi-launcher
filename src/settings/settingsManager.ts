@@ -48,12 +48,12 @@ export class SettingsManager {
   }
 
   public getUseDolphinBeta(type: DolphinLaunchType): boolean {
-    const dolphinSettings = this.get().settings.dolphin;
+    const settings = this.get().settings;
     switch (type) {
       case DolphinLaunchType.NETPLAY:
-        return dolphinSettings.netplay.useBeta;
+        return settings.useNetplayBeta;
       case DolphinLaunchType.PLAYBACK:
-        return dolphinSettings.playback.useBeta;
+        return settings.usePlaybackBeta;
     }
   }
 
@@ -89,12 +89,15 @@ export class SettingsManager {
     await this._set("settings.autoUpdateLauncher", autoUpdateLauncher);
   }
 
-  public async setUseNetplayBeta(useBeta: boolean): Promise<void> {
-    await this._set("settings.dolphin.netplay.useBeta", useBeta);
-  }
-
-  public async setUsePlaybackBeta(useBeta: boolean): Promise<void> {
-    await this._set("settings.dolphin.playback.useBeta", useBeta);
+  public async setUseDolphinBeta(dolphinType: DolphinLaunchType, useBeta: boolean): Promise<void> {
+    switch (dolphinType) {
+      case DolphinLaunchType.NETPLAY:
+        await this._set("settings.useNetplayBeta", useBeta);
+        break;
+      case DolphinLaunchType.PLAYBACK:
+        await this._set("settings.usePlaybackBeta", useBeta);
+        break;
+    }
   }
 
   public async addConsoleConnection(conn: Omit<StoredConnection, "id">): Promise<void> {

@@ -85,22 +85,18 @@ export const useAutoUpdateLauncher = () => {
 };
 
 export const useDolphinBeta = (dolphinType: DolphinLaunchType) => {
-  const netplayBeta = useSettings((state) => state.settings.dolphin.netplay.useBeta);
-  const setNetplayBeta = useCallback(async (useBeta: boolean) => {
-    await window.electron.settings.setUseNetplayBeta(useBeta);
-  }, []);
-
-  const playbackBeta = useSettings((state) => state.settings.dolphin.playback.useBeta);
-  const setPlaybackBeta = useCallback(async (useBeta: boolean) => {
-    await window.electron.settings.setUsePlaybackBeta(useBeta);
+  const netplayBeta = useSettings((state) => state.settings.useNetplayBeta);
+  const playbackBeta = useSettings((state) => state.settings.usePlaybackBeta);
+  const setDolphinBeta = useCallback(async (useBeta: boolean) => {
+    await window.electron.settings.setUseDolphinBeta(dolphinType, useBeta);
   }, []);
 
   switch (dolphinType) {
     case DolphinLaunchType.NETPLAY: {
-      return [netplayBeta, setNetplayBeta] as const;
+      return [netplayBeta, setDolphinBeta] as const;
     }
     case DolphinLaunchType.PLAYBACK: {
-      return [playbackBeta, setPlaybackBeta] as const;
+      return [playbackBeta, setDolphinBeta] as const;
     }
   }
 };

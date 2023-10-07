@@ -15,9 +15,8 @@ import {
   ipc_setLaunchMeleeOnPlay,
   ipc_setRootSlpPath,
   ipc_setSpectateSlpPath,
+  ipc_setUseDolphinBeta,
   ipc_setUseMonthlySubfolders,
-  ipc_setUseNetplayBeta,
-  ipc_setUsePlaybackBeta,
 } from "./ipc";
 import type { SettingsManager } from "./settingsManager";
 
@@ -106,13 +105,8 @@ export default function setupSettingsIpc({
     return { success: true };
   });
 
-  ipc_setUseNetplayBeta.main!.handle(async ({ useBeta: installBeta }) => {
-    await settingsManager.setUseNetplayBeta(installBeta);
-    return { success: true };
-  });
-
-  ipc_setUsePlaybackBeta.main!.handle(async ({ useBeta: installBeta }) => {
-    await settingsManager.setUsePlaybackBeta(installBeta);
+  ipc_setUseDolphinBeta.main!.handle(async ({ dolphinType, useBeta }) => {
+    await settingsManager.setUseDolphinBeta(dolphinType, useBeta);
     return { success: true };
   });
 }

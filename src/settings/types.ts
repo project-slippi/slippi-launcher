@@ -26,13 +26,7 @@ export type AppSettings = {
     extraSlpPaths: string[];
     launchMeleeOnPlay: boolean;
     autoUpdateLauncher: boolean;
-    dolphin: {
-      netplay: {
-        useBeta: boolean;
-      };
-      playback: {
-        useBeta: boolean;
-      };
-    };
+    useNetplayBeta: boolean;
+    usePlaybackBeta: boolean;
   };
 };
