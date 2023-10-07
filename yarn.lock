@@ -15502,6 +15502,11 @@ semver-regex@^3.1.2:
   resolved "https://registry.yarnpkg.com/semver-regex/-/semver-regex-3.1.4.tgz#13053c0d4aa11d070a2f2872b6b1e3ae1e1971b4"
   integrity sha512-6IiqeZNgq01qGf0TId0t3NvKzSvUsjcpdEO3AQNeIjR6A2+ckTnQlDpl4qu1bjRv0RzN3FP9hzFmws3lKqRWkA==
 
+semver-regex@^4.0.5:
+  version "4.0.5"
+  resolved "https://registry.yarnpkg.com/semver-regex/-/semver-regex-4.0.5.tgz#fbfa36c7ba70461311f5debcb3928821eb4f9180"
+  integrity sha512-hunMQrEy1T6Jr2uEVjrAIqjwWcQTgOAcIM52C8MY1EZSD3DDNft04XzvYKPqjED65bNVVko0YI38nYeEHCX3yw==
+
 "semver@2 || 3 || 4 || 5", semver@^5.4.1, semver@^5.5.0, semver@^5.6.0, semver@^5.7.1:
   version "5.7.1"
   resolved "https://registry.yarnpkg.com/semver/-/semver-5.7.1.tgz#a954f931aeba508d307bbf069eff0c01c96116f7"
