@@ -8,8 +8,12 @@ import path from "path";
 import { isSubdirectory } from "utils/isSubdirectory";
 
 import commonApi from "./api";
+import { getConfigFlags } from "./flags";
+
+const isDevelopment = process.env.NODE_ENV === "development" || process.env.DEBUG_PROD === "true";
 
 const api = {
+  flags: getConfigFlags(isDevelopment),
   common: commonApi,
   console: consoleApi,
   settings: settingsApi,

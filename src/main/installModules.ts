@@ -6,9 +6,10 @@ import setupReplaysIpc from "@replays/setup";
 import { SettingsManager } from "@settings/settingsManager";
 import setupSettingsIpc from "@settings/setup";
 
+import type { ConfigFlags } from "./flags";
 import setupMainIpc from "./setup";
 
-export function installModules() {
+export function installModules(_flags: ConfigFlags) {
   const settingsManager = new SettingsManager();
   const dolphinManager = new DolphinManager(settingsManager);
   setupDolphinIpc({ dolphinManager });
