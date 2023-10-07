@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const fs = require("fs");
 const path = require("path");
-const electronNotarize = require("electron-notarize");
+const electronNotarize = require("@electron/notarize");
 const electronBuilderConfig = require("../../electron-builder.json");
 
 module.exports = async function (params) {

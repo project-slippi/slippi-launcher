@@ -36,6 +36,7 @@ let menu: CrossProcessExports.Menu | null = null;
 let mainWindow: BrowserWindow | null = null;
 let didFinishLoad = false;
 
+log.initialize();
 log.catchErrors();
 
 // Only allow a single Slippi App instance
@@ -97,6 +98,7 @@ const createWindow = async () => {
     autoHideMenuBar: true,
 
     webPreferences: {
+      sandbox: false,
       preload: app.isPackaged ? path.join(__dirname, "preload.js") : path.join(__dirname, "../../.erb/dll/preload.js"),
     },
   });

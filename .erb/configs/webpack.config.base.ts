@@ -6,7 +6,7 @@ import { execSync } from "child_process";
 import Dotenv from "dotenv-webpack";
 import moment from "moment";
 import path from "path";
-import { TsconfigPathsPlugin } from "tsconfig-paths-webpack-plugin";
+import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
 import webpack from "webpack";
 
 import pkg from "../../release/app/package.json";
@@ -29,6 +29,9 @@ const configuration: webpack.Configuration = {
         use: {
           loader: "ts-loader",
           options: {
+            compilerOptions: {
+              module: "esnext",
+            },
             // Whether or not we should disable type-checking
             transpileOnly: isDevelop,
             // By default, ts-loader compiles absolutely everything and we don't want that
@@ -53,13 +56,8 @@ const configuration: webpack.Configuration = {
   resolve: {
     extensions: [".js", ".jsx", ".json", ".ts", ".tsx"],
     modules: [webpackPaths.srcPath, "node_modules"],
-    plugins: [
-      // Ensure our custom paths can be resolved
-      new TsconfigPathsPlugin({
-        baseUrl: webpackPaths.srcPath,
-        configFile: path.join(webpackPaths.rootPath, "tsconfig.json"),
-      }),
-    ],
+    // There is no need to add aliases here, the paths in tsconfig get mirrored
+    plugins: [new TsconfigPathsPlugin()],
   },
 
   plugins: [
