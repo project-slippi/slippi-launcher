@@ -23,7 +23,8 @@ const isLinux = process.platform === "linux";
 export class IshiirukaDolphinInstallation implements DolphinInstallation {
   public readonly installationFolder: string;
   constructor(private readonly dolphinLaunchType: DolphinLaunchType) {
-    this.installationFolder = path.join(app.getPath("userData"), `${dolphinLaunchType.toLowerCase()}`);
+    const dolphinFolder = dolphinLaunchType === DolphinLaunchType.NETPLAY ? "netplay" : "playback";
+    this.installationFolder = path.join(app.getPath("userData"), dolphinFolder);
   }
 
   public get userFolder(): string {
@@ -33,7 +34,8 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
       }
       case "darwin": {
         const configPath = path.join(os.homedir(), "Library", "Application Support", "com.project-slippi.dolphin");
-        const userFolderName = `${this.dolphinLaunchType.toLowerCase()}/User`;
+        const dolphinFolder = this.dolphinLaunchType === DolphinLaunchType.NETPLAY ? "netplay" : "playback";
+        const userFolderName = `${dolphinFolder}/User`;
 
         return path.join(configPath, userFolderName);
       }

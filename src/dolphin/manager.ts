@@ -321,9 +321,10 @@ export class DolphinManager {
       if (promoteToStable && !currentPromoteToStable) {
         // if this is the first time we're handling the promotion then delete {dolphinType}-beta and move {dolphinType}
         // we want to delete the beta folder so that any defaults that got changed during the beta are properly updated
-        const betaPath = path.join(app.getPath("userData"), `${dolphinType.toLowerCase()}-beta`);
-        const oldStablePath = path.join(app.getPath("userData"), dolphinType.toLowerCase());
-        const legacyPath = path.join(app.getPath("userData"), `${dolphinType.toLowerCase()}-legacy`);
+        const dolphinFolder = dolphinType === DolphinLaunchType.NETPLAY ? "netplay" : "playback";
+        const betaPath = path.join(app.getPath("userData"), `${dolphinFolder}-beta`);
+        const oldStablePath = path.join(app.getPath("userData"), dolphinFolder);
+        const legacyPath = path.join(app.getPath("userData"), `${dolphinFolder}-legacy`);
         try {
           await remove(betaPath);
           await move(oldStablePath, legacyPath, { overwrite: true });
@@ -332,10 +333,10 @@ export class DolphinManager {
             // windows keeps everything contained in the install dir
             // linux will be using a new user folder path
             const configPath = path.join(os.homedir(), "Library", "Application Support", "com.project-slippi.dolphin");
-            const oldUserFolderName = `${dolphinType.toLowerCase()}/User`;
-            const bkpFolderName = `${dolphinType.toLowerCase()}/User-bkp`;
+            const oldUserFolderName = `${dolphinFolder}/User`;
+            const legacyUserFolderName = `${dolphinFolder}/User-legacy`;
             const oldPath = path.join(configPath, oldUserFolderName);
-            const newPath = path.join(configPath, bkpFolderName);
+            const newPath = path.join(configPath, legacyUserFolderName);
             await move(oldPath, newPath, { overwrite: true });
           }
         } catch (err) {

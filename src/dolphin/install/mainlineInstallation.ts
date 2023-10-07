@@ -22,10 +22,8 @@ const isLinux = process.platform === "linux";
 export class MainlineDolphinInstallation implements DolphinInstallation {
   public readonly installationFolder: string;
   constructor(private readonly dolphinLaunchType: DolphinLaunchType, private readonly betaSuffix: string) {
-    this.installationFolder = path.join(
-      app.getPath("userData"),
-      `${dolphinLaunchType.toLowerCase()}${this.betaSuffix}`,
-    );
+    const dolphinFolder = dolphinLaunchType === DolphinLaunchType.NETPLAY ? "netplay" : "playback";
+    this.installationFolder = path.join(app.getPath("userData"), `${dolphinFolder}${this.betaSuffix}`);
   }
 
   public get userFolder(): string {
