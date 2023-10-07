@@ -31,13 +31,9 @@ export const defaultAppSettings: AppSettings = {
     dolphin: {
       netplay: {
         useBeta: false,
-        betaAvailable: false,
-        promoteToStable: false,
       },
       playback: {
         useBeta: false,
-        betaAvailable: false,
-        promoteToStable: false,
       },
     },
   },

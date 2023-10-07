@@ -19,6 +19,9 @@ const log = electronLog.scope("dolphin/manager");
 // DolphinManager should be in control of all dolphin instances that get opened for actual use.
 // This includes playing netplay, viewing replays, watching broadcasts (spectating), and configuring Dolphin.
 export class DolphinManager {
+  private betaAvailable = false;
+  private promoteToStable = false;
+
   private playbackDolphinInstances = new Map<string, PlaybackDolphinInstance>();
   private netplayDolphinInstance: DolphinInstance | null = null;
   private eventSubject = new Subject<DolphinEvent>();
@@ -27,8 +30,8 @@ export class DolphinManager {
   constructor(private settingsManager: SettingsManager) {}
 
   public getInstallation(launchType: DolphinLaunchType): DolphinInstallation {
-    const betaAvailable = this.settingsManager.getDolphinBetaAvailable(launchType);
-    const promoteToStable = this.settingsManager.getDolphinPromoteToStable(launchType);
+    const betaAvailable = this.betaAvailable;
+    const promoteToStable = this.promoteToStable;
     if (betaAvailable || promoteToStable) {
       const betaSuffix = promoteToStable ? "" : "-beta";
       return new MainlineDolphinInstallation(launchType, betaSuffix);
@@ -314,7 +317,7 @@ export class DolphinManager {
   private async _updateDolphinFlags(downloadInfo: DolphinVersionResponse, dolphinType: DolphinLaunchType) {
     if (downloadInfo.promoteToStable) {
       const promoteToStable = downloadInfo.promoteToStable;
-      const currentPromoteToStable = this.settingsManager.getDolphinPromoteToStable(dolphinType);
+      const currentPromoteToStable = this.promoteToStable;
       if (promoteToStable && !currentPromoteToStable) {
         // if this is the first time we're handling the promotion then delete {dolphinType}-beta and move {dolphinType}
         // we want to delete the beta folder so that any defaults that got changed during the beta are properly updated
@@ -339,10 +342,10 @@ export class DolphinManager {
           log.warn(`could not handle promotion: ${err}`);
         }
       }
-      await this.settingsManager.setDolphinPromoteToStable(dolphinType, promoteToStable);
+      this.promoteToStable = promoteToStable;
     }
 
     const isBeta = (downloadInfo.version as string).includes("-beta");
-    await this.settingsManager.setDolphinBetaAvailable(dolphinType, isBeta);
+    this.betaAvailable = isBeta;
   }
 }

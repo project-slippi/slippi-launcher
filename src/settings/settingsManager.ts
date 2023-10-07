@@ -57,26 +57,6 @@ export class SettingsManager {
     }
   }
 
-  public getDolphinBetaAvailable(type: DolphinLaunchType): boolean {
-    const dolphinSettings = this.get().settings.dolphin;
-    switch (type) {
-      case DolphinLaunchType.NETPLAY:
-        return dolphinSettings.netplay.betaAvailable;
-      case DolphinLaunchType.PLAYBACK:
-        return dolphinSettings.playback.betaAvailable;
-    }
-  }
-
-  public getDolphinPromoteToStable(type: DolphinLaunchType): boolean {
-    const dolphinSettings = this.get().settings.dolphin;
-    switch (type) {
-      case DolphinLaunchType.NETPLAY:
-        return dolphinSettings.netplay.promoteToStable;
-      case DolphinLaunchType.PLAYBACK:
-        return dolphinSettings.playback.promoteToStable;
-    }
-  }
-
   public async setIsoPath(isoPath: string | null): Promise<void> {
     await this._set("settings.isoPath", isoPath);
   }
@@ -107,30 +87,6 @@ export class SettingsManager {
 
   public async setAutoUpdateLauncher(autoUpdateLauncher: boolean): Promise<void> {
     await this._set("settings.autoUpdateLauncher", autoUpdateLauncher);
-  }
-
-  public async setDolphinBetaAvailable(type: DolphinLaunchType, betaAvailable: boolean): Promise<void> {
-    switch (type) {
-      case DolphinLaunchType.NETPLAY: {
-        await this._set("settings.dolphin.netplay.betaAvailable", betaAvailable);
-        break;
-      }
-      case DolphinLaunchType.PLAYBACK: {
-        await this._set("settings.dolphin.playback.betaAvailable", betaAvailable);
-      }
-    }
-  }
-
-  public async setDolphinPromoteToStable(type: DolphinLaunchType, promoteToStable: boolean): Promise<void> {
-    switch (type) {
-      case DolphinLaunchType.NETPLAY: {
-        await this._set("settings.dolphin.netplay.promoteToStable", promoteToStable);
-        break;
-      }
-      case DolphinLaunchType.PLAYBACK: {
-        await this._set("settings.dolphin.playback.promoteToStable", promoteToStable);
-      }
-    }
   }
 
   public async setUseNetplayBeta(useBeta: boolean): Promise<void> {

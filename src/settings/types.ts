@@ -28,14 +28,10 @@ export type AppSettings = {
     autoUpdateLauncher: boolean;
     dolphin: {
       netplay: {
-        betaAvailable: boolean;
         useBeta: boolean;
-        promoteToStable: boolean;
       };
       playback: {
-        betaAvailable: boolean;
         useBeta: boolean;
-        promoteToStable: boolean;
       };
     };
   };
