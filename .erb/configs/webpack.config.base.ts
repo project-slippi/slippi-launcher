@@ -65,8 +65,8 @@ const configuration: webpack.Configuration = {
       NODE_ENV: "production",
 
       // Config flags
-      ENABLE_MAINLINE_DOLPHIN: "",
-      ENABLE_REPLAY_DATABASE: "",
+      ENABLE_MAINLINE_DOLPHIN: null,
+      ENABLE_REPLAY_DATABASE: null,
     }),
 
     new webpack.DefinePlugin({

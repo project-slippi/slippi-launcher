@@ -11,7 +11,6 @@ export type AppBootstrap = {
   isMac: boolean;
   isLinux: boolean;
   isWindows: boolean;
-  argv: string[];
 };
 
 export function getAppBootstrap(flags: ConfigFlags): AppBootstrap {
@@ -30,7 +29,6 @@ export function getAppBootstrap(flags: ConfigFlags): AppBootstrap {
     isMac: process.platform === "darwin",
     isLinux: process.platform === "linux",
     isWindows: process.platform === "win32",
-    argv: process.argv,
   };
   return bootstrap;
 }
