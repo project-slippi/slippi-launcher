@@ -14,7 +14,7 @@ const DEVELOPMENT_CONFIG_FLAGS: ConfigFlags = {
 };
 
 export function getConfigFlags(): ConfigFlags {
-  const isDevelopment = process.env.NODE_ENV === "development" || process.env.DEBUG_PROD === "true";
+  const isDevelopment = process.env.NODE_ENV === "development";
   if (isDevelopment) {
     return DEVELOPMENT_CONFIG_FLAGS;
   }
