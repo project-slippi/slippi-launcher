@@ -50,7 +50,7 @@ export class ErrorBoundary extends React.Component<any, ErrorBoundaryState> {
           <WarningIcon />
           <span style={{ marginLeft: 10 }}>Uh oh... Something went wrong!</span>
         </h2>
-        {window.electron.common.isDevelopment && this.state.errorInfo !== null && (
+        {window.electron.bootstrap.isDevelopment && this.state.errorInfo !== null && (
           <div>
             <Button onClick={() => this.setState({ showStackTrace: !this.state.showStackTrace })} size="small">
               Toggle stack trace

@@ -1,3 +1,5 @@
+import log from "electron-log";
+
 export type ConfigFlags = {
   enableMainlineDolphin: boolean;
   enableReplayDatabase: boolean;

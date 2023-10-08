@@ -33,7 +33,7 @@ export const CgnatCommandSection = ({ address }: CgnatCommandSectionProps) => {
   const onCgnatCommandShowHide = () => {
     setCgnatCommandHidden(!cgnatCommandHidden);
   };
-  const tracerouteCommand = window.electron.common.isWindows ? "tracert" : "traceroute";
+  const tracerouteCommand = window.electron.bootstrap.isWindows ? "tracert" : "traceroute";
   const cgnatCommand = `${tracerouteCommand} ${address}`;
   const displayedCgnatCommand = `${tracerouteCommand} ${cgnatCommandHidden ? hiddenIpAddress : address}`;
   const [cgnatCommandCopied, setCgnatCommandCopied] = React.useState(false);

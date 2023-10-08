@@ -4,7 +4,7 @@ import { combine } from "zustand/middleware";
 const ADVANCED_USER_STORAGE_KEY = "IS_ADVANCED_USER";
 
 const result = localStorage.getItem(ADVANCED_USER_STORAGE_KEY);
-const startingValue = result === "true" || window.electron.common.isDevelopment;
+const startingValue = result === "true" || window.electron.bootstrap.isDevelopment;
 
 export const useAdvancedUser = create(
   combine(

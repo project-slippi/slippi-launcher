@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
 
-const isMac = window.electron.common.isMac;
+const isMac = window.electron.bootstrap.isMac;
 
 // Some platforms, like macOS, need to account for extra padding at the top of the window for
 // the proper OS styling.

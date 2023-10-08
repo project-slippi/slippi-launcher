@@ -3,15 +3,15 @@ import consoleApi from "@console/api";
 import dolphinApi from "@dolphin/api";
 import replaysApi from "@replays/api";
 import settingsApi from "@settings/api";
-import { clipboard, contextBridge, shell } from "electron";
+import { clipboard, contextBridge, ipcRenderer, shell } from "electron";
 import path from "path";
 import { isSubdirectory } from "utils/isSubdirectory";
 
 import commonApi from "./api";
-import { getConfigFlags } from "./flags/flags";
+import type { AppBootstrap } from "./bootstrap";
 
 const api = {
-  flags: getConfigFlags(),
+  bootstrap: ipcRenderer.sendSync("getAppBootstrapSync") as AppBootstrap,
   common: commonApi,
   console: consoleApi,
   settings: settingsApi,

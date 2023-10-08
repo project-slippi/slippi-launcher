@@ -16,7 +16,7 @@ import { useServices } from "@/services";
 
 import { QuickStartHeader } from "./QuickStartHeader";
 
-const isMac = window.electron.common.isMac;
+const isMac = window.electron.bootstrap.isMac;
 
 type FormValues = {
   netplayPath: string;
