@@ -39,11 +39,10 @@ const MenuColumn = styled.div`
 `;
 
 const ContentColumn = styled.div`
-  flex: 1;
-  overflow-x: hidden;
-  ${() => platformTitleBarStyles()}
-  padding: 30px;
-  padding-right: 100px;
+  width: 100%;
+  display: flex;
+  padding-top: 30px;
+  ${() => platformTitleBarStyles(50)}
 `;
 
 const CloseButton = styled(IconButton)`
@@ -62,11 +61,6 @@ export const SettingsView = React.memo(() => {
 
   return (
     <Outer>
-      <Tooltip title="Close">
-        <CloseButton onClick={close}>
-          <CloseIcon />
-        </CloseButton>
-      </Tooltip>
       <DualPane
         id="settings-view"
         leftStyle={{ backgroundColor: colors.purpleDark }}
@@ -131,15 +125,22 @@ export const SettingsView = React.memo(() => {
         }
         rightSide={
           <ContentColumn>
-            <Routes>
-              {settingItems.map((item) => {
-                return <Route key={item.path} path={item.path} element={item.component} />;
-              })}
-              {settingItems.length > 0 && <Route path="*" element={<Navigate to={settingItems[0].path} />} />}
-            </Routes>
+            <div style={{ paddingLeft: 30, paddingBottom: 30, paddingRight: 100, flex: 1 }}>
+              <Routes>
+                {settingItems.map((item) => {
+                  return <Route key={item.path} path={item.path} element={item.component} />;
+                })}
+                {settingItems.length > 0 && <Route path="*" element={<Navigate to={settingItems[0].path} />} />}
+              </Routes>
+            </div>
           </ContentColumn>
         }
       />
+      <Tooltip title="Close">
+        <CloseButton onClick={close}>
+          <CloseIcon />
+        </CloseButton>
+      </Tooltip>
     </Outer>
   );
 });

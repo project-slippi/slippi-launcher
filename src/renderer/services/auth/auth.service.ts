@@ -1,3 +1,4 @@
+import log from "electron-log";
 import { getApps, initializeApp } from "firebase/app";
 import {
   getAuth,
@@ -14,8 +15,6 @@ import Subject from "observable-fns/subject";
 import { generateDisplayPicture } from "@/lib/displayPicture";
 
 import type { AuthService, AuthUser } from "./types";
-
-const log = window.electron.log;
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
