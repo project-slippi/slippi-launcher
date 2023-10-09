@@ -19,6 +19,8 @@ import { useEnableJukebox, useIsoPath, useLaunchMeleeOnPlay } from "@/lib/hooks/
 
 import { SettingItem } from "./SettingItem";
 
+const isWindows = window.electron.bootstrap.isWindows;
+
 const renderValidityStatus = (isoValidity: IsoValidity) => {
   switch (isoValidity) {
     case IsoValidity.VALID: {
@@ -92,7 +94,7 @@ export const MeleeOptions = React.memo(() => {
             value={enableJukebox}
             onChange={(checked) => setEnableJukebox(checked)}
             label="Enable Music"
-            description="Enable in-game music. Incompatible with WASAPI."
+            description={`Enable in-game music.${isWindows ? " Incompatible with WASAPI." : ""}`}
             disabled={netplayDolphinOpen}
           />
         </SettingItem>
