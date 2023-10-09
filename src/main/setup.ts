@@ -7,11 +7,11 @@ import electronLog from "electron-log";
 import type { ProgressInfo, UpdateInfo } from "electron-updater";
 import { autoUpdater } from "electron-updater";
 import * as fs from "fs-extra";
-import os from "os";
-import osName from "os-name";
 import path from "path";
 import { fileExists } from "utils/fileExists";
 
+import { getAppBootstrap } from "./bootstrap";
+import type { ConfigFlags } from "./flags/flags";
 import { getLatestRelease } from "./github";
 import {
   ipc_checkForUpdate,
@@ -42,7 +42,13 @@ autoUpdater.logger = log;
 
 const LINES_TO_READ = 200;
 
-export default function setupMainIpc({ dolphinManager }: { dolphinManager: DolphinManager }) {
+export default function setupMainIpc({
+  dolphinManager,
+  flags,
+}: {
+  dolphinManager: DolphinManager;
+  flags: ConfigFlags;
+}) {
   ipcMain.on("onDragStart", (event, files: string[]) => {
     // The Electron.Item type declaration is missing the files attribute
     // so we'll just cast it as unknown for now.
@@ -52,15 +58,8 @@ export default function setupMainIpc({ dolphinManager }: { dolphinManager: Dolph
     } as unknown as Electron.Item);
   });
 
-  ipcMain.on("getOsInfoSync", (event) => {
-    const release = os.release();
-    try {
-      const name = osName(os.platform(), release);
-      event.returnValue = `${name} (${release})`;
-    } catch (err) {
-      log.error(err);
-      event.returnValue = release;
-    }
+  ipcMain.on("getAppBootstrapSync", (event) => {
+    event.returnValue = getAppBootstrap(flags);
   });
 
   ipc_fetchNewsFeed.main!.handle(async () => {

@@ -29,7 +29,7 @@ import { MainMenu } from "./MainMenu";
 import { StartGameDialog } from "./StartGameDialog";
 import { UserMenu } from "./UserMenu";
 
-const isMac = window.electron.common.isMac;
+const isMac = window.electron.bootstrap.isMac;
 
 const OuterBox = styled(Box)`
   background: radial-gradient(circle at left, #5c1394, transparent 30%);

@@ -6,7 +6,7 @@ import createDolphinClient from "./dolphin/dolphin.service";
 import createSlippiClient from "./slippi/slippi.service";
 import type { Services } from "./types";
 
-const isDevelopment = window.electron.common.isDevelopment;
+const isDevelopment = window.electron.bootstrap.isDevelopment;
 
 export async function installServices(): Promise<Services> {
   const dolphinService = createDolphinClient();

@@ -1,4 +1,4 @@
-const { isLinux, isWindows } = window.electron.common;
+const { isLinux, isWindows } = window.electron.bootstrap;
 
 export const handleDolphinExitCode = (exitCode: number | null): string | null => {
   if (exitCode === null || exitCode === 0) {

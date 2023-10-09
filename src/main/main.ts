@@ -26,6 +26,7 @@ import url from "url";
 import { download } from "utils/download";
 import { fileExists } from "utils/fileExists";
 
+import { getConfigFlags } from "./flags/flags";
 import { installModules } from "./installModules";
 import { MenuBuilder } from "./menu";
 import { resolveHtmlPath } from "./util";
@@ -45,7 +46,8 @@ if (!lockObtained) {
   app.quit();
 }
 
-const { dolphinManager, settingsManager } = installModules();
+const flags = getConfigFlags();
+const { dolphinManager, settingsManager } = installModules(flags);
 
 class AppUpdater {
   constructor() {

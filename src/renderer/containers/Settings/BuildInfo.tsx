@@ -6,7 +6,7 @@ import { ExternalLink as A } from "@/components/ExternalLink";
 import { useToasts } from "@/lib/hooks/useToasts";
 import { useAdvancedUser } from "@/lib/useAdvancedUser";
 
-const osInfo = window.electron.common.getOsInfoSync();
+const osInfo = window.electron.bootstrap.operatingSystem;
 
 const appVersion = __VERSION__;
 const buildDate = moment.utc(__DATE__);

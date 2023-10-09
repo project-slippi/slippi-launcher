@@ -18,7 +18,7 @@ import { useServices } from "@/services";
 import { GeckoCodes } from "./GeckoCodes/GeckoCodes";
 import { SettingItem } from "./SettingItem";
 
-const { isLinux, isMac } = window.electron.common;
+const { isLinux, isMac } = window.electron.bootstrap;
 
 enum ResetType {
   SOFT,
