@@ -279,9 +279,9 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
       case "linux": {
         const { installDolphinOnLinux } = await import("./linux");
         await installDolphinOnLinux({
-          type: this.dolphinLaunchType,
           assetPath,
           destinationFolder: dolphinPath,
+          findDolphinExecutable: this.findDolphinExecutable,
         });
         break;
       }

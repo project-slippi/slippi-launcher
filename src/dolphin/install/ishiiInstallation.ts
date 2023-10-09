@@ -1,7 +1,6 @@
 import type { SyncedDolphinSettings } from "@dolphin/config/config";
 import { addGamePath, getSlippiIshiiSettings, setSlippiIshiiSettings } from "@dolphin/config/config";
 import { IniFile } from "@dolphin/config/iniFile";
-import { findDolphinExecutable } from "@dolphin/util";
 import { spawnSync } from "child_process";
 import { app } from "electron";
 import electronLog from "electron-log";
@@ -67,8 +66,40 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
   public async findDolphinExecutable(): Promise<string> {
     const dolphinPath = this.installationFolder;
     const type = this.dolphinLaunchType;
+    // Check the directory contents
+    const files = await fs.readdir(dolphinPath);
+    const result = files.find((filename) => {
+      switch (process.platform) {
+        case "win32":
+          return filename.endsWith("Dolphin.exe");
+        case "darwin":
+          return filename.endsWith("Dolphin.app");
+        case "linux": {
+          const appimagePrefix = type === DolphinLaunchType.NETPLAY ? "Slippi_Online" : "Slippi_Playback";
+          const isAppimage = filename.startsWith(appimagePrefix) && filename.endsWith("AppImage");
+          return isAppimage || filename.endsWith("dolphin-emu");
+        }
+        default:
+          return false;
+      }
+    });
 
-    return findDolphinExecutable(type, dolphinPath);
+    if (!result) {
+      throw new Error(
+        `No ${type} Dolphin found in: ${dolphinPath}, try restarting the launcher. Ask in the Slippi Discord's support channels for further help`,
+      );
+    }
+
+    if (process.platform === "darwin") {
+      const dolphinBinaryPath = path.join(dolphinPath, result, "Contents", "MacOS", "Slippi Dolphin");
+      const dolphinExists = await fs.pathExists(dolphinBinaryPath);
+      if (!dolphinExists) {
+        throw new Error(`No ${type} Dolphin found in: ${dolphinPath}, try resetting dolphin`);
+      }
+      return dolphinBinaryPath;
+    }
+
+    return path.join(dolphinPath, result);
   }
 
   public async clearCache() {
@@ -248,9 +279,9 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
       case "linux": {
         const { installDolphinOnLinux } = await import("./linux");
         await installDolphinOnLinux({
-          type: this.dolphinLaunchType,
           assetPath,
           destinationFolder: dolphinPath,
+          findDolphinExecutable: this.findDolphinExecutable,
         });
         break;
       }
