@@ -92,7 +92,7 @@ export const MeleeOptions = React.memo(() => {
             value={enableJukebox}
             onChange={(checked) => setEnableJukebox(checked)}
             label="Enable Music"
-            description="Enable in-game music via Slippi Jukebox. Incompatible with WASAPI."
+            description="Enable in-game music. Incompatible with WASAPI."
             disabled={netplayDolphinOpen}
           />
         </SettingItem>
