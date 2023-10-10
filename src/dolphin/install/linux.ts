@@ -1,3 +1,4 @@
+import type { DolphinInstallation } from "@dolphin/types";
 import * as fs from "fs-extra";
 import { async as AsyncStreamZip } from "node-stream-zip";
 
@@ -5,16 +6,16 @@ import { async as AsyncStreamZip } from "node-stream-zip";
 export async function installDolphinOnLinux({
   assetPath,
   destinationFolder,
-  findDolphinExecutable,
+  installation,
   log = console.log,
 }: {
   assetPath: string;
   destinationFolder: string;
-  findDolphinExecutable: () => Promise<string>;
+  installation: DolphinInstallation;
   log?: (message: string) => void;
 }) {
   try {
-    const dolphinAppImagePath = await findDolphinExecutable();
+    const dolphinAppImagePath = await installation.findDolphinExecutable();
     log(`${dolphinAppImagePath} already exists. Deleting...`);
     await fs.remove(dolphinAppImagePath);
   } catch (err) {
@@ -26,7 +27,7 @@ export async function installDolphinOnLinux({
   await zip.close();
 
   // make the appimage executable because sometimes it doesn't have the right perms out the gate
-  const dolphinAppImagePath = await findDolphinExecutable();
+  const dolphinAppImagePath = await installation.findDolphinExecutable();
   log(`Setting executable permissions...`);
   await fs.chmod(dolphinAppImagePath, "755");
 }

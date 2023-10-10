@@ -281,7 +281,7 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
         await installDolphinOnLinux({
           assetPath,
           destinationFolder: dolphinPath,
-          findDolphinExecutable: this.findDolphinExecutable,
+          installation: this,
         });
         break;
       }
