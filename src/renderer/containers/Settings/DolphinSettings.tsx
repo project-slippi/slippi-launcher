@@ -11,6 +11,7 @@ import capitalize from "lodash/capitalize";
 import React from "react";
 
 import { ConfirmationModal } from "@/components/ConfirmationModal";
+import { DevGuard } from "@/components/DevGuard";
 import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
 import { useDolphinBeta } from "@/lib/hooks/useSettings";
@@ -21,6 +22,7 @@ import { GeckoCodes } from "./GeckoCodes/GeckoCodes";
 import { SettingItem } from "./SettingItem";
 
 const { isMac, isWindows } = window.electron.bootstrap;
+const { enableMainlineDolphin } = window.electron.bootstrap.flags;
 
 enum ResetType {
   SOFT,
@@ -171,15 +173,21 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
         </div>
       </SettingItem>
       {dolphinType === DolphinLaunchType.NETPLAY && (
-        <SettingItem
-          name={`${dolphinTypeName} Dolphin Release Channel`}
-          description="Choose which Slippi Dolphin version to install"
-        >
-          <RadioGroup value={dolphinBeta} onChange={(_event, value) => onDolphinBetaChange(value)}>
-            <FormControlLabel value={false} label="Stable (Ishiiruka)" control={<Radio disabled={!dolphinIsReady} />} />
-            <FormControlLabel value={true} label="Beta (Mainline)" control={<Radio disabled={!dolphinIsReady} />} />
-          </RadioGroup>
-        </SettingItem>
+        <DevGuard show={enableMainlineDolphin}>
+          <SettingItem
+            name={`${dolphinTypeName} Dolphin Release Channel`}
+            description="Choose which Slippi Dolphin version to install"
+          >
+            <RadioGroup value={dolphinBeta} onChange={(_event, value) => onDolphinBetaChange(value)}>
+              <FormControlLabel
+                value={false}
+                label="Stable (Ishiiruka)"
+                control={<Radio disabled={!dolphinIsReady} />}
+              />
+              <FormControlLabel value={true} label="Beta (Mainline)" control={<Radio disabled={!dolphinIsReady} />} />
+            </RadioGroup>
+          </SettingItem>
+        </DevGuard>
       )}
       {isWindows && (
         <ImportDolphinConfigForm
