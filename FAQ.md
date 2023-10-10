@@ -65,10 +65,9 @@ A single delay frame is equal to 4 buffer in traditional Dolphin netplay. Our re
 
 If you want to change this value, first open Dolphin (if using the Launcher go to Settings -> Netplay -> Configure Dolphin) and go to `Config` -> `GameCube`. At the bottom you will see the option to update the Delay Frames. You can update this value at any time but it will only update for the next game you play.
 
-## Can I use Widescreen when playing Slippi Online?
+## Can I use Widescreen (16:9) when playing Slippi Online?
 
-Yes. To enable Widescreen for Slippi Online follow these steps. Open Dolphin (if using the Launcher go to Settings -> Netplay -> Configure Dolphin), right click on your Melee in the games list, go to Properties -> Gecko Codes. Then enable the Widescreen gecko code and set the Dolphin aspect ratio to 16:9 under the Graphics settings. Do not use the dolphin widescreen hack, it does not have the same effect as the gecko code.
-
+Yes, to enable widescreen go to the Netplay in the Launcher settings depending > `Manage Gecko Codes` > and enable the Widescreen gecko code. You can do the same for replays by going to the Playback tab instead.
 ## Is UCF included in Slippi Online?
 
 Yes, we currently ship with UCF 0.8 and it is applied everywhere by default.
@@ -88,3 +87,12 @@ Some computers will have issues polling the adapter at the correct rate on some 
 ## Where are my replays?
 
 Replays are stored by default in `Documents/Slippi` on Windows and `~/Slippi` on macOS and Linux. The replay directory is configurable in the `Replays` settings tab of the Launcher.
+
+## Mainline Slippi Dolphin (Beta)
+
+### Updated OS Requirements
+- Windows 10 or newer
+- macOS Catalina (10.15) or newer
+- Ubuntu 22.04 or newer and the following packages
+  - libfuse2
+  - qt6-qpa-plugins

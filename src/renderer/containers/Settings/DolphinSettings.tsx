@@ -14,6 +14,7 @@ import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
 import { useDolphinBeta } from "@/lib/hooks/useSettings";
+import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";
 
 import { GeckoCodes } from "./GeckoCodes/GeckoCodes";
@@ -41,7 +42,7 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
   const [isResetType, setResetType] = React.useState<ResetType | null>(null);
   const { dolphinService } = useServices();
   const { openConfigureDolphin, hardResetDolphin, softResetDolphin, importDolphin } = useDolphinActions(dolphinService);
-
+  const { showWarning } = useToasts();
   const dolphinIsReady = dolphinStatus === DolphinStatus.READY && !dolphinIsOpen && isResetType === null;
   const versionString: string =
     dolphinStatus === DolphinStatus.UNKNOWN ? "Not found" : !dolphinVersion ? "Unknown" : dolphinVersion;
@@ -49,6 +50,9 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
   const onDolphinBetaChange = async (value: string) => {
     setResetType(ResetType.SOFT);
     const useBeta = value === "true";
+    if (useBeta) {
+      showWarning("Mainline Slippi Dolphin has updated OS requirements, check the Help Section for more info");
+    }
     await setDolphinBeta(useBeta);
     await softResetDolphin(dolphinType);
     setResetType(null);
@@ -172,16 +176,8 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
           description="Choose which Slippi Dolphin version to install"
         >
           <RadioGroup value={dolphinBeta} onChange={(_event, value) => onDolphinBetaChange(value)}>
-            <FormControlLabel
-              value={false}
-              label="Stable (Ishiiruka)"
-              control={<Radio disabled={dolphinIsOpen || isResetType !== null} />}
-            />
-            <FormControlLabel
-              value={true}
-              label="Beta (Mainline)"
-              control={<Radio disabled={dolphinIsOpen || isResetType !== null} />}
-            />
+            <FormControlLabel value={false} label="Stable (Ishiiruka)" control={<Radio disabled={!dolphinIsReady} />} />
+            <FormControlLabel value={true} label="Beta (Mainline)" control={<Radio disabled={!dolphinIsReady} />} />
           </RadioGroup>
         </SettingItem>
       )}
