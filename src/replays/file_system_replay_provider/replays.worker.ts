@@ -10,9 +10,9 @@ import type { ModuleMethods } from "threads/dist/types/master";
 import { Observable, Subject } from "threads/observable";
 import { expose } from "threads/worker";
 
-import { loadFile } from "./loadFile";
-import { loadFolder } from "./loadFolder";
-import type { FileLoadResult, FileResult, Progress } from "./types";
+import type { FileLoadResult, FileResult, Progress } from "../types";
+import { loadFile } from "./load_file";
+import { loadFolder } from "./load_folder";
 
 interface Methods {
   dispose: () => Promise<void>;

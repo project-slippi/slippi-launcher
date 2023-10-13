@@ -6,7 +6,7 @@ import _ from "lodash";
 import moment from "moment";
 import path from "path";
 
-import type { FileResult } from "./types";
+import type { FileResult } from "../types";
 
 export async function loadFile(fullPath: string): Promise<FileResult> {
   const filename = path.basename(fullPath);

@@ -1,4 +1,4 @@
-import type { GameStartType, MetadataType } from "@slippi/slippi-js";
+import type { GameStartType, MetadataType, StadiumStatsType, StatsType } from "@slippi/slippi-js";
 
 export type FileResult = {
   name: string;
@@ -26,3 +26,11 @@ export type Progress = {
   current: number;
   total: number;
 };
+
+export interface ReplayProvider {
+  init(): void;
+  loadFile(filePath: string): Promise<FileResult>;
+  loadFolder(folder: string, onProgress?: (progress: Progress) => void): Promise<FileLoadResult>;
+  calculateGameStats(fullPath: string): Promise<StatsType | null>;
+  calculateStadiumStats(fullPath: string): Promise<StadiumStatsType | null>;
+}
