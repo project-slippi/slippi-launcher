@@ -1,3 +1,7 @@
+import { app } from "electron";
+import path from "path";
+
+import { DatabaseReplayProvider } from "./database_replay_provider/database_replay_provider";
 import { FileSystemReplayProvider } from "./file_system_replay_provider/file_system_replay_provider";
 import { FolderTreeService } from "./folderTreeService";
 import {
@@ -10,9 +14,17 @@ import {
 } from "./ipc";
 import type { Progress, ReplayProvider } from "./types";
 
-export default function setupReplaysIpc() {
+export default function setupReplaysIpc({ enableReplayDatabase }: { enableReplayDatabase?: boolean }) {
   const treeService = new FolderTreeService();
+<<<<<<< HEAD
   const replayProvider: ReplayProvider = new FileSystemReplayProvider();
+=======
+  const replayDatabaseFolder = path.join(app.getPath("userData"), "replay_database.sqlite3");
+  const replayProvider: ReplayProvider = enableReplayDatabase
+    ? new DatabaseReplayProvider(replayDatabaseFolder)
+    : new FileSystemReplayProvider();
+  replayProvider.init();
+>>>>>>> d2cff555... wip
 
   ipc_initializeFolderTree.main!.handle(async ({ folders }) => {
     return treeService.init(folders);
