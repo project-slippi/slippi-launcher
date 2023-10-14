@@ -22,7 +22,7 @@ export const defaultAppSettings: AppSettings = {
   settings: {
     isoPath: null,
     rootSlpPath: getDefaultRootSlpPath(),
-    useMonthlySubfolders: false,
+    useMonthlySubfolders: true,
     enableJukebox: true,
     spectateSlpPath: path.join(getDefaultRootSlpPath(), "Spectate"),
     extraSlpPaths: [],
