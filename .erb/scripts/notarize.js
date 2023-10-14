@@ -5,7 +5,7 @@ const electronNotarize = require("@electron/notarize");
 const electronBuilderConfig = require("../../electron-builder.json");
 
 module.exports = async function (params) {
-  if (process.platform !== "darwin") {
+  if (process.platform !== "darwin" || !process.env.SLIPPI_ENABLE_SIGNING) {
     return;
   }
 

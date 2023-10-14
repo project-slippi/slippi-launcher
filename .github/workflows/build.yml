@@ -88,9 +88,9 @@ jobs:
           if [[ "$FROM_FORK" = "true" ]] || [[ ! $msg =~ "^release.*" ]];
           then
             echo "not a release, skipping code signing"
-            echo "SKIP_CODE_SIGNING=yes" >> $GITHUB_ENV
             exit 0;
           fi
+          echo "SLIPPI_ENABLE_SIGNING=yes" >> $GITHUB_ENV
           echo "ES_USERNAME=${{ secrets.ES_USERNAME }}" >> $GITHUB_ENV
           echo "ES_PASSWORD=${{ secrets.ES_PASSWORD }}" >> $GITHUB_ENV
           echo "ES_CREDENTIAL_ID=${{ secrets.ES_CREDENTIAL_ID }}" >> $GITHUB_ENV
@@ -103,6 +103,7 @@ jobs:
         run: |
           chmod +x build/load-macos-certs-ci.sh && ./build/load-macos-certs-ci.sh
           mkdir -p ~/private_keys/
+          echo "SLIPPI_ENABLE_SIGNING=yes" >> $GITHUB_ENV
           echo '${{ secrets.APPLE_CONNECT_API_KEY }}' > ~/private_keys/AuthKey_${{ secrets.APPLE_API_KEY_ID }}.p8
           echo "CSC_LINK=${{ secrets.CERTIFICATE_MACOS_APPLICATION }}" >> $GITHUB_ENV
           echo "CSC_KEY_PASSWORD=${{ secrets.CERTIFICATE_MACOS_PASSWORD }}" >> $GITHUB_ENV

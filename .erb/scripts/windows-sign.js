@@ -12,7 +12,7 @@ const CODESIGNTOOL_PATH = process.env.CODESIGNTOOL_PATH;
 exports.default = async (config) => {
   const fileToSign = config.path ? String(config.path) : "";
 
-  if (process.env.SKIP_CODE_SIGNING === "yes") {
+  if (!process.env.SLIPPI_ENABLE_SIGNING) {
     return;
   }
 
