@@ -8,16 +8,14 @@ import SportsCricket from "@mui/icons-material/SportsCricket";
 import TimerIcon from "@mui/icons-material/Timer";
 import TrackChangesIcon from "@mui/icons-material/TrackChanges";
 import type { FileResult } from "@replays/types";
-import type { GameStartType } from "@slippi/slippi-js";
-import { frameToGameTimer, GameMode, stages as stageUtils } from "@slippi/slippi-js";
-import _ from "lodash";
+import { GameMode, stages as stageUtils } from "@slippi/slippi-js";
+import { groupBy } from "lodash";
 import moment from "moment";
 import React, { useCallback, useMemo } from "react";
 
 import { DraggableFile } from "@/components/DraggableFile";
 import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
-import { extractPlayerNames } from "@/lib/matchNames";
-import { convertFrameCountToDurationString, monthDayHourFormat } from "@/lib/time";
+import { monthDayHourFormat } from "@/lib/time";
 import { getStageImage } from "@/lib/utils";
 
 import type { ReplayDetail } from "./ReplayFile";
@@ -44,16 +42,13 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
   onClick,
   selectedFiles,
   selectedIndex,
-  startTime,
-  settings,
-  name,
-  metadata,
-  lastFrame,
+  id,
+  fileName,
+  game,
   fullPath,
-  winnerIndices,
 }: ReplayFileContainerProps) {
   const selected = selectedIndex !== -1;
-  const stageInfo = settings.stageId !== null ? stageUtils.getStageInfo(settings.stageId) : null;
+  const stageInfo = game.stageId != null ? stageUtils.getStageInfo(game.stageId) : null;
   const stageImageUrl = stageInfo !== null && stageInfo.id !== -1 ? getStageImage(stageInfo.id) : undefined;
   const stageName = stageInfo !== null ? stageInfo.name : "Unknown Stage";
   const playbackStatus = useDolphinStore((store) => store.playbackStatus);
@@ -88,38 +83,37 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
   }, [index, onOpenMenu, onPlayClick, onShowStats, playbackStatus]);
 
   const details = useMemo(() => {
-    const date = new Date(startTime ? Date.parse(startTime) : 0);
+    const duration = moment.duration(game.durationMs, "ms");
+    const durationLength =
+      game.durationMs != null ? moment.utc(duration.as("milliseconds")).format("m[m] ss[s]") : "Unknown";
+
+    const date = new Date(game.startTime ? Date.parse(game.startTime) : 0);
     return generateReplayDetails({
+      gameMode: game.mode,
       date,
-      lastFrame,
+      duration: durationLength,
       stageName,
-      settings,
     });
-  }, [startTime, lastFrame, settings, stageName]);
+  }, [game.durationMs, game.mode, game.startTime, stageName]);
 
   const players = useMemo((): PlayerInfo[][] => {
-    return _.chain(settings.players)
-      .groupBy((player) => (settings.isTeams ? player.teamId : player.port))
-      .toArray()
-      .value()
-      .map((team) => {
-        return team.map((player): PlayerInfo => {
-          const backupName = player.type === 1 ? "CPU" : `Player ${player.playerIndex + 1}`;
-          const names = extractPlayerNames(player.playerIndex, settings, metadata);
-          const teamId = settings.isTeams ? player.teamId : undefined;
-          const isWinner = winnerIndices.includes(player.playerIndex);
-          return {
-            characterId: player.characterId,
-            characterColor: player.characterColor,
-            port: player.port,
-            teamId: teamId ?? undefined,
-            variant: names.code ? "code" : "tag",
-            text: names.code || names.tag || backupName,
-            isWinner,
-          };
-        });
+    const teams = Object.values(groupBy(game.players, (p) => (game.isTeams ? p.teamId : p.port)));
+    return teams.map((team) => {
+      return team.map((player): PlayerInfo => {
+        const backupName = player.type === 1 ? "CPU" : `Player ${player.playerIndex + 1}`;
+        const teamId = game.isTeams ? player.teamId : undefined;
+        return {
+          characterId: player.characterId,
+          characterColor: player.characterColor,
+          port: player.port,
+          teamId: teamId ?? undefined,
+          variant: player.connectCode ? "code" : "tag",
+          text: player.connectCode || player.tag || backupName,
+          isWinner: player.isWinner,
+        };
       });
-  }, [metadata, settings, winnerIndices]);
+    });
+  }, [game.isTeams, game.players]);
 
   const title = useMemo(() => {
     return (
@@ -133,14 +127,15 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
           }
         `}
       >
-        {name}
+        {fileName}
       </DraggableFile>
     );
-  }, [fullPath, name]);
+  }, [fileName, fullPath]);
 
   return (
     <DraggableFile filePaths={selected && selectedFiles.length > 0 ? selectedFiles : []}>
       <div
+        key={id}
         css={css`
           cursor: pointer;
         `}
@@ -162,16 +157,15 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
 
 const generateReplayDetails = ({
   date,
-  lastFrame,
   stageName,
-  settings,
+  gameMode,
+  duration,
 }: {
   date: Date;
-  lastFrame: number | null;
-  settings: GameStartType;
+  duration: string;
   stageName: string;
+  gameMode?: number;
 }): ReplayDetail[] => {
-  const { gameMode } = settings;
   const replayDetails: ReplayDetail[] = [
     {
       Icon: EventIcon,
@@ -179,13 +173,10 @@ const generateReplayDetails = ({
     },
   ];
 
-  if (lastFrame !== null && gameMode !== GameMode.HOME_RUN_CONTEST) {
+  if (gameMode !== GameMode.HOME_RUN_CONTEST) {
     replayDetails.push({
       Icon: TimerIcon,
-      label:
-        gameMode === GameMode.TARGET_TEST
-          ? frameToGameTimer(lastFrame, settings)
-          : convertFrameCountToDurationString(lastFrame, "m[m] ss[s]"),
+      label: duration,
     });
   }
 
@@ -196,7 +187,7 @@ const generateReplayDetails = ({
   return replayDetails;
 };
 
-const getReplayStageIcon = (gameMode: GameMode | null): React.ComponentType => {
+const getReplayStageIcon = (gameMode?: number): React.ComponentType => {
   switch (gameMode) {
     case GameMode.HOME_RUN_CONTEST:
       return SportsCricket;

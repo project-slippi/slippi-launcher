@@ -1,10 +1,9 @@
 import { css } from "@emotion/react";
 import Tooltip from "@mui/material/Tooltip";
 import type { FileResult } from "@replays/types";
-import type { ConversionType, PlayerType, StatsType, StockType } from "@slippi/slippi-js";
+import type { ConversionType, StatsType, StockType } from "@slippi/slippi-js";
 import _ from "lodash";
 
-import { extractPlayerNames } from "@/lib/matchNames";
 import { convertFrameCountToDurationString } from "@/lib/time";
 import { getCharacterIcon, toOrdinal } from "@/lib/utils";
 
@@ -12,16 +11,22 @@ import * as T from "./TableStyles";
 
 const columnCount = 6;
 
+type PlayerInfo = {
+  playerIndex: number;
+  characterId: number;
+  characterColor: number;
+  name?: string;
+};
+
 type PunishTableProps = {
   file: FileResult;
   stats: StatsType;
-  player: PlayerType;
-  opp: PlayerType;
+  player: PlayerInfo;
+  opp: PlayerInfo;
   onPlay: (options: { path: string; startFrame: number }) => void;
 };
 
 export const PunishTable = ({ file, stats, player, opp, onPlay }: PunishTableProps) => {
-  const names = extractPlayerNames(player.playerIndex, file.settings, file.metadata);
   const playerDisplay = (
     <div style={{ display: "flex", alignItems: "center" }}>
       <img
@@ -32,7 +37,7 @@ export const PunishTable = ({ file, stats, player, opp, onPlay }: PunishTablePro
           marginRight: 10,
         }}
       />
-      <div style={{ fontWeight: 500 }}>{names.name || names.tag || `Player ${player.playerIndex + 1}`}</div>
+      <div style={{ fontWeight: 500 }}>{player.name || `Player ${player.playerIndex + 1}`}</div>
     </div>
   );
 
@@ -79,11 +84,13 @@ export const PunishTable = ({ file, stats, player, opp, onPlay }: PunishTablePro
   };
 
   const generateEmptyRow = (stock: StockType) => {
-    const player = getPlayer(stock.playerIndex);
-    let stockIndex = 0;
-    if (player.startStocks !== null) {
-      stockIndex = player.startStocks - stock.count + 1;
-    }
+    // const player = getPlayer(stock.playerIndex);
+    const stockIndex = 0;
+
+    // TODO: actually pass in start stocks
+    // if (player.startStocks != null) {
+    //   stockIndex = player.startStocks - stock.count + 1;
+    // }
 
     return (
       <T.TableRow key={`no-punishes-${stock.count}`}>
@@ -103,7 +110,7 @@ export const PunishTable = ({ file, stats, player, opp, onPlay }: PunishTablePro
         <T.GrayableImage
           key={`stock-image-${stock.playerIndex}-${stockNum}`}
           gray={stockNum > currentStocks}
-          src={getCharacterIcon(player.characterId, player.characterColor)}
+          src={getCharacterIcon(player.characterId ?? null, player.characterColor)}
           height={20}
           width={20}
         />
@@ -121,7 +128,7 @@ export const PunishTable = ({ file, stats, player, opp, onPlay }: PunishTablePro
   };
 
   const getPlayer = (playerIndex: number) => {
-    const players = file.settings.players || [];
+    const players = file.game.players || [];
     const playersByIndex = _.keyBy(players, "playerIndex");
     return playersByIndex[playerIndex];
   };

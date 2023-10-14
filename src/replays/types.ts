@@ -1,13 +1,32 @@
-import type { GameStartType, MetadataType, StadiumStatsType, StatsType } from "@slippi/slippi-js";
+import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
+
+export type PlayerInfo = {
+  playerIndex: number;
+  port: number;
+  type?: number;
+  characterId?: number;
+  characterColor?: number;
+  teamId?: number;
+  isWinner?: boolean;
+  connectCode?: string;
+  displayName?: string;
+  tag?: string;
+};
 
 export type FileResult = {
-  name: string;
+  id: string;
+  fileName: string;
   fullPath: string;
-  settings: GameStartType;
-  startTime: string | null;
-  lastFrame: number | null;
-  metadata: MetadataType | null;
-  winnerIndices: number[];
+  game: {
+    players: PlayerInfo[];
+    isTeams: boolean;
+    stageId?: number;
+    startTime?: string;
+    durationMs?: number;
+    platform?: string;
+    consoleNickname?: string;
+    mode?: number;
+  };
 };
 
 export type FolderResult = {

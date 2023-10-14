@@ -2,48 +2,58 @@ import { exists } from "@common/exists";
 import type { GameStartType, MetadataType } from "@slippi/slippi-js";
 import { SlippiGame } from "@slippi/slippi-js";
 import * as fs from "fs-extra";
-import _ from "lodash";
 import moment from "moment";
 import path from "path";
 
-import type { FileResult } from "../types";
+import type { FileResult, PlayerInfo } from "../types";
+import { extractPlayerNames } from "./matchNames";
 
 export async function loadFile(fullPath: string): Promise<FileResult> {
   const filename = path.basename(fullPath);
   const game = new SlippiGame(fullPath);
   // Load settings
   const settings: GameStartType | null = game.getSettings();
-  if (!settings || _.isEmpty(settings.players)) {
+  if (!settings || settings.players.length === 0) {
     throw new Error("Game settings could not be properly loaded.");
   }
 
-  const result: FileResult = {
-    name: filename,
-    fullPath,
-    settings,
-    startTime: null,
-    lastFrame: null,
-    metadata: null,
-    winnerIndices: [],
-  };
-
-  result.winnerIndices = game.getWinners().map((winner) => winner.playerIndex);
-
-  // Load metadata
   const metadata: MetadataType | null = game.getMetadata();
-  if (metadata) {
-    result.metadata = metadata;
+  const winnerIndices = game.getWinners().map((winner) => winner.playerIndex);
 
-    if (metadata.lastFrame !== undefined) {
-      result.lastFrame = metadata.lastFrame;
-    }
-  }
+  const players = settings.players.map((p) => {
+    const names = extractPlayerNames(p.playerIndex, settings, metadata);
+    const info: PlayerInfo = {
+      playerIndex: p.playerIndex,
+      port: p.port,
+      type: p.type ?? undefined,
+      characterId: p.characterId ?? undefined,
+      characterColor: p.characterColor ?? undefined,
+      teamId: p.teamId ?? undefined,
+      isWinner: winnerIndices.includes(p.playerIndex),
+      connectCode: names.code,
+      displayName: names.name,
+      tag: names.tag,
+    };
+    return info;
+  });
 
   const startAtTime = await fileToDateAndTime(metadata ? metadata.startAt : null, filename, result.fullPath);
 
-  if (startAtTime) {
-    result.startTime = startAtTime.toISOString();
-  }
+  const result: FileResult = {
+    id: fullPath,
+    fileName: filename,
+    fullPath,
+    game: {
+      players,
+      isTeams: settings.isTeams ?? false,
+      stageId: settings.stageId ?? undefined,
+      startTime: startAtTime?.toISOString(),
+      durationMs: 0, // TODO: actually calculate this properly based on all game modes and timer variants
+      platform: metadata?.playedOn ?? undefined,
+      consoleNickname: metadata?.consoleNick ?? undefined,
+      mode: settings.gameMode ?? undefined,
+    },
+  };
 
   return result;
 }

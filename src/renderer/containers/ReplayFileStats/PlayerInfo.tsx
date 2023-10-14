@@ -1,20 +1,18 @@
 import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import type { PlayerType } from "@slippi/slippi-js";
+import type { PlayerInfo as PlayerInfoType } from "@replays/types";
 
-import type { PlayerNames } from "@/lib/matchNames";
 import { getColor } from "@/lib/playerColors";
 import { getCharacterIcon } from "@/lib/utils";
 import { withFont } from "@/styles/withFont";
 
 type PlayerInfoProps = {
-  player: PlayerType;
-  names: PlayerNames;
+  player: PlayerInfoType;
   isTeams?: boolean;
 };
 
-export const PlayerInfo = ({ player, names, isTeams }: PlayerInfoProps) => {
+export const PlayerInfo = ({ player, isTeams }: PlayerInfoProps) => {
   const backupName = player.type === 1 ? "CPU" : `Player ${player.port}`;
   const charIcon = getCharacterIcon(player.characterId, player.characterColor);
   const teamId = isTeams ? player.teamId : null;
@@ -47,7 +45,7 @@ export const PlayerInfo = ({ player, names, isTeams }: PlayerInfoProps) => {
             font-size: 18px;
           `}
         >
-          <span>{names.name || names.tag || backupName}</span>
+          <span>{player.displayName || player.tag || backupName}</span>
           <span
             css={css`
               display: inline-block;
@@ -63,7 +61,7 @@ export const PlayerInfo = ({ player, names, isTeams }: PlayerInfoProps) => {
             P{player.port}
           </span>
         </div>
-        {names.code && (
+        {player.connectCode && (
           <div
             css={css`
               color: rgba(255, 255, 255, 0.6);
@@ -71,7 +69,7 @@ export const PlayerInfo = ({ player, names, isTeams }: PlayerInfoProps) => {
               font-weight: 500;
             `}
           >
-            {names.code}
+            {player.connectCode}
           </div>
         )}
       </div>
