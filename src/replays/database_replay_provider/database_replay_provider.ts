@@ -1,3 +1,4 @@
+import { chunk } from "@common/chunk";
 import { exists } from "@common/exists";
 import type { FileLoadResult, FileResult, Progress, ReplayProvider } from "@replays/types";
 import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
@@ -8,6 +9,7 @@ import _ from "lodash";
 import path from "path";
 
 import { loadFile } from "./load_file";
+import { migrateToLatest } from "./migrate_to_latest";
 import type {
   Database,
   NewReplay,
@@ -21,6 +23,7 @@ import type {
 
 export class DatabaseReplayProvider implements ReplayProvider {
   private database: Kysely<Database>;
+  private databaseReady: Promise<void>;
 
   constructor(databaseName: string) {
     const dialect = new SqliteDialect({
@@ -31,19 +34,17 @@ export class DatabaseReplayProvider implements ReplayProvider {
       dialect,
     });
 
-    // await migrateToLatest(db);
-
-    // Databases[databaseName] = db;
-    // return db;
+    this.databaseReady = migrateToLatest(this.database);
   }
 
-  public init(): void {
-    // Do nothing
+  public async init(): Promise<void> {
+    await this.databaseReady;
   }
-  public loadFile(filePath: string): Promise<FileResult> {
+  public loadFile(_filePath: string): Promise<FileResult> {
     throw new Error("Method not implemented.");
   }
   public async loadFolder(folder: string, onProgress?: (progress: Progress) => void): Promise<FileLoadResult> {
+    await this.databaseReady;
     // If the folder does not exist, return empty
     if (!(await fs.pathExists(folder))) {
       return {
@@ -105,7 +106,13 @@ export class DatabaseReplayProvider implements ReplayProvider {
     const totalBytesNew = replaysNew.reduce((acc, replay) => acc + replay.size, 0);
 
     // Insert newly processed files
-    await this.insertReplays(replaysNew);
+
+    // Break up this into smaller amounts since there could be thousands of replays
+    const chunkSize = 100;
+    const chunkedReplays = chunk(replaysNew, chunkSize);
+    for (const replayChunk of chunkedReplays) {
+      await this.insertReplays(replayChunk);
+    }
 
     // Indicate that loading is complete
     onProgress?.({ current: total, total });
@@ -116,14 +123,15 @@ export class DatabaseReplayProvider implements ReplayProvider {
       totalBytes: totalBytesIndexed + totalBytesNew,
     };
   }
-  public calculateGameStats(fullPath: string): Promise<StatsType | null> {
+  public calculateGameStats(_fullPath: string): Promise<StatsType | null> {
     throw new Error("Method not implemented.");
   }
-  public calculateStadiumStats(fullPath: string): Promise<StadiumStatsType | null> {
+  public calculateStadiumStats(_fullPath: string): Promise<StadiumStatsType | null> {
     throw new Error("Method not implemented.");
   }
 
   private async loadReplays(fullPaths: string[]): Promise<FileResult[]> {
+    await this.databaseReady;
     const replays = await this.database
       .selectFrom("replay")
       .where("replay.fullPath", "in", fullPaths)

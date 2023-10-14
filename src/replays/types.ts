@@ -52,6 +52,7 @@ export type Progress = {
 };
 
 export interface ReplayProvider {
+  init(): Promise<void>;
   loadFile(filePath: string): Promise<FileResult>;
   loadFolder(folder: string, onProgress?: (progress: Progress) => void): Promise<FileLoadResult>;
   calculateGameStats(fullPath: string): Promise<StatsType | null>;
