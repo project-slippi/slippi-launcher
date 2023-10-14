@@ -57,6 +57,16 @@ export class SettingsManager {
     }
   }
 
+  public getDolphinPromoteToStable(type: DolphinLaunchType): boolean {
+    const settings = this.get();
+    switch (type) {
+      case DolphinLaunchType.NETPLAY:
+        return settings.netplayPromoteToStable;
+      case DolphinLaunchType.PLAYBACK:
+        return settings.playbackPromoteToStable;
+    }
+  }
+
   public async setIsoPath(isoPath: string | null): Promise<void> {
     await this._set("settings.isoPath", isoPath);
   }
@@ -96,6 +106,17 @@ export class SettingsManager {
         break;
       case DolphinLaunchType.PLAYBACK:
         await this._set("settings.usePlaybackBeta", useBeta);
+        break;
+    }
+  }
+
+  public async setDolphinPromoteToStable(dolphinType: DolphinLaunchType, promoteToStable: boolean): Promise<void> {
+    switch (dolphinType) {
+      case DolphinLaunchType.NETPLAY:
+        await this._set("netplayPromoteToStable", promoteToStable);
+        break;
+      case DolphinLaunchType.PLAYBACK:
+        await this._set("playbackPromoteToStable", promoteToStable);
         break;
     }
   }

@@ -1,7 +1,6 @@
 import type { SettingsManager } from "@settings/settingsManager";
 import { app } from "electron";
 import electronLog from "electron-log";
-import electronSettings from "electron-settings";
 import { move, remove } from "fs-extra";
 import { Observable, Subject } from "observable-fns";
 import os from "os";
@@ -16,16 +15,6 @@ import type { DolphinEvent, DolphinInstallation, ReplayCommunication } from "./t
 import { DolphinEventType, DolphinLaunchType } from "./types";
 
 const log = electronLog.scope("dolphin/manager");
-
-electronSettings.configure({
-  fileName: "DolphinManager",
-  prettify: true,
-});
-
-type DolphinManagerStoredFlags = {
-  netplayPromoteToStable: boolean;
-  playbackPromoteToStable: boolean;
-};
 
 // DolphinManager should be in control of all dolphin instances that get opened for actual use.
 // This includes playing netplay, viewing replays, watching broadcasts (spectating), and configuring Dolphin.
@@ -47,9 +36,12 @@ export class DolphinManager {
   public events = Observable.from(this.eventSubject);
 
   constructor(private settingsManager: SettingsManager) {
-    const storedFlags = electronSettings.getSync() as Partial<DolphinManagerStoredFlags>;
-    this.betaFlags[DolphinLaunchType.NETPLAY].promoteToStable = storedFlags.netplayPromoteToStable ?? false;
-    this.betaFlags[DolphinLaunchType.PLAYBACK].promoteToStable = storedFlags.playbackPromoteToStable ?? false;
+    this.betaFlags[DolphinLaunchType.NETPLAY].promoteToStable = settingsManager.getDolphinPromoteToStable(
+      DolphinLaunchType.NETPLAY,
+    );
+    this.betaFlags[DolphinLaunchType.PLAYBACK].promoteToStable = settingsManager.getDolphinPromoteToStable(
+      DolphinLaunchType.PLAYBACK,
+    );
   }
 
   public getInstallation(launchType: DolphinLaunchType): DolphinInstallation {
@@ -366,10 +358,7 @@ export class DolphinManager {
         }
       }
       this.betaFlags[dolphinType].promoteToStable = promoteToStable;
-
-      const settingsPath =
-        dolphinType === DolphinLaunchType.NETPLAY ? "netplayPromoteToStable" : "playbackPromoteToStable";
-      await electronSettings.set(settingsPath, promoteToStable);
+      await this.settingsManager.setDolphinPromoteToStable(dolphinType, promoteToStable);
     }
 
     const isBeta = (downloadInfo.version as string).includes("-beta");

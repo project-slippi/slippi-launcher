@@ -29,4 +29,6 @@ export type AppSettings = {
     useNetplayBeta: boolean;
     usePlaybackBeta: boolean;
   };
+  netplayPromoteToStable: boolean;
+  playbackPromoteToStable: boolean;
 };
