@@ -22,11 +22,11 @@ export class DolphinManager {
   private betaFlags = {
     [DolphinLaunchType.NETPLAY]: {
       betaAvailable: false,
-      promoteToStable: false,
+      promotedToStable: false,
     },
     [DolphinLaunchType.PLAYBACK]: {
       betaAvailable: false,
-      promoteToStable: false,
+      promotedToStable: false,
     },
   };
 
@@ -36,18 +36,18 @@ export class DolphinManager {
   public events = Observable.from(this.eventSubject);
 
   constructor(private settingsManager: SettingsManager) {
-    this.betaFlags[DolphinLaunchType.NETPLAY].promoteToStable = settingsManager.getDolphinPromoteToStable(
+    this.betaFlags[DolphinLaunchType.NETPLAY].promotedToStable = settingsManager.getDolphinPromotedToStable(
       DolphinLaunchType.NETPLAY,
     );
-    this.betaFlags[DolphinLaunchType.PLAYBACK].promoteToStable = settingsManager.getDolphinPromoteToStable(
+    this.betaFlags[DolphinLaunchType.PLAYBACK].promotedToStable = settingsManager.getDolphinPromotedToStable(
       DolphinLaunchType.PLAYBACK,
     );
   }
 
   public getInstallation(launchType: DolphinLaunchType): DolphinInstallation {
-    const { betaAvailable, promoteToStable } = this.betaFlags[launchType];
-    if (betaAvailable || promoteToStable) {
-      const betaSuffix = promoteToStable ? "" : "-beta";
+    const { betaAvailable, promotedToStable } = this.betaFlags[launchType];
+    if (betaAvailable || promotedToStable) {
+      const betaSuffix = promotedToStable ? "" : "-beta";
       return new MainlineDolphinInstallation(launchType, betaSuffix);
     }
     return new IshiirukaDolphinInstallation(launchType);
@@ -329,39 +329,36 @@ export class DolphinManager {
 
   // Run after fetchLatestVersion to update the necessary flags
   private async _updateDolphinFlags(downloadInfo: DolphinVersionResponse, dolphinType: DolphinLaunchType) {
-    if (downloadInfo.promoteToStable) {
-      const promoteToStable = downloadInfo.promoteToStable;
-      const currentPromoteToStable = this.betaFlags[dolphinType].promoteToStable;
-      if (promoteToStable && !currentPromoteToStable) {
-        // if this is the first time we're handling the promotion then delete {dolphinType}-beta and move {dolphinType}
-        // we want to delete the beta folder so that any defaults that got changed during the beta are properly updated
-        const dolphinFolder = dolphinType === DolphinLaunchType.NETPLAY ? "netplay" : "playback";
-        const betaPath = path.join(app.getPath("userData"), `${dolphinFolder}-beta`);
-        const oldStablePath = path.join(app.getPath("userData"), dolphinFolder);
-        const legacyPath = path.join(app.getPath("userData"), `${dolphinFolder}-legacy`);
-        try {
-          await remove(betaPath);
-          await move(oldStablePath, legacyPath, { overwrite: true });
-          if (process.platform === "darwin") {
-            // mainline on macOS will take over the old user folder so move it on promotion
-            // windows keeps everything contained in the install dir
-            // linux will be using a new user folder path
-            const configPath = path.join(os.homedir(), "Library", "Application Support", "com.project-slippi.dolphin");
-            const oldUserFolderName = `${dolphinFolder}/User`;
-            const legacyUserFolderName = `${dolphinFolder}/User-legacy`;
-            const oldPath = path.join(configPath, oldUserFolderName);
-            const newPath = path.join(configPath, legacyUserFolderName);
-            await move(oldPath, newPath, { overwrite: true });
-          }
-        } catch (err) {
-          log.warn(`could not handle promotion: ${err}`);
-        }
-      }
-      this.betaFlags[dolphinType].promoteToStable = promoteToStable;
-      await this.settingsManager.setDolphinPromoteToStable(dolphinType, promoteToStable);
-    }
-
     const isBeta = (downloadInfo.version as string).includes("-beta");
     this.betaFlags[dolphinType].betaAvailable = isBeta;
+
+    const isMainline = downloadInfo.downloadUrls.win32.includes("project-slippi/dolphin");
+    if (!this.betaFlags[dolphinType].promotedToStable && !isBeta && isMainline) {
+      // if this is the first time we're handling the promotion then delete {dolphinType}-beta and move {dolphinType}
+      // we want to delete the beta folder so that any defaults that got changed during the beta are properly updated
+      const dolphinFolder = dolphinType === DolphinLaunchType.NETPLAY ? "netplay" : "playback";
+      const betaPath = path.join(app.getPath("userData"), `${dolphinFolder}-beta`);
+      const oldStablePath = path.join(app.getPath("userData"), dolphinFolder);
+      const legacyPath = path.join(app.getPath("userData"), `${dolphinFolder}-legacy`);
+      try {
+        await remove(betaPath);
+        await move(oldStablePath, legacyPath, { overwrite: true });
+        if (process.platform === "darwin") {
+          // mainline on macOS will take over the old user folder so move it on promotion
+          // windows keeps everything contained in the install dir
+          // linux will be using a new user folder path
+          const configPath = path.join(os.homedir(), "Library", "Application Support", "com.project-slippi.dolphin");
+          const oldUserFolderName = `${dolphinFolder}/User`;
+          const legacyUserFolderName = `${dolphinFolder}/User-legacy`;
+          const oldPath = path.join(configPath, oldUserFolderName);
+          const newPath = path.join(configPath, legacyUserFolderName);
+          await move(oldPath, newPath, { overwrite: true });
+          this.betaFlags[dolphinType].promotedToStable = true;
+          await this.settingsManager.setDolphinPromotedToStable(dolphinType, true);
+        }
+      } catch (err) {
+        log.warn(`could not handle promotion: ${err}`);
+      }
+    }
   }
 }

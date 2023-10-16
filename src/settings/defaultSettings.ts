@@ -31,6 +31,6 @@ export const defaultAppSettings: AppSettings = {
     useNetplayBeta: false,
     usePlaybackBeta: false,
   },
-  netplayPromoteToStable: false,
-  playbackPromoteToStable: false,
+  netplayPromotedToStable: false,
+  playbackPromotedToStable: false,
 };

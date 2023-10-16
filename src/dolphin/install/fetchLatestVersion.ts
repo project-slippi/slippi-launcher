@@ -10,7 +10,6 @@ import type { DolphinLaunchType } from "../types";
 
 export type DolphinVersionResponse = {
   version: string;
-  promoteToStable: boolean;
   downloadUrls: {
     darwin: string;
     linux: string;
@@ -95,7 +94,6 @@ export async function fetchLatestVersion(
 
   return {
     version: res.data.getLatestDolphin.version,
-    promoteToStable: res.data.getLatestDolphin.promoteToStable ?? false,
     downloadUrls: {
       darwin: res.data.getLatestDolphin.macDownloadUrl,
       linux: res.data.getLatestDolphin.linuxDownloadUrl,
