@@ -15,7 +15,7 @@ import { DolphinLaunchType } from "../types";
 import { downloadLatestDolphin } from "./download";
 import type { DolphinVersionResponse } from "./fetchLatestVersion";
 
-const log = electronLog.scope("dolphin/installation");
+const log = electronLog.scope("dolphin/ishiiInstallation");
 
 const isLinux = process.platform === "linux";
 
