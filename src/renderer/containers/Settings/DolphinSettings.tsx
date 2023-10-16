@@ -174,7 +174,7 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
       {enableMainlineDolphin && dolphinType === DolphinLaunchType.NETPLAY && (
         <SettingItem
           name={`${dolphinTypeName} Dolphin Release Channel`}
-          description="Choose which Slippi Dolphin version to install"
+          description="Choose which Slippi Dolphin release to install"
         >
           <RadioGroup value={dolphinBeta} onChange={(_event, value) => onDolphinBetaChange(value)}>
             <FormControlLabel value={false} label="Stable (Ishiiruka)" control={<Radio disabled={!dolphinIsReady} />} />
