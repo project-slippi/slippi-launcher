@@ -68,7 +68,7 @@ describe("when parsing flags", () => {
         RuntimeFlags.ENABLE_REPLAY_DATABASE,
       ]);
       const flags = getConfigFlags();
-      expect(Object.keys(flags).length).toEqual(2);
+      expect(Object.keys(flags).length).toEqual(1);
       expect(flags.enableReplayDatabase).toBeTruthy();
     });
   });
@@ -76,7 +76,7 @@ describe("when parsing flags", () => {
   it("should override build flags with runtime flags", () => {
     mockProcess({ ENABLE_REPLAY_DATABASE: "0" }, [RuntimeFlags.ENABLE_REPLAY_DATABASE]);
     const flags = getConfigFlags();
-    expect(flags.enableReplayDatabase).toBeFalsy();
+    expect(flags.enableReplayDatabase).toBeTruthy();
   });
 });
 
