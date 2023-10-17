@@ -137,6 +137,11 @@ jobs:
       - name: Prepare artifacts
         shell: bash
         run: |
+          msg="$(git log -1 --no-merges --pretty=%B)"
+          if [[ ! $msg =~ "^release.*" ]];
+          then
+            rm release/build/*-mac.zip || true;
+          fi
           mkdir artifacts
           mv release/build/{*.exe*,*.deb,*.AppImage,*.dmg*,*.zip,*.yml} artifacts || true
       - name: Upload artifacts

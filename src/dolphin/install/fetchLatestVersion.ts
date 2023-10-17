@@ -17,7 +17,7 @@ export type DolphinVersionResponse = {
   };
 };
 
-const log = electronLog.scope("dolphin/checkVersion");
+const log = electronLog.scope("dolphin/fetchLatestVersion");
 const isDevelopment = process.env.NODE_ENV !== "production";
 
 const httpLink = new HttpLink({ uri: process.env.SLIPPI_GRAPHQL_ENDPOINT, fetch });
@@ -73,16 +73,20 @@ const handleErrors = (errors: readonly GraphQLError[] | undefined) => {
   }
 };
 
+// this function is relied by getInstallation in DolphinManager to decide which dolphin (folder) to use
+// it isn't the prettiest execution but will suffice since we want to be able to let users play even if
+// the stable dolphin updates before the beta dolphin. The backend will interleave the versions from github
+// and return the version that is most recently published if includeBeta is true.
 export async function fetchLatestVersion(
   dolphinType: DolphinLaunchType,
-  beta = false,
+  includeBeta = false,
 ): Promise<DolphinVersionResponse> {
   const res = await client.query({
     query: getLatestDolphinQuery,
     fetchPolicy: "network-only",
     variables: {
       purpose: dolphinType.toUpperCase(),
-      includeBeta: beta,
+      includeBeta: includeBeta,
     },
   });
 

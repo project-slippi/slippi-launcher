@@ -2,23 +2,26 @@ import { DolphinLaunchType } from "@dolphin/types";
 import { css } from "@emotion/react";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
 import Typography from "@mui/material/Typography";
 import log from "electron-log";
 import capitalize from "lodash/capitalize";
 import React from "react";
 
 import { ConfirmationModal } from "@/components/ConfirmationModal";
-import { DevGuard } from "@/components/DevGuard";
-import { PathInput } from "@/components/PathInput";
 import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
-import { useDolphinPath } from "@/lib/hooks/useSettings";
+import { useDolphinBeta } from "@/lib/hooks/useSettings";
+import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";
 
 import { GeckoCodes } from "./GeckoCodes/GeckoCodes";
 import { SettingItem } from "./SettingItem";
 
-const { isLinux, isMac } = window.electron.bootstrap;
+const { isMac, isWindows } = window.electron.bootstrap;
+const { enableMainlineDolphin } = window.electron.bootstrap.flags;
 
 enum ResetType {
   SOFT,
@@ -35,23 +38,30 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
   const dolphinVersion = useDolphinStore((store) =>
     dolphinType === DolphinLaunchType.NETPLAY ? store.netplayDolphinVersion : store.playbackDolphinVersion,
   );
-  const [dolphinPath, setDolphinPath] = useDolphinPath(dolphinType);
+  const [dolphinBeta, setDolphinBeta] = useDolphinBeta(dolphinType);
   const [resetModalOpen, setResetModalOpen] = React.useState(false);
   const [isResetType, setResetType] = React.useState<ResetType | null>(null);
   const { dolphinService } = useServices();
   const { openConfigureDolphin, hardResetDolphin, softResetDolphin, importDolphin } = useDolphinActions(dolphinService);
-
+  const { showWarning } = useToasts();
   const dolphinIsReady = dolphinStatus === DolphinStatus.READY && !dolphinIsOpen && isResetType === null;
   const versionString: string =
     dolphinStatus === DolphinStatus.UNKNOWN ? "Not found" : !dolphinVersion ? "Unknown" : dolphinVersion;
 
-  const openDolphinDirectoryHandler = React.useCallback(async () => {
-    if (isMac || isLinux) {
-      await dolphinService.openDolphinSettingsFolder(dolphinType);
-    } else {
-      await window.electron.shell.openPath(dolphinPath);
+  const onDolphinBetaChange = async (value: string) => {
+    setResetType(ResetType.SOFT);
+    const useBeta = value === "true";
+    if (useBeta) {
+      showWarning("Mainline Slippi Dolphin has updated OS requirements, check the Help Section for more info");
     }
-  }, [dolphinPath, dolphinService, dolphinType]);
+    await setDolphinBeta(useBeta);
+    await softResetDolphin(dolphinType);
+    setResetType(null);
+  };
+
+  const openDolphinDirectoryHandler = React.useCallback(async () => {
+    await dolphinService.openDolphinSettingsFolder(dolphinType);
+  }, [dolphinService, dolphinType]);
 
   const configureDolphinHandler = async () => {
     openConfigureDolphin(dolphinType);
@@ -97,19 +107,6 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
           </Button>
         </div>
       </SettingItem>
-      <DevGuard show={isLinux}>
-        <SettingItem
-          name={`${dolphinType} Dolphin Directory`}
-          description={`The path to the folder containing the ${dolphinTypeName} Dolphin executable.`}
-        >
-          <PathInput
-            value={dolphinPath ?? ""}
-            onSelect={setDolphinPath}
-            placeholder="No folder set"
-            options={{ properties: ["openDirectory"] }}
-          />
-        </SettingItem>
-      </DevGuard>
       <SettingItem name={`${dolphinTypeName} Gecko Codes`}>
         <GeckoCodes dolphinType={dolphinType} disabled={!dolphinIsReady} />
       </SettingItem>
@@ -174,7 +171,18 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
           </Button>
         </div>
       </SettingItem>
-      {!isLinux && (
+      {enableMainlineDolphin && dolphinType === DolphinLaunchType.NETPLAY && (
+        <SettingItem
+          name={`${dolphinTypeName} Dolphin Release Channel`}
+          description="Choose which Slippi Dolphin release to install"
+        >
+          <RadioGroup value={dolphinBeta} onChange={(_event, value) => onDolphinBetaChange(value)}>
+            <FormControlLabel value={false} label="Stable (Ishiiruka)" control={<Radio disabled={!dolphinIsReady} />} />
+            <FormControlLabel value={true} label="Beta (Mainline)" control={<Radio disabled={!dolphinIsReady} />} />
+          </RadioGroup>
+        </SettingItem>
+      )}
+      {isWindows && (
         <ImportDolphinConfigForm
           dolphinType={dolphinType}
           disabled={!dolphinIsReady}

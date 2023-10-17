@@ -66,27 +66,6 @@ export const useExtraSlpPaths = () => {
   return [extraSlpPaths, setExtraSlpDirs] as const;
 };
 
-export const useDolphinPath = (dolphinType: DolphinLaunchType) => {
-  const netplayDolphinPath = useSettings((store) => store.settings.netplayDolphinPath);
-  const setNetplayPath = async (path: string) => {
-    await window.electron.settings.setNetplayDolphinPath(path);
-  };
-
-  const playbackDolphinPath = useSettings((store) => store.settings.playbackDolphinPath);
-  const setDolphinPath = async (path: string) => {
-    await window.electron.settings.setPlaybackDolphinPath(path);
-  };
-
-  switch (dolphinType) {
-    case DolphinLaunchType.NETPLAY: {
-      return [netplayDolphinPath, setNetplayPath] as const;
-    }
-    case DolphinLaunchType.PLAYBACK: {
-      return [playbackDolphinPath, setDolphinPath] as const;
-    }
-  }
-};
-
 export const useLaunchMeleeOnPlay = () => {
   const launchMeleeOnPlay = useSettings((store) => store.settings.launchMeleeOnPlay);
   const setLaunchMelee = async (launchMelee: boolean) => {
@@ -103,4 +82,21 @@ export const useAutoUpdateLauncher = () => {
   }, []);
 
   return [autoUpdateLauncher, setAutoUpdateLauncher] as const;
+};
+
+export const useDolphinBeta = (dolphinType: DolphinLaunchType) => {
+  const netplayBeta = useSettings((state) => state.settings.useNetplayBeta);
+  const playbackBeta = useSettings((state) => state.settings.usePlaybackBeta);
+  const setDolphinBeta = useCallback(async (useBeta: boolean) => {
+    await window.electron.settings.setUseDolphinBeta(dolphinType, useBeta);
+  }, []);
+
+  switch (dolphinType) {
+    case DolphinLaunchType.NETPLAY: {
+      return [netplayBeta, setDolphinBeta] as const;
+    }
+    case DolphinLaunchType.PLAYBACK: {
+      return [playbackBeta, setDolphinBeta] as const;
+    }
+  }
 };

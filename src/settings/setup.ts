@@ -13,10 +13,9 @@ import {
   ipc_setExtraSlpPaths,
   ipc_setIsoPath,
   ipc_setLaunchMeleeOnPlay,
-  ipc_setNetplayDolphinPath,
-  ipc_setPlaybackDolphinPath,
   ipc_setRootSlpPath,
   ipc_setSpectateSlpPath,
+  ipc_setUseDolphinBeta,
   ipc_setUseMonthlySubfolders,
 } from "./ipc";
 import type { SettingsManager } from "./settingsManager";
@@ -80,16 +79,6 @@ export default function setupSettingsIpc({
     return { success: true };
   });
 
-  ipc_setNetplayDolphinPath.main!.handle(async ({ path }) => {
-    await settingsManager.setNetplayDolphinPath(path);
-    return { success: true };
-  });
-
-  ipc_setPlaybackDolphinPath.main!.handle(async ({ path }) => {
-    await settingsManager.setPlaybackDolphinPath(path);
-    return { success: true };
-  });
-
   ipc_addNewConnection.main!.handle(async ({ connection }) => {
     await settingsManager.addConsoleConnection(connection);
     return { success: true };
@@ -113,6 +102,11 @@ export default function setupSettingsIpc({
   ipc_setAutoUpdateLauncher.main!.handle(async ({ autoUpdateLauncher }) => {
     await settingsManager.setAutoUpdateLauncher(autoUpdateLauncher);
     autoUpdater.autoInstallOnAppQuit = autoUpdateLauncher;
+    return { success: true };
+  });
+
+  ipc_setUseDolphinBeta.main!.handle(async ({ dolphinType, useBeta }) => {
+    await settingsManager.setUseDolphinBeta(dolphinType, useBeta);
     return { success: true };
   });
 }

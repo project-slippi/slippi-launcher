@@ -1,3 +1,4 @@
+import type { DolphinLaunchType } from "@dolphin/types";
 import type { SuccessPayload } from "utils/ipc";
 import { _, makeEndpoint } from "utils/ipc";
 
@@ -21,18 +22,6 @@ export const ipc_setSpectateSlpPath = makeEndpoint.main("setSpectateSlpPath", <{
 
 export const ipc_setExtraSlpPaths = makeEndpoint.main("setExtraSlpPaths", <{ paths: string[] }>_, <SuccessPayload>_);
 
-export const ipc_setNetplayDolphinPath = makeEndpoint.main(
-  "setNetplayDolphinPath",
-  <{ path: string }>_,
-  <SuccessPayload>_,
-);
-
-export const ipc_setPlaybackDolphinPath = makeEndpoint.main(
-  "setPlaybackDolphinPath",
-  <{ path: string }>_,
-  <SuccessPayload>_,
-);
-
 export const ipc_setLaunchMeleeOnPlay = makeEndpoint.main(
   "setLaunchMeleeOnPlay",
   <{ launchMelee: boolean }>_,
@@ -42,6 +31,12 @@ export const ipc_setLaunchMeleeOnPlay = makeEndpoint.main(
 export const ipc_setAutoUpdateLauncher = makeEndpoint.main(
   "setAutoUpdateLauncher",
   <{ autoUpdateLauncher: boolean }>_,
+  <SuccessPayload>_,
+);
+
+export const ipc_setUseDolphinBeta = makeEndpoint.main(
+  "setUseNetplayBeta",
+  <{ dolphinType: DolphinLaunchType; useBeta: boolean }>_,
   <SuccessPayload>_,
 );
 

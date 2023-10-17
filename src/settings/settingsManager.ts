@@ -1,4 +1,5 @@
 import { DolphinLaunchType } from "@dolphin/types";
+import { Mutex } from "async-mutex";
 import electronSettings from "electron-settings";
 import fs from "fs";
 import merge from "lodash/merge";
@@ -16,8 +17,10 @@ electronSettings.configure({
 export class SettingsManager {
   // This only stores the actually modified settings
   private appSettings: Partial<AppSettings>;
+  private setMutex: Mutex;
 
   constructor() {
+    this.setMutex = new Mutex();
     const restoredSettings = electronSettings.getSync() as Partial<AppSettings>;
 
     // If the ISO file no longer exists, don't restore it
@@ -36,21 +39,32 @@ export class SettingsManager {
     return merge({}, defaultAppSettings, this.appSettings);
   }
 
-  public getDolphinPath(type: DolphinLaunchType): string {
-    switch (type) {
-      case DolphinLaunchType.NETPLAY:
-        return this.get().settings.netplayDolphinPath;
-      case DolphinLaunchType.PLAYBACK:
-        return this.get().settings.playbackDolphinPath;
-    }
-  }
-
   public getRootSlpPath(): string {
     return this.get().settings.rootSlpPath;
   }
 
   public getUseMonthlySubfolders(): boolean {
     return this.get().settings.useMonthlySubfolders;
+  }
+
+  public getUseDolphinBeta(type: DolphinLaunchType): boolean {
+    const settings = this.get().settings;
+    switch (type) {
+      case DolphinLaunchType.NETPLAY:
+        return settings.useNetplayBeta;
+      case DolphinLaunchType.PLAYBACK:
+        return settings.usePlaybackBeta;
+    }
+  }
+
+  public getDolphinPromotedToStable(type: DolphinLaunchType): boolean {
+    const settings = this.get();
+    switch (type) {
+      case DolphinLaunchType.NETPLAY:
+        return settings.netplayPromotedToStable;
+      case DolphinLaunchType.PLAYBACK:
+        return settings.playbackPromotedToStable;
+    }
   }
 
   public async setIsoPath(isoPath: string | null): Promise<void> {
@@ -77,20 +91,34 @@ export class SettingsManager {
     await this._set("settings.extraSlpPaths", slpPaths);
   }
 
-  public async setNetplayDolphinPath(dolphinPath: string): Promise<void> {
-    await this._set("settings.netplayDolphinPath", dolphinPath);
-  }
-
-  public async setPlaybackDolphinPath(dolphinPath: string): Promise<void> {
-    await this._set("settings.playbackDolphinPath", dolphinPath);
-  }
-
   public async setLaunchMeleeOnPlay(launchMelee: boolean): Promise<void> {
     await this._set("settings.launchMeleeOnPlay", launchMelee);
   }
 
   public async setAutoUpdateLauncher(autoUpdateLauncher: boolean): Promise<void> {
     await this._set("settings.autoUpdateLauncher", autoUpdateLauncher);
+  }
+
+  public async setUseDolphinBeta(dolphinType: DolphinLaunchType, useBeta: boolean): Promise<void> {
+    switch (dolphinType) {
+      case DolphinLaunchType.NETPLAY:
+        await this._set("settings.useNetplayBeta", useBeta);
+        break;
+      case DolphinLaunchType.PLAYBACK:
+        await this._set("settings.usePlaybackBeta", useBeta);
+        break;
+    }
+  }
+
+  public async setDolphinPromotedToStable(dolphinType: DolphinLaunchType, promotedToStable: boolean): Promise<void> {
+    switch (dolphinType) {
+      case DolphinLaunchType.NETPLAY:
+        await this._set("netplayPromotedToStable", promotedToStable);
+        break;
+      case DolphinLaunchType.PLAYBACK:
+        await this._set("playbackPromotedToStable", promotedToStable);
+        break;
+    }
   }
 
   public async addConsoleConnection(conn: Omit<StoredConnection, "id">): Promise<void> {
@@ -121,8 +149,10 @@ export class SettingsManager {
   }
 
   private async _set(objectPath: string, value: any) {
+    await this.setMutex.acquire();
     await electronSettings.set(objectPath, value);
     set(this.appSettings, objectPath, value);
     await ipc_settingsUpdatedEvent.main!.trigger(this.get());
+    this.setMutex.release();
   }
 }

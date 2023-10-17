@@ -1,7 +1,6 @@
 import type { SyncedDolphinSettings } from "@dolphin/config/config";
-import { addGamePath, getSlippiSettings, setSlippiSettings } from "@dolphin/config/config";
+import { addGamePath, getSlippiMainlineSettings, setSlippiMainlineSettings } from "@dolphin/config/config";
 import { IniFile } from "@dolphin/config/iniFile";
-import { findDolphinExecutable } from "@dolphin/util";
 import { spawnSync } from "child_process";
 import { app } from "electron";
 import electronLog from "electron-log";
@@ -9,22 +8,23 @@ import * as fs from "fs-extra";
 import os from "os";
 import path from "path";
 import { lt } from "semver";
+import semverRegex from "semver-regex";
 
+import type { DolphinInstallation } from "../types";
 import { DolphinLaunchType } from "../types";
 import { downloadLatestDolphin } from "./download";
 import type { DolphinVersionResponse } from "./fetchLatestVersion";
-import { fetchLatestVersion } from "./fetchLatestVersion";
 
-const log = electronLog.scope("dolphin/installation");
+const log = electronLog.scope("dolphin/mainlineInstallation");
 
 const isLinux = process.platform === "linux";
 
-// taken from https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
-const semverRegex =
-  /(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-((?:0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?/;
-
-export class DolphinInstallation {
-  constructor(private dolphinLaunchType: DolphinLaunchType, private installationFolder: string) {}
+export class MainlineDolphinInstallation implements DolphinInstallation {
+  public readonly installationFolder: string;
+  constructor(private readonly dolphinLaunchType: DolphinLaunchType, private readonly betaSuffix: string) {
+    const dolphinFolder = dolphinLaunchType === DolphinLaunchType.NETPLAY ? "netplay" : "playback";
+    this.installationFolder = path.join(app.getPath("userData"), `${dolphinFolder}${this.betaSuffix}`);
+  }
 
   public get userFolder(): string {
     switch (process.platform) {
@@ -32,14 +32,20 @@ export class DolphinInstallation {
         return path.join(this.installationFolder, "User");
       }
       case "darwin": {
-        const configPath = path.join(os.homedir(), "Library", "Application Support", "com.project-slippi.dolphin");
-        const userFolderName = this.dolphinLaunchType === DolphinLaunchType.NETPLAY ? "netplay/User" : "playback/User";
+        const configPath = path.join(os.homedir(), "Library", "Application Support", `com.project-slippi.dolphin`);
+        const userFolderName =
+          this.dolphinLaunchType === DolphinLaunchType.NETPLAY
+            ? `netplay${this.betaSuffix}/User`
+            : `playback${this.betaSuffix}/User`;
 
         return path.join(configPath, userFolderName);
       }
       case "linux": {
         const configPath = path.join(os.homedir(), ".config");
-        const userFolderName = this.dolphinLaunchType === DolphinLaunchType.NETPLAY ? "SlippiOnline" : "SlippiPlayback";
+        const userFolderName =
+          this.dolphinLaunchType === DolphinLaunchType.NETPLAY
+            ? `slippi-dolphin/netplay${this.betaSuffix}`
+            : `slippi-dolphin/playback${this.betaSuffix}`;
         return path.join(configPath, userFolderName);
       }
       default:
@@ -49,16 +55,14 @@ export class DolphinInstallation {
 
   public get sysFolder(): string {
     const dolphinPath = this.installationFolder;
-    const type = this.dolphinLaunchType;
     switch (process.platform) {
+      case "linux":
       case "win32": {
         return path.join(dolphinPath, "Sys");
       }
       case "darwin": {
-        return path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "Resources", "Sys");
-      }
-      case "linux": {
-        return path.join(app.getPath("userData"), type, "Sys");
+        const dolphinApp = "Slippi_Dolphin.app";
+        return path.join(dolphinPath, dolphinApp, "Contents", "Resources", "Sys");
       }
       default:
         throw new Error(`Unsupported operating system: ${process.platform}`);
@@ -69,7 +73,43 @@ export class DolphinInstallation {
     const dolphinPath = this.installationFolder;
     const type = this.dolphinLaunchType;
 
-    return findDolphinExecutable(type, dolphinPath);
+    // Make sure the directory actually exists
+    await fs.ensureDir(dolphinPath);
+
+    // Check the directory contents
+    const files = await fs.readdir(dolphinPath);
+    const result = files.find((filename) => {
+      switch (process.platform) {
+        case "win32":
+          return filename.endsWith("Dolphin.exe");
+        case "darwin":
+          return filename.endsWith("Dolphin.app");
+        case "linux": {
+          const appimagePrefix = type === DolphinLaunchType.NETPLAY ? "Slippi_Netplay" : "Slippi_Playback";
+          const isAppimage = filename.startsWith(appimagePrefix) && filename.endsWith("AppImage");
+          return isAppimage || filename.endsWith("dolphin-emu");
+        }
+        default:
+          return false;
+      }
+    });
+
+    if (!result) {
+      throw new Error(
+        `No ${type} Dolphin found in: ${dolphinPath}, try restarting the launcher. Ask in the Slippi Discord's support channels for further help`,
+      );
+    }
+
+    if (process.platform === "darwin") {
+      const dolphinBinaryPath = path.join(dolphinPath, result, "Contents", "MacOS", "Slippi_Dolphin");
+      const dolphinExists = await fs.pathExists(dolphinBinaryPath);
+      if (!dolphinExists) {
+        throw new Error(`No ${type} Dolphin found in: ${dolphinPath}, try resetting dolphin`);
+      }
+      return dolphinBinaryPath;
+    }
+
+    return path.join(dolphinPath, result);
   }
 
   public async clearCache() {
@@ -90,42 +130,29 @@ export class DolphinInstallation {
 
     // we shouldn't keep the old cache folder since it might be out of date
     await this.clearCache();
-
-    // read the settings from the ini and update any settings
-    if (this.dolphinLaunchType === DolphinLaunchType.NETPLAY) {
-      const iniPath = path.join(this.userFolder, "Config", "Dolphin.ini");
-      const iniFile = await IniFile.init(iniPath);
-      await getSlippiSettings(iniFile);
-    }
   }
 
   public async validate({
     onStart,
     onProgress,
     onComplete,
+    dolphinDownloadInfo,
   }: {
     onStart: () => void;
     onProgress: (current: number, total: number) => void;
     onComplete: () => void;
+    dolphinDownloadInfo: DolphinVersionResponse;
   }): Promise<void> {
     const type = this.dolphinLaunchType;
-    let dolphinDownloadInfo: DolphinVersionResponse | undefined = undefined;
 
     try {
       await this.findDolphinExecutable();
       log.info(`Found existing ${type} Dolphin executable.`);
       log.info(`Checking if we need to update ${type} Dolphin`);
 
-      try {
-        dolphinDownloadInfo = await fetchLatestVersion(type);
-      } catch (err) {
-        log.error(`Failed to fetch latest Dolphin version: ${err}`);
-        onComplete();
-        return;
-      }
-
       const latestVersion = dolphinDownloadInfo?.version;
       const isOutdated = !latestVersion || (await this._isOutOfDate(latestVersion));
+      log.warn(`latest version = ${latestVersion}`);
       if (!isOutdated) {
         log.info("No update found...");
         onComplete();
@@ -141,28 +168,24 @@ export class DolphinInstallation {
 
     // Start the download
     await this.downloadAndInstall({
-      releaseInfo: dolphinDownloadInfo,
+      dolphinDownloadInfo,
       onProgress,
       onComplete,
     });
   }
 
   public async downloadAndInstall({
-    releaseInfo,
+    dolphinDownloadInfo,
     onProgress,
     onComplete,
     cleanInstall,
   }: {
-    releaseInfo?: DolphinVersionResponse;
+    dolphinDownloadInfo: DolphinVersionResponse;
     onProgress?: (current: number, total: number) => void;
     onComplete?: () => void;
     cleanInstall?: boolean;
   }): Promise<void> {
     const type = this.dolphinLaunchType;
-    let dolphinDownloadInfo = releaseInfo;
-    if (!dolphinDownloadInfo) {
-      dolphinDownloadInfo = await fetchLatestVersion(type);
-    }
 
     const downloadUrl = dolphinDownloadInfo.downloadUrls[process.platform];
     if (!downloadUrl) {
@@ -189,29 +212,38 @@ export class DolphinInstallation {
   public async getSettings(): Promise<SyncedDolphinSettings> {
     const iniPath = path.join(this.userFolder, "Config", "Dolphin.ini");
     const iniFile = await IniFile.init(iniPath);
-    return await getSlippiSettings(iniFile);
+    return await getSlippiMainlineSettings(iniFile);
   }
 
   public async updateSettings(options: Partial<SyncedDolphinSettings>): Promise<void> {
     const iniPath = path.join(this.userFolder, "Config", "Dolphin.ini");
     const iniFile = await IniFile.init(iniPath);
-    await setSlippiSettings(iniFile, options);
+    await setSlippiMainlineSettings(iniFile, options);
   }
 
   private async _isOutOfDate(latestVersion: string): Promise<boolean> {
     const dolphinVersion = await this.getDolphinVersion();
+    log.info(`dolphin version = ${dolphinVersion}`);
     return !dolphinVersion || lt(dolphinVersion, latestVersion);
   }
 
   public async getDolphinVersion(): Promise<string | null> {
     try {
       const dolphinPath = await this.findDolphinExecutable();
+      log.warn(`dolphinPath = ${dolphinPath}`);
       const dolphinVersionOut = spawnSync(dolphinPath, ["--version"]).stdout.toString();
-      const match = dolphinVersionOut.match(semverRegex);
+      log.warn(`dolphinVersionOut = ${dolphinVersionOut}`);
+      const match = dolphinVersionOut.match(semverRegex());
       return match?.[0] ?? null;
     } catch (err) {
       return null;
     }
+  }
+
+  public async findPlayKey(): Promise<string> {
+    const slippiDir = path.join(this.userFolder, "Slippi");
+    await fs.ensureDir(slippiDir);
+    return path.resolve(slippiDir, "user.json");
   }
 
   private async _uninstallDolphin() {
@@ -237,8 +269,8 @@ export class DolphinInstallation {
         break;
       }
       case "darwin": {
-        const { installDolphinOnMac } = await import("./macos");
-        await installDolphinOnMac({
+        const { installMainlineDolphinOnMac } = await import("./macos");
+        await installMainlineDolphinOnMac({
           assetPath,
           destinationFolder: dolphinPath,
         });
@@ -247,9 +279,9 @@ export class DolphinInstallation {
       case "linux": {
         const { installDolphinOnLinux } = await import("./linux");
         await installDolphinOnLinux({
-          type: this.dolphinLaunchType,
           assetPath,
           destinationFolder: dolphinPath,
+          installation: this,
         });
         break;
       }

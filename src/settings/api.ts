@@ -1,4 +1,5 @@
 /* eslint-disable import/no-default-export */
+import type { DolphinLaunchType } from "@dolphin/types";
 import { ipcRenderer } from "electron";
 
 import {
@@ -11,11 +12,10 @@ import {
   ipc_setExtraSlpPaths,
   ipc_setIsoPath,
   ipc_setLaunchMeleeOnPlay,
-  ipc_setNetplayDolphinPath,
-  ipc_setPlaybackDolphinPath,
   ipc_setRootSlpPath,
   ipc_setSpectateSlpPath,
   ipc_settingsUpdatedEvent,
+  ipc_setUseDolphinBeta,
   ipc_setUseMonthlySubfolders,
 } from "./ipc";
 import type { AppSettings, StoredConnection } from "./types";
@@ -54,17 +54,14 @@ export default {
   async setExtraSlpPaths(paths: string[]): Promise<void> {
     await ipc_setExtraSlpPaths.renderer!.trigger({ paths });
   },
-  async setNetplayDolphinPath(netplayDolphinPath: string): Promise<void> {
-    await ipc_setNetplayDolphinPath.renderer!.trigger({ path: netplayDolphinPath });
-  },
-  async setPlaybackDolphinPath(playbackDolphinPath: string): Promise<void> {
-    await ipc_setPlaybackDolphinPath.renderer!.trigger({ path: playbackDolphinPath });
-  },
   async setLaunchMeleeOnPlay(launchMelee: boolean): Promise<void> {
     await ipc_setLaunchMeleeOnPlay.renderer!.trigger({ launchMelee });
   },
   async setAutoUpdateLauncher(autoUpdateLauncher: boolean): Promise<void> {
     await ipc_setAutoUpdateLauncher.renderer!.trigger({ autoUpdateLauncher });
+  },
+  async setUseDolphinBeta(dolphinType: DolphinLaunchType, installBeta: boolean): Promise<void> {
+    await ipc_setUseDolphinBeta.renderer!.trigger({ dolphinType, useBeta: installBeta });
   },
   async addNewConnection(connection: Omit<StoredConnection, "id">): Promise<void> {
     await ipc_addNewConnection.renderer!.trigger({ connection });

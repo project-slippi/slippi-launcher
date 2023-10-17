@@ -5,7 +5,7 @@ import { setBootToCss } from "./config/config";
 import type { GeckoCode } from "./config/geckoCode";
 import { loadGeckoCodes, setCodes } from "./config/geckoCode";
 import { IniFile } from "./config/iniFile";
-import type { DolphinInstallation } from "./install/installation";
+import type { DolphinInstallation } from "./types";
 import { DolphinLaunchType } from "./types";
 
 export async function findDolphinExecutable(type: DolphinLaunchType, dolphinPath: string): Promise<string> {

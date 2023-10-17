@@ -17,7 +17,7 @@ export async function extractDmg(filename: string, destination: string): Promise
   return files;
 }
 
-async function mountDmg(filename: string): Promise<string> {
+export async function mountDmg(filename: string): Promise<string> {
   return new Promise((resolve, reject) => {
     dmg.mount(filename, (err, value) => {
       if (err) {
@@ -29,7 +29,7 @@ async function mountDmg(filename: string): Promise<string> {
   });
 }
 
-async function unmountDmg(mountPath: string): Promise<void> {
+export async function unmountDmg(mountPath: string): Promise<void> {
   return new Promise((resolve, reject) => {
     dmg.unmount(mountPath, (err) => {
       if (err) {

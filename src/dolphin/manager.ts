@@ -1,12 +1,17 @@
 import type { SettingsManager } from "@settings/settingsManager";
+import { app } from "electron";
 import electronLog from "electron-log";
+import { move, remove } from "fs-extra";
 import { Observable, Subject } from "observable-fns";
+import os from "os";
 import path from "path";
 import { fileExists } from "utils/fileExists";
 
-import { DolphinInstallation } from "./install/installation";
+import { type DolphinVersionResponse, fetchLatestVersion } from "./install/fetchLatestVersion";
+import { IshiirukaDolphinInstallation } from "./install/ishiiInstallation";
+import { MainlineDolphinInstallation } from "./install/mainlineInstallation";
 import { DolphinInstance, PlaybackDolphinInstance } from "./instance";
-import type { DolphinEvent, ReplayCommunication } from "./types";
+import type { DolphinEvent, DolphinInstallation, ReplayCommunication } from "./types";
 import { DolphinEventType, DolphinLaunchType } from "./types";
 
 const log = electronLog.scope("dolphin/manager");
@@ -14,19 +19,51 @@ const log = electronLog.scope("dolphin/manager");
 // DolphinManager should be in control of all dolphin instances that get opened for actual use.
 // This includes playing netplay, viewing replays, watching broadcasts (spectating), and configuring Dolphin.
 export class DolphinManager {
+  private betaFlags = {
+    [DolphinLaunchType.NETPLAY]: {
+      betaAvailable: false,
+      promotedToStable: false,
+    },
+    [DolphinLaunchType.PLAYBACK]: {
+      betaAvailable: false,
+      promotedToStable: false,
+    },
+  };
+
   private playbackDolphinInstances = new Map<string, PlaybackDolphinInstance>();
   private netplayDolphinInstance: DolphinInstance | null = null;
   private eventSubject = new Subject<DolphinEvent>();
   public events = Observable.from(this.eventSubject);
 
-  constructor(private settingsManager: SettingsManager) {}
+  constructor(private settingsManager: SettingsManager) {
+    this.betaFlags[DolphinLaunchType.NETPLAY].promotedToStable = settingsManager.getDolphinPromotedToStable(
+      DolphinLaunchType.NETPLAY,
+    );
+    this.betaFlags[DolphinLaunchType.PLAYBACK].promotedToStable = settingsManager.getDolphinPromotedToStable(
+      DolphinLaunchType.PLAYBACK,
+    );
+  }
 
   public getInstallation(launchType: DolphinLaunchType): DolphinInstallation {
-    const dolphinPath = this.settingsManager.getDolphinPath(launchType);
-    return new DolphinInstallation(launchType, dolphinPath);
+    const { betaAvailable, promotedToStable } = this.betaFlags[launchType];
+    if (betaAvailable || promotedToStable) {
+      const betaSuffix = promotedToStable ? "" : "-beta";
+      return new MainlineDolphinInstallation(launchType, betaSuffix);
+    }
+    return new IshiirukaDolphinInstallation(launchType);
   }
 
   public async installDolphin(dolphinType: DolphinLaunchType): Promise<void> {
+    const useBeta = this.settingsManager.getUseDolphinBeta(dolphinType);
+    let dolphinDownloadInfo: DolphinVersionResponse | undefined = undefined;
+    try {
+      dolphinDownloadInfo = await fetchLatestVersion(dolphinType, useBeta);
+      await this._updateDolphinFlags(dolphinDownloadInfo, dolphinType);
+    } catch (err) {
+      log.error(`Failed to fetch latest Dolphin version: ${err}`);
+      return;
+    }
+
     const dolphinInstall = this.getInstallation(dolphinType);
     await dolphinInstall.validate({
       onStart: () => this._onStart(dolphinType),
@@ -35,6 +72,7 @@ export class DolphinManager {
         dolphinInstall.getDolphinVersion().then((version) => {
           this._onComplete(dolphinType, version);
         }),
+      dolphinDownloadInfo,
     });
 
     const isoPath = this.settingsManager.get().settings.isoPath;
@@ -185,9 +223,19 @@ export class DolphinManager {
       }
     }
 
+    const useBeta = this.settingsManager.getUseDolphinBeta(launchType);
+    let dolphinDownloadInfo: DolphinVersionResponse | undefined = undefined;
+    try {
+      dolphinDownloadInfo = await fetchLatestVersion(launchType, useBeta);
+      await this._updateDolphinFlags(dolphinDownloadInfo, launchType);
+    } catch (err) {
+      log.error(`Failed to fetch latest Dolphin version: ${err}`);
+      return;
+    }
     const installation = this.getInstallation(launchType);
     this._onStart(launchType);
     await installation.downloadAndInstall({
+      dolphinDownloadInfo,
       cleanInstall,
       onProgress: (current, total) => this._onProgress(launchType, current, total),
     });
@@ -210,6 +258,14 @@ export class DolphinManager {
       }
     }
     return meleeIsoPath;
+  }
+
+  public async importConfig(launchType: DolphinLaunchType, dolphinPath: string): Promise<void> {
+    const installation = this.getInstallation(launchType);
+    await installation.importConfig(dolphinPath);
+    if (launchType === DolphinLaunchType.NETPLAY) {
+      await this._updateLauncherSettings(launchType);
+    }
   }
 
   private async _updateDolphinSettings(launchType: DolphinLaunchType) {
@@ -269,5 +325,41 @@ export class DolphinManager {
       dolphinType,
       dolphinVersion,
     });
+  }
+
+  // Run after fetchLatestVersion to update the necessary flags
+  private async _updateDolphinFlags(downloadInfo: DolphinVersionResponse, dolphinType: DolphinLaunchType) {
+    const isBeta = (downloadInfo.version as string).includes("-beta");
+    const isMainline = downloadInfo.downloadUrls.win32.includes("project-slippi/dolphin");
+
+    if (!this.betaFlags[dolphinType].promotedToStable && !isBeta && isMainline) {
+      // if this is the first time we're handling the promotion then delete {dolphinType}-beta and move {dolphinType}
+      // we want to delete the beta folder so that any defaults that got changed during the beta are properly updated
+      const dolphinFolder = dolphinType === DolphinLaunchType.NETPLAY ? "netplay" : "playback";
+      const betaPath = path.join(app.getPath("userData"), `${dolphinFolder}-beta`);
+      const stablePath = path.join(app.getPath("userData"), dolphinFolder);
+      const legacyPath = path.join(app.getPath("userData"), `${dolphinFolder}-legacy`);
+      try {
+        await remove(betaPath);
+        await move(stablePath, legacyPath, { overwrite: true });
+        if (process.platform === "darwin") {
+          // mainline on macOS will take over the old user folder so move it on promotion
+          // windows keeps everything contained in the install dir
+          // linux will be using a new user folder path
+          const configPath = path.join(os.homedir(), "Library", "Application Support", "com.project-slippi.dolphin");
+          const oldUserFolderName = `${dolphinFolder}/User`;
+          const legacyUserFolderName = `${dolphinFolder}/User-legacy`;
+          const oldPath = path.join(configPath, oldUserFolderName);
+          const newPath = path.join(configPath, legacyUserFolderName);
+          await move(oldPath, newPath, { overwrite: true });
+        }
+        this.betaFlags[dolphinType].promotedToStable = true;
+        await this.settingsManager.setDolphinPromotedToStable(dolphinType, true);
+      } catch (err) {
+        log.warn(`could not handle promotion: ${err}`);
+      }
+    }
+
+    this.betaFlags[dolphinType].betaAvailable = isBeta;
   }
 }
