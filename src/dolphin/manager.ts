@@ -330,19 +330,18 @@ export class DolphinManager {
   // Run after fetchLatestVersion to update the necessary flags
   private async _updateDolphinFlags(downloadInfo: DolphinVersionResponse, dolphinType: DolphinLaunchType) {
     const isBeta = (downloadInfo.version as string).includes("-beta");
-    this.betaFlags[dolphinType].betaAvailable = isBeta;
-
     const isMainline = downloadInfo.downloadUrls.win32.includes("project-slippi/dolphin");
+
     if (!this.betaFlags[dolphinType].promotedToStable && !isBeta && isMainline) {
       // if this is the first time we're handling the promotion then delete {dolphinType}-beta and move {dolphinType}
       // we want to delete the beta folder so that any defaults that got changed during the beta are properly updated
       const dolphinFolder = dolphinType === DolphinLaunchType.NETPLAY ? "netplay" : "playback";
       const betaPath = path.join(app.getPath("userData"), `${dolphinFolder}-beta`);
-      const oldStablePath = path.join(app.getPath("userData"), dolphinFolder);
+      const stablePath = path.join(app.getPath("userData"), dolphinFolder);
       const legacyPath = path.join(app.getPath("userData"), `${dolphinFolder}-legacy`);
       try {
         await remove(betaPath);
-        await move(oldStablePath, legacyPath, { overwrite: true });
+        await move(stablePath, legacyPath, { overwrite: true });
         if (process.platform === "darwin") {
           // mainline on macOS will take over the old user folder so move it on promotion
           // windows keeps everything contained in the install dir
@@ -353,12 +352,14 @@ export class DolphinManager {
           const oldPath = path.join(configPath, oldUserFolderName);
           const newPath = path.join(configPath, legacyUserFolderName);
           await move(oldPath, newPath, { overwrite: true });
-          this.betaFlags[dolphinType].promotedToStable = true;
-          await this.settingsManager.setDolphinPromotedToStable(dolphinType, true);
         }
+        this.betaFlags[dolphinType].promotedToStable = true;
+        await this.settingsManager.setDolphinPromotedToStable(dolphinType, true);
       } catch (err) {
         log.warn(`could not handle promotion: ${err}`);
       }
     }
+
+    this.betaFlags[dolphinType].betaAvailable = isBeta;
   }
 }
