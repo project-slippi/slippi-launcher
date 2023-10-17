@@ -1,15 +1,12 @@
 export type ConfigFlags = {
-  enableMainlineDolphin: boolean;
   enableReplayDatabase: boolean;
 };
 
 export enum RuntimeFlags {
-  ENABLE_MAINLINE_DOLPHIN = "--enable-mainline-dolphin",
   ENABLE_REPLAY_DATABASE = "--enable-replay-database",
 }
 
 const DEVELOPMENT_CONFIG_FLAGS: ConfigFlags = {
-  enableMainlineDolphin: true,
   enableReplayDatabase: true,
 };
 
@@ -30,7 +27,6 @@ export function getConfigFlags(): ConfigFlags {
 
 function getBuildFlags(): ConfigFlags {
   return {
-    enableMainlineDolphin: parseBoolean(process.env.ENABLE_MAINLINE_DOLPHIN, false),
     enableReplayDatabase: parseBoolean(process.env.ENABLE_REPLAY_DATABASE, false),
   };
 }
@@ -43,9 +39,6 @@ function getRuntimeFlags(): Partial<ConfigFlags> {
   while (i < args.length) {
     const argument = args[i];
     switch (argument) {
-      case RuntimeFlags.ENABLE_MAINLINE_DOLPHIN:
-        overrides.enableMainlineDolphin = true;
-        break;
       case RuntimeFlags.ENABLE_REPLAY_DATABASE:
         overrides.enableReplayDatabase = true;
         break;

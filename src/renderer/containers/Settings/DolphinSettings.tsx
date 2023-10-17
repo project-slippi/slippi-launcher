@@ -21,7 +21,6 @@ import { GeckoCodes } from "./GeckoCodes/GeckoCodes";
 import { SettingItem } from "./SettingItem";
 
 const { isMac, isWindows } = window.electron.bootstrap;
-const { enableMainlineDolphin } = window.electron.bootstrap.flags;
 
 enum ResetType {
   SOFT,
@@ -171,7 +170,7 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
           </Button>
         </div>
       </SettingItem>
-      {enableMainlineDolphin && dolphinType === DolphinLaunchType.NETPLAY && (
+      {dolphinType === DolphinLaunchType.NETPLAY && (
         <SettingItem
           name={`${dolphinTypeName} Dolphin Release Channel`}
           description="Choose which Slippi Dolphin release to install"

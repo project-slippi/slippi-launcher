@@ -18,44 +18,43 @@ describe("when parsing flags", () => {
 
   describe("when environment variables are empty", () => {
     it("should return default flags", () => {
-      mockProcess({ ENABLE_MAINLINE_DOLPHIN: "" });
+      mockProcess({ ENABLE_REPLAY_DATABASE: "" });
       const flags = getConfigFlags();
-      expect(flags.enableMainlineDolphin).toBeFalsy();
       expect(flags.enableReplayDatabase).toBeFalsy();
     });
   });
 
   describe("when handling truthy flags", () => {
     it("should parse true strings as true", () => {
-      mockProcess({ ENABLE_MAINLINE_DOLPHIN: "true" });
+      mockProcess({ ENABLE_REPLAY_DATABASE: "true" });
       const flags = getConfigFlags();
-      expect(flags.enableMainlineDolphin).toBeTruthy();
+      expect(flags.enableReplayDatabase).toBeTruthy();
     });
 
     it("should parse 1 as true", () => {
-      mockProcess({ ENABLE_MAINLINE_DOLPHIN: "1" });
+      mockProcess({ ENABLE_REPLAY_DATABASE: "1" });
       const flags = getConfigFlags();
-      expect(flags.enableMainlineDolphin).toBeTruthy();
+      expect(flags.enableReplayDatabase).toBeTruthy();
     });
   });
 
   describe("when handling falsey flags", () => {
     it("should parse undefined strings as false", () => {
-      mockProcess({ ENABLE_MAINLINE_DOLPHIN: "UNDEFINED" });
+      mockProcess({ ENABLE_REPLAY_DATABASE: "UNDEFINED" });
       const flags = getConfigFlags();
-      expect(flags.enableMainlineDolphin).toBeFalsy();
+      expect(flags.enableReplayDatabase).toBeFalsy();
     });
 
     it("should parse false strings as false", () => {
-      mockProcess({ ENABLE_MAINLINE_DOLPHIN: "FALSE" });
+      mockProcess({ ENABLE_REPLAY_DATABASE: "FALSE" });
       const flags = getConfigFlags();
-      expect(flags.enableMainlineDolphin).toBeFalsy();
+      expect(flags.enableReplayDatabase).toBeFalsy();
     });
 
     it("should parse 0 as false", () => {
-      mockProcess({ ENABLE_MAINLINE_DOLPHIN: "0" });
+      mockProcess({ ENABLE_REPLAY_DATABASE: "0" });
       const flags = getConfigFlags();
-      expect(flags.enableMainlineDolphin).toBeFalsy();
+      expect(flags.enableReplayDatabase).toBeFalsy();
     });
   });
 
@@ -63,22 +62,20 @@ describe("when parsing flags", () => {
     it("should correctly parse the valid arguments", () => {
       mockProcess({}, [
         "--foo-bar-baz",
-        RuntimeFlags.ENABLE_MAINLINE_DOLPHIN,
+        RuntimeFlags.ENABLE_REPLAY_DATABASE,
         "sdfsf",
         "",
         RuntimeFlags.ENABLE_REPLAY_DATABASE,
       ]);
       const flags = getConfigFlags();
       expect(Object.keys(flags).length).toEqual(2);
-      expect(flags.enableMainlineDolphin).toBeTruthy();
       expect(flags.enableReplayDatabase).toBeTruthy();
     });
   });
 
   it("should override build flags with runtime flags", () => {
-    mockProcess({ ENABLE_MAINLINE_DOLPHIN: "0" }, [RuntimeFlags.ENABLE_MAINLINE_DOLPHIN]);
+    mockProcess({ ENABLE_REPLAY_DATABASE: "0" }, [RuntimeFlags.ENABLE_REPLAY_DATABASE]);
     const flags = getConfigFlags();
-    expect(flags.enableMainlineDolphin).toBeTruthy();
     expect(flags.enableReplayDatabase).toBeFalsy();
   });
 });
