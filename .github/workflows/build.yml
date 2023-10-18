@@ -85,7 +85,7 @@ jobs:
         shell: bash
         run: |
           msg="$(git log -1 --no-merges --pretty=%B)"
-          if [[ "$FROM_FORK" = "true" ]] || [[ ! $msg =~ "^release.*" ]];
+          if [[ "$FROM_FORK" = "true" ]] || [[ ! "$msg" =~ "^release.*" ]];
           then
             echo "not a release, skipping code signing"
             exit 0;
@@ -138,7 +138,7 @@ jobs:
         shell: bash
         run: |
           msg="$(git log -1 --no-merges --pretty=%B)"
-          if [[ ! $msg =~ "^release.*" ]];
+          if [[ ! "$msg" =~ "^release.*" ]];
           then
             rm release/build/*-mac.zip || true;
           fi
