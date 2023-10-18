@@ -37,7 +37,6 @@ const endpointsRegistered: {
 } = {
   browser: [],
   renderer: [],
-  utility: [],
 };
 
 type EndpointMaker = {
