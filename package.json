@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.17.5",
-    "@electron/notarize": "^2.1.0",
+    "@electron/notarize": "^1.2.4",
     "@electron/rebuild": "^3.3.0",
     "@emotion/babel-preset-css-prop": "^11.2.0",
     "@pmmmwh/react-refresh-webpack-plugin": "0.5.5",
@@ -97,8 +97,6 @@
     "electron": "^19.1.9",
     "electron-builder": "^23.3.3",
     "electron-devtools-installer": "^3.2.0",
-    "electron-notarize": "^1.2.1",
-    "electron-rebuild": "^3.2.7",
     "electronmon": "^2.0.2",
     "eslint": "^7.15.0",
     "eslint-config-prettier": "^8.5.0",

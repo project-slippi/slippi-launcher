@@ -34,4 +34,6 @@ exports.default = async (config) => {
   if (!output.includes("Code signed successfully")) {
     throw new Error(`Failed to sign file: ${output}`);
   }
+
+  console.log(output);
 };
