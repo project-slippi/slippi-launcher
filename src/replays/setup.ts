@@ -31,14 +31,18 @@ export default function setupReplaysIpc() {
   });
 
   ipc_calculateGameStats.main!.handle(async ({ filePath }) => {
-    const result = await replayProvider.calculateGameStats(filePath);
-    const fileResult = await replayProvider.loadFile(filePath);
-    return { file: fileResult, stats: result };
+    const [stats, fileResult] = await Promise.all([
+      replayProvider.calculateGameStats(filePath),
+      replayProvider.loadFile(filePath),
+    ]);
+    return { file: fileResult, stats };
   });
 
   ipc_calculateStadiumStats.main!.handle(async ({ filePath }) => {
-    const result = await replayProvider.calculateStadiumStats(filePath);
-    const fileResult = await replayProvider.loadFile(filePath);
-    return { file: fileResult, stadiumStats: result };
+    const [stadiumStats, fileResult] = await Promise.all([
+      replayProvider.calculateStadiumStats(filePath),
+      replayProvider.loadFile(filePath),
+    ]);
+    return { file: fileResult, stadiumStats };
   });
 }
