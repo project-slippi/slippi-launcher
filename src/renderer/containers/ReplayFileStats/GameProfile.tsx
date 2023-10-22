@@ -35,7 +35,7 @@ const StatSection = (props: React.PropsWithChildren<{ title: string }>) => {
 };
 
 export const GameProfile = ({ file, stats, onPlay }: GameProfileProps) => {
-  const [firstPlayer, secondPlayer] = file.settings.players;
+  const [firstPlayer, secondPlayer] = file.game.players;
 
   return (
     <div style={{ flex: "1", margin: 20 }}>

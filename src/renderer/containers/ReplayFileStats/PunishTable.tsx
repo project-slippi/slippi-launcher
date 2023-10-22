@@ -13,8 +13,8 @@ const columnCount = 6;
 
 type PlayerInfo = {
   playerIndex: number;
-  characterId: number;
-  characterColor: number;
+  characterId?: number;
+  characterColor?: number;
   name?: string;
 };
 
@@ -110,7 +110,7 @@ export const PunishTable = ({ file, stats, player, opp, onPlay }: PunishTablePro
         <T.GrayableImage
           key={`stock-image-${stock.playerIndex}-${stockNum}`}
           gray={stockNum > currentStocks}
-          src={getCharacterIcon(player.characterId ?? null, player.characterColor)}
+          src={getCharacterIcon(player.characterId, player.characterColor)}
           height={20}
           width={20}
         />

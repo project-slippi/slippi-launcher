@@ -5,8 +5,8 @@ import unknownCharacterIcon from "@/styles/images/unknown.png";
 const characterIcons = require.context("../styles/images/characters", true);
 const stageIcons = require.context("../styles/images/stages");
 
-export const getCharacterIcon = (characterId: number | null, characterColor: number | null = 0): string => {
-  if (characterId !== null) {
+export const getCharacterIcon = (characterId: number | undefined, characterColor = 0): string => {
+  if (characterId != null) {
     const characterInfo = charUtils.getCharacterInfo(characterId);
     if (characterInfo.id !== charUtils.UnknownCharacter.id) {
       const allColors = characterInfo.colors;

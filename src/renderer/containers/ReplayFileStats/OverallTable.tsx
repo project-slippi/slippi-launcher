@@ -2,7 +2,6 @@ import type { FileResult } from "@replays/types";
 import type { RatioType, StatsType } from "@slippi/slippi-js";
 import _ from "lodash";
 
-import { extractPlayerNames } from "@/lib/matchNames";
 import { getCharacterIcon } from "@/lib/utils";
 
 import * as T from "./TableStyles";
@@ -18,8 +17,8 @@ export const OverallTable = ({ file, stats }: OverallTableProps) => {
   //RENDER HELPERS
   const renderPlayerHeaders = () => {
     const tableHeaders = [];
-    for (const p of file.settings.players) {
-      const names = extractPlayerNames(p.playerIndex, file.settings, file.metadata);
+    for (const p of file.game.players) {
+      // const names = extractPlayerNames(p.playerIndex, file.settings, file.metadata);
       tableHeaders.push(
         <T.TableHeaderCell key={p.playerIndex}>
           <div style={{ display: "flex", alignItems: "center" }}>
@@ -31,7 +30,7 @@ export const OverallTable = ({ file, stats }: OverallTableProps) => {
                 marginRight: 10,
               }}
             />
-            <div style={{ fontWeight: 500 }}>{names.name || names.tag || `Player ${p.playerIndex + 1}`}</div>
+            <div style={{ fontWeight: 500 }}>{p.displayName || p.tag || `Player ${p.playerIndex + 1}`}</div>
           </div>
         </T.TableHeaderCell>,
       );

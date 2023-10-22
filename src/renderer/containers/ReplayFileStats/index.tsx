@@ -85,7 +85,7 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
   const error = gameStatsQuery.error as any;
 
   const file = gameStatsQuery.data?.file ?? props.file;
-  const numPlayers = file?.settings.players.length;
+  const numPlayers = file?.game.players.length;
   const gameStats = gameStatsQuery.data?.stats ?? null;
   const stadiumStats = stadiumStatsQuery.data?.stadiumStats ?? null;
 
@@ -133,8 +133,8 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
     return <LoadingScreen message="Loading..." />;
   }
 
-  const { settings } = file;
-  const stageImage = settings.stageId !== null ? getStageImage(settings.stageId) : undefined;
+  const { game } = file;
+  const stageImage = game.stageId != null ? getStageImage(game.stageId) : undefined;
 
   return (
     <Outer backgroundImage={stageImage}>
@@ -149,9 +149,9 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
       <Content>
         {!file || loading ? (
           <LoadingScreen message={"Crunching numbers..."} />
-        ) : file.settings.gameMode == GameMode.TARGET_TEST ? (
+        ) : game.mode == GameMode.TARGET_TEST ? (
           <TargetTestProfile file={file} stats={stadiumStats}></TargetTestProfile>
-        ) : file.settings.gameMode == GameMode.HOME_RUN_CONTEST ? (
+        ) : game.mode == GameMode.HOME_RUN_CONTEST ? (
           <HomeRunProfile file={file} stats={stadiumStats}></HomeRunProfile>
         ) : numPlayers !== 2 ? (
           <IconMessage Icon={ErrorIcon} label="Game stats for doubles is unsupported" />

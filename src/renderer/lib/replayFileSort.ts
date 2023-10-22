@@ -1,12 +1,13 @@
+import { exists } from "@common/exists";
 import type { FileResult } from "@replays/types";
-import { Frames, GameMode } from "@slippi/slippi-js";
+// import { Frames, GameMode } from "@slippi/slippi-js";
 import compareFunc from "compare-func";
 
-import { extractAllPlayerNames, namesMatch } from "@/lib/matchNames";
+import { namesMatch } from "@/lib/matchNames";
 
 // The minimum duration of games when filtering out short games
-const MIN_GAME_DURATION_FRAMES = 30 * 60;
-const STADIUM_GAME_MODES = [GameMode.HOME_RUN_CONTEST, GameMode.TARGET_TEST];
+// const MIN_GAME_DURATION_FRAMES = 30 * 60;
+// const STADIUM_GAME_MODES = [GameMode.HOME_RUN_CONTEST, GameMode.TARGET_TEST];
 
 export enum ReplaySortOption {
   DATE = "DATE",
@@ -48,10 +49,11 @@ const sortByValue = (key: ReplaySortOption): ((val: FileResult) => any) => {
   return (file) => {
     switch (key) {
       case ReplaySortOption.GAME_DURATION: {
-        return file.lastFrame ?? Frames.FIRST;
+        return file.game.durationMs;
       }
       case ReplaySortOption.DATE: {
-        return file.startTime ? Date.parse(file.startTime) : 0;
+        const startTime = file.game.startTime;
+        return startTime ? Date.parse(startTime) : 0;
       }
     }
   };
@@ -76,16 +78,17 @@ export const replayFileFilter =
   (filterOptions: ReplayFilterOptions): ((file: FileResult) => boolean) =>
   (file) => {
     if (filterOptions.hideShortGames) {
-      if (STADIUM_GAME_MODES.every((stadiumGameMode) => file.settings.gameMode !== stadiumGameMode)) {
-        if (file.lastFrame !== null && file.lastFrame <= MIN_GAME_DURATION_FRAMES) {
-          return false;
-        }
-      }
+      // TODO: make sure this logic exists at the mapping stage
+      // if (STADIUM_GAME_MODES.every((stadiumGameMode) => file.settings.gameMode !== stadiumGameMode)) {
+      //   if (file.lastFrame !== null && file.lastFrame <= MIN_GAME_DURATION_FRAMES) {
+      //     return false;
+      //   }
+      // }
     }
 
     // First try to match names
     const playerNamesMatch = (): boolean => {
-      const matchable = extractAllPlayerNames(file.settings, file.metadata);
+      const matchable = matchablePlayerNames(file);
       if (!filterOptions.searchText) {
         return true;
       } else if (matchable.length === 0) {
@@ -98,9 +101,15 @@ export const replayFileFilter =
     }
 
     // Match filenames
-    if (file.name.toLowerCase().includes(filterOptions.searchText.toLowerCase())) {
+    if (file.fileName.toLowerCase().includes(filterOptions.searchText.toLowerCase())) {
       return true;
     }
 
     return false;
   };
+
+function matchablePlayerNames(file: FileResult): string[] {
+  return file.game.players.flatMap((player) => {
+    return [player.displayName, player.tag, player.connectCode].filter(exists);
+  });
+}

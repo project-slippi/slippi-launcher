@@ -16,8 +16,8 @@ import * as T from "./TableStyles";
 
 type PlayerInfo = {
   playerIndex: number;
-  characterId: number;
-  characterColor: number;
+  characterId?: number;
+  characterColor?: number;
   name?: string;
 };
 

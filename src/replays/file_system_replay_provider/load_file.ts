@@ -37,7 +37,7 @@ export async function loadFile(fullPath: string): Promise<FileResult> {
     return info;
   });
 
-  const startAtTime = await fileToDateAndTime(metadata ? metadata.startAt : null, filename, result.fullPath);
+  const startAtTime = await fileToDateAndTime(metadata ? metadata.startAt : null, filename, fullPath);
 
   const result: FileResult = {
     id: fullPath,
