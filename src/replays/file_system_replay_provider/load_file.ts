@@ -33,6 +33,7 @@ export async function loadFile(fullPath: string): Promise<FileResult> {
       connectCode: names.code,
       displayName: names.name,
       tag: names.tag,
+      startStocks: p.startStocks ?? undefined,
     };
     return info;
   });

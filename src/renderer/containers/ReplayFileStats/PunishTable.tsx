@@ -85,13 +85,12 @@ export const PunishTable = ({ file, stats, player, opp, onPlay }: PunishTablePro
   };
 
   const generateEmptyRow = (stock: StockType) => {
-    // const player = getPlayer(stock.playerIndex);
-    const stockIndex = 0;
+    const player = getPlayer(stock.playerIndex);
+    let stockIndex = 0;
 
-    // TODO: actually pass in start stocks
-    // if (player.startStocks != null) {
-    //   stockIndex = player.startStocks - stock.count + 1;
-    // }
+    if (player.startStocks != null) {
+      stockIndex = player.startStocks - stock.count + 1;
+    }
 
     return (
       <T.TableRow key={`no-punishes-${stock.count}`}>
@@ -103,10 +102,10 @@ export const PunishTable = ({ file, stats, player, opp, onPlay }: PunishTablePro
   const generateStockRow = (stock: StockType) => {
     const player = getPlayer(stock.playerIndex);
 
-    const totalStocks = _.get(player, "startStocks");
+    const totalStocks = player.startStocks;
     const currentStocks = stock.count - 1;
 
-    const stockIcons = _.range(1, totalStocks !== null ? totalStocks + 1 : 1).map((stockNum) => {
+    const stockIcons = _.range(1, totalStocks != null ? totalStocks + 1 : 1).map((stockNum) => {
       return (
         <T.GrayableImage
           key={`stock-image-${stock.playerIndex}-${stockNum}`}

@@ -18,7 +18,6 @@ export const OverallTable = ({ file, stats }: OverallTableProps) => {
   const renderPlayerHeaders = () => {
     const tableHeaders = [];
     for (const p of file.game.players) {
-      // const names = extractPlayerNames(p.playerIndex, file.settings, file.metadata);
       tableHeaders.push(
         <T.TableHeaderCell key={p.playerIndex}>
           <div style={{ display: "flex", alignItems: "center" }}>

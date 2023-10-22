@@ -11,6 +11,7 @@ export type PlayerInfo = {
   connectCode?: string;
   displayName?: string;
   tag?: string;
+  startStocks?: number;
 };
 
 export type FileResult = {

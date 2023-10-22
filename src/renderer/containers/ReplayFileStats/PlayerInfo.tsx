@@ -1,11 +1,22 @@
 import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import type { PlayerInfo as PlayerInfoType } from "@replays/types";
 
 import { getColor } from "@/lib/playerColors";
 import { getCharacterIcon } from "@/lib/utils";
 import { withFont } from "@/styles/withFont";
+
+type PlayerInfoType = {
+  playerIndex: number;
+  port: number;
+  type?: number;
+  teamId?: number;
+  characterId?: number;
+  characterColor?: number;
+  connectCode?: string;
+  displayName?: string;
+  tag?: string;
+};
 
 type PlayerInfoProps = {
   player: PlayerInfoType;
