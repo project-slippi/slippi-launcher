@@ -6,7 +6,7 @@ import moment from "moment";
 import path from "path";
 
 import type { FileResult, PlayerInfo } from "../types";
-import { extractPlayerNames } from "./matchNames";
+import { extractPlayerNames } from "./extract_player_names";
 
 export async function loadFile(fullPath: string): Promise<FileResult> {
   const filename = path.basename(fullPath);
