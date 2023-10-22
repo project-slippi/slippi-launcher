@@ -18,7 +18,8 @@ type PlayerInfo = {
   playerIndex: number;
   characterId?: number;
   characterColor?: number;
-  name?: string;
+  displayName?: string;
+  tag?: string;
 };
 
 const columnCount = 5;
@@ -41,7 +42,7 @@ export const KillTable = ({ file, stats, player, opp, onPlay }: KillTableProps) 
           marginRight: 10,
         }}
       />
-      <div style={{ fontWeight: 500 }}>{player.name || `Player ${player.playerIndex + 1}`}</div>
+      <div style={{ fontWeight: 500 }}>{player.displayName || player.tag || `Player ${player.playerIndex + 1}`}</div>
     </div>
   );
   const generateStockRow = (stock: StockType) => {

@@ -15,7 +15,8 @@ type PlayerInfo = {
   playerIndex: number;
   characterId?: number;
   characterColor?: number;
-  name?: string;
+  displayName?: string;
+  tag?: string;
 };
 
 type PunishTableProps = {
@@ -37,7 +38,7 @@ export const PunishTable = ({ file, stats, player, opp, onPlay }: PunishTablePro
           marginRight: 10,
         }}
       />
-      <div style={{ fontWeight: 500 }}>{player.name || `Player ${player.playerIndex + 1}`}</div>
+      <div style={{ fontWeight: 500 }}>{player.displayName || player.tag || `Player ${player.playerIndex + 1}`}</div>
     </div>
   );
 
