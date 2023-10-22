@@ -171,10 +171,7 @@ const GameDetails = ({
   // Sometimes metadata doesn't exist and won't have the last frame
   // but we might have the stats computed which contains the real last frame.
   // In that situation, we should use that lastFrame not the metadata one.
-  let duration = game.lastFrame;
-  if (duration === null) {
-    duration = stats?.lastFrame;
-  }
+  const duration = game.lastFrame ?? stats?.lastFrame;
   const durationLength =
     duration != null
       ? game.mode === GameMode.TARGET_TEST
