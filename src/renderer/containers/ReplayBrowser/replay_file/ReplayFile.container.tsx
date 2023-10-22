@@ -1,3 +1,4 @@
+import { exists } from "@common/exists";
 import { css } from "@emotion/react";
 import EqualizerIcon from "@mui/icons-material/Equalizer";
 import EventIcon from "@mui/icons-material/Event";
@@ -8,14 +9,14 @@ import SportsCricket from "@mui/icons-material/SportsCricket";
 import TimerIcon from "@mui/icons-material/Timer";
 import TrackChangesIcon from "@mui/icons-material/TrackChanges";
 import type { FileResult } from "@replays/types";
-import { GameMode, stages as stageUtils } from "@slippi/slippi-js";
+import { frameToGameTimer, GameMode, stages as stageUtils } from "@slippi/slippi-js";
 import { groupBy } from "lodash";
 import moment from "moment";
 import React, { useCallback, useMemo } from "react";
 
 import { DraggableFile } from "@/components/DraggableFile";
 import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
-import { monthDayHourFormat } from "@/lib/time";
+import { convertFrameCountToDurationString, monthDayHourFormat } from "@/lib/time";
 import { getStageImage } from "@/lib/utils";
 
 import type { ReplayDetail } from "./ReplayFile";
@@ -83,18 +84,16 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
   }, [index, onOpenMenu, onPlayClick, onShowStats, playbackStatus]);
 
   const details = useMemo(() => {
-    const duration = moment.duration(game.durationMs, "ms");
-    const durationLength =
-      game.durationMs != null ? moment.utc(duration.as("milliseconds")).format("m[m] ss[s]") : "Unknown";
-
     const date = new Date(game.startTime ? Date.parse(game.startTime) : 0);
     return generateReplayDetails({
       gameMode: game.mode,
       date,
-      duration: durationLength,
+      lastFrame: game.lastFrame,
+      timerType: game.timerType,
+      startingTimerSeconds: game.startingTimerSeconds,
       stageName,
     });
-  }, [game.durationMs, game.mode, game.startTime, stageName]);
+  }, [game.lastFrame, game.mode, game.startTime, game.startingTimerSeconds, game.timerType, stageName]);
 
   const players = useMemo((): PlayerInfo[][] => {
     const teams = Object.values(groupBy(game.players, (p) => (game.isTeams ? p.teamId : p.port)));
@@ -159,12 +158,16 @@ const generateReplayDetails = ({
   date,
   stageName,
   gameMode,
-  duration,
+  lastFrame,
+  timerType = null,
+  startingTimerSeconds = null,
 }: {
   date: Date;
-  duration: string;
   stageName: string;
   gameMode?: number;
+  lastFrame?: number | null;
+  timerType?: number | null;
+  startingTimerSeconds?: number | null;
 }): ReplayDetail[] => {
   const replayDetails: ReplayDetail[] = [
     {
@@ -173,10 +176,13 @@ const generateReplayDetails = ({
     },
   ];
 
-  if (gameMode !== GameMode.HOME_RUN_CONTEST) {
+  if (exists(lastFrame) && gameMode !== GameMode.HOME_RUN_CONTEST) {
     replayDetails.push({
       Icon: TimerIcon,
-      label: duration,
+      label:
+        gameMode === GameMode.TARGET_TEST
+          ? frameToGameTimer(lastFrame, { timerType, startingTimerSeconds })
+          : convertFrameCountToDurationString(lastFrame, "m[m] ss[s]"),
     });
   }
 

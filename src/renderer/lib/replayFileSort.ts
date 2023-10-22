@@ -1,13 +1,13 @@
 import { exists } from "@common/exists";
 import type { FileResult } from "@replays/types";
-// import { Frames, GameMode } from "@slippi/slippi-js";
+import { Frames, GameMode } from "@slippi/slippi-js";
 import compareFunc from "compare-func";
 
 import { namesMatch } from "@/lib/matchNames";
 
 // The minimum duration of games when filtering out short games
-// const MIN_GAME_DURATION_FRAMES = 30 * 60;
-// const STADIUM_GAME_MODES = [GameMode.HOME_RUN_CONTEST, GameMode.TARGET_TEST];
+const MIN_GAME_DURATION_FRAMES = 30 * 60;
+const STADIUM_GAME_MODES = [GameMode.HOME_RUN_CONTEST, GameMode.TARGET_TEST];
 
 export enum ReplaySortOption {
   DATE = "DATE",
@@ -49,11 +49,10 @@ const sortByValue = (key: ReplaySortOption): ((val: FileResult) => any) => {
   return (file) => {
     switch (key) {
       case ReplaySortOption.GAME_DURATION: {
-        return file.game.durationMs;
+        return file.game.lastFrame ?? Frames.FIRST;
       }
       case ReplaySortOption.DATE: {
-        const startTime = file.game.startTime;
-        return startTime ? Date.parse(startTime) : 0;
+        return file.game.startTime ? Date.parse(file.game.startTime) : 0;
       }
     }
   };
@@ -78,12 +77,11 @@ export const replayFileFilter =
   (filterOptions: ReplayFilterOptions): ((file: FileResult) => boolean) =>
   (file) => {
     if (filterOptions.hideShortGames) {
-      // TODO: make sure this logic exists at the mapping stage
-      // if (STADIUM_GAME_MODES.every((stadiumGameMode) => file.settings.gameMode !== stadiumGameMode)) {
-      //   if (file.lastFrame !== null && file.lastFrame <= MIN_GAME_DURATION_FRAMES) {
-      //     return false;
-      //   }
-      // }
+      if (STADIUM_GAME_MODES.every((stadiumGameMode) => file.game.mode !== stadiumGameMode)) {
+        if (file.game.lastFrame != null && file.game.lastFrame <= MIN_GAME_DURATION_FRAMES) {
+          return false;
+        }
+      }
     }
 
     // First try to match names
@@ -109,7 +107,7 @@ export const replayFileFilter =
   };
 
 function matchablePlayerNames(file: FileResult): string[] {
-  return file.game.players.flatMap((player) => {
-    return [player.displayName, player.tag, player.connectCode].filter(exists);
+  return file.game.players.flatMap((p) => {
+    return [p.displayName, p.tag, p.connectCode].filter(exists);
   });
 }

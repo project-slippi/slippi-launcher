@@ -48,10 +48,11 @@ export async function loadFile(fullPath: string): Promise<FileResult> {
       isTeams: settings.isTeams ?? false,
       stageId: settings.stageId ?? undefined,
       startTime: startAtTime?.toISOString(),
-      durationMs: 0, // TODO: actually calculate this properly based on all game modes and timer variants
       platform: metadata?.playedOn ?? undefined,
       consoleNickname: metadata?.consoleNick ?? undefined,
       mode: settings.gameMode ?? undefined,
+      lastFrame: metadata?.lastFrame ?? undefined,
+      timerType: settings.timerType ?? undefined,
     },
   };
 

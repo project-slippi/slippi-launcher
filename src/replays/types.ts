@@ -17,16 +17,20 @@ export type FileResult = {
   id: string;
   fileName: string;
   fullPath: string;
-  game: {
-    players: PlayerInfo[];
-    isTeams: boolean;
-    stageId?: number;
-    startTime?: string;
-    durationMs?: number;
-    platform?: string;
-    consoleNickname?: string;
-    mode?: number;
-  };
+  game: GameInfo;
+};
+
+export type GameInfo = {
+  players: PlayerInfo[];
+  isTeams: boolean;
+  stageId?: number;
+  startTime?: string;
+  platform?: string;
+  consoleNickname?: string;
+  mode?: number;
+  lastFrame?: number;
+  timerType?: number;
+  startingTimerSeconds?: number;
 };
 
 export type FolderResult = {
