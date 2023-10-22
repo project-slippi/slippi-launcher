@@ -13,7 +13,6 @@ import type { Progress, ReplayProvider } from "./types";
 export default function setupReplaysIpc() {
   const treeService = new FolderTreeService();
   const replayProvider: ReplayProvider = new FileSystemReplayProvider();
-  replayProvider.init();
 
   ipc_initializeFolderTree.main!.handle(async ({ folders }) => {
     return treeService.init(folders);
