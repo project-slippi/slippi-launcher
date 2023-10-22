@@ -54,6 +54,7 @@ export async function loadFile(fullPath: string): Promise<FileResult> {
       mode: settings.gameMode ?? undefined,
       lastFrame: metadata?.lastFrame ?? undefined,
       timerType: settings.timerType ?? undefined,
+      startingTimerSeconds: settings.startingTimerSeconds ?? undefined,
     },
   };
 
