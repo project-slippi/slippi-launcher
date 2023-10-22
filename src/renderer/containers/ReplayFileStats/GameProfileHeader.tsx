@@ -171,15 +171,15 @@ const GameDetails = ({
   // Sometimes metadata doesn't exist and won't have the last frame
   // but we might have the stats computed which contains the real last frame.
   // In that situation, we should use that lastFrame not the metadata one.
-  const duration = game.lastFrame ?? stats?.lastFrame;
+  const lastFrame = game.lastFrame ?? stats?.lastFrame;
   const durationLength =
-    duration != null
+    lastFrame != null
       ? game.mode === GameMode.TARGET_TEST
-        ? frameToGameTimer(duration, {
+        ? frameToGameTimer(lastFrame, {
             startingTimerSeconds: game.startingTimerSeconds ?? null,
             timerType: game.timerType ?? null,
           })
-        : convertFrameCountToDurationString(duration, "m[m] ss[s]")
+        : convertFrameCountToDurationString(lastFrame, "m[m] ss[s]")
       : "Unknown";
 
   const distance = get(stadiumStats, "distance");
