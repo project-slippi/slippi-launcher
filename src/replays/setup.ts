@@ -1,3 +1,4 @@
+import { createDatabase } from "database/create_database";
 import { app } from "electron";
 import log from "electron-log";
 import path from "path";
@@ -15,11 +16,15 @@ import {
 } from "./ipc";
 import type { Progress, ReplayProvider } from "./types";
 
+function initDatabaseReplayProvider(): ReplayProvider {
+  const replayDatabaseFolder = path.join(app.getPath("userData"), "replay_database.sqlite3");
+  return new DatabaseReplayProvider(() => createDatabase(replayDatabaseFolder));
+}
+
 export default function setupReplaysIpc({ enableReplayDatabase }: { enableReplayDatabase?: boolean }) {
   const treeService = new FolderTreeService();
-  const replayDatabaseFolder = path.join(app.getPath("userData"), "replay_database.sqlite3");
   const replayProvider: ReplayProvider = enableReplayDatabase
-    ? new DatabaseReplayProvider(replayDatabaseFolder)
+    ? initDatabaseReplayProvider()
     : new FileSystemReplayProvider();
   replayProvider.init().catch(log.error);
 

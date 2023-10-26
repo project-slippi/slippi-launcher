@@ -2,49 +2,30 @@ import { chunk } from "@common/chunk";
 import { exists } from "@common/exists";
 import type { FileLoadResult, FileResult, Progress, ReplayProvider } from "@replays/types";
 import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
-import DatabaseConstructor from "better-sqlite3";
+import { ReplayRepository } from "database/replay_repository";
+import type { Database, NewReplay } from "database/schema";
 import * as fs from "fs-extra";
-import { Kysely, SqliteDialect } from "kysely";
+import type { Kysely } from "kysely";
 import _ from "lodash";
 import path from "path";
 
 import { loadFile } from "./load_file";
-import { migrateToLatest } from "./migrate_to_latest";
-import type {
-  Database,
-  NewReplay,
-  NewReplayGameStart,
-  NewReplayMetadata,
-  NewReplayPlayer,
-  ReplayGameStart,
-  ReplayMetadata,
-  ReplayPlayer,
-} from "./schema";
 
 export class DatabaseReplayProvider implements ReplayProvider {
-  private database: Kysely<Database>;
-  private databaseReady: Promise<void>;
+  private database: Promise<Kysely<Database>>;
 
-  constructor(databaseName: string) {
-    const dialect = new SqliteDialect({
-      database: new DatabaseConstructor(databaseName),
-    });
-
-    this.database = new Kysely<Database>({
-      dialect,
-    });
-
-    this.databaseReady = migrateToLatest(this.database);
+  constructor(createDatabase: () => Promise<Kysely<Database>>) {
+    this.database = createDatabase();
   }
 
   public async init(): Promise<void> {
-    await this.databaseReady;
+    await this.database;
   }
   public loadFile(_filePath: string): Promise<FileResult> {
     throw new Error("Method not implemented.");
   }
   public async loadFolder(folder: string, onProgress?: (progress: Progress) => void): Promise<FileLoadResult> {
-    await this.databaseReady;
+    const db = await this.database;
     // If the folder does not exist, return empty
     if (!(await fs.pathExists(folder))) {
       return {
@@ -60,6 +41,8 @@ export class DatabaseReplayProvider implements ReplayProvider {
       .map((dirent) => path.resolve(folder, dirent.name));
 
     // Get already processed files from database
+    const existingReplays = await ReplayRepository.findReplayInFolder(db, folder, 20);
+
     const replaysIndexed = await this.loadReplays(fullSlpPaths);
     const totalBytesIndexed = replaysIndexed.reduce((acc, replay) => acc + replay.size, 0);
 
@@ -225,5 +208,22 @@ export class DatabaseReplayProvider implements ReplayProvider {
       return metadataObj as NewReplayMetadata;
     });
     await this.database.insertInto("replay_metadata").values(resMetadata).executeTakeFirst();
+  }
+
+  private async syncReplayDatabase(folder: string, batchSize = 100) {
+    const results = await fs.readdir(folder, { withFileTypes: true });
+    const fullSlpPaths = results
+      .filter((dirent) => dirent.isFile() && path.extname(dirent.name) === ".slp")
+      .map((dirent) => path.resolve(folder, dirent.name));
+
+    // find all slp files that are not in the database
+    const newSlpFiles: string[] = [];
+    const chunkedPaths = chunk(fullSlpPaths, batchSize);
+    chunkedPaths.forEach((slpPaths) => {});
+
+    // find all records in the database that no longer exist
+
+    // Get already processed files from database
+    const existingReplays = await ReplayRepository.findReplayInFolder(db, folder, 20);
   }
 }

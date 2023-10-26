@@ -1,11 +1,11 @@
 import type { Kysely, Migration, MigrationProvider } from "kysely";
 import { Migrator } from "kysely";
 
-import { migration1 } from "./migrations/20230701T171646-initial";
+import migration1 from "./migrations/20230701T171646-initial";
 import type { Database } from "./schema"; // schema
 
 const migrations = {
-  migration1: migration1,
+  migration1,
 };
 
 // I'm not sure how to dynamically load migrations in electron
