@@ -5,23 +5,17 @@ import type { Database, NewReplay } from "./schema";
 type DB = Kysely<Database>;
 
 export class ReplayRepository {
-  public static async insertReplay(db: DB, replay: NewReplay) {
-    return db.insertInto("replay").values(replay).returningAll().executeTakeFirstOrThrow();
+  public static async insertReplay(db: DB, ...replay: NewReplay[]): Promise<void> {
+    await db.insertInto("replay").values(replay).execute();
   }
 
-  public static async findReplaysInFolder(db: DB, folder: string, limit: number, continuation?: number) {
-    let query = db.selectFrom("replay").where("folder", "=", folder);
-    if (continuation != null) {
-      query = query.where("_id", ">", continuation);
-    }
-    return await query.limit(limit).selectAll().execute();
+  public static async findAllReplaysInFolder(db: DB, folder: string): Promise<{ _id: number; file_name: string }[]> {
+    const query = db.selectFrom("replay").where("folder", "=", folder);
+    const records = await query.select(["_id", "file_name"]).execute();
+    return records;
   }
 
-  public static async findReplaysByIds(db: DB, replayPaths: string[]): Promise<string[]> {
-    return;
-  }
-
-  public static async deleteReplays(db: DB, replayPaths: string[]) {
-    return await db.deleteFrom("replay").where("full_path", "in", replayPaths).execute();
+  public static async deleteReplaysById(db: DB, ids: number[]) {
+    return await db.deleteFrom("replay").where("_id", "in", ids).execute();
   }
 }

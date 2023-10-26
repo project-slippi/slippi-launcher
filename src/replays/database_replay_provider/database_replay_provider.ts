@@ -1,15 +1,15 @@
 import { chunk } from "@common/chunk";
-import { exists } from "@common/exists";
 import type { FileLoadResult, FileResult, Progress, ReplayProvider } from "@replays/types";
 import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
 import { ReplayRepository } from "database/replay_repository";
 import type { Database, NewReplay } from "database/schema";
+import log from "electron-log";
 import * as fs from "fs-extra";
 import type { Kysely } from "kysely";
-import _ from "lodash";
 import path from "path";
 
-import { loadFile } from "./load_file";
+import { loadFile } from "../file_system_replay_provider/load_file";
+import { loadFolder } from "../file_system_replay_provider/load_folder";
 
 export class DatabaseReplayProvider implements ReplayProvider {
   private database: Promise<Kysely<Database>>;
@@ -21,11 +21,10 @@ export class DatabaseReplayProvider implements ReplayProvider {
   public async init(): Promise<void> {
     await this.database;
   }
-  public loadFile(_filePath: string): Promise<FileResult> {
-    throw new Error("Method not implemented.");
+  public loadFile(filePath: string): Promise<FileResult> {
+    return loadFile(filePath);
   }
   public async loadFolder(folder: string, onProgress?: (progress: Progress) => void): Promise<FileLoadResult> {
-    const db = await this.database;
     // If the folder does not exist, return empty
     if (!(await fs.pathExists(folder))) {
       return {
@@ -35,76 +34,12 @@ export class DatabaseReplayProvider implements ReplayProvider {
       };
     }
 
-    const results = await fs.readdir(folder, { withFileTypes: true });
-    const fullSlpPaths = results
-      .filter((dirent) => dirent.isFile() && path.extname(dirent.name) === ".slp")
-      .map((dirent) => path.resolve(folder, dirent.name));
+    await this.syncReplayDatabase(folder);
 
-    // Get already processed files from database
-    const existingReplays = await ReplayRepository.findReplayInFolder(db, folder, 20);
-
-    const replaysIndexed = await this.loadReplays(fullSlpPaths);
-    const totalBytesIndexed = replaysIndexed.reduce((acc, replay) => acc + replay.size, 0);
-
-    // Calculate files that still need to be processed
-    const fullSlpPathsIndexed = replaysIndexed.map((replay) => replay.fullPath);
-    const fullSlpPathsNew = fullSlpPaths.filter((dirent) => !fullSlpPathsIndexed.includes(dirent));
-
-    // Ensure we actually have files to process
-    const total = fullSlpPaths.length;
-    if (total === 0) {
-      return {
-        files: replaysIndexed,
-        fileErrorCount: 0,
-        totalBytes: totalBytesIndexed,
-      };
-    }
-
-    let fileValidCount = 0;
-    onProgress?.({ current: 0, total });
-
-    const process = async (path: string) => {
-      return new Promise<FileResult | null>((resolve) => {
-        setImmediate(async () => {
-          try {
-            const res = await loadFile(path);
-            res.size = (await fs.stat(path)).size;
-            fileValidCount += 1;
-            onProgress?.({ current: fileValidCount, total });
-            resolve(res);
-          } catch (err) {
-            resolve(null);
-          }
-        });
-      });
-    };
-
-    const slpGames = await Promise.all(
-      fullSlpPathsNew.map((fullPath) => {
-        return process(fullPath);
-      }),
-    );
-    const replaysNew = slpGames.filter(exists);
-
-    const totalBytesNew = replaysNew.reduce((acc, replay) => acc + replay.size, 0);
-
-    // Insert newly processed files
-
-    // Break up this into smaller amounts since there could be thousands of replays
-    const chunkSize = 100;
-    const chunkedReplays = chunk(replaysNew, chunkSize);
-    for (const replayChunk of chunkedReplays) {
-      await this.insertReplays(replayChunk);
-    }
-
-    // Indicate that loading is complete
-    onProgress?.({ current: total, total });
-
-    return {
-      files: replaysIndexed.concat(replaysNew),
-      fileErrorCount: total - fileValidCount,
-      totalBytes: totalBytesIndexed + totalBytesNew,
-    };
+    const result = await loadFolder(folder, (current: number, total: number) => {
+      onProgress?.({ current, total });
+    });
+    return result;
   }
   public calculateGameStats(_fullPath: string): Promise<StatsType | null> {
     throw new Error("Method not implemented.");
@@ -113,117 +48,67 @@ export class DatabaseReplayProvider implements ReplayProvider {
     throw new Error("Method not implemented.");
   }
 
-  private async loadReplays(fullPaths: string[]): Promise<FileResult[]> {
-    await this.databaseReady;
-    const replays = await this.database
-      .selectFrom("replay")
-      .where("replay.fullPath", "in", fullPaths)
-      .innerJoin("replay_game_start", "replay_game_start.replayId", "replay.id")
-      .innerJoin("replay_player", "replay_player.settingsId", "replay_game_start.id")
-      .innerJoin("replay_metadata", "replay_metadata.replayId", "replay.id")
-      .selectAll(["replay", "replay_game_start", "replay_player", "replay_metadata"])
-      .execute();
-    const replayGroups = Object.values(_.groupBy(replays, "id"));
-    const replayObjs = replayGroups.map((replay) => {
-      const replayObj = replay[0] as any;
-      replayObj.winnerIndices = JSON.parse(replay[0].winnerIndices);
-      replayObj.settings = replay[0] as ReplayGameStart;
-      replayObj.settings.players = replay.map((player) => player as ReplayPlayer);
-      replayObj.metadata = replay[0] as ReplayMetadata;
-      return replayObj as FileResult;
-    });
-    return replayObjs as FileResult[];
-  }
+  private async syncReplayDatabase(folder: string, onProgress?: (progress: Progress) => void, batchSize = 100) {
+    const db = await this.database;
+    const [fileResults, existingReplays] = await Promise.all([
+      fs.readdir(folder, { withFileTypes: true }),
+      ReplayRepository.findAllReplaysInFolder(db, folder),
+    ]);
 
-  private async insertReplays(replays: FileResult[]) {
-    if (replays.length == 0) {
-      return;
-    }
-
-    // Preserve replay properties for later insert
-    const replaysCopy = _.cloneDeep(replays);
-    const metadataObjs = replaysCopy.map((replay) => replay.metadata);
-    const playerObjs = replaysCopy.map((replay) => replay.settings.players);
-    const settingsObjs = replaysCopy.map((replay) => replay.settings);
-
-    // Insert replay files
-    const resReplays: NewReplay[] = replaysCopy.map((replay) => {
-      const replayObj = replay as any;
-      delete replayObj["settings"];
-      delete replayObj["metadata"];
-      replayObj.winnerIndices = JSON.stringify(replay.winnerIndices);
-      return replayObj as NewReplay;
-    });
-    const replayInsert = await this.database.insertInto("replay").values(resReplays).executeTakeFirstOrThrow();
-    if (replayInsert.insertId === undefined) {
-      throw "db error";
-    }
-    const replayId = Number(replayInsert.insertId);
-
-    // Insert GameStart data for replays
-    const resSettings: NewReplayGameStart[] = settingsObjs.map((settings, index) => {
-      const settingsObj = settings as any;
-      delete settingsObj["players"];
-      delete settingsObj["gameInfoBlock"];
-      delete settingsObj["matchInfo"];
-      settingsObj.isFrozenPS = Number(settings.isFrozenPS);
-      settingsObj.isPAL = Number(settings.isPAL);
-      settingsObj.isTeams = Number(settings.isTeams);
-      settingsObj.friendlyFireEnabled = Number(settings.friendlyFireEnabled);
-      settingsObj.replayId = replayId - replays.length + index + 1;
-      return settingsObj as ReplayGameStart as NewReplayGameStart;
-    });
-    const settingsInsert = await this.database.insertInto("replay_game_start").values(resSettings).executeTakeFirst();
-    if (settingsInsert.insertId === undefined) {
-      throw "db error";
-    }
-    const settingsId = Number(settingsInsert.insertId);
-
-    // Insert Player data for replays
-    const resPlayers: NewReplayPlayer[] = playerObjs
-      .map((players, index) => {
-        const playersObj = players.map((player) => {
-          const playerObj = player as any;
-          playerObj.settingsId = settingsId - replays.length + index + 1;
-          playerObj.staminaMode = Number(player.staminaMode);
-          playerObj.silentCharacter = Number(player.silentCharacter);
-          playerObj.lowGravity = Number(player.lowGravity);
-          playerObj.invisible = Number(player.invisible);
-          playerObj.blackStockIcon = Number(player.blackStockIcon);
-          playerObj.metal = Number(player.metal);
-          playerObj.startOnAngelPlatform = Number(player.startOnAngelPlatform);
-          playerObj.rumbleEnabled = Number(player.rumbleEnabled);
-          return player as NewReplayPlayer;
-        });
-        return playersObj as NewReplayPlayer[];
-      })
-      .flat();
-    await this.database.insertInto("replay_player").values(resPlayers).executeTakeFirstOrThrow();
-
-    // Insert Metadata for replays
-    const resMetadata: NewReplayMetadata[] = metadataObjs.map((metadata, index) => {
-      const metadataObj = metadata as any;
-      metadataObj.replayId = replayId - replays.length + index + 1;
-      delete metadataObj["players"];
-      return metadataObj as NewReplayMetadata;
-    });
-    await this.database.insertInto("replay_metadata").values(resMetadata).executeTakeFirst();
-  }
-
-  private async syncReplayDatabase(folder: string, batchSize = 100) {
-    const results = await fs.readdir(folder, { withFileTypes: true });
-    const fullSlpPaths = results
+    const slpFileNames = fileResults
       .filter((dirent) => dirent.isFile() && path.extname(dirent.name) === ".slp")
-      .map((dirent) => path.resolve(folder, dirent.name));
+      .map((dirent) => dirent.name);
 
-    // find all slp files that are not in the database
-    const newSlpFiles: string[] = [];
-    const chunkedPaths = chunk(fullSlpPaths, batchSize);
-    chunkedPaths.forEach((slpPaths) => {});
+    // Find all records in the database that no longer exist
+    const deleteOldReplays = async () => {
+      const setOfSlpFileNames = new Set(slpFileNames);
+      const fileIdsToDelete = existingReplays
+        .filter(({ file_name }) => !setOfSlpFileNames.has(file_name))
+        .map(({ _id }) => _id);
+      const chunkedFileIdsToDelete = chunk(fileIdsToDelete, batchSize);
+      for (const batch of chunkedFileIdsToDelete) {
+        await ReplayRepository.deleteReplaysById(db, batch);
+      }
+    };
 
-    // find all records in the database that no longer exist
+    // Find all new SLP files that are not yet in the database
+    const insertNewReplays = async () => {
+      const setOfExistingReplayNames = new Set(existingReplays.map((r) => r.file_name));
+      const slpFilesToAdd = slpFileNames.filter((name) => !setOfExistingReplayNames.has(name));
+      let replaysAdded = 0;
+      const chunkedReplays = chunk(slpFilesToAdd, batchSize);
+      for (const batch of chunkedReplays) {
+        const newReplays = await Promise.all(
+          batch.map(async (filename): Promise<NewReplay> => {
+            let size = 0;
+            let birthtime: string | null = null;
+            try {
+              const fileInfo = await fs.stat(filename);
+              size = fileInfo.size;
+              birthtime = fileInfo.birthtime.toISOString();
+            } catch (err) {
+              // Just ignore
+            }
+            return {
+              file_name: filename,
+              folder,
+              size_bytes: size,
+              birth_time: birthtime,
+            };
+          }),
+        );
+        await ReplayRepository.insertReplay(db, ...newReplays);
+        replaysAdded += batchSize;
+        onProgress?.({ current: replaysAdded, total: slpFilesToAdd.length });
+      }
+    };
 
-    // Get already processed files from database
-    const existingReplays = await ReplayRepository.findReplayInFolder(db, folder, 20);
+    const [deleteResult, insertResult] = await Promise.allSettled([deleteOldReplays(), insertNewReplays()]);
+    if (deleteResult.status === "rejected") {
+      log.warn("Error removing deleted replays: " + deleteResult.reason);
+    }
+    if (insertResult.status === "rejected") {
+      throw new Error("Error inserting new replays: " + insertResult.reason);
+    }
   }
 }
