@@ -80,14 +80,15 @@ export class DatabaseReplayProvider implements ReplayProvider {
       for (const batch of chunkedReplays) {
         const newReplays = await Promise.all(
           batch.map(async (filename): Promise<NewReplay> => {
+            const fullPath = path.resolve(folder, filename);
             let size = 0;
             let birthtime: string | null = null;
             try {
-              const fileInfo = await fs.stat(filename);
+              const fileInfo = await fs.stat(fullPath);
               size = fileInfo.size;
               birthtime = fileInfo.birthtime.toISOString();
             } catch (err) {
-              // Just ignore
+              log.warn(`Error running stat for file ${fullPath}: `, err);
             }
             return {
               file_name: filename,
