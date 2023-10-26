@@ -1,3 +1,4 @@
+import log from "electron-log";
 import type { Kysely, Migration, MigrationProvider } from "kysely";
 import { Migrator } from "kysely";
 
@@ -26,15 +27,15 @@ export async function migrateToLatest(db: Kysely<Database>) {
 
   results?.forEach((it) => {
     if (it.status === "Success") {
-      console.log(`migration "${it.migrationName}" was executed successfully`);
+      log.info(`migration "${it.migrationName}" was executed successfully`);
     } else if (it.status === "Error") {
-      console.error(`failed to execute migration "${it.migrationName}"`);
+      log.error(`failed to execute migration "${it.migrationName}"`);
     }
   });
 
   if (error) {
-    console.error("failed to migrate");
-    console.error(error);
+    log.error("failed to migrate");
+    log.error(error);
     process.exit(1);
   }
 }

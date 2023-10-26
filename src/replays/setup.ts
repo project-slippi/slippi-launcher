@@ -16,8 +16,10 @@ import {
 } from "./ipc";
 import type { Progress, ReplayProvider } from "./types";
 
+const REPLAY_DATABASE_NAME = "slippi.sqlite3";
+
 function initDatabaseReplayProvider(): ReplayProvider {
-  const replayDatabaseFolder = path.join(app.getPath("userData"), "replay_database.sqlite3");
+  const replayDatabaseFolder = path.join(app.getPath("userData"), REPLAY_DATABASE_NAME);
   return new DatabaseReplayProvider(() => createDatabase(replayDatabaseFolder));
 }
 
