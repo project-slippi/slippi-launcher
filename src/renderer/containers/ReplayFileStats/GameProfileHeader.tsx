@@ -42,7 +42,20 @@ const PlayerInfoDisplay = ({ isTeams, players }: PlayerInfoDisplayProps) => {
   const elements: JSX.Element[] = [];
   teams.forEach((team, idx) => {
     const teamEls = team.map((player) => {
-      return <PlayerInfo key={`player-${player.playerIndex}`} player={player} isTeams={Boolean(isTeams)} />;
+      return (
+        <PlayerInfo
+          key={`player-${player.playerIndex}`}
+          isTeams={Boolean(isTeams)}
+          playerIndex={player.playerIndex}
+          type={player.type ?? undefined}
+          teamId={player.teamId ?? undefined}
+          characterId={player.characterId ?? undefined}
+          characterColor={player.characterColor ?? undefined}
+          connectCode={player.connectCode ?? undefined}
+          displayName={player.displayName ?? undefined}
+          tag={player.tag ?? undefined}
+        />
+      );
     });
     elements.push(
       <div

@@ -25,15 +25,15 @@ export async function loadFile(fullPath: string): Promise<FileResult> {
     const info: PlayerInfo = {
       playerIndex: p.playerIndex,
       port: p.port,
-      type: p.type ?? undefined,
-      characterId: p.characterId ?? undefined,
-      characterColor: p.characterColor ?? undefined,
-      teamId: p.teamId ?? undefined,
+      type: p.type,
+      characterId: p.characterId,
+      characterColor: p.characterColor,
+      teamId: p.teamId,
       isWinner: winnerIndices.includes(p.playerIndex),
       connectCode: names.code,
       displayName: names.name,
       tag: names.tag,
-      startStocks: p.startStocks ?? undefined,
+      startStocks: p.startStocks,
     };
     return info;
   });
@@ -47,14 +47,14 @@ export async function loadFile(fullPath: string): Promise<FileResult> {
     game: {
       players,
       isTeams: settings.isTeams ?? false,
-      stageId: settings.stageId ?? undefined,
-      startTime: startAtTime?.toISOString(),
-      platform: metadata?.playedOn ?? undefined,
-      consoleNickname: metadata?.consoleNick ?? undefined,
-      mode: settings.gameMode ?? undefined,
-      lastFrame: metadata?.lastFrame ?? undefined,
-      timerType: settings.timerType ?? undefined,
-      startingTimerSeconds: settings.startingTimerSeconds ?? undefined,
+      stageId: settings.stageId,
+      startTime: startAtTime?.toISOString() ?? null,
+      platform: metadata?.playedOn ?? null,
+      consoleNickname: metadata?.consoleNick ?? null,
+      mode: settings.gameMode ?? null,
+      lastFrame: metadata?.lastFrame ?? null,
+      timerType: settings.timerType ?? null,
+      startingTimerSeconds: settings.startingTimerSeconds ?? null,
     },
   };
 

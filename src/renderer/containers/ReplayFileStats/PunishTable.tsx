@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
 import Tooltip from "@mui/material/Tooltip";
-import type { FileResult } from "@replays/types";
+import type { FileResult, PlayerInfo } from "@replays/types";
 import type { ConversionType, StatsType, StockType } from "@slippi/slippi-js";
 import _ from "lodash";
 
@@ -11,19 +11,13 @@ import * as T from "./TableStyles";
 
 const columnCount = 6;
 
-type PlayerInfo = {
-  playerIndex: number;
-  characterId?: number;
-  characterColor?: number;
-  displayName?: string;
-  tag?: string;
-};
+type PlayerInfoType = Pick<PlayerInfo, "playerIndex" | "characterId" | "characterColor" | "displayName" | "tag">;
 
 type PunishTableProps = {
   file: FileResult;
   stats: StatsType;
-  player: PlayerInfo;
-  opp: PlayerInfo;
+  player: PlayerInfoType;
+  opp: PlayerInfoType;
   onPlay: (options: { path: string; startFrame: number }) => void;
 };
 

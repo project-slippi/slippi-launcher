@@ -102,8 +102,8 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
         const backupName = player.type === 1 ? "CPU" : `Player ${player.playerIndex + 1}`;
         const teamId = game.isTeams ? player.teamId : undefined;
         return {
-          characterId: player.characterId,
-          characterColor: player.characterColor,
+          characterId: player.characterId ?? undefined,
+          characterColor: player.characterColor ?? undefined,
           port: player.port,
           teamId: teamId ?? undefined,
           variant: player.connectCode ? "code" : "tag",
@@ -164,9 +164,9 @@ const generateReplayDetails = ({
 }: {
   date: Date;
   stageName: string;
-  gameMode?: number;
-  lastFrame?: number | null;
-  timerType?: number | null;
+  gameMode: number | null;
+  lastFrame: number | null;
+  timerType: number | null;
   startingTimerSeconds?: number | null;
 }): ReplayDetail[] => {
   const replayDetails: ReplayDetail[] = [
@@ -193,7 +193,7 @@ const generateReplayDetails = ({
   return replayDetails;
 };
 
-const getReplayStageIcon = (gameMode?: number): React.ComponentType => {
+const getReplayStageIcon = (gameMode: number | null): React.ComponentType => {
   switch (gameMode) {
     case GameMode.HOME_RUN_CONTEST:
       return SportsCricket;

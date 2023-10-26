@@ -4,7 +4,7 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import Tooltip from "@mui/material/Tooltip";
-import type { FileResult } from "@replays/types";
+import type { FileResult, PlayerInfo } from "@replays/types";
 import type { StatsType, StockType } from "@slippi/slippi-js";
 import { animations as animationUtils, Frames, moves as moveUtils } from "@slippi/slippi-js";
 import _ from "lodash";
@@ -14,20 +14,14 @@ import { getCharacterIcon } from "@/lib/utils";
 
 import * as T from "./TableStyles";
 
-type PlayerInfo = {
-  playerIndex: number;
-  characterId?: number;
-  characterColor?: number;
-  displayName?: string;
-  tag?: string;
-};
+type PlayerInfoType = Pick<PlayerInfo, "playerIndex" | "characterId" | "characterColor" | "displayName" | "tag">;
 
 const columnCount = 5;
 type KillTableProps = {
   file: FileResult;
   stats: StatsType;
-  player: PlayerInfo;
-  opp: PlayerInfo;
+  player: PlayerInfoType;
+  opp: PlayerInfoType;
   onPlay: (options: { path: string; startFrame: number }) => void;
 };
 
