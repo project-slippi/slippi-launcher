@@ -42,7 +42,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
     // });
 
     const db = await this.database;
-    const gameRecords = await GameRepository.findGamesByFolder(db, folder, 100);
+    const gameRecords = await GameRepository.findGamesByFolder(db, folder, 20);
     const files = gameRecords.map((gameRecord): FileResult => {
       const fullPath = path.resolve(gameRecord.folder, gameRecord.file_name);
       return {
