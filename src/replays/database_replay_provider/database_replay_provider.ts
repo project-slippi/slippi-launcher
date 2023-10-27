@@ -1,15 +1,17 @@
 import { chunk } from "@common/chunk";
-import type { FileLoadResult, FileResult, Progress, ReplayProvider } from "@replays/types";
+import type { FileLoadResult, FileResult, PlayerInfo, Progress, ReplayProvider } from "@replays/types";
 import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
 import { SlippiGame } from "@slippi/slippi-js";
 import * as GameRepository from "database/game_repository";
+import * as PlayerRepository from "database/player_repository";
 import * as ReplayRepository from "database/replay_repository";
-import type { Database, NewGame, NewReplay } from "database/schema";
+import type { Database, NewGame, NewPlayer, NewReplay } from "database/schema";
 import log from "electron-log";
 import * as fs from "fs-extra";
 import type { Kysely } from "kysely";
 import path from "path";
 
+import { extractPlayerNames } from "../file_system_replay_provider/extract_player_names";
 import { loadFile } from "../file_system_replay_provider/load_file";
 
 export class DatabaseReplayProvider implements ReplayProvider {
@@ -43,6 +45,29 @@ export class DatabaseReplayProvider implements ReplayProvider {
 
     const db = await this.database;
     const gameRecords = await GameRepository.findGamesByFolder(db, folder, 20);
+    const players = await Promise.all(
+      gameRecords.map(async ({ _id: gameId }): Promise<[number, PlayerInfo[]]> => {
+        const playerRecords = await PlayerRepository.findAllPlayersByGame(db, gameId);
+        const playerInfos = playerRecords.map((player): PlayerInfo => {
+          return {
+            playerIndex: player.index,
+            port: player.index + 1,
+            type: player.type,
+            characterId: player.character_id,
+            characterColor: player.character_color,
+            teamId: player.team_id,
+            isWinner: Boolean(player.is_winner),
+            connectCode: player.connect_code,
+            displayName: player.display_name,
+            tag: player.tag,
+            startStocks: player.start_stocks,
+          };
+        });
+        return [gameId, playerInfos];
+      }),
+    );
+    const playerMap = new Map(players);
+
     const files = gameRecords.map((gameRecord): FileResult => {
       const fullPath = path.resolve(gameRecord.folder, gameRecord.file_name);
       return {
@@ -50,7 +75,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
         fileName: gameRecord.file_name,
         fullPath,
         game: {
-          players: [],
+          players: playerMap.get(gameRecord._id) ?? [],
           isTeams: Boolean(gameRecord.is_teams),
           stageId: gameRecord.stage,
           startTime: gameRecord.start_time,
@@ -155,9 +180,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
     return newReplay;
   }
 
-  private generateNewGame(replayId: number, folder: string, filename: string): NewGame {
-    const fullPath = path.resolve(folder, filename);
-    const game = new SlippiGame(fullPath);
+  private generateNewGame(replayId: number, game: SlippiGame): NewGame {
     // Load settings
     const settings = game.getSettings();
     if (!settings || settings.players.length === 0) {
@@ -183,14 +206,50 @@ export class DatabaseReplayProvider implements ReplayProvider {
     return newGame;
   }
 
+  private generateNewPlayers(gameId: number, game: SlippiGame): NewPlayer[] {
+    const settings = game.getSettings();
+    if (!settings || settings.players.length === 0) {
+      return [];
+    }
+
+    const winnerIndices = game.getWinners().map((winner) => winner.playerIndex);
+    return settings.players.map((player): NewPlayer => {
+      const isWinner = winnerIndices.includes(player.playerIndex);
+      const names = extractPlayerNames(player.playerIndex, settings, game.getMetadata());
+      const newPlayer: NewPlayer = {
+        game_id: gameId,
+        index: player.playerIndex,
+        type: player.port,
+        character_id: player.characterId,
+        character_color: player.characterColor,
+        team_id: settings.isTeams ? player.teamId : undefined,
+        is_winner: Number(isWinner),
+        start_stocks: player.startStocks,
+        connect_code: names.code,
+        display_name: names.name,
+        tag: names.tag,
+      };
+      return newPlayer;
+    });
+  }
+
   private async addReplay(folder: string, filename: string) {
+    const fullPath = path.resolve(folder, filename);
+    const game = new SlippiGame(fullPath);
+
     const newReplay = await this.generateNewReplay(folder, filename);
 
     const db = await this.database;
     await db.transaction().execute(async (trx) => {
       const { _id: replayId } = await ReplayRepository.insertReplay(trx, newReplay);
-      const newGame = this.generateNewGame(replayId, folder, filename);
-      await GameRepository.insertGame(trx, newGame);
+      const newGame = this.generateNewGame(replayId, game);
+      const { _id: gameId } = await GameRepository.insertGame(trx, newGame);
+
+      await Promise.all(
+        this.generateNewPlayers(gameId, game).map((newPlayer) => {
+          return PlayerRepository.insertPlayer(trx, newPlayer);
+        }),
+      );
     });
   }
 }

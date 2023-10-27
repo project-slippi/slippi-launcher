@@ -30,7 +30,27 @@ export type Game = Selectable<GameTable>;
 export type NewGame = Insertable<GameTable>;
 export type GameUpdate = Updateable<GameTable>;
 
+export interface PlayerTable {
+  _id: Generated<number>;
+  game_id: number; // Foreign key
+  index: number;
+  type: number | null;
+  character_id: number | null;
+  character_color: number | null;
+  team_id: number | null;
+  is_winner: number | null;
+  start_stocks: number | null;
+  connect_code: string | null;
+  display_name: string | null;
+  tag: string | null;
+}
+
+export type Player = Selectable<PlayerTable>;
+export type NewPlayer = Insertable<PlayerTable>;
+export type PlayerUpdate = Updateable<PlayerTable>;
+
 export interface Database {
   replay: ReplayTable;
   game: GameTable;
+  player: PlayerTable;
 }
