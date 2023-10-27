@@ -127,11 +127,13 @@ export class DatabaseReplayProvider implements ReplayProvider {
           }),
         );
 
-        const successful = results.filter((r) => r.status === "fulfilled");
+        const [successful, failed] = partition<PromiseFulfilledResult<void>, PromiseRejectedResult>(
+          results,
+          (r) => r.status === "fulfilled",
+        );
         log.info(`Added ${successful.length} out of ${batchSize}`);
-        const firstUnsuccessful = results.find((r): r is PromiseRejectedResult => r.status === "rejected");
-        if (firstUnsuccessful) {
-          log.warn("Add replay failed because of: ", firstUnsuccessful.reason);
+        if (failed.length > 0) {
+          log.warn("Add replay failed because of: ", failed[0].reason);
         }
 
         replaysAdded += successful.length;
@@ -242,4 +244,17 @@ export class DatabaseReplayProvider implements ReplayProvider {
       );
     });
   }
+}
+
+function partition<T, U = T>(items: (T | U)[], predicate: (item: T | U, index: number) => boolean): [T[], U[]] {
+  const pass: T[] = [];
+  const fail: U[] = [];
+  items.forEach((item, i) => {
+    if (predicate(item, i)) {
+      pass.push(item as T);
+    } else {
+      fail.push(item as U);
+    }
+  });
+  return [pass, fail];
 }
