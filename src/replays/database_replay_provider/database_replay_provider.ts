@@ -15,6 +15,9 @@ import { extractPlayerNames } from "../file_system_replay_provider/extract_playe
 import { loadFile } from "../file_system_replay_provider/load_file";
 import { mapPlayerRecordToPlayerInfo } from "./record_mapper";
 
+const NUM_REPLAYS_TO_RETURN = 200;
+const INSERT_REPLAY_BATCH_SIZE = 200;
+
 export class DatabaseReplayProvider implements ReplayProvider {
   private database: Promise<Kysely<Database>>;
 
@@ -38,10 +41,10 @@ export class DatabaseReplayProvider implements ReplayProvider {
       };
     }
 
-    await this.syncReplayDatabase(folder, onProgress);
+    await this.syncReplayDatabase(folder, onProgress, INSERT_REPLAY_BATCH_SIZE);
 
     const db = await this.database;
-    const gameRecords = await GameRepository.findGamesByFolder(db, folder, 20);
+    const gameRecords = await GameRepository.findGamesByFolder(db, folder, NUM_REPLAYS_TO_RETURN);
     const players = await Promise.all(
       gameRecords.map(async ({ _id: gameId }): Promise<[number, PlayerInfo[]]> => {
         const playerRecords = await PlayerRepository.findAllPlayersByGame(db, gameId);
@@ -113,6 +116,8 @@ export class DatabaseReplayProvider implements ReplayProvider {
     const insertNewReplays = async () => {
       const setOfExistingReplayNames = new Set(existingReplays.map((r) => r.file_name));
       const slpFilesToAdd = slpFileNames.filter((name) => !setOfExistingReplayNames.has(name));
+      const total = slpFilesToAdd.length;
+
       let replaysAdded = 0;
       const chunkedReplays = chunk(slpFilesToAdd, batchSize);
       for (const batch of chunkedReplays) {
@@ -130,8 +135,10 @@ export class DatabaseReplayProvider implements ReplayProvider {
         }
 
         replaysAdded += successful.length;
-        onProgress?.({ current: replaysAdded, total: slpFilesToAdd.length });
+        onProgress?.({ current: replaysAdded, total });
       }
+
+      onProgress?.({ current: total, total });
     };
 
     const [deleteResult, insertResult] = await Promise.allSettled([deleteOldReplays(), insertNewReplays()]);
