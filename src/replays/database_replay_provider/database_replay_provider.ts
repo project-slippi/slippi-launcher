@@ -13,6 +13,7 @@ import path from "path";
 
 import { extractPlayerNames } from "../file_system_replay_provider/extract_player_names";
 import { loadFile } from "../file_system_replay_provider/load_file";
+import { mapPlayerRecordToPlayerInfo } from "./record_mapper";
 
 export class DatabaseReplayProvider implements ReplayProvider {
   private database: Promise<Kysely<Database>>;
@@ -39,30 +40,12 @@ export class DatabaseReplayProvider implements ReplayProvider {
 
     await this.syncReplayDatabase(folder, onProgress);
 
-    // const result = await loadFolder(folder, (current: number, total: number) => {
-    //   onProgress?.({ current, total });
-    // });
-
     const db = await this.database;
     const gameRecords = await GameRepository.findGamesByFolder(db, folder, 20);
     const players = await Promise.all(
       gameRecords.map(async ({ _id: gameId }): Promise<[number, PlayerInfo[]]> => {
         const playerRecords = await PlayerRepository.findAllPlayersByGame(db, gameId);
-        const playerInfos = playerRecords.map((player): PlayerInfo => {
-          return {
-            playerIndex: player.index,
-            port: player.index + 1,
-            type: player.type,
-            characterId: player.character_id,
-            characterColor: player.character_color,
-            teamId: player.team_id,
-            isWinner: Boolean(player.is_winner),
-            connectCode: player.connect_code,
-            displayName: player.display_name,
-            tag: player.tag,
-            startStocks: player.start_stocks,
-          };
-        });
+        const playerInfos = playerRecords.map(mapPlayerRecordToPlayerInfo);
         return [gameId, playerInfos];
       }),
     );
