@@ -1,6 +1,6 @@
 import type { Kysely } from "kysely";
 
-import type { Database, NewGame } from "./schema";
+import type { Database, NewGame } from "../schema";
 
 type DB = Kysely<Database>;
 
