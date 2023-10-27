@@ -5,7 +5,7 @@ import { Kysely, SqliteDialect } from "kysely";
 import { migrateToLatest } from "./migrate_to_latest";
 import type { Database } from "./schema";
 
-const isDevelopment = process.env.NODE_ENV === "development" || process.env.DEBUG_PROD === "true";
+const isDevelopment = process.env.NODE_ENV === "development";
 
 export async function createDatabase(databasePath: string): Promise<Kysely<Database>> {
   let sqliteDb: SQLite.Database;
