@@ -1,22 +1,31 @@
-import DatabaseConstructor from "better-sqlite3";
+import SQLite from "better-sqlite3";
 import log from "electron-log";
 import { Kysely, SqliteDialect } from "kysely";
 
 import { migrateToLatest } from "./migrate_to_latest";
 import type { Database } from "./schema";
 
+const isDevelopment = process.env.NODE_ENV === "development" || process.env.DEBUG_PROD === "true";
+
 export async function createDatabase(databasePath: string): Promise<Kysely<Database>> {
-  log.info(`opening database at: ${databasePath}`);
+  let sqliteDb: SQLite.Database;
+  if (isDevelopment) {
+    sqliteDb = new SQLite(":memory:");
+  } else {
+    log.info(`Opening database at: ${databasePath}`);
+    sqliteDb = new SQLite(databasePath);
+  }
+
   const dialect = new SqliteDialect({
-    database: new DatabaseConstructor(databasePath),
+    database: sqliteDb,
   });
 
   const database = new Kysely<Database>({
     dialect,
   });
 
-  log.info("running migrations");
+  log.info("Running migrations");
   await migrateToLatest(database);
-  log.info("successfully ran migrations");
+  log.info("Successfully ran migrations");
   return database;
 }

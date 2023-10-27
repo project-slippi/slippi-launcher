@@ -1,15 +1,16 @@
 import { chunk } from "@common/chunk";
 import type { FileLoadResult, FileResult, Progress, ReplayProvider } from "@replays/types";
 import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
-import { ReplayRepository } from "database/replay_repository";
-import type { Database, NewReplay } from "database/schema";
+import { SlippiGame } from "@slippi/slippi-js";
+import * as GameRepository from "database/game_repository";
+import * as ReplayRepository from "database/replay_repository";
+import type { Database, NewGame, NewReplay } from "database/schema";
 import log from "electron-log";
 import * as fs from "fs-extra";
 import type { Kysely } from "kysely";
 import path from "path";
 
 import { loadFile } from "../file_system_replay_provider/load_file";
-import { loadFolder } from "../file_system_replay_provider/load_folder";
 
 export class DatabaseReplayProvider implements ReplayProvider {
   private database: Promise<Kysely<Database>>;
@@ -34,11 +35,40 @@ export class DatabaseReplayProvider implements ReplayProvider {
       };
     }
 
-    await this.syncReplayDatabase(folder);
+    await this.syncReplayDatabase(folder, onProgress);
 
-    const result = await loadFolder(folder, (current: number, total: number) => {
-      onProgress?.({ current, total });
+    // const result = await loadFolder(folder, (current: number, total: number) => {
+    //   onProgress?.({ current, total });
+    // });
+
+    const db = await this.database;
+    const gameRecords = await GameRepository.findGamesByFolder(db, folder, 100);
+    const files = gameRecords.map((gameRecord): FileResult => {
+      const fullPath = path.resolve(gameRecord.folder, gameRecord.file_name);
+      return {
+        id: `${gameRecord._id}-${gameRecord.replay_id}`,
+        fileName: gameRecord.file_name,
+        fullPath,
+        game: {
+          players: [],
+          isTeams: Boolean(gameRecord.is_teams),
+          stageId: gameRecord.stage,
+          startTime: gameRecord.start_time,
+          platform: gameRecord.platform,
+          consoleNickname: gameRecord.console_nickname,
+          mode: gameRecord.mode,
+          lastFrame: gameRecord.last_frame,
+          timerType: gameRecord.timer_type,
+          startingTimerSeconds: gameRecord.starting_timer_secs,
+        },
+      };
     });
+
+    const result: FileLoadResult = {
+      files,
+      totalBytes: 0,
+      fileErrorCount: 0,
+    };
     return result;
   }
   public calculateGameStats(_fullPath: string): Promise<StatsType | null> {
@@ -78,28 +108,20 @@ export class DatabaseReplayProvider implements ReplayProvider {
       let replaysAdded = 0;
       const chunkedReplays = chunk(slpFilesToAdd, batchSize);
       for (const batch of chunkedReplays) {
-        const newReplays = await Promise.all(
-          batch.map(async (filename): Promise<NewReplay> => {
-            const fullPath = path.resolve(folder, filename);
-            let size = 0;
-            let birthtime: string | null = null;
-            try {
-              const fileInfo = await fs.stat(fullPath);
-              size = fileInfo.size;
-              birthtime = fileInfo.birthtime.toISOString();
-            } catch (err) {
-              log.warn(`Error running stat for file ${fullPath}: `, err);
-            }
-            return {
-              file_name: filename,
-              folder,
-              size_bytes: size,
-              birth_time: birthtime,
-            };
+        const results = await Promise.allSettled(
+          batch.map(async (filename): Promise<void> => {
+            return this.addReplay(folder, filename);
           }),
         );
-        await ReplayRepository.insertReplay(db, ...newReplays);
-        replaysAdded += batchSize;
+
+        const successful = results.filter((r) => r.status === "fulfilled");
+        log.info(`Added ${successful.length} out of ${batchSize}`);
+        const firstUnsuccessful = results.find((r): r is PromiseRejectedResult => r.status === "rejected");
+        if (firstUnsuccessful) {
+          log.warn("Add replay failed because of: ", firstUnsuccessful.reason);
+        }
+
+        replaysAdded += successful.length;
         onProgress?.({ current: replaysAdded, total: slpFilesToAdd.length });
       }
     };
@@ -111,5 +133,64 @@ export class DatabaseReplayProvider implements ReplayProvider {
     if (insertResult.status === "rejected") {
       throw new Error("Error inserting new replays: " + insertResult.reason);
     }
+  }
+
+  private async generateNewReplay(folder: string, filename: string): Promise<NewReplay> {
+    const fullPath = path.resolve(folder, filename);
+    let size = 0;
+    let birthtime: string | null = null;
+    try {
+      const fileInfo = await fs.stat(fullPath);
+      size = fileInfo.size;
+      birthtime = fileInfo.birthtime.toISOString();
+    } catch (err) {
+      log.warn(`Error running stat for file ${fullPath}: `, err);
+    }
+    const newReplay: NewReplay = {
+      file_name: filename,
+      folder,
+      size_bytes: size,
+      birth_time: birthtime,
+    };
+    return newReplay;
+  }
+
+  private generateNewGame(replayId: number, folder: string, filename: string): NewGame {
+    const fullPath = path.resolve(folder, filename);
+    const game = new SlippiGame(fullPath);
+    // Load settings
+    const settings = game.getSettings();
+    if (!settings || settings.players.length === 0) {
+      return {
+        replay_id: replayId,
+      };
+    }
+    const metadata = game.getMetadata();
+
+    const newGame: NewGame = {
+      replay_id: replayId,
+      is_teams: Number(settings.isTeams),
+      stage: settings.stageId,
+      start_time: metadata?.startAt,
+      platform: metadata?.playedOn,
+      console_nickname: metadata?.consoleNick,
+      mode: settings.gameMode,
+      last_frame: metadata?.lastFrame,
+      timer_type: settings.timerType,
+      starting_timer_secs: settings.startingTimerSeconds,
+    };
+
+    return newGame;
+  }
+
+  private async addReplay(folder: string, filename: string) {
+    const newReplay = await this.generateNewReplay(folder, filename);
+
+    const db = await this.database;
+    await db.transaction().execute(async (trx) => {
+      const { _id: replayId } = await ReplayRepository.insertReplay(trx, newReplay);
+      const newGame = this.generateNewGame(replayId, folder, filename);
+      await GameRepository.insertGame(trx, newGame);
+    });
   }
 }
