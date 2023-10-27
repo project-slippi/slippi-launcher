@@ -209,7 +209,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
       const newPlayer: NewPlayer = {
         game_id: gameId,
         index: player.playerIndex,
-        type: player.port,
+        type: player.type,
         character_id: player.characterId,
         character_color: player.characterColor,
         team_id: settings.isTeams ? player.teamId : undefined,
