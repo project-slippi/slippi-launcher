@@ -10,6 +10,7 @@ const isDevelopment = process.env.NODE_ENV === "development";
 export async function createDatabase(databasePath: string): Promise<Kysely<Database>> {
   let sqliteDb: SQLite.Database;
   if (isDevelopment) {
+    log.info(`Using in-memory SQLite database`);
     sqliteDb = new SQLite(":memory:");
   } else {
     log.info(`Opening database at: ${databasePath}`);
