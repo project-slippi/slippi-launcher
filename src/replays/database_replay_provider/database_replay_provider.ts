@@ -131,12 +131,12 @@ export class DatabaseReplayProvider implements ReplayProvider {
           results,
           (r) => r.status === "fulfilled",
         );
-        log.info(`Added ${successful.length} out of ${batchSize}`);
+        replaysAdded += successful.length;
+        log.info(`Added ${replaysAdded} out of ${total} replays`);
         if (failed.length > 0) {
-          log.warn("Add replay failed because of: ", failed[0].reason);
+          log.warn(`Failed to add ${failed.length} replay(s): `, failed[0].reason);
         }
 
-        replaysAdded += successful.length;
         onProgress?.({ current: replaysAdded, total });
       }
 
