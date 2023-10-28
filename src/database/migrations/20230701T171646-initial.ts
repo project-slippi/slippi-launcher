@@ -4,10 +4,11 @@ export async function up(db: Kysely<any>): Promise<void> {
   await db.schema
     .createTable("replay")
     .addColumn("_id", "integer", (col) => col.primaryKey())
-    .addColumn("file_name", "text", (col) => col.notNull())
     .addColumn("folder", "text", (col) => col.notNull())
+    .addColumn("file_name", "text", (col) => col.notNull())
     .addColumn("size_bytes", "integer", (col) => col.defaultTo(0).notNull())
     .addColumn("birth_time", "text")
+    .addUniqueConstraint("unique_folder_file_name_constraint", ["folder", "file_name"])
     .execute();
 
   await db.schema
