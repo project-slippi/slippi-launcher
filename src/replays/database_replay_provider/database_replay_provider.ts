@@ -88,11 +88,24 @@ export class DatabaseReplayProvider implements ReplayProvider {
     };
     return result;
   }
-  public calculateGameStats(_fullPath: string): Promise<StatsType | null> {
-    throw new Error("Method not implemented.");
+
+  public async calculateGameStats(fullPath: string): Promise<StatsType | null> {
+    const game = new SlippiGame(fullPath);
+    const settings = game.getSettings();
+    if (!settings || settings.players.length === 0) {
+      throw new Error("Game settings could not be properly loaded.");
+    }
+
+    if (settings.players.length !== 2) {
+      throw new Error("Stats can only be calculated for 1v1s.");
+    }
+
+    return game.getStats();
   }
-  public calculateStadiumStats(_fullPath: string): Promise<StadiumStatsType | null> {
-    throw new Error("Method not implemented.");
+
+  public async calculateStadiumStats(fullPath: string): Promise<StadiumStatsType | null> {
+    const game = new SlippiGame(fullPath);
+    return game.getStadiumStats();
   }
 
   private async syncReplayDatabase(folder: string, onProgress?: (progress: Progress) => void, batchSize = 100) {
