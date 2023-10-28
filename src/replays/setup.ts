@@ -5,7 +5,7 @@ import path from "path";
 
 import { DatabaseReplayProvider } from "./database_replay_provider/database_replay_provider";
 import { FileSystemReplayProvider } from "./file_system_replay_provider/file_system_replay_provider";
-import { FolderTreeService } from "./folderTreeService";
+import { FolderTreeService } from "./folder_tree_service";
 import {
   ipc_calculateGameStats,
   ipc_calculateStadiumStats,
