@@ -31,18 +31,27 @@ export class DatabaseReplayProvider implements ReplayProvider {
   public async loadFile(filePath: string): Promise<FileResult> {
     const filename = path.basename(filePath);
     const folder = path.dirname(filePath);
-    await this.addReplay(folder, filename);
 
     const db = await this.database;
-    const gameRecord = await GameRepository.findGameByFolderAndFilename(db, folder, filename);
+    let gameRecord = await GameRepository.findGameByFolderAndFilename(db, folder, filename);
+
     if (!gameRecord) {
-      throw new Error(`Could not find game at path: ${filePath}`);
+      // Add the game if it doesn't already exist in our database
+      const { replayId } = await this.addReplay(folder, filename);
+
+      // TODO: Figure out how to return the game record directly after adding
+      // to avoid needing to do another database query
+      gameRecord = await GameRepository.findGameByReplayId(db, replayId);
+      if (!gameRecord) {
+        throw new Error(`Could not find replay ${replayId} at path: ${filePath}`);
+      }
     }
 
     const playerRecords = await PlayerRepository.findAllPlayersByGame(db, gameRecord._id);
     const players = playerRecords.map(mapPlayerRecordToPlayerInfo);
     return mapGameRecordToFileResult(gameRecord, players);
   }
+
   public async loadFolder(folder: string, onProgress?: (progress: Progress) => void): Promise<FileLoadResult> {
     // If the folder does not exist, return empty
     if (!(await fs.pathExists(folder))) {
@@ -53,6 +62,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
       };
     }
 
+    // Add new files to the database and remove deleted files
     await this.syncReplayDatabase(folder, onProgress, INSERT_REPLAY_BATCH_SIZE);
 
     const db = await this.database;
@@ -119,7 +129,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
       for (const batch of chunkedReplays) {
         const results = await Promise.allSettled(
           batch.map(async (filename): Promise<void> => {
-            return this.addReplay(folder, filename);
+            await this.addReplay(folder, filename);
           }),
         );
 
@@ -219,14 +229,14 @@ export class DatabaseReplayProvider implements ReplayProvider {
     });
   }
 
-  private async addReplay(folder: string, filename: string) {
+  private async addReplay(folder: string, filename: string): Promise<{ replayId: number }> {
     const fullPath = path.resolve(folder, filename);
     const game = new SlippiGame(fullPath);
 
     const newReplay = await this.generateNewReplay(folder, filename);
 
     const db = await this.database;
-    await db.transaction().execute(async (trx) => {
+    return await db.transaction().execute(async (trx) => {
       const { _id: replayId } = await ReplayRepository.insertReplay(trx, newReplay);
 
       const newGame = this.generateNewGame(replayId, game);
@@ -239,6 +249,8 @@ export class DatabaseReplayProvider implements ReplayProvider {
           }),
         );
       }
+
+      return { replayId };
     });
   }
 }
