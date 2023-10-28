@@ -1,4 +1,5 @@
 import { chunk } from "@common/chunk";
+import { partition } from "@common/partition";
 import type { FileLoadResult, FileResult, PlayerInfo, Progress, ReplayProvider } from "@replays/types";
 import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
 import { SlippiGame } from "@slippi/slippi-js";
@@ -266,17 +267,4 @@ export class DatabaseReplayProvider implements ReplayProvider {
       return { replayId };
     });
   }
-}
-
-function partition<T, U = T>(items: (T | U)[], predicate: (item: T | U, index: number) => boolean): [T[], U[]] {
-  const pass: T[] = [];
-  const fail: U[] = [];
-  items.forEach((item, i) => {
-    if (predicate(item, i)) {
-      pass.push(item as T);
-    } else {
-      fail.push(item as U);
-    }
-  });
-  return [pass, fail];
 }
