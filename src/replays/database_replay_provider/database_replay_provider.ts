@@ -127,7 +127,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
         .map(({ _id }) => _id);
       const chunkedFileIdsToDelete = chunk(fileIdsToDelete, batchSize);
       for (const batch of chunkedFileIdsToDelete) {
-        await ReplayRepository.deleteReplaysById(db, batch);
+        await ReplayRepository.deleteReplayById(db, ...batch);
       }
     };
 

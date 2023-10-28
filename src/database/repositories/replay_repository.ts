@@ -14,6 +14,6 @@ export async function findAllReplaysInFolder(db: DB, folder: string): Promise<{ 
   return records;
 }
 
-export async function deleteReplaysById(db: DB, ids: number[]) {
+export async function deleteReplayById(db: DB, ...ids: number[]) {
   return await db.deleteFrom("replay").where("_id", "in", ids).execute();
 }

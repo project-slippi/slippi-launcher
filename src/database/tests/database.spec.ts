@@ -1,8 +1,9 @@
 import { createDatabase } from "database/create_database";
-import type { Database, NewGame, NewReplay } from "database/schema";
+import type { Database, NewGame, NewPlayer, NewReplay } from "database/schema";
 import type { Kysely } from "kysely";
 
 import * as GameRepository from "../repositories/game_repository";
+import * as PlayerRepository from "../repositories/player_repository";
 import * as ReplayRepository from "../repositories/replay_repository";
 import * as TestRepository from "./test_repository";
 
@@ -37,9 +38,24 @@ describe("when using the database", () => {
     await GameRepository.insertGame(db, aMockGameWith(replayId));
     expect(await TestRepository.getRowCount(db, "game")).toEqual(1);
 
-    await ReplayRepository.deleteReplaysById(db, [replayId]);
+    await ReplayRepository.deleteReplayById(db, replayId);
     expect(await TestRepository.getRowCount(db, "replay")).toEqual(0);
     expect(await TestRepository.getRowCount(db, "game")).toEqual(0);
+  });
+
+  it("should delete players when games are deleted", async () => {
+    const { _id: replayId } = await ReplayRepository.insertReplay(db, aMockReplayWith());
+    expect(await TestRepository.getRowCount(db, "replay")).toEqual(1);
+
+    const { _id: gameId } = await GameRepository.insertGame(db, aMockGameWith(replayId));
+    expect(await TestRepository.getRowCount(db, "game")).toEqual(1);
+
+    await PlayerRepository.insertPlayer(db, aMockPlayerWith(gameId));
+    expect(await TestRepository.getRowCount(db, "player")).toEqual(1);
+
+    await TestRepository.deleteGameById(db, gameId);
+    expect(await TestRepository.getRowCount(db, "game")).toEqual(0);
+    expect(await TestRepository.getRowCount(db, "player")).toEqual(0);
   });
 });
 
@@ -64,6 +80,23 @@ function aMockGameWith(replayId: number, opts: Partial<NewGame> = {}): NewGame {
     last_frame: 123,
     timer_type: 1,
     starting_timer_secs: 480,
+    ...opts,
+  };
+}
+
+function aMockPlayerWith(gameId: number, opts: Partial<NewPlayer> = {}): NewPlayer {
+  return {
+    game_id: gameId,
+    index: 0,
+    type: 0,
+    character_id: 1,
+    character_color: 1,
+    team_id: 0,
+    is_winner: 0,
+    start_stocks: 4,
+    connect_code: "FOO#123",
+    display_name: "Foo",
+    tag: "FOO",
     ...opts,
   };
 }

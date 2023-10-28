@@ -17,3 +17,7 @@ export async function getRowCount(db: DB, table: keyof Database): Promise<number
     .executeTakeFirstOrThrow();
   return num_rows;
 }
+
+export async function deleteGameById(db: DB, ...ids: number[]) {
+  return await db.deleteFrom("game").where("_id", "in", ids).execute();
+}
