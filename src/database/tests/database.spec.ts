@@ -33,10 +33,8 @@ describe("when using the database", () => {
   });
 
   it("should delete games when replays are deleted", async () => {
-    const { _id: replayId } = await ReplayRepository.insertReplay(db, aMockReplayWith());
+    const { replayId } = await addMockGame();
     expect(await TestRepository.getRowCount(db, "replay")).toEqual(1);
-
-    await GameRepository.insertGame(db, aMockGameWith(replayId));
     expect(await TestRepository.getRowCount(db, "game")).toEqual(1);
 
     await ReplayRepository.deleteReplayById(db, replayId);
@@ -45,8 +43,7 @@ describe("when using the database", () => {
   });
 
   it("should delete players when games are deleted", async () => {
-    const { _id: replayId } = await ReplayRepository.insertReplay(db, aMockReplayWith());
-    const { _id: gameId } = await GameRepository.insertGame(db, aMockGameWith(replayId));
+    const { gameId } = await addMockGame();
     expect(await TestRepository.getRowCount(db, "game")).toEqual(1);
 
     await PlayerRepository.insertPlayer(db, aMockPlayerWith(gameId));
@@ -58,8 +55,7 @@ describe("when using the database", () => {
   });
 
   it("should disallow adding the same player for the same game", async () => {
-    const { _id: replayId } = await ReplayRepository.insertReplay(db, aMockReplayWith());
-    const { _id: gameId } = await GameRepository.insertGame(db, aMockGameWith(replayId));
+    const { gameId } = await addMockGame();
     await PlayerRepository.insertPlayer(db, aMockPlayerWith(gameId, { index: 0 }));
     await PlayerRepository.insertPlayer(db, aMockPlayerWith(gameId, { index: 1 }));
     expect(await TestRepository.getRowCount(db, "player")).toEqual(2);
@@ -67,4 +63,10 @@ describe("when using the database", () => {
     const result = PlayerRepository.insertPlayer(db, aMockPlayerWith(gameId, { index: 1 }));
     await expect(result).rejects.toThrowError();
   });
+
+  const addMockGame = async (): Promise<{ replayId: number; gameId: number }> => {
+    const { _id: replayId } = await ReplayRepository.insertReplay(db, aMockReplayWith());
+    const { _id: gameId } = await GameRepository.insertGame(db, aMockGameWith(replayId));
+    return { replayId, gameId };
+  };
 });
