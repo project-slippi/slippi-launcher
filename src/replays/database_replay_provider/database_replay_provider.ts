@@ -12,8 +12,7 @@ import type { Kysely } from "kysely";
 import path from "path";
 
 import { extractPlayerNames } from "../file_system_replay_provider/extract_player_names";
-import { loadFile } from "../file_system_replay_provider/load_file";
-import { mapPlayerRecordToPlayerInfo } from "./record_mapper";
+import { mapGameRecordToFileResult, mapPlayerRecordToPlayerInfo } from "./record_mapper";
 
 const NUM_REPLAYS_TO_RETURN = 200;
 const INSERT_REPLAY_BATCH_SIZE = 200;
@@ -28,8 +27,21 @@ export class DatabaseReplayProvider implements ReplayProvider {
   public async init(): Promise<void> {
     await this.database;
   }
-  public loadFile(filePath: string): Promise<FileResult> {
-    return loadFile(filePath);
+
+  public async loadFile(filePath: string): Promise<FileResult> {
+    const filename = path.basename(filePath);
+    const folder = path.dirname(filePath);
+    await this.addReplay(folder, filename);
+
+    const db = await this.database;
+    const gameRecord = await GameRepository.findGameByFolderAndFilename(db, folder, filename);
+    if (!gameRecord) {
+      throw new Error(`Could not find game at path: ${filePath}`);
+    }
+
+    const playerRecords = await PlayerRepository.findAllPlayersByGame(db, gameRecord._id);
+    const players = playerRecords.map(mapPlayerRecordToPlayerInfo);
+    return mapGameRecordToFileResult(gameRecord, players);
   }
   public async loadFolder(folder: string, onProgress?: (progress: Progress) => void): Promise<FileLoadResult> {
     // If the folder does not exist, return empty
@@ -55,24 +67,8 @@ export class DatabaseReplayProvider implements ReplayProvider {
     const playerMap = new Map(players);
 
     const files = gameRecords.map((gameRecord): FileResult => {
-      const fullPath = path.resolve(gameRecord.folder, gameRecord.file_name);
-      return {
-        id: `${gameRecord._id}-${gameRecord.replay_id}`,
-        fileName: gameRecord.file_name,
-        fullPath,
-        game: {
-          players: playerMap.get(gameRecord._id) ?? [],
-          isTeams: Boolean(gameRecord.is_teams),
-          stageId: gameRecord.stage,
-          startTime: gameRecord.start_time,
-          platform: gameRecord.platform,
-          consoleNickname: gameRecord.console_nickname,
-          mode: gameRecord.mode,
-          lastFrame: gameRecord.last_frame,
-          timerType: gameRecord.timer_type,
-          startingTimerSeconds: gameRecord.starting_timer_secs,
-        },
-      };
+      const players = playerMap.get(gameRecord._id) ?? [];
+      return mapGameRecordToFileResult(gameRecord, players);
     });
 
     const result: FileLoadResult = {
