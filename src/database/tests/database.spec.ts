@@ -45,8 +45,6 @@ describe("when using the database", () => {
 
   it("should delete players when games are deleted", async () => {
     const { _id: replayId } = await ReplayRepository.insertReplay(db, aMockReplayWith());
-    expect(await TestRepository.getRowCount(db, "replay")).toEqual(1);
-
     const { _id: gameId } = await GameRepository.insertGame(db, aMockGameWith(replayId));
     expect(await TestRepository.getRowCount(db, "game")).toEqual(1);
 
@@ -56,6 +54,17 @@ describe("when using the database", () => {
     await TestRepository.deleteGameById(db, gameId);
     expect(await TestRepository.getRowCount(db, "game")).toEqual(0);
     expect(await TestRepository.getRowCount(db, "player")).toEqual(0);
+  });
+
+  it("should disallow adding the same player for the same game", async () => {
+    const { _id: replayId } = await ReplayRepository.insertReplay(db, aMockReplayWith());
+    const { _id: gameId } = await GameRepository.insertGame(db, aMockGameWith(replayId));
+    await PlayerRepository.insertPlayer(db, aMockPlayerWith(gameId, { index: 0 }));
+    await PlayerRepository.insertPlayer(db, aMockPlayerWith(gameId, { index: 1 }));
+    expect(await TestRepository.getRowCount(db, "player")).toEqual(2);
+
+    const result = PlayerRepository.insertPlayer(db, aMockPlayerWith(gameId, { index: 1 }));
+    await expect(result).rejects.toThrowError();
   });
 });
 

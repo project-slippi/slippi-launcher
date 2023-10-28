@@ -40,6 +40,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("connect_code", "text")
     .addColumn("display_name", "text")
     .addColumn("tag", "text")
+    .addUniqueConstraint("unique_game_id_index_constraint", ["game_id", "index"])
     .execute();
 
   // Create indexes
