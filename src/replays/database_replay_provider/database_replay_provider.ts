@@ -19,22 +19,13 @@ const NUM_REPLAYS_TO_RETURN = 200;
 const INSERT_REPLAY_BATCH_SIZE = 200;
 
 export class DatabaseReplayProvider implements ReplayProvider {
-  private database: Promise<Kysely<Database>>;
-
-  constructor(createDatabase: () => Promise<Kysely<Database>>) {
-    this.database = createDatabase();
-  }
-
-  public async init(): Promise<void> {
-    await this.database;
-  }
+  constructor(private readonly db: Kysely<Database>) {}
 
   public async loadFile(filePath: string): Promise<FileResult> {
     const filename = path.basename(filePath);
     const folder = path.dirname(filePath);
 
-    const db = await this.database;
-    let gameRecord = await GameRepository.findGameByFolderAndFilename(db, folder, filename);
+    let gameRecord = await GameRepository.findGameByFolderAndFilename(this.db, folder, filename);
 
     if (!gameRecord) {
       // Add the game if it doesn't already exist in our database
@@ -42,13 +33,13 @@ export class DatabaseReplayProvider implements ReplayProvider {
 
       // TODO: Figure out how to return the game record directly after adding
       // to avoid needing to do another database query
-      gameRecord = await GameRepository.findGameByReplayId(db, replayId);
+      gameRecord = await GameRepository.findGameByReplayId(this.db, replayId);
       if (!gameRecord) {
         throw new Error(`Could not find replay ${replayId} at path: ${filePath}`);
       }
     }
 
-    const playerRecords = await PlayerRepository.findAllPlayersByGame(db, gameRecord._id);
+    const playerRecords = await PlayerRepository.findAllPlayersByGame(this.db, gameRecord._id);
     const players = playerRecords.map(mapPlayerRecordToPlayerInfo);
     return mapGameRecordToFileResult(gameRecord, players);
   }
@@ -66,11 +57,10 @@ export class DatabaseReplayProvider implements ReplayProvider {
     // Add new files to the database and remove deleted files
     await this.syncReplayDatabase(folder, onProgress, INSERT_REPLAY_BATCH_SIZE);
 
-    const db = await this.database;
-    const gameRecords = await GameRepository.findGamesByFolder(db, folder, NUM_REPLAYS_TO_RETURN);
+    const gameRecords = await GameRepository.findGamesByFolder(this.db, folder, NUM_REPLAYS_TO_RETURN);
     const players = await Promise.all(
       gameRecords.map(async ({ _id: gameId }): Promise<[number, PlayerInfo[]]> => {
-        const playerRecords = await PlayerRepository.findAllPlayersByGame(db, gameId);
+        const playerRecords = await PlayerRepository.findAllPlayersByGame(this.db, gameId);
         const playerInfos = playerRecords.map(mapPlayerRecordToPlayerInfo);
         return [gameId, playerInfos];
       }),
@@ -110,10 +100,9 @@ export class DatabaseReplayProvider implements ReplayProvider {
   }
 
   private async syncReplayDatabase(folder: string, onProgress?: (progress: Progress) => void, batchSize = 100) {
-    const db = await this.database;
     const [fileResults, existingReplays] = await Promise.all([
       fs.readdir(folder, { withFileTypes: true }),
-      ReplayRepository.findAllReplaysInFolder(db, folder),
+      ReplayRepository.findAllReplaysInFolder(this.db, folder),
     ]);
 
     const slpFileNames = fileResults
@@ -128,7 +117,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
         .map(({ _id }) => _id);
       const chunkedFileIdsToDelete = chunk(fileIdsToDelete, batchSize);
       for (const batch of chunkedFileIdsToDelete) {
-        await ReplayRepository.deleteReplayById(db, ...batch);
+        await ReplayRepository.deleteReplayById(this.db, ...batch);
       }
     };
 
@@ -249,8 +238,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
 
     const newReplay = await this.generateNewReplay(folder, filename);
 
-    const db = await this.database;
-    return await db.transaction().execute(async (trx) => {
+    return await this.db.transaction().execute(async (trx) => {
       const { _id: replayId } = await ReplayRepository.insertReplay(trx, newReplay);
 
       const newGame = this.generateNewGame(replayId, game);

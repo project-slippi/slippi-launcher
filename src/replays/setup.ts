@@ -20,25 +20,27 @@ const REPLAY_DATABASE_NAME = "slippi.sqlite";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
-function createReplayProvider({ enableReplayDatabase }: { enableReplayDatabase?: boolean }): ReplayProvider {
-  if (!enableReplayDatabase) {
-    return new FileSystemReplayProvider();
+async function createReplayProvider({
+  enableReplayDatabase,
+}: {
+  enableReplayDatabase?: boolean;
+}): Promise<ReplayProvider> {
+  if (enableReplayDatabase) {
+    try {
+      const replayDatabaseFolder = path.join(app.getPath("userData"), REPLAY_DATABASE_NAME);
+      const database = await createDatabase(isDevelopment ? undefined : replayDatabaseFolder);
+      return new DatabaseReplayProvider(database);
+    } catch (err) {
+      log.warn("Failed to init database replay provider: ", err);
+    }
   }
 
-  return new DatabaseReplayProvider(async () => {
-    if (isDevelopment) {
-      return createDatabase();
-    }
-
-    const replayDatabaseFolder = path.join(app.getPath("userData"), REPLAY_DATABASE_NAME);
-    return createDatabase(replayDatabaseFolder);
-  });
+  return new FileSystemReplayProvider();
 }
 
 export default function setupReplaysIpc({ enableReplayDatabase }: { enableReplayDatabase?: boolean }) {
   const treeService = new FolderTreeService();
-  const replayProvider = createReplayProvider({ enableReplayDatabase });
-  replayProvider.init().catch(log.error);
+  const replayProviderPromise = createReplayProvider({ enableReplayDatabase });
 
   ipc_initializeFolderTree.main!.handle(async ({ folders }) => {
     return treeService.init(folders);
@@ -53,10 +55,12 @@ export default function setupReplaysIpc({ enableReplayDatabase }: { enableReplay
       ipc_loadProgressUpdatedEvent.main!.trigger(progress).catch(console.warn);
     };
 
+    const replayProvider = await replayProviderPromise;
     return await replayProvider.loadFolder(folderPath, onProgress);
   });
 
   ipc_calculateGameStats.main!.handle(async ({ filePath }) => {
+    const replayProvider = await replayProviderPromise;
     const [stats, fileResult] = await Promise.all([
       replayProvider.calculateGameStats(filePath),
       replayProvider.loadFile(filePath),
@@ -65,6 +69,7 @@ export default function setupReplaysIpc({ enableReplayDatabase }: { enableReplay
   });
 
   ipc_calculateStadiumStats.main!.handle(async ({ filePath }) => {
+    const replayProvider = await replayProviderPromise;
     const [stadiumStats, fileResult] = await Promise.all([
       replayProvider.calculateStadiumStats(filePath),
       replayProvider.loadFile(filePath),

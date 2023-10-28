@@ -11,10 +11,6 @@ export class FileSystemReplayProvider implements ReplayProvider {
     this.replayBrowserWorker = createReplayWorker();
   }
 
-  public async init(): Promise<void> {
-    // Do nothing
-  }
-
   public async loadFile(filePath: string): Promise<FileResult> {
     const worker = await this.replayBrowserWorker;
     return worker.loadSingleFile(filePath);
