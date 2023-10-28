@@ -1,10 +1,11 @@
 import { createDatabase } from "database/create_database";
-import type { Database, NewGame, NewPlayer, NewReplay } from "database/schema";
+import type { Database } from "database/schema";
 import type { Kysely } from "kysely";
 
 import * as GameRepository from "../repositories/game_repository";
 import * as PlayerRepository from "../repositories/player_repository";
 import * as ReplayRepository from "../repositories/replay_repository";
+import { aMockGameWith, aMockPlayerWith, aMockReplayWith } from "./mocks";
 import * as TestRepository from "./test_repository";
 
 describe("when using the database", () => {
@@ -67,45 +68,3 @@ describe("when using the database", () => {
     await expect(result).rejects.toThrowError();
   });
 });
-
-function aMockReplayWith(opts: Partial<NewReplay> = {}): NewReplay {
-  return {
-    folder: "folder",
-    file_name: "file_name",
-    size_bytes: 123,
-    ...opts,
-  };
-}
-
-function aMockGameWith(replayId: number, opts: Partial<NewGame> = {}): NewGame {
-  return {
-    replay_id: replayId,
-    is_teams: 0,
-    stage: 12,
-    start_time: null,
-    platform: "dolphin",
-    console_nickname: "Wii",
-    mode: 1,
-    last_frame: 123,
-    timer_type: 1,
-    starting_timer_secs: 480,
-    ...opts,
-  };
-}
-
-function aMockPlayerWith(gameId: number, opts: Partial<NewPlayer> = {}): NewPlayer {
-  return {
-    game_id: gameId,
-    index: 0,
-    type: 0,
-    character_id: 1,
-    character_color: 1,
-    team_id: 0,
-    is_winner: 0,
-    start_stocks: 4,
-    connect_code: "FOO#123",
-    display_name: "Foo",
-    tag: "FOO",
-    ...opts,
-  };
-}
