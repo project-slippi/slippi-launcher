@@ -20,16 +20,24 @@ const REPLAY_DATABASE_NAME = "slippi.sqlite";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
-function initDatabaseReplayProvider(): ReplayProvider {
-  const replayDatabaseFolder = path.join(app.getPath("userData"), REPLAY_DATABASE_NAME);
-  return new DatabaseReplayProvider(() => createDatabase(isDevelopment ? undefined : replayDatabaseFolder));
+function createReplayProvider({ enableReplayDatabase }: { enableReplayDatabase?: boolean }): ReplayProvider {
+  if (!enableReplayDatabase) {
+    return new FileSystemReplayProvider();
+  }
+
+  return new DatabaseReplayProvider(async () => {
+    if (isDevelopment) {
+      return createDatabase();
+    }
+
+    const replayDatabaseFolder = path.join(app.getPath("userData"), REPLAY_DATABASE_NAME);
+    return createDatabase(replayDatabaseFolder);
+  });
 }
 
 export default function setupReplaysIpc({ enableReplayDatabase }: { enableReplayDatabase?: boolean }) {
   const treeService = new FolderTreeService();
-  const replayProvider: ReplayProvider = enableReplayDatabase
-    ? initDatabaseReplayProvider()
-    : new FileSystemReplayProvider();
+  const replayProvider = createReplayProvider({ enableReplayDatabase });
   replayProvider.init().catch(log.error);
 
   ipc_initializeFolderTree.main!.handle(async ({ folders }) => {
