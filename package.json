@@ -18,7 +18,7 @@
     "start:main": "cross-env NODE_ENV=development electronmon -r ts-node/register/transpile-only -r ./.erb/scripts/fix-esm.js ./src/main/main.ts",
     "start:preload": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.preload.dev.ts",
     "start:renderer": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
-    "test": "jest --verbose",
+    "test": "cross-env ELECTRON_RUN_AS_NODE=true electron ./node_modules/jest-cli/bin/jest.js --verbose",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },
