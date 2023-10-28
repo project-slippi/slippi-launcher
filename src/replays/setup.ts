@@ -16,7 +16,7 @@ import {
 } from "./ipc";
 import type { Progress, ReplayProvider } from "./types";
 
-const REPLAY_DATABASE_NAME = "slippi.sqlite3";
+const REPLAY_DATABASE_NAME = "slippi.sqlite";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
