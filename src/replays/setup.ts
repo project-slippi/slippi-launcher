@@ -1,9 +1,7 @@
-import { createDatabase } from "database/create_database";
 import { app } from "electron";
 import log from "electron-log";
 import path from "path";
 
-import { DatabaseReplayProvider } from "./database_replay_provider/database_replay_provider";
 import { FileSystemReplayProvider } from "./file_system_replay_provider/file_system_replay_provider";
 import { FolderTreeService } from "./folder_tree_service";
 import {
@@ -28,6 +26,10 @@ async function createReplayProvider({
   if (enableReplayDatabase) {
     try {
       const replayDatabaseFolder = path.join(app.getPath("userData"), REPLAY_DATABASE_NAME);
+      const [{ createDatabase }, { DatabaseReplayProvider }] = await Promise.all([
+        import("database/create_database"),
+        import("./database_replay_provider/database_replay_provider"),
+      ]);
       const database = await createDatabase(isDevelopment ? undefined : replayDatabaseFolder);
       return new DatabaseReplayProvider(database);
     } catch (err) {
