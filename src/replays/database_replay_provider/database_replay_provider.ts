@@ -172,13 +172,11 @@ export class DatabaseReplayProvider implements ReplayProvider {
     return newReplay;
   }
 
-  private generateNewGame(replayId: number, game: SlippiGame): NewGame {
+  private generateNewGame(replayId: number, game: SlippiGame): NewGame | null {
     // Load settings
     const settings = game.getSettings();
     if (!settings || settings.players.length === 0) {
-      return {
-        replay_id: replayId,
-      };
+      return null;
     }
     const metadata = game.getMetadata();
 
@@ -234,14 +232,17 @@ export class DatabaseReplayProvider implements ReplayProvider {
     const db = await this.database;
     await db.transaction().execute(async (trx) => {
       const { _id: replayId } = await ReplayRepository.insertReplay(trx, newReplay);
-      const newGame = this.generateNewGame(replayId, game);
-      const { _id: gameId } = await GameRepository.insertGame(trx, newGame);
 
-      await Promise.all(
-        this.generateNewPlayers(gameId, game).map((newPlayer) => {
-          return PlayerRepository.insertPlayer(trx, newPlayer);
-        }),
-      );
+      const newGame = this.generateNewGame(replayId, game);
+      // Ensure we have a valid game
+      if (newGame) {
+        const { _id: gameId } = await GameRepository.insertGame(trx, newGame);
+        await Promise.all(
+          this.generateNewPlayers(gameId, game).map((newPlayer) => {
+            return PlayerRepository.insertPlayer(trx, newPlayer);
+          }),
+        );
+      }
     });
   }
 }

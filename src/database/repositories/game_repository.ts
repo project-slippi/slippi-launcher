@@ -9,12 +9,8 @@ export async function insertGame(db: DB, game: NewGame) {
 }
 
 export async function findGamesByFolder(db: DB, folder: string, limit: number) {
-  const query = db
-    .selectFrom("replay")
-    .where("folder", "=", folder)
-    .limit(limit)
-    .innerJoin("game", "game.replay_id", "replay._id");
+  const query = db.selectFrom("replay").where("folder", "=", folder).innerJoin("game", "game.replay_id", "replay._id");
 
-  const res = await query.selectAll(["replay", "game"]).select(["game._id as _id"]).execute();
+  const res = await query.selectAll(["replay", "game"]).select(["game._id as _id"]).limit(limit).execute();
   return res;
 }
