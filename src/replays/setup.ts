@@ -18,9 +18,11 @@ import type { Progress, ReplayProvider } from "./types";
 
 const REPLAY_DATABASE_NAME = "slippi.sqlite3";
 
+const isDevelopment = process.env.NODE_ENV === "development";
+
 function initDatabaseReplayProvider(): ReplayProvider {
   const replayDatabaseFolder = path.join(app.getPath("userData"), REPLAY_DATABASE_NAME);
-  return new DatabaseReplayProvider(() => createDatabase(replayDatabaseFolder));
+  return new DatabaseReplayProvider(() => createDatabase(isDevelopment ? undefined : replayDatabaseFolder));
 }
 
 export default function setupReplaysIpc({ enableReplayDatabase }: { enableReplayDatabase?: boolean }) {

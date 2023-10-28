@@ -5,16 +5,14 @@ import { Kysely, SqliteDialect } from "kysely";
 import { migrateToLatest } from "./migrate_to_latest";
 import type { Database } from "./schema";
 
-const isDevelopment = process.env.NODE_ENV === "development";
-
-export async function createDatabase(databasePath: string): Promise<Kysely<Database>> {
+export async function createDatabase(databasePath?: string): Promise<Kysely<Database>> {
   let sqliteDb: SQLite.Database;
-  if (isDevelopment) {
-    log.info(`Using in-memory SQLite database`);
-    sqliteDb = new SQLite(":memory:");
-  } else {
+  if (databasePath) {
     log.info(`Opening database at: ${databasePath}`);
     sqliteDb = new SQLite(databasePath);
+  } else {
+    log.info(`Database path not provided. Using in-memory SQLite database`);
+    sqliteDb = new SQLite(":memory:");
   }
 
   const dialect = new SqliteDialect({
