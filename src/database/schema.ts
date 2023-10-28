@@ -1,10 +1,10 @@
-import type { Generated, Insertable, Selectable, Updateable } from "kysely";
+import type { ColumnType, Generated, Insertable, Selectable, Updateable } from "kysely";
 
 export interface ReplayTable {
   _id: Generated<number>;
   folder: string;
   file_name: string;
-  size_bytes: number;
+  size_bytes: ColumnType<number, number | undefined>;
   birth_time: string | null;
 }
 
