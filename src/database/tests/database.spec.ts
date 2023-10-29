@@ -1,14 +1,16 @@
-import { createDatabase } from "database/create_database";
+import SQLite from "better-sqlite3";
 import type { Database } from "database/schema";
-import type { Kysely } from "kysely";
+import { Kysely, SqliteDialect } from "kysely";
+import path from "path";
 
+import { migrateToLatest } from "../migrate_to_latest";
 import * as GameRepository from "../repositories/game_repository";
 import * as PlayerRepository from "../repositories/player_repository";
 import * as ReplayRepository from "../repositories/replay_repository";
 import { aMockGameWith, aMockPlayerWith, aMockReplayWith } from "./mocks";
 import * as TestRepository from "./test_repository";
 
-describe("when using the database", () => {
+describe("database integration tests", () => {
   let db: Kysely<Database>;
 
   beforeAll(async () => {
@@ -70,3 +72,16 @@ describe("when using the database", () => {
     return { replayId, gameId };
   };
 });
+
+async function createDatabase(): Promise<Kysely<Database>> {
+  const sqliteDb = new SQLite(":memory:");
+  const database = new Kysely<Database>({
+    dialect: new SqliteDialect({
+      database: sqliteDb,
+    }),
+  });
+
+  const migrationsFolder = path.join(__dirname, "../migrations");
+  await migrateToLatest(database, migrationsFolder);
+  return database;
+}
