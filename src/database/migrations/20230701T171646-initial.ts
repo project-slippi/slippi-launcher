@@ -63,8 +63,3 @@ export async function down(db: Kysely<any>): Promise<void> {
   db.schema.dropTable("game");
   db.schema.dropTable("players");
 }
-
-export default {
-  up,
-  down,
-};
