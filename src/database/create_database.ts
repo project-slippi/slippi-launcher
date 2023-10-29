@@ -29,7 +29,6 @@ export async function createDatabase(databasePath?: string): Promise<Kysely<Data
   log.info(`Running migrations in ${migrationsFolder}`);
 
   const results = await migrateToLatest(database, migrationsFolder);
-
   results.forEach((result) => {
     if (result.status === "Success") {
       log.info(`Migration "${result.migrationName}" was executed successfully`);

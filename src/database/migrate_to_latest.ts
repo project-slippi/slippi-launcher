@@ -16,7 +16,6 @@ export async function migrateToLatest(db: Kysely<Database>, migrationFolder: str
   });
 
   const { error, results } = await migrator.migrateToLatest();
-
   if (error || !results) {
     throw new Error(`Error migrating database: ${error}`);
   }

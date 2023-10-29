@@ -1,19 +1,19 @@
 import { chunk } from "@common/chunk";
 import { partition } from "@common/partition";
-import type { FileLoadResult, FileResult, PlayerInfo, Progress, ReplayProvider } from "@replays/types";
+import type { FileLoadResult, FileResult, Progress, ReplayProvider } from "@replays/types";
 import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
 import { SlippiGame } from "@slippi/slippi-js";
 import * as GameRepository from "database/repositories/game_repository";
 import * as PlayerRepository from "database/repositories/player_repository";
 import * as ReplayRepository from "database/repositories/replay_repository";
-import type { Database, NewGame, NewPlayer, NewReplay } from "database/schema";
+import type { Database, NewGame, NewPlayer, NewReplay, Player } from "database/schema";
 import log from "electron-log";
 import * as fs from "fs-extra";
 import type { Kysely } from "kysely";
 import path from "path";
 
 import { extractPlayerNames } from "../file_system_replay_provider/extract_player_names";
-import { mapGameRecordToFileResult, mapPlayerRecordToPlayerInfo } from "./record_mapper";
+import { mapGameRecordToFileResult } from "./record_mapper";
 
 const NUM_REPLAYS_TO_RETURN = 200;
 const INSERT_REPLAY_BATCH_SIZE = 200;
@@ -40,8 +40,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
     }
 
     const playerRecords = await PlayerRepository.findAllPlayersByGame(this.db, gameRecord._id);
-    const players = playerRecords.map(mapPlayerRecordToPlayerInfo);
-    return mapGameRecordToFileResult(gameRecord, players);
+    return mapGameRecordToFileResult(gameRecord, playerRecords);
   }
 
   public async loadFolder(folder: string, onProgress?: (progress: Progress) => void): Promise<FileLoadResult> {
@@ -59,10 +58,9 @@ export class DatabaseReplayProvider implements ReplayProvider {
 
     const gameRecords = await GameRepository.findGamesByFolder(this.db, folder, NUM_REPLAYS_TO_RETURN);
     const players = await Promise.all(
-      gameRecords.map(async ({ _id: gameId }): Promise<[number, PlayerInfo[]]> => {
+      gameRecords.map(async ({ _id: gameId }): Promise<[number, Player[]]> => {
         const playerRecords = await PlayerRepository.findAllPlayersByGame(this.db, gameId);
-        const playerInfos = playerRecords.map(mapPlayerRecordToPlayerInfo);
-        return [gameId, playerInfos];
+        return [gameId, playerRecords];
       }),
     );
     const playerMap = new Map(players);

@@ -3,7 +3,7 @@ import type { Game, Player, Replay } from "database/schema";
 import moment from "moment";
 import path from "path";
 
-export function mapPlayerRecordToPlayerInfo(player: Player): PlayerInfo {
+function mapPlayerRecordToPlayerInfo(player: Player): PlayerInfo {
   return {
     playerIndex: player.index,
     port: player.index + 1,
@@ -19,14 +19,14 @@ export function mapPlayerRecordToPlayerInfo(player: Player): PlayerInfo {
   };
 }
 
-export function mapGameRecordToFileResult(gameRecord: Game & Replay, players: PlayerInfo[]): FileResult {
+export function mapGameRecordToFileResult(gameRecord: Game & Replay, playerRecords: Player[]): FileResult {
   const fullPath = path.resolve(gameRecord.folder, gameRecord.file_name);
   return {
     id: `${gameRecord._id}-${gameRecord.replay_id}`,
     fileName: gameRecord.file_name,
     fullPath,
     game: {
-      players,
+      players: playerRecords.map(mapPlayerRecordToPlayerInfo),
       isTeams: Boolean(gameRecord.is_teams),
       stageId: gameRecord.stage,
       startTime: inferStartTime(gameRecord.start_time, gameRecord.file_name, gameRecord.birth_time),
