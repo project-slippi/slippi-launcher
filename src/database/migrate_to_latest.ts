@@ -1,41 +1,38 @@
+import { app } from "electron";
 import log from "electron-log";
-import type { Kysely, Migration, MigrationProvider } from "kysely";
-import { Migrator } from "kysely";
+import { promises as fs } from "fs";
+import type { Kysely } from "kysely";
+import { FileMigrationProvider, Migrator } from "kysely";
+import path from "path";
 
-import migration1 from "./migrations/20230701T171646-initial";
-import type { Database } from "./schema"; // schema
-
-const migrations = {
-  migration1,
-};
-
-// I'm not sure how to dynamically load migrations in electron
-// So we're just importing them all directly
-class ConstMigrationProvider implements MigrationProvider {
-  public async getMigrations(): Promise<Record<string, Migration>> {
-    return migrations;
-  }
-}
+import type { Database } from "./schema";
 
 export async function migrateToLatest(db: Kysely<Database>) {
+  const migrationFolder = app.isPackaged
+    ? path.join(process.resourcesPath, "./migrations")
+    : path.join(__dirname, "./migrations");
+
+  log.info("Applying migrations from folder: " + migrationFolder);
   const migrator = new Migrator({
     db,
-    provider: new ConstMigrationProvider(),
+    provider: new FileMigrationProvider({
+      fs,
+      path,
+      migrationFolder,
+    }),
   });
 
   const { error, results } = await migrator.migrateToLatest();
 
-  results?.forEach((it) => {
-    if (it.status === "Success") {
-      log.info(`migration "${it.migrationName}" was executed successfully`);
-    } else if (it.status === "Error") {
-      log.error(`failed to execute migration "${it.migrationName}"`);
+  results?.forEach((result) => {
+    if (result.status === "Success") {
+      log.info(`Migration "${result.migrationName}" was executed successfully`);
+    } else if (result.status === "Error") {
+      log.error(`Failed to execute migration: "${result.migrationName}"`);
     }
   });
 
-  if (error) {
-    log.error("failed to migrate");
-    log.error(error);
-    process.exit(1);
+  if (error || !results) {
+    throw new Error(`Error migrating database: ${error}`);
   }
 }
