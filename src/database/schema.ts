@@ -15,7 +15,8 @@ export type ReplayUpdate = Updateable<ReplayTable>;
 export interface GameTable {
   _id: Generated<number>;
   replay_id: number; // Foreign key
-  is_teams: number | null;
+  is_ranked: ColumnType<number, number | undefined>;
+  is_teams: ColumnType<number, number | undefined>;
   stage: number | null;
   start_time: string | null;
   platform: string | null;

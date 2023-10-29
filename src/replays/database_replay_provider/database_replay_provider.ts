@@ -189,8 +189,12 @@ export class DatabaseReplayProvider implements ReplayProvider {
     }
     const metadata = game.getMetadata();
 
+    const matchId = settings.matchInfo?.matchId ?? "";
+    const isRanked = matchId.startsWith("mode.ranked-");
+
     const newGame: NewGame = {
       replay_id: replayId,
+      is_ranked: Number(isRanked),
       is_teams: Number(settings.isTeams),
       stage: settings.stageId,
       start_time: metadata?.startAt,
