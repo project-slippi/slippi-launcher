@@ -1,5 +1,5 @@
 /**
- * Webpack config for production electron main process
+ * Webpack config for Kysely database migrations
  */
 
 import { fdir } from "fdir";
@@ -9,36 +9,24 @@ import type { Configuration } from "webpack";
 import { merge } from "webpack-merge";
 
 import checkNodeEnv from "../scripts/check-node-env";
-import deleteSourceMaps from "../scripts/delete-source-maps";
 import baseConfig from "./webpack.config.base";
 import webpackPaths from "./webpack.paths";
 
 checkNodeEnv("production");
-deleteSourceMaps();
 
 function resolveMigrations(): Record<string, string> {
-  const workers: Record<string, string> = {};
+  const migrations: Record<string, string> = {};
   // eslint-disable-next-line new-cap
   const crawler = new fdir().glob("./**/*.ts").withFullPaths();
   const files = crawler.crawl(path.join(webpackPaths.srcPath, "database", "migrations")).sync() as string[];
   files.forEach((filename) => {
     const basename = path.basename(filename, ".ts");
-    workers[basename] = filename;
+    migrations[basename] = filename;
   });
-  console.log({ workers });
-  return workers;
+  return migrations;
 }
 
-const devtoolsConfig =
-  process.env.DEBUG_PROD === "true"
-    ? {
-        devtool: "source-map",
-      }
-    : {};
-
 const configuration: Configuration = {
-  ...devtoolsConfig,
-
   mode: "production",
 
   target: "electron-main",
