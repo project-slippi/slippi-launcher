@@ -43,6 +43,7 @@ export interface PlayerTable {
   connect_code: string | null;
   display_name: string | null;
   tag: string | null;
+  user_id: string | null;
 }
 
 export type Player = Selectable<PlayerTable>;

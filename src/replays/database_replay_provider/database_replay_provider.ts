@@ -227,6 +227,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
         connect_code: names.code,
         display_name: names.name,
         tag: names.tag,
+        user_id: player.userId,
       };
       return newPlayer;
     });

@@ -40,6 +40,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("connect_code", "text")
     .addColumn("display_name", "text")
     .addColumn("tag", "text")
+    .addColumn("user_id", "text")
     .addUniqueConstraint("unique_game_id_index_constraint", ["game_id", "index"])
     .execute();
 
@@ -52,7 +53,8 @@ export async function up(db: Kysely<any>): Promise<void> {
     .execute();
 
   await db.schema.createIndex("game_replay_id_index").on("game").column("replay_id").execute();
-  await db.schema.createIndex("player_game_index").on("player").column("game_id").execute();
+  await db.schema.createIndex("player_game_id_index").on("player").column("game_id").execute();
+  await db.schema.createIndex("player_user_id_index").on("player").column("user_id").execute();
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
