@@ -67,6 +67,6 @@ async function checkDatabaseUserVersion(databasePath: string) {
   await fs.rename(databasePath, backupDatabasePath);
 
   // Create a new db with the latest user_version
-  const newSqliteDb = new SQLite(databasePath);
+  const newSqliteDb = new Sqlite(databasePath);
   newSqliteDb.pragma(`user_version = ${DATABASE_USER_VERSION}`);
 }
