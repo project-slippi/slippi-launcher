@@ -163,102 +163,21 @@ export class DatabaseReplayProvider implements ReplayProvider {
     }
   }
 
-  private async generateNewReplay(folder: string, filename: string): Promise<NewReplay> {
-    const fullPath = path.resolve(folder, filename);
-    let size = 0;
-    let birthtime: string | null = null;
-    try {
-      const fileInfo = await fs.stat(fullPath);
-      size = fileInfo.size;
-      birthtime = fileInfo.birthtime.toISOString();
-    } catch (err) {
-      log.warn(`Error running stat for file ${fullPath}: `, err);
-    }
-    const newReplay: NewReplay = {
-      file_name: filename,
-      folder,
-      size_bytes: size,
-      birth_time: birthtime,
-    };
-    return newReplay;
-  }
-
-  private generateNewGame(replay: Replay, game: SlippiGame): NewGame | null {
-    // Load settings
-    const settings = game.getSettings();
-    if (!settings || settings.players.length === 0) {
-      return null;
-    }
-    const metadata = game.getMetadata();
-
-    const matchId = settings.matchInfo?.matchId ?? null;
-    const isRanked = matchId != null && matchId.startsWith("mode.ranked-");
-
-    const gameStartTime = inferStartTime(metadata?.startAt ?? null, replay.file_name, replay.birth_time);
-
-    const newGame: NewGame = {
-      replay_id: replay._id,
-      is_ranked: Number(isRanked),
-      is_teams: Number(settings.isTeams),
-      stage: settings.stageId,
-      start_time: gameStartTime,
-      platform: metadata?.playedOn,
-      console_nickname: metadata?.consoleNick,
-      mode: settings.gameMode,
-      last_frame: metadata?.lastFrame,
-      timer_type: settings.timerType,
-      starting_timer_secs: settings.startingTimerSeconds,
-      match_id: matchId,
-      sequence_number: settings.matchInfo?.gameNumber ?? undefined,
-      tiebreak_index: settings.matchInfo?.tiebreakerNumber ?? undefined,
-    };
-
-    return newGame;
-  }
-
-  private generateNewPlayers(gameId: number, game: SlippiGame): NewPlayer[] {
-    const settings = game.getSettings();
-    if (!settings || settings.players.length === 0) {
-      return [];
-    }
-
-    const winnerIndices = game.getWinners().map((winner) => winner.playerIndex);
-    return settings.players.map((player): NewPlayer => {
-      const isWinner = winnerIndices.includes(player.playerIndex);
-      const names = extractPlayerNames(player.playerIndex, settings, game.getMetadata());
-      const newPlayer: NewPlayer = {
-        game_id: gameId,
-        index: player.playerIndex,
-        type: player.type,
-        character_id: player.characterId,
-        character_color: player.characterColor,
-        team_id: settings.isTeams ? player.teamId : undefined,
-        is_winner: Number(isWinner),
-        start_stocks: player.startStocks,
-        connect_code: names.code,
-        display_name: names.name,
-        tag: names.tag,
-        user_id: player.userId,
-      };
-      return newPlayer;
-    });
-  }
-
   private async addReplay(folder: string, filename: string): Promise<{ replayId: number }> {
     const fullPath = path.resolve(folder, filename);
     const game = new SlippiGame(fullPath);
 
-    const newReplay = await this.generateNewReplay(folder, filename);
+    const newReplay = await generateNewReplay(folder, filename);
 
     return await this.db.transaction().execute(async (trx) => {
       const replayRecord = await ReplayRepository.insertReplay(trx, newReplay);
 
-      const newGame = this.generateNewGame(replayRecord, game);
+      const newGame = generateNewGame(replayRecord, game);
       // Ensure we have a valid game
       if (newGame) {
         const { _id: gameId } = await GameRepository.insertGame(trx, newGame);
         await Promise.all(
-          this.generateNewPlayers(gameId, game).map((newPlayer) => {
+          generateNewPlayers(gameId, game).map((newPlayer) => {
             return PlayerRepository.insertPlayer(trx, newPlayer);
           }),
         );
@@ -267,4 +186,85 @@ export class DatabaseReplayProvider implements ReplayProvider {
       return { replayId: replayRecord._id };
     });
   }
+}
+
+async function generateNewReplay(folder: string, filename: string): Promise<NewReplay> {
+  const fullPath = path.resolve(folder, filename);
+  let size = 0;
+  let birthtime: string | null = null;
+  try {
+    const fileInfo = await fs.stat(fullPath);
+    size = fileInfo.size;
+    birthtime = fileInfo.birthtime.toISOString();
+  } catch (err) {
+    log.warn(`Error running stat for file ${fullPath}: `, err);
+  }
+  const newReplay: NewReplay = {
+    file_name: filename,
+    folder,
+    size_bytes: size,
+    birth_time: birthtime,
+  };
+  return newReplay;
+}
+
+function generateNewGame(replay: Replay, game: SlippiGame): NewGame | null {
+  // Load settings
+  const settings = game.getSettings();
+  if (!settings || settings.players.length === 0) {
+    return null;
+  }
+  const metadata = game.getMetadata();
+
+  const matchId = settings.matchInfo?.matchId ?? null;
+  const isRanked = matchId != null && matchId.startsWith("mode.ranked-");
+
+  const gameStartTime = inferStartTime(metadata?.startAt ?? null, replay.file_name, replay.birth_time);
+
+  const newGame: NewGame = {
+    replay_id: replay._id,
+    is_ranked: Number(isRanked),
+    is_teams: Number(settings.isTeams),
+    stage: settings.stageId,
+    start_time: gameStartTime,
+    platform: metadata?.playedOn,
+    console_nickname: metadata?.consoleNick,
+    mode: settings.gameMode,
+    last_frame: metadata?.lastFrame,
+    timer_type: settings.timerType,
+    starting_timer_secs: settings.startingTimerSeconds,
+    match_id: matchId,
+    sequence_number: settings.matchInfo?.gameNumber ?? undefined,
+    tiebreak_index: settings.matchInfo?.tiebreakerNumber ?? undefined,
+  };
+
+  return newGame;
+}
+
+function generateNewPlayers(gameId: number, game: SlippiGame): NewPlayer[] {
+  const settings = game.getSettings();
+  if (!settings || settings.players.length === 0) {
+    return [];
+  }
+
+  const winnerIndices = game.getWinners().map((winner) => winner.playerIndex);
+  return settings.players.map((player): NewPlayer => {
+    const isWinner = winnerIndices.includes(player.playerIndex);
+    const names = extractPlayerNames(player.playerIndex, settings, game.getMetadata());
+    const newPlayer: NewPlayer = {
+      game_id: gameId,
+      index: player.playerIndex,
+      type: player.type,
+      character_id: player.characterId,
+      character_color: player.characterColor,
+      team_id: settings.isTeams ? player.teamId : undefined,
+      is_winner: Number(isWinner),
+      start_stocks: player.startStocks,
+      connect_code: names.code,
+      display_name: names.name,
+      tag: names.tag,
+      user_id: player.userId,
+    };
+    return newPlayer;
+  });
 }
