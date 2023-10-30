@@ -188,8 +188,8 @@ export class DatabaseReplayProvider implements ReplayProvider {
     }
     const metadata = game.getMetadata();
 
-    const matchId = settings.matchInfo?.matchId ?? "";
-    const isRanked = matchId.startsWith("mode.ranked-");
+    const matchId = settings.matchInfo?.matchId ?? null;
+    const isRanked = matchId != null && matchId.startsWith("mode.ranked-");
 
     const gameStartTime = inferStartTime(metadata?.startAt ?? null, replay.file_name, replay.birth_time);
 
@@ -205,6 +205,9 @@ export class DatabaseReplayProvider implements ReplayProvider {
       last_frame: metadata?.lastFrame,
       timer_type: settings.timerType,
       starting_timer_secs: settings.startingTimerSeconds,
+      match_id: matchId,
+      sequence_index: settings.matchInfo?.gameNumber ?? undefined,
+      tiebreak_index: settings.matchInfo?.tiebreakerNumber ?? undefined,
     };
 
     return newGame;

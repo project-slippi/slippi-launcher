@@ -25,6 +25,9 @@ export interface GameTable {
   last_frame: number | null;
   timer_type: number | null;
   starting_timer_secs: number | null;
+  match_id: string | null;
+  sequence_index: ColumnType<number, number | undefined>;
+  tiebreak_index: ColumnType<number, number | undefined>;
 }
 
 export type Game = Selectable<GameTable>;

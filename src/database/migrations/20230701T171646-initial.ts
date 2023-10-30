@@ -25,6 +25,9 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("last_frame", "integer")
     .addColumn("timer_type", "integer")
     .addColumn("starting_timer_secs", "integer")
+    .addColumn("match_id", "text")
+    .addColumn("sequence_index", "integer", (col) => col.defaultTo(1).notNull())
+    .addColumn("tiebreak_index", "integer", (col) => col.defaultTo(0).notNull())
     .execute();
 
   await db.schema
