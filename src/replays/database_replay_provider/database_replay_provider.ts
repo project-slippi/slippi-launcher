@@ -56,7 +56,11 @@ export class DatabaseReplayProvider implements ReplayProvider {
     // Add new files to the database and remove deleted files
     await this.syncReplayDatabase(folder, onProgress, INSERT_REPLAY_BATCH_SIZE);
 
-    const gameRecords = await GameRepository.findGamesByFolder(this.db, folder);
+    const [gameRecords, totalBytes] = await Promise.all([
+      GameRepository.findGamesByFolder(this.db, folder),
+      ReplayRepository.findTotalSizeByFolder(this.db, folder),
+    ]);
+
     const players = await Promise.all(
       gameRecords.map(async ({ _id: gameId }): Promise<[number, Player[]]> => {
         const playerRecords = await PlayerRepository.findAllPlayersByGame(this.db, gameId);
@@ -69,8 +73,6 @@ export class DatabaseReplayProvider implements ReplayProvider {
       const players = playerMap.get(gameRecord._id) ?? [];
       return mapGameRecordToFileResult(gameRecord, players);
     });
-
-    const totalBytes = await ReplayRepository.findTotalSizeByFolder(this.db, folder);
 
     const result: FileLoadResult = {
       files,
