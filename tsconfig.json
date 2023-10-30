@@ -11,7 +11,7 @@
       "@replays/*": ["replays/*"],
       "@settings/*": ["settings/*"],
       "@console/*": ["console/*"],
-      "database/*": ["database/*"]
+      "@database/*": ["database/*"]
     },
     "baseUrl": "./src",
     "outDir": "release/app/dist",

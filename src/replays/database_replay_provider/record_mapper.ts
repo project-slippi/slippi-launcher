@@ -1,5 +1,5 @@
+import type { Game, Player, Replay } from "@database/schema";
 import type { FileResult, PlayerInfo } from "@replays/types";
-import type { Game, Player, Replay } from "database/schema";
 import path from "path";
 
 function mapPlayerRecordToPlayerInfo(player: Player): PlayerInfo {

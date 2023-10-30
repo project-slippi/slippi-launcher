@@ -27,7 +27,7 @@ async function createReplayProvider({
     try {
       const replayDatabaseFolder = path.join(app.getPath("userData"), REPLAY_DATABASE_NAME);
       const [{ createDatabase }, { DatabaseReplayProvider }] = await Promise.all([
-        import("database/create_database"),
+        import("@database/create_database"),
         import("./database_replay_provider/database_replay_provider"),
       ]);
       const database = await createDatabase(isDevelopment ? undefined : replayDatabaseFolder);

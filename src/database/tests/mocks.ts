@@ -1,4 +1,4 @@
-import type { NewGame, NewPlayer, NewReplay } from "database/schema";
+import type { NewGame, NewPlayer, NewReplay } from "@database/schema";
 
 export function aMockReplayWith(opts: Partial<NewReplay> = {}): NewReplay {
   return {

@@ -1,5 +1,5 @@
+import type { Database } from "@database/schema";
 import Sqlite from "better-sqlite3";
-import type { Database } from "database/schema";
 import { Kysely, SqliteDialect } from "kysely";
 import path from "path";
 

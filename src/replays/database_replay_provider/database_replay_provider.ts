@@ -1,12 +1,12 @@
 import { chunk } from "@common/chunk";
 import { partition } from "@common/partition";
+import * as GameRepository from "@database/repositories/game_repository";
+import * as PlayerRepository from "@database/repositories/player_repository";
+import * as ReplayRepository from "@database/repositories/replay_repository";
+import type { Database, NewGame, NewPlayer, NewReplay, Player, Replay } from "@database/schema";
 import type { FileLoadResult, FileResult, Progress, ReplayProvider } from "@replays/types";
 import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
 import { SlippiGame } from "@slippi/slippi-js";
-import * as GameRepository from "database/repositories/game_repository";
-import * as PlayerRepository from "database/repositories/player_repository";
-import * as ReplayRepository from "database/repositories/replay_repository";
-import type { Database, NewGame, NewPlayer, NewReplay, Player, Replay } from "database/schema";
 import log from "electron-log";
 import * as fs from "fs-extra";
 import type { Kysely } from "kysely";
