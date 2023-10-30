@@ -70,9 +70,11 @@ export class DatabaseReplayProvider implements ReplayProvider {
       return mapGameRecordToFileResult(gameRecord, players);
     });
 
+    const totalBytes = await ReplayRepository.findTotalSizeByFolder(this.db, folder);
+
     const result: FileLoadResult = {
       files,
-      totalBytes: 0,
+      totalBytes,
       fileErrorCount: 0,
     };
     return result;

@@ -17,3 +17,12 @@ export async function findAllReplaysInFolder(db: DB, folder: string): Promise<{ 
 export async function deleteReplayById(db: DB, ...ids: number[]) {
   return await db.deleteFrom("replay").where("_id", "in", ids).execute();
 }
+
+export async function findTotalSizeByFolder(db: DB, folder: string): Promise<number> {
+  const query = db
+    .selectFrom("replay")
+    .where("folder", "=", folder)
+    .select((eb) => eb.fn.sum<number>("replay.size_bytes").as("total_size"));
+  const res = await query.executeTakeFirst();
+  return res?.total_size ?? 0;
+}

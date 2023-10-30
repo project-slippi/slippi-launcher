@@ -23,6 +23,16 @@ describe("database integration tests", () => {
     await db.deleteFrom("player").execute();
   });
 
+  it("should count total folder size", async () => {
+    const folder = "folder";
+    await ReplayRepository.insertReplay(db, aMockReplayWith({ folder, file_name: "foo", size_bytes: 10 }));
+    expect(await ReplayRepository.findTotalSizeByFolder(db, folder)).toEqual(10);
+    await ReplayRepository.insertReplay(db, aMockReplayWith({ folder, file_name: "bar", size_bytes: 20 }));
+    expect(await ReplayRepository.findTotalSizeByFolder(db, folder)).toEqual(30);
+    await ReplayRepository.insertReplay(db, aMockReplayWith({ folder, file_name: "baz", size_bytes: 30 }));
+    expect(await ReplayRepository.findTotalSizeByFolder(db, folder)).toEqual(60);
+  });
+
   it("should disallow replays with the same folder and filename", async () => {
     await ReplayRepository.insertReplay(db, aMockReplayWith({ folder: "folder", file_name: "name" }));
     await ReplayRepository.insertReplay(db, aMockReplayWith({ folder: "folder", file_name: "different_name" }));
