@@ -5,7 +5,7 @@ import type { Database, NewReplay } from "../schema";
 type DB = Kysely<Database>;
 
 export async function insertReplay(db: DB, replay: NewReplay) {
-  return db.insertInto("replay").values(replay).returning("_id").executeTakeFirstOrThrow();
+  return db.insertInto("replay").values(replay).returningAll().executeTakeFirstOrThrow();
 }
 
 export async function findAllReplaysInFolder(db: DB, folder: string): Promise<{ _id: number; file_name: string }[]> {

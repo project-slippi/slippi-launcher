@@ -6,13 +6,14 @@ import { SlippiGame } from "@slippi/slippi-js";
 import * as GameRepository from "database/repositories/game_repository";
 import * as PlayerRepository from "database/repositories/player_repository";
 import * as ReplayRepository from "database/repositories/replay_repository";
-import type { Database, NewGame, NewPlayer, NewReplay, Player } from "database/schema";
+import type { Database, NewGame, NewPlayer, NewReplay, Player, Replay } from "database/schema";
 import log from "electron-log";
 import * as fs from "fs-extra";
 import type { Kysely } from "kysely";
 import path from "path";
 
 import { extractPlayerNames } from "../file_system_replay_provider/extract_player_names";
+import { inferStartTime } from "./infer_start_time";
 import { mapGameRecordToFileResult } from "./record_mapper";
 
 const NUM_REPLAYS_TO_RETURN = 200;
@@ -179,7 +180,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
     return newReplay;
   }
 
-  private generateNewGame(replayId: number, game: SlippiGame): NewGame | null {
+  private generateNewGame(replay: Replay, game: SlippiGame): NewGame | null {
     // Load settings
     const settings = game.getSettings();
     if (!settings || settings.players.length === 0) {
@@ -190,12 +191,14 @@ export class DatabaseReplayProvider implements ReplayProvider {
     const matchId = settings.matchInfo?.matchId ?? "";
     const isRanked = matchId.startsWith("mode.ranked-");
 
+    const gameStartTime = inferStartTime(metadata?.startAt ?? null, replay.file_name, replay.birth_time);
+
     const newGame: NewGame = {
-      replay_id: replayId,
+      replay_id: replay._id,
       is_ranked: Number(isRanked),
       is_teams: Number(settings.isTeams),
       stage: settings.stageId,
-      start_time: metadata?.startAt,
+      start_time: gameStartTime,
       platform: metadata?.playedOn,
       console_nickname: metadata?.consoleNick,
       mode: settings.gameMode,
@@ -242,9 +245,9 @@ export class DatabaseReplayProvider implements ReplayProvider {
     const newReplay = await this.generateNewReplay(folder, filename);
 
     return await this.db.transaction().execute(async (trx) => {
-      const { _id: replayId } = await ReplayRepository.insertReplay(trx, newReplay);
+      const replayRecord = await ReplayRepository.insertReplay(trx, newReplay);
 
-      const newGame = this.generateNewGame(replayId, game);
+      const newGame = this.generateNewGame(replayRecord, game);
       // Ensure we have a valid game
       if (newGame) {
         const { _id: gameId } = await GameRepository.insertGame(trx, newGame);
@@ -255,7 +258,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
         );
       }
 
-      return { replayId };
+      return { replayId: replayRecord._id };
     });
   }
 }
