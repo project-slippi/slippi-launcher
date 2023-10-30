@@ -209,7 +209,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
       timer_type: settings.timerType,
       starting_timer_secs: settings.startingTimerSeconds,
       match_id: matchId,
-      sequence_index: settings.matchInfo?.gameNumber ?? undefined,
+      sequence_number: settings.matchInfo?.gameNumber ?? undefined,
       tiebreak_index: settings.matchInfo?.tiebreakerNumber ?? undefined,
     };
 

@@ -26,7 +26,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("timer_type", "integer")
     .addColumn("starting_timer_secs", "integer")
     .addColumn("match_id", "text")
-    .addColumn("sequence_index", "integer", (col) => col.defaultTo(1).notNull())
+    .addColumn("sequence_number", "integer", (col) => col.defaultTo(1).notNull())
     .addColumn("tiebreak_index", "integer", (col) => col.defaultTo(0).notNull())
     .execute();
 
@@ -56,6 +56,12 @@ export async function up(db: Kysely<any>): Promise<void> {
     .column("file_name")
     .execute();
   await db.schema.createIndex("game_replay_id_index").on("game").column("replay_id").execute();
+  await db.schema
+    .createIndex("game_match_id_sequence_number_index")
+    .on("game")
+    .column("match_id")
+    .column("sequence_number")
+    .execute();
   await db.schema.createIndex("player_game_id_index").on("player").column("game_id").execute();
   await db.schema.createIndex("player_user_id_index").on("player").column("user_id").execute();
 }
