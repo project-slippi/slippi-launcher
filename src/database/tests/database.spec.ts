@@ -1,4 +1,4 @@
-import SQLite from "better-sqlite3";
+import Sqlite from "better-sqlite3";
 import type { Database } from "database/schema";
 import { Kysely, SqliteDialect } from "kysely";
 import path from "path";
@@ -74,7 +74,7 @@ describe("database integration tests", () => {
 });
 
 async function createDatabase(): Promise<Kysely<Database>> {
-  const sqliteDb = new SQLite(":memory:");
+  const sqliteDb = new Sqlite(":memory:");
   const database = new Kysely<Database>({
     dialect: new SqliteDialect({
       database: sqliteDb,
