@@ -55,14 +55,18 @@ export async function up(db: Kysely<any>): Promise<void> {
     .column("folder")
     .column("file_name")
     .execute();
-
   await db.schema.createIndex("game_replay_id_index").on("game").column("replay_id").execute();
   await db.schema.createIndex("player_game_id_index").on("player").column("game_id").execute();
   await db.schema.createIndex("player_user_id_index").on("player").column("user_id").execute();
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
-  db.schema.dropTable("replay");
-  db.schema.dropTable("game");
-  db.schema.dropTable("players");
+  await db.schema.dropTable("replay").execute();
+  await db.schema.dropTable("game").execute();
+  await db.schema.dropTable("players").execute();
+
+  await db.schema.dropIndex("replay_folder_file_name_index").execute();
+  await db.schema.dropIndex("game_replay_id_index").execute();
+  await db.schema.dropIndex("player_game_id_index").execute();
+  await db.schema.dropIndex("player_user_id_index").execute();
 }
