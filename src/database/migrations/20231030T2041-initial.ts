@@ -73,6 +73,7 @@ export async function down(db: Kysely<any>): Promise<void> {
 
   await db.schema.dropIndex("replay_folder_file_name_index").execute();
   await db.schema.dropIndex("game_replay_id_index").execute();
+  await db.schema.dropIndex("game_match_id_sequence_number_index").execute();
   await db.schema.dropIndex("player_game_id_index").execute();
   await db.schema.dropIndex("player_user_id_index").execute();
 }
