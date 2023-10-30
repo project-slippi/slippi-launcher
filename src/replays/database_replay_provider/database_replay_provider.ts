@@ -16,7 +16,6 @@ import { extractPlayerNames } from "../file_system_replay_provider/extract_playe
 import { inferStartTime } from "./infer_start_time";
 import { mapGameRecordToFileResult } from "./record_mapper";
 
-const NUM_REPLAYS_TO_RETURN = 200;
 const INSERT_REPLAY_BATCH_SIZE = 200;
 
 export class DatabaseReplayProvider implements ReplayProvider {
@@ -57,7 +56,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
     // Add new files to the database and remove deleted files
     await this.syncReplayDatabase(folder, onProgress, INSERT_REPLAY_BATCH_SIZE);
 
-    const gameRecords = await GameRepository.findGamesByFolder(this.db, folder, NUM_REPLAYS_TO_RETURN);
+    const gameRecords = await GameRepository.findGamesByFolder(this.db, folder);
     const players = await Promise.all(
       gameRecords.map(async ({ _id: gameId }): Promise<[number, Player[]]> => {
         const playerRecords = await PlayerRepository.findAllPlayersByGame(this.db, gameId);

@@ -26,9 +26,13 @@ export async function findGameByFolderAndFilename(db: DB, folder: string, filena
   return res;
 }
 
-export async function findGamesByFolder(db: DB, folder: string, limit: number) {
-  const query = db.selectFrom("replay").where("folder", "=", folder).innerJoin("game", "game.replay_id", "replay._id");
+export async function findGamesByFolder(db: DB, folder: string, limit?: number) {
+  let query = db.selectFrom("replay").where("folder", "=", folder).innerJoin("game", "game.replay_id", "replay._id");
 
-  const res = await query.selectAll(["replay", "game"]).select(["game._id as _id"]).limit(limit).execute();
+  if (limit != null && limit > 0) {
+    query = query.limit(limit);
+  }
+
+  const res = await query.selectAll(["replay", "game"]).select(["game._id as _id"]).execute();
   return res;
 }
