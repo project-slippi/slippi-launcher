@@ -6,8 +6,8 @@ import { getCharacterIcon } from "@/lib/utils";
 import crownImage from "@/styles/images/crown.png";
 
 type CommonPlayerBadgeProps = {
-  characterId: number | null;
-  characterColor: number | null;
+  characterId?: number;
+  characterColor?: number;
   port: number;
   teamId?: number;
   isWinner?: boolean;
@@ -21,7 +21,7 @@ const InternalPlayerBadge = ({
   isWinner,
   children,
 }: React.PropsWithChildren<CommonPlayerBadgeProps>) => {
-  const charIcon = getCharacterIcon(characterId, characterColor);
+  const charIcon = getCharacterIcon(characterId ?? null, characterColor);
   const color = getColor(port, teamId);
 
   return (

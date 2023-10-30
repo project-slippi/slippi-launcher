@@ -1,13 +1,37 @@
-import type { GameStartType, MetadataType } from "@slippi/slippi-js";
+import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
+
+export type PlayerInfo = {
+  playerIndex: number;
+  port: number;
+  type: number | null;
+  characterId: number | null;
+  characterColor: number | null;
+  teamId: number | null;
+  isWinner: boolean;
+  connectCode: string | null;
+  displayName: string | null;
+  tag: string | null;
+  startStocks: number | null;
+};
 
 export type FileResult = {
-  name: string;
+  id: string;
+  fileName: string;
   fullPath: string;
-  settings: GameStartType;
+  game: GameInfo;
+};
+
+export type GameInfo = {
+  players: PlayerInfo[];
+  isTeams: boolean;
+  stageId: number | null;
   startTime: string | null;
+  platform: string | null;
+  consoleNickname: string | null;
+  mode: number | null;
   lastFrame: number | null;
-  metadata: MetadataType | null;
-  winnerIndices: number[];
+  timerType: number | null;
+  startingTimerSeconds: number | null;
 };
 
 export type FolderResult = {
@@ -26,3 +50,10 @@ export type Progress = {
   current: number;
   total: number;
 };
+
+export interface ReplayProvider {
+  loadFile(filePath: string): Promise<FileResult>;
+  loadFolder(folder: string, onProgress?: (progress: Progress) => void): Promise<FileLoadResult>;
+  calculateGameStats(fullPath: string): Promise<StatsType | null>;
+  calculateStadiumStats(fullPath: string): Promise<StadiumStatsType | null>;
+}

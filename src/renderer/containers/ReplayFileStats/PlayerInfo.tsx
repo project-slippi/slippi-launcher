@@ -1,23 +1,37 @@
 import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import type { PlayerType } from "@slippi/slippi-js";
 
-import type { PlayerNames } from "@/lib/matchNames";
 import { getColor } from "@/lib/playerColors";
 import { getCharacterIcon } from "@/lib/utils";
 import { withFont } from "@/styles/withFont";
 
 type PlayerInfoProps = {
-  player: PlayerType;
-  names: PlayerNames;
-  isTeams?: boolean;
+  isTeams: boolean;
+  playerIndex: number;
+  type?: number;
+  teamId?: number;
+  characterId?: number;
+  characterColor?: number;
+  connectCode?: string;
+  displayName?: string;
+  tag?: string;
 };
 
-export const PlayerInfo = ({ player, names, isTeams }: PlayerInfoProps) => {
-  const backupName = player.type === 1 ? "CPU" : `Player ${player.port}`;
-  const charIcon = getCharacterIcon(player.characterId, player.characterColor);
-  const teamId = isTeams ? player.teamId : null;
+export const PlayerInfo = ({
+  isTeams,
+  playerIndex,
+  type,
+  teamId,
+  characterId,
+  characterColor,
+  connectCode,
+  displayName,
+  tag,
+}: PlayerInfoProps) => {
+  const port = playerIndex + 1;
+  const backupName = type === 1 ? "CPU" : `Player ${port}`;
+  const charIcon = getCharacterIcon(characterId ?? null, characterColor);
   return (
     <Outer>
       <div
@@ -47,23 +61,23 @@ export const PlayerInfo = ({ player, names, isTeams }: PlayerInfoProps) => {
             font-size: 18px;
           `}
         >
-          <span>{names.name || names.tag || backupName}</span>
+          <span>{displayName || tag || backupName}</span>
           <span
             css={css`
               display: inline-block;
               color: ${colors.grayDark};
               font-weight: bold;
-              background-color: ${getColor(player.port, teamId ?? undefined)};
+              background-color: ${getColor(port, isTeams ? teamId : undefined)};
               padding: 2px 6px;
               font-size: 12px;
               border-radius: 100px;
               margin-left: 5px;
             `}
           >
-            P{player.port}
+            P{port}
           </span>
         </div>
-        {names.code && (
+        {connectCode && (
           <div
             css={css`
               color: rgba(255, 255, 255, 0.6);
@@ -71,7 +85,7 @@ export const PlayerInfo = ({ player, names, isTeams }: PlayerInfoProps) => {
               font-weight: 500;
             `}
           >
-            {names.code}
+            {connectCode}
           </div>
         )}
       </div>

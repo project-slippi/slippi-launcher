@@ -9,7 +9,7 @@ export default {
 };
 
 export const NullValues = () => {
-  return generateBadge({ characterId: null, characterColor: null });
+  return generateBadge({ characterId: undefined, characterColor: undefined });
 };
 
 export const TagVariants = () => {

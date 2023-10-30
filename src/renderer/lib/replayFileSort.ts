@@ -1,8 +1,7 @@
+import { exists } from "@common/exists";
 import type { FileResult } from "@replays/types";
 import { Frames, GameMode } from "@slippi/slippi-js";
 import compareFunc from "compare-func";
-
-import { extractAllPlayerNames, namesMatch } from "@/lib/matchNames";
 
 // The minimum duration of games when filtering out short games
 const MIN_GAME_DURATION_FRAMES = 30 * 60;
@@ -48,10 +47,10 @@ const sortByValue = (key: ReplaySortOption): ((val: FileResult) => any) => {
   return (file) => {
     switch (key) {
       case ReplaySortOption.GAME_DURATION: {
-        return file.lastFrame ?? Frames.FIRST;
+        return file.game.lastFrame ?? Frames.FIRST;
       }
       case ReplaySortOption.DATE: {
-        return file.startTime ? Date.parse(file.startTime) : 0;
+        return file.game.startTime ? Date.parse(file.game.startTime) : 0;
       }
     }
   };
@@ -76,8 +75,8 @@ export const replayFileFilter =
   (filterOptions: ReplayFilterOptions): ((file: FileResult) => boolean) =>
   (file) => {
     if (filterOptions.hideShortGames) {
-      if (STADIUM_GAME_MODES.every((stadiumGameMode) => file.settings.gameMode !== stadiumGameMode)) {
-        if (file.lastFrame !== null && file.lastFrame <= MIN_GAME_DURATION_FRAMES) {
+      if (STADIUM_GAME_MODES.every((stadiumGameMode) => file.game.mode !== stadiumGameMode)) {
+        if (file.game.lastFrame != null && file.game.lastFrame <= MIN_GAME_DURATION_FRAMES) {
           return false;
         }
       }
@@ -85,7 +84,7 @@ export const replayFileFilter =
 
     // First try to match names
     const playerNamesMatch = (): boolean => {
-      const matchable = extractAllPlayerNames(file.settings, file.metadata);
+      const matchable = matchablePlayerNames(file);
       if (!filterOptions.searchText) {
         return true;
       } else if (matchable.length === 0) {
@@ -98,9 +97,40 @@ export const replayFileFilter =
     }
 
     // Match filenames
-    if (file.name.toLowerCase().includes(filterOptions.searchText.toLowerCase())) {
+    if (file.fileName.toLowerCase().includes(filterOptions.searchText.toLowerCase())) {
       return true;
     }
 
     return false;
   };
+
+function matchablePlayerNames(file: FileResult): string[] {
+  return file.game.players.flatMap((p) => {
+    return [p.displayName, p.tag, p.connectCode].filter(exists);
+  });
+}
+
+function namesMatch(lookingForNametags: string[], inGameTags: string[], fuzzyMatch = true): boolean {
+  if (lookingForNametags.length === 0 || inGameTags.length === 0) {
+    return false;
+  }
+
+  const match = inGameTags.find((name) => {
+    // If we're not doing fuzzy matching just return the exact match
+    if (!fuzzyMatch) {
+      return lookingForNametags.includes(name);
+    }
+
+    // Replace the netplay names with underscores and coerce to lowercase
+    // Smashladder internally represents spaces as underscores when writing SLP files
+    const fuzzyNetplayName = name.toLowerCase();
+    const matchedFuzzyTag = lookingForNametags.find((tag) => {
+      const lowerSearch = tag.toLowerCase();
+      const fuzzySearch = tag.split(" ").join("_").toLowerCase();
+      return fuzzyNetplayName.startsWith(lowerSearch) || fuzzyNetplayName.startsWith(fuzzySearch);
+    });
+    return matchedFuzzyTag !== undefined;
+  });
+
+  return match !== undefined;
+}

@@ -4,28 +4,28 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import Tooltip from "@mui/material/Tooltip";
-import type { FileResult } from "@replays/types";
-import type { PlayerType, StatsType, StockType } from "@slippi/slippi-js";
+import type { FileResult, PlayerInfo } from "@replays/types";
+import type { StatsType, StockType } from "@slippi/slippi-js";
 import { animations as animationUtils, Frames, moves as moveUtils } from "@slippi/slippi-js";
 import _ from "lodash";
 
-import { extractPlayerNames } from "@/lib/matchNames";
 import { convertFrameCountToDurationString } from "@/lib/time";
 import { getCharacterIcon } from "@/lib/utils";
 
 import * as T from "./TableStyles";
 
+type PlayerInfoType = Pick<PlayerInfo, "playerIndex" | "characterId" | "characterColor" | "displayName" | "tag">;
+
 const columnCount = 5;
 type KillTableProps = {
   file: FileResult;
   stats: StatsType;
-  player: PlayerType;
-  opp: PlayerType;
+  player: PlayerInfoType;
+  opp: PlayerInfoType;
   onPlay: (options: { path: string; startFrame: number }) => void;
 };
 
 export const KillTable = ({ file, stats, player, opp, onPlay }: KillTableProps) => {
-  const names = extractPlayerNames(player.playerIndex, file.settings, file.metadata);
   const playerDisplay = (
     <div style={{ display: "flex", alignItems: "center" }}>
       <img
@@ -36,7 +36,7 @@ export const KillTable = ({ file, stats, player, opp, onPlay }: KillTableProps) 
           marginRight: 10,
         }}
       />
-      <div style={{ fontWeight: 500 }}>{names.name || names.tag || `Player ${player.playerIndex + 1}`}</div>
+      <div style={{ fontWeight: 500 }}>{player.displayName || player.tag || `Player ${player.playerIndex + 1}`}</div>
     </div>
   );
   const generateStockRow = (stock: StockType) => {

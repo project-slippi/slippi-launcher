@@ -2,8 +2,8 @@ import { exists } from "@common/exists";
 import * as fs from "fs-extra";
 import path from "path";
 
-import { loadFile } from "./loadFile";
-import type { FileLoadResult, FileResult } from "./types";
+import type { FileLoadResult, FileResult } from "../types";
+import { loadFile } from "./load_file";
 
 export async function loadFolder(
   folder: string,

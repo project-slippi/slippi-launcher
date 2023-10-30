@@ -14,15 +14,14 @@ import TrackChangesIcon from "@mui/icons-material/TrackChanges";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import type { FileResult } from "@replays/types";
-import type { GameStartType, MetadataType, StadiumStatsType, StatsType } from "@slippi/slippi-js";
+import type { FileResult, PlayerInfo as PlayerInfoType } from "@replays/types";
+import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
 import { frameToGameTimer, GameMode, stages as stageUtils } from "@slippi/slippi-js";
-import _ from "lodash";
+import { get, groupBy } from "lodash";
 import moment from "moment";
 import React from "react";
 
 import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
-import { extractPlayerNames } from "@/lib/matchNames";
 import { convertFrameCountToDurationString, monthDayHourFormat } from "@/lib/time";
 
 import { PlayerInfo } from "./PlayerInfo";
@@ -34,26 +33,27 @@ const Outer = styled.div`
 `;
 
 type PlayerInfoDisplayProps = {
-  settings: GameStartType;
-  metadata: MetadataType | null;
+  isTeams?: boolean;
+  players: PlayerInfoType[];
 };
 
-const PlayerInfoDisplay = ({ settings, metadata }: PlayerInfoDisplayProps) => {
-  const teams = _.chain(settings.players)
-    .groupBy((player) => (settings.isTeams ? player.teamId : player.port))
-    .toArray()
-    .value();
-
+const PlayerInfoDisplay = ({ isTeams, players }: PlayerInfoDisplayProps) => {
+  const teams = Object.values(groupBy(players, (p) => (isTeams ? p.teamId : p.port)));
   const elements: JSX.Element[] = [];
   teams.forEach((team, idx) => {
     const teamEls = team.map((player) => {
-      const names = extractPlayerNames(player.playerIndex, settings, metadata);
       return (
         <PlayerInfo
           key={`player-${player.playerIndex}`}
-          player={player}
-          isTeams={Boolean(settings.isTeams)}
-          names={names}
+          isTeams={Boolean(isTeams)}
+          playerIndex={player.playerIndex}
+          type={player.type ?? undefined}
+          teamId={player.teamId ?? undefined}
+          characterId={player.characterId ?? undefined}
+          characterColor={player.characterColor ?? undefined}
+          connectCode={player.connectCode ?? undefined}
+          displayName={player.displayName ?? undefined}
+          tag={player.tag ?? undefined}
         />
       );
     });
@@ -114,7 +114,6 @@ export const GameProfileHeader = ({
   onPlay,
   onClose,
 }: GameProfileHeaderProps) => {
-  const { metadata, settings } = file;
   return (
     <div
       css={css`
@@ -152,9 +151,9 @@ export const GameProfileHeader = ({
               </span>
             </Tooltip>
           </div>
-          <PlayerInfoDisplay metadata={metadata} settings={settings} />
+          <PlayerInfoDisplay players={file.game.players} isTeams={file.game.isTeams} />
         </div>
-        <GameDetails file={file} stats={stats} stadiumStats={stadiumStats} settings={settings} />
+        <GameDetails file={file} stats={stats} stadiumStats={stadiumStats} />
       </div>
       <Controls disabled={disabled} index={index} total={total} onNext={onNext} onPrev={onPrev} onPlay={onPlay} />
     </div>
@@ -167,42 +166,37 @@ const GameDetails = ({
   stadiumStats,
 }: {
   file: FileResult;
-  settings: GameStartType;
-  stats: StatsType | null;
+  stats: Pick<StatsType, "lastFrame"> | null;
   stadiumStats: StadiumStatsType | null;
 }) => {
+  const { game } = file;
   let stageName = "Unknown";
   try {
-    stageName = stageUtils.getStageName(file.settings.stageId !== null ? file.settings.stageId : 0);
+    stageName = stageUtils.getStageName(game.stageId != null ? game.stageId : 0);
   } catch (err) {
     console.error(err);
   }
 
-  let platform = _.get(file.metadata, "playedOn") || "Unknown";
-  const consoleNick = _.get(file.metadata, "consoleNick");
-  if (consoleNick !== "unknown") {
-    platform = consoleNick || platform;
-  }
+  const platform = game.consoleNickname || game.platform || "Unknown";
 
-  const startAtDisplay = new Date(file.startTime ? Date.parse(file.startTime) : 0);
+  const startAtDisplay = new Date(game.startTime ? Date.parse(game.startTime) : 0);
 
   // Sometimes metadata doesn't exist and won't have the last frame
   // but we might have the stats computed which contains the real last frame.
   // In that situation, we should use that lastFrame not the metadata one.
-  let duration = _.get(file.metadata, "lastFrame");
-  if (duration === null || duration === undefined) {
-    duration = _.get(stats, "lastFrame");
-  }
-
+  const lastFrame = game.lastFrame ?? stats?.lastFrame;
   const durationLength =
-    duration !== null && duration !== undefined
-      ? file.settings.gameMode == GameMode.TARGET_TEST && file.metadata
-        ? frameToGameTimer(file.metadata?.lastFrame as number, file.settings)
-        : convertFrameCountToDurationString(duration, "m[m] ss[s]")
+    lastFrame != null
+      ? game.mode === GameMode.TARGET_TEST
+        ? frameToGameTimer(lastFrame, {
+            startingTimerSeconds: game.startingTimerSeconds ?? null,
+            timerType: game.timerType ?? null,
+          })
+        : convertFrameCountToDurationString(lastFrame, "m[m] ss[s]")
       : "Unknown";
 
-  const distance = _.get(stadiumStats, "distance");
-  const units = _.get(stadiumStats, "units");
+  const distance = get(stadiumStats, "distance");
+  const units = get(stadiumStats, "units");
 
   const eventDisplay = {
     label: <EventIcon />,
@@ -239,10 +233,8 @@ const GameDetails = ({
     content: `${distance} ${units}`,
   };
 
-  const gameMode = file.settings.gameMode;
-
   let displayData: { label: React.ReactNode; content: React.ReactNode }[];
-  switch (gameMode) {
+  switch (game.mode) {
     case GameMode.HOME_RUN_CONTEST:
       displayData = [eventDisplay, distanceDisplay, homerunDisplay, platformDisplay];
       break;
