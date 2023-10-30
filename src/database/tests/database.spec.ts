@@ -4,9 +4,9 @@ import { Kysely, SqliteDialect } from "kysely";
 import path from "path";
 
 import { migrateToLatest } from "../migrate_to_latest";
-import * as GameRepository from "../repositories/game_repository";
-import * as PlayerRepository from "../repositories/player_repository";
-import * as ReplayRepository from "../repositories/replay_repository";
+import { GameRepository } from "../repositories/game_repository";
+import { PlayerRepository } from "../repositories/player_repository";
+import { ReplayRepository } from "../repositories/replay_repository";
 import { aMockGameWith, aMockPlayerWith, aMockReplayWith } from "./mocks";
 
 describe("database integration tests", () => {

@@ -1,8 +1,8 @@
 import { chunk } from "@common/chunk";
 import { partition } from "@common/partition";
-import * as GameRepository from "@database/repositories/game_repository";
-import * as PlayerRepository from "@database/repositories/player_repository";
-import * as ReplayRepository from "@database/repositories/replay_repository";
+import { GameRepository } from "@database/repositories/game_repository";
+import { PlayerRepository } from "@database/repositories/player_repository";
+import { ReplayRepository } from "@database/repositories/replay_repository";
 import type { Database, NewGame, NewPlayer, NewReplay, Player, Replay } from "@database/schema";
 import type { FileLoadResult, FileResult, Progress, ReplayProvider } from "@replays/types";
 import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
