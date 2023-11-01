@@ -84,7 +84,7 @@ jobs:
         if: matrix.os == 'windows-latest' && (env.ES_USERNAME != null || github.event_name == 'pull_request')
         shell: bash
         run: |
-          msg="$(git log -1 --no-merges --pretty=%B)"
+          msg="$(git log -1 --no-merges --pretty=%B | head -n 1)"
           if [[ "$FROM_FORK" = "true" ]] || [[ ! "$msg" =~ "^release.*" ]];
           then
             echo "not a release, skipping code signing"
