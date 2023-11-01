@@ -155,7 +155,6 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
 
       const latestVersion = dolphinDownloadInfo?.version;
       const isOutdated = !latestVersion || (await this._isOutOfDate(latestVersion));
-      log.warn(`latest version = ${latestVersion}`);
       if (!isOutdated) {
         log.info("No update found...");
         onComplete();
@@ -226,7 +225,6 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
 
   private async _isOutOfDate(latestVersion: string): Promise<boolean> {
     const dolphinVersion = await this.getDolphinVersion();
-    log.info(`dolphin version = ${dolphinVersion}`);
     return !dolphinVersion || lt(dolphinVersion, latestVersion);
   }
 
@@ -234,7 +232,6 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
     try {
       const dolphinPath = await this.findDolphinExecutable();
       const dolphinVersionOut = spawnSync(dolphinPath, ["--version"]).stdout.toString();
-      log.warn(`dolphinVersionOut = ${dolphinVersionOut}`);
       const match = dolphinVersionOut.match(semverRegex);
       return match?.[0] ?? null;
     } catch (err) {
