@@ -85,7 +85,7 @@ jobs:
         shell: bash
         run: |
           msg="$(git log -1 --no-merges --pretty=%B | head -n 1)"
-          if [[ "$FROM_FORK" = "true" ]] || [[ ! "$msg" =~ "^release.*" ]];
+          if [[ "$FROM_FORK" = "true" ]] || [[ ! "$msg" =~ ^release:.* ]];
           then
             echo "not a release, skipping code signing"
             exit 0;
@@ -97,6 +97,7 @@ jobs:
           echo "ES_TOTP_SECRET=${{ secrets.ES_TOTP_SECRET }}" >> $GITHUB_ENV
           echo "CSC_LINK=${{ secrets.CERTIFICATE_WINDOWS_APPLICATION }}" >> $GITHUB_ENV
           echo "CSC_KEY_PASSWORD=${{ secrets.CERTIFICATE_WINDOWS_PASSWORD }}" >> $GITHUB_ENV
+          echo "signing enabled and secrets loaded"
 
       - name: Load macOS signing certificates and secrets
         if: matrix.os == 'macOS-latest' && env.CERTIFICATE_MACOS_PASSWORD != null
