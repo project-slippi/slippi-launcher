@@ -1,8 +1,8 @@
-import type { Game, Player, Replay } from "@database/schema";
+import type { FileRecord, GameRecord, PlayerRecord } from "@database/schema";
 import type { FileResult, PlayerInfo } from "@replays/types";
 import path from "path";
 
-function mapPlayerRecordToPlayerInfo(player: Player): PlayerInfo {
+function mapPlayerRecordToPlayerInfo(player: PlayerRecord): PlayerInfo {
   return {
     playerIndex: player.index,
     port: player.index + 1,
@@ -18,11 +18,14 @@ function mapPlayerRecordToPlayerInfo(player: Player): PlayerInfo {
   };
 }
 
-export function mapGameRecordToFileResult(gameRecord: Game & Replay, playerRecords: Player[]): FileResult {
-  const fullPath = path.resolve(gameRecord.folder, gameRecord.file_name);
+export function mapGameRecordToFileResult(
+  gameRecord: GameRecord & FileRecord,
+  playerRecords: PlayerRecord[],
+): FileResult {
+  const fullPath = path.resolve(gameRecord.folder, gameRecord.name);
   return {
-    id: `${gameRecord._id}-${gameRecord.replay_id}`,
-    fileName: gameRecord.file_name,
+    id: `${gameRecord._id}-${gameRecord.file_id}`,
+    fileName: gameRecord.name,
     fullPath,
     game: {
       players: playerRecords.map(mapPlayerRecordToPlayerInfo),

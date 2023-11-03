@@ -1,20 +1,20 @@
 import type { ColumnType, Generated, Insertable, Selectable, Updateable } from "kysely";
 
-export interface ReplayTable {
+export type FileTable = {
   _id: Generated<number>;
   folder: string;
-  file_name: string;
+  name: string;
   size_bytes: ColumnType<number, number | undefined>;
   birth_time: string | null;
-}
+};
 
-export type Replay = Selectable<ReplayTable>;
-export type NewReplay = Insertable<ReplayTable>;
-export type ReplayUpdate = Updateable<ReplayTable>;
+export type FileRecord = Selectable<FileTable>;
+export type NewFile = Insertable<FileTable>;
+export type FileUpdate = Updateable<FileTable>;
 
-export interface GameTable {
+export type GameTable = {
   _id: Generated<number>;
-  replay_id: number; // Foreign key
+  file_id: number; // Foreign key
   is_ranked: ColumnType<number, number | undefined>;
   is_teams: ColumnType<number, number | undefined>;
   stage: number | null;
@@ -28,13 +28,13 @@ export interface GameTable {
   match_id: string | null;
   sequence_number: ColumnType<number, number | undefined>;
   tiebreak_index: ColumnType<number, number | undefined>;
-}
+};
 
-export type Game = Selectable<GameTable>;
+export type GameRecord = Selectable<GameTable>;
 export type NewGame = Insertable<GameTable>;
 export type GameUpdate = Updateable<GameTable>;
 
-export interface PlayerTable {
+export type PlayerTable = {
   _id: Generated<number>;
   game_id: number; // Foreign key
   index: number;
@@ -48,14 +48,14 @@ export interface PlayerTable {
   display_name: string | null;
   tag: string | null;
   user_id: string | null;
-}
+};
 
-export type Player = Selectable<PlayerTable>;
+export type PlayerRecord = Selectable<PlayerTable>;
 export type NewPlayer = Insertable<PlayerTable>;
 export type PlayerUpdate = Updateable<PlayerTable>;
 
-export interface Database {
-  replay: ReplayTable;
+export type Database = {
+  file: FileTable;
   game: GameTable;
   player: PlayerTable;
-}
+};

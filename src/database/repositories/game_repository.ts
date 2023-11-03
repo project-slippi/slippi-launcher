@@ -9,32 +9,32 @@ export class GameRepository {
     return db.insertInto("game").values(game).returning("_id").executeTakeFirstOrThrow();
   }
 
-  public static async findGameByReplayId(db: DB, replayId: number) {
-    const query = db.selectFrom("replay").where("_id", "=", replayId).innerJoin("game", "game.replay_id", "replay._id");
+  public static async findGameByFileId(db: DB, fileId: number) {
+    const query = db.selectFrom("file").where("_id", "=", fileId).innerJoin("game", "game.file_id", "file._id");
 
-    const res = await query.selectAll(["replay", "game"]).select(["game._id as _id"]).executeTakeFirst();
+    const res = await query.selectAll(["file", "game"]).select(["game._id as _id"]).executeTakeFirst();
     return res;
   }
 
   public static async findGameByFolderAndFilename(db: DB, folder: string, filename: string) {
     const query = db
-      .selectFrom("replay")
+      .selectFrom("file")
       .where("folder", "=", folder)
-      .where("file_name", "=", filename)
-      .innerJoin("game", "game.replay_id", "replay._id");
+      .where("name", "=", filename)
+      .innerJoin("game", "game.file_id", "file._id");
 
-    const res = await query.selectAll(["replay", "game"]).select(["game._id as _id"]).executeTakeFirst();
+    const res = await query.selectAll(["file", "game"]).select(["game._id as _id"]).executeTakeFirst();
     return res;
   }
 
   public static async findGamesByFolder(db: DB, folder: string, limit?: number) {
-    let query = db.selectFrom("replay").where("folder", "=", folder).innerJoin("game", "game.replay_id", "replay._id");
+    let query = db.selectFrom("file").where("folder", "=", folder).innerJoin("game", "game.file_id", "file._id");
 
     if (limit != null && limit > 0) {
       query = query.limit(limit);
     }
 
-    const res = await query.selectAll(["replay", "game"]).select(["game._id as _id"]).execute();
+    const res = await query.selectAll(["file", "game"]).select(["game._id as _id"]).execute();
     return res;
   }
 }

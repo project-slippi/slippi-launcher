@@ -1,17 +1,17 @@
-import type { NewGame, NewPlayer, NewReplay } from "@database/schema";
+import type { NewFile, NewGame, NewPlayer } from "@database/schema";
 
-export function aMockReplayWith(opts: Partial<NewReplay> = {}): NewReplay {
+export function aMockFileWith(opts: Partial<NewFile> = {}): NewFile {
   return {
     folder: "folder",
-    file_name: "file_name",
+    name: "file_name",
     size_bytes: 123,
     ...opts,
   };
 }
 
-export function aMockGameWith(replayId: number, opts: Partial<NewGame> = {}): NewGame {
+export function aMockGameWith(fileId: number, opts: Partial<NewGame> = {}): NewGame {
   return {
-    replay_id: replayId,
+    file_id: fileId,
     is_teams: 0,
     stage: 12,
     start_time: null,

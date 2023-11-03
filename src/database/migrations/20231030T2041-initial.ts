@@ -2,19 +2,19 @@ import type { Kysely } from "kysely";
 
 export async function up(db: Kysely<any>): Promise<void> {
   await db.schema
-    .createTable("replay")
+    .createTable("file")
     .addColumn("_id", "integer", (col) => col.primaryKey())
     .addColumn("folder", "text", (col) => col.notNull())
-    .addColumn("file_name", "text", (col) => col.notNull())
+    .addColumn("name", "text", (col) => col.notNull())
     .addColumn("size_bytes", "integer", (col) => col.defaultTo(0).notNull())
     .addColumn("birth_time", "text")
-    .addUniqueConstraint("unique_folder_file_name_constraint", ["folder", "file_name"])
+    .addUniqueConstraint("unique_folder_name_constraint", ["folder", "name"])
     .execute();
 
   await db.schema
     .createTable("game")
     .addColumn("_id", "integer", (col) => col.primaryKey())
-    .addColumn("replay_id", "integer", (col) => col.references("replay._id").onDelete("cascade").notNull())
+    .addColumn("file_id", "integer", (col) => col.references("file._id").onDelete("cascade").notNull())
     .addColumn("is_ranked", "integer", (col) => col.defaultTo(0).notNull())
     .addColumn("is_teams", "integer", (col) => col.defaultTo(0).notNull())
     .addColumn("stage", "integer")
@@ -49,13 +49,8 @@ export async function up(db: Kysely<any>): Promise<void> {
     .execute();
 
   // Create indexes
-  await db.schema
-    .createIndex("replay_folder_file_name_index")
-    .on("replay")
-    .column("folder")
-    .column("file_name")
-    .execute();
-  await db.schema.createIndex("game_replay_id_index").on("game").column("replay_id").execute();
+  await db.schema.createIndex("file_folder_name_index").on("file").column("folder").column("name").execute();
+  await db.schema.createIndex("game_file_id_index").on("game").column("file_id").execute();
   await db.schema
     .createIndex("game_match_id_sequence_number_index")
     .on("game")
@@ -67,7 +62,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
-  await db.schema.dropTable("replay").execute();
+  await db.schema.dropTable("file").execute();
   await db.schema.dropTable("game").execute();
   await db.schema.dropTable("players").execute();
 }

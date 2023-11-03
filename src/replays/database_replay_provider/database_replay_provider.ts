@@ -1,9 +1,9 @@
 import { chunk } from "@common/chunk";
 import { partition } from "@common/partition";
+import { FileRepository } from "@database/repositories/file_repository";
 import { GameRepository } from "@database/repositories/game_repository";
 import { PlayerRepository } from "@database/repositories/player_repository";
-import { ReplayRepository } from "@database/repositories/replay_repository";
-import type { Database, NewGame, NewPlayer, NewReplay, Player, Replay } from "@database/schema";
+import type { Database, FileRecord, NewFile, NewGame, NewPlayer, PlayerRecord } from "@database/schema";
 import type { FileLoadResult, FileResult, Progress, ReplayProvider } from "@replays/types";
 import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
 import { SlippiGame } from "@slippi/slippi-js";
@@ -29,13 +29,13 @@ export class DatabaseReplayProvider implements ReplayProvider {
 
     if (!gameRecord) {
       // Add the game if it doesn't already exist in our database
-      const { replayId } = await this.addReplay(folder, filename);
+      const { fileId } = await this.insertNewReplayFile(folder, filename);
 
       // TODO: Figure out how to return the game record directly after adding
       // to avoid needing to do another database query
-      gameRecord = await GameRepository.findGameByReplayId(this.db, replayId);
+      gameRecord = await GameRepository.findGameByFileId(this.db, fileId);
       if (!gameRecord) {
-        throw new Error(`Could not find replay ${replayId} at path: ${filePath}`);
+        throw new Error(`Could not find file ${fileId} at path: ${filePath}`);
       }
     }
 
@@ -58,11 +58,11 @@ export class DatabaseReplayProvider implements ReplayProvider {
 
     const [gameRecords, totalBytes] = await Promise.all([
       GameRepository.findGamesByFolder(this.db, folder),
-      ReplayRepository.findTotalSizeByFolder(this.db, folder),
+      FileRepository.findTotalSizeByFolder(this.db, folder),
     ]);
 
     const players = await Promise.all(
-      gameRecords.map(async ({ _id: gameId }): Promise<[number, Player[]]> => {
+      gameRecords.map(async ({ _id: gameId }): Promise<[number, PlayerRecord[]]> => {
         const playerRecords = await PlayerRepository.findAllPlayersByGame(this.db, gameId);
         return [gameId, playerRecords];
       }),
@@ -102,9 +102,9 @@ export class DatabaseReplayProvider implements ReplayProvider {
   }
 
   private async syncReplayDatabase(folder: string, onProgress?: (progress: Progress) => void, batchSize = 100) {
-    const [fileResults, existingReplays] = await Promise.all([
+    const [fileResults, existingFiles] = await Promise.all([
       fs.readdir(folder, { withFileTypes: true }),
-      ReplayRepository.findAllReplaysInFolder(this.db, folder),
+      FileRepository.findAllFilesInFolder(this.db, folder),
     ]);
 
     const slpFileNames = fileResults
@@ -114,18 +114,16 @@ export class DatabaseReplayProvider implements ReplayProvider {
     // Find all records in the database that no longer exist
     const deleteOldReplays = async () => {
       const setOfSlpFileNames = new Set(slpFileNames);
-      const fileIdsToDelete = existingReplays
-        .filter(({ file_name }) => !setOfSlpFileNames.has(file_name))
-        .map(({ _id }) => _id);
+      const fileIdsToDelete = existingFiles.filter(({ name }) => !setOfSlpFileNames.has(name)).map(({ _id }) => _id);
       const chunkedFileIdsToDelete = chunk(fileIdsToDelete, batchSize);
       for (const batch of chunkedFileIdsToDelete) {
-        await ReplayRepository.deleteReplayById(this.db, ...batch);
+        await FileRepository.deleteFileById(this.db, ...batch);
       }
     };
 
     // Find all new SLP files that are not yet in the database
     const insertNewReplays = async () => {
-      const setOfExistingReplayNames = new Set(existingReplays.map((r) => r.file_name));
+      const setOfExistingReplayNames = new Set(existingFiles.map((r) => r.name));
       const slpFilesToAdd = slpFileNames.filter((name) => !setOfExistingReplayNames.has(name));
       const total = slpFilesToAdd.length;
 
@@ -134,7 +132,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
       for (const batch of chunkedReplays) {
         const results = await Promise.allSettled(
           batch.map(async (filename): Promise<void> => {
-            await this.addReplay(folder, filename);
+            await this.insertNewReplayFile(folder, filename);
           }),
         );
 
@@ -163,16 +161,16 @@ export class DatabaseReplayProvider implements ReplayProvider {
     }
   }
 
-  private async addReplay(folder: string, filename: string): Promise<{ replayId: number }> {
+  private async insertNewReplayFile(folder: string, filename: string): Promise<{ fileId: number }> {
     const fullPath = path.resolve(folder, filename);
     const game = new SlippiGame(fullPath);
 
-    const newReplay = await generateNewReplay(folder, filename);
+    const newFile = await generateNewFile(folder, filename);
 
     return await this.db.transaction().execute(async (trx) => {
-      const replayRecord = await ReplayRepository.insertReplay(trx, newReplay);
+      const fileRecord = await FileRepository.insertFile(trx, newFile);
 
-      const newGame = generateNewGame(replayRecord, game);
+      const newGame = generateNewGame(fileRecord, game);
       // Ensure we have a valid game
       if (newGame) {
         const { _id: gameId } = await GameRepository.insertGame(trx, newGame);
@@ -183,12 +181,12 @@ export class DatabaseReplayProvider implements ReplayProvider {
         );
       }
 
-      return { replayId: replayRecord._id };
+      return { fileId: fileRecord._id };
     });
   }
 }
 
-async function generateNewReplay(folder: string, filename: string): Promise<NewReplay> {
+async function generateNewFile(folder: string, filename: string): Promise<NewFile> {
   const fullPath = path.resolve(folder, filename);
   let size = 0;
   let birthtime: string | null = null;
@@ -199,8 +197,8 @@ async function generateNewReplay(folder: string, filename: string): Promise<NewR
   } catch (err) {
     log.warn(`Error running stat for file ${fullPath}: `, err);
   }
-  const newReplay: NewReplay = {
-    file_name: filename,
+  const newReplay: NewFile = {
+    name: filename,
     folder,
     size_bytes: size,
     birth_time: birthtime,
@@ -208,7 +206,7 @@ async function generateNewReplay(folder: string, filename: string): Promise<NewR
   return newReplay;
 }
 
-function generateNewGame(replay: Replay, game: SlippiGame): NewGame | null {
+function generateNewGame(file: FileRecord, game: SlippiGame): NewGame | null {
   // Load settings
   const settings = game.getSettings();
   if (!settings || settings.players.length === 0) {
@@ -219,10 +217,10 @@ function generateNewGame(replay: Replay, game: SlippiGame): NewGame | null {
   const matchId = settings.matchInfo?.matchId ?? null;
   const isRanked = matchId != null && matchId.startsWith("mode.ranked-");
 
-  const gameStartTime = inferStartTime(metadata?.startAt ?? null, replay.file_name, replay.birth_time);
+  const gameStartTime = inferStartTime(metadata?.startAt ?? null, file.name, file.birth_time);
 
   const newGame: NewGame = {
-    replay_id: replay._id,
+    file_id: file._id,
     is_ranked: Number(isRanked),
     is_teams: Number(settings.isTeams),
     stage: settings.stageId,

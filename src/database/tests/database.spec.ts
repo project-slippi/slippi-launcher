@@ -4,10 +4,10 @@ import { Kysely, SqliteDialect } from "kysely";
 import path from "path";
 
 import { migrateToLatest } from "../migrate_to_latest";
+import { FileRepository } from "../repositories/file_repository";
 import { GameRepository } from "../repositories/game_repository";
 import { PlayerRepository } from "../repositories/player_repository";
-import { ReplayRepository } from "../repositories/replay_repository";
-import { aMockGameWith, aMockPlayerWith, aMockReplayWith } from "./mocks";
+import { aMockFileWith, aMockGameWith, aMockPlayerWith } from "./mocks";
 
 describe("database integration tests", () => {
   let db: Kysely<Database>;
@@ -18,39 +18,39 @@ describe("database integration tests", () => {
 
   afterEach(async () => {
     // Clear the database after each test
-    await db.deleteFrom("replay").execute();
+    await db.deleteFrom("file").execute();
     await db.deleteFrom("game").execute();
     await db.deleteFrom("player").execute();
   });
 
   it("should count total folder size", async () => {
     const folder = "folder";
-    await ReplayRepository.insertReplay(db, aMockReplayWith({ folder, file_name: "foo", size_bytes: 10 }));
-    expect(await ReplayRepository.findTotalSizeByFolder(db, folder)).toEqual(10);
-    await ReplayRepository.insertReplay(db, aMockReplayWith({ folder, file_name: "bar", size_bytes: 20 }));
-    expect(await ReplayRepository.findTotalSizeByFolder(db, folder)).toEqual(30);
-    await ReplayRepository.insertReplay(db, aMockReplayWith({ folder, file_name: "baz", size_bytes: 30 }));
-    expect(await ReplayRepository.findTotalSizeByFolder(db, folder)).toEqual(60);
+    await FileRepository.insertFile(db, aMockFileWith({ folder, name: "foo", size_bytes: 10 }));
+    expect(await FileRepository.findTotalSizeByFolder(db, folder)).toEqual(10);
+    await FileRepository.insertFile(db, aMockFileWith({ folder, name: "bar", size_bytes: 20 }));
+    expect(await FileRepository.findTotalSizeByFolder(db, folder)).toEqual(30);
+    await FileRepository.insertFile(db, aMockFileWith({ folder, name: "baz", size_bytes: 30 }));
+    expect(await FileRepository.findTotalSizeByFolder(db, folder)).toEqual(60);
   });
 
-  it("should disallow replays with the same folder and filename", async () => {
-    await ReplayRepository.insertReplay(db, aMockReplayWith({ folder: "folder", file_name: "name" }));
-    await ReplayRepository.insertReplay(db, aMockReplayWith({ folder: "folder", file_name: "different_name" }));
-    await ReplayRepository.insertReplay(db, aMockReplayWith({ folder: "different_folder", file_name: "name" }));
+  it("should disallow files with the same folder and filename", async () => {
+    await FileRepository.insertFile(db, aMockFileWith({ folder: "folder", name: "name" }));
+    await FileRepository.insertFile(db, aMockFileWith({ folder: "folder", name: "different_name" }));
+    await FileRepository.insertFile(db, aMockFileWith({ folder: "different_folder", name: "name" }));
 
-    expect(await getRowCount(db, "replay")).toEqual(3);
+    expect(await getRowCount(db, "file")).toEqual(3);
 
-    const result = ReplayRepository.insertReplay(db, aMockReplayWith({ folder: "folder", file_name: "name" }));
+    const result = FileRepository.insertFile(db, aMockFileWith({ folder: "folder", name: "name" }));
     await expect(result).rejects.toThrowError();
   });
 
-  it("should delete games when replays are deleted", async () => {
-    const { replayId } = await addMockGame();
-    expect(await getRowCount(db, "replay")).toEqual(1);
+  it("should delete games when files are deleted", async () => {
+    const { fileId } = await addMockGame();
+    expect(await getRowCount(db, "file")).toEqual(1);
     expect(await getRowCount(db, "game")).toEqual(1);
 
-    await ReplayRepository.deleteReplayById(db, replayId);
-    expect(await getRowCount(db, "replay")).toEqual(0);
+    await FileRepository.deleteFileById(db, fileId);
+    expect(await getRowCount(db, "file")).toEqual(0);
     expect(await getRowCount(db, "game")).toEqual(0);
   });
 
@@ -76,10 +76,10 @@ describe("database integration tests", () => {
     await expect(result).rejects.toThrowError();
   });
 
-  const addMockGame = async (): Promise<{ replayId: number; gameId: number }> => {
-    const { _id: replayId } = await ReplayRepository.insertReplay(db, aMockReplayWith());
-    const { _id: gameId } = await GameRepository.insertGame(db, aMockGameWith(replayId));
-    return { replayId, gameId };
+  const addMockGame = async (): Promise<{ fileId: number; gameId: number }> => {
+    const { _id: fileId } = await FileRepository.insertFile(db, aMockFileWith());
+    const { _id: gameId } = await GameRepository.insertGame(db, aMockGameWith(fileId));
+    return { fileId, gameId };
   };
 });
 
