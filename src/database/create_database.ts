@@ -9,15 +9,34 @@ import path from "path";
 import { migrateToLatest } from "./migrate_to_latest";
 import type { Database } from "./schema";
 
-// The latest database schema version.
-// Increment this when we want users to re-create the database from scratch.
+/** The latest database schema version.
+ *  Only increment this when we want users to re-create the database from scratch.
+ */
 const DATABASE_USER_VERSION = 0;
 
 export async function createDatabase(databasePath?: string): Promise<Kysely<Database>> {
+  try {
+    const database = await initDatabaseAndRunMigrations(databasePath);
+    return database;
+  } catch (err) {
+    log.warn(`Error creating database: ${err}. Force retrying...`);
+  }
+
+  return await initDatabaseAndRunMigrations(databasePath, { force: true });
+}
+
+async function initDatabaseAndRunMigrations(
+  databasePath?: string,
+  { force }: { force?: boolean } = {},
+): Promise<Kysely<Database>> {
   let source: string;
   if (databasePath) {
     log.info(`Using database at: ${databasePath}`);
-    await checkDatabaseUserVersion(databasePath);
+    const userVersion = getDatabaseUserVersion(databasePath);
+    log.info(`Current database user version is ${userVersion}. Latest version is ${DATABASE_USER_VERSION}.`);
+    if (userVersion !== DATABASE_USER_VERSION || force) {
+      await backupAndRecreateDatabase(databasePath);
+    }
     source = databasePath;
   } else {
     log.info(`Database path not provided. Using in-memory SQLite database`);
@@ -48,17 +67,16 @@ export async function createDatabase(databasePath?: string): Promise<Kysely<Data
   return database;
 }
 
-async function checkDatabaseUserVersion(databasePath: string) {
+function getDatabaseUserVersion(databasePath: string): number {
   const sqliteDb = new Sqlite(databasePath);
   const userVersion = sqliteDb.pragma("user_version", { simple: true }) as number;
-  log.info(`Current database user version is ${userVersion}. Latest version is ${DATABASE_USER_VERSION}.`);
-  if (userVersion === DATABASE_USER_VERSION) {
-    return;
-  }
+  return userVersion;
+}
 
+async function backupAndRecreateDatabase(databasePath: string) {
   // We want to hard-reset/re-index the database
   const backupDatabasePath = databasePath + ".bak";
-  log.info(`Database schema is out of date. Backing up database to: ${backupDatabasePath}`);
+  log.info(`Backing up database to: ${backupDatabasePath}`);
 
   // Delete the existing backup if necessary
   await fs.rm(backupDatabasePath, { force: true });
