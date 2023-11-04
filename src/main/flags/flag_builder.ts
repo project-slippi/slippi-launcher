@@ -44,9 +44,7 @@ export class FlagBuilder<Flags extends Record<never, never>> {
     const flagOverrides: { [k in keyof Flags]: unknown } = {} as any;
     const args = this.argv.slice(1);
 
-    let i = 0;
-    while (i < args.length) {
-      const argument = args[i];
+    args.forEach((argument) => {
       const [key, value] = argument.split("=");
       const flagToOverride = this.overrides[key];
       if (flagToOverride) {
@@ -59,7 +57,7 @@ export class FlagBuilder<Flags extends Record<never, never>> {
             break;
           case "boolean":
             if (value) {
-              // This allows us to handle something like --someBooleanFlag=false
+              // This allows us to handle something like --some-boolean-flag=false
               flagOverrides[flagToOverride] = parseBooleanFlag(value, currentFlagValue);
             } else {
               flagOverrides[flagToOverride] = true;
@@ -67,8 +65,7 @@ export class FlagBuilder<Flags extends Record<never, never>> {
             break;
         }
       }
-      i += 1;
-    }
+    });
     return flagOverrides as Partial<Flags>;
   }
 }
