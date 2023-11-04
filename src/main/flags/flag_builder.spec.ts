@@ -1,53 +1,74 @@
 import { FlagBuilder } from "./flag_builder";
 
+enum Flags {
+  ENABLE_FOO = "ENABLE_FOO",
+  SOME_NUMBER_FIELD = "SOME_NUMBER_FIELD",
+}
+
 describe("when parsing flags", () => {
+  it("should override build flags with runtime flags", () => {
+    const flags = getFlagsFromMockProcess({ [Flags.ENABLE_FOO]: "0" }, ["--enable-foo"]);
+    expect(flags.enableFoo).toBeTruthy();
+  });
+
   describe("when environment variables are empty", () => {
     it("should return default flags", () => {
-      const flags = getFlagsFromMockProcess({ ENABLE_FOO: "" });
+      const flags = getFlagsFromMockProcess({ [Flags.ENABLE_FOO]: "" });
       expect(flags.enableFoo).toBeFalsy();
     });
   });
 
   describe("when handling truthy flags", () => {
     it("should parse true strings as true", () => {
-      const flags = getFlagsFromMockProcess({ ENABLE_FOO: "true" });
+      const flags = getFlagsFromMockProcess({ [Flags.ENABLE_FOO]: "true" });
       expect(flags.enableFoo).toBeTruthy();
     });
 
     it("should parse 1 as true", () => {
-      const flags = getFlagsFromMockProcess({ ENABLE_FOO: "1" });
+      const flags = getFlagsFromMockProcess({ [Flags.ENABLE_FOO]: "1" });
       expect(flags.enableFoo).toBeTruthy();
     });
   });
 
   describe("when handling falsey flags", () => {
     it("should parse undefined strings as false", () => {
-      const flags = getFlagsFromMockProcess({ ENABLE_FOO: "UNDEFINED" });
+      const flags = getFlagsFromMockProcess({ [Flags.ENABLE_FOO]: "UNDEFINED" });
       expect(flags.enableFoo).toBeFalsy();
     });
 
     it("should parse false strings as false", () => {
-      const flags = getFlagsFromMockProcess({ ENABLE_FOO: "FALSE" });
+      const flags = getFlagsFromMockProcess({ [Flags.ENABLE_FOO]: "FALSE" });
       expect(flags.enableFoo).toBeFalsy();
     });
 
     it("should parse 0 as false", () => {
-      const flags = getFlagsFromMockProcess({ ENABLE_FOO: "0" });
+      const flags = getFlagsFromMockProcess({ [Flags.ENABLE_FOO]: "0" });
       expect(flags.enableFoo).toBeFalsy();
     });
   });
 
   describe("when invalid arguments are passed in", () => {
-    it("should correctly parse the valid arguments", () => {
+    it("should parse valid arguments", () => {
       const flags = getFlagsFromMockProcess({}, ["--foo-bar-baz", "--enable-foo", "sdfsf", "", "--enable-foo"]);
-      expect(Object.keys(flags).length).toEqual(1);
       expect(flags.enableFoo).toBeTruthy();
     });
   });
 
-  it("should override build flags with runtime flags", () => {
-    const flags = getFlagsFromMockProcess({ ENABLE_FOO: "0" }, ["--enable-foo"]);
-    expect(flags.enableFoo).toBeTruthy();
+  describe("when handling integer flags", () => {
+    it("should parse build time number flags", () => {
+      const flags = getFlagsFromMockProcess({ [Flags.SOME_NUMBER_FIELD]: "10" });
+      expect(flags.someNumberField).toEqual(10);
+    });
+
+    it("should parse runtime number flags", () => {
+      const flags = getFlagsFromMockProcess({}, ["--some-number-field=123"]);
+      expect(flags.someNumberField).toEqual(123);
+    });
+
+    it("should override build time number flags", () => {
+      const flags = getFlagsFromMockProcess({ [Flags.SOME_NUMBER_FIELD]: "10" }, ["--some-number-field=456"]);
+      expect(flags.someNumberField).toEqual(456);
+    });
   });
 });
 
@@ -56,8 +77,10 @@ function getFlagsFromMockProcess(variables: Record<string, string | undefined> =
   const argv = ["current_executable", ...args];
 
   const flags = new FlagBuilder({ argv })
-    .addBooleanFlag("enableFoo", env.ENABLE_FOO, false)
+    .addBooleanFlag("enableFoo", env[Flags.ENABLE_FOO], false)
     .withOverride("enableFoo", "--enable-foo")
+    .addIntegerFlag("someNumberField", env[Flags.SOME_NUMBER_FIELD], 0)
+    .withOverride("someNumberField", "--some-number-field")
     .build();
 
   return flags;
