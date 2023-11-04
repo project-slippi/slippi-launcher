@@ -11,6 +11,11 @@ describe("when parsing flags", () => {
     expect(flags.enableFoo).toBeTruthy();
   });
 
+  it("should can support setting boolean runtime flags", () => {
+    const flags = getFlagsFromMockProcess({ [Flags.ENABLE_FOO]: "1" }, ["--enable-foo=false"]);
+    expect(flags.enableFoo).toBeFalsy();
+  });
+
   describe("when environment variables are empty", () => {
     it("should return default flags", () => {
       const flags = getFlagsFromMockProcess({ [Flags.ENABLE_FOO]: "" });
