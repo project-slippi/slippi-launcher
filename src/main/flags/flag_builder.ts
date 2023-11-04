@@ -33,7 +33,15 @@ export class FlagBuilder<Types extends Record<never, never>> {
   }
 
   public build(): Types {
-    const flagsToReturn = this.flags;
+    const overrides = this.handleFlagOverrides();
+    return {
+      ...this.flags,
+      ...overrides,
+    } as Types;
+  }
+
+  private handleFlagOverrides(): Partial<Types> {
+    const flagOverrides: { [k in keyof Types]: unknown } = {} as any;
     const args = this.argv.slice(1);
 
     let i = 0;
@@ -45,21 +53,21 @@ export class FlagBuilder<Types extends Record<never, never>> {
         const currentFlagValue = this.flags[flagToOverride];
         switch (typeof currentFlagValue) {
           case "number":
-            flagsToReturn[flagToOverride] = parseIntegerFlag(value, currentFlagValue);
+            flagOverrides[flagToOverride] = parseIntegerFlag(value, currentFlagValue);
             break;
           case "boolean":
             if (value) {
               // This allows us to handle something like --someBooleanFlag=false
-              flagsToReturn[flagToOverride] = parseBooleanFlag(value, currentFlagValue);
+              flagOverrides[flagToOverride] = parseBooleanFlag(value, currentFlagValue);
             } else {
-              flagsToReturn[flagToOverride] = true;
+              flagOverrides[flagToOverride] = true;
             }
             break;
         }
       }
       i += 1;
     }
-    return flagsToReturn as Types;
+    return flagOverrides as Partial<Types>;
   }
 }
 
