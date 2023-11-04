@@ -53,7 +53,9 @@ export class FlagBuilder<Flags extends Record<never, never>> {
         const currentFlagValue = this.flags[flagToOverride];
         switch (typeof currentFlagValue) {
           case "number":
-            flagOverrides[flagToOverride] = parseIntegerFlag(value, currentFlagValue);
+            if (value) {
+              flagOverrides[flagToOverride] = parseIntegerFlag(value, currentFlagValue);
+            }
             break;
           case "boolean":
             if (value) {

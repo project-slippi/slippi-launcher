@@ -70,9 +70,21 @@ describe("when parsing flags", () => {
       expect(flags.someNumberField).toEqual(123);
     });
 
+    it("should ignore empty runtime number flags", () => {
+      const defaultFlags = getFlagsFromMockProcess({}, ["--some-number-field="]);
+      expect(defaultFlags.someNumberField).toEqual(0);
+      const configFlags = getFlagsFromMockProcess({ [Flags.SOME_NUMBER_FIELD]: "123" }, ["--some-number-field="]);
+      expect(configFlags.someNumberField).toEqual(123);
+    });
+
     it("should override build time number flags", () => {
       const flags = getFlagsFromMockProcess({ [Flags.SOME_NUMBER_FIELD]: "10" }, ["--some-number-field=456"]);
       expect(flags.someNumberField).toEqual(456);
+    });
+
+    it("should handle negative numbers", () => {
+      const flags = getFlagsFromMockProcess({}, ["--some-number-field=-123"]);
+      expect(flags.someNumberField).toEqual(-123);
     });
   });
 });
