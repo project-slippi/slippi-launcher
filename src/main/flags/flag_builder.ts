@@ -1,8 +1,8 @@
 type ProcessLike = { argv: string[] };
 
-export class FlagBuilder<Types extends Record<never, never>> {
-  private flags: { [k in keyof Types]: unknown } = {} as any;
-  private overrides: Partial<Record<string, keyof Types>> = {};
+export class FlagBuilder<Flags extends Record<never, never>> {
+  private flags: { [k in keyof Flags]: unknown } = {} as any;
+  private overrides: Partial<Record<string, keyof Flags>> = {};
   private readonly argv: string[];
 
   constructor({ argv }: ProcessLike = process) {
@@ -13,7 +13,7 @@ export class FlagBuilder<Types extends Record<never, never>> {
     name: K,
     value: string | undefined,
     defaultValue: boolean,
-  ): FlagBuilder<Types & { [k in K]: boolean }> {
+  ): FlagBuilder<Flags & { [k in K]: boolean }> {
     (this.flags as any)[name] = parseBooleanFlag(value, defaultValue);
     return this as any;
   }
@@ -22,26 +22,26 @@ export class FlagBuilder<Types extends Record<never, never>> {
     name: K,
     value: string | undefined,
     defaultValue: number,
-  ): FlagBuilder<Types & { [k in K]: number }> {
+  ): FlagBuilder<Flags & { [k in K]: number }> {
     (this.flags as any)[name] = parseIntegerFlag(value, defaultValue);
     return this as any;
   }
 
-  public withOverride(flagToOverride: keyof Types, flagName: string) {
+  public withOverride(flagToOverride: keyof Flags, flagName: string) {
     this.overrides[flagName] = flagToOverride;
     return this;
   }
 
-  public build(): Types {
+  public build(): Flags {
     const overrides = this.handleFlagOverrides();
     return {
       ...this.flags,
       ...overrides,
-    } as Types;
+    } as Flags;
   }
 
-  private handleFlagOverrides(): Partial<Types> {
-    const flagOverrides: { [k in keyof Types]: unknown } = {} as any;
+  private handleFlagOverrides(): Partial<Flags> {
+    const flagOverrides: { [k in keyof Flags]: unknown } = {} as any;
     const args = this.argv.slice(1);
 
     let i = 0;
@@ -67,7 +67,7 @@ export class FlagBuilder<Types extends Record<never, never>> {
       }
       i += 1;
     }
-    return flagOverrides as Partial<Types>;
+    return flagOverrides as Partial<Flags>;
   }
 }
 
