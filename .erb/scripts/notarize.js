@@ -27,7 +27,6 @@ module.exports = async function (params) {
   console.log(`Notarizing ${appId} found at ${appPath} (this could take awhile, get some coffee...)`);
 
   const keyPath = path.join(process.env.HOME, `private_keys/AuthKey_${process.env.APPLE_API_KEY_ID}.p8`);
-  fs.writeFileSync(keyPath, process.env.APPLE_API_KEY);
 
   try {
     await electronNotarize.notarize({
@@ -42,7 +41,5 @@ module.exports = async function (params) {
     console.log(`Successfully notarized ${appId}`);
   } catch (error) {
     console.error(error);
-  } finally {
-    fs.rmSync(keyPath);
   }
 };
