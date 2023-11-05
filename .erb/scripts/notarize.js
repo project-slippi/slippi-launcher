@@ -13,7 +13,7 @@ module.exports = async function (params) {
 
   // Bail early if this is a fork-caused PR build, which doesn't get
   // secrets.
-  if (!process.env.APPLE_TEAM_PROVIDER_ID || !process.env.APPLE_API_KEY || !process.env.APPLE_ISSUER_ID) {
+  if (!process.env.APPLE_API_KEY_ID || !process.env.APPLE_API_KEY || !process.env.APPLE_ISSUER_ID) {
     console.log("Bailing, no secrets found.");
     return;
   }
@@ -26,11 +26,15 @@ module.exports = async function (params) {
 
   console.log(`Notarizing ${appId} found at ${appPath} (this could take awhile, get some coffee...)`);
 
+  const keyPath = path.join(process.env.HOME, `private_keys/AuthKey_${process.env.APPLE_API_KEY_ID}.p8`);
+
   try {
     await electronNotarize.notarize({
+      tool: "notarytool",
       appBundleId: appId,
       appPath: appPath,
-      appleApiKey: process.env.APPLE_API_KEY,
+      appleApiKeyId: process.env.APPLE_API_KEY_ID,
+      appleApiKey: keyPath,
       appleApiIssuer: process.env.APPLE_ISSUER_ID,
     });
 
