@@ -4,8 +4,6 @@ const path = require("path");
 const electronNotarize = require("@electron/notarize");
 const electronBuilderConfig = require("../../electron-builder.json");
 
-const KEY_PATH = "./key.txt";
-
 module.exports = async function (params) {
   if (process.platform !== "darwin" || !process.env.SLIPPI_ENABLE_SIGNING) {
     return;
@@ -28,7 +26,8 @@ module.exports = async function (params) {
 
   console.log(`Notarizing ${appId} found at ${appPath} (this could take awhile, get some coffee...)`);
 
-  fs.writeFileSync(KEY_PATH, process.env.APPLE_API_KEY);
+  const keyPath = path.resolve("./key.txt");
+  fs.writeFileSync(keyPath, process.env.APPLE_API_KEY);
 
   try {
     await electronNotarize.notarize({
@@ -36,13 +35,14 @@ module.exports = async function (params) {
       appBundleId: appId,
       appPath: appPath,
       appleApiKeyId: process.env.APPLE_API_KEY_ID,
-      appleApiKey: KEY_PATH,
+      appleApiKey: keyPath,
       appleApiIssuer: process.env.APPLE_ISSUER_ID,
     });
 
-    fs.rmSync(KEY_PATH);
     console.log(`Successfully notarized ${appId}`);
   } catch (error) {
     console.error(error);
+  } finally {
+    fs.rmSync(keyPath);
   }
 };
