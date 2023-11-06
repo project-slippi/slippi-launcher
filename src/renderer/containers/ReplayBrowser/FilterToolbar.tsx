@@ -7,14 +7,15 @@ import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import InputBase from "@mui/material/InputBase";
 import debounce from "lodash/debounce";
-import React from "react";
+import React, { useRef } from "react";
 
 import { Button, Checkbox, Dropdown } from "@/components/FormInputs";
 import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
-import { useReplays } from "@/lib/hooks/useReplays";
+import { ReplayPresenter, useReplays } from "@/lib/hooks/useReplays";
 import { useSettings } from "@/lib/hooks/useSettings";
 import { useToasts } from "@/lib/hooks/useToasts";
 import { ReplaySortOption, SortDirection } from "@/lib/replayFileSort";
+import { useServices } from "@/services";
 
 const Outer = styled.div`
   display: flex;
@@ -34,8 +35,9 @@ type FilterToolbarProps = {
 };
 
 export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarProps>((props, ref) => {
+  const { replayService } = useServices();
+  const presenter = useRef(new ReplayPresenter(replayService));
   const { disabled } = props;
-  const init = useReplays((store) => store.init);
   const rootSlpPath = useSettings((store) => store.settings.rootSlpPath);
   const extraSlpPaths = useSettings((store) => store.settings.extraSlpPaths);
   const currentFolder = useReplays((store) => store.currentFolder);
@@ -51,8 +53,8 @@ export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarPro
   const { showError } = useToasts();
 
   const refresh = React.useCallback(() => {
-    init(rootSlpPath, extraSlpPaths, true, currentFolder).catch(showError);
-  }, [rootSlpPath, extraSlpPaths, init, currentFolder, showError]);
+    presenter.current.init(rootSlpPath, extraSlpPaths, true, currentFolder).catch(showError);
+  }, [rootSlpPath, extraSlpPaths, currentFolder, showError]);
 
   const debounceChange = debounce((text: string) => {
     setStoreSearchText(text);
