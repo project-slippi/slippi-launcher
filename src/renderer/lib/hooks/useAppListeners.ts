@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { IsoValidity } from "@common/types";
+import type { Progress } from "@replays/types";
 import log from "electron-log";
 import throttle from "lodash/throttle";
 import React, { useRef } from "react";
@@ -73,7 +74,7 @@ export const useAppListeners = () => {
     return broadcastService.onBroadcastErrorMessage(setBroadcastError);
   }, [setBroadcastError, broadcastService]);
 
-  const updateProgress = replayPresenter.current.updateProgress;
+  const updateProgress = (progress: Progress | null) => replayPresenter.current.updateProgress(progress);
   const throttledUpdateProgress = throttle(updateProgress, 50);
   React.useEffect(() => {
     return replayService.onReplayLoadProgressUpdate(throttledUpdateProgress);
@@ -132,14 +133,13 @@ export const useAppListeners = () => {
       });
   }, [isoPath, setIsValid, setIsValidating]);
 
-  const clearSelectedFile = replayPresenter.current.clearSelectedFile;
   const { goToReplayStatsPage } = useReplayBrowserNavigation();
   const moveToStatsPage = React.useCallback(
     (filePath: string) => {
-      clearSelectedFile();
+      replayPresenter.current.clearSelectedFile();
       goToReplayStatsPage(filePath);
     },
-    [clearSelectedFile, goToReplayStatsPage],
+    [goToReplayStatsPage],
   );
   React.useEffect(() => {
     return replayService.onStatsPageRequest(moveToStatsPage);
