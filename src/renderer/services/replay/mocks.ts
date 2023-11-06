@@ -43,7 +43,7 @@ export function aMockGameWith(opts: Partial<GameInfo> = {}): GameInfo {
     platform: "Dolphin",
     consoleNickname: null,
     mode: 0x08,
-    lastFrame: 15600,
+    lastFrame: 15477,
     timerType: 0b10,
     startingTimerSeconds: 480,
     ...opts,

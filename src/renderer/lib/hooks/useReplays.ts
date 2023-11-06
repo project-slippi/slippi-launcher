@@ -57,7 +57,6 @@ export class ReplayPresenter {
     forceReload?: boolean,
     currentFolder?: string,
   ): Promise<void> {
-    // public async init(rootFolder, extraFolders, forceReload, currentFolder) {
     const { currentRoot } = useReplays.getState();
     if (currentRoot === rootFolder && !forceReload) {
       return;
@@ -187,7 +186,6 @@ export const useReplaySelection = () => {
   const presenter = useRef(new ReplayPresenter(replayService));
   const { files } = useReplayBrowserList();
   const selectedFiles = useReplays((store) => store.selectedFiles);
-  const setSelectedFiles = presenter.current.setSelectedFiles;
 
   const [lastClickIndex, setLastClickIndex] = useState<number | null>(null);
 
@@ -220,7 +218,7 @@ export const useReplaySelection = () => {
       }
     });
 
-    setSelectedFiles(newSelection);
+    presenter.current.setSelectedFiles(newSelection);
   };
 
   const onFileClick = (index: number, isShiftHeld: boolean) => {
@@ -254,11 +252,11 @@ export const useReplaySelection = () => {
   };
 
   const clearSelection = () => {
-    setSelectedFiles([]);
+    presenter.current.setSelectedFiles([]);
   };
 
   const selectAll = () => {
-    setSelectedFiles(files.map((f) => f.fullPath));
+    presenter.current.setSelectedFiles(files.map((f) => f.fullPath));
   };
 
   return {
