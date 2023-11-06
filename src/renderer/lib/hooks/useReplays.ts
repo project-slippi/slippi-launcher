@@ -1,9 +1,10 @@
-import type { FileLoadResult, FileResult, FolderResult, Progress } from "@replays/types";
-import { produce } from "immer";
-import { useState } from "react";
-import create from "zustand";
+import type { FileResult, FolderResult, Progress, ReplayService } from "@replays/types";
+import { useRef, useState } from "react";
+import { create } from "zustand";
+import { immer } from "zustand/middleware/immer";
 
 import { useSettings } from "@/lib/hooks/useSettings";
+import { useServices } from "@/services";
 
 import { useReplayBrowserList } from "./useReplayBrowserList";
 
@@ -17,25 +18,13 @@ type StoreState = {
   fileErrorCount: number;
   scrollRowItem: number;
   selectedFiles: string[];
-  folderTree: readonly FolderResult[];
-  collapsedFolders: readonly string[];
+  folderTree: FolderResult[];
+  collapsedFolders: string[];
   selectedFile: {
     index: number | null;
     total: number | null;
     fileResult: FileResult | null;
   };
-};
-
-type StoreReducers = {
-  init: (rootFolder: string, extraFolders: string[], forceReload?: boolean, currentFolder?: string) => Promise<void>;
-  selectFile: (file: FileResult, index?: number | null, total?: number | null) => void;
-  clearSelectedFile: () => void;
-  removeFiles: (filePaths: string[]) => void;
-  loadFolder: (childPath?: string, forceReload?: boolean) => Promise<void>;
-  toggleFolder: (fullPath: string) => void;
-  setScrollRowItem: (offset: number) => void;
-  updateProgress: (progress: Progress | null) => void;
-  setSelectedFiles: (filePaths: string[]) => void;
 };
 
 const initialState: StoreState = {
@@ -57,12 +46,19 @@ const initialState: StoreState = {
   },
 };
 
-export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
-  // Set the initial state
-  ...initialState,
+export const useReplays = create<StoreState>()(immer(() => initialState));
 
-  init: async (rootFolder, extraFolders, forceReload, currentFolder) => {
-    const { currentRoot, loadFolder } = get();
+export class ReplayPresenter {
+  constructor(private readonly replayService: ReplayService) {}
+
+  public async init(
+    rootFolder: string,
+    extraFolders: string[],
+    forceReload?: boolean,
+    currentFolder?: string,
+  ): Promise<void> {
+    // public async init(rootFolder, extraFolders, forceReload, currentFolder) {
+    const { currentRoot } = useReplays.getState();
     if (currentRoot === rootFolder && !forceReload) {
       return;
     }
@@ -70,51 +66,51 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     const loadFolderList = async () => {
       const folders = [rootFolder, ...extraFolders];
       // Init the folder tree
-      await window.electron.replays.initializeFolderTree(folders);
+      await this.replayService.initializeFolderTree(folders);
 
       // Get the result after folder selection
-      const folderTree = await window.electron.replays.selectTreeFolder(currentFolder ?? rootFolder);
+      const folderTree = await this.replayService.selectTreeFolder(currentFolder ?? rootFolder);
 
-      set({
-        currentRoot: rootFolder,
-        folderTree,
-        collapsedFolders: [],
+      useReplays.setState((state) => {
+        state.currentRoot = rootFolder;
+        state.folderTree = [...folderTree];
+        state.collapsedFolders = [];
       });
     };
 
-    await Promise.all([loadFolderList(), loadFolder(currentFolder ?? rootFolder, true)]);
-  },
+    await Promise.all([loadFolderList(), this.loadFolder(currentFolder ?? rootFolder, true)]);
+  }
 
-  selectFile: (file, index = null, total = null) => {
-    set({
-      selectedFile: { fileResult: file, index, total },
+  public selectFile(file: FileResult, index: number | null = null, total: number | null = null): void {
+    useReplays.setState((state) => {
+      state.selectedFile = { fileResult: file, index, total };
     });
-  },
+  }
 
-  clearSelectedFile: () => {
-    set({
-      selectedFile: {
+  public clearSelectedFile() {
+    useReplays.setState((state) => {
+      state.selectedFile = {
         fileResult: null,
         index: null,
         total: null,
-      },
+      };
     });
-  },
+  }
 
-  removeFiles: (filePaths: string[]) => {
-    set((state) =>
-      produce(state, (draft) => {
-        draft.files = draft.files.filter(({ fullPath }) => !filePaths.includes(fullPath));
-      }),
-    );
-  },
+  public removeFiles(filePaths: string[]) {
+    useReplays.setState((state) => {
+      state.files = state.files.filter(({ fullPath }) => !filePaths.includes(fullPath));
+    });
+  }
 
-  updateProgress: (progress: { current: number; total: number } | null) => {
-    set({ progress });
-  },
+  public updateProgress(progress: { current: number; total: number } | null) {
+    useReplays.setState((state) => {
+      state.progress = progress;
+    });
+  }
 
-  loadFolder: async (childPath, forceReload) => {
-    const { currentFolder, loading } = get();
+  public async loadFolder(childPath?: string, forceReload?: boolean): Promise<void> {
+    const { currentFolder, loading } = useReplays.getState();
 
     if (loading) {
       console.warn("A folder is already loading! Please wait for it to finish first.");
@@ -122,11 +118,16 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
     }
 
     const folderToLoad = childPath ?? currentFolder;
-    set({ currentFolder: folderToLoad, selectedFiles: [] });
+    useReplays.setState((state) => {
+      state.currentFolder = folderToLoad;
+      state.selectedFiles = [];
+    });
 
     const loadFolderTree = async () => {
-      const folderTree = await window.electron.replays.selectTreeFolder(folderToLoad);
-      set({ folderTree });
+      const folderTree = await this.replayService.selectTreeFolder(folderToLoad);
+      useReplays.setState((state) => {
+        state.folderTree = [...folderTree];
+      });
     };
 
     const loadFolderDetails = async () => {
@@ -135,53 +136,58 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
         return;
       }
 
-      set({ loading: true, progress: null });
+      useReplays.setState((state) => {
+        state.loading = true;
+        state.progress = null;
+      });
       try {
-        const result = await handleReplayFolderLoading(folderToLoad);
-        set({
-          scrollRowItem: 0,
-          files: result.files,
-          loading: false,
-          fileErrorCount: result.fileErrorCount,
-          totalBytes: result.totalBytes,
+        const result = await this.replayService.loadReplayFolder(folderToLoad);
+        useReplays.setState((state) => {
+          state.scrollRowItem = 0;
+          state.files = result.files;
+          state.loading = false;
+          state.fileErrorCount = result.fileErrorCount;
+          state.totalBytes = result.totalBytes;
         });
       } catch (err) {
-        set({ loading: false, progress: null });
+        useReplays.setState((state) => {
+          state.loading = false;
+          state.progress = null;
+        });
       }
     };
-
     await Promise.all([loadFolderTree(), loadFolderDetails()]);
-  },
+  }
 
-  toggleFolder: (folder) => {
-    set((state) =>
-      produce(state, (draft) => {
-        if (draft.collapsedFolders.includes(folder)) {
-          draft.collapsedFolders = draft.collapsedFolders.filter((f) => f !== folder);
-        } else {
-          draft.collapsedFolders = [...draft.collapsedFolders, folder];
-        }
-      }),
-    );
-  },
+  public toggleFolder(folder: string) {
+    useReplays.setState((state) => {
+      if (state.collapsedFolders.includes(folder)) {
+        state.collapsedFolders = state.collapsedFolders.filter((f) => f !== folder);
+      } else {
+        state.collapsedFolders = [...state.collapsedFolders, folder];
+      }
+    });
+  }
 
-  setScrollRowItem: (rowItem) => {
-    set({ scrollRowItem: rowItem });
-  },
+  public setScrollRowItem(rowItem: number) {
+    useReplays.setState((state) => {
+      state.scrollRowItem = rowItem;
+    });
+  }
 
-  setSelectedFiles: (filePaths: string[]) => {
-    set({ selectedFiles: filePaths });
-  },
-}));
-
-const handleReplayFolderLoading = async (folderPath: string): Promise<FileLoadResult> => {
-  return window.electron.replays.loadReplayFolder(folderPath);
-};
+  public setSelectedFiles(filePaths: string[]) {
+    useReplays.setState((state) => {
+      state.selectedFiles = filePaths;
+    });
+  }
+}
 
 export const useReplaySelection = () => {
+  const { replayService } = useServices();
+  const presenter = useRef(new ReplayPresenter(replayService));
   const { files } = useReplayBrowserList();
   const selectedFiles = useReplays((store) => store.selectedFiles);
-  const setSelectedFiles = useReplays((store) => store.setSelectedFiles);
+  const setSelectedFiles = presenter.current.setSelectedFiles;
 
   const [lastClickIndex, setLastClickIndex] = useState<number | null>(null);
 

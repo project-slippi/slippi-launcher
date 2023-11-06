@@ -8,19 +8,19 @@ import {
   ipc_selectTreeFolder,
   ipc_statsPageRequestedEvent,
 } from "./ipc";
-import type { Progress } from "./types";
+import type { Progress, ReplayService } from "./types";
 
-export default {
-  async loadReplayFolder(folderPath: string) {
-    const { result } = await ipc_loadReplayFolder.renderer!.trigger({ folderPath });
-    return result;
-  },
+const replayApi: ReplayService = {
   async initializeFolderTree(folders: readonly string[]) {
     const { result } = await ipc_initializeFolderTree.renderer!.trigger({ folders });
     return result;
   },
   async selectTreeFolder(folderPath: string) {
     const { result } = await ipc_selectTreeFolder.renderer!.trigger({ folderPath });
+    return result;
+  },
+  async loadReplayFolder(folderPath: string) {
+    const { result } = await ipc_loadReplayFolder.renderer!.trigger({ folderPath });
     return result;
   },
   async calculateGameStats(filePath: string) {
@@ -44,3 +44,5 @@ export default {
     return destroy;
   },
 };
+
+export default replayApi;

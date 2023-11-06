@@ -57,3 +57,13 @@ export interface ReplayProvider {
   calculateGameStats(fullPath: string): Promise<StatsType | null>;
   calculateStadiumStats(fullPath: string): Promise<StadiumStatsType | null>;
 }
+
+export interface ReplayService {
+  initializeFolderTree(folders: readonly string[]): Promise<readonly FolderResult[]>;
+  selectTreeFolder(folderPath: string): Promise<readonly FolderResult[]>;
+  loadReplayFolder(folderPath: string): Promise<FileLoadResult>;
+  calculateGameStats(filePath: string): Promise<{ file: FileResult; stats: StatsType | null }>;
+  calculateStadiumStats(filePath: string): Promise<{ file: FileResult; stadiumStats: StadiumStatsType | null }>;
+  onReplayLoadProgressUpdate(handle: (progress: Progress) => void): () => void;
+  onStatsPageRequest(handle: (filePath: string) => void): () => void;
+}
