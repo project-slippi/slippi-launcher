@@ -57,7 +57,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .column("match_id")
     .column("sequence_number")
     .execute();
-  await db.schema.createIndex("player_game_id_index").on("player").column("game_id").execute();
+  await db.schema.createIndex("player_game_id_index").on("player").column("game_id").column("index").execute();
   await db.schema.createIndex("player_user_id_index").on("player").column("user_id").execute();
 }
 
