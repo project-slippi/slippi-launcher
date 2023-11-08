@@ -3,7 +3,7 @@ import { partition } from "@common/partition";
 import { FileRepository } from "@database/repositories/file_repository";
 import { GameRepository } from "@database/repositories/game_repository";
 import { PlayerRepository } from "@database/repositories/player_repository";
-import type { Database, FileRecord, NewFile, NewGame, NewPlayer, PlayerRecord } from "@database/schema";
+import type { Database, FileRecord, NewFile, NewGame, NewPlayer } from "@database/schema";
 import type { FileLoadResult, FileResult, Progress, ReplayProvider } from "@replays/types";
 import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
 import { SlippiGame } from "@slippi/slippi-js";
@@ -39,8 +39,8 @@ export class DatabaseReplayProvider implements ReplayProvider {
       }
     }
 
-    const playerRecords = await PlayerRepository.findAllPlayersByGame(this.db, gameRecord._id);
-    return mapGameRecordToFileResult(gameRecord, playerRecords);
+    const playerMap = await PlayerRepository.findAllPlayersByGame(this.db, gameRecord._id);
+    return mapGameRecordToFileResult(gameRecord, playerMap.get(gameRecord._id) ?? []);
   }
 
   public async loadFolder(folder: string, onProgress?: (progress: Progress) => void): Promise<FileLoadResult> {
@@ -61,14 +61,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
       FileRepository.findTotalSizeByFolder(this.db, folder),
     ]);
 
-    const players = await Promise.all(
-      gameRecords.map(async ({ _id: gameId }): Promise<[number, PlayerRecord[]]> => {
-        const playerRecords = await PlayerRepository.findAllPlayersByGame(this.db, gameId);
-        return [gameId, playerRecords];
-      }),
-    );
-    const playerMap = new Map(players);
-
+    const playerMap = await PlayerRepository.findAllPlayersByGame(this.db, ...gameRecords.map((game) => game._id));
     const files = gameRecords.map((gameRecord): FileResult => {
       const players = playerMap.get(gameRecord._id) ?? [];
       return mapGameRecordToFileResult(gameRecord, players);
