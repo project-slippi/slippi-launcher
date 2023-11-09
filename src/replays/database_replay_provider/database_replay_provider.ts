@@ -31,9 +31,9 @@ export class DatabaseReplayProvider implements ReplayProvider {
       const replay = await this.insertNewReplayFile(folder, filename);
       if (!replay.gameRecord) {
         throw new Error(`Could not load game info from file ${replay.fileRecord._id} at path: ${filePath}`);
-      } else {
-        gameRecord = { ...replay.fileRecord, ...replay.gameRecord };
       }
+
+      gameRecord = { ...replay.fileRecord, ...replay.gameRecord };
     }
 
     const playerMap = await PlayerRepository.findAllPlayersByGame(this.db, gameRecord._id);
