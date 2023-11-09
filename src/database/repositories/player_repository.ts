@@ -5,8 +5,8 @@ import type { Database, NewPlayer, PlayerRecord } from "../schema";
 type DB = Kysely<Database>;
 
 export class PlayerRepository {
-  public static async insertPlayer(db: DB, ...player: NewPlayer[]) {
-    return db.insertInto("player").values(player).returning("_id").execute();
+  public static async insertPlayer(db: DB, ...player: NewPlayer[]): Promise<PlayerRecord[]> {
+    return db.insertInto("player").values(player).returningAll().execute();
   }
 
   public static async findAllPlayersByGame(db: DB, ...gameId: number[]): Promise<Map<number, PlayerRecord[]>> {

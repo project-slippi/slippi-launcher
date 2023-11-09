@@ -3,7 +3,7 @@ import { partition } from "@common/partition";
 import { FileRepository } from "@database/repositories/file_repository";
 import { GameRepository } from "@database/repositories/game_repository";
 import { PlayerRepository } from "@database/repositories/player_repository";
-import type { Database, FileRecord, GameRecord, NewFile, NewGame, NewPlayer } from "@database/schema";
+import type { Database, FileRecord, GameRecord, NewFile, NewGame, NewPlayer, PlayerRecord } from "@database/schema";
 import type { FileLoadResult, FileResult, Progress, ReplayProvider } from "@replays/types";
 import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
 import { SlippiGame } from "@slippi/slippi-js";
@@ -25,19 +25,24 @@ export class DatabaseReplayProvider implements ReplayProvider {
     const filename = path.basename(filePath);
     const folder = path.dirname(filePath);
 
+    let playerRecords: PlayerRecord[];
     let gameRecord = await GameRepository.findGameByFolderAndFilename(this.db, folder, filename);
 
-    if (!gameRecord) {
+    if (gameRecord) {
+      const playerMap = await PlayerRepository.findAllPlayersByGame(this.db, gameRecord._id);
+      playerRecords = playerMap.get(gameRecord._id) ?? [];
+    } else {
+      // We haven't indexed this file before so add it to the database
       const replay = await this.insertNewReplayFile(folder, filename);
       if (!replay.gameRecord) {
         throw new Error(`Could not load game info from file ${replay.fileRecord._id} at path: ${filePath}`);
       }
 
       gameRecord = { ...replay.fileRecord, ...replay.gameRecord };
+      playerRecords = replay.playerRecords;
     }
 
-    const playerMap = await PlayerRepository.findAllPlayersByGame(this.db, gameRecord._id);
-    return mapGameRecordToFileResult(gameRecord, playerMap.get(gameRecord._id) ?? []);
+    return mapGameRecordToFileResult(gameRecord, playerRecords);
   }
 
   public async loadFolder(folder: string, onProgress?: (progress: Progress) => void): Promise<FileLoadResult> {
@@ -155,7 +160,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
   private async insertNewReplayFile(
     folder: string,
     filename: string,
-  ): Promise<{ fileRecord: FileRecord; gameRecord?: GameRecord }> {
+  ): Promise<{ fileRecord: FileRecord; gameRecord: GameRecord | undefined; playerRecords: PlayerRecord[] }> {
     const fullPath = path.resolve(folder, filename);
     const game = new SlippiGame(fullPath);
 
@@ -164,16 +169,16 @@ export class DatabaseReplayProvider implements ReplayProvider {
     return await this.db.transaction().execute(async (trx) => {
       const fileRecord = await FileRepository.insertFile(trx, newFile);
 
-      let gameRecord: GameRecord | undefined;
       const newGame = generateNewGame(fileRecord, game);
-      // Ensure we have a valid game
-      if (newGame) {
-        gameRecord = await GameRepository.insertGame(trx, newGame);
-        const newPlayers = generateNewPlayers(gameRecord._id, game);
-        await PlayerRepository.insertPlayer(trx, ...newPlayers);
+      if (!newGame) {
+        return { fileRecord, gameRecord: undefined, playerRecords: [] };
       }
 
-      return { fileRecord: fileRecord, gameRecord };
+      const gameRecord = await GameRepository.insertGame(trx, newGame);
+      const newPlayers = generateNewPlayers(gameRecord._id, game);
+      const playerRecords = await PlayerRepository.insertPlayer(trx, ...newPlayers);
+
+      return { fileRecord, gameRecord, playerRecords };
     });
   }
 }
