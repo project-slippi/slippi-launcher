@@ -26,23 +26,22 @@ export class DatabaseReplayProvider implements ReplayProvider {
     const folder = path.dirname(filePath);
 
     let playerRecords: PlayerRecord[];
-    let gameRecord = await GameRepository.findGameByFolderAndFilename(this.db, folder, filename);
+    let gameAndFileRecord = await GameRepository.findGameByFolderAndFilename(this.db, folder, filename);
 
-    if (gameRecord) {
-      const playerMap = await PlayerRepository.findAllPlayersByGame(this.db, gameRecord._id);
-      playerRecords = playerMap.get(gameRecord._id) ?? [];
+    if (gameAndFileRecord) {
+      const playerMap = await PlayerRepository.findAllPlayersByGame(this.db, gameAndFileRecord._id);
+      playerRecords = playerMap.get(gameAndFileRecord._id) ?? [];
     } else {
       // We haven't indexed this file before so add it to the database
       const replay = await this.insertNewReplayFile(folder, filename);
       if (!replay.gameRecord) {
         throw new Error(`Could not load game info from file ${replay.fileRecord._id} at path: ${filePath}`);
       }
-
-      gameRecord = { ...replay.fileRecord, ...replay.gameRecord };
+      gameAndFileRecord = { ...replay.fileRecord, ...replay.gameRecord };
       playerRecords = replay.playerRecords;
     }
 
-    return mapGameRecordToFileResult(gameRecord, playerRecords);
+    return mapGameRecordToFileResult(gameAndFileRecord, playerRecords);
   }
 
   public async loadFolder(folder: string, onProgress?: (progress: Progress) => void): Promise<FileLoadResult> {

@@ -19,25 +19,25 @@ function mapPlayerRecordToPlayerInfo(player: PlayerRecord): PlayerInfo {
 }
 
 export function mapGameRecordToFileResult(
-  gameRecord: GameRecord & FileRecord,
+  gameAndFileRecord: GameRecord & FileRecord,
   playerRecords: PlayerRecord[],
 ): FileResult {
-  const fullPath = path.resolve(gameRecord.folder, gameRecord.name);
+  const fullPath = path.resolve(gameAndFileRecord.folder, gameAndFileRecord.name);
   return {
-    id: `${gameRecord._id}-${gameRecord.file_id}`,
-    fileName: gameRecord.name,
+    id: `${gameAndFileRecord._id}-${gameAndFileRecord.file_id}`,
+    fileName: gameAndFileRecord.name,
     fullPath,
     game: {
       players: playerRecords.map(mapPlayerRecordToPlayerInfo),
-      isTeams: Boolean(gameRecord.is_teams),
-      stageId: gameRecord.stage,
-      startTime: gameRecord.start_time,
-      platform: gameRecord.platform,
-      consoleNickname: gameRecord.console_nickname,
-      mode: gameRecord.mode,
-      lastFrame: gameRecord.last_frame,
-      timerType: gameRecord.timer_type,
-      startingTimerSeconds: gameRecord.starting_timer_secs,
+      isTeams: Boolean(gameAndFileRecord.is_teams),
+      stageId: gameAndFileRecord.stage,
+      startTime: gameAndFileRecord.start_time,
+      platform: gameAndFileRecord.platform,
+      consoleNickname: gameAndFileRecord.console_nickname,
+      mode: gameAndFileRecord.mode,
+      lastFrame: gameAndFileRecord.last_frame,
+      timerType: gameAndFileRecord.timer_type,
+      startingTimerSeconds: gameAndFileRecord.starting_timer_secs,
     },
   };
 }
