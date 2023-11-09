@@ -1,12 +1,12 @@
 import type { Kysely } from "kysely";
 
-import type { Database, NewGame } from "../schema";
+import type { Database, GameRecord, NewGame } from "../schema";
 
 type DB = Kysely<Database>;
 
 export class GameRepository {
-  public static async insertGame(db: DB, game: NewGame) {
-    return db.insertInto("game").values(game).returning("_id").executeTakeFirstOrThrow();
+  public static async insertGame(db: DB, game: NewGame): Promise<GameRecord> {
+    return db.insertInto("game").values(game).returningAll().executeTakeFirstOrThrow();
   }
 
   public static async findGameByFileId(db: DB, fileId: number) {

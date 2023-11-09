@@ -3,7 +3,7 @@ import { partition } from "@common/partition";
 import { FileRepository } from "@database/repositories/file_repository";
 import { GameRepository } from "@database/repositories/game_repository";
 import { PlayerRepository } from "@database/repositories/player_repository";
-import type { Database, FileRecord, NewFile, NewGame, NewPlayer } from "@database/schema";
+import type { Database, FileRecord, GameRecord, NewFile, NewGame, NewPlayer } from "@database/schema";
 import type { FileLoadResult, FileResult, Progress, ReplayProvider } from "@replays/types";
 import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
 import { SlippiGame } from "@slippi/slippi-js";
@@ -28,14 +28,11 @@ export class DatabaseReplayProvider implements ReplayProvider {
     let gameRecord = await GameRepository.findGameByFolderAndFilename(this.db, folder, filename);
 
     if (!gameRecord) {
-      // Add the game if it doesn't already exist in our database
-      const { fileId } = await this.insertNewReplayFile(folder, filename);
-
-      // TODO: Figure out how to return the game record directly after adding
-      // to avoid needing to do another database query
-      gameRecord = await GameRepository.findGameByFileId(this.db, fileId);
-      if (!gameRecord) {
-        throw new Error(`Could not find file ${fileId} at path: ${filePath}`);
+      const replay = await this.insertNewReplayFile(folder, filename);
+      if (!replay.gameRecord) {
+        throw new Error(`Could not load game info from file ${replay.fileRecord._id} at path: ${filePath}`);
+      } else {
+        gameRecord = { ...replay.fileRecord, ...replay.gameRecord };
       }
     }
 
@@ -61,7 +58,8 @@ export class DatabaseReplayProvider implements ReplayProvider {
       FileRepository.findTotalSizeByFolder(this.db, folder),
     ]);
 
-    const playerMap = await PlayerRepository.findAllPlayersByGame(this.db, ...gameRecords.map((game) => game._id));
+    const gameIds = gameRecords.map((game) => game._id);
+    const playerMap = await PlayerRepository.findAllPlayersByGame(this.db, ...gameIds);
     const files = gameRecords.map((gameRecord): FileResult => {
       const players = playerMap.get(gameRecord._id) ?? [];
       return mapGameRecordToFileResult(gameRecord, players);
@@ -154,7 +152,10 @@ export class DatabaseReplayProvider implements ReplayProvider {
     }
   }
 
-  private async insertNewReplayFile(folder: string, filename: string): Promise<{ fileId: number }> {
+  private async insertNewReplayFile(
+    folder: string,
+    filename: string,
+  ): Promise<{ fileRecord: FileRecord; gameRecord?: GameRecord }> {
     const fullPath = path.resolve(folder, filename);
     const game = new SlippiGame(fullPath);
 
@@ -163,18 +164,16 @@ export class DatabaseReplayProvider implements ReplayProvider {
     return await this.db.transaction().execute(async (trx) => {
       const fileRecord = await FileRepository.insertFile(trx, newFile);
 
+      let gameRecord: GameRecord | undefined;
       const newGame = generateNewGame(fileRecord, game);
       // Ensure we have a valid game
       if (newGame) {
-        const { _id: gameId } = await GameRepository.insertGame(trx, newGame);
-        await Promise.all(
-          generateNewPlayers(gameId, game).map((newPlayer) => {
-            return PlayerRepository.insertPlayer(trx, newPlayer);
-          }),
-        );
+        gameRecord = await GameRepository.insertGame(trx, newGame);
+        const newPlayers = generateNewPlayers(gameRecord._id, game);
+        await PlayerRepository.insertPlayer(trx, ...newPlayers);
       }
 
-      return { fileId: fileRecord._id };
+      return { fileRecord: fileRecord, gameRecord };
     });
   }
 }
