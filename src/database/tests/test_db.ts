@@ -17,3 +17,9 @@ export async function initTestDb(): Promise<Kysely<Database>> {
   await migrateToLatest(database, migrationsFolder);
   return database;
 }
+
+export async function resetTestDb(db: Kysely<Database>) {
+  await db.deleteFrom("file").execute();
+  await db.deleteFrom("game").execute();
+  await db.deleteFrom("player").execute();
+}

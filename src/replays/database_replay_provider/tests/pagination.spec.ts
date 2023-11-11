@@ -1,8 +1,8 @@
 import { FileRepository } from "@database/repositories/file_repository";
 import { GameRepository } from "@database/repositories/game_repository";
 import type { Database, NewFile, NewGame } from "@database/schema";
-import { initTestDb } from "@database/tests/init_test_db";
 import { aMockFileWith, aMockGameWith } from "@database/tests/mocks";
+import { initTestDb, resetTestDb } from "@database/tests/test_db";
 import type { Kysely } from "kysely";
 
 import { DatabaseReplayProvider } from "../database_replay_provider";
@@ -18,9 +18,7 @@ describe("replay pagination integration tests", () => {
 
   afterEach(async () => {
     // Clear the database after each test
-    await db.deleteFrom("file").execute();
-    await db.deleteFrom("game").execute();
-    await db.deleteFrom("player").execute();
+    await resetTestDb(db);
   });
 
   it("should return no continuation when all results are fetched", async () => {

@@ -4,8 +4,8 @@ import type { Kysely } from "kysely";
 import { FileRepository } from "../repositories/file_repository";
 import { GameRepository } from "../repositories/game_repository";
 import { PlayerRepository } from "../repositories/player_repository";
-import { initTestDb } from "./init_test_db";
 import { aMockFileWith, aMockGameWith, aMockPlayerWith } from "./mocks";
+import { initTestDb, resetTestDb } from "./test_db";
 
 describe("database integration tests", () => {
   let db: Kysely<Database>;
@@ -16,9 +16,7 @@ describe("database integration tests", () => {
 
   afterEach(async () => {
     // Clear the database after each test
-    await db.deleteFrom("file").execute();
-    await db.deleteFrom("game").execute();
-    await db.deleteFrom("player").execute();
+    await resetTestDb(db);
   });
 
   it("should count total folder size", async () => {
