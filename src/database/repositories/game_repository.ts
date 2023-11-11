@@ -1,4 +1,4 @@
-import type { Kysely, SelectQueryBuilder } from "kysely";
+import type { ExpressionOrFactory, Kysely, OperandValueExpressionOrList, SqlBool, StringReference } from "kysely";
 
 import type { Database, GameRecord, NewGame } from "../schema";
 
@@ -49,7 +49,7 @@ export class GameRepository {
     let query = db.selectFrom("file").where("folder", "=", folder).innerJoin("game", "game.file_id", "file._id");
 
     if (nextIdInclusive != null) {
-      query = handleStartTimeContinuation(query, continueFromStartTime, nextIdInclusive, direction);
+      query = query.where(handleContinuation("game.start_time", continueFromStartTime, nextIdInclusive, direction));
     }
 
     const res = await query
@@ -63,41 +63,38 @@ export class GameRepository {
   }
 }
 
-function handleStartTimeContinuation<T>(
-  query: SelectQueryBuilder<Database, "file" | "game", T>,
-  continueFromStartTime: string | null,
+function handleContinuation<K extends StringReference<Database, "file" | "game">>(
+  field: K,
+  continuationValue: OperandValueExpressionOrList<Database, "file" | "game", K> | null,
   nextIdInclusive: number,
   sortDirection: "asc" | "desc",
-): SelectQueryBuilder<Database, "file" | "game", T> {
+): ExpressionOrFactory<Database, "file" | "game", SqlBool> {
   switch (sortDirection) {
     case "asc":
-      return query.where(({ eb, or, and }) => {
-        if (continueFromStartTime == null) {
-          return and([eb("game.start_time", "is", null), eb("game._id", ">=", nextIdInclusive)]);
+      return ({ eb, or, and }) => {
+        if (continuationValue == null) {
+          return and([eb(field, "is", continuationValue), eb("game._id", ">=", nextIdInclusive)]);
         }
 
         return or([
-          and([eb("game.start_time", ">", continueFromStartTime), eb("game.start_time", "is not", null)]),
+          and([eb(field, ">", continuationValue), eb(field, "is not", null)]),
           and([
-            or([eb("game.start_time", "=", continueFromStartTime), eb("game.start_time", "is not", null)]),
+            or([eb(field, "=", continuationValue), eb(field, "is not", null)]),
             eb("game._id", ">=", nextIdInclusive),
           ]),
         ]);
-      });
+      };
     case "desc":
-      return query.where(({ eb, or, and }) => {
-        if (continueFromStartTime == null) {
-          return and([eb("game.start_time", "is", null), eb("game._id", "<=", nextIdInclusive)]);
+      return ({ eb, or, and }) => {
+        if (continuationValue == null) {
+          return and([eb(field, "is", null), eb("game._id", "<=", nextIdInclusive)]);
         }
 
         return or([
-          or([eb("game.start_time", "<", continueFromStartTime), eb("game.start_time", "is", null)]),
-          and([
-            or([eb("game.start_time", "=", continueFromStartTime), eb("game.start_time", "is", null)]),
-            eb("game._id", "<=", nextIdInclusive),
-          ]),
+          or([eb(field, "<", continuationValue), eb(field, "is", null)]),
+          and([or([eb(field, "=", continuationValue), eb(field, "is", null)]), eb("game._id", "<=", nextIdInclusive)]),
         ]);
-      });
+      };
     default:
       throw new Error(`Unexpected direction: ${sortDirection}`);
   }
