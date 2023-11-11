@@ -40,7 +40,7 @@ describe("database integration tests", () => {
     expect(res2.continuation).toBeUndefined();
   });
 
-  it("should return paged results in order of game start time", async () => {
+  it("should return paged results in reverse chronological order", async () => {
     const limit = 2;
     const folder = "folder";
     await addMockGame({ folder, name: "jan.slp" }, { start_time: new Date(2023, 0).toISOString() });
@@ -49,9 +49,25 @@ describe("database integration tests", () => {
     await addMockGame({ folder, name: "apr.slp" }, { start_time: new Date(2023, 4).toISOString() });
     await addMockGame({ folder, name: "may.slp" }, { start_time: new Date(2023, 5).toISOString() });
 
-    const { files, continuation } = await provider.searchReplays(folder, limit, undefined);
-    expect(files.length).toEqual(2);
-    expect(continuation).toBeDefined();
+    // Get the first 2
+    const res1 = await provider.searchReplays(folder, limit, undefined);
+    expect(res1.files.length).toEqual(2);
+    expect(res1.continuation).toBeDefined();
+    expect(res1.files[0].fileName).toEqual("may.slp");
+    expect(res1.files[1].fileName).toEqual("apr.slp");
+
+    // Get the next 2
+    const res2 = await provider.searchReplays(folder, limit, res1.continuation);
+    expect(res2.files.length).toEqual(2);
+    expect(res2.continuation).toBeDefined();
+    expect(res2.files[0].fileName).toEqual("mar.slp");
+    expect(res2.files[1].fileName).toEqual("feb.slp");
+
+    // Get the last 1
+    const res3 = await provider.searchReplays(folder, limit, res2.continuation);
+    expect(res3.files.length).toEqual(1);
+    expect(res3.continuation).toBeUndefined();
+    expect(res3.files[0].fileName).toEqual("jan.slp");
   });
 
   const addMockGame = async (
