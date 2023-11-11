@@ -1,4 +1,4 @@
-import type { Kysely } from "kysely";
+import type { Kysely, SelectQueryBuilder } from "kysely";
 
 import type { Database, GameRecord, NewGame } from "../schema";
 
@@ -46,61 +46,32 @@ export class GameRepository {
     nextIdInclusive: number | null = null,
     direction: "asc" | "desc" = "desc",
   ) {
-    if (direction === "desc") {
-      return this.findGamesOrderByStartTimeDesc(db, folder, limit, continueFromStartTime, nextIdInclusive);
-    }
-    return this.findGamesOrderByStartTimeAsc(db, folder, limit, continueFromStartTime, nextIdInclusive);
-  }
-
-  private static async findGamesOrderByStartTimeDesc(
-    db: DB,
-    folder: string,
-    limit: number,
-    continueFromStartTime: string | null,
-    nextIdInclusive: number | null,
-  ) {
     let query = db.selectFrom("file").where("folder", "=", folder).innerJoin("game", "game.file_id", "file._id");
 
     if (nextIdInclusive != null) {
-      query = query.where(({ eb, or, and }) => {
-        // Have to handle the null cases separately
-        if (continueFromStartTime == null) {
-          return and([eb("game.start_time", "is", null), eb("game._id", "<=", nextIdInclusive)]);
-        }
-
-        return or([
-          or([eb("game.start_time", "<", continueFromStartTime), eb("game.start_time", "is", null)]),
-          and([
-            or([eb("game.start_time", "=", continueFromStartTime), eb("game.start_time", "is", null)]),
-            eb("game._id", "<=", nextIdInclusive),
-          ]),
-        ]);
-      });
+      query = handleStartTimeContinuation(query, continueFromStartTime, nextIdInclusive, direction);
     }
 
     const res = await query
       .selectAll(["file", "game"])
       .select(["game._id as _id"])
-      .orderBy("game.start_time", "desc")
-      .orderBy("game._id", "desc")
+      .orderBy("game.start_time", direction)
+      .orderBy("game._id", direction)
       .limit(limit)
       .execute();
     return res;
   }
+}
 
-  private static async findGamesOrderByStartTimeAsc(
-    db: DB,
-    folder: string,
-    limit: number,
-    continueFromStartTime: string | null,
-    nextIdInclusive: number | null,
-  ) {
-    console.log({ continueFromStartTime, nextIdInclusive });
-    let query = db.selectFrom("file").where("folder", "=", folder).innerJoin("game", "game.file_id", "file._id");
-
-    if (nextIdInclusive != null) {
-      query = query.where(({ eb, or, and }) => {
-        // Have to handle the null cases separately
+function handleStartTimeContinuation<T>(
+  query: SelectQueryBuilder<Database, "file" | "game", T>,
+  continueFromStartTime: string | null,
+  nextIdInclusive: number,
+  sortDirection: "asc" | "desc",
+): SelectQueryBuilder<Database, "file" | "game", T> {
+  switch (sortDirection) {
+    case "asc":
+      return query.where(({ eb, or, and }) => {
         if (continueFromStartTime == null) {
           return and([eb("game.start_time", "is", null), eb("game._id", ">=", nextIdInclusive)]);
         }
@@ -113,15 +84,21 @@ export class GameRepository {
           ]),
         ]);
       });
-    }
+    case "desc":
+      return query.where(({ eb, or, and }) => {
+        if (continueFromStartTime == null) {
+          return and([eb("game.start_time", "is", null), eb("game._id", "<=", nextIdInclusive)]);
+        }
 
-    const res = await query
-      .selectAll(["file", "game"])
-      .select(["game._id as _id"])
-      .orderBy("game.start_time", "asc")
-      .orderBy("game._id", "asc")
-      .execute();
-    console.log(res);
-    return res.slice(0, limit);
+        return or([
+          or([eb("game.start_time", "<", continueFromStartTime), eb("game.start_time", "is", null)]),
+          and([
+            or([eb("game.start_time", "=", continueFromStartTime), eb("game.start_time", "is", null)]),
+            eb("game._id", "<=", nextIdInclusive),
+          ]),
+        ]);
+      });
+    default:
+      throw new Error(`Unexpected direction: ${sortDirection}`);
   }
 }
