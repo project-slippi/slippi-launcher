@@ -27,7 +27,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
     folder: string,
     limit = SEARCH_REPLAYS_LIMIT,
     continuation?: string,
-    sortBy: {
+    orderBy: {
       field: "lastFrame" | "startTime";
       direction?: "asc" | "desc";
     } = {
@@ -39,13 +39,13 @@ export class DatabaseReplayProvider implements ReplayProvider {
     continuation: string | undefined;
   }> {
     const maybeContinuationToken = Continuation.fromString(continuation);
-    const continuationValue = maybeContinuationToken?.getContinuationValue() ?? null;
+    const continuationValue = maybeContinuationToken?.getValue() ?? null;
     const nextIdInclusive = maybeContinuationToken?.getNextIdInclusive() ?? null;
 
     let recordsToReturn: (GameRecord & FileRecord)[];
     let newContinuation: string | undefined;
 
-    switch (sortBy.field) {
+    switch (orderBy.field) {
       case "startTime": {
         const gameAndFileRecords = await GameRepository.findGamesOrderByStartTime(
           this.db,
@@ -53,10 +53,10 @@ export class DatabaseReplayProvider implements ReplayProvider {
           limit + 1,
           continuationValue === "null" ? null : continuationValue,
           nextIdInclusive,
-          sortBy.direction,
+          orderBy.direction,
         );
         [recordsToReturn, newContinuation] = Continuation.truncate(gameAndFileRecords, limit, (record) => ({
-          continuationValue: record.start_time ?? "null",
+          value: record.start_time ?? "null",
           nextIdInclusive: record._id,
         }));
         break;
@@ -68,16 +68,16 @@ export class DatabaseReplayProvider implements ReplayProvider {
           limit + 1,
           continuationValue === "null" || continuationValue == null ? null : parseInt(continuationValue, 10),
           nextIdInclusive,
-          sortBy.direction,
+          orderBy.direction,
         );
         [recordsToReturn, newContinuation] = Continuation.truncate(gameAndFileRecords, limit, (record) => ({
-          continuationValue: record.last_frame != null ? record.last_frame.toString() : "null",
+          value: record.last_frame != null ? record.last_frame.toString() : "null",
           nextIdInclusive: record._id,
         }));
         break;
       }
       default:
-        throw new Error(`Unexpected sort by field: ${sortBy.field}`);
+        throw new Error(`Unexpected sort by field: ${orderBy.field}`);
     }
 
     const files = await this.mapGameAndFileRecordsToFileResult(recordsToReturn);
