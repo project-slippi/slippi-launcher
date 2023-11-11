@@ -7,7 +7,7 @@ import type { Kysely } from "kysely";
 
 import { DatabaseReplayProvider } from "../database_replay_provider";
 
-describe("database integration tests", () => {
+describe("replay pagination integration tests", () => {
   let db: Kysely<Database>;
   let provider: DatabaseReplayProvider;
 
