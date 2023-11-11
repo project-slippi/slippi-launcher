@@ -40,95 +40,190 @@ describe("replay pagination integration tests", () => {
     expect(res2.continuation).toBeUndefined();
   });
 
-  it("should return paged results in reverse chronological order", async () => {
-    const limit = 2;
-    const folder = "folder";
-    await addMockGame({ folder, name: "jan.slp" }, { start_time: new Date(2023, 0).toISOString() });
-    await addMockGame({ folder, name: "feb.slp" }, { start_time: new Date(2023, 1).toISOString() });
-    await addMockGame({ folder, name: "mar.slp" }, { start_time: new Date(2023, 3).toISOString() });
-    await addMockGame({ folder, name: "apr.slp" }, { start_time: new Date(2023, 4).toISOString() });
-    await addMockGame({ folder, name: "may.slp" }, { start_time: new Date(2023, 5).toISOString() });
+  describe("when sorting by game start time", () => {
+    it("should return paged results in reverse chronological order", async () => {
+      const limit = 2;
+      const folder = "folder";
+      await addMockGame({ folder, name: "jan.slp" }, { start_time: new Date(2023, 0).toISOString() });
+      await addMockGame({ folder, name: "feb.slp" }, { start_time: new Date(2023, 1).toISOString() });
+      await addMockGame({ folder, name: "mar.slp" }, { start_time: new Date(2023, 3).toISOString() });
+      await addMockGame({ folder, name: "apr.slp" }, { start_time: new Date(2023, 4).toISOString() });
+      await addMockGame({ folder, name: "may.slp" }, { start_time: new Date(2023, 5).toISOString() });
 
-    // Get the first 2
-    const res1 = await provider.searchReplays(folder, limit, undefined);
-    expect(res1.files.length).toEqual(2);
-    expect(res1.continuation).toBeDefined();
-    expect(res1.files[0].fileName).toEqual("may.slp");
-    expect(res1.files[1].fileName).toEqual("apr.slp");
+      // Get the first 2
+      const res1 = await provider.searchReplays(folder, limit, undefined);
+      expect(res1.files.length).toEqual(2);
+      expect(res1.continuation).toBeDefined();
+      expect(res1.files[0].fileName).toEqual("may.slp");
+      expect(res1.files[1].fileName).toEqual("apr.slp");
 
-    // Get the next 2
-    const res2 = await provider.searchReplays(folder, limit, res1.continuation);
-    expect(res2.files.length).toEqual(2);
-    expect(res2.continuation).toBeDefined();
-    expect(res2.files[0].fileName).toEqual("mar.slp");
-    expect(res2.files[1].fileName).toEqual("feb.slp");
+      // Get the next 2
+      const res2 = await provider.searchReplays(folder, limit, res1.continuation);
+      expect(res2.files.length).toEqual(2);
+      expect(res2.continuation).toBeDefined();
+      expect(res2.files[0].fileName).toEqual("mar.slp");
+      expect(res2.files[1].fileName).toEqual("feb.slp");
 
-    // Get the last 1
-    const res3 = await provider.searchReplays(folder, limit, res2.continuation);
-    expect(res3.files.length).toEqual(1);
-    expect(res3.continuation).toBeUndefined();
-    expect(res3.files[0].fileName).toEqual("jan.slp");
+      // Get the last 1
+      const res3 = await provider.searchReplays(folder, limit, res2.continuation);
+      expect(res3.files.length).toEqual(1);
+      expect(res3.continuation).toBeUndefined();
+      expect(res3.files[0].fileName).toEqual("jan.slp");
+    });
+
+    it("should return null start times at the end", async () => {
+      const limit = 2;
+      const folder = "folder";
+      await addMockGame({ folder, name: "jan.slp" }, { start_time: new Date(2023, 0).toISOString() });
+      await addMockGame({ folder, name: "null_1.slp" }, { start_time: null });
+      await addMockGame({ folder, name: "mar.slp" }, { start_time: new Date(2023, 3).toISOString() });
+      await addMockGame({ folder, name: "null_2.slp" }, { start_time: null });
+      await addMockGame({ folder, name: "may.slp" }, { start_time: new Date(2023, 5).toISOString() });
+
+      // Get the first 2
+      const res1 = await provider.searchReplays(folder, limit, undefined);
+      expect(res1.files.length).toEqual(2);
+      expect(res1.continuation).toBeDefined();
+      expect(res1.files[0].fileName).toEqual("may.slp");
+      expect(res1.files[1].fileName).toEqual("mar.slp");
+
+      // Get the next 2
+      const res2 = await provider.searchReplays(folder, limit, res1.continuation);
+      expect(res2.files.length).toEqual(2);
+      expect(res2.continuation).toBeDefined();
+      expect(res2.files[0].fileName).toEqual("jan.slp");
+      expect(res2.files[1].fileName).toEqual("null_2.slp");
+
+      // Get the last 1
+      const res3 = await provider.searchReplays(folder, limit, res2.continuation);
+      expect(res3.files.length).toEqual(1);
+      expect(res3.continuation).toBeUndefined();
+      expect(res3.files[0].fileName).toEqual("null_1.slp");
+    });
+
+    it("should support sorting by reverse-chronological order", async () => {
+      const direction = "asc" as const;
+      const limit = 2;
+      const folder = "folder";
+      await addMockGame({ folder, name: "jan.slp" }, { start_time: new Date(2023, 0).toISOString() });
+      await addMockGame({ folder, name: "null_1.slp" }, { start_time: null });
+      await addMockGame({ folder, name: "mar.slp" }, { start_time: new Date(2023, 3).toISOString() });
+      await addMockGame({ folder, name: "null_2.slp" }, { start_time: null });
+      await addMockGame({ folder, name: "may.slp" }, { start_time: new Date(2023, 5).toISOString() });
+
+      // Get the first 2
+      const res1 = await provider.searchReplays(folder, limit, undefined, { field: "startTime", direction });
+      expect(res1.files.length).toEqual(2);
+      expect(res1.continuation).toBeDefined();
+      expect(res1.files[0].fileName).toEqual("null_1.slp");
+      expect(res1.files[1].fileName).toEqual("null_2.slp");
+
+      // Get the next 2
+      const res2 = await provider.searchReplays(folder, limit, res1.continuation, { field: "startTime", direction });
+      expect(res2.files.length).toEqual(2);
+      expect(res2.continuation).toBeDefined();
+      expect(res2.files[0].fileName).toEqual("jan.slp");
+      expect(res2.files[1].fileName).toEqual("mar.slp");
+
+      // Get the last 1
+      const res3 = await provider.searchReplays(folder, limit, res2.continuation, { field: "startTime", direction });
+      expect(res3.files.length).toEqual(1);
+      expect(res3.continuation).toBeUndefined();
+      expect(res3.files[0].fileName).toEqual("may.slp");
+    });
   });
 
-  it("should return null start times at the end", async () => {
-    const limit = 2;
-    const folder = "folder";
-    await addMockGame({ folder, name: "jan.slp" }, { start_time: new Date(2023, 0).toISOString() });
-    await addMockGame({ folder, name: "null_1.slp" }, { start_time: null });
-    await addMockGame({ folder, name: "mar.slp" }, { start_time: new Date(2023, 3).toISOString() });
-    await addMockGame({ folder, name: "null_2.slp" }, { start_time: null });
-    await addMockGame({ folder, name: "may.slp" }, { start_time: new Date(2023, 5).toISOString() });
+  describe("when sorting by game last frame", () => {
+    it("should return paged results for the longest games first", async () => {
+      const limit = 2;
+      const folder = "folder";
+      await addMockGame({ folder, name: "1.slp" }, { last_frame: 100 });
+      await addMockGame({ folder, name: "2.slp" }, { last_frame: 200 });
+      await addMockGame({ folder, name: "3.slp" }, { last_frame: 200 });
+      await addMockGame({ folder, name: "4.slp" }, { last_frame: 400 });
+      await addMockGame({ folder, name: "5.slp" }, { last_frame: 500 });
 
-    // Get the first 2
-    const res1 = await provider.searchReplays(folder, limit, undefined);
-    expect(res1.files.length).toEqual(2);
-    expect(res1.continuation).toBeDefined();
-    expect(res1.files[0].fileName).toEqual("may.slp");
-    expect(res1.files[1].fileName).toEqual("mar.slp");
+      // Get the first 2
+      const res1 = await provider.searchReplays(folder, limit, undefined, { field: "lastFrame" });
+      expect(res1.files.length).toEqual(2);
+      expect(res1.continuation).toBeDefined();
+      expect(res1.files[0].fileName).toEqual("5.slp");
+      expect(res1.files[1].fileName).toEqual("4.slp");
 
-    // Get the next 2
-    const res2 = await provider.searchReplays(folder, limit, res1.continuation);
-    expect(res2.files.length).toEqual(2);
-    expect(res2.continuation).toBeDefined();
-    expect(res2.files[0].fileName).toEqual("jan.slp");
-    expect(res2.files[1].fileName).toEqual("null_2.slp");
+      // Get the next 2
+      const res2 = await provider.searchReplays(folder, limit, res1.continuation, { field: "lastFrame" });
+      expect(res2.files.length).toEqual(2);
+      expect(res2.continuation).toBeDefined();
+      expect(res2.files[0].fileName).toEqual("3.slp");
+      expect(res2.files[1].fileName).toEqual("2.slp");
 
-    // Get the last 1
-    const res3 = await provider.searchReplays(folder, limit, res2.continuation);
-    expect(res3.files.length).toEqual(1);
-    expect(res3.continuation).toBeUndefined();
-    expect(res3.files[0].fileName).toEqual("null_1.slp");
-  });
+      // Get the last 1
+      const res3 = await provider.searchReplays(folder, limit, res2.continuation, { field: "lastFrame" });
+      expect(res3.files.length).toEqual(1);
+      expect(res3.continuation).toBeUndefined();
+      expect(res3.files[0].fileName).toEqual("1.slp");
+    });
 
-  it("should support sorting by reverse-chronological order", async () => {
-    const direction = "asc" as const;
-    const limit = 2;
-    const folder = "folder";
-    await addMockGame({ folder, name: "jan.slp" }, { start_time: new Date(2023, 0).toISOString() });
-    await addMockGame({ folder, name: "null_1.slp" }, { start_time: null });
-    await addMockGame({ folder, name: "mar.slp" }, { start_time: new Date(2023, 3).toISOString() });
-    await addMockGame({ folder, name: "null_2.slp" }, { start_time: null });
-    await addMockGame({ folder, name: "may.slp" }, { start_time: new Date(2023, 5).toISOString() });
+    it("should return null last_frame games at the end", async () => {
+      const limit = 2;
+      const folder = "folder";
+      await addMockGame({ folder, name: "1.slp" }, { last_frame: 100 });
+      await addMockGame({ folder, name: "null_1.slp" }, { last_frame: null });
+      await addMockGame({ folder, name: "3.slp" }, { last_frame: 300 });
+      await addMockGame({ folder, name: "null_2.slp" }, { last_frame: null });
+      await addMockGame({ folder, name: "5.slp" }, { last_frame: 300 });
 
-    // Get the first 2
-    const res1 = await provider.searchReplays(folder, limit, undefined, { field: "startTime", direction });
-    expect(res1.files.length).toEqual(2);
-    expect(res1.continuation).toBeDefined();
-    expect(res1.files[0].fileName).toEqual("null_1.slp");
-    expect(res1.files[1].fileName).toEqual("null_2.slp");
+      // Get the first 2
+      const res1 = await provider.searchReplays(folder, limit, undefined, { field: "lastFrame" });
+      expect(res1.files.length).toEqual(2);
+      expect(res1.continuation).toBeDefined();
+      expect(res1.files[0].fileName).toEqual("5.slp");
+      expect(res1.files[1].fileName).toEqual("3.slp");
 
-    // Get the next 2
-    const res2 = await provider.searchReplays(folder, limit, res1.continuation, { field: "startTime", direction });
-    expect(res2.files.length).toEqual(2);
-    expect(res2.continuation).toBeDefined();
-    expect(res2.files[0].fileName).toEqual("jan.slp");
-    expect(res2.files[1].fileName).toEqual("mar.slp");
+      // Get the next 2
+      const res2 = await provider.searchReplays(folder, limit, res1.continuation, { field: "lastFrame" });
+      expect(res2.files.length).toEqual(2);
+      expect(res2.continuation).toBeDefined();
+      expect(res2.files[0].fileName).toEqual("1.slp");
+      expect(res2.files[1].fileName).toEqual("null_2.slp");
 
-    // Get the last 1
-    const res3 = await provider.searchReplays(folder, limit, res2.continuation, { field: "startTime", direction });
-    expect(res3.files.length).toEqual(1);
-    expect(res3.continuation).toBeUndefined();
-    expect(res3.files[0].fileName).toEqual("may.slp");
+      // Get the last 1
+      const res3 = await provider.searchReplays(folder, limit, res2.continuation, { field: "lastFrame" });
+      expect(res3.files.length).toEqual(1);
+      expect(res3.continuation).toBeUndefined();
+      expect(res3.files[0].fileName).toEqual("null_1.slp");
+    });
+
+    it("should support sorting by shortest game first", async () => {
+      const sortBy = { field: "lastFrame", direction: "asc" } as const;
+      const limit = 2;
+      const folder = "folder";
+      await addMockGame({ folder, name: "1.slp" }, { last_frame: 100 });
+      await addMockGame({ folder, name: "null_1.slp" }, { last_frame: null });
+      await addMockGame({ folder, name: "3.slp" }, { last_frame: 300 });
+      await addMockGame({ folder, name: "null_2.slp" }, { last_frame: null });
+      await addMockGame({ folder, name: "5.slp" }, { last_frame: 300 });
+
+      // Get the first 2
+      const res1 = await provider.searchReplays(folder, limit, undefined, sortBy);
+      expect(res1.files.length).toEqual(2);
+      expect(res1.continuation).toBeDefined();
+      expect(res1.files[0].fileName).toEqual("null_1.slp");
+      expect(res1.files[1].fileName).toEqual("null_2.slp");
+
+      // Get the next 2
+      const res2 = await provider.searchReplays(folder, limit, res1.continuation, sortBy);
+      expect(res2.files.length).toEqual(2);
+      expect(res2.continuation).toBeDefined();
+      expect(res2.files[0].fileName).toEqual("1.slp");
+      expect(res2.files[1].fileName).toEqual("3.slp");
+
+      // Get the last 1
+      const res3 = await provider.searchReplays(folder, limit, res2.continuation, sortBy);
+      expect(res3.files.length).toEqual(1);
+      expect(res3.continuation).toBeUndefined();
+      expect(res3.files[0].fileName).toEqual("5.slp");
+    });
   });
 
   const addMockGame = async (

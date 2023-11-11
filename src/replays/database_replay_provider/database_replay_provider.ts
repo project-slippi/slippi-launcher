@@ -29,7 +29,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
     continuation?: string,
     sortBy: {
       field: "lastFrame" | "startTime";
-      direction: "asc" | "desc";
+      direction?: "asc" | "desc";
     } = {
       field: "startTime",
       direction: "desc",
