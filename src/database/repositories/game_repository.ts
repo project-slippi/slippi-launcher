@@ -97,7 +97,7 @@ function handleContinuation<K extends StringReference<Database, "file" | "game">
     case "asc":
       return ({ eb, or, and }) => {
         if (continuationValue == null) {
-          return and([eb(field, "is", continuationValue), eb("game._id", ">=", nextIdInclusive)]);
+          return and([eb(field, "is", null), eb("game._id", ">=", nextIdInclusive)]);
         }
 
         return or([
