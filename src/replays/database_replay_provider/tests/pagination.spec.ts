@@ -111,21 +111,21 @@ describe("replay pagination integration tests", () => {
     await addMockGame({ folder, name: "may.slp" }, { start_time: new Date(2023, 5).toISOString() });
 
     // Get the first 2
-    const res1 = await provider.searchReplays(folder, limit, undefined, direction);
+    const res1 = await provider.searchReplays(folder, limit, undefined, { field: "startTime", direction });
     expect(res1.files.length).toEqual(2);
     expect(res1.continuation).toBeDefined();
     expect(res1.files[0].fileName).toEqual("null_1.slp");
     expect(res1.files[1].fileName).toEqual("null_2.slp");
 
     // Get the next 2
-    const res2 = await provider.searchReplays(folder, limit, res1.continuation, direction);
+    const res2 = await provider.searchReplays(folder, limit, res1.continuation, { field: "startTime", direction });
     expect(res2.files.length).toEqual(2);
     expect(res2.continuation).toBeDefined();
     expect(res2.files[0].fileName).toEqual("jan.slp");
     expect(res2.files[1].fileName).toEqual("mar.slp");
 
     // Get the last 1
-    const res3 = await provider.searchReplays(folder, limit, res2.continuation, direction);
+    const res3 = await provider.searchReplays(folder, limit, res2.continuation, { field: "startTime", direction });
     expect(res3.files.length).toEqual(1);
     expect(res3.continuation).toBeUndefined();
     expect(res3.files[0].fileName).toEqual("may.slp");

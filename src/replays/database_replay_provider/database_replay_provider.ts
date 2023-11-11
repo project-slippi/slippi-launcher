@@ -27,27 +27,58 @@ export class DatabaseReplayProvider implements ReplayProvider {
     folder: string,
     limit = SEARCH_REPLAYS_LIMIT,
     continuation?: string,
-    sortDirection: "asc" | "desc" = "desc",
+    sortBy: {
+      field: "lastFrame" | "startTime";
+      direction: "asc" | "desc";
+    } = {
+      field: "startTime",
+      direction: "desc",
+    },
   ): Promise<{
     files: FileResult[];
     continuation: string | undefined;
   }> {
     const maybeContinuationToken = Continuation.fromString(continuation);
-    const continueFromStartTime = maybeContinuationToken?.getStartTime() ?? null;
+    const continuationValue = maybeContinuationToken?.getContinuationValue() ?? null;
     const nextIdInclusive = maybeContinuationToken?.getNextIdInclusive() ?? null;
-    const gameAndFileRecords = await GameRepository.findGamesOrderByStartTime(
-      this.db,
-      folder,
-      limit + 1,
-      continueFromStartTime,
-      nextIdInclusive,
-      sortDirection,
-    );
 
-    const [recordsToReturn, newContinuation] = Continuation.truncate(gameAndFileRecords, limit, (record) => ({
-      startTime: record.start_time,
-      nextIdInclusive: record._id,
-    }));
+    let recordsToReturn: (GameRecord & FileRecord)[];
+    let newContinuation: string | undefined;
+
+    switch (sortBy.field) {
+      case "startTime": {
+        const gameAndFileRecords = await GameRepository.findGamesOrderByStartTime(
+          this.db,
+          folder,
+          limit + 1,
+          continuationValue === "null" ? null : continuationValue,
+          nextIdInclusive,
+          sortBy.direction,
+        );
+        [recordsToReturn, newContinuation] = Continuation.truncate(gameAndFileRecords, limit, (record) => ({
+          continuationValue: record.start_time ?? "null",
+          nextIdInclusive: record._id,
+        }));
+        break;
+      }
+      case "lastFrame": {
+        const gameAndFileRecords = await GameRepository.findGamesOrderByLastFrame(
+          this.db,
+          folder,
+          limit + 1,
+          continuationValue === "null" || continuationValue == null ? null : parseInt(continuationValue, 10),
+          nextIdInclusive,
+          sortBy.direction,
+        );
+        [recordsToReturn, newContinuation] = Continuation.truncate(gameAndFileRecords, limit, (record) => ({
+          continuationValue: record.last_frame != null ? record.last_frame.toString() : "null",
+          nextIdInclusive: record._id,
+        }));
+        break;
+      }
+      default:
+        throw new Error(`Unexpected sort by field: ${sortBy.field}`);
+    }
 
     const files = await this.mapGameAndFileRecordsToFileResult(recordsToReturn);
 

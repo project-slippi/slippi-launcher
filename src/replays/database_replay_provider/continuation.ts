@@ -1,7 +1,7 @@
 export class Continuation {
   private static separator = ",";
 
-  private constructor(private readonly startTime: string | null, private readonly nextIdInclusive: number) {}
+  private constructor(private readonly continuationValue: string, private readonly nextIdInclusive: number) {}
 
   public static fromString(continuation: string | undefined): Continuation | null {
     if (!continuation) {
@@ -10,31 +10,31 @@ export class Continuation {
 
     const parts = decodeFromBase64(continuation).split(Continuation.separator);
     if (parts.length === 2) {
-      const startTime = parts[0] === "null" ? null : validateISOString(parts[0]);
+      const continuationValue = parts[0];
       const nextIdInclusive = validateId(parts[1]);
       if (nextIdInclusive != null) {
-        return new Continuation(startTime, nextIdInclusive);
+        return new Continuation(continuationValue, nextIdInclusive);
       }
     }
 
     return null;
   }
 
-  public static truncate<T>(
-    records: T[],
+  public static truncate<U>(
+    records: U[],
     limit: number,
-    mapper: (item: T) => { startTime: string | null; nextIdInclusive: number },
-  ): [T[], string | undefined] {
+    mapper: (item: U) => { continuationValue: string; nextIdInclusive: number },
+  ): [U[], string | undefined] {
     if (records.length === limit + 1) {
       const lastRecord = records[records.length - 1];
-      const { startTime, nextIdInclusive } = mapper(lastRecord);
-      return [records.slice(0, limit), new Continuation(startTime, nextIdInclusive).toString()];
+      const { continuationValue, nextIdInclusive } = mapper(lastRecord);
+      return [records.slice(0, limit), new Continuation(continuationValue, nextIdInclusive).toString()];
     }
     return [records, undefined];
   }
 
-  public getStartTime(): string | null {
-    return this.startTime;
+  public getContinuationValue(): string {
+    return this.continuationValue;
   }
 
   public getNextIdInclusive(): number | null {
@@ -43,19 +43,11 @@ export class Continuation {
 
   public toString(): string | undefined {
     if (this.nextIdInclusive != null) {
-      const joined = [this.startTime ?? "null", this.nextIdInclusive.toString()].join(Continuation.separator);
+      const joined = [this.continuationValue, this.nextIdInclusive.toString()].join(Continuation.separator);
       return encodeToBase64(joined);
     }
     return undefined;
   }
-}
-
-function validateISOString(val: string): string | null {
-  const date = new Date(val);
-  if (!Number.isNaN(date.valueOf()) && date.toISOString() === val) {
-    return val;
-  }
-  return null;
 }
 
 function validateId(val: string): number | null {

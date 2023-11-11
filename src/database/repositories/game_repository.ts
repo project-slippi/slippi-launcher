@@ -61,6 +61,30 @@ export class GameRepository {
       .execute();
     return res;
   }
+
+  public static async findGamesOrderByLastFrame(
+    db: DB,
+    folder: string,
+    limit: number,
+    continueFromLastFrame: number | null = null,
+    nextIdInclusive: number | null = null,
+    direction: "asc" | "desc" = "desc",
+  ) {
+    let query = db.selectFrom("file").where("folder", "=", folder).innerJoin("game", "game.file_id", "file._id");
+
+    if (nextIdInclusive != null) {
+      query = query.where(handleContinuation("game.last_frame", continueFromLastFrame, nextIdInclusive, direction));
+    }
+
+    const res = await query
+      .selectAll(["file", "game"])
+      .select(["game._id as _id"])
+      .orderBy("game.last_frame", direction)
+      .orderBy("game._id", direction)
+      .limit(limit)
+      .execute();
+    return res;
+  }
 }
 
 function handleContinuation<K extends StringReference<Database, "file" | "game">>(
