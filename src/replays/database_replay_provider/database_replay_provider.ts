@@ -27,6 +27,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
     folder: string,
     limit = SEARCH_REPLAYS_LIMIT,
     continuation?: string,
+    sortDirection: "asc" | "desc" = "desc",
   ): Promise<{
     files: FileResult[];
     continuation: string | undefined;
@@ -40,6 +41,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
       limit + 1,
       continueFromStartTime,
       nextIdInclusive,
+      sortDirection,
     );
 
     const [recordsToReturn, newContinuation] = Continuation.truncate(gameAndFileRecords, limit, (record) => ({

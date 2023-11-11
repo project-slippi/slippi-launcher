@@ -42,6 +42,20 @@ export class GameRepository {
     db: DB,
     folder: string,
     limit: number,
+    continueFromStartTime: string | null = null,
+    nextIdInclusive: number | null = null,
+    direction: "asc" | "desc" = "desc",
+  ) {
+    if (direction === "desc") {
+      return this.findGamesOrderByStartTimeDesc(db, folder, limit, continueFromStartTime, nextIdInclusive);
+    }
+    return this.findGamesOrderByStartTimeAsc(db, folder, limit, continueFromStartTime, nextIdInclusive);
+  }
+
+  private static async findGamesOrderByStartTimeDesc(
+    db: DB,
+    folder: string,
+    limit: number,
     continueFromStartTime: string | null,
     nextIdInclusive: number | null,
   ) {
@@ -72,5 +86,42 @@ export class GameRepository {
       .limit(limit)
       .execute();
     return res;
+  }
+
+  private static async findGamesOrderByStartTimeAsc(
+    db: DB,
+    folder: string,
+    limit: number,
+    continueFromStartTime: string | null,
+    nextIdInclusive: number | null,
+  ) {
+    console.log({ continueFromStartTime, nextIdInclusive });
+    let query = db.selectFrom("file").where("folder", "=", folder).innerJoin("game", "game.file_id", "file._id");
+
+    if (nextIdInclusive != null) {
+      query = query.where(({ eb, or, and }) => {
+        // Have to handle the null cases separately
+        if (continueFromStartTime == null) {
+          return and([eb("game.start_time", "is", null), eb("game._id", ">=", nextIdInclusive)]);
+        }
+
+        return or([
+          and([eb("game.start_time", ">", continueFromStartTime), eb("game.start_time", "is not", null)]),
+          and([
+            or([eb("game.start_time", "=", continueFromStartTime), eb("game.start_time", "is not", null)]),
+            eb("game._id", ">=", nextIdInclusive),
+          ]),
+        ]);
+      });
+    }
+
+    const res = await query
+      .selectAll(["file", "game"])
+      .select(["game._id as _id"])
+      .orderBy("game.start_time", "asc")
+      .orderBy("game._id", "asc")
+      .execute();
+    console.log(res);
+    return res.slice(0, limit);
   }
 }
