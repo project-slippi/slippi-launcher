@@ -77,7 +77,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
         break;
       }
       default:
-        throw new Error(`Unexpected sort by field: ${orderBy.field}`);
+        throw new Error(`Unexpected order by field: ${orderBy.field}`);
     }
 
     const files = await this.mapGameAndFileRecordsToFileResult(recordsToReturn);
