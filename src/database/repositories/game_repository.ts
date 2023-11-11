@@ -48,12 +48,20 @@ export class GameRepository {
     let query = db.selectFrom("file").where("folder", "=", folder).innerJoin("game", "game.file_id", "file._id");
 
     if (nextIdInclusive != null) {
-      query = query.where(({ eb, or, and }) =>
-        or([
-          eb("game.start_time", "<", continueFromStartTime),
-          and([eb("game.start_time", "=", continueFromStartTime), eb("game._id", "<=", nextIdInclusive)]),
-        ]),
-      );
+      query = query.where(({ eb, or, and }) => {
+        // Have to handle the null cases separately
+        if (continueFromStartTime == null) {
+          return and([eb("game.start_time", "is", null), eb("game._id", "<=", nextIdInclusive)]);
+        }
+
+        return or([
+          or([eb("game.start_time", "<", continueFromStartTime), eb("game.start_time", "is", null)]),
+          and([
+            or([eb("game.start_time", "=", continueFromStartTime), eb("game.start_time", "is", null)]),
+            eb("game._id", "<=", nextIdInclusive),
+          ]),
+        ]);
+      });
     }
 
     const res = await query
