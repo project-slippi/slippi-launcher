@@ -1,3 +1,14 @@
+/**
+ * Responsible for encoding all necessary continuation information into a string to be sent
+ * to the renderer. Typically what's required is at least a composite key (e.g. game start time or
+ * last frame as well as a record's unique ID). This makes it possible to return the same search
+ * results to continue where we left off.
+ *
+ * The continuation token is the base64 encoded form of `${value},${nextIdInclusive}`.
+ *
+ * @param value The start time or last frame of the next record that should be returned
+ * @param nextIdInclusive The ID of the next record that should be returned
+ */
 export class Continuation {
   private static separator = ",";
 
@@ -20,11 +31,20 @@ export class Continuation {
     return null;
   }
 
-  public static truncate<U>(
-    records: U[],
+  /**
+   * Takes the last element of the list of records to be used as the next value to be returned.
+   * The original list of records is truncated to the required size, and the continuation token
+   * is generated based on the values in the last record.
+   * @param records The list of records returned from the database. Should be of length {@link limit} + 1.
+   * @param limit The desired limit of the records
+   * @param mapper A function that extracts the required continuation fields from the last record.
+   * @returns A tuple with the correctly sized record list, and the encoded continuation token.
+   */
+  public static truncate<T>(
+    records: T[],
     limit: number,
-    mapper: (item: U) => { value: string; nextIdInclusive: number },
-  ): [U[], string | undefined] {
+    mapper: (item: T) => { value: string; nextIdInclusive: number },
+  ): [T[], string | undefined] {
     if (records.length === limit + 1) {
       const lastRecord = records[records.length - 1];
       const { value, nextIdInclusive } = mapper(lastRecord);
@@ -37,7 +57,7 @@ export class Continuation {
     return this.value;
   }
 
-  public getNextIdInclusive(): number | null {
+  public getNextIdInclusive(): number {
     return this.nextIdInclusive;
   }
 
