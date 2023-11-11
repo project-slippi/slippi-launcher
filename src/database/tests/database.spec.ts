@@ -1,19 +1,17 @@
 import type { Database } from "@database/schema";
-import Sqlite from "better-sqlite3";
-import { Kysely, SqliteDialect } from "kysely";
-import path from "path";
+import type { Kysely } from "kysely";
 
-import { migrateToLatest } from "../migrate_to_latest";
 import { FileRepository } from "../repositories/file_repository";
 import { GameRepository } from "../repositories/game_repository";
 import { PlayerRepository } from "../repositories/player_repository";
+import { initTestDb } from "./init_test_db";
 import { aMockFileWith, aMockGameWith, aMockPlayerWith } from "./mocks";
 
 describe("database integration tests", () => {
   let db: Kysely<Database>;
 
   beforeAll(async () => {
-    db = await createDatabase();
+    db = await initTestDb();
   });
 
   afterEach(async () => {
@@ -82,19 +80,6 @@ describe("database integration tests", () => {
     return { fileId, gameId };
   };
 });
-
-async function createDatabase(): Promise<Kysely<Database>> {
-  const sqliteDb = new Sqlite(":memory:");
-  const database = new Kysely<Database>({
-    dialect: new SqliteDialect({
-      database: sqliteDb,
-    }),
-  });
-
-  const migrationsFolder = path.join(__dirname, "../migrations");
-  await migrateToLatest(database, migrationsFolder);
-  return database;
-}
 
 async function getRowCount(db: Kysely<Database>, table: keyof Database): Promise<number> {
   const { num_rows } = await db

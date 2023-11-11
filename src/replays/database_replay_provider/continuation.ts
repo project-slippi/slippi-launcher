@@ -28,7 +28,7 @@ export class Continuation {
     if (records.length === limit + 1) {
       const lastRecord = records[records.length - 1];
       const { startTime, nextIdInclusive } = mapper(lastRecord);
-      return [records.slice(limit), new Continuation(startTime, nextIdInclusive).toString()];
+      return [records.slice(0, limit), new Continuation(startTime, nextIdInclusive).toString()];
     }
     return [records, undefined];
   }
