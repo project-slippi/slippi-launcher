@@ -37,4 +37,32 @@ export class GameRepository {
     const res = await query.selectAll(["file", "game"]).select(["game._id as _id"]).execute();
     return res;
   }
+
+  public static async findGamesOrderByStartTime(
+    db: DB,
+    folder: string,
+    limit: number,
+    continueFromStartTime: string | null,
+    nextIdInclusive: number | null,
+  ) {
+    let query = db.selectFrom("file").where("folder", "=", folder).innerJoin("game", "game.file_id", "file._id");
+
+    if (nextIdInclusive != null) {
+      query = query.where(({ eb, or, and }) =>
+        or([
+          eb("game.start_time", "<", continueFromStartTime),
+          and([eb("game.start_time", "=", continueFromStartTime), eb("game._id", "<=", nextIdInclusive)]),
+        ]),
+      );
+    }
+
+    const res = await query
+      .selectAll(["file", "game"])
+      .select(["game._id as _id"])
+      .orderBy("game.start_time", "desc")
+      .orderBy("game._id", "desc")
+      .limit(limit)
+      .execute();
+    return res;
+  }
 }
