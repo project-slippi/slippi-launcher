@@ -7,15 +7,9 @@ module.exports = {
   testTimeout: 300000, // 5 minutes in milliseconds
   testRegex: "(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$",
   verbose: true,
-  globals: {
-    "ts-jest": {
-      diagnostics: false,
-    },
-  },
-  testURL: "http://localhost/",
   testEnvironment: "jsdom",
   transform: {
-    "\\.(ts|tsx|js|jsx)$": "ts-jest",
+    "\\.(ts|tsx|js|jsx)$": ["ts-jest", { diagnostics: false }],
   },
   moduleNameMapper: {
     "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
