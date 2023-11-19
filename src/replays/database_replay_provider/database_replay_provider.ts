@@ -13,13 +13,80 @@ import type { Kysely } from "kysely";
 import path from "path";
 
 import { extractPlayerNames } from "../file_system_replay_provider/extract_player_names";
+import { Continuation } from "./continuation";
 import { inferStartTime } from "./infer_start_time";
 import { mapGameRecordToFileResult } from "./record_mapper";
 
 const INSERT_REPLAY_BATCH_SIZE = 200;
+const SEARCH_REPLAYS_LIMIT = 20;
 
 export class DatabaseReplayProvider implements ReplayProvider {
   constructor(private readonly db: Kysely<Database>) {}
+
+  public async searchReplays(
+    folder: string,
+    limit = SEARCH_REPLAYS_LIMIT,
+    continuation?: string,
+    orderBy: {
+      field: "lastFrame" | "startTime";
+      direction?: "asc" | "desc";
+    } = {
+      field: "startTime",
+      direction: "desc",
+    },
+  ): Promise<{
+    files: FileResult[];
+    continuation: string | undefined;
+  }> {
+    const maybeContinuationToken = Continuation.fromString(continuation);
+    const continuationValue = maybeContinuationToken?.getValue() ?? null;
+    const nextIdInclusive = maybeContinuationToken?.getNextIdInclusive() ?? null;
+
+    let recordsToReturn: (GameRecord & FileRecord)[];
+    let newContinuation: string | undefined;
+
+    switch (orderBy.field) {
+      case "startTime": {
+        const gameAndFileRecords = await GameRepository.findGamesOrderByStartTime(
+          this.db,
+          folder,
+          limit + 1,
+          continuationValue === "null" ? null : continuationValue,
+          nextIdInclusive,
+          orderBy.direction,
+        );
+        [recordsToReturn, newContinuation] = Continuation.truncate(gameAndFileRecords, limit, (record) => ({
+          value: record.start_time ?? "null",
+          nextIdInclusive: record._id,
+        }));
+        break;
+      }
+      case "lastFrame": {
+        const gameAndFileRecords = await GameRepository.findGamesOrderByLastFrame(
+          this.db,
+          folder,
+          limit + 1,
+          continuationValue === "null" || continuationValue == null ? null : parseInt(continuationValue, 10),
+          nextIdInclusive,
+          orderBy.direction,
+        );
+        [recordsToReturn, newContinuation] = Continuation.truncate(gameAndFileRecords, limit, (record) => ({
+          value: record.last_frame != null ? record.last_frame.toString() : "null",
+          nextIdInclusive: record._id,
+        }));
+        break;
+      }
+      default:
+        throw new Error(`Unexpected order by field: ${orderBy.field}`);
+    }
+
+    const files = await this.mapGameAndFileRecordsToFileResult(recordsToReturn);
+
+    return {
+      files,
+      continuation: newContinuation,
+    };
+  }
 
   public async loadFile(filePath: string): Promise<FileResult> {
     const filename = path.basename(filePath);
@@ -62,12 +129,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
       FileRepository.findTotalSizeByFolder(this.db, folder),
     ]);
 
-    const gameIds = gameRecords.map((game) => game._id);
-    const playerMap = await PlayerRepository.findAllPlayersByGame(this.db, ...gameIds);
-    const files = gameRecords.map((gameRecord): FileResult => {
-      const players = playerMap.get(gameRecord._id) ?? [];
-      return mapGameRecordToFileResult(gameRecord, players);
-    });
+    const files = await this.mapGameAndFileRecordsToFileResult(gameRecords);
 
     const result: FileLoadResult = {
       files,
@@ -94,6 +156,15 @@ export class DatabaseReplayProvider implements ReplayProvider {
   public async calculateStadiumStats(fullPath: string): Promise<StadiumStatsType | null> {
     const game = new SlippiGame(fullPath);
     return game.getStadiumStats();
+  }
+
+  private async mapGameAndFileRecordsToFileResult(records: (GameRecord & FileRecord)[]): Promise<FileResult[]> {
+    const gameIds = records.map((game) => game._id);
+    const playerMap = await PlayerRepository.findAllPlayersByGame(this.db, ...gameIds);
+    return records.map((gameRecord): FileResult => {
+      const players = playerMap.get(gameRecord._id) ?? [];
+      return mapGameRecordToFileResult(gameRecord, players);
+    });
   }
 
   private async syncReplayDatabase(folder: string, onProgress?: (progress: Progress) => void, batchSize = 100) {

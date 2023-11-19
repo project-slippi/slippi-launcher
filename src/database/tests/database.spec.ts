@@ -1,26 +1,22 @@
 import type { Database } from "@database/schema";
-import Sqlite from "better-sqlite3";
-import { Kysely, SqliteDialect } from "kysely";
-import path from "path";
+import type { Kysely } from "kysely";
 
-import { migrateToLatest } from "../migrate_to_latest";
 import { FileRepository } from "../repositories/file_repository";
 import { GameRepository } from "../repositories/game_repository";
 import { PlayerRepository } from "../repositories/player_repository";
 import { aMockFileWith, aMockGameWith, aMockPlayerWith } from "./mocks";
+import { initTestDb, resetTestDb } from "./test_db";
 
 describe("database integration tests", () => {
   let db: Kysely<Database>;
 
   beforeAll(async () => {
-    db = await createDatabase();
+    db = await initTestDb();
   });
 
   afterEach(async () => {
     // Clear the database after each test
-    await db.deleteFrom("file").execute();
-    await db.deleteFrom("game").execute();
-    await db.deleteFrom("player").execute();
+    await resetTestDb(db);
   });
 
   it("should count total folder size", async () => {
@@ -40,8 +36,8 @@ describe("database integration tests", () => {
 
     expect(await getRowCount(db, "file")).toEqual(3);
 
-    const result = FileRepository.insertFile(db, aMockFileWith({ folder: "folder", name: "name" }));
-    await expect(result).rejects.toThrowError();
+    const action = async () => await FileRepository.insertFile(db, aMockFileWith({ folder: "folder", name: "name" }));
+    await expect(action()).rejects.toThrowError();
   });
 
   it("should delete games when files are deleted", async () => {
@@ -72,8 +68,8 @@ describe("database integration tests", () => {
     await PlayerRepository.insertPlayer(db, aMockPlayerWith(gameId, { index: 1 }));
     expect(await getRowCount(db, "player")).toEqual(2);
 
-    const result = PlayerRepository.insertPlayer(db, aMockPlayerWith(gameId, { index: 1 }));
-    await expect(result).rejects.toThrowError();
+    const action = async () => await PlayerRepository.insertPlayer(db, aMockPlayerWith(gameId, { index: 1 }));
+    await expect(action()).rejects.toThrowError();
   });
 
   const addMockGame = async (): Promise<{ fileId: number; gameId: number }> => {
@@ -82,19 +78,6 @@ describe("database integration tests", () => {
     return { fileId, gameId };
   };
 });
-
-async function createDatabase(): Promise<Kysely<Database>> {
-  const sqliteDb = new Sqlite(":memory:");
-  const database = new Kysely<Database>({
-    dialect: new SqliteDialect({
-      database: sqliteDb,
-    }),
-  });
-
-  const migrationsFolder = path.join(__dirname, "../migrations");
-  await migrateToLatest(database, migrationsFolder);
-  return database;
-}
 
 async function getRowCount(db: Kysely<Database>, table: keyof Database): Promise<number> {
   const { num_rows } = await db
