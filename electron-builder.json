@@ -91,7 +91,14 @@
     "buildResources": "assets",
     "output": "release/build"
   },
-  "extraResources": ["./assets/include/**"],
+  "extraResources": [
+    "./assets/include/**",
+    {
+      "from": "./release/app/dist/migrations",
+      "to": "./migrations",
+      "filter": ["**/*.js"]
+    }
+  ],
   "publish": {
     "provider": "github",
     "owner": "project-slippi",

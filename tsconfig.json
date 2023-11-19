@@ -10,7 +10,8 @@
       "@dolphin/*": ["dolphin/*"],
       "@replays/*": ["replays/*"],
       "@settings/*": ["settings/*"],
-      "@console/*": ["console/*"]
+      "@console/*": ["console/*"],
+      "@database/*": ["database/*"]
     },
     "baseUrl": "./src",
     "outDir": "release/app/dist",
