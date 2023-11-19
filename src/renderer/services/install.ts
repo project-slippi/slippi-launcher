@@ -3,6 +3,7 @@ import { appVersion } from "@common/constants";
 
 import createAuthClient from "./auth/auth.service";
 import createDolphinClient from "./dolphin/dolphin.service";
+import createReplayClient from "./replay/replay.service";
 import createSlippiClient from "./slippi/slippi.service";
 import type { Services } from "./types";
 
@@ -11,6 +12,7 @@ const isDevelopment = window.electron.bootstrap.isDevelopment;
 export async function installServices(): Promise<Services> {
   const dolphinService = createDolphinClient();
   const authService = createAuthClient();
+  const replayService = createReplayClient();
   const slippiBackendService = createSlippiClient(
     authService,
     dolphinService,
@@ -26,5 +28,6 @@ export async function installServices(): Promise<Services> {
     dolphinService,
     broadcastService,
     consoleService,
+    replayService,
   };
 }

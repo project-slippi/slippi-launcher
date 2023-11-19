@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { IsoValidity } from "@common/types";
+import type { Progress } from "@replays/types";
 import log from "electron-log";
 import throttle from "lodash/throttle";
-import React from "react";
+import React, { useRef } from "react";
 
 import { useAppInitialization, useAppStore } from "@/lib/hooks/useApp";
 import { useConsole } from "@/lib/hooks/useConsole";
-import { useReplays } from "@/lib/hooks/useReplays";
+import { ReplayPresenter } from "@/lib/hooks/useReplays";
 import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";
 
@@ -22,7 +23,8 @@ import { useSettingsModal } from "./useSettingsModal";
 
 export const useAppListeners = () => {
   // Handle app initalization
-  const { authService, broadcastService, consoleService, dolphinService } = useServices();
+  const { authService, broadcastService, consoleService, dolphinService, replayService } = useServices();
+  const replayPresenter = useRef(new ReplayPresenter(replayService));
   const initialized = useAppStore((store) => store.initialized);
   const initializeApp = useAppInitialization();
   React.useEffect(() => {
@@ -72,11 +74,11 @@ export const useAppListeners = () => {
     return broadcastService.onBroadcastErrorMessage(setBroadcastError);
   }, [setBroadcastError, broadcastService]);
 
-  const updateProgress = useReplays((store) => store.updateProgress);
+  const updateProgress = (progress: Progress | null) => replayPresenter.current.updateProgress(progress);
   const throttledUpdateProgress = throttle(updateProgress, 50);
   React.useEffect(() => {
-    return window.electron.replays.onReplayLoadProgressUpdate(throttledUpdateProgress);
-  }, [throttledUpdateProgress]);
+    return replayService.onReplayLoadProgressUpdate(throttledUpdateProgress);
+  }, [throttledUpdateProgress, replayService]);
 
   const updateSettings = useSettings((store) => store.updateSettings);
   React.useEffect(() => {
@@ -131,18 +133,17 @@ export const useAppListeners = () => {
       });
   }, [isoPath, setIsValid, setIsValidating]);
 
-  const clearSelectedFile = useReplays((store) => store.clearSelectedFile);
   const { goToReplayStatsPage } = useReplayBrowserNavigation();
   const moveToStatsPage = React.useCallback(
     (filePath: string) => {
-      clearSelectedFile();
+      replayPresenter.current.clearSelectedFile();
       goToReplayStatsPage(filePath);
     },
-    [clearSelectedFile, goToReplayStatsPage],
+    [goToReplayStatsPage],
   );
   React.useEffect(() => {
-    return window.electron.replays.onStatsPageRequest(moveToStatsPage);
-  }, [moveToStatsPage]);
+    return replayService.onStatsPageRequest(moveToStatsPage);
+  }, [moveToStatsPage, replayService]);
 
   const { open } = useSettingsModal();
   React.useEffect(() => {
@@ -168,12 +169,11 @@ export const useAppListeners = () => {
   }, [setIsReady]);
 
   // Initialize the replay browser once and refresh on SLP path changes
-  const init = useReplays((store) => store.init);
   const rootSlpPath = useSettings((store) => store.settings.rootSlpPath);
   const extraSlpPaths = useSettings((store) => store.settings.extraSlpPaths);
   React.useEffect(() => {
-    init(rootSlpPath, extraSlpPaths, true).catch(console.error);
-  }, [rootSlpPath, JSON.stringify(extraSlpPaths), init]);
+    replayPresenter.current.init(rootSlpPath, extraSlpPaths, true).catch(console.error);
+  }, [rootSlpPath, extraSlpPaths]);
 
   const { showError } = useToasts();
   React.useEffect(() => {

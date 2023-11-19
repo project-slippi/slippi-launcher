@@ -69,15 +69,15 @@ type ReplayFileStatsProps = {
 export const ReplayFileStats = (props: ReplayFileStatsProps) => {
   const { filePath } = props;
 
-  const { dolphinService } = useServices();
+  const { dolphinService, replayService } = useServices();
   const { viewReplays } = useDolphinActions(dolphinService);
   const gameStatsQuery = useQuery(["loadStatsQuery", filePath], async () => {
-    const result = await window.electron.replays.calculateGameStats(filePath);
+    const result = await replayService.calculateGameStats(filePath);
     return result;
   });
 
   const stadiumStatsQuery = useQuery(["loadStadiumStatsQuery", filePath], async () => {
-    const result = await window.electron.replays.calculateStadiumStats(filePath);
+    const result = await replayService.calculateStadiumStats(filePath);
     return result;
   });
 

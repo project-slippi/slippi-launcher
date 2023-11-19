@@ -19,7 +19,7 @@ import { IconMessage } from "@/components/Message";
 import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/useReplayBrowserList";
 import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
-import { useReplays, useReplaySelection } from "@/lib/hooks/useReplays";
+import { ReplayPresenter, useReplays, useReplaySelection } from "@/lib/hooks/useReplays";
 import { useToasts } from "@/lib/hooks/useToasts";
 import { humanReadableBytes } from "@/lib/utils";
 import { useServices } from "@/services";
@@ -30,20 +30,16 @@ import { FilterToolbar } from "./FilterToolbar";
 import { FolderTreeNode } from "./FolderTreeNode";
 
 export const ReplayBrowser = React.memo(() => {
+  const { replayService } = useServices();
+  const presenter = React.useRef(new ReplayPresenter(replayService));
   const searchInputRef = React.createRef<HTMLInputElement>();
   const scrollRowItem = useReplays((store) => store.scrollRowItem);
-  const setScrollRowItem = useReplays((store) => store.setScrollRowItem);
-  const removeFiles = useReplays((store) => store.removeFiles);
-  const selectFile = useReplays((store) => store.selectFile);
   const { dolphinService } = useServices();
   const { viewReplays } = useDolphinActions(dolphinService);
-  const clearSelectedFile = useReplays((store) => store.clearSelectedFile);
   const loading = useReplays((store) => store.loading);
   const currentFolder = useReplays((store) => store.currentFolder);
   const folderTree = useReplays((store) => store.folderTree);
-  const loadFolder = useReplays((store) => store.loadFolder);
   const collapsedFolders = useReplays((store) => store.collapsedFolders);
-  const toggleFolder = useReplays((store) => store.toggleFolder);
   const selectedFiles = useReplays((store) => store.selectedFiles);
   const totalBytes = useReplays((store) => store.totalBytes);
   const fileSelection = useReplaySelection();
@@ -56,16 +52,16 @@ export const ReplayBrowser = React.memo(() => {
 
   const setSelectedItem = (index: number | null) => {
     if (index === null) {
-      void clearSelectedFile();
+      void presenter.current.clearSelectedFile();
     } else {
       const file = filteredFiles[index];
-      void selectFile(file, index, filteredFiles.length);
+      void presenter.current.selectFile(file, index, filteredFiles.length);
       goToReplayStatsPage(file.fullPath);
     }
   };
 
   const onFolderTreeNodeClick = (fullPath: string) => {
-    loadFolder(fullPath).catch(showError);
+    presenter.current.loadFolder(fullPath).catch(showError);
   };
 
   const playSelectedFile = (index: number) => {
@@ -76,7 +72,7 @@ export const ReplayBrowser = React.memo(() => {
   const deleteFiles = React.useCallback(
     (filePaths: string[]) => {
       // Optimistically remove the files first
-      removeFiles(filePaths);
+      presenter.current.removeFiles(filePaths);
 
       window.electron.common
         .deleteFiles(filePaths)
@@ -85,7 +81,7 @@ export const ReplayBrowser = React.memo(() => {
         })
         .catch(showError);
     },
-    [showError, showSuccess, removeFiles],
+    [showError, showSuccess],
   );
 
   return (
@@ -114,7 +110,7 @@ export const ReplayBrowser = React.memo(() => {
                       key={folder.fullPath}
                       collapsedFolders={collapsedFolders}
                       onClick={onFolderTreeNodeClick}
-                      onToggle={toggleFolder}
+                      onToggle={(folder) => presenter.current.toggleFolder(folder)}
                     />
                   );
                 })}
@@ -163,7 +159,7 @@ export const ReplayBrowser = React.memo(() => {
                   onPlay={(index: number) => playSelectedFile(index)}
                   files={filteredFiles}
                   scrollRowItem={scrollRowItem}
-                  setScrollRowItem={setScrollRowItem}
+                  setScrollRowItem={(item) => presenter.current.setScrollRowItem(item)}
                 />
               )}
               <FileSelectionToolbar
