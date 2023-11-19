@@ -36,8 +36,8 @@ describe("database integration tests", () => {
 
     expect(await getRowCount(db, "file")).toEqual(3);
 
-    const result = FileRepository.insertFile(db, aMockFileWith({ folder: "folder", name: "name" }));
-    await expect(result).rejects.toThrowError();
+    const action = async () => await FileRepository.insertFile(db, aMockFileWith({ folder: "folder", name: "name" }));
+    await expect(action()).rejects.toThrowError();
   });
 
   it("should delete games when files are deleted", async () => {
@@ -68,8 +68,8 @@ describe("database integration tests", () => {
     await PlayerRepository.insertPlayer(db, aMockPlayerWith(gameId, { index: 1 }));
     expect(await getRowCount(db, "player")).toEqual(2);
 
-    const result = PlayerRepository.insertPlayer(db, aMockPlayerWith(gameId, { index: 1 }));
-    await expect(result).rejects.toThrowError();
+    const action = async () => await PlayerRepository.insertPlayer(db, aMockPlayerWith(gameId, { index: 1 }));
+    await expect(action()).rejects.toThrowError();
   });
 
   const addMockGame = async (): Promise<{ fileId: number; gameId: number }> => {
