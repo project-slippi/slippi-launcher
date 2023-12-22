@@ -63,16 +63,18 @@ export const GeckoCodes = ({ dolphinType, disabled }: { dolphinType: DolphinLaun
   const onClose = React.useCallback(() => setGeckoFormOpen(false), []);
 
   const tabs = React.useMemo((): { name: string; Component: React.ComponentType }[] => {
+    const managePage = () => <ManageCodesContainer geckoCodes={geckoCodes} onChange={updateGeckoCodes} />;
+    const addPage = () => (
+      <AddCodesContainer existingGeckoCodeNames={geckoCodes.map(({ name }) => name)} onSubmit={addCode} />
+    );
     return [
       {
         name: "Manage",
-        Component: () => <ManageCodesContainer geckoCodes={geckoCodes} onChange={updateGeckoCodes} />,
+        Component: managePage,
       },
       {
         name: "Add",
-        Component: () => (
-          <AddCodesContainer existingGeckoCodeNames={geckoCodes.map(({ name }) => name)} onSubmit={addCode} />
-        ),
+        Component: addPage,
       },
     ];
   }, [addCode, geckoCodes, updateGeckoCodes]);

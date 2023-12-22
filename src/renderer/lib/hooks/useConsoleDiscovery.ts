@@ -1,5 +1,5 @@
 import type { ConsoleMirrorStatusUpdate, DiscoveredConsoleInfo } from "@console/types";
-import produce from "immer";
+import { produce } from "immer";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
