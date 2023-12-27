@@ -2,6 +2,7 @@
  * Build config for electron renderer process
  */
 
+import StylexPlugin from "@stylexjs/webpack-plugin";
 import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
@@ -19,6 +20,8 @@ import webpackPaths from "./webpack.paths";
 
 checkNodeEnv("production");
 deleteSourceMaps();
+
+const isDevelopment = process.env.NODE_ENV !== "production";
 
 const devtoolsConfig =
   process.env.DEBUG_PROD === "true"
@@ -47,6 +50,11 @@ const configuration: webpack.Configuration = {
 
   module: {
     rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: "babel-loader",
+      },
       {
         test: /\.s?(a|c)ss$/,
         use: [
@@ -111,6 +119,16 @@ const configuration: webpack.Configuration = {
       DEBUG_PROD: false,
     }),
 
+    new StylexPlugin({
+      filename: "styles.[contenthash].css",
+      dev: isDevelopment,
+      unstable_moduleResolution: {
+        type: "commonJS",
+        rootDir: webpackPaths.rootPath,
+      },
+      appendTo: undefined,
+    }),
+
     new MiniCssExtractPlugin({
       filename: "style.css",
     }),
@@ -128,7 +146,7 @@ const configuration: webpack.Configuration = {
         removeComments: true,
       },
       isBrowser: false,
-      isDevelopment: process.env.NODE_ENV !== "production",
+      isDevelopment,
     }),
 
     new webpack.IgnorePlugin({ resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ }),

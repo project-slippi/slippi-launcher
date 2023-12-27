@@ -1,6 +1,7 @@
 import "webpack-dev-server";
 
 import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
+import StylexPlugin from "@stylexjs/webpack-plugin";
 import chalk from "chalk";
 import { execSync, spawn } from "child_process";
 import fs from "fs";
@@ -14,9 +15,11 @@ import baseConfig from "./webpack.config.base";
 import polyfills from "./webpack.config.renderer.polyfills";
 import webpackPaths from "./webpack.paths";
 
+const isDevelopment = process.env.NODE_ENV !== "production";
+
 // When an ESLint server is running, we can't set the NODE_ENV so we'll check if it's
 // at the dev webpack config is not accidentally run in a production environment
-if (process.env.NODE_ENV === "production") {
+if (!isDevelopment) {
   checkNodeEnv("development");
 }
 
@@ -187,8 +190,18 @@ export default (env?: Record<string, string | true>, _argv?: any) => {
         },
         isBrowser: false,
         env: process.env.NODE_ENV,
-        isDevelopment: process.env.NODE_ENV !== "production",
+        isDevelopment,
         nodeModules: webpackPaths.appNodeModulesPath,
+      }),
+
+      new StylexPlugin({
+        filename: "styles.[contenthash].css",
+        dev: isDevelopment,
+        unstable_moduleResolution: {
+          type: "commonJS",
+          rootDir: webpackPaths.rootPath,
+        },
+        appendTo: undefined,
       }),
     ],
 

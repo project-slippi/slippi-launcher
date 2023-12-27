@@ -1,6 +1,4 @@
 import type { NewsItem } from "@common/types";
-import { css } from "@emotion/react";
-import styled from "@emotion/styled";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
@@ -8,6 +6,7 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
+import stylex from "@stylexjs/stylex";
 import moment from "moment";
 import React from "react";
 import TimeAgo from "react-timeago";
@@ -15,22 +14,33 @@ import TimeAgo from "react-timeago";
 import { ExternalLink } from "@/components/external_link";
 import { MarkdownContent } from "@/components/markdown_content";
 
+const styles = stylex.create({
+  container: {
+    marginBottom: "200px",
+  },
+  dateInfo: {
+    marginRight: "auto",
+    marginLeft: "5px",
+    opacity: 0.6,
+    fontSize: "15px",
+  },
+  fixedCardHeight: {
+    height: "200px",
+  },
+  markdownContainer: {
+    color: "#ccc",
+    maxWidth: "700px",
+  },
+});
+
 export const NewsArticle = React.memo(function NewsArticle({ item }: { item: NewsItem }) {
   const { imageUrl, title, subtitle, permalink, body, publishedAt } = item;
   const localDateString = moment(publishedAt).format("LLL");
 
   return (
-    <Outer>
+    <div {...stylex.props(styles.container)}>
       <Card>
-        {imageUrl && (
-          <CardMedia
-            css={css`
-              height: 200px;
-            `}
-            image={imageUrl}
-            title={title}
-          />
-        )}
+        {imageUrl && <CardMedia {...stylex.props(styles.fixedCardHeight)} image={imageUrl} title={title} />}
         <CardContent>
           <Typography gutterBottom={true} variant="h5" component="h2">
             {title}
@@ -40,38 +50,19 @@ export const NewsArticle = React.memo(function NewsArticle({ item }: { item: New
               {subtitle}
             </Typography>
           )}
-          {body && (
-            <MarkdownContent
-              content={body}
-              css={css`
-                color: #ccc;
-                max-width: 700px;
-              `}
-            />
-          )}
+          {body && <MarkdownContent content={body} {...stylex.props(styles.markdownContainer)} />}
         </CardContent>
         <CardActions disableSpacing={true}>
           <Tooltip title={localDateString}>
-            <DateInfo>
+            <div {...stylex.props(styles.dateInfo)}>
               Posted <TimeAgo date={publishedAt} title="" live={false} />
-            </DateInfo>
+            </div>
           </Tooltip>
           <Button LinkComponent={ExternalLink} size="small" color="primary" href={permalink}>
             Read more
           </Button>
         </CardActions>
       </Card>
-    </Outer>
+    </div>
   );
 });
-
-const Outer = styled.div`
-  margin-bottom: 20px;
-`;
-
-const DateInfo = styled.div`
-  margin-right: auto;
-  margin-left: 5px;
-  opacity: 0.6;
-  font-size: 15px;
-`;
