@@ -153,7 +153,7 @@ const ChatMessageSelector = ({
   updateMessage,
   user,
 }: ChatMessageSelectorProps) => {
-  const [hoverStates, setHoverStates] = useState({});
+  const [hoverStates, setHoverStates] = useState<Record<string, boolean>>({});
 
   const defaultMessage = defaultMessages[dirIdx[groupDirection] * 4 + dirIdx[direction]];
 
