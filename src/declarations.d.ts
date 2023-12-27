@@ -6,8 +6,6 @@ declare const __VERSION__: string; // App version number
 declare const __DATE__: string; // ISO timestamp of build date
 declare const __COMMIT__: string; // Short git commit hash
 
-declare module "@stylexjs/stylex";
-
 declare module "raw-loader!*.md" {
   const content: string;
   export default content;
