@@ -189,11 +189,7 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
   }): Promise<void> {
     const type = this.dolphinLaunchType;
 
-    const downloadUrl = dolphinDownloadInfo.downloadUrls[process.platform];
-    if (!downloadUrl) {
-      throw new Error(`Could not find latest Dolphin download url for ${process.platform}`);
-    }
-
+    const downloadUrl = this.getPlatformSpecificDownloadLink(dolphinDownloadInfo);
     const downloadDir = path.join(app.getPath("userData"), "temp");
     const downloadedAsset = await downloadLatestDolphin(downloadUrl, downloadDir, onProgress);
     log.info(`Installing v${dolphinDownloadInfo.version} ${type} Dolphin...`);
@@ -202,6 +198,19 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
 
     if (onComplete) {
       onComplete();
+    }
+  }
+
+  private getPlatformSpecificDownloadLink(downloadInfo: DolphinVersionResponse): string {
+    switch (process.platform) {
+      case "linux":
+        return downloadInfo.downloadUrls.linux;
+      case "darwin":
+        return downloadInfo.downloadUrls.darwin;
+      case "win32":
+        return downloadInfo.downloadUrls.win32;
+      default:
+        throw new Error(`Could not find latest Dolphin download url for ${process.platform}`);
     }
   }
 

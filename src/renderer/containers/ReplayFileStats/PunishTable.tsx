@@ -147,7 +147,7 @@ export const PunishTable = ({ file, stats, player, opp, onPlay }: PunishTablePro
   };
 
   const renderOpeningTypeCell = (punish: ConversionType) => {
-    const textTranslation = {
+    const textTranslation: Record<string, string> = {
       "counter-attack": "Counter Hit",
       "neutral-win": "Neutral",
       trade: "Trade",
