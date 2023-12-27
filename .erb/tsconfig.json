@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "types": ["@types/node"],
+    "noEmit": true,
+    "allowJs": true
+  },
+  "extends": "../tsconfig.json",
+  "include": [
+    "**/*.ts",
+    "**/*.js"
+  ]
+}
