@@ -51,11 +51,6 @@ const configuration: webpack.Configuration = {
   module: {
     rules: [
       {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: "babel-loader",
-      },
-      {
         test: /\.s?(a|c)ss$/,
         use: [
           MiniCssExtractPlugin.loader,
@@ -119,18 +114,17 @@ const configuration: webpack.Configuration = {
       DEBUG_PROD: false,
     }),
 
+    new MiniCssExtractPlugin({
+      filename: "style.css",
+    }),
+
     new StylexPlugin({
-      filename: "styles.[contenthash].css",
       dev: isDevelopment,
       unstable_moduleResolution: {
         type: "commonJS",
         rootDir: webpackPaths.rootPath,
       },
-      appendTo: undefined,
-    }),
-
-    new MiniCssExtractPlugin({
-      filename: "style.css",
+      appendTo: "style.css",
     }),
 
     new BundleAnalyzerPlugin({
