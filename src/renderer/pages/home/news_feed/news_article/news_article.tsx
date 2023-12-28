@@ -16,7 +16,7 @@ import { MarkdownContent } from "@/components/markdown_content";
 
 const styles = stylex.create({
   container: {
-    marginBottom: "200px",
+    marginBottom: "20px",
   },
   dateInfo: {
     marginRight: "auto",
