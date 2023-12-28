@@ -195,13 +195,11 @@ export default (env?: Record<string, string | true>, _argv?: any) => {
       }),
 
       new StylexPlugin({
-        filename: "styles.[contenthash].css",
         dev: isDevelopment,
         unstable_moduleResolution: {
           type: "commonJS",
           rootDir: webpackPaths.rootPath,
         },
-        appendTo: undefined,
       }),
     ],
 
