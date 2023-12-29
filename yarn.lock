@@ -4062,13 +4062,6 @@
   dependencies:
     "@stylexjs/shared" "0.3.0"
 
-"@stylexjs/dev-runtime@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@stylexjs/dev-runtime/-/dev-runtime-0.3.0.tgz#14937babb958305df9d958631598021552108b7c"
-  integrity sha512-mHzyZC1a8gT6ix7fXfKGeMGo7V0a2T59bCZjRWJRguG+RDAgCFj2EGxzmIIaB9P2R/lRa92avAw0KvPg/nHRjw==
-  dependencies:
-    "@stylexjs/shared" "0.3.0"
-
 "@stylexjs/shared@0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@stylexjs/shared/-/shared-0.3.0.tgz#6e9effac2fb79bb50b38d4b1da8404f109cc52b5"
