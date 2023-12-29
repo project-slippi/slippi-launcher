@@ -204,5 +204,8 @@
     "stun": "^2.1.0",
     "wget-improved": "^3.3.1",
     "zustand": "^4.4.6"
+  },
+  "resolutions": {
+    "@storybook/react-docgen-typescript-plugin": "1.0.6--canary.9.cd77847.0"
   }
 }
