@@ -15,12 +15,11 @@ import { Link, Navigate, Route, Routes, useMatch, useResolvedPath } from "react-
 
 import { DualPane } from "@/components/DualPane";
 import { BuildInfo } from "@/containers/Settings/BuildInfo";
+import type { SettingSection } from "@/containers/Settings/types";
 import { useMousetrap } from "@/lib/hooks/useMousetrap";
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
 import { platformTitleBarStyles } from "@/styles/platformTitleBarStyles";
 import { withSlippiBackground } from "@/styles/withSlippiBackground";
-
-import { settings } from "../containers/Settings";
 
 const Outer = styled.div`
   position: relative;
@@ -53,9 +52,8 @@ const CloseButton = styled(IconButton)`
   z-index: 1;
 `;
 
-const settingItems = settings.flatMap((section) => section.items);
-
-export const SettingsView = React.memo(() => {
+export const SettingsPage = React.memo(({ settings }: { settings: SettingSection[] }) => {
+  const settingItems = settings.flatMap((section) => section.items);
   const { close } = useSettingsModal();
   useMousetrap("escape", close);
 

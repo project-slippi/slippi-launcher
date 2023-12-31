@@ -5,6 +5,7 @@ import { BuildInfo } from "@/containers/Settings/BuildInfo";
 import { withSlippiBackground } from "@/styles/withSlippiBackground";
 
 export const LoadingView = () => {
+  return <LoadingScreen message="Just a sec..." />;
   return (
     <div
       css={css`

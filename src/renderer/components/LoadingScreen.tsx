@@ -7,7 +7,7 @@ import { BouncingSlippiLogo } from "@/components/BouncingSlippiLogo";
 import { Message } from "./Message";
 
 export const LoadingScreen = ({
-  message,
+  message = "Just a sec...",
   style,
   className,
 }: {
