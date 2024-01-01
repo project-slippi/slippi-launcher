@@ -2,7 +2,7 @@ import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import Paper from "@mui/material/Paper";
 import { alpha } from "@mui/material/styles";
-import faqMarkdown from "raw-loader!../../../../FAQ.md";
+import faqMarkdown from "raw-loader!@/../../FAQ.md";
 import React from "react";
 
 import { MarkdownContent } from "@/components/MarkdownContent";
