@@ -13,7 +13,6 @@ export type CreateSpectatePageArgs = {
 export function createSpectatePage({ broadcastService }: CreateSpectatePageArgs): {
   Page: React.ComponentType;
 } {
-  console.log("creating spectate page");
   const watchBroadcast = (id: string) => {
     void broadcastService.watchBroadcast(id);
   };
