@@ -14,10 +14,10 @@ import type { LinkProps } from "react-router-dom";
 import { Link, Navigate, Route, Routes, useMatch, useResolvedPath } from "react-router-dom";
 
 import { DualPane } from "@/components/DualPane";
-import { BuildInfo } from "@/containers/Settings/BuildInfo";
-import type { SettingSection } from "@/containers/Settings/types";
 import { useMousetrap } from "@/lib/hooks/useMousetrap";
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
+import { BuildInfo } from "@/pages/settings/advanced_app_settings/build_info";
+import type { SettingSection } from "@/pages/settings/types";
 import { platformTitleBarStyles } from "@/styles/platformTitleBarStyles";
 import { withSlippiBackground } from "@/styles/withSlippiBackground";
 

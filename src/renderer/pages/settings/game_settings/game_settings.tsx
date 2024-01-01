@@ -17,7 +17,7 @@ import { useDolphinStore } from "@/lib/dolphin/useDolphinStore";
 import { useIsoVerification } from "@/lib/hooks/useIsoVerification";
 import { useEnableJukebox, useIsoPath, useLaunchMeleeOnPlay } from "@/lib/hooks/useSettings";
 
-import { SettingItem } from "./SettingItem";
+import { SettingItem } from "../setting_item_section";
 
 const isWindows = window.electron.bootstrap.isWindows;
 
@@ -36,7 +36,7 @@ const renderValidityStatus = (isoValidity: IsoValidity) => {
   }
 };
 
-export const MeleeOptions = React.memo(() => {
+export const GameSettings = React.memo(() => {
   const verifying = useIsoVerification((state) => state.isValidating);
   const isoValidity = useIsoVerification((state) => state.validity);
   const [isoPath, setIsoPath] = useIsoPath();

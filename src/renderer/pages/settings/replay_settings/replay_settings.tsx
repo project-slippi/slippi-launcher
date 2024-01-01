@@ -8,9 +8,9 @@ import { PathInput } from "@/components/PathInput";
 import { useDolphinStore } from "@/lib/dolphin/useDolphinStore";
 import { useExtraSlpPaths, useMonthlySubfolders, useRootSlpPath, useSpectateSlpPath } from "@/lib/hooks/useSettings";
 
-import { SettingItem } from "./SettingItem";
+import { SettingItem } from "../setting_item_section";
 
-export const ReplayOptions = React.memo(() => {
+export const ReplaySettings = React.memo(() => {
   const [localReplayDir, setLocalReplayDir] = useRootSlpPath();
   const [replayDirs, setReplayDirs] = useExtraSlpPaths();
   const [spectateDir, setSpectateDir] = useSpectateSlpPath();

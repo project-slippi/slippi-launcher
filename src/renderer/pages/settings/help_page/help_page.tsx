@@ -7,7 +7,7 @@ import React from "react";
 
 import { MarkdownContent } from "@/components/MarkdownContent";
 
-import { SupportBox } from "./SupportBox";
+import { SupportBox } from "./support_box";
 
 export const HelpPage = React.memo(() => {
   return (

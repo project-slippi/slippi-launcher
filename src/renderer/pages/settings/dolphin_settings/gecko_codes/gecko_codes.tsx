@@ -7,9 +7,9 @@ import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";
 
-import { AddCodesContainer } from "./AddCodes/AddCodes.container";
-import { ManageCodesContainer } from "./ManageCodes/ManageCodes.container";
-import { TabbedDialog } from "./TabbedDialog";
+import { AddCodesContainer } from "./add_codes/add_codes.container";
+import { ManageCodesContainer } from "./manage_codes/manage_codes.container";
+import { TabbedDialog } from "./tabbed_dialog";
 
 export const GeckoCodes = ({ dolphinType, disabled }: { dolphinType: DolphinLaunchType; disabled: boolean }) => {
   const [isLoading, setIsLoading] = React.useState(false);

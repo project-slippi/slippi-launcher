@@ -1,7 +1,7 @@
 import type { GeckoCode } from "@dolphin/config/geckoCode";
 import { parseGeckoCodes } from "@dolphin/config/geckoCode";
 
-import { AddCodes } from "./AddCodes";
+import { AddCodes } from "./add_codes";
 
 export const AddCodesContainer = ({
   existingGeckoCodeNames = [],

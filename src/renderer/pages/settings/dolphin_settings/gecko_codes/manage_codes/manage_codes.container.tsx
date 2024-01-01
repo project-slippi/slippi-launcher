@@ -3,7 +3,7 @@ import { geckoCodeToString } from "@dolphin/config/geckoCode";
 
 import { useToasts } from "@/lib/hooks/useToasts";
 
-import { ManageCodes } from "./ManageCodes";
+import { ManageCodes } from "./manage_codes";
 
 export const ManageCodesContainer = ({
   geckoCodes,

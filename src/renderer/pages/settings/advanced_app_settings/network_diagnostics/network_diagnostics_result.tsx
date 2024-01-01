@@ -6,8 +6,8 @@ import DialogActions from "@mui/material/DialogActions";
 import Typography from "@mui/material/Typography";
 import React from "react";
 
-import { CgnatCommandSection } from "./CgnatCommandSection";
-import { NatTypeSection } from "./NatTypeSection";
+import { CgnatCommandSection } from "./cgnat_command_section";
+import { NatTypeSection } from "./nat_type_section";
 
 const ContentBody = styled.div`
   margin-bottom: 1em;

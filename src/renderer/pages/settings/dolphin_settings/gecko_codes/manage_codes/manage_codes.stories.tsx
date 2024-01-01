@@ -1,8 +1,8 @@
 import { action } from "@storybook/addon-actions";
 import type { ComponentMeta, ComponentStory } from "@storybook/react";
 
-import type { GeckoCode } from "./ManageCodes";
-import { ManageCodes } from "./ManageCodes";
+import type { GeckoCode } from "./manage_codes";
+import { ManageCodes } from "./manage_codes";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

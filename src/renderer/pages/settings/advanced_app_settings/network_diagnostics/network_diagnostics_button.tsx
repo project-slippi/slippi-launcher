@@ -10,7 +10,7 @@ import React from "react";
 
 import { Button as ActionButton } from "@/components/FormInputs";
 
-import { NetworkDiagnosticsResult } from "./NetworkDiagnosticsResult";
+import { NetworkDiagnosticsResult } from "./network_diagnostics_result";
 
 type NetworkInformation = {
   address: string;

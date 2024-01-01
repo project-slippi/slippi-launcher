@@ -6,9 +6,9 @@ import { ChatMessagesInput } from "@/components/ChatMessagesInput";
 import { useAccount } from "@/lib/hooks/useAccount";
 import { useChatMessages } from "@/lib/hooks/useChatMessages";
 
-import { SettingItem } from "./SettingItem";
+import { SettingItem } from "../setting_item_section";
 
-export const ChatOptions = React.memo(() => {
+export const ChatSettings = React.memo(() => {
   const user = useAccount((store) => store.user);
   const {
     loading,

@@ -17,8 +17,8 @@ import { useDolphinBeta } from "@/lib/hooks/useSettings";
 import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";
 
-import { GeckoCodes } from "./GeckoCodes/GeckoCodes";
-import { SettingItem } from "./SettingItem";
+import { SettingItem } from "../setting_item_section";
+import { GeckoCodes } from "./gecko_codes/gecko_codes";
 
 const { isMac, isWindows } = window.electron.bootstrap;
 

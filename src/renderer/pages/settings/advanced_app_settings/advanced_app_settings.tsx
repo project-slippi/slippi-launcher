@@ -5,7 +5,7 @@ import { Toggle } from "@/components/FormInputs/Toggle";
 import { useAutoUpdateLauncher } from "@/lib/hooks/useSettings";
 import { useToasts } from "@/lib/hooks/useToasts";
 
-import { SettingItem } from "./SettingItem";
+import { SettingItem } from "../setting_item_section";
 
 export const AdvancedAppSettings = React.memo(() => {
   const [autoUpdateLauncher, setAutoUpdateLauncher] = useAutoUpdateLauncher();
