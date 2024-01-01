@@ -14,13 +14,14 @@ import { lazyLoadSettingsPage } from "./pages/settings/load";
 import { createServiceProvider } from "./services";
 import type { Services } from "./services/types";
 import { slippiTheme } from "./styles/theme";
+import { createMainView } from "./views/createMainView";
 import { LandingView } from "./views/LandingView";
 import { LoadingView } from "./views/LoadingView";
-import { MainView } from "./views/MainView";
 import { NotFoundView } from "./views/NotFoundView";
 
 export function createApp({ services }: { services: Services }): React.ComponentType {
   const { Page: SettingsPage } = lazyLoadSettingsPage();
+  const { MainView } = createMainView({ broadcastService: services.broadcastService });
 
   const App = () => {
     const initialized = useAppStore((state) => state.initialized);
