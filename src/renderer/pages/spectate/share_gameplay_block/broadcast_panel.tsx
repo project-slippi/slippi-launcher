@@ -7,7 +7,7 @@ import moment from "moment";
 import React from "react";
 import TimeAgo from "react-timeago";
 
-import { StartBroadcastDialog } from "./StartBroadcastDialog";
+import { StartBroadcastDialog } from "./start_broadcast_dialog";
 
 type BroadcastPanelProps = {
   dolphinStatus: ConnectionStatus;

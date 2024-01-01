@@ -7,7 +7,7 @@ import { useBroadcast } from "@/lib/hooks/useBroadcast";
 import { useConsole } from "@/lib/hooks/useConsole";
 import { useToasts } from "@/lib/hooks/useToasts";
 
-import { BroadcastPanel } from "./BroadcastPanel";
+import { BroadcastPanel } from "./broadcast_panel";
 
 // These are the default params for broadcasting Netplay Dolphin
 const ip = "127.0.0.1";

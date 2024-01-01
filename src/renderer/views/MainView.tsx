@@ -12,9 +12,9 @@ import { Header } from "@/containers/Header";
 import { LoginDialog } from "@/containers/Header/LoginDialog";
 import type { MenuItem } from "@/containers/Header/MainMenu";
 import { ReplayBrowserPage } from "@/containers/ReplayBrowser/ReplayBrowserPage";
-import { SpectatePage } from "@/containers/SpectatePage";
 import { usePageNavigationShortcuts } from "@/lib/hooks/useShortcuts";
 import { HomePage } from "@/pages/home/HomePage";
+import { SpectatePage } from "@/pages/spectate/spectate_page";
 
 type MainMenuItem = MenuItem & {
   component: React.ReactNode;

@@ -13,10 +13,10 @@ import { useAccount } from "@/lib/hooks/useAccount";
 import { useBroadcastList } from "@/lib/hooks/useBroadcastList";
 import { useServices } from "@/services";
 
-import { Footer } from "./Footer";
-import { ShareGameplayBlock } from "./ShareGameplayBlock";
-import { SpectateItem } from "./SpectateItem";
-import { SpectatorIdBlock } from "./SpectatorIdBlock";
+import { Footer } from "./footer";
+import { ShareGameplayBlock } from "./share_gameplay_block/share_gameplay_block";
+import { SpectateItem } from "./spectate_item";
+import { SpectatorIdBlock } from "./spectator_id_block";
 
 export const SpectatePage = React.memo(() => {
   const user = useAccount((store) => store.user);
