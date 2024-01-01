@@ -1,11 +1,10 @@
 import { css } from "@emotion/react";
 
 import { LoadingScreen } from "@/components/LoadingScreen";
-import { BuildInfo } from "@/containers/Settings/BuildInfo";
+import { BuildInfo } from "@/containers/build_info";
 import { withSlippiBackground } from "@/styles/withSlippiBackground";
 
 export const LoadingView = () => {
-  return <LoadingScreen message="Just a sec..." />;
   return (
     <div
       css={css`
