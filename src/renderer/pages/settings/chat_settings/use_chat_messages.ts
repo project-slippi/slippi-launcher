@@ -1,7 +1,7 @@
 import { isEqual, keyBy } from "lodash";
 import { useCallback, useEffect, useState } from "react";
 
-import { defaultMessages } from "@/lib/chat";
+import { defaultMessages } from "@/pages/settings/chat_settings/default_chat_messages";
 import { useServices } from "@/services";
 import type { AvailableMessageType } from "@/services/slippi/types";
 

@@ -1,8 +1,6 @@
 import { currentRulesVersion } from "@common/constants";
 import type { PlayKey } from "@dolphin/types";
 
-import { defaultMessages } from "@/lib/chat";
-
 import type { AuthService } from "../auth/types";
 import { delayAndMaybeError } from "../utils";
 import { generateMockChatMessage, generateUserSubscriptionLevel } from "./mockSlippiDataUtils";
@@ -13,6 +11,28 @@ const SHOULD_ERROR = false;
 const fakeUserId = "userid";
 
 type SavedUserData = UserData & { savedMessages: string[] };
+
+const savedMessages = [
+  "ggs",
+  "one more",
+  "brb",
+  "good luck",
+
+  "well played",
+  "that was fun",
+  "thanks",
+  "too good",
+
+  "sorry",
+  "my b",
+  "lol",
+  "wow",
+
+  "gotta go",
+  "one sec",
+  "let's play again later",
+  "bad connection",
+];
 
 class MockSlippiBackendClient implements SlippiBackendService {
   private fakeUsers: Map<string, SavedUserData> = new Map();
@@ -31,7 +51,7 @@ class MockSlippiBackendClient implements SlippiBackendService {
         displayName: displayName ?? `Demo user ${numUsers}`,
       },
       rulesAccepted: 0,
-      savedMessages: defaultMessages,
+      savedMessages,
     });
   }
 

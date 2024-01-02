@@ -12,7 +12,7 @@ import { capitalize, chain } from "lodash";
 import type { MouseEventHandler } from "react";
 import React, { useState } from "react";
 
-import { defaultMessages } from "@/lib/chat";
+import { defaultMessages } from "@/pages/settings/chat_settings/default_chat_messages";
 import type { AvailableMessageType } from "@/services/slippi/types";
 
 import { DPadDirection } from "../../../components/DPadDirection";
