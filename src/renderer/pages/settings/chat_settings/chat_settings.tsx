@@ -1,12 +1,12 @@
 import { css } from "@emotion/react";
 import React from "react";
 
-import { ChatMessagesFooter } from "@/components/ChatMessagesFooter";
-import { ChatMessagesInput } from "@/components/ChatMessagesInput";
 import { useAccount } from "@/lib/hooks/useAccount";
-import { useChatMessages } from "@/lib/hooks/useChatMessages";
 
 import { SettingItem } from "../setting_item_section";
+import { ChatMessagesFooter } from "./chat_messages_footer";
+import { ChatMessagesInput } from "./chat_messages_input";
+import { useChatMessages } from "./use_chat_messages";
 
 export const ChatSettings = React.memo(() => {
   const user = useAccount((store) => store.user);

@@ -5,7 +5,7 @@ import { defaultMessages } from "@/lib/chat";
 import { useServices } from "@/services";
 import type { AvailableMessageType } from "@/services/slippi/types";
 
-import { useToasts } from "./useToasts";
+import { useToasts } from "../../../lib/hooks/useToasts";
 
 const validateMessages = (messages: string[], availableMessages: AvailableMessageType[]): string[] => {
   const optionsByText = keyBy(availableMessages, "text");

@@ -15,7 +15,7 @@ import React, { useState } from "react";
 import { defaultMessages } from "@/lib/chat";
 import type { AvailableMessageType } from "@/services/slippi/types";
 
-import { DPadDirection } from "./DPadDirection";
+import { DPadDirection } from "../../../components/DPadDirection";
 
 const dirIdx = {
   up: 0,
