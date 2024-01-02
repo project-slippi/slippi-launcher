@@ -11,7 +11,7 @@ import React from "react";
 
 import { useSettings } from "@/lib/hooks/useSettings";
 
-import { AddConnectionForm } from "./AddConnectionForm";
+import { AddConnectionForm } from "./add_connection_form";
 
 type AddConnectionDialogProps = {
   open: boolean;

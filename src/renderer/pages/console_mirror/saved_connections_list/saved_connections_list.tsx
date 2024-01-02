@@ -12,7 +12,7 @@ import { IconMessage } from "@/components/Message";
 import { useConsoleDiscoveryStore } from "@/lib/hooks/useConsoleDiscovery";
 import { useSettings } from "@/lib/hooks/useSettings";
 
-import { SavedConnectionItem } from "./SavedConnectionItem";
+import { SavedConnectionItem } from "./saved_connection_item";
 
 type SavedConnectionsListProps = {
   availableConsoles: DiscoveredConsoleInfo[];

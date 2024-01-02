@@ -4,7 +4,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 import { InfoBlock } from "@/components/InfoBlock";
 
-import { NewConnectionItem } from "./NewConnectionItem";
+import { NewConnectionItem } from "./new_connection_item";
 
 type NewConnectionListProps = {
   isScanning?: boolean;

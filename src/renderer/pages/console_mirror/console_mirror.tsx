@@ -21,10 +21,10 @@ import { useSettings } from "@/lib/hooks/useSettings";
 import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";
 
-import { AddConnectionDialog } from "./AddConnectionDialog";
-import { NewConnectionList } from "./NewConnectionList";
-import { OBSWebsocketNotice } from "./OBSWebsocketNotice";
-import { SavedConnectionsList } from "./SavedConnectionsList";
+import { AddConnectionDialog } from "./add_connection_dialog/add_connection_dialog";
+import { NewConnectionList } from "./new_connection_list/new_connection_list";
+import { OBSWebsocketNotice } from "./obs_websocket_notice";
+import { SavedConnectionsList } from "./saved_connections_list/saved_connections_list";
 
 const Outer = styled.div`
   display: flex;
