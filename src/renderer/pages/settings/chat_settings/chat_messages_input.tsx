@@ -12,10 +12,10 @@ import { capitalize, chain } from "lodash";
 import type { MouseEventHandler } from "react";
 import React, { useState } from "react";
 
-import { defaultMessages } from "@/pages/settings/chat_settings/default_chat_messages";
 import type { AvailableMessageType } from "@/services/slippi/types";
 
-import { DPadDirection } from "../../../components/DPadDirection";
+import { defaultMessages } from "./default_chat_messages";
+import { DpadDirection } from "./dpad_direction";
 
 const dirIdx = {
   up: 0,
@@ -221,8 +221,8 @@ const ChatMessageSelector = ({
         max-width: 800px;
       `}
     >
-      <DPadDirection direction={groupDirection} />
-      <DPadDirection direction={direction} />
+      <DpadDirection direction={groupDirection} />
+      <DpadDirection direction={direction} />
       <div />
       <FormControl fullWidth={true} size="small">
         <Select
