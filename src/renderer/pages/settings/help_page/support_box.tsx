@@ -11,7 +11,7 @@ import { Button } from "@/components/FormInputs";
 import { useToasts } from "@/lib/hooks/useToasts";
 import { ReactComponent as DiscordIcon } from "@/styles/images/discord.svg";
 
-import { NetworkDiagnosticsButton } from "../advanced_app_settings/network_diagnostics/network_diagnostics_button";
+import { NetworkDiagnosticsButton } from "./network_diagnostics/network_diagnostics_button";
 
 export const SupportBox = () => {
   const { showError, showSuccess } = useToasts();
