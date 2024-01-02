@@ -8,12 +8,12 @@ import { Navigate, Route, Routes } from "react-router-dom";
 
 import { AuthGuard } from "@/components/AuthGuard";
 import { PersistentNotification } from "@/components/PersistentNotification";
-import { Console } from "@/containers/Console";
 import { Header } from "@/containers/Header";
 import { LoginDialog } from "@/containers/Header/LoginDialog";
 import type { MenuItem } from "@/containers/Header/MainMenu";
 import { ReplayBrowserPage } from "@/containers/ReplayBrowser/ReplayBrowserPage";
 import { usePageNavigationShortcuts } from "@/lib/hooks/useShortcuts";
+import { lazyLoadConsoleMirrorPage } from "@/pages/console_mirror/load";
 import { HomePage } from "@/pages/home/HomePage";
 import { lazyLoadSpectatePage } from "@/pages/spectate/load";
 
@@ -27,6 +27,7 @@ export function createMainView({ broadcastService }: { broadcastService: Broadca
   MainView: React.ComponentType;
 } {
   const { Page: SpectatePage } = lazyLoadSpectatePage({ broadcastService });
+  const { Page: ConsoleMirrorPage } = lazyLoadConsoleMirrorPage();
 
   const menuItems: MainMenuItem[] = [
     {
@@ -53,7 +54,7 @@ export function createMainView({ broadcastService }: { broadcastService: Broadca
     {
       subpath: "console",
       title: "Console Mirror",
-      component: <Console />,
+      component: <ConsoleMirrorPage />,
       icon: <CastOutlinedIcon />,
     },
   ];
