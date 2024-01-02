@@ -18,7 +18,7 @@ import { HomePage } from "@/pages/home/HomePage";
 import { lazyLoadSpectatePage } from "@/pages/spectate/load";
 
 type MainMenuItem = MenuItem & {
-  component: React.ReactNode;
+  Component: React.ComponentType;
   default?: boolean;
   private?: boolean;
 };
@@ -33,29 +33,29 @@ export function createMainView({ broadcastService }: { broadcastService: Broadca
     {
       subpath: "home",
       title: "Home",
-      component: <HomePage />,
-      icon: <HomeOutlinedIcon />,
+      Component: HomePage,
+      Icon: HomeOutlinedIcon,
       default: true,
     },
     {
       subpath: "replays",
       title: "Replays",
-      component: <ReplayBrowserPage />,
-      icon: <SlowMotionVideoIcon />,
+      Component: ReplayBrowserPage,
+      Icon: SlowMotionVideoIcon,
     },
 
     {
       subpath: "spectate",
       title: "Spectate",
-      component: <SpectatePage />,
-      icon: <LiveTvOutlinedIcon />,
+      Component: SpectatePage,
+      Icon: LiveTvOutlinedIcon,
       private: true,
     },
     {
       subpath: "console",
       title: "Console Mirror",
-      component: <ConsoleMirrorPage />,
-      icon: <CastOutlinedIcon />,
+      Component: ConsoleMirrorPage,
+      Icon: CastOutlinedIcon,
     },
   ];
 
@@ -80,7 +80,13 @@ export function createMainView({ broadcastService }: { broadcastService: Broadca
         <div style={{ flex: 1, overflow: "auto", display: "flex" }}>
           <Routes>
             {menuItems.map((item) => {
-              const element = item.private ? <AuthGuard>{item.component}</AuthGuard> : item.component;
+              const element = item.private ? (
+                <AuthGuard>
+                  <item.Component />
+                </AuthGuard>
+              ) : (
+                <item.Component />
+              );
               return <Route key={item.subpath} path={`${item.subpath}/*`} element={element} />;
             })}
             {defaultRoute && <Route path="*" element={<Navigate replace={true} to={`${defaultRoute.subpath}`} />} />}

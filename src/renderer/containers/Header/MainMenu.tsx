@@ -10,7 +10,7 @@ import { Link, useMatch, useResolvedPath } from "react-router-dom";
 export type MenuItem = {
   subpath: string;
   title: string;
-  icon: React.ReactNode;
+  Icon: React.ComponentType;
 };
 
 type MainMenuProps = {
@@ -29,7 +29,7 @@ export const MainMenu = ({ menuItems }: MainMenuProps) => {
         return (
           <div key={item.subpath}>
             <CustomLink to={item.subpath} title={item.title}>
-              {item.icon ? item.icon : item.title}
+              {item.Icon ? <item.Icon /> : item.title}
             </CustomLink>
           </div>
         );
