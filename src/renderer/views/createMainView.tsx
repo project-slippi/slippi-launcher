@@ -43,7 +43,6 @@ export function createMainView({ broadcastService }: { broadcastService: Broadca
       Component: ReplayBrowserPage,
       Icon: SlowMotionVideoIcon,
     },
-
     {
       subpath: "spectate",
       title: "Spectate",
