@@ -37,7 +37,7 @@ const OuterBox = styled(Box)`
   height: 70px;
 `;
 
-export const Header = ({ menuItems }: { menuItems: MenuItem[] }) => {
+export const Header = ({ menuItems }: { menuItems: readonly MenuItem[] }) => {
   const { dolphinService, slippiBackendService } = useServices();
   const [startGameModalOpen, setStartGameModalOpen] = React.useState(false);
   const [activateOnlineModal, setActivateOnlineModal] = React.useState(false);

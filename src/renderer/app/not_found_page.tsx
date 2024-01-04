@@ -16,7 +16,7 @@ const Text = styled.h2`
   margin: 0;
 `;
 
-export const NotFoundView = React.memo(() => {
+export const NotFoundPage = React.memo(() => {
   return (
     <OuterBox>
       <Typography variant="h2">Uh oh.</Typography>

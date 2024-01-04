@@ -4,7 +4,7 @@ import { LoadingScreen } from "@/components/LoadingScreen";
 import { BuildInfo } from "@/containers/build_info";
 import { withSlippiBackground } from "@/styles/withSlippiBackground";
 
-export const LoadingView = () => {
+export const LoadingPage = () => {
   return (
     <div
       css={css`

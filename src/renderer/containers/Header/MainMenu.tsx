@@ -14,7 +14,7 @@ export type MenuItem = {
 };
 
 type MainMenuProps = {
-  menuItems: MenuItem[];
+  menuItems: readonly MenuItem[];
 };
 
 export const MainMenu = ({ menuItems }: MainMenuProps) => {
