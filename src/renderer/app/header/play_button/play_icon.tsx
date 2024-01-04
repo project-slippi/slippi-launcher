@@ -2,7 +2,7 @@ import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import React from "react";
 
-import { withFont } from "@/styles/withFont";
+import { withFont } from "@/styles/with_font";
 
 export const PlayIcon = ({ children, fillPercent = 1 }: React.PropsWithChildren<{ fillPercent?: number }>) => {
   const offset = `${(fillPercent * 100).toFixed(2)}%`;

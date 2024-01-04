@@ -2,7 +2,7 @@ import { colors } from "@common/colors";
 import type { Theme } from "@mui/material/styles";
 import { createTheme } from "@mui/material/styles";
 
-import { withFont } from "./withFont";
+import { withFont } from "./with_font";
 
 const rubikFont = withFont("Rubik");
 const mavenProFont = withFont("Maven Pro");

@@ -18,8 +18,8 @@ import { BuildInfo } from "@/containers/build_info";
 import { useMousetrap } from "@/lib/hooks/use_mousetrap";
 import { useSettingsModal } from "@/lib/hooks/use_settings_modal";
 import type { SettingSection } from "@/pages/settings/types";
-import { platformTitleBarStyles } from "@/styles/platformTitleBarStyles";
-import { withSlippiBackground } from "@/styles/withSlippiBackground";
+import { platformTitleBarStyles } from "@/styles/platform_title_bar_styles";
+import { withSlippiBackground } from "@/styles/with_slippi_background";
 
 const Outer = styled.div`
   position: relative;

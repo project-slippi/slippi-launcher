@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 
 import { getColor } from "@/lib/player_colors";
 import { getCharacterIcon } from "@/lib/utils";
-import { withFont } from "@/styles/withFont";
+import { withFont } from "@/styles/with_font";
 
 type PlayerInfoProps = {
   isTeams: boolean;

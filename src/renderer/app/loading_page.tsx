@@ -2,7 +2,7 @@ import { css } from "@emotion/react";
 
 import { LoadingScreen } from "@/components/loading_screen";
 import { BuildInfo } from "@/containers/build_info";
-import { withSlippiBackground } from "@/styles/withSlippiBackground";
+import { withSlippiBackground } from "@/styles/with_slippi_background";
 
 export const LoadingPage = () => {
   return (

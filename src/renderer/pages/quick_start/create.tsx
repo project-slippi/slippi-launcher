@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import React from "react";
 
 import { useQuickStart } from "@/lib/hooks/use_quick_start";
-import { withSlippiBackground } from "@/styles/withSlippiBackground";
+import { withSlippiBackground } from "@/styles/with_slippi_background";
 
 import { QuickStart } from "./quick_start";
 

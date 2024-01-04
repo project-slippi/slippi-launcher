@@ -20,7 +20,7 @@ import { useSettingsModal } from "@/lib/hooks/use_settings_modal";
 import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 import slippiLogo from "@/styles/images/slippi-logo.svg";
-import { platformTitleBarStyles } from "@/styles/platformTitleBarStyles";
+import { platformTitleBarStyles } from "@/styles/platform_title_bar_styles";
 
 import { ActivateOnlineDialog } from "./activate_online_dialog";
 import type { MenuItem } from "./main_menu";

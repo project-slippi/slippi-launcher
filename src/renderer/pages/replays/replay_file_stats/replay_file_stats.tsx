@@ -19,7 +19,7 @@ import { useDolphinActions } from "@/lib/dolphin/use_dolphin_actions";
 import { useMousetrap } from "@/lib/hooks/use_mousetrap";
 import { getStageImage } from "@/lib/utils";
 import { useServices } from "@/services";
-import { withFont } from "@/styles/withFont";
+import { withFont } from "@/styles/with_font";
 
 import { GameProfile } from "./game_profile";
 import { GameProfileHeader } from "./game_profile_header";

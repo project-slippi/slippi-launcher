@@ -2,7 +2,7 @@ import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import React from "react";
 
-import { withFont } from "@/styles/withFont";
+import { withFont } from "@/styles/with_font";
 
 type LabelledTextProps = {
   className?: string;
