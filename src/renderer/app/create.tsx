@@ -24,10 +24,10 @@ import { createServiceProvider } from "@/services";
 import type { Services } from "@/services/types";
 import { slippiTheme } from "@/styles/theme";
 
-import { LoadingPage } from "./loading_page";
-import type { MainMenuItem } from "./main_page";
-import { MainPage as MainPageImpl } from "./main_page";
-import { NotFoundPage } from "./not_found_page";
+import { LoadingPage } from "../pages/loading/loading_page";
+import { NotFoundPage } from "../pages/not_found/not_found_page";
+import type { MainMenuItem } from "./app";
+import { App as AppImpl } from "./app";
 
 export function createApp({ services }: { services: Services }): {
   App: React.ComponentType;
@@ -72,7 +72,7 @@ export function createApp({ services }: { services: Services }): {
   const MainAppPage = React.memo(() => {
     usePageNavigationShortcuts(navigationPaths);
 
-    return <MainPageImpl menuItems={menuItems} />;
+    return <AppImpl menuItems={menuItems} />;
   });
 
   const AppRoutes = () => {

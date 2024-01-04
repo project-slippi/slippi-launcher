@@ -13,7 +13,7 @@ export type MainMenuItem = MenuItem & {
   private?: boolean;
 };
 
-export const MainPage = React.memo(({ menuItems }: { menuItems: readonly MainMenuItem[] }) => {
+export const App = React.memo(({ menuItems }: { menuItems: readonly MainMenuItem[] }) => {
   const defaultRoute = menuItems.find((item) => item.default);
   return (
     <div

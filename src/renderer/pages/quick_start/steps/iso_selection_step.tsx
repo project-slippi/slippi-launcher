@@ -13,7 +13,7 @@ import { useQuery } from "react-query";
 import { ConfirmationModal } from "@/components/confirmation_modal";
 import { useIsoPath } from "@/lib/hooks/use_settings";
 import { useToasts } from "@/lib/hooks/use_toasts";
-import { hasBorder } from "@/styles/hasBorder";
+import { hasBorder } from "@/styles/has_border";
 
 import { QuickStartHeader } from "../quick_start_header/quick_start_header";
 
