@@ -8,7 +8,7 @@ import React from "react";
 
 import { BasicFooter } from "@/components/footer/footer";
 import { LabelledText } from "@/components/labelled_text";
-import { useSpectateSlpPath } from "@/lib/hooks/useSettings";
+import { useSpectateSlpPath } from "@/lib/hooks/use_settings";
 
 export const Footer = React.memo(() => {
   const [spectateSlpFolder, setSpectateSlpFolder] = useSpectateSlpPath();

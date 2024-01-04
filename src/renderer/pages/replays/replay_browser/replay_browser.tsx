@@ -16,11 +16,11 @@ import { BasicFooter } from "@/components/footer/footer";
 import { LabelledText } from "@/components/labelled_text";
 import { LoadingScreenWithProgress } from "@/components/loading_screen";
 import { IconMessage } from "@/components/message";
-import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
-import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/useReplayBrowserList";
-import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
-import { ReplayPresenter, useReplays, useReplaySelection } from "@/lib/hooks/useReplays";
-import { useToasts } from "@/lib/hooks/useToasts";
+import { useDolphinActions } from "@/lib/dolphin/use_dolphin_actions";
+import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/use_replay_browser_list";
+import { useReplayFilter } from "@/lib/hooks/use_replay_filter";
+import { ReplayPresenter, useReplays, useReplaySelection } from "@/lib/hooks/use_replays";
+import { useToasts } from "@/lib/hooks/use_toasts";
 import { humanReadableBytes } from "@/lib/utils";
 import { useServices } from "@/services";
 

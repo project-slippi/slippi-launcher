@@ -21,7 +21,7 @@ import { get, groupBy } from "lodash";
 import moment from "moment";
 import React from "react";
 
-import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
+import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/use_dolphin_store";
 import { convertFrameCountToDurationString, monthDayHourFormat } from "@/lib/time";
 
 import { PlayerInfo } from "./player_info";

@@ -15,8 +15,8 @@ import { Link, Navigate, Route, Routes, useMatch, useResolvedPath } from "react-
 
 import { DualPane } from "@/components/dual_pane";
 import { BuildInfo } from "@/containers/build_info";
-import { useMousetrap } from "@/lib/hooks/useMousetrap";
-import { useSettingsModal } from "@/lib/hooks/useSettingsModal";
+import { useMousetrap } from "@/lib/hooks/use_mousetrap";
+import { useSettingsModal } from "@/lib/hooks/use_settings_modal";
 import type { SettingSection } from "@/pages/settings/types";
 import { platformTitleBarStyles } from "@/styles/platformTitleBarStyles";
 import { withSlippiBackground } from "@/styles/withSlippiBackground";

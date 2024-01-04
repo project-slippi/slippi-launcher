@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import React from "react";
 
-import { getColor } from "@/lib/playerColors";
+import { getColor } from "@/lib/player_colors";
 import { getCharacterIcon } from "@/lib/utils";
 import crownImage from "@/styles/images/crown.png";
 

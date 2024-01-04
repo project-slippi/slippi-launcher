@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import { useToasts } from "@/lib/hooks/useToasts";
+import { useToasts } from "@/lib/hooks/use_toasts";
 
 export const useFileDrag = () => {
   const { showError } = useToasts();

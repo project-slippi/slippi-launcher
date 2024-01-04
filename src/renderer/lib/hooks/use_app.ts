@@ -3,12 +3,12 @@ import log from "electron-log";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
-import { useAccount } from "@/lib/hooks/useAccount";
-import { useToasts } from "@/lib/hooks/useToasts";
+import { useAccount } from "@/lib/hooks/use_account";
+import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 import type { AuthUser } from "@/services/auth/types";
 
-import { useDesktopApp } from "./useQuickStart";
+import { useDesktopApp } from "./use_quick_start";
 
 export const useAppStore = create(
   combine(

@@ -5,21 +5,21 @@ import log from "electron-log";
 import throttle from "lodash/throttle";
 import React, { useRef } from "react";
 
-import { useAppInitialization, useAppStore } from "@/lib/hooks/useApp";
-import { useConsole } from "@/lib/hooks/useConsole";
-import { ReplayPresenter } from "@/lib/hooks/useReplays";
-import { useToasts } from "@/lib/hooks/useToasts";
+import { useAppInitialization, useAppStore } from "@/lib/hooks/use_app";
+import { useConsole } from "@/lib/hooks/use_console";
+import { ReplayPresenter } from "@/lib/hooks/use_replays";
+import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 
-import { useDolphinListeners } from "../dolphin/useDolphinListeners";
-import { useAccount, useUserData } from "./useAccount";
-import { useBroadcast } from "./useBroadcast";
-import { useBroadcastList, useBroadcastListStore } from "./useBroadcastList";
-import { useConsoleDiscoveryStore } from "./useConsoleDiscovery";
-import { useIsoVerification } from "./useIsoVerification";
-import { useReplayBrowserNavigation } from "./useReplayBrowserList";
-import { useSettings } from "./useSettings";
-import { useSettingsModal } from "./useSettingsModal";
+import { useDolphinListeners } from "../dolphin/use_dolphin_listeners";
+import { useAccount, useUserData } from "./use_account";
+import { useBroadcast } from "./use_broadcast";
+import { useBroadcastList, useBroadcastListStore } from "./use_broadcast_list";
+import { useConsoleDiscoveryStore } from "./use_console_discovery";
+import { useIsoVerification } from "./use_iso_verification";
+import { useReplayBrowserNavigation } from "./use_replay_browser_list";
+import { useSettings } from "./use_settings";
+import { useSettingsModal } from "./use_settings_modal";
 
 export const useAppListeners = () => {
   // Handle app initalization

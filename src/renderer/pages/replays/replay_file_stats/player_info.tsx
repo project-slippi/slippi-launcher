@@ -2,7 +2,7 @@ import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import { getColor } from "@/lib/playerColors";
+import { getColor } from "@/lib/player_colors";
 import { getCharacterIcon } from "@/lib/utils";
 import { withFont } from "@/styles/withFont";
 

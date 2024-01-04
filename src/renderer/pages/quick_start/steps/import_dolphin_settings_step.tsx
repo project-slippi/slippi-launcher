@@ -9,9 +9,9 @@ import { Controller, useForm } from "react-hook-form";
 
 import { Checkbox } from "@/components/form/checkbox";
 import { PathInput } from "@/components/path_input";
-import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
-import { useDesktopApp } from "@/lib/hooks/useQuickStart";
-import { useToasts } from "@/lib/hooks/useToasts";
+import { useDolphinActions } from "@/lib/dolphin/use_dolphin_actions";
+import { useDesktopApp } from "@/lib/hooks/use_quick_start";
+import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 
 import { QuickStartHeader } from "../quick_start_header/quick_start_header";

@@ -9,7 +9,7 @@ import React from "react";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
-import { useAsync } from "@/lib/hooks/useAsync";
+import { useAsync } from "@/lib/hooks/use_async";
 import { useServices } from "@/services";
 import type { AuthUser } from "@/services/auth/types";
 

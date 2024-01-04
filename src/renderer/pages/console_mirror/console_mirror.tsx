@@ -14,11 +14,11 @@ import { DualPane } from "@/components/dual_pane";
 import { ExternalLink as A } from "@/components/external_link";
 import { Footer } from "@/components/footer/footer";
 import { Button } from "@/components/form/button";
-import type { EditConnectionType } from "@/lib/consoleConnection";
-import { addConsoleConnection, deleteConsoleConnection, editConsoleConnection } from "@/lib/consoleConnection";
-import { useConsoleDiscoveryStore } from "@/lib/hooks/useConsoleDiscovery";
-import { useSettings } from "@/lib/hooks/useSettings";
-import { useToasts } from "@/lib/hooks/useToasts";
+import type { EditConnectionType } from "@/lib/console_connection";
+import { addConsoleConnection, deleteConsoleConnection, editConsoleConnection } from "@/lib/console_connection";
+import { useConsoleDiscoveryStore } from "@/lib/hooks/use_console_discovery";
+import { useSettings } from "@/lib/hooks/use_settings";
+import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 
 import { AddConnectionDialog } from "./add_connection_dialog/add_connection_dialog";

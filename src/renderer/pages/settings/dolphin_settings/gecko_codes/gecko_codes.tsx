@@ -3,8 +3,8 @@ import type { DolphinLaunchType } from "@dolphin/types";
 import Button from "@mui/material/Button";
 import React from "react";
 
-import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
-import { useToasts } from "@/lib/hooks/useToasts";
+import { useDolphinActions } from "@/lib/dolphin/use_dolphin_actions";
+import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 
 import { AddCodesContainer } from "./add_codes/add_codes.container";

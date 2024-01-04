@@ -8,8 +8,8 @@ import Button from "@mui/material/Button";
 import React, { useEffect } from "react";
 
 import { ExternalLink as A } from "@/components/external_link";
-import { useAccount } from "@/lib/hooks/useAccount";
-import { useToasts } from "@/lib/hooks/useToasts";
+import { useAccount } from "@/lib/hooks/use_account";
+import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 
 import { QuickStartHeader } from "../quick_start_header/quick_start_header";

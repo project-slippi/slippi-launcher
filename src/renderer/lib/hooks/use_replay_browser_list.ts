@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
-import { ReplayPresenter, useReplays } from "@/lib/hooks/useReplays";
+import { ReplayPresenter, useReplays } from "@/lib/hooks/use_replays";
 import { useServices } from "@/services";
 
-import { replayFileFilter, replayFileSort } from "../replayFileSort";
-import { useReplayFilter } from "./useReplayFilter";
+import { replayFileFilter, replayFileSort } from "../replay_file_sort";
+import { useReplayFilter } from "./use_replay_filter";
 
 const useReplayBrowserNavigationStore = create(
   combine(

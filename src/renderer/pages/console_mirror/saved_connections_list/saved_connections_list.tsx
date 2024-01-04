@@ -9,8 +9,8 @@ import React from "react";
 
 import { IconMenu } from "@/components/icon_menu";
 import { IconMessage } from "@/components/message";
-import { useConsoleDiscoveryStore } from "@/lib/hooks/useConsoleDiscovery";
-import { useSettings } from "@/lib/hooks/useSettings";
+import { useConsoleDiscoveryStore } from "@/lib/hooks/use_console_discovery";
+import { useSettings } from "@/lib/hooks/use_settings";
 
 import { SavedConnectionItem } from "./saved_connection_item";
 

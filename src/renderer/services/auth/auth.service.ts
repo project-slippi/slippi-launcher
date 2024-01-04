@@ -12,7 +12,7 @@ import { getFunctions, httpsCallable } from "firebase/functions";
 import multicast from "observable-fns/multicast";
 import Subject from "observable-fns/subject";
 
-import { generateDisplayPicture } from "@/lib/displayPicture";
+import { generateDisplayPicture } from "@/lib/display_picture";
 
 import type { AuthService, AuthUser } from "./types";
 

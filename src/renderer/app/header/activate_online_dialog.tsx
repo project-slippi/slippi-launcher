@@ -5,9 +5,9 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import { ActivateOnlineForm } from "@/containers/ActivateOnlineForm";
-import { useUserData } from "@/lib/hooks/useAccount";
-import { useToasts } from "@/lib/hooks/useToasts";
+import { ActivateOnlineForm } from "@/containers/activate_online_form";
+import { useUserData } from "@/lib/hooks/use_account";
+import { useToasts } from "@/lib/hooks/use_toasts";
 
 type ActivateOnlineDialogProps = {
   open: boolean;

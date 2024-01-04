@@ -2,10 +2,10 @@ import { Ports } from "@slippi/slippi-js";
 import log from "electron-log";
 
 import { InfoBlock } from "@/components/info_block";
-import { useAccount } from "@/lib/hooks/useAccount";
-import { useBroadcast } from "@/lib/hooks/useBroadcast";
-import { useConsole } from "@/lib/hooks/useConsole";
-import { useToasts } from "@/lib/hooks/useToasts";
+import { useAccount } from "@/lib/hooks/use_account";
+import { useBroadcast } from "@/lib/hooks/use_broadcast";
+import { useConsole } from "@/lib/hooks/use_console";
+import { useToasts } from "@/lib/hooks/use_toasts";
 
 import { BroadcastPanel } from "./broadcast_panel";
 

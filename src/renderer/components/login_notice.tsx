@@ -4,7 +4,7 @@ import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 
-import { useLoginModal } from "@/lib/hooks/useLoginModal";
+import { useLoginModal } from "@/lib/hooks/use_login_modal";
 
 export const LoginNotice = () => {
   const openModal = useLoginModal((store) => store.openModal);

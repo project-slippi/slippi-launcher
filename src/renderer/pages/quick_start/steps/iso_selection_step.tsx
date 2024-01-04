@@ -11,8 +11,8 @@ import { useDropzone } from "react-dropzone";
 import { useQuery } from "react-query";
 
 import { ConfirmationModal } from "@/components/confirmation_modal";
-import { useIsoPath } from "@/lib/hooks/useSettings";
-import { useToasts } from "@/lib/hooks/useToasts";
+import { useIsoPath } from "@/lib/hooks/use_settings";
+import { useToasts } from "@/lib/hooks/use_toasts";
 import { hasBorder } from "@/styles/hasBorder";
 
 import { QuickStartHeader } from "../quick_start_header/quick_start_header";

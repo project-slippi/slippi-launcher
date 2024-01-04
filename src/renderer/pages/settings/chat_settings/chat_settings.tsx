@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import React from "react";
 
-import { useAccount } from "@/lib/hooks/useAccount";
+import { useAccount } from "@/lib/hooks/use_account";
 
 import { SettingItem } from "../setting_item_section";
 import { ChatMessagesFooter } from "./chat_messages_footer";

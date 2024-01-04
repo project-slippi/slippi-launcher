@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useAccount } from "@/lib/hooks/useAccount";
+import { useAccount } from "@/lib/hooks/use_account";
 
 import { LoginNotice } from "./login_notice";
 

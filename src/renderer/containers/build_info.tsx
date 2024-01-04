@@ -3,8 +3,8 @@ import moment from "moment";
 import React from "react";
 
 import { ExternalLink as A } from "@/components/external_link";
-import { useToasts } from "@/lib/hooks/useToasts";
-import { useAdvancedUser } from "@/lib/useAdvancedUser";
+import { useAdvancedUser } from "@/lib/hooks/use_advanced_user";
+import { useToasts } from "@/lib/hooks/use_toasts";
 
 const osInfo = window.electron.bootstrap.operatingSystem;
 

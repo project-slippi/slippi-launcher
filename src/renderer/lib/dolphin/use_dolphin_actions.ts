@@ -3,9 +3,9 @@ import type { DolphinService, ReplayQueueItem } from "@dolphin/types";
 import { DolphinLaunchType } from "@dolphin/types";
 import { useCallback } from "react";
 
-import { useToasts } from "@/lib/hooks/useToasts";
+import { useToasts } from "@/lib/hooks/use_toasts";
 
-import { DolphinStatus, setDolphinOpened, useDolphinStore } from "./useDolphinStore";
+import { DolphinStatus, setDolphinOpened, useDolphinStore } from "./use_dolphin_store";
 
 export const useDolphinActions = (dolphinService: DolphinService) => {
   const { showError, showSuccess } = useToasts();

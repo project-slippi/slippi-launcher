@@ -11,10 +11,10 @@ import capitalize from "lodash/capitalize";
 import React from "react";
 
 import { ConfirmationModal } from "@/components/confirmation_modal";
-import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
-import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
-import { useDolphinBeta } from "@/lib/hooks/useSettings";
-import { useToasts } from "@/lib/hooks/useToasts";
+import { useDolphinActions } from "@/lib/dolphin/use_dolphin_actions";
+import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/use_dolphin_store";
+import { useDolphinBeta } from "@/lib/hooks/use_settings";
+import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 
 import { SettingItem } from "../setting_item_section";

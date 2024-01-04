@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useToasts } from "@/lib/hooks/useToasts";
+import { useToasts } from "@/lib/hooks/use_toasts";
 
 export const useAppUpdate = () => {
   const { showError } = useToasts();

@@ -9,7 +9,7 @@ import { Ports } from "@slippi/slippi-js";
 import merge from "lodash/merge";
 import React from "react";
 
-import { useSettings } from "@/lib/hooks/useSettings";
+import { useSettings } from "@/lib/hooks/use_settings";
 
 import { AddConnectionForm } from "./add_connection_form";
 

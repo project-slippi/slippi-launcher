@@ -9,16 +9,16 @@ import type {
 import { DolphinEventType, DolphinLaunchType } from "@dolphin/types";
 import { useCallback, useEffect } from "react";
 
-import { useToasts } from "@/lib/hooks/useToasts";
+import { useToasts } from "@/lib/hooks/use_toasts";
 
-import { handleDolphinExitCode } from "./handleDolphinExitCode";
+import { handleDolphinExitCode } from "./handle_dolphin_exit_code";
 import {
   DolphinStatus,
   setDolphinOpened,
   setDolphinStatus,
   setDolphinVersion,
   updateNetplayDownloadProgress,
-} from "./useDolphinStore";
+} from "./use_dolphin_store";
 
 // Setup listeners for DolphinService
 export const useDolphinListeners = (dolphinService: DolphinService) => {

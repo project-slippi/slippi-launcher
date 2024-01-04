@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import React from "react";
 
-import { useFileDrag } from "@/lib/hooks/useFileDrag";
+import { useFileDrag } from "@/lib/hooks/use_file_drag";
 
 const Outer = styled.div`
   color: inherit;

@@ -5,7 +5,7 @@ import React from "react";
 
 import { DualPane } from "@/components/dual_pane";
 import { Footer } from "@/components/footer/footer";
-import { usePageScrollingShortcuts } from "@/lib/hooks/useShortcuts";
+import { usePageScrollingShortcuts } from "@/lib/hooks/use_shortcuts";
 
 import { NewsFeed } from "./news_feed/news_feed";
 import { Sidebar } from "./sidebar/sidebar";

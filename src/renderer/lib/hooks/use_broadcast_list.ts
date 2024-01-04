@@ -3,7 +3,7 @@ import throttle from "lodash/throttle";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
-import { useToasts } from "@/lib/hooks/useToasts";
+import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 
 export const useBroadcastListStore = create(

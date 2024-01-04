@@ -3,8 +3,8 @@ import DialogContent from "@mui/material/DialogContent";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import { LoginForm } from "@/containers/LoginForm";
-import { useLoginModal } from "@/lib/hooks/useLoginModal";
+import { LoginForm } from "@/containers/login_form";
+import { useLoginModal } from "@/lib/hooks/use_login_modal";
 
 export const LoginDialog = () => {
   const theme = useTheme();

@@ -4,10 +4,10 @@ import TextField from "@mui/material/TextField";
 import { Controller, useForm } from "react-hook-form";
 
 import { ConfirmationModal } from "@/components/confirmation_modal";
-import { useAccount } from "@/lib/hooks/useAccount";
-import { useAsync } from "@/lib/hooks/useAsync";
-import { useToasts } from "@/lib/hooks/useToasts";
-import { validateDisplayName } from "@/lib/validate";
+import { useAccount } from "@/lib/hooks/use_account";
+import { useAsync } from "@/lib/hooks/use_async";
+import { useToasts } from "@/lib/hooks/use_toasts";
+import { validateDisplayName } from "@/lib/validate/validate";
 import { useServices } from "@/services";
 
 export const NameChangeDialog = ({

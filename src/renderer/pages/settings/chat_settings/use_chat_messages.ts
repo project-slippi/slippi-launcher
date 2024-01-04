@@ -1,7 +1,7 @@
 import { isEqual, keyBy } from "lodash";
 import { useCallback, useEffect, useState } from "react";
 
-import { useToasts } from "@/lib/hooks/useToasts";
+import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 import type { AvailableMessageType } from "@/services/slippi/types";
 

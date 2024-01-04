@@ -10,11 +10,11 @@ import debounce from "lodash/debounce";
 import React, { useRef } from "react";
 
 import { Button, Checkbox, Dropdown } from "@/components/form";
-import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
-import { ReplayPresenter, useReplays } from "@/lib/hooks/useReplays";
-import { useSettings } from "@/lib/hooks/useSettings";
-import { useToasts } from "@/lib/hooks/useToasts";
-import { ReplaySortOption, SortDirection } from "@/lib/replayFileSort";
+import { useReplayFilter } from "@/lib/hooks/use_replay_filter";
+import { ReplayPresenter, useReplays } from "@/lib/hooks/use_replays";
+import { useSettings } from "@/lib/hooks/use_settings";
+import { useToasts } from "@/lib/hooks/use_toasts";
+import { ReplaySortOption, SortDirection } from "@/lib/replay_file_sort";
 import { useServices } from "@/services";
 
 const Outer = styled.div`

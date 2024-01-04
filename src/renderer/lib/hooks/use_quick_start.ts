@@ -4,9 +4,9 @@ import { useNavigate } from "react-router-dom";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
-import { useSettings } from "@/lib/hooks/useSettings";
+import { useSettings } from "@/lib/hooks/use_settings";
 
-import { useAccount } from "./useAccount";
+import { useAccount } from "./use_account";
 
 export enum QuickStartStep {
   LOGIN = "LOGIN",

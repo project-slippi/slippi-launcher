@@ -3,10 +3,10 @@ import { useRef, useState } from "react";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
-import { useSettings } from "@/lib/hooks/useSettings";
+import { useSettings } from "@/lib/hooks/use_settings";
 import { useServices } from "@/services";
 
-import { useReplayBrowserList } from "./useReplayBrowserList";
+import { useReplayBrowserList } from "./use_replay_browser_list";
 
 type StoreState = {
   loading: boolean;

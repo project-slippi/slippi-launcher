@@ -9,7 +9,7 @@ import React from "react";
 import { DualPane } from "@/components/dual_pane";
 import { Button } from "@/components/form/button";
 import { IconMessage } from "@/components/message";
-import { generateDisplayPicture } from "@/lib/displayPicture";
+import { generateDisplayPicture } from "@/lib/display_picture";
 
 import { Footer } from "./footer";
 import { ShareGameplayBlock } from "./share_gameplay_block/share_gameplay_block";

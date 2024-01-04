@@ -1,8 +1,8 @@
 import type { BroadcastService } from "@broadcast/types";
 import React from "react";
 
-import { useAccount } from "@/lib/hooks/useAccount";
-import { useBroadcastList } from "@/lib/hooks/useBroadcastList";
+import { useAccount } from "@/lib/hooks/use_account";
+import { useBroadcastList } from "@/lib/hooks/use_broadcast_list";
 
 import { SpectatePage } from "./spectate_page";
 

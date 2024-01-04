@@ -9,7 +9,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import type { FolderResult } from "@replays/types";
 
-import { useReplays } from "@/lib/hooks/useReplays";
+import { useReplays } from "@/lib/hooks/use_replays";
 
 type FolderTreeNodeProps = {
   nestLevel?: number;

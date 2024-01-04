@@ -10,8 +10,8 @@ import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
 
 import { ExternalLink as A } from "@/components/external_link";
-import { useAccount, useUserData } from "@/lib/hooks/useAccount";
-import { useToasts } from "@/lib/hooks/useToasts";
+import { useAccount, useUserData } from "@/lib/hooks/use_account";
+import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 
 import { QuickStartHeader } from "../quick_start_header/quick_start_header";

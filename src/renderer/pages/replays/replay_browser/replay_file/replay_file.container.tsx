@@ -15,7 +15,7 @@ import moment from "moment";
 import React, { useCallback, useMemo } from "react";
 
 import { DraggableFile } from "@/components/draggable_file";
-import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
+import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/use_dolphin_store";
 import { convertFrameCountToDurationString, monthDayHourFormat } from "@/lib/time";
 import { getStageImage } from "@/lib/utils";
 

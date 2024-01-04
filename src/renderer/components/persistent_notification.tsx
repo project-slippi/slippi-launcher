@@ -4,8 +4,8 @@ import styled from "@emotion/styled";
 import ButtonBase from "@mui/material/ButtonBase";
 import React from "react";
 
-import { useAppStore } from "@/lib/hooks/useApp";
-import { useAppUpdate } from "@/lib/hooks/useAppUpdate";
+import { useAppStore } from "@/lib/hooks/use_app";
+import { useAppUpdate } from "@/lib/hooks/use_app_update";
 
 export const PersistentNotification = React.memo(() => {
   const updateVersion = useAppStore((store) => store.updateVersion);

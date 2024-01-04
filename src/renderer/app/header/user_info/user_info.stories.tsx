@@ -1,4 +1,4 @@
-import { generateDisplayPicture } from "@/lib/displayPicture";
+import { generateDisplayPicture } from "@/lib/display_picture";
 
 import { UserInfo } from "./user_info";
 

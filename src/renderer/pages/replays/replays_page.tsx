@@ -1,9 +1,9 @@
 import React from "react";
 import { Navigate, Route, Routes, useParams } from "react-router-dom";
 
-import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
-import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/useReplayBrowserList";
-import { useReplays } from "@/lib/hooks/useReplays";
+import { useDolphinActions } from "@/lib/dolphin/use_dolphin_actions";
+import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/use_replay_browser_list";
+import { useReplays } from "@/lib/hooks/use_replays";
 import { useServices } from "@/services";
 
 import { ReplayBrowser } from "./replay_browser/replay_browser";

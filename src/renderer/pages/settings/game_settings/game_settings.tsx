@@ -13,9 +13,9 @@ import { gte } from "semver";
 
 import { Toggle } from "@/components/form/toggle";
 import { PathInput } from "@/components/path_input";
-import { useDolphinStore } from "@/lib/dolphin/useDolphinStore";
-import { useIsoVerification } from "@/lib/hooks/useIsoVerification";
-import { useEnableJukebox, useIsoPath, useLaunchMeleeOnPlay } from "@/lib/hooks/useSettings";
+import { useDolphinStore } from "@/lib/dolphin/use_dolphin_store";
+import { useIsoVerification } from "@/lib/hooks/use_iso_verification";
+import { useEnableJukebox, useIsoPath, useLaunchMeleeOnPlay } from "@/lib/hooks/use_settings";
 
 import { SettingItem } from "../setting_item_section";
 

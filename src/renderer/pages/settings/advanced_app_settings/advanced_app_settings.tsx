@@ -2,8 +2,8 @@ import Button from "@mui/material/Button";
 import React from "react";
 
 import { Toggle } from "@/components/form/toggle";
-import { useAutoUpdateLauncher } from "@/lib/hooks/useSettings";
-import { useToasts } from "@/lib/hooks/useToasts";
+import { useAutoUpdateLauncher } from "@/lib/hooks/use_settings";
+import { useToasts } from "@/lib/hooks/use_toasts";
 
 import { SettingItem } from "../setting_item_section";
 

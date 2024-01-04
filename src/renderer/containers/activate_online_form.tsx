@@ -9,9 +9,9 @@ import log from "electron-log";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 
-import { useAccount, useUserData } from "@/lib/hooks/useAccount";
-import { useToasts } from "@/lib/hooks/useToasts";
-import { validateConnectCodeStart } from "@/lib/validate";
+import { useAccount, useUserData } from "@/lib/hooks/use_account";
+import { useToasts } from "@/lib/hooks/use_toasts";
+import { validateConnectCodeStart } from "@/lib/validate/validate";
 import { useServices } from "@/services";
 
 export const ActivateOnlineForm = ({ onSubmit }: { onSubmit?: () => void }) => {

@@ -10,7 +10,7 @@ import React from "react";
 import { ConfirmationModal } from "@/components/confirmation_modal";
 import type { IconMenuItem } from "@/components/icon_menu";
 import { IconMenu } from "@/components/icon_menu";
-import { useAccount } from "@/lib/hooks/useAccount";
+import { useAccount } from "@/lib/hooks/use_account";
 import { useServices } from "@/services";
 import type { AuthUser } from "@/services/auth/types";
 

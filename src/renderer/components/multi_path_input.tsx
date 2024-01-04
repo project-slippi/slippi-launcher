@@ -5,8 +5,8 @@ import InputBase from "@mui/material/InputBase";
 import type { OpenDialogOptions } from "electron";
 import { useState } from "react";
 
-import { useSettings } from "@/lib/hooks/useSettings";
-import { useToasts } from "@/lib/hooks/useToasts";
+import { useSettings } from "@/lib/hooks/use_settings";
+import { useToasts } from "@/lib/hooks/use_toasts";
 
 const { isSubdirectory } = window.electron.utils;
 
