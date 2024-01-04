@@ -2,7 +2,7 @@ import { css } from "@emotion/react";
 import moment from "moment";
 import React from "react";
 
-import { ExternalLink as A } from "@/components/ExternalLink";
+import { ExternalLink as A } from "@/components/external_link";
 import { useToasts } from "@/lib/hooks/useToasts";
 import { useAdvancedUser } from "@/lib/useAdvancedUser";
 

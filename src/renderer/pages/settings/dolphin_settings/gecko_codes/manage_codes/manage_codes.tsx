@@ -9,7 +9,7 @@ import ListItem from "@mui/material/ListItem";
 import Tooltip from "@mui/material/Tooltip";
 import React from "react";
 
-import { ConfirmationModal } from "@/components/ConfirmationModal";
+import { ConfirmationModal } from "@/components/confirmation_modal";
 
 export type GeckoCode = {
   name: string;

@@ -2,7 +2,7 @@ import Construction from "@mui/icons-material/Construction";
 import type { FileResult } from "@replays/types";
 import type { StadiumStatsType } from "@slippi/slippi-js";
 
-import { IconMessage } from "@/components/Message";
+import { IconMessage } from "@/components/message";
 
 type GameProfileProps = {
   file: FileResult;

@@ -7,8 +7,8 @@ import FormHelperText from "@mui/material/FormHelperText";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 
-import { Checkbox } from "@/components/FormInputs/Checkbox";
-import { PathInput } from "@/components/PathInput";
+import { Checkbox } from "@/components/form/checkbox";
+import { PathInput } from "@/components/path_input";
 import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { useDesktopApp } from "@/lib/hooks/useQuickStart";
 import { useToasts } from "@/lib/hooks/useToasts";

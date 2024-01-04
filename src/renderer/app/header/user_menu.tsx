@@ -7,9 +7,9 @@ import ButtonBase from "@mui/material/ButtonBase";
 import DialogContentText from "@mui/material/DialogContentText";
 import React from "react";
 
-import { ConfirmationModal } from "@/components/ConfirmationModal";
-import type { IconMenuItem } from "@/components/IconMenu";
-import { IconMenu } from "@/components/IconMenu";
+import { ConfirmationModal } from "@/components/confirmation_modal";
+import type { IconMenuItem } from "@/components/icon_menu";
+import { IconMenu } from "@/components/icon_menu";
 import { useAccount } from "@/lib/hooks/useAccount";
 import { useServices } from "@/services";
 import type { AuthUser } from "@/services/auth/types";

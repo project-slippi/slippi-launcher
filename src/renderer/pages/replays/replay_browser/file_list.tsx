@@ -6,8 +6,8 @@ import React from "react";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as List } from "react-window";
 
-import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { IconMenu } from "@/components/IconMenu";
+import { ErrorBoundary } from "@/components/error_boundary";
+import { IconMenu } from "@/components/icon_menu";
 
 import { ReplayFileContainer } from "./replay_file/replay_file.container";
 

@@ -4,7 +4,7 @@ import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 
-import { UserIcon } from "@/components/UserIcon";
+import { UserIcon } from "@/components/user_icon";
 
 export const SpectateItem = ({
   broadcasterPicture,

@@ -7,7 +7,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import React, { useEffect } from "react";
 
-import { ExternalLink as A } from "@/components/ExternalLink";
+import { ExternalLink as A } from "@/components/external_link";
 import { useAccount } from "@/lib/hooks/useAccount";
 import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";

@@ -11,10 +11,10 @@ import { Ports } from "@slippi/slippi-js";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 
-import { ExternalLink as A } from "@/components/ExternalLink";
-import { Checkbox } from "@/components/FormInputs/Checkbox";
-import { Toggle } from "@/components/FormInputs/Toggle";
-import { PathInput } from "@/components/PathInput";
+import { ExternalLink as A } from "@/components/external_link";
+import { Checkbox } from "@/components/form/checkbox";
+import { Toggle } from "@/components/form/toggle";
+import { PathInput } from "@/components/path_input";
 import { isValidIpAddress, isValidPort } from "@/lib/validate";
 
 type FormValues = {

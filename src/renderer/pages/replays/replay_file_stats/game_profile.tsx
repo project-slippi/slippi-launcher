@@ -5,7 +5,7 @@ import type { StatsType } from "@slippi/slippi-js";
 import _ from "lodash";
 import React from "react";
 
-import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { ErrorBoundary } from "@/components/error_boundary";
 
 import { KillTable } from "./kill_table";
 import { OverallTable } from "./overall_table";

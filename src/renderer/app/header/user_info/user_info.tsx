@@ -3,7 +3,7 @@ import { css } from "@emotion/react";
 import CircularProgress from "@mui/material/CircularProgress";
 import React from "react";
 
-import { UserIcon } from "@/components/UserIcon";
+import { UserIcon } from "@/components/user_icon";
 
 export const UserInfo = React.memo(function UserInfo({
   displayName,

@@ -2,9 +2,9 @@ import { css } from "@emotion/react";
 import LinearProgress from "@mui/material/LinearProgress";
 import React from "react";
 
-import { BouncingSlippiLogo } from "@/components/BouncingSlippiLogo";
+import { BouncingSlippiLogo } from "@/components/bouncing_slippi_logo/bouncing_slippi_logo";
 
-import { Message } from "./Message";
+import { Message } from "./message";
 
 export const LoadingScreen = ({
   message = "Just a sec...",

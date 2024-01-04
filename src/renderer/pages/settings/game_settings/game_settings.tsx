@@ -11,8 +11,8 @@ import RadioGroup from "@mui/material/RadioGroup";
 import React from "react";
 import { gte } from "semver";
 
-import { Toggle } from "@/components/FormInputs/Toggle";
-import { PathInput } from "@/components/PathInput";
+import { Toggle } from "@/components/form/toggle";
+import { PathInput } from "@/components/path_input";
 import { useDolphinStore } from "@/lib/dolphin/useDolphinStore";
 import { useIsoVerification } from "@/lib/hooks/useIsoVerification";
 import { useEnableJukebox, useIsoPath, useLaunchMeleeOnPlay } from "@/lib/hooks/useSettings";

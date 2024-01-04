@@ -10,7 +10,7 @@ import log from "electron-log";
 import capitalize from "lodash/capitalize";
 import React from "react";
 
-import { ConfirmationModal } from "@/components/ConfirmationModal";
+import { ConfirmationModal } from "@/components/confirmation_modal";
 import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
 import { useDolphinBeta } from "@/lib/hooks/useSettings";

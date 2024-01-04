@@ -2,7 +2,7 @@ import type { DiscoveredConsoleInfo } from "@console/types";
 import { css } from "@emotion/react";
 import CircularProgress from "@mui/material/CircularProgress";
 
-import { InfoBlock } from "@/components/InfoBlock";
+import { InfoBlock } from "@/components/info_block";
 
 import { NewConnectionItem } from "./new_connection_item";
 

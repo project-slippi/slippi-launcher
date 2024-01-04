@@ -10,10 +10,10 @@ import type { StoredConnection } from "@settings/types";
 import { ConnectionStatus } from "@slippi/slippi-js";
 import React from "react";
 
-import { DualPane } from "@/components/DualPane";
-import { ExternalLink as A } from "@/components/ExternalLink";
-import { Footer } from "@/components/Footer";
-import { Button } from "@/components/FormInputs";
+import { DualPane } from "@/components/dual_pane";
+import { ExternalLink as A } from "@/components/external_link";
+import { Footer } from "@/components/footer/footer";
+import { Button } from "@/components/form/button";
 import type { EditConnectionType } from "@/lib/consoleConnection";
 import { addConsoleConnection, deleteConsoleConnection, editConsoleConnection } from "@/lib/consoleConnection";
 import { useConsoleDiscoveryStore } from "@/lib/hooks/useConsoleDiscovery";

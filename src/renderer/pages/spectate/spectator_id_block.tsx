@@ -3,7 +3,7 @@ import Button from "@mui/material/Button";
 import InputBase from "@mui/material/InputBase";
 import React from "react";
 
-import { InfoBlock } from "@/components/InfoBlock";
+import { InfoBlock } from "@/components/info_block";
 
 type SpectatorIdBlockProps = {
   userId: string;

@@ -5,7 +5,7 @@ import { alpha } from "@mui/material/styles";
 import faqMarkdown from "raw-loader!@/../../FAQ.md";
 import React from "react";
 
-import { MarkdownContent } from "@/components/MarkdownContent";
+import { MarkdownContent } from "@/components/markdown_content";
 
 import { SupportBox } from "./support_box";
 

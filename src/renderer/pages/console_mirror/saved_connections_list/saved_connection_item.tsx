@@ -14,8 +14,8 @@ import { ConnectionStatus, Ports } from "@slippi/slippi-js";
 import React from "react";
 import { lt } from "semver";
 
-import { ExternalLink as A } from "@/components/ExternalLink";
-import { LabelledText } from "@/components/LabelledText";
+import { ExternalLink as A } from "@/components/external_link";
+import { LabelledText } from "@/components/labelled_text";
 import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";
 import { ReactComponent as WiiIcon } from "@/styles/images/wii-icon.svg";

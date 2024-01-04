@@ -4,8 +4,8 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { Header } from "@/app/header/header";
 import { LoginDialog } from "@/app/header/login_dialog";
 import type { MenuItem } from "@/app/header/main_menu";
-import { AuthGuard } from "@/components/AuthGuard";
-import { PersistentNotification } from "@/components/PersistentNotification";
+import { AuthGuard } from "@/components/auth_guard";
+import { PersistentNotification } from "@/components/persistent_notification";
 
 export type MainMenuItem = MenuItem & {
   Component: React.ComponentType;

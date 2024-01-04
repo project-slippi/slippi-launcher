@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
 
-import { LoadingScreen } from "@/components/LoadingScreen";
+import { LoadingScreen } from "@/components/loading_screen";
 import { BuildInfo } from "@/containers/build_info";
 import { withSlippiBackground } from "@/styles/withSlippiBackground";
 

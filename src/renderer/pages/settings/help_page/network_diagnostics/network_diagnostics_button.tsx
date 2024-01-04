@@ -8,7 +8,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import React from "react";
 
-import { Button as ActionButton } from "@/components/FormInputs";
+import { Button as ActionButton } from "@/components/form/button";
 
 import { NetworkDiagnosticsResult } from "./network_diagnostics_result";
 

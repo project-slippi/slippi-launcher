@@ -3,8 +3,8 @@ import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import React from "react";
 
-import { DualPane } from "@/components/DualPane";
-import { Footer } from "@/components/Footer";
+import { DualPane } from "@/components/dual_pane";
+import { Footer } from "@/components/footer/footer";
 import { usePageScrollingShortcuts } from "@/lib/hooks/useShortcuts";
 
 import { NewsFeed } from "./news_feed/news_feed";

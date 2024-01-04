@@ -12,8 +12,8 @@ import moment from "moment";
 import React from "react";
 import TimeAgo from "react-timeago";
 
-import { ExternalLink } from "@/components/ExternalLink";
-import { MarkdownContent } from "@/components/MarkdownContent";
+import { ExternalLink } from "@/components/external_link";
+import { MarkdownContent } from "@/components/markdown_content";
 
 export const NewsArticle = React.memo(function NewsArticle({ item }: { item: NewsItem }) {
   const { imageUrl, title, subtitle, permalink, body, publishedAt } = item;

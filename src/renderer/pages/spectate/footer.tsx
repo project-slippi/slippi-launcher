@@ -6,8 +6,8 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import React from "react";
 
-import { BasicFooter } from "@/components/Footer";
-import { LabelledText } from "@/components/LabelledText";
+import { BasicFooter } from "@/components/footer/footer";
+import { LabelledText } from "@/components/labelled_text";
 import { useSpectateSlpPath } from "@/lib/hooks/useSettings";
 
 export const Footer = React.memo(() => {

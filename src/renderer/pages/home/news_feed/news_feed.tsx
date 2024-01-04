@@ -3,7 +3,7 @@ import Button from "@mui/material/Button";
 import React from "react";
 import { useQuery } from "react-query";
 
-import { LoadingScreen } from "@/components/LoadingScreen";
+import { LoadingScreen } from "@/components/loading_screen";
 
 import { NewsArticle } from "./news_article/news_article";
 

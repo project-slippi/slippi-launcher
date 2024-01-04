@@ -3,7 +3,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import TextField from "@mui/material/TextField";
 import { Controller, useForm } from "react-hook-form";
 
-import { ConfirmationModal } from "@/components/ConfirmationModal";
+import { ConfirmationModal } from "@/components/confirmation_modal";
 import { useAccount } from "@/lib/hooks/useAccount";
 import { useAsync } from "@/lib/hooks/useAsync";
 import { useToasts } from "@/lib/hooks/useToasts";

@@ -10,7 +10,7 @@ import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { HashRouter as Router, Navigate, Route, Routes } from "react-router-dom";
 
-import { ToastProvider } from "@/components/ToastProvider";
+import { ToastProvider } from "@/components/toast_provider";
 import { useAppStore } from "@/lib/hooks/useApp";
 import { useAppListeners } from "@/lib/hooks/useAppListeners";
 import { usePageNavigationShortcuts } from "@/lib/hooks/useShortcuts";

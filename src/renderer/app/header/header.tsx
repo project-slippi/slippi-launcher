@@ -10,7 +10,6 @@ import log from "electron-log";
 import { debounce } from "lodash";
 import React, { useCallback, useMemo } from "react";
 
-import { PlayButton as PlayButtonImpl, UpdatingButton } from "@/components/play_button/PlayButton";
 import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
 import { useAccount } from "@/lib/hooks/useAccount";
@@ -26,6 +25,7 @@ import { platformTitleBarStyles } from "@/styles/platformTitleBarStyles";
 import { ActivateOnlineDialog } from "./activate_online_dialog";
 import type { MenuItem } from "./main_menu";
 import { MainMenu } from "./main_menu";
+import { PlayButton as PlayButtonImpl, UpdatingButton } from "./play_button/play_button";
 import { StartGameDialog } from "./start_game_dialog";
 import { UserMenu } from "./user_menu";
 

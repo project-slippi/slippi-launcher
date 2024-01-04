@@ -6,9 +6,9 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import SyncIcon from "@mui/icons-material/Sync";
 import React from "react";
 
-import { DualPane } from "@/components/DualPane";
-import { Button } from "@/components/FormInputs";
-import { IconMessage } from "@/components/Message";
+import { DualPane } from "@/components/dual_pane";
+import { Button } from "@/components/form/button";
+import { IconMessage } from "@/components/message";
 import { generateDisplayPicture } from "@/lib/displayPicture";
 
 import { Footer } from "./footer";

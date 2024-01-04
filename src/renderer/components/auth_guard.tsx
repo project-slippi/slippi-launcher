@@ -2,7 +2,7 @@ import React from "react";
 
 import { useAccount } from "@/lib/hooks/useAccount";
 
-import { LoginNotice } from "./LoginNotice";
+import { LoginNotice } from "./login_notice";
 
 export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const user = useAccount((store) => store.user);

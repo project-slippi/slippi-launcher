@@ -1,7 +1,7 @@
 import { Ports } from "@slippi/slippi-js";
 import log from "electron-log";
 
-import { InfoBlock } from "@/components/InfoBlock";
+import { InfoBlock } from "@/components/info_block";
 import { useAccount } from "@/lib/hooks/useAccount";
 import { useBroadcast } from "@/lib/hooks/useBroadcast";
 import { useConsole } from "@/lib/hooks/useConsole";

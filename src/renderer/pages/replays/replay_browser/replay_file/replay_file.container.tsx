@@ -14,7 +14,7 @@ import { groupBy } from "lodash";
 import moment from "moment";
 import React, { useCallback, useMemo } from "react";
 
-import { DraggableFile } from "@/components/DraggableFile";
+import { DraggableFile } from "@/components/draggable_file";
 import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
 import { convertFrameCountToDurationString, monthDayHourFormat } from "@/lib/time";
 import { getStageImage } from "@/lib/utils";

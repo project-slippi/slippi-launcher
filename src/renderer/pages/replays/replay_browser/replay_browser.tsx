@@ -11,11 +11,11 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import React from "react";
 
-import { DualPane } from "@/components/DualPane";
-import { BasicFooter } from "@/components/Footer";
-import { LabelledText } from "@/components/LabelledText";
-import { LoadingScreenWithProgress } from "@/components/LoadingScreen";
-import { IconMessage } from "@/components/Message";
+import { DualPane } from "@/components/dual_pane";
+import { BasicFooter } from "@/components/footer/footer";
+import { LabelledText } from "@/components/labelled_text";
+import { LoadingScreenWithProgress } from "@/components/loading_screen";
+import { IconMessage } from "@/components/message";
 import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/useReplayBrowserList";
 import { useReplayFilter } from "@/lib/hooks/useReplayFilter";

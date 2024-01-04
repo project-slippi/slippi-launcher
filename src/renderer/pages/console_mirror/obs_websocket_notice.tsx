@@ -6,7 +6,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import React from "react";
 
-import { ExternalLink as A } from "@/components/ExternalLink";
+import { ExternalLink as A } from "@/components/external_link";
 
 const OBS_WEBSOCKET_NOTICE_KEY = "SEEN_OBS_WEBSOCKET_NOTICE";
 

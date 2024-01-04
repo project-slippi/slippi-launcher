@@ -9,7 +9,7 @@ import InputBase from "@mui/material/InputBase";
 import debounce from "lodash/debounce";
 import React, { useRef } from "react";
 
-import { Button, Checkbox, Dropdown } from "@/components/FormInputs";
+import { Button, Checkbox, Dropdown } from "@/components/form";
 import { useReplayFilter } from "@/lib/hooks/useReplayFilter";
 import { ReplayPresenter, useReplays } from "@/lib/hooks/useReplays";
 import { useSettings } from "@/lib/hooks/useSettings";

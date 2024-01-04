@@ -2,9 +2,9 @@ import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import React from "react";
 
-import { Checkbox } from "@/components/FormInputs/Checkbox";
-import { MultiPathInput } from "@/components/MultiPathInput";
-import { PathInput } from "@/components/PathInput";
+import { Checkbox } from "@/components/form/checkbox";
+import { MultiPathInput } from "@/components/multi_path_input";
+import { PathInput } from "@/components/path_input";
 import { useDolphinStore } from "@/lib/dolphin/useDolphinStore";
 import { useExtraSlpPaths, useMonthlySubfolders, useRootSlpPath, useSpectateSlpPath } from "@/lib/hooks/useSettings";
 

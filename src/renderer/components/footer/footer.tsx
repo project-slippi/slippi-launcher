@@ -6,7 +6,7 @@ import TwitterIcon from "@mui/icons-material/Twitter";
 import Tooltip from "@mui/material/Tooltip";
 import React from "react";
 
-import { ExternalLink as A } from "@/components/ExternalLink";
+import { ExternalLink as A } from "@/components/external_link";
 import { ReactComponent as DiscordIcon } from "@/styles/images/discord.svg";
 
 export const BasicFooter = styled.div`

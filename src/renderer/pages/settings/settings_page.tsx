@@ -13,7 +13,7 @@ import React from "react";
 import type { LinkProps } from "react-router-dom";
 import { Link, Navigate, Route, Routes, useMatch, useResolvedPath } from "react-router-dom";
 
-import { DualPane } from "@/components/DualPane";
+import { DualPane } from "@/components/dual_pane";
 import { BuildInfo } from "@/containers/build_info";
 import { useMousetrap } from "@/lib/hooks/useMousetrap";
 import { useSettingsModal } from "@/lib/hooks/useSettingsModal";

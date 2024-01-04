@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import ReactMarkdown from "react-markdown";
 
-import { ExternalLink as A } from "@/components/ExternalLink";
+import { ExternalLink as A } from "@/components/external_link";
 import { withFont } from "@/styles/withFont";
 
 export const MarkdownContent = ({ content, className }: { className?: string; content: string }) => {

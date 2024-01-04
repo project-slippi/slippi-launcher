@@ -12,9 +12,9 @@ import { GameMode } from "@slippi/slippi-js";
 import _ from "lodash";
 import { useQuery } from "react-query";
 
-import { BasicFooter } from "@/components/Footer";
-import { LoadingScreen } from "@/components/LoadingScreen";
-import { IconMessage } from "@/components/Message";
+import { BasicFooter } from "@/components/footer/footer";
+import { LoadingScreen } from "@/components/loading_screen";
+import { IconMessage } from "@/components/message";
 import { useDolphinActions } from "@/lib/dolphin/useDolphinActions";
 import { useMousetrap } from "@/lib/hooks/useMousetrap";
 import { getStageImage } from "@/lib/utils";

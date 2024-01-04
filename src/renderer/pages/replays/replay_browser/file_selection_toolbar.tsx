@@ -7,7 +7,7 @@ import SelectAllIcon from "@mui/icons-material/SelectAll";
 import Button from "@mui/material/Button";
 import React from "react";
 
-import { ConfirmationModal } from "@/components/ConfirmationModal";
+import { ConfirmationModal } from "@/components/confirmation_modal";
 
 type FileSelectionToolbarProps = {
   totalSelected: number;

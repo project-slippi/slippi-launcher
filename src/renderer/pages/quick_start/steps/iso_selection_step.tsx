@@ -10,7 +10,7 @@ import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { useQuery } from "react-query";
 
-import { ConfirmationModal } from "@/components/ConfirmationModal";
+import { ConfirmationModal } from "@/components/confirmation_modal";
 import { useIsoPath } from "@/lib/hooks/useSettings";
 import { useToasts } from "@/lib/hooks/useToasts";
 import { hasBorder } from "@/styles/hasBorder";

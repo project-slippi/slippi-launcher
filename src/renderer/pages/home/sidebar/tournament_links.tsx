@@ -6,7 +6,7 @@ import { Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import React from "react";
 
-import { ExternalLink } from "@/components/ExternalLink";
+import { ExternalLink } from "@/components/external_link";
 import { ReactComponent as StartggLogo } from "@/styles/images/startgg-logo.svg";
 
 const NEARBY_TOURNAMENTS_URL =

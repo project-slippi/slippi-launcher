@@ -9,7 +9,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
 
-import { ExternalLink as A } from "@/components/ExternalLink";
+import { ExternalLink as A } from "@/components/external_link";
 import { useAccount, useUserData } from "@/lib/hooks/useAccount";
 import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";

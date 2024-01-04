@@ -1,7 +1,7 @@
 import Button from "@mui/material/Button";
 import React from "react";
 
-import { Toggle } from "@/components/FormInputs/Toggle";
+import { Toggle } from "@/components/form/toggle";
 import { useAutoUpdateLauncher } from "@/lib/hooks/useSettings";
 import { useToasts } from "@/lib/hooks/useToasts";
 
