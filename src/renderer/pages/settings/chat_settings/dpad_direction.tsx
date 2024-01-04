@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
 
-import { ReactComponent as DpadDirIcon } from "@/styles/images/dpad-dir.svg";
+import { ReactComponent as DpadDirIcon } from "@/styles/images/dpad_dir.svg";
 
 export const DpadDirection = ({
   direction,

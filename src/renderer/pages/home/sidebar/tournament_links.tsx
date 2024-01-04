@@ -7,7 +7,7 @@ import Button from "@mui/material/Button";
 import React from "react";
 
 import { ExternalLink } from "@/components/external_link";
-import { ReactComponent as StartggLogo } from "@/styles/images/startgg-logo.svg";
+import { ReactComponent as StartggLogo } from "@/styles/images/startgg_logo.svg";
 
 const NEARBY_TOURNAMENTS_URL =
   "https://start.gg/search/near_me?range%5BeffectiveRegistrationClosesAt%5D%5Bmin%5D=1&refinementList%5Bevents.videogame.id%5D=1&refinementList%5BhasOnlineEvents%5D=&refinementList%5Bstate%5D%5B0%5D=1&page=1&configure%5BhitsPerPage%5D=15&configure%5Bfilters%5D=profileType%3Atournament&configure%5BaroundLatLngViaIP%5D=true&configure%5BaroundRadius%5D=160934";

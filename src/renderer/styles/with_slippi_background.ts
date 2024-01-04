@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
 
-import slippiLogo from "@/styles/images/slippi-logo.svg";
+import slippiLogo from "@/styles/images/slippi_logo.svg";
 
 export const withSlippiBackground = css`
   &::before {

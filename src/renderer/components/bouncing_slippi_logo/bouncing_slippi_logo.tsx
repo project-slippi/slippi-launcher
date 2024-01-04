@@ -1,7 +1,7 @@
 import { css, keyframes } from "@emotion/react";
 import React from "react";
 
-import slippiLogo from "@/styles/images/slippi-logo.svg";
+import slippiLogo from "@/styles/images/slippi_logo.svg";
 
 const bounceAnimation = keyframes`
   0%  { bottom: 0px; }
