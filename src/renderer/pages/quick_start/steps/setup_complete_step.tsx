@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-import { QuickStartHeader } from "./QuickStartHeader";
+import { QuickStartHeader } from "../quick_start_header/quick_start_header";
 
 const Container = styled.div`
   margin: 0 auto;

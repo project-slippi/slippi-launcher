@@ -14,7 +14,7 @@ import { useAccount, useUserData } from "@/lib/hooks/useAccount";
 import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";
 
-import { QuickStartHeader } from "./QuickStartHeader";
+import { QuickStartHeader } from "../quick_start_header/quick_start_header";
 
 const Container = styled.div`
   margin: 0 auto;

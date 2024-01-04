@@ -15,7 +15,7 @@ import { useIsoPath } from "@/lib/hooks/useSettings";
 import { useToasts } from "@/lib/hooks/useToasts";
 import { hasBorder } from "@/styles/hasBorder";
 
-import { QuickStartHeader } from "./QuickStartHeader";
+import { QuickStartHeader } from "../quick_start_header/quick_start_header";
 
 const getColor = (props: any, defaultColor = "#eeeeee") => {
   if (props.isDragAccept) {

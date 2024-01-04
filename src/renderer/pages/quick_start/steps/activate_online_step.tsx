@@ -2,8 +2,8 @@ import styled from "@emotion/styled";
 import Box from "@mui/material/Box";
 import React from "react";
 
-import { ActivateOnlineForm } from "../ActivateOnlineForm";
-import { QuickStartHeader } from "./QuickStartHeader";
+import { ActivateOnlineForm } from "../../../containers/ActivateOnlineForm";
+import { QuickStartHeader } from "../quick_start_header/quick_start_header";
 
 const Container = styled.div`
   margin: 0 auto;

@@ -9,13 +9,13 @@ import { useMousetrap } from "@/lib/hooks/useMousetrap";
 import { QuickStartStep } from "@/lib/hooks/useQuickStart";
 import { platformTitleBarStyles } from "@/styles/platformTitleBarStyles";
 
-import { AcceptRulesStep } from "./AcceptRulesStep";
-import { ActivateOnlineStep } from "./ActivateOnlineStep";
-import { ImportDolphinSettingsStep } from "./ImportDolphinSettingsStep";
-import { IsoSelectionStep } from "./IsoSelectionStep";
-import { LoginStep } from "./LoginStep";
-import { SetupCompleteStep } from "./SetupCompleteStep";
-import { VerifyEmailStep } from "./VerifyEmailStep";
+import { AcceptRulesStep } from "./steps/accept_rules_step";
+import { ActivateOnlineStep } from "./steps/activate_online_step";
+import { ImportDolphinSettingsStep } from "./steps/import_dolphin_settings_step";
+import { IsoSelectionStep } from "./steps/iso_selection_step";
+import { LoginStep } from "./steps/login_step";
+import { SetupCompleteStep } from "./steps/setup_complete_step";
+import { VerifyEmailStep } from "./steps/verify_email_step";
 
 const OuterBox = styled(Box)`
   flex: 1;

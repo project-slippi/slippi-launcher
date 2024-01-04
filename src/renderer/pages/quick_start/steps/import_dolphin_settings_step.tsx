@@ -14,7 +14,7 @@ import { useDesktopApp } from "@/lib/hooks/useQuickStart";
 import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";
 
-import { QuickStartHeader } from "./QuickStartHeader";
+import { QuickStartHeader } from "../quick_start_header/quick_start_header";
 
 const isMac = window.electron.bootstrap.isMac;
 

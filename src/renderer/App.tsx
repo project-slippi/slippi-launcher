@@ -10,18 +10,19 @@ import { useAppStore } from "@/lib/hooks/useApp";
 
 import { ToastProvider } from "./components/ToastProvider";
 import { useAppListeners } from "./lib/hooks/useAppListeners";
+import { lazyLoadQuickStartPage } from "./pages/quick_start/load";
 import { lazyLoadSettingsPage } from "./pages/settings/load";
 import { createServiceProvider } from "./services";
 import type { Services } from "./services/types";
 import { slippiTheme } from "./styles/theme";
 import { createMainView } from "./views/createMainView";
-import { LandingView } from "./views/LandingView";
 import { LoadingView } from "./views/LoadingView";
 import { NotFoundView } from "./views/NotFoundView";
 
 export function createApp({ services }: { services: Services }): React.ComponentType {
-  const { Page: SettingsPage } = lazyLoadSettingsPage();
   const { MainView } = createMainView({ broadcastService: services.broadcastService });
+  const { Page: SettingsPage } = lazyLoadSettingsPage();
+  const { Page: QuickStartPage } = lazyLoadQuickStartPage();
 
   const App = () => {
     const initialized = useAppStore((state) => state.initialized);
@@ -36,7 +37,7 @@ export function createApp({ services }: { services: Services }): React.Component
     return (
       <Routes>
         <Route path="/main/*" element={<MainView />} />
-        <Route path="/landing" element={<LandingView />} />
+        <Route path="/landing" element={<QuickStartPage />} />
         <Route path="/settings/*" element={<SettingsPage />} />
         <Route path="/" element={<Navigate replace={true} to="/landing" />} />
         <Route element={<NotFoundView />} />

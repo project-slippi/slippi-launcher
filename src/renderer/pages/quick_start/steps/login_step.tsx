@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import Box from "@mui/material/Box";
 import React from "react";
 
-import { LoginForm } from "../LoginForm";
+import { LoginForm } from "../../../containers/LoginForm";
 
 const FormContainer = styled.div`
   margin: 0 auto;
