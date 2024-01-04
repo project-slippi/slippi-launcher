@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import create from "zustand";
+import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
 import { useServices } from "@/services";

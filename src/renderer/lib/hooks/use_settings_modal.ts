@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useLocation, useMatch, useNavigate, useResolvedPath } from "react-router-dom";
-import create from "zustand";
+import { create } from "zustand";
 
 type StoreState = {
   lastModalPage?: string;

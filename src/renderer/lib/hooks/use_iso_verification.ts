@@ -1,5 +1,5 @@
 import { IsoValidity } from "@common/types";
-import create from "zustand";
+import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
 export const useIsoVerification = create(

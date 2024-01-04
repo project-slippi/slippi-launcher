@@ -1,4 +1,4 @@
-import create from "zustand";
+import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
 import { ReplaySortOption, SortDirection } from "../replay_file_sort";

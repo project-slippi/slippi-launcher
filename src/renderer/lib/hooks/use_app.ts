@@ -1,6 +1,6 @@
 import { DolphinLaunchType } from "@dolphin/types";
 import log from "electron-log";
-import create from "zustand";
+import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
 import { useAccount } from "@/lib/hooks/use_account";

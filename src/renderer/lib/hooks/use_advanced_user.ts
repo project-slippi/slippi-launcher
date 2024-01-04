@@ -1,4 +1,4 @@
-import create from "zustand";
+import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
 const ADVANCED_USER_STORAGE_KEY = "IS_ADVANCED_USER";

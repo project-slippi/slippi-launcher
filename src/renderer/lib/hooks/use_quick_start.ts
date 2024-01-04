@@ -1,7 +1,7 @@
 import { currentRulesVersion } from "@common/constants";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import create from "zustand";
+import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
 import { useSettings } from "@/lib/hooks/use_settings";

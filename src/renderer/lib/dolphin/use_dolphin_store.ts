@@ -1,6 +1,6 @@
 import { DolphinLaunchType } from "@dolphin/types";
 import { unstable_batchedUpdates } from "react-dom";
-import create from "zustand";
+import { create } from "zustand";
 
 export enum DolphinStatus {
   UNKNOWN = "UNKNOWN",

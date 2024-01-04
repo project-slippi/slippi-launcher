@@ -1,7 +1,7 @@
 import { DolphinLaunchType } from "@dolphin/types";
 import type { AppSettings } from "@settings/types";
 import { useCallback } from "react";
-import create from "zustand";
+import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
 const initialState = window.electron.settings.getAppSettingsSync();

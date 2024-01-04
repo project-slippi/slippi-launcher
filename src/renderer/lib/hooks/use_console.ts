@@ -1,5 +1,5 @@
 import { ConnectionStatus } from "@slippi/slippi-js";
-import create from "zustand";
+import { create } from "zustand";
 
 type StoreState = {
   isBroadcasting: boolean;
