@@ -10,10 +10,9 @@ import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
 import { useAsync } from "@/lib/hooks/use_async";
+import { QuickStartHeader } from "@/pages/quick_start/quick_start_header/quick_start_header";
 import { useServices } from "@/services";
 import type { AuthUser } from "@/services/auth/types";
-
-import { QuickStartHeader } from "../pages/quick_start/quick_start_header/quick_start_header";
 
 // Store this data in a hook so we can avoid dealing with setting state on unmount errors
 const useLoginStore = create(

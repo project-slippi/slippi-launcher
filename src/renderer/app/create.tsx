@@ -16,6 +16,8 @@ import { useAppListeners } from "@/lib/hooks/use_app_listeners";
 import { usePageNavigationShortcuts } from "@/lib/hooks/use_shortcuts";
 import { lazyLoadConsoleMirrorPage } from "@/pages/console_mirror/load";
 import { HomePage } from "@/pages/home/home_page";
+import { LoadingPage } from "@/pages/loading/loading_page";
+import { NotFoundPage } from "@/pages/not_found/not_found_page";
 import { lazyLoadQuickStartPage } from "@/pages/quick_start/load";
 import { lazyLoadReplaysPage } from "@/pages/replays/load";
 import { lazyLoadSettingsPage } from "@/pages/settings/load";
@@ -24,8 +26,6 @@ import { createServiceProvider } from "@/services";
 import type { Services } from "@/services/types";
 import { slippiTheme } from "@/styles/theme";
 
-import { LoadingPage } from "../pages/loading/loading_page";
-import { NotFoundPage } from "../pages/not_found/not_found_page";
 import type { MainMenuItem } from "./app";
 import { App as AppImpl } from "./app";
 
