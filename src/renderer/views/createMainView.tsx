@@ -14,7 +14,7 @@ import type { MenuItem } from "@/containers/Header/MainMenu";
 import { ReplayBrowserPage } from "@/containers/ReplayBrowser/ReplayBrowserPage";
 import { usePageNavigationShortcuts } from "@/lib/hooks/useShortcuts";
 import { lazyLoadConsoleMirrorPage } from "@/pages/console_mirror/load";
-import { HomePage } from "@/pages/home/HomePage";
+import { HomePage } from "@/pages/home/home_page";
 import { lazyLoadSpectatePage } from "@/pages/spectate/load";
 
 type MainMenuItem = MenuItem & {

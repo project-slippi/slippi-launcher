@@ -1,11 +1,11 @@
 import { isEqual, keyBy } from "lodash";
 import { useCallback, useEffect, useState } from "react";
 
-import { defaultMessages } from "@/pages/settings/chat_settings/default_chat_messages";
+import { useToasts } from "@/lib/hooks/useToasts";
 import { useServices } from "@/services";
 import type { AvailableMessageType } from "@/services/slippi/types";
 
-import { useToasts } from "../../../lib/hooks/useToasts";
+import { defaultMessages } from "./default_chat_messages";
 
 const validateMessages = (messages: string[], availableMessages: AvailableMessageType[]): string[] => {
   const optionsByText = keyBy(availableMessages, "text");
