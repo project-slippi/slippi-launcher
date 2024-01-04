@@ -1,6 +1,6 @@
 import { generateDisplayPicture } from "@/lib/displayPicture";
 
-import { UserInfo } from "./UserInfo";
+import { UserInfo } from "./user_info";
 
 // type UserInfoProps = React.ComponentProps<typeof UserInfo>;
 

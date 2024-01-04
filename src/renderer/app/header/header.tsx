@@ -23,11 +23,11 @@ import { useServices } from "@/services";
 import slippiLogo from "@/styles/images/slippi-logo.svg";
 import { platformTitleBarStyles } from "@/styles/platformTitleBarStyles";
 
-import { ActivateOnlineDialog } from "./ActivateOnlineDialog";
-import type { MenuItem } from "./MainMenu";
-import { MainMenu } from "./MainMenu";
-import { StartGameDialog } from "./StartGameDialog";
-import { UserMenu } from "./UserMenu";
+import { ActivateOnlineDialog } from "./activate_online_dialog";
+import type { MenuItem } from "./main_menu";
+import { MainMenu } from "./main_menu";
+import { StartGameDialog } from "./start_game_dialog";
+import { UserMenu } from "./user_menu";
 
 const isMac = window.electron.bootstrap.isMac;
 

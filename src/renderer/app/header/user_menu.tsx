@@ -14,9 +14,9 @@ import { useAccount } from "@/lib/hooks/useAccount";
 import { useServices } from "@/services";
 import type { AuthUser } from "@/services/auth/types";
 
-import { ActivateOnlineDialog } from "./ActivateOnlineDialog";
-import { NameChangeDialog } from "./NameChangeDialog";
-import { UserInfo } from "./UserInfo/UserInfo";
+import { ActivateOnlineDialog } from "./activate_online_dialog";
+import { NameChangeDialog } from "./name_change_dialog";
+import { UserInfo } from "./user_info/user_info";
 
 export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (error: any) => void }) => {
   const { authService } = useServices();

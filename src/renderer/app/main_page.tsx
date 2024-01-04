@@ -1,11 +1,11 @@
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 
+import { Header } from "@/app/header/header";
+import { LoginDialog } from "@/app/header/login_dialog";
+import type { MenuItem } from "@/app/header/main_menu";
 import { AuthGuard } from "@/components/AuthGuard";
 import { PersistentNotification } from "@/components/PersistentNotification";
-import { Header } from "@/containers/Header";
-import { LoginDialog } from "@/containers/Header/LoginDialog";
-import type { MenuItem } from "@/containers/Header/MainMenu";
 
 export type MainMenuItem = MenuItem & {
   Component: React.ComponentType;
