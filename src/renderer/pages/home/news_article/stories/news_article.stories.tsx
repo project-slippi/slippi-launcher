@@ -1,7 +1,7 @@
 import type { ComponentMeta, ComponentStory } from "@storybook/react";
 
-import { NewsArticle } from "../NewsArticle";
-import { generateFakeNewsItem } from "./fakeNewsItem";
+import { NewsArticle } from "../news_article";
+import { generateFakeNewsItem } from "./fakes";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
