@@ -5,7 +5,7 @@ import { useQuery } from "react-query";
 
 import { LoadingScreen } from "@/components/LoadingScreen";
 
-import { NewsArticle } from "../news_article/news_article";
+import { NewsArticle } from "./news_article/news_article";
 
 const ITEMS_TO_SHOW = 7;
 const BATCH_SIZE = 5;
