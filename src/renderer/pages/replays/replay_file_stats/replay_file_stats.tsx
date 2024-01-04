@@ -21,10 +21,10 @@ import { getStageImage } from "@/lib/utils";
 import { useServices } from "@/services";
 import { withFont } from "@/styles/withFont";
 
-import { GameProfile } from "./GameProfile";
-import { GameProfileHeader } from "./GameProfileHeader";
-import { HomeRunProfile } from "./HomeRunProfile";
-import { TargetTestProfile } from "./TargetTestProfile";
+import { GameProfile } from "./game_profile";
+import { GameProfileHeader } from "./game_profile_header";
+import { HomeRunProfile } from "./home_run_profile";
+import { TargetTestProfile } from "./target_test_profile";
 
 const Outer = styled.div<{
   backgroundImage?: any;

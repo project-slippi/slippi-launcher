@@ -1,4 +1,4 @@
-import { PlayerBadge } from "./PlayerBadge";
+import { PlayerBadge } from "./player_badge";
 
 type PlayerBadgeProps = React.ComponentProps<typeof PlayerBadge>;
 

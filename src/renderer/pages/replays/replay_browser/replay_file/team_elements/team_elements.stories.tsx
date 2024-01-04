@@ -1,5 +1,5 @@
-import type { PlayerInfo } from "./TeamElements";
-import { TeamElements } from "./TeamElements";
+import type { PlayerInfo } from "./team_elements";
+import { TeamElements } from "./team_elements";
 
 export default {
   title: "containers/ReplayBrowser/ReplayFile/TeamElements",

@@ -19,9 +19,9 @@ import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
 import { convertFrameCountToDurationString, monthDayHourFormat } from "@/lib/time";
 import { getStageImage } from "@/lib/utils";
 
-import type { ReplayDetail } from "./ReplayFile";
-import { ReplayFile as ReplayFileImpl } from "./ReplayFile";
-import type { PlayerInfo } from "./team_elements/TeamElements";
+import type { ReplayDetail } from "./replay_file";
+import { ReplayFile as ReplayFileImpl } from "./replay_file";
+import type { PlayerInfo } from "./team_elements/team_elements";
 
 type ReplayFileContainerProps = FileResult & {
   index: number;

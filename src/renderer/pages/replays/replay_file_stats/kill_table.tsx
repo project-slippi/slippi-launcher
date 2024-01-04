@@ -12,7 +12,7 @@ import _ from "lodash";
 import { convertFrameCountToDurationString } from "@/lib/time";
 import { getCharacterIcon } from "@/lib/utils";
 
-import * as T from "./TableStyles";
+import * as T from "./table_styles";
 
 type PlayerInfoType = Pick<PlayerInfo, "playerIndex" | "characterId" | "characterColor" | "displayName" | "tag">;
 

@@ -6,8 +6,8 @@ import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
 import TimerIcon from "@mui/icons-material/Timer";
 import { action } from "@storybook/addon-actions";
 
-import { ReplayFile } from "../ReplayFile";
-import type { PlayerInfo } from "../team_elements/TeamElements";
+import { ReplayFile } from "../replay_file";
+import type { PlayerInfo } from "../team_elements/team_elements";
 import stageImage from "./stage.png";
 
 export default {

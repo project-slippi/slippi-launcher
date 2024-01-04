@@ -7,7 +7,7 @@ import _ from "lodash";
 import { convertFrameCountToDurationString } from "@/lib/time";
 import { getCharacterIcon, toOrdinal } from "@/lib/utils";
 
-import * as T from "./TableStyles";
+import * as T from "./table_styles";
 
 const columnCount = 6;
 

@@ -7,9 +7,9 @@ import React from "react";
 
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 
-import { KillTable } from "./KillTable";
-import { OverallTable } from "./OverallTable";
-import { PunishTable } from "./PunishTable";
+import { KillTable } from "./kill_table";
+import { OverallTable } from "./overall_table";
+import { PunishTable } from "./punish_table";
 
 type GameProfileProps = {
   file: FileResult;

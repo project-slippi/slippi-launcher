@@ -6,8 +6,8 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import React from "react";
 
-import type { PlayerInfo } from "./team_elements/TeamElements";
-import { TeamElements } from "./team_elements/TeamElements";
+import type { PlayerInfo } from "./team_elements/team_elements";
+import { TeamElements } from "./team_elements/team_elements";
 
 export type ReplayDetail = {
   Icon: React.ComponentType;

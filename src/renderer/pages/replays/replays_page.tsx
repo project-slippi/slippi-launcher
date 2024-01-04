@@ -6,8 +6,8 @@ import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/us
 import { useReplays } from "@/lib/hooks/useReplays";
 import { useServices } from "@/services";
 
-import { ReplayFileStats } from "../ReplayFileStats";
-import { ReplayBrowser } from "./ReplayBrowser";
+import { ReplayBrowser } from "./replay_browser/replay_browser";
+import { ReplayFileStats } from "./replay_file_stats/replay_file_stats";
 
 export const ReplayBrowserPage = React.memo(() => {
   const { lastPath } = useReplayBrowserNavigation();

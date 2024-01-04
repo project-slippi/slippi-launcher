@@ -4,7 +4,7 @@ import _ from "lodash";
 
 import { getCharacterIcon } from "@/lib/utils";
 
-import * as T from "./TableStyles";
+import * as T from "./table_styles";
 
 const columnCount = 5; // Unfortunately there is no way to specify a col span of "all" max cols there will be is 5
 

@@ -24,7 +24,7 @@ import React from "react";
 import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/useDolphinStore";
 import { convertFrameCountToDurationString, monthDayHourFormat } from "@/lib/time";
 
-import { PlayerInfo } from "./PlayerInfo";
+import { PlayerInfo } from "./player_info";
 
 const Outer = styled.div`
   margin-top: 10px;

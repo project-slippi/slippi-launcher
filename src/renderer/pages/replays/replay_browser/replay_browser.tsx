@@ -24,10 +24,10 @@ import { useToasts } from "@/lib/hooks/useToasts";
 import { humanReadableBytes } from "@/lib/utils";
 import { useServices } from "@/services";
 
-import { FileList } from "./FileList";
-import { FileSelectionToolbar } from "./FileSelectionToolbar";
-import { FilterToolbar } from "./FilterToolbar";
-import { FolderTreeNode } from "./FolderTreeNode";
+import { FileList } from "./file_list";
+import { FileSelectionToolbar } from "./file_selection_toolbar";
+import { FilterToolbar } from "./filter_toolbar";
+import { FolderTreeNode } from "./folder_tree_node";
 
 export const ReplayBrowser = React.memo(() => {
   const { replayService } = useServices();

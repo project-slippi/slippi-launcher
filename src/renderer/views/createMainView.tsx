@@ -11,10 +11,10 @@ import { PersistentNotification } from "@/components/PersistentNotification";
 import { Header } from "@/containers/Header";
 import { LoginDialog } from "@/containers/Header/LoginDialog";
 import type { MenuItem } from "@/containers/Header/MainMenu";
-import { ReplayBrowserPage } from "@/containers/ReplayBrowser/ReplayBrowserPage";
 import { usePageNavigationShortcuts } from "@/lib/hooks/useShortcuts";
 import { lazyLoadConsoleMirrorPage } from "@/pages/console_mirror/load";
 import { HomePage } from "@/pages/home/home_page";
+import { lazyLoadReplaysPage } from "@/pages/replays/load";
 import { lazyLoadSpectatePage } from "@/pages/spectate/load";
 
 type MainMenuItem = MenuItem & {
@@ -28,6 +28,7 @@ export function createMainView({ broadcastService }: { broadcastService: Broadca
 } {
   const { Page: SpectatePage } = lazyLoadSpectatePage({ broadcastService });
   const { Page: ConsoleMirrorPage } = lazyLoadConsoleMirrorPage();
+  const { Page: ReplaysPage } = lazyLoadReplaysPage();
 
   const menuItems: MainMenuItem[] = [
     {
@@ -40,7 +41,7 @@ export function createMainView({ broadcastService }: { broadcastService: Broadca
     {
       subpath: "replays",
       title: "Replays",
-      Component: ReplayBrowserPage,
+      Component: ReplaysPage,
       Icon: SlowMotionVideoIcon,
     },
     {

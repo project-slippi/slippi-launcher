@@ -9,7 +9,7 @@ import { FixedSizeList as List } from "react-window";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { IconMenu } from "@/components/IconMenu";
 
-import { ReplayFileContainer } from "./replay_file/ReplayFile.container";
+import { ReplayFileContainer } from "./replay_file/replay_file.container";
 
 const REPLAY_FILE_ITEM_SIZE = 90;
 

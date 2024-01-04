@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import React from "react";
 
-import { PlayerBadge } from "./player_badge/PlayerBadge";
+import { PlayerBadge } from "./player_badge/player_badge";
 
 const Outer = styled.div`
   display: flex;
