@@ -87,6 +87,11 @@ export class DolphinInstance extends EventEmitter {
       debouncedErrorLog(combinedString);
     });
   }
+  public kill() {
+    if (this.process) {
+      this.process.kill("SIGINT");
+    }
+  }
 }
 
 export class PlaybackDolphinInstance extends DolphinInstance {
