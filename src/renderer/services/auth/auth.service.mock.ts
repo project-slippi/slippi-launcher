@@ -1,7 +1,7 @@
 import multicast from "observable-fns/multicast";
 import Subject from "observable-fns/subject";
 
-import { generateDisplayPicture } from "@/lib/displayPicture";
+import { generateDisplayPicture } from "@/lib/display_picture";
 
 import { delayAndMaybeError } from "../utils";
 import type { AuthService, AuthUser } from "./types";

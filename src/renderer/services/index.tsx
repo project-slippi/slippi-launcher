@@ -1,8 +1,5 @@
 import React, { createContext, useContext } from "react";
 
-import { LoadingScreen } from "@/components/LoadingScreen";
-
-import { installServices } from "./install";
 import type { Services } from "./types";
 
 const ServiceContext = createContext<Services | null>(null);
@@ -15,18 +12,9 @@ export const useServices = () => {
   return services;
 };
 
-const LazyServiceProvider = React.lazy(async () => {
-  const services = await installServices();
+export function createServiceProvider({ services }: { services: Services }) {
   const ServiceProvider = ({ children }: { children: React.ReactNode }) => {
     return <ServiceContext.Provider value={services}>{children}</ServiceContext.Provider>;
   };
-  return { default: ServiceProvider };
-});
-
-export const ServiceProvider = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <React.Suspense fallback={<LoadingScreen />}>
-      <LazyServiceProvider>{children}</LazyServiceProvider>
-    </React.Suspense>
-  );
-};
+  return { ServiceProvider };
+}
