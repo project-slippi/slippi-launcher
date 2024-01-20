@@ -1,3 +1,4 @@
+import { Preconditions } from "@common/preconditions";
 import log from "electron-log";
 import { getApps, initializeApp } from "firebase/app";
 import {
@@ -123,25 +124,18 @@ class AuthClient implements AuthService {
   public async sendVerificationEmail() {
     const auth = getAuth();
     const user = auth.currentUser;
-    if (!user) {
-      throw new Error("User is not logged in.");
+    Preconditions.checkExists(user, "User is not logged in.");
+
+    if (!user.emailVerified) {
+      log.info(`Sending email verification`);
+      await sendEmailVerification(user);
     }
-
-    if (user.emailVerified) {
-      return;
-    }
-
-    log.info(`Sending email verification`);
-
-    await sendEmailVerification(user);
   }
 
   public async refreshUser(): Promise<void> {
     const auth = getAuth();
     const user = auth.currentUser;
-    if (!user) {
-      throw new Error("User is not logged in.");
-    }
+    Preconditions.checkExists(user, "User is not logged in.");
 
     await user.reload();
     // Notify listeners of the new user object
@@ -161,9 +155,8 @@ class AuthClient implements AuthService {
   public async getUserToken(): Promise<string> {
     const auth = getAuth();
     const user = auth.currentUser;
-    if (!user) {
-      throw new Error("User is not logged in.");
-    }
+    Preconditions.checkExists(user, "User is not logged in.");
+
     const token = await user.getIdToken();
     return token;
   }

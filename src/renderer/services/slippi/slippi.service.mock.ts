@@ -1,4 +1,5 @@
 import { currentRulesVersion } from "@common/constants";
+import { Preconditions } from "@common/preconditions";
 import type { PlayKey } from "@dolphin/types";
 
 import type { AuthService } from "../auth/types";
@@ -71,9 +72,8 @@ class MockSlippiBackendClient implements SlippiBackendService {
   @delayAndMaybeError(SHOULD_ERROR)
   public async fetchUserData(): Promise<UserData | null> {
     const user = this.authService.getCurrentUser();
-    if (!user) {
-      throw new Error("No user logged in");
-    }
+    Preconditions.checkExists(user, "No user logged in");
+
     if (!this.fakeUsers.has(user.uid)) {
       this.addFakeSlippiUser(user.uid, user.displayName);
     }
@@ -94,14 +94,10 @@ class MockSlippiBackendClient implements SlippiBackendService {
   @delayAndMaybeError(SHOULD_ERROR)
   public async changeDisplayName(name: string) {
     const user = this.authService.getCurrentUser();
-    if (!user) {
-      throw new Error("No user logged in");
-    }
+    Preconditions.checkExists(user, "No user logged in");
 
     const userData = this.fakeUsers.get(user.uid);
-    if (!userData) {
-      throw new Error(`No user with id: ${user.uid}`);
-    }
+    Preconditions.checkExists(userData, `No user with id: ${user.uid}`);
 
     userData.playKey!.displayName = name;
     this.fakeUsers.set(user.uid, userData);
@@ -111,14 +107,9 @@ class MockSlippiBackendClient implements SlippiBackendService {
   @delayAndMaybeError(SHOULD_ERROR)
   public async acceptRules() {
     const user = this.authService.getCurrentUser();
-    if (!user) {
-      throw new Error("No user logged in");
-    }
-
+    Preconditions.checkExists(user, "No user logged in");
     const userData = this.fakeUsers.get(user.uid);
-    if (!userData) {
-      throw new Error(`No user with id: ${user.uid}`);
-    }
+    Preconditions.checkExists(userData, `No user with id: ${user.uid}`);
 
     userData.rulesAccepted = currentRulesVersion;
     this.fakeUsers.set(user.uid, userData);
@@ -132,9 +123,7 @@ class MockSlippiBackendClient implements SlippiBackendService {
   @delayAndMaybeError(SHOULD_ERROR)
   public async fetchChatMessageData(userId: string): Promise<ChatMessageData> {
     const userData = this.fakeUsers.get(userId);
-    if (!userData) {
-      throw new Error("User not found");
-    }
+    Preconditions.checkExists(userData, "User not found");
 
     const displayName = userData.playKey!.displayName.toLowerCase();
     const subscriptionLevel = generateUserSubscriptionLevel(displayName.includes("sub"));
@@ -149,9 +138,8 @@ class MockSlippiBackendClient implements SlippiBackendService {
   @delayAndMaybeError(SHOULD_ERROR)
   public async submitChatMessages(userId: string, messages: string[]): Promise<string[]> {
     const userData = this.fakeUsers.get(userId);
-    if (!userData) {
-      throw new Error("User not found");
-    }
+    Preconditions.checkExists(userData, "User not found");
+
     userData.savedMessages = messages;
     this.fakeUsers.set(userId, userData);
     return messages;

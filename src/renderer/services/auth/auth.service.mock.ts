@@ -1,3 +1,4 @@
+import { Preconditions } from "@common/preconditions";
 import multicast from "observable-fns/multicast";
 import Subject from "observable-fns/subject";
 
@@ -98,14 +99,10 @@ class MockAuthClient implements AuthService {
 
   private _updateCurrentUser(newUserDetails: Partial<AuthUser>): AuthUser {
     const user = this._currentUser;
-    if (!user) {
-      throw new Error("User is not logged in.");
-    }
+    Preconditions.checkExists(user, "User is not logged in.");
 
     const maybeUserRecord = Array.from(this._usersMap.entries()).find(([_, u]) => user.uid === u.uid);
-    if (!maybeUserRecord) {
-      throw new Error(`Error updating user with id: ${user.uid}`);
-    }
+    Preconditions.checkExists(maybeUserRecord, `Could not find user with id: ${user.uid}`);
 
     const [key, userRecord] = maybeUserRecord;
     const updatedUser: AuthUser = { ...userRecord, ...newUserDetails };

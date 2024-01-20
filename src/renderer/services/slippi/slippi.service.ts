@@ -4,6 +4,7 @@ import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
 import { RetryLink } from "@apollo/client/link/retry";
 import { currentRulesVersion } from "@common/constants";
+import { Preconditions } from "@common/preconditions";
 import type { DolphinService, PlayKey } from "@dolphin/types";
 import log from "electron-log";
 import type { GraphQLError } from "graphql";
@@ -110,9 +111,7 @@ class SlippiBackendClient implements SlippiBackendService {
 
   public async fetchUserData(): Promise<UserData | null> {
     const user = this.authService.getCurrentUser();
-    if (!user) {
-      throw new Error("User is not logged in");
-    }
+    Preconditions.checkExists(user, "User is not logged in");
 
     const res = await this.client.query({
       query: QUERY_GET_USER_DATA,
@@ -190,9 +189,7 @@ class SlippiBackendClient implements SlippiBackendService {
 
   public async changeDisplayName(name: string) {
     const user = this.authService.getCurrentUser();
-    if (!user) {
-      throw new Error("User is not logged in");
-    }
+    Preconditions.checkExists(user, "User is not logged in");
 
     const res = await this.client.mutate({
       mutation: MUTATION_RENAME_USER,
@@ -210,9 +207,7 @@ class SlippiBackendClient implements SlippiBackendService {
 
   public async acceptRules() {
     const user = this.authService.getCurrentUser();
-    if (!user) {
-      throw new Error("User is not logged in");
-    }
+    Preconditions.checkExists(user, "User is not logged in");
 
     const res = await this.client.mutate({
       mutation: MUTATION_ACCEPT_RULES,
