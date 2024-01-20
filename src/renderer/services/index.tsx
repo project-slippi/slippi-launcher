@@ -1,14 +1,13 @@
+import { Preconditions } from "@common/preconditions";
 import React, { createContext, useContext } from "react";
 
 import type { Services } from "./types";
 
 const ServiceContext = createContext<Services | null>(null);
 
-export const useServices = () => {
+export const useServices = (): Services => {
   const services = useContext(ServiceContext);
-  if (!services) {
-    throw new Error("You must wrap your component in ServiceProvider to use services!");
-  }
+  Preconditions.checkExists(services, "You must wrap your component in ServiceProvider to use services!");
   return services;
 };
 
