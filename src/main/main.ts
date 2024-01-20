@@ -109,7 +109,7 @@ const createWindow = async () => {
   mainWindow.loadURL(resolveHtmlPath("index.html")).catch(log.error);
 
   mainWindow.on("ready-to-show", () => {
-    Preconditions.checkExists(mainWindow);
+    Preconditions.checkExists(mainWindow, '"mainWindow" is not defined');
 
     didFinishLoad = true;
 
