@@ -1,3 +1,4 @@
+import { Preconditions } from "@common/preconditions";
 import { SlpFileWriter, SlpFileWriterEvent } from "@slippi/slippi-js";
 import { EventEmitter } from "events";
 import * as fs from "fs-extra";
@@ -186,9 +187,7 @@ export class SpectateManager extends EventEmitter {
   }
 
   public async refreshBroadcastList(): Promise<void> {
-    if (!this.wsConnection) {
-      throw new Error("No websocket connection");
-    }
+    Preconditions.checkExists(this.wsConnection, "No websocket connection");
 
     this.wsConnection.sendUTF(
       JSON.stringify({
@@ -225,9 +224,7 @@ export class SpectateManager extends EventEmitter {
    * in a single Dolphin window. Opens each broadcast in their own window otherwise.
    */
   public watchBroadcast(broadcastId: string, targetPath: string, singleton?: true) {
-    if (!this.wsConnection) {
-      throw new Error("No websocket connection");
-    }
+    Preconditions.checkExists(this.wsConnection, "No websocket connection");
 
     const existingBroadcasts = Object.keys(this.openBroadcasts);
     if (existingBroadcasts.includes(broadcastId)) {

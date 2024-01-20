@@ -1,3 +1,4 @@
+import { Preconditions } from "@common/preconditions";
 import { ConnectionEvent, ConnectionStatus, DolphinConnection, DolphinMessageType } from "@slippi/slippi-js";
 import { EventEmitter } from "events";
 import _ from "lodash";
@@ -83,6 +84,8 @@ export class BroadcastManager extends EventEmitter {
    * Connects to the Slippi server and the local Dolphin instance
    */
   public async start(config: StartBroadcastConfig) {
+    Preconditions.checkExists(SLIPPI_WS_SERVER, "Slippi websocket server is undefined");
+
     // First try to connect to Dolphin if we haven't already
     if (this.dolphinConnection.getStatus() === ConnectionStatus.DISCONNECTED) {
       try {
@@ -110,10 +113,6 @@ export class BroadcastManager extends EventEmitter {
       "api-version": 2,
       authorization: `Bearer ${config.authToken}`,
     };
-
-    if (!SLIPPI_WS_SERVER) {
-      throw new Error("Slippi websocket server is undefined");
-    }
 
     const socket = new WebSocketClient({ disableNagleAlgorithm: true });
 

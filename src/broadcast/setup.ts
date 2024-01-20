@@ -1,3 +1,4 @@
+import { Preconditions } from "@common/preconditions";
 import type { DolphinManager } from "@dolphin/manager";
 import type { DolphinPlaybackClosedEvent } from "@dolphin/types";
 import { DolphinEventType, DolphinLaunchType } from "@dolphin/types";
@@ -39,9 +40,11 @@ export default function setupBroadcastIpc({
   });
 
   ipc_watchBroadcast.main!.handle(async ({ broadcasterId }) => {
-    if (!spectateWorker) {
-      throw new Error("Could not watch broadcast. Try refreshing the broadcast list and try again.");
-    }
+    Preconditions.checkExists(
+      spectateWorker,
+      "Could not watch broadcast. Try refreshing the broadcast list and try again.",
+    );
+
     const folderPath = settingsManager.get().settings.spectateSlpPath;
     await spectateWorker.startSpectate(broadcasterId, folderPath);
     return { success: true };
@@ -57,9 +60,7 @@ export default function setupBroadcastIpc({
   });
 
   ipc_stopBroadcast.main!.handle(async () => {
-    if (!broadcastWorker) {
-      throw new Error("Error stopping broadcast. Was the broadcast started to begin with?");
-    }
+    Preconditions.checkExists(broadcastWorker, "Error stopping broadcast. Was the broadcast started to begin with?");
 
     await broadcastWorker.stopBroadcast();
 

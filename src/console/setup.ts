@@ -1,3 +1,4 @@
+import { Preconditions } from "@common/preconditions";
 import type { DolphinManager } from "@dolphin/manager";
 import type { DolphinPlaybackClosedEvent } from "@dolphin/types";
 import { DolphinEventType, DolphinLaunchType } from "@dolphin/types";
@@ -38,9 +39,10 @@ export default function setupConsoleIpc({ dolphinManager }: { dolphinManager: Do
   });
 
   ipc_disconnectFromConsoleMirror.main!.handle(async ({ ip }) => {
-    if (!mirrorWorker) {
-      throw new Error("Failed to disconnect from console. Was the console connected to begin with?");
-    }
+    Preconditions.checkExists(
+      mirrorWorker,
+      "Failed to disconnect from console. Was the console connected to begin with?",
+    );
 
     await mirrorWorker.disconnectFromConsole(ip);
 
@@ -48,9 +50,7 @@ export default function setupConsoleIpc({ dolphinManager }: { dolphinManager: Do
   });
 
   ipc_startMirroring.main!.handle(async ({ ip }) => {
-    if (!mirrorWorker) {
-      throw new Error("Failed to start mirroring. Is the console connected?");
-    }
+    Preconditions.checkExists(mirrorWorker, "Failed to start mirroring. Is the console connected?");
 
     await mirrorWorker.startMirroring(ip);
     return { success: true };

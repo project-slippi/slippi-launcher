@@ -1,3 +1,4 @@
+import { Preconditions } from "@common/preconditions";
 import type { SettingsManager } from "@settings/settingsManager";
 import { app } from "electron";
 import electronLog from "electron-log";
@@ -117,9 +118,7 @@ export class DolphinManager {
   }
 
   public async launchNetplayDolphin() {
-    if (this.netplayDolphinInstance) {
-      throw new Error("Netplay dolphin is already open!");
-    }
+    Preconditions.checkState(this.netplayDolphinInstance == null, "Netplay dolphin is already open!");
 
     await this._updateDolphinSettings(DolphinLaunchType.NETPLAY);
 

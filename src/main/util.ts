@@ -1,4 +1,5 @@
 /* eslint import/prefer-default-export: off, import/no-mutable-exports: off */
+import { Preconditions } from "@common/preconditions";
 import { app } from "electron";
 import * as fs from "fs-extra";
 import path from "path";
@@ -33,10 +34,8 @@ export async function readLastLines(
   maxLineCount: number,
   encoding: BufferEncoding = "utf-8",
 ): Promise<string> {
-  const exists = await fs.pathExists(inputFilePath);
-  if (!exists) {
-    throw new Error("file does not exist");
-  }
+  const fileExists = await fs.pathExists(inputFilePath);
+  Preconditions.checkState(fileExists, `${inputFilePath} does not exist`);
 
   // Load file Stats.
   const stat = await fs.stat(inputFilePath);
