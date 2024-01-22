@@ -2,7 +2,7 @@ import * as fs from "fs-extra";
 import { dirname } from "path";
 import { download as wgetDownload } from "wget-improved";
 
-import { fileExists } from "./fileExists";
+import { fileExists } from "./file_exists";
 
 export async function download(options: {
   url: string;

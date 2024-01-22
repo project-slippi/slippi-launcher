@@ -1,4 +1,4 @@
-import type { GeckoCode } from "@dolphin/config/geckoCode";
+import type { GeckoCode } from "@dolphin/config/gecko_code";
 import type { DolphinLaunchType } from "@dolphin/types";
 import Button from "@mui/material/Button";
 import React from "react";

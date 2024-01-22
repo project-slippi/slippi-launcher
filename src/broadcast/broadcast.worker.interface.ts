@@ -1,7 +1,7 @@
 import electronLog from "electron-log";
 import { Worker } from "threads";
-import type { RegisteredWorker } from "utils/registerWorker";
-import { registerWorker } from "utils/registerWorker";
+import type { RegisteredWorker } from "utils/register_worker";
+import { registerWorker } from "utils/register_worker";
 
 import type { WorkerSpec as BroadcastWorkerSpec } from "./broadcast.worker";
 import {

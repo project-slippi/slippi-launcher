@@ -2,7 +2,7 @@ import { Preconditions } from "@common/preconditions";
 import { IsoValidity } from "@common/types";
 import crypto from "crypto";
 import fs from "fs";
-import { fileExists } from "utils/fileExists";
+import { fileExists } from "utils/file_exists";
 type IsoHashInfo = {
   valid: IsoValidity;
   name: string;

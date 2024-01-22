@@ -1,5 +1,5 @@
-import type { GeckoCode } from "@dolphin/config/geckoCode";
-import { parseGeckoCodes } from "@dolphin/config/geckoCode";
+import type { GeckoCode } from "@dolphin/config/gecko_code";
+import { parseGeckoCodes } from "@dolphin/config/gecko_code";
 
 import { AddCodes } from "./add_codes";
 

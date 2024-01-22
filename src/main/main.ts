@@ -25,10 +25,10 @@ import last from "lodash/last";
 import path from "path";
 import url from "url";
 import { download } from "utils/download";
-import { fileExists } from "utils/fileExists";
+import { fileExists } from "utils/file_exists";
 
 import { getConfigFlags } from "./flags/flags";
-import { installModules } from "./installModules";
+import { installModules } from "./install_modules";
 import { MenuBuilder } from "./menu";
 import { resolveHtmlPath } from "./util";
 

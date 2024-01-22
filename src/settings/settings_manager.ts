@@ -5,7 +5,7 @@ import fs from "fs";
 import merge from "lodash/merge";
 import set from "lodash/set";
 
-import { defaultAppSettings } from "./defaultSettings";
+import { defaultAppSettings } from "./default_settings";
 import { ipc_settingsUpdatedEvent } from "./ipc";
 import type { AppSettings, StoredConnection } from "./types";
 

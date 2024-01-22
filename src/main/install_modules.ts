@@ -3,7 +3,7 @@ import setupConsoleIpc from "@console/setup";
 import { DolphinManager } from "@dolphin/manager";
 import setupDolphinIpc from "@dolphin/setup";
 import setupReplaysIpc from "@replays/setup";
-import { SettingsManager } from "@settings/settingsManager";
+import { SettingsManager } from "@settings/settings_manager";
 import setupSettingsIpc from "@settings/setup";
 
 import type { ConfigFlags } from "./flags/flags";

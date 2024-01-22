@@ -1,6 +1,6 @@
 import type { SyncedDolphinSettings } from "./config/config";
-import type { GeckoCode } from "./config/geckoCode";
-import type { DolphinVersionResponse } from "./install/fetchLatestVersion";
+import type { GeckoCode } from "./config/gecko_code";
+import type { DolphinVersionResponse } from "./install/fetch_latest_version";
 
 export type ReplayCommunication = {
   mode: "normal" | "mirror" | "queue"; // default normal

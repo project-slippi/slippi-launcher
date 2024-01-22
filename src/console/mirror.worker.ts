@@ -6,7 +6,7 @@ import type { ModuleMethods } from "threads/dist/types/master";
 import { Observable, Subject } from "threads/observable";
 import { expose } from "threads/worker";
 
-import { MirrorManager } from "./mirrorManager";
+import { MirrorManager } from "./mirror_manager";
 import type { ConsoleMirrorStatusUpdate, MirrorConfig } from "./types";
 import { MirrorEvent } from "./types";
 

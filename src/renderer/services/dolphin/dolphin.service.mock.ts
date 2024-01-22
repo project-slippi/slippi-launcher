@@ -1,5 +1,5 @@
 import { delay } from "@common/delay";
-import type { GeckoCode } from "@dolphin/config/geckoCode";
+import type { GeckoCode } from "@dolphin/config/gecko_code";
 import type {
   DolphinDownloadProgressEvent,
   DolphinEvent,

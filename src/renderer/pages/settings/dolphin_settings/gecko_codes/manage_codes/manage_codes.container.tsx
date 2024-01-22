@@ -1,5 +1,5 @@
-import type { GeckoCode } from "@dolphin/config/geckoCode";
-import { geckoCodeToString } from "@dolphin/config/geckoCode";
+import type { GeckoCode } from "@dolphin/config/gecko_code";
+import { geckoCodeToString } from "@dolphin/config/gecko_code";
 
 import { useToasts } from "@/lib/hooks/use_toasts";
 

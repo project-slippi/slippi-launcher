@@ -2,8 +2,8 @@ import type { DolphinManager } from "@dolphin/manager";
 import type { ReplayCommunication } from "@dolphin/types";
 import electronLog from "electron-log";
 import { Worker } from "threads";
-import type { RegisteredWorker } from "utils/registerWorker";
-import { registerWorker } from "utils/registerWorker";
+import type { RegisteredWorker } from "utils/register_worker";
+import { registerWorker } from "utils/register_worker";
 
 import { ipc_consoleMirrorErrorMessageEvent, ipc_consoleMirrorStatusUpdatedEvent } from "./ipc";
 import type { WorkerSpec as MirrorWorkerSpec } from "./mirror.worker";

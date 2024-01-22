@@ -1,6 +1,6 @@
 import type { DolphinInstallation, PlayKey } from "@dolphin/types";
 import * as fs from "fs-extra";
-import { fileExists } from "utils/fileExists";
+import { fileExists } from "utils/file_exists";
 
 export async function writePlayKeyFile(installation: DolphinInstallation, playKey: PlayKey): Promise<void> {
   const keyPath = await installation.findPlayKey();

@@ -2,7 +2,7 @@ import { Preconditions } from "@common/preconditions";
 import type { DolphinManager } from "@dolphin/manager";
 import type { DolphinPlaybackClosedEvent } from "@dolphin/types";
 import { DolphinEventType, DolphinLaunchType } from "@dolphin/types";
-import type { SettingsManager } from "@settings/settingsManager";
+import type { SettingsManager } from "@settings/settings_manager";
 import log from "electron-log";
 
 import type { BroadcastWorker } from "./broadcast.worker.interface";

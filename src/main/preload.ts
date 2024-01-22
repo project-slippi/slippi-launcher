@@ -5,7 +5,7 @@ import replaysApi from "@replays/api";
 import settingsApi from "@settings/api";
 import { clipboard, contextBridge, ipcRenderer, shell } from "electron";
 import path from "path";
-import { isSubdirectory } from "utils/isSubdirectory";
+import { isSubdirectory } from "utils/is_subdirectory";
 
 import commonApi from "./api";
 import type { AppBootstrap } from "./bootstrap";

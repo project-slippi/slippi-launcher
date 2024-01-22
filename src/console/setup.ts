@@ -4,7 +4,7 @@ import type { DolphinPlaybackClosedEvent } from "@dolphin/types";
 import { DolphinEventType, DolphinLaunchType } from "@dolphin/types";
 import log from "electron-log";
 
-import { connectionScanner } from "./connectionScanner";
+import { connectionScanner } from "./connection_scanner";
 import {
   ipc_connectToConsoleMirror,
   ipc_disconnectFromConsoleMirror,

@@ -1,8 +1,8 @@
-import { defaultAppSettings } from "@settings/defaultSettings";
+import { defaultAppSettings } from "@settings/default_settings";
 
-import type { GeckoCode } from "./geckoCode";
-import { loadGeckoCodes, setCodes } from "./geckoCode";
-import type { IniFile } from "./iniFile";
+import type { GeckoCode } from "./gecko_code";
+import { loadGeckoCodes, setCodes } from "./gecko_code";
+import type { IniFile } from "./ini_file";
 
 export type SyncedDolphinSettings = {
   useMonthlySubfolders: boolean;
