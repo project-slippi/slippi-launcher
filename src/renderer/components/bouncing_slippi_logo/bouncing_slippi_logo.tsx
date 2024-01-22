@@ -21,13 +21,14 @@ const styles = stylex.create({
     height: "80px",
     width: "80px",
   },
-  logo: {
+  logo: (logoUrl: string) => ({
+    backgroundImage: `url("${logoUrl}")`,
     backgroundSize: "contain",
     backgroundRepeat: "no-repeat",
     position: "absolute",
     height: "60px",
     width: "80px",
-  },
+  }),
   onlyBounce: {
     animation: `${bounceAnimation} 0.6s infinite alternate`,
   },
@@ -62,12 +63,12 @@ export const BouncingSlippiLogo = () => {
   return (
     <div {...stylex.props(styles.container)}>
       <div
-        {...stylex.props(styles.logo, animationState === "ready" ? styles.onlyBounce : styles.bouncePlusSpin)}
+        {...stylex.props(
+          styles.logo(slippiLogo),
+          animationState === "ready" ? styles.onlyBounce : styles.bouncePlusSpin,
+        )}
         ref={ref}
         onMouseOver={onMouseOver}
-        style={{
-          backgroundImage: `url("${slippiLogo}")`,
-        }}
       />
     </div>
   );
