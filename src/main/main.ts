@@ -32,6 +32,8 @@ import { installModules } from "./installModules";
 import { MenuBuilder } from "./menu";
 import { resolveHtmlPath } from "./util";
 
+const isDevelopment = process.env.NODE_ENV === "development" || process.env.DEBUG_PROD === "true";
+
 const isMac = process.platform === "darwin";
 
 let menu: CrossProcessExports.Menu | null = null;
@@ -40,6 +42,7 @@ let didFinishLoad = false;
 
 log.initialize();
 log.catchErrors();
+log.transports.file.level = isDevelopment ? "info" : "warn";
 
 // Only allow a single Slippi App instance
 const lockObtained = app.requestSingleInstanceLock();
@@ -52,7 +55,6 @@ const { dolphinManager, settingsManager } = installModules(flags);
 
 class AppUpdater {
   constructor() {
-    log.transports.file.level = "info";
     autoUpdater.logger = log;
     autoUpdater.autoInstallOnAppQuit = settingsManager.get().settings.autoUpdateLauncher;
   }
@@ -62,8 +64,6 @@ if (process.env.NODE_ENV === "production") {
   const sourceMapSupport = require("source-map-support");
   sourceMapSupport.install();
 }
-
-const isDevelopment = process.env.NODE_ENV === "development" || process.env.DEBUG_PROD === "true";
 
 if (isDevelopment) {
   require("electron-debug")();
