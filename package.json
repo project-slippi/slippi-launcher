@@ -168,6 +168,7 @@
     "async-mutex": "^0.4.0",
     "compare-func": "^2.0.0",
     "cross-fetch": "^3.1.5",
+    "date-fns": "^3.3.0",
     "default-gateway": "^7.2.2",
     "dmg": "^0.1.0",
     "electron-debug": "^3.2.0",
