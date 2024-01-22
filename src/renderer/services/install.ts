@@ -3,6 +3,7 @@ import { appVersion } from "@common/constants";
 
 import createAuthClient from "./auth/auth.service";
 import createDolphinClient from "./dolphin/dolphin.service";
+import createNotificationClient from "./notification/notification.service";
 import createReplayClient from "./replay/replay.service";
 import createSlippiClient from "./slippi/slippi.service";
 import type { Services } from "./types";
@@ -18,6 +19,7 @@ export async function installServices(): Promise<Services> {
     dolphinService,
     `${appVersion}${isDevelopment ? "-dev" : ""}`,
   );
+  const notificationService = createNotificationClient();
 
   const broadcastService = window.electron.broadcast;
   const consoleService = window.electron.console;
@@ -29,5 +31,6 @@ export async function installServices(): Promise<Services> {
     broadcastService,
     consoleService,
     replayService,
+    notificationService,
   };
 }
