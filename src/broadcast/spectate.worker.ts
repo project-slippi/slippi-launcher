@@ -6,7 +6,7 @@ import type { ModuleMethods } from "threads/dist/types/master";
 import { Observable, Subject } from "threads/observable";
 import { expose } from "threads/worker";
 
-import { SpectateManager } from "./spectateManager";
+import { SpectateManager } from "./spectate_manager";
 import type { BroadcasterItem } from "./types";
 import { SpectateEvent } from "./types";
 

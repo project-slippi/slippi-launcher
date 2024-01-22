@@ -15,7 +15,7 @@ Make any changes you need to the `src/database/schema.ts` file, such as defining
 
 #### 2. Create a new migration file
 
-Using the ISO timestamp format, create a new file in the `src/database/migrations` folder. Migrations are run in alphabetical order so it's imperative to follow the naming convention: `YYYYMMDDTHHMM-some-description.ts` to ensure the migrations are applied correctly. For example: `20231103T1139-add-foo-column.ts`
+Using the ISO timestamp format, create a new file in the `src/database/migrations` folder. Migrations are run in alphabetical order so it's imperative to follow the naming convention: `YYYYMMDDTHHMM_some_description.ts` to ensure the migrations are applied correctly. For example: `20231103T1139_add_foo_column.ts`
 
 #### 3. Write the migration code
 
