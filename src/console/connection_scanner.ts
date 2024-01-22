@@ -1,6 +1,5 @@
 import dgram from "dgram";
 import electronLog from "electron-log";
-import moment from "moment";
 
 import { ipc_discoveredConsolesUpdatedEvent } from "./ipc";
 import type { DiscoveredConsoleInfo } from "./types";
@@ -71,7 +70,7 @@ export class ConnectionScanner {
       ip: ip,
       mac: macAddr,
       name: nick,
-      firstFound: previous ? previous.firstFound : moment().toISOString(),
+      firstFound: previous ? previous.firstFound : new Date().toISOString(),
     };
     this.availableConnectionsByIp[ip] = newConsole;
 
