@@ -7,7 +7,7 @@ import type { ModuleMethods } from "threads/dist/types/master";
 import { Observable, Subject } from "threads/observable";
 import { expose } from "threads/worker";
 
-import { BroadcastManager } from "./broadcastManager";
+import { BroadcastManager } from "./broadcast_manager";
 import type { StartBroadcastConfig } from "./types";
 import { BroadcastEvent } from "./types";
 
