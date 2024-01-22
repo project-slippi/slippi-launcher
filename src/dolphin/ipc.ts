@@ -1,7 +1,7 @@
 import type { EmptyPayload, SuccessPayload } from "utils/ipc";
 import { _, makeEndpoint } from "utils/ipc";
 
-import type { GeckoCode } from "./config/geckoCode";
+import type { GeckoCode } from "./config/gecko_code";
 import type { DolphinEvent, DolphinLaunchType, PlayKey, ReplayQueueItem } from "./types";
 
 // Handlers

@@ -8,7 +8,7 @@ import type { ProgressInfo, UpdateInfo } from "electron-updater";
 import { autoUpdater } from "electron-updater";
 import * as fs from "fs-extra";
 import path from "path";
-import { fileExists } from "utils/fileExists";
+import { fileExists } from "utils/file_exists";
 
 import { getAppBootstrap } from "./bootstrap";
 import type { ConfigFlags } from "./flags/flags";
@@ -29,10 +29,10 @@ import {
   ipc_runNetworkDiagnostics,
   ipc_showOpenDialog,
 } from "./ipc";
-import { getNetworkDiagnostics } from "./networkDiagnostics";
-import { fetchNewsFeedData } from "./newsFeed";
+import { getNetworkDiagnostics } from "./network_diagnostics";
+import { fetchNewsFeedData } from "./news_feed";
 import { getAssetPath, readLastLines } from "./util";
-import { verifyIso } from "./verifyIso";
+import { verifyIso } from "./verify_iso";
 
 const log = electronLog.scope("main/listeners");
 const isDevelopment = process.env.NODE_ENV !== "production";

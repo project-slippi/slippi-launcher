@@ -1,4 +1,4 @@
-import type { GeckoCode } from "@dolphin/config/geckoCode";
+import type { GeckoCode } from "@dolphin/config/gecko_code";
 import type { DolphinService, ReplayQueueItem } from "@dolphin/types";
 import { DolphinLaunchType } from "@dolphin/types";
 import { useCallback } from "react";

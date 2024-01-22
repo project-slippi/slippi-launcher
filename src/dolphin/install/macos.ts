@@ -2,7 +2,7 @@ import * as fs from "fs-extra";
 import os from "os";
 import path from "path";
 
-import { extractDmg, mountDmg, unmountDmg } from "./extractDmg";
+import { extractDmg, mountDmg, unmountDmg } from "./extract_dmg";
 
 export async function installIshiirukaDolphinOnMac({
   assetPath,

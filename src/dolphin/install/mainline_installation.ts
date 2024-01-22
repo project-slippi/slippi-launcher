@@ -1,6 +1,6 @@
 import type { SyncedDolphinSettings } from "@dolphin/config/config";
-import { addGamePath, getSlippiIshiiSettings, setSlippiIshiiSettings } from "@dolphin/config/config";
-import { IniFile } from "@dolphin/config/iniFile";
+import { addGamePath, getSlippiMainlineSettings, setSlippiMainlineSettings } from "@dolphin/config/config";
+import { IniFile } from "@dolphin/config/ini_file";
 import { spawnSync } from "child_process";
 import { app } from "electron";
 import electronLog from "electron-log";
@@ -12,9 +12,9 @@ import { lt } from "semver";
 import type { DolphinInstallation } from "../types";
 import { DolphinLaunchType } from "../types";
 import { downloadLatestDolphin } from "./download";
-import type { DolphinVersionResponse } from "./fetchLatestVersion";
+import type { DolphinVersionResponse } from "./fetch_latest_version";
 
-const log = electronLog.scope("dolphin/ishiiInstallation");
+const log = electronLog.scope("dolphin/mainlineInstallation");
 
 const isLinux = process.platform === "linux";
 
@@ -22,11 +22,11 @@ const isLinux = process.platform === "linux";
 const semverRegex =
   /(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-((?:0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?/;
 
-export class IshiirukaDolphinInstallation implements DolphinInstallation {
+export class MainlineDolphinInstallation implements DolphinInstallation {
   public readonly installationFolder: string;
-  constructor(private readonly dolphinLaunchType: DolphinLaunchType) {
+  constructor(private readonly dolphinLaunchType: DolphinLaunchType, private readonly betaSuffix: string) {
     const dolphinFolder = dolphinLaunchType === DolphinLaunchType.NETPLAY ? "netplay" : "playback";
-    this.installationFolder = path.join(app.getPath("userData"), dolphinFolder);
+    this.installationFolder = path.join(app.getPath("userData"), `${dolphinFolder}${this.betaSuffix}`);
   }
 
   public get userFolder(): string {
@@ -35,15 +35,20 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
         return path.join(this.installationFolder, "User");
       }
       case "darwin": {
-        const configPath = path.join(os.homedir(), "Library", "Application Support", "com.project-slippi.dolphin");
-        const dolphinFolder = this.dolphinLaunchType === DolphinLaunchType.NETPLAY ? "netplay" : "playback";
-        const userFolderName = `${dolphinFolder}/User`;
+        const configPath = path.join(os.homedir(), "Library", "Application Support", `com.project-slippi.dolphin`);
+        const userFolderName =
+          this.dolphinLaunchType === DolphinLaunchType.NETPLAY
+            ? `netplay${this.betaSuffix}/User`
+            : `playback${this.betaSuffix}/User`;
 
         return path.join(configPath, userFolderName);
       }
       case "linux": {
         const configPath = path.join(os.homedir(), ".config");
-        const userFolderName = this.dolphinLaunchType === DolphinLaunchType.NETPLAY ? "SlippiOnline" : "SlippiPlayback";
+        const userFolderName =
+          this.dolphinLaunchType === DolphinLaunchType.NETPLAY
+            ? `slippi-dolphin/netplay${this.betaSuffix}`
+            : `slippi-dolphin/playback${this.betaSuffix}`;
         return path.join(configPath, userFolderName);
       }
       default:
@@ -59,7 +64,8 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
         return path.join(dolphinPath, "Sys");
       }
       case "darwin": {
-        return path.join(dolphinPath, "Slippi Dolphin.app", "Contents", "Resources", "Sys");
+        const dolphinApp = "Slippi_Dolphin.app";
+        return path.join(dolphinPath, dolphinApp, "Contents", "Resources", "Sys");
       }
       default:
         throw new Error(`Unsupported operating system: ${process.platform}`);
@@ -69,6 +75,10 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
   public async findDolphinExecutable(): Promise<string> {
     const dolphinPath = this.installationFolder;
     const type = this.dolphinLaunchType;
+
+    // Make sure the directory actually exists
+    await fs.ensureDir(dolphinPath);
+
     // Check the directory contents
     const files = await fs.readdir(dolphinPath);
     const result = files.find((filename) => {
@@ -78,7 +88,7 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
         case "darwin":
           return filename.endsWith("Dolphin.app");
         case "linux": {
-          const appimagePrefix = type === DolphinLaunchType.NETPLAY ? "Slippi_Online" : "Slippi_Playback";
+          const appimagePrefix = type === DolphinLaunchType.NETPLAY ? "Slippi_Netplay" : "Slippi_Playback";
           const isAppimage = filename.startsWith(appimagePrefix) && filename.endsWith("AppImage");
           return isAppimage || filename.endsWith("dolphin-emu");
         }
@@ -94,7 +104,7 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
     }
 
     if (process.platform === "darwin") {
-      const dolphinBinaryPath = path.join(dolphinPath, result, "Contents", "MacOS", "Slippi Dolphin");
+      const dolphinBinaryPath = path.join(dolphinPath, result, "Contents", "MacOS", "Slippi_Dolphin");
       const dolphinExists = await fs.pathExists(dolphinBinaryPath);
       if (!dolphinExists) {
         throw new Error(`No ${type} Dolphin found in: ${dolphinPath}, try resetting dolphin`);
@@ -213,13 +223,13 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
   public async getSettings(): Promise<SyncedDolphinSettings> {
     const iniPath = path.join(this.userFolder, "Config", "Dolphin.ini");
     const iniFile = await IniFile.init(iniPath);
-    return await getSlippiIshiiSettings(iniFile);
+    return await getSlippiMainlineSettings(iniFile);
   }
 
   public async updateSettings(options: Partial<SyncedDolphinSettings>): Promise<void> {
     const iniPath = path.join(this.userFolder, "Config", "Dolphin.ini");
     const iniFile = await IniFile.init(iniPath);
-    await setSlippiIshiiSettings(iniFile, options);
+    await setSlippiMainlineSettings(iniFile, options);
   }
 
   private async _isOutOfDate(latestVersion: string): Promise<boolean> {
@@ -239,21 +249,7 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
   }
 
   public async findPlayKey(): Promise<string> {
-    let slippiDir = "";
-    switch (process.platform) {
-      case "linux":
-      case "win32": {
-        slippiDir = path.join(this.userFolder, "Slippi");
-        break;
-      }
-      case "darwin": {
-        slippiDir = path.join(os.homedir(), "Library", "Application Support", "com.project-slippi.dolphin", "Slippi");
-        break;
-      }
-      default: {
-        break;
-      }
-    }
+    const slippiDir = path.join(this.userFolder, "Slippi");
     await fs.ensureDir(slippiDir);
     return path.resolve(slippiDir, "user.json");
   }
@@ -281,8 +277,8 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
         break;
       }
       case "darwin": {
-        const { installIshiirukaDolphinOnMac } = await import("./macos");
-        await installIshiirukaDolphinOnMac({
+        const { installMainlineDolphinOnMac } = await import("./macos");
+        await installMainlineDolphinOnMac({
           assetPath,
           destinationFolder: dolphinPath,
         });

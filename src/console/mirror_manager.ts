@@ -13,8 +13,8 @@ import { EventEmitter } from "events";
 import * as fs from "fs-extra";
 import path from "path";
 
-import { AutoSwitcher } from "./autoSwitcher";
-import { ConsoleRelay } from "./consoleRelay";
+import { AutoSwitcher } from "./auto_switcher";
+import { ConsoleRelay } from "./console_relay";
 import type { MirrorConfig, MirrorDetails } from "./types";
 import { MirrorEvent } from "./types";
 

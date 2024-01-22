@@ -2,9 +2,9 @@ import * as fs from "fs-extra";
 import path from "path";
 
 import { setBootToCss } from "./config/config";
-import type { GeckoCode } from "./config/geckoCode";
-import { loadGeckoCodes, setCodes } from "./config/geckoCode";
-import { IniFile } from "./config/iniFile";
+import type { GeckoCode } from "./config/gecko_code";
+import { loadGeckoCodes, setCodes } from "./config/gecko_code";
+import { IniFile } from "./config/ini_file";
 import type { DolphinInstallation } from "./types";
 import { DolphinLaunchType } from "./types";
 

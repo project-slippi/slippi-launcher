@@ -1,16 +1,16 @@
 import { Preconditions } from "@common/preconditions";
-import type { SettingsManager } from "@settings/settingsManager";
+import type { SettingsManager } from "@settings/settings_manager";
 import { app } from "electron";
 import electronLog from "electron-log";
 import { move, remove } from "fs-extra";
 import { Observable, Subject } from "observable-fns";
 import os from "os";
 import path from "path";
-import { fileExists } from "utils/fileExists";
+import { fileExists } from "utils/file_exists";
 
-import { type DolphinVersionResponse, fetchLatestVersion } from "./install/fetchLatestVersion";
-import { IshiirukaDolphinInstallation } from "./install/ishiiInstallation";
-import { MainlineDolphinInstallation } from "./install/mainlineInstallation";
+import { type DolphinVersionResponse, fetchLatestVersion } from "./install/fetch_latest_version";
+import { IshiirukaDolphinInstallation } from "./install/ishiiruka_installation";
+import { MainlineDolphinInstallation } from "./install/mainline_installation";
 import { DolphinInstance, PlaybackDolphinInstance } from "./instance";
 import type { DolphinEvent, DolphinInstallation, ReplayCommunication } from "./types";
 import { DolphinEventType, DolphinLaunchType } from "./types";

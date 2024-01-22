@@ -1,6 +1,6 @@
 /* eslint-disable import/no-default-export */
 
-import type { GeckoCode } from "./config/geckoCode";
+import type { GeckoCode } from "./config/gecko_code";
 import {
   ipc_checkDesktopAppDolphin,
   ipc_checkPlayKeyExists,

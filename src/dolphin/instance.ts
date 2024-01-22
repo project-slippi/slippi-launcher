@@ -7,7 +7,7 @@ import { EventEmitter } from "events";
 import * as fs from "fs-extra";
 import { debounce } from "lodash";
 import path from "path";
-import { fileExists } from "utils/fileExists";
+import { fileExists } from "utils/file_exists";
 
 import type { ReplayCommunication } from "./types";
 

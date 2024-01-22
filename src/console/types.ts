@@ -1,7 +1,7 @@
 import type { ConsoleConnection, SlpFileWriter } from "@slippi/slippi-js";
 
-import type { AutoSwitcher } from "./autoSwitcher";
-import type { ConsoleRelay } from "./consoleRelay";
+import type { AutoSwitcher } from "./auto_switcher";
+import type { ConsoleRelay } from "./console_relay";
 
 export type ConsoleMirrorStatusUpdate = {
   status: number;

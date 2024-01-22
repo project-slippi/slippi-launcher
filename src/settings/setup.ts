@@ -18,7 +18,7 @@ import {
   ipc_setUseDolphinBeta,
   ipc_setUseMonthlySubfolders,
 } from "./ipc";
-import type { SettingsManager } from "./settingsManager";
+import type { SettingsManager } from "./settings_manager";
 
 export default function setupSettingsIpc({
   settingsManager,
