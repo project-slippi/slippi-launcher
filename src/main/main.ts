@@ -11,6 +11,7 @@
  */
 import { colors } from "@common/colors";
 import { delay } from "@common/delay";
+import { Preconditions } from "@common/preconditions";
 import { DolphinLaunchType } from "@dolphin/types";
 import { ipc_statsPageRequestedEvent } from "@replays/ipc";
 import { ipc_openSettingsModalEvent } from "@settings/ipc";
@@ -108,9 +109,8 @@ const createWindow = async () => {
   mainWindow.loadURL(resolveHtmlPath("index.html")).catch(log.error);
 
   mainWindow.on("ready-to-show", () => {
-    if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined');
-    }
+    Preconditions.checkExists(mainWindow, '"mainWindow" is not defined');
+
     didFinishLoad = true;
 
     if (process.env.START_MINIMIZED) {

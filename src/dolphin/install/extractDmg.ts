@@ -2,13 +2,12 @@
 // The included typings for extract-dmg are wrong!! It's actually an async function that needs awaiting!
 // But the function is simple enough so let's just maintain it ourselves and fix the typing.
 
+import { Preconditions } from "@common/preconditions";
 import dmg from "dmg";
 import * as fs from "fs-extra";
 
 export async function extractDmg(filename: string, destination: string): Promise<string[]> {
-  if (!filename.endsWith(".dmg")) {
-    throw new Error(`Expected a dmg file, got ${filename}`);
-  }
+  Preconditions.checkState(filename.endsWith(".dmg"), `Expected a dmg file, got ${filename}`);
 
   const mountPath = await mountDmg(filename);
   const files = await fs.readdir(mountPath);
