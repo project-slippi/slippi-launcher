@@ -16,20 +16,20 @@ import { MarkdownContent } from "@/components/markdown_content";
 
 const styles = stylex.create({
   container: {
-    marginBottom: "20px",
+    marginBottom: 20,
   },
   dateInfo: {
     marginRight: "auto",
-    marginLeft: "5px",
+    marginLeft: 5,
     opacity: 0.6,
-    fontSize: "15px",
+    fontSize: 15,
   },
   fixedCardHeight: {
-    height: "200px",
+    height: 200,
   },
   markdownContainer: {
     color: "#ccc",
-    maxWidth: "700px",
+    maxWidth: 700,
   },
 });
 

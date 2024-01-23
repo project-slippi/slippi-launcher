@@ -17,17 +17,17 @@ const styles = stylex.create({
   container: {
     display: "flex",
     position: "relative",
-    paddingTop: "20px",
-    height: "80px",
-    width: "80px",
+    paddingTop: 20,
+    height: 80,
+    width: 80,
   },
   logo: (logoUrl: string) => ({
     backgroundImage: `url("${logoUrl}")`,
     backgroundSize: "contain",
     backgroundRepeat: "no-repeat",
     position: "absolute",
-    height: "60px",
-    width: "80px",
+    height: 60,
+    width: 80,
   }),
   onlyBounce: {
     // eslint-disable-next-line @stylexjs/valid-styles
