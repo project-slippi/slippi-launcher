@@ -4,8 +4,8 @@ import React from "react";
 import slippiLogo from "@/styles/images/slippi_logo.svg";
 
 const bounceAnimation = stylex.keyframes({
-  "0%": { bottom: "0px" },
-  "100%": { bottom: "25px" },
+  "0%": { bottom: 0 },
+  "100%": { bottom: 25 },
 });
 
 const barrelRollAnimation = stylex.keyframes({
