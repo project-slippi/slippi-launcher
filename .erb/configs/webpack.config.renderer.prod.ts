@@ -124,6 +124,7 @@ const configuration: webpack.Configuration = {
         type: "commonJS",
         rootDir: webpackPaths.rootPath,
       },
+      useCSSLayers: true,
       appendTo: "style.css",
     }),
 
