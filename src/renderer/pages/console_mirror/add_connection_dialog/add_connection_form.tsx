@@ -1,4 +1,3 @@
-import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import WarningIcon from "@mui/icons-material/Warning";
@@ -16,6 +15,7 @@ import { Checkbox } from "@/components/form/checkbox";
 import { Toggle } from "@/components/form/toggle";
 import { PathInput } from "@/components/path_input";
 import { isValidIpAddress, isValidPort } from "@/lib/validate/validate";
+import { colors } from "@/styles/colors";
 
 type FormValues = {
   ipAddress: string;

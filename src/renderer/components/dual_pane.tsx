@@ -1,7 +1,8 @@
-import { colors } from "@common/colors";
 import styled from "@emotion/styled";
 import { debounce } from "lodash";
 import React from "react";
+
+import { colors } from "@/styles/colors";
 
 const Outer = styled.div`
   position: relative;

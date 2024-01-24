@@ -1,4 +1,3 @@
-import { colors } from "@common/colors";
 import FolderIcon from "@mui/icons-material/Folder";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -10,6 +9,7 @@ import ListItemText from "@mui/material/ListItemText";
 import type { FolderResult } from "@replays/types";
 
 import { useReplays } from "@/lib/hooks/use_replays";
+import { colors } from "@/styles/colors";
 
 type FolderTreeNodeProps = {
   nestLevel?: number;

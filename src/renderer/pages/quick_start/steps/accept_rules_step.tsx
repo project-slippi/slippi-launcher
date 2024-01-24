@@ -1,4 +1,3 @@
-import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import Box from "@mui/material/Box";
@@ -13,6 +12,7 @@ import { ExternalLink as A } from "@/components/external_link";
 import { useAccount, useUserData } from "@/lib/hooks/use_account";
 import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
+import { colors } from "@/styles/colors";
 
 import { QuickStartHeader } from "../quick_start_header/quick_start_header";
 

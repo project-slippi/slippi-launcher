@@ -1,4 +1,3 @@
-import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import Button from "@mui/material/Button";
@@ -6,6 +5,8 @@ import Tooltip from "@mui/material/Tooltip";
 import React from "react";
 import type { LinkProps } from "react-router-dom";
 import { Link, useMatch, useResolvedPath } from "react-router-dom";
+
+import { colors } from "@/styles/colors";
 
 export type MenuItem = {
   subpath: string;

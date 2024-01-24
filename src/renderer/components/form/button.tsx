@@ -1,6 +1,7 @@
-import { colors } from "@common/colors";
 import type { ButtonProps } from "@mui/material/Button";
 import MatButton from "@mui/material/Button";
+
+import { colors } from "@/styles/colors";
 
 export const Button = ({ children, ...rest }: ButtonProps) => {
   return (

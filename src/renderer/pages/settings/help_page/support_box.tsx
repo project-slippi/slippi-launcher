@@ -1,4 +1,3 @@
-import { colors } from "@common/colors";
 import { socials } from "@common/constants";
 import { css } from "@emotion/react";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
@@ -10,16 +9,17 @@ import { ExternalLink as A } from "@/components/external_link";
 import { Button } from "@/components/form/button";
 import { useToasts } from "@/lib/hooks/use_toasts";
 import { ReactComponent as DiscordIcon } from "@/styles/images/discord.svg";
+import { colors } from "@/styles/tokens.stylex";
 
 import { NetworkDiagnosticsButton } from "./network_diagnostics/network_diagnostics_button";
 
 const styles = stylex.create({
-  container: (backgroundColor: string, color: string) => ({
-    backgroundColor,
-    color,
+  container: {
+    backgroundColor: colors.purpleLight,
+    color: colors.offWhite,
     borderRadius: "10px",
     padding: "15px",
-  }),
+  },
   iconContainer: {
     display: "flex",
     alignItems: "center",
@@ -51,7 +51,7 @@ export const SupportBox = () => {
   };
 
   return (
-    <div {...stylex.props(styles.container(colors.purpleLight, colors.offWhite))}>
+    <div {...stylex.props(styles.container)}>
       <h2 {...stylex.props(styles.iconContainer)}>
         <LiveHelpIcon {...stylex.props(styles.helpIcon)} />
         Need help?

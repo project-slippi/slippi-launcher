@@ -1,4 +1,3 @@
-import { colors } from "@common/colors";
 import { IsoValidity } from "@common/types";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
@@ -13,6 +12,7 @@ import { useQuery } from "react-query";
 import { ConfirmationModal } from "@/components/confirmation_modal";
 import { useIsoPath } from "@/lib/hooks/use_settings";
 import { useToasts } from "@/lib/hooks/use_toasts";
+import { colors } from "@/styles/colors";
 import { hasBorder } from "@/styles/has_border";
 
 import { QuickStartHeader } from "../quick_start_header/quick_start_header";

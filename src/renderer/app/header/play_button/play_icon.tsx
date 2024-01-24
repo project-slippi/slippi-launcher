@@ -1,7 +1,7 @@
-import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import React from "react";
 
+import { colors } from "@/styles/colors";
 import { withFont } from "@/styles/with_font";
 
 export const PlayIcon = ({ children, fillPercent = 1 }: React.PropsWithChildren<{ fillPercent?: number }>) => {

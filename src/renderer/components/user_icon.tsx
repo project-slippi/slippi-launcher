@@ -1,5 +1,6 @@
-import { colors } from "@common/colors";
 import { css } from "@emotion/react";
+
+import { colors } from "@/styles/colors";
 
 export const UserIcon = ({ imageUrl, size = 45 }: { imageUrl: string; size?: number }) => {
   return (

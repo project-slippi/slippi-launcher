@@ -1,4 +1,3 @@
-import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import ErrorIcon from "@mui/icons-material/Error";
@@ -19,6 +18,7 @@ import { useDolphinActions } from "@/lib/dolphin/use_dolphin_actions";
 import { useMousetrap } from "@/lib/hooks/use_mousetrap";
 import { getStageImage } from "@/lib/utils";
 import { useServices } from "@/services";
+import { colors } from "@/styles/colors";
 import { withFont } from "@/styles/with_font";
 
 import { GameProfile } from "./game_profile";

@@ -1,6 +1,7 @@
-import { colors } from "@common/colors";
 import type { Theme } from "@mui/material/styles";
 import { createTheme } from "@mui/material/styles";
+
+import { colors } from "@/styles/colors";
 
 import { withFont } from "./with_font";
 

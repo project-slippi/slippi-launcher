@@ -1,10 +1,11 @@
-import { colors } from "@common/colors";
 import { exists } from "@common/exists";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import React from "react";
+
+import { colors } from "@/styles/colors";
 
 import type { PlayerInfo } from "./team_elements/team_elements";
 import { TeamElements } from "./team_elements/team_elements";

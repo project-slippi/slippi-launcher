@@ -1,3 +1,7 @@
+// Gotta manually keep these in sync with ./tokens.stylex.ts for now.
+// Hopefully we can eventually remove this file by using MUI themes
+// or just using StyleX for all custom colours.
+
 export const colors = {
   greenPrimary: "#72d07f", // Should be accessed with useTheme instead
   purplePrimary: "#b984bb", // Should be accessed with useTheme instead
@@ -19,4 +23,4 @@ export const colors = {
   textSecondary: "#B4B4B4",
   textDim: "#939599",
   textVeryDim: "#5E6066",
-};
+} as const;

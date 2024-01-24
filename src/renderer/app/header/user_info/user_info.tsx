@@ -1,9 +1,9 @@
-import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import CircularProgress from "@mui/material/CircularProgress";
 import React from "react";
 
 import { UserIcon } from "@/components/user_icon";
+import { colors } from "@/styles/colors";
 
 export const UserInfo = React.memo(function UserInfo({
   displayName,

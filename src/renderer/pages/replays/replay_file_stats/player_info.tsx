@@ -1,9 +1,9 @@
-import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 
 import { getColor } from "@/lib/player_colors";
 import { getCharacterIcon } from "@/lib/utils";
+import { colors } from "@/styles/colors";
 import { withFont } from "@/styles/with_font";
 
 type PlayerInfoProps = {

@@ -1,4 +1,3 @@
-import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import CloseIcon from "@mui/icons-material/Close";
@@ -18,6 +17,7 @@ import { BuildInfo } from "@/containers/build_info";
 import { useMousetrap } from "@/lib/hooks/use_mousetrap";
 import { useSettingsModal } from "@/lib/hooks/use_settings_modal";
 import type { SettingSection } from "@/pages/settings/types";
+import { colors } from "@/styles/colors";
 import { platformTitleBarStyles } from "@/styles/platform_title_bar_styles";
 import { withSlippiBackground } from "@/styles/with_slippi_background";
 

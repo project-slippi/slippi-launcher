@@ -1,4 +1,3 @@
-import { colors } from "@common/colors";
 import { exists } from "@common/exists";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
@@ -23,6 +22,7 @@ import { ReplayPresenter, useReplays, useReplaySelection } from "@/lib/hooks/use
 import { useToasts } from "@/lib/hooks/use_toasts";
 import { humanReadableBytes } from "@/lib/utils";
 import { useServices } from "@/services";
+import { colors } from "@/styles/colors";
 
 import { FileList } from "./file_list";
 import { FileSelectionToolbar } from "./file_selection_toolbar";

@@ -1,4 +1,3 @@
-import { colors } from "@common/colors";
 import { slippiDonateUrl, socials } from "@common/constants";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
@@ -7,6 +6,7 @@ import Tooltip from "@mui/material/Tooltip";
 import React from "react";
 
 import { ExternalLink as A } from "@/components/external_link";
+import { colors } from "@/styles/colors";
 import { ReactComponent as DiscordIcon } from "@/styles/images/discord.svg";
 
 export const BasicFooter = styled.div`

@@ -1,4 +1,3 @@
-import { colors } from "@common/colors";
 import type { NatType, PortMapping, Presence } from "@common/types";
 import NetworkCheckIcon from "@mui/icons-material/NetworkCheck";
 import { Typography } from "@mui/material";
@@ -10,6 +9,7 @@ import * as stylex from "@stylexjs/stylex";
 import React from "react";
 
 import { Button as ActionButton } from "@/components/form/button";
+import { colors } from "@/styles/colors";
 
 import { NetworkDiagnosticsResult } from "./network_diagnostics_result";
 

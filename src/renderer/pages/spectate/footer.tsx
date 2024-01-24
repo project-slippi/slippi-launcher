@@ -1,4 +1,3 @@
-import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import FolderIcon from "@mui/icons-material/Folder";
 import Button from "@mui/material/Button";
@@ -9,6 +8,7 @@ import React from "react";
 import { BasicFooter } from "@/components/footer/footer";
 import { LabelledText } from "@/components/labelled_text";
 import { useSpectateSlpPath } from "@/lib/hooks/use_settings";
+import { colors } from "@/styles/colors";
 
 export const Footer = React.memo(() => {
   const [spectateSlpFolder, setSpectateSlpFolder] = useSpectateSlpPath();

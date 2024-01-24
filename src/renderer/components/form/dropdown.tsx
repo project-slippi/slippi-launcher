@@ -1,9 +1,10 @@
-import { colors } from "@common/colors";
 import styled from "@emotion/styled";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import MenuItem from "@mui/material/MenuItem";
 import MatSelect from "@mui/material/Select";
 import React from "react";
+
+import { colors } from "@/styles/colors";
 
 type DropdownProps<T> = {
   value: T;

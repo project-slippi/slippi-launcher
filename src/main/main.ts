@@ -9,7 +9,6 @@
  * When running `npm run build` or `npm run build:main`, this file is compiled to
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
-import { colors } from "@common/colors";
 import { delay } from "@common/delay";
 import { Preconditions } from "@common/preconditions";
 import { DolphinLaunchType } from "@dolphin/types";
@@ -31,6 +30,8 @@ import { getConfigFlags } from "./flags/flags";
 import { installModules } from "./install_modules";
 import { MenuBuilder } from "./menu";
 import { resolveHtmlPath } from "./util";
+
+const BACKGROUND_COLOR = "#1B0B28";
 
 const isDevelopment = process.env.NODE_ENV === "development" || process.env.DEBUG_PROD === "true";
 
@@ -93,7 +94,7 @@ const createWindow = async () => {
     height: 728,
     minHeight: isDevelopment ? undefined : 450,
     minWidth: isDevelopment ? undefined : 900,
-    backgroundColor: colors.purpleDarker,
+    backgroundColor: BACKGROUND_COLOR,
 
     // This setting only takes effect on macOS, and simply opts it into the modern
     // Big-Sur frame UI for the window style.

@@ -1,9 +1,10 @@
-import { colors } from "@common/colors";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import Paper from "@mui/material/Paper";
 import { alpha } from "@mui/material/styles";
 import React from "react";
+
+import { colors } from "@/styles/colors";
 
 export const Table = ({ children }: { children: React.ReactNode }) => {
   return (
