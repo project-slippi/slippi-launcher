@@ -4,6 +4,9 @@ import React from "react";
 
 import { colors } from "@/styles/tokens.stylex";
 
+const RESIZE_HANDLE_WIDTH = 6;
+const DEFAULT_SIDEBAR_WIDTH = 250;
+
 const styles = stylex.create({
   container: {
     position: "relative",
@@ -56,8 +59,6 @@ export const DualPane = ({
   rightSide,
   minWidth,
   maxWidth,
-  width = 250,
-  resizeHandleWidth = 6,
   style,
 }: {
   id: string;
@@ -67,12 +68,10 @@ export const DualPane = ({
   rightSide: React.ReactNode;
   leftStyle?: React.CSSProperties;
   rightStyle?: React.CSSProperties;
-  width?: number;
   minWidth?: number;
   maxWidth?: number;
-  resizeHandleWidth?: number;
 }) => {
-  const [panelWidth, setPanelWidth] = React.useState<number>(restoreWidth(id, width));
+  const [panelWidth, setPanelWidth] = React.useState<number>(restoreWidth(id, DEFAULT_SIDEBAR_WIDTH));
 
   // Clean up event listeners, classes, etc.
   const onMouseUp = () => {
@@ -84,7 +83,7 @@ export const DualPane = ({
   const onMouseMove = (e: any) => {
     const maxPaneWidth = maxWidth ?? window.innerWidth;
     const minPaneWidth = minWidth ?? 0;
-    let value = Math.min(maxPaneWidth - resizeHandleWidth, e.clientX);
+    let value = Math.min(maxPaneWidth - RESIZE_HANDLE_WIDTH, e.clientX);
     value = Math.max(minPaneWidth, value);
     setPanelWidth(value);
     saveWidth(id, value);
@@ -95,7 +94,7 @@ export const DualPane = ({
     window.addEventListener("mouseup", onMouseUp);
   };
 
-  const gridTemplateColumns = `${resizable ? panelWidth : width}px auto`;
+  const gridTemplateColumns = `${resizable ? panelWidth : DEFAULT_SIDEBAR_WIDTH}px auto`;
 
   return (
     <div
@@ -115,8 +114,8 @@ export const DualPane = ({
         <div
           {...stylex.props(styles.resizeHandle)}
           style={{
-            left: panelWidth - Math.floor(resizeHandleWidth / 2),
-            width: resizeHandleWidth,
+            left: panelWidth - Math.floor(RESIZE_HANDLE_WIDTH / 2),
+            width: RESIZE_HANDLE_WIDTH,
           }}
           onMouseDown={initResize}
         />
