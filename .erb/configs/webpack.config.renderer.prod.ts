@@ -37,6 +37,8 @@ const configuration: webpack.Configuration = {
 
   target: ["web", "electron-renderer"],
 
+  stats: { assets: true },
+
   entry: [path.join(webpackPaths.srcRendererPath, "index.tsx")],
 
   output: {

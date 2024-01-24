@@ -41,8 +41,6 @@ const configuration: webpack.Configuration = {
 
   mode: "production",
 
-  stats: { assets: true },
-
   target: "electron-main",
 
   entry: {
