@@ -1,9 +1,42 @@
-import { css } from "@emotion/react";
 import CircularProgress from "@mui/material/CircularProgress";
+import * as stylex from "@stylexjs/stylex";
 import React from "react";
 
 import { UserIcon } from "@/components/user_icon";
-import { colors } from "@/styles/colors";
+import { colors } from "@/styles/tokens.stylex";
+
+const styles = stylex.create({
+  container: {
+    display: "flex",
+    alignItems: "center",
+    color: "white",
+    minWidth: {
+      "@media (min-width: 800px)": 250,
+    },
+  },
+  userDetails: {
+    display: {
+      default: "flex",
+      "@media (max-width: 800px)": "none",
+    },
+    flexDirection: "column",
+    alignItems: "flex-start",
+    marginLeft: 10,
+  },
+  displayName: {
+    margin: 0,
+    marginBottom: 6,
+    fontSize: 18,
+  },
+  subText: {
+    fontWeight: "bold",
+    fontSize: 14,
+    color: colors.purpleLight,
+  },
+  errorText: {
+    color: "red",
+  },
+});
 
 export const UserInfo = React.memo(function UserInfo({
   displayName,
@@ -21,48 +54,11 @@ export const UserInfo = React.memo(function UserInfo({
   const subtext = errorMessage ? errorMessage : connectCode || "";
 
   return (
-    <div
-      css={css`
-        display: flex;
-        align-items: center;
-        color: white;
-
-        @media (min-width: 800px) {
-          min-width: 250px;
-        }
-      `}
-    >
+    <div {...stylex.props(styles.container)}>
       {loading ? <CircularProgress color="inherit" /> : <UserIcon imageUrl={displayPicture} size={38} />}
-      <div
-        css={css`
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          margin-left: 10px;
-
-          @media (max-width: 800px) {
-            display: none;
-          }
-
-          h3 {
-            margin: 0;
-            margin-bottom: 6px;
-            font-size: 18px;
-          }
-        `}
-      >
-        <h3>{displayName}</h3>
-        {!loading && (
-          <div
-            css={css`
-              font-weight: bold;
-              font-size: 14px;
-              color: ${errorMessage ? "red" : colors.purpleLight};
-            `}
-          >
-            {subtext}
-          </div>
-        )}
+      <div {...stylex.props(styles.userDetails)}>
+        <h3 {...stylex.props(styles.displayName)}>{displayName}</h3>
+        {!loading && <div {...stylex.props(styles.subText, errorMessage != null && styles.errorText)}>{subtext}</div>}
       </div>
     </div>
   );
