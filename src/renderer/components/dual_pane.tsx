@@ -1,34 +1,35 @@
-import styled from "@emotion/styled";
+import * as stylex from "@stylexjs/stylex";
 import { debounce } from "lodash";
 import React from "react";
 
-import { colors } from "@/styles/colors";
+import { colors } from "@/styles/tokens.stylex";
 
-const Outer = styled.div`
-  position: relative;
-  display: grid;
-  flex: 1;
-`;
-
-const Column = styled.div`
-  display: flex;
-  height: 100%;
-  width: 100%;
-  position: relative;
-  overflow: auto;
-`;
-
-const ResizeHandle = styled.div`
-  position: absolute;
-  cursor: e-resize;
-  background-color: ${colors.offWhite};
-  top: 0;
-  height: 100%;
-  opacity: 0;
-  &:hover {
-    opacity: 0.7;
-  }
-`;
+const styles = stylex.create({
+  container: {
+    position: "relative",
+    display: "grid",
+    flex: "1",
+  },
+  column: {
+    display: "flex",
+    height: "100%",
+    width: "100%",
+    position: "relative",
+    overflow: "auto",
+  },
+  resizeHandle: {
+    position: "absolute",
+    cursor: "ew-resize",
+    backgroundColor: colors.offWhite,
+    top: 0,
+    height: "100%",
+    transition: "opacity 0.1s ease-in-out",
+    opacity: {
+      default: 0,
+      ":hover": 0.7,
+    },
+  },
+});
 
 const getStoreKey = (paneId = "default"): string => {
   return `dual-pane-width-${paneId}`;
@@ -57,12 +58,10 @@ export const DualPane = ({
   maxWidth,
   width = 250,
   resizeHandleWidth = 6,
-  className,
   style,
 }: {
   id: string;
   style?: React.CSSProperties;
-  className?: string;
   resizable?: boolean;
   leftSide: React.ReactNode;
   rightSide: React.ReactNode;
@@ -99,17 +98,22 @@ export const DualPane = ({
   const gridTemplateColumns = `${resizable ? panelWidth : width}px auto`;
 
   return (
-    <Outer
-      className={className}
+    <div
+      {...stylex.props(styles.container)}
       style={{
         gridTemplateColumns,
         ...style,
       }}
     >
-      <Column style={leftStyle}>{leftSide}</Column>
-      <Column style={rightStyle}>{rightSide}</Column>
+      <div {...stylex.props(styles.column)} style={leftStyle}>
+        {leftSide}
+      </div>
+      <div {...stylex.props(styles.column)} style={rightStyle}>
+        {rightSide}
+      </div>
       {resizable && (
-        <ResizeHandle
+        <div
+          {...stylex.props(styles.resizeHandle)}
           style={{
             left: panelWidth - Math.floor(resizeHandleWidth / 2),
             width: resizeHandleWidth,
@@ -117,6 +121,6 @@ export const DualPane = ({
           onMouseDown={initResize}
         />
       )}
-    </Outer>
+    </div>
   );
 };
