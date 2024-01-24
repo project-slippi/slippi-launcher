@@ -6,6 +6,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
+import * as stylex from "@stylexjs/stylex";
 import React from "react";
 
 import { Button as ActionButton } from "@/components/form/button";
@@ -18,6 +19,19 @@ type NetworkInformation = {
   natType: NatType;
   portMapping: PortMapping;
 };
+
+const styles = stylex.create({
+  container: {
+    textAlign: "center",
+  },
+  text: {
+    marginTop: 20,
+  },
+  icon: {
+    height: 18,
+    width: 18,
+  },
+});
 
 export const NetworkDiagnosticsButton = React.memo(() => {
   const [dialogOpen, setDialogOpen] = React.useState(false);
@@ -45,9 +59,9 @@ export const NetworkDiagnosticsButton = React.memo(() => {
   const networkDiagnosticsContent = React.useMemo(() => {
     if (isLoading) {
       return (
-        <div style={{ textAlign: "center" }}>
+        <div {...stylex.props(styles.container)}>
           <CircularProgress color="inherit" />
-          <div style={{ marginTop: 20 }}>Running network diagnostics...</div>
+          <div {...stylex.props(styles.text)}>Running network diagnostics...</div>
         </div>
       );
     }
@@ -63,7 +77,7 @@ export const NetworkDiagnosticsButton = React.memo(() => {
   return (
     <div>
       <ActionButton
-        startIcon={<NetworkCheckIcon fill={colors.purpleLighter} style={{ height: 18, width: 18 }} />}
+        startIcon={<NetworkCheckIcon fill={colors.purpleLighter} {...stylex.props(styles.icon)} />}
         color="secondary"
         variant="contained"
         onClick={openDialog}

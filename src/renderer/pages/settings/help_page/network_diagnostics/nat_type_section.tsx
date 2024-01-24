@@ -1,24 +1,28 @@
 import { NatType } from "@common/types";
-import { css } from "@emotion/react";
-import styled from "@emotion/styled";
 import Button from "@mui/material/Button";
 import InputBase from "@mui/material/InputBase";
 import Typography from "@mui/material/Typography";
+import * as stylex from "@stylexjs/stylex";
 import React from "react";
 
-const buttonStyle = { marginLeft: "8px", width: "96px" };
 const hiddenIpAddress = "···.···.···.···";
-const inputBaseCss = css`
-  padding: 4px 8px;
-  border-radius: 10px;
-  background-color: rgba(0, 0, 0, 0.4);
-  font-size: 1em;
-  margin: 8px 0;
-`;
 
-const DialogBody = styled.div`
-  margin-bottom: 1em;
-`;
+const styles = stylex.create({
+  button: {
+    marginLeft: "8px",
+    width: "96px",
+  },
+  ipAddress: {
+    padding: "4px 8px",
+    borderRadius: "10px",
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+    fontSize: "1em",
+    margin: "8px 0",
+  },
+  body: {
+    marginBottom: "1em",
+  },
+});
 
 const getIpAddressTitle = (natType: NatType) => {
   if (natType === NatType.FAILED) {
@@ -49,18 +53,22 @@ export const NatTypeSection = ({ address, description, natType, title }: NatType
     <div>
       <Typography variant="subtitle2">{ipAddressTitle}</Typography>
       {natType !== NatType.FAILED && (
-        <DialogBody>
-          <InputBase css={inputBaseCss} disabled={true} value={ipAddressHidden ? hiddenIpAddress : address} />
-          <Button variant="contained" color="secondary" onClick={onIpAddressShowHide} style={buttonStyle}>
+        <div {...stylex.props(styles.body)}>
+          <InputBase
+            disabled={true}
+            value={ipAddressHidden ? hiddenIpAddress : address}
+            {...stylex.props(styles.ipAddress)}
+          />
+          <Button variant="contained" color="secondary" onClick={onIpAddressShowHide} {...stylex.props(styles.button)}>
             {ipAddressHidden ? "Reveal" : "Hide"}
           </Button>
-          <Button variant="contained" color="secondary" onClick={onIpAddressCopy} style={buttonStyle}>
+          <Button variant="contained" color="secondary" onClick={onIpAddressCopy} {...stylex.props(styles.button)}>
             {ipAddressCopied ? "Copied!" : "Copy"}
           </Button>
-        </DialogBody>
+        </div>
       )}
       <Typography variant="subtitle2">{title}</Typography>
-      <DialogBody>{description}</DialogBody>
+      <div {...stylex.props(styles.body)}>{description}</div>
     </div>
   );
 };
