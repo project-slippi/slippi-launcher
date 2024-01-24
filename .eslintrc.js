@@ -7,7 +7,7 @@ module.exports = {
     tsconfigRootDir: __dirname,
     createDefaultProgram: true,
   },
-  plugins: ["simple-import-sort", "strict-booleans", "react-hooks", "prettier"],
+  plugins: ["simple-import-sort", "strict-booleans", "react-hooks", "prettier", "@stylexjs"],
   extends: [
     "plugin:react/recommended",
     "eslint:recommended",
@@ -100,6 +100,7 @@ module.exports = {
     "react/react-in-jsx-scope": "off",
     "react/jsx-boolean-value": ["error", "always"],
     "react/no-unstable-nested-components": "error",
+    "@stylexjs/valid-styles": "error",
   },
   ignorePatterns: ["/*.js", "node_modules"],
 };
