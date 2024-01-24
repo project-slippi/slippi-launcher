@@ -1,14 +1,41 @@
-import { css } from "@emotion/react";
-import styled from "@emotion/styled";
 import Button from "@mui/material/Button";
+import { styled } from "@mui/material/styles";
 import { ConnectionStatus } from "@slippi/slippi-js";
+import * as stylex from "@stylexjs/stylex";
 import moment from "moment";
 import React from "react";
 import TimeAgo from "react-timeago";
 
-import { colors } from "@/styles/colors";
+import { colors } from "@/styles/tokens.stylex";
 
 import { StartBroadcastDialog } from "./start_broadcast_dialog";
+
+const styles = stylex.create({
+  gridContainer: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+    gridGap: 15,
+  },
+  statusContainer: {
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+    padding: "5px 10px",
+    borderRadius: "10px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  statusText: {
+    textTransform: "uppercase",
+    fontWeight: "bold",
+    color: colors.purpleLight,
+    marginRight: 10,
+  },
+  broadcastTimeContainer: {
+    fontSize: 13,
+    opacity: 0.8,
+    marginTop: 10,
+  },
+});
 
 type BroadcastPanelProps = {
   dolphinStatus: ConnectionStatus;
@@ -36,36 +63,12 @@ export const BroadcastPanel = ({
 
   return (
     <div>
-      <div
-        css={css`
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-          grid-gap: 15px;
-        `}
-      >
-        <div
-          css={css`
-            background-color: rgba(0, 0, 0, 0.4);
-            padding: 5px 10px;
-            border-radius: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-          `}
-        >
-          <span
-            css={css`
-              text-transform: uppercase;
-              font-weight: bold;
-              color: ${colors.purpleLight};
-              margin-right: 10px;
-            `}
-          >
-            Status
-          </span>
+      <div {...stylex.props(styles.gridContainer)}>
+        <div {...stylex.props(styles.statusContainer)}>
+          <span {...stylex.props(styles.statusText)}>Status</span>
           {isConnected ? "Connected" : isDisconnected ? "Disconnected" : "Connecting"}
         </div>
-        <div css={css``}>
+        <div>
           {isDisconnected ? (
             <ConnectButton variant="contained" color="primary" onClick={() => setModalOpen(true)}>
               Start Broadcast
@@ -77,13 +80,7 @@ export const BroadcastPanel = ({
           )}
         </div>
       </div>
-      <div
-        css={css`
-          font-size: 13px;
-          opacity: 0.8;
-          margin-top: 10px;
-        `}
-      >
+      <div {...stylex.props(styles.broadcastTimeContainer)}>
         {isConnected && startTime !== null && (
           <div>
             Broadcast started <TimeAgo date={startTime} />
@@ -96,6 +93,6 @@ export const BroadcastPanel = ({
   );
 };
 
-const ConnectButton = styled(Button)`
-  width: 100%;
-`;
+const ConnectButton = styled(Button)(() => ({
+  width: "100%",
+}));
