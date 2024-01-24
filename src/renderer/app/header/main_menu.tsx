@@ -22,12 +22,6 @@ const styles = stylex.create({
     display: "flex",
     height: "100%",
   },
-  button: {
-    color: "white",
-    backgroundColor: {
-      ":hover": "rgba(255, 255, 255, 0.16)",
-    },
-  },
   base: {
     opacity: 0.5,
     position: "relative",
@@ -74,7 +68,7 @@ type CustomLinkProps = LinkProps & {
   title: string;
 };
 
-const CustomLink = ({ title, children, to, ...props }: CustomLinkProps) => {
+const CustomLink = ({ title, children, to }: CustomLinkProps) => {
   const resolved = useResolvedPath(to);
   const match = useMatch({ path: resolved.pathname, end: false });
   const isSelected = match != null;
@@ -82,7 +76,11 @@ const CustomLink = ({ title, children, to, ...props }: CustomLinkProps) => {
   return (
     <div {...stylex.props(styles.base, isSelected && styles.selected)}>
       <Tooltip title={title}>
-        <Button component={Link} to={to} {...(props as any)} {...stylex.props(styles.button)}>
+        <Button
+          component={Link}
+          to={to}
+          sx={{ color: "white", "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.16)" } }}
+        >
           {children}
         </Button>
       </Tooltip>
