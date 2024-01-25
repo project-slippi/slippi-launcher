@@ -2,7 +2,10 @@ import { css } from "@emotion/react";
 import Tooltip from "@mui/material/Tooltip";
 import type { FileResult, PlayerInfo } from "@replays/types";
 import type { ConversionType, StatsType, StockType } from "@slippi/slippi-js";
-import { get, groupBy, keyBy, range } from "lodash";
+import get from "lodash/get";
+import groupBy from "lodash/groupBy";
+import keyBy from "lodash/keyBy";
+import range from "lodash/range";
 
 import { convertFrameCountToDurationString } from "@/lib/time";
 import { getCharacterIcon, toOrdinal } from "@/lib/utils";

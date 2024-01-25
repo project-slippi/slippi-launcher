@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { debounce } from "lodash";
+import debounce from "lodash/debounce";
 import React from "react";
 
 import { colors } from "@/styles/colors";

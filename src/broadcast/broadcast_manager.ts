@@ -1,7 +1,9 @@
 import { Preconditions } from "@common/preconditions";
 import { ConnectionEvent, ConnectionStatus, DolphinConnection, DolphinMessageType } from "@slippi/slippi-js";
 import { EventEmitter } from "events";
-import { first, keyBy, last } from "lodash";
+import first from "lodash/first";
+import keyBy from "lodash/keyBy";
+import last from "lodash/last";
 import type { connection, Message } from "websocket";
 import { client as WebSocketClient } from "websocket";
 
@@ -229,7 +231,7 @@ export class BroadcastManager extends EventEmitter {
         switch (message.type) {
           case "start-broadcast-resp": {
             if (message.recoveryGameCursor !== undefined) {
-              const firstIncoming = first(this.incomingEvents);
+              const firstIncoming = this.incomingEvents[0];
               let firstCursor: number | null | undefined;
               if (firstIncoming) {
                 firstCursor = firstIncoming.cursor;

@@ -7,7 +7,11 @@ import Tooltip from "@mui/material/Tooltip";
 import type { FileResult, PlayerInfo } from "@replays/types";
 import type { StatsType, StockType } from "@slippi/slippi-js";
 import { animations as animationUtils, Frames, moves as moveUtils } from "@slippi/slippi-js";
-import { filter, get, groupBy, keyBy, last } from "lodash";
+import filter from "lodash/filter";
+import get from "lodash/get";
+import groupBy from "lodash/groupBy";
+import keyBy from "lodash/keyBy";
+import last from "lodash/last";
 
 import { convertFrameCountToDurationString } from "@/lib/time";
 import { getCharacterIcon } from "@/lib/utils";

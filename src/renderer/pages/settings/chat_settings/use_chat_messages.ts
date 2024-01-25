@@ -1,4 +1,5 @@
-import { isEqual, keyBy } from "lodash";
+import isEqual from "lodash/isEqual";
+import keyBy from "lodash/keyBy";
 import { useCallback, useEffect, useState } from "react";
 
 import { useToasts } from "@/lib/hooks/use_toasts";
