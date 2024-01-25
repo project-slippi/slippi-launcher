@@ -1,6 +1,8 @@
 import type { FileResult } from "@replays/types";
 import type { RatioType, StatsType } from "@slippi/slippi-js";
-import { chain, get } from "lodash";
+import get from "lodash/get";
+import pick from "lodash/pick";
+import toArray from "lodash/toArray";
 
 import { getCharacterIcon } from "@/lib/utils";
 
@@ -70,11 +72,7 @@ export const OverallTable = ({ file, stats }: OverallTableProps) => {
     const player2Item = arrPathExtension ? get(itemsByPlayer[1], arrPathExtension) : itemsByPlayer[1] || {};
     const generateValues = (item: any) => {
       if (fieldPaths !== null) {
-        return chain(item)
-          .pick(fieldPaths)
-          .toArray()
-          .map((v) => (valueMapper ? valueMapper(v) : v))
-          .value();
+        return toArray(pick(item, fieldPaths)).map((v) => (valueMapper ? valueMapper(v) : v));
       }
 
       if (valueMapper) {
