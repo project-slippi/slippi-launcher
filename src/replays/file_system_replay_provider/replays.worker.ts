@@ -5,7 +5,6 @@
 // TODO: Make electron-log work somehow
 import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
 import { SlippiGame } from "@slippi/slippi-js";
-import _ from "lodash";
 import type { ModuleMethods } from "threads/dist/types/master";
 import { Observable, Subject } from "threads/observable";
 import { expose } from "threads/worker";
@@ -54,7 +53,7 @@ const methods: WorkerSpec = {
     // For a valid SLP game, at the very least we should have valid settings
     const game = new SlippiGame(fullPath);
     const settings = game.getSettings();
-    if (!settings || _.isEmpty(settings.players)) {
+    if (!settings || settings.players.length === 0) {
       throw new Error("Game settings could not be properly loaded.");
     }
 

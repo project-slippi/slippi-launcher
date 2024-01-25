@@ -2,7 +2,10 @@ import { css } from "@emotion/react";
 import Tooltip from "@mui/material/Tooltip";
 import type { FileResult, PlayerInfo } from "@replays/types";
 import type { ConversionType, StatsType, StockType } from "@slippi/slippi-js";
-import _ from "lodash";
+import get from "lodash/get";
+import groupBy from "lodash/groupBy";
+import keyBy from "lodash/keyBy";
+import range from "lodash/range";
 
 import { convertFrameCountToDurationString } from "@/lib/time";
 import { getCharacterIcon, toOrdinal } from "@/lib/utils";
@@ -99,7 +102,7 @@ export const PunishTable = ({ file, stats, player, opp, onPlay }: PunishTablePro
     const totalStocks = player.startStocks;
     const currentStocks = stock.count - 1;
 
-    const stockIcons = _.range(1, totalStocks != null ? totalStocks + 1 : 1).map((stockNum) => {
+    const stockIcons = range(1, totalStocks != null ? totalStocks + 1 : 1).map((stockNum) => {
       return (
         <T.GrayableImage
           key={`stock-image-${stock.playerIndex}-${stockNum}`}
@@ -123,7 +126,7 @@ export const PunishTable = ({ file, stats, player, opp, onPlay }: PunishTablePro
 
   const getPlayer = (playerIndex: number) => {
     const players = file.game.players || [];
-    const playersByIndex = _.keyBy(players, "playerIndex");
+    const playersByIndex = keyBy(players, "playerIndex");
     return playersByIndex[playerIndex];
   };
 
@@ -177,12 +180,12 @@ export const PunishTable = ({ file, stats, player, opp, onPlay }: PunishTablePro
   };
 
   const renderPunishRows = () => {
-    const punishes = _.get(stats, "conversions") || [];
-    const punishesByPlayer = _.groupBy(punishes, "playerIndex");
+    const punishes = get(stats, "conversions") || [];
+    const punishesByPlayer = groupBy(punishes, "playerIndex");
     const playerPunishes = punishesByPlayer[opp.playerIndex] || [];
 
-    const stocks = _.get(stats, "stocks") || [];
-    const stocksTakenFromPlayer = _.groupBy(stocks, "playerIndex");
+    const stocks = get(stats, "stocks") || [];
+    const stocksTakenFromPlayer = groupBy(stocks, "playerIndex");
     const opponentStocks = stocksTakenFromPlayer[opp.playerIndex] || [];
 
     const elements: JSX.Element[] = [];
@@ -190,8 +193,8 @@ export const PunishTable = ({ file, stats, player, opp, onPlay }: PunishTablePro
     const addStockRows = (punish?: ConversionType) => {
       const shouldDisplayStockLoss = () => {
         // Calculates whether we should display a stock loss row in this position
-        const currentStock = _.first(opponentStocks);
-        if (!currentStock || currentStock.endFrame === null || currentStock.endFrame === undefined) {
+        const currentStock = opponentStocks[0];
+        if (!currentStock || currentStock.endFrame == null) {
           return false;
         }
 
@@ -208,7 +211,7 @@ export const PunishTable = ({ file, stats, player, opp, onPlay }: PunishTablePro
       // rendered one after another. but will initialize to true if we are considering
       // the very first punish, this is the handle the case where someone SD's on first
       // stock
-      let shouldAddEmptyState = punish === _.first(playerPunishes);
+      let shouldAddEmptyState = punish === playerPunishes[0];
       while (shouldDisplayStockLoss()) {
         const stock = opponentStocks.shift();
 
@@ -231,7 +234,7 @@ export const PunishTable = ({ file, stats, player, opp, onPlay }: PunishTablePro
 
       // Special case handling when a player finishes their opponent without getting hit
       // on their last stock. Still want to show an empty state
-      const stock = _.first(opponentStocks);
+      const stock = opponentStocks[0];
       if (stock && addedStockRow && !punish) {
         const emptyPunishes = generateEmptyRow(stock);
         elements.push(emptyPunishes);

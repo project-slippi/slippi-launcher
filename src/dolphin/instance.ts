@@ -5,7 +5,7 @@ import { app } from "electron";
 import electronLog from "electron-log";
 import { EventEmitter } from "events";
 import * as fs from "fs-extra";
-import { debounce } from "lodash";
+import debounce from "lodash/debounce";
 import path from "path";
 import { fileExists } from "utils/file_exists";
 

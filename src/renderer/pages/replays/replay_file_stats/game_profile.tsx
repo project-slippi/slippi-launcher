@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 import Typography from "@mui/material/Typography";
 import type { FileResult } from "@replays/types";
 import type { StatsType } from "@slippi/slippi-js";
-import _ from "lodash";
 import React from "react";
 
 import { ErrorBoundary } from "@/components/error_boundary";

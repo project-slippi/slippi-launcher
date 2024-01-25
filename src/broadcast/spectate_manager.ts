@@ -2,7 +2,6 @@ import { Preconditions } from "@common/preconditions";
 import { SlpFileWriter, SlpFileWriterEvent } from "@slippi/slippi-js";
 import { EventEmitter } from "events";
 import * as fs from "fs-extra";
-import _ from "lodash";
 import type { connection, Message } from "websocket";
 import { client as WebSocketClient } from "websocket";
 

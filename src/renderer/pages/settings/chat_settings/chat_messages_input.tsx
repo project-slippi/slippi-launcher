@@ -9,7 +9,8 @@ import type { SelectChangeEvent } from "@mui/material/Select";
 import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
 import log from "electron-log";
-import { capitalize, chain } from "lodash";
+import capitalize from "lodash/capitalize";
+import orderBy from "lodash/orderBy";
 import type { MouseEventHandler } from "react";
 import React, { useState } from "react";
 
@@ -165,45 +166,46 @@ const ChatMessageSelector = ({
     }));
   };
 
-  const isLockedByMessage = chain(availableMessages)
-    .keyBy("text")
-    .mapValues((am) => {
-      return am.isPaid && user.subLevel === "NONE";
-    })
-    .value();
+  const isPaidMessage = React.useMemo(() => {
+    return availableMessages.reduce((acc, current) => {
+      acc[current.text] = current.isPaid;
+      return acc;
+    }, {} as Record<string, boolean>);
+  }, [availableMessages]);
 
-  const items = chain(availableMessages)
-    .orderBy(["isPaid", "text"])
-    .filter((am) => am.text !== defaultMessage)
-    .map((am) =>
+  const items = React.useMemo(() => {
+    const messageItems = orderBy(availableMessages, ["isPaid", "text"])
+      .filter((am) => am.text !== defaultMessage)
+      .map((am) =>
+        genChatMessageItem(
+          `${groupDirection}-${direction}-${am.text}`,
+          am.text,
+          am.isPaid,
+          false,
+          hoverStates[am.text] ?? false,
+          updateHoverState(am.text),
+          user,
+        ),
+      );
+
+    // Add default message to the top of the list
+    messageItems.unshift(
       genChatMessageItem(
-        `${groupDirection}-${direction}-${am.text}`,
-        am.text,
-        am.isPaid,
+        `${groupDirection}-${direction}-${defaultMessage}`,
+        defaultMessage,
         false,
-        hoverStates[am.text] ?? false,
-        updateHoverState(am.text),
+        true,
+        hoverStates[defaultMessage],
+        updateHoverState(defaultMessage),
         user,
       ),
-    )
-    .value();
+    );
 
-  // Add default message to the top of the list
-  items.unshift(
-    genChatMessageItem(
-      `${groupDirection}-${direction}-${defaultMessage}`,
-      defaultMessage,
-      false,
-      true,
-      hoverStates[defaultMessage],
-      updateHoverState(defaultMessage),
-      user,
-    ),
-  );
+    return messageItems;
+  }, [availableMessages, defaultMessage, direction, groupDirection, hoverStates, user]);
 
   const onChange = (event: SelectChangeEvent<string>) => {
-    console.log(`Updating message to ${event.target.value}. isLocked: ${isLockedByMessage[event.target.value]}`);
-    if (isLockedByMessage[event.target.value]) {
+    if (isPaidMessage[event.target.value] && user.subLevel === "NONE") {
       // Don't allow change to locked item
       return;
     }

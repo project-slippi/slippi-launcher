@@ -1,7 +1,8 @@
 import { Preconditions } from "@common/preconditions";
 import { ConnectionEvent, ConnectionStatus, DolphinConnection, DolphinMessageType } from "@slippi/slippi-js";
 import { EventEmitter } from "events";
-import _ from "lodash";
+import keyBy from "lodash/keyBy";
+import last from "lodash/last";
 import type { connection, Message } from "websocket";
 import { client as WebSocketClient } from "websocket";
 
@@ -229,7 +230,7 @@ export class BroadcastManager extends EventEmitter {
         switch (message.type) {
           case "start-broadcast-resp": {
             if (message.recoveryGameCursor !== undefined) {
-              const firstIncoming = _.first(this.incomingEvents);
+              const firstIncoming = this.incomingEvents[0];
               let firstCursor: number | null | undefined;
               if (firstIncoming) {
                 firstCursor = firstIncoming.cursor;
@@ -246,24 +247,24 @@ export class BroadcastManager extends EventEmitter {
                   const isNeededByServer = event.cursor > message.recoveryGameCursor;
 
                   // Make sure we aren't duplicating anything that is already in the incoming events array
-                  const isNotIncoming = _.isNil(firstCursor) || event.cursor < firstCursor;
+                  const isNotIncoming = firstCursor == null || event.cursor < firstCursor;
 
                   return isNeededByServer && isNotIncoming;
                 }
                 return false;
               });
 
-              this.incomingEvents = _.concat(backedEventsToUse, this.incomingEvents);
+              this.incomingEvents = [...backedEventsToUse, ...this.incomingEvents];
 
-              const newFirstEvent = _.first(this.incomingEvents);
+              const newFirstEvent = this.incomingEvents[0];
               if (!newFirstEvent) {
                 this.emit(BroadcastEvent.LOG, "Missing new first event");
                 return;
               }
               const newFirstCursor = newFirstEvent.cursor;
 
-              const firstBackupCursor = (_.first(this.backupEvents) || {}).cursor;
-              const lastBackupCursor = (_.last(this.backupEvents) || {}).cursor;
+              const firstBackupCursor = (this.backupEvents[0] || {}).cursor;
+              const lastBackupCursor = (last(this.backupEvents) || {}).cursor;
 
               this.emit(
                 BroadcastEvent.LOG,
@@ -281,7 +282,7 @@ export class BroadcastManager extends EventEmitter {
             // Grab broadcastId we were currently using if the broadcast still exists, would happen
             // in the case of a reconnect
             if (this.broadcastId) {
-              const broadcastsById = _.keyBy(broadcasts, "id");
+              const broadcastsById = keyBy(broadcasts, "id");
               const prevBroadcast = broadcastsById[this.broadcastId];
 
               if (prevBroadcast) {
@@ -397,7 +398,7 @@ export class BroadcastManager extends EventEmitter {
       return;
     }
 
-    while (!_.isEmpty(this.incomingEvents)) {
+    while (this.incomingEvents.length > 0) {
       const event = this.incomingEvents.shift();
       if (!event) {
         this.emit(BroadcastEvent.LOG, "No incoming events");

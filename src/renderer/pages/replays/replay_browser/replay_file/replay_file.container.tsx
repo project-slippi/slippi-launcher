@@ -10,7 +10,7 @@ import TimerIcon from "@mui/icons-material/Timer";
 import TrackChangesIcon from "@mui/icons-material/TrackChanges";
 import type { FileResult } from "@replays/types";
 import { frameToGameTimer, GameMode, stages as stageUtils } from "@slippi/slippi-js";
-import { groupBy } from "lodash";
+import groupBy from "lodash/groupBy";
 import moment from "moment";
 import React, { useCallback, useMemo } from "react";
 

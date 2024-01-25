@@ -17,7 +17,8 @@ import Tooltip from "@mui/material/Tooltip";
 import type { FileResult, PlayerInfo as PlayerInfoType } from "@replays/types";
 import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
 import { frameToGameTimer, GameMode, stages as stageUtils } from "@slippi/slippi-js";
-import { get, groupBy } from "lodash";
+import get from "lodash/get";
+import groupBy from "lodash/groupBy";
 import moment from "moment";
 import React from "react";
 

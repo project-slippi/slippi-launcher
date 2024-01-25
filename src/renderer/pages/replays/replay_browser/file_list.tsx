@@ -1,7 +1,7 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import FolderIcon from "@mui/icons-material/Folder";
 import type { FileResult } from "@replays/types";
-import { debounce } from "lodash";
+import debounce from "lodash/debounce";
 import React from "react";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as List } from "react-window";

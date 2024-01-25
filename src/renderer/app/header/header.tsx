@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import log from "electron-log";
-import { debounce } from "lodash";
+import debounce from "lodash/debounce";
 import React, { useCallback, useMemo } from "react";
 
 import { useDolphinActions } from "@/lib/dolphin/use_dolphin_actions";
