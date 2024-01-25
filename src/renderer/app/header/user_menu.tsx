@@ -5,6 +5,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import ButtonBase from "@mui/material/ButtonBase";
 import DialogContentText from "@mui/material/DialogContentText";
+import log from "electron-log";
 import React from "react";
 
 import { ConfirmationModal } from "@/components/confirmation_modal";
@@ -66,12 +67,11 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
 
     if (userData && userData.playKey) {
       const profileUrl = `https://slippi.gg/user/${userData.playKey.connectCode.replace("#", "-")}`;
-      const manageUrl = `https://slippi.gg/manage?expectedUid=${user.uid}`;
       items.push(
         {
           onClick: () => {
+            window.electron.shell.openExternal(profileUrl).catch(log.error);
             closeMenu();
-            void window.electron.shell.openPath(profileUrl);
           },
           label: "View profile",
           icon: <AccountBoxIcon fontSize="small" />,
@@ -79,8 +79,9 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
         },
         {
           onClick: () => {
+            const manageUrl = `https://slippi.gg/manage?expectedUid=${user.uid}`;
+            window.electron.shell.openExternal(manageUrl).catch(log.error);
             closeMenu();
-            void window.electron.shell.openPath(manageUrl);
           },
           label: "Manage account",
           icon: <ManageAccountsIcon fontSize="small" />,

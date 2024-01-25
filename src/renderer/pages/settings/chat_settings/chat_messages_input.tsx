@@ -8,6 +8,7 @@ import MenuItem from "@mui/material/MenuItem";
 import type { SelectChangeEvent } from "@mui/material/Select";
 import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
+import log from "electron-log";
 import { capitalize, chain } from "lodash";
 import type { MouseEventHandler } from "react";
 import React, { useState } from "react";
@@ -108,7 +109,7 @@ const genChatMessageItem = (
       e.stopPropagation();
       // e.preventDefault();
       const manageUrl = `https://slippi.gg/manage?expectedUid=${user.uid}`;
-      void window.electron.shell.openPath(manageUrl);
+      window.electron.shell.openExternal(manageUrl).catch(log.error);
     };
   }
 

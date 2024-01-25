@@ -30,6 +30,7 @@ const api = {
   },
   shell: {
     openPath: shell.openPath,
+    openExternal: shell.openExternal,
     showItemInFolder: shell.showItemInFolder,
   },
 };
