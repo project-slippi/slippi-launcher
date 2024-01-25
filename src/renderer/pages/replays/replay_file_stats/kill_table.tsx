@@ -7,7 +7,6 @@ import Tooltip from "@mui/material/Tooltip";
 import type { FileResult, PlayerInfo } from "@replays/types";
 import type { StatsType, StockType } from "@slippi/slippi-js";
 import { animations as animationUtils, Frames, moves as moveUtils } from "@slippi/slippi-js";
-import filter from "lodash/filter";
 import get from "lodash/get";
 import groupBy from "lodash/groupBy";
 import keyBy from "lodash/keyBy";
@@ -106,7 +105,7 @@ export const KillTable = ({ file, stats, player, opp, onPlay }: KillTableProps) 
     const playerPunishes = punishesByPlayer[opp.playerIndex] || [];
 
     // Only get punishes that killed
-    const killingPunishes = filter(playerPunishes, "didKill");
+    const killingPunishes = playerPunishes.filter((punish) => punish.didKill);
     const killingPunishesByEndFrame = keyBy(killingPunishes, "endFrame");
     const punishThatEndedStock =
       stock.endFrame !== null && stock.endFrame !== undefined ? killingPunishesByEndFrame[stock.endFrame] : null;

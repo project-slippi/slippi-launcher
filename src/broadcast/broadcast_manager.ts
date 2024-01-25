@@ -1,7 +1,6 @@
 import { Preconditions } from "@common/preconditions";
 import { ConnectionEvent, ConnectionStatus, DolphinConnection, DolphinMessageType } from "@slippi/slippi-js";
 import { EventEmitter } from "events";
-import first from "lodash/first";
 import keyBy from "lodash/keyBy";
 import last from "lodash/last";
 import type { connection, Message } from "websocket";
@@ -264,7 +263,7 @@ export class BroadcastManager extends EventEmitter {
               }
               const newFirstCursor = newFirstEvent.cursor;
 
-              const firstBackupCursor = (first(this.backupEvents) || {}).cursor;
+              const firstBackupCursor = (this.backupEvents[0] || {}).cursor;
               const lastBackupCursor = (last(this.backupEvents) || {}).cursor;
 
               this.emit(
