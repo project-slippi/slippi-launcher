@@ -1,6 +1,6 @@
 import type { FileResult } from "@replays/types";
 import type { RatioType, StatsType } from "@slippi/slippi-js";
-import _ from "lodash";
+import { chain, get } from "lodash";
 
 import { getCharacterIcon } from "@/lib/utils";
 
@@ -55,8 +55,8 @@ export const OverallTable = ({ file, stats }: OverallTableProps) => {
   ) => {
     const key = `standard-field-${header}`;
 
-    const arr = _.get(stats, arrPath) || [];
-    const itemsByPlayer = arr; // _.keyBy(arr, "playerIndex");
+    const arr = get(stats, arrPath) || [];
+    const itemsByPlayer = arr; // keyBy(arr, "playerIndex");
 
     if (!arr || arr.length === 0) {
       return (
@@ -66,11 +66,11 @@ export const OverallTable = ({ file, stats }: OverallTableProps) => {
         </T.TableRow>
       );
     }
-    const player1Item = arrPathExtension ? _.get(itemsByPlayer[0], arrPathExtension) : itemsByPlayer[0] || {};
-    const player2Item = arrPathExtension ? _.get(itemsByPlayer[1], arrPathExtension) : itemsByPlayer[1] || {};
+    const player1Item = arrPathExtension ? get(itemsByPlayer[0], arrPathExtension) : itemsByPlayer[0] || {};
+    const player2Item = arrPathExtension ? get(itemsByPlayer[1], arrPathExtension) : itemsByPlayer[1] || {};
     const generateValues = (item: any) => {
       if (fieldPaths !== null) {
-        return _.chain(item)
+        return chain(item)
           .pick(fieldPaths)
           .toArray()
           .map((v) => (valueMapper ? valueMapper(v) : v))
@@ -106,8 +106,8 @@ export const OverallTable = ({ file, stats }: OverallTableProps) => {
     fieldPath: string,
     ratioRenderer: (ratio: RatioType, oppRatio: RatioType) => JSX.Element,
   ) => {
-    const arr = _.get(stats, arrPath) || [];
-    const itemsByPlayer = arr; // _.keyBy(arr, "playerIndex");
+    const arr = get(stats, arrPath) || [];
+    const itemsByPlayer = arr; // keyBy(arr, "playerIndex");
 
     const player1Item = itemsByPlayer[0] || {};
     const player2Item = itemsByPlayer[1] || {};
@@ -116,8 +116,8 @@ export const OverallTable = ({ file, stats }: OverallTableProps) => {
       const item = firstPlayer ? player1Item : player2Item;
       const oppItem = firstPlayer ? player2Item : player1Item;
 
-      const ratio = _.get(item, fieldPath);
-      const oppRatio = _.get(oppItem, fieldPath);
+      const ratio = get(item, fieldPath);
+      const oppRatio = get(oppItem, fieldPath);
 
       return ratioRenderer(ratio, oppRatio);
     };
@@ -139,8 +139,8 @@ export const OverallTable = ({ file, stats }: OverallTableProps) => {
     highlightCondition: (a: number, b: number) => boolean,
   ) => {
     return renderRatioStatField(header, arrPath, fieldPath, (ratio: RatioType, oppRatio: RatioType) => {
-      const playerRatio = _.get(ratio, "ratio", null);
-      const oppRatioType = _.get(oppRatio, "ratio", null);
+      const playerRatio = get(ratio, "ratio", null);
+      const oppRatioType = get(oppRatio, "ratio", null);
 
       if (playerRatio === null) {
         return (
@@ -166,8 +166,8 @@ export const OverallTable = ({ file, stats }: OverallTableProps) => {
     highlightCondition: (a: number, b: number) => boolean,
   ) => {
     return renderRatioStatField(header, arrPath, fieldPath, (ratio, oppRatio) => {
-      const playerRatio = _.get(ratio, "ratio", null);
-      const oppRatioType = _.get(oppRatio, "ratio", null);
+      const playerRatio = get(ratio, "ratio", null);
+      const oppRatioType = get(oppRatio, "ratio", null);
 
       if (playerRatio === null || oppRatioType === null) {
         return (
@@ -179,8 +179,8 @@ export const OverallTable = ({ file, stats }: OverallTableProps) => {
       const fixedPlayerRatio = playerRatio.toFixed(3);
       const fixedOppRatio = oppRatioType.toFixed(3);
 
-      const playerCount = _.get(ratio, "count");
-      const playerTotal = _.get(ratio, "total");
+      const playerCount = get(ratio, "count");
+      const playerTotal = get(ratio, "total");
 
       return (
         <T.TableCell highlight={highlightCondition(parseFloat(fixedPlayerRatio), parseFloat(fixedOppRatio))}>
@@ -226,10 +226,10 @@ export const OverallTable = ({ file, stats }: OverallTableProps) => {
     highlightCondition: (a: number, b: number) => boolean,
   ) => {
     return renderRatioStatField(header, arrPath, fieldPath, (ratio: RatioType, oppRatio: RatioType) => {
-      const playerCount = _.get(ratio, "count") || 0;
-      const playerRatio = _.get(ratio, "ratio");
+      const playerCount = get(ratio, "count") || 0;
+      const playerRatio = get(ratio, "ratio");
 
-      const oppCount = _.get(oppRatio, "count") || 0;
+      const oppCount = get(oppRatio, "count") || 0;
 
       let secondaryDisplay = null;
       if (playerRatio !== null) {

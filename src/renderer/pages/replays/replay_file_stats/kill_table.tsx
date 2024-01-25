@@ -7,7 +7,7 @@ import Tooltip from "@mui/material/Tooltip";
 import type { FileResult, PlayerInfo } from "@replays/types";
 import type { StatsType, StockType } from "@slippi/slippi-js";
 import { animations as animationUtils, Frames, moves as moveUtils } from "@slippi/slippi-js";
-import _ from "lodash";
+import { filter, get, groupBy, keyBy, last } from "lodash";
 
 import { convertFrameCountToDurationString } from "@/lib/time";
 import { getCharacterIcon } from "@/lib/utils";
@@ -97,13 +97,13 @@ export const KillTable = ({ file, stats, player, opp, onPlay }: KillTableProps) 
   const renderKilledBy = (stock: StockType) => {
     // Here we are going to grab the opponent's punishes and see if one of them was
     // responsible for ending this stock, if so show the kill move, otherwise assume SD
-    const punishes = _.get(stats, "conversions") || [];
-    const punishesByPlayer = _.groupBy(punishes, "playerIndex");
+    const punishes = get(stats, "conversions") || [];
+    const punishesByPlayer = groupBy(punishes, "playerIndex");
     const playerPunishes = punishesByPlayer[opp.playerIndex] || [];
 
     // Only get punishes that killed
-    const killingPunishes = _.filter(playerPunishes, "didKill");
-    const killingPunishesByEndFrame = _.keyBy(killingPunishes, "endFrame");
+    const killingPunishes = filter(playerPunishes, "didKill");
+    const killingPunishesByEndFrame = keyBy(killingPunishes, "endFrame");
     const punishThatEndedStock =
       stock.endFrame !== null && stock.endFrame !== undefined ? killingPunishesByEndFrame[stock.endFrame] : null;
 
@@ -112,7 +112,7 @@ export const KillTable = ({ file, stats, player, opp, onPlay }: KillTableProps) 
       return <span>Self Destruct</span>;
     }
 
-    const lastMove = _.last(punishThatEndedStock.moves);
+    const lastMove = last(punishThatEndedStock.moves);
     if (!lastMove) {
       return <span>Grab Release</span>;
     }
@@ -160,8 +160,8 @@ export const KillTable = ({ file, stats, player, opp, onPlay }: KillTableProps) 
   };
 
   const renderStocksRows = () => {
-    const stocks = _.get(stats, "stocks") || [];
-    const stocksByOpponent = _.groupBy(stocks, "playerIndex");
+    const stocks = get(stats, "stocks") || [];
+    const stocksByOpponent = groupBy(stocks, "playerIndex");
     const opponentStocks = stocksByOpponent[opp.playerIndex] || [];
 
     return opponentStocks.map(generateStockRow);

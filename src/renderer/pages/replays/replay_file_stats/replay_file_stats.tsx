@@ -8,7 +8,6 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import type { FileResult } from "@replays/types";
 import { GameMode } from "@slippi/slippi-js";
-import _ from "lodash";
 import { useQuery } from "react-query";
 
 import { BasicFooter } from "@/components/footer/footer";
