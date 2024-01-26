@@ -1,4 +1,4 @@
-import moment from "moment";
+import parse from "date-fns/parse";
 
 export function inferStartTime(
   gameStartAt: string | null,
@@ -19,27 +19,22 @@ export function inferStartTime(
   return startAt?.toISOString() ?? null;
 }
 
-function convertToDateAndTime(dateTimeString: moment.MomentInput): moment.Moment | null {
+function convertToDateAndTime(dateTimeString: string | null | undefined): Date | null {
   if (dateTimeString == null) {
     return null;
   }
 
-  const asMoment = moment(dateTimeString);
-  if (asMoment.isValid()) {
-    return asMoment.local();
-  }
-
-  return null;
+  return new Date(dateTimeString);
 }
 
-function inferDateFromFilename(fileName: string): moment.Moment | null {
+function inferDateFromFilename(fileName: string): Date | null {
   const timeReg = /\d{8}T\d{6}/g;
   const filenameTime = fileName.match(timeReg);
 
-  if (filenameTime == null) {
+  if (filenameTime === null) {
     return null;
   }
 
-  const time = moment(filenameTime[0]).local();
+  const time = parse(filenameTime[0], "yyyyMMdd'T'HHmmss", new Date());
   return time;
 }
