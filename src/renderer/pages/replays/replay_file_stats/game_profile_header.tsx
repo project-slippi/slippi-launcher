@@ -192,7 +192,7 @@ const GameDetails = ({
             startingTimerSeconds: game.startingTimerSeconds ?? null,
             timerType: game.timerType ?? null,
           })
-        : convertFrameCountToDurationString(lastFrame, "m[m] ss[s]")
+        : convertFrameCountToDurationString(lastFrame, "long")
       : "Unknown";
 
   const distance = get(stadiumStats, "distance");

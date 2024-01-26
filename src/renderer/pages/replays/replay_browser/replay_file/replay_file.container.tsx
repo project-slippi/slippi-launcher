@@ -181,7 +181,7 @@ const generateReplayDetails = ({
       label:
         gameMode === GameMode.TARGET_TEST
           ? frameToGameTimer(lastFrame, { timerType, startingTimerSeconds })
-          : convertFrameCountToDurationString(lastFrame, "m[m] ss[s]"),
+          : convertFrameCountToDurationString(lastFrame, "long"),
     });
   }
 
