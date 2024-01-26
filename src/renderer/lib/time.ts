@@ -1,5 +1,4 @@
-import format from "date-fns/format";
-import intervalToDuration from "date-fns/intervalToDuration";
+import { format, intervalToDuration } from "date-fns";
 
 export function convertFrameCountToDurationString(frameCount: number, format: "short" | "long" = "short"): string {
   const duration = intervalToDuration({ start: 0, end: ((frameCount + 123) / 60) * 1000 });

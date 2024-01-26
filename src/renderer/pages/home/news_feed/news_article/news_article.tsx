@@ -7,7 +7,7 @@ import CardMedia from "@mui/material/CardMedia";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import stylex from "@stylexjs/stylex";
-import format from "date-fns/format";
+import { format } from "date-fns";
 import React from "react";
 import TimeAgo from "react-timeago";
 

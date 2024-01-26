@@ -1,7 +1,7 @@
 import { exists } from "@common/exists";
 import type { GameStartType, MetadataType } from "@slippi/slippi-js";
 import { SlippiGame } from "@slippi/slippi-js";
-import parse from "date-fns/parse";
+import { parse } from "date-fns";
 import * as fs from "fs-extra";
 import path from "path";
 

@@ -2,8 +2,7 @@ import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import Button from "@mui/material/Button";
 import { ConnectionStatus } from "@slippi/slippi-js";
-import formatDuration from "date-fns/formatDuration";
-import intervalToDuration from "date-fns/intervalToDuration";
+import { formatDuration, intervalToDuration } from "date-fns";
 import React from "react";
 import TimeAgo from "react-timeago";
 

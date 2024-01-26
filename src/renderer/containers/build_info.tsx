@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import format from "date-fns/format";
+import { format } from "date-fns";
 import React from "react";
 
 import { ExternalLink as A } from "@/components/external_link";
