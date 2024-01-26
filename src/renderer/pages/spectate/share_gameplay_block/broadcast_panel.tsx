@@ -2,7 +2,8 @@ import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import Button from "@mui/material/Button";
 import { ConnectionStatus } from "@slippi/slippi-js";
-import moment from "moment";
+import formatDuration from "date-fns/formatDuration";
+import intervalToDuration from "date-fns/intervalToDuration";
 import React from "react";
 import TimeAgo from "react-timeago";
 
@@ -32,7 +33,13 @@ export const BroadcastPanel = ({
     slippiServerStatus === ConnectionStatus.DISCONNECTED && dolphinStatus === ConnectionStatus.DISCONNECTED;
   const isConnected = slippiServerStatus === ConnectionStatus.CONNECTED && dolphinStatus === ConnectionStatus.CONNECTED;
 
-  const broadcastDuration = startTime && endTime ? moment.duration(moment(endTime).diff(moment(startTime))) : null;
+  const broadcastDuration =
+    startTime && endTime
+      ? intervalToDuration({
+          start: startTime,
+          end: endTime,
+        })
+      : null;
 
   return (
     <div>
@@ -89,7 +96,7 @@ export const BroadcastPanel = ({
             Broadcast started <TimeAgo date={startTime} />
           </div>
         )}
-        {isDisconnected && broadcastDuration && <div>Broadcast ended after {broadcastDuration.humanize()}</div>}
+        {isDisconnected && broadcastDuration && <div>Broadcast ended after {formatDuration(broadcastDuration)}</div>}
       </div>
       <StartBroadcastDialog open={modalOpen} onClose={() => setModalOpen(false)} onSubmit={onStartBroadcast} />
     </div>
