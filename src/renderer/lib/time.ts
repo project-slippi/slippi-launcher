@@ -17,7 +17,7 @@ export function monthDayHourFormat(momentOrDate: moment.Moment | Date): string |
 }
 
 function monthDayHourFormatFromDate(time: Date): string | null {
-  return null;
+  return format(time, "PP · p");
 }
 
 function monthDayHourFormatFromMoment(time: moment.Moment): string | null {
