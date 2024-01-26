@@ -4,7 +4,6 @@
 
 import { execSync } from "child_process";
 import Dotenv from "dotenv-webpack";
-import moment from "moment";
 import path from "path";
 import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
 import webpack from "webpack";
@@ -13,7 +12,7 @@ import pkg from "../../release/app/package.json";
 import webpackPaths from "./webpack.paths";
 
 const isDevelop = process.env.NODE_ENV === "development";
-const buildDate = moment().toISOString();
+const buildDate = new Date().toISOString();
 const commitHash = execSync("git rev-parse --short HEAD").toString().trim();
 
 const configuration: webpack.Configuration = {
