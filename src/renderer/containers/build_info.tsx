@@ -79,7 +79,7 @@ export const BuildInfo = ({ className, enableAdvancedUserClick }: BuildInfoProps
             margin-left: 4px;
           `}
         >
-          {format(buildDate, "yyyymmdd")}
+          {format(buildDate, "yyyyMMdd")}
         </span>
       </div>
       <div>{osInfo}</div>
