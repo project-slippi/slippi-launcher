@@ -145,8 +145,6 @@ const configuration: webpack.Configuration = {
       isBrowser: false,
       isDevelopment,
     }),
-
-    new webpack.IgnorePlugin({ resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ }),
   ],
 };
 
