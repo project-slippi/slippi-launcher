@@ -92,7 +92,7 @@ function filenameToDateAndTime(fileName: string): Date | null {
   const timeReg = /\d{8}T\d{6}/g;
   const filenameTime = fileName.match(timeReg);
 
-  if (filenameTime === null) {
+  if (filenameTime == null) {
     return null;
   }
 
