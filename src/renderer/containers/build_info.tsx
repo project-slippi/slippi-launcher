@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import moment from "moment";
+import { format } from "date-fns";
 import React from "react";
 
 import { ExternalLink as A } from "@/components/external_link";
@@ -9,7 +9,7 @@ import { useToasts } from "@/lib/hooks/use_toasts";
 const osInfo = window.electron.bootstrap.operatingSystem;
 
 const appVersion = __VERSION__;
-const buildDate = moment.utc(__DATE__);
+const buildDate = new Date(__DATE__);
 const commitHash = __COMMIT__;
 
 type BuildInfoProps = {
@@ -79,7 +79,7 @@ export const BuildInfo = ({ className, enableAdvancedUserClick }: BuildInfoProps
             margin-left: 4px;
           `}
         >
-          {buildDate.format("YYYYMMDD")}
+          {format(buildDate, "yyyyMMdd")}
         </span>
       </div>
       <div>{osInfo}</div>

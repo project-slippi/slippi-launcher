@@ -7,7 +7,7 @@ import CardMedia from "@mui/material/CardMedia";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import stylex from "@stylexjs/stylex";
-import moment from "moment";
+import { format } from "date-fns";
 import React from "react";
 import TimeAgo from "react-timeago";
 
@@ -35,7 +35,7 @@ const styles = stylex.create({
 
 export const NewsArticle = React.memo(function NewsArticle({ item }: { item: NewsItem }) {
   const { imageUrl, title, subtitle, permalink, body, publishedAt } = item;
-  const localDateString = moment(publishedAt).format("LLL");
+  const localDateString = format(new Date(publishedAt), "PPP p");
 
   return (
     <div {...stylex.props(styles.container)}>

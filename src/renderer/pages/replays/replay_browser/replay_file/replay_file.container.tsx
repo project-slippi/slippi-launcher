@@ -11,7 +11,6 @@ import TrackChangesIcon from "@mui/icons-material/TrackChanges";
 import type { FileResult } from "@replays/types";
 import { frameToGameTimer, GameMode, stages as stageUtils } from "@slippi/slippi-js";
 import groupBy from "lodash/groupBy";
-import moment from "moment";
 import React, { useCallback, useMemo } from "react";
 
 import { DraggableFile } from "@/components/draggable_file";
@@ -172,7 +171,7 @@ const generateReplayDetails = ({
   const replayDetails: ReplayDetail[] = [
     {
       Icon: EventIcon,
-      label: monthDayHourFormat(moment(date)) ?? "",
+      label: monthDayHourFormat(new Date(date)) ?? "",
     },
   ];
 
@@ -182,7 +181,7 @@ const generateReplayDetails = ({
       label:
         gameMode === GameMode.TARGET_TEST
           ? frameToGameTimer(lastFrame, { timerType, startingTimerSeconds })
-          : convertFrameCountToDurationString(lastFrame, "m[m] ss[s]"),
+          : convertFrameCountToDurationString(lastFrame, "long"),
     });
   }
 

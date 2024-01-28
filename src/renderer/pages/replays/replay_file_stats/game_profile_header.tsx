@@ -19,7 +19,6 @@ import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
 import { frameToGameTimer, GameMode, stages as stageUtils } from "@slippi/slippi-js";
 import get from "lodash/get";
 import groupBy from "lodash/groupBy";
-import moment from "moment";
 import React from "react";
 
 import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/use_dolphin_store";
@@ -193,7 +192,7 @@ const GameDetails = ({
             startingTimerSeconds: game.startingTimerSeconds ?? null,
             timerType: game.timerType ?? null,
           })
-        : convertFrameCountToDurationString(lastFrame, "m[m] ss[s]")
+        : convertFrameCountToDurationString(lastFrame, "long")
       : "Unknown";
 
   const distance = get(stadiumStats, "distance");
@@ -201,7 +200,7 @@ const GameDetails = ({
 
   const eventDisplay = {
     label: <EventIcon />,
-    content: monthDayHourFormat(moment(startAtDisplay)),
+    content: monthDayHourFormat(startAtDisplay),
   };
 
   const timerDisplay = {
