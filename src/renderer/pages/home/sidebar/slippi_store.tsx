@@ -1,4 +1,3 @@
-import styled from "@emotion/styled";
 import { Button } from "@mui/material";
 import * as stylex from "@stylexjs/stylex";
 import React from "react";
@@ -6,20 +5,12 @@ import React from "react";
 import { ExternalLink } from "@/components/external_link";
 import shopImage from "@/styles/images/shop-image.png";
 
-const SlippiStoreContainer = styled.div`
-  height: 100%;
-  background-color: #21ba44;
-  & > div {
-    height: 100%;
-    width: 100%;
-  }
-`;
-
 const styles = stylex.create({
   container: {
     position: "relative",
     flex: "1",
     overflow: "hidden",
+    backgroundColor: "#21ba44",
   },
   image: {
     position: "absolute",
@@ -45,22 +36,20 @@ const styles = stylex.create({
 export const SlippiStore = React.memo(function SlippiStore() {
   return (
     <div {...stylex.props(styles.container)}>
-      <SlippiStoreContainer>
-        <img src={shopImage} {...stylex.props(styles.image)} />
-        <div {...stylex.props(styles.buttonContainer)}>
-          <Button
-            variant="contained"
-            sx={{ color: "white", textTransform: "uppercase" }}
-            color="secondary"
-            fullWidth={true}
-            LinkComponent={ExternalLink}
-            href="https://start.gg/slippi/shop"
-          >
-            Click to Shop
-          </Button>
-        </div>
-        <div {...stylex.props(styles.closeDate)}>Store Ends: 2/27/24</div>
-      </SlippiStoreContainer>
+      <img src={shopImage} {...stylex.props(styles.image)} />
+      <div {...stylex.props(styles.buttonContainer)}>
+        <Button
+          variant="contained"
+          sx={{ color: "white", textTransform: "uppercase" }}
+          color="secondary"
+          fullWidth={true}
+          LinkComponent={ExternalLink}
+          href="https://start.gg/slippi/shop"
+        >
+          Click to Shop
+        </Button>
+      </div>
+      <div {...stylex.props(styles.closeDate)}>Store Ends: 2/27/24</div>
     </div>
   );
 });
