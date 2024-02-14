@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 
+import { SlippiStore } from "./slippi_store";
 import { TournamentLinks } from "./tournament_links";
-import { TwitterFeed } from "./twitter_feed";
 
 const Outer = styled.div`
   display: flex;
@@ -13,7 +13,7 @@ const Outer = styled.div`
 export const Sidebar = () => {
   return (
     <Outer>
-      <TwitterFeed />
+      <SlippiStore />
       <TournamentLinks />
     </Outer>
   );
