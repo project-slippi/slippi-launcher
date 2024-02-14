@@ -86,6 +86,7 @@ export const SlippiStore = React.memo(function SlippiStore() {
 
       if (isBefore(endDate, now)) {
         setShopOpen(false);
+        setCountdown("");
         clearInterval(interval);
       } else {
         setCountdown(formatDuration(duration, { locale: shortEnLocale }));
