@@ -65,7 +65,7 @@ const InternalSlippiStore = React.memo(function InternalSlippiStore({
       {countdown && (
         <div {...stylex.props(styles.closeDate)}>
           <Typography variant="overline" sx={{ lineHeight: "initial" }}>
-            Stop closes in
+            Shop closes in
           </Typography>
           <Typography fontWeight="bold">{countdown}</Typography>
         </div>
