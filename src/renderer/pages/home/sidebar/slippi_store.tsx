@@ -38,13 +38,7 @@ const styles = stylex.create({
   },
 });
 
-const InternalSlippiStore = React.memo(function InternalSlippiStore({
-  shopOpen,
-  countdown,
-}: {
-  shopOpen: boolean;
-  countdown: string;
-}) {
+const InternalSlippiStore = ({ shopOpen, countdown }: { shopOpen: boolean; countdown: string }) => {
   const buttonText = shopOpen ? "Click to Shop" : "Shop closed";
   return (
     <div {...stylex.props(styles.container)}>
@@ -72,7 +66,7 @@ const InternalSlippiStore = React.memo(function InternalSlippiStore({
       )}
     </div>
   );
-});
+};
 
 export const SlippiStore = React.memo(function SlippiStore() {
   const [shopOpen, setShopOpen] = React.useState(true);
