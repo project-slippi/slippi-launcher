@@ -80,7 +80,7 @@ export const SlippiStore = React.memo(function SlippiStore() {
 
   React.useEffect(() => {
     const endDate = SHOP_CLOSES_AT;
-    const interval = setInterval(() => {
+    const checkTime = () => {
       const now = new Date();
       const duration = intervalToDuration({ start: now, end: endDate });
 
@@ -89,10 +89,12 @@ export const SlippiStore = React.memo(function SlippiStore() {
         setCountdown("");
         clearInterval(interval);
       } else {
-        setCountdown(formatDuration(duration, { locale: shortEnLocale }));
+        setCountdown(formatDuration(duration, { format: ["days", "hours", "minutes"], locale: shortEnLocale }));
       }
-    }, 1000);
+    };
+    checkTime();
 
+    const interval = setInterval(checkTime, 60 * 1000);
     return () => clearInterval(interval);
   }, []);
 
