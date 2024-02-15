@@ -78,11 +78,12 @@ jobs:
         working-directory: ${{ github.workspace }}
         shell: powershell
         run: |
-          if (!(Test-Path ".\CodeSignTool\CodeSignTool.bat" -PathType Leaf)) { 
+          if (!(Test-Path ".\CodeSignTool\CodeSignTool.bat" -PathType Leaf)) {
+            mkdir CodeSignTool
+            cd .\CodeSignTool
             Invoke-WebRequest -Uri https://www.ssl.com/download/codesigntool-for-windows/ -UseBasicParsing -OutFile ".\CodeSignTool.zip"
             7z x CodeSignTool.zip
             Remove-Item CodeSignTool.zip
-            Get-ChildItem -Path . | Where-Object { $_.Name -like "CodeSignTool*" } | %{ Rename-Item -LiteralPath $_.FullName -NewName "CodeSignTool" }
           }
       - name: Load Windows signing secrets
         env:
