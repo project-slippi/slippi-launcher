@@ -1,5 +1,6 @@
 import { Button, Typography } from "@mui/material";
 import * as stylex from "@stylexjs/stylex";
+import type { Duration } from "date-fns";
 import { formatDuration, intervalToDuration, isBefore } from "date-fns";
 import React from "react";
 
@@ -86,12 +87,14 @@ export const SlippiStore = React.memo(function SlippiStore() {
         setCountdown("");
         window.clearInterval(interval);
       } else {
-        setCountdown(formatDuration(duration, { format: ["days", "hours", "minutes"], locale: shortEnLocale }));
+        const format: (keyof Duration)[] =
+          (duration.hours ?? 0) < 1 ? ["minutes", "seconds"] : ["days", "hours", "minutes"];
+        setCountdown(formatDuration(duration, { format, locale: shortEnLocale }));
       }
     };
     checkTime();
 
-    interval = window.setInterval(checkTime, 60 * 1000);
+    interval = window.setInterval(checkTime, 1000);
     return () => window.clearInterval(interval);
   }, []);
 
