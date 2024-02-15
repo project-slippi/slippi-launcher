@@ -88,7 +88,7 @@ export const SlippiStore = React.memo(function SlippiStore() {
         window.clearInterval(interval);
       } else {
         const format: (keyof Duration)[] =
-          (duration.hours ?? 0) < 1 ? ["minutes", "seconds"] : ["days", "hours", "minutes"];
+          (duration.hours ?? 0) < 1 && (duration.days ?? 0) < 1 ? ["minutes", "seconds"] : ["days", "hours", "minutes"];
         setCountdown(formatDuration(duration, { format, locale: shortEnLocale }));
       }
     };
