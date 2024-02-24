@@ -17,6 +17,7 @@ import type { DolphinVersionResponse } from "./fetch_latest_version";
 const log = electronLog.scope("dolphin/ishiiInstallation");
 
 const isLinux = process.platform === "linux";
+const isMac = process.platform === "darwin";
 
 // taken from https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
 const semverRegex =
@@ -260,7 +261,7 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
 
   private async _uninstallDolphin() {
     await fs.remove(this.installationFolder);
-    if (isLinux) {
+    if (isLinux || isMac) {
       await fs.remove(this.userFolder);
     }
   }
@@ -271,6 +272,11 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
     if (cleanInstall) {
       await this._uninstallDolphin();
     } else {
+      if (isLinux || isMac) {
+        // macOS and Linux use bundles which are safe to delete since they contain no user config
+        // deleting the bundle first lets us ignore any issues that would come up when overwriting the bundle
+        await fs.remove(this.installationFolder);
+      }
       await this.clearCache(); // clear cache to avoid shader issues on new versions
     }
 
