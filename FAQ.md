@@ -63,14 +63,14 @@ Delay frames are how we account for the time it takes to send an opponent your i
 
 A single delay frame is equal to 4 buffer in traditional Dolphin netplay. Our recommended default is 2 frame delay (8 buffer). We suggest using 2 frame delay for connections up to 130ms ping. Mixed buffers are allowed to play each other.
 
-If you want to change this value, first open Dolphin (if using the Launcher go to Settings -> Netplay -> Configure Dolphin) and go to `Config` -> `GameCube`. At the bottom you will see the option to update the Delay Frames. You can update this value at any time but it will only update for the next game you play.
+If you want to change this value, first open Dolphin (if using the Launcher go to Settings -> Netplay -> Configure Dolphin) and go to `Config` -> `Slippi` to find the option to update the Delay Frames. You can update this value at any time but it will only update for the next game you play.
 
 ## Can I use Widescreen (16:9) when playing Slippi Online?
 
 Yes, to enable widescreen go to the Netplay in the Launcher settings depending > `Manage Gecko Codes` > and enable the Widescreen gecko code. You can do the same for replays by going to the Playback tab instead.
 ## Is UCF included in Slippi Online?
 
-Yes, we currently ship with UCF 0.8 and it is applied everywhere by default.
+Yes, we currently ship with UCF 0.84 and it is applied everywhere by default.
 
 ## Where can I find a Melee ISO?
 
@@ -92,7 +92,7 @@ Replays are stored by default in `Documents/Slippi` on Windows and `~/Slippi` on
 
 ### Updated OS Requirements
 - Windows 10 or newer
-- macOS Catalina (10.15) or newer
+- macOS Monterey (12.0) or newer
 - Ubuntu 22.04 or newer and the following packages
   - libfuse2
   - qt6-qpa-plugins
