@@ -146,9 +146,11 @@ jobs:
           yarn run lint
       - name: Prepare artifacts
         shell: bash
+        env:
+          FROM_FORK: ${{ github.event_name == 'pull_request' }} # pull request events from our repo are skipped in favor of push events
         run: |
-          msg="$(git log -1 --no-merges --pretty=%B)"
-          if [[ ! "$msg" =~ "^release.*" ]];
+          msg="$(git log -1 --no-merges --pretty=%B | head -n 1)"
+          if [[ "$FROM_FORK" = "true" ]] || [[ ! "$msg" =~ ^release:.* ]];
           then
             rm release/build/*-mac.zip || true;
           fi
