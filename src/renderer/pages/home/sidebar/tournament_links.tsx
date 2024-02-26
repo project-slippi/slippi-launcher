@@ -10,7 +10,7 @@ import { ExternalLink } from "@/components/external_link";
 import { ReactComponent as StartggLogo } from "@/styles/images/startgg_logo.svg";
 
 const NEARBY_TOURNAMENTS_URL =
-  "https://start.gg/search/near_me?range%5BeffectiveRegistrationClosesAt%5D%5Bmin%5D=1&refinementList%5Bevents.videogame.id%5D=1&refinementList%5BhasOnlineEvents%5D=&refinementList%5Bstate%5D%5B0%5D=1&page=1&configure%5BhitsPerPage%5D=15&configure%5Bfilters%5D=profileType%3Atournament&configure%5BaroundLatLngViaIP%5D=true&configure%5BaroundRadius%5D=160934";
+  "https://start.gg/search/near_me?refinementList%5Bevents.videogame.id%5D=1&refinementList%5BhasOnlineEvents%5D=&refinementList%5Bstate%5D%5B0%5D=1&page=1&configure%5BhitsPerPage%5D=15&configure%5Bfilters%5D=profileType%3Atournament&configure%5BaroundLatLngViaIP%5D=true&configure%5BaroundRadius%5D=160934";
 
 const ONLINE_TOURNAMENTS_URL =
   "https://start.gg/search/tournaments?refinementList%5Bevents.videogame.id%5D=1&refinementList%5BhasOnlineEvents%5D%5B0%5D=true&page=1&configure%5BhitsPerPage%5D=15&configure%5Bfilters%5D=profileType%3Atournament&range%5BeffectiveRegistrationClosesAt%5D%5Bmin%5D=1";
