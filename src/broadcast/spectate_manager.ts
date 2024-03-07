@@ -219,10 +219,10 @@ export class SpectateManager extends EventEmitter {
    *
    * @param {string} broadcastId The ID of the broadcast to watch
    * @param {string} targetPath Where the SLP files should be stored
-   * @param {true} [singleton] If true, it will open the broadcasts only
+   * @param {boolean} [singleton] If true, it will open the broadcasts only
    * in a single Dolphin window. Opens each broadcast in their own window otherwise.
    */
-  public watchBroadcast(broadcastId: string, targetPath: string, singleton?: true) {
+  public watchBroadcast(broadcastId: string, targetPath: string, singleton?: boolean) {
     Preconditions.checkExists(this.wsConnection, "No websocket connection");
 
     const existingBroadcasts = Object.keys(this.openBroadcasts);
