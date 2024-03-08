@@ -20,6 +20,7 @@ export default function setupBroadcastIpc({
 }) {
   let spectateWorker: SpectateWorker | undefined;
   let broadcastWorker: BroadcastWorker | undefined;
+  let prefixOrdinal = 0;
 
   dolphinManager.events
     .filter<DolphinPlaybackClosedEvent>((event) => {
@@ -46,7 +47,8 @@ export default function setupBroadcastIpc({
     );
 
     const folderPath = settingsManager.get().settings.spectateSlpPath;
-    await spectateWorker.startSpectate(broadcasterId, folderPath);
+    await spectateWorker.startSpectate(broadcasterId, folderPath, { idPostfix: `broadcast${prefixOrdinal}` });
+    prefixOrdinal += 1;
     return { success: true };
   });
 

@@ -77,3 +77,8 @@ export type BroadcastService = {
   startBroadcast(config: StartBroadcastConfig): Promise<void>;
   stopBroadcast(): Promise<void>;
 };
+
+export type SpectateDolphinOptions = {
+  dolphinId?: string;
+  idPostfix?: string;
+};

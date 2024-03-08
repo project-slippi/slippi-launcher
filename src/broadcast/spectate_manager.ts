@@ -5,12 +5,10 @@ import * as fs from "fs-extra";
 import type { connection, Message } from "websocket";
 import { client as WebSocketClient } from "websocket";
 
-import type { BroadcasterItem } from "./types";
+import type { BroadcasterItem, SpectateDolphinOptions } from "./types";
 import { SpectateEvent } from "./types";
 
 const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
-
-const DOLPHIN_INSTANCE_ID = "spectate";
 
 type BroadcastInfo = {
   broadcastId: string;
@@ -20,7 +18,11 @@ type BroadcastInfo = {
   dolphinId: string;
 };
 
-const generatePlaybackId = (broadcastId: string) => `spectate-${broadcastId}`;
+// since we can have multiple SpectateManagers, we need to be careful about creating colliding ids
+const generatePlaybackId = (postfix?: string) => {
+  const now = Date.now().toString();
+  return postfix ? now + postfix : now;
+};
 
 /**
  * Responsible for retrieving Dolphin game data over enet and sending the data
@@ -225,27 +227,24 @@ export class SpectateManager extends EventEmitter {
    * @param {boolean} [singleton] If true, it will open the broadcasts only
    * in a single Dolphin window. Opens each broadcast in their own window otherwise.
    */
-  public watchBroadcast(broadcastId: string, targetPath: string, singleton?: boolean) {
+  public watchBroadcast(broadcastId: string, targetPath: string, dolphinOptions: SpectateDolphinOptions) {
     Preconditions.checkExists(this.wsConnection, "No websocket connection");
 
-    const existingBroadcasts = Object.keys(this.openBroadcasts);
-    if (existingBroadcasts.includes(broadcastId)) {
-      // We're already watching this broadcast!
+    const openBroadcast = this.openBroadcasts[broadcastId];
+    if (openBroadcast) {
       this.emit(SpectateEvent.LOG, `We are already watching the selected broadcast`);
-      return this.openBroadcasts[broadcastId].dolphinId;
+      return openBroadcast.dolphinId;
     }
 
-    let dolphinPlaybackId = generatePlaybackId(broadcastId);
-
-    // We're only watching one at at time so stop other broadcasts
-    if (singleton) {
-      existingBroadcasts.forEach((broadcastInfo) => {
-        this.stopWatchingBroadcast(broadcastInfo);
-      });
-
-      // Use the default playback ID
-      dolphinPlaybackId = DOLPHIN_INSTANCE_ID;
+    if (dolphinOptions.dolphinId) {
+      const existingDolphin = Object.values(this.openBroadcasts).find(
+        (broadcastInfo) => broadcastInfo.dolphinId === dolphinOptions.dolphinId,
+      );
+      if (existingDolphin) {
+        this.stopWatchingBroadcast(existingDolphin.broadcastId);
+      }
     }
+    const dolphinPlaybackId = dolphinOptions.dolphinId || generatePlaybackId(dolphinOptions.idPostfix);
 
     fs.ensureDirSync(targetPath);
     const slpFileWriter = new SlpFileWriter({

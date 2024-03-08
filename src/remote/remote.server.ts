@@ -1,4 +1,4 @@
-import type { BroadcasterItem } from "@broadcast/types";
+import type { BroadcasterItem, SpectateDolphinOptions } from "@broadcast/types";
 import type { DolphinManager } from "@dolphin/manager";
 import type { DolphinPlaybackClosedEvent, ReplayCommunication } from "@dolphin/types";
 import { DolphinEventType, DolphinLaunchType } from "@dolphin/types";
@@ -26,12 +26,15 @@ export default class RemoteServer {
   private remoteServer: WebSocketServer | null;
   private connection: connection | null;
 
+  private prefixOrdinal: number;
+
   constructor(dolphinManager: DolphinManager, settingsManager: SettingsManager) {
     this.authToken = "";
     this.spectateWorker = null;
     this.httpServer = null;
     this.remoteServer = null;
     this.connection = null;
+    this.prefixOrdinal = 0;
 
     this.settingsManager = settingsManager;
     this.dolphinManager = dolphinManager;
@@ -133,14 +136,23 @@ export default class RemoteServer {
             if (json.op === "list-broadcasts-request") {
               await throttledRefresh();
             } else if (json.op === "spectate-broadcast-request") {
-              if (!json.broadcastId) {
+              const broadcastId = json.broadcastId;
+              if (!broadcastId) {
                 newConnection.sendUTF(JSON.stringify({ op: "spectate-broadcast-response", err: "no broadcastId" }));
                 return;
               }
 
+              const dolphinOptions: SpectateDolphinOptions = {};
+              const dolphinId = json.dolphinId;
+              if (dolphinId && typeof dolphinId === "string") {
+                dolphinOptions.dolphinId = dolphinId;
+              } else {
+                dolphinOptions.idPostfix = `remote${this.prefixOrdinal}`;
+                this.prefixOrdinal += 1;
+              }
               try {
                 const path = this.settingsManager.get().settings.spectateSlpPath;
-                const dolphinId = await this.spectateWorker!.startSpectate(json.broadcastId, path);
+                const dolphinId = await this.spectateWorker!.startSpectate(broadcastId, path, dolphinOptions);
                 newConnection.sendUTF(JSON.stringify({ op: "spectate-broadcast-response", dolphinId, path }));
               } catch (e) {
                 const err = typeof e === "string" ? e : e instanceof Error ? e.message : "unknown";
