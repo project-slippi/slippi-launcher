@@ -28,7 +28,7 @@ export const SpectatePage = React.memo(
   }: {
     userId?: string;
     broadcasts: BroadcasterItem[];
-    onRefreshBroadcasts: () => Promise<void> | undefined;
+    onRefreshBroadcasts: () => void;
     watchBroadcast: (id: string) => void;
     startRemoteServer: () => Promise<{ port: number }>;
     stopRemoteServer: () => Promise<void>;
