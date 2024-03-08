@@ -12,7 +12,7 @@ import { SpectateEvent } from "./types";
 
 interface Methods {
   dispose: () => Promise<void>;
-  startSpectate(broadcastId: string, targetPath: string): Promise<void>;
+  startSpectate(broadcastId: string, targetPath: string): Promise<string>;
   stopSpectate(broadcastId: string): Promise<void>;
   dolphinClosed(playbackId: string): Promise<void>;
   refreshBroadcastList(authToken: string): Promise<void>;
@@ -65,8 +65,8 @@ const methods: WorkerSpec = {
 
     spectateManager.removeAllListeners();
   },
-  async startSpectate(broadcastId: string, targetPath: string): Promise<void> {
-    await spectateManager.watchBroadcast(broadcastId, targetPath);
+  async startSpectate(broadcastId: string, targetPath: string): Promise<string> {
+    return await spectateManager.watchBroadcast(broadcastId, targetPath);
   },
   async stopSpectate(broadcastId: string): Promise<void> {
     spectateManager.stopWatchingBroadcast(broadcastId);

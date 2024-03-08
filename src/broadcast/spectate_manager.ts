@@ -229,7 +229,7 @@ export class SpectateManager extends EventEmitter {
     if (existingBroadcasts.includes(broadcastId)) {
       // We're already watching this broadcast!
       this.emit(SpectateEvent.LOG, `We are already watching the selected broadcast`);
-      return;
+      return this.openBroadcasts[broadcastId].dolphinId;
     }
 
     let dolphinPlaybackId = generatePlaybackId(broadcastId);
@@ -273,6 +273,7 @@ export class SpectateManager extends EventEmitter {
     // used to clear out any previous file that we were reading for. The file will get updated
     // by the fileWriter
     this._playFile("", dolphinPlaybackId, broadcasterName).catch(console.warn);
+    return dolphinPlaybackId;
   }
 
   public handleClosedDolphin(playbackId: string) {
