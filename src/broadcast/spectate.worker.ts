@@ -21,6 +21,7 @@ interface Methods {
   getBroadcastListObservable(): Observable<BroadcasterItem[]>;
   getSpectateDetailsObservable(): Observable<{ playbackId: string; filePath: string; broadcasterName: string }>;
   getReconnectObservable(): Observable<Record<never, never>>;
+  getGameEndObservable(): Observable<string>;
 }
 
 export type WorkerSpec = ModuleMethods & Methods;
@@ -32,6 +33,7 @@ const errorSubject = new Subject<Error | string>();
 const broadcastListSubject = new Subject<BroadcasterItem[]>();
 const spectateDetailsSubject = new Subject<{ playbackId: string; filePath: string; broadcasterName: string }>();
 const reconnectSubject = new Subject<Record<never, never>>();
+const gameEndSubject = new Subject<string>();
 
 // Forward the events to the renderer
 spectateManager.on(SpectateEvent.BROADCAST_LIST_UPDATE, async (data: BroadcasterItem[]) => {
@@ -52,6 +54,10 @@ spectateManager.on(SpectateEvent.NEW_FILE, async (playbackId: string, filePath: 
 
 spectateManager.on(SpectateEvent.RECONNECT, async () => {
   reconnectSubject.next({});
+});
+
+spectateManager.on(SpectateEvent.GAME_END, async (dolphinId: string) => {
+  gameEndSubject.next(dolphinId);
 });
 
 const methods: WorkerSpec = {
@@ -92,6 +98,9 @@ const methods: WorkerSpec = {
   },
   getReconnectObservable(): Observable<Record<never, never>> {
     return Observable.from(reconnectSubject);
+  },
+  getGameEndObservable(): Observable<string> {
+    return Observable.from(gameEndSubject);
   },
 };
 

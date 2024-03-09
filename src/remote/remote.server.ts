@@ -70,6 +70,11 @@ export default class RemoteServer {
             log.error(e);
           }
         });
+        spectateWorker.getGameEndObservable().subscribe((dolphinId: string) => {
+          if (this.connection) {
+            this.connection.sendUTF(JSON.stringify({ op: "game-end-event", dolphinId }));
+          }
+        });
       })
       .catch(log.error);
   }
