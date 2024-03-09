@@ -64,10 +64,12 @@ export class SpectateManager extends EventEmitter {
         }
         case "end_game": {
           // End the current game if it's not already ended
-          this.emit(SpectateEvent.GAME_END, broadcastInfo.dolphinId);
           this.emit(SpectateEvent.LOG, "Game end explicit");
           broadcastInfo.fileWriter.endCurrentFile();
           broadcastInfo.gameStarted = false;
+
+          // Observers should be able to depend on the file being closed, so emit this last.
+          this.emit(SpectateEvent.GAME_END, broadcastInfo.dolphinId);
           break;
         }
         case "game_event": {
