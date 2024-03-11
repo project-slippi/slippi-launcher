@@ -5,6 +5,7 @@ import { DolphinEventType, DolphinLaunchType } from "@dolphin/types";
 import type { SettingsManager } from "@settings/settings_manager";
 import log from "electron-log";
 import http from "http";
+import { throttle } from "lodash";
 import type { AddressInfo } from "net";
 import type { connection } from "websocket";
 import { server as WebSocketServer } from "websocket";
@@ -115,6 +116,14 @@ export default class RemoteServer {
       this.remoteServer.on("request", async (request) => {
         if (!this.connection && request.requestedProtocols.includes(SPECTATE_PROTOCOL)) {
           const newConnection = request.accept(SPECTATE_PROTOCOL, request.origin);
+          const throttledRefresh = throttle(async () => {
+            try {
+              await this.spectateWorker!.refreshBroadcastList(this.authToken);
+            } catch (e) {
+              const err = typeof e === "string" ? e : e instanceof Error ? e.message : "unknown";
+              newConnection.sendUTF(JSON.stringify({ op: "list-broadcasts-response", err }));
+            }
+          }, 2000);
           newConnection.on("message", async (data) => {
             if (data.type === "binary") {
               return;
@@ -122,14 +131,8 @@ export default class RemoteServer {
 
             const json = JSON.parse(data.utf8Data);
             if (json.op === "list-broadcasts-request") {
-              try {
-                await this.spectateWorker!.refreshBroadcastList(this.authToken);
-              } catch (e) {
-                const err = typeof e === "string" ? e : e instanceof Error ? e.message : "unknown";
-                newConnection.sendUTF(JSON.stringify({ op: "list-broadcasts-response", err }));
-              }
-            }
-            if (json.op === "spectate-broadcast-request") {
+              await throttledRefresh();
+            } else if (json.op === "spectate-broadcast-request") {
               if (!json.broadcastId) {
                 newConnection.sendUTF(JSON.stringify({ op: "spectate-broadcast-response", err: "no broadcastId" }));
                 return;
