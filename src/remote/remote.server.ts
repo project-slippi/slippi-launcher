@@ -18,15 +18,16 @@ const SPECTATE_PROTOCOL = "spectate-protocol";
 export default class RemoteServer {
   private dolphinManager: DolphinManager;
   private settingsManager: SettingsManager;
-  private spectateWorkerPromise: Promise<SpectateWorker>;
   private authToken: string;
 
+  private spectateWorker: SpectateWorker | null;
   private httpServer: http.Server | null;
   private remoteServer: WebSocketServer | null;
   private connection: connection | null;
 
   constructor(dolphinManager: DolphinManager, settingsManager: SettingsManager) {
     this.authToken = "";
+    this.spectateWorker = null;
     this.httpServer = null;
     this.remoteServer = null;
     this.connection = null;
@@ -41,46 +42,50 @@ export default class RemoteServer {
         if (this.connection) {
           this.connection.sendUTF(JSON.stringify({ op: "dolphin-closed-event", dolphinId: event.instanceId }));
         }
-        const spectateWorker = await this.spectateWorkerPromise;
-        try {
-          await spectateWorker.dolphinClosed(event.instanceId);
-        } catch (e) {
-          log.error(e);
-        }
-      });
-    this.spectateWorkerPromise = createSpectateWorker();
-    this.spectateWorkerPromise
-      .then((spectateWorker) => {
-        spectateWorker.getBroadcastListObservable().subscribe((data: BroadcasterItem[]) => {
-          if (this.connection) {
-            this.connection.sendUTF(JSON.stringify({ op: "list-broadcasts-response", broadcasts: data }));
-          }
-        });
-        spectateWorker.getSpectateDetailsObservable().subscribe(async ({ playbackId, filePath, broadcasterName }) => {
-          const replayComm: ReplayCommunication = {
-            mode: "mirror",
-            replay: filePath,
-            gameStation: broadcasterName,
-          };
+        if (this.spectateWorker) {
           try {
-            await this.dolphinManager.launchPlaybackDolphin(playbackId, replayComm);
-            if (this.connection && filePath) {
-              this.connection.sendUTF(JSON.stringify({ op: "new-file-event", dolphinId: playbackId, filePath }));
-            }
+            await this.spectateWorker.dolphinClosed(event.instanceId);
           } catch (e) {
             log.error(e);
           }
-        });
-        spectateWorker.getGameEndObservable().subscribe((dolphinId: string) => {
-          if (this.connection) {
-            this.connection.sendUTF(JSON.stringify({ op: "game-end-event", dolphinId }));
-          }
-        });
-      })
-      .catch(log.error);
+        }
+      });
+  }
+
+  private async createSpectateWorker() {
+    this.spectateWorker = await createSpectateWorker();
+    this.spectateWorker.getBroadcastListObservable().subscribe((data: BroadcasterItem[]) => {
+      if (this.connection) {
+        this.connection.sendUTF(JSON.stringify({ op: "list-broadcasts-response", broadcasts: data }));
+      }
+    });
+    this.spectateWorker.getSpectateDetailsObservable().subscribe(async ({ playbackId, filePath, broadcasterName }) => {
+      const replayComm: ReplayCommunication = {
+        mode: "mirror",
+        replay: filePath,
+        gameStation: broadcasterName,
+      };
+      try {
+        await this.dolphinManager.launchPlaybackDolphin(playbackId, replayComm);
+        if (this.connection && filePath) {
+          this.connection.sendUTF(JSON.stringify({ op: "new-file-event", dolphinId: playbackId, filePath }));
+        }
+      } catch (e) {
+        log.error(e);
+      }
+    });
+    this.spectateWorker.getGameEndObservable().subscribe((dolphinId: string) => {
+      if (this.connection) {
+        this.connection.sendUTF(JSON.stringify({ op: "game-end-event", dolphinId }));
+      }
+    });
   }
 
   public async start(authToken: string, port: number): Promise<{ success: boolean; err?: string }> {
+    if (!this.spectateWorker) {
+      await this.createSpectateWorker();
+    }
+
     if (this.httpServer && this.remoteServer) {
       return (<AddressInfo>this.httpServer.address()).port === port
         ? { success: true }
@@ -89,8 +94,6 @@ export default class RemoteServer {
 
     this.authToken = authToken;
     try {
-      const spectateWorker = await this.spectateWorkerPromise;
-
       this.httpServer = http.createServer();
       await new Promise<void>((resolve, reject) => {
         this.httpServer!.once("error", (e) => {
@@ -120,7 +123,7 @@ export default class RemoteServer {
             const json = JSON.parse(data.utf8Data);
             if (json.op === "list-broadcasts-request") {
               try {
-                await spectateWorker.refreshBroadcastList(this.authToken);
+                await this.spectateWorker!.refreshBroadcastList(this.authToken);
               } catch (e) {
                 const err = typeof e === "string" ? e : e instanceof Error ? e.message : "unknown";
                 newConnection.sendUTF(JSON.stringify({ op: "list-broadcasts-response", err }));
@@ -134,7 +137,7 @@ export default class RemoteServer {
 
               try {
                 const path = this.settingsManager.get().settings.spectateSlpPath;
-                const dolphinId = await spectateWorker.startSpectate(json.broadcastId, path);
+                const dolphinId = await this.spectateWorker!.startSpectate(json.broadcastId, path);
                 newConnection.sendUTF(JSON.stringify({ op: "spectate-broadcast-response", dolphinId, path }));
               } catch (e) {
                 const err = typeof e === "string" ? e : e instanceof Error ? e.message : "unknown";
@@ -169,9 +172,8 @@ export default class RemoteServer {
     }
 
     this.authToken = authToken;
-    const spectateWorker = await this.spectateWorkerPromise;
     try {
-      await spectateWorker.refreshBroadcastList(this.authToken);
+      await this.spectateWorker!.refreshBroadcastList(this.authToken);
       return true;
     } catch (e) {
       return false;
