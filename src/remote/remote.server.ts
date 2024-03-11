@@ -9,6 +9,7 @@ import type { AddressInfo } from "net";
 import type { connection } from "websocket";
 import { server as WebSocketServer } from "websocket";
 
+import { ipc_remoteStateEvent } from "./ipc";
 import type { SpectateWorker } from "./spectate.worker.interface";
 import { createSpectateWorker } from "./spectate.worker.interface";
 
@@ -101,6 +102,7 @@ export default class RemoteServer {
           511, // default backlog queue length
           () => {
             this.httpServer!.removeAllListeners("error");
+            ipc_remoteStateEvent.main!.trigger({ connected: false, started: true, port }).catch(log.error);
             resolve();
           },
         );
@@ -142,8 +144,10 @@ export default class RemoteServer {
           });
           newConnection.on("close", () => {
             this.connection = null;
+            ipc_remoteStateEvent.main!.trigger({ connected: false, started: true }).catch(log.error);
           });
           this.connection = newConnection;
+          ipc_remoteStateEvent.main!.trigger({ connected: true, started: true }).catch(log.error);
         } else {
           request.reject();
         }
@@ -151,7 +155,6 @@ export default class RemoteServer {
 
       return { success: true };
     } catch (e: any) {
-      console.log(JSON.stringify(e));
       if (e.code === "EADDRINUSE") {
         return { success: false, err: "Port in use" };
       }
@@ -176,14 +179,16 @@ export default class RemoteServer {
   }
 
   public stop() {
-    this.connection = null;
-    if (this.remoteServer) {
-      this.remoteServer.shutDown();
-      this.remoteServer = null;
-    }
-    if (this.httpServer) {
+    if (this.httpServer && this.remoteServer) {
+      if (this.connection) {
+        this.connection.removeAllListeners();
+        this.connection = null;
+      }
       this.httpServer.close();
       this.httpServer = null;
+      this.remoteServer.shutDown();
+      this.remoteServer = null;
+      ipc_remoteStateEvent.main!.trigger({ connected: false, started: false }).catch(log.error);
     }
   }
 }

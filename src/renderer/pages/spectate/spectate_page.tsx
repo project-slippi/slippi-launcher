@@ -21,6 +21,7 @@ export const SpectatePage = React.memo(
   ({
     userId,
     broadcasts,
+    remoteServerState,
     onRefreshBroadcasts,
     watchBroadcast,
     startRemoteServer,
@@ -28,6 +29,7 @@ export const SpectatePage = React.memo(
   }: {
     userId?: string;
     broadcasts: BroadcasterItem[];
+    remoteServerState: { connected: boolean; started: boolean; port: number };
     onRefreshBroadcasts: () => void;
     watchBroadcast: (id: string) => void;
     startRemoteServer: (port: number) => Promise<{ success: boolean; err?: string }>;
@@ -99,7 +101,11 @@ export const SpectatePage = React.memo(
               >
                 <SpectatorIdBlock userId={userId} />
                 <ShareGameplayBlock />
-                <WebSocketBlock startRemoteServer={startRemoteServer} stopRemoteServer={stopRemoteServer} />
+                <WebSocketBlock
+                  remoteServerState={remoteServerState}
+                  startRemoteServer={startRemoteServer}
+                  stopRemoteServer={stopRemoteServer}
+                />
               </div>
             }
             style={{ gridTemplateColumns: "auto 400px" }}

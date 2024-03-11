@@ -18,7 +18,7 @@ import { useBroadcast } from "./use_broadcast";
 import { useBroadcastList, useBroadcastListStore } from "./use_broadcast_list";
 import { useConsoleDiscoveryStore } from "./use_console_discovery";
 import { useIsoVerification } from "./use_iso_verification";
-import { useRemoteServer } from "./use_remote_server";
+import { useRemoteServer, useRemoteServerStateStore } from "./use_remote_server";
 import { useReplayBrowserNavigation } from "./use_replay_browser_list";
 import { useSettings } from "./use_settings";
 import { useSettingsModal } from "./use_settings_modal";
@@ -194,8 +194,13 @@ export const useAppListeners = () => {
     return broadcastService.onSpectateReconnect(refreshBroadcasts);
   }, [refreshBroadcasts, broadcastService]);
 
-  const [, reconnectRemoteServer] = useRemoteServer();
+  const [, , reconnectRemoteServer] = useRemoteServer();
   React.useEffect(() => {
     return remoteService.onReconnect(reconnectRemoteServer);
   }, [reconnectRemoteServer, remoteService]);
+
+  const updateRemoteServerState = useRemoteServerStateStore((store) => store.setState);
+  React.useEffect(() => {
+    return remoteService.onState(updateRemoteServerState);
+  }, [updateRemoteServerState, remoteService]);
 };

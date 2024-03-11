@@ -14,18 +14,19 @@ const StartStopButton = styled(Button)`
 
 export const WebSocketBlock = React.memo(
   ({
+    remoteServerState,
     startRemoteServer,
     stopRemoteServer,
   }: {
+    remoteServerState: { connected: boolean; started: boolean; port: number };
     startRemoteServer: (port: number) => Promise<{ success: boolean; err?: string }>;
     stopRemoteServer: () => Promise<void>;
   }) => {
-    const [started, setStarted] = React.useState(false);
     const [startError, setStartError] = React.useState("");
 
     const [portError, setPortError] = React.useState(false);
-    const [port, setPort] = React.useState(49809);
-    const address = "ws://localhost:" + port;
+    const [chosenPort, setChosenPort] = React.useState(remoteServerState.port || 49809);
+    const address = "ws://localhost:" + remoteServerState.port;
 
     const [copied, setCopied] = React.useState(false);
     const onCopy = React.useCallback(() => {
@@ -40,19 +41,28 @@ export const WebSocketBlock = React.memo(
     const [starting, setStarting] = React.useState(false);
     const onStart = async () => {
       setStarting(true);
-      const { success, err } = await startRemoteServer(port);
+      const { success, err } = await startRemoteServer(chosenPort);
       if (!success && err) {
         setStartError(err);
       } else {
         setStartError("");
-        setStarted(true);
       }
       setStarting(false);
     };
     const onStop = async () => {
       await stopRemoteServer();
-      setStarted(false);
     };
+
+    let status = "";
+    if (remoteServerState.connected && remoteServerState.started) {
+      status = "Connected";
+    } else if (remoteServerState.started) {
+      status = "Started";
+    } else if (starting) {
+      status = "Starting...";
+    } else {
+      status = "Stopped";
+    }
 
     return (
       <InfoBlock title="Spectate Remote Control">
@@ -80,7 +90,7 @@ export const WebSocketBlock = React.memo(
           >
             Status
           </span>
-          {started ? "Started" : "Stopped"}
+          {status}
         </div>
         <div
           css={css`
@@ -89,7 +99,7 @@ export const WebSocketBlock = React.memo(
             margin-bottom: 14px;
           `}
         >
-          {started ? (
+          {remoteServerState.started ? (
             <>
               <InputBase
                 css={css`
@@ -103,13 +113,13 @@ export const WebSocketBlock = React.memo(
                 disabled={true}
                 value={address}
               />
-              <Button variant="contained" color="secondary" onClick={onCopy} disabled={port === 0}>
+              <Button variant="contained" color="secondary" onClick={onCopy}>
                 {copied ? "Copied!" : "Copy"}
               </Button>
             </>
           ) : (
             <TextField
-              defaultValue={port}
+              defaultValue={chosenPort}
               error={portError || !!startError}
               helperText={startError || (portError && "Must be a number from 1 to 65535")}
               inputProps={{ maxLength: 5 }}
@@ -120,13 +130,13 @@ export const WebSocketBlock = React.memo(
                   setPortError(true);
                 } else {
                   setPortError(false);
-                  setPort(num);
+                  setChosenPort(num);
                 }
               }}
             />
           )}
         </div>
-        {started ? (
+        {remoteServerState.started ? (
           <StartStopButton variant="outlined" color="secondary" onClick={onStop}>
             Stop Server
           </StartStopButton>
