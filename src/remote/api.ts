@@ -13,8 +13,8 @@ const remoteApi: RemoteService = {
     });
     return destroy;
   },
-  async startRemoteServer(authToken: string) {
-    const { result } = await ipc_startRemoteServer.renderer!.trigger({ authToken });
+  async startRemoteServer(authToken: string, port: number) {
+    const { result } = await ipc_startRemoteServer.renderer!.trigger({ authToken, port });
     return result;
   },
   async reconnectRemoteServer(authToken: string) {

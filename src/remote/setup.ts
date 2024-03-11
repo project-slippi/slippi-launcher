@@ -12,8 +12,8 @@ export default function setupRemoteIpc({
   settingsManager: SettingsManager;
 }) {
   const remoteServer = new RemoteServer(dolphinManager, settingsManager);
-  ipc_startRemoteServer.main!.handle(async ({ authToken }) => {
-    return { port: await remoteServer.start(authToken) };
+  ipc_startRemoteServer.main!.handle(async ({ authToken, port }) => {
+    return await remoteServer.start(authToken, port);
   });
   ipc_reconnectRemoteServer.main!.handle(async ({ authToken }) => {
     return { success: await remoteServer.reconnect(authToken) };

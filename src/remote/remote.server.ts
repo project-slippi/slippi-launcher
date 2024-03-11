@@ -79,9 +79,11 @@ export default class RemoteServer {
       .catch(log.error);
   }
 
-  public async start(authToken: string): Promise<number> {
+  public async start(authToken: string, port: number): Promise<{ success: boolean; err?: string }> {
     if (this.httpServer && this.remoteServer) {
-      return (<AddressInfo>this.httpServer.address()).port;
+      return (<AddressInfo>this.httpServer.address()).port === port
+        ? { success: true }
+        : { success: false, err: `server already started on port ${port}` };
     }
 
     this.authToken = authToken;
@@ -94,7 +96,7 @@ export default class RemoteServer {
           reject(e);
         });
         this.httpServer!.listen(
-          0, // let the OS decide a port
+          port,
           "localhost", // bind only to localhost
           511, // default backlog queue length
           () => {
@@ -118,8 +120,8 @@ export default class RemoteServer {
               try {
                 await spectateWorker.refreshBroadcastList(this.authToken);
               } catch (e) {
-                const message = typeof e === "string" ? e : e instanceof Error ? e.message : "unknown";
-                newConnection.sendUTF(JSON.stringify({ op: "list-broadcasts-response", err: message }));
+                const err = typeof e === "string" ? e : e instanceof Error ? e.message : "unknown";
+                newConnection.sendUTF(JSON.stringify({ op: "list-broadcasts-response", err }));
               }
             }
             if (json.op === "spectate-broadcast-request") {
@@ -133,8 +135,8 @@ export default class RemoteServer {
                 const dolphinId = await spectateWorker.startSpectate(json.broadcastId, path);
                 newConnection.sendUTF(JSON.stringify({ op: "spectate-broadcast-response", dolphinId, path }));
               } catch (e) {
-                const message = typeof e === "string" ? e : e instanceof Error ? e.message : "unknown";
-                newConnection.sendUTF(JSON.stringify({ op: "spectate-broadcast-response", err: message }));
+                const err = typeof e === "string" ? e : e instanceof Error ? e.message : "unknown";
+                newConnection.sendUTF(JSON.stringify({ op: "spectate-broadcast-response", err }));
               }
             }
           });
@@ -147,9 +149,14 @@ export default class RemoteServer {
         }
       });
 
-      return (<AddressInfo>this.httpServer.address()).port;
+      return { success: true };
     } catch (e: any) {
-      return 0;
+      console.log(JSON.stringify(e));
+      if (e.code === "EADDRINUSE") {
+        return { success: false, err: "Port in use" };
+      }
+      const err = typeof e === "string" ? e : e instanceof Error ? e.message : "unknown";
+      return { success: false, err };
     }
   }
 

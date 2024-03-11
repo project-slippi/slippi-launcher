@@ -4,8 +4,8 @@ import { _, makeEndpoint } from "utils/ipc";
 export const ipc_remoteReconnectEvent = makeEndpoint.renderer("remote_reconnect", <EmptyPayload>_);
 export const ipc_startRemoteServer = makeEndpoint.main(
   "remote_startServer",
-  <{ authToken: string }>_,
-  <{ port: number }>_,
+  <{ authToken: string; port: number }>_,
+  <{ success: boolean; err?: string }>_,
 );
 export const ipc_reconnectRemoteServer = makeEndpoint.main(
   "remote_reconnectServer",

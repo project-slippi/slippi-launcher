@@ -2,9 +2,9 @@ import { useServices } from "@/services";
 
 export const useRemoteServer = () => {
   const { authService, remoteService } = useServices();
-  const startRemoteServer = async () => {
+  const startRemoteServer = async (port: number) => {
     const authToken = await authService.getUserToken();
-    return remoteService.startRemoteServer(authToken);
+    return remoteService.startRemoteServer(authToken, port);
   };
   const reconnectRemoteServer = async () => {
     const authToken = await authService.getUserToken();
