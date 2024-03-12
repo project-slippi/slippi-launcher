@@ -224,8 +224,10 @@ export class SpectateManager extends EventEmitter {
    *
    * @param {string} broadcastId The ID of the broadcast to watch
    * @param {string} targetPath Where the SLP files should be stored
-   * @param {boolean} [singleton] If true, it will open the broadcasts only
-   * in a single Dolphin window. Opens each broadcast in their own window otherwise.
+   * @param {SpectateDolphinOptions} dolphinOptions Options for playback dolphin. One of `dolphinId` or `idPostfix` must be specified
+   * @param {string?} dolphinOptions.dolphinId The ID of the dolphin window to use, will create a dolphin window with the ID if none exists. If not specified, a dolphin ID will be generated
+   * @param {string?} dolphinOptions.idPostfix A postfix to use with the generated dolphin ID to avoid collisions
+   * @returns {string} The ID of the dolphin window used
    */
   public watchBroadcast(broadcastId: string, targetPath: string, dolphinOptions: SpectateDolphinOptions) {
     Preconditions.checkExists(this.wsConnection, "No websocket connection");
