@@ -168,7 +168,7 @@ export default class RemoteServer {
               await throttledRefresh();
             } else if (json.op === "spectate-broadcast-request") {
               const broadcastId = json.broadcastId;
-              if (!broadcastId) {
+              if (!broadcastId || typeof broadcastId !== "string") {
                 newConnection.sendUTF(JSON.stringify({ op: "spectate-broadcast-response", err: "no broadcastId" }));
                 return;
               }
