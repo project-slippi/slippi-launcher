@@ -3,7 +3,7 @@ import type { DolphinManager } from "@dolphin/manager";
 import type { DolphinPlaybackClosedEvent, ReplayCommunication } from "@dolphin/types";
 import { DolphinEventType, DolphinLaunchType } from "@dolphin/types";
 import type { SettingsManager } from "@settings/settings_manager";
-import log from "electron-log";
+import electronLog from "electron-log";
 import http from "http";
 import { throttle } from "lodash";
 import type { AddressInfo } from "net";
@@ -15,6 +15,7 @@ import type { SpectateWorker } from "./spectate.worker.interface";
 import { createSpectateWorker } from "./spectate.worker.interface";
 
 const SPECTATE_PROTOCOL = "spectate-protocol";
+const log = electronLog.scope("remote.server");
 
 export default class RemoteServer {
   private dolphinManager: DolphinManager;
