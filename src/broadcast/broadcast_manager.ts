@@ -15,11 +15,12 @@ const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
 // support disconnects of 30 seconds at most
 const BACKUP_MAX_LENGTH = 1800;
 
-const INITIAL_CONNECTION_SUB_STEP_TIMEOUT = 2000;
+const CONNECTING_SUB_STEP_INITIAL_TIMEOUT = 2000;
 enum ConnectingSubStep {
   NONE = 0,
-  GET = 1,
-  START = 2,
+  SOCKET = 1,
+  GET = 2,
+  START = 3,
 }
 type ConnectingSubState = {
   step: ConnectingSubStep;
@@ -54,7 +55,7 @@ export class BroadcastManager extends EventEmitter {
     this.connectingSubState = {
       step: ConnectingSubStep.NONE,
       broadcastId: null,
-      timeout: INITIAL_CONNECTION_SUB_STEP_TIMEOUT,
+      timeout: CONNECTING_SUB_STEP_INITIAL_TIMEOUT,
     };
 
     // We need to store events as we process them in the event that we get a disconnect and
@@ -148,7 +149,6 @@ export class BroadcastManager extends EventEmitter {
       }
 
       this.emit(BroadcastEvent.ERROR, message);
-      this.stop();
     });
 
     socket.on("connect", (connection: connection) => {
@@ -193,7 +193,7 @@ export class BroadcastManager extends EventEmitter {
         this.connectingSubState = {
           step: ConnectingSubStep.NONE,
           broadcastId: null,
-          timeout: INITIAL_CONNECTION_SUB_STEP_TIMEOUT,
+          timeout: CONNECTING_SUB_STEP_INITIAL_TIMEOUT,
         };
         this._setSlippiStatus(ConnectionStatus.CONNECTED);
 
@@ -301,7 +301,7 @@ export class BroadcastManager extends EventEmitter {
           case "get-broadcasts-resp": {
             const broadcasts = message.broadcasts || [];
             this.connectingSubState.step = ConnectingSubStep.START;
-            this.connectingSubState.timeout = INITIAL_CONNECTION_SUB_STEP_TIMEOUT;
+            this.connectingSubState.timeout = CONNECTING_SUB_STEP_INITIAL_TIMEOUT;
 
             // Grab broadcastId we were currently using if the broadcast still exists, would happen
             // in the case of a reconnect
@@ -332,7 +332,8 @@ export class BroadcastManager extends EventEmitter {
 
       getBroadcasts().catch(console.warn);
       this.connectingSubState.step = ConnectingSubStep.GET;
-      const connectionSubStepRetry = () => {
+      this.connectingSubState.timeout = CONNECTING_SUB_STEP_INITIAL_TIMEOUT;
+      const postSocketConnectingSubStepRetry = () => {
         if (this.connectingSubState.step === ConnectingSubStep.NONE) {
           return;
         }
@@ -348,16 +349,35 @@ export class BroadcastManager extends EventEmitter {
           startBroadcast(this.connectingSubState.broadcastId, config.name).catch(console.warn);
         }
         setTimeout(() => {
-          connectionSubStepRetry();
+          postSocketConnectingSubStepRetry();
         }, this.connectingSubState.timeout);
       };
       setTimeout(() => {
-        connectionSubStepRetry();
-      }, INITIAL_CONNECTION_SUB_STEP_TIMEOUT);
+        postSocketConnectingSubStepRetry();
+      }, CONNECTING_SUB_STEP_INITIAL_TIMEOUT);
     });
 
     this.emit(BroadcastEvent.LOG, "Connecting to WS service");
     socket.connect(SLIPPI_WS_SERVER, "broadcast-protocol", undefined, headers);
+    this.connectingSubState.step = ConnectingSubStep.SOCKET;
+    const socketConnectingSubStepRetry = () => {
+      if (this.connectingSubState.step !== ConnectingSubStep.SOCKET) {
+        return;
+      }
+
+      this.emit(
+        BroadcastEvent.LOG,
+        `Retrying connecting sub step: ${this.connectingSubState.step} after ${this.connectingSubState.timeout}ms`,
+      );
+      this.connectingSubState.timeout *= 2;
+      socket.connect(SLIPPI_WS_SERVER, "broadcast-protocol", undefined, headers);
+      setTimeout(() => {
+        socketConnectingSubStepRetry();
+      }, this.connectingSubState.timeout);
+    };
+    setTimeout(() => {
+      socketConnectingSubStepRetry();
+    }, CONNECTING_SUB_STEP_INITIAL_TIMEOUT);
   }
 
   public stop() {
@@ -375,15 +395,17 @@ export class BroadcastManager extends EventEmitter {
       return;
     }
 
-    if (this.wsConnection && this.broadcastId) {
+    if (this.wsConnection) {
       this.emit(BroadcastEvent.LOG, "Disconnecting ws connection...");
 
-      this.wsConnection.send(
-        JSON.stringify({
-          type: "stop-broadcast",
-          broadcastId: this.broadcastId,
-        }),
-      );
+      if (this.broadcastId) {
+        this.wsConnection.send(
+          JSON.stringify({
+            type: "stop-broadcast",
+            broadcastId: this.broadcastId,
+          }),
+        );
+      }
 
       this.wsConnection.close();
       this.wsConnection = null;
