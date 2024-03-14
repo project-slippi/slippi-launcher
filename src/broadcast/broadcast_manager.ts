@@ -15,6 +15,17 @@ const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
 // support disconnects of 30 seconds at most
 const BACKUP_MAX_LENGTH = 1800;
 
+const INITIAL_CONNECTION_SUB_STEP_TIMEOUT = 2000;
+declare enum ConnectingSubStep {
+  NONE = 0,
+  GET = 1,
+  START = 2,
+}
+type ConnectingSubState = {
+  step: ConnectingSubStep;
+  broadcastId: string | null;
+};
+
 /**
  * Responsible for retrieving Dolphin game data over enet and sending the data
  * to the Slippi server over websockets.
@@ -30,6 +41,8 @@ export class BroadcastManager extends EventEmitter {
   private wsConnection: connection | null;
   private dolphinConnection: DolphinConnection;
 
+  private connectingSubState: ConnectingSubState;
+
   constructor() {
     super();
     this.broadcastId = null;
@@ -37,6 +50,7 @@ export class BroadcastManager extends EventEmitter {
     this.wsConnection = null;
     this.incomingEvents = [];
     this.slippiStatus = ConnectionStatus.DISCONNECTED;
+    this.connectingSubState = { step: ConnectingSubStep.NONE, broadcastId: null };
 
     // We need to store events as we process them in the event that we get a disconnect and
     // we need to re-send some events to the server
@@ -171,6 +185,7 @@ export class BroadcastManager extends EventEmitter {
         this.isBroadcastReady = true;
 
         this.broadcastId = broadcastId;
+        this.connectingSubState = { step: ConnectingSubStep.NONE, broadcastId: null };
         this._setSlippiStatus(ConnectionStatus.CONNECTED);
 
         // Process any events that may have been missed when we disconnected
@@ -231,7 +246,7 @@ export class BroadcastManager extends EventEmitter {
           case "start-broadcast-resp": {
             if (message.recoveryGameCursor !== undefined) {
               const firstIncoming = this.incomingEvents[0];
-              let firstCursor: number | null | undefined;
+              let firstCursor: number | undefined;
               if (firstIncoming) {
                 firstCursor = firstIncoming.cursor;
               }
@@ -247,7 +262,7 @@ export class BroadcastManager extends EventEmitter {
                   const isNeededByServer = event.cursor > message.recoveryGameCursor;
 
                   // Make sure we aren't duplicating anything that is already in the incoming events array
-                  const isNotIncoming = firstCursor == null || event.cursor < firstCursor;
+                  const isNotIncoming = firstCursor === undefined || event.cursor < firstCursor;
 
                   return isNeededByServer && isNotIncoming;
                 }
@@ -256,13 +271,11 @@ export class BroadcastManager extends EventEmitter {
 
               this.incomingEvents = [...backedEventsToUse, ...this.incomingEvents];
 
+              let newFirstCursor: number | undefined;
               const newFirstEvent = this.incomingEvents[0];
-              if (!newFirstEvent) {
-                this.emit(BroadcastEvent.LOG, "Missing new first event");
-                return;
+              if (newFirstEvent) {
+                newFirstCursor = newFirstEvent.cursor;
               }
-              const newFirstCursor = newFirstEvent.cursor;
-
               const firstBackupCursor = (this.backupEvents[0] || {}).cursor;
               const lastBackupCursor = (last(this.backupEvents) || {}).cursor;
 
@@ -278,6 +291,7 @@ export class BroadcastManager extends EventEmitter {
           }
           case "get-broadcasts-resp": {
             const broadcasts = message.broadcasts || [];
+            this.connectingSubState.step = ConnectingSubStep.START;
 
             // Grab broadcastId we were currently using if the broadcast still exists, would happen
             // in the case of a reconnect
@@ -286,6 +300,8 @@ export class BroadcastManager extends EventEmitter {
               const prevBroadcast = broadcastsById[this.broadcastId];
 
               if (prevBroadcast) {
+                this.connectingSubState.broadcastId = prevBroadcast.id;
+
                 // TODO: Figure out if this config.name guaranteed to be the correct name?
                 startBroadcast(prevBroadcast.id, config.name).catch(console.warn);
                 return;
@@ -305,6 +321,29 @@ export class BroadcastManager extends EventEmitter {
       });
 
       getBroadcasts().catch(console.warn);
+      this.connectingSubState.step = ConnectingSubStep.GET;
+      const connectionSubStepRetry = (timeout: number) => {
+        if (this.connectingSubState.step === ConnectingSubStep.NONE) {
+          return;
+        }
+
+        this.emit(
+          BroadcastEvent.LOG,
+          `Retrying connecting sub step: ${this.connectingSubState.step} after ${timeout}ms`,
+        );
+        const newTimeout = timeout * 2;
+        if (this.connectingSubState.step === ConnectingSubStep.GET) {
+          getBroadcasts().catch(console.warn);
+        } else {
+          startBroadcast(this.connectingSubState.broadcastId, config.name).catch(console.warn);
+        }
+        setTimeout(() => {
+          connectionSubStepRetry(newTimeout);
+        }, newTimeout);
+      };
+      setTimeout(() => {
+        connectionSubStepRetry(INITIAL_CONNECTION_SUB_STEP_TIMEOUT);
+      }, INITIAL_CONNECTION_SUB_STEP_TIMEOUT);
     });
 
     this.emit(BroadcastEvent.LOG, "Connecting to WS service");
