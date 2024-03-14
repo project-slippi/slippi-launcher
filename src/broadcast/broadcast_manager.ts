@@ -16,7 +16,7 @@ const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
 const BACKUP_MAX_LENGTH = 1800;
 
 const INITIAL_CONNECTION_SUB_STEP_TIMEOUT = 2000;
-declare enum ConnectingSubStep {
+enum ConnectingSubStep {
   NONE = 0,
   GET = 1,
   START = 2,
@@ -24,6 +24,7 @@ declare enum ConnectingSubStep {
 type ConnectingSubState = {
   step: ConnectingSubStep;
   broadcastId: string | null;
+  timeout: number;
 };
 
 /**
@@ -50,7 +51,11 @@ export class BroadcastManager extends EventEmitter {
     this.wsConnection = null;
     this.incomingEvents = [];
     this.slippiStatus = ConnectionStatus.DISCONNECTED;
-    this.connectingSubState = { step: ConnectingSubStep.NONE, broadcastId: null };
+    this.connectingSubState = {
+      step: ConnectingSubStep.NONE,
+      broadcastId: null,
+      timeout: INITIAL_CONNECTION_SUB_STEP_TIMEOUT,
+    };
 
     // We need to store events as we process them in the event that we get a disconnect and
     // we need to re-send some events to the server
@@ -185,7 +190,11 @@ export class BroadcastManager extends EventEmitter {
         this.isBroadcastReady = true;
 
         this.broadcastId = broadcastId;
-        this.connectingSubState = { step: ConnectingSubStep.NONE, broadcastId: null };
+        this.connectingSubState = {
+          step: ConnectingSubStep.NONE,
+          broadcastId: null,
+          timeout: INITIAL_CONNECTION_SUB_STEP_TIMEOUT,
+        };
         this._setSlippiStatus(ConnectionStatus.CONNECTED);
 
         // Process any events that may have been missed when we disconnected
@@ -292,6 +301,7 @@ export class BroadcastManager extends EventEmitter {
           case "get-broadcasts-resp": {
             const broadcasts = message.broadcasts || [];
             this.connectingSubState.step = ConnectingSubStep.START;
+            this.connectingSubState.timeout = INITIAL_CONNECTION_SUB_STEP_TIMEOUT;
 
             // Grab broadcastId we were currently using if the broadcast still exists, would happen
             // in the case of a reconnect
@@ -322,27 +332,27 @@ export class BroadcastManager extends EventEmitter {
 
       getBroadcasts().catch(console.warn);
       this.connectingSubState.step = ConnectingSubStep.GET;
-      const connectionSubStepRetry = (timeout: number) => {
+      const connectionSubStepRetry = () => {
         if (this.connectingSubState.step === ConnectingSubStep.NONE) {
           return;
         }
 
         this.emit(
           BroadcastEvent.LOG,
-          `Retrying connecting sub step: ${this.connectingSubState.step} after ${timeout}ms`,
+          `Retrying connecting sub step: ${this.connectingSubState.step} after ${this.connectingSubState.timeout}ms`,
         );
-        const newTimeout = timeout * 2;
+        this.connectingSubState.timeout *= 2;
         if (this.connectingSubState.step === ConnectingSubStep.GET) {
           getBroadcasts().catch(console.warn);
         } else {
           startBroadcast(this.connectingSubState.broadcastId, config.name).catch(console.warn);
         }
         setTimeout(() => {
-          connectionSubStepRetry(newTimeout);
-        }, newTimeout);
+          connectionSubStepRetry();
+        }, this.connectingSubState.timeout);
       };
       setTimeout(() => {
-        connectionSubStepRetry(INITIAL_CONNECTION_SUB_STEP_TIMEOUT);
+        connectionSubStepRetry();
       }, INITIAL_CONNECTION_SUB_STEP_TIMEOUT);
     });
 
