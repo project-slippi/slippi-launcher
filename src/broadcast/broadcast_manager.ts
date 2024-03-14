@@ -152,6 +152,9 @@ export class BroadcastManager extends EventEmitter {
     });
 
     socket.on("connect", (connection: connection) => {
+      this.connectingSubState.step = ConnectingSubStep.GET;
+      this.connectingSubState.timeout = CONNECTING_SUB_STEP_INITIAL_TIMEOUT;
+
       this.emit(BroadcastEvent.LOG, "WS connection successful");
       this.wsConnection = connection;
 
@@ -299,9 +302,10 @@ export class BroadcastManager extends EventEmitter {
             break;
           }
           case "get-broadcasts-resp": {
-            const broadcasts = message.broadcasts || [];
             this.connectingSubState.step = ConnectingSubStep.START;
             this.connectingSubState.timeout = CONNECTING_SUB_STEP_INITIAL_TIMEOUT;
+
+            const broadcasts = message.broadcasts || [];
 
             // Grab broadcastId we were currently using if the broadcast still exists, would happen
             // in the case of a reconnect
@@ -331,8 +335,6 @@ export class BroadcastManager extends EventEmitter {
       });
 
       getBroadcasts().catch(console.warn);
-      this.connectingSubState.step = ConnectingSubStep.GET;
-      this.connectingSubState.timeout = CONNECTING_SUB_STEP_INITIAL_TIMEOUT;
       const postSocketConnectingSubStepRetry = () => {
         if (this.connectingSubState.step === ConnectingSubStep.NONE) {
           return;
