@@ -62,6 +62,7 @@ export class DolphinManager {
       await this._updateDolphinFlags(dolphinDownloadInfo, dolphinType);
     } catch (err) {
       log.error(`Failed to fetch latest Dolphin version: ${err}`);
+      this._onOffline(dolphinType);
       return;
     }
 
@@ -229,6 +230,7 @@ export class DolphinManager {
       await this._updateDolphinFlags(dolphinDownloadInfo, launchType);
     } catch (err) {
       log.error(`Failed to fetch latest Dolphin version: ${err}`);
+      this._onOffline(launchType);
       return;
     }
     const installation = this.getInstallation(launchType);
@@ -323,6 +325,13 @@ export class DolphinManager {
       type: DolphinEventType.DOWNLOAD_COMPLETE,
       dolphinType,
       dolphinVersion,
+    });
+  }
+
+  private _onOffline(dolphinType: DolphinLaunchType) {
+    this.eventSubject.next({
+      type: DolphinEventType.OFFLINE,
+      dolphinType,
     });
   }
 

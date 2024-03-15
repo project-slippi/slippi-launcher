@@ -3,6 +3,7 @@ import type {
   DolphinDownloadProgressEvent,
   DolphinDownloadStartEvent,
   DolphinNetplayClosedEvent,
+  DolphinOfflineEvent,
   DolphinPlaybackClosedEvent,
   DolphinService,
 } from "@dolphin/types";
@@ -22,7 +23,7 @@ import {
 
 // Setup listeners for DolphinService
 export const useDolphinListeners = (dolphinService: DolphinService) => {
-  const { showError } = useToasts();
+  const { showError, showWarning } = useToasts();
   const dolphinClosedHandler = useCallback(
     ({ dolphinType, exitCode }: DolphinNetplayClosedEvent | DolphinPlaybackClosedEvent) => {
       setDolphinOpened(dolphinType, false);
@@ -47,6 +48,14 @@ export const useDolphinListeners = (dolphinService: DolphinService) => {
     setDolphinVersion(event.dolphinVersion, event.dolphinType);
   }, []);
 
+  const dolphinOfflineHandler = useCallback(
+    (event: DolphinOfflineEvent) => {
+      showWarning("You seem to be offline, some functionality of the Launcher and Dolphin will be unavailable.");
+      setDolphinStatus(event.dolphinType, DolphinStatus.READY);
+    },
+    [showWarning],
+  );
+
   const dolphinDownloadStartHandler = useCallback((event: DolphinDownloadStartEvent) => {
     setDolphinStatus(event.dolphinType, DolphinStatus.DOWNLOADING);
   }, []);
@@ -57,6 +66,7 @@ export const useDolphinListeners = (dolphinService: DolphinService) => {
     subs.push(dolphinService.onEvent(DolphinEventType.DOWNLOAD_START, dolphinDownloadStartHandler));
     subs.push(dolphinService.onEvent(DolphinEventType.DOWNLOAD_PROGRESS, dolphinProgressHandler));
     subs.push(dolphinService.onEvent(DolphinEventType.DOWNLOAD_COMPLETE, dolphinCompleteHandler));
+    subs.push(dolphinService.onEvent(DolphinEventType.OFFLINE, dolphinOfflineHandler));
 
     return () => {
       subs.forEach((unsub) => unsub());
@@ -67,5 +77,6 @@ export const useDolphinListeners = (dolphinService: DolphinService) => {
     dolphinProgressHandler,
     dolphinCompleteHandler,
     dolphinDownloadStartHandler,
+    dolphinOfflineHandler,
   ]);
 };
