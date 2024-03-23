@@ -40,6 +40,7 @@ export class BroadcastManager extends EventEmitter {
   private nextGameCursor: number | null;
   private slippiStatus: ConnectionStatus;
 
+  private wsClient: WebSocketClient | null;
   private wsConnection: connection | null;
   private dolphinConnection: DolphinConnection;
 
@@ -49,6 +50,7 @@ export class BroadcastManager extends EventEmitter {
     super();
     this.broadcastId = null;
     this.isBroadcastReady = false;
+    this.wsClient = null;
     this.wsConnection = null;
     this.incomingEvents = [];
     this.slippiStatus = ConnectionStatus.DISCONNECTED;
@@ -126,6 +128,13 @@ export class BroadcastManager extends EventEmitter {
       return;
     }
 
+    // If we don't have a WS connection but we do have a WS client we're somewhere mid-connecting. Just start over.
+    if (this.wsClient) {
+      this.wsClient.removeAllListeners();
+      this.wsClient.abort();
+      this.wsClient = null;
+    }
+
     // Indicate we're connecting to the Slippi server
     this._setSlippiStatus(ConnectionStatus.CONNECTING);
 
@@ -135,9 +144,9 @@ export class BroadcastManager extends EventEmitter {
       authorization: `Bearer ${config.authToken}`,
     };
 
-    const socket = new WebSocketClient({ disableNagleAlgorithm: true });
+    this.wsClient = new WebSocketClient({ disableNagleAlgorithm: true });
 
-    socket.on("connectFailed", (err) => {
+    this.wsClient.on("connectFailed", (err) => {
       this.emit(BroadcastEvent.LOG, `WS failed to connect`);
 
       const label = "x-websocket-reject-reason: ";
@@ -149,9 +158,21 @@ export class BroadcastManager extends EventEmitter {
       }
 
       this.emit(BroadcastEvent.ERROR, message);
+
+      const currentTimeout = this.connectingSubState.timeout;
+      setTimeout(() => {
+        if (this.wsClient) {
+          this.emit(
+            BroadcastEvent.LOG,
+            `Retrying connecting sub step: ${this.connectingSubState.step} after ${currentTimeout}ms`,
+          );
+          this.wsClient.connect(SLIPPI_WS_SERVER, "broadcast-protocol", undefined, headers);
+        }
+      }, currentTimeout);
+      this.connectingSubState.timeout *= 2;
     });
 
-    socket.on("connect", (connection: connection) => {
+    this.wsClient.on("connect", (connection: connection) => {
       this.connectingSubState.step = ConnectingSubStep.GET;
       this.connectingSubState.timeout = CONNECTING_SUB_STEP_INITIAL_TIMEOUT;
 
@@ -360,26 +381,8 @@ export class BroadcastManager extends EventEmitter {
     });
 
     this.emit(BroadcastEvent.LOG, "Connecting to WS service");
-    socket.connect(SLIPPI_WS_SERVER, "broadcast-protocol", undefined, headers);
+    this.wsClient.connect(SLIPPI_WS_SERVER, "broadcast-protocol", undefined, headers);
     this.connectingSubState.step = ConnectingSubStep.SOCKET;
-    const socketConnectingSubStepRetry = () => {
-      if (this.connectingSubState.step !== ConnectingSubStep.SOCKET) {
-        return;
-      }
-
-      this.emit(
-        BroadcastEvent.LOG,
-        `Retrying connecting sub step: ${this.connectingSubState.step} after ${this.connectingSubState.timeout}ms`,
-      );
-      this.connectingSubState.timeout *= 2;
-      socket.connect(SLIPPI_WS_SERVER, "broadcast-protocol", undefined, headers);
-      setTimeout(() => {
-        socketConnectingSubStepRetry();
-      }, this.connectingSubState.timeout);
-    };
-    setTimeout(() => {
-      socketConnectingSubStepRetry();
-    }, CONNECTING_SUB_STEP_INITIAL_TIMEOUT);
   }
 
   public stop() {
@@ -411,6 +414,12 @@ export class BroadcastManager extends EventEmitter {
 
       this.wsConnection.close();
       this.wsConnection = null;
+    }
+
+    if (this.wsClient) {
+      this.wsClient.removeAllListeners();
+      this.wsClient.abort();
+      this.wsClient = null;
     }
 
     // Clear incoming events
