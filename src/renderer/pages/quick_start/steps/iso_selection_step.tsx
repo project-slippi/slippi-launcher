@@ -77,6 +77,9 @@ export const IsoSelectionStep = React.memo(() => {
     if (filePath.endsWith(".7z")) {
       showError("7z files must be uncompressed to be used in Dolphin.");
       return;
+    } else if (filePath.endsWith(".rvz")) {
+      showError("RVZ files are currently incompatible with Slippi.");
+      return;
     }
 
     setTempIsoPath(filePath);
@@ -84,7 +87,7 @@ export const IsoSelectionStep = React.memo(() => {
   const validIsoPath = validIsoPathQuery.data?.valid ?? IsoValidity.UNVALIDATED;
 
   const { open, getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
-    accept: [".iso", ".gcm", ".gcz", ".ciso", ".7z"],
+    accept: [".iso", ".gcm", ".gcz", ".ciso", ".7z", ".rvz"],
     onDrop: onDrop,
     multiple: false,
     noClick: true,
