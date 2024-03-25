@@ -17,10 +17,10 @@ const BACKUP_MAX_LENGTH = 1800;
 
 const CONNECTING_SUB_STEP_INITIAL_TIMEOUT = 2000;
 enum ConnectingSubStep {
-  NONE = 0,
-  SOCKET = 1,
-  GET = 2,
-  START = 3,
+  NONE = "NONE",
+  SOCKET = "SOCKET",
+  GET = "GET",
+  START = "START",
 }
 type ConnectingSubState = {
   step: ConnectingSubStep;
