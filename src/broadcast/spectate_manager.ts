@@ -247,13 +247,13 @@ export class SpectateManager extends EventEmitter {
       }
     }
     const dolphinPlaybackId = dolphinOptions.dolphinId || generatePlaybackId(dolphinOptions.idPostfix);
+    const broadcasterName = dolphinOptions.dolphinId || this.availableBroadcasts[broadcastId].name;
 
     fs.ensureDirSync(targetPath);
     const slpFileWriter = new SlpFileWriter({
       folderPath: targetPath,
     });
 
-    const broadcasterName = this.availableBroadcasts[broadcastId].name;
     slpFileWriter.on(SlpFileWriterEvent.NEW_FILE, (currFilePath) => {
       this._playFile(currFilePath, dolphinPlaybackId, broadcasterName).catch(console.warn);
     });
