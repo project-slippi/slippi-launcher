@@ -31,6 +31,7 @@ export enum SpectateEvent {
   NEW_FILE = "NEW_FILE",
   LOG = "LOG",
   RECONNECT = "RECONNECT",
+  GAME_END = "GAME_END",
 }
 
 type TypeMap<M extends { [index: string]: any }> = {
@@ -75,4 +76,9 @@ export type BroadcastService = {
   watchBroadcast(broadcasterId: string): Promise<void>;
   startBroadcast(config: StartBroadcastConfig): Promise<void>;
   stopBroadcast(): Promise<void>;
+};
+
+export type SpectateDolphinOptions = {
+  dolphinId?: string;
+  idPostfix?: string;
 };
