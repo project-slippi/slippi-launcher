@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 
-import { SlippiStore } from "./slippi_store";
+import { RankedStatus } from "./ranked_status";
 import { TournamentLinks } from "./tournament_links";
 
 const Outer = styled.div`
@@ -13,7 +13,7 @@ const Outer = styled.div`
 export const Sidebar = () => {
   return (
     <Outer>
-      <SlippiStore />
+      <RankedStatus />
       <TournamentLinks />
     </Outer>
   );
