@@ -102,7 +102,7 @@ const InternalRankedStatus = ({
           <Typography
             {...stylex.props(styles.stroke)}
             variant="body1"
-            color={isFullAccess ? colors.greenDark : colors.purpleLight}
+            color={isFullAccess ? colors.greenDark : colors.textDim}
             fontSize={"20px"}
             fontWeight={"medium"}
           >
@@ -124,7 +124,14 @@ const InternalRankedStatus = ({
             {countdown}
           </Typography>
           <Typography fontSize={"12px"} color={colors.textDim} marginTop={"-4px"}>
-            {nextTime.toLocaleString()}
+            {nextTime.toLocaleString(undefined, {
+              year: "numeric",
+              month: "numeric",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+              // timeZoneName: "short", // Chose not to include this. Can sometimes confuse Europeans (happened at smashgg)
+            })}
           </Typography>
         </div>
         <Typography fontSize={"11px"} color={colors.textDim} marginTop={"12px"}>
