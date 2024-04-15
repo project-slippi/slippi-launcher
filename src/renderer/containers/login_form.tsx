@@ -153,7 +153,7 @@ export const LoginForm = ({ className, onSuccess, disableAutoFocus }: LoginFormP
               label="Confirm password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              type={"password"}
+              type="password"
               fullWidth={true}
               required={true}
             />

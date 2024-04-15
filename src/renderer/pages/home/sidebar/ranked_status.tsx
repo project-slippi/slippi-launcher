@@ -2,7 +2,6 @@ import { Button, Card, Typography } from "@mui/material";
 import * as stylex from "@stylexjs/stylex";
 import type { Duration } from "date-fns";
 import { formatDuration, intervalToDuration } from "date-fns";
-import { chain } from "lodash";
 import React from "react";
 
 import { ExternalLink } from "@/components/external_link";
@@ -12,6 +11,7 @@ import { ReactComponent as RankedDayActiveIcon } from "@/styles/images/ranked_da
 import { ReactComponent as RankedDayInactiveIcon } from "@/styles/images/ranked_day_inactive.svg";
 import { colors } from "@/styles/tokens.stylex";
 
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const FREE_ACCESS_START_AT = new Date(Date.UTC(2024, 3, 15, 14, 0, 0)); // Note: Month is 0-indexed, so 3 is April
 const FREE_ACCESS_OFFSET_FROM = new Date(Date.UTC(2024, 3, 15, 8, 0, 0)); // Note: Month is 0-indexed, so 3 is April
 
@@ -48,29 +48,31 @@ const styles = stylex.create({
 });
 
 const getFullAccessTimes = (now: Date): { isActive: boolean; nextStartTime: Date; nextEndTime: Date } => {
-  const msPerDay = 24 * 60 * 60 * 1000;
   const startTime = FREE_ACCESS_START_AT;
   const offsetTime = FREE_ACCESS_OFFSET_FROM;
   if (now < startTime) {
-    return { isActive: false, nextStartTime: startTime, nextEndTime: new Date(offsetTime.getTime() + msPerDay) };
+    return { isActive: false, nextStartTime: startTime, nextEndTime: new Date(offsetTime.getTime() + MS_PER_DAY) };
   }
 
-  const daysSinceStart = Math.floor((now.getTime() - offsetTime.getTime()) / msPerDay);
+  const daysSinceStart = Math.floor((now.getTime() - offsetTime.getTime()) / MS_PER_DAY);
   let daysUntilNextRankedDay = 4 - (daysSinceStart % 4);
   if (daysUntilNextRankedDay === 4) {
     daysUntilNextRankedDay = 0;
   }
-  const nextRankedDayTime = new Date(offsetTime.getTime() + (daysSinceStart + daysUntilNextRankedDay) * msPerDay);
+  const nextRankedDayTime = new Date(offsetTime.getTime() + (daysSinceStart + daysUntilNextRankedDay) * MS_PER_DAY);
 
   return {
     isActive: daysUntilNextRankedDay === 0,
     nextStartTime: nextRankedDayTime,
-    nextEndTime: new Date(nextRankedDayTime.getTime() + msPerDay),
+    nextEndTime: new Date(nextRankedDayTime.getTime() + MS_PER_DAY),
   };
 };
 
 const convertCodeToSlug = (code: string | undefined) => {
-  return chain(code).toLower().replace("#", "-").value();
+  if (code) {
+    return code.toLowerCase().replace("#", "-");
+  }
+  return "";
 };
 
 const InternalRankedStatus = ({
@@ -89,13 +91,7 @@ const InternalRankedStatus = ({
     <div {...stylex.props(styles.container)}>
       <Card {...stylex.props(styles.card)}>
         <div {...stylex.props(styles.centerStack)}>
-          <Typography
-            variant="h6"
-            color={colors.purpleLight}
-            fontSize={"14px"}
-            fontWeight={"semibold"}
-            marginBottom={"8px"}
-          >
+          <Typography variant="h6" color={colors.purpleLight} fontSize="14px" fontWeight="semibold" marginBottom="8px">
             RANKED DAY
           </Typography>
           {isFullAccess ? <RankedDayActiveIcon width={40} /> : <RankedDayInactiveIcon width={40} />}
@@ -103,8 +99,8 @@ const InternalRankedStatus = ({
             {...stylex.props(styles.stroke)}
             variant="body1"
             color={isFullAccess ? colors.greenDark : colors.textDim}
-            fontSize={"20px"}
-            fontWeight={"medium"}
+            fontSize="20px"
+            fontWeight="medium"
           >
             {isFullAccess ? "ACTIVE" : "STARTING SOON"}
           </Typography>
@@ -114,16 +110,17 @@ const InternalRankedStatus = ({
           <Typography
             variant="h6"
             color={colors.purpleLight}
-            fontSize={"14px"}
-            fontWeight={"semibold"}
-            marginBottom={"4px"}
+            className="14px"
+            fontSize="14px"
+            fontWeight="semibold"
+            marginBottom="4px"
           >
             {isFullAccess ? "ENDING IN" : "STARTING IN"}
           </Typography>
-          <Typography fontWeight="medium" fontSize={"20px"}>
+          <Typography fontWeight="medium" fontSize="20px">
             {countdown}
           </Typography>
-          <Typography fontSize={"12px"} color={colors.textDim} marginTop={"-4px"}>
+          <Typography fontSize="12px" color={colors.textDim} marginTop="-4px">
             {nextTime.toLocaleString(undefined, {
               year: "numeric",
               month: "numeric",
@@ -134,7 +131,7 @@ const InternalRankedStatus = ({
             })}
           </Typography>
         </div>
-        <Typography fontSize={"11px"} color={colors.textDim} marginTop={"12px"}>
+        <Typography fontSize="11px" color={colors.textDim} marginTop="12px">
           {isFullAccess
             ? "Ranked play is currently available for everyone. Try it now! Available once every 4 days."
             : "Once every 4 days, ranked play is available to all users including non-subs. Check back soon!"}
