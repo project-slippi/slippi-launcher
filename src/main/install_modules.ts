@@ -14,11 +14,11 @@ export function installModules(flags: ConfigFlags) {
   const settingsManager = new SettingsManager();
   const dolphinManager = new DolphinManager(settingsManager);
   setupDolphinIpc({ dolphinManager });
-  setupBroadcastIpc({ settingsManager, dolphinManager });
+  const { getSpectateController } = setupBroadcastIpc({ settingsManager, dolphinManager });
   setupReplaysIpc({ enableReplayDatabase: flags.enableReplayDatabase });
   setupSettingsIpc({ settingsManager, dolphinManager });
   setupConsoleIpc({ dolphinManager });
-  setupRemoteIpc({ dolphinManager, settingsManager });
+  setupRemoteIpc({ dolphinManager, settingsManager, getSpectateController });
   setupMainIpc({ dolphinManager, flags });
   return { dolphinManager, settingsManager };
 }

@@ -10,6 +10,7 @@ import { createBroadcastWorker } from "./broadcast.worker.interface";
 import { ipc_refreshBroadcastList, ipc_startBroadcast, ipc_stopBroadcast, ipc_watchBroadcast } from "./ipc";
 import type { SpectateWorker } from "./spectate.worker.interface";
 import { createSpectateWorker } from "./spectate.worker.interface";
+import type { SpectateController } from "./types";
 
 export default function setupBroadcastIpc({
   settingsManager,
@@ -17,7 +18,9 @@ export default function setupBroadcastIpc({
 }: {
   settingsManager: SettingsManager;
   dolphinManager: DolphinManager;
-}) {
+}): {
+  getSpectateController: () => Promise<SpectateController>;
+} {
   let spectateWorker: SpectateWorker | undefined;
   let broadcastWorker: BroadcastWorker | undefined;
   let prefixOrdinal = 0;
@@ -68,4 +71,15 @@ export default function setupBroadcastIpc({
 
     return { success: true };
   });
+
+  const getSpectateController = async (): Promise<SpectateController> => {
+    if (!spectateWorker) {
+      spectateWorker = await createSpectateWorker(dolphinManager);
+    }
+    return spectateWorker;
+  };
+
+  return {
+    getSpectateController,
+  };
 }
