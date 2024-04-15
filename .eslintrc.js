@@ -102,6 +102,7 @@ module.exports = {
     "react/no-unstable-nested-components": "error",
     "@stylexjs/valid-styles": "error",
     "lodash/chaining": "error",
+    "lodash/import-scope": [2, "method"],
   },
   ignorePatterns: ["/*.js", "node_modules"],
 };
