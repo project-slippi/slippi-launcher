@@ -147,7 +147,7 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
       />
       <Content>
         {!file || loading ? (
-          <LoadingScreen message={"Crunching numbers..."} />
+          <LoadingScreen message="Crunching numbers..." />
         ) : game.mode == GameMode.TARGET_TEST ? (
           <TargetTestProfile file={file} stats={stadiumStats}></TargetTestProfile>
         ) : game.mode == GameMode.HOME_RUN_CONTEST ? (

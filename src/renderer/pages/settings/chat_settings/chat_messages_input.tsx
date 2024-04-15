@@ -38,7 +38,7 @@ const genChatMessageItem = (
   let adornment = null;
   if (isDefault) {
     adornment = (
-      <Typography fontSize="12px" color={"#FFFFFFB0"} marginRight={"6px"} padding={"4px 8px"}>
+      <Typography fontSize="12px" color="#FFFFFFB0" marginRight="6px" padding="4px 8px">
         Default
       </Typography>
     );
@@ -272,7 +272,7 @@ const ChatMessagesSection = ({
         margin-bottom: 32px;
       `}
     >
-      <Typography fontSize={15} color={"#FFFFFFAA"} marginBottom={"5px"}>
+      <Typography fontSize={15} color="#FFFFFFAA" marginBottom="5px">
         Chat Group: {capitalize(direction)}
       </Typography>
       <ChatMessageSelector

@@ -99,8 +99,8 @@ const InternalRankedStatus = ({
             {...stylex.props(styles.stroke)}
             variant="body1"
             color={isFullAccess ? colors.greenDark : colors.textDim}
-            fontSize={"20px"}
-            fontWeight={"medium"}
+            fontSize="20px"
+            fontWeight="medium"
           >
             {isFullAccess ? "ACTIVE" : "STARTING SOON"}
           </Typography>
@@ -110,16 +110,17 @@ const InternalRankedStatus = ({
           <Typography
             variant="h6"
             color={colors.purpleLight}
-            fontSize={"14px"}
-            fontWeight={"semibold"}
-            marginBottom={"4px"}
+            className="14px"
+            fontSize="14px"
+            fontWeight="semibold"
+            marginBottom="4px"
           >
             {isFullAccess ? "ENDING IN" : "STARTING IN"}
           </Typography>
-          <Typography fontWeight="medium" fontSize={"20px"}>
+          <Typography fontWeight="medium" fontSize="20px">
             {countdown}
           </Typography>
-          <Typography fontSize={"12px"} color={colors.textDim} marginTop={"-4px"}>
+          <Typography fontSize="12px" color={colors.textDim} marginTop="-4px">
             {nextTime.toLocaleString(undefined, {
               year: "numeric",
               month: "numeric",
@@ -130,7 +131,7 @@ const InternalRankedStatus = ({
             })}
           </Typography>
         </div>
-        <Typography fontSize={"11px"} color={colors.textDim} marginTop={"12px"}>
+        <Typography fontSize="11px" color={colors.textDim} marginTop="12px">
           {isFullAccess
             ? "Ranked play is currently available for everyone. Try it now! Available once every 4 days."
             : "Once every 4 days, ranked play is available to all users including non-subs. Check back soon!"}
