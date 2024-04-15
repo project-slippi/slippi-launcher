@@ -11,6 +11,7 @@ import { ReactComponent as RankedDayActiveIcon } from "@/styles/images/ranked_da
 import { ReactComponent as RankedDayInactiveIcon } from "@/styles/images/ranked_day_inactive.svg";
 import { colors } from "@/styles/tokens.stylex";
 
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const FREE_ACCESS_START_AT = new Date(Date.UTC(2024, 3, 15, 14, 0, 0)); // Note: Month is 0-indexed, so 3 is April
 const FREE_ACCESS_OFFSET_FROM = new Date(Date.UTC(2024, 3, 15, 8, 0, 0)); // Note: Month is 0-indexed, so 3 is April
 
@@ -47,24 +48,23 @@ const styles = stylex.create({
 });
 
 const getFullAccessTimes = (now: Date): { isActive: boolean; nextStartTime: Date; nextEndTime: Date } => {
-  const msPerDay = 24 * 60 * 60 * 1000;
   const startTime = FREE_ACCESS_START_AT;
   const offsetTime = FREE_ACCESS_OFFSET_FROM;
   if (now < startTime) {
-    return { isActive: false, nextStartTime: startTime, nextEndTime: new Date(offsetTime.getTime() + msPerDay) };
+    return { isActive: false, nextStartTime: startTime, nextEndTime: new Date(offsetTime.getTime() + MS_PER_DAY) };
   }
 
-  const daysSinceStart = Math.floor((now.getTime() - offsetTime.getTime()) / msPerDay);
+  const daysSinceStart = Math.floor((now.getTime() - offsetTime.getTime()) / MS_PER_DAY);
   let daysUntilNextRankedDay = 4 - (daysSinceStart % 4);
   if (daysUntilNextRankedDay === 4) {
     daysUntilNextRankedDay = 0;
   }
-  const nextRankedDayTime = new Date(offsetTime.getTime() + (daysSinceStart + daysUntilNextRankedDay) * msPerDay);
+  const nextRankedDayTime = new Date(offsetTime.getTime() + (daysSinceStart + daysUntilNextRankedDay) * MS_PER_DAY);
 
   return {
     isActive: daysUntilNextRankedDay === 0,
     nextStartTime: nextRankedDayTime,
-    nextEndTime: new Date(nextRankedDayTime.getTime() + msPerDay),
+    nextEndTime: new Date(nextRankedDayTime.getTime() + MS_PER_DAY),
   };
 };
 
@@ -91,13 +91,7 @@ const InternalRankedStatus = ({
     <div {...stylex.props(styles.container)}>
       <Card {...stylex.props(styles.card)}>
         <div {...stylex.props(styles.centerStack)}>
-          <Typography
-            variant="h6"
-            color={colors.purpleLight}
-            fontSize={"14px"}
-            fontWeight={"semibold"}
-            marginBottom={"8px"}
-          >
+          <Typography variant="h6" color={colors.purpleLight} fontSize="14px" fontWeight="semibold" marginBottom="8px">
             RANKED DAY
           </Typography>
           {isFullAccess ? <RankedDayActiveIcon width={40} /> : <RankedDayInactiveIcon width={40} />}
