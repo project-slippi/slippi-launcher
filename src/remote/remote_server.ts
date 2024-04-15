@@ -13,7 +13,7 @@ import { server as WebSocketServer } from "websocket";
 import { ipc_remoteStateEvent } from "./ipc";
 
 const SPECTATE_PROTOCOL = "spectate-protocol";
-const log = electronLog.scope("remote.server");
+const log = electronLog.scope("remote_server");
 
 export class RemoteServer {
   private authToken: string;
@@ -68,7 +68,7 @@ export class RemoteServer {
     }
   }
 
-  private async createSpectateWorker() {
+  private async setupSpectateController() {
     this.spectateController = await this.getSpectateController();
     this.spectateController.getBroadcastListObservable().subscribe((data: BroadcasterItem[]) => {
       if (this.connection) {
@@ -119,7 +119,7 @@ export class RemoteServer {
 
   public async start(authToken: string, port: number): Promise<{ success: boolean; err?: string }> {
     if (!this.spectateController) {
-      await this.createSpectateWorker();
+      await this.setupSpectateController();
     }
 
     if (this.httpServer && this.remoteServer) {
