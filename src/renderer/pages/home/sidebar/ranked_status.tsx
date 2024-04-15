@@ -2,7 +2,6 @@ import { Button, Card, Typography } from "@mui/material";
 import * as stylex from "@stylexjs/stylex";
 import type { Duration } from "date-fns";
 import { formatDuration, intervalToDuration } from "date-fns";
-import { chain } from "lodash";
 import React from "react";
 
 import { ExternalLink } from "@/components/external_link";
@@ -70,7 +69,10 @@ const getFullAccessTimes = (now: Date): { isActive: boolean; nextStartTime: Date
 };
 
 const convertCodeToSlug = (code: string | undefined) => {
-  return chain(code).toLower().replace("#", "-").value();
+  if (code) {
+    return code.toLowerCase().replace("#", "-");
+  }
+  return "";
 };
 
 const InternalRankedStatus = ({
