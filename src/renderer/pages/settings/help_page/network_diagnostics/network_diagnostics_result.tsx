@@ -109,9 +109,13 @@ export const NetworkDiagnosticsResult = React.memo(
     const [diagnosticResultsCopied, setDiagnosticResultsCopied] = React.useState(false);
     const onDiagnosticResultsCopy = React.useCallback(() => {
       const diagnosticResults = `${natTypeTitle}\n${natTypeDescription}\n\n${portMappingTitle}\n${portMappingDescription}\n\n${cgnatTitle}\n${cgnatDescription}`;
-      window.electron.clipboard.writeText(diagnosticResults);
-      setDiagnosticResultsCopied(true);
-      window.setTimeout(() => setDiagnosticResultsCopied(false), 2000);
+      navigator.clipboard
+        .writeText(diagnosticResults)
+        .then(() => {
+          setDiagnosticResultsCopied(true);
+          window.setTimeout(() => setDiagnosticResultsCopied(false), 2000);
+        })
+        .catch(console.error);
     }, [cgnatDescription, cgnatTitle, natTypeDescription, natTypeTitle, portMappingDescription, portMappingTitle]);
 
     return (

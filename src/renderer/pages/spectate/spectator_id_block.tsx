@@ -15,11 +15,14 @@ export const SpectatorIdBlock = ({ userId, className }: SpectatorIdBlockProps) =
 
   const onCopy = React.useCallback(() => {
     // Set the clipboard text
-    window.electron.clipboard.writeText(userId);
-
-    // Set copied indication
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 2000);
+    navigator.clipboard
+      .writeText(userId)
+      .then(() => {
+        // Set copied indication
+        setCopied(true);
+        window.setTimeout(() => setCopied(false), 2000);
+      })
+      .catch(console.error);
   }, [userId]);
 
   return (

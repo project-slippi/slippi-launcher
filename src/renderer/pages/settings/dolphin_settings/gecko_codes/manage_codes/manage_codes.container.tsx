@@ -19,8 +19,12 @@ export const ManageCodesContainer = ({
   };
 
   const handleCopy = (geckoCode: GeckoCode) => {
-    window.electron.clipboard.writeText(geckoCodeToString(geckoCode).trim());
-    showSuccess("Code copied to clipboard!");
+    navigator.clipboard
+      .writeText(geckoCodeToString(geckoCode).trim())
+      .then(() => {
+        showSuccess("Code copied to clipboard!");
+      })
+      .catch(console.error);
   };
 
   const handleToggle = (code: GeckoCode) => {
