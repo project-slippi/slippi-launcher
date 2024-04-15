@@ -103,7 +103,8 @@ module.exports = {
     "@stylexjs/valid-styles": "error",
     "lodash/chaining": "error",
     "lodash/import-scope": [2, "method"],
-    "no-restricted-imports": ["error", "lodash/chain"]
+    "no-restricted-imports": ["error", "lodash/chain"],
+    "react/jsx-curly-brace-presence": ["error", "never"]
   },
   ignorePatterns: ["/*.js", "node_modules"],
 };
