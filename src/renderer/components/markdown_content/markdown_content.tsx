@@ -12,9 +12,7 @@ export const MarkdownContent = ({ content, className }: { className?: string; co
       <ReactMarkdown
         skipHtml={true}
         renderers={{
-          code: ({ value }: { value: string }) => {
-            return <CodeBlock content={value} />;
-          },
+          code: ({ value }: { value: string }) => <CodeBlock content={value} />,
           link: ({ href, children }) => (
             <A href={href} title={href}>
               {children}
