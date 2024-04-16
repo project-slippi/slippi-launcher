@@ -40,9 +40,13 @@ export const CgnatCommandSection = ({ address }: CgnatCommandSectionProps) => {
   const displayedCgnatCommand = `${tracerouteCommand} ${cgnatCommandHidden ? hiddenIpAddress : address}`;
   const [cgnatCommandCopied, setCgnatCommandCopied] = React.useState(false);
   const onCgnatCommandCopy = React.useCallback(() => {
-    window.electron.clipboard.writeText(cgnatCommand);
-    setCgnatCommandCopied(true);
-    window.setTimeout(() => setCgnatCommandCopied(false), 2000);
+    navigator.clipboard
+      .writeText(cgnatCommand)
+      .then(() => {
+        setCgnatCommandCopied(true);
+        window.setTimeout(() => setCgnatCommandCopied(false), 2000);
+      })
+      .catch(console.error);
   }, [cgnatCommand]);
 
   return (

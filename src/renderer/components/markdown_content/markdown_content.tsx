@@ -4,12 +4,15 @@ import ReactMarkdown from "react-markdown";
 import { ExternalLink as A } from "@/components/external_link";
 import { withFont } from "@/styles/with_font";
 
+import { CodeBlock } from "./code_block";
+
 export const MarkdownContent = ({ content, className }: { className?: string; content: string }) => {
   return (
     <Outer className={className}>
       <ReactMarkdown
         skipHtml={true}
         renderers={{
+          code: ({ value }: { value: string }) => <CodeBlock content={value} />,
           link: ({ href, children }) => (
             <A href={href} title={href}>
               {children}

@@ -3,7 +3,7 @@ import consoleApi from "@console/api";
 import dolphinApi from "@dolphin/api";
 import replaysApi from "@replays/api";
 import settingsApi from "@settings/api";
-import { clipboard, contextBridge, ipcRenderer, shell } from "electron";
+import { contextBridge, ipcRenderer, shell } from "electron";
 import path from "path";
 import { isSubdirectory } from "utils/is_subdirectory";
 
@@ -23,10 +23,6 @@ const api = {
   },
   path: {
     join: path.join,
-  },
-  clipboard: {
-    writeText: clipboard.writeText,
-    readText: clipboard.readText,
   },
   shell: {
     openPath: shell.openPath,

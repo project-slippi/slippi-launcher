@@ -12,7 +12,7 @@ import React from "react";
 import TimeAgo from "react-timeago";
 
 import { ExternalLink } from "@/components/external_link";
-import { MarkdownContent } from "@/components/markdown_content";
+import { MarkdownContent } from "@/components/markdown_content/markdown_content";
 
 const styles = stylex.create({
   container: {

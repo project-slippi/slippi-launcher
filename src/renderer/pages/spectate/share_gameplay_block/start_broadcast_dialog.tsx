@@ -126,10 +126,14 @@ export const StartBroadcastDialog = ({ open, onClose, onSubmit }: StartBroadcast
                       <IconButton
                         size="small"
                         onClick={() => {
-                          const text = window.electron.clipboard.readText();
-                          if (text) {
-                            handleChange(text);
-                          }
+                          navigator.clipboard
+                            .readText()
+                            .then((text) => {
+                              if (text) {
+                                handleChange(text);
+                              }
+                            })
+                            .catch(console.error);
                         }}
                       >
                         <AssignmentIcon />

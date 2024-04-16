@@ -41,9 +41,13 @@ export const NatTypeSection = ({ address, description, natType, title }: NatType
   const ipAddressTitle = getIpAddressTitle(natType);
   const [ipAddressCopied, setIpAddressCopied] = React.useState(false);
   const onIpAddressCopy = React.useCallback(() => {
-    window.electron.clipboard.writeText(address);
-    setIpAddressCopied(true);
-    window.setTimeout(() => setIpAddressCopied(false), 2000);
+    navigator.clipboard
+      .writeText(address)
+      .then(() => {
+        setIpAddressCopied(true);
+        window.setTimeout(() => setIpAddressCopied(false), 2000);
+      })
+      .catch(console.error);
   }, [address]);
   const [ipAddressHidden, setIpAddressHidden] = React.useState(true);
   const onIpAddressShowHide = () => {

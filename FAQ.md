@@ -16,7 +16,9 @@ Download and install the file at the link: <https://aka.ms/vs/17/release/vc_redi
 
 If you are on Ubuntu, PopOS, or similar, open a terminal and run
 
-> sudo apt install libopengl0
+~~~bash
+sudo apt install libopengl0
+~~~
 
 ## How do I setup my GameCube Controller Adapter?
 
@@ -45,17 +47,23 @@ Make sure to check the "overclock" option when installing your driver. This will
 
 Run the following command block
 
-> sudo rm -f /etc/udev/rules.d/51-gcadapter.rules && sudo touch /etc/udev/rules.d/51-gcadapter.rules && echo 'SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="057e", ATTRS{idProduct}=="0337", MODE="0666"' | sudo tee /etc/udev/rules.d/51-gcadapter.rules > /dev/null && sudo udevadm control --reload-rules
+~~~bash
+sudo rm -f /etc/udev/rules.d/51-gcadapter.rules && sudo touch /etc/udev/rules.d/51-gcadapter.rules && echo 'SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="057e", ATTRS{idProduct}=="0337", MODE="0666"' | sudo tee /etc/udev/rules.d/51-gcadapter.rules > /dev/null && sudo udevadm control --reload-rules
+~~~
 
 There is no output, so once it is finished restart Dolphin and test your adapter.
 
 If your adapter still doesn't work then try running the command below if you use systemd or restarting your computer.
 
-> sudo systemctl restart udev.service
+~~~bash
+sudo systemctl restart udev.service
+~~~
 
 On some distributions you need to run this command instead to restart the service:
 
-> sudo systemctl restart systemd-udevd.service
+~~~bash
+sudo systemctl restart systemd-udevd.service
+~~~
 
 ## What are delay frames and how do I change them?
 
