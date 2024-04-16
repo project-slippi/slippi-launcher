@@ -42,13 +42,6 @@ export class RemoteServer {
         if (this.connection) {
           this.connection.sendUTF(JSON.stringify({ op: "dolphin-closed-event", dolphinId: event.instanceId }));
         }
-        if (this.spectateController) {
-          try {
-            await this.spectateController.dolphinClosed(event.instanceId);
-          } catch (e) {
-            log.error(e);
-          }
-        }
       });
   }
 
