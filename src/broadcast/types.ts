@@ -73,7 +73,8 @@ export type BroadcastService = {
   onDolphinStatusChanged(handle: (status: number) => void): () => void;
   onSlippiStatusChanged(handle: (status: number) => void): () => void;
   onSpectateErrorMessage(handle: (message: string | null) => void): () => void;
-  refreshBroadcastList(authToken: string): Promise<void>;
+  connect(authToken: string): Promise<void>;
+  refreshBroadcastList(): Promise<void>;
   watchBroadcast(broadcasterId: string): Promise<void>;
   startBroadcast(config: StartBroadcastConfig): Promise<void>;
   stopBroadcast(): Promise<void>;
@@ -87,7 +88,8 @@ export type SpectateDolphinOptions = {
 export interface SpectateController {
   startSpectate(broadcastId: string, targetPath: string, dolphinOptions: SpectateDolphinOptions): Promise<string>;
   dolphinClosed(playbackId: string): Promise<void>;
-  refreshBroadcastList(authToken: string): Promise<void>;
+  connect(authToken: string): Promise<void>;
+  refreshBroadcastList(): Promise<void>;
   getBroadcastListObservable(): Observable<BroadcasterItem[]>;
   getSpectateDetailsObservable(): Observable<{ playbackId: string; filePath: string; broadcasterName: string }>;
   getGameEndObservable(): Observable<string>;

@@ -20,14 +20,17 @@ export function createSpectatePage({ broadcastService }: CreateSpectatePageArgs)
 
   const Page = React.memo(() => {
     const user = useAccount((store) => store.user);
-    const [currentBroadcasts, refreshBroadcasts] = useBroadcastList();
-    const [remoteServerState, startRemoteServer, , stopRemoteServer] = useRemoteServer();
+    const [currentBroadcasts, connect, refreshBroadcasts] = useBroadcastList();
+    const [remoteServerState, startRemoteServer, stopRemoteServer] = useRemoteServer();
     return (
       <SpectatePage
         userId={user?.uid}
         watchBroadcast={watchBroadcast}
         broadcasts={currentBroadcasts}
-        onRefreshBroadcasts={refreshBroadcasts}
+        onRefreshBroadcasts={async () => {
+          await connect();
+          await refreshBroadcasts();
+        }}
         remoteServerState={remoteServerState}
         startRemoteServer={startRemoteServer}
         stopRemoteServer={stopRemoteServer}

@@ -15,7 +15,8 @@ interface Methods {
   startSpectate(broadcastId: string, targetPath: string, dolphinOptions: SpectateDolphinOptions): Promise<string>;
   stopSpectate(broadcastId: string): Promise<void>;
   dolphinClosed(playbackId: string): Promise<void>;
-  refreshBroadcastList(authToken: string): Promise<void>;
+  connect(authToken: string): Promise<void>;
+  refreshBroadcastList(): Promise<void>;
   getLogObservable(): Observable<string>;
   getErrorObservable(): Observable<Error | string>;
   getBroadcastListObservable(): Observable<BroadcasterItem[]>;
@@ -84,8 +85,10 @@ const methods: WorkerSpec = {
   async dolphinClosed(playbackId: string): Promise<void> {
     spectateManager.handleClosedDolphin(playbackId);
   },
-  async refreshBroadcastList(authToken: string): Promise<void> {
+  async connect(authToken: string): Promise<void> {
     await spectateManager.connect(authToken);
+  },
+  async refreshBroadcastList(): Promise<void> {
     await spectateManager.refreshBroadcastList();
   },
   getLogObservable(): Observable<string> {

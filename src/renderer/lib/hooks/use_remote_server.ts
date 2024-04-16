@@ -33,12 +33,8 @@ export const useRemoteServer = () => {
     const authToken = await authService.getUserToken();
     return remoteService.startRemoteServer(authToken, port);
   };
-  const reconnectRemoteServer = async () => {
-    const authToken = await authService.getUserToken();
-    return remoteService.reconnectRemoteServer(authToken);
-  };
   const stopRemoteServer = async () => {
     return remoteService.stopRemoteServer();
   };
-  return [state, startRemoteServer, reconnectRemoteServer, stopRemoteServer] as const;
+  return [state, startRemoteServer, stopRemoteServer] as const;
 };

@@ -7,7 +7,13 @@ import log from "electron-log";
 
 import type { BroadcastWorker } from "./broadcast.worker.interface";
 import { createBroadcastWorker } from "./broadcast.worker.interface";
-import { ipc_refreshBroadcastList, ipc_startBroadcast, ipc_stopBroadcast, ipc_watchBroadcast } from "./ipc";
+import {
+  ipc_connect,
+  ipc_refreshBroadcastList,
+  ipc_startBroadcast,
+  ipc_stopBroadcast,
+  ipc_watchBroadcast,
+} from "./ipc";
 import type { SpectateWorker } from "./spectate.worker.interface";
 import { createSpectateWorker } from "./spectate.worker.interface";
 import type { SpectateController } from "./types";
@@ -35,11 +41,21 @@ export default function setupBroadcastIpc({
       }
     });
 
-  ipc_refreshBroadcastList.main!.handle(async ({ authToken }) => {
+  ipc_connect.main!.handle(async ({ authToken }) => {
     if (!spectateWorker) {
       spectateWorker = await createSpectateWorker(dolphinManager);
     }
-    await spectateWorker.refreshBroadcastList(authToken);
+    await spectateWorker.connect(authToken);
+    return { success: true };
+  });
+
+  ipc_refreshBroadcastList.main!.handle(async () => {
+    Preconditions.checkExists(
+      spectateWorker,
+      "Could not refresh broadcast list, make sure spectateWorker is connected.",
+    );
+
+    await spectateWorker.refreshBroadcastList();
     return { success: true };
   });
 

@@ -5,7 +5,7 @@ import { DolphinEventType, DolphinLaunchType } from "@dolphin/types";
 import type { SettingsManager } from "@settings/settings_manager";
 import electronLog from "electron-log";
 import http from "http";
-import { throttle } from "lodash";
+import throttle from "lodash/throttle";
 import type { AddressInfo } from "net";
 import type { connection } from "websocket";
 import { server as WebSocketServer } from "websocket";
@@ -16,7 +16,6 @@ const SPECTATE_PROTOCOL = "spectate-protocol";
 const log = electronLog.scope("remote_server");
 
 export class RemoteServer {
-  private authToken: string;
   private dolphinLaunchTimes: Map<string, number>;
 
   private spectateController: SpectateController | null;
@@ -31,7 +30,6 @@ export class RemoteServer {
     private readonly settingsManager: SettingsManager,
     private readonly getSpectateController: () => Promise<SpectateController>,
   ) {
-    this.authToken = "";
     this.dolphinLaunchTimes = new Map();
     this.spectateController = null;
     this.httpServer = null;
@@ -117,10 +115,11 @@ export class RemoteServer {
     });
   }
 
-  public async start(authToken: string, port: number): Promise<{ success: boolean; err?: string }> {
+  public async start(initialAuthToken: string, port: number): Promise<{ success: boolean; err?: string }> {
     if (!this.spectateController) {
       await this.setupSpectateController();
     }
+    await this.spectateController!.connect(initialAuthToken);
 
     if (this.httpServer && this.remoteServer) {
       return (<AddressInfo>this.httpServer.address()).port === port
@@ -128,7 +127,6 @@ export class RemoteServer {
         : { success: false, err: `server already started on port ${port}` };
     }
 
-    this.authToken = authToken;
     try {
       this.httpServer = http.createServer();
       await new Promise<void>((resolve, reject) => {
@@ -153,7 +151,7 @@ export class RemoteServer {
           const newConnection = request.accept(SPECTATE_PROTOCOL, request.origin);
           const throttledRefresh = throttle(async () => {
             try {
-              await this.spectateController!.refreshBroadcastList(this.authToken);
+              await this.spectateController!.refreshBroadcastList();
             } catch (e) {
               const err = typeof e === "string" ? e : e instanceof Error ? e.message : "unknown";
               newConnection.sendUTF(JSON.stringify({ op: "list-broadcasts-response", err }));
@@ -210,20 +208,6 @@ export class RemoteServer {
       }
       const err = typeof e === "string" ? e : e instanceof Error ? e.message : "unknown";
       return { success: false, err };
-    }
-  }
-
-  public async reconnect(authToken: string) {
-    if (!authToken) {
-      return false;
-    }
-
-    this.authToken = authToken;
-    try {
-      await this.spectateController!.refreshBroadcastList(this.authToken);
-      return true;
-    } catch (e) {
-      return false;
     }
   }
 
