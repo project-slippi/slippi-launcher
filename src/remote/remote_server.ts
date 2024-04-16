@@ -1,6 +1,6 @@
 import type { BroadcasterItem, SpectateController, SpectateDolphinOptions } from "@broadcast/types";
 import type { DolphinManager } from "@dolphin/manager";
-import type { DolphinPlaybackClosedEvent, ReplayCommunication } from "@dolphin/types";
+import type { DolphinPlaybackClosedEvent } from "@dolphin/types";
 import { DolphinEventType, DolphinLaunchType } from "@dolphin/types";
 import type { SettingsManager } from "@settings/settings_manager";
 import electronLog from "electron-log";
@@ -55,17 +55,6 @@ export class RemoteServer {
       });
   }
 
-  private async launchPlaybackDolphin(playbackId: string, filePath: string, replayComm: ReplayCommunication) {
-    try {
-      await this.dolphinManager.launchPlaybackDolphin(playbackId, replayComm);
-      if (this.connection && filePath) {
-        this.connection.sendUTF(JSON.stringify({ op: "new-file-event", dolphinId: playbackId, filePath }));
-      }
-    } catch (e) {
-      log.error(e);
-    }
-  }
-
   private async setupSpectateController() {
     this.spectateController = await this.getSpectateController();
     this.spectateController.getBroadcastListObservable().subscribe((data: BroadcasterItem[]) => {
@@ -73,41 +62,11 @@ export class RemoteServer {
         this.connection.sendUTF(JSON.stringify({ op: "list-broadcasts-response", broadcasts: data }));
       }
     });
-    this.spectateController
-      .getSpectateDetailsObservable()
-      .subscribe(async ({ playbackId, filePath, broadcasterName }) => {
-        const replayComm: ReplayCommunication = {
-          mode: "mirror",
-          replay: filePath,
-          gameStation: broadcasterName,
-        };
-        await new Promise<void>((resolve, reject) => {
-          const dolphinLaunchTime = this.dolphinLaunchTimes.get(playbackId);
-          if (dolphinLaunchTime !== undefined) {
-            const diff = Date.now() - dolphinLaunchTime;
-            if (diff < 1000) {
-              setTimeout(async () => {
-                try {
-                  await this.launchPlaybackDolphin(playbackId, filePath, replayComm);
-                  this.dolphinLaunchTimes.set(playbackId, Date.now());
-                  resolve();
-                } catch (e) {
-                  reject(e);
-                }
-              }, 1000 - diff);
-              return;
-            }
-          }
-          this.launchPlaybackDolphin(playbackId, filePath, replayComm)
-            .then(() => {
-              this.dolphinLaunchTimes.set(playbackId, Date.now());
-              resolve();
-            })
-            .catch((e) => {
-              reject(e);
-            });
-        });
-      });
+    this.spectateController.getSpectateDetailsObservable().subscribe(async ({ playbackId, filePath }) => {
+      if (this.connection && filePath) {
+        this.connection.sendUTF(JSON.stringify({ op: "new-file-event", dolphinId: playbackId, filePath }));
+      }
+    });
     this.spectateController.getGameEndObservable().subscribe((dolphinId: string) => {
       if (this.connection) {
         this.connection.sendUTF(JSON.stringify({ op: "game-end-event", dolphinId }));
