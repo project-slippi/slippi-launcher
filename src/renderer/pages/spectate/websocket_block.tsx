@@ -30,12 +30,13 @@ export const WebSocketBlock = React.memo(
 
     const [copied, setCopied] = React.useState(false);
     const onCopy = React.useCallback(() => {
-      // Set the clipboard text
-      window.electron.clipboard.writeText(address);
-
-      // Set copied indication
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 2000);
+      navigator.clipboard
+        .writeText(address)
+        .then(() => {
+          setCopied(true);
+          window.setTimeout(() => setCopied(false), 2000);
+        })
+        .catch(console.error);
     }, [address]);
 
     const [starting, setStarting] = React.useState(false);

@@ -16,8 +16,6 @@ const SPECTATE_PROTOCOL = "spectate-protocol";
 const log = electronLog.scope("remote_server");
 
 export class RemoteServer {
-  private dolphinLaunchTimes: Map<string, number>;
-
   private spectateController: SpectateController | null;
   private httpServer: http.Server | null;
   private remoteServer: WebSocketServer | null;
@@ -30,14 +28,13 @@ export class RemoteServer {
     private readonly settingsManager: SettingsManager,
     private readonly getSpectateController: () => Promise<SpectateController>,
   ) {
-    this.dolphinLaunchTimes = new Map();
     this.spectateController = null;
     this.httpServer = null;
     this.remoteServer = null;
     this.connection = null;
     this.prefixOrdinal = 0;
 
-    dolphinManager.events
+    this.dolphinManager.events
       .filter<DolphinPlaybackClosedEvent>((event) => {
         return event.type === DolphinEventType.CLOSED && event.dolphinType === DolphinLaunchType.PLAYBACK;
       })
