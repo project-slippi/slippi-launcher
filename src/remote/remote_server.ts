@@ -145,6 +145,12 @@ export class RemoteServer {
           });
           this.connection = newConnection;
           ipc_remoteStateEvent.main!.trigger({ connected: true, started: true }).catch(log.error);
+          this.connection.sendUTF(
+            JSON.stringify({
+              op: "spectating-broadcasts-event",
+              spectatingBroadcasts: await this.spectateController!.getOpenBroadcasts(),
+            }),
+          );
         } else {
           request.reject();
         }

@@ -297,4 +297,11 @@ export class SpectateManager extends EventEmitter {
 
     this.stopWatchingBroadcast(broadcastInfo.broadcastId);
   }
+
+  public getOpenBroadcasts() {
+    return Object.values(this.openBroadcasts).map((value) => ({
+      broadcastId: value.broadcastId,
+      dolphinId: value.dolphinId,
+    }));
+  }
 }
