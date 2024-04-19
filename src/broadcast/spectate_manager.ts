@@ -5,12 +5,10 @@ import * as fs from "fs-extra";
 import type { connection, Message } from "websocket";
 import { client as WebSocketClient } from "websocket";
 
-import type { BroadcasterItem } from "./types";
+import type { BroadcasterItem, SpectateDolphinOptions } from "./types";
 import { SpectateEvent } from "./types";
 
 const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
-
-const DOLPHIN_INSTANCE_ID = "spectate";
 
 type BroadcastInfo = {
   broadcastId: string;
@@ -20,7 +18,11 @@ type BroadcastInfo = {
   dolphinId: string;
 };
 
-const generatePlaybackId = (broadcastId: string) => `spectate-${broadcastId}`;
+// since we can have multiple SpectateManagers, we need to be careful about creating colliding ids
+const generatePlaybackId = (postfix?: string) => {
+  const now = Date.now().toString();
+  return postfix ? now + postfix : now;
+};
 
 /**
  * Responsible for retrieving Dolphin game data over enet and sending the data
@@ -67,6 +69,9 @@ export class SpectateManager extends EventEmitter {
           this.emit(SpectateEvent.LOG, "Game end explicit");
           broadcastInfo.fileWriter.endCurrentFile();
           broadcastInfo.gameStarted = false;
+
+          // Observers should be able to depend on the file being closed, so emit this last.
+          this.emit(SpectateEvent.GAME_END, broadcastInfo.dolphinId);
           break;
         }
         case "game_event": {
@@ -219,37 +224,36 @@ export class SpectateManager extends EventEmitter {
    *
    * @param {string} broadcastId The ID of the broadcast to watch
    * @param {string} targetPath Where the SLP files should be stored
-   * @param {true} [singleton] If true, it will open the broadcasts only
-   * in a single Dolphin window. Opens each broadcast in their own window otherwise.
+   * @param {SpectateDolphinOptions} dolphinOptions Options for playback dolphin. One of `dolphinId` or `idPostfix` must be specified
+   * @param {string?} dolphinOptions.dolphinId The ID of the dolphin window to use, will create a dolphin window with the ID if none exists. If not specified, a dolphin ID will be generated
+   * @param {string?} dolphinOptions.idPostfix A postfix to use with the generated dolphin ID to avoid collisions
+   * @returns {string} The ID of the dolphin window used
    */
-  public watchBroadcast(broadcastId: string, targetPath: string, singleton?: true) {
+  public watchBroadcast(broadcastId: string, targetPath: string, dolphinOptions: SpectateDolphinOptions) {
     Preconditions.checkExists(this.wsConnection, "No websocket connection");
 
-    const existingBroadcasts = Object.keys(this.openBroadcasts);
-    if (existingBroadcasts.includes(broadcastId)) {
-      // We're already watching this broadcast!
+    const openBroadcast = this.openBroadcasts[broadcastId];
+    if (openBroadcast) {
       this.emit(SpectateEvent.LOG, `We are already watching the selected broadcast`);
-      return;
+      return openBroadcast.dolphinId;
     }
 
-    let dolphinPlaybackId = generatePlaybackId(broadcastId);
-
-    // We're only watching one at at time so stop other broadcasts
-    if (singleton) {
-      existingBroadcasts.forEach((broadcastInfo) => {
-        this.stopWatchingBroadcast(broadcastInfo);
-      });
-
-      // Use the default playback ID
-      dolphinPlaybackId = DOLPHIN_INSTANCE_ID;
+    if (dolphinOptions.dolphinId) {
+      const existingDolphin = Object.values(this.openBroadcasts).find(
+        (broadcastInfo) => broadcastInfo.dolphinId === dolphinOptions.dolphinId,
+      );
+      if (existingDolphin) {
+        this.stopWatchingBroadcast(existingDolphin.broadcastId);
+      }
     }
+    const dolphinPlaybackId = dolphinOptions.dolphinId || generatePlaybackId(dolphinOptions.idPostfix);
+    const broadcasterName = dolphinOptions.dolphinId || this.availableBroadcasts[broadcastId].name;
 
     fs.ensureDirSync(targetPath);
     const slpFileWriter = new SlpFileWriter({
       folderPath: targetPath,
     });
 
-    const broadcasterName = this.availableBroadcasts[broadcastId].name;
     slpFileWriter.on(SlpFileWriterEvent.NEW_FILE, (currFilePath) => {
       this._playFile(currFilePath, dolphinPlaybackId, broadcasterName).catch(console.warn);
     });
@@ -273,6 +277,7 @@ export class SpectateManager extends EventEmitter {
     // used to clear out any previous file that we were reading for. The file will get updated
     // by the fileWriter
     this._playFile("", dolphinPlaybackId, broadcasterName).catch(console.warn);
+    return dolphinPlaybackId;
   }
 
   public handleClosedDolphin(playbackId: string) {
@@ -291,5 +296,12 @@ export class SpectateManager extends EventEmitter {
     }
 
     this.stopWatchingBroadcast(broadcastInfo.broadcastId);
+  }
+
+  public getOpenBroadcasts() {
+    return Object.values(this.openBroadcasts).map((value) => ({
+      broadcastId: value.broadcastId,
+      dolphinId: value.dolphinId,
+    }));
   }
 }
