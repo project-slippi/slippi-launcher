@@ -84,7 +84,7 @@ export class RemoteServer {
         });
         this.httpServer!.listen(
           port,
-          "localhost", // bind only to localhost
+          "127.0.0.1", // allow only local conenctions
           511, // default backlog queue length
           () => {
             this.httpServer!.removeAllListeners("error");

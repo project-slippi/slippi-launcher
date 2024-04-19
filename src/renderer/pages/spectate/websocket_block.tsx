@@ -26,7 +26,7 @@ export const WebSocketBlock = React.memo(
 
     const [portError, setPortError] = React.useState(false);
     const [chosenPort, setChosenPort] = React.useState(remoteServerState.port || 49809);
-    const address = "ws://localhost:" + remoteServerState.port;
+    const address = "ws://127.0.0.1:" + remoteServerState.port;
 
     const [copied, setCopied] = React.useState(false);
     const onCopy = React.useCallback(() => {
