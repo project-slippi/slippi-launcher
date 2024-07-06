@@ -15,16 +15,41 @@ type FolderTreeNodeProps = {
   nestLevel?: number;
   folder: FolderResult;
   collapsedFolders: readonly string[];
+  isReversed: boolean;
   onClick: (fullPath: string) => void;
   onToggle: (fullPath: string) => void;
 };
 
-export const FolderTreeNode = ({ nestLevel = 0, folder, collapsedFolders, onClick, onToggle }: FolderTreeNodeProps) => {
+export const FolderTreeNode = ({
+  nestLevel = 0,
+  folder,
+  collapsedFolders,
+  isReversed,
+  onClick,
+  onToggle,
+}: FolderTreeNodeProps) => {
   const currentFolder = useReplays((store) => store.currentFolder);
   const hasChildren = folder.subdirectories.length > 0;
   const isCollapsed = collapsedFolders.includes(folder.fullPath);
   const isSelected = currentFolder === folder.fullPath;
   const labelColor = isSelected ? colors.grayDark : "rgba(255, 255, 255, 0.5)";
+
+  const getSubdirectoryNodes = () => {
+    const subdirectories = folder.subdirectories.map((f) => (
+      <FolderTreeNode
+        nestLevel={nestLevel + 1}
+        key={f.fullPath}
+        folder={f}
+        collapsedFolders={collapsedFolders}
+        isReversed={isReversed}
+        onClick={onClick}
+        onToggle={onToggle}
+      />
+    ));
+
+    return isReversed ? subdirectories.reverse() : subdirectories;
+  };
+
   return (
     <div>
       <ListItem
@@ -74,16 +99,7 @@ export const FolderTreeNode = ({ nestLevel = 0, folder, collapsedFolders, onClic
       </ListItem>
       {folder.subdirectories.length === 0 || isCollapsed ? null : (
         <List dense={true} style={{ padding: 0 }}>
-          {folder.subdirectories.map((f) => (
-            <FolderTreeNode
-              nestLevel={nestLevel + 1}
-              key={f.fullPath}
-              folder={f}
-              collapsedFolders={collapsedFolders}
-              onClick={onClick}
-              onToggle={onToggle}
-            />
-          ))}
+          {getSubdirectoryNodes()}
         </List>
       )}
     </div>
