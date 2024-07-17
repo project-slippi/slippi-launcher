@@ -96,7 +96,7 @@ export class MirrorManager extends EventEmitter {
         this.emit(MirrorEvent.LOG, "Got handshake from wii");
         this.emit(MirrorEvent.LOG, details);
         if (config.useNicknameFolders) {
-          const replayFolder = path.join(config.folderPath, details.consoleNick);
+          const replayFolder = path.join(config.folderPath, details.consoleNick.trim());
           fs.ensureDirSync(replayFolder);
 
           fileWriter.updateSettings({ consoleNickname: details.consoleNick, folderPath: replayFolder });

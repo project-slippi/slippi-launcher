@@ -120,7 +120,9 @@ export const SavedConnectionItem = ({
                 font-size: 14px;
               `}
             >
-              {connection.useNicknameFolders ? path.join(connection.folderPath, nickname ?? "") : connection.folderPath}
+              {connection.useNicknameFolders
+                ? path.join(connection.folderPath, nickname?.trim() ?? "")
+                : connection.folderPath}
             </span>
           </LabelledText>
           {connection.enableRelay && (
