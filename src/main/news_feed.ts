@@ -1,3 +1,4 @@
+import { socials } from "@common/constants";
 import type { NewsItem } from "@common/types";
 import log from "electron-log";
 import mediumJSONFeed from "medium-json-feed";
@@ -17,23 +18,43 @@ export async function fetchNewsFeedData(): Promise<NewsItem[]> {
 }
 
 async function fetchMediumNews(): Promise<NewsItem[]> {
-  const response = await mediumJSONFeed("project-slippi");
-  if (response?.status !== 200) {
-    throw new Error("Error fetching Medium feed");
-  }
+  return mediumJSONFeed("project-slippi").then(
+    (feedFetchAttempt: { status: number; response: any }) => {
+      if (feedFetchAttempt?.status !== 200) {
+        // NOTE(VirtualFreeEx): I do not think that this is a possible
+        // occurance, as the promise is exclusively resolved with 200
+        // in the original library.
+        throw new Error("Received a non-200 response.");
+      }
 
-  const result = response.response;
-  return result.map((post: any): NewsItem => {
-    const publishedAt = new Date(post.firstPublishedAt).toISOString();
-    return {
-      id: `medium-${post.id}`,
-      imageUrl: `https://cdn-images-1.medium.com/${post.virtuals.previewImage.imageId}`,
-      title: post.title,
-      subtitle: post.virtuals.subtitle,
-      publishedAt,
-      permalink: `https://medium.com/project-slippi/${post.uniqueSlug}`,
-    };
-  });
+      const result = feedFetchAttempt.response;
+      return result.map((post: any): NewsItem => {
+        const publishedAt = new Date(post.firstPublishedAt).toISOString();
+        return {
+          id: `medium-${post.id}`,
+          imageUrl: `https://cdn-images-1.medium.com/${post.virtuals.previewImage.imageId}`,
+          title: post.title,
+          subtitle: post.virtuals.subtitle,
+          publishedAt,
+          permalink: `https://medium.com/project-slippi/${post.uniqueSlug}`,
+        };
+      });
+    },
+    (error: any) => {
+      log.warn("Failed to fetch Medium news!", error);
+      // HACK(VirtualFreeEx): Returning a news post instead of showing a warning snackbar.
+      // Ideally, this should be either silently failing or display a better indicator of failure (such as a snackbar.)
+      return [
+        {
+          id: "fallback-medium-load-failed",
+          title: "Failed loading Medium news!",
+          body: "An error has occured while trying to fetch news from Medium. See logs for more details, join Project Slippi Discord server for support.",
+          publishedAt: new Date().toISOString(),
+          permalink: socials.discordUrl,
+        },
+      ];
+    },
+  );
 }
 
 async function fetchGithubReleaseNews(repos: string[]): Promise<NewsItem[]> {
