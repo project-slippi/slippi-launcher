@@ -111,7 +111,6 @@ export interface DolphinService {
   removePlayKeyFile(): Promise<void>;
   viewSlpReplay(files: ReplayQueueItem[]): Promise<void>;
   launchNetplayDolphin(options: { bootToCss?: boolean }): Promise<void>;
-  importDolphinSettings(options: { toImportDolphinPath: string; dolphinType: DolphinLaunchType }): Promise<void>;
   fetchGeckoCodes(dolphinLaunchType: DolphinLaunchType): Promise<GeckoCode[]>;
   saveGeckoCodes(dolphinLaunchType: DolphinLaunchType, geckoCodes: GeckoCode[]): Promise<void>;
   onEvent<T extends DolphinEventType>(eventType: T, handle: (event: DolphinEventMap[T]) => void): () => void;

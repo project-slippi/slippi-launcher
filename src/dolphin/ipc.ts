@@ -54,13 +54,6 @@ export const ipc_launchNetplayDolphin = makeEndpoint.main(
   <SuccessPayload>_,
 );
 
-// toImportDolphin path must point to a "Slippi Dolphin.{exe,app}"
-export const ipc_importDolphinSettings = makeEndpoint.main(
-  "importDolphinSettings",
-  <{ toImportDolphinPath: string; dolphinType: DolphinLaunchType }>_,
-  <SuccessPayload>_,
-);
-
 export const ipc_fetchGeckoCodes = makeEndpoint.main(
   "fetchGeckoCodes",
   <{ dolphinType: DolphinLaunchType }>_,

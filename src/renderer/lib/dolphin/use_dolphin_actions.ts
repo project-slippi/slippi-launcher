@@ -8,7 +8,7 @@ import { useToasts } from "@/lib/hooks/use_toasts";
 import { DolphinStatus, setDolphinOpened, useDolphinStore } from "./use_dolphin_store";
 
 export const useDolphinActions = (dolphinService: DolphinService) => {
-  const { showError, showSuccess } = useToasts();
+  const { showError } = useToasts();
   const netplayStatus = useDolphinStore((store) => store.netplayStatus);
   const playbackStatus = useDolphinStore((store) => store.playbackStatus);
 
@@ -114,18 +114,6 @@ export const useDolphinActions = (dolphinService: DolphinService) => {
     [getInstallStatus, dolphinService, showError],
   );
 
-  const importDolphin = useCallback(
-    (toImportDolphinPath: string, dolphinType: DolphinLaunchType) => {
-      dolphinService
-        .importDolphinSettings({ toImportDolphinPath, dolphinType })
-        .then(() => {
-          showSuccess(`${dolphinType} Dolphin settings successfully imported`);
-        })
-        .catch(showError);
-    },
-    [dolphinService, showError, showSuccess],
-  );
-
   const readGeckoCodes = useCallback(
     async (dolphinType: DolphinLaunchType) => {
       if (getInstallStatus(dolphinType) !== DolphinStatus.READY) {
@@ -155,7 +143,6 @@ export const useDolphinActions = (dolphinService: DolphinService) => {
     hardResetDolphin,
     launchNetplay,
     viewReplays,
-    importDolphin,
     updateDolphin,
     readGeckoCodes,
     saveGeckoCodes,

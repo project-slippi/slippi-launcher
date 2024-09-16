@@ -2,7 +2,6 @@ import { shell } from "electron";
 import log from "electron-log";
 import * as fs from "fs-extra";
 import isEqual from "lodash/isEqual";
-import path from "path";
 import { fileExists } from "utils/file_exists";
 
 import {
@@ -12,7 +11,6 @@ import {
   ipc_downloadDolphin,
   ipc_fetchGeckoCodes,
   ipc_hardResetDolphin,
-  ipc_importDolphinSettings,
   ipc_launchNetplayDolphin,
   ipc_openDolphinSettingsFolder,
   ipc_removePlayKeyFile,
@@ -25,8 +23,6 @@ import type { DolphinManager } from "./manager";
 import { deletePlayKeyFile, writePlayKeyFile } from "./playkey";
 import { DolphinLaunchType } from "./types";
 import { fetchGeckoCodes, saveGeckoCodes, updateBootToCssCode } from "./util";
-
-const isMac = process.platform === "darwin";
 
 export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: DolphinManager }) {
   dolphinManager.events.subscribe((event) => {
@@ -114,18 +110,6 @@ export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: Do
 
     // Actually launch Dolphin
     await dolphinManager.launchNetplayDolphin();
-    return { success: true };
-  });
-
-  ipc_importDolphinSettings.main!.handle(async ({ toImportDolphinPath, dolphinType }) => {
-    let dolphinPath = toImportDolphinPath;
-    if (isMac) {
-      dolphinPath = path.join(dolphinPath, "Contents", "Resources");
-    } else {
-      dolphinPath = path.dirname(dolphinPath);
-    }
-
-    await dolphinManager.importConfig(dolphinType, dolphinPath);
     return { success: true };
   });
 

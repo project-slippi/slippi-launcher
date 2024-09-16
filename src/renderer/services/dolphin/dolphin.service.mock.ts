@@ -86,14 +86,6 @@ class MockDolphinClient implements DolphinService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async importDolphinSettings(_options: {
-    toImportDolphinPath: string;
-    dolphinType: DolphinLaunchType;
-  }): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
-
-  @delayAndMaybeError(SHOULD_ERROR)
   public async openDolphinSettingsFolder(_dolphinType: DolphinLaunchType): Promise<void> {
     throw new Error("Method not implemented.");
   }

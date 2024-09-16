@@ -6,7 +6,6 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import Typography from "@mui/material/Typography";
-import log from "electron-log";
 import capitalize from "lodash/capitalize";
 import React from "react";
 
@@ -19,8 +18,6 @@ import { useServices } from "@/services";
 
 import { SettingItem } from "../setting_item_section";
 import { GeckoCodes } from "./gecko_codes/gecko_codes";
-
-const { isMac, isWindows } = window.electron.bootstrap;
 
 enum ResetType {
   SOFT,
@@ -41,7 +38,7 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
   const [resetModalOpen, setResetModalOpen] = React.useState(false);
   const [isResetType, setResetType] = React.useState<ResetType | null>(null);
   const { dolphinService } = useServices();
-  const { openConfigureDolphin, hardResetDolphin, softResetDolphin, importDolphin } = useDolphinActions(dolphinService);
+  const { openConfigureDolphin, hardResetDolphin, softResetDolphin } = useDolphinActions(dolphinService);
   const { showWarning } = useToasts();
   const dolphinIsReady = dolphinStatus === DolphinStatus.READY && !dolphinIsOpen && isResetType === null;
   const versionString: string =
@@ -76,11 +73,6 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
     setResetType(ResetType.HARD);
     await hardResetDolphin(dolphinType);
     setResetType(null);
-  };
-
-  const importDolphinHandler = (importPath: string) => {
-    log.info(`importing dolphin from ${importPath}`);
-    importDolphin(importPath, dolphinType);
   };
 
   const dolphinTypeName = capitalize(dolphinType);
@@ -181,48 +173,6 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
           </RadioGroup>
         </SettingItem>
       )}
-      {isWindows && (
-        <ImportDolphinConfigForm
-          dolphinType={dolphinType}
-          disabled={!dolphinIsReady}
-          onImportDolphin={importDolphinHandler}
-        />
-      )}
     </div>
-  );
-};
-
-const ImportDolphinConfigForm = ({
-  dolphinType,
-  disabled,
-  onImportDolphin,
-}: {
-  dolphinType: DolphinLaunchType;
-  disabled?: boolean;
-  onImportDolphin: (importPath: string) => void;
-}) => {
-  const dolphinTypeName = capitalize(dolphinType);
-  const extension = isMac ? "app" : "exe";
-
-  const onImportClick = async () => {
-    const result = await window.electron.common.showOpenDialog({
-      filters: [{ name: "Slippi Dolphin", extensions: [isMac ? "app" : "exe"] }],
-    });
-    const res = result.filePaths;
-    if (result.canceled || res.length === 0) {
-      return;
-    }
-    onImportDolphin(res[0]);
-  };
-
-  return (
-    <SettingItem
-      name={`Import ${dolphinTypeName} Dolphin Settings`}
-      description={`Replace the ${dolphinTypeName} Dolphin settings with those from a different Dolphin application. To do this, select the Dolphin.${extension} with the desired ${dolphinType} settings.`}
-    >
-      <Button variant="contained" color="secondary" onClick={onImportClick} disabled={disabled}>
-        Import Dolphin settings
-      </Button>
-    </SettingItem>
   );
 };
