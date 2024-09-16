@@ -92,6 +92,19 @@ export const useAppInitialization = () => {
     // Check if there is an update to the launcher
     promises.push(window.electron.common.checkForAppUpdates());
 
+    // Remove any temp files
+    promises.push(
+      (async () => {
+        window.electron.common.clearTempFolder().catch((err) => {
+          // silently fail since this isn't a critical issue
+          log.error(
+            `Could not clear temp folder on startup due to:
+            ${err instanceof Error ? err.message : JSON.stringify(err)}`,
+          );
+        });
+      })(),
+    );
+
     // Wait for all the promises to complete before completing
     try {
       await Promise.all(promises);
