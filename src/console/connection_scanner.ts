@@ -51,6 +51,12 @@ export class ConnectionScanner {
     // The Wii's IP address
     const ip = rinfo.address;
 
+    if (ip === "0.0.0.0") {
+      // this is not a routable address, any wii advertising failed to get an actual IP
+      // TODO: give a warning toast that a Wii with no assigned IP was found
+      return;
+    }
+
     const previous = this.availableConnectionsByIp[ip];
     const previousTimeoutHandler = this.timeoutsByIp[ip];
 
