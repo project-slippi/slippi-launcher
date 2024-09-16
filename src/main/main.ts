@@ -42,7 +42,7 @@ let mainWindow: BrowserWindow | null = null;
 let didFinishLoad = false;
 
 log.initialize();
-log.catchErrors();
+log.errorHandler.startCatching();
 log.transports.file.level = isDevelopment ? "info" : "warn";
 
 // Only allow a single Slippi App instance
