@@ -18,7 +18,6 @@ import {
   ipc_checkValidIso,
   ipc_clearTempFolder,
   ipc_copyLogsToClipboard,
-  ipc_deleteDesktopAppPath,
   ipc_deleteFiles,
   ipc_fetchNewsFeed,
   ipc_getLatestGitHubReleaseVersion,
@@ -88,14 +87,6 @@ export default function setupMainIpc({
     } catch (err) {
       return { path, valid: IsoValidity.INVALID };
     }
-  });
-
-  ipc_deleteDesktopAppPath.main!.handle(async () => {
-    // get the path and remove
-    const desktopAppPath = path.join(app.getPath("appData"), "Slippi Desktop App");
-    await fs.remove(desktopAppPath);
-
-    return { success: true };
   });
 
   ipc_copyLogsToClipboard.main!.handle(async () => {

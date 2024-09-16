@@ -10,8 +10,6 @@ export const ipc_checkValidIso = makeEndpoint.main(
   <{ path: string; valid: IsoValidity }>_,
 );
 
-export const ipc_deleteDesktopAppPath = makeEndpoint.main("deleteDesktopAppPath", <EmptyPayload>_, <SuccessPayload>_);
-
 export const ipc_copyLogsToClipboard = makeEndpoint.main("copyLogsToClipboard", <EmptyPayload>_, <SuccessPayload>_);
 
 export const ipc_checkForUpdate = makeEndpoint.main("checkForUpdate", <EmptyPayload>_, <SuccessPayload>_);

@@ -8,8 +8,6 @@ import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 import type { AuthUser } from "@/services/auth/types";
 
-import { useDesktopApp } from "./use_quick_start";
-
 export const useAppStore = create(
   combine(
     {
@@ -39,8 +37,6 @@ export const useAppInitialization = () => {
   const setUserData = useAccount((store) => store.setUserData);
   const setUser = useAccount((store) => store.setUser);
   const setServerError = useAccount((store) => store.setServerError);
-  const setDesktopAppExists = useDesktopApp((store) => store.setExists);
-  const setDesktopAppDolphinPath = useDesktopApp((store) => store.setDolphinPath);
 
   const initialize = async () => {
     if (initializing || initialized) {
@@ -92,16 +88,6 @@ export const useAppInitialization = () => {
         );
       });
     });
-
-    promises.push(
-      dolphinService
-        .checkDesktopAppDolphin()
-        .then(({ exists, dolphinPath }) => {
-          setDesktopAppExists(exists);
-          setDesktopAppDolphinPath(dolphinPath);
-        })
-        .catch(log.error),
-    );
 
     // Check if there is an update to the launcher
     promises.push(window.electron.common.checkForAppUpdates());

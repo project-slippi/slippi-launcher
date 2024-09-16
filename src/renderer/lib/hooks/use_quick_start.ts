@@ -1,8 +1,6 @@
 import { currentRulesVersion } from "@common/constants";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { create } from "zustand";
-import { combine } from "zustand/middleware";
 
 import { useSettings } from "@/lib/hooks/use_settings";
 
@@ -12,7 +10,6 @@ export enum QuickStartStep {
   LOGIN = "LOGIN",
   VERIFY_EMAIL = "VERIFY_EMAIL",
   ACCEPT_RULES = "ACCEPT_RULES",
-  MIGRATE_DOLPHIN = "MIGRATE_DOLPHIN",
   ACTIVATE_ONLINE = "ACTIVATE_ONLINE",
   SET_ISO_PATH = "SET_ISO_PATH",
   COMPLETE = "COMPLETE",
@@ -26,7 +23,6 @@ function generateSteps(
     showRules: boolean;
     serverError: boolean;
     hasIso: boolean;
-    hasOldDesktopApp: boolean;
   }>,
 ): QuickStartStep[] {
   // Build the steps in reverse order
@@ -34,10 +30,6 @@ function generateSteps(
 
   if (!options.hasIso) {
     steps.unshift(QuickStartStep.SET_ISO_PATH);
-  }
-
-  if (options.hasOldDesktopApp) {
-    steps.unshift(QuickStartStep.MIGRATE_DOLPHIN);
   }
 
   if (!options.hasPlayKey && !options.serverError) {
@@ -65,7 +57,6 @@ export const useQuickStart = () => {
   const user = useAccount((store) => store.user);
   const userData = useAccount((store) => store.userData);
   const serverError = useAccount((store) => store.serverError);
-  const desktopAppPathExists = useDesktopApp((store) => store.exists);
   const options = {
     hasUser: Boolean(user),
     hasIso: Boolean(savedIsoPath),
@@ -73,7 +64,6 @@ export const useQuickStart = () => {
     hasPlayKey: Boolean(userData?.playKey),
     showRules: Boolean((userData?.rulesAccepted ?? 0) < currentRulesVersion),
     serverError: Boolean(serverError),
-    hasOldDesktopApp: desktopAppPathExists,
   };
   const [steps] = React.useState(generateSteps(options));
   const [currentStep, setCurrentStep] = React.useState<QuickStartStep | null>(null);
@@ -88,10 +78,6 @@ export const useQuickStart = () => {
     let stepToShow: QuickStartStep | null = QuickStartStep.COMPLETE;
     if (!options.hasIso) {
       stepToShow = QuickStartStep.SET_ISO_PATH;
-    }
-
-    if (options.hasOldDesktopApp) {
-      stepToShow = QuickStartStep.MIGRATE_DOLPHIN;
     }
 
     if (!options.hasPlayKey && !options.serverError) {
@@ -115,7 +101,6 @@ export const useQuickStart = () => {
     steps,
     options.hasIso,
     options.hasVerifiedEmail,
-    options.hasOldDesktopApp,
     options.hasPlayKey,
     options.hasUser,
     options.showRules,
@@ -144,18 +129,3 @@ export const useQuickStart = () => {
     prevStep,
   };
 };
-
-export const oldDesktopApp = { path: "", exists: false };
-
-export const useDesktopApp = create(
-  combine(
-    {
-      exists: false,
-      dolphinPath: "",
-    },
-    (set) => ({
-      setExists: (exists: boolean) => set({ exists }),
-      setDolphinPath: (dolphinPath: string) => set({ dolphinPath }),
-    }),
-  ),
-);

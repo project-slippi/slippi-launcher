@@ -5,7 +5,6 @@ import {
   ipc_checkValidIso,
   ipc_clearTempFolder,
   ipc_copyLogsToClipboard,
-  ipc_deleteDesktopAppPath,
   ipc_deleteFiles,
   ipc_fetchNewsFeed,
   ipc_getLatestGitHubReleaseVersion,
@@ -34,9 +33,6 @@ export default {
   // rather than the file paths to delete. Remove this function once Replay DB service is ready.
   async deleteFiles(filePaths: string[]) {
     await ipc_deleteFiles.renderer!.trigger({ filePaths });
-  },
-  async deleteDesktopAppPath() {
-    await ipc_deleteDesktopAppPath.renderer!.trigger({});
   },
   async copyLogsToClipboard(): Promise<void> {
     await ipc_copyLogsToClipboard.renderer!.trigger({});

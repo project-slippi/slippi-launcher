@@ -1,19 +1,16 @@
-import { app, shell } from "electron";
+import { shell } from "electron";
 import log from "electron-log";
 import * as fs from "fs-extra";
 import isEqual from "lodash/isEqual";
-import path from "path";
 import { fileExists } from "utils/file_exists";
 
 import {
-  ipc_checkDesktopAppDolphin,
   ipc_checkPlayKeyExists,
   ipc_configureDolphin,
   ipc_dolphinEvent,
   ipc_downloadDolphin,
   ipc_fetchGeckoCodes,
   ipc_hardResetDolphin,
-  ipc_importDolphinSettings,
   ipc_launchNetplayDolphin,
   ipc_openDolphinSettingsFolder,
   ipc_removePlayKeyFile,
@@ -25,10 +22,7 @@ import {
 import type { DolphinManager } from "./manager";
 import { deletePlayKeyFile, writePlayKeyFile } from "./playkey";
 import { DolphinLaunchType } from "./types";
-import { fetchGeckoCodes, findDolphinExecutable, saveGeckoCodes, updateBootToCssCode } from "./util";
-
-const isMac = process.platform === "darwin";
-const isLinux = process.platform === "linux";
+import { fetchGeckoCodes, saveGeckoCodes, updateBootToCssCode } from "./util";
 
 export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: DolphinManager }) {
   dolphinManager.events.subscribe((event) => {
@@ -117,41 +111,6 @@ export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: Do
     // Actually launch Dolphin
     await dolphinManager.launchNetplayDolphin();
     return { success: true };
-  });
-
-  ipc_importDolphinSettings.main!.handle(async ({ toImportDolphinPath, dolphinType }) => {
-    let dolphinPath = toImportDolphinPath;
-    if (isMac) {
-      dolphinPath = path.join(dolphinPath, "Contents", "Resources");
-    } else {
-      dolphinPath = path.dirname(dolphinPath);
-    }
-
-    await dolphinManager.importConfig(dolphinType, dolphinPath);
-    return { success: true };
-  });
-
-  ipc_checkDesktopAppDolphin.main!.handle(async () => {
-    // get the path and check existence
-    const desktopAppPath = path.join(app.getPath("appData"), "Slippi Desktop App");
-    let exists = await fs.pathExists(desktopAppPath);
-
-    if (!exists) {
-      return { dolphinPath: "", exists: false };
-    }
-
-    // Linux doesn't need to do anything because their dolphin settings are in a user config dir
-    if (isLinux && exists) {
-      await fs.remove(desktopAppPath);
-      return { dolphinPath: "", exists: false };
-    }
-
-    const dolphinFolderPath = path.join(desktopAppPath, "dolphin");
-    exists = await fs.pathExists(dolphinFolderPath);
-
-    const dolphinExecutablePath = await findDolphinExecutable(DolphinLaunchType.NETPLAY, dolphinFolderPath);
-
-    return { dolphinPath: dolphinExecutablePath, exists: exists };
   });
 
   ipc_fetchGeckoCodes.main!.handle(async ({ dolphinType }) => {
