@@ -305,8 +305,5 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
         );
       }
     }
-    await fs.remove(assetPath).catch((err) => {
-      log.error(`Could not delete dolphin asset: ${err}`);
-    });
   }
 }
