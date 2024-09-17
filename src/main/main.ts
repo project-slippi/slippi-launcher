@@ -29,7 +29,7 @@ import { fileExists } from "utils/file_exists";
 import { getConfigFlags } from "./flags/flags";
 import { installModules } from "./install_modules";
 import { MenuBuilder } from "./menu";
-import { resolveHtmlPath } from "./util";
+import { clearTempFolder, resolveHtmlPath } from "./util";
 
 const BACKGROUND_COLOR = "#1B0B28";
 
@@ -86,6 +86,17 @@ const installExtensions = async () => {
 const createWindow = async () => {
   if (isDevelopment) {
     await installExtensions();
+  }
+
+  // clear temp files safely before the app has fully started and replays are being loaded for playback
+  try {
+    await clearTempFolder();
+  } catch (err) {
+    // silently fail since this isn't a critical issue
+    log.error(
+      `Could not clear temp folder on startup due to:
+      ${err instanceof Error ? err.message : JSON.stringify(err)}`,
+    );
   }
 
   mainWindow = new BrowserWindow({

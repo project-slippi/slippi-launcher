@@ -78,3 +78,9 @@ export async function readLastLines(
 
   return Buffer.from(allBytes).toString(encoding);
 }
+
+export async function clearTempFolder() {
+  const tmpDir = path.join(app.getPath("userData"), "temp");
+  await fs.remove(tmpDir);
+  await fs.ensureDir(tmpDir);
+}
