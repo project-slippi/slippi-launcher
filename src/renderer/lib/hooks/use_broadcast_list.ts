@@ -22,9 +22,12 @@ export const useBroadcastList = () => {
   const items = useBroadcastListStore((store) => store.items);
   const { showError } = useToasts();
 
-  const refresh = async () => {
+  const connect = async () => {
     const authToken = await authService.getUserToken();
-    await broadcastService.refreshBroadcastList(authToken);
+    await broadcastService.connect(authToken);
+  };
+  const refresh = async () => {
+    await broadcastService.refreshBroadcastList();
   };
 
   // Limit refreshing to once every 2 seconds
@@ -32,5 +35,5 @@ export const useBroadcastList = () => {
     refresh().catch(showError);
   }, 2000);
 
-  return [items, throttledRefresh] as const;
+  return [items, connect, throttledRefresh] as const;
 };

@@ -17,13 +17,14 @@ import { useBroadcast } from "./use_broadcast";
 import { useBroadcastList, useBroadcastListStore } from "./use_broadcast_list";
 import { useConsoleDiscoveryStore } from "./use_console_discovery";
 import { useIsoVerification } from "./use_iso_verification";
+import { useRemoteServerStateStore } from "./use_remote_server";
 import { useReplayBrowserNavigation } from "./use_replay_browser_list";
 import { useSettings } from "./use_settings";
 import { useSettingsModal } from "./use_settings_modal";
 
 export const useAppListeners = () => {
   // Handle app initalization
-  const { authService, broadcastService, consoleService, dolphinService, replayService } = useServices();
+  const { authService, broadcastService, consoleService, dolphinService, remoteService, replayService } = useServices();
   const replayPresenter = useRef(new ReplayPresenter(replayService));
   const initialized = useAppStore((store) => store.initialized);
   const initializeApp = useAppInitialization();
@@ -187,8 +188,13 @@ export const useAppListeners = () => {
     });
   }, [startBroadcast, broadcastService]);
 
-  const [, refreshBroadcasts] = useBroadcastList();
+  const [, connect] = useBroadcastList();
   React.useEffect(() => {
-    return broadcastService.onSpectateReconnect(refreshBroadcasts);
-  }, [refreshBroadcasts, broadcastService]);
+    return broadcastService.onSpectateReconnect(connect);
+  }, [connect, broadcastService]);
+
+  const updateRemoteServerState = useRemoteServerStateStore((store) => store.setState);
+  React.useEffect(() => {
+    return remoteService.onState(updateRemoteServerState);
+  }, [updateRemoteServerState, remoteService]);
 };

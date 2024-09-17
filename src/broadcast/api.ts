@@ -4,6 +4,7 @@ import {
   ipc_broadcastErrorOccurredEvent,
   ipc_broadcastListUpdatedEvent,
   ipc_broadcastReconnectEvent,
+  ipc_connect,
   ipc_dolphinStatusChangedEvent,
   ipc_refreshBroadcastList,
   ipc_slippiStatusChangedEvent,
@@ -58,8 +59,11 @@ const broadcastApi: BroadcastService = {
     });
     return destroy;
   },
-  async refreshBroadcastList(authToken: string): Promise<void> {
-    await ipc_refreshBroadcastList.renderer!.trigger({ authToken });
+  async connect(authToken: string): Promise<void> {
+    await ipc_connect.renderer!.trigger({ authToken });
+  },
+  async refreshBroadcastList(): Promise<void> {
+    await ipc_refreshBroadcastList.renderer!.trigger({});
   },
   async watchBroadcast(broadcasterId: string): Promise<void> {
     await ipc_watchBroadcast.renderer!.trigger({ broadcasterId });
