@@ -8,16 +8,23 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { useState } from "react";
 
 import { ExternalLink as A } from "@/components/external_link";
-import spifShopImage from "@/styles/images/ads/spif-slippi-shop-full-size.png";
 
-const getActiveCampaign = () => {
-  const now = new Date();
-  const start = new Date("2024-12-25");
-  const end = new Date("2025-01-12");
+// import spifShopImage from "@/styles/images/ads/spif-slippi-shop-full-size.png";
 
-  if (now >= start && now <= end) {
-    return { image: spifShopImage, seenKey: "SPIF_SHOP_SEEN" };
-  }
+const getActiveCampaign = ():
+  | {
+      image: string;
+      seenKey: string;
+    }
+  | undefined => {
+  // const now = new Date();
+
+  // // I'm disabling this because the banner by itself is probably enough. This feels quite heavy.
+  // const start = new Date("2024-12-25");
+  // const end = new Date("2025-01-12");
+  // if (now >= start && now <= end) {
+  //   return { image: spifShopImage, seenKey: "SPIF_SHOP_SEEN" };
+  // }
 
   return undefined;
 };
