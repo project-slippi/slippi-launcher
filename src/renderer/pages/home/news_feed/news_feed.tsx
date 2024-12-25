@@ -5,6 +5,7 @@ import { useQuery } from "react-query";
 
 import { LoadingScreen } from "@/components/loading_screen";
 
+import { AdBanner } from "./ad_banner";
 import { NewsArticle } from "./news_article/news_article";
 
 const ITEMS_TO_SHOW = 7;
@@ -65,6 +66,7 @@ export const NewsFeed = React.memo(function NewsFeedContainer() {
           </Button>
         </div>
       )}
+      <AdBanner />
     </div>
   );
 });
