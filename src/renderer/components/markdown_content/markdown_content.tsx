@@ -40,6 +40,7 @@ const Outer = styled.div`
 
   img {
     display: list-item;
+    max-width: 100%;
   }
 
   li {
