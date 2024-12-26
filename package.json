@@ -53,7 +53,7 @@
   "devDependencies": {
     "@babel/core": "^7.17.5",
     "@electron/notarize": "^2.1.0",
-    "@electron/rebuild": "^3.3.0",
+    "@electron/rebuild": "^3.7.1",
     "@emotion/babel-preset-css-prop": "^11.2.0",
     "@pmmmwh/react-refresh-webpack-plugin": "0.5.5",
     "@storybook/addon-actions": "^6.5.10",
