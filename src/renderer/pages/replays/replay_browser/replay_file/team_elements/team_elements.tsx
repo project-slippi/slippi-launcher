@@ -1,7 +1,13 @@
 import styled from "@emotion/styled";
+import OpenInNew from "@mui/icons-material/OpenInNew";
+import IconButton from "@mui/material/IconButton";
 import React from "react";
 
+import { ExternalLink } from "@/components/external_link";
+
 import { PlayerBadge } from "./player_badge/player_badge";
+
+const SLIPPI_PROFILE_URL_PREFIX = "https://slippi.gg/user";
 
 const Outer = styled.div`
   display: flex;
@@ -23,6 +29,23 @@ export const TeamElements = ({ teams }: TeamElementProps) => {
   teams.forEach((team, i) => {
     team.forEach((player) => {
       elements.push(<PlayerBadge key={`player-${player.port}`} {...player} />);
+
+      if (player.text.includes("#")) {
+        const profileUrl = `${SLIPPI_PROFILE_URL_PREFIX}/${player.text.split("#").join("-")}`;
+        elements.push(
+          <IconButton
+            key={`url-${player.text}`}
+            color="secondary"
+            size="small"
+            style={{ position: "relative", left: "-8px", marginRight: "-8px" }}
+            LinkComponent={ExternalLink}
+            href={profileUrl}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <OpenInNew fontSize="small" />
+          </IconButton>,
+        );
+      }
     });
 
     // Add VS obj in between teams
