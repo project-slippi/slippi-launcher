@@ -15,18 +15,25 @@ import { Footer } from "./footer";
 import { ShareGameplayBlock } from "./share_gameplay_block/share_gameplay_block";
 import { SpectateItem } from "./spectate_item";
 import { SpectatorIdBlock } from "./spectator_id_block";
+import { WebSocketBlock } from "./websocket_block";
 
 export const SpectatePage = React.memo(
   ({
     userId,
     broadcasts,
+    remoteServerState,
     onRefreshBroadcasts,
     watchBroadcast,
+    startRemoteServer,
+    stopRemoteServer,
   }: {
     userId?: string;
     broadcasts: BroadcasterItem[];
+    remoteServerState: { connected: boolean; started: boolean; port: number };
     onRefreshBroadcasts: () => void;
     watchBroadcast: (id: string) => void;
+    startRemoteServer: (port: number) => Promise<{ success: boolean; err?: string }>;
+    stopRemoteServer: () => Promise<void>;
   }) => {
     if (!userId) {
       return <IconMessage Icon={AccountCircleIcon} label="You must be logged in to use this feature" />;
@@ -94,6 +101,11 @@ export const SpectatePage = React.memo(
               >
                 <SpectatorIdBlock userId={userId} />
                 <ShareGameplayBlock />
+                <WebSocketBlock
+                  remoteServerState={remoteServerState}
+                  startRemoteServer={startRemoteServer}
+                  stopRemoteServer={stopRemoteServer}
+                />
               </div>
             }
             style={{ gridTemplateColumns: "auto 400px" }}

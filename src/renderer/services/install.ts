@@ -23,6 +23,7 @@ export async function installServices(): Promise<Services> {
 
   const broadcastService = window.electron.broadcast;
   const consoleService = window.electron.console;
+  const remoteService = window.electron.remote;
 
   return {
     authService,
@@ -31,6 +32,7 @@ export async function installServices(): Promise<Services> {
     broadcastService,
     consoleService,
     replayService,
+    remoteService,
     notificationService,
   };
 }
