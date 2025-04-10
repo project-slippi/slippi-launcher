@@ -21,7 +21,7 @@ const styles = stylex.create({
   titleHeader: {
     display: "flex",
     alignItems: "center",
-    gap: 10,
+    gap: 14,
   },
   dateInfo: {
     marginRight: "auto",
@@ -59,7 +59,7 @@ export const NewsArticle = React.memo(function NewsArticle({ item }: { item: New
               />
             )}
             <div>
-              <Typography gutterBottom={!isBluesky} variant={isBluesky ? "h6" : "h5"} component="h2">
+              <Typography variant="h5" component="h2" fontSize={isBluesky ? 22 : undefined}>
                 {title}
               </Typography>
               {subtitle && (
