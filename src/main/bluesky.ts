@@ -47,7 +47,7 @@ export type BlueskyFeed = {
   message: string | undefined;
 };
 
-// Let's cache our Github responses so we don't exceed the 60 requests/hour rate limit
+// Let's cache our Bluesky responses to prevent hitting the API too much
 type ResponseCacheEntry = {
   time: number;
   response: any;
