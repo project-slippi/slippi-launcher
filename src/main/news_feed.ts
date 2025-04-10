@@ -2,12 +2,14 @@ import type { NewsItem } from "@common/types";
 import log from "electron-log";
 import mediumJSONFeed from "medium-json-feed";
 
+import { getBlueskyFeed } from "./bluesky";
 import { getAllReleases } from "./github";
 
 export async function fetchNewsFeedData(): Promise<NewsItem[]> {
   const mediumNews = fetchMediumNews();
   const githubNews = fetchGithubReleaseNews(["Ishiiruka", "slippi-launcher", "dolphin"]);
-  const allNews = (await Promise.all([mediumNews, githubNews])).flat();
+  const blueskyNews = fetchBlueskyPosts();
+  const allNews = (await Promise.all([mediumNews, githubNews, blueskyNews])).flat();
   return allNews.sort((a, b) => {
     // Sort all news item by reverse chronological order
     const aDate = new Date(a.publishedAt).getTime();
@@ -60,4 +62,27 @@ async function fetchGithubReleaseNews(repos: string[]): Promise<NewsItem[]> {
     log.error(promise.reason);
     return [];
   });
+}
+
+async function fetchBlueskyPosts(): Promise<NewsItem[]> {
+  const result = await getBlueskyFeed();
+  if (result.error || result.feed === undefined) {
+    log.error(result);
+    return [];
+  }
+
+  const news = result.feed.map((entry): NewsItem => {
+    const post = entry.post;
+    const publishedAt = new Date(post.record.createdAt).toISOString();
+    return {
+      id: `bluesky-${post.cid}`,
+      title: post.author.displayName,
+      imageUrl: post.author.avatar,
+      body: post.record.text,
+      subtitle: `@${post.author.handle}`,
+      publishedAt,
+      permalink: `https://bsky.app/profile/slippi.bsky.social/post/${post.uri.split("/").slice(-1)[0]}`,
+    };
+  });
+  return news;
 }
