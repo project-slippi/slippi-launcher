@@ -18,6 +18,11 @@ const styles = stylex.create({
   container: {
     marginBottom: 20,
   },
+  titleHeader: {
+    display: "flex",
+    alignItems: "center",
+    gap: 14,
+  },
   dateInfo: {
     marginRight: "auto",
     marginLeft: 5,
@@ -36,20 +41,34 @@ const styles = stylex.create({
 export const NewsArticle = React.memo(function NewsArticle({ item }: { item: NewsItem }) {
   const { imageUrl, title, subtitle, permalink, body, publishedAt } = item;
   const localDateString = format(new Date(publishedAt), "PPP p");
+  const isBluesky = item.id.startsWith("bluesky-");
 
   return (
     <div {...stylex.props(styles.container)}>
       <Card>
-        {imageUrl && <CardMedia {...stylex.props(styles.fixedCardHeight)} image={imageUrl} title={title} />}
+        {imageUrl && !isBluesky && (
+          <CardMedia {...stylex.props(styles.fixedCardHeight)} image={imageUrl} title={title} />
+        )}
         <CardContent>
-          <Typography gutterBottom={true} variant="h5" component="h2">
-            {title}
-          </Typography>
-          {subtitle && (
-            <Typography variant="body2" color="textSecondary" component="p">
-              {subtitle}
-            </Typography>
-          )}
+          <div {...stylex.props(styles.titleHeader)}>
+            {isBluesky && imageUrl && (
+              <CardMedia
+                {...stylex.props(styles.fixedCardHeight)}
+                image={imageUrl}
+                style={{ width: 45, height: 45, borderRadius: "50%" }}
+              />
+            )}
+            <div>
+              <Typography variant="h5" component="h2" fontSize={isBluesky ? 22 : undefined}>
+                {title}
+              </Typography>
+              {subtitle && (
+                <Typography variant="body2" color="textSecondary" component="p">
+                  {subtitle}
+                </Typography>
+              )}
+            </div>
+          </div>
           {body && <MarkdownContent content={body} {...stylex.props(styles.markdownContainer)} />}
         </CardContent>
         <CardActions disableSpacing={true}>
@@ -59,7 +78,7 @@ export const NewsArticle = React.memo(function NewsArticle({ item }: { item: New
             </div>
           </Tooltip>
           <Button LinkComponent={ExternalLink} size="small" color="primary" href={permalink}>
-            Read more
+            {isBluesky ? "View on Bluesky" : "Read more"}
           </Button>
         </CardActions>
       </Card>
