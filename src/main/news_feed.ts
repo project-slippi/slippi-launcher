@@ -81,7 +81,7 @@ async function fetchBlueskyPosts(): Promise<NewsItem[]> {
       body: post.record.text,
       subtitle: `@${post.author.handle}`,
       publishedAt,
-      permalink: `https://bsky.app/profile/slippi.bsky.social/post/${post.uri.split("/").slice(-1)[0]}`,
+      permalink: `https://bsky.app/profile/${post.author.handle}/post/${post.uri.split("/").slice(-1)[0]}`,
     };
   });
   return news;
