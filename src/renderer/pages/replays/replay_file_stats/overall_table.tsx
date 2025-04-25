@@ -1,17 +1,12 @@
-import OpenInNew from "@mui/icons-material/OpenInNew";
-import IconButton from "@mui/material/IconButton";
 import type { FileResult } from "@replays/types";
 import type { RatioType, StatsType } from "@slippi/slippi-js";
 import get from "lodash/get";
 import pick from "lodash/pick";
 import toArray from "lodash/toArray";
 
-import { ExternalLink } from "@/components/external_link";
 import { getCharacterIcon } from "@/lib/utils";
 
 import * as T from "./table_styles";
-
-const SLIPPI_PROFILE_URL_PREFIX = "https://slippi.gg/user";
 
 const columnCount = 5; // Unfortunately there is no way to specify a col span of "all" max cols there will be is 5
 
@@ -36,22 +31,7 @@ export const OverallTable = ({ file, stats }: OverallTableProps) => {
                 marginRight: 10,
               }}
             />
-            <div style={{ fontWeight: 500, marginRight: 10 }}>
-              {p.displayName || p.tag || `Player ${p.playerIndex + 1}`}
-            </div>
-            {p.connectCode && (
-              <IconButton
-                key={`url-${p.playerIndex}`}
-                color="secondary"
-                size="small"
-                style={{ position: "relative", left: "-8px", marginRight: "-8px" }}
-                LinkComponent={ExternalLink}
-                href={`${SLIPPI_PROFILE_URL_PREFIX}/${p.connectCode.split("#").join("-")}`}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <OpenInNew fontSize="small" />
-              </IconButton>
-            )}
+            <div style={{ fontWeight: 500 }}>{p.displayName || p.tag || `Player ${p.playerIndex + 1}`}</div>
           </div>
         </T.TableHeaderCell>,
       );
