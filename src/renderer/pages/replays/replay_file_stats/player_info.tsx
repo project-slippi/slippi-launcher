@@ -1,6 +1,5 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import Tooltip from "@mui/material/Tooltip";
 
 import { ExternalLink as A } from "@/components/external_link";
 import { getColor } from "@/lib/player_colors";
@@ -96,9 +95,7 @@ export const PlayerInfo = ({
               `}
               href={slippiProfileUrl}
             >
-              <Tooltip title={slippiProfileUrl}>
-                <div>{connectCode}</div>
-              </Tooltip>
+              <div>{connectCode}</div>
             </A>
           </div>
         )}
