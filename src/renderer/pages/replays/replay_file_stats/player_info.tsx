@@ -95,7 +95,7 @@ export const PlayerInfo = ({
               `}
               href={slippiProfileUrl}
             >
-              <div>{connectCode}</div>
+              {connectCode}
             </A>
           </div>
         )}
