@@ -1,6 +1,7 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 
+import { ExternalLink as A } from "@/components/external_link";
 import { getColor } from "@/lib/player_colors";
 import { getCharacterIcon } from "@/lib/utils";
 import { colors } from "@/styles/colors";
@@ -32,6 +33,7 @@ export const PlayerInfo = ({
   const port = playerIndex + 1;
   const backupName = type === 1 ? "CPU" : `Player ${port}`;
   const charIcon = getCharacterIcon(characterId ?? null, characterColor);
+  const slippiProfileUrl = `https://slippi.gg/user/${connectCode?.split("#").join("-")}`;
   return (
     <Outer>
       <div
@@ -85,7 +87,16 @@ export const PlayerInfo = ({
               font-weight: 500;
             `}
           >
-            {connectCode}
+            <A
+              css={css`
+                &:hover {
+                  opacity: 0.7;
+                }
+              `}
+              href={slippiProfileUrl}
+            >
+              {connectCode}
+            </A>
           </div>
         )}
       </div>
