@@ -160,7 +160,7 @@ class SlippiBackendClient implements SlippiBackendService {
     return {
       level: res.data.getUser?.activeSubscription?.level ?? "NONE",
       userMessages: res.data.getUser?.activeChatMessages ?? [],
-      availableMessages: (res.data.queryChatMessage ?? []).filter((msg) => msg) as AvailableMessageType[],
+      availableMessages: (res.data.getChatMessageOptions ?? []).filter((msg) => msg) as AvailableMessageType[],
     };
   }
 

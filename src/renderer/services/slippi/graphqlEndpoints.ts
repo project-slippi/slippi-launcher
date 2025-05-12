@@ -69,7 +69,7 @@ export const QUERY_GET_USER_DATA: TypedDocumentNode<
 export const QUERY_CHAT_MESSAGE_DATA: TypedDocumentNode<
   {
     getUser: Nullable<{ activeSubscription: Nullable<{ level: string }>; activeChatMessages: string[] }>;
-    queryChatMessage: Nullable<Nullable<AvailableMessageType>[]>;
+    getChatMessageOptions: Nullable<Nullable<AvailableMessageType>[]>;
   },
   {
     fbUid: string;
@@ -82,7 +82,7 @@ export const QUERY_CHAT_MESSAGE_DATA: TypedDocumentNode<
       }
       activeChatMessages
     }
-    queryChatMessage {
+    getChatMessageOptions {
       isPaid
       text
     }
