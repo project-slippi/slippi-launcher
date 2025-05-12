@@ -106,7 +106,7 @@ class AuthClient implements AuthService {
 
   public async signUp({ email, displayName, password }: { email: string; displayName: string; password: string }) {
     const functions = getFunctions();
-    const createUser = httpsCallable(functions, "createUser");
+    const createUser = httpsCallable(functions, "createUserNew");
     await createUser({ email, password, displayName });
     return this.login({ email, password });
   }
