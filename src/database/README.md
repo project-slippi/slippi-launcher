@@ -40,8 +40,8 @@ During development, you can continue to make changes to your migration file (cre
 
 ### Migration Packaging and Execution
 
-The schema migrations are compiled and included in the package itself so they can be ran on the user's machine. The `yarn run package` command already does all this for you, so you don't need to do anything else. The packaging process it uses is as follows:
+The schema migrations are compiled and included in the package itself so they can be ran on the user's machine. The `npm run package` command already does all this for you, so you don't need to do anything else. The packaging process it uses is as follows:
 
-1. Compile from TS into JS with the command `yarn run build:migrations`. These get built into the `release/app/dist/migrations` folder.
+1. Compile from TS into JS with the command `npm run build:migrations`. These get built into the `release/app/dist/migrations` folder.
 2. Copy  `release/app/dist/migrations/*.js` files into the [extraResources](https://www.electron.build/configuration/contents.html#extraresources) folder, see `electron-builder.json`
 3. When the packaged app is ran, it will execute the migrations in the `extraResources/migrations` folder when the app is initialized. See `src/database/create_database.ts` for this implementation.

@@ -12,9 +12,10 @@
   "scripts": {
     "electron-rebuild": "node -r ts-node/register ../../.erb/scripts/electron-rebuild.js",
     "link-modules": "node -r ts-node/register ../../.erb/scripts/link-modules.ts",
-    "postinstall": "yarn run electron-rebuild && yarn run link-modules"
+    "postinstall": "npm run electron-rebuild && npm run link-modules"
   },
   "dependencies": {
+    "@slippi/slippi-js": "7.0.0",
     "better-sqlite3": "^9.0.0",
     "kysely": "^0.26.3",
     "kysely-sqlite-worker": "^0.4.5",

@@ -7,7 +7,7 @@ import { currentRulesVersion } from "@common/constants";
 import { Preconditions } from "@common/preconditions";
 import type { DolphinService, PlayKey } from "@dolphin/types";
 import log from "electron-log";
-import type { GraphQLError } from "graphql";
+import type { GraphQLFormattedError } from "graphql";
 
 import type { AuthService } from "../auth/types";
 import {
@@ -23,7 +23,7 @@ import type { AvailableMessageType, ChatMessageData, SlippiBackendService, UserD
 
 const SLIPPI_BACKEND_URL = process.env.SLIPPI_GRAPHQL_ENDPOINT;
 
-const handleErrors = (errors: readonly GraphQLError[] | undefined) => {
+const handleErrors = (errors: readonly GraphQLFormattedError[] | undefined) => {
   if (errors) {
     let errMsgs = "";
     errors.forEach((err) => {
