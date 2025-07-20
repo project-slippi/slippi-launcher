@@ -103,8 +103,8 @@ const createWindow = async () => {
     show: false,
     width: 1100,
     height: 728,
-    minHeight: isDevelopment ? undefined : 450,
-    minWidth: isDevelopment ? undefined : 900,
+    minHeight: isDevelopment ? undefined : 150,
+    minWidth: isDevelopment ? undefined : 275,
     backgroundColor: BACKGROUND_COLOR,
 
     // This setting only takes effect on macOS, and simply opts it into the modern
