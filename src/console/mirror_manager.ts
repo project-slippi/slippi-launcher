@@ -198,6 +198,7 @@ export class MirrorManager extends EventEmitter {
     if (details.relay) {
       details.relay.stopRelay();
     }
+    details.fileWriter.endCurrentFile();
     delete this.mirrors[ip];
 
     // FIXME: Not sure why the disconnected status update isn't working
