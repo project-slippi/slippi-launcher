@@ -14,6 +14,8 @@ import TimeAgo from "react-timeago";
 import { ExternalLink } from "@/components/external_link";
 import { MarkdownContent } from "@/components/markdown_content/markdown_content";
 
+import { NewsArticleMessages as Messages } from "./news_article.messages";
+
 const styles = stylex.create({
   container: {
     marginBottom: 20,
@@ -78,7 +80,7 @@ export const NewsArticle = React.memo(function NewsArticle({ item }: { item: New
             </div>
           </Tooltip>
           <Button LinkComponent={ExternalLink} size="small" color="primary" href={permalink}>
-            {isBluesky ? "View on Bluesky" : "Read more"}
+            {isBluesky ? Messages.viewOnBluesky() : Messages.readMore()}
           </Button>
         </CardActions>
       </Card>
