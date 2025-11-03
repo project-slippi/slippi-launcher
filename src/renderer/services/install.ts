@@ -3,6 +3,7 @@ import { appVersion } from "@common/constants";
 
 import createAuthClient from "./auth/auth.service";
 import createDolphinClient from "./dolphin/dolphin.service";
+import createI18nService from "./i18n/i18n.service";
 import createNotificationClient from "./notification/notification.service";
 import createReplayClient from "./replay/replay.service";
 import createSlippiClient from "./slippi/slippi.service";
@@ -24,6 +25,9 @@ export async function installServices(): Promise<Services> {
   const broadcastService = window.electron.broadcast;
   const consoleService = window.electron.console;
 
+  const i18nService = createI18nService();
+  await i18nService.init();
+
   return {
     authService,
     slippiBackendService,
@@ -32,5 +36,6 @@ export async function installServices(): Promise<Services> {
     consoleService,
     replayService,
     notificationService,
+    i18nService,
   };
 }

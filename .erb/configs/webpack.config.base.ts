@@ -38,13 +38,6 @@ const configuration: webpack.Configuration = {
               onlyCompileBundledFiles: true,
             },
           },
-          {
-            loader: "i18next-auto-keys",
-            options: {
-              include: /\.messages\.(ts|tsx)$/, // Only process message files
-              hashLength: 10,
-            },
-          },
         ],
       },
     ],
