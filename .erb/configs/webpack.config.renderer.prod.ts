@@ -5,6 +5,7 @@
 import StylexPlugin from "@stylexjs/webpack-plugin";
 import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
+import { I18nextAutoKeyEmitPlugin } from "i18next-auto-keys";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import path from "path";
 import TerserPlugin from "terser-webpack-plugin";
@@ -144,6 +145,10 @@ const configuration: webpack.Configuration = {
       },
       isBrowser: false,
       isDevelopment,
+    }),
+
+    new I18nextAutoKeyEmitPlugin({
+      jsonOutputPath: "locales/en/translation.json",
     }),
   ],
 };

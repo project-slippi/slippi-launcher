@@ -6,6 +6,7 @@ import chalk from "chalk";
 import { execSync, spawn } from "child_process";
 import fs from "fs";
 import HtmlWebpackPlugin from "html-webpack-plugin";
+import { I18nextAutoKeyEmitPlugin } from "i18next-auto-keys";
 import path from "path";
 import webpack from "webpack";
 import { merge } from "webpack-merge";
@@ -200,6 +201,10 @@ export default (env?: Record<string, string | true>, _argv?: any) => {
           type: "commonJS",
           rootDir: webpackPaths.rootPath,
         },
+      }),
+
+      new I18nextAutoKeyEmitPlugin({
+        jsonOutputPath: "locales/en/translation.json",
       }),
     ],
 
