@@ -1,0 +1,104 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: app 1.0\n"
+"mime-version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"x-generator: i18next-auto-keys CLI\n"
+"Language: ja-JP\n"
+"PO-Revision-Date: 2025-11-05T12:01:29.751Z\n"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:8:38
+msgctxt "9ed7d5167d"
+msgid "Choose what happens when the Play button is pressed."
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:4:31
+msgctxt "b5a78e4b7b"
+msgid "Close Dolphin to change this setting"
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:11:22
+msgctxt "004f981b1f"
+msgid "Enable Music"
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:12:33
+msgctxt "181377f7b8"
+msgid "Enable in-game music."
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:13:33
+msgctxt "6714a551cb"
+msgid "Incompatible with WASAPI."
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:10:24
+msgctxt "b88c7e0d9b"
+msgid "Launch Dolphin"
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:9:22
+msgctxt "61a518cb24"
+msgid "Launch Melee"
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:2:23
+msgctxt "2db970796b"
+msgid "Melee ISO File"
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:5:20
+msgctxt "ce792afb1f"
+msgid "No file set"
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:7:27
+msgctxt "40900631bd"
+msgid "Play Button Action"
+msgstr ""
+
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:3:19
+msgctxt "ad086cf55b"
+msgid "Read more"
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:3:34
+msgctxt "4659dd753d"
+msgid "The path to an NTSC Melee 1.02 ISO."
+msgstr ""
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:5:41
+#. {0} readableBytes: string
+msgctxt "f622d0c238"
+msgid "Total size: {0}"
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:6:20
+msgctxt "bf6ea54060"
+msgid "Verifying..."
+msgstr ""
+
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:2:24
+msgctxt "8fd8d1ccc8"
+msgid "View on Bluesky"
+msgstr ""
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:3:39
+#. {0} count: number
+msgctxt "e910028692"
+msgid "{0, plural, one {# file} other {# files}} filtered."
+msgstr ""
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:2:38
+#. {0} count: number
+msgctxt "13d69a5b76"
+msgid "{0, plural, one {# file} other {# files}} found."
+msgstr ""
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:4:38
+#. {0} count: number
+msgctxt "a9e5f6f435"
+msgid "{0, plural, one {# file} other {# files}} had errors."
+msgstr ""
