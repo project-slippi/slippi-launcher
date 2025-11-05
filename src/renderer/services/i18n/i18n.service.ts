@@ -47,16 +47,6 @@ class I18nClient implements I18nService {
         fallbackLng: this.defaultLanguage,
         lng: localStorage.getItem(this.localStorageKey) || this.defaultLanguage,
         debug: false,
-
-        // Handle missing keys gracefully
-        returnEmptyString: false,
-        returnNull: false,
-        saveMissing: false,
-
-        missingKeyHandler: (_lng, _ns, key, fallbackValue) => {
-          console.warn(`Missing translation for key: ${key}`);
-          return fallbackValue || key;
-        },
       });
 
     this.initialized = true;
