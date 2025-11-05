@@ -213,12 +213,9 @@ export default (env?: Record<string, string | true>, _argv?: any) => {
       compress: true,
       hot: true,
       headers: { "Access-Control-Allow-Origin": "*" },
-      static: [
-        {
-          directory: webpackPaths.distRendererPath,
-          publicPath: "/",
-        },
-      ],
+      static: {
+        publicPath: "/",
+      },
       historyApiFallback: {
         verbose: true,
       },

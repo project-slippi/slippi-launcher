@@ -25,20 +25,18 @@ const configuration: webpack.Configuration = {
       {
         test: /\.[jt]sx?$/,
         exclude: /node_modules/,
-        use: [
-          {
-            loader: "ts-loader",
-            options: {
-              compilerOptions: {
-                module: "esnext",
-              },
-              // Whether or not we should disable type-checking
-              transpileOnly: isDevelop,
-              // By default, ts-loader compiles absolutely everything and we don't want that
-              onlyCompileBundledFiles: true,
+        use: {
+          loader: "ts-loader",
+          options: {
+            compilerOptions: {
+              module: "esnext",
             },
+            // Whether or not we should disable type-checking
+            transpileOnly: isDevelop,
+            // By default, ts-loader compiles absolutely everything and we don't want that
+            onlyCompileBundledFiles: true,
           },
-        ],
+        },
       },
       // i18n message files
       {
