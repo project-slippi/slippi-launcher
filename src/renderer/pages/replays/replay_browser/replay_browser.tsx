@@ -28,6 +28,7 @@ import { FileList } from "./file_list";
 import { FileSelectionToolbar } from "./file_selection_toolbar";
 import { FilterToolbar } from "./filter_toolbar";
 import { FolderTreeNode } from "./folder_tree_node";
+import { ReplayBrowserMessages as Messages } from "./replay_browser.messages";
 
 export const ReplayBrowser = React.memo(() => {
   const { replayService } = useServices();
@@ -205,9 +206,9 @@ export const ReplayBrowser = React.memo(() => {
           </LabelledText>
         </div>
         <div style={{ textAlign: "right" }}>
-          {filteredFiles.length} files found. {hiddenFileCount} files filtered.{" "}
-          {fileErrorCount > 0 ? `${fileErrorCount} files had errors. ` : ""}
-          {exists(totalBytes) ? `Total size: ${humanReadableBytes(totalBytes)}` : ""}
+          {Messages.totalFileCount(filteredFiles.length)} {Messages.hiddenFileCount(hiddenFileCount)}{" "}
+          {fileErrorCount > 0 ? Messages.errorFileCount(fileErrorCount) : ""}
+          {exists(totalBytes) ? Messages.totalSize(humanReadableBytes(totalBytes)) : ""}
         </div>
       </Footer>
     </Outer>
