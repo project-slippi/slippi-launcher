@@ -25,7 +25,7 @@ export async function installServices(): Promise<Services> {
   const broadcastService = window.electron.broadcast;
   const consoleService = window.electron.console;
 
-  const i18nService = createI18nService();
+  const i18nService = createI18nService(isDevelopment);
   await i18nService.init();
 
   return {
