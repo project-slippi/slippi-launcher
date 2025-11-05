@@ -4,7 +4,7 @@
   "description": "Launch Slippi Online, browse and watch saved replays",
   "license": "GPL-3.0",
   "scripts": {
-    "build": "concurrently \"yarn run build:main\" \"yarn run build:renderer\" \"yarn run build:migrations\"",
+    "build": "concurrently \"yarn run build:main\" \"yarn run build:renderer\" \"yarn run build:migrations\" \"yarn run i18n:convert\"",
     "build:main": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.main.prod.ts",
     "build:renderer": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.prod.ts",
     "build:migrations": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.migrations.prod.ts",
@@ -22,7 +22,10 @@
     "start:renderer": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
     "test": "cross-env ELECTRON_RUN_AS_NODE=true electron ./node_modules/jest-cli/bin/jest.js --verbose",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "i18n:extract": "i18next-auto-keys generate --include \"src/renderer/**/*.messages.ts\" --output \"i18n/messages.pot\"",
+    "i18n:update": "i18next-auto-keys update --template ./i18n/messages.pot --po-files \"./i18n/*.po\"",
+    "i18n:convert": "i18next-auto-keys convert --input \"./i18n/*.po\" --output ./release/app/dist/renderer/locales --batch"
   },
   "repository": {
     "type": "git",
