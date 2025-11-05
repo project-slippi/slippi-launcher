@@ -2,7 +2,13 @@ import i18next from "i18next";
 import HttpApi from "i18next-http-backend";
 import ICU from "i18next-icu";
 
-import type { I18nService } from "./types";
+import type { I18nService, Language } from "./types";
+
+const SUPPORTED_LANGUAGES: Language[] = [
+  { value: "en", label: "English" },
+  { value: "es", label: "Español" },
+  { value: "ja", label: "日本語" },
+];
 
 class I18nClient implements I18nService {
   private readonly localStorageKey = "preferred-language";
@@ -17,6 +23,10 @@ class I18nClient implements I18nService {
   public async setLanguage(language: string): Promise<void> {
     localStorage.setItem(this.localStorageKey, language);
     await i18next.changeLanguage(language);
+  }
+
+  public getSupportedLanguages(): readonly Language[] {
+    return SUPPORTED_LANGUAGES;
   }
 
   private async initDevelopment(): Promise<void> {

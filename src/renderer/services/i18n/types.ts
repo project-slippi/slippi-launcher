@@ -1,5 +1,11 @@
 export interface I18nService {
   currentLanguage: string;
-  setLanguage(language: string): Promise<void>;
   init(): Promise<void>;
+  setLanguage(language: string): Promise<void>;
+  getSupportedLanguages(): readonly Language[];
 }
+
+export type Language = {
+  value: string;
+  label: string;
+};

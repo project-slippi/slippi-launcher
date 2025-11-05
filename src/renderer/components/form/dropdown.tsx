@@ -8,10 +8,10 @@ import { colors } from "@/styles/colors";
 
 type DropdownProps<T> = {
   value: T;
-  options: Array<{
+  options: readonly {
     value: T;
     label: string;
-  }>;
+  }[];
   onChange: (val: T) => void;
 };
 
