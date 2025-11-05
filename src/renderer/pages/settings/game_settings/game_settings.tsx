@@ -18,6 +18,7 @@ import { useIsoVerification } from "@/lib/hooks/use_iso_verification";
 import { useEnableJukebox, useIsoPath, useLaunchMeleeOnPlay } from "@/lib/hooks/use_settings";
 
 import { SettingItem } from "../setting_item_section";
+import { GameSettingsMessages as Messages } from "./game_settings.messages";
 
 const isWindows = window.electron.bootstrap.isWindows;
 
@@ -56,12 +57,12 @@ export const GameSettings = React.memo(() => {
 
   return (
     <div>
-      <SettingItem name="Melee ISO File" description="The path to an NTSC Melee 1.02 ISO.">
+      <SettingItem name={Messages.meleeIsoFile()} description={Messages.meleeIsoFileDescription()}>
         <PathInput
-          tooltipText={netplayDolphinOpen || playbackDolphinOpen ? "Close Dolphin to change this setting" : ""}
+          tooltipText={netplayDolphinOpen || playbackDolphinOpen ? Messages.closeDolphinToChange() : ""}
           value={isoPath !== null ? isoPath : ""}
           onSelect={setIsoPath}
-          placeholder="No file set"
+          placeholder={Messages.noFileSet()}
           disabled={verifying || netplayDolphinOpen || playbackDolphinOpen}
           options={{
             filters: [{ name: "Melee ISO", extensions: ["iso", "gcm", "gcz", "ciso"] }],
@@ -75,17 +76,17 @@ export const GameSettings = React.memo(() => {
                   font-weight: 500;
                 `}
               >
-                {verifying ? "Verifying..." : isoValidity.toLowerCase()}
+                {verifying ? Messages.verifying() : isoValidity.toLowerCase()}
               </span>
               {verifying ? <CircularProgress size={25} color="inherit" /> : renderValidityStatus(isoValidity)}
             </ValidationContainer>
           }
         />
       </SettingItem>
-      <SettingItem name="Play Button Action" description="Choose what happens when the Play button is pressed.">
+      <SettingItem name={Messages.playButtonAction()} description={Messages.playButtonActionDescription()}>
         <RadioGroup value={launchMeleeOnPlay} onChange={(_event, value) => onLaunchMeleeChange(value)}>
-          <FormControlLabel value={true} label="Launch Melee" control={<Radio />} />
-          <FormControlLabel value={false} label="Launch Dolphin" control={<Radio />} />
+          <FormControlLabel value={true} label={Messages.launchMelee()} control={<Radio />} />
+          <FormControlLabel value={false} label={Messages.launchDolphin()} control={<Radio />} />
         </RadioGroup>
       </SettingItem>
       {showJukeboxToggle && (
@@ -93,8 +94,8 @@ export const GameSettings = React.memo(() => {
           <Toggle
             value={enableJukebox}
             onChange={(checked) => setEnableJukebox(checked)}
-            label="Enable Music"
-            description={`Enable in-game music.${isWindows ? " Incompatible with WASAPI." : ""}`}
+            label={Messages.enableMusic()}
+            description={Messages.enableMusicDescription() + (isWindows ? " " + Messages.incompatibleWithWasapi() : "")}
             disabled={netplayDolphinOpen}
           />
         </SettingItem>
