@@ -4,102 +4,102 @@ msgstr ""
 "mime-version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "x-generator: i18next-auto-keys CLI\n"
-"Language: \n"
+"Language: es-ES\n"
 "PO-Revision-Date: 2025-11-05 23:23+1100\n"
 "X-Generator: Autopo v1.0.5\n"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:8:38
 msgctxt "9ed7d5167d"
 msgid "Choose what happens when the Play button is pressed."
-msgstr ""
+msgstr "Elige qué sucede cuando se presiona el botón Reproducir."
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:4:31
 msgctxt "b5a78e4b7b"
 msgid "Close Dolphin to change this setting"
-msgstr ""
+msgstr "Cierra Dolphin para cambiar esta configuración"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:11:22
 msgctxt "004f981b1f"
 msgid "Enable Music"
-msgstr ""
+msgstr "Activar música"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:12:33
 msgctxt "181377f7b8"
 msgid "Enable in-game music."
-msgstr ""
+msgstr "Activa la música dentro del juego."
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:13:33
 msgctxt "6714a551cb"
 msgid "Incompatible with WASAPI."
-msgstr ""
+msgstr "Incompatible con WASAPI."
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:10:24
 msgctxt "b88c7e0d9b"
 msgid "Launch Dolphin"
-msgstr ""
+msgstr "Iniciar Dolphin"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:9:22
 msgctxt "61a518cb24"
 msgid "Launch Melee"
-msgstr ""
+msgstr "Iniciar Melee"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:2:23
 msgctxt "2db970796b"
 msgid "Melee ISO File"
-msgstr ""
+msgstr "Archivo ISO de Melee"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:5:20
 msgctxt "ce792afb1f"
 msgid "No file set"
-msgstr ""
+msgstr "Ningún archivo seleccionado"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:7:27
 msgctxt "40900631bd"
 msgid "Play Button Action"
-msgstr ""
+msgstr "Acción del botón Reproducir"
 
 #: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:3:19
 msgctxt "ad086cf55b"
 msgid "Read more"
-msgstr ""
+msgstr "Leer más"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:3:34
 msgctxt "4659dd753d"
 msgid "The path to an NTSC Melee 1.02 ISO."
-msgstr ""
+msgstr "La ruta a un archivo ISO de Melee NTSC 1.02."
 
 #. {0} readableBytes: string
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:5:41
 msgctxt "f622d0c238"
 msgid "Total size: {0}"
-msgstr ""
+msgstr "Tamaño total: {0}"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:6:20
 msgctxt "bf6ea54060"
 msgid "Verifying..."
-msgstr ""
+msgstr "Verificando..."
 
 #: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:2:24
 msgctxt "8fd8d1ccc8"
 msgid "View on Bluesky"
-msgstr ""
+msgstr "Ver en Bluesky"
 
 #. {0} count: number
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:3:39
 msgctxt "e910028692"
 msgid "{0, plural, one {# file} other {# files}} filtered."
-msgstr ""
+msgstr "{0, plural, one {# archivo filtrado} other {# archivos filtrados}}."
 
 #. {0} count: number
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:2:38
 msgctxt "13d69a5b76"
 msgid "{0, plural, one {# file} other {# files}} found."
-msgstr ""
+msgstr "{0, plural, one {# archivo encontrado} other {# archivos encontrados}}."
 
 #. {0} count: number
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:4:38
 msgctxt "a9e5f6f435"
 msgid "{0, plural, one {# file} other {# files}} had errors."
-msgstr ""
+msgstr "{0, plural, one {# archivo tenía errores} other {# archivos tenían errores}}."
