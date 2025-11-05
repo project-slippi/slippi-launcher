@@ -89,32 +89,6 @@ const configuration: webpack.Configuration = {
         test: /\.(png|jpg|jpeg|gif)$/i,
         type: "asset/resource",
       },
-      // i18n message files
-      {
-        test: /\.messages\.(ts|tsx)$/, // Only process message files
-        exclude: /node_modules/,
-        use: [
-          {
-            loader: "ts-loader",
-            options: {
-              compilerOptions: {
-                module: "esnext",
-              },
-              // Whether or not we should disable type-checking
-              transpileOnly: isDevelopment,
-              // By default, ts-loader compiles absolutely everything and we don't want that
-              onlyCompileBundledFiles: true,
-            },
-          },
-          {
-            loader: "i18next-auto-keys",
-            options: {
-              include: /\.messages\.(ts|tsx)$/, // Only process message files
-              hashLength: 10,
-            },
-          },
-        ],
-      },
     ],
   },
 
