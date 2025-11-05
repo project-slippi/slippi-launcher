@@ -11099,10 +11099,10 @@ husky@^4.3.0:
     slash "^3.0.0"
     which-pm-runs "^1.0.0"
 
-i18next-auto-keys@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/i18next-auto-keys/-/i18next-auto-keys-1.1.1.tgz#996b4078a56522c670fa1f221250891f1daffe60"
-  integrity sha512-jJwRNArf7wfYr8L8SR0yd4trMjxDG5RIHITnjb+ZQk4Am0/D1tJHpbKRQkOpGKAFcOmc9pPBZAwy/Idqmhk1Nw==
+i18next-auto-keys@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/i18next-auto-keys/-/i18next-auto-keys-2.1.0.tgz#eb72670d983251511e3314666573b428c706a0a1"
+  integrity sha512-PVyi6Ua4hztXC+hprxviwJBw9j2d6X0aTeTL9OJ1FOUDXhF60BBCPCrLppeHBAXws7sU8bkJi1kVdKic5nmdGw==
   dependencies:
     commander "^12.1.0"
     glob "^11.0.0"
