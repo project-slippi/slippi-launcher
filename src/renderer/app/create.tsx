@@ -77,6 +77,7 @@ export function createApp({ services }: { services: Services }): {
 
   const AppRoutes = () => {
     const initialized = useAppStore((state) => state.initialized);
+    const currentLanguage = useAppStore((state) => state.currentLanguage);
 
     // Then add the rest of the app listeners
     useAppListeners();
@@ -86,7 +87,7 @@ export function createApp({ services }: { services: Services }): {
     }
 
     return (
-      <Routes>
+      <Routes key={currentLanguage}>
         <Route path="/main/*" element={<MainAppPage />} />
         <Route path="/landing" element={<QuickStartPage />} />
         <Route path="/settings/*" element={<SettingsPage />} />

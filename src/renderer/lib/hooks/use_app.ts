@@ -16,6 +16,7 @@ export const useAppStore = create(
       updateVersion: "",
       updateDownloadProgress: 0,
       updateReady: false,
+      currentLanguage: "en", // Add current language to global state
     },
     (set) => ({
       setInitializing: (initializing: boolean) => set({ initializing }),
@@ -23,6 +24,7 @@ export const useAppStore = create(
       setUpdateVersion: (updateVersion: string) => set({ updateVersion }),
       setUpdateDownloadProgress: (updateDownloadProgress: number) => set({ updateDownloadProgress }),
       setUpdateReady: (updateReady: boolean) => set({ updateReady }),
+      setCurrentLanguage: (currentLanguage: string) => set({ currentLanguage }), // Add language setter
     }),
   ),
 );

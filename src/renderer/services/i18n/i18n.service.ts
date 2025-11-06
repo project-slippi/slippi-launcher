@@ -1,10 +1,11 @@
 import i18next from "i18next";
 import HttpApi from "i18next-http-backend";
 import ICU from "i18next-icu";
+import { Subject } from "observable-fns";
 
-import type { I18nService, Language } from "./types";
+import type { I18nService, Language, LanguageOption } from "./types";
 
-const SUPPORTED_LANGUAGES: Language[] = [
+const SUPPORTED_LANGUAGES: LanguageOption[] = [
   { value: "en", label: "English" },
   { value: "es", label: "Español" },
   { value: "ja", label: "日本語" },
@@ -13,19 +14,23 @@ const SUPPORTED_LANGUAGES: Language[] = [
 class I18nClient implements I18nService {
   private readonly localStorageKey = "preferred-language";
   private initialized = false;
+  private languageChangeSubject = new Subject<Language>();
 
-  constructor(private readonly defaultLanguage = "en") {}
+  constructor(private readonly defaultLanguage: Language = "en") {}
 
-  public get currentLanguage(): string {
-    return i18next.language;
+  public onLanguageChange(handle: (language: Language) => void): () => void {
+    const subscription = this.languageChangeSubject.subscribe(handle);
+    return () => subscription.unsubscribe();
   }
 
-  public async setLanguage(language: string): Promise<void> {
+  public async setLanguage(language: Language): Promise<void> {
     localStorage.setItem(this.localStorageKey, language);
     await i18next.changeLanguage(language);
+    // Notify React components that the language has changed
+    this.languageChangeSubject.next(language);
   }
 
-  public getSupportedLanguages(): readonly Language[] {
+  public getSupportedLanguages(): readonly LanguageOption[] {
     return SUPPORTED_LANGUAGES;
   }
 
@@ -50,6 +55,10 @@ class I18nClient implements I18nService {
 
       this.initialized = true;
       console.log("i18next initialized for production");
+
+      // Notify React components of the initial language
+      // what happens if we use a language detector and it's not one of the supported languages?
+      this.languageChangeSubject.next(i18next.language as unknown as Language);
     } catch (error) {
       console.error("Failed to initialize i18next:", error);
       throw error;
