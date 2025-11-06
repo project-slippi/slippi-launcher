@@ -218,7 +218,7 @@ export default (env?: Record<string, string | true>, _argv?: any) => {
           publicPath: "/",
         },
         {
-          directory: path.join(webpackPaths.rootPath, "release/app/dist/renderer/locales"),
+          directory: path.join(webpackPaths.distRendererPath, "locales"),
           publicPath: "/locales",
         },
       ],
