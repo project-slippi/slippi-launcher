@@ -148,7 +148,7 @@ const configuration: webpack.Configuration = {
     }),
 
     new I18nextAutoKeyEmitPlugin({
-      jsonOutputPath: "locales/en.json",
+      jsonOutputPath: "i18n/en.json",
     }),
   ],
 };

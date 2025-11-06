@@ -218,8 +218,8 @@ export default (env?: Record<string, string | true>, _argv?: any) => {
           publicPath: "/",
         },
         {
-          directory: path.join(webpackPaths.distRendererPath, "locales"),
-          publicPath: "/locales",
+          directory: path.join(webpackPaths.distRendererPath, "i18n"),
+          publicPath: "/i18n",
         },
       ],
       historyApiFallback: {

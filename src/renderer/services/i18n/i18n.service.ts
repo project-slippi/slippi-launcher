@@ -46,7 +46,7 @@ class I18nClient implements I18nService {
         .use(HttpApi)
         .init({
           backend: {
-            loadPath: "./locales/{{lng}}.json",
+            loadPath: "./i18n/{{lng}}.json",
           },
           fallbackLng: this.defaultLanguage,
           lng: localStorage.getItem(this.localStorageKey) || this.defaultLanguage,

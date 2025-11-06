@@ -24,8 +24,8 @@
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "i18n:extract": "i18next-auto-keys extract --include \"src/renderer/**/*.messages.ts\"",
-    "i18n:update": "i18next-auto-keys update --po-files \"./i18n/*.po\"",
-    "i18n:convert": "i18next-auto-keys convert --input \"./i18n/*.po\" --output ./release/app/dist/renderer/locales --batch"
+    "i18n:update": "i18next-auto-keys update --po-files \"./locales/*.po\"",
+    "i18n:convert": "i18next-auto-keys convert --input \"./locales/*.po\" --output ./release/app/dist/renderer/i18n --batch"
   },
   "repository": {
     "type": "git",
@@ -54,8 +54,8 @@
     "*.{js,ts,jsx,tsx}": "eslint --cache --fix"
   },
   "i18next-auto-keys": {
-    "potTemplatePath": "./i18n/messages.pot",
-    "hashLength": 16,
+    "potTemplatePath": "./locales/messages.pot",
+    "hashLength": 12,
     "argMode": "indexed",
     "projectId": "Slippi Launcher 1.0"
   },
