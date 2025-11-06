@@ -14,7 +14,7 @@ class I18nClient implements I18nService {
   private readonly localStorageKey = "preferred-language";
   private initialized = false;
 
-  constructor(private readonly isDevelopment: boolean, private readonly defaultLanguage = "en") {}
+  constructor(private readonly defaultLanguage = "en") {}
 
   public get currentLanguage(): string {
     return i18next.language;
@@ -29,39 +29,6 @@ class I18nClient implements I18nService {
     return SUPPORTED_LANGUAGES;
   }
 
-  private async initDevelopment(): Promise<void> {
-    if (this.initialized && i18next.isInitialized) {
-      console.log("i18next already initialized (dev mode)");
-      return;
-    }
-
-    // Simple setup for development - just language switching, no translation loading
-    await i18next.use(ICU).init({
-      fallbackLng: this.defaultLanguage,
-      lng: localStorage.getItem(this.localStorageKey) || this.defaultLanguage,
-      debug: true,
-      resources: {}, // No resources needed in dev mode
-    });
-
-    this.initialized = true;
-  }
-
-  private async initProduction(): Promise<void> {
-    await i18next
-      .use(ICU)
-      .use(HttpApi)
-      .init({
-        backend: {
-          loadPath: "./locales/{{lng}}.json",
-        },
-        fallbackLng: this.defaultLanguage,
-        lng: localStorage.getItem(this.localStorageKey) || this.defaultLanguage,
-        debug: false,
-      });
-
-    this.initialized = true;
-  }
-
   public async init(): Promise<void> {
     if (this.initialized && i18next.isInitialized) {
       console.log("i18next already initialized, skipping...");
@@ -69,11 +36,19 @@ class I18nClient implements I18nService {
     }
 
     try {
-      if (this.isDevelopment) {
-        await this.initDevelopment();
-      } else {
-        await this.initProduction();
-      }
+      await i18next
+        .use(ICU)
+        .use(HttpApi)
+        .init({
+          backend: {
+            loadPath: "./locales/{{lng}}.json",
+          },
+          fallbackLng: this.defaultLanguage,
+          lng: localStorage.getItem(this.localStorageKey) || this.defaultLanguage,
+          debug: false,
+        });
+
+      this.initialized = true;
       console.log("i18next initialized for production");
     } catch (error) {
       console.error("Failed to initialize i18next:", error);
@@ -82,6 +57,6 @@ class I18nClient implements I18nService {
   }
 }
 
-export default function createI18nService(isDevelopment: boolean): I18nService {
-  return new I18nClient(isDevelopment);
+export default function createI18nService(): I18nService {
+  return new I18nClient();
 }

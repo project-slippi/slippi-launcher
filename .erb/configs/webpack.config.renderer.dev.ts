@@ -213,9 +213,15 @@ export default (env?: Record<string, string | true>, _argv?: any) => {
       compress: true,
       hot: true,
       headers: { "Access-Control-Allow-Origin": "*" },
-      static: {
-        publicPath: "/",
-      },
+      static: [
+        {
+          publicPath: "/",
+        },
+        {
+          directory: path.join(webpackPaths.rootPath, "release/app/dist/renderer/locales"),
+          publicPath: "/locales",
+        },
+      ],
       historyApiFallback: {
         verbose: true,
       },
