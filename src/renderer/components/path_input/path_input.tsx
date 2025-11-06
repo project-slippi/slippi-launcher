@@ -6,6 +6,8 @@ import Tooltip from "@mui/material/Tooltip";
 import type { OpenDialogOptions } from "electron";
 import React from "react";
 
+import { PathInputMessages as Messages } from "./path_input.messages";
+
 type PathInputProps = {
   onSelect: (filePath: string) => void;
   placeholder?: string;
@@ -35,7 +37,7 @@ export const PathInput = React.forwardRef<HTMLInputElement, PathInputProps>((pro
       <Tooltip title={tooltipText ?? ""}>
         <span>
           <Button color="secondary" variant="contained" onClick={onClick} disabled={disabled}>
-            Select
+            {Messages.select()}
           </Button>
         </span>
       </Tooltip>

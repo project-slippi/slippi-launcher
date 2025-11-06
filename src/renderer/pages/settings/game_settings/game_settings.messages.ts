@@ -11,4 +11,8 @@ export const GameSettingsMessages = {
   enableMusic: () => "Enable Music",
   enableMusicDescription: () => "Enable in-game music.",
   incompatibleWithWasapi: () => "Incompatible with WASAPI.",
+  valid: () => "Valid",
+  unknown: () => "Unknown",
+  invalid: () => "Invalid",
+  unvalidated: () => "Unvalidated",
 };

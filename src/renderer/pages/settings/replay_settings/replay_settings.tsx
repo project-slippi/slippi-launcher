@@ -4,7 +4,7 @@ import React from "react";
 
 import { Checkbox } from "@/components/form/checkbox";
 import { MultiPathInput } from "@/components/multi_path_input";
-import { PathInput } from "@/components/path_input";
+import { PathInput } from "@/components/path_input/path_input";
 import { useDolphinStore } from "@/lib/dolphin/use_dolphin_store";
 import { useExtraSlpPaths, useMonthlySubfolders, useRootSlpPath, useSpectateSlpPath } from "@/lib/hooks/use_settings";
 

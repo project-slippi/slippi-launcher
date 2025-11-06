@@ -12,7 +12,7 @@ import React from "react";
 import { gte } from "semver";
 
 import { Toggle } from "@/components/form/toggle";
-import { PathInput } from "@/components/path_input";
+import { PathInput } from "@/components/path_input/path_input";
 import { useDolphinStore } from "@/lib/dolphin/use_dolphin_store";
 import { useIsoVerification } from "@/lib/hooks/use_iso_verification";
 import { useEnableJukebox, useIsoPath, useLaunchMeleeOnPlay } from "@/lib/hooks/use_settings";
@@ -33,6 +33,22 @@ const renderValidityStatus = (isoValidity: IsoValidity) => {
     case IsoValidity.INVALID:
     case IsoValidity.UNVALIDATED: {
       return <ErrorIcon />;
+    }
+  }
+};
+
+const renderValidityText = (isoValidity: IsoValidity) => {
+  switch (isoValidity) {
+    case IsoValidity.VALID: {
+      return Messages.valid();
+    }
+    case IsoValidity.UNKNOWN: {
+      return Messages.unknown();
+    }
+    case IsoValidity.INVALID:
+      return Messages.invalid();
+    case IsoValidity.UNVALIDATED: {
+      return Messages.unvalidated();
     }
   }
 };
@@ -76,7 +92,7 @@ export const GameSettings = React.memo(() => {
                   font-weight: 500;
                 `}
               >
-                {verifying ? Messages.verifying() : isoValidity.toLowerCase()}
+                {verifying ? Messages.verifying() : renderValidityText(isoValidity)}
               </span>
               {verifying ? <CircularProgress size={25} color="inherit" /> : renderValidityStatus(isoValidity)}
             </ValidationContainer>
