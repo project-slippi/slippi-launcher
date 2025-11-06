@@ -26,7 +26,7 @@ The translation system works through a multi-step process:
 
 Currently supported languages:
 - `en` - English (default)
-- `es` - Spanish (Español)  
+- `es` - Spanish (Español)
 - `ja` - Japanese (日本語)
 
 ### Translation Workflow
@@ -67,7 +67,7 @@ export const ExampleComponent = ({ userName, items }: Props) => {
 After adding new messages, extract them to update the translation template:
 
 ```bash
-npm run i18n:extract
+yarn run i18n:extract
 ```
 
 This command:
@@ -80,7 +80,7 @@ This command:
 Update the `.po` files for all languages with the new strings:
 
 ```bash
-npm run i18n:update
+yarn run i18n:update
 ```
 
 This command:
@@ -106,7 +106,7 @@ msgstr "¡Hola, {0}!"
 Convert the `.po` files to JSON format for the application:
 
 ```bash
-npm run i18n:convert
+yarn run i18n:convert
 ```
 
 This command:
@@ -152,25 +152,119 @@ To add support for a new language:
 1. **File Naming**: Use `.messages.ts` suffix for message files
 2. **Export Pattern**: Export a single object with descriptive method names
 3. **Function Calls**: Always use functions (even for simple strings) to maintain consistency
-4. **Parameterization**: Use parameters for dynamic content instead of string concatenation
-5. **Grouping**: Keep related messages in the same file, typically alongside the components that use them
+4. **Use ICU MessageFormat**: Use ICU syntax for plurals and interpolation instead of JavaScript string templates
+5. **No Template Literals**: Avoid `${}` string interpolation - use ICU placeholders like `{0}`, `{1}` instead
+6. **Grouping**: Keep related messages in the same file, typically alongside the components that use them
 
-Example of good message organization:
+### ICU MessageFormat Guidelines
+
+The project uses ICU MessageFormat for advanced translation features. This is crucial for proper internationalization:
+
+**✅ Correct Usage:**
 ```typescript
 export const UserProfileMessages = {
   // Simple messages
   profileTitle: () => "User Profile",
   editButton: () => "Edit Profile",
-  
-  // Parameterized messages
-  welcomeMessage: (name: string) => `Welcome back, {0}!`,
-  lastSeen: (date: string) => `Last seen: {0}`,
-  
+
+  // Parameterized messages (ICU format)
+  welcomeMessage: (name: string) => "Welcome back, {0}!",
+  lastSeen: (date: string) => "Last seen: {0}",
+
+  // Pluralization (ICU format)
+  itemCount: (count: number) => "{0, plural, one {# item} other {# items}}",
+  friendCount: (count: number) => "{0, plural, zero {No friends} one {1 friend} other {# friends}}",
+
   // Status messages
   loading: () => "Loading profile...",
   error: () => "Failed to load profile. Please try again.",
 };
 ```
+
+**❌ Avoid These Patterns:**
+```typescript
+// DON'T use template literals with ${}
+welcomeMessage: (name: string) => `Welcome back, ${name}!`, // ❌
+itemCount: (count: number) => `You have ${count} items`, // ❌
+
+// DON'T use JavaScript logic for plurals
+friendCount: (count: number) => count === 1 ? "1 friend" : `${count} friends`, // ❌
+```
+
+### ICU Placeholder Types
+
+The project uses **indexed arguments** (`argMode: "indexed"`):
+
+- **Simple interpolation**: `{0}`, `{1}`, `{2}` for the 1st, 2nd, 3rd parameters
+- **Plurals**: `{0, plural, one {# item} other {# items}}`
+- **Numbers**: `{0, number}` or `{0, number, currency}`
+- **Dates**: `{0, date}` or `{0, date, short}`
+
+Example of complex ICU usage:
+```typescript
+export const ShopMessages = {
+  purchaseComplete: (userName: string, itemCount: number, total: number) =>
+    "Hello {0}! You bought {1, plural, one {# item} other {# items}} for {2, number, currency}.",
+};
+```
+
+### Excluding Messages from Translation
+
+Use JSDoc comments to exclude specific functions:
+
+```typescript
+export const Messages = {
+  // This will be translated
+  translate: (): string => "Translate me",
+
+  /** @noTranslate */
+  doNotTranslate: (): string => "Keep as-is",
+
+  /**
+   * @noTranslate
+   * This is a debug message that shouldn't be translated
+   */
+  debugInfo: (): string => "Debug: Component mounted"
+};
+```
+
+### Translation Context for Message Disambiguation
+
+Use `@translationContext` in JSDoc comments to provide context for identical strings that may need different translations:
+
+```typescript
+export const Messages = {
+  /**
+   * Play button for games
+   * @translationContext gaming
+   */
+  playGame: (): string => "Play",
+
+  /**
+   * Play button for music
+   * @translationContext music
+   */
+  playMusic: (): string => "Play",
+};
+```
+
+This helps translators distinguish between contexts. For example, in Spanish:
+- Gaming context: "Jugar" (to play a game)
+- Music context: "Reproducir" (to play music)
+
+**Generated POT file with context:**
+```po
+#. Play button for games
+msgctxt "gaming"
+msgid "Play"
+msgstr ""
+
+#. Play button for music
+msgctxt "music"
+msgid "Play"
+msgstr ""
+```
+
 
 ### Contributing Translations
 
@@ -178,7 +272,7 @@ When contributing translations:
 
 1. **Fork the Repository**: Create your own fork to work in
 2. **Create Feature Branch**: `git checkout -b add-french-translations`
-3. **Follow Workflow**: Use the npm scripts to properly extract and update translations
+3. **Follow Workflow**: Use the yarn scripts to properly extract and update translations
 4. **Test Thoroughly**: Verify translations work in the application
 5. **Submit PR**: Include both `.po` file changes and any necessary code changes
 6. **Provide Context**: In your PR description, explain any translation choices or cultural considerations
