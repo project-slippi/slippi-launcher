@@ -1,3 +1,4 @@
+import { app } from "electron";
 import log from "electron-log";
 import os from "os";
 import osName from "os-name";
@@ -11,6 +12,7 @@ export type AppBootstrap = {
   isMac: boolean;
   isLinux: boolean;
   isWindows: boolean;
+  locale: string;
 };
 
 export function getAppBootstrap(flags: ConfigFlags): AppBootstrap {
@@ -29,6 +31,7 @@ export function getAppBootstrap(flags: ConfigFlags): AppBootstrap {
     isMac: process.platform === "darwin",
     isLinux: process.platform === "linux",
     isWindows: process.platform === "win32",
+    locale: app.getLocale(),
   };
   return bootstrap;
 }

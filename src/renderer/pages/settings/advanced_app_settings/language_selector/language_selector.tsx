@@ -3,6 +3,7 @@ import React from "react";
 import { Dropdown } from "@/components/form/dropdown";
 import { useAppStore } from "@/lib/hooks/use_app";
 import { useServices } from "@/services";
+import { SUPPORTED_LANGUAGES } from "@/services/i18n/util";
 
 import { SettingItem } from "../../setting_item_section";
 import { LanguageSelectorMessages as Messages } from "./language_selector.messages";
@@ -10,7 +11,6 @@ import { LanguageSelectorMessages as Messages } from "./language_selector.messag
 export const LanguageSelector = React.memo(() => {
   const { i18nService } = useServices();
   const currentLanguage = useAppStore((state) => state.currentLanguage);
-  const supportedLanguages = i18nService.getSupportedLanguages();
 
   const handleLanguageChange = React.useCallback(
     (language: string) => {
@@ -21,7 +21,7 @@ export const LanguageSelector = React.memo(() => {
 
   return (
     <SettingItem name={Messages.appLanguage()} description={Messages.appLanguageDescription()}>
-      <Dropdown value={currentLanguage} options={supportedLanguages} onChange={handleLanguageChange} />
+      <Dropdown value={currentLanguage} options={SUPPORTED_LANGUAGES} onChange={handleLanguageChange} />
     </SettingItem>
   );
 });

@@ -3,20 +3,15 @@ import HttpApi from "i18next-http-backend";
 import ICU from "i18next-icu";
 import { Subject } from "observable-fns";
 
-import type { I18nService, Language, LanguageOption } from "./types";
-
-const SUPPORTED_LANGUAGES: LanguageOption[] = [
-  { value: "en", label: "English" },
-  { value: "es", label: "Español" },
-  { value: "ja", label: "日本語" },
-];
+import type { I18nService } from "./types";
+import { getSystemLanguage, SUPPORTED_LANGUAGES } from "./util";
 
 class I18nClient implements I18nService {
   private readonly localStorageKey = "preferred-language";
   private initialized = false;
   private languageChangeSubject = new Subject<string>();
 
-  constructor(private readonly defaultLanguage: Language = "en") {}
+  constructor(private readonly isDevelopment: boolean) {}
 
   public onLanguageChange(handle: (language: string) => void): () => void {
     const subscription = this.languageChangeSubject.subscribe(handle);
@@ -28,10 +23,6 @@ class I18nClient implements I18nService {
     await i18next.changeLanguage(language);
     // Notify React components that the language has changed
     this.languageChangeSubject.next(language);
-  }
-
-  public getSupportedLanguages(): readonly LanguageOption[] {
-    return SUPPORTED_LANGUAGES;
   }
 
   public async init(): Promise<void> {
@@ -48,13 +39,17 @@ class I18nClient implements I18nService {
           backend: {
             loadPath: "./i18n/{{lng}}.json",
           },
-          fallbackLng: this.defaultLanguage,
-          lng: localStorage.getItem(this.localStorageKey) || this.defaultLanguage,
-          debug: false,
+          supportedLngs: SUPPORTED_LANGUAGES.map((lang) => lang.value),
+          fallbackLng: "en",
+          lng: localStorage.getItem(this.localStorageKey) || getSystemLanguage(),
+          load: "languageOnly", // ignore the locale suffix in the language code e.g. "en-US" -> "en"
+          lowerCaseLng: true,
+          cleanCode: true,
+          debug: this.isDevelopment,
         });
 
       this.initialized = true;
-      console.log("i18next initialized for production");
+      console.log("i18next initialized");
 
       // Notify React components of the initial language
       // what happens if we use a language detector and it's not one of the supported languages?
@@ -66,6 +61,6 @@ class I18nClient implements I18nService {
   }
 }
 
-export default function createI18nService(): I18nService {
-  return new I18nClient();
+export default function createI18nService(options: { isDevelopment?: boolean } = {}): I18nService {
+  return new I18nClient(options.isDevelopment ?? false);
 }

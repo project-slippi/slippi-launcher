@@ -27,7 +27,7 @@ export async function installServices(): Promise<Services> {
   const broadcastService = window.electron.broadcast;
   const consoleService = window.electron.console;
 
-  const i18nService = createI18nService();
+  const i18nService = createI18nService({ isDevelopment });
   // Connect i18n service to global app state for language changes
   i18nService.onLanguageChange((language) => {
     useAppStore.getState().setCurrentLanguage(language);

@@ -7,6 +7,7 @@ import { useAccount } from "@/lib/hooks/use_account";
 import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 import type { AuthUser } from "@/services/auth/types";
+import { getSystemLanguage } from "@/services/i18n/util";
 
 export const useAppStore = create(
   combine(
@@ -16,7 +17,7 @@ export const useAppStore = create(
       updateVersion: "",
       updateDownloadProgress: 0,
       updateReady: false,
-      currentLanguage: "en",
+      currentLanguage: getSystemLanguage(),
     },
     (set) => ({
       setInitializing: (initializing: boolean) => set({ initializing }),

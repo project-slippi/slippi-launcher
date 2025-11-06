@@ -121,16 +121,10 @@ The JSON files are automatically built from the `.po` files in production at pac
 
 To add support for a new language:
 
-1. **Update Type Definitions**:
+1. **Add Language Option**:
    ```typescript
-   // src/renderer/services/i18n/types.ts
-   export type Language = "en" | "es" | "ja" | "fr"; // Add new language code
-   ```
-
-2. **Add Language Option**:
-   ```typescript
-   // src/renderer/services/i18n/i18n.service.ts
-   const SUPPORTED_LANGUAGES: LanguageOption[] = [
+   // src/renderer/services/i18n/util.ts
+   export const SUPPORTED_LANGUAGES = [
      { value: "en", label: "English" },
      { value: "es", label: "Español" },
      { value: "ja", label: "日本語" },
@@ -138,14 +132,14 @@ To add support for a new language:
    ];
    ```
 
-3. **Create PO File**:
+2. **Create PO File**:
    ```bash
    # Create new PO file
    cp locales/messages.pot locales/fr.po
    # Edit the header to set the language
    ```
 
-4. **Run Translation Workflow**: Extract, update, and convert as described above
+3. **Run Translation Workflow**: Extract, update, and convert as described above
 
 ### Message File Best Practices
 

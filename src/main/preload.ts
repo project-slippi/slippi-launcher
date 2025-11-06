@@ -10,8 +10,10 @@ import { isSubdirectory } from "utils/is_subdirectory";
 import commonApi from "./api";
 import type { AppBootstrap } from "./bootstrap";
 
+const bootstrap = ipcRenderer.sendSync("getAppBootstrapSync") as AppBootstrap;
+
 const api = {
-  bootstrap: ipcRenderer.sendSync("getAppBootstrapSync") as AppBootstrap,
+  bootstrap,
   common: commonApi,
   console: consoleApi,
   settings: settingsApi,
