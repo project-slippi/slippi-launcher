@@ -1,3 +1,4 @@
+import log from "electron-log";
 import i18next from "i18next";
 import HttpApi from "i18next-http-backend";
 import ICU from "i18next-icu";
@@ -27,7 +28,7 @@ class I18nClient implements I18nService {
 
   public async init(): Promise<void> {
     if (this.initialized && i18next.isInitialized) {
-      console.log("i18next already initialized, skipping...");
+      log.info("i18next already initialized, skipping...");
       return;
     }
 
@@ -46,13 +47,13 @@ class I18nClient implements I18nService {
         });
 
       this.initialized = true;
-      console.log("i18next initialized");
+      log.info("i18next initialized");
 
       // Notify React components of the initial language
       // what happens if we use a language detector and it's not one of the supported languages?
       this.languageChangeSubject.next(i18next.language);
     } catch (error) {
-      console.error("Failed to initialize i18next:", error);
+      log.error("Failed to initialize i18next:", error);
       throw error;
     }
   }
