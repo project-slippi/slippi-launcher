@@ -45,7 +45,6 @@ export const HomePage = React.memo(function HomePage() {
           id="home-page"
           leftSide={
             <Main ref={mainRef}>
-              <h1>Latest News</h1>
               <NewsFeed />
             </Main>
           }
