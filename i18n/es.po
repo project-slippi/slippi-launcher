@@ -7,16 +7,52 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "x-generator: i18next-auto-keys CLI\n"
 "Language: es-ES\n"
-"PO-Revision-Date: 2025-11-06T05:42:50.658Z\n"
+"PO-Revision-Date: 2025-11-06T08:03:33.168Z\n"
 "X-Generator: Autopo v1.0.5\n"
+
+#: src/renderer/pages/settings/create.messages.ts:10:19
+msgid "Advanced"
+msgstr "Avanzado"
+
+#: src/renderer/pages/settings/advanced_app_settings/language_selector/language_selector.messages.ts:2:22
+msgid "App Language"
+msgstr "Idioma de la Aplicación"
+
+#: src/renderer/pages/settings/create.messages.ts:9:22
+msgid "App Settings"
+msgstr "Configuración de la Aplicación"
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:3:39
+msgid "Automatically install Slippi Launcher updates when they become available."
+msgstr "Instalar automáticamente las actualizaciones de Slippi Launcher cuando estén disponibles."
+
+#: src/renderer/pages/settings/create.messages.ts:5:15
+msgid "Chat"
+msgstr "Chat"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:8:38
 msgid "Choose what happens when the Play button is pressed."
 msgstr "Elige qué sucede cuando se presiona el botón Jugar."
 
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:4:25
+msgid "Clear Temporary Files"
+msgstr "Limpiar Archivos Temporales"
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:7:21
+msgid "Clear files"
+msgstr "Limpiar archivos"
+
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:4:31
 msgid "Close Dolphin to change this setting"
 msgstr "Cierra Dolphin para cambiar esta configuración"
+
+#: src/renderer/pages/settings/create.messages.ts:6:26
+msgid "Dolphin Settings"
+msgstr "Configuración de Dolphin"
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:2:28
+msgid "Enable Auto Updates"
+msgstr "Activar Actualizaciones Automáticas"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:11:22
 msgid "Enable Music"
@@ -25,6 +61,18 @@ msgstr "Activar música"
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:12:33
 msgid "Enable in-game music."
 msgstr "Activa la música dentro del juego."
+
+#: src/renderer/pages/settings/create.messages.ts:3:15
+msgid "Game"
+msgstr "Juego"
+
+#: src/renderer/pages/settings/create.messages.ts:2:26
+msgid "General Settings"
+msgstr "Configuración General"
+
+#: src/renderer/pages/settings/create.messages.ts:11:15
+msgid "Help"
+msgstr "Ayuda"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:13:33
 msgid "Incompatible with WASAPI."
@@ -42,6 +90,10 @@ msgstr "Iniciar Melee"
 msgid "Melee ISO File"
 msgstr "Archivo ISO de Melee"
 
+#: src/renderer/pages/settings/create.messages.ts:7:18
+msgid "Netplay"
+msgstr "Juego en Red"
+
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:5:20
 msgid "No file set"
 msgstr "Ningún archivo seleccionado"
@@ -50,9 +102,33 @@ msgstr "Ningún archivo seleccionado"
 msgid "Play Button Action"
 msgstr "Acción del botón Jugar"
 
+#: src/renderer/pages/settings/create.messages.ts:8:19
+msgid "Playback"
+msgstr "Reproducción"
+
 #: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:3:19
 msgid "Read more"
 msgstr "Leer más"
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:6:5
+msgid ""
+"Removes temporary downloads, files used for Dolphin communication, and "
+"files streamed from Slippi.gg."
+msgstr ""
+"Elimina descargas temporales, archivos utilizados para la comunicación con "
+"Dolphin y archivos transmitidos desde Slippi.gg."
+
+#: src/renderer/pages/settings/create.messages.ts:4:18
+msgid "Replays"
+msgstr "Repeticiones"
+
+#: src/renderer/pages/settings/advanced_app_settings/language_selector/language_selector.messages.ts:3:33
+msgid "Select your preferred language for the app."
+msgstr "Selecciona tu idioma preferido para la aplicación."
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:8:28
+msgid "Successfully cleared temporary files."
+msgstr "Archivos temporales eliminados correctamente."
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:3:34
 msgid "The path to an NTSC Melee 1.02 ISO."
@@ -84,4 +160,6 @@ msgstr "{0, plural, one {# archivo encontrado} other {# archivos encontrados}}."
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:4:38
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} had errors."
-msgstr "{0, plural, one {# archivo tenía errores} other {# archivos tenían errores}}."
+msgstr ""
+"{0, plural, one {# archivo tenía errores} other {# archivos tenían "
+"errores}}."
