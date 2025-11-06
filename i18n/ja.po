@@ -10,95 +10,77 @@ msgstr ""
 "PO-Revision-Date: 2025-11-05T12:01:29.751Z\n"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:8:38
-msgctxt "9ed7d5167d"
 msgid "Choose what happens when the Play button is pressed."
 msgstr "再生ボタンを押したときの動作を選択してください。"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:4:31
-msgctxt "b5a78e4b7b"
 msgid "Close Dolphin to change this setting"
 msgstr "この設定を変更するには Dolphin を閉じてください"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:11:22
-msgctxt "004f981b1f"
 msgid "Enable Music"
 msgstr "音楽を有効にする"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:12:33
-msgctxt "181377f7b8"
 msgid "Enable in-game music."
 msgstr "ゲーム内音楽を有効にします。"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:13:33
-msgctxt "6714a551cb"
 msgid "Incompatible with WASAPI."
 msgstr "WASAPI とは互換性がありません。"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:10:24
-msgctxt "b88c7e0d9b"
 msgid "Launch Dolphin"
 msgstr "Dolphin を起動する"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:9:22
-msgctxt "61a518cb24"
 msgid "Launch Melee"
 msgstr "Melee を起動する"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:2:23
-msgctxt "2db970796b"
 msgid "Melee ISO File"
 msgstr "Melee の ISO ファイル"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:5:20
-msgctxt "ce792afb1f"
 msgid "No file set"
 msgstr "ファイルが設定されていません"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:7:27
-msgctxt "40900631bd"
 msgid "Play Button Action"
 msgstr "再生ボタンの動作"
 
 #: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:3:19
-msgctxt "ad086cf55b"
 msgid "Read more"
 msgstr "続きを読む"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:3:34
-msgctxt "4659dd753d"
 msgid "The path to an NTSC Melee 1.02 ISO."
 msgstr "NTSC Melee 1.02 ISO へのパスです。"
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:5:41
 #. {0} readableBytes: string
-msgctxt "f622d0c238"
 msgid "Total size: {0}"
 msgstr "合計サイズ: {0}"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:6:20
-msgctxt "bf6ea54060"
 msgid "Verifying..."
 msgstr "確認中..."
 
 #: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:2:24
-msgctxt "8fd8d1ccc8"
 msgid "View on Bluesky"
 msgstr "Bluesky で見る"
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:3:39
 #. {0} count: number
-msgctxt "e910028692"
 msgid "{0, plural, one {# file} other {# files}} filtered."
 msgstr "{0, plural, one {# 件のファイルが} other {# 件のファイルが}} フィルターされました。"
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:2:38
 #. {0} count: number
-msgctxt "13d69a5b76"
 msgid "{0, plural, one {# file} other {# files}} found."
 msgstr "{0, plural, one {# 件のファイルが} other {# 件のファイルが}} 見つかりました。"
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:4:38
 #. {0} count: number
-msgctxt "a9e5f6f435"
 msgid "{0, plural, one {# file} other {# files}} had errors."
 msgstr "{0, plural, one {# 件のファイルにエラーがありました} other {# 件のファイルにエラーがありました}}。"
