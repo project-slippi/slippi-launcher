@@ -41,8 +41,11 @@ class I18nClient implements I18nService {
             loadPath: "./i18n/{{lng}}.json",
           },
           supportedLngs: SUPPORTED_LANGUAGES.map((lang) => lang.value),
-          fallbackLng: "en-US",
+          fallbackLng: "en",
           lng: localStorage.getItem(this.localStorageKey) || getSystemLanguage(),
+          load: "languageOnly", // ignore the locale suffix in the language code e.g. "en-US" -> "en"
+          lowerCaseLng: true,
+          cleanCode: true,
           debug: this.isDevelopment,
         });
 
