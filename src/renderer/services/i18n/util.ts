@@ -1,14 +1,13 @@
 export const SUPPORTED_LANGUAGES = [
-  { value: "en", label: "English" },
-  { value: "es", label: "Español" },
-  { value: "ja", label: "日本語" },
+  { value: "en-US", label: "English" },
+  { value: "es-ES", label: "Español" },
+  { value: "ja-JP", label: "日本語" },
 ];
 
 export function getSystemLanguage(): string {
-  const locale = window.electron.bootstrap.locale ?? navigator.language;
-  const systemLanguage = locale.split("-")[0];
+  const systemLanguage = window.electron.bootstrap.locale ?? navigator.language;
   if (SUPPORTED_LANGUAGES.some((lang) => lang.value === systemLanguage)) {
     return systemLanguage;
   }
-  return "en";
+  return "en-US";
 }

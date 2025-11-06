@@ -25,9 +25,9 @@ The translation system works through a multi-step process:
 ### Supported Languages
 
 Currently supported languages:
-- `en` - English (default)
-- `es` - Spanish (Español)
-- `ja` - Japanese (日本語)
+- `en-US` - English (default)
+- `es-ES` - Spanish (Español)
+- `ja-JP` - Japanese (日本語)
 
 ### Translation Workflow
 
@@ -84,7 +84,7 @@ yarn run i18n:update
 ```
 
 This command:
-- Updates `locales/es.po`, `locales/ja.po`, etc.
+- Updates `locales/es-ES.po`, `locales/ja-JP.po`, etc.
 - Adds new untranslated strings (marked as empty `msgstr ""`)
 - Preserves existing translations
 
@@ -112,7 +112,7 @@ yarn run i18n:convert
 This command:
 - Converts all `.po` files to JSON
 - Outputs to `release/app/dist/renderer/i18n/`
-- Creates `en.json`, `es.json`, `ja.json`, etc.
+- Creates `en-US.json`, `es-ES.json`, `ja-JP.json`, etc.
 
 You only need to manually run this when testing translations in develop mode.
 The JSON files are automatically built from the `.po` files in production at package time.
@@ -125,10 +125,10 @@ To add support for a new language:
    ```typescript
    // src/renderer/services/i18n/util.ts
    export const SUPPORTED_LANGUAGES = [
-     { value: "en", label: "English" },
-     { value: "es", label: "Español" },
-     { value: "ja", label: "日本語" },
-     { value: "fr", label: "Français" }, // Add new language
+     { value: "en-US", label: "English" },
+     { value: "es-ES", label: "Español" },
+     { value: "ja-JP", label: "日本語" },
+     { value: "fr-FR", label: "Français" }, // Add new language
    ];
    ```
 
