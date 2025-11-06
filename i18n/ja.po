@@ -11,11 +11,11 @@ msgstr ""
 
 #: src/renderer/pages/settings/create.messages.ts:10:19
 msgid "Advanced"
-msgstr "詳細設定"
+msgstr "詳細"
 
 #: src/renderer/pages/settings/advanced_app_settings/language_selector/language_selector.messages.ts:2:22
 msgid "App Language"
-msgstr "アプリの言語"
+msgstr "言語"
 
 #: src/renderer/pages/settings/create.messages.ts:9:22
 msgid "App Settings"
@@ -23,7 +23,7 @@ msgstr "アプリ設定"
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:3:39
 msgid "Automatically install Slippi Launcher updates when they become available."
-msgstr "Slippi Launcher のアップデートが利用可能になったときに自動的にインストールします。"
+msgstr "Slippi Launcher のアップデートが利用可能になったときに自動的にインストール"
 
 #: src/renderer/pages/settings/create.messages.ts:5:15
 msgid "Chat"
@@ -31,7 +31,7 @@ msgstr "チャット"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:8:38
 msgid "Choose what happens when the Play button is pressed."
-msgstr "再生ボタンを押したときの動作を選択してください。"
+msgstr "再生ボタンを押したときの動作を選択"
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:4:25
 msgid "Clear Temporary Files"
@@ -43,7 +43,7 @@ msgstr "ファイルを削除"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:4:31
 msgid "Close Dolphin to change this setting"
-msgstr "この設定を変更するには Dolphin を閉じてください"
+msgstr "この設定を変更するには Dolphin を閉じる"
 
 #: src/renderer/pages/settings/create.messages.ts:6:26
 msgid "Dolphin Settings"
@@ -51,15 +51,15 @@ msgstr "Dolphin 設定"
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:2:28
 msgid "Enable Auto Updates"
-msgstr "自動アップデートを有効にする"
+msgstr "自動アップデート"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:11:22
 msgid "Enable Music"
-msgstr "音楽を有効にする"
+msgstr "音楽"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:12:33
 msgid "Enable in-game music."
-msgstr "ゲーム内音楽を有効にします。"
+msgstr "ゲーム内音楽を有効化"
 
 #: src/renderer/pages/settings/create.messages.ts:3:15
 msgid "Game"
@@ -75,15 +75,15 @@ msgstr "ヘルプ"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:13:33
 msgid "Incompatible with WASAPI."
-msgstr "WASAPI とは互換性がありません。"
+msgstr "WASAPI 非対応"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:10:24
 msgid "Launch Dolphin"
-msgstr "Dolphin を起動する"
+msgstr "Dolphin 起動"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:9:22
 msgid "Launch Melee"
-msgstr "Melee を起動する"
+msgstr "Melee 起動"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:2:23
 msgid "Melee ISO File"
@@ -95,7 +95,7 @@ msgstr "ネットプレイ"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:5:20
 msgid "No file set"
-msgstr "ファイルが設定されていません"
+msgstr "未設定"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:7:27
 msgid "Play Button Action"
@@ -115,7 +115,7 @@ msgid ""
 "files streamed from Slippi.gg."
 msgstr ""
 "一時ダウンロード、Dolphin 通信に使用されるファイル、および "
-"Slippi.gg からストリーミングされたファイルを削除します。"
+"Slippi.gg からストリーミングされたファイルを削除"
 
 #: src/renderer/pages/settings/create.messages.ts:4:18
 msgid "Replays"
@@ -123,15 +123,15 @@ msgstr "リプレイ"
 
 #: src/renderer/pages/settings/advanced_app_settings/language_selector/language_selector.messages.ts:3:33
 msgid "Select your preferred language for the app."
-msgstr "アプリの使用言語を選択してください。"
+msgstr "アプリの使用言語を選択"
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:8:28
 msgid "Successfully cleared temporary files."
-msgstr "一時ファイルが正常に削除されました。"
+msgstr "削除完了"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:3:34
 msgid "The path to an NTSC Melee 1.02 ISO."
-msgstr "NTSC Melee 1.02 ISO へのパスです。"
+msgstr "NTSC Melee 1.02 ISO へのパス"
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:5:41
 #. {0} readableBytes: string
@@ -149,14 +149,14 @@ msgstr "Bluesky で見る"
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:3:39
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} filtered."
-msgstr "{0, plural, one {# 件のファイルが} other {# 件のファイルが}} フィルターされました。"
+msgstr "{0, plural, one {# 件フィルター済み} other {# 件フィルター済み}}"
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:2:38
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} found."
-msgstr "{0, plural, one {# 件のファイルが} other {# 件のファイルが}} 見つかりました。"
+msgstr "{0, plural, one {# 件見つかりました} other {# 件見つかりました}}"
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:4:38
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} had errors."
-msgstr "{0, plural, one {# 件のファイルにエラーがありました} other {# 件のファイルにエラーがありました}}。"
+msgstr "{0, plural, one {# 件エラー} other {# 件エラー}}"
