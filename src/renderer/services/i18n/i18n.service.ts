@@ -14,16 +14,16 @@ const SUPPORTED_LANGUAGES: LanguageOption[] = [
 class I18nClient implements I18nService {
   private readonly localStorageKey = "preferred-language";
   private initialized = false;
-  private languageChangeSubject = new Subject<Language>();
+  private languageChangeSubject = new Subject<string>();
 
   constructor(private readonly defaultLanguage: Language = "en") {}
 
-  public onLanguageChange(handle: (language: Language) => void): () => void {
+  public onLanguageChange(handle: (language: string) => void): () => void {
     const subscription = this.languageChangeSubject.subscribe(handle);
     return () => subscription.unsubscribe();
   }
 
-  public async setLanguage(language: Language): Promise<void> {
+  public async setLanguage(language: string): Promise<void> {
     localStorage.setItem(this.localStorageKey, language);
     await i18next.changeLanguage(language);
     // Notify React components that the language has changed
@@ -58,7 +58,7 @@ class I18nClient implements I18nService {
 
       // Notify React components of the initial language
       // what happens if we use a language detector and it's not one of the supported languages?
-      this.languageChangeSubject.next(i18next.language as unknown as Language);
+      this.languageChangeSubject.next(i18next.language);
     } catch (error) {
       console.error("Failed to initialize i18next:", error);
       throw error;

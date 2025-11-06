@@ -7,7 +7,7 @@ export type LanguageOption = {
 
 export interface I18nService {
   init(): Promise<void>;
-  setLanguage(language: Language): Promise<void>;
+  setLanguage(language: string): Promise<void>;
   getSupportedLanguages(): readonly LanguageOption[];
-  onLanguageChange(handle: (language: Language) => void): () => void;
+  onLanguageChange(handle: (language: string) => void): () => void;
 }
