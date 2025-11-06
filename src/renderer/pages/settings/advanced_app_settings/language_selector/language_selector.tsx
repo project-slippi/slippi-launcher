@@ -4,6 +4,7 @@ import { Dropdown } from "@/components/form/dropdown";
 import { useServices } from "@/services";
 
 import { SettingItem } from "../../setting_item_section";
+import { LanguageSelectorMessages as Messages } from "./language_selector.messages";
 
 export const LanguageSelector = React.memo(() => {
   const { i18nService } = useServices();
@@ -20,7 +21,7 @@ export const LanguageSelector = React.memo(() => {
   );
 
   return (
-    <SettingItem name="Language" description="Select your preferred language for the interface.">
+    <SettingItem name={Messages.appLanguage()} description={Messages.appLanguageDescription()}>
       <Dropdown value={currentLanguage} options={supportedLanguages} onChange={handleLanguageChange} />
     </SettingItem>
   );

@@ -6,6 +6,7 @@ import { useAutoUpdateLauncher } from "@/lib/hooks/use_settings";
 import { useToasts } from "@/lib/hooks/use_toasts";
 
 import { SettingItem } from "../setting_item_section";
+import { AdvancedAppSettingsMessages as Messages } from "./advanced_app_settings.messages";
 import { LanguageSelector } from "./language_selector/language_selector";
 
 export const AdvancedAppSettings = React.memo(() => {
@@ -18,8 +19,8 @@ export const AdvancedAppSettings = React.memo(() => {
         <Toggle
           value={autoUpdateLauncher}
           onChange={(checked) => setAutoUpdateLauncher(checked)}
-          label="Enable Auto Updates"
-          description="Automatically install Slippi Launcher updates when they become available."
+          label={Messages.enableAutoUpdates()}
+          description={Messages.enableAutoUpdatesDescription()}
         />
       </SettingItem>
       <ClearTempFilesForm />
@@ -33,17 +34,14 @@ const ClearTempFilesForm = React.memo(() => {
     window.electron.common
       .clearTempFolder()
       .then(() => {
-        showSuccess("Successfully cleared temporary files.");
+        showSuccess(Messages.clearFilesSuccess());
       })
       .catch(showError);
   }, [showSuccess, showError]);
   return (
-    <SettingItem
-      name="Clear Temporary Files"
-      description="Removes temporary downloads, files used for Dolphin communication, and files streamed from Slippi.gg."
-    >
+    <SettingItem name={Messages.clearTempFiles()} description={Messages.clearTempFilesDescription()}>
       <Button variant="contained" color="secondary" onClick={onClear}>
-        Clear files
+        {Messages.clearFiles()}
       </Button>
     </SettingItem>
   );
