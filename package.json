@@ -23,8 +23,8 @@
     "test": "cross-env ELECTRON_RUN_AS_NODE=true electron ./node_modules/jest-cli/bin/jest.js --verbose",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "i18n:extract": "i18next-auto-keys generate --include \"src/renderer/**/*.messages.ts\" --output \"i18n/messages.pot\"",
-    "i18n:update": "i18next-auto-keys update --template ./i18n/messages.pot --po-files \"./i18n/*.po\"",
+    "i18n:extract": "i18next-auto-keys extract --include \"src/renderer/**/*.messages.ts\"",
+    "i18n:update": "i18next-auto-keys update --po-files \"./i18n/*.po\"",
     "i18n:convert": "i18next-auto-keys convert --input \"./i18n/*.po\" --output ./release/app/dist/renderer/locales --batch"
   },
   "repository": {
@@ -52,6 +52,12 @@
   },
   "lint-staged": {
     "*.{js,ts,jsx,tsx}": "eslint --cache --fix"
+  },
+  "i18next-auto-keys": {
+    "potTemplatePath": "./i18n/messages.pot",
+    "hashLength": 16,
+    "argMode": "indexed",
+    "projectId": "Slippi Launcher 1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.5",
@@ -128,7 +134,7 @@
     "gettext-parser": "^8.0.0",
     "html-webpack-plugin": "^5.5.0",
     "husky": "^4.3.0",
-    "i18next-auto-keys": "^2.1.0",
+    "i18next-auto-keys": "^3.0.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",

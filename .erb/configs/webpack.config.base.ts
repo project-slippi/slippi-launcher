@@ -47,9 +47,7 @@ const configuration: webpack.Configuration = {
           {
             loader: "i18next-auto-keys",
             options: {
-              argMode: "indexed",
               setDefaultValue: isDevelop,
-              hashLength: 10,
             },
           },
         ],
