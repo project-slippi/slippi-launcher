@@ -58,8 +58,8 @@ msgstr "Leer más"
 msgid "The path to an NTSC Melee 1.02 ISO."
 msgstr "La ruta a un archivo ISO de Melee NTSC 1.02."
 
-#. {0} readableBytes: string
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:5:41
+#. {0} readableBytes: string
 msgid "Total size: {0}"
 msgstr "Tamaño total: {0}"
 
@@ -71,17 +71,17 @@ msgstr "Verificando..."
 msgid "View on Bluesky"
 msgstr "Ver en Bluesky"
 
-#. {0} count: number
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:3:39
+#. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} filtered."
 msgstr "{0, plural, one {# archivo filtrado} other {# archivos filtrados}}."
 
-#. {0} count: number
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:2:38
+#. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} found."
 msgstr "{0, plural, one {# archivo encontrado} other {# archivos encontrados}}."
 
-#. {0} count: number
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:4:38
+#. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} had errors."
 msgstr "{0, plural, one {# archivo tenía errores} other {# archivos tenían errores}}."
