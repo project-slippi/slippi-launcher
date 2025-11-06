@@ -28,6 +28,14 @@ msgstr ""
 msgid "Chat"
 msgstr ""
 
+#: src/renderer/app/header/header.messages.ts:3:26
+msgid "Check for updates"
+msgstr ""
+
+#: src/renderer/app/header/header.messages.ts:4:29
+msgid "Checking for updates..."
+msgstr ""
+
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:8:38
 msgid "Choose what happens when the Play button is pressed."
 msgstr ""
@@ -42,6 +50,10 @@ msgstr ""
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:4:31
 msgid "Close Dolphin to change this setting"
+msgstr ""
+
+#: src/renderer/app/create.messages.ts:5:18
+msgid "Console Mirror"
 msgstr ""
 
 #: src/renderer/pages/settings/create.messages.ts:6:26
@@ -60,6 +72,14 @@ msgstr ""
 msgid "Enable in-game music."
 msgstr ""
 
+#: src/renderer/pages/home/news_feed/news_feed.messages.ts:4:24
+msgid "Failed to fetch news articles."
+msgstr ""
+
+#: src/renderer/app/header/header.messages.ts:5:29
+msgid "Failed to get updates"
+msgstr ""
+
 #: src/renderer/pages/settings/create.messages.ts:3:15
 msgid "Game"
 msgstr ""
@@ -72,8 +92,20 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
+#: src/renderer/app/create.messages.ts:2:15
+msgid "Home"
+msgstr ""
+
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:13:33
 msgid "Incompatible with WASAPI."
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:16:18
+msgid "Invalid"
+msgstr ""
+
+#: src/renderer/pages/home/news_feed/news_feed.messages.ts:2:21
+msgid "Latest News"
 msgstr ""
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:10:24
@@ -84,6 +116,14 @@ msgstr ""
 msgid "Launch Melee"
 msgstr ""
 
+#: src/renderer/pages/home/news_feed/news_feed.messages.ts:3:18
+msgid "Loading..."
+msgstr ""
+
+#: src/renderer/app/header/header.messages.ts:2:16
+msgid "Log in"
+msgstr ""
+
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:2:23
 msgid "Melee ISO File"
 msgstr ""
@@ -92,8 +132,16 @@ msgstr ""
 msgid "Netplay"
 msgstr ""
 
+#: src/renderer/app/header/header.messages.ts:6:25
+msgid "No Melee ISO file specified"
+msgstr ""
+
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:5:20
 msgid "No file set"
+msgstr ""
+
+#: src/renderer/app/header/play_button/play_button.messages.ts:2:15
+msgid "Play"
 msgstr ""
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:7:27
@@ -114,12 +162,29 @@ msgid ""
 "files streamed from Slippi.gg."
 msgstr ""
 
+#: src/renderer/app/create.messages.ts:3:18
 #: src/renderer/pages/settings/create.messages.ts:4:18
 msgid "Replays"
 msgstr ""
 
+#: src/renderer/components/path_input/path_input.messages.ts:2:17
+msgid "Select"
+msgstr ""
+
 #: src/renderer/pages/settings/advanced_app_settings/language_selector/language_selector.messages.ts:3:33
 msgid "Select your preferred language for the app."
+msgstr ""
+
+#: src/renderer/app/header/header.messages.ts:7:19
+msgid "Settings"
+msgstr ""
+
+#: src/renderer/pages/home/news_feed/news_feed.messages.ts:6:19
+msgid "Show more"
+msgstr ""
+
+#: src/renderer/app/create.messages.ts:4:19
+msgid "Spectate"
 msgstr ""
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:8:28
@@ -133,6 +198,26 @@ msgstr ""
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:5:41
 #. {0} readableBytes: string
 msgid "Total size: {0}"
+msgstr ""
+
+#: src/renderer/pages/home/news_feed/news_feed.messages.ts:5:19
+msgid "Try again"
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:15:18
+msgid "Unknown"
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:17:22
+msgid "Unvalidated"
+msgstr ""
+
+#: src/renderer/app/header/play_button/play_button.messages.ts:3:19
+msgid "Updating"
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:14:16
+msgid "Valid"
 msgstr ""
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:6:20
