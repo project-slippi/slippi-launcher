@@ -23,6 +23,7 @@ import slippiLogo from "@/styles/images/slippi_logo.svg";
 import { platformTitleBarStyles } from "@/styles/platform_title_bar_styles";
 
 import { ActivateOnlineDialog } from "./activate_online_dialog";
+import { HeaderMessages as Messages } from "./header.messages";
 import type { MenuItem } from "./main_menu";
 import { MainMenu } from "./main_menu";
 import { PlayButton as PlayButtonImpl, UpdatingButton } from "./play_button/play_button";
@@ -77,7 +78,7 @@ export const Header = ({ menuItems }: { menuItems: readonly MenuItem[] }) => {
       }
 
       if (!meleeIsoPath) {
-        showError("No Melee ISO file specified");
+        showError(Messages.noMeleeIsoFile());
         return;
       }
 
@@ -118,10 +119,10 @@ export const Header = ({ menuItems }: { menuItems: readonly MenuItem[] }) => {
           <UserMenu user={currentUser} handleError={showError} />
         ) : (
           <Button onClick={openModal} sx={{ color: "white" }}>
-            Log in
+            {Messages.logIn()}
           </Button>
         )}
-        <Tooltip title="Settings">
+        <Tooltip title={Messages.settings()}>
           <IconButton
             onClick={() => open()}
             css={css`
@@ -179,12 +180,12 @@ const CheckForUpdatesButton = () => {
     const checkForUpdates = async () => {
       setCheckingForUpdates(true);
       try {
-        showInfo("Checking for updates...");
+        showInfo(Messages.checkingForUpdates());
         await checkForAppUpdates();
         await updateDolphin();
       } catch (err) {
         log.error(err);
-        showError("Failed to get updates");
+        showError(Messages.failedToGetUpdates());
       } finally {
         setCheckingForUpdates(false);
       }
@@ -193,7 +194,7 @@ const CheckForUpdatesButton = () => {
   }, [checkForAppUpdates, updateDolphin, showInfo, showError]);
 
   return (
-    <Tooltip title="Check for updates">
+    <Tooltip title={Messages.checkForUpdates()}>
       <Button
         style={isMac ? { marginTop: 10 } : undefined}
         onClick={checkForUpdatesHandler}

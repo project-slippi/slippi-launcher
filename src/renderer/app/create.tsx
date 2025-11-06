@@ -28,6 +28,7 @@ import { slippiTheme } from "@/styles/theme";
 
 import type { MainMenuItem } from "./app";
 import { App as AppImpl } from "./app";
+import { CreateAppMessages as Messages } from "./create.messages";
 
 export function createApp({ services }: { services: Services }): {
   App: React.ComponentType;
@@ -41,27 +42,27 @@ export function createApp({ services }: { services: Services }): {
   const menuItems: MainMenuItem[] = [
     {
       subpath: "home",
-      title: "Home",
+      title: () => Messages.home(),
       Component: HomePage,
       Icon: HomeOutlinedIcon,
       default: true,
     },
     {
       subpath: "replays",
-      title: "Replays",
+      title: () => Messages.replays(),
       Component: ReplaysPage,
       Icon: SlowMotionVideoIcon,
     },
     {
       subpath: "spectate",
-      title: "Spectate",
+      title: () => Messages.spectate(),
       Component: SpectatePage,
       Icon: LiveTvOutlinedIcon,
       private: true,
     },
     {
       subpath: "console",
-      title: "Console Mirror",
+      title: () => Messages.console(),
       Component: ConsoleMirrorPage,
       Icon: CastOutlinedIcon,
     },

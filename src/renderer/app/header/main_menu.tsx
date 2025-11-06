@@ -10,7 +10,7 @@ import { colors } from "@/styles/colors";
 
 export type MenuItem = {
   subpath: string;
-  title: string;
+  title: () => string;
   Icon: React.ComponentType;
 };
 
@@ -29,7 +29,7 @@ export const MainMenu = ({ menuItems }: MainMenuProps) => {
       {menuItems.map((item) => {
         return (
           <div key={item.subpath}>
-            <CustomLink to={item.subpath} title={item.title}>
+            <CustomLink to={item.subpath} title={item.title()}>
               {item.Icon ? <item.Icon /> : item.title}
             </CustomLink>
           </div>
