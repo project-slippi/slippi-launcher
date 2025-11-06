@@ -12,45 +12,45 @@ import type { SettingSection } from "./types";
 export function createSettingsPage(): { Page: React.ComponentType } {
   const settings: SettingSection[] = [
     {
-      title: Messages.generalSettings(),
+      title: () => Messages.generalSettings(),
       items: [
         {
-          name: Messages.game(),
+          name: () => Messages.game(),
           path: "melee-options",
           component: <GameSettings />,
         },
         {
-          name: Messages.replays(),
+          name: () => Messages.replays(),
           path: "replay-options",
           component: <ReplaySettings />,
         },
         {
-          name: Messages.chat(),
+          name: () => Messages.chat(),
           path: "chat-options",
           component: <ChatSettings />,
         },
       ],
     },
     {
-      title: Messages.dolphinSettings(),
+      title: () => Messages.dolphinSettings(),
       items: [
         {
-          name: Messages.netplay(),
+          name: () => Messages.netplay(),
           path: "netplay-dolphin-settings",
           component: <NetplayDolphinSettings />,
         },
         {
-          name: Messages.playback(),
+          name: () => Messages.playback(),
           path: "playback-dolphin-settings",
           component: <PlaybackDolphinSettings />,
         },
       ],
     },
     {
-      title: Messages.appSettings(),
+      title: () => Messages.appSettings(),
       items: [
         {
-          name: Messages.advanced(),
+          name: () => Messages.advanced(),
           path: "advanced-settings",
           component: <AdvancedAppSettings />,
         },
@@ -59,7 +59,7 @@ export function createSettingsPage(): { Page: React.ComponentType } {
     {
       items: [
         {
-          name: Messages.help(),
+          name: () => Messages.help(),
           path: "help",
           component: <HelpPage />,
         },
