@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import ButtonBase from "@mui/material/ButtonBase";
 import React from "react";
 
-import { useAppStore } from "@/lib/hooks/use_app";
+import { useAppStore } from "@/lib/hooks/use_app_store";
 import { useAppUpdate } from "@/lib/hooks/use_app_update";
 import { colors } from "@/styles/colors";
 

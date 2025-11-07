@@ -1,7 +1,7 @@
 /* eslint-disable import/no-default-export */
 import { appVersion } from "@common/constants";
 
-import { useAppStore } from "@/lib/hooks/use_app";
+import { useAppStore } from "@/lib/hooks/use_app_store";
 
 import createAuthClient from "./auth/auth.service";
 import createDolphinClient from "./dolphin/dolphin.service";

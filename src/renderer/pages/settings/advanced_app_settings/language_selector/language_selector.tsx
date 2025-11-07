@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Dropdown } from "@/components/form/dropdown";
-import { useAppStore } from "@/lib/hooks/use_app";
+import { useAppStore } from "@/lib/hooks/use_app_store";
 import { useServices } from "@/services";
 import { SUPPORTED_LANGUAGES } from "@/services/i18n/util";
 

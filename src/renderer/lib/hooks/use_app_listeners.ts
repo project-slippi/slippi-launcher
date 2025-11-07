@@ -5,7 +5,8 @@ import log from "electron-log";
 import throttle from "lodash/throttle";
 import React, { useRef } from "react";
 
-import { useAppInitialization, useAppStore } from "@/lib/hooks/use_app";
+import { useAppInitialization } from "@/lib/hooks/use_app";
+import { useAppStore } from "@/lib/hooks/use_app_store";
 import { useConsole } from "@/lib/hooks/use_console";
 import { ReplayPresenter } from "@/lib/hooks/use_replays";
 import { useToasts } from "@/lib/hooks/use_toasts";

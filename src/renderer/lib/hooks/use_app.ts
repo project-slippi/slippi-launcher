@@ -1,34 +1,12 @@
 import { DolphinLaunchType } from "@dolphin/types";
 import log from "electron-log";
-import { create } from "zustand";
-import { combine } from "zustand/middleware";
 
-import { useAccount } from "@/lib/hooks/use_account";
-import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 import type { AuthUser } from "@/services/auth/types";
-import { getSystemLanguage } from "@/services/i18n/util";
 
-export const useAppStore = create(
-  combine(
-    {
-      initializing: false,
-      initialized: false,
-      updateVersion: "",
-      updateDownloadProgress: 0,
-      updateReady: false,
-      currentLanguage: getSystemLanguage(),
-    },
-    (set) => ({
-      setInitializing: (initializing: boolean) => set({ initializing }),
-      setInitialized: (initialized: boolean) => set({ initialized }),
-      setUpdateVersion: (updateVersion: string) => set({ updateVersion }),
-      setUpdateDownloadProgress: (updateDownloadProgress: number) => set({ updateDownloadProgress }),
-      setUpdateReady: (updateReady: boolean) => set({ updateReady }),
-      setCurrentLanguage: (currentLanguage: string) => set({ currentLanguage }),
-    }),
-  ),
-);
+import { useAccount } from "./use_account";
+import { useAppStore } from "./use_app_store";
+import { useToasts } from "./use_toasts";
 
 export const useAppInitialization = () => {
   const { authService, slippiBackendService, dolphinService } = useServices();
