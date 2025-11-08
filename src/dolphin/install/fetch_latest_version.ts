@@ -120,10 +120,5 @@ export async function fetchLatestVersion(
     throw Error("failed to get latest dolphin version");
   }
 
-  return {
-    version: res.data.getLatestDolphin.version,
-    macDownloadUrl: res.data.getLatestDolphin.macDownloadUrl,
-    linuxDownloadUrl: res.data.getLatestDolphin.linuxDownloadUrl,
-    windowsDownloadUrl: res.data.getLatestDolphin.windowsDownloadUrl,
-  };
+  return res.data.getLatestDolphin;
 }
