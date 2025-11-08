@@ -338,7 +338,7 @@ export class DolphinManager {
   // Run after fetchLatestVersion to update the necessary flags
   private async _updateDolphinFlags(downloadInfo: DolphinVersionResponse, dolphinType: DolphinLaunchType) {
     const isBeta = (downloadInfo.version as string).includes("-beta");
-    const isMainline = downloadInfo.downloadUrls.win32.includes("project-slippi/dolphin");
+    const isMainline = downloadInfo.windowsDownloadUrl.includes("project-slippi/dolphin");
 
     if (!this.betaFlags[dolphinType].promotedToStable && !isBeta && isMainline) {
       // if this is the first time we're handling the promotion then delete {dolphinType}-beta and move {dolphinType}

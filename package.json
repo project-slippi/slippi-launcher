@@ -158,7 +158,7 @@
     "webpack-merge": "^5.9.0"
   },
   "dependencies": {
-    "@apollo/client": "^3.3.4",
+    "@apollo/client": "^4.0.9",
     "@emotion/react": "^11.4.0",
     "@emotion/styled": "^11.3.0",
     "@fontsource/maven-pro": "^4.4.2",
@@ -181,7 +181,7 @@
     "electron-updater": "^5.2.4",
     "firebase": "^9.6.9",
     "fs-extra": "^9.0.1",
-    "graphql": "^15.4.0",
+    "graphql": "^16.12.0",
     "history": "^5.3.0",
     "immer": "^9.0.7",
     "is-ip": "^5.0.0",
@@ -205,6 +205,7 @@
     "react-timeago": "^5.2.0",
     "react-virtualized-auto-sizer": "^1.0.3",
     "react-window": "^1.8.6",
+    "rxjs": "^7.8.2",
     "semver": "^7.5.4",
     "semver-regex": "^3.1.2",
     "stun": "^2.1.0",

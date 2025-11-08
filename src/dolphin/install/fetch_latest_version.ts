@@ -1,20 +1,26 @@
-import { ApolloClient, ApolloLink, gql, HttpLink, InMemoryCache } from "@apollo/client";
-import { onError } from "@apollo/client/link/error";
+import type { ErrorLike, TypedDocumentNode } from "@apollo/client";
+import {
+  ApolloClient,
+  ApolloLink,
+  CombinedGraphQLErrors,
+  CombinedProtocolErrors,
+  gql,
+  HttpLink,
+  InMemoryCache,
+} from "@apollo/client";
+import { ErrorLink } from "@apollo/client/link/error";
 import { RetryLink } from "@apollo/client/link/retry";
 import { appVersion } from "@common/constants";
 import { fetch } from "cross-fetch";
 import electronLog from "electron-log";
-import type { GraphQLError } from "graphql";
 
 import type { DolphinLaunchType } from "../types";
 
 export type DolphinVersionResponse = {
   version: string;
-  downloadUrls: {
-    darwin: string;
-    linux: string;
-    win32: string;
-  };
+  windowsDownloadUrl: string;
+  macDownloadUrl: string;
+  linuxDownloadUrl: string;
 };
 
 const log = electronLog.scope("dolphin/fetchLatestVersion");
@@ -32,14 +38,19 @@ const retryLink = new RetryLink({
     retryIf: (error) => Boolean(error),
   },
 });
-const errorLink = onError(({ graphQLErrors, networkError }) => {
-  if (graphQLErrors) {
-    graphQLErrors.map(({ message, locations, path }) =>
-      log.error(`Apollo GQL Error: Message: ${message}, Location: ${locations}, Path: ${path}`),
+const errorLink = new ErrorLink(({ error, operation }) => {
+  if (CombinedGraphQLErrors.is(error)) {
+    error.errors.forEach(({ message, locations, path }) =>
+      log.error(
+        `Apollo GQL Error: Message: ${message}, Location: ${locations}, Path: ${path}, Operation: ${operation.operationName}`,
+      ),
     );
-  }
-  if (networkError) {
-    log.error(`Apollo Network Error: ${networkError}`);
+  } else if (CombinedProtocolErrors.is(error)) {
+    error.errors.forEach(({ message, extensions }) =>
+      log.error(`Apollo Protocol Error: Message: ${message}, Extensions: ${JSON.stringify(extensions)}`),
+    );
+  } else {
+    log.error(`Apollo Network Error: ${error}`);
   }
 });
 
@@ -48,11 +59,22 @@ const apolloLink = ApolloLink.from([errorLink, retryLink, httpLink]);
 const client = new ApolloClient({
   link: apolloLink,
   cache: new InMemoryCache(),
-  name: "slippi-launcher",
-  version: `${appVersion}${isDevelopment ? "-dev" : ""}`,
+
+  clientAwareness: {
+    name: "slippi-launcher",
+    version: `${appVersion}${isDevelopment ? "-dev" : ""}`,
+  },
 });
 
-const getLatestDolphinQuery = gql`
+const QUERY_GET_LATEST_DOLPHIN: TypedDocumentNode<
+  {
+    getLatestDolphin: DolphinVersionResponse;
+  },
+  {
+    purpose: string;
+    includeBeta: boolean;
+  }
+> = gql`
   query GetLatestDolphin($purpose: DolphinPurpose, $includeBeta: Boolean) {
     getLatestDolphin(purpose: $purpose, includeBeta: $includeBeta) {
       linuxDownloadUrl
@@ -63,13 +85,15 @@ const getLatestDolphinQuery = gql`
   }
 `;
 
-const handleErrors = (errors: readonly GraphQLError[] | undefined) => {
-  if (errors) {
-    let errMsgs = "";
-    errors.forEach((err) => {
-      errMsgs += `${err.message}\n`;
-    });
-    throw new Error(errMsgs);
+const handleErrors = (error: ErrorLike | undefined) => {
+  if (error) {
+    let errMsg = error.message;
+    if (error instanceof CombinedGraphQLErrors) {
+      error.errors.forEach((err) => {
+        errMsg += `${err.message}\n`;
+      });
+    }
+    throw new Error(errMsg);
   }
 };
 
@@ -82,7 +106,7 @@ export async function fetchLatestVersion(
   includeBeta = false,
 ): Promise<DolphinVersionResponse> {
   const res = await client.query({
-    query: getLatestDolphinQuery,
+    query: QUERY_GET_LATEST_DOLPHIN,
     fetchPolicy: "network-only",
     variables: {
       purpose: dolphinType.toUpperCase(),
@@ -90,14 +114,16 @@ export async function fetchLatestVersion(
     },
   });
 
-  handleErrors(res.errors);
+  handleErrors(res.error);
+
+  if (!res.data) {
+    throw Error("failed to get latest dolphin version");
+  }
 
   return {
     version: res.data.getLatestDolphin.version,
-    downloadUrls: {
-      darwin: res.data.getLatestDolphin.macDownloadUrl,
-      linux: res.data.getLatestDolphin.linuxDownloadUrl,
-      win32: res.data.getLatestDolphin.windowsDownloadUrl,
-    },
+    macDownloadUrl: res.data.getLatestDolphin.macDownloadUrl,
+    linuxDownloadUrl: res.data.getLatestDolphin.linuxDownloadUrl,
+    windowsDownloadUrl: res.data.getLatestDolphin.windowsDownloadUrl,
   };
 }
