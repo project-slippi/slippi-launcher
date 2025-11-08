@@ -191,7 +191,7 @@ const renderStatusName = (status: number) => {
   }
 };
 
-const OutdatedNintendontWarning = () => {
+export const OutdatedNintendontWarning = () => {
   return (
     <div
       css={css`

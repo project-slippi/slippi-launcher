@@ -7,7 +7,7 @@ module.exports = {
     tsconfigRootDir: __dirname,
     createDefaultProgram: true,
   },
-  plugins: ["simple-import-sort", "strict-booleans", "react-hooks", "prettier", "@stylexjs", "lodash"],
+  plugins: ["simple-import-sort", "react-hooks", "prettier", "@stylexjs", "lodash"],
   extends: [
     "plugin:react/recommended",
     "eslint:recommended",
@@ -83,7 +83,6 @@ module.exports = {
     "import/no-named-as-default-member": "off",
     "simple-import-sort/imports": "warn",
     "simple-import-sort/exports": "warn",
-    "strict-booleans/no-nullable-numbers": "error",
     "no-undef": "off",
     "new-cap": "error",
     "@typescript-eslint/consistent-type-imports": "warn",

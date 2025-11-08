@@ -1,6 +1,5 @@
 import type { PortMapping } from "@common/types";
 import { NatType, Presence } from "@common/types";
-import { createPmpClient, createUpnpClient } from "@xmcl/nat-api";
 import { gateway4async } from "default-gateway";
 import Tracer from "nodejs-traceroute";
 import { createServer, request } from "stun";
@@ -40,45 +39,45 @@ async function getNatType(): Promise<{ address: string; natType: NatType }> {
 
 async function getPortMappingPresence(): Promise<PortMapping> {
   let upnpPresence = Presence.UNKNOWN;
-  const upnpClient = await createUpnpClient();
-  const upnpPromise = upnpClient
-    .externalIp()
-    .then(() => {
-      upnpPresence = Presence.PRESENT;
-    })
-    .catch(() => {
-      upnpPresence = Presence.ABSENT;
-    })
-    .finally(() => {
-      upnpClient.destroy();
-    });
+  // const upnpClient = await createUpnpClient();
+  // const upnpPromise = upnpClient
+  //   .externalIp()
+  //   .then(() => {
+  //     upnpPresence = Presence.PRESENT;
+  //   })
+  //   .catch(() => {
+  //     upnpPresence = Presence.ABSENT;
+  //   })
+  //   .finally(() => {
+  //     upnpClient.destroy();
+  //   });
 
   let natpmpPresence = Presence.UNKNOWN;
-  const pmpClient = await createPmpClient((await gateway4async()).gateway);
-  const pmpPromise = new Promise((resolve, reject) => {
-    // library does not use a timeout for NAT-PMP, so we do it ourselves.
-    const timeout = setTimeout(() => {
-      reject("NAT-PMP timeout");
-    }, 1800); // same as library UPnP timeout
-    pmpClient
-      .externalIp()
-      .then(resolve)
-      .catch(reject)
-      .finally(() => {
-        clearTimeout(timeout);
-      });
-  })
-    .then(() => {
-      natpmpPresence = Presence.PRESENT;
-    })
-    .catch(() => {
-      natpmpPresence = Presence.ABSENT;
-    })
-    .finally(() => {
-      pmpClient.close();
-    });
+  // const pmpClient = await createPmpClient((await gateway4async()).gateway);
+  // const pmpPromise = new Promise((resolve, reject) => {
+  //   // library does not use a timeout for NAT-PMP, so we do it ourselves.
+  //   const timeout = setTimeout(() => {
+  //     reject("NAT-PMP timeout");
+  //   }, 1800); // same as library UPnP timeout
+  //   pmpClient
+  //     .externalIp()
+  //     .then(resolve)
+  //     .catch(reject)
+  //     .finally(() => {
+  //       clearTimeout(timeout);
+  //     });
+  // })
+  //   .then(() => {
+  //     natpmpPresence = Presence.PRESENT;
+  //   })
+  //   .catch(() => {
+  //     natpmpPresence = Presence.ABSENT;
+  //   })
+  //   .finally(() => {
+  //     pmpClient.close();
+  //   });
 
-  await Promise.all([upnpPromise, pmpPromise]);
+  // await Promise.all([upnpPromise, pmpPromise]);
   return { upnp: upnpPresence, natpmp: natpmpPresence } as PortMapping;
 }
 
