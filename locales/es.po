@@ -58,7 +58,7 @@ msgstr "Cierra Dolphin para cambiar esta configuración"
 
 #: src/renderer/app/create.messages.ts:5:18
 msgid "Console Mirror"
-msgstr "Espejo de Consola"
+msgstr "Transmisión de Consola"
 
 #: src/renderer/pages/settings/create.messages.ts:6:26
 msgid "Dolphin Settings"
@@ -247,6 +247,4 @@ msgstr "{0, plural, one {# archivo encontrado} other {# archivos encontrados}}."
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:4:38
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} had errors."
-msgstr ""
-"{0, plural, one {# archivo tenía errores} other {# archivos tenían "
-"errores}}."
+msgstr "{0, plural, one {# archivo tenía} other {# archivos tenían}} errores."
