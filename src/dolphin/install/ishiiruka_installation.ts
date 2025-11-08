@@ -156,6 +156,7 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
 
       log.info(`${type} Dolphin installation is outdated. Downloading latest...`);
     } catch (err) {
+      log.error(err);
       log.info(`Could not find ${type} Dolphin installation. Downloading...`);
     }
 
@@ -195,11 +196,11 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
   private getPlatformSpecificDownloadLink(downloadInfo: DolphinVersionResponse): string {
     switch (process.platform) {
       case "linux":
-        return downloadInfo.downloadUrls.linux;
+        return downloadInfo.linuxDownloadUrl;
       case "darwin":
-        return downloadInfo.downloadUrls.darwin;
+        return downloadInfo.macDownloadUrl;
       case "win32":
-        return downloadInfo.downloadUrls.win32;
+        return downloadInfo.windowsDownloadUrl;
       default:
         throw new Error(`Could not find latest Dolphin download url for ${process.platform}`);
     }
@@ -234,7 +235,7 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
       const dolphinVersionOut = spawnSync(dolphinPath, ["--version"]).stdout.toString();
       const match = dolphinVersionOut.match(semverRegex);
       return match?.[0] ?? null;
-    } catch (err) {
+    } catch {
       return null;
     }
   }

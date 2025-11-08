@@ -1,13 +1,19 @@
-import type { NormalizedCacheObject } from "@apollo/client";
-import { ApolloClient, ApolloLink, HttpLink, InMemoryCache } from "@apollo/client";
+import type { ErrorLike } from "@apollo/client";
+import {
+  ApolloClient,
+  ApolloLink,
+  CombinedGraphQLErrors,
+  CombinedProtocolErrors,
+  HttpLink,
+  InMemoryCache,
+} from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
-import { onError } from "@apollo/client/link/error";
+import { ErrorLink } from "@apollo/client/link/error";
 import { RetryLink } from "@apollo/client/link/retry";
 import { currentRulesVersion } from "@common/constants";
 import { Preconditions } from "@common/preconditions";
 import type { DolphinService, PlayKey } from "@dolphin/types";
 import log from "electron-log";
-import type { GraphQLError } from "graphql";
 
 import type { AuthService } from "../auth/types";
 import {
@@ -23,18 +29,20 @@ import type { AvailableMessageType, ChatMessageData, SlippiBackendService, UserD
 
 const SLIPPI_BACKEND_URL = process.env.SLIPPI_GRAPHQL_ENDPOINT;
 
-const handleErrors = (errors: readonly GraphQLError[] | undefined) => {
-  if (errors) {
-    let errMsgs = "";
-    errors.forEach((err) => {
-      errMsgs += `${err.message}\n`;
-    });
-    throw new Error(errMsgs);
+const handleErrors = (error: ErrorLike | undefined) => {
+  if (error) {
+    let errMsg = error.message;
+    if (error instanceof CombinedGraphQLErrors) {
+      error.errors.forEach((err) => {
+        errMsg += `${err.message}\n`;
+      });
+    }
+    throw new Error(errMsg);
   }
 };
 
 class SlippiBackendClient implements SlippiBackendService {
-  private client: ApolloClient<NormalizedCacheObject>;
+  private client: ApolloClient;
 
   constructor(
     private readonly authService: AuthService,
@@ -67,14 +75,19 @@ class SlippiBackendClient implements SlippiBackendService {
         retryIf: (error) => Boolean(error),
       },
     });
-    const errorLink = onError(({ graphQLErrors, networkError }) => {
-      if (graphQLErrors) {
-        graphQLErrors.map(({ message, locations, path }) =>
-          log.error(`Apollo GQL Error: Message: ${message}, Location: ${locations}, Path: ${path}`),
+    const errorLink = new ErrorLink(({ error, operation }) => {
+      if (CombinedGraphQLErrors.is(error)) {
+        error.errors.forEach(({ message, locations, path }) =>
+          log.error(
+            `Apollo GQL Error: Message: ${message}, Location: ${locations}, Path: ${path}, Operation: ${operation.operationName}`,
+          ),
         );
-      }
-      if (networkError) {
-        log.error(`Apollo Network Error: ${networkError}`);
+      } else if (CombinedProtocolErrors.is(error)) {
+        error.errors.forEach(({ message, extensions }) =>
+          log.error(`Apollo Protocol Error: Message: ${message}, Extensions: ${JSON.stringify(extensions)}`),
+        );
+      } else {
+        log.error(`Apollo Network Error: ${error}`);
       }
     });
 
@@ -82,8 +95,11 @@ class SlippiBackendClient implements SlippiBackendService {
     return new ApolloClient({
       link: apolloLink,
       cache: new InMemoryCache(),
-      name: "slippi-launcher",
-      version: clientVersion,
+
+      clientAwareness: {
+        name: "slippi-launcher",
+        version: clientVersion,
+      },
     });
   }
 
@@ -96,7 +112,7 @@ class SlippiBackendClient implements SlippiBackendService {
       fetchPolicy: "network-only",
     });
 
-    if (res.data.getUser) {
+    if (res.data?.getUser) {
       const { connectCode, displayName } = res.data.getUser;
       if (connectCode?.code) {
         return {
@@ -121,7 +137,11 @@ class SlippiBackendClient implements SlippiBackendService {
       fetchPolicy: "network-only",
     });
 
-    handleErrors(res.errors);
+    handleErrors(res.error);
+
+    if (!res.data) {
+      throw Error("failed to get user info");
+    }
 
     const connectCode = res.data.getUser?.connectCode?.code;
     const playKey = res.data.getUser?.private?.playKey;
@@ -155,7 +175,11 @@ class SlippiBackendClient implements SlippiBackendService {
       fetchPolicy: "network-only",
     });
 
-    handleErrors(res.errors);
+    handleErrors(res.error);
+
+    if (!res.data) {
+      throw Error("failed to get chat data");
+    }
 
     return {
       level: res.data.getUser?.activeSubscription?.level ?? "NONE",
@@ -169,7 +193,7 @@ class SlippiBackendClient implements SlippiBackendService {
       mutation: MUTATION_SUBMIT_CHAT_MESSAGES,
       variables: { fbUid: uid, messages },
     });
-    handleErrors(res.errors);
+    handleErrors(res.error);
 
     return res.data?.userSetChatMessages?.activeChatMessages ?? [];
   }
@@ -196,7 +220,7 @@ class SlippiBackendClient implements SlippiBackendService {
       variables: { fbUid: user.uid, displayName: name },
     });
 
-    handleErrors(res.errors);
+    handleErrors(res.error);
 
     if (res.data?.userRename?.displayName !== name) {
       throw new Error("Could not change name.");
@@ -214,7 +238,7 @@ class SlippiBackendClient implements SlippiBackendService {
       variables: { num: currentRulesVersion },
     });
 
-    handleErrors(res.errors);
+    handleErrors(res.error);
 
     if (res.data?.userAcceptRules?.rulesAccepted !== currentRulesVersion) {
       throw new Error("Could not accept rules");
@@ -223,7 +247,7 @@ class SlippiBackendClient implements SlippiBackendService {
 
   public async initializeNetplay(codeStart: string): Promise<void> {
     const res = await this.client.mutate({ mutation: MUTATION_INIT_NETPLAY, variables: { codeStart } });
-    handleErrors(res.errors);
+    handleErrors(res.error);
   }
 }
 

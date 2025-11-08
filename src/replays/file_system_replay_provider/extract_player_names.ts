@@ -20,8 +20,8 @@ export function extractPlayerNames(
 
   const player = settings.players.find((player) => player.playerIndex === index);
   result.tag = player?.nametag ?? "";
-  result.name = player?.displayName || get(metadata, ["players", index, "names", "netplay"], "");
-  result.code = player?.connectCode || get(metadata, ["players", index, "names", "code"], "");
+  result.name = (player?.displayName || get(metadata, ["players", index, "names", "netplay"], "")) ?? "";
+  result.code = (player?.connectCode || get(metadata, ["players", index, "names", "code"], "")) ?? "";
 
   return result;
 }
