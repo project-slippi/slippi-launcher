@@ -1,4 +1,3 @@
-declare module "react-twitter-embed";
 declare module "medium-json-feed";
 
 // Injected through webpack.DefinePlugin
