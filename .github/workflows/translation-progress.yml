@@ -16,16 +16,26 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20.x'
           cache: 'yarn'
-          
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        id: cache
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-build-${{ secrets.CACHE_CONTROL }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.OS }}-build-${{ secrets.CACHE_CONTROL }}-${{ env.cache-name }}-
+            ${{ runner.OS }}-build-${{ secrets.CACHE_CONTROL }}
+
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
-        
+        run: yarn install
+
       - name: Calculate translation percentage
         id: calc
         run: |
@@ -50,7 +60,7 @@ jobs:
           else
             COLOR="red"
           fi
-          
+
           # Build JSON payload
           OUTPUT_JSON=$(cat << EOF
           {
@@ -61,7 +71,7 @@ jobs:
           }
           EOF
           )
-          
+
           # Update the badge via API
           curl -X PATCH "https://jsonhosting.com/api/json/e785d45e" \
             -H "Content-Type: application/json" \
