@@ -1,11 +1,11 @@
 export type SettingItem = {
-  name: string;
+  name: () => string;
   path: string;
   component: JSX.Element;
   icon?: JSX.Element;
 };
 
 export type SettingSection = {
-  title?: string;
+  title?: () => string;
   items: SettingItem[];
 };

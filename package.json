@@ -4,7 +4,7 @@
   "description": "Launch Slippi Online, browse and watch saved replays",
   "license": "GPL-3.0",
   "scripts": {
-    "build": "concurrently \"yarn run build:main\" \"yarn run build:renderer\" \"yarn run build:migrations\"",
+    "build": "concurrently \"yarn run build:main\" \"yarn run build:renderer\" \"yarn run build:migrations\" \"yarn run i18n:convert\"",
     "build:main": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.main.prod.ts",
     "build:renderer": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.prod.ts",
     "build:migrations": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.migrations.prod.ts",
@@ -22,7 +22,11 @@
     "start:renderer": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
     "test": "cross-env ELECTRON_RUN_AS_NODE=true electron ./node_modules/jest-cli/bin/jest.js --verbose",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "i18n:extract": "i18next-auto-keys extract --include \"src/renderer/**/*.messages.ts\"",
+    "i18n:sync": "i18next-auto-keys sync",
+    "i18n:convert": "i18next-auto-keys convert --batch --output ./release/app/dist/renderer/i18n",
+    "i18n:status": "i18next-auto-keys status --verbose"
   },
   "repository": {
     "type": "git",
@@ -34,10 +38,10 @@
     "url": "https://github.com/jlaferri"
   },
   "engines": {
-    "node": ">=12"
+    "node": ">=16"
   },
   "devEngines": {
-    "node": ">=12.x"
+    "node": ">=16.x"
   },
   "browserslist": [
     "chrome 91"
@@ -49,6 +53,12 @@
   },
   "lint-staged": {
     "*.{js,ts,jsx,tsx}": "eslint --cache --fix"
+  },
+  "i18next-auto-keys": {
+    "poTemplateName": "messages.pot",
+    "poOutputDirectory": "./locales",
+    "argMode": "indexed",
+    "projectId": "slippi-launcher 1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.5",
@@ -124,6 +134,7 @@
     "fix-esm": "^1.0.1",
     "html-webpack-plugin": "^5.5.0",
     "husky": "^4.3.0",
+    "i18next-auto-keys": "^3.2.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
@@ -180,7 +191,11 @@
     "fs-extra": "^9.0.1",
     "graphql": "^15.4.0",
     "history": "^5.3.0",
+    "i18next": "^25.6.0",
+    "i18next-http-backend": "^3.0.2",
+    "i18next-icu": "^2.4.1",
     "immer": "^9.0.7",
+    "intl-messageformat": "^10.7.18",
     "is-ip": "^5.0.0",
     "jdenticon": "^3.1.1",
     "lodash": "^4.17.21",

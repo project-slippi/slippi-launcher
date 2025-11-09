@@ -106,5 +106,13 @@ module.exports = {
     "no-restricted-imports": ["error", "lodash/chain"],
     "react/jsx-curly-brace-presence": ["error", "never"]
   },
+  overrides: [
+    {
+      files: ["src/**/*.messages.ts"],
+      rules: {
+        "@typescript-eslint/no-unused-vars": "off",
+      },
+    },
+  ],
   ignorePatterns: ["/*.js", "node_modules"],
 };

@@ -1,0 +1,249 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: slippi-launcher 1.0\n"
+"mime-version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"x-generator: i18next-auto-keys CLI\n"
+"Language: es-ES\n"
+"PO-Revision-Date: 2025-11-09T11:45:02.975Z\n"
+
+#: src/renderer/pages/settings/create.messages.ts:10:19
+msgid "Advanced"
+msgstr "Avanzado"
+
+#: src/renderer/pages/settings/advanced_app_settings/language_selector/language_selector.messages.ts:2:22
+msgid "App Language"
+msgstr "Idioma de la Aplicación"
+
+#: src/renderer/pages/settings/create.messages.ts:9:22
+msgid "App Settings"
+msgstr "Configuración de la Aplicación"
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:3:39
+msgid "Automatically install Slippi Launcher updates when they become available."
+msgstr ""
+"Instalar automáticamente las actualizaciones de Slippi Launcher cuando "
+"estén disponibles."
+
+#: src/renderer/pages/settings/create.messages.ts:5:15
+msgid "Chat"
+msgstr "Chat"
+
+#: src/renderer/app/header/header.messages.ts:3:26
+msgid "Check for updates"
+msgstr "Buscar actualizaciones"
+
+#: src/renderer/app/header/header.messages.ts:4:29
+msgid "Checking for updates..."
+msgstr "Buscando actualizaciones..."
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:8:38
+msgid "Choose what happens when the Play button is pressed."
+msgstr "Elige qué sucede cuando se presiona el botón Jugar."
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:4:25
+msgid "Clear Temporary Files"
+msgstr "Limpiar Archivos Temporales"
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:7:21
+msgid "Clear files"
+msgstr "Limpiar archivos"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:4:31
+msgid "Close Dolphin to change this setting"
+msgstr "Cierra Dolphin para cambiar esta configuración"
+
+#: src/renderer/app/create.messages.ts:5:18
+msgid "Console Mirror"
+msgstr "Transmisión de Consola"
+
+#: src/renderer/pages/settings/create.messages.ts:6:26
+msgid "Dolphin Settings"
+msgstr "Configuración de Dolphin"
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:2:28
+msgid "Enable Auto Updates"
+msgstr "Activar Actualizaciones Automáticas"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:11:22
+msgid "Enable Music"
+msgstr "Activar música"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:12:33
+msgid "Enable in-game music."
+msgstr "Activa la música dentro del juego."
+
+#: src/renderer/pages/home/news_feed/news_feed.messages.ts:4:24
+msgid "Failed to fetch news articles."
+msgstr "Error al obtener artículos de noticias."
+
+#: src/renderer/app/header/header.messages.ts:5:29
+msgid "Failed to get updates"
+msgstr "Error al obtener actualizaciones"
+
+#: src/renderer/pages/settings/create.messages.ts:3:15
+msgid "Game"
+msgstr "Juego"
+
+#: src/renderer/pages/settings/create.messages.ts:2:26
+msgid "General Settings"
+msgstr "Configuración General"
+
+#: src/renderer/pages/settings/create.messages.ts:11:15
+msgid "Help"
+msgstr "Ayuda"
+
+#: src/renderer/app/create.messages.ts:2:15
+msgid "Home"
+msgstr "Inicio"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:13:33
+msgid "Incompatible with WASAPI."
+msgstr "Incompatible con WASAPI."
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:16:18
+msgid "Invalid"
+msgstr "Inválido"
+
+#: src/renderer/pages/home/news_feed/news_feed.messages.ts:2:21
+msgid "Latest News"
+msgstr "Últimas Noticias"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:10:24
+msgid "Launch Dolphin"
+msgstr "Iniciar Dolphin"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:9:22
+msgid "Launch Melee"
+msgstr "Iniciar Melee"
+
+#: src/renderer/pages/home/news_feed/news_feed.messages.ts:3:18
+msgid "Loading..."
+msgstr "Cargando..."
+
+#: src/renderer/app/header/header.messages.ts:2:16
+msgid "Log in"
+msgstr "Iniciar sesión"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:2:23
+msgid "Melee ISO File"
+msgstr "Archivo ISO de Melee"
+
+#: src/renderer/pages/settings/create.messages.ts:7:18
+msgid "Netplay"
+msgstr "Juego en Red"
+
+#: src/renderer/app/header/header.messages.ts:6:25
+msgid "No Melee ISO file specified"
+msgstr "No se ha especificado archivo ISO de Melee"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:5:20
+msgid "No file set"
+msgstr "Ningún archivo seleccionado"
+
+#: src/renderer/app/header/play_button/play_button.messages.ts:2:15
+msgid "Play"
+msgstr "Jugar"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:7:27
+msgid "Play Button Action"
+msgstr "Acción del botón Jugar"
+
+#: src/renderer/pages/settings/create.messages.ts:8:19
+msgid "Playback"
+msgstr "Reproducción"
+
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:3:19
+msgid "Read more"
+msgstr "Leer más"
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:6:5
+msgid ""
+"Removes temporary downloads, files used for Dolphin communication, and "
+"files streamed from Slippi.gg."
+msgstr ""
+"Elimina descargas temporales, archivos utilizados para la comunicación con "
+"Dolphin y archivos transmitidos desde Slippi.gg."
+
+#: src/renderer/app/create.messages.ts:3:18
+#: src/renderer/pages/settings/create.messages.ts:4:18
+msgid "Replays"
+msgstr "Repeticiones"
+
+#: src/renderer/components/path_input/path_input.messages.ts:2:17
+msgid "Select"
+msgstr "Seleccionar"
+
+#: src/renderer/pages/settings/advanced_app_settings/language_selector/language_selector.messages.ts:3:33
+msgid "Select your preferred language for the app."
+msgstr "Selecciona tu idioma preferido para la aplicación."
+
+#: src/renderer/app/header/header.messages.ts:7:19
+msgid "Settings"
+msgstr "Configuración"
+
+#: src/renderer/pages/home/news_feed/news_feed.messages.ts:6:19
+msgid "Show more"
+msgstr "Mostrar más"
+
+#: src/renderer/app/create.messages.ts:4:19
+msgid "Spectate"
+msgstr "Espectador"
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:8:28
+msgid "Successfully cleared temporary files."
+msgstr "Archivos temporales eliminados correctamente."
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:3:34
+msgid "The path to an NTSC Melee 1.02 ISO."
+msgstr "La ruta a un archivo ISO de Melee NTSC 1.02."
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:5:41
+#. {0} readableBytes: string
+msgid "Total size: {0}"
+msgstr "Tamaño total: {0}"
+
+#: src/renderer/pages/home/news_feed/news_feed.messages.ts:5:19
+msgid "Try again"
+msgstr "Intentar de nuevo"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:15:18
+msgid "Unknown"
+msgstr "Desconocido"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:17:22
+msgid "Unvalidated"
+msgstr "Sin validar"
+
+#: src/renderer/app/header/play_button/play_button.messages.ts:3:19
+msgid "Updating"
+msgstr "Actualizando"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:14:16
+msgid "Valid"
+msgstr "Válido"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:6:20
+msgid "Verifying..."
+msgstr "Verificando..."
+
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:2:24
+msgid "View on Bluesky"
+msgstr "Ver en Bluesky"
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:3:39
+#. {0} count: number
+msgid "{0, plural, one {# file} other {# files}} filtered."
+msgstr "{0, plural, one {# archivo filtrado} other {# archivos filtrados}}."
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:2:38
+#. {0} count: number
+msgid "{0, plural, one {# file} other {# files}} found."
+msgstr "{0, plural, one {# archivo encontrado} other {# archivos encontrados}}."
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:4:38
+#. {0} count: number
+msgid "{0, plural, one {# file} other {# files}} had errors."
+msgstr "{0, plural, one {# archivo tenía} other {# archivos tenían}} errores."

@@ -4,6 +4,7 @@ import type { DolphinService } from "@dolphin/types";
 import type { ReplayService } from "@replays/types";
 
 import type { AuthService } from "./auth/types";
+import type { I18nService } from "./i18n/types";
 import type { NotificationService } from "./notification/types";
 import type { SlippiBackendService } from "./slippi/types";
 
@@ -15,4 +16,5 @@ export type Services = {
   consoleService: ConsoleService;
   replayService: ReplayService;
   notificationService: NotificationService;
+  i18nService: I18nService;
 };

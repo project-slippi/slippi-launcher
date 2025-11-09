@@ -72,7 +72,7 @@ export const SettingsPage = React.memo(({ settings }: { settings: SettingSection
               {settings.map((section, i) => {
                 return (
                   <List
-                    key={`section-${section.title}${i}`}
+                    key={`section-${section.title?.()}${i}`}
                     component="nav"
                     css={css`
                       margin: 0 10px;
@@ -92,18 +92,18 @@ export const SettingsPage = React.memo(({ settings }: { settings: SettingSection
                             color: ${colors.purpleLight};
                           `}
                         >
-                          {section.title}
+                          {section.title?.()}
                         </ListSubheader>
                       ) : undefined
                     }
                   >
                     {section.items.map((item) => {
                       return (
-                        <div key={item.name}>
+                        <div key={item.name()}>
                           <CustomLink to={item.path}>
                             {item.icon ? <ListItemIcon>{item.icon}</ListItemIcon> : null}
                             <ListItemText
-                              primary={item.name}
+                              primary={item.name()}
                               css={css`
                                 .MuiTypography-body1 {
                                   font-size: 16px;

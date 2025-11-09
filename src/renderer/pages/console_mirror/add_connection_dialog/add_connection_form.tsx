@@ -13,7 +13,7 @@ import { Controller, useForm } from "react-hook-form";
 import { ExternalLink as A } from "@/components/external_link";
 import { Checkbox } from "@/components/form/checkbox";
 import { Toggle } from "@/components/form/toggle";
-import { PathInput } from "@/components/path_input";
+import { PathInput } from "@/components/path_input/path_input";
 import { isValidIpAddress, isValidPort } from "@/lib/validate/validate";
 import { colors } from "@/styles/colors";
 

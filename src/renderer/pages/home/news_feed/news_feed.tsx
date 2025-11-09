@@ -7,11 +7,12 @@ import { LoadingScreen } from "@/components/loading_screen";
 
 import { AdBanner } from "./ad_banner";
 import { NewsArticle } from "./news_article/news_article";
+import { NewsFeedMessages as Messages } from "./news_feed.messages";
 
 const ITEMS_TO_SHOW = 7;
 const BATCH_SIZE = 5;
 
-export const NewsFeed = React.memo(function NewsFeedContainer() {
+const NewsFeedContent = React.memo(function NewsFeedContent() {
   const [numItemsToShow, setNumItemsToShow] = React.useState(ITEMS_TO_SHOW);
   const newsFeedQuery = useQuery(["newsFeedQuery"], window.electron.common.fetchNewsFeed);
   const { isLoading, error, data: allPosts = [], refetch } = newsFeedQuery;
@@ -25,7 +26,7 @@ export const NewsFeed = React.memo(function NewsFeedContainer() {
   }, [allPosts, numItemsToShow]);
 
   if (isLoading) {
-    return <LoadingScreen message="Loading..." />;
+    return <LoadingScreen message={Messages.loading()} />;
   }
 
   if (error) {
@@ -41,10 +42,10 @@ export const NewsFeed = React.memo(function NewsFeedContainer() {
             margin-right: 10px;
           `}
         >
-          Failed to fetch news articles.
+          {Messages.failedToFetch()}
         </div>
         <Button color="primary" variant="text" size="small" onClick={() => refetch()}>
-          Try again
+          {Messages.tryAgain()}
         </Button>
       </div>
     );
@@ -62,11 +63,20 @@ export const NewsFeed = React.memo(function NewsFeedContainer() {
           `}
         >
           <Button color="primary" variant="contained" size="small" onClick={onShowMore}>
-            Show more
+            {Messages.showMore()}
           </Button>
         </div>
       )}
       <AdBanner />
     </div>
+  );
+});
+
+export const NewsFeed = React.memo(function NewsFeed() {
+  return (
+    <>
+      <h1>{Messages.latestNews()}</h1>
+      <NewsFeedContent />
+    </>
   );
 });

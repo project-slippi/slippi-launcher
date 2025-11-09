@@ -11,8 +11,8 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { HashRouter as Router, Navigate, Route, Routes } from "react-router-dom";
 
 import { ToastProvider } from "@/components/toast_provider";
-import { useAppStore } from "@/lib/hooks/use_app";
 import { useAppListeners } from "@/lib/hooks/use_app_listeners";
+import { useAppStore } from "@/lib/hooks/use_app_store";
 import { usePageNavigationShortcuts } from "@/lib/hooks/use_shortcuts";
 import { lazyLoadConsoleMirrorPage } from "@/pages/console_mirror/load";
 import { HomePage } from "@/pages/home/home_page";
@@ -28,6 +28,7 @@ import { slippiTheme } from "@/styles/theme";
 
 import type { MainMenuItem } from "./app";
 import { App as AppImpl } from "./app";
+import { CreateAppMessages as Messages } from "./create.messages";
 
 export function createApp({ services }: { services: Services }): {
   App: React.ComponentType;
@@ -41,27 +42,27 @@ export function createApp({ services }: { services: Services }): {
   const menuItems: MainMenuItem[] = [
     {
       subpath: "home",
-      title: "Home",
+      title: () => Messages.home(),
       Component: HomePage,
       Icon: HomeOutlinedIcon,
       default: true,
     },
     {
       subpath: "replays",
-      title: "Replays",
+      title: () => Messages.replays(),
       Component: ReplaysPage,
       Icon: SlowMotionVideoIcon,
     },
     {
       subpath: "spectate",
-      title: "Spectate",
+      title: () => Messages.spectate(),
       Component: SpectatePage,
       Icon: LiveTvOutlinedIcon,
       private: true,
     },
     {
       subpath: "console",
-      title: "Console Mirror",
+      title: () => Messages.console(),
       Component: ConsoleMirrorPage,
       Icon: CastOutlinedIcon,
     },
@@ -77,6 +78,7 @@ export function createApp({ services }: { services: Services }): {
 
   const AppRoutes = () => {
     const initialized = useAppStore((state) => state.initialized);
+    const currentLanguage = useAppStore((state) => state.currentLanguage);
 
     // Then add the rest of the app listeners
     useAppListeners();
@@ -86,7 +88,7 @@ export function createApp({ services }: { services: Services }): {
     }
 
     return (
-      <Routes>
+      <Routes key={currentLanguage}>
         <Route path="/main/*" element={<MainAppPage />} />
         <Route path="/landing" element={<QuickStartPage />} />
         <Route path="/settings/*" element={<SettingsPage />} />

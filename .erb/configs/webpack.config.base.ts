@@ -38,6 +38,18 @@ const configuration: webpack.Configuration = {
           },
         },
       },
+      // i18n message files
+      {
+        test: /\.messages\.(ts|tsx)$/, // Only process message files
+        exclude: /node_modules/,
+        enforce: "pre",
+        use: {
+          loader: "i18next-auto-keys",
+          options: {
+            setDefaultValue: isDevelop,
+          },
+        },
+      },
     ],
   },
 

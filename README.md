@@ -62,6 +62,8 @@ These extensions will provide automatic formatting and warnings about code quali
 
 Contributions are welcome! The [issues section](https://github.com/project-slippi/slippi-launcher/issues) contains some good first ideas. When making a PR, ensure you are not PRing your `main` branch and always describe the feature and what testing you've done so far.
 
+For more information on how to contribute, as well as information on adding app translations see the [CONTRIBUTING.md](./CONTRIBUTING.md) file.
+
 ## Acknowledgements
 
 This application uses [Electron React Boilerplate](https://github.com/electron-react-boilerplate/electron-react-boilerplate) as a base and includes most changes up to commit [10c22e5](https://github.com/electron-react-boilerplate/electron-react-boilerplate/commit/10c22e5).

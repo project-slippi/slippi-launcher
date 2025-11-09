@@ -2,6 +2,7 @@ import { css } from "@emotion/react";
 import ButtonBase from "@mui/material/ButtonBase";
 import React from "react";
 
+import { PlayButtonMessages as Messages } from "./play_button.messages";
 import { PlayIcon } from "./play_icon";
 
 type MainButtonProps = React.ComponentProps<typeof ButtonBase> & {
@@ -31,7 +32,7 @@ const MainButton = React.memo((props: MainButtonProps) => {
 type PlayButtonProps = Omit<MainButtonProps, "children" | "fillPercent">;
 
 export const PlayButton = React.memo((props: PlayButtonProps) => {
-  return <MainButton {...props}>Play</MainButton>;
+  return <MainButton {...props}>{Messages.play()}</MainButton>;
 });
 
 type UpdatingButtonProps = Omit<MainButtonProps, "children">;
@@ -44,7 +45,7 @@ export const UpdatingButton = React.memo((props: UpdatingButtonProps) => {
           font-size: 0.9em;
         `}
       >
-        Updating
+        {Messages.updating()}
       </span>
     </MainButton>
   );

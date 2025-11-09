@@ -1,0 +1,244 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: slippi-launcher 1.0\n"
+"mime-version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"x-generator: i18next-auto-keys CLI\n"
+"Language: \n"
+
+#: src/renderer/pages/settings/create.messages.ts:10:19
+msgid "Advanced"
+msgstr ""
+
+#: src/renderer/pages/settings/advanced_app_settings/language_selector/language_selector.messages.ts:2:22
+msgid "App Language"
+msgstr ""
+
+#: src/renderer/pages/settings/create.messages.ts:9:22
+msgid "App Settings"
+msgstr ""
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:3:39
+msgid "Automatically install Slippi Launcher updates when they become available."
+msgstr ""
+
+#: src/renderer/pages/settings/create.messages.ts:5:15
+msgid "Chat"
+msgstr ""
+
+#: src/renderer/app/header/header.messages.ts:3:26
+msgid "Check for updates"
+msgstr ""
+
+#: src/renderer/app/header/header.messages.ts:4:29
+msgid "Checking for updates..."
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:8:38
+msgid "Choose what happens when the Play button is pressed."
+msgstr ""
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:4:25
+msgid "Clear Temporary Files"
+msgstr ""
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:7:21
+msgid "Clear files"
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:4:31
+msgid "Close Dolphin to change this setting"
+msgstr ""
+
+#: src/renderer/app/create.messages.ts:5:18
+msgid "Console Mirror"
+msgstr ""
+
+#: src/renderer/pages/settings/create.messages.ts:6:26
+msgid "Dolphin Settings"
+msgstr ""
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:2:28
+msgid "Enable Auto Updates"
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:11:22
+msgid "Enable Music"
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:12:33
+msgid "Enable in-game music."
+msgstr ""
+
+#: src/renderer/pages/home/news_feed/news_feed.messages.ts:4:24
+msgid "Failed to fetch news articles."
+msgstr ""
+
+#: src/renderer/app/header/header.messages.ts:5:29
+msgid "Failed to get updates"
+msgstr ""
+
+#: src/renderer/pages/settings/create.messages.ts:3:15
+msgid "Game"
+msgstr ""
+
+#: src/renderer/pages/settings/create.messages.ts:2:26
+msgid "General Settings"
+msgstr ""
+
+#: src/renderer/pages/settings/create.messages.ts:11:15
+msgid "Help"
+msgstr ""
+
+#: src/renderer/app/create.messages.ts:2:15
+msgid "Home"
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:13:33
+msgid "Incompatible with WASAPI."
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:16:18
+msgid "Invalid"
+msgstr ""
+
+#: src/renderer/pages/home/news_feed/news_feed.messages.ts:2:21
+msgid "Latest News"
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:10:24
+msgid "Launch Dolphin"
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:9:22
+msgid "Launch Melee"
+msgstr ""
+
+#: src/renderer/pages/home/news_feed/news_feed.messages.ts:3:18
+msgid "Loading..."
+msgstr ""
+
+#: src/renderer/app/header/header.messages.ts:2:16
+msgid "Log in"
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:2:23
+msgid "Melee ISO File"
+msgstr ""
+
+#: src/renderer/pages/settings/create.messages.ts:7:18
+msgid "Netplay"
+msgstr ""
+
+#: src/renderer/app/header/header.messages.ts:6:25
+msgid "No Melee ISO file specified"
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:5:20
+msgid "No file set"
+msgstr ""
+
+#: src/renderer/app/header/play_button/play_button.messages.ts:2:15
+msgid "Play"
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:7:27
+msgid "Play Button Action"
+msgstr ""
+
+#: src/renderer/pages/settings/create.messages.ts:8:19
+msgid "Playback"
+msgstr ""
+
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:3:19
+msgid "Read more"
+msgstr ""
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:6:5
+msgid ""
+"Removes temporary downloads, files used for Dolphin communication, and "
+"files streamed from Slippi.gg."
+msgstr ""
+
+#: src/renderer/app/create.messages.ts:3:18
+#: src/renderer/pages/settings/create.messages.ts:4:18
+msgid "Replays"
+msgstr ""
+
+#: src/renderer/components/path_input/path_input.messages.ts:2:17
+msgid "Select"
+msgstr ""
+
+#: src/renderer/pages/settings/advanced_app_settings/language_selector/language_selector.messages.ts:3:33
+msgid "Select your preferred language for the app."
+msgstr ""
+
+#: src/renderer/app/header/header.messages.ts:7:19
+msgid "Settings"
+msgstr ""
+
+#: src/renderer/pages/home/news_feed/news_feed.messages.ts:6:19
+msgid "Show more"
+msgstr ""
+
+#: src/renderer/app/create.messages.ts:4:19
+msgid "Spectate"
+msgstr ""
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:8:28
+msgid "Successfully cleared temporary files."
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:3:34
+msgid "The path to an NTSC Melee 1.02 ISO."
+msgstr ""
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:5:41
+#. {0} readableBytes: string
+msgid "Total size: {0}"
+msgstr ""
+
+#: src/renderer/pages/home/news_feed/news_feed.messages.ts:5:19
+msgid "Try again"
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:15:18
+msgid "Unknown"
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:17:22
+msgid "Unvalidated"
+msgstr ""
+
+#: src/renderer/app/header/play_button/play_button.messages.ts:3:19
+msgid "Updating"
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:14:16
+msgid "Valid"
+msgstr ""
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:6:20
+msgid "Verifying..."
+msgstr ""
+
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:2:24
+msgid "View on Bluesky"
+msgstr ""
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:3:39
+#. {0} count: number
+msgid "{0, plural, one {# file} other {# files}} filtered."
+msgstr ""
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:2:38
+#. {0} count: number
+msgid "{0, plural, one {# file} other {# files}} found."
+msgstr ""
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:4:38
+#. {0} count: number
+msgid "{0, plural, one {# file} other {# files}} had errors."
+msgstr ""
