@@ -1,0 +1,70 @@
+name: Translation Progress Badge
+
+on:
+  push:
+    branches: [ main ]
+
+concurrency:
+  group: translations-badge-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  calculate-translation:
+    runs-on: ubuntu-latest
+    outputs:
+      translation_pct: ${{ steps.calc.outputs.translation_pct }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'yarn'
+          
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+        
+      - name: Calculate translation percentage
+        id: calc
+        run: |
+          TRANSLATION_PCT=$(yarn --silent i18n:status --percent-only)
+          echo "translation_pct=${TRANSLATION_PCT}" >> $GITHUB_OUTPUT
+
+  publish-badge:
+    needs: calculate-translation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build and publish badge JSON
+        env:
+          TRANSLATION_PCT: ${{ needs.calculate-translation.outputs.translation_pct }}
+        run: |
+          # Determine color based on translation percentage
+          if [ "${TRANSLATION_PCT}" -ge 90 ]; then
+            COLOR="brightgreen"
+          elif [ "${TRANSLATION_PCT}" -ge 70 ]; then
+            COLOR="yellowgreen"
+          elif [ "${TRANSLATION_PCT}" -ge 50 ]; then
+            COLOR="orange"
+          else
+            COLOR="red"
+          fi
+          
+          # Build JSON payload
+          OUTPUT_JSON=$(cat << EOF
+          {
+            "schemaVersion": 1,
+            "label": "translations",
+            "message": "${TRANSLATION_PCT}%",
+            "color": "${COLOR}"
+          }
+          EOF
+          )
+          
+          # Update the badge via API
+          curl -X PATCH "https://jsonhosting.com/api/json/e785d45e" \
+            -H "Content-Type: application/json" \
+            -H "X-Edit-Key: ${{ secrets.TRANSLATION_STATUS_EDIT_KEY }}" \
+            -d "${OUTPUT_JSON}"
+
