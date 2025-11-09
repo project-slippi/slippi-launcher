@@ -24,8 +24,9 @@
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "i18n:extract": "i18next-auto-keys extract --include \"src/renderer/**/*.messages.ts\"",
-    "i18n:update": "i18next-auto-keys update --po-files \"./locales/*.po\"",
-    "i18n:convert": "i18next-auto-keys convert --input \"./locales/*.po\" --output ./release/app/dist/renderer/i18n --batch"
+    "i18n:sync": "i18next-auto-keys sync",
+    "i18n:convert": "i18next-auto-keys convert --batch --output ./release/app/dist/renderer/i18n",
+    "i18n:status": "i18next-auto-keys status --verbose"
   },
   "repository": {
     "type": "git",
@@ -54,10 +55,10 @@
     "*.{js,ts,jsx,tsx}": "eslint --cache --fix"
   },
   "i18next-auto-keys": {
-    "poTemplatePath": "./locales/messages.pot",
-    "hashLength": 12,
+    "poTemplateName": "messages.pot",
+    "poOutputDirectory": "./locales",
     "argMode": "indexed",
-    "projectId": "Slippi Launcher 1.0"
+    "projectId": "slippi-launcher 1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.5",
@@ -131,10 +132,9 @@
     "fdir": "^5.1.0",
     "file-loader": "^6.2.0",
     "fix-esm": "^1.0.1",
-    "gettext-parser": "^8.0.0",
     "html-webpack-plugin": "^5.5.0",
     "husky": "^4.3.0",
-    "i18next-auto-keys": "^3.1.0",
+    "i18next-auto-keys": "^3.2.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",

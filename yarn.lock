@@ -11109,16 +11109,18 @@ husky@^4.3.0:
     slash "^3.0.0"
     which-pm-runs "^1.0.0"
 
-i18next-auto-keys@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/i18next-auto-keys/-/i18next-auto-keys-3.1.0.tgz#df9ca276d4df11a02d64b86ace6ad6481c095dd2"
-  integrity sha512-z8Ap6VGrxkPfv3irj5HK42zT2eeUr7JR2fAObEMEdV0oGXuLL3r6ZghTAjtHt4BCSrqj2QjapRZuON4lz6QAvw==
+i18next-auto-keys@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/i18next-auto-keys/-/i18next-auto-keys-3.2.0.tgz#b7d931e7ab6bd478de42f2c6449f27445a7eaa1c"
+  integrity sha512-EB2MkcVWexAjdq03Nynr9Qcr4mejW9MTURKIDX4bDlB5xGcnMJtdGe4i65hbHXfAJ9dwaQnEnUmqPzn8xJdpXg==
   dependencies:
     commander "^12.1.0"
     cosmiconfig "^9.0.0"
     glob "^11.0.0"
     schema-utils "^4.3.3"
     zod "^4.1.12"
+  optionalDependencies:
+    gettext-parser "^8.0.0"
 
 i18next-http-backend@^3.0.2:
   version "3.0.2"
