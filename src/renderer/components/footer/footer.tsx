@@ -9,6 +9,8 @@ import { ExternalLink as A } from "@/components/external_link";
 import { colors } from "@/styles/colors";
 import { ReactComponent as DiscordIcon } from "@/styles/images/discord.svg";
 
+import { FooterMessages as Messages } from "./footer.messages";
+
 export const BasicFooter = styled.div`
   display: flex;
   padding: 0 20px;
@@ -28,10 +30,10 @@ export const BasicFooter = styled.div`
 export const Footer: React.ComponentType = () => {
   return (
     <Outer>
-      <Social title="Follow Project Slippi on Twitter" url={`https://twitter.com/${socials.twitterId}`}>
+      <Social title={Messages.followOnTwitter()} url={`https://twitter.com/${socials.twitterId}`}>
         <TwitterIcon />
       </Social>
-      <Social title="Join the Discord" url={socials.discordUrl}>
+      <Social title={Messages.joinDiscord()} url={socials.discordUrl}>
         <DiscordIcon fill={colors.purpleLight} />
       </Social>
       <div
@@ -51,7 +53,7 @@ export const Footer: React.ComponentType = () => {
               margin-right: 5px;
             `}
           >
-            Support Slippi
+            {Messages.supportSlippi()}
           </div>
         </Social>
       </div>
