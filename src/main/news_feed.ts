@@ -9,7 +9,9 @@ export async function fetchNewsFeedData(): Promise<NewsItem[]> {
   const mediumNews = fetchMediumNews();
   const githubNews = fetchGithubReleaseNews(["Ishiiruka", "slippi-launcher", "dolphin"]);
   const blueskyNews = fetchBlueskyPosts();
-  const allNews = (await Promise.all([mediumNews, githubNews, blueskyNews])).flat();
+  const allNews = (await Promise.allSettled([mediumNews, githubNews, blueskyNews]))
+    .filter((news) => news.status === "fulfilled")
+    .flatMap((news) => news.value);
   return allNews.sort((a, b) => {
     // Sort all news item by reverse chronological order
     const aDate = new Date(a.publishedAt).getTime();
