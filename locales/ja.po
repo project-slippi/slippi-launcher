@@ -7,7 +7,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0\n"
 "x-generator: i18next-auto-keys CLI\n"
 "Language: ja-JP\n"
-"PO-Revision-Date: 2025-11-09T11:45:02.971Z\n"
+"PO-Revision-Date: 2025-11-09T13:52:19.547Z\n"
 
 #: src/renderer/pages/settings/create.messages.ts:10:19
 msgid "Advanced"
@@ -81,6 +81,10 @@ msgstr "ニュース記事の取得に失敗"
 msgid "Failed to get updates"
 msgstr "アップデート取得失敗"
 
+#: src/renderer/components/footer/footer.messages.ts:3:26
+msgid "Follow Project Slippi on Twitter"
+msgstr ""
+
 #: src/renderer/pages/settings/create.messages.ts:3:15
 msgid "Game"
 msgstr "ゲーム"
@@ -104,6 +108,10 @@ msgstr "WASAPI 非対応"
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:16:18
 msgid "Invalid"
 msgstr "無効"
+
+#: src/renderer/components/footer/footer.messages.ts:4:22
+msgid "Join the Discord"
+msgstr ""
 
 #: src/renderer/pages/home/news_feed/news_feed.messages.ts:2:21
 msgid "Latest News"
@@ -191,6 +199,10 @@ msgstr "観戦"
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:8:28
 msgid "Successfully cleared temporary files."
 msgstr "削除完了"
+
+#: src/renderer/components/footer/footer.messages.ts:2:24
+msgid "Support Slippi"
+msgstr ""
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:3:34
 msgid "The path to an NTSC Melee 1.02 ISO."
