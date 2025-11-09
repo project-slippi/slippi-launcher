@@ -2,7 +2,7 @@
 
 [![Build Status](https://github.com/project-slippi/slippi-launcher/workflows/build/badge.svg)](https://github.com/project-slippi/slippi-launcher/actions?workflow=build)
 [![License](https://img.shields.io/badge/license-GPLv3-blue)](https://github.com/project-slippi/slippi-launcher/blob/master/LICENSE)
-![Translations](https://img.shields.io/endpoint?&url=https://jsonhosting.com/api/json/e785d45e/raw)
+[![Translations](https://img.shields.io/endpoint?&url=https://jsonhosting.com/api/json/e785d45e/raw)](./CONTRIBUTING.md)
 
 The Slippi Launcher acts as a one stop shop for everything Slippi related. It handles updating Slippi Dolphin, playing Slippi Online, launching and analyzing replays, and more.
 
