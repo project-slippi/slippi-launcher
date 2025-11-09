@@ -4,14 +4,18 @@ Thank you for your interest in contributing to the Slippi Launcher! This documen
 
 ## Adding Translations
 
-The Slippi Launcher uses a custom internationalization (i18n) system built on top of `i18next` with the `i18next-auto-keys` package. This approach provides several benefits over traditional React i18n libraries.
+The Slippi Launcher uses i18next with the [i18next-auto-keys](https://www.npmjs.com/package/i18next-auto-keys) package for its translations system. This approach provides several benefits over traditional React i18n libraries.
 
 ### Benefits Over react-i18next
 
-1. **No Component Pollution**: Unlike `react-i18next`, our system doesn't require wrapping components with translation providers or importing translation hooks throughout the codebase
-2. **Build-Time Optimization**: Messages are transformed at build time, resulting in better performance and smaller bundle sizes
-3. **Cleaner Code**: Components remain focused on their logic without translation concerns scattered throughout
-4. **Automatic Key Generation**: No need to manually manage translation keys - they're generated automatically from your message functions
+1. **No Component Pollution**: Doesn't require wrapping components with translation providers or importing translation hooks throughout the codebase. The developer doesn't even need to know what the translation system under the hood is.
+2. **Colocated Messages**: Text strings live next to the components that use them.
+3. **Automatic Key Generation**: No need to manually manage translation keys - they're generated automatically from your message functions.
+4. **Typesafe by default**: Since you're never working directly with the translation key strings.
+
+
+You can read more about [i18next-auto-keys](https://www.npmjs.com/package/i18next-auto-keys) on the NPM page.
+
 
 ### How Translations Work
 
@@ -28,6 +32,14 @@ Currently supported languages:
 - `en` - English (default)
 - `es` - Spanish (Español)
 - `ja` - Japanese (日本語)
+
+### Checking Translation Status
+
+You can see what the translation progress is across the different languages with the following command:
+
+```bash
+yarn run i18n:status
+```
 
 ### Translation Workflow
 
@@ -75,18 +87,17 @@ This command:
 - Extracts translatable strings
 - Updates the `locales/messages.pot` template file
 
-#### 3. Update Translation Files
-
-Update the `.po` files for all languages with the new strings:
+#### 3. Sync the Translation Files
 
 ```bash
-yarn run i18n:update
+yarn run i18n:sync
 ```
 
 This command:
-- Updates `locales/es.po`, `locales/ja.po`, etc.
+- Syncs `locales/es.po`, `locales/ja.po`, etc.
 - Adds new untranslated strings (marked as empty `msgstr ""`)
 - Preserves existing translations
+- Removes old unusued strings
 
 #### 4. Add Translations
 
@@ -139,7 +150,7 @@ To add support for a new language:
    # Edit the header to set the language
    ```
 
-3. **Run Translation Workflow**: Extract, update, and convert as described above
+3. **Run Translation Workflow**: Extract, sync, and convert as described above
 
 ### Message File Best Practices
 
@@ -266,7 +277,7 @@ When contributing translations:
 
 1. **Fork the Repository**: Create your own fork to work in
 2. **Create Feature Branch**: `git checkout -b add-french-translations`
-3. **Follow Workflow**: Use the yarn scripts to properly extract and update translations
+3. **Follow Workflow**: Use the yarn scripts to properly extract and sync translations
 4. **Test Thoroughly**: Verify translations work in the application
 5. **Submit PR**: Include both `.po` file changes and any necessary code changes
 6. **Provide Context**: In your PR description, explain any translation choices or cultural considerations
