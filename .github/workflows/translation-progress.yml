@@ -36,6 +36,10 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      - name: Display translation percentage
+        run: |
+          yarn run i18n:status
+
       - name: Calculate translation percentage
         id: calc
         run: |
@@ -46,7 +50,15 @@ jobs:
     needs: calculate-translation
     runs-on: ubuntu-latest
     steps:
-      - name: Build and publish badge JSON
+      - name: Cache previous badge JSON
+        uses: actions/cache@v4
+        with:
+          path: previous-badge.json
+          key: translation-badge-json-latest
+          restore-keys: |
+            translation-badge-json-latest
+
+      - name: Build and conditionally publish badge JSON
         env:
           TRANSLATION_PCT: ${{ needs.calculate-translation.outputs.translation_pct }}
         run: |
@@ -62,7 +74,7 @@ jobs:
           fi
 
           # Build JSON payload
-          OUTPUT_JSON=$(cat << EOF
+          cat > current-badge.json << EOF
           {
             "schemaVersion": 1,
             "label": "translations",
@@ -70,11 +82,24 @@ jobs:
             "color": "${COLOR}"
           }
           EOF
-          )
 
-          # Update the badge via API
-          curl -X PATCH "https://jsonhosting.com/api/json/e785d45e" \
-            -H "Content-Type: application/json" \
-            -H "X-Edit-Key: ${{ secrets.TRANSLATION_STATUS_EDIT_KEY }}" \
-            -d "${OUTPUT_JSON}"
+          # Check if badge JSON has changed
+          if [ -f "previous-badge.json" ] && cmp -s "current-badge.json" "previous-badge.json"; then
+            echo "Badge JSON unchanged - skipping API call to avoid rate limits"
+          else
+            echo "Badge JSON changed - updating via API"
+
+            # Read the JSON content
+            OUTPUT_JSON=$(cat current-badge.json)
+
+            # Update the badge via API
+            curl -X PATCH "https://jsonhosting.com/api/json/e785d45e" \
+              -H "Content-Type: application/json" \
+              -H "X-Edit-Key: ${{ secrets.TRANSLATION_STATUS_EDIT_KEY }}" \
+              -d "${OUTPUT_JSON}"
+
+            # Update cache for next run
+            cp current-badge.json previous-badge.json
+            echo "Badge updated successfully"
+          fi
 
