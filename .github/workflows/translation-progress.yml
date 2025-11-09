@@ -3,6 +3,8 @@ name: Translation Progress Badge
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'locales/**'  # Only run when translation files (.po/.pot) change
 
 concurrency:
   group: translations-badge-${{ github.ref }}
