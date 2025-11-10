@@ -5,6 +5,8 @@ import Typography from "@mui/material/Typography";
 import * as stylex from "@stylexjs/stylex";
 import React from "react";
 
+import { NatTypeSectionMessages as Messages } from "./nat_type_section.messages";
+
 const hiddenIpAddress = "···.···.···.···";
 
 const styles = stylex.create({
@@ -26,9 +28,9 @@ const styles = stylex.create({
 
 const getIpAddressTitle = (natType: NatType) => {
   if (natType === NatType.FAILED) {
-    return "Failed to determine IP Address";
+    return Messages.failedToDetermineIpAddress();
   }
-  return "External IP Address";
+  return Messages.externalIpAddress();
 };
 
 type NatTypeSectionProps = {
@@ -64,10 +66,10 @@ export const NatTypeSection = ({ address, description, natType, title }: NatType
             {...stylex.props(styles.ipAddress)}
           />
           <Button variant="contained" color="secondary" onClick={onIpAddressShowHide} {...stylex.props(styles.button)}>
-            {ipAddressHidden ? "Reveal" : "Hide"}
+            {ipAddressHidden ? Messages.reveal() : Messages.hide()}
           </Button>
           <Button variant="contained" color="secondary" onClick={onIpAddressCopy} {...stylex.props(styles.button)}>
-            {ipAddressCopied ? "Copied!" : "Copy"}
+            {ipAddressCopied ? Messages.copied() : Messages.copy()}
           </Button>
         </div>
       )}

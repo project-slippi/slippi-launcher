@@ -7,7 +7,7 @@ import * as stylex from "@stylexjs/stylex";
 import React from "react";
 
 import { CgnatCommandSection } from "./cgnat_command_section";
-import { NatTypeSection } from "./nat_type_section";
+import { NatTypeSection } from "./nat_type_section/nat_type_section";
 
 const styles = stylex.create({
   contentBody: {
