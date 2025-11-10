@@ -11,8 +11,8 @@ import React from "react";
 import { Button as ActionButton } from "@/components/form/button";
 import { colors } from "@/styles/colors";
 
+import { NetworkDiagnosticsResult } from "./network_diagnostic_result/network_diagnostics_result";
 import { NetworkDiagnosticsMessages as Messages } from "./network_diagnostics_button.messages";
-import { NetworkDiagnosticsResult } from "./network_diagnostics_result";
 
 type NetworkInformation = {
   address: string;

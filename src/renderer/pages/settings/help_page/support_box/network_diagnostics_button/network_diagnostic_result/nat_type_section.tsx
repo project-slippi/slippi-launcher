@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import * as stylex from "@stylexjs/stylex";
 import React from "react";
 
-import { NatTypeSectionMessages as Messages } from "./nat_type_section.messages";
+import { NetworkDiagnosticsResultMessages as Messages } from "./network_diagnostics_result.messages";
 
 const hiddenIpAddress = "···.···.···.···";
 
