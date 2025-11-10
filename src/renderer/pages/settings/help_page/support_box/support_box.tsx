@@ -11,7 +11,7 @@ import { useToasts } from "@/lib/hooks/use_toasts";
 import { ReactComponent as DiscordIcon } from "@/styles/images/discord.svg";
 import { colors } from "@/styles/tokens.stylex";
 
-import { NetworkDiagnosticsButton } from "../network_diagnostics/network_diagnostics_button/network_diagnostics_button";
+import { NetworkDiagnosticsButton } from "./network_diagnostics/network_diagnostics_button/network_diagnostics_button";
 import { SupportBoxMessages as Messages } from "./support_box.messages";
 
 const styles = stylex.create({
