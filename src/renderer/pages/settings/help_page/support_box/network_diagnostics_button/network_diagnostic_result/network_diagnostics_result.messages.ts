@@ -5,6 +5,32 @@ export const NetworkDiagnosticsResultMessages = {
   reveal: () => "Reveal",
   copy: () => "Copy",
   copied: () => "Copied!",
+  copyResults: () => "Copy results",
   cgnatOrDoubleNatDescription: () =>
     "More than one hop to your external IP address indicates CGNAT or Double NAT (or VPN).",
+  failedToDetermineNatType: () => "Failed to determine NAT type",
+  natType: () => "NAT Type",
+  normalNat: () => "Normal NAT",
+  normalNatDescription: () => "This is the optimal result. Also known as 'easy', 'full cone', or 'open' NAT.",
+  symmetricNat: () => "Symmetric NAT",
+  symmetricNatDescription: () =>
+    "You may have trouble connecting to other players. Also known as 'hard', 'strict', or 'symmetric' NAT. " +
+    "If possible, please check your router settings to see if this can be changed to 'easy', 'full cone', 'normal', or 'open' NAT.",
+  failedNatTypeDescription: () =>
+    "Please try again later. If the failure persists, this network may block UDP. In that case it will not be possible to use Slippi as well as many other online games and apps.",
+  failedToDeterminePortMapping: () => "Failed to determine port mapping availability",
+  portMapping: () => "Port mapping",
+  notAvailable: () => "Not available.",
+  available: () => "Available.",
+  upnp: () => "UPnP.",
+  natpmp: () => "NAT-PMP.",
+  upnpAndNatpmp: () => "UPnP and NAT-PMP.",
+  pleaseTryAgainLater: () => "Please try again later.",
+  failedToDetermineCgnatOrDoubleNat: () => "Failed to determine CGNAT or Double NAT presence",
+  cgnatOrDoubleNat: () => "CGNAT or Double NAT",
+  notDetected: () => "Not detected.",
+  thisIsTheOptimalResult: () => "This is the optimal result.",
+  detectedItCouldAlsoBeAVpn: () => "Detected (it could also be a VPN)",
+  youMayHaveTrouble: () => "You may have trouble connecting to other players.",
+  ifTheFailurePersists: () => "If the failure persists, you can test this in your computer's terminal app. See below:",
 };

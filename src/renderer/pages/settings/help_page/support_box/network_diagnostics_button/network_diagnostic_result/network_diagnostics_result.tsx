@@ -8,6 +8,7 @@ import React from "react";
 
 import { CgnatCommandSection } from "./cgnat_command_section";
 import { NatTypeSection } from "./nat_type_section";
+import { NetworkDiagnosticsResultMessages as Messages } from "./network_diagnostics_result.messages";
 
 const styles = stylex.create({
   contentBody: {
@@ -17,23 +18,19 @@ const styles = stylex.create({
 
 const getNatTypeTitle = (natType: NatType) => {
   if (natType === NatType.FAILED) {
-    return "Failed to determine NAT type";
+    return Messages.failedToDetermineNatType();
   }
-  return "NAT Type";
+  return Messages.natType();
 };
 
-const getNatTypeDescription = (natType: NatType) => {
+const getNatTypeDescription = (natType: NatType): string => {
   switch (natType) {
     case NatType.NORMAL:
-      return `Normal NAT - This is the optimal result. Also known as "easy", "full cone", or "open" NAT.`;
+      return `${Messages.normalNat()} - ${Messages.normalNatDescription()}`;
     case NatType.SYMMETRIC:
-      return `Symmetric NAT - You may have trouble connecting to other players.
-        Also known as "hard" or "strict" NAT.
-        If possible, please check your router settings to see if this can be changed to "easy", "full cone", "normal", or "open" NAT.`;
+      return `${Messages.symmetricNat()} - ${Messages.symmetricNatDescription()}`;
     case NatType.FAILED:
-      return `Please try again later.
-        If the failure persists, this network may block UDP.
-        In that case it will not be possible to use Slippi as well as many other online games and apps.`;
+      return Messages.failedNatTypeDescription();
     default:
       return "";
   }
@@ -41,47 +38,47 @@ const getNatTypeDescription = (natType: NatType) => {
 
 const getPortMappingTitle = (portMapping: PortMapping) => {
   if (portMapping.upnp === Presence.FAILED || portMapping.natpmp === Presence.FAILED) {
-    return "Failed to determine port mapping availability";
+    return Messages.failedToDeterminePortMapping();
   }
-  return "Port mapping";
+  return Messages.portMapping();
 };
 
-const getPortMappingDescription = (portMapping: PortMapping) => {
+const getPortMappingDescription = (portMapping: PortMapping): string => {
   if (portMapping.upnp === Presence.ABSENT && portMapping.natpmp === Presence.ABSENT) {
-    return "Not available.";
+    return Messages.notAvailable();
   }
   if (portMapping.upnp === Presence.PRESENT && portMapping.natpmp === Presence.ABSENT) {
-    return "Available - UPnP.";
+    return `${Messages.available()} - ${Messages.upnp()}`;
   }
   if (portMapping.upnp === Presence.ABSENT && portMapping.natpmp === Presence.PRESENT) {
-    return "Available - NAT-PMP.";
+    return `${Messages.available()} - ${Messages.natpmp()}`;
   }
   if (portMapping.upnp === Presence.PRESENT && portMapping.natpmp === Presence.PRESENT) {
-    return "Available - UPnP and NAT-PMP.";
+    return `${Messages.available()} - ${Messages.upnpAndNatpmp()}`;
   }
   if (portMapping.upnp === Presence.FAILED || portMapping.natpmp === Presence.FAILED) {
-    return "Please try again later.";
+    return Messages.pleaseTryAgainLater();
   }
   return "";
 };
 
 const getCgnatTitle = (presence: Presence) => {
   if (presence === Presence.FAILED) {
-    return "Failed to determine CGNAT or Double NAT presence";
+    return Messages.failedToDetermineCgnatOrDoubleNat();
   }
-  return "CGNAT or Double NAT";
+  return Messages.cgnatOrDoubleNat();
 };
 
 const getCgnatDescription = (address: string, presence: Presence) => {
   switch (presence) {
     case Presence.ABSENT:
-      return "Not detected - This is the optimal result.";
+      return `${Messages.notDetected()} - ${Messages.thisIsTheOptimalResult()}`;
     case Presence.PRESENT:
-      return "Detected (it could also be a VPN) - You may have trouble connecting to other players.";
+      return `${Messages.detectedItCouldAlsoBeAVpn()} - ${Messages.youMayHaveTrouble()}`;
     case Presence.FAILED: {
-      let failedDescription = "Please try again later.";
+      let failedDescription = Messages.pleaseTryAgainLater();
       if (address) {
-        failedDescription += "If the failure persists, you can test this in your computer's terminal app. See below:";
+        failedDescription += `${Messages.ifTheFailurePersists()}`;
       }
       return failedDescription;
     }
@@ -130,7 +127,7 @@ export const NetworkDiagnosticsResult = React.memo(
         </div>
         <DialogActions>
           <Button variant="contained" color="secondary" onClick={onDiagnosticResultsCopy} style={{ width: "144px" }}>
-            {diagnosticResultsCopied ? "Copied!" : "Copy results"}
+            {diagnosticResultsCopied ? Messages.copied() : Messages.copyResults()}
           </Button>
         </DialogActions>
       </div>
