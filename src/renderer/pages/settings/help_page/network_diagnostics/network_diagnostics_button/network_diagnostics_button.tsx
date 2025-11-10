@@ -11,7 +11,8 @@ import React from "react";
 import { Button as ActionButton } from "@/components/form/button";
 import { colors } from "@/styles/colors";
 
-import { NetworkDiagnosticsResult } from "./network_diagnostics_result";
+import { NetworkDiagnosticsResult } from "../network_diagnostics_result";
+import { NetworkDiagnosticsMessages as Messages } from "./network_diagnostics_button.messages";
 
 type NetworkInformation = {
   address: string;
@@ -61,13 +62,13 @@ export const NetworkDiagnosticsButton = React.memo(() => {
       return (
         <div {...stylex.props(styles.container)}>
           <CircularProgress color="inherit" />
-          <div {...stylex.props(styles.text)}>Running network diagnostics...</div>
+          <div {...stylex.props(styles.text)}>{Messages.runningDiagnostics()}</div>
         </div>
       );
     }
 
     if (isError || !networkInfo) {
-      return <div>Error running network diagnostics</div>;
+      return <div>{Messages.errorRunningDiagnostics()}</div>;
     }
 
     const { address, cgnat, natType, portMapping } = networkInfo;
@@ -82,13 +83,13 @@ export const NetworkDiagnosticsButton = React.memo(() => {
         variant="contained"
         onClick={openDialog}
       >
-        Check network issues
+        {Messages.checkNetworkIssues()}
       </ActionButton>
       <Dialog open={dialogOpen} closeAfterTransition={true} onClose={onClose} fullWidth={true}>
-        <DialogTitle>Network Diagnostics</DialogTitle>
+        <DialogTitle>{Messages.networkDiagnostics()}</DialogTitle>
         <DialogContent>
           <Typography fontSize={14} marginBottom={1}>
-            Turn VPN off for best results.
+            {Messages.turnVpnOff()}
           </Typography>
           <div>{networkDiagnosticsContent}</div>
         </DialogContent>

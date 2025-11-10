@@ -6,7 +6,8 @@ import React from "react";
 
 import { MarkdownContent } from "@/components/markdown_content/markdown_content";
 
-import { SupportBox } from "./support_box";
+import { HelpPageMessages as Messages } from "./help_page.messages";
+import { SupportBox } from "./support_box/support_box";
 
 export const HelpPage = React.memo(() => {
   return (
@@ -23,7 +24,7 @@ export const HelpPage = React.memo(() => {
       >
         <SupportBox />
       </div>
-      <h1>FAQ</h1>
+      <h1>{Messages.faq()}</h1>
       <Paper sx={{ backgroundColor: (theme) => alpha(theme.palette.background.paper, 0.85) }}>
         <MarkdownContent
           content={faqMarkdown}
