@@ -8,4 +8,7 @@ export const ChatSettingsMessages = {
   left: () => "Left",
   right: () => "Right",
   down: () => "Down",
+  chatMessages: () => "Chat Messages",
+  chatMessagesDescription: () => "Chat messages to use for netplay",
+  pleaseLoginToUseFeature: () => "Please log in to use this feature.",
 };
