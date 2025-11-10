@@ -7,13 +7,13 @@ export const withSlippiBackground = css`
     content: "";
     background-image: url("${slippiLogo}");
     background-size: 50%;
-    background-position: 110% 120%;
+    background-position: 110% 140%;
     background-repeat: no-repeat;
     position: fixed;
     top: 0;
     height: 100%;
     width: 100%;
-    opacity: 0.1;
+    opacity: 0.02;
     z-index: -1;
   }
 `;
