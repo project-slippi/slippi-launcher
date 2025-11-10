@@ -39,7 +39,7 @@ const genChatMessageItem = (
   if (isDefault) {
     adornment = (
       <Typography fontSize="12px" color="#FFFFFFB0" marginRight="6px" padding="4px 8px">
-        Default
+        {Messages.default()}
       </Typography>
     );
   } else if (isPaid && isHovered && user.subLevel === "NONE") {

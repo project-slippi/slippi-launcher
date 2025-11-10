@@ -1,6 +1,7 @@
 export const ChatSettingsMessages = {
   save: () => "Save",
   discardChanges: () => "Discard Changes",
+  default: () => "Default",
   subscribe: () => "Subscribe",
   premium: () => "Premium",
   chatGroup: (direction: string) => `Chat Group: {0}`,
