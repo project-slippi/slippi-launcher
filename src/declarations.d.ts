@@ -1,5 +1,6 @@
 declare module "react-twitter-embed";
 declare module "medium-json-feed";
+declare module "react-timeago/defaultFormatter";
 
 // Injected through webpack.DefinePlugin
 declare const __VERSION__: string; // App version number
