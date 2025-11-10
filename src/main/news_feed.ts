@@ -10,7 +10,7 @@ export async function fetchNewsFeedData(): Promise<NewsItem[]> {
   const githubNews = fetchGithubReleaseNews(["Ishiiruka", "slippi-launcher", "dolphin"]);
   const blueskyNews = fetchBlueskyPosts();
   const allNews = (await Promise.allSettled([mediumNews, githubNews, blueskyNews]))
-    .filter((news) => news.status === "fulfilled")
+    .filter((news): news is PromiseFulfilledResult<NewsItem[]> => news.status === "fulfilled")
     .flatMap((news) => news.value);
   return allNews.sort((a, b) => {
     // Sort all news item by reverse chronological order
