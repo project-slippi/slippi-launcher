@@ -1,5 +1,4 @@
 import { css } from "@emotion/react";
-import styled from "@emotion/styled";
 import Paper from "@mui/material/Paper";
 import { alpha } from "@mui/material/styles";
 import faqMarkdown from "raw-loader!@/../../FAQ.md";
@@ -11,7 +10,7 @@ import { SupportBox } from "./support_box";
 
 export const HelpPage = React.memo(() => {
   return (
-    <Outer>
+    <div>
       <div
         css={css`
           margin-top: 10px;
@@ -48,10 +47,6 @@ export const HelpPage = React.memo(() => {
           `}
         />
       </Paper>
-    </Outer>
+    </div>
   );
 });
-
-const Outer = styled.div`
-  max-width: 800px;
-`;

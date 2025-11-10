@@ -41,6 +41,7 @@ const ContentColumn = styled.div`
   width: 100%;
   display: flex;
   padding-top: 30px;
+  max-width: 800px;
   ${() => platformTitleBarStyles(50)}
 `;
 
