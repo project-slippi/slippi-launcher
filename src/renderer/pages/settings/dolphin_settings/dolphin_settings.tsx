@@ -6,7 +6,6 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import Typography from "@mui/material/Typography";
-import capitalize from "lodash/capitalize";
 import React from "react";
 
 import { ConfirmationModal } from "@/components/confirmation_modal";
@@ -17,12 +16,40 @@ import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 
 import { SettingItem } from "../setting_item_section";
+import { DolphinSettingsMessages as Messages } from "./dolphin_settings.messages";
 import { GeckoCodes } from "./gecko_codes/gecko_codes";
 
 enum ResetType {
   SOFT,
   HARD,
 }
+
+const getDolphinTypeName = (dolphinType: DolphinLaunchType) => {
+  switch (dolphinType) {
+    case DolphinLaunchType.NETPLAY:
+      return Messages.netplayDolphin();
+    case DolphinLaunchType.PLAYBACK:
+      return Messages.playbackDolphin();
+  }
+};
+
+const getDolphinSettingsName = (dolphinType: DolphinLaunchType) => {
+  switch (dolphinType) {
+    case DolphinLaunchType.NETPLAY:
+      return Messages.netplayDolphinSettings();
+    case DolphinLaunchType.PLAYBACK:
+      return Messages.playbackDolphinSettings();
+  }
+};
+
+const getGeckoCodesName = (dolphinType: DolphinLaunchType) => {
+  switch (dolphinType) {
+    case DolphinLaunchType.NETPLAY:
+      return Messages.netplayGeckoCodes();
+    case DolphinLaunchType.PLAYBACK:
+      return Messages.playbackGeckoCodes();
+  }
+};
 
 export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchType }) => {
   const dolphinStatus = useDolphinStore((store) =>
@@ -42,13 +69,17 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
   const { showWarning } = useToasts();
   const dolphinIsReady = dolphinStatus === DolphinStatus.READY && !dolphinIsOpen && isResetType === null;
   const versionString: string =
-    dolphinStatus === DolphinStatus.UNKNOWN ? "Not found" : !dolphinVersion ? "Unknown" : dolphinVersion;
+    dolphinStatus === DolphinStatus.UNKNOWN
+      ? Messages.notFound()
+      : !dolphinVersion
+      ? Messages.unknown()
+      : dolphinVersion;
 
   const onDolphinBetaChange = async (value: string) => {
     setResetType(ResetType.SOFT);
     const useBeta = value === "true";
     if (useBeta) {
-      showWarning("Mainline Slippi Dolphin has updated OS requirements, check the Help Section for more info");
+      showWarning(Messages.mainlineDolphinHasUpdatedOsRequirements());
     }
     await setDolphinBeta(useBeta);
     await softResetDolphin(dolphinType);
@@ -75,13 +106,13 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
     setResetType(null);
   };
 
-  const dolphinTypeName = capitalize(dolphinType);
+  const dolphinTypeName = getDolphinTypeName(dolphinType);
   return (
     <div>
-      <Typography variant="h5">{dolphinTypeName} Dolphin Settings</Typography>
-      <Typography variant="caption">Version: {versionString}</Typography>
+      <Typography variant="h5">{getDolphinSettingsName(dolphinType)}</Typography>
+      <Typography variant="caption">{Messages.version(versionString)}</Typography>
 
-      <SettingItem name={`Configure ${dolphinType} Dolphin`}>
+      <SettingItem name={Messages.configureDolphin(dolphinTypeName)}>
         <div
           css={css`
             display: flex;
@@ -91,24 +122,24 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
           `}
         >
           <Button variant="contained" color="primary" onClick={configureDolphinHandler} disabled={!dolphinIsReady}>
-            Configure Dolphin
+            {Messages.configureDolphinButton()}
           </Button>
           <Button variant="outlined" color="primary" onClick={openDolphinDirectoryHandler}>
-            Open settings folder
+            {Messages.openSettingsFolderButton()}
           </Button>
         </div>
       </SettingItem>
-      <SettingItem name={`${dolphinTypeName} Gecko Codes`}>
+      <SettingItem name={getGeckoCodesName(dolphinType)}>
         <GeckoCodes dolphinType={dolphinType} disabled={!dolphinIsReady} />
       </SettingItem>
-      <SettingItem name={`Reset ${dolphinTypeName} Dolphin`}>
+      <SettingItem name={Messages.resetDolphin(dolphinTypeName)}>
         <ConfirmationModal
           open={resetModalOpen}
           onClose={() => setResetModalOpen(false)}
           onSubmit={hardResetDolphinHandler}
-          title="Are you sure?"
+          title={Messages.areYouSure()}
         >
-          This will remove all your {dolphinTypeName} Dolphin settings.
+          {Messages.thisWillRemoveAllYourDolphinSettings(dolphinTypeName)}
         </ConfirmationModal>
         <div
           css={css`
@@ -127,7 +158,7 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
               min-width: 145px;
             `}
           >
-            Soft Reset
+            {Messages.softReset()}
             {isResetType === ResetType.SOFT && (
               <CircularProgress
                 css={css`
@@ -148,7 +179,7 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
               min-width: 145px;
             `}
           >
-            Hard Reset
+            {Messages.hardReset()}
             {isResetType === ResetType.HARD && (
               <CircularProgress
                 css={css`
@@ -164,12 +195,12 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
       </SettingItem>
       {dolphinType === DolphinLaunchType.NETPLAY && (
         <SettingItem
-          name={`${dolphinTypeName} Dolphin Release Channel`}
-          description="Choose which Slippi Dolphin release to install"
+          name={Messages.netplayDolphinReleaseChannel()}
+          description={Messages.netplayDolphinReleaseChannelDescription()}
         >
           <RadioGroup value={dolphinBeta} onChange={(_event, value) => onDolphinBetaChange(value)}>
-            <FormControlLabel value={false} label="Stable (Ishiiruka)" control={<Radio disabled={!dolphinIsReady} />} />
-            <FormControlLabel value={true} label="Beta (Mainline)" control={<Radio disabled={!dolphinIsReady} />} />
+            <FormControlLabel value={false} label={Messages.stable()} control={<Radio disabled={!dolphinIsReady} />} />
+            <FormControlLabel value={true} label={Messages.beta()} control={<Radio disabled={!dolphinIsReady} />} />
           </RadioGroup>
         </SettingItem>
       )}
