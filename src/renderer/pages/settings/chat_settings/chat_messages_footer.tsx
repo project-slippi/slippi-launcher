@@ -2,6 +2,8 @@ import { css } from "@emotion/react";
 import LoadingButton from "@mui/lab/LoadingButton";
 import Button from "@mui/material/Button";
 
+import { ChatSettingsMessages as Messages } from "./chat_settings.messages";
+
 type ChatMessagesFooterProps = {
   loading: boolean;
   dirty: boolean;
@@ -27,7 +29,7 @@ export const ChatMessagesFooter = ({ loading, dirty, saveToDatabase, discardChan
         loading={loading}
         onClick={saveToDatabase}
       >
-        Save
+        {Messages.save()}
       </LoadingButton>
       <Button
         css={css`
@@ -38,7 +40,7 @@ export const ChatMessagesFooter = ({ loading, dirty, saveToDatabase, discardChan
         onClick={discardChanges}
         color="secondary"
       >
-        Discard Changes
+        {Messages.discardChanges()}
       </Button>
     </div>
   );
