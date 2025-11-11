@@ -8,6 +8,16 @@ msgstr ""
 "x-generator: i18next-auto-keys CLI\n"
 "Language: \n"
 
+#: src/renderer/components/multi_path_input/multi_path_input.messages.ts:3:14
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/add_codes/add_codes.messages.ts:6:14
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:6:14
+msgid "Add"
+msgstr ""
+
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:9:35
+msgid "Additional SLP Directories"
+msgstr ""
+
 #: src/renderer/pages/settings/create.messages.ts:10:19
 msgid "Advanced"
 msgstr ""
@@ -20,24 +30,85 @@ msgstr ""
 msgid "App Settings"
 msgstr ""
 
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:5:21
+msgid "Are you sure you want to delete this code?"
+msgstr ""
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:17:21
+msgid "Are you sure?"
+msgstr ""
+
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:3:39
 msgid "Automatically install Slippi Launcher updates when they become available."
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:24:20
+msgid "Available."
+msgstr ""
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:24:15
+msgid "Beta (Mainline)"
+msgstr ""
+
+#: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:9:50
+#. {0} broadcastDuration: string
+msgid "Broadcast ended after {0}"
+msgstr ""
+
+#: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:8:27
+msgid "Broadcast started"
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:30:27
+msgid "CGNAT or Double NAT"
+msgstr ""
+
+#: src/renderer/components/multi_path_input/multi_path_input.messages.ts:5:40
+msgid "Cannot add sub directories of the Root SLP Directory."
 msgstr ""
 
 #: src/renderer/pages/settings/create.messages.ts:5:15
 msgid "Chat"
 msgstr ""
 
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:7:37
+#. {0} direction: string
+msgid "Chat Group: {0}"
+msgstr ""
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:12:23
+msgid "Chat Messages"
+msgstr ""
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:13:34
+msgid "Chat messages to use for netplay"
+msgstr ""
+
 #: src/renderer/app/header/header.messages.ts:3:26
 msgid "Check for updates"
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostics_button.messages.ts:6:29
+#: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:9:29
+msgid "Check network issues"
 msgstr ""
 
 #: src/renderer/app/header/header.messages.ts:4:29
 msgid "Checking for updates..."
 msgstr ""
 
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:11:5
+msgid ""
+"Choose any additional SLP directories that should show up in the replay "
+"browser."
+msgstr ""
+
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:8:38
 msgid "Choose what happens when the Play button is pressed."
+msgstr ""
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:22:50
+msgid "Choose which Slippi Dolphin release to install"
 msgstr ""
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:4:25
@@ -48,16 +119,90 @@ msgstr ""
 msgid "Clear files"
 msgstr ""
 
+#: src/renderer/pages/settings/settings_page.messages.ts:2:16
+msgid "Close"
+msgstr ""
+
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:4:31
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:4:38
 msgid "Close Dolphin to change this setting"
+msgstr ""
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:10:33
+msgid "Configure Dolphin"
+msgstr ""
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:4:50
+#. {0} dolphinTypeName: string
+msgid "Configure {0}"
+msgstr ""
+
+#: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:3:20
+msgid "Connected"
+msgstr ""
+
+#: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:5:21
+msgid "Connecting"
 msgstr ""
 
 #: src/renderer/app/create.messages.ts:5:18
 msgid "Console Mirror"
 msgstr ""
 
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:7:17
+msgid "Copied!"
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:6:15
+msgid "Copy"
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:8:19
+msgid "Copy logs"
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:8:22
+msgid "Copy results"
+msgstr ""
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:3:26
+msgid "Copy to Clipboard"
+msgstr ""
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:4:18
+msgid "Default"
+msgstr ""
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:6:17
+msgid "Delete"
+msgstr ""
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:2:21
+msgid "Delete Code"
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:33:36
+msgid "Detected (it could also be a VPN)"
+msgstr ""
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:3:25
+msgid "Discard Changes"
+msgstr ""
+
+#: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:4:23
+msgid "Disconnected"
+msgstr ""
+
 #: src/renderer/pages/settings/create.messages.ts:6:26
 msgid "Dolphin Settings"
+msgstr ""
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:11:15
+msgid "Down"
+msgstr ""
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/add_codes/add_codes.messages.ts:4:28
+msgid "Duplicate code name"
 msgstr ""
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:2:28
@@ -72,12 +217,54 @@ msgstr ""
 msgid "Enable in-game music."
 msgstr ""
 
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:3:53
+#. {0} errorMessage: string
+msgid "Error reading gecko codes: {0}"
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostics_button.messages.ts:3:34
+msgid "Error running network diagnostics"
+msgstr ""
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:4:52
+#. {0} errorMessage: string
+msgid "Error saving gecko codes: {0}"
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:3:28
+msgid "External IP Address"
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/help_page.messages.ts:2:14
+msgid "FAQ"
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:29:44
+msgid "Failed to determine CGNAT or Double NAT presence"
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:2:37
+msgid "Failed to determine IP Address"
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:11:35
+msgid "Failed to determine NAT type"
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:21:39
+msgid "Failed to determine port mapping availability"
+msgstr ""
+
 #: src/renderer/pages/home/news_feed/news_feed.messages.ts:4:24
 msgid "Failed to fetch news articles."
 msgstr ""
 
 #: src/renderer/app/header/header.messages.ts:5:29
 msgid "Failed to get updates"
+msgstr ""
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:2:33
+msgid "Failed to read gecko codes"
 msgstr ""
 
 #: src/renderer/components/footer/footer.messages.ts:3:26
@@ -92,12 +279,26 @@ msgstr ""
 msgid "General Settings"
 msgstr ""
 
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:20:20
+msgid "Hard reset"
+msgstr ""
+
 #: src/renderer/pages/settings/create.messages.ts:11:15
 msgid "Help"
 msgstr ""
 
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:4:15
+msgid "Hide"
+msgstr ""
+
 #: src/renderer/app/create.messages.ts:2:15
 msgid "Home"
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:35:31
+msgid ""
+"If the failure persists, you can test this in your computer's terminal app. "
+"See below:"
 msgstr ""
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:13:33
@@ -108,7 +309,12 @@ msgstr ""
 msgid "Invalid"
 msgstr ""
 
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/add_codes/add_codes.messages.ts:2:27
+msgid "Invalid Gecko code"
+msgstr ""
+
 #: src/renderer/components/footer/footer.messages.ts:4:22
+#: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:7:22
 msgid "Join the Discord"
 msgstr ""
 
@@ -124,6 +330,10 @@ msgstr ""
 msgid "Launch Melee"
 msgstr ""
 
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:9:15
+msgid "Left"
+msgstr ""
+
 #: src/renderer/pages/home/news_feed/news_feed.messages.ts:3:18
 msgid "Loading..."
 msgstr ""
@@ -132,20 +342,108 @@ msgstr ""
 msgid "Log in"
 msgstr ""
 
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:3:5
+msgid ""
+"Mainline Slippi Dolphin has updated OS requirements, check the Help Section "
+"for more info"
+msgstr ""
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:5:17
+msgid "Manage"
+msgstr ""
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:7:27
+msgid "Manage Gecko codes"
+msgstr ""
+
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:2:23
 msgid "Melee ISO File"
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:10:5
+msgid ""
+"More than one hop to your external IP address indicates CGNAT or Double NAT "
+"(or VPN)."
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:12:18
+msgid "NAT Type"
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:26:17
+msgid "NAT-PMP."
+msgstr ""
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/add_codes/add_codes.messages.ts:3:23
+msgid "Name is required"
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:2:19
+msgid "Need help?"
 msgstr ""
 
 #: src/renderer/pages/settings/create.messages.ts:7:18
 msgid "Netplay"
 msgstr ""
 
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:5:25
+msgid "Netplay Dolphin"
+msgstr ""
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:21:39
+msgid "Netplay Dolphin Release Channel"
+msgstr ""
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:8:33
+msgid "Netplay Dolphin Settings"
+msgstr ""
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:14:28
+msgid "Netplay Gecko Codes"
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostics_button.messages.ts:4:29
+msgid "Network Diagnostics"
+msgstr ""
+
 #: src/renderer/app/header/header.messages.ts:6:25
 msgid "No Melee ISO file specified"
 msgstr ""
 
+#: src/renderer/components/multi_path_input/multi_path_input.messages.ts:2:39
+msgid "No additional directories added."
+msgstr ""
+
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:5:20
 msgid "No file set"
+msgstr ""
+
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:5:22
+msgid "No folder set"
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:13:20
+msgid "Normal NAT"
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:23:23
+msgid "Not available."
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:31:22
+msgid "Not detected."
+msgstr ""
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:12:19
+msgid "Not found"
+msgstr ""
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:11:35
+msgid "Open settings folder"
+msgstr ""
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/add_codes/add_codes.messages.ts:5:26
+msgid "Paste Gecko Codes"
 msgstr ""
 
 #: src/renderer/app/header/play_button/play_button.messages.ts:2:15
@@ -160,8 +458,47 @@ msgstr ""
 msgid "Playback"
 msgstr ""
 
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:6:26
+msgid "Playback Dolphin"
+msgstr ""
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:9:34
+msgid "Playback Dolphin Settings"
+msgstr ""
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:15:29
+msgid "Playback Gecko Codes"
+msgstr ""
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:14:34
+msgid "Please log in to use this feature."
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:28:30
+msgid "Please try again later."
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:20:5
+msgid ""
+"Please try again later. If the failure persists, this network may block "
+"UDP. In that case it will not be possible to use Slippi as well as many "
+"other online games and apps."
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:22:22
+msgid "Port mapping"
+msgstr ""
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:6:18
+msgid "Premium"
+msgstr ""
+
 #: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:3:19
 msgid "Read more"
+msgstr ""
+
+#: src/renderer/components/multi_path_input/multi_path_input.messages.ts:4:17
+msgid "Remove"
 msgstr ""
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:6:5
@@ -173,6 +510,31 @@ msgstr ""
 #: src/renderer/app/create.messages.ts:3:18
 #: src/renderer/pages/settings/create.messages.ts:4:18
 msgid "Replays"
+msgstr ""
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:16:46
+#. {0} dolphinTypeName: string
+msgid "Reset {0}"
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:5:17
+msgid "Reveal"
+msgstr ""
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:10:16
+msgid "Right"
+msgstr ""
+
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:2:27
+msgid "Root SLP Directory"
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostics_button.messages.ts:2:29
+msgid "Running network diagnostics..."
+msgstr ""
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:2:15
+msgid "Save"
 msgstr ""
 
 #: src/renderer/components/path_input/path_input.messages.ts:2:17
@@ -191,20 +553,96 @@ msgstr ""
 msgid "Show more"
 msgstr ""
 
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:19:20
+msgid "Soft reset"
+msgstr ""
+
 #: src/renderer/app/create.messages.ts:4:19
 msgid "Spectate"
+msgstr ""
+
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:7:32
+msgid "Spectator SLP Directory"
+msgstr ""
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:23:17
+msgid "Stable (Ishiiruka)"
+msgstr ""
+
+#: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:6:25
+msgid "Start Broadcast"
+msgstr ""
+
+#: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:2:17
+msgid "Status"
+msgstr ""
+
+#: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:7:24
+msgid "Stop Broadcast"
+msgstr ""
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:5:20
+msgid "Subscribe"
 msgstr ""
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:8:28
 msgid "Successfully cleared temporary files."
 msgstr ""
 
+#: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:10:29
+msgid "Successfully copied logs to clipboard"
+msgstr ""
+
 #: src/renderer/components/footer/footer.messages.ts:2:24
 msgid "Support Slippi"
 msgstr ""
 
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:15:23
+msgid "Symmetric NAT"
+msgstr ""
+
+#: src/renderer/components/multi_path_input/multi_path_input.messages.ts:6:41
+msgid "That directory is already included."
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:4:5
+msgid ""
+"The best way to get support is to first join the Slippi Discord, then read "
+"the information in the #support-portal channel before posting your issue in "
+"the appropriate support channel for your operating system. Our support "
+"volunteers will try their best to assist you with your problem."
+msgstr ""
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:4:44
+#. {0} codeName: string
+msgid "The code <{0}> will be deleted. This cannot be undone."
+msgstr ""
+
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:8:43
+msgid "The folder where spectated games should be saved."
+msgstr ""
+
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:3:38
+msgid "The folder where your SLP replays should be saved."
+msgstr ""
+
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:3:34
 msgid "The path to an NTSC Melee 1.02 ISO."
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:32:33
+msgid "This is the optimal result."
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:14:31
+msgid ""
+"This is the optimal result. Also known as 'easy', 'full cone', or 'open' "
+"NAT."
+msgstr ""
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:18:70
+#. {0} dolphinTypeName: string
+msgid "This will remove all your {0} settings."
 msgstr ""
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:5:41
@@ -216,12 +654,29 @@ msgstr ""
 msgid "Try again"
 msgstr ""
 
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostics_button.messages.ts:5:21
+msgid "Turn VPN off for best results."
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:27:24
+msgid "UPnP and NAT-PMP."
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:25:15
+msgid "UPnP."
+msgstr ""
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:13:18
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:15:18
 msgid "Unknown"
 msgstr ""
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:17:22
 msgid "Unvalidated"
+msgstr ""
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:8:13
+msgid "Up"
 msgstr ""
 
 #: src/renderer/app/header/play_button/play_button.messages.ts:3:19
@@ -236,8 +691,25 @@ msgstr ""
 msgid "Verifying..."
 msgstr ""
 
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:7:39
+#. {0} versionString: string
+msgid "Version: {0}"
+msgstr ""
+
 #: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:2:24
 msgid "View on Bluesky"
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:34:28
+msgid "You may have trouble connecting to other players."
+msgstr ""
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:17:5
+msgid ""
+"You may have trouble connecting to other players. Also known as 'hard', "
+"'strict', or 'symmetric' NAT. If possible, please check your router "
+"settings to see if this can be changed to 'easy', 'full cone', 'normal', or "
+"'open' NAT."
 msgstr ""
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:3:39
