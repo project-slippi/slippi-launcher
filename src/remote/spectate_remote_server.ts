@@ -10,15 +10,15 @@ import type { AddressInfo } from "net";
 import type { connection } from "websocket";
 import { server as WebSocketServer } from "websocket";
 
-import { ipc_remoteStateEvent } from "./ipc";
+import { ipc_spectateRemoteStateEvent } from "./ipc";
 
 const SPECTATE_PROTOCOL = "spectate-protocol";
-const log = electronLog.scope("remote_server");
+const log = electronLog.scope("spectate_remote_server");
 
-export class RemoteServer {
+export class SpectateRemoteServer {
   private spectateController: SpectateController | null;
   private httpServer: http.Server | null;
-  private remoteServer: WebSocketServer | null;
+  private spectateRemoteServer: WebSocketServer | null;
   private connection: connection | null;
 
   private prefixOrdinal: number;
@@ -30,7 +30,7 @@ export class RemoteServer {
   ) {
     this.spectateController = null;
     this.httpServer = null;
-    this.remoteServer = null;
+    this.spectateRemoteServer = null;
     this.connection = null;
     this.prefixOrdinal = 0;
 
@@ -70,7 +70,7 @@ export class RemoteServer {
     }
     await this.spectateController!.connect(initialAuthToken);
 
-    if (this.httpServer && this.remoteServer) {
+    if (this.httpServer && this.spectateRemoteServer) {
       return (<AddressInfo>this.httpServer.address()).port === port
         ? { success: true }
         : { success: false, err: `server already started on port ${port}` };
@@ -88,14 +88,14 @@ export class RemoteServer {
           511, // default backlog queue length
           () => {
             this.httpServer!.removeAllListeners("error");
-            ipc_remoteStateEvent.main!.trigger({ connected: false, started: true, port }).catch(log.error);
+            ipc_spectateRemoteStateEvent.main!.trigger({ connected: false, started: true, port }).catch(log.error);
             resolve();
           },
         );
       });
 
-      this.remoteServer = new WebSocketServer({ httpServer: this.httpServer });
-      this.remoteServer.on("request", async (request) => {
+      this.spectateRemoteServer = new WebSocketServer({ httpServer: this.httpServer });
+      this.spectateRemoteServer.on("request", async (request) => {
         if (!this.connection && request.requestedProtocols.includes(SPECTATE_PROTOCOL)) {
           const newConnection = request.accept(SPECTATE_PROTOCOL, request.origin);
           const throttledRefresh = throttle(async () => {
@@ -141,10 +141,10 @@ export class RemoteServer {
           });
           newConnection.on("close", () => {
             this.connection = null;
-            ipc_remoteStateEvent.main!.trigger({ connected: false, started: true }).catch(log.error);
+            ipc_spectateRemoteStateEvent.main!.trigger({ connected: false, started: true }).catch(log.error);
           });
           this.connection = newConnection;
-          ipc_remoteStateEvent.main!.trigger({ connected: true, started: true }).catch(log.error);
+          ipc_spectateRemoteStateEvent.main!.trigger({ connected: true, started: true }).catch(log.error);
           this.connection.sendUTF(
             JSON.stringify({
               op: "spectating-broadcasts-event",
@@ -167,16 +167,16 @@ export class RemoteServer {
   }
 
   public stop() {
-    if (this.httpServer && this.remoteServer) {
+    if (this.httpServer && this.spectateRemoteServer) {
       if (this.connection) {
         this.connection.removeAllListeners();
         this.connection = null;
       }
       this.httpServer.close();
       this.httpServer = null;
-      this.remoteServer.shutDown();
-      this.remoteServer = null;
-      ipc_remoteStateEvent.main!.trigger({ connected: false, started: false }).catch(log.error);
+      this.spectateRemoteServer.shutDown();
+      this.spectateRemoteServer = null;
+      ipc_spectateRemoteStateEvent.main!.trigger({ connected: false, started: false }).catch(log.error);
     }
   }
 }

@@ -4,7 +4,7 @@ import {
   ipc_broadcastErrorOccurredEvent,
   ipc_broadcastListUpdatedEvent,
   ipc_broadcastReconnectEvent,
-  ipc_connect,
+  ipc_connectToSpectateServer,
   ipc_dolphinStatusChangedEvent,
   ipc_refreshBroadcastList,
   ipc_slippiStatusChangedEvent,
@@ -60,7 +60,7 @@ const broadcastApi: BroadcastService = {
     return destroy;
   },
   async connect(authToken: string): Promise<void> {
-    await ipc_connect.renderer!.trigger({ authToken });
+    await ipc_connectToSpectateServer.renderer!.trigger({ authToken });
   },
   async refreshBroadcastList(): Promise<void> {
     await ipc_refreshBroadcastList.renderer!.trigger({});

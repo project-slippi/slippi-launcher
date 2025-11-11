@@ -1,5 +1,7 @@
-export type RemoteService = {
-  onState(handle: (connected: boolean, started: boolean, port?: number) => void): () => void;
-  startRemoteServer(authToken: string, port: number): Promise<{ success: boolean; err?: string }>;
-  stopRemoteServer(): Promise<void>;
+export type SpectateRemoteService = {
+  onSpectateRemoteServerStateChange(
+    handle: (state: { connected: boolean; started: boolean; port?: number }) => void,
+  ): () => void;
+  startSpectateRemoteServer(authToken: string, port: number): Promise<{ success: boolean; err?: string }>;
+  stopSpectateRemoteServer(): Promise<void>;
 };

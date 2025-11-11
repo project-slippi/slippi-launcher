@@ -1,7 +1,7 @@
 import broadcastApi from "@broadcast/api";
 import consoleApi from "@console/api";
 import dolphinApi from "@dolphin/api";
-import remoteApi from "@remote/api";
+import spectateRemoteApi from "@remote/api";
 import replaysApi from "@replays/api";
 import settingsApi from "@settings/api";
 import { contextBridge, ipcRenderer, shell } from "electron";
@@ -21,7 +21,7 @@ const api = {
   broadcast: broadcastApi,
   dolphin: dolphinApi,
   replays: replaysApi,
-  remote: remoteApi,
+  remote: spectateRemoteApi,
   utils: {
     isSubdirectory,
   },

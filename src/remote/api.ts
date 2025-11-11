@@ -1,20 +1,20 @@
-import { ipc_remoteStateEvent, ipc_startRemoteServer, ipc_stopRemoteServer } from "./ipc";
-import type { RemoteService } from "./types";
+import { ipc_spectateRemoteStateEvent, ipc_startSpectateRemoteServer, ipc_stopSpectateRemoteServer } from "./ipc";
+import type { SpectateRemoteService } from "./types";
 
-const remoteApi: RemoteService = {
-  onState(handle: (connected: boolean, started: boolean, port?: number) => void) {
-    const { destroy } = ipc_remoteStateEvent.renderer!.handle(async ({ connected, started, port }) => {
-      handle(connected, started, port);
+const spectateRemoteApi: SpectateRemoteService = {
+  onSpectateRemoteServerStateChange(handle: (state: { connected: boolean; started: boolean; port?: number }) => void) {
+    const { destroy } = ipc_spectateRemoteStateEvent.renderer!.handle(async ({ connected, started, port }) => {
+      handle({ connected, started, port });
     });
     return destroy;
   },
-  async startRemoteServer(authToken: string, port: number) {
-    const { result } = await ipc_startRemoteServer.renderer!.trigger({ authToken, port });
+  async startSpectateRemoteServer(authToken: string, port: number) {
+    const { result } = await ipc_startSpectateRemoteServer.renderer!.trigger({ authToken, port });
     return result;
   },
-  async stopRemoteServer() {
-    await ipc_stopRemoteServer.renderer!.trigger({});
+  async stopSpectateRemoteServer() {
+    await ipc_stopSpectateRemoteServer.renderer!.trigger({});
   },
 };
 
-export default remoteApi;
+export default spectateRemoteApi;

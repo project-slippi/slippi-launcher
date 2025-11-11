@@ -14,19 +14,19 @@ const StartStopButton = styled(Button)`
 
 export const WebSocketBlock = React.memo(
   ({
-    remoteServerState,
-    startRemoteServer,
-    stopRemoteServer,
+    spectateRemoteServerState,
+    startSpectateRemoteServer,
+    stopSpectateRemoteServer,
   }: {
-    remoteServerState: { connected: boolean; started: boolean; port: number };
-    startRemoteServer: (port: number) => Promise<{ success: boolean; err?: string }>;
-    stopRemoteServer: () => Promise<void>;
+    spectateRemoteServerState: { connected: boolean; started: boolean; port: number };
+    startSpectateRemoteServer: (port: number) => Promise<{ success: boolean; err?: string }>;
+    stopSpectateRemoteServer: () => Promise<void>;
   }) => {
     const [startError, setStartError] = React.useState("");
 
     const [portError, setPortError] = React.useState(false);
-    const [chosenPort, setChosenPort] = React.useState(remoteServerState.port || 49809);
-    const address = "ws://127.0.0.1:" + remoteServerState.port;
+    const [chosenPort, setChosenPort] = React.useState(spectateRemoteServerState.port || 49809);
+    const address = "ws://127.0.0.1:" + spectateRemoteServerState.port;
 
     const [copied, setCopied] = React.useState(false);
     const onCopy = React.useCallback(() => {
@@ -42,7 +42,7 @@ export const WebSocketBlock = React.memo(
     const [starting, setStarting] = React.useState(false);
     const onStart = async () => {
       setStarting(true);
-      const { success, err } = await startRemoteServer(chosenPort);
+      const { success, err } = await startSpectateRemoteServer(chosenPort);
       if (!success && err) {
         setStartError(err);
       } else {
@@ -51,13 +51,13 @@ export const WebSocketBlock = React.memo(
       setStarting(false);
     };
     const onStop = async () => {
-      await stopRemoteServer();
+      await stopSpectateRemoteServer();
     };
 
     let status = "";
-    if (remoteServerState.connected && remoteServerState.started) {
+    if (spectateRemoteServerState.connected && spectateRemoteServerState.started) {
       status = "Connected";
-    } else if (remoteServerState.started) {
+    } else if (spectateRemoteServerState.started) {
       status = "Started";
     } else if (starting) {
       status = "Starting...";
@@ -100,7 +100,7 @@ export const WebSocketBlock = React.memo(
             margin-bottom: 14px;
           `}
         >
-          {remoteServerState.started ? (
+          {spectateRemoteServerState.started ? (
             <>
               <InputBase
                 css={css`
@@ -137,7 +137,7 @@ export const WebSocketBlock = React.memo(
             />
           )}
         </div>
-        {remoteServerState.started ? (
+        {spectateRemoteServerState.started ? (
           <StartStopButton variant="outlined" color="secondary" onClick={onStop}>
             Stop Server
           </StartStopButton>

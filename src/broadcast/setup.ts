@@ -8,7 +8,7 @@ import log from "electron-log";
 import type { BroadcastWorker } from "./broadcast.worker.interface";
 import { createBroadcastWorker } from "./broadcast.worker.interface";
 import {
-  ipc_connect,
+  ipc_connectToSpectateServer,
   ipc_refreshBroadcastList,
   ipc_startBroadcast,
   ipc_stopBroadcast,
@@ -41,7 +41,7 @@ export default function setupBroadcastIpc({
       }
     });
 
-  ipc_connect.main!.handle(async ({ authToken }) => {
+  ipc_connectToSpectateServer.main!.handle(async ({ authToken }) => {
     if (!spectateWorker) {
       spectateWorker = await createSpectateWorker(dolphinManager);
     }

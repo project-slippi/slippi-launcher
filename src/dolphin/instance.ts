@@ -1,5 +1,6 @@
 import type { ChildProcess } from "child_process";
 import { execFile, spawn } from "child_process";
+import { delay } from "common/delay";
 import { randomBytes } from "crypto";
 import { app } from "electron";
 import electronLog from "electron-log";
@@ -111,6 +112,22 @@ export class PlaybackDolphinInstance extends DolphinInstance {
     });
   }
 
+  private async writeCommsFile(options: ReplayCommunication) {
+    // Playback Slippi Dolphin can't pick up comms file changes within the same second, so
+    // defer writing comms file if it's been less than 1 second since last write.
+    //
+    // However this will only work if only one invocation comes 'early'.
+    // If 2 or more invocations happen within a second after the last,
+    // they will all be deferred to approximately the same time.
+    // I don't think it's deterministic which one will go first (and therefore succeed).
+    const diff = Date.now() - this.lastWriteMs;
+    if (diff < 1000) {
+      await delay(1000 - diff);
+    }
+    await fs.writeFile(this.commPath, JSON.stringify(options));
+    this.lastWriteMs = Date.now();
+  }
+
   /***
    * Starts Dolphin with the specified replay communication options
    */
@@ -120,27 +137,7 @@ export class PlaybackDolphinInstance extends DolphinInstance {
       options.commandId = Math.random().toString(36).slice(2);
     }
 
-    // defer writing comms file if it's been less than 1 second since last write
-    // however this will only work if only one invocation comes 'early'
-    // if 2 or more invocations happen within a second after the last,
-    // they will all be deferred to approximately the same time.
-    // I don't think it's deterministic which one will go first (and therefore succeed).
-    const diff = Date.now() - this.lastWriteMs;
-    if (diff < 1000) {
-      await new Promise<void>((resolve, reject) => {
-        setTimeout(async () => {
-          try {
-            await fs.writeFile(this.commPath, JSON.stringify(options));
-            resolve();
-          } catch (e: any) {
-            reject(e);
-          }
-        }, 1000 - diff);
-      });
-    } else {
-      await fs.writeFile(this.commPath, JSON.stringify(options));
-    }
-    this.lastWriteMs = Date.now();
+    await this.writeCommsFile(options);
 
     if (!this.process) {
       const params: string[] = [];

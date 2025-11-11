@@ -21,19 +21,19 @@ export const SpectatePage = React.memo(
   ({
     userId,
     broadcasts,
-    remoteServerState,
+    spectateRemoteServerState,
     onRefreshBroadcasts,
     watchBroadcast,
-    startRemoteServer,
-    stopRemoteServer,
+    startSpectateRemoteServer,
+    stopSpectateRemoteServer,
   }: {
     userId?: string;
     broadcasts: BroadcasterItem[];
-    remoteServerState: { connected: boolean; started: boolean; port: number };
+    spectateRemoteServerState: { connected: boolean; started: boolean; port: number };
     onRefreshBroadcasts: () => void;
     watchBroadcast: (id: string) => void;
-    startRemoteServer: (port: number) => Promise<{ success: boolean; err?: string }>;
-    stopRemoteServer: () => Promise<void>;
+    startSpectateRemoteServer: (port: number) => Promise<{ success: boolean; err?: string }>;
+    stopSpectateRemoteServer: () => Promise<void>;
   }) => {
     if (!userId) {
       return <IconMessage Icon={AccountCircleIcon} label="You must be logged in to use this feature" />;
@@ -102,9 +102,9 @@ export const SpectatePage = React.memo(
                 <SpectatorIdBlock userId={userId} />
                 <ShareGameplayBlock />
                 <WebSocketBlock
-                  remoteServerState={remoteServerState}
-                  startRemoteServer={startRemoteServer}
-                  stopRemoteServer={stopRemoteServer}
+                  spectateRemoteServerState={spectateRemoteServerState}
+                  startSpectateRemoteServer={startSpectateRemoteServer}
+                  stopSpectateRemoteServer={stopSpectateRemoteServer}
                 />
               </div>
             }
