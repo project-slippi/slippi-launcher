@@ -10,11 +10,15 @@ import { SupportBox } from "./support_box";
 
 export const HelpPage = React.memo(() => {
   return (
-    <div>
+    <div
+      css={css`
+        padding-bottom: 80px;
+      `}
+    >
       <div
         css={css`
-          margin-top: 10px;
-          margin-bottom: 40px;
+          padding-top: 10px;
+          padding-bottom: 20px;
         `}
       >
         <SupportBox />
@@ -25,7 +29,11 @@ export const HelpPage = React.memo(() => {
           content={faqMarkdown}
           css={css`
             border-radius: 10px;
-            padding: 10px 20px;
+            padding-top: 10px;
+            padding-bottom: 50px;
+            padding-left: 20px;
+            padding-right: 20px;
+
             * {
               color: #bbb;
             }
