@@ -21,6 +21,8 @@ import { colors } from "@/styles/colors";
 import { platformTitleBarStyles } from "@/styles/platform_title_bar_styles";
 import { withSlippiBackground } from "@/styles/with_slippi_background";
 
+import { SettingsPageMessages as Messages } from "./settings_page.messages";
+
 const Outer = styled.div`
   position: relative;
   display: flex;
@@ -135,7 +137,7 @@ export const SettingsPage = React.memo(({ settings }: { settings: SettingSection
           </ContentColumn>
         }
       />
-      <Tooltip title="Close">
+      <Tooltip title={Messages.close()}>
         <CloseButton onClick={close}>
           <CloseIcon />
         </CloseButton>
