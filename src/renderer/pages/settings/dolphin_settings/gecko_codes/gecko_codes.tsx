@@ -8,6 +8,7 @@ import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 
 import { AddCodesContainer } from "./add_codes/add_codes.container";
+import { GeckoCodesMessages as Messages } from "./gecko_codes.messages";
 import { ManageCodesContainer } from "./manage_codes/manage_codes.container";
 import { TabbedDialog } from "./tabbed_dialog";
 
@@ -26,14 +27,15 @@ export const GeckoCodes = ({ dolphinType, disabled }: { dolphinType: DolphinLaun
     try {
       const geckoCodes = await readGeckoCodes(dolphinType);
       if (!geckoCodes) {
-        showError("Failed to read gecko codes");
+        showError(Messages.failedToReadGeckoCodes());
         return;
       }
 
       setGeckoCodes(geckoCodes);
       setGeckoFormOpen(true);
     } catch (err) {
-      showError(`Error reading gecko codes: ${err}`);
+      const errorMessage = err instanceof Error ? err.message : JSON.stringify(err);
+      showError(Messages.errorReadingGeckoCodes(errorMessage));
     } finally {
       setIsLoading(false);
     }
@@ -45,7 +47,8 @@ export const GeckoCodes = ({ dolphinType, disabled }: { dolphinType: DolphinLaun
         await saveGeckoCodes(dolphinType, geckoCodesToSave);
         setGeckoCodes(geckoCodesToSave);
       } catch (err) {
-        showError(`Error saving gecko codes: ${err}`);
+        const errorMessage = err instanceof Error ? err.message : JSON.stringify(err);
+        showError(Messages.errorSavingGeckoCodes(errorMessage));
       }
     },
     [dolphinType, saveGeckoCodes, showError],
@@ -69,11 +72,11 @@ export const GeckoCodes = ({ dolphinType, disabled }: { dolphinType: DolphinLaun
     );
     return [
       {
-        name: "Manage",
+        name: Messages.manage(),
         Component: managePage,
       },
       {
-        name: "Add",
+        name: Messages.add(),
         Component: addPage,
       },
     ];
@@ -82,7 +85,7 @@ export const GeckoCodes = ({ dolphinType, disabled }: { dolphinType: DolphinLaun
   return (
     <>
       <Button variant="contained" color="secondary" onClick={openCodes} disabled={disabled || isLoading}>
-        Manage Gecko Codes
+        {Messages.manageGeckoCodes()}
       </Button>
       <TabbedDialog
         open={geckoFormOpen}

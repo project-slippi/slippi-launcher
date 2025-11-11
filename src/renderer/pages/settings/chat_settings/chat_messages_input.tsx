@@ -9,13 +9,13 @@ import type { SelectChangeEvent } from "@mui/material/Select";
 import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
 import log from "electron-log";
-import capitalize from "lodash/capitalize";
 import orderBy from "lodash/orderBy";
 import type { MouseEventHandler } from "react";
 import React, { useState } from "react";
 
 import type { AvailableMessageType } from "@/services/slippi/types";
 
+import { ChatSettingsMessages as Messages } from "./chat_settings.messages";
 import { defaultMessages } from "./default_chat_messages";
 import { DpadDirection } from "./dpad_direction";
 
@@ -39,7 +39,7 @@ const genChatMessageItem = (
   if (isDefault) {
     adornment = (
       <Typography fontSize="12px" color="#FFFFFFB0" marginRight="6px" padding="4px 8px">
-        Default
+        {Messages.default()}
       </Typography>
     );
   } else if (isPaid && isHovered && user.subLevel === "NONE") {
@@ -61,7 +61,7 @@ const genChatMessageItem = (
       >
         <LockOpenIcon fontSize="inherit" />
         <Typography fontSize="12px" color="#1B0B28" fontWeight="500">
-          Subscribe
+          {Messages.subscribe()}
         </Typography>
       </div>
     );
@@ -82,7 +82,7 @@ const genChatMessageItem = (
       >
         <AutoAwesomeIcon fontSize="inherit" />
         <Typography fontSize="12px" color="#b984bb" fontWeight="bold">
-          Premium
+          {Messages.premium()}
         </Typography>
       </div>
     );
@@ -247,6 +247,19 @@ const ChatMessageSelector = ({
   );
 };
 
+const getChatGroupTitle = (direction: "up" | "left" | "right" | "down") => {
+  switch (direction) {
+    case "up":
+      return Messages.up();
+    case "left":
+      return Messages.left();
+    case "right":
+      return Messages.right();
+    case "down":
+      return Messages.down();
+  }
+};
+
 type ChatMessagesSectionProps = {
   direction: "up" | "left" | "right" | "down";
   messages: string[];
@@ -273,7 +286,7 @@ const ChatMessagesSection = ({
       `}
     >
       <Typography fontSize={15} color="#FFFFFFAA" marginBottom="5px">
-        Chat Group: {capitalize(direction)}
+        {Messages.chatGroup(getChatGroupTitle(direction))}
       </Typography>
       <ChatMessageSelector
         groupDirection={direction}

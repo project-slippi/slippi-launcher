@@ -1,4 +1,9 @@
+import type { FormatOptions } from "date-fns";
 import { format, intervalToDuration } from "date-fns";
+import type { Locale } from "date-fns/locale";
+import { es, ja } from "date-fns/locale";
+
+import type { SupportedLanguage } from "@/services/i18n/util";
 
 export function convertFrameCountToDurationString(frameCount: number, format: "short" | "long" = "short"): string {
   const duration = intervalToDuration({ start: 0, end: ((frameCount + 123) / 60) * 1000 });
@@ -15,8 +20,8 @@ export function convertFrameCountToDurationString(frameCount: number, format: "s
   }
 }
 
-export function monthDayHourFormat(date: Date): string {
-  return format(date, "PP · p");
+export function monthDayHourFormat(date: Date, options?: FormatOptions): string {
+  return format(date, "PP · p", options);
 }
 
 const formatDistanceLocale: Record<string, string> = {
@@ -38,3 +43,15 @@ export const shortEnLocale = {
     return "";
   },
 };
+
+export function getLocale(language: SupportedLanguage): Locale | undefined {
+  switch (language) {
+    case "es":
+      return es;
+    case "ja":
+      return ja;
+    case "en":
+      return undefined;
+    // Intentionally do not use a default case here catch errors when a new language is supported
+  }
+}

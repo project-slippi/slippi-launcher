@@ -8,6 +8,8 @@ import { useState } from "react";
 import { useSettings } from "@/lib/hooks/use_settings";
 import { useToasts } from "@/lib/hooks/use_toasts";
 
+import { MultiPathInputMessages as Messages } from "./multi_path_input.messages";
+
 const { isSubdirectory } = window.electron.utils;
 
 type MultiPathInputProps = {
@@ -25,12 +27,12 @@ export const MultiPathInput = ({ paths, updatePaths, options }: MultiPathInputPr
       showError(description);
     };
     if (paths.includes(newPath)) {
-      addErrorToast("That directory is already included.");
+      addErrorToast(Messages.thatDirectoryIsAlreadyIncluded());
       return false;
     }
 
     if (isSubdirectory(rootFolder, newPath)) {
-      addErrorToast("Cannot add sub directories of the Root SLP Directory.");
+      addErrorToast(Messages.cannotAddSubdirectoriesOfRoot());
       return false;
     }
 
@@ -38,7 +40,7 @@ export const MultiPathInput = ({ paths, updatePaths, options }: MultiPathInputPr
     for (let i = 0; i < pathsToCheck.length; i++) {
       const path = pathsToCheck[i];
       if (isSubdirectory(path, newPath)) {
-        addErrorToast("Cannot add sub directories of the Root SLP Directory.");
+        addErrorToast(Messages.cannotAddSubdirectoriesOfRoot());
         return false;
       } else if (isSubdirectory(newPath, path)) {
         updatePaths(pathsToCheck.splice(i, 1));
@@ -124,7 +126,7 @@ export const MultiPathInput = ({ paths, updatePaths, options }: MultiPathInputPr
             opacity: 0.7;
           `}
         >
-          No additional directories added.
+          {Messages.noAdditionalDirectoriesAdded()}
         </div>
       )}
       <div
@@ -133,7 +135,7 @@ export const MultiPathInput = ({ paths, updatePaths, options }: MultiPathInputPr
         `}
       >
         <Button color="secondary" variant="contained" onClick={onAddClick}>
-          Add
+          {Messages.add()}
         </Button>
         <Button
           color="secondary"
@@ -144,7 +146,7 @@ export const MultiPathInput = ({ paths, updatePaths, options }: MultiPathInputPr
             margin-left: 10px;
           `}
         >
-          Remove
+          {Messages.remove()}
         </Button>
       </div>
     </div>

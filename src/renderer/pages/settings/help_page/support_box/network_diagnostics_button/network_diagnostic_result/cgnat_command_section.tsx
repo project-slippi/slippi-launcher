@@ -4,6 +4,8 @@ import Typography from "@mui/material/Typography";
 import * as stylex from "@stylexjs/stylex";
 import React from "react";
 
+import { NetworkDiagnosticsResultMessages as Messages } from "./network_diagnostics_result.messages";
+0;
 const hiddenIpAddress = "···.···.···.···";
 
 const styles = stylex.create({
@@ -55,15 +57,13 @@ export const CgnatCommandSection = ({ address }: CgnatCommandSectionProps) => {
       <div {...stylex.props(styles.alignCenterDiv)}>
         <InputBase disabled={true} value={displayedCgnatCommand} {...stylex.props(styles.cgnatCmd)} />
         <Button variant="contained" color="secondary" onClick={onCgnatCommandShowHide} {...stylex.props(styles.button)}>
-          {cgnatCommandHidden ? "Reveal" : "Hide"}
+          {cgnatCommandHidden ? Messages.reveal() : Messages.hide()}
         </Button>
         <Button variant="contained" color="secondary" onClick={onCgnatCommandCopy} {...stylex.props(styles.button)}>
-          {cgnatCommandCopied ? "Copied!" : "Copy"}
+          {cgnatCommandCopied ? Messages.copied() : Messages.copy()}
         </Button>
       </div>
-      <div {...stylex.props(styles.body)}>
-        More than one hop to your external IP address indicates CGNAT or Double NAT (or VPN).
-      </div>
+      <div {...stylex.props(styles.body)}>{Messages.cgnatOrDoubleNatDescription()}</div>
     </div>
   );
 };

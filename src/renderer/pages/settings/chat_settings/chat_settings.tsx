@@ -6,6 +6,7 @@ import { useAccount } from "@/lib/hooks/use_account";
 import { SettingItem } from "../setting_item_section";
 import { ChatMessagesFooter } from "./chat_messages_footer";
 import { ChatMessagesInput } from "./chat_messages_input";
+import { ChatSettingsMessages as Messages } from "./chat_settings.messages";
 import { useChatMessages } from "./use_chat_messages";
 
 export const ChatSettings = React.memo(() => {
@@ -61,7 +62,7 @@ export const ChatSettings = React.memo(() => {
         min-width: 450px;
       `}
     >
-      <SettingItem name="Chat Messages" description="Chat messages to use for netplay">
+      <SettingItem name={Messages.chatMessages()} description={Messages.chatMessagesDescription()}>
         {user ? (
           <ChatMessagesInput
             messages={localMessages}
@@ -70,7 +71,7 @@ export const ChatSettings = React.memo(() => {
             user={{ uid: user.uid, subLevel }}
           />
         ) : (
-          <div>Please log in to use this feature.</div>
+          <div>{Messages.pleaseLoginToUseFeature()}</div>
         )}
         {footer}
       </SettingItem>

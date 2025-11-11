@@ -4,6 +4,8 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import { Controller, useForm } from "react-hook-form";
 
+import { AddCodesMessages as Messages } from "./add_codes.messages";
+
 export const AddCodes = ({
   validateCodeInput,
   onSubmit,
@@ -56,7 +58,7 @@ export const AddCodes = ({
                     <TextField
                       {...field}
                       type="textarea"
-                      label="Paste Gecko Codes"
+                      label={Messages.pasteGeckoCodes()}
                       variant="filled"
                       margin="normal"
                       rows="20"
@@ -79,7 +81,7 @@ export const AddCodes = ({
           />
         </div>
         <Button type="submit" fullWidth={true} variant="contained" color="secondary">
-          Add
+          {Messages.add()}
         </Button>
       </div>
     </form>

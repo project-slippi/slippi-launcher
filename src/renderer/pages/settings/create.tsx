@@ -1,4 +1,5 @@
 import { AdvancedAppSettings } from "./advanced_app_settings/advanced_app_settings";
+import { AppearanceSettings } from "./appearance_settings/appearance_settings";
 import { ChatSettings } from "./chat_settings/chat_settings";
 import { SettingsCreateMessages as Messages } from "./create.messages";
 import { NetplayDolphinSettings } from "./dolphin_settings/netplay_dolphin_settings";
@@ -49,6 +50,11 @@ export function createSettingsPage(): { Page: React.ComponentType } {
     {
       title: () => Messages.appSettings(),
       items: [
+        {
+          name: () => Messages.appearance(),
+          path: "appearance-settings",
+          component: <AppearanceSettings />,
+        },
         {
           name: () => Messages.advanced(),
           path: "advanced-settings",

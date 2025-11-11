@@ -11,6 +11,8 @@ import React from "react";
 
 import { ConfirmationModal } from "@/components/confirmation_modal";
 
+import { ManageCodesMessages as Messages } from "./manage_codes.messages";
+
 export type GeckoCode = {
   name: string;
   enabled: boolean;
@@ -50,14 +52,14 @@ export const ManageCodes = <T extends GeckoCode>({
 
       {codeToDelete && (
         <ConfirmationModal
-          title="Are you sure you want to delete this code?"
-          confirmText="Delete"
+          title={Messages.areYouSure()}
+          confirmText={Messages.delete()}
           open={codeToDelete !== undefined}
           onClose={() => setCodeToDelete(undefined)}
           onSubmit={() => handleDelete(codeToDelete)}
           fullWidth={false}
         >
-          The code &lt;{codeToDelete.name}&gt; will be deleted. This cannot be undone.
+          {Messages.codeWillBeDeleted(codeToDelete.name)}
         </ConfirmationModal>
       )}
     </>
@@ -120,13 +122,13 @@ const GeckoCodeListItem = React.memo(function GeckoCodeListItem({
         `}
       >
         {canBeDeleted && (
-          <Tooltip title="Delete Code">
+          <Tooltip title={Messages.deleteCode()}>
             <IconButton onClick={onDelete}>
               <DeleteOutlineIcon />
             </IconButton>
           </Tooltip>
         )}
-        <Tooltip title="Copy to Clipboard">
+        <Tooltip title={Messages.copyToClipboard()}>
           <IconButton onClick={onCopy}>
             <ContentCopyIcon />
           </IconButton>

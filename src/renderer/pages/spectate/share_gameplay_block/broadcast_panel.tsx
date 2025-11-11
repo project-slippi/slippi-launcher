@@ -5,9 +5,13 @@ import { ConnectionStatus } from "@slippi/slippi-js";
 import { formatDuration, intervalToDuration } from "date-fns";
 import React from "react";
 import TimeAgo from "react-timeago";
+// eslint-disable-next-line import/no-unresolved
+import { makeIntlFormatter } from "react-timeago/defaultFormatter";
 
+import { useAppStore } from "@/lib/hooks/use_app_store";
 import { colors } from "@/styles/colors";
 
+import { BroadcastPanelMessages as Messages } from "./broadcast_panel.messages";
 import { StartBroadcastDialog } from "./start_broadcast_dialog";
 
 type BroadcastPanelProps = {
@@ -31,6 +35,15 @@ export const BroadcastPanel = ({
   const isDisconnected =
     slippiServerStatus === ConnectionStatus.DISCONNECTED && dolphinStatus === ConnectionStatus.DISCONNECTED;
   const isConnected = slippiServerStatus === ConnectionStatus.CONNECTED && dolphinStatus === ConnectionStatus.CONNECTED;
+
+  const currentLanguage = useAppStore((store) => store.currentLanguage);
+  const intlFormatter = React.useMemo(
+    () =>
+      makeIntlFormatter({
+        locale: currentLanguage,
+      }),
+    [currentLanguage],
+  );
 
   const broadcastDuration =
     startTime && endTime
@@ -67,18 +80,18 @@ export const BroadcastPanel = ({
               margin-right: 10px;
             `}
           >
-            Status
+            {Messages.status()}
           </span>
-          {isConnected ? "Connected" : isDisconnected ? "Disconnected" : "Connecting"}
+          {isConnected ? Messages.connected() : isDisconnected ? Messages.disconnected() : Messages.connecting()}
         </div>
         <div css={css``}>
           {isDisconnected ? (
             <ConnectButton variant="contained" color="primary" onClick={() => setModalOpen(true)}>
-              Start Broadcast
+              {Messages.startBroadcast()}
             </ConnectButton>
           ) : (
             <ConnectButton variant="outlined" color="secondary" onClick={onDisconnect}>
-              Stop Broadcast
+              {Messages.stopBroadcast()}
             </ConnectButton>
           )}
         </div>
@@ -92,10 +105,10 @@ export const BroadcastPanel = ({
       >
         {isConnected && startTime !== null && (
           <div>
-            Broadcast started <TimeAgo date={startTime} />
+            {Messages.broadcastStarted()} <TimeAgo date={startTime} formatter={intlFormatter} />
           </div>
         )}
-        {isDisconnected && broadcastDuration && <div>Broadcast ended after {formatDuration(broadcastDuration)}</div>}
+        {isDisconnected && broadcastDuration && <div>{Messages.broadcastEnded(formatDuration(broadcastDuration))}</div>}
       </div>
       <StartBroadcastDialog open={modalOpen} onClose={() => setModalOpen(false)} onSubmit={onStartBroadcast} />
     </div>

@@ -11,7 +11,8 @@ import { useToasts } from "@/lib/hooks/use_toasts";
 import { ReactComponent as DiscordIcon } from "@/styles/images/discord.svg";
 import { colors } from "@/styles/tokens.stylex";
 
-import { NetworkDiagnosticsButton } from "./network_diagnostics/network_diagnostics_button";
+import { NetworkDiagnosticsButton } from "./network_diagnostics_button/network_diagnostics_button";
+import { SupportBoxMessages as Messages } from "./support_box.messages";
 
 const styles = stylex.create({
   container: {
@@ -42,7 +43,7 @@ export const SupportBox = () => {
     window.electron.common
       .copyLogsToClipboard()
       .then(() => {
-        showSuccess("Successfully copied logs to clipboard");
+        showSuccess(Messages.successfullyCopied());
       })
       .catch((err) => {
         log.error(err);
@@ -54,18 +55,9 @@ export const SupportBox = () => {
     <div {...stylex.props(styles.container)}>
       <h2 {...stylex.props(styles.iconContainer)}>
         <LiveHelpIcon {...stylex.props(styles.helpIcon)} />
-        Need help?
+        {Messages.needHelp()}
       </h2>
-      <div>
-        The best way to get support is to first{" "}
-        <A title={socials.discordUrl} href={socials.discordUrl} {...stylex.props(styles.link)}>
-          join the Slippi Discord
-        </A>
-        , then read the information in the <b>#support-portal</b> channel before posting your issue in the appropriate
-        support channel for your operating system. Our support volunteers will try their best to assist you with your
-        problem.
-      </div>
-
+      <div>{Messages.bestWayToGetSupport()}</div>
       <div
         css={css`
           margin-top: 5px;
@@ -82,12 +74,12 @@ export const SupportBox = () => {
             startIcon={<DiscordIcon fill={colors.purpleLighter} style={{ height: 18, width: 18 }} />}
             href={socials.discordUrl}
           >
-            Join the Discord
+            {Messages.joinDiscord()}
           </Button>
         </div>
         <div>
           <Button startIcon={<FileCopyIcon />} onClick={onCopy}>
-            Copy logs
+            {Messages.copyLogs()}
           </Button>
         </div>
         <div>

@@ -2,6 +2,7 @@ import type { GeckoCode } from "@dolphin/config/gecko_code";
 import { parseGeckoCodes } from "@dolphin/config/gecko_code";
 
 import { AddCodes } from "./add_codes";
+import { AddCodesMessages as Messages } from "./add_codes.messages";
 
 export const AddCodesContainer = ({
   existingGeckoCodeNames = [],
@@ -27,14 +28,14 @@ const validateGeckoCode = (codeInput: string, existingGeckoCodeNames: string[] =
   // Attempt to parse the code lines as gecko codes
   const parsedCodes: GeckoCode[] = parseGeckoCodes(codeInput.split("\n"));
   if (parsedCodes.length === 0) {
-    return "Invalid Gecko code";
+    return Messages.invalidGeckoCode();
   }
 
   for (const newCode of parsedCodes) {
     if (newCode.name.trim().length === 0) {
-      return "Name is required";
+      return Messages.nameRequired();
     } else if (existingGeckoCodeNames.includes(newCode.name)) {
-      return "Duplicate code name";
+      return Messages.duplicateCodeName();
     }
   }
 

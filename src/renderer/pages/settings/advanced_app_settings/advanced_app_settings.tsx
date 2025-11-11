@@ -7,14 +7,12 @@ import { useToasts } from "@/lib/hooks/use_toasts";
 
 import { SettingItem } from "../setting_item_section";
 import { AdvancedAppSettingsMessages as Messages } from "./advanced_app_settings.messages";
-import { LanguageSelector } from "./language_selector/language_selector";
 
 export const AdvancedAppSettings = React.memo(() => {
   const [autoUpdateLauncher, setAutoUpdateLauncher] = useAutoUpdateLauncher();
 
   return (
     <div>
-      <LanguageSelector />
       <SettingItem name="">
         <Toggle
           value={autoUpdateLauncher}
