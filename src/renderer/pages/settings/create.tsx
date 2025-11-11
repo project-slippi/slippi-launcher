@@ -1,11 +1,11 @@
 import { AdvancedAppSettings } from "./advanced_app_settings/advanced_app_settings";
+import { AppearanceSettings } from "./appearance_settings/appearance_settings";
 import { ChatSettings } from "./chat_settings/chat_settings";
 import { SettingsCreateMessages as Messages } from "./create.messages";
 import { NetplayDolphinSettings } from "./dolphin_settings/netplay_dolphin_settings";
 import { PlaybackDolphinSettings } from "./dolphin_settings/playback_dolphin_settings";
 import { GameSettings } from "./game_settings/game_settings";
 import { HelpPage } from "./help_page/help_page";
-import { LanguageSettings } from "./language_settings/language_settings";
 import { ReplaySettings } from "./replay_settings/replay_settings";
 import { SettingsPage } from "./settings_page";
 import type { SettingSection } from "./types";
@@ -51,9 +51,9 @@ export function createSettingsPage(): { Page: React.ComponentType } {
       title: () => Messages.appSettings(),
       items: [
         {
-          name: () => Messages.language(),
-          path: "language-settings",
-          component: <LanguageSettings />,
+          name: () => Messages.appearance(),
+          path: "appearance-settings",
+          component: <AppearanceSettings />,
         },
         {
           name: () => Messages.advanced(),
