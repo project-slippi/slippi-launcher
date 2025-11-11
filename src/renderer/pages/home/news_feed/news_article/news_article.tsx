@@ -84,7 +84,7 @@ export const NewsArticle = React.memo(function NewsArticle({ item }: { item: New
         </CardContent>
         <CardActions disableSpacing={true}>
           <Tooltip title={localDateString}>
-            <div {...stylex.props(styles.dateInfo)}>{timeAgo}</div>
+            <div {...stylex.props(styles.dateInfo)}>{Messages.posted(timeAgo)}</div>
           </Tooltip>
           <Button LinkComponent={ExternalLink} size="small" color="primary" href={permalink}>
             {isBluesky ? Messages.viewOnBluesky() : Messages.readMore()}
