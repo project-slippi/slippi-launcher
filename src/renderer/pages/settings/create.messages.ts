@@ -7,6 +7,7 @@ export const SettingsCreateMessages = {
   netplay: () => "Netplay",
   playback: () => "Playback",
   appSettings: () => "App Settings",
+  language: () => "Language",
   advanced: () => "Advanced",
   help: () => "Help",
 };
