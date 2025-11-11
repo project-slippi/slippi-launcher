@@ -7,7 +7,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0\n"
 "x-generator: i18next-auto-keys CLI\n"
 "Language: ja-JP\n"
-"PO-Revision-Date: 2025-11-11T13:39:43.635Z\n"
+"PO-Revision-Date: 2025-11-11T13:56:58.049Z\n"
 
 #: src/renderer/components/multi_path_input/multi_path_input.messages.ts:3:14
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/add_codes/add_codes.messages.ts:6:14
@@ -19,17 +19,21 @@ msgstr ""
 msgid "Additional SLP Directories"
 msgstr ""
 
-#: src/renderer/pages/settings/create.messages.ts:10:19
+#: src/renderer/pages/settings/create.messages.ts:11:19
 msgid "Advanced"
 msgstr "詳細"
 
-#: src/renderer/pages/settings/advanced_app_settings/language_selector/language_selector.messages.ts:2:22
+#: src/renderer/pages/settings/appearance_settings/language_selector/language_selector.messages.ts:2:22
 msgid "App Language"
 msgstr "言語"
 
 #: src/renderer/pages/settings/create.messages.ts:9:22
 msgid "App Settings"
 msgstr "アプリ設定"
+
+#: src/renderer/pages/settings/create.messages.ts:10:21
+msgid "Appearance"
+msgstr ""
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:5:21
 msgid "Are you sure you want to delete this code?"
@@ -284,7 +288,7 @@ msgstr "一般設定"
 msgid "Hard reset"
 msgstr ""
 
-#: src/renderer/pages/settings/create.messages.ts:11:15
+#: src/renderer/pages/settings/create.messages.ts:12:15
 msgid "Help"
 msgstr "ヘルプ"
 
@@ -490,6 +494,11 @@ msgstr ""
 msgid "Port mapping"
 msgstr ""
 
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:4:32
+#. {0} timeAgo: string
+msgid "Posted {0}"
+msgstr ""
+
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:6:18
 msgid "Premium"
 msgstr ""
@@ -542,7 +551,7 @@ msgstr ""
 msgid "Select"
 msgstr "選択"
 
-#: src/renderer/pages/settings/advanced_app_settings/language_selector/language_selector.messages.ts:3:33
+#: src/renderer/pages/settings/appearance_settings/language_selector/language_selector.messages.ts:3:33
 msgid "Select your preferred language for the app."
 msgstr "アプリの使用言語を選択"
 
