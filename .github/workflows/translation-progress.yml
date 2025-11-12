@@ -38,8 +38,10 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Display translation percentage
+      - name: Display updated translation percentage
         run: |
+          yarn run i18n:extract
+          yarn run i18n:sync
           yarn run i18n:status
 
       - name: Calculate translation percentage
@@ -52,8 +54,9 @@ jobs:
     needs: calculate-translation
     runs-on: ubuntu-latest
     steps:
-      - name: Cache previous badge JSON
-        uses: actions/cache@v4
+      - name: Restore previous badge JSON
+        uses: actions/cache/restore@v4
+        id: cache-restore
         with:
           path: previous-badge.json
           key: translation-badge-json-latest
@@ -61,6 +64,7 @@ jobs:
             translation-badge-json-latest
 
       - name: Build and conditionally publish badge JSON
+        id: badge-update
         env:
           TRANSLATION_PCT: ${{ needs.calculate-translation.outputs.translation_pct }}
         run: |
@@ -88,6 +92,7 @@ jobs:
           # Check if badge JSON has changed
           if [ -f "previous-badge.json" ] && cmp -s "current-badge.json" "previous-badge.json"; then
             echo "Badge JSON unchanged - skipping API call to avoid rate limits"
+            echo "badge_updated=false" >> $GITHUB_OUTPUT
           else
             echo "Badge JSON changed - updating via API"
 
@@ -103,5 +108,12 @@ jobs:
             # Update cache for next run
             cp current-badge.json previous-badge.json
             echo "Badge updated successfully"
+            echo "badge_updated=true" >> $GITHUB_OUTPUT
           fi
 
+      - name: Save updated badge JSON to cache
+        if: steps.cache-restore.outputs.cache-hit != 'true' || steps.badge-update.outputs.badge_updated == 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: previous-badge.json
+          key: translation-badge-json-latest
