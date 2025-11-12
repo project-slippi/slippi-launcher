@@ -15,7 +15,7 @@ This repository is part of the Project Slippi ecosystem. For more information ab
 These are the applications you will need to install in order to build this project:
 
 - [Git](https://git-scm.com/downloads)
-- [Node v16+](https://nodejs.org/en/)
+- [Node v20+](https://nodejs.org/en/)
 - [Yarn](https://yarnpkg.com/getting-started/install)
 
 ### Build Steps
