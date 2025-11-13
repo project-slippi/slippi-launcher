@@ -73,7 +73,7 @@ export type BroadcastService = {
   onDolphinStatusChanged(handle: (status: number) => void): () => void;
   onSlippiStatusChanged(handle: (status: number) => void): () => void;
   onSpectateErrorMessage(handle: (message: string | null) => void): () => void;
-  connect(authToken: string): Promise<void>;
+  connectToSpectateServer(authToken: string): Promise<void>;
   refreshBroadcastList(): Promise<void>;
   watchBroadcast(broadcasterId: string): Promise<void>;
   startBroadcast(config: StartBroadcastConfig): Promise<void>;

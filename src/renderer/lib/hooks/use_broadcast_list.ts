@@ -24,7 +24,7 @@ export const useBroadcastList = () => {
 
   const connect = async () => {
     const authToken = await authService.getUserToken();
-    await broadcastService.connect(authToken);
+    await broadcastService.connectToSpectateServer(authToken);
   };
   const refresh = async () => {
     await broadcastService.refreshBroadcastList();

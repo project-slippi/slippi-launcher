@@ -59,7 +59,7 @@ const broadcastApi: BroadcastService = {
     });
     return destroy;
   },
-  async connect(authToken: string): Promise<void> {
+  async connectToSpectateServer(authToken: string): Promise<void> {
     await ipc_connectToSpectateServer.renderer!.trigger({ authToken });
   },
   async refreshBroadcastList(): Promise<void> {

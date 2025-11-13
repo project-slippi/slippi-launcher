@@ -4,7 +4,11 @@ import { _, makeEndpoint } from "utils/ipc";
 import type { BroadcasterItem, StartBroadcastConfig } from "./types";
 
 // Handlers
-export const ipc_connectToSpectateServer = makeEndpoint.main("connect", <{ authToken: string }>_, <SuccessPayload>_);
+export const ipc_connectToSpectateServer = makeEndpoint.main(
+  "connectToSpectateServer",
+  <{ authToken: string }>_,
+  <SuccessPayload>_,
+);
 
 export const ipc_refreshBroadcastList = makeEndpoint.main("refreshBroadcastList", <EmptyPayload>_, <SuccessPayload>_);
 
