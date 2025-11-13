@@ -1,44 +1,24 @@
-import type { DolphinLaunchType } from "@dolphin/types";
 import type { SuccessPayload } from "utils/ipc";
 import { _, makeEndpoint } from "utils/ipc";
 
-import type { AppSettings, StoredConnection } from "./types";
+import type { AppSettings, SettingUpdate, StoredConnection } from "./types";
 
-// Handlers
+/**
+ * Generic endpoints for the new settings system
+ */
 
-export const ipc_setIsoPath = makeEndpoint.main("setIsoPath", <{ isoPath: string | null }>_, <SuccessPayload>_);
+export const ipc_updateSetting = makeEndpoint.main("updateSetting", <SettingUpdate>_, <SuccessPayload>_);
 
-export const ipc_setRootSlpPath = makeEndpoint.main("setRootSlpPath", <{ path: string }>_, <SuccessPayload>_);
-
-export const ipc_setUseMonthlySubfolders = makeEndpoint.main(
-  "setUseMonthlySubfolders",
-  <{ toggle: boolean }>_,
+export const ipc_updateSettings = makeEndpoint.main(
+  "updateSettings",
+  <{ updates: SettingUpdate[] }>_,
   <SuccessPayload>_,
 );
 
-export const ipc_setEnableJukebox = makeEndpoint.main("setEnableJukebox", <{ toggle: boolean }>_, <SuccessPayload>_);
-
-export const ipc_setSpectateSlpPath = makeEndpoint.main("setSpectateSlpPath", <{ path: string }>_, <SuccessPayload>_);
-
-export const ipc_setExtraSlpPaths = makeEndpoint.main("setExtraSlpPaths", <{ paths: string[] }>_, <SuccessPayload>_);
-
-export const ipc_setLaunchMeleeOnPlay = makeEndpoint.main(
-  "setLaunchMeleeOnPlay",
-  <{ launchMelee: boolean }>_,
-  <SuccessPayload>_,
-);
-
-export const ipc_setAutoUpdateLauncher = makeEndpoint.main(
-  "setAutoUpdateLauncher",
-  <{ autoUpdateLauncher: boolean }>_,
-  <SuccessPayload>_,
-);
-
-export const ipc_setUseDolphinBeta = makeEndpoint.main(
-  "setUseNetplayBeta",
-  <{ dolphinType: DolphinLaunchType; useBeta: boolean }>_,
-  <SuccessPayload>_,
-);
+/**
+ * Connection management endpoints
+ * (Kept separate because they have special logic for ID generation)
+ */
 
 export const ipc_addNewConnection = makeEndpoint.main(
   "addNewConnection",
@@ -54,8 +34,17 @@ export const ipc_editConnection = makeEndpoint.main(
 
 export const ipc_deleteConnection = makeEndpoint.main("deleteConnection", <{ id: number }>_, <SuccessPayload>_);
 
-// Events
+/**
+ * Events
+ */
 
+// Full settings sync (used for initial load or debugging)
 export const ipc_settingsUpdatedEvent = makeEndpoint.renderer("settings_settingsUpdated", <AppSettings>_);
+
+// Incremental setting updates (used for syncing changes efficiently)
+export const ipc_settingChangedEvent = makeEndpoint.renderer(
+  "settings_settingChanged",
+  <{ updates: SettingUpdate[] }>_,
+);
 
 export const ipc_openSettingsModalEvent = makeEndpoint.renderer("openSettingsModal", <Record<string, never>>_);
