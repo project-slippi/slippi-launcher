@@ -15,7 +15,7 @@ import { ActivateOnlineStep } from "./steps/activate_online_step/activate_online
 import { IsoSelectionStep } from "./steps/iso_selection_step/iso_selection_step";
 import { LoginStep } from "./steps/login_step";
 import { SetupCompleteStep } from "./steps/setup_complete_step/setup_complete_step";
-import { VerifyEmailStep } from "./steps/verify_email_step";
+import { VerifyEmailStep } from "./steps/verify_email_step/verify_email_step";
 
 const OuterBox = styled(Box)`
   flex: 1;

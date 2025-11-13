@@ -12,7 +12,8 @@ import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 import { colors } from "@/styles/colors";
 
-import { QuickStartHeader } from "../quick_start_header/quick_start_header";
+import { QuickStartHeader } from "../../quick_start_header/quick_start_header";
+import { VerifyEmailStepMessages as Messages } from "./verify_email_step.messages";
 
 const Container = styled.div`
   margin: 0 auto;
@@ -82,7 +83,7 @@ export const VerifyEmailStep = React.memo(() => {
       // Get current user manually since the user variable above hasn't updated yet
       const newUser = authService.getCurrentUser();
       if (!newUser?.emailVerified) {
-        showError("Email is not yet verified. Have you checked your spam folder?");
+        showError(Messages.emailIsNotVerified());
       }
     } catch (err: any) {
       showError(err.message);
@@ -106,16 +107,14 @@ export const VerifyEmailStep = React.memo(() => {
 
   const preVerification = (
     <>
-      <div css={classes.instructions}>
-        Visit your email, click the link in the verification email, and then check verification
-      </div>
+      <div css={classes.instructions}>{Messages.visitYourEmail()}</div>
       <Button variant="outlined" onClick={handleCheckVerification}>
-        Check Verification
+        {Messages.checkVerification()}
       </Button>
       <div css={classes.emailNotFoundContainer}>
-        Can't find the email? Check your spam folder. Still missing?{" "}
+        {Messages.cantFindEmail()}{" "}
         <a href="#" onClick={authService.sendVerificationEmail}>
-          send again
+          {Messages.sendAgain()}
         </a>
       </div>
     </>
@@ -124,7 +123,7 @@ export const VerifyEmailStep = React.memo(() => {
   const postVerification = (
     <div css={classes.confirmationContainer}>
       <CheckCircleOutlineIcon />
-      Email verified
+      {Messages.emailVerified()}
     </div>
   );
 
@@ -132,22 +131,22 @@ export const VerifyEmailStep = React.memo(() => {
   if (user) {
     stepBody = (
       <>
-        <div css={classes.message}>A confirmation email has been sent to</div>
+        <div css={classes.message}>{Messages.aConfirmationEmailHasBeenSentTo()}</div>
         <div css={classes.emailContainer}>{user.email}</div>
         <div css={classes.incorrectEmailContainer}>
-          Wrong email? <A href={slippiManagePage}>change email</A>
+          {Messages.wrongEmail()} <A href={slippiManagePage}>{Messages.changeEmail()}</A>
         </div>
         {user.emailVerified ? postVerification : preVerification}
       </>
     );
   } else {
-    stepBody = <div>An error occurred. The application does not have a user.</div>;
+    stepBody = <div>{Messages.errorMissingUser()}</div>;
   }
 
   return (
     <Box display="flex" flexDirection="column" flexGrow="1">
       <Container>
-        <QuickStartHeader>Verify your email</QuickStartHeader>
+        <QuickStartHeader>{Messages.verifyYourEmail()}</QuickStartHeader>
         {stepBody}
       </Container>
     </Box>
