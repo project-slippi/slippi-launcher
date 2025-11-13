@@ -3,6 +3,7 @@ import React from "react";
 
 import { useAccount } from "@/lib/hooks/use_account";
 import { useBroadcastList } from "@/lib/hooks/use_broadcast_list";
+import { useSpectateRemoteServer } from "@/lib/hooks/use_spectate_remote_server";
 
 import { SpectatePage } from "./spectate_page";
 
@@ -19,13 +20,20 @@ export function createSpectatePage({ broadcastService }: CreateSpectatePageArgs)
 
   const Page = React.memo(() => {
     const user = useAccount((store) => store.user);
-    const [currentBroadcasts, refreshBroadcasts] = useBroadcastList();
+    const [currentBroadcasts, connect, refreshBroadcasts] = useBroadcastList();
+    const [spectateRemoteServerState, startSpectateRemoteServer, stopSpectateRemoteServer] = useSpectateRemoteServer();
     return (
       <SpectatePage
         userId={user?.uid}
         watchBroadcast={watchBroadcast}
         broadcasts={currentBroadcasts}
-        onRefreshBroadcasts={refreshBroadcasts}
+        onRefreshBroadcasts={async () => {
+          await connect();
+          await refreshBroadcasts();
+        }}
+        spectateRemoteServerState={spectateRemoteServerState}
+        startSpectateRemoteServer={startSpectateRemoteServer}
+        stopSpectateRemoteServer={stopSpectateRemoteServer}
       />
     );
   });

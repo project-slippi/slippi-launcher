@@ -26,6 +26,7 @@ export async function installServices(): Promise<Services> {
 
   const broadcastService = window.electron.broadcast;
   const consoleService = window.electron.console;
+  const spectateRemoteService = window.electron.remote;
 
   const i18nService = createI18nService({ isDevelopment });
   // Connect i18n service to global app state for language changes
@@ -42,6 +43,7 @@ export async function installServices(): Promise<Services> {
     broadcastService,
     consoleService,
     replayService,
+    spectateRemoteService,
     notificationService,
     i18nService,
   };

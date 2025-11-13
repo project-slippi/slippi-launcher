@@ -21,10 +21,12 @@ import { useIsoVerification } from "./use_iso_verification";
 import { useReplayBrowserNavigation } from "./use_replay_browser_list";
 import { useSettings } from "./use_settings";
 import { useSettingsModal } from "./use_settings_modal";
+import { useSpectateRemoteServerStateStore } from "./use_spectate_remote_server";
 
 export const useAppListeners = () => {
   // Handle app initalization
-  const { authService, broadcastService, consoleService, dolphinService, replayService } = useServices();
+  const { authService, broadcastService, consoleService, dolphinService, spectateRemoteService, replayService } =
+    useServices();
   const replayPresenter = useRef(new ReplayPresenter(replayService));
   const initialized = useAppStore((store) => store.initialized);
   const initializeApp = useAppInitialization();
@@ -188,8 +190,13 @@ export const useAppListeners = () => {
     });
   }, [startBroadcast, broadcastService]);
 
-  const [, refreshBroadcasts] = useBroadcastList();
+  const [, connect] = useBroadcastList();
   React.useEffect(() => {
-    return broadcastService.onSpectateReconnect(refreshBroadcasts);
-  }, [refreshBroadcasts, broadcastService]);
+    return broadcastService.onSpectateReconnect(connect);
+  }, [connect, broadcastService]);
+
+  const updateSpectateRemoteServerState = useSpectateRemoteServerStateStore((store) => store.setState);
+  React.useEffect(() => {
+    return spectateRemoteService.onSpectateRemoteServerStateChange(updateSpectateRemoteServerState);
+  }, [updateSpectateRemoteServerState, spectateRemoteService]);
 };
