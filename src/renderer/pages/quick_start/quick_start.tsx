@@ -10,7 +10,7 @@ import { QuickStartStep } from "@/lib/hooks/use_quick_start";
 import { platformTitleBarStyles } from "@/styles/platform_title_bar_styles";
 
 import { QuickStartMessages as Messages } from "./quick_start.messages";
-import { AcceptRulesStep } from "./steps/accept_rules_step";
+import { AcceptRulesStep } from "./steps/accept_rules_step/accept_rules_step";
 import { ActivateOnlineStep } from "./steps/activate_online_step";
 import { IsoSelectionStep } from "./steps/iso_selection_step";
 import { LoginStep } from "./steps/login_step";
