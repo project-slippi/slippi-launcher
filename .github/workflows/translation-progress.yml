@@ -59,9 +59,9 @@ jobs:
         id: cache-restore
         with:
           path: previous-badge.json
-          key: translation-badge-json-latest
+          key: translation-badge-json-${{ github.run_id }}
           restore-keys: |
-            translation-badge-json-latest
+            translation-badge-json-
 
       - name: Build and conditionally publish badge JSON
         id: badge-update
@@ -116,4 +116,4 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: previous-badge.json
-          key: translation-badge-json-latest
+          key: translation-badge-json-${{ github.run_id }}
