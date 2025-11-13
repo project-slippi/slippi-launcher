@@ -15,7 +15,8 @@ import { useToasts } from "@/lib/hooks/use_toasts";
 import { colors } from "@/styles/colors";
 import { hasBorder } from "@/styles/has_border";
 
-import { QuickStartHeader } from "../quick_start_header/quick_start_header";
+import { QuickStartHeader } from "../../quick_start_header/quick_start_header";
+import { IsoSelectionStepMessages as Messages } from "./iso_selection_step.messages";
 
 const getColor = (props: any, defaultColor = "#eeeeee") => {
   if (props.isDragAccept) {
@@ -75,10 +76,10 @@ export const IsoSelectionStep = React.memo(() => {
 
     const filePath = acceptedFiles[0].path;
     if (filePath.endsWith(".7z")) {
-      showError("7z files must be uncompressed to be used in Dolphin.");
+      showError(Messages.sevenZFilesMustBeUncompressed());
       return;
     } else if (filePath.endsWith(".rvz")) {
-      showError("RVZ files are currently incompatible with Slippi.");
+      showError(Messages.rvzFilesAreIncompatible());
       return;
     }
 
@@ -103,7 +104,7 @@ export const IsoSelectionStep = React.memo(() => {
 
   React.useEffect(() => {
     if (invalidIso) {
-      showError("Provided ISO will not work with Slippi Online. Please provide an NTSC 1.02 ISO.");
+      showError(Messages.providedIsoWillNotWork());
     }
   }, [showError, invalidIso]);
 
@@ -121,17 +122,17 @@ export const IsoSelectionStep = React.memo(() => {
           margin-bottom: 20px;
         `}
       >
-        <QuickStartHeader>Select Melee ISO</QuickStartHeader>
-        <div>This application uses an NTSC 1.02 game backup.</div>
+        <QuickStartHeader>{Messages.selectMeleeIso()}</QuickStartHeader>
+        <div>{Messages.thisApplicationUsesNtsc()}</div>
       </div>
       <Container {...getRootProps({ isDragActive, isDragAccept, isDragReject })}>
         <input {...getInputProps()} />
         {!loading && (
           <Button color="primary" variant="contained" onClick={open}>
-            Select
+            {Messages.select()}
           </Button>
         )}
-        <p>{loading ? "Verifying ISO..." : "or drag and drop here"}</p>
+        <p>{loading ? Messages.verifyingIso() : Messages.orDragAndDropHere()}</p>
       </Container>
 
       <ConfirmationModal
@@ -139,10 +140,10 @@ export const IsoSelectionStep = React.memo(() => {
         open={unknownIso}
         onClose={handleClose}
         onSubmit={onConfirm}
-        confirmText="Use anyway"
-        title="Unknown ISO"
+        confirmText={Messages.useAnyway()}
+        title={Messages.unknownIso()}
       >
-        Your ISO is unsupported. Using this ISO may cause issues and no support will be given.
+        {Messages.isoIsUnsupported()}
       </ConfirmationModal>
     </Box>
   );

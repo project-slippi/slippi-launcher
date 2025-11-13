@@ -14,7 +14,8 @@ import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 import { colors } from "@/styles/colors";
 
-import { QuickStartHeader } from "../quick_start_header/quick_start_header";
+import { QuickStartHeader } from "../../quick_start_header/quick_start_header";
+import { AcceptRulesStepMessages as Messages } from "./accept_rules_step.messages";
 
 const Container = styled.div`
   margin: 0 auto;
@@ -90,32 +91,22 @@ export const AcceptRulesStep = React.memo(() => {
   if (user) {
     stepBody = (
       <>
-        <Typography css={classes.sectionHeader}>Slippi Online Rules</Typography>
+        <Typography css={classes.sectionHeader}>{Messages.slippiOnlineRules()}</Typography>
         <div css={classes.rulesContainer}>
-          <Typography>
-            These are a set of rules to follow when using Slippi. Breaking these rules may result in a suspension or ban
-            depending on severity and frequency. This is not an exhaustive list, we reserve the right to suspend or ban
-            an account for any reason.
-          </Typography>
+          <Typography>{Messages.slippiOnlineRulesDescription()}</Typography>
           <div css={classes.rulesList}>
             <Typography>1.</Typography>
-            <Typography>
-              Racist, homophobic, transphobic, or otherwise bigoted names and codes are not allowed. Targeted harassment
-              in names and codes is also not allowed.
-            </Typography>
+            <Typography>{Messages.rule1()}</Typography>
             <Typography>2.</Typography>
-            <Typography>
-              Slippi does its best to promote fairness in terms of player matching, result reporting, etc. Attempting to
-              circumvent these systems is not allowed.
-            </Typography>
+            <Typography>{Messages.rule2()}</Typography>
             <Typography>3.</Typography>
-            <Typography>Intentionally manipulating the game performance for your own gain is not allowed.</Typography>
+            <Typography>{Messages.rule3()}</Typography>
             <Typography>4.</Typography>
-            <Typography>Macros and bots are not allowed.</Typography>
+            <Typography>{Messages.rule4()}</Typography>
           </div>
         </div>
         <FormControlLabel
-          label="Accept Slippi Rules"
+          label={Messages.acceptSlippiRules()}
           control={
             <Checkbox
               checked={rulesChecked}
@@ -125,25 +116,24 @@ export const AcceptRulesStep = React.memo(() => {
             />
           }
         />
-        <Typography css={classes.sectionHeader}>Privacy Policy and Terms of Service</Typography>
+        <Typography css={classes.sectionHeader}>{Messages.privacyPolicyAndTermsOfService()}</Typography>
+        <Typography color={colors.textSecondary}>{Messages.clickTheLinksBelow()}</Typography>
         <div css={classes.policiesList}>
           <Typography color={colors.textSecondary}>●</Typography>
           <Typography color={colors.textSecondary}>
-            Click to review the{" "}
             <A css={classes.link} href="https://slippi.gg/privacy">
-              Slippi Privacy Policy
+              {Messages.slippiPrivacyPolicy()}
             </A>
           </Typography>
           <Typography color={colors.textSecondary}>●</Typography>
           <Typography color={colors.textSecondary}>
-            Click to review the{" "}
             <A css={classes.link} href="https://slippi.gg/tos">
-              Slippi Terms of Service
+              {Messages.slippiTermsOfService()}
             </A>
           </Typography>
         </div>
         <FormControlLabel
-          label="Accept Privacy Policy and Terms of Service"
+          label={Messages.acceptPrivacyPolicyAndTos()}
           control={
             <Checkbox
               checked={policiesChecked}
@@ -161,19 +151,19 @@ export const AcceptRulesStep = React.memo(() => {
             disabled={!policiesChecked || !rulesChecked || processing}
             size="large"
           >
-            {processing ? <CircularProgress color="inherit" size={24} /> : "Accept All"}
+            {processing ? <CircularProgress color="inherit" size={24} /> : Messages.acceptAll()}
           </Button>
         </div>
       </>
     );
   } else {
-    stepBody = <div>An error occurred. The application does not have a user.</div>;
+    stepBody = <div>{Messages.errorMissingUser()}</div>;
   }
 
   return (
     <Box display="flex" flexDirection="column" flexGrow="1">
       <Container>
-        <QuickStartHeader>Accept rules and policies</QuickStartHeader>
+        <QuickStartHeader>{Messages.acceptRulesAndPolicies()}</QuickStartHeader>
         {stepBody}
       </Container>
     </Box>

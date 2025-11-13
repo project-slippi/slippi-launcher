@@ -5,7 +5,8 @@ import Button from "@mui/material/Button";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-import { QuickStartHeader } from "../quick_start_header/quick_start_header";
+import { QuickStartHeader } from "../../quick_start_header/quick_start_header";
+import { SetupCompleteStepMessages as Messages } from "./setup_complete_step.messages";
 
 const Container = styled.div`
   margin: 0 auto;
@@ -21,7 +22,7 @@ export const SetupCompleteStep = React.memo(() => {
   return (
     <Box display="flex" flexDirection="column" flexGrow="1">
       <Container>
-        <QuickStartHeader>Nice work!</QuickStartHeader>
+        <QuickStartHeader>{Messages.niceWork()}</QuickStartHeader>
         <div
           css={css`
             display: flex;
@@ -33,7 +34,7 @@ export const SetupCompleteStep = React.memo(() => {
           `}
         >
           <Button color="primary" variant="contained" onClick={onClick}>
-            Continue
+            {Messages.continue()}
           </Button>
         </div>
       </Container>

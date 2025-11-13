@@ -1,0 +1,18 @@
+export const LoginFormMessages = {
+  createAnAccount: () => "Create an account",
+  logIn: () => "Log in",
+  passwordsDoNotMatch: () => "Passwords do not match",
+  displayName: () => "Display Name",
+  email: () => "Email",
+  password: () => "Password",
+  togglePasswordVisibility: () => "Toggle password visibility",
+  confirmPassword: () => "Confirm password",
+  alreadyHaveAnAccount: () => "I already have an account",
+  signUp: () => "Sign up",
+  forgotPassword: () => "Forgot your password?",
+  passwordReset: () => "Password reset",
+  passwordResetInstructionsSent: (email: string) => `Password reset instructions have been sent to {0}.`,
+  continue: () => "Continue",
+  reset: () => "Reset",
+  goBack: () => "Go back",
+};

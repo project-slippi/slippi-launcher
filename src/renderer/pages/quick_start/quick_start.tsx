@@ -4,17 +4,18 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
 
-import { StepperDots } from "@/components/stepper_dots";
 import { useMousetrap } from "@/lib/hooks/use_mousetrap";
 import { QuickStartStep } from "@/lib/hooks/use_quick_start";
 import { platformTitleBarStyles } from "@/styles/platform_title_bar_styles";
 
-import { AcceptRulesStep } from "./steps/accept_rules_step";
-import { ActivateOnlineStep } from "./steps/activate_online_step";
-import { IsoSelectionStep } from "./steps/iso_selection_step";
+import { QuickStartMessages as Messages } from "./quick_start.messages";
+import { StepperDots } from "./stepper_dots/stepper_dots";
+import { AcceptRulesStep } from "./steps/accept_rules_step/accept_rules_step";
+import { ActivateOnlineStep } from "./steps/activate_online_step/activate_online_step";
+import { IsoSelectionStep } from "./steps/iso_selection_step/iso_selection_step";
 import { LoginStep } from "./steps/login_step";
-import { SetupCompleteStep } from "./steps/setup_complete_step";
-import { VerifyEmailStep } from "./steps/verify_email_step";
+import { SetupCompleteStep } from "./steps/setup_complete_step/setup_complete_step";
+import { VerifyEmailStep } from "./steps/verify_email_step/verify_email_step";
 
 const OuterBox = styled(Box)`
   flex: 1;
@@ -26,9 +27,9 @@ const OuterBox = styled(Box)`
 function getStepHeader(step: QuickStartStep): string {
   switch (step) {
     case QuickStartStep.COMPLETE:
-      return "You're all set up";
+      return Messages.youAreAllSetUp();
     default:
-      return "Let's get set up";
+      return Messages.letsGetSetUp();
   }
 }
 
@@ -76,7 +77,7 @@ export const QuickStart = ({ allSteps: steps, currentStep, onNext, onPrev }: Qui
         {currentStep !== QuickStartStep.COMPLETE && (
           <div>
             <Button onClick={skipSetup} style={{ color: "white", textTransform: "uppercase" }}>
-              Skip setup
+              {Messages.skipSetup()}
             </Button>
           </div>
         )}

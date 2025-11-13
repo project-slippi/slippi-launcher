@@ -14,6 +14,8 @@ import { QuickStartHeader } from "@/pages/quick_start/quick_start_header/quick_s
 import { useServices } from "@/services";
 import type { AuthUser } from "@/services/auth/types";
 
+import { LoginFormMessages as Messages } from "./login_form.messages";
+
 // Store this data in a hook so we can avoid dealing with setting state on unmount errors
 const useLoginStore = create(
   combine(
@@ -57,7 +59,7 @@ export const LoginForm = ({ className, onSuccess, disableAutoFocus }: LoginFormP
     let user: AuthUser | null;
     if (isSignUp) {
       if (password !== confirmPassword) {
-        throw new Error("Passwords do not match");
+        throw new Error(Messages.passwordsDoNotMatch());
       }
       user = await authService.signUp({ email: email.trim(), displayName, password });
     } else {
@@ -87,7 +89,7 @@ export const LoginForm = ({ className, onSuccess, disableAutoFocus }: LoginFormP
 
   return (
     <div className={className}>
-      <QuickStartHeader>{isSignUp ? "Create an account" : "Log in"}</QuickStartHeader>
+      <QuickStartHeader>{isSignUp ? Messages.createAnAccount() : Messages.logIn()}</QuickStartHeader>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -104,7 +106,7 @@ export const LoginForm = ({ className, onSuccess, disableAutoFocus }: LoginFormP
           {isSignUp && (
             <TextField
               disabled={loading}
-              label="Display Name"
+              label={Messages.displayName()}
               variant="filled"
               value={displayName}
               autoFocus={!disableAutoFocus}
@@ -115,7 +117,7 @@ export const LoginForm = ({ className, onSuccess, disableAutoFocus }: LoginFormP
           )}
           <TextField
             disabled={loading}
-            label="Email"
+            label={Messages.email()}
             variant="filled"
             value={email}
             autoFocus={!disableAutoFocus}
@@ -126,7 +128,7 @@ export const LoginForm = ({ className, onSuccess, disableAutoFocus }: LoginFormP
           <TextField
             disabled={loading}
             variant="filled"
-            label="Password"
+            label={Messages.password()}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             type={!isSignUp && showPassword ? "text" : "password"}
@@ -135,7 +137,8 @@ export const LoginForm = ({ className, onSuccess, disableAutoFocus }: LoginFormP
             InputProps={{
               endAdornment: !isSignUp ? (
                 <IconButton
-                  aria-label="toggle password visibility"
+                  title={Messages.togglePasswordVisibility()}
+                  aria-label={Messages.togglePasswordVisibility()}
                   onClick={() => setShowPassword(!showPassword)}
                   onMouseDown={(e) => e.preventDefault()}
                   edge="end"
@@ -150,7 +153,7 @@ export const LoginForm = ({ className, onSuccess, disableAutoFocus }: LoginFormP
             <TextField
               disabled={loading}
               variant="filled"
-              label="Confirm password"
+              label={Messages.confirmPassword()}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               type="password"
@@ -178,10 +181,10 @@ export const LoginForm = ({ className, onSuccess, disableAutoFocus }: LoginFormP
               font-size: 14px;
             `}
           >
-            {isSignUp ? "I already have an account" : "Create an account"}
+            {isSignUp ? Messages.alreadyHaveAnAccount() : Messages.createAnAccount()}
           </Button>
           <Button type="submit" color="primary" disabled={loading} variant="contained">
-            {isSignUp ? "Sign up" : "Log in"}
+            {isSignUp ? Messages.signUp() : Messages.logIn()}
           </Button>
         </div>
         {!isSignUp && (
@@ -199,7 +202,7 @@ export const LoginForm = ({ className, onSuccess, disableAutoFocus }: LoginFormP
                 font-size: 12px;
               `}
             >
-              Forgot your password?
+              {Messages.forgotPassword()}
             </Button>
           </div>
         )}
@@ -222,7 +225,7 @@ const ForgotPasswordForm = ({ className, onClose }: { className?: string; onClos
 
   return (
     <div className={className}>
-      <QuickStartHeader>Password Reset</QuickStartHeader>
+      <QuickStartHeader>{Messages.passwordReset()}</QuickStartHeader>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -234,11 +237,11 @@ const ForgotPasswordForm = ({ className, onClose }: { className?: string; onClos
         }}
       >
         {success ? (
-          <div>Password reset instructions have been sent to {email}.</div>
+          <div>{Messages.passwordResetInstructionsSent(email)}</div>
         ) : (
           <TextField
             disabled={loading}
-            label="Email"
+            label={Messages.email()}
             variant="filled"
             value={email}
             autoFocus={false}
@@ -258,7 +261,7 @@ const ForgotPasswordForm = ({ className, onClose }: { className?: string; onClos
           `}
         >
           <Button type="submit" color="primary" disabled={loading} variant="contained">
-            {success ? "Continue" : "Reset"}
+            {success ? Messages.continue() : Messages.reset()}
           </Button>
         </div>
         {!success && (
@@ -276,7 +279,7 @@ const ForgotPasswordForm = ({ className, onClose }: { className?: string; onClos
                 font-size: 12px;
               `}
             >
-              Go back
+              {Messages.goBack()}
             </Button>
           </div>
         )}

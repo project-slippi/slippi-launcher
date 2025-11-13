@@ -14,12 +14,14 @@ import { useToasts } from "@/lib/hooks/use_toasts";
 import { validateConnectCodeStart } from "@/lib/validate/validate";
 import { useServices } from "@/services";
 
+import { ActivateOnlineFormMessages as Messages } from "./activate_online_form.messages";
+
 export const ActivateOnlineForm = ({ onSubmit }: { onSubmit?: () => void }) => {
   const user = useAccount((store) => store.user);
   const refreshActivation = useUserData();
   return (
     <div>
-      <div>Your connect code is used for players to connect with you directly.</div>
+      <div>{Messages.yourConnectCodeDescription()}</div>
       <ConnectCodeSetter displayName={user ? user.displayName : null} onSuccess={onSubmit || refreshActivation} />
     </div>
   );
@@ -68,9 +70,9 @@ const ConnectCodeSetter = ({ displayName, onSuccess }: ConnectCodeSetterProps) =
     <form onSubmit={onFormSubmit}>
       <Typography component="div" variant="body2" color="textSecondary">
         <ul>
-          <li>2-4 uppercase English characters</li>
-          <li>Trailing numbers will be auto-generated</li>
-          <li>Can be changed later for a one-time payment</li>
+          <li>{Messages.twoToFourCharacters()}</li>
+          <li>{Messages.trailingNumbers()}</li>
+          <li>{Messages.canBeChanged()}</li>
         </ul>
       </Typography>
       <Controller
@@ -120,7 +122,7 @@ const ConnectCodeSetter = ({ displayName, onSuccess }: ConnectCodeSetterProps) =
         `}
       >
         <Button variant="contained" color="primary" size="large" disabled={isLoading} type="submit">
-          {isLoading ? <CircularProgress color="inherit" size={29} /> : "Confirm code"}
+          {isLoading ? <CircularProgress color="inherit" size={29} /> : Messages.confirmCode()}
         </Button>
       </div>
     </form>

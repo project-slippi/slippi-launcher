@@ -12,8 +12,8 @@ import React from "react";
 import type { LinkProps } from "react-router-dom";
 import { Link, Navigate, Route, Routes, useMatch, useResolvedPath } from "react-router-dom";
 
+import { BuildInfo } from "@/components/build_info/build_info";
 import { DualPane } from "@/components/dual_pane";
-import { BuildInfo } from "@/containers/build_info";
 import { useMousetrap } from "@/lib/hooks/use_mousetrap";
 import { useSettingsModal } from "@/lib/hooks/use_settings_modal";
 import type { SettingSection } from "@/pages/settings/types";
