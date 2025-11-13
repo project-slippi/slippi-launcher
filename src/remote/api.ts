@@ -8,7 +8,7 @@ const spectateRemoteApi: SpectateRemoteService = {
     });
     return destroy;
   },
-  async startSpectateRemoteServer(authToken: string, port: number) {
+  async startSpectateRemoteServer(authToken: string, port?: number) {
     const { result } = await ipc_startSpectateRemoteServer.renderer!.trigger({ authToken, port });
     return result;
   },

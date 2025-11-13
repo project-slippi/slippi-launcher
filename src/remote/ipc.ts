@@ -3,7 +3,7 @@ import { _, makeEndpoint } from "utils/ipc";
 
 export const ipc_startSpectateRemoteServer = makeEndpoint.main(
   "startSpectateRemoteServer",
-  <{ authToken: string; port: number }>_,
+  <{ authToken: string; port?: number }>_,
   <{ success: boolean; err?: string }>_,
 );
 

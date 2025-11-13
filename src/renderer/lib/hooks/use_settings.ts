@@ -73,6 +73,8 @@ export function useSetting<K extends keyof SettingsSchema>(
 
 export const useIsoPath = () => useSetting("isoPath");
 
+export const useEnableSpectateRemoteControl = () => useSetting("enableSpectateRemoteControl");
+
 export const useRootSlpPath = () => useSetting("rootSlpPath");
 
 export const useMonthlySubfolders = () => useSetting("useMonthlySubfolders");

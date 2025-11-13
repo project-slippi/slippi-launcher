@@ -30,6 +30,8 @@ export const defaultAppSettings: AppSettings = {
     autoUpdateLauncher: true,
     useNetplayBeta: false,
     usePlaybackBeta: false,
+    enableSpectateRemoteControl: false,
+    spectateRemoteControlPort: 49809,
   },
   netplayPromotedToStable: false,
   playbackPromotedToStable: false,
