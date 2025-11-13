@@ -9,6 +9,7 @@ import { useMousetrap } from "@/lib/hooks/use_mousetrap";
 import { QuickStartStep } from "@/lib/hooks/use_quick_start";
 import { platformTitleBarStyles } from "@/styles/platform_title_bar_styles";
 
+import { QuickStartMessages as Messages } from "./quick_start.messages";
 import { AcceptRulesStep } from "./steps/accept_rules_step";
 import { ActivateOnlineStep } from "./steps/activate_online_step";
 import { IsoSelectionStep } from "./steps/iso_selection_step";
@@ -26,9 +27,9 @@ const OuterBox = styled(Box)`
 function getStepHeader(step: QuickStartStep): string {
   switch (step) {
     case QuickStartStep.COMPLETE:
-      return "You're all set up";
+      return Messages.youAreAllSetUp();
     default:
-      return "Let's get set up";
+      return Messages.letsGetSetUp();
   }
 }
 
@@ -76,7 +77,7 @@ export const QuickStart = ({ allSteps: steps, currentStep, onNext, onPrev }: Qui
         {currentStep !== QuickStartStep.COMPLETE && (
           <div>
             <Button onClick={skipSetup} style={{ color: "white", textTransform: "uppercase" }}>
-              Skip setup
+              {Messages.skipSetup()}
             </Button>
           </div>
         )}
