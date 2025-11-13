@@ -14,6 +14,7 @@ export const AcceptRulesStepMessages = {
     "Attempting to circumvent these systems is not allowed.",
   rule3: () => "Intentionally manipulating the game performance for your own gain is not allowed.",
   rule4: () => "Macros and bots are not allowed.",
+  clickTheLinksBelow: () => "Click the links below to review:",
   slippiPrivacyPolicy: () => "Slippi Privacy Policy",
   slippiTermsOfService: () => "Slippi Terms of Service",
   acceptPrivacyPolicyAndTos: () => "I accept the Slippi Privacy Policy and Terms of Service",

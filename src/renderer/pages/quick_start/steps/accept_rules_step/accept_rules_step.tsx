@@ -117,6 +117,7 @@ export const AcceptRulesStep = React.memo(() => {
           }
         />
         <Typography css={classes.sectionHeader}>{Messages.privacyPolicyAndTermsOfService()}</Typography>
+        <Typography color={colors.textSecondary}>{Messages.clickTheLinksBelow()}</Typography>
         <div css={classes.policiesList}>
           <Typography color={colors.textSecondary}>●</Typography>
           <Typography color={colors.textSecondary}>
