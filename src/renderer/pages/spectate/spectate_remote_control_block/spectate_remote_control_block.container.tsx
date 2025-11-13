@@ -4,6 +4,7 @@ import { useSpectateRemoteControlPort } from "@/lib/hooks/use_settings";
 import { useSpectateRemoteServer } from "@/lib/hooks/use_spectate_remote_server";
 
 import { SpectateRemoteControlBlock } from "./spectate_remote_control_block";
+import { SpectateRemoteControlBlockMessages as Messages } from "./spectate_remote_control_block.messages";
 
 export const SpectateRemoteControlBlockContainer = React.memo(() => {
   const [errorMessage, setErrorMessage] = React.useState("");
@@ -23,7 +24,7 @@ export const SpectateRemoteControlBlockContainer = React.memo(() => {
         setErrorMessage("");
       }
     } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : "Error starting server");
+      setErrorMessage(err instanceof Error ? err.message : Messages.errorStartingServer());
     } finally {
       setStarting(false);
     }

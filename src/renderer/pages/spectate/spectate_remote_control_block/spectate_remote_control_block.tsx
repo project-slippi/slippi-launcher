@@ -7,6 +7,8 @@ import React from "react";
 import { InfoBlock } from "@/components/info_block";
 import { colors } from "@/styles/colors";
 
+import { SpectateRemoteControlBlockMessages as Messages } from "./spectate_remote_control_block.messages";
+
 const StartStopButton = styled(Button)`
   width: 100%;
 `;
@@ -37,13 +39,13 @@ export const SpectateRemoteControlBlock = React.memo(
 
     let status = "";
     if (connected && serverStatus === "started") {
-      status = "Connected";
+      status = Messages.connected();
     } else if (serverStatus === "started") {
-      status = "Started";
+      status = Messages.started();
     } else if (serverStatus === "starting") {
-      status = "Starting...";
+      status = Messages.starting();
     } else {
-      status = "Stopped";
+      status = Messages.stopped();
     }
 
     return (
@@ -67,17 +69,17 @@ export const SpectateRemoteControlBlock = React.memo(
               margin-right: 10px;
             `}
           >
-            Status
+            {Messages.status()}
           </span>
           {status}
         </div>
         {serverStatus === "started" ? (
           <StartStopButton variant="outlined" color="secondary" onClick={onStop}>
-            Stop Server
+            {Messages.stopServer()}
           </StartStopButton>
         ) : (
           <StartStopButton variant="contained" color="primary" onClick={onStart} disabled={serverStatus === "starting"}>
-            {serverStatus === "starting" ? "Starting Server..." : "Start Server"}
+            {serverStatus === "starting" ? Messages.startingServer() : Messages.startServer()}
           </StartStopButton>
         )}
         {!errorMessage && serverStatus === "started" && (
@@ -101,7 +103,7 @@ export const SpectateRemoteControlBlock = React.memo(
               value={address}
             />
             <Button variant="contained" color="secondary" onClick={onCopy}>
-              {copied ? "Copied!" : "Copy"}
+              {copied ? Messages.copied() : Messages.copy()}
             </Button>
           </div>
         )}
