@@ -3,6 +3,8 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import Button from "@mui/material/Button";
 import MobileStepper from "@mui/material/MobileStepper";
 
+import { StepperDotsMessages as Messages } from "./stepper_dots.messages";
+
 export const StepperDots = ({
   steps,
   activeStep,
@@ -32,7 +34,7 @@ export const StepperDots = ({
       nextButton={
         handleBack ? (
           <Button size="small" onClick={handleNext} disabled={activeStep === steps - 1}>
-            Next
+            {Messages.next()}
             <KeyboardArrowRight />
           </Button>
         ) : null
@@ -41,7 +43,7 @@ export const StepperDots = ({
         handleBack ? (
           <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
             <KeyboardArrowLeft />
-            Back
+            {Messages.back()}
           </Button>
         ) : null
       }

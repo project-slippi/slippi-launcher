@@ -4,7 +4,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
 
-import { StepperDots } from "@/components/stepper_dots";
+import { StepperDots } from "@/components/stepper_dots/stepper_dots";
 import { useMousetrap } from "@/lib/hooks/use_mousetrap";
 import { QuickStartStep } from "@/lib/hooks/use_quick_start";
 import { platformTitleBarStyles } from "@/styles/platform_title_bar_styles";
