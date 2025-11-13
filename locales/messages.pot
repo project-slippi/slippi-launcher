@@ -8,6 +8,26 @@ msgstr ""
 "x-generator: i18next-auto-keys CLI\n"
 "Language: \n"
 
+#: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
+msgid "2-4 uppercase English characters"
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:10:40
+msgid "7z files must be uncompressed to be used in Dolphin."
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:8:42
+msgid "A confirmation email has been sent to:"
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:21:20
+msgid "Accept All"
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:23:33
+msgid "Accept rules and policies"
+msgstr ""
+
 #: src/renderer/components/multi_path_input/multi_path_input.messages.ts:3:14
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/add_codes/add_codes.messages.ts:6:14
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:6:14
@@ -20,6 +40,11 @@ msgstr ""
 
 #: src/renderer/pages/settings/create.messages.ts:11:19
 msgid "Advanced"
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:22:27
+#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:12:27
+msgid "An error occurred. The application does not have a user."
 msgstr ""
 
 #: src/renderer/pages/settings/appearance_settings/language_selector/language_selector.messages.ts:2:22
@@ -50,6 +75,10 @@ msgstr ""
 msgid "Available."
 msgstr ""
 
+#: src/renderer/pages/quick_start/stepper_dots/stepper_dots.messages.ts:3:15
+msgid "Back"
+msgstr ""
+
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:24:15
 msgid "Beta (Mainline)"
 msgstr ""
@@ -67,8 +96,20 @@ msgstr ""
 msgid "CGNAT or Double NAT"
 msgstr ""
 
+#: src/renderer/components/activate_online_form/activate_online_form.messages.ts:5:23
+msgid "Can be changed later for a one-time payment"
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:5:24
+msgid "Can't find the email? Check your spam folder. Still missing? "
+msgstr ""
+
 #: src/renderer/components/multi_path_input/multi_path_input.messages.ts:5:40
 msgid "Cannot add sub directories of the Root SLP Directory."
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:10:22
+msgid "Change email"
 msgstr ""
 
 #: src/renderer/pages/settings/create.messages.ts:5:15
@@ -88,6 +129,10 @@ msgstr ""
 msgid "Chat messages to use for netplay"
 msgstr ""
 
+#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:4:28
+msgid "Check Verification"
+msgstr ""
+
 #: src/renderer/app/header/header.messages.ts:3:26
 msgid "Check for updates"
 msgstr ""
@@ -99,6 +144,10 @@ msgstr ""
 
 #: src/renderer/app/header/header.messages.ts:4:29
 msgid "Checking for updates..."
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/activate_online_step/activate_online_step.messages.ts:2:29
+msgid "Choose a connect code"
 msgstr ""
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:11:5
@@ -123,6 +172,10 @@ msgstr ""
 msgid "Clear files"
 msgstr ""
 
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:17:29
+msgid "Click the links below to review:"
+msgstr ""
+
 #: src/renderer/pages/settings/settings_page.messages.ts:2:16
 msgid "Close"
 msgstr ""
@@ -141,6 +194,14 @@ msgstr ""
 msgid "Configure {0}"
 msgstr ""
 
+#: src/renderer/components/activate_online_form/activate_online_form.messages.ts:6:22
+msgid "Confirm code"
+msgstr ""
+
+#: src/renderer/components/login_form/login_form.messages.ts:9:26
+msgid "Confirm password"
+msgstr ""
+
 #: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:3:20
 msgid "Connected"
 msgstr ""
@@ -151,6 +212,11 @@ msgstr ""
 
 #: src/renderer/app/create.messages.ts:5:18
 msgid "Console Mirror"
+msgstr ""
+
+#: src/renderer/components/login_form/login_form.messages.ts:15:19
+#: src/renderer/pages/quick_start/steps/setup_complete_step/setup_complete_step.messages.ts:3:19
+msgid "Continue"
 msgstr ""
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:7:17
@@ -171,6 +237,10 @@ msgstr ""
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:3:26
 msgid "Copy to Clipboard"
+msgstr ""
+
+#: src/renderer/components/login_form/login_form.messages.ts:2:26
+msgid "Create an account"
 msgstr ""
 
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:4:18
@@ -197,6 +267,10 @@ msgstr ""
 msgid "Disconnected"
 msgstr ""
 
+#: src/renderer/components/login_form/login_form.messages.ts:5:22
+msgid "Display Name"
+msgstr ""
+
 #: src/renderer/pages/settings/create.messages.ts:6:26
 msgid "Dolphin Settings"
 msgstr ""
@@ -207,6 +281,18 @@ msgstr ""
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/add_codes/add_codes.messages.ts:4:28
 msgid "Duplicate code name"
+msgstr ""
+
+#: src/renderer/components/login_form/login_form.messages.ts:6:16
+msgid "Email"
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:11:29
+msgid "Email is not yet verified. Have you checked your spam folder?"
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:7:24
+msgid "Email verified"
 msgstr ""
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:2:28
@@ -275,12 +361,20 @@ msgstr ""
 msgid "Follow Project Slippi on Twitter"
 msgstr ""
 
+#: src/renderer/components/login_form/login_form.messages.ts:12:25
+msgid "Forgot your password?"
+msgstr ""
+
 #: src/renderer/pages/settings/create.messages.ts:3:15
 msgid "Game"
 msgstr ""
 
 #: src/renderer/pages/settings/create.messages.ts:2:26
 msgid "General Settings"
+msgstr ""
+
+#: src/renderer/components/login_form/login_form.messages.ts:17:17
+msgid "Go back"
 msgstr ""
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:20:20
@@ -299,6 +393,22 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:4:28
+msgid "I accept the Slippi Online Rules"
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:20:36
+msgid "I accept the Slippi Privacy Policy and Terms of Service"
+msgstr ""
+
+#: src/renderer/components/login_form/login_form.messages.ts:10:31
+msgid "I already have an account"
+msgstr ""
+
+#: src/renderer/components/build_info/build_info.messages.ts:2:19
+msgid "I hope you know what you're doing..."
+msgstr ""
+
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:35:31
 msgid ""
 "If the failure persists, you can test this in your computer's terminal app. "
@@ -307,6 +417,12 @@ msgstr ""
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:13:33
 msgid "Incompatible with WASAPI."
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:15:16
+msgid ""
+"Intentionally manipulating the game performance for your own gain is not "
+"allowed."
 msgstr ""
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:16:18
@@ -320,6 +436,10 @@ msgstr ""
 #: src/renderer/components/footer/footer.messages.ts:4:22
 #: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:7:22
 msgid "Join the Discord"
+msgstr ""
+
+#: src/renderer/pages/loading/loading_page.messages.ts:2:19
+msgid "Just a sec..."
 msgstr ""
 
 #: src/renderer/pages/home/news_feed/news_feed.messages.ts:2:21
@@ -338,12 +458,21 @@ msgstr ""
 msgid "Left"
 msgstr ""
 
+#: src/renderer/pages/quick_start/quick_start.messages.ts:3:23
+msgid "Let's get set up"
+msgstr ""
+
 #: src/renderer/pages/home/news_feed/news_feed.messages.ts:3:18
 msgid "Loading..."
 msgstr ""
 
 #: src/renderer/app/header/header.messages.ts:2:16
+#: src/renderer/components/login_form/login_form.messages.ts:3:16
 msgid "Log in"
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:16:16
+msgid "Macros and bots are not allowed."
 msgstr ""
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:3:5
@@ -410,6 +539,14 @@ msgstr ""
 msgid "Network Diagnostics"
 msgstr ""
 
+#: src/renderer/pages/quick_start/stepper_dots/stepper_dots.messages.ts:2:15
+msgid "Next"
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/setup_complete_step/setup_complete_step.messages.ts:2:19
+msgid "Nice work!"
+msgstr ""
+
 #: src/renderer/app/header/header.messages.ts:6:25
 msgid "No Melee ISO file specified"
 msgstr ""
@@ -444,6 +581,23 @@ msgstr ""
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:11:35
 msgid "Open settings folder"
+msgstr ""
+
+#: src/renderer/components/login_form/login_form.messages.ts:7:19
+msgid "Password"
+msgstr ""
+
+#: src/renderer/components/login_form/login_form.messages.ts:13:24
+msgid "Password reset"
+msgstr ""
+
+#: src/renderer/components/login_form/login_form.messages.ts:14:53
+#. {0} email: string
+msgid "Password reset instructions have been sent to {0}."
+msgstr ""
+
+#: src/renderer/components/login_form/login_form.messages.ts:4:30
+msgid "Passwords do not match"
 msgstr ""
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/add_codes/add_codes.messages.ts:5:26
@@ -502,6 +656,26 @@ msgstr ""
 msgid "Premium"
 msgstr ""
 
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:3:41
+msgid "Privacy Policy and Terms of Service"
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:9:33
+msgid ""
+"Provided ISO will not work with Slippi Online. Please provide an NTSC 1.02 "
+"ISO."
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:11:34
+msgid "RVZ files are currently incompatible with Slippi."
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:10:5
+msgid ""
+"Racist, homophobic, transphobic, or otherwise bigoted names and codes are "
+"not allowed. Targeted harassment in names and codes is also not allowed."
+msgstr ""
+
 #: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:3:19
 msgid "Read more"
 msgstr ""
@@ -521,9 +695,17 @@ msgstr ""
 msgid "Replays"
 msgstr ""
 
+#: src/renderer/components/login_form/login_form.messages.ts:16:16
+msgid "Reset"
+msgstr ""
+
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:16:46
 #. {0} dolphinTypeName: string
 msgid "Reset {0}"
+msgstr ""
+
+#: src/renderer/pages/not_found/not_found_page.messages.ts:4:21
+msgid "Return home"
 msgstr ""
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:5:17
@@ -547,11 +729,20 @@ msgid "Save"
 msgstr ""
 
 #: src/renderer/components/path_input/path_input.messages.ts:2:17
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:12:17
 msgid "Select"
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:2:25
+msgid "Select Melee ISO"
 msgstr ""
 
 #: src/renderer/pages/settings/appearance_settings/language_selector/language_selector.messages.ts:3:33
 msgid "Select your preferred language for the app."
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:6:20
+msgid "Send verification email again"
 msgstr ""
 
 #: src/renderer/app/header/header.messages.ts:7:19
@@ -562,8 +753,39 @@ msgstr ""
 msgid "Show more"
 msgstr ""
 
+#: src/renderer/components/login_form/login_form.messages.ts:11:17
+msgid "Sign up"
+msgstr ""
+
+#: src/renderer/pages/quick_start/quick_start.messages.ts:4:20
+msgid "Skip setup"
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:2:28
+msgid "Slippi Online Rules"
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:18:30
+msgid "Slippi Privacy Policy"
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:19:31
+msgid "Slippi Terms of Service"
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:13:5
+msgid ""
+"Slippi does its best to promote fairness in terms of player matching, "
+"result reporting, etc. Attempting to circumvent these systems is not "
+"allowed."
+msgstr ""
+
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:19:20
 msgid "Soft reset"
+msgstr ""
+
+#: src/renderer/pages/not_found/not_found_page.messages.ts:3:29
+msgid "Something went wrong."
 msgstr ""
 
 #: src/renderer/app/create.messages.ts:4:19
@@ -639,6 +861,18 @@ msgstr ""
 msgid "The path to an NTSC Melee 1.02 ISO."
 msgstr ""
 
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:6:5
+msgid ""
+"These are a set of rules to follow when using Slippi. Breaking these rules "
+"may result in a suspension or ban depending on severity and frequency. This "
+"is not an exhaustive list, we reserve the right to suspend or ban an "
+"account for any reason."
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:3:34
+msgid "This application uses an NTSC 1.02 game backup."
+msgstr ""
+
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:32:33
 msgid "This is the optimal result."
 msgstr ""
@@ -654,9 +888,17 @@ msgstr ""
 msgid "This will remove all your {0} settings."
 msgstr ""
 
+#: src/renderer/components/login_form/login_form.messages.ts:8:35
+msgid "Toggle password visibility"
+msgstr ""
+
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:5:41
 #. {0} readableBytes: string
 msgid "Total size: {0}"
+msgstr ""
+
+#: src/renderer/components/activate_online_form/activate_online_form.messages.ts:4:26
+msgid "Trailing numbers will be auto-generated"
 msgstr ""
 
 #: src/renderer/pages/home/news_feed/news_feed.messages.ts:5:19
@@ -675,9 +917,17 @@ msgstr ""
 msgid "UPnP."
 msgstr ""
 
+#: src/renderer/pages/not_found/not_found_page.messages.ts:2:15
+msgid "Uh oh."
+msgstr ""
+
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:13:18
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:15:18
 msgid "Unknown"
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:7:21
+msgid "Unknown ISO"
 msgstr ""
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:17:22
@@ -692,8 +942,20 @@ msgstr ""
 msgid "Updating"
 msgstr ""
 
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:6:20
+msgid "Use anyway"
+msgstr ""
+
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:14:16
 msgid "Valid"
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:2:26
+msgid "Verify your email"
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:4:23
+msgid "Verifying ISO..."
 msgstr ""
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:6:20
@@ -709,6 +971,16 @@ msgstr ""
 msgid "View on Bluesky"
 msgstr ""
 
+#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:3:25
+msgid ""
+"Visit your email, click the link in the verification email, and then check "
+"verification"
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:9:21
+msgid "Wrong email? "
+msgstr ""
+
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:34:28
 msgid "You may have trouble connecting to other players."
 msgstr ""
@@ -719,6 +991,24 @@ msgid ""
 "'strict', or 'symmetric' NAT. If possible, please check your router "
 "settings to see if this can be changed to 'easy', 'full cone', 'normal', or "
 "'open' NAT."
+msgstr ""
+
+#: src/renderer/pages/quick_start/quick_start.messages.ts:2:25
+msgid "You're all set up"
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:8:27
+msgid ""
+"Your ISO is unsupported. Using this ISO may cause issues and no support "
+"will be given."
+msgstr ""
+
+#: src/renderer/components/activate_online_form/activate_online_form.messages.ts:2:37
+msgid "Your connect code is used for players to connect with you directly."
+msgstr ""
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:5:28
+msgid "or drag and drop here"
 msgstr ""
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:3:39
