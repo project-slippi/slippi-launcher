@@ -6,6 +6,8 @@ import { ExternalLink as A } from "@/components/external_link";
 import { useAdvancedUser } from "@/lib/hooks/use_advanced_user";
 import { useToasts } from "@/lib/hooks/use_toasts";
 
+import { BuildInfoMessages as Messages } from "./build_info.messages";
+
 const osInfo = window.electron.bootstrap.operatingSystem;
 
 const appVersion = __VERSION__;
@@ -36,7 +38,7 @@ export const BuildInfo = ({ className, enableAdvancedUserClick }: BuildInfoProps
     }
 
     if (!isAdvancedUser) {
-      showWarning("I hope you know what you're doing...");
+      showWarning(Messages.warnUser());
     }
 
     setIsAdvancedUser(!isAdvancedUser);

@@ -5,6 +5,8 @@ import Typography from "@mui/material/Typography";
 import React from "react";
 import { Link } from "react-router-dom";
 
+import { NotFoundPageMessages as Messages } from "./not_found_page.messages";
+
 const OuterBox = styled(Box)`
   flex: 1;
   align-self: stretch;
@@ -19,11 +21,11 @@ const Text = styled.h2`
 export const NotFoundPage = React.memo(() => {
   return (
     <OuterBox>
-      <Typography variant="h2">Uh oh.</Typography>
-      <Text>Something went wrong.</Text>
+      <Typography variant="h2">{Messages.uhOh()}</Typography>
+      <Text>{Messages.somethingWentWrong()}</Text>
       <div style={{ textAlign: "right" }}>
         <Button color="primary" variant="contained" component={Link} to="/main">
-          Return home
+          {Messages.returnHome()}
         </Button>
       </div>
     </OuterBox>

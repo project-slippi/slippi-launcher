@@ -1,8 +1,10 @@
 import { css } from "@emotion/react";
 
+import { BuildInfo } from "@/components/build_info/build_info";
 import { LoadingScreen } from "@/components/loading_screen";
-import { BuildInfo } from "@/containers/build_info";
 import { withSlippiBackground } from "@/styles/with_slippi_background";
+
+import { LoadingPageMessages as Messages } from "./loading_page.messages";
 
 export const LoadingPage = () => {
   return (
@@ -12,7 +14,7 @@ export const LoadingPage = () => {
         width: 100%;
       `}
     >
-      <LoadingScreen css={withSlippiBackground} message="Just a sec..." />
+      <LoadingScreen css={withSlippiBackground} message={Messages.justASec()} />
       <div
         css={css`
           position: fixed;
