@@ -4,6 +4,8 @@ import * as stylex from "@stylexjs/stylex";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 
+import { SpectatePortFormMessages as Messages } from "./spectate_port_form.messages";
+
 const DEFAULT_PORT = 49809;
 
 const styles = stylex.create({
@@ -53,11 +55,11 @@ export const SpectatePortForm = React.memo(({ port, onChange }: { port: number; 
         name="port"
         control={control}
         rules={{
-          required: "Port is required",
+          required: Messages.portIsRequired(),
           validate: (value) => {
             const num = Number(value);
             if (isNaN(num) || num <= 0 || num > 65535) {
-              return "Must be a number from 1 to 65535";
+              return Messages.portMustBeNumber();
             }
             return true;
           },
@@ -82,7 +84,7 @@ export const SpectatePortForm = React.memo(({ port, onChange }: { port: number; 
         disabled={!isDirty}
         {...stylex.props(styles.button)}
       >
-        Save
+        {Messages.save()}
       </Button>
       <Button
         color="secondary"
@@ -91,7 +93,7 @@ export const SpectatePortForm = React.memo(({ port, onChange }: { port: number; 
         disabled={!isNotDefaultPort}
         {...stylex.props(styles.button)}
       >
-        Reset to default
+        {Messages.resetToDefault()}
       </Button>
     </div>
   );
