@@ -12,7 +12,7 @@ import { platformTitleBarStyles } from "@/styles/platform_title_bar_styles";
 import { QuickStartMessages as Messages } from "./quick_start.messages";
 import { AcceptRulesStep } from "./steps/accept_rules_step/accept_rules_step";
 import { ActivateOnlineStep } from "./steps/activate_online_step/activate_online_step";
-import { IsoSelectionStep } from "./steps/iso_selection_step";
+import { IsoSelectionStep } from "./steps/iso_selection_step/iso_selection_step";
 import { LoginStep } from "./steps/login_step";
 import { SetupCompleteStep } from "./steps/setup_complete_step/setup_complete_step";
 import { VerifyEmailStep } from "./steps/verify_email_step";
