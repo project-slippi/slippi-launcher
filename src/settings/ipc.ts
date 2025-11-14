@@ -7,8 +7,6 @@ import type { AppSettings, SettingUpdate, StoredConnection } from "./types";
  * Generic endpoints for the new settings system
  */
 
-export const ipc_updateSetting = makeEndpoint.main("updateSetting", <SettingUpdate>_, <SuccessPayload>_);
-
 export const ipc_updateSettings = makeEndpoint.main(
   "updateSettings",
   <{ updates: SettingUpdate[] }>_,

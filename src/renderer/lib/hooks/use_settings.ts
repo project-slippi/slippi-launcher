@@ -63,7 +63,7 @@ export function useSetting<K extends keyof SettingsSchema>(
   const setValue = useCallback(
     async (newValue: SettingsSchema[K]) => {
       // Type assertion needed due to complex conditional type in updateSetting
-      await window.electron.settings.updateSetting(key as SettingKey, newValue as any);
+      await window.electron.settings.updateSettings([{ key, value: newValue }]);
     },
     [key],
   );
@@ -94,7 +94,7 @@ export const useDolphinBeta = (dolphinType: DolphinLaunchType) => {
   const setDolphinBeta = useCallback(
     async (useBeta: boolean) => {
       const key = dolphinType === DolphinLaunchType.NETPLAY ? "useNetplayBeta" : "usePlaybackBeta";
-      await window.electron.settings.updateSetting(key, useBeta);
+      await window.electron.settings.updateSettings([{ key, value: useBeta }]);
     },
     [dolphinType],
   );
@@ -102,20 +102,3 @@ export const useDolphinBeta = (dolphinType: DolphinLaunchType) => {
   const useBeta = dolphinType === DolphinLaunchType.NETPLAY ? netplayBeta : playbackBeta;
   return [useBeta, setDolphinBeta] as const;
 };
-
-/**
- * NEW: Hook to access multiple settings efficiently
- * Only re-renders when any of the specified settings change
- *
- * @example
- * const { isoPath, rootSlpPath } = useMultipleSettings(["isoPath", "rootSlpPath"]);
- */
-export function useMultipleSettings<K extends keyof SettingsSchema>(keys: K[]): Pick<SettingsSchema, K> {
-  return useSettingsStore((state) => {
-    const result = {} as Pick<SettingsSchema, K>;
-    for (const key of keys) {
-      result[key] = state.settings[key];
-    }
-    return result;
-  });
-}

@@ -8,17 +8,9 @@ import {
   ipc_openSettingsModalEvent,
   ipc_settingChangedEvent,
   ipc_settingsUpdatedEvent,
-  ipc_updateSetting,
   ipc_updateSettings,
 } from "./ipc";
-import type {
-  AppSettings,
-  RootSettingsSchema,
-  SettingKey,
-  SettingsSchema,
-  SettingUpdate,
-  StoredConnection,
-} from "./types";
+import type { AppSettings, SettingUpdate, StoredConnection } from "./types";
 
 export default {
   /**
@@ -58,23 +50,6 @@ export default {
       handle();
     });
     return destroy;
-  },
-
-  /**
-   * Update a single setting
-   * @example
-   * await updateSetting("isoPath", "/path/to/game.iso");
-   * await updateSetting("autoUpdateLauncher", true);
-   */
-  async updateSetting<K extends SettingKey>(
-    key: K,
-    value: K extends keyof SettingsSchema
-      ? SettingsSchema[K]
-      : K extends keyof RootSettingsSchema
-      ? RootSettingsSchema[K]
-      : never,
-  ): Promise<void> {
-    await ipc_updateSetting.renderer!.trigger({ key, value } as SettingUpdate);
   },
 
   /**

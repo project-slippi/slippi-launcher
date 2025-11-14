@@ -4,13 +4,7 @@ import { ipcMain } from "electron";
 import { autoUpdater } from "electron-updater";
 import path from "path";
 
-import {
-  ipc_addNewConnection,
-  ipc_deleteConnection,
-  ipc_editConnection,
-  ipc_updateSetting,
-  ipc_updateSettings,
-} from "./ipc";
+import { ipc_addNewConnection, ipc_deleteConnection, ipc_editConnection, ipc_updateSettings } from "./ipc";
 import type { SettingsManager } from "./settings_manager";
 
 export default function setupSettingsIpc({
@@ -28,12 +22,6 @@ export default function setupSettingsIpc({
   ipcMain.on("getAppSettingsSync", (event) => {
     const settings = settingsManager.get();
     event.returnValue = settings;
-  });
-
-  // Generic single setting update
-  ipc_updateSetting.main!.handle(async ({ key, value }) => {
-    await settingsManager.updateSetting(key as any, value);
-    return { success: true };
   });
 
   // Generic batch update
