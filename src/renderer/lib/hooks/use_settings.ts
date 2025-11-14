@@ -119,10 +119,3 @@ export function useMultipleSettings<K extends keyof SettingsSchema>(keys: K[]): 
     return result;
   });
 }
-
-// Subscribe to incremental setting changes from main process
-// This uses Immer's structural sharing to only update what actually changed,
-// preventing unnecessary re-renders in components
-window.electron.settings.onSettingChanged((updates) => {
-  useSettingsStore.getState().applyUpdates(updates);
-});
