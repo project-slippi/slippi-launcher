@@ -47,6 +47,7 @@ const configuration: webpack.Configuration = {
           loader: "i18next-auto-keys",
           options: {
             setDefaultValue: isDevelop,
+            debug: process.env.DEBUG_I18N === "1",
           },
         },
       },
