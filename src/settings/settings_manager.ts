@@ -220,6 +220,11 @@ export class SettingsManager extends EventEmitter {
       ? currentSettings.settings[key as keyof SettingsSchema]
       : (currentSettings as any)[key];
 
+    if (previousValue === value) {
+      // No change, so do nothing
+      return;
+    }
+
     // Update the setting value
     await this.setMutex.acquire();
     await electronSettings.set(objectPath, value as any);
