@@ -1,7 +1,7 @@
 import type { SuccessPayload } from "utils/ipc";
 import { _, makeEndpoint } from "utils/ipc";
 
-import type { AppSettings, SettingUpdate, StoredConnection } from "./types";
+import type { SettingUpdate, StoredConnection } from "./types";
 
 /**
  * Generic endpoints for the new settings system
@@ -35,9 +35,6 @@ export const ipc_deleteConnection = makeEndpoint.main("deleteConnection", <{ id:
 /**
  * Events
  */
-
-// Full settings sync (used for initial load or debugging)
-export const ipc_settingsUpdatedEvent = makeEndpoint.renderer("settings_settingsUpdated", <AppSettings>_);
 
 // Incremental setting updates (used for syncing changes efficiently)
 export const ipc_settingChangedEvent = makeEndpoint.renderer(

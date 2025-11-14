@@ -7,7 +7,6 @@ import {
   ipc_editConnection,
   ipc_openSettingsModalEvent,
   ipc_settingChangedEvent,
-  ipc_settingsUpdatedEvent,
   ipc_updateSettings,
 } from "./ipc";
 import type { AppSettings, SettingUpdate, StoredConnection } from "./types";
@@ -18,17 +17,6 @@ export default {
    */
   getAppSettingsSync() {
     return ipcRenderer.sendSync("getAppSettingsSync") as AppSettings;
-  },
-
-  /**
-   * Subscribe to settings updates from main process (full state sync)
-   * This is primarily for compatibility or full state refreshes
-   */
-  onSettingsUpdated(handle: (settings: AppSettings) => void) {
-    const { destroy } = ipc_settingsUpdatedEvent.renderer!.handle(async (settings) => {
-      handle(settings);
-    });
-    return destroy;
   },
 
   /**

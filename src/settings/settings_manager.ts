@@ -112,39 +112,6 @@ export class SettingsManager extends EventEmitter {
     };
   }
 
-  /**
-   * Subscribe to changes for multiple settings
-   * Returns an unsubscribe function
-   */
-  public onSettingsChange(
-    keys: SettingKey[],
-    callback: (event: SettingChangeEvent) => void | Promise<void>,
-  ): () => void {
-    const listener = (event: SettingChangeEvent) => {
-      if (keys.includes(event.key)) {
-        void Promise.resolve(callback(event));
-      }
-    };
-
-    this.on("settingChange", listener);
-
-    return () => {
-      this.off("settingChange", listener);
-    };
-  }
-
-  /**
-   * Subscribe to all setting changes
-   * Returns an unsubscribe function
-   */
-  public onAnySettingChange(callback: (event: SettingChangeEvent) => void | Promise<void>): () => void {
-    this.on("settingChange", callback);
-
-    return () => {
-      this.off("settingChange", callback);
-    };
-  }
-
   public get(): AppSettings {
     // Join the settings with our default settings.
     // This allows us to change the defaults without persisting them
