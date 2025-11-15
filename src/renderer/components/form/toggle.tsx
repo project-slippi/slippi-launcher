@@ -17,6 +17,7 @@ export const Toggle = ({ label, description, value, onChange, disabled }: Toggle
     <div>
       <FormControlLabel
         labelPlacement="start"
+        disabled={disabled}
         control={
           <Switch checked={value} onChange={(e) => onChange(e.target.checked)} color="primary" disabled={disabled} />
         }
