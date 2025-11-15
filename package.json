@@ -60,6 +60,14 @@
     "argMode": "indexed",
     "projectId": "slippi-launcher 1.0"
   },
+  "electronmon": {
+    "patterns": [
+      "!src/renderer/**/*",
+      "!**/*.md",
+      "!**/*.spec.ts",
+      "!**/*.test.ts"
+    ]
+  },
   "devDependencies": {
     "@babel/core": "^7.17.5",
     "@electron/notarize": "^2.1.0",
