@@ -42,6 +42,7 @@ export interface SettingsSchema {
 
   // Spectate settings
   enableSpectateRemoteControl: boolean;
+  spectateRemoteControlPort: number;
 }
 
 /**
