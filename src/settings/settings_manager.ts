@@ -271,20 +271,9 @@ export class SettingsManager extends EventEmitter {
 
   /**
    * Check if a setting is nested under "settings" or at root level
+   * Automatically stays in sync with SettingsSchema by checking against defaultAppSettings
    */
   private isNestedSetting(key: SettingKey): key is keyof SettingsSchema {
-    const nestedKeys: Array<keyof SettingsSchema> = [
-      "isoPath",
-      "rootSlpPath",
-      "spectateSlpPath",
-      "extraSlpPaths",
-      "useMonthlySubfolders",
-      "enableJukebox",
-      "launchMeleeOnPlay",
-      "autoUpdateLauncher",
-      "useNetplayBeta",
-      "usePlaybackBeta",
-    ];
-    return nestedKeys.includes(key as any);
+    return key in defaultAppSettings.settings;
   }
 }
