@@ -1,16 +1,29 @@
 import { IsoValidity } from "@common/types";
+import type { SettingKey } from "@settings/types";
 import log from "electron-log";
 
 import { useIsoVerification } from "@/lib/hooks/use_iso_verification";
+import { useSettingsStore } from "@/lib/hooks/use_settings";
 
-export function installIsoPathListeners() {
+export function installSettingsChangeListeners() {
   window.electron.settings.onSettingChanged((updates) => {
-    updates.forEach((update) => {
-      if (update.key === "isoPath") {
-        void onIsoPathChange(update.value as any);
-      }
-    });
+    // Listen for individual settings changes
+    updates.forEach((update) => onSettingChange(update.key, update.value));
+
+    // Apply updates to the settings store
+    useSettingsStore.getState().applyUpdates(updates);
   });
+}
+
+// Enrol listeners for individual settings changes
+function onSettingChange(key: SettingKey, value: any) {
+  switch (key) {
+    case "isoPath":
+      void onIsoPathChange(value);
+      break;
+    default:
+      break;
+  }
 }
 
 let requestId = 0;

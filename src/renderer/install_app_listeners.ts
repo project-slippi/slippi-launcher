@@ -6,9 +6,8 @@ import { useAppStore } from "./lib/hooks/use_app_store";
 import { useBroadcastListStore } from "./lib/hooks/use_broadcast_list";
 import { useConsole } from "./lib/hooks/use_console";
 import { useConsoleDiscoveryStore } from "./lib/hooks/use_console_discovery";
-import { useSettingsStore } from "./lib/hooks/use_settings";
 import { installDolphinListeners } from "./listeners/install_dolphin_listeners";
-import { installIsoPathListeners } from "./listeners/install_iso_path_listeners";
+import { installSettingsChangeListeners } from "./listeners/install_settings_change_listeners";
 import type { NotificationService } from "./services/notification/types";
 import type { Services } from "./services/types";
 
@@ -25,11 +24,6 @@ export function installAppListeners(services: Services) {
     }
   });
 
-  // Subscribe to incremental setting changes to keep settings state in sync with main
-  window.electron.settings.onSettingChanged((updates) => {
-    useSettingsStore.getState().applyUpdates(updates);
-  });
-
   window.electron.common.onAppUpdateReady(() => {
     useAppStore.getState().setUpdateReady(true);
   });
@@ -41,7 +35,7 @@ export function installAppListeners(services: Services) {
   installDolphinListeners({ dolphinService, notificationService });
   installBroadcastListeners({ broadcastService });
   installConsoleListeners({ consoleService, notificationService });
-  installIsoPathListeners();
+  installSettingsChangeListeners();
 }
 
 function installBroadcastListeners({ broadcastService }: { broadcastService: BroadcastService }) {
