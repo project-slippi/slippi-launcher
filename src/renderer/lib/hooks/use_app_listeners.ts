@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { IsoValidity } from "@common/types";
 import type { Progress } from "@replays/types";
-import log from "electron-log";
 import throttle from "lodash/throttle";
 import React, { useRef } from "react";
 
@@ -11,7 +9,6 @@ import { useServices } from "@/services";
 
 import { useBroadcast } from "./use_broadcast";
 import { useBroadcastList } from "./use_broadcast_list";
-import { useIsoVerification } from "./use_iso_verification";
 import { useReplayBrowserNavigation } from "./use_replay_browser_list";
 import { useSettings } from "./use_settings";
 import { useSettingsModal } from "./use_settings_modal";
@@ -27,36 +24,6 @@ export const useAppListeners = () => {
   React.useEffect(() => {
     return replayService.onReplayLoadProgressUpdate(throttledUpdateProgress);
   }, [throttledUpdateProgress, replayService]);
-
-  // Automatically run ISO verification whenever the isoPath changes
-  const isoPath = useSettings((store) => store.settings.isoPath);
-  const setIsValidating = useIsoVerification((store) => store.setIsValidating);
-  const setIsValid = useIsoVerification((store) => store.setIsValid);
-  React.useEffect(() => {
-    if (!isoPath) {
-      setIsValid(IsoValidity.UNVALIDATED);
-      setIsValidating(false);
-      return;
-    }
-
-    // Start iso validation
-    setIsValidating(true);
-    window.electron.common
-      .checkValidIso(isoPath)
-      .then((isoCheckResult) => {
-        if (isoCheckResult.path !== isoPath) {
-          // The ISO path changed before verification completed
-          // so just do nothing.
-          return;
-        }
-
-        setIsValid(isoCheckResult.valid);
-      })
-      .catch(log.error)
-      .finally(() => {
-        setIsValidating(false);
-      });
-  }, [isoPath, setIsValid, setIsValidating]);
 
   const { goToReplayStatsPage } = useReplayBrowserNavigation();
   const moveToStatsPage = React.useCallback(
