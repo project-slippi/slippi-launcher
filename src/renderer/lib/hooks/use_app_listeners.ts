@@ -5,9 +5,7 @@ import log from "electron-log";
 import throttle from "lodash/throttle";
 import React, { useRef } from "react";
 
-import { useAppInitialization } from "@/lib/hooks/use_app";
 import { useAppStore } from "@/lib/hooks/use_app_store";
-import { useConsole } from "@/lib/hooks/use_console";
 import { ReplayPresenter } from "@/lib/hooks/use_replays";
 import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
@@ -15,7 +13,7 @@ import { useServices } from "@/services";
 import { useDolphinListeners } from "../dolphin/use_dolphin_listeners";
 import { useAccount, useUserData } from "./use_account";
 import { useBroadcast } from "./use_broadcast";
-import { useBroadcastList, useBroadcastListStore } from "./use_broadcast_list";
+import { useBroadcastList } from "./use_broadcast_list";
 import { useConsoleDiscoveryStore } from "./use_console_discovery";
 import { useIsoVerification } from "./use_iso_verification";
 import { useReplayBrowserNavigation } from "./use_replay_browser_list";
@@ -28,11 +26,6 @@ export const useAppListeners = () => {
   const { authService, broadcastService, consoleService, dolphinService, spectateRemoteService, replayService } =
     useServices();
   const replayPresenter = useRef(new ReplayPresenter(replayService));
-  const initialized = useAppStore((store) => store.initialized);
-  const initializeApp = useAppInitialization();
-  React.useEffect(() => {
-    void initializeApp();
-  }, [initializeApp]);
 
   useDolphinListeners(dolphinService);
 
@@ -41,9 +34,6 @@ export const useAppListeners = () => {
   const refreshUserData = useUserData();
   React.useEffect(() => {
     // Only start subscribing to user change events after we've finished initializing
-    if (!initialized) {
-      return;
-    }
 
     try {
       const unsubscribe = authService.onUserChange((user) => {
@@ -60,34 +50,13 @@ export const useAppListeners = () => {
     }
 
     return;
-  }, [initialized, refreshUserData, setUser, authService]);
-
-  const setSlippiConnectionStatus = useConsole((store) => store.setSlippiConnectionStatus);
-  React.useEffect(() => {
-    return broadcastService.onSlippiStatusChanged(setSlippiConnectionStatus);
-  }, [setSlippiConnectionStatus, broadcastService]);
-
-  const setDolphinConnectionStatus = useConsole((store) => store.setDolphinConnectionStatus);
-  React.useEffect(() => {
-    return broadcastService.onDolphinStatusChanged(setDolphinConnectionStatus);
-  }, [setDolphinConnectionStatus, broadcastService]);
-
-  const setBroadcastError = useConsole((store) => store.setBroadcastError);
-  React.useEffect(() => {
-    return broadcastService.onBroadcastErrorMessage(setBroadcastError);
-  }, [setBroadcastError, broadcastService]);
+  }, [refreshUserData, setUser, authService]);
 
   const updateProgress = (progress: Progress | null) => replayPresenter.current.updateProgress(progress);
   const throttledUpdateProgress = throttle(updateProgress, 50);
   React.useEffect(() => {
     return replayService.onReplayLoadProgressUpdate(throttledUpdateProgress);
   }, [throttledUpdateProgress, replayService]);
-
-  // Listen to when the list of broadcasting users has changed
-  const updateBroadcastingList = useBroadcastListStore((store) => store.setItems);
-  React.useEffect(() => {
-    return broadcastService.onBroadcastListUpdated(updateBroadcastingList);
-  }, [updateBroadcastingList, broadcastService]);
 
   // Update the discovered console list
   const updateConsoleItems = useConsoleDiscoveryStore((store) => store.updateConsoleItems);

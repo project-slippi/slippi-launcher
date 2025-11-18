@@ -16,7 +16,6 @@ import { useAppStore } from "@/lib/hooks/use_app_store";
 import { usePageNavigationShortcuts } from "@/lib/hooks/use_shortcuts";
 import { lazyLoadConsoleMirrorPage } from "@/pages/console_mirror/load";
 import { HomePage } from "@/pages/home/home_page";
-import { LoadingPage } from "@/pages/loading/loading_page";
 import { NotFoundPage } from "@/pages/not_found/not_found_page";
 import { lazyLoadQuickStartPage } from "@/pages/quick_start/load";
 import { lazyLoadReplaysPage } from "@/pages/replays/load";
@@ -77,15 +76,10 @@ export function createApp({ services }: { services: Services }): {
   });
 
   const AppRoutes = () => {
-    const initialized = useAppStore((state) => state.initialized);
     const currentLanguage = useAppStore((state) => state.currentLanguage);
 
     // Then add the rest of the app listeners
     useAppListeners();
-
-    if (!initialized) {
-      return <LoadingPage />;
-    }
 
     return (
       <Routes key={currentLanguage}>
