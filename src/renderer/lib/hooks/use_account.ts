@@ -40,15 +40,22 @@ export const useAccount = create(
   ),
 );
 
+let requestId = 0;
 export async function refreshUserData(slippiBackendService: SlippiBackendService) {
   // We're already refreshing the key
   if (useAccount.getState().loading) {
     return;
   }
 
+  const currentRequestId = ++requestId;
   useAccount.getState().setLoading(true);
   try {
     const userData = await slippiBackendService.fetchUserData();
+    if (requestId !== currentRequestId) {
+      // We've already got a new request so just do nothing.
+      return;
+    }
+
     useAccount.getState().setUserData(userData);
     useAccount.getState().setServerError(false);
   } catch (err) {
@@ -58,4 +65,11 @@ export async function refreshUserData(slippiBackendService: SlippiBackendService
   } finally {
     useAccount.getState().setLoading(false);
   }
+}
+
+export function clearUserData() {
+  // Disregard any pending requests for user data.
+  requestId += 1;
+
+  useAccount.getState().setUserData(null);
 }

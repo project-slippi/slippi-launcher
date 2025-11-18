@@ -1,7 +1,7 @@
 import type { BroadcastService } from "@broadcast/types";
 import type { ConsoleService } from "@console/types";
 
-import { refreshUserData, useAccount } from "./lib/hooks/use_account";
+import { clearUserData, refreshUserData, useAccount } from "./lib/hooks/use_account";
 import { useAppStore } from "./lib/hooks/use_app_store";
 import { useBroadcastListStore } from "./lib/hooks/use_broadcast_list";
 import { useConsole } from "./lib/hooks/use_console";
@@ -21,6 +21,9 @@ export function installAppListeners(services: Services) {
     // Refresh the play key
     if (user) {
       void refreshUserData(slippiBackendService);
+    } else {
+      // We've logged out so clear any pending requests for user data.
+      clearUserData();
     }
   });
 
