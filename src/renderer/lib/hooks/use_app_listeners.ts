@@ -7,14 +7,11 @@ import React, { useRef } from "react";
 
 import { useAppStore } from "@/lib/hooks/use_app_store";
 import { ReplayPresenter } from "@/lib/hooks/use_replays";
-import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 
 import { useDolphinListeners } from "../dolphin/use_dolphin_listeners";
-import { useAccount, useUserData } from "./use_account";
 import { useBroadcast } from "./use_broadcast";
 import { useBroadcastList } from "./use_broadcast_list";
-import { useConsoleDiscoveryStore } from "./use_console_discovery";
 import { useIsoVerification } from "./use_iso_verification";
 import { useReplayBrowserNavigation } from "./use_replay_browser_list";
 import { useSettings } from "./use_settings";
@@ -23,52 +20,16 @@ import { useSpectateRemoteServerStateStore } from "./use_spectate_remote_server"
 
 export const useAppListeners = () => {
   // Handle app initalization
-  const { authService, broadcastService, consoleService, dolphinService, spectateRemoteService, replayService } =
-    useServices();
+  const { broadcastService, dolphinService, spectateRemoteService, replayService } = useServices();
   const replayPresenter = useRef(new ReplayPresenter(replayService));
 
   useDolphinListeners(dolphinService);
-
-  // Subscribe to user auth changes to keep store up to date
-  const setUser = useAccount((store) => store.setUser);
-  const refreshUserData = useUserData();
-  React.useEffect(() => {
-    // Only start subscribing to user change events after we've finished initializing
-
-    try {
-      const unsubscribe = authService.onUserChange((user) => {
-        setUser(user);
-
-        // Refresh the play key
-        void refreshUserData();
-      });
-
-      // Unsubscribe on unmount
-      return unsubscribe;
-    } catch (err) {
-      console.warn(err);
-    }
-
-    return;
-  }, [refreshUserData, setUser, authService]);
 
   const updateProgress = (progress: Progress | null) => replayPresenter.current.updateProgress(progress);
   const throttledUpdateProgress = throttle(updateProgress, 50);
   React.useEffect(() => {
     return replayService.onReplayLoadProgressUpdate(throttledUpdateProgress);
   }, [throttledUpdateProgress, replayService]);
-
-  // Update the discovered console list
-  const updateConsoleItems = useConsoleDiscoveryStore((store) => store.updateConsoleItems);
-  React.useEffect(() => {
-    return consoleService.onDiscoveredConsolesUpdated(updateConsoleItems);
-  }, [updateConsoleItems, consoleService]);
-
-  // Update the mirroring console status
-  const updateConsoleStatus = useConsoleDiscoveryStore((store) => store.updateConsoleStatus);
-  React.useEffect(() => {
-    return consoleService.onConsoleMirrorStatusUpdated(updateConsoleStatus);
-  }, [updateConsoleStatus, consoleService]);
 
   // Automatically run ISO verification whenever the isoPath changes
   const isoPath = useSettings((store) => store.settings.isoPath);
@@ -141,11 +102,6 @@ export const useAppListeners = () => {
   React.useEffect(() => {
     replayPresenter.current.init(rootSlpPath, extraSlpPaths, true).catch(console.error);
   }, [rootSlpPath, extraSlpPaths]);
-
-  const { showError } = useToasts();
-  React.useEffect(() => {
-    return consoleService.onConsoleMirrorErrorMessage(showError);
-  }, [showError, consoleService]);
 
   const [startBroadcast] = useBroadcast();
   React.useEffect(() => {

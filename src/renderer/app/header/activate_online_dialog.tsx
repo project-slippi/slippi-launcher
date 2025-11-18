@@ -6,8 +6,9 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { ActivateOnlineForm } from "@/components/activate_online_form/activate_online_form";
-import { useUserData } from "@/lib/hooks/use_account";
+import { refreshUserData } from "@/lib/hooks/use_account";
 import { useToasts } from "@/lib/hooks/use_toasts";
+import { useServices } from "@/services";
 
 type ActivateOnlineDialogProps = {
   open: boolean;
@@ -18,11 +19,11 @@ type ActivateOnlineDialogProps = {
 export const ActivateOnlineDialog = ({ open, onClose, onSubmit }: ActivateOnlineDialogProps) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  const refreshUserData = useUserData();
   const { showError } = useToasts();
+  const { slippiBackendService } = useServices();
 
   const handleSubmit = () => {
-    refreshUserData()
+    void refreshUserData(slippiBackendService)
       .then(() => {
         onClose();
         onSubmit();
