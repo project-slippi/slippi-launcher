@@ -1,0 +1,14 @@
+export const SpectateRemoteControlBlockMessages = {
+  errorStartingServer: () => "Error starting server",
+  status: () => "Status",
+  startServer: () => "Start Server",
+  stopServer: () => "Stop Server",
+  started: () => "Started",
+  starting: () => "Starting...",
+  startingServer: () => "Starting Server...",
+  stopped: () => "Stopped",
+  connected: () => "Connected",
+  disconnected: () => "Disconnected",
+  copied: () => "Copied!",
+  copy: () => "Copy",
+};

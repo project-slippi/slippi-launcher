@@ -8,6 +8,7 @@ import { GameSettings } from "./game_settings/game_settings";
 import { HelpPage } from "./help_page/help_page";
 import { ReplaySettings } from "./replay_settings/replay_settings";
 import { SettingsPage } from "./settings_page";
+import { SpectateSettings } from "./spectate_settings/spectate_settings";
 import type { SettingSection } from "./types";
 
 export function createSettingsPage(): { Page: React.ComponentType } {
@@ -29,6 +30,11 @@ export function createSettingsPage(): { Page: React.ComponentType } {
           name: () => Messages.chat(),
           path: "chat-options",
           component: <ChatSettings />,
+        },
+        {
+          name: () => Messages.spectate(),
+          path: "spectate-options",
+          component: <SpectateSettings />,
         },
       ],
     },

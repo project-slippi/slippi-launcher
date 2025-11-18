@@ -39,6 +39,10 @@ export interface SettingsSchema {
   // Dolphin settings
   useNetplayBeta: boolean;
   usePlaybackBeta: boolean;
+
+  // Spectate settings
+  enableSpectateRemoteControl: boolean;
+  spectateRemoteControlPort: number;
 }
 
 /**

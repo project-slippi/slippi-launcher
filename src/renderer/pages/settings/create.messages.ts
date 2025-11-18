@@ -3,6 +3,7 @@ export const SettingsCreateMessages = {
   game: () => "Game",
   replays: () => "Replays",
   chat: () => "Chat",
+  spectate: () => "Spectate",
   dolphinSettings: () => "Dolphin Settings",
   netplay: () => "Netplay",
   playback: () => "Playback",
