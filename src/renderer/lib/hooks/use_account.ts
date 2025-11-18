@@ -1,3 +1,4 @@
+import log from "electron-log";
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
@@ -46,16 +47,15 @@ export async function refreshUserData(slippiBackendService: SlippiBackendService
   }
 
   useAccount.getState().setLoading(true);
-  await slippiBackendService
-    .fetchUserData()
-    .then((userData) => {
-      useAccount.getState().setUserData(userData);
-      useAccount.getState().setServerError(false);
-    })
-    .catch((err) => {
-      console.warn("Error fetching play key: ", err);
-      useAccount.getState().setUserData(null);
-      useAccount.getState().setServerError(true);
-    })
-    .finally(() => useAccount.getState().setLoading(false));
+  try {
+    const userData = await slippiBackendService.fetchUserData();
+    useAccount.getState().setUserData(userData);
+    useAccount.getState().setServerError(false);
+  } catch (err) {
+    log.warn("Error fetching play key: ", err);
+    useAccount.getState().setUserData(null);
+    useAccount.getState().setServerError(true);
+  } finally {
+    useAccount.getState().setLoading(false);
+  }
 }

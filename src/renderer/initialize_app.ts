@@ -4,8 +4,6 @@ import log from "electron-log";
 import type { AuthUser } from "@/services/auth/types";
 import type { Services } from "@/services/types";
 
-import { useAccount } from "./lib/hooks/use_account";
-
 export async function initializeApp(services: Services) {
   const { authService, slippiBackendService, dolphinService, notificationService } = services;
   const { showError } = notificationService;
@@ -20,20 +18,15 @@ export async function initializeApp(services: Services) {
       let user: AuthUser | null = null;
       try {
         user = await authService.init();
-        useAccount.getState().setUser(user);
+        // useAccount.getState().setUser(user);
       } catch (err) {
         log.warn(err);
       }
 
       if (user) {
         try {
-          const userData = await slippiBackendService.fetchUserData();
-          useAccount.getState().setServerError(false);
-          useAccount.getState().setUserData(userData);
+          await slippiBackendService.fetchUserData();
         } catch (err) {
-          useAccount.getState().setServerError(true);
-          log.warn(err);
-
           const message = `Failed to communicate with Slippi servers. You either have no internet
               connection or Slippi is experiencing some downtime. Playing online may or may not work.`;
           showError(message);

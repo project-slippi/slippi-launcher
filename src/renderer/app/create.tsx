@@ -1,16 +1,11 @@
-import "@/styles/styles.scss";
-
-import { ThemeProvider } from "@emotion/react";
 import CastOutlinedIcon from "@mui/icons-material/CastOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import LiveTvOutlinedIcon from "@mui/icons-material/LiveTvOutlined";
 import SlowMotionVideoIcon from "@mui/icons-material/SlowMotionVideo";
-import { StyledEngineProvider, ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { HashRouter as Router, Navigate, Route, Routes } from "react-router-dom";
 
-import { ToastProvider } from "@/components/toast_provider";
 import { useAppListeners } from "@/lib/hooks/use_app_listeners";
 import { useAppStore } from "@/lib/hooks/use_app_store";
 import { usePageNavigationShortcuts } from "@/lib/hooks/use_shortcuts";
@@ -23,7 +18,6 @@ import { lazyLoadSettingsPage } from "@/pages/settings/load";
 import { lazyLoadSpectatePage } from "@/pages/spectate/load";
 import { createServiceProvider } from "@/services";
 import type { Services } from "@/services/types";
-import { slippiTheme } from "@/styles/theme";
 
 import type { MainMenuItem } from "./app";
 import { App as AppImpl } from "./app";
@@ -110,21 +104,13 @@ export function createApp({ services }: { services: Services }): {
   // Providers need to be initialized before the rest of the app can use them
   const withProviders = (Component: React.ComponentType) => {
     return () => (
-      <StyledEngineProvider injectFirst={true}>
-        <MuiThemeProvider theme={slippiTheme}>
-          <ThemeProvider theme={slippiTheme as any}>
-            <QueryClientProvider client={queryClient}>
-              <ToastProvider>
-                <ServiceProvider>
-                  <Router>
-                    <Component />
-                  </Router>
-                </ServiceProvider>
-              </ToastProvider>
-            </QueryClientProvider>
-          </ThemeProvider>
-        </MuiThemeProvider>
-      </StyledEngineProvider>
+      <QueryClientProvider client={queryClient}>
+        <ServiceProvider>
+          <Router>
+            <Component />
+          </Router>
+        </ServiceProvider>
+      </QueryClientProvider>
     );
   };
 
