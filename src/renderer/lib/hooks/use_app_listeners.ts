@@ -9,7 +9,6 @@ import { useAppStore } from "@/lib/hooks/use_app_store";
 import { ReplayPresenter } from "@/lib/hooks/use_replays";
 import { useServices } from "@/services";
 
-import { useDolphinListeners } from "../dolphin/use_dolphin_listeners";
 import { useBroadcast } from "./use_broadcast";
 import { useBroadcastList } from "./use_broadcast_list";
 import { useIsoVerification } from "./use_iso_verification";
@@ -20,10 +19,8 @@ import { useSpectateRemoteServerStateStore } from "./use_spectate_remote_server"
 
 export const useAppListeners = () => {
   // Handle app initalization
-  const { broadcastService, dolphinService, spectateRemoteService, replayService } = useServices();
+  const { broadcastService, spectateRemoteService, replayService } = useServices();
   const replayPresenter = useRef(new ReplayPresenter(replayService));
-
-  useDolphinListeners(dolphinService);
 
   const updateProgress = (progress: Progress | null) => replayPresenter.current.updateProgress(progress);
   const throttledUpdateProgress = throttle(updateProgress, 50);

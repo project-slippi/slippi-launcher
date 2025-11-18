@@ -13,10 +13,10 @@ const LazyApp = React.lazy(async () => {
   try {
     // Install services and wait for initialization
     const services = await installServices();
-    await initializeApp(services);
-
     // Install app listeners after services are ready
     installAppListeners(services);
+
+    await initializeApp(services);
 
     // Create and return the app component
     const { App } = createApp({ services });

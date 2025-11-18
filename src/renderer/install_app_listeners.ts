@@ -1,6 +1,15 @@
 import type { BroadcastService } from "@broadcast/types";
 import type { ConsoleService } from "@console/types";
+import { type DolphinService, DolphinEventType, DolphinLaunchType } from "@dolphin/types";
 
+import { handleDolphinExitCode } from "./lib/dolphin/handle_dolphin_exit_code";
+import {
+  DolphinStatus,
+  setDolphinOpened,
+  setDolphinStatus,
+  setDolphinVersion,
+  updateNetplayDownloadProgress,
+} from "./lib/dolphin/use_dolphin_store";
 import { refreshUserData, useAccount } from "./lib/hooks/use_account";
 import { useAppStore } from "./lib/hooks/use_app_store";
 import { useBroadcastListStore } from "./lib/hooks/use_broadcast_list";
@@ -11,13 +20,16 @@ import type { NotificationService } from "./services/notification/types";
 import type { Services } from "./services/types";
 
 export function installAppListeners(services: Services) {
-  const { authService, broadcastService, consoleService, notificationService, slippiBackendService } = services;
+  const { authService, broadcastService, consoleService, notificationService, slippiBackendService, dolphinService } =
+    services;
 
   authService.onUserChange((user) => {
     useAccount.getState().setUser(user);
 
     // Refresh the play key
-    void refreshUserData(slippiBackendService);
+    if (user) {
+      void refreshUserData(slippiBackendService);
+    }
   });
 
   // Subscribe to incremental setting changes to keep settings state in sync with main
@@ -33,6 +45,7 @@ export function installAppListeners(services: Services) {
     useAppStore.getState().setUpdateDownloadProgress(progress);
   });
 
+  installDolphinListeners({ dolphinService, notificationService });
   installBroadcastListeners({ broadcastService });
   installConsoleListeners({ consoleService, notificationService });
 }
@@ -73,5 +86,44 @@ function installConsoleListeners(services: {
 
   consoleService.onConsoleMirrorErrorMessage((message) => {
     notificationService.showError(message);
+  });
+}
+
+function installDolphinListeners({
+  dolphinService,
+  notificationService,
+}: {
+  dolphinService: DolphinService;
+  notificationService: NotificationService;
+}) {
+  const { showError, showWarning } = notificationService;
+
+  dolphinService.onEvent(DolphinEventType.CLOSED, ({ dolphinType, exitCode }) => {
+    setDolphinOpened(dolphinType, false);
+
+    // Check if it exited cleanly
+    const errMsg = handleDolphinExitCode(exitCode);
+    if (errMsg) {
+      showError(errMsg);
+    }
+  });
+  dolphinService.onEvent(DolphinEventType.DOWNLOAD_START, (event) => {
+    setDolphinStatus(event.dolphinType, DolphinStatus.DOWNLOADING);
+  });
+
+  dolphinService.onEvent(DolphinEventType.DOWNLOAD_PROGRESS, (event) => {
+    if (event.dolphinType === DolphinLaunchType.NETPLAY) {
+      updateNetplayDownloadProgress(event.progress);
+    }
+  });
+
+  dolphinService.onEvent(DolphinEventType.DOWNLOAD_COMPLETE, (event) => {
+    setDolphinStatus(event.dolphinType, DolphinStatus.READY);
+    setDolphinVersion(event.dolphinVersion, event.dolphinType);
+  });
+
+  dolphinService.onEvent(DolphinEventType.OFFLINE, (event) => {
+    showWarning("You seem to be offline, some functionality of the Launcher and Dolphin will be unavailable.");
+    setDolphinStatus(event.dolphinType, DolphinStatus.READY);
   });
 }
