@@ -83,19 +83,6 @@ export const useAppListeners = () => {
     return window.electron.common.onAppUpdateFound(setUpdateVersion);
   }, [setUpdateVersion]);
 
-  const setUpdateDownloadProgress = useAppStore((store) => store.setUpdateDownloadProgress);
-  React.useEffect(() => {
-    return window.electron.common.onAppUpdateDownloadProgress(setUpdateDownloadProgress);
-  }, [setUpdateDownloadProgress]);
-
-  const setUpdateReady = useAppStore((store) => store.setUpdateReady);
-  const setIsReady = React.useCallback(() => {
-    setUpdateReady(true);
-  }, [setUpdateReady]);
-  React.useEffect(() => {
-    return window.electron.common.onAppUpdateReady(setIsReady);
-  }, [setIsReady]);
-
   // Initialize the replay browser once and refresh on SLP path changes
   const rootSlpPath = useSettings((store) => store.settings.rootSlpPath);
   const extraSlpPaths = useSettings((store) => store.settings.extraSlpPaths);

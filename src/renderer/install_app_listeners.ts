@@ -2,6 +2,7 @@ import type { BroadcastService } from "@broadcast/types";
 import type { ConsoleService } from "@console/types";
 
 import { refreshUserData, useAccount } from "./lib/hooks/use_account";
+import { useAppStore } from "./lib/hooks/use_app_store";
 import { useBroadcastListStore } from "./lib/hooks/use_broadcast_list";
 import { useConsole } from "./lib/hooks/use_console";
 import { useConsoleDiscoveryStore } from "./lib/hooks/use_console_discovery";
@@ -24,11 +25,19 @@ export function installAppListeners(services: Services) {
     useSettingsStore.getState().applyUpdates(updates);
   });
 
-  installBroadcastListeners(broadcastService);
+  window.electron.common.onAppUpdateReady(() => {
+    useAppStore.getState().setUpdateReady(true);
+  });
+
+  window.electron.common.onAppUpdateDownloadProgress((progress) => {
+    useAppStore.getState().setUpdateDownloadProgress(progress);
+  });
+
+  installBroadcastListeners({ broadcastService });
   installConsoleListeners({ consoleService, notificationService });
 }
 
-function installBroadcastListeners(broadcastService: BroadcastService) {
+function installBroadcastListeners({ broadcastService }: { broadcastService: BroadcastService }) {
   broadcastService.onSlippiStatusChanged((status) => {
     useConsole.getState().setSlippiConnectionStatus(status);
   });
