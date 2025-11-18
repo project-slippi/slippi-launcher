@@ -1,5 +1,6 @@
 import { DolphinLaunchType } from "@dolphin/types";
-import type { AppSettings } from "@settings/types";
+import type { SettingKey, SettingsSchema } from "@settings/types";
+import { produce } from "immer";
 import { useCallback } from "react";
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
@@ -7,96 +8,97 @@ import { combine } from "zustand/middleware";
 const initialState = window.electron.settings.getAppSettingsSync();
 console.log("initial state: ", initialState);
 
-export const useSettings = create(
+/**
+ * NEW: Settings store with Immer for structural sharing
+ * This prevents unnecessary re-renders by preserving object references when values don't change
+ */
+export const useSettingsStore = create(
   combine(
     {
-      ...initialState,
+      settings: initialState.settings as SettingsSchema,
+      connections: initialState.connections,
+      previousVersion: initialState.previousVersion,
+      netplayPromotedToStable: initialState.netplayPromotedToStable,
+      playbackPromotedToStable: initialState.playbackPromotedToStable,
     },
     (set) => ({
-      updateSettings: (settings: AppSettings) => set(() => settings),
+      /**
+       * Apply partial updates using Immer for structural sharing
+       * Only updates references for values that actually changed
+       */
+      applyUpdates: (updates: Array<{ key: SettingKey; value: any }>) =>
+        set((state) => {
+          return produce(state, (draft) => {
+            for (const { key, value } of updates) {
+              // Check if this is a nested setting or root-level setting
+              if (key in draft.settings) {
+                (draft.settings as any)[key] = value;
+              } else {
+                (draft as any)[key] = value;
+              }
+            }
+          });
+        }),
     }),
   ),
 );
 
-export const useIsoPath = () => {
-  const isoPath = useSettings((store) => store.settings.isoPath);
-  const setPath = async (isoPath: string | null) => {
-    await window.electron.settings.setIsoPath(isoPath);
-  };
-  return [isoPath, setPath] as const;
-};
+// LEGACY: Keep old useSettings export for backward compatibility
+export const useSettings = useSettingsStore;
 
-export const useRootSlpPath = () => {
-  const rootSlpPath = useSettings((store) => store.settings.rootSlpPath);
-  const setReplayDir = async (path: string) => {
-    await window.electron.settings.setRootSlpPath(path);
-  };
-  return [rootSlpPath, setReplayDir] as const;
-};
+/**
+ * NEW: Generic hook for any setting with granular reactivity
+ * Only re-renders when the specific setting changes
+ *
+ * @example
+ * const [isoPath, setIsoPath] = useSetting("isoPath");
+ * const [autoUpdate, setAutoUpdate] = useSetting("autoUpdateLauncher");
+ */
+export function useSetting<K extends keyof SettingsSchema>(
+  key: K,
+): [SettingsSchema[K], (value: SettingsSchema[K]) => Promise<void>] {
+  // Only subscribes to this specific setting
+  const value = useSettingsStore((state) => state.settings[key]);
 
-export const useMonthlySubfolders = () => {
-  const useMonthlySubfolders = useSettings((store) => store.settings.useMonthlySubfolders);
-  const setUseMonthlySubfolders = async (toggle: boolean) => {
-    await window.electron.settings.setUseMonthlySubfolders(toggle);
-  };
-  return [useMonthlySubfolders, setUseMonthlySubfolders] as const;
-};
+  const setValue = useCallback(
+    async (newValue: SettingsSchema[K]) => {
+      // Type assertion needed due to complex conditional type in updateSetting
+      await window.electron.settings.updateSettings([{ key, value: newValue }]);
+    },
+    [key],
+  );
 
-export const useEnableJukebox = () => {
-  const enableJukebox = useSettings((store) => store.settings.enableJukebox);
-  const setEnableJukebox = useCallback(async (toggle: boolean) => {
-    await window.electron.settings.setEnableJukebox(toggle);
-  }, []);
-  return [enableJukebox, setEnableJukebox] as const;
-};
+  return [value, setValue];
+}
 
-export const useSpectateSlpPath = () => {
-  const spectateSlpPath = useSettings((store) => store.settings.spectateSlpPath);
-  const setSpectateDir = async (path: string) => {
-    await window.electron.settings.setSpectateSlpPath(path);
-  };
-  return [spectateSlpPath, setSpectateDir] as const;
-};
+export const useIsoPath = () => useSetting("isoPath");
 
-export const useExtraSlpPaths = () => {
-  const extraSlpPaths = useSettings((store) => store.settings.extraSlpPaths);
-  const setExtraSlpDirs = async (paths: string[]) => {
-    await window.electron.settings.setExtraSlpPaths(paths);
-  };
-  return [extraSlpPaths, setExtraSlpDirs] as const;
-};
+export const useRootSlpPath = () => useSetting("rootSlpPath");
 
-export const useLaunchMeleeOnPlay = () => {
-  const launchMeleeOnPlay = useSettings((store) => store.settings.launchMeleeOnPlay);
-  const setLaunchMelee = async (launchMelee: boolean) => {
-    await window.electron.settings.setLaunchMeleeOnPlay(launchMelee);
-  };
+export const useMonthlySubfolders = () => useSetting("useMonthlySubfolders");
 
-  return [launchMeleeOnPlay, setLaunchMelee] as const;
-};
+export const useEnableJukebox = () => useSetting("enableJukebox");
 
-export const useAutoUpdateLauncher = () => {
-  const autoUpdateLauncher = useSettings((store) => store.settings.autoUpdateLauncher);
-  const setAutoUpdateLauncher = useCallback(async (autoUpdateLauncher: boolean) => {
-    await window.electron.settings.setAutoUpdateLauncher(autoUpdateLauncher);
-  }, []);
+export const useSpectateSlpPath = () => useSetting("spectateSlpPath");
 
-  return [autoUpdateLauncher, setAutoUpdateLauncher] as const;
-};
+export const useExtraSlpPaths = () => useSetting("extraSlpPaths");
+
+export const useLaunchMeleeOnPlay = () => useSetting("launchMeleeOnPlay");
+
+export const useAutoUpdateLauncher = () => useSetting("autoUpdateLauncher");
 
 export const useDolphinBeta = (dolphinType: DolphinLaunchType) => {
-  const netplayBeta = useSettings((state) => state.settings.useNetplayBeta);
-  const playbackBeta = useSettings((state) => state.settings.usePlaybackBeta);
-  const setDolphinBeta = useCallback(async (useBeta: boolean) => {
-    await window.electron.settings.setUseDolphinBeta(dolphinType, useBeta);
-  }, []);
+  const netplayBeta = useSettingsStore((state) => state.settings.useNetplayBeta);
+  const playbackBeta = useSettingsStore((state) => state.settings.usePlaybackBeta);
 
-  switch (dolphinType) {
-    case DolphinLaunchType.NETPLAY: {
-      return [netplayBeta, setDolphinBeta] as const;
-    }
-    case DolphinLaunchType.PLAYBACK: {
-      return [playbackBeta, setDolphinBeta] as const;
-    }
-  }
+  const setDolphinBeta = useCallback(
+    async (useBeta: boolean) => {
+      const key = dolphinType === DolphinLaunchType.NETPLAY ? "useNetplayBeta" : "usePlaybackBeta";
+      await window.electron.settings.updateSettings([{ key, value: useBeta }]);
+    },
+    [dolphinType],
+  );
+
+  const useBeta = dolphinType === DolphinLaunchType.NETPLAY ? netplayBeta : playbackBeta;
+  return [useBeta, setDolphinBeta] as const;
 };

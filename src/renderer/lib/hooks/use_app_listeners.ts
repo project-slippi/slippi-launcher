@@ -83,11 +83,6 @@ export const useAppListeners = () => {
     return replayService.onReplayLoadProgressUpdate(throttledUpdateProgress);
   }, [throttledUpdateProgress, replayService]);
 
-  const updateSettings = useSettings((store) => store.updateSettings);
-  React.useEffect(() => {
-    return window.electron.settings.onSettingsUpdated(updateSettings);
-  }, [updateSettings]);
-
   // Listen to when the list of broadcasting users has changed
   const updateBroadcastingList = useBroadcastListStore((store) => store.setItems);
   React.useEffect(() => {

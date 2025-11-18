@@ -284,17 +284,17 @@ export class DolphinManager {
     await this._updateLauncherSetting(
       this.settingsManager.getRootSlpPath(),
       path.normalize(newSettings.replayPath),
-      (val) => this.settingsManager.setRootSlpPath(val),
+      (val) => this.settingsManager.updateSetting("rootSlpPath", val),
     );
     await this._updateLauncherSetting(
       this.settingsManager.getUseMonthlySubfolders(),
       newSettings.useMonthlySubfolders,
-      (val) => this.settingsManager.setUseMonthlySubfolders(val),
+      (val) => this.settingsManager.updateSetting("useMonthlySubfolders", val),
     );
     await this._updateLauncherSetting(
       this.settingsManager.get().settings.enableJukebox,
       newSettings.enableJukebox,
-      (val) => this.settingsManager.setEnableJukebox(val),
+      (val) => this.settingsManager.updateSetting("enableJukebox", val),
     );
   }
 
