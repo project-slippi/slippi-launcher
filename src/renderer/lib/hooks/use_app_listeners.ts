@@ -3,7 +3,6 @@ import type { Progress } from "@replays/types";
 import throttle from "lodash/throttle";
 import React, { useRef } from "react";
 
-import { useAppStore } from "@/lib/hooks/use_app_store";
 import { ReplayPresenter } from "@/lib/hooks/use_replays";
 import { useServices } from "@/services";
 
@@ -12,11 +11,10 @@ import { useBroadcastList } from "./use_broadcast_list";
 import { useReplayBrowserNavigation } from "./use_replay_browser_list";
 import { useSettings } from "./use_settings";
 import { useSettingsModal } from "./use_settings_modal";
-import { useSpectateRemoteServerStateStore } from "./use_spectate_remote_server";
 
 export const useAppListeners = () => {
   // Handle app initalization
-  const { broadcastService, spectateRemoteService, replayService } = useServices();
+  const { broadcastService, replayService } = useServices();
   const replayPresenter = useRef(new ReplayPresenter(replayService));
 
   const updateProgress = (progress: Progress | null) => replayPresenter.current.updateProgress(progress);
@@ -42,11 +40,6 @@ export const useAppListeners = () => {
     return window.electron.settings.onOpenSettingsPageRequest(open);
   }, [open]);
 
-  const setUpdateVersion = useAppStore((store) => store.setUpdateVersion);
-  React.useEffect(() => {
-    return window.electron.common.onAppUpdateFound(setUpdateVersion);
-  }, [setUpdateVersion]);
-
   // Initialize the replay browser once and refresh on SLP path changes
   const rootSlpPath = useSettings((store) => store.settings.rootSlpPath);
   const extraSlpPaths = useSettings((store) => store.settings.extraSlpPaths);
@@ -65,9 +58,4 @@ export const useAppListeners = () => {
   React.useEffect(() => {
     return broadcastService.onSpectateReconnect(connect);
   }, [connect, broadcastService]);
-
-  const updateSpectateRemoteServerState = useSpectateRemoteServerStateStore((store) => store.setState);
-  React.useEffect(() => {
-    return spectateRemoteService.onSpectateRemoteServerStateChange(updateSpectateRemoteServerState);
-  }, [updateSpectateRemoteServerState, spectateRemoteService]);
 };
