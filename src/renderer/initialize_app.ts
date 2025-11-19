@@ -53,7 +53,7 @@ export async function initializeApp(services: Services) {
   // Wait for all the promises to complete before returning
   const results = await Promise.allSettled(promises);
   results
-    .filter((result) => result.status === "rejected")
+    .filter((result): result is PromiseRejectedResult => result.status === "rejected")
     .forEach((result) => {
       log.error(result.reason);
     });
