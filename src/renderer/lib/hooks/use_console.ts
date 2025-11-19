@@ -1,4 +1,4 @@
-import { ConnectionStatus } from "@slippi/slippi-js";
+import { ConnectionStatus } from "@console/types";
 import { create } from "zustand";
 
 type StoreState = {

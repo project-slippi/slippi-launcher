@@ -1,4 +1,4 @@
-import { Ports } from "@slippi/slippi-js";
+import { Ports } from "@console/types";
 import log from "electron-log";
 
 import { InfoBlock } from "@/components/info_block";

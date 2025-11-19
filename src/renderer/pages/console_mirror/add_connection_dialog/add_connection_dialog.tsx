@@ -1,3 +1,4 @@
+import { Ports } from "@console/types";
 import { css } from "@emotion/react";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
@@ -5,7 +6,6 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import type { StoredConnection } from "@settings/types";
-import { Ports } from "@slippi/slippi-js";
 import merge from "lodash/merge";
 import React from "react";
 

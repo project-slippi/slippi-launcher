@@ -1,4 +1,5 @@
 import type { MirrorConfig } from "@console/types";
+import { ConnectionStatus, Ports } from "@console/types";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -10,7 +11,6 @@ import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import IconButton from "@mui/material/IconButton";
 import type { StoredConnection } from "@settings/types";
-import { ConnectionStatus, Ports } from "@slippi/slippi-js";
 import React from "react";
 import { lt } from "semver";
 

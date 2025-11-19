@@ -3,6 +3,9 @@ import type { ConsoleConnection, SlpFileWriter } from "@slippi/slippi-js/node";
 import type { AutoSwitcher } from "./auto_switcher";
 import type { ConsoleRelay } from "./console_relay";
 
+// Re-export the ConnectionStatus type from slippi-js/node so that the renderer can use it
+export { ConnectionStatus, Ports } from "@slippi/slippi-js/node";
+
 export type ConsoleMirrorStatusUpdate = {
   status: number;
   isMirroring: boolean;
