@@ -1,4 +1,4 @@
-import type { GameStartType, MetadataType } from "@slippi/slippi-js";
+import type { GameStartType, MetadataType } from "@slippi/slippi-js/node";
 import get from "lodash/get";
 
 type PlayerNames = {

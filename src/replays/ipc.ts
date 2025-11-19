@@ -1,4 +1,4 @@
-import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
+import type { StadiumStatsType, StatsType } from "@slippi/slippi-js/node";
 import { _, makeEndpoint } from "utils/ipc";
 
 import type { FileLoadResult, FileResult, FolderResult, Progress } from "./types";

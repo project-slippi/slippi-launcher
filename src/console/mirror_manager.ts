@@ -1,4 +1,4 @@
-import type { ConnectionDetails, GameEndType, PostFrameUpdateType } from "@slippi/slippi-js";
+import type { ConnectionDetails, GameEndType, PostFrameUpdateType } from "@slippi/slippi-js/node";
 import {
   Command,
   ConnectionEvent,
@@ -8,7 +8,7 @@ import {
   SlpFileWriter,
   SlpFileWriterEvent,
   SlpStreamEvent,
-} from "@slippi/slippi-js";
+} from "@slippi/slippi-js/node";
 import { EventEmitter } from "events";
 import * as fs from "fs-extra";
 import path from "path";

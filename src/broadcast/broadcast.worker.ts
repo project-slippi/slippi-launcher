@@ -2,7 +2,7 @@
 // fails to obtain the paths required for file transport to work
 // when in Node worker context.
 
-import type { ConnectionStatus } from "@slippi/slippi-js";
+import type { ConnectionStatus } from "@slippi/slippi-js/node";
 import type { ModuleMethods } from "threads/dist/types/master";
 import { Observable, Subject } from "threads/observable";
 import { expose } from "threads/worker";

@@ -1,4 +1,4 @@
-import { Ports } from "@slippi/slippi-js";
+import { Ports } from "@slippi/slippi-js/node";
 import { EventEmitter } from "events";
 import net from "net";
 

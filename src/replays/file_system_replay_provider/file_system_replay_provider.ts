@@ -1,5 +1,5 @@
 import type { FileResult, Progress, ReplayProvider } from "@replays/types";
-import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
+import type { StadiumStatsType, StatsType } from "@slippi/slippi-js/node";
 
 import type { ReplayWorker } from "./replays.worker.interface";
 import { createReplayWorker } from "./replays.worker.interface";
