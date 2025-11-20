@@ -7,7 +7,6 @@ import { useReplayPresenter } from "@/lib/hooks/use_replays";
 import { useServices } from "@/services";
 
 import { useReplayBrowserNavigation } from "./use_replay_browser_list";
-import { useSettings } from "./use_settings";
 import { useSettingsModal } from "./use_settings_modal";
 
 export const useAppListeners = () => {
@@ -37,11 +36,4 @@ export const useAppListeners = () => {
   React.useEffect(() => {
     return window.electron.settings.onOpenSettingsPageRequest(open);
   }, [open]);
-
-  // Initialize the replay browser once and refresh on SLP path changes
-  const rootSlpPath = useSettings((store) => store.settings.rootSlpPath);
-  const extraSlpPaths = useSettings((store) => store.settings.extraSlpPaths);
-  React.useEffect(() => {
-    replayPresenter.init(rootSlpPath, extraSlpPaths, true).catch(console.error);
-  }, [rootSlpPath, extraSlpPaths, replayPresenter]);
 };

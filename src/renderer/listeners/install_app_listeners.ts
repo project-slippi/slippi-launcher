@@ -1,5 +1,9 @@
 import type { ConsoleService } from "@console/types";
 import type { SpectateRemoteService } from "@remote/types";
+import type { Progress, ReplayService } from "@replays/types";
+import throttle from "lodash/throttle";
+
+import { getReplayPresenter } from "@/lib/hooks/use_replays";
 
 import { clearUserData, refreshUserData, useAccount } from "../lib/hooks/use_account";
 import { useAppStore } from "../lib/hooks/use_app_store";
@@ -20,6 +24,7 @@ export function installAppListeners(services: Services) {
     slippiBackendService,
     dolphinService,
     spectateRemoteService,
+    replayService,
   } = services;
 
   authService.onUserChange((user) => {
@@ -49,7 +54,8 @@ export function installAppListeners(services: Services) {
   installDolphinListeners({ dolphinService, notificationService });
   installBroadcastListeners({ broadcastService, authService });
   installConsoleListeners({ consoleService, notificationService });
-  installSettingsChangeListeners();
+  installReplayListeners({ replayService });
+  installSettingsChangeListeners({ replayService });
   installSpectateListeners({ spectateRemoteService });
 }
 
@@ -77,4 +83,12 @@ function installSpectateListeners({ spectateRemoteService }: { spectateRemoteSer
   spectateRemoteService.onSpectateRemoteServerStateChange((state) =>
     useSpectateRemoteServerStateStore.getState().setState(state),
   );
+}
+
+export function installReplayListeners({ replayService }: { replayService: ReplayService }) {
+  const replayPresenter = getReplayPresenter(replayService);
+
+  const updateProgress = (progress: Progress | null) => replayPresenter.updateProgress(progress);
+  const throttledUpdateProgress = throttle(updateProgress, 50);
+  replayService.onReplayLoadProgressUpdate(throttledUpdateProgress);
 }
