@@ -12,7 +12,7 @@ import { IconMessage } from "@/components/message";
 import { generateDisplayPicture } from "@/lib/display_picture";
 import { useEnableSpectateRemoteControl } from "@/lib/hooks/use_settings";
 
-import { Footer } from "./footer";
+import { Footer } from "./footer/footer";
 import { ShareGameplayBlock } from "./share_gameplay_block/share_gameplay_block";
 import { SpectateItem } from "./spectate_item";
 import { SpectatePageMessages as Messages } from "./spectate_page.messages";
