@@ -5,7 +5,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { InfoBlock } from "@/components/info_block";
 
 import { NewConnectionItem } from "./new_connection_item";
-
+import { NewConnectionListMessages as Messages } from "./new_connection_list.messages";
 type NewConnectionListProps = {
   isScanning?: boolean;
   consoleItems: DiscoveredConsoleInfo[];
@@ -23,7 +23,7 @@ export const NewConnectionList = ({ consoleItems, isScanning, onClick }: NewConn
             align-items: center;
           `}
         >
-          <div>New Connections ({consoleItems.length})</div>
+          <div>{Messages.newConnections(consoleItems.length)}</div>
           {isScanning && <CircularProgress size={16} thickness={6} color="inherit" />}
         </div>
       }
@@ -39,7 +39,7 @@ export const NewConnectionList = ({ consoleItems, isScanning, onClick }: NewConn
             return <NewConnectionItem key={item.ip} onAdd={() => onClick(item)} ip={item.ip} nickname={item.name} />;
           })
         ) : (
-          <div>Consoles detected on the network will show up here.</div>
+          <div>{Messages.consolesDetected()}</div>
         )}
       </div>
     </InfoBlock>
