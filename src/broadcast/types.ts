@@ -94,4 +94,5 @@ export interface SpectateController {
   getBroadcastListObservable(): Observable<BroadcasterItem[]>;
   getSpectateDetailsObservable(): Observable<{ playbackId: string; filePath: string; broadcasterName: string }>;
   getGameEndObservable(): Observable<string>;
+  getErrorObservable(): Observable<Error | string>;
 }

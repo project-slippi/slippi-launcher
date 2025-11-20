@@ -17,7 +17,8 @@ export default function setupRemoteIpc({
   const remoteServer = new SpectateRemoteServer(dolphinManager, settingsManager, getSpectateController);
   ipc_startSpectateRemoteServer.main!.handle(async ({ authToken, port }) => {
     const portToUse = port ?? settingsManager.get().settings.spectateRemoteControlPort;
-    return await remoteServer.start(authToken, portToUse);
+    await remoteServer.start(authToken, portToUse);
+    return { success: true };
   });
   ipc_stopSpectateRemoteServer.main!.handle(async () => {
     remoteServer.stop();

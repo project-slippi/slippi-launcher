@@ -16,6 +16,8 @@ import { ipc_spectateRemoteStateEvent } from "./ipc";
 const SPECTATE_PROTOCOL = "spectate-protocol";
 const log = electronLog.scope("spectate_remote_server");
 
+const CONNECTION_TIMEOUT_MS = 20000;
+
 export class SpectateRemoteServer {
   private spectateController: SpectateController | null = null;
   private broadcastListSubscription: Subscription<BroadcasterItem[]> | null = null;
@@ -84,16 +86,50 @@ export class SpectateRemoteServer {
     });
   }
 
-  public async start(initialAuthToken: string, port: number): Promise<{ success: boolean; err?: string }> {
+  public async start(initialAuthToken: string, port: number): Promise<void> {
+    if (!this.spectateController) {
+      await this.setupSpectateController();
+    }
+    const errObservable = this.spectateController!.getErrorObservable();
+    const errorPromise = new Promise<void>((resolve, reject) => {
+      const subscription = errObservable.subscribe({
+        next: (err: Error | string) => {
+          subscription.unsubscribe();
+          reject(typeof err === "string" ? new Error(err) : err);
+        },
+        error: (err: any) => {
+          subscription.unsubscribe();
+          reject(typeof err === "string" ? new Error(err) : err);
+        },
+      });
+    });
+
+    const timeout = new Promise<void>((resolve, reject) => {
+      setTimeout(() => {
+        reject(new Error(`Timed out after ${CONNECTION_TIMEOUT_MS / 1000}s trying to connect to spectate controller.`));
+      }, CONNECTION_TIMEOUT_MS);
+    });
+
+    try {
+      await Promise.race([errorPromise, timeout, this.connectToSpectateController(initialAuthToken, port)]);
+    } finally {
+      // Clean up whatever we were doing
+      this.stop();
+    }
+  }
+
+  private async connectToSpectateController(initialAuthToken: string, port: number): Promise<void> {
     if (!this.spectateController) {
       await this.setupSpectateController();
     }
     await this.spectateController!.connect(initialAuthToken);
 
     if (this.httpServer && this.spectateRemoteServer) {
-      return (<AddressInfo>this.httpServer.address()).port === port
-        ? { success: true }
-        : { success: false, err: `server already started on port ${port}` };
+      if ((<AddressInfo>this.httpServer.address()).port === port) {
+        return;
+      } else {
+        throw new Error(`server already started on port ${port}`);
+      }
     }
 
     try {
@@ -116,15 +152,22 @@ export class SpectateRemoteServer {
 
       this.spectateRemoteServer = new WebSocketServer({ httpServer: this.httpServer });
       this.spectateRemoteServer.on("request", (request) => {
-        void this.handleSpectateRemoteServerRequest(request);
+        this.handleSpectateRemoteServerRequest(request).catch((err) => {
+          log.error(err);
+        });
       });
-      return { success: true };
+      return;
     } catch (e: any) {
       if (e.code === "EADDRINUSE") {
-        return { success: false, err: "Port in use" };
+        throw new Error("Port in use");
       }
-      const err = typeof e === "string" ? e : e instanceof Error ? e.message : "unknown";
-      return { success: false, err };
+      const err =
+        typeof e === "string"
+          ? new Error(e)
+          : e instanceof Error
+          ? e
+          : new Error("Error connecting to spectate controller");
+      throw err;
     }
   }
 
@@ -189,28 +232,24 @@ export class SpectateRemoteServer {
   }
 
   public stop() {
-    if (this.broadcastListSubscription) {
-      this.broadcastListSubscription.unsubscribe();
-      this.broadcastListSubscription = null;
-    }
-    if (this.spectateDetailsSubscription) {
-      this.spectateDetailsSubscription.unsubscribe();
-      this.spectateDetailsSubscription = null;
-    }
-    if (this.gameEndSubscription) {
-      this.gameEndSubscription.unsubscribe();
-      this.gameEndSubscription = null;
-    }
-    if (this.httpServer && this.spectateRemoteServer) {
-      if (this.connection) {
-        this.connection.removeAllListeners();
-        this.connection = null;
-      }
-      this.httpServer.close();
-      this.httpServer = null;
-      this.spectateRemoteServer.shutDown();
-      this.spectateRemoteServer = null;
-      ipc_spectateRemoteStateEvent.main!.trigger({ connected: false, started: false }).catch(log.error);
-    }
+    this.broadcastListSubscription?.unsubscribe();
+    this.broadcastListSubscription = null;
+
+    this.spectateDetailsSubscription?.unsubscribe();
+    this.spectateDetailsSubscription = null;
+
+    this.gameEndSubscription?.unsubscribe();
+    this.gameEndSubscription = null;
+
+    this.connection?.removeAllListeners();
+    this.connection = null;
+
+    this.httpServer?.close();
+    this.httpServer = null;
+
+    this.spectateRemoteServer?.shutDown();
+    this.spectateRemoteServer = null;
+
+    ipc_spectateRemoteStateEvent.main!.trigger({ connected: false, started: false }).catch(log.error);
   }
 }
