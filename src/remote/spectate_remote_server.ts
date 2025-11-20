@@ -30,7 +30,7 @@ export class SpectateRemoteServer {
   private httpServer: http.Server | null = null;
   private spectateRemoteServer: WebSocketServer | null = null;
   private connection: connection | null = null;
-  private throttledRefresh: () => void;
+  private throttledRefresh: (() => void) & { cancel: () => void };
 
   private prefixOrdinal = 0;
 
@@ -112,9 +112,12 @@ export class SpectateRemoteServer {
 
     try {
       await Promise.race([errorPromise, timeout, this.connectToSpectateController(initialAuthToken, port)]);
-    } finally {
-      // Clean up whatever we were doing
+    } catch (err) {
+      // Clean up whatever we were doing before throwing the error.
+      // We can't do this in the finally block or we will indescriminately stop the server.
       this.stop();
+
+      throw err;
     }
   }
 
@@ -232,6 +235,10 @@ export class SpectateRemoteServer {
   }
 
   public stop() {
+    // Cancel any pending throttled refresh calls
+    this.throttledRefresh.cancel();
+
+    // Unsubscribe from all observables
     this.broadcastListSubscription?.unsubscribe();
     this.broadcastListSubscription = null;
 
@@ -241,12 +248,17 @@ export class SpectateRemoteServer {
     this.gameEndSubscription?.unsubscribe();
     this.gameEndSubscription = null;
 
+    // Close WebSocket connection
     this.connection?.removeAllListeners();
+    this.connection?.close();
     this.connection = null;
 
+    // Close HTTP server
     this.httpServer?.close();
     this.httpServer = null;
 
+    // Shutdown WebSocket server
+    this.spectateRemoteServer?.removeAllListeners();
     this.spectateRemoteServer?.shutDown();
     this.spectateRemoteServer = null;
 
