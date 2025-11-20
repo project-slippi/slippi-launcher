@@ -6,8 +6,8 @@ import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { HashRouter as Router, Navigate, Route, Routes } from "react-router-dom";
 
-import { useAppListeners } from "@/lib/hooks/use_app_listeners";
 import { useAppStore } from "@/lib/hooks/use_app_store";
+import { usePageRequestListeners } from "@/lib/hooks/use_page_request_listeners";
 import { usePageNavigationShortcuts } from "@/lib/hooks/use_shortcuts";
 import { lazyLoadConsoleMirrorPage } from "@/pages/console_mirror/load";
 import { HomePage } from "@/pages/home/home_page";
@@ -72,8 +72,8 @@ export function createApp({ services }: { services: Services }): {
   const AppRoutes = () => {
     const currentLanguage = useAppStore((state) => state.currentLanguage);
 
-    // Then add the rest of the app listeners
-    useAppListeners();
+    // Then add the page request listeners
+    usePageRequestListeners();
 
     return (
       <Routes key={currentLanguage}>

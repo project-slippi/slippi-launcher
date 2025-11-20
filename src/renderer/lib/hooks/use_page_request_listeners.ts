@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import type { Progress } from "@replays/types";
-import throttle from "lodash/throttle";
 import React from "react";
 
 import { useReplayPresenter } from "@/lib/hooks/use_replays";
@@ -9,16 +6,9 @@ import { useServices } from "@/services";
 import { useReplayBrowserNavigation } from "./use_replay_browser_list";
 import { useSettingsModal } from "./use_settings_modal";
 
-export const useAppListeners = () => {
-  // Handle app initalization
+export const usePageRequestListeners = () => {
   const { replayService } = useServices();
   const replayPresenter = useReplayPresenter();
-
-  const updateProgress = (progress: Progress | null) => replayPresenter.updateProgress(progress);
-  const throttledUpdateProgress = throttle(updateProgress, 50);
-  React.useEffect(() => {
-    return replayService.onReplayLoadProgressUpdate(throttledUpdateProgress);
-  }, [throttledUpdateProgress, replayService]);
 
   const { goToReplayStatsPage } = useReplayBrowserNavigation();
   const moveToStatsPage = React.useCallback(
