@@ -18,7 +18,7 @@ import { IconMessage } from "@/components/message";
 import { useDolphinActions } from "@/lib/dolphin/use_dolphin_actions";
 import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/use_replay_browser_list";
 import { useReplayFilter } from "@/lib/hooks/use_replay_filter";
-import { ReplayPresenter, useReplays, useReplaySelection } from "@/lib/hooks/use_replays";
+import { useReplayPresenter, useReplays, useReplaySelection } from "@/lib/hooks/use_replays";
 import { useToasts } from "@/lib/hooks/use_toasts";
 import { humanReadableBytes } from "@/lib/utils";
 import { useServices } from "@/services";
@@ -31,8 +31,7 @@ import { FolderTreeNode } from "./folder_tree_node";
 import { ReplayBrowserMessages as Messages } from "./replay_browser.messages";
 
 export const ReplayBrowser = React.memo(() => {
-  const { replayService } = useServices();
-  const presenter = React.useRef(new ReplayPresenter(replayService));
+  const presenter = useReplayPresenter();
   const searchInputRef = React.createRef<HTMLInputElement>();
   const scrollRowItem = useReplays((store) => store.scrollRowItem);
   const { dolphinService } = useServices();
@@ -53,16 +52,16 @@ export const ReplayBrowser = React.memo(() => {
 
   const setSelectedItem = (index: number | null) => {
     if (index === null) {
-      void presenter.current.clearSelectedFile();
+      void presenter.clearSelectedFile();
     } else {
       const file = filteredFiles[index];
-      void presenter.current.selectFile(file, index, filteredFiles.length);
+      void presenter.selectFile(file, index, filteredFiles.length);
       goToReplayStatsPage(file.fullPath);
     }
   };
 
   const onFolderTreeNodeClick = (fullPath: string) => {
-    presenter.current.loadFolder(fullPath).catch(showError);
+    presenter.loadFolder(fullPath).catch(showError);
   };
 
   const playSelectedFile = (index: number) => {
@@ -73,7 +72,7 @@ export const ReplayBrowser = React.memo(() => {
   const deleteFiles = React.useCallback(
     (filePaths: string[]) => {
       // Optimistically remove the files first
-      presenter.current.removeFiles(filePaths);
+      presenter.removeFiles(filePaths);
 
       window.electron.common
         .deleteFiles(filePaths)
@@ -82,7 +81,7 @@ export const ReplayBrowser = React.memo(() => {
         })
         .catch(showError);
     },
-    [showError, showSuccess],
+    [presenter, showError, showSuccess],
   );
 
   return (
@@ -111,7 +110,7 @@ export const ReplayBrowser = React.memo(() => {
                       key={folder.fullPath}
                       collapsedFolders={collapsedFolders}
                       onClick={onFolderTreeNodeClick}
-                      onToggle={(folder) => presenter.current.toggleFolder(folder)}
+                      onToggle={(folder) => presenter.toggleFolder(folder)}
                     />
                   );
                 })}
@@ -160,7 +159,7 @@ export const ReplayBrowser = React.memo(() => {
                   onPlay={(index: number) => playSelectedFile(index)}
                   files={filteredFiles}
                   scrollRowItem={scrollRowItem}
-                  setScrollRowItem={(item) => presenter.current.setScrollRowItem(item)}
+                  setScrollRowItem={(item) => presenter.setScrollRowItem(item)}
                 />
               )}
               <FileSelectionToolbar
