@@ -15,8 +15,9 @@ import { useEnableSpectateRemoteControl } from "@/lib/hooks/use_settings";
 import { Footer } from "./footer";
 import { ShareGameplayBlock } from "./share_gameplay_block/share_gameplay_block";
 import { SpectateItem } from "./spectate_item";
+import { SpectatePageMessages as Messages } from "./spectate_page.messages";
 import { SpectateRemoteControlBlockContainer } from "./spectate_remote_control_block/spectate_remote_control_block.container";
-import { SpectatorIdBlock } from "./spectator_id_block";
+import { SpectatorIdBlock } from "./spectator_id_block/spectator_id_block";
 
 export const SpectatePage = React.memo(
   ({
@@ -33,7 +34,7 @@ export const SpectatePage = React.memo(
     const [enableSpectateRemoteControl] = useEnableSpectateRemoteControl();
 
     if (!userId) {
-      return <IconMessage Icon={AccountCircleIcon} label="You must be logged in to use this feature" />;
+      return <IconMessage Icon={AccountCircleIcon} label={Messages.youMustBeLoggedIn()} />;
     }
 
     return (
@@ -56,10 +57,10 @@ export const SpectatePage = React.memo(
                   width: 100%;
                 `}
               >
-                <h1>Spectate</h1>
+                <h1>{Messages.spectate()}</h1>
                 <div>
                   <Button startIcon={<SyncIcon />} onClick={onRefreshBroadcasts}>
-                    Refresh
+                    {Messages.refresh()}
                   </Button>
                   <div
                     css={css`
@@ -68,7 +69,7 @@ export const SpectatePage = React.memo(
                     `}
                   >
                     {broadcasts.length === 0 ? (
-                      <IconMessage Icon={HelpOutlineIcon} label="No users are broadcasting to you" />
+                      <IconMessage Icon={HelpOutlineIcon} label={Messages.noUsers()} />
                     ) : (
                       broadcasts.map(({ id, broadcaster, name }) => {
                         return (

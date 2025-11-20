@@ -6,6 +6,8 @@ import Typography from "@mui/material/Typography";
 
 import { useLoginModal } from "@/lib/hooks/use_login_modal";
 
+import { LoginNoticeMessages as Messages } from "./login_notice.messages";
+
 export const LoginNotice = () => {
   const openModal = useLoginModal((store) => store.openModal);
   return (
@@ -19,10 +21,10 @@ export const LoginNotice = () => {
           margin-bottom: 20px;
         `}
       >
-        User is not logged in
+        {Messages.userIsNotLoggedIn()}
       </Typography>
       <Button type="button" color="primary" variant="contained" onClick={openModal}>
-        Log in
+        {Messages.logIn()}
       </Button>
     </Outer>
   );
