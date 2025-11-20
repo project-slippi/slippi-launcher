@@ -12,7 +12,7 @@ import { slippiTheme } from "@/styles/theme";
 import { createApp } from "./app/create";
 import { LoadingScreen } from "./components/loading_screen";
 import { initializeApp } from "./initialize_app";
-import { installAppListeners } from "./install_app_listeners";
+import { installAppListeners } from "./listeners/install_app_listeners";
 import { installServices } from "./services/install";
 
 // Create a lazy-loaded component that waits for async initialization

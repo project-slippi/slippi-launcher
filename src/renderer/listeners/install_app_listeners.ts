@@ -1,17 +1,15 @@
-import type { BroadcastService } from "@broadcast/types";
 import type { ConsoleService } from "@console/types";
 import type { SpectateRemoteService } from "@remote/types";
 
-import { clearUserData, refreshUserData, useAccount } from "./lib/hooks/use_account";
-import { useAppStore } from "./lib/hooks/use_app_store";
-import { useBroadcastListStore } from "./lib/hooks/use_broadcast_list";
-import { useConsole } from "./lib/hooks/use_console";
-import { useConsoleDiscoveryStore } from "./lib/hooks/use_console_discovery";
-import { useSpectateRemoteServerStateStore } from "./lib/hooks/use_spectate_remote_server";
-import { installDolphinListeners } from "./listeners/install_dolphin_listeners";
-import { installSettingsChangeListeners } from "./listeners/install_settings_change_listeners";
-import type { NotificationService } from "./services/notification/types";
-import type { Services } from "./services/types";
+import { clearUserData, refreshUserData, useAccount } from "../lib/hooks/use_account";
+import { useAppStore } from "../lib/hooks/use_app_store";
+import { useConsoleDiscoveryStore } from "../lib/hooks/use_console_discovery";
+import { useSpectateRemoteServerStateStore } from "../lib/hooks/use_spectate_remote_server";
+import type { NotificationService } from "../services/notification/types";
+import type { Services } from "../services/types";
+import { installBroadcastListeners } from "./install_broadcast_listeners";
+import { installDolphinListeners } from "./install_dolphin_listeners";
+import { installSettingsChangeListeners } from "./install_settings_change_listeners";
 
 export function installAppListeners(services: Services) {
   const {
@@ -49,29 +47,10 @@ export function installAppListeners(services: Services) {
   });
 
   installDolphinListeners({ dolphinService, notificationService });
-  installBroadcastListeners({ broadcastService });
+  installBroadcastListeners({ broadcastService, authService });
   installConsoleListeners({ consoleService, notificationService });
   installSettingsChangeListeners();
   installSpectateListeners({ spectateRemoteService });
-}
-
-function installBroadcastListeners({ broadcastService }: { broadcastService: BroadcastService }) {
-  broadcastService.onSlippiStatusChanged((status) => {
-    useConsole.getState().setSlippiConnectionStatus(status);
-  });
-
-  broadcastService.onDolphinStatusChanged((status) => {
-    useConsole.getState().setDolphinConnectionStatus(status);
-  });
-
-  broadcastService.onBroadcastErrorMessage((error) => {
-    useConsole.getState().setBroadcastError(error);
-  });
-
-  // Listen to when the list of broadcasting users has changed
-  broadcastService.onBroadcastListUpdated((items) => {
-    useBroadcastListStore.getState().setItems(items);
-  });
 }
 
 function installConsoleListeners(services: {

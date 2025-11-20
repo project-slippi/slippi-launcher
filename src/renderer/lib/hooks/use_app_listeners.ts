@@ -6,15 +6,13 @@ import React, { useRef } from "react";
 import { ReplayPresenter } from "@/lib/hooks/use_replays";
 import { useServices } from "@/services";
 
-import { useBroadcast } from "./use_broadcast";
-import { useBroadcastList } from "./use_broadcast_list";
 import { useReplayBrowserNavigation } from "./use_replay_browser_list";
 import { useSettings } from "./use_settings";
 import { useSettingsModal } from "./use_settings_modal";
 
 export const useAppListeners = () => {
   // Handle app initalization
-  const { broadcastService, replayService } = useServices();
+  const { replayService } = useServices();
   const replayPresenter = useRef(new ReplayPresenter(replayService));
 
   const updateProgress = (progress: Progress | null) => replayPresenter.current.updateProgress(progress);
@@ -46,16 +44,4 @@ export const useAppListeners = () => {
   React.useEffect(() => {
     replayPresenter.current.init(rootSlpPath, extraSlpPaths, true).catch(console.error);
   }, [rootSlpPath, extraSlpPaths]);
-
-  const [startBroadcast] = useBroadcast();
-  React.useEffect(() => {
-    return broadcastService.onBroadcastReconnect((config) => {
-      startBroadcast(config).catch(console.error);
-    });
-  }, [startBroadcast, broadcastService]);
-
-  const [, connect] = useBroadcastList();
-  React.useEffect(() => {
-    return broadcastService.onSpectateReconnect(connect);
-  }, [connect, broadcastService]);
 };
