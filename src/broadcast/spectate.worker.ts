@@ -28,7 +28,7 @@ interface Methods {
     broadcasterName: string;
   }>;
   getReconnectObservable(): Observable<Record<never, never>>;
-  getGameEndObservable(): Observable<string>;
+  getGameEndObservable(): Observable<{ broadcastId: string; dolphinId: string }>;
 }
 
 export type WorkerSpec = ModuleMethods & Methods;
@@ -45,7 +45,7 @@ const spectateDetailsSubject = new Subject<{
   broadcasterName: string;
 }>();
 const reconnectSubject = new Subject<Record<never, never>>();
-const gameEndSubject = new Subject<string>();
+const gameEndSubject = new Subject<{ broadcastId: string; dolphinId: string }>();
 
 // Forward the events to the renderer
 spectateManager.on(SpectateEvent.BROADCAST_LIST_UPDATE, async (data: BroadcasterItem[]) => {
@@ -71,8 +71,8 @@ spectateManager.on(SpectateEvent.RECONNECT, async () => {
   reconnectSubject.next({});
 });
 
-spectateManager.on(SpectateEvent.GAME_END, async (dolphinId: string) => {
-  gameEndSubject.next(dolphinId);
+spectateManager.on(SpectateEvent.GAME_END, async (broadcastId: string, dolphinId: string) => {
+  gameEndSubject.next({ broadcastId, dolphinId });
 });
 
 const methods: WorkerSpec = {
@@ -128,7 +128,7 @@ const methods: WorkerSpec = {
   getReconnectObservable(): Observable<Record<never, never>> {
     return Observable.from(reconnectSubject);
   },
-  getGameEndObservable(): Observable<string> {
+  getGameEndObservable(): Observable<{ broadcastId: string; dolphinId: string }> {
     return Observable.from(gameEndSubject);
   },
 };

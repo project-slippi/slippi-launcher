@@ -71,7 +71,7 @@ export class SpectateManager extends EventEmitter {
           broadcastInfo.gameStarted = false;
 
           // Observers should be able to depend on the file being closed, so emit this last.
-          this.emit(SpectateEvent.GAME_END, broadcastInfo.dolphinId);
+          this.emit(SpectateEvent.GAME_END, broadcastId, broadcastInfo.dolphinId);
           break;
         }
         case "game_event": {

@@ -98,6 +98,6 @@ export interface SpectateController {
     filePath: string;
     broadcasterName: string;
   }>;
-  getGameEndObservable(): Observable<string>;
+  getGameEndObservable(): Observable<{ broadcastId: string; dolphinId: string }>;
   getErrorObservable(): Observable<Error | string>;
 }
