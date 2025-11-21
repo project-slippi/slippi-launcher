@@ -221,7 +221,7 @@ export class SpectateRemoteServer {
       try {
         const path = this.settingsManager.get().settings.spectateSlpPath;
         const dolphinId = await this.spectateController!.startSpectate(broadcastId, path, dolphinOptions);
-        this.connection.sendUTF(JSON.stringify({ op: "spectate-broadcast-response", dolphinId, path }));
+        this.connection.sendUTF(JSON.stringify({ op: "spectate-broadcast-response", broadcastId, dolphinId, path }));
       } catch (e) {
         const err = typeof e === "string" ? e : e instanceof Error ? e.message : "unknown";
         this.connection.sendUTF(JSON.stringify({ op: "spectate-broadcast-response", err }));
