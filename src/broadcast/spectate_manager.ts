@@ -39,8 +39,8 @@ export class SpectateManager extends EventEmitter {
     super();
   }
 
-  private async _playFile(filePath: string, playbackId: string, broadcasterName: string) {
-    this.emit(SpectateEvent.NEW_FILE, playbackId, filePath, broadcasterName);
+  private async _playFile(filePath: string, broadcastId: string, dolphinId: string, broadcasterName: string) {
+    this.emit(SpectateEvent.NEW_FILE, broadcastId, dolphinId, filePath, broadcasterName);
   }
 
   private _handleEvents(obj: { type: string; broadcastId: string; cursor: string; events: any[] }) {
@@ -255,7 +255,7 @@ export class SpectateManager extends EventEmitter {
     });
 
     slpFileWriter.on(SlpFileWriterEvent.NEW_FILE, (currFilePath) => {
-      this._playFile(currFilePath, dolphinPlaybackId, broadcasterName).catch(console.warn);
+      this._playFile(currFilePath, broadcastId, dolphinPlaybackId, broadcasterName).catch(console.warn);
     });
 
     this.openBroadcasts[broadcastId] = {
@@ -276,7 +276,7 @@ export class SpectateManager extends EventEmitter {
     // Play an empty file such that we just launch into the waiting for game screen, this is
     // used to clear out any previous file that we were reading for. The file will get updated
     // by the fileWriter
-    this._playFile("", dolphinPlaybackId, broadcasterName).catch(console.warn);
+    this._playFile("", broadcastId, dolphinPlaybackId, broadcasterName).catch(console.warn);
     return dolphinPlaybackId;
   }
 

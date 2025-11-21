@@ -22,7 +22,7 @@ export class SpectateRemoteServer {
   private spectateController: SpectateController | null = null;
   private broadcastListSubscription: Subscription<BroadcasterItem[]> | null = null;
   private spectateDetailsSubscription: Subscription<{
-    playbackId: string;
+    dolphinId: string;
     filePath: string;
     broadcasterName: string;
   }> | null = null;
@@ -74,9 +74,9 @@ export class SpectateRemoteServer {
       });
     this.spectateDetailsSubscription = this.spectateController
       .getSpectateDetailsObservable()
-      .subscribe(async ({ playbackId, filePath }) => {
+      .subscribe(async ({ broadcastId, dolphinId, filePath }) => {
         if (this.connection && filePath) {
-          this.connection.sendUTF(JSON.stringify({ op: "new-file-event", dolphinId: playbackId, filePath }));
+          this.connection.sendUTF(JSON.stringify({ op: "new-file-event", broadcastId, dolphinId, filePath }));
         }
       });
     this.gameEndSubscription = this.spectateController.getGameEndObservable().subscribe((dolphinId: string) => {
