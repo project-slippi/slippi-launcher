@@ -238,7 +238,7 @@ export class SpectateRemoteServer {
     // Cancel any pending throttled refresh calls
     this.throttledRefresh.cancel();
 
-    // Unsubscribe from all observables
+    // Unsubscribe from spectate controller observables
     this.broadcastListSubscription?.unsubscribe();
     this.broadcastListSubscription = null;
 
@@ -247,6 +247,8 @@ export class SpectateRemoteServer {
 
     this.gameEndSubscription?.unsubscribe();
     this.gameEndSubscription = null;
+
+    this.spectateController = null;
 
     // Close WebSocket connection
     this.connection?.removeAllListeners();
