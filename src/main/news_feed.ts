@@ -1,3 +1,4 @@
+import { partition } from "@common/partition";
 import type { NewsItem } from "@common/types";
 import log from "electron-log";
 import mediumJSONFeed from "medium-json-feed";
@@ -6,22 +7,38 @@ import { getBlueskyFeed } from "./bluesky";
 import { getAllReleases } from "./github";
 
 export async function fetchNewsFeedData(): Promise<NewsItem[]> {
-  const mediumNews = fetchMediumNews();
-  const githubNews = fetchGithubReleaseNews(["Ishiiruka", "slippi-launcher", "dolphin"]);
-  const blueskyNews = fetchBlueskyPosts();
-  const allNews = (await Promise.allSettled([mediumNews, githubNews, blueskyNews]))
-    .filter((news): news is PromiseFulfilledResult<NewsItem[]> => news.status === "fulfilled")
-    .flatMap((news) => news.value);
-  return allNews.sort((a, b) => {
-    // Sort all news item by reverse chronological order
-    const aDate = new Date(a.publishedAt).getTime();
-    const bDate = new Date(b.publishedAt).getTime();
-    return bDate - aDate;
+  const newsPromises: Promise<NewsItem[]>[] = [];
+  newsPromises.push(fetchMediumNews());
+  newsPromises.push(fetchGithubReleaseNews(["Ishiiruka", "slippi-launcher", "dolphin"]));
+  newsPromises.push(fetchBlueskyPosts());
+  const [allNews, failedNews] = partition<PromiseFulfilledResult<NewsItem[]>, PromiseRejectedResult>(
+    await Promise.allSettled(newsPromises),
+    (newsPromise) => newsPromise.status === "fulfilled",
+  );
+
+  // Log out the reason for the failed news promises
+  failedNews.forEach((newsPromise) => {
+    log.error(newsPromise.reason);
   });
+
+  return allNews
+    .flatMap((news) => news.value)
+    .sort((a, b) => {
+      // Sort all news item by reverse chronological order
+      const aDate = new Date(a.publishedAt).getTime();
+      const bDate = new Date(b.publishedAt).getTime();
+      return bDate - aDate;
+    });
 }
 
 async function fetchMediumNews(): Promise<NewsItem[]> {
-  const response = await mediumJSONFeed("project-slippi");
+  let response: any;
+  try {
+    response = await mediumJSONFeed("project-slippi");
+  } catch (err) {
+    throw new Error(`Error fetching Medium feed: ${err instanceof Error ? err.message : JSON.stringify(err)}`);
+  }
+
   if (response?.status !== 200) {
     throw new Error("Error fetching Medium feed");
   }
