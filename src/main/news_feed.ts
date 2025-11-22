@@ -1,9 +1,9 @@
 import type { NewsItem } from "@common/types";
 import log from "electron-log";
-import mediumJSONFeed from "medium-json-feed";
 
 import { getBlueskyFeed } from "./bluesky";
 import { getAllReleases } from "./github";
+import { getMediumFeed } from "./medium";
 
 export async function fetchNewsFeedData(): Promise<NewsItem[]> {
   const mediumNews = fetchMediumNews();
@@ -21,21 +21,24 @@ export async function fetchNewsFeedData(): Promise<NewsItem[]> {
 }
 
 async function fetchMediumNews(): Promise<NewsItem[]> {
-  const response = await mediumJSONFeed("project-slippi");
-  if (response?.status !== 200) {
-    throw new Error("Error fetching Medium feed");
+  const result = await getMediumFeed();
+
+  // TODO: Change error check condition. This stuff is old from when I tried to use RSS data directly
+  if (result.status !== "ok" || result.items === undefined) {
+    log.error("Error fetching Medium feed:");
+    log.error(result);
+    return [];
   }
 
-  const result = response.response;
-  return result.map((post: any): NewsItem => {
-    const publishedAt = new Date(post.firstPublishedAt).toISOString();
+  return result.items.map((post): NewsItem => {
+    const publishedAt = new Date(post.latestPublishedAt).toISOString();
     return {
       id: `medium-${post.id}`,
-      imageUrl: `https://cdn-images-1.medium.com/${post.virtuals.previewImage.imageId}`,
+      imageUrl: `https://cdn-images-1.medium.com/${post.previewImage.id}`,
       title: post.title,
-      subtitle: post.virtuals.subtitle,
+      subtitle: post.extendedPreviewContent.subtitle,
       publishedAt,
-      permalink: `https://medium.com/project-slippi/${post.uniqueSlug}`,
+      permalink: post.mediumUrl,
     };
   });
 }
@@ -69,6 +72,7 @@ async function fetchGithubReleaseNews(repos: string[]): Promise<NewsItem[]> {
 async function fetchBlueskyPosts(): Promise<NewsItem[]> {
   const result = await getBlueskyFeed();
   if (result.error || result.feed === undefined) {
+    log.error("Error fetching Bluesky feed:");
     log.error(result);
     return [];
   }
