@@ -1,10 +1,15 @@
 import { partition } from "@common/partition";
 import type { NewsItem } from "@common/types";
 import log from "electron-log";
+import TurndownService from "turndown";
 
 import { getBlueskyFeed } from "./bluesky";
 import { getMediumFeed } from "./cross_origin/medium";
 import { getAllReleases } from "./github";
+
+const turndownService = new TurndownService();
+
+const MAX_SUBTITLE_LENGTH = 200;
 
 export async function fetchNewsFeedData(): Promise<NewsItem[]> {
   const newsPromises: Promise<NewsItem[]>[] = [];
@@ -46,19 +51,26 @@ async function fetchMediumNews(): Promise<NewsItem[]> {
 
     // Extract subtitle from description HTML (strip tags and truncate)
     let subtitle: string | undefined;
-    if (post.description) {
+    // Ensure that the subtitle is not the same as the description
+    if (post.description && !post.content.startsWith(post.description)) {
       const textContent = post.description.replace(/<[^>]*>/g, "").trim();
-      subtitle = textContent.length > 200 ? textContent.substring(0, 200) + "..." : textContent;
+      subtitle =
+        textContent.length > MAX_SUBTITLE_LENGTH ? textContent.substring(0, MAX_SUBTITLE_LENGTH) + "..." : textContent;
     }
+
+    const bodyMarkdown = turndownService.turndown(post.content);
+    // const nextPageBreak = bodyMarkdown.indexOf("\n\n", MAX_BODY_LENGTH);
+    // const body = nextPageBreak !== -1 ? truncateString(bodyMarkdown, nextPageBreak) : bodyMarkdown;
 
     return {
       id: `medium-${post.guid}`,
+      source: "medium",
       imageUrl: post.thumbnail || undefined,
       title: post.title,
       subtitle,
       publishedAt,
       permalink: post.link,
-      body: post.content,
+      body: bodyMarkdown,
     };
   });
 }
@@ -70,6 +82,7 @@ async function fetchGithubReleaseNews(repos: string[]): Promise<NewsItem[]> {
       return releases.map((release): NewsItem => {
         return {
           id: `gh-${repo}-${release.id}`,
+          source: "github",
           title: `[${repo}] ${release.name}`,
           body: release.body,
           publishedAt: release.published_at,
@@ -102,6 +115,7 @@ async function fetchBlueskyPosts(): Promise<NewsItem[]> {
     const publishedAt = new Date(post.record.createdAt).toISOString();
     return {
       id: `bluesky-${post.cid}`,
+      source: "bluesky",
       title: post.author.displayName,
       imageUrl: post.author.avatar,
       body: post.record.text,
