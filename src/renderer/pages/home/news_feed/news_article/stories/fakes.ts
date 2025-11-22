@@ -3,6 +3,7 @@ import type { NewsItem } from "@common/types";
 export function generateFakeNewsItem(news: Partial<NewsItem>): NewsItem {
   return {
     id: "fake-news",
+    source: "medium",
     title: "Lorem Ipsum",
     permalink: "https://youtu.be/dQw4w9WgXcQ",
     publishedAt: new Date(2009, 10, 25, 6, 57, 33, 42).toISOString(),
