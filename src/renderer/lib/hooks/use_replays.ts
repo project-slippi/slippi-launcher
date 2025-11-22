@@ -1,5 +1,5 @@
 import type { FileResult, FolderResult, Progress, ReplayService } from "@replays/types";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
@@ -47,6 +47,9 @@ const initialState: StoreState = {
 };
 
 export const useReplays = create<StoreState>()(immer(() => initialState));
+
+// Singleton instance of ReplayPresenter
+let presenterInstance: ReplayPresenter | null = null;
 
 export class ReplayPresenter {
   constructor(private readonly replayService: ReplayService) {}
@@ -181,9 +184,28 @@ export class ReplayPresenter {
   }
 }
 
-export const useReplaySelection = () => {
+/**
+ * Get the singleton instance of ReplayPresenter.
+ * This ensures only one presenter instance exists across the entire application.
+ */
+export const getReplayPresenter = (replayService: ReplayService): ReplayPresenter => {
+  if (!presenterInstance) {
+    presenterInstance = new ReplayPresenter(replayService);
+  }
+  return presenterInstance;
+};
+
+/**
+ * Hook to get the singleton ReplayPresenter instance.
+ * Use this instead of creating new ReplayPresenter instances directly.
+ */
+export const useReplayPresenter = () => {
   const { replayService } = useServices();
-  const presenter = useRef(new ReplayPresenter(replayService));
+  return getReplayPresenter(replayService);
+};
+
+export const useReplaySelection = () => {
+  const presenter = useReplayPresenter();
   const { files } = useReplayBrowserList();
   const selectedFiles = useReplays((store) => store.selectedFiles);
 
@@ -218,7 +240,7 @@ export const useReplaySelection = () => {
       }
     });
 
-    presenter.current.setSelectedFiles(newSelection);
+    presenter.setSelectedFiles(newSelection);
   };
 
   const onFileClick = (index: number, isShiftHeld: boolean) => {
@@ -252,11 +274,11 @@ export const useReplaySelection = () => {
   };
 
   const clearSelection = () => {
-    presenter.current.setSelectedFiles([]);
+    presenter.setSelectedFiles([]);
   };
 
   const selectAll = () => {
-    presenter.current.setSelectedFiles(files.map((f) => f.fullPath));
+    presenter.setSelectedFiles(files.map((f) => f.fullPath));
   };
 
   return {

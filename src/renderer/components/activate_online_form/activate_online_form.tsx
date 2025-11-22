@@ -6,10 +6,10 @@ import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import log from "electron-log";
-import React from "react";
+import React, { useCallback } from "react";
 import { Controller, useForm } from "react-hook-form";
 
-import { useAccount, useUserData } from "@/lib/hooks/use_account";
+import { refreshUserData, useAccount } from "@/lib/hooks/use_account";
 import { useToasts } from "@/lib/hooks/use_toasts";
 import { validateConnectCodeStart } from "@/lib/validate/validate";
 import { useServices } from "@/services";
@@ -18,7 +18,10 @@ import { ActivateOnlineFormMessages as Messages } from "./activate_online_form.m
 
 export const ActivateOnlineForm = ({ onSubmit }: { onSubmit?: () => void }) => {
   const user = useAccount((store) => store.user);
-  const refreshActivation = useUserData();
+  const { slippiBackendService } = useServices();
+  const refreshActivation = useCallback(() => {
+    void refreshUserData(slippiBackendService);
+  }, [slippiBackendService]);
   return (
     <div>
       <div>{Messages.yourConnectCodeDescription()}</div>

@@ -9,7 +9,7 @@ import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
 
 import { ExternalLink as A } from "@/components/external_link";
-import { useAccount, useUserData } from "@/lib/hooks/use_account";
+import { refreshUserData, useAccount } from "@/lib/hooks/use_account";
 import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 import { colors } from "@/styles/colors";
@@ -66,7 +66,6 @@ const classes = {
 export const AcceptRulesStep = React.memo(() => {
   const { slippiBackendService } = useServices();
   const { showError } = useToasts();
-  const refreshUserData = useUserData();
   const user = useAccount((store) => store.user);
   const [rulesChecked, setRulesChecked] = useState(false);
   const [policiesChecked, setPoliciesChecked] = useState(false);
@@ -77,7 +76,7 @@ export const AcceptRulesStep = React.memo(() => {
 
     try {
       await slippiBackendService.acceptRules();
-      await refreshUserData();
+      await refreshUserData(slippiBackendService);
     } catch (err: any) {
       showError(err.message);
     } finally {

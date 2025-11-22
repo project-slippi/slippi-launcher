@@ -1,10 +1,9 @@
-import { useCallback } from "react";
+import log from "electron-log";
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
-import { useServices } from "@/services";
 import type { AuthUser } from "@/services/auth/types";
-import type { UserData } from "@/services/slippi/types";
+import type { SlippiBackendService, UserData } from "@/services/slippi/types";
 
 export const useAccount = create(
   combine(
@@ -41,33 +40,36 @@ export const useAccount = create(
   ),
 );
 
-export const useUserData = () => {
-  const { slippiBackendService } = useServices();
-  const loading = useAccount((store) => store.loading);
-  const setLoading = useAccount((store) => store.setLoading);
-  const setUserData = useAccount((store) => store.setUserData);
-  const setServerError = useAccount((store) => store.setServerError);
+let requestId = 0;
+export async function refreshUserData(slippiBackendService: SlippiBackendService) {
+  // We're already refreshing the key
+  if (useAccount.getState().loading) {
+    return;
+  }
 
-  const refreshUserData = useCallback(async () => {
-    // We're already refreshing the key
-    if (loading) {
+  const currentRequestId = ++requestId;
+  useAccount.getState().setLoading(true);
+  try {
+    const userData = await slippiBackendService.fetchUserData();
+    if (requestId !== currentRequestId) {
+      // We've already got a new request so just do nothing.
       return;
     }
 
-    setLoading(true);
-    await slippiBackendService
-      .fetchUserData()
-      .then((userData) => {
-        setUserData(userData);
-        setServerError(false);
-      })
-      .catch((err) => {
-        console.warn("Error fetching play key: ", err);
-        setUserData(null);
-        setServerError(true);
-      })
-      .finally(() => setLoading(false));
-  }, [loading, setLoading, setUserData, setServerError, slippiBackendService]);
+    useAccount.getState().setUserData(userData);
+    useAccount.getState().setServerError(false);
+  } catch (err) {
+    log.warn("Error fetching play key: ", err);
+    useAccount.getState().setUserData(null);
+    useAccount.getState().setServerError(true);
+  } finally {
+    useAccount.getState().setLoading(false);
+  }
+}
 
-  return refreshUserData;
-};
+export function clearUserData() {
+  // Disregard any pending requests for user data.
+  requestId += 1;
+
+  useAccount.getState().setUserData(null);
+}

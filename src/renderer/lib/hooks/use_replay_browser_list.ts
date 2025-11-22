@@ -1,10 +1,8 @@
-import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
-import { ReplayPresenter, useReplays } from "@/lib/hooks/use_replays";
-import { useServices } from "@/services";
+import { useReplayPresenter, useReplays } from "@/lib/hooks/use_replays";
 
 import { replayFileFilter, replayFileSort } from "../replay_file_sort";
 import { useReplayFilter } from "./use_replay_filter";
@@ -49,8 +47,7 @@ export const useReplayBrowserNavigation = () => {
 };
 
 export const useReplayBrowserList = () => {
-  const { replayService } = useServices();
-  const presenter = useRef(new ReplayPresenter(replayService));
+  const presenter = useReplayPresenter();
   const files = useReplays((store) => store.files);
   const sortDirection = useReplayFilter((store) => store.sortDirection);
   const sortBy = useReplayFilter((store) => store.sortBy);
@@ -65,11 +62,11 @@ export const useReplayBrowserList = () => {
 
   const setSelectedItem = (index: number | null) => {
     if (index === null) {
-      presenter.current.clearSelectedFile();
+      presenter.clearSelectedFile();
       return;
     }
     const file = filteredFiles[index];
-    presenter.current.selectFile(file, index, filteredFiles.length);
+    presenter.selectFile(file, index, filteredFiles.length);
     goToReplayStatsPage(file.fullPath);
   };
 
