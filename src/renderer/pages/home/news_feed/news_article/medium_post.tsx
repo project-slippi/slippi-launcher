@@ -25,7 +25,7 @@ const styles = stylex.create({
   },
 });
 
-export const MediumPost = React.memo(function NewsArticle({ item }: { item: NewsItem }) {
+export const MediumPost = React.memo(function MediumPost({ item }: { item: NewsItem }) {
   const { imageUrl, title, subtitle, body = "" } = item;
   const nextPageBreak = body?.indexOf("\n\n", MAX_BODY_LENGTH) ?? -1;
   const [truncateBody, setTruncatedBody] = React.useState(nextPageBreak > 0);
