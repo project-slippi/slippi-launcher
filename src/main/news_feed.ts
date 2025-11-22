@@ -9,13 +9,11 @@ import { getMediumFeed } from "./fetch_cross_origin/medium";
 
 const turndownService = new TurndownService();
 
-const MAX_SUBTITLE_LENGTH = 200;
-
 export async function fetchNewsFeedData(): Promise<NewsItem[]> {
   const newsPromises: Promise<NewsItem[]>[] = [];
   newsPromises.push(fetchMediumNews());
-  // newsPromises.push(fetchGithubReleaseNews(["Ishiiruka", "slippi-launcher", "dolphin"]));
-  // newsPromises.push(fetchBlueskyPosts());
+  newsPromises.push(fetchGithubReleaseNews(["Ishiiruka", "slippi-launcher", "dolphin"]));
+  newsPromises.push(fetchBlueskyPosts());
   const [allNews, failedNews] = partition<PromiseFulfilledResult<NewsItem[]>, PromiseRejectedResult>(
     await Promise.allSettled(newsPromises),
     (newsPromise) => newsPromise.status === "fulfilled",
@@ -48,26 +46,15 @@ async function fetchMediumNews(): Promise<NewsItem[]> {
   return result.items.map((post): NewsItem => {
     // Parse the Medium pubDate format: "YYYY-MM-DD HH:MM:SS"
     const publishedAt = new Date(post.pubDate.replace(" ", "T") + "Z").toISOString();
-
-    // Extract subtitle from description HTML (strip tags and truncate)
-    let subtitle: string | undefined;
-    // Ensure that the subtitle is not the same as the description
-    if (post.description && !post.content.startsWith(post.description)) {
-      const textContent = post.description.replace(/<[^>]*>/g, "").trim();
-      subtitle =
-        textContent.length > MAX_SUBTITLE_LENGTH ? textContent.substring(0, MAX_SUBTITLE_LENGTH) + "..." : textContent;
-    }
-
+    // The NewsItem content needs to be in markdown format so convert the raw HTML content to markdown
     const bodyMarkdown = turndownService.turndown(post.content);
-    // const nextPageBreak = bodyMarkdown.indexOf("\n\n", MAX_BODY_LENGTH);
-    // const body = nextPageBreak !== -1 ? truncateString(bodyMarkdown, nextPageBreak) : bodyMarkdown;
 
     return {
       id: `medium-${post.guid}`,
       source: "medium",
       imageUrl: post.thumbnail || undefined,
       title: post.title,
-      subtitle,
+      subtitle: undefined, // There is no subtitle content fetched from the Medium RSS feed
       publishedAt,
       permalink: post.link,
       body: bodyMarkdown,

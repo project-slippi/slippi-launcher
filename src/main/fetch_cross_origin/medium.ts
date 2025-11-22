@@ -10,6 +10,7 @@ const EXPIRES_IN = 10 * MINUTE;
 
 export type MediumPost = {
   title: string;
+  /** The Medium pubDate string formatted as: "YYYY-MM-DD HH:MM:SS" */
   pubDate: string;
   link: string;
   guid: string;
