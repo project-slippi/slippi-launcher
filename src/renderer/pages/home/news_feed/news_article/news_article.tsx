@@ -27,6 +27,11 @@ const styles = stylex.create({
     opacity: 0.6,
     fontSize: 15,
   },
+  cardActions: {
+    borderTopWidth: 1,
+    borderTopStyle: "solid",
+    borderTopColor: "rgba(255, 255, 255, 0.2)",
+  },
 });
 
 function getViewPostButtonText(source: NewsItem["source"]) {
@@ -67,7 +72,7 @@ export const NewsArticle = React.memo(function NewsArticle({ item }: { item: New
     <div {...stylex.props(styles.container)}>
       <Card>
         {postContent}
-        <CardActions disableSpacing={true}>
+        <CardActions disableSpacing={true} {...stylex.props(styles.cardActions)}>
           <Tooltip title={localDateString}>
             <div {...stylex.props(styles.dateInfo)}>{Messages.posted(timeAgo)}</div>
           </Tooltip>
