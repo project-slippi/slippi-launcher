@@ -1,6 +1,7 @@
 import { exists } from "@common/exists";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
+import { ArrowDownward, ArrowUpward } from "@mui/icons-material";
 import FolderIcon from "@mui/icons-material/Folder";
 import SearchIcon from "@mui/icons-material/Search";
 import Button from "@mui/material/Button";
@@ -8,7 +9,7 @@ import IconButton from "@mui/material/IconButton";
 import List from "@mui/material/List";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
-import React from "react";
+import React, { useState } from "react";
 
 import { DualPane } from "@/components/dual_pane";
 import { BasicFooter } from "@/components/footer/footer";
@@ -51,6 +52,8 @@ export const ReplayBrowser = React.memo(() => {
   const { files: filteredFiles, hiddenFileCount } = useReplayBrowserList();
   const { goToReplayStatsPage } = useReplayBrowserNavigation();
 
+  const [isFolderTreeReversed, setIsFolderTreeReversed] = useState<boolean>(true);
+
   const setSelectedItem = (index: number | null) => {
     if (index === null) {
       void presenter.current.clearSelectedFile();
@@ -85,6 +88,23 @@ export const ReplayBrowser = React.memo(() => {
     [showError, showSuccess],
   );
 
+  const onFolderTreeSortClick = () => {
+    setIsFolderTreeReversed(!isFolderTreeReversed);
+  };
+
+  const folderTreeNodes = folderTree.map((folder) => {
+    return (
+      <FolderTreeNode
+        folder={folder}
+        key={folder.fullPath}
+        collapsedFolders={collapsedFolders}
+        isReversed={isFolderTreeReversed}
+        onClick={onFolderTreeNodeClick}
+        onToggle={(folder) => presenter.current.toggleFolder(folder)}
+      />
+    );
+  });
+
   return (
     <Outer>
       <div
@@ -104,17 +124,13 @@ export const ReplayBrowser = React.memo(() => {
           leftSide={
             <List dense={true} style={{ flex: 1, padding: 0 }}>
               <div style={{ position: "relative", minHeight: "100%" }}>
-                {folderTree.map((folder) => {
-                  return (
-                    <FolderTreeNode
-                      folder={folder}
-                      key={folder.fullPath}
-                      collapsedFolders={collapsedFolders}
-                      onClick={onFolderTreeNodeClick}
-                      onToggle={(folder) => presenter.current.toggleFolder(folder)}
-                    />
-                  );
-                })}
+                <Button
+                  onClick={onFolderTreeSortClick}
+                  startIcon={isFolderTreeReversed ? <ArrowDownward /> : <ArrowUpward />}
+                >
+                  Sort
+                </Button>
+                {isFolderTreeReversed ? folderTreeNodes.reverse() : folderTreeNodes}
                 {loading && (
                   <div
                     style={{
