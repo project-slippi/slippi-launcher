@@ -114,7 +114,6 @@ const createWindow = async () => {
 
     webPreferences: {
       sandbox: false,
-      webSecurity: true, // Setting this to false allows the fetch from the renderer to work
       preload: app.isPackaged ? path.join(__dirname, "preload.js") : path.join(__dirname, "../../.erb/dll/preload.js"),
     },
   });
