@@ -5,16 +5,33 @@ on:
     types: [released]
 
 jobs:
+  wait-for-builds:
+    name: Wait for all builds to complete
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+    steps:
+      - name: Wait for build job - ${{ matrix.os }}
+        uses: lewagon/wait-on-check-action@v1.3.4
+        with:
+          ref: ${{ github.event.release.target_commitish }}
+          check-name: 'Test on node 20.x and ${{ matrix.os }}'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10
+          allowed-conclusions: success
+
   package:
     name: Release Launcher
     runs-on: ubuntu-latest
+    needs: wait-for-builds
     steps:
       - name: Download latest artifacts
         uses: dawidd6/action-download-artifact@v6
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           workflow: build.yml
-          commit: ${{ github.sha }}
+          commit: ${{ github.event.release.target_commitish }}
       - name: Flatten Directory structure
         run: |
           find ./ -mindepth 2 -type f -not -name "builder-debug*" -exec mv -t ./ -i '{}' +
