@@ -18,11 +18,17 @@ export function installSettingsChangeListeners({ replayService }: { replayServic
   // Also initialize it once on app startup
   initReplayBrowser();
 
+  // Validate the ISO file on app startup
+  const initialIsoPath = useSettingsStore.getState().settings.isoPath;
+  if (initialIsoPath) {
+    void validateIsoFile(initialIsoPath);
+  }
+
   // Enroll listeners for individual settings changes
   const onSettingChange = (key: SettingKey, value: any) => {
     switch (key) {
       case "isoPath":
-        void onIsoPathChange(value);
+        void validateIsoFile(value);
         break;
       case "rootSlpPath":
         initReplayBrowser();
@@ -45,7 +51,7 @@ export function installSettingsChangeListeners({ replayService }: { replayServic
 }
 
 let requestId = 0;
-async function onIsoPathChange(isoPath: string | null) {
+async function validateIsoFile(isoPath: string | null) {
   const { setIsValid, setIsValidating } = useIsoVerification.getState();
   if (!isoPath) {
     setIsValid(IsoValidity.UNVALIDATED);
