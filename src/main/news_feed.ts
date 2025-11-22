@@ -35,7 +35,7 @@ export async function fetchNewsFeedData(): Promise<NewsItem[]> {
 }
 
 async function fetchMediumNews(): Promise<NewsItem[]> {
-  const result = await getMediumFeed();
+  const result = await getMediumFeed("project-slippi");
 
   if (result.status !== "ok" || result.items === undefined) {
     log.error("Error fetching Medium feed:");

@@ -35,8 +35,8 @@ type ResponseCacheEntry = {
 
 const mediumResponseCache: Record<string, ResponseCacheEntry> = {};
 
-export async function getMediumFeed(): Promise<MediumFeed> {
-  const rssUrl = "https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/feed/project-slippi";
+export async function getMediumFeed(profileName: string): Promise<MediumFeed> {
+  const rssUrl = `https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/feed/${profileName}`;
 
   try {
     const data = await cachedFetch(rssUrl);
