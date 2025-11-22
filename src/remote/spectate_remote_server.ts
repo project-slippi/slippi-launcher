@@ -22,11 +22,11 @@ export class SpectateRemoteServer {
   private spectateController: SpectateController | null = null;
   private broadcastListSubscription: Subscription<BroadcasterItem[]> | null = null;
   private spectateDetailsSubscription: Subscription<{
-    playbackId: string;
+    dolphinId: string;
     filePath: string;
     broadcasterName: string;
   }> | null = null;
-  private gameEndSubscription: Subscription<string> | null = null;
+  private gameEndSubscription: Subscription<{ broadcastId: string; dolphinId: string }> | null = null;
   private httpServer: http.Server | null = null;
   private spectateRemoteServer: WebSocketServer | null = null;
   private connection: connection | null = null;
@@ -74,16 +74,18 @@ export class SpectateRemoteServer {
       });
     this.spectateDetailsSubscription = this.spectateController
       .getSpectateDetailsObservable()
-      .subscribe(async ({ playbackId, filePath }) => {
+      .subscribe(({ broadcastId, dolphinId, filePath }) => {
         if (this.connection && filePath) {
-          this.connection.sendUTF(JSON.stringify({ op: "new-file-event", dolphinId: playbackId, filePath }));
+          this.connection.sendUTF(JSON.stringify({ op: "new-file-event", broadcastId, dolphinId, filePath }));
         }
       });
-    this.gameEndSubscription = this.spectateController.getGameEndObservable().subscribe((dolphinId: string) => {
-      if (this.connection) {
-        this.connection.sendUTF(JSON.stringify({ op: "game-end-event", dolphinId }));
-      }
-    });
+    this.gameEndSubscription = this.spectateController
+      .getGameEndObservable()
+      .subscribe(({ broadcastId, dolphinId }) => {
+        if (this.connection) {
+          this.connection.sendUTF(JSON.stringify({ op: "game-end-event", broadcastId, dolphinId }));
+        }
+      });
   }
 
   public async start(initialAuthToken: string, port: number): Promise<void> {
@@ -221,7 +223,7 @@ export class SpectateRemoteServer {
       try {
         const path = this.settingsManager.get().settings.spectateSlpPath;
         const dolphinId = await this.spectateController!.startSpectate(broadcastId, path, dolphinOptions);
-        this.connection.sendUTF(JSON.stringify({ op: "spectate-broadcast-response", dolphinId, path }));
+        this.connection.sendUTF(JSON.stringify({ op: "spectate-broadcast-response", broadcastId, dolphinId, path }));
       } catch (e) {
         const err = typeof e === "string" ? e : e instanceof Error ? e.message : "unknown";
         this.connection.sendUTF(JSON.stringify({ op: "spectate-broadcast-response", err }));
@@ -238,7 +240,7 @@ export class SpectateRemoteServer {
     // Cancel any pending throttled refresh calls
     this.throttledRefresh.cancel();
 
-    // Unsubscribe from all observables
+    // Unsubscribe from spectate controller observables
     this.broadcastListSubscription?.unsubscribe();
     this.broadcastListSubscription = null;
 
@@ -247,6 +249,8 @@ export class SpectateRemoteServer {
 
     this.gameEndSubscription?.unsubscribe();
     this.gameEndSubscription = null;
+
+    this.spectateController = null;
 
     // Close WebSocket connection
     this.connection?.removeAllListeners();
