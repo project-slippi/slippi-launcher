@@ -56,7 +56,7 @@ const CloseButton = styled(IconButton)`
 `;
 
 export const SettingsPage = React.memo(({ settings }: { settings: SettingSection[] }) => {
-  const settingItems = settings.flatMap((section) => section.items);
+  const settingItems = settings.flatMap((section) => section.items).filter((item) => !item.hidden?.());
   const { close } = useSettingsModal();
   useMousetrap("escape", close);
 
@@ -73,6 +73,7 @@ export const SettingsPage = React.memo(({ settings }: { settings: SettingSection
               `}
             >
               {settings.map((section, i) => {
+                const sectionItems = section.items.filter((item) => !item.hidden?.());
                 return (
                   <List
                     key={`section-${section.title?.()}${i}`}
@@ -100,7 +101,7 @@ export const SettingsPage = React.memo(({ settings }: { settings: SettingSection
                       ) : undefined
                     }
                   >
-                    {section.items.map((item) => {
+                    {sectionItems.map((item) => {
                       return (
                         <div key={item.name()}>
                           <CustomLink to={item.path}>

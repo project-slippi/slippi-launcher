@@ -12,7 +12,7 @@ class I18nClient implements I18nService {
   private initialized = false;
   private languageChangeSubject = new Subject<string>();
 
-  constructor(private readonly isDevelopment: boolean) {}
+  constructor(private readonly isDevelopment: boolean, private readonly englishOnly: boolean) {}
 
   public onLanguageChange(handle: (language: string) => void): () => void {
     const subscription = this.languageChangeSubject.subscribe(handle);
@@ -32,6 +32,8 @@ class I18nClient implements I18nService {
       return;
     }
 
+    const supportedLanguages = this.englishOnly ? ["en"] : SUPPORTED_LANGUAGES.map((lang) => lang.value);
+
     try {
       await i18next
         .use(ICU)
@@ -40,7 +42,7 @@ class I18nClient implements I18nService {
           backend: {
             loadPath: "./i18n/{{lng}}.json",
           },
-          supportedLngs: SUPPORTED_LANGUAGES.map((lang) => lang.value),
+          supportedLngs: supportedLanguages,
           fallbackLng: "en",
           lng: localStorage.getItem(this.localStorageKey) || getSystemLanguage(),
           load: "languageOnly", // ignore the locale suffix in the language code e.g. "en-US" -> "en"
@@ -62,6 +64,8 @@ class I18nClient implements I18nService {
   }
 }
 
-export default function createI18nService(options: { isDevelopment?: boolean } = {}): I18nService {
-  return new I18nClient(options.isDevelopment ?? false);
+export default function createI18nService(
+  options: { isDevelopment?: boolean; englishOnly?: boolean } = {},
+): I18nService {
+  return new I18nClient(Boolean(options.isDevelopment), Boolean(options.englishOnly));
 }

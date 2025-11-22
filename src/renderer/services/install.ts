@@ -12,6 +12,7 @@ import createSlippiClient from "./slippi/slippi.service";
 import type { Services } from "./types";
 
 const isDevelopment = window.electron.bootstrap.isDevelopment;
+const configFlags = window.electron.bootstrap.flags;
 
 export async function installServices(): Promise<Services> {
   const dolphinService = createDolphinClient();
@@ -28,7 +29,8 @@ export async function installServices(): Promise<Services> {
   const consoleService = window.electron.console;
   const spectateRemoteService = window.electron.remote;
 
-  const i18nService = createI18nService({ isDevelopment });
+  const i18nService = createI18nService({ isDevelopment, englishOnly: !configFlags.enableI18n });
+
   // Connect i18n service to global app state for language changes
   i18nService.onLanguageChange((language) => {
     useAppStore.getState().setCurrentLanguage(language);

@@ -11,6 +11,8 @@ import { SettingsPage } from "./settings_page";
 import { SpectateSettings } from "./spectate_settings/spectate_settings";
 import type { SettingSection } from "./types";
 
+const configFlags = window.electron.bootstrap.flags;
+
 export function createSettingsPage(): { Page: React.ComponentType } {
   const settings: SettingSection[] = [
     {
@@ -60,6 +62,9 @@ export function createSettingsPage(): { Page: React.ComponentType } {
           name: () => Messages.appearance(),
           path: "appearance-settings",
           component: <AppearanceSettings />,
+          // This is the appearance settings but technically right now it's only used for language selection
+          // so we should hide it if the flag is not enabled.
+          hidden: () => !configFlags.enableI18n,
         },
         {
           name: () => Messages.advanced(),
