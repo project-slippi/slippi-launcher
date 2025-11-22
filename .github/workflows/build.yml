@@ -50,16 +50,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: yarn
 
-      - name: Cache node modules
-        uses: actions/cache@v4
-        id: cache
-        with:
-          path: node_modules
-          key: ${{ runner.OS }}-build-${{ secrets.CACHE_CONTROL }}-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.OS }}-build-${{ secrets.CACHE_CONTROL }}-${{ env.cache-name }}-
-            ${{ runner.OS }}-build-${{ secrets.CACHE_CONTROL }}
-
       - name: Install dependencies
         run: |
           yarn install
