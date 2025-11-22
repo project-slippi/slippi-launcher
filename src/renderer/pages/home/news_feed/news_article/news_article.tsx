@@ -12,9 +12,9 @@ import { useAppStore } from "@/lib/hooks/use_app_store";
 import { getLocale } from "@/lib/time";
 import type { SupportedLanguage } from "@/services/i18n/util";
 
-import { BlueskyPost } from "./BlueskyPost";
-import { GithubPost } from "./GithubPost";
-import { MediumPost } from "./MediumPost";
+import { BlueskyPost } from "./bluesky_post";
+import { GithubPost } from "./github_post";
+import { MediumPost } from "./medium_post";
 import { NewsArticleMessages as Messages } from "./news_article.messages";
 
 const styles = stylex.create({
