@@ -81,6 +81,7 @@ export const NewsArticle = React.memo(function NewsArticle({ item }: { item: New
             </div>
           </div>
           {body && <MarkdownContent content={body} {...stylex.props(styles.markdownContainer)} />}
+          <pre>{JSON.stringify(item.body, null, 2)}</pre>
         </CardContent>
         <CardActions disableSpacing={true}>
           <Tooltip title={localDateString}>

@@ -3,14 +3,14 @@ import type { NewsItem } from "@common/types";
 import log from "electron-log";
 
 import { getBlueskyFeed } from "./bluesky";
+import { getMediumFeed } from "./cross_origin/medium";
 import { getAllReleases } from "./github";
-import { getMediumFeed } from "./medium";
 
 export async function fetchNewsFeedData(): Promise<NewsItem[]> {
   const newsPromises: Promise<NewsItem[]>[] = [];
   newsPromises.push(fetchMediumNews());
-  newsPromises.push(fetchGithubReleaseNews(["Ishiiruka", "slippi-launcher", "dolphin"]));
-  newsPromises.push(fetchBlueskyPosts());
+  // newsPromises.push(fetchGithubReleaseNews(["Ishiiruka", "slippi-launcher", "dolphin"]));
+  // newsPromises.push(fetchBlueskyPosts());
   const [allNews, failedNews] = partition<PromiseFulfilledResult<NewsItem[]>, PromiseRejectedResult>(
     await Promise.allSettled(newsPromises),
     (newsPromise) => newsPromise.status === "fulfilled",
@@ -34,7 +34,6 @@ export async function fetchNewsFeedData(): Promise<NewsItem[]> {
 async function fetchMediumNews(): Promise<NewsItem[]> {
   const result = await getMediumFeed();
 
-  // TODO: Change error check condition. This stuff is old from when I tried to use RSS data directly
   if (result.status !== "ok" || result.items === undefined) {
     log.error("Error fetching Medium feed:");
     log.error(result);
@@ -42,14 +41,24 @@ async function fetchMediumNews(): Promise<NewsItem[]> {
   }
 
   return result.items.map((post): NewsItem => {
-    const publishedAt = new Date(post.latestPublishedAt).toISOString();
+    // Parse the Medium pubDate format: "YYYY-MM-DD HH:MM:SS"
+    const publishedAt = new Date(post.pubDate.replace(" ", "T") + "Z").toISOString();
+
+    // Extract subtitle from description HTML (strip tags and truncate)
+    let subtitle: string | undefined;
+    if (post.description) {
+      const textContent = post.description.replace(/<[^>]*>/g, "").trim();
+      subtitle = textContent.length > 200 ? textContent.substring(0, 200) + "..." : textContent;
+    }
+
     return {
-      id: `medium-${post.id}`,
-      imageUrl: `https://cdn-images-1.medium.com/${post.previewImage.id}`,
+      id: `medium-${post.guid}`,
+      imageUrl: post.thumbnail || undefined,
       title: post.title,
-      subtitle: post.extendedPreviewContent.subtitle,
+      subtitle,
       publishedAt,
-      permalink: post.mediumUrl,
+      permalink: post.link,
+      body: post.content,
     };
   });
 }
