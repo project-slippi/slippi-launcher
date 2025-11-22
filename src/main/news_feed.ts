@@ -3,9 +3,9 @@ import type { NewsItem } from "@common/types";
 import log from "electron-log";
 import TurndownService from "turndown";
 
-import { getBlueskyFeed } from "./bluesky";
-import { getMediumFeed } from "./cross_origin/medium";
-import { getAllReleases } from "./github";
+import { getBlueskyFeed } from "./fetch_cross_origin/bluesky";
+import { getAllReleases } from "./fetch_cross_origin/github";
+import { getMediumFeed } from "./fetch_cross_origin/medium";
 
 const turndownService = new TurndownService();
 
