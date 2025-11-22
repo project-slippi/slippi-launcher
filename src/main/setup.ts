@@ -10,8 +10,8 @@ import path from "path";
 import { fileExists } from "utils/file_exists";
 
 import { getAppBootstrap } from "./bootstrap";
+import { getLatestRelease } from "./fetch_cross_origin/github";
 import type { ConfigFlags } from "./flags/flags";
-import { getLatestRelease } from "./github";
 import {
   ipc_checkForUpdate,
   ipc_checkValidIso,

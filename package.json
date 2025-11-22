@@ -104,6 +104,7 @@
     "@types/react-window": "^1.8.2",
     "@types/semver": "^7.5.3",
     "@types/terser-webpack-plugin": "^5.0.4",
+    "@types/turndown": "^5.0.6",
     "@types/webpack-env": "^1.16.3",
     "@types/websocket": "^1.0.5",
     "@typescript-eslint/eslint-plugin": "^6.16.0",
@@ -207,7 +208,6 @@
     "is-ip": "^5.0.0",
     "jdenticon": "^3.1.1",
     "lodash": "^4.17.21",
-    "medium-json-feed": "^0.0.3",
     "mousetrap": "^1.6.5",
     "node-stream-zip": "^1.15.0",
     "nodejs-traceroute": "2.0.0",
@@ -229,6 +229,7 @@
     "semver": "^7.5.4",
     "semver-regex": "^3.1.2",
     "stun": "^2.1.0",
+    "turndown": "^7.2.2",
     "wget-improved": "^3.3.1",
     "zustand": "^4.4.6"
   },
