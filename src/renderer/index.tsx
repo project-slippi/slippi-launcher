@@ -10,7 +10,7 @@ import { ToastProvider } from "@/components/toast_provider";
 import { slippiTheme } from "@/styles/theme";
 
 import { createApp } from "./app/create";
-import { LoadingScreen } from "./components/loading_screen";
+import { LoadingScreen } from "./components/loading_screen/loading_screen";
 import { initializeApp } from "./initialize_app";
 import { installAppListeners } from "./listeners/install_app_listeners";
 import { installServices } from "./services/install";

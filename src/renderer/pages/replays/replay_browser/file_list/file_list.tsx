@@ -9,7 +9,8 @@ import { FixedSizeList as List } from "react-window";
 import { ErrorBoundary } from "@/components/error_boundary";
 import { IconMenu } from "@/components/icon_menu";
 
-import { ReplayFileContainer } from "./replay_file/replay_file.container";
+import { ReplayFileContainer } from "../replay_file/replay_file.container";
+import { FileListMessages as Messages } from "./file_list.messages";
 
 const REPLAY_FILE_ITEM_SIZE = 90;
 
@@ -177,12 +178,12 @@ export const FileList = ({
           {
             onClick: handleRevealLocation,
             icon: <FolderIcon fontSize="small" />,
-            label: "Reveal location",
+            label: Messages.revealLocation(),
           },
           {
             onClick: handleDelete,
             icon: <DeleteIcon fontSize="small" />,
-            label: "Delete",
+            label: Messages.delete(),
           },
         ]}
       />

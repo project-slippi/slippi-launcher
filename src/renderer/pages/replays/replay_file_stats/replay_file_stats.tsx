@@ -11,7 +11,7 @@ import { GameMode } from "@slippi/slippi-js";
 import { useQuery } from "react-query";
 
 import { BasicFooter } from "@/components/footer/footer";
-import { LoadingScreen } from "@/components/loading_screen";
+import { LoadingScreen } from "@/components/loading_screen/loading_screen";
 import { IconMessage } from "@/components/message";
 import { useDolphinActions } from "@/lib/dolphin/use_dolphin_actions";
 import { useMousetrap } from "@/lib/hooks/use_mousetrap";
@@ -21,8 +21,9 @@ import { colors } from "@/styles/colors";
 import { withFont } from "@/styles/with_font";
 
 import { GameProfile } from "./game_profile";
-import { GameProfileHeader } from "./game_profile_header";
+import { GameProfileHeader } from "./game_profile_header/game_profile_header";
 import { HomeRunProfile } from "./home_run_profile";
+import { ReplayFileStatsMessages as Messages } from "./replay_file_stats.messages";
 import { TargetTestProfile } from "./target_test_profile";
 
 const Outer = styled.div<{
@@ -119,9 +120,9 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
             text-align: center;
           `}
         >
-          <h2>Uh oh. We couldn't open that file. It's probably corrupted.</h2>
+          <h2>{Messages.weCouldntOpenThatFile()}</h2>
           <Button color="secondary" onClick={props.onClose}>
-            Go back
+            {Messages.goBack()}
           </Button>
         </div>
       </IconMessage>
@@ -129,7 +130,7 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
   }
 
   if (!file) {
-    return <LoadingScreen message="Loading..." />;
+    return <LoadingScreen message={Messages.loading()} />;
   }
 
   const { game } = file;
@@ -147,23 +148,23 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
       />
       <Content>
         {!file || loading ? (
-          <LoadingScreen message="Crunching numbers..." />
+          <LoadingScreen message={Messages.crunchingNumbers()} />
         ) : game.mode == GameMode.TARGET_TEST ? (
           <TargetTestProfile file={file} stats={stadiumStats}></TargetTestProfile>
         ) : game.mode == GameMode.HOME_RUN_CONTEST ? (
           <HomeRunProfile file={file} stats={stadiumStats}></HomeRunProfile>
         ) : numPlayers !== 2 ? (
-          <IconMessage Icon={ErrorIcon} label="Game stats for doubles is unsupported" />
+          <IconMessage Icon={ErrorIcon} label={Messages.gameStatsForDoublesIsUnsupported()} />
         ) : error ? (
           <IconMessage Icon={ErrorIcon} label={`Error: ${error.message ?? JSON.stringify(error, null, 2)}`} />
         ) : gameStats ? (
           <GameProfile file={file} stats={gameStats} onPlay={viewReplays} />
         ) : (
-          <IconMessage Icon={HelpIcon} label="No stats computed" />
+          <IconMessage Icon={HelpIcon} label={Messages.noStatsComputed()} />
         )}
       </Content>
       <BasicFooter>
-        <Tooltip title="Reveal location">
+        <Tooltip title={Messages.revealLocation()}>
           <IconButton onClick={handleRevealLocation} size="small">
             <FolderIcon
               css={css`
@@ -189,7 +190,7 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
               font-family: ${withFont("Maven Pro")};
             `}
           >
-            Current File
+            {Messages.currentFile()}
           </div>
           <div
             css={css`

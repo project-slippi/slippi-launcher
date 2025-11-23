@@ -8,6 +8,8 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import React from "react";
 
+import { HeaderMessages as Messages } from "./header.messages";
+
 type StartGameDialogProps = {
   open: boolean;
   onClose: () => void;
@@ -36,16 +38,16 @@ export const StartGameDialog = ({ open, onClose, onSubmit }: StartGameDialogProp
       fullScreen={fullScreen}
     >
       <form onSubmit={handleSubmit}>
-        <StyledDialogTitle>You are not logged in</StyledDialogTitle>
+        <StyledDialogTitle>{Messages.youAreNotLoggedIn()}</StyledDialogTitle>
         <DialogContent style={{ display: "flex" }}>
-          <div>Only logged in users can play online. Would you like to play offline?</div>
+          <div>{Messages.onlyLoggedInUsersCanPlayOnline()}</div>
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose} color="secondary">
-            Cancel
+            {Messages.cancel()}
           </Button>
           <Button color="primary" type="submit">
-            Play offline
+            {Messages.playOffline()}
           </Button>
         </DialogActions>
       </form>

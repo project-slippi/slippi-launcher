@@ -10,6 +10,8 @@ import { refreshUserData } from "@/lib/hooks/use_account";
 import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 
+import { HeaderMessages as Messages } from "./header.messages";
+
 type ActivateOnlineDialogProps = {
   open: boolean;
   onClose: () => void;
@@ -33,7 +35,7 @@ export const ActivateOnlineDialog = ({ open, onClose, onSubmit }: ActivateOnline
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth={true} fullScreen={fullScreen}>
-      <StyledDialogTitle>Choose a connect code</StyledDialogTitle>
+      <StyledDialogTitle>{Messages.chooseAConnectCode()}</StyledDialogTitle>
       <DialogContent style={{ display: "flex", paddingBottom: 30 }}>
         <ActivateOnlineForm onSubmit={handleSubmit} />
       </DialogContent>

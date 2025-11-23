@@ -5,4 +5,13 @@ export const HeaderMessages = {
   failedToGetUpdates: () => "Failed to get updates",
   noMeleeIsoFile: () => "No Melee ISO file specified",
   settings: () => "Settings",
+  chooseAConnectCode: () => "Choose a connect code",
+  youAreNotLoggedIn: () => "You are not logged in",
+  onlyLoggedInUsersCanPlayOnline: () => "Only logged in users can play online. Would you like to play offline?",
+  playOffline: () => "Play offline",
+  cancel: () => "Cancel",
+  editDisplayName: () => "Edit display name",
+  confirm: () => "Confirm",
+  displayName: () => "Display Name",
+  loading: () => "Loading",
 };

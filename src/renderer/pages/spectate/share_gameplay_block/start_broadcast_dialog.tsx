@@ -23,6 +23,8 @@ import { useQuery } from "react-query";
 
 import { useServices } from "@/services";
 
+import { StartBroadcastDialogMessages as Messages } from "./start_broadcast_dialog.messages";
+
 type StartBroadcastDialogProps = {
   open: boolean;
   onClose: () => void;
@@ -40,7 +42,7 @@ export const StartBroadcastDialog = ({ open, onClose, onSubmit }: StartBroadcast
     async () => {
       // First check that the user id is only alphanumeric
       if (!value.match(/^[0-9a-zA-Z]+$/)) {
-        throw new Error("Invalid user ID format");
+        throw new Error(Messages.invalidUserIdFormat());
       }
       console.log("starting fetch: ", JSON.stringify(new Date()));
       const result = await slippiBackendService.validateUserId(value);
@@ -92,14 +94,14 @@ export const StartBroadcastDialog = ({ open, onClose, onSubmit }: StartBroadcast
     >
       <form onSubmit={handleSubmit}>
         <StyledDialogTitle>
-          Enter Spectator ID
-          <Tooltip title="The unique viewer code of the spectator.">
+          {Messages.enterSpectatorId()}
+          <Tooltip title={Messages.theUniqueViewerCodeOfTheSpectator()}>
             <HelpIcon style={{ marginLeft: 10, opacity: 0.7 }} fontSize="small" />
           </Tooltip>
         </StyledDialogTitle>
         <DialogContent style={{ display: "flex" }}>
           <TextField
-            label="Spectator ID"
+            label={Messages.spectatorId()}
             value={value}
             variant="filled"
             style={{ width: "100%", flex: 1 }}
@@ -107,22 +109,22 @@ export const StartBroadcastDialog = ({ open, onClose, onSubmit }: StartBroadcast
             error={showErrorStatus}
             helperText={
               userQuery.isSuccess && userQuery.data
-                ? `Broadcast to ${userQuery.data.displayName} (${userQuery.data.connectCode})`
+                ? Messages.broadcastToUser(userQuery.data.displayName, userQuery.data.connectCode)
                 : showErrorStatus
-                ? "No associated user found"
+                ? Messages.noAssociatedUserFound()
                 : undefined
             }
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
                   {value.length > 0 ? (
-                    <Tooltip title="Clear">
+                    <Tooltip title={Messages.clear()}>
                       <IconButton size="small" onClick={() => handleChange("")}>
                         <CloseIcon />
                       </IconButton>
                     </Tooltip>
                   ) : (
-                    <Tooltip title="Paste">
+                    <Tooltip title={Messages.paste()}>
                       <IconButton
                         size="small"
                         onClick={() => {
@@ -166,10 +168,10 @@ export const StartBroadcastDialog = ({ open, onClose, onSubmit }: StartBroadcast
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose} color="secondary">
-            Cancel
+            {Messages.cancel()}
           </Button>
           <Button color="primary" disabled={!userQuery.isSuccess} type="submit">
-            Confirm
+            {Messages.confirm()}
           </Button>
         </DialogActions>
       </form>
