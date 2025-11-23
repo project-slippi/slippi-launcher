@@ -62,7 +62,7 @@ export const NameChangeDialog = ({
                 align-items: center;
               `}
             >
-              Loading
+              {Messages.loading()}
               <CircularProgress
                 size={16}
                 color="inherit"

@@ -33,4 +33,5 @@ export const NetworkDiagnosticsResultMessages = {
   detectedItCouldAlsoBeAVpn: () => "Detected (it could also be a VPN)",
   youMayHaveTrouble: () => "You may have trouble connecting to other players.",
   ifTheFailurePersists: () => "If the failure persists, you can test this in your computer's terminal app. See below:",
+  runThisCommand: () => "Run this command",
 };

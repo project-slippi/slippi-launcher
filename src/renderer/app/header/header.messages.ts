@@ -13,4 +13,5 @@ export const HeaderMessages = {
   editDisplayName: () => "Edit display name",
   confirm: () => "Confirm",
   displayName: () => "Display Name",
+  loading: () => "Loading",
 };
