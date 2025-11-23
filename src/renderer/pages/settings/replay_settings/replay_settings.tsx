@@ -43,7 +43,7 @@ export const ReplaySettings = React.memo(() => {
           checked={enableMonthlySubfolders}
           disabled={netplayDolphinOpen}
           hoverText={netplayDolphinOpen ? Messages.closeDolphinToChangeSetting() : ""}
-          label={<CheckboxDescription>Save replays to monthly subfolders</CheckboxDescription>}
+          label={<CheckboxDescription>{Messages.saveReplaysToMonthlySubfolders()}</CheckboxDescription>}
         />
       </SettingItem>
       <SettingItem name={Messages.spectatorSlpDirectory()} description={Messages.spectatorSlpDirectoryDescription()}>
