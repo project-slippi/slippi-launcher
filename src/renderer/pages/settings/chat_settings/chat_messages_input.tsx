@@ -96,8 +96,8 @@ const genChatMessageItem = (
         css={css`
           color: #ffffff4c;
           font-size: 20px;
-          margin-top: 4px;
-          margin-right: 6px;
+          padding-top: 4px;
+          padding-right: 6px;
           margin-left: -2px;
         `}
       >
@@ -282,10 +282,10 @@ const ChatMessagesSection = ({
   return (
     <div
       css={css`
-        margin-bottom: 32px;
+        padding-bottom: 32px;
       `}
     >
-      <Typography fontSize={15} color="#FFFFFFAA" marginBottom="5px">
+      <Typography fontSize={15} color="#FFFFFFAA" paddingBottom="5px">
         {Messages.chatGroup(getChatGroupTitle(direction))}
       </Typography>
       <ChatMessageSelector
@@ -347,7 +347,7 @@ export const ChatMessagesInput = ({ messages, availableMessages, updateMessages,
   return (
     <div
       css={css`
-        margin-top: 16px;
+        padding-top: 16px;
       `}
     >
       <ChatMessagesSection
