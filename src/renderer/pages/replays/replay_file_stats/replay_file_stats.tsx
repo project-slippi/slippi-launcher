@@ -120,7 +120,7 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
             text-align: center;
           `}
         >
-          <h2>{Messages.uhOhWeCouldntOpenThatFile()}</h2>
+          <h2>{Messages.weCouldntOpenThatFile()}</h2>
           <Button color="secondary" onClick={props.onClose}>
             {Messages.goBack()}
           </Button>

@@ -1,5 +1,5 @@
 export const ReplayFileStatsMessages = {
-  uhOhWeCouldntOpenThatFile: () => "Uh oh. We couldn't open that file. It's probably corrupted.",
+  weCouldntOpenThatFile: () => "Uh oh. We couldn't open that file. It's probably corrupted.",
   goBack: () => "Go back",
   loading: () => "Loading...",
   crunchingNumbers: () => "Crunching numbers...",
