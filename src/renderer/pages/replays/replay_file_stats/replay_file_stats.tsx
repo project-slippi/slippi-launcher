@@ -154,7 +154,7 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
         ) : game.mode == GameMode.HOME_RUN_CONTEST ? (
           <HomeRunProfile file={file} stats={stadiumStats}></HomeRunProfile>
         ) : numPlayers !== 2 ? (
-          <IconMessage Icon={ErrorIcon} label={Messages.gameStatsForDoublesIsUnsupported()} />
+          <IconMessage Icon={ErrorIcon} label={Messages.gameStatsForTeamBattlesIsUnsupported()} />
         ) : error ? (
           <IconMessage Icon={ErrorIcon} label={`Error: ${error.message ?? JSON.stringify(error, null, 2)}`} />
         ) : gameStats ? (

@@ -45,7 +45,7 @@ msgid "Add"
 msgstr ""
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:12:35
-msgid "Additional SLP Directories"
+msgid "Additional SLP Folders"
 msgstr ""
 
 #: src/renderer/pages/settings/create.messages.ts:12:19
@@ -124,7 +124,7 @@ msgid "Beta (Mainline)"
 msgstr ""
 
 #: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:4:26
-msgid "Break the Targets"
+msgid "Target Test"
 msgstr ""
 
 #: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:9:50
@@ -161,7 +161,7 @@ msgid "Cancel"
 msgstr ""
 
 #: src/renderer/components/multi_path_input/multi_path_input.messages.ts:5:40
-msgid "Cannot add sub directories of the Root SLP Directory."
+msgid "Cannot add subfolders of the Root SLP Folder."
 msgstr ""
 
 #: src/renderer/pages/spectate/footer/footer.messages.ts:3:23
@@ -213,7 +213,7 @@ msgstr ""
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:14:5
 msgid ""
-"Choose any additional SLP directories that should show up in the replay "
+"Choose any additional SLP folders that should show up in the replay "
 "browser."
 msgstr ""
 
@@ -570,7 +570,7 @@ msgid "Game"
 msgstr "ゲーム"
 
 #: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:7:43
-msgid "Game stats for doubles is unsupported"
+msgid "Game stats for eteaoubles is unsupported"
 msgstr ""
 
 #: src/renderer/pages/settings/create.messages.ts:2:26
@@ -858,7 +858,7 @@ msgid "No SLP files found"
 msgstr ""
 
 #: src/renderer/components/multi_path_input/multi_path_input.messages.ts:2:39
-msgid "No additional directories added."
+msgid "No additional folders added."
 msgstr ""
 
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:7:32
@@ -1158,7 +1158,7 @@ msgid "Right"
 msgstr ""
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:2:27
-msgid "Root SLP Directory"
+msgid "Root SLP Folder"
 msgstr ""
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:36:25
@@ -1296,7 +1296,7 @@ msgid "Spectator ID"
 msgstr ""
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:10:32
-msgid "Spectator SLP Directory"
+msgid "Spectator SLP Folder"
 msgstr ""
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:23:17
@@ -1381,7 +1381,7 @@ msgid "Target folder"
 msgstr ""
 
 #: src/renderer/components/multi_path_input/multi_path_input.messages.ts:6:41
-msgid "That directory is already included."
+msgid "That folder is already included."
 msgstr ""
 
 #: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:4:5

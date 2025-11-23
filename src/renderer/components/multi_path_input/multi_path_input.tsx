@@ -27,12 +27,12 @@ export const MultiPathInput = ({ paths, updatePaths, options }: MultiPathInputPr
       showError(description);
     };
     if (paths.includes(newPath)) {
-      addErrorToast(Messages.thatDirectoryIsAlreadyIncluded());
+      addErrorToast(Messages.thatFolderIsAlreadyIncluded());
       return false;
     }
 
     if (isSubdirectory(rootFolder, newPath)) {
-      addErrorToast(Messages.cannotAddSubdirectoriesOfRoot());
+      addErrorToast(Messages.cannotAddSubfoldersOfRoot());
       return false;
     }
 
@@ -40,7 +40,7 @@ export const MultiPathInput = ({ paths, updatePaths, options }: MultiPathInputPr
     for (let i = 0; i < pathsToCheck.length; i++) {
       const path = pathsToCheck[i];
       if (isSubdirectory(path, newPath)) {
-        addErrorToast(Messages.cannotAddSubdirectoriesOfRoot());
+        addErrorToast(Messages.cannotAddSubfoldersOfRoot());
         return false;
       } else if (isSubdirectory(newPath, path)) {
         updatePaths(pathsToCheck.splice(i, 1));
@@ -133,7 +133,7 @@ export const MultiPathInput = ({ paths, updatePaths, options }: MultiPathInputPr
             opacity: 0.7;
           `}
         >
-          {Messages.noAdditionalDirectoriesAdded()}
+          {Messages.noAdditionalFoldersAdded()}
         </div>
       )}
       <div

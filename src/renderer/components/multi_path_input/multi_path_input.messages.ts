@@ -1,7 +1,7 @@
 export const MultiPathInputMessages = {
-  noAdditionalDirectoriesAdded: () => "No additional directories added.",
+  noAdditionalFoldersAdded: () => "No additional folders added.",
   add: () => "Add",
   remove: () => "Remove",
-  cannotAddSubdirectoriesOfRoot: () => "Cannot add sub directories of the Root SLP Directory.",
-  thatDirectoryIsAlreadyIncluded: () => "That directory is already included.",
+  cannotAddSubfoldersOfRoot: () => "Cannot add subfolders of the Root SLP Folder.",
+  thatFolderIsAlreadyIncluded: () => "That folder is already included.",
 };

@@ -221,7 +221,7 @@ const GameDetails = ({
 
   const targetTestDisplay = {
     label: <TrackChangesIcon />,
-    content: Messages.breakTheTargets(),
+    content: Messages.targetTest(),
   };
 
   const homerunDisplay = {

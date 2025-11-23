@@ -9,7 +9,7 @@ export const SavedConnectionItemMessages = {
   mirror: () => "Mirror",
   disconnect: () => "Disconnect",
   relayPort: () => "Relay Port",
-  targetFolder: () => "Target folder",
+  targetFolder: () => "Target Folder",
   yourNintendontIsOutOfDate: () =>
     "Your Nintendont is out of date and no longer supported. Click to download the latest version from the Slippi website.",
   currentFile: () => "Current file",

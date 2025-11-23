@@ -24,7 +24,7 @@ export const ReplaySettings = React.memo(() => {
 
   return (
     <div>
-      <SettingItem name={Messages.rootSlpDirectory()} description={Messages.rootSlpDirectoryDescription()}>
+      <SettingItem name={Messages.rootSlpFolder()} description={Messages.rootSlpFolderDescription()}>
         <PathInput
           disabled={netplayDolphinOpen}
           tooltipText={netplayDolphinOpen ? Messages.closeDolphinToChangeSetting() : ""}
@@ -46,7 +46,7 @@ export const ReplaySettings = React.memo(() => {
           label={<CheckboxDescription>{Messages.saveReplaysToMonthlySubfolders()}</CheckboxDescription>}
         />
       </SettingItem>
-      <SettingItem name={Messages.spectatorSlpDirectory()} description={Messages.spectatorSlpDirectoryDescription()}>
+      <SettingItem name={Messages.spectatorSlpFolder()} description={Messages.spectatorSlpFolderDescription()}>
         <PathInput
           value={spectateDir}
           onSelect={setSpectateDir}
@@ -56,10 +56,7 @@ export const ReplaySettings = React.memo(() => {
           placeholder={Messages.noFolderSet()}
         />
       </SettingItem>
-      <SettingItem
-        name={Messages.additionalSlpDirectories()}
-        description={Messages.additionalSlpDirectoriesDescription()}
-      >
+      <SettingItem name={Messages.additionalSlpFolders()} description={Messages.additionalSlpFoldersDescription()}>
         <MultiPathInput
           paths={replayDirs}
           updatePaths={setReplayDirs}

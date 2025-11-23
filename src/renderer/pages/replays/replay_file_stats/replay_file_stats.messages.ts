@@ -4,7 +4,7 @@ export const ReplayFileStatsMessages = {
   loading: () => "Loading...",
   crunchingNumbers: () => "Crunching numbers...",
   noStatsComputed: () => "No stats computed",
-  gameStatsForDoublesIsUnsupported: () => "Game stats for doubles is unsupported",
+  gameStatsForTeamBattlesIsUnsupported: () => "Game stats for team battles is unsupported",
   revealLocation: () => "Reveal location",
   currentFile: () => "Current file",
 };
