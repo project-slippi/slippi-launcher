@@ -11,31 +11,31 @@ msgstr ""
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
 msgid "2-4 uppercase English characters"
-msgstr ""
+msgstr "2-4 caracteres en inglés en mayúsculas"
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:10:40
 msgid "7z files must be uncompressed to be used in Dolphin."
-msgstr ""
+msgstr "Los archivos 7z deben descomprimirse para usarse en Dolphin."
 
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:8:42
 msgid "A confirmation email has been sent to:"
-msgstr ""
+msgstr "Se ha enviado un correo de confirmación a:"
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:21:20
 msgid "Accept All"
-msgstr ""
+msgstr "Aceptar todo"
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:23:33
 msgid "Accept rules and policies"
-msgstr ""
+msgstr "Aceptar reglas y políticas"
 
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:2:29
 msgid "Activate online play"
-msgstr ""
+msgstr "Activar juego en línea"
 
 #: src/renderer/pages/home/sidebar/ranked_status.messages.ts:3:17
 msgid "Active"
-msgstr ""
+msgstr "Activo"
 
 #: src/renderer/components/multi_path_input/multi_path_input.messages.ts:3:14
 #: src/renderer/pages/console_mirror/new_connection_list/new_connection_list.messages.ts:5:14
@@ -84,19 +84,19 @@ msgstr "Configuración de la Aplicación"
 
 #: src/renderer/pages/settings/create.messages.ts:11:21
 msgid "Appearance"
-msgstr ""
+msgstr "Apariencia"
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:5:21
 msgid "Are you sure you want to delete this code?"
-msgstr ""
+msgstr "¿Estás seguro de que quieres eliminar este código?"
 
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:9:36
 msgid "Are you sure you want to log out?"
-msgstr ""
+msgstr "¿Estás seguro de que quieres cerrar sesión?"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:17:21
 msgid "Are you sure?"
-msgstr ""
+msgstr "¿Estás seguro?"
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:3:39
 msgid "Automatically install Slippi Launcher updates when they become available."
@@ -108,64 +108,64 @@ msgstr ""
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:7:20
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:24:20
 msgid "Available"
-msgstr ""
+msgstr "Disponible"
 
 #: src/renderer/pages/quick_start/stepper_dots/stepper_dots.messages.ts:3:15
 msgid "Back"
-msgstr ""
+msgstr "Atrás"
 
 #: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:2:24
 msgid "Back to replays"
-msgstr ""
+msgstr "Volver a repeticiones"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:24:15
 msgid "Beta (Mainline)"
-msgstr ""
+msgstr "Beta (Principal)"
 
 #: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:9:50
 #. {0} broadcastDuration: string
 msgid "Broadcast ended after {0}"
-msgstr ""
+msgstr "Transmisión finalizada después de {0}"
 
 #: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:8:27
 msgid "Broadcast started"
-msgstr ""
+msgstr "Transmisión iniciada"
 
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:6:66
 #. {0} displayName: string
 #. {1} connectCode: string
 msgid "Broadcast to: {0} ({1})"
-msgstr ""
+msgstr "Transmitir a: {0} ({1})"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:30:27
 msgid "CGNAT or Double NAT"
-msgstr ""
+msgstr "CGNAT o NAT doble"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:5:23
 msgid "Can be changed later for a one-time payment"
-msgstr ""
+msgstr "Puede cambiarse después con un pago único"
 
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:5:24
 msgid "Can't find the email? Check your spam folder. Still missing? "
-msgstr ""
+msgstr "¿No encuentras el correo? Revisa tu carpeta de spam. ¿Aún no aparece? "
 
 #: src/renderer/app/header/header.messages.ts:12:17
 #: src/renderer/components/confirmation_modal/confirmation_modal.messages.ts:3:17
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:10:17
 msgid "Cancel"
-msgstr ""
+msgstr "Cancelar"
 
 #: src/renderer/components/multi_path_input/multi_path_input.messages.ts:5:36
 msgid "Cannot add subfolders of the Root SLP Folder."
-msgstr ""
+msgstr "No se pueden agregar subdirectorios del directorio raíz de SLP."
 
 #: src/renderer/pages/spectate/footer/footer.messages.ts:3:23
 msgid "Change Folder"
-msgstr ""
+msgstr "Cambiar carpeta"
 
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:10:22
 msgid "Change email"
-msgstr ""
+msgstr "Cambiar correo"
 
 #: src/renderer/pages/settings/create.messages.ts:5:15
 msgid "Chat"
@@ -174,19 +174,19 @@ msgstr "Chat"
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:7:37
 #. {0} direction: string
 msgid "Chat Group: {0}"
-msgstr ""
+msgstr "Grupo de chat: {0}"
 
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:12:23
 msgid "Chat Messages"
-msgstr ""
+msgstr "Mensajes de chat"
 
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:13:34
 msgid "Chat messages to use for netplay"
-msgstr ""
+msgstr "Mensajes de chat para usar en el juego en línea"
 
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:4:28
 msgid "Check Verification"
-msgstr ""
+msgstr "Verificar confirmación"
 
 #: src/renderer/app/header/header.messages.ts:3:26
 msgid "Check for updates"
@@ -195,7 +195,7 @@ msgstr "Buscar actualizaciones"
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostics_button.messages.ts:6:29
 #: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:9:29
 msgid "Check network issues"
-msgstr ""
+msgstr "Verificar problemas de red"
 
 #: src/renderer/app/header/header.messages.ts:4:29
 msgid "Checking for updates..."
@@ -204,11 +204,13 @@ msgstr "Buscando actualizaciones..."
 #: src/renderer/app/header/header.messages.ts:8:29
 #: src/renderer/pages/quick_start/steps/activate_online_step/activate_online_step.messages.ts:2:29
 msgid "Choose a connect code"
-msgstr ""
+msgstr "Elige un código de conexión"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:13:42
 msgid "Choose any additional SLP folders that should show up in the replay browser."
 msgstr ""
+"Elige los directorios SLP adicionales que deberían aparecer en el navegador "
+"de repeticiones."
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:8:38
 msgid "Choose what happens when the Play button is pressed."
@@ -216,12 +218,12 @@ msgstr "Elige qué sucede cuando se presiona el botón Jugar."
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:22:50
 msgid "Choose which Slippi Dolphin release to install"
-msgstr ""
+msgstr "Elige qué versión de Slippi Dolphin instalar"
 
 #: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:4:16
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:8:16
 msgid "Clear"
-msgstr ""
+msgstr "Limpiar"
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:4:25
 msgid "Clear Temporary Files"
@@ -233,15 +235,15 @@ msgstr "Limpiar archivos"
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:6:22
 msgid "Clear filter"
-msgstr ""
+msgstr "Limpiar filtro"
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:17:29
 msgid "Click the links below to review:"
-msgstr ""
+msgstr "Haz clic en los enlaces siguientes para revisar:"
 
 #: src/renderer/pages/settings/settings_page.messages.ts:2:16
 msgid "Close"
-msgstr ""
+msgstr "Cerrar"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:4:31
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:7:38
@@ -250,49 +252,49 @@ msgstr "Cierra Dolphin para cambiar esta configuración"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:10:33
 msgid "Configure Dolphin"
-msgstr ""
+msgstr "Configurar Dolphin"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:4:50
 #. {0} dolphinTypeName: string
 msgid "Configure {0}"
-msgstr ""
+msgstr "Configurar {0}"
 
 #: src/renderer/app/header/header.messages.ts:14:18
 #: src/renderer/components/confirmation_modal/confirmation_modal.messages.ts:2:18
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:11:18
 msgid "Confirm"
-msgstr ""
+msgstr "Confirmar"
 
 #: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:7:30
 msgid "Confirm File Deletion"
-msgstr ""
+msgstr "Confirmar eliminación de archivos"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:6:22
 msgid "Confirm code"
-msgstr ""
+msgstr "Confirmar código"
 
 #: src/renderer/components/login_form/login_form.messages.ts:9:26
 msgid "Confirm password"
-msgstr ""
+msgstr "Confirmar contraseña"
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:8:18
 msgid "Connect"
-msgstr ""
+msgstr "Conectar"
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:2:20
 #: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:3:20
 #: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:11:20
 msgid "Connected"
-msgstr ""
+msgstr "Conectado"
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:3:21
 #: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:5:21
 msgid "Connecting"
-msgstr ""
+msgstr "Conectando"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:25:25
 msgid "Connection Port"
-msgstr ""
+msgstr "Puerto de conexión"
 
 #: src/renderer/app/create.messages.ts:5:18
 #: src/renderer/pages/console_mirror/console_mirror.messages.ts:2:24
@@ -301,91 +303,91 @@ msgstr "Transmisión de Consola"
 
 #: src/renderer/pages/console_mirror/new_connection_list/new_connection_list.messages.ts:3:27
 msgid "Consoles detected on the network will show up here."
-msgstr ""
+msgstr "Las consolas detectadas en la red aparecerán aquí."
 
 #: src/renderer/components/login_form/login_form.messages.ts:15:19
 #: src/renderer/pages/quick_start/steps/setup_complete_step/setup_complete_step.messages.ts:3:19
 msgid "Continue"
-msgstr ""
+msgstr "Continuar"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:7:17
 #: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:13:17
 #: src/renderer/pages/spectate/spectator_id_block/spectator_id_block.messages.ts:4:17
 msgid "Copied!"
-msgstr ""
+msgstr "¡Copiado!"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:6:15
 #: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:14:15
 #: src/renderer/pages/spectate/spectator_id_block/spectator_id_block.messages.ts:3:15
 msgid "Copy"
-msgstr ""
+msgstr "Copiar"
 
 #: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:8:19
 msgid "Copy logs"
-msgstr ""
+msgstr "Copiar registros"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:8:22
 msgid "Copy results"
-msgstr ""
+msgstr "Copiar resultados"
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:3:26
 msgid "Copy to Clipboard"
-msgstr ""
+msgstr "Copiar al portapapeles"
 
 #: src/renderer/components/login_form/login_form.messages.ts:2:26
 msgid "Create an account"
-msgstr ""
+msgstr "Crear una cuenta"
 
 #: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:5:27
 msgid "Crunching numbers..."
-msgstr ""
+msgstr "Calculando estadísticas..."
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:15:22
 #: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:9:22
 msgid "Current file"
-msgstr ""
+msgstr "Archivo actual"
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:4:24
 msgid "Current folder"
-msgstr ""
+msgstr "Carpeta actual"
 
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:4:18
 msgid "Default"
-msgstr ""
+msgstr "Predeterminado"
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connections_list.messages.ts:3:17
 #: src/renderer/pages/replays/replay_browser/file_list/file_list.messages.ts:3:17
 #: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:3:17
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:6:17
 msgid "Delete"
-msgstr ""
+msgstr "Eliminar"
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:2:21
 msgid "Delete Code"
-msgstr ""
+msgstr "Eliminar código"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:33:36
 msgid "Detected (it could also be a VPN)"
-msgstr ""
+msgstr "Detectado (también podría ser una VPN)"
 
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:3:25
 msgid "Discard Changes"
-msgstr ""
+msgstr "Descartar cambios"
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:10:21
 msgid "Disconnect"
-msgstr ""
+msgstr "Desconectar"
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:5:23
 #: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:4:23
 #: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:12:23
 msgid "Disconnected"
-msgstr ""
+msgstr "Desconectado"
 
 #: src/renderer/app/header/header.messages.ts:15:22
 #: src/renderer/components/login_form/login_form.messages.ts:5:22
 msgid "Display Name"
-msgstr ""
+msgstr "Nombre para mostrar"
 
 #: src/renderer/pages/settings/create.messages.ts:7:26
 msgid "Dolphin Settings"
@@ -394,49 +396,49 @@ msgstr "Configuración de Dolphin"
 #: src/renderer/pages/replays/replay_browser/replay_file/replay_file.messages.ts:6:28
 #: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:6:28
 msgid "Dolphin is updating"
-msgstr ""
+msgstr "Dolphin se está actualizando"
 
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:11:15
 msgid "Down"
-msgstr ""
+msgstr "Abajo"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:17:19
 msgid "Download"
-msgstr ""
+msgstr "Descargar"
 
 #: src/renderer/components/persistent_notification/persistent_notification.messages.ts:2:44
 #. {0} version: string
 msgid "Downloading version {0}..."
-msgstr ""
+msgstr "Descargando versión {0}..."
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/add_codes/add_codes.messages.ts:4:28
 msgid "Duplicate code name"
-msgstr ""
+msgstr "Nombre de código duplicado"
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connections_list.messages.ts:2:15
 msgid "Edit"
-msgstr ""
+msgstr "Editar"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_dialog.messages.ts:2:25
 msgid "Edit connection"
-msgstr ""
+msgstr "Editar conexión"
 
 #: src/renderer/app/header/header.messages.ts:13:26
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:5:26
 msgid "Edit display name"
-msgstr ""
+msgstr "Editar nombre para mostrar"
 
 #: src/renderer/components/login_form/login_form.messages.ts:6:16
 msgid "Email"
-msgstr ""
+msgstr "Correo electrónico"
 
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:11:29
 msgid "Email is not yet verified. Have you checked your spam folder?"
-msgstr ""
+msgstr "El correo aún no está verificado. ¿Has revisado tu carpeta de spam?"
 
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:7:24
 msgid "Email verified"
-msgstr ""
+msgstr "Correo verificado"
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:2:28
 msgid "Enable Auto Updates"
@@ -444,11 +446,11 @@ msgstr "Activar Actualizaciones Automáticas"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:13:29
 msgid "Enable Autoswitcher"
-msgstr ""
+msgstr "Activar cambio automático"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:23:22
 msgid "Enable Console Relay"
-msgstr ""
+msgstr "Activar retransmisión de consola"
 
 #: src/renderer/pages/settings/game_settings/game_music_toggle/game_music_toggle.messages.ts:2:22
 msgid "Enable Music"
@@ -456,11 +458,11 @@ msgstr "Activar música"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:7:29
 msgid "Enable Real-time Mode"
-msgstr ""
+msgstr "Activar modo en tiempo real"
 
 #: src/renderer/pages/settings/spectate_settings/spectate_settings.messages.ts:2:38
 msgid "Enable Spectate Remote Control"
-msgstr ""
+msgstr "Activar control remoto de espectador"
 
 #: src/renderer/pages/settings/game_settings/game_music_toggle/game_music_toggle.messages.ts:3:33
 msgid "Enable in-game music."
@@ -468,57 +470,57 @@ msgstr "Activa la música dentro del juego."
 
 #: src/renderer/pages/home/sidebar/ranked_status.messages.ts:5:19
 msgid "Ending In"
-msgstr ""
+msgstr "Termina en"
 
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:5:27
 msgid "Enter Spectator ID"
-msgstr ""
+msgstr "Ingresar ID de espectador"
 
 #: src/renderer/pages/spectate/share_gameplay_block/share_gameplay_block.messages.ts:3:35
 msgid "Error connecting to Dolphin. Ensure Dolphin is running and try again."
-msgstr ""
+msgstr "Error al conectar con Dolphin. Asegúrate de que Dolphin esté ejecutándose e intenta de nuevo."
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:3:53
 #. {0} errorMessage: string
 msgid "Error reading gecko codes: {0}"
-msgstr ""
+msgstr "Error al leer códigos Gecko: {0}"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostics_button.messages.ts:3:34
 msgid "Error running network diagnostics"
-msgstr ""
+msgstr "Error al ejecutar diagnósticos de red"
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:4:52
 #. {0} errorMessage: string
 msgid "Error saving gecko codes: {0}"
-msgstr ""
+msgstr "Error al guardar códigos Gecko: {0}"
 
 #: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:3:30
 msgid "Error starting server"
-msgstr ""
+msgstr "Error al iniciar servidor"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:3:28
 msgid "External IP Address"
-msgstr ""
+msgstr "Dirección IP externa"
 
 #: src/renderer/pages/settings/help_page/help_page.messages.ts:2:14
 msgid "FAQ"
-msgstr ""
+msgstr "Preguntas frecuentes"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:29:44
 msgid "Failed to determine CGNAT or Double NAT presence"
-msgstr ""
+msgstr "No se pudo determinar la presencia de CGNAT o NAT doble"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:2:37
 msgid "Failed to determine IP Address"
-msgstr ""
+msgstr "No se pudo determinar la dirección IP"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:11:35
 msgid "Failed to determine NAT type"
-msgstr ""
+msgstr "No se pudo determinar el tipo de NAT"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:21:39
 msgid "Failed to determine port mapping availability"
-msgstr ""
+msgstr "No se pudo determinar la disponibilidad de mapeo de puertos"
 
 #: src/renderer/pages/home/news_feed/news_feed.messages.ts:4:24
 msgid "Failed to fetch news articles."
@@ -530,33 +532,35 @@ msgstr "Error al obtener actualizaciones"
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:2:33
 msgid "Failed to read gecko codes"
-msgstr ""
+msgstr "No se pudieron leer los códigos Gecko"
 
 #: src/renderer/pages/home/sidebar/tournament_links.messages.ts:5:34
 msgid "Find in-person tournaments"
-msgstr ""
+msgstr "Encontrar torneos presenciales"
 
 #: src/renderer/pages/home/sidebar/tournament_links.messages.ts:6:32
 msgid "Find online tournaments"
-msgstr ""
+msgstr "Encontrar torneos en línea"
 
 #: src/renderer/pages/home/sidebar/tournament_links.messages.ts:2:26
 msgid "Find tournaments"
-msgstr ""
+msgstr "Encontrar torneos"
 
 #: src/renderer/pages/spectate/spectator_id_block/spectator_id_block.messages.ts:6:5
 msgid ""
 "First give this ID to the person whose gameplay you want to watch. Then "
 "after they have started their broadcast, click Refresh."
 msgstr ""
+"Primero da este ID a la persona cuyo juego quieres ver. Después de que "
+"hayan comenzado su transmisión, haz clic en Actualizar."
 
 #: src/renderer/components/footer/footer.messages.ts:3:26
 msgid "Follow Project Slippi on Twitter"
-msgstr ""
+msgstr "Sigue a Project Slippi en Twitter"
 
 #: src/renderer/components/login_form/login_form.messages.ts:12:25
 msgid "Forgot your password?"
-msgstr ""
+msgstr "¿Olvidaste tu contraseña?"
 
 #: src/renderer/pages/settings/create.messages.ts:3:15
 msgid "Game"
@@ -564,7 +568,7 @@ msgstr "Juego"
 
 #: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:7:47
 msgid "Game stats for team battles is unsupported"
-msgstr ""
+msgstr "Las estadísticas de juego para dobles no son compatibles"
 
 #: src/renderer/pages/settings/create.messages.ts:2:26
 msgid "General Settings"
@@ -573,11 +577,11 @@ msgstr "Configuración General"
 #: src/renderer/components/login_form/login_form.messages.ts:17:17
 #: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:3:17
 msgid "Go back"
-msgstr ""
+msgstr "Volver"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:20:20
 msgid "Hard reset"
-msgstr ""
+msgstr "Reinicio completo"
 
 #: src/renderer/pages/settings/create.messages.ts:13:15
 msgid "Help"
@@ -585,15 +589,15 @@ msgstr "Ayuda"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:4:15
 msgid "Hide"
-msgstr ""
+msgstr "Ocultar"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:11:30
 msgid "Hide advanced options"
-msgstr ""
+msgstr "Ocultar opciones avanzadas"
 
 #: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:7:25
 msgid "Hide short games"
-msgstr ""
+msgstr "Ocultar juegos cortos"
 
 #: src/renderer/app/create.messages.ts:2:15
 msgid "Home"
@@ -601,37 +605,39 @@ msgstr "Inicio"
 
 #: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:5:25
 msgid "Home-Run Contest"
-msgstr ""
+msgstr "Home-Run Contest"
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:4:28
 msgid "I accept the Slippi Online Rules"
-msgstr ""
+msgstr "Acepto las Reglas de Slippi Online"
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:20:36
 msgid "I accept the Slippi Privacy Policy and Terms of Service"
-msgstr ""
+msgstr "Acepto la Política de Privacidad y los Términos de Servicio de Slippi"
 
 #: src/renderer/components/login_form/login_form.messages.ts:10:31
 msgid "I already have an account"
-msgstr ""
+msgstr "Ya tengo una cuenta"
 
 #: src/renderer/components/build_info/build_info.messages.ts:2:19
 msgid "I hope you know what you're doing..."
-msgstr ""
+msgstr "Espero que sepas lo que estás haciendo..."
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:2:20
 msgid "IP Address"
-msgstr ""
+msgstr "Dirección IP"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:35:31
 msgid ""
 "If the failure persists, you can test this in your computer's terminal app. "
 "See below:"
 msgstr ""
+"Si el fallo persiste, puedes probar esto en la terminal de tu computadora. "
+"Ver abajo:"
 
 #: src/renderer/pages/home/sidebar/tournament_links.messages.ts:3:19
 msgid "In-Person"
-msgstr ""
+msgstr "Presencial"
 
 #: src/renderer/pages/settings/game_settings/game_music_toggle/game_music_toggle.messages.ts:4:33
 msgid "Incompatible with WASAPI."
@@ -639,13 +645,15 @@ msgstr "Incompatible con WASAPI."
 
 #: src/renderer/components/persistent_notification/persistent_notification.messages.ts:3:24
 msgid "Install update"
-msgstr ""
+msgstr "Instalar actualización"
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:15:16
 msgid ""
 "Intentionally manipulating the game performance for your own gain is not "
 "allowed."
 msgstr ""
+"No está permitido manipular intencionalmente el rendimiento del juego para "
+"tu propio beneficio."
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:13:18
 msgid "Invalid"
@@ -653,29 +661,29 @@ msgstr "Inválido"
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/add_codes/add_codes.messages.ts:2:27
 msgid "Invalid Gecko code"
-msgstr ""
+msgstr "Código Gecko inválido"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:20:22
 msgid "Invalid Port"
-msgstr ""
+msgstr "Puerto inválido"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:29:28
 msgid "Invalid port number"
-msgstr ""
+msgstr "Número de puerto inválido"
 
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:2:30
 msgid "Invalid user ID format"
-msgstr ""
+msgstr "Formato de ID de usuario inválido"
 
 #: src/renderer/components/footer/footer.messages.ts:4:22
 #: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:7:22
 msgid "Join the Discord"
-msgstr ""
+msgstr "Únete al Discord"
 
 #: src/renderer/components/loading_screen/loading_screen.messages.ts:2:19
 #: src/renderer/pages/loading/loading_page.messages.ts:2:19
 msgid "Just a sec..."
-msgstr ""
+msgstr "Un momento..."
 
 #: src/renderer/pages/home/news_feed/news_feed.messages.ts:2:21
 msgid "Latest News"
@@ -692,23 +700,23 @@ msgstr "Iniciar Melee"
 #: src/renderer/pages/replays/replay_browser/replay_file/replay_file.messages.ts:5:23
 #: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:7:23
 msgid "Launch replay"
-msgstr ""
+msgstr "Reproducir repetición"
 
 #: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:4:22
 msgid "Least recent"
-msgstr ""
+msgstr "Menos reciente"
 
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:9:15
 msgid "Left"
-msgstr ""
+msgstr "Izquierda"
 
 #: src/renderer/pages/quick_start/quick_start.messages.ts:3:23
 msgid "Let's get set up"
-msgstr ""
+msgstr "Comencemos con la configuración"
 
 #: src/renderer/app/header/header.messages.ts:16:18
 msgid "Loading"
-msgstr ""
+msgstr "Cargando"
 
 #: src/renderer/pages/home/news_feed/news_feed.messages.ts:3:18
 #: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:4:18
@@ -723,33 +731,35 @@ msgstr "Iniciar sesión"
 
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:6:17
 msgid "Log out"
-msgstr ""
+msgstr "Cerrar sesión"
 
 #: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:5:22
 msgid "Longest game"
-msgstr ""
+msgstr "Juego más largo"
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:16:16
 msgid "Macros and bots are not allowed."
-msgstr ""
+msgstr "Los macros y bots no están permitidos."
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:3:5
 msgid ""
 "Mainline Slippi Dolphin has updated OS requirements, check the Help Section "
 "for more info"
 msgstr ""
+"Slippi Dolphin Principal tiene requisitos actualizados de sistema operativo, "
+"revisa la sección de Ayuda para más información"
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:5:17
 msgid "Manage"
-msgstr ""
+msgstr "Administrar"
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:7:27
 msgid "Manage Gecko codes"
-msgstr ""
+msgstr "Administrar códigos Gecko"
 
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:4:24
 msgid "Manage account"
-msgstr ""
+msgstr "Administrar cuenta"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:2:23
 msgid "Melee ISO File"
@@ -757,41 +767,43 @@ msgstr "Archivo ISO de Melee"
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:9:17
 msgid "Mirror"
-msgstr ""
+msgstr "Transmitir"
 
 #: src/renderer/pages/console_mirror/console_mirror.messages.ts:8:25
 msgid "Mirroring Guide"
-msgstr ""
+msgstr "Guía de transmisión"
 
 #: src/renderer/pages/replays/replay_browser/replay_file/replay_file.messages.ts:3:22
 msgid "More options"
-msgstr ""
+msgstr "Más opciones"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:10:5
 msgid ""
 "More than one hop to your external IP address indicates CGNAT or Double NAT "
 "(or VPN)."
 msgstr ""
+"Más de un salto a tu dirección IP externa indica CGNAT o NAT doble "
+"(o VPN)."
 
 #: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:3:21
 msgid "Most recent"
-msgstr ""
+msgstr "Más reciente"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:12:18
 msgid "NAT Type"
-msgstr ""
+msgstr "Tipo de NAT"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:26:17
 msgid "NAT-PMP."
-msgstr ""
+msgstr "NAT-PMP."
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/add_codes/add_codes.messages.ts:3:23
 msgid "Name is required"
-msgstr ""
+msgstr "El nombre es obligatorio"
 
 #: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:2:19
 msgid "Need help?"
-msgstr ""
+msgstr "¿Necesitas ayuda?"
 
 #: src/renderer/pages/settings/create.messages.ts:8:18
 msgid "Netplay"
@@ -799,45 +811,45 @@ msgstr "Juego en Red"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:5:25
 msgid "Netplay Dolphin"
-msgstr ""
+msgstr "Dolphin de juego en línea"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:21:39
 msgid "Netplay Dolphin Release Channel"
-msgstr ""
+msgstr "Canal de versiones de Dolphin de juego en línea"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:8:33
 msgid "Netplay Dolphin Settings"
-msgstr ""
+msgstr "Configuración de Dolphin de juego en línea"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:14:28
 msgid "Netplay Gecko Codes"
-msgstr ""
+msgstr "Códigos Gecko de juego en línea"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostics_button.messages.ts:4:29
 msgid "Network Diagnostics"
-msgstr ""
+msgstr "Diagnósticos de red"
 
 #: src/renderer/pages/console_mirror/new_connection_list/new_connection_list.messages.ts:2:38
 #. {0} count: number
 msgid "New Connections ({0})"
-msgstr ""
+msgstr "Nuevas conexiones ({0})"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_dialog.messages.ts:3:24
 #: src/renderer/pages/console_mirror/console_mirror.messages.ts:3:24
 msgid "New connection"
-msgstr ""
+msgstr "Nueva conexión"
 
 #: src/renderer/pages/quick_start/stepper_dots/stepper_dots.messages.ts:2:15
 msgid "Next"
-msgstr ""
+msgstr "Siguiente"
 
 #: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:9:21
 msgid "Next replay"
-msgstr ""
+msgstr "Siguiente repetición"
 
 #: src/renderer/pages/quick_start/steps/setup_complete_step/setup_complete_step.messages.ts:2:19
 msgid "Nice work!"
-msgstr ""
+msgstr "¡Buen trabajo!"
 
 #: src/renderer/app/header/header.messages.ts:6:25
 msgid "No Melee ISO file specified"
@@ -845,15 +857,15 @@ msgstr "No se ha especificado archivo ISO de Melee"
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:5:26
 msgid "No SLP files found"
-msgstr ""
+msgstr "No se encontraron archivos SLP"
 
 #: src/renderer/components/multi_path_input/multi_path_input.messages.ts:2:35
 msgid "No additional folders added."
-msgstr ""
+msgstr "No se agregaron directorios adicionales."
 
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:7:32
 msgid "No associated user found"
-msgstr ""
+msgstr "No se encontró usuario asociado"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:5:20
 msgid "No file set"
@@ -861,106 +873,108 @@ msgstr "Ningún archivo seleccionado"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:5:34
 msgid "No folder selected"
-msgstr ""
+msgstr "Ninguna carpeta seleccionada"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:8:22
 msgid "No folder set"
-msgstr ""
+msgstr "Ninguna carpeta configurada"
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connections_list.messages.ts:4:29
 msgid "No saved console connections"
-msgstr ""
+msgstr "No hay conexiones de consola guardadas"
 
 #: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:6:26
 msgid "No stats computed"
-msgstr ""
+msgstr "No se calcularon estadísticas"
 
 #: src/renderer/pages/spectate/spectate_page.messages.ts:3:18
 msgid "No users are broadcasting to you"
-msgstr ""
+msgstr "No hay usuarios transmitiéndote"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:13:20
 msgid "Normal NAT"
-msgstr ""
+msgstr "NAT normal"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:23:23
 msgid "Not available"
-msgstr ""
+msgstr "No disponible"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:31:22
 msgid "Not detected."
-msgstr ""
+msgstr "No detectado."
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:12:19
 msgid "Not found"
-msgstr ""
+msgstr "No encontrado"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:21:22
 msgid "OBS Password"
-msgstr ""
+msgstr "Contraseña de OBS"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:22:24
 msgid "OBS Source Name"
-msgstr ""
+msgstr "Nombre de fuente de OBS"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:18:25
 msgid "OBS Websocket IP"
-msgstr ""
+msgstr "IP de Websocket de OBS"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:19:27
 msgid "OBS Websocket Port"
-msgstr ""
+msgstr "Puerto de Websocket de OBS"
 
 #: src/renderer/pages/home/sidebar/ranked_status.messages.ts:10:5
 msgid ""
 "Once every 4 days, ranked play is available to all users including "
 "non-subs. Check back soon!"
 msgstr ""
+"Una vez cada 4 días, el juego clasificatorio está disponible para todos los "
+"usuarios, incluyendo no-suscriptores. ¡Vuelve pronto!"
 
 #: src/renderer/pages/home/sidebar/tournament_links.messages.ts:4:17
 msgid "Online"
-msgstr ""
+msgstr "En línea"
 
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:8:35
 msgid "Online activation required"
-msgstr ""
+msgstr "Se requiere activación en línea"
 
 #: src/renderer/app/header/header.messages.ts:10:41
 msgid "Only logged in users can play online. Would you like to play offline?"
-msgstr ""
+msgstr "Solo los usuarios con sesión iniciada pueden jugar en línea. ¿Te gustaría jugar sin conexión?"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:12:45
 msgid "Only modify these values if you know what you're doing."
-msgstr ""
+msgstr "Solo modifica estos valores si sabes lo que estás haciendo."
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:11:35
 msgid "Open settings folder"
-msgstr ""
+msgstr "Abrir carpeta de configuración"
 
 #: src/renderer/components/login_form/login_form.messages.ts:7:19
 msgid "Password"
-msgstr ""
+msgstr "Contraseña"
 
 #: src/renderer/components/login_form/login_form.messages.ts:13:24
 msgid "Password reset"
-msgstr ""
+msgstr "Restablecer contraseña"
 
 #: src/renderer/components/login_form/login_form.messages.ts:14:53
 #. {0} email: string
 msgid "Password reset instructions have been sent to {0}."
-msgstr ""
+msgstr "Las instrucciones para restablecer la contraseña han sido enviadas a {0}."
 
 #: src/renderer/components/login_form/login_form.messages.ts:4:30
 msgid "Passwords do not match"
-msgstr ""
+msgstr "Las contraseñas no coinciden"
 
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:9:16
 msgid "Paste"
-msgstr ""
+msgstr "Pegar"
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/add_codes/add_codes.messages.ts:5:26
 msgid "Paste Gecko Codes"
-msgstr ""
+msgstr "Pegar códigos Gecko"
 
 #: src/renderer/app/header/play_button/play_button.messages.ts:2:15
 msgid "Play"
@@ -968,7 +982,7 @@ msgstr "Jugar"
 
 #: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:6:18
 msgid "Play All"
-msgstr ""
+msgstr "Reproducir todo"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:7:27
 msgid "Play Button Action"
@@ -976,7 +990,7 @@ msgstr "Acción del botón Jugar"
 
 #: src/renderer/app/header/header.messages.ts:11:22
 msgid "Play offline"
-msgstr ""
+msgstr "Jugar sin conexión"
 
 #: src/renderer/pages/settings/create.messages.ts:9:19
 msgid "Playback"
@@ -984,23 +998,23 @@ msgstr "Reproducción"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:6:26
 msgid "Playback Dolphin"
-msgstr ""
+msgstr "Dolphin de reproducción"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:9:34
 msgid "Playback Dolphin Settings"
-msgstr ""
+msgstr "Configuración de Dolphin de reproducción"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:15:29
 msgid "Playback Gecko Codes"
-msgstr ""
+msgstr "Códigos Gecko de reproducción"
 
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:14:34
 msgid "Please log in to use this feature."
-msgstr ""
+msgstr "Por favor inicia sesión para usar esta función."
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:28:30
 msgid "Please try again later."
-msgstr ""
+msgstr "Por favor intenta de nuevo más tarde."
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:20:5
 msgid ""
@@ -1008,71 +1022,83 @@ msgid ""
 "UDP. In that case it will not be possible to use Slippi as well as many "
 "other online games and apps."
 msgstr ""
+"Por favor intenta de nuevo más tarde. Si el fallo persiste, esta red podría "
+"estar bloqueando UDP. En ese caso no será posible usar Slippi ni muchos "
+"otros juegos y aplicaciones en línea."
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:28:15
 msgid "Port"
-msgstr ""
+msgstr "Puerto"
 
 #: src/renderer/pages/settings/spectate_settings/spectate_port_form/spectate_port_form.messages.ts:2:25
 msgid "Port is required"
-msgstr ""
+msgstr "El puerto es obligatorio"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:22:22
 msgid "Port mapping"
-msgstr ""
+msgstr "Mapeo de puertos"
 
 #: src/renderer/pages/settings/spectate_settings/spectate_port_form/spectate_port_form.messages.ts:3:27
 msgid "Port must be a number from 1 to 65535"
-msgstr ""
+msgstr "El puerto debe ser un número del 1 al 65535"
 
 #: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:4:32
 #. {0} timeAgo: string
 msgid "Posted {0}"
-msgstr ""
+msgstr "Publicado hace {0}"
 
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:6:18
 msgid "Premium"
-msgstr ""
+msgstr "Premium"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:9:5
 msgid ""
 "Prevents delay from accumulating when mirroring. Keep this off unless both "
 "the Wii and computer are on a wired LAN connection."
 msgstr ""
+"Evita que se acumule retraso al transmitir. Mantén esto desactivado a menos que "
+"tanto la Wii como la computadora estén conectadas por cable a la LAN."
 
 #: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:8:25
 msgid "Previous replay"
-msgstr ""
+msgstr "Repetición anterior"
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:3:41
 msgid "Privacy Policy and Terms of Service"
-msgstr ""
+msgstr "Política de Privacidad y Términos de Servicio"
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:9:33
 msgid ""
 "Provided ISO will not work with Slippi Online. Please provide an NTSC 1.02 "
 "ISO."
 msgstr ""
+"El ISO proporcionado no funcionará con Slippi Online. Por favor proporciona "
+"un ISO NTSC 1.02."
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:11:34
 msgid "RVZ files are currently incompatible with Slippi."
-msgstr ""
+msgstr "Los archivos RVZ actualmente no son compatibles con Slippi."
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:10:5
 msgid ""
 "Racist, homophobic, transphobic, or otherwise bigoted names and codes are "
 "not allowed. Targeted harassment in names and codes is also not allowed."
 msgstr ""
+"No se permiten nombres y códigos racistas, homofóbicos, transfóbicos o de "
+"cualquier otra forma intolerantes. Tampoco se permite el acoso dirigido en "
+"nombres y códigos."
 
 #: src/renderer/pages/home/sidebar/ranked_status.messages.ts:2:20
 msgid "Ranked Day"
-msgstr ""
+msgstr "Día clasificatorio"
 
 #: src/renderer/pages/home/sidebar/ranked_status.messages.ts:8:5
 msgid ""
 "Ranked play is currently available for everyone. Try it now! Available once "
 "every 4 days."
 msgstr ""
+"El juego clasificatorio está actualmente disponible para todos. ¡Pruébalo ahora! "
+"Disponible una vez cada 4 días."
 
 #: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:3:19
 msgid "Read more"
@@ -1080,24 +1106,24 @@ msgstr "Leer más"
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:4:23
 msgid "Reconnecting"
-msgstr ""
+msgstr "Reconectando"
 
 #: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:2:18
 #: src/renderer/pages/spectate/spectate_page.messages.ts:4:18
 msgid "Refresh"
-msgstr ""
+msgstr "Actualizar"
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:11:20
 msgid "Relay Port"
-msgstr ""
+msgstr "Puerto de retransmisión"
 
 #: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:2:30
 msgid "Remote Control Server"
-msgstr ""
+msgstr "Servidor de control remoto"
 
 #: src/renderer/components/multi_path_input/multi_path_input.messages.ts:4:17
 msgid "Remove"
-msgstr ""
+msgstr "Eliminar"
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:6:5
 msgid ""
@@ -1115,72 +1141,72 @@ msgstr "Repeticiones"
 #: src/renderer/pages/settings/game_settings/game_music_toggle/game_music_toggle.messages.ts:5:48
 #. {0} version: string
 msgid "Requires Dolphin version {0} or higher"
-msgstr ""
+msgstr "Requiere Dolphin versión {0} o superior"
 
 #: src/renderer/components/login_form/login_form.messages.ts:16:16
 msgid "Reset"
-msgstr ""
+msgstr "Restablecer"
 
 #: src/renderer/pages/settings/spectate_settings/spectate_port_form/spectate_port_form.messages.ts:5:25
 msgid "Reset to default"
-msgstr ""
+msgstr "Restablecer a predeterminado"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:16:46
 #. {0} dolphinTypeName: string
 msgid "Reset {0}"
-msgstr ""
+msgstr "Restablecer {0}"
 
 #: src/renderer/pages/not_found/not_found_page.messages.ts:4:21
 msgid "Return home"
-msgstr ""
+msgstr "Volver al inicio"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:5:17
 msgid "Reveal"
-msgstr ""
+msgstr "Mostrar"
 
 #: src/renderer/pages/replays/replay_browser/file_list/file_list.messages.ts:2:25
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:3:25
 #: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:8:25
 #: src/renderer/pages/spectate/footer/footer.messages.ts:2:25
 msgid "Reveal location"
-msgstr ""
+msgstr "Mostrar ubicación"
 
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:10:16
 msgid "Right"
-msgstr ""
+msgstr "Derecha"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:2:24
 msgid "Root SLP Folder"
-msgstr ""
+msgstr "Directorio raíz de SLP"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:36:25
 msgid "Run this command"
-msgstr ""
+msgstr "Ejecutar este comando"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostics_button.messages.ts:2:29
 msgid "Running network diagnostics..."
-msgstr ""
+msgstr "Ejecutando diagnósticos de red..."
 
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:2:15
 #: src/renderer/pages/settings/spectate_settings/spectate_port_form/spectate_port_form.messages.ts:4:15
 msgid "Save"
-msgstr ""
+msgstr "Guardar"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:5:41
 msgid "Save replays to monthly subfolders"
-msgstr ""
+msgstr "Guardar repeticiones en subcarpetas mensuales"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:6:34
 msgid "Save replays to subfolders based on console nickname"
-msgstr ""
+msgstr "Guardar repeticiones en subcarpetas según el apodo de la consola"
 
 #: src/renderer/pages/spectate/footer/footer.messages.ts:4:31
 msgid "Save spectated games to"
-msgstr ""
+msgstr "Guardar juegos espectados en"
 
 #: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:8:17
 msgid "Search"
-msgstr ""
+msgstr "Buscar"
 
 #: src/renderer/components/path_input/path_input.messages.ts:2:17
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:12:17
@@ -1189,11 +1215,11 @@ msgstr "Seleccionar"
 
 #: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:5:20
 msgid "Select All"
-msgstr ""
+msgstr "Seleccionar todo"
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:2:25
 msgid "Select Melee ISO"
-msgstr ""
+msgstr "Seleccionar ISO de Melee"
 
 #: src/renderer/pages/settings/appearance_settings/language_selector/language_selector.messages.ts:3:33
 msgid "Select your preferred language for the app."
@@ -1201,7 +1227,7 @@ msgstr "Selecciona tu idioma preferido para la aplicación."
 
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:6:20
 msgid "Send verification email again"
-msgstr ""
+msgstr "Enviar correo de verificación de nuevo"
 
 #: src/renderer/app/header/header.messages.ts:7:19
 msgid "Settings"
@@ -1209,15 +1235,15 @@ msgstr "Configuración"
 
 #: src/renderer/pages/spectate/share_gameplay_block/share_gameplay_block.messages.ts:2:28
 msgid "Share your gameplay"
-msgstr ""
+msgstr "Comparte tu juego"
 
 #: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:6:23
 msgid "Shortest game"
-msgstr ""
+msgstr "Juego más corto"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:10:30
 msgid "Show advanced options"
-msgstr ""
+msgstr "Mostrar opciones avanzadas"
 
 #: src/renderer/pages/home/news_feed/news_feed.messages.ts:6:19
 msgid "Show more"
@@ -1225,15 +1251,15 @@ msgstr "Mostrar más"
 
 #: src/renderer/pages/replays/replay_browser/replay_file/replay_file.messages.ts:4:20
 msgid "Show stats"
-msgstr ""
+msgstr "Mostrar estadísticas"
 
 #: src/renderer/components/login_form/login_form.messages.ts:11:17
 msgid "Sign up"
-msgstr ""
+msgstr "Registrarse"
 
 #: src/renderer/pages/quick_start/quick_start.messages.ts:4:20
 msgid "Skip setup"
-msgstr ""
+msgstr "Omitir configuración"
 
 #: src/renderer/pages/console_mirror/console_mirror.messages.ts:6:5
 msgid ""
@@ -1241,18 +1267,21 @@ msgid ""
 "real time playback. Checkout the Mirroring Guide below for setup "
 "instructions."
 msgstr ""
+"La transmisión de Slippi permite transmitir repeticiones desde una consola "
+"a una PC para reproducción en tiempo real. Consulta la Guía de transmisión "
+"a continuación para instrucciones de configuración."
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:2:28
 msgid "Slippi Online Rules"
-msgstr ""
+msgstr "Reglas de Slippi Online"
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:18:30
 msgid "Slippi Privacy Policy"
-msgstr ""
+msgstr "Política de Privacidad de Slippi"
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:19:31
 msgid "Slippi Terms of Service"
-msgstr ""
+msgstr "Términos de Servicio de Slippi"
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:13:5
 msgid ""
@@ -1260,18 +1289,21 @@ msgid ""
 "result reporting, etc. Attempting to circumvent these systems is not "
 "allowed."
 msgstr ""
+"Slippi hace su mejor esfuerzo para promover la equidad en términos de "
+"emparejamiento de jugadores, reporte de resultados, etc. No está permitido "
+"intentar eludir estos sistemas."
 
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:7:28
 msgid "Slippi server error"
-msgstr ""
+msgstr "Error del servidor de Slippi"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:19:20
 msgid "Soft reset"
-msgstr ""
+msgstr "Reinicio suave"
 
 #: src/renderer/pages/not_found/not_found_page.messages.ts:3:29
 msgid "Something went wrong."
-msgstr ""
+msgstr "Algo salió mal."
 
 #: src/renderer/app/create.messages.ts:4:19
 #: src/renderer/pages/settings/create.messages.ts:6:19
@@ -1281,72 +1313,72 @@ msgstr "Espectador"
 
 #: src/renderer/pages/settings/spectate_settings/spectate_settings.messages.ts:4:36
 msgid "Spectate Remote Control Port"
-msgstr ""
+msgstr "Puerto de control remoto de espectador"
 
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:4:22
 msgid "Spectator ID"
-msgstr ""
+msgstr "ID de espectador"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:10:29
 msgid "Spectator SLP Folder"
-msgstr ""
+msgstr "Directorio SLP de espectador"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:23:17
 msgid "Stable (Ishiiruka)"
-msgstr ""
+msgstr "Estable (Ishiiruka)"
 
 #: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:6:25
 msgid "Start Broadcast"
-msgstr ""
+msgstr "Iniciar transmisión"
 
 #: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:5:22
 msgid "Start Server"
-msgstr ""
+msgstr "Iniciar servidor"
 
 #: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:7:18
 msgid "Started"
-msgstr ""
+msgstr "Iniciado"
 
 #: src/renderer/pages/home/sidebar/ranked_status.messages.ts:6:21
 msgid "Starting In"
-msgstr ""
+msgstr "Comienza en"
 
 #: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:9:25
 msgid "Starting Server..."
-msgstr ""
+msgstr "Iniciando servidor..."
 
 #: src/renderer/pages/home/sidebar/ranked_status.messages.ts:4:23
 msgid "Starting Soon"
-msgstr ""
+msgstr "Comienza pronto"
 
 #: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:8:19
 msgid "Starting..."
-msgstr ""
+msgstr "Iniciando..."
 
 #: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:2:17
 #: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:4:17
 msgid "Status"
-msgstr ""
+msgstr "Estado"
 
 #: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:7:24
 msgid "Stop Broadcast"
-msgstr ""
+msgstr "Detener transmisión"
 
 #: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:6:21
 msgid "Stop Server"
-msgstr ""
+msgstr "Detener servidor"
 
 #: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:10:18
 msgid "Stopped"
-msgstr ""
+msgstr "Detenido"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:30:17
 msgid "Submit"
-msgstr ""
+msgstr "Enviar"
 
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:5:20
 msgid "Subscribe"
-msgstr ""
+msgstr "Suscribirse"
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:8:28
 msgid "Successfully cleared temporary files."
@@ -1354,28 +1386,28 @@ msgstr "Archivos temporales eliminados correctamente."
 
 #: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:10:29
 msgid "Successfully copied logs to clipboard"
-msgstr ""
+msgstr "Registros copiados exitosamente al portapapeles"
 
 #: src/renderer/components/footer/footer.messages.ts:2:24
 msgid "Support Slippi"
-msgstr ""
+msgstr "Apoyar a Slippi"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:15:23
 msgid "Symmetric NAT"
-msgstr ""
+msgstr "NAT simétrico"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:3:23
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:12:23
 msgid "Target Folder"
-msgstr ""
+msgstr "Carpeta de destino"
 
 #: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:4:21
 msgid "Target Test"
-msgstr ""
+msgstr "Target Test"
 
 #: src/renderer/components/multi_path_input/multi_path_input.messages.ts:6:38
 msgid "That folder is already included."
-msgstr ""
+msgstr "Ese directorio ya está incluido."
 
 #: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:4:5
 msgid ""
@@ -1384,23 +1416,27 @@ msgid ""
 "the appropriate support channel for your operating system. Our support "
 "volunteers will try their best to assist you with your problem."
 msgstr ""
+"La mejor manera de obtener soporte es unirte primero al Discord de Slippi, "
+"luego leer la información en el canal #support-portal antes de publicar tu "
+"problema en el canal de soporte apropiado para tu sistema operativo. Nuestros "
+"voluntarios de soporte harán su mejor esfuerzo para ayudarte con tu problema."
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:4:44
 #. {0} codeName: string
 msgid "The code <{0}> will be deleted. This cannot be undone."
-msgstr ""
+msgstr "El código <{0}> será eliminado. Esto no se puede deshacer."
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:4:34
 msgid "The folder to save SLP files to."
-msgstr ""
+msgstr "La carpeta donde guardar los archivos SLP."
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:11:40
 msgid "The folder where spectated games should be saved."
-msgstr ""
+msgstr "La carpeta donde se deben guardar los juegos espectados."
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:3:35
 msgid "The folder where your SLP replays should be saved."
-msgstr ""
+msgstr "La carpeta donde se deben guardar tus repeticiones SLP."
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:3:34
 msgid "The path to an NTSC Melee 1.02 ISO."
@@ -1408,7 +1444,7 @@ msgstr "La ruta a un archivo ISO de Melee NTSC 1.02."
 
 #: src/renderer/pages/settings/spectate_settings/spectate_settings.messages.ts:5:47
 msgid "The port to use for the spectate remote control WebSocket."
-msgstr ""
+msgstr "El puerto a usar para el WebSocket de control remoto de espectador."
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:27:5
 #. {0} defaultPort: number
@@ -1416,10 +1452,12 @@ msgid ""
 "The port used for connecting to console. Only change this if connecting to "
 "a Console Relay. If unsure, leave it as {0}."
 msgstr ""
+"El puerto usado para conectar a la consola. Solo cambia esto si te conectas a "
+"una retransmisión de consola. Si no estás seguro, déjalo como {0}."
 
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:3:44
 msgid "The unique viewer code of the spectator."
-msgstr ""
+msgstr "El código único de visualización del espectador."
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:6:5
 msgid ""
@@ -1428,29 +1466,35 @@ msgid ""
 "is not an exhaustive list, we reserve the right to suspend or ban an "
 "account for any reason."
 msgstr ""
+"Estas son un conjunto de reglas a seguir al usar Slippi. Romper estas reglas "
+"puede resultar en una suspensión o baneo dependiendo de la gravedad y frecuencia. "
+"Esta no es una lista exhaustiva, nos reservamos el derecho de suspender o banear "
+"una cuenta por cualquier motivo."
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:3:34
 msgid "This application uses an NTSC 1.02 game backup."
-msgstr ""
+msgstr "Esta aplicación usa una copia del juego NTSC 1.02."
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:32:33
 msgid "This is the optimal result."
-msgstr ""
+msgstr "Este es el resultado óptimo."
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:14:31
 msgid ""
 "This is the optimal result. Also known as 'easy', 'full cone', or 'open' "
 "NAT."
 msgstr ""
+"Este es el resultado óptimo. También conocido como NAT 'fácil', 'cono completo' "
+"o 'abierto'."
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:18:70
 #. {0} dolphinTypeName: string
 msgid "This will remove all your {0} settings."
-msgstr ""
+msgstr "Esto eliminará todas tus configuraciones de {0}."
 
 #: src/renderer/components/login_form/login_form.messages.ts:8:35
 msgid "Toggle password visibility"
-msgstr ""
+msgstr "Alternar visibilidad de contraseña"
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:11:41
 #. {0} readableBytes: string
@@ -1459,7 +1503,7 @@ msgstr "Tamaño total: {0}"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:4:26
 msgid "Trailing numbers will be auto-generated"
-msgstr ""
+msgstr "Los números finales se generarán automáticamente"
 
 #: src/renderer/pages/home/news_feed/news_feed.messages.ts:5:19
 msgid "Try again"
@@ -1467,23 +1511,23 @@ msgstr "Intentar de nuevo"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostics_button.messages.ts:5:21
 msgid "Turn VPN off for best results."
-msgstr ""
+msgstr "Desactiva la VPN para obtener mejores resultados."
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:27:24
 msgid "UPnP and NAT-PMP."
-msgstr ""
+msgstr "UPnP y NAT-PMP."
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:25:15
 msgid "UPnP."
-msgstr ""
+msgstr "UPnP."
 
 #: src/renderer/pages/not_found/not_found_page.messages.ts:2:15
 msgid "Uh oh."
-msgstr ""
+msgstr "Ups."
 
 #: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:2:32
 msgid "Uh oh. We couldn't open that file. It's probably corrupted."
-msgstr ""
+msgstr "Ups. No pudimos abrir ese archivo. Probablemente esté corrupto."
 
 #: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:3:18
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:13:18
@@ -1493,16 +1537,16 @@ msgstr "Desconocido"
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:7:21
 msgid "Unknown ISO"
-msgstr ""
+msgstr "ISO desconocido"
 
 #: src/renderer/pages/replays/replay_browser/replay_file/replay_file.messages.ts:2:23
 msgid "Unknown stage"
-msgstr ""
+msgstr "Escenario desconocido"
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:6:38
 #. {0} status: number
 msgid "Unknown status: {0}"
-msgstr ""
+msgstr "Estado desconocido: {0}"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:14:22
 msgid "Unvalidated"
@@ -1510,7 +1554,7 @@ msgstr "Sin validar"
 
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:8:13
 msgid "Up"
-msgstr ""
+msgstr "Arriba"
 
 #: src/renderer/app/header/play_button/play_button.messages.ts:3:19
 msgid "Updating"
@@ -1518,11 +1562,11 @@ msgstr "Actualizando"
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:6:20
 msgid "Use anyway"
-msgstr ""
+msgstr "Usar de todos modos"
 
 #: src/renderer/components/login_notice/login_notice.messages.ts:2:28
 msgid "User is not logged in"
-msgstr ""
+msgstr "El usuario no ha iniciado sesión"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:11:16
 msgid "Valid"
@@ -1530,11 +1574,11 @@ msgstr "Válido"
 
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:2:26
 msgid "Verify your email"
-msgstr ""
+msgstr "Verifica tu correo"
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:4:23
 msgid "Verifying ISO..."
-msgstr ""
+msgstr "Verificando ISO..."
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:6:20
 msgid "Verifying..."
@@ -1543,16 +1587,16 @@ msgstr "Verificando..."
 #: src/renderer/components/persistent_notification/persistent_notification.messages.ts:4:47
 #. {0} version: string
 msgid "Version {0} is now available!"
-msgstr ""
+msgstr "¡La versión {0} ya está disponible!"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:7:39
 #. {0} versionString: string
 msgid "Version: {0}"
-msgstr ""
+msgstr "Versión: {0}"
 
 #: src/renderer/pages/home/sidebar/ranked_status.messages.ts:11:28
 msgid "View Ranked Profile"
-msgstr ""
+msgstr "Ver perfil clasificatorio"
 
 #: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:2:24
 msgid "View on Bluesky"
@@ -1560,29 +1604,31 @@ msgstr "Ver en Bluesky"
 
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:3:22
 msgid "View profile"
-msgstr ""
+msgstr "Ver perfil"
 
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:3:25
 msgid ""
 "Visit your email, click the link in the verification email, and then check "
 "verification"
 msgstr ""
+"Visita tu correo, haz clic en el enlace del correo de verificación, y luego "
+"verifica la confirmación"
 
 #: src/renderer/pages/console_mirror/console_mirror.messages.ts:4:26
 msgid "What is Mirroring?"
-msgstr ""
+msgstr "¿Qué es la transmisión?"
 
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:9:21
 msgid "Wrong email? "
-msgstr ""
+msgstr "¿Correo equivocado? "
 
 #: src/renderer/app/header/header.messages.ts:9:28
 msgid "You are not logged in"
-msgstr ""
+msgstr "No has iniciado sesión"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:34:28
 msgid "You may have trouble connecting to other players."
-msgstr ""
+msgstr "Podrías tener problemas para conectarte con otros jugadores."
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:17:5
 msgid ""
@@ -1591,42 +1637,50 @@ msgid ""
 "settings to see if this can be changed to 'easy', 'full cone', 'normal', or "
 "'open' NAT."
 msgstr ""
+"Podrías tener problemas para conectarte con otros jugadores. También conocido "
+"como NAT 'duro', 'estricto' o 'simétrico'. Si es posible, por favor revisa la "
+"configuración de tu router para ver si puede cambiarse a NAT 'fácil', 'cono "
+"completo', 'normal' o 'abierto'."
 
 #: src/renderer/pages/spectate/spectate_page.messages.ts:5:28
 msgid "You must be logged in to use this feature"
-msgstr ""
+msgstr "Debes iniciar sesión para usar esta función"
 
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:10:34
 msgid "You will need to log in again next time you want to play."
-msgstr ""
+msgstr "Necesitarás iniciar sesión de nuevo la próxima vez que quieras jugar."
 
 #: src/renderer/pages/quick_start/quick_start.messages.ts:2:25
 msgid "You're all set up"
-msgstr ""
+msgstr "¡Todo listo!"
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:8:27
 msgid ""
 "Your ISO is unsupported. Using this ISO may cause issues and no support "
 "will be given."
 msgstr ""
+"Tu ISO no está soportado. Usar este ISO puede causar problemas y no se "
+"proporcionará soporte."
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:14:5
 msgid ""
 "Your Nintendont is out of date and no longer supported. Click to download "
 "the latest version from the Slippi website."
 msgstr ""
+"Tu Nintendont está desactualizado y ya no tiene soporte. Haz clic para descargar "
+"la última versión desde el sitio web de Slippi."
 
 #: src/renderer/pages/spectate/spectator_id_block/spectator_id_block.messages.ts:2:26
 msgid "Your Spectator ID"
-msgstr ""
+msgstr "Tu ID de espectador"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:2:37
 msgid "Your connect code is used for players to connect with you directly."
-msgstr ""
+msgstr "Tu código de conexión se usa para que los jugadores se conecten contigo directamente."
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:5:28
 msgid "or drag and drop here"
-msgstr ""
+msgstr "o arrastra y suelta aquí"
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:8:41
 #. {0} count: number
