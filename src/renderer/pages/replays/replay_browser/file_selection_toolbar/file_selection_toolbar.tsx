@@ -9,6 +9,8 @@ import React from "react";
 
 import { ConfirmationModal } from "@/components/confirmation_modal/confirmation_modal";
 
+import { FileSelectionToolbarMessages as Messages } from "./file_selection_toolbar.messages";
+
 type FileSelectionToolbarProps = {
   totalSelected: number;
   onSelectAll: () => void;
@@ -49,7 +51,7 @@ export const FileSelectionToolbar = ({
             margin-left: 10px;
           `}
         >
-          {totalSelected} files selected
+          {Messages.filesSelected(totalSelected)}
         </div>
         <div>
           <Button
@@ -59,10 +61,10 @@ export const FileSelectionToolbar = ({
             onClick={() => setShowDeletePrompt(true)}
             startIcon={<DeleteIcon />}
           >
-            Delete
+            {Messages.delete()}
           </Button>
           <Button color="secondary" variant="contained" size="small" onClick={onClear} startIcon={<BlockIcon />}>
-            Clear
+            {Messages.clear()}
           </Button>
           <Button
             color="secondary"
@@ -71,21 +73,21 @@ export const FileSelectionToolbar = ({
             onClick={onSelectAll}
             startIcon={<SelectAllIcon />}
           >
-            Select All
+            {Messages.selectAll()}
           </Button>
           <Button color="primary" variant="contained" size="small" onClick={onPlay} startIcon={<PlayArrowIcon />}>
-            Play All
+            {Messages.playAll()}
           </Button>
         </div>
       </div>
       <ConfirmationModal
         open={showDeletePrompt}
-        title="Confirm File Deletion"
-        confirmText="Delete"
+        title={Messages.confirmFileDeletion()}
+        confirmText={Messages.delete()}
         onClose={() => setShowDeletePrompt(false)}
         onSubmit={onDelete}
       >
-        {totalSelected} file(s) will be deleted.
+        {Messages.willBeDeleted(totalSelected)}
       </ConfirmationModal>
     </Outer>
   );

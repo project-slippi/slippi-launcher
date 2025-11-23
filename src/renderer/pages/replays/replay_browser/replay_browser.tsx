@@ -25,7 +25,7 @@ import { useServices } from "@/services";
 import { colors } from "@/styles/colors";
 
 import { FileList } from "./file_list";
-import { FileSelectionToolbar } from "./file_selection_toolbar";
+import { FileSelectionToolbar } from "./file_selection_toolbar/file_selection_toolbar";
 import { FilterToolbar } from "./filter_toolbar";
 import { FolderTreeNode } from "./folder_tree_node";
 import { ReplayBrowserMessages as Messages } from "./replay_browser.messages";
@@ -77,7 +77,7 @@ export const ReplayBrowser = React.memo(() => {
       window.electron.common
         .deleteFiles(filePaths)
         .then(() => {
-          showSuccess(`${filePaths.length} file(s) successfully deleted.`);
+          showSuccess(Messages.filesDeleted(filePaths.length));
         })
         .catch(showError);
     },
@@ -185,7 +185,7 @@ export const ReplayBrowser = React.memo(() => {
           `}
         >
           <div>
-            <Tooltip title="Reveal location">
+            <Tooltip title={Messages.revealLocation()}>
               <IconButton onClick={() => window.electron.shell.openPath(currentFolder)} size="small">
                 <FolderIcon
                   css={css`
@@ -196,7 +196,7 @@ export const ReplayBrowser = React.memo(() => {
             </Tooltip>
           </div>
           <LabelledText
-            label="Current folder"
+            label={Messages.currentFolder()}
             css={css`
               margin-left: 10px;
             `}
@@ -205,7 +205,7 @@ export const ReplayBrowser = React.memo(() => {
           </LabelledText>
         </div>
         <div style={{ textAlign: "right" }}>
-          {Messages.totalFileCount(filteredFiles.length)} {Messages.hiddenFileCount(hiddenFileCount)}{" "}
+          {Messages.totalFileCount(filteredFiles.length)} {Messages.filteredFileCount(hiddenFileCount)}{" "}
           {fileErrorCount > 0 ? Messages.errorFileCount(fileErrorCount) : ""}
           {exists(totalBytes) ? Messages.totalSize(humanReadableBytes(totalBytes)) : ""}
         </div>
@@ -221,10 +221,10 @@ const LoadingBox = React.memo(function LoadingBox() {
 
 const EmptyFolder = ({ hiddenFileCount, onClearFilter }: { hiddenFileCount: number; onClearFilter: () => void }) => {
   return (
-    <IconMessage Icon={SearchIcon} label="No SLP files found">
+    <IconMessage Icon={SearchIcon} label={Messages.noSlpFilesFound()}>
       {hiddenFileCount > 0 && (
         <div style={{ textAlign: "center" }}>
-          <Typography style={{ marginTop: 20, opacity: 0.6 }}>{hiddenFileCount} files hidden</Typography>
+          <Typography style={{ marginTop: 20, opacity: 0.6 }}>{Messages.hiddenFileCount(hiddenFileCount)}</Typography>
           <Button
             css={css`
               text-transform: lowercase;
@@ -234,7 +234,7 @@ const EmptyFolder = ({ hiddenFileCount, onClearFilter }: { hiddenFileCount: numb
             onClick={onClearFilter}
             size="small"
           >
-            clear filter
+            {Messages.clearFilter()}
           </Button>
         </div>
       )}
