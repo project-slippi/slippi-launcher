@@ -4,6 +4,7 @@ import type { Progress, ReplayService } from "@replays/types";
 import throttle from "lodash/throttle";
 
 import { getReplayPresenter } from "@/lib/hooks/use_replays";
+import { refreshChatMessages, useChatMessagesStore } from "@/pages/settings/chat_settings/use_chat_messages";
 
 import { clearUserData, refreshUserData, useAccount } from "../lib/hooks/use_account";
 import { useAppStore } from "../lib/hooks/use_app_store";
@@ -30,12 +31,14 @@ export function installAppListeners(services: Services) {
   authService.onUserChange((user) => {
     useAccount.getState().setUser(user);
 
-    // Refresh the play key
+    // Refresh the play key and chat messages
     if (user) {
       void refreshUserData(slippiBackendService);
+      void refreshChatMessages(slippiBackendService, user.uid);
     } else {
       // We've logged out so clear any pending requests for user data.
       clearUserData();
+      useChatMessagesStore.getState().resetStore();
     }
   });
 
