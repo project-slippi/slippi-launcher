@@ -20,6 +20,7 @@ import { getStageImage } from "@/lib/utils";
 
 import type { ReplayDetail } from "./replay_file";
 import { ReplayFile as ReplayFileImpl } from "./replay_file";
+import { ReplayFileMessages as Messages } from "./replay_file.messages";
 import type { PlayerInfo } from "./team_elements/team_elements";
 
 type ReplayFileContainerProps = FileResult & {
@@ -50,7 +51,7 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
   const selected = selectedIndex !== -1;
   const stageInfo = game.stageId != null ? stageUtils.getStageInfo(game.stageId) : null;
   const stageImageUrl = stageInfo !== null && stageInfo.id !== -1 ? getStageImage(stageInfo.id) : undefined;
-  const stageName = stageInfo !== null ? stageInfo.name : "Unknown Stage";
+  const stageName = stageInfo !== null ? stageInfo.name : Messages.unknownStage();
   const playbackStatus = useDolphinStore((store) => store.playbackStatus);
 
   const onShowStats = useCallback(() => onSelect(index), [onSelect, index]);
@@ -64,17 +65,17 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
     return [
       {
         Icon: MoreHorizIcon,
-        label: "More options",
+        label: Messages.moreOptions(),
         onClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => onOpenMenu(index, e.currentTarget),
       },
       {
         Icon: EqualizerIcon,
-        label: "Show stats",
+        label: Messages.showStats(),
         onClick: onShowStats,
       },
       {
         Icon: PlayCircleOutlineIcon,
-        label: playbackStatus === DolphinStatus.READY ? "Launch replay" : "Dolphin is updating",
+        label: playbackStatus === DolphinStatus.READY ? Messages.launchReplay() : Messages.dolphinIsUpdating(),
         primary: true,
         onClick: onPlayClick,
         disabled: playbackStatus !== DolphinStatus.READY,

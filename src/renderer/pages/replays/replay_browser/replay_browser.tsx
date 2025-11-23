@@ -24,7 +24,7 @@ import { humanReadableBytes } from "@/lib/utils";
 import { useServices } from "@/services";
 import { colors } from "@/styles/colors";
 
-import { FileList } from "./file_list";
+import { FileList } from "./file_list/file_list";
 import { FileSelectionToolbar } from "./file_selection_toolbar/file_selection_toolbar";
 import { FilterToolbar } from "./filter_toolbar/filter_toolbar";
 import { FolderTreeNode } from "./folder_tree_node";
