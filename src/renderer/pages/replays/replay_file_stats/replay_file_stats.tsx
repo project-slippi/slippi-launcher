@@ -21,7 +21,7 @@ import { colors } from "@/styles/colors";
 import { withFont } from "@/styles/with_font";
 
 import { GameProfile } from "./game_profile";
-import { GameProfileHeader } from "./game_profile_header";
+import { GameProfileHeader } from "./game_profile_header/game_profile_header";
 import { HomeRunProfile } from "./home_run_profile";
 import { TargetTestProfile } from "./target_test_profile";
 

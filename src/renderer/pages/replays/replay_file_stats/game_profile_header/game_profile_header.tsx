@@ -24,7 +24,8 @@ import React from "react";
 import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/use_dolphin_store";
 import { convertFrameCountToDurationString, monthDayHourFormat } from "@/lib/time";
 
-import { PlayerInfo } from "./player_info";
+import { PlayerInfo } from "../player_info";
+import { GameProfileHeaderMessages as Messages } from "./game_profile_header.messages";
 
 const Outer = styled.div`
   margin-top: 10px;
@@ -136,7 +137,7 @@ export const GameProfileHeader = ({
           `}
         >
           <div>
-            <Tooltip title="Back to replays">
+            <Tooltip title={Messages.backToReplays()}>
               <span>
                 <IconButton
                   onClick={onClose}
@@ -170,14 +171,14 @@ const GameDetails = ({
   stadiumStats: StadiumStatsType | null;
 }) => {
   const { game } = file;
-  let stageName = "Unknown";
+  let stageName = Messages.unknown();
   try {
     stageName = stageUtils.getStageName(game.stageId != null ? game.stageId : 0);
   } catch (err) {
     console.error(err);
   }
 
-  const platform = game.consoleNickname || game.platform || "Unknown";
+  const platform = game.consoleNickname || game.platform || Messages.unknown();
 
   const startAtDisplay = new Date(game.startTime ? Date.parse(game.startTime) : 0);
 
@@ -193,7 +194,7 @@ const GameDetails = ({
             timerType: game.timerType ?? null,
           })
         : convertFrameCountToDurationString(lastFrame, "long")
-      : "Unknown";
+      : Messages.unknown();
 
   const distance = get(stadiumStats, "distance");
   const units = get(stadiumStats, "units");
@@ -220,12 +221,12 @@ const GameDetails = ({
 
   const targetTestDisplay = {
     label: <TrackChangesIcon />,
-    content: "Break the Targets",
+    content: Messages.breakTheTargets(),
   };
 
   const homerunDisplay = {
     label: <SportsCricket />,
-    content: "Home Run Contest",
+    content: Messages.homeRunContest(),
   };
 
   const distanceDisplay = {
@@ -279,7 +280,7 @@ const GameDetails = ({
 
 const LaunchReplayButton = React.memo(({ onClick }: { onClick: () => void }) => {
   const playbackStatus = useDolphinStore((store) => store.playbackStatus);
-  const title = playbackStatus === DolphinStatus.READY ? "" : "Dolphin is updating";
+  const title = playbackStatus === DolphinStatus.READY ? "" : Messages.dolphinIsUpdating();
   return (
     <Tooltip title={title}>
       <span>
@@ -290,7 +291,7 @@ const LaunchReplayButton = React.memo(({ onClick }: { onClick: () => void }) => 
           startIcon={<PlayArrowIcon />}
           disabled={playbackStatus !== DolphinStatus.READY}
         >
-          Launch Replay
+          {Messages.launchReplay()}
         </Button>
       </span>
     </Tooltip>
@@ -337,7 +338,7 @@ const Controls = ({
           font-size: 13px;
         `}
       >
-        <Tooltip title="Previous replay">
+        <Tooltip title={Messages.previousReplay()}>
           <span>
             <IconButton disabled={disabled || atStart} onClick={onPrev} size="small">
               <ArrowBackIosIcon fontSize="small" />
@@ -345,7 +346,7 @@ const Controls = ({
           </span>
         </Tooltip>
         <span>{indexLabel}</span>
-        <Tooltip title="Next replay">
+        <Tooltip title={Messages.nextReplay()}>
           <span>
             <IconButton disabled={disabled || atEnd} onClick={onNext} size="small">
               <ArrowForwardIosIcon fontSize="small" />
