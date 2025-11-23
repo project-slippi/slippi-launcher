@@ -9,6 +9,7 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import React from "react";
 
+import { ConfirmationModalMessages as Messages } from "./confirmation_modal.messages";
 type ConfirmationModalProps = {
   open: boolean;
   onClose: () => void;
@@ -28,8 +29,8 @@ export const ConfirmationModal = ({
   onSubmit,
   title,
   children,
-  confirmText = "Confirm",
-  cancelText = "Cancel",
+  confirmText = Messages.confirm(),
+  cancelText = Messages.cancel(),
   confirmProps,
   cancelProps,
   closeOnSubmit = true,
@@ -40,7 +41,6 @@ export const ConfirmationModal = ({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("submitting form...");
     onSubmit();
     if (closeOnSubmit) {
       onClose();

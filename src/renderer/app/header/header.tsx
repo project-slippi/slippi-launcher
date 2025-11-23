@@ -28,7 +28,7 @@ import type { MenuItem } from "./main_menu";
 import { MainMenu } from "./main_menu";
 import { PlayButton as PlayButtonImpl, UpdatingButton } from "./play_button/play_button";
 import { StartGameDialog } from "./start_game_dialog";
-import { UserMenu } from "./user_menu";
+import { UserMenu } from "./user_menu/user_menu";
 
 const isMac = window.electron.bootstrap.isMac;
 

@@ -4,6 +4,9 @@ import InputBase from "@mui/material/InputBase";
 import React from "react";
 
 import { InfoBlock } from "@/components/info_block";
+import { colors } from "@/styles/colors";
+
+import { SpectatorIdBlockMessages as Messages } from "./spectator_id_block.messages";
 
 type SpectatorIdBlockProps = {
   userId: string;
@@ -26,7 +29,7 @@ export const SpectatorIdBlock = ({ userId, className }: SpectatorIdBlockProps) =
   }, [userId]);
 
   return (
-    <InfoBlock title="Your Spectator ID" className={className}>
+    <InfoBlock title={Messages.yourSpectatorId()} className={className}>
       <div
         css={css`
           display: flex;
@@ -46,17 +49,16 @@ export const SpectatorIdBlock = ({ userId, className }: SpectatorIdBlockProps) =
           value={userId}
         />
         <Button variant="contained" color="secondary" onClick={onCopy}>
-          {copied ? "Copied!" : "Copy"}
+          {copied ? Messages.copied() : Messages.copy()}
         </Button>
       </div>
       <div
         css={css`
           font-size: 14px;
+          color: ${colors.textDim};
         `}
       >
-        <p>1. Give this ID to the person whose gameplay you want to watch.</p>
-        <p>2. Once they have started their broadcast, click Refresh.</p>
-        <p>3. Once the broadcast appears, click Watch.</p>
+        <p>{Messages.spectatorInstructions()}</p>
       </div>
     </InfoBlock>
   );

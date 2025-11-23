@@ -1,20 +1,26 @@
-import styled from "@emotion/styled";
+import * as stylex from "@stylexjs/stylex";
+
+import { colors } from "@/styles/tokens.stylex";
 
 import { RankedStatus } from "./ranked_status";
 import { TournamentLinks } from "./tournament_links";
 
-const Outer = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  overflow-x: hidden;
-`;
+const styles = stylex.create({
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    flex: "1",
+    position: "relative",
+    overflow: "hidden",
+    backgroundColor: colors.purpleDarker,
+  },
+});
 
 export const Sidebar = () => {
   return (
-    <Outer>
+    <div {...stylex.props(styles.container)}>
       <RankedStatus />
       <TournamentLinks />
-    </Outer>
+    </div>
   );
 };

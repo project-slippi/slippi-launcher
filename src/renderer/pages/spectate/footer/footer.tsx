@@ -10,6 +10,8 @@ import { LabelledText } from "@/components/labelled_text";
 import { useSpectateSlpPath } from "@/lib/hooks/use_settings";
 import { colors } from "@/styles/colors";
 
+import { FooterMessages as Messages } from "./footer.messages";
+
 export const Footer = React.memo(() => {
   const [spectateSlpFolder, setSpectateSlpFolder] = useSpectateSlpPath();
   const onClick = async () => {
@@ -24,7 +26,7 @@ export const Footer = React.memo(() => {
   };
   return (
     <BasicFooter>
-      <Tooltip title="Reveal location">
+      <Tooltip title={Messages.revealLocation()}>
         <IconButton
           size="small"
           onClick={() => window.electron.shell.openPath(spectateSlpFolder)}
@@ -42,7 +44,7 @@ export const Footer = React.memo(() => {
           padding-right: 20px;
           border-right: solid 1px ${colors.purple};
         `}
-        label="Save spectated games to"
+        label={Messages.saveSpectatedGamesTo()}
       >
         {spectateSlpFolder}
       </LabelledText>
@@ -54,7 +56,7 @@ export const Footer = React.memo(() => {
         `}
         onClick={onClick}
       >
-        Change Folder
+        {Messages.changeFolder()}
       </Button>
     </BasicFooter>
   );

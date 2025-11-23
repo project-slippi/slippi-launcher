@@ -8,7 +8,7 @@ import RadioGroup from "@mui/material/RadioGroup";
 import Typography from "@mui/material/Typography";
 import React from "react";
 
-import { ConfirmationModal } from "@/components/confirmation_modal";
+import { ConfirmationModal } from "@/components/confirmation_modal/confirmation_modal";
 import { useDolphinActions } from "@/lib/dolphin/use_dolphin_actions";
 import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/use_dolphin_store";
 import { useDolphinBeta } from "@/lib/hooks/use_settings";

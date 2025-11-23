@@ -1,10 +1,10 @@
 import { css } from "@emotion/react";
+import styled from "@emotion/styled";
 import Button from "@mui/material/Button";
-import MatCheckbox from "@mui/material/Checkbox";
-import InputBase from "@mui/material/InputBase";
 import type { OpenDialogOptions } from "electron";
-import { useState } from "react";
+import React, { useState } from "react";
 
+import { Checkbox } from "@/components/form/checkbox";
 import { useSettings } from "@/lib/hooks/use_settings";
 import { useToasts } from "@/lib/hooks/use_toasts";
 
@@ -84,40 +84,47 @@ export const MultiPathInput = ({ paths, updatePaths, options }: MultiPathInputPr
 
   const [checkboxSelections, updateCheckboxSelections] = useState(Array(paths.length).fill(false));
 
-  const onToggle = (index: number) => {
-    updateCheckboxSelections((arr) => {
-      const newArr = arr;
-      newArr[index] = !newArr[index];
-      return [...newArr];
-    });
-  };
+  const onToggle = React.useCallback(
+    (index: number) => {
+      updateCheckboxSelections((arr) => {
+        const newArr = [...arr];
+        newArr[index] = !newArr[index];
+        return newArr;
+      });
+    },
+    [updateCheckboxSelections],
+  );
 
-  const Rows = paths.map((path, index) => {
-    return (
-      <div key={index}>
-        <InputBase
-          css={css`
-            width: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            border-radius: 10px;
-            font-size: 14px;
-            margin-bottom: 5px;
-            padding-right: 10px;
-          `}
-          value={path}
-          disabled={true}
-          startAdornment={
-            <MatCheckbox checked={checkboxSelections[index]} onChange={() => onToggle(index)} size="small" />
-          }
-        />
-      </div>
-    );
-  });
+  const pathRows = React.useMemo(
+    () =>
+      paths.map((path, index) => {
+        return (
+          <div
+            key={index}
+            css={css`
+              width: 100%;
+              border-radius: 10px;
+              font-size: 14px;
+              margin-bottom: 5px;
+              padding-right: 10px;
+            `}
+          >
+            <Checkbox
+              label={<CheckboxDescription>{path}</CheckboxDescription>}
+              checked={checkboxSelections[index]}
+              onChange={() => onToggle(index)}
+              size="small"
+            />
+          </div>
+        );
+      }),
+    [paths, checkboxSelections, onToggle],
+  );
 
   return (
     <div>
-      {Rows.length > 0 ? (
-        <div>{Rows}</div>
+      {pathRows.length > 0 ? (
+        <div>{pathRows}</div>
       ) : (
         <div
           css={css`
@@ -152,3 +159,8 @@ export const MultiPathInput = ({ paths, updatePaths, options }: MultiPathInputPr
     </div>
   );
 };
+
+const CheckboxDescription = styled.span`
+  font-size: 14px;
+  color: ${({ theme }) => theme.palette.text.disabled};
+`;

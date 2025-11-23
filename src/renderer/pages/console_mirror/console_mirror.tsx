@@ -22,6 +22,7 @@ import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 
 import { AddConnectionDialog } from "./add_connection_dialog/add_connection_dialog";
+import { ConsoleMirrorMessages as Messages } from "./console_mirror.messages";
 import { NewConnectionList } from "./new_connection_list/new_connection_list";
 import { OBSWebsocketNotice } from "./obs_websocket_notice";
 import { SavedConnectionsList } from "./saved_connections_list/saved_connections_list";
@@ -115,10 +116,10 @@ export const ConsoleMirror = React.memo(() => {
                   align-items: center;
                 `}
               >
-                <h1>Console Mirror</h1> <MirroringHelp />
+                <h1>{Messages.consoleMirror()}</h1> <MirroringHelp />
               </div>
               <Button onClick={() => setModalOpen(true)} startIcon={<AddIcon />}>
-                New connection
+                {Messages.newConnection()}
               </Button>
               <SavedConnectionsList
                 availableConsoles={availableConsoles}
@@ -182,21 +183,20 @@ const MirroringHelp = () => {
         />
       </IconButton>
       <Dialog open={modalOpen} closeAfterTransition={true} onClose={() => setModalOpen(false)}>
-        <DialogTitle>What is Mirroring?</DialogTitle>
+        <DialogTitle>{Messages.whatIsMirroring()}</DialogTitle>
         <DialogContent>
-          <span
+          <p>{Messages.slippiMirroringDescription()}</p>
+          <p
             css={css`
               a {
                 text-decoration: underline;
               }
             `}
           >
-            Slippi Mirroring allows for streaming replays from a console to a PC for real time playback. Checkout the{" "}
             <A href="https://docs.google.com/document/d/1ezavBjqVGbVO8aqSa5EHfq7ZflrTCvezRYjOf51MOWg">
-              mirroring guide
-            </A>{" "}
-            for setup instructions.
-          </span>
+              {Messages.mirroringGuide()}
+            </A>
+          </p>
         </DialogContent>
       </Dialog>
     </>

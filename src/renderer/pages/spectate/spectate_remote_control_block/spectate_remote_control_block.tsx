@@ -49,7 +49,7 @@ export const SpectateRemoteControlBlock = React.memo(
     }
 
     return (
-      <InfoBlock title="Remote Control Server">
+      <InfoBlock title={Messages.remoteControlServer()}>
         <div
           css={css`
             background-color: rgba(0, 0, 0, 0.4);

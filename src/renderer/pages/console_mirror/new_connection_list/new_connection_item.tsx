@@ -5,6 +5,8 @@ import Tooltip from "@mui/material/Tooltip";
 
 import { ReactComponent as WiiIcon } from "@/styles/images/wii_icon.svg";
 
+import { NewConnectionListMessages as Messages } from "./new_connection_list.messages";
+
 type NewConnectionItemProps = {
   nickname?: string;
   ip: string;
@@ -40,11 +42,11 @@ export const NewConnectionItem = ({ ip, onAdd, nickname }: NewConnectionItemProp
           `}
         >
           <div>{title}</div>
-          <div>Available</div>
+          <div>{Messages.available()}</div>
         </div>
       </div>
       <div>
-        <Tooltip title="Add">
+        <Tooltip title={Messages.add()}>
           <IconButton onClick={onAdd} size="small">
             <AddIcon />
           </IconButton>

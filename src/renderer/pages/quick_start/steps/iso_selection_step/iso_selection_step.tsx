@@ -9,7 +9,7 @@ import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { useQuery } from "react-query";
 
-import { ConfirmationModal } from "@/components/confirmation_modal";
+import { ConfirmationModal } from "@/components/confirmation_modal/confirmation_modal";
 import { useIsoPath } from "@/lib/hooks/use_settings";
 import { useToasts } from "@/lib/hooks/use_toasts";
 import { colors } from "@/styles/colors";

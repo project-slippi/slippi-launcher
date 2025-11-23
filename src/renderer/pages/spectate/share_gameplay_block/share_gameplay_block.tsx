@@ -8,6 +8,7 @@ import { useConsole } from "@/lib/hooks/use_console";
 import { useToasts } from "@/lib/hooks/use_toasts";
 
 import { BroadcastPanel } from "./broadcast_panel";
+import { ShareGameplayBlockMessages as Messages } from "./share_gameplay_block.messages";
 
 // These are the default params for broadcasting Netplay Dolphin
 const ip = "127.0.0.1";
@@ -23,7 +24,7 @@ export const ShareGameplayBlock = ({ className }: { className?: string }) => {
   const { showError } = useToasts();
 
   return (
-    <InfoBlock title="Share your gameplay" className={className}>
+    <InfoBlock title={Messages.shareYourGameplay()} className={className}>
       <BroadcastPanel
         slippiServerStatus={slippiStatus}
         dolphinStatus={dolphinStatus}
@@ -40,7 +41,7 @@ export const ShareGameplayBlock = ({ className }: { className?: string }) => {
             });
           } catch (err) {
             log.error(err);
-            showError("Error connecting to Dolphin. Ensure Dolphin is running and try again.");
+            showError(Messages.errorConnectingToDolphin());
           }
         }}
       />

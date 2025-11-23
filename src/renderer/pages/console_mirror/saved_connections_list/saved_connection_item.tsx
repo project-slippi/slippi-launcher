@@ -20,6 +20,8 @@ import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 import { ReactComponent as WiiIcon } from "@/styles/images/wii_icon.svg";
 
+import { SavedConnectionItemMessages as Messages } from "./saved_connection_item.messages";
+
 const path = window.electron.path;
 
 type SavedConnectionItemProps = {
@@ -78,7 +80,8 @@ export const SavedConnectionItem = ({
     consoleService.startMirroring(connection.ipAddress).catch(showError);
   }, [consoleService, connection, showError]);
   const onDisconnect = () => consoleService.disconnectFromConsole(connection.ipAddress);
-  const statusName = status === ConnectionStatus.DISCONNECTED && isAvailable ? "Available" : renderStatusName(status);
+  const statusName =
+    status === ConnectionStatus.DISCONNECTED && isAvailable ? Messages.available() : renderStatusName(status);
   const isConnected = status !== ConnectionStatus.DISCONNECTED;
   const title = nickname ? `${connection.ipAddress} (${nickname})` : connection.ipAddress;
   const nintendontIsOutdated = nintendontVersion !== null && lt(nintendontVersion, latestVersion);
@@ -114,7 +117,7 @@ export const SavedConnectionItem = ({
             margin-bottom: 10px;
           `}
         >
-          <LabelledText label="Target folder">
+          <LabelledText label={Messages.targetFolder()}>
             <span
               css={css`
                 font-size: 14px;
@@ -127,7 +130,7 @@ export const SavedConnectionItem = ({
           </LabelledText>
           {connection.enableRelay && (
             <LabelledText
-              label="Relay Port"
+              label={Messages.relayPort()}
               css={css`
                 margin-left: 20px;
               `}
@@ -143,7 +146,7 @@ export const SavedConnectionItem = ({
           )}
         </div>
         {currentFilename && (
-          <LabelledText label="Current file" css={css``}>
+          <LabelledText label={Messages.currentFile()}>
             <span
               css={css`
                 font-size: 14px;
@@ -160,10 +163,10 @@ export const SavedConnectionItem = ({
           color={isConnected ? "secondary" : "primary"}
           onClick={isConnected ? onDisconnect : onConnect}
         >
-          {isConnected ? "Disconnect" : "Connect"}
+          {isConnected ? Messages.disconnect() : Messages.connect()}
         </Button>
         <Button size="small" onClick={onMirror} color="primary" disabled={!isConnected || isMirroring}>
-          Mirror
+          {Messages.mirror()}
         </Button>
       </CardActions>
     </Outer>
@@ -179,21 +182,22 @@ const Outer = styled(Card)`
 const renderStatusName = (status: number) => {
   switch (status) {
     case ConnectionStatus.CONNECTED:
-      return "Connected";
+      return Messages.connected();
     case ConnectionStatus.CONNECTING:
-      return "Connecting";
+      return Messages.connecting();
     case ConnectionStatus.RECONNECT_WAIT:
-      return "Reconnecting";
+      return Messages.reconnecting();
     case ConnectionStatus.DISCONNECTED:
-      return "Disconnected";
+      return Messages.disconnected();
     default:
-      return `Unknown status: ${status}`;
+      return Messages.unknownStatus(status);
   }
 };
 
 const OutdatedNintendontWarning = () => {
   return (
-    <div
+    <A
+      href="https://slippi.gg/downloads"
       css={css`
         display: flex;
         align-items: center;
@@ -209,16 +213,10 @@ const OutdatedNintendontWarning = () => {
           margin-right: 5px;
         }
         margin-bottom: 20px;
-        a {
-          text-decoration: underline;
-        }
       `}
     >
       <WarningIcon />
-      <span>
-        Your Nintendont is out of date and no longer supported. Download the latest version from{" "}
-        <A href="https://slippi.gg/downloads">the Slippi website</A>.
-      </span>
-    </div>
+      <span>{Messages.yourNintendontIsOutOfDate()}</span>
+    </A>
   );
 };
