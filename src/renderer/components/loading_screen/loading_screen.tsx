@@ -4,10 +4,11 @@ import React from "react";
 
 import { BouncingSlippiLogo } from "@/components/bouncing_slippi_logo/bouncing_slippi_logo";
 
-import { Message } from "./message";
+import { Message } from "../message";
+import { LoadingScreenMessages as Messages } from "./loading_screen.messages";
 
 export const LoadingScreen = ({
-  message = "Just a sec...",
+  message = Messages.justASec(),
   style,
   className,
 }: {

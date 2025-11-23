@@ -13,7 +13,7 @@ import React from "react";
 import { DualPane } from "@/components/dual_pane";
 import { BasicFooter } from "@/components/footer/footer";
 import { LabelledText } from "@/components/labelled_text";
-import { LoadingScreenWithProgress } from "@/components/loading_screen";
+import { LoadingScreenWithProgress } from "@/components/loading_screen/loading_screen";
 import { IconMessage } from "@/components/message";
 import { useDolphinActions } from "@/lib/dolphin/use_dolphin_actions";
 import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/use_replay_browser_list";

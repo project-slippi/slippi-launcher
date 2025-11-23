@@ -11,7 +11,7 @@ import { GameMode } from "@slippi/slippi-js";
 import { useQuery } from "react-query";
 
 import { BasicFooter } from "@/components/footer/footer";
-import { LoadingScreen } from "@/components/loading_screen";
+import { LoadingScreen } from "@/components/loading_screen/loading_screen";
 import { IconMessage } from "@/components/message";
 import { useDolphinActions } from "@/lib/dolphin/use_dolphin_actions";
 import { useMousetrap } from "@/lib/hooks/use_mousetrap";
