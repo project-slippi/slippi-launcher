@@ -116,7 +116,7 @@ msgstr "Atrás"
 
 #: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:2:24
 msgid "Back to replays"
-msgstr "Volver a repeticiones"
+msgstr "Volver a las repeticiones"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:24:15
 msgid "Beta (Mainline)"
@@ -125,7 +125,7 @@ msgstr "Beta (Principal)"
 #: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:9:50
 #. {0} broadcastDuration: string
 msgid "Broadcast ended after {0}"
-msgstr "Transmisión finalizada después de {0}"
+msgstr "Transmisión finalizada tras {0}"
 
 #: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:8:27
 msgid "Broadcast started"
@@ -147,7 +147,7 @@ msgstr "Puede cambiarse después con un pago único"
 
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:5:24
 msgid "Can't find the email? Check your spam folder. Still missing? "
-msgstr "¿No encuentras el correo? Revisa tu carpeta de spam. ¿Aún no aparece? "
+msgstr "¿No encuentras el correo? Revisa tu carpeta de correo basura. ¿Aún no aparece? "
 
 #: src/renderer/app/header/header.messages.ts:12:17
 #: src/renderer/components/confirmation_modal/confirmation_modal.messages.ts:3:17
@@ -209,7 +209,7 @@ msgstr "Elige un código de conexión"
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:13:42
 msgid "Choose any additional SLP folders that should show up in the replay browser."
 msgstr ""
-"Elige los directorios SLP adicionales que deberían aparecer en el navegador "
+"Elige los directorios SLP adicionales que deberían aparecer en el buscador "
 "de repeticiones."
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:8:38
@@ -434,7 +434,7 @@ msgstr "Correo electrónico"
 
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:11:29
 msgid "Email is not yet verified. Have you checked your spam folder?"
-msgstr "El correo aún no está verificado. ¿Has revisado tu carpeta de spam?"
+msgstr "El correo aún no está verificado. ¿Has revisado tu carpeta de correo basura?"
 
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:7:24
 msgid "Email verified"
@@ -551,8 +551,8 @@ msgid ""
 "First give this ID to the person whose gameplay you want to watch. Then "
 "after they have started their broadcast, click Refresh."
 msgstr ""
-"Primero da este ID a la persona cuyo juego quieres ver. Después de que "
-"hayan comenzado su transmisión, haz clic en Actualizar."
+"Primero da este ID a la persona cuya partida quieres ver. Después de que "
+"haya comenzado su retransmisión, haz clic en Actualizar."
 
 #: src/renderer/components/footer/footer.messages.ts:3:26
 msgid "Follow Project Slippi on Twitter"
@@ -568,7 +568,7 @@ msgstr "Juego"
 
 #: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:7:47
 msgid "Game stats for team battles is unsupported"
-msgstr "Las estadísticas de juego para dobles no son compatibles"
+msgstr "No hay soporte de estadísticas de juego por equipos"
 
 #: src/renderer/pages/settings/create.messages.ts:2:26
 msgid "General Settings"
@@ -597,7 +597,7 @@ msgstr "Ocultar opciones avanzadas"
 
 #: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:7:25
 msgid "Hide short games"
-msgstr "Ocultar juegos cortos"
+msgstr "Ocultar partidas cortas"
 
 #: src/renderer/app/create.messages.ts:2:15
 msgid "Home"
@@ -632,7 +632,7 @@ msgid ""
 "If the failure persists, you can test this in your computer's terminal app. "
 "See below:"
 msgstr ""
-"Si el fallo persiste, puedes probar esto en la terminal de tu computadora. "
+"Si el fallo persiste, puedes probar esto en la terminal de tu ordenador. "
 "Ver abajo:"
 
 #: src/renderer/pages/home/sidebar/tournament_links.messages.ts:3:19
@@ -1057,7 +1057,7 @@ msgid ""
 "the Wii and computer are on a wired LAN connection."
 msgstr ""
 "Evita que se acumule retraso al transmitir. Mantén esto desactivado a menos que "
-"tanto la Wii como la computadora estén conectadas por cable a la LAN."
+"tanto la Wii como el ordenador estén conectadas por cable a la LAN."
 
 #: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:8:25
 msgid "Previous replay"
@@ -1202,7 +1202,7 @@ msgstr "Guardar repeticiones en subcarpetas según el apodo de la consola"
 
 #: src/renderer/pages/spectate/footer/footer.messages.ts:4:31
 msgid "Save spectated games to"
-msgstr "Guardar juegos espectados en"
+msgstr "Guardar partidas espectadas en"
 
 #: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:8:17
 msgid "Search"
@@ -1235,7 +1235,7 @@ msgstr "Configuración"
 
 #: src/renderer/pages/spectate/share_gameplay_block/share_gameplay_block.messages.ts:2:28
 msgid "Share your gameplay"
-msgstr "Comparte tu juego"
+msgstr "Comparte tu partida"
 
 #: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:6:23
 msgid "Shortest game"
@@ -1299,7 +1299,7 @@ msgstr "Error del servidor de Slippi"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:19:20
 msgid "Soft reset"
-msgstr "Reinicio suave"
+msgstr "Reinicio parcial"
 
 #: src/renderer/pages/not_found/not_found_page.messages.ts:3:29
 msgid "Something went wrong."
@@ -1453,7 +1453,7 @@ msgid ""
 "a Console Relay. If unsure, leave it as {0}."
 msgstr ""
 "El puerto usado para conectar a la consola. Solo cambia esto si te conectas a "
-"una retransmisión de consola. Si no estás seguro, déjalo como {0}."
+"una retransmisión de consola. Si no estás seguro, déjalo en {0}."
 
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:3:44
 msgid "The unique viewer code of the spectator."
@@ -1467,8 +1467,8 @@ msgid ""
 "account for any reason."
 msgstr ""
 "Estas son un conjunto de reglas a seguir al usar Slippi. Romper estas reglas "
-"puede resultar en una suspensión o baneo dependiendo de la gravedad y frecuencia. "
-"Esta no es una lista exhaustiva, nos reservamos el derecho de suspender o banear "
+"puede resultar en una suspensión o bloqueo dependiendo de la gravedad y frecuencia. "
+"Esta no es una lista exhaustiva, nos reservamos el derecho de suspender o bloqueo "
 "una cuenta por cualquier motivo."
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:3:34
