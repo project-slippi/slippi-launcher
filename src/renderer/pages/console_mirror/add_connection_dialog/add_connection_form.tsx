@@ -17,6 +17,8 @@ import { PathInput } from "@/components/path_input/path_input";
 import { isValidIpAddress, isValidPort } from "@/lib/validate/validate";
 import { colors } from "@/styles/colors";
 
+import { AddConnectionFormMessages as Messages } from "./add_connection_form.messages";
+
 type FormValues = {
   ipAddress: string;
   port: number;
@@ -67,7 +69,7 @@ export const AddConnectionForm = ({ defaultValues, onSubmit, disabled }: AddConn
             render={({ field, fieldState: { error } }) => (
               <TextField
                 {...field}
-                label="IP Address"
+                label={Messages.ipAddress()}
                 required={true}
                 error={Boolean(error)}
                 helperText={error ? error.message : undefined}
@@ -79,11 +81,11 @@ export const AddConnectionForm = ({ defaultValues, onSubmit, disabled }: AddConn
         </section>
 
         <section>
-          <SettingDescription label="Target Folder">The folder to save SLP files to.</SettingDescription>
+          <SettingDescription label={Messages.targetFolder()}>{Messages.targetFolderDescription()}</SettingDescription>
           <PathInput
             value={folderPath}
             onSelect={(newPath) => setValue("folderPath", newPath)}
-            placeholder="No folder selected"
+            placeholder={Messages.targetFolderPlaceholder()}
             options={{
               properties: ["openDirectory"],
             }}
@@ -94,15 +96,15 @@ export const AddConnectionForm = ({ defaultValues, onSubmit, disabled }: AddConn
             onChange={() => setValue("useNicknameFolders", !useNicknameFolders)}
             checked={useNicknameFolders}
             disabled={disabled}
-            label={<CheckboxDescription>Save replays to subfolders based on console nickname</CheckboxDescription>}
+            label={<CheckboxDescription>{Messages.saveReplaysToSubfolders()}</CheckboxDescription>}
           />
         </section>
         <section>
           <Toggle
             value={Boolean(isRealtime)}
             onChange={(checked) => setValue("isRealtime", checked)}
-            label="Enable Real-time Mode"
-            description="Prevents delay from accumulating when mirroring. Keep this off unless both the Wii and computer are on a wired LAN connection."
+            label={Messages.enableRealTimeMode()}
+            description={Messages.enableRealTimeModeDescription()}
             disabled={disabled}
           />
         </section>
@@ -121,7 +123,7 @@ export const AddConnectionForm = ({ defaultValues, onSubmit, disabled }: AddConn
               margin-bottom: 5px;
             `}
           >
-            {showAdvanced ? "Hide" : "Show"} advanced options
+            {showAdvanced ? Messages.hideAdvancedOptions() : Messages.showAdvancedOptions()}
           </Button>
           <Collapse
             in={showAdvanced}
@@ -133,14 +135,14 @@ export const AddConnectionForm = ({ defaultValues, onSubmit, disabled }: AddConn
           >
             <Notice>
               <WarningIcon />
-              Only modify these values if you know what you're doing.
+              {Messages.onlyModifyIfYouKnowWhatYouAreDoing()}
             </Notice>
             <Toggle
               value={enableAutoSwitcher}
               onChange={(checked) => {
                 setValue("enableAutoSwitcher", checked);
               }}
-              label="Enable Autoswitcher"
+              label={Messages.enableAutoswitcher()}
               description={
                 <span
                   css={css`
@@ -149,9 +151,8 @@ export const AddConnectionForm = ({ defaultValues, onSubmit, disabled }: AddConn
                     }
                   `}
                 >
-                  Allows automatic hiding and showing of an OBS source (e.g. your Dolphin capture) when the game is
-                  active. Requires <A href="https://github.com/obsproject/obs-websocket/releases">OBS Websocket 5.0+</A>
-                  , which comes preinstalled on OBS 28+.
+                  {Messages.enableAutoswitcherDescription()}{" "}
+                  <A href="https://github.com/obsproject/obs-websocket/releases">{Messages.download()}</A>
                 </span>
               }
               disabled={disabled}
@@ -173,7 +174,7 @@ export const AddConnectionForm = ({ defaultValues, onSubmit, disabled }: AddConn
                     render={({ field, fieldState: { error } }) => (
                       <TextField
                         {...field}
-                        label="OBS Websocket IP"
+                        label={Messages.obsWebsocketIP()}
                         required={enableAutoSwitcher}
                         error={Boolean(error)}
                         helperText={error ? error.message : undefined}
@@ -200,7 +201,7 @@ export const AddConnectionForm = ({ defaultValues, onSubmit, disabled }: AddConn
                     render={({ field, fieldState: { error } }) => (
                       <TextField
                         {...field}
-                        label="OBS Websocket Port"
+                        label={Messages.obsWebsocketPort()}
                         required={enableAutoSwitcher}
                         error={Boolean(error)}
                         helperText={error ? error.message : undefined}
@@ -216,19 +217,19 @@ export const AddConnectionForm = ({ defaultValues, onSubmit, disabled }: AddConn
                         if (!val) {
                           return false;
                         }
-                        return isValidPort(val) || "Invalid Port";
+                        return isValidPort(val) || Messages.invalidPort();
                       },
                     }}
                   />
                   <TextField
-                    label="OBS Password"
+                    label={Messages.obsPassword()}
                     value={obsPassword ?? ""}
                     onChange={(e) => setValue("obsPassword", e.target.value)}
                     type="password"
                     disabled={disabled}
                   />
                   <TextField
-                    label="OBS Source Name"
+                    label={Messages.obsSourceName()}
                     value={obsSourceName ?? ""}
                     required={enableAutoSwitcher}
                     onChange={(e) => setValue("obsSourceName", e.target.value)}
@@ -241,15 +242,14 @@ export const AddConnectionForm = ({ defaultValues, onSubmit, disabled }: AddConn
               <Toggle
                 value={Boolean(enableRelay)}
                 onChange={(checked) => setValue("enableRelay", checked)}
-                label="Enable Console Relay"
-                description="Allows external programs to read live game data by connecting to a local endpoint."
+                label={Messages.enableRelay()}
+                description={Messages.enableRelayDescription()}
                 disabled={disabled}
               />
             </section>
             <section>
-              <SettingDescription label="Connection Port">
-                The port used for connecting to console. Only change this if connecting to a Console Relay. If unsure,
-                leave it as {Ports.DEFAULT}.
+              <SettingDescription label={Messages.connectionPort()}>
+                {Messages.connectionPortDescription(Ports.DEFAULT)}
               </SettingDescription>
               <Controller
                 name="port"
@@ -263,7 +263,7 @@ export const AddConnectionForm = ({ defaultValues, onSubmit, disabled }: AddConn
                         margin: 0;
                       }
                     `}
-                    label="Port"
+                    label={Messages.port()}
                     required={true}
                     value={isNaN(value) ? "" : value.toString()}
                     onChange={(e) => onChange(parseInt(e.target.value))}
@@ -273,14 +273,14 @@ export const AddConnectionForm = ({ defaultValues, onSubmit, disabled }: AddConn
                     disabled={disabled}
                   />
                 )}
-                rules={{ validate: (val) => !isNaN(val) || "Invalid port number" }}
+                rules={{ validate: (val) => !isNaN(val) || Messages.invalidPortNumber() }}
               />
             </section>
           </Collapse>
         </div>
 
         <Button type="submit" variant="contained" color="primary" disabled={disabled}>
-          Submit
+          {Messages.submit()}
         </Button>
       </form>
     </Outer>

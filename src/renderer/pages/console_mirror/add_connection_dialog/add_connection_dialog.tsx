@@ -11,6 +11,7 @@ import React from "react";
 
 import { useSettings } from "@/lib/hooks/use_settings";
 
+import { AddConnectionDialogMessages as Messages } from "./add_connection_dialog.messages";
 import { AddConnectionForm } from "./add_connection_form";
 
 type AddConnectionDialogProps = {
@@ -34,7 +35,7 @@ export const AddConnectionDialog = ({
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const updateTitle = () => {
-    setTitle(isEditing ? "Edit Connection" : "New Connection");
+    setTitle(isEditing ? Messages.editConnection() : Messages.newConnection());
   };
   const defaultValues: Partial<StoredConnection> = merge(
     {
