@@ -11,42 +11,42 @@ msgstr ""
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
 msgid "2-4 uppercase English characters"
-msgstr ""
+msgstr "2～4文字の英大文字"
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:10:40
 msgid "7z files must be uncompressed to be used in Dolphin."
-msgstr ""
+msgstr "7zファイルはDolphinで使用するために解凍する必要があります。"
 
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:8:42
 msgid "A confirmation email has been sent to:"
-msgstr ""
+msgstr "確認メールが送信されました："
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:21:20
 msgid "Accept All"
-msgstr ""
+msgstr "すべて承認"
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:23:33
 msgid "Accept rules and policies"
-msgstr ""
+msgstr "規約とポリシーに同意"
 
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:2:29
 msgid "Activate online play"
-msgstr ""
+msgstr "オンラインプレイを有効化"
 
 #: src/renderer/pages/home/sidebar/ranked_status.messages.ts:3:17
 msgid "Active"
-msgstr ""
+msgstr "実施中"
 
 #: src/renderer/components/multi_path_input/multi_path_input.messages.ts:3:14
 #: src/renderer/pages/console_mirror/new_connection_list/new_connection_list.messages.ts:5:14
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/add_codes/add_codes.messages.ts:6:14
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:6:14
 msgid "Add"
-msgstr ""
+msgstr "追加"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:12:31
 msgid "Additional SLP Folders"
-msgstr ""
+msgstr "追加のSLPディレクトリ"
 
 #: src/renderer/pages/settings/create.messages.ts:12:19
 msgid "Advanced"
@@ -58,21 +58,24 @@ msgid ""
 "capture) when the game is active. Requires OBS Websocket 5.0+, which comes "
 "preinstalled on OBS 28+."
 msgstr ""
+"ゲームがアクティブなときにOBSソース（例：Dolphinキャプチャ）の自動表示・非表示を可能にします。"
+"OBS Websocket 5.0+が必要です（OBS 28+にプリインストール）。"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:24:33
 msgid ""
 "Allows external programs to read live game data by connecting to a local "
 "endpoint."
 msgstr ""
+"外部プログラムがローカルエンドポイントに接続してライブゲームデータを読み取れるようにします。"
 
 #: src/renderer/pages/settings/spectate_settings/spectate_settings.messages.ts:3:49
 msgid "Allows remote control of spectate features via WebSocket."
-msgstr ""
+msgstr "WebSocket経由で観戦機能のリモートコントロールを可能にします。"
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:22:27
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:12:27
 msgid "An error occurred. The application does not have a user."
-msgstr ""
+msgstr "エラーが発生しました。アプリケーションにユーザーがありません。"
 
 #: src/renderer/pages/settings/appearance_settings/language_selector/language_selector.messages.ts:2:22
 msgid "App Language"
@@ -84,19 +87,19 @@ msgstr "アプリ設定"
 
 #: src/renderer/pages/settings/create.messages.ts:11:21
 msgid "Appearance"
-msgstr ""
+msgstr "外観"
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:5:21
 msgid "Are you sure you want to delete this code?"
-msgstr ""
+msgstr "このコードを削除してもよろしいですか？"
 
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:9:36
 msgid "Are you sure you want to log out?"
-msgstr ""
+msgstr "ログアウトしてもよろしいですか？"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:17:21
 msgid "Are you sure?"
-msgstr ""
+msgstr "よろしいですか？"
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:3:39
 msgid "Automatically install Slippi Launcher updates when they become available."
