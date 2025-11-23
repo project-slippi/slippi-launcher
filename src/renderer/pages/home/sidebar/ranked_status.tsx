@@ -7,7 +7,8 @@ import React from "react";
 import { ExternalLink } from "@/components/external_link";
 import { useAccount } from "@/lib/hooks/use_account";
 import { useAppStore } from "@/lib/hooks/use_app_store";
-import { shortEnLocale } from "@/lib/time";
+import { getLocale, shortEnLocale } from "@/lib/time";
+import type { SupportedLanguage } from "@/services/i18n/util";
 import { ReactComponent as RankedDayActiveIcon } from "@/styles/images/ranked_day_active.svg";
 import { ReactComponent as RankedDayInactiveIcon } from "@/styles/images/ranked_day_inactive.svg";
 import { colors } from "@/styles/tokens.stylex";
@@ -171,6 +172,7 @@ export const RankedStatus = React.memo(function RankedStatus() {
   const [isFullAccess, setFullAccess] = React.useState(false);
   const [countdown, setCountdown] = React.useState<string>("");
   const [nextTime, setNextTime] = React.useState<Date>(new Date());
+  const currentLanguage = useAppStore((store) => store.currentLanguage);
 
   React.useEffect(() => {
     const checkTime = () => {
@@ -187,7 +189,9 @@ export const RankedStatus = React.memo(function RankedStatus() {
 
       const format: (keyof Duration)[] =
         (duration.hours ?? 0) < 1 && (duration.days ?? 0) < 1 ? ["minutes", "seconds"] : ["days", "hours", "minutes"];
-      setCountdown(formatDuration(duration, { format, locale: shortEnLocale }));
+      setCountdown(
+        formatDuration(duration, { format, locale: getLocale(currentLanguage as SupportedLanguage) ?? shortEnLocale }),
+      );
     };
     checkTime();
 
