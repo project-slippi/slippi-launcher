@@ -22,12 +22,6 @@ const FREE_ACCESS_START_AT = new Date(Date.UTC(2024, 3, 15, 14, 0, 0)); // Note:
 const FREE_ACCESS_OFFSET_FROM = new Date(Date.UTC(2024, 3, 15, 8, 0, 0)); // Note: Month is 0-indexed, so 3 is April
 
 const styles = stylex.create({
-  container: {
-    position: "relative",
-    flex: "1",
-    overflow: "hidden",
-    backgroundColor: colors.purpleDarker,
-  },
   card: {
     margin: "6px",
     padding: "10px",
@@ -96,75 +90,73 @@ const InternalRankedStatus = ({
   const connectCode = userData?.playKey?.connectCode;
 
   return (
-    <div {...stylex.props(styles.container)}>
-      <Card {...stylex.props(styles.card)}>
-        <div {...stylex.props(styles.centerStack)}>
-          <Typography
-            variant="h6"
-            color={colors.purpleLight}
-            fontSize="14px"
-            fontWeight="semibold"
-            marginBottom="8px"
-            textTransform="uppercase"
-          >
-            {Messages.rankedDay()}
-          </Typography>
-          {isFullAccess ? <RankedDayActiveIcon width={40} /> : <RankedDayInactiveIcon width={40} />}
-          <Typography
-            {...stylex.props(styles.stroke)}
-            variant="body1"
-            color={isFullAccess ? colors.greenDark : colors.textDim}
-            fontSize="20px"
-            fontWeight="medium"
-          >
-            {isFullAccess ? Messages.active() : Messages.startingSoon()}
-          </Typography>
-        </div>
-        <div {...stylex.props(styles.separator)} />
-        <div {...stylex.props(styles.centerStack)}>
-          <Typography
-            variant="h6"
-            color={colors.purpleLight}
-            className="14px"
-            fontSize="14px"
-            fontWeight="semibold"
-            marginBottom="4px"
-            textTransform="uppercase"
-          >
-            {isFullAccess ? Messages.endingIn() : Messages.startingIn()}
-          </Typography>
-          <Typography fontWeight="medium" fontSize="20px">
-            {countdown}
-          </Typography>
-          <Typography fontSize="12px" color={colors.textDim} marginTop="-4px">
-            {nextTime.toLocaleString([userLocale, currentLanguage], {
-              year: "numeric",
-              month: "numeric",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-              // timeZoneName: "short", // Chose not to include this. Can sometimes confuse Europeans (happened at smashgg)
-            })}
-          </Typography>
-        </div>
-        <Typography fontSize="11px" color={colors.textDim} marginTop="12px">
-          {isFullAccess ? Messages.rankedPlayIsCurrentlyAvailable() : Messages.onceEveryFourDaysRankedPlayIsAvailable()}
+    <Card {...stylex.props(styles.card)}>
+      <div {...stylex.props(styles.centerStack)}>
+        <Typography
+          variant="h6"
+          color={colors.purpleLight}
+          fontSize="14px"
+          fontWeight="semibold"
+          marginBottom="8px"
+          textTransform="uppercase"
+        >
+          {Messages.rankedDay()}
         </Typography>
-        <div {...stylex.props(styles.buttonContainer)}>
-          <Button
-            variant="contained"
-            sx={{ color: "white", fontSize: "13px", fontWeight: "medium", textTransform: "uppercase" }}
-            color="secondary"
-            fullWidth={true}
-            LinkComponent={ExternalLink}
-            href={`https://slippi.gg/user/${convertCodeToSlug(connectCode)}`}
-            disabled={!connectCode}
-          >
-            {Messages.viewRankedProfile()}
-          </Button>
-        </div>
-      </Card>
-    </div>
+        {isFullAccess ? <RankedDayActiveIcon width={40} /> : <RankedDayInactiveIcon width={40} />}
+        <Typography
+          {...stylex.props(styles.stroke)}
+          variant="body1"
+          color={isFullAccess ? colors.greenDark : colors.textDim}
+          fontSize="20px"
+          fontWeight="medium"
+        >
+          {isFullAccess ? Messages.active() : Messages.startingSoon()}
+        </Typography>
+      </div>
+      <div {...stylex.props(styles.separator)} />
+      <div {...stylex.props(styles.centerStack)}>
+        <Typography
+          variant="h6"
+          color={colors.purpleLight}
+          className="14px"
+          fontSize="14px"
+          fontWeight="semibold"
+          marginBottom="4px"
+          textTransform="uppercase"
+        >
+          {isFullAccess ? Messages.endingIn() : Messages.startingIn()}
+        </Typography>
+        <Typography fontWeight="medium" fontSize="20px">
+          {countdown}
+        </Typography>
+        <Typography fontSize="12px" color={colors.textDim} marginTop="-4px">
+          {nextTime.toLocaleString([userLocale, currentLanguage], {
+            year: "numeric",
+            month: "numeric",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            // timeZoneName: "short", // Chose not to include this. Can sometimes confuse Europeans (happened at smashgg)
+          })}
+        </Typography>
+      </div>
+      <Typography fontSize="11px" color={colors.textDim} marginTop="12px">
+        {isFullAccess ? Messages.rankedPlayIsCurrentlyAvailable() : Messages.onceEveryFourDaysRankedPlayIsAvailable()}
+      </Typography>
+      <div {...stylex.props(styles.buttonContainer)}>
+        <Button
+          variant="contained"
+          sx={{ color: "white", fontSize: "13px", fontWeight: "medium", textTransform: "uppercase" }}
+          color="secondary"
+          fullWidth={true}
+          LinkComponent={ExternalLink}
+          href={`https://slippi.gg/user/${convertCodeToSlug(connectCode)}`}
+          disabled={!connectCode}
+        >
+          {Messages.viewRankedProfile()}
+        </Button>
+      </div>
+    </Card>
   );
 };
 

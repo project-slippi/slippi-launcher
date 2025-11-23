@@ -1,34 +1,21 @@
 import styled from "@emotion/styled";
-import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import LanguageIcon from "@mui/icons-material/Language";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import { Typography } from "@mui/material";
+import { Card, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
+import * as stylex from "@stylexjs/stylex";
 import React from "react";
 
 import { ExternalLink } from "@/components/external_link";
-import { ReactComponent as StartggLogo } from "@/styles/images/startgg_logo.svg";
+import { colors } from "@/styles/tokens.stylex";
+
+import { TournamentLinksMessages as Messages } from "./tournament_links.messages";
 
 const NEARBY_TOURNAMENTS_URL =
   "https://start.gg/search/near_me?refinementList%5Bevents.videogame.id%5D=1&refinementList%5BhasOnlineEvents%5D=&refinementList%5Bstate%5D%5B0%5D=1&page=1&configure%5BhitsPerPage%5D=15&configure%5Bfilters%5D=profileType%3Atournament&configure%5BaroundLatLngViaIP%5D=true&configure%5BaroundRadius%5D=160934";
 
 const ONLINE_TOURNAMENTS_URL =
   "https://start.gg/search/tournaments?refinementList%5Bevents.videogame.id%5D=1&refinementList%5BhasOnlineEvents%5D%5B0%5D=true&page=1&configure%5BhitsPerPage%5D=15&configure%5Bfilters%5D=profileType%3Atournament&range%5BeffectiveRegistrationClosesAt%5D%5Bmin%5D=1";
-
-const PoweredByContainer = styled.div`
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: end;
-  align-items: center;
-  padding: 4px 15px;
-  font-size: 9pt;
-  color: rgba(255, 255, 255, 0.6);
-`;
-
-const LinksContainer = styled.div`
-  background-color: rgba(0, 0, 0, 0.35);
-  padding: 15px;
-`;
 
 const LinksGrid = styled.div`
   display: grid;
@@ -37,23 +24,33 @@ const LinksGrid = styled.div`
   align-items: center;
 `;
 
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-`;
+const styles = stylex.create({
+  card: {
+    margin: "6px",
+    padding: "10px",
+  },
+  centerStack: {
+    display: "grid",
+    justifyContent: "center",
+    justifyItems: "center",
+    alignItems: "center",
+  },
+});
 
 export const TournamentLinks = React.memo(function TournamentLinks() {
   return (
-    <div>
-      <LinksContainer>
-        <Header>
-          <Typography variant="h2" fontSize={18} marginLeft={0.5}>
-            Tournaments
-          </Typography>
-          <EmojiEventsIcon fontSize="small" />
-        </Header>
+    <Card {...stylex.props(styles.card)}>
+      <div {...stylex.props(styles.centerStack)}>
+        <Typography
+          variant="h6"
+          color={colors.purpleLight}
+          fontSize="14px"
+          fontWeight="semibold"
+          marginBottom="8px"
+          textTransform="uppercase"
+        >
+          {Messages.tournaments()}
+        </Typography>
         <LinksGrid>
           <Button
             color="secondary"
@@ -61,9 +58,9 @@ export const TournamentLinks = React.memo(function TournamentLinks() {
             size="small"
             href={NEARBY_TOURNAMENTS_URL}
             startIcon={<LocationOnIcon />}
-            title="Show nearby tournaments in the browser"
+            title={Messages.showNearbyTournamentsInBrowser()}
           >
-            Nearby
+            {Messages.nearby()}
           </Button>
           <Button
             color="secondary"
@@ -71,16 +68,12 @@ export const TournamentLinks = React.memo(function TournamentLinks() {
             size="small"
             href={ONLINE_TOURNAMENTS_URL}
             startIcon={<LanguageIcon />}
-            title="Show online tournaments in the browser"
+            title={Messages.showOnlineTournamentsInBrowser()}
           >
-            Online
+            {Messages.online()}
           </Button>
         </LinksGrid>
-      </LinksContainer>
-      <PoweredByContainer>
-        <div style={{ marginRight: 8 }}>powered by start.gg</div>
-        <StartggLogo height="16px" width="16px" viewBox="0 0 1001 1001" aria-label="start.gg logo" role="image" />
-      </PoweredByContainer>
-    </div>
+      </div>
+    </Card>
   );
 });
