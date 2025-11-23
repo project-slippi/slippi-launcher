@@ -9,7 +9,7 @@ import ListItem from "@mui/material/ListItem";
 import Tooltip from "@mui/material/Tooltip";
 import React from "react";
 
-import { ConfirmationModal } from "@/components/confirmation_modal";
+import { ConfirmationModal } from "@/components/confirmation_modal/confirmation_modal";
 
 import { ManageCodesMessages as Messages } from "./manage_codes.messages";
 

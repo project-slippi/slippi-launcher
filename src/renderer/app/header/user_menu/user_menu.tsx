@@ -8,16 +8,17 @@ import DialogContentText from "@mui/material/DialogContentText";
 import log from "electron-log";
 import React from "react";
 
-import { ConfirmationModal } from "@/components/confirmation_modal";
+import { ConfirmationModal } from "@/components/confirmation_modal/confirmation_modal";
 import type { IconMenuItem } from "@/components/icon_menu";
 import { IconMenu } from "@/components/icon_menu";
 import { useAccount } from "@/lib/hooks/use_account";
 import { useServices } from "@/services";
 import type { AuthUser } from "@/services/auth/types";
 
-import { ActivateOnlineDialog } from "./activate_online_dialog";
-import { NameChangeDialog } from "./name_change_dialog";
-import { UserInfo } from "./user_info/user_info";
+import { ActivateOnlineDialog } from "../activate_online_dialog";
+import { NameChangeDialog } from "../name_change_dialog";
+import { UserInfo } from "../user_info/user_info";
+import { UserMenuMessages as Messages } from "./user_menu.messages";
 
 export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (error: any) => void }) => {
   const { authService } = useServices();
@@ -61,7 +62,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
           setOpenActivationDialog(true);
         },
         icon: <LanguageIcon fontSize="small" />,
-        label: "Activate online play",
+        label: Messages.activateOnlinePlay(),
       });
     }
 
@@ -73,7 +74,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
             window.electron.shell.openExternal(profileUrl).catch(log.error);
             closeMenu();
           },
-          label: "View profile",
+          label: Messages.viewProfile(),
           icon: <AccountBoxIcon fontSize="small" />,
           external: true,
         },
@@ -83,7 +84,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
             window.electron.shell.openExternal(manageUrl).catch(log.error);
             closeMenu();
           },
-          label: "Manage account",
+          label: Messages.manageAccount(),
           icon: <ManageAccountsIcon fontSize="small" />,
           external: true,
         },
@@ -92,7 +93,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
             closeMenu();
             setOpenNameChangePrompt(true);
           },
-          label: "Edit display name",
+          label: Messages.editDisplayName(),
           icon: <EditIcon fontSize="small" />,
         },
       );
@@ -103,7 +104,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
         closeMenu();
         setOpenLogoutPrompt(true);
       },
-      label: "Log out",
+      label: Messages.logout(),
       icon: <LogoutIcon fontSize="small" />,
     });
     return items;
@@ -111,9 +112,9 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
 
   let errMessage: string | undefined = undefined;
   if (serverError) {
-    errMessage = "Slippi server error";
+    errMessage = Messages.slippiServerError();
   } else if (!userData?.playKey) {
-    errMessage = "Online activation required";
+    errMessage = Messages.onlineActivationRequired();
   }
 
   return (
@@ -145,14 +146,14 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
         }}
       />
       <ConfirmationModal
-        title="Are you sure you want to log out?"
-        confirmText="Log out"
+        title={Messages.areYouSureYouWantToLogout()}
+        confirmText={Messages.logout()}
         open={openLogoutPrompt}
         onClose={handleClose}
         onSubmit={onLogout}
         fullWidth={false}
       >
-        <DialogContentText>You will need to log in again next time you want to play.</DialogContentText>
+        <DialogContentText>{Messages.youWillNeedToLogInAgain()}</DialogContentText>
       </ConfirmationModal>
     </div>
   );
