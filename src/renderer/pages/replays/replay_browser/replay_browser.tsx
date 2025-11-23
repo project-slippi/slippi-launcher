@@ -26,7 +26,7 @@ import { colors } from "@/styles/colors";
 
 import { FileList } from "./file_list";
 import { FileSelectionToolbar } from "./file_selection_toolbar/file_selection_toolbar";
-import { FilterToolbar } from "./filter_toolbar";
+import { FilterToolbar } from "./filter_toolbar/filter_toolbar";
 import { FolderTreeNode } from "./folder_tree_node";
 import { ReplayBrowserMessages as Messages } from "./replay_browser.messages";
 

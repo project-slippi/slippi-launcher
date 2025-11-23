@@ -16,6 +16,8 @@ import { useSettings } from "@/lib/hooks/use_settings";
 import { useToasts } from "@/lib/hooks/use_toasts";
 import { ReplaySortOption, SortDirection } from "@/lib/replay_file_sort";
 
+import { FilterToolbarMessages as Messages } from "./filter_toolbar.messages";
+
 const Outer = styled.div`
   display: flex;
   align-items: center;
@@ -68,7 +70,7 @@ export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarPro
       <ButtonContainer>
         <div style={{ display: "inline-block" }}>
           <Button onClick={refresh} disabled={disabled} startIcon={<SyncIcon />}>
-            Refresh
+            {Messages.refresh()}
           </Button>
         </div>
         <Dropdown
@@ -82,28 +84,28 @@ export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarPro
                 key: ReplaySortOption.DATE,
                 dir: SortDirection.DESC,
               },
-              label: "Most recent",
+              label: Messages.mostRecent(),
             },
             {
               value: {
                 key: ReplaySortOption.DATE,
                 dir: SortDirection.ASC,
               },
-              label: "Least recent",
+              label: Messages.leastRecent(),
             },
             {
               value: {
                 key: ReplaySortOption.GAME_DURATION,
                 dir: SortDirection.DESC,
               },
-              label: "Longest game",
+              label: Messages.longestGame(),
             },
             {
               value: {
                 key: ReplaySortOption.GAME_DURATION,
                 dir: SortDirection.ASC,
               },
-              label: "Shortest game",
+              label: Messages.shortestGame(),
             },
           ]}
           onChange={(val) => {
@@ -112,7 +114,7 @@ export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarPro
           }}
         />
         <Checkbox
-          label="Hide short games"
+          label={Messages.hideShortGames()}
           checked={hideShortGames}
           onChange={() => setHideShortGames(!hideShortGames)}
           css={css`
@@ -138,7 +140,7 @@ export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarPro
               </IconButton>
             </InputAdornment>
           }
-          placeholder="Search"
+          placeholder={Messages.search()}
           value={searchText}
           onChange={(e) => {
             setNameFilter(e.target.value);
