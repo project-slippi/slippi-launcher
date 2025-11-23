@@ -13,6 +13,7 @@ import { useConsoleDiscoveryStore } from "@/lib/hooks/use_console_discovery";
 import { useSettings } from "@/lib/hooks/use_settings";
 
 import { SavedConnectionItem } from "./saved_connection_item";
+import { SavedConnectionsListMessages as Messages } from "./saved_connections_list.messages";
 
 type SavedConnectionsListProps = {
   availableConsoles: DiscoveredConsoleInfo[];
@@ -80,7 +81,7 @@ export const SavedConnectionsList = ({ availableConsoles, onEdit, onDelete }: Sa
   return (
     <Outer>
       {savedConnections.length === 0 ? (
-        <IconMessage Icon={HelpOutlineIcon} label="No saved console connections" />
+        <IconMessage Icon={HelpOutlineIcon} label={Messages.noSavedConnections()} />
       ) : (
         <div>
           {savedConnections.map((conn, index) => {
@@ -114,12 +115,12 @@ export const SavedConnectionsList = ({ availableConsoles, onEdit, onDelete }: Sa
           {
             onClick: handleEdit,
             icon: <CreateIcon fontSize="small" />,
-            label: "Edit",
+            label: Messages.edit(),
           },
           {
             onClick: handleDelete,
             icon: <DeleteIcon fontSize="small" />,
-            label: "Delete",
+            label: Messages.delete(),
             disabled: consoleIsConnected(menuItem?.ipAddress),
           },
         ]}
