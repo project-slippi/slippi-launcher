@@ -7,7 +7,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0\n"
 "x-generator: i18next-auto-keys CLI\n"
 "Language: ja-JP\n"
-"PO-Revision-Date: 2025-11-23T06:32:19.006Z\n"
+"PO-Revision-Date: 2025-11-23T23:37:59.977Z\n"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
 msgid "2-4 uppercase English characters"
@@ -44,7 +44,7 @@ msgstr ""
 msgid "Add"
 msgstr ""
 
-#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:12:35
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:12:31
 msgid "Additional SLP Folders"
 msgstr ""
 
@@ -104,11 +104,8 @@ msgstr "Slippi Launcher のアップデートが利用可能になったとき�
 
 #: src/renderer/pages/console_mirror/new_connection_list/new_connection_list.messages.ts:4:20
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:7:20
-msgid "Available"
-msgstr ""
-
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:24:20
-msgid "Available."
+msgid "Available"
 msgstr ""
 
 #: src/renderer/pages/quick_start/stepper_dots/stepper_dots.messages.ts:3:15
@@ -121,10 +118,6 @@ msgstr ""
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:24:15
 msgid "Beta (Mainline)"
-msgstr ""
-
-#: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:4:26
-msgid "Target Test"
 msgstr ""
 
 #: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:9:50
@@ -160,7 +153,7 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: src/renderer/components/multi_path_input/multi_path_input.messages.ts:5:40
+#: src/renderer/components/multi_path_input/multi_path_input.messages.ts:5:36
 msgid "Cannot add subfolders of the Root SLP Folder."
 msgstr ""
 
@@ -211,10 +204,8 @@ msgstr "アップデート確認中..."
 msgid "Choose a connect code"
 msgstr ""
 
-#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:14:5
-msgid ""
-"Choose any additional SLP folders that should show up in the replay "
-"browser."
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:13:42
+msgid "Choose any additional SLP folders that should show up in the replay browser."
 msgstr ""
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:8:38
@@ -569,8 +560,8 @@ msgstr ""
 msgid "Game"
 msgstr "ゲーム"
 
-#: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:7:43
-msgid "Game stats for eteaoubles is unsupported"
+#: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:7:47
+msgid "Game stats for team battles is unsupported"
 msgstr ""
 
 #: src/renderer/pages/settings/create.messages.ts:2:26
@@ -607,7 +598,7 @@ msgid "Home"
 msgstr "ホーム"
 
 #: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:5:25
-msgid "Home Run Contest"
+msgid "Home-Run Contest"
 msgstr ""
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:4:28
@@ -696,11 +687,8 @@ msgstr "Dolphin 起動"
 msgid "Launch Melee"
 msgstr "DX 起動"
 
-#: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:7:23
-msgid "Launch Replay"
-msgstr ""
-
 #: src/renderer/pages/replays/replay_browser/replay_file/replay_file.messages.ts:5:23
+#: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:7:23
 msgid "Launch replay"
 msgstr ""
 
@@ -857,7 +845,7 @@ msgstr "DX ISO ファイルが未指定"
 msgid "No SLP files found"
 msgstr ""
 
-#: src/renderer/components/multi_path_input/multi_path_input.messages.ts:2:39
+#: src/renderer/components/multi_path_input/multi_path_input.messages.ts:2:35
 msgid "No additional folders added."
 msgstr ""
 
@@ -894,7 +882,7 @@ msgid "Normal NAT"
 msgstr ""
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:23:23
-msgid "Not available."
+msgid "Not available"
 msgstr ""
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:31:22
@@ -1157,7 +1145,7 @@ msgstr ""
 msgid "Right"
 msgstr ""
 
-#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:2:27
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:2:24
 msgid "Root SLP Folder"
 msgstr ""
 
@@ -1295,7 +1283,7 @@ msgstr ""
 msgid "Spectator ID"
 msgstr ""
 
-#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:10:32
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:10:29
 msgid "Spectator SLP Folder"
 msgstr ""
 
@@ -1373,14 +1361,15 @@ msgid "Symmetric NAT"
 msgstr ""
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:3:23
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:12:23
 msgid "Target Folder"
 msgstr ""
 
-#: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:12:23
-msgid "Target folder"
+#: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:4:21
+msgid "Target Test"
 msgstr ""
 
-#: src/renderer/components/multi_path_input/multi_path_input.messages.ts:6:41
+#: src/renderer/components/multi_path_input/multi_path_input.messages.ts:6:38
 msgid "That folder is already included."
 msgstr ""
 
@@ -1401,11 +1390,11 @@ msgstr ""
 msgid "The folder to save SLP files to."
 msgstr ""
 
-#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:11:43
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:11:40
 msgid "The folder where spectated games should be saved."
 msgstr ""
 
-#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:3:38
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:3:35
 msgid "The folder where your SLP replays should be saved."
 msgstr ""
 
