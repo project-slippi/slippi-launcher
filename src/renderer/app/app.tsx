@@ -6,7 +6,7 @@ import { LoginDialog } from "@/app/header/login_dialog";
 import type { MenuItem } from "@/app/header/main_menu";
 import { AdDialog } from "@/components/ad_dialog";
 import { AuthGuard } from "@/components/auth_guard";
-import { PersistentNotification } from "@/components/persistent_notification";
+import { PersistentNotification } from "@/components/persistent_notification/persistent_notification";
 
 export type MainMenuItem = MenuItem & {
   Component: React.ComponentType;

@@ -7,6 +7,8 @@ import { useAppStore } from "@/lib/hooks/use_app_store";
 import { useAppUpdate } from "@/lib/hooks/use_app_update";
 import { colors } from "@/styles/colors";
 
+import { PersistentNotificationMessages as Messages } from "./persistent_notification.messages";
+
 export const PersistentNotification = React.memo(() => {
   const updateVersion = useAppStore((store) => store.updateVersion);
   const updateReady = useAppStore((store) => store.updateReady);
@@ -23,7 +25,7 @@ export const PersistentNotification = React.memo(() => {
             justify-content: center;
           `}
         >
-          Downloading version {updateVersion}...
+          {Messages.downloadingVersion(updateVersion)}
         </div>
       </Outer>
     );
@@ -46,9 +48,9 @@ export const PersistentNotification = React.memo(() => {
             margin-right: 10px;
           `}
         >
-          Version {updateVersion} is now available!
+          {Messages.versionIsNowAvailable(updateVersion)}
         </span>
-        <RestartButton onClick={installAppUpdate}>Install update</RestartButton>
+        <RestartButton onClick={installAppUpdate}>{Messages.installUpdate()}</RestartButton>
       </div>
     </Outer>
   );

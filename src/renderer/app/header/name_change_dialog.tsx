@@ -10,6 +10,8 @@ import { useToasts } from "@/lib/hooks/use_toasts";
 import { validateDisplayName } from "@/lib/validate/validate";
 import { useServices } from "@/services";
 
+import { HeaderMessages as Messages } from "./header.messages";
+
 export const NameChangeDialog = ({
   displayName,
   open,
@@ -44,7 +46,7 @@ export const NameChangeDialog = ({
   return (
     <div>
       <ConfirmationModal
-        title="Edit display name"
+        title={Messages.editDisplayName()}
         open={open}
         onClose={handleClose}
         closeOnSubmit={false}
@@ -70,7 +72,7 @@ export const NameChangeDialog = ({
               />
             </span>
           ) : (
-            "Confirm"
+            Messages.confirm()
           )
         }
       >
@@ -81,7 +83,7 @@ export const NameChangeDialog = ({
           render={({ field, fieldState: { error } }) => (
             <TextField
               {...field}
-              label="Display Name"
+              label={Messages.displayName()}
               required={true}
               error={Boolean(error)}
               helperText={error ? error.message : undefined}
