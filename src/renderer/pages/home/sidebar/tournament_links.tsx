@@ -1,6 +1,5 @@
-import styled from "@emotion/styled";
 import LanguageIcon from "@mui/icons-material/Language";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
+import PeopleIcon from "@mui/icons-material/People";
 import { Card, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import * as stylex from "@stylexjs/stylex";
@@ -16,13 +15,6 @@ const NEARBY_TOURNAMENTS_URL =
 
 const ONLINE_TOURNAMENTS_URL =
   "https://start.gg/search/tournaments?refinementList%5Bevents.videogame.id%5D=1&refinementList%5BhasOnlineEvents%5D%5B0%5D=true&page=1&configure%5BhitsPerPage%5D=15&configure%5Bfilters%5D=profileType%3Atournament&range%5BeffectiveRegistrationClosesAt%5D%5Bmin%5D=1";
-
-const LinksGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  justify-items: center;
-  align-items: center;
-`;
 
 const styles = stylex.create({
   card: {
@@ -49,30 +41,28 @@ export const TournamentLinks = React.memo(function TournamentLinks() {
           marginBottom="8px"
           textTransform="uppercase"
         >
-          {Messages.tournaments()}
+          {Messages.findTournaments()}
         </Typography>
-        <LinksGrid>
-          <Button
-            color="secondary"
-            LinkComponent={ExternalLink}
-            size="small"
-            href={NEARBY_TOURNAMENTS_URL}
-            startIcon={<LocationOnIcon />}
-            title={Messages.showNearbyTournamentsInBrowser()}
-          >
-            {Messages.nearby()}
-          </Button>
-          <Button
-            color="secondary"
-            LinkComponent={ExternalLink}
-            size="small"
-            href={ONLINE_TOURNAMENTS_URL}
-            startIcon={<LanguageIcon />}
-            title={Messages.showOnlineTournamentsInBrowser()}
-          >
-            {Messages.online()}
-          </Button>
-        </LinksGrid>
+        <Button
+          color="secondary"
+          LinkComponent={ExternalLink}
+          size="small"
+          href={NEARBY_TOURNAMENTS_URL}
+          startIcon={<PeopleIcon />}
+          title={Messages.findInPersonTournaments()}
+        >
+          {Messages.inPerson()}
+        </Button>
+        <Button
+          color="secondary"
+          LinkComponent={ExternalLink}
+          size="small"
+          href={ONLINE_TOURNAMENTS_URL}
+          startIcon={<LanguageIcon />}
+          title={Messages.findOnlineTournaments()}
+        >
+          {Messages.online()}
+        </Button>
       </div>
     </Card>
   );

@@ -1,7 +1,7 @@
 export const TournamentLinksMessages = {
-  tournaments: () => "Tournaments",
-  nearby: () => "Nearby",
+  findTournaments: () => "Find tournaments",
+  inPerson: () => "In-Person",
   online: () => "Online",
-  showNearbyTournamentsInBrowser: () => "Show nearby tournaments in the browser",
-  showOnlineTournamentsInBrowser: () => "Show online tournaments in the browser",
+  findInPersonTournaments: () => "Find in-person tournaments",
+  findOnlineTournaments: () => "Find online tournaments",
 };
