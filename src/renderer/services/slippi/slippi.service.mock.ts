@@ -4,7 +4,7 @@ import type { PlayKey } from "@dolphin/types";
 
 import type { AuthService } from "../auth/types";
 import { delayAndMaybeError } from "../utils";
-import { generateMockChatMessage, generateUserSubscriptionLevel } from "./mockSlippiDataUtils";
+import { generateMockChatMessage, generateUserSubscriptionLevel } from "./mock_slippi_data_utils";
 import type { ChatMessageData, SlippiBackendService, UserData } from "./types";
 
 const SHOULD_ERROR = false;

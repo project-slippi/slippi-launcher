@@ -18,7 +18,7 @@ import {
   QUERY_CHAT_MESSAGE_DATA,
   QUERY_GET_USER_DATA,
   QUERY_VALIDATE_USER_ID,
-} from "./graphqlEndpoints";
+} from "./graphql_endpoints";
 import type { AvailableMessageType, ChatMessageData, SlippiBackendService, UserData } from "./types";
 
 const SLIPPI_BACKEND_URL = process.env.SLIPPI_GRAPHQL_ENDPOINT;
