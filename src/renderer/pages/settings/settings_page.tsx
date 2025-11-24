@@ -64,6 +64,7 @@ export const SettingsPage = React.memo(({ settings }: { settings: SettingSection
     <Outer>
       <DualPane
         id="settings-view"
+        width={275}
         leftStyle={{ backgroundColor: colors.purpleDark }}
         leftSide={
           <MenuColumn>
