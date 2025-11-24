@@ -619,7 +619,7 @@ msgstr "すでにアカウントを持っています"
 
 #: src/renderer/components/build_info/build_info.messages.ts:2:19
 msgid "I hope you know what you're doing..."
-msgstr "何をしているか理解していることを願います..."
+msgstr "本当に分かっててやってるんですよね…？"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:2:20
 msgid "IP Address"
@@ -843,7 +843,7 @@ msgstr "次のリプレイ"
 
 #: src/renderer/pages/quick_start/steps/setup_complete_step/setup_complete_step.messages.ts:2:19
 msgid "Nice work!"
-msgstr "完了しました！"
+msgstr "おつかれさま！"
 
 #: src/renderer/app/header/header.messages.ts:6:25
 msgid "No Melee ISO file specified"
@@ -1466,7 +1466,7 @@ msgid ""
 "This is the optimal result. Also known as 'easy', 'full cone', or 'open' "
 "NAT."
 msgstr ""
-"これは最適な結果です。「easy」、「full cone」、「open」NATとも呼ばれます。"
+"これは最適な結果です。「easy」「full cone」「open」NATとも呼ばれます。"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:18:70
 #. {0} dolphinTypeName: string
@@ -1504,11 +1504,11 @@ msgstr "UPnP"
 
 #: src/renderer/pages/not_found/not_found_page.messages.ts:2:15
 msgid "Uh oh."
-msgstr "おっと。"
+msgstr "おっと…"
 
 #: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:2:32
 msgid "Uh oh. We couldn't open that file. It's probably corrupted."
-msgstr "おっと。ファイルを開けませんでした。おそらく破損しています。"
+msgstr "おっと…。ファイルを開けませんでした。たぶん壊れています。"
 
 #: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:3:18
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:13:18
@@ -1630,7 +1630,7 @@ msgstr "次回プレイする際は再度ログインが必要です。"
 
 #: src/renderer/pages/quick_start/quick_start.messages.ts:2:25
 msgid "You're all set up"
-msgstr "セットアップ完了"
+msgstr "準備完了！"
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:8:27
 msgid ""
@@ -1661,34 +1661,34 @@ msgstr "またはここにドラッグ＆ドロップ"
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:8:41
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} filtered."
-msgstr "{0, plural, one {# 件フィルター済み} other {# 件フィルター済み}}"
+msgstr "{0}件フィルター済み"
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:7:38
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} found."
-msgstr "{0, plural, one {# 件見つかりました} other {# 件見つかりました}}"
+msgstr "{0}件見つかりました"
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:10:38
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} had errors."
-msgstr "{0, plural, one {# 件エラー} other {# 件エラー}}"
+msgstr "{0}件エラー"
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:9:39
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} hidden."
-msgstr "{0, plural, one {# 件非表示} other {# 件非表示}}"
+msgstr "{0}件非表示"
 
 #: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:2:37
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} selected"
-msgstr "{0, plural, one {# 件選択中} other {# 件選択中}}"
+msgstr "{0}件選択中"
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:2:36
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} successfully deleted."
-msgstr "{0, plural, one {# 件削除しました} other {# 件削除しました}}"
+msgstr "{0}件削除しました"
 
 #: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:8:37
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} will be deleted."
-msgstr "{0, plural, one {# 件削除されます} other {# 件削除されます}}"
+msgstr "{0}件削除されます"
