@@ -1,6 +1,5 @@
 import mousetrap from "mousetrap";
-import type { RefObject } from "react";
-import { useCallback, useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
 const isMac = window.electron.bootstrap.isMac;
@@ -36,55 +35,4 @@ export const usePageNavigationShortcuts = (paths: string[]) => {
       });
     };
   }, [handlers, paths]);
-};
-
-// Add vim key bindings
-export const usePageScrollingShortcuts = (ref: RefObject<HTMLDivElement>) => {
-  const smallStep = 50;
-  const bigStep = 300;
-
-  const scrollBy = useCallback(
-    (amount: number) => {
-      if (!ref.current) {
-        return;
-      }
-
-      ref.current.scrollBy({ top: amount });
-    },
-    [ref],
-  );
-
-  useEffect(() => {
-    const handlers: Array<{
-      keys: string | string[];
-      handler: () => void;
-    }> = [
-      {
-        keys: "j",
-        handler: () => scrollBy(smallStep),
-      },
-      {
-        keys: "k",
-        handler: () => scrollBy(-smallStep),
-      },
-      {
-        keys: "ctrl+d",
-        handler: () => scrollBy(bigStep),
-      },
-      {
-        keys: "ctrl+u",
-        handler: () => scrollBy(-bigStep),
-      },
-    ];
-
-    handlers.forEach((handler) => {
-      mousetrap.bind(handler.keys, handler.handler);
-    });
-
-    return () => {
-      handlers.forEach((handler) => {
-        mousetrap.unbind(handler.keys);
-      });
-    };
-  }, [ref, scrollBy]);
 };

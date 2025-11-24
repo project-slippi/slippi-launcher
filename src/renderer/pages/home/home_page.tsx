@@ -4,7 +4,6 @@ import React from "react";
 
 import { DualPane } from "@/components/dual_pane";
 import { Footer } from "@/components/footer/footer";
-import { usePageScrollingShortcuts } from "@/lib/hooks/use_shortcuts";
 import { colors } from "@/styles/colors";
 
 import { NewsFeed } from "./news_feed/news_feed";
@@ -28,9 +27,6 @@ const Main = styled.div`
 `;
 
 export const HomePage = React.memo(function HomePage() {
-  const mainRef = React.createRef<HTMLDivElement>();
-  usePageScrollingShortcuts(mainRef);
-
   return (
     <Outer>
       <div
@@ -44,7 +40,7 @@ export const HomePage = React.memo(function HomePage() {
         <DualPane
           id="home-page"
           leftSide={
-            <Main ref={mainRef}>
+            <Main>
               <NewsFeed />
             </Main>
           }
