@@ -11,11 +11,11 @@ msgstr ""
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
 msgid "2-4 uppercase English characters"
-msgstr "2～4文字の英大文字"
+msgstr "2～4文字の大文字アルファベット"
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:10:40
 msgid "7z files must be uncompressed to be used in Dolphin."
-msgstr "7zファイルはDolphinで使用するために解凍する必要があります。"
+msgstr "7zファイルをDolphinで使用するためには解凍する必要があります。"
 
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:8:42
 msgid "A confirmation email has been sent to:"
@@ -58,7 +58,7 @@ msgid ""
 "capture) when the game is active. Requires OBS Websocket 5.0+, which comes "
 "preinstalled on OBS 28+."
 msgstr ""
-"ゲームがアクティブなときにOBSソース（例：Dolphinキャプチャ）を自動で表示・非表示します。OBS Websocket "
+"ゲームがアクティブになったときにOBSソース（例：Dolphinキャプチャ）を自動的に表示したり非表示化したりします。OBS Websocket "
 "5.0+が必要です（OBS 28+にプリインストールされています）。"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:24:33
@@ -143,7 +143,7 @@ msgstr "CGNATまたはダブルNAT"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:5:23
 msgid "Can be changed later for a one-time payment"
-msgstr "後で一回限りの支払いで変更できます"
+msgstr "後で一回限りの支払いに変更できます"
 
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:5:24
 msgid "Can't find the email? Check your spam folder. Still missing? "
@@ -273,7 +273,7 @@ msgstr "コードを確認"
 
 #: src/renderer/components/login_form/login_form.messages.ts:9:26
 msgid "Confirm password"
-msgstr "パスワード確認"
+msgstr "パスワードを確認"
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:8:18
 msgid "Connect"
@@ -577,7 +577,7 @@ msgstr "戻る"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:20:20
 msgid "Hard reset"
-msgstr "完全リセット"
+msgstr "ハードリセット"
 
 #: src/renderer/pages/settings/create.messages.ts:13:15
 msgid "Help"
@@ -753,7 +753,7 @@ msgstr "アカウントを管理"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:2:23
 msgid "Melee ISO File"
-msgstr "DX の ISO ファイル"
+msgstr "スマブラDXの ISO ファイル"
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:9:17
 msgid "Mirror"
@@ -841,7 +841,7 @@ msgstr "おつかれさま！"
 
 #: src/renderer/app/header/header.messages.ts:6:25
 msgid "No Melee ISO file specified"
-msgstr "DX ISO ファイルが未指定です"
+msgstr "スマブラDXの ISO ファイルが未指定です"
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:5:26
 msgid "No SLP files found"
@@ -984,15 +984,15 @@ msgstr "再生"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:6:26
 msgid "Playback Dolphin"
-msgstr "再生Dolphin"
+msgstr "再生用Dolphin"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:9:34
 msgid "Playback Dolphin Settings"
-msgstr "再生Dolphin設定"
+msgstr "再生用Dolphin設定"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:15:29
 msgid "Playback Gecko Codes"
-msgstr "再生Geckoコード"
+msgstr "再生用Geckoコード"
 
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:14:34
 msgid "Please log in to use this feature."
@@ -1161,7 +1161,7 @@ msgstr "このコマンドを実行"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostics_button.messages.ts:2:29
 msgid "Running network diagnostics..."
-msgstr "ネットワーク診断実行中..."
+msgstr "ネットワーク診断を実行中..."
 
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:2:15
 #: src/renderer/pages/settings/spectate_settings/spectate_port_form/spectate_port_form.messages.ts:4:15
@@ -1195,7 +1195,7 @@ msgstr "すべて選択"
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:2:25
 msgid "Select Melee ISO"
-msgstr "DX ISOを選択"
+msgstr "スマブラDXの ISO を選択"
 
 #: src/renderer/pages/settings/appearance_settings/language_selector/language_selector.messages.ts:3:33
 msgid "Select your preferred language for the app."
@@ -1293,7 +1293,7 @@ msgstr "観戦者ID"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:10:29
 msgid "Spectator SLP Folder"
-msgstr "観戦SLPフォルダ"
+msgstr "観戦者SLPフォルダ"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:23:17
 msgid "Stable (Ishiiruka)"
@@ -1396,7 +1396,7 @@ msgstr ""
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:4:44
 #. {0} codeName: string
 msgid "The code <{0}> will be deleted. This cannot be undone."
-msgstr "コード<{0}>が削除されます。この操作は元に戻せません。"
+msgstr "コード<{0}>が削除されます。この操作は取り消せません。"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:4:34
 msgid "The folder to save SLP files to."
@@ -1412,7 +1412,7 @@ msgstr "SLPリプレイの保存先フォルダです。"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:3:34
 msgid "The path to an NTSC Melee 1.02 ISO."
-msgstr "NTSC DX 1.02 ISO へのパスです。"
+msgstr "スマブラDX NTSC 1.02 ISO へのパスです。"
 
 #: src/renderer/pages/settings/spectate_settings/spectate_settings.messages.ts:5:47
 msgid "The port to use for the spectate remote control WebSocket."
@@ -1437,7 +1437,7 @@ msgid ""
 "account for any reason."
 msgstr ""
 "これらはSlippiを使用する際に従うべき一連のルールです。これらのルールを破ると、重大性と頻度に応じてアカウント停止または追放される可能性があります。"
-"これは網羅的なリストではなく、当社はいかなる理由でもアカウントを停止または追放する権利を留保します。"
+"これは網羅的なリストではなく、当社はあらゆる理由でアカウントを停止または追放する権利を有します。"
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:3:34
 msgid "This application uses an NTSC 1.02 game backup."
@@ -1634,7 +1634,7 @@ msgstr "このISOはサポートされていません。このISOを使用する
 msgid ""
 "Your Nintendont is out of date and no longer supported. Click to download "
 "the latest version from the Slippi website."
-msgstr "Nintendontが古くサポートされていません。クリックしてSlippi Webサイトから最新バージョンをダウンロードしてください。"
+msgstr "もうサポートされていない古いNintendontです。クリックしてSlippi Webサイトから最新バージョンをダウンロードしてください。"
 
 #: src/renderer/pages/spectate/spectator_id_block/spectator_id_block.messages.ts:2:26
 msgid "Your Spectator ID"
