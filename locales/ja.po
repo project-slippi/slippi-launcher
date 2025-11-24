@@ -46,7 +46,7 @@ msgstr "追加"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:12:31
 msgid "Additional SLP Folders"
-msgstr "追加のSLPディレクトリ"
+msgstr "追加のSLPフォルダ"
 
 #: src/renderer/pages/settings/create.messages.ts:12:19
 msgid "Advanced"
@@ -157,7 +157,7 @@ msgstr "キャンセル"
 
 #: src/renderer/components/multi_path_input/multi_path_input.messages.ts:5:36
 msgid "Cannot add subfolders of the Root SLP Folder."
-msgstr "ルートSLPディレクトリのサブディレクトリは追加できません。"
+msgstr "ルートSLPフォルダのサブフォルダは追加できません。"
 
 #: src/renderer/pages/spectate/footer/footer.messages.ts:3:23
 msgid "Change Folder"
@@ -208,7 +208,7 @@ msgstr "接続コードを選択"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:13:42
 msgid "Choose any additional SLP folders that should show up in the replay browser."
-msgstr "リプレイブラウザに表示する追加のSLPディレクトリを選択してください。"
+msgstr "リプレイブラウザに表示する追加のSLPフォルダを選択してください。"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:8:38
 msgid "Choose what happens when the Play button is pressed."
@@ -849,7 +849,7 @@ msgstr "SLPファイルが見つかりません"
 
 #: src/renderer/components/multi_path_input/multi_path_input.messages.ts:2:35
 msgid "No additional folders added."
-msgstr "追加ディレクトリはありません。"
+msgstr "追加フォルダはありません。"
 
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:7:32
 msgid "No associated user found"
@@ -1153,7 +1153,7 @@ msgstr "右"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:2:24
 msgid "Root SLP Folder"
-msgstr "ルートSLPディレクトリ"
+msgstr "ルートSLPフォルダ"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:36:25
 msgid "Run this command"
@@ -1293,7 +1293,7 @@ msgstr "観戦者ID"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:10:29
 msgid "Spectator SLP Folder"
-msgstr "観戦SLPディレクトリ"
+msgstr "観戦SLPフォルダ"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:23:17
 msgid "Stable (Ishiiruka)"
@@ -1379,7 +1379,7 @@ msgstr "ターゲットをこわせ"
 
 #: src/renderer/components/multi_path_input/multi_path_input.messages.ts:6:38
 msgid "That folder is already included."
-msgstr "そのディレクトリは既に含まれています。"
+msgstr "そのフォルダは既に含まれています。"
 
 #: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:4:5
 msgid ""
