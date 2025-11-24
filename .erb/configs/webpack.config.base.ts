@@ -76,7 +76,8 @@ const configuration: webpack.Configuration = {
     new webpack.EnvironmentPlugin({
       NODE_ENV: "production",
 
-      // Config flags
+      // Environment Variables to expose in the renderer process
+      DEBUG_I18N: null,
       ENABLE_REPLAY_DATABASE: null,
     }),
 

@@ -48,7 +48,7 @@ class I18nClient implements I18nService {
           load: "languageOnly", // ignore the locale suffix in the language code e.g. "en-US" -> "en"
           lowerCaseLng: true,
           cleanCode: true,
-          debug: this.isDevelopment,
+          debug: Boolean(process.env.DEBUG_I18N),
         });
 
       this.initialized = true;
