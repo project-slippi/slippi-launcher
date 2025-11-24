@@ -19,7 +19,7 @@ msgstr "7zファイルはDolphinで使用するために解凍する必要があ
 
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:8:42
 msgid "A confirmation email has been sent to:"
-msgstr "確認メールが送信されました："
+msgstr "確認メールを送信しました："
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:21:20
 msgid "Accept All"
@@ -35,7 +35,7 @@ msgstr "オンラインプレイを有効化"
 
 #: src/renderer/pages/home/sidebar/ranked_status.messages.ts:3:17
 msgid "Active"
-msgstr "実施中"
+msgstr "開催中"
 
 #: src/renderer/components/multi_path_input/multi_path_input.messages.ts:3:14
 #: src/renderer/pages/console_mirror/new_connection_list/new_connection_list.messages.ts:5:14
@@ -58,8 +58,8 @@ msgid ""
 "capture) when the game is active. Requires OBS Websocket 5.0+, which comes "
 "preinstalled on OBS 28+."
 msgstr ""
-"ゲームがアクティブなときにOBSソース（例：Dolphinキャプチャ）の自動表示・非表示を可能にします。"
-"OBS Websocket 5.0+が必要です（OBS 28+にプリインストール）。"
+"ゲームがアクティブなときにOBSソース（例：Dolphinキャプチャ）を自動で表示・非表示します。"
+"OBS Websocket 5.0+が必要です（OBS 28+にプリインストールされています）。"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:24:33
 msgid ""
@@ -70,16 +70,16 @@ msgstr ""
 
 #: src/renderer/pages/settings/spectate_settings/spectate_settings.messages.ts:3:49
 msgid "Allows remote control of spectate features via WebSocket."
-msgstr "WebSocket経由で観戦機能のリモートコントロールを可能にします。"
+msgstr "WebSocket経由で観戦機能をリモートコントロールできるようにします。"
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:22:27
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:12:27
 msgid "An error occurred. The application does not have a user."
-msgstr "エラーが発生しました。アプリケーションにユーザーがありません。"
+msgstr "エラーが発生しました。アプリケーションにユーザーが存在しません。"
 
 #: src/renderer/pages/settings/appearance_settings/language_selector/language_selector.messages.ts:2:22
 msgid "App Language"
-msgstr "言語"
+msgstr "アプリの言語"
 
 #: src/renderer/pages/settings/create.messages.ts:10:22
 msgid "App Settings"
@@ -103,7 +103,7 @@ msgstr "よろしいですか？"
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:3:39
 msgid "Automatically install Slippi Launcher updates when they become available."
-msgstr "Slippi Launcher のアップデートが利用可能になったときに自動的にインストール"
+msgstr "Slippi Launcher のアップデートが利用可能になったときに自動的にインストールします。"
 
 #: src/renderer/pages/console_mirror/new_connection_list/new_connection_list.messages.ts:4:20
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:7:20
@@ -126,11 +126,11 @@ msgstr "ベータ版（Mainline）"
 #: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:9:50
 #. {0} broadcastDuration: string
 msgid "Broadcast ended after {0}"
-msgstr "配信終了：{0}"
+msgstr "配信は{0}で終了しました"
 
 #: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:8:27
 msgid "Broadcast started"
-msgstr "配信開始"
+msgstr "配信を開始しました"
 
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:6:66
 #. {0} displayName: string
@@ -144,11 +144,11 @@ msgstr "CGNATまたはダブルNAT"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:5:23
 msgid "Can be changed later for a one-time payment"
-msgstr "後で一回限りの支払いで変更可能"
+msgstr "後で一回限りの支払いで変更できます"
 
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:5:24
 msgid "Can't find the email? Check your spam folder. Still missing? "
-msgstr "メールが見つかりませんか？迷惑メールフォルダを確認してください。それでも見つからない場合は "
+msgstr "メールが見つかりませんか？迷惑メールフォルダを確認しましたか？それでも見つからない場合は "
 
 #: src/renderer/app/header/header.messages.ts:12:17
 #: src/renderer/components/confirmation_modal/confirmation_modal.messages.ts:3:17
@@ -187,20 +187,20 @@ msgstr "ネットプレイで使用するチャットメッセージ"
 
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:4:28
 msgid "Check Verification"
-msgstr "確認を確認"
+msgstr "確認する"
 
 #: src/renderer/app/header/header.messages.ts:3:26
 msgid "Check for updates"
-msgstr "アップデート確認"
+msgstr "アップデートを確認"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostics_button.messages.ts:6:29
 #: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:9:29
 msgid "Check network issues"
-msgstr "ネットワーク問題を確認"
+msgstr "ネットワークの問題を確認"
 
 #: src/renderer/app/header/header.messages.ts:4:29
 msgid "Checking for updates..."
-msgstr "アップデート確認中..."
+msgstr "アップデートを確認中..."
 
 #: src/renderer/app/header/header.messages.ts:8:29
 #: src/renderer/pages/quick_start/steps/activate_online_step/activate_online_step.messages.ts:2:29
@@ -209,16 +209,15 @@ msgstr "接続コードを選択"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:13:42
 msgid "Choose any additional SLP folders that should show up in the replay browser."
-msgstr ""
-"リプレイブラウザに表示する追加のSLPディレクトリを選択してください。"
+msgstr "リプレイブラウザに表示する追加のSLPディレクトリを選択してください。"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:8:38
 msgid "Choose what happens when the Play button is pressed."
-msgstr "再生ボタンを押したときの動作を選択"
+msgstr "再生ボタンを押したときの動作を選択してください。"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:22:50
 msgid "Choose which Slippi Dolphin release to install"
-msgstr "インストールするSlippi Dolphinのリリースを選択"
+msgstr "インストールするSlippi Dolphinのリリースを選択します。"
 
 #: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:4:16
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:8:16
@@ -239,7 +238,7 @@ msgstr "フィルターをクリア"
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:17:29
 msgid "Click the links below to review:"
-msgstr "以下のリンクをクリックして確認してください："
+msgstr "以下のリンクをクリックして内容を確認してください："
 
 #: src/renderer/pages/settings/settings_page.messages.ts:2:16
 msgid "Close"
@@ -248,7 +247,7 @@ msgstr "閉じる"
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:4:31
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:7:38
 msgid "Close Dolphin to change this setting"
-msgstr "この設定を変更するには Dolphin を閉じる"
+msgstr "この設定を変更するには Dolphin を終了してください。"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:10:33
 msgid "Configure Dolphin"
@@ -442,7 +441,7 @@ msgstr "メールアドレス確認完了"
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:2:28
 msgid "Enable Auto Updates"
-msgstr "自動アップデート"
+msgstr "自動アップデートを有効化"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:13:29
 msgid "Enable Autoswitcher"
@@ -454,7 +453,7 @@ msgstr "コンソールリレーを有効化"
 
 #: src/renderer/pages/settings/game_settings/game_music_toggle/game_music_toggle.messages.ts:2:22
 msgid "Enable Music"
-msgstr "音楽"
+msgstr "音楽を有効化"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:7:29
 msgid "Enable Real-time Mode"
@@ -466,7 +465,7 @@ msgstr "観戦リモートコントロールを有効化"
 
 #: src/renderer/pages/settings/game_settings/game_music_toggle/game_music_toggle.messages.ts:3:33
 msgid "Enable in-game music."
-msgstr "ゲーム内音楽を有効化"
+msgstr "ゲーム内音楽を有効化します。"
 
 #: src/renderer/pages/home/sidebar/ranked_status.messages.ts:5:19
 msgid "Ending In"
@@ -478,7 +477,7 @@ msgstr "観戦者IDを入力"
 
 #: src/renderer/pages/spectate/share_gameplay_block/share_gameplay_block.messages.ts:3:35
 msgid "Error connecting to Dolphin. Ensure Dolphin is running and try again."
-msgstr "Dolphinへの接続エラー。Dolphinが起動していることを確認して再試行してください。"
+msgstr "Dolphinへの接続エラーです。Dolphinが起動していることを確認してから再試行してください。"
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:3:53
 #. {0} errorMessage: string
@@ -508,31 +507,31 @@ msgstr "よくある質問"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:29:44
 msgid "Failed to determine CGNAT or Double NAT presence"
-msgstr "CGNATまたはダブルNATの有無の判定に失敗"
+msgstr "CGNATまたはダブルNATの有無の判定に失敗しました"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:2:37
 msgid "Failed to determine IP Address"
-msgstr "IPアドレスの判定に失敗"
+msgstr "IPアドレスの判定に失敗しました"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:11:35
 msgid "Failed to determine NAT type"
-msgstr "NATタイプの判定に失敗"
+msgstr "NATタイプの判定に失敗しました"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:21:39
 msgid "Failed to determine port mapping availability"
-msgstr "ポートマッピングの可用性の判定に失敗"
+msgstr "ポートマッピングの可用性の判定に失敗しました"
 
 #: src/renderer/pages/home/news_feed/news_feed.messages.ts:4:24
 msgid "Failed to fetch news articles."
-msgstr "ニュース記事の取得に失敗"
+msgstr "ニュース記事の取得に失敗しました。"
 
 #: src/renderer/app/header/header.messages.ts:5:29
 msgid "Failed to get updates"
-msgstr "アップデート取得失敗"
+msgstr "アップデートの取得に失敗しました"
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:2:33
 msgid "Failed to read gecko codes"
-msgstr "Geckoコードの読み込みに失敗"
+msgstr "Geckoコードの読み込みに失敗しました"
 
 #: src/renderer/pages/home/sidebar/tournament_links.messages.ts:5:34
 msgid "Find in-person tournaments"
@@ -551,7 +550,7 @@ msgid ""
 "First give this ID to the person whose gameplay you want to watch. Then "
 "after they have started their broadcast, click Refresh."
 msgstr ""
-"まず、プレイを観戦したい相手にこのIDを伝えてください。相手が配信を開始したら、更新をクリックしてください。"
+"まず、プレイを観戦したい相手にこのIDを伝えてください。相手が配信を開始したら、「更新」をクリックしてください。"
 
 #: src/renderer/components/footer/footer.messages.ts:3:26
 msgid "Follow Project Slippi on Twitter"
@@ -567,7 +566,7 @@ msgstr "ゲーム"
 
 #: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:7:47
 msgid "Game stats for team battles is unsupported"
-msgstr "ダブルスの試合統計は未対応"
+msgstr "ダブルスの試合統計は未対応です"
 
 #: src/renderer/pages/settings/create.messages.ts:2:26
 msgid "General Settings"
@@ -639,7 +638,7 @@ msgstr "オフライン"
 
 #: src/renderer/pages/settings/game_settings/game_music_toggle/game_music_toggle.messages.ts:4:33
 msgid "Incompatible with WASAPI."
-msgstr "WASAPI 非対応"
+msgstr "WASAPI 非対応です。"
 
 #: src/renderer/components/persistent_notification/persistent_notification.messages.ts:3:24
 msgid "Install update"
@@ -743,7 +742,7 @@ msgid ""
 "Mainline Slippi Dolphin has updated OS requirements, check the Help Section "
 "for more info"
 msgstr ""
-"Mainline Slippi Dolphinは新しいOS要件があります。詳細はヘルプセクションを確認してください"
+"Mainline Slippi Dolphin では OS の要件が更新されています。詳細はヘルプセクションを確認してください。"
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:5:17
 msgid "Manage"
@@ -848,7 +847,7 @@ msgstr "完了しました！"
 
 #: src/renderer/app/header/header.messages.ts:6:25
 msgid "No Melee ISO file specified"
-msgstr "DX ISO ファイルが未指定"
+msgstr "DX ISO ファイルが未指定です"
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:5:26
 msgid "No SLP files found"
@@ -868,7 +867,7 @@ msgstr "未設定"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:5:34
 msgid "No folder selected"
-msgstr "フォルダが未選択"
+msgstr "フォルダが未選択です"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:8:22
 msgid "No folder set"
@@ -923,7 +922,7 @@ msgid ""
 "Once every 4 days, ranked play is available to all users including "
 "non-subs. Check back soon!"
 msgstr ""
-"4日に1回、非サブスクライバーを含むすべてのユーザーがランクマッチをプレイできます。またお越しください！"
+"4日に1回、非サブスクライバーを含むすべてのユーザーがランクマッチをプレイできます。ぜひまたお越しください！"
 
 #: src/renderer/pages/home/sidebar/tournament_links.messages.ts:4:17
 msgid "Online"
@@ -935,7 +934,7 @@ msgstr "オンライン有効化が必要です"
 
 #: src/renderer/app/header/header.messages.ts:10:41
 msgid "Only logged in users can play online. Would you like to play offline?"
-msgstr "ログインユーザーのみオンラインでプレイできます。オフラインでプレイしますか？"
+msgstr "オンラインでプレイできるのはログインユーザーのみです。オフラインでプレイしますか？"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:12:45
 msgid "Only modify these values if you know what you're doing."
@@ -1095,7 +1094,7 @@ msgstr "続きを読む"
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:4:23
 msgid "Reconnecting"
-msgstr ""
+msgstr "再接続中"
 
 #: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:2:18
 #: src/renderer/pages/spectate/spectate_page.messages.ts:4:18
@@ -1118,7 +1117,7 @@ msgstr "削除"
 msgid ""
 "Removes temporary downloads, files used for Dolphin communication, and "
 "files streamed from Slippi.gg."
-msgstr "一時ダウンロード、Dolphin 通信に使用されるファイル、および Slippi.gg からストリーミングされたファイルを削除"
+msgstr "一時ダウンロード、Dolphin 通信に使用されるファイル、および Slippi.gg からストリーミングされたファイルを削除します。"
 
 #: src/renderer/app/create.messages.ts:3:18
 #: src/renderer/pages/settings/create.messages.ts:4:18
@@ -1128,7 +1127,7 @@ msgstr "リプレイ"
 #: src/renderer/pages/settings/game_settings/game_music_toggle/game_music_toggle.messages.ts:5:48
 #. {0} version: string
 msgid "Requires Dolphin version {0} or higher"
-msgstr "Dolphinバージョン {0} 以上が必要"
+msgstr "Dolphinバージョン {0} 以上が必要です"
 
 #: src/renderer/components/login_form/login_form.messages.ts:16:16
 msgid "Reset"
@@ -1202,7 +1201,7 @@ msgstr "選択"
 
 #: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:5:20
 msgid "Select All"
-msgstr ""
+msgstr "すべて選択"
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:2:25
 msgid "Select Melee ISO"
@@ -1210,7 +1209,7 @@ msgstr "DX ISOを選択"
 
 #: src/renderer/pages/settings/appearance_settings/language_selector/language_selector.messages.ts:3:33
 msgid "Select your preferred language for the app."
-msgstr "アプリの使用言語を選択"
+msgstr "アプリの使用言語を選択してください。"
 
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:6:20
 msgid "Send verification email again"
@@ -1275,7 +1274,7 @@ msgid ""
 "result reporting, etc. Attempting to circumvent these systems is not "
 "allowed."
 msgstr ""
-"Slippiはプレイヤーマッチング、結果報告などの公平性を促進するために最善を尽くしています。"
+"Slippiはプレイヤーマッチングや結果報告などの公平性を促進するために最善を尽くしています。"
 "これらのシステムを回避しようとすることは禁止されています。"
 
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:7:28
@@ -1367,7 +1366,7 @@ msgstr "サブスク登録"
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:8:28
 msgid "Successfully cleared temporary files."
-msgstr "削除完了"
+msgstr "一時ファイルを削除しました。"
 
 #: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:10:29
 msgid "Successfully copied logs to clipboard"
@@ -1412,23 +1411,23 @@ msgstr "コード<{0}>が削除されます。この操作は元に戻せませ�
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:4:34
 msgid "The folder to save SLP files to."
-msgstr "SLPファイルの保存先フォルダ。"
+msgstr "SLPファイルの保存先フォルダです。"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:11:40
 msgid "The folder where spectated games should be saved."
-msgstr "観戦した試合の保存先フォルダ。"
+msgstr "観戦した試合の保存先フォルダです。"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:3:35
 msgid "The folder where your SLP replays should be saved."
-msgstr "SLPリプレイの保存先フォルダ。"
+msgstr "SLPリプレイの保存先フォルダです。"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:3:34
 msgid "The path to an NTSC Melee 1.02 ISO."
-msgstr "NTSC DX 1.02 ISO へのパス"
+msgstr "NTSC DX 1.02 ISO へのパスです。"
 
 #: src/renderer/pages/settings/spectate_settings/spectate_settings.messages.ts:5:47
 msgid "The port to use for the spectate remote control WebSocket."
-msgstr "観戦リモートコントロールWebSocketで使用するポート。"
+msgstr "観戦リモートコントロールWebSocketで使用するポートです。"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:27:5
 #. {0} defaultPort: number
@@ -1436,12 +1435,12 @@ msgid ""
 "The port used for connecting to console. Only change this if connecting to "
 "a Console Relay. If unsure, leave it as {0}."
 msgstr ""
-"ゲーム機への接続に使用するポート。コンソールリレーに接続する場合のみ変更してください。"
+"ゲーム機への接続に使用するポートです。コンソールリレーに接続する場合のみ変更してください。"
 "不明な場合は {0} のままにしてください。"
 
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:3:44
 msgid "The unique viewer code of the spectator."
-msgstr "観戦者の一意の視聴者コード。"
+msgstr "観戦者の一意の視聴者コードです。"
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:6:5
 msgid ""
@@ -1485,7 +1484,7 @@ msgstr "合計サイズ: {0}"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:4:26
 msgid "Trailing numbers will be auto-generated"
-msgstr ""
+msgstr "末尾の数字は自動生成されます"
 
 #: src/renderer/pages/home/news_feed/news_feed.messages.ts:5:19
 msgid "Try again"
@@ -1593,7 +1592,7 @@ msgid ""
 "Visit your email, click the link in the verification email, and then check "
 "verification"
 msgstr ""
-"メールを開き、確認メール内のリンクをクリックしてから、確認をチェックしてください"
+"メールを開き、確認メール内のリンクをクリックしてから、確認を実行してください。"
 
 #: src/renderer/pages/console_mirror/console_mirror.messages.ts:4:26
 msgid "What is Mirroring?"
@@ -1618,8 +1617,8 @@ msgid ""
 "settings to see if this can be changed to 'easy', 'full cone', 'normal', or "
 "'open' NAT."
 msgstr ""
-"他のプレイヤーとの接続に問題が発生する可能性があります。「hard」、「strict」、「symmetric」NATとも呼ばれます。"
-"可能であれば、ルーターの設定を確認して、「easy」、「full cone」、「normal」、「open」NATに変更できるか確認してください。"
+"他のプレイヤーとの接続に問題が発生する可能性があります。「hard」「strict」「symmetric」NATとも呼ばれます。"
+"可能であれば、ルーターの設定を確認して、「easy」「full cone」「normal」「open」NATに変更できるか確認してください。"
 
 #: src/renderer/pages/spectate/spectate_page.messages.ts:5:28
 msgid "You must be logged in to use this feature"
