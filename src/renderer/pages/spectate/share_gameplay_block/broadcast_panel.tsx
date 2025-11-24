@@ -9,6 +9,8 @@ import TimeAgo from "react-timeago";
 import { makeIntlFormatter } from "react-timeago/defaultFormatter";
 
 import { useAppStore } from "@/lib/hooks/use_app_store";
+import { getLocale } from "@/lib/time";
+import type { SupportedLanguage } from "@/services/i18n/util";
 import { colors } from "@/styles/colors";
 
 import { BroadcastPanelMessages as Messages } from "./broadcast_panel.messages";
@@ -108,7 +110,13 @@ export const BroadcastPanel = ({
             {Messages.broadcastStarted()} <TimeAgo date={startTime} formatter={intlFormatter} />
           </div>
         )}
-        {isDisconnected && broadcastDuration && <div>{Messages.broadcastEnded(formatDuration(broadcastDuration))}</div>}
+        {isDisconnected && broadcastDuration && (
+          <div>
+            {Messages.broadcastEnded(
+              formatDuration(broadcastDuration, { locale: getLocale(currentLanguage as SupportedLanguage) }),
+            )}
+          </div>
+        )}
       </div>
       <StartBroadcastDialog open={modalOpen} onClose={() => setModalOpen(false)} onSubmit={onStartBroadcast} />
     </div>
