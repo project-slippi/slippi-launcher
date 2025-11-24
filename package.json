@@ -38,10 +38,10 @@
     "url": "https://github.com/jlaferri"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=20"
   },
   "devEngines": {
-    "node": ">=16.x"
+    "node": ">=20.x"
   },
   "browserslist": [
     "chrome 91"
