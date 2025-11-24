@@ -45,7 +45,8 @@ render(
       <MuiThemeProvider theme={slippiTheme}>
         <ThemeProvider theme={slippiTheme as any}>
           <ToastProvider>
-            <Suspense fallback={<LoadingScreen />}>
+            {/* Don't use a message here since the i18nService is not yet initialized at this point. */}
+            <Suspense fallback={<LoadingScreen message="" />}>
               <LazyApp />
             </Suspense>
           </ToastProvider>
