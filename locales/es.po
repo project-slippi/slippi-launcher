@@ -178,7 +178,7 @@ msgstr "Grupo de chat: {0}"
 
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:12:23
 msgid "Chat Messages"
-msgstr "Mensajes de chat"
+msgstr "Mensajes"
 
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:13:34
 msgid "Chat messages to use for netplay"
