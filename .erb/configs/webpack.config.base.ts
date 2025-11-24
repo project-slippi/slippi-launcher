@@ -12,6 +12,7 @@ import pkg from "../../release/app/package.json";
 import webpackPaths from "./webpack.paths";
 
 const isDevelop = process.env.NODE_ENV === "development";
+const isDebugProd = process.env.DEBUG_PROD === "true";
 const buildDate = new Date().toISOString();
 const commitHash = execSync("git rev-parse --short HEAD").toString().trim();
 
@@ -30,6 +31,10 @@ const configuration: webpack.Configuration = {
           options: {
             compilerOptions: {
               module: "esnext",
+              // Only generate source maps and declaration files when debugging prod
+              sourceMap: isDevelop || isDebugProd,
+              declaration: isDevelop || isDebugProd,
+              declarationMap: isDevelop || isDebugProd,
             },
             // Whether or not we should disable type-checking
             transpileOnly: isDevelop,
