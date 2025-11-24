@@ -1611,7 +1611,7 @@ msgid ""
 "Visit your email, click the link in the verification email, and then check "
 "verification"
 msgstr ""
-"Visita tu correo, haz clic en el enlace del correo de verificación, y luego "
+"Accede a tu correo, haz clic en el enlace del correo de verificación, y luego "
 "verifica la confirmación"
 
 #: src/renderer/pages/console_mirror/console_mirror.messages.ts:4:26
