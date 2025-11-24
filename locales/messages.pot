@@ -1022,7 +1022,7 @@ msgstr ""
 msgid "Port must be a number from 1 to 65535"
 msgstr ""
 
-#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:4:32
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:6:32
 #. {0} timeAgo: string
 msgid "Posted {0}"
 msgstr ""
@@ -1071,7 +1071,7 @@ msgid ""
 "every 4 days."
 msgstr ""
 
-#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:3:19
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:5:19
 msgid "Read more"
 msgstr ""
 
@@ -1551,6 +1551,14 @@ msgstr ""
 
 #: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:2:24
 msgid "View on Bluesky"
+msgstr ""
+
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:4:23
+msgid "View on Github"
+msgstr ""
+
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:3:23
+msgid "View on Medium"
 msgstr ""
 
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:3:22

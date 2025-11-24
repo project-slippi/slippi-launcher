@@ -7,7 +7,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0\n"
 "x-generator: i18next-auto-keys CLI\n"
 "Language: ja-JP\n"
-"PO-Revision-Date: 2025-11-23T23:37:59.977Z\n"
+"PO-Revision-Date: 2025-11-24T03:41:25.636Z\n"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
 msgid "2-4 uppercase English characters"
@@ -58,15 +58,14 @@ msgid ""
 "capture) when the game is active. Requires OBS Websocket 5.0+, which comes "
 "preinstalled on OBS 28+."
 msgstr ""
-"ゲームがアクティブなときにOBSソース（例：Dolphinキャプチャ）を自動で表示・非表示します。"
-"OBS Websocket 5.0+が必要です（OBS 28+にプリインストールされています）。"
+"ゲームがアクティブなときにOBSソース（例：Dolphinキャプチャ）を自動で表示・非表示します。OBS Websocket "
+"5.0+が必要です（OBS 28+にプリインストールされています）。"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:24:33
 msgid ""
 "Allows external programs to read live game data by connecting to a local "
 "endpoint."
-msgstr ""
-"外部プログラムがローカルエンドポイントに接続してライブゲームデータを読み取れるようにします。"
+msgstr "外部プログラムがローカルエンドポイントに接続してライブゲームデータを読み取れるようにします。"
 
 #: src/renderer/pages/settings/spectate_settings/spectate_settings.messages.ts:3:49
 msgid "Allows remote control of spectate features via WebSocket."
@@ -549,8 +548,7 @@ msgstr "大会を探す"
 msgid ""
 "First give this ID to the person whose gameplay you want to watch. Then "
 "after they have started their broadcast, click Refresh."
-msgstr ""
-"まず、プレイを観戦したい相手にこのIDを伝えてください。相手が配信を開始したら、「更新」をクリックしてください。"
+msgstr "まず、プレイを観戦したい相手にこのIDを伝えてください。相手が配信を開始したら、「更新」をクリックしてください。"
 
 #: src/renderer/components/footer/footer.messages.ts:3:26
 msgid "Follow Project Slippi on Twitter"
@@ -629,8 +627,7 @@ msgstr "IPアドレス"
 msgid ""
 "If the failure persists, you can test this in your computer's terminal app. "
 "See below:"
-msgstr ""
-"エラーが続く場合は、コンピューターのターミナルアプリでテストできます。以下を参照してください："
+msgstr "エラーが続く場合は、コンピューターのターミナルアプリでテストできます。以下を参照してください："
 
 #: src/renderer/pages/home/sidebar/tournament_links.messages.ts:3:19
 msgid "In-Person"
@@ -648,8 +645,7 @@ msgstr "アップデートをインストール"
 msgid ""
 "Intentionally manipulating the game performance for your own gain is not "
 "allowed."
-msgstr ""
-"自分の利益のために意図的にゲームパフォーマンスを操作することは禁止されています。"
+msgstr "自分の利益のために意図的にゲームパフォーマンスを操作することは禁止されています。"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:13:18
 msgid "Invalid"
@@ -741,8 +737,7 @@ msgstr "マクロやボットの使用は禁止されています。"
 msgid ""
 "Mainline Slippi Dolphin has updated OS requirements, check the Help Section "
 "for more info"
-msgstr ""
-"Mainline Slippi Dolphin では OS の要件が更新されています。詳細はヘルプセクションを確認してください。"
+msgstr "Mainline Slippi Dolphin では OS の要件が更新されています。詳細はヘルプセクションを確認してください。"
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:5:17
 msgid "Manage"
@@ -776,8 +771,7 @@ msgstr "その他のオプション"
 msgid ""
 "More than one hop to your external IP address indicates CGNAT or Double NAT "
 "(or VPN)."
-msgstr ""
-"外部IPアドレスへの複数のホップは、CGNATまたはダブルNAT（またはVPN）を示しています。"
+msgstr "外部IPアドレスへの複数のホップは、CGNATまたはダブルNAT（またはVPN）を示しています。"
 
 #: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:3:21
 msgid "Most recent"
@@ -921,8 +915,7 @@ msgstr "OBS Websocketポート"
 msgid ""
 "Once every 4 days, ranked play is available to all users including "
 "non-subs. Check back soon!"
-msgstr ""
-"4日に1回、非サブスクライバーを含むすべてのユーザーがランクマッチをプレイできます。ぜひまたお越しください！"
+msgstr "4日に1回、非サブスクライバーを含むすべてのユーザーがランクマッチをプレイできます。ぜひまたお越しください！"
 
 #: src/renderer/pages/home/sidebar/tournament_links.messages.ts:4:17
 msgid "Online"
@@ -1015,8 +1008,8 @@ msgid ""
 "UDP. In that case it will not be possible to use Slippi as well as many "
 "other online games and apps."
 msgstr ""
-"後でもう一度お試しください。エラーが続く場合、このネットワークはUDPをブロックしている可能性があります。"
-"その場合、Slippiや他の多くのオンラインゲームやアプリを使用できません。"
+"後でもう一度お試しください。エラーが続く場合、このネットワークはUDPをブロックしている可能性があります。その場合、Slippiや他の多くのオンラインゲ"
+"ームやアプリを使用できません。"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:28:15
 msgid "Port"
@@ -1034,7 +1027,7 @@ msgstr "ポートマッピング"
 msgid "Port must be a number from 1 to 65535"
 msgstr "ポートは1から65535の数値である必要があります"
 
-#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:4:32
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:6:32
 #. {0} timeAgo: string
 msgid "Posted {0}"
 msgstr "{0}に投稿"
@@ -1047,8 +1040,7 @@ msgstr "プレミアム"
 msgid ""
 "Prevents delay from accumulating when mirroring. Keep this off unless both "
 "the Wii and computer are on a wired LAN connection."
-msgstr ""
-"ミラーリング時の遅延蓄積を防ぎます。Wiiとコンピューターの両方が有線LAN接続でない限りオフのままにしてください。"
+msgstr "ミラーリング時の遅延蓄積を防ぎます。Wiiとコンピューターの両方が有線LAN接続でない限りオフのままにしてください。"
 
 #: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:8:25
 msgid "Previous replay"
@@ -1062,8 +1054,7 @@ msgstr "プライバシーポリシーと利用規約"
 msgid ""
 "Provided ISO will not work with Slippi Online. Please provide an NTSC 1.02 "
 "ISO."
-msgstr ""
-"提供されたISOはSlippiオンラインで動作しません。NTSC 1.02 ISOを指定してください。"
+msgstr "提供されたISOはSlippiオンラインで動作しません。NTSC 1.02 ISOを指定してください。"
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:11:34
 msgid "RVZ files are currently incompatible with Slippi."
@@ -1074,8 +1065,8 @@ msgid ""
 "Racist, homophobic, transphobic, or otherwise bigoted names and codes are "
 "not allowed. Targeted harassment in names and codes is also not allowed."
 msgstr ""
-"人種差別的、同性愛嫌悪的、トランスフォビア的、またはその他の偏見に満ちた名前やコードは禁止されています。"
-"名前やコードでの標的型嫌がらせも禁止されています。"
+"人種差別的、同性愛嫌悪的、トランスフォビア的、またはその他の偏見に満ちた名前やコードは禁止されています。名前やコードでの標的型嫌がらせも禁止されています"
+"。"
 
 #: src/renderer/pages/home/sidebar/ranked_status.messages.ts:2:20
 msgid "Ranked Day"
@@ -1085,10 +1076,9 @@ msgstr "ランクマッチデー"
 msgid ""
 "Ranked play is currently available for everyone. Try it now! Available once "
 "every 4 days."
-msgstr ""
-"現在、ランクマッチは誰でもプレイできます。今すぐお試しください！4日に1回利用可能です。"
+msgstr "現在、ランクマッチは誰でもプレイできます。今すぐお試しください！4日に1回利用可能です。"
 
-#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:3:19
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:5:19
 msgid "Read more"
 msgstr "続きを読む"
 
@@ -1253,8 +1243,8 @@ msgid ""
 "real time playback. Checkout the Mirroring Guide below for setup "
 "instructions."
 msgstr ""
-"Slippiミラーリングを使用すると、ゲーム機からPCにリプレイをストリーミングしてリアルタイムで再生できます。"
-"セットアップ手順については、以下のミラーリングガイドを確認してください。"
+"Slippiミラーリングを使用すると、ゲーム機からPCにリプレイをストリーミングしてリアルタイムで再生できます。セットアップ手順については、以下のミラー"
+"リングガイドを確認してください。"
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:2:28
 msgid "Slippi Online Rules"
@@ -1273,9 +1263,7 @@ msgid ""
 "Slippi does its best to promote fairness in terms of player matching, "
 "result reporting, etc. Attempting to circumvent these systems is not "
 "allowed."
-msgstr ""
-"Slippiはプレイヤーマッチングや結果報告などの公平性を促進するために最善を尽くしています。"
-"これらのシステムを回避しようとすることは禁止されています。"
+msgstr "Slippiはプレイヤーマッチングや結果報告などの公平性を促進するために最善を尽くしています。これらのシステムを回避しようとすることは禁止されています。"
 
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:7:28
 msgid "Slippi server error"
@@ -1400,9 +1388,10 @@ msgid ""
 "the appropriate support channel for your operating system. Our support "
 "volunteers will try their best to assist you with your problem."
 msgstr ""
-"サポートを受ける最良の方法は、まずSlippi Discordに参加し、#support-portalチャンネルの情報を読んでから、"
-"お使いのOSに適したサポートチャンネルで問題を投稿することです。"
-"サポートボランティアが問題解決のために最善を尽くします。"
+"サポートを受ける最良の方法は、まずSlippi "
+"Discordに参加し、#support-"
+"portalチャンネルの情報を読んでから、お使いのOSに適したサポートチャンネルで問題を投稿することです。サポートボランティアが問題解決のために最善を尽"
+"くします。"
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:4:44
 #. {0} codeName: string
@@ -1434,9 +1423,7 @@ msgstr "観戦リモートコントロールWebSocketで使用するポートで
 msgid ""
 "The port used for connecting to console. Only change this if connecting to "
 "a Console Relay. If unsure, leave it as {0}."
-msgstr ""
-"ゲーム機への接続に使用するポートです。コンソールリレーに接続する場合のみ変更してください。"
-"不明な場合は {0} のままにしてください。"
+msgstr "ゲーム機への接続に使用するポートです。コンソールリレーに接続する場合のみ変更してください。不明な場合は {0} のままにしてください。"
 
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:3:44
 msgid "The unique viewer code of the spectator."
@@ -1449,9 +1436,8 @@ msgid ""
 "is not an exhaustive list, we reserve the right to suspend or ban an "
 "account for any reason."
 msgstr ""
-"これらはSlippiを使用する際に従うべき一連のルールです。これらのルールを破ると、重大性と頻度に応じて"
-"アカウント停止または追放される可能性があります。これは網羅的なリストではなく、"
-"当社はいかなる理由でもアカウントを停止または追放する権利を留保します。"
+"これらはSlippiを使用する際に従うべき一連のルールです。これらのルールを破ると、重大性と頻度に応じてアカウント停止または追放される可能性があります。"
+"これは網羅的なリストではなく、当社はいかなる理由でもアカウントを停止または追放する権利を留保します。"
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:3:34
 msgid "This application uses an NTSC 1.02 game backup."
@@ -1465,8 +1451,7 @@ msgstr "これは最適な結果です。"
 msgid ""
 "This is the optimal result. Also known as 'easy', 'full cone', or 'open' "
 "NAT."
-msgstr ""
-"これは最適な結果です。「easy」「full cone」「open」NATとも呼ばれます。"
+msgstr "これは最適な結果です。「easy」「full cone」「open」NATとも呼ばれます。"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:18:70
 #. {0} dolphinTypeName: string
@@ -1583,6 +1568,14 @@ msgstr "ランクプロフィールを表示"
 msgid "View on Bluesky"
 msgstr "Bluesky で見る"
 
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:4:23
+msgid "View on Github"
+msgstr "Github で見る"
+
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:3:23
+msgid "View on Medium"
+msgstr "Medium で見る"
+
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:3:22
 msgid "View profile"
 msgstr "プロフィールを表示"
@@ -1591,8 +1584,7 @@ msgstr "プロフィールを表示"
 msgid ""
 "Visit your email, click the link in the verification email, and then check "
 "verification"
-msgstr ""
-"メールを開き、確認メール内のリンクをクリックしてから、確認を実行してください。"
+msgstr "メールを開き、確認メール内のリンクをクリックしてから、確認を実行してください。"
 
 #: src/renderer/pages/console_mirror/console_mirror.messages.ts:4:26
 msgid "What is Mirroring?"
@@ -1617,8 +1609,8 @@ msgid ""
 "settings to see if this can be changed to 'easy', 'full cone', 'normal', or "
 "'open' NAT."
 msgstr ""
-"他のプレイヤーとの接続に問題が発生する可能性があります。「hard」「strict」「symmetric」NATとも呼ばれます。"
-"可能であれば、ルーターの設定を確認して、「easy」「full cone」「normal」「open」NATに変更できるか確認してください。"
+"他のプレイヤーとの接続に問題が発生する可能性があります。「hard」「strict」「symmetric」NATとも呼ばれます。可能であれば、ルーターの"
+"設定を確認して、「easy」「full cone」「normal」「open」NATに変更できるか確認してください。"
 
 #: src/renderer/pages/spectate/spectate_page.messages.ts:5:28
 msgid "You must be logged in to use this feature"
@@ -1636,15 +1628,13 @@ msgstr "準備完了！"
 msgid ""
 "Your ISO is unsupported. Using this ISO may cause issues and no support "
 "will be given."
-msgstr ""
-"このISOはサポートされていません。このISOを使用すると問題が発生する可能性があり、サポートは提供されません。"
+msgstr "このISOはサポートされていません。このISOを使用すると問題が発生する可能性があり、サポートは提供されません。"
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:14:5
 msgid ""
 "Your Nintendont is out of date and no longer supported. Click to download "
 "the latest version from the Slippi website."
-msgstr ""
-"Nintendontが古くサポートされていません。クリックしてSlippi Webサイトから最新バージョンをダウンロードしてください。"
+msgstr "Nintendontが古くサポートされていません。クリックしてSlippi Webサイトから最新バージョンをダウンロードしてください。"
 
 #: src/renderer/pages/spectate/spectator_id_block/spectator_id_block.messages.ts:2:26
 msgid "Your Spectator ID"

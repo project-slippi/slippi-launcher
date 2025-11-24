@@ -7,7 +7,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "x-generator: i18next-auto-keys CLI\n"
 "Language: es-ES\n"
-"PO-Revision-Date: 2025-11-23T23:37:59.986Z\n"
+"PO-Revision-Date: 2025-11-24T03:41:25.646Z\n"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
 msgid "2-4 uppercase English characters"
@@ -58,17 +58,17 @@ msgid ""
 "capture) when the game is active. Requires OBS Websocket 5.0+, which comes "
 "preinstalled on OBS 28+."
 msgstr ""
-"Permite ocultar y mostrar automáticamente una fuente de OBS (por ejemplo, tu "
-"captura de Dolphin) cuando el juego está activo. Requiere OBS Websocket 5.0+, "
-"que viene preinstalado en OBS 28+."
+"Permite ocultar y mostrar automáticamente una fuente de OBS (por ejemplo, "
+"tu captura de Dolphin) cuando el juego está activo. Requiere OBS Websocket "
+"5.0+, que viene preinstalado en OBS 28+."
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:24:33
 msgid ""
 "Allows external programs to read live game data by connecting to a local "
 "endpoint."
 msgstr ""
-"Permite que programas externos lean datos de juego en vivo al conectarse a una "
-"conexión local."
+"Permite que programas externos lean datos de juego en vivo al conectarse a "
+"una conexión local."
 
 #: src/renderer/pages/settings/spectate_settings/spectate_settings.messages.ts:3:49
 msgid "Allows remote control of spectate features via WebSocket."
@@ -105,7 +105,9 @@ msgstr "¿Estás seguro?"
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:3:39
 msgid "Automatically install Slippi Launcher updates when they become available."
-msgstr "Instalar automáticamente las actualizaciones de Slippi Launcher cuando estén disponibles."
+msgstr ""
+"Instalar automáticamente las actualizaciones de Slippi Launcher cuando "
+"estén disponibles."
 
 #: src/renderer/pages/console_mirror/new_connection_list/new_connection_list.messages.ts:4:20
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:7:20
@@ -212,8 +214,8 @@ msgstr "Elige un código de conexión"
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:13:42
 msgid "Choose any additional SLP folders that should show up in the replay browser."
 msgstr ""
-"Elige las carpetas SLP adicionales que deberían aparecer en el buscador "
-"de repeticiones."
+"Elige las carpetas SLP adicionales que deberían aparecer en el buscador de "
+"repeticiones."
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:8:38
 msgid "Choose what happens when the Play button is pressed."
@@ -481,7 +483,9 @@ msgstr "Ingresar ID de espectador"
 
 #: src/renderer/pages/spectate/share_gameplay_block/share_gameplay_block.messages.ts:3:35
 msgid "Error connecting to Dolphin. Ensure Dolphin is running and try again."
-msgstr "Error al conectar con Dolphin. Asegúrate de que Dolphin esté ejecutándose e intenta de nuevo."
+msgstr ""
+"Error al conectar con Dolphin. Asegúrate de que Dolphin esté ejecutándose e "
+"intenta de nuevo."
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:3:53
 #. {0} errorMessage: string
@@ -634,9 +638,7 @@ msgstr "Dirección IP"
 msgid ""
 "If the failure persists, you can test this in your computer's terminal app. "
 "See below:"
-msgstr ""
-"Si el fallo persiste, puedes probar esto en la terminal. "
-"Ver abajo:"
+msgstr "Si el fallo persiste, puedes probar esto en la terminal. Ver abajo:"
 
 #: src/renderer/pages/home/sidebar/tournament_links.messages.ts:3:19
 msgid "In-Person"
@@ -749,8 +751,8 @@ msgid ""
 "Mainline Slippi Dolphin has updated OS requirements, check the Help Section "
 "for more info"
 msgstr ""
-"Slippi Dolphin Principal tiene requisitos actualizados de sistema operativo, "
-"revisa la sección de Ayuda para más información"
+"Slippi Dolphin Principal tiene requisitos actualizados de sistema "
+"operativo, revisa la sección de Ayuda para más información"
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:5:17
 msgid "Manage"
@@ -784,9 +786,7 @@ msgstr "Más opciones"
 msgid ""
 "More than one hop to your external IP address indicates CGNAT or Double NAT "
 "(or VPN)."
-msgstr ""
-"Más de un salto a tu dirección IP externa indica CGNAT o NAT doble "
-"(o VPN)."
+msgstr "Más de un salto a tu dirección IP externa indica CGNAT o NAT doble (o VPN)."
 
 #: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:3:21
 msgid "Most recent"
@@ -944,7 +944,9 @@ msgstr "Se requiere activación en línea"
 
 #: src/renderer/app/header/header.messages.ts:10:41
 msgid "Only logged in users can play online. Would you like to play offline?"
-msgstr "Solo los usuarios con sesión iniciada pueden jugar en línea. ¿Te gustaría jugar sin conexión?"
+msgstr ""
+"Solo los usuarios con sesión iniciada pueden jugar en línea. ¿Te gustaría "
+"jugar sin conexión?"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:12:45
 msgid "Only modify these values if you know what you're doing."
@@ -1045,7 +1047,7 @@ msgstr "Mapeo de puertos"
 msgid "Port must be a number from 1 to 65535"
 msgstr "El puerto debe ser un número del 1 al 65535"
 
-#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:4:32
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:6:32
 #. {0} timeAgo: string
 msgid "Posted {0}"
 msgstr "Publicado hace {0}"
@@ -1059,8 +1061,9 @@ msgid ""
 "Prevents delay from accumulating when mirroring. Keep this off unless both "
 "the Wii and computer are on a wired LAN connection."
 msgstr ""
-"Evita que se acumule algun retraso durante Mirroring. Mantén esto desactivado a menos que "
-"todos los dispositivos estén en una conexión LAN por cable."
+"Evita que se acumule algun retraso durante Mirroring. Mantén esto "
+"desactivado a menos que todos los dispositivos estén en una conexión LAN "
+"por cable."
 
 #: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:8:25
 msgid "Previous replay"
@@ -1100,10 +1103,10 @@ msgid ""
 "Ranked play is currently available for everyone. Try it now! Available once "
 "every 4 days."
 msgstr ""
-"El juego clasificatorio está actualmente disponible para todos. ¡Pruébalo ahora! "
-"Disponible una vez cada 4 días."
+"El juego clasificatorio está actualmente disponible para todos. ¡Pruébalo "
+"ahora! Disponible una vez cada 4 días."
 
-#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:3:19
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:5:19
 msgid "Read more"
 msgstr "Leer más"
 
@@ -1270,9 +1273,9 @@ msgid ""
 "real time playback. Checkout the Mirroring Guide below for setup "
 "instructions."
 msgstr ""
-"Slippi Mirroring permite transmitir repeticiones desde una consola "
-"a una PC para reproducción en tiempo real. Consulta la Guía de Mirroring "
-"a continuación para instrucciones de configuración."
+"Slippi Mirroring permite transmitir repeticiones desde una consola a una PC "
+"para reproducción en tiempo real. Consulta la Guía de Mirroring a "
+"continuación para instrucciones de configuración."
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:2:28
 msgid "Slippi Online Rules"
@@ -1421,8 +1424,9 @@ msgid ""
 msgstr ""
 "La mejor manera de obtener soporte es unirte primero al Discord de Slippi, "
 "luego leer la información en el canal #support-portal antes de publicar tu "
-"problema en el canal de soporte apropiado para tu sistema operativo. Nuestros "
-"voluntarios de soporte harán su mejor esfuerzo para ayudarte con tu problema."
+"problema en el canal de soporte apropiado para tu sistema operativo. "
+"Nuestros voluntarios de soporte harán su mejor esfuerzo para ayudarte con "
+"tu problema."
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:4:44
 #. {0} codeName: string
@@ -1455,8 +1459,8 @@ msgid ""
 "The port used for connecting to console. Only change this if connecting to "
 "a Console Relay. If unsure, leave it as {0}."
 msgstr ""
-"El puerto usado para conectar a la consola. Solo cambia esto si te conectas a "
-"una Retransmisión de Consola. Si no estás seguro, déjalo en {0}."
+"El puerto usado para conectar a la consola. Solo cambia esto si te conectas "
+"a una Retransmisión de Consola. Si no estás seguro, déjalo en {0}."
 
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:3:44
 msgid "The unique viewer code of the spectator."
@@ -1469,10 +1473,10 @@ msgid ""
 "is not an exhaustive list, we reserve the right to suspend or ban an "
 "account for any reason."
 msgstr ""
-"Estas son un conjunto de reglas a seguir al usar Slippi. Romper estas reglas "
-"puede resultar en una suspensión o bloqueo dependiendo de la gravedad y frecuencia. "
-"Esta no es una lista exhaustiva, nos reservamos el derecho de suspender o bloqueo "
-"una cuenta por cualquier motivo."
+"Estas son un conjunto de reglas a seguir al usar Slippi. Romper estas "
+"reglas puede resultar en una suspensión o bloqueo dependiendo de la "
+"gravedad y frecuencia. Esta no es una lista exhaustiva, nos reservamos el "
+"derecho de suspender o bloqueo una cuenta por cualquier motivo."
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:3:34
 msgid "This application uses an NTSC 1.02 game backup."
@@ -1487,8 +1491,8 @@ msgid ""
 "This is the optimal result. Also known as 'easy', 'full cone', or 'open' "
 "NAT."
 msgstr ""
-"Este es el resultado óptimo. También conocido como NAT 'fácil', 'cono completo' "
-"o 'abierto'."
+"Este es el resultado óptimo. También conocido como NAT 'fácil', 'cono "
+"completo' o 'abierto'."
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:18:70
 #. {0} dolphinTypeName: string
@@ -1605,6 +1609,14 @@ msgstr "Ver perfil clasificatorio"
 msgid "View on Bluesky"
 msgstr "Ver en Bluesky"
 
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:4:23
+msgid "View on Github"
+msgstr "Ver en Github"
+
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:3:23
+msgid "View on Medium"
+msgstr "Ver en Medium"
+
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:3:22
 msgid "View profile"
 msgstr "Ver perfil"
@@ -1614,8 +1626,8 @@ msgid ""
 "Visit your email, click the link in the verification email, and then check "
 "verification"
 msgstr ""
-"Accede a tu correo, haz clic en el enlace del correo de verificación, y luego "
-"verifica la confirmación"
+"Accede a tu correo, haz clic en el enlace del correo de verificación, y "
+"luego verifica la confirmación"
 
 #: src/renderer/pages/console_mirror/console_mirror.messages.ts:4:26
 msgid "What is Mirroring?"
@@ -1640,10 +1652,10 @@ msgid ""
 "settings to see if this can be changed to 'easy', 'full cone', 'normal', or "
 "'open' NAT."
 msgstr ""
-"Podrías tener problemas para conectarte con otros jugadores. También conocido "
-"como NAT 'duro', 'estricto' o 'simétrico'. Si es posible, por favor revisa la "
-"configuración de tu router para ver si puede cambiarse a NAT 'fácil', 'cono "
-"completo', 'normal' o 'abierto'."
+"Podrías tener problemas para conectarte con otros jugadores. También "
+"conocido como NAT 'duro', 'estricto' o 'simétrico'. Si es posible, por "
+"favor revisa la configuración de tu router para ver si puede cambiarse a "
+"NAT 'fácil', 'cono completo', 'normal' o 'abierto'."
 
 #: src/renderer/pages/spectate/spectate_page.messages.ts:5:28
 msgid "You must be logged in to use this feature"
@@ -1670,8 +1682,8 @@ msgid ""
 "Your Nintendont is out of date and no longer supported. Click to download "
 "the latest version from the Slippi website."
 msgstr ""
-"Tu Nintendont está desactualizado y ya no tiene soporte. Haz clic para descargar "
-"la última versión desde el sitio web de Slippi."
+"Tu Nintendont está desactualizado y ya no tiene soporte. Haz clic para "
+"descargar la última versión desde el sitio web de Slippi."
 
 #: src/renderer/pages/spectate/spectator_id_block/spectator_id_block.messages.ts:2:26
 msgid "Your Spectator ID"
@@ -1679,7 +1691,9 @@ msgstr "Tu ID de espectador"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:2:37
 msgid "Your connect code is used for players to connect with you directly."
-msgstr "Tu código de conexión se usa para que otros jugadores se conecten contigo directamente."
+msgstr ""
+"Tu código de conexión se usa para que otros jugadores se conecten contigo "
+"directamente."
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:5:28
 msgid "or drag and drop here"
@@ -1713,9 +1727,13 @@ msgstr "{0, plural, one {# archivo seleccionado} other {# archivos seleccionados
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:2:36
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} successfully deleted."
-msgstr "{0, plural, one {# archivo eliminado} other {# archivos eliminados}} correctamente."
+msgstr ""
+"{0, plural, one {# archivo eliminado} other {# archivos eliminados}} "
+"correctamente."
 
 #: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:8:37
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} will be deleted."
-msgstr "{0, plural, one {# archivo será eliminado} other {# archivos serán eliminados}}."
+msgstr ""
+"{0, plural, one {# archivo será eliminado} other {# archivos serán "
+"eliminados}}."
