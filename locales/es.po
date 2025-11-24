@@ -1267,8 +1267,8 @@ msgid ""
 "real time playback. Checkout the Mirroring Guide below for setup "
 "instructions."
 msgstr ""
-"La transmisión de Slippi permite transmitir repeticiones desde una consola "
-"a una PC para reproducción en tiempo real. Consulta la Guía de transmisión "
+"Slippi Mirroring permite transmitir repeticiones desde una consola "
+"a una PC para reproducción en tiempo real. Consulta la Guía de Mirroring "
 "a continuación para instrucciones de configuración."
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:2:28
