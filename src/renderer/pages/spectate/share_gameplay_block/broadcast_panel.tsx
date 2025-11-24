@@ -86,7 +86,7 @@ export const BroadcastPanel = ({
         </div>
         <div css={css``}>
           {isDisconnected ? (
-            <ConnectButton variant="contained" color="primary" onClick={() => setModalOpen(true)}>
+            <ConnectButton variant="contained" color="secondary" onClick={() => setModalOpen(true)}>
               {Messages.startBroadcast()}
             </ConnectButton>
           ) : (

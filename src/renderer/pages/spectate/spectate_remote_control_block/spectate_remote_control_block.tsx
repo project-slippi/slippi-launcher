@@ -78,7 +78,12 @@ export const SpectateRemoteControlBlock = React.memo(
             {Messages.stopServer()}
           </StartStopButton>
         ) : (
-          <StartStopButton variant="contained" color="primary" onClick={onStart} disabled={serverStatus === "starting"}>
+          <StartStopButton
+            variant="contained"
+            color="secondary"
+            onClick={onStart}
+            disabled={serverStatus === "starting"}
+          >
             {serverStatus === "starting" ? Messages.startingServer() : Messages.startServer()}
           </StartStopButton>
         )}
