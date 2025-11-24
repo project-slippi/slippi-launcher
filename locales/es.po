@@ -116,7 +116,7 @@ msgstr "Atrás"
 
 #: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:2:24
 msgid "Back to replays"
-msgstr "Volver a las repeticiones"
+msgstr "Regresar a las repeticiones"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:24:15
 msgid "Beta (Mainline)"
