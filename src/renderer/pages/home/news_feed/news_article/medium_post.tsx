@@ -8,6 +8,8 @@ import React from "react";
 
 import { MarkdownContent } from "@/components/markdown_content/markdown_content";
 
+import { NewsArticleMessages as Messages } from "./news_article.messages";
+
 const MAX_BODY_LENGTH = 750;
 
 const styles = stylex.create({
@@ -51,7 +53,7 @@ export const MediumPost = React.memo(function MediumPost({ item }: { item: NewsI
         {body && <MarkdownContent content={bodyContent} {...stylex.props(styles.markdownContainer)} />}
         {truncateBody && (
           <Button size="small" color="secondary" onClick={() => setTruncatedBody(false)}>
-            Read more
+            {Messages.readMore()}
           </Button>
         )}
       </CardContent>
