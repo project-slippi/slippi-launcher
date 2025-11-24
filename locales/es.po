@@ -174,7 +174,7 @@ msgstr "Chat"
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:7:37
 #. {0} direction: string
 msgid "Chat Group: {0}"
-msgstr "Grupo de chat: {0}"
+msgstr "Chat Grupal: {0}"
 
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:12:23
 msgid "Chat Messages"
