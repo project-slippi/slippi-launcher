@@ -27,11 +27,12 @@ type DolphinRelease = {
 };
 
 export const QUERY_VALIDATE_USER_ID: TypedDocumentNode<
-  { getUser: Nullable<Pick<User, "connectCode" | "displayName">> },
+  { getUser: Nullable<Pick<User, "fbUid" | "connectCode" | "displayName">> },
   { fbUid: string }
 > = gql`
   query validateUserIdQuery($fbUid: String) {
     getUser(fbUid: $fbUid) {
+      fbUid
       displayName
       connectCode {
         code
@@ -42,7 +43,7 @@ export const QUERY_VALIDATE_USER_ID: TypedDocumentNode<
 
 export const QUERY_GET_USER_DATA: TypedDocumentNode<
   {
-    getUser: Nullable<Pick<User, "displayName" | "connectCode" | "private" | "rulesAccepted">>;
+    getUser: Nullable<Pick<User, "fbUid" | "displayName" | "connectCode" | "private" | "rulesAccepted">>;
     getLatestDolphin: Nullable<Pick<DolphinRelease, "version">>;
   },
   {
@@ -51,6 +52,7 @@ export const QUERY_GET_USER_DATA: TypedDocumentNode<
 > = gql`
   query getUserKeyQuery($fbUid: String) {
     getUser(fbUid: $fbUid) {
+      fbUid
       displayName
       connectCode {
         code
@@ -68,7 +70,7 @@ export const QUERY_GET_USER_DATA: TypedDocumentNode<
 
 export const QUERY_CHAT_MESSAGE_DATA: TypedDocumentNode<
   {
-    getUser: Nullable<{ activeSubscription: Nullable<{ level: string }>; activeChatMessages: string[] }>;
+    getUser: Nullable<{ fbUid: string; activeSubscription: Nullable<{ level: string }>; activeChatMessages: string[] }>;
     getChatMessageOptions: Nullable<Nullable<AvailableMessageType>[]>;
   },
   {
@@ -77,6 +79,7 @@ export const QUERY_CHAT_MESSAGE_DATA: TypedDocumentNode<
 > = gql`
   query GetChatMessageConfigData($fbUid: String) {
     getUser(fbUid: $fbUid) {
+      fbUid
       activeSubscription {
         level
       }

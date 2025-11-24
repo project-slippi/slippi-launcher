@@ -81,7 +81,15 @@ class SlippiBackendClient implements SlippiBackendService {
     const apolloLink = ApolloLink.from([authLink, errorLink, retryLink, httpLink]);
     return new ApolloClient({
       link: apolloLink,
-      cache: new InMemoryCache(),
+      cache: new InMemoryCache({
+        typePolicies: {
+          User: {
+            // Use fbUid as the unique identifier for User objects
+            // This allows Apollo to properly cache and merge User data from different queries
+            keyFields: ["fbUid"],
+          },
+        },
+      }),
       name: "slippi-launcher",
       version: clientVersion,
     });
