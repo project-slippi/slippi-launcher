@@ -564,7 +564,7 @@ msgstr "ゲーム"
 
 #: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:7:47
 msgid "Game stats for team battles is unsupported"
-msgstr "ダブルスの試合統計は未対応です"
+msgstr "チーム戦の試合統計は未対応です"
 
 #: src/renderer/pages/settings/create.messages.ts:2:26
 msgid "General Settings"

@@ -64,7 +64,7 @@ export const OverallTable = ({ file, stats }: OverallTableProps) => {
       return (
         <T.TableRow key={key}>
           <T.TableCell>{header}</T.TableCell>
-          <T.TableCell>Doubles is not supported for this field</T.TableCell>
+          <T.TableCell>Team Battle is not supported for this field</T.TableCell>
         </T.TableRow>
       );
     }
