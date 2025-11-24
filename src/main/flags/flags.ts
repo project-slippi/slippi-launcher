@@ -24,7 +24,7 @@ export function getConfigFlags(): ConfigFlags {
   const flags = new FlagBuilder()
     .addBooleanFlag("enableReplayDatabase", process.env.ENABLE_REPLAY_DATABASE, false)
     .withOverride("enableReplayDatabase", RuntimeFlags.ENABLE_REPLAY_DATABASE)
-    .addBooleanFlag("enableI18n", process.env.ENABLE_I18N, false)
+    .addBooleanFlag("enableI18n", process.env.ENABLE_I18N, true)
     .withOverride("enableI18n", RuntimeFlags.ENABLE_I18N)
     .build();
   return flags;
