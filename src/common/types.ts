@@ -1,5 +1,6 @@
 export type NewsItem = {
   id: string;
+  source: "bluesky" | "medium" | "github";
   title: string;
   permalink: string;
   publishedAt: string; // ISO string

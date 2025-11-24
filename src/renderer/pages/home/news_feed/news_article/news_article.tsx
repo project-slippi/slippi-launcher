@@ -2,30 +2,24 @@ import type { NewsItem } from "@common/types";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
 import Tooltip from "@mui/material/Tooltip";
-import Typography from "@mui/material/Typography";
 import stylex from "@stylexjs/stylex";
 import { format, formatDistance } from "date-fns";
 import React from "react";
 
 import { ExternalLink } from "@/components/external_link";
-import { MarkdownContent } from "@/components/markdown_content/markdown_content";
 import { useAppStore } from "@/lib/hooks/use_app_store";
 import { getLocale } from "@/lib/time";
 import type { SupportedLanguage } from "@/services/i18n/util";
 
+import { BlueskyPost } from "./bluesky_post";
+import { GithubPost } from "./github_post";
+import { MediumPost } from "./medium_post";
 import { NewsArticleMessages as Messages } from "./news_article.messages";
 
 const styles = stylex.create({
   container: {
     marginBottom: 20,
-  },
-  titleHeader: {
-    display: "flex",
-    alignItems: "center",
-    gap: 14,
   },
   dateInfo: {
     marginRight: "auto",
@@ -33,18 +27,28 @@ const styles = stylex.create({
     opacity: 0.6,
     fontSize: 15,
   },
-  fixedCardHeight: {
-    height: 200,
-  },
-  markdownContainer: {
-    color: "#ccc",
-    maxWidth: 700,
+  cardActions: {
+    borderTopWidth: 1,
+    borderTopStyle: "solid",
+    borderTopColor: "rgba(255, 255, 255, 0.2)",
   },
 });
 
+function getViewPostButtonText(source: NewsItem["source"]) {
+  switch (source) {
+    case "bluesky":
+      return Messages.viewOnBluesky();
+    case "medium":
+      return Messages.viewOnMedium();
+    case "github":
+      return Messages.viewOnGithub();
+  }
+}
+
 export const NewsArticle = React.memo(function NewsArticle({ item }: { item: NewsItem }) {
+  const { permalink, publishedAt } = item;
+
   const currentLanguage = useAppStore((store) => store.currentLanguage) as SupportedLanguage;
-  const { imageUrl, title, subtitle, permalink, body, publishedAt } = item;
   const publishedDate = new Date(publishedAt);
   const dateFnsLocale = getLocale(currentLanguage);
   const localDateString = format(publishedDate, "PPP p", { locale: dateFnsLocale });
@@ -52,42 +56,28 @@ export const NewsArticle = React.memo(function NewsArticle({ item }: { item: New
     addSuffix: true,
     locale: dateFnsLocale,
   });
-  const isBluesky = item.id.startsWith("bluesky-");
+
+  const postContent = React.useMemo(() => {
+    switch (item.source) {
+      case "bluesky":
+        return <BlueskyPost item={item} />;
+      case "medium":
+        return <MediumPost item={item} />;
+      case "github":
+        return <GithubPost item={item} />;
+    }
+  }, [item]);
 
   return (
     <div {...stylex.props(styles.container)}>
       <Card>
-        {imageUrl && !isBluesky && (
-          <CardMedia {...stylex.props(styles.fixedCardHeight)} image={imageUrl} title={title} />
-        )}
-        <CardContent>
-          <div {...stylex.props(styles.titleHeader)}>
-            {isBluesky && imageUrl && (
-              <CardMedia
-                {...stylex.props(styles.fixedCardHeight)}
-                image={imageUrl}
-                style={{ width: 45, height: 45, borderRadius: "50%" }}
-              />
-            )}
-            <div>
-              <Typography variant="h5" component="h2" fontSize={isBluesky ? 22 : undefined}>
-                {title}
-              </Typography>
-              {subtitle && (
-                <Typography variant="body2" color="textSecondary" component="p">
-                  {subtitle}
-                </Typography>
-              )}
-            </div>
-          </div>
-          {body && <MarkdownContent content={body} {...stylex.props(styles.markdownContainer)} />}
-        </CardContent>
-        <CardActions disableSpacing={true}>
+        {postContent}
+        <CardActions disableSpacing={true} {...stylex.props(styles.cardActions)}>
           <Tooltip title={localDateString}>
             <div {...stylex.props(styles.dateInfo)}>{Messages.posted(timeAgo)}</div>
           </Tooltip>
           <Button LinkComponent={ExternalLink} size="small" color="primary" href={permalink}>
-            {isBluesky ? Messages.viewOnBluesky() : Messages.readMore()}
+            {getViewPostButtonText(item.source)}
           </Button>
         </CardActions>
       </Card>

@@ -1,10 +1,13 @@
 import { partition } from "@common/partition";
 import type { NewsItem } from "@common/types";
 import log from "electron-log";
-import mediumJSONFeed from "medium-json-feed";
+import TurndownService from "turndown";
 
-import { getBlueskyFeed } from "./bluesky";
-import { getAllReleases } from "./github";
+import { getBlueskyFeed } from "./fetch_cross_origin/bluesky";
+import { getAllReleases } from "./fetch_cross_origin/github";
+import { getMediumFeed } from "./fetch_cross_origin/medium";
+
+const turndownService = new TurndownService();
 
 export async function fetchNewsFeedData(): Promise<NewsItem[]> {
   const newsPromises: Promise<NewsItem[]>[] = [];
@@ -32,27 +35,29 @@ export async function fetchNewsFeedData(): Promise<NewsItem[]> {
 }
 
 async function fetchMediumNews(): Promise<NewsItem[]> {
-  let response: any;
-  try {
-    response = await mediumJSONFeed("project-slippi");
-  } catch (err) {
-    throw new Error(`Error fetching Medium feed: ${err instanceof Error ? err.message : JSON.stringify(err)}`);
+  const result = await getMediumFeed("project-slippi");
+
+  if (result.status !== "ok" || result.items === undefined) {
+    log.error("Error fetching Medium feed:");
+    log.error(result);
+    return [];
   }
 
-  if (response?.status !== 200) {
-    throw new Error("Error fetching Medium feed");
-  }
+  return result.items.map((post): NewsItem => {
+    // Parse the Medium pubDate format: "YYYY-MM-DD HH:MM:SS"
+    const publishedAt = new Date(post.pubDate.replace(" ", "T") + "Z").toISOString();
+    // The NewsItem content needs to be in markdown format so convert the raw HTML content to markdown
+    const bodyMarkdown = turndownService.turndown(post.content);
 
-  const result = response.response;
-  return result.map((post: any): NewsItem => {
-    const publishedAt = new Date(post.firstPublishedAt).toISOString();
     return {
-      id: `medium-${post.id}`,
-      imageUrl: `https://cdn-images-1.medium.com/${post.virtuals.previewImage.imageId}`,
+      id: `medium-${post.guid}`,
+      source: "medium",
+      imageUrl: post.thumbnail || undefined,
       title: post.title,
-      subtitle: post.virtuals.subtitle,
+      subtitle: undefined, // There is no subtitle content fetched from the Medium RSS feed
       publishedAt,
-      permalink: `https://medium.com/project-slippi/${post.uniqueSlug}`,
+      permalink: post.link,
+      body: bodyMarkdown,
     };
   });
 }
@@ -64,6 +69,7 @@ async function fetchGithubReleaseNews(repos: string[]): Promise<NewsItem[]> {
       return releases.map((release): NewsItem => {
         return {
           id: `gh-${repo}-${release.id}`,
+          source: "github",
           title: `[${repo}] ${release.name}`,
           body: release.body,
           publishedAt: release.published_at,
@@ -86,6 +92,7 @@ async function fetchGithubReleaseNews(repos: string[]): Promise<NewsItem[]> {
 async function fetchBlueskyPosts(): Promise<NewsItem[]> {
   const result = await getBlueskyFeed();
   if (result.error || result.feed === undefined) {
+    log.error("Error fetching Bluesky feed:");
     log.error(result);
     return [];
   }
@@ -95,6 +102,7 @@ async function fetchBlueskyPosts(): Promise<NewsItem[]> {
     const publishedAt = new Date(post.record.createdAt).toISOString();
     return {
       id: `bluesky-${post.cid}`,
+      source: "bluesky",
       title: post.author.displayName,
       imageUrl: post.author.avatar,
       body: post.record.text,
