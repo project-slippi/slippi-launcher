@@ -12,7 +12,7 @@ class I18nClient implements I18nService {
   private initialized = false;
   private languageChangeSubject = new Subject<string>();
 
-  constructor(private readonly isDevelopment: boolean, private readonly englishOnly: boolean) {}
+  constructor(private readonly englishOnly: boolean) {}
 
   public onLanguageChange(handle: (language: string) => void): () => void {
     const subscription = this.languageChangeSubject.subscribe(handle);
@@ -64,8 +64,6 @@ class I18nClient implements I18nService {
   }
 }
 
-export default function createI18nService(
-  options: { isDevelopment?: boolean; englishOnly?: boolean } = {},
-): I18nService {
-  return new I18nClient(Boolean(options.isDevelopment), Boolean(options.englishOnly));
+export default function createI18nService(options: { englishOnly?: boolean } = {}): I18nService {
+  return new I18nClient(Boolean(options.englishOnly));
 }
