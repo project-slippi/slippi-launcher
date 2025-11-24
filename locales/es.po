@@ -143,7 +143,7 @@ msgstr "CGNAT o NAT doble"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:5:23
 msgid "Can be changed later for a one-time payment"
-msgstr "Puede cambiarse después con un pago único"
+msgstr "Puede cambiarse después por un pago único"
 
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:5:24
 msgid "Can't find the email? Check your spam folder. Still missing? "
