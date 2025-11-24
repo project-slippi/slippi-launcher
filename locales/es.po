@@ -11,7 +11,7 @@ msgstr ""
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
 msgid "2-4 uppercase English characters"
-msgstr "2-4 caracteres en inglés en mayúsculas"
+msgstr "2-4 caracteres en mayúsculas"
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:10:40
 msgid "7z files must be uncompressed to be used in Dolphin."
