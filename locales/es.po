@@ -1523,7 +1523,7 @@ msgstr "UPnP."
 
 #: src/renderer/pages/not_found/not_found_page.messages.ts:2:15
 msgid "Uh oh."
-msgstr "Ups."
+msgstr "Oh oh."
 
 #: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:2:32
 msgid "Uh oh. We couldn't open that file. It's probably corrupted."
