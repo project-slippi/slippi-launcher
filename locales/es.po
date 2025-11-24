@@ -42,11 +42,11 @@ msgstr "Activo"
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/add_codes/add_codes.messages.ts:6:14
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:6:14
 msgid "Add"
-msgstr ""
+msgstr "Agregar"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:12:31
 msgid "Additional SLP Folders"
-msgstr ""
+msgstr "Carpetas SLP adicionales"
 
 #: src/renderer/pages/settings/create.messages.ts:12:19
 msgid "Advanced"
@@ -58,21 +58,26 @@ msgid ""
 "capture) when the game is active. Requires OBS Websocket 5.0+, which comes "
 "preinstalled on OBS 28+."
 msgstr ""
+"Permite ocultar y mostrar automáticamente una fuente de OBS (por ejemplo, tu "
+"captura de Dolphin) cuando el juego está activo. Requiere OBS Websocket 5.0+, "
+"que viene preinstalado en OBS 28+."
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:24:33
 msgid ""
 "Allows external programs to read live game data by connecting to a local "
 "endpoint."
 msgstr ""
+"Permite que programas externos lean datos de juego en vivo al conectarse a una "
+"conexión local."
 
 #: src/renderer/pages/settings/spectate_settings/spectate_settings.messages.ts:3:49
 msgid "Allows remote control of spectate features via WebSocket."
-msgstr ""
+msgstr "Permite el control remoto de funciones de espectador a través de WebSocket."
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:22:27
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:12:27
 msgid "An error occurred. The application does not have a user."
-msgstr ""
+msgstr "Ocurrió un error. La aplicación no tiene un usuario."
 
 #: src/renderer/pages/settings/appearance_settings/language_selector/language_selector.messages.ts:2:22
 msgid "App Language"
@@ -100,9 +105,7 @@ msgstr "¿Estás seguro?"
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:3:39
 msgid "Automatically install Slippi Launcher updates when they become available."
-msgstr ""
-"Instalar automáticamente las actualizaciones de Slippi Launcher cuando "
-"estén disponibles."
+msgstr "Instalar automáticamente las actualizaciones de Slippi Launcher cuando estén disponibles."
 
 #: src/renderer/pages/console_mirror/new_connection_list/new_connection_list.messages.ts:4:20
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:7:20
@@ -147,7 +150,7 @@ msgstr "Puede cambiarse después con un pago único"
 
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:5:24
 msgid "Can't find the email? Check your spam folder. Still missing? "
-msgstr "¿No encuentras el correo? Revisa tu carpeta de correo basura. ¿Aún no aparece? "
+msgstr "¿No encuentras el correo? Revisa tu carpeta de spam. ¿Aún no aparece? "
 
 #: src/renderer/app/header/header.messages.ts:12:17
 #: src/renderer/components/confirmation_modal/confirmation_modal.messages.ts:3:17
@@ -157,7 +160,7 @@ msgstr "Cancelar"
 
 #: src/renderer/components/multi_path_input/multi_path_input.messages.ts:5:36
 msgid "Cannot add subfolders of the Root SLP Folder."
-msgstr "No se pueden agregar subdirectorios del directorio raíz de SLP."
+msgstr "No se pueden añadir subcarpetas de la carpeta raíz de SLP."
 
 #: src/renderer/pages/spectate/footer/footer.messages.ts:3:23
 msgid "Change Folder"
@@ -209,7 +212,7 @@ msgstr "Elige un código de conexión"
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:13:42
 msgid "Choose any additional SLP folders that should show up in the replay browser."
 msgstr ""
-"Elige los directorios SLP adicionales que deberían aparecer en el buscador "
+"Elige las carpetas SLP adicionales que deberían aparecer en el buscador "
 "de repeticiones."
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:8:38
@@ -299,7 +302,7 @@ msgstr "Puerto de conexión"
 #: src/renderer/app/create.messages.ts:5:18
 #: src/renderer/pages/console_mirror/console_mirror.messages.ts:2:24
 msgid "Console Mirror"
-msgstr "Transmisión de Consola"
+msgstr "Mirror de Consola"
 
 #: src/renderer/pages/console_mirror/new_connection_list/new_connection_list.messages.ts:3:27
 msgid "Consoles detected on the network will show up here."
@@ -430,11 +433,11 @@ msgstr "Editar nombre para mostrar"
 
 #: src/renderer/components/login_form/login_form.messages.ts:6:16
 msgid "Email"
-msgstr "Correo electrónico"
+msgstr "Correo"
 
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:11:29
 msgid "Email is not yet verified. Have you checked your spam folder?"
-msgstr "El correo aún no está verificado. ¿Has revisado tu carpeta de correo basura?"
+msgstr "Correo aún no está verificado. ¿Has revisado tu carpeta de spam?"
 
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:7:24
 msgid "Email verified"
@@ -450,7 +453,7 @@ msgstr "Activar cambio automático"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:23:22
 msgid "Enable Console Relay"
-msgstr "Activar retransmisión de consola"
+msgstr "Activar Retransmisión de Consola"
 
 #: src/renderer/pages/settings/game_settings/game_music_toggle/game_music_toggle.messages.ts:2:22
 msgid "Enable Music"
@@ -552,7 +555,7 @@ msgid ""
 "after they have started their broadcast, click Refresh."
 msgstr ""
 "Primero da este ID a la persona cuya partida quieres ver. Después de que "
-"haya comenzado su retransmisión, haz clic en Actualizar."
+"haya comenzado su transmisión, haz clic en Actualizar."
 
 #: src/renderer/components/footer/footer.messages.ts:3:26
 msgid "Follow Project Slippi on Twitter"
@@ -632,7 +635,7 @@ msgid ""
 "If the failure persists, you can test this in your computer's terminal app. "
 "See below:"
 msgstr ""
-"Si el fallo persiste, puedes probar esto en la terminal de tu ordenador. "
+"Si el fallo persiste, puedes probar esto en la terminal. "
 "Ver abajo:"
 
 #: src/renderer/pages/home/sidebar/tournament_links.messages.ts:3:19
@@ -771,7 +774,7 @@ msgstr "Transmitir"
 
 #: src/renderer/pages/console_mirror/console_mirror.messages.ts:8:25
 msgid "Mirroring Guide"
-msgstr "Guía de transmisión"
+msgstr "Guía de Mirroring"
 
 #: src/renderer/pages/replays/replay_browser/replay_file/replay_file.messages.ts:3:22
 msgid "More options"
@@ -861,7 +864,7 @@ msgstr "No se encontraron archivos SLP"
 
 #: src/renderer/components/multi_path_input/multi_path_input.messages.ts:2:35
 msgid "No additional folders added."
-msgstr "No se agregaron directorios adicionales."
+msgstr "No se agregaron carpetas adicionales."
 
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:7:32
 msgid "No associated user found"
@@ -877,7 +880,7 @@ msgstr "Ninguna carpeta seleccionada"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:8:22
 msgid "No folder set"
-msgstr "Ninguna carpeta configurada"
+msgstr "Ninguna carpeta asignada"
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connections_list.messages.ts:4:29
 msgid "No saved console connections"
@@ -1056,8 +1059,8 @@ msgid ""
 "Prevents delay from accumulating when mirroring. Keep this off unless both "
 "the Wii and computer are on a wired LAN connection."
 msgstr ""
-"Evita que se acumule retraso al transmitir. Mantén esto desactivado a menos que "
-"tanto la Wii como el ordenador estén conectadas por cable a la LAN."
+"Evita que se acumule algun retraso durante Mirroring. Mantén esto desactivado a menos que "
+"todos los dispositivos estén en una conexión LAN por cable."
 
 #: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:8:25
 msgid "Previous replay"
@@ -1115,7 +1118,7 @@ msgstr "Actualizar"
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:11:20
 msgid "Relay Port"
-msgstr "Puerto de retransmisión"
+msgstr "Puerto de Retransmisión"
 
 #: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:2:30
 msgid "Remote Control Server"
@@ -1177,7 +1180,7 @@ msgstr "Derecha"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:2:24
 msgid "Root SLP Folder"
-msgstr "Directorio raíz de SLP"
+msgstr "Carpeta raíz de SLP"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:36:25
 msgid "Run this command"
@@ -1267,8 +1270,8 @@ msgid ""
 "real time playback. Checkout the Mirroring Guide below for setup "
 "instructions."
 msgstr ""
-"La transmisión de Slippi permite transmitir repeticiones desde una consola "
-"a una PC para reproducción en tiempo real. Consulta la Guía de transmisión "
+"Slippi Mirroring permite transmitir repeticiones desde una consola "
+"a una PC para reproducción en tiempo real. Consulta la Guía de Mirroring "
 "a continuación para instrucciones de configuración."
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:2:28
@@ -1321,7 +1324,7 @@ msgstr "ID de espectador"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:10:29
 msgid "Spectator SLP Folder"
-msgstr "Directorio SLP de espectador"
+msgstr "Carpetas SLP de espectador"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:23:17
 msgid "Stable (Ishiiruka)"
@@ -1399,7 +1402,7 @@ msgstr "NAT simétrico"
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:3:23
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:12:23
 msgid "Target Folder"
-msgstr "Carpeta de destino"
+msgstr "Carpeta destino"
 
 #: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:4:21
 msgid "Target Test"
@@ -1407,7 +1410,7 @@ msgstr "Target Test"
 
 #: src/renderer/components/multi_path_input/multi_path_input.messages.ts:6:38
 msgid "That folder is already included."
-msgstr "Ese directorio ya está incluido."
+msgstr "Esa Carpeta ya está incluida."
 
 #: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:4:5
 msgid ""
@@ -1428,15 +1431,15 @@ msgstr "El código <{0}> será eliminado. Esto no se puede deshacer."
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:4:34
 msgid "The folder to save SLP files to."
-msgstr "La carpeta donde guardar los archivos SLP."
+msgstr "Carpeta donde guardar los archivos SLP."
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:11:40
 msgid "The folder where spectated games should be saved."
-msgstr "La carpeta donde se deben guardar los juegos espectados."
+msgstr "Carpeta donde se deben guardar los juegos espectados."
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:3:35
 msgid "The folder where your SLP replays should be saved."
-msgstr "La carpeta donde se deben guardar tus repeticiones SLP."
+msgstr "Carpeta donde se deben guardar tus repeticiones SLP."
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:3:34
 msgid "The path to an NTSC Melee 1.02 ISO."
@@ -1453,7 +1456,7 @@ msgid ""
 "a Console Relay. If unsure, leave it as {0}."
 msgstr ""
 "El puerto usado para conectar a la consola. Solo cambia esto si te conectas a "
-"una retransmisión de consola. Si no estás seguro, déjalo en {0}."
+"una Retransmisión de Consola. Si no estás seguro, déjalo en {0}."
 
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:3:44
 msgid "The unique viewer code of the spectator."
@@ -1616,7 +1619,7 @@ msgstr ""
 
 #: src/renderer/pages/console_mirror/console_mirror.messages.ts:4:26
 msgid "What is Mirroring?"
-msgstr "¿Qué es la transmisión?"
+msgstr "¿Qué es Slippi Mirroring?"
 
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:9:21
 msgid "Wrong email? "
@@ -1676,7 +1679,7 @@ msgstr "Tu ID de espectador"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:2:37
 msgid "Your connect code is used for players to connect with you directly."
-msgstr "Tu código de conexión se usa para que los jugadores se conecten contigo directamente."
+msgstr "Tu código de conexión se usa para que otros jugadores se conecten contigo directamente."
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:5:28
 msgid "or drag and drop here"
@@ -1700,19 +1703,19 @@ msgstr "{0, plural, one {# archivo tenía} other {# archivos tenían}} errores."
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:9:39
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} hidden."
-msgstr ""
+msgstr "{0, plural, one {# archivo oculto} other {# archivos ocultos}}."
 
 #: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:2:37
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} selected"
-msgstr ""
+msgstr "{0, plural, one {# archivo seleccionado} other {# archivos seleccionados}}"
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:2:36
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} successfully deleted."
-msgstr ""
+msgstr "{0, plural, one {# archivo eliminado} other {# archivos eliminados}} correctamente."
 
 #: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:8:37
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} will be deleted."
-msgstr ""
+msgstr "{0, plural, one {# archivo será eliminado} other {# archivos serán eliminados}}."
