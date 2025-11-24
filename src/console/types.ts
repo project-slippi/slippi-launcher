@@ -1,10 +1,16 @@
-import type { ConsoleConnection, SlpFileWriter } from "@slippi/slippi-js/node";
-
-import type { AutoSwitcher } from "./auto_switcher";
-import type { ConsoleRelay } from "./console_relay";
-
 // Re-export the ConnectionStatus type from slippi-js/node so that the renderer can use it
-export { ConnectionStatus, Ports } from "@slippi/slippi-js/node";
+export enum ConnectionStatus {
+  DISCONNECTED = 0,
+  CONNECTING = 1,
+  CONNECTED = 2,
+  RECONNECT_WAIT = 3,
+}
+
+export enum Ports {
+  DEFAULT = 51441,
+  LEGACY = 666,
+  RELAY_START = 53741,
+}
 
 export type ConsoleMirrorStatusUpdate = {
   status: number;
@@ -24,14 +30,6 @@ export type MirrorConfig = {
   autoSwitcherSettings?: AutoSwitcherSettings;
   useNicknameFolders: boolean;
   nickname?: string;
-};
-
-export type MirrorDetails = MirrorConfig & {
-  isMirroring: boolean;
-  connection: ConsoleConnection;
-  fileWriter: SlpFileWriter;
-  autoSwitcher: AutoSwitcher | null;
-  relay: ConsoleRelay | null;
 };
 
 export type AutoSwitcherSettings = {

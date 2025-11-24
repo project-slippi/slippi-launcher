@@ -91,7 +91,7 @@ export class BroadcastManager extends EventEmitter {
         this.backupEvents = [];
       }
     });
-    this.dolphinConnection.on(ConnectionEvent.MESSAGE, (message) => {
+    this.dolphinConnection.on(ConnectionEvent.MESSAGE, (message: any) => {
       this.incomingEvents.push(message);
       this._handleGameData();
     });
