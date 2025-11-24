@@ -120,7 +120,7 @@ msgstr "Volver a las repeticiones"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:24:15
 msgid "Beta (Mainline)"
-msgstr "Beta (Principal)"
+msgstr "Beta (Mainline)"
 
 #: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:9:50
 #. {0} broadcastDuration: string
