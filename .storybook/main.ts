@@ -1,7 +1,6 @@
 import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
 import type { StorybookConfig } from "@storybook/core-common";
 import path from "path";
-import polyfills from "../.erb/configs/webpack.config.renderer.polyfills";
 import fs from "fs";
 import { merge } from "webpack-merge";
 import type { RuleSetRule } from "webpack";
@@ -42,7 +41,7 @@ const config: StorybookConfig & { babel: any } = {
       use: ["@svgr/webpack", "url-loader"],
     });
 
-    config = merge(config, polyfills, {
+    config = merge(config, {
       resolve: {
         alias: {
           "@emotion/core": getPackageDir("@emotion/react"),

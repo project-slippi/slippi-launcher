@@ -16,7 +16,6 @@ import { merge } from "webpack-merge";
 import checkNodeEnv from "../scripts/check-node-env";
 import deleteSourceMaps from "../scripts/delete-source-maps";
 import baseConfig from "./webpack.config.base";
-import polyfills from "./webpack.config.renderer.polyfills";
 import webpackPaths from "./webpack.paths";
 
 checkNodeEnv("production");
@@ -167,4 +166,4 @@ const configuration: webpack.Configuration = {
   ],
 };
 
-export default merge(baseConfig, polyfills, configuration);
+export default merge(baseConfig, configuration);
