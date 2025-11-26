@@ -49,7 +49,7 @@ export enum DolphinEventType {
   DOWNLOAD_START = "DOWNLOAD_START",
   DOWNLOAD_PROGRESS = "DOWNLOAD_PROGRESS",
   DOWNLOAD_COMPLETE = "DOWNLOAD_COMPLETE",
-  OFFLINE = "OFFLINE",
+  NETWORK_ERROR = "NETWORK_ERROR",
 }
 
 export type DolphinNetplayClosedEvent = {
@@ -86,7 +86,7 @@ export type DolphinDownloadCompleteEvent = {
 };
 
 export type DolphinOfflineEvent = {
-  type: DolphinEventType.OFFLINE;
+  type: DolphinEventType.NETWORK_ERROR;
   dolphinType: DolphinLaunchType;
 };
 
@@ -95,7 +95,7 @@ export type DolphinEventMap = {
   [DolphinEventType.DOWNLOAD_START]: DolphinDownloadStartEvent;
   [DolphinEventType.DOWNLOAD_PROGRESS]: DolphinDownloadProgressEvent;
   [DolphinEventType.DOWNLOAD_COMPLETE]: DolphinDownloadCompleteEvent;
-  [DolphinEventType.OFFLINE]: DolphinOfflineEvent;
+  [DolphinEventType.NETWORK_ERROR]: DolphinOfflineEvent;
 };
 
 export type DolphinEvent = DolphinEventMap[DolphinEventType];
