@@ -15,6 +15,15 @@ const isDevelopment = window.electron.bootstrap.isDevelopment;
 const configFlags = window.electron.bootstrap.flags;
 
 export async function installServices(): Promise<Services> {
+  // Initialize i18n service first so that other services can show
+  // internationalized error messages if necessary.
+  const i18nService = createI18nService({ englishOnly: !configFlags.enableI18n });
+  // Connect i18n service to global app state for language changes
+  i18nService.onLanguageChange((language) => {
+    useAppStore.getState().setCurrentLanguage(language);
+  });
+  await i18nService.init();
+
   const dolphinService = createDolphinClient();
   const authService = createAuthClient();
   const replayService = createReplayClient();
@@ -28,15 +37,6 @@ export async function installServices(): Promise<Services> {
   const broadcastService = window.electron.broadcast;
   const consoleService = window.electron.console;
   const spectateRemoteService = window.electron.remote;
-
-  const i18nService = createI18nService({ englishOnly: !configFlags.enableI18n });
-
-  // Connect i18n service to global app state for language changes
-  i18nService.onLanguageChange((language) => {
-    useAppStore.getState().setCurrentLanguage(language);
-  });
-
-  await i18nService.init();
 
   return {
     authService,
