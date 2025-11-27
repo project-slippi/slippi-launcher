@@ -1413,7 +1413,7 @@ msgid ""
 "Slippi may be experiencing some downtime. Playing online may or may not "
 "work."
 msgstr ""
-"Slippi puede estar experimentando inactividad. Jugar en línea puede "
+"Los Servidores de Slippi pueden estar experimentando inconvenientes. Jugar en línea podría "
 "funcionar o no."
 
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:7:28
