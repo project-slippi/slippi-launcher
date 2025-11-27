@@ -437,9 +437,9 @@ msgid ""
 "screenshot this and post it in a support channel in the Slippi Discord with "
 "some context regarding the crash."
 msgstr ""
-"Dolphin se cerró con código de error: {0}. Si necesitas ayuda, toma una "
+"Dolphin se cerró con el código de error: {0}. Si necesitas ayuda, toma una "
 "captura de pantalla y publícala en un canal de soporte en el Discord de "
-"Slippi con contexto sobre el cierre inesperado."
+"Slippi con algun contexto sobre el cierre."
 
 #: src/renderer/lib/dolphin/handle_dolphin_exit_code.messages.ts:5:5
 msgid ""
