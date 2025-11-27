@@ -21,7 +21,7 @@ These are the applications you will need to install in order to build this proje
 
 - Clone the repo via: `git clone https://github.com/project-slippi/slippi-launcher.git`
 - Navigate into the directory and run: `npm install` to install all dependencies
-- Use `npm start` to run the app in develop mode
+- Use `npm run start` to run the app in develop mode
 - Use `npm run package` to build a release
 
 #### Recommended IDE
