@@ -151,7 +151,7 @@ export class ReplayPresenter {
           state.fileErrorCount = result.fileErrorCount;
           state.totalBytes = result.totalBytes;
         });
-      } catch (err) {
+      } catch (_err) {
         useReplays.setState((state) => {
           state.loading = false;
           state.progress = null;

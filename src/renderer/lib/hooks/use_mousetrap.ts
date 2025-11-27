@@ -22,7 +22,9 @@ export const useMousetrap = (handlerKey: string | string[], handlerCallback: Mou
     mousetrap.bind(
       handlerKey,
       (evt, combo) => {
-        typeof actionRef.current === "function" && actionRef.current(evt, combo);
+        if (typeof actionRef.current === "function") {
+          actionRef.current(evt, combo);
+        }
       },
       evtType,
     );

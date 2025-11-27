@@ -36,7 +36,7 @@ export async function download(options: {
       resolve();
     });
     downloader.on("bytes", (transferredBytes: number) => {
-      onProgress && onProgress({ transferredBytes, totalBytes });
+      onProgress?.({ transferredBytes, totalBytes });
     });
   });
 }

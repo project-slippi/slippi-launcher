@@ -18,7 +18,7 @@ export async function installDolphinOnLinux({
     const dolphinAppImagePath = await installation.findDolphinExecutable();
     log(`${dolphinAppImagePath} already exists. Deleting...`);
     await fs.remove(dolphinAppImagePath);
-  } catch (err) {
+  } catch (_err) {
     log("No existing AppImage found");
   }
 

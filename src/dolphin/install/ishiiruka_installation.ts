@@ -155,7 +155,7 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
       onStart();
 
       log.info(`${type} Dolphin installation is outdated. Downloading latest...`);
-    } catch (err) {
+    } catch (_err) {
       log.info(`Could not find ${type} Dolphin installation. Downloading...`);
     }
 
@@ -234,7 +234,7 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
       const dolphinVersionOut = spawnSync(dolphinPath, ["--version"]).stdout.toString();
       const match = dolphinVersionOut.match(semverRegex);
       return match?.[0] ?? null;
-    } catch (err) {
+    } catch (_err) {
       return null;
     }
   }

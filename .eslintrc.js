@@ -66,6 +66,7 @@ module.exports = {
       {
         argsIgnorePattern: "^_",
         varsIgnorePattern: "^_",
+        caughtErrorsIgnorePattern: "^_",
       },
     ],
     "@typescript-eslint/explicit-module-boundary-types": "off",
@@ -104,7 +105,8 @@ module.exports = {
     "lodash/chaining": "error",
     "lodash/import-scope": [2, "method"],
     "no-restricted-imports": ["error", "lodash/chain"],
-    "react/jsx-curly-brace-presence": ["error", "never"]
+    "react/jsx-curly-brace-presence": ["error", "never"],
+    "@typescript-eslint/no-require-imports": "off"
   },
   overrides: [
     {

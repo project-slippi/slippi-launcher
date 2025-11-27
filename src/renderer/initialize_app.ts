@@ -28,7 +28,7 @@ export async function initializeApp(services: Services) {
       if (user) {
         try {
           await slippiBackendService.fetchUserData();
-        } catch (err) {
+        } catch (_err) {
           const reason = !navigator.onLine ? Messages.youAreOffline() : Messages.slippiMayBeDown();
           const message = `${Messages.failedToCommunicateWithSlippiServers()} ${reason}`;
           showError(message);

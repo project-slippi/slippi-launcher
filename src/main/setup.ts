@@ -83,7 +83,7 @@ export default function setupMainIpc({
     try {
       const result = await verifyIso(path);
       return { path, valid: result };
-    } catch (err) {
+    } catch (_err) {
       return { path, valid: IsoValidity.INVALID };
     }
   });

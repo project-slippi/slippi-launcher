@@ -22,7 +22,7 @@ export async function getNetworkDiagnostics(): Promise<{
     portMapping = await getPortMappingPresence();
     ({ address, natType } = await getNatType());
     cgnat = await getCgnatPresence(address);
-  } catch (err) {
+  } catch (_err) {
     // just return what we have
   }
   return { address, cgnat, natType, portMapping };
