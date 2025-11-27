@@ -12,7 +12,7 @@
   "scripts": {
     "electron-rebuild": "node -r ts-node/register ../../.erb/scripts/electron-rebuild.js",
     "link-modules": "node -r ts-node/register ../../.erb/scripts/link-modules.ts",
-    "postinstall": "yarn run electron-rebuild && yarn run link-modules"
+    "postinstall": "npm run electron-rebuild && npm run link-modules"
   },
   "dependencies": {
     "better-sqlite3": "^9.0.0",
