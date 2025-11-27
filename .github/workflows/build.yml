@@ -14,21 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  skip_duplicates:
-    name: Skip Duplicate Runs
-    runs-on: ubuntu-latest
-    outputs:
-      should_skip: ${{ steps.skip_check.outputs.should_skip }}
-    steps:
-      - id: skip_check
-        uses: fkirc/skip-duplicate-actions@master
-        with:
-          concurrent_skipping: "same_content"
-          do_not_skip: '["push", "workflow_dispatch", "schedule"]'
-
   build:
-    needs: skip_duplicates
-    if: ${{ needs.skip_duplicates.outputs.should_skip != 'true' }}
     name: Test on node ${{ matrix.node-version }} and ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -81,12 +67,12 @@ jobs:
       - name: Load Windows signing secrets
         env:
           ES_USERNAME: ${{ secrets.ES_USERNAME }}
-          FROM_FORK: ${{ github.event_name == 'pull_request' }} # pull request events from our repo are skipped in favor of push events
+          PR_BUILD: ${{ github.event_name == 'pull_request' }} # skip windows signing on PR builds
         if: matrix.os == 'windows-latest' && (env.ES_USERNAME != null || github.event_name == 'pull_request')
         shell: bash
         run: |
           msg="$(git log -1 --no-merges --pretty=%B | head -n 1)"
-          if [[ "$FROM_FORK" = "true" ]] || [[ ! "$msg" =~ ^release:.* ]];
+          if [[ "$PR_BUILD" = "true" ]] || [[ ! "$msg" =~ ^release:.* ]];
           then
             echo "not a release, skipping code signing"
             exit 0;
@@ -139,11 +125,9 @@ jobs:
           yarn run lint
       - name: Prepare artifacts
         shell: bash
-        env:
-          FROM_FORK: ${{ github.event_name == 'pull_request' }} # pull request events from our repo are skipped in favor of push events
         run: |
           msg="$(git log -1 --no-merges --pretty=%B | head -n 1)"
-          if [[ "$FROM_FORK" = "true" ]] || [[ ! "$msg" =~ ^release:.* ]];
+          if [[ ! "$msg" =~ ^release:.* ]];
           then
             rm release/build/*-mac.zip || true;
           fi
