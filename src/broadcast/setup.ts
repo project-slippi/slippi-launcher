@@ -35,9 +35,18 @@ export default function setupBroadcastIpc({
     .filter<DolphinPlaybackClosedEvent>((event) => {
       return event.type === DolphinEventType.CLOSED && event.dolphinType === DolphinLaunchType.PLAYBACK;
     })
-    .subscribe((event) => {
+    .subscribe(async (event) => {
       if (spectateWorker) {
-        void spectateWorker.dolphinClosed(event.instanceId).catch(log.error);
+        await spectateWorker.dolphinClosed(event.instanceId).catch(log.error);
+
+        // Check if there are any remaining open broadcasts
+        const openBroadcasts = await spectateWorker.getOpenBroadcasts().catch(() => []);
+        if (openBroadcasts.length === 0) {
+          // No more active spectating sessions - terminate the worker to free resources
+          log.debug("No active spectate sessions remaining, terminating spectate worker");
+          await spectateWorker.terminate().catch(log.error);
+          spectateWorker = undefined;
+        }
       }
     });
 
