@@ -306,6 +306,7 @@ export class SpectateManager extends EventEmitter {
   }
 
   public async disconnect(): Promise<void> {
+    this.emit(SpectateEvent.BROADCAST_LIST_UPDATE, []);
     this.emit(SpectateEvent.LOG, "Disconnecting from spectate server");
 
     // Stop watching all broadcasts
