@@ -48,8 +48,10 @@ const apolloLink = ApolloLink.from([errorLink, retryLink, httpLink]);
 const client = new ApolloClient({
   link: apolloLink,
   cache: new InMemoryCache(),
-  name: "slippi-launcher",
-  version: `${appVersion}${isDevelopment ? "-dev" : ""}`,
+  clientAwareness: {
+    name: "slippi-launcher",
+    version: isDevelopment ? `${appVersion}-dev` : appVersion,
+  },
 });
 
 const getLatestDolphinQuery = gql`

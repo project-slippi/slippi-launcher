@@ -90,8 +90,10 @@ class SlippiBackendClient implements SlippiBackendService {
           },
         },
       }),
-      name: "slippi-launcher",
-      version: clientVersion,
+      clientAwareness: {
+        name: "slippi-launcher",
+        version: clientVersion,
+      },
     });
   }
 
