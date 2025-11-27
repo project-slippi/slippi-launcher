@@ -44,9 +44,9 @@ export async function readLastLines(
   const file = await fs.open(inputFilePath, "r");
 
   const bufferSize = Math.min(16384, stat.size);
-  const readBuffer = Buffer.alloc(bufferSize);
+  const readBuffer = new Uint8Array(bufferSize);
   let readBufferRemaining = 0;
-  const allBytes = [];
+  const allBytes: number[] = [];
   let lineCount = 0;
   let fileOffset = stat.size;
 
@@ -54,10 +54,10 @@ export async function readLastLines(
     // Read the next chunk of the file
     const readSize = Math.min(readBuffer.length, fileOffset);
     fileOffset -= readSize;
-    const readResult = await fs.read(file, readBuffer as unknown as Uint8Array, 0, readSize, fileOffset);
+    const readResult = await fs.read(file, readBuffer, 0, readSize, fileOffset);
 
     // If there's still data in our read buffer, then finish processing that
-    readBufferRemaining = (readResult as { bytesRead: number; buffer: Buffer }).bytesRead;
+    readBufferRemaining = readResult.bytesRead;
     while (readBufferRemaining > 0) {
       const bufferIndex = readBufferRemaining - 1;
       if (readBuffer[bufferIndex] === 0x0a && allBytes.length) {
