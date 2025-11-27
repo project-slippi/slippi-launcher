@@ -137,7 +137,6 @@
     "eslint-plugin-react-hooks": "^4.3.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "eslint-plugin-storybook": "^0.5.7",
-    "eslint-plugin-strict-booleans": "^1.0.1",
     "fdir": "^5.1.0",
     "file-loader": "^6.2.0",
     "fix-esm": "^1.0.1",
