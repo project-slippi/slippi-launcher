@@ -129,7 +129,7 @@ export class MirrorManager extends EventEmitter {
       });
     });
     this.emit(MirrorEvent.LOG, config.port);
-    connection.connect(config.ipAddress, config.port ?? Ports.DEFAULT, config.isRealtime);
+    await connection.connect(config.ipAddress, config.port ?? Ports.DEFAULT, config.isRealtime);
 
     let autoSwitcher: AutoSwitcher | null = null;
     if (config.autoSwitcherSettings) {
