@@ -99,6 +99,7 @@ module.exports = {
     "react/react-in-jsx-scope": "off",
     "react/jsx-boolean-value": ["error", "always"],
     "react/no-unstable-nested-components": "error",
+    "react/no-unknown-property": ["error", { "ignore": ["css"] }],
     "@stylexjs/valid-styles": "error",
     "lodash/chaining": "error",
     "lodash/import-scope": [2, "method"],
