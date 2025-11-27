@@ -23,7 +23,7 @@ msgstr "確認メールを送信しました："
 
 #: src/renderer/listeners/listeners.messages.ts:3:23
 msgid "A network error occurred."
-msgstr ""
+msgstr "ネットワークエラーが発生しました。"
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:21:20
 msgid "Accept All"
@@ -254,15 +254,15 @@ msgstr "この設定を変更するには Dolphin を終了してください。
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:7:32
 msgid "Code copied to clipboard!"
-msgstr ""
+msgstr "コードをクリップボードにコピーしました！"
 
 #: src/renderer/lib/validate/validate.messages.ts:6:24
 msgid "Code is too long"
-msgstr ""
+msgstr "コードが長すぎます"
 
 #: src/renderer/lib/validate/validate.messages.ts:5:25
 msgid "Code is too short"
-msgstr ""
+msgstr "コードが短すぎます"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:10:33
 msgid "Configure Dolphin"
@@ -405,17 +405,17 @@ msgstr "表示名"
 
 #: src/renderer/lib/validate/validate.messages.ts:10:31
 msgid "Display name is too long"
-msgstr ""
+msgstr "表示名が長すぎます"
 
 #: src/renderer/lib/validate/validate.messages.ts:9:32
 msgid "Display name is too short"
-msgstr ""
+msgstr "表示名が短すぎます"
 
 #: src/renderer/lib/validate/validate.messages.ts:8:5
 msgid ""
 "Display names can only contain letters, numbers, Hiragana, Katakana, and "
 "special characters"
-msgstr ""
+msgstr "表示名には文字、数字、ひらがな、カタカナ、特殊文字のみ使用できます"
 
 #: src/renderer/pages/settings/create.messages.ts:7:26
 msgid "Dolphin Settings"
@@ -427,14 +427,14 @@ msgid ""
 "Dolphin exited with error code: {0}. If you're in need of assistance, "
 "screenshot this and post it in a support channel in the Slippi Discord with "
 "some context regarding the crash."
-msgstr ""
+msgstr "Dolphinがエラーコード{0}で終了しました。サポートが必要な場合は、この画面のスクリーンショットとクラッシュ時の状況をSlippi Discordのサポートチャンネルに投稿してください。"
 
 #: src/renderer/lib/dolphin/handle_dolphin_exit_code.messages.ts:5:5
 msgid ""
 "Dolphin has crashed. Please go to the Help section of the settings page, "
 "click \"Copy logs\", and paste them in the Slippi Discord's "
 "#windows-support channel with some context regarding the crash."
-msgstr ""
+msgstr "Dolphinがクラッシュしました。設定ページのヘルプセクションから「ログをコピー」をクリックし、Slippi Discordの#windows-supportチャンネルにクラッシュ時の状況と共に貼り付けてください。"
 
 #: src/renderer/pages/replays/replay_browser/replay_file/replay_file.messages.ts:6:28
 #: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:6:28
@@ -443,7 +443,7 @@ msgstr "Dolphinを更新中"
 
 #: src/renderer/lib/dolphin/dolphin.messages.ts:2:28
 msgid "Dolphin is updating. Try again later."
-msgstr ""
+msgstr "Dolphinを更新中です。後でもう一度お試しください。"
 
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:11:15
 msgid "Down"
@@ -555,7 +555,7 @@ msgstr "よくある質問"
 
 #: src/renderer/initialize_app.messages.ts:2:47
 msgid "Failed to communicate with Slippi servers."
-msgstr ""
+msgstr "Slippiサーバーとの通信に失敗しました。"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:29:44
 msgid "Failed to determine CGNAT or Double NAT presence"
@@ -587,7 +587,7 @@ msgstr "アップデートの取得に失敗しました"
 msgid ""
 "Failed to install {0}. Try closing all Dolphin instances and restarting the "
 "launcher."
-msgstr ""
+msgstr "{0}のインストールに失敗しました。すべてのDolphinを終了してランチャーを再起動してください。"
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:2:33
 msgid "Failed to read gecko codes"
@@ -718,7 +718,7 @@ msgstr "無効なGeckoコード"
 
 #: src/renderer/lib/validate/validate.messages.ts:2:27
 msgid "Invalid IP address"
-msgstr ""
+msgstr "無効なIPアドレス"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:20:22
 msgid "Invalid Port"
@@ -726,7 +726,7 @@ msgstr "無効なポート"
 
 #: src/renderer/lib/validate/validate.messages.ts:3:22
 msgid "Invalid code"
-msgstr ""
+msgstr "無効なコード"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:29:28
 msgid "Invalid port number"
@@ -940,7 +940,7 @@ msgstr "フォルダ未設定"
 
 #: src/renderer/app/header/header.messages.ts:11:30
 msgid "No network connection"
-msgstr ""
+msgstr "ネットワーク接続なし"
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connections_list.messages.ts:4:29
 msgid "No saved console connections"
@@ -1002,7 +1002,7 @@ msgstr "オンライン有効化が必要です"
 
 #: src/renderer/lib/validate/validate.messages.ts:4:39
 msgid "Only English characters are allowed"
-msgstr ""
+msgstr "英字のみ使用できます"
 
 #: src/renderer/app/header/header.messages.ts:10:41
 msgid "Only logged in users can play online."
@@ -1199,14 +1199,14 @@ msgstr "リプレイ"
 msgid ""
 "Required DLLs for launching Dolphin are missing. Check the Help section in "
 "the settings page to fix this issue."
-msgstr ""
+msgstr "Dolphinの起動に必要なDLLファイルが見つかりません。設定ページのヘルプセクションを確認して問題を解決してください。"
 
 #: src/renderer/lib/dolphin/handle_dolphin_exit_code.messages.ts:12:5
 msgid ""
 "Required libraries for launching Dolphin may be missing. Check the Help "
 "section in the settings page for guidance. Post in the Slippi Discord's "
 "#linux-support forum for further assistance if needed."
-msgstr ""
+msgstr "Dolphinの起動に必要なライブラリが不足している可能性があります。設定ページのヘルプセクションを確認してください。さらにサポートが必要な場合は、Slippi Discordの#linux-supportフォーラムに投稿してください。"
 
 #: src/renderer/pages/settings/game_settings/game_music_toggle/game_music_toggle.messages.ts:5:48
 #. {0} version: string
@@ -1363,7 +1363,7 @@ msgstr "Slippiはプレイヤーマッチングや結果報告などの公平性
 msgid ""
 "Slippi may be experiencing some downtime. Playing online may or may not "
 "work."
-msgstr ""
+msgstr "Slippiがメンテナンス中の可能性があります。オンラインプレイが正常に動作しない場合があります。"
 
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:7:28
 msgid "Slippi server error"
@@ -1375,7 +1375,7 @@ msgstr "ソフトリセット"
 
 #: src/renderer/listeners/listeners.messages.ts:4:39
 msgid "Some functionality of the Launcher and Dolphin will be unavailable."
-msgstr ""
+msgstr "ランチャーとDolphinの一部機能が利用できません。"
 
 #: src/renderer/pages/not_found/not_found_page.messages.ts:3:29
 msgid "Something went wrong."
@@ -1579,7 +1579,7 @@ msgstr "末尾の数字は自動生成されます"
 msgid ""
 "Try a different video backend in Dolphin. If the issue persists, install "
 "the latest Windows update available and then restart your computer."
-msgstr ""
+msgstr "Dolphinで別のビデオバックエンドをお試しください。問題が解決しない場合は、最新のWindowsアップデートをインストールしてコンピューターを再起動してください。"
 
 #: src/renderer/pages/home/news_feed/news_feed.messages.ts:5:19
 msgid "Try again"
@@ -1715,7 +1715,7 @@ msgstr "ログインしていません"
 #: src/renderer/initialize_app.messages.ts:3:24
 #: src/renderer/listeners/listeners.messages.ts:2:24
 msgid "You are offline."
-msgstr ""
+msgstr "オフラインです。"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:34:28
 msgid "You may have trouble connecting to other players."
