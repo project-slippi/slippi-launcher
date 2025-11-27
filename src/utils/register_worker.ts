@@ -12,6 +12,9 @@ export type RegisteredWorker<T> = Thread &
     onCleanup: (callback: () => void | Promise<void>) => void;
   };
 
+const SECOND = 1000;
+const WORKER_TIMEOUT = 30 * SECOND;
+
 /**
  * Spawns and registers a worker to automatically terminate once the app is quit.
  * The returned worker has a `terminate()` method for explicit cleanup and
@@ -19,7 +22,7 @@ export type RegisteredWorker<T> = Thread &
  */
 export async function registerWorker<T extends WorkerMethods>(worker: Worker): Promise<RegisteredWorker<T>> {
   try {
-    const registeredWorker = (await spawn(worker, { timeout: 30000 })) as Thread & T;
+    const registeredWorker = (await spawn(worker, { timeout: WORKER_TIMEOUT })) as Thread & T;
     const cleanupCallbacks: Array<() => void | Promise<void>> = [];
 
     const terminateWorker = async () => {
