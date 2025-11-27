@@ -116,13 +116,27 @@ export default (env?: Record<string, string | true>, _argv?: any) => {
                 importLoaders: 1,
               },
             },
-            "sass-loader",
+            {
+              loader: "sass-loader",
+              options: {
+                api: "modern",
+              },
+            },
           ],
           include: /\.module\.s?(c|a)ss$/,
         },
         {
           test: /\.s?css$/,
-          use: ["style-loader", "css-loader", "sass-loader"],
+          use: [
+            "style-loader",
+            "css-loader",
+            {
+              loader: "sass-loader",
+              options: {
+                api: "modern",
+              },
+            },
+          ],
           exclude: /\.module\.s?(c|a)ss$/,
         },
         // Fonts
