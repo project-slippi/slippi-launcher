@@ -4,6 +4,7 @@ import { geckoCodeToString } from "@dolphin/config/gecko_code";
 import { useToasts } from "@/lib/hooks/use_toasts";
 
 import { ManageCodes } from "./manage_codes";
+import { ManageCodesMessages as Messages } from "./manage_codes.messages";
 
 export const ManageCodesContainer = ({
   geckoCodes,
@@ -22,7 +23,7 @@ export const ManageCodesContainer = ({
     navigator.clipboard
       .writeText(geckoCodeToString(geckoCode).trim())
       .then(() => {
-        showSuccess("Code copied to clipboard!");
+        showSuccess(Messages.codeCopiedToClipboard());
       })
       .catch(console.error);
   };
