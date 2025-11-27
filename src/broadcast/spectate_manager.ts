@@ -304,4 +304,24 @@ export class SpectateManager extends EventEmitter {
       dolphinId: value.dolphinId,
     }));
   }
+
+  public async disconnect(): Promise<void> {
+    this.emit(SpectateEvent.LOG, "Disconnecting from spectate server");
+
+    // Stop watching all broadcasts
+    const broadcastIds = Object.keys(this.openBroadcasts);
+    for (const broadcastId of broadcastIds) {
+      this.stopWatchingBroadcast(broadcastId);
+    }
+
+    // Close WebSocket connection
+    if (this.wsConnection) {
+      this.wsConnection.close();
+      this.wsConnection = null;
+    }
+
+    // Clear state
+    this.openBroadcasts = {};
+    this.availableBroadcasts = {};
+  }
 }

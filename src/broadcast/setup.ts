@@ -47,10 +47,11 @@ export default function setupBroadcastIpc({
     if (spectateWorker) {
       const openBroadcasts = await spectateWorker.getOpenBroadcasts().catch(() => []);
       if (openBroadcasts.length === 0) {
-        log.debug("Starting spectate idle timeout (15 minutes)");
+        log.debug("Starting spectate idle timeout");
         spectateIdleTimer = setTimeout(async () => {
-          log.debug("Spectate idle timeout reached, terminating worker");
+          log.debug("Spectate idle timeout reached, disconnecting and terminating worker");
           if (spectateWorker) {
+            await spectateWorker.disconnect();
             await spectateWorker.terminate();
             spectateWorker = undefined;
           }
