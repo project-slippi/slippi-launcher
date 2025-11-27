@@ -183,7 +183,7 @@
     "@mui/icons-material": "^5.11.16",
     "@mui/lab": "^5.0.0-alpha.127",
     "@mui/material": "^5.12.1",
-    "@slippi/slippi-js": "^7.1.0",
+    "@slippi/slippi-js": "^7.2.0",
     "@stylexjs/stylex": "^0.4.1",
     "@xmcl/nat-api": "^0.4.1",
     "async-mutex": "^0.4.0",

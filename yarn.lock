@@ -3294,19 +3294,20 @@
   dependencies:
     "@sinonjs/commons" "^3.0.0"
 
-"@slippi/slippi-js@^7.1.0":
-  version "7.1.0"
-  resolved "https://registry.yarnpkg.com/@slippi/slippi-js/-/slippi-js-7.1.0.tgz#c28a0f8a510b534241bae7fa966e45b97ddbdd8b"
-  integrity sha512-fxxxh9cwb7LUMjDaa78suVQkxdR+vgHbBosczvQoq5VDb1J6Wwc2ZmOT+RupDuKAf4CR8e+p2LyA8GQfqsl+NA==
+"@slippi/slippi-js@^7.2.0":
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/@slippi/slippi-js/-/slippi-js-7.2.0.tgz#0968aa31aba7ac8971f133f7ea0fd89369bc6913"
+  integrity sha512-cegUrEFAqDEZBDgQpv+lYgCrb3/ESG6cv+deJh7PzM+RKc8lPorVVnq54Xs3H5xiTa7EMXR24I5rfdaTcR6TcA==
   dependencies:
     "@shelacek/ubjson" "^1.0.1"
     date-fns "^2.28.0"
-    enet "^0.2.9"
-    iconv-lite "^0.6.2"
+    iconv-cp932 "^1.2.2"
     lodash "^4.17.21"
     lodash-es "^4.17.21"
-    reconnect-core "^1.3.0"
     semver "^7.3.2"
+  optionalDependencies:
+    enet "^0.2.9"
+    reconnect-core "^1.3.0"
 
 "@storybook/addon-actions@6.5.10", "@storybook/addon-actions@^6.5.10":
   version "6.5.10"
@@ -11158,6 +11159,11 @@ iconv-corefoundation@^1.1.7:
   dependencies:
     cli-truncate "^2.1.0"
     node-addon-api "^1.6.3"
+
+iconv-cp932@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/iconv-cp932/-/iconv-cp932-1.2.2.tgz#480c04f771a40337fc4186823ec1c2fab56d19a7"
+  integrity sha512-vUP4Ke0Xy3bInEjSsKtKq51KeXK7nglt9uvRVYhJrlUBlMKa2R1EBDE88HFXzm8Wp5J1w83psrISj0f+QMEt4g==
 
 iconv-lite@0.4.24:
   version "0.4.24"
