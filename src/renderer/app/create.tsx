@@ -106,7 +106,11 @@ export function createApp({ services }: { services: Services }): {
     return () => (
       <QueryClientProvider client={queryClient}>
         <ServiceProvider>
-          <Router>
+          <Router
+            future={{
+              v7_startTransition: true,
+            }}
+          >
             <Component />
           </Router>
         </ServiceProvider>
