@@ -2,7 +2,7 @@ import type { BroadcastService } from "@broadcast/types";
 import React from "react";
 
 import { useAccount } from "@/lib/hooks/use_account";
-import { useBroadcastList } from "@/lib/hooks/use_broadcast_list";
+import { useBroadcastList, useBroadcastListStore } from "@/lib/hooks/use_broadcast_list";
 
 import { SpectatePage } from "./spectate_page";
 
@@ -19,16 +19,14 @@ export function createSpectatePage({ broadcastService }: CreateSpectatePageArgs)
 
   const Page = React.memo(() => {
     const user = useAccount((store) => store.user);
-    const [currentBroadcasts, connect, refreshBroadcasts] = useBroadcastList();
+    const currentBroadcasts = useBroadcastListStore((store) => store.currentBroadcasts);
+    const { refreshBroadcasts } = useBroadcastList();
     return (
       <SpectatePage
         userId={user?.uid}
         watchBroadcast={watchBroadcast}
         broadcasts={currentBroadcasts}
-        onRefreshBroadcasts={async () => {
-          await connect();
-          await refreshBroadcasts();
-        }}
+        onRefreshBroadcasts={refreshBroadcasts}
       />
     );
   });
