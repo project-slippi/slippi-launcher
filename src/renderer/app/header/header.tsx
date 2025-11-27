@@ -27,7 +27,7 @@ import { HeaderMessages as Messages } from "./header.messages";
 import type { MenuItem } from "./main_menu";
 import { MainMenu } from "./main_menu";
 import { PlayButton as PlayButtonImpl, UpdatingButton } from "./play_button/play_button";
-import { StartGameDialog } from "./start_game_dialog";
+import { StartGameOfflineDialog } from "./start_game_offline_dialog";
 import { UserMenu } from "./user_menu/user_menu";
 
 const isMac = window.electron.bootstrap.isMac;
@@ -135,10 +135,10 @@ export const Header = ({ menuItems }: { menuItems: readonly MenuItem[] }) => {
           </IconButton>
         </Tooltip>
       </Box>
-      <StartGameDialog
+      <StartGameOfflineDialog
         open={startGameModalOpen}
-        onClose={() => setStartGameModalOpen(false)}
-        onSubmit={() => onPlay(true)}
+        onCancel={() => setStartGameModalOpen(false)}
+        onPlayOffline={() => onPlay(true)}
       />
       <ActivateOnlineDialog
         open={activateOnlineModal}

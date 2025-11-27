@@ -10,20 +10,20 @@ import React from "react";
 
 import { HeaderMessages as Messages } from "./header.messages";
 
-type StartGameDialogProps = {
+type StartGameOfflineDialogProps = {
   open: boolean;
-  onClose: () => void;
-  onSubmit: () => void;
+  onCancel: () => void;
+  onPlayOffline: () => void;
 };
 
-export const StartGameDialog = ({ open, onClose, onSubmit }: StartGameDialogProps) => {
+export const StartGameOfflineDialog = ({ open, onCancel, onPlayOffline }: StartGameOfflineDialogProps) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    onClose();
-    onSubmit();
+    onCancel();
+    onPlayOffline();
   };
 
   return (
@@ -31,7 +31,7 @@ export const StartGameDialog = ({ open, onClose, onSubmit }: StartGameDialogProp
       open={open}
       onClose={(_, reason) => {
         if (reason !== "backdropClick") {
-          onClose();
+          onCancel();
         }
       }}
       fullWidth={true}
@@ -43,7 +43,7 @@ export const StartGameDialog = ({ open, onClose, onSubmit }: StartGameDialogProp
           <div>{Messages.onlyLoggedInUsersCanPlayOnline()}</div>
         </DialogContent>
         <DialogActions>
-          <Button onClick={onClose} color="secondary">
+          <Button onClick={onCancel} color="secondary">
             {Messages.cancel()}
           </Button>
           <Button color="primary" type="submit">
