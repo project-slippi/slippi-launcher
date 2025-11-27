@@ -8,6 +8,8 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import React from "react";
 
+import { useAppStore } from "@/lib/hooks/use_app_store";
+
 import { HeaderMessages as Messages } from "./header.messages";
 
 type StartGameOfflineDialogProps = {
@@ -19,6 +21,7 @@ type StartGameOfflineDialogProps = {
 export const StartGameOfflineDialog = ({ open, onCancel, onPlayOffline }: StartGameOfflineDialogProps) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const isOnline = useAppStore((state) => state.isOnline);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -38,9 +41,12 @@ export const StartGameOfflineDialog = ({ open, onCancel, onPlayOffline }: StartG
       fullScreen={fullScreen}
     >
       <form onSubmit={handleSubmit}>
-        <StyledDialogTitle>{Messages.youAreNotLoggedIn()}</StyledDialogTitle>
-        <DialogContent style={{ display: "flex" }}>
-          <div>{Messages.onlyLoggedInUsersCanPlayOnline()}</div>
+        <StyledDialogTitle>
+          {isOnline ? Messages.youAreNotLoggedIn() : Messages.noNetworkConnection()}
+        </StyledDialogTitle>
+        <DialogContent>
+          {isOnline && <p>{Messages.onlyLoggedInUsersCanPlayOnline()}</p>}
+          <p>{Messages.wouldYouLikeToPlayOffline()}</p>
         </DialogContent>
         <DialogActions>
           <Button onClick={onCancel} color="secondary">
