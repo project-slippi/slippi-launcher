@@ -85,7 +85,7 @@ export type DolphinDownloadCompleteEvent = {
   dolphinVersion: string | null;
 };
 
-export type DolphinOfflineEvent = {
+export type DolphinNetworkErrorEvent = {
   type: DolphinEventType.NETWORK_ERROR;
   dolphinType: DolphinLaunchType;
 };
@@ -95,7 +95,7 @@ export type DolphinEventMap = {
   [DolphinEventType.DOWNLOAD_START]: DolphinDownloadStartEvent;
   [DolphinEventType.DOWNLOAD_PROGRESS]: DolphinDownloadProgressEvent;
   [DolphinEventType.DOWNLOAD_COMPLETE]: DolphinDownloadCompleteEvent;
-  [DolphinEventType.NETWORK_ERROR]: DolphinOfflineEvent;
+  [DolphinEventType.NETWORK_ERROR]: DolphinNetworkErrorEvent;
 };
 
 export type DolphinEvent = DolphinEventMap[DolphinEventType];
