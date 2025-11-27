@@ -8,22 +8,25 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import React from "react";
 
+import { useAppStore } from "@/lib/hooks/use_app_store";
+
 import { HeaderMessages as Messages } from "./header.messages";
 
-type StartGameDialogProps = {
+type StartGameOfflineDialogProps = {
   open: boolean;
-  onClose: () => void;
-  onSubmit: () => void;
+  onCancel: () => void;
+  onPlayOffline: () => void;
 };
 
-export const StartGameDialog = ({ open, onClose, onSubmit }: StartGameDialogProps) => {
+export const StartGameOfflineDialog = ({ open, onCancel, onPlayOffline }: StartGameOfflineDialogProps) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const isOnline = useAppStore((state) => state.isOnline);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    onClose();
-    onSubmit();
+    onCancel();
+    onPlayOffline();
   };
 
   return (
@@ -31,19 +34,22 @@ export const StartGameDialog = ({ open, onClose, onSubmit }: StartGameDialogProp
       open={open}
       onClose={(_, reason) => {
         if (reason !== "backdropClick") {
-          onClose();
+          onCancel();
         }
       }}
       fullWidth={true}
       fullScreen={fullScreen}
     >
       <form onSubmit={handleSubmit}>
-        <StyledDialogTitle>{Messages.youAreNotLoggedIn()}</StyledDialogTitle>
-        <DialogContent style={{ display: "flex" }}>
-          <div>{Messages.onlyLoggedInUsersCanPlayOnline()}</div>
+        <StyledDialogTitle>
+          {isOnline ? Messages.youAreNotLoggedIn() : Messages.noNetworkConnection()}
+        </StyledDialogTitle>
+        <DialogContent>
+          {isOnline && <p>{Messages.onlyLoggedInUsersCanPlayOnline()}</p>}
+          <p>{Messages.wouldYouLikeToPlayOffline()}</p>
         </DialogContent>
         <DialogActions>
-          <Button onClick={onClose} color="secondary">
+          <Button onClick={onCancel} color="secondary">
             {Messages.cancel()}
           </Button>
           <Button color="primary" type="submit">

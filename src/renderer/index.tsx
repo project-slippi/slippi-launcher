@@ -10,6 +10,7 @@ import { ToastProvider } from "@/components/toast_provider";
 import { slippiTheme } from "@/styles/theme";
 
 import { createApp } from "./app/create";
+import { ErrorBoundary } from "./components/error_boundary";
 import { LoadingScreen } from "./components/loading_screen/loading_screen";
 import { initializeApp } from "./initialize_app";
 import { installAppListeners } from "./listeners/install_app_listeners";
@@ -45,10 +46,12 @@ render(
       <MuiThemeProvider theme={slippiTheme}>
         <ThemeProvider theme={slippiTheme as any}>
           <ToastProvider>
-            {/* Don't use a message here since the i18nService is not yet initialized at this point. */}
-            <Suspense fallback={<LoadingScreen message="" />}>
-              <LazyApp />
-            </Suspense>
+            <ErrorBoundary padding="50px">
+              {/* Don't use a message here since the i18nService is not yet initialized at this point. */}
+              <Suspense fallback={<LoadingScreen message="" />}>
+                <LazyApp />
+              </Suspense>
+            </ErrorBoundary>
           </ToastProvider>
         </ThemeProvider>
       </MuiThemeProvider>

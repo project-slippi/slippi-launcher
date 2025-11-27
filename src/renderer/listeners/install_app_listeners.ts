@@ -54,6 +54,14 @@ export function installAppListeners(services: Services) {
     useAppStore.getState().setUpdateVersion(version);
   });
 
+  // Track online/offline status
+  window.addEventListener("online", () => {
+    useAppStore.getState().setIsOnline(true);
+  });
+  window.addEventListener("offline", () => {
+    useAppStore.getState().setIsOnline(false);
+  });
+
   installDolphinListeners({ dolphinService, notificationService });
   installBroadcastListeners({ broadcastService, authService });
   installConsoleListeners({ consoleService, notificationService });

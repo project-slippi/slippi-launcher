@@ -10,6 +10,8 @@ import {
 } from "@/lib/dolphin/use_dolphin_store";
 import type { NotificationService } from "@/services/notification/types";
 
+import { ListenersMessages as Messages } from "./listeners.messages";
+
 export function installDolphinListeners({
   dolphinService,
   notificationService,
@@ -43,8 +45,9 @@ export function installDolphinListeners({
     setDolphinVersion(event.dolphinVersion, event.dolphinType);
   });
 
-  dolphinService.onEvent(DolphinEventType.OFFLINE, (event) => {
-    showWarning("You seem to be offline, some functionality of the Launcher and Dolphin will be unavailable.");
+  dolphinService.onEvent(DolphinEventType.NETWORK_ERROR, (event) => {
+    const preludeMessage = !navigator.onLine ? Messages.youAreOffline() : Messages.networkError();
+    showWarning(`${preludeMessage} ${Messages.someFunctionalityUnavailable()}`);
     setDolphinStatus(event.dolphinType, DolphinStatus.READY);
   });
 }

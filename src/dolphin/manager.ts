@@ -330,7 +330,7 @@ export class DolphinManager {
 
   private _onOffline(dolphinType: DolphinLaunchType) {
     this.eventSubject.next({
-      type: DolphinEventType.OFFLINE,
+      type: DolphinEventType.NETWORK_ERROR,
       dolphinType,
     });
   }

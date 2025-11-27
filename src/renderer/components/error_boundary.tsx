@@ -18,8 +18,13 @@ type ErrorBoundaryState = {
   showStackTrace: boolean;
 };
 
-export class ErrorBoundary extends React.Component<any, ErrorBoundaryState> {
-  constructor(props: any) {
+type ErrorBoundaryProps = {
+  padding?: React.CSSProperties["padding"];
+  children: React.ReactNode;
+};
+
+export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = {
       hasError: false,
@@ -38,17 +43,13 @@ export class ErrorBoundary extends React.Component<any, ErrorBoundaryState> {
     this.setState({ errorInfo });
   }
 
-  public render() {
-    if (!this.state.hasError) {
-      return this.props.children;
-    }
-
+  private renderFallback() {
     // Render fallback error UI
     return (
-      <div style={{ padding: "0 20px 20px", color: "#DB6A6A" }}>
+      <div style={{ padding: this.props.padding ?? "0 20px 20px", color: "#DB6A6A" }}>
         <h2 style={{ display: "flex", alignItems: "center" }}>
           <WarningIcon />
-          <span style={{ marginLeft: 10 }}>Uh oh... Something went wrong!</span>
+          <span style={{ paddingLeft: 10 }}>Uh oh... Something went wrong!</span>
         </h2>
         {window.electron.bootstrap.isDevelopment && this.state.errorInfo !== null && (
           <div>
@@ -66,5 +67,12 @@ export class ErrorBoundary extends React.Component<any, ErrorBoundaryState> {
         )}
       </div>
     );
+  }
+
+  public render() {
+    if (!this.state.hasError) {
+      return this.props.children;
+    }
+    return this.renderFallback();
   }
 }

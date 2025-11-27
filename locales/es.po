@@ -6,8 +6,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "x-generator: i18next-auto-keys CLI\n"
-"Language: es-ES\n"
-"PO-Revision-Date: 2025-11-24T03:41:25.646Z\n"
+"Language: es\n"
+"PO-Revision-Date: 2025-11-27T01:35:14.954Z\n"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
 msgid "2-4 uppercase English characters"
@@ -20,6 +20,10 @@ msgstr "Los archivos 7z deben descomprimirse para usarse en Dolphin."
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:8:42
 msgid "A confirmation email has been sent to:"
 msgstr "Se ha enviado un correo de confirmación a:"
+
+#: src/renderer/listeners/listeners.messages.ts:3:23
+msgid "A network error occurred."
+msgstr ""
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:21:20
 msgid "Accept All"
@@ -154,7 +158,7 @@ msgstr "Puede cambiarse después por un pago único"
 msgid "Can't find the email? Check your spam folder. Still missing? "
 msgstr "¿No encuentras el correo? Revisa tu carpeta de spam. ¿Aún no aparece? "
 
-#: src/renderer/app/header/header.messages.ts:12:17
+#: src/renderer/app/header/header.messages.ts:14:17
 #: src/renderer/components/confirmation_modal/confirmation_modal.messages.ts:3:17
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:10:17
 msgid "Cancel"
@@ -255,6 +259,18 @@ msgstr "Cerrar"
 msgid "Close Dolphin to change this setting"
 msgstr "Cierra Dolphin para cambiar esta configuración"
 
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:7:32
+msgid "Code copied to clipboard!"
+msgstr ""
+
+#: src/renderer/lib/validate/validate.messages.ts:6:24
+msgid "Code is too long"
+msgstr ""
+
+#: src/renderer/lib/validate/validate.messages.ts:5:25
+msgid "Code is too short"
+msgstr ""
+
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:10:33
 msgid "Configure Dolphin"
 msgstr "Configurar Dolphin"
@@ -264,7 +280,7 @@ msgstr "Configurar Dolphin"
 msgid "Configure {0}"
 msgstr "Configurar {0}"
 
-#: src/renderer/app/header/header.messages.ts:14:18
+#: src/renderer/app/header/header.messages.ts:16:18
 #: src/renderer/components/confirmation_modal/confirmation_modal.messages.ts:2:18
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:11:18
 msgid "Confirm"
@@ -389,19 +405,52 @@ msgstr "Desconectar"
 msgid "Disconnected"
 msgstr "Desconectado"
 
-#: src/renderer/app/header/header.messages.ts:15:22
+#: src/renderer/app/header/header.messages.ts:17:22
 #: src/renderer/components/login_form/login_form.messages.ts:5:22
 msgid "Display Name"
 msgstr "Nombre para mostrar"
+
+#: src/renderer/lib/validate/validate.messages.ts:10:31
+msgid "Display name is too long"
+msgstr ""
+
+#: src/renderer/lib/validate/validate.messages.ts:9:32
+msgid "Display name is too short"
+msgstr ""
+
+#: src/renderer/lib/validate/validate.messages.ts:8:5
+msgid ""
+"Display names can only contain letters, numbers, Hiragana, Katakana, and "
+"special characters"
+msgstr ""
 
 #: src/renderer/pages/settings/create.messages.ts:7:26
 msgid "Dolphin Settings"
 msgstr "Configuración de Dolphin"
 
+#: src/renderer/lib/dolphin/handle_dolphin_exit_code.messages.ts:9:5
+#. {0} exitCode: string
+msgid ""
+"Dolphin exited with error code: {0}. If you're in need of assistance, "
+"screenshot this and post it in a support channel in the Slippi Discord with "
+"some context regarding the crash."
+msgstr ""
+
+#: src/renderer/lib/dolphin/handle_dolphin_exit_code.messages.ts:5:5
+msgid ""
+"Dolphin has crashed. Please go to the Help section of the settings page, "
+"click \"Copy logs\", and paste them in the Slippi Discord's "
+"#windows-support channel with some context regarding the crash."
+msgstr ""
+
 #: src/renderer/pages/replays/replay_browser/replay_file/replay_file.messages.ts:6:28
 #: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:6:28
 msgid "Dolphin is updating"
 msgstr "Dolphin se está actualizando"
+
+#: src/renderer/lib/dolphin/dolphin.messages.ts:2:28
+msgid "Dolphin is updating. Try again later."
+msgstr ""
 
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:11:15
 msgid "Down"
@@ -428,7 +477,7 @@ msgstr "Editar"
 msgid "Edit connection"
 msgstr "Editar conexión"
 
-#: src/renderer/app/header/header.messages.ts:13:26
+#: src/renderer/app/header/header.messages.ts:15:26
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:5:26
 msgid "Edit display name"
 msgstr "Editar nombre para mostrar"
@@ -513,6 +562,10 @@ msgstr "Dirección IP externa"
 msgid "FAQ"
 msgstr "Preguntas frecuentes"
 
+#: src/renderer/initialize_app.messages.ts:2:47
+msgid "Failed to communicate with Slippi servers."
+msgstr ""
+
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:29:44
 msgid "Failed to determine CGNAT or Double NAT presence"
 msgstr "No se pudo determinar la presencia de CGNAT o NAT doble"
@@ -536,6 +589,14 @@ msgstr "Error al obtener artículos de noticias."
 #: src/renderer/app/header/header.messages.ts:5:29
 msgid "Failed to get updates"
 msgstr "Error al obtener actualizaciones"
+
+#: src/renderer/initialize_app.messages.ts:6:5
+#: src/renderer/lib/dolphin/dolphin.messages.ts:4:5
+#. {0} dolphinTypeName: string
+msgid ""
+"Failed to install {0}. Try closing all Dolphin instances and restarting the "
+"launcher."
+msgstr ""
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:2:33
 msgid "Failed to read gecko codes"
@@ -668,9 +729,17 @@ msgstr "Inválido"
 msgid "Invalid Gecko code"
 msgstr "Código Gecko inválido"
 
+#: src/renderer/lib/validate/validate.messages.ts:2:27
+msgid "Invalid IP address"
+msgstr ""
+
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:20:22
 msgid "Invalid Port"
 msgstr "Puerto inválido"
+
+#: src/renderer/lib/validate/validate.messages.ts:3:22
+msgid "Invalid code"
+msgstr ""
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:29:28
 msgid "Invalid port number"
@@ -719,7 +788,7 @@ msgstr "Izquierda"
 msgid "Let's get set up"
 msgstr "Comencemos con la configuración"
 
-#: src/renderer/app/header/header.messages.ts:16:18
+#: src/renderer/app/header/header.messages.ts:18:18
 msgid "Loading"
 msgstr "Cargando"
 
@@ -812,6 +881,8 @@ msgstr "¿Necesitas ayuda?"
 msgid "Netplay"
 msgstr "Juego en Red"
 
+#: src/renderer/initialize_app.messages.ts:7:25
+#: src/renderer/lib/dolphin/dolphin.messages.ts:5:25
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:5:25
 msgid "Netplay Dolphin"
 msgstr "Dolphin de juego en línea"
@@ -882,6 +953,10 @@ msgstr "Ninguna carpeta seleccionada"
 msgid "No folder set"
 msgstr "Ninguna carpeta asignada"
 
+#: src/renderer/app/header/header.messages.ts:11:30
+msgid "No network connection"
+msgstr ""
+
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connections_list.messages.ts:4:29
 msgid "No saved console connections"
 msgstr "No hay conexiones de consola guardadas"
@@ -942,11 +1017,13 @@ msgstr "En línea"
 msgid "Online activation required"
 msgstr "Se requiere activación en línea"
 
-#: src/renderer/app/header/header.messages.ts:10:41
-msgid "Only logged in users can play online. Would you like to play offline?"
+#: src/renderer/lib/validate/validate.messages.ts:4:39
+msgid "Only English characters are allowed"
 msgstr ""
-"Solo los usuarios con sesión iniciada pueden jugar en línea. ¿Te gustaría "
-"jugar sin conexión?"
+
+#: src/renderer/app/header/header.messages.ts:10:41
+msgid "Only logged in users can play online."
+msgstr "Solo los usuarios con sesión iniciada pueden jugar en línea."
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:12:45
 msgid "Only modify these values if you know what you're doing."
@@ -993,7 +1070,7 @@ msgstr "Reproducir todo"
 msgid "Play Button Action"
 msgstr "Acción del botón Jugar"
 
-#: src/renderer/app/header/header.messages.ts:11:22
+#: src/renderer/app/header/header.messages.ts:13:22
 msgid "Play offline"
 msgstr "Jugar sin conexión"
 
@@ -1001,6 +1078,8 @@ msgstr "Jugar sin conexión"
 msgid "Playback"
 msgstr "Reproducción"
 
+#: src/renderer/initialize_app.messages.ts:8:26
+#: src/renderer/lib/dolphin/dolphin.messages.ts:6:26
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:6:26
 msgid "Playback Dolphin"
 msgstr "Dolphin de reproducción"
@@ -1143,6 +1222,19 @@ msgstr ""
 #: src/renderer/pages/settings/create.messages.ts:4:18
 msgid "Replays"
 msgstr "Repeticiones"
+
+#: src/renderer/lib/dolphin/handle_dolphin_exit_code.messages.ts:3:5
+msgid ""
+"Required DLLs for launching Dolphin are missing. Check the Help section in "
+"the settings page to fix this issue."
+msgstr ""
+
+#: src/renderer/lib/dolphin/handle_dolphin_exit_code.messages.ts:12:5
+msgid ""
+"Required libraries for launching Dolphin may be missing. Check the Help "
+"section in the settings page for guidance. Post in the Slippi Discord's "
+"#linux-support forum for further assistance if needed."
+msgstr ""
 
 #: src/renderer/pages/settings/game_settings/game_music_toggle/game_music_toggle.messages.ts:5:48
 #. {0} version: string
@@ -1299,6 +1391,12 @@ msgstr ""
 "emparejamiento de jugadores, reporte de resultados, etc. No está permitido "
 "intentar eludir estos sistemas."
 
+#: src/renderer/initialize_app.messages.ts:4:26
+msgid ""
+"Slippi may be experiencing some downtime. Playing online may or may not "
+"work."
+msgstr ""
+
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:7:28
 msgid "Slippi server error"
 msgstr "Error del servidor de Slippi"
@@ -1306,6 +1404,10 @@ msgstr "Error del servidor de Slippi"
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:19:20
 msgid "Soft reset"
 msgstr "Reinicio parcial"
+
+#: src/renderer/listeners/listeners.messages.ts:4:39
+msgid "Some functionality of the Launcher and Dolphin will be unavailable."
+msgstr ""
 
 #: src/renderer/pages/not_found/not_found_page.messages.ts:3:29
 msgid "Something went wrong."
@@ -1512,6 +1614,12 @@ msgstr "Tamaño total: {0}"
 msgid "Trailing numbers will be auto-generated"
 msgstr "Los números finales se generarán automáticamente"
 
+#: src/renderer/lib/dolphin/handle_dolphin_exit_code.messages.ts:7:5
+msgid ""
+"Try a different video backend in Dolphin. If the issue persists, install "
+"the latest Windows update available and then restart your computer."
+msgstr ""
+
 #: src/renderer/pages/home/news_feed/news_feed.messages.ts:5:19
 msgid "Try again"
 msgstr "Intentar de nuevo"
@@ -1633,6 +1741,10 @@ msgstr ""
 msgid "What is Mirroring?"
 msgstr "¿Qué es Slippi Mirroring?"
 
+#: src/renderer/app/header/header.messages.ts:12:36
+msgid "Would you like to play offline?"
+msgstr "¿Te gustaría jugar sin conexión?"
+
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:9:21
 msgid "Wrong email? "
 msgstr "¿Correo equivocado? "
@@ -1640,6 +1752,11 @@ msgstr "¿Correo equivocado? "
 #: src/renderer/app/header/header.messages.ts:9:28
 msgid "You are not logged in"
 msgstr "No has iniciado sesión"
+
+#: src/renderer/initialize_app.messages.ts:3:24
+#: src/renderer/listeners/listeners.messages.ts:2:24
+msgid "You are offline."
+msgstr ""
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:34:28
 msgid "You may have trouble connecting to other players."

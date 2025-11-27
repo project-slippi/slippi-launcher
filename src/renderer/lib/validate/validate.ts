@@ -1,5 +1,7 @@
 import { isIPv4, isIPv6 } from "is-ip";
 
+import { ValidateMessages as Messages } from "./validate.messages";
+
 export const isValidIpv4Address = (ip: string): boolean => {
   return ip === "localhost" || isIPv4(ip);
 };
@@ -10,7 +12,7 @@ export const isValidIpv6Address = (ip: string): boolean => {
 
 export const isValidIpAddress = (ip: string): string | true => {
   if (!isValidIpv4Address(ip) && !isValidIpv6Address(ip)) {
-    return "Invalid IP address";
+    return Messages.invalidIpAddress();
   }
 
   return true;
@@ -23,19 +25,19 @@ export function isValidPort(value: string | number) {
 
 export const validateConnectCodeStart = (codeStart: string): string | true => {
   if (codeStart.length === 0) {
-    return "Invalid code";
+    return Messages.invalidCode();
   }
 
   if (!/^[a-zA-Z]+$/.test(codeStart)) {
-    return "Only English characters are allowed";
+    return Messages.onlyEnglishCharactersAllowed();
   }
 
   if (codeStart.length < 2) {
-    return "Code is too short";
+    return Messages.codeIsTooShort();
   }
 
   if (codeStart.length > 4) {
-    return "Code is too long";
+    return Messages.codeIsTooLong();
   }
 
   return true;
@@ -44,15 +46,15 @@ export const validateConnectCodeStart = (codeStart: string): string | true => {
 export const validateDisplayName = (displayName: string): string | true => {
   // these characters are confirmed to work in game
   if (!/^((?![\\`])[ぁ-んァ-ン -~])+$/u.test(displayName)) {
-    return "Display names can only contain letters, numbers, Hiragana, Katakana, and special characters";
+    return Messages.displayNamesCanOnlyContain();
   }
 
   if (displayName.length === 0) {
-    return "Display name is too short";
+    return Messages.displayNameIsTooShort();
   }
 
   if (displayName.length > 15) {
-    return "Display name is too long";
+    return Messages.displayNameIsTooLong();
   }
 
   return true;
