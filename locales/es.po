@@ -1023,7 +1023,7 @@ msgstr ""
 
 #: src/renderer/app/header/header.messages.ts:10:41
 msgid "Only logged in users can play online."
-msgstr ""
+msgstr "Solo los usuarios con sesión iniciada pueden jugar en línea."
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:12:45
 msgid "Only modify these values if you know what you're doing."
@@ -1743,7 +1743,7 @@ msgstr "¿Qué es Slippi Mirroring?"
 
 #: src/renderer/app/header/header.messages.ts:12:36
 msgid "Would you like to play offline?"
-msgstr ""
+msgstr "¿Te gustaría jugar sin conexión?"
 
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:9:21
 msgid "Wrong email? "
