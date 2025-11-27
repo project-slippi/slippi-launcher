@@ -12,6 +12,7 @@ import React, { useCallback, useMemo } from "react";
 import { useDolphinActions } from "@/lib/dolphin/use_dolphin_actions";
 import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/use_dolphin_store";
 import { useAccount } from "@/lib/hooks/use_account";
+import { useAppStore } from "@/lib/hooks/use_app_store";
 import { useAppUpdate } from "@/lib/hooks/use_app_update";
 import { useLoginModal } from "@/lib/hooks/use_login_modal";
 import { useSettings } from "@/lib/hooks/use_settings";
@@ -50,12 +51,13 @@ export const Header = ({ menuItems }: { menuItems: readonly MenuItem[] }) => {
   const meleeIsoPath = useSettings((store) => store.settings.isoPath) || undefined;
   const { showError } = useToasts();
   const { launchNetplay } = useDolphinActions(dolphinService);
+  const isOnline = useAppStore((state) => state.isOnline);
 
   const onPlay = useCallback(
     async (offlineOnly?: boolean) => {
       if (!offlineOnly) {
         // Ensure user is logged in
-        if (!currentUser) {
+        if (!currentUser || !isOnline) {
           setStartGameModalOpen(true);
           return;
         }
@@ -86,7 +88,7 @@ export const Header = ({ menuItems }: { menuItems: readonly MenuItem[] }) => {
 
       return;
     },
-    [currentUser, launchNetplay, meleeIsoPath, userData, serverError, showError, slippiBackendService],
+    [currentUser, isOnline, launchNetplay, meleeIsoPath, userData, serverError, showError, slippiBackendService],
   );
 
   return (
