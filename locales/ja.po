@@ -756,7 +756,7 @@ msgstr "Dolphin 起動"
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:9:22
 msgid "Launch Melee"
-msgstr "DX 起動"
+msgstr "スマブラDX 起動"
 
 #: src/renderer/pages/replays/replay_browser/replay_file/replay_file.messages.ts:5:23
 #: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:7:23
