@@ -33,10 +33,10 @@ const requiredByDLLConfig = module.parent!.filename.includes("webpack.config.ren
 if (!requiredByDLLConfig && !(fs.existsSync(webpackPaths.dllPath) && fs.existsSync(manifest))) {
   console.log(
     chalk.black.bgYellow.bold(
-      'The DLL files are missing. Sit back while we build them for you with "yarn run build-dll"',
+      'The DLL files are missing. Sit back while we build them for you with "npm run build-dll"',
     ),
   );
-  execSync("yarn run postinstall");
+  execSync("npm run postinstall");
 }
 
 const allMockableServices: readonly string[] = ["auth", "slippi", "dolphin", "replay"];
@@ -227,7 +227,7 @@ export default (env?: Record<string, string | true>, _argv?: any) => {
       },
       setupMiddlewares(middlewares) {
         console.log("Starting preload.js builder...");
-        const preloadProcess = spawn("yarn", ["run", "start:preload"], {
+        const preloadProcess = spawn("npm", ["run", "start:preload"], {
           shell: true,
           stdio: "inherit",
         })
@@ -235,7 +235,7 @@ export default (env?: Record<string, string | true>, _argv?: any) => {
           .on("error", (spawnError) => console.error(spawnError));
 
         console.log("Starting Main Process...");
-        spawn("yarn", ["run", "start:main"], {
+        spawn("npm", ["run", "start:main"], {
           shell: true,
           stdio: "inherit",
         })
