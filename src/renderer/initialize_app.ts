@@ -4,6 +4,8 @@ import log from "electron-log";
 import type { AuthUser } from "@/services/auth/types";
 import type { Services } from "@/services/types";
 
+import { InitializeAppMessages as Messages } from "./initialize_app.messages";
+
 export async function initializeApp(services: Services) {
   const { authService, slippiBackendService, dolphinService, notificationService } = services;
   const { showError } = notificationService;
@@ -27,8 +29,8 @@ export async function initializeApp(services: Services) {
         try {
           await slippiBackendService.fetchUserData();
         } catch (err) {
-          const message = `Failed to communicate with Slippi servers. You either have no internet
-              connection or Slippi is experiencing some downtime. Playing online may or may not work.`;
+          const reason = !navigator.onLine ? Messages.youAreOffline() : Messages.slippiMayBeDown();
+          const message = `${Messages.failedToCommunicateWithSlippiServers()} ${reason}`;
           showError(message);
         }
       }
@@ -39,11 +41,9 @@ export async function initializeApp(services: Services) {
   [DolphinLaunchType.NETPLAY, DolphinLaunchType.PLAYBACK].map(async (dolphinType) => {
     return dolphinService.downloadDolphin(dolphinType).catch((err) => {
       log.error(err);
-      showError(
-        `Failed to install ${dolphinType} Dolphin. Try closing all Dolphin instances and restarting the launcher. Error: ${
-          err instanceof Error ? err.message : JSON.stringify(err)
-        }`,
-      );
+      const dolphinTypeName =
+        dolphinType === DolphinLaunchType.NETPLAY ? Messages.netplayDolphin() : Messages.playbackDolphin();
+      showError(Messages.failedToInstallDolphin(dolphinTypeName));
     });
   });
 
