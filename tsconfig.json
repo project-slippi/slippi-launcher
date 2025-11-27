@@ -46,7 +46,10 @@
   },
   "ts-node": {
     "transpileOnly": true,
-    "require": ["dotenv/config", "tsconfig-paths/register"]
+    "require": ["dotenv/config", "tsconfig-paths/register"],
+    "compilerOptions": {
+      "module": "commonjs"
+    }
   },
   "exclude": ["test", "release/build", "release/app/dist", ".erb/dll"]
 }
