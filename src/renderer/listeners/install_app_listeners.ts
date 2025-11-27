@@ -55,12 +55,12 @@ export function installAppListeners(services: Services) {
   });
 
   // Track online/offline status
-  window.ononline = function () {
+  window.addEventListener("online", () => {
     useAppStore.getState().setIsOnline(true);
-  };
-  window.onoffline = function () {
+  });
+  window.addEventListener("offline", () => {
     useAppStore.getState().setIsOnline(false);
-  };
+  });
 
   installDolphinListeners({ dolphinService, notificationService });
   installBroadcastListeners({ broadcastService, authService });
