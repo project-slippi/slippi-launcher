@@ -2,12 +2,8 @@ const path = require("path");
 const { pathsToModuleNameMapper } = require("ts-jest");
 const { compilerOptions } = require("./tsconfig.json");
 
-module.exports = {
-  roots: ["<rootDir>/src"],
-  testTimeout: 300000, // 5 minutes in milliseconds
-  testRegex: "(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$",
-  verbose: true,
-  testEnvironment: "jsdom",
+// Shared configuration for all projects
+const sharedConfig = {
   transform: {
     "\\.(ts|tsx|js|jsx)$": ["ts-jest", { diagnostics: false }],
   },
@@ -20,6 +16,29 @@ module.exports = {
   moduleFileExtensions: ["js", "jsx", "ts", "tsx", "json"],
   moduleDirectories: ["node_modules", "release/app/node_modules"],
   testPathIgnorePatterns: ["release/app/dist"],
-  setupFiles: ["./.erb/scripts/check-build-exists.ts"],
   transformIgnorePatterns: ["node_modules/(?!is-ip|ip-regex|super-regex|function-timeout|time-span|convert-hrtime|is-regexp|clone-regexp)"],
+};
+
+module.exports = {
+  testTimeout: 300000, // 5 minutes in milliseconds
+  verbose: true,
+  projects: [
+    {
+      displayName: "renderer",
+      testEnvironment: "jsdom",
+      testMatch: ["<rootDir>/src/renderer/**/*.{test,spec}.{ts,tsx}"],
+      setupFiles: ["./.erb/scripts/check-build-exists.ts"],
+      ...sharedConfig,
+    },
+    {
+      displayName: "node",
+      testEnvironment: "node",
+      testMatch: [
+        "<rootDir>/src/**/*.{test,spec}.{ts,tsx}",
+        "!<rootDir>/src/renderer/**/*.{test,spec}.{ts,tsx}",
+      ],
+      setupFiles: ["./.erb/scripts/check-build-exists.ts"],
+      ...sharedConfig,
+    },
+  ],
 };
