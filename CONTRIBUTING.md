@@ -38,7 +38,7 @@ Currently supported languages:
 You can see what the translation progress is across the different languages with the following command:
 
 ```bash
-yarn run i18n:status
+npm run i18n:status
 ```
 
 ### Translation Workflow
@@ -79,7 +79,7 @@ export const ExampleComponent = ({ userName, items }: Props) => {
 After adding new messages, extract them to update the translation template:
 
 ```bash
-yarn run i18n:extract
+npm run i18n:extract
 ```
 
 This command:
@@ -90,7 +90,7 @@ This command:
 #### 3. Sync the Translation Files
 
 ```bash
-yarn run i18n:sync
+npm run i18n:sync
 ```
 
 This command:
@@ -117,7 +117,7 @@ msgstr "¡Hola, {0}!"
 Convert the `.po` files to JSON format for the application:
 
 ```bash
-yarn run i18n:convert
+npm run i18n:convert
 ```
 
 This command:
@@ -277,7 +277,7 @@ When contributing translations:
 
 1. **Fork the Repository**: Create your own fork to work in
 2. **Create Feature Branch**: `git checkout -b add-french-translations`
-3. **Follow Workflow**: Use the yarn scripts to properly extract and sync translations
+3. **Follow Workflow**: Use the npm scripts to properly extract and sync translations
 4. **Test Thoroughly**: Verify translations work in the application
 5. **Submit PR**: Include both `.po` file changes and any necessary code changes
 6. **Provide Context**: In your PR description, explain any translation choices or cultural considerations
