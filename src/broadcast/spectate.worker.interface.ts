@@ -60,16 +60,11 @@ export async function createSpectateWorker(dolphinManager: DolphinManager): Prom
     }),
   );
 
-  // Wrap dispose to clean up subscriptions
-  const originalDispose = worker.dispose.bind(worker);
-  worker.dispose = async () => {
-    // Call originalDispose() FIRST to emit any final status changes
-    await originalDispose();
-
-    // Then unsubscribe from observables
+  // Register cleanup callback to unsubscribe after worker disposal
+  worker.onCleanup(() => {
     log.debug("spectate: Unsubscribing from worker observables");
     subscriptions.forEach((sub) => sub.unsubscribe());
-  };
+  });
 
   return worker;
 }

@@ -59,16 +59,11 @@ export async function createMirrorWorker(dolphinManager: DolphinManager): Promis
     }),
   );
 
-  // Wrap dispose to clean up subscriptions
-  const originalDispose = worker.dispose.bind(worker);
-  worker.dispose = async () => {
-    // Call originalDispose() FIRST to complete cleanup
-    await originalDispose();
-
-    // Then unsubscribe from observables
+  // Register cleanup callback to unsubscribe after worker disposal
+  worker.onCleanup(() => {
     log.debug("mirror: Unsubscribing from worker observables");
     subscriptions.forEach((sub) => sub.unsubscribe());
-  };
+  });
 
   return worker;
 }

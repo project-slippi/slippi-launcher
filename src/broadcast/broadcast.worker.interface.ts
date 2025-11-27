@@ -57,16 +57,11 @@ export async function createBroadcastWorker(): Promise<BroadcastWorker> {
     }),
   );
 
-  // Wrap dispose to clean up subscriptions
-  const originalDispose = worker.dispose.bind(worker);
-  worker.dispose = async () => {
-    // Call originalDispose() FIRST to emit status changes through observables
-    await originalDispose();
-
-    // Then unsubscribe from observables after status updates have been sent
+  // Register cleanup callback to unsubscribe after worker disposal
+  worker.onCleanup(() => {
     log.debug("broadcast: Unsubscribing from worker observables");
     subscriptions.forEach((sub) => sub.unsubscribe());
-  };
+  });
 
   return worker;
 }
