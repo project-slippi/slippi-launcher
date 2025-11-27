@@ -18,6 +18,9 @@ import type { SpectateWorker } from "./spectate.worker.interface";
 import { createSpectateWorker } from "./spectate.worker.interface";
 import type { SpectateController } from "./types";
 
+const MINUTE = 60 * 1000;
+const SPECTATE_IDLE_TIMEOUT = 15 * MINUTE;
+
 export default function setupBroadcastIpc({
   settingsManager,
   dolphinManager,
@@ -30,6 +33,40 @@ export default function setupBroadcastIpc({
   let spectateWorker: SpectateWorker | undefined;
   let broadcastWorker: BroadcastWorker | undefined;
   let prefixOrdinal = 0;
+  let spectateIdleTimer: NodeJS.Timeout | undefined;
+
+  // Helper to start/reset the idle timeout (only when no active broadcasts)
+  const resetSpectateIdleTimeout = async () => {
+    // Clear any existing timer
+    if (spectateIdleTimer) {
+      clearTimeout(spectateIdleTimer);
+      spectateIdleTimer = undefined;
+    }
+
+    // Only start timeout if worker exists and has no active broadcasts
+    if (spectateWorker) {
+      const openBroadcasts = await spectateWorker.getOpenBroadcasts().catch(() => []);
+      if (openBroadcasts.length === 0) {
+        log.debug("Starting spectate idle timeout (15 minutes)");
+        spectateIdleTimer = setTimeout(async () => {
+          log.debug("Spectate idle timeout reached, terminating worker");
+          if (spectateWorker) {
+            await spectateWorker.terminate();
+            spectateWorker = undefined;
+          }
+        }, SPECTATE_IDLE_TIMEOUT);
+      }
+    }
+  };
+
+  // Helper to stop the idle timeout (when actively watching)
+  const stopSpectateIdleTimeout = () => {
+    if (spectateIdleTimer) {
+      log.debug("Stopping spectate idle timeout (actively watching)");
+      clearTimeout(spectateIdleTimer);
+      spectateIdleTimer = undefined;
+    }
+  };
 
   dolphinManager.events
     .filter<DolphinPlaybackClosedEvent>((event) => {
@@ -42,10 +79,9 @@ export default function setupBroadcastIpc({
         // Check if there are any remaining open broadcasts
         const openBroadcasts = await spectateWorker.getOpenBroadcasts().catch(() => []);
         if (openBroadcasts.length === 0) {
-          // No more active spectating sessions - terminate the worker to free resources
-          log.debug("No active spectate sessions remaining, terminating spectate worker");
-          await spectateWorker.terminate().catch(log.error);
-          spectateWorker = undefined;
+          // No more active spectating sessions - start idle timeout
+          log.debug("No active spectate sessions remaining, starting idle timeout");
+          await resetSpectateIdleTimeout();
         }
       }
     });
@@ -55,6 +91,10 @@ export default function setupBroadcastIpc({
       spectateWorker = await createSpectateWorker(dolphinManager);
     }
     await spectateWorker.connect(authToken);
+
+    // Reset idle timeout on connect
+    await resetSpectateIdleTimeout();
+
     return { success: true };
   });
 
@@ -65,6 +105,10 @@ export default function setupBroadcastIpc({
     );
 
     await spectateWorker.refreshBroadcastList();
+
+    // Reset idle timeout on refresh
+    await resetSpectateIdleTimeout();
+
     return { success: true };
   });
 
@@ -77,6 +121,10 @@ export default function setupBroadcastIpc({
     const folderPath = settingsManager.get().settings.spectateSlpPath;
     await spectateWorker.startSpectate(broadcasterId, folderPath, { idPostfix: `broadcast${prefixOrdinal}` });
     prefixOrdinal += 1;
+
+    // Stop idle timeout when actively watching a broadcast
+    stopSpectateIdleTimeout();
+
     return { success: true };
   });
 
