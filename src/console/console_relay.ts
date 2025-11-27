@@ -26,7 +26,7 @@ export class ConsoleRelay extends EventEmitter {
 
       // Only get the full buffer when the client connects for performance
       const buf = this.getFullBuffer();
-      socket.write(buf);
+      socket.write(buf as Uint8Array);
 
       this.clients.push(socket);
       socket.on("close", (err) => {
@@ -52,7 +52,7 @@ export class ConsoleRelay extends EventEmitter {
     this.dataBuffer.buffersToConcat.push(newData);
     if (this.clients) {
       this.clients.forEach((client) => {
-        client.write(newData, (err) => {
+        client.write(newData as Uint8Array, (err) => {
           if (err) {
             this.emit(MirrorEvent.ERROR, err);
           }
@@ -68,7 +68,10 @@ export class ConsoleRelay extends EventEmitter {
 
   private getFullBuffer() {
     if (this.dataBuffer.buffersToConcat.length > 0) {
-      this.dataBuffer.fullBuffer = Buffer.concat([this.dataBuffer.fullBuffer, ...this.dataBuffer.buffersToConcat]);
+      this.dataBuffer.fullBuffer = Buffer.concat([
+        this.dataBuffer.fullBuffer as Uint8Array,
+        ...(this.dataBuffer.buffersToConcat as Uint8Array[]),
+      ]);
     }
     this.dataBuffer.buffersToConcat = [];
     return this.dataBuffer.fullBuffer;

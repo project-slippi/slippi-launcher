@@ -4,7 +4,7 @@ import { RetryLink } from "@apollo/client/link/retry";
 import { appVersion } from "@common/constants";
 import { fetch } from "cross-fetch";
 import electronLog from "electron-log";
-import type { GraphQLError } from "graphql";
+import type { GraphQLFormattedError } from "graphql";
 
 import type { DolphinLaunchType } from "../types";
 
@@ -63,7 +63,7 @@ const getLatestDolphinQuery = gql`
   }
 `;
 
-const handleErrors = (errors: readonly GraphQLError[] | undefined) => {
+const handleErrors = (errors: readonly GraphQLFormattedError[] | undefined) => {
   if (errors) {
     let errMsgs = "";
     errors.forEach((err) => {
