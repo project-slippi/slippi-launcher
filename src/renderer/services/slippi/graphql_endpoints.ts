@@ -94,12 +94,13 @@ export const QUERY_CHAT_MESSAGE_DATA: TypedDocumentNode<
 
 export const MUTATION_RENAME_USER: TypedDocumentNode<
   {
-    userRename: Nullable<Pick<User, "displayName">>;
+    userRename: Nullable<Pick<User, "fbUid" | "displayName">>;
   },
   { fbUid: string; displayName: string }
 > = gql`
   mutation RenameUser($fbUid: String!, $displayName: String!) {
     userRename(fbUid: $fbUid, displayName: $displayName) {
+      fbUid
       displayName
     }
   }
@@ -107,12 +108,13 @@ export const MUTATION_RENAME_USER: TypedDocumentNode<
 
 export const MUTATION_ACCEPT_RULES: TypedDocumentNode<
   {
-    userAcceptRules: Nullable<Pick<User, "rulesAccepted">>;
+    userAcceptRules: Nullable<Pick<User, "fbUid" | "rulesAccepted">>;
   },
   { num: number }
 > = gql`
   mutation AcceptRules($num: Int!) {
     userAcceptRules(num: $num) {
+      fbUid
       rulesAccepted
     }
   }
