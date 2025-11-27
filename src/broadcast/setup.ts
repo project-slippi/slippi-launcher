@@ -83,7 +83,13 @@ export default function setupBroadcastIpc({
   ipc_stopBroadcast.main!.handle(async () => {
     Preconditions.checkExists(broadcastWorker, "Error stopping broadcast. Was the broadcast started to begin with?");
 
+    // Stop the broadcast
     await broadcastWorker.stopBroadcast();
+
+    // Terminate the worker and clean up resources
+    log.debug("Terminating broadcast worker after stopping broadcast");
+    await broadcastWorker.terminate();
+    broadcastWorker = undefined;
 
     return { success: true };
   });
