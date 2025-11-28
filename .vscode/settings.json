@@ -1,38 +1,52 @@
 {
-  "search.exclude": {
-    ".git": true,
-    ".eslintcache": true,
-    "app/dist": true,
-    "app/main.prod.js": true,
-    "app/main.prod.js.map": true,
-    "bower_components": true,
-    "dll": true,
-    "flow-typed": false,
-    "release": true,
-    "node_modules": true,
-    "npm-debug.log.*": true,
-    "test/**/__snapshots__": true
+  // Enable ESLint
+  "eslint.enable": true,
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+
+  // Run ESLint on save
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
   },
-  "files.eol": "\n",
-  "editor.detectIndentation": true,
-  "javascript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": false,
-  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": false,
-  "editor.tabSize": 2,
-  "editor.formatOnSave": true,
-  "eslint.format.enable": true,
+
+  // Format with Prettier (via ESLint)
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+
+  // TypeScript settings
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
-  "[javascript]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-  },
-  "[javascriptreact]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-  },
+
+  // Prettier integration (ESLint handles it via prettier/prettier rule)
+  "prettier.enable": false, // Let ESLint handle Prettier via prettier/prettier rule
+
+  // Auto-format on save
+  "editor.formatOnSave": true,
+
+  // Show ESLint status in status bar
+  "eslint.alwaysShowStatus": true,
+
+  // Run ESLint in the entire workspace
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
+    }
+  ],
+
+  // Disable built-in TypeScript formatter (let ESLint handle it)
   "[typescript]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   },
   "[typescriptreact]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[javascriptreact]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   }
 }
