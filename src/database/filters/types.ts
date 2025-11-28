@@ -21,15 +21,18 @@ export type DurationFilter = {
  * Examples:
  * - { connectCode: "MANG#0" } = games with a player who has connect code MANG#0
  * - { connectCode: "MANG#0", mustBeWinner: true } = games where MANG#0 won
+ * - { connectCode: "MANG#0", port: 1, mustBeWinner: true } = games where MANG#0 was port 1 and won
+ * - { port: 1 } = games where port 1 exists (any player)
  * - { userId: "abc123", displayName: "Mango" } = games where user abc123 has display name "Mango"
  */
 export type PlayerFilter = {
   type: "player";
-  // At least one identifier (OR logic if multiple provided)
+  // Player identifiers (all use AND logic)
   connectCode?: string;
   userId?: string;
   displayName?: string;
   tag?: string;
+  port?: number; // Port number (1-4)
   // Optional win condition
   mustBeWinner?: boolean;
 };
