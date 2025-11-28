@@ -248,6 +248,9 @@ function applyPlayerFilter(
           if (filter.port != null) {
             conditions.push(eb2("player.port", "=", filter.port));
           }
+          if (filter.characterIds != null && filter.characterIds.length > 0) {
+            conditions.push(eb2("player.character_id", "in", filter.characterIds));
+          }
 
           // Add winner condition if specified
           if (filter.mustBeWinner === true) {
