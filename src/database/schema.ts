@@ -109,16 +109,16 @@ export type GameUpdate = Updateable<GameTable>;
  * Represents a player in a game. Each game has 2-4 players.
  *
  * Indexes:
- * - player_game_id_index: (game_id, index) - For player lookups by game and player index
+ * - player_game_id_port_index: (game_id, port) - For player lookups by game and port
  * - player_user_id_index: (user_id) - For filtering games by user/player
  *
  * Unique Constraints:
- * - unique_game_id_index_constraint: (game_id, index) - Ensures unique player index per game
+ * - unique_game_id_port_constraint: (game_id, port) - Ensures unique port per game
  */
 export type PlayerTable = {
   _id: Generated<number>;
   game_id: number; // Foreign key to game._id, indexed
-  index: number; // Player index (0-3), part of composite index and unique constraint
+  port: number; // Port number (1-4), part of composite index and unique constraint
   type: number | null; // Player type (human, CPU, etc.)
   character_id: number | null; // Character ID from Slippi
   character_color: number | null; // Character color/costume

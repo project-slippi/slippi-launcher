@@ -274,7 +274,7 @@ describe("GameRepository.searchGames with filters", () => {
       await PlayerRepository.insertPlayer(
         db,
         aMockPlayerWith(game1, {
-          index: 0,
+          port: 1,
           connect_code: "MANG#0",
           display_name: "Joseph",
           is_winner: 1,
@@ -283,7 +283,7 @@ describe("GameRepository.searchGames with filters", () => {
       await PlayerRepository.insertPlayer(
         db,
         aMockPlayerWith(game1, {
-          index: 1,
+          port: 2,
           connect_code: "PPMD#0",
           display_name: "Mango",
           is_winner: 0,
@@ -442,16 +442,16 @@ describe("GameRepository.searchGames with filters", () => {
       const { gameId: game3 } = await addGame(folder, "armada_vs_ppmd.slp");
 
       // Game 1: Mango vs Armada
-      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game1, { index: 0, connect_code: "MANG#0" }));
-      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game1, { index: 1, connect_code: "ARMA#0" }));
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game1, { port: 1, connect_code: "MANG#0" }));
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game1, { port: 2, connect_code: "ARMA#0" }));
 
       // Game 2: Mango vs PPMD
-      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game2, { index: 0, connect_code: "MANG#0" }));
-      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game2, { index: 1, connect_code: "PPMD#0" }));
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game2, { port: 1, connect_code: "MANG#0" }));
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game2, { port: 2, connect_code: "PPMD#0" }));
 
       // Game 3: Armada vs PPMD
-      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game3, { index: 0, connect_code: "ARMA#0" }));
-      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game3, { index: 1, connect_code: "PPMD#0" }));
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game3, { port: 1, connect_code: "ARMA#0" }));
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game3, { port: 2, connect_code: "PPMD#0" }));
 
       // Find games with both Mango AND Armada
       const filters: ReplayFilter[] = [

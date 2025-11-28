@@ -288,8 +288,8 @@ function generateNewGame(file: FileRecord, game: SlippiGame): NewGame | null {
 
   const newGame: NewGame = {
     file_id: file._id,
-    is_ranked: Number(isRanked),
-    is_teams: Number(settings.isTeams),
+    is_ranked: isRanked,
+    is_teams: settings.isTeams ?? false,
     stage: settings.stageId,
     start_time: gameStartTime,
     platform: metadata?.playedOn,
@@ -318,12 +318,12 @@ function generateNewPlayers(gameId: number, game: SlippiGame): NewPlayer[] {
     const names = extractPlayerNames(player.playerIndex, settings, game.getMetadata());
     const newPlayer: NewPlayer = {
       game_id: gameId,
-      index: player.playerIndex,
+      port: player.playerIndex + 1,
       type: player.type,
       character_id: player.characterId,
       character_color: player.characterColor,
       team_id: settings.isTeams ? player.teamId : undefined,
-      is_winner: Number(isWinner),
+      is_winner: isWinner,
       start_stocks: player.startStocks,
       connect_code: names.code,
       display_name: names.name,
