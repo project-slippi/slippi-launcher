@@ -53,3 +53,16 @@ export type GameModeFilter = {
 };
 
 export type ReplayFilter = DurationFilter | PlayerFilter | GameModeFilter;
+
+// Game mode constants
+const GameModeValue = {
+  VS: 2,
+  ONLINE: 8,
+  TARGET_TEST: 15,
+  HOME_RUN_CONTEST: 32,
+} as const;
+
+/**
+ * Stadium game modes (Home Run Contest, Target Test) that should be excluded from duration filtering
+ */
+export const STADIUM_GAME_MODES = [GameModeValue.HOME_RUN_CONTEST, GameModeValue.TARGET_TEST];
