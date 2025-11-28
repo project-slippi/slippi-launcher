@@ -8,6 +8,7 @@
  *
  * Boolean Fields:
  * - SQLite stores booleans as integers: 0 = false, 1 = true
+ * - Use SQLiteBoolean and SQLiteBooleanNullable type aliases for clarity
  * - Fields: is_ranked, is_teams, is_winner
  *
  * Session Handling:
@@ -19,6 +20,32 @@
  * - See JSDoc comments on each table type
  */
 import type { ColumnType, Generated, Insertable, Selectable, Updateable } from "kysely";
+
+/**
+ * SQLite Boolean type (non-nullable with default)
+ *
+ * SQLite doesn't have a native boolean type, so we store them as integers.
+ * - Reading: Returns 0 or 1
+ * - Writing: Accepts 0, 1, boolean, or undefined (uses default)
+ *
+ * Database: 0 = false, 1 = true
+ */
+export type SQLiteBoolean = ColumnType<0 | 1, 0 | 1 | boolean | undefined, 0 | 1 | boolean>;
+
+/**
+ * SQLite Boolean type (nullable)
+ *
+ * Same as SQLiteBoolean but allows NULL values.
+ * - Reading: Returns 0, 1, or null
+ * - Writing: Accepts 0, 1, boolean, null, or undefined
+ *
+ * Database: 0 = false, 1 = true, NULL = unknown/not applicable
+ */
+export type SQLiteBooleanNullable = ColumnType<
+  0 | 1 | null,
+  0 | 1 | boolean | null | undefined,
+  0 | 1 | boolean | null
+>;
 
 /**
  * File table schema
@@ -61,8 +88,8 @@ export type FileUpdate = Updateable<FileTable>;
 export type GameTable = {
   _id: Generated<number>;
   file_id: number; // Foreign key to file._id, indexed, UNIQUE (1:1 relationship)
-  is_ranked: ColumnType<number, number | undefined>; // Boolean: 0=unranked, 1=ranked
-  is_teams: ColumnType<number, number | undefined>; // Boolean: 0=singles, 1=teams
+  is_ranked: SQLiteBoolean; // Boolean: 0=unranked, 1=ranked
+  is_teams: SQLiteBoolean; // Boolean: 0=singles, 1=teams
   stage: number | null;
   start_time: string | null; // Indexed for date range queries, ISO 8601 format
   platform: string | null; // e.g., "dolphin", "console", "nintendont"
@@ -100,7 +127,7 @@ export type PlayerTable = {
   character_id: number | null; // Character ID from Slippi
   character_color: number | null; // Character color/costume
   team_id: number | null; // Team ID for team games
-  is_winner: number | null; // Boolean: 0=lost, 1=won, NULL=unknown/in-progress
+  is_winner: SQLiteBooleanNullable; // Boolean: 0=lost, 1=won, NULL=unknown/in-progress
   start_stocks: number | null; // Starting stock count
   connect_code: string | null; // Slippi connect code (e.g., "MANG#0")
   display_name: string | null; // Player display name
