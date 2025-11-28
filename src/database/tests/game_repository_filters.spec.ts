@@ -441,6 +441,383 @@ describe("GameRepository.searchGames with filters", () => {
       expect(results).toHaveLength(1);
       expect(results[0].name).toBe("game1.slp");
     });
+
+    it("should filter games by character", async () => {
+      const folder = "/replays";
+      const FOX = 2;
+      const FALCO = 20;
+      const MARTH = 13;
+
+      const { gameId: game1 } = await addGame(folder, "game1.slp");
+      const { gameId: game2 } = await addGame(folder, "game2.slp");
+      const { gameId: game3 } = await addGame(folder, "game3.slp");
+
+      // Game 1: Fox player
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game1, { connect_code: "MANG#0", character_id: FOX }));
+
+      // Game 2: Falco player
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game2, { connect_code: "MANG#0", character_id: FALCO }));
+
+      // Game 3: Marth player
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game3, { connect_code: "MANG#0", character_id: MARTH }));
+
+      // Find games where anyone played Fox
+      const filters: ReplayFilter[] = [{ type: "player", characterIds: [FOX] }];
+
+      const results = await GameRepository.searchGames(db, folder, filters, {
+        limit: 10,
+        orderBy: { field: "startTime", direction: "desc" },
+      });
+
+      expect(results).toHaveLength(1);
+      expect(results[0].name).toBe("game1.slp");
+    });
+
+    it("should filter games by multiple characters with OR logic", async () => {
+      const folder = "/replays";
+      const FOX = 2;
+      const FALCO = 20;
+      const MARTH = 13;
+
+      const { gameId: game1 } = await addGame(folder, "game1.slp");
+      const { gameId: game2 } = await addGame(folder, "game2.slp");
+      const { gameId: game3 } = await addGame(folder, "game3.slp");
+
+      // Game 1: Fox player
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game1, { connect_code: "MANG#0", character_id: FOX }));
+
+      // Game 2: Falco player
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game2, { connect_code: "MANG#0", character_id: FALCO }));
+
+      // Game 3: Marth player
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game3, { connect_code: "MANG#0", character_id: MARTH }));
+
+      // Find games where anyone played Fox OR Falco
+      const filters: ReplayFilter[] = [{ type: "player", characterIds: [FOX, FALCO] }];
+
+      const results = await GameRepository.searchGames(db, folder, filters, {
+        limit: 10,
+        orderBy: { field: "startTime", direction: "desc" },
+      });
+
+      expect(results).toHaveLength(2);
+      expect(results.map((r) => r.name)).toEqual(expect.arrayContaining(["game1.slp", "game2.slp"]));
+    });
+
+    it("should filter games where specific player played specific character", async () => {
+      const folder = "/replays";
+      const FOX = 2;
+      const FALCO = 20;
+
+      const { gameId: game1 } = await addGame(folder, "game1.slp");
+      const { gameId: game2 } = await addGame(folder, "game2.slp");
+      const { gameId: game3 } = await addGame(folder, "game3.slp");
+
+      // Game 1: Mango plays Fox
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game1, { connect_code: "MANG#0", character_id: FOX }));
+
+      // Game 2: Mango plays Falco
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game2, { connect_code: "MANG#0", character_id: FALCO }));
+
+      // Game 3: PPMD plays Fox (wrong player)
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game3, { connect_code: "PPMD#0", character_id: FOX }));
+
+      // Find games where Mango played Fox
+      const filters: ReplayFilter[] = [{ type: "player", connectCode: "MANG#0", characterIds: [FOX] }];
+
+      const results = await GameRepository.searchGames(db, folder, filters, {
+        limit: 10,
+        orderBy: { field: "startTime", direction: "desc" },
+      });
+
+      expect(results).toHaveLength(1);
+      expect(results[0].name).toBe("game1.slp");
+    });
+
+    it("should filter games where player played specific character and won", async () => {
+      const folder = "/replays";
+      const FOX = 2;
+      const FALCO = 20;
+
+      const { gameId: game1 } = await addGame(folder, "game1.slp");
+      const { gameId: game2 } = await addGame(folder, "game2.slp");
+      const { gameId: game3 } = await addGame(folder, "game3.slp");
+
+      // Game 1: Mango plays Fox and wins
+      await PlayerRepository.insertPlayer(
+        db,
+        aMockPlayerWith(game1, {
+          connect_code: "MANG#0",
+          character_id: FOX,
+          is_winner: 1,
+        }),
+      );
+
+      // Game 2: Mango plays Fox and loses
+      await PlayerRepository.insertPlayer(
+        db,
+        aMockPlayerWith(game2, {
+          connect_code: "MANG#0",
+          character_id: FOX,
+          is_winner: 0,
+        }),
+      );
+
+      // Game 3: Mango plays Falco and wins
+      await PlayerRepository.insertPlayer(
+        db,
+        aMockPlayerWith(game3, {
+          connect_code: "MANG#0",
+          character_id: FALCO,
+          is_winner: 1,
+        }),
+      );
+
+      // Find games where Mango played Fox OR Falco and won
+      const filters: ReplayFilter[] = [
+        {
+          type: "player",
+          connectCode: "MANG#0",
+          characterIds: [FOX, FALCO],
+          mustBeWinner: true,
+        },
+      ];
+
+      const results = await GameRepository.searchGames(db, folder, filters, {
+        limit: 10,
+        orderBy: { field: "startTime", direction: "desc" },
+      });
+
+      expect(results).toHaveLength(2);
+      expect(results.map((r) => r.name)).toEqual(expect.arrayContaining(["game1.slp", "game3.slp"]));
+    });
+
+    it("should filter games where mang0 played fox and won against zain's marth", async () => {
+      const folder = "/replays";
+      const FOX = 2;
+      const FALCO = 20;
+      const MARTH = 13;
+      const SHEIK = 18;
+
+      const { gameId: game1 } = await addGame(folder, "game1.slp");
+      const { gameId: game2 } = await addGame(folder, "game2.slp");
+      const { gameId: game3 } = await addGame(folder, "game3.slp");
+      const { gameId: game4 } = await addGame(folder, "game4.slp");
+
+      // Game 1: Mango Fox wins vs Zain Marth ✓
+      await PlayerRepository.insertPlayer(
+        db,
+        aMockPlayerWith(game1, {
+          port: 1,
+          connect_code: "MANG#0",
+          character_id: FOX,
+          is_winner: 1,
+        }),
+      );
+      await PlayerRepository.insertPlayer(
+        db,
+        aMockPlayerWith(game1, {
+          port: 2,
+          connect_code: "ZAIN#0",
+          character_id: MARTH,
+          is_winner: 0,
+        }),
+      );
+
+      // Game 2: Mango Fox loses vs Zain Marth (didn't win)
+      await PlayerRepository.insertPlayer(
+        db,
+        aMockPlayerWith(game2, {
+          port: 1,
+          connect_code: "MANG#0",
+          character_id: FOX,
+          is_winner: 0,
+        }),
+      );
+      await PlayerRepository.insertPlayer(
+        db,
+        aMockPlayerWith(game2, {
+          port: 2,
+          connect_code: "ZAIN#0",
+          character_id: MARTH,
+          is_winner: 1,
+        }),
+      );
+
+      // Game 3: Mango Falco wins vs Zain Marth (wrong character)
+      await PlayerRepository.insertPlayer(
+        db,
+        aMockPlayerWith(game3, {
+          port: 1,
+          connect_code: "MANG#0",
+          character_id: FALCO,
+          is_winner: 1,
+        }),
+      );
+      await PlayerRepository.insertPlayer(
+        db,
+        aMockPlayerWith(game3, {
+          port: 2,
+          connect_code: "ZAIN#0",
+          character_id: MARTH,
+          is_winner: 0,
+        }),
+      );
+
+      // Game 4: Mango Fox wins vs Zain Sheik (wrong character for Zain)
+      await PlayerRepository.insertPlayer(
+        db,
+        aMockPlayerWith(game4, {
+          port: 1,
+          connect_code: "MANG#0",
+          character_id: FOX,
+          is_winner: 1,
+        }),
+      );
+      await PlayerRepository.insertPlayer(
+        db,
+        aMockPlayerWith(game4, {
+          port: 2,
+          connect_code: "ZAIN#0",
+          character_id: SHEIK,
+          is_winner: 0,
+        }),
+      );
+
+      // Find games where Mango played Fox and won, and Zain played Marth
+      const filters: ReplayFilter[] = [
+        {
+          type: "player",
+          connectCode: "MANG#0",
+          characterIds: [FOX],
+          mustBeWinner: true,
+        },
+        { type: "player", connectCode: "ZAIN#0", characterIds: [MARTH] },
+      ];
+
+      const results = await GameRepository.searchGames(db, folder, filters, {
+        limit: 10,
+        orderBy: { field: "startTime", direction: "desc" },
+      });
+
+      // Only game1 matches all conditions
+      expect(results).toHaveLength(1);
+      expect(results[0].name).toBe("game1.slp");
+    });
+
+    it("should filter games where mang0 played fox or falco and won against zain's marth or sheik", async () => {
+      const folder = "/replays";
+      const FOX = 2;
+      const FALCO = 20;
+      const MARTH = 13;
+      const SHEIK = 18;
+      const PEACH = 12;
+
+      const { gameId: game1 } = await addGame(folder, "game1.slp");
+      const { gameId: game2 } = await addGame(folder, "game2.slp");
+      const { gameId: game3 } = await addGame(folder, "game3.slp");
+      const { gameId: game4 } = await addGame(folder, "game4.slp");
+
+      // Game 1: Mango Fox wins vs Zain Marth ✓
+      await PlayerRepository.insertPlayer(
+        db,
+        aMockPlayerWith(game1, {
+          port: 1,
+          connect_code: "MANG#0",
+          character_id: FOX,
+          is_winner: 1,
+        }),
+      );
+      await PlayerRepository.insertPlayer(
+        db,
+        aMockPlayerWith(game1, {
+          port: 2,
+          connect_code: "ZAIN#0",
+          character_id: MARTH,
+          is_winner: 0,
+        }),
+      );
+
+      // Game 2: Mango Falco wins vs Zain Sheik ✓
+      await PlayerRepository.insertPlayer(
+        db,
+        aMockPlayerWith(game2, {
+          port: 1,
+          connect_code: "MANG#0",
+          character_id: FALCO,
+          is_winner: 1,
+        }),
+      );
+      await PlayerRepository.insertPlayer(
+        db,
+        aMockPlayerWith(game2, {
+          port: 2,
+          connect_code: "ZAIN#0",
+          character_id: SHEIK,
+          is_winner: 0,
+        }),
+      );
+
+      // Game 3: Mango Fox wins vs Zain Peach (wrong character for Zain)
+      await PlayerRepository.insertPlayer(
+        db,
+        aMockPlayerWith(game3, {
+          port: 1,
+          connect_code: "MANG#0",
+          character_id: FOX,
+          is_winner: 1,
+        }),
+      );
+      await PlayerRepository.insertPlayer(
+        db,
+        aMockPlayerWith(game3, {
+          port: 2,
+          connect_code: "ZAIN#0",
+          character_id: PEACH,
+          is_winner: 0,
+        }),
+      );
+
+      // Game 4: Mango Falco wins vs PPMD Marth (wrong opponent)
+      await PlayerRepository.insertPlayer(
+        db,
+        aMockPlayerWith(game4, {
+          port: 1,
+          connect_code: "MANG#0",
+          character_id: FALCO,
+          is_winner: 1,
+        }),
+      );
+      await PlayerRepository.insertPlayer(
+        db,
+        aMockPlayerWith(game4, {
+          port: 2,
+          connect_code: "PPMD#0",
+          character_id: MARTH,
+          is_winner: 0,
+        }),
+      );
+
+      // Find games where Mango played Fox or Falco and won, and Zain played Marth or Sheik
+      const filters: ReplayFilter[] = [
+        {
+          type: "player",
+          connectCode: "MANG#0",
+          characterIds: [FOX, FALCO],
+          mustBeWinner: true,
+        },
+        { type: "player", connectCode: "ZAIN#0", characterIds: [MARTH, SHEIK] },
+      ];
+
+      const results = await GameRepository.searchGames(db, folder, filters, {
+        limit: 10,
+        orderBy: { field: "startTime", direction: "desc" },
+      });
+
+      // Games 1 and 2 match all conditions
+      expect(results).toHaveLength(2);
+      expect(results.map((r) => r.name)).toEqual(expect.arrayContaining(["game1.slp", "game2.slp"]));
+    });
   });
 
   describe("GameModeFilter", () => {
