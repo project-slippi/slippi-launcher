@@ -245,6 +245,9 @@ function applyPlayerFilter(
           if (filter.tag != null) {
             conditions.push(eb2("player.tag", "=", filter.tag));
           }
+          if (filter.port != null) {
+            conditions.push(eb2("player.port", "=", filter.port));
+          }
 
           // Add winner condition if specified
           if (filter.mustBeWinner === true) {

@@ -308,6 +308,139 @@ describe("GameRepository.searchGames with filters", () => {
       // Should NOT match because no single player has all three attributes
       expect(results).toHaveLength(0);
     });
+
+    it("should filter games by port number", async () => {
+      const folder = "/replays";
+      const { gameId: game1 } = await addGame(folder, "game1.slp");
+      const { gameId: game2 } = await addGame(folder, "game2.slp");
+      const { gameId: game3 } = await addGame(folder, "game3.slp");
+
+      // Game 1: Mango port 1, PPMD port 2
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game1, { port: 1, connect_code: "MANG#0" }));
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game1, { port: 2, connect_code: "PPMD#0" }));
+
+      // Game 2: Mango port 2, PPMD port 1
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game2, { port: 2, connect_code: "MANG#0" }));
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game2, { port: 1, connect_code: "PPMD#0" }));
+
+      // Game 3: Armada port 1, PPMD port 2
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game3, { port: 1, connect_code: "ARMA#0" }));
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game3, { port: 2, connect_code: "PPMD#0" }));
+
+      // Find games where Mango was port 1
+      const filters: ReplayFilter[] = [{ type: "player", connectCode: "MANG#0", port: 1 }];
+
+      const results = await GameRepository.searchGames(db, folder, filters, {
+        limit: 10,
+        orderBy: { field: "startTime", direction: "desc" },
+      });
+
+      // Only game1 matches (Mango in port 1)
+      expect(results).toHaveLength(1);
+      expect(results[0].name).toBe("game1.slp");
+    });
+
+    it("should filter games where specific port won", async () => {
+      const folder = "/replays";
+      const { gameId: game1 } = await addGame(folder, "game1.slp");
+      const { gameId: game2 } = await addGame(folder, "game2.slp");
+
+      // Game 1: Port 1 wins
+      await PlayerRepository.insertPlayer(
+        db,
+        aMockPlayerWith(game1, {
+          port: 1,
+          connect_code: "MANG#0",
+          is_winner: 1,
+        }),
+      );
+      await PlayerRepository.insertPlayer(
+        db,
+        aMockPlayerWith(game1, {
+          port: 2,
+          connect_code: "PPMD#0",
+          is_winner: 0,
+        }),
+      );
+
+      // Game 2: Port 2 wins
+      await PlayerRepository.insertPlayer(
+        db,
+        aMockPlayerWith(game2, {
+          port: 1,
+          connect_code: "MANG#0",
+          is_winner: 0,
+        }),
+      );
+      await PlayerRepository.insertPlayer(
+        db,
+        aMockPlayerWith(game2, {
+          port: 2,
+          connect_code: "PPMD#0",
+          is_winner: 1,
+        }),
+      );
+
+      // Find games where port 1 won
+      const filters: ReplayFilter[] = [{ type: "player", port: 1, mustBeWinner: true }];
+
+      const results = await GameRepository.searchGames(db, folder, filters, {
+        limit: 10,
+        orderBy: { field: "startTime", direction: "desc" },
+      });
+
+      expect(results).toHaveLength(1);
+      expect(results[0].name).toBe("game1.slp");
+    });
+
+    it("should filter games where mang0 was port 1 and won", async () => {
+      const folder = "/replays";
+      const { gameId: game1 } = await addGame(folder, "game1.slp");
+      const { gameId: game2 } = await addGame(folder, "game2.slp");
+      const { gameId: game3 } = await addGame(folder, "game3.slp");
+
+      // Game 1: Mango port 1 wins
+      await PlayerRepository.insertPlayer(
+        db,
+        aMockPlayerWith(game1, {
+          port: 1,
+          connect_code: "MANG#0",
+          is_winner: 1,
+        }),
+      );
+
+      // Game 2: Mango port 2 wins (wrong port)
+      await PlayerRepository.insertPlayer(
+        db,
+        aMockPlayerWith(game2, {
+          port: 2,
+          connect_code: "MANG#0",
+          is_winner: 1,
+        }),
+      );
+
+      // Game 3: Mango port 1 loses (didn't win)
+      await PlayerRepository.insertPlayer(
+        db,
+        aMockPlayerWith(game3, {
+          port: 1,
+          connect_code: "MANG#0",
+          is_winner: 0,
+        }),
+      );
+
+      // Find games where Mango was port 1 and won
+      const filters: ReplayFilter[] = [{ type: "player", connectCode: "MANG#0", port: 1, mustBeWinner: true }];
+
+      const results = await GameRepository.searchGames(db, folder, filters, {
+        limit: 10,
+        orderBy: { field: "startTime", direction: "desc" },
+      });
+
+      // Only game1 matches all conditions
+      expect(results).toHaveLength(1);
+      expect(results[0].name).toBe("game1.slp");
+    });
   });
 
   describe("GameModeFilter", () => {
