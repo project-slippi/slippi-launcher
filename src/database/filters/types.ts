@@ -16,12 +16,12 @@ export type DurationFilter = {
  * Filter for player participation
  *
  * At least one of the identifier fields must be provided.
- * If multiple identifiers are provided, they are combined with OR logic.
+ * All specified fields are combined with AND logic - they must all match the same player.
  *
  * Examples:
- * - { connectCode: "MANG#0" } = games with Mango
- * - { connectCode: "MANG#0", mustBeWinner: true } = games Mango won
- * - { userId: "abc123" } = games by user ID
+ * - { connectCode: "MANG#0" } = games with a player who has connect code MANG#0
+ * - { connectCode: "MANG#0", mustBeWinner: true } = games where MANG#0 won
+ * - { userId: "abc123", displayName: "Mango" } = games where user abc123 has display name "Mango"
  */
 export type PlayerFilter = {
   type: "player";
