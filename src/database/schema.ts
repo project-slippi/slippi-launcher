@@ -41,11 +41,7 @@ export type SQLiteBoolean = ColumnType<0 | 1, 0 | 1 | boolean | undefined, 0 | 1
  *
  * Database: 0 = false, 1 = true, NULL = unknown/not applicable
  */
-export type SQLiteBooleanNullable = ColumnType<
-  0 | 1 | null,
-  0 | 1 | boolean | null | undefined,
-  0 | 1 | boolean | null
->;
+export type SQLiteBooleanOrNull = ColumnType<0 | 1 | null, 0 | 1 | boolean | null | undefined, 0 | 1 | boolean | null>;
 
 /**
  * File table schema
@@ -127,7 +123,7 @@ export type PlayerTable = {
   character_id: number | null; // Character ID from Slippi
   character_color: number | null; // Character color/costume
   team_id: number | null; // Team ID for team games
-  is_winner: SQLiteBooleanNullable; // Boolean: 0=lost, 1=won, NULL=unknown/in-progress
+  is_winner: SQLiteBooleanOrNull; // Boolean: 0=lost, 1=won, NULL=unknown/in-progress
   start_stocks: number | null; // Starting stock count
   connect_code: string | null; // Slippi connect code (e.g., "MANG#0")
   display_name: string | null; // Player display name
