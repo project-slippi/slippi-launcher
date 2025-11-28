@@ -281,8 +281,8 @@ function generateNewGame(file: FileRecord, game: SlippiGame): NewGame | null {
   }
   const metadata = game.getMetadata();
 
-  const matchId = settings.matchInfo?.matchId ?? null;
-  const isRanked = matchId != null && matchId.startsWith("mode.ranked-");
+  const sessionId = settings.matchInfo?.sessionId ?? null;
+  const isRanked = sessionId != null && sessionId.startsWith("mode.ranked-");
 
   const gameStartTime = inferStartTime(metadata?.startAt ?? null, file.name, file.birth_time);
 
@@ -298,9 +298,9 @@ function generateNewGame(file: FileRecord, game: SlippiGame): NewGame | null {
     last_frame: metadata?.lastFrame,
     timer_type: settings.timerType,
     starting_timer_secs: settings.startingTimerSeconds,
-    match_id: matchId,
-    sequence_number: settings.matchInfo?.gameNumber ?? undefined,
-    tiebreak_index: settings.matchInfo?.tiebreakerNumber ?? undefined,
+    session_id: sessionId,
+    game_number: settings.matchInfo?.gameNumber ?? undefined,
+    tiebreak_number: settings.matchInfo?.tiebreakerNumber ?? undefined,
   };
 
   return newGame;
