@@ -980,6 +980,71 @@ describe("GameRepository.searchGames with filters", () => {
     });
   });
 
+  describe("Folder filtering", () => {
+    it("should search all folders when folder is null", async () => {
+      // Add games to multiple folders
+      const { gameId: game1 } = await addGame("/folder1", "game1.slp");
+      const { gameId: game2 } = await addGame("/folder2", "game2.slp");
+      const { gameId: game3 } = await addGame("/folder3", "game3.slp");
+
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game1, { connect_code: "MANG#0" }));
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game2, { connect_code: "MANG#0" }));
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game3, { connect_code: "MANG#0" }));
+
+      // Search across all folders
+      const filters: ReplayFilter[] = [{ type: "player", connectCode: "MANG#0" }];
+      const results = await GameRepository.searchGames(db, null, filters, {
+        limit: 10,
+        orderBy: { field: "startTime", direction: "desc" },
+      });
+
+      // Should find games from all folders
+      expect(results).toHaveLength(3);
+      expect(results.map((r) => r.name)).toEqual(expect.arrayContaining(["game1.slp", "game2.slp", "game3.slp"]));
+    });
+
+    it("should search all folders when folder is empty string", async () => {
+      // Add games to multiple folders
+      const { gameId: game1 } = await addGame("/folder1", "game1.slp");
+      const { gameId: game2 } = await addGame("/folder2", "game2.slp");
+
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game1, { connect_code: "MANG#0" }));
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game2, { connect_code: "MANG#0" }));
+
+      // Search across all folders with empty string
+      const filters: ReplayFilter[] = [{ type: "player", connectCode: "MANG#0" }];
+      const results = await GameRepository.searchGames(db, "", filters, {
+        limit: 10,
+        orderBy: { field: "startTime", direction: "desc" },
+      });
+
+      // Should find games from all folders
+      expect(results).toHaveLength(2);
+      expect(results.map((r) => r.name)).toEqual(expect.arrayContaining(["game1.slp", "game2.slp"]));
+    });
+
+    it("should respect folder filter when specified", async () => {
+      // Add games to multiple folders
+      const { gameId: game1 } = await addGame("/folder1", "game1.slp");
+      const { gameId: game2 } = await addGame("/folder2", "game2.slp");
+
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game1, { connect_code: "MANG#0" }));
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game2, { connect_code: "MANG#0" }));
+
+      // Search only in folder1
+      const filters: ReplayFilter[] = [{ type: "player", connectCode: "MANG#0" }];
+      const results = await GameRepository.searchGames(db, "/folder1", filters, {
+        limit: 10,
+        orderBy: { field: "startTime", direction: "desc" },
+      });
+
+      // Should only find game from folder1
+      expect(results).toHaveLength(1);
+      expect(results[0].name).toBe("game1.slp");
+      expect(results[0].folder).toBe("/folder1");
+    });
+  });
+
   describe("Pagination and ordering", () => {
     it("should order by start time descending", async () => {
       const folder = "/replays";
