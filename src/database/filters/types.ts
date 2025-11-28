@@ -22,6 +22,7 @@ export type DurationFilter = {
  * - { connectCode: "MANG#0" } = games with a player who has connect code MANG#0
  * - { connectCode: "MANG#0", mustBeWinner: true } = games where MANG#0 won
  * - { connectCode: "MANG#0", port: 1, mustBeWinner: true } = games where MANG#0 was port 1 and won
+ * - { connectCode: "MANG#0", characterIds: [2, 20], mustBeWinner: true } = games where MANG#0 played Fox or Falco and won
  * - { port: 1 } = games where port 1 exists (any player)
  * - { userId: "abc123", displayName: "Mango" } = games where user abc123 has display name "Mango"
  */
@@ -33,6 +34,7 @@ export type PlayerFilter = {
   displayName?: string;
   tag?: string;
   port?: number; // Port number (1-4)
+  characterIds?: number[]; // Character IDs (OR logic - player played any of these characters)
   // Optional win condition
   mustBeWinner?: boolean;
 };
