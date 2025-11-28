@@ -1002,7 +1002,7 @@ msgstr "オンライン有効化が必要です"
 
 #: src/renderer/lib/validate/validate.messages.ts:4:39
 msgid "Only English characters are allowed"
-msgstr "英字のみ使用できます"
+msgstr "アルファベットのみ使用できます"
 
 #: src/renderer/app/header/header.messages.ts:10:41
 msgid "Only logged in users can play online."
