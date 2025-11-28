@@ -93,14 +93,14 @@ export class GameRepository {
    * Search for games with filters and pagination
    *
    * @param db Database connection
-   * @param folder Folder to search in
+   * @param folder Folder to search in (if empty/null, searches all folders)
    * @param filters Array of filters to apply (AND logic between filters)
    * @param options Pagination and ordering options
    * @returns Array of game records with file information
    */
   public static async searchGames(
     db: DB,
-    folder: string,
+    folder: string | null,
     filters: ReplayFilter[],
     options: {
       limit: number;
@@ -109,7 +109,12 @@ export class GameRepository {
       nextIdInclusive?: number;
     },
   ) {
-    let query = db.selectFrom("file").where("folder", "=", folder).innerJoin("game", "game.file_id", "file._id");
+    let query = db.selectFrom("file").innerJoin("game", "game.file_id", "file._id");
+
+    // Apply folder filter if specified
+    if (folder != null && folder !== "") {
+      query = query.where("folder", "=", folder);
+    }
 
     // Apply all filters (AND logic)
     query = applyFilters(query, filters);
