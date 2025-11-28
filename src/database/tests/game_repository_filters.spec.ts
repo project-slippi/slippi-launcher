@@ -402,6 +402,72 @@ describe("GameRepository.searchGames with filters", () => {
       expect(results).toHaveLength(1);
       expect(results[0].name).toBe("match.slp");
     });
+
+    it("should exclude stadium modes when game mode filter is applied", async () => {
+      const folder = "/replays";
+
+      // Short online game
+      await addGameWithDurationAndMode(folder, "short_online.slp", 100, 0x08); // ONLINE
+
+      // Long online game
+      await addGameWithDurationAndMode(folder, "long_online.slp", 3600, 0x08); // ONLINE
+
+      // Short stadium games (these normally bypass duration filtering)
+      await addGameWithDurationAndMode(folder, "short_target.slp", 100, 0x0f); // TARGET_TEST
+      await addGameWithDurationAndMode(folder, "short_homerun.slp", 100, 0x20); // HOME_RUN_CONTEST
+
+      // Long stadium games
+      await addGameWithDurationAndMode(folder, "long_target.slp", 3600, 0x0f); // TARGET_TEST
+
+      const filters: ReplayFilter[] = [
+        { type: "gameMode", modes: [0x08] }, // Only online games
+        { type: "duration", minFrames: 1800 }, // At least 30 seconds
+      ];
+
+      const results = await GameRepository.searchGames(db, folder, filters, {
+        limit: 10,
+        orderBy: { field: "startTime", direction: "desc" },
+      });
+
+      // Only long_online.slp should match
+      // Stadium games are excluded by game mode filter even though duration filter normally includes them
+      expect(results).toHaveLength(1);
+      expect(results[0].name).toBe("long_online.slp");
+    });
+
+    it("should find multiple specific players in the same game", async () => {
+      const folder = "/replays";
+      const { gameId: game1 } = await addGame(folder, "mang0_vs_armada.slp");
+      const { gameId: game2 } = await addGame(folder, "mang0_vs_ppmd.slp");
+      const { gameId: game3 } = await addGame(folder, "armada_vs_ppmd.slp");
+
+      // Game 1: Mango vs Armada
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game1, { index: 0, connect_code: "MANG#0" }));
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game1, { index: 1, connect_code: "ARMA#0" }));
+
+      // Game 2: Mango vs PPMD
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game2, { index: 0, connect_code: "MANG#0" }));
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game2, { index: 1, connect_code: "PPMD#0" }));
+
+      // Game 3: Armada vs PPMD
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game3, { index: 0, connect_code: "ARMA#0" }));
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game3, { index: 1, connect_code: "PPMD#0" }));
+
+      // Find games with both Mango AND Armada
+      const filters: ReplayFilter[] = [
+        { type: "player", connectCode: "MANG#0" },
+        { type: "player", connectCode: "ARMA#0" },
+      ];
+
+      const results = await GameRepository.searchGames(db, folder, filters, {
+        limit: 10,
+        orderBy: { field: "startTime", direction: "desc" },
+      });
+
+      // Only game1 has both players
+      expect(results).toHaveLength(1);
+      expect(results[0].name).toBe("mang0_vs_armada.slp");
+    });
   });
 
   describe("Pagination and ordering", () => {
