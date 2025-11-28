@@ -64,11 +64,11 @@ describe("database integration tests", () => {
 
   it("should disallow adding the same player for the same game", async () => {
     const { gameId } = await addMockGame();
-    await PlayerRepository.insertPlayer(db, aMockPlayerWith(gameId, { index: 0 }));
-    await PlayerRepository.insertPlayer(db, aMockPlayerWith(gameId, { index: 1 }));
+    await PlayerRepository.insertPlayer(db, aMockPlayerWith(gameId, { port: 1 }));
+    await PlayerRepository.insertPlayer(db, aMockPlayerWith(gameId, { port: 2 }));
     expect(await getRowCount(db, "player")).toEqual(2);
 
-    const action = async () => await PlayerRepository.insertPlayer(db, aMockPlayerWith(gameId, { index: 1 }));
+    const action = async () => await PlayerRepository.insertPlayer(db, aMockPlayerWith(gameId, { port: 2 }));
     await expect(action()).rejects.toThrow();
   });
 
