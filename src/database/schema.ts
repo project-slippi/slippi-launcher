@@ -25,9 +25,9 @@ export type GameTable = {
   last_frame: number | null;
   timer_type: number | null;
   starting_timer_secs: number | null;
-  match_id: string | null;
-  sequence_number: ColumnType<number, number | undefined>;
-  tiebreak_index: ColumnType<number, number | undefined>;
+  session_id: string | null;
+  game_number: ColumnType<number, number | undefined>;
+  tiebreak_number: ColumnType<number, number | undefined>;
 };
 
 export type GameRecord = Selectable<GameTable>;
