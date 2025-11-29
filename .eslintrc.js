@@ -66,7 +66,7 @@ module.exports = {
       {
         argsIgnorePattern: "^_",
         varsIgnorePattern: "^_",
-        caughtErrorsIgnorePattern: "^_",
+        caughtErrorsIgnorePattern: ".*",
       },
     ],
     "@typescript-eslint/explicit-module-boundary-types": "off",
