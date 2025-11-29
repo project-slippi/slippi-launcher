@@ -72,7 +72,7 @@ export class AutoSwitcher extends EventEmitter {
           },
         );
         this.emit(MirrorEvent.LOG, `Connected to OBS Websocket ${obsWebSocketVersion} (RPC ${negotiatedRpcVersion})`);
-      } catch (_err) {
+      } catch (err) {
         this.emit(
           MirrorEvent.ERROR,
           "Could not connect to OBS, ensure you have OBS websocket installed, OBS is open, and the password is correct if using one.",

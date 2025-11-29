@@ -14,7 +14,7 @@ export const getCharacterIcon = (characterId: number | null, characterColor: num
       const color = characterColor !== null && characterColor <= allColors.length - 1 ? characterColor : 0;
       try {
         return characterIcons(`./${characterId}/${color}/stock.png`);
-      } catch (_err) {
+      } catch (err) {
         console.warn(`Failed to find stock icon for character ID ${characterId} and color ${color}.`);
       }
     }
@@ -30,7 +30,7 @@ export const getStageImage = (stageId: number): string => {
     }
     try {
       return stageIcons(`./${stageId}.png`);
-    } catch (_err) {
+    } catch (err) {
       console.warn(`Failed to find stage image for stage ID ${stageId}`);
     }
   }
