@@ -44,6 +44,7 @@ export const ReplayBrowser = React.memo(() => {
   const collapsedFolders = useReplays((store) => store.collapsedFolders);
   const selectedFiles = useReplays((store) => store.selectedFiles);
   const selectAllMode = useReplays((store) => store.selectAllMode);
+  const deselectedFiles = useReplays((store) => store.deselectedFiles);
   const totalFilesInFolder = useReplays((store) => store.totalFilesInFolder);
   const totalBytes = useReplays((store) => store.totalBytes);
   const fileSelection = useReplaySelection();
@@ -107,10 +108,15 @@ export const ReplayBrowser = React.memo(() => {
           hideShortGames,
         });
 
+        // Filter out deselected files
+        const deselectedSet = new Set(deselectedFiles);
+        const filesToPlay = allFilePaths.filter((path) => !deselectedSet.has(path));
+
         // Preserve order: manually selected files first, then remaining files
         const manuallySelectedSet = new Set(selectedFiles);
-        const remainingFiles = allFilePaths.filter((path) => !manuallySelectedSet.has(path));
-        const orderedPaths = [...selectedFiles, ...remainingFiles];
+        const manuallySelected = filesToPlay.filter((path) => manuallySelectedSet.has(path));
+        const remainingFiles = filesToPlay.filter((path) => !manuallySelectedSet.has(path));
+        const orderedPaths = [...manuallySelected, ...remainingFiles];
 
         viewReplays(...orderedPaths.map((path) => ({ path })));
       } else {
@@ -120,7 +126,7 @@ export const ReplayBrowser = React.memo(() => {
     } catch (err) {
       showError(err);
     }
-  }, [selectAllMode, selectedFiles, currentFolder, replayService, viewReplays, showError]);
+  }, [selectAllMode, selectedFiles, deselectedFiles, currentFolder, replayService, viewReplays, showError]);
 
   const handleDeleteAll = React.useCallback(async () => {
     try {
@@ -137,10 +143,15 @@ export const ReplayBrowser = React.memo(() => {
           hideShortGames,
         });
 
+        // Filter out deselected files
+        const deselectedSet = new Set(deselectedFiles);
+        const filesToDelete = allFilePaths.filter((path) => !deselectedSet.has(path));
+
         // Preserve order: manually selected files first, then remaining files
         const manuallySelectedSet = new Set(selectedFiles);
-        const remainingFiles = allFilePaths.filter((path) => !manuallySelectedSet.has(path));
-        const orderedPaths = [...selectedFiles, ...remainingFiles];
+        const manuallySelected = filesToDelete.filter((path) => manuallySelectedSet.has(path));
+        const remainingFiles = filesToDelete.filter((path) => !manuallySelectedSet.has(path));
+        const orderedPaths = [...manuallySelected, ...remainingFiles];
 
         await deleteFiles(orderedPaths);
       } else {
@@ -150,7 +161,16 @@ export const ReplayBrowser = React.memo(() => {
     } catch (err) {
       showError(err);
     }
-  }, [selectAllMode, selectedFiles, currentFolder, replayService, deleteFiles, fileSelection, showError]);
+  }, [
+    selectAllMode,
+    selectedFiles,
+    deselectedFiles,
+    currentFolder,
+    replayService,
+    deleteFiles,
+    fileSelection,
+    showError,
+  ]);
 
   return (
     <Outer>
@@ -233,7 +253,11 @@ export const ReplayBrowser = React.memo(() => {
                 />
               )}
               <FileSelectionToolbar
-                totalSelected={selectAllMode && totalFilesInFolder ? totalFilesInFolder : selectedFiles.length}
+                totalSelected={
+                  selectAllMode && totalFilesInFolder
+                    ? totalFilesInFolder - deselectedFiles.length
+                    : selectedFiles.length
+                }
                 isSelectAllMode={selectAllMode}
                 onSelectAll={fileSelection.selectAll}
                 onPlay={handlePlayAll}

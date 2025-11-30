@@ -23,6 +23,7 @@ type StoreState = {
   scrollRowItem: number;
   selectedFiles: string[];
   selectAllMode: boolean;
+  deselectedFiles: string[]; // Files explicitly deselected from select-all mode
   totalFilesInFolder: number | null;
   folderTree: FolderResult[];
   collapsedFolders: string[];
@@ -49,6 +50,7 @@ const initialState: StoreState = {
   scrollRowItem: 0,
   selectedFiles: [],
   selectAllMode: false,
+  deselectedFiles: [],
   totalFilesInFolder: null,
   selectedFile: {
     index: null,
@@ -137,6 +139,7 @@ export class ReplayPresenter {
       state.currentFolder = folderToLoad;
       state.selectedFiles = [];
       state.selectAllMode = false;
+      state.deselectedFiles = [];
     });
 
     const loadFolderTree = async () => {
@@ -212,6 +215,7 @@ export class ReplayPresenter {
       // Reset selectAllMode when manually changing selection
       if (resetSelectAllMode) {
         state.selectAllMode = false;
+        state.deselectedFiles = [];
       }
     });
   }
@@ -219,6 +223,28 @@ export class ReplayPresenter {
   public setSelectAllMode(enabled: boolean) {
     useReplays.setState((state) => {
       state.selectAllMode = enabled;
+      if (!enabled) {
+        state.deselectedFiles = [];
+      }
+    });
+  }
+
+  public toggleFileInSelectAllMode(filePath: string) {
+    useReplays.setState((state) => {
+      const isDeselected = state.deselectedFiles.includes(filePath);
+      if (isDeselected) {
+        // Re-select the file (remove from deselected list)
+        state.deselectedFiles = state.deselectedFiles.filter((f) => f !== filePath);
+        // Also add to selectedFiles for immediate visual feedback
+        if (!state.selectedFiles.includes(filePath)) {
+          state.selectedFiles = [...state.selectedFiles, filePath];
+        }
+      } else {
+        // Deselect the file (add to deselected list)
+        state.deselectedFiles = [...state.deselectedFiles, filePath];
+        // Remove from selectedFiles for immediate visual feedback
+        state.selectedFiles = state.selectedFiles.filter((f) => f !== filePath);
+      }
     });
   }
 
@@ -256,8 +282,10 @@ export class ReplayPresenter {
         state.loadingMore = false;
 
         // If in select-all mode, automatically add newly loaded files to selection
+        // (unless they're in the deselected list)
         if (state.selectAllMode) {
-          const newFilePaths = result.files.map((f) => f.fullPath);
+          const deselectedSet = new Set(state.deselectedFiles);
+          const newFilePaths = result.files.map((f) => f.fullPath).filter((path) => !deselectedSet.has(path));
           state.selectedFiles = [...state.selectedFiles, ...newFilePaths];
         }
       });
@@ -298,6 +326,17 @@ export const useReplaySelection = () => {
   const [lastClickIndex, setLastClickIndex] = useState<number | null>(null);
 
   const toggleFiles = (fileNames: string[], mode: "toggle" | "select" | "deselect" = "toggle") => {
+    const { selectAllMode } = useReplays.getState();
+
+    // If in select-all mode, use the exclusion pattern
+    if (selectAllMode) {
+      fileNames.forEach((fileName) => {
+        presenter.toggleFileInSelectAllMode(fileName);
+      });
+      return;
+    }
+
+    // Normal selection mode
     const newSelection = Array.from(selectedFiles);
 
     fileNames.forEach((fileName) => {
@@ -360,7 +399,7 @@ export const useReplaySelection = () => {
   };
 
   const clearSelection = () => {
-    presenter.setSelectedFiles([], true); // Reset selectAllMode
+    presenter.setSelectedFiles([], true); // Reset selectAllMode and deselectedFiles
   };
 
   const selectAll = () => {
