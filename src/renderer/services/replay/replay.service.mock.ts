@@ -1,4 +1,12 @@
-import type { FileLoadResult, FileResult, FolderResult, Progress, ReplayService } from "@replays/types";
+import type {
+  FileLoadResult,
+  FileResult,
+  FolderResult,
+  Progress,
+  ReplayService,
+  SearchGamesOptions,
+  SearchGamesResult,
+} from "@replays/types";
 import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
 
 import { delayAndMaybeError } from "../utils";
@@ -24,6 +32,15 @@ class MockReplayClient implements ReplayService {
       files,
       totalBytes: 124567,
       fileErrorCount: 0,
+    };
+  }
+
+  @delayAndMaybeError(SHOULD_ERROR)
+  public async searchGames(folderPath: string, _options?: SearchGamesOptions): Promise<SearchGamesResult> {
+    const files = [1, 2, 3, 4].map((i) => aMockFileResultWith(folderPath, { fileName: `Game${i}.slp` }));
+    return {
+      files,
+      continuation: undefined,
     };
   }
 

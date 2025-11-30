@@ -10,6 +10,7 @@ import {
   ipc_initializeFolderTree,
   ipc_loadProgressUpdatedEvent,
   ipc_loadReplayFolder,
+  ipc_searchGames,
   ipc_selectTreeFolder,
 } from "./ipc";
 import type { Progress, ReplayProvider } from "./types";
@@ -77,5 +78,37 @@ export default function setupReplaysIpc({ enableReplayDatabase }: { enableReplay
       replayProvider.loadFile(filePath),
     ]);
     return { file: fileResult, stadiumStats };
+  });
+
+  ipc_searchGames.main!.handle(async ({ folderPath, options = {} }) => {
+    const replayProvider = await replayProviderPromise;
+
+    // Check if the provider supports searchReplays (DatabaseReplayProvider)
+    if ("searchReplays" in replayProvider && typeof replayProvider.searchReplays === "function") {
+      const { limit = 20, continuation, orderBy = { field: "startTime", direction: "desc" } } = options;
+
+      // Progress callback for database sync
+      const onProgress = (progress: Progress) => {
+        ipc_loadProgressUpdatedEvent.main!.trigger(progress).catch(console.warn);
+      };
+
+      // Convert hideShortGames filter to database filter
+      const filters: any[] = [];
+      if (options.hideShortGames) {
+        filters.push({
+          type: "duration" as const,
+          minFrames: 30 * 60, // 30 seconds
+        });
+      }
+
+      return await replayProvider.searchReplays(folderPath, limit, continuation, orderBy, filters, onProgress);
+    }
+
+    // Fallback to loadFolder for FileSystemReplayProvider
+    const onProgress = (progress: Progress) => {
+      ipc_loadProgressUpdatedEvent.main!.trigger(progress).catch(console.warn);
+    };
+    const result = await replayProvider.loadFolder(folderPath, onProgress);
+    return { files: result.files, continuation: undefined };
   });
 }
