@@ -41,12 +41,14 @@ export class DatabaseReplayProvider implements ReplayProvider {
   ): Promise<{
     files: FileResult[];
     continuation: string | undefined;
+    totalCount?: number;
   }> {
     // If the folder does not exist, return empty
     if (!(await fs.pathExists(folder))) {
       return {
         files: [],
         continuation: undefined,
+        totalCount: 0,
       };
     }
 
@@ -58,6 +60,12 @@ export class DatabaseReplayProvider implements ReplayProvider {
     // Only sync if we're not using continuation (i.e., first page of results)
     if (continuationValue === null && nextIdInclusive === null) {
       await this.syncReplayDatabase(folder, onProgress, INSERT_REPLAY_BATCH_SIZE);
+    }
+
+    // Get total count on first page load (when there's no continuation)
+    let totalCount: number | undefined;
+    if (continuationValue === null && nextIdInclusive === null) {
+      totalCount = await GameRepository.countGames(this.db, folder, filters);
     }
 
     // Use GameRepository.searchGames which supports filters
@@ -81,7 +89,40 @@ export class DatabaseReplayProvider implements ReplayProvider {
     return {
       files,
       continuation: newContinuation,
+      totalCount,
     };
+  }
+
+  public async getAllFilePaths(
+    folder: string,
+    orderBy: {
+      field: "lastFrame" | "startTime";
+      direction?: "asc" | "desc";
+    } = {
+      field: "startTime",
+      direction: "desc",
+    },
+    filters: ReplayFilter[] = [],
+  ): Promise<string[]> {
+    // If the folder does not exist, return empty
+    if (!(await fs.pathExists(folder))) {
+      return [];
+    }
+
+    // Sync the database first (add new files, remove deleted files)
+    await this.syncReplayDatabase(folder, undefined, INSERT_REPLAY_BATCH_SIZE);
+
+    // Query all games without limit to get all file paths
+    const records = await GameRepository.searchGames(this.db, folder, filters, {
+      limit: 1000000, // Large limit to get all records
+      orderBy: {
+        field: orderBy.field,
+        direction: orderBy.direction ?? "desc",
+      },
+    });
+
+    // Return just the full paths
+    return records.map((record) => path.resolve(record.folder, record.name));
   }
 
   public async loadFile(filePath: string): Promise<FileResult> {

@@ -22,6 +22,8 @@ type StoreState = {
   fileErrorCount: number;
   scrollRowItem: number;
   selectedFiles: string[];
+  selectAllMode: boolean;
+  totalFilesInFolder: number | null;
   folderTree: FolderResult[];
   collapsedFolders: string[];
   selectedFile: {
@@ -46,6 +48,8 @@ const initialState: StoreState = {
   fileErrorCount: 0,
   scrollRowItem: 0,
   selectedFiles: [],
+  selectAllMode: false,
+  totalFilesInFolder: null,
   selectedFile: {
     index: null,
     total: null,
@@ -132,6 +136,7 @@ export class ReplayPresenter {
     useReplays.setState((state) => {
       state.currentFolder = folderToLoad;
       state.selectedFiles = [];
+      state.selectAllMode = false;
     });
 
     const loadFolderTree = async () => {
@@ -173,6 +178,7 @@ export class ReplayPresenter {
           state.totalBytes = null; // searchGames doesn't return totalBytes
           state.continuation = result.continuation;
           state.hasMoreReplays = result.continuation !== undefined;
+          state.totalFilesInFolder = result.totalCount ?? null;
         });
       } catch (err) {
         useReplays.setState((state) => {
@@ -200,9 +206,19 @@ export class ReplayPresenter {
     });
   }
 
-  public setSelectedFiles(filePaths: string[]) {
+  public setSelectedFiles(filePaths: string[], resetSelectAllMode = true) {
     useReplays.setState((state) => {
       state.selectedFiles = filePaths;
+      // Reset selectAllMode when manually changing selection
+      if (resetSelectAllMode) {
+        state.selectAllMode = false;
+      }
+    });
+  }
+
+  public setSelectAllMode(enabled: boolean) {
+    useReplays.setState((state) => {
+      state.selectAllMode = enabled;
     });
   }
 
@@ -238,6 +254,12 @@ export class ReplayPresenter {
         state.continuation = result.continuation;
         state.hasMoreReplays = result.continuation !== undefined;
         state.loadingMore = false;
+
+        // If in select-all mode, automatically add newly loaded files to selection
+        if (state.selectAllMode) {
+          const newFilePaths = result.files.map((f) => f.fullPath);
+          state.selectedFiles = [...state.selectedFiles, ...newFilePaths];
+        }
       });
     } catch (err) {
       console.error("Failed to load more replays:", err);
@@ -338,11 +360,18 @@ export const useReplaySelection = () => {
   };
 
   const clearSelection = () => {
-    presenter.setSelectedFiles([]);
+    presenter.setSelectedFiles([], true); // Reset selectAllMode
   };
 
   const selectAll = () => {
-    presenter.setSelectedFiles(files.map((f) => f.fullPath));
+    const currentlySelected = new Set(selectedFiles);
+    const remainingFiles = files.filter((f) => !currentlySelected.has(f.fullPath)).map((f) => f.fullPath);
+
+    // Preserve order: manually selected files first, then remaining files
+    const allFiles = [...selectedFiles, ...remainingFiles];
+
+    presenter.setSelectedFiles(allFiles, false); // Don't reset selectAllMode
+    presenter.setSelectAllMode(true);
   };
 
   return {

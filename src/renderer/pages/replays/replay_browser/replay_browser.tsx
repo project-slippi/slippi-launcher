@@ -34,7 +34,7 @@ export const ReplayBrowser = React.memo(() => {
   const presenter = useReplayPresenter();
   const searchInputRef = React.createRef<HTMLInputElement>();
   const scrollRowItem = useReplays((store) => store.scrollRowItem);
-  const { dolphinService } = useServices();
+  const { dolphinService, replayService } = useServices();
   const { viewReplays } = useDolphinActions(dolphinService);
   const loading = useReplays((store) => store.loading);
   const loadingMore = useReplays((store) => store.loadingMore);
@@ -43,6 +43,8 @@ export const ReplayBrowser = React.memo(() => {
   const folderTree = useReplays((store) => store.folderTree);
   const collapsedFolders = useReplays((store) => store.collapsedFolders);
   const selectedFiles = useReplays((store) => store.selectedFiles);
+  const selectAllMode = useReplays((store) => store.selectAllMode);
+  const totalFilesInFolder = useReplays((store) => store.totalFilesInFolder);
   const totalBytes = useReplays((store) => store.totalBytes);
   const fileSelection = useReplaySelection();
   const fileErrorCount = useReplays((store) => store.fileErrorCount);
@@ -91,6 +93,64 @@ export const ReplayBrowser = React.memo(() => {
     },
     [presenter, showError, showSuccess],
   );
+
+  const handlePlayAll = React.useCallback(async () => {
+    try {
+      if (selectAllMode) {
+        // Get all file paths from the current folder with the same filters
+        const { sortBy, sortDirection, hideShortGames } = useReplayFilter.getState();
+        const allFilePaths = await replayService.getAllFilePaths(currentFolder, {
+          orderBy: {
+            field: sortBy === "DATE" ? "startTime" : "lastFrame",
+            direction: sortDirection === "DESC" ? "desc" : "asc",
+          },
+          hideShortGames,
+        });
+
+        // Preserve order: manually selected files first, then remaining files
+        const manuallySelectedSet = new Set(selectedFiles);
+        const remainingFiles = allFilePaths.filter((path) => !manuallySelectedSet.has(path));
+        const orderedPaths = [...selectedFiles, ...remainingFiles];
+
+        viewReplays(...orderedPaths.map((path) => ({ path })));
+      } else {
+        // Just play the selected files
+        viewReplays(...selectedFiles.map((path) => ({ path })));
+      }
+    } catch (err) {
+      showError(err);
+    }
+  }, [selectAllMode, selectedFiles, currentFolder, replayService, viewReplays, showError]);
+
+  const handleDeleteAll = React.useCallback(async () => {
+    try {
+      fileSelection.clearSelection();
+
+      if (selectAllMode) {
+        // Get all file paths from the current folder with the same filters
+        const { sortBy, sortDirection, hideShortGames } = useReplayFilter.getState();
+        const allFilePaths = await replayService.getAllFilePaths(currentFolder, {
+          orderBy: {
+            field: sortBy === "DATE" ? "startTime" : "lastFrame",
+            direction: sortDirection === "DESC" ? "desc" : "asc",
+          },
+          hideShortGames,
+        });
+
+        // Preserve order: manually selected files first, then remaining files
+        const manuallySelectedSet = new Set(selectedFiles);
+        const remainingFiles = allFilePaths.filter((path) => !manuallySelectedSet.has(path));
+        const orderedPaths = [...selectedFiles, ...remainingFiles];
+
+        await deleteFiles(orderedPaths);
+      } else {
+        // Just delete the selected files
+        await deleteFiles(selectedFiles);
+      }
+    } catch (err) {
+      showError(err);
+    }
+  }, [selectAllMode, selectedFiles, currentFolder, replayService, deleteFiles, fileSelection, showError]);
 
   return (
     <Outer>
@@ -173,14 +233,12 @@ export const ReplayBrowser = React.memo(() => {
                 />
               )}
               <FileSelectionToolbar
-                totalSelected={selectedFiles.length}
+                totalSelected={selectAllMode && totalFilesInFolder ? totalFilesInFolder : selectedFiles.length}
+                isSelectAllMode={selectAllMode}
                 onSelectAll={fileSelection.selectAll}
-                onPlay={() => viewReplays(...selectedFiles.map((path) => ({ path })))}
+                onPlay={handlePlayAll}
                 onClear={fileSelection.clearSelection}
-                onDelete={() => {
-                  fileSelection.clearSelection();
-                  void deleteFiles(selectedFiles);
-                }}
+                onDelete={handleDeleteAll}
               />
             </div>
           }

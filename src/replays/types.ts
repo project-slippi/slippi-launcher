@@ -85,6 +85,7 @@ export type SearchGamesOptions = {
 export type SearchGamesResult = {
   files: FileResult[];
   continuation: string | undefined;
+  totalCount?: number;
 };
 
 export interface ReplayService {
@@ -92,6 +93,7 @@ export interface ReplayService {
   selectTreeFolder(folderPath: string): Promise<readonly FolderResult[]>;
   loadReplayFolder(folderPath: string): Promise<FileLoadResult>;
   searchGames(folderPath: string, options?: SearchGamesOptions): Promise<SearchGamesResult>;
+  getAllFilePaths(folderPath: string, options?: SearchGamesOptions): Promise<string[]>;
   calculateGameStats(filePath: string): Promise<{ file: FileResult; stats: StatsType | null }>;
   calculateStadiumStats(filePath: string): Promise<{ file: FileResult; stadiumStats: StadiumStatsType | null }>;
   onReplayLoadProgressUpdate(handle: (progress: Progress) => void): () => void;
