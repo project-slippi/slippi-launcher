@@ -7,6 +7,7 @@ import { FolderTreeService } from "./folder_tree_service";
 import {
   ipc_calculateGameStats,
   ipc_calculateStadiumStats,
+  ipc_getAllFilePaths,
   ipc_initializeFolderTree,
   ipc_loadProgressUpdatedEvent,
   ipc_loadReplayFolder,
@@ -110,5 +111,32 @@ export default function setupReplaysIpc({ enableReplayDatabase }: { enableReplay
     };
     const result = await replayProvider.loadFolder(folderPath, onProgress);
     return { files: result.files, continuation: undefined };
+  });
+
+  ipc_getAllFilePaths.main!.handle(async ({ folderPath, options = {} }) => {
+    const replayProvider = await replayProviderPromise;
+
+    // Check if the provider supports getAllFilePaths (DatabaseReplayProvider)
+    if ("getAllFilePaths" in replayProvider && typeof replayProvider.getAllFilePaths === "function") {
+      const { orderBy = { field: "startTime", direction: "desc" } } = options;
+
+      // Convert hideShortGames filter to database filter
+      const filters: any[] = [];
+      if (options.hideShortGames) {
+        filters.push({
+          type: "duration" as const,
+          minFrames: 30 * 60, // 30 seconds
+        });
+      }
+
+      return await replayProvider.getAllFilePaths(folderPath, orderBy, filters);
+    }
+
+    // Fallback to loadFolder for FileSystemReplayProvider
+    const onProgress = (progress: Progress) => {
+      ipc_loadProgressUpdatedEvent.main!.trigger(progress).catch(console.warn);
+    };
+    const result = await replayProvider.loadFolder(folderPath, onProgress);
+    return result.files.map((f) => f.fullPath);
   });
 }

@@ -20,6 +20,12 @@ export const ipc_searchGames = makeEndpoint.main(
   <SearchGamesResult>_,
 );
 
+export const ipc_getAllFilePaths = makeEndpoint.main(
+  "getAllFilePaths",
+  <{ folderPath: string; options?: SearchGamesOptions }>_,
+  <string[]>_,
+);
+
 export const ipc_initializeFolderTree = makeEndpoint.main(
   "initializeFolderTree",
   <{ folders: readonly string[] }>_,
