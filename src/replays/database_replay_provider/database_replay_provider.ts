@@ -4,6 +4,7 @@ import { FileRepository } from "@database/repositories/file_repository";
 import { GameRepository } from "@database/repositories/game_repository";
 import { PlayerRepository } from "@database/repositories/player_repository";
 import type { Database, FileRecord, GameRecord, NewFile, NewGame, NewPlayer, PlayerRecord } from "@database/schema";
+import { boolToInt, boolToIntOrNull } from "@database/utils";
 import type { FileLoadResult, FileResult, Progress, ReplayProvider } from "@replays/types";
 import type { StadiumStatsType, StatsType } from "@slippi/slippi-js/node";
 import { SlippiGame } from "@slippi/slippi-js/node";
@@ -288,8 +289,8 @@ function generateNewGame(file: FileRecord, game: SlippiGame): NewGame | null {
 
   const newGame: NewGame = {
     file_id: file._id,
-    is_ranked: isRanked,
-    is_teams: settings.isTeams ?? false,
+    is_ranked: boolToInt(isRanked),
+    is_teams: boolToInt(settings.isTeams ?? false),
     stage: settings.stageId,
     start_time: gameStartTime,
     platform: metadata?.playedOn,
@@ -323,7 +324,7 @@ function generateNewPlayers(gameId: number, game: SlippiGame): NewPlayer[] {
       character_id: player.characterId,
       character_color: player.characterColor,
       team_id: settings.isTeams ? player.teamId : undefined,
-      is_winner: isWinner,
+      is_winner: boolToIntOrNull(isWinner),
       start_stocks: player.startStocks,
       connect_code: names.code,
       display_name: names.name,

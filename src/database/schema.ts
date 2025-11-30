@@ -26,22 +26,26 @@ import type { ColumnType, Generated, Insertable, Selectable, Updateable } from "
  *
  * SQLite doesn't have a native boolean type, so we store them as integers.
  * - Reading: Returns 0 or 1
- * - Writing: Accepts 0, 1, boolean, or undefined (uses default)
+ * - Writing: Accepts 0, 1, or undefined (uses default)
  *
  * Database: 0 = false, 1 = true
+ * Note: Must use 0 or 1, not boolean, due to kysely-sqlite-worker limitations.
+ *       Use boolToInt() helper function to convert booleans.
  */
-export type SQLiteBoolean = ColumnType<0 | 1, 0 | 1 | boolean | undefined, 0 | 1 | boolean>;
+export type SQLiteBoolean = ColumnType<0 | 1, 0 | 1 | undefined, 0 | 1>;
 
 /**
  * SQLite Boolean type (nullable)
  *
  * Same as SQLiteBoolean but allows NULL values.
  * - Reading: Returns 0, 1, or null
- * - Writing: Accepts 0, 1, boolean, null, or undefined
+ * - Writing: Accepts 0, 1, null, or undefined
  *
  * Database: 0 = false, 1 = true, NULL = unknown/not applicable
+ * Note: Must use 0 or 1, not boolean, due to kysely-sqlite-worker limitations.
+ *       Use boolToIntOrNull() helper function to convert booleans.
  */
-export type SQLiteBooleanOrNull = ColumnType<0 | 1 | null, 0 | 1 | boolean | null | undefined, 0 | 1 | boolean | null>;
+export type SQLiteBooleanOrNull = ColumnType<0 | 1 | null, 0 | 1 | null | undefined, 0 | 1 | null>;
 
 /**
  * File table schema
