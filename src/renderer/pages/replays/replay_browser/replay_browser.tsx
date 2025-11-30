@@ -89,10 +89,12 @@ export const ReplayBrowser = React.memo(() => {
         .deleteFiles(filePaths)
         .then(() => {
           showSuccess(Messages.filesDeleted(filePaths.length));
+          // Reload the folder to resync the database and remove deleted files
+          return presenter.loadFolder(currentFolder, true);
         })
         .catch(showError);
     },
-    [presenter, showError, showSuccess],
+    [presenter, showError, showSuccess, currentFolder],
   );
 
   const handlePlayAll = React.useCallback(async () => {
