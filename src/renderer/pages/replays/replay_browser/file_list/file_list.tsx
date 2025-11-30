@@ -25,6 +25,7 @@ const FileListResults = ({
   setScrollRowItem,
   onClick,
   selectedFiles,
+  onLoadMore,
 }: {
   folderPath: string;
   files: FileResult[];
@@ -35,6 +36,7 @@ const FileListResults = ({
   onSelect: (index: number) => void;
   onPlay: (index: number) => void;
   setScrollRowItem: (row: number) => void;
+  onLoadMore: () => void;
 }) => {
   // Keep a reference to the list so we can control the scroll position
   const listRef = React.createRef<List>();
@@ -91,8 +93,14 @@ const FileListResults = ({
           initialScrollOffset={scrollRowItem * REPLAY_FILE_ITEM_SIZE}
           itemCount={files.length}
           itemSize={REPLAY_FILE_ITEM_SIZE}
-          onItemsRendered={({ visibleStartIndex }) => {
+          onItemsRendered={({ visibleStartIndex, visibleStopIndex }) => {
             setScrollRowRef(visibleStartIndex);
+
+            // Trigger load more when user scrolls near the end (within 10 items)
+            const itemsFromEnd = files.length - visibleStopIndex;
+            if (itemsFromEnd <= 2) {
+              onLoadMore();
+            }
           }}
         >
           {Row}
@@ -114,6 +122,7 @@ export const FileList = ({
   onFileClick,
   folderPath,
   selectedFiles,
+  onLoadMore,
 }: {
   folderPath: string;
   files: FileResult[];
@@ -124,6 +133,8 @@ export const FileList = ({
   onFileClick: (index: number, isShiftHeld: boolean) => void;
   selectedFiles: Array<string>;
   onPlay: (index: number) => void;
+  onLoadMore: () => void;
+  loadingMore: boolean;
 }) => {
   const [menuItem, setMenuItem] = React.useState<null | {
     index: number;
@@ -168,6 +179,7 @@ export const FileList = ({
           files={files}
           scrollRowItem={scrollRowItem}
           setScrollRowItem={setScrollRowItem}
+          onLoadMore={onLoadMore}
         />
       </div>
       <IconMenu

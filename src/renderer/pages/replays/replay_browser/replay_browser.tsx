@@ -37,6 +37,8 @@ export const ReplayBrowser = React.memo(() => {
   const { dolphinService } = useServices();
   const { viewReplays } = useDolphinActions(dolphinService);
   const loading = useReplays((store) => store.loading);
+  const loadingMore = useReplays((store) => store.loadingMore);
+  const hasMoreReplays = useReplays((store) => store.hasMoreReplays);
   const currentFolder = useReplays((store) => store.currentFolder);
   const folderTree = useReplays((store) => store.folderTree);
   const collapsedFolders = useReplays((store) => store.collapsedFolders);
@@ -68,6 +70,12 @@ export const ReplayBrowser = React.memo(() => {
     const filePath = filteredFiles[index].fullPath;
     viewReplays({ path: filePath });
   };
+
+  const handleLoadMore = React.useCallback(() => {
+    if (!loadingMore && hasMoreReplays) {
+      presenter.loadMoreReplays().catch(showError);
+    }
+  }, [presenter, loadingMore, hasMoreReplays, showError]);
 
   const deleteFiles = React.useCallback(
     (filePaths: string[]) => {
@@ -160,6 +168,8 @@ export const ReplayBrowser = React.memo(() => {
                   files={filteredFiles}
                   scrollRowItem={scrollRowItem}
                   setScrollRowItem={(item) => presenter.setScrollRowItem(item)}
+                  onLoadMore={handleLoadMore}
+                  loadingMore={loadingMore}
                 />
               )}
               <FileSelectionToolbar
