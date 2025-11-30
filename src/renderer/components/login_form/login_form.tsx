@@ -40,12 +40,11 @@ const Header = styled.h2`
 `;
 
 type LoginFormProps = {
-  className?: string;
   disableAutoFocus?: boolean;
   onSuccess?: () => void;
 };
 
-export const LoginForm = ({ className, onSuccess, disableAutoFocus }: LoginFormProps) => {
+export const LoginForm = ({ onSuccess, disableAutoFocus }: LoginFormProps) => {
   const { authService } = useServices();
   const email = useLoginStore((store) => store.email);
   const setEmail = useLoginStore((store) => store.setEmail);
@@ -93,7 +92,7 @@ export const LoginForm = ({ className, onSuccess, disableAutoFocus }: LoginFormP
   }
 
   return (
-    <div className={className}>
+    <div>
       <Header>{isSignUp ? Messages.createAnAccount() : Messages.logIn()}</Header>
       <form
         onSubmit={(e) => {
