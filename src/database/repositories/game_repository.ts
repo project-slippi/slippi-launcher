@@ -90,6 +90,30 @@ export class GameRepository {
   }
 
   /**
+   * Count games with filters
+   *
+   * @param db Database connection
+   * @param folder Folder to search in (if empty/null, searches all folders)
+   * @param filters Array of filters to apply (AND logic between filters)
+   * @returns Number of games matching the criteria
+   */
+  public static async countGames(db: DB, folder: string | null, filters: ReplayFilter[]): Promise<number> {
+    let query = db.selectFrom("file").innerJoin("game", "game.file_id", "file._id");
+
+    // Apply folder filter if specified
+    if (folder != null && folder !== "") {
+      query = query.where("folder", "=", folder);
+    }
+
+    // Apply all filters (AND logic)
+    query = applyFilters(query, filters);
+
+    const result = await query.select(({ fn }) => fn.count<number>("game._id").as("count")).executeTakeFirstOrThrow();
+
+    return Number(result.count);
+  }
+
+  /**
    * Search for games with filters and pagination
    *
    * @param db Database connection

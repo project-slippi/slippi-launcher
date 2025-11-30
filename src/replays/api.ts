@@ -2,6 +2,7 @@
 import {
   ipc_calculateGameStats,
   ipc_calculateStadiumStats,
+  ipc_getAllFilePaths,
   ipc_initializeFolderTree,
   ipc_loadProgressUpdatedEvent,
   ipc_loadReplayFolder,
@@ -26,6 +27,10 @@ const replayApi: ReplayService = {
   },
   async searchGames(folderPath: string, options?: SearchGamesOptions) {
     const { result } = await ipc_searchGames.renderer!.trigger({ folderPath, options });
+    return result;
+  },
+  async getAllFilePaths(folderPath: string, options?: SearchGamesOptions) {
+    const { result } = await ipc_getAllFilePaths.renderer!.trigger({ folderPath, options });
     return result;
   },
   async calculateGameStats(filePath: string) {
