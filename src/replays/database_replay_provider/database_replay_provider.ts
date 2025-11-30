@@ -13,7 +13,7 @@ import * as fs from "fs-extra";
 import type { Kysely } from "kysely";
 import path from "path";
 
-import { extractPlayerNames } from "../file_system_replay_provider/extract_player_names";
+import { extractPlayerNames } from "../extract_player_names";
 import { Continuation } from "./continuation";
 import { inferStartTime } from "./infer_start_time";
 import { mapGameRecordToFileResult } from "./record_mapper";
