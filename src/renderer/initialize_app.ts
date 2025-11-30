@@ -1,11 +1,11 @@
 import { DolphinLaunchType } from "@dolphin/types";
 import log from "electron-log";
 
+import { generateQuickStartSteps } from "@/pages/quick_start/use_quick_start";
 import type { AuthUser } from "@/services/auth/types";
 import type { Services } from "@/services/types";
 
 import { InitializeAppMessages as Messages } from "./initialize_app.messages";
-import { generateQuickStartSteps } from "./lib/hooks/use_quick_start";
 import type { UserData } from "./services/slippi/types";
 
 export async function initializeApp(services: Services) {

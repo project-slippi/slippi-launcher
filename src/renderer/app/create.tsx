@@ -8,12 +8,12 @@ import { HashRouter as Router, Navigate, Route, Routes } from "react-router-dom"
 
 import { useAppStore } from "@/lib/hooks/use_app_store";
 import { usePageRequestListeners } from "@/lib/hooks/use_page_request_listeners";
-import { QuickStartStep, useQuickStartStore } from "@/lib/hooks/use_quick_start";
 import { usePageNavigationShortcuts } from "@/lib/hooks/use_shortcuts";
 import { lazyLoadConsoleMirrorPage } from "@/pages/console_mirror/load";
 import { HomePage } from "@/pages/home/home_page";
 import { NotFoundPage } from "@/pages/not_found/not_found_page";
 import { lazyLoadQuickStartPage } from "@/pages/quick_start/load";
+import { QuickStartStep, useQuickStartStore } from "@/pages/quick_start/use_quick_start";
 import { lazyLoadReplaysPage } from "@/pages/replays/load";
 import { lazyLoadSettingsPage } from "@/pages/settings/load";
 import { lazyLoadSpectatePage } from "@/pages/spectate/load";

@@ -2,10 +2,10 @@ import Box from "@mui/material/Box";
 import React from "react";
 import { Navigate } from "react-router-dom";
 
-import { QuickStartStep, useQuickStart, useQuickStartStore } from "@/lib/hooks/use_quick_start";
 import { withSlippiBackground } from "@/styles/with_slippi_background";
 
 import { QuickStart } from "./quick_start";
+import { QuickStartStep, useQuickStart, useQuickStartStore } from "./use_quick_start";
 
 const isDevelopment = window.electron.bootstrap.isDevelopment;
 

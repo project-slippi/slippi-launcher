@@ -1,9 +1,8 @@
 import { css } from "@emotion/react";
 import Button from "@mui/material/Button";
 
-import { useQuickStartStore } from "@/lib/hooks/use_quick_start";
-
 import { StepContainer } from "../../step_container";
+import { useQuickStartStore } from "../../use_quick_start";
 import { SetupCompleteStepMessages as Messages } from "./setup_complete_step.messages";
 
 export const SetupCompleteStep = () => {
