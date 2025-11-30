@@ -40,9 +40,6 @@
   "engines": {
     "node": ">=20"
   },
-  "devEngines": {
-    "node": ">=20.x"
-  },
   "browserslist": [
     "chrome 91"
   ],
