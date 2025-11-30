@@ -13,7 +13,7 @@ import { lazyLoadConsoleMirrorPage } from "@/pages/console_mirror/load";
 import { HomePage } from "@/pages/home/home_page";
 import { NotFoundPage } from "@/pages/not_found/not_found_page";
 import { lazyLoadQuickStartPage } from "@/pages/quick_start/load";
-import { QuickStartStep, useQuickStartStore } from "@/pages/quick_start/use_quick_start";
+import { useQuickStartStore } from "@/pages/quick_start/use_quick_start";
 import { lazyLoadReplaysPage } from "@/pages/replays/load";
 import { lazyLoadSettingsPage } from "@/pages/settings/load";
 import { lazyLoadSpectatePage } from "@/pages/spectate/load";
@@ -74,8 +74,8 @@ export function createApp({ services }: { services: Services }): {
   const RootRedirect = () => {
     const steps = useQuickStartStore((store) => store.steps);
 
-    // If we have quick start steps and the first step is not the complete step, show the landing (quick start) page
-    if (steps.length > 0 && steps[0] !== QuickStartStep.COMPLETE) {
+    // Only redirect to the landing page if we actually have quick start steps
+    if (steps.length > 0) {
       return <Navigate to="/landing" replace={true} />;
     }
 

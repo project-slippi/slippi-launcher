@@ -5,7 +5,7 @@ import { Navigate } from "react-router-dom";
 import { withSlippiBackground } from "@/styles/with_slippi_background";
 
 import { QuickStart } from "./quick_start";
-import { QuickStartStep, useQuickStart, useQuickStartStore } from "./use_quick_start";
+import { useQuickStart, useQuickStartStore } from "./use_quick_start";
 
 const isDevelopment = window.electron.bootstrap.isDevelopment;
 
@@ -14,8 +14,8 @@ export function createQuickStartPage(): { Page: React.ComponentType } {
     const steps = useQuickStartStore((store) => store.steps);
     const { currentStep, nextStep, prevStep } = useQuickStart();
 
-    // We either have no steps or we only have the complete step, so just go to the main page
-    if (steps.length === 0 || steps[0] === QuickStartStep.COMPLETE) {
+    // We have no more steps, so just go to the main page
+    if (steps.length === 0) {
       return <Navigate to="/main" replace={true} />;
     }
 
