@@ -1,0 +1,53 @@
+diff --git a/node_modules/@electron/notarize/lib/check-signature.js b/node_modules/@electron/notarize/lib/check-signature.js
+index 8bf6975..9d0784f 100644
+--- a/node_modules/@electron/notarize/lib/check-signature.js
++++ b/node_modules/@electron/notarize/lib/check-signature.js
+@@ -3,16 +3,12 @@ import { spawn } from './spawn.js';
+ import debug from 'debug';
+ const d = debug('electron-notarize');
+ const codesignDisplay = async (opts) => {
+-    const result = await spawn('codesign', ['-dv', '-vvvv', '--deep', `./${path.basename(opts.appPath)}`], {
+-        cwd: path.dirname(opts.appPath),
+-    });
++    const result = await spawn('codesign', ['-dv', '-vvvv', '--deep', opts.appPath]);
+     return result;
+ };
+ const codesign = async (opts) => {
+     d('attempting to check codesign of app:', opts.appPath);
+-    const result = await spawn('codesign', ['-vvv', '--deep', '--strict', `./${path.basename(opts.appPath)}`], {
+-        cwd: path.dirname(opts.appPath),
+-    });
++    const result = await spawn('codesign', ['-vvv', '--deep', '--strict', opts.appPath]);
+     return result;
+ };
+ export async function checkSignatures(opts) {
+diff --git a/node_modules/@electron/notarize/lib/notarytool.js b/node_modules/@electron/notarize/lib/notarytool.js
+index c73ea03..0b1edd7 100644
+--- a/node_modules/@electron/notarize/lib/notarytool.js
++++ b/node_modules/@electron/notarize/lib/notarytool.js
+@@ -75,9 +75,7 @@ export async function notarizeAndWaitForNotaryTool(opts) {
+         else {
+             filePath = path.resolve(dir, `${path.parse(opts.appPath).name}.zip`);
+             d('zipping application to:', filePath);
+-            const zipResult = await spawn('ditto', ['-c', '-k', '--sequesterRsrc', '--keepParent', path.basename(opts.appPath), filePath], {
+-                cwd: path.dirname(opts.appPath),
+-            });
++            const zipResult = await spawn('ditto', ['-c', '-k', '--sequesterRsrc', '--keepParent', opts.appPath, filePath]);
+             if (zipResult.code !== 0) {
+                 throw new Error(`Failed to zip application, exited with code: ${zipResult.code}\n\n${zipResult.output}`);
+             }
+diff --git a/node_modules/@electron/notarize/lib/staple.js b/node_modules/@electron/notarize/lib/staple.js
+index 4f92978..062c0cf 100644
+--- a/node_modules/@electron/notarize/lib/staple.js
++++ b/node_modules/@electron/notarize/lib/staple.js
+@@ -4,9 +4,7 @@ import { spawn } from './spawn.js';
+ const d = debug('electron-notarize:staple');
+ export async function stapleApp(opts) {
+     d('attempting to staple app:', opts.appPath);
+-    const result = await spawn('xcrun', ['stapler', 'staple', '-v', path.basename(opts.appPath)], {
+-        cwd: path.dirname(opts.appPath),
+-    });
++    const result = await spawn('xcrun', ['stapler', 'staple', '-v', opts.appPath]);
+     if (result.code !== 0) {
+         throw new Error(`Failed to staple your application with code: ${result.code}\n\n${result.output}`);
+     }
