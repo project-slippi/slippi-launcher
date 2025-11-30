@@ -4,7 +4,7 @@ import Checkbox from "@mui/material/Checkbox";
 import CircularProgress from "@mui/material/CircularProgress";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Typography from "@mui/material/Typography";
-import React, { useState } from "react";
+import { useState } from "react";
 
 import { ExternalLink as A } from "@/components/external_link";
 import { refreshUserData, useAccount } from "@/lib/hooks/use_account";

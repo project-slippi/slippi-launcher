@@ -2,7 +2,7 @@ import { slippiManagePage } from "@common/constants";
 import { css } from "@emotion/react";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import Button from "@mui/material/Button";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 import { ExternalLink as A } from "@/components/external_link";
 import { useAccount } from "@/lib/hooks/use_account";
