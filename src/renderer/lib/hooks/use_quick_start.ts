@@ -107,12 +107,12 @@ export const useQuickStart = () => {
 /**
  * Generates the quick start steps, and sets them in the store. This is called only once on app initialization.
  */
-export function generateQuickStartSteps(options: {
+export function generateQuickStartSteps(state: {
   user: AuthUser | null;
   userData: UserData | null;
   serverError: boolean;
 }): void {
-  const { user, userData, serverError } = options;
+  const { user, userData, serverError } = state;
 
   // Build the steps
   const steps: QuickStartStep[] = [];

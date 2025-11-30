@@ -8,6 +8,7 @@ import { HashRouter as Router, Navigate, Route, Routes } from "react-router-dom"
 
 import { useAppStore } from "@/lib/hooks/use_app_store";
 import { usePageRequestListeners } from "@/lib/hooks/use_page_request_listeners";
+import { QuickStartStep, useQuickStartStore } from "@/lib/hooks/use_quick_start";
 import { usePageNavigationShortcuts } from "@/lib/hooks/use_shortcuts";
 import { lazyLoadConsoleMirrorPage } from "@/pages/console_mirror/load";
 import { HomePage } from "@/pages/home/home_page";
@@ -69,6 +70,19 @@ export function createApp({ services }: { services: Services }): {
     return <AppImpl menuItems={menuItems} />;
   });
 
+  // Smart root redirect that checks if quick start is needed
+  const RootRedirect = () => {
+    const steps = useQuickStartStore((store) => store.steps);
+
+    // If we have quick start steps and the first step is not the complete step, show the landing (quick start) page
+    if (steps.length > 0 && steps[0] !== QuickStartStep.COMPLETE) {
+      return <Navigate to="/landing" replace={true} />;
+    }
+
+    // Otherwise, go to the main page
+    return <Navigate to="/main" replace={true} />;
+  };
+
   const AppRoutes = () => {
     const currentLanguage = useAppStore((state) => state.currentLanguage);
 
@@ -80,7 +94,7 @@ export function createApp({ services }: { services: Services }): {
         <Route path="/main/*" element={<MainAppPage />} />
         <Route path="/landing" element={<QuickStartPage />} />
         <Route path="/settings/*" element={<SettingsPage />} />
-        <Route path="/" element={<Navigate replace={true} to="/landing" />} />
+        <Route path="/" element={<RootRedirect />} />
         <Route element={<NotFoundPage />} />
       </Routes>
     );

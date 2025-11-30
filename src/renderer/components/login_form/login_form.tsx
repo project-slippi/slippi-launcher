@@ -10,7 +10,6 @@ import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
 import { useAsync } from "@/lib/hooks/use_async";
-import { QuickStartHeader } from "@/pages/quick_start/quick_start_header/quick_start_header";
 import { useServices } from "@/services";
 import type { AuthUser } from "@/services/auth/types";
 
@@ -33,6 +32,12 @@ const useLoginStore = create(
     }),
   ),
 );
+
+const Header = styled.h2`
+  font-weight: normal;
+  margin: 0;
+  margin-bottom: 15px;
+`;
 
 type LoginFormProps = {
   className?: string;
@@ -89,7 +94,7 @@ export const LoginForm = ({ className, onSuccess, disableAutoFocus }: LoginFormP
 
   return (
     <div className={className}>
-      <QuickStartHeader>{isSignUp ? Messages.createAnAccount() : Messages.logIn()}</QuickStartHeader>
+      <Header>{isSignUp ? Messages.createAnAccount() : Messages.logIn()}</Header>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -225,7 +230,7 @@ const ForgotPasswordForm = ({ className, onClose }: { className?: string; onClos
 
   return (
     <div className={className}>
-      <QuickStartHeader>{Messages.passwordReset()}</QuickStartHeader>
+      <Header>{Messages.passwordReset()}</Header>
       <form
         onSubmit={(e) => {
           e.preventDefault();

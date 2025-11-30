@@ -32,7 +32,7 @@ export const StepperDots = ({
       position="static"
       activeStep={activeStep}
       nextButton={
-        handleBack ? (
+        handleNext ? (
           <Button size="small" onClick={handleNext} disabled={activeStep === steps - 1}>
             {Messages.next()}
             <KeyboardArrowRight />

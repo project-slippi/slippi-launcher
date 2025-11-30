@@ -10,7 +10,7 @@ import { QuickStart } from "./quick_start";
 const isDevelopment = window.electron.bootstrap.isDevelopment;
 
 export function createQuickStartPage(): { Page: React.ComponentType } {
-  const Page = React.memo(() => {
+  const Page = () => {
     const steps = useQuickStartStore((store) => store.steps);
     const { currentStep, nextStep, prevStep } = useQuickStart();
 
@@ -29,7 +29,7 @@ export function createQuickStartPage(): { Page: React.ComponentType } {
         />
       </Box>
     );
-  });
+  };
 
   return { Page };
 }
