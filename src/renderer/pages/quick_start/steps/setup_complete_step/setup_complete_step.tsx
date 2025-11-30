@@ -1,16 +1,18 @@
 import { css } from "@emotion/react";
 import Button from "@mui/material/Button";
-import React from "react";
-import { useNavigate } from "react-router-dom";
+
+import { useQuickStartStore } from "@/lib/hooks/use_quick_start";
 
 import { StepContainer } from "../../step_container";
 import { SetupCompleteStepMessages as Messages } from "./setup_complete_step.messages";
 
 export const SetupCompleteStep = () => {
-  const navigate = useNavigate();
+  const setSteps = useQuickStartStore((store) => store.setSteps);
   const onClick = () => {
-    navigate("/main");
+    // Clear the quick start steps since we don't need them anymore
+    setSteps([]);
   };
+
   return (
     <StepContainer header={Messages.niceWork()}>
       <div
