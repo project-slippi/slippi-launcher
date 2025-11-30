@@ -5,10 +5,11 @@ import {
   ipc_initializeFolderTree,
   ipc_loadProgressUpdatedEvent,
   ipc_loadReplayFolder,
+  ipc_searchGames,
   ipc_selectTreeFolder,
   ipc_statsPageRequestedEvent,
 } from "./ipc";
-import type { Progress, ReplayService } from "./types";
+import type { Progress, ReplayService, SearchGamesOptions } from "./types";
 
 const replayApi: ReplayService = {
   async initializeFolderTree(folders: readonly string[]) {
@@ -21,6 +22,10 @@ const replayApi: ReplayService = {
   },
   async loadReplayFolder(folderPath: string) {
     const { result } = await ipc_loadReplayFolder.renderer!.trigger({ folderPath });
+    return result;
+  },
+  async searchGames(folderPath: string, options?: SearchGamesOptions) {
+    const { result } = await ipc_searchGames.renderer!.trigger({ folderPath, options });
     return result;
   },
   async calculateGameStats(filePath: string) {

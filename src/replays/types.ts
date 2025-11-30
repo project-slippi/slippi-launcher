@@ -56,12 +56,42 @@ export interface ReplayProvider {
   loadFolder(folder: string, onProgress?: (progress: Progress) => void): Promise<FileLoadResult>;
   calculateGameStats(fullPath: string): Promise<StatsType | null>;
   calculateStadiumStats(fullPath: string): Promise<StadiumStatsType | null>;
+  searchReplays?(
+    folder: string,
+    limit?: number,
+    continuation?: string,
+    orderBy?: {
+      field: "lastFrame" | "startTime";
+      direction?: "asc" | "desc";
+    },
+    filters?: any[],
+    onProgress?: (progress: Progress) => void,
+  ): Promise<{
+    files: FileResult[];
+    continuation: string | undefined;
+  }>;
 }
+
+export type SearchGamesOptions = {
+  limit?: number;
+  continuation?: string;
+  orderBy?: {
+    field: "startTime" | "lastFrame";
+    direction?: "asc" | "desc";
+  };
+  hideShortGames?: boolean;
+};
+
+export type SearchGamesResult = {
+  files: FileResult[];
+  continuation: string | undefined;
+};
 
 export interface ReplayService {
   initializeFolderTree(folders: readonly string[]): Promise<readonly FolderResult[]>;
   selectTreeFolder(folderPath: string): Promise<readonly FolderResult[]>;
   loadReplayFolder(folderPath: string): Promise<FileLoadResult>;
+  searchGames(folderPath: string, options?: SearchGamesOptions): Promise<SearchGamesResult>;
   calculateGameStats(filePath: string): Promise<{ file: FileResult; stats: StatsType | null }>;
   calculateStadiumStats(filePath: string): Promise<{ file: FileResult; stadiumStats: StadiumStatsType | null }>;
   onReplayLoadProgressUpdate(handle: (progress: Progress) => void): () => void;

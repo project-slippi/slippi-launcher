@@ -7,6 +7,7 @@ import { useSettings } from "@/lib/hooks/use_settings";
 import { useServices } from "@/services";
 
 import { useReplayBrowserList } from "./use_replay_browser_list";
+import { useReplayFilter } from "./use_replay_filter";
 
 type StoreState = {
   loading: boolean;
@@ -143,13 +144,25 @@ export class ReplayPresenter {
         state.progress = null;
       });
       try {
-        const result = await this.replayService.loadReplayFolder(folderToLoad);
+        // Get current filter state
+        const { sortBy, sortDirection, hideShortGames } = useReplayFilter.getState();
+
+        // Use searchGames with current filter/sort settings
+        const result = await this.replayService.searchGames(folderToLoad, {
+          limit: 10000, // Large limit to get all games
+          orderBy: {
+            field: sortBy === "DATE" ? "startTime" : "lastFrame",
+            direction: sortDirection === "DESC" ? "desc" : "asc",
+          },
+          hideShortGames,
+        });
+
         useReplays.setState((state) => {
           state.scrollRowItem = 0;
           state.files = result.files;
           state.loading = false;
-          state.fileErrorCount = result.fileErrorCount;
-          state.totalBytes = result.totalBytes;
+          state.fileErrorCount = 0; // searchGames doesn't track errors
+          state.totalBytes = null; // searchGames doesn't return totalBytes
         });
       } catch (err) {
         useReplays.setState((state) => {

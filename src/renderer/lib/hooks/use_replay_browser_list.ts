@@ -49,13 +49,10 @@ export const useReplayBrowserNavigation = () => {
 export const useReplayBrowserList = () => {
   const presenter = useReplayPresenter();
   const files = useReplays((store) => store.files);
-  const sortDirection = useReplayFilter((store) => store.sortDirection);
-  const sortBy = useReplayFilter((store) => store.sortBy);
   const searchText = useReplayFilter((store) => store.searchText);
-  const hideShortGames = useReplayFilter((store) => store.hideShortGames);
-  const filteredFiles = files
-    .filter(replayFileFilter({ searchText, hideShortGames }))
-    .sort(replayFileSort(sortBy, sortDirection));
+  // Note: Files are already sorted and filtered by backend (except for text search)
+  // Only apply text filtering here
+  const filteredFiles = files.filter(replayFileFilter({ searchText, hideShortGames: false }));
   const numHiddenFiles = files.length - filteredFiles.length;
   const { index, total } = useReplays((store) => store.selectedFile);
   const { goToReplayStatsPage } = useReplayBrowserNavigation();

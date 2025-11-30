@@ -1,5 +1,6 @@
 import { chunk } from "@common/chunk";
 import { partition } from "@common/partition";
+import type { ReplayFilter } from "@database/filters/types";
 import { FileRepository } from "@database/repositories/file_repository";
 import { GameRepository } from "@database/repositories/game_repository";
 import { PlayerRepository } from "@database/repositories/player_repository";
@@ -35,51 +36,45 @@ export class DatabaseReplayProvider implements ReplayProvider {
       field: "startTime",
       direction: "desc",
     },
+    filters: ReplayFilter[] = [],
+    onProgress?: (progress: Progress) => void,
   ): Promise<{
     files: FileResult[];
     continuation: string | undefined;
   }> {
+    // If the folder does not exist, return empty
+    if (!(await fs.pathExists(folder))) {
+      return {
+        files: [],
+        continuation: undefined,
+      };
+    }
+
     const maybeContinuationToken = Continuation.fromString(continuation);
     const continuationValue = maybeContinuationToken?.getValue() ?? null;
     const nextIdInclusive = maybeContinuationToken?.getNextIdInclusive() ?? null;
 
-    let recordsToReturn: (GameRecord & FileRecord)[];
-    let newContinuation: string | undefined;
-
-    switch (orderBy.field) {
-      case "startTime": {
-        const gameAndFileRecords = await GameRepository.findGamesOrderByStartTime(
-          this.db,
-          folder,
-          limit + 1,
-          continuationValue === "null" ? null : continuationValue,
-          nextIdInclusive,
-          orderBy.direction,
-        );
-        [recordsToReturn, newContinuation] = Continuation.truncate(gameAndFileRecords, limit, (record) => ({
-          value: record.start_time ?? "null",
-          nextIdInclusive: record._id,
-        }));
-        break;
-      }
-      case "lastFrame": {
-        const gameAndFileRecords = await GameRepository.findGamesOrderByLastFrame(
-          this.db,
-          folder,
-          limit + 1,
-          continuationValue === "null" || continuationValue == null ? null : parseInt(continuationValue, 10),
-          nextIdInclusive,
-          orderBy.direction,
-        );
-        [recordsToReturn, newContinuation] = Continuation.truncate(gameAndFileRecords, limit, (record) => ({
-          value: record.last_frame != null ? record.last_frame.toString() : "null",
-          nextIdInclusive: record._id,
-        }));
-        break;
-      }
-      default:
-        throw new Error(`Unexpected order by field: ${orderBy.field}`);
+    // Sync the database first (add new files, remove deleted files)
+    // Only sync if we're not using continuation (i.e., first page of results)
+    if (continuationValue === null && nextIdInclusive === null) {
+      await this.syncReplayDatabase(folder, onProgress, INSERT_REPLAY_BATCH_SIZE);
     }
+
+    // Use GameRepository.searchGames which supports filters
+    const records = await GameRepository.searchGames(this.db, folder, filters, {
+      limit: limit + 1,
+      orderBy: {
+        field: orderBy.field,
+        direction: orderBy.direction ?? "desc",
+      },
+      continuationValue,
+      nextIdInclusive: nextIdInclusive ?? undefined,
+    });
+
+    const [recordsToReturn, newContinuation] = Continuation.truncate(records, limit, (record) => ({
+      value: orderBy.field === "startTime" ? record.start_time ?? "null" : record.last_frame?.toString() ?? "null",
+      nextIdInclusive: record._id,
+    }));
 
     const files = await this.mapGameAndFileRecordsToFileResult(recordsToReturn);
 
