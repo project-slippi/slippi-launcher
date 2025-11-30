@@ -4,7 +4,7 @@ import { combine } from "zustand/middleware";
 
 import { useReplayPresenter, useReplays } from "@/lib/hooks/use_replays";
 
-import { replayFileFilter, replayFileSort } from "../replay_file_sort";
+import { replayFileFilter } from "../replay_file_sort";
 import { useReplayFilter } from "./use_replay_filter";
 
 const useReplayBrowserNavigationStore = create(

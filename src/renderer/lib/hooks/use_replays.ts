@@ -9,8 +9,11 @@ import { useServices } from "@/services";
 import { useReplayBrowserList } from "./use_replay_browser_list";
 import { useReplayFilter } from "./use_replay_filter";
 
+const REPLAY_BATCH_SIZE = 20;
+
 type StoreState = {
   loading: boolean;
+  loadingMore: boolean;
   progress: Progress | null;
   files: FileResult[];
   totalBytes: number | null;
@@ -26,10 +29,13 @@ type StoreState = {
     total: number | null;
     fileResult: FileResult | null;
   };
+  hasMoreReplays: boolean;
+  continuation: string | undefined;
 };
 
 const initialState: StoreState = {
   loading: false,
+  loadingMore: false,
   progress: null,
   files: [],
   totalBytes: null,
@@ -45,6 +51,8 @@ const initialState: StoreState = {
     total: null,
     fileResult: null,
   },
+  hasMoreReplays: false,
+  continuation: undefined,
 };
 
 export const useReplays = create<StoreState>()(immer(() => initialState));
@@ -147,9 +155,9 @@ export class ReplayPresenter {
         // Get current filter state
         const { sortBy, sortDirection, hideShortGames } = useReplayFilter.getState();
 
-        // Use searchGames with current filter/sort settings
+        // Use searchGames with pagination - load first batch
         const result = await this.replayService.searchGames(folderToLoad, {
-          limit: 10000, // Large limit to get all games
+          limit: REPLAY_BATCH_SIZE,
           orderBy: {
             field: sortBy === "DATE" ? "startTime" : "lastFrame",
             direction: sortDirection === "DESC" ? "desc" : "asc",
@@ -163,6 +171,8 @@ export class ReplayPresenter {
           state.loading = false;
           state.fileErrorCount = 0; // searchGames doesn't track errors
           state.totalBytes = null; // searchGames doesn't return totalBytes
+          state.continuation = result.continuation;
+          state.hasMoreReplays = result.continuation !== undefined;
         });
       } catch (err) {
         useReplays.setState((state) => {
@@ -194,6 +204,47 @@ export class ReplayPresenter {
     useReplays.setState((state) => {
       state.selectedFiles = filePaths;
     });
+  }
+
+  public async loadMoreReplays(): Promise<void> {
+    const { continuation, loadingMore, hasMoreReplays, currentFolder } = useReplays.getState();
+
+    // Don't load more if already loading or no more replays
+    if (loadingMore || !hasMoreReplays || !continuation) {
+      return;
+    }
+
+    useReplays.setState((state) => {
+      state.loadingMore = true;
+    });
+
+    try {
+      // Get current filter state
+      const { sortBy, sortDirection, hideShortGames } = useReplayFilter.getState();
+
+      // Load next batch of replays
+      const result = await this.replayService.searchGames(currentFolder, {
+        limit: REPLAY_BATCH_SIZE,
+        continuation,
+        orderBy: {
+          field: sortBy === "DATE" ? "startTime" : "lastFrame",
+          direction: sortDirection === "DESC" ? "desc" : "asc",
+        },
+        hideShortGames,
+      });
+
+      useReplays.setState((state) => {
+        state.files = [...state.files, ...result.files];
+        state.continuation = result.continuation;
+        state.hasMoreReplays = result.continuation !== undefined;
+        state.loadingMore = false;
+      });
+    } catch (err) {
+      console.error("Failed to load more replays:", err);
+      useReplays.setState((state) => {
+        state.loadingMore = false;
+      });
+    }
   }
 }
 
