@@ -196,7 +196,10 @@ const ReplayActionButton = React.memo(({ label, color, onClick, ...rest }: Repla
 const SelectedNumber = ({ num }: { num: number }) => {
   // Scale the font size based on the length of the number string
   const chars = num.toString().length;
-  const fontSize = chars > 2 ? `${2 / chars}em` : "1em";
+  // Base font size is 30px, scale down for longer numbers
+  const svgFontSize = chars > 2 ? 60 / chars : 30;
+  const maskId = `selected-number-mask-${num}`;
+
   return (
     <div
       css={css`
@@ -207,20 +210,28 @@ const SelectedNumber = ({ num }: { num: number }) => {
         margin-right: auto;
         left: 0;
         right: 0;
-        background-color: rgba(255, 255, 255, 0.9);
-        color: black;
-        mix-blend-mode: color-dodge;
-        font-weight: bold;
-        font-size: 30px;
-        border-radius: 50%;
-        text-align: center;
         z-index: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
       `}
     >
-      <span style={{ fontSize, lineHeight: fontSize }}>{num}</span>
+      <svg width="50" height="50" viewBox="0 0 50 50">
+        <defs>
+          <mask id={maskId}>
+            <circle cx="25" cy="25" r="25" fill="white" />
+            <text
+              x="50%"
+              y="50%"
+              textAnchor="middle"
+              dominantBaseline="central"
+              fontSize={svgFontSize}
+              fontWeight="bold"
+              fill="black"
+            >
+              {num}
+            </text>
+          </mask>
+        </defs>
+        <circle cx="25" cy="25" r="25" fill="rgba(255, 255, 255, 0.9)" mask={`url(#${maskId})`} />
+      </svg>
     </div>
   );
 };
