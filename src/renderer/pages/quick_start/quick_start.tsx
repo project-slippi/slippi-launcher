@@ -85,12 +85,14 @@ export const QuickStart = ({ allSteps: steps, currentStep, onNext, onPrev }: Qui
       <Box display="flex" flex="1" alignSelf="stretch" paddingTop="40px">
         {getStepContent(currentStep)}
       </Box>
-      <StepperDots
-        steps={steps.length}
-        activeStep={steps.indexOf(currentStep)}
-        handleNext={onNext}
-        handleBack={onPrev}
-      />
+      {steps.length > 1 && (
+        <StepperDots
+          steps={steps.length}
+          activeStep={steps.indexOf(currentStep)}
+          handleNext={onNext}
+          handleBack={onPrev}
+        />
+      )}
     </OuterBox>
   );
 };

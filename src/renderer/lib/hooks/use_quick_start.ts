@@ -1,8 +1,11 @@
 import { currentRulesVersion } from "@common/constants";
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { create } from "zustand";
+import { combine } from "zustand/middleware";
 
-import { useSettings } from "@/lib/hooks/use_settings";
+import { useSettings, useSettingsStore } from "@/lib/hooks/use_settings";
+import type { AuthUser } from "@/services/auth/types";
+import type { UserData } from "@/services/slippi/types";
 
 import { useAccount } from "./use_account";
 
@@ -15,66 +18,40 @@ export enum QuickStartStep {
   COMPLETE = "COMPLETE",
 }
 
-function generateSteps(
-  options: Partial<{
-    hasUser: boolean;
-    hasPlayKey: boolean;
-    hasVerifiedEmail: boolean;
-    showRules: boolean;
-    serverError: boolean;
-    hasIso: boolean;
-  }>,
-): QuickStartStep[] {
-  // Build the steps in reverse order
-  const steps: QuickStartStep[] = [QuickStartStep.COMPLETE];
+export const useQuickStartStore = create(
+  combine(
+    {
+      steps: [] as QuickStartStep[],
+    },
+    (set) => ({
+      setSteps: (steps: QuickStartStep[]) => set({ steps }),
+    }),
+  ),
+);
 
-  if (!options.hasIso) {
-    steps.unshift(QuickStartStep.SET_ISO_PATH);
-  }
-
-  if (!options.hasPlayKey && !options.serverError) {
-    steps.unshift(QuickStartStep.ACTIVATE_ONLINE);
-  }
-
-  if (options.showRules && !options.serverError) {
-    steps.unshift(QuickStartStep.ACCEPT_RULES);
-  }
-
-  if (!options.hasVerifiedEmail && !options.serverError) {
-    steps.unshift(QuickStartStep.VERIFY_EMAIL);
-  }
-
-  if (!options.hasUser) {
-    steps.unshift(QuickStartStep.LOGIN);
-  }
-
-  return steps;
-}
-
-export const useQuickStart = () => {
-  const navigate = useNavigate();
+const useQuickStartOptions = () => {
   const savedIsoPath = useSettings((store) => store.settings.isoPath);
   const user = useAccount((store) => store.user);
   const userData = useAccount((store) => store.userData);
   const serverError = useAccount((store) => store.serverError);
-  const options = {
-    hasUser: Boolean(user),
-    hasIso: Boolean(savedIsoPath),
-    hasVerifiedEmail: Boolean(user?.emailVerified),
-    hasPlayKey: Boolean(userData?.playKey),
-    showRules: Boolean((userData?.rulesAccepted ?? 0) < currentRulesVersion),
-    serverError: Boolean(serverError),
-  };
-  const [steps] = React.useState(generateSteps(options));
+  return React.useMemo(() => {
+    return {
+      hasUser: Boolean(user),
+      hasIso: Boolean(savedIsoPath),
+      hasVerifiedEmail: Boolean(user?.emailVerified),
+      hasPlayKey: Boolean(userData?.playKey),
+      showRules: Boolean((userData?.rulesAccepted ?? 0) < currentRulesVersion),
+      serverError: Boolean(serverError),
+    };
+  }, [user, userData, serverError, savedIsoPath]);
+};
+
+export const useQuickStart = () => {
+  const options = useQuickStartOptions();
   const [currentStep, setCurrentStep] = React.useState<QuickStartStep | null>(null);
+  const steps = useQuickStartStore((store) => store.steps);
 
   React.useEffect(() => {
-    // If we only have the complete step then just go to the main page
-    if (steps.length === 1 && steps[0] === QuickStartStep.COMPLETE) {
-      navigate("/main");
-      return;
-    }
-
     let stepToShow: QuickStartStep | null = QuickStartStep.COMPLETE;
     if (!options.hasIso) {
       stepToShow = QuickStartStep.SET_ISO_PATH;
@@ -98,14 +75,12 @@ export const useQuickStart = () => {
 
     setCurrentStep(stepToShow);
   }, [
-    steps,
     options.hasIso,
     options.hasVerifiedEmail,
     options.hasPlayKey,
     options.hasUser,
     options.showRules,
     options.serverError,
-    navigate,
   ]);
 
   const nextStep = () => {
@@ -123,9 +98,53 @@ export const useQuickStart = () => {
   };
 
   return {
-    allSteps: steps,
     currentStep,
     nextStep,
     prevStep,
   };
 };
+
+/**
+ * Generates the quick start steps, and sets them in the store. This is called only once on app initialization.
+ */
+export function generateQuickStartSteps(options: {
+  user: AuthUser | null;
+  userData: UserData | null;
+  serverError: boolean;
+}): void {
+  const { user, userData, serverError } = options;
+
+  // Build the steps
+  const steps: QuickStartStep[] = [];
+
+  if (user == null) {
+    steps.push(QuickStartStep.LOGIN);
+  }
+
+  const hasVerifiedEmail = Boolean(user?.emailVerified);
+  if (!hasVerifiedEmail && !serverError) {
+    steps.push(QuickStartStep.VERIFY_EMAIL);
+  }
+
+  const showRules = Boolean((userData?.rulesAccepted ?? 0) < currentRulesVersion);
+  if (showRules && !serverError) {
+    steps.push(QuickStartStep.ACCEPT_RULES);
+  }
+
+  const hasPlayKey = Boolean(userData?.playKey);
+  if (!hasPlayKey && !serverError) {
+    steps.push(QuickStartStep.ACTIVATE_ONLINE);
+  }
+
+  const hasIso = Boolean(useSettingsStore.getState().settings.isoPath);
+  if (!hasIso) {
+    steps.push(QuickStartStep.SET_ISO_PATH);
+  }
+
+  // Always finish with the complete step if we have any steps
+  if (steps.length > 0) {
+    steps.push(QuickStartStep.COMPLETE);
+  }
+
+  useQuickStartStore.getState().setSteps(steps);
+}

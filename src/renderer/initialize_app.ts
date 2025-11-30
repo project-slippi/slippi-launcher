@@ -5,6 +5,8 @@ import type { AuthUser } from "@/services/auth/types";
 import type { Services } from "@/services/types";
 
 import { InitializeAppMessages as Messages } from "./initialize_app.messages";
+import { generateQuickStartSteps } from "./lib/hooks/use_quick_start";
+import type { UserData } from "./services/slippi/types";
 
 export async function initializeApp(services: Services) {
   const { authService, slippiBackendService, dolphinService, notificationService } = services;
@@ -25,15 +27,22 @@ export async function initializeApp(services: Services) {
         log.warn(err);
       }
 
+      let userData: UserData | null = null;
+      let serverError = false;
       if (user) {
         try {
-          await slippiBackendService.fetchUserData();
+          userData = await slippiBackendService.fetchUserData();
+          serverError = false;
         } catch (err) {
+          serverError = true;
           const reason = !navigator.onLine ? Messages.youAreOffline() : Messages.slippiMayBeDown();
           const message = `${Messages.failedToCommunicateWithSlippiServers()} ${reason}`;
           showError(message);
         }
       }
+
+      // Generate the quick start steps based on the current state
+      generateQuickStartSteps({ user, userData, serverError });
     })(),
   );
 
