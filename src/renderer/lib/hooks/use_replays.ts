@@ -114,9 +114,9 @@ export class ReplayPresenter {
     });
   }
 
-  public removeFilesByIds(gameIds: string[]) {
+  public removeFilesByIds(fileIds: string[]) {
     useReplays.setState((state) => {
-      state.files = state.files.filter(({ id }) => !gameIds.includes(id));
+      state.files = state.files.filter(({ id }) => !fileIds.includes(id));
     });
   }
 
