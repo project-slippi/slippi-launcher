@@ -32,7 +32,6 @@ export const ReplayBrowser = React.memo(() => {
   const scrollRowItem = useReplays((store) => store.scrollRowItem);
   const { dolphinService, replayService } = useServices();
   const { viewReplays } = useDolphinActions(dolphinService);
-  const loading = useReplays((store) => store.loading);
   const loadingMore = useReplays((store) => store.loadingMore);
   const hasMoreReplays = useReplays((store) => store.hasMoreReplays);
   const currentFolder = useReplays((store) => store.currentFolder);
@@ -193,17 +192,6 @@ export const ReplayBrowser = React.memo(() => {
                     />
                   );
                 })}
-                {loading && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      height: "100%",
-                      width: "100%",
-                      top: 0,
-                      backgroundColor: "rgba(0, 0, 0, 0.5)",
-                    }}
-                  />
-                )}
               </div>
             </List>
           }
@@ -215,7 +203,7 @@ export const ReplayBrowser = React.memo(() => {
                 flex: 1;
               `}
             >
-              <FilterToolbar disabled={loading} ref={searchInputRef} />
+              <FilterToolbar ref={searchInputRef} />
               {filteredFiles.length === 0 ? (
                 <EmptyFolder
                   onClearFilter={() => {
