@@ -16,8 +16,6 @@ export const ipc_checkForUpdate = makeEndpoint.main("checkForUpdate", <EmptyPayl
 
 export const ipc_installUpdate = makeEndpoint.main("installUpdate", <EmptyPayload>_, <SuccessPayload>_);
 
-export const ipc_deleteFiles = makeEndpoint.main("deleteFiles", <{ filePaths: string[] }>_, <SuccessPayload>_);
-
 export const ipc_getLatestGitHubReleaseVersion = makeEndpoint.main(
   "getLatestGitHubReleaseVersion",
   <{ owner: string; repo: string }>_,

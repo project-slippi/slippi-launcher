@@ -7,6 +7,7 @@ import { FolderTreeService } from "./folder_tree_service";
 import {
   ipc_calculateGameStats,
   ipc_calculateStadiumStats,
+  ipc_deleteReplays,
   ipc_getAllFilePaths,
   ipc_initializeFolderTree,
   ipc_loadProgressUpdatedEvent,
@@ -138,5 +139,17 @@ export default function setupReplaysIpc({ enableReplayDatabase }: { enableReplay
     };
     const result = await replayProvider.loadFolder(folderPath, onProgress);
     return result.files.map((f) => f.fullPath);
+  });
+
+  ipc_deleteReplays.main!.handle(async ({ gameIds }) => {
+    const replayProvider = await replayProviderPromise;
+
+    // Check if the provider supports deleteReplays (DatabaseReplayProvider)
+    if ("deleteReplays" in replayProvider && typeof replayProvider.deleteReplays === "function") {
+      await replayProvider.deleteReplays(gameIds);
+      return { success: true };
+    }
+
+    throw new Error("deleteReplays is not supported by the current replay provider");
   });
 }
