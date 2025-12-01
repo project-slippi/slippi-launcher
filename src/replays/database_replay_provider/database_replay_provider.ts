@@ -44,15 +44,6 @@ export class DatabaseReplayProvider implements ReplayProvider {
     continuation: string | undefined;
     totalCount?: number;
   }> {
-    // If the folder is specified but does not exist, return empty
-    if (folder !== undefined && !(await fs.pathExists(folder))) {
-      return {
-        files: [],
-        continuation: undefined,
-        totalCount: 0,
-      };
-    }
-
     const maybeContinuationToken = Continuation.fromString(continuation);
     const continuationValue = maybeContinuationToken?.getValue() ?? null;
     const nextIdInclusive = maybeContinuationToken?.getNextIdInclusive() ?? null;
@@ -60,7 +51,10 @@ export class DatabaseReplayProvider implements ReplayProvider {
     // Sync the database first (add new files, remove deleted files)
     // Only sync if we're not using continuation (i.e., first page of results) and folder is specified
     if (folder !== undefined && continuationValue === null && nextIdInclusive === null) {
-      await this.syncReplayDatabase(folder, onProgress, INSERT_REPLAY_BATCH_SIZE);
+      // Only sync if the folder exists on disk
+      if (await fs.pathExists(folder)) {
+        await this.syncReplayDatabase(folder, onProgress, INSERT_REPLAY_BATCH_SIZE);
+      }
     }
 
     // Get total count on first page load (when there's no continuation)
@@ -105,14 +99,9 @@ export class DatabaseReplayProvider implements ReplayProvider {
     },
     filters: ReplayFilter[] = [],
   ): Promise<string[]> {
-    // If the folder is specified but does not exist, return empty
-    if (folder !== undefined && !(await fs.pathExists(folder))) {
-      return [];
-    }
-
     // Sync the database first (add new files, remove deleted files)
-    // Only sync if folder is specified
-    if (folder !== undefined) {
+    // Only sync if folder is specified and exists on disk
+    if (folder !== undefined && (await fs.pathExists(folder))) {
       await this.syncReplayDatabase(folder, undefined, INSERT_REPLAY_BATCH_SIZE);
     }
 
@@ -201,14 +190,9 @@ export class DatabaseReplayProvider implements ReplayProvider {
       excludeFilePaths?: string[];
     },
   ): Promise<{ deletedCount: number }> {
-    // If the folder is specified but does not exist, return
-    if (folder !== undefined && !(await fs.pathExists(folder))) {
-      return { deletedCount: 0 };
-    }
-
     // Sync the database first to ensure we're working with up-to-date data
-    // Only sync if folder is specified
-    if (folder !== undefined) {
+    // Only sync if folder is specified and exists on disk
+    if (folder !== undefined && (await fs.pathExists(folder))) {
       await this.syncReplayDatabase(folder, undefined, INSERT_REPLAY_BATCH_SIZE);
     }
 

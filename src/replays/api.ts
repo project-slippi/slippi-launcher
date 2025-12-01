@@ -22,12 +22,12 @@ const replayApi: ReplayService = {
     const { result } = await ipc_selectTreeFolder.renderer!.trigger({ folderPath });
     return result;
   },
-  async searchGames(folderPath: string, options?: SearchGamesOptions) {
-    const { result } = await ipc_searchGames.renderer!.trigger({ folderPath, options });
+  async searchGames(options: SearchGamesOptions) {
+    const { result } = await ipc_searchGames.renderer!.trigger(options);
     return result;
   },
-  async getAllFilePaths(folderPath: string, options?: SearchGamesOptions) {
-    const { result } = await ipc_getAllFilePaths.renderer!.trigger({ folderPath, options });
+  async getAllFilePaths(options: SearchGamesOptions) {
+    const { result } = await ipc_getAllFilePaths.renderer!.trigger(options);
     return result;
   },
   async calculateGameStats(filePath: string) {
@@ -41,8 +41,8 @@ const replayApi: ReplayService = {
   async deleteReplays(fileIds: string[]) {
     await ipc_deleteReplays.renderer!.trigger({ fileIds });
   },
-  async bulkDeleteReplays(folderPath: string, options?: BulkDeleteOptions) {
-    const { result } = await ipc_bulkDeleteReplays.renderer!.trigger({ folderPath, options });
+  async bulkDeleteReplays(options: BulkDeleteOptions) {
+    const { result } = await ipc_bulkDeleteReplays.renderer!.trigger(options);
     return result;
   },
   onReplayLoadProgressUpdate(handle: (progress: Progress) => void) {
