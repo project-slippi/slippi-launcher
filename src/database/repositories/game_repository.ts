@@ -89,7 +89,7 @@ export class GameRepository {
       const field = options.orderBy.field === "startTime" ? "game.start_time" : "game.last_frame";
       query = query.where(
         handleContinuation(
-          field as any,
+          field,
           options.continuationValue ?? null,
           options.nextIdInclusive,
           options.orderBy.direction,
@@ -102,7 +102,7 @@ export class GameRepository {
     const res = await query
       .selectAll(["file", "game"])
       .select(["game._id as _id"])
-      .orderBy(orderField as any, options.orderBy.direction)
+      .orderBy(orderField, options.orderBy.direction)
       .orderBy("game._id", options.orderBy.direction)
       .limit(options.limit)
       .execute();
@@ -174,7 +174,7 @@ export class GameRepository {
     const orderField = orderBy.field === "startTime" ? "game.start_time" : "game.last_frame";
     const res = await query
       .select(["file.folder", "file.name"])
-      .orderBy(orderField as any, orderBy.direction)
+      .orderBy(orderField, orderBy.direction)
       .orderBy("game._id", orderBy.direction)
       .execute();
 
