@@ -192,26 +192,28 @@ function handleContinuation<K extends StringReference<Database, "file" | "game">
     case "asc":
       return ({ eb, or, and }) => {
         if (continuationValue == null) {
+          // Paginating through null values (nulls come first in ASC)
           return and([eb(field, "is", null), eb("game._id", ">=", nextIdInclusive)]);
         }
 
+        // Paginating through non-null values (already past nulls in ASC)
         return or([
           and([eb(field, ">", continuationValue), eb(field, "is not", null)]),
-          and([
-            or([eb(field, "=", continuationValue), eb(field, "is not", null)]),
-            eb("game._id", ">=", nextIdInclusive),
-          ]),
+          and([eb(field, "=", continuationValue), eb("game._id", ">=", nextIdInclusive)]),
         ]);
       };
     case "desc":
       return ({ eb, or, and }) => {
         if (continuationValue == null) {
+          // Paginating through null values (nulls come last in DESC)
           return and([eb(field, "is", null), eb("game._id", "<=", nextIdInclusive)]);
         }
 
+        // Paginating through non-null values or transitioning to nulls (nulls come last in DESC)
         return or([
-          or([eb(field, "<", continuationValue), eb(field, "is", null)]),
-          and([or([eb(field, "=", continuationValue), eb(field, "is", null)]), eb("game._id", "<=", nextIdInclusive)]),
+          and([eb(field, "<", continuationValue), eb(field, "is not", null)]),
+          and([eb(field, "=", continuationValue), eb("game._id", "<=", nextIdInclusive)]),
+          eb(field, "is", null), // Include all nulls since they come after all non-null values in DESC
         ]);
       };
     default:

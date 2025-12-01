@@ -63,6 +63,18 @@ export class DatabaseReplayProvider implements ReplayProvider {
       totalCount = await GameRepository.countGames(this.db, folder ?? null, filters);
     }
 
+    // Convert continuation value from string to proper type
+    let typedContinuationValue: string | number | null = null;
+    if (continuationValue !== null) {
+      if (continuationValue === "null") {
+        typedContinuationValue = null;
+      } else if (orderBy.field === "lastFrame") {
+        typedContinuationValue = parseInt(continuationValue, 10);
+      } else {
+        typedContinuationValue = continuationValue;
+      }
+    }
+
     // Use GameRepository.searchGames which supports filters
     const records = await GameRepository.searchGames(this.db, folder ?? null, filters, {
       limit: limit + 1,
@@ -70,7 +82,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
         field: orderBy.field,
         direction: orderBy.direction ?? "desc",
       },
-      continuationValue,
+      continuationValue: typedContinuationValue,
       nextIdInclusive: nextIdInclusive ?? undefined,
     });
 
