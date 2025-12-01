@@ -11,7 +11,6 @@ import React from "react";
 import { DualPane } from "@/components/dual_pane";
 import { BasicFooter } from "@/components/footer/footer";
 import { LabelledText } from "@/components/labelled_text";
-import { LoadingScreenWithProgress } from "@/components/loading_screen/loading_screen";
 import { IconMessage } from "@/components/message";
 import { useDolphinActions } from "@/lib/dolphin/use_dolphin_actions";
 import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/use_replay_browser_list";
@@ -217,9 +216,7 @@ export const ReplayBrowser = React.memo(() => {
               `}
             >
               <FilterToolbar disabled={loading} ref={searchInputRef} />
-              {loading ? (
-                <LoadingBox />
-              ) : filteredFiles.length === 0 ? (
+              {filteredFiles.length === 0 ? (
                 <EmptyFolder
                   onClearFilter={() => {
                     if (searchInputRef.current) {
@@ -296,11 +293,6 @@ export const ReplayBrowser = React.memo(() => {
       </Footer>
     </Outer>
   );
-});
-
-const LoadingBox = React.memo(function LoadingBox() {
-  const progress = useReplays((store) => store.progress);
-  return <LoadingScreenWithProgress current={progress?.current} total={progress?.total} />;
 });
 
 const EmptyFolder = ({ onClearFilter }: { onClearFilter: () => void }) => {
