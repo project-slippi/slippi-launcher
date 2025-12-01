@@ -27,7 +27,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
   constructor(private readonly db: Kysely<Database>) {}
 
   public async searchReplays(
-    folder: string,
+    folder: string | undefined,
     limit = SEARCH_REPLAYS_LIMIT,
     continuation?: string,
     orderBy: {
@@ -44,8 +44,8 @@ export class DatabaseReplayProvider implements ReplayProvider {
     continuation: string | undefined;
     totalCount?: number;
   }> {
-    // If the folder does not exist, return empty
-    if (!(await fs.pathExists(folder))) {
+    // If the folder is specified but does not exist, return empty
+    if (folder !== undefined && !(await fs.pathExists(folder))) {
       return {
         files: [],
         continuation: undefined,
@@ -58,19 +58,19 @@ export class DatabaseReplayProvider implements ReplayProvider {
     const nextIdInclusive = maybeContinuationToken?.getNextIdInclusive() ?? null;
 
     // Sync the database first (add new files, remove deleted files)
-    // Only sync if we're not using continuation (i.e., first page of results)
-    if (continuationValue === null && nextIdInclusive === null) {
+    // Only sync if we're not using continuation (i.e., first page of results) and folder is specified
+    if (folder !== undefined && continuationValue === null && nextIdInclusive === null) {
       await this.syncReplayDatabase(folder, onProgress, INSERT_REPLAY_BATCH_SIZE);
     }
 
     // Get total count on first page load (when there's no continuation)
     let totalCount: number | undefined;
     if (continuationValue === null && nextIdInclusive === null) {
-      totalCount = await GameRepository.countGames(this.db, folder, filters);
+      totalCount = await GameRepository.countGames(this.db, folder ?? null, filters);
     }
 
     // Use GameRepository.searchGames which supports filters
-    const records = await GameRepository.searchGames(this.db, folder, filters, {
+    const records = await GameRepository.searchGames(this.db, folder ?? null, filters, {
       limit: limit + 1,
       orderBy: {
         field: orderBy.field,
@@ -95,7 +95,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
   }
 
   public async getAllFilePaths(
-    folder: string,
+    folder: string | undefined,
     orderBy: {
       field: "lastFrame" | "startTime";
       direction?: "asc" | "desc";
@@ -105,16 +105,19 @@ export class DatabaseReplayProvider implements ReplayProvider {
     },
     filters: ReplayFilter[] = [],
   ): Promise<string[]> {
-    // If the folder does not exist, return empty
-    if (!(await fs.pathExists(folder))) {
+    // If the folder is specified but does not exist, return empty
+    if (folder !== undefined && !(await fs.pathExists(folder))) {
       return [];
     }
 
     // Sync the database first (add new files, remove deleted files)
-    await this.syncReplayDatabase(folder, undefined, INSERT_REPLAY_BATCH_SIZE);
+    // Only sync if folder is specified
+    if (folder !== undefined) {
+      await this.syncReplayDatabase(folder, undefined, INSERT_REPLAY_BATCH_SIZE);
+    }
 
     // Query all file paths using the dedicated repository method
-    const records = await GameRepository.getAllFilePaths(this.db, folder, filters, {
+    const records = await GameRepository.getAllFilePaths(this.db, folder ?? null, filters, {
       field: orderBy.field,
       direction: orderBy.direction ?? "desc",
     });
@@ -192,26 +195,34 @@ export class DatabaseReplayProvider implements ReplayProvider {
   }
 
   public async bulkDeleteReplays(
-    folder: string,
+    folder: string | undefined,
     filters: ReplayFilter[] = [],
     options?: {
       excludeFilePaths?: string[];
     },
   ): Promise<{ deletedCount: number }> {
-    // If the folder does not exist, return
-    if (!(await fs.pathExists(folder))) {
+    // If the folder is specified but does not exist, return
+    if (folder !== undefined && !(await fs.pathExists(folder))) {
       return { deletedCount: 0 };
     }
 
     // Sync the database first to ensure we're working with up-to-date data
-    await this.syncReplayDatabase(folder, undefined, INSERT_REPLAY_BATCH_SIZE);
+    // Only sync if folder is specified
+    if (folder !== undefined) {
+      await this.syncReplayDatabase(folder, undefined, INSERT_REPLAY_BATCH_SIZE);
+    }
 
     // Convert file paths to file IDs for exclusion
     let excludeFileIds: number[] = [];
     if (options?.excludeFilePaths && options.excludeFilePaths.length > 0) {
-      const excludeRecords = await this.db
-        .selectFrom("file")
-        .where("folder", "=", folder)
+      let excludeQuery = this.db.selectFrom("file");
+
+      // Apply folder filter if specified
+      if (folder !== undefined) {
+        excludeQuery = excludeQuery.where("folder", "=", folder);
+      }
+
+      const excludeRecords = await excludeQuery
         .where(
           "name",
           "in",
@@ -225,7 +236,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
     // Get all file IDs matching the filters
     const fileIdsToDelete = await GameRepository.getFileIdsForBulkDelete(
       this.db,
-      folder,
+      folder ?? null,
       filters,
       excludeFileIds.length > 0 ? excludeFileIds : undefined,
     );

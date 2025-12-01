@@ -163,7 +163,8 @@ export class ReplayPresenter {
         const filters = buildReplayFilters(hideShortGames, searchText);
 
         // Use searchGames with pagination - load first batch
-        const result = await this.replayService.searchGames(folderToLoad, {
+        const result = await this.replayService.searchGames({
+          folderPath: folderToLoad,
           limit: REPLAY_BATCH_SIZE,
           orderBy: {
             field: sortBy === "DATE" ? "startTime" : "lastFrame",
@@ -265,7 +266,8 @@ export class ReplayPresenter {
       const filters = buildReplayFilters(hideShortGames, searchText);
 
       // Load next batch of replays
-      const result = await this.replayService.searchGames(currentFolder, {
+      const result = await this.replayService.searchGames({
+        folderPath: currentFolder,
         limit: REPLAY_BATCH_SIZE,
         continuation,
         orderBy: {

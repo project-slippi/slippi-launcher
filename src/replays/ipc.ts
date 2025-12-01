@@ -15,13 +15,13 @@ import type {
 
 export const ipc_searchGames = makeEndpoint.main(
   "searchGames",
-  <{ folderPath: string; options?: SearchGamesOptions }>_,
+  <{ options: SearchGamesOptions }>_,
   <SearchGamesResult>_,
 );
 
 export const ipc_getAllFilePaths = makeEndpoint.main(
   "getAllFilePaths",
-  <{ folderPath: string; options?: SearchGamesOptions }>_,
+  <{ options: SearchGamesOptions }>_,
   <string[]>_,
 );
 
@@ -53,7 +53,7 @@ export const ipc_deleteReplays = makeEndpoint.main("deleteReplays", <{ fileIds: 
 
 export const ipc_bulkDeleteReplays = makeEndpoint.main(
   "bulkDeleteReplays",
-  <{ folderPath: string; options?: BulkDeleteOptions }>_,
+  <{ options: BulkDeleteOptions }>_,
   <BulkDeleteResult>_,
 );
 
