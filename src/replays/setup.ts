@@ -68,49 +68,19 @@ export default function setupReplaysIpc() {
 
   ipc_searchGames.main!.handle(async ({ folderPath, options = {} }) => {
     const replayProvider = await replayProviderPromise;
-    const { limit = 20, continuation, orderBy = { field: "startTime", direction: "desc" } } = options;
+    const { limit = 20, continuation, orderBy = { field: "startTime", direction: "desc" }, filters } = options;
 
     // Progress callback for database sync
     const onProgress = (progress: Progress) => {
       ipc_loadProgressUpdatedEvent.main!.trigger(progress).catch(console.warn);
     };
 
-    // Convert options to database filters
-    const filters: any[] = [];
-    if (options.hideShortGames) {
-      filters.push({
-        type: "duration" as const,
-        minFrames: 30 * 60, // 30 seconds
-      });
-    }
-    if (options.searchText && options.searchText.trim() !== "") {
-      filters.push({
-        type: "textSearch" as const,
-        query: options.searchText.trim(),
-      });
-    }
-
     return await replayProvider.searchReplays(folderPath, limit, continuation, orderBy, filters, onProgress);
   });
 
   ipc_getAllFilePaths.main!.handle(async ({ folderPath, options = {} }) => {
     const replayProvider = await replayProviderPromise;
-    const { orderBy = { field: "startTime", direction: "desc" } } = options;
-
-    // Convert options to database filters
-    const filters: any[] = [];
-    if (options.hideShortGames) {
-      filters.push({
-        type: "duration" as const,
-        minFrames: 30 * 60, // 30 seconds
-      });
-    }
-    if (options.searchText && options.searchText.trim() !== "") {
-      filters.push({
-        type: "textSearch" as const,
-        query: options.searchText.trim(),
-      });
-    }
+    const { orderBy = { field: "startTime", direction: "desc" }, filters } = options;
 
     return await replayProvider.getAllFilePaths(folderPath, orderBy, filters);
   });
@@ -124,22 +94,7 @@ export default function setupReplaysIpc() {
   ipc_bulkDeleteReplays.main!.handle(async ({ folderPath, options = {} }) => {
     const replayProvider = await replayProviderPromise;
 
-    // Convert options to database filters
-    const filters: any[] = [];
-    if (options.hideShortGames) {
-      filters.push({
-        type: "duration" as const,
-        minFrames: 30 * 60, // 30 seconds
-      });
-    }
-    if (options.searchText && options.searchText.trim() !== "") {
-      filters.push({
-        type: "textSearch" as const,
-        query: options.searchText.trim(),
-      });
-    }
-
-    return await replayProvider.bulkDeleteReplays(folderPath, filters, {
+    return await replayProvider.bulkDeleteReplays(folderPath, options.filters, {
       excludeFilePaths: options.excludeFilePaths,
     });
   });
