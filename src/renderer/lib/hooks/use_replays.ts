@@ -161,7 +161,7 @@ export class ReplayPresenter {
       });
       try {
         // Get current filter state
-        const { sortBy, sortDirection, hideShortGames } = useReplayFilter.getState();
+        const { sortBy, sortDirection, hideShortGames, searchText } = useReplayFilter.getState();
 
         // Use searchGames with pagination - load first batch
         const result = await this.replayService.searchGames(folderToLoad, {
@@ -171,6 +171,7 @@ export class ReplayPresenter {
             direction: sortDirection === "DESC" ? "desc" : "asc",
           },
           hideShortGames,
+          searchText,
         });
 
         useReplays.setState((state) => {
@@ -262,7 +263,7 @@ export class ReplayPresenter {
 
     try {
       // Get current filter state
-      const { sortBy, sortDirection, hideShortGames } = useReplayFilter.getState();
+      const { sortBy, sortDirection, hideShortGames, searchText } = useReplayFilter.getState();
 
       // Load next batch of replays
       const result = await this.replayService.searchGames(currentFolder, {
@@ -273,6 +274,7 @@ export class ReplayPresenter {
           direction: sortDirection === "DESC" ? "desc" : "asc",
         },
         hideShortGames,
+        searchText,
       });
 
       useReplays.setState((state) => {

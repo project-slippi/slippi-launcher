@@ -95,12 +95,18 @@ export default function setupReplaysIpc({ enableReplayDatabase }: { enableReplay
         ipc_loadProgressUpdatedEvent.main!.trigger(progress).catch(console.warn);
       };
 
-      // Convert hideShortGames filter to database filter
+      // Convert options to database filters
       const filters: any[] = [];
       if (options.hideShortGames) {
         filters.push({
           type: "duration" as const,
           minFrames: 30 * 60, // 30 seconds
+        });
+      }
+      if (options.searchText && options.searchText.trim() !== "") {
+        filters.push({
+          type: "textSearch" as const,
+          query: options.searchText.trim(),
         });
       }
 
@@ -122,12 +128,18 @@ export default function setupReplaysIpc({ enableReplayDatabase }: { enableReplay
     if ("getAllFilePaths" in replayProvider && typeof replayProvider.getAllFilePaths === "function") {
       const { orderBy = { field: "startTime", direction: "desc" } } = options;
 
-      // Convert hideShortGames filter to database filter
+      // Convert options to database filters
       const filters: any[] = [];
       if (options.hideShortGames) {
         filters.push({
           type: "duration" as const,
           minFrames: 30 * 60, // 30 seconds
+        });
+      }
+      if (options.searchText && options.searchText.trim() !== "") {
+        filters.push({
+          type: "textSearch" as const,
+          query: options.searchText.trim(),
         });
       }
 
@@ -159,12 +171,18 @@ export default function setupReplaysIpc({ enableReplayDatabase }: { enableReplay
 
     // Check if the provider supports bulkDeleteReplays (DatabaseReplayProvider)
     if ("bulkDeleteReplays" in replayProvider && typeof replayProvider.bulkDeleteReplays === "function") {
-      // Convert hideShortGames filter to database filter
+      // Convert options to database filters
       const filters: any[] = [];
       if (options.hideShortGames) {
         filters.push({
           type: "duration" as const,
           minFrames: 30 * 60, // 30 seconds
+        });
+      }
+      if (options.searchText && options.searchText.trim() !== "") {
+        filters.push({
+          type: "textSearch" as const,
+          query: options.searchText.trim(),
         });
       }
 
