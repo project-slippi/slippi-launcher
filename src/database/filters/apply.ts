@@ -29,6 +29,8 @@ function applyFilter(
       return applyPlayerFilter(query, filter);
     case "gameMode":
       return applyGameModeFilter(query, filter);
+    case "textSearch":
+      return applyTextSearchFilter(query, filter);
     default: {
       // TypeScript exhaustiveness check
       const _exhaustive: never = filter;
@@ -137,4 +139,55 @@ function applyGameModeFilter(
     return query;
   }
   return query.where("game.mode", "in", filter.modes);
+}
+
+/**
+ * Apply text search filter to query
+ * Searches across player fields (connect code, display name, tag) and file names using case-insensitive ILIKE
+ * Returns games where ANY of the searchable fields match the query (OR logic)
+ */
+function applyTextSearchFilter(
+  query: SelectQueryBuilder<Database, "file" | "game", {}>,
+  filter: Extract<ReplayFilter, { type: "textSearch" }>,
+): SelectQueryBuilder<Database, "file" | "game", {}> {
+  // Skip if query is empty
+  if (!filter.query || filter.query.trim() === "") {
+    return query;
+  }
+
+  const searchPattern = `%${filter.query}%`;
+
+  // If only searching file names
+  if (filter.searchFileNameOnly) {
+    return query.where("file.name", "ilike", searchPattern);
+  }
+
+  // General search: check player fields OR file name
+  return query.where((eb) => {
+    const conditions = [];
+
+    // Search in file name
+    conditions.push(eb("file.name", "ilike", searchPattern));
+
+    // Search in player fields using EXISTS subquery
+    // This finds games where at least one player matches the search text
+    conditions.push(
+      eb.exists(
+        eb
+          .selectFrom("player")
+          .whereRef("player.game_id", "=", "game._id")
+          .where((eb2) =>
+            eb2.or([
+              eb2("player.connect_code", "ilike", searchPattern),
+              eb2("player.display_name", "ilike", searchPattern),
+              eb2("player.tag", "ilike", searchPattern),
+            ]),
+          )
+          .select("player._id"),
+      ),
+    );
+
+    // OR all conditions together
+    return eb.or(conditions);
+  });
 }
