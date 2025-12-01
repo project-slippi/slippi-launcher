@@ -1,8 +1,6 @@
 import { app } from "electron";
-import log from "electron-log";
 import path from "path";
 
-import { FileSystemReplayProvider } from "./file_system_replay_provider/file_system_replay_provider";
 import { FolderTreeService } from "./folder_tree_service";
 import {
   ipc_bulkDeleteReplays,
@@ -16,37 +14,25 @@ import {
   ipc_searchGames,
   ipc_selectTreeFolder,
 } from "./ipc";
-import type { Progress, ReplayProvider } from "./types";
+import type { Progress } from "./types";
 
 const REPLAY_DATABASE_NAME = "slippi.sqlite";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
-async function createReplayProvider({
-  enableReplayDatabase,
-}: {
-  enableReplayDatabase?: boolean;
-}): Promise<ReplayProvider> {
-  if (enableReplayDatabase) {
-    try {
-      const replayDatabaseFolder = path.join(app.getPath("userData"), REPLAY_DATABASE_NAME);
-      const [{ createDatabase }, { DatabaseReplayProvider }] = await Promise.all([
-        import("@database/create_database"),
-        import("./database_replay_provider/database_replay_provider"),
-      ]);
-      const database = await createDatabase(isDevelopment ? undefined : replayDatabaseFolder);
-      return new DatabaseReplayProvider(database);
-    } catch (err) {
-      log.warn("Failed to init database replay provider: ", err);
-    }
-  }
-
-  return new FileSystemReplayProvider();
+async function createReplayProvider() {
+  const replayDatabaseFolder = path.join(app.getPath("userData"), REPLAY_DATABASE_NAME);
+  const [{ createDatabase }, { DatabaseReplayProvider }] = await Promise.all([
+    import("@database/create_database"),
+    import("./database_replay_provider/database_replay_provider"),
+  ]);
+  const database = await createDatabase(isDevelopment ? undefined : replayDatabaseFolder);
+  return new DatabaseReplayProvider(database);
 }
 
-export default function setupReplaysIpc({ enableReplayDatabase }: { enableReplayDatabase?: boolean }) {
+export default function setupReplaysIpc() {
   const treeService = new FolderTreeService();
-  const replayProviderPromise = createReplayProvider({ enableReplayDatabase });
+  const replayProviderPromise = createReplayProvider();
 
   ipc_initializeFolderTree.main!.handle(async ({ folders }) => {
     return treeService.init(folders);
@@ -85,112 +71,79 @@ export default function setupReplaysIpc({ enableReplayDatabase }: { enableReplay
 
   ipc_searchGames.main!.handle(async ({ folderPath, options = {} }) => {
     const replayProvider = await replayProviderPromise;
+    const { limit = 20, continuation, orderBy = { field: "startTime", direction: "desc" } } = options;
 
-    // Check if the provider supports searchReplays (DatabaseReplayProvider)
-    if ("searchReplays" in replayProvider && typeof replayProvider.searchReplays === "function") {
-      const { limit = 20, continuation, orderBy = { field: "startTime", direction: "desc" } } = options;
-
-      // Progress callback for database sync
-      const onProgress = (progress: Progress) => {
-        ipc_loadProgressUpdatedEvent.main!.trigger(progress).catch(console.warn);
-      };
-
-      // Convert options to database filters
-      const filters: any[] = [];
-      if (options.hideShortGames) {
-        filters.push({
-          type: "duration" as const,
-          minFrames: 30 * 60, // 30 seconds
-        });
-      }
-      if (options.searchText && options.searchText.trim() !== "") {
-        filters.push({
-          type: "textSearch" as const,
-          query: options.searchText.trim(),
-        });
-      }
-
-      return await replayProvider.searchReplays(folderPath, limit, continuation, orderBy, filters, onProgress);
-    }
-
-    // Fallback to loadFolder for FileSystemReplayProvider
+    // Progress callback for database sync
     const onProgress = (progress: Progress) => {
       ipc_loadProgressUpdatedEvent.main!.trigger(progress).catch(console.warn);
     };
-    const result = await replayProvider.loadFolder(folderPath, onProgress);
-    return { files: result.files, continuation: undefined };
+
+    // Convert options to database filters
+    const filters: any[] = [];
+    if (options.hideShortGames) {
+      filters.push({
+        type: "duration" as const,
+        minFrames: 30 * 60, // 30 seconds
+      });
+    }
+    if (options.searchText && options.searchText.trim() !== "") {
+      filters.push({
+        type: "textSearch" as const,
+        query: options.searchText.trim(),
+      });
+    }
+
+    return await replayProvider.searchReplays(folderPath, limit, continuation, orderBy, filters, onProgress);
   });
 
   ipc_getAllFilePaths.main!.handle(async ({ folderPath, options = {} }) => {
     const replayProvider = await replayProviderPromise;
+    const { orderBy = { field: "startTime", direction: "desc" } } = options;
 
-    // Check if the provider supports getAllFilePaths (DatabaseReplayProvider)
-    if ("getAllFilePaths" in replayProvider && typeof replayProvider.getAllFilePaths === "function") {
-      const { orderBy = { field: "startTime", direction: "desc" } } = options;
-
-      // Convert options to database filters
-      const filters: any[] = [];
-      if (options.hideShortGames) {
-        filters.push({
-          type: "duration" as const,
-          minFrames: 30 * 60, // 30 seconds
-        });
-      }
-      if (options.searchText && options.searchText.trim() !== "") {
-        filters.push({
-          type: "textSearch" as const,
-          query: options.searchText.trim(),
-        });
-      }
-
-      return await replayProvider.getAllFilePaths(folderPath, orderBy, filters);
+    // Convert options to database filters
+    const filters: any[] = [];
+    if (options.hideShortGames) {
+      filters.push({
+        type: "duration" as const,
+        minFrames: 30 * 60, // 30 seconds
+      });
+    }
+    if (options.searchText && options.searchText.trim() !== "") {
+      filters.push({
+        type: "textSearch" as const,
+        query: options.searchText.trim(),
+      });
     }
 
-    // Fallback to loadFolder for FileSystemReplayProvider
-    const onProgress = (progress: Progress) => {
-      ipc_loadProgressUpdatedEvent.main!.trigger(progress).catch(console.warn);
-    };
-    const result = await replayProvider.loadFolder(folderPath, onProgress);
-    return result.files.map((f) => f.fullPath);
+    return await replayProvider.getAllFilePaths(folderPath, orderBy, filters);
   });
 
   ipc_deleteReplays.main!.handle(async ({ fileIds }) => {
     const replayProvider = await replayProviderPromise;
-
-    // Check if the provider supports deleteReplays (DatabaseReplayProvider)
-    if ("deleteReplays" in replayProvider && typeof replayProvider.deleteReplays === "function") {
-      await replayProvider.deleteReplays(fileIds);
-      return { success: true };
-    }
-
-    throw new Error("deleteReplays is not supported by the current replay provider");
+    await replayProvider.deleteReplays(fileIds);
+    return { success: true };
   });
 
   ipc_bulkDeleteReplays.main!.handle(async ({ folderPath, options = {} }) => {
     const replayProvider = await replayProviderPromise;
 
-    // Check if the provider supports bulkDeleteReplays (DatabaseReplayProvider)
-    if ("bulkDeleteReplays" in replayProvider && typeof replayProvider.bulkDeleteReplays === "function") {
-      // Convert options to database filters
-      const filters: any[] = [];
-      if (options.hideShortGames) {
-        filters.push({
-          type: "duration" as const,
-          minFrames: 30 * 60, // 30 seconds
-        });
-      }
-      if (options.searchText && options.searchText.trim() !== "") {
-        filters.push({
-          type: "textSearch" as const,
-          query: options.searchText.trim(),
-        });
-      }
-
-      return await replayProvider.bulkDeleteReplays(folderPath, filters, {
-        excludeFilePaths: options.excludeFilePaths,
+    // Convert options to database filters
+    const filters: any[] = [];
+    if (options.hideShortGames) {
+      filters.push({
+        type: "duration" as const,
+        minFrames: 30 * 60, // 30 seconds
+      });
+    }
+    if (options.searchText && options.searchText.trim() !== "") {
+      filters.push({
+        type: "textSearch" as const,
+        query: options.searchText.trim(),
       });
     }
 
-    throw new Error("bulkDeleteReplays is not supported by the current replay provider");
+    return await replayProvider.bulkDeleteReplays(folderPath, filters, {
+      excludeFilePaths: options.excludeFilePaths,
+    });
   });
 }
