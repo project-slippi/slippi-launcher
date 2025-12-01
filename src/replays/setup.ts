@@ -1,6 +1,9 @@
+import { createDatabase } from "@database/create_database";
 import { app } from "electron";
+import log from "electron-log";
 import path from "path";
 
+import { DatabaseReplayProvider } from "./database_replay_provider/database_replay_provider";
 import { FolderTreeService } from "./folder_tree_service";
 import {
   ipc_bulkDeleteReplays,
@@ -22,12 +25,16 @@ const isDevelopment = process.env.NODE_ENV === "development";
 
 async function createReplayProvider() {
   const replayDatabaseFolder = path.join(app.getPath("userData"), REPLAY_DATABASE_NAME);
-  const [{ createDatabase }, { DatabaseReplayProvider }] = await Promise.all([
-    import("@database/create_database"),
-    import("./database_replay_provider/database_replay_provider"),
-  ]);
-  const database = await createDatabase(isDevelopment ? undefined : replayDatabaseFolder);
-  return new DatabaseReplayProvider(database);
+  try {
+    const database = await createDatabase(isDevelopment ? undefined : replayDatabaseFolder);
+    return new DatabaseReplayProvider(database);
+  } catch (err) {
+    log.error(
+      `Fatal error: Failed to initialize replay database at ${replayDatabaseFolder}: ${err}. Using in-memory database instead.`,
+    );
+    const database = await createDatabase(undefined);
+    return new DatabaseReplayProvider(database);
+  }
 }
 
 export default function setupReplaysIpc() {
