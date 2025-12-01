@@ -175,17 +175,14 @@ export class GameRepository {
    * @param db Database connection
    * @param folder Folder to search in (if empty/null, searches all folders)
    * @param filters Array of filters to apply (AND logic between filters)
-   * @param options Ordering options and optional excluded file IDs
+   * @param excludeFileIds Optional file IDs to exclude from the results
    * @returns Array of file IDs
    */
   public static async getFileIdsForBulkDelete(
     db: DB,
     folder: string | null,
     filters: ReplayFilter[],
-    options: {
-      orderBy: { field: "startTime" | "lastFrame"; direction: "asc" | "desc" };
-      excludeFileIds?: number[];
-    },
+    excludeFileIds?: number[],
   ): Promise<number[]> {
     let query = db.selectFrom("file").innerJoin("game", "game.file_id", "file._id");
 
@@ -198,19 +195,49 @@ export class GameRepository {
     query = applyFilters(query, filters);
 
     // Exclude specific file IDs if provided
-    if (options.excludeFileIds && options.excludeFileIds.length > 0) {
-      query = query.where("file._id", "not in", options.excludeFileIds);
+    if (excludeFileIds && excludeFileIds.length > 0) {
+      query = query.where("file._id", "not in", excludeFileIds);
     }
 
-    // Apply ordering to maintain consistent order
-    const orderField = options.orderBy.field === "startTime" ? "game.start_time" : "game.last_frame";
-    const res = await query
-      .select("file._id")
-      .orderBy(orderField as any, options.orderBy.direction)
-      .orderBy("game._id", options.orderBy.direction)
-      .execute();
+    const res = await query.select("file._id").execute();
 
     return res.map((row) => row._id);
+  }
+
+  /**
+   * Get all file paths for games matching filters with ordering
+   *
+   * @param db Database connection
+   * @param folder Folder to search in (if empty/null, searches all folders)
+   * @param filters Array of filters to apply (AND logic between filters)
+   * @param orderBy Ordering options
+   * @returns Array of file paths with folder and name
+   */
+  public static async getAllFilePaths(
+    db: DB,
+    folder: string | null,
+    filters: ReplayFilter[],
+    orderBy: { field: "startTime" | "lastFrame"; direction: "asc" | "desc" },
+  ): Promise<{ folder: string; name: string }[]> {
+    let query = db.selectFrom("file").innerJoin("game", "game.file_id", "file._id");
+
+    // Apply folder filter if specified
+    if (folder != null && folder !== "") {
+      query = query.where("folder", "=", folder);
+    }
+
+    // Apply all filters (AND logic)
+    query = applyFilters(query, filters);
+
+    // Apply ordering
+    const orderField = orderBy.field === "startTime" ? "game.start_time" : "game.last_frame";
+    const res = await query
+      .select(["file.folder", "file.name"])
+      .orderBy(orderField as any, orderBy.direction)
+      .orderBy("game._id", orderBy.direction)
+      .execute();
+
+    return res;
   }
 }
 
