@@ -1,7 +1,3 @@
-diff --git a/node_modules/kysely/dist/cjs/.DS_Store b/node_modules/kysely/dist/cjs/.DS_Store
-new file mode 100644
-index 0000000..12fdf27
-Binary files /dev/null and b/node_modules/kysely/dist/cjs/.DS_Store differ
 diff --git a/node_modules/kysely/dist/cjs/dialect/sqlite/sqlite-dialect-config.d.ts b/node_modules/kysely/dist/cjs/dialect/sqlite/sqlite-dialect-config.d.ts
 index a873682..b446ad7 100644
 --- a/node_modules/kysely/dist/cjs/dialect/sqlite/sqlite-dialect-config.d.ts
