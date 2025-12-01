@@ -29,7 +29,7 @@ async function createReplayProvider() {
     return new DatabaseReplayProvider(database);
   } catch (err) {
     log.error(
-      `Fatal error: Failed to initialize replay database at ${replayDatabaseFolder}: ${err}. Using in-memory database instead.`,
+      `Failed to initialize replay database at ${replayDatabaseFolder}: ${err}. Using in-memory database instead.`,
     );
     const database = await createDatabase(undefined);
     return new DatabaseReplayProvider(database);
