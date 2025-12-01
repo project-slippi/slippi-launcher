@@ -1,4 +1,5 @@
-import type { StadiumStatsType, StatsType } from "@slippi/slippi-js/node";
+import type { ReplayFilter } from "@database/filters/types";
+import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
 
 export type PlayerInfo = {
   playerIndex: number;
@@ -58,7 +59,7 @@ export interface ReplayProvider {
       field: "lastFrame" | "startTime";
       direction?: "asc" | "desc";
     },
-    filters?: any[],
+    filters?: ReplayFilter[],
     onProgress?: (progress: Progress) => void,
   ): Promise<{
     files: FileResult[];
@@ -71,11 +72,11 @@ export interface ReplayProvider {
       field: "lastFrame" | "startTime";
       direction?: "asc" | "desc";
     },
-    filters?: any[],
+    filters?: ReplayFilter[],
   ): Promise<string[]>;
   bulkDeleteReplays(
     folder: string,
-    filters?: any[],
+    filters?: ReplayFilter[],
     options?: {
       excludeFilePaths?: string[];
     },
@@ -89,8 +90,7 @@ export type SearchGamesOptions = {
     field: "startTime" | "lastFrame";
     direction?: "asc" | "desc";
   };
-  hideShortGames?: boolean;
-  searchText?: string;
+  filters?: ReplayFilter[];
 };
 
 export type SearchGamesResult = {
@@ -100,8 +100,7 @@ export type SearchGamesResult = {
 };
 
 export type BulkDeleteOptions = {
-  hideShortGames?: boolean;
-  searchText?: string;
+  filters?: ReplayFilter[];
   excludeFilePaths?: string[];
 };
 

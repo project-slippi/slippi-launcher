@@ -15,7 +15,7 @@ import { LoadingScreenWithProgress } from "@/components/loading_screen/loading_s
 import { IconMessage } from "@/components/message";
 import { useDolphinActions } from "@/lib/dolphin/use_dolphin_actions";
 import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/use_replay_browser_list";
-import { useReplayFilter } from "@/lib/hooks/use_replay_filter";
+import { buildReplayFilters, useReplayFilter } from "@/lib/hooks/use_replay_filter";
 import { useReplayPresenter, useReplays, useReplaySelection } from "@/lib/hooks/use_replays";
 import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
@@ -95,13 +95,13 @@ export const ReplayBrowser = React.memo(() => {
       if (selectAllMode) {
         // Get all file paths from the current folder with the same filters
         const { sortBy, sortDirection, hideShortGames, searchText } = useReplayFilter.getState();
+        const filters = buildReplayFilters(hideShortGames, searchText);
         const allFilePaths = await replayService.getAllFilePaths(currentFolder, {
           orderBy: {
             field: sortBy === "DATE" ? "startTime" : "lastFrame",
             direction: sortDirection === "DESC" ? "desc" : "asc",
           },
-          hideShortGames,
-          searchText,
+          filters,
         });
 
         // Filter out deselected files
@@ -131,9 +131,9 @@ export const ReplayBrowser = React.memo(() => {
       if (selectAllMode) {
         // Use bulk delete with filters
         const { hideShortGames, searchText } = useReplayFilter.getState();
+        const filters = buildReplayFilters(hideShortGames, searchText);
         const result = await replayService.bulkDeleteReplays(currentFolder, {
-          hideShortGames,
-          searchText,
+          filters,
           excludeFilePaths: deselectedFiles,
         });
 

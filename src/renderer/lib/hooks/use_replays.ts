@@ -7,7 +7,7 @@ import { useSettings } from "@/lib/hooks/use_settings";
 import { useServices } from "@/services";
 
 import { useReplayBrowserList } from "./use_replay_browser_list";
-import { useReplayFilter } from "./use_replay_filter";
+import { buildReplayFilters, useReplayFilter } from "./use_replay_filter";
 
 const REPLAY_BATCH_SIZE = 20;
 
@@ -159,6 +159,9 @@ export class ReplayPresenter {
         // Get current filter state
         const { sortBy, sortDirection, hideShortGames, searchText } = useReplayFilter.getState();
 
+        // Build filters from current state
+        const filters = buildReplayFilters(hideShortGames, searchText);
+
         // Use searchGames with pagination - load first batch
         const result = await this.replayService.searchGames(folderToLoad, {
           limit: REPLAY_BATCH_SIZE,
@@ -166,8 +169,7 @@ export class ReplayPresenter {
             field: sortBy === "DATE" ? "startTime" : "lastFrame",
             direction: sortDirection === "DESC" ? "desc" : "asc",
           },
-          hideShortGames,
-          searchText,
+          filters,
         });
 
         useReplays.setState((state) => {
@@ -259,6 +261,9 @@ export class ReplayPresenter {
       // Get current filter state
       const { sortBy, sortDirection, hideShortGames, searchText } = useReplayFilter.getState();
 
+      // Build filters from current state
+      const filters = buildReplayFilters(hideShortGames, searchText);
+
       // Load next batch of replays
       const result = await this.replayService.searchGames(currentFolder, {
         limit: REPLAY_BATCH_SIZE,
@@ -267,8 +272,7 @@ export class ReplayPresenter {
           field: sortBy === "DATE" ? "startTime" : "lastFrame",
           direction: sortDirection === "DESC" ? "desc" : "asc",
         },
-        hideShortGames,
-        searchText,
+        filters,
       });
 
       useReplays.setState((state) => {
