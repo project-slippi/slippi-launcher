@@ -15,7 +15,7 @@
     "postinstall": "npm run electron-rebuild && npm run link-modules"
   },
   "dependencies": {
-    "better-sqlite3": "^11.8.1",
+    "better-sqlite3": "^12.4.6",
     "kysely": "^0.28.8",
     "kysely-sqlite-worker": "^1.2.1",
     "threads": "^1.6.5",
