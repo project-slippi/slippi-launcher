@@ -8,6 +8,7 @@ import { FixedSizeList as List } from "react-window";
 
 import { ErrorBoundary } from "@/components/error_boundary";
 import { IconMenu } from "@/components/icon_menu";
+import { useReplayFilter } from "@/lib/hooks/use_replay_filter";
 
 import { ReplayFileContainer } from "../replay_file/replay_file.container";
 import { FileListMessages as Messages } from "./file_list.messages";
@@ -69,6 +70,11 @@ const FileListResults = ({
     [files, onSelect, onPlay, onOpenMenu, selectedFiles],
   );
 
+  const searchText = useReplayFilter((store) => store.searchText);
+  const hideShortGames = useReplayFilter((store) => store.hideShortGames);
+  const sortBy = useReplayFilter((store) => store.sortBy);
+  const sortDirection = useReplayFilter((store) => store.sortDirection);
+
   // Store the latest scroll row item on unmount
   React.useEffect(() => {
     return () => {
@@ -82,6 +88,13 @@ const FileListResults = ({
       listRef.current.scrollToItem(0);
     }
   }, [folderPath]);
+
+  // Reset scroll position when filters change
+  React.useEffect(() => {
+    if (listRef.current) {
+      listRef.current.scrollToItem(0);
+    }
+  }, [searchText, hideShortGames, sortBy, sortDirection]);
 
   return (
     <AutoSizer>
