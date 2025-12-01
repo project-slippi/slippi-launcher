@@ -40,12 +40,6 @@ export type FolderResult = {
   subdirectories: FolderResult[];
 };
 
-export type FileLoadResult = {
-  files: FileResult[];
-  totalBytes: number;
-  fileErrorCount: number;
-};
-
 export type Progress = {
   current: number;
   total: number;
@@ -53,11 +47,10 @@ export type Progress = {
 
 export interface ReplayProvider {
   loadFile(filePath: string): Promise<FileResult>;
-  loadFolder(folder: string, onProgress?: (progress: Progress) => void): Promise<FileLoadResult>;
   calculateGameStats(fullPath: string): Promise<StatsType | null>;
   calculateStadiumStats(fullPath: string): Promise<StadiumStatsType | null>;
-  deleteReplays?(fileIds: string[]): Promise<void>;
-  searchReplays?(
+  deleteReplays(fileIds: string[]): Promise<void>;
+  searchReplays(
     folder: string,
     limit?: number,
     continuation?: string,
@@ -71,7 +64,7 @@ export interface ReplayProvider {
     files: FileResult[];
     continuation: string | undefined;
   }>;
-  getAllFilePaths?(
+  getAllFilePaths(
     folder: string,
     orderBy?: {
       field: "lastFrame" | "startTime";
@@ -79,7 +72,7 @@ export interface ReplayProvider {
     },
     filters?: any[],
   ): Promise<string[]>;
-  bulkDeleteReplays?(
+  bulkDeleteReplays(
     folder: string,
     filters?: any[],
     options?: {
@@ -118,7 +111,6 @@ export type BulkDeleteResult = {
 export interface ReplayService {
   initializeFolderTree(folders: readonly string[]): Promise<readonly FolderResult[]>;
   selectTreeFolder(folderPath: string): Promise<readonly FolderResult[]>;
-  loadReplayFolder(folderPath: string): Promise<FileLoadResult>;
   searchGames(folderPath: string, options?: SearchGamesOptions): Promise<SearchGamesResult>;
   getAllFilePaths(folderPath: string, options?: SearchGamesOptions): Promise<string[]>;
   calculateGameStats(filePath: string): Promise<{ file: FileResult; stats: StatsType | null }>;

@@ -7,7 +7,6 @@ import {
   ipc_getAllFilePaths,
   ipc_initializeFolderTree,
   ipc_loadProgressUpdatedEvent,
-  ipc_loadReplayFolder,
   ipc_searchGames,
   ipc_selectTreeFolder,
   ipc_statsPageRequestedEvent,
@@ -21,10 +20,6 @@ const replayApi: ReplayService = {
   },
   async selectTreeFolder(folderPath: string) {
     const { result } = await ipc_selectTreeFolder.renderer!.trigger({ folderPath });
-    return result;
-  },
-  async loadReplayFolder(folderPath: string) {
-    const { result } = await ipc_loadReplayFolder.renderer!.trigger({ folderPath });
     return result;
   },
   async searchGames(folderPath: string, options?: SearchGamesOptions) {

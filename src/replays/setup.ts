@@ -13,7 +13,6 @@ import {
   ipc_getAllFilePaths,
   ipc_initializeFolderTree,
   ipc_loadProgressUpdatedEvent,
-  ipc_loadReplayFolder,
   ipc_searchGames,
   ipc_selectTreeFolder,
 } from "./ipc";
@@ -47,15 +46,6 @@ export default function setupReplaysIpc() {
 
   ipc_selectTreeFolder.main!.handle(async ({ folderPath }) => {
     return await treeService.select(folderPath);
-  });
-
-  ipc_loadReplayFolder.main!.handle(async ({ folderPath }) => {
-    const onProgress = (progress: Progress) => {
-      ipc_loadProgressUpdatedEvent.main!.trigger(progress).catch(console.warn);
-    };
-
-    const replayProvider = await replayProviderPromise;
-    return await replayProvider.loadFolder(folderPath, onProgress);
   });
 
   ipc_calculateGameStats.main!.handle(async ({ filePath }) => {

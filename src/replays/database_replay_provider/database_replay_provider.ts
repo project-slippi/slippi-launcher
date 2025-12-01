@@ -6,7 +6,7 @@ import { GameRepository } from "@database/repositories/game_repository";
 import { PlayerRepository } from "@database/repositories/player_repository";
 import type { Database, FileRecord, GameRecord, NewFile, NewGame, NewPlayer, PlayerRecord } from "@database/schema";
 import { boolToInt, boolToIntOrNull } from "@database/utils";
-import type { FileLoadResult, FileResult, Progress, ReplayProvider } from "@replays/types";
+import type { FileResult, Progress, ReplayProvider } from "@replays/types";
 import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
 import { SlippiGame } from "@slippi/slippi-js";
 import { shell } from "electron";
@@ -144,34 +144,6 @@ export class DatabaseReplayProvider implements ReplayProvider {
     }
 
     return mapGameRecordToFileResult(gameAndFileRecord, playerRecords);
-  }
-
-  public async loadFolder(folder: string, onProgress?: (progress: Progress) => void): Promise<FileLoadResult> {
-    // If the folder does not exist, return empty
-    if (!(await fs.pathExists(folder))) {
-      return {
-        files: [],
-        fileErrorCount: 0,
-        totalBytes: 0,
-      };
-    }
-
-    // Add new files to the database and remove deleted files
-    await this.syncReplayDatabase(folder, onProgress, INSERT_REPLAY_BATCH_SIZE);
-
-    const [gameRecords, totalBytes] = await Promise.all([
-      GameRepository.findGamesByFolder(this.db, folder),
-      FileRepository.findTotalSizeByFolder(this.db, folder),
-    ]);
-
-    const files = await this.mapGameAndFileRecordsToFileResult(gameRecords);
-
-    const result: FileLoadResult = {
-      files,
-      totalBytes,
-      fileErrorCount: 0,
-    };
-    return result;
   }
 
   public async calculateGameStats(fullPath: string): Promise<StatsType | null> {

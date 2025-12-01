@@ -1,7 +1,6 @@
 import type {
   BulkDeleteOptions,
   BulkDeleteResult,
-  FileLoadResult,
   FileResult,
   FolderResult,
   Progress,
@@ -25,16 +24,6 @@ class MockReplayClient implements ReplayService {
   @delayAndMaybeError(SHOULD_ERROR)
   public async selectTreeFolder(folderPath: string): Promise<readonly FolderResult[]> {
     return ["foo", "bar", "baz"].map((name) => aMockFolderResultWith(folderPath, { name }));
-  }
-
-  @delayAndMaybeError(SHOULD_ERROR)
-  public async loadReplayFolder(folderPath: string): Promise<FileLoadResult> {
-    const files = [1, 2, 3, 4].map((i) => aMockFileResultWith(folderPath, { fileName: `Game${i}.slp` }));
-    return {
-      files,
-      totalBytes: 124567,
-      fileErrorCount: 0,
-    };
   }
 
   @delayAndMaybeError(SHOULD_ERROR)

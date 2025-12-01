@@ -4,7 +4,6 @@ import { _, makeEndpoint } from "utils/ipc";
 import type {
   BulkDeleteOptions,
   BulkDeleteResult,
-  FileLoadResult,
   FileResult,
   FolderResult,
   Progress,
@@ -13,8 +12,6 @@ import type {
 } from "./types";
 
 // Handlers
-
-export const ipc_loadReplayFolder = makeEndpoint.main("loadReplayFolder", <{ folderPath: string }>_, <FileLoadResult>_);
 
 export const ipc_searchGames = makeEndpoint.main(
   "searchGames",
