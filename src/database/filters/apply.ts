@@ -143,7 +143,8 @@ function applyGameModeFilter(
 
 /**
  * Apply text search filter to query
- * Searches across player fields (connect code, display name, tag) and file names using case-insensitive ILIKE
+ * Searches across player fields (connect code, display name, tag) and file names using case-insensitive LIKE
+ * Note: SQLite's LIKE operator is case-insensitive by default (unlike PostgreSQL)
  * Returns games where ANY of the searchable fields match the query (OR logic)
  */
 function applyTextSearchFilter(
@@ -159,35 +160,30 @@ function applyTextSearchFilter(
 
   // If only searching file names
   if (filter.searchFileNameOnly) {
-    return query.where("file.name", "ilike", searchPattern);
+    return query.where("file.name", "like", searchPattern);
   }
 
   // General search: check player fields OR file name
-  return query.where((eb) => {
-    const conditions = [];
-
-    // Search in file name
-    conditions.push(eb("file.name", "ilike", searchPattern));
-
-    // Search in player fields using EXISTS subquery
-    // This finds games where at least one player matches the search text
-    conditions.push(
+  // Note: The array must be passed inline to eb.or(), not built separately
+  return query.where((eb) =>
+    eb.or([
+      // Search in file name
+      eb("file.name", "like", searchPattern),
+      // Search in player fields using EXISTS subquery
+      // This finds games where at least one player matches the search text
       eb.exists(
         eb
           .selectFrom("player")
           .whereRef("player.game_id", "=", "game._id")
           .where((eb2) =>
             eb2.or([
-              eb2("player.connect_code", "ilike", searchPattern),
-              eb2("player.display_name", "ilike", searchPattern),
-              eb2("player.tag", "ilike", searchPattern),
+              eb2("player.connect_code", "like", searchPattern),
+              eb2("player.display_name", "like", searchPattern),
+              eb2("player.tag", "like", searchPattern),
             ]),
           )
           .select("player._id"),
       ),
-    );
-
-    // OR all conditions together
-    return eb.or(conditions);
-  });
+    ]),
+  );
 }
