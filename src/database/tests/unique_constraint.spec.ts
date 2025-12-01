@@ -1,6 +1,6 @@
 import type { Database } from "@database/schema";
 import Sqlite from "better-sqlite3";
-import type { Kysely } from "kysely";
+import { Kysely, SqliteDialect } from "kysely";
 
 import { FileRepository } from "../repositories/file_repository";
 import { GameRepository } from "../repositories/game_repository";
@@ -29,6 +29,17 @@ describe("file_id unique constraint", () => {
     expect(() => {
       db.prepare("INSERT INTO t (x) VALUES (?)").run("foo");
     }).toThrow();
+  });
+
+  it("kysely throws on UNIQUE constraint violation", async () => {
+    const newDb = new Kysely<any>({ dialect: new SqliteDialect({ database: new Sqlite(":memory:") }) });
+    await newDb.schema
+      .createTable("t")
+      .addColumn("x", "text", (col) => col.unique().notNull())
+      .execute();
+    await newDb.insertInto("t").values({ x: "foo" }).execute();
+    const action = () => newDb.insertInto("t").values({ x: "foo" }).execute();
+    await expect(action()).rejects.toThrow();
   });
 
   it("should enforce 1:1 relationship between file and game", async () => {
