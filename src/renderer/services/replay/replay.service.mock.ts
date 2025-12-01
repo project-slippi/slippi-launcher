@@ -27,7 +27,8 @@ class MockReplayClient implements ReplayService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async searchGames(folderPath: string, _options?: SearchGamesOptions): Promise<SearchGamesResult> {
+  public async searchGames(options: SearchGamesOptions): Promise<SearchGamesResult> {
+    const folderPath = options.folderPath ?? "/default/folder";
     const files = [1, 2, 3, 4].map((i) => aMockFileResultWith(folderPath, { fileName: `Game${i}.slp` }));
     return {
       files,
@@ -36,7 +37,8 @@ class MockReplayClient implements ReplayService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async getAllFilePaths(folderPath: string, _options?: SearchGamesOptions): Promise<string[]> {
+  public async getAllFilePaths(options: SearchGamesOptions): Promise<string[]> {
+    const folderPath = options.folderPath ?? "/default/folder";
     return [1, 2, 3, 4].map((i) => `${folderPath}/Game${i}.slp`);
   }
 
@@ -58,7 +60,7 @@ class MockReplayClient implements ReplayService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async bulkDeleteReplays(_folderPath: string, _options?: BulkDeleteOptions): Promise<BulkDeleteResult> {
+  public async bulkDeleteReplays(_options: BulkDeleteOptions): Promise<BulkDeleteResult> {
     return { deletedCount: 4 };
   }
 

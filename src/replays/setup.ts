@@ -66,7 +66,7 @@ export default function setupReplaysIpc() {
     return { file: fileResult, stadiumStats };
   });
 
-  ipc_searchGames.main!.handle(async ({ folderPath, options = {} }) => {
+  ipc_searchGames.main!.handle(async ({ options }) => {
     const replayProvider = await replayProviderPromise;
     const { limit = 20, continuation, orderBy = { field: "startTime", direction: "desc" }, filters } = options;
 
@@ -75,14 +75,14 @@ export default function setupReplaysIpc() {
       ipc_loadProgressUpdatedEvent.main!.trigger(progress).catch(console.warn);
     };
 
-    return await replayProvider.searchReplays(folderPath, limit, continuation, orderBy, filters, onProgress);
+    return await replayProvider.searchReplays(options.folderPath, limit, continuation, orderBy, filters, onProgress);
   });
 
-  ipc_getAllFilePaths.main!.handle(async ({ folderPath, options = {} }) => {
+  ipc_getAllFilePaths.main!.handle(async ({ options }) => {
     const replayProvider = await replayProviderPromise;
     const { orderBy = { field: "startTime", direction: "desc" }, filters } = options;
 
-    return await replayProvider.getAllFilePaths(folderPath, orderBy, filters);
+    return await replayProvider.getAllFilePaths(options.folderPath, orderBy, filters);
   });
 
   ipc_deleteReplays.main!.handle(async ({ fileIds }) => {
@@ -91,10 +91,10 @@ export default function setupReplaysIpc() {
     return { success: true };
   });
 
-  ipc_bulkDeleteReplays.main!.handle(async ({ folderPath, options = {} }) => {
+  ipc_bulkDeleteReplays.main!.handle(async ({ options }) => {
     const replayProvider = await replayProviderPromise;
 
-    return await replayProvider.bulkDeleteReplays(folderPath, options.filters, {
+    return await replayProvider.bulkDeleteReplays(options.folderPath, options.filters, {
       excludeFilePaths: options.excludeFilePaths,
     });
   });
