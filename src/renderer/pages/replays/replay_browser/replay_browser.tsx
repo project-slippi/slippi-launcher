@@ -96,7 +96,8 @@ export const ReplayBrowser = React.memo(() => {
         // Get all file paths from the current folder with the same filters
         const { sortBy, sortDirection, hideShortGames, searchText } = useReplayFilter.getState();
         const filters = buildReplayFilters(hideShortGames, searchText);
-        const allFilePaths = await replayService.getAllFilePaths(currentFolder, {
+        const allFilePaths = await replayService.getAllFilePaths({
+          folderPath: currentFolder,
           orderBy: {
             field: sortBy === "DATE" ? "startTime" : "lastFrame",
             direction: sortDirection === "DESC" ? "desc" : "asc",
@@ -132,7 +133,8 @@ export const ReplayBrowser = React.memo(() => {
         // Use bulk delete with filters
         const { hideShortGames, searchText } = useReplayFilter.getState();
         const filters = buildReplayFilters(hideShortGames, searchText);
-        const result = await replayService.bulkDeleteReplays(currentFolder, {
+        const result = await replayService.bulkDeleteReplays({
+          folderPath: currentFolder,
           filters,
           excludeFilePaths: deselectedFiles,
         });
