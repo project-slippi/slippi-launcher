@@ -63,6 +63,7 @@ export interface ReplayProvider {
   ): Promise<{
     files: FileResult[];
     continuation: string | undefined;
+    totalCount?: number;
   }>;
   getAllFilePaths(
     folder: string,

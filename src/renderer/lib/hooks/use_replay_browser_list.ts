@@ -78,7 +78,6 @@ export const useReplayBrowserList = () => {
   };
 
   return {
-    hiddenFileCount: 0, // No more frontend filtering
     files,
     index,
     total,
