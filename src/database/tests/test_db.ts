@@ -8,14 +8,20 @@ import { migrateToLatest } from "../migrate_to_latest";
 export async function initTestDb(): Promise<Kysely<Database>> {
   const sqliteDb = new Sqlite(":memory:");
 
+  // Enable foreign keys BEFORE creating Kysely instance (required on some platforms like Ubuntu)
+  sqliteDb.pragma("foreign_keys = ON");
+
   const database = new Kysely<Database>({
     dialect: new SqliteDialect({
       database: sqliteDb,
     }),
   });
 
-  // Enable foreign keys for SQLite (required on some platforms like Ubuntu)
-  await sql`PRAGMA foreign_keys = ON`.execute(database);
+  // Verify foreign keys are enabled
+  const result = await sql<{ foreign_keys: number }>`PRAGMA foreign_keys`.execute(database);
+  if (result.rows[0]?.foreign_keys !== 1) {
+    throw new Error("Failed to enable foreign keys");
+  }
 
   const migrationsFolder = path.join(__dirname, "../migrations");
   await migrateToLatest(database, migrationsFolder);
