@@ -7,6 +7,10 @@ import { migrateToLatest } from "../migrate_to_latest";
 
 export async function initTestDb(): Promise<Kysely<Database>> {
   const sqliteDb = new Sqlite(":memory:");
+
+  // Enable foreign keys for SQLite (required on some platforms like Ubuntu)
+  sqliteDb.pragma("foreign_keys = ON");
+
   const database = new Kysely<Database>({
     dialect: new SqliteDialect({
       database: sqliteDb,

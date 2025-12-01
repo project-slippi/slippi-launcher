@@ -2,7 +2,7 @@ import Sqlite from "better-sqlite3";
 import { app } from "electron";
 import log from "electron-log";
 import fs from "fs-extra";
-import { Kysely } from "kysely";
+import { Kysely, sql } from "kysely";
 import { SqliteWorkerDialect } from "kysely-sqlite-worker";
 import path from "path";
 
@@ -55,6 +55,10 @@ async function initDatabaseAndRunMigrations(
       source,
     }),
   });
+
+  // Enable foreign keys for SQLite (required on some platforms like Ubuntu)
+  await sql`PRAGMA foreign_keys = ON`.execute(database);
+  log.info("Enabled foreign key constraints");
 
   const migrationsFolder = app.isPackaged
     ? path.join(process.resourcesPath, "./migrations")

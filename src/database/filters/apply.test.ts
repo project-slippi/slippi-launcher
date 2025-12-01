@@ -1,5 +1,5 @@
-import Database from "better-sqlite3";
-import { Kysely, SqliteDialect } from "kysely";
+import { initTestDb } from "@database/tests/test_db";
+import type { Kysely } from "kysely";
 
 import type { Database as DatabaseSchema } from "../schema";
 import { applyFilters } from "./apply";
@@ -9,12 +9,7 @@ describe("Text Search Filter", () => {
   let db: Kysely<DatabaseSchema>;
 
   beforeAll(async () => {
-    // Create an in-memory SQLite database for testing
-    const dialect = new SqliteDialect({
-      database: new Database(":memory:"),
-    });
-
-    db = new Kysely<DatabaseSchema>({ dialect });
+    db = await initTestDb();
 
     // Create tables
     await db.schema
