@@ -33,9 +33,16 @@ async function initDatabaseAndRunMigrations(
   if (databasePath) {
     log.info(`Using database at: ${databasePath}`);
     const userVersion = getDatabaseUserVersion(databasePath);
-    log.info(`Current database user version is ${userVersion}. Latest version is ${DATABASE_USER_VERSION}.`);
-    if (userVersion !== DATABASE_USER_VERSION || force) {
+
+    // If we couldn't read the version (corrupted database) or version mismatch, recreate
+    if (userVersion === null) {
+      log.warn(`Database is corrupted or unreadable. Recreating database.`);
       await backupAndRecreateDatabase(databasePath);
+    } else {
+      log.info(`Current database user version is ${userVersion}. Latest version is ${DATABASE_USER_VERSION}.`);
+      if (userVersion !== DATABASE_USER_VERSION || force) {
+        await backupAndRecreateDatabase(databasePath);
+      }
     }
     source = databasePath;
   } else {
@@ -67,10 +74,16 @@ async function initDatabaseAndRunMigrations(
   return database;
 }
 
-function getDatabaseUserVersion(databasePath: string): number {
-  const sqliteDb = new Sqlite(databasePath);
-  const userVersion = sqliteDb.pragma("user_version", { simple: true }) as number;
-  return userVersion;
+function getDatabaseUserVersion(databasePath: string): number | null {
+  try {
+    const sqliteDb = new Sqlite(databasePath);
+    const userVersion = sqliteDb.pragma("user_version", { simple: true }) as number;
+    sqliteDb.close();
+    return userVersion;
+  } catch (err) {
+    log.warn(`Failed to read database version from ${databasePath}. Database may be corrupted: ${err}`);
+    return null;
+  }
 }
 
 async function backupAndRecreateDatabase(databasePath: string) {
@@ -78,13 +91,30 @@ async function backupAndRecreateDatabase(databasePath: string) {
   const backupDatabasePath = databasePath + ".bak";
   log.info(`Backing up database to: ${backupDatabasePath}`);
 
-  // Delete the existing backup if necessary
-  await fs.rm(backupDatabasePath, { force: true });
+  try {
+    // Delete the existing backup if necessary
+    await fs.rm(backupDatabasePath, { force: true });
 
-  // Rename the current database
-  await fs.rename(databasePath, backupDatabasePath);
+    // Rename the current database
+    await fs.rename(databasePath, backupDatabasePath);
+  } catch (err) {
+    log.warn(`Failed to backup database: ${err}. Attempting to delete and recreate without backup.`);
+    try {
+      // If we can't backup, just delete the corrupted database
+      await fs.rm(databasePath, { force: true });
+    } catch (deleteErr) {
+      log.error(`Failed to delete corrupted database: ${deleteErr}`);
+      throw new Error(`Unable to recreate database. Please manually delete: ${databasePath}`);
+    }
+  }
 
   // Create a new db with the latest user_version
-  const newSqliteDb = new Sqlite(databasePath);
-  newSqliteDb.pragma(`user_version = ${DATABASE_USER_VERSION}`);
+  try {
+    const newSqliteDb = new Sqlite(databasePath);
+    newSqliteDb.pragma(`user_version = ${DATABASE_USER_VERSION}`);
+    newSqliteDb.close();
+  } catch (err) {
+    log.error(`Failed to create new database: ${err}`);
+    throw new Error(`Unable to create new database at: ${databasePath}`);
+  }
 }
