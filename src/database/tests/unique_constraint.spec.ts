@@ -1,4 +1,5 @@
 import type { Database } from "@database/schema";
+import Sqlite from "better-sqlite3";
 import type { Kysely } from "kysely";
 
 import { FileRepository } from "../repositories/file_repository";
@@ -18,6 +19,16 @@ describe("file_id unique constraint", () => {
 
   afterEach(async () => {
     await destroy();
+  });
+
+  it("better-sqlite3 throws on UNIQUE constraint violation", () => {
+    const db = new Sqlite(":memory:");
+    db.exec("CREATE TABLE t (id INTEGER PRIMARY KEY, x TEXT UNIQUE)");
+    db.prepare("INSERT INTO t (x) VALUES (?)").run("foo");
+
+    expect(() => {
+      db.prepare("INSERT INTO t (x) VALUES (?)").run("foo");
+    }).toThrow();
   });
 
   it("should enforce 1:1 relationship between file and game", async () => {
