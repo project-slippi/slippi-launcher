@@ -42,8 +42,8 @@ const replayApi: ReplayService = {
     const { result } = await ipc_calculateStadiumStats.renderer!.trigger({ filePath });
     return result;
   },
-  async deleteReplays(gameIds: string[]) {
-    await ipc_deleteReplays.renderer!.trigger({ gameIds });
+  async deleteReplays(fileIds: string[]) {
+    await ipc_deleteReplays.renderer!.trigger({ fileIds });
   },
   onReplayLoadProgressUpdate(handle: (progress: Progress) => void) {
     const { destroy } = ipc_loadProgressUpdatedEvent.renderer!.handle(async (progress) => {
