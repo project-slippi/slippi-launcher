@@ -55,7 +55,7 @@ export type GameModeFilter = {
 /**
  * Filter for general text searching across replay data
  *
- * Uses SQL ILIKE for case-insensitive fuzzy matching.
+ * Uses SQL LIKE for case-insensitive fuzzy matching (case-insensitive by default in SQLite).
  * Searches across ALL player fields (connect code, display name, tag) and file names.
  * Returns a match if the query appears in ANY of these fields.
  *
