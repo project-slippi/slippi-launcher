@@ -15,6 +15,7 @@ const sharedConfig = {
   },
   moduleFileExtensions: ["js", "jsx", "ts", "tsx", "json"],
   moduleDirectories: ["node_modules", "release/app/node_modules"],
+  modulePathIgnorePatterns: ["<rootDir>/release/"],
   testPathIgnorePatterns: ["release/app/dist"],
   transformIgnorePatterns: ["node_modules/(?!is-ip|ip-regex|super-regex|function-timeout|time-span|convert-hrtime|is-regexp|clone-regexp)"],
 };
