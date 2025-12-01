@@ -2,6 +2,8 @@ import type { StadiumStatsType, StatsType } from "@slippi/slippi-js/node";
 import { _, makeEndpoint } from "utils/ipc";
 
 import type {
+  BulkDeleteOptions,
+  BulkDeleteResult,
   FileLoadResult,
   FileResult,
   FolderResult,
@@ -51,6 +53,12 @@ export const ipc_calculateStadiumStats = makeEndpoint.main(
 );
 
 export const ipc_deleteReplays = makeEndpoint.main("deleteReplays", <{ fileIds: string[] }>_, <{ success: boolean }>_);
+
+export const ipc_bulkDeleteReplays = makeEndpoint.main(
+  "bulkDeleteReplays",
+  <{ folderPath: string; options?: BulkDeleteOptions }>_,
+  <BulkDeleteResult>_,
+);
 
 // Events
 

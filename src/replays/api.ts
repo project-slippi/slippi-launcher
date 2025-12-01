@@ -1,5 +1,6 @@
 /* eslint-disable import/no-default-export */
 import {
+  ipc_bulkDeleteReplays,
   ipc_calculateGameStats,
   ipc_calculateStadiumStats,
   ipc_deleteReplays,
@@ -11,7 +12,7 @@ import {
   ipc_selectTreeFolder,
   ipc_statsPageRequestedEvent,
 } from "./ipc";
-import type { Progress, ReplayService, SearchGamesOptions } from "./types";
+import type { BulkDeleteOptions, Progress, ReplayService, SearchGamesOptions } from "./types";
 
 const replayApi: ReplayService = {
   async initializeFolderTree(folders: readonly string[]) {
@@ -44,6 +45,10 @@ const replayApi: ReplayService = {
   },
   async deleteReplays(fileIds: string[]) {
     await ipc_deleteReplays.renderer!.trigger({ fileIds });
+  },
+  async bulkDeleteReplays(folderPath: string, options?: BulkDeleteOptions) {
+    const { result } = await ipc_bulkDeleteReplays.renderer!.trigger({ folderPath, options });
+    return result;
   },
   onReplayLoadProgressUpdate(handle: (progress: Progress) => void) {
     const { destroy } = ipc_loadProgressUpdatedEvent.renderer!.handle(async (progress) => {
