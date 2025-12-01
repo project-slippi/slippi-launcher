@@ -1,3 +1,4 @@
+import type { ReplayFilter } from "@database/filters/types";
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
@@ -25,3 +26,26 @@ export const useReplayFilter = create(
     }),
   ),
 );
+
+/**
+ * Converts the current filter state to ReplayFilter array
+ */
+export const buildReplayFilters = (hideShortGames: boolean, searchText: string): ReplayFilter[] => {
+  const filters: ReplayFilter[] = [];
+
+  if (hideShortGames) {
+    filters.push({
+      type: "duration",
+      minFrames: 30 * 60, // 30 seconds
+    });
+  }
+
+  if (searchText && searchText.trim() !== "") {
+    filters.push({
+      type: "textSearch",
+      query: searchText.trim(),
+    });
+  }
+
+  return filters;
+};
