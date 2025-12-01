@@ -66,7 +66,7 @@ export default function setupReplaysIpc() {
     return { file: fileResult, stadiumStats };
   });
 
-  ipc_searchGames.main!.handle(async ({ options }) => {
+  ipc_searchGames.main!.handle(async (options) => {
     const replayProvider = await replayProviderPromise;
     const { limit = 20, continuation, orderBy = { field: "startTime", direction: "desc" }, filters } = options;
 
@@ -78,7 +78,7 @@ export default function setupReplaysIpc() {
     return await replayProvider.searchReplays(options.folderPath, limit, continuation, orderBy, filters, onProgress);
   });
 
-  ipc_getAllFilePaths.main!.handle(async ({ options }) => {
+  ipc_getAllFilePaths.main!.handle(async (options) => {
     const replayProvider = await replayProviderPromise;
     const { orderBy = { field: "startTime", direction: "desc" }, filters } = options;
 
@@ -91,7 +91,7 @@ export default function setupReplaysIpc() {
     return { success: true };
   });
 
-  ipc_bulkDeleteReplays.main!.handle(async ({ options }) => {
+  ipc_bulkDeleteReplays.main!.handle(async (options) => {
     const replayProvider = await replayProviderPromise;
 
     return await replayProvider.bulkDeleteReplays(options.folderPath, options.filters, {

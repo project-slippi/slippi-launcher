@@ -13,17 +13,9 @@ import type {
 
 // Handlers
 
-export const ipc_searchGames = makeEndpoint.main(
-  "searchGames",
-  <{ options: SearchGamesOptions }>_,
-  <SearchGamesResult>_,
-);
+export const ipc_searchGames = makeEndpoint.main("searchGames", <SearchGamesOptions>_, <SearchGamesResult>_);
 
-export const ipc_getAllFilePaths = makeEndpoint.main(
-  "getAllFilePaths",
-  <{ options: SearchGamesOptions }>_,
-  <string[]>_,
-);
+export const ipc_getAllFilePaths = makeEndpoint.main("getAllFilePaths", <SearchGamesOptions>_, <string[]>_);
 
 export const ipc_initializeFolderTree = makeEndpoint.main(
   "initializeFolderTree",
@@ -51,11 +43,7 @@ export const ipc_calculateStadiumStats = makeEndpoint.main(
 
 export const ipc_deleteReplays = makeEndpoint.main("deleteReplays", <{ fileIds: string[] }>_, <{ success: boolean }>_);
 
-export const ipc_bulkDeleteReplays = makeEndpoint.main(
-  "bulkDeleteReplays",
-  <{ options: BulkDeleteOptions }>_,
-  <BulkDeleteResult>_,
-);
+export const ipc_bulkDeleteReplays = makeEndpoint.main("bulkDeleteReplays", <BulkDeleteOptions>_, <BulkDeleteResult>_);
 
 // Events
 
