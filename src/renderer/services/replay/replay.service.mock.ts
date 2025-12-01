@@ -1,4 +1,6 @@
 import type {
+  BulkDeleteOptions,
+  BulkDeleteResult,
   FileLoadResult,
   FileResult,
   FolderResult,
@@ -45,6 +47,11 @@ class MockReplayClient implements ReplayService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
+  public async getAllFilePaths(folderPath: string, _options?: SearchGamesOptions): Promise<string[]> {
+    return [1, 2, 3, 4].map((i) => `${folderPath}/Game${i}.slp`);
+  }
+
+  @delayAndMaybeError(SHOULD_ERROR)
   public async calculateGameStats(_filePath: string): Promise<{ file: FileResult; stats: StatsType | null }> {
     throw new Error("Method not implemented.");
   }
@@ -54,6 +61,16 @@ class MockReplayClient implements ReplayService {
     _filePath: string,
   ): Promise<{ file: FileResult; stadiumStats: StadiumStatsType | null }> {
     throw new Error("Method not implemented.");
+  }
+
+  @delayAndMaybeError(SHOULD_ERROR)
+  public async deleteReplays(_fileIds: string[]): Promise<void> {
+    return;
+  }
+
+  @delayAndMaybeError(SHOULD_ERROR)
+  public async bulkDeleteReplays(_folderPath: string, _options?: BulkDeleteOptions): Promise<BulkDeleteResult> {
+    return { deletedCount: 0 };
   }
 
   public onReplayLoadProgressUpdate(_handle: (progress: Progress) => void): () => void {

@@ -168,6 +168,50 @@ export class GameRepository {
 
     return res;
   }
+
+  /**
+   * Get file IDs for games matching filters (for bulk deletion)
+   *
+   * @param db Database connection
+   * @param folder Folder to search in (if empty/null, searches all folders)
+   * @param filters Array of filters to apply (AND logic between filters)
+   * @param options Ordering options and optional excluded file IDs
+   * @returns Array of file IDs
+   */
+  public static async getFileIdsForBulkDelete(
+    db: DB,
+    folder: string | null,
+    filters: ReplayFilter[],
+    options: {
+      orderBy: { field: "startTime" | "lastFrame"; direction: "asc" | "desc" };
+      excludeFileIds?: number[];
+    },
+  ): Promise<number[]> {
+    let query = db.selectFrom("file").innerJoin("game", "game.file_id", "file._id");
+
+    // Apply folder filter if specified
+    if (folder != null && folder !== "") {
+      query = query.where("folder", "=", folder);
+    }
+
+    // Apply all filters (AND logic)
+    query = applyFilters(query, filters);
+
+    // Exclude specific file IDs if provided
+    if (options.excludeFileIds && options.excludeFileIds.length > 0) {
+      query = query.where("file._id", "not in", options.excludeFileIds);
+    }
+
+    // Apply ordering to maintain consistent order
+    const orderField = options.orderBy.field === "startTime" ? "game.start_time" : "game.last_frame";
+    const res = await query
+      .select("file._id")
+      .orderBy(orderField as any, options.orderBy.direction)
+      .orderBy("game._id", options.orderBy.direction)
+      .execute();
+
+    return res.map((row) => row._id);
+  }
 }
 
 function handleContinuation<K extends StringReference<Database, "file" | "game">>(

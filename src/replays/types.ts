@@ -71,6 +71,26 @@ export interface ReplayProvider {
     files: FileResult[];
     continuation: string | undefined;
   }>;
+  getAllFilePaths?(
+    folder: string,
+    orderBy?: {
+      field: "lastFrame" | "startTime";
+      direction?: "asc" | "desc";
+    },
+    filters?: any[],
+  ): Promise<string[]>;
+  bulkDeleteReplays?(
+    folder: string,
+    orderBy?: {
+      field: "lastFrame" | "startTime";
+      direction?: "asc" | "desc";
+    },
+    filters?: any[],
+    options?: {
+      excludeFilePaths?: string[];
+      includeFilePaths?: string[];
+    },
+  ): Promise<{ deletedCount: number }>;
 }
 
 export type SearchGamesOptions = {
@@ -89,6 +109,20 @@ export type SearchGamesResult = {
   totalCount?: number;
 };
 
+export type BulkDeleteOptions = {
+  orderBy?: {
+    field: "startTime" | "lastFrame";
+    direction?: "asc" | "desc";
+  };
+  hideShortGames?: boolean;
+  excludeFilePaths?: string[];
+  includeFilePaths?: string[];
+};
+
+export type BulkDeleteResult = {
+  deletedCount: number;
+};
+
 export interface ReplayService {
   initializeFolderTree(folders: readonly string[]): Promise<readonly FolderResult[]>;
   selectTreeFolder(folderPath: string): Promise<readonly FolderResult[]>;
@@ -98,6 +132,7 @@ export interface ReplayService {
   calculateGameStats(filePath: string): Promise<{ file: FileResult; stats: StatsType | null }>;
   calculateStadiumStats(filePath: string): Promise<{ file: FileResult; stadiumStats: StadiumStatsType | null }>;
   deleteReplays(fileIds: string[]): Promise<void>;
+  bulkDeleteReplays(folderPath: string, options?: BulkDeleteOptions): Promise<BulkDeleteResult>;
   onReplayLoadProgressUpdate(handle: (progress: Progress) => void): () => void;
   onStatsPageRequest(handle: (filePath: string) => void): () => void;
 }
