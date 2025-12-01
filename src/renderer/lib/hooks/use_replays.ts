@@ -16,10 +16,8 @@ type StoreState = {
   loadingMore: boolean;
   progress: Progress | null;
   files: FileResult[];
-  totalBytes: number | null;
   currentRoot: string | null;
   currentFolder: string;
-  fileErrorCount: number;
   scrollRowItem: number;
   selectedFiles: string[];
   selectAllMode: boolean;
@@ -41,12 +39,10 @@ const initialState: StoreState = {
   loadingMore: false,
   progress: null,
   files: [],
-  totalBytes: null,
   folderTree: [],
   collapsedFolders: [],
   currentRoot: null,
   currentFolder: useSettings.getState().settings.rootSlpPath,
-  fileErrorCount: 0,
   scrollRowItem: 0,
   selectedFiles: [],
   selectAllMode: false,
@@ -178,8 +174,6 @@ export class ReplayPresenter {
           state.scrollRowItem = 0;
           state.files = result.files;
           state.loading = false;
-          state.fileErrorCount = 0; // searchGames doesn't track errors
-          state.totalBytes = null; // searchGames doesn't return totalBytes
           state.continuation = result.continuation;
           state.hasMoreReplays = result.continuation !== undefined;
           state.totalFilesInFolder = result.totalCount ?? null;

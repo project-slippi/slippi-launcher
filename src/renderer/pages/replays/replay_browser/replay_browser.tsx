@@ -1,4 +1,3 @@
-import { exists } from "@common/exists";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import FolderIcon from "@mui/icons-material/Folder";
@@ -7,7 +6,6 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import List from "@mui/material/List";
 import Tooltip from "@mui/material/Tooltip";
-import Typography from "@mui/material/Typography";
 import React from "react";
 
 import { DualPane } from "@/components/dual_pane";
@@ -20,7 +18,6 @@ import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/us
 import { useReplayFilter } from "@/lib/hooks/use_replay_filter";
 import { useReplayPresenter, useReplays, useReplaySelection } from "@/lib/hooks/use_replays";
 import { useToasts } from "@/lib/hooks/use_toasts";
-import { humanReadableBytes } from "@/lib/utils";
 import { useServices } from "@/services";
 import { colors } from "@/styles/colors";
 
@@ -46,13 +43,11 @@ export const ReplayBrowser = React.memo(() => {
   const selectAllMode = useReplays((store) => store.selectAllMode);
   const deselectedFiles = useReplays((store) => store.deselectedFiles);
   const totalFilesInFolder = useReplays((store) => store.totalFilesInFolder);
-  const totalBytes = useReplays((store) => store.totalBytes);
   const fileSelection = useReplaySelection();
-  const fileErrorCount = useReplays((store) => store.fileErrorCount);
   const { showError, showSuccess } = useToasts();
 
   const resetFilter = useReplayFilter((store) => store.resetFilter);
-  const { files: filteredFiles, hiddenFileCount } = useReplayBrowserList();
+  const { files: filteredFiles } = useReplayBrowserList();
   const { goToReplayStatsPage } = useReplayBrowserNavigation();
 
   const setSelectedItem = (index: number | null) => {
@@ -224,7 +219,6 @@ export const ReplayBrowser = React.memo(() => {
                 <LoadingBox />
               ) : filteredFiles.length === 0 ? (
                 <EmptyFolder
-                  hiddenFileCount={hiddenFileCount}
                   onClearFilter={() => {
                     if (searchInputRef.current) {
                       searchInputRef.current.value = "";
@@ -296,11 +290,7 @@ export const ReplayBrowser = React.memo(() => {
             {currentFolder}
           </LabelledText>
         </div>
-        <div style={{ textAlign: "right" }}>
-          {Messages.totalFileCount(filteredFiles.length)} {Messages.filteredFileCount(hiddenFileCount)}{" "}
-          {fileErrorCount > 0 ? Messages.errorFileCount(fileErrorCount) : ""}
-          {exists(totalBytes) ? Messages.totalSize(humanReadableBytes(totalBytes)) : ""}
-        </div>
+        <div style={{ textAlign: "right" }}>{Messages.totalFileCount(totalFilesInFolder ?? filteredFiles.length)}</div>
       </Footer>
     </Outer>
   );
@@ -311,25 +301,22 @@ const LoadingBox = React.memo(function LoadingBox() {
   return <LoadingScreenWithProgress current={progress?.current} total={progress?.total} />;
 });
 
-const EmptyFolder = ({ hiddenFileCount, onClearFilter }: { hiddenFileCount: number; onClearFilter: () => void }) => {
+const EmptyFolder = ({ onClearFilter }: { onClearFilter: () => void }) => {
   return (
     <IconMessage Icon={SearchIcon} label={Messages.noSlpFilesFound()}>
-      {hiddenFileCount > 0 && (
-        <div style={{ textAlign: "center" }}>
-          <Typography style={{ marginTop: 20, opacity: 0.6 }}>{Messages.hiddenFileCount(hiddenFileCount)}</Typography>
-          <Button
-            css={css`
-              text-transform: lowercase;
-              font-size: 12px;
-            `}
-            color="primary"
-            onClick={onClearFilter}
-            size="small"
-          >
-            {Messages.clearFilter()}
-          </Button>
-        </div>
-      )}
+      <div style={{ textAlign: "center" }}>
+        <Button
+          css={css`
+            text-transform: lowercase;
+            font-size: 12px;
+          `}
+          color="primary"
+          onClick={onClearFilter}
+          size="small"
+        >
+          {Messages.clearFilter()}
+        </Button>
+      </div>
     </IconMessage>
   );
 };
