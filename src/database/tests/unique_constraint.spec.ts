@@ -21,6 +21,13 @@ describe("file_id unique constraint", () => {
   });
 
   it("should enforce 1:1 relationship between file and game", async () => {
+    const rows = await db
+      .selectFrom("sqlite_master" as any)
+      .select(["type", "name", "sql"])
+      .execute();
+
+    console.log(rows);
+
     // Create a file
     const { _id: fileId } = await FileRepository.insertFile(
       db,

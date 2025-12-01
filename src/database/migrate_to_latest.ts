@@ -6,6 +6,7 @@ import path from "path";
 import type { Database } from "./schema";
 
 export async function migrateToLatest(db: Kysely<Database>, migrationFolder: string): Promise<MigrationResult[]> {
+  console.log("migrating to latest with migration folder: ${migrationFolder}");
   const migrator = new Migrator({
     db,
     provider: new FileMigrationProvider({

@@ -32,6 +32,13 @@ describe("database integration tests", () => {
   });
 
   it("should disallow files with the same folder and filename", async () => {
+    const rows = await db
+      .selectFrom("sqlite_master" as any)
+      .select(["type", "name", "sql"])
+      .execute();
+
+    console.log(rows);
+
     await FileRepository.insertFile(db, aMockFileWith({ folder: "folder", name: "name" }));
     await FileRepository.insertFile(db, aMockFileWith({ folder: "folder", name: "different_name" }));
     await FileRepository.insertFile(db, aMockFileWith({ folder: "different_folder", name: "name" }));
