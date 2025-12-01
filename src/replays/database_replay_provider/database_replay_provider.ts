@@ -9,6 +9,7 @@ import { boolToInt, boolToIntOrNull } from "@database/utils";
 import type { FileLoadResult, FileResult, Progress, ReplayProvider } from "@replays/types";
 import type { StadiumStatsType, StatsType } from "@slippi/slippi-js/node";
 import { SlippiGame } from "@slippi/slippi-js/node";
+import { shell } from "electron";
 import log from "electron-log";
 import * as fs from "fs-extra";
 import type { Kysely } from "kysely";
@@ -193,6 +194,34 @@ export class DatabaseReplayProvider implements ReplayProvider {
   public async calculateStadiumStats(fullPath: string): Promise<StadiumStatsType | null> {
     const game = new SlippiGame(fullPath);
     return game.getStadiumStats();
+  }
+
+  public async deleteReplays(gameIds: string[]): Promise<void> {
+    // Convert string IDs to numbers
+    const numericGameIds = gameIds.map((id) => parseInt(id, 10));
+
+    // Get the file paths for the given game IDs
+    const gameRecords = await GameRepository.findGamesByIds(this.db, numericGameIds);
+
+    if (gameRecords.length === 0) {
+      log.warn("No games found for the given IDs");
+      return;
+    }
+
+    // Delete the records from the database
+    // Get the file IDs from the game records
+    const fileIds = gameRecords.map((record) => record.file_id);
+    await FileRepository.deleteFileById(this.db, ...fileIds);
+
+    // Delete files from the filesystem
+    const filePaths = gameRecords.map((record) => path.resolve(record.folder, record.name));
+    const deletePromises = await Promise.allSettled(filePaths.map((filePath) => shell.trashItem(filePath)));
+    const errCount = deletePromises.reduce((curr, { status }) => (status === "rejected" ? curr + 1 : curr), 0);
+    if (errCount > 0) {
+      log.warn(`${errCount} file(s) failed to delete from filesystem`);
+    }
+
+    log.info(`Deleted ${gameRecords.length} replay(s)`);
   }
 
   private async mapGameAndFileRecordsToFileResult(records: (GameRecord & FileRecord)[]): Promise<FileResult[]> {

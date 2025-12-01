@@ -15,7 +15,7 @@ export type PlayerInfo = {
 };
 
 export type FileResult = {
-  id: string;
+  id: string; // Database-generated game._id
   fileName: string;
   fullPath: string;
   game: GameInfo;
@@ -56,6 +56,7 @@ export interface ReplayProvider {
   loadFolder(folder: string, onProgress?: (progress: Progress) => void): Promise<FileLoadResult>;
   calculateGameStats(fullPath: string): Promise<StatsType | null>;
   calculateStadiumStats(fullPath: string): Promise<StadiumStatsType | null>;
+  deleteReplays?(gameIds: string[]): Promise<void>;
   searchReplays?(
     folder: string,
     limit?: number,
@@ -96,6 +97,7 @@ export interface ReplayService {
   getAllFilePaths(folderPath: string, options?: SearchGamesOptions): Promise<string[]>;
   calculateGameStats(filePath: string): Promise<{ file: FileResult; stats: StatsType | null }>;
   calculateStadiumStats(filePath: string): Promise<{ file: FileResult; stadiumStats: StadiumStatsType | null }>;
+  deleteReplays(gameIds: string[]): Promise<void>;
   onReplayLoadProgressUpdate(handle: (progress: Progress) => void): () => void;
   onStatsPageRequest(handle: (filePath: string) => void): () => void;
 }

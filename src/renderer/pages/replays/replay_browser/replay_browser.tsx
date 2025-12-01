@@ -80,21 +80,19 @@ export const ReplayBrowser = React.memo(() => {
     }
   }, [presenter, loadingMore, hasMoreReplays, showError]);
 
-  const deleteFiles = React.useCallback(
-    (filePaths: string[]) => {
-      // Optimistically remove the files first
-      presenter.removeFiles(filePaths);
-
-      window.electron.common
-        .deleteFiles(filePaths)
+  const deleteReplays = React.useCallback(
+    (gameIds: string[]) => {
+      replayService
+        .deleteReplays(gameIds)
         .then(() => {
-          showSuccess(Messages.filesDeleted(filePaths.length));
-          // Reload the folder to resync the database and remove deleted files
-          return presenter.loadFolder(currentFolder, true);
+          // Don't optimistically remove the files in the UI since it could trigger an
+          // infinite scroll and fetch more data, _before_ we can delete the files from the DB.
+          presenter.removeFilesByIds(gameIds);
+          showSuccess(Messages.filesDeleted(gameIds.length));
         })
         .catch(showError);
     },
-    [presenter, showError, showSuccess, currentFolder],
+    [presenter, showError, showSuccess, replayService],
   );
 
   const handlePlayAll = React.useCallback(async () => {
@@ -135,30 +133,32 @@ export const ReplayBrowser = React.memo(() => {
       fileSelection.clearSelection();
 
       if (selectAllMode) {
-        // Get all file paths from the current folder with the same filters
+        // Get all files from the current folder with the same filters
         const { sortBy, sortDirection, hideShortGames } = useReplayFilter.getState();
-        const allFilePaths = await replayService.getAllFilePaths(currentFolder, {
+        const searchResult = await replayService.searchGames(currentFolder, {
           orderBy: {
             field: sortBy === "DATE" ? "startTime" : "lastFrame",
             direction: sortDirection === "DESC" ? "desc" : "asc",
           },
           hideShortGames,
+          limit: 1000000, // Large limit to get all files
         });
 
         // Filter out deselected files
         const deselectedSet = new Set(deselectedFiles);
-        const filesToDelete = allFilePaths.filter((path) => !deselectedSet.has(path));
+        const filesToDelete = searchResult.files.filter((file) => !deselectedSet.has(file.fullPath));
 
         // Preserve order: manually selected files first, then remaining files
         const manuallySelectedSet = new Set(selectedFiles);
-        const manuallySelected = filesToDelete.filter((path) => manuallySelectedSet.has(path));
-        const remainingFiles = filesToDelete.filter((path) => !manuallySelectedSet.has(path));
-        const orderedPaths = [...manuallySelected, ...remainingFiles];
+        const manuallySelected = filesToDelete.filter((file) => manuallySelectedSet.has(file.fullPath));
+        const remainingFiles = filesToDelete.filter((file) => !manuallySelectedSet.has(file.fullPath));
+        const orderedFiles = [...manuallySelected, ...remainingFiles];
 
-        await deleteFiles(orderedPaths);
+        await deleteReplays(orderedFiles.map((file) => file.id));
       } else {
-        // Just delete the selected files
-        await deleteFiles(selectedFiles);
+        // Just delete the selected files - map file paths to game IDs
+        const gameIds = filteredFiles.filter((file) => selectedFiles.includes(file.fullPath)).map((file) => file.id);
+        await deleteReplays(gameIds);
       }
     } catch (err) {
       showError(err);
@@ -169,9 +169,10 @@ export const ReplayBrowser = React.memo(() => {
     deselectedFiles,
     currentFolder,
     replayService,
-    deleteFiles,
+    deleteReplays,
     fileSelection,
     showError,
+    filteredFiles,
   ]);
 
   return (
@@ -242,7 +243,12 @@ export const ReplayBrowser = React.memo(() => {
               ) : (
                 <FileList
                   folderPath={currentFolder}
-                  onDelete={(filePath) => deleteFiles([filePath])}
+                  onDelete={(filePath) => {
+                    const file = filteredFiles.find((f) => f.fullPath === filePath);
+                    if (file) {
+                      deleteReplays([file.id]);
+                    }
+                  }}
                   onFileClick={fileSelection.onFileClick}
                   selectedFiles={selectedFiles}
                   onSelect={(index: number) => setSelectedItem(index)}

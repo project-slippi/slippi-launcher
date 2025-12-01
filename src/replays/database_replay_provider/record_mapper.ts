@@ -24,7 +24,7 @@ export function mapGameRecordToFileResult(
 ): FileResult {
   const fullPath = path.resolve(gameAndFileRecord.folder, gameAndFileRecord.name);
   return {
-    id: `${gameAndFileRecord._id}-${gameAndFileRecord.file_id}`,
+    id: gameAndFileRecord._id.toString(),
     fileName: gameAndFileRecord.name,
     fullPath,
     game: {
