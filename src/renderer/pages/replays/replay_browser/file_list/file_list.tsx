@@ -13,6 +13,7 @@ import { useReplayFilter } from "@/lib/hooks/use_replay_filter";
 import { ReplayFileContainer } from "../replay_file/replay_file.container";
 import { FileListMessages as Messages } from "./file_list.messages";
 
+const LOAD_MORE_THRESHOLD = 5;
 const REPLAY_FILE_ITEM_SIZE = 90;
 
 // This is the container for all the replays visible, the autosizer will handle the virtualization portion
@@ -109,9 +110,9 @@ const FileListResults = ({
           onItemsRendered={({ visibleStartIndex, visibleStopIndex }) => {
             setScrollRowRef(visibleStartIndex);
 
-            // Trigger load more when user scrolls near the end (within 10 items)
+            // Trigger load more when user scrolls near the end
             const itemsFromEnd = files.length - visibleStopIndex;
-            if (itemsFromEnd <= 2) {
+            if (itemsFromEnd <= LOAD_MORE_THRESHOLD) {
               onLoadMore();
             }
           }}
