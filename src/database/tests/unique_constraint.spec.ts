@@ -35,10 +35,18 @@ describe("file_id unique constraint", () => {
     );
 
     // Insert first game - should succeed
-    await GameRepository.insertGame(db, aMockGameWith(fileId));
+    const game = aMockGameWith(fileId);
+    const gameRecord = await GameRepository.insertGame(db, game);
+    expect(gameRecord).toBeDefined();
+    console.log(gameRecord);
 
     // Try to insert second game with same file_id - should fail
-    const action = async () => await GameRepository.insertGame(db, aMockGameWith(fileId));
+    let gameRecord2: any;
+    const action = async () => {
+      gameRecord2 = await GameRepository.insertGame(db, game);
+      console.log(gameRecord2);
+      return gameRecord2;
+    };
     await expect(action()).rejects.toThrow();
   });
 
