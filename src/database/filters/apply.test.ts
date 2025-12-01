@@ -9,53 +9,8 @@ describe("Text Search Filter", () => {
   let db: Kysely<DatabaseSchema>;
 
   beforeAll(async () => {
+    // initTestDb now runs migrations which create the tables
     db = await initTestDb();
-
-    // Create tables
-    await db.schema
-      .createTable("file")
-      .addColumn("_id", "integer", (col) => col.primaryKey().autoIncrement())
-      .addColumn("name", "text", (col) => col.notNull())
-      .addColumn("folder", "text", (col) => col.notNull())
-      .addColumn("size_bytes", "integer", (col) => col.notNull())
-      .addColumn("birth_time", "text")
-      .execute();
-
-    await db.schema
-      .createTable("game")
-      .addColumn("_id", "integer", (col) => col.primaryKey().autoIncrement())
-      .addColumn("file_id", "integer", (col) => col.notNull().references("file._id").onDelete("cascade"))
-      .addColumn("is_ranked", "integer")
-      .addColumn("is_teams", "integer")
-      .addColumn("stage", "integer")
-      .addColumn("start_time", "text")
-      .addColumn("platform", "text")
-      .addColumn("console_nickname", "text")
-      .addColumn("mode", "integer")
-      .addColumn("last_frame", "integer")
-      .addColumn("timer_type", "integer")
-      .addColumn("starting_timer_secs", "integer")
-      .addColumn("session_id", "text")
-      .addColumn("game_number", "integer")
-      .addColumn("tiebreak_number", "integer")
-      .execute();
-
-    await db.schema
-      .createTable("player")
-      .addColumn("_id", "integer", (col) => col.primaryKey().autoIncrement())
-      .addColumn("game_id", "integer", (col) => col.notNull().references("game._id").onDelete("cascade"))
-      .addColumn("port", "integer", (col) => col.notNull())
-      .addColumn("type", "integer")
-      .addColumn("character_id", "integer")
-      .addColumn("character_color", "integer")
-      .addColumn("team_id", "integer")
-      .addColumn("is_winner", "integer")
-      .addColumn("start_stocks", "integer")
-      .addColumn("connect_code", "text")
-      .addColumn("display_name", "text")
-      .addColumn("tag", "text")
-      .addColumn("user_id", "text")
-      .execute();
 
     // Insert test data with non-overlapping search terms
     // Game 1: Has unique connect code "ALFA#0" that doesn't appear anywhere else
