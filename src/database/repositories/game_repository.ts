@@ -30,65 +30,6 @@ export class GameRepository {
     return res;
   }
 
-  public static async findGamesByFolder(db: DB, folder: string, limit?: number) {
-    let query = db.selectFrom("file").where("folder", "=", folder).innerJoin("game", "game.file_id", "file._id");
-
-    if (limit != null && limit > 0) {
-      query = query.limit(limit);
-    }
-
-    const res = await query.selectAll(["file", "game"]).select(["game._id as _id"]).execute();
-    return res;
-  }
-
-  public static async findGamesOrderByStartTime(
-    db: DB,
-    folder: string,
-    limit: number,
-    continueFromStartTime: string | null = null,
-    nextIdInclusive: number | null = null,
-    direction: "asc" | "desc" = "desc",
-  ) {
-    let query = db.selectFrom("file").where("folder", "=", folder).innerJoin("game", "game.file_id", "file._id");
-
-    if (nextIdInclusive != null) {
-      query = query.where(handleContinuation("game.start_time", continueFromStartTime, nextIdInclusive, direction));
-    }
-
-    const res = await query
-      .selectAll(["file", "game"])
-      .select(["game._id as _id"])
-      .orderBy("game.start_time", direction)
-      .orderBy("game._id", direction)
-      .limit(limit)
-      .execute();
-    return res;
-  }
-
-  public static async findGamesOrderByLastFrame(
-    db: DB,
-    folder: string,
-    limit: number,
-    continueFromLastFrame: number | null = null,
-    nextIdInclusive: number | null = null,
-    direction: "asc" | "desc" = "desc",
-  ) {
-    let query = db.selectFrom("file").where("folder", "=", folder).innerJoin("game", "game.file_id", "file._id");
-
-    if (nextIdInclusive != null) {
-      query = query.where(handleContinuation("game.last_frame", continueFromLastFrame, nextIdInclusive, direction));
-    }
-
-    const res = await query
-      .selectAll(["file", "game"])
-      .select(["game._id as _id"])
-      .orderBy("game.last_frame", direction)
-      .orderBy("game._id", direction)
-      .limit(limit)
-      .execute();
-    return res;
-  }
-
   /**
    * Count games with filters
    *
