@@ -96,6 +96,7 @@ export type SearchGamesOptions = {
     direction?: "asc" | "desc";
   };
   hideShortGames?: boolean;
+  searchText?: string;
 };
 
 export type SearchGamesResult = {
@@ -106,6 +107,7 @@ export type SearchGamesResult = {
 
 export type BulkDeleteOptions = {
   hideShortGames?: boolean;
+  searchText?: string;
   excludeFilePaths?: string[];
 };
 

@@ -52,7 +52,30 @@ export type GameModeFilter = {
   modes: number[];
 };
 
-export type ReplayFilter = DurationFilter | PlayerFilter | GameModeFilter;
+/**
+ * Filter for general text searching across replay data
+ *
+ * Uses SQL ILIKE for case-insensitive fuzzy matching.
+ * Searches across ALL player fields (connect code, display name, tag) and file names.
+ * Returns a match if the query appears in ANY of these fields.
+ *
+ * This is distinct from PlayerFilter in that:
+ * - PlayerFilter: Structured queries with exact matching and AND logic for specific players
+ * - TextSearchFilter: Quick fuzzy search with OR logic across all searchable fields
+ *
+ * Examples:
+ * - { query: "mango" } = fuzzy search for "mango" in all player fields and file names
+ * - { query: "FOO#123" } = fuzzy search, would match "FOO#1234" or "FOO#123"
+ * - { query: "game_20231201", searchFileNameOnly: true } = search only file names
+ */
+export type TextSearchFilter = {
+  type: "textSearch";
+  query: string;
+  // Optional: if true, only search file names (not player fields)
+  searchFileNameOnly?: boolean;
+};
+
+export type ReplayFilter = DurationFilter | PlayerFilter | GameModeFilter | TextSearchFilter;
 
 // Game mode constants
 const GameModeValue = {

@@ -65,7 +65,7 @@ export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarPro
     debounceChange(name);
   };
 
-  // Reload when sort or hideShortGames changes (backend filters)
+  // Reload when sort, hideShortGames, or searchText changes (backend filters)
   // Skip initial mount to avoid double-loading
   const isInitialMount = React.useRef(true);
   React.useEffect(() => {
@@ -74,7 +74,7 @@ export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarPro
       return;
     }
     presenter.loadFolder(currentFolder, true).catch(showError);
-  }, [sortBy, sortDirection, hideShortGames]);
+  }, [sortBy, sortDirection, hideShortGames, storeSearchText]);
 
   return (
     <Outer>
