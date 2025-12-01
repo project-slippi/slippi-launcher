@@ -133,28 +133,21 @@ export const ReplayBrowser = React.memo(() => {
       fileSelection.clearSelection();
 
       if (selectAllMode) {
-        // Get all files from the current folder with the same filters
+        // Use bulk delete with filters
         const { sortBy, sortDirection, hideShortGames } = useReplayFilter.getState();
-        const searchResult = await replayService.searchGames(currentFolder, {
+        const result = await replayService.bulkDeleteReplays(currentFolder, {
           orderBy: {
             field: sortBy === "DATE" ? "startTime" : "lastFrame",
             direction: sortDirection === "DESC" ? "desc" : "asc",
           },
           hideShortGames,
-          limit: 1000000, // Large limit to get all files
+          excludeFilePaths: deselectedFiles,
+          includeFilePaths: selectedFiles.length > 0 ? selectedFiles : undefined,
         });
 
-        // Filter out deselected files
-        const deselectedSet = new Set(deselectedFiles);
-        const filesToDelete = searchResult.files.filter((file) => !deselectedSet.has(file.fullPath));
-
-        // Preserve order: manually selected files first, then remaining files
-        const manuallySelectedSet = new Set(selectedFiles);
-        const manuallySelected = filesToDelete.filter((file) => manuallySelectedSet.has(file.fullPath));
-        const remainingFiles = filesToDelete.filter((file) => !manuallySelectedSet.has(file.fullPath));
-        const orderedFiles = [...manuallySelected, ...remainingFiles];
-
-        await deleteReplays(orderedFiles.map((file) => file.id));
+        // Reload the folder to get the updated list
+        await presenter.loadFolder(currentFolder, true);
+        showSuccess(Messages.filesDeleted(result.deletedCount));
       } else {
         // Just delete the selected files - map file paths to file IDs
         const fileIds = filteredFiles.filter((file) => selectedFiles.includes(file.fullPath)).map((file) => file.id);
@@ -172,7 +165,9 @@ export const ReplayBrowser = React.memo(() => {
     deleteReplays,
     fileSelection,
     showError,
+    showSuccess,
     filteredFiles,
+    presenter,
   ]);
 
   return (

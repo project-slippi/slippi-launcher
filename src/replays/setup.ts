@@ -5,6 +5,7 @@ import path from "path";
 import { FileSystemReplayProvider } from "./file_system_replay_provider/file_system_replay_provider";
 import { FolderTreeService } from "./folder_tree_service";
 import {
+  ipc_bulkDeleteReplays,
   ipc_calculateGameStats,
   ipc_calculateStadiumStats,
   ipc_deleteReplays,
@@ -151,5 +152,30 @@ export default function setupReplaysIpc({ enableReplayDatabase }: { enableReplay
     }
 
     throw new Error("deleteReplays is not supported by the current replay provider");
+  });
+
+  ipc_bulkDeleteReplays.main!.handle(async ({ folderPath, options = {} }) => {
+    const replayProvider = await replayProviderPromise;
+
+    // Check if the provider supports bulkDeleteReplays (DatabaseReplayProvider)
+    if ("bulkDeleteReplays" in replayProvider && typeof replayProvider.bulkDeleteReplays === "function") {
+      const { orderBy = { field: "startTime", direction: "desc" } } = options;
+
+      // Convert hideShortGames filter to database filter
+      const filters: any[] = [];
+      if (options.hideShortGames) {
+        filters.push({
+          type: "duration" as const,
+          minFrames: 30 * 60, // 30 seconds
+        });
+      }
+
+      return await replayProvider.bulkDeleteReplays(folderPath, orderBy, filters, {
+        excludeFilePaths: options.excludeFilePaths,
+        includeFilePaths: options.includeFilePaths,
+      });
+    }
+
+    throw new Error("bulkDeleteReplays is not supported by the current replay provider");
   });
 }
