@@ -159,8 +159,6 @@ export default function setupReplaysIpc({ enableReplayDatabase }: { enableReplay
 
     // Check if the provider supports bulkDeleteReplays (DatabaseReplayProvider)
     if ("bulkDeleteReplays" in replayProvider && typeof replayProvider.bulkDeleteReplays === "function") {
-      const { orderBy = { field: "startTime", direction: "desc" } } = options;
-
       // Convert hideShortGames filter to database filter
       const filters: any[] = [];
       if (options.hideShortGames) {
@@ -170,9 +168,8 @@ export default function setupReplaysIpc({ enableReplayDatabase }: { enableReplay
         });
       }
 
-      return await replayProvider.bulkDeleteReplays(folderPath, orderBy, filters, {
+      return await replayProvider.bulkDeleteReplays(folderPath, filters, {
         excludeFilePaths: options.excludeFilePaths,
-        includeFilePaths: options.includeFilePaths,
       });
     }
 

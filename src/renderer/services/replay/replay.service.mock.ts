@@ -70,7 +70,7 @@ class MockReplayClient implements ReplayService {
 
   @delayAndMaybeError(SHOULD_ERROR)
   public async bulkDeleteReplays(_folderPath: string, _options?: BulkDeleteOptions): Promise<BulkDeleteResult> {
-    return { deletedCount: 0 };
+    return { deletedCount: 4 };
   }
 
   public onReplayLoadProgressUpdate(_handle: (progress: Progress) => void): () => void {

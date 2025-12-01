@@ -81,14 +81,9 @@ export interface ReplayProvider {
   ): Promise<string[]>;
   bulkDeleteReplays?(
     folder: string,
-    orderBy?: {
-      field: "lastFrame" | "startTime";
-      direction?: "asc" | "desc";
-    },
     filters?: any[],
     options?: {
       excludeFilePaths?: string[];
-      includeFilePaths?: string[];
     },
   ): Promise<{ deletedCount: number }>;
 }
@@ -110,13 +105,8 @@ export type SearchGamesResult = {
 };
 
 export type BulkDeleteOptions = {
-  orderBy?: {
-    field: "startTime" | "lastFrame";
-    direction?: "asc" | "desc";
-  };
   hideShortGames?: boolean;
   excludeFilePaths?: string[];
-  includeFilePaths?: string[];
 };
 
 export type BulkDeleteResult = {

@@ -113,13 +113,10 @@ export class DatabaseReplayProvider implements ReplayProvider {
     // Sync the database first (add new files, remove deleted files)
     await this.syncReplayDatabase(folder, undefined, INSERT_REPLAY_BATCH_SIZE);
 
-    // Query all games without limit to get all file paths
-    const records = await GameRepository.searchGames(this.db, folder, filters, {
-      limit: 1000000, // Large limit to get all records
-      orderBy: {
-        field: orderBy.field,
-        direction: orderBy.direction ?? "desc",
-      },
+    // Query all file paths using the dedicated repository method
+    const records = await GameRepository.getAllFilePaths(this.db, folder, filters, {
+      field: orderBy.field,
+      direction: orderBy.direction ?? "desc",
     });
 
     // Return just the full paths
@@ -224,17 +221,9 @@ export class DatabaseReplayProvider implements ReplayProvider {
 
   public async bulkDeleteReplays(
     folder: string,
-    orderBy: {
-      field: "lastFrame" | "startTime";
-      direction?: "asc" | "desc";
-    } = {
-      field: "startTime",
-      direction: "desc",
-    },
     filters: ReplayFilter[] = [],
     options?: {
       excludeFilePaths?: string[];
-      includeFilePaths?: string[];
     },
   ): Promise<{ deletedCount: number }> {
     // If the folder does not exist, return
@@ -262,34 +251,12 @@ export class DatabaseReplayProvider implements ReplayProvider {
     }
 
     // Get all file IDs matching the filters
-    let fileIdsToDelete = await GameRepository.getFileIdsForBulkDelete(this.db, folder, filters, {
-      orderBy: {
-        field: orderBy.field,
-        direction: orderBy.direction ?? "desc",
-      },
-      excludeFileIds: excludeFileIds.length > 0 ? excludeFileIds : undefined,
-    });
-
-    // If includeFilePaths is provided, we need to intersect with those files
-    // and ensure they come first in the deletion order
-    if (options?.includeFilePaths && options.includeFilePaths.length > 0) {
-      const includeRecords = await this.db
-        .selectFrom("file")
-        .where("folder", "=", folder)
-        .where(
-          "name",
-          "in",
-          options.includeFilePaths.map((p) => path.basename(p)),
-        )
-        .select("_id")
-        .execute();
-      const includeFileIds = new Set(includeRecords.map((r) => r._id));
-
-      // Partition into manually selected and remaining
-      const manuallySelected = fileIdsToDelete.filter((id) => includeFileIds.has(id));
-      const remaining = fileIdsToDelete.filter((id) => !includeFileIds.has(id));
-      fileIdsToDelete = [...manuallySelected, ...remaining];
-    }
+    const fileIdsToDelete = await GameRepository.getFileIdsForBulkDelete(
+      this.db,
+      folder,
+      filters,
+      excludeFileIds.length > 0 ? excludeFileIds : undefined,
+    );
 
     if (fileIdsToDelete.length === 0) {
       log.info("No files to delete");

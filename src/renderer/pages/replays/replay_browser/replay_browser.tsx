@@ -134,15 +134,10 @@ export const ReplayBrowser = React.memo(() => {
 
       if (selectAllMode) {
         // Use bulk delete with filters
-        const { sortBy, sortDirection, hideShortGames } = useReplayFilter.getState();
+        const { hideShortGames } = useReplayFilter.getState();
         const result = await replayService.bulkDeleteReplays(currentFolder, {
-          orderBy: {
-            field: sortBy === "DATE" ? "startTime" : "lastFrame",
-            direction: sortDirection === "DESC" ? "desc" : "asc",
-          },
           hideShortGames,
           excludeFilePaths: deselectedFiles,
-          includeFilePaths: selectedFiles.length > 0 ? selectedFiles : undefined,
         });
 
         // Reload the folder to get the updated list
