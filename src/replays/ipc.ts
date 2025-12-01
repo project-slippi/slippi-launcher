@@ -50,7 +50,7 @@ export const ipc_calculateStadiumStats = makeEndpoint.main(
   <{ file: FileResult; stadiumStats: StadiumStatsType | null }>_,
 );
 
-export const ipc_deleteReplays = makeEndpoint.main("deleteReplays", <{ gameIds: string[] }>_, <{ success: boolean }>_);
+export const ipc_deleteReplays = makeEndpoint.main("deleteReplays", <{ fileIds: string[] }>_, <{ success: boolean }>_);
 
 // Events
 

@@ -196,32 +196,30 @@ export class DatabaseReplayProvider implements ReplayProvider {
     return game.getStadiumStats();
   }
 
-  public async deleteReplays(gameIds: string[]): Promise<void> {
+  public async deleteReplays(fileIds: string[]): Promise<void> {
     // Convert string IDs to numbers
-    const numericGameIds = gameIds.map((id) => parseInt(id, 10));
+    const numericFileIds = fileIds.map((id) => parseInt(id, 10));
 
-    // Get the file paths for the given game IDs
-    const gameRecords = await GameRepository.findGamesByIds(this.db, numericGameIds);
+    // Get the file records to get the file paths
+    const fileRecords = await this.db.selectFrom("file").where("file._id", "in", numericFileIds).selectAll().execute();
 
-    if (gameRecords.length === 0) {
-      log.warn("No games found for the given IDs");
+    if (fileRecords.length === 0) {
+      log.warn("No files found for the given IDs");
       return;
     }
 
-    // Delete the records from the database
-    // Get the file IDs from the game records
-    const fileIds = gameRecords.map((record) => record.file_id);
-    await FileRepository.deleteFileById(this.db, ...fileIds);
+    // Delete the records from the database first (cascades to game and player records)
+    await FileRepository.deleteFileById(this.db, ...numericFileIds);
 
     // Delete files from the filesystem
-    const filePaths = gameRecords.map((record) => path.resolve(record.folder, record.name));
+    const filePaths = fileRecords.map((record) => path.resolve(record.folder, record.name));
     const deletePromises = await Promise.allSettled(filePaths.map((filePath) => shell.trashItem(filePath)));
     const errCount = deletePromises.reduce((curr, { status }) => (status === "rejected" ? curr + 1 : curr), 0);
     if (errCount > 0) {
       log.warn(`${errCount} file(s) failed to delete from filesystem`);
     }
 
-    log.info(`Deleted ${gameRecords.length} replay(s)`);
+    log.info(`Deleted ${fileRecords.length} replay(s)`);
   }
 
   private async mapGameAndFileRecordsToFileResult(records: (GameRecord & FileRecord)[]): Promise<FileResult[]> {

@@ -81,14 +81,14 @@ export const ReplayBrowser = React.memo(() => {
   }, [presenter, loadingMore, hasMoreReplays, showError]);
 
   const deleteReplays = React.useCallback(
-    (gameIds: string[]) => {
+    (fileIds: string[]) => {
       replayService
-        .deleteReplays(gameIds)
+        .deleteReplays(fileIds)
         .then(() => {
           // Don't optimistically remove the files in the UI since it could trigger an
           // infinite scroll and fetch more data, _before_ we can delete the files from the DB.
-          presenter.removeFilesByIds(gameIds);
-          showSuccess(Messages.filesDeleted(gameIds.length));
+          presenter.removeFilesByIds(fileIds);
+          showSuccess(Messages.filesDeleted(fileIds.length));
         })
         .catch(showError);
     },
@@ -156,9 +156,9 @@ export const ReplayBrowser = React.memo(() => {
 
         await deleteReplays(orderedFiles.map((file) => file.id));
       } else {
-        // Just delete the selected files - map file paths to game IDs
-        const gameIds = filteredFiles.filter((file) => selectedFiles.includes(file.fullPath)).map((file) => file.id);
-        await deleteReplays(gameIds);
+        // Just delete the selected files - map file paths to file IDs
+        const fileIds = filteredFiles.filter((file) => selectedFiles.includes(file.fullPath)).map((file) => file.id);
+        await deleteReplays(fileIds);
       }
     } catch (err) {
       showError(err);

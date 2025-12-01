@@ -141,12 +141,12 @@ export default function setupReplaysIpc({ enableReplayDatabase }: { enableReplay
     return result.files.map((f) => f.fullPath);
   });
 
-  ipc_deleteReplays.main!.handle(async ({ gameIds }) => {
+  ipc_deleteReplays.main!.handle(async ({ fileIds }) => {
     const replayProvider = await replayProviderPromise;
 
     // Check if the provider supports deleteReplays (DatabaseReplayProvider)
     if ("deleteReplays" in replayProvider && typeof replayProvider.deleteReplays === "function") {
-      await replayProvider.deleteReplays(gameIds);
+      await replayProvider.deleteReplays(fileIds);
       return { success: true };
     }
 

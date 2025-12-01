@@ -30,17 +30,6 @@ export class GameRepository {
     return res;
   }
 
-  public static async findGamesByIds(db: DB, gameIds: number[]) {
-    if (gameIds.length === 0) {
-      return [];
-    }
-
-    const query = db.selectFrom("game").where("game._id", "in", gameIds).innerJoin("file", "file._id", "game.file_id");
-
-    const res = await query.selectAll(["file", "game"]).select(["game._id as _id"]).execute();
-    return res;
-  }
-
   public static async findGamesByFolder(db: DB, folder: string, limit?: number) {
     let query = db.selectFrom("file").where("folder", "=", folder).innerJoin("game", "game.file_id", "file._id");
 
