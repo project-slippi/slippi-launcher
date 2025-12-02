@@ -40,45 +40,23 @@ export class DatabaseReplayProvider implements ReplayProvider {
   }> {
     const maybeContinuationToken = Continuation.fromString(continuation);
     const continuationValue = maybeContinuationToken?.getValue() ?? null;
-    const nextIdInclusive = maybeContinuationToken?.getNextIdInclusive() ?? null;
+    const nextIdInclusive = maybeContinuationToken?.getNextIdInclusive();
+    const sortOrder = {
+      field: orderBy.field,
+      direction: orderBy.direction ?? "desc",
+    };
 
-    let recordsToReturn: (GameRecord & FileRecord)[];
-    let newContinuation: string | undefined;
+    const gameAndFileRecords = await GameRepository.searchGames(this.db, folder, [], {
+      limit: limit + 1,
+      orderBy: sortOrder,
+      continuationValue,
+      nextIdInclusive,
+    });
 
-    switch (orderBy.field) {
-      case "startTime": {
-        const gameAndFileRecords = await GameRepository.findGamesOrderByStartTime(
-          this.db,
-          folder,
-          limit + 1,
-          continuationValue === "null" ? null : continuationValue,
-          nextIdInclusive,
-          orderBy.direction,
-        );
-        [recordsToReturn, newContinuation] = Continuation.truncate(gameAndFileRecords, limit, (record) => ({
-          value: record.start_time ?? "null",
-          nextIdInclusive: record._id,
-        }));
-        break;
-      }
-      case "lastFrame": {
-        const gameAndFileRecords = await GameRepository.findGamesOrderByLastFrame(
-          this.db,
-          folder,
-          limit + 1,
-          continuationValue === "null" || continuationValue == null ? null : parseInt(continuationValue, 10),
-          nextIdInclusive,
-          orderBy.direction,
-        );
-        [recordsToReturn, newContinuation] = Continuation.truncate(gameAndFileRecords, limit, (record) => ({
-          value: record.last_frame != null ? record.last_frame.toString() : "null",
-          nextIdInclusive: record._id,
-        }));
-        break;
-      }
-      default:
-        throw new Error(`Unexpected order by field: ${orderBy.field}`);
-    }
+    const [recordsToReturn, newContinuation] = Continuation.truncate(gameAndFileRecords, limit, (record) => ({
+      value: record.start_time ?? "null",
+      nextIdInclusive: record._id,
+    }));
 
     const files = await this.mapGameAndFileRecordsToFileResult(recordsToReturn);
 
@@ -125,7 +103,10 @@ export class DatabaseReplayProvider implements ReplayProvider {
     await this.syncReplayDatabase(folder, onProgress, INSERT_REPLAY_BATCH_SIZE);
 
     const [gameRecords, totalBytes] = await Promise.all([
-      GameRepository.findGamesByFolder(this.db, folder),
+      GameRepository.searchGames(this.db, folder, [], {
+        limit: SEARCH_REPLAYS_LIMIT,
+        orderBy: { field: "startTime", direction: "desc" },
+      }),
       FileRepository.findTotalSizeByFolder(this.db, folder),
     ]);
 
