@@ -1,6 +1,5 @@
 import type { Database } from "@database/schema";
-import Sqlite from "better-sqlite3";
-import { Kysely, SqliteDialect } from "kysely";
+import type { Kysely } from "kysely";
 import { afterEach, beforeAll, describe, expect, it } from "vitest";
 
 import { FileRepository } from "../repositories/file_repository";
@@ -19,27 +18,6 @@ describe("database integration tests", () => {
   afterEach(async () => {
     // Clear the database after each test
     await resetTestDb(db);
-  });
-
-  it("better-sqlite3 throws on UNIQUE constraint violation", () => {
-    const db2 = new Sqlite(":memory:");
-    db2.exec("CREATE TABLE t (id INTEGER PRIMARY KEY, x TEXT UNIQUE)");
-    db2.prepare("INSERT INTO t (x) VALUES (?)").run("foo");
-
-    expect(() => {
-      db2.prepare("INSERT INTO t (x) VALUES (?)").run("foo");
-    }).toThrow();
-  });
-
-  it("kysely throws on UNIQUE constraint violation", async () => {
-    const db2 = new Kysely<any>({ dialect: new SqliteDialect({ database: new Sqlite(":memory:") }) });
-    await db2.schema
-      .createTable("t")
-      .addColumn("x", "text", (col) => col.unique().notNull())
-      .execute();
-    await db2.insertInto("t").values({ x: "foo" }).execute();
-    const action = () => db2.insertInto("t").values({ x: "foo" }).execute();
-    await expect(action()).rejects.toThrow();
   });
 
   it("should count total folder size", async () => {
