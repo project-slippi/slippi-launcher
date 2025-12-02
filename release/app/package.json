@@ -16,8 +16,8 @@
   },
   "dependencies": {
     "better-sqlite3": "^11.8.1",
-    "kysely": "^0.26.3",
-    "kysely-sqlite-worker": "^0.4.5",
+    "kysely": "^0.28.8",
+    "kysely-sqlite-worker": "^1.2.1",
     "threads": "^1.6.5",
     "websocket": "^1.0.34"
   },
