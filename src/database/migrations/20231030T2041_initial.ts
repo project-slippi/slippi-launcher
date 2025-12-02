@@ -14,7 +14,7 @@ export async function up(db: Kysely<any>): Promise<void> {
   await db.schema
     .createTable("game")
     .addColumn("_id", "integer", (col) => col.primaryKey())
-    .addColumn("file_id", "integer", (col) => col.references("file._id").onDelete("cascade").notNull())
+    .addColumn("file_id", "integer", (col) => col.references("file._id").onDelete("cascade").notNull().unique())
     .addColumn("is_ranked", "integer", (col) => col.defaultTo(0).notNull())
     .addColumn("is_teams", "integer", (col) => col.defaultTo(0).notNull())
     .addColumn("stage", "integer")
@@ -25,16 +25,16 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("last_frame", "integer")
     .addColumn("timer_type", "integer")
     .addColumn("starting_timer_secs", "integer")
-    .addColumn("match_id", "text")
-    .addColumn("sequence_number", "integer", (col) => col.defaultTo(1).notNull())
-    .addColumn("tiebreak_index", "integer", (col) => col.defaultTo(0).notNull())
+    .addColumn("session_id", "text")
+    .addColumn("game_number", "integer", (col) => col.defaultTo(1).notNull())
+    .addColumn("tiebreak_number", "integer", (col) => col.defaultTo(0).notNull())
     .execute();
 
   await db.schema
     .createTable("player")
     .addColumn("_id", "integer", (col) => col.primaryKey())
     .addColumn("game_id", "integer", (col) => col.references("game._id").onDelete("cascade").notNull())
-    .addColumn("index", "integer", (col) => col.notNull())
+    .addColumn("port", "integer", (col) => col.notNull())
     .addColumn("type", "integer")
     .addColumn("character_id", "integer")
     .addColumn("character_color", "integer")
@@ -45,19 +45,26 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("display_name", "text")
     .addColumn("tag", "text")
     .addColumn("user_id", "text")
-    .addUniqueConstraint("unique_game_id_index_constraint", ["game_id", "index"])
+    .addUniqueConstraint("unique_game_id_port_constraint", ["game_id", "port"])
     .execute();
 
   // Create indexes
-  await db.schema.createIndex("file_folder_name_index").on("file").column("folder").column("name").execute();
-  await db.schema.createIndex("game_file_id_index").on("game").column("file_id").execute();
+  await db.schema.createIndex("file_folder_name_index").on("file").column("folder").column("name").unique().execute();
+  await db.schema.createIndex("game_file_id_index").on("game").column("file_id").unique().execute();
   await db.schema
-    .createIndex("game_match_id_sequence_number_index")
+    .createIndex("game_session_id_game_number_index")
     .on("game")
-    .column("match_id")
-    .column("sequence_number")
+    .column("session_id")
+    .column("game_number")
     .execute();
-  await db.schema.createIndex("player_game_id_index").on("player").column("game_id").column("index").execute();
+  await db.schema.createIndex("game_start_time_index").on("game").column("start_time").execute();
+  await db.schema
+    .createIndex("player_game_id_port_index")
+    .on("player")
+    .column("game_id")
+    .column("port")
+    .unique()
+    .execute();
   await db.schema.createIndex("player_user_id_index").on("player").column("user_id").execute();
 }
 

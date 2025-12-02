@@ -281,15 +281,15 @@ function generateNewGame(file: FileRecord, game: SlippiGame): NewGame | null {
   }
   const metadata = game.getMetadata();
 
-  const matchId = settings.matchInfo?.matchId ?? null;
-  const isRanked = matchId != null && matchId.startsWith("mode.ranked-");
+  const sessionId = settings.matchInfo?.sessionId ?? null;
+  const isRanked = sessionId != null && sessionId.startsWith("mode.ranked-");
 
   const gameStartTime = inferStartTime(metadata?.startAt ?? null, file.name, file.birth_time);
 
   const newGame: NewGame = {
     file_id: file._id,
-    is_ranked: Number(isRanked),
-    is_teams: Number(settings.isTeams),
+    is_ranked: Number(isRanked) as any,
+    is_teams: Number(settings.isTeams) as any,
     stage: settings.stageId,
     start_time: gameStartTime,
     platform: metadata?.playedOn,
@@ -298,9 +298,9 @@ function generateNewGame(file: FileRecord, game: SlippiGame): NewGame | null {
     last_frame: metadata?.lastFrame,
     timer_type: settings.timerType,
     starting_timer_secs: settings.startingTimerSeconds,
-    match_id: matchId,
-    sequence_number: settings.matchInfo?.gameNumber ?? undefined,
-    tiebreak_index: settings.matchInfo?.tiebreakerNumber ?? undefined,
+    session_id: sessionId,
+    game_number: settings.matchInfo?.gameNumber ?? undefined,
+    tiebreak_number: settings.matchInfo?.tiebreakerNumber ?? undefined,
   };
 
   return newGame;
@@ -318,12 +318,12 @@ function generateNewPlayers(gameId: number, game: SlippiGame): NewPlayer[] {
     const names = extractPlayerNames(player.playerIndex, settings, game.getMetadata());
     const newPlayer: NewPlayer = {
       game_id: gameId,
-      index: player.playerIndex,
+      port: player.port,
       type: player.type,
       character_id: player.characterId,
       character_color: player.characterColor,
       team_id: settings.isTeams ? player.teamId : undefined,
-      is_winner: Number(isWinner),
+      is_winner: Number(isWinner) as any,
       start_stocks: player.startStocks,
       connect_code: names.code,
       display_name: names.name,
