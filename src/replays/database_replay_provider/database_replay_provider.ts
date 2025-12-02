@@ -53,10 +53,13 @@ export class DatabaseReplayProvider implements ReplayProvider {
       nextIdInclusive,
     });
 
-    const [recordsToReturn, newContinuation] = Continuation.truncate(gameAndFileRecords, limit, (record) => ({
-      value: record.start_time ?? "null",
-      nextIdInclusive: record._id,
-    }));
+    const [recordsToReturn, newContinuation] = Continuation.truncate(gameAndFileRecords, limit, (record) => {
+      const fieldValue = sortOrder.field === "lastFrame" ? record.last_frame : record.start_time;
+      return {
+        value: fieldValue?.toString() ?? "null",
+        nextIdInclusive: record._id,
+      };
+    });
 
     const files = await this.mapGameAndFileRecordsToFileResult(recordsToReturn);
 
