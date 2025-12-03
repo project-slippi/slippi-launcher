@@ -108,14 +108,14 @@ describe("Text Search Filter", () => {
         // Game 1: Has unique connect code "ALFA#0"
         {
           game_id: gameId1._id,
-          port: 1,
+          index: 0,
           connect_code: "ALFA#0",
           display_name: "PlayerOne",
           tag: "Team1",
         },
         {
           game_id: gameId1._id,
-          port: 2,
+          index: 1,
           connect_code: "BETA#1",
           display_name: "PlayerTwo",
           tag: "Team2",
@@ -123,14 +123,14 @@ describe("Text Search Filter", () => {
         // Game 2: Has unique display name "Zain"
         {
           game_id: gameId2._id,
-          port: 1,
+          index: 0,
           connect_code: "CODE#111",
           display_name: "Zain",
           tag: "TeamA",
         },
         {
           game_id: gameId2._id,
-          port: 2,
+          index: 1,
           connect_code: "CODE#222",
           display_name: "PlayerB",
           tag: "TeamB",
@@ -138,14 +138,14 @@ describe("Text Search Filter", () => {
         // Game 3: Has unique tag "GG"
         {
           game_id: gameId3._id,
-          port: 1,
+          index: 0,
           connect_code: "TEST#333",
           display_name: "PlayerX",
           tag: "GG",
         },
         {
           game_id: gameId3._id,
-          port: 2,
+          index: 1,
           connect_code: "TEST#444",
           display_name: "PlayerY",
           tag: "EZ",
@@ -153,14 +153,14 @@ describe("Text Search Filter", () => {
         // Game 4: Generic player names, searchable only by filename
         {
           game_id: gameId4._id,
-          port: 1,
+          index: 0,
           connect_code: "PLYR#555",
           display_name: "Generic1",
           tag: "Tag1",
         },
         {
           game_id: gameId4._id,
-          port: 2,
+          index: 1,
           connect_code: "PLYR#666",
           display_name: "Generic2",
           tag: "Tag2",
