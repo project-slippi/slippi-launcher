@@ -1,3 +1,5 @@
+import { describe, expect, it } from "vitest";
+
 import { validateDisplayName } from "./validate";
 
 describe("when validating display names", () => {
