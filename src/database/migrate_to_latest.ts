@@ -40,6 +40,10 @@ class ESMCompatibleMigrationProvider implements MigrationProvider {
     const migrations: Record<string, Migration> = {};
     const files = await fs.readdir(this.migrationFolder);
 
+    // Sort files alphabetically to ensure migrations run in chronological order
+    // (migration filenames are prefixed with timestamps like 20231030T2041_)
+    files.sort();
+
     for (const fileName of files) {
       if (!fileName.endsWith(".ts") && !fileName.endsWith(".js")) {
         continue;
