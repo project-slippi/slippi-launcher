@@ -7,7 +7,6 @@ import webpackPaths from "../configs/webpack.paths";
 
 const mainPath = path.join(webpackPaths.distMainPath, "main.js");
 const rendererPath = path.join(webpackPaths.distRendererPath, "renderer.js");
-const migrationsPath = webpackPaths.distMigrationsPath;
 
 if (!fs.existsSync(mainPath)) {
   throw new Error(
@@ -18,11 +17,5 @@ if (!fs.existsSync(mainPath)) {
 if (!fs.existsSync(rendererPath)) {
   throw new Error(
     chalk.whiteBright.bgRed.bold('The renderer process is not built yet. Build it by running "npm run build:renderer"'),
-  );
-}
-
-if (!fs.existsSync(migrationsPath)) {
-  throw new Error(
-    chalk.whiteBright.bgRed.bold('The migrations are not built yet. Build it by running "npm run build:migrations"'),
   );
 }
