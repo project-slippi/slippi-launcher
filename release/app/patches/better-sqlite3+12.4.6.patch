@@ -1,0 +1,25 @@
+diff --git a/node_modules/better-sqlite3/build/Release/.forge-meta b/node_modules/better-sqlite3/build/Release/.forge-meta
+new file mode 100644
+index 0000000..39079ee
+--- /dev/null
++++ b/node_modules/better-sqlite3/build/Release/.forge-meta
+@@ -0,0 +1 @@
++arm64--132
+\ No newline at end of file
+diff --git a/node_modules/better-sqlite3/build/Release/better_sqlite3.node b/node_modules/better-sqlite3/build/Release/better_sqlite3.node
+index f6069be..d510aca 100755
+Binary files a/node_modules/better-sqlite3/build/Release/better_sqlite3.node and b/node_modules/better-sqlite3/build/Release/better_sqlite3.node differ
+diff --git a/node_modules/better-sqlite3/lib/database.js b/node_modules/better-sqlite3/lib/database.js
+index acd5b59..782c7e3 100644
+--- a/node_modules/better-sqlite3/lib/database.js
++++ b/node_modules/better-sqlite3/lib/database.js
+@@ -55,8 +55,8 @@ function Database(filenameGiven, options) {
+ 		addon = nativeBinding;
+ 	}
+ 
++	addon.setErrorConstructor(SqliteError);
+ 	if (!addon.isInitialized) {
+-		addon.setErrorConstructor(SqliteError);
+ 		addon.isInitialized = true;
+ 	}
+ 
