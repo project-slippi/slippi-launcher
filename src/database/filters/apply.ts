@@ -109,7 +109,7 @@ function applyPlayerFilter(
             conditions.push(eb2("player.tag", "=", filter.tag));
           }
           if (filter.port != null) {
-            conditions.push(eb2("player.port", "=", filter.port));
+            conditions.push(eb2("player.index", "=", filter.port - 1));
           }
           if (filter.characterIds != null && filter.characterIds.length > 0) {
             conditions.push(eb2("player.character_id", "in", filter.characterIds));
