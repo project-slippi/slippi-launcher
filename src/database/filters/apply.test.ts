@@ -1,4 +1,4 @@
-import { initTestDb } from "@database/tests/test_db";
+import { closeTestDb, initTestDb, resetTestDb } from "@database/tests/test_db";
 import type { Kysely } from "kysely";
 
 import type { Database as DatabaseSchema } from "../schema";
@@ -11,7 +11,9 @@ describe("Text Search Filter", () => {
   beforeAll(async () => {
     // initTestDb now runs migrations which create the tables
     db = await initTestDb();
+  });
 
+  beforeEach(async () => {
     // Insert test data with non-overlapping search terms
     // Game 1: Has unique connect code "ALFA#0" that doesn't appear anywhere else
     const fileId1 = await db
@@ -169,8 +171,12 @@ describe("Text Search Filter", () => {
       .execute();
   });
 
+  afterEach(async () => {
+    await resetTestDb(db);
+  });
+
   afterAll(async () => {
-    await db.destroy();
+    await closeTestDb(db);
   });
 
   it("should generate valid SQL for text search filter", async () => {

@@ -4,7 +4,7 @@ import type { Kysely } from "kysely";
 import { FileRepository } from "../repositories/file_repository";
 import { GameRepository } from "../repositories/game_repository";
 import { aMockFileWith, aMockGameWith } from "./mocks";
-import { initTestDb, resetTestDb } from "./test_db";
+import { closeTestDb, initTestDb, resetTestDb } from "./test_db";
 
 describe("file_id unique constraint", () => {
   let db: Kysely<Database>;
@@ -15,6 +15,10 @@ describe("file_id unique constraint", () => {
 
   afterEach(async () => {
     await resetTestDb(db);
+  });
+
+  afterAll(async () => {
+    await closeTestDb(db);
   });
 
   it("should enforce 1:1 relationship between file and game", async () => {
