@@ -2,7 +2,7 @@ import { FileRepository } from "@database/repositories/file_repository";
 import { GameRepository } from "@database/repositories/game_repository";
 import type { Database, NewFile, NewGame } from "@database/schema";
 import { aMockFileWith, aMockGameWith } from "@database/tests/mocks";
-import { initTestDb, resetTestDb } from "@database/tests/test_db";
+import { initTestDb } from "@database/tests/test_db";
 import type { Kysely } from "kysely";
 import { afterEach, beforeAll, describe, expect, it } from "vitest";
 
@@ -12,14 +12,13 @@ describe("replay pagination integration tests", () => {
   let db: Kysely<Database>;
   let provider: DatabaseReplayProvider;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     db = await initTestDb();
     provider = new DatabaseReplayProvider(db);
   });
 
   afterEach(async () => {
-    // Clear the database after each test
-    await resetTestDb(db);
+    await db.destroy();
   });
 
   it("should return no continuation when all results are fetched", async () => {

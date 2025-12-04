@@ -8,7 +8,7 @@ import type { TextSearchFilter } from "./types";
 describe("Text Search Filter", () => {
   let db: Kysely<DatabaseSchema>;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     // initTestDb now runs migrations which create the tables
     db = await initTestDb();
 
@@ -169,7 +169,7 @@ describe("Text Search Filter", () => {
       .execute();
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
     await db.destroy();
   });
 

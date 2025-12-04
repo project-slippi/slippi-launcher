@@ -6,18 +6,17 @@ import { FileRepository } from "../repositories/file_repository";
 import { GameRepository } from "../repositories/game_repository";
 import { PlayerRepository } from "../repositories/player_repository";
 import { aMockFileWith, aMockGameWith, aMockPlayerWith } from "./mocks";
-import { initTestDb, resetTestDb } from "./test_db";
+import { initTestDb } from "./test_db";
 
 describe("database integration tests", () => {
   let db: Kysely<Database>;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     db = await initTestDb();
   });
 
   afterEach(async () => {
-    // Clear the database after each test
-    await resetTestDb(db);
+    await db.destroy();
   });
 
   it("should count total folder size", async () => {
