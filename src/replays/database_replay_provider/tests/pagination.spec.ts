@@ -2,23 +2,25 @@ import { FileRepository } from "@database/repositories/file_repository";
 import { GameRepository } from "@database/repositories/game_repository";
 import type { Database, NewFile, NewGame } from "@database/schema";
 import { aMockFileWith, aMockGameWith } from "@database/tests/mocks";
-import { initTestDb, resetTestDb } from "@database/tests/test_db";
+import { initTestDb } from "@database/tests/test_db";
 import type { Kysely } from "kysely";
 
 import { DatabaseReplayProvider } from "../database_replay_provider";
 
 describe("replay pagination integration tests", () => {
   let db: Kysely<Database>;
+  let destroy: () => Promise<void>;
   let provider: DatabaseReplayProvider;
 
-  beforeAll(async () => {
-    db = await initTestDb();
+  beforeEach(async () => {
+    const testDb = await initTestDb();
+    db = testDb.db;
+    destroy = testDb.destroy;
     provider = new DatabaseReplayProvider(db);
   });
 
   afterEach(async () => {
-    // Clear the database after each test
-    await resetTestDb(db);
+    await destroy();
   });
 
   it("should return no continuation when all results are fetched", async () => {

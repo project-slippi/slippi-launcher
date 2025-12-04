@@ -5,22 +5,20 @@ import { FileRepository } from "../repositories/file_repository";
 import { GameRepository } from "../repositories/game_repository";
 import { PlayerRepository } from "../repositories/player_repository";
 import { aMockFileWith, aMockGameWith, aMockPlayerWith } from "./mocks";
-import { closeTestDb, initTestDb, resetTestDb } from "./test_db";
+import { initTestDb } from "./test_db";
 
 describe("database integration tests", () => {
   let db: Kysely<Database>;
+  let destroy: () => Promise<void>;
 
-  beforeAll(async () => {
-    db = await initTestDb();
+  beforeEach(async () => {
+    const testDb = await initTestDb();
+    db = testDb.db;
+    destroy = testDb.destroy;
   });
 
   afterEach(async () => {
-    // Clear the database after each test
-    await resetTestDb(db);
-  });
-
-  afterAll(async () => {
-    await closeTestDb(db);
+    await destroy();
   });
 
   it("should count total folder size", async () => {
