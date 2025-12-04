@@ -1,24 +1,14 @@
 // vitest.config.ts
-import path from "path";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-  plugins: [tsconfigPaths()],
-
-  resolve: {
-    alias: {
-      "@database": path.resolve(__dirname, "src/database"),
-      // you can add others if needed:
-      // '@renderer': path.resolve(__dirname, 'src/renderer'),
-      // '@common': path.resolve(__dirname, 'src/common'),
-    },
-  },
-
   test: {
     // Define two projects: renderer (jsdom) and node
     projects: [
       {
+        plugins: [tsconfigPaths()],
+
         test: {
           name: "renderer",
           environment: "jsdom",
@@ -30,6 +20,8 @@ export default defineConfig({
         },
       },
       {
+        plugins: [tsconfigPaths()],
+
         test: {
           name: "node",
           environment: "node",
