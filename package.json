@@ -159,7 +159,6 @@
     "tsconfig-paths-webpack-plugin": "^4.1.0",
     "typescript": "^5.7.3",
     "url-loader": "^4.1.1",
-    "vite": "^7.2.6",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^4.0.15",
     "webpack": "^5.88.2",
