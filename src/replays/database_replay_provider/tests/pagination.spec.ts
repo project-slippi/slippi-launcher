@@ -4,7 +4,7 @@ import type { Database, NewFile, NewGame } from "@database/schema";
 import { aMockFileWith, aMockGameWith } from "@database/tests/mocks";
 import { initTestDb } from "@database/tests/test_db";
 import type { Kysely } from "kysely";
-import { afterEach, beforeAll, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { DatabaseReplayProvider } from "../database_replay_provider";
 
