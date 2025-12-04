@@ -1,3 +1,5 @@
+import { describe, expect, it } from "vitest";
+
 import { FlagBuilder } from "./flag_builder";
 
 enum Flags {
