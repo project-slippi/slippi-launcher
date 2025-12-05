@@ -3,7 +3,7 @@ import log from "electron-log";
 /**
  * TokenStorage handles secure storage of Firebase refresh tokens using OS-level encryption
  * via Electron's safeStorage API (Keychain on macOS, DPAPI on Windows, libsecret on Linux).
- * 
+ *
  * Tokens are stored in the settings schema under 'accountTokens' field.
  */
 export class TokenStorage {
@@ -12,7 +12,7 @@ export class TokenStorage {
   /**
    * Check if encryption is available on this system
    */
-  async checkEncryptionAvailable(): Promise<boolean> {
+  public async checkEncryptionAvailable(): Promise<boolean> {
     if (this.isAvailable !== null) {
       return this.isAvailable;
     }
@@ -30,7 +30,7 @@ export class TokenStorage {
   /**
    * Store an encrypted refresh token for an account
    */
-  async storeToken(uid: string, refreshToken: string): Promise<void> {
+  public async storeToken(uid: string, refreshToken: string): Promise<void> {
     const available = await this.checkEncryptionAvailable();
     if (!available) {
       throw new Error("Encryption is not available on this system");
@@ -60,7 +60,7 @@ export class TokenStorage {
   /**
    * Retrieve and decrypt a refresh token for an account
    */
-  async getToken(uid: string): Promise<string | null> {
+  public async getToken(uid: string): Promise<string | null> {
     const available = await this.checkEncryptionAvailable();
     if (!available) {
       log.warn("Encryption not available, cannot retrieve token");
@@ -91,7 +91,7 @@ export class TokenStorage {
   /**
    * Remove a token from storage
    */
-  async removeToken(uid: string): Promise<void> {
+  public async removeToken(uid: string): Promise<void> {
     try {
       // Get existing tokens
       const settings = window.electron.settings.getAppSettingsSync();
@@ -113,7 +113,7 @@ export class TokenStorage {
   /**
    * Get all stored token UIDs
    */
-  async getAllTokenUids(): Promise<string[]> {
+  public async getAllTokenUids(): Promise<string[]> {
     try {
       const settings = window.electron.settings.getAppSettingsSync();
       const tokens = settings.accountTokens;
@@ -127,7 +127,7 @@ export class TokenStorage {
   /**
    * Clear all stored tokens (use with caution)
    */
-  async clearAllTokens(): Promise<void> {
+  public async clearAllTokens(): Promise<void> {
     try {
       await window.electron.settings.updateSettings([{ key: "accountTokens", value: {} }]);
       log.info("Cleared all stored tokens");
@@ -140,4 +140,3 @@ export class TokenStorage {
 
 // Export a singleton instance
 export const tokenStorage = new TokenStorage();
-

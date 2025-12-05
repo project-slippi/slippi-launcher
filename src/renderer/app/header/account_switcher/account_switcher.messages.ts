@@ -17,4 +17,3 @@ export const AccountSwitcherMessages = {
   cancel: () => "Cancel",
   accountRemoved: (accountName: string) => `Removed ${accountName}`,
 };
-

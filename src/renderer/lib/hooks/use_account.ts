@@ -1,10 +1,10 @@
+import type { StoredAccount } from "@settings/types";
 import log from "electron-log";
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
 import type { AuthUser } from "@/services/auth/types";
 import type { SlippiBackendService, UserData } from "@/services/slippi/types";
-import type { StoredAccount } from "@settings/types";
 
 export const useAccount = create(
   combine(

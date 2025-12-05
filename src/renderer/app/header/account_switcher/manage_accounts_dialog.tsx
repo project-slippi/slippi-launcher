@@ -9,12 +9,12 @@ import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import type { StoredAccount } from "@settings/types";
 import React from "react";
 
 import { ConfirmationModal } from "@/components/confirmation_modal/confirmation_modal";
 import { UserIcon } from "@/components/user_icon";
 import { colors } from "@/styles/colors";
-import type { StoredAccount } from "@settings/types";
 
 import { AccountSwitcherMessages as Messages } from "./account_switcher.messages";
 
@@ -47,7 +47,7 @@ const AccountName = styled.div`
 
 const AccountEmail = styled.div`
   font-size: 14px;
-  color: ${colors.textGray};
+  color: ${colors.textDim};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -75,11 +75,21 @@ function formatTimeAgo(date: Date): string {
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-  if (diffMins < 1) return "just now";
-  if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? "s" : ""} ago`;
-  if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
-  if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)} week${Math.floor(diffDays / 7) > 1 ? "s" : ""} ago`;
+  if (diffMins < 1) {
+    return "just now";
+  }
+  if (diffMins < 60) {
+    return `${diffMins} minute${diffMins > 1 ? "s" : ""} ago`;
+  }
+  if (diffHours < 24) {
+    return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+  }
+  if (diffDays < 7) {
+    return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+  }
+  if (diffDays < 30) {
+    return `${Math.floor(diffDays / 7)} week${Math.floor(diffDays / 7) > 1 ? "s" : ""} ago`;
+  }
   return `${Math.floor(diffDays / 30)} month${Math.floor(diffDays / 30) > 1 ? "s" : ""} ago`;
 }
 
@@ -108,8 +118,12 @@ export const ManageAccountsDialog: React.FC<ManageAccountsDialogProps> = ({
   // Sort accounts: active first, then by last active
   const sortedAccounts = React.useMemo(() => {
     return [...accounts].sort((a, b) => {
-      if (a.id === activeAccountId) return -1;
-      if (b.id === activeAccountId) return 1;
+      if (a.id === activeAccountId) {
+        return -1;
+      }
+      if (b.id === activeAccountId) {
+        return 1;
+      }
       return b.lastActive.getTime() - a.lastActive.getTime();
     });
   }, [accounts, activeAccountId]);
@@ -119,7 +133,9 @@ export const ManageAccountsDialog: React.FC<ManageAccountsDialogProps> = ({
   };
 
   const handleConfirmRemove = async () => {
-    if (!confirmRemove) return;
+    if (!confirmRemove) {
+      return;
+    }
 
     setRemoving(confirmRemove.id);
     try {
@@ -183,7 +199,7 @@ export const ManageAccountsDialog: React.FC<ManageAccountsDialogProps> = ({
                 css={css`
                   margin-top: 16px;
                   font-size: 14px;
-                  color: ${colors.textGray};
+                  color: ${colors.textDim};
                   text-align: center;
                 `}
               >
@@ -217,4 +233,3 @@ export const ManageAccountsDialog: React.FC<ManageAccountsDialogProps> = ({
     </>
   );
 };
-

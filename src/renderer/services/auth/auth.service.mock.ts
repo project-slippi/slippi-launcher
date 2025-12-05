@@ -111,6 +111,20 @@ class MockAuthClient implements AuthService {
     return updatedUser;
   }
 
+  public getMultiAccountService(): any {
+    // Mock implementation - return a basic mock
+    return {
+      init: async () => {},
+      addAccount: async () => ({ id: "", email: "", displayName: "", displayPicture: "", lastActive: new Date() }),
+      removeAccount: async () => {},
+      switchAccount: async () => {},
+      getAccounts: () => [],
+      getActiveAccountId: () => null,
+      getActiveAuth: () => null,
+      onAccountsChange: () => () => {},
+    };
+  }
+
   private _setCurrentUser(user: AuthUser | null) {
     this._currentUser = user;
     this._userSubject.next(user);
