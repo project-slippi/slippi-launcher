@@ -42,12 +42,20 @@ const Header = styled.h2`
 type LoginFormProps = {
   disableAutoFocus?: boolean;
   onSuccess?: () => void;
+  defaultEmail?: string;
 };
 
-export const LoginForm = ({ onSuccess, disableAutoFocus }: LoginFormProps) => {
+export const LoginForm = ({ onSuccess, disableAutoFocus, defaultEmail }: LoginFormProps) => {
   const { authService } = useServices();
   const email = useLoginStore((store) => store.email);
   const setEmail = useLoginStore((store) => store.setEmail);
+
+  // Pre-fill email if provided
+  React.useEffect(() => {
+    if (defaultEmail) {
+      setEmail(defaultEmail);
+    }
+  }, [defaultEmail, setEmail]);
   const displayName = useLoginStore((store) => store.displayName);
   const setDisplayName = useLoginStore((store) => store.setDisplayName);
   const password = useLoginStore((store) => store.password);

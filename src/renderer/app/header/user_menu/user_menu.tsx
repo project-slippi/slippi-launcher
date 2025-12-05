@@ -19,6 +19,7 @@ import { useAccount } from "@/lib/hooks/use_account";
 import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 import type { AuthUser } from "@/services/auth/types";
+import { SessionExpiredError } from "@/services/auth/types";
 
 import { AccountSwitcher } from "../account_switcher/account_switcher";
 import { AccountSwitcherMessages as AccountMessages } from "../account_switcher/account_switcher.messages";
@@ -49,6 +50,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
   const [openAddAccountDialog, setOpenAddAccountDialog] = React.useState(false);
   const [openManageAccountsDialog, setOpenManageAccountsDialog] = React.useState(false);
   const [switching, setSwitching] = React.useState(false);
+  const [reAuthEmail, setReAuthEmail] = React.useState<string | null>(null);
 
   const onLogout = async () => {
     try {
@@ -112,8 +114,15 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
         // Ignore errors here - user data will be fetched by other listeners
       });
     } catch (err: any) {
-      showError(err?.message || "Failed to switch account");
-      console.error("Failed to switch account:", err);
+      // Check if session expired
+      if (err instanceof SessionExpiredError) {
+        // Show login dialog with pre-filled email
+        setReAuthEmail(err.email);
+        setOpenAddAccountDialog(true);
+      } else {
+        showError(err?.message || "Failed to switch account");
+        console.error("Failed to switch account:", err);
+      }
     } finally {
       setSwitching(false);
     }
@@ -304,7 +313,10 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
       {/* Multi-Account Dialogs */}
       <AddAccountDialog
         open={openAddAccountDialog}
-        onClose={() => setOpenAddAccountDialog(false)}
+        onClose={() => {
+          setOpenAddAccountDialog(false);
+          setReAuthEmail(null);
+        }}
         onSuccess={() => {
           if (multiAccountService) {
             const accountsList = multiAccountService.getAccounts();
@@ -312,7 +324,9 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
             setAccounts(accountsList);
             setActiveAccountId(activeId);
           }
+          setReAuthEmail(null);
         }}
+        defaultEmail={reAuthEmail}
       />
       <ManageAccountsDialog
         open={openManageAccountsDialog}

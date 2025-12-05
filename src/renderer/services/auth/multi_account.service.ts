@@ -32,6 +32,7 @@ import { generateDisplayPicture } from "@/lib/display_picture";
 
 import { tokenStorage } from "./token_storage";
 import type { MultiAccountService } from "./types";
+import { SessionExpiredError } from "./types";
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -331,7 +332,8 @@ class MultiAccountClient implements MultiAccountService {
       const currentUser = auth.currentUser;
 
       if (!currentUser) {
-        throw new Error("Account session expired, please re-authenticate");
+        // Session expired - throw special error with account info
+        throw new SessionExpiredError(account.email, accountId);
       }
 
       // Update active account

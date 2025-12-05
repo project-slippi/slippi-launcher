@@ -6,6 +6,13 @@ export type AuthUser = {
   emailVerified: boolean;
 };
 
+export class SessionExpiredError extends Error {
+  constructor(public email: string, public accountId: string) {
+    super(`Session expired for ${email}`);
+    this.name = "SessionExpiredError";
+  }
+}
+
 export interface AuthService {
   getCurrentUser(): AuthUser | null;
   getUserToken(): Promise<string>;
@@ -24,6 +31,7 @@ export interface AuthService {
 
 // Multi-account types
 // Note: StoredAccount and AccountData are defined in @settings/types.ts
+import type { StoredAccount } from "@settings/types";
 
 export interface MultiAccountService {
   // Initialization
