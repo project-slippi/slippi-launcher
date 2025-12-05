@@ -1,6 +1,6 @@
-import Database from "better-sqlite3";
-import { Kysely, SqliteDialect } from "kysely";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { initTestDb } from "@database/tests/init_test_db";
+import type { Kysely } from "kysely";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import type { Database as DatabaseSchema } from "../schema";
 import { applyFilters } from "./apply";
@@ -9,218 +9,12 @@ import type { TextSearchFilter } from "./types";
 describe("Text Search Filter", () => {
   let db: Kysely<DatabaseSchema>;
 
-  beforeAll(async () => {
-    // Create an in-memory SQLite database for testing
-    const dialect = new SqliteDialect({
-      database: new Database(":memory:"),
-    });
-
-    db = new Kysely<DatabaseSchema>({ dialect });
-
-    // Create tables
-    await db.schema
-      .createTable("file")
-      .addColumn("_id", "integer", (col) => col.primaryKey().autoIncrement())
-      .addColumn("name", "text", (col) => col.notNull())
-      .addColumn("folder", "text", (col) => col.notNull())
-      .addColumn("size_bytes", "integer", (col) => col.notNull())
-      .addColumn("birth_time", "text")
-      .execute();
-
-    await db.schema
-      .createTable("game")
-      .addColumn("_id", "integer", (col) => col.primaryKey().autoIncrement())
-      .addColumn("file_id", "integer", (col) => col.notNull().references("file._id").onDelete("cascade"))
-      .addColumn("is_ranked", "integer")
-      .addColumn("is_teams", "integer")
-      .addColumn("stage", "integer")
-      .addColumn("start_time", "text")
-      .addColumn("platform", "text")
-      .addColumn("console_nickname", "text")
-      .addColumn("mode", "integer")
-      .addColumn("last_frame", "integer")
-      .addColumn("timer_type", "integer")
-      .addColumn("starting_timer_secs", "integer")
-      .addColumn("session_id", "text")
-      .addColumn("game_number", "integer")
-      .addColumn("tiebreak_number", "integer")
-      .execute();
-
-    await db.schema
-      .createTable("player")
-      .addColumn("_id", "integer", (col) => col.primaryKey().autoIncrement())
-      .addColumn("game_id", "integer", (col) => col.notNull().references("game._id").onDelete("cascade"))
-      .addColumn("port", "integer", (col) => col.notNull())
-      .addColumn("type", "integer")
-      .addColumn("character_id", "integer")
-      .addColumn("character_color", "integer")
-      .addColumn("team_id", "integer")
-      .addColumn("is_winner", "integer")
-      .addColumn("start_stocks", "integer")
-      .addColumn("connect_code", "text")
-      .addColumn("display_name", "text")
-      .addColumn("tag", "text")
-      .addColumn("user_id", "text")
-      .execute();
-
-    // Insert test data with non-overlapping search terms
-    // Game 1: Has unique connect code "ALFA#0" that doesn't appear anywhere else
-    const fileId1 = await db
-      .insertInto("file")
-      .values({
-        name: "game001.slp",
-        folder: "/test",
-        size_bytes: 1000,
-        birth_time: null,
-      })
-      .returning("_id")
-      .executeTakeFirstOrThrow();
-
-    // Game 2: Has unique display name "Zain" that doesn't appear anywhere else
-    const fileId2 = await db
-      .insertInto("file")
-      .values({
-        name: "game002.slp",
-        folder: "/test",
-        size_bytes: 2000,
-        birth_time: null,
-      })
-      .returning("_id")
-      .executeTakeFirstOrThrow();
-
-    // Game 3: Has unique tag "GG" that doesn't appear anywhere else
-    const fileId3 = await db
-      .insertInto("file")
-      .values({
-        name: "game003.slp",
-        folder: "/test",
-        size_bytes: 3000,
-        birth_time: null,
-      })
-      .returning("_id")
-      .executeTakeFirstOrThrow();
-
-    // Game 4: Has unique filename "tournament_finals" but generic player names
-    const fileId4 = await db
-      .insertInto("file")
-      .values({
-        name: "tournament_finals.slp",
-        folder: "/test",
-        size_bytes: 4000,
-        birth_time: null,
-      })
-      .returning("_id")
-      .executeTakeFirstOrThrow();
-
-    const gameId1 = await db
-      .insertInto("game")
-      .values({
-        file_id: fileId1._id,
-        mode: 8,
-        last_frame: 5000,
-      })
-      .returning("_id")
-      .executeTakeFirstOrThrow();
-
-    const gameId2 = await db
-      .insertInto("game")
-      .values({
-        file_id: fileId2._id,
-        mode: 8,
-        last_frame: 3000,
-      })
-      .returning("_id")
-      .executeTakeFirstOrThrow();
-
-    const gameId3 = await db
-      .insertInto("game")
-      .values({
-        file_id: fileId3._id,
-        mode: 8,
-        last_frame: 4000,
-      })
-      .returning("_id")
-      .executeTakeFirstOrThrow();
-
-    const gameId4 = await db
-      .insertInto("game")
-      .values({
-        file_id: fileId4._id,
-        mode: 8,
-        last_frame: 4500,
-      })
-      .returning("_id")
-      .executeTakeFirstOrThrow();
-
-    // Insert players with non-overlapping identifiers
-    await db
-      .insertInto("player")
-      .values([
-        // Game 1: Has unique connect code "ALFA#0"
-        {
-          game_id: gameId1._id,
-          port: 1,
-          connect_code: "ALFA#0",
-          display_name: "PlayerOne",
-          tag: "Team1",
-        },
-        {
-          game_id: gameId1._id,
-          port: 2,
-          connect_code: "BETA#1",
-          display_name: "PlayerTwo",
-          tag: "Team2",
-        },
-        // Game 2: Has unique display name "Zain"
-        {
-          game_id: gameId2._id,
-          port: 1,
-          connect_code: "CODE#111",
-          display_name: "Zain",
-          tag: "TeamA",
-        },
-        {
-          game_id: gameId2._id,
-          port: 2,
-          connect_code: "CODE#222",
-          display_name: "PlayerB",
-          tag: "TeamB",
-        },
-        // Game 3: Has unique tag "GG"
-        {
-          game_id: gameId3._id,
-          port: 1,
-          connect_code: "TEST#333",
-          display_name: "PlayerX",
-          tag: "GG",
-        },
-        {
-          game_id: gameId3._id,
-          port: 2,
-          connect_code: "TEST#444",
-          display_name: "PlayerY",
-          tag: "EZ",
-        },
-        // Game 4: Generic player names, searchable only by filename
-        {
-          game_id: gameId4._id,
-          port: 1,
-          connect_code: "PLYR#555",
-          display_name: "Generic1",
-          tag: "Tag1",
-        },
-        {
-          game_id: gameId4._id,
-          port: 2,
-          connect_code: "PLYR#666",
-          display_name: "Generic2",
-          tag: "Tag2",
-        },
-      ])
-      .execute();
+  beforeEach(async () => {
+    db = await initTestDb();
+    await insertMockData(db);
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
     await db.destroy();
   });
 
@@ -363,3 +157,161 @@ describe("Text Search Filter", () => {
     expect(results.length).toBe(4);
   });
 });
+
+async function insertMockData(db: Kysely<DatabaseSchema>) {
+  // Insert test data with non-overlapping search terms
+  // Game 1: Has unique connect code "ALFA#0" that doesn't appear anywhere else
+  const fileId1 = await db
+    .insertInto("file")
+    .values({
+      name: "game001.slp",
+      folder: "/test",
+      size_bytes: 1000,
+      birth_time: null,
+    })
+    .returning("_id")
+    .executeTakeFirstOrThrow();
+
+  // Game 2: Has unique display name "Zain" that doesn't appear anywhere else
+  const fileId2 = await db
+    .insertInto("file")
+    .values({
+      name: "game002.slp",
+      folder: "/test",
+      size_bytes: 2000,
+      birth_time: null,
+    })
+    .returning("_id")
+    .executeTakeFirstOrThrow();
+
+  // Game 3: Has unique tag "GG" that doesn't appear anywhere else
+  const fileId3 = await db
+    .insertInto("file")
+    .values({
+      name: "game003.slp",
+      folder: "/test",
+      size_bytes: 3000,
+      birth_time: null,
+    })
+    .returning("_id")
+    .executeTakeFirstOrThrow();
+
+  // Game 4: Has unique filename "tournament_finals" but generic player names
+  const fileId4 = await db
+    .insertInto("file")
+    .values({
+      name: "tournament_finals.slp",
+      folder: "/test",
+      size_bytes: 4000,
+      birth_time: null,
+    })
+    .returning("_id")
+    .executeTakeFirstOrThrow();
+
+  const gameId1 = await db
+    .insertInto("game")
+    .values({
+      file_id: fileId1._id,
+      mode: 8,
+      last_frame: 5000,
+    })
+    .returning("_id")
+    .executeTakeFirstOrThrow();
+
+  const gameId2 = await db
+    .insertInto("game")
+    .values({
+      file_id: fileId2._id,
+      mode: 8,
+      last_frame: 3000,
+    })
+    .returning("_id")
+    .executeTakeFirstOrThrow();
+
+  const gameId3 = await db
+    .insertInto("game")
+    .values({
+      file_id: fileId3._id,
+      mode: 8,
+      last_frame: 4000,
+    })
+    .returning("_id")
+    .executeTakeFirstOrThrow();
+
+  const gameId4 = await db
+    .insertInto("game")
+    .values({
+      file_id: fileId4._id,
+      mode: 8,
+      last_frame: 4500,
+    })
+    .returning("_id")
+    .executeTakeFirstOrThrow();
+
+  // Insert players with non-overlapping identifiers
+  await db
+    .insertInto("player")
+    .values([
+      // Game 1: Has unique connect code "ALFA#0"
+      {
+        game_id: gameId1._id,
+        port: 1,
+        connect_code: "ALFA#0",
+        display_name: "PlayerOne",
+        tag: "Team1",
+      },
+      {
+        game_id: gameId1._id,
+        port: 2,
+        connect_code: "BETA#1",
+        display_name: "PlayerTwo",
+        tag: "Team2",
+      },
+      // Game 2: Has unique display name "Zain"
+      {
+        game_id: gameId2._id,
+        port: 1,
+        connect_code: "CODE#111",
+        display_name: "Zain",
+        tag: "TeamA",
+      },
+      {
+        game_id: gameId2._id,
+        port: 2,
+        connect_code: "CODE#222",
+        display_name: "PlayerB",
+        tag: "TeamB",
+      },
+      // Game 3: Has unique tag "GG"
+      {
+        game_id: gameId3._id,
+        port: 1,
+        connect_code: "TEST#333",
+        display_name: "PlayerX",
+        tag: "GG",
+      },
+      {
+        game_id: gameId3._id,
+        port: 2,
+        connect_code: "TEST#444",
+        display_name: "PlayerY",
+        tag: "EZ",
+      },
+      // Game 4: Generic player names, searchable only by filename
+      {
+        game_id: gameId4._id,
+        port: 1,
+        connect_code: "PLYR#555",
+        display_name: "Generic1",
+        tag: "Tag1",
+      },
+      {
+        game_id: gameId4._id,
+        port: 2,
+        connect_code: "PLYR#666",
+        display_name: "Generic2",
+        tag: "Tag2",
+      },
+    ])
+    .execute();
+}
