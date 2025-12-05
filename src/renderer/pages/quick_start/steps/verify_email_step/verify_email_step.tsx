@@ -105,7 +105,13 @@ export const VerifyEmailStep = () => {
       </Button>
       <div css={classes.emailNotFoundContainer}>
         {Messages.cantFindEmail()}{" "}
-        <a href="#" onClick={authService.sendVerificationEmail}>
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            void authService.sendVerificationEmail();
+          }}
+        >
           {Messages.sendAgain()}
         </a>
       </div>
