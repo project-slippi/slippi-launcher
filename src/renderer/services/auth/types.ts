@@ -26,7 +26,7 @@ export interface AuthService {
   signUp(args: { email: string; password: string; displayName: string }): Promise<AuthUser | null>;
   updateDisplayName(displayName: string): Promise<void>;
   // Multi-account support
-  getMultiAccountService?(): MultiAccountService | null;
+  getMultiAccountService(): MultiAccountService;
 }
 
 // Multi-account types

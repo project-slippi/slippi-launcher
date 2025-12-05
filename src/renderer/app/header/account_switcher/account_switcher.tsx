@@ -6,11 +6,11 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ButtonBase from "@mui/material/ButtonBase";
 import CircularProgress from "@mui/material/CircularProgress";
+import type { StoredAccount } from "@settings/types";
 import React from "react";
 
 import { UserIcon } from "@/components/user_icon";
 import { colors } from "@/styles/colors";
-import type { StoredAccount } from "@settings/types";
 
 import { AccountSwitcherMessages as Messages } from "./account_switcher.messages";
 
@@ -41,7 +41,7 @@ const ActiveIndicator = styled.div<{ $active: boolean }>`
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  border: 2px solid ${(props) => (props.$active ? colors.purple : colors.textGray)};
+  border: 2px solid ${(props) => (props.$active ? colors.purple : colors.textDim)};
   background-color: ${(props) => (props.$active ? colors.purple : "transparent")};
   flex-shrink: 0;
 `;
@@ -142,8 +142,12 @@ export const AccountSwitcher: React.FC<AccountSwitcherProps> = ({
   const sortedAccounts = React.useMemo(() => {
     return [...accounts].sort((a, b) => {
       // Active account always first
-      if (a.id === activeAccountId) return -1;
-      if (b.id === activeAccountId) return 1;
+      if (a.id === activeAccountId) {
+        return -1;
+      }
+      if (b.id === activeAccountId) {
+        return 1;
+      }
       // Then by last active
       return b.lastActive.getTime() - a.lastActive.getTime();
     });
@@ -223,11 +227,21 @@ export const AccountSwitcher: React.FC<AccountSwitcherProps> = ({
           gap: 4px;
         `}
       >
-        <ActionButton onClick={onAddAccount} css={css`flex: 1;`}>
+        <ActionButton
+          onClick={onAddAccount}
+          css={css`
+            flex: 1;
+          `}
+        >
           <AddIcon />
           {Messages.addAccount()}
         </ActionButton>
-        <ActionButton onClick={onManageAccounts} css={css`flex: 1;`}>
+        <ActionButton
+          onClick={onManageAccounts}
+          css={css`
+            flex: 1;
+          `}
+        >
           <SettingsIcon />
           {Messages.manageAccounts()}
         </ActionButton>
@@ -235,4 +249,3 @@ export const AccountSwitcher: React.FC<AccountSwitcherProps> = ({
     </div>
   );
 };
-
