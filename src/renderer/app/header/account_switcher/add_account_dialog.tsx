@@ -11,9 +11,10 @@ export interface AddAccountDialogProps {
   open: boolean;
   onClose: () => void;
   onSuccess?: () => void;
+  defaultEmail?: string | null;
 }
 
-export const AddAccountDialog: React.FC<AddAccountDialogProps> = ({ open, onClose, onSuccess }) => {
+export const AddAccountDialog: React.FC<AddAccountDialogProps> = ({ open, onClose, onSuccess, defaultEmail }) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -24,11 +25,10 @@ export const AddAccountDialog: React.FC<AddAccountDialogProps> = ({ open, onClos
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth={true} fullScreen={fullScreen}>
-      <DialogTitle>Add Another Account</DialogTitle>
+      <DialogTitle>{defaultEmail ? "Re-authenticate Account" : "Add Another Account"}</DialogTitle>
       <DialogContent>
-        <LoginForm onSuccess={handleSuccess} disableAutoFocus={false} />
+        <LoginForm onSuccess={handleSuccess} disableAutoFocus={false} defaultEmail={defaultEmail ?? undefined} />
       </DialogContent>
     </Dialog>
   );
 };
-
