@@ -7,23 +7,31 @@ import { pathToFileURL } from "url";
 import type { Database } from "./schema";
 
 /**
- * Converts an absolute path to a file:// URL on Windows for ESM compatibility.
+ * Attempts to import a migration file with proper path handling for both CJS and ESM.
  *
- * On Windows, Node.js ESM loader requires absolute paths to be valid file:// URLs
- * when using dynamic imports. Without this conversion, you'll get:
+ * This function handles two scenarios:
+ * 1. Development (ts-node/CommonJS): Uses regular file paths with dynamic import
+ * 2. Production (ESM on Windows): Converts absolute paths to file:// URLs
+ *
+ * On Windows with ESM, absolute paths must be valid file:// URLs or you'll get:
  * `Error [ERR_UNSUPPORTED_ESM_URL_SCHEME]: Only URLs with a scheme in: file, data,
- * node, and electron are supported by the default ESM loader. On Windows, absolute
- * paths must be valid file:// URLs. Received protocol 'd:'`
+ * node, and electron are supported by the default ESM loader. Received protocol 'd:'`
  *
- * This function ensures cross-platform compatibility by converting Windows absolute
- * paths (e.g., `D:\path\to\migrations`) to file:// URLs (e.g., `file:///D:/path/to/migrations`)
- * while leaving relative paths and non-Windows paths unchanged.
- *
- * @param filePath - The absolute file path to convert
- * @returns The path converted to a file:// URL if absolute, otherwise unchanged
+ * @param filePath - The absolute file path to import
+ * @returns The imported migration module
  */
-function fixPathForESMImport(filePath: string): string {
-  return path.isAbsolute(filePath) ? pathToFileURL(filePath).href : filePath;
+async function importMigration(filePath: string): Promise<Migration> {
+  try {
+    // First try with regular path (works in dev/CJS and Unix ESM)
+    return await import(filePath);
+  } catch (error: any) {
+    // If it fails with ERR_UNSUPPORTED_ESM_URL_SCHEME (Windows ESM), try with file:// URL
+    if (error?.code === "ERR_UNSUPPORTED_ESM_URL_SCHEME" && path.isAbsolute(filePath)) {
+      const fileUrl = pathToFileURL(filePath).href;
+      return await import(fileUrl);
+    }
+    throw error;
+  }
 }
 
 /**
@@ -52,11 +60,8 @@ class ESMCompatibleMigrationProvider implements MigrationProvider {
       const migrationName = fileName.substring(0, fileName.lastIndexOf("."));
       const filePath = path.join(this.migrationFolder, fileName);
 
-      // Convert to file:// URL for Windows ESM compatibility
-      const importPath = fixPathForESMImport(filePath);
-
-      // Dynamic import of the migration module
-      const migration = await import(importPath);
+      // Import with automatic CJS/ESM handling
+      const migration = await importMigration(filePath);
       migrations[migrationName] = migration;
     }
 
