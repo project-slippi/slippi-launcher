@@ -5,14 +5,13 @@
  *
  * ## Firebase Persistence
  * Firebase automatically persists authentication state in IndexedDB (browser storage).
- * Each Firebase app instance (identified by name) gets its own IndexedDB database.
+ * Each Firebase app instance (identified by name) gets its own IndexedDB database:
+ * - firebaseLocalStorageDb:app-account-{uid}
  * This means accounts stay logged in across app restarts automatically.
  *
- * ## Refresh Token Storage
- * We also store refresh tokens (encrypted) in electron-settings as a backup.
- * However, Firebase's IndexedDB persistence is the primary mechanism.
- * The refresh tokens are extracted from Firebase's internal API (stsTokenManager)
- * which is not officially documented and may change in future versions.
+ * ## No Refresh Token Needed
+ * Firebase's built-in IndexedDB persistence handles everything automatically.
+ * We don't need to manually store refresh tokens - Firebase does it for us.
  *
  * ## Account Switching
  * When switching accounts, we simply change which Firebase app instance is "active"
@@ -30,7 +29,6 @@ import Subject from "observable-fns/subject";
 
 import { generateDisplayPicture } from "@/lib/display_picture";
 
-import { tokenStorage } from "./token_storage";
 import type { MultiAccountService } from "./types";
 import { SessionExpiredError } from "./types";
 
@@ -165,26 +163,14 @@ class MultiAccountClient implements MultiAccountService {
           unsubscribe();
 
           if (user) {
-            log.info(`Session already active for account: ${account.email}`);
+            log.info(`Session restored for account: ${account.email}`);
           } else {
-            log.warn(`No active session for account ${account.id} - may need re-authentication`);
+            log.warn(`No active session for account ${account.id} - will need re-authentication`);
           }
 
           resolve();
         });
       });
-
-      // Try to get stored refresh token (note: this may not work reliably)
-      const refreshToken = await tokenStorage.getToken(account.id);
-
-      if (refreshToken) {
-        // We can't easily use refresh tokens with Firebase client SDK
-        // Firebase handles persistence automatically via IndexedDB
-        // The refresh token storage is mainly for backup/debugging
-        log.info(`Found refresh token for account: ${account.email}`);
-      }
-
-      log.info(`Restored auth instance for account: ${account.email}`);
     } catch (err) {
       log.error(`Failed to restore account ${account.id}:`, err);
     }
@@ -263,19 +249,12 @@ class MultiAccountClient implements MultiAccountService {
 
       // Transfer session to permanent app
       // Note: We'll need to re-authenticate here since we can't transfer sessions directly
-      const result = await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(auth, email, password);
 
-      // Store the refresh token
-      // Firebase doesn't officially expose refresh tokens, but they're available in the internal structure
-      // This accesses the internal API which may change in future Firebase versions
-      const refreshToken = (result.user as any).stsTokenManager?.refreshToken;
-      if (refreshToken) {
-        await tokenStorage.storeToken(user.uid, refreshToken);
-      } else {
-        // Fallback: Firebase stores tokens in IndexedDB, but we can't easily access them
-        // For now, log a warning - the user will need to re-authenticate on next launch
-        log.warn(`Could not extract refresh token for account ${email}. Session may not persist.`);
-      }
+      // Note: We no longer need to manually store refresh tokens.
+      // Firebase automatically persists the session in IndexedDB for this app instance.
+      // The IndexedDB key is: firebaseLocalStorageDb:app-account-{uid}
+      // This will survive app restarts without us doing anything.
 
       // Set up auth state listener (for persistence)
       onAuthStateChanged(auth, () => {
@@ -367,10 +346,7 @@ class MultiAccountClient implements MultiAccountService {
     }
 
     try {
-      // Remove token
-      await tokenStorage.removeToken(accountId);
-
-      // Delete Firebase app
+      // Delete Firebase app (this will also clear IndexedDB persistence)
       const app = this._firebaseApps.get(accountId);
       if (app) {
         await deleteApp(app);

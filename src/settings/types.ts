@@ -70,7 +70,6 @@ export interface SettingsSchema {
 export interface RootSettingsSchema {
   connections: StoredConnection[];
   accounts: AccountData;
-  accountTokens: Record<string, string>; // uid -> encrypted refresh token
   previousVersion?: string;
   netplayPromotedToStable: boolean;
   playbackPromotedToStable: boolean;
