@@ -19,12 +19,11 @@
  * and notify listeners. All accounts remain logged in simultaneously.
  */
 
-import { Preconditions } from "@common/preconditions";
 import type { AccountData, StoredAccount } from "@settings/types";
 import log from "electron-log";
 import type { FirebaseApp } from "firebase/app";
 import { deleteApp, getApp, getApps, initializeApp } from "firebase/app";
-import type { Auth, User as FirebaseUser } from "firebase/auth";
+import type { Auth } from "firebase/auth";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import multicast from "observable-fns/multicast";
 import Subject from "observable-fns/subject";
@@ -32,7 +31,7 @@ import Subject from "observable-fns/subject";
 import { generateDisplayPicture } from "@/lib/display_picture";
 
 import { tokenStorage } from "./token_storage";
-import type { AuthUser, MultiAccountService } from "./types";
+import type { MultiAccountService } from "./types";
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -48,8 +47,6 @@ const firebaseConfig = {
 const MAX_ACCOUNTS = 5;
 
 class MultiAccountClient implements MultiAccountService {
-  private _userSubject = new Subject<AuthUser | null>();
-  private _onAuthStateChanged = multicast(this._userSubject);
   private _accountsSubject = new Subject<{ accounts: StoredAccount[]; activeId: string | null }>();
   private _onAccountsChanged = multicast(this._accountsSubject);
   private _firebaseApps = new Map<string, FirebaseApp>();
@@ -59,11 +56,11 @@ class MultiAccountClient implements MultiAccountService {
   private _initialized = false;
 
   /**
-   * Initialize the multi-account service and restore previous session
+   * Initialize the multi-account service and restore previous sessions
    */
-  public async init(): Promise<AuthUser | null> {
+  public async init(): Promise<void> {
     if (this._initialized) {
-      return this.getCurrentUser();
+      return;
     }
 
     try {
@@ -73,27 +70,23 @@ class MultiAccountClient implements MultiAccountService {
       // Notify listeners of initial accounts state
       this._notifyAccountsChanged();
 
-      // If we have accounts, restore the active session
+      // If we have accounts, restore their sessions
       if (this._activeAccountId && this._accounts.length > 0) {
         const activeAccount = this._accounts.find((acc) => acc.id === this._activeAccountId);
         if (activeAccount) {
           await this._restoreAccount(activeAccount);
-          this._initialized = true;
-          return this.getCurrentUser();
         }
       }
 
-      // No active account, initialize default Firebase app
+      // Initialize default Firebase app if none exist
       if (getApps().length === 0) {
         initializeApp(firebaseConfig);
       }
 
       this._initialized = true;
-      return null;
     } catch (err) {
       log.error("Failed to initialize multi-account service:", err);
       this._initialized = true;
-      return null;
     }
   }
 
@@ -163,14 +156,9 @@ class MultiAccountClient implements MultiAccountService {
       // Store auth instance
       this._authInstances.set(account.id, auth);
 
-      // Set up auth state listener
-      onAuthStateChanged(auth, (user) => {
-        if (user && account.id === this._activeAccountId) {
-          this._userSubject.next(this._mapFirebaseUserToAuthUser(user));
-        } else if (!user && account.id === this._activeAccountId) {
-          // User logged out or token expired
-          this._userSubject.next(null);
-        }
+      // Set up auth state listener (for persistence)
+      onAuthStateChanged(auth, () => {
+        // Auth state changes are handled by AuthService
       });
 
       // Check if user is already logged in (Firebase persists auth in IndexedDB)
@@ -284,11 +272,9 @@ class MultiAccountClient implements MultiAccountService {
         log.warn(`Could not extract refresh token for account ${email}. Session may not persist.`);
       }
 
-      // Set up auth state listener
-      onAuthStateChanged(auth, (fbUser) => {
-        if (fbUser && user.uid === this._activeAccountId) {
-          this._userSubject.next(this._mapFirebaseUserToAuthUser(fbUser));
-        }
+      // Set up auth state listener (for persistence)
+      onAuthStateChanged(auth, () => {
+        // Auth state changes are handled by AuthService
       });
 
       // Set as active account
@@ -299,9 +285,6 @@ class MultiAccountClient implements MultiAccountService {
 
       // Clean up temp app
       await deleteApp(tempApp);
-
-      // Notify listeners
-      this._userSubject.next(this._mapFirebaseUserToAuthUser(user));
 
       log.info(`Added and switched to account: ${email}`);
 
@@ -360,9 +343,6 @@ class MultiAccountClient implements MultiAccountService {
       // Save to storage
       await this._saveAccounts();
 
-      // Notify listeners
-      this._userSubject.next(this._mapFirebaseUserToAuthUser(currentUser));
-
       log.info(`Switched to account: ${account.email}`);
     } catch (err) {
       log.error(`Failed to switch to account ${accountId}:`, err);
@@ -407,7 +387,6 @@ class MultiAccountClient implements MultiAccountService {
         } else {
           // No accounts left
           this._activeAccountId = null;
-          this._userSubject.next(null);
         }
       }
 
@@ -437,161 +416,14 @@ class MultiAccountClient implements MultiAccountService {
   }
 
   /**
-   * Get the current user for the active account
+   * Get the active Firebase Auth instance (for AuthService to use)
    */
-  public getCurrentUser(): AuthUser | null {
+  public getActiveAuth(): Auth | null {
     if (!this._activeAccountId) {
       return null;
     }
 
-    const auth = this._authInstances.get(this._activeAccountId);
-    if (!auth || !auth.currentUser) {
-      return null;
-    }
-
-    return this._mapFirebaseUserToAuthUser(auth.currentUser);
-  }
-
-  /**
-   * Get user token for the active account
-   */
-  public async getUserToken(): Promise<string> {
-    if (!this._activeAccountId) {
-      throw new Error("No active account");
-    }
-
-    const auth = this._authInstances.get(this._activeAccountId);
-    Preconditions.checkExists(auth, "Auth instance not found");
-    Preconditions.checkExists(auth.currentUser, "User is not logged in");
-
-    const token = await auth.currentUser.getIdToken();
-    return token;
-  }
-
-  /**
-   * Login to an account (adds account if first login, or switches to it if already exists)
-   */
-  public async login({ email, password }: { email: string; password: string }): Promise<AuthUser | null> {
-    try {
-      await this.addAccount(email, password);
-      return this.getCurrentUser();
-    } catch (err) {
-      log.error("Login failed:", err);
-      throw err;
-    }
-  }
-
-  /**
-   * Sign up a new user
-   */
-  public async signUp({
-    email,
-    displayName,
-    password,
-  }: {
-    email: string;
-    displayName: string;
-    password: string;
-  }): Promise<AuthUser | null> {
-    try {
-      // Use default Firebase app for signup
-      const defaultApp = getApps().find((app) => app.name === "[DEFAULT]");
-      const app = defaultApp ?? initializeApp(firebaseConfig);
-      const functions = await import("firebase/functions").then((m) => m.getFunctions(app));
-      const createUser = await import("firebase/functions").then((m) => m.httpsCallable(functions, "createUserNew"));
-
-      await createUser({ email, password, displayName });
-
-      // Now login with the new account
-      return this.login({ email, password });
-    } catch (err) {
-      log.error("Signup failed:", err);
-      throw err;
-    }
-  }
-
-  /**
-   * Send verification email for the active account
-   */
-  public async sendVerificationEmail(): Promise<void> {
-    if (!this._activeAccountId) {
-      throw new Error("No active account");
-    }
-
-    const auth = this._authInstances.get(this._activeAccountId);
-    Preconditions.checkExists(auth, "Auth instance not found");
-    Preconditions.checkExists(auth.currentUser, "User is not logged in");
-
-    if (!auth.currentUser.emailVerified) {
-      log.info(`Sending email verification for account: ${this._activeAccountId}`);
-      const { sendEmailVerification } = await import("firebase/auth");
-      await sendEmailVerification(auth.currentUser);
-    }
-  }
-
-  /**
-   * Refresh the current user data
-   */
-  public async refreshUser(): Promise<void> {
-    if (!this._activeAccountId) {
-      throw new Error("No active account");
-    }
-
-    const auth = this._authInstances.get(this._activeAccountId);
-    Preconditions.checkExists(auth, "Auth instance not found");
-    Preconditions.checkExists(auth.currentUser, "User is not logged in");
-
-    await auth.currentUser.reload();
-
-    // Notify listeners of the updated user
-    this._userSubject.next(this.getCurrentUser());
-  }
-
-  /**
-   * Update display name for the active account
-   */
-  public async updateDisplayName(displayName: string): Promise<void> {
-    if (!this._activeAccountId) {
-      throw new Error("No active account");
-    }
-
-    const auth = this._authInstances.get(this._activeAccountId);
-    Preconditions.checkExists(auth, "Auth instance not found");
-    Preconditions.checkExists(auth.currentUser, "User is not logged in");
-
-    const { updateProfile } = await import("firebase/auth");
-    await updateProfile(auth.currentUser, { displayName });
-
-    // Update stored account info
-    const accountIndex = this._accounts.findIndex((acc) => acc.id === this._activeAccountId);
-    if (accountIndex !== -1) {
-      this._accounts[accountIndex].displayName = displayName;
-      await this._saveAccounts();
-    }
-
-    // Notify listeners
-    this._userSubject.next(this.getCurrentUser());
-  }
-
-  /**
-   * Logout the active account only
-   */
-  public async logout(): Promise<void> {
-    if (!this._activeAccountId) {
-      return;
-    }
-
-    await this.removeAccount(this._activeAccountId);
-  }
-
-  /**
-   * Subscribe to auth state changes
-   */
-  public onUserChange(onChange: (user: AuthUser | null) => void): () => void {
-    const subscription = this._onAuthStateChanged.subscribe(onChange);
-    return () => {
-      subscription.unsubscribe();
-    };
+    return this._authInstances.get(this._activeAccountId) ?? null;
   }
 
   /**
@@ -603,20 +435,6 @@ class MultiAccountClient implements MultiAccountService {
     const subscription = this._onAccountsChanged.subscribe(onChange);
     return () => {
       subscription.unsubscribe();
-    };
-  }
-
-  /**
-   * Map Firebase user to AuthUser
-   */
-  private _mapFirebaseUserToAuthUser(user: FirebaseUser): AuthUser {
-    const displayPicture = generateDisplayPicture(user.uid);
-    return {
-      uid: user.uid,
-      displayName: user.displayName ?? "",
-      displayPicture,
-      email: user.email ?? "",
-      emailVerified: user.emailVerified,
     };
   }
 }

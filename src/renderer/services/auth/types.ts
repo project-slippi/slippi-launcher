@@ -26,6 +26,9 @@ export interface AuthService {
 // Note: StoredAccount and AccountData are defined in @settings/types.ts
 
 export interface MultiAccountService {
+  // Initialization
+  init(): Promise<void>;
+
   // Account Management
   addAccount(email: string, password: string): Promise<StoredAccount>;
   removeAccount(accountId: string): Promise<void>;
@@ -33,15 +36,9 @@ export interface MultiAccountService {
   getAccounts(): StoredAccount[];
   getActiveAccountId(): string | null;
 
-  // Auth Operations (delegates to active account)
-  getCurrentUser(): AuthUser | null;
-  getUserToken(): Promise<string>;
-  init(): Promise<AuthUser | null>;
-  login(args: { email: string; password: string }): Promise<AuthUser | null>;
-  signUp(args: { email: string; password: string; displayName: string }): Promise<AuthUser | null>;
-  logout(): Promise<void>; // Active account only
-  sendVerificationEmail(): Promise<void>;
-  refreshUser(): Promise<void>;
-  updateDisplayName(displayName: string): Promise<void>;
-  onUserChange(onChange: (user: AuthUser | null) => void): () => void;
+  // Get the active Firebase Auth instance for AuthService to use
+  getActiveAuth(): any | null; // Returns firebase Auth instance
+
+  // Notifications
+  onAccountsChange(onChange: (data: { accounts: StoredAccount[]; activeId: string | null }) => void): () => void;
 }
