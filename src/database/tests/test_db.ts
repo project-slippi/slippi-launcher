@@ -1,8 +1,8 @@
 import type { Database } from "@database/schema";
 import Sqlite from "better-sqlite3";
 import { Kysely, SqliteDialect } from "kysely";
-import path from "path";
 
+import webpackPaths from "../../../.erb/configs/webpack.paths";
 import { migrateToLatest } from "../migrate_to_latest";
 
 export async function initTestDb(): Promise<Kysely<Database>> {
@@ -13,8 +13,7 @@ export async function initTestDb(): Promise<Kysely<Database>> {
     }),
   });
 
-  const migrationsFolder = path.join(__dirname, "../migrations");
-  await migrateToLatest(database, migrationsFolder);
+  await migrateToLatest(database, webpackPaths.distMigrationsPath);
   return database;
 }
 

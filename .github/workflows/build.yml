@@ -115,7 +115,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CODESIGNTOOL_PATH: "${{ github.workspace }}/CodeSignTool"
       - name: Run tests
-        if: matrix.os == 'ubuntu-latest'
         run: |
           npm run typecheck
           npm run test
