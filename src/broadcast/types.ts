@@ -1,4 +1,4 @@
-import type { DolphinMessageType } from "@slippi/slippi-js";
+import type { DolphinMessageType } from "@slippi/slippi-js/node";
 import type { Observable } from "observable-fns";
 
 export type BroadcasterItem = {

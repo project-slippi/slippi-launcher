@@ -1,4 +1,4 @@
-import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
+import type { StadiumStatsType, StatsType } from "@slippi/slippi-js/node";
 
 export type PlayerInfo = {
   playerIndex: number;

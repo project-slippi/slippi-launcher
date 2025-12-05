@@ -3,8 +3,8 @@
 // when in Node worker context.
 
 // TODO: Make electron-log work somehow
-import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
-import { SlippiGame } from "@slippi/slippi-js";
+import type { StadiumStatsType, StatsType } from "@slippi/slippi-js/node";
+import { SlippiGame } from "@slippi/slippi-js/node";
 import type { ModuleMethods } from "threads/dist/types/master";
 import { Observable, Subject } from "threads/observable";
 import { expose } from "threads/worker";

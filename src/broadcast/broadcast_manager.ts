@@ -1,5 +1,5 @@
 import { Preconditions } from "@common/preconditions";
-import { ConnectionEvent, ConnectionStatus, DolphinConnection, DolphinMessageType } from "@slippi/slippi-js";
+import { ConnectionEvent, ConnectionStatus, DolphinConnection, DolphinMessageType } from "@slippi/slippi-js/node";
 import { EventEmitter } from "events";
 import keyBy from "lodash/keyBy";
 import last from "lodash/last";
@@ -91,7 +91,7 @@ export class BroadcastManager extends EventEmitter {
         this.backupEvents = [];
       }
     });
-    this.dolphinConnection.on(ConnectionEvent.MESSAGE, (message) => {
+    this.dolphinConnection.on(ConnectionEvent.MESSAGE, (message: any) => {
       this.incomingEvents.push(message);
       this._handleGameData();
     });

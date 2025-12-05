@@ -1,3 +1,4 @@
+import { ConnectionStatus } from "@console/types";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import AddIcon from "@mui/icons-material/Add";
@@ -7,7 +8,6 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton";
 import type { StoredConnection } from "@settings/types";
-import { ConnectionStatus } from "@slippi/slippi-js";
 import React from "react";
 
 import { DualPane } from "@/components/dual_pane";

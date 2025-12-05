@@ -1,4 +1,4 @@
-import type { ConnectionDetails, GameEndType, PostFrameUpdateType } from "@slippi/slippi-js";
+import type { ConnectionDetails, GameEndType, PostFrameUpdateType } from "@slippi/slippi-js/node";
 import {
   Command,
   ConnectionEvent,
@@ -8,15 +8,23 @@ import {
   SlpFileWriter,
   SlpFileWriterEvent,
   SlpStreamEvent,
-} from "@slippi/slippi-js";
+} from "@slippi/slippi-js/node";
 import { EventEmitter } from "events";
 import * as fs from "fs-extra";
 import path from "path";
 
 import { AutoSwitcher } from "./auto_switcher";
 import { ConsoleRelay } from "./console_relay";
-import type { MirrorConfig, MirrorDetails } from "./types";
+import type { MirrorConfig } from "./types";
 import { MirrorEvent } from "./types";
+
+export type MirrorDetails = MirrorConfig & {
+  isMirroring: boolean;
+  connection: ConsoleConnection;
+  fileWriter: SlpFileWriter;
+  autoSwitcher: AutoSwitcher | null;
+  relay: ConsoleRelay | null;
+};
 
 /**
  * Responsible for setting up and keeping track of active console connections and mirroring.
@@ -121,10 +129,10 @@ export class MirrorManager extends EventEmitter {
         });
       });
 
-      connection.on(ConnectionEvent.DATA, (data: Buffer) => {
+      connection.on(ConnectionEvent.DATA, (data) => {
         fileWriter.write(data);
         if (relay) {
-          relay.write(data);
+          relay.write(Buffer.from(data));
         }
       });
     });

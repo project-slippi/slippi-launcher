@@ -1,10 +1,10 @@
 import type { DiscoveredConsoleInfo } from "@console/types";
+import { ConnectionStatus } from "@console/types";
 import styled from "@emotion/styled";
 import CreateIcon from "@mui/icons-material/Create";
 import DeleteIcon from "@mui/icons-material/Delete";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import type { StoredConnection } from "@settings/types";
-import { ConnectionStatus } from "@slippi/slippi-js";
 import React from "react";
 
 import { IconMenu } from "@/components/icon_menu";

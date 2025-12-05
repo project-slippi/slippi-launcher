@@ -1,7 +1,7 @@
+import { ConnectionStatus } from "@console/types";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import Button from "@mui/material/Button";
-import { ConnectionStatus } from "@slippi/slippi-js";
 import { formatDuration, intervalToDuration } from "date-fns";
 import React from "react";
 import TimeAgo from "react-timeago";

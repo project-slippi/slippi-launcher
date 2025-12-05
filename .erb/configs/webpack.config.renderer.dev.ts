@@ -12,7 +12,6 @@ import { merge } from "webpack-merge";
 
 import checkNodeEnv from "../scripts/check-node-env";
 import baseConfig from "./webpack.config.base";
-import polyfills from "./webpack.config.renderer.polyfills";
 import webpackPaths from "./webpack.paths";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
@@ -263,5 +262,5 @@ export default (env?: Record<string, string | true>, _argv?: any) => {
     },
   };
 
-  return merge(baseConfig, polyfills, configuration);
+  return merge(baseConfig, configuration);
 };
