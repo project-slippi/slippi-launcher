@@ -23,7 +23,6 @@ export const defaultAppSettings: AppSettings = {
     activeId: null,
     list: [],
   },
-  accountTokens: {},
   settings: {
     isoPath: null,
     rootSlpPath: getDefaultRootSlpPath(),

@@ -2,7 +2,7 @@ import { exists } from "@common/exists";
 import { IsoValidity } from "@common/types";
 import type { DolphinManager } from "@dolphin/manager";
 import { DolphinLaunchType } from "@dolphin/types";
-import { app, clipboard, dialog, ipcMain, nativeImage, safeStorage, shell } from "electron";
+import { app, clipboard, dialog, ipcMain, nativeImage, shell } from "electron";
 import electronLog from "electron-log";
 import type { ProgressInfo, UpdateInfo } from "electron-updater";
 import { autoUpdater } from "electron-updater";
@@ -17,13 +17,10 @@ import {
   ipc_checkValidIso,
   ipc_clearTempFolder,
   ipc_copyLogsToClipboard,
-  ipc_decryptString,
   ipc_deleteFiles,
-  ipc_encryptString,
   ipc_fetchNewsFeed,
   ipc_getLatestGitHubReleaseVersion,
   ipc_installUpdate,
-  ipc_isEncryptionAvailable,
   ipc_launcherUpdateDownloadingEvent,
   ipc_launcherUpdateFoundEvent,
   ipc_launcherUpdateReadyEvent,
@@ -181,27 +178,5 @@ export default function setupMainIpc({
 
   ipc_runNetworkDiagnostics.main!.handle(async () => {
     return getNetworkDiagnostics();
-  });
-
-  // SafeStorage handlers for secure token storage
-  ipc_encryptString.main!.handle(async ({ data }) => {
-    if (!safeStorage.isEncryptionAvailable()) {
-      throw new Error("Encryption is not available on this system");
-    }
-    const encrypted = safeStorage.encryptString(data);
-    return { encrypted: encrypted.toString("base64") };
-  });
-
-  ipc_decryptString.main!.handle(async ({ encrypted }) => {
-    if (!safeStorage.isEncryptionAvailable()) {
-      throw new Error("Encryption is not available on this system");
-    }
-    const buffer = Buffer.from(encrypted, "base64");
-    const data = safeStorage.decryptString(buffer);
-    return { data };
-  });
-
-  ipc_isEncryptionAvailable.main!.handle(async () => {
-    return { available: safeStorage.isEncryptionAvailable() };
   });
 }

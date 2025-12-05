@@ -48,15 +48,3 @@ export const ipc_launcherUpdateDownloadingEvent = makeEndpoint.renderer(
 );
 
 export const ipc_launcherUpdateReadyEvent = makeEndpoint.renderer("launcherupdate_ready", <EmptyPayload>_);
-
-// SafeStorage (for multi-account token encryption)
-
-export const ipc_encryptString = makeEndpoint.main("encryptString", <{ data: string }>_, <{ encrypted: string }>_);
-
-export const ipc_decryptString = makeEndpoint.main("decryptString", <{ encrypted: string }>_, <{ data: string }>_);
-
-export const ipc_isEncryptionAvailable = makeEndpoint.main(
-  "isEncryptionAvailable",
-  <EmptyPayload>_,
-  <{ available: boolean }>_,
-);
