@@ -140,6 +140,10 @@ class AuthClient implements AuthService {
   }
 
   public async signUp({ email, displayName, password }: { email: string; displayName: string; password: string }) {
+    if (this._multiAccountService) {
+      return this._multiAccountService.signUp({ email, displayName, password });
+    }
+
     const functions = getFunctions();
     const createUser = httpsCallable(functions, "createUserNew");
     await createUser({ email, password, displayName });
@@ -147,6 +151,10 @@ class AuthClient implements AuthService {
   }
 
   public async login({ email, password }: { email: string; password: string }) {
+    if (this._multiAccountService) {
+      return this._multiAccountService.login({ email, password });
+    }
+
     const auth = getAuth();
     const { user } = await signInWithEmailAndPassword(auth, email, password);
     if (!user) {
@@ -157,6 +165,10 @@ class AuthClient implements AuthService {
   }
 
   public async sendVerificationEmail() {
+    if (this._multiAccountService) {
+      return this._multiAccountService.sendVerificationEmail();
+    }
+
     const auth = getAuth();
     const user = auth.currentUser;
     Preconditions.checkExists(user, "User is not logged in.");
@@ -168,6 +180,10 @@ class AuthClient implements AuthService {
   }
 
   public async refreshUser(): Promise<void> {
+    if (this._multiAccountService) {
+      return this._multiAccountService.refreshUser();
+    }
+
     const auth = getAuth();
     const user = auth.currentUser;
     Preconditions.checkExists(user, "User is not logged in.");
@@ -206,6 +222,10 @@ class AuthClient implements AuthService {
   }
 
   public async updateDisplayName(displayName: string): Promise<void> {
+    if (this._multiAccountService) {
+      return this._multiAccountService.updateDisplayName(displayName);
+    }
+
     const auth = getAuth();
     const user = auth.currentUser;
     if (!user) {

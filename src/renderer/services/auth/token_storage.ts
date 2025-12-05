@@ -1,11 +1,10 @@
-import electronSettings from "electron-settings";
 import log from "electron-log";
-
-const TOKENS_KEY = "accounts.tokens";
 
 /**
  * TokenStorage handles secure storage of Firebase refresh tokens using OS-level encryption
  * via Electron's safeStorage API (Keychain on macOS, DPAPI on Windows, libsecret on Linux).
+ * 
+ * Tokens are stored in the settings schema under 'accountTokens' field.
  */
 export class TokenStorage {
   private isAvailable: boolean | null = null;
@@ -41,8 +40,15 @@ export class TokenStorage {
       // Encrypt using OS keychain via IPC
       const encrypted = await window.electron.common.encryptString(refreshToken);
 
-      // Store encrypted token in electron-settings
-      await electronSettings.set(`${TOKENS_KEY}.${uid}`, encrypted);
+      // Get existing tokens
+      const settings = window.electron.settings.getAppSettingsSync();
+      const tokens = { ...settings.accountTokens };
+
+      // Add/update token for this account
+      tokens[uid] = encrypted;
+
+      // Save back using settings API
+      await window.electron.settings.updateSettings([{ key: "accountTokens", value: tokens }]);
 
       log.info(`Stored encrypted token for account: ${uid}`);
     } catch (err) {
@@ -62,8 +68,10 @@ export class TokenStorage {
     }
 
     try {
-      // Get encrypted data from storage
-      const encrypted = (await electronSettings.get(`${TOKENS_KEY}.${uid}`)) as string | undefined;
+      // Get encrypted token from settings
+      const settings = window.electron.settings.getAppSettingsSync();
+      const tokens = settings.accountTokens;
+      const encrypted = tokens[uid];
 
       if (!encrypted) {
         return null;
@@ -85,7 +93,16 @@ export class TokenStorage {
    */
   async removeToken(uid: string): Promise<void> {
     try {
-      await electronSettings.unset(`${TOKENS_KEY}.${uid}`);
+      // Get existing tokens
+      const settings = window.electron.settings.getAppSettingsSync();
+      const tokens = { ...settings.accountTokens };
+
+      // Remove token for this account
+      delete tokens[uid];
+
+      // Save back using settings API
+      await window.electron.settings.updateSettings([{ key: "accountTokens", value: tokens }]);
+
       log.info(`Removed token for account: ${uid}`);
     } catch (err) {
       log.error(`Failed to remove token for account ${uid}:`, err);
@@ -98,8 +115,9 @@ export class TokenStorage {
    */
   async getAllTokenUids(): Promise<string[]> {
     try {
-      const tokens = (await electronSettings.get(TOKENS_KEY)) as Record<string, string> | undefined;
-      return tokens ? Object.keys(tokens) : [];
+      const settings = window.electron.settings.getAppSettingsSync();
+      const tokens = settings.accountTokens;
+      return Object.keys(tokens);
     } catch (err) {
       log.error("Failed to get all token UIDs:", err);
       return [];
@@ -111,7 +129,7 @@ export class TokenStorage {
    */
   async clearAllTokens(): Promise<void> {
     try {
-      await electronSettings.unset(TOKENS_KEY);
+      await window.electron.settings.updateSettings([{ key: "accountTokens", value: {} }]);
       log.info("Cleared all stored tokens");
     } catch (err) {
       log.error("Failed to clear tokens:", err);
