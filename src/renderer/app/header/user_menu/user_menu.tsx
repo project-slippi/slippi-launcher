@@ -216,7 +216,6 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
                 onAddAccount={handleAddAccount}
                 onManageAccounts={handleManageAccounts}
                 switching={switching}
-                connectCode={userData?.playKey?.connectCode}
               />
             </div>
             <Divider />
