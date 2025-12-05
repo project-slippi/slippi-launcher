@@ -16,7 +16,9 @@ import { AccountSwitcherMessages as Messages } from "./account_switcher.messages
 
 const TOP_ACCOUNTS_TO_SHOW = 3;
 
-const AccountItem = styled(ButtonBase)<{ $active?: boolean }>`
+const AccountItem = styled(ButtonBase, {
+  shouldForwardProp: (prop) => prop !== "$active",
+})<{ $active?: boolean }>`
   width: 100%;
   display: flex;
   align-items: center;
