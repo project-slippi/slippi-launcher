@@ -1,34 +1,55 @@
+import { css } from "@emotion/react";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import EditIcon from "@mui/icons-material/Edit";
 import LanguageIcon from "@mui/icons-material/Language";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import ButtonBase from "@mui/material/ButtonBase";
+import Divider from "@mui/material/Divider";
 import DialogContentText from "@mui/material/DialogContentText";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 import log from "electron-log";
 import React from "react";
 
 import { ConfirmationModal } from "@/components/confirmation_modal/confirmation_modal";
-import type { IconMenuItem } from "@/components/icon_menu";
-import { IconMenu } from "@/components/icon_menu";
 import { useAccount } from "@/lib/hooks/use_account";
 import { useServices } from "@/services";
+import { useToasts } from "@/lib/hooks/use_toasts";
 import type { AuthUser } from "@/services/auth/types";
 
+import { AccountSwitcher } from "../account_switcher/account_switcher";
+import { AddAccountDialog } from "../account_switcher/add_account_dialog";
+import { ManageAccountsDialog } from "../account_switcher/manage_accounts_dialog";
+import { AccountSwitcherMessages as AccountMessages } from "../account_switcher/account_switcher.messages";
 import { ActivateOnlineDialog } from "../activate_online_dialog";
 import { NameChangeDialog } from "../name_change_dialog";
 import { UserInfo } from "../user_info/user_info";
 import { UserMenuMessages as Messages } from "./user_menu.messages";
 
+const MAX_ACCOUNTS = 5;
+
 export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (error: any) => void }) => {
-  const { authService } = useServices();
+  const { authService, slippiBackendService } = useServices();
   const userData = useAccount((store) => store.userData);
   const displayName = useAccount((store) => store.displayName);
   const loading = useAccount((store) => store.loading);
   const serverError = useAccount((store) => store.serverError);
+  const accounts = useAccount((store) => store.accounts);
+  const activeAccountId = useAccount((store) => store.activeAccountId);
+  const setAccounts = useAccount((store) => store.setAccounts);
+  const setActiveAccountId = useAccount((store) => store.setActiveAccountId);
+  const { showSuccess, showError } = useToasts();
+
   const [openLogoutPrompt, setOpenLogoutPrompt] = React.useState(false);
   const [openNameChangePrompt, setOpenNameChangePrompt] = React.useState(false);
   const [openActivationDialog, setOpenActivationDialog] = React.useState(false);
+  const [openAddAccountDialog, setOpenAddAccountDialog] = React.useState(false);
+  const [openManageAccountsDialog, setOpenManageAccountsDialog] = React.useState(false);
+  const [switching, setSwitching] = React.useState(false);
+
   const onLogout = async () => {
     try {
       await authService.logout();
@@ -52,63 +73,95 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
     setOpenLogoutPrompt(false);
   };
 
-  const generateMenuItems = (): IconMenuItem[] => {
-    const items: IconMenuItem[] = [];
+  // Get multi-account service
+  const multiAccountService = authService.getMultiAccountService?.();
 
-    if (!userData?.playKey && !serverError) {
-      items.push({
-        onClick: () => {
-          closeMenu();
-          setOpenActivationDialog(true);
-        },
-        icon: <LanguageIcon fontSize="small" />,
-        label: Messages.activateOnlinePlay(),
+  // Update accounts in state when they change
+  React.useEffect(() => {
+    if (multiAccountService) {
+      const accountsList = multiAccountService.getAccounts();
+      const activeId = multiAccountService.getActiveAccountId();
+      setAccounts(accountsList);
+      setActiveAccountId(activeId);
+    }
+  }, [multiAccountService, setAccounts, setActiveAccountId]);
+
+  // Handle account switch
+  const handleSwitchAccount = async (accountId: string) => {
+    if (!multiAccountService || switching) return;
+
+    setSwitching(true);
+    closeMenu();
+
+    try {
+      await multiAccountService.switchAccount(accountId);
+
+      // Update local state
+      const accountsList = multiAccountService.getAccounts();
+      const activeId = multiAccountService.getActiveAccountId();
+      setAccounts(accountsList);
+      setActiveAccountId(activeId);
+
+      const account = accountsList.find((acc) => acc.id === accountId);
+      if (account) {
+        showSuccess(AccountMessages.switchedTo(account.displayName || account.email));
+      }
+
+      // Refresh user data for new account
+      await slippiBackendService.fetchUserData().catch(() => {
+        // Ignore errors here - user data will be fetched by other listeners
       });
+    } catch (err: any) {
+      showError(err?.message || "Failed to switch account");
+      console.error("Failed to switch account:", err);
+    } finally {
+      setSwitching(false);
     }
-
-    if (userData && userData.playKey) {
-      const profileUrl = `https://slippi.gg/user/${userData.playKey.connectCode.replace("#", "-")}`;
-      items.push(
-        {
-          onClick: () => {
-            window.electron.shell.openExternal(profileUrl).catch(log.error);
-            closeMenu();
-          },
-          label: Messages.viewProfile(),
-          icon: <AccountBoxIcon fontSize="small" />,
-          external: true,
-        },
-        {
-          onClick: () => {
-            const manageUrl = `https://slippi.gg/manage?expectedUid=${user.uid}`;
-            window.electron.shell.openExternal(manageUrl).catch(log.error);
-            closeMenu();
-          },
-          label: Messages.manageAccount(),
-          icon: <ManageAccountsIcon fontSize="small" />,
-          external: true,
-        },
-        {
-          onClick: () => {
-            closeMenu();
-            setOpenNameChangePrompt(true);
-          },
-          label: Messages.editDisplayName(),
-          icon: <EditIcon fontSize="small" />,
-        },
-      );
-    }
-
-    items.push({
-      onClick: () => {
-        closeMenu();
-        setOpenLogoutPrompt(true);
-      },
-      label: Messages.logout(),
-      icon: <LogoutIcon fontSize="small" />,
-    });
-    return items;
   };
+
+  // Handle add account
+  const handleAddAccount = () => {
+    if (accounts.length >= MAX_ACCOUNTS) {
+      showError(AccountMessages.maxAccountsReached(MAX_ACCOUNTS));
+      return;
+    }
+
+    closeMenu();
+    setOpenAddAccountDialog(true);
+  };
+
+  // Handle manage accounts
+  const handleManageAccounts = () => {
+    closeMenu();
+    setOpenManageAccountsDialog(true);
+  };
+
+  // Handle remove account
+  const handleRemoveAccount = async (accountId: string) => {
+    if (!multiAccountService) return;
+
+    try {
+      await multiAccountService.removeAccount(accountId);
+
+      // Update local state
+      const accountsList = multiAccountService.getAccounts();
+      const activeId = multiAccountService.getActiveAccountId();
+      setAccounts(accountsList);
+      setActiveAccountId(activeId);
+
+      const account = accounts.find((acc) => acc.id === accountId);
+      if (account) {
+        showSuccess(AccountMessages.accountRemoved(account.displayName || account.email));
+      }
+    } catch (err: any) {
+      showError(err?.message || "Failed to remove account");
+      console.error("Failed to remove account:", err);
+      throw err;
+    }
+  };
+
+  // Determine if we have multi-account support
+  const hasMultiAccount = accounts.length > 0 || multiAccountService !== null;
 
   let errMessage: string | undefined = undefined;
   if (serverError) {
@@ -128,15 +181,105 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
           loading={loading}
         />
       </ButtonBase>
-      <IconMenu
+
+      <Menu
         anchorEl={anchorEl}
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
         transformOrigin={{ vertical: "top", horizontal: "left" }}
         keepMounted={true}
         open={Boolean(anchorEl)}
         onClose={closeMenu}
-        items={generateMenuItems()}
-      />
+      >
+        {/* Account Switcher (if multi-account enabled and has accounts) */}
+        {hasMultiAccount && accounts.length > 0 && (
+          <>
+            <div
+              css={css`
+                padding: 8px;
+              `}
+            >
+              <AccountSwitcher
+                accounts={accounts}
+                activeAccountId={activeAccountId}
+                onSwitchAccount={handleSwitchAccount}
+                onAddAccount={handleAddAccount}
+                onManageAccounts={handleManageAccounts}
+                switching={switching}
+                connectCode={userData?.playKey?.connectCode}
+              />
+            </div>
+            <Divider />
+          </>
+        )}
+
+        {/* Current Account Options */}
+        {!userData?.playKey && !serverError && (
+          <MenuItem
+            onClick={() => {
+              closeMenu();
+              setOpenActivationDialog(true);
+            }}
+          >
+            <ListItemIcon>
+              <LanguageIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText primary={Messages.activateOnlinePlay()} />
+          </MenuItem>
+        )}
+
+        {userData && userData.playKey && (
+          <>
+            <MenuItem
+              onClick={() => {
+                const profileUrl = `https://slippi.gg/user/${userData.playKey!.connectCode.replace("#", "-")}`;
+                window.electron.shell.openExternal(profileUrl).catch(log.error);
+                closeMenu();
+              }}
+            >
+              <ListItemIcon>
+                <AccountBoxIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText primary={Messages.viewProfile()} />
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                const manageUrl = `https://slippi.gg/manage?expectedUid=${user.uid}`;
+                window.electron.shell.openExternal(manageUrl).catch(log.error);
+                closeMenu();
+              }}
+            >
+              <ListItemIcon>
+                <ManageAccountsIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText primary={Messages.manageAccount()} />
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                closeMenu();
+                setOpenNameChangePrompt(true);
+              }}
+            >
+              <ListItemIcon>
+                <EditIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText primary={Messages.editDisplayName()} />
+            </MenuItem>
+          </>
+        )}
+
+        <MenuItem
+          onClick={() => {
+            closeMenu();
+            setOpenLogoutPrompt(true);
+          }}
+        >
+          <ListItemIcon>
+            <LogoutIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText primary={Messages.logout()} />
+        </MenuItem>
+      </Menu>
+
       <NameChangeDialog displayName={displayName} open={openNameChangePrompt} handleClose={handleClose} />
       <ActivateOnlineDialog
         open={openActivationDialog}
@@ -155,6 +298,28 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
       >
         <DialogContentText>{Messages.youWillNeedToLogInAgain()}</DialogContentText>
       </ConfirmationModal>
+
+      {/* Multi-Account Dialogs */}
+      <AddAccountDialog
+        open={openAddAccountDialog}
+        onClose={() => setOpenAddAccountDialog(false)}
+        onSuccess={() => {
+          if (multiAccountService) {
+            const accountsList = multiAccountService.getAccounts();
+            const activeId = multiAccountService.getActiveAccountId();
+            setAccounts(accountsList);
+            setActiveAccountId(activeId);
+          }
+        }}
+      />
+      <ManageAccountsDialog
+        open={openManageAccountsDialog}
+        onClose={() => setOpenManageAccountsDialog(false)}
+        accounts={accounts}
+        activeAccountId={activeAccountId}
+        onRemoveAccount={handleRemoveAccount}
+        maxAccounts={MAX_ACCOUNTS}
+      />
     </div>
   );
 };

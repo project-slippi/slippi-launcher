@@ -2,7 +2,7 @@ import log from "electron-log";
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
-import type { AuthUser } from "@/services/auth/types";
+import type { AuthUser, StoredAccount } from "@/services/auth/types";
 import type { SlippiBackendService, UserData } from "@/services/slippi/types";
 
 export const useAccount = create(
@@ -14,6 +14,9 @@ export const useAccount = create(
       serverError: false,
       displayName: "",
       emailVerificationSent: false,
+      // Multi-account state
+      accounts: [] as StoredAccount[],
+      activeAccountId: null as string | null,
     },
     (set, get) => ({
       setUser: (user: AuthUser | null) => {
@@ -36,6 +39,9 @@ export const useAccount = create(
       setServerError: (serverError: boolean) => set({ serverError }),
       setDisplayName: (displayName: string) => set({ displayName }),
       setEmailVerificationSent: (emailVerificationSent: boolean) => set({ emailVerificationSent }),
+      // Multi-account actions
+      setAccounts: (accounts: StoredAccount[]) => set({ accounts }),
+      setActiveAccountId: (activeAccountId: string | null) => set({ activeAccountId }),
     }),
   ),
 );
