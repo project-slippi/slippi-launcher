@@ -5,7 +5,7 @@ import * as stylex from "@stylexjs/stylex";
 import React from "react";
 
 import { NetworkDiagnosticsResultMessages as Messages } from "./network_diagnostics_result.messages";
-0;
+
 const hiddenIpAddress = "···.···.···.···";
 
 const styles = stylex.create({

@@ -74,7 +74,8 @@ export const IsoSelectionStep = React.memo(() => {
       return;
     }
 
-    const filePath = acceptedFiles[0].path;
+    const isoFile = acceptedFiles[0];
+    const filePath = window.electron.utils.getFilePath(isoFile);
     if (filePath.endsWith(".7z")) {
       showError(Messages.sevenZFilesMustBeUncompressed());
       return;

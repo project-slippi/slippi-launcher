@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import { delay } from "@common/delay";
 
 export const delayAndMaybeError =

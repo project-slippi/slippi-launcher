@@ -44,9 +44,9 @@ export async function readLastLines(
   const file = await fs.open(inputFilePath, "r");
 
   const bufferSize = Math.min(16384, stat.size);
-  const readBuffer = Buffer.alloc(bufferSize);
+  const readBuffer = new Uint8Array(bufferSize);
   let readBufferRemaining = 0;
-  const allBytes = [];
+  const allBytes: number[] = [];
   let lineCount = 0;
   let fileOffset = stat.size;
 

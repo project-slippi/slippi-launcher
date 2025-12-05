@@ -23,31 +23,31 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
-          cache: 'yarn'
+          cache: 'npm'
 
       - name: Cache node modules
         uses: actions/cache@v4
         id: cache
         with:
           path: node_modules
-          key: ${{ runner.OS }}-build-${{ secrets.CACHE_CONTROL }}-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.OS }}-build-${{ secrets.CACHE_CONTROL }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.OS }}-build-${{ secrets.CACHE_CONTROL }}-${{ env.cache-name }}-
             ${{ runner.OS }}-build-${{ secrets.CACHE_CONTROL }}
 
       - name: Install dependencies
-        run: yarn install
+        run: npm ci
 
       - name: Display updated translation percentage
         run: |
-          yarn run i18n:extract
-          yarn run i18n:sync
-          yarn run i18n:status
+          npm run i18n:extract
+          npm run i18n:sync
+          npm run i18n:status
 
       - name: Calculate translation percentage
         id: calc
         run: |
-          TRANSLATION_PCT=$(yarn --silent i18n:status --percent-only)
+          TRANSLATION_PCT=$(npm run --silent i18n:status -- --percent-only)
           echo "translation_pct=${TRANSLATION_PCT}" >> $GITHUB_OUTPUT
 
   publish-badge:

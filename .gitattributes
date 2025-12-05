@@ -11,6 +11,6 @@
 *.ttf   binary
 *.woff  binary
 *.woff2 binary
-yarn.lock linguist-generated=true
+package-lock.json linguist-generated=true
 *.po linguist-generated=true
 *.pot linguist-generated=true

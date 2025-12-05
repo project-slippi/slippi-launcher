@@ -184,7 +184,7 @@ const ReplayActionButton = React.memo(({ label, color, onClick, ...rest }: Repla
           size="large"
           onClick={(e) => {
             e.stopPropagation();
-            onClick && onClick(e);
+            onClick?.(e);
           }}
           {...rest}
         />

@@ -38,8 +38,8 @@ export async function initializeApp(services: Services) {
   );
 
   // Download Dolphins if necessary
-  [DolphinLaunchType.NETPLAY, DolphinLaunchType.PLAYBACK].map(async (dolphinType) => {
-    return dolphinService.downloadDolphin(dolphinType).catch((err) => {
+  [DolphinLaunchType.NETPLAY, DolphinLaunchType.PLAYBACK].map((dolphinType) => {
+    void dolphinService.downloadDolphin(dolphinType).catch((err) => {
       log.error(err);
       const dolphinTypeName =
         dolphinType === DolphinLaunchType.NETPLAY ? Messages.netplayDolphin() : Messages.playbackDolphin();

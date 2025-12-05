@@ -45,6 +45,12 @@ log.initialize();
 log.errorHandler.startCatching();
 log.transports.file.level = isDevelopment ? "info" : "warn";
 
+// Disable IPC hooks in development to prevent duplicate console logs
+// In dev mode, both main and renderer import electron-log, which causes duplication
+if (isDevelopment) {
+  log.transports.ipc.level = false;
+}
+
 // Only allow a single Slippi App instance
 const lockObtained = app.requestSingleInstanceLock();
 if (!lockObtained) {

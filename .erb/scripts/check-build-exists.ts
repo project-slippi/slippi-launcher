@@ -10,14 +10,12 @@ const rendererPath = path.join(webpackPaths.distRendererPath, "renderer.js");
 
 if (!fs.existsSync(mainPath)) {
   throw new Error(
-    chalk.whiteBright.bgRed.bold('The main process is not built yet. Build it by running "yarn run build:main"'),
+    chalk.whiteBright.bgRed.bold('The main process is not built yet. Build it by running "npm run build:main"'),
   );
 }
 
 if (!fs.existsSync(rendererPath)) {
   throw new Error(
-    chalk.whiteBright.bgRed.bold(
-      'The renderer process is not built yet. Build it by running "yarn run build:renderer"',
-    ),
+    chalk.whiteBright.bgRed.bold('The renderer process is not built yet. Build it by running "npm run build:renderer"'),
   );
 }

@@ -7,7 +7,7 @@ module.exports = {
     tsconfigRootDir: __dirname,
     createDefaultProgram: true,
   },
-  plugins: ["simple-import-sort", "strict-booleans", "react-hooks", "prettier", "@stylexjs", "lodash"],
+  plugins: ["simple-import-sort", "react-hooks", "prettier", "@stylexjs", "lodash"],
   extends: [
     "plugin:react/recommended",
     "eslint:recommended",
@@ -66,6 +66,7 @@ module.exports = {
       {
         argsIgnorePattern: "^_",
         varsIgnorePattern: "^_",
+        caughtErrorsIgnorePattern: ".*",
       },
     ],
     "@typescript-eslint/explicit-module-boundary-types": "off",
@@ -83,7 +84,6 @@ module.exports = {
     "import/no-named-as-default-member": "off",
     "simple-import-sort/imports": "warn",
     "simple-import-sort/exports": "warn",
-    "strict-booleans/no-nullable-numbers": "error",
     "no-undef": "off",
     "new-cap": "error",
     "@typescript-eslint/consistent-type-imports": "warn",
@@ -100,11 +100,13 @@ module.exports = {
     "react/react-in-jsx-scope": "off",
     "react/jsx-boolean-value": ["error", "always"],
     "react/no-unstable-nested-components": "error",
+    "react/no-unknown-property": ["error", { "ignore": ["css"] }],
     "@stylexjs/valid-styles": "error",
     "lodash/chaining": "error",
     "lodash/import-scope": [2, "method"],
     "no-restricted-imports": ["error", "lodash/chain"],
-    "react/jsx-curly-brace-presence": ["error", "never"]
+    "react/jsx-curly-brace-presence": ["error", "never"],
+    "@typescript-eslint/no-require-imports": "off"
   },
   overrides: [
     {

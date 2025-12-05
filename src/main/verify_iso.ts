@@ -125,7 +125,7 @@ export async function verifyIso(isoPath: string): Promise<IsoValidity> {
           }
         }
 
-        hash.update(data);
+        hash.update(new Uint8Array(data));
         return;
       }
 
