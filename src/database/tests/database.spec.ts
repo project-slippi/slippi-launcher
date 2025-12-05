@@ -1,23 +1,22 @@
 import type { Database } from "@database/schema";
 import type { Kysely } from "kysely";
-import { afterEach, beforeAll, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { FileRepository } from "../repositories/file_repository";
 import { GameRepository } from "../repositories/game_repository";
 import { PlayerRepository } from "../repositories/player_repository";
+import { initTestDb } from "./init_test_db";
 import { aMockFileWith, aMockGameWith, aMockPlayerWith } from "./mocks";
-import { initTestDb, resetTestDb } from "./test_db";
 
 describe("database integration tests", () => {
   let db: Kysely<Database>;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     db = await initTestDb();
   });
 
   afterEach(async () => {
-    // Clear the database after each test
-    await resetTestDb(db);
+    await db.destroy();
   });
 
   it("should count total folder size", async () => {
