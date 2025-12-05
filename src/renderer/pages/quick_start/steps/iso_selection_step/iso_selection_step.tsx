@@ -15,7 +15,7 @@ import { useToasts } from "@/lib/hooks/use_toasts";
 import { colors } from "@/styles/colors";
 import { hasBorder } from "@/styles/has_border";
 
-import { QuickStartHeader } from "../../quick_start_header/quick_start_header";
+import { QuickStartHeader } from "../../step_container";
 import { IsoSelectionStepMessages as Messages } from "./iso_selection_step.messages";
 
 const getColor = (props: any, defaultColor = "#eeeeee") => {
@@ -51,7 +51,7 @@ const Container = styled.div`
   }
 `;
 
-export const IsoSelectionStep = React.memo(() => {
+export const IsoSelectionStep = () => {
   const { showError } = useToasts();
   const [tempIsoPath, setTempIsoPath] = React.useState("");
   const validIsoPathQuery = useQuery(["validIsoPathQuery", tempIsoPath], async () => {
@@ -148,4 +148,4 @@ export const IsoSelectionStep = React.memo(() => {
       </ConfirmationModal>
     </Box>
   );
-});
+};

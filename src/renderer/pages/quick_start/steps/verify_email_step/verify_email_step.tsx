@@ -1,10 +1,8 @@
 import { slippiManagePage } from "@common/constants";
 import { css } from "@emotion/react";
-import styled from "@emotion/styled";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 import { ExternalLink as A } from "@/components/external_link";
 import { useAccount } from "@/lib/hooks/use_account";
@@ -12,14 +10,8 @@ import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 import { colors } from "@/styles/colors";
 
-import { QuickStartHeader } from "../../quick_start_header/quick_start_header";
+import { StepContainer } from "../../step_container";
 import { VerifyEmailStepMessages as Messages } from "./verify_email_step.messages";
-
-const Container = styled.div`
-  margin: 0 auto;
-  width: 100%;
-  max-width: 800px;
-`;
 
 const classes = {
   message: css`
@@ -69,7 +61,7 @@ const classes = {
   `,
 };
 
-export const VerifyEmailStep = React.memo(() => {
+export const VerifyEmailStep = () => {
   const { authService } = useServices();
   const { showError } = useToasts();
   const user = useAccount((store) => store.user);
@@ -143,12 +135,5 @@ export const VerifyEmailStep = React.memo(() => {
     stepBody = <div>{Messages.errorMissingUser()}</div>;
   }
 
-  return (
-    <Box display="flex" flexDirection="column" flexGrow="1">
-      <Container>
-        <QuickStartHeader>{Messages.verifyYourEmail()}</QuickStartHeader>
-        {stepBody}
-      </Container>
-    </Box>
-  );
-});
+  return <StepContainer header={Messages.verifyYourEmail()}>{stepBody}</StepContainer>;
+};

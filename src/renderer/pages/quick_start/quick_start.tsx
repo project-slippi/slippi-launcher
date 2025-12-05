@@ -5,7 +5,6 @@ import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
 
 import { useMousetrap } from "@/lib/hooks/use_mousetrap";
-import { QuickStartStep } from "@/lib/hooks/use_quick_start";
 import { platformTitleBarStyles } from "@/styles/platform_title_bar_styles";
 
 import { QuickStartMessages as Messages } from "./quick_start.messages";
@@ -16,6 +15,7 @@ import { IsoSelectionStep } from "./steps/iso_selection_step/iso_selection_step"
 import { LoginStep } from "./steps/login_step";
 import { SetupCompleteStep } from "./steps/setup_complete_step/setup_complete_step";
 import { VerifyEmailStep } from "./steps/verify_email_step/verify_email_step";
+import { QuickStartStep } from "./use_quick_start";
 
 const OuterBox = styled(Box)`
   flex: 1;
@@ -85,12 +85,14 @@ export const QuickStart = ({ allSteps: steps, currentStep, onNext, onPrev }: Qui
       <Box display="flex" flex="1" alignSelf="stretch" paddingTop="40px">
         {getStepContent(currentStep)}
       </Box>
-      <StepperDots
-        steps={steps.length}
-        activeStep={steps.indexOf(currentStep)}
-        handleNext={onNext}
-        handleBack={onPrev}
-      />
+      {steps.length > 1 && (
+        <StepperDots
+          steps={steps.length}
+          activeStep={steps.indexOf(currentStep)}
+          handleNext={onNext}
+          handleBack={onPrev}
+        />
+      )}
     </OuterBox>
   );
 };

@@ -13,6 +13,7 @@ import { lazyLoadConsoleMirrorPage } from "@/pages/console_mirror/load";
 import { HomePage } from "@/pages/home/home_page";
 import { NotFoundPage } from "@/pages/not_found/not_found_page";
 import { lazyLoadQuickStartPage } from "@/pages/quick_start/load";
+import { useQuickStartStore } from "@/pages/quick_start/use_quick_start";
 import { lazyLoadReplaysPage } from "@/pages/replays/load";
 import { lazyLoadSettingsPage } from "@/pages/settings/load";
 import { lazyLoadSpectatePage } from "@/pages/spectate/load";
@@ -69,6 +70,19 @@ export function createApp({ services }: { services: Services }): {
     return <AppImpl menuItems={menuItems} />;
   });
 
+  // Smart root redirect that checks if quick start is needed
+  const RootRedirect = () => {
+    const steps = useQuickStartStore((store) => store.steps);
+
+    // Only redirect to the landing page if we actually have quick start steps
+    if (steps.length > 0) {
+      return <Navigate to="/landing" replace={true} />;
+    }
+
+    // Otherwise, go to the main page
+    return <Navigate to="/main" replace={true} />;
+  };
+
   const AppRoutes = () => {
     const currentLanguage = useAppStore((state) => state.currentLanguage);
 
@@ -80,7 +94,7 @@ export function createApp({ services }: { services: Services }): {
         <Route path="/main/*" element={<MainAppPage />} />
         <Route path="/landing" element={<QuickStartPage />} />
         <Route path="/settings/*" element={<SettingsPage />} />
-        <Route path="/" element={<Navigate replace={true} to="/landing" />} />
+        <Route path="/" element={<RootRedirect />} />
         <Route element={<NotFoundPage />} />
       </Routes>
     );

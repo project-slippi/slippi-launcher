@@ -1,12 +1,10 @@
 import { css } from "@emotion/react";
-import styled from "@emotion/styled";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
 import CircularProgress from "@mui/material/CircularProgress";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Typography from "@mui/material/Typography";
-import React, { useState } from "react";
+import { useState } from "react";
 
 import { ExternalLink as A } from "@/components/external_link";
 import { refreshUserData, useAccount } from "@/lib/hooks/use_account";
@@ -14,14 +12,8 @@ import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 import { colors } from "@/styles/colors";
 
-import { QuickStartHeader } from "../../quick_start_header/quick_start_header";
+import { StepContainer } from "../../step_container";
 import { AcceptRulesStepMessages as Messages } from "./accept_rules_step.messages";
-
-const Container = styled.div`
-  margin: 0 auto;
-  width: 100%;
-  max-width: 800px;
-`;
 
 const classes = {
   sectionHeader: css`
@@ -63,7 +55,7 @@ const classes = {
   `,
 };
 
-export const AcceptRulesStep = React.memo(() => {
+export const AcceptRulesStep = () => {
   const { slippiBackendService } = useServices();
   const { showError } = useToasts();
   const user = useAccount((store) => store.user);
@@ -159,12 +151,5 @@ export const AcceptRulesStep = React.memo(() => {
     stepBody = <div>{Messages.errorMissingUser()}</div>;
   }
 
-  return (
-    <Box display="flex" flexDirection="column" flexGrow="1">
-      <Container>
-        <QuickStartHeader>{Messages.acceptRulesAndPolicies()}</QuickStartHeader>
-        {stepBody}
-      </Container>
-    </Box>
-  );
-});
+  return <StepContainer header={Messages.acceptRulesAndPolicies()}>{stepBody}</StepContainer>;
+};

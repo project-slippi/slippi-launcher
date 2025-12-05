@@ -1,21 +1,11 @@
-import styled from "@emotion/styled";
-import Box from "@mui/material/Box";
-import React from "react";
-
 import { LoginForm } from "@/components/login_form/login_form";
 
-const FormContainer = styled.div`
-  margin: 0 auto;
-  width: 100%;
-  max-width: 800px;
-`;
+import { StepContainer } from "../step_container";
 
-export const LoginStep = React.memo(() => {
+export const LoginStep = () => {
   return (
-    <Box display="flex" flexDirection="column" flexGrow="1">
-      <FormContainer>
-        <LoginForm disableAutoFocus={true} />
-      </FormContainer>
-    </Box>
+    <StepContainer>
+      <LoginForm disableAutoFocus={true} />
+    </StepContainer>
   );
-});
+};
