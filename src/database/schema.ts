@@ -54,7 +54,7 @@ export type SQLiteBooleanOrNull = ColumnType<0 | 1 | null, 0 | 1 | null | undefi
  * One file contains exactly one game.
  *
  * Indexes:
- * - file_folder_name_index: (folder, name) - For folder/name lookups and queries
+ * - (folder, name) - Created automatically by unique_folder_name_constraint
  *
  * Unique Constraints:
  * - unique_folder_name_constraint: (folder, name) - Prevents duplicate files
@@ -78,7 +78,7 @@ export type FileUpdate = Updateable<FileTable>;
  * One game belongs to exactly one file (1:1 relationship enforced by unique constraint).
  *
  * Indexes:
- * - game_file_id_index: (file_id) - For file/folder joins and lookups
+ * - (file_id) - Created automatically by UNIQUE constraint (for file/folder joins)
  * - game_session_id_game_number_index: (session_id, game_number) - For session grouping and ordering games within sessions
  * - game_start_time_index: (start_time) - For date range queries and temporal filtering
  *
@@ -113,7 +113,7 @@ export type GameUpdate = Updateable<GameTable>;
  * Represents a player in a game. Each game has 2-4 players.
  *
  * Indexes:
- * - player_game_id_port_index: (game_id, port) - For player lookups by game and port
+ * - (game_id, port) - Created automatically by unique_game_id_port_constraint
  * - player_user_id_index: (user_id) - For filtering games by user/player
  *
  * Unique Constraints:

@@ -48,9 +48,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addUniqueConstraint("unique_game_id_port_constraint", ["game_id", "port"])
     .execute();
 
-  // Create indexes
-  await db.schema.createIndex("file_folder_name_index").on("file").column("folder").column("name").execute();
-  await db.schema.createIndex("game_file_id_index").on("game").column("file_id").execute();
+  // Create additional indexes
   await db.schema
     .createIndex("game_session_id_game_number_index")
     .on("game")
@@ -58,12 +56,11 @@ export async function up(db: Kysely<any>): Promise<void> {
     .column("game_number")
     .execute();
   await db.schema.createIndex("game_start_time_index").on("game").column("start_time").execute();
-  await db.schema.createIndex("player_game_id_port_index").on("player").column("game_id").column("port").execute();
   await db.schema.createIndex("player_user_id_index").on("player").column("user_id").execute();
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
-  await db.schema.dropTable("file").execute();
+  await db.schema.dropTable("player").execute();
   await db.schema.dropTable("game").execute();
-  await db.schema.dropTable("players").execute();
+  await db.schema.dropTable("file").execute();
 }
