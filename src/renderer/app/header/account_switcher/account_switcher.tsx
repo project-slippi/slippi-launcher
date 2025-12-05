@@ -156,60 +156,50 @@ export const AccountSwitcher: React.FC<AccountSwitcherProps> = ({
       `}
     >
       {/* Account List */}
-      {sortedAccounts.length === 0 ? (
-        <div
-          css={css`
-            padding: 16px 12px;
-            text-align: center;
-            color: ${colors.textDim};
-            font-size: 14px;
-          `}
-        >
-          No other accounts
-        </div>
-      ) : (
-        <div
-          css={css`
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-          `}
-        >
-          {visibleAccounts.map((account) => (
-            <AccountItem
-              key={account.id}
-              $active={false}
-              onClick={() => handleAccountClick(account.id)}
-              disabled={switching}
-            >
-              <UserIcon imageUrl={account.displayPicture} size={32} />
-              <AccountInfo>
-                <AccountName>{account.displayName}</AccountName>
-                <AccountEmail>{account.email}</AccountEmail>
-              </AccountInfo>
-            </AccountItem>
-          ))}
-        </div>
-      )}
-
-      {/* Expand/Collapse Button */}
-      {shouldShowExpandButton && (
-        <ExpandButton onClick={() => setExpanded(!expanded)}>
-          {expanded ? (
-            <>
-              <ExpandLessIcon />
-              {Messages.showLess()}
-            </>
-          ) : (
-            <>
-              <ExpandMoreIcon />
-              {Messages.showMore(hiddenCount)}
-            </>
+      {sortedAccounts.length > 0 && (
+        <>
+          <div
+            css={css`
+              display: flex;
+              flex-direction: column;
+              gap: 2px;
+            `}
+          >
+            {visibleAccounts.map((account) => (
+              <AccountItem
+                key={account.id}
+                $active={false}
+                onClick={() => handleAccountClick(account.id)}
+                disabled={switching}
+              >
+                <UserIcon imageUrl={account.displayPicture} size={32} />
+                <AccountInfo>
+                  <AccountName>{account.displayName}</AccountName>
+                  <AccountEmail>{account.email}</AccountEmail>
+                </AccountInfo>
+              </AccountItem>
+            ))}
+          </div>
+          {/* Expand/Collapse Button */}
+          {shouldShowExpandButton && (
+            <ExpandButton onClick={() => setExpanded(!expanded)}>
+              {expanded ? (
+                <>
+                  <ExpandLessIcon />
+                  {Messages.showLess()}
+                </>
+              ) : (
+                <>
+                  <ExpandMoreIcon />
+                  {Messages.showMore(hiddenCount)}
+                </>
+              )}
+            </ExpandButton>
           )}
-        </ExpandButton>
-      )}
 
-      <SectionDivider />
+          <SectionDivider />
+        </>
+      )}
 
       {/* Actions */}
       <div
