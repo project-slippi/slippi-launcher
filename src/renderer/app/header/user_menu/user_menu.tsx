@@ -5,8 +5,8 @@ import LanguageIcon from "@mui/icons-material/Language";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import ButtonBase from "@mui/material/ButtonBase";
-import Divider from "@mui/material/Divider";
 import DialogContentText from "@mui/material/DialogContentText";
+import Divider from "@mui/material/Divider";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Menu from "@mui/material/Menu";
@@ -16,14 +16,14 @@ import React from "react";
 
 import { ConfirmationModal } from "@/components/confirmation_modal/confirmation_modal";
 import { useAccount } from "@/lib/hooks/use_account";
-import { useServices } from "@/services";
 import { useToasts } from "@/lib/hooks/use_toasts";
+import { useServices } from "@/services";
 import type { AuthUser } from "@/services/auth/types";
 
 import { AccountSwitcher } from "../account_switcher/account_switcher";
+import { AccountSwitcherMessages as AccountMessages } from "../account_switcher/account_switcher.messages";
 import { AddAccountDialog } from "../account_switcher/add_account_dialog";
 import { ManageAccountsDialog } from "../account_switcher/manage_accounts_dialog";
-import { AccountSwitcherMessages as AccountMessages } from "../account_switcher/account_switcher.messages";
 import { ActivateOnlineDialog } from "../activate_online_dialog";
 import { NameChangeDialog } from "../name_change_dialog";
 import { UserInfo } from "../user_info/user_info";
@@ -74,21 +74,21 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
   };
 
   // Get multi-account service
-  const multiAccountService = authService.getMultiAccountService?.();
+  const multiAccountService = authService.getMultiAccountService();
 
   // Update accounts in state when they change
   React.useEffect(() => {
-    if (multiAccountService) {
-      const accountsList = multiAccountService.getAccounts();
-      const activeId = multiAccountService.getActiveAccountId();
-      setAccounts(accountsList);
-      setActiveAccountId(activeId);
-    }
+    const accountsList = multiAccountService.getAccounts();
+    const activeId = multiAccountService.getActiveAccountId();
+    setAccounts(accountsList);
+    setActiveAccountId(activeId);
   }, [multiAccountService, setAccounts, setActiveAccountId]);
 
   // Handle account switch
   const handleSwitchAccount = async (accountId: string) => {
-    if (!multiAccountService || switching) return;
+    if (switching) {
+      return;
+    }
 
     setSwitching(true);
     closeMenu();
@@ -138,7 +138,9 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
 
   // Handle remove account
   const handleRemoveAccount = async (accountId: string) => {
-    if (!multiAccountService) return;
+    if (!multiAccountService) {
+      return;
+    }
 
     try {
       await multiAccountService.removeAccount(accountId);
