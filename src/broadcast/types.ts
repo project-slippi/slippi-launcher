@@ -87,6 +87,7 @@ export type SpectateDolphinOptions = {
 
 export interface SpectateController {
   startSpectate(broadcastId: string, targetPath: string, dolphinOptions: SpectateDolphinOptions): Promise<string>;
+  stopSpectate(broadcastId: string): Promise<void>;
   dolphinClosed(playbackId: string): Promise<void>;
   connect(authToken: string): Promise<void>;
   refreshBroadcastList(): Promise<void>;

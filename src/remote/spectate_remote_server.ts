@@ -228,6 +228,20 @@ export class SpectateRemoteServer {
         const err = typeof e === "string" ? e : e instanceof Error ? e.message : "unknown";
         this.connection.sendUTF(JSON.stringify({ op: "spectate-broadcast-response", err }));
       }
+    } else if (json.op === "stop-broadcast-request") {
+      const broadcastId = json.broadcastId;
+      if (!broadcastId || typeof broadcastId !== "string") {
+        this.connection.sendUTF(JSON.stringify({ op: "stop-broadcast-response", err: "no broadcastId" }));
+        return;
+      }
+
+      try {
+        await this.spectateController!.stopSpectate(broadcastId);
+        this.connection.sendUTF(JSON.stringify({ op: "stop-broadcast-response", broadcastId }));
+      } catch (e) {
+        const err = typeof e === "string" ? e : e instanceof Error ? e.message : "unknown";
+        this.connection.sendUTF(JSON.stringify({ op: "stop-broadcast-response", err }));
+      }
     }
   }
 
