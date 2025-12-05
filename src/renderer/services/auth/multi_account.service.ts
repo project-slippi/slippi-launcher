@@ -85,6 +85,7 @@ class MultiAccountClient implements MultiAccountService {
       }
 
       this._initialized = true;
+      log.info("Multi-account service initialized");
     } catch (err) {
       log.error("Failed to initialize multi-account service:", err);
       this._initialized = true;
@@ -157,16 +158,21 @@ class MultiAccountClient implements MultiAccountService {
       // Store auth instance
       this._authInstances.set(account.id, auth);
 
-      // Set up auth state listener (for persistence)
-      onAuthStateChanged(auth, () => {
-        // Auth state changes are handled by AuthService
-      });
+      // Wait for Firebase to check IndexedDB and restore auth state
+      await new Promise<void>((resolve) => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+          // Unsubscribe after first event (initial state loaded)
+          unsubscribe();
 
-      // Check if user is already logged in (Firebase persists auth in IndexedDB)
-      if (auth.currentUser) {
-        log.info(`Session already active for account: ${account.email}`);
-        return;
-      }
+          if (user) {
+            log.info(`Session already active for account: ${account.email}`);
+          } else {
+            log.warn(`No active session for account ${account.id} - may need re-authentication`);
+          }
+
+          resolve();
+        });
+      });
 
       // Try to get stored refresh token (note: this may not work reliably)
       const refreshToken = await tokenStorage.getToken(account.id);
@@ -176,8 +182,6 @@ class MultiAccountClient implements MultiAccountService {
         // Firebase handles persistence automatically via IndexedDB
         // The refresh token storage is mainly for backup/debugging
         log.info(`Found refresh token for account: ${account.email}`);
-      } else {
-        log.warn(`No refresh token found for account ${account.id} - may need re-authentication`);
       }
 
       log.info(`Restored auth instance for account: ${account.email}`);
