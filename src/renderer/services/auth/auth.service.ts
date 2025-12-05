@@ -15,7 +15,8 @@ import Subject from "observable-fns/subject";
 
 import { generateDisplayPicture } from "@/lib/display_picture";
 
-import type { AuthService, AuthUser } from "./types";
+import { createMultiAccountService } from "./multi_account.service";
+import type { AuthService, AuthUser, MultiAccountService } from "./types";
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -32,11 +33,34 @@ const firebaseConfig = {
  * Initialize Firebase
  */
 
+// Flag to enable multi-account mode (default: true for new implementation)
+const ENABLE_MULTI_ACCOUNT = true;
+
 class AuthClient implements AuthService {
   private _userSubject = new Subject<AuthUser | null>();
   private _onAuthStateChanged = multicast(this._userSubject);
+  private _multiAccountService: MultiAccountService | null = null;
 
-  public init(): Promise<AuthUser | null> {
+  constructor() {
+    if (ENABLE_MULTI_ACCOUNT) {
+      this._multiAccountService = createMultiAccountService();
+    }
+  }
+
+  public async init(): Promise<AuthUser | null> {
+    // Use multi-account service if enabled
+    if (this._multiAccountService) {
+      const user = await this._multiAccountService.init();
+
+      // Set up listener to forward events from multi-account service
+      this._multiAccountService.onUserChange((user) => {
+        this._userSubject.next(user);
+      });
+
+      return user;
+    }
+
+    // Legacy single-account mode
     // Initialize the Firebase app if we haven't already
     if (getApps().length !== 0) {
       // We've already initialized the app before so just return the current user
@@ -71,6 +95,13 @@ class AuthClient implements AuthService {
     });
   }
 
+  /**
+   * Get the multi-account service (for accessing multi-account features)
+   */
+  public getMultiAccountService(): MultiAccountService | null {
+    return this._multiAccountService;
+  }
+
   private _mapFirebaseUserToAuthUser(user: {
     uid: string;
     displayName: string | null;
@@ -96,6 +127,10 @@ class AuthClient implements AuthService {
   }
 
   public getCurrentUser(): AuthUser | null {
+    if (this._multiAccountService) {
+      return this._multiAccountService.getCurrentUser();
+    }
+
     const auth = getAuth();
     const user = auth.currentUser;
     if (!user) {
@@ -143,6 +178,11 @@ class AuthClient implements AuthService {
   }
 
   public async logout() {
+    if (this._multiAccountService) {
+      await this._multiAccountService.logout();
+      return;
+    }
+
     const auth = getAuth();
     await auth.signOut();
   }
@@ -153,6 +193,10 @@ class AuthClient implements AuthService {
   }
 
   public async getUserToken(): Promise<string> {
+    if (this._multiAccountService) {
+      return this._multiAccountService.getUserToken();
+    }
+
     const auth = getAuth();
     const user = auth.currentUser;
     Preconditions.checkExists(user, "User is not logged in.");

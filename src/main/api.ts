@@ -5,10 +5,13 @@ import {
   ipc_checkValidIso,
   ipc_clearTempFolder,
   ipc_copyLogsToClipboard,
+  ipc_decryptString,
   ipc_deleteFiles,
+  ipc_encryptString,
   ipc_fetchNewsFeed,
   ipc_getLatestGitHubReleaseVersion,
   ipc_installUpdate,
+  ipc_isEncryptionAvailable,
   ipc_launcherUpdateDownloadingEvent,
   ipc_launcherUpdateFoundEvent,
   ipc_launcherUpdateReadyEvent,
@@ -76,5 +79,18 @@ export default {
       handle();
     });
     return destroy;
+  },
+  // SafeStorage API for secure token encryption
+  async encryptString(data: string): Promise<string> {
+    const { result } = await ipc_encryptString.renderer!.trigger({ data });
+    return result.encrypted;
+  },
+  async decryptString(encrypted: string): Promise<string> {
+    const { result } = await ipc_decryptString.renderer!.trigger({ encrypted });
+    return result.data;
+  },
+  async isEncryptionAvailable(): Promise<boolean> {
+    const { result } = await ipc_isEncryptionAvailable.renderer!.trigger({});
+    return result.available;
   },
 };
