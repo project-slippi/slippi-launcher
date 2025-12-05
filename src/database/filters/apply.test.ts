@@ -1,5 +1,6 @@
 import Database from "better-sqlite3";
 import { Kysely, SqliteDialect } from "kysely";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import type { Database as DatabaseSchema } from "../schema";
 import { applyFilters } from "./apply";
