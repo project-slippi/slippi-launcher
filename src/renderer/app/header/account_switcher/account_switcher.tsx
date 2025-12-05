@@ -5,7 +5,6 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ButtonBase from "@mui/material/ButtonBase";
-import CircularProgress from "@mui/material/CircularProgress";
 import type { StoredAccount } from "@settings/types";
 import React from "react";
 
@@ -39,15 +38,6 @@ const AccountItem = styled(ButtonBase, {
   `}
 `;
 
-const ActiveIndicator = styled.div<{ $active: boolean }>`
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  border: 2px solid ${(props) => (props.$active ? colors.purple : colors.textDim)};
-  background-color: ${(props) => (props.$active ? colors.purple : "transparent")};
-  flex-shrink: 0;
-`;
-
 const AccountInfo = styled.div`
   display: flex;
   flex-direction: column;
@@ -64,12 +54,6 @@ const AccountName = styled.div`
   text-overflow: ellipsis;
   width: 100%;
   text-align: left;
-`;
-
-const ConnectCode = styled.div`
-  font-size: 14px;
-  color: ${colors.purpleLight};
-  font-weight: normal;
 `;
 
 const SectionDivider = styled.div`
@@ -119,6 +103,14 @@ const ExpandButton = styled(ButtonBase)`
   }
 `;
 
+const AccountEmail = styled.div`
+  font-size: 14px;
+  color: ${colors.textDim};
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
 export interface AccountSwitcherProps {
   accounts: StoredAccount[];
   activeAccountId: string | null;
@@ -126,7 +118,6 @@ export interface AccountSwitcherProps {
   onAddAccount: () => void;
   onManageAccounts: () => void;
   switching?: boolean;
-  connectCode?: string;
 }
 
 export const AccountSwitcher: React.FC<AccountSwitcherProps> = ({
@@ -136,23 +127,14 @@ export const AccountSwitcher: React.FC<AccountSwitcherProps> = ({
   onAddAccount,
   onManageAccounts,
   switching = false,
-  connectCode,
 }) => {
   const [expanded, setExpanded] = React.useState(false);
 
-  // Sort accounts by last active (most recent first)
+  // Filter out active account (already shown in header) and sort by last active
   const sortedAccounts = React.useMemo(() => {
-    return [...accounts].sort((a, b) => {
-      // Active account always first
-      if (a.id === activeAccountId) {
-        return -1;
-      }
-      if (b.id === activeAccountId) {
-        return 1;
-      }
-      // Then by last active
-      return b.lastActive.getTime() - a.lastActive.getTime();
-    });
+    return [...accounts]
+      .filter((account) => account.id !== activeAccountId)
+      .sort((a, b) => b.lastActive.getTime() - a.lastActive.getTime());
   }, [accounts, activeAccountId]);
 
   // Determine which accounts to show
@@ -161,7 +143,7 @@ export const AccountSwitcher: React.FC<AccountSwitcherProps> = ({
   const shouldShowExpandButton = sortedAccounts.length > TOP_ACCOUNTS_TO_SHOW;
 
   const handleAccountClick = (accountId: string) => {
-    if (accountId !== activeAccountId && !switching) {
+    if (!switching) {
       onSwitchAccount(accountId);
     }
   };
@@ -174,34 +156,41 @@ export const AccountSwitcher: React.FC<AccountSwitcherProps> = ({
       `}
     >
       {/* Account List */}
-      <div
-        css={css`
-          display: flex;
-          flex-direction: column;
-          gap: 2px;
-        `}
-      >
-        {visibleAccounts.map((account) => {
-          const isActive = account.id === activeAccountId;
-
-          return (
+      {sortedAccounts.length === 0 ? (
+        <div
+          css={css`
+            padding: 16px 12px;
+            text-align: center;
+            color: ${colors.textDim};
+            font-size: 14px;
+          `}
+        >
+          No other accounts
+        </div>
+      ) : (
+        <div
+          css={css`
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+          `}
+        >
+          {visibleAccounts.map((account) => (
             <AccountItem
               key={account.id}
-              $active={isActive}
+              $active={false}
               onClick={() => handleAccountClick(account.id)}
               disabled={switching}
             >
-              <ActiveIndicator $active={isActive} />
               <UserIcon imageUrl={account.displayPicture} size={32} />
               <AccountInfo>
-                <AccountName>{account.displayName || account.email}</AccountName>
-                {isActive && connectCode && <ConnectCode>{connectCode}</ConnectCode>}
+                <AccountName>{account.displayName}</AccountName>
+                <AccountEmail>{account.email}</AccountEmail>
               </AccountInfo>
-              {switching && isActive && <CircularProgress size={16} color="inherit" />}
             </AccountItem>
-          );
-        })}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Expand/Collapse Button */}
       {shouldShowExpandButton && (
