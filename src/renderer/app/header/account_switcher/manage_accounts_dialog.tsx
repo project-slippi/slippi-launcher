@@ -13,8 +13,8 @@ import React from "react";
 
 import { ConfirmationModal } from "@/components/confirmation_modal/confirmation_modal";
 import { UserIcon } from "@/components/user_icon";
-import type { StoredAccount } from "@/services/auth/types";
 import { colors } from "@/styles/colors";
+import type { StoredAccount } from "@settings/types";
 
 import { AccountSwitcherMessages as Messages } from "./account_switcher.messages";
 

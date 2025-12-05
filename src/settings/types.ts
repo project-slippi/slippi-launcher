@@ -20,6 +20,25 @@ export type StoredConnection = {
 };
 
 /**
+ * Stored account information (for multi-account support)
+ */
+export interface StoredAccount {
+  id: string; // Firebase UID
+  email: string;
+  displayName: string;
+  displayPicture: string;
+  lastActive: Date;
+}
+
+/**
+ * Account data structure
+ */
+export interface AccountData {
+  activeId: string | null;
+  list: StoredAccount[];
+}
+
+/**
  * Settings Schema
  * This is the single source of truth for all application settings
  */
@@ -50,6 +69,8 @@ export interface SettingsSchema {
  */
 export interface RootSettingsSchema {
   connections: StoredConnection[];
+  accounts: AccountData;
+  accountTokens: Record<string, string>; // uid -> encrypted refresh token
   previousVersion?: string;
   netplayPromotedToStable: boolean;
   playbackPromotedToStable: boolean;

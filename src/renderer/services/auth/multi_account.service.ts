@@ -20,19 +20,19 @@
  */
 
 import { Preconditions } from "@common/preconditions";
-import electronSettings from "electron-settings";
+import type { AccountData, StoredAccount } from "@settings/types";
 import log from "electron-log";
 import type { FirebaseApp } from "firebase/app";
 import { deleteApp, getApp, getApps, initializeApp } from "firebase/app";
 import type { Auth, User as FirebaseUser } from "firebase/auth";
-import { getAuth, onAuthStateChanged, signInWithCustomToken, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import multicast from "observable-fns/multicast";
 import Subject from "observable-fns/subject";
 
 import { generateDisplayPicture } from "@/lib/display_picture";
 
 import { tokenStorage } from "./token_storage";
-import type { AuthUser, MultiAccountService, StoredAccount } from "./types";
+import type { AuthUser, MultiAccountService } from "./types";
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -45,19 +45,13 @@ const firebaseConfig = {
   measurementId: process.env.FIREBASE_MEASUREMENT_ID,
 };
 
-const ACCOUNTS_KEY = "accounts";
-const ACCOUNTS_LIST_KEY = "accounts.list";
-const ACTIVE_ACCOUNT_KEY = "accounts.activeId";
 const MAX_ACCOUNTS = 5;
-
-interface AccountData {
-  activeId: string | null;
-  list: StoredAccount[];
-}
 
 class MultiAccountClient implements MultiAccountService {
   private _userSubject = new Subject<AuthUser | null>();
   private _onAuthStateChanged = multicast(this._userSubject);
+  private _accountsSubject = new Subject<{ accounts: StoredAccount[]; activeId: string | null }>();
+  private _onAccountsChanged = multicast(this._accountsSubject);
   private _firebaseApps = new Map<string, FirebaseApp>();
   private _authInstances = new Map<string, Auth>();
   private _activeAccountId: string | null = null;
@@ -75,6 +69,9 @@ class MultiAccountClient implements MultiAccountService {
     try {
       // Load stored accounts
       await this._loadStoredAccounts();
+
+      // Notify listeners of initial accounts state
+      this._notifyAccountsChanged();
 
       // If we have accounts, restore the active session
       if (this._activeAccountId && this._accounts.length > 0) {
@@ -101,11 +98,12 @@ class MultiAccountClient implements MultiAccountService {
   }
 
   /**
-   * Load stored accounts from electron-settings
+   * Load stored accounts from settings
    */
   private async _loadStoredAccounts(): Promise<void> {
     try {
-      const accountData = (await electronSettings.get(ACCOUNTS_KEY)) as AccountData | undefined;
+      const settings = window.electron.settings.getAppSettingsSync();
+      const accountData = settings.accounts;
 
       if (accountData) {
         this._activeAccountId = accountData.activeId;
@@ -124,7 +122,7 @@ class MultiAccountClient implements MultiAccountService {
   }
 
   /**
-   * Save accounts to electron-settings
+   * Save accounts to settings
    */
   private async _saveAccounts(): Promise<void> {
     try {
@@ -133,11 +131,24 @@ class MultiAccountClient implements MultiAccountService {
         list: this._accounts,
       };
 
-      await electronSettings.set(ACCOUNTS_KEY, accountData);
+      await window.electron.settings.updateSettings([{ key: "accounts", value: accountData }]);
+
+      // Notify listeners of accounts change
+      this._notifyAccountsChanged();
     } catch (err) {
       log.error("Failed to save accounts:", err);
       throw err;
     }
+  }
+
+  /**
+   * Notify listeners that accounts have changed
+   */
+  private _notifyAccountsChanged(): void {
+    this._accountsSubject.next({
+      accounts: [...this._accounts],
+      activeId: this._activeAccountId,
+    });
   }
 
   /**
@@ -239,11 +250,6 @@ class MultiAccountClient implements MultiAccountService {
         await this.switchAccount(user.uid);
         return existingAccount;
       }
-
-      // Get refresh token (this is a hack - Firebase doesn't expose refresh tokens directly)
-      // We'll need to store the user's credentials temporarily or use a different approach
-      // For now, we'll get the ID token and use that
-      const idToken = await user.getIdToken();
 
       // Create stored account
       const storedAccount: StoredAccount = {
@@ -396,9 +402,7 @@ class MultiAccountClient implements MultiAccountService {
       if (this._activeAccountId === accountId) {
         if (this._accounts.length > 0) {
           // Switch to most recently active account
-          const sortedAccounts = [...this._accounts].sort(
-            (a, b) => b.lastActive.getTime() - a.lastActive.getTime(),
-          );
+          const sortedAccounts = [...this._accounts].sort((a, b) => b.lastActive.getTime() - a.lastActive.getTime());
           await this.switchAccount(sortedAccounts[0].id);
         } else {
           // No accounts left
@@ -465,6 +469,111 @@ class MultiAccountClient implements MultiAccountService {
   }
 
   /**
+   * Login to an account (adds account if first login, or switches to it if already exists)
+   */
+  public async login({ email, password }: { email: string; password: string }): Promise<AuthUser | null> {
+    try {
+      await this.addAccount(email, password);
+      return this.getCurrentUser();
+    } catch (err) {
+      log.error("Login failed:", err);
+      throw err;
+    }
+  }
+
+  /**
+   * Sign up a new user
+   */
+  public async signUp({
+    email,
+    displayName,
+    password,
+  }: {
+    email: string;
+    displayName: string;
+    password: string;
+  }): Promise<AuthUser | null> {
+    try {
+      // Use default Firebase app for signup
+      const defaultApp = getApps().find((app) => app.name === "[DEFAULT]");
+      const app = defaultApp ?? initializeApp(firebaseConfig);
+      const functions = await import("firebase/functions").then((m) => m.getFunctions(app));
+      const createUser = await import("firebase/functions").then((m) => m.httpsCallable(functions, "createUserNew"));
+
+      await createUser({ email, password, displayName });
+
+      // Now login with the new account
+      return this.login({ email, password });
+    } catch (err) {
+      log.error("Signup failed:", err);
+      throw err;
+    }
+  }
+
+  /**
+   * Send verification email for the active account
+   */
+  public async sendVerificationEmail(): Promise<void> {
+    if (!this._activeAccountId) {
+      throw new Error("No active account");
+    }
+
+    const auth = this._authInstances.get(this._activeAccountId);
+    Preconditions.checkExists(auth, "Auth instance not found");
+    Preconditions.checkExists(auth.currentUser, "User is not logged in");
+
+    if (!auth.currentUser.emailVerified) {
+      log.info(`Sending email verification for account: ${this._activeAccountId}`);
+      const { sendEmailVerification } = await import("firebase/auth");
+      await sendEmailVerification(auth.currentUser);
+    }
+  }
+
+  /**
+   * Refresh the current user data
+   */
+  public async refreshUser(): Promise<void> {
+    if (!this._activeAccountId) {
+      throw new Error("No active account");
+    }
+
+    const auth = this._authInstances.get(this._activeAccountId);
+    Preconditions.checkExists(auth, "Auth instance not found");
+    Preconditions.checkExists(auth.currentUser, "User is not logged in");
+
+    await auth.currentUser.reload();
+
+    // Notify listeners of the updated user
+    this._userSubject.next(this.getCurrentUser());
+  }
+
+  /**
+   * Update display name for the active account
+   */
+  public async updateDisplayName(displayName: string): Promise<void> {
+    if (!this._activeAccountId) {
+      throw new Error("No active account");
+    }
+
+    const auth = this._authInstances.get(this._activeAccountId);
+    Preconditions.checkExists(auth, "Auth instance not found");
+    Preconditions.checkExists(auth.currentUser, "User is not logged in");
+
+    const { updateProfile } = await import("firebase/auth");
+    await updateProfile(auth.currentUser, { displayName });
+
+    // Update stored account info
+    const accountIndex = this._accounts.findIndex((acc) => acc.id === this._activeAccountId);
+    if (accountIndex !== -1) {
+      this._accounts[accountIndex].displayName = displayName;
+      await this._saveAccounts();
+    }
+
+    // Notify listeners
+    this._userSubject.next(this.getCurrentUser());
+  }
+
+  /**
    * Logout the active account only
    */
   public async logout(): Promise<void> {
@@ -480,6 +589,18 @@ class MultiAccountClient implements MultiAccountService {
    */
   public onUserChange(onChange: (user: AuthUser | null) => void): () => void {
     const subscription = this._onAuthStateChanged.subscribe(onChange);
+    return () => {
+      subscription.unsubscribe();
+    };
+  }
+
+  /**
+   * Subscribe to accounts list changes
+   */
+  public onAccountsChange(
+    onChange: (data: { accounts: StoredAccount[]; activeId: string | null }) => void,
+  ): () => void {
+    const subscription = this._onAccountsChanged.subscribe(onChange);
     return () => {
       subscription.unsubscribe();
     };
@@ -503,4 +624,3 @@ class MultiAccountClient implements MultiAccountService {
 export function createMultiAccountService(): MultiAccountService {
   return new MultiAccountClient();
 }
-

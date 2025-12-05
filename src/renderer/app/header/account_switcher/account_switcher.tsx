@@ -9,8 +9,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import React from "react";
 
 import { UserIcon } from "@/components/user_icon";
-import type { StoredAccount } from "@/services/auth/types";
 import { colors } from "@/styles/colors";
+import type { StoredAccount } from "@settings/types";
 
 import { AccountSwitcherMessages as Messages } from "./account_switcher.messages";
 

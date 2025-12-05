@@ -23,14 +23,7 @@ export interface AuthService {
 }
 
 // Multi-account types
-
-export interface StoredAccount {
-  id: string; // Firebase UID
-  email: string;
-  displayName: string;
-  displayPicture: string;
-  lastActive: Date;
-}
+// Note: StoredAccount and AccountData are defined in @settings/types.ts
 
 export interface MultiAccountService {
   // Account Management
@@ -44,6 +37,11 @@ export interface MultiAccountService {
   getCurrentUser(): AuthUser | null;
   getUserToken(): Promise<string>;
   init(): Promise<AuthUser | null>;
+  login(args: { email: string; password: string }): Promise<AuthUser | null>;
+  signUp(args: { email: string; password: string; displayName: string }): Promise<AuthUser | null>;
   logout(): Promise<void>; // Active account only
+  sendVerificationEmail(): Promise<void>;
+  refreshUser(): Promise<void>;
+  updateDisplayName(displayName: string): Promise<void>;
   onUserChange(onChange: (user: AuthUser | null) => void): () => void;
 }

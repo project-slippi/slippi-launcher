@@ -19,6 +19,11 @@ function getDefaultRootSlpPath(): string {
 
 export const defaultAppSettings: AppSettings = {
   connections: [],
+  accounts: {
+    activeId: null,
+    list: [],
+  },
+  accountTokens: {},
   settings: {
     isoPath: null,
     rootSlpPath: getDefaultRootSlpPath(),
