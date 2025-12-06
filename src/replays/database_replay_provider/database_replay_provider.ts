@@ -1,5 +1,4 @@
 import { chunk } from "@common/chunk";
-import { partition } from "@common/partition";
 import type { ReplayFilter } from "@database/filters/types";
 import { FileRepository } from "@database/repositories/file_repository";
 import { GameRepository } from "@database/repositories/game_repository";
@@ -12,7 +11,7 @@ import { SlippiGame } from "@slippi/slippi-js/node";
 import { shell } from "electron";
 import log from "electron-log";
 import * as fs from "fs-extra";
-import type { Kysely } from "kysely";
+import type { Kysely, Transaction } from "kysely";
 import path from "path";
 
 import { extractPlayerNames } from "../extract_player_names";
@@ -20,7 +19,9 @@ import { Continuation } from "./continuation";
 import { inferStartTime } from "./infer_start_time";
 import { mapGameRecordToFileResult } from "./record_mapper";
 
-const INSERT_REPLAY_BATCH_SIZE = 200;
+// Batch size for processing replays - optimized to stay under SQLite's 999 parameter limit
+// for DELETE operations while providing good performance for bulk operations
+const INSERT_REPLAY_BATCH_SIZE = 500;
 const SEARCH_REPLAYS_LIMIT = 20;
 
 export class DatabaseReplayProvider implements ReplayProvider {
@@ -297,21 +298,34 @@ export class DatabaseReplayProvider implements ReplayProvider {
 
       let replaysAdded = 0;
       const chunkedReplays = chunk(slpFilesToAdd, batchSize);
-      for (const batch of chunkedReplays) {
-        const results = await Promise.allSettled(
-          batch.map(async (filename): Promise<void> => {
-            await this.insertNewReplayFile(folder, filename);
-          }),
-        );
 
-        const [successful, failed] = partition<PromiseFulfilledResult<void>, PromiseRejectedResult>(
-          results,
-          (r) => r.status === "fulfilled",
-        );
-        replaysAdded += successful.length;
+      // Process each batch in a single transaction for optimal performance
+      // This reduces transaction overhead from N transactions to 1 per batch
+      for (const batch of chunkedReplays) {
+        const batchResults = await this.db.transaction().execute(async (trx) => {
+          const results: Array<{ success: boolean; error?: any }> = [];
+
+          // Process files sequentially within the transaction
+          // SQLite is single-writer, so parallel processing just creates lock contention
+          for (const filename of batch) {
+            try {
+              await this.insertNewReplayFileInTransaction(trx, folder, filename);
+              results.push({ success: true });
+            } catch (err) {
+              results.push({ success: false, error: err });
+            }
+          }
+
+          return results;
+        });
+
+        const successful = batchResults.filter((r) => r.success).length;
+        const failed = batchResults.filter((r) => !r.success);
+
+        replaysAdded += successful;
         log.info(`Added ${replaysAdded} out of ${total} replays`);
         if (failed.length > 0) {
-          log.warn(`Failed to add ${failed.length} replay(s): `, failed[0].reason);
+          log.warn(`Failed to add ${failed.length} replay(s): `, failed[0].error);
         }
 
         onProgress?.({ current: replaysAdded, total });
@@ -329,6 +343,43 @@ export class DatabaseReplayProvider implements ReplayProvider {
     }
   }
 
+  /**
+   * Insert a new replay file within an existing transaction.
+   * This method should be used when batch processing to avoid creating nested transactions.
+   *
+   * @param trx - The transaction to use for the insert
+   * @param folder - The folder containing the replay file
+   * @param filename - The name of the replay file
+   */
+  private async insertNewReplayFileInTransaction(
+    trx: Transaction<Database>,
+    folder: string,
+    filename: string,
+  ): Promise<void> {
+    const fullPath = path.resolve(folder, filename);
+    const game = new SlippiGame(fullPath);
+    const newFile = await generateNewFile(folder, filename);
+
+    const fileRecord = await FileRepository.insertFile(trx, newFile);
+
+    const newGame = generateNewGame(fileRecord, game);
+    if (!newGame) {
+      return;
+    }
+
+    const gameRecord = await GameRepository.insertGame(trx, newGame);
+    const newPlayers = generateNewPlayers(gameRecord._id, game);
+    await PlayerRepository.insertPlayer(trx, ...newPlayers);
+  }
+
+  /**
+   * Insert a new replay file (creates its own transaction).
+   * This method is used for single-file operations like loading a file that isn't in the database.
+   *
+   * @param folder - The folder containing the replay file
+   * @param filename - The name of the replay file
+   * @returns The inserted file, game, and player records
+   */
   private async insertNewReplayFile(
     folder: string,
     filename: string,
