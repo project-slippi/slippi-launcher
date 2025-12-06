@@ -7,17 +7,22 @@ import { useSettings } from "@/lib/hooks/use_settings";
 import { useServices } from "@/services";
 
 import { useReplayBrowserList } from "./use_replay_browser_list";
+import { buildReplayFilters, useReplayFilter } from "./use_replay_filter";
+
+const REPLAY_BATCH_SIZE = 20;
 
 type StoreState = {
   loading: boolean;
+  loadingMore: boolean;
   progress: Progress | null;
   files: FileResult[];
-  totalBytes: number | null;
   currentRoot: string | null;
   currentFolder: string;
-  fileErrorCount: number;
   scrollRowItem: number;
   selectedFiles: string[];
+  selectAllMode: boolean;
+  deselectedFiles: string[]; // Files explicitly deselected from select-all mode
+  totalFilesInFolder: number | null;
   folderTree: FolderResult[];
   collapsedFolders: string[];
   selectedFile: {
@@ -25,25 +30,31 @@ type StoreState = {
     total: number | null;
     fileResult: FileResult | null;
   };
+  hasMoreReplays: boolean;
+  continuation: string | undefined;
 };
 
 const initialState: StoreState = {
   loading: false,
+  loadingMore: false,
   progress: null,
   files: [],
-  totalBytes: null,
   folderTree: [],
   collapsedFolders: [],
   currentRoot: null,
   currentFolder: useSettings.getState().settings.rootSlpPath,
-  fileErrorCount: 0,
   scrollRowItem: 0,
   selectedFiles: [],
+  selectAllMode: false,
+  deselectedFiles: [],
+  totalFilesInFolder: null,
   selectedFile: {
     index: null,
     total: null,
     fileResult: null,
   },
+  hasMoreReplays: false,
+  continuation: undefined,
 };
 
 export const useReplays = create<StoreState>()(immer(() => initialState));
@@ -99,9 +110,9 @@ export class ReplayPresenter {
     });
   }
 
-  public removeFiles(filePaths: string[]) {
+  public removeFilesByIds(fileIds: string[]) {
     useReplays.setState((state) => {
-      state.files = state.files.filter(({ fullPath }) => !filePaths.includes(fullPath));
+      state.files = state.files.filter(({ id }) => !fileIds.includes(id));
     });
   }
 
@@ -123,6 +134,8 @@ export class ReplayPresenter {
     useReplays.setState((state) => {
       state.currentFolder = folderToLoad;
       state.selectedFiles = [];
+      state.selectAllMode = false;
+      state.deselectedFiles = [];
     });
 
     const loadFolderTree = async () => {
@@ -143,13 +156,30 @@ export class ReplayPresenter {
         state.progress = null;
       });
       try {
-        const result = await this.replayService.loadReplayFolder(folderToLoad);
+        // Get current filter state
+        const { sortBy, sortDirection, hideShortGames, searchText } = useReplayFilter.getState();
+
+        // Build filters from current state
+        const filters = buildReplayFilters(hideShortGames, searchText);
+
+        // Use searchGames with pagination - load first batch
+        const result = await this.replayService.searchGames({
+          folderPath: folderToLoad,
+          limit: REPLAY_BATCH_SIZE,
+          orderBy: {
+            field: sortBy === "DATE" ? "startTime" : "lastFrame",
+            direction: sortDirection === "DESC" ? "desc" : "asc",
+          },
+          filters,
+        });
+
         useReplays.setState((state) => {
           state.scrollRowItem = 0;
           state.files = result.files;
           state.loading = false;
-          state.fileErrorCount = result.fileErrorCount;
-          state.totalBytes = result.totalBytes;
+          state.continuation = result.continuation;
+          state.hasMoreReplays = result.continuation !== undefined;
+          state.totalFilesInFolder = result.totalCount ?? null;
         });
       } catch (err) {
         useReplays.setState((state) => {
@@ -177,10 +207,96 @@ export class ReplayPresenter {
     });
   }
 
-  public setSelectedFiles(filePaths: string[]) {
+  public setSelectedFiles(filePaths: string[], resetSelectAllMode = true) {
     useReplays.setState((state) => {
       state.selectedFiles = filePaths;
+      // Reset selectAllMode when manually changing selection
+      if (resetSelectAllMode) {
+        state.selectAllMode = false;
+        state.deselectedFiles = [];
+      }
     });
+  }
+
+  public setSelectAllMode(enabled: boolean) {
+    useReplays.setState((state) => {
+      state.selectAllMode = enabled;
+      if (!enabled) {
+        state.deselectedFiles = [];
+      }
+    });
+  }
+
+  public toggleFileInSelectAllMode(filePath: string) {
+    useReplays.setState((state) => {
+      const isDeselected = state.deselectedFiles.includes(filePath);
+      if (isDeselected) {
+        // Re-select the file (remove from deselected list)
+        state.deselectedFiles = state.deselectedFiles.filter((f) => f !== filePath);
+        // Also add to selectedFiles for immediate visual feedback
+        if (!state.selectedFiles.includes(filePath)) {
+          state.selectedFiles = [...state.selectedFiles, filePath];
+        }
+      } else {
+        // Deselect the file (add to deselected list)
+        state.deselectedFiles = [...state.deselectedFiles, filePath];
+        // Remove from selectedFiles for immediate visual feedback
+        state.selectedFiles = state.selectedFiles.filter((f) => f !== filePath);
+      }
+    });
+  }
+
+  public async loadMoreReplays(): Promise<void> {
+    const { continuation, loadingMore, hasMoreReplays, currentFolder } = useReplays.getState();
+
+    // Don't load more if already loading or no more replays
+    if (loadingMore || !hasMoreReplays || !continuation) {
+      return;
+    }
+
+    useReplays.setState((state) => {
+      state.loadingMore = true;
+    });
+
+    try {
+      // Get current filter state
+      const { sortBy, sortDirection, hideShortGames, searchText } = useReplayFilter.getState();
+
+      // Build filters from current state
+      const filters = buildReplayFilters(hideShortGames, searchText);
+
+      // Load next batch of replays
+      const result = await this.replayService.searchGames({
+        folderPath: currentFolder,
+        limit: REPLAY_BATCH_SIZE,
+        continuation,
+        orderBy: {
+          field: sortBy === "DATE" ? "startTime" : "lastFrame",
+          direction: sortDirection === "DESC" ? "desc" : "asc",
+        },
+        filters,
+      });
+
+      useReplays.setState((state) => {
+        state.files = [...state.files, ...result.files];
+        state.continuation = result.continuation;
+        state.hasMoreReplays = result.continuation !== undefined;
+        state.loadingMore = false;
+
+        // If in select-all mode, automatically add newly loaded files to selection
+        // (unless they're in the deselected list)
+        if (state.selectAllMode) {
+          const deselectedSet = new Set(state.deselectedFiles);
+          const newFilePaths = result.files.map((f) => f.fullPath).filter((path) => !deselectedSet.has(path));
+          state.selectedFiles = [...state.selectedFiles, ...newFilePaths];
+        }
+      });
+    } catch (err) {
+      console.error("Failed to load more replays:", err);
+      useReplays.setState((state) => {
+        state.loadingMore = false;
+      });
+    }
   }
 }
 
@@ -212,6 +328,17 @@ export const useReplaySelection = () => {
   const [lastClickIndex, setLastClickIndex] = useState<number | null>(null);
 
   const toggleFiles = (fileNames: string[], mode: "toggle" | "select" | "deselect" = "toggle") => {
+    const { selectAllMode } = useReplays.getState();
+
+    // If in select-all mode, use the exclusion pattern
+    if (selectAllMode) {
+      fileNames.forEach((fileName) => {
+        presenter.toggleFileInSelectAllMode(fileName);
+      });
+      return;
+    }
+
+    // Normal selection mode
     const newSelection = Array.from(selectedFiles);
 
     fileNames.forEach((fileName) => {
@@ -274,11 +401,18 @@ export const useReplaySelection = () => {
   };
 
   const clearSelection = () => {
-    presenter.setSelectedFiles([]);
+    presenter.setSelectedFiles([], true); // Reset selectAllMode and deselectedFiles
   };
 
   const selectAll = () => {
-    presenter.setSelectedFiles(files.map((f) => f.fullPath));
+    const currentlySelected = new Set(selectedFiles);
+    const remainingFiles = files.filter((f) => !currentlySelected.has(f.fullPath)).map((f) => f.fullPath);
+
+    // Preserve order: manually selected files first, then remaining files
+    const allFiles = [...selectedFiles, ...remainingFiles];
+
+    presenter.setSelectedFiles(allFiles, false); // Don't reset selectAllMode
+    presenter.setSelectAllMode(true);
   };
 
   return {

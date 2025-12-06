@@ -5,7 +5,6 @@ import {
   ipc_checkValidIso,
   ipc_clearTempFolder,
   ipc_copyLogsToClipboard,
-  ipc_deleteFiles,
   ipc_fetchNewsFeed,
   ipc_getLatestGitHubReleaseVersion,
   ipc_installUpdate,
@@ -27,12 +26,6 @@ export default {
   async checkValidIso(path: string) {
     const { result } = await ipc_checkValidIso.renderer!.trigger({ path });
     return result;
-  },
-  // TODO: don't allow deleting of arbitrary items. Replay DB service should return a unique ID
-  // for each item sent to the renderer, and the renderer should tell main the list of IDs to delete
-  // rather than the file paths to delete. Remove this function once Replay DB service is ready.
-  async deleteFiles(filePaths: string[]) {
-    await ipc_deleteFiles.renderer!.trigger({ filePaths });
   },
   async copyLogsToClipboard(): Promise<void> {
     await ipc_copyLogsToClipboard.renderer!.trigger({});

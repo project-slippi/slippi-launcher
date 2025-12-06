@@ -28,7 +28,7 @@ export function aMockGameWith(fileId: number, opts: Partial<NewGame> = {}): NewG
 export function aMockPlayerWith(gameId: number, opts: Partial<NewPlayer> = {}): NewPlayer {
   return {
     game_id: gameId,
-    index: 0,
+    port: 1,
     type: 0,
     character_id: 1,
     character_color: 1,

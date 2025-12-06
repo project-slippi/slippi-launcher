@@ -1,11 +1,21 @@
 import type { StadiumStatsType, StatsType } from "@slippi/slippi-js/node";
 import { _, makeEndpoint } from "utils/ipc";
 
-import type { FileLoadResult, FileResult, FolderResult, Progress } from "./types";
+import type {
+  BulkDeleteOptions,
+  BulkDeleteResult,
+  FileResult,
+  FolderResult,
+  Progress,
+  SearchGamesOptions,
+  SearchGamesResult,
+} from "./types";
 
 // Handlers
 
-export const ipc_loadReplayFolder = makeEndpoint.main("loadReplayFolder", <{ folderPath: string }>_, <FileLoadResult>_);
+export const ipc_searchGames = makeEndpoint.main("searchGames", <SearchGamesOptions>_, <SearchGamesResult>_);
+
+export const ipc_getAllFilePaths = makeEndpoint.main("getAllFilePaths", <SearchGamesOptions>_, <string[]>_);
 
 export const ipc_initializeFolderTree = makeEndpoint.main(
   "initializeFolderTree",
@@ -30,6 +40,10 @@ export const ipc_calculateStadiumStats = makeEndpoint.main(
   <{ filePath: string }>_,
   <{ file: FileResult; stadiumStats: StadiumStatsType | null }>_,
 );
+
+export const ipc_deleteReplays = makeEndpoint.main("deleteReplays", <{ fileIds: string[] }>_, <{ success: boolean }>_);
+
+export const ipc_bulkDeleteReplays = makeEndpoint.main("bulkDeleteReplays", <BulkDeleteOptions>_, <BulkDeleteResult>_);
 
 // Events
 

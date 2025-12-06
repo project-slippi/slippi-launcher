@@ -13,6 +13,7 @@ import { FileSelectionToolbarMessages as Messages } from "./file_selection_toolb
 
 type FileSelectionToolbarProps = {
   totalSelected: number;
+  isSelectAllMode?: boolean;
   onSelectAll: () => void;
   onPlay: () => void;
   onClear: () => void;
@@ -21,6 +22,7 @@ type FileSelectionToolbarProps = {
 
 export const FileSelectionToolbar = ({
   totalSelected,
+  isSelectAllMode = false,
   onSelectAll,
   onPlay,
   onClear,
@@ -51,7 +53,7 @@ export const FileSelectionToolbar = ({
             margin-left: 10px;
           `}
         >
-          {Messages.filesSelected(totalSelected)}
+          {isSelectAllMode ? Messages.allFilesSelected(totalSelected) : Messages.filesSelected(totalSelected)}
         </div>
         <div>
           <Button

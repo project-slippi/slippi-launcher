@@ -1,14 +1,17 @@
 /* eslint-disable import/no-default-export */
 import {
+  ipc_bulkDeleteReplays,
   ipc_calculateGameStats,
   ipc_calculateStadiumStats,
+  ipc_deleteReplays,
+  ipc_getAllFilePaths,
   ipc_initializeFolderTree,
   ipc_loadProgressUpdatedEvent,
-  ipc_loadReplayFolder,
+  ipc_searchGames,
   ipc_selectTreeFolder,
   ipc_statsPageRequestedEvent,
 } from "./ipc";
-import type { Progress, ReplayService } from "./types";
+import type { BulkDeleteOptions, Progress, ReplayService, SearchGamesOptions } from "./types";
 
 const replayApi: ReplayService = {
   async initializeFolderTree(folders: readonly string[]) {
@@ -19,8 +22,12 @@ const replayApi: ReplayService = {
     const { result } = await ipc_selectTreeFolder.renderer!.trigger({ folderPath });
     return result;
   },
-  async loadReplayFolder(folderPath: string) {
-    const { result } = await ipc_loadReplayFolder.renderer!.trigger({ folderPath });
+  async searchGames(options: SearchGamesOptions) {
+    const { result } = await ipc_searchGames.renderer!.trigger(options);
+    return result;
+  },
+  async getAllFilePaths(options: SearchGamesOptions) {
+    const { result } = await ipc_getAllFilePaths.renderer!.trigger(options);
     return result;
   },
   async calculateGameStats(filePath: string) {
@@ -29,6 +36,13 @@ const replayApi: ReplayService = {
   },
   async calculateStadiumStats(filePath: string) {
     const { result } = await ipc_calculateStadiumStats.renderer!.trigger({ filePath });
+    return result;
+  },
+  async deleteReplays(fileIds: string[]) {
+    await ipc_deleteReplays.renderer!.trigger({ fileIds });
+  },
+  async bulkDeleteReplays(options: BulkDeleteOptions) {
+    const { result } = await ipc_bulkDeleteReplays.renderer!.trigger(options);
     return result;
   },
   onReplayLoadProgressUpdate(handle: (progress: Progress) => void) {
