@@ -428,12 +428,19 @@ export class DatabaseReplayProvider implements ReplayProvider {
       onProgress?.({ current: total, total });
     };
 
-    const [deleteResult, insertResult] = await Promise.allSettled([deleteOldReplays(), insertNewReplays()]);
-    if (deleteResult.status === "rejected") {
-      log.warn("Error removing deleted replays: " + deleteResult.reason);
+    // Run delete and insert sequentially for better performance
+    // SQLite is single-writer, so running these in parallel just adds overhead
+    // and lock contention without any benefit
+    try {
+      await deleteOldReplays();
+    } catch (err) {
+      log.warn("Error removing deleted replays: " + err);
     }
-    if (insertResult.status === "rejected") {
-      throw new Error("Error inserting new replays: " + insertResult.reason);
+
+    try {
+      await insertNewReplays();
+    } catch (err) {
+      throw new Error("Error inserting new replays: " + err);
     }
 
     const syncDuration = Date.now() - syncStartTime;
