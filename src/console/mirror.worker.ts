@@ -16,6 +16,7 @@ interface Methods {
   disconnectFromConsole(ip: string): Promise<void>;
   startMirroring(id: string): Promise<void>;
   dolphinClosed(playbackId: string): Promise<void>;
+  getActiveMirrorCount(): Promise<number>;
   getLogObservable(): Observable<string>;
   getErrorObservable(): Observable<Error | string>;
   getMirrorDetailsObservable(): Observable<{
@@ -85,6 +86,9 @@ const methods: WorkerSpec = {
   },
   async dolphinClosed(playbackId: string): Promise<void> {
     await mirrorManager.handleClosedDolphin(playbackId);
+  },
+  async getActiveMirrorCount(): Promise<number> {
+    return mirrorManager.getActiveMirrorCount();
   },
   getLogObservable(): Observable<string> {
     return Observable.from(logSubject);

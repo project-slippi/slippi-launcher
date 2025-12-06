@@ -222,6 +222,10 @@ export class MirrorManager extends EventEmitter {
     });
   }
 
+  public getActiveMirrorCount(): number {
+    return Object.keys(this.mirrors).length;
+  }
+
   public async startMirroring(ip: string) {
     this.emit(MirrorEvent.LOG, "Mirroring starting");
     const details = this.mirrors[ip];

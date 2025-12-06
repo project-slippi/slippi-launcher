@@ -2,7 +2,7 @@
 // fails to obtain the paths required for file transport to work
 // when in Node worker context.
 
-import type { ConnectionStatus } from "@slippi/slippi-js/node";
+import { ConnectionStatus } from "@slippi/slippi-js/node";
 import type { ModuleMethods } from "threads/dist/types/master";
 import { Observable, Subject } from "threads/observable";
 import { expose } from "threads/worker";
@@ -50,14 +50,20 @@ broadcastManager.on(BroadcastEvent.RECONNECT, (config: StartBroadcastConfig) => 
 
 const methods: WorkerSpec = {
   async dispose(): Promise<void> {
+    // Emit disconnected status BEFORE stopping to ensure UI updates
+    slippiStatusSubject.next({ status: ConnectionStatus.DISCONNECTED });
+    dolphinStatusSubject.next({ status: ConnectionStatus.DISCONNECTED });
+
+    // Stop broadcast and clean up connections
+    broadcastManager.stop();
+    broadcastManager.removeAllListeners();
+
     // Clean up worker
     logSubject.complete();
     errorSubject.complete();
     slippiStatusSubject.complete();
     dolphinStatusSubject.complete();
     reconnectSubject.complete();
-
-    broadcastManager.removeAllListeners();
   },
   async startBroadcast(config: StartBroadcastConfig): Promise<void> {
     await broadcastManager.start(config);

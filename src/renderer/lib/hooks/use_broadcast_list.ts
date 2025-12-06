@@ -1,5 +1,6 @@
 import type { BroadcasterItem } from "@broadcast/types";
 import throttle from "lodash/throttle";
+import React from "react";
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
@@ -9,31 +10,34 @@ import { useServices } from "@/services";
 export const useBroadcastListStore = create(
   combine(
     {
-      items: [] as BroadcasterItem[],
+      currentBroadcasts: [] as BroadcasterItem[],
     },
     (set) => ({
-      setItems: (items: BroadcasterItem[]) => set({ items }),
+      setCurrentBroadcasts: (currentBroadcasts: BroadcasterItem[]) => set({ currentBroadcasts }),
     }),
   ),
 );
 
 export const useBroadcastList = () => {
   const { authService, broadcastService } = useServices();
-  const items = useBroadcastListStore((store) => store.items);
   const { showError } = useToasts();
 
-  const connect = async () => {
-    const authToken = await authService.getUserToken();
-    await broadcastService.connectToSpectateServer(authToken);
-  };
-  const refresh = async () => {
-    await broadcastService.refreshBroadcastList();
-  };
+  return React.useMemo((): {
+    refreshBroadcasts: () => void;
+  } => {
+    const refresh = async () => {
+      const authToken = await authService.getUserToken();
+      await broadcastService.connectToSpectateServer(authToken);
+      await broadcastService.refreshBroadcastList().catch(showError);
+    };
 
-  // Limit refreshing to once every 2 seconds
-  const throttledRefresh = throttle(() => {
-    refresh().catch(showError);
-  }, 2000);
+    // Limit refreshing to once every 2 seconds
+    const throttledRefresh = throttle(refresh, 2000);
 
-  return [items, connect, throttledRefresh] as const;
+    return {
+      refreshBroadcasts: () => {
+        void throttledRefresh();
+      },
+    };
+  }, [authService, broadcastService, showError]);
 };

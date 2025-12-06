@@ -46,6 +46,15 @@ export default function setupConsoleIpc({ dolphinManager }: { dolphinManager: Do
 
     await mirrorWorker.disconnectFromConsole(ip);
 
+    // Check if there are any remaining active mirrors
+    const activeMirrors = await mirrorWorker.getActiveMirrorCount();
+    if (activeMirrors === 0) {
+      // No more active consoles - terminate the worker to free resources
+      log.debug("No active console mirrors remaining, terminating mirror worker");
+      await mirrorWorker.terminate();
+      mirrorWorker = undefined;
+    }
+
     return { success: true };
   });
 
