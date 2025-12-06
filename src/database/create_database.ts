@@ -32,11 +32,11 @@ async function applyPragmaSettings(db: Kysely<Database>): Promise<void> {
     await sql`PRAGMA synchronous = NORMAL`.execute(db);
     log.info("Set synchronous mode to NORMAL");
 
-    // Increase cache size to 64MB (default is ~2MB)
+    // Increase cache size to 32MB (default is ~2MB)
     // Negative value means size in KB, positive means number of pages
-    // -64000 = 64MB of cache
-    await sql`PRAGMA cache_size = -64000`.execute(db);
-    log.info("Set cache size to 64MB");
+    // -32000 = 32MB of cache
+    await sql`PRAGMA cache_size = -32000`.execute(db);
+    log.info("Set cache size to 32MB");
 
     // Store temp tables and indices in memory for faster operations
     await sql`PRAGMA temp_store = MEMORY`.execute(db);
