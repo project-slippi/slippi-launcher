@@ -2,7 +2,7 @@ import Sqlite from "better-sqlite3";
 import { app } from "electron";
 import log from "electron-log";
 import fs from "fs-extra";
-import { Kysely } from "kysely";
+import { Kysely, sql } from "kysely";
 import { SqliteWorkerDialect } from "kysely-sqlite-worker";
 import path from "path";
 
@@ -13,6 +13,48 @@ import type { Database } from "./schema";
  *  Only increment this when we want users to re-create the database from scratch.
  */
 const DATABASE_USER_VERSION = 0;
+
+/**
+ * Apply SQLite PRAGMA settings for optimal performance.
+ * These settings significantly improve bulk insert and query performance.
+ */
+async function applyPragmaSettings(db: Kysely<Database>): Promise<void> {
+  log.info("Applying SQLite PRAGMA settings for performance optimization");
+
+  try {
+    // Enable WAL mode for better concurrency and write performance
+    // WAL allows concurrent reads during writes and is faster than rollback journal
+    await sql`PRAGMA journal_mode = WAL`.execute(db);
+    log.info("Enabled WAL journal mode");
+
+    // NORMAL synchronous mode - balance between safety and performance
+    // Full is safest but slowest, OFF is fastest but unsafe, NORMAL is the sweet spot
+    await sql`PRAGMA synchronous = NORMAL`.execute(db);
+    log.info("Set synchronous mode to NORMAL");
+
+    // Increase cache size to 64MB (default is ~2MB)
+    // Negative value means size in KB, positive means number of pages
+    // -64000 = 64MB of cache
+    await sql`PRAGMA cache_size = -64000`.execute(db);
+    log.info("Set cache size to 64MB");
+
+    // Store temp tables and indices in memory for faster operations
+    await sql`PRAGMA temp_store = MEMORY`.execute(db);
+    log.info("Set temp store to memory");
+
+    // Use 8KB page size (SQLite 3.12.0+ default is 4KB)
+    // Larger page size can improve performance for larger databases
+    // Note: This only takes effect on new databases or after VACUUM
+    await sql`PRAGMA page_size = 8192`.execute(db);
+    log.info("Set page size to 8KB");
+
+    log.info("Successfully applied all PRAGMA settings");
+  } catch (err) {
+    // Don't fail database creation if PRAGMA settings fail
+    // Log the error and continue - database will still work, just not optimally
+    log.warn(`Failed to apply some PRAGMA settings: ${err}`);
+  }
+}
 
 export async function createDatabase(databasePath?: string): Promise<Kysely<Database>> {
   try {
@@ -55,6 +97,9 @@ async function initDatabaseAndRunMigrations(
       source,
     }),
   });
+
+  // Apply performance optimizations via PRAGMA settings
+  await applyPragmaSettings(database);
 
   const migrationsFolder = app.isPackaged
     ? path.join(process.resourcesPath, "./migrations")
