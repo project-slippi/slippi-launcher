@@ -18,6 +18,18 @@ const log = electronLog.scope("spectate_remote_server");
 
 const CONNECTION_TIMEOUT_MS = 20000;
 
+enum REQUEST_OP {
+  LIST_BROADCASTS = "list-broadcasts-request",
+  SPECTATE_BROADCAST = "spectate-broadcast-request",
+  STOP_BROADCAST = "stop-broadcast-request",
+}
+
+enum RESPONSE_OP {
+  LIST_BROADCASTS = "list-broadcasts-response",
+  SPECTATE_BROADCAST = "spectate-broadcast-response",
+  STOP_BROADCAST = "stop-broadcast-response",
+}
+
 export class SpectateRemoteServer {
   private spectateController: SpectateController | null = null;
   private broadcastListSubscription: Subscription<BroadcasterItem[]> | null = null;
@@ -58,7 +70,7 @@ export class SpectateRemoteServer {
         await this.spectateController!.refreshBroadcastList();
       } catch (e) {
         const err = typeof e === "string" ? e : e instanceof Error ? e.message : "unknown";
-        this.connection.sendUTF(JSON.stringify({ op: "list-broadcasts-response", err }));
+        this.connection.sendUTF(JSON.stringify({ op: RESPONSE_OP.LIST_BROADCASTS, err }));
       }
     }, 2000);
   }
@@ -69,7 +81,7 @@ export class SpectateRemoteServer {
       .getBroadcastListObservable()
       .subscribe((data: BroadcasterItem[]) => {
         if (this.connection) {
-          this.connection.sendUTF(JSON.stringify({ op: "list-broadcasts-response", broadcasts: data }));
+          this.connection.sendUTF(JSON.stringify({ op: RESPONSE_OP.LIST_BROADCASTS, broadcasts: data }));
         }
       });
     this.spectateDetailsSubscription = this.spectateController
@@ -203,31 +215,53 @@ export class SpectateRemoteServer {
     }
 
     const json = JSON.parse(data.utf8Data);
-    if (json.op === "list-broadcasts-request") {
-      await this.throttledRefresh();
-    } else if (json.op === "spectate-broadcast-request") {
-      const broadcastId = json.broadcastId;
-      if (!broadcastId || typeof broadcastId !== "string") {
-        this.connection.sendUTF(JSON.stringify({ op: "spectate-broadcast-response", err: "no broadcastId" }));
-        return;
-      }
+    switch (json.op) {
+      case REQUEST_OP.LIST_BROADCASTS:
+        await this.throttledRefresh();
+        break;
+      case REQUEST_OP.SPECTATE_BROADCAST: {
+        const broadcastId = json.broadcastId;
+        if (!broadcastId || typeof broadcastId !== "string") {
+          this.connection.sendUTF(JSON.stringify({ op: RESPONSE_OP.SPECTATE_BROADCAST, err: "no broadcastId" }));
+          return;
+        }
 
-      const dolphinOptions: SpectateDolphinOptions = {};
-      const dolphinId = json.dolphinId;
-      if (dolphinId && typeof dolphinId === "string") {
-        dolphinOptions.dolphinId = dolphinId;
-      } else {
-        dolphinOptions.idPostfix = `remote${this.prefixOrdinal}`;
-        this.prefixOrdinal += 1;
+        const dolphinOptions: SpectateDolphinOptions = {};
+        const dolphinId = json.dolphinId;
+        if (dolphinId && typeof dolphinId === "string") {
+          dolphinOptions.dolphinId = dolphinId;
+        } else {
+          dolphinOptions.idPostfix = `remote${this.prefixOrdinal}`;
+          this.prefixOrdinal += 1;
+        }
+        try {
+          const path = this.settingsManager.get().settings.spectateSlpPath;
+          const dolphinId = await this.spectateController!.startSpectate(broadcastId, path, dolphinOptions);
+          this.connection.sendUTF(JSON.stringify({ op: RESPONSE_OP.SPECTATE_BROADCAST, broadcastId, dolphinId, path }));
+        } catch (e) {
+          const err = typeof e === "string" ? e : e instanceof Error ? e.message : "unknown";
+          this.connection.sendUTF(JSON.stringify({ op: RESPONSE_OP.SPECTATE_BROADCAST, err }));
+        }
+        break;
       }
-      try {
-        const path = this.settingsManager.get().settings.spectateSlpPath;
-        const dolphinId = await this.spectateController!.startSpectate(broadcastId, path, dolphinOptions);
-        this.connection.sendUTF(JSON.stringify({ op: "spectate-broadcast-response", broadcastId, dolphinId, path }));
-      } catch (e) {
-        const err = typeof e === "string" ? e : e instanceof Error ? e.message : "unknown";
-        this.connection.sendUTF(JSON.stringify({ op: "spectate-broadcast-response", err }));
+      case REQUEST_OP.STOP_BROADCAST: {
+        const broadcastId = json.broadcastId;
+        if (!broadcastId || typeof broadcastId !== "string") {
+          this.connection.sendUTF(JSON.stringify({ op: RESPONSE_OP.STOP_BROADCAST, err: "no broadcastId" }));
+          return;
+        }
+
+        try {
+          await this.spectateController!.stopSpectate(broadcastId);
+          this.connection.sendUTF(JSON.stringify({ op: RESPONSE_OP.STOP_BROADCAST, broadcastId }));
+        } catch (e) {
+          const err = typeof e === "string" ? e : e instanceof Error ? e.message : "unknown";
+          this.connection.sendUTF(JSON.stringify({ op: RESPONSE_OP.STOP_BROADCAST, err }));
+        }
+        break;
       }
+      default:
+        this.connection.sendUTF(JSON.stringify({ op: json.op, err: "unknown op" }));
     }
   }
 
