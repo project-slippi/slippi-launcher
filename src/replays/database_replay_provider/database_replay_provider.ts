@@ -45,6 +45,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
     continuation: string | undefined;
     totalCount?: number;
   }> {
+    const searchStartTime = Date.now();
     const maybeContinuationToken = Continuation.fromString(continuation);
     const continuationValue = maybeContinuationToken?.getValue() ?? null;
     const nextIdInclusive = maybeContinuationToken?.getNextIdInclusive() ?? null;
@@ -54,14 +55,20 @@ export class DatabaseReplayProvider implements ReplayProvider {
     if (folder !== undefined && continuationValue === null && nextIdInclusive === null) {
       // Only sync if the folder exists on disk
       if (await fs.pathExists(folder)) {
+        const syncStartTime = Date.now();
         await this.syncReplayDatabase(folder, onProgress, INSERT_REPLAY_BATCH_SIZE);
+        const syncDuration = Date.now() - syncStartTime;
+        log.info(`Database sync completed in ${syncDuration}ms`);
       }
     }
 
     // Get total count on first page load (when there's no continuation)
     let totalCount: number | undefined;
     if (continuationValue === null && nextIdInclusive === null) {
+      const countStartTime = Date.now();
       totalCount = await GameRepository.countGames(this.db, folder ?? null, filters);
+      const countDuration = Date.now() - countStartTime;
+      log.info(`Count query completed in ${countDuration}ms (found ${totalCount} games)`);
     }
 
     // Convert continuation value from string to proper type
@@ -77,6 +84,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
     }
 
     // Use GameRepository.searchGames which supports filters
+    const queryStartTime = Date.now();
     const records = await GameRepository.searchGames(this.db, folder ?? null, filters, {
       limit: limit + 1,
       orderBy: {
@@ -86,13 +94,21 @@ export class DatabaseReplayProvider implements ReplayProvider {
       continuationValue: typedContinuationValue,
       nextIdInclusive: nextIdInclusive ?? undefined,
     });
+    const queryDuration = Date.now() - queryStartTime;
+    log.info(`Search query completed in ${queryDuration}ms (returned ${records.length} records)`);
 
     const [recordsToReturn, newContinuation] = Continuation.truncate(records, limit, (record) => ({
       value: orderBy.field === "startTime" ? record.start_time ?? "null" : record.last_frame?.toString() ?? "null",
       nextIdInclusive: record._id,
     }));
 
+    const mapStartTime = Date.now();
     const files = await this.mapGameAndFileRecordsToFileResult(recordsToReturn);
+    const mapDuration = Date.now() - mapStartTime;
+    log.info(`Player mapping completed in ${mapDuration}ms`);
+
+    const totalDuration = Date.now() - searchStartTime;
+    log.info(`Total searchReplays completed in ${totalDuration}ms`);
 
     return {
       files,
@@ -171,11 +187,17 @@ export class DatabaseReplayProvider implements ReplayProvider {
   }
 
   public async deleteReplays(fileIds: string[]): Promise<void> {
+    const deleteStartTime = Date.now();
+    log.info(`Deleting ${fileIds.length} replay(s) by ID`);
+
     // Convert string IDs to numbers
     const numericFileIds = fileIds.map((id) => parseInt(id, 10));
 
     // Get the file records to get the file paths
+    const queryStartTime = Date.now();
     const fileRecords = await this.db.selectFrom("file").where("file._id", "in", numericFileIds).selectAll().execute();
+    const queryDuration = Date.now() - queryStartTime;
+    log.info(`File record query completed in ${queryDuration}ms`);
 
     if (fileRecords.length === 0) {
       log.warn("No files found for the given IDs");
@@ -183,17 +205,26 @@ export class DatabaseReplayProvider implements ReplayProvider {
     }
 
     // Delete the records from the database first (cascades to game and player records)
+    const dbDeleteStartTime = Date.now();
     await FileRepository.deleteFileById(this.db, ...numericFileIds);
+    const dbDeleteDuration = Date.now() - dbDeleteStartTime;
+    log.info(`Database delete completed in ${dbDeleteDuration}ms`);
 
     // Delete files from the filesystem
+    const fsDeleteStartTime = Date.now();
     const filePaths = fileRecords.map((record) => path.resolve(record.folder, record.name));
     const deletePromises = await Promise.allSettled(filePaths.map((filePath) => shell.trashItem(filePath)));
     const errCount = deletePromises.reduce((curr, { status }) => (status === "rejected" ? curr + 1 : curr), 0);
+    const fsDeleteDuration = Date.now() - fsDeleteStartTime;
+
     if (errCount > 0) {
-      log.warn(`${errCount} file(s) failed to delete from filesystem`);
+      log.warn(`${errCount} file(s) failed to delete from filesystem in ${fsDeleteDuration}ms`);
+    } else {
+      log.info(`Filesystem delete completed in ${fsDeleteDuration}ms`);
     }
 
-    log.info(`Deleted ${fileRecords.length} replay(s)`);
+    const totalDuration = Date.now() - deleteStartTime;
+    log.info(`Deleted ${fileRecords.length} replay(s) in ${totalDuration}ms total`);
   }
 
   public async bulkDeleteReplays(
@@ -203,15 +234,24 @@ export class DatabaseReplayProvider implements ReplayProvider {
       excludeFilePaths?: string[];
     },
   ): Promise<{ deletedCount: number }> {
+    const bulkDeleteStartTime = Date.now();
+    log.info(
+      `Starting bulk delete with ${filters.length} filter(s) and ${options?.excludeFilePaths?.length ?? 0} exclusions`,
+    );
+
     // Sync the database first to ensure we're working with up-to-date data
     // Only sync if folder is specified and exists on disk
     if (folder !== undefined && (await fs.pathExists(folder))) {
+      const syncStartTime = Date.now();
       await this.syncReplayDatabase(folder, undefined, INSERT_REPLAY_BATCH_SIZE);
+      const syncDuration = Date.now() - syncStartTime;
+      log.info(`Pre-delete sync completed in ${syncDuration}ms`);
     }
 
     // Convert file paths to file IDs for exclusion
     let excludeFileIds: number[] = [];
     if (options?.excludeFilePaths && options.excludeFilePaths.length > 0) {
+      const excludeQueryStartTime = Date.now();
       let excludeQuery = this.db.selectFrom("file");
 
       // Apply folder filter if specified
@@ -228,15 +268,20 @@ export class DatabaseReplayProvider implements ReplayProvider {
         .select("_id")
         .execute();
       excludeFileIds = excludeRecords.map((r) => r._id);
+      const excludeQueryDuration = Date.now() - excludeQueryStartTime;
+      log.info(`Exclude query completed in ${excludeQueryDuration}ms (found ${excludeFileIds.length} exclusions)`);
     }
 
     // Get all file IDs matching the filters
+    const filterQueryStartTime = Date.now();
     const fileIdsToDelete = await GameRepository.getFileIdsForBulkDelete(
       this.db,
       folder ?? null,
       filters,
       excludeFileIds.length > 0 ? excludeFileIds : undefined,
     );
+    const filterQueryDuration = Date.now() - filterQueryStartTime;
+    log.info(`Filter query completed in ${filterQueryDuration}ms (found ${fileIdsToDelete.length} files to delete)`);
 
     if (fileIdsToDelete.length === 0) {
       log.info("No files to delete");
@@ -244,20 +289,32 @@ export class DatabaseReplayProvider implements ReplayProvider {
     }
 
     // Get the file records to get the file paths
+    const fileQueryStartTime = Date.now();
     const fileRecords = await this.db.selectFrom("file").where("file._id", "in", fileIdsToDelete).selectAll().execute();
+    const fileQueryDuration = Date.now() - fileQueryStartTime;
+    log.info(`File records query completed in ${fileQueryDuration}ms`);
 
     // Delete the records from the database first (cascades to game and player records)
+    const dbDeleteStartTime = Date.now();
     await FileRepository.deleteFileById(this.db, ...fileIdsToDelete);
+    const dbDeleteDuration = Date.now() - dbDeleteStartTime;
+    log.info(`Database bulk delete completed in ${dbDeleteDuration}ms`);
 
     // Delete files from the filesystem
+    const fsDeleteStartTime = Date.now();
     const filePaths = fileRecords.map((record) => path.resolve(record.folder, record.name));
     const deletePromises = await Promise.allSettled(filePaths.map((filePath) => shell.trashItem(filePath)));
     const errCount = deletePromises.reduce((curr, { status }) => (status === "rejected" ? curr + 1 : curr), 0);
+    const fsDeleteDuration = Date.now() - fsDeleteStartTime;
+
     if (errCount > 0) {
-      log.warn(`${errCount} file(s) failed to delete from filesystem`);
+      log.warn(`${errCount} file(s) failed to delete from filesystem in ${fsDeleteDuration}ms`);
+    } else {
+      log.info(`Filesystem bulk delete completed in ${fsDeleteDuration}ms`);
     }
 
-    log.info(`Bulk deleted ${fileRecords.length} replay(s)`);
+    const totalDuration = Date.now() - bulkDeleteStartTime;
+    log.info(`Bulk deleted ${fileRecords.length} replay(s) in ${totalDuration}ms total`);
     return { deletedCount: fileRecords.length };
   }
 
@@ -271,6 +328,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
   }
 
   private async syncReplayDatabase(folder: string, onProgress?: (progress: Progress) => void, batchSize = 100) {
+    const syncStartTime = Date.now();
     const [fileResults, existingFiles] = await Promise.all([
       fs.readdir(folder, { withFileTypes: true }),
       FileRepository.findAllFilesInFolder(this.db, folder),
@@ -280,28 +338,57 @@ export class DatabaseReplayProvider implements ReplayProvider {
       .filter((dirent) => dirent.isFile() && path.extname(dirent.name) === ".slp")
       .map((dirent) => dirent.name);
 
+    log.info(`Found ${slpFileNames.length} .slp files on disk, ${existingFiles.length} files in database`);
+
     // Find all records in the database that no longer exist
     const deleteOldReplays = async () => {
+      const deleteStartTime = Date.now();
       const setOfSlpFileNames = new Set(slpFileNames);
       const fileIdsToDelete = existingFiles.filter(({ name }) => !setOfSlpFileNames.has(name)).map(({ _id }) => _id);
-      const chunkedFileIdsToDelete = chunk(fileIdsToDelete, batchSize);
-      for (const batch of chunkedFileIdsToDelete) {
-        await FileRepository.deleteFileById(this.db, ...batch);
+
+      if (fileIdsToDelete.length === 0) {
+        log.info("No replays to delete");
+        return;
       }
+
+      log.info(`Deleting ${fileIdsToDelete.length} replays that no longer exist on disk`);
+      const chunkedFileIdsToDelete = chunk(fileIdsToDelete, batchSize);
+      let deletedCount = 0;
+
+      for (const batch of chunkedFileIdsToDelete) {
+        const batchStartTime = Date.now();
+        await FileRepository.deleteFileById(this.db, ...batch);
+        deletedCount += batch.length;
+        const batchDuration = Date.now() - batchStartTime;
+        log.info(
+          `Deleted batch of ${batch.length} replays in ${batchDuration}ms (${deletedCount}/${fileIdsToDelete.length})`,
+        );
+      }
+
+      const deleteDuration = Date.now() - deleteStartTime;
+      log.info(`Completed deleting ${fileIdsToDelete.length} replays in ${deleteDuration}ms`);
     };
 
     // Find all new SLP files that are not yet in the database
     const insertNewReplays = async () => {
+      const insertStartTime = Date.now();
       const setOfExistingReplayNames = new Set(existingFiles.map((r) => r.name));
       const slpFilesToAdd = slpFileNames.filter((name) => !setOfExistingReplayNames.has(name));
       const total = slpFilesToAdd.length;
 
+      if (total === 0) {
+        log.info("No new replays to add");
+        return;
+      }
+
+      log.info(`Adding ${total} new replays to database`);
       let replaysAdded = 0;
       const chunkedReplays = chunk(slpFilesToAdd, batchSize);
 
       // Process each batch in a single transaction for optimal performance
       // This reduces transaction overhead from N transactions to 1 per batch
       for (const batch of chunkedReplays) {
+        const batchStartTime = Date.now();
         const batchResults = await this.db.transaction().execute(async (trx) => {
           const results: Array<{ success: boolean; error?: any }> = [];
 
@@ -323,13 +410,20 @@ export class DatabaseReplayProvider implements ReplayProvider {
         const failed = batchResults.filter((r) => !r.success);
 
         replaysAdded += successful;
-        log.info(`Added ${replaysAdded} out of ${total} replays`);
+        const batchDuration = Date.now() - batchStartTime;
+        const filesPerSec = Math.round((successful / batchDuration) * 1000);
+        log.info(`Added ${replaysAdded}/${total} replays in ${batchDuration}ms (${filesPerSec} files/sec)`);
+
         if (failed.length > 0) {
           log.warn(`Failed to add ${failed.length} replay(s): `, failed[0].error);
         }
 
         onProgress?.({ current: replaysAdded, total });
       }
+
+      const insertDuration = Date.now() - insertStartTime;
+      const totalFilesPerSec = Math.round((replaysAdded / insertDuration) * 1000);
+      log.info(`Completed adding ${replaysAdded} replays in ${insertDuration}ms (avg ${totalFilesPerSec} files/sec)`);
 
       onProgress?.({ current: total, total });
     };
@@ -341,6 +435,9 @@ export class DatabaseReplayProvider implements ReplayProvider {
     if (insertResult.status === "rejected") {
       throw new Error("Error inserting new replays: " + insertResult.reason);
     }
+
+    const syncDuration = Date.now() - syncStartTime;
+    log.info(`Total sync operation completed in ${syncDuration}ms`);
   }
 
   /**
