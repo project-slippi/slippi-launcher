@@ -533,17 +533,18 @@ export class DatabaseReplayProvider implements ReplayProvider {
 
   /**
    * Insert a new replay file within an existing transaction.
-   * This method should be used when batch processing to avoid creating nested transactions.
+   * This is the core implementation used by both batch processing and single-file operations.
    *
    * @param trx - The transaction to use for the insert
    * @param folder - The folder containing the replay file
    * @param filename - The name of the replay file
+   * @returns The inserted file, game, and player records
    */
   private async insertNewReplayFileInTransaction(
     trx: Transaction<Database>,
     folder: string,
     filename: string,
-  ): Promise<void> {
+  ): Promise<{ fileRecord: FileRecord; gameRecord: GameRecord | undefined; playerRecords: PlayerRecord[] }> {
     const fullPath = path.resolve(folder, filename);
     const game = new SlippiGame(fullPath);
     const newFile = await generateNewFile(folder, filename);
@@ -552,12 +553,14 @@ export class DatabaseReplayProvider implements ReplayProvider {
 
     const newGame = generateNewGame(fileRecord, game);
     if (!newGame) {
-      return;
+      return { fileRecord, gameRecord: undefined, playerRecords: [] };
     }
 
     const gameRecord = await GameRepository.insertGame(trx, newGame);
     const newPlayers = generateNewPlayers(gameRecord._id, game);
-    await PlayerRepository.insertPlayer(trx, ...newPlayers);
+    const playerRecords = await PlayerRepository.insertPlayer(trx, ...newPlayers);
+
+    return { fileRecord, gameRecord, playerRecords };
   }
 
   /**
@@ -572,24 +575,8 @@ export class DatabaseReplayProvider implements ReplayProvider {
     folder: string,
     filename: string,
   ): Promise<{ fileRecord: FileRecord; gameRecord: GameRecord | undefined; playerRecords: PlayerRecord[] }> {
-    const fullPath = path.resolve(folder, filename);
-    const game = new SlippiGame(fullPath);
-
-    const newFile = await generateNewFile(folder, filename);
-
     return await this.db.transaction().execute(async (trx) => {
-      const fileRecord = await FileRepository.insertFile(trx, newFile);
-
-      const newGame = generateNewGame(fileRecord, game);
-      if (!newGame) {
-        return { fileRecord, gameRecord: undefined, playerRecords: [] };
-      }
-
-      const gameRecord = await GameRepository.insertGame(trx, newGame);
-      const newPlayers = generateNewPlayers(gameRecord._id, game);
-      const playerRecords = await PlayerRepository.insertPlayer(trx, ...newPlayers);
-
-      return { fileRecord, gameRecord, playerRecords };
+      return await this.insertNewReplayFileInTransaction(trx, folder, filename);
     });
   }
 }
