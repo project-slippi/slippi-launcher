@@ -27,6 +27,8 @@ const INSERT_REPLAY_BATCH_SIZE = 500;
 const SQLITE_PARAM_LIMIT_BATCH_SIZE = 500;
 
 export class DatabaseReplayProvider implements ReplayProvider {
+  private currentSearchRequestId = 0;
+
   constructor(private readonly db: Kysely<Database>) {}
 
   public async searchReplays(
@@ -47,7 +49,11 @@ export class DatabaseReplayProvider implements ReplayProvider {
     continuation: string | undefined;
     totalCount?: number;
   }> {
+    // Increment request ID for this search
+    const requestId = ++this.currentSearchRequestId;
     const searchStartTime = Date.now();
+    log.info(`[Request ${requestId}] Starting searchReplays for folder: ${folder ?? "all"}`);
+
     const maybeContinuationToken = Continuation.fromString(continuation);
     const continuationValue = maybeContinuationToken?.getValue() ?? null;
     const nextIdInclusive = maybeContinuationToken?.getNextIdInclusive() ?? null;
@@ -58,9 +64,19 @@ export class DatabaseReplayProvider implements ReplayProvider {
       // Only sync if the folder exists on disk
       if (await fs.pathExists(folder)) {
         const syncStartTime = Date.now();
-        await this.syncReplayDatabase(folder, onProgress, INSERT_REPLAY_BATCH_SIZE);
+        await this.syncReplayDatabase(folder, onProgress, INSERT_REPLAY_BATCH_SIZE, requestId);
         const syncDuration = Date.now() - syncStartTime;
-        log.info(`Database sync completed in ${syncDuration}ms`);
+        log.info(`[Request ${requestId}] Database sync completed in ${syncDuration}ms`);
+
+        // Check if superseded after sync
+        if (this.currentSearchRequestId !== requestId) {
+          log.info(`[Request ${requestId}] Superseded after sync (current: ${this.currentSearchRequestId})`);
+          return {
+            files: [],
+            continuation: undefined,
+            totalCount: 0,
+          };
+        }
       }
     }
 
@@ -70,7 +86,17 @@ export class DatabaseReplayProvider implements ReplayProvider {
       const countStartTime = Date.now();
       totalCount = await GameRepository.countGames(this.db, folder ?? null, filters);
       const countDuration = Date.now() - countStartTime;
-      log.info(`Count query completed in ${countDuration}ms (found ${totalCount} games)`);
+      log.info(`[Request ${requestId}] Count query completed in ${countDuration}ms (found ${totalCount} games)`);
+
+      // Check if superseded after count
+      if (this.currentSearchRequestId !== requestId) {
+        log.info(`[Request ${requestId}] Superseded after count (current: ${this.currentSearchRequestId})`);
+        return {
+          files: [],
+          continuation: undefined,
+          totalCount: 0,
+        };
+      }
     }
 
     // Convert continuation value from string to proper type
@@ -97,7 +123,19 @@ export class DatabaseReplayProvider implements ReplayProvider {
       nextIdInclusive: nextIdInclusive ?? undefined,
     });
     const queryDuration = Date.now() - queryStartTime;
-    log.info(`Search query completed in ${queryDuration}ms (returned ${records.length} records)`);
+    log.info(
+      `[Request ${requestId}] Search query completed in ${queryDuration}ms (returned ${records.length} records)`,
+    );
+
+    // Check if superseded after query
+    if (this.currentSearchRequestId !== requestId) {
+      log.info(`[Request ${requestId}] Superseded after query (current: ${this.currentSearchRequestId})`);
+      return {
+        files: [],
+        continuation: undefined,
+        totalCount: 0,
+      };
+    }
 
     const [recordsToReturn, newContinuation] = Continuation.truncate(records, limit, (record) => ({
       value: orderBy.field === "startTime" ? record.start_time ?? "null" : record.last_frame?.toString() ?? "null",
@@ -107,10 +145,10 @@ export class DatabaseReplayProvider implements ReplayProvider {
     const mapStartTime = Date.now();
     const files = await this.mapGameAndFileRecordsToFileResult(recordsToReturn);
     const mapDuration = Date.now() - mapStartTime;
-    log.info(`Player mapping completed in ${mapDuration}ms`);
+    log.info(`[Request ${requestId}] Player mapping completed in ${mapDuration}ms`);
 
     const totalDuration = Date.now() - searchStartTime;
-    log.info(`Total searchReplays completed in ${totalDuration}ms`);
+    log.info(`[Request ${requestId}] Total searchReplays completed in ${totalDuration}ms`);
 
     return {
       files,
@@ -357,7 +395,12 @@ export class DatabaseReplayProvider implements ReplayProvider {
     });
   }
 
-  private async syncReplayDatabase(folder: string, onProgress?: (progress: Progress) => void, batchSize = 100) {
+  private async syncReplayDatabase(
+    folder: string,
+    onProgress?: (progress: Progress) => void,
+    batchSize = 100,
+    requestId?: number,
+  ) {
     const syncStartTime = Date.now();
     const [fileResults, existingFiles] = await Promise.all([
       fs.readdir(folder, { withFileTypes: true }),
@@ -368,7 +411,8 @@ export class DatabaseReplayProvider implements ReplayProvider {
       .filter((dirent) => dirent.isFile() && path.extname(dirent.name) === ".slp")
       .map((dirent) => dirent.name);
 
-    log.info(`Found ${slpFileNames.length} .slp files on disk, ${existingFiles.length} files in database`);
+    const reqLog = requestId ? `[Request ${requestId}] ` : "";
+    log.info(`${reqLog}Found ${slpFileNames.length} .slp files on disk, ${existingFiles.length} files in database`);
 
     // Find all records in the database that no longer exist
     const deleteOldReplays = async () => {
@@ -418,6 +462,16 @@ export class DatabaseReplayProvider implements ReplayProvider {
       // Process each batch in a single transaction for optimal performance
       // This reduces transaction overhead from N transactions to 1 per batch
       for (const batch of chunkedReplays) {
+        // Check if superseded BEFORE starting this batch
+        // This allows us to stop processing new batches while committing what we've done
+        if (requestId !== undefined && this.currentSearchRequestId !== requestId) {
+          log.info(
+            `[Request ${requestId}] Stopping insert after ${replaysAdded} replays - superseded by request ${this.currentSearchRequestId}`,
+          );
+          onProgress?.({ current: replaysAdded, total });
+          return; // Stop processing, but commit what we've already done
+        }
+
         const batchStartTime = Date.now();
         const batchResults = await this.db.transaction().execute(async (trx) => {
           const results: Array<{ success: boolean; error?: any }> = [];
