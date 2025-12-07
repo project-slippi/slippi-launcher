@@ -63,6 +63,8 @@ export const useReplays = create<StoreState>()(immer(() => initialState));
 let presenterInstance: ReplayPresenter | null = null;
 
 export class ReplayPresenter {
+  private currentLoadRequestId = 0;
+
   constructor(private readonly replayService: ReplayService) {}
 
   public async init(
@@ -123,12 +125,9 @@ export class ReplayPresenter {
   }
 
   public async loadFolder(childPath?: string, forceReload?: boolean): Promise<void> {
-    const { currentFolder, loading } = useReplays.getState();
-
-    if (loading) {
-      console.warn("A folder is already loading! Please wait for it to finish first.");
-      return;
-    }
+    // Increment request ID for this load operation
+    const requestId = ++this.currentLoadRequestId;
+    const { currentFolder } = useReplays.getState();
 
     const folderToLoad = childPath ?? currentFolder;
     useReplays.setState((state) => {
@@ -140,6 +139,13 @@ export class ReplayPresenter {
 
     const loadFolderTree = async () => {
       const folderTree = await this.replayService.selectTreeFolder(folderToLoad);
+
+      // Check if this request is still current before updating state
+      if (this.currentLoadRequestId !== requestId) {
+        console.log(`[Request ${requestId}] Discarding stale folder tree results`);
+        return;
+      }
+
       useReplays.setState((state) => {
         state.folderTree = [...folderTree];
       });
@@ -173,6 +179,16 @@ export class ReplayPresenter {
           filters,
         });
 
+        // Check if this request is still current before updating state
+        if (this.currentLoadRequestId !== requestId) {
+          console.log(`[Request ${requestId}] Discarding stale search results (current: ${this.currentLoadRequestId})`);
+          // Update loading state even for stale requests
+          useReplays.setState((state) => {
+            state.loading = false;
+          });
+          return;
+        }
+
         useReplays.setState((state) => {
           state.scrollRowItem = 0;
           state.files = result.files;
@@ -182,10 +198,13 @@ export class ReplayPresenter {
           state.totalFilesInFolder = result.totalCount ?? null;
         });
       } catch (err) {
-        useReplays.setState((state) => {
-          state.loading = false;
-          state.progress = null;
-        });
+        // Only update state if this is still the current request
+        if (this.currentLoadRequestId === requestId) {
+          useReplays.setState((state) => {
+            state.loading = false;
+            state.progress = null;
+          });
+        }
       }
     };
     await Promise.all([loadFolderTree(), loadFolderDetails()]);
@@ -247,6 +266,8 @@ export class ReplayPresenter {
   }
 
   public async loadMoreReplays(): Promise<void> {
+    // Increment request ID for this load more operation
+    const requestId = ++this.currentLoadRequestId;
     const { continuation, loadingMore, hasMoreReplays, currentFolder } = useReplays.getState();
 
     // Don't load more if already loading or no more replays
@@ -277,6 +298,18 @@ export class ReplayPresenter {
         filters,
       });
 
+      // Check if this request is still current before updating state
+      if (this.currentLoadRequestId !== requestId) {
+        console.log(
+          `[Request ${requestId}] Discarding stale load-more results (current: ${this.currentLoadRequestId})`,
+        );
+        // Update loading state even for stale requests
+        useReplays.setState((state) => {
+          state.loadingMore = false;
+        });
+        return;
+      }
+
       useReplays.setState((state) => {
         state.files = [...state.files, ...result.files];
         state.continuation = result.continuation;
@@ -293,9 +326,12 @@ export class ReplayPresenter {
       });
     } catch (err) {
       console.error("Failed to load more replays:", err);
-      useReplays.setState((state) => {
-        state.loadingMore = false;
-      });
+      // Only update state if this is still the current request
+      if (this.currentLoadRequestId === requestId) {
+        useReplays.setState((state) => {
+          state.loadingMore = false;
+        });
+      }
     }
   }
 }
