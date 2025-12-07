@@ -31,6 +31,15 @@ export class DatabaseReplayProvider implements ReplayProvider {
 
   constructor(private readonly db: Kysely<Database>) {}
 
+  /**
+   * Check if a request ID has been superseded by a newer request.
+   * @param requestId - The request ID to check (undefined means no tracking)
+   * @returns true if the request is stale and should be cancelled
+   */
+  private isRequestSuperseded(requestId: number | undefined): boolean {
+    return requestId !== undefined && this.currentSearchRequestId !== requestId;
+  }
+
   public async searchReplays(
     folder: string | undefined,
     limit: number,
@@ -68,9 +77,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
         const syncDuration = Date.now() - syncStartTime;
         log.info(`[Request ${requestId}] Database sync completed in ${syncDuration}ms`);
 
-        // Check if superseded after sync
-        if (this.currentSearchRequestId !== requestId) {
-          log.info(`[Request ${requestId}] Superseded after sync (current: ${this.currentSearchRequestId})`);
+        if (this.isRequestSuperseded(requestId)) {
           return {
             files: [],
             continuation: undefined,
@@ -88,9 +95,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
       const countDuration = Date.now() - countStartTime;
       log.info(`[Request ${requestId}] Count query completed in ${countDuration}ms (found ${totalCount} games)`);
 
-      // Check if superseded after count
-      if (this.currentSearchRequestId !== requestId) {
-        log.info(`[Request ${requestId}] Superseded after count (current: ${this.currentSearchRequestId})`);
+      if (this.isRequestSuperseded(requestId)) {
         return {
           files: [],
           continuation: undefined,
@@ -127,9 +132,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
       `[Request ${requestId}] Search query completed in ${queryDuration}ms (returned ${records.length} records)`,
     );
 
-    // Check if superseded after query
-    if (this.currentSearchRequestId !== requestId) {
-      log.info(`[Request ${requestId}] Superseded after query (current: ${this.currentSearchRequestId})`);
+    if (this.isRequestSuperseded(requestId)) {
       return {
         files: [],
         continuation: undefined,
@@ -461,14 +464,9 @@ export class DatabaseReplayProvider implements ReplayProvider {
       // Process each batch in a single transaction for optimal performance
       // This reduces transaction overhead from N transactions to 1 per batch
       for (const batch of chunkedReplays) {
-        // Check if superseded BEFORE starting this batch
-        // This allows us to stop processing new batches while committing what we've done
-        if (requestId !== undefined && this.currentSearchRequestId !== requestId) {
-          log.info(
-            `[Request ${requestId}] Stopping insert after ${replaysAdded} replays - superseded by request ${this.currentSearchRequestId}`,
-          );
+        if (this.isRequestSuperseded(requestId)) {
           onProgress?.({ current: replaysAdded, total });
-          return; // Stop processing, but commit what we've already done
+          return;
         }
 
         const batchStartTime = Date.now();
@@ -478,6 +476,10 @@ export class DatabaseReplayProvider implements ReplayProvider {
           // Process files sequentially within the transaction
           // SQLite is single-writer, so parallel processing just creates lock contention
           for (const filename of batch) {
+            if (this.isRequestSuperseded(requestId)) {
+              break;
+            }
+
             try {
               await this.insertNewReplayFileInTransaction(trx, folder, filename);
               results.push({ success: true });
