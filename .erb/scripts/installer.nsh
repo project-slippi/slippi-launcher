@@ -16,6 +16,14 @@ var InstallType
   ShowUninstDetails show
 !macroend
 
+!macro customInit
+  ; Force silent mode for updates to make them seamless
+  ; while still allowing directory selection for fresh installs
+  ${If} ${isUpdated}
+    SetSilent silent
+  ${EndIf}
+!macroend
+
 !macro customPageAfterChangeDir
   Page custom InstTypePageCreate InstTypePageLeave
   Function InstTypePageCreate
