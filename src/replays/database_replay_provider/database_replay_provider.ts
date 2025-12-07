@@ -19,10 +19,8 @@ import { Continuation } from "./continuation";
 import { inferStartTime } from "./infer_start_time";
 import { mapGameRecordToFileResult } from "./record_mapper";
 
-// Batch size for processing replays - optimized to stay under SQLite's 999 parameter limit
-// for DELETE operations while providing good performance for bulk operations
+// Batch size for processing replays - how many insertions to be done in a single transaction
 const INSERT_REPLAY_BATCH_SIZE = 500;
-const SEARCH_REPLAYS_LIMIT = 20;
 
 // SQLite has a limit of 999 parameters per query (SQLITE_MAX_VARIABLE_NUMBER)
 // We use a conservative batch size to stay well under this limit for DELETE and IN operations
@@ -33,7 +31,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
 
   public async searchReplays(
     folder: string | undefined,
-    limit = SEARCH_REPLAYS_LIMIT,
+    limit: number,
     continuation?: string,
     orderBy: {
       field: "lastFrame" | "startTime";
