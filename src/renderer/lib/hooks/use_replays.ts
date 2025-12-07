@@ -142,7 +142,6 @@ export class ReplayPresenter {
 
       // Check if this request is still current before updating state
       if (this.currentLoadRequestId !== requestId) {
-        console.log(`[Request ${requestId}] Discarding stale folder tree results`);
         return;
       }
 
@@ -181,8 +180,6 @@ export class ReplayPresenter {
 
         // Check if this request is still current before updating state
         if (this.currentLoadRequestId !== requestId) {
-          console.log(`[Request ${requestId}] Discarding stale search results (current: ${this.currentLoadRequestId})`);
-          // Don't update loading state - let the current request handle it
           return;
         }
 
@@ -297,10 +294,6 @@ export class ReplayPresenter {
 
       // Check if this request is still current before updating state
       if (this.currentLoadRequestId !== requestId) {
-        console.log(
-          `[Request ${requestId}] Discarding stale load-more results (current: ${this.currentLoadRequestId})`,
-        );
-        // Don't update loadingMore state - let the current request handle it
         return;
       }
 
