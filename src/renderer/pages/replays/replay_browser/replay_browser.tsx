@@ -14,6 +14,7 @@ import { BasicFooter } from "@/components/footer/footer";
 import { LabelledText } from "@/components/labelled_text";
 import { IconMessage } from "@/components/message";
 import { useDolphinActions } from "@/lib/dolphin/use_dolphin_actions";
+import { useDelayedLoading } from "@/lib/hooks/use_delayed_loading";
 import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/use_replay_browser_list";
 import { buildReplayFilters, useReplayFilter } from "@/lib/hooks/use_replay_filter";
 import { useReplayPresenter, useReplays, useReplaySelection } from "@/lib/hooks/use_replays";
@@ -35,6 +36,7 @@ export const ReplayBrowser = React.memo(() => {
   const { dolphinService, replayService } = useServices();
   const { viewReplays } = useDolphinActions(dolphinService);
   const loading = useReplays((store) => store.loading);
+  const showLoading = useDelayedLoading(loading, 300, 500);
   const loadingMore = useReplays((store) => store.loadingMore);
   const hasMoreReplays = useReplays((store) => store.hasMoreReplays);
   const currentFolder = useReplays((store) => store.currentFolder);
@@ -207,7 +209,7 @@ export const ReplayBrowser = React.memo(() => {
               `}
             >
               <FilterToolbar ref={searchInputRef} />
-              {loading ? (
+              {showLoading ? (
                 <FileListSkeleton />
               ) : filteredFiles.length === 0 ? (
                 <EmptyFolder
@@ -289,7 +291,7 @@ export const ReplayBrowser = React.memo(() => {
             justify-content: flex-end;
           `}
         >
-          {loading ? (
+          {showLoading ? (
             <CircularProgress color="secondary" size={20} />
           ) : (
             Messages.totalFileCount(totalFilesInFolder ?? filteredFiles.length)
