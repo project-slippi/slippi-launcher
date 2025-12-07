@@ -182,10 +182,7 @@ export class ReplayPresenter {
         // Check if this request is still current before updating state
         if (this.currentLoadRequestId !== requestId) {
           console.log(`[Request ${requestId}] Discarding stale search results (current: ${this.currentLoadRequestId})`);
-          // Update loading state even for stale requests
-          useReplays.setState((state) => {
-            state.loading = false;
-          });
+          // Don't update loading state - let the current request handle it
           return;
         }
 
@@ -303,10 +300,7 @@ export class ReplayPresenter {
         console.log(
           `[Request ${requestId}] Discarding stale load-more results (current: ${this.currentLoadRequestId})`,
         );
-        // Update loading state even for stale requests
-        useReplays.setState((state) => {
-          state.loadingMore = false;
-        });
+        // Don't update loadingMore state - let the current request handle it
         return;
       }
 
