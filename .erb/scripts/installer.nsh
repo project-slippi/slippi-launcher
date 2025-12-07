@@ -65,6 +65,11 @@ var InstallType
 !macroend
 
 !macro customInstall
+  ; Show installation details during non-silent installs
+  ${IfNot} ${Silent}
+    SetDetailsPrint both
+  ${EndIf}
+
   ; Add slippi URI Handling
   DetailPrint "Register slippi URI Handler"
   ${If} $installMode == "all"
