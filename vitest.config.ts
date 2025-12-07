@@ -12,7 +12,7 @@ export default defineConfig({
         test: {
           name: "renderer",
           environment: "jsdom",
-          setupFiles: ["./.erb/scripts/check-build-exists.ts"],
+          setupFiles: ["./.erb/scripts/check-build-exists.ts", "./.erb/scripts/setup-tests.ts"],
           include: ["src/renderer/**/*.{test,spec}.{ts,tsx,js,jsx}"],
           exclude: ["release/app/dist", "dist", "node_modules"],
         },
@@ -23,7 +23,7 @@ export default defineConfig({
         test: {
           name: "node",
           environment: "node",
-          setupFiles: ["./.erb/scripts/check-build-exists.ts"],
+          setupFiles: ["./.erb/scripts/check-build-exists.ts", "./.erb/scripts/setup-tests.ts"],
           include: ["src/**/*.{test,spec}.{ts,tsx,js,jsx}", "!src/renderer/**/*.{test,spec}.{ts,tsx,js,jsx}"],
           exclude: ["release/app/dist", "dist", "node_modules"],
         },
