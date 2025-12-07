@@ -68,6 +68,7 @@
     "include": ".erb/scripts/installer.nsh",
     "warningsAsErrors": false,
     "allowElevation": true,
+    "perMachine": false,
     "oneClick": false,
     "allowToChangeInstallationDirectory": true,
     "createStartMenuShortcut": true
