@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import FolderIcon from "@mui/icons-material/Folder";
 import SearchIcon from "@mui/icons-material/Search";
 import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
 import IconButton from "@mui/material/IconButton";
 import List from "@mui/material/List";
 import Tooltip from "@mui/material/Tooltip";
@@ -281,7 +282,19 @@ export const ReplayBrowser = React.memo(() => {
             {currentFolder}
           </LabelledText>
         </div>
-        <div style={{ textAlign: "right" }}>{Messages.totalFileCount(totalFilesInFolder ?? filteredFiles.length)}</div>
+        <div
+          css={css`
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+          `}
+        >
+          {loading ? (
+            <CircularProgress color="secondary" size={20} />
+          ) : (
+            Messages.totalFileCount(totalFilesInFolder ?? filteredFiles.length)
+          )}
+        </div>
       </Footer>
     </Outer>
   );
