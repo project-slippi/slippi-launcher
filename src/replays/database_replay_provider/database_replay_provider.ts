@@ -234,18 +234,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
     const numericFileIds = fileIds.map((id) => parseInt(id, 10));
 
     // Get the file records to get the file paths
-    // Batch the query to stay under SQLite's 999 parameter limit
-    const queryStartTime = Date.now();
-    const chunkedFileIds = chunk(numericFileIds, SQLITE_PARAM_LIMIT_BATCH_SIZE);
-    const fileRecords: FileRecord[] = [];
-
-    for (const batch of chunkedFileIds) {
-      const batchRecords = await this.db.selectFrom("file").where("file._id", "in", batch).selectAll().execute();
-      fileRecords.push(...batchRecords);
-    }
-
-    const queryDuration = Date.now() - queryStartTime;
-    log.info(`File record query completed in ${queryDuration}ms`);
+    const fileRecords = await this.queryFileRecordsByIds(numericFileIds);
 
     if (fileRecords.length === 0) {
       log.warn("No files found for the given IDs");
@@ -253,29 +242,10 @@ export class DatabaseReplayProvider implements ReplayProvider {
     }
 
     // Delete the records from the database first (cascades to game and player records)
-    // Batch the deletes to stay under SQLite's 999 parameter limit
-    const dbDeleteStartTime = Date.now();
-    const chunkedDeleteIds = chunk(numericFileIds, SQLITE_PARAM_LIMIT_BATCH_SIZE);
-
-    for (const batch of chunkedDeleteIds) {
-      await FileRepository.deleteFileById(this.db, ...batch);
-    }
-
-    const dbDeleteDuration = Date.now() - dbDeleteStartTime;
-    log.info(`Database delete completed in ${dbDeleteDuration}ms`);
+    await this.deleteFileRecordsFromDatabase(numericFileIds);
 
     // Delete files from the filesystem
-    const fsDeleteStartTime = Date.now();
-    const filePaths = fileRecords.map((record) => path.resolve(record.folder, record.name));
-    const deletePromises = await Promise.allSettled(filePaths.map((filePath) => shell.trashItem(filePath)));
-    const errCount = deletePromises.reduce((curr, { status }) => (status === "rejected" ? curr + 1 : curr), 0);
-    const fsDeleteDuration = Date.now() - fsDeleteStartTime;
-
-    if (errCount > 0) {
-      log.warn(`${errCount} file(s) failed to delete from filesystem in ${fsDeleteDuration}ms`);
-    } else {
-      log.info(`Filesystem delete completed in ${fsDeleteDuration}ms`);
-    }
+    await this.deleteFilesFromFilesystem(fileRecords);
 
     const totalDuration = Date.now() - deleteStartTime;
     log.info(`Deleted ${fileRecords.length} replay(s) in ${totalDuration}ms total`);
@@ -343,43 +313,13 @@ export class DatabaseReplayProvider implements ReplayProvider {
     }
 
     // Get the file records to get the file paths
-    // Batch the query to stay under SQLite's 999 parameter limit
-    const fileQueryStartTime = Date.now();
-    const chunkedFileIdsForQuery = chunk(fileIdsToDelete, SQLITE_PARAM_LIMIT_BATCH_SIZE);
-    const fileRecords: FileRecord[] = [];
-
-    for (const batch of chunkedFileIdsForQuery) {
-      const batchRecords = await this.db.selectFrom("file").where("file._id", "in", batch).selectAll().execute();
-      fileRecords.push(...batchRecords);
-    }
-
-    const fileQueryDuration = Date.now() - fileQueryStartTime;
-    log.info(`File records query completed in ${fileQueryDuration}ms`);
+    const fileRecords = await this.queryFileRecordsByIds(fileIdsToDelete);
 
     // Delete the records from the database first (cascades to game and player records)
-    // Batch the deletes to stay under SQLite's 999 parameter limit
-    const dbDeleteStartTime = Date.now();
-    const chunkedFileIdsForDelete = chunk(fileIdsToDelete, SQLITE_PARAM_LIMIT_BATCH_SIZE);
-
-    for (const batch of chunkedFileIdsForDelete) {
-      await FileRepository.deleteFileById(this.db, ...batch);
-    }
-
-    const dbDeleteDuration = Date.now() - dbDeleteStartTime;
-    log.info(`Database bulk delete completed in ${dbDeleteDuration}ms`);
+    await this.deleteFileRecordsFromDatabase(fileIdsToDelete);
 
     // Delete files from the filesystem
-    const fsDeleteStartTime = Date.now();
-    const filePaths = fileRecords.map((record) => path.resolve(record.folder, record.name));
-    const deletePromises = await Promise.allSettled(filePaths.map((filePath) => shell.trashItem(filePath)));
-    const errCount = deletePromises.reduce((curr, { status }) => (status === "rejected" ? curr + 1 : curr), 0);
-    const fsDeleteDuration = Date.now() - fsDeleteStartTime;
-
-    if (errCount > 0) {
-      log.warn(`${errCount} file(s) failed to delete from filesystem in ${fsDeleteDuration}ms`);
-    } else {
-      log.info(`Filesystem bulk delete completed in ${fsDeleteDuration}ms`);
-    }
+    await this.deleteFilesFromFilesystem(fileRecords);
 
     const totalDuration = Date.now() - bulkDeleteStartTime;
     log.info(`Bulk deleted ${fileRecords.length} replay(s) in ${totalDuration}ms total`);
@@ -393,6 +333,65 @@ export class DatabaseReplayProvider implements ReplayProvider {
       const players = playerMap.get(gameRecord._id) ?? [];
       return mapGameRecordToFileResult(gameRecord, players);
     });
+  }
+
+  /**
+   * Query file records by IDs with automatic chunking to stay under SQLite parameter limits.
+   * @param fileIds - Array of file IDs to query
+   * @returns Array of file records
+   */
+  private async queryFileRecordsByIds(fileIds: number[]): Promise<FileRecord[]> {
+    const queryStartTime = Date.now();
+    const chunkedFileIds = chunk(fileIds, SQLITE_PARAM_LIMIT_BATCH_SIZE);
+    const fileRecords: FileRecord[] = [];
+
+    for (const batch of chunkedFileIds) {
+      const batchRecords = await this.db.selectFrom("file").where("file._id", "in", batch).selectAll().execute();
+      fileRecords.push(...batchRecords);
+    }
+
+    const queryDuration = Date.now() - queryStartTime;
+    log.info(`File record query completed in ${queryDuration}ms (found ${fileRecords.length} records)`);
+
+    return fileRecords;
+  }
+
+  /**
+   * Delete file records from database by IDs with automatic chunking.
+   * Cascades to game and player records.
+   * @param fileIds - Array of file IDs to delete
+   */
+  private async deleteFileRecordsFromDatabase(fileIds: number[]): Promise<void> {
+    const dbDeleteStartTime = Date.now();
+    const chunkedDeleteIds = chunk(fileIds, SQLITE_PARAM_LIMIT_BATCH_SIZE);
+
+    for (const batch of chunkedDeleteIds) {
+      await FileRepository.deleteFileById(this.db, ...batch);
+    }
+
+    const dbDeleteDuration = Date.now() - dbDeleteStartTime;
+    log.info(`Database delete completed in ${dbDeleteDuration}ms (deleted ${fileIds.length} records)`);
+  }
+
+  /**
+   * Delete files from filesystem by moving them to trash.
+   * @param fileRecords - Array of file records to delete from filesystem
+   * @returns Number of files that failed to delete
+   */
+  private async deleteFilesFromFilesystem(fileRecords: FileRecord[]): Promise<number> {
+    const fsDeleteStartTime = Date.now();
+    const filePaths = fileRecords.map((record) => path.resolve(record.folder, record.name));
+    const deletePromises = await Promise.allSettled(filePaths.map((filePath) => shell.trashItem(filePath)));
+    const errCount = deletePromises.reduce((curr, { status }) => (status === "rejected" ? curr + 1 : curr), 0);
+    const fsDeleteDuration = Date.now() - fsDeleteStartTime;
+
+    if (errCount > 0) {
+      log.warn(`${errCount} file(s) failed to delete from filesystem in ${fsDeleteDuration}ms`);
+    } else {
+      log.info(`Filesystem delete completed in ${fsDeleteDuration}ms`);
+    }
+
+    return errCount;
   }
 
   private async syncReplayDatabase(
