@@ -24,6 +24,10 @@ import { mapGameRecordToFileResult } from "./record_mapper";
 const INSERT_REPLAY_BATCH_SIZE = 500;
 const SEARCH_REPLAYS_LIMIT = 20;
 
+// SQLite has a limit of 999 parameters per query (SQLITE_MAX_VARIABLE_NUMBER)
+// We use a conservative batch size to stay well under this limit for DELETE and IN operations
+const SQLITE_PARAM_LIMIT_BATCH_SIZE = 500;
+
 export class DatabaseReplayProvider implements ReplayProvider {
   constructor(private readonly db: Kysely<Database>) {}
 
@@ -194,8 +198,16 @@ export class DatabaseReplayProvider implements ReplayProvider {
     const numericFileIds = fileIds.map((id) => parseInt(id, 10));
 
     // Get the file records to get the file paths
+    // Batch the query to stay under SQLite's 999 parameter limit
     const queryStartTime = Date.now();
-    const fileRecords = await this.db.selectFrom("file").where("file._id", "in", numericFileIds).selectAll().execute();
+    const chunkedFileIds = chunk(numericFileIds, SQLITE_PARAM_LIMIT_BATCH_SIZE);
+    const fileRecords: FileRecord[] = [];
+
+    for (const batch of chunkedFileIds) {
+      const batchRecords = await this.db.selectFrom("file").where("file._id", "in", batch).selectAll().execute();
+      fileRecords.push(...batchRecords);
+    }
+
     const queryDuration = Date.now() - queryStartTime;
     log.info(`File record query completed in ${queryDuration}ms`);
 
@@ -205,8 +217,14 @@ export class DatabaseReplayProvider implements ReplayProvider {
     }
 
     // Delete the records from the database first (cascades to game and player records)
+    // Batch the deletes to stay under SQLite's 999 parameter limit
     const dbDeleteStartTime = Date.now();
-    await FileRepository.deleteFileById(this.db, ...numericFileIds);
+    const chunkedDeleteIds = chunk(numericFileIds, SQLITE_PARAM_LIMIT_BATCH_SIZE);
+
+    for (const batch of chunkedDeleteIds) {
+      await FileRepository.deleteFileById(this.db, ...batch);
+    }
+
     const dbDeleteDuration = Date.now() - dbDeleteStartTime;
     log.info(`Database delete completed in ${dbDeleteDuration}ms`);
 
@@ -249,25 +267,25 @@ export class DatabaseReplayProvider implements ReplayProvider {
     }
 
     // Convert file paths to file IDs for exclusion
-    let excludeFileIds: number[] = [];
+    // Batch the query to stay under SQLite's 999 parameter limit
+    const excludeFileIds: number[] = [];
     if (options?.excludeFilePaths && options.excludeFilePaths.length > 0) {
       const excludeQueryStartTime = Date.now();
-      let excludeQuery = this.db.selectFrom("file");
+      const excludeFilenames = options.excludeFilePaths.map((p) => path.basename(p));
+      const chunkedFilenames = chunk(excludeFilenames, SQLITE_PARAM_LIMIT_BATCH_SIZE);
 
-      // Apply folder filter if specified
-      if (folder !== undefined) {
-        excludeQuery = excludeQuery.where("folder", "=", folder);
+      for (const batch of chunkedFilenames) {
+        let excludeQuery = this.db.selectFrom("file");
+
+        // Apply folder filter if specified
+        if (folder !== undefined) {
+          excludeQuery = excludeQuery.where("folder", "=", folder);
+        }
+
+        const excludeRecords = await excludeQuery.where("name", "in", batch).select("_id").execute();
+        excludeFileIds.push(...excludeRecords.map((r) => r._id));
       }
 
-      const excludeRecords = await excludeQuery
-        .where(
-          "name",
-          "in",
-          options.excludeFilePaths.map((p) => path.basename(p)),
-        )
-        .select("_id")
-        .execute();
-      excludeFileIds = excludeRecords.map((r) => r._id);
       const excludeQueryDuration = Date.now() - excludeQueryStartTime;
       log.info(`Exclude query completed in ${excludeQueryDuration}ms (found ${excludeFileIds.length} exclusions)`);
     }
@@ -289,14 +307,28 @@ export class DatabaseReplayProvider implements ReplayProvider {
     }
 
     // Get the file records to get the file paths
+    // Batch the query to stay under SQLite's 999 parameter limit
     const fileQueryStartTime = Date.now();
-    const fileRecords = await this.db.selectFrom("file").where("file._id", "in", fileIdsToDelete).selectAll().execute();
+    const chunkedFileIdsForQuery = chunk(fileIdsToDelete, SQLITE_PARAM_LIMIT_BATCH_SIZE);
+    const fileRecords: FileRecord[] = [];
+
+    for (const batch of chunkedFileIdsForQuery) {
+      const batchRecords = await this.db.selectFrom("file").where("file._id", "in", batch).selectAll().execute();
+      fileRecords.push(...batchRecords);
+    }
+
     const fileQueryDuration = Date.now() - fileQueryStartTime;
     log.info(`File records query completed in ${fileQueryDuration}ms`);
 
     // Delete the records from the database first (cascades to game and player records)
+    // Batch the deletes to stay under SQLite's 999 parameter limit
     const dbDeleteStartTime = Date.now();
-    await FileRepository.deleteFileById(this.db, ...fileIdsToDelete);
+    const chunkedFileIdsForDelete = chunk(fileIdsToDelete, SQLITE_PARAM_LIMIT_BATCH_SIZE);
+
+    for (const batch of chunkedFileIdsForDelete) {
+      await FileRepository.deleteFileById(this.db, ...batch);
+    }
+
     const dbDeleteDuration = Date.now() - dbDeleteStartTime;
     log.info(`Database bulk delete completed in ${dbDeleteDuration}ms`);
 

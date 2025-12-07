@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
+import { chunk } from "@common/chunk";
 import type { ExpressionOrFactory, Kysely, OperandValueExpressionOrList, SqlBool, StringReference } from "kysely";
 
 import { applyFilters } from "../filters/apply";
@@ -6,6 +7,8 @@ import type { ReplayFilter } from "../filters/types";
 import type { Database, GameRecord, NewGame } from "../schema";
 
 type DB = Kysely<Database>;
+
+const SQLITE_PARAM_LIMIT_BATCH_SIZE = 500;
 
 export class GameRepository {
   public static async insertGame(db: DB, game: NewGame): Promise<GameRecord> {
@@ -136,8 +139,20 @@ export class GameRepository {
     query = applyFilters(query, filters);
 
     // Exclude specific file IDs if provided
+    // For large exclude lists (>999), we need to batch the NOT IN clauses
+    // to stay under SQLite's parameter limit
     if (excludeFileIds && excludeFileIds.length > 0) {
-      query = query.where("file._id", "not in", excludeFileIds);
+      if (excludeFileIds.length <= SQLITE_PARAM_LIMIT_BATCH_SIZE) {
+        // Small list: use single NOT IN clause
+        query = query.where("file._id", "not in", excludeFileIds);
+      } else {
+        // Large list: apply NOT IN in batches using AND conditions
+        // Each batch adds a NOT IN constraint, all must be satisfied
+        const batches = chunk(excludeFileIds, SQLITE_PARAM_LIMIT_BATCH_SIZE);
+        for (const batch of batches) {
+          query = query.where("file._id", "not in", batch);
+        }
+      }
     }
 
     const res = await query.select("file._id").execute();
