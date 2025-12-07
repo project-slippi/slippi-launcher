@@ -21,6 +21,7 @@ import { useServices } from "@/services";
 import { colors } from "@/styles/colors";
 
 import { FileList } from "./file_list/file_list";
+import { FileListSkeleton } from "./file_list/file_list_skeleton";
 import { FileSelectionToolbar } from "./file_selection_toolbar/file_selection_toolbar";
 import { FilterToolbar } from "./filter_toolbar/filter_toolbar";
 import { FolderTreeNode } from "./folder_tree_node";
@@ -32,6 +33,7 @@ export const ReplayBrowser = React.memo(() => {
   const scrollRowItem = useReplays((store) => store.scrollRowItem);
   const { dolphinService, replayService } = useServices();
   const { viewReplays } = useDolphinActions(dolphinService);
+  const loading = useReplays((store) => store.loading);
   const loadingMore = useReplays((store) => store.loadingMore);
   const hasMoreReplays = useReplays((store) => store.hasMoreReplays);
   const currentFolder = useReplays((store) => store.currentFolder);
@@ -204,7 +206,9 @@ export const ReplayBrowser = React.memo(() => {
               `}
             >
               <FilterToolbar ref={searchInputRef} />
-              {filteredFiles.length === 0 ? (
+              {loading ? (
+                <FileListSkeleton />
+              ) : filteredFiles.length === 0 ? (
                 <EmptyFolder
                   onClearFilter={() => {
                     if (searchInputRef.current) {
