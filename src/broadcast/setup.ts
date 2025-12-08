@@ -69,48 +69,45 @@ export default function setupBroadcastIpc({
     }
   };
 
-  dolphinManager.events
-    .filter<DolphinPlaybackClosedEvent>((event) => {
-      return event.type === DolphinEventType.CLOSED && event.dolphinType === DolphinLaunchType.PLAYBACK;
-    })
-    .subscribe(async (event) => {
-      if (spectateWorker) {
-        await spectateWorker.dolphinClosed(event.instanceId).catch(log.error);
+  const initSpectateWorker = async (): Promise<SpectateWorker> => {
+    if (spectateWorker) {
+      return spectateWorker;
+    }
 
-        // Check if there are any remaining open broadcasts
-        const openBroadcasts = await spectateWorker.getOpenBroadcasts().catch(() => []);
-        if (openBroadcasts.length === 0) {
-          // No more active spectating sessions - start idle timeout
-          log.debug("No active spectate sessions remaining, starting idle timeout");
-          await resetSpectateIdleTimeout();
-        }
+    // Don't set the global variable here, only create and set up the worker.
+    // Rely on the caller to set the global variable if needed.
+    const worker = await createSpectateWorker(dolphinManager);
+
+    // Start the idle timeout when the number of open broadcasts becomes zero (i.e. no more active spectating sessions).
+    const spectateListSub = worker.getSpectateListObservable().subscribe(async (openBroadcasts) => {
+      // Check if there are any remaining open broadcasts
+      if (openBroadcasts.length === 0) {
+        // No more active spectating sessions - start idle timeout
+        log.debug("No active spectate sessions remaining, starting idle timeout");
+        await resetSpectateIdleTimeout();
       }
     });
 
-  const setupSpectateWorker = async (): Promise<SpectateWorker> => {
-    if (!spectateWorker) {
-      spectateWorker = await createSpectateWorker(dolphinManager);
-      const sub = spectateWorker
-        .getSpectateListObservable()
-        .subscribe(async (openBroadcasts: { broadcastId: string; dolphinId: string }[]) => {
-          // Check if there are any remaining open broadcasts
-          if (openBroadcasts.length === 0) {
-            // No more active spectating sessions - start idle timeout
-            log.debug("No active spectate sessions remaining, starting idle timeout");
-            await resetSpectateIdleTimeout();
-          }
-        });
-      spectateWorker.onCleanup(() => {
-        sub.unsubscribe();
+    // Start the idle timeout when a dolphin is closed (i.e. no more active spectating sessions).
+    const dolphinClosedSub = dolphinManager.events
+      .filter<DolphinPlaybackClosedEvent>((event) => {
+        return event.type === DolphinEventType.CLOSED && event.dolphinType === DolphinLaunchType.PLAYBACK;
+      })
+      .subscribe((event) => {
+        void worker.dolphinClosed(event.instanceId).catch(log.error);
       });
-    }
 
-    return spectateWorker;
+    worker.onCleanup(() => {
+      spectateListSub.unsubscribe();
+      dolphinClosedSub.unsubscribe();
+    });
+
+    return worker;
   };
 
   ipc_connectToSpectateServer.main!.handle(async ({ authToken }) => {
     if (!spectateWorker) {
-      spectateWorker = await setupSpectateWorker();
+      spectateWorker = await initSpectateWorker();
     }
     await spectateWorker.connect(authToken);
 
@@ -175,7 +172,7 @@ export default function setupBroadcastIpc({
 
   const getSpectateController = async (): Promise<SpectateController> => {
     if (!spectateWorker) {
-      spectateWorker = await setupSpectateWorker();
+      spectateWorker = await initSpectateWorker();
     }
     return spectateWorker;
   };
