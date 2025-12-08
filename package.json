@@ -136,7 +136,7 @@
     "fix-esm": "^1.0.1",
     "html-webpack-plugin": "^5.5.0",
     "husky": "^4.3.0",
-    "i18next-auto-keys": "^3.3.0",
+    "i18next-auto-keys": "^3.3.1",
     "identity-obj-proxy": "^3.0.0",
     "jsdom": "^27.2.0",
     "lint-staged": "^12.3.7",
