@@ -305,7 +305,7 @@ export class SpectateManager extends EventEmitter {
     }));
   }
 
-  public async disconnect(): Promise<void> {
+  public disconnect() {
     this.emit(SpectateEvent.BROADCAST_LIST_UPDATE, []);
     this.emit(SpectateEvent.LOG, "Disconnecting from spectate server");
 
@@ -317,6 +317,7 @@ export class SpectateManager extends EventEmitter {
 
     // Close WebSocket connection
     if (this.wsConnection) {
+      this.wsConnection.removeAllListeners();
       this.wsConnection.close();
       this.wsConnection = null;
     }
