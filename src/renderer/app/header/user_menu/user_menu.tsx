@@ -196,7 +196,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
       <Menu
         anchorEl={anchorEl}
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-        transformOrigin={{ vertical: "top", horizontal: "left" }}
+        transformOrigin={{ vertical: -8, horizontal: "left" }}
         keepMounted={true}
         open={Boolean(anchorEl)}
         onClose={closeMenu}
