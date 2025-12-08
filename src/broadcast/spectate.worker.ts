@@ -116,7 +116,7 @@ const methods: WorkerSpec = {
     await spectateManager.refreshBroadcastList();
   },
   async getOpenBroadcasts() {
-    return await spectateManager.getOpenBroadcasts();
+    return spectateManager.getOpenBroadcasts();
   },
   getLogObservable(): Observable<string> {
     return Observable.from(logSubject);

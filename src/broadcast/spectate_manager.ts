@@ -146,8 +146,9 @@ export class SpectateManager extends EventEmitter {
             this.emit(SpectateEvent.LOG, "Auth token expired, reconencting...");
             this.emit(SpectateEvent.RECONNECT, authToken);
           } else {
-            // TODO: Somehow kill dolphin? Or maybe reconnect to a person's broadcast when it
-            // TODO: comes back up?
+            // TODO: Somehow kill dolphin? Or maybe reconnect to a person's broadcast when it comes back up?
+            // For now, if we disconnect from server, just disconnect from everything..
+            this.disconnect();
           }
         });
 
