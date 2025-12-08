@@ -24,7 +24,6 @@ import { SessionExpiredError } from "@/services/auth/types";
 import { AccountSwitcher } from "../account_switcher/account_switcher";
 import { AccountSwitcherMessages as AccountMessages } from "../account_switcher/account_switcher.messages";
 import { AddAccountDialog } from "../account_switcher/add_account_dialog";
-import { ManageAccountsDialog } from "../account_switcher/manage_accounts_dialog";
 import { ActivateOnlineDialog } from "../activate_online_dialog";
 import { NameChangeDialog } from "../name_change_dialog";
 import { UserInfo } from "../user_info/user_info";
@@ -48,7 +47,6 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
   const [openNameChangePrompt, setOpenNameChangePrompt] = React.useState(false);
   const [openActivationDialog, setOpenActivationDialog] = React.useState(false);
   const [openAddAccountDialog, setOpenAddAccountDialog] = React.useState(false);
-  const [openManageAccountsDialog, setOpenManageAccountsDialog] = React.useState(false);
   const [switching, setSwitching] = React.useState(false);
   const [reAuthEmail, setReAuthEmail] = React.useState<string | null>(null);
 
@@ -139,38 +137,6 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
     setOpenAddAccountDialog(true);
   };
 
-  // Handle manage accounts
-  const handleManageAccounts = () => {
-    closeMenu();
-    setOpenManageAccountsDialog(true);
-  };
-
-  // Handle remove account
-  const handleRemoveAccount = async (accountId: string) => {
-    if (!multiAccountService) {
-      return;
-    }
-
-    try {
-      await multiAccountService.removeAccount(accountId);
-
-      // Update local state
-      const accountsList = multiAccountService.getAccounts();
-      const activeId = multiAccountService.getActiveAccountId();
-      setAccounts(accountsList);
-      setActiveAccountId(activeId);
-
-      const account = accounts.find((acc) => acc.id === accountId);
-      if (account) {
-        showSuccess(AccountMessages.accountRemoved(account.displayName || account.email));
-      }
-    } catch (err: any) {
-      showError(err?.message || "Failed to remove account");
-      console.error("Failed to remove account:", err);
-      throw err;
-    }
-  };
-
   // Determine if we have multi-account support
   const hasMultiAccount = accounts.length > 0 || multiAccountService !== null;
 
@@ -214,7 +180,6 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
                 activeAccountId={activeAccountId}
                 onSwitchAccount={handleSwitchAccount}
                 onAddAccount={handleAddAccount}
-                onManageAccounts={handleManageAccounts}
                 switching={switching}
               />
             </div>
@@ -326,14 +291,6 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
           setReAuthEmail(null);
         }}
         defaultEmail={reAuthEmail}
-      />
-      <ManageAccountsDialog
-        open={openManageAccountsDialog}
-        onClose={() => setOpenManageAccountsDialog(false)}
-        accounts={accounts}
-        activeAccountId={activeAccountId}
-        onRemoveAccount={handleRemoveAccount}
-        maxAccounts={MAX_ACCOUNTS}
       />
     </div>
   );

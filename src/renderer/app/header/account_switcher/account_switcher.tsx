@@ -1,9 +1,6 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import AddIcon from "@mui/icons-material/Add";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import SettingsIcon from "@mui/icons-material/Settings";
 import ButtonBase from "@mui/material/ButtonBase";
 import type { StoredAccount } from "@settings/types";
 import React from "react";
@@ -12,8 +9,6 @@ import { UserIcon } from "@/components/user_icon";
 import { colors } from "@/styles/colors";
 
 import { AccountSwitcherMessages as Messages } from "./account_switcher.messages";
-
-const TOP_ACCOUNTS_TO_SHOW = 3;
 
 const AccountItem = styled(ButtonBase, {
   shouldForwardProp: (prop) => prop !== "$active",
@@ -68,7 +63,7 @@ const ActionButton = styled(ButtonBase)`
   align-items: center;
   padding: 10px 12px;
   gap: 8px;
-  justify-content: flex-start;
+  justify-content: center;
   border-radius: 4px;
   font-size: 14px;
   transition: background-color 100ms ease-in;
@@ -79,27 +74,6 @@ const ActionButton = styled(ButtonBase)`
 
   svg {
     font-size: 20px;
-  }
-`;
-
-const ExpandButton = styled(ButtonBase)`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  padding: 8px 12px;
-  gap: 8px;
-  justify-content: center;
-  border-radius: 4px;
-  font-size: 14px;
-  color: ${colors.purpleLight};
-  transition: background-color 100ms ease-in;
-
-  &:hover {
-    background-color: rgba(92, 19, 148, 0.1);
-  }
-
-  svg {
-    font-size: 18px;
   }
 `;
 
@@ -116,7 +90,6 @@ export interface AccountSwitcherProps {
   activeAccountId: string | null;
   onSwitchAccount: (accountId: string) => void;
   onAddAccount: () => void;
-  onManageAccounts: () => void;
   switching?: boolean;
 }
 
@@ -125,22 +98,14 @@ export const AccountSwitcher: React.FC<AccountSwitcherProps> = ({
   activeAccountId,
   onSwitchAccount,
   onAddAccount,
-  onManageAccounts,
   switching = false,
 }) => {
-  const [expanded, setExpanded] = React.useState(false);
-
   // Filter out active account (already shown in header) and sort by last active
   const sortedAccounts = React.useMemo(() => {
     return [...accounts]
       .filter((account) => account.id !== activeAccountId)
       .sort((a, b) => b.lastActive.getTime() - a.lastActive.getTime());
   }, [accounts, activeAccountId]);
-
-  // Determine which accounts to show
-  const visibleAccounts = expanded ? sortedAccounts : sortedAccounts.slice(0, TOP_ACCOUNTS_TO_SHOW);
-  const hiddenCount = sortedAccounts.length - TOP_ACCOUNTS_TO_SHOW;
-  const shouldShowExpandButton = sortedAccounts.length > TOP_ACCOUNTS_TO_SHOW;
 
   const handleAccountClick = (accountId: string) => {
     if (!switching) {
@@ -165,7 +130,7 @@ export const AccountSwitcher: React.FC<AccountSwitcherProps> = ({
               gap: 2px;
             `}
           >
-            {visibleAccounts.map((account) => (
+            {sortedAccounts.map((account) => (
               <AccountItem
                 key={account.id}
                 $active={false}
@@ -180,53 +145,16 @@ export const AccountSwitcher: React.FC<AccountSwitcherProps> = ({
               </AccountItem>
             ))}
           </div>
-          {/* Expand/Collapse Button */}
-          {shouldShowExpandButton && (
-            <ExpandButton onClick={() => setExpanded(!expanded)}>
-              {expanded ? (
-                <>
-                  <ExpandLessIcon />
-                  {Messages.showLess()}
-                </>
-              ) : (
-                <>
-                  <ExpandMoreIcon />
-                  {Messages.showMore(hiddenCount)}
-                </>
-              )}
-            </ExpandButton>
-          )}
 
           <SectionDivider />
         </>
       )}
 
-      {/* Actions */}
-      <div
-        css={css`
-          display: flex;
-          gap: 4px;
-        `}
-      >
-        <ActionButton
-          onClick={onAddAccount}
-          css={css`
-            flex: 1;
-          `}
-        >
-          <AddIcon />
-          {Messages.addAccount()}
-        </ActionButton>
-        <ActionButton
-          onClick={onManageAccounts}
-          css={css`
-            flex: 1;
-          `}
-        >
-          <SettingsIcon />
-          {Messages.manageAccounts()}
-        </ActionButton>
-      </div>
+      {/* Add Account Button */}
+      <ActionButton onClick={onAddAccount}>
+        <AddIcon />
+        {Messages.addAccount()}
+      </ActionButton>
     </div>
   );
 };
