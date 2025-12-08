@@ -27,7 +27,7 @@ export function installBroadcastListeners({
 
   // Listen to when the list of broadcasting users has changed
   broadcastService.onBroadcastListUpdated((items) => {
-    useBroadcastListStore.getState().setItems(items);
+    useBroadcastListStore.getState().setCurrentBroadcasts(items);
   });
 
   const startBroadcast = async (config: StartBroadcastConfig) => {

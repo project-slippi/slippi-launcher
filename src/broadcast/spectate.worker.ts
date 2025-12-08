@@ -16,11 +16,13 @@ interface Methods {
   stopSpectate(broadcastId: string): Promise<void>;
   dolphinClosed(playbackId: string): Promise<void>;
   connect(authToken: string): Promise<void>;
+  disconnect(): Promise<void>;
   refreshBroadcastList(): Promise<void>;
   getOpenBroadcasts(): Promise<{ broadcastId: string; dolphinId: string }[]>;
   getLogObservable(): Observable<string>;
   getErrorObservable(): Observable<Error | string>;
   getBroadcastListObservable(): Observable<BroadcasterItem[]>;
+  getSpectateListObservable(): Observable<{ broadcastId: string; dolphinId: string }[]>;
   getSpectateDetailsObservable(): Observable<{
     broadcastId: string;
     dolphinId: string;
@@ -38,6 +40,7 @@ const spectateManager = new SpectateManager();
 const logSubject = new Subject<string>();
 const errorSubject = new Subject<Error | string>();
 const broadcastListSubject = new Subject<BroadcasterItem[]>();
+const spectateListSubject = new Subject<{ broadcastId: string; dolphinId: string }[]>();
 const spectateDetailsSubject = new Subject<{
   broadcastId: string;
   dolphinId: string;
@@ -50,6 +53,10 @@ const gameEndSubject = new Subject<{ broadcastId: string; dolphinId: string }>()
 // Forward the events to the renderer
 spectateManager.on(SpectateEvent.BROADCAST_LIST_UPDATE, async (data: BroadcasterItem[]) => {
   broadcastListSubject.next(data);
+});
+
+spectateManager.on(SpectateEvent.SPECTATE_LIST_UPDATE, async (data: { broadcastId: string; dolphinId: string }[]) => {
+  spectateListSubject.next(data);
 });
 
 spectateManager.on(SpectateEvent.LOG, async (msg: string) => {
@@ -102,11 +109,14 @@ const methods: WorkerSpec = {
   async connect(authToken: string): Promise<void> {
     await spectateManager.connect(authToken);
   },
+  async disconnect(): Promise<void> {
+    await spectateManager.disconnect();
+  },
   async refreshBroadcastList(): Promise<void> {
     await spectateManager.refreshBroadcastList();
   },
   async getOpenBroadcasts() {
-    return await spectateManager.getOpenBroadcasts();
+    return spectateManager.getOpenBroadcasts();
   },
   getLogObservable(): Observable<string> {
     return Observable.from(logSubject);
@@ -116,6 +126,9 @@ const methods: WorkerSpec = {
   },
   getBroadcastListObservable(): Observable<BroadcasterItem[]> {
     return Observable.from(broadcastListSubject);
+  },
+  getSpectateListObservable(): Observable<{ broadcastId: string; dolphinId: string }[]> {
+    return Observable.from(spectateListSubject);
   },
   getSpectateDetailsObservable(): Observable<{
     broadcastId: string;

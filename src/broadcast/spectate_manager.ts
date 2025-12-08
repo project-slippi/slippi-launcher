@@ -146,8 +146,9 @@ export class SpectateManager extends EventEmitter {
             this.emit(SpectateEvent.LOG, "Auth token expired, reconencting...");
             this.emit(SpectateEvent.RECONNECT, authToken);
           } else {
-            // TODO: Somehow kill dolphin? Or maybe reconnect to a person's broadcast when it
-            // TODO: comes back up?
+            // TODO: Somehow kill dolphin? Or maybe reconnect to a person's broadcast when it comes back up?
+            // For now, if we disconnect from server, just disconnect from everything..
+            this.disconnect();
           }
         });
 
@@ -215,7 +216,7 @@ export class SpectateManager extends EventEmitter {
     const info = this.openBroadcasts[broadcastId];
     if (info) {
       info.fileWriter.endCurrentFile();
-      delete this.openBroadcasts[broadcastId];
+      this.removeOpenBroadcast(broadcastId);
     }
   }
 
@@ -258,13 +259,7 @@ export class SpectateManager extends EventEmitter {
       this._playFile(currFilePath, broadcastId, dolphinPlaybackId, broadcasterName).catch(console.warn);
     });
 
-    this.openBroadcasts[broadcastId] = {
-      broadcastId,
-      cursor: "",
-      fileWriter: slpFileWriter,
-      gameStarted: false,
-      dolphinId: dolphinPlaybackId,
-    };
+    this.addNewOpenBroadcast(broadcastId, dolphinPlaybackId);
 
     this.wsConnection.sendUTF(
       JSON.stringify({
@@ -278,6 +273,22 @@ export class SpectateManager extends EventEmitter {
     // by the fileWriter
     this._playFile("", broadcastId, dolphinPlaybackId, broadcasterName).catch(console.warn);
     return dolphinPlaybackId;
+  }
+
+  private addNewOpenBroadcast(broadcastId: string, dolphinId: string) {
+    this.openBroadcasts[broadcastId] = {
+      broadcastId,
+      cursor: "",
+      fileWriter: new SlpFileWriter({ folderPath: "" }),
+      gameStarted: false,
+      dolphinId,
+    };
+    this.emit(SpectateEvent.SPECTATE_LIST_UPDATE, this.getOpenBroadcasts());
+  }
+
+  private removeOpenBroadcast(broadcastId: string) {
+    delete this.openBroadcasts[broadcastId];
+    this.emit(SpectateEvent.SPECTATE_LIST_UPDATE, this.getOpenBroadcasts());
   }
 
   public handleClosedDolphin(playbackId: string) {
@@ -303,5 +314,29 @@ export class SpectateManager extends EventEmitter {
       broadcastId: value.broadcastId,
       dolphinId: value.dolphinId,
     }));
+  }
+
+  public disconnect() {
+    this.emit(SpectateEvent.BROADCAST_LIST_UPDATE, []);
+    this.emit(SpectateEvent.LOG, "Disconnecting from spectate server");
+    // No need to emit a SPECTATE_LIST_UPDATE event here, since we will emit one for each broadcast that is stopped
+
+    // Stop watching all broadcasts
+    const broadcastIds = Object.keys(this.openBroadcasts);
+    for (const broadcastId of broadcastIds) {
+      // We will emit a SPECTATE_LIST_UPDATE event for each broadcast that is stopped
+      this.stopWatchingBroadcast(broadcastId);
+    }
+
+    // Close WebSocket connection
+    if (this.wsConnection) {
+      this.wsConnection.removeAllListeners();
+      this.wsConnection.close();
+      this.wsConnection = null;
+    }
+
+    // Clear state
+    this.openBroadcasts = {};
+    this.availableBroadcasts = {};
   }
 }

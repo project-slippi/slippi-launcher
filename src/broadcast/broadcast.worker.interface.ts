@@ -1,4 +1,5 @@
 import electronLog from "electron-log";
+import type { Subscription } from "observable-fns";
 import { Worker } from "threads";
 import type { RegisteredWorker } from "utils/register_worker";
 import { registerWorker } from "utils/register_worker";
@@ -21,22 +22,46 @@ export async function createBroadcastWorker(): Promise<BroadcastWorker> {
   const worker = await registerWorker<BroadcastWorkerSpec>(new Worker("./broadcast.worker"));
   log.debug("broadcast: Spawning worker: Done");
 
-  worker.getDolphinStatusObservable().subscribe(({ status }) => {
-    ipc_dolphinStatusChangedEvent.main!.trigger({ status }).catch(log.error);
+  // Store subscriptions for cleanup
+  const subscriptions: Subscription<unknown>[] = [];
+
+  subscriptions.push(
+    worker.getDolphinStatusObservable().subscribe(({ status }) => {
+      ipc_dolphinStatusChangedEvent.main!.trigger({ status }).catch(log.error);
+    }),
+  );
+
+  subscriptions.push(
+    worker.getSlippiStatusObservable().subscribe(({ status }) => {
+      ipc_slippiStatusChangedEvent.main!.trigger({ status }).catch(log.error);
+    }),
+  );
+
+  subscriptions.push(
+    worker.getLogObservable().subscribe((logMessage) => {
+      log.info(logMessage);
+    }),
+  );
+
+  subscriptions.push(
+    worker.getErrorObservable().subscribe((err) => {
+      log.error(err);
+      const errorMessage = err instanceof Error ? err.message : err;
+      ipc_broadcastErrorOccurredEvent.main!.trigger({ errorMessage }).catch(log.error);
+    }),
+  );
+
+  subscriptions.push(
+    worker.getReconnectObservable().subscribe(({ config }) => {
+      ipc_broadcastReconnectEvent.main!.trigger({ config }).catch(log.error);
+    }),
+  );
+
+  // Register cleanup callback to unsubscribe after worker disposal
+  worker.onCleanup(() => {
+    log.debug("broadcast: Unsubscribing from worker observables");
+    subscriptions.forEach((sub) => sub.unsubscribe());
   });
-  worker.getSlippiStatusObservable().subscribe(({ status }) => {
-    ipc_slippiStatusChangedEvent.main!.trigger({ status }).catch(log.error);
-  });
-  worker.getLogObservable().subscribe((logMessage) => {
-    log.info(logMessage);
-  });
-  worker.getErrorObservable().subscribe((err) => {
-    log.error(err);
-    const errorMessage = err instanceof Error ? err.message : err;
-    ipc_broadcastErrorOccurredEvent.main!.trigger({ errorMessage }).catch(log.error);
-  });
-  worker.getReconnectObservable().subscribe(({ config }) => {
-    ipc_broadcastReconnectEvent.main!.trigger({ config }).catch(log.error);
-  });
+
   return worker;
 }
