@@ -87,9 +87,30 @@ export default function setupBroadcastIpc({
       }
     });
 
-  ipc_connectToSpectateServer.main!.handle(async ({ authToken }) => {
+  const setupSpectateWorker = async (): Promise<SpectateWorker> => {
     if (!spectateWorker) {
       spectateWorker = await createSpectateWorker(dolphinManager);
+      const sub = spectateWorker
+        .getSpectateListObservable()
+        .subscribe(async (openBroadcasts: { broadcastId: string; dolphinId: string }[]) => {
+          // Check if there are any remaining open broadcasts
+          if (openBroadcasts.length === 0) {
+            // No more active spectating sessions - start idle timeout
+            log.debug("No active spectate sessions remaining, starting idle timeout");
+            await resetSpectateIdleTimeout();
+          }
+        });
+      spectateWorker.onCleanup(() => {
+        sub.unsubscribe();
+      });
+    }
+
+    return spectateWorker;
+  };
+
+  ipc_connectToSpectateServer.main!.handle(async ({ authToken }) => {
+    if (!spectateWorker) {
+      spectateWorker = await setupSpectateWorker();
     }
     await spectateWorker.connect(authToken);
 
@@ -154,7 +175,7 @@ export default function setupBroadcastIpc({
 
   const getSpectateController = async (): Promise<SpectateController> => {
     if (!spectateWorker) {
-      spectateWorker = await createSpectateWorker(dolphinManager);
+      spectateWorker = await setupSpectateWorker();
     }
     return spectateWorker;
   };

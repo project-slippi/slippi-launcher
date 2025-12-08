@@ -33,6 +33,7 @@ export enum SpectateEvent {
   LOG = "LOG",
   RECONNECT = "RECONNECT",
   GAME_END = "GAME_END",
+  SPECTATE_LIST_UPDATE = "SPECTATE_LIST_UPDATE",
 }
 
 type TypeMap<M extends { [index: string]: any }> = {
