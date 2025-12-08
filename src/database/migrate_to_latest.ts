@@ -9,32 +9,25 @@ import type { Database } from "./schema";
 /**
  * Converts a file path to the appropriate format for dynamic imports.
  *
- * This function handles the difference between development and production environments:
- * - Development (ts-node): Uses regular file paths (importing .ts files)
- * - Production (compiled): Uses file:// URLs for absolute paths (importing .js files)
- *
- * On Windows with ESM, absolute paths must be valid file:// URLs or you'll get:
+ * On Windows, absolute paths MUST be converted to file:// URLs for dynamic imports,
+ * regardless of file extension (.ts or .js). Otherwise you'll get:
  * `Error [ERR_UNSUPPORTED_ESM_URL_SCHEME]: Only URLs with a scheme in: file, data,
  * node, and electron are supported by the default ESM loader. Received protocol 'd:'`
  *
- * We detect the environment by checking if we're importing .js files (production)
- * or .ts files (development with ts-node).
+ * On Unix systems, both regular paths and file:// URLs work, but file:// URLs
+ * are more consistent, so we use them for absolute paths everywhere.
  *
  * @param filePath - The file path to convert
- * @returns The path in the appropriate format for the current environment
+ * @returns file:// URL for absolute paths, or the original path for relative paths
  */
 function fixPathForImport(filePath: string): string {
-  // In development with ts-node, we import .ts files directly - use regular paths
-  if (filePath.endsWith(".ts")) {
-    return filePath;
-  }
-
-  // In production, we import compiled .js files - use file:// URLs for absolute paths
-  // This ensures Windows ESM compatibility while still working on Unix systems
+  // Convert all absolute paths to file:// URLs for cross-platform compatibility
+  // This is required on Windows and works fine on Unix systems
   if (path.isAbsolute(filePath)) {
     return pathToFileURL(filePath).href;
   }
 
+  // Relative paths can be used as-is
   return filePath;
 }
 
