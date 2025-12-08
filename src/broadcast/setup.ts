@@ -35,6 +35,18 @@ export default function setupBroadcastIpc({
   let prefixOrdinal = 0;
   let spectateIdleTimer: NodeJS.Timeout | undefined;
 
+  const disconnectFromSpectateServerIfInactive = async () => {
+    if (spectateWorker) {
+      const openBroadcasts = await spectateWorker.getOpenBroadcasts().catch(() => []);
+      if (openBroadcasts.length === 0) {
+        log.debug("Disconnecting and terminating worker due to idle timeout");
+        await spectateWorker.disconnect();
+        await spectateWorker.terminate();
+        spectateWorker = undefined;
+      }
+    }
+  };
+
   // Helper to start/reset the idle timeout (only when no active broadcasts)
   const resetSpectateIdleTimeout = async () => {
     // Clear any existing timer
@@ -48,14 +60,7 @@ export default function setupBroadcastIpc({
       const openBroadcasts = await spectateWorker.getOpenBroadcasts().catch(() => []);
       if (openBroadcasts.length === 0) {
         log.debug("Starting spectate idle timeout");
-        spectateIdleTimer = setTimeout(async () => {
-          log.debug("Spectate idle timeout reached, disconnecting and terminating worker");
-          if (spectateWorker) {
-            await spectateWorker.disconnect();
-            await spectateWorker.terminate();
-            spectateWorker = undefined;
-          }
-        }, SPECTATE_IDLE_TIMEOUT);
+        spectateIdleTimer = setTimeout(disconnectFromSpectateServerIfInactive, SPECTATE_IDLE_TIMEOUT);
       }
     }
   };
