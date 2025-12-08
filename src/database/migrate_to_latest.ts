@@ -1,3 +1,4 @@
+import { app } from "electron";
 import { promises as fs } from "fs";
 import type { Kysely, Migration, MigrationProvider, MigrationResult } from "kysely";
 import { FileMigrationProvider, Migrator } from "kysely";
@@ -5,8 +6,6 @@ import path from "path";
 import { pathToFileURL } from "url";
 
 import type { Database } from "./schema";
-
-const isDevelopment = process.env.NODE_ENV === "development";
 
 /**
  * Converts a file path to the appropriate format for dynamic imports.
@@ -80,15 +79,15 @@ class ESMCompatibleMigrationProvider implements MigrationProvider {
 
 export async function migrateToLatest(db: Kysely<Database>, migrationFolder: string): Promise<MigrationResult[]> {
   let provider: MigrationProvider;
-  if (isDevelopment) {
-    provider = new ESMCompatibleMigrationProvider(migrationFolder);
-  } else {
+  if (app.isPackaged) {
     // We expect the migrations to be in CommonJS format for production
     provider = new FileMigrationProvider({
       fs,
       path,
       migrationFolder,
     });
+  } else {
+    provider = new ESMCompatibleMigrationProvider(migrationFolder);
   }
 
   const migrator = new Migrator({
