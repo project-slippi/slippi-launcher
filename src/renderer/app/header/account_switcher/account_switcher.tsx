@@ -90,21 +90,21 @@ const RemoveButton = styled(IconButton)`
   }
 `;
 
-export interface AccountSwitcherProps {
+type AccountSwitcherProps = {
   accounts: StoredAccount[]; // Only inactive accounts (active account is shown in header)
   onSwitchAccount: (accountId: string) => void;
   onAddAccount: () => void;
   onRemoveAccount: (accountId: string) => void;
   switching?: boolean;
-}
+};
 
-export const AccountSwitcher: React.FC<AccountSwitcherProps> = ({
+export const AccountSwitcher = ({
   accounts,
   onSwitchAccount,
   onAddAccount,
   onRemoveAccount,
   switching = false,
-}) => {
+}: AccountSwitcherProps) => {
   // Sort accounts by last active (accounts are already filtered to exclude active)
   const sortedAccounts = React.useMemo(() => {
     return [...accounts].sort((a, b) => b.lastActive.getTime() - a.lastActive.getTime());

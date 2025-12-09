@@ -9,7 +9,6 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import MenuItem from "@mui/material/MenuItem";
 import type { StoredAccount } from "@settings/types";
-import React from "react";
 
 import { AccountSwitcher } from "../account_switcher/account_switcher";
 import { UserMenuMessages as Messages } from "./user_menu.messages";
@@ -20,7 +19,7 @@ const SectionDivider = styled.div`
   margin: 8px 0;
 `;
 
-export interface UserMenuItemsProps {
+type UserMenuItemsProps = {
   inactiveAccounts: StoredAccount[]; // Only inactive accounts (active account shown in header)
   onSwitchAccount: (accountId: string) => void;
   onAddAccount: () => void;
@@ -33,9 +32,9 @@ export interface UserMenuItemsProps {
   onManageAccount: () => void;
   onEditDisplayName: () => void;
   onLogout: () => void;
-}
+};
 
-export const UserMenuItems: React.FC<UserMenuItemsProps> = ({
+export const UserMenuItems = ({
   inactiveAccounts,
   onSwitchAccount,
   onAddAccount,
@@ -48,7 +47,7 @@ export const UserMenuItems: React.FC<UserMenuItemsProps> = ({
   onManageAccount,
   onEditDisplayName,
   onLogout,
-}) => {
+}: UserMenuItemsProps) => {
   return (
     <>
       {/* Account Switcher (if has inactive accounts to switch to) */}
