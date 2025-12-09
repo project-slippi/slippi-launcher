@@ -132,9 +132,6 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
     return accounts.filter((account) => account.id !== activeAccountId);
   }, [accounts, activeAccountId]);
 
-  // Determine if we have multi-account support
-  const hasMultiAccount = accounts.length > 0 || multiAccountService !== null;
-
   let errMessage: string | undefined = undefined;
   if (serverError) {
     errMessage = Messages.slippiServerError();
@@ -163,12 +160,11 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
         onClose={closeMenu}
       >
         <UserMenuItems
-          hasMultiAccount={hasMultiAccount}
           inactiveAccounts={inactiveAccounts}
           onSwitchAccount={handleSwitchAccount}
           onAddAccount={handleAddAccount}
           switching={switching}
-          userData={userData}
+          isOnlineActivated={!!userData?.playKey}
           serverError={serverError}
           onActivateOnline={() => {
             closeMenu();

@@ -23,14 +23,6 @@ export default {
 
 const Template: ComponentStory<typeof UserMenuItems> = (args) => <UserMenuItems {...args} />;
 
-const mockUserData = {
-  uid: "abc123",
-  playKey: {
-    uid: "abc123",
-    connectCode: "PLAY#123",
-  },
-};
-
 const mockAccounts: StoredAccount[] = [
   {
     id: "abc123",
@@ -58,12 +50,11 @@ const mockAccounts: StoredAccount[] = [
 // No inactive accounts to switch to (1 total account - active one shown in header)
 export const NoInactiveAccounts = Template.bind({});
 NoInactiveAccounts.args = {
-  hasMultiAccount: false,
   inactiveAccounts: [],
   onSwitchAccount: action("onSwitchAccount"),
   onAddAccount: action("onAddAccount"),
   switching: false,
-  userData: mockUserData,
+  isOnlineActivated: true,
   serverError: false,
   onActivateOnline: action("onActivateOnline"),
   onViewProfile: action("onViewProfile"),
@@ -76,7 +67,7 @@ NoInactiveAccounts.args = {
 export const NotActivated = Template.bind({});
 NotActivated.args = {
   ...NoInactiveAccounts.args,
-  userData: { uid: "abc123" },
+  isOnlineActivated: false,
 };
 
 // Server error
@@ -90,7 +81,6 @@ ServerError.args = {
 export const OneInactiveAccount = Template.bind({});
 OneInactiveAccount.args = {
   ...NoInactiveAccounts.args,
-  hasMultiAccount: true,
   inactiveAccounts: [mockAccounts[1]],
 };
 
@@ -98,7 +88,6 @@ OneInactiveAccount.args = {
 export const TwoInactiveAccounts = Template.bind({});
 TwoInactiveAccounts.args = {
   ...NoInactiveAccounts.args,
-  hasMultiAccount: true,
   inactiveAccounts: mockAccounts.slice(1),
 };
 
@@ -106,7 +95,6 @@ TwoInactiveAccounts.args = {
 export const FourInactiveAccounts = Template.bind({});
 FourInactiveAccounts.args = {
   ...NoInactiveAccounts.args,
-  hasMultiAccount: true,
   inactiveAccounts: [
     mockAccounts[1],
     mockAccounts[2],
@@ -138,5 +126,5 @@ SwitchingAccounts.args = {
 export const MultiAccountNotActivated = Template.bind({});
 MultiAccountNotActivated.args = {
   ...OneInactiveAccount.args,
-  userData: { uid: "abc123" }, // No playKey - not activated
+  isOnlineActivated: false, // Not activated - no playKey
 };

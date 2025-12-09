@@ -15,12 +15,11 @@ import { AccountSwitcher } from "../account_switcher/account_switcher";
 import { UserMenuMessages as Messages } from "./user_menu.messages";
 
 export interface UserMenuItemsProps {
-  hasMultiAccount: boolean;
   inactiveAccounts: StoredAccount[]; // Only inactive accounts (active account shown in header)
   onSwitchAccount: (accountId: string) => void;
   onAddAccount: () => void;
   switching: boolean;
-  userData: any;
+  isOnlineActivated: boolean; // Whether the user has activated online play (has playKey)
   serverError: boolean;
   onActivateOnline: () => void;
   onViewProfile: () => void;
@@ -30,12 +29,11 @@ export interface UserMenuItemsProps {
 }
 
 export const UserMenuItems: React.FC<UserMenuItemsProps> = ({
-  hasMultiAccount,
   inactiveAccounts,
   onSwitchAccount,
   onAddAccount,
   switching,
-  userData,
+  isOnlineActivated,
   serverError,
   onActivateOnline,
   onViewProfile,
@@ -45,8 +43,8 @@ export const UserMenuItems: React.FC<UserMenuItemsProps> = ({
 }) => {
   return (
     <>
-      {/* Account Switcher (if multi-account enabled and has inactive accounts) */}
-      {hasMultiAccount && inactiveAccounts.length > 0 && (
+      {/* Account Switcher (if has inactive accounts to switch to) */}
+      {inactiveAccounts.length > 0 && (
         <>
           <div
             css={css`
@@ -65,7 +63,7 @@ export const UserMenuItems: React.FC<UserMenuItemsProps> = ({
       )}
 
       {/* Current Account Options */}
-      {!userData?.playKey && !serverError && (
+      {!isOnlineActivated && !serverError && (
         <MenuItem onClick={onActivateOnline}>
           <ListItemIcon>
             <LanguageIcon fontSize="small" />
@@ -74,7 +72,7 @@ export const UserMenuItems: React.FC<UserMenuItemsProps> = ({
         </MenuItem>
       )}
 
-      {userData && userData.playKey && (
+      {isOnlineActivated && (
         <>
           <MenuItem onClick={onViewProfile}>
             <ListItemIcon>
