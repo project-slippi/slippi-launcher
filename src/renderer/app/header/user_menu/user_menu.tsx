@@ -44,7 +44,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
     try {
       await authService.logout();
     } catch (err) {
-      console.error(err);
+      log.error(err);
       handleError(err);
     } finally {
       handleClose();
@@ -109,7 +109,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
         setOpenAddAccountDialog(true);
       } else {
         showError(err?.message || "Failed to switch account");
-        console.error("Failed to switch account:", err);
+        log.error("Failed to switch account:", err);
       }
     } finally {
       setSwitching(false);
@@ -125,6 +125,27 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
 
     closeMenu();
     setOpenAddAccountDialog(true);
+  };
+
+  // Handle remove account
+  const handleRemoveAccount = async (accountId: string) => {
+    try {
+      const account = accounts.find((acc) => acc.id === accountId);
+      await multiAccountService.removeAccount(accountId);
+
+      // Update local state
+      const accountsList = multiAccountService.getAccounts();
+      const activeId = multiAccountService.getActiveAccountId();
+      setAccounts(accountsList);
+      setActiveAccountId(activeId);
+
+      if (account) {
+        showSuccess(AccountMessages.accountRemoved(account.displayName || account.email));
+      }
+    } catch (err: any) {
+      showError(err?.message || Messages.failedToRemoveAccount());
+      log.error("Failed to remove account:", err);
+    }
   };
 
   // Filter out active account - only pass inactive accounts to menu
@@ -163,6 +184,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
           inactiveAccounts={inactiveAccounts}
           onSwitchAccount={handleSwitchAccount}
           onAddAccount={handleAddAccount}
+          onRemoveAccount={handleRemoveAccount}
           switching={switching}
           isOnlineActivated={!!userData?.playKey}
           serverError={serverError}

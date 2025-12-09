@@ -1,7 +1,10 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from "@mui/icons-material/Close";
 import ButtonBase from "@mui/material/ButtonBase";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 import type { StoredAccount } from "@settings/types";
 import React from "react";
 
@@ -18,7 +21,6 @@ const AccountItem = styled(ButtonBase)`
   gap: 10px;
   justify-content: flex-start;
   border-radius: 4px;
-  transition: background-color 100ms ease-in;
 
   &:hover {
     background-color: rgba(92, 19, 148, 0.1);
@@ -77,10 +79,30 @@ const AccountEmail = styled.div`
   text-overflow: ellipsis;
 `;
 
+const RemoveButton = styled(IconButton)`
+  padding: 4px;
+  opacity: 0;
+  transition: opacity 100ms ease-in;
+
+  ${AccountItem}:hover & {
+    opacity: 1;
+  }
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  svg {
+    font-size: 18px;
+    color: ${colors.textDim};
+  }
+`;
+
 export interface AccountSwitcherProps {
   accounts: StoredAccount[]; // Only inactive accounts (active account is shown in header)
   onSwitchAccount: (accountId: string) => void;
   onAddAccount: () => void;
+  onRemoveAccount: (accountId: string) => void;
   switching?: boolean;
 }
 
@@ -88,6 +110,7 @@ export const AccountSwitcher: React.FC<AccountSwitcherProps> = ({
   accounts,
   onSwitchAccount,
   onAddAccount,
+  onRemoveAccount,
   switching = false,
 }) => {
   // Sort accounts by last active (accounts are already filtered to exclude active)
@@ -99,6 +122,11 @@ export const AccountSwitcher: React.FC<AccountSwitcherProps> = ({
     if (!switching) {
       onSwitchAccount(accountId);
     }
+  };
+
+  const handleRemoveClick = (e: React.MouseEvent, accountId: string) => {
+    e.stopPropagation(); // Prevent triggering the account switch
+    onRemoveAccount(accountId);
   };
 
   return (
@@ -125,6 +153,11 @@ export const AccountSwitcher: React.FC<AccountSwitcherProps> = ({
                   <AccountName>{account.displayName}</AccountName>
                   <AccountEmail>{account.email}</AccountEmail>
                 </AccountInfo>
+                <Tooltip title={Messages.remove()}>
+                  <RemoveButton onClick={(e) => handleRemoveClick(e, account.id)} size="small">
+                    <CloseIcon />
+                  </RemoveButton>
+                </Tooltip>
               </AccountItem>
             ))}
           </div>

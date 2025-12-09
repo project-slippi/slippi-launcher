@@ -8,4 +8,5 @@ export const UserMenuMessages = {
   onlineActivationRequired: () => "Online activation required",
   areYouSureYouWantToLogout: () => "Are you sure you want to log out?",
   youWillNeedToLogInAgain: () => "You will need to log in again next time you want to play.",
+  failedToRemoveAccount: () => "Failed to remove account",
 };

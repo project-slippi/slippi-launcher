@@ -53,6 +53,7 @@ NoInactiveAccounts.args = {
   inactiveAccounts: [],
   onSwitchAccount: action("onSwitchAccount"),
   onAddAccount: action("onAddAccount"),
+  onRemoveAccount: action("onRemoveAccount"),
   switching: false,
   isOnlineActivated: true,
   serverError: false,

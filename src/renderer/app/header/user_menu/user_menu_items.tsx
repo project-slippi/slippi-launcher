@@ -18,6 +18,7 @@ export interface UserMenuItemsProps {
   inactiveAccounts: StoredAccount[]; // Only inactive accounts (active account shown in header)
   onSwitchAccount: (accountId: string) => void;
   onAddAccount: () => void;
+  onRemoveAccount: (accountId: string) => void;
   switching: boolean;
   isOnlineActivated: boolean; // Whether the user has activated online play (has playKey)
   serverError: boolean;
@@ -32,6 +33,7 @@ export const UserMenuItems: React.FC<UserMenuItemsProps> = ({
   inactiveAccounts,
   onSwitchAccount,
   onAddAccount,
+  onRemoveAccount,
   switching,
   isOnlineActivated,
   serverError,
@@ -55,6 +57,7 @@ export const UserMenuItems: React.FC<UserMenuItemsProps> = ({
               accounts={inactiveAccounts}
               onSwitchAccount={onSwitchAccount}
               onAddAccount={onAddAccount}
+              onRemoveAccount={onRemoveAccount}
               switching={switching}
             />
           </div>
