@@ -82,7 +82,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
     }
 
     if (netplayOpened) {
-      showError(Messages.closeDolphinToEnableSwitchingAccounts());
+      showError(Messages.closeDolphinToSwitchAccounts());
       return;
     }
 
