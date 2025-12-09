@@ -161,7 +161,7 @@ class MultiAccountClient implements MultiAccountService {
         return;
       }
 
-      log.info(`Found existing session for user: ${user.email}, migrating to multi-account system`);
+      log.info(`Found existing session for user: ${user.displayName || user.uid}, migrating to multi-account system`);
 
       // Create stored account from existing user
       const migratedAccount: StoredAccount = {
