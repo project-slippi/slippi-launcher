@@ -19,8 +19,7 @@ import { UserMenuMessages as Messages } from "./user_menu.messages";
 
 export interface UserMenuItemsProps {
   hasMultiAccount: boolean;
-  accounts: StoredAccount[];
-  activeAccountId: string | null;
+  inactiveAccounts: StoredAccount[]; // Only inactive accounts (active account shown in header)
   onSwitchAccount: (accountId: string) => void;
   onAddAccount: () => void;
   switching: boolean;
@@ -35,8 +34,7 @@ export interface UserMenuItemsProps {
 
 export const UserMenuItems: React.FC<UserMenuItemsProps> = ({
   hasMultiAccount,
-  accounts,
-  activeAccountId,
+  inactiveAccounts,
   onSwitchAccount,
   onAddAccount,
   switching,
@@ -50,8 +48,8 @@ export const UserMenuItems: React.FC<UserMenuItemsProps> = ({
 }) => {
   return (
     <>
-      {/* Account Switcher (if multi-account enabled and has accounts) */}
-      {hasMultiAccount && accounts.length > 0 && (
+      {/* Account Switcher (if multi-account enabled and has inactive accounts) */}
+      {hasMultiAccount && inactiveAccounts.length > 0 && (
         <>
           <div
             css={css`
@@ -59,8 +57,7 @@ export const UserMenuItems: React.FC<UserMenuItemsProps> = ({
             `}
           >
             <AccountSwitcher
-              accounts={accounts}
-              activeAccountId={activeAccountId}
+              accounts={inactiveAccounts}
               onSwitchAccount={onSwitchAccount}
               onAddAccount={onAddAccount}
               switching={switching}

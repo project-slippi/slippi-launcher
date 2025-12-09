@@ -64,12 +64,11 @@ const mockAccounts: StoredAccount[] = [
   },
 ];
 
-// Default Story - Single account, activated
+// Default Story - Single account, activated (no other accounts to switch to)
 export const SingleAccount = Template.bind({});
 SingleAccount.args = {
   hasMultiAccount: false,
-  accounts: [],
-  activeAccountId: null,
+  inactiveAccounts: [], // No inactive accounts - only the active one shown in header
   onSwitchAccount: action("onSwitchAccount"),
   onAddAccount: action("onAddAccount"),
   switching: false,
@@ -96,31 +95,30 @@ ServerError.args = {
   serverError: true,
 };
 
-// Two accounts
+// Two accounts (1 active in header + 1 inactive shown in menu)
 export const TwoAccounts = Template.bind({});
 TwoAccounts.args = {
   ...SingleAccount.args,
   hasMultiAccount: true,
-  accounts: mockAccounts.slice(0, 2),
-  activeAccountId: "abc123",
+  inactiveAccounts: [mockAccounts[1]], // Only the second account (first is active in header)
 };
 
-// Three accounts
+// Three accounts (1 active in header + 2 inactive shown in menu)
 export const ThreeAccounts = Template.bind({});
 ThreeAccounts.args = {
   ...SingleAccount.args,
   hasMultiAccount: true,
-  accounts: mockAccounts,
-  activeAccountId: "abc123",
+  inactiveAccounts: mockAccounts.slice(1), // Show 2nd and 3rd accounts (first is active in header)
 };
 
-// Five accounts (max)
+// Five accounts (1 active in header + 4 inactive shown in menu)
 export const FiveAccounts = Template.bind({});
 FiveAccounts.args = {
   ...SingleAccount.args,
   hasMultiAccount: true,
-  accounts: [
-    ...mockAccounts,
+  inactiveAccounts: [
+    mockAccounts[1], // 2nd account
+    mockAccounts[2], // 3rd account
     {
       id: "jkl012",
       email: "marth@example.com",
@@ -135,8 +133,7 @@ FiveAccounts.args = {
       displayPicture: generateDisplayPicture("mno345"),
       lastActive: new Date("2025-12-05T18:45:00Z"),
     },
-  ],
-  activeAccountId: "abc123",
+  ], // Show 4 inactive accounts (first is active in header)
 };
 
 // Two accounts, currently switching
@@ -146,9 +143,9 @@ Switching.args = {
   switching: true,
 };
 
-// Two accounts, not activated
+// Two accounts, active account not activated
 export const MultiAccountNotActivated = Template.bind({});
 MultiAccountNotActivated.args = {
   ...TwoAccounts.args,
-  userData: { uid: "abc123" },
+  userData: { uid: "abc123" }, // No playKey - not activated
 };

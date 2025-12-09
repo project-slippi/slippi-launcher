@@ -10,9 +10,7 @@ import { colors } from "@/styles/colors";
 
 import { AccountSwitcherMessages as Messages } from "./account_switcher.messages";
 
-const AccountItem = styled(ButtonBase, {
-  shouldForwardProp: (prop) => prop !== "$active",
-})<{ $active?: boolean }>`
+const AccountItem = styled(ButtonBase)`
   width: 100%;
   display: flex;
   align-items: center;
@@ -25,12 +23,6 @@ const AccountItem = styled(ButtonBase, {
   &:hover {
     background-color: rgba(92, 19, 148, 0.1);
   }
-
-  ${(props) =>
-    props.$active &&
-    `
-    font-weight: 500;
-  `}
 `;
 
 const AccountInfo = styled.div`
@@ -86,8 +78,7 @@ const AccountEmail = styled.div`
 `;
 
 export interface AccountSwitcherProps {
-  accounts: StoredAccount[];
-  activeAccountId: string | null;
+  accounts: StoredAccount[]; // Only inactive accounts (active account is shown in header)
   onSwitchAccount: (accountId: string) => void;
   onAddAccount: () => void;
   switching?: boolean;
@@ -95,17 +86,14 @@ export interface AccountSwitcherProps {
 
 export const AccountSwitcher: React.FC<AccountSwitcherProps> = ({
   accounts,
-  activeAccountId,
   onSwitchAccount,
   onAddAccount,
   switching = false,
 }) => {
-  // Filter out active account (already shown in header) and sort by last active
+  // Sort accounts by last active (accounts are already filtered to exclude active)
   const sortedAccounts = React.useMemo(() => {
-    return [...accounts]
-      .filter((account) => account.id !== activeAccountId)
-      .sort((a, b) => b.lastActive.getTime() - a.lastActive.getTime());
-  }, [accounts, activeAccountId]);
+    return [...accounts].sort((a, b) => b.lastActive.getTime() - a.lastActive.getTime());
+  }, [accounts]);
 
   const handleAccountClick = (accountId: string) => {
     if (!switching) {
@@ -131,12 +119,7 @@ export const AccountSwitcher: React.FC<AccountSwitcherProps> = ({
             `}
           >
             {sortedAccounts.map((account) => (
-              <AccountItem
-                key={account.id}
-                $active={false}
-                onClick={() => handleAccountClick(account.id)}
-                disabled={switching}
-              >
+              <AccountItem key={account.id} onClick={() => handleAccountClick(account.id)} disabled={switching}>
                 <UserIcon imageUrl={account.displayPicture} size={32} />
                 <AccountInfo>
                   <AccountName>{account.displayName}</AccountName>

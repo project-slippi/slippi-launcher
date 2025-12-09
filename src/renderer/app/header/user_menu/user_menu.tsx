@@ -126,6 +126,11 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
     setOpenAddAccountDialog(true);
   };
 
+  // Filter out active account - only pass inactive accounts to menu
+  const inactiveAccounts = React.useMemo(() => {
+    return accounts.filter((account) => account.id !== activeAccountId);
+  }, [accounts, activeAccountId]);
+
   // Determine if we have multi-account support
   const hasMultiAccount = accounts.length > 0 || multiAccountService !== null;
 
@@ -158,8 +163,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
       >
         <UserMenuItems
           hasMultiAccount={hasMultiAccount}
-          accounts={accounts}
-          activeAccountId={activeAccountId}
+          inactiveAccounts={inactiveAccounts}
           onSwitchAccount={handleSwitchAccount}
           onAddAccount={handleAddAccount}
           switching={switching}
