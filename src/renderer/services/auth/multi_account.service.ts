@@ -170,7 +170,7 @@ class MultiAccountClient implements MultiAccountService {
         displayName: user.displayName ?? "",
         displayPicture: generateDisplayPicture(user.uid),
         lastActive: new Date(),
-        defaultApp: true,
+        useDefaultApp: true,
       };
 
       // Add to accounts list
@@ -229,7 +229,7 @@ class MultiAccountClient implements MultiAccountService {
   private async _restoreAccount(account: StoredAccount): Promise<void> {
     try {
       // Create or get Firebase app for this account
-      const app = this._getOrCreateFirebaseApp(account.id, account.defaultApp);
+      const app = this._getOrCreateFirebaseApp(account.id, account.useDefaultApp);
       const auth = getAuth(app);
 
       // Store auth instance
@@ -258,11 +258,11 @@ class MultiAccountClient implements MultiAccountService {
   /**
    * Get or create a Firebase app instance for an account
    */
-  private _getOrCreateFirebaseApp(accountId: string, defaultApp: boolean): FirebaseApp {
+  private _getOrCreateFirebaseApp(accountId: string, useDefaultApp?: boolean): FirebaseApp {
     let app = this._firebaseApps.get(accountId);
 
     if (!app) {
-      if (defaultApp) {
+      if (useDefaultApp) {
         app = initializeApp(firebaseConfig);
       } else {
         try {
@@ -319,14 +319,13 @@ class MultiAccountClient implements MultiAccountService {
         displayName: user.displayName ?? "",
         displayPicture: generateDisplayPicture(user.uid),
         lastActive: new Date(),
-        defaultApp: false,
       };
 
       // Add to accounts list
       this._accounts.push(storedAccount);
 
       // Create permanent Firebase app for this account
-      const app = this._getOrCreateFirebaseApp(user.uid, storedAccount.defaultApp);
+      const app = this._getOrCreateFirebaseApp(user.uid, storedAccount.useDefaultApp);
       const auth = getAuth(app);
       this._authInstances.set(user.uid, auth);
 
