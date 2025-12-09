@@ -72,14 +72,6 @@ const ActionButton = styled(ButtonBase)`
   }
 `;
 
-const AccountEmail = styled.div`
-  font-size: 14px;
-  color: ${colors.textDim};
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
-
 const RemoveButton = styled(IconButton)`
   padding: 4px;
   color: ${colors.textDim};
@@ -142,7 +134,6 @@ export const AccountSwitcher = ({
               <UserIcon imageUrl={account.displayPicture} size={32} />
               <AccountInfo>
                 <AccountName>{account.displayName}</AccountName>
-                <AccountEmail>{account.email}</AccountEmail>
               </AccountInfo>
               <Tooltip title={Messages.remove()}>
                 <RemoveButton className="remove-button" onClick={(e) => handleRemoveClick(e, account.id)} size="small">
