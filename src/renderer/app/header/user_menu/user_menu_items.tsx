@@ -9,10 +9,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import MenuItem from "@mui/material/MenuItem";
 import type { StoredAccount } from "@settings/types";
-import log from "electron-log";
 import React from "react";
-
-import type { AuthUser } from "@/services/auth/types";
 
 import { AccountSwitcher } from "../account_switcher/account_switcher";
 import { UserMenuMessages as Messages } from "./user_menu.messages";
@@ -25,9 +22,9 @@ export interface UserMenuItemsProps {
   switching: boolean;
   userData: any;
   serverError: boolean;
-  onClose: () => void;
   onActivateOnline: () => void;
-  user: AuthUser;
+  onViewProfile: () => void;
+  onManageAccount: () => void;
   onEditDisplayName: () => void;
   onLogout: () => void;
 }
@@ -40,9 +37,9 @@ export const UserMenuItems: React.FC<UserMenuItemsProps> = ({
   switching,
   userData,
   serverError,
-  onClose,
   onActivateOnline,
-  user,
+  onViewProfile,
+  onManageAccount,
   onEditDisplayName,
   onLogout,
 }) => {
@@ -69,12 +66,7 @@ export const UserMenuItems: React.FC<UserMenuItemsProps> = ({
 
       {/* Current Account Options */}
       {!userData?.playKey && !serverError && (
-        <MenuItem
-          onClick={() => {
-            onClose();
-            onActivateOnline();
-          }}
-        >
+        <MenuItem onClick={onActivateOnline}>
           <ListItemIcon>
             <LanguageIcon fontSize="small" />
           </ListItemIcon>
@@ -84,36 +76,19 @@ export const UserMenuItems: React.FC<UserMenuItemsProps> = ({
 
       {userData && userData.playKey && (
         <>
-          <MenuItem
-            onClick={() => {
-              const profileUrl = `https://slippi.gg/user/${userData.playKey!.connectCode.replace("#", "-")}`;
-              window.electron.shell.openExternal(profileUrl).catch(log.error);
-              onClose();
-            }}
-          >
+          <MenuItem onClick={onViewProfile}>
             <ListItemIcon>
               <AccountBoxIcon fontSize="small" />
             </ListItemIcon>
             <ListItemText primary={Messages.viewProfile()} />
           </MenuItem>
-          <MenuItem
-            onClick={() => {
-              const manageUrl = `https://slippi.gg/manage?expectedUid=${user.uid}`;
-              window.electron.shell.openExternal(manageUrl).catch(log.error);
-              onClose();
-            }}
-          >
+          <MenuItem onClick={onManageAccount}>
             <ListItemIcon>
               <ManageAccountsIcon fontSize="small" />
             </ListItemIcon>
             <ListItemText primary={Messages.manageAccount()} />
           </MenuItem>
-          <MenuItem
-            onClick={() => {
-              onClose();
-              onEditDisplayName();
-            }}
-          >
+          <MenuItem onClick={onEditDisplayName}>
             <ListItemIcon>
               <EditIcon fontSize="small" />
             </ListItemIcon>
@@ -122,12 +97,7 @@ export const UserMenuItems: React.FC<UserMenuItemsProps> = ({
         </>
       )}
 
-      <MenuItem
-        onClick={() => {
-          onClose();
-          onLogout();
-        }}
-      >
+      <MenuItem onClick={onLogout}>
         <ListItemIcon>
           <LogoutIcon fontSize="small" />
         </ListItemIcon>

@@ -1,6 +1,7 @@
 import ButtonBase from "@mui/material/ButtonBase";
 import DialogContentText from "@mui/material/DialogContentText";
 import Menu from "@mui/material/Menu";
+import log from "electron-log";
 import React from "react";
 
 import { ConfirmationModal } from "@/components/confirmation_modal/confirmation_modal";
@@ -169,11 +170,28 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
           switching={switching}
           userData={userData}
           serverError={serverError}
-          onClose={closeMenu}
-          onActivateOnline={() => setOpenActivationDialog(true)}
-          user={user}
-          onEditDisplayName={() => setOpenNameChangePrompt(true)}
-          onLogout={() => setOpenLogoutPrompt(true)}
+          onActivateOnline={() => {
+            closeMenu();
+            setOpenActivationDialog(true);
+          }}
+          onViewProfile={() => {
+            const profileUrl = `https://slippi.gg/user/${userData?.playKey?.connectCode.replace("#", "-")}`;
+            void window.electron.shell.openExternal(profileUrl).catch(log.error);
+            closeMenu();
+          }}
+          onManageAccount={() => {
+            const manageUrl = `https://slippi.gg/manage?expectedUid=${user.uid}`;
+            void window.electron.shell.openExternal(manageUrl).catch(log.error);
+            closeMenu();
+          }}
+          onEditDisplayName={() => {
+            closeMenu();
+            setOpenNameChangePrompt(true);
+          }}
+          onLogout={() => {
+            closeMenu();
+            setOpenLogoutPrompt(true);
+          }}
         />
       </Menu>
 

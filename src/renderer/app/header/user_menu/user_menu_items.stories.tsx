@@ -4,7 +4,6 @@ import { action } from "@storybook/addon-actions";
 import type { ComponentMeta, ComponentStory } from "@storybook/react";
 
 import { generateDisplayPicture } from "@/lib/display_picture";
-import type { AuthUser } from "@/services/auth/types";
 
 import { UserMenuItems } from "./user_menu_items";
 
@@ -23,14 +22,6 @@ export default {
 } as ComponentMeta<typeof UserMenuItems>;
 
 const Template: ComponentStory<typeof UserMenuItems> = (args) => <UserMenuItems {...args} />;
-
-const mockUser: AuthUser = {
-  uid: "abc123",
-  displayName: "Player1",
-  displayPicture: generateDisplayPicture("abc123"),
-  email: "player1@example.com",
-  emailVerified: true,
-};
 
 const mockUserData = {
   uid: "abc123",
@@ -74,9 +65,9 @@ NoInactiveAccounts.args = {
   switching: false,
   userData: mockUserData,
   serverError: false,
-  onClose: action("onClose"),
   onActivateOnline: action("onActivateOnline"),
-  user: mockUser,
+  onViewProfile: action("onViewProfile"),
+  onManageAccount: action("onManageAccount"),
   onEditDisplayName: action("onEditDisplayName"),
   onLogout: action("onLogout"),
 };
