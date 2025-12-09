@@ -74,10 +74,6 @@ const ActionButton = styled(ButtonBase)`
   &:hover {
     background-color: rgba(255, 255, 255, 0.05);
   }
-
-  svg {
-    font-size: 20px;
-  }
 `;
 
 const AccountEmail = styled.div`
@@ -94,11 +90,6 @@ const RemoveButton = styled(IconButton)`
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.05);
-  }
-
-  svg {
-    font-size: 18px;
-    color: ${colors.textDim};
   }
 `;
 
