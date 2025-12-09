@@ -9,7 +9,6 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import MenuItem from "@mui/material/MenuItem";
 import type { StoredAccount } from "@settings/types";
-import React from "react";
 
 import { AccountSwitcher } from "../account_switcher/account_switcher";
 import { UserMenuMessages as Messages } from "./user_menu.messages";
