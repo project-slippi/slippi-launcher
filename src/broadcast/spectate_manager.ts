@@ -259,7 +259,7 @@ export class SpectateManager extends EventEmitter {
       this._playFile(currFilePath, broadcastId, dolphinPlaybackId, broadcasterName).catch(console.warn);
     });
 
-    this.addNewOpenBroadcast(broadcastId, dolphinPlaybackId);
+    this.addNewOpenBroadcast(broadcastId, dolphinPlaybackId, slpFileWriter);
 
     this.wsConnection.sendUTF(
       JSON.stringify({
@@ -275,11 +275,11 @@ export class SpectateManager extends EventEmitter {
     return dolphinPlaybackId;
   }
 
-  private addNewOpenBroadcast(broadcastId: string, dolphinId: string) {
+  private addNewOpenBroadcast(broadcastId: string, dolphinId: string, fileWriter: SlpFileWriter) {
     this.openBroadcasts[broadcastId] = {
       broadcastId,
       cursor: "",
-      fileWriter: new SlpFileWriter({ folderPath: "" }),
+      fileWriter,
       gameStarted: false,
       dolphinId,
     };
