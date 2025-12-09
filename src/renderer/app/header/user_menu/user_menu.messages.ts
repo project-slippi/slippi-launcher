@@ -13,4 +13,5 @@ export const UserMenuMessages = {
   maxAccountsReached: (max: number) => `Maximum {0} accounts reached. Remove an account to add another.`,
   accountRemoved: (accountName: string) => `Removed {0}`,
   switchedTo: (accountName: string) => `Switched to {0}`,
+  closeDolphinToEnableSwitchingAccounts: () => "Close Dolphin to enable switching accounts",
 };
