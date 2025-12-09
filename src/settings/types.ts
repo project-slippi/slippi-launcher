@@ -28,6 +28,7 @@ export interface StoredAccount {
   displayName: string;
   displayPicture: string;
   lastActive: Date;
+  defaultApp: boolean;
 }
 
 /**
