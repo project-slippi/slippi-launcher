@@ -29,6 +29,7 @@ export function installAppListeners(services: Services) {
   } = services;
 
   authService.onUserChange((user) => {
+    const oldUserId = useAccount.getState().user?.uid;
     useAccount.getState().setUser(user);
 
     // Refresh the play key and chat messages
@@ -39,6 +40,13 @@ export function installAppListeners(services: Services) {
       // We've logged out so clear any pending requests for user data.
       clearUserData();
       useChatMessagesStore.getState().resetStore();
+    }
+
+    if (oldUserId && user && user.uid !== oldUserId) {
+      // technically we don't need to stop broadcasting cause we don't allow
+      // switching accounts when netplay is open. better to be safe
+      void broadcastService.stopBroadcast();
+      void broadcastService.disconnectFromSpectateServer();
     }
   });
 

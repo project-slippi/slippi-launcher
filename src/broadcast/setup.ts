@@ -9,6 +9,7 @@ import type { BroadcastWorker } from "./broadcast.worker.interface";
 import { createBroadcastWorker } from "./broadcast.worker.interface";
 import {
   ipc_connectToSpectateServer,
+  ipc_disconnectFromSpectateServer,
   ipc_refreshBroadcastList,
   ipc_startBroadcast,
   ipc_stopBroadcast,
@@ -118,6 +119,15 @@ export default function setupBroadcastIpc({
 
     // Reset idle timeout on connect
     await resetSpectateIdleTimeout();
+
+    return { success: true };
+  });
+
+  ipc_disconnectFromSpectateServer.main!.handle(async () => {
+    if (!spectateWorker) {
+      return { success: true };
+    }
+    await spectateWorker.disconnect();
 
     return { success: true };
   });
