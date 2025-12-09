@@ -1,17 +1,6 @@
-import { css } from "@emotion/react";
-import AccountBoxIcon from "@mui/icons-material/AccountBox";
-import EditIcon from "@mui/icons-material/Edit";
-import LanguageIcon from "@mui/icons-material/Language";
-import LogoutIcon from "@mui/icons-material/Logout";
-import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import ButtonBase from "@mui/material/ButtonBase";
 import DialogContentText from "@mui/material/DialogContentText";
-import Divider from "@mui/material/Divider";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
 import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import log from "electron-log";
 import React from "react";
 
 import { ConfirmationModal } from "@/components/confirmation_modal/confirmation_modal";
@@ -21,13 +10,13 @@ import { useServices } from "@/services";
 import type { AuthUser } from "@/services/auth/types";
 import { SessionExpiredError } from "@/services/auth/types";
 
-import { AccountSwitcher } from "../account_switcher/account_switcher";
 import { AccountSwitcherMessages as AccountMessages } from "../account_switcher/account_switcher.messages";
 import { AddAccountDialog } from "../account_switcher/add_account_dialog";
 import { ActivateOnlineDialog } from "../activate_online_dialog";
 import { NameChangeDialog } from "../name_change_dialog";
 import { UserInfo } from "../user_info/user_info";
 import { UserMenuMessages as Messages } from "./user_menu.messages";
+import { UserMenuItems } from "./user_menu_items";
 
 const MAX_ACCOUNTS = 5;
 
@@ -167,92 +156,21 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
         open={Boolean(anchorEl)}
         onClose={closeMenu}
       >
-        {/* Account Switcher (if multi-account enabled and has accounts) */}
-        {hasMultiAccount && accounts.length > 0 && (
-          <>
-            <div
-              css={css`
-                padding: 8px;
-              `}
-            >
-              <AccountSwitcher
-                accounts={accounts}
-                activeAccountId={activeAccountId}
-                onSwitchAccount={handleSwitchAccount}
-                onAddAccount={handleAddAccount}
-                switching={switching}
-              />
-            </div>
-            <Divider />
-          </>
-        )}
-
-        {/* Current Account Options */}
-        {!userData?.playKey && !serverError && (
-          <MenuItem
-            onClick={() => {
-              closeMenu();
-              setOpenActivationDialog(true);
-            }}
-          >
-            <ListItemIcon>
-              <LanguageIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText primary={Messages.activateOnlinePlay()} />
-          </MenuItem>
-        )}
-
-        {userData && userData.playKey && (
-          <>
-            <MenuItem
-              onClick={() => {
-                const profileUrl = `https://slippi.gg/user/${userData.playKey!.connectCode.replace("#", "-")}`;
-                window.electron.shell.openExternal(profileUrl).catch(log.error);
-                closeMenu();
-              }}
-            >
-              <ListItemIcon>
-                <AccountBoxIcon fontSize="small" />
-              </ListItemIcon>
-              <ListItemText primary={Messages.viewProfile()} />
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                const manageUrl = `https://slippi.gg/manage?expectedUid=${user.uid}`;
-                window.electron.shell.openExternal(manageUrl).catch(log.error);
-                closeMenu();
-              }}
-            >
-              <ListItemIcon>
-                <ManageAccountsIcon fontSize="small" />
-              </ListItemIcon>
-              <ListItemText primary={Messages.manageAccount()} />
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                closeMenu();
-                setOpenNameChangePrompt(true);
-              }}
-            >
-              <ListItemIcon>
-                <EditIcon fontSize="small" />
-              </ListItemIcon>
-              <ListItemText primary={Messages.editDisplayName()} />
-            </MenuItem>
-          </>
-        )}
-
-        <MenuItem
-          onClick={() => {
-            closeMenu();
-            setOpenLogoutPrompt(true);
-          }}
-        >
-          <ListItemIcon>
-            <LogoutIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText primary={Messages.logout()} />
-        </MenuItem>
+        <UserMenuItems
+          hasMultiAccount={hasMultiAccount}
+          accounts={accounts}
+          activeAccountId={activeAccountId}
+          onSwitchAccount={handleSwitchAccount}
+          onAddAccount={handleAddAccount}
+          switching={switching}
+          userData={userData}
+          serverError={serverError}
+          onClose={closeMenu}
+          onActivateOnline={() => setOpenActivationDialog(true)}
+          user={user}
+          onEditDisplayName={() => setOpenNameChangePrompt(true)}
+          onLogout={() => setOpenLogoutPrompt(true)}
+        />
       </Menu>
 
       <NameChangeDialog displayName={displayName} open={openNameChangePrompt} handleClose={handleClose} />

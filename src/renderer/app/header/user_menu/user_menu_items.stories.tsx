@@ -1,0 +1,159 @@
+import Menu from "@mui/material/Menu";
+import type { StoredAccount } from "@settings/types";
+import { action } from "@storybook/addon-actions";
+import type { ComponentMeta, ComponentStory } from "@storybook/react";
+
+import type { AuthUser } from "@/services/auth/types";
+
+import { UserMenuItems } from "./user_menu_items";
+
+export default {
+  title: "containers/Header/UserMenuItems",
+  component: UserMenuItems,
+  decorators: [
+    (Story) => (
+      <div style={{ height: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Menu open={true} onClose={() => {}}>
+          <Story />
+        </Menu>
+      </div>
+    ),
+  ],
+} as ComponentMeta<typeof UserMenuItems>;
+
+const Template: ComponentStory<typeof UserMenuItems> = (args) => <UserMenuItems {...args} />;
+
+const mockUser: AuthUser = {
+  uid: "abc123",
+  displayName: "Player1",
+  displayPicture:
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%234299e1'/%3E%3C/svg%3E",
+  email: "player1@example.com",
+  emailVerified: true,
+};
+
+const mockUserData = {
+  uid: "abc123",
+  playKey: {
+    uid: "abc123",
+    connectCode: "PLAY#123",
+  },
+};
+
+const mockAccounts: StoredAccount[] = [
+  {
+    id: "abc123",
+    email: "player1@example.com",
+    displayName: "Player1",
+    displayPicture:
+      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%234299e1'/%3E%3C/svg%3E",
+    lastActive: new Date("2025-12-09T10:00:00Z"),
+  },
+  {
+    id: "def456",
+    email: "falco@example.com",
+    displayName: "FalcoMain",
+    displayPicture:
+      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23ed8936'/%3E%3C/svg%3E",
+    lastActive: new Date("2025-12-08T15:30:00Z"),
+  },
+  {
+    id: "ghi789",
+    email: "fox@example.com",
+    displayName: "FoxMaster",
+    displayPicture:
+      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%2348bb78'/%3E%3C/svg%3E",
+    lastActive: new Date("2025-12-07T09:15:00Z"),
+  },
+];
+
+// Default Story - Single account, activated
+export const SingleAccount = Template.bind({});
+SingleAccount.args = {
+  hasMultiAccount: false,
+  accounts: [],
+  activeAccountId: null,
+  onSwitchAccount: action("onSwitchAccount"),
+  onAddAccount: action("onAddAccount"),
+  switching: false,
+  userData: mockUserData,
+  serverError: false,
+  onClose: action("onClose"),
+  onActivateOnline: action("onActivateOnline"),
+  user: mockUser,
+  onEditDisplayName: action("onEditDisplayName"),
+  onLogout: action("onLogout"),
+};
+
+// Not activated (no play key)
+export const NotActivated = Template.bind({});
+NotActivated.args = {
+  ...SingleAccount.args,
+  userData: { uid: "abc123" },
+};
+
+// Server error
+export const ServerError = Template.bind({});
+ServerError.args = {
+  ...SingleAccount.args,
+  serverError: true,
+};
+
+// Two accounts
+export const TwoAccounts = Template.bind({});
+TwoAccounts.args = {
+  ...SingleAccount.args,
+  hasMultiAccount: true,
+  accounts: mockAccounts.slice(0, 2),
+  activeAccountId: "abc123",
+};
+
+// Three accounts
+export const ThreeAccounts = Template.bind({});
+ThreeAccounts.args = {
+  ...SingleAccount.args,
+  hasMultiAccount: true,
+  accounts: mockAccounts,
+  activeAccountId: "abc123",
+};
+
+// Five accounts (max)
+export const FiveAccounts = Template.bind({});
+FiveAccounts.args = {
+  ...SingleAccount.args,
+  hasMultiAccount: true,
+  accounts: [
+    ...mockAccounts,
+    {
+      id: "jkl012",
+      email: "marth@example.com",
+      displayName: "MarthPro",
+      displayPicture:
+        "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%239f7aea'/%3E%3C/svg%3E",
+      lastActive: new Date("2025-12-06T12:00:00Z"),
+    },
+    {
+      id: "mno345",
+      email: "sheik@example.com",
+      displayName: "SheikPlayer",
+      displayPicture:
+        "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23f56565'/%3E%3C/svg%3E",
+      lastActive: new Date("2025-12-05T18:45:00Z"),
+    },
+  ],
+  activeAccountId: "abc123",
+};
+
+// Two accounts, currently switching
+export const Switching = Template.bind({});
+Switching.args = {
+  ...TwoAccounts.args,
+  switching: true,
+};
+
+// Two accounts, not activated
+export const MultiAccountNotActivated = Template.bind({});
+MultiAccountNotActivated.args = {
+  ...TwoAccounts.args,
+  userData: { uid: "abc123" },
+};
