@@ -11,7 +11,6 @@ import { useServices } from "@/services";
 import type { AuthUser } from "@/services/auth/types";
 import { SessionExpiredError } from "@/services/auth/types";
 
-import { AccountSwitcherMessages as AccountMessages } from "../account_switcher/account_switcher.messages";
 import { AddAccountDialog } from "../account_switcher/add_account_dialog";
 import { ActivateOnlineDialog } from "../activate_online_dialog";
 import { NameChangeDialog } from "../name_change_dialog";
@@ -94,7 +93,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
 
       const account = accountsList.find((acc) => acc.id === accountId);
       if (account) {
-        showSuccess(AccountMessages.switchedTo(account.displayName || account.email));
+        showSuccess(Messages.switchedTo(account.displayName || account.email));
       }
 
       // Refresh user data for new account
@@ -119,7 +118,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
   // Handle add account
   const handleAddAccount = () => {
     if (accounts.length >= MAX_ACCOUNTS) {
-      showError(AccountMessages.maxAccountsReached(MAX_ACCOUNTS));
+      showError(Messages.maxAccountsReached(MAX_ACCOUNTS));
       return;
     }
 
@@ -140,7 +139,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
       setActiveAccountId(activeId);
 
       if (account) {
-        showSuccess(AccountMessages.accountRemoved(account.displayName || account.email));
+        showSuccess(Messages.accountRemoved(account.displayName || account.email));
       }
     } catch (err: any) {
       showError(err?.message || Messages.failedToRemoveAccount());

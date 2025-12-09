@@ -10,4 +10,7 @@ export const UserMenuMessages = {
   youWillNeedToLogInAgain: () => "You will need to log in again next time you want to play.",
   failedToRemoveAccount: () => "Failed to remove account",
   failedToSwitchAccount: () => "Failed to switch account",
+  maxAccountsReached: (max: number) => `Maximum {0} accounts reached. Remove an account to add another.`,
+  accountRemoved: (accountName: string) => `Removed {0}`,
+  switchedTo: (accountName: string) => `Switched to {0}`,
 };
