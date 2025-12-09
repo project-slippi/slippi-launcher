@@ -9,4 +9,5 @@ export const UserMenuMessages = {
   areYouSureYouWantToLogout: () => "Are you sure you want to log out?",
   youWillNeedToLogInAgain: () => "You will need to log in again next time you want to play.",
   failedToRemoveAccount: () => "Failed to remove account",
+  failedToSwitchAccount: () => "Failed to switch account",
 };

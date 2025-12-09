@@ -108,7 +108,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
         setReAuthEmail(err.email);
         setOpenAddAccountDialog(true);
       } else {
-        showError(err?.message || "Failed to switch account");
+        showError(err?.message || Messages.failedToSwitchAccount());
         log.error("Failed to switch account:", err);
       }
     } finally {
