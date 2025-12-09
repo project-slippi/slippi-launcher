@@ -163,7 +163,7 @@ class MultiAccountClient implements MultiAccountService {
           unsubscribe();
 
           if (user) {
-            log.info(`Session restored for account: ${account.email}`);
+            log.info(`Session restored for account: ${account.displayName}`);
           } else {
             log.warn(`No active session for account ${account.id} - will need re-authentication`);
           }
@@ -224,7 +224,7 @@ class MultiAccountClient implements MultiAccountService {
 
       if (existingAccount) {
         // Account already added - auto-switch to it
-        log.info(`Account ${email} already added, switching to it`);
+        log.info(`Account ${existingAccount.displayName} already added, switching to it`);
         await deleteApp(tempApp);
         await this.switchAccount(user.uid);
         return existingAccount;
@@ -270,7 +270,7 @@ class MultiAccountClient implements MultiAccountService {
       // Clean up temp app
       await deleteApp(tempApp);
 
-      log.info(`Added and switched to account: ${email}`);
+      log.info(`Added and switched to account: ${storedAccount.displayName}`);
 
       return storedAccount;
     } catch (err) {
@@ -328,7 +328,7 @@ class MultiAccountClient implements MultiAccountService {
       // Save to storage
       await this._saveAccounts();
 
-      log.info(`Switched to account: ${account.email}`);
+      log.info(`Switched to account: ${account.displayName}`);
     } catch (err) {
       log.error(`Failed to switch to account ${accountId}:`, err);
       throw err;
@@ -375,7 +375,7 @@ class MultiAccountClient implements MultiAccountService {
       // Save to storage
       await this._saveAccounts();
 
-      log.info(`Removed account: ${removedAccount.email}`);
+      log.info(`Removed account: ${removedAccount.displayName}`);
     } catch (err) {
       log.error(`Failed to remove account ${accountId}:`, err);
       throw err;
