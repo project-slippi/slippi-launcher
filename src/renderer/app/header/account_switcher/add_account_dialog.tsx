@@ -7,6 +7,8 @@ import React from "react";
 
 import { LoginForm } from "@/components/login_form/login_form";
 
+import { AccountSwitcherMessages as Messages } from "./account_switcher.messages";
+
 export interface AddAccountDialogProps {
   open: boolean;
   onClose: () => void;
@@ -25,7 +27,7 @@ export const AddAccountDialog: React.FC<AddAccountDialogProps> = ({ open, onClos
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth={true} fullScreen={fullScreen}>
-      <DialogTitle>{defaultEmail ? "Re-authenticate Account" : "Add Another Account"}</DialogTitle>
+      <DialogTitle>{defaultEmail ? Messages.reAuthenticateAccount() : Messages.addAnotherAccount()}</DialogTitle>
       <DialogContent>
         <LoginForm onSuccess={handleSuccess} disableAutoFocus={false} defaultEmail={defaultEmail ?? undefined} />
       </DialogContent>

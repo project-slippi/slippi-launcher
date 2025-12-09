@@ -1,5 +1,6 @@
 export const AccountSwitcherMessages = {
-  addAccount: () => "Add account",
+  addAnotherAccount: () => "Add another account",
+  reAuthenticateAccount: () => "Re-authenticate account",
   manageAccounts: () => "Manage accounts",
   showMore: (count: number) => `Show {0} more {0, plural, one {account} other {accounts}}`,
   showLess: () => "Show less",

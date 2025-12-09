@@ -172,7 +172,7 @@ export const AccountSwitcher: React.FC<AccountSwitcherProps> = ({
           {sortedAccounts.length > 0 && <SectionDivider />}
           <ActionButton onClick={onAddAccount}>
             <AddIcon />
-            {Messages.addAccount()}
+            {Messages.addAnotherAccount()}
           </ActionButton>
         </>
       )}
