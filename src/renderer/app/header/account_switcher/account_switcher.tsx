@@ -13,6 +13,8 @@ import { colors } from "@/styles/colors";
 
 import { AccountSwitcherMessages as Messages } from "./account_switcher.messages";
 
+const MAX_ADDITIONAL_ACCOUNTS = 4;
+
 const AccountItem = styled.div<{ $disabled?: boolean }>`
   width: 100%;
   display: flex;
@@ -89,7 +91,6 @@ const AccountEmail = styled.div`
 const RemoveButton = styled(IconButton)`
   padding: 4px;
   opacity: 0;
-  transition: opacity 100ms ease-in;
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.05);
@@ -141,43 +142,40 @@ export const AccountSwitcher: React.FC<AccountSwitcherProps> = ({
     >
       {/* Account List */}
       {sortedAccounts.length > 0 && (
-        <>
-          <div
-            css={css`
-              display: flex;
-              flex-direction: column;
-              gap: 2px;
-            `}
-          >
-            {sortedAccounts.map((account) => (
-              <AccountItem key={account.id} onClick={() => handleAccountClick(account.id)} $disabled={switching}>
-                <UserIcon imageUrl={account.displayPicture} size={32} />
-                <AccountInfo>
-                  <AccountName>{account.displayName}</AccountName>
-                  <AccountEmail>{account.email}</AccountEmail>
-                </AccountInfo>
-                <Tooltip title={Messages.remove()}>
-                  <RemoveButton
-                    className="remove-button"
-                    onClick={(e) => handleRemoveClick(e, account.id)}
-                    size="small"
-                  >
-                    <CloseIcon />
-                  </RemoveButton>
-                </Tooltip>
-              </AccountItem>
-            ))}
-          </div>
-
-          <SectionDivider />
-        </>
+        <div
+          css={css`
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+          `}
+        >
+          {sortedAccounts.map((account) => (
+            <AccountItem key={account.id} onClick={() => handleAccountClick(account.id)} $disabled={switching}>
+              <UserIcon imageUrl={account.displayPicture} size={32} />
+              <AccountInfo>
+                <AccountName>{account.displayName}</AccountName>
+                <AccountEmail>{account.email}</AccountEmail>
+              </AccountInfo>
+              <Tooltip title={Messages.remove()}>
+                <RemoveButton className="remove-button" onClick={(e) => handleRemoveClick(e, account.id)} size="small">
+                  <CloseIcon />
+                </RemoveButton>
+              </Tooltip>
+            </AccountItem>
+          ))}
+        </div>
       )}
 
       {/* Add Account Button */}
-      <ActionButton onClick={onAddAccount}>
-        <AddIcon />
-        {Messages.addAccount()}
-      </ActionButton>
+      {sortedAccounts.length < MAX_ADDITIONAL_ACCOUNTS && (
+        <>
+          {sortedAccounts.length > 0 && <SectionDivider />}
+          <ActionButton onClick={onAddAccount}>
+            <AddIcon />
+            {Messages.addAccount()}
+          </ActionButton>
+        </>
+      )}
     </div>
   );
 };

@@ -52,24 +52,20 @@ export const UserMenuItems: React.FC<UserMenuItemsProps> = ({
   return (
     <>
       {/* Account Switcher (if has inactive accounts to switch to) */}
-      {inactiveAccounts.length > 0 && (
-        <>
-          <div
-            css={css`
-              padding: 0 8px;
-            `}
-          >
-            <AccountSwitcher
-              accounts={inactiveAccounts}
-              onSwitchAccount={onSwitchAccount}
-              onAddAccount={onAddAccount}
-              onRemoveAccount={onRemoveAccount}
-              switching={switching}
-            />
-          </div>
-          <SectionDivider />
-        </>
-      )}
+      <div
+        css={css`
+          padding: 0 8px;
+        `}
+      >
+        <AccountSwitcher
+          accounts={inactiveAccounts}
+          onSwitchAccount={onSwitchAccount}
+          onAddAccount={onAddAccount}
+          onRemoveAccount={onRemoveAccount}
+          switching={switching}
+        />
+      </div>
+      <SectionDivider />
 
       {/* Current Account Options */}
       {!isOnlineActivated && !serverError && (
