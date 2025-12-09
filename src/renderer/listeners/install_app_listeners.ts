@@ -42,7 +42,9 @@ export function installAppListeners(services: Services) {
       useChatMessagesStore.getState().resetStore();
     }
 
-    if (oldUserId && user && user.uid !== oldUserId) {
+    // If we switched users, stop broadcasting and disconnect from the spectate server.
+    const didSwitchUser = oldUserId != null && user != null && user.uid !== oldUserId;
+    if (didSwitchUser) {
       // technically we don't need to stop broadcasting cause we don't allow
       // switching accounts when netplay is open. better to be safe
       void broadcastService.stopBroadcast();
