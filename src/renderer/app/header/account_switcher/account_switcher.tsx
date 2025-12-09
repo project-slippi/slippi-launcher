@@ -21,11 +21,9 @@ const AccountItem = styled.div<{ $disabled?: boolean }>`
   align-items: center;
   padding: 4px 0;
   gap: 10px;
-  justify-content: flex-start;
-  border-radius: 4px;
   cursor: ${(props) => (props.$disabled ? "default" : "pointer")};
   opacity: ${(props) => (props.$disabled ? 0.6 : 1)};
-  transition: background-color 100ms ease-in;
+  transition: background-color 100ms ease-out;
 
   &:hover {
     background-color: ${(props) => (props.$disabled ? "transparent" : "rgba(255, 255, 255, 0.05)")};
@@ -46,12 +44,10 @@ const AccountInfo = styled.div`
 
 const AccountName = styled.div`
   font-size: 16px;
-  font-weight: inherit;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   width: 100%;
-  text-align: left;
 `;
 
 const SectionDivider = styled.div`
@@ -69,7 +65,7 @@ const ActionButton = styled(ButtonBase)`
   justify-content: center;
   border-radius: 4px;
   font-size: 14px;
-  transition: background-color 100ms ease-in;
+  transition: background-color 100ms ease-out;
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.05);
@@ -86,6 +82,7 @@ const AccountEmail = styled.div`
 
 const RemoveButton = styled(IconButton)`
   padding: 4px;
+  color: ${colors.textDim};
   opacity: 0;
 
   &:hover {
@@ -149,7 +146,7 @@ export const AccountSwitcher: React.FC<AccountSwitcherProps> = ({
               </AccountInfo>
               <Tooltip title={Messages.remove()}>
                 <RemoveButton className="remove-button" onClick={(e) => handleRemoveClick(e, account.id)} size="small">
-                  <CloseIcon />
+                  <CloseIcon sx={{ fontSize: 18 }} />
                 </RemoveButton>
               </Tooltip>
             </AccountItem>
@@ -162,7 +159,7 @@ export const AccountSwitcher: React.FC<AccountSwitcherProps> = ({
         <>
           {sortedAccounts.length > 0 && <SectionDivider />}
           <ActionButton onClick={onAddAccount}>
-            <AddIcon />
+            <AddIcon sx={{ fontSize: 18 }} />
             {Messages.addAnotherAccount()}
           </ActionButton>
         </>
