@@ -13,17 +13,24 @@ import { colors } from "@/styles/colors";
 
 import { AccountSwitcherMessages as Messages } from "./account_switcher.messages";
 
-const AccountItem = styled(ButtonBase)`
+const AccountItem = styled.div<{ $disabled?: boolean }>`
   width: 100%;
   display: flex;
   align-items: center;
-  padding: 8px 12px;
+  padding: 4px 0;
   gap: 10px;
   justify-content: flex-start;
   border-radius: 4px;
+  cursor: ${(props) => (props.$disabled ? "default" : "pointer")};
+  opacity: ${(props) => (props.$disabled ? 0.6 : 1)};
+  transition: background-color 100ms ease-in;
 
   &:hover {
-    background-color: rgba(92, 19, 148, 0.1);
+    background-color: ${(props) => (props.$disabled ? "transparent" : "rgba(255, 255, 255, 0.05)")};
+
+    .remove-button {
+      opacity: ${(props) => (props.$disabled ? 0 : 1)};
+    }
   }
 `;
 
@@ -63,7 +70,7 @@ const ActionButton = styled(ButtonBase)`
   transition: background-color 100ms ease-in;
 
   &:hover {
-    background-color: rgba(92, 19, 148, 0.1);
+    background-color: rgba(255, 255, 255, 0.05);
   }
 
   svg {
@@ -84,12 +91,8 @@ const RemoveButton = styled(IconButton)`
   opacity: 0;
   transition: opacity 100ms ease-in;
 
-  ${AccountItem}:hover & {
-    opacity: 1;
-  }
-
   &:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.05);
   }
 
   svg {
@@ -147,14 +150,18 @@ export const AccountSwitcher: React.FC<AccountSwitcherProps> = ({
             `}
           >
             {sortedAccounts.map((account) => (
-              <AccountItem key={account.id} onClick={() => handleAccountClick(account.id)} disabled={switching}>
+              <AccountItem key={account.id} onClick={() => handleAccountClick(account.id)} $disabled={switching}>
                 <UserIcon imageUrl={account.displayPicture} size={32} />
                 <AccountInfo>
                   <AccountName>{account.displayName}</AccountName>
                   <AccountEmail>{account.email}</AccountEmail>
                 </AccountInfo>
                 <Tooltip title={Messages.remove()}>
-                  <RemoveButton onClick={(e) => handleRemoveClick(e, account.id)} size="small">
+                  <RemoveButton
+                    className="remove-button"
+                    onClick={(e) => handleRemoveClick(e, account.id)}
+                    size="small"
+                  >
                     <CloseIcon />
                   </RemoveButton>
                 </Tooltip>

@@ -1,10 +1,10 @@
 import { css } from "@emotion/react";
+import styled from "@emotion/styled";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import EditIcon from "@mui/icons-material/Edit";
 import LanguageIcon from "@mui/icons-material/Language";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
-import Divider from "@mui/material/Divider";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import MenuItem from "@mui/material/MenuItem";
@@ -13,6 +13,12 @@ import React from "react";
 
 import { AccountSwitcher } from "../account_switcher/account_switcher";
 import { UserMenuMessages as Messages } from "./user_menu.messages";
+
+const SectionDivider = styled.div`
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.1);
+  margin: 8px 0;
+`;
 
 export interface UserMenuItemsProps {
   inactiveAccounts: StoredAccount[]; // Only inactive accounts (active account shown in header)
@@ -50,7 +56,7 @@ export const UserMenuItems: React.FC<UserMenuItemsProps> = ({
         <>
           <div
             css={css`
-              padding: 8px;
+              padding: 0 8px;
             `}
           >
             <AccountSwitcher
@@ -61,7 +67,7 @@ export const UserMenuItems: React.FC<UserMenuItemsProps> = ({
               switching={switching}
             />
           </div>
-          <Divider />
+          <SectionDivider />
         </>
       )}
 
