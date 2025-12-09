@@ -66,6 +66,9 @@ class MultiAccountClient implements MultiAccountService {
       // Load stored accounts
       await this._loadStoredAccounts();
 
+      // Migrate existing session from default Firebase app (if any)
+      await this._migrateExistingSession();
+
       // Notify listeners of initial accounts state
       this._notifyAccountsChanged();
 
@@ -111,6 +114,81 @@ class MultiAccountClient implements MultiAccountService {
       log.error("Failed to load stored accounts:", err);
       this._accounts = [];
       this._activeAccountId = null;
+    }
+  }
+
+  /**
+   * Migrate existing session from default Firebase app to multi-account system
+   * This is a one-time migration for users who were logged in before multi-account support
+   *
+   * Strategy: Keep using the [DEFAULT] Firebase app for the migrated account.
+   * New accounts added later will use named apps (app-account-{uid}).
+   */
+  private async _migrateExistingSession(): Promise<void> {
+    // Skip if we already have accounts (migration already done or user started fresh)
+    if (this._accounts.length > 0) {
+      log.info("Accounts already exist, skipping migration");
+      return;
+    }
+
+    try {
+      // Check if there's a default Firebase app with an active session
+      let defaultApp: FirebaseApp | null = null;
+      try {
+        defaultApp = getApp("[DEFAULT]");
+      } catch {
+        // No default app exists, try to initialize it to check for persisted session
+        defaultApp = initializeApp(firebaseConfig);
+      }
+
+      if (!defaultApp) {
+        log.info("No default Firebase app found, skipping migration");
+        return;
+      }
+
+      const defaultAuth = getAuth(defaultApp);
+
+      // Wait for Firebase to restore auth state from IndexedDB
+      const user = await new Promise<typeof defaultAuth.currentUser>((resolve) => {
+        const unsubscribe = onAuthStateChanged(defaultAuth, (user) => {
+          unsubscribe();
+          resolve(user);
+        });
+      });
+
+      if (!user) {
+        log.info("No existing session found in default app, skipping migration");
+        return;
+      }
+
+      log.info(`Found existing session for user: ${user.email}, migrating to multi-account system`);
+
+      // Create stored account from existing user
+      const migratedAccount: StoredAccount = {
+        id: user.uid,
+        email: user.email ?? "",
+        displayName: user.displayName ?? "",
+        displayPicture: generateDisplayPicture(user.uid),
+        lastActive: new Date(),
+      };
+
+      // Add to accounts list
+      this._accounts.push(migratedAccount);
+      this._activeAccountId = user.uid;
+
+      // Store the default Firebase app and auth for this migrated account
+      // We use the default app to preserve the existing session
+      this._firebaseApps.set(user.uid, defaultApp);
+      this._authInstances.set(user.uid, defaultAuth);
+
+      // Save the migrated account
+      await this._saveAccounts();
+
+      log.info("Successfully migrated existing session to multi-account system");
+      log.info("User session preserved - no re-authentication required!");
+    } catch (err) {
+      log.error("Failed to migrate existing session:", err);
+      // Don't throw - this is a best-effort migration
     }
   }
 
@@ -346,8 +424,11 @@ class MultiAccountClient implements MultiAccountService {
     }
 
     try {
-      // Delete Firebase app (this will also clear IndexedDB persistence)
+      // Check if this is the default app before deleting
       const app = this._firebaseApps.get(accountId);
+      const isDefaultApp = app && app.name === "[DEFAULT]";
+
+      // Delete Firebase app (this will also clear IndexedDB persistence)
       if (app) {
         await deleteApp(app);
         this._firebaseApps.delete(accountId);
@@ -369,6 +450,15 @@ class MultiAccountClient implements MultiAccountService {
         } else {
           // No accounts left
           this._activeAccountId = null;
+        }
+      }
+
+      // If we deleted the default app and no accounts remain, recreate it
+      // This ensures password reset and other features still work
+      if (isDefaultApp && this._accounts.length === 0) {
+        if (getApps().length === 0) {
+          initializeApp(firebaseConfig);
+          log.info("Recreated default Firebase app after removing last account");
         }
       }
 
