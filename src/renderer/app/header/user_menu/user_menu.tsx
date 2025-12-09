@@ -93,7 +93,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
 
       const account = accountsList.find((acc) => acc.id === accountId);
       if (account) {
-        showSuccess(Messages.switchedTo(account.displayName || account.email));
+        showSuccess(Messages.switchedTo(account.displayName || account.id));
       }
 
       // Refresh user data for new account
@@ -139,7 +139,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
       setActiveAccountId(activeId);
 
       if (account) {
-        showSuccess(Messages.accountRemoved(account.displayName || account.email));
+        showSuccess(Messages.accountRemoved(account.displayName || account.id));
       }
     } catch (err: any) {
       showError(err?.message || Messages.failedToRemoveAccount());

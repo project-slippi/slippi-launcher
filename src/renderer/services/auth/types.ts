@@ -8,7 +8,7 @@ export type AuthUser = {
 
 export class SessionExpiredError extends Error {
   constructor(public email: string, public accountId: string) {
-    super(`Session expired for ${email}`);
+    super(`Session expired for ${accountId}`);
     this.name = "SessionExpiredError";
   }
 }
