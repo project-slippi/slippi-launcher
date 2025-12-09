@@ -8,4 +8,9 @@ export const UserMenuMessages = {
   onlineActivationRequired: () => "Online activation required",
   areYouSureYouWantToLogout: () => "Are you sure you want to log out?",
   youWillNeedToLogInAgain: () => "You will need to log in again next time you want to play.",
+  failedToRemoveAccount: () => "Failed to remove account",
+  failedToSwitchAccount: () => "Failed to switch account",
+  maxAccountsReached: (max: number) => `Maximum {0} accounts reached. Remove an account to add another.`,
+  accountRemoved: (accountName: string) => `Removed {0}`,
+  switchedTo: (accountName: string) => `Switched to {0}`,
 };

@@ -42,6 +42,13 @@ export function installAppListeners(services: Services) {
     }
   });
 
+  // Subscribe to multi-account changes
+  const multiAccountService = authService.getMultiAccountService();
+  multiAccountService.onAccountsChange(({ accounts, activeId }) => {
+    useAccount.getState().setAccounts(accounts);
+    useAccount.getState().setActiveAccountId(activeId);
+  });
+
   window.electron.common.onAppUpdateReady(() => {
     useAppStore.getState().setUpdateReady(true);
   });
