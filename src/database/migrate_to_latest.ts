@@ -69,20 +69,13 @@ class ESMCompatibleMigrationProvider implements MigrationProvider {
   }
 }
 
-export async function migrateToLatest(db: Kysely<Database>, migrationFolder: string): Promise<MigrationResult[]> {
-  // Auto-detect which provider to use based on what migration files exist:
-  // - .ts files present → Development/tests (use dynamic import with ESM provider)
-  // - Only .js files → Production build (use require with FileMigrationProvider)
-  //
-  // This is simpler and more reliable than checking app.isPackaged because:
-  // - Works correctly in test environments where Electron app may not be initialized
-  // - Directly detects the actual file format rather than inferring from app state
-  // - Self-documenting: the check matches what actually matters
-  const files = await fs.readdir(migrationFolder);
-  const hasTsFiles = files.some((f) => f.endsWith(".ts"));
-
+export async function migrateToLatest(
+  db: Kysely<Database>,
+  migrationFolder: string,
+  options?: { useEsmMigrator?: boolean },
+): Promise<MigrationResult[]> {
   let provider: MigrationProvider;
-  if (hasTsFiles) {
+  if (options?.useEsmMigrator) {
     // Development/tests: Use dynamic import() which handles ESM and cross-platform paths
     provider = new ESMCompatibleMigrationProvider(migrationFolder);
   } else {

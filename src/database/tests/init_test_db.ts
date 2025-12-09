@@ -13,6 +13,6 @@ export async function initTestDb(): Promise<Kysely<Database>> {
     }),
   });
 
-  await migrateToLatest(database, webpackPaths.distMigrationsPath);
+  await migrateToLatest(database, webpackPaths.distMigrationsPath, { useEsmMigrator: true });
   return database;
 }
