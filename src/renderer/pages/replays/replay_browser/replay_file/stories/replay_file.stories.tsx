@@ -32,7 +32,9 @@ export const Selected = () => {
 };
 
 export const ReallyLongReplayName = () => {
-  return renderReplayFileWith({ title: "a_super_special_awesome_replay_with_a_reeeeaaaaaaaally_looooooong_name.slp" });
+  return renderReplayFileWith({
+    fileName: "a_super_special_awesome_replay_with_a_reeeeaaaaaaaally_looooooong_name.slp",
+  });
 };
 
 const generatePlayer = (options: Partial<PlayerInfo>): PlayerInfo => {
@@ -56,7 +58,8 @@ const renderReplayFileWith = (additionalProps: Partial<ReplayFileProps> = {}) =>
   ];
   const props: ReplayFileProps = {
     players: freeForAllTeams,
-    title: "some_game_file.slp",
+    fileName: "some_game_file.slp",
+    fullPath: "/path/to/some_game_file.slp",
     backgroundImage: stageImage,
     details: [
       {

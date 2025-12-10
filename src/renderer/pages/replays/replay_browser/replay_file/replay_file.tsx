@@ -5,8 +5,11 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import React from "react";
 
+import { DraggableFile } from "@/components/draggable_file";
+import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/use_dolphin_store";
 import { colors } from "@/styles/colors";
 
+import { ReplayFileMessages as Messages } from "./replay_file.messages";
 import type { PlayerInfo } from "./team_elements/team_elements";
 import { TeamElements } from "./team_elements/team_elements";
 
@@ -21,10 +24,12 @@ export type ReplayFileAction = {
   disabled?: boolean;
   label: string;
   onClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  isDolphinAction?: boolean; // Flag to indicate this button needs Dolphin status
 };
 
 type ReplayFileProps = {
-  title: React.ReactNode;
+  fileName: string;
+  fullPath: string;
   players: PlayerInfo[][];
   details: ReplayDetail[];
   actions: ReplayFileAction[];
@@ -37,7 +42,8 @@ export const ReplayFile = React.memo(function ReplayFile({
   backgroundImage,
   actions,
   players,
-  title,
+  fileName,
+  fullPath,
   details,
 }: ReplayFileProps) {
   const selected = exists(selectedIndex) && selectedIndex >= 0;
@@ -51,6 +57,7 @@ export const ReplayFile = React.memo(function ReplayFile({
           justify-content: center;
           padding: 10px;
           background-color: ${selected ? "rgba(180, 130, 176, 0.1)" : "transparent"};
+          width: 100%;
         `}
       >
         {selected && <SelectedNumber num={selectedIndex + 1} />}
@@ -59,6 +66,7 @@ export const ReplayFile = React.memo(function ReplayFile({
             display: flex;
             align-items: center;
             justify-content: space-between;
+            width: 100%;
           `}
         >
           <TeamElements teams={players} />
@@ -67,16 +75,8 @@ export const ReplayFile = React.memo(function ReplayFile({
               display: flex;
             `}
           >
-            {actions.map(({ label, onClick, Icon, disabled, primary }, i) => (
-              <ReplayActionButton
-                key={i}
-                color={primary ? colors.greenDark : undefined}
-                label={label}
-                onClick={onClick}
-                disabled={disabled}
-              >
-                <Icon />
-              </ReplayActionButton>
+            {actions.map((action, i) => (
+              <ActionButton key={i} action={action} />
             ))}
           </div>
         </div>
@@ -89,6 +89,7 @@ export const ReplayFile = React.memo(function ReplayFile({
             margin-top: 5px;
             font-size: 14px;
             white-space: nowrap;
+            width: 100%;
           `}
         >
           <div
@@ -102,7 +103,28 @@ export const ReplayFile = React.memo(function ReplayFile({
               <InfoItem key={i} Icon={Icon} label={label} />
             ))}
           </div>
-          <div>{title}</div>
+          <DraggableFile
+            filePaths={[fullPath]}
+            css={css`
+              min-width: 0;
+              opacity: 0.9;
+              &:hover {
+                opacity: 1;
+                text-decoration: underline;
+              }
+            `}
+          >
+            <span
+              css={css`
+                max-width: 350px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              `}
+            >
+              {fileName}
+            </span>
+          </DraggableFile>
         </div>
       </div>
     </Outer>
@@ -126,6 +148,7 @@ const Outer = styled.div<{
     p.backgroundImage
       ? `linear-gradient(to right, ${colors.purpleDark} 20%, transparent 35%, transparent 65%, ${colors.purpleDark} 80%)`
       : colors.purpleDark};
+  will-change: border-color;
   &::before {
     z-index: -1;
     position: absolute;
@@ -140,7 +163,7 @@ const Outer = styled.div<{
   }
 `;
 
-const InfoItem = ({ Icon, label }: { Icon: React.ComponentType; label: string }) => {
+const InfoItem = React.memo(({ Icon, label }: { Icon: React.ComponentType; label: string }) => {
   return (
     <div
       css={css`
@@ -164,12 +187,39 @@ const InfoItem = ({ Icon, label }: { Icon: React.ComponentType; label: string })
       <div>{label}</div>
     </div>
   );
-};
+});
 
 type ReplayActionButtonProps = Omit<React.ComponentProps<typeof IconButton>, "color"> & {
   label: string;
   color?: string;
 };
+
+// Wrapper component that handles dynamic Dolphin status for play button
+const ActionButton = React.memo(({ action }: { action: ReplayFileAction }) => {
+  const { label, onClick, Icon, disabled, primary, isDolphinAction } = action;
+
+  // Only subscribe to Dolphin status if this is a Dolphin action
+  const playbackStatus = useDolphinStore((store) => store.playbackStatus);
+
+  const finalLabel = isDolphinAction
+    ? playbackStatus === DolphinStatus.READY
+      ? label
+      : Messages.dolphinIsUpdating()
+    : label;
+
+  const finalDisabled = isDolphinAction ? playbackStatus !== DolphinStatus.READY : disabled;
+
+  return (
+    <ReplayActionButton
+      color={primary ? colors.greenDark : undefined}
+      label={finalLabel}
+      onClick={onClick}
+      disabled={finalDisabled}
+    >
+      <Icon />
+    </ReplayActionButton>
+  );
+});
 
 const ReplayActionButton = React.memo(({ label, color, onClick, ...rest }: ReplayActionButtonProps) => {
   return (

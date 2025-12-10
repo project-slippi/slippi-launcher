@@ -1,14 +1,11 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import FolderIcon from "@mui/icons-material/Folder";
 import type { FileResult } from "@replays/types";
-import debounce from "lodash/debounce";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import React from "react";
-import AutoSizer from "react-virtualized-auto-sizer";
-import { FixedSizeList as List } from "react-window";
 
-import { ErrorBoundary } from "@/components/error_boundary";
 import { IconMenu } from "@/components/icon_menu";
-import { useReplayFilter } from "@/lib/hooks/use_replay_filter";
+import { useReplays } from "@/lib/hooks/use_replays";
 
 import { ReplayFileContainer } from "../replay_file/replay_file.container";
 import { FileListMessages as Messages } from "./file_list.messages";
@@ -16,203 +13,259 @@ import { FileListMessages as Messages } from "./file_list.messages";
 const LOAD_MORE_THRESHOLD = 5;
 const REPLAY_FILE_ITEM_SIZE = 90;
 
-// This is the container for all the replays visible, the autosizer will handle the virtualization portion
+// This is the container for all the replays visible, using TanStack Virtual for smooth 60fps scrolling
 const FileListResults = ({
   folderPath,
-  scrollRowItem,
+  initialScrollOffset,
   files,
   onSelect,
   onPlay,
   onOpenMenu,
-  setScrollRowItem,
   onClick,
-  selectedFiles,
   onLoadMore,
+  onScrollPositionChange,
+  selectedFilesSet,
 }: {
   folderPath: string;
   files: FileResult[];
-  scrollRowItem: number;
-  selectedFiles: Array<string>;
+  initialScrollOffset: number;
   onClick: (index: number, isShiftHeld: boolean) => void;
   onOpenMenu: (index: number, element: HTMLElement) => void;
   onSelect: (index: number) => void;
   onPlay: (index: number) => void;
-  setScrollRowItem: (row: number) => void;
   onLoadMore: () => void;
+  onScrollPositionChange: (rowIndex: number) => void;
+  selectedFilesSet: Set<string>;
 }) => {
-  // Keep a reference to the list so we can control the scroll position
-  const listRef = React.createRef<List>();
-  // Keep track of the latest scroll position
-  const scrollRowRef = React.useRef(0);
-  const setScrollRowRef = debounce((row: number) => {
-    scrollRowRef.current = row;
-  }, 100);
+  // Ref to the scrollable container element
+  const parentRef = React.useRef<HTMLDivElement>(null);
 
-  const Row = React.useCallback(
-    (props: { style?: React.CSSProperties; index: number }) => {
-      const file = files[props.index];
-      const selectedIndex = selectedFiles.indexOf(file.fullPath);
-      return (
-        <ErrorBoundary>
-          <ReplayFileContainer
-            onOpenMenu={onOpenMenu}
-            index={props.index}
-            style={props.style}
-            onSelect={onSelect}
-            onClick={onClick}
-            selectedFiles={selectedFiles}
-            selectedIndex={selectedIndex}
-            onPlay={onPlay}
-            {...file}
-          />
-        </ErrorBoundary>
-      );
-    },
-    [files, onSelect, onPlay, onOpenMenu, selectedFiles],
-  );
+  // Track current scroll offset in pixels for saving on unmount
+  const currentScrollOffset = React.useRef(initialScrollOffset);
 
-  const searchText = useReplayFilter((store) => store.searchText);
-  const hideShortGames = useReplayFilter((store) => store.hideShortGames);
-  const sortBy = useReplayFilter((store) => store.sortBy);
-  const sortDirection = useReplayFilter((store) => store.sortDirection);
+  // Initialize virtualizer with optimal settings for 60fps
+  const virtualizer = useVirtualizer({
+    count: files.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: React.useCallback(() => REPLAY_FILE_ITEM_SIZE, []),
+    overscan: 5, // Render 5 items above/below viewport for smooth scrolling
+    initialOffset: initialScrollOffset, // Set initial scroll position
+    // Using fixed size, no dynamic measurement needed
+  });
 
-  // Store the latest scroll row item on unmount
-  React.useEffect(() => {
-    return () => {
-      setScrollRowItem(scrollRowRef.current);
-    };
-  }, []);
+  // Track filter values with ref to avoid re-renders
+  const lastFilterRef = React.useRef({ folderPath });
 
   // Reset scroll position when we change folders
   React.useEffect(() => {
-    if (listRef.current) {
-      listRef.current.scrollToItem(0);
+    if (folderPath !== lastFilterRef.current.folderPath) {
+      currentScrollOffset.current = 0;
+      lastFilterRef.current.folderPath = folderPath;
+      // Use microtask to avoid flushSync warning during render
+      queueMicrotask(() => {
+        if (parentRef.current) {
+          parentRef.current.scrollTop = 0;
+        }
+      });
     }
   }, [folderPath]);
 
-  // Reset scroll position when filters change
+  // Track scroll offset from the container for persistence
   React.useEffect(() => {
-    if (listRef.current) {
-      listRef.current.scrollToItem(0);
+    const scrollElement = parentRef.current;
+    if (!scrollElement) {
+      return;
     }
-  }, [searchText, hideShortGames, sortBy, sortDirection]);
+
+    const handleScroll = () => {
+      currentScrollOffset.current = scrollElement.scrollTop;
+    };
+
+    scrollElement.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      scrollElement.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  // Save scroll position when component unmounts
+  React.useEffect(() => {
+    return () => {
+      // Convert pixel offset to row index for storage
+      const rowIndex = Math.floor(currentScrollOffset.current / REPLAY_FILE_ITEM_SIZE);
+      onScrollPositionChange(rowIndex);
+    };
+  }, [onScrollPositionChange]);
+
+  // Track scroll position and trigger load more when approaching end
+  const virtualItems = virtualizer.getVirtualItems();
+
+  React.useEffect(() => {
+    const items = virtualizer.getVirtualItems();
+    if (items.length > 0) {
+      // Check if we need to load more items
+      const lastItem = items[items.length - 1];
+      const itemsFromEnd = files.length - lastItem.index;
+
+      if (itemsFromEnd <= LOAD_MORE_THRESHOLD) {
+        onLoadMore();
+      }
+    }
+  }, [virtualizer, files.length, onLoadMore]);
 
   return (
-    <AutoSizer>
-      {({ height, width }) => (
-        <List
-          ref={listRef}
-          height={height}
-          width={width}
-          initialScrollOffset={scrollRowItem * REPLAY_FILE_ITEM_SIZE}
-          itemCount={files.length}
-          itemSize={REPLAY_FILE_ITEM_SIZE}
-          onItemsRendered={({ visibleStartIndex, visibleStopIndex }) => {
-            setScrollRowRef(visibleStartIndex);
-
-            // Trigger load more when user scrolls near the end
-            const itemsFromEnd = files.length - visibleStopIndex;
-            if (itemsFromEnd <= LOAD_MORE_THRESHOLD) {
-              onLoadMore();
-            }
-          }}
-        >
-          {Row}
-        </List>
-      )}
-    </AutoSizer>
+    <div
+      ref={parentRef}
+      style={{
+        height: "100%",
+        width: "100%",
+        overflow: "auto",
+        contain: "strict", // CSS containment for better performance
+        willChange: "transform", // GPU acceleration hint
+      }}
+    >
+      <div
+        style={{
+          height: `${virtualizer.getTotalSize()}px`,
+          width: "100%",
+          position: "relative",
+        }}
+      >
+        {virtualItems.map((virtualItem) => {
+          const file = files[virtualItem.index];
+          return (
+            <div
+              key={String(virtualItem.key)}
+              data-index={virtualItem.index}
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: `${virtualItem.size}px`,
+                transform: `translateY(${virtualItem.start}px)`,
+              }}
+            >
+              <ReplayFileContainer
+                onOpenMenu={onOpenMenu}
+                index={virtualItem.index}
+                onSelect={onSelect}
+                onClick={onClick}
+                onPlay={onPlay}
+                selectedFilesSet={selectedFilesSet}
+                {...file}
+              />
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 };
 
 // the container containing FileListResults. figure the rest out yourself
 // to simplify the DOM, the submenu for each row is essentially the same until you actually click on it for a given row.
-export const FileList = ({
-  scrollRowItem = 0,
-  files,
-  onSelect,
-  onPlay,
-  onDelete,
-  setScrollRowItem,
-  onFileClick,
-  folderPath,
-  selectedFiles,
-  onLoadMore,
-}: {
-  folderPath: string;
-  files: FileResult[];
-  scrollRowItem?: number;
-  setScrollRowItem: (row: number) => void;
-  onDelete: (filepath: string) => void;
-  onSelect: (index: number) => void;
-  onFileClick: (index: number, isShiftHeld: boolean) => void;
-  selectedFiles: Array<string>;
-  onPlay: (index: number) => void;
-  onLoadMore: () => void;
-  loadingMore: boolean;
-}) => {
-  const [menuItem, setMenuItem] = React.useState<null | {
-    index: number;
-    anchorEl: HTMLElement;
-  }>(null);
+export const FileList = React.memo(
+  ({
+    files,
+    onSelect,
+    onPlay,
+    onDelete,
+    onFileClick,
+    folderPath,
+    onLoadMore,
+    selectedFilesSet,
+  }: {
+    folderPath: string;
+    files: FileResult[];
+    onDelete: (filepath: string) => void;
+    onSelect: (index: number) => void;
+    onFileClick: (index: number, isShiftHeld: boolean) => void;
+    selectedFiles: Array<string>;
+    selectedFilesSet: Set<string>;
+    onPlay: (index: number) => void;
+    onLoadMore: () => void;
+    loadingMore: boolean;
+  }) => {
+    const [menuItem, setMenuItem] = React.useState<null | {
+      index: number;
+      anchorEl: HTMLElement;
+    }>(null);
 
-  const onOpenMenu = React.useCallback((index: number, target: any) => {
-    setMenuItem({
-      index,
-      anchorEl: target,
-    });
-  }, []);
+    // Read initial scroll position from store ONCE on mount (no subscription)
+    // This persists scroll position across page navigation
+    const initialScrollOffset = React.useRef(useReplays.getState().scrollRowItem * REPLAY_FILE_ITEM_SIZE);
 
-  const handleRevealLocation = () => {
-    if (menuItem) {
-      window.electron.shell.showItemInFolder(files[menuItem.index].fullPath);
-    }
-    handleClose();
-  };
+    // Callback to save scroll position to store (called on unmount)
+    const handleScrollPositionChange = React.useCallback((rowIndex: number) => {
+      useReplays.setState({ scrollRowItem: rowIndex });
+    }, []);
 
-  const handleDelete = () => {
-    if (menuItem) {
-      onDelete(files[menuItem.index].fullPath);
-    }
-    handleClose();
-  };
+    const onOpenMenu = React.useCallback((index: number, target: any) => {
+      setMenuItem({
+        index,
+        anchorEl: target,
+      });
+    }, []);
 
-  const handleClose = () => {
-    setMenuItem(null);
-  };
+    const handleRevealLocation = React.useCallback(() => {
+      if (menuItem) {
+        window.electron.shell.showItemInFolder(files[menuItem.index].fullPath);
+      }
+      setMenuItem(null);
+    }, [menuItem, files]);
 
-  return (
-    <div style={{ display: "flex", flexFlow: "column", height: "100%", flex: "1" }}>
-      <div style={{ flex: "1", overflow: "hidden" }}>
-        <FileListResults
-          folderPath={folderPath}
-          onOpenMenu={onOpenMenu}
-          onSelect={onSelect}
-          onPlay={onPlay}
-          onClick={onFileClick}
-          selectedFiles={selectedFiles}
-          files={files}
-          scrollRowItem={scrollRowItem}
-          setScrollRowItem={setScrollRowItem}
-          onLoadMore={onLoadMore}
+    const handleDelete = React.useCallback(() => {
+      if (menuItem) {
+        onDelete(files[menuItem.index].fullPath);
+      }
+      setMenuItem(null);
+    }, [menuItem, files, onDelete]);
+
+    const handleClose = React.useCallback(() => {
+      setMenuItem(null);
+    }, []);
+
+    return (
+      <div style={{ display: "flex", flexFlow: "column", height: "100%", flex: "1" }}>
+        <div
+          style={{
+            flex: "1",
+            overflow: "hidden",
+            // Container for the virtualized list - no transform needed here
+            // as TanStack Virtual handles its own optimization
+          }}
+        >
+          <FileListResults
+            folderPath={folderPath}
+            onOpenMenu={onOpenMenu}
+            onSelect={onSelect}
+            onPlay={onPlay}
+            onClick={onFileClick}
+            files={files}
+            initialScrollOffset={initialScrollOffset.current}
+            onLoadMore={onLoadMore}
+            onScrollPositionChange={handleScrollPositionChange}
+            selectedFilesSet={selectedFilesSet}
+          />
+        </div>
+        <IconMenu
+          anchorEl={menuItem ? menuItem.anchorEl : null}
+          open={Boolean(menuItem)}
+          onClose={handleClose}
+          items={[
+            {
+              onClick: handleRevealLocation,
+              icon: <FolderIcon fontSize="small" />,
+              label: Messages.revealLocation(),
+            },
+            {
+              onClick: handleDelete,
+              icon: <DeleteIcon fontSize="small" />,
+              label: Messages.delete(),
+            },
+          ]}
         />
       </div>
-      <IconMenu
-        anchorEl={menuItem ? menuItem.anchorEl : null}
-        open={Boolean(menuItem)}
-        onClose={handleClose}
-        items={[
-          {
-            onClick: handleRevealLocation,
-            icon: <FolderIcon fontSize="small" />,
-            label: Messages.revealLocation(),
-          },
-          {
-            onClick: handleDelete,
-            icon: <DeleteIcon fontSize="small" />,
-            label: Messages.delete(),
-          },
-        ]}
-      />
-    </div>
-  );
-};
+    );
+  },
+);

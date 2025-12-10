@@ -32,20 +32,26 @@ import { ReplayBrowserMessages as Messages } from "./replay_browser.messages";
 export const ReplayBrowser = React.memo(() => {
   const presenter = useReplayPresenter();
   const searchInputRef = React.createRef<HTMLInputElement>();
-  const scrollRowItem = useReplays((store) => store.scrollRowItem);
   const { dolphinService, replayService } = useServices();
   const { viewReplays } = useDolphinActions(dolphinService);
+
   const loading = useReplays((store) => store.loading);
-  const showLoading = useDelayedLoading(loading, 300, 500);
   const loadingMore = useReplays((store) => store.loadingMore);
   const hasMoreReplays = useReplays((store) => store.hasMoreReplays);
+
   const currentFolder = useReplays((store) => store.currentFolder);
   const folderTree = useReplays((store) => store.folderTree);
   const collapsedFolders = useReplays((store) => store.collapsedFolders);
+  const totalFilesInFolder = useReplays((store) => store.totalFilesInFolder);
+
   const selectedFiles = useReplays((store) => store.selectedFiles);
   const selectAllMode = useReplays((store) => store.selectAllMode);
   const deselectedFiles = useReplays((store) => store.deselectedFiles);
-  const totalFilesInFolder = useReplays((store) => store.totalFilesInFolder);
+
+  // Convert to Set for O(1) lookups in list items
+  const selectedFilesSet = React.useMemo(() => new Set(selectedFiles), [selectedFiles]);
+
+  const showLoading = useDelayedLoading(loading, 300, 500);
   const fileSelection = useReplaySelection();
   const { showError, showSuccess } = useToasts();
 
@@ -231,11 +237,10 @@ export const ReplayBrowser = React.memo(() => {
                   }}
                   onFileClick={fileSelection.onFileClick}
                   selectedFiles={selectedFiles}
+                  selectedFilesSet={selectedFilesSet}
                   onSelect={(index: number) => setSelectedItem(index)}
                   onPlay={(index: number) => playSelectedFile(index)}
                   files={filteredFiles}
-                  scrollRowItem={scrollRowItem}
-                  setScrollRowItem={(item) => presenter.setScrollRowItem(item)}
                   onLoadMore={handleLoadMore}
                   loadingMore={loadingMore}
                 />
