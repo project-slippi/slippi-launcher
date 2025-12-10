@@ -16,11 +16,10 @@ import { AccountSwitcherMessages as Messages } from "./account_switcher.messages
 const MAX_ADDITIONAL_ACCOUNTS = 4;
 
 const AccountItem = styled.div<{ $disabled?: boolean }>`
-  width: 100%;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  padding: 4px 0;
-  gap: 10px;
+  padding: 4px 16px;
   cursor: ${(props) => (props.$disabled ? "default" : "pointer")};
   opacity: ${(props) => (props.$disabled ? 0.6 : 1)};
   transition: background-color 100ms ease-out;
@@ -131,10 +130,18 @@ export const AccountSwitcher = ({
         >
           {sortedAccounts.map((account) => (
             <AccountItem key={account.id} onClick={() => handleAccountClick(account.id)} $disabled={switching}>
-              <UserIcon imageUrl={account.displayPicture} size={32} />
-              <AccountInfo>
-                <AccountName>{account.displayName}</AccountName>
-              </AccountInfo>
+              <div
+                css={css`
+                  display: flex;
+                  align-items: center;
+                  gap: 10px;
+                `}
+              >
+                <UserIcon imageUrl={account.displayPicture} size={26} />
+                <AccountInfo>
+                  <AccountName>{account.displayName}</AccountName>
+                </AccountInfo>
+              </div>
               <Tooltip title={Messages.remove()}>
                 <RemoveButton className="remove-button" onClick={(e) => handleRemoveClick(e, account.id)} size="small">
                   <CloseIcon sx={{ fontSize: 18 }} />
