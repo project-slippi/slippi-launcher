@@ -24,14 +24,12 @@ const FileListResults = ({
   onPlay,
   onOpenMenu,
   onClick,
-  selectedFiles,
   onLoadMore,
   onScrollPositionChange,
 }: {
   folderPath: string;
   files: FileResult[];
   initialScrollOffset: number;
-  selectedFiles: Array<string>;
   onClick: (index: number, isShiftHeld: boolean) => void;
   onOpenMenu: (index: number, element: HTMLElement) => void;
   onSelect: (index: number) => void;
@@ -44,14 +42,9 @@ const FileListResults = ({
   // Track current scroll row for saving on unmount
   const currentScrollRow = React.useRef(initialScrollOffset / REPLAY_FILE_ITEM_SIZE);
 
-  // Convert selectedFiles array to Set for O(1) lookups
-  const selectedFilesSet = React.useMemo(() => new Set(selectedFiles), [selectedFiles]);
-
   const Row = React.useCallback(
     (props: { style?: React.CSSProperties; index: number }) => {
       const file = files[props.index];
-      const isSelected = selectedFilesSet.has(file.fullPath);
-      const selectedIndex = isSelected ? selectedFiles.indexOf(file.fullPath) : -1;
       return (
         <ErrorBoundary>
           <ReplayFileContainer
@@ -60,15 +53,13 @@ const FileListResults = ({
             style={props.style}
             onSelect={onSelect}
             onClick={onClick}
-            isSelected={isSelected}
-            selectedIndex={selectedIndex}
             onPlay={onPlay}
             {...file}
           />
         </ErrorBoundary>
       );
     },
-    [files, onSelect, onPlay, onOpenMenu, onClick, selectedFiles, selectedFilesSet],
+    [files, onSelect, onPlay, onOpenMenu, onClick],
   );
 
   // Track filter values with ref to avoid re-renders
@@ -134,7 +125,6 @@ export const FileList = React.memo(
     onDelete,
     onFileClick,
     folderPath,
-    selectedFiles,
     onLoadMore,
   }: {
     folderPath: string;
@@ -195,7 +185,6 @@ export const FileList = React.memo(
             onSelect={onSelect}
             onPlay={onPlay}
             onClick={onFileClick}
-            selectedFiles={selectedFiles}
             files={files}
             initialScrollOffset={initialScrollOffset.current}
             onLoadMore={onLoadMore}

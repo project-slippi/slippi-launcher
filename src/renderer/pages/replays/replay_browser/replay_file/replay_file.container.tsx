@@ -15,6 +15,7 @@ import React, { useCallback, useMemo } from "react";
 
 import { DraggableFile } from "@/components/draggable_file";
 import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/use_dolphin_store";
+import { useReplays } from "@/lib/hooks/use_replays";
 import { convertFrameCountToDurationString, monthDayHourFormat } from "@/lib/time";
 import { getStageImage } from "@/lib/utils";
 
@@ -30,8 +31,6 @@ type ReplayFileContainerProps = FileResult & {
   onPlay: (index: number) => void;
   onOpenMenu: (index: number, element: HTMLElement) => void;
   onClick: (index: number, isShiftHeld: boolean) => void;
-  isSelected: boolean;
-  selectedIndex: number;
 };
 
 export const ReplayFileContainer = React.memo(function ReplayFileContainer({
@@ -41,18 +40,19 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
   onSelect,
   onPlay,
   onClick,
-  isSelected,
-  selectedIndex,
   id,
   fileName,
   game,
   fullPath,
 }: ReplayFileContainerProps) {
-  const selected = isSelected;
   const stageInfo = game.stageId != null ? stageUtils.getStageInfo(game.stageId) : null;
   const stageImageUrl = stageInfo !== null && stageInfo.id !== -1 ? getStageImage(stageInfo.id) : undefined;
   const stageName = stageInfo !== null ? stageInfo.name : Messages.unknownStage();
   const playbackStatus = useDolphinStore((store) => store.playbackStatus);
+  const selectedFiles = useReplays((store) => store.selectedFiles);
+
+  const selectedIndex = useMemo(() => selectedFiles.indexOf(fullPath), [selectedFiles, fullPath]);
+  const selected = selectedIndex !== -1;
 
   const onShowStats = useCallback(() => onSelect(index), [onSelect, index]);
   const onReplayClick = useCallback(
@@ -132,23 +132,25 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
   }, [fileName, fullPath]);
 
   return (
-    <div
-      key={id}
-      css={css`
-        cursor: pointer;
-      `}
-      onClick={onReplayClick}
-      style={style}
-    >
-      <ReplayFileImpl
-        title={title}
-        backgroundImage={stageImageUrl}
-        selectedIndex={selected ? selectedIndex : undefined}
-        players={players}
-        actions={actions}
-        details={details}
-      />
-    </div>
+    <DraggableFile filePaths={selected && selectedFiles.length > 0 ? selectedFiles : []}>
+      <div
+        key={id}
+        css={css`
+          cursor: pointer;
+        `}
+        onClick={onReplayClick}
+        style={style}
+      >
+        <ReplayFileImpl
+          title={title}
+          backgroundImage={stageImageUrl}
+          selectedIndex={selected ? selectedIndex : undefined}
+          players={players}
+          actions={actions}
+          details={details}
+        />
+      </div>
+    </DraggableFile>
   );
 });
 
