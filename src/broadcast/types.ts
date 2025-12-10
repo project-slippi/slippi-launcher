@@ -75,6 +75,7 @@ export type BroadcastService = {
   onSlippiStatusChanged(handle: (status: number) => void): () => void;
   onSpectateErrorMessage(handle: (message: string | null) => void): () => void;
   connectToSpectateServer(authToken: string): Promise<void>;
+  disconnectFromSpectateServer(): Promise<void>;
   refreshBroadcastList(): Promise<void>;
   watchBroadcast(broadcasterId: string): Promise<void>;
   startBroadcast(config: StartBroadcastConfig): Promise<void>;

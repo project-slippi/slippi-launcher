@@ -5,6 +5,7 @@ import log from "electron-log";
 import React from "react";
 
 import { ConfirmationModal } from "@/components/confirmation_modal/confirmation_modal";
+import { useDolphinStore } from "@/lib/dolphin/use_dolphin_store";
 import { useAccount } from "@/lib/hooks/use_account";
 import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
@@ -30,6 +31,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
   const activeAccountId = useAccount((store) => store.activeAccountId);
   const setAccounts = useAccount((store) => store.setAccounts);
   const setActiveAccountId = useAccount((store) => store.setActiveAccountId);
+  const netplayOpened = useDolphinStore((store) => store.netplayOpened);
   const { showSuccess, showError } = useToasts();
 
   const [openLogoutPrompt, setOpenLogoutPrompt] = React.useState(false);
@@ -76,6 +78,11 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
   // Handle account switch
   const handleSwitchAccount = async (accountId: string) => {
     if (switching) {
+      return;
+    }
+
+    if (netplayOpened) {
+      showError(Messages.closeDolphinToSwitchAccounts());
       return;
     }
 

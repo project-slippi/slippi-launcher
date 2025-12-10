@@ -32,6 +32,7 @@ export interface AuthService {
 // Multi-account types
 // Note: StoredAccount and AccountData are defined in @settings/types.ts
 import type { StoredAccount } from "@settings/types";
+import type { Auth } from "firebase/auth";
 
 export interface MultiAccountService {
   // Initialization
@@ -45,7 +46,7 @@ export interface MultiAccountService {
   getActiveAccountId(): string | null;
 
   // Get the active Firebase Auth instance for AuthService to use
-  getActiveAuth(): any | null; // Returns firebase Auth instance
+  getActiveAuth(): Auth | null; // Returns firebase Auth instance
 
   // Notifications
   onAccountsChange(onChange: (data: { accounts: StoredAccount[]; activeId: string | null }) => void): () => void;

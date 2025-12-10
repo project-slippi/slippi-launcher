@@ -9,6 +9,7 @@ import type { BroadcastWorker } from "./broadcast.worker.interface";
 import { createBroadcastWorker } from "./broadcast.worker.interface";
 import {
   ipc_connectToSpectateServer,
+  ipc_disconnectFromSpectateServer,
   ipc_refreshBroadcastList,
   ipc_startBroadcast,
   ipc_stopBroadcast,
@@ -122,6 +123,15 @@ export default function setupBroadcastIpc({
     return { success: true };
   });
 
+  ipc_disconnectFromSpectateServer.main!.handle(async () => {
+    if (!spectateWorker) {
+      return { success: true };
+    }
+    await spectateWorker.disconnect();
+
+    return { success: true };
+  });
+
   ipc_refreshBroadcastList.main!.handle(async () => {
     Preconditions.checkExists(
       spectateWorker,
@@ -162,8 +172,10 @@ export default function setupBroadcastIpc({
   });
 
   ipc_stopBroadcast.main!.handle(async () => {
-    Preconditions.checkExists(broadcastWorker, "Error stopping broadcast. Was the broadcast started to begin with?");
-
+    if (!broadcastWorker) {
+      // We don't have a broadcast worker, so we probably hadn't started a broadcast to begin with.
+      return { success: true };
+    }
     // Stop the broadcast
     await broadcastWorker.stopBroadcast();
 

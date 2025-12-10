@@ -10,6 +10,12 @@ export const ipc_connectToSpectateServer = makeEndpoint.main(
   <SuccessPayload>_,
 );
 
+export const ipc_disconnectFromSpectateServer = makeEndpoint.main(
+  "disconnectFromSpectateServer",
+  <EmptyPayload>_,
+  <SuccessPayload>_,
+);
+
 export const ipc_refreshBroadcastList = makeEndpoint.main("refreshBroadcastList", <EmptyPayload>_, <SuccessPayload>_);
 
 export const ipc_watchBroadcast = makeEndpoint.main("watchBroadcast", <{ broadcasterId: string }>_, <SuccessPayload>_);

@@ -1,4 +1,3 @@
-import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import EditIcon from "@mui/icons-material/Edit";
@@ -51,19 +50,13 @@ export const UserMenuItems = ({
   return (
     <>
       {/* Account Switcher (if has inactive accounts to switch to) */}
-      <div
-        css={css`
-          padding: 0 8px;
-        `}
-      >
-        <AccountSwitcher
-          accounts={inactiveAccounts}
-          onSwitchAccount={onSwitchAccount}
-          onAddAccount={onAddAccount}
-          onRemoveAccount={onRemoveAccount}
-          switching={switching}
-        />
-      </div>
+      <AccountSwitcher
+        accounts={inactiveAccounts}
+        onSwitchAccount={onSwitchAccount}
+        onAddAccount={onAddAccount}
+        onRemoveAccount={onRemoveAccount}
+        switching={switching}
+      />
       <SectionDivider />
 
       {/* Current Account Options */}

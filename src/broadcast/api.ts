@@ -5,6 +5,7 @@ import {
   ipc_broadcastListUpdatedEvent,
   ipc_broadcastReconnectEvent,
   ipc_connectToSpectateServer,
+  ipc_disconnectFromSpectateServer,
   ipc_dolphinStatusChangedEvent,
   ipc_refreshBroadcastList,
   ipc_slippiStatusChangedEvent,
@@ -61,6 +62,9 @@ const broadcastApi: BroadcastService = {
   },
   async connectToSpectateServer(authToken: string): Promise<void> {
     await ipc_connectToSpectateServer.renderer!.trigger({ authToken });
+  },
+  async disconnectFromSpectateServer(): Promise<void> {
+    await ipc_disconnectFromSpectateServer.renderer!.trigger({});
   },
   async refreshBroadcastList(): Promise<void> {
     await ipc_refreshBroadcastList.renderer!.trigger({});
