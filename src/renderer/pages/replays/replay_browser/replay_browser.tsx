@@ -55,6 +55,9 @@ export const ReplayBrowser = React.memo(() => {
     deselectedFiles: store.deselectedFiles,
   }));
 
+  // Convert to Set for O(1) lookups in list items
+  const selectedFilesSet = React.useMemo(() => new Set(selectedFiles), [selectedFiles]);
+
   const showLoading = useDelayedLoading(loading, 300, 500);
   const fileSelection = useReplaySelection();
   const { showError, showSuccess } = useToasts();
@@ -241,6 +244,7 @@ export const ReplayBrowser = React.memo(() => {
                   }}
                   onFileClick={fileSelection.onFileClick}
                   selectedFiles={selectedFiles}
+                  selectedFilesSet={selectedFilesSet}
                   onSelect={(index: number) => setSelectedItem(index)}
                   onPlay={(index: number) => playSelectedFile(index)}
                   files={filteredFiles}

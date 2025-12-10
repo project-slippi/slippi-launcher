@@ -14,7 +14,6 @@ import groupBy from "lodash/groupBy";
 import React, { useCallback, useMemo } from "react";
 
 import { DraggableFile } from "@/components/draggable_file";
-import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/use_dolphin_store";
 import { useReplays } from "@/lib/hooks/use_replays";
 import { convertFrameCountToDurationString, monthDayHourFormat } from "@/lib/time";
 import { getStageImage } from "@/lib/utils";
@@ -31,6 +30,7 @@ type ReplayFileContainerProps = FileResult & {
   onPlay: (index: number) => void;
   onOpenMenu: (index: number, element: HTMLElement) => void;
   onClick: (index: number, isShiftHeld: boolean) => void;
+  selectedFilesSet: Set<string>;
 };
 
 export const ReplayFileContainer = React.memo(function ReplayFileContainer({
@@ -44,15 +44,21 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
   fileName,
   game,
   fullPath,
+  selectedFilesSet,
 }: ReplayFileContainerProps) {
   const stageInfo = game.stageId != null ? stageUtils.getStageInfo(game.stageId) : null;
   const stageImageUrl = stageInfo !== null && stageInfo.id !== -1 ? getStageImage(stageInfo.id) : undefined;
   const stageName = stageInfo !== null ? stageInfo.name : Messages.unknownStage();
-  const playbackStatus = useDolphinStore((store) => store.playbackStatus);
-  const selectedFiles = useReplays((store) => store.selectedFiles);
 
-  const selectedIndex = useMemo(() => selectedFiles.indexOf(fullPath), [selectedFiles, fullPath]);
-  const selected = selectedIndex !== -1;
+  // Use Set for O(1) lookup instead of O(n) indexOf
+  const selected = selectedFilesSet.has(fullPath);
+
+  // Only calculate index if actually selected (for display purposes)
+  const selectedFiles = useReplays((store) => store.selectedFiles);
+  const selectedIndex = useMemo(
+    () => (selected ? selectedFiles.indexOf(fullPath) : -1),
+    [selected, selectedFiles, fullPath],
+  );
 
   const onShowStats = useCallback(() => onSelect(index), [onSelect, index]);
   const onReplayClick = useCallback(
@@ -61,6 +67,7 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
   );
   const onPlayClick = useCallback(() => onPlay(index), [onPlay, index]);
 
+  // Extract playbackStatus to a separate component to avoid re-rendering all items
   const actions = useMemo(() => {
     return [
       {
@@ -75,13 +82,14 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
       },
       {
         Icon: PlayCircleOutlineIcon,
-        label: playbackStatus === DolphinStatus.READY ? Messages.launchReplay() : Messages.dolphinIsUpdating(),
+        label: Messages.launchReplay(), // Will be updated by PlayButton component
         primary: true,
         onClick: onPlayClick,
-        disabled: playbackStatus !== DolphinStatus.READY,
+        disabled: false, // Will be updated by PlayButton component
+        useDolphinStatus: true, // Flag to indicate this action needs Dolphin status
       },
     ];
-  }, [index, onOpenMenu, onPlayClick, onShowStats, playbackStatus]);
+  }, [index, onOpenMenu, onPlayClick, onShowStats]);
 
   const details = useMemo(() => {
     const date = new Date(game.startTime ? Date.parse(game.startTime) : 0);
@@ -114,25 +122,14 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
     });
   }, [game.isTeams, game.players]);
 
-  const title = useMemo(() => {
-    return (
-      <DraggableFile
-        filePaths={[fullPath]}
-        css={css`
-          opacity: 0.9;
-          &:hover {
-            opacity: 1;
-            text-decoration: underline;
-          }
-        `}
-      >
-        {fileName}
-      </DraggableFile>
-    );
-  }, [fileName, fullPath]);
+  // Pre-compute drag paths to avoid recreating array
+  const dragPaths = useMemo(
+    () => (selected && selectedFiles.length > 0 ? selectedFiles : []),
+    [selected, selectedFiles],
+  );
 
   return (
-    <DraggableFile filePaths={selected && selectedFiles.length > 0 ? selectedFiles : []}>
+    <DraggableFile filePaths={dragPaths}>
       <div
         key={id}
         css={css`
@@ -142,7 +139,8 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
         style={style}
       >
         <ReplayFileImpl
-          title={title}
+          fileName={fileName}
+          fullPath={fullPath}
           backgroundImage={stageImageUrl}
           selectedIndex={selected ? selectedIndex : undefined}
           players={players}

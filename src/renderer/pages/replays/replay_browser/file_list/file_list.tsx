@@ -26,6 +26,7 @@ const FileListResults = ({
   onClick,
   onLoadMore,
   onScrollPositionChange,
+  selectedFilesSet,
 }: {
   folderPath: string;
   files: FileResult[];
@@ -36,14 +37,29 @@ const FileListResults = ({
   onPlay: (index: number) => void;
   onLoadMore: () => void;
   onScrollPositionChange: (rowIndex: number) => void;
+  selectedFilesSet: Set<string>;
 }) => {
   // Keep a reference to the list so we can control the scroll position
   const listRef = React.useRef<List>(null);
   // Track current scroll row for saving on unmount
   const currentScrollRow = React.useRef(initialScrollOffset / REPLAY_FILE_ITEM_SIZE);
 
+  // Use itemData to pass dependencies to Row without recreating the Row component
+  const itemData = React.useMemo(
+    () => ({
+      files,
+      onOpenMenu,
+      onSelect,
+      onClick,
+      onPlay,
+      selectedFilesSet,
+    }),
+    [files, onSelect, onPlay, onOpenMenu, onClick, selectedFilesSet],
+  );
+
   const Row = React.useCallback(
-    (props: { style?: React.CSSProperties; index: number }) => {
+    (props: { style?: React.CSSProperties; index: number; data: typeof itemData }) => {
+      const { files, onOpenMenu, onSelect, onClick, onPlay, selectedFilesSet } = props.data;
       const file = files[props.index];
       return (
         <ErrorBoundary>
@@ -54,12 +70,13 @@ const FileListResults = ({
             onSelect={onSelect}
             onClick={onClick}
             onPlay={onPlay}
+            selectedFilesSet={selectedFilesSet}
             {...file}
           />
         </ErrorBoundary>
       );
     },
-    [files, onSelect, onPlay, onOpenMenu, onClick],
+    [], // Row itself never changes
   );
 
   // Track filter values with ref to avoid re-renders
@@ -106,6 +123,7 @@ const FileListResults = ({
           initialScrollOffset={initialScrollOffset}
           itemCount={files.length}
           itemSize={REPLAY_FILE_ITEM_SIZE}
+          itemData={itemData}
           onItemsRendered={handleItemsRendered}
         >
           {Row}
@@ -126,6 +144,7 @@ export const FileList = React.memo(
     onFileClick,
     folderPath,
     onLoadMore,
+    selectedFilesSet,
   }: {
     folderPath: string;
     files: FileResult[];
@@ -133,6 +152,7 @@ export const FileList = React.memo(
     onSelect: (index: number) => void;
     onFileClick: (index: number, isShiftHeld: boolean) => void;
     selectedFiles: Array<string>;
+    selectedFilesSet: Set<string>;
     onPlay: (index: number) => void;
     onLoadMore: () => void;
     loadingMore: boolean;
@@ -178,7 +198,15 @@ export const FileList = React.memo(
 
     return (
       <div style={{ display: "flex", flexFlow: "column", height: "100%", flex: "1" }}>
-        <div style={{ flex: "1", overflow: "hidden" }}>
+        <div
+          style={{
+            flex: "1",
+            overflow: "hidden",
+            willChange: "transform",
+            // Enable GPU acceleration for smooth scrolling
+            transform: "translateZ(0)",
+          }}
+        >
           <FileListResults
             folderPath={folderPath}
             onOpenMenu={onOpenMenu}
@@ -189,6 +217,7 @@ export const FileList = React.memo(
             initialScrollOffset={initialScrollOffset.current}
             onLoadMore={onLoadMore}
             onScrollPositionChange={handleScrollPositionChange}
+            selectedFilesSet={selectedFilesSet}
           />
         </div>
         <IconMenu
