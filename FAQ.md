@@ -100,7 +100,7 @@ Replays are stored by default in `Documents/Slippi` on Windows and `~/Slippi` on
 
 ### Updated OS Requirements
 - Windows 10 or newer
-- macOS Monterey (12.0) or newer
+- macOS Ventura (13.0) or newer
 - Ubuntu 22.04 or newer and the following packages
   - libfuse2
   - qt6-qpa-plugins
