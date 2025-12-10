@@ -16,7 +16,7 @@ import {
   ipc_searchGames,
   ipc_selectTreeFolder,
 } from "./ipc";
-import { createReplayIndexingWorker } from "./replay_indexing.worker.interface";
+import { createReplayIndexingPool } from "./replay_indexing_pool";
 import type { Progress } from "./types";
 
 const REPLAY_DATABASE_NAME = "slippi.sqlite";
@@ -26,24 +26,33 @@ const isDevelopment = process.env.NODE_ENV === "development";
 async function createReplayProvider() {
   const replayDatabaseFolder = path.join(app.getPath("userData"), REPLAY_DATABASE_NAME);
 
-  // Create the replay indexing worker
-  let worker;
+  // Create the replay indexing worker pool
+  let workerPool;
   try {
-    worker = await createReplayIndexingWorker();
-    log.info("Replay indexing worker created successfully");
+    workerPool = createReplayIndexingPool();
+    await workerPool.initialize();
+    log.info(`Replay indexing worker pool created successfully with ${workerPool.getPoolSize()} workers`);
   } catch (err) {
-    log.error(`Failed to create replay indexing worker: ${err}. Will use main thread for parsing.`);
+    log.error(`Failed to create replay indexing worker pool: ${err}. Will use main thread for parsing.`);
+  }
+
+  // Register cleanup on app quit
+  if (workerPool) {
+    app.on("quit", async () => {
+      log.info("App quitting, terminating worker pool...");
+      await workerPool.terminate();
+    });
   }
 
   try {
     const database = await createDatabase(isDevelopment ? undefined : replayDatabaseFolder);
-    return new DatabaseReplayProvider(database, worker);
+    return new DatabaseReplayProvider(database, workerPool);
   } catch (err) {
     log.error(
       `Failed to initialize replay database at ${replayDatabaseFolder}: ${err}. Using in-memory database instead.`,
     );
     const database = await createDatabase(undefined);
-    return new DatabaseReplayProvider(database, worker);
+    return new DatabaseReplayProvider(database, workerPool);
   }
 }
 
