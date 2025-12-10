@@ -1,7 +1,7 @@
 import type { FormatOptions } from "date-fns";
 import { format, intervalToDuration } from "date-fns";
 import type { Locale } from "date-fns/locale";
-import { es, ja } from "date-fns/locale";
+import { es, ja, ru } from "date-fns/locale";
 
 import type { SupportedLanguage } from "@/services/i18n/util";
 
@@ -50,6 +50,8 @@ export function getLocale(language: SupportedLanguage): Locale | undefined {
       return es;
     case "ja":
       return ja;
+    case "ru":
+      return ru;
     case "en":
       return undefined;
     // Intentionally do not use a default case here catch errors when a new language is supported
