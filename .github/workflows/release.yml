@@ -27,11 +27,11 @@ jobs:
     needs: wait-for-builds
     steps:
       - name: Download latest artifacts
-        uses: dawidd6/action-download-artifact@v6
+        uses: dawidd6/action-download-artifact@v11
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           workflow: build.yml
-          commit: ${{ github.event.release.target_commitish }}
+          commit: ${{ github.sha }}
       - name: Flatten Directory structure
         run: |
           find ./ -mindepth 2 -type f -not -name "builder-debug*" -exec mv -t ./ -i '{}' +
