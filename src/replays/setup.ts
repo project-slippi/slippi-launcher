@@ -16,7 +16,7 @@ import {
   ipc_searchGames,
   ipc_selectTreeFolder,
 } from "./ipc";
-import { createReplayIndexingPool } from "./replay_indexing_pool/replay_indexing_pool";
+import { createManagedReplayIndexingPool } from "./replay_indexing_pool/replay_indexing_pool_manager";
 import type { Progress } from "./types";
 
 const REPLAY_DATABASE_NAME = "slippi.sqlite";
@@ -26,33 +26,33 @@ const isDevelopment = process.env.NODE_ENV === "development";
 async function createReplayProvider() {
   const replayDatabaseFolder = path.join(app.getPath("userData"), REPLAY_DATABASE_NAME);
 
-  // Create the replay indexing worker pool
-  let workerPool;
+  // Create the managed replay indexing pool (lazy initialization + idle timeout)
+  // Workers will be created on-demand and automatically shut down after 5 minutes of inactivity
+  let workerPoolManager;
   try {
-    workerPool = createReplayIndexingPool();
-    await workerPool.initialize();
-    log.info(`Replay indexing worker pool created successfully with ${workerPool.getPoolSize()} workers`);
+    workerPoolManager = createManagedReplayIndexingPool();
+    log.info("Replay indexing pool manager created (workers will be created on-demand)");
   } catch (err) {
-    log.error(`Failed to create replay indexing worker pool: ${err}. Will use main thread for parsing.`);
+    log.error(`Failed to create replay indexing pool manager: ${err}. Will use main thread for parsing.`);
   }
 
   // Register cleanup on app quit
-  if (workerPool) {
+  if (workerPoolManager) {
     app.on("quit", async () => {
       log.info("App quitting, terminating worker pool...");
-      await workerPool.terminate();
+      await workerPoolManager.terminate();
     });
   }
 
   try {
     const database = await createDatabase(isDevelopment ? undefined : replayDatabaseFolder);
-    return new DatabaseReplayProvider(database, workerPool);
+    return new DatabaseReplayProvider(database, workerPoolManager);
   } catch (err) {
     log.error(
       `Failed to initialize replay database at ${replayDatabaseFolder}: ${err}. Using in-memory database instead.`,
     );
     const database = await createDatabase(undefined);
-    return new DatabaseReplayProvider(database, workerPool);
+    return new DatabaseReplayProvider(database, workerPoolManager);
   }
 }
 

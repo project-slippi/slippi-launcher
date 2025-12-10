@@ -16,7 +16,7 @@ import path from "path";
 
 import { extractPlayerNames } from "../extract_player_names";
 import type { ParsedFileInfo } from "../replay_indexing_pool/replay_indexing.worker.interface";
-import type { ReplayIndexingPool } from "../replay_indexing_pool/replay_indexing_pool";
+import type { ReplayIndexingPoolManager } from "../replay_indexing_pool/replay_indexing_pool_manager";
 import { Continuation } from "./continuation";
 import { inferStartTime } from "./infer_start_time";
 import { mapGameRecordToFileResult } from "./record_mapper";
@@ -31,7 +31,7 @@ const SQLITE_PARAM_LIMIT_BATCH_SIZE = 500;
 export class DatabaseReplayProvider implements ReplayProvider {
   private currentSearchRequestId = 0;
 
-  constructor(private readonly db: Kysely<Database>, private readonly workerPool?: ReplayIndexingPool) {}
+  constructor(private readonly db: Kysely<Database>, private readonly workerPool?: ReplayIndexingPoolManager) {}
 
   /**
    * Check if a request ID has been superseded by a newer request.
@@ -473,7 +473,8 @@ export class DatabaseReplayProvider implements ReplayProvider {
 
         const batchStartTime = Date.now();
 
-        // Parse files using worker pool (if available) before transaction
+        // Parse files using managed worker pool (if available) before transaction
+        // Pool is created on-demand and will auto-shutdown after idle timeout
         // This allows parallel parsing off the main thread across multiple workers
         let parsedFiles: Map<string, ParsedFileInfo>;
         if (this.workerPool) {
@@ -482,8 +483,9 @@ export class DatabaseReplayProvider implements ReplayProvider {
           const parseDuration = Date.now() - parseStartTime;
           const filesPerSec = Math.round((batch.length / parseDuration) * 1000);
           const poolSize = this.workerPool.getPoolSize();
+          const poolInfo = poolSize > 0 ? ` across ${poolSize} workers` : "";
           log.info(
-            `Worker pool parsed ${batch.length} files in ${parseDuration}ms (${filesPerSec} files/sec across ${poolSize} workers)`,
+            `Worker pool parsed ${batch.length} files in ${parseDuration}ms (${filesPerSec} files/sec${poolInfo})`,
           );
 
           parsedFiles = new Map(parseResults.filter((r) => r.success && r.data).map((r) => [r.filename, r.data!]));
@@ -571,7 +573,8 @@ export class DatabaseReplayProvider implements ReplayProvider {
   }
 
   /**
-   * Parse a replay file using the worker pool if available, otherwise fallback to main thread.
+   * Parse a replay file using the managed worker pool if available, otherwise fallback to main thread.
+   * The pool will be created on-demand and automatically shut down after idle timeout.
    * @param folder - The folder containing the replay file
    * @param filename - The name of the replay file
    * @returns The parsed file information
