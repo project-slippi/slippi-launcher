@@ -103,11 +103,17 @@ export class MirrorManager extends EventEmitter {
       connection.on(ConnectionEvent.HANDSHAKE, (details: ConnectionDetails) => {
         this.emit(MirrorEvent.LOG, "Got handshake from wii");
         this.emit(MirrorEvent.LOG, details);
-        if (config.useNicknameFolders) {
-          const replayFolder = path.join(config.folderPath, details.consoleNick.trim());
-          fs.ensureDirSync(replayFolder);
+        // i'm being extra defensive cause there is a setup that will break mirroring when nickname folders is enabled
+        try {
+          if (config.useNicknameFolders && details.consoleNick && details.consoleNick.length > 0) {
+            const replayFolder = path.join(config.folderPath, details.consoleNick.trim());
+            fs.ensureDirSync(replayFolder);
 
-          fileWriter.updateSettings({ consoleNickname: details.consoleNick, folderPath: replayFolder });
+            fileWriter.updateSettings({ consoleNickname: details.consoleNick, folderPath: replayFolder });
+          }
+        } catch (err) {
+          // this is not a true failure so we're just gonna log it for now
+          this.emit(MirrorEvent.LOG, `failed to setup the replay folder with console nickname: ${err}`);
         }
 
         this.emit(MirrorEvent.MIRROR_STATUS_CHANGE, {
