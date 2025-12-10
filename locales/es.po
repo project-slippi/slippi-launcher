@@ -7,7 +7,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "x-generator: i18next-auto-keys CLI\n"
 "Language: es\n"
-"PO-Revision-Date: 2025-11-27T01:35:14.954Z\n"
+"PO-Revision-Date: 2025-12-10T23:54:31.393Z\n"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
 msgid "2-4 uppercase English characters"
@@ -48,6 +48,10 @@ msgstr "Activo"
 msgid "Add"
 msgstr "Agregar"
 
+#: src/renderer/app/header/account_switcher/account_switcher.messages.ts:2:28
+msgid "Add another account"
+msgstr ""
+
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:12:31
 msgid "Additional SLP Folders"
 msgstr "Carpetas SLP adicionales"
@@ -55,6 +59,11 @@ msgstr "Carpetas SLP adicionales"
 #: src/renderer/pages/settings/create.messages.ts:12:19
 msgid "Advanced"
 msgstr "Avanzado"
+
+#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:3:40
+#. {0} count: number
+msgid "All {0, plural, one {# file} other {# files}} selected"
+msgstr ""
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:15:5
 msgid ""
@@ -229,7 +238,7 @@ msgstr "Elige qué sucede cuando se presiona el botón Jugar."
 msgid "Choose which Slippi Dolphin release to install"
 msgstr "Elige qué versión de Slippi Dolphin instalar"
 
-#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:4:16
+#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:5:16
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:8:16
 msgid "Clear"
 msgstr "Limpiar"
@@ -286,7 +295,7 @@ msgstr "Configurar {0}"
 msgid "Confirm"
 msgstr "Confirmar"
 
-#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:7:30
+#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:8:30
 msgid "Confirm File Deletion"
 msgstr "Confirmar eliminación de archivos"
 
@@ -378,7 +387,7 @@ msgstr "Predeterminado"
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connections_list.messages.ts:3:17
 #: src/renderer/pages/replays/replay_browser/file_list/file_list.messages.ts:3:17
-#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:3:17
+#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:4:17
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:6:17
 msgid "Delete"
 msgstr "Eliminar"
@@ -451,6 +460,10 @@ msgstr ""
 "en la página de configuración, haz clic en \"Copiar registros\", y pégalos "
 "en el canal #windows-support del Discord de Slippi con contexto sobre el "
 "cierre inesperado."
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:16:39
+msgid "Dolphin is currently running. Close Dolphin to switch accounts"
+msgstr ""
 
 #: src/renderer/pages/replays/replay_browser/replay_file/replay_file.messages.ts:6:28
 #: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:6:28
@@ -612,6 +625,14 @@ msgstr ""
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:2:33
 msgid "Failed to read gecko codes"
 msgstr "No se pudieron leer los códigos Gecko"
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:11:32
+msgid "Failed to remove account"
+msgstr ""
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:12:32
+msgid "Failed to switch account"
+msgstr ""
 
 #: src/renderer/pages/home/sidebar/tournament_links.messages.ts:5:34
 msgid "Find in-person tournaments"
@@ -846,6 +867,11 @@ msgstr "Administrar códigos Gecko"
 msgid "Manage account"
 msgstr "Administrar cuenta"
 
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:13:40
+#. {0} max: number
+msgid "Maximum {0} accounts reached. Remove an account to add another."
+msgstr ""
+
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:2:23
 msgid "Melee ISO File"
 msgstr "Archivo ISO de Melee"
@@ -1073,7 +1099,7 @@ msgstr "Pegar códigos Gecko"
 msgid "Play"
 msgstr "Jugar"
 
-#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:6:18
+#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:7:18
 msgid "Play All"
 msgstr "Reproducir todo"
 
@@ -1196,6 +1222,10 @@ msgstr ""
 "El juego clasificatorio está actualmente disponible para todos. ¡Pruébalo "
 "ahora! Disponible una vez cada 4 días."
 
+#: src/renderer/app/header/account_switcher/account_switcher.messages.ts:3:32
+msgid "Re-authenticate account"
+msgstr ""
+
 #: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:5:19
 msgid "Read more"
 msgstr "Leer más"
@@ -1217,9 +1247,15 @@ msgstr "Puerto de Retransmisión"
 msgid "Remote Control Server"
 msgstr "Servidor de control remoto"
 
+#: src/renderer/app/header/account_switcher/account_switcher.messages.ts:4:17
 #: src/renderer/components/multi_path_input/multi_path_input.messages.ts:4:17
 msgid "Remove"
 msgstr "Eliminar"
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:14:44
+#. {0} accountName: string
+msgid "Removed {0}"
+msgstr ""
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:6:5
 msgid ""
@@ -1328,7 +1364,7 @@ msgstr "Buscar"
 msgid "Select"
 msgstr "Seleccionar"
 
-#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:5:20
+#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:6:20
 msgid "Select All"
 msgstr "Seleccionar todo"
 
@@ -1413,8 +1449,8 @@ msgid ""
 "Slippi may be experiencing some downtime. Playing online may or may not "
 "work."
 msgstr ""
-"Los Servidores de Slippi pueden estar experimentando inconvenientes. Jugar en línea podría "
-"funcionar o no."
+"Los Servidores de Slippi pueden estar experimentando inconvenientes. Jugar "
+"en línea podría funcionar o no."
 
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:7:28
 msgid "Slippi server error"
@@ -1518,6 +1554,11 @@ msgstr "Registros copiados exitosamente al portapapeles"
 #: src/renderer/components/footer/footer.messages.ts:2:24
 msgid "Support Slippi"
 msgstr "Apoyar a Slippi"
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:15:40
+#. {0} accountName: string
+msgid "Switched to {0}"
+msgstr ""
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:15:23
 msgid "Symmetric NAT"
@@ -1870,7 +1911,7 @@ msgstr ""
 "{0, plural, one {# archivo eliminado} other {# archivos eliminados}} "
 "correctamente."
 
-#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:8:37
+#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:9:37
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} will be deleted."
 msgstr ""

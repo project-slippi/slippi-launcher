@@ -7,7 +7,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0\n"
 "x-generator: i18next-auto-keys CLI\n"
 "Language: ja-JP\n"
-"PO-Revision-Date: 2025-11-27T01:35:14.944Z\n"
+"PO-Revision-Date: 2025-12-10T23:54:31.386Z\n"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
 msgid "2-4 uppercase English characters"
@@ -48,6 +48,10 @@ msgstr "開催中"
 msgid "Add"
 msgstr "追加"
 
+#: src/renderer/app/header/account_switcher/account_switcher.messages.ts:2:28
+msgid "Add another account"
+msgstr ""
+
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:12:31
 msgid "Additional SLP Folders"
 msgstr "追加のSLPフォルダ"
@@ -55,6 +59,11 @@ msgstr "追加のSLPフォルダ"
 #: src/renderer/pages/settings/create.messages.ts:12:19
 msgid "Advanced"
 msgstr "詳細"
+
+#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:3:40
+#. {0} count: number
+msgid "All {0, plural, one {# file} other {# files}} selected"
+msgstr ""
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:15:5
 msgid ""
@@ -222,7 +231,7 @@ msgstr "再生ボタンを押したときの動作を選択してください。
 msgid "Choose which Slippi Dolphin release to install"
 msgstr "インストールするSlippi Dolphinのリリースを選択します。"
 
-#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:4:16
+#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:5:16
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:8:16
 msgid "Clear"
 msgstr "クリア"
@@ -279,7 +288,7 @@ msgstr "{0}を設定"
 msgid "Confirm"
 msgstr "確認"
 
-#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:7:30
+#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:8:30
 msgid "Confirm File Deletion"
 msgstr "ファイル削除の確認"
 
@@ -371,7 +380,7 @@ msgstr "デフォルト"
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connections_list.messages.ts:3:17
 #: src/renderer/pages/replays/replay_browser/file_list/file_list.messages.ts:3:17
-#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:3:17
+#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:4:17
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:6:17
 msgid "Delete"
 msgstr "削除"
@@ -427,14 +436,22 @@ msgid ""
 "Dolphin exited with error code: {0}. If you're in need of assistance, "
 "screenshot this and post it in a support channel in the Slippi Discord with "
 "some context regarding the crash."
-msgstr "Dolphinがエラーコード{0}で終了しました。サポートが必要な場合は、この画面のスクリーンショットとクラッシュ時の状況をSlippi Discordのサポートチャンネルに投稿してください。"
+msgstr ""
+"Dolphinがエラーコード{0}で終了しました。サポートが必要な場合は、この画面のスクリーンショットとクラッシュ時の状況をSlippi "
+"Discordのサポートチャンネルに投稿してください。"
 
 #: src/renderer/lib/dolphin/handle_dolphin_exit_code.messages.ts:5:5
 msgid ""
 "Dolphin has crashed. Please go to the Help section of the settings page, "
 "click \"Copy logs\", and paste them in the Slippi Discord's "
 "#windows-support channel with some context regarding the crash."
-msgstr "Dolphinがクラッシュしました。設定ページのヘルプセクションから「ログをコピー」をクリックし、Slippi Discordの#windows-supportチャンネルにクラッシュ時の状況と共に貼り付けてください。"
+msgstr ""
+"Dolphinがクラッシュしました。設定ページのヘルプセクションから「ログをコピー」をクリックし、Slippi "
+"Discordの#windows-supportチャンネルにクラッシュ時の状況と共に貼り付けてください。"
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:16:39
+msgid "Dolphin is currently running. Close Dolphin to switch accounts"
+msgstr ""
 
 #: src/renderer/pages/replays/replay_browser/replay_file/replay_file.messages.ts:6:28
 #: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:6:28
@@ -592,6 +609,14 @@ msgstr "{0}のインストールに失敗しました。すべてのDolphinを�
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:2:33
 msgid "Failed to read gecko codes"
 msgstr "Geckoコードの読み込みに失敗しました"
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:11:32
+msgid "Failed to remove account"
+msgstr ""
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:12:32
+msgid "Failed to switch account"
+msgstr ""
 
 #: src/renderer/pages/home/sidebar/tournament_links.messages.ts:5:34
 msgid "Find in-person tournaments"
@@ -820,6 +845,11 @@ msgstr "Geckoコードを管理"
 msgid "Manage account"
 msgstr "アカウントを管理"
 
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:13:40
+#. {0} max: number
+msgid "Maximum {0} accounts reached. Remove an account to add another."
+msgstr ""
+
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:2:23
 msgid "Melee ISO File"
 msgstr "スマブラDXの ISO ファイル"
@@ -1045,7 +1075,7 @@ msgstr "Geckoコードを貼り付け"
 msgid "Play"
 msgstr "プレイ"
 
-#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:6:18
+#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:7:18
 msgid "Play All"
 msgstr "すべて再生"
 
@@ -1159,6 +1189,10 @@ msgid ""
 "every 4 days."
 msgstr "現在、ランクマッチは誰でもプレイできます。今すぐお試しください！4日に1回利用可能です。"
 
+#: src/renderer/app/header/account_switcher/account_switcher.messages.ts:3:32
+msgid "Re-authenticate account"
+msgstr ""
+
 #: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:5:19
 msgid "Read more"
 msgstr "続きを読む"
@@ -1180,9 +1214,15 @@ msgstr "リレーポート"
 msgid "Remote Control Server"
 msgstr "リモートコントロールサーバー"
 
+#: src/renderer/app/header/account_switcher/account_switcher.messages.ts:4:17
 #: src/renderer/components/multi_path_input/multi_path_input.messages.ts:4:17
 msgid "Remove"
 msgstr "削除"
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:14:44
+#. {0} accountName: string
+msgid "Removed {0}"
+msgstr ""
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:6:5
 msgid ""
@@ -1206,7 +1246,9 @@ msgid ""
 "Required libraries for launching Dolphin may be missing. Check the Help "
 "section in the settings page for guidance. Post in the Slippi Discord's "
 "#linux-support forum for further assistance if needed."
-msgstr "Dolphinの起動に必要なライブラリが不足している可能性があります。設定ページのヘルプセクションを確認してください。さらにサポートが必要な場合は、Slippi Discordの#linux-supportフォーラムに投稿してください。"
+msgstr ""
+"Dolphinの起動に必要なライブラリが不足している可能性があります。設定ページのヘルプセクションを確認してください。さらにサポートが必要な場合は、Sl"
+"ippi Discordの#linux-supportフォーラムに投稿してください。"
 
 #: src/renderer/pages/settings/game_settings/game_music_toggle/game_music_toggle.messages.ts:5:48
 #. {0} version: string
@@ -1283,7 +1325,7 @@ msgstr "検索"
 msgid "Select"
 msgstr "選択"
 
-#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:5:20
+#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:6:20
 msgid "Select All"
 msgstr "すべて選択"
 
@@ -1468,6 +1510,11 @@ msgstr "ログをクリップボードにコピーしました"
 msgid "Support Slippi"
 msgstr "Slippiを支援"
 
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:15:40
+#. {0} accountName: string
+msgid "Switched to {0}"
+msgstr ""
+
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:15:23
 msgid "Symmetric NAT"
 msgstr "対称型NAT"
@@ -1579,7 +1626,9 @@ msgstr "末尾の数字は自動生成されます"
 msgid ""
 "Try a different video backend in Dolphin. If the issue persists, install "
 "the latest Windows update available and then restart your computer."
-msgstr "Dolphinで別のビデオバックエンドをお試しください。問題が解決しない場合は、最新のWindowsアップデートをインストールしてコンピューターを再起動してください。"
+msgstr ""
+"Dolphinで別のビデオバックエンドをお試しください。問題が解決しない場合は、最新のWindowsアップデートをインストールしてコンピューターを再起動"
+"してください。"
 
 #: src/renderer/pages/home/news_feed/news_feed.messages.ts:5:19
 msgid "Try again"
@@ -1797,7 +1846,7 @@ msgstr "{0}件選択中"
 msgid "{0, plural, one {# file} other {# files}} successfully deleted."
 msgstr "{0}件削除しました"
 
-#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:8:37
+#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:9:37
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} will be deleted."
 msgstr "{0}件削除されます"
