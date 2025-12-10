@@ -4,7 +4,6 @@ import type { FileResult } from "@replays/types";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import React from "react";
 
-import { ErrorBoundary } from "@/components/error_boundary";
 import { IconMenu } from "@/components/icon_menu";
 import { useReplays } from "@/lib/hooks/use_replays";
 
@@ -146,17 +145,15 @@ const FileListResults = ({
                 transform: `translateY(${virtualItem.start}px)`,
               }}
             >
-              <ErrorBoundary>
-                <ReplayFileContainer
-                  onOpenMenu={onOpenMenu}
-                  index={virtualItem.index}
-                  onSelect={onSelect}
-                  onClick={onClick}
-                  onPlay={onPlay}
-                  selectedFilesSet={selectedFilesSet}
-                  {...file}
-                />
-              </ErrorBoundary>
+              <ReplayFileContainer
+                onOpenMenu={onOpenMenu}
+                index={virtualItem.index}
+                onSelect={onSelect}
+                onClick={onClick}
+                onPlay={onPlay}
+                selectedFilesSet={selectedFilesSet}
+                {...file}
+              />
             </div>
           );
         })}
