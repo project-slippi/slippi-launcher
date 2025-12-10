@@ -214,7 +214,6 @@
     "react-query": "^3.12.0",
     "react-router-dom": "^6.3.0",
     "react-timeago": "^8.3.0",
-    "react-twitter-embed": "^4.0.4",
     "react-virtualized-auto-sizer": "^1.0.3",
     "react-window": "^1.8.6",
     "semver": "^7.5.4",
