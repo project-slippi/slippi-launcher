@@ -7,6 +7,7 @@ import { FixedSizeList as List } from "react-window";
 
 import { ErrorBoundary } from "@/components/error_boundary";
 import { IconMenu } from "@/components/icon_menu";
+import { useReplays } from "@/lib/hooks/use_replays";
 
 import { ReplayFileContainer } from "../replay_file/replay_file.container";
 import { FileListMessages as Messages } from "./file_list.messages";
@@ -25,6 +26,7 @@ const FileListResults = ({
   onClick,
   selectedFiles,
   onLoadMore,
+  onScrollPositionChange,
 }: {
   folderPath: string;
   files: FileResult[];
@@ -35,9 +37,12 @@ const FileListResults = ({
   onSelect: (index: number) => void;
   onPlay: (index: number) => void;
   onLoadMore: () => void;
+  onScrollPositionChange: (rowIndex: number) => void;
 }) => {
   // Keep a reference to the list so we can control the scroll position
   const listRef = React.useRef<List>(null);
+  // Track current scroll row for saving on unmount
+  const currentScrollRow = React.useRef(initialScrollOffset / REPLAY_FILE_ITEM_SIZE);
 
   // Convert selectedFiles array to Set for O(1) lookups
   const selectedFilesSet = React.useMemo(() => new Set(selectedFiles), [selectedFiles]);
@@ -73,13 +78,24 @@ const FileListResults = ({
   React.useEffect(() => {
     if (listRef.current && folderPath !== lastFilterRef.current.folderPath) {
       listRef.current.scrollToItem(0);
+      currentScrollRow.current = 0;
       lastFilterRef.current.folderPath = folderPath;
     }
   }, [folderPath]);
 
+  // Save scroll position when component unmounts
+  React.useEffect(() => {
+    return () => {
+      onScrollPositionChange(Math.floor(currentScrollRow.current));
+    };
+  }, [onScrollPositionChange]);
+
   // Memoize onItemsRendered to prevent recreating on every render
   const handleItemsRendered = React.useCallback(
-    ({ visibleStopIndex }: { visibleStartIndex: number; visibleStopIndex: number }) => {
+    ({ visibleStartIndex, visibleStopIndex }: { visibleStartIndex: number; visibleStopIndex: number }) => {
+      // Update current scroll position (stored locally, not in store)
+      currentScrollRow.current = visibleStartIndex;
+
       // Trigger load more when user scrolls near the end
       const itemsFromEnd = files.length - visibleStopIndex;
       if (itemsFromEnd <= LOAD_MORE_THRESHOLD) {
@@ -136,8 +152,14 @@ export const FileList = React.memo(
       anchorEl: HTMLElement;
     }>(null);
 
-    // Store initial scroll offset locally instead of in global store
-    const initialScrollOffset = React.useRef(0);
+    // Read initial scroll position from store ONCE on mount (no subscription)
+    // This persists scroll position across page navigation
+    const initialScrollOffset = React.useRef(useReplays.getState().scrollRowItem * REPLAY_FILE_ITEM_SIZE);
+
+    // Callback to save scroll position to store (called on unmount)
+    const handleScrollPositionChange = React.useCallback((rowIndex: number) => {
+      useReplays.setState({ scrollRowItem: rowIndex });
+    }, []);
 
     const onOpenMenu = React.useCallback((index: number, target: any) => {
       setMenuItem({
@@ -177,6 +199,7 @@ export const FileList = React.memo(
             files={files}
             initialScrollOffset={initialScrollOffset.current}
             onLoadMore={onLoadMore}
+            onScrollPositionChange={handleScrollPositionChange}
           />
         </div>
         <IconMenu

@@ -18,6 +18,7 @@ type StoreState = {
   files: FileResult[];
   currentRoot: string | null;
   currentFolder: string;
+  scrollRowItem: number; // Persisted for navigation, but not subscribed to during scrolling
   selectedFiles: string[];
   selectAllMode: boolean;
   deselectedFiles: string[]; // Files explicitly deselected from select-all mode
@@ -42,6 +43,7 @@ const initialState: StoreState = {
   collapsedFolders: [],
   currentRoot: null,
   currentFolder: useSettings.getState().settings.rootSlpPath,
+  scrollRowItem: 0,
   selectedFiles: [],
   selectAllMode: false,
   deselectedFiles: [],
@@ -182,6 +184,7 @@ export class ReplayPresenter {
         }
 
         useReplays.setState((state) => {
+          state.scrollRowItem = 0; // Reset scroll position when loading new folder
           state.files = result.files;
           state.loading = false;
           state.continuation = result.continuation;
@@ -208,6 +211,12 @@ export class ReplayPresenter {
       } else {
         state.collapsedFolders = [...state.collapsedFolders, folder];
       }
+    });
+  }
+
+  public setScrollRowItem(rowItem: number) {
+    useReplays.setState((state) => {
+      state.scrollRowItem = rowItem;
     });
   }
 
