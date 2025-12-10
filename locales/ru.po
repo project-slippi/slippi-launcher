@@ -6,7 +6,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "x-generator: i18next-auto-keys CLI\n"
-"Language: ru_RU\n"
+"Language: ru-RU\n"
 "PO-Revision-Date: 2025-12-10T16:29:14.954Z\n"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
@@ -1394,7 +1394,7 @@ msgid ""
 "allowed."
 msgstr ""
 "Slippi старается предоставлять честный опыт в плане матчинга, записи "
-результатов и т.д. Попытки скомпроментировать эти системы запрещены."
+"результатов и т.д. Попытки скомпроментировать эти системы запрещены."
 
 #: src/renderer/initialize_app.messages.ts:4:26
 msgid ""
@@ -1565,7 +1565,7 @@ msgid ""
 "The port used for connecting to console. Only change this if connecting to "
 "a Console Relay. If unsure, leave it as {0}."
 msgstr ""
-"Порт, используемый для подключения к консоли. Изменяйте только если 
+"Порт, используемый для подключения к консоли. Изменяйте только если"
 "подключаетесь к Console Relay. Если не уверены, оставьте как {0}."
 
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:3:44
