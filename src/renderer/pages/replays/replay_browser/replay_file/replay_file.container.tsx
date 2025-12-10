@@ -65,7 +65,6 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
   );
   const onPlayClick = useCallback(() => onPlay(index), [onPlay, index]);
 
-  // Extract playbackStatus to a separate component to avoid re-rendering all items
   const actions = useMemo((): ReplayFileAction[] => {
     return [
       {
@@ -80,11 +79,11 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
       },
       {
         Icon: PlayCircleOutlineIcon,
-        label: Messages.launchReplay(), // Will be updated by PlayButton component
+        label: Messages.launchReplay(),
         primary: true,
         onClick: onPlayClick,
-        disabled: false, // Will be updated by PlayButton component
-        isDolphinAction: true, // Flag to indicate this action needs Dolphin status
+        disabled: false,
+        isDolphinAction: true,
       },
     ];
   }, [index, onOpenMenu, onPlayClick, onShowStats]);

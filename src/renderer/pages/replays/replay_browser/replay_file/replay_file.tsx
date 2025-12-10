@@ -57,6 +57,7 @@ export const ReplayFile = React.memo(function ReplayFile({
           justify-content: center;
           padding: 10px;
           background-color: ${selected ? "rgba(180, 130, 176, 0.1)" : "transparent"};
+          width: 100%;
         `}
       >
         {selected && <SelectedNumber num={selectedIndex + 1} />}
@@ -65,6 +66,7 @@ export const ReplayFile = React.memo(function ReplayFile({
             display: flex;
             align-items: center;
             justify-content: space-between;
+            width: 100%;
           `}
         >
           <TeamElements teams={players} />
@@ -87,6 +89,7 @@ export const ReplayFile = React.memo(function ReplayFile({
             margin-top: 5px;
             font-size: 14px;
             white-space: nowrap;
+            width: 100%;
           `}
         >
           <div
@@ -103,6 +106,7 @@ export const ReplayFile = React.memo(function ReplayFile({
           <DraggableFile
             filePaths={[fullPath]}
             css={css`
+              min-width: 0;
               opacity: 0.9;
               &:hover {
                 opacity: 1;
@@ -110,7 +114,16 @@ export const ReplayFile = React.memo(function ReplayFile({
               }
             `}
           >
-            {fileName}
+            <span
+              css={css`
+                max-width: 350px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              `}
+            >
+              {fileName}
+            </span>
           </DraggableFile>
         </div>
       </div>
