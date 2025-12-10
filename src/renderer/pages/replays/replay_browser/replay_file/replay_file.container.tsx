@@ -25,7 +25,6 @@ import type { PlayerInfo } from "./team_elements/team_elements";
 
 type ReplayFileContainerProps = FileResult & {
   index: number;
-  style?: React.CSSProperties;
   onSelect: (index: number) => void;
   onPlay: (index: number) => void;
   onOpenMenu: (index: number, element: HTMLElement) => void;
@@ -36,7 +35,6 @@ type ReplayFileContainerProps = FileResult & {
 export const ReplayFileContainer = React.memo(function ReplayFileContainer({
   index,
   onOpenMenu,
-  style,
   onSelect,
   onPlay,
   onClick,
@@ -136,7 +134,6 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
           cursor: pointer;
         `}
         onClick={onReplayClick}
-        style={style}
       >
         <ReplayFileImpl
           fileName={fileName}

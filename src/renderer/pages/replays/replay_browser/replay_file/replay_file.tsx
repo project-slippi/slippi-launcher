@@ -135,6 +135,7 @@ const Outer = styled.div<{
     p.backgroundImage
       ? `linear-gradient(to right, ${colors.purpleDark} 20%, transparent 35%, transparent 65%, ${colors.purpleDark} 80%)`
       : colors.purpleDark};
+  will-change: border-color;
   &::before {
     z-index: -1;
     position: absolute;
@@ -149,7 +150,7 @@ const Outer = styled.div<{
   }
 `;
 
-const InfoItem = ({ Icon, label }: { Icon: React.ComponentType; label: string }) => {
+const InfoItem = React.memo(({ Icon, label }: { Icon: React.ComponentType; label: string }) => {
   return (
     <div
       css={css`
@@ -173,7 +174,7 @@ const InfoItem = ({ Icon, label }: { Icon: React.ComponentType; label: string })
       <div>{label}</div>
     </div>
   );
-};
+});
 
 type ReplayActionButtonProps = Omit<React.ComponentProps<typeof IconButton>, "color"> & {
   label: string;
