@@ -50,7 +50,8 @@ const FileListResults = ({
     getScrollElement: () => parentRef.current,
     estimateSize: React.useCallback(() => REPLAY_FILE_ITEM_SIZE, []),
     overscan: 5, // Render 5 items above/below viewport for smooth scrolling
-    measureElement: (element) => element.getBoundingClientRect().height,
+    initialOffset: initialScrollOffset, // Set initial scroll position
+    // Using fixed size, no dynamic measurement needed
   });
 
   // Track filter values with ref to avoid re-renders
@@ -59,19 +60,16 @@ const FileListResults = ({
   // Reset scroll position when we change folders
   React.useEffect(() => {
     if (folderPath !== lastFilterRef.current.folderPath) {
-      virtualizer.scrollToOffset(0, { behavior: "auto" });
       currentScrollOffset.current = 0;
       lastFilterRef.current.folderPath = folderPath;
+      // Use microtask to avoid flushSync warning during render
+      queueMicrotask(() => {
+        if (parentRef.current) {
+          parentRef.current.scrollTop = 0;
+        }
+      });
     }
-  }, [folderPath, virtualizer]);
-
-  // Set initial scroll position on mount
-  React.useEffect(() => {
-    if (initialScrollOffset > 0) {
-      virtualizer.scrollToOffset(initialScrollOffset, { behavior: "auto" });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Only on mount
+  }, [folderPath]);
 
   // Track scroll offset from the container for persistence
   React.useEffect(() => {
@@ -103,16 +101,17 @@ const FileListResults = ({
   const virtualItems = virtualizer.getVirtualItems();
 
   React.useEffect(() => {
-    if (virtualItems.length > 0) {
+    const items = virtualizer.getVirtualItems();
+    if (items.length > 0) {
       // Check if we need to load more items
-      const lastItem = virtualItems[virtualItems.length - 1];
+      const lastItem = items[items.length - 1];
       const itemsFromEnd = files.length - lastItem.index;
 
       if (itemsFromEnd <= LOAD_MORE_THRESHOLD) {
         onLoadMore();
       }
     }
-  }, [virtualItems, files.length, onLoadMore]);
+  }, [virtualizer, files.length, onLoadMore]);
 
   return (
     <div
@@ -138,7 +137,6 @@ const FileListResults = ({
             <div
               key={String(virtualItem.key)}
               data-index={virtualItem.index}
-              ref={virtualizer.measureElement}
               style={{
                 position: "absolute",
                 top: 0,
