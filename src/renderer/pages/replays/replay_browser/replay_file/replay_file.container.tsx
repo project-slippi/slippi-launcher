@@ -30,7 +30,7 @@ type ReplayFileContainerProps = FileResult & {
   onPlay: (index: number) => void;
   onOpenMenu: (index: number, element: HTMLElement) => void;
   onClick: (index: number, isShiftHeld: boolean) => void;
-  selectedFiles: string[];
+  isSelected: boolean;
   selectedIndex: number;
 };
 
@@ -41,14 +41,14 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
   onSelect,
   onPlay,
   onClick,
-  selectedFiles,
+  isSelected,
   selectedIndex,
   id,
   fileName,
   game,
   fullPath,
 }: ReplayFileContainerProps) {
-  const selected = selectedIndex !== -1;
+  const selected = isSelected;
   const stageInfo = game.stageId != null ? stageUtils.getStageInfo(game.stageId) : null;
   const stageImageUrl = stageInfo !== null && stageInfo.id !== -1 ? getStageImage(stageInfo.id) : undefined;
   const stageName = stageInfo !== null ? stageInfo.name : Messages.unknownStage();
@@ -132,25 +132,23 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
   }, [fileName, fullPath]);
 
   return (
-    <DraggableFile filePaths={selected && selectedFiles.length > 0 ? selectedFiles : []}>
-      <div
-        key={id}
-        css={css`
-          cursor: pointer;
-        `}
-        onClick={onReplayClick}
-        style={style}
-      >
-        <ReplayFileImpl
-          title={title}
-          backgroundImage={stageImageUrl}
-          selectedIndex={selected ? selectedIndex : undefined}
-          players={players}
-          actions={actions}
-          details={details}
-        />
-      </div>
-    </DraggableFile>
+    <div
+      key={id}
+      css={css`
+        cursor: pointer;
+      `}
+      onClick={onReplayClick}
+      style={style}
+    >
+      <ReplayFileImpl
+        title={title}
+        backgroundImage={stageImageUrl}
+        selectedIndex={selected ? selectedIndex : undefined}
+        players={players}
+        actions={actions}
+        details={details}
+      />
+    </div>
   );
 });
 

@@ -1,14 +1,12 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import FolderIcon from "@mui/icons-material/Folder";
 import type { FileResult } from "@replays/types";
-import debounce from "lodash/debounce";
 import React from "react";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as List } from "react-window";
 
 import { ErrorBoundary } from "@/components/error_boundary";
 import { IconMenu } from "@/components/icon_menu";
-import { useReplayFilter } from "@/lib/hooks/use_replay_filter";
 
 import { ReplayFileContainer } from "../replay_file/replay_file.container";
 import { FileListMessages as Messages } from "./file_list.messages";
@@ -19,39 +17,36 @@ const REPLAY_FILE_ITEM_SIZE = 90;
 // This is the container for all the replays visible, the autosizer will handle the virtualization portion
 const FileListResults = ({
   folderPath,
-  scrollRowItem,
+  initialScrollOffset,
   files,
   onSelect,
   onPlay,
   onOpenMenu,
-  setScrollRowItem,
   onClick,
   selectedFiles,
   onLoadMore,
 }: {
   folderPath: string;
   files: FileResult[];
-  scrollRowItem: number;
+  initialScrollOffset: number;
   selectedFiles: Array<string>;
   onClick: (index: number, isShiftHeld: boolean) => void;
   onOpenMenu: (index: number, element: HTMLElement) => void;
   onSelect: (index: number) => void;
   onPlay: (index: number) => void;
-  setScrollRowItem: (row: number) => void;
   onLoadMore: () => void;
 }) => {
   // Keep a reference to the list so we can control the scroll position
-  const listRef = React.createRef<List>();
-  // Keep track of the latest scroll position
-  const scrollRowRef = React.useRef(0);
-  const setScrollRowRef = debounce((row: number) => {
-    scrollRowRef.current = row;
-  }, 100);
+  const listRef = React.useRef<List>(null);
+
+  // Convert selectedFiles array to Set for O(1) lookups
+  const selectedFilesSet = React.useMemo(() => new Set(selectedFiles), [selectedFiles]);
 
   const Row = React.useCallback(
     (props: { style?: React.CSSProperties; index: number }) => {
       const file = files[props.index];
-      const selectedIndex = selectedFiles.indexOf(file.fullPath);
+      const isSelected = selectedFilesSet.has(file.fullPath);
+      const selectedIndex = isSelected ? selectedFiles.indexOf(file.fullPath) : -1;
       return (
         <ErrorBoundary>
           <ReplayFileContainer
@@ -60,7 +55,7 @@ const FileListResults = ({
             style={props.style}
             onSelect={onSelect}
             onClick={onClick}
-            selectedFiles={selectedFiles}
+            isSelected={isSelected}
             selectedIndex={selectedIndex}
             onPlay={onPlay}
             {...file}
@@ -68,34 +63,31 @@ const FileListResults = ({
         </ErrorBoundary>
       );
     },
-    [files, onSelect, onPlay, onOpenMenu, selectedFiles],
+    [files, onSelect, onPlay, onOpenMenu, onClick, selectedFiles, selectedFilesSet],
   );
 
-  const searchText = useReplayFilter((store) => store.searchText);
-  const hideShortGames = useReplayFilter((store) => store.hideShortGames);
-  const sortBy = useReplayFilter((store) => store.sortBy);
-  const sortDirection = useReplayFilter((store) => store.sortDirection);
+  // Track filter values with ref to avoid re-renders
+  const lastFilterRef = React.useRef({ folderPath });
 
-  // Store the latest scroll row item on unmount
+  // Reset scroll position when we change folders or filters
   React.useEffect(() => {
-    return () => {
-      setScrollRowItem(scrollRowRef.current);
-    };
-  }, []);
-
-  // Reset scroll position when we change folders
-  React.useEffect(() => {
-    if (listRef.current) {
+    if (listRef.current && folderPath !== lastFilterRef.current.folderPath) {
       listRef.current.scrollToItem(0);
+      lastFilterRef.current.folderPath = folderPath;
     }
   }, [folderPath]);
 
-  // Reset scroll position when filters change
-  React.useEffect(() => {
-    if (listRef.current) {
-      listRef.current.scrollToItem(0);
-    }
-  }, [searchText, hideShortGames, sortBy, sortDirection]);
+  // Memoize onItemsRendered to prevent recreating on every render
+  const handleItemsRendered = React.useCallback(
+    ({ visibleStopIndex }: { visibleStartIndex: number; visibleStopIndex: number }) => {
+      // Trigger load more when user scrolls near the end
+      const itemsFromEnd = files.length - visibleStopIndex;
+      if (itemsFromEnd <= LOAD_MORE_THRESHOLD) {
+        onLoadMore();
+      }
+    },
+    [files.length, onLoadMore],
+  );
 
   return (
     <AutoSizer>
@@ -104,18 +96,10 @@ const FileListResults = ({
           ref={listRef}
           height={height}
           width={width}
-          initialScrollOffset={scrollRowItem * REPLAY_FILE_ITEM_SIZE}
+          initialScrollOffset={initialScrollOffset}
           itemCount={files.length}
           itemSize={REPLAY_FILE_ITEM_SIZE}
-          onItemsRendered={({ visibleStartIndex, visibleStopIndex }) => {
-            setScrollRowRef(visibleStartIndex);
-
-            // Trigger load more when user scrolls near the end
-            const itemsFromEnd = files.length - visibleStopIndex;
-            if (itemsFromEnd <= LOAD_MORE_THRESHOLD) {
-              onLoadMore();
-            }
-          }}
+          onItemsRendered={handleItemsRendered}
         >
           {Row}
         </List>
@@ -126,93 +110,93 @@ const FileListResults = ({
 
 // the container containing FileListResults. figure the rest out yourself
 // to simplify the DOM, the submenu for each row is essentially the same until you actually click on it for a given row.
-export const FileList = ({
-  scrollRowItem = 0,
-  files,
-  onSelect,
-  onPlay,
-  onDelete,
-  setScrollRowItem,
-  onFileClick,
-  folderPath,
-  selectedFiles,
-  onLoadMore,
-}: {
-  folderPath: string;
-  files: FileResult[];
-  scrollRowItem?: number;
-  setScrollRowItem: (row: number) => void;
-  onDelete: (filepath: string) => void;
-  onSelect: (index: number) => void;
-  onFileClick: (index: number, isShiftHeld: boolean) => void;
-  selectedFiles: Array<string>;
-  onPlay: (index: number) => void;
-  onLoadMore: () => void;
-  loadingMore: boolean;
-}) => {
-  const [menuItem, setMenuItem] = React.useState<null | {
-    index: number;
-    anchorEl: HTMLElement;
-  }>(null);
+export const FileList = React.memo(
+  ({
+    files,
+    onSelect,
+    onPlay,
+    onDelete,
+    onFileClick,
+    folderPath,
+    selectedFiles,
+    onLoadMore,
+  }: {
+    folderPath: string;
+    files: FileResult[];
+    onDelete: (filepath: string) => void;
+    onSelect: (index: number) => void;
+    onFileClick: (index: number, isShiftHeld: boolean) => void;
+    selectedFiles: Array<string>;
+    onPlay: (index: number) => void;
+    onLoadMore: () => void;
+    loadingMore: boolean;
+  }) => {
+    const [menuItem, setMenuItem] = React.useState<null | {
+      index: number;
+      anchorEl: HTMLElement;
+    }>(null);
 
-  const onOpenMenu = React.useCallback((index: number, target: any) => {
-    setMenuItem({
-      index,
-      anchorEl: target,
-    });
-  }, []);
+    // Store initial scroll offset locally instead of in global store
+    const initialScrollOffset = React.useRef(0);
 
-  const handleRevealLocation = () => {
-    if (menuItem) {
-      window.electron.shell.showItemInFolder(files[menuItem.index].fullPath);
-    }
-    handleClose();
-  };
+    const onOpenMenu = React.useCallback((index: number, target: any) => {
+      setMenuItem({
+        index,
+        anchorEl: target,
+      });
+    }, []);
 
-  const handleDelete = () => {
-    if (menuItem) {
-      onDelete(files[menuItem.index].fullPath);
-    }
-    handleClose();
-  };
+    const handleRevealLocation = React.useCallback(() => {
+      if (menuItem) {
+        window.electron.shell.showItemInFolder(files[menuItem.index].fullPath);
+      }
+      setMenuItem(null);
+    }, [menuItem, files]);
 
-  const handleClose = () => {
-    setMenuItem(null);
-  };
+    const handleDelete = React.useCallback(() => {
+      if (menuItem) {
+        onDelete(files[menuItem.index].fullPath);
+      }
+      setMenuItem(null);
+    }, [menuItem, files, onDelete]);
 
-  return (
-    <div style={{ display: "flex", flexFlow: "column", height: "100%", flex: "1" }}>
-      <div style={{ flex: "1", overflow: "hidden" }}>
-        <FileListResults
-          folderPath={folderPath}
-          onOpenMenu={onOpenMenu}
-          onSelect={onSelect}
-          onPlay={onPlay}
-          onClick={onFileClick}
-          selectedFiles={selectedFiles}
-          files={files}
-          scrollRowItem={scrollRowItem}
-          setScrollRowItem={setScrollRowItem}
-          onLoadMore={onLoadMore}
+    const handleClose = React.useCallback(() => {
+      setMenuItem(null);
+    }, []);
+
+    return (
+      <div style={{ display: "flex", flexFlow: "column", height: "100%", flex: "1" }}>
+        <div style={{ flex: "1", overflow: "hidden" }}>
+          <FileListResults
+            folderPath={folderPath}
+            onOpenMenu={onOpenMenu}
+            onSelect={onSelect}
+            onPlay={onPlay}
+            onClick={onFileClick}
+            selectedFiles={selectedFiles}
+            files={files}
+            initialScrollOffset={initialScrollOffset.current}
+            onLoadMore={onLoadMore}
+          />
+        </div>
+        <IconMenu
+          anchorEl={menuItem ? menuItem.anchorEl : null}
+          open={Boolean(menuItem)}
+          onClose={handleClose}
+          items={[
+            {
+              onClick: handleRevealLocation,
+              icon: <FolderIcon fontSize="small" />,
+              label: Messages.revealLocation(),
+            },
+            {
+              onClick: handleDelete,
+              icon: <DeleteIcon fontSize="small" />,
+              label: Messages.delete(),
+            },
+          ]}
         />
       </div>
-      <IconMenu
-        anchorEl={menuItem ? menuItem.anchorEl : null}
-        open={Boolean(menuItem)}
-        onClose={handleClose}
-        items={[
-          {
-            onClick: handleRevealLocation,
-            icon: <FolderIcon fontSize="small" />,
-            label: Messages.revealLocation(),
-          },
-          {
-            onClick: handleDelete,
-            icon: <DeleteIcon fontSize="small" />,
-            label: Messages.delete(),
-          },
-        ]}
-      />
-    </div>
-  );
-};
+    );
+  },
+);

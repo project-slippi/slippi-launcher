@@ -32,20 +32,30 @@ import { ReplayBrowserMessages as Messages } from "./replay_browser.messages";
 export const ReplayBrowser = React.memo(() => {
   const presenter = useReplayPresenter();
   const searchInputRef = React.createRef<HTMLInputElement>();
-  const scrollRowItem = useReplays((store) => store.scrollRowItem);
   const { dolphinService, replayService } = useServices();
   const { viewReplays } = useDolphinActions(dolphinService);
-  const loading = useReplays((store) => store.loading);
+
+  // Batch related state reads into single selectors to reduce subscription overhead
+  const { loading, loadingMore, hasMoreReplays } = useReplays((store) => ({
+    loading: store.loading,
+    loadingMore: store.loadingMore,
+    hasMoreReplays: store.hasMoreReplays,
+  }));
+
+  const { currentFolder, folderTree, collapsedFolders, totalFilesInFolder } = useReplays((store) => ({
+    currentFolder: store.currentFolder,
+    folderTree: store.folderTree,
+    collapsedFolders: store.collapsedFolders,
+    totalFilesInFolder: store.totalFilesInFolder,
+  }));
+
+  const { selectedFiles, selectAllMode, deselectedFiles } = useReplays((store) => ({
+    selectedFiles: store.selectedFiles,
+    selectAllMode: store.selectAllMode,
+    deselectedFiles: store.deselectedFiles,
+  }));
+
   const showLoading = useDelayedLoading(loading, 300, 500);
-  const loadingMore = useReplays((store) => store.loadingMore);
-  const hasMoreReplays = useReplays((store) => store.hasMoreReplays);
-  const currentFolder = useReplays((store) => store.currentFolder);
-  const folderTree = useReplays((store) => store.folderTree);
-  const collapsedFolders = useReplays((store) => store.collapsedFolders);
-  const selectedFiles = useReplays((store) => store.selectedFiles);
-  const selectAllMode = useReplays((store) => store.selectAllMode);
-  const deselectedFiles = useReplays((store) => store.deselectedFiles);
-  const totalFilesInFolder = useReplays((store) => store.totalFilesInFolder);
   const fileSelection = useReplaySelection();
   const { showError, showSuccess } = useToasts();
 
@@ -234,8 +244,6 @@ export const ReplayBrowser = React.memo(() => {
                   onSelect={(index: number) => setSelectedItem(index)}
                   onPlay={(index: number) => playSelectedFile(index)}
                   files={filteredFiles}
-                  scrollRowItem={scrollRowItem}
-                  setScrollRowItem={(item) => presenter.setScrollRowItem(item)}
                   onLoadMore={handleLoadMore}
                   loadingMore={loadingMore}
                 />
