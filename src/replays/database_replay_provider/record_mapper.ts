@@ -4,8 +4,8 @@ import path from "path";
 
 function mapPlayerRecordToPlayerInfo(player: PlayerRecord): PlayerInfo {
   return {
-    playerIndex: player.index,
-    port: player.index + 1,
+    playerIndex: player.port - 1,
+    port: player.port,
     type: player.type,
     characterId: player.character_id,
     characterColor: player.character_color,
@@ -24,7 +24,7 @@ export function mapGameRecordToFileResult(
 ): FileResult {
   const fullPath = path.resolve(gameAndFileRecord.folder, gameAndFileRecord.name);
   return {
-    id: `${gameAndFileRecord._id}-${gameAndFileRecord.file_id}`,
+    id: gameAndFileRecord.file_id.toString(),
     fileName: gameAndFileRecord.name,
     fullPath,
     game: {

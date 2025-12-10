@@ -4,9 +4,6 @@ import { combine } from "zustand/middleware";
 
 import { useReplayPresenter, useReplays } from "@/lib/hooks/use_replays";
 
-import { replayFileFilter, replayFileSort } from "../replay_file_sort";
-import { useReplayFilter } from "./use_replay_filter";
-
 const useReplayBrowserNavigationStore = create(
   combine(
     {
@@ -49,14 +46,6 @@ export const useReplayBrowserNavigation = () => {
 export const useReplayBrowserList = () => {
   const presenter = useReplayPresenter();
   const files = useReplays((store) => store.files);
-  const sortDirection = useReplayFilter((store) => store.sortDirection);
-  const sortBy = useReplayFilter((store) => store.sortBy);
-  const searchText = useReplayFilter((store) => store.searchText);
-  const hideShortGames = useReplayFilter((store) => store.hideShortGames);
-  const filteredFiles = files
-    .filter(replayFileFilter({ searchText, hideShortGames }))
-    .sort(replayFileSort(sortBy, sortDirection));
-  const numHiddenFiles = files.length - filteredFiles.length;
   const { index, total } = useReplays((store) => store.selectedFile);
   const { goToReplayStatsPage } = useReplayBrowserNavigation();
 
@@ -65,8 +54,8 @@ export const useReplayBrowserList = () => {
       presenter.clearSelectedFile();
       return;
     }
-    const file = filteredFiles[index];
-    presenter.selectFile(file, index, filteredFiles.length);
+    const file = files[index];
+    presenter.selectFile(file, index, files.length);
     goToReplayStatsPage(file.fullPath);
   };
 
@@ -74,7 +63,7 @@ export const useReplayBrowserList = () => {
     if (index === null) {
       return;
     }
-    if (index < filteredFiles.length - 1) {
+    if (index < files.length - 1) {
       setSelectedItem(index + 1);
     }
   };
@@ -89,8 +78,7 @@ export const useReplayBrowserList = () => {
   };
 
   return {
-    hiddenFileCount: numHiddenFiles,
-    files: filteredFiles,
+    files,
     index,
     total,
     selectNextFile,

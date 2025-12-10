@@ -1,4 +1,13 @@
-import type { FileLoadResult, FileResult, FolderResult, Progress, ReplayService } from "@replays/types";
+import type {
+  BulkDeleteOptions,
+  BulkDeleteResult,
+  FileResult,
+  FolderResult,
+  Progress,
+  ReplayService,
+  SearchGamesOptions,
+  SearchGamesResult,
+} from "@replays/types";
 import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
 
 import { delayAndMaybeError } from "../utils";
@@ -18,13 +27,19 @@ class MockReplayClient implements ReplayService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async loadReplayFolder(folderPath: string): Promise<FileLoadResult> {
+  public async searchGames(options: SearchGamesOptions): Promise<SearchGamesResult> {
+    const folderPath = options.folderPath ?? "/default/folder";
     const files = [1, 2, 3, 4].map((i) => aMockFileResultWith(folderPath, { fileName: `Game${i}.slp` }));
     return {
       files,
-      totalBytes: 124567,
-      fileErrorCount: 0,
+      continuation: undefined,
     };
+  }
+
+  @delayAndMaybeError(SHOULD_ERROR)
+  public async getAllFilePaths(options: SearchGamesOptions): Promise<string[]> {
+    const folderPath = options.folderPath ?? "/default/folder";
+    return [1, 2, 3, 4].map((i) => `${folderPath}/Game${i}.slp`);
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
@@ -37,6 +52,16 @@ class MockReplayClient implements ReplayService {
     _filePath: string,
   ): Promise<{ file: FileResult; stadiumStats: StadiumStatsType | null }> {
     throw new Error("Method not implemented.");
+  }
+
+  @delayAndMaybeError(SHOULD_ERROR)
+  public async deleteReplays(_fileIds: string[]): Promise<void> {
+    return;
+  }
+
+  @delayAndMaybeError(SHOULD_ERROR)
+  public async bulkDeleteReplays(_options: BulkDeleteOptions): Promise<BulkDeleteResult> {
+    return { deletedCount: 4 };
   }
 
   public onReplayLoadProgressUpdate(_handle: (progress: Progress) => void): () => void {

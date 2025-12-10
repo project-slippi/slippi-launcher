@@ -15,7 +15,7 @@ export function installModules(flags: ConfigFlags) {
   const dolphinManager = new DolphinManager(settingsManager);
   setupDolphinIpc({ dolphinManager });
   const { getSpectateController } = setupBroadcastIpc({ settingsManager, dolphinManager });
-  setupReplaysIpc({ enableReplayDatabase: flags.enableReplayDatabase });
+  setupReplaysIpc();
   setupSettingsIpc({ settingsManager, dolphinManager });
   setupConsoleIpc({ dolphinManager });
   setupRemoteIpc({ dolphinManager, settingsManager, getSpectateController });

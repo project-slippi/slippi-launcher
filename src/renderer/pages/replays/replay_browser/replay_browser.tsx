@@ -1,30 +1,29 @@
-import { exists } from "@common/exists";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import FolderIcon from "@mui/icons-material/Folder";
 import SearchIcon from "@mui/icons-material/Search";
 import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
 import IconButton from "@mui/material/IconButton";
 import List from "@mui/material/List";
 import Tooltip from "@mui/material/Tooltip";
-import Typography from "@mui/material/Typography";
 import React from "react";
 
 import { DualPane } from "@/components/dual_pane";
 import { BasicFooter } from "@/components/footer/footer";
 import { LabelledText } from "@/components/labelled_text";
-import { LoadingScreenWithProgress } from "@/components/loading_screen/loading_screen";
 import { IconMessage } from "@/components/message";
 import { useDolphinActions } from "@/lib/dolphin/use_dolphin_actions";
+import { useDelayedLoading } from "@/lib/hooks/use_delayed_loading";
 import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/use_replay_browser_list";
-import { useReplayFilter } from "@/lib/hooks/use_replay_filter";
+import { buildReplayFilters, useReplayFilter } from "@/lib/hooks/use_replay_filter";
 import { useReplayPresenter, useReplays, useReplaySelection } from "@/lib/hooks/use_replays";
 import { useToasts } from "@/lib/hooks/use_toasts";
-import { humanReadableBytes } from "@/lib/utils";
 import { useServices } from "@/services";
 import { colors } from "@/styles/colors";
 
 import { FileList } from "./file_list/file_list";
+import { FileListSkeleton } from "./file_list/file_list_skeleton";
 import { FileSelectionToolbar } from "./file_selection_toolbar/file_selection_toolbar";
 import { FilterToolbar } from "./filter_toolbar/filter_toolbar";
 import { FolderTreeNode } from "./folder_tree_node";
@@ -34,20 +33,24 @@ export const ReplayBrowser = React.memo(() => {
   const presenter = useReplayPresenter();
   const searchInputRef = React.createRef<HTMLInputElement>();
   const scrollRowItem = useReplays((store) => store.scrollRowItem);
-  const { dolphinService } = useServices();
+  const { dolphinService, replayService } = useServices();
   const { viewReplays } = useDolphinActions(dolphinService);
   const loading = useReplays((store) => store.loading);
+  const showLoading = useDelayedLoading(loading, 300, 500);
+  const loadingMore = useReplays((store) => store.loadingMore);
+  const hasMoreReplays = useReplays((store) => store.hasMoreReplays);
   const currentFolder = useReplays((store) => store.currentFolder);
   const folderTree = useReplays((store) => store.folderTree);
   const collapsedFolders = useReplays((store) => store.collapsedFolders);
   const selectedFiles = useReplays((store) => store.selectedFiles);
-  const totalBytes = useReplays((store) => store.totalBytes);
+  const selectAllMode = useReplays((store) => store.selectAllMode);
+  const deselectedFiles = useReplays((store) => store.deselectedFiles);
+  const totalFilesInFolder = useReplays((store) => store.totalFilesInFolder);
   const fileSelection = useReplaySelection();
-  const fileErrorCount = useReplays((store) => store.fileErrorCount);
   const { showError, showSuccess } = useToasts();
 
   const resetFilter = useReplayFilter((store) => store.resetFilter);
-  const { files: filteredFiles, hiddenFileCount } = useReplayBrowserList();
+  const { files: filteredFiles } = useReplayBrowserList();
   const { goToReplayStatsPage } = useReplayBrowserNavigation();
 
   const setSelectedItem = (index: number | null) => {
@@ -69,20 +72,100 @@ export const ReplayBrowser = React.memo(() => {
     viewReplays({ path: filePath });
   };
 
-  const deleteFiles = React.useCallback(
-    (filePaths: string[]) => {
-      // Optimistically remove the files first
-      presenter.removeFiles(filePaths);
+  const handleLoadMore = React.useCallback(() => {
+    if (!loadingMore && hasMoreReplays) {
+      presenter.loadMoreReplays().catch(showError);
+    }
+  }, [presenter, loadingMore, hasMoreReplays, showError]);
 
-      window.electron.common
-        .deleteFiles(filePaths)
+  const deleteReplays = React.useCallback(
+    (fileIds: string[]) => {
+      replayService
+        .deleteReplays(fileIds)
         .then(() => {
-          showSuccess(Messages.filesDeleted(filePaths.length));
+          // Don't optimistically remove the files in the UI since it could trigger an
+          // infinite scroll and fetch more data, _before_ we can delete the files from the DB.
+          presenter.removeFilesByIds(fileIds);
+          showSuccess(Messages.filesDeleted(fileIds.length));
         })
         .catch(showError);
     },
-    [presenter, showError, showSuccess],
+    [presenter, showError, showSuccess, replayService],
   );
+
+  const handlePlayAll = React.useCallback(async () => {
+    try {
+      if (selectAllMode) {
+        // Get all file paths from the current folder with the same filters
+        const { sortBy, sortDirection, hideShortGames, searchText } = useReplayFilter.getState();
+        const filters = buildReplayFilters(hideShortGames, searchText);
+        const allFilePaths = await replayService.getAllFilePaths({
+          folderPath: currentFolder,
+          orderBy: {
+            field: sortBy === "DATE" ? "startTime" : "lastFrame",
+            direction: sortDirection === "DESC" ? "desc" : "asc",
+          },
+          filters,
+        });
+
+        // Filter out deselected files
+        const deselectedSet = new Set(deselectedFiles);
+        const filesToPlay = allFilePaths.filter((path) => !deselectedSet.has(path));
+
+        // Preserve order: manually selected files first, then remaining files
+        const manuallySelectedSet = new Set(selectedFiles);
+        const manuallySelected = filesToPlay.filter((path) => manuallySelectedSet.has(path));
+        const remainingFiles = filesToPlay.filter((path) => !manuallySelectedSet.has(path));
+        const orderedPaths = [...manuallySelected, ...remainingFiles];
+
+        viewReplays(...orderedPaths.map((path) => ({ path })));
+      } else {
+        // Just play the selected files
+        viewReplays(...selectedFiles.map((path) => ({ path })));
+      }
+    } catch (err) {
+      showError(err);
+    }
+  }, [selectAllMode, selectedFiles, deselectedFiles, currentFolder, replayService, viewReplays, showError]);
+
+  const handleDeleteAll = React.useCallback(async () => {
+    try {
+      fileSelection.clearSelection();
+
+      if (selectAllMode) {
+        // Use bulk delete with filters
+        const { hideShortGames, searchText } = useReplayFilter.getState();
+        const filters = buildReplayFilters(hideShortGames, searchText);
+        const result = await replayService.bulkDeleteReplays({
+          folderPath: currentFolder,
+          filters,
+          excludeFilePaths: deselectedFiles,
+        });
+
+        // Reload the folder to get the updated list
+        await presenter.loadFolder(currentFolder, true);
+        showSuccess(Messages.filesDeleted(result.deletedCount));
+      } else {
+        // Just delete the selected files - map file paths to file IDs
+        const fileIds = filteredFiles.filter((file) => selectedFiles.includes(file.fullPath)).map((file) => file.id);
+        await deleteReplays(fileIds);
+      }
+    } catch (err) {
+      showError(err);
+    }
+  }, [
+    selectAllMode,
+    selectedFiles,
+    deselectedFiles,
+    currentFolder,
+    replayService,
+    deleteReplays,
+    fileSelection,
+    showError,
+    showSuccess,
+    filteredFiles,
+    presenter,
+  ]);
 
   return (
     <Outer>
@@ -114,17 +197,6 @@ export const ReplayBrowser = React.memo(() => {
                     />
                   );
                 })}
-                {loading && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      height: "100%",
-                      width: "100%",
-                      top: 0,
-                      backgroundColor: "rgba(0, 0, 0, 0.5)",
-                    }}
-                  />
-                )}
               </div>
             </List>
           }
@@ -136,12 +208,11 @@ export const ReplayBrowser = React.memo(() => {
                 flex: 1;
               `}
             >
-              <FilterToolbar disabled={loading} ref={searchInputRef} />
-              {loading ? (
-                <LoadingBox />
+              <FilterToolbar ref={searchInputRef} />
+              {showLoading ? (
+                <FileListSkeleton />
               ) : filteredFiles.length === 0 ? (
                 <EmptyFolder
-                  hiddenFileCount={hiddenFileCount}
                   onClearFilter={() => {
                     if (searchInputRef.current) {
                       searchInputRef.current.value = "";
@@ -152,7 +223,12 @@ export const ReplayBrowser = React.memo(() => {
               ) : (
                 <FileList
                   folderPath={currentFolder}
-                  onDelete={(filePath) => deleteFiles([filePath])}
+                  onDelete={(filePath) => {
+                    const file = filteredFiles.find((f) => f.fullPath === filePath);
+                    if (file) {
+                      deleteReplays([file.id]);
+                    }
+                  }}
                   onFileClick={fileSelection.onFileClick}
                   selectedFiles={selectedFiles}
                   onSelect={(index: number) => setSelectedItem(index)}
@@ -160,17 +236,21 @@ export const ReplayBrowser = React.memo(() => {
                   files={filteredFiles}
                   scrollRowItem={scrollRowItem}
                   setScrollRowItem={(item) => presenter.setScrollRowItem(item)}
+                  onLoadMore={handleLoadMore}
+                  loadingMore={loadingMore}
                 />
               )}
               <FileSelectionToolbar
-                totalSelected={selectedFiles.length}
+                totalSelected={
+                  selectAllMode && totalFilesInFolder
+                    ? totalFilesInFolder - deselectedFiles.length
+                    : selectedFiles.length
+                }
+                isSelectAllMode={selectAllMode}
                 onSelectAll={fileSelection.selectAll}
-                onPlay={() => viewReplays(...selectedFiles.map((path) => ({ path })))}
+                onPlay={handlePlayAll}
                 onClear={fileSelection.clearSelection}
-                onDelete={() => {
-                  fileSelection.clearSelection();
-                  void deleteFiles(selectedFiles);
-                }}
+                onDelete={handleDeleteAll}
               />
             </div>
           }
@@ -204,40 +284,40 @@ export const ReplayBrowser = React.memo(() => {
             {currentFolder}
           </LabelledText>
         </div>
-        <div style={{ textAlign: "right" }}>
-          {Messages.totalFileCount(filteredFiles.length)} {Messages.filteredFileCount(hiddenFileCount)}{" "}
-          {fileErrorCount > 0 ? Messages.errorFileCount(fileErrorCount) : ""}
-          {exists(totalBytes) ? Messages.totalSize(humanReadableBytes(totalBytes)) : ""}
+        <div
+          css={css`
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+          `}
+        >
+          {showLoading ? (
+            <CircularProgress color="secondary" size={20} />
+          ) : (
+            Messages.totalFileCount(totalFilesInFolder ?? filteredFiles.length)
+          )}
         </div>
       </Footer>
     </Outer>
   );
 });
 
-const LoadingBox = React.memo(function LoadingBox() {
-  const progress = useReplays((store) => store.progress);
-  return <LoadingScreenWithProgress current={progress?.current} total={progress?.total} />;
-});
-
-const EmptyFolder = ({ hiddenFileCount, onClearFilter }: { hiddenFileCount: number; onClearFilter: () => void }) => {
+const EmptyFolder = ({ onClearFilter }: { onClearFilter: () => void }) => {
   return (
     <IconMessage Icon={SearchIcon} label={Messages.noSlpFilesFound()}>
-      {hiddenFileCount > 0 && (
-        <div style={{ textAlign: "center" }}>
-          <Typography style={{ marginTop: 20, opacity: 0.6 }}>{Messages.hiddenFileCount(hiddenFileCount)}</Typography>
-          <Button
-            css={css`
-              text-transform: lowercase;
-              font-size: 12px;
-            `}
-            color="primary"
-            onClick={onClearFilter}
-            size="small"
-          >
-            {Messages.clearFilter()}
-          </Button>
-        </div>
-      )}
+      <div style={{ textAlign: "center" }}>
+        <Button
+          css={css`
+            text-transform: lowercase;
+            font-size: 12px;
+          `}
+          color="primary"
+          onClick={onClearFilter}
+          size="small"
+        >
+          {Messages.clearFilter()}
+        </Button>
+      </div>
     </IconMessage>
   );
 };
