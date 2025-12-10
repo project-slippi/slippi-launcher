@@ -18,7 +18,7 @@ import { useReplays } from "@/lib/hooks/use_replays";
 import { convertFrameCountToDurationString, monthDayHourFormat } from "@/lib/time";
 import { getStageImage } from "@/lib/utils";
 
-import type { ReplayDetail } from "./replay_file";
+import type { ReplayDetail, ReplayFileAction } from "./replay_file";
 import { ReplayFile as ReplayFileImpl } from "./replay_file";
 import { ReplayFileMessages as Messages } from "./replay_file.messages";
 import type { PlayerInfo } from "./team_elements/team_elements";
@@ -66,7 +66,7 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
   const onPlayClick = useCallback(() => onPlay(index), [onPlay, index]);
 
   // Extract playbackStatus to a separate component to avoid re-rendering all items
-  const actions = useMemo(() => {
+  const actions = useMemo((): ReplayFileAction[] => {
     return [
       {
         Icon: MoreHorizIcon,
@@ -84,7 +84,7 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
         primary: true,
         onClick: onPlayClick,
         disabled: false, // Will be updated by PlayButton component
-        useDolphinStatus: true, // Flag to indicate this action needs Dolphin status
+        isDolphinAction: true, // Flag to indicate this action needs Dolphin status
       },
     ];
   }, [index, onOpenMenu, onPlayClick, onShowStats]);
