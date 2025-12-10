@@ -15,6 +15,7 @@ import type { Kysely, Transaction } from "kysely";
 import path from "path";
 
 import { extractPlayerNames } from "../extract_player_names";
+import type { ParsedFileInfo, ReplayIndexingWorker } from "../replay_indexing.worker.interface";
 import { Continuation } from "./continuation";
 import { inferStartTime } from "./infer_start_time";
 import { mapGameRecordToFileResult } from "./record_mapper";
@@ -29,7 +30,7 @@ const SQLITE_PARAM_LIMIT_BATCH_SIZE = 500;
 export class DatabaseReplayProvider implements ReplayProvider {
   private currentSearchRequestId = 0;
 
-  constructor(private readonly db: Kysely<Database>) {}
+  constructor(private readonly db: Kysely<Database>, private readonly worker?: ReplayIndexingWorker) {}
 
   /**
    * Check if a request ID has been superseded by a newer request.
@@ -470,6 +471,27 @@ export class DatabaseReplayProvider implements ReplayProvider {
         }
 
         const batchStartTime = Date.now();
+
+        // Parse files using worker (if available) before transaction
+        // This allows parallel parsing off the main thread
+        let parsedFiles: Map<string, ParsedFileInfo>;
+        if (this.worker) {
+          const parseStartTime = Date.now();
+          const parseResults = await this.worker.parseReplayFileBatch(folder, batch);
+          const parseDuration = Date.now() - parseStartTime;
+          log.info(`Worker parsed ${batch.length} files in ${parseDuration}ms`);
+
+          parsedFiles = new Map(parseResults.filter((r) => r.success && r.data).map((r) => [r.filename, r.data!]));
+
+          const parseFailures = parseResults.filter((r) => !r.success);
+          if (parseFailures.length > 0) {
+            log.warn(`Failed to parse ${parseFailures.length} replay(s): `, parseFailures[0].error);
+          }
+        } else {
+          parsedFiles = new Map();
+        }
+
+        // Insert parsed files into database within a transaction
         const batchResults = await this.db.transaction().execute(async (trx) => {
           const results: Array<{ success: boolean; error?: any }> = [];
 
@@ -481,7 +503,18 @@ export class DatabaseReplayProvider implements ReplayProvider {
             }
 
             try {
-              await this.insertNewReplayFileInTransaction(trx, folder, filename);
+              // Use pre-parsed data if available, otherwise parse on demand
+              const parsedInfo = parsedFiles.get(filename) ?? (await this.parseReplayFile(folder, filename));
+              const newFile = generateNewFile(folder, parsedInfo);
+              const fileRecord = await FileRepository.insertFile(trx, newFile);
+
+              const newGame = generateNewGame(fileRecord, parsedInfo);
+              if (newGame) {
+                const gameRecord = await GameRepository.insertGame(trx, newGame);
+                const newPlayers = generateNewPlayers(gameRecord._id, parsedInfo);
+                await PlayerRepository.insertPlayer(trx, ...newPlayers);
+              }
+
               results.push({ success: true });
             } catch (err) {
               results.push({ success: false, error: err });
@@ -533,6 +566,45 @@ export class DatabaseReplayProvider implements ReplayProvider {
   }
 
   /**
+   * Parse a replay file using the worker if available, otherwise fallback to main thread.
+   * @param folder - The folder containing the replay file
+   * @param filename - The name of the replay file
+   * @returns The parsed file information
+   */
+  private async parseReplayFile(folder: string, filename: string): Promise<ParsedFileInfo> {
+    if (this.worker) {
+      const result = await this.worker.parseReplayFile(folder, filename);
+      if (!result.success) {
+        throw new Error(`Failed to parse replay file ${filename}: ${result.error}`);
+      }
+      return result.data!;
+    } else {
+      // Fallback to main thread parsing
+      const fullPath = path.resolve(folder, filename);
+      const game = new SlippiGame(fullPath);
+
+      let sizeBytes = 0;
+      let birthTime: string | null = null;
+      try {
+        const fileInfo = await fs.stat(fullPath);
+        sizeBytes = fileInfo.size;
+        birthTime = fileInfo.birthtime.toISOString();
+      } catch (err) {
+        log.warn(`Error running stat for file ${fullPath}: `, err);
+      }
+
+      return {
+        filename,
+        sizeBytes,
+        birthTime,
+        settings: game.getSettings(),
+        metadata: game.getMetadata(),
+        winnerIndices: game.getWinners().map((winner) => winner.playerIndex),
+      };
+    }
+  }
+
+  /**
    * Insert a new replay file within an existing transaction.
    * This is the core implementation used by both batch processing and single-file operations.
    *
@@ -546,19 +618,18 @@ export class DatabaseReplayProvider implements ReplayProvider {
     folder: string,
     filename: string,
   ): Promise<{ fileRecord: FileRecord; gameRecord: GameRecord | undefined; playerRecords: PlayerRecord[] }> {
-    const fullPath = path.resolve(folder, filename);
-    const game = new SlippiGame(fullPath);
-    const newFile = await generateNewFile(folder, filename);
+    const parsedInfo = await this.parseReplayFile(folder, filename);
+    const newFile = generateNewFile(folder, parsedInfo);
 
     const fileRecord = await FileRepository.insertFile(trx, newFile);
 
-    const newGame = generateNewGame(fileRecord, game);
+    const newGame = generateNewGame(fileRecord, parsedInfo);
     if (!newGame) {
       return { fileRecord, gameRecord: undefined, playerRecords: [] };
     }
 
     const gameRecord = await GameRepository.insertGame(trx, newGame);
-    const newPlayers = generateNewPlayers(gameRecord._id, game);
+    const newPlayers = generateNewPlayers(gameRecord._id, parsedInfo);
     const playerRecords = await PlayerRepository.insertPlayer(trx, ...newPlayers);
 
     return { fileRecord, gameRecord, playerRecords };
@@ -582,33 +653,23 @@ export class DatabaseReplayProvider implements ReplayProvider {
   }
 }
 
-async function generateNewFile(folder: string, filename: string): Promise<NewFile> {
-  const fullPath = path.resolve(folder, filename);
-  let size = 0;
-  let birthtime: string | null = null;
-  try {
-    const fileInfo = await fs.stat(fullPath);
-    size = fileInfo.size;
-    birthtime = fileInfo.birthtime.toISOString();
-  } catch (err) {
-    log.warn(`Error running stat for file ${fullPath}: `, err);
-  }
+function generateNewFile(folder: string, parsedInfo: ParsedFileInfo): NewFile {
   const newReplay: NewFile = {
-    name: filename,
+    name: parsedInfo.filename,
     folder,
-    size_bytes: size,
-    birth_time: birthtime,
+    size_bytes: parsedInfo.sizeBytes,
+    birth_time: parsedInfo.birthTime,
   };
   return newReplay;
 }
 
-function generateNewGame(file: FileRecord, game: SlippiGame): NewGame | null {
+function generateNewGame(file: FileRecord, parsedInfo: ParsedFileInfo): NewGame | null {
   // Load settings
-  const settings = game.getSettings();
+  const settings = parsedInfo.settings;
   if (!settings || settings.players.length === 0) {
     return null;
   }
-  const metadata = game.getMetadata();
+  const metadata = parsedInfo.metadata;
 
   const sessionId = settings.matchInfo?.sessionId ?? null;
   const isRanked = sessionId != null && sessionId.startsWith("mode.ranked-");
@@ -635,16 +696,16 @@ function generateNewGame(file: FileRecord, game: SlippiGame): NewGame | null {
   return newGame;
 }
 
-function generateNewPlayers(gameId: number, game: SlippiGame): NewPlayer[] {
-  const settings = game.getSettings();
+function generateNewPlayers(gameId: number, parsedInfo: ParsedFileInfo): NewPlayer[] {
+  const settings = parsedInfo.settings;
   if (!settings || settings.players.length === 0) {
     return [];
   }
 
-  const winnerIndices = game.getWinners().map((winner) => winner.playerIndex);
+  const winnerIndices = parsedInfo.winnerIndices;
   return settings.players.map((player): NewPlayer => {
     const isWinner = winnerIndices.includes(player.playerIndex);
-    const names = extractPlayerNames(player.playerIndex, settings, game.getMetadata());
+    const names = extractPlayerNames(player.playerIndex, settings, parsedInfo.metadata);
     const newPlayer: NewPlayer = {
       game_id: gameId,
       port: player.playerIndex + 1,

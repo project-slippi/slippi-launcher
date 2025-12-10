@@ -16,6 +16,7 @@ import {
   ipc_searchGames,
   ipc_selectTreeFolder,
 } from "./ipc";
+import { createReplayIndexingWorker } from "./replay_indexing.worker.interface";
 import type { Progress } from "./types";
 
 const REPLAY_DATABASE_NAME = "slippi.sqlite";
@@ -24,15 +25,25 @@ const isDevelopment = process.env.NODE_ENV === "development";
 
 async function createReplayProvider() {
   const replayDatabaseFolder = path.join(app.getPath("userData"), REPLAY_DATABASE_NAME);
+
+  // Create the replay indexing worker
+  let worker;
+  try {
+    worker = await createReplayIndexingWorker();
+    log.info("Replay indexing worker created successfully");
+  } catch (err) {
+    log.error(`Failed to create replay indexing worker: ${err}. Will use main thread for parsing.`);
+  }
+
   try {
     const database = await createDatabase(isDevelopment ? undefined : replayDatabaseFolder);
-    return new DatabaseReplayProvider(database);
+    return new DatabaseReplayProvider(database, worker);
   } catch (err) {
     log.error(
       `Failed to initialize replay database at ${replayDatabaseFolder}: ${err}. Using in-memory database instead.`,
     );
     const database = await createDatabase(undefined);
-    return new DatabaseReplayProvider(database);
+    return new DatabaseReplayProvider(database, worker);
   }
 }
 
