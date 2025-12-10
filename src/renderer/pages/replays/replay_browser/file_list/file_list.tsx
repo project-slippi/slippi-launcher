@@ -50,10 +50,7 @@ const FileListResults = ({
     getScrollElement: () => parentRef.current,
     estimateSize: React.useCallback(() => REPLAY_FILE_ITEM_SIZE, []),
     overscan: 5, // Render 5 items above/below viewport for smooth scrolling
-    measureElement:
-      typeof window !== "undefined" && navigator.userAgent.indexOf("Firefox") === -1
-        ? (element) => element.getBoundingClientRect().height
-        : undefined,
+    measureElement: (element) => element.getBoundingClientRect().height,
   });
 
   // Track filter values with ref to avoid re-renders

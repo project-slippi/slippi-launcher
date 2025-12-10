@@ -18,7 +18,7 @@ type StoreState = {
   files: FileResult[];
   currentRoot: string | null;
   currentFolder: string;
-  scrollRowItem: number; // Persisted for navigation, but not subscribed to during scrolling
+  scrollRowItem: number;
   selectedFiles: string[];
   selectAllMode: boolean;
   deselectedFiles: string[]; // Files explicitly deselected from select-all mode
