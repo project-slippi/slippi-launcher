@@ -35,25 +35,18 @@ export const ReplayBrowser = React.memo(() => {
   const { dolphinService, replayService } = useServices();
   const { viewReplays } = useDolphinActions(dolphinService);
 
-  // Batch related state reads into single selectors to reduce subscription overhead
-  const { loading, loadingMore, hasMoreReplays } = useReplays((store) => ({
-    loading: store.loading,
-    loadingMore: store.loadingMore,
-    hasMoreReplays: store.hasMoreReplays,
-  }));
+  const loading = useReplays((store) => store.loading);
+  const loadingMore = useReplays((store) => store.loadingMore);
+  const hasMoreReplays = useReplays((store) => store.hasMoreReplays);
 
-  const { currentFolder, folderTree, collapsedFolders, totalFilesInFolder } = useReplays((store) => ({
-    currentFolder: store.currentFolder,
-    folderTree: store.folderTree,
-    collapsedFolders: store.collapsedFolders,
-    totalFilesInFolder: store.totalFilesInFolder,
-  }));
+  const currentFolder = useReplays((store) => store.currentFolder);
+  const folderTree = useReplays((store) => store.folderTree);
+  const collapsedFolders = useReplays((store) => store.collapsedFolders);
+  const totalFilesInFolder = useReplays((store) => store.totalFilesInFolder);
 
-  const { selectedFiles, selectAllMode, deselectedFiles } = useReplays((store) => ({
-    selectedFiles: store.selectedFiles,
-    selectAllMode: store.selectAllMode,
-    deselectedFiles: store.deselectedFiles,
-  }));
+  const selectedFiles = useReplays((store) => store.selectedFiles);
+  const selectAllMode = useReplays((store) => store.selectAllMode);
+  const deselectedFiles = useReplays((store) => store.deselectedFiles);
 
   // Convert to Set for O(1) lookups in list items
   const selectedFilesSet = React.useMemo(() => new Set(selectedFiles), [selectedFiles]);
