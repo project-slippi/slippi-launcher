@@ -36,8 +36,8 @@ const configuration: webpack.Configuration = {
               declaration: isDevelop || isDebugProd,
               declarationMap: isDevelop || isDebugProd,
             },
-            // Whether or not we should disable type-checking
-            transpileOnly: isDevelop,
+            // Disable type-checking during build for speed - use separate 'npm run typecheck'
+            transpileOnly: true,
             // By default, ts-loader compiles absolutely everything and we don't want that
             onlyCompileBundledFiles: true,
           },
