@@ -1,0 +1,1857 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: slippi-launcher 1.0\n"
+"mime-version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"x-generator: i18next-auto-keys CLI\n"
+"Language: ru_RU\n"
+"PO-Revision-Date: 2025-12-10T16:29:14.954Z\n"
+
+#: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
+msgid "2-4 uppercase English characters"
+msgstr "2-4 заглавные латинские буквы"
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:10:40
+msgid "7z files must be uncompressed to be used in Dolphin."
+msgstr "7z файлы должны быть распакованы для использования в Dolphin."
+
+#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:8:42
+msgid "A confirmation email has been sent to:"
+msgstr "Письмо с подтверждением было отправлено на:"
+
+#: src/renderer/listeners/listeners.messages.ts:3:23
+msgid "A network error occurred."
+msgstr "Произошла сетевая ошибка."
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:21:20
+msgid "Accept All"
+msgstr "Принять все"
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:23:33
+msgid "Accept rules and policies"
+msgstr "Принять правила и политики"
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:2:29
+msgid "Activate online play"
+msgstr "Активировать онлайн"
+
+#: src/renderer/pages/home/sidebar/ranked_status.messages.ts:3:17
+msgid "Active"
+msgstr "Активен"
+
+#: src/renderer/components/multi_path_input/multi_path_input.messages.ts:3:14
+#: src/renderer/pages/console_mirror/new_connection_list/new_connection_list.messages.ts:5:14
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/add_codes/add_codes.messages.ts:6:14
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:6:14
+msgid "Add"
+msgstr "Добавить"
+
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:12:31
+msgid "Additional SLP Folders"
+msgstr "Дополнительные SLP каталоги"
+
+#: src/renderer/pages/settings/create.messages.ts:12:19
+msgid "Advanced"
+msgstr "Дополнительные"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:15:5
+msgid ""
+"Allows automatic hiding and showing of an OBS source (e.g. your Dolphin "
+"capture) when the game is active. Requires OBS Websocket 5.0+, which comes "
+"preinstalled on OBS 28+."
+msgstr ""
+"Позволяет автоматически показывать и скрывать захват Dolphin в OBS"
+"при начале и окончании матча. Требует OBS Websocket 5.0+, который"
+"входит в установку OBS 28+."
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:24:33
+msgid ""
+"Allows external programs to read live game data by connecting to a local "
+"endpoint."
+msgstr ""
+"Позволяет внешним программам получать данные о матче через локальное "
+"подключение."
+
+#: src/renderer/pages/settings/spectate_settings/spectate_settings.messages.ts:3:49
+msgid "Allows remote control of spectate features via WebSocket."
+msgstr "Позволяет удаленно управлять функционалом трансляций через WebSocket."
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:22:27
+#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:12:27
+msgid "An error occurred. The application does not have a user."
+msgstr "Произошла ошибка. У приложения нет пользователя."
+
+#: src/renderer/pages/settings/appearance_settings/language_selector/language_selector.messages.ts:2:22
+msgid "App Language"
+msgstr "Язык приложения"
+
+#: src/renderer/pages/settings/create.messages.ts:10:22
+msgid "App Settings"
+msgstr "Настройки приложения"
+
+#: src/renderer/pages/settings/create.messages.ts:11:21
+msgid "Appearance"
+msgstr "Внешний вид"
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:5:21
+msgid "Are you sure you want to delete this code?"
+msgstr "Вы уверены, что хотите удалить этот код?"
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:9:36
+msgid "Are you sure you want to log out?"
+msgstr "Вы уверены, что хотите разлогиниться?"
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:17:21
+msgid "Are you sure?"
+msgstr "Вы уверены?"
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:3:39
+msgid "Automatically install Slippi Launcher updates when they become available."
+msgstr "Автоматически устанавливать обновления Slippi Launcher"
+
+#: src/renderer/pages/console_mirror/new_connection_list/new_connection_list.messages.ts:4:20
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:7:20
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:24:20
+msgid "Available"
+msgstr "Доступно"
+
+#: src/renderer/pages/quick_start/stepper_dots/stepper_dots.messages.ts:3:15
+msgid "Back"
+msgstr "Назад"
+
+#: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:2:24
+msgid "Back to replays"
+msgstr "Назад к реплеям"
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:24:15
+msgid "Beta (Mainline)"
+msgstr "Бета (Mainline)"
+
+#: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:9:50
+#. {0} broadcastDuration: string
+msgid "Broadcast ended after {0}"
+msgstr "Трансляция закончилась спустя {0}"
+
+#: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:8:27
+msgid "Broadcast started"
+msgstr "Трансляция началась"
+
+#: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:6:66
+#. {0} displayName: string
+#. {1} connectCode: string
+msgid "Broadcast to: {0} ({1})"
+msgstr "Транслировать: {0} ({1})"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:30:27
+msgid "CGNAT or Double NAT"
+msgstr "CGNAT или Double NAT"
+
+#: src/renderer/components/activate_online_form/activate_online_form.messages.ts:5:23
+msgid "Can be changed later for a one-time payment"
+msgstr "Можно изменить позже за одноразовый платеж"
+
+#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:5:24
+msgid "Can't find the email? Check your spam folder. Still missing? "
+msgstr "Не можете найти письмо? Проверьте спам-каталог. Все еще не пришло? "
+
+#: src/renderer/app/header/header.messages.ts:14:17
+#: src/renderer/components/confirmation_modal/confirmation_modal.messages.ts:3:17
+#: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:10:17
+msgid "Cancel"
+msgstr "Отмена"
+
+#: src/renderer/components/multi_path_input/multi_path_input.messages.ts:5:36
+msgid "Cannot add subfolders of the Root SLP Folder."
+msgstr "Нельзя добавить подкаталоги корневого SLP каталога."
+
+#: src/renderer/pages/spectate/footer/footer.messages.ts:3:23
+msgid "Change Folder"
+msgstr "Сменить каталог"
+
+#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:10:22
+msgid "Change email"
+msgstr "Сменить email"
+
+#: src/renderer/pages/settings/create.messages.ts:5:15
+msgid "Chat"
+msgstr "Чат"
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:7:37
+#. {0} direction: string
+msgid "Chat Group: {0}"
+msgstr "Группа сообщений: {0}"
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:12:23
+msgid "Chat Messages"
+msgstr "Сообщения"
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:13:34
+msgid "Chat messages to use for netplay"
+msgstr "Сообщения для использования в онлайне"
+
+#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:4:28
+msgid "Check Verification"
+msgstr "Проверка подтверждения"
+
+#: src/renderer/app/header/header.messages.ts:3:26
+msgid "Check for updates"
+msgstr "Проверить обновления"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostics_button.messages.ts:6:29
+#: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:9:29
+msgid "Check network issues"
+msgstr "Проверить сетевые проблемы"
+
+#: src/renderer/app/header/header.messages.ts:4:29
+msgid "Checking for updates..."
+msgstr "Проверка обновлений..."
+
+#: src/renderer/app/header/header.messages.ts:8:29
+#: src/renderer/pages/quick_start/steps/activate_online_step/activate_online_step.messages.ts:2:29
+msgid "Choose a connect code"
+msgstr "Выберите коннект-код"
+
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:13:42
+msgid "Choose any additional SLP folders that should show up in the replay browser."
+msgstr "Выберите дополнительные SLP каталоги, которые должны показываться в браузере реплеев."
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:8:38
+msgid "Choose what happens when the Play button is pressed."
+msgstr "Выберите, что должно происходить при нажатии кнопки Play."
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:22:50
+msgid "Choose which Slippi Dolphin release to install"
+msgstr "Выберите версию установки Slippi Dolphin"
+
+#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:4:16
+#: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:8:16
+msgid "Clear"
+msgstr "Очистить"
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:4:25
+msgid "Clear Temporary Files"
+msgstr "Удалить временные файлы"
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:7:21
+msgid "Clear files"
+msgstr "Удалить файлы"
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:6:22
+msgid "Clear filter"
+msgstr "Сбросить фильтр"
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:17:29
+msgid "Click the links below to review:"
+msgstr "Кликните ссылки ниже для просмотра:"
+
+#: src/renderer/pages/settings/settings_page.messages.ts:2:16
+msgid "Close"
+msgstr "Закрыть"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:4:31
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:7:38
+msgid "Close Dolphin to change this setting"
+msgstr "Закройте Dolphin для изменения этой настройки"
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:7:32
+msgid "Code copied to clipboard!"
+msgstr "Код скопирован!"
+
+#: src/renderer/lib/validate/validate.messages.ts:6:24
+msgid "Code is too long"
+msgstr "Код слишком длинный"
+
+#: src/renderer/lib/validate/validate.messages.ts:5:25
+msgid "Code is too short"
+msgstr "Код слишком короткий"
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:10:33
+msgid "Configure Dolphin"
+msgstr "Конфигурировать Dolphin"
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:4:50
+#. {0} dolphinTypeName: string
+msgid "Configure {0}"
+msgstr "Конфигурирация {0}"
+
+#: src/renderer/app/header/header.messages.ts:16:18
+#: src/renderer/components/confirmation_modal/confirmation_modal.messages.ts:2:18
+#: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:11:18
+msgid "Confirm"
+msgstr "Подтвердить"
+
+#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:7:30
+msgid "Confirm File Deletion"
+msgstr "Подтвердите удаление файлов"
+
+#: src/renderer/components/activate_online_form/activate_online_form.messages.ts:6:22
+msgid "Confirm code"
+msgstr "Подтвердите код"
+
+#: src/renderer/components/login_form/login_form.messages.ts:9:26
+msgid "Confirm password"
+msgstr "Подтвердите пароль"
+
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:8:18
+msgid "Connect"
+msgstr "Подключиться"
+
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:2:20
+#: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:3:20
+#: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:11:20
+msgid "Connected"
+msgstr "Подключено"
+
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:3:21
+#: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:5:21
+msgid "Connecting"
+msgstr "Подключение"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:25:25
+msgid "Connection Port"
+msgstr "Порт подключения"
+
+#: src/renderer/app/create.messages.ts:5:18
+#: src/renderer/pages/console_mirror/console_mirror.messages.ts:2:24
+msgid "Console Mirror"
+msgstr "Трансляция с консоли"
+
+#: src/renderer/pages/console_mirror/new_connection_list/new_connection_list.messages.ts:3:27
+msgid "Consoles detected on the network will show up here."
+msgstr "Найденные в сети консоли будут показываться здесь."
+
+#: src/renderer/components/login_form/login_form.messages.ts:15:19
+#: src/renderer/pages/quick_start/steps/setup_complete_step/setup_complete_step.messages.ts:3:19
+msgid "Continue"
+msgstr "Продолжить"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:7:17
+#: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:13:17
+#: src/renderer/pages/spectate/spectator_id_block/spectator_id_block.messages.ts:4:17
+msgid "Copied!"
+msgstr "Скопировано!"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:6:15
+#: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:14:15
+#: src/renderer/pages/spectate/spectator_id_block/spectator_id_block.messages.ts:3:15
+msgid "Copy"
+msgstr "Скопировать"
+
+#: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:8:19
+msgid "Copy logs"
+msgstr "Скопировать логи"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:8:22
+msgid "Copy results"
+msgstr "Скопировать результаты"
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:3:26
+msgid "Copy to Clipboard"
+msgstr "Скопировать в буфер обмена"
+
+#: src/renderer/components/login_form/login_form.messages.ts:2:26
+msgid "Create an account"
+msgstr "Создать аккаунт"
+
+#: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:5:27
+msgid "Crunching numbers..."
+msgstr "Обрабатываем данные..."
+
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:15:22
+#: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:9:22
+msgid "Current file"
+msgstr "Текущий файл"
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:4:24
+msgid "Current folder"
+msgstr "Текущий каталог"
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:4:18
+msgid "Default"
+msgstr "По умолчанию"
+
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connections_list.messages.ts:3:17
+#: src/renderer/pages/replays/replay_browser/file_list/file_list.messages.ts:3:17
+#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:3:17
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:6:17
+msgid "Delete"
+msgstr "Удалить"
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:2:21
+msgid "Delete Code"
+msgstr "Удалить код"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:33:36
+msgid "Detected (it could also be a VPN)"
+msgstr "Обнаружен (так же может быть VPN)"
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:3:25
+msgid "Discard Changes"
+msgstr "Отменить изменения"
+
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:10:21
+msgid "Disconnect"
+msgstr "Отключиться"
+
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:5:23
+#: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:4:23
+#: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:12:23
+msgid "Disconnected"
+msgstr "Отключено"
+
+#: src/renderer/app/header/header.messages.ts:17:22
+#: src/renderer/components/login_form/login_form.messages.ts:5:22
+msgid "Display Name"
+msgstr "Никнейм"
+
+#: src/renderer/lib/validate/validate.messages.ts:10:31
+msgid "Display name is too long"
+msgstr "Никнейм слишком длинный"
+
+#: src/renderer/lib/validate/validate.messages.ts:9:32
+msgid "Display name is too short"
+msgstr "Никнейм слишком короткий"
+
+#: src/renderer/lib/validate/validate.messages.ts:8:5
+msgid ""
+"Display names can only contain letters, numbers, Hiragana, Katakana, and "
+"special characters"
+msgstr ""
+"Никнеймы могут содержать только латинские буквы, цифры, Hiragana, "
+"Katakana и специальные символы"
+
+#: src/renderer/pages/settings/create.messages.ts:7:26
+msgid "Dolphin Settings"
+msgstr "Настройки Dolphin"
+
+#: src/renderer/lib/dolphin/handle_dolphin_exit_code.messages.ts:9:5
+#. {0} exitCode: string
+msgid ""
+"Dolphin exited with error code: {0}. If you're in need of assistance, "
+"screenshot this and post it in a support channel in the Slippi Discord with "
+"some context regarding the crash."
+msgstr ""
+"Dolphin закрылся с кодом ошибки: {0}. Если вам нужна помощь, "
+"сделайте скриншот ошибки и отправьте его в канал поддержки Slippi Discord'а, "
+"вместе с описанием контекста проблемы."
+
+#: src/renderer/lib/dolphin/handle_dolphin_exit_code.messages.ts:5:5
+msgid ""
+"Dolphin has crashed. Please go to the Help section of the settings page, "
+"click \"Copy logs\", and paste them in the Slippi Discord's "
+"#windows-support channel with some context regarding the crash."
+msgstr ""
+"Dolphin крашнулся. Пожалуйста, скопируйте логи в секции Помощь страницы настроек, "
+"и приложите их в Slippi Discord в канал #windows-support, вместе с описанием проблемы "
+
+
+#: src/renderer/pages/replays/replay_browser/replay_file/replay_file.messages.ts:6:28
+#: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:6:28
+msgid "Dolphin is updating"
+msgstr "Dolphin обновляется"
+
+#: src/renderer/lib/dolphin/dolphin.messages.ts:2:28
+msgid "Dolphin is updating. Try again later."
+msgstr "Dolphin обновляется. Попробуйте позже."
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:11:15
+msgid "Down"
+msgstr "Вниз"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:17:19
+msgid "Download"
+msgstr "Скачать"
+
+#: src/renderer/components/persistent_notification/persistent_notification.messages.ts:2:44
+#. {0} version: string
+msgid "Downloading version {0}..."
+msgstr "Скачивается версия {0}..."
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/add_codes/add_codes.messages.ts:4:28
+msgid "Duplicate code name"
+msgstr "Код с таким именем уже существует"
+
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connections_list.messages.ts:2:15
+msgid "Edit"
+msgstr "Изменить"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_dialog.messages.ts:2:25
+msgid "Edit connection"
+msgstr "Изменить соединение"
+
+#: src/renderer/app/header/header.messages.ts:15:26
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:5:26
+msgid "Edit display name"
+msgstr "Поменять никнейм"
+
+#: src/renderer/components/login_form/login_form.messages.ts:6:16
+msgid "Email"
+msgstr "Email"
+
+#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:11:29
+msgid "Email is not yet verified. Have you checked your spam folder?"
+msgstr "Email не подтвержден. Проверили ли вы ваш спам-каталог?"
+
+#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:7:24
+msgid "Email verified"
+msgstr "Email подтвержден"
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:2:28
+msgid "Enable Auto Updates"
+msgstr "Включить автоматические обновления"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:13:29
+msgid "Enable Autoswitcher"
+msgstr "Включить Autoswitcher"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:23:22
+msgid "Enable Console Relay"
+msgstr "Включить Console Relay"
+
+#: src/renderer/pages/settings/game_settings/game_music_toggle/game_music_toggle.messages.ts:2:22
+msgid "Enable Music"
+msgstr "Включить музыку"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:7:29
+msgid "Enable Real-time Mode"
+msgstr "Включить режим реального времени"
+
+#: src/renderer/pages/settings/spectate_settings/spectate_settings.messages.ts:2:38
+msgid "Enable Spectate Remote Control"
+msgstr "Включить удаленное управление трансляциями"
+
+#: src/renderer/pages/settings/game_settings/game_music_toggle/game_music_toggle.messages.ts:3:33
+msgid "Enable in-game music."
+msgstr "Включить игровую музыку."
+
+#: src/renderer/pages/home/sidebar/ranked_status.messages.ts:5:19
+msgid "Ending In"
+msgstr "Заканчивается через"
+
+#: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:5:27
+msgid "Enter Spectator ID"
+msgstr "Введите Spectator ID"
+
+#: src/renderer/pages/spectate/share_gameplay_block/share_gameplay_block.messages.ts:3:35
+msgid "Error connecting to Dolphin. Ensure Dolphin is running and try again."
+msgstr "Ошибка подключения к Dolphin. Убедитесь, что Dolphin запущен, и попробуйте снова."
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:3:53
+#. {0} errorMessage: string
+msgid "Error reading gecko codes: {0}"
+msgstr "Ошибка чтения gecko-кода: {0}"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostics_button.messages.ts:3:34
+msgid "Error running network diagnostics"
+msgstr "Ошибка запуска сетевой диагностики"
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:4:52
+#. {0} errorMessage: string
+msgid "Error saving gecko codes: {0}"
+msgstr "Ошибка сохранения gecko-кода: {0}"
+
+#: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:3:30
+msgid "Error starting server"
+msgstr "Ошибка при запуске сервера"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:3:28
+msgid "External IP Address"
+msgstr "Внешний IP адрес"
+
+#: src/renderer/pages/settings/help_page/help_page.messages.ts:2:14
+msgid "FAQ"
+msgstr "Частые вопросы"
+
+#: src/renderer/initialize_app.messages.ts:2:47
+msgid "Failed to communicate with Slippi servers."
+msgstr "Ошибка соединения с серверами Slippi."
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:29:44
+msgid "Failed to determine CGNAT or Double NAT presence"
+msgstr "Не получилось определить наличие CGNAT или Double NAT"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:2:37
+msgid "Failed to determine IP Address"
+msgstr "Не получилось определить IP адрес"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:11:35
+msgid "Failed to determine NAT type"
+msgstr "Не получилось определить тип NAT"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:21:39
+msgid "Failed to determine port mapping availability"
+msgstr "Не получилось определить доступность port mapping"
+
+#: src/renderer/pages/home/news_feed/news_feed.messages.ts:4:24
+msgid "Failed to fetch news articles."
+msgstr "Ошибка получения новостных сообщений."
+
+#: src/renderer/app/header/header.messages.ts:5:29
+msgid "Failed to get updates"
+msgstr "Ошибка получения обновлений"
+
+#: src/renderer/initialize_app.messages.ts:6:5
+#: src/renderer/lib/dolphin/dolphin.messages.ts:4:5
+#. {0} dolphinTypeName: string
+msgid ""
+"Failed to install {0}. Try closing all Dolphin instances and restarting the "
+"launcher."
+msgstr ""
+"Ошибка инсталляции {0}. Попробуйте закрыть все приложения Dolphin и "
+"перезапустите лаунчер."
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:2:33
+msgid "Failed to read gecko codes"
+msgstr "Не получилось прочитать gecko-коды"
+
+#: src/renderer/pages/home/sidebar/tournament_links.messages.ts:5:34
+msgid "Find in-person tournaments"
+msgstr "Найти оффлайн-турниры"
+
+#: src/renderer/pages/home/sidebar/tournament_links.messages.ts:6:32
+msgid "Find online tournaments"
+msgstr "Найти онлайн-турниры"
+
+#: src/renderer/pages/home/sidebar/tournament_links.messages.ts:2:26
+msgid "Find tournaments"
+msgstr "Найти турниры"
+
+#: src/renderer/pages/spectate/spectator_id_block/spectator_id_block.messages.ts:6:5
+msgid ""
+"First give this ID to the person whose gameplay you want to watch. Then "
+"after they have started their broadcast, click Refresh."
+msgstr ""
+"Отправьте этот ID людям, чьи матчи вы хотите смотреть. Затем, "
+"после того как они начали свою трансляцию, нажмите Обновить."
+
+#: src/renderer/components/footer/footer.messages.ts:3:26
+msgid "Follow Project Slippi on Twitter"
+msgstr "Подпишитесь на Project Slippi в Twitter"
+
+#: src/renderer/components/login_form/login_form.messages.ts:12:25
+msgid "Forgot your password?"
+msgstr "Забыли пароль?"
+
+#: src/renderer/pages/settings/create.messages.ts:3:15
+msgid "Game"
+msgstr "Игра"
+
+#: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:7:47
+msgid "Game stats for team battles is unsupported"
+msgstr "Сбор игровой статистики для командных матчей не поддерживается"
+
+#: src/renderer/pages/settings/create.messages.ts:2:26
+msgid "General Settings"
+msgstr "Основные настройки"
+
+#: src/renderer/components/login_form/login_form.messages.ts:17:17
+#: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:3:17
+msgid "Go back"
+msgstr "Вернуться"
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:20:20
+msgid "Hard reset"
+msgstr "Полный сброс"
+
+#: src/renderer/pages/settings/create.messages.ts:13:15
+msgid "Help"
+msgstr "Помощь"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:4:15
+msgid "Hide"
+msgstr "Спрятать"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:11:30
+msgid "Hide advanced options"
+msgstr "Спрятать продвинутые опции"
+
+#: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:7:25
+msgid "Hide short games"
+msgstr "Спрятать короткие матчи"
+
+#: src/renderer/app/create.messages.ts:2:15
+msgid "Home"
+msgstr "Главная"
+
+#: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:5:25
+msgid "Home-Run Contest"
+msgstr "Home-Run Contest"
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:4:28
+msgid "I accept the Slippi Online Rules"
+msgstr "Я принимаю правила Slippi Online"
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:20:36
+msgid "I accept the Slippi Privacy Policy and Terms of Service"
+msgstr "Я принимаю Slippi Privacy Policy и Terms of Service"
+
+#: src/renderer/components/login_form/login_form.messages.ts:10:31
+msgid "I already have an account"
+msgstr "У меня уже есть аккаунт"
+
+#: src/renderer/components/build_info/build_info.messages.ts:2:19
+msgid "I hope you know what you're doing..."
+msgstr "Надеюсь, вы знаете что вы делаете..."
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:2:20
+msgid "IP Address"
+msgstr "IP адрес"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:35:31
+msgid ""
+"If the failure persists, you can test this in your computer's terminal app. "
+"See below:"
+msgstr ""
+"Если проблема осталась, можете протестировать в командной строке. "
+"См. ниже:"
+
+#: src/renderer/pages/home/sidebar/tournament_links.messages.ts:3:19
+msgid "In-Person"
+msgstr "Оффлайн"
+
+#: src/renderer/pages/settings/game_settings/game_music_toggle/game_music_toggle.messages.ts:4:33
+msgid "Incompatible with WASAPI."
+msgstr "Несовместимо с WASAPI."
+
+#: src/renderer/components/persistent_notification/persistent_notification.messages.ts:3:24
+msgid "Install update"
+msgstr "Установить обновление"
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:15:16
+msgid ""
+"Intentionally manipulating the game performance for your own gain is not "
+"allowed."
+msgstr "Умышленная манипуляция качеством матча для получения выгоды запрещена."
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:13:18
+msgid "Invalid"
+msgstr "Некорректен"
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/add_codes/add_codes.messages.ts:2:27
+msgid "Invalid Gecko code"
+msgstr "Некорректный gecko-код"
+
+#: src/renderer/lib/validate/validate.messages.ts:2:27
+msgid "Invalid IP address"
+msgstr "Некорректный IP адрес"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:20:22
+msgid "Invalid Port"
+msgstr "Некорректный порт"
+
+#: src/renderer/lib/validate/validate.messages.ts:3:22
+msgid "Invalid code"
+msgstr "Некорректный код"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:29:28
+msgid "Invalid port number"
+msgstr "Номер порта некорректен"
+
+#: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:2:30
+msgid "Invalid user ID format"
+msgstr "Некорректный формат ID"
+
+#: src/renderer/components/footer/footer.messages.ts:4:22
+#: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:7:22
+msgid "Join the Discord"
+msgstr "Зайти в Discord"
+
+#: src/renderer/components/loading_screen/loading_screen.messages.ts:2:19
+#: src/renderer/pages/loading/loading_page.messages.ts:2:19
+msgid "Just a sec..."
+msgstr "Секунду..."
+
+#: src/renderer/pages/home/news_feed/news_feed.messages.ts:2:21
+msgid "Latest News"
+msgstr "Последние новости"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:10:24
+msgid "Launch Dolphin"
+msgstr "Запустить Dolphin"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:9:22
+msgid "Launch Melee"
+msgstr "Запустить Melee"
+
+#: src/renderer/pages/replays/replay_browser/replay_file/replay_file.messages.ts:5:23
+#: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:7:23
+msgid "Launch replay"
+msgstr "Запустить реплей"
+
+#: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:4:22
+msgid "Least recent"
+msgstr "Самые старые"
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:9:15
+msgid "Left"
+msgstr "Влево"
+
+#: src/renderer/pages/quick_start/quick_start.messages.ts:3:23
+msgid "Let's get set up"
+msgstr "Начнем настройку"
+
+#: src/renderer/app/header/header.messages.ts:18:18
+msgid "Loading"
+msgstr "Загрузка"
+
+#: src/renderer/pages/home/news_feed/news_feed.messages.ts:3:18
+#: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:4:18
+msgid "Loading..."
+msgstr "Загрузка..."
+
+#: src/renderer/app/header/header.messages.ts:2:16
+#: src/renderer/components/login_form/login_form.messages.ts:3:16
+#: src/renderer/components/login_notice/login_notice.messages.ts:3:16
+msgid "Log in"
+msgstr "Войти"
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:6:17
+msgid "Log out"
+msgstr "Выйти"
+
+#: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:5:22
+msgid "Longest game"
+msgstr "Самые долгие"
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:16:16
+msgid "Macros and bots are not allowed."
+msgstr "Макросы и боты запрещены."
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:3:5
+msgid ""
+"Mainline Slippi Dolphin has updated OS requirements, check the Help Section "
+"for more info"
+msgstr ""
+"Mainline Slippi Dolphin имеет более новые требования к системе, "
+"проверьте секцию Помощь для подробной информации"
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:5:17
+msgid "Manage"
+msgstr "Управлять"
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:7:27
+msgid "Manage Gecko codes"
+msgstr "Управление Gecko кодами"
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:4:24
+msgid "Manage account"
+msgstr "Управление аккаунтом"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:2:23
+msgid "Melee ISO File"
+msgstr "Melee ISO файл"
+
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:9:17
+msgid "Mirror"
+msgstr "Трансляция"
+
+#: src/renderer/pages/console_mirror/console_mirror.messages.ts:8:25
+msgid "Mirroring Guide"
+msgstr "Гайд по консольным трансляциям"
+
+#: src/renderer/pages/replays/replay_browser/replay_file/replay_file.messages.ts:3:22
+msgid "More options"
+msgstr "Больше опций"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:10:5
+msgid ""
+"More than one hop to your external IP address indicates CGNAT or Double NAT "
+"(or VPN)."
+msgstr ""
+"Более одного хопа до вашего внешнего IP адреса указывает на CGNAT или Double NAT "
+"(или VPN)."
+
+#: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:3:21
+msgid "Most recent"
+msgstr "Самые новые"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:12:18
+msgid "NAT Type"
+msgstr "Тип NAT"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:26:17
+msgid "NAT-PMP."
+msgstr "NAT-PMP."
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/add_codes/add_codes.messages.ts:3:23
+msgid "Name is required"
+msgstr "Требуется имя"
+
+#: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:2:19
+msgid "Need help?"
+msgstr "Нужна помощь?"
+
+#: src/renderer/pages/settings/create.messages.ts:8:18
+msgid "Netplay"
+msgstr "Netplay"
+
+#: src/renderer/initialize_app.messages.ts:7:25
+#: src/renderer/lib/dolphin/dolphin.messages.ts:5:25
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:5:25
+msgid "Netplay Dolphin"
+msgstr "Netplay Dolphin"
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:21:39
+msgid "Netplay Dolphin Release Channel"
+msgstr "Выбор версии Netplay Dolphin"
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:8:33
+msgid "Netplay Dolphin Settings"
+msgstr "Настройки Netplay Dolphin"
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:14:28
+msgid "Netplay Gecko Codes"
+msgstr "Netplay Gecko коды"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostics_button.messages.ts:4:29
+msgid "Network Diagnostics"
+msgstr "Сетевая диагностика"
+
+#: src/renderer/pages/console_mirror/new_connection_list/new_connection_list.messages.ts:2:38
+#. {0} count: number
+msgid "New Connections ({0})"
+msgstr "Новые подключения ({0})"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_dialog.messages.ts:3:24
+#: src/renderer/pages/console_mirror/console_mirror.messages.ts:3:24
+msgid "New connection"
+msgstr "Новое подключение"
+
+#: src/renderer/pages/quick_start/stepper_dots/stepper_dots.messages.ts:2:15
+msgid "Next"
+msgstr "Далее"
+
+#: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:9:21
+msgid "Next replay"
+msgstr "Следующий реплей"
+
+#: src/renderer/pages/quick_start/steps/setup_complete_step/setup_complete_step.messages.ts:2:19
+msgid "Nice work!"
+msgstr "Отличная работа!"
+
+#: src/renderer/app/header/header.messages.ts:6:25
+msgid "No Melee ISO file specified"
+msgstr "Не указан Melee ISO файл"
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:5:26
+msgid "No SLP files found"
+msgstr "SLP файлы не найдены"
+
+#: src/renderer/components/multi_path_input/multi_path_input.messages.ts:2:35
+msgid "No additional folders added."
+msgstr "Дополнительные каталоги не были добавлены."
+
+#: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:7:32
+msgid "No associated user found"
+msgstr "Не найден соответствующий пользователь"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:5:20
+msgid "No file set"
+msgstr "Файл не указан"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:5:34
+msgid "No folder selected"
+msgstr "Каталог не выбран"
+
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:8:22
+msgid "No folder set"
+msgstr "Каталог не указан"
+
+#: src/renderer/app/header/header.messages.ts:11:30
+msgid "No network connection"
+msgstr "Нет сетевого соединения"
+
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connections_list.messages.ts:4:29
+msgid "No saved console connections"
+msgstr "Нет сохраненных консольных подключений"
+
+#: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:6:26
+msgid "No stats computed"
+msgstr "Нет собранных статов"
+
+#: src/renderer/pages/spectate/spectate_page.messages.ts:3:18
+msgid "No users are broadcasting to you"
+msgstr "Вам никто не транслирует"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:13:20
+msgid "Normal NAT"
+msgstr "Нормальный NAT"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:23:23
+msgid "Not available"
+msgstr "Не доступен"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:31:22
+msgid "Not detected."
+msgstr "Не обнаружен."
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:12:19
+msgid "Not found"
+msgstr "Не найден"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:21:22
+msgid "OBS Password"
+msgstr "Пароль OBS"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:22:24
+msgid "OBS Source Name"
+msgstr "Имя OBS Source"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:18:25
+msgid "OBS Websocket IP"
+msgstr "OBS Websocket IP"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:19:27
+msgid "OBS Websocket Port"
+msgstr "OBS Websocket Port"
+
+#: src/renderer/pages/home/sidebar/ranked_status.messages.ts:10:5
+msgid ""
+"Once every 4 days, ranked play is available to all users including "
+"non-subs. Check back soon!"
+msgstr "Ранкед режим доступен каждые 4 дня. Проверьте позже!"
+
+#: src/renderer/pages/home/sidebar/tournament_links.messages.ts:4:17
+msgid "Online"
+msgstr "Онлайн"
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:8:35
+msgid "Online activation required"
+msgstr "Требуется онлайн активация"
+
+#: src/renderer/lib/validate/validate.messages.ts:4:39
+msgid "Only English characters are allowed"
+msgstr "Разрешены только латинские символы"
+
+#: src/renderer/app/header/header.messages.ts:10:41
+msgid "Only logged in users can play online."
+msgstr "Залогиньтесь для игры онлайн."
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:12:45
+msgid "Only modify these values if you know what you're doing."
+msgstr "Меняйте эти значения только если вы знаете, что вы делаете."
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:11:35
+msgid "Open settings folder"
+msgstr "Открыть каталог настроек"
+
+#: src/renderer/components/login_form/login_form.messages.ts:7:19
+msgid "Password"
+msgstr "Пароль"
+
+#: src/renderer/components/login_form/login_form.messages.ts:13:24
+msgid "Password reset"
+msgstr "Пароль сброшен"
+
+#: src/renderer/components/login_form/login_form.messages.ts:14:53
+#. {0} email: string
+msgid "Password reset instructions have been sent to {0}."
+msgstr "Инструкции по сбросу пароля были отправлены на {0}."
+
+#: src/renderer/components/login_form/login_form.messages.ts:4:30
+msgid "Passwords do not match"
+msgstr "Пароли не совпадают"
+
+#: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:9:16
+msgid "Paste"
+msgstr "Вставить"
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/add_codes/add_codes.messages.ts:5:26
+msgid "Paste Gecko Codes"
+msgstr "Вставить Gecko-код"
+
+#: src/renderer/app/header/play_button/play_button.messages.ts:2:15
+msgid "Play"
+msgstr "Играть"
+
+#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:6:18
+msgid "Play All"
+msgstr "Проиграть все"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:7:27
+msgid "Play Button Action"
+msgstr "Функция кнопки Играть"
+
+#: src/renderer/app/header/header.messages.ts:13:22
+msgid "Play offline"
+msgstr "Играть оффлайн"
+
+#: src/renderer/pages/settings/create.messages.ts:9:19
+msgid "Playback"
+msgstr "Playback"
+
+#: src/renderer/initialize_app.messages.ts:8:26
+#: src/renderer/lib/dolphin/dolphin.messages.ts:6:26
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:6:26
+msgid "Playback Dolphin"
+msgstr "Playback Dolphin"
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:9:34
+msgid "Playback Dolphin Settings"
+msgstr "Настройки Playback Dolphin"
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:15:29
+msgid "Playback Gecko Codes"
+msgstr "Playback Gecko коды"
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:14:34
+msgid "Please log in to use this feature."
+msgstr "Пожалуйста, залогиньтесь для использования этого функционала."
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:28:30
+msgid "Please try again later."
+msgstr "Пожалуйста, попробуйте позже."
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:20:5
+msgid ""
+"Please try again later. If the failure persists, this network may block "
+"UDP. In that case it will not be possible to use Slippi as well as many "
+"other online games and apps."
+msgstr ""
+"Пожалуйста, попробуйте позже. Если проблема остается, ваша сеть может "
+"блокировать UDP. В этом случае не будет возможно использовать Slippi, "
+"как и многие другие игры и приложения"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:28:15
+msgid "Port"
+msgstr "Порт"
+
+#: src/renderer/pages/settings/spectate_settings/spectate_port_form/spectate_port_form.messages.ts:2:25
+msgid "Port is required"
+msgstr "Требуется указать порт"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:22:22
+msgid "Port mapping"
+msgstr "Port mapping"
+
+#: src/renderer/pages/settings/spectate_settings/spectate_port_form/spectate_port_form.messages.ts:3:27
+msgid "Port must be a number from 1 to 65535"
+msgstr "Порт должен быть цифрой от 1 до 65535"
+
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:6:32
+#. {0} timeAgo: string
+msgid "Posted {0}"
+msgstr "Опубликовано {0}"
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:6:18
+msgid "Premium"
+msgstr "Премиум"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:9:5
+msgid ""
+"Prevents delay from accumulating when mirroring. Keep this off unless both "
+"the Wii and computer are on a wired LAN connection."
+msgstr ""
+"Предотвращает отставание трансляции. Не включайте, если не используется "
+"проводное соединение между Wii и компьютером"
+
+
+#: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:8:25
+msgid "Previous replay"
+msgstr "Предыдущий реплей"
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:3:41
+msgid "Privacy Policy and Terms of Service"
+msgstr "Privacy Policy и Terms of Service"
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:9:33
+msgid ""
+"Provided ISO will not work with Slippi Online. Please provide an NTSC 1.02 "
+"ISO."
+msgstr ""
+"Предоставленный файл ISO не работает со Slippi Online. Пожалуйста, предоставьте "
+"ISO версии NTSC 1.02."
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:11:34
+msgid "RVZ files are currently incompatible with Slippi."
+msgstr "Файлы RVZ не совместимы со Slippi."
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:10:5
+msgid ""
+"Racist, homophobic, transphobic, or otherwise bigoted names and codes are "
+"not allowed. Targeted harassment in names and codes is also not allowed."
+msgstr ""
+"Расистские, гомофобские, трансфобские или какие-либо еще оскорбительные имена "
+"и коды запрещены. Таргетированный харрасмент в именах и кодах так же запрещен."
+
+#: src/renderer/pages/home/sidebar/ranked_status.messages.ts:2:20
+msgid "Ranked Day"
+msgstr "Ранкед день"
+
+#: src/renderer/pages/home/sidebar/ranked_status.messages.ts:8:5
+msgid ""
+"Ranked play is currently available for everyone. Try it now! Available once "
+"every 4 days."
+msgstr ""
+"Ранкед режим сейчас доступен для всех. Скорей играть! Доступен каждые 4 дня."
+
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:5:19
+msgid "Read more"
+msgstr "Читать дальше"
+
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:4:23
+msgid "Reconnecting"
+msgstr "Переподключение"
+
+#: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:2:18
+#: src/renderer/pages/spectate/spectate_page.messages.ts:4:18
+msgid "Refresh"
+msgstr "Обновить"
+
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:11:20
+msgid "Relay Port"
+msgstr "Relay Port"
+
+#: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:2:30
+msgid "Remote Control Server"
+msgstr "Remote Control Server"
+
+#: src/renderer/components/multi_path_input/multi_path_input.messages.ts:4:17
+msgid "Remove"
+msgstr "Удалить"
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:6:5
+msgid ""
+"Removes temporary downloads, files used for Dolphin communication, and "
+"files streamed from Slippi.gg."
+msgstr ""
+"Удаляет временные файлы, файлы используемые Dolphin для коммуникации, "
+"а так же файлы полученные с Slippi.gg"
+
+#: src/renderer/app/create.messages.ts:3:18
+#: src/renderer/pages/settings/create.messages.ts:4:18
+msgid "Replays"
+msgstr "Реплеи"
+
+#: src/renderer/lib/dolphin/handle_dolphin_exit_code.messages.ts:3:5
+msgid ""
+"Required DLLs for launching Dolphin are missing. Check the Help section in "
+"the settings page to fix this issue."
+msgstr ""
+"Отсутствуют DLL необходимые для запуска Dolphin. Проверьте секцию Помощь "
+"в настройках, чтобы решить проблему."
+
+#: src/renderer/lib/dolphin/handle_dolphin_exit_code.messages.ts:12:5
+msgid ""
+"Required libraries for launching Dolphin may be missing. Check the Help "
+"section in the settings page for guidance. Post in the Slippi Discord's "
+"#linux-support forum for further assistance if needed."
+msgstr ""
+"Необходимые для запуска Dolphin библиотеки отсутствуют. Проверьте секцию "
+"Помощь в настройках. В случае необходимости, отпишите в #linux-support "
+"в Slippi Discord за дальнейшей поддержкой."
+
+#: src/renderer/pages/settings/game_settings/game_music_toggle/game_music_toggle.messages.ts:5:48
+#. {0} version: string
+msgid "Requires Dolphin version {0} or higher"
+msgstr "Требует версию Dolphin {0} или выше"
+
+#: src/renderer/components/login_form/login_form.messages.ts:16:16
+msgid "Reset"
+msgstr "Сбросить"
+
+#: src/renderer/pages/settings/spectate_settings/spectate_port_form/spectate_port_form.messages.ts:5:25
+msgid "Reset to default"
+msgstr "Сбросить"
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:16:46
+#. {0} dolphinTypeName: string
+msgid "Reset {0}"
+msgstr "Сбросить {0}"
+
+#: src/renderer/pages/not_found/not_found_page.messages.ts:4:21
+msgid "Return home"
+msgstr "Вернуться на главную"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:5:17
+msgid "Reveal"
+msgstr "Показать"
+
+#: src/renderer/pages/replays/replay_browser/file_list/file_list.messages.ts:2:25
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:3:25
+#: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:8:25
+#: src/renderer/pages/spectate/footer/footer.messages.ts:2:25
+msgid "Reveal location"
+msgstr "Показать локацию"
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:10:16
+msgid "Right"
+msgstr "Вправо"
+
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:2:24
+msgid "Root SLP Folder"
+msgstr "Корневой каталог SLP"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:36:25
+msgid "Run this command"
+msgstr "Выполните эту команду"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostics_button.messages.ts:2:29
+msgid "Running network diagnostics..."
+msgstr "Идет сетевая диагностика..."
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:2:15
+#: src/renderer/pages/settings/spectate_settings/spectate_port_form/spectate_port_form.messages.ts:4:15
+msgid "Save"
+msgstr "Сохранить"
+
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:5:41
+msgid "Save replays to monthly subfolders"
+msgstr "Сохранять реплеи в подкаталоги по месяцам"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:6:34
+msgid "Save replays to subfolders based on console nickname"
+msgstr "Сохранять реплеи в подкаталоги на основе имени консоли"
+
+#: src/renderer/pages/spectate/footer/footer.messages.ts:4:31
+msgid "Save spectated games to"
+msgstr "Сохранять реплеи трансляций в"
+
+#: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:8:17
+msgid "Search"
+msgstr "Поиск"
+
+#: src/renderer/components/path_input/path_input.messages.ts:2:17
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:12:17
+msgid "Select"
+msgstr "Выбрать"
+
+#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:5:20
+msgid "Select All"
+msgstr "Выбрать все"
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:2:25
+msgid "Select Melee ISO"
+msgstr "Выбрать Melee ISO"
+
+#: src/renderer/pages/settings/appearance_settings/language_selector/language_selector.messages.ts:3:33
+msgid "Select your preferred language for the app."
+msgstr "Выберите язык приложения."
+
+#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:6:20
+msgid "Send verification email again"
+msgstr "Отправить email с подтверждением заново"
+
+#: src/renderer/app/header/header.messages.ts:7:19
+msgid "Settings"
+msgstr "Настройки"
+
+#: src/renderer/pages/spectate/share_gameplay_block/share_gameplay_block.messages.ts:2:28
+msgid "Share your gameplay"
+msgstr "Транслировать свои матчи"
+
+#: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:6:23
+msgid "Shortest game"
+msgstr "Самые короткие"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:10:30
+msgid "Show advanced options"
+msgstr "Показать продвинутые настройки"
+
+#: src/renderer/pages/home/news_feed/news_feed.messages.ts:6:19
+msgid "Show more"
+msgstr "Показать больше"
+
+#: src/renderer/pages/replays/replay_browser/replay_file/replay_file.messages.ts:4:20
+msgid "Show stats"
+msgstr "Показать статы"
+
+#: src/renderer/components/login_form/login_form.messages.ts:11:17
+msgid "Sign up"
+msgstr "Зарегистрироваться"
+
+#: src/renderer/pages/quick_start/quick_start.messages.ts:4:20
+msgid "Skip setup"
+msgstr "Пропустить настройку"
+
+#: src/renderer/pages/console_mirror/console_mirror.messages.ts:6:5
+msgid ""
+"Slippi Mirroring allows for streaming replays from a console to a PC for "
+"real time playback. Checkout the Mirroring Guide below for setup "
+"instructions."
+msgstr ""
+"Slippi Mirroring позволяет транслировать реплеи с консоли на компьютер в "
+"режиме реального времени. Проверьте гайд ниже для инструкций по настройке."
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:2:28
+msgid "Slippi Online Rules"
+msgstr "Правила Slippi Online"
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:18:30
+msgid "Slippi Privacy Policy"
+msgstr "Slippi Privacy Policy"
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:19:31
+msgid "Slippi Terms of Service"
+msgstr "Slippi Terms of Service"
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:13:5
+msgid ""
+"Slippi does its best to promote fairness in terms of player matching, "
+"result reporting, etc. Attempting to circumvent these systems is not "
+"allowed."
+msgstr ""
+"Slippi старается предоставлять честный опыт в плане матчинга, записи "
+результатов и т.д. Попытки скомпроментировать эти системы запрещены."
+
+#: src/renderer/initialize_app.messages.ts:4:26
+msgid ""
+"Slippi may be experiencing some downtime. Playing online may or may not "
+"work."
+msgstr "Slippi может испытывать даунтайм. Игра онлайн может не работать"
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:7:28
+msgid "Slippi server error"
+msgstr "Ошибка сервера Slippi"
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:19:20
+msgid "Soft reset"
+msgstr "Частичный сброс"
+
+#: src/renderer/listeners/listeners.messages.ts:4:39
+msgid "Some functionality of the Launcher and Dolphin will be unavailable."
+msgstr "Некоторый функционал лаунчера и Dolphin будет недоступен."
+
+#: src/renderer/pages/not_found/not_found_page.messages.ts:3:29
+msgid "Something went wrong."
+msgstr "Что-то пошло не так."
+
+#: src/renderer/app/create.messages.ts:4:19
+#: src/renderer/pages/settings/create.messages.ts:6:19
+#: src/renderer/pages/spectate/spectate_page.messages.ts:2:19
+msgid "Spectate"
+msgstr "Трансляции"
+
+#: src/renderer/pages/settings/spectate_settings/spectate_settings.messages.ts:4:36
+msgid "Spectate Remote Control Port"
+msgstr "Spectate Remote Control Port"
+
+#: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:4:22
+msgid "Spectator ID"
+msgstr "Spectator ID"
+
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:10:29
+msgid "Spectator SLP Folder"
+msgstr "Каталог SLP трансляций"
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:23:17
+msgid "Stable (Ishiiruka)"
+msgstr "Стабильная (Ishiiruka)"
+
+#: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:6:25
+msgid "Start Broadcast"
+msgstr "Начать трансляцию"
+
+#: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:5:22
+msgid "Start Server"
+msgstr "Запустить сервер"
+
+#: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:7:18
+msgid "Started"
+msgstr "Запущено"
+
+#: src/renderer/pages/home/sidebar/ranked_status.messages.ts:6:21
+msgid "Starting In"
+msgstr "Начнется через"
+
+#: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:9:25
+msgid "Starting Server..."
+msgstr "Стартует сервер..."
+
+#: src/renderer/pages/home/sidebar/ranked_status.messages.ts:4:23
+msgid "Starting Soon"
+msgstr "Начнется скоро"
+
+#: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:8:19
+msgid "Starting..."
+msgstr "Стартует..."
+
+#: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:2:17
+#: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:4:17
+msgid "Status"
+msgstr "Статус"
+
+#: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:7:24
+msgid "Stop Broadcast"
+msgstr "Остановить трансляцию"
+
+#: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:6:21
+msgid "Stop Server"
+msgstr "Остановить сервер"
+
+#: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:10:18
+msgid "Stopped"
+msgstr "Остановлен"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:30:17
+msgid "Submit"
+msgstr "Отправить"
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:5:20
+msgid "Subscribe"
+msgstr "Подписаться"
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:8:28
+msgid "Successfully cleared temporary files."
+msgstr "Временные файлы успешно очищены."
+
+#: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:10:29
+msgid "Successfully copied logs to clipboard"
+msgstr "Логи успешно скопированы в буфер обмена"
+
+#: src/renderer/components/footer/footer.messages.ts:2:24
+msgid "Support Slippi"
+msgstr "Поддержать Slippi"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:15:23
+msgid "Symmetric NAT"
+msgstr "Симметричный NAT"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:3:23
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:12:23
+msgid "Target Folder"
+msgstr "Целевой каталог"
+
+#: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:4:21
+msgid "Target Test"
+msgstr "Target Test"
+
+#: src/renderer/components/multi_path_input/multi_path_input.messages.ts:6:38
+msgid "That folder is already included."
+msgstr "Этот каталог уже включен."
+
+#: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:4:5
+msgid ""
+"The best way to get support is to first join the Slippi Discord, then read "
+"the information in the #support-portal channel before posting your issue in "
+"the appropriate support channel for your operating system. Our support "
+"volunteers will try their best to assist you with your problem."
+msgstr ""
+"Лучший способ получить поддержку - это зайти в Slippi Discord, затем "
+"прочитать информацию в #support-portal и описать свою проблему в канале, "
+"соответствующим вашей системе. Наши волонтеры поддержки постараются "
+"помочь вам с вашей проблемой."
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:4:44
+#. {0} codeName: string
+msgid "The code <{0}> will be deleted. This cannot be undone."
+msgstr "Код <{0}> будет удален безвозвратно."
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:4:34
+msgid "The folder to save SLP files to."
+msgstr "Каталог для сохранения SLP файлов."
+
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:11:40
+msgid "The folder where spectated games should be saved."
+msgstr "Каталог для сохранения просматриваемых трансляций."
+
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:3:35
+msgid "The folder where your SLP replays should be saved."
+msgstr "Каталог для сохранения SLP реплеев."
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:3:34
+msgid "The path to an NTSC Melee 1.02 ISO."
+msgstr "Путь до файла ISO Melee NTSC 1.02."
+
+#: src/renderer/pages/settings/spectate_settings/spectate_settings.messages.ts:5:47
+msgid "The port to use for the spectate remote control WebSocket."
+msgstr "Порт для WebSocket удаленного контроля трансляциями."
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:27:5
+#. {0} defaultPort: number
+msgid ""
+"The port used for connecting to console. Only change this if connecting to "
+"a Console Relay. If unsure, leave it as {0}."
+msgstr ""
+"Порт, используемый для подключения к консоли. Изменяйте только если 
+"подключаетесь к Console Relay. Если не уверены, оставьте как {0}."
+
+#: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:3:44
+msgid "The unique viewer code of the spectator."
+msgstr "Уникальный код для просмотра трансляции."
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:6:5
+msgid ""
+"These are a set of rules to follow when using Slippi. Breaking these rules "
+"may result in a suspension or ban depending on severity and frequency. This "
+"is not an exhaustive list, we reserve the right to suspend or ban an "
+"account for any reason."
+msgstr ""
+"Это свод правил, которым нужно следовать при использовании Slippi. "
+"Нарушение данных правил может привести к временному или перманентному бану, "
+"в зависимости от серьезности и частоты нарушений. Это не эксклюзивный список, "
+"мы оставляем за собой право бана аккаунта по любой причине."
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:3:34
+msgid "This application uses an NTSC 1.02 game backup."
+msgstr "Это приложение использует образ игры версии NTSC 1.02."
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:32:33
+msgid "This is the optimal result."
+msgstr "Это оптимальный результат."
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:14:31
+msgid ""
+"This is the optimal result. Also known as 'easy', 'full cone', or 'open' "
+"NAT."
+msgstr ""
+"Это оптимальный результат. Так же известный как 'easy', 'full cone' или 'open' NAT."
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:18:70
+#. {0} dolphinTypeName: string
+msgid "This will remove all your {0} settings."
+msgstr "Это удалит все ваши настройки {0}."
+
+#: src/renderer/components/login_form/login_form.messages.ts:8:35
+msgid "Toggle password visibility"
+msgstr "Увидеть пароль"
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:11:41
+#. {0} readableBytes: string
+msgid "Total size: {0}"
+msgstr "Общий размер: {0}"
+
+#: src/renderer/components/activate_online_form/activate_online_form.messages.ts:4:26
+msgid "Trailing numbers will be auto-generated"
+msgstr "Цифры после решетки будут авто-сгенерированы"
+
+#: src/renderer/lib/dolphin/handle_dolphin_exit_code.messages.ts:7:5
+msgid ""
+"Try a different video backend in Dolphin. If the issue persists, install "
+"the latest Windows update available and then restart your computer."
+msgstr ""
+"Попробуйте другой видео-бэкенд в Dolphin. В случае, если проблема осталась, "
+"установите последнее обновление Windows и перезапустите компьютер."
+
+#: src/renderer/pages/home/news_feed/news_feed.messages.ts:5:19
+msgid "Try again"
+msgstr "Попробовать снова"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostics_button.messages.ts:5:21
+msgid "Turn VPN off for best results."
+msgstr "Для наилучшего результата отключите VPN."
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:27:24
+msgid "UPnP and NAT-PMP."
+msgstr "UPnP и NAT-PMP."
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:25:15
+msgid "UPnP."
+msgstr "UPnP."
+
+#: src/renderer/pages/not_found/not_found_page.messages.ts:2:15
+msgid "Uh oh."
+msgstr "Ой."
+
+#: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:2:32
+msgid "Uh oh. We couldn't open that file. It's probably corrupted."
+msgstr "Ой. Мы не смогли открыть этот файл. Возможно, он поврежден."
+
+#: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:3:18
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:13:18
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:12:18
+msgid "Unknown"
+msgstr "Неизвестно"
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:7:21
+msgid "Unknown ISO"
+msgstr "Неизвестное ISO"
+
+#: src/renderer/pages/replays/replay_browser/replay_file/replay_file.messages.ts:2:23
+msgid "Unknown stage"
+msgstr "Неизвестный уровень"
+
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:6:38
+#. {0} status: number
+msgid "Unknown status: {0}"
+msgstr "Неизвестный статус: {0}"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:14:22
+msgid "Unvalidated"
+msgstr "Не проверен"
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:8:13
+msgid "Up"
+msgstr "Вверх"
+
+#: src/renderer/app/header/play_button/play_button.messages.ts:3:19
+msgid "Updating"
+msgstr "Обновление"
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:6:20
+msgid "Use anyway"
+msgstr "Использовать все равно"
+
+#: src/renderer/components/login_notice/login_notice.messages.ts:2:28
+msgid "User is not logged in"
+msgstr "Пользователь не залогинен"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:11:16
+msgid "Valid"
+msgstr "Корректный"
+
+#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:2:26
+msgid "Verify your email"
+msgstr "Подтвердите ваш email"
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:4:23
+msgid "Verifying ISO..."
+msgstr "Проверка ISO..."
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:6:20
+msgid "Verifying..."
+msgstr "Проверка..."
+
+#: src/renderer/components/persistent_notification/persistent_notification.messages.ts:4:47
+#. {0} version: string
+msgid "Version {0} is now available!"
+msgstr "Версия {0} теперь доступна!"
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:7:39
+#. {0} versionString: string
+msgid "Version: {0}"
+msgstr "Версия: {0}"
+
+#: src/renderer/pages/home/sidebar/ranked_status.messages.ts:11:28
+msgid "View Ranked Profile"
+msgstr "Посмотреть ранкед профиль"
+
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:2:24
+msgid "View on Bluesky"
+msgstr "Посмотреть на Bluesky"
+
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:4:23
+msgid "View on Github"
+msgstr "Посмотреть на Github"
+
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:3:23
+msgid "View on Medium"
+msgstr "Посмотреть на Medium"
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:3:22
+msgid "View profile"
+msgstr "Посмотреть профиль"
+
+#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:3:25
+msgid ""
+"Visit your email, click the link in the verification email, and then check "
+"verification"
+msgstr ""
+"Зайдите в ваш email, кликните на линк в письме с подтверждением, и затем "
+"нажмите проверку подтверждения"
+
+#: src/renderer/pages/console_mirror/console_mirror.messages.ts:4:26
+msgid "What is Mirroring?"
+msgstr "Что такое Slippi Mirroring?"
+
+#: src/renderer/app/header/header.messages.ts:12:36
+msgid "Would you like to play offline?"
+msgstr "Хотите ли вы играть оффлайн?"
+
+#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:9:21
+msgid "Wrong email? "
+msgstr "Неправильный email? "
+
+#: src/renderer/app/header/header.messages.ts:9:28
+msgid "You are not logged in"
+msgstr "Вы не залогинены"
+
+#: src/renderer/initialize_app.messages.ts:3:24
+#: src/renderer/listeners/listeners.messages.ts:2:24
+msgid "You are offline."
+msgstr "Вы оффлайн."
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:34:28
+msgid "You may have trouble connecting to other players."
+msgstr "Вы можете испытывать проблемы подключения к другим игрокам."
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:17:5
+msgid ""
+"You may have trouble connecting to other players. Also known as 'hard', "
+"'strict', or 'symmetric' NAT. If possible, please check your router "
+"settings to see if this can be changed to 'easy', 'full cone', 'normal', or "
+"'open' NAT."
+msgstr ""
+"Вы можете испытывать проблемы подключения к другим игрокам. Так же известно "
+"как 'hard, 'strict', или 'symmetric' NAT. По возможности, проверьте настройки "
+"вашего роутера, чтобы проверить можно ли это изменить на 'easy', 'full cone', "
+"'normal' или 'open' NAT."
+
+#: src/renderer/pages/spectate/spectate_page.messages.ts:5:28
+msgid "You must be logged in to use this feature"
+msgstr "Вы должны быть залогинены для использования этой функции"
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:10:34
+msgid "You will need to log in again next time you want to play."
+msgstr "Вам потребуется залогиниться снова, когда вы захотите поиграть."
+
+#: src/renderer/pages/quick_start/quick_start.messages.ts:2:25
+msgid "You're all set up"
+msgstr "Все готово!"
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:8:27
+msgid ""
+"Your ISO is unsupported. Using this ISO may cause issues and no support "
+"will be given."
+msgstr ""
+"Ваш файл ISO не поддерживается. Использование этого ISO может привести "
+"к проблемам и по нему не будет оказываться поддержка."
+
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:14:5
+msgid ""
+"Your Nintendont is out of date and no longer supported. Click to download "
+"the latest version from the Slippi website."
+msgstr ""
+"Ваш Nintendont устарел и больше не поддерживается. Кликните чтобы скачать "
+"последнюю версию с сайта Slippi."
+
+#: src/renderer/pages/spectate/spectator_id_block/spectator_id_block.messages.ts:2:26
+msgid "Your Spectator ID"
+msgstr "Ваш Spectator ID"
+
+#: src/renderer/components/activate_online_form/activate_online_form.messages.ts:2:37
+msgid "Your connect code is used for players to connect with you directly."
+msgstr ""
+"Ваш коннект-код будет использоваться другими игроками для прямого соединения с вами."
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:5:28
+msgid "or drag and drop here"
+msgstr "или перетащите сюда"
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:8:41
+#. {0} count: number
+msgid "{0, plural, one {# file} other {# files}} filtered."
+msgstr "{0, plural, one {# файл} few {# файла} other {# файлов}} отфильтровано."
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:7:38
+#. {0} count: number
+msgid "{0, plural, one {# file} other {# files}} found."
+msgstr "{0, plural, one {# файл} few {# файла} other {# файлов}} найдено."
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:10:38
+#. {0} count: number
+msgid "{0, plural, one {# file} other {# files}} had errors."
+msgstr "{0, plural, one {# файл содержит} few {# файла содержат} other {# файлов содержат}} ошибки."
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:9:39
+#. {0} count: number
+msgid "{0, plural, one {# file} other {# files}} hidden."
+msgstr "{0, plural, one {# файл скрыт} few {# файла скрыто} other {# файлов скрыто}}."
+
+#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:2:37
+#. {0} count: number
+msgid "{0, plural, one {# file} other {# files}} selected"
+msgstr "{0, plural, one {# файл выбран} few {# файла выбрано} other {# файлов выбрано}}"
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:2:36
+#. {0} count: number
+msgid "{0, plural, one {# file} other {# files}} successfully deleted."
+msgstr "{0, plural, one {# файл удален} few {# файла удалено} other {# файлов удалено}} успешно"
+
+
+#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:8:37
+#. {0} count: number
+msgid "{0, plural, one {# file} other {# files}} will be deleted."
+msgstr "{0, plural, one {# файл будет удален} few {# файла будут удалены} other {# файлов будет удалено}}."
