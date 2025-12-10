@@ -406,17 +406,36 @@ export class DatabaseReplayProvider implements ReplayProvider {
     requestId?: number,
   ) {
     const syncStartTime = Date.now();
-    const [fileResults, existingFiles] = await Promise.all([
-      fs.readdir(folder, { withFileTypes: true }),
-      FileRepository.findAllFilesInFolder(this.db, folder),
-    ]);
 
-    const slpFileNames = fileResults
-      .filter((dirent) => dirent.isFile() && path.extname(dirent.name) === ".slp")
-      .map((dirent) => dirent.name);
+    // Start fetching existing files from database
+    const existingFilesPromise = FileRepository.findAllFilesInFolder(this.db, folder);
+
+    // Use streaming to discover .slp files (non-blocking)
+    // This avoids blocking the main thread when scanning large directories
+    const slpFileNames: string[] = [];
+    let totalScanned = 0;
+
+    const { streamSlpFiles } = await import("../streaming_folder_service");
+    const streamGen = streamSlpFiles(folder, 200);
+
+    for await (const progress of streamGen) {
+      totalScanned = progress.scanned;
+      slpFileNames.length = 0;
+      slpFileNames.push(...progress.slpFiles);
+
+      // Log intermediate progress for large directories
+      if (!progress.complete && totalScanned % 1000 === 0) {
+        log.info(`Scanned ${totalScanned} entries, found ${slpFileNames.length} .slp files so far...`);
+      }
+    }
+
+    // Wait for existing files query to complete
+    const existingFiles = await existingFilesPromise;
 
     const reqLog = requestId ? `[Request ${requestId}] ` : "";
-    log.info(`${reqLog}Found ${slpFileNames.length} .slp files on disk, ${existingFiles.length} files in database`);
+    log.info(
+      `${reqLog}Found ${slpFileNames.length} .slp files on disk (scanned ${totalScanned} entries), ${existingFiles.length} files in database`,
+    );
 
     // Find all records in the database that no longer exist
     const deleteOldReplays = async () => {
