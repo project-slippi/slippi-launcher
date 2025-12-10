@@ -41,8 +41,8 @@ const FileListResults = ({
   // Ref to the scrollable container element
   const parentRef = React.useRef<HTMLDivElement>(null);
 
-  // Track current scroll row for saving on unmount
-  const currentScrollRow = React.useRef(initialScrollOffset / REPLAY_FILE_ITEM_SIZE);
+  // Track current scroll offset in pixels for saving on unmount
+  const currentScrollOffset = React.useRef(initialScrollOffset);
 
   // Initialize virtualizer with optimal settings for 60fps
   const virtualizer = useVirtualizer({
@@ -63,7 +63,7 @@ const FileListResults = ({
   React.useEffect(() => {
     if (folderPath !== lastFilterRef.current.folderPath) {
       virtualizer.scrollToOffset(0, { behavior: "auto" });
-      currentScrollRow.current = 0;
+      currentScrollOffset.current = 0;
       lastFilterRef.current.folderPath = folderPath;
     }
   }, [folderPath, virtualizer]);
@@ -76,10 +76,29 @@ const FileListResults = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Only on mount
 
+  // Track scroll offset from the container for persistence
+  React.useEffect(() => {
+    const scrollElement = parentRef.current;
+    if (!scrollElement) {
+      return;
+    }
+
+    const handleScroll = () => {
+      currentScrollOffset.current = scrollElement.scrollTop;
+    };
+
+    scrollElement.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      scrollElement.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   // Save scroll position when component unmounts
   React.useEffect(() => {
     return () => {
-      onScrollPositionChange(Math.floor(currentScrollRow.current));
+      // Convert pixel offset to row index for storage
+      const rowIndex = Math.floor(currentScrollOffset.current / REPLAY_FILE_ITEM_SIZE);
+      onScrollPositionChange(rowIndex);
     };
   }, [onScrollPositionChange]);
 
@@ -88,9 +107,6 @@ const FileListResults = ({
 
   React.useEffect(() => {
     if (virtualItems.length > 0) {
-      const firstItem = virtualItems[0];
-      currentScrollRow.current = firstItem.index;
-
       // Check if we need to load more items
       const lastItem = virtualItems[virtualItems.length - 1];
       const itemsFromEnd = files.length - lastItem.index;
