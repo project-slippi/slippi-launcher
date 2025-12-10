@@ -16,7 +16,7 @@ import {
   ipc_searchGames,
   ipc_selectTreeFolder,
 } from "./ipc";
-import { createReplayIndexingPool } from "./replay_indexing_pool";
+import { createReplayIndexingPool } from "./replay_indexing_pool/replay_indexing_pool";
 import type { Progress } from "./types";
 
 const REPLAY_DATABASE_NAME = "slippi.sqlite";

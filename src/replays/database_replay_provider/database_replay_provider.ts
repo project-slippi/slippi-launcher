@@ -15,8 +15,8 @@ import type { Kysely, Transaction } from "kysely";
 import path from "path";
 
 import { extractPlayerNames } from "../extract_player_names";
-import type { ParsedFileInfo } from "../replay_indexing.worker.interface";
-import type { ReplayIndexingPool } from "../replay_indexing_pool";
+import type { ParsedFileInfo } from "../replay_indexing_pool/replay_indexing.worker.interface";
+import type { ReplayIndexingPool } from "../replay_indexing_pool/replay_indexing_pool";
 import { Continuation } from "./continuation";
 import { inferStartTime } from "./infer_start_time";
 import { mapGameRecordToFileResult } from "./record_mapper";
