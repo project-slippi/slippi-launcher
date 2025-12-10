@@ -9,7 +9,7 @@ import { useServices } from "@/services";
 import { useReplayBrowserList } from "./use_replay_browser_list";
 import { buildReplayFilters, useReplayFilter } from "./use_replay_filter";
 
-const REPLAY_BATCH_SIZE = 20;
+const REPLAY_BATCH_SIZE = 50;
 
 type StoreState = {
   loading: boolean;
