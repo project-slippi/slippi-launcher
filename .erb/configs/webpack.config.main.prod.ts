@@ -2,9 +2,9 @@
  * Webpack config for production electron main process
  */
 
+import { EsbuildPlugin } from "esbuild-loader";
 import { fdir } from "fdir";
 import path from "path";
-import TerserPlugin from "terser-webpack-plugin";
 import webpack from "webpack";
 import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 import { merge } from "webpack-merge";
@@ -56,8 +56,8 @@ const configuration: webpack.Configuration = {
 
   optimization: {
     minimizer: [
-      new TerserPlugin({
-        parallel: true,
+      new EsbuildPlugin({
+        target: "es2015",
       }),
     ],
   },
