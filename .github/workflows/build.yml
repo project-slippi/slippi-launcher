@@ -107,7 +107,7 @@ jobs:
           echo "signing enabled and secrets loaded"
 
       - name: Load macOS signing certificates and secrets
-        if: matrix.os == 'macOS-latest' && env.CERTIFICATE_MACOS_PASSWORD != null
+        if: matrix.os == 'macOS-latest' && env.CERTIFICATE_MACOS_PASSWORD != null && env.IS_NOT_PR == 'true'
         run: |
           chmod +x .erb/scripts/load-macos-certs-ci.sh && ./.erb/scripts/load-macos-certs-ci.sh
           mkdir -p ~/private_keys/
