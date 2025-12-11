@@ -175,11 +175,12 @@ function applyFilter(filters: QueryFilters, key: string, value: any, negate: boo
   // Unquoted = fuzzy match (LIKE), Quoted = exact match (=)
   if (lowerKey === "tag" || lowerKey === "name") {
     filters.playerFilters = filters.playerFilters || [];
-    const useFuzzy = valueWasQuoted !== true; // Default to fuzzy unless explicitly quoted
-    filters.playerFilters.push({
-      tag: value,
-      tagFuzzy: useFuzzy,
-    });
+    const useExact = valueWasQuoted === true; // Exact only if explicitly quoted
+    const filter: any = { tag: value };
+    if (useExact) {
+      filter.tagExact = true; // Only set flag if exact (fuzzy is default)
+    }
+    filters.playerFilters.push(filter);
     return;
   }
 
@@ -191,12 +192,12 @@ function applyFilter(filters: QueryFilters, key: string, value: any, negate: boo
     if (value.includes("#")) {
       filters.playerFilters.push({ connectCode: value, mustBeWinner: true });
     } else {
-      const useFuzzy = valueWasQuoted !== true;
-      filters.playerFilters.push({
-        tag: value,
-        tagFuzzy: useFuzzy,
-        mustBeWinner: true,
-      });
+      const useExact = valueWasQuoted === true;
+      const filter: any = { tag: value, mustBeWinner: true };
+      if (useExact) {
+        filter.tagExact = true; // Only set flag if exact (fuzzy is default)
+      }
+      filters.playerFilters.push(filter);
     }
     return;
   }
@@ -207,12 +208,12 @@ function applyFilter(filters: QueryFilters, key: string, value: any, negate: boo
     if (value.includes("#")) {
       filters.playerFilters.push({ connectCode: value, mustBeWinner: false });
     } else {
-      const useFuzzy = valueWasQuoted !== true;
-      filters.playerFilters.push({
-        tag: value,
-        tagFuzzy: useFuzzy,
-        mustBeWinner: false,
-      });
+      const useExact = valueWasQuoted === true;
+      const filter: any = { tag: value, mustBeWinner: false };
+      if (useExact) {
+        filter.tagExact = true; // Only set flag if exact (fuzzy is default)
+      }
+      filters.playerFilters.push(filter);
     }
     return;
   }
@@ -247,9 +248,9 @@ export function convertToReplayFilters(queryFilters: QueryFilters): ReplayFilter
         port: pf.port,
         characterIds: pf.characterIds,
         mustBeWinner: pf.mustBeWinner,
-        // Pass through fuzzy matching flags
-        tagFuzzy: pf.tagFuzzy,
-        displayNameFuzzy: pf.displayNameFuzzy,
+        // Pass through exact matching flags
+        tagExact: pf.tagExact,
+        displayNameExact: pf.displayNameExact,
       });
     });
   }

@@ -84,8 +84,8 @@ function applyDurationFilter(
  * All filter fields must match the same player (AND logic)
  *
  * Supports both exact matching (=) and fuzzy matching (LIKE) for text fields:
- * - tagFuzzy/displayNameFuzzy = true: Uses LIKE with % wildcards
- * - tagFuzzy/displayNameFuzzy = false/undefined: Uses exact = match
+ * - tagExact/displayNameExact = true: Uses exact = match
+ * - tagExact/displayNameExact = false/undefined: Uses fuzzy LIKE with % wildcards (default)
  */
 function applyPlayerFilter(
   query: SelectQueryBuilder<Database, "file" | "game", {}>,
@@ -107,21 +107,23 @@ function applyPlayerFilter(
             conditions.push(eb2("player.user_id", "=", filter.userId));
           }
 
-          // Display name - fuzzy or exact match
+          // Display name - fuzzy (default) or exact match
           if (filter.displayName != null) {
-            if (filter.displayNameFuzzy) {
-              conditions.push(eb2("player.display_name", "like", `%${filter.displayName}%`));
-            } else {
+            if (filter.displayNameExact) {
               conditions.push(eb2("player.display_name", "=", filter.displayName));
+            } else {
+              // Fuzzy match is default
+              conditions.push(eb2("player.display_name", "like", `%${filter.displayName}%`));
             }
           }
 
-          // Tag - fuzzy or exact match
+          // Tag - fuzzy (default) or exact match
           if (filter.tag != null) {
-            if (filter.tagFuzzy) {
-              conditions.push(eb2("player.tag", "like", `%${filter.tag}%`));
-            } else {
+            if (filter.tagExact) {
               conditions.push(eb2("player.tag", "=", filter.tag));
+            } else {
+              // Fuzzy match is default
+              conditions.push(eb2("player.tag", "like", `%${filter.tag}%`));
             }
           }
 

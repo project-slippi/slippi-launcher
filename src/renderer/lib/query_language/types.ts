@@ -48,9 +48,9 @@ export type PlayerFilterSpec = {
   port?: number; // Port number (1-4)
   characterIds?: number[]; // Character IDs (OR logic - player played any of these)
   mustBeWinner?: boolean;
-  // Fuzzy matching flags (true = use LIKE with %, false/undefined = exact match with =)
-  tagFuzzy?: boolean;
-  displayNameFuzzy?: boolean;
+  // Exact matching flags (true = use exact match with =, false/undefined = fuzzy match with LIKE)
+  tagExact?: boolean;
+  displayNameExact?: boolean;
 };
 
 /**
