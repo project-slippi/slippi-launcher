@@ -51,7 +51,7 @@ msgstr "Добавить"
 
 #: src/renderer/app/header/account_switcher/account_switcher.messages.ts:2:28
 msgid "Add another account"
-msgstr ""
+msgstr "Добавить другой аккаунт"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:12:31
 msgid "Additional SLP Folders"
@@ -65,6 +65,8 @@ msgstr "Дополнительные"
 #. {0} count: number
 msgid "All {0, plural, one {# file} other {# files}} selected"
 msgstr ""
+"{0, plural, =1 {Единственный файл выбран} one {Все (#) файлы выбраны} "
+"few {Все # файла выбраны} other {Все # файлов выбраны}}"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:15:5
 msgid ""
@@ -72,9 +74,9 @@ msgid ""
 "capture) when the game is active. Requires OBS Websocket 5.0+, which comes "
 "preinstalled on OBS 28+."
 msgstr ""
-"Позволяет автоматически показывать и скрывать захват Dolphin в OBSпри "
-"начале и окончании матча. Требует OBS Websocket 5.0+, которыйвходит в "
-"установку OBS 28+."
+"Позволяет автоматически показывать и скрывать захват Dolphin в OBS "
+"при начале и окончании матча. Требует OBS Websocket 5.0+, который входит "
+"в установку OBS 28+."
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:24:33
 msgid ""
@@ -119,13 +121,13 @@ msgstr "Вы уверены?"
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:3:39
 msgid "Automatically install Slippi Launcher updates when they become available."
-msgstr "Автоматически устанавливать обновления Slippi Launcher"
+msgstr "Автоматически устанавливать обновления Slippi Launcher."
 
 #: src/renderer/pages/console_mirror/new_connection_list/new_connection_list.messages.ts:4:20
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:7:20
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:24:20
 msgid "Available"
-msgstr "Доступно"
+msgstr "Доступен"
 
 #: src/renderer/pages/quick_start/stepper_dots/stepper_dots.messages.ts:3:15
 msgid "Back"
@@ -231,7 +233,7 @@ msgstr ""
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:8:38
 msgid "Choose what happens when the Play button is pressed."
-msgstr "Выберите, что должно происходить при нажатии кнопки Play."
+msgstr "Выберите, что должно происходить при нажатии кнопки Играть."
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:22:50
 msgid "Choose which Slippi Dolphin release to install"
@@ -462,6 +464,8 @@ msgstr ""
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:16:39
 msgid "Dolphin is currently running. Close Dolphin to switch accounts"
 msgstr ""
+"Dolphin в данный момент запущен. Закройте Dolphin для переключения "
+"аккаунтов"
 
 #: src/renderer/pages/replays/replay_browser/replay_file/replay_file.messages.ts:6:28
 #: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:6:28
@@ -626,11 +630,11 @@ msgstr "Не получилось прочитать gecko-коды"
 
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:11:32
 msgid "Failed to remove account"
-msgstr ""
+msgstr "Не получилось удалить аккаунт"
 
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:12:32
 msgid "Failed to switch account"
-msgstr ""
+msgstr "Не получилось переключить аккаунт"
 
 #: src/renderer/pages/home/sidebar/tournament_links.messages.ts:5:34
 msgid "Find in-person tournaments"
@@ -771,7 +775,7 @@ msgstr "Некорректный код"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:29:28
 msgid "Invalid port number"
-msgstr "Номер порта некорректен"
+msgstr "Некорректный номер порта"
 
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:2:30
 msgid "Invalid user ID format"
@@ -866,7 +870,7 @@ msgstr "Управление аккаунтом"
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:13:40
 #. {0} max: number
 msgid "Maximum {0} accounts reached. Remove an account to add another."
-msgstr ""
+msgstr "Достигнут лимит в {0} аккаунтов. Удалите аккаунт, чтобы добавить новый."
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:2:23
 msgid "Melee ISO File"
@@ -1217,7 +1221,7 @@ msgstr "Ранкед режим сейчас доступен для всех. �
 
 #: src/renderer/app/header/account_switcher/account_switcher.messages.ts:3:32
 msgid "Re-authenticate account"
-msgstr ""
+msgstr "Перелогинить аккаунт"
 
 #: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:5:19
 msgid "Read more"
@@ -1248,7 +1252,7 @@ msgstr "Удалить"
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:14:44
 #. {0} accountName: string
 msgid "Removed {0}"
-msgstr ""
+msgstr "Удален {0}"
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:6:5
 msgid ""
@@ -1472,7 +1476,7 @@ msgstr "Spectator ID"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:10:29
 msgid "Spectator SLP Folder"
-msgstr "Каталог SLP трансляций"
+msgstr "Каталог c SLP трансляций"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:23:17
 msgid "Stable (Ishiiruka)"
@@ -1546,7 +1550,7 @@ msgstr "Поддержать Slippi"
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:15:40
 #. {0} accountName: string
 msgid "Switched to {0}"
-msgstr ""
+msgstr "Переключен на {0}"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:15:23
 msgid "Symmetric NAT"
@@ -1600,7 +1604,7 @@ msgstr "Путь до файла ISO Melee NTSC 1.02."
 
 #: src/renderer/pages/settings/spectate_settings/spectate_settings.messages.ts:5:47
 msgid "The port to use for the spectate remote control WebSocket."
-msgstr "Порт для WebSocket удаленного контроля трансляциями."
+msgstr "Порт WebSocket для удаленного контроля трансляциями."
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:27:5
 #. {0} defaultPort: number
@@ -1609,7 +1613,7 @@ msgid ""
 "a Console Relay. If unsure, leave it as {0}."
 msgstr ""
 "Порт, используемый для подключения к консоли. Изменяйте только "
-"еслиподключаетесь к Console Relay. Если не уверены, оставьте как {0}."
+"если подключаетесь к Console Relay. Если не уверены, оставьте как {0}."
 
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:3:44
 msgid "The unique viewer code of the spectator."
@@ -1675,7 +1679,7 @@ msgstr "Попробовать снова"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostics_button.messages.ts:5:21
 msgid "Turn VPN off for best results."
-msgstr "Для наилучшего результата отключите VPN."
+msgstr "Для наилучшего результата, отключите VPN."
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:27:24
 msgid "UPnP and NAT-PMP."
@@ -1848,7 +1852,7 @@ msgid ""
 "Your Nintendont is out of date and no longer supported. Click to download "
 "the latest version from the Slippi website."
 msgstr ""
-"Ваш Nintendont устарел и больше не поддерживается. Кликните чтобы скачать "
+"Ваш Nintendont устарел и больше не поддерживается. Кликните, чтобы скачать "
 "последнюю версию с сайта Slippi."
 
 #: src/renderer/pages/spectate/spectator_id_block/spectator_id_block.messages.ts:2:26
@@ -1868,12 +1872,12 @@ msgstr "или перетащите сюда"
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:8:41
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} filtered."
-msgstr "{0, plural, one {# файл} few {# файла} other {# файлов}} отфильтровано."
+msgstr "{0, plural, one {# файл отфильтрован} few {# файла отфильтрованы} other {# файлов отфильтровано}}"
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:7:38
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} found."
-msgstr "{0, plural, one {# файл} few {# файла} other {# файлов}} найдено."
+msgstr "{0, plural, one {# файл найден} few {# файла найдены} other {# файлов найдено}}."
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:10:38
 #. {0} count: number
