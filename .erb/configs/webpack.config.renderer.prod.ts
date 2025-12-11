@@ -3,12 +3,11 @@
  */
 
 import StylexPlugin from "@stylexjs/webpack-plugin";
-import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
+import { EsbuildPlugin } from "esbuild-loader";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import { I18nextAutoKeyEmitPlugin } from "i18next-auto-keys";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import path from "path";
-import TerserPlugin from "terser-webpack-plugin";
 import webpack from "webpack";
 import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 import { merge } from "webpack-merge";
@@ -108,10 +107,10 @@ const configuration: webpack.Configuration = {
   optimization: {
     minimize: true,
     minimizer: [
-      new TerserPlugin({
-        parallel: true,
+      new EsbuildPlugin({
+        target: "es2022",
+        css: true,
       }),
-      new CssMinimizerPlugin(),
     ],
   },
 

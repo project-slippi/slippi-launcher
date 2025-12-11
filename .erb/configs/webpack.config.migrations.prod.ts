@@ -2,9 +2,9 @@
  * Webpack config for Kysely database migrations
  */
 
+import { EsbuildPlugin } from "esbuild-loader";
 import { fdir } from "fdir";
 import path from "path";
-import TerserPlugin from "terser-webpack-plugin";
 import type { Configuration } from "webpack";
 import { merge } from "webpack-merge";
 
@@ -40,8 +40,8 @@ const configuration: Configuration = {
 
   optimization: {
     minimizer: [
-      new TerserPlugin({
-        parallel: true,
+      new EsbuildPlugin({
+        target: "es2022",
       }),
     ],
   },

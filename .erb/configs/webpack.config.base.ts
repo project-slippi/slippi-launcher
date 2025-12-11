@@ -12,7 +12,6 @@ import pkg from "../../release/app/package.json";
 import webpackPaths from "./webpack.paths";
 
 const isDevelop = process.env.NODE_ENV === "development";
-const isDebugProd = process.env.DEBUG_PROD === "true";
 const buildDate = new Date().toISOString();
 const commitHash = execSync("git rev-parse --short HEAD").toString().trim();
 
@@ -26,21 +25,9 @@ const configuration: webpack.Configuration = {
       {
         test: /\.[jt]sx?$/,
         exclude: /node_modules/,
-        use: {
-          loader: "ts-loader",
-          options: {
-            compilerOptions: {
-              module: "esnext",
-              // Only generate source maps and declaration files when debugging prod
-              sourceMap: isDevelop || isDebugProd,
-              declaration: isDevelop || isDebugProd,
-              declarationMap: isDevelop || isDebugProd,
-            },
-            // Disable type-checking during build for speed - use separate 'npm run typecheck'
-            transpileOnly: true,
-            // By default, ts-loader compiles absolutely everything and we don't want that
-            onlyCompileBundledFiles: true,
-          },
+        loader: "esbuild-loader",
+        options: {
+          target: "es2022",
         },
       },
       // i18n message files
