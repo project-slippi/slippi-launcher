@@ -82,6 +82,10 @@ function applyDurationFilter(
  * Apply player filter to query
  * Uses EXISTS subquery to find games where a player matching the criteria participated
  * All filter fields must match the same player (AND logic)
+ *
+ * Supports both exact matching (=) and fuzzy matching (LIKE) for text fields:
+ * - tagFuzzy/displayNameFuzzy = true: Uses LIKE with % wildcards
+ * - tagFuzzy/displayNameFuzzy = false/undefined: Uses exact = match
  */
 function applyPlayerFilter(
   query: SelectQueryBuilder<Database, "file" | "game", {}>,
@@ -102,12 +106,25 @@ function applyPlayerFilter(
           if (filter.userId != null) {
             conditions.push(eb2("player.user_id", "=", filter.userId));
           }
+
+          // Display name - fuzzy or exact match
           if (filter.displayName != null) {
-            conditions.push(eb2("player.display_name", "=", filter.displayName));
+            if (filter.displayNameFuzzy) {
+              conditions.push(eb2("player.display_name", "like", `%${filter.displayName}%`));
+            } else {
+              conditions.push(eb2("player.display_name", "=", filter.displayName));
+            }
           }
+
+          // Tag - fuzzy or exact match
           if (filter.tag != null) {
-            conditions.push(eb2("player.tag", "=", filter.tag));
+            if (filter.tagFuzzy) {
+              conditions.push(eb2("player.tag", "like", `%${filter.tag}%`));
+            } else {
+              conditions.push(eb2("player.tag", "=", filter.tag));
+            }
           }
+
           if (filter.port != null) {
             conditions.push(eb2("player.port", "=", filter.port));
           }

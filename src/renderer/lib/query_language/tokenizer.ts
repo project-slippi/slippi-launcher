@@ -67,7 +67,8 @@ export function tokenize(query: string): Token[] {
     if (filterMatch) {
       const [full, key, , quotedValue, unquotedValue] = filterMatch;
       const value = quotedValue !== undefined ? quotedValue : unquotedValue;
-      tokens.push({ type: "FILTER", value, key, position: i });
+      const valueWasQuoted = quotedValue !== undefined;
+      tokens.push({ type: "FILTER", value, key, position: i, valueWasQuoted });
       i += full.length;
       continue;
     }

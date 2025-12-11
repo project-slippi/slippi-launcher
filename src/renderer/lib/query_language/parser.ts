@@ -44,6 +44,29 @@ export function parseQuery(query: string): ParsedQuery {
 
       case "FILTER":
         try {
+          // Special handling for port aliases (p1, p2, p3, p4)
+          // They need character parsing, not port number parsing
+          const portNum = getPortFromAlias(token.key!);
+          if (portNum !== undefined) {
+            // Port alias - parse value as character
+            const charFilter = getFilterDefinition("character");
+            if (charFilter) {
+              const parsedValue = parseValue(token.value, charFilter);
+              const characterIds = Array.isArray(parsedValue) ? parsedValue : [parsedValue];
+
+              if (negateNext) {
+                filters.excludeFilters = filters.excludeFilters || {};
+                filters.excludeFilters.playerFilters = filters.excludeFilters.playerFilters || [];
+                filters.excludeFilters.playerFilters.push({ port: portNum, characterIds });
+              } else {
+                filters.playerFilters = filters.playerFilters || [];
+                filters.playerFilters.push({ port: portNum, characterIds });
+              }
+              negateNext = false;
+              break;
+            }
+          }
+
           const def = getFilterDefinition(token.key!);
           if (!def) {
             errors.push({
@@ -56,7 +79,7 @@ export function parseQuery(query: string): ParsedQuery {
           }
 
           const parsedValue = parseValue(token.value, def);
-          applyFilter(filters, token.key!, parsedValue, negateNext);
+          applyFilter(filters, token.key!, parsedValue, negateNext, token.valueWasQuoted);
           negateNext = false;
         } catch (err: any) {
           errors.push({
@@ -94,12 +117,13 @@ export function parseQuery(query: string): ParsedQuery {
 
 /**
  * Apply a filter to the filters object
+ * @param valueWasQuoted - Whether the value was quoted (for fuzzy vs exact matching)
  */
-function applyFilter(filters: QueryFilters, key: string, value: any, negate: boolean): void {
+function applyFilter(filters: QueryFilters, key: string, value: any, negate: boolean, valueWasQuoted?: boolean): void {
   // Handle negation by applying to excludeFilters
   if (negate) {
     filters.excludeFilters = filters.excludeFilters || {};
-    applyFilter(filters.excludeFilters, key, value, false);
+    applyFilter(filters.excludeFilters, key, value, false, valueWasQuoted);
     return;
   }
 
@@ -131,16 +155,8 @@ function applyFilter(filters: QueryFilters, key: string, value: any, negate: boo
     return;
   }
 
-  // Port-specific filters (p1, p2, p3, p4, or port:N)
-  const portNum = getPortFromAlias(key);
-  if (portNum !== undefined) {
-    // This is a port alias like p1, p2, etc. with a character value
-    const characterIds = Array.isArray(value) ? value : [value];
-    filters.playerFilters = filters.playerFilters || [];
-    filters.playerFilters.push({ port: portNum, characterIds });
-    return;
-  }
-
+  // Port filter (port:N)
+  // Note: Port aliases (p1, p2, p3, p4) are handled in parseQuery() before calling applyFilter()
   if (lowerKey === "port") {
     // port:N specified directly
     filters.playerFilters = filters.playerFilters || [];
@@ -156,9 +172,14 @@ function applyFilter(filters: QueryFilters, key: string, value: any, negate: boo
   }
 
   // Tag/name filter
+  // Unquoted = fuzzy match (LIKE), Quoted = exact match (=)
   if (lowerKey === "tag" || lowerKey === "name") {
     filters.playerFilters = filters.playerFilters || [];
-    filters.playerFilters.push({ tag: value });
+    const useFuzzy = valueWasQuoted !== true; // Default to fuzzy unless explicitly quoted
+    filters.playerFilters.push({
+      tag: value,
+      tagFuzzy: useFuzzy,
+    });
     return;
   }
 
@@ -170,7 +191,12 @@ function applyFilter(filters: QueryFilters, key: string, value: any, negate: boo
     if (value.includes("#")) {
       filters.playerFilters.push({ connectCode: value, mustBeWinner: true });
     } else {
-      filters.playerFilters.push({ tag: value, mustBeWinner: true });
+      const useFuzzy = valueWasQuoted !== true;
+      filters.playerFilters.push({
+        tag: value,
+        tagFuzzy: useFuzzy,
+        mustBeWinner: true,
+      });
     }
     return;
   }
@@ -181,7 +207,12 @@ function applyFilter(filters: QueryFilters, key: string, value: any, negate: boo
     if (value.includes("#")) {
       filters.playerFilters.push({ connectCode: value, mustBeWinner: false });
     } else {
-      filters.playerFilters.push({ tag: value, mustBeWinner: false });
+      const useFuzzy = valueWasQuoted !== true;
+      filters.playerFilters.push({
+        tag: value,
+        tagFuzzy: useFuzzy,
+        mustBeWinner: false,
+      });
     }
     return;
   }
@@ -211,11 +242,14 @@ export function convertToReplayFilters(queryFilters: QueryFilters): ReplayFilter
       filters.push({
         type: "player",
         connectCode: pf.connectCode,
-        displayName: pf.tag, // displayName in backend = tag in query
-        tag: pf.tag, // Also set tag field
+        displayName: pf.displayName,
+        tag: pf.tag,
         port: pf.port,
         characterIds: pf.characterIds,
         mustBeWinner: pf.mustBeWinner,
+        // Pass through fuzzy matching flags
+        tagFuzzy: pf.tagFuzzy,
+        displayNameFuzzy: pf.displayNameFuzzy,
       });
     });
   }

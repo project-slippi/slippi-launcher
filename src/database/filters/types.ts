@@ -24,7 +24,8 @@ export type DurationFilter = {
  * - { connectCode: "MANG#0", port: 1, mustBeWinner: true } = games where MANG#0 was port 1 and won
  * - { connectCode: "MANG#0", characterIds: [2, 20], mustBeWinner: true } = games where MANG#0 played Fox or Falco and won
  * - { port: 1 } = games where port 1 exists (any player)
- * - { userId: "abc123", displayName: "Mango" } = games where user abc123 has display name "Mango"
+ * - { tag: "aklo", tagFuzzy: true } = games where tag contains "aklo" (fuzzy LIKE match)
+ * - { tag: "aklo", tagFuzzy: false } = games where tag exactly equals "aklo" (exact = match)
  */
 export type PlayerFilter = {
   type: "player";
@@ -37,6 +38,9 @@ export type PlayerFilter = {
   characterIds?: number[]; // Character IDs (OR logic - player played any of these characters)
   // Optional win condition
   mustBeWinner?: boolean;
+  // Fuzzy matching flags (true = use LIKE with %, false/undefined = exact match with =)
+  tagFuzzy?: boolean;
+  displayNameFuzzy?: boolean;
 };
 
 /**
