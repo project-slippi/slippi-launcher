@@ -114,10 +114,19 @@ describe("Query Parser", () => {
       expect(result.errors).toHaveLength(0);
     });
 
-    it("should parse tag", () => {
-      const result = parseQuery("tag:Mango");
+    it("should parse unquoted tag with fuzzy matching", () => {
+      const result = parseQuery("tag:aklo");
       expect(result.filters.playerFilters).toHaveLength(1);
-      expect(result.filters.playerFilters?.[0].tag).toBe("Mango");
+      expect(result.filters.playerFilters?.[0].tag).toBe("aklo");
+      expect(result.filters.playerFilters?.[0].tagFuzzy).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse quoted tag with exact matching", () => {
+      const result = parseQuery('tag:"aklo"');
+      expect(result.filters.playerFilters).toHaveLength(1);
+      expect(result.filters.playerFilters?.[0].tag).toBe("aklo");
+      expect(result.filters.playerFilters?.[0].tagFuzzy).toBe(false);
       expect(result.errors).toHaveLength(0);
     });
 
@@ -129,10 +138,20 @@ describe("Query Parser", () => {
       expect(result.errors).toHaveLength(0);
     });
 
-    it("should parse winner with tag", () => {
+    it("should parse winner with unquoted tag (fuzzy)", () => {
       const result = parseQuery("winner:Mango");
       expect(result.filters.playerFilters).toHaveLength(1);
       expect(result.filters.playerFilters?.[0].tag).toBe("Mango");
+      expect(result.filters.playerFilters?.[0].tagFuzzy).toBe(true);
+      expect(result.filters.playerFilters?.[0].mustBeWinner).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse winner with quoted tag (exact)", () => {
+      const result = parseQuery('winner:"Mango"');
+      expect(result.filters.playerFilters).toHaveLength(1);
+      expect(result.filters.playerFilters?.[0].tag).toBe("Mango");
+      expect(result.filters.playerFilters?.[0].tagFuzzy).toBe(false);
       expect(result.filters.playerFilters?.[0].mustBeWinner).toBe(true);
       expect(result.errors).toHaveLength(0);
     });
