@@ -41,7 +41,7 @@
     "node": ">=20"
   },
   "browserslist": [
-    "chrome 91"
+    "chrome 132"
   ],
   "husky": {
     "hooks": {
