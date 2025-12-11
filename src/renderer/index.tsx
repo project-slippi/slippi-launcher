@@ -1,6 +1,7 @@
 import "@/styles/styles.scss";
 
 // foo test
+/// foo bar baz
 import { ThemeProvider } from "@emotion/react";
 import { StyledEngineProvider, ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
 import log from "electron-log";
