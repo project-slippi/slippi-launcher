@@ -7,7 +7,7 @@ const electronBuilderConfig = require("../../electron-builder.json");
 const ACCEPTED_TRUE_VALUES = ["true", "yes", "1"];
 
 module.exports = async function (params) {
-  const ENABLE_SIGNING = ACCEPTED_TRUE_VALUES.includes(process.env.SLIPPI_ENABLE_SIGNING ?? "").toLowerCase();
+  const ENABLE_SIGNING = ACCEPTED_TRUE_VALUES.includes((process.env.SLIPPI_ENABLE_SIGNING ?? "").toLowerCase());
   if (process.platform !== "darwin" || !ENABLE_SIGNING) {
     return;
   }
