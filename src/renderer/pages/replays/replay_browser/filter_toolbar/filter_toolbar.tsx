@@ -58,7 +58,7 @@ export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarPro
 
   const debounceChange = debounce((text: string) => {
     setStoreSearchText(text);
-  }, 100);
+  }, 300);
 
   const setNameFilter = (name: string) => {
     setSearchText(name);
