@@ -17,6 +17,8 @@ jobs:
   build:
     name: Test on node ${{ matrix.node-version }} and ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    env:
+      IS_NOT_PR: ${{ ! (github.event_name == 'pull_request') }}
     strategy:
       fail-fast: false
       matrix:
@@ -109,7 +111,7 @@ jobs:
         run: |
           chmod +x .erb/scripts/load-macos-certs-ci.sh && ./.erb/scripts/load-macos-certs-ci.sh
           mkdir -p ~/private_keys/
-          echo "SLIPPI_ENABLE_SIGNING=yes" >> $GITHUB_ENV
+          echo "SLIPPI_ENABLE_SIGNING=$IS_NOT_PR" >> $GITHUB_ENV
           echo '${{ secrets.APPLE_CONNECT_API_KEY }}' > ~/private_keys/AuthKey_${{ secrets.APPLE_API_KEY_ID }}.p8
           echo "CSC_LINK=${{ secrets.CERTIFICATE_MACOS_APPLICATION }}" >> $GITHUB_ENV
           echo "CSC_KEY_PASSWORD=${{ secrets.CERTIFICATE_MACOS_PASSWORD }}" >> $GITHUB_ENV
@@ -132,7 +134,7 @@ jobs:
           USE_HARD_LINKS: false # because of https://github.com/electron-userland/electron-builder/issues/3179
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CODESIGNTOOL_PATH: "${{ github.workspace }}/CodeSignTool"
-          CSC_FOR_PULL_REQUEST: true
+          CSC_FOR_PULL_REQUEST: ${{ env.IS_NOT_PR }}
       - name: Run tests
         run: |
           npm run typecheck
