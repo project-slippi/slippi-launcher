@@ -57,7 +57,7 @@ const configuration: webpack.Configuration = {
   optimization: {
     minimizer: [
       new EsbuildPlugin({
-        target: "es2015",
+        target: "es2022",
       }),
     ],
   },

@@ -27,7 +27,7 @@ const configuration: webpack.Configuration = {
         exclude: /node_modules/,
         loader: "esbuild-loader",
         options: {
-          target: "esnext",
+          target: "es2022",
         },
       },
       // i18n message files
