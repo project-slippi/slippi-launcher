@@ -1,7 +1,7 @@
-import * as fs from "fs-extra";
 import path from "path";
 import { isSubdirectory } from "utils/is_subdirectory";
 
+import { listSubFoldersAsync } from "./streaming_folder_service";
 import type { FolderResult } from "./types";
 
 export class FolderTreeService {
@@ -17,7 +17,8 @@ export class FolderTreeService {
 
   public async select(folder: string): Promise<readonly FolderResult[]> {
     const childNode = await this._findChild(folder, this.tree);
-    childNode.subdirectories = await generateSubFolderTree(folder);
+    // Use non-blocking async iteration instead of synchronous fs.readdir()
+    childNode.subdirectories = await listSubFoldersAsync(folder);
     return this.tree;
   }
 
@@ -34,7 +35,8 @@ export class FolderTreeService {
 
     // Expand the subdirectories if necessary
     if (res.subdirectories.length === 0) {
-      res.subdirectories = await generateSubFolderTree(res.fullPath);
+      // Use non-blocking async iteration
+      res.subdirectories = await listSubFoldersAsync(res.fullPath);
     }
 
     return this._findChild(folder, res.subdirectories);
@@ -42,39 +44,13 @@ export class FolderTreeService {
 }
 
 /**
- * Returns the tree structure of a folder
- * @param folder Details including name, and subdirectories
+ * Returns the tree structure of a folder using non-blocking async iteration.
+ * @param folder - The folder path to scan for subdirectories
+ * @returns Array of subdirectories, sorted by name
+ * @deprecated Use listSubFoldersAsync from streaming_folder_service.ts directly
  */
 export async function generateSubFolderTree(folder: string): Promise<FolderResult[]> {
   console.log(`generating subfolder tree for folder: ${folder}`);
-  // Only generate the tree for a single level
-  let results: fs.Dirent[] = [];
-  try {
-    // The directory we're expanding might not actually exist.
-    results = await fs.readdir(folder, { withFileTypes: true });
-  } catch (err) {
-    // If it doesn't exist, just return an empty list.
-    console.warn(err);
-    return [];
-  }
-
-  const subdirectories = results
-    .filter((dirent) => {
-      return dirent.isDirectory();
-    })
-    .map((dirent): FolderResult => {
-      return {
-        name: dirent.name,
-        fullPath: path.join(folder, dirent.name),
-        subdirectories: [],
-      };
-    })
-    .sort((a, b) => {
-      return a.name.localeCompare(b.name, undefined, {
-        numeric: true,
-        sensitivity: "base",
-      });
-    });
-
-  return subdirectories;
+  // Use non-blocking async iteration instead of fs.readdir()
+  return listSubFoldersAsync(folder);
 }
