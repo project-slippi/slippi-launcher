@@ -49,26 +49,28 @@ const FileListResults = ({
     getScrollElement: () => parentRef.current,
     estimateSize: React.useCallback(() => REPLAY_FILE_ITEM_SIZE, []),
     overscan: 5, // Render 5 items above/below viewport for smooth scrolling
-    initialOffset: initialScrollOffset, // Set initial scroll position
     // Using fixed size, no dynamic measurement needed
   });
 
   // Track filter values with ref to avoid re-renders
   const lastFilterRef = React.useRef({ folderPath });
 
+  // Don't use the initialOffset when initializing the virtualizer
+  // since it can cause a flushSync warning
+  React.useEffect(() => {
+    console.log("initialScrollOffset", initialScrollOffset);
+    virtualizer.scrollToOffset(initialScrollOffset);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Reset scroll position when we change folders
   React.useEffect(() => {
     if (folderPath !== lastFilterRef.current.folderPath) {
       currentScrollOffset.current = 0;
       lastFilterRef.current.folderPath = folderPath;
-      // Use microtask to avoid flushSync warning during render
-      queueMicrotask(() => {
-        if (parentRef.current) {
-          parentRef.current.scrollTop = 0;
-        }
-      });
+      virtualizer.scrollToOffset(0);
     }
-  }, [folderPath]);
+  }, [folderPath, virtualizer]);
 
   // Track scroll offset from the container for persistence
   React.useEffect(() => {
@@ -92,6 +94,7 @@ const FileListResults = ({
     return () => {
       // Convert pixel offset to row index for storage
       const rowIndex = Math.floor(currentScrollOffset.current / REPLAY_FILE_ITEM_SIZE);
+      console.log("rowIndex", rowIndex);
       onScrollPositionChange(rowIndex);
     };
   }, [onScrollPositionChange]);
@@ -197,6 +200,7 @@ export const FileList = React.memo(
 
     // Callback to save scroll position to store (called on unmount)
     const handleScrollPositionChange = React.useCallback((rowIndex: number) => {
+      console.log("handleScrollPositionChange", rowIndex);
       useReplays.setState({ scrollRowItem: rowIndex });
     }, []);
 
