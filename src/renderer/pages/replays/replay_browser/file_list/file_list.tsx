@@ -3,15 +3,24 @@ import FolderIcon from "@mui/icons-material/Folder";
 import type { FileResult } from "@replays/types";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import React from "react";
+import { create } from "zustand";
 
 import { IconMenu } from "@/components/icon_menu";
-import { useReplays } from "@/lib/hooks/use_replays";
 
 import { ReplayFileContainer } from "../replay_file/replay_file.container";
 import { FileListMessages as Messages } from "./file_list.messages";
 
 const LOAD_MORE_THRESHOLD = 5;
 const REPLAY_FILE_ITEM_SIZE = 90;
+
+// Small hook to persist scroll position across component unmounts
+const useScrollPosition = create<{
+  scrollPixelOffset: number;
+  setScrollPixelOffset: (offset: number) => void;
+}>((set) => ({
+  scrollPixelOffset: 0,
+  setScrollPixelOffset: (offset: number) => set({ scrollPixelOffset: offset }),
+}));
 
 // This is the container for all the replays visible, using TanStack Virtual for smooth 60fps scrolling
 const FileListResults = ({
@@ -58,7 +67,6 @@ const FileListResults = ({
   // Don't use the initialOffset when initializing the virtualizer
   // since it can cause a flushSync warning
   React.useEffect(() => {
-    console.log("initialScrollOffset", initialScrollOffset);
     virtualizer.scrollToOffset(initialScrollOffset);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -92,10 +100,7 @@ const FileListResults = ({
   // Save scroll position when component unmounts
   React.useEffect(() => {
     return () => {
-      // Convert pixel offset to row index for storage
-      const rowIndex = Math.floor(currentScrollOffset.current / REPLAY_FILE_ITEM_SIZE);
-      console.log("rowIndex", rowIndex);
-      onScrollPositionChange(rowIndex);
+      onScrollPositionChange(currentScrollOffset.current);
     };
   }, [onScrollPositionChange]);
 
@@ -196,12 +201,11 @@ export const FileList = React.memo(
 
     // Read initial scroll position from store ONCE on mount (no subscription)
     // This persists scroll position across page navigation
-    const initialScrollOffset = React.useRef(useReplays.getState().scrollRowItem * REPLAY_FILE_ITEM_SIZE);
+    const initialScrollOffset = React.useRef(useScrollPosition.getState().scrollPixelOffset);
 
     // Callback to save scroll position to store (called on unmount)
-    const handleScrollPositionChange = React.useCallback((rowIndex: number) => {
-      console.log("handleScrollPositionChange", rowIndex);
-      useReplays.setState({ scrollRowItem: rowIndex });
+    const handleScrollPositionChange = React.useCallback((pixelOffset: number) => {
+      useScrollPosition.setState({ scrollPixelOffset: pixelOffset });
     }, []);
 
     const onOpenMenu = React.useCallback((index: number, target: any) => {
