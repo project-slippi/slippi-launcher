@@ -18,7 +18,8 @@ jobs:
     name: Test on node ${{ matrix.node-version }} and ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     env:
-      IS_NOT_PR: ${{ ! (github.event_name == 'pull_request') }}
+      IS_PR: ${{ github.event_name == 'pull_request' }}
+      ENABLE_CODESIGNING_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'enable-codesigning') }}
     strategy:
       fail-fast: false
       matrix:
@@ -98,15 +99,23 @@ jobs:
       - name: Load Windows signing secrets
         env:
           ES_USERNAME: ${{ secrets.ES_USERNAME }}
-          PR_BUILD: ${{ github.event_name == 'pull_request' }} # skip windows signing on PR builds
-        if: matrix.os == 'windows-latest' && (env.ES_USERNAME != null || github.event_name == 'pull_request')
+        if: matrix.os == 'windows-latest' && (env.ES_USERNAME != null || env.IS_PR == 'true')
         shell: bash
         run: |
-          msg="$(git log -1 --no-merges --pretty=%B | head -n 1)"
-          if [[ "$PR_BUILD" = "true" ]] || [[ ! "$msg" =~ ^release:.* ]];
-          then
-            echo "not a release, skipping code signing"
-            exit 0;
+          # Enable signing if: (1) PR with enable-codesigning label, OR (2) not a PR and release commit
+          if [[ "$IS_PR" = "true" ]]; then
+            if [[ "$ENABLE_CODESIGNING_LABEL" = "true" ]]; then
+              echo "PR with enable-codesigning label, enabling code signing"
+            else
+              echo "PR without enable-codesigning label, skipping code signing"
+              exit 0;
+            fi
+          else
+            msg="$(git log -1 --no-merges --pretty=%B | head -n 1)"
+            if [[ ! "$msg" =~ ^release:.* ]]; then
+              echo "not a release commit, skipping code signing"
+              exit 0;
+            fi
           fi
           echo "SLIPPI_ENABLE_SIGNING=yes" >> $GITHUB_ENV
           echo "ES_USERNAME=${{ secrets.ES_USERNAME }}" >> $GITHUB_ENV
@@ -118,11 +127,11 @@ jobs:
           echo "signing enabled and secrets loaded"
 
       - name: Load macOS signing certificates and secrets
-        if: matrix.os == 'macOS-latest' && env.CERTIFICATE_MACOS_PASSWORD != null && env.IS_NOT_PR == 'true'
+        if: matrix.os == 'macOS-latest' && env.CERTIFICATE_MACOS_PASSWORD != null && (env.IS_PR != 'true' || env.ENABLE_CODESIGNING_LABEL == 'true')
         run: |
           chmod +x .erb/scripts/load-macos-certs-ci.sh && ./.erb/scripts/load-macos-certs-ci.sh
           mkdir -p ~/private_keys/
-          echo "SLIPPI_ENABLE_SIGNING=$IS_NOT_PR" >> $GITHUB_ENV
+          echo "SLIPPI_ENABLE_SIGNING=true" >> $GITHUB_ENV
           echo '${{ secrets.APPLE_CONNECT_API_KEY }}' > ~/private_keys/AuthKey_${{ secrets.APPLE_API_KEY_ID }}.p8
           echo "CSC_LINK=${{ secrets.CERTIFICATE_MACOS_APPLICATION }}" >> $GITHUB_ENV
           echo "CSC_KEY_PASSWORD=${{ secrets.CERTIFICATE_MACOS_PASSWORD }}" >> $GITHUB_ENV
@@ -145,7 +154,7 @@ jobs:
           USE_HARD_LINKS: false # because of https://github.com/electron-userland/electron-builder/issues/3179
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CODESIGNTOOL_PATH: "${{ github.workspace }}/CodeSignTool"
-          CSC_FOR_PULL_REQUEST: ${{ env.IS_NOT_PR }}
+          CSC_FOR_PULL_REQUEST: ${{ env.IS_PR != 'true' || env.ENABLE_CODESIGNING_LABEL == 'true' }}
       - name: Run tests
         run: |
           npm run typecheck
