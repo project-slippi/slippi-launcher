@@ -1900,26 +1900,26 @@ msgstr ""
 #. {0} count: number
 msgid "{0, plural, one {# replay} other {# replays}} filtered."
 msgstr ""
-"{0, plural, one {# файл отфильтрован} few {# файла отфильтрованы} other {# "
-"файлов отфильтровано}}"
+"{0, plural, one {# реплей отфильтрован} few {# реплея отфильтрованы} other {# "
+"реплеев отфильтровано}}"
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:9:40
 #. {0} count: number
 msgid "{0, plural, one {# replay} other {# replays}} found."
 msgstr ""
-"{0, plural, one {# файл найден} few {# файла найдены} other {# файлов "
+"{0, plural, one {# реплей найден} few {# реплея найдены} other {# реплеев "
 "найдено}}."
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:12:40
 #. {0} count: number
 msgid "{0, plural, one {# replay} other {# replays}} had errors."
 msgstr ""
-"{0, plural, one {# файл содержит} few {# файла содержат} other {# файлов "
+"{0, plural, one {# реплей содержит} few {# реплея содержат} other {# реплеев "
 "содержат}} ошибки."
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:11:41
 #. {0} count: number
 msgid "{0, plural, one {# replay} other {# replays}} hidden."
 msgstr ""
-"{0, plural, one {# файл скрыт} few {# файла скрыто} other {# файлов "
+"{0, plural, one {# реплей скрыт} few {# реплея скрыто} other {# реплеев "
 "скрыто}}."
