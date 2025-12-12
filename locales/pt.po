@@ -7,7 +7,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "x-generator: i18next-auto-keys CLI\n"
 "Language: pt-BR\n"
-"PO-Revision-Date: 2025-12-12T18:31:53.700Z\n"
+"PO-Revision-Date: 2025-12-12T19:12:35.873Z\n"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
 msgid "2-4 uppercase English characters"
@@ -1665,7 +1665,7 @@ msgstr "Isso removerá todas as suas configurações de {0}."
 msgid "Toggle password visibility"
 msgstr "Alternar visibilidade da senha"
 
-#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:11:41
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:13:41
 #. {0} readableBytes: string
 msgid "Total size: {0}"
 msgstr "Tamanho total: {0}"
@@ -1879,25 +1879,11 @@ msgstr ""
 msgid "or drag and drop here"
 msgstr "ou arraste e solte aqui"
 
-#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:8:41
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:8:5
 #. {0} count: number
-msgid "{0, plural, one {# file} other {# files}} filtered."
-msgstr "{0, plural, one {# arquivo} other {# arquivos}} filtrado(s)."
-
-#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:7:38
-#. {0} count: number
-msgid "{0, plural, one {# file} other {# files}} found."
-msgstr "{0, plural, one {# arquivo} other {# arquivos}} encontrado(s)."
-
-#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:10:38
-#. {0} count: number
-msgid "{0, plural, one {# file} other {# files}} had errors."
-msgstr "{0, plural, one {# arquivo} other {# arquivos}} com erros."
-
-#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:9:39
-#. {0} count: number
-msgid "{0, plural, one {# file} other {# files}} hidden."
-msgstr "{0, plural, one {# arquivo} other {# arquivos}} oculto(s)."
+#. {1} total: number
+msgid "{0, number} of {1, plural, one {# replay} other {# replays}} processed."
+msgstr "{0, number} de {1, plural, one {# replay} other {# replays}} processado(s)."
 
 #: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:2:37
 #. {0} count: number
@@ -1913,3 +1899,23 @@ msgstr "{0, plural, one {# arquivo} other {# arquivos}} excluído(s) com sucesso
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} will be deleted."
 msgstr "{0, plural, one {# arquivo} other {# arquivos}} será(ão) excluído(s)."
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:10:43
+#. {0} count: number
+msgid "{0, plural, one {# replay} other {# replays}} filtered."
+msgstr "{0, plural, one {# replay} other {# replays}} filtrado(s)."
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:9:40
+#. {0} count: number
+msgid "{0, plural, one {# replay} other {# replays}} found."
+msgstr "{0, plural, one {# replay} other {# replays}} encontrado(s)."
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:12:40
+#. {0} count: number
+msgid "{0, plural, one {# replay} other {# replays}} had errors."
+msgstr "{0, plural, one {# replay} other {# replays}} com erro(s)."
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:11:41
+#. {0} count: number
+msgid "{0, plural, one {# replay} other {# replays}} hidden."
+msgstr "{0, plural, one {# replay} other {# replays}} oculto(s)."
