@@ -22,7 +22,7 @@ import type { AccountData, StoredAccount } from "@settings/types";
 import log from "electron-log";
 import type { FirebaseApp } from "firebase/app";
 import { deleteApp, getApp, getApps, initializeApp } from "firebase/app";
-import type { Auth } from "firebase/auth";
+import type { Auth, User } from "firebase/auth";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import multicast from "observable-fns/multicast";
 import Subject from "observable-fns/subject";
@@ -164,14 +164,8 @@ class MultiAccountClient implements MultiAccountService {
       log.info(`Found existing session for user: ${user.displayName || user.uid}, migrating to multi-account system`);
 
       // Create stored account from existing user
-      const migratedAccount: StoredAccount = {
-        id: user.uid,
-        email: user.email ?? "",
-        displayName: user.displayName ?? "",
-        displayPicture: generateDisplayPicture(user.uid),
-        lastActive: new Date(),
-        useDefaultApp: true,
-      };
+      const migratedAccount = mapFirebaseUserToStoredAccount(user);
+      migratedAccount.useDefaultApp = true;
 
       // Add to accounts list
       this._accounts.push(migratedAccount);
@@ -319,13 +313,7 @@ class MultiAccountClient implements MultiAccountService {
       }
 
       // Create stored account (we know it's new because we already checked by email)
-      const storedAccount: StoredAccount = {
-        id: user.uid,
-        email: user.email ?? email,
-        displayName: user.displayName ?? "",
-        displayPicture: generateDisplayPicture(user.uid),
-        lastActive: new Date(),
-      };
+      const storedAccount = mapFirebaseUserToStoredAccount(user, email);
 
       // Add to accounts list
       this._accounts.push(storedAccount);
@@ -512,6 +500,16 @@ class MultiAccountClient implements MultiAccountService {
       subscription.unsubscribe();
     };
   }
+}
+
+function mapFirebaseUserToStoredAccount(user: User, defaultEmail: string = ""): StoredAccount {
+  return {
+    id: user.uid,
+    email: user.email ?? defaultEmail,
+    displayName: user.displayName ?? "",
+    displayPicture: generateDisplayPicture(user.uid),
+    lastActive: new Date(),
+  };
 }
 
 export function createMultiAccountService(): MultiAccountService {
