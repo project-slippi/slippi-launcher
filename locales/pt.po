@@ -7,7 +7,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "x-generator: i18next-auto-keys CLI\n"
 "Language: pt-BR\n"
-"PO-Revision-Date: 2025-12-12T19:12:35.873Z\n"
+"PO-Revision-Date: 2025-12-12T19:33:20.002Z\n"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
 msgid "2-4 uppercase English characters"
@@ -432,7 +432,7 @@ msgid ""
 "Display names can only contain letters, numbers, Hiragana, Katakana, and "
 "special characters"
 msgstr ""
-"Nomes de exibição podem conter apenas letras, números, Hiragana, Katakanae "
+"Nomes de exibição podem conter apenas letras, números, Hiragana, Katakana e "
 "caracteres especiais"
 
 #: src/renderer/pages/settings/create.messages.ts:7:26
@@ -456,7 +456,7 @@ msgid ""
 "click \"Copy logs\", and paste them in the Slippi Discord's "
 "#windows-support channel with some context regarding the crash."
 msgstr ""
-"Dolphin encerrou inesperadamente. Por favor, vá para a seção de Ajudana "
+"Dolphin encerrou inesperadamente. Por favor, vá para a seção de Ajuda na "
 "página de configurações, clique em \"Copiar logs\" e cole-osno canal "
 "#windows-support do Discord do Slippi com algum contexto sobrea falha."
 
@@ -1046,7 +1046,7 @@ msgid ""
 "Once every 4 days, ranked play is available to all users including "
 "non-subs. Check back soon!"
 msgstr ""
-"A cada 4 dias, o jogo ranqueado está disponível para todos osusuários, "
+"A cada 4 dias, o jogo ranqueado está disponível para todos os usuários, "
 "incluindo não-assinantes. Volte em breve!"
 
 #: src/renderer/pages/home/sidebar/tournament_links.messages.ts:4:17
@@ -1637,7 +1637,7 @@ msgid ""
 msgstr ""
 "Este é um conjunto de regras a serem seguidas ao usar o Slippi. Quebrar "
 "essas regras pode resultar em suspensão ou banimento, dependendo da "
-"gravidade e frequência. Esta não é uma lista exaustiva, reservamo-noso "
+"gravidade e frequência. Esta não é uma lista exaustiva, reservamo-nos o "
 "direito de suspender ou banir uma conta por qualquer motivo."
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:3:34
