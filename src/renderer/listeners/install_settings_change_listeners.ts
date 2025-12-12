@@ -4,19 +4,21 @@ import type { SettingKey } from "@settings/types";
 import log from "electron-log";
 
 import { useIsoVerification } from "@/lib/hooks/use_iso_verification";
-import { getReplayPresenter } from "@/lib/hooks/use_replays";
+import { getReplayPresenter, useReplays } from "@/lib/hooks/use_replays";
 import { useSettingsStore } from "@/lib/hooks/use_settings";
 
 export function installSettingsChangeListeners({ replayService }: { replayService: ReplayService }) {
   const replayPresenter = getReplayPresenter(replayService);
 
   // Re-initialize the replay browser whenever the tracked SLP paths change
-  const initReplayBrowser = () => {
+  const initReplayBrowser = (preserveCurrentFolder = false) => {
     const { rootSlpPath, extraSlpPaths } = useSettingsStore.getState().settings;
-    void replayPresenter.init(rootSlpPath, extraSlpPaths, true).catch(log.error);
+    // When preserving the current folder, pass it to init so it doesn't reset to root
+    const currentFolder = preserveCurrentFolder ? useReplays.getState().currentFolder : undefined;
+    void replayPresenter.init(rootSlpPath, extraSlpPaths, true, currentFolder).catch(log.error);
   };
-  // Also initialize it once on app startup
-  initReplayBrowser();
+  // Also initialize it once on app startup - preserve the folder loaded from localStorage
+  initReplayBrowser(true);
 
   // Validate the ISO file on app startup
   const initialIsoPath = useSettingsStore.getState().settings.isoPath;

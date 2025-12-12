@@ -10,6 +10,35 @@ import { useReplayBrowserList } from "./use_replay_browser_list";
 import { buildReplayFilters, useReplayFilter } from "./use_replay_filter";
 
 const REPLAY_BATCH_SIZE = 50;
+const LAST_FOLDER_KEY = "replay-browser-last-folder";
+
+/**
+ * Get the initial folder to load in the replay browser.
+ * Validates that the stored folder is still a subdirectory of one of the SLP paths.
+ * Falls back to rootSlpPath if validation fails.
+ */
+const getInitialFolder = (): string => {
+  const { rootSlpPath, extraSlpPaths } = useSettings.getState().settings;
+
+  // Try to restore the last folder from localStorage
+  const storedFolder = localStorage.getItem(LAST_FOLDER_KEY);
+
+  if (storedFolder) {
+    // Check if the stored folder is a subdirectory of any of the SLP paths
+    const allSlpPaths = [rootSlpPath, ...extraSlpPaths];
+    const isValid = allSlpPaths.some((slpPath) => {
+      // A folder is valid if it equals the SLP path or is a subdirectory of it
+      return storedFolder === slpPath || window.electron.utils.isSubdirectory(slpPath, storedFolder);
+    });
+
+    if (isValid) {
+      return storedFolder;
+    }
+  }
+
+  // Fall back to root SLP path if stored folder is invalid or doesn't exist
+  return rootSlpPath;
+};
 
 type StoreState = {
   loading: boolean;
@@ -41,7 +70,7 @@ const initialState: StoreState = {
   folderTree: [],
   collapsedFolders: [],
   currentRoot: null,
-  currentFolder: useSettings.getState().settings.rootSlpPath,
+  currentFolder: getInitialFolder(),
   selectedFiles: [],
   selectAllMode: false,
   deselectedFiles: [],
@@ -128,6 +157,10 @@ export class ReplayPresenter {
     const { currentFolder } = useReplays.getState();
 
     const folderToLoad = childPath ?? currentFolder;
+
+    // Persist the folder to localStorage for next session
+    localStorage.setItem(LAST_FOLDER_KEY, folderToLoad);
+
     useReplays.setState((state) => {
       state.currentFolder = folderToLoad;
       state.selectedFiles = [];
