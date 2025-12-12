@@ -1,6 +1,5 @@
 import { Preconditions } from "@common/preconditions";
 import log from "electron-log";
-import { getApps, initializeApp } from "firebase/app";
 import {
   getAuth,
   onAuthStateChanged,
@@ -8,7 +7,6 @@ import {
   sendPasswordResetEmail,
   updateProfile,
 } from "firebase/auth";
-import { getFunctions, httpsCallable } from "firebase/functions";
 import multicast from "observable-fns/multicast";
 import Subject from "observable-fns/subject";
 
@@ -16,17 +14,6 @@ import { generateDisplayPicture } from "@/lib/display_picture";
 
 import { createMultiAccountService } from "./multi_account.service";
 import type { AuthService, AuthUser, MultiAccountService } from "./types";
-
-const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  databaseURL: process.env.FIREBASE_DATABASE_URL,
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.FIREBASE_APP_ID,
-  measurementId: process.env.FIREBASE_MEASUREMENT_ID,
-};
 
 /**
  * Initialize Firebase with multi-account support
@@ -122,15 +109,9 @@ class AuthClient implements AuthService {
   }
 
   public async signUp({ email, displayName, password }: { email: string; displayName: string; password: string }) {
-    // Use default Firebase app for signup
-    const defaultApp = getApps().find((app) => app.name === "[DEFAULT]");
-    const app = defaultApp ?? initializeApp(firebaseConfig);
-    const functions = getFunctions(app);
-    const createUser = httpsCallable(functions, "createUserNew");
-    await createUser({ email, password, displayName });
-
-    // Now login with the new account (which will add it via multi-account service)
-    return this.login({ email, password });
+    // Delegate to multi-account service to create user and add account
+    await this._multiAccountService.signUp(email, password, displayName);
+    return this.getCurrentUser();
   }
 
   public async login({ email, password }: { email: string; password: string }) {

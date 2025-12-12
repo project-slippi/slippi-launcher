@@ -22,8 +22,9 @@ import type { AccountData, StoredAccount } from "@settings/types";
 import log from "electron-log";
 import type { FirebaseApp } from "firebase/app";
 import { deleteApp, getApp, getApps, initializeApp } from "firebase/app";
-import type { Auth } from "firebase/auth";
+import type { Auth, User } from "firebase/auth";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
+import { getFunctions, httpsCallable } from "firebase/functions";
 import multicast from "observable-fns/multicast";
 import Subject from "observable-fns/subject";
 
@@ -90,6 +91,29 @@ class MultiAccountClient implements MultiAccountService {
     } catch (err) {
       log.error("Failed to initialize multi-account service:", err);
       this._initialized = true;
+    }
+  }
+
+  /**
+   * Sign up a new user and add them to accounts
+   */
+  public async signUp(email: string, password: string, displayName: string): Promise<StoredAccount> {
+    try {
+      // Use default Firebase app for signup
+      const defaultApp = getApps().find((app) => app.name === "[DEFAULT]") ?? initializeApp(firebaseConfig);
+      const functions = getFunctions(defaultApp);
+      const createUser = httpsCallable(functions, "createUserNew");
+
+      // Create the user account via cloud function
+      await createUser({ email, password, displayName });
+
+      log.info(`Successfully created new user account`);
+
+      // Now login with the new account (which will add it via addAccount)
+      return await this.addAccount(email, password);
+    } catch (err) {
+      log.error("Failed to sign up new user:", err);
+      throw err;
     }
   }
 
@@ -164,14 +188,8 @@ class MultiAccountClient implements MultiAccountService {
       log.info(`Found existing session for user: ${user.displayName || user.uid}, migrating to multi-account system`);
 
       // Create stored account from existing user
-      const migratedAccount: StoredAccount = {
-        id: user.uid,
-        email: user.email ?? "",
-        displayName: user.displayName ?? "",
-        displayPicture: generateDisplayPicture(user.uid),
-        lastActive: new Date(),
-        useDefaultApp: true,
-      };
+      const migratedAccount = mapFirebaseUserToStoredAccount(user);
+      migratedAccount.useDefaultApp = true;
 
       // Add to accounts list
       this._accounts.push(migratedAccount);
@@ -288,7 +306,25 @@ class MultiAccountClient implements MultiAccountService {
       throw new Error(`Maximum of ${MAX_ACCOUNTS} accounts allowed`);
     }
 
-    // Create a temporary Firebase app for login
+    // Check if account already exists by email (before creating temp app)
+    // This avoids IndexedDB persistence conflicts when re-authenticating
+    const existingAccountByEmail = this._accounts.find((acc) => acc.email === email);
+
+    if (existingAccountByEmail) {
+      log.info("Account with that email already exists, re-authenticating...");
+      try {
+        // Re-authenticate using the existing account's Firebase app
+        // This avoids persistence conflicts that can occur with temp apps
+        await this._signInWithStoredAccount(existingAccountByEmail, password);
+        log.info(`Successfully re-authenticated and switched to account: ${existingAccountByEmail.displayName}`);
+        return existingAccountByEmail;
+      } catch (err) {
+        log.error(`Failed to re-authenticate existing account:`, err);
+        throw err;
+      }
+    }
+
+    // Account doesn't exist - create a temporary Firebase app for login
     const tempAppName = `temp-${Date.now()}`;
     const tempApp = initializeApp(firebaseConfig, tempAppName);
     const tempAuth = getAuth(tempApp);
@@ -296,58 +332,18 @@ class MultiAccountClient implements MultiAccountService {
     try {
       // Login to get user details
       const { user } = await signInWithEmailAndPassword(tempAuth, email, password);
-
       if (!user) {
         throw new Error("Login failed");
       }
 
-      // Check if account already exists
-      const existingAccount = this._accounts.find((acc) => acc.id === user.uid);
-
-      if (existingAccount) {
-        // Account already added - auto-switch to it
-        log.info(`Account ${existingAccount.displayName} already added, switching to it`);
-        await deleteApp(tempApp);
-        await this.switchAccount(user.uid);
-        return existingAccount;
-      }
-
-      // Create stored account
-      const storedAccount: StoredAccount = {
-        id: user.uid,
-        email: user.email ?? email,
-        displayName: user.displayName ?? "",
-        displayPicture: generateDisplayPicture(user.uid),
-        lastActive: new Date(),
-      };
+      // Create stored account (we know it's new because we already checked by email)
+      const storedAccount = mapFirebaseUserToStoredAccount(user, email);
 
       // Add to accounts list
       this._accounts.push(storedAccount);
 
       // Create permanent Firebase app for this account
-      const app = this._getOrCreateFirebaseApp(user.uid, storedAccount.useDefaultApp);
-      const auth = getAuth(app);
-      this._authInstances.set(user.uid, auth);
-
-      // Transfer session to permanent app
-      // Note: We'll need to re-authenticate here since we can't transfer sessions directly
-      await signInWithEmailAndPassword(auth, email, password);
-
-      // Note: We no longer need to manually store refresh tokens.
-      // Firebase automatically persists the session in IndexedDB for this app instance.
-      // The IndexedDB key is: firebaseLocalStorageDb:app-account-{uid}
-      // This will survive app restarts without us doing anything.
-
-      // Set up auth state listener (for persistence)
-      onAuthStateChanged(auth, () => {
-        // Auth state changes are handled by AuthService
-      });
-
-      // Set as active account
-      this._activeAccountId = user.uid;
-
-      // Save to storage
-      await this._saveAccounts();
+      await this._signInWithStoredAccount(storedAccount, password);
 
       // Clean up temp app
       await deleteApp(tempApp);
@@ -361,6 +357,21 @@ class MultiAccountClient implements MultiAccountService {
       log.error("Failed to add account:", err);
       throw err;
     }
+  }
+
+  private async _signInWithStoredAccount(account: StoredAccount, password: string): Promise<void> {
+    const app = this._getOrCreateFirebaseApp(account.id, account.useDefaultApp);
+    const auth = getAuth(app);
+    this._authInstances.set(account.id, auth);
+
+    await signInWithEmailAndPassword(auth, account.email, password);
+
+    // Set as active account
+    this._activeAccountId = account.id;
+    account.lastActive = new Date();
+
+    // Save to storage
+    await this._saveAccounts();
   }
 
   /**
@@ -513,6 +524,16 @@ class MultiAccountClient implements MultiAccountService {
       subscription.unsubscribe();
     };
   }
+}
+
+function mapFirebaseUserToStoredAccount(user: User, defaultEmail: string = ""): StoredAccount {
+  return {
+    id: user.uid,
+    email: user.email ?? defaultEmail,
+    displayName: user.displayName ?? "",
+    displayPicture: generateDisplayPicture(user.uid),
+    lastActive: new Date(),
+  };
 }
 
 export function createMultiAccountService(): MultiAccountService {
