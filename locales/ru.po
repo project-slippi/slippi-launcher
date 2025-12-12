@@ -8,7 +8,7 @@ msgstr ""
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "x-generator: i18next-auto-keys CLI\n"
 "Language: ru-RU\n"
-"PO-Revision-Date: 2025-12-10T23:54:31.379Z\n"
+"PO-Revision-Date: 2025-12-12T18:12:58.244Z\n"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
 msgid "2-4 uppercase English characters"
@@ -65,8 +65,8 @@ msgstr "Дополнительные"
 #. {0} count: number
 msgid "All {0, plural, one {# file} other {# files}} selected"
 msgstr ""
-"{0, plural, =1 {Единственный файл выбран} one {Все (#) файлы выбраны} "
-"few {Все # файла выбраны} other {Все # файлов выбраны}}"
+"{0, plural, =1 {Единственный файл выбран} one {Все (#) файлы выбраны} few "
+"{Все # файла выбраны} other {Все # файлов выбраны}}"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:15:5
 msgid ""
@@ -74,9 +74,9 @@ msgid ""
 "capture) when the game is active. Requires OBS Websocket 5.0+, which comes "
 "preinstalled on OBS 28+."
 msgstr ""
-"Позволяет автоматически показывать и скрывать захват Dolphin в OBS "
-"при начале и окончании матча. Требует OBS Websocket 5.0+, который входит "
-"в установку OBS 28+."
+"Позволяет автоматически показывать и скрывать захват Dolphin в OBS при "
+"начале и окончании матча. Требует OBS Websocket 5.0+, который входит в "
+"установку OBS 28+."
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:24:33
 msgid ""
@@ -463,9 +463,7 @@ msgstr ""
 
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:16:39
 msgid "Dolphin is currently running. Close Dolphin to switch accounts"
-msgstr ""
-"Dolphin в данный момент запущен. Закройте Dolphin для переключения "
-"аккаунтов"
+msgstr "Dolphin в данный момент запущен. Закройте Dolphin для переключения аккаунтов"
 
 #: src/renderer/pages/replays/replay_browser/replay_file/replay_file.messages.ts:6:28
 #: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:6:28
@@ -1612,8 +1610,8 @@ msgid ""
 "The port used for connecting to console. Only change this if connecting to "
 "a Console Relay. If unsure, leave it as {0}."
 msgstr ""
-"Порт, используемый для подключения к консоли. Изменяйте только "
-"если подключаетесь к Console Relay. Если не уверены, оставьте как {0}."
+"Порт, используемый для подключения к консоли. Изменяйте только если "
+"подключаетесь к Console Relay. Если не уверены, оставьте как {0}."
 
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:3:44
 msgid "The unique viewer code of the spectator."
@@ -1656,7 +1654,7 @@ msgstr "Это удалит все ваши настройки {0}."
 msgid "Toggle password visibility"
 msgstr "Увидеть пароль"
 
-#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:11:41
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:13:41
 #. {0} readableBytes: string
 msgid "Total size: {0}"
 msgstr "Общий размер: {0}"
@@ -1869,29 +1867,11 @@ msgstr ""
 msgid "or drag and drop here"
 msgstr "или перетащите сюда"
 
-#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:8:41
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:8:5
 #. {0} count: number
-msgid "{0, plural, one {# file} other {# files}} filtered."
-msgstr "{0, plural, one {# файл отфильтрован} few {# файла отфильтрованы} other {# файлов отфильтровано}}"
-
-#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:7:38
-#. {0} count: number
-msgid "{0, plural, one {# file} other {# files}} found."
-msgstr "{0, plural, one {# файл найден} few {# файла найдены} other {# файлов найдено}}."
-
-#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:10:38
-#. {0} count: number
-msgid "{0, plural, one {# file} other {# files}} had errors."
+#. {1} total: number
+msgid "{0, number} of {1, plural, one {# replay} other {# replays}} processed."
 msgstr ""
-"{0, plural, one {# файл содержит} few {# файла содержат} other {# файлов "
-"содержат}} ошибки."
-
-#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:9:39
-#. {0} count: number
-msgid "{0, plural, one {# file} other {# files}} hidden."
-msgstr ""
-"{0, plural, one {# файл скрыт} few {# файла скрыто} other {# файлов "
-"скрыто}}."
 
 #: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:2:37
 #. {0} count: number
@@ -1913,3 +1893,31 @@ msgid "{0, plural, one {# file} other {# files}} will be deleted."
 msgstr ""
 "{0, plural, one {# файл будет удален} few {# файла будут удалены} other {# "
 "файлов будет удалено}}."
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:10:43
+#. {0} count: number
+msgid "{0, plural, one {# replay} other {# replays}} filtered."
+msgstr ""
+"{0, plural, one {# файл отфильтрован} few {# файла отфильтрованы} other {# "
+"файлов отфильтровано}}"
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:9:40
+#. {0} count: number
+msgid "{0, plural, one {# replay} other {# replays}} found."
+msgstr ""
+"{0, plural, one {# файл найден} few {# файла найдены} other {# файлов "
+"найдено}}."
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:12:40
+#. {0} count: number
+msgid "{0, plural, one {# replay} other {# replays}} had errors."
+msgstr ""
+"{0, plural, one {# файл содержит} few {# файла содержат} other {# файлов "
+"содержат}} ошибки."
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:11:41
+#. {0} count: number
+msgid "{0, plural, one {# replay} other {# replays}} hidden."
+msgstr ""
+"{0, plural, one {# файл скрыт} few {# файла скрыто} other {# файлов "
+"скрыто}}."

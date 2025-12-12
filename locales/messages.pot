@@ -1592,7 +1592,7 @@ msgstr ""
 msgid "Toggle password visibility"
 msgstr ""
 
-#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:11:41
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:13:41
 #. {0} readableBytes: string
 msgid "Total size: {0}"
 msgstr ""
@@ -1791,24 +1791,10 @@ msgstr ""
 msgid "or drag and drop here"
 msgstr ""
 
-#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:8:41
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:8:5
 #. {0} count: number
-msgid "{0, plural, one {# file} other {# files}} filtered."
-msgstr ""
-
-#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:7:38
-#. {0} count: number
-msgid "{0, plural, one {# file} other {# files}} found."
-msgstr ""
-
-#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:10:38
-#. {0} count: number
-msgid "{0, plural, one {# file} other {# files}} had errors."
-msgstr ""
-
-#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:9:39
-#. {0} count: number
-msgid "{0, plural, one {# file} other {# files}} hidden."
+#. {1} total: number
+msgid "{0, number} of {1, plural, one {# replay} other {# replays}} processed."
 msgstr ""
 
 #: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:2:37
@@ -1824,4 +1810,24 @@ msgstr ""
 #: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:9:37
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} will be deleted."
+msgstr ""
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:10:43
+#. {0} count: number
+msgid "{0, plural, one {# replay} other {# replays}} filtered."
+msgstr ""
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:9:40
+#. {0} count: number
+msgid "{0, plural, one {# replay} other {# replays}} found."
+msgstr ""
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:12:40
+#. {0} count: number
+msgid "{0, plural, one {# replay} other {# replays}} had errors."
+msgstr ""
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:11:41
+#. {0} count: number
+msgid "{0, plural, one {# replay} other {# replays}} hidden."
 msgstr ""
