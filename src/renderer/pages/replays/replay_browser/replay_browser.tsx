@@ -36,8 +36,20 @@ export const ReplayBrowser = React.memo(() => {
   const { viewReplays } = useDolphinActions(dolphinService);
 
   const loading = useReplays((store) => store.loading);
+  const replayProgress = useReplays((store) => store.progress);
   const loadingMore = useReplays((store) => store.loadingMore);
   const hasMoreReplays = useReplays((store) => store.hasMoreReplays);
+  const showReplayProgress = React.useMemo(
+    () => replayProgress && replayProgress.current !== replayProgress.total,
+    [replayProgress],
+  );
+  const replayProgressPercent = React.useMemo(() => {
+    if (replayProgress) {
+      return Math.round((replayProgress.current / replayProgress.total) * 100);
+    } else {
+      return undefined;
+    }
+  }, [replayProgress]);
 
   const currentFolder = useReplays((store) => store.currentFolder);
   const folderTree = useReplays((store) => store.folderTree);
@@ -294,12 +306,23 @@ export const ReplayBrowser = React.memo(() => {
             display: flex;
             align-items: center;
             justify-content: flex-end;
+            gap: 1em;
           `}
         >
           {showLoading ? (
-            <CircularProgress color="secondary" size={20} />
+            <>
+              <span>
+                {showReplayProgress ? Messages.processedFileCount(replayProgress!.current, replayProgress!.total) : ""}
+              </span>
+              <CircularProgress
+                color="secondary"
+                size={20}
+                value={replayProgressPercent}
+                variant={replayProgressPercent ? "determinate" : "indeterminate"}
+              />
+            </>
           ) : (
-            Messages.totalFileCount(totalFilesInFolder ?? filteredFiles.length)
+            Messages.totalReplayCount(totalFilesInFolder ?? filteredFiles.length)
           )}
         </div>
       </Footer>

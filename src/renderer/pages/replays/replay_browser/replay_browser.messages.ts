@@ -4,9 +4,11 @@ export const ReplayBrowserMessages = {
   currentFolder: () => "Current folder",
   noSlpFilesFound: () => "No SLP files found",
   clearFilter: () => "Clear filter",
-  totalFileCount: (count: number) => "{0, plural, one {# file} other {# files}} found.",
-  filteredFileCount: (count: number) => "{0, plural, one {# file} other {# files}} filtered.",
-  hiddenFileCount: (count: number) => "{0, plural, one {# file} other {# files}} hidden.",
-  errorFileCount: (count: number) => "{0, plural, one {# file} other {# files}} had errors.",
+  processedFileCount: (count: number, total: number) =>
+    "{0, number} of {1, plural, one {# file} other {# files}} processed.",
+  totalReplayCount: (count: number) => "{0, plural, one {# replay} other {# replays}} found.",
+  filteredReplayCount: (count: number) => "{0, plural, one {# replay} other {# replays}} filtered.",
+  hiddenReplayCount: (count: number) => "{0, plural, one {# replay} other {# replays}} hidden.",
+  errorReplayCount: (count: number) => "{0, plural, one {# replay} other {# replays}} had errors.",
   totalSize: (readableBytes: string) => "Total size: {0}",
 };
