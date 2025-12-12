@@ -293,7 +293,7 @@ class MultiAccountClient implements MultiAccountService {
     const existingAccountByEmail = this._accounts.find((acc) => acc.email === email);
 
     if (existingAccountByEmail) {
-      log.info(`Account with email ${email} already exists, re-authenticating...`);
+      log.info("Account with that email already exists, re-authenticating...");
 
       // Get or create the Firebase app for this existing account
       const app = this._getOrCreateFirebaseApp(existingAccountByEmail.id, existingAccountByEmail.useDefaultApp);
