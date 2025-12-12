@@ -352,16 +352,6 @@ class MultiAccountClient implements MultiAccountService {
       // Note: We'll need to re-authenticate here since we can't transfer sessions directly
       await signInWithEmailAndPassword(auth, email, password);
 
-      // Note: We no longer need to manually store refresh tokens.
-      // Firebase automatically persists the session in IndexedDB for this app instance.
-      // The IndexedDB key is: firebaseLocalStorageDb:app-account-{uid}
-      // This will survive app restarts without us doing anything.
-
-      // Set up auth state listener (for persistence)
-      onAuthStateChanged(auth, () => {
-        // Auth state changes are handled by AuthService
-      });
-
       // Set as active account
       this._activeAccountId = user.uid;
 
