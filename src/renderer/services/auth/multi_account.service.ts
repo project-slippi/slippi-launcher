@@ -288,7 +288,37 @@ class MultiAccountClient implements MultiAccountService {
       throw new Error(`Maximum of ${MAX_ACCOUNTS} accounts allowed`);
     }
 
-    // Create a temporary Firebase app for login
+    // Check if account already exists by email (before creating temp app)
+    // This avoids IndexedDB persistence conflicts when re-authenticating
+    const existingAccountByEmail = this._accounts.find((acc) => acc.email === email);
+
+    if (existingAccountByEmail) {
+      log.info(`Account with email ${email} already exists, re-authenticating...`);
+
+      // Get or create the Firebase app for this existing account
+      const app = this._getOrCreateFirebaseApp(existingAccountByEmail.id, existingAccountByEmail.useDefaultApp);
+      const auth = getAuth(app);
+      this._authInstances.set(existingAccountByEmail.id, auth);
+
+      try {
+        // Re-authenticate using the existing account's Firebase app
+        // This avoids persistence conflicts that can occur with temp apps
+        await signInWithEmailAndPassword(auth, email, password);
+
+        // Switch to this account
+        this._activeAccountId = existingAccountByEmail.id;
+        existingAccountByEmail.lastActive = new Date();
+        await this._saveAccounts();
+
+        log.info(`Successfully re-authenticated and switched to account: ${existingAccountByEmail.displayName}`);
+        return existingAccountByEmail;
+      } catch (err) {
+        log.error(`Failed to re-authenticate existing account:`, err);
+        throw err;
+      }
+    }
+
+    // Account doesn't exist - create a temporary Firebase app for login
     const tempAppName = `temp-${Date.now()}`;
     const tempApp = initializeApp(firebaseConfig, tempAppName);
     const tempAuth = getAuth(tempApp);
@@ -301,18 +331,7 @@ class MultiAccountClient implements MultiAccountService {
         throw new Error("Login failed");
       }
 
-      // Check if account already exists
-      const existingAccount = this._accounts.find((acc) => acc.id === user.uid);
-
-      if (existingAccount) {
-        // Account already added - auto-switch to it
-        log.info(`Account ${existingAccount.displayName} already added, switching to it`);
-        await deleteApp(tempApp);
-        await this.switchAccount(user.uid);
-        return existingAccount;
-      }
-
-      // Create stored account
+      // Create stored account (we know it's new because we already checked by email)
       const storedAccount: StoredAccount = {
         id: user.uid,
         email: user.email ?? email,
