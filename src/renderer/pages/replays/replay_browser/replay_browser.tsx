@@ -312,7 +312,9 @@ export const ReplayBrowser = React.memo(() => {
           {showLoading ? (
             <>
               <span>
-                {showReplayProgress ? Messages.processedFileCount(replayProgress!.current, replayProgress!.total) : ""}
+                {showReplayProgress
+                  ? Messages.processedReplayCount(replayProgress!.current, replayProgress!.total)
+                  : ""}
               </span>
               <CircularProgress
                 color="secondary"
