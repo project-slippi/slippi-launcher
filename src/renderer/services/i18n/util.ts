@@ -1,10 +1,11 @@
-export type SupportedLanguage = "en" | "es" | "ja" | "ru";
+export type SupportedLanguage = "en" | "es" | "ja" | "ru" | "pt";
 
 export const SUPPORTED_LANGUAGES: { value: SupportedLanguage; label: string }[] = [
   { value: "en", label: "English" },
   { value: "es", label: "Español" },
   { value: "ja", label: "日本語" },
   { value: "ru", label: "Русский" },
+  { value: "pt", label: "Português" },
 ];
 
 export function getSystemLanguage(): string {
