@@ -294,22 +294,10 @@ class MultiAccountClient implements MultiAccountService {
 
     if (existingAccountByEmail) {
       log.info("Account with that email already exists, re-authenticating...");
-
-      // Get or create the Firebase app for this existing account
-      const app = this._getOrCreateFirebaseApp(existingAccountByEmail.id, existingAccountByEmail.useDefaultApp);
-      const auth = getAuth(app);
-      this._authInstances.set(existingAccountByEmail.id, auth);
-
       try {
         // Re-authenticate using the existing account's Firebase app
         // This avoids persistence conflicts that can occur with temp apps
-        await signInWithEmailAndPassword(auth, email, password);
-
-        // Switch to this account
-        this._activeAccountId = existingAccountByEmail.id;
-        existingAccountByEmail.lastActive = new Date();
-        await this._saveAccounts();
-
+        await this._signInWithStoredAccount(existingAccountByEmail, password);
         log.info(`Successfully re-authenticated and switched to account: ${existingAccountByEmail.displayName}`);
         return existingAccountByEmail;
       } catch (err) {
@@ -326,7 +314,6 @@ class MultiAccountClient implements MultiAccountService {
     try {
       // Login to get user details
       const { user } = await signInWithEmailAndPassword(tempAuth, email, password);
-
       if (!user) {
         throw new Error("Login failed");
       }
@@ -344,19 +331,7 @@ class MultiAccountClient implements MultiAccountService {
       this._accounts.push(storedAccount);
 
       // Create permanent Firebase app for this account
-      const app = this._getOrCreateFirebaseApp(user.uid, storedAccount.useDefaultApp);
-      const auth = getAuth(app);
-      this._authInstances.set(user.uid, auth);
-
-      // Transfer session to permanent app
-      // Note: We'll need to re-authenticate here since we can't transfer sessions directly
-      await signInWithEmailAndPassword(auth, email, password);
-
-      // Set as active account
-      this._activeAccountId = user.uid;
-
-      // Save to storage
-      await this._saveAccounts();
+      await this._signInWithStoredAccount(storedAccount, password);
 
       // Clean up temp app
       await deleteApp(tempApp);
@@ -370,6 +345,21 @@ class MultiAccountClient implements MultiAccountService {
       log.error("Failed to add account:", err);
       throw err;
     }
+  }
+
+  private async _signInWithStoredAccount(account: StoredAccount, password: string): Promise<void> {
+    const app = this._getOrCreateFirebaseApp(account.id, account.useDefaultApp);
+    const auth = getAuth(app);
+    this._authInstances.set(account.id, auth);
+
+    await signInWithEmailAndPassword(auth, account.email, password);
+
+    // Set as active account
+    this._activeAccountId = account.id;
+    account.lastActive = new Date();
+
+    // Save to storage
+    await this._saveAccounts();
   }
 
   /**
