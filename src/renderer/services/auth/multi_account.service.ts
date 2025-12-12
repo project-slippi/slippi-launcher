@@ -24,6 +24,7 @@ import type { FirebaseApp } from "firebase/app";
 import { deleteApp, getApp, getApps, initializeApp } from "firebase/app";
 import type { Auth, User } from "firebase/auth";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
+import { getFunctions, httpsCallable } from "firebase/functions";
 import multicast from "observable-fns/multicast";
 import Subject from "observable-fns/subject";
 
@@ -90,6 +91,29 @@ class MultiAccountClient implements MultiAccountService {
     } catch (err) {
       log.error("Failed to initialize multi-account service:", err);
       this._initialized = true;
+    }
+  }
+
+  /**
+   * Sign up a new user and add them to accounts
+   */
+  public async signUp(email: string, password: string, displayName: string): Promise<StoredAccount> {
+    try {
+      // Use default Firebase app for signup
+      const defaultApp = getApps().find((app) => app.name === "[DEFAULT]") ?? initializeApp(firebaseConfig);
+      const functions = getFunctions(defaultApp);
+      const createUser = httpsCallable(functions, "createUserNew");
+
+      // Create the user account via cloud function
+      await createUser({ email, password, displayName });
+
+      log.info(`Successfully created new user account`);
+
+      // Now login with the new account (which will add it via addAccount)
+      return await this.addAccount(email, password);
+    } catch (err) {
+      log.error("Failed to sign up new user:", err);
+      throw err;
     }
   }
 

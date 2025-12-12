@@ -39,6 +39,7 @@ export interface MultiAccountService {
   init(): Promise<void>;
 
   // Account Management
+  signUp(email: string, password: string, displayName: string): Promise<StoredAccount>;
   addAccount(email: string, password: string): Promise<StoredAccount>;
   removeAccount(accountId: string): Promise<void>;
   switchAccount(accountId: string): Promise<void>;
