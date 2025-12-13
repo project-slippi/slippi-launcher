@@ -255,6 +255,7 @@ export const ReplayBrowser = React.memo(() => {
                   files={filteredFiles}
                   onLoadMore={handleLoadMore}
                   loadingMore={loadingMore}
+                  hasMoreReplays={hasMoreReplays}
                 />
               )}
               <FileSelectionToolbar

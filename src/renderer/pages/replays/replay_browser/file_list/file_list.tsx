@@ -1,7 +1,6 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import FolderIcon from "@mui/icons-material/Folder";
 import type { FileResult } from "@replays/types";
-import { useVirtualizer } from "@tanstack/react-virtual";
 import React from "react";
 import { create } from "zustand";
 
@@ -9,9 +8,6 @@ import { IconMenu } from "@/components/icon_menu";
 
 import { ReplayFileContainer } from "../replay_file/replay_file.container";
 import { FileListMessages as Messages } from "./file_list.messages";
-
-const LOAD_MORE_THRESHOLD = 5;
-const REPLAY_FILE_ITEM_SIZE = 90;
 
 // Small hook to persist scroll position across component unmounts
 const useScrollPosition = create<{
@@ -22,7 +18,7 @@ const useScrollPosition = create<{
   setScrollPixelOffset: (offset: number) => set({ scrollPixelOffset: offset }),
 }));
 
-// This is the container for all the replays visible, using TanStack Virtual for smooth 60fps scrolling
+// This is the container for all the replays, rendering all items with infinite scroll
 const FileListResults = ({
   folderPath,
   initialScrollOffset,
@@ -34,6 +30,7 @@ const FileListResults = ({
   onLoadMore,
   onScrollPositionChange,
   selectedFilesSet,
+  hasMoreReplays,
 }: {
   folderPath: string;
   files: FileResult[];
@@ -45,132 +42,116 @@ const FileListResults = ({
   onLoadMore: () => void;
   onScrollPositionChange: (rowIndex: number) => void;
   selectedFilesSet: Set<string>;
+  hasMoreReplays: boolean;
 }) => {
-  // Ref to the scrollable container element
-  const parentRef = React.useRef<HTMLDivElement>(null);
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+  const loadMoreSentinelRef = React.useRef<HTMLDivElement>(null);
+  const lastFolderRef = React.useRef(folderPath);
+  const currentScrollOffsetRef = React.useRef(initialScrollOffset);
 
-  // Track current scroll offset in pixels for saving on unmount
-  const currentScrollOffset = React.useRef(initialScrollOffset);
-
-  // Initialize virtualizer with optimal settings for 60fps
-  const virtualizer = useVirtualizer({
-    count: files.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: React.useCallback(() => REPLAY_FILE_ITEM_SIZE, []),
-    overscan: 5, // Render 5 items above/below viewport for smooth scrolling
-    // Using fixed size, no dynamic measurement needed
-  });
-
-  // Track filter values with ref to avoid re-renders
-  const lastFilterRef = React.useRef({ folderPath });
-
-  // Don't use the initialOffset when initializing the virtualizer
-  // since it can cause a flushSync warning
+  // Restore scroll position on mount
   React.useEffect(() => {
-    virtualizer.scrollToOffset(initialScrollOffset);
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = initialScrollOffset;
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Reset scroll position when we change folders
+  // Reset scroll position when folder changes
   React.useEffect(() => {
-    if (folderPath !== lastFilterRef.current.folderPath) {
-      currentScrollOffset.current = 0;
-      lastFilterRef.current.folderPath = folderPath;
-      virtualizer.scrollToOffset(0);
+    if (folderPath !== lastFolderRef.current) {
+      lastFolderRef.current = folderPath;
+      currentScrollOffsetRef.current = 0;
+      if (scrollContainerRef.current) {
+        scrollContainerRef.current.scrollTop = 0;
+      }
     }
-  }, [folderPath, virtualizer]);
+  }, [folderPath]);
 
-  // Track scroll offset from the container for persistence
+  // Use Intersection Observer for performant infinite scroll
   React.useEffect(() => {
-    const scrollElement = parentRef.current;
+    const sentinel = loadMoreSentinelRef.current;
+    if (!sentinel) {
+      return;
+    }
+
+    let rafId: number | null = null;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // When the sentinel becomes visible, load more
+        if (entries[0].isIntersecting) {
+          // Defer loading to next frame to avoid blocking scroll
+          rafId = requestAnimationFrame(() => {
+            onLoadMore();
+            rafId = null;
+          });
+        }
+      },
+      {
+        root: scrollContainerRef.current,
+        rootMargin: "800px", // Load well ahead of viewport for smooth momentum scrolling
+        threshold: 0,
+      },
+    );
+
+    observer.observe(sentinel);
+
+    return () => {
+      observer.disconnect();
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+      }
+    };
+  }, [onLoadMore]);
+
+  // Track scroll position and save on unmount
+  React.useEffect(() => {
+    const scrollElement = scrollContainerRef.current;
     if (!scrollElement) {
       return;
     }
 
     const handleScroll = () => {
-      currentScrollOffset.current = scrollElement.scrollTop;
+      currentScrollOffsetRef.current = scrollElement.scrollTop;
     };
 
     scrollElement.addEventListener("scroll", handleScroll, { passive: true });
+
     return () => {
       scrollElement.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  // Save scroll position when component unmounts
-  React.useEffect(() => {
-    return () => {
-      onScrollPositionChange(currentScrollOffset.current);
+      onScrollPositionChange(currentScrollOffsetRef.current);
     };
   }, [onScrollPositionChange]);
 
-  // Track scroll position and trigger load more when approaching end
-  const virtualItems = virtualizer.getVirtualItems();
-
-  React.useEffect(() => {
-    if (virtualItems.length > 0) {
-      // Check if we need to load more items
-      const lastItem = virtualItems[virtualItems.length - 1];
-      const itemsFromEnd = files.length - lastItem.index;
-
-      if (itemsFromEnd <= LOAD_MORE_THRESHOLD) {
-        onLoadMore();
-      }
-    }
-  }, [virtualItems, files.length, onLoadMore]);
-
   return (
     <div
-      ref={parentRef}
+      ref={scrollContainerRef}
       style={{
         height: "100%",
         width: "100%",
         overflow: "auto",
-        contain: "strict", // CSS containment for better performance
-        willChange: "transform", // GPU acceleration hint
       }}
     >
-      <div
-        style={{
-          height: `${virtualizer.getTotalSize()}px`,
-          width: "100%",
-          position: "relative",
-        }}
-      >
-        {virtualItems.map((virtualItem) => {
-          const file = files[virtualItem.index];
-          return (
-            <div
-              key={String(virtualItem.key)}
-              data-index={virtualItem.index}
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: `${virtualItem.size}px`,
-                transform: `translateY(${virtualItem.start}px)`,
-              }}
-            >
-              <ReplayFileContainer
-                onOpenMenu={onOpenMenu}
-                index={virtualItem.index}
-                onSelect={onSelect}
-                onClick={onClick}
-                onPlay={onPlay}
-                selectedFilesSet={selectedFilesSet}
-                {...file}
-              />
-            </div>
-          );
-        })}
-      </div>
+      {files.map((file, index) => (
+        <ReplayFileContainer
+          key={file.fullPath}
+          onOpenMenu={onOpenMenu}
+          index={index}
+          onSelect={onSelect}
+          onClick={onClick}
+          onPlay={onPlay}
+          selectedFilesSet={selectedFilesSet}
+          {...file}
+        />
+      ))}
+      {/* Sentinel element for intersection observer - only render if there are more replays */}
+      {hasMoreReplays && <div ref={loadMoreSentinelRef} style={{ height: "1px" }} />}
     </div>
   );
 };
 
-// the container containing FileListResults. figure the rest out yourself
-// to simplify the DOM, the submenu for each row is essentially the same until you actually click on it for a given row.
+// The container containing FileListResults and the context menu for file operations
 export const FileList = React.memo(
   ({
     files,
@@ -181,6 +162,7 @@ export const FileList = React.memo(
     folderPath,
     onLoadMore,
     selectedFilesSet,
+    hasMoreReplays,
   }: {
     folderPath: string;
     files: FileResult[];
@@ -192,6 +174,7 @@ export const FileList = React.memo(
     onPlay: (index: number) => void;
     onLoadMore: () => void;
     loadingMore: boolean;
+    hasMoreReplays: boolean;
   }) => {
     const [menuItem, setMenuItem] = React.useState<null | {
       index: number;
@@ -233,28 +216,20 @@ export const FileList = React.memo(
     }, []);
 
     return (
-      <div style={{ display: "flex", flexFlow: "column", height: "100%", flex: "1" }}>
-        <div
-          style={{
-            flex: "1",
-            overflow: "hidden",
-            // Container for the virtualized list - no transform needed here
-            // as TanStack Virtual handles its own optimization
-          }}
-        >
-          <FileListResults
-            folderPath={folderPath}
-            onOpenMenu={onOpenMenu}
-            onSelect={onSelect}
-            onPlay={onPlay}
-            onClick={onFileClick}
-            files={files}
-            initialScrollOffset={initialScrollOffset.current}
-            onLoadMore={onLoadMore}
-            onScrollPositionChange={handleScrollPositionChange}
-            selectedFilesSet={selectedFilesSet}
-          />
-        </div>
+      <>
+        <FileListResults
+          folderPath={folderPath}
+          onOpenMenu={onOpenMenu}
+          onSelect={onSelect}
+          onPlay={onPlay}
+          onClick={onFileClick}
+          files={files}
+          initialScrollOffset={initialScrollOffset.current}
+          onLoadMore={onLoadMore}
+          onScrollPositionChange={handleScrollPositionChange}
+          selectedFilesSet={selectedFilesSet}
+          hasMoreReplays={hasMoreReplays}
+        />
         <IconMenu
           anchorEl={menuItem ? menuItem.anchorEl : null}
           open={Boolean(menuItem)}
@@ -272,7 +247,7 @@ export const FileList = React.memo(
             },
           ]}
         />
-      </div>
+      </>
     );
   },
 );

@@ -166,6 +166,7 @@ export class ReplayPresenter {
       state.selectedFiles = [];
       state.selectAllMode = false;
       state.deselectedFiles = [];
+      state.loadingMore = false;
     });
 
     const loadFolderTree = async () => {
@@ -189,6 +190,7 @@ export class ReplayPresenter {
 
       useReplays.setState((state) => {
         state.loading = true;
+        state.loadingMore = false;
         state.progress = null;
       });
       try {
