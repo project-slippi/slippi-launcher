@@ -2,7 +2,6 @@ import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
 import type { StorybookConfig } from "@storybook/react-webpack5";
 import path from "path";
 import fs from "fs";
-import { merge } from "webpack-merge";
 import type { RuleSetRule } from "webpack";
 import webpack from "webpack";
 
@@ -41,8 +40,8 @@ const config: StorybookConfig = {
       ...options,
       presets: [
         ...(options.presets || []),
-        ["@babel/preset-typescript", { 
-          isTSX: true, 
+        ["@babel/preset-typescript", {
+          isTSX: true,
           allExtensions: true,
           onlyRemoveTypeImports: true
         }],
@@ -66,26 +65,41 @@ const config: StorybookConfig = {
       use: ["@svgr/webpack", "url-loader"],
     });
 
-    config = merge(config, {
-      resolve: {
-        alias: {
-          "@emotion/core": getPackageDir("@emotion/react"),
-          "@emotion/styled": getPackageDir("@emotion/styled"),
-          "emotion-theming": getPackageDir("@emotion/react")
-        },
-        plugins: [
-          new TsconfigPathsPlugin({
-            extensions: config.resolve.extensions
-          }) as any
-        ],
-      },
-      plugins: [
-        ...(config.plugins || []),
+    // Merge resolve configuration separately to avoid plugin duplication
+    config.resolve = config.resolve || {};
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      "@emotion/core": getPackageDir("@emotion/react"),
+      "@emotion/styled": getPackageDir("@emotion/styled"),
+      "emotion-theming": getPackageDir("@emotion/react")
+    };
+
+    // Add TsconfigPathsPlugin if not already present
+    config.resolve.plugins = config.resolve.plugins || [];
+    const hasTsconfigPlugin = config.resolve.plugins.some(
+      (plugin: any) => plugin?.constructor?.name === 'TsconfigPathsPlugin'
+    );
+    if (!hasTsconfigPlugin) {
+      config.resolve.plugins.push(
+        new TsconfigPathsPlugin({
+          extensions: config.resolve.extensions
+        }) as any
+      );
+    }
+
+    // Add ProvidePlugin if not already present
+    config.plugins = config.plugins || [];
+    const hasProvidePlugin = config.plugins.some(
+      (plugin: any) => plugin?.constructor?.name === 'ProvidePlugin'
+    );
+    if (!hasProvidePlugin) {
+      config.plugins.push(
         new webpack.ProvidePlugin({
           React: 'react',
-        }),
-      ],
-    });
+        })
+      );
+    }
+
     return config;
   },
 };
