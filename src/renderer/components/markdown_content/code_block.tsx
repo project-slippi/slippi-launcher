@@ -5,9 +5,16 @@ import stylex from "@stylexjs/stylex";
 import React from "react";
 
 const styles = stylex.create({
+  inlineContainer: {
+    padding: "2px 6px",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    borderRadius: 5,
+    position: "relative",
+  },
   container: {
     fontSize: 15,
     padding: "20px 30px",
+    paddingRight: "50px",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     borderRadius: 5,
     position: "relative",
@@ -15,6 +22,9 @@ const styles = stylex.create({
   code: {
     color: "#999",
     lineHeight: "1.5em",
+    whiteSpace: "pre-wrap",
+    overflowWrap: "break-word",
+    wordBreak: "break-word",
   },
   buttonContainer: {
     position: "absolute",
@@ -28,7 +38,7 @@ const styles = stylex.create({
   },
 });
 
-export const CodeBlock = React.memo(function CodeBlock({ content }: { content: string }) {
+const StandaloneCodeBlock = React.memo(function StandaloneCodeBlock({ content }: { content: string }) {
   const [copied, setCopied] = React.useState<boolean>(false);
   const [isHovering, setIsHovering] = React.useState<boolean>(false);
   const onMouseEnter = () => setIsHovering(true);
@@ -55,3 +65,18 @@ export const CodeBlock = React.memo(function CodeBlock({ content }: { content: s
     </div>
   );
 });
+
+const InlineCodeBlock = React.memo(function InlineCodeBlock({ content }: { content: string }) {
+  return (
+    <span {...stylex.props(styles.inlineContainer)}>
+      <code {...stylex.props(styles.code)}>{content}</code>
+    </span>
+  );
+});
+
+export const CodeBlock = ({ content, inline = false }: { content: string; inline?: boolean }) => {
+  if (inline) {
+    return <InlineCodeBlock content={content} />;
+  }
+  return <StandaloneCodeBlock content={content} />;
+};

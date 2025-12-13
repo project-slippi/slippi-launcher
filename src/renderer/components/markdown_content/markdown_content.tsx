@@ -7,10 +7,13 @@ import { withFont } from "@/styles/with_font";
 import { CodeBlock } from "./code_block";
 
 // Custom component for rendering code blocks
-const MarkdownCode = ({ children }: { children?: React.ReactNode }) => {
+const MarkdownCode = ({ children, node }: { children?: React.ReactNode; node?: any }) => {
+  // This is jank AF but it's the only way for us to determine if the code block is inline or not
+  // Taken from: https://github.com/orgs/remarkjs/discussions/1426#discussioncomment-12548944
+  const isInlineCodeBlock = node?.position && node.position.start.line === node.position.end.line;
   // For code blocks, children is the text content
   const value = String(children).replace(/\n$/, "");
-  return <CodeBlock content={value} />;
+  return <CodeBlock content={value} inline={isInlineCodeBlock} />;
 };
 
 // Custom component for rendering links
