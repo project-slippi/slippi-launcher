@@ -126,7 +126,7 @@ export const NetworkDiagnosticsResult = React.memo(
           {cgnat === Presence.FAILED && ipAddress && <CgnatCommandSection address={ipAddress} />}
         </div>
         <DialogActions>
-          <Button variant="contained" color="secondary" onClick={onDiagnosticResultsCopy} style={{ width: "144px" }}>
+          <Button variant="contained" color="secondary" onClick={onDiagnosticResultsCopy} style={{ width: "auto" }}>
             {diagnosticResultsCopied ? Messages.copied() : Messages.copyResults()}
           </Button>
         </DialogActions>

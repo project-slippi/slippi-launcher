@@ -12,7 +12,7 @@ const hiddenIpAddress = "···.···.···.···";
 const styles = stylex.create({
   button: {
     marginLeft: "8px",
-    width: "96px",
+    width: "auto",
   },
   ipAddress: {
     padding: "4px 8px",
