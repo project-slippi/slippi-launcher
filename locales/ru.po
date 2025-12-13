@@ -28,7 +28,7 @@ msgstr "Произошла сетевая ошибка."
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:21:20
 msgid "Accept All"
-msgstr "Принять все"
+msgstr "Принять"
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:23:33
 msgid "Accept rules and policies"
@@ -1762,7 +1762,7 @@ msgstr "Версия: {0}"
 
 #: src/renderer/pages/home/sidebar/ranked_status.messages.ts:11:28
 msgid "View Ranked Profile"
-msgstr "Посмотреть ранкед профиль"
+msgstr "Ранкед профиль"
 
 #: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:2:24
 msgid "View on Bluesky"
@@ -1835,7 +1835,7 @@ msgstr "Вам потребуется залогиниться снова, ко�
 
 #: src/renderer/pages/quick_start/quick_start.messages.ts:2:25
 msgid "You're all set up"
-msgstr "Все готово!"
+msgstr "Все готово"
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:8:27
 msgid ""
