@@ -9,7 +9,7 @@ import { useServices } from "@/services";
 import { useReplayBrowserList } from "./use_replay_browser_list";
 import { buildReplayFilters, useReplayFilter } from "./use_replay_filter";
 
-const REPLAY_BATCH_SIZE = 50;
+const REPLAY_BATCH_SIZE = 10;
 const LAST_FOLDER_KEY = "replay-browser-last-folder";
 
 /**
@@ -166,6 +166,7 @@ export class ReplayPresenter {
       state.selectedFiles = [];
       state.selectAllMode = false;
       state.deselectedFiles = [];
+      state.loadingMore = false;
     });
 
     const loadFolderTree = async () => {
@@ -189,6 +190,7 @@ export class ReplayPresenter {
 
       useReplays.setState((state) => {
         state.loading = true;
+        state.loadingMore = false;
         state.progress = null;
       });
       try {
