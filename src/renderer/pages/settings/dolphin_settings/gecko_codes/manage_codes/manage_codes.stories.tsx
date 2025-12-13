@@ -26,7 +26,9 @@ const aFakeGeckoCodeWith = (opts: Partial<GeckoCode> = {}) => {
 };
 
 const fakeGeckoCodes: GeckoCode[] = [
-  aFakeGeckoCodeWith({ name: "Some super duper really really really really really really long name" }),
+  aFakeGeckoCodeWith({
+    name: "Some super duper really really really really really really long name",
+  }),
   aFakeGeckoCodeWith({
     userDefined: true,
     notes: [

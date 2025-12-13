@@ -24,13 +24,17 @@ function getPackageDir(filepath: string) {
 
 const config: StorybookConfig = {
   stories: ["../src/renderer/**/*.stories.mdx", "../src/renderer/**/*.stories.@(js|jsx|ts|tsx)"],
-  addons: ["@storybook/addon-links", "@storybook/addon-essentials", "@storybook/addon-interactions", "@storybook/preset-scss"],
+  addons: [
+    "@storybook/addon-links",
+    "@storybook/addon-essentials",
+    "@storybook/addon-interactions",
+    "@storybook/preset-scss",
+    "@storybook/addon-webpack5-compiler-babel"
+  ],
   framework: {
     name: "@storybook/react-webpack5",
     options: {
-      builder: {
-        useSWC: false,
-      },
+      builder: {},
     },
   },
   babel: async (options) => {
