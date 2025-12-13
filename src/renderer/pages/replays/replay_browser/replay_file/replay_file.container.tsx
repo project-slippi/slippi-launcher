@@ -13,15 +13,16 @@ import { frameToGameTimer, GameMode, stages as stageUtils } from "@slippi/slippi
 import groupBy from "lodash/groupBy";
 import React, { useCallback, useMemo } from "react";
 
-import { DraggableFile } from "@/components/draggable_file";
 import { useReplays } from "@/lib/hooks/use_replays";
 import { convertFrameCountToDurationString, monthDayHourFormat } from "@/lib/time";
 import { getStageImage } from "@/lib/utils";
 
+import { DraggableFile } from "./draggable_file";
 import type { ReplayDetail, ReplayFileAction } from "./replay_file";
 import { ReplayFile as ReplayFileImpl } from "./replay_file";
 import { ReplayFileMessages as Messages } from "./replay_file.messages";
 import type { PlayerInfo } from "./team_elements/team_elements";
+import { useFileDrag } from "./use_file_drag";
 
 type ReplayFileContainerProps = FileResult & {
   index: number;
@@ -58,12 +59,37 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
     [selected, selectedFiles, fullPath],
   );
 
+  // Pre-compute drag paths to avoid recreating array
+  const dragPaths = useMemo(
+    () => (selected && selectedFiles.length > 0 ? selectedFiles : []),
+    [selected, selectedFiles],
+  );
+
+  const fileDrag = useFileDrag();
   const onShowStats = useCallback(() => onSelect(index), [onSelect, index]);
   const onReplayClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => onClick(index, e.shiftKey),
     [onClick, index],
   );
   const onPlayClick = useCallback(() => onPlay(index), [onPlay, index]);
+
+  // Drag handler for the entire replay item (drags all selected files)
+  const onReplayDragStart = useCallback(
+    (event: React.DragEvent<HTMLDivElement>) => {
+      if (dragPaths.length > 0) {
+        fileDrag(event, dragPaths);
+      }
+    },
+    [fileDrag, dragPaths],
+  );
+
+  // Drag handler for just the filename (drags only this file)
+  const onFileNameDragStart = useCallback(
+    (event: React.DragEvent<HTMLDivElement>) => {
+      fileDrag(event, [fullPath]);
+    },
+    [fileDrag, fullPath],
+  );
 
   const actions = useMemo((): ReplayFileAction[] => {
     return [
@@ -119,14 +145,8 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
     });
   }, [game.isTeams, game.players]);
 
-  // Pre-compute drag paths to avoid recreating array
-  const dragPaths = useMemo(
-    () => (selected && selectedFiles.length > 0 ? selectedFiles : []),
-    [selected, selectedFiles],
-  );
-
   return (
-    <DraggableFile filePaths={dragPaths}>
+    <DraggableFile onDragStart={onReplayDragStart}>
       <div
         key={id}
         css={css`
@@ -136,12 +156,12 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
       >
         <ReplayFileImpl
           fileName={fileName}
-          fullPath={fullPath}
           backgroundImage={stageImageUrl}
           selectedIndex={selected ? selectedIndex : undefined}
           players={players}
           actions={actions}
           details={details}
+          onFileNameDragStart={onFileNameDragStart}
         />
       </div>
     </DraggableFile>
