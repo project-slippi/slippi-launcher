@@ -59,7 +59,6 @@ const renderReplayFileWith = (additionalProps: Partial<ReplayFileProps> = {}) =>
   const props: ReplayFileProps = {
     players: freeForAllTeams,
     fileName: "some_game_file.slp",
-    fullPath: "/path/to/some_game_file.slp",
     backgroundImage: stageImage,
     details: [
       {
