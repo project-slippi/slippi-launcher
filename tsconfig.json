@@ -1,8 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2021",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "commonjs",
     "lib": ["dom", "es2021"],
     "paths": {
       "@/*": ["renderer/*"],
@@ -28,6 +27,7 @@
     "noUnusedParameters": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
+    "moduleResolution": "node",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
