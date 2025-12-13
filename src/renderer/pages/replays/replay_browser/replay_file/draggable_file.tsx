@@ -1,13 +1,19 @@
-import styled from "@emotion/styled";
+import stylex from "@stylexjs/stylex";
 import React from "react";
 
-const Outer = styled.div`
-  color: inherit;
-  cursor: grab;
-  user-select: auto;
-  -webkit-user-drag: element;
-  -webkit-app-region: no-drag;
-`;
+const styles = stylex.create({
+  draggable: {
+    color: "inherit",
+    cursor: "grab",
+    userSelect: "auto",
+  },
+});
+
+// Vendor-specific styles that aren't supported by stylex
+const webkitStyles = {
+  WebkitUserDrag: "element",
+  WebkitAppRegion: "no-drag",
+} as React.CSSProperties;
 
 type DraggableFileProps = {
   onDragStart?: (event: React.DragEvent<HTMLDivElement>) => void;
@@ -25,15 +31,19 @@ export const DraggableFile = ({
   className,
   style,
 }: React.PropsWithChildren<DraggableFileProps>) => {
+  const isDraggable = !!onDragStart;
+  const combinedStyles = isDraggable ? { ...webkitStyles, ...style } : style;
+
   return (
-    <Outer
+    <div
+      {...stylex.props(isDraggable && styles.draggable)}
       className={className}
-      style={style}
+      style={combinedStyles}
       draggable={!!onDragStart}
       onDragStart={onDragStart}
       onClick={(event) => event.preventDefault()}
     >
       {children}
-    </Outer>
+    </div>
   );
 };

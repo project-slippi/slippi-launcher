@@ -74,14 +74,14 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
   const onPlayClick = useCallback(() => onPlay(index), [onPlay, index]);
 
   // Drag handler for the entire replay item (drags all selected files)
-  const onReplayDragStart = useCallback(
-    (event: React.DragEvent<HTMLDivElement>) => {
-      if (dragPaths.length > 0) {
-        fileDrag(event, dragPaths);
-      }
-    },
-    [fileDrag, dragPaths],
-  );
+  const onReplayDragStart = useMemo(() => {
+    if (dragPaths.length === 0) {
+      return undefined;
+    }
+    return (event: React.DragEvent<HTMLDivElement>) => {
+      fileDrag(event, dragPaths);
+    };
+  }, [fileDrag, dragPaths]);
 
   // Drag handler for just the filename (drags only this file)
   const onFileNameDragStart = useCallback(
