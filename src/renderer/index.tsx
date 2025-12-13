@@ -4,7 +4,7 @@ import { ThemeProvider } from "@emotion/react";
 import { StyledEngineProvider, ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
 import log from "electron-log";
 import React, { Suspense } from "react";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 
 import { ToastProvider } from "@/components/toast_provider";
 import { slippiTheme } from "@/styles/theme";
@@ -40,7 +40,12 @@ const LazyApp = React.lazy(async () => {
 // We only initialize theme providers and toast providers here, before the rest of the
 // the app. We need the toast provider so we can show errors and notify during suspense,
 // and we need the theme providers so the notifications are styled correctly.
-render(
+const container = document.getElementById("app");
+if (!container) {
+  throw new Error("Failed to find the app element");
+}
+const root = createRoot(container);
+root.render(
   <React.StrictMode>
     <StyledEngineProvider injectFirst={true}>
       <MuiThemeProvider theme={slippiTheme}>
@@ -57,5 +62,4 @@ render(
       </MuiThemeProvider>
     </StyledEngineProvider>
   </React.StrictMode>,
-  document.getElementById("app"),
 );

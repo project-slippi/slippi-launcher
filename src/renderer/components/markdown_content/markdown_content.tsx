@@ -6,18 +6,28 @@ import { withFont } from "@/styles/with_font";
 
 import { CodeBlock } from "./code_block";
 
+// Custom component for rendering code blocks
+const MarkdownCode = ({ children }: { children?: React.ReactNode }) => {
+  // For code blocks, children is the text content
+  const value = String(children).replace(/\n$/, "");
+  return <CodeBlock content={value} />;
+};
+
+// Custom component for rendering links
+const MarkdownLink = ({ href, children }: { href?: string; children?: React.ReactNode }) => (
+  <A href={href ?? ""} title={href ?? ""}>
+    {children}
+  </A>
+);
+
 export const MarkdownContent = ({ content, className }: { className?: string; content: string }) => {
   return (
     <Outer className={className}>
       <ReactMarkdown
         skipHtml={true}
-        renderers={{
-          code: ({ value }: { value: string }) => <CodeBlock content={value} />,
-          link: ({ href, children }) => (
-            <A href={href} title={href}>
-              {children}
-            </A>
-          ),
+        components={{
+          code: MarkdownCode,
+          a: MarkdownLink,
         }}
       >
         {content}
