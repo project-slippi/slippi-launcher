@@ -6,7 +6,7 @@ import { useQuery } from "react-query";
 import { LoadingScreen } from "@/components/loading_screen/loading_screen";
 
 import { AdBanner } from "./ad_banner";
-import { NewsArticle } from "./news_article/news_article";
+import { NewsArticleContainer as NewsArticle } from "./news_article/news_article.container";
 import { NewsFeedMessages as Messages } from "./news_feed.messages";
 
 const ITEMS_TO_SHOW = 7;

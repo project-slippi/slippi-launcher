@@ -8,7 +8,6 @@ import { format, formatDistance } from "date-fns";
 import React from "react";
 
 import { ExternalLink } from "@/components/external_link";
-import { useAppStore } from "@/lib/hooks/use_app_store";
 import { getLocale } from "@/lib/time";
 import type { SupportedLanguage } from "@/services/i18n/util";
 
@@ -45,10 +44,15 @@ function getViewPostButtonText(source: NewsItem["source"]) {
   }
 }
 
-export const NewsArticle = React.memo(function NewsArticle({ item }: { item: NewsItem }) {
+export const NewsArticle = React.memo(function NewsArticle({
+  item,
+  currentLanguage,
+}: {
+  item: NewsItem;
+  currentLanguage: SupportedLanguage;
+}) {
   const { permalink, publishedAt } = item;
 
-  const currentLanguage = useAppStore((store) => store.currentLanguage) as SupportedLanguage;
   const publishedDate = new Date(publishedAt);
   const dateFnsLocale = getLocale(currentLanguage);
   const localDateString = format(publishedDate, "PPP p", { locale: dateFnsLocale });

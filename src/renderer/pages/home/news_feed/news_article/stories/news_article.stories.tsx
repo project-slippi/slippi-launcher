@@ -15,5 +15,6 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
   args: {
     item: generateFakeNewsItem({}),
+    currentLanguage: "en",
   },
 };
