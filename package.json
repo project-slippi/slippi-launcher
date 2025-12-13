@@ -72,6 +72,7 @@
     "@electron/rebuild": "^3.7.1",
     "@emotion/babel-preset-css-prop": "^11.2.0",
     "@pmmmwh/react-refresh-webpack-plugin": "0.5.17",
+    "@storybook/addon-docs": "9.1.16",
     "@storybook/addon-links": "9.1.16",
     "@storybook/addon-webpack5-compiler-babel": "^4.0.0",
     "@storybook/preset-scss": "^1.0.3",
@@ -113,10 +114,10 @@
     "esbuild-loader": "^4.4.0",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^8.5.0",
-    "eslint-import-resolver-typescript": "^2.5.0",
+    "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-import-resolver-webpack": "^0.13.2",
     "eslint-plugin-compat": "^4.0.0",
-    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-lodash": "^7.4.0",
     "eslint-plugin-prettier": "^4.0.0",
@@ -156,8 +157,7 @@
     "webpack-bundle-analyzer": "^4.9.1",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.2.2",
-    "webpack-merge": "^5.9.0",
-    "@storybook/addon-docs": "9.1.16"
+    "webpack-merge": "^5.9.0"
   },
   "dependencies": {
     "@apollo/client": "^3.11.10",
