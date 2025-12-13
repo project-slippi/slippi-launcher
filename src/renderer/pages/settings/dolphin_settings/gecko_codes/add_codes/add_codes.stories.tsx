@@ -1,18 +1,22 @@
-import type { ComponentMeta, ComponentStory } from "@storybook/react-webpack5";
+import type { Meta, StoryObj } from "@storybook/react-webpack5";
+import { action } from "storybook/actions";
 
 import { AddCodes } from "./add_codes";
 
-// More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
-export default {
+const meta = {
   title: "containers/Settings/AddCodes",
   component: AddCodes,
-  // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
-  argTypes: {},
-} as ComponentMeta<typeof AddCodes>;
+} satisfies Meta<typeof AddCodes>;
+export default meta;
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: ComponentStory<typeof AddCodes> = (args) => <AddCodes {...args} />;
+type Story = StoryObj<typeof meta>;
 
-export const Primary = Template.bind({});
-// More on args: https://storybook.js.org/docs/react/writing-stories/args
-Primary.args = {};
+export const Primary: Story = {
+  args: {
+    validateCodeInput: () => {
+      return true;
+    },
+    onSubmit: action("onSubmit"),
+  },
+};

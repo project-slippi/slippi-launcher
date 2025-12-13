@@ -1,21 +1,19 @@
-import type { ComponentMeta, ComponentStory } from "@storybook/react-webpack5";
+import type { Meta, StoryObj } from "@storybook/react-webpack5";
 
 import { NewsArticle } from "../news_article";
 import { generateFakeNewsItem } from "./fakes";
 
-// More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
-export default {
+const meta = {
   title: "pages/home/news_feed/NewsArticle",
   component: NewsArticle,
-  // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
-  argTypes: {},
-} as ComponentMeta<typeof NewsArticle>;
+} satisfies Meta<typeof NewsArticle>;
 
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: ComponentStory<typeof NewsArticle> = (args) => <NewsArticle {...args} />;
+export default meta;
 
-export const Primary = Template.bind({});
-// More on args: https://storybook.js.org/docs/react/writing-stories/args
-Primary.args = {
-  item: generateFakeNewsItem({}),
+type Story = StoryObj<typeof meta>;
+
+export const Primary: Story = {
+  args: {
+    item: generateFakeNewsItem({}),
+  },
 };

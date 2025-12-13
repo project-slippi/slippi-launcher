@@ -1,5 +1,5 @@
+import type { Meta } from "@storybook/react-webpack5";
 import { action } from "storybook/actions";
-import type { ComponentMeta } from "@storybook/react-webpack5";
 
 import { SpectateRemoteControlBlock } from "../spectate_remote_control_block";
 
@@ -9,7 +9,7 @@ export default {
   component: SpectateRemoteControlBlock,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {},
-} as ComponentMeta<typeof SpectateRemoteControlBlock>;
+} as Meta<typeof SpectateRemoteControlBlock>;
 
 export const Default = () => {
   return (

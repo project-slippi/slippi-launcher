@@ -1,19 +1,16 @@
+import type { Meta, StoryObj } from "@storybook/react-webpack5";
 import { action } from "storybook/actions";
-import type { ComponentMeta, ComponentStory } from "@storybook/react-webpack5";
 
 import type { GeckoCode } from "./manage_codes";
 import { ManageCodes } from "./manage_codes";
 
-// More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
-export default {
+const meta = {
   title: "containers/Settings/ManageCodes",
   component: ManageCodes,
-  // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
-  argTypes: {},
-} as ComponentMeta<typeof ManageCodes>;
+} satisfies Meta<typeof ManageCodes>;
+export default meta;
 
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: ComponentStory<typeof ManageCodes> = (args) => <ManageCodes {...args} />;
+type Story = StoryObj<typeof meta>;
 
 const aFakeGeckoCodeWith = (opts: Partial<GeckoCode> = {}) => {
   return {
@@ -40,11 +37,11 @@ const fakeGeckoCodes: GeckoCode[] = [
   aFakeGeckoCodeWith({ userDefined: true }),
 ];
 
-export const Primary = Template.bind({});
-// More on args: https://storybook.js.org/docs/react/writing-stories/args
-Primary.args = {
-  geckoCodes: fakeGeckoCodes,
-  handleToggle: action("handleToggle"),
-  handleCopy: action("handleCopy"),
-  handleDelete: action("handleDelete"),
+export const Primary: Story = {
+  args: {
+    geckoCodes: fakeGeckoCodes,
+    handleToggle: action("handleToggle"),
+    handleCopy: action("handleCopy"),
+    handleDelete: action("handleDelete"),
+  },
 };

@@ -1,18 +1,17 @@
-import type { ComponentMeta, ComponentStory } from "@storybook/react-webpack5";
+import type { Meta, StoryObj } from "@storybook/react-webpack5";
 
 import { Footer } from "./footer";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
-export default {
+const meta = {
   title: "Components/Footer",
   component: Footer,
-  // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
-  argTypes: {},
-} as ComponentMeta<typeof Footer>;
+} satisfies Meta<typeof Footer>;
 
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: ComponentStory<typeof Footer> = (args) => <Footer {...args} />;
+export default meta;
 
-export const Primary = Template.bind({});
-// More on args: https://storybook.js.org/docs/react/writing-stories/args
-Primary.args = {};
+type Story = StoryObj<typeof meta>;
+
+export const Primary: Story = {
+  args: {},
+};
