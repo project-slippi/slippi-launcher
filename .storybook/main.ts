@@ -1,5 +1,5 @@
 import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
-import type { StorybookConfig } from "@storybook/core-common";
+import type { StorybookConfig } from "@storybook/react-webpack5";
 import path from "path";
 import fs from "fs";
 import { merge } from "webpack-merge";
@@ -21,13 +21,30 @@ function getPackageDir(filepath: string) {
   }
 }
 
-const config: StorybookConfig & { babel: any } = {
+const config: StorybookConfig = {
   stories: ["../src/renderer/**/*.stories.mdx", "../src/renderer/**/*.stories.@(js|jsx|ts|tsx)"],
   addons: ["@storybook/addon-links", "@storybook/addon-essentials", "@storybook/addon-interactions", "@storybook/preset-scss"],
-  framework: "@storybook/react",
+  framework: {
+    name: "@storybook/react-webpack5",
+    options: {
+      builder: {
+        useSWC: false,
+      },
+    },
+  },
   babel: async (options) => {
-    options.presets.push("@emotion/babel-preset-css-prop");
-    return options;
+    return {
+      ...options,
+      presets: [
+        ...(options.presets || []),
+        ["@babel/preset-typescript", { isTSX: true, allExtensions: true }],
+        "@emotion/babel-preset-css-prop",
+      ],
+    };
+  },
+  typescript: {
+    reactDocgen: "react-docgen-typescript",
+    check: false,
   },
   webpackFinal: async config => {
     // Fix SVGR not working
@@ -57,9 +74,6 @@ const config: StorybookConfig & { babel: any } = {
     });
     return config;
   },
-  core: {
-    builder: "webpack5"
-  }
 };
 
 module.exports = config;
