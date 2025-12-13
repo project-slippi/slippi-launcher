@@ -172,7 +172,6 @@
     "@mui/material": "^5.12.1",
     "@slippi/slippi-js": "^8.0.0",
     "@stylexjs/stylex": "^0.4.1",
-    "@tanstack/react-virtual": "^3.13.13",
     "@xmcl/nat-api": "^0.4.1",
     "async-mutex": "^0.4.0",
     "compare-func": "^2.0.0",
