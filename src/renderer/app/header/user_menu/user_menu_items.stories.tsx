@@ -1,7 +1,7 @@
 import Menu from "@mui/material/Menu";
 import type { StoredAccount } from "@settings/types";
-import { action } from "@storybook/addon-actions";
-import type { ComponentMeta, ComponentStory } from "@storybook/react";
+import { action } from "storybook/actions";
+import type { ComponentMeta, ComponentStory } from "@storybook/react-webpack5";
 
 import { generateDisplayPicture } from "@/lib/display_picture";
 

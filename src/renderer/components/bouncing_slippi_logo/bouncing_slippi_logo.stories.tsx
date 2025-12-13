@@ -1,4 +1,4 @@
-import type { ComponentMeta, ComponentStory } from "@storybook/react";
+import type { ComponentMeta, ComponentStory } from "@storybook/react-webpack5";
 
 import { BouncingSlippiLogo } from "./bouncing_slippi_logo";
 

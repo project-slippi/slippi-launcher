@@ -1,4 +1,4 @@
-import type { ComponentMeta, ComponentStory } from "@storybook/react";
+import type { ComponentMeta, ComponentStory } from "@storybook/react-webpack5";
 
 import { NewsArticle } from "../news_article";
 import { generateFakeNewsItem } from "./fakes";

@@ -3,7 +3,7 @@ import "../src/renderer/styles/styles.scss"
 import { slippiTheme } from "../src/renderer/styles/theme";
 import { ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
 import React from 'react';
-import type { Preview } from "@storybook/react";
+import type { Preview } from "@storybook/react-webpack5";
 
 const preview: Preview = {
   decorators: [

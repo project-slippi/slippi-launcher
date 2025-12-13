@@ -1,5 +1,5 @@
-import { action } from "@storybook/addon-actions";
-import type { ComponentMeta } from "@storybook/react";
+import { action } from "storybook/actions";
+import type { ComponentMeta } from "@storybook/react-webpack5";
 
 import { SpectateRemoteControlBlock } from "../spectate_remote_control_block";
 

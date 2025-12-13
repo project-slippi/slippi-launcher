@@ -1,5 +1,5 @@
-import { action } from "@storybook/addon-actions";
-import type { ComponentMeta, ComponentStory } from "@storybook/react";
+import { action } from "storybook/actions";
+import type { ComponentMeta, ComponentStory } from "@storybook/react-webpack5";
 
 import type { GeckoCode } from "./manage_codes";
 import { ManageCodes } from "./manage_codes";

@@ -4,7 +4,7 @@ import LandscapeIcon from "@mui/icons-material/Landscape";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
 import TimerIcon from "@mui/icons-material/Timer";
-import { action } from "@storybook/addon-actions";
+import { action } from "storybook/actions";
 
 import { ReplayFile } from "../replay_file";
 import type { PlayerInfo } from "../team_elements/team_elements";
