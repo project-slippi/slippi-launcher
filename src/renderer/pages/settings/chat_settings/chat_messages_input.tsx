@@ -88,7 +88,7 @@ const genChatMessageItem = (
     );
   }
 
-  let onClickHandler: MouseEventHandler<React.ReactNode> | undefined = undefined;
+  let onClickHandler: MouseEventHandler<HTMLLIElement> | undefined = undefined;
   let icon = <div />;
   if (isPaid && user.subLevel === "NONE") {
     icon = (

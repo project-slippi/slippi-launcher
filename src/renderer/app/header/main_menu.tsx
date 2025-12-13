@@ -30,7 +30,7 @@ export const MainMenu = ({ menuItems }: MainMenuProps) => {
         return (
           <div key={item.subpath}>
             <CustomLink to={item.subpath} title={item.title()}>
-              {item.Icon ? <item.Icon /> : item.title}
+              {item.Icon ? <item.Icon /> : item.title()}
             </CustomLink>
           </div>
         );

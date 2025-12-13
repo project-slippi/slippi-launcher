@@ -5,10 +5,10 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import React from "react";
 
-import { DraggableFile } from "@/components/draggable_file";
 import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/use_dolphin_store";
 import { colors } from "@/styles/colors";
 
+import { DraggableFile } from "./draggable_file";
 import { ReplayFileMessages as Messages } from "./replay_file.messages";
 import type { PlayerInfo } from "./team_elements/team_elements";
 import { TeamElements } from "./team_elements/team_elements";
@@ -29,12 +29,12 @@ export type ReplayFileAction = {
 
 type ReplayFileProps = {
   fileName: string;
-  fullPath: string;
   players: PlayerInfo[][];
   details: ReplayDetail[];
   actions: ReplayFileAction[];
   selectedIndex?: number;
   backgroundImage?: string;
+  onFileNameDragStart?: (event: React.DragEvent<HTMLDivElement>) => void;
 };
 
 export const ReplayFile = React.memo(function ReplayFile({
@@ -43,8 +43,8 @@ export const ReplayFile = React.memo(function ReplayFile({
   actions,
   players,
   fileName,
-  fullPath,
   details,
+  onFileNameDragStart,
 }: ReplayFileProps) {
   const selected = exists(selectedIndex) && selectedIndex >= 0;
   return (
@@ -104,10 +104,11 @@ export const ReplayFile = React.memo(function ReplayFile({
             ))}
           </div>
           <DraggableFile
-            filePaths={[fullPath]}
+            onDragStart={onFileNameDragStart}
             css={css`
               min-width: 0;
               opacity: 0.9;
+              cursor: ${onFileNameDragStart ? "grab" : "inherit"};
               &:hover {
                 opacity: 1;
                 text-decoration: underline;

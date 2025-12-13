@@ -1,9 +1,9 @@
 import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
-import type { StorybookConfig } from "@storybook/core-common";
+import type { StorybookConfig } from "@storybook/react-webpack5";
 import path from "path";
 import fs from "fs";
-import { merge } from "webpack-merge";
 import type { RuleSetRule } from "webpack";
+import webpack from "webpack";
 
 // Helper for fixing emotion dependency
 // Taken from: https://stackoverflow.com/a/65970945
@@ -21,13 +21,37 @@ function getPackageDir(filepath: string) {
   }
 }
 
-const config: StorybookConfig & { babel: any } = {
+const config: StorybookConfig = {
   stories: ["../src/renderer/**/*.stories.mdx", "../src/renderer/**/*.stories.@(js|jsx|ts|tsx)"],
-  addons: ["@storybook/addon-links", "@storybook/addon-essentials", "@storybook/addon-interactions", "@storybook/preset-scss"],
-  framework: "@storybook/react",
+  addons: [
+    "@storybook/addon-links",
+    "@storybook/preset-scss",
+    "@storybook/addon-webpack5-compiler-babel",
+    "@storybook/addon-docs"
+  ],
+  framework: {
+    name: "@storybook/react-webpack5",
+    options: {
+      builder: {},
+    },
+  },
   babel: async (options) => {
-    options.presets.push("@emotion/babel-preset-css-prop");
-    return options;
+    return {
+      ...options,
+      presets: [
+        ...(options.presets || []),
+        ["@babel/preset-typescript", {
+          isTSX: true,
+          allExtensions: true,
+          onlyRemoveTypeImports: true
+        }],
+        "@emotion/babel-preset-css-prop",
+      ],
+    };
+  },
+  typescript: {
+    reactDocgen: "react-docgen-typescript",
+    check: false,
   },
   webpackFinal: async config => {
     // Fix SVGR not working
@@ -41,25 +65,43 @@ const config: StorybookConfig & { babel: any } = {
       use: ["@svgr/webpack", "url-loader"],
     });
 
-    config = merge(config, {
-      resolve: {
-        alias: {
-          "@emotion/core": getPackageDir("@emotion/react"),
-          "@emotion/styled": getPackageDir("@emotion/styled"),
-          "emotion-theming": getPackageDir("@emotion/react")
-        },
-        plugins: [
-          new TsconfigPathsPlugin({
-            extensions: config.resolve.extensions
-          }) as any
-        ],
-      },
-    });
+    // Merge resolve configuration separately to avoid plugin duplication
+    config.resolve = config.resolve || {};
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      "@emotion/core": getPackageDir("@emotion/react"),
+      "@emotion/styled": getPackageDir("@emotion/styled"),
+      "emotion-theming": getPackageDir("@emotion/react")
+    };
+
+    // Add TsconfigPathsPlugin if not already present
+    config.resolve.plugins = config.resolve.plugins || [];
+    const hasTsconfigPlugin = config.resolve.plugins.some(
+      (plugin: any) => plugin?.constructor?.name === 'TsconfigPathsPlugin'
+    );
+    if (!hasTsconfigPlugin) {
+      config.resolve.plugins.push(
+        new TsconfigPathsPlugin({
+          extensions: config.resolve.extensions
+        }) as any
+      );
+    }
+
+    // Add ProvidePlugin if not already present
+    config.plugins = config.plugins || [];
+    const hasProvidePlugin = config.plugins.some(
+      (plugin: any) => plugin?.constructor?.name === 'ProvidePlugin'
+    );
+    if (!hasProvidePlugin) {
+      config.plugins.push(
+        new webpack.ProvidePlugin({
+          React: 'react',
+        })
+      );
+    }
+
     return config;
   },
-  core: {
-    builder: "webpack5"
-  }
 };
 
 module.exports = config;

@@ -42,8 +42,10 @@ const MenuColumn = styled.div`
 const ContentColumn = styled.div`
   width: 100%;
   display: flex;
+  flex-direction: column;
   padding-top: 30px;
   max-width: 800px;
+  min-width: 0;
   ${() => platformTitleBarStyles(50)}
 `;
 

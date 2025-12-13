@@ -1,8 +1,6 @@
 import styled from "@emotion/styled";
 import React from "react";
 
-import { useFileDrag } from "@/lib/hooks/use_file_drag";
-
 const Outer = styled.div`
   color: inherit;
   cursor: grab;
@@ -12,28 +10,27 @@ const Outer = styled.div`
 `;
 
 type DraggableFileProps = {
-  filePaths: string[];
+  onDragStart?: (event: React.DragEvent<HTMLDivElement>) => void;
   className?: string;
   style?: React.CSSProperties;
 };
 
 /**
- * DraggableFile accepts the `filePaths` prop and allows those files to be dragged into other contexts
- * such as copied to a different folder or dragged into web-sites etc.
+ * DraggableFile is a presentational component that makes its children draggable.
+ * Pass an onDragStart handler to control what happens when dragging begins.
  */
 export const DraggableFile = ({
   children,
-  filePaths,
+  onDragStart,
   className,
   style,
 }: React.PropsWithChildren<DraggableFileProps>) => {
-  const fileDrag = useFileDrag();
-
   return (
     <Outer
       className={className}
       style={style}
-      onDragStart={(event) => fileDrag(event, filePaths)}
+      draggable={!!onDragStart}
+      onDragStart={onDragStart}
       onClick={(event) => event.preventDefault()}
     >
       {children}

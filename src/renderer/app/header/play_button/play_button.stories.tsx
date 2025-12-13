@@ -1,26 +1,25 @@
-import type { ComponentMeta, ComponentStory } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-webpack5";
 import React from "react";
 
 import { PlayButton, UpdatingButton } from "./play_button";
 
-// More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
-export default {
+const meta = {
   title: "Components/PlayButton",
   component: PlayButton,
-  // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
-  argTypes: {},
-} as ComponentMeta<typeof PlayButton>;
+} satisfies Meta<typeof PlayButton>;
 
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: ComponentStory<typeof PlayButton> = (args) => <PlayButton {...args} />;
+export default meta;
 
-export const Primary = Template.bind({});
-// More on args: https://storybook.js.org/docs/react/writing-stories/args
-Primary.args = {};
+type Story = StoryObj<typeof meta>;
 
-export const Disabled = Template.bind({});
-Disabled.args = {
-  disabled: true,
+export const Primary: Story = {
+  args: {},
+};
+
+export const Disabled: Story = {
+  args: {
+    disabled: true,
+  },
 };
 
 export const Updating = () => {
