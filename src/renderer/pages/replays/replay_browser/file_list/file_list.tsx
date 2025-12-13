@@ -9,8 +9,6 @@ import { IconMenu } from "@/components/icon_menu";
 import { ReplayFileContainer } from "../replay_file/replay_file.container";
 import { FileListMessages as Messages } from "./file_list.messages";
 
-const LOAD_MORE_THRESHOLD = 5;
-
 // Small hook to persist scroll position across component unmounts
 const useScrollPosition = create<{
   scrollPixelOffset: number;
@@ -32,6 +30,7 @@ const FileListResults = ({
   onLoadMore,
   onScrollPositionChange,
   selectedFilesSet,
+  hasMoreReplays,
 }: {
   folderPath: string;
   files: FileResult[];
@@ -43,117 +42,82 @@ const FileListResults = ({
   onLoadMore: () => void;
   onScrollPositionChange: (rowIndex: number) => void;
   selectedFilesSet: Set<string>;
+  hasMoreReplays: boolean;
 }) => {
-  // Ref to the scrollable container element
-  const parentRef = React.useRef<HTMLDivElement>(null);
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+  const loadMoreSentinelRef = React.useRef<HTMLDivElement>(null);
+  const lastFolderRef = React.useRef(folderPath);
+  const currentScrollOffsetRef = React.useRef(initialScrollOffset);
 
-  // Track current scroll offset in pixels for saving on unmount
-  const currentScrollOffset = React.useRef(initialScrollOffset);
-
-  // Track filter values with ref to avoid re-renders
-  const lastFilterRef = React.useRef({ folderPath });
-
-  // Track if we're currently requesting more to prevent duplicate calls
-  const isRequestingMore = React.useRef(false);
-  const requestTimeout = React.useRef<NodeJS.Timeout | null>(null);
-
-  // Restore initial scroll position
+  // Restore scroll position on mount
   React.useEffect(() => {
-    if (parentRef.current) {
-      parentRef.current.scrollTop = initialScrollOffset;
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = initialScrollOffset;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Reset scroll position when we change folders
+  // Reset scroll position when folder changes
   React.useEffect(() => {
-    if (folderPath !== lastFilterRef.current.folderPath) {
-      currentScrollOffset.current = 0;
-      lastFilterRef.current.folderPath = folderPath;
-      isRequestingMore.current = false;
-      if (requestTimeout.current) {
-        clearTimeout(requestTimeout.current);
-        requestTimeout.current = null;
-      }
-      if (parentRef.current) {
-        parentRef.current.scrollTop = 0;
+    if (folderPath !== lastFolderRef.current) {
+      lastFolderRef.current = folderPath;
+      currentScrollOffsetRef.current = 0;
+      if (scrollContainerRef.current) {
+        scrollContainerRef.current.scrollTop = 0;
       }
     }
   }, [folderPath]);
 
-  // Check if we need to load more based on scroll position
-  const checkLoadMore = React.useCallback(() => {
-    const scrollElement = parentRef.current;
-    if (!scrollElement) {
+  // Use Intersection Observer for performant infinite scroll
+  React.useEffect(() => {
+    const sentinel = loadMoreSentinelRef.current;
+    if (!sentinel) {
       return;
     }
 
-    const scrollTop = scrollElement.scrollTop;
-    const scrollHeight = scrollElement.scrollHeight;
-    const clientHeight = scrollElement.clientHeight;
-    const scrolledToBottom = scrollHeight - scrollTop - clientHeight;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // When the sentinel becomes visible, load more
+        if (entries[0].isIntersecting) {
+          onLoadMore();
+        }
+      },
+      {
+        root: scrollContainerRef.current,
+        rootMargin: "200px", // Trigger 200px before reaching the sentinel
+        threshold: 0,
+      },
+    );
 
-    // Trigger load more when within threshold of bottom (approximately LOAD_MORE_THRESHOLD items)
-    const thresholdPixels = LOAD_MORE_THRESHOLD * 90; // Approximate item height
+    observer.observe(sentinel);
 
-    if (scrolledToBottom < thresholdPixels && !isRequestingMore.current) {
-      isRequestingMore.current = true;
-
-      // Clear any existing timeout
-      if (requestTimeout.current) {
-        clearTimeout(requestTimeout.current);
-      }
-
-      // Reset the flag after a delay to allow the next request
-      requestTimeout.current = setTimeout(() => {
-        isRequestingMore.current = false;
-      }, 500);
-
-      onLoadMore();
-    }
+    return () => {
+      observer.disconnect();
+    };
   }, [onLoadMore]);
 
-  // Track scroll offset and trigger load more when approaching end
+  // Track scroll position and save on unmount
   React.useEffect(() => {
-    const scrollElement = parentRef.current;
+    const scrollElement = scrollContainerRef.current;
     if (!scrollElement) {
       return;
     }
 
     const handleScroll = () => {
-      currentScrollOffset.current = scrollElement.scrollTop;
-      checkLoadMore();
+      currentScrollOffsetRef.current = scrollElement.scrollTop;
     };
 
     scrollElement.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => {
       scrollElement.removeEventListener("scroll", handleScroll);
-    };
-  }, [checkLoadMore]);
-
-  // Check if we need to load more when files change (e.g., after loading)
-  React.useEffect(() => {
-    // Small delay to ensure the DOM has updated and loading state has settled
-    const timer = setTimeout(() => {
-      checkLoadMore();
-    }, 100);
-    return () => clearTimeout(timer);
-  }, [files.length, checkLoadMore]);
-
-  // Save scroll position when component unmounts
-  React.useEffect(() => {
-    return () => {
-      onScrollPositionChange(currentScrollOffset.current);
-      if (requestTimeout.current) {
-        clearTimeout(requestTimeout.current);
-      }
+      onScrollPositionChange(currentScrollOffsetRef.current);
     };
   }, [onScrollPositionChange]);
 
   return (
     <div
-      ref={parentRef}
+      ref={scrollContainerRef}
       style={{
         height: "100%",
         width: "100%",
@@ -172,6 +136,8 @@ const FileListResults = ({
           {...file}
         />
       ))}
+      {/* Sentinel element for intersection observer - only render if there are more replays */}
+      {hasMoreReplays && <div ref={loadMoreSentinelRef} style={{ height: "1px" }} />}
     </div>
   );
 };
@@ -187,6 +153,7 @@ export const FileList = React.memo(
     folderPath,
     onLoadMore,
     selectedFilesSet,
+    hasMoreReplays,
   }: {
     folderPath: string;
     files: FileResult[];
@@ -198,6 +165,7 @@ export const FileList = React.memo(
     onPlay: (index: number) => void;
     onLoadMore: () => void;
     loadingMore: boolean;
+    hasMoreReplays: boolean;
   }) => {
     const [menuItem, setMenuItem] = React.useState<null | {
       index: number;
@@ -251,6 +219,7 @@ export const FileList = React.memo(
           onLoadMore={onLoadMore}
           onScrollPositionChange={handleScrollPositionChange}
           selectedFilesSet={selectedFilesSet}
+          hasMoreReplays={hasMoreReplays}
         />
         <IconMenu
           anchorEl={menuItem ? menuItem.anchorEl : null}
