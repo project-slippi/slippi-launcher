@@ -108,17 +108,16 @@ const FileListResults = ({
   const virtualItems = virtualizer.getVirtualItems();
 
   React.useEffect(() => {
-    const items = virtualizer.getVirtualItems();
-    if (items.length > 0) {
+    if (virtualItems.length > 0) {
       // Check if we need to load more items
-      const lastItem = items[items.length - 1];
+      const lastItem = virtualItems[virtualItems.length - 1];
       const itemsFromEnd = files.length - lastItem.index;
 
       if (itemsFromEnd <= LOAD_MORE_THRESHOLD) {
         onLoadMore();
       }
     }
-  }, [virtualizer, files.length, onLoadMore]);
+  }, [virtualItems, files.length, onLoadMore]);
 
   return (
     <div
