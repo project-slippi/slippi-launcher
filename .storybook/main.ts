@@ -4,6 +4,7 @@ import path from "path";
 import fs from "fs";
 import { merge } from "webpack-merge";
 import type { RuleSetRule } from "webpack";
+import webpack from "webpack";
 
 // Helper for fixing emotion dependency
 // Taken from: https://stackoverflow.com/a/65970945
@@ -71,6 +72,12 @@ const config: StorybookConfig = {
           }) as any
         ],
       },
+      plugins: [
+        ...(config.plugins || []),
+        new webpack.ProvidePlugin({
+          React: 'react',
+        }),
+      ],
     });
     return config;
   },
