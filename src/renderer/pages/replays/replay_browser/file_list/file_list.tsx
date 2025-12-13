@@ -75,16 +75,22 @@ const FileListResults = ({
       return;
     }
 
+    let rafId: number | null = null;
+
     const observer = new IntersectionObserver(
       (entries) => {
         // When the sentinel becomes visible, load more
         if (entries[0].isIntersecting) {
-          onLoadMore();
+          // Defer loading to next frame to avoid blocking scroll
+          rafId = requestAnimationFrame(() => {
+            onLoadMore();
+            rafId = null;
+          });
         }
       },
       {
         root: scrollContainerRef.current,
-        rootMargin: "200px", // Trigger 200px before reaching the sentinel
+        rootMargin: "400px", // Trigger earlier to reduce likelihood of visible loading
         threshold: 0,
       },
     );
@@ -93,6 +99,9 @@ const FileListResults = ({
 
     return () => {
       observer.disconnect();
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+      }
     };
   }, [onLoadMore]);
 
