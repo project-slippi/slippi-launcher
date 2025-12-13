@@ -90,7 +90,7 @@ const FileListResults = ({
       },
       {
         root: scrollContainerRef.current,
-        rootMargin: "400px", // Trigger earlier to reduce likelihood of visible loading
+        rootMargin: "800px", // Load well ahead of viewport for smooth momentum scrolling
         threshold: 0,
       },
     );
