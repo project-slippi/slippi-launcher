@@ -1,11 +1,10 @@
 import styleXPlugin from '@stylexjs/babel-plugin';
 
 const config = {
-  presets: [
-    "@babel/preset-env",
-    ["@babel/preset-typescript", { onlyRemoveTypeImports: true, isTSX: true, allExtensions: true }],
-    "@emotion/babel-preset-css-prop"
-  ],
+  // presets: [
+  //   "@babel/preset-env",
+  //   "@babel/preset-typescript"
+  // ],
   plugins: [
     [
       styleXPlugin,
