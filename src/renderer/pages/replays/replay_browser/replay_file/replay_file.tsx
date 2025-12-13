@@ -106,6 +106,10 @@ export const ReplayFile = React.memo(function ReplayFile({
           <DraggableFile
             onDragStart={onFileNameDragStart}
             css={css`
+              max-width: 350px;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
               min-width: 0;
               opacity: 0.9;
               cursor: ${onFileNameDragStart ? "grab" : "inherit"};
@@ -115,16 +119,7 @@ export const ReplayFile = React.memo(function ReplayFile({
               }
             `}
           >
-            <span
-              css={css`
-                max-width: 350px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-              `}
-            >
-              {fileName}
-            </span>
+            {fileName}
           </DraggableFile>
         </div>
       </div>
