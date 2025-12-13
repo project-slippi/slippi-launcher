@@ -17,10 +17,7 @@ const log = electronLog.scope("broadcast.worker");
 export type BroadcastWorker = RegisteredWorker<BroadcastWorkerSpec>;
 
 export async function createBroadcastWorker(): Promise<BroadcastWorker> {
-  log.debug("broadcast: Spawning worker");
-
-  const worker = await registerWorker<BroadcastWorkerSpec>(new Worker("./broadcast.worker"));
-  log.debug("broadcast: Spawning worker: Done");
+  const worker = await registerWorker<BroadcastWorkerSpec>("broadcast-stream", new Worker("./broadcast.worker"));
 
   // Store subscriptions for cleanup
   const subscriptions: Subscription<unknown>[] = [];

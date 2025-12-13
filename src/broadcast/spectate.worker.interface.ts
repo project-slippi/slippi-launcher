@@ -15,10 +15,7 @@ const log = electronLog.scope("spectate.worker");
 export type SpectateWorker = RegisteredWorker<SpectateWorkerSpec>;
 
 export async function createSpectateWorker(dolphinManager: DolphinManager): Promise<SpectateWorker> {
-  log.debug("spectate: Spawning worker");
-
-  const worker = await registerWorker<SpectateWorkerSpec>(new Worker("./spectate.worker"));
-  log.debug("spectate: Spawning worker: Done");
+  const worker = await registerWorker<SpectateWorkerSpec>("broadcast-spectate", new Worker("./spectate.worker"));
 
   // Store subscriptions for cleanup
   const subscriptions: Subscription<any>[] = [];

@@ -25,7 +25,7 @@ export class ReplayIndexingPool {
     log.info(`Initializing replay indexing pool with ${this.poolSize} workers`);
 
     const workerPromises = Array.from({ length: this.poolSize }, (_, i) =>
-      createReplayIndexingWorker()
+      createReplayIndexingWorker(`replay-indexing-${i}`)
         .then((worker) => {
           log.debug(`Worker ${i + 1}/${this.poolSize} created successfully`);
           return worker;

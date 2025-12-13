@@ -14,10 +14,7 @@ const log = electronLog.scope("mirror.worker");
 export type MirrorWorker = RegisteredWorker<MirrorWorkerSpec>;
 
 export async function createMirrorWorker(dolphinManager: DolphinManager): Promise<MirrorWorker> {
-  log.debug("mirror: Spawning worker");
-
-  const worker = await registerWorker<MirrorWorkerSpec>(new Worker("./mirror.worker"));
-  log.debug("mirror: Spawning worker: Done");
+  const worker = await registerWorker<MirrorWorkerSpec>("console-mirror", new Worker("./mirror.worker"));
 
   // Store subscriptions for cleanup
   const subscriptions: Subscription<any>[] = [];
