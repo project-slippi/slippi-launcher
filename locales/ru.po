@@ -8,7 +8,7 @@ msgstr ""
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "x-generator: i18next-auto-keys CLI\n"
 "Language: ru-RU\n"
-"PO-Revision-Date: 2025-12-12T18:12:58.244Z\n"
+"PO-Revision-Date: 2025-12-13T06:47:29.711Z\n"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
 msgid "2-4 uppercase English characters"
@@ -127,7 +127,7 @@ msgstr "Автоматически устанавливать обновлени
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:7:20
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:24:20
 msgid "Available"
-msgstr "Доступен"
+msgstr "Доступно"
 
 #: src/renderer/pages/quick_start/stepper_dots/stepper_dots.messages.ts:3:15
 msgid "Back"
@@ -359,7 +359,7 @@ msgstr "Скопировать логи"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:8:22
 msgid "Copy results"
-msgstr "Скопировать результаты"
+msgstr "Скопировать"
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:3:26
 msgid "Copy to Clipboard"
@@ -876,7 +876,7 @@ msgstr "Melee ISO файл"
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:9:17
 msgid "Mirror"
-msgstr "Трансляция"
+msgstr "Смотреть"
 
 #: src/renderer/pages/console_mirror/console_mirror.messages.ts:8:25
 msgid "Mirroring Guide"
@@ -1016,7 +1016,7 @@ msgstr "Не доступен"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:31:22
 msgid "Not detected."
-msgstr "Не обнаружен."
+msgstr "Не обнаружен"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:12:19
 msgid "Not found"
@@ -1466,7 +1466,7 @@ msgstr "Трансляции"
 
 #: src/renderer/pages/settings/spectate_settings/spectate_settings.messages.ts:4:36
 msgid "Spectate Remote Control Port"
-msgstr "Spectate Remote Control Port"
+msgstr "Порт удаленного управления трансляциями"
 
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:4:22
 msgid "Spectator ID"
@@ -1474,7 +1474,7 @@ msgstr "Spectator ID"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:10:29
 msgid "Spectator SLP Folder"
-msgstr "Каталог c SLP трансляций"
+msgstr "Каталог SLP трансляций"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:23:17
 msgid "Stable (Ishiiruka)"
@@ -1502,7 +1502,7 @@ msgstr "Стартует сервер..."
 
 #: src/renderer/pages/home/sidebar/ranked_status.messages.ts:4:23
 msgid "Starting Soon"
-msgstr "Начнется скоро"
+msgstr "Скоро будет!"
 
 #: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:8:19
 msgid "Starting..."
@@ -1527,7 +1527,7 @@ msgstr "Остановлен"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:30:17
 msgid "Submit"
-msgstr "Отправить"
+msgstr "Применить"
 
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:5:20
 msgid "Subscribe"
@@ -1535,11 +1535,11 @@ msgstr "Подписаться"
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:8:28
 msgid "Successfully cleared temporary files."
-msgstr "Временные файлы успешно очищены."
+msgstr "Временные файлы успешно удалены."
 
 #: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:10:29
 msgid "Successfully copied logs to clipboard"
-msgstr "Логи успешно скопированы в буфер обмена"
+msgstr "Логи скопированы в буфер обмена"
 
 #: src/renderer/components/footer/footer.messages.ts:2:24
 msgid "Support Slippi"
@@ -1590,7 +1590,7 @@ msgstr "Каталог для сохранения SLP файлов."
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:11:40
 msgid "The folder where spectated games should be saved."
-msgstr "Каталог для сохранения просматриваемых трансляций."
+msgstr "Каталог для сохранения реплеев трансляций."
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:3:35
 msgid "The folder where your SLP replays should be saved."
@@ -1635,14 +1635,14 @@ msgstr "Это приложение использует образ игры в�
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:32:33
 msgid "This is the optimal result."
-msgstr "Это оптимальный результат."
+msgstr "это оптимальный результат."
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:14:31
 msgid ""
 "This is the optimal result. Also known as 'easy', 'full cone', or 'open' "
 "NAT."
 msgstr ""
-"Это оптимальный результат. Так же известный как 'easy', 'full cone' или "
+"это оптимальный результат. Так же известный как 'easy', 'full cone' или "
 "'open' NAT."
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:18:70
@@ -1766,15 +1766,15 @@ msgstr "Посмотреть ранкед профиль"
 
 #: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:2:24
 msgid "View on Bluesky"
-msgstr "Посмотреть на Bluesky"
+msgstr "Читать на Bluesky"
 
 #: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:4:23
 msgid "View on Github"
-msgstr "Посмотреть на Github"
+msgstr "Читать на Github"
 
 #: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:3:23
 msgid "View on Medium"
-msgstr "Посмотреть на Medium"
+msgstr "Читать на Medium"
 
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:3:22
 msgid "View profile"
@@ -1872,6 +1872,8 @@ msgstr "или перетащите сюда"
 #. {1} total: number
 msgid "{0, number} of {1, plural, one {# replay} other {# replays}} processed."
 msgstr ""
+"Обработано {0, number} из {1, plural, one {# реплея} few {# реплеев} other "
+"{# реплеев}}."
 
 #: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:2:37
 #. {0} count: number
@@ -1898,26 +1900,26 @@ msgstr ""
 #. {0} count: number
 msgid "{0, plural, one {# replay} other {# replays}} filtered."
 msgstr ""
-"{0, plural, one {# файл отфильтрован} few {# файла отфильтрованы} other {# "
-"файлов отфильтровано}}"
+"{0, plural, one {# реплей отфильтрован} few {# реплея отфильтрованы} other "
+"{# реплеев отфильтровано}}"
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:9:40
 #. {0} count: number
 msgid "{0, plural, one {# replay} other {# replays}} found."
 msgstr ""
-"{0, plural, one {# файл найден} few {# файла найдены} other {# файлов "
+"{0, plural, one {# реплей найден} few {# реплея найдены} other {# реплеев "
 "найдено}}."
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:12:40
 #. {0} count: number
 msgid "{0, plural, one {# replay} other {# replays}} had errors."
 msgstr ""
-"{0, plural, one {# файл содержит} few {# файла содержат} other {# файлов "
-"содержат}} ошибки."
+"{0, plural, one {# реплей содержит} few {# реплея содержат} other {# "
+"реплеев содержат}} ошибки."
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:11:41
 #. {0} count: number
 msgid "{0, plural, one {# replay} other {# replays}} hidden."
 msgstr ""
-"{0, plural, one {# файл скрыт} few {# файла скрыто} other {# файлов "
+"{0, plural, one {# реплей скрыт} few {# реплея скрыто} other {# реплеев "
 "скрыто}}."
