@@ -8,7 +8,7 @@ msgstr ""
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "x-generator: i18next-auto-keys CLI\n"
 "Language: ru-RU\n"
-"PO-Revision-Date: 2025-12-12T18:12:58.244Z\n"
+"PO-Revision-Date: 2025-12-13T06:47:29.711Z\n"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
 msgid "2-4 uppercase English characters"
@@ -1872,8 +1872,8 @@ msgstr "или перетащите сюда"
 #. {1} total: number
 msgid "{0, number} of {1, plural, one {# replay} other {# replays}} processed."
 msgstr ""
-"Обработано {0, number} из {1, plural, one {# реплея} few {# реплеев} "
-"other {# реплеев}}."
+"Обработано {0, number} из {1, plural, one {# реплея} few {# реплеев} other "
+"{# реплеев}}."
 
 #: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:2:37
 #. {0} count: number
@@ -1900,8 +1900,8 @@ msgstr ""
 #. {0} count: number
 msgid "{0, plural, one {# replay} other {# replays}} filtered."
 msgstr ""
-"{0, plural, one {# реплей отфильтрован} few {# реплея отфильтрованы} other {# "
-"реплеев отфильтровано}}"
+"{0, plural, one {# реплей отфильтрован} few {# реплея отфильтрованы} other "
+"{# реплеев отфильтровано}}"
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:9:40
 #. {0} count: number
@@ -1914,8 +1914,8 @@ msgstr ""
 #. {0} count: number
 msgid "{0, plural, one {# replay} other {# replays}} had errors."
 msgstr ""
-"{0, plural, one {# реплей содержит} few {# реплея содержат} other {# реплеев "
-"содержат}} ошибки."
+"{0, plural, one {# реплей содержит} few {# реплея содержат} other {# "
+"реплеев содержат}} ошибки."
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:11:41
 #. {0} count: number
