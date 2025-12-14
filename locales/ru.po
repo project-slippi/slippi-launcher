@@ -51,7 +51,7 @@ msgstr "Добавить"
 
 #: src/renderer/app/header/account_switcher/account_switcher.messages.ts:2:28
 msgid "Add another account"
-msgstr "Добавить другой аккаунт"
+msgstr "Добавить аккаунт"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:12:31
 msgid "Additional SLP Folders"
@@ -916,7 +916,7 @@ msgstr "Нужна помощь?"
 
 #: src/renderer/pages/settings/create.messages.ts:8:18
 msgid "Netplay"
-msgstr "Netplay"
+msgstr "Игровой"
 
 #: src/renderer/initialize_app.messages.ts:7:25
 #: src/renderer/lib/dolphin/dolphin.messages.ts:5:25
@@ -1111,7 +1111,7 @@ msgstr "Играть оффлайн"
 
 #: src/renderer/pages/settings/create.messages.ts:9:19
 msgid "Playback"
-msgstr "Playback"
+msgstr "Проигрыватель"
 
 #: src/renderer/initialize_app.messages.ts:8:26
 #: src/renderer/lib/dolphin/dolphin.messages.ts:6:26
@@ -1176,7 +1176,7 @@ msgid ""
 "the Wii and computer are on a wired LAN connection."
 msgstr ""
 "Предотвращает отставание трансляции. Не включайте, если не используется "
-"проводное соединение между Wii и компьютером"
+"проводное соединение между Wii и компьютером."
 
 #: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:8:25
 msgid "Previous replay"
@@ -1240,7 +1240,7 @@ msgstr "Relay Port"
 
 #: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:2:30
 msgid "Remote Control Server"
-msgstr "Remote Control Server"
+msgstr "Сервер удаленного контроля"
 
 #: src/renderer/app/header/account_switcher/account_switcher.messages.ts:4:17
 #: src/renderer/components/multi_path_input/multi_path_input.messages.ts:4:17
@@ -1258,7 +1258,7 @@ msgid ""
 "files streamed from Slippi.gg."
 msgstr ""
 "Удаляет временные файлы, файлы используемые Dolphin для коммуникации, а так "
-"же файлы полученные с Slippi.gg"
+"же файлы полученные с Slippi.gg."
 
 #: src/renderer/app/create.messages.ts:3:18
 #: src/renderer/pages/settings/create.messages.ts:4:18
@@ -1494,7 +1494,7 @@ msgstr "Запущено"
 
 #: src/renderer/pages/home/sidebar/ranked_status.messages.ts:6:21
 msgid "Starting In"
-msgstr "Начнется через"
+msgstr "Осталось"
 
 #: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:9:25
 msgid "Starting Server..."
@@ -1557,7 +1557,7 @@ msgstr "Симметричный NAT"
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:3:23
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:12:23
 msgid "Target Folder"
-msgstr "Целевой каталог"
+msgstr "Каталог реплеев"
 
 #: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:4:21
 msgid "Target Test"
