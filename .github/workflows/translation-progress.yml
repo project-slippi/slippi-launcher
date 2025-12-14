@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       translation_pct: ${{ steps.calc.outputs.translation_pct }}
+      has_unstaged: ${{ steps.check-unstaged.outputs.has_unstaged }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -44,6 +45,18 @@ jobs:
           npm run i18n:sync
           npm run i18n:status
 
+      - name: Check for unstaged translation changes
+        id: check-unstaged
+        run: |
+          # Check if messages.pot has unstaged changes after extract
+          if git diff --name-only | grep -q "locales/messages.pot"; then
+            echo "has_unstaged=true" >> $GITHUB_OUTPUT
+            echo "Detected unstaged changes to messages.pot"
+          else
+            echo "has_unstaged=false" >> $GITHUB_OUTPUT
+            echo "No unstaged changes to messages.pot"
+          fi
+
       - name: Calculate translation percentage
         id: calc
         run: |
@@ -67,6 +80,7 @@ jobs:
         id: badge-update
         env:
           TRANSLATION_PCT: ${{ needs.calculate-translation.outputs.translation_pct }}
+          HAS_UNSTAGED: ${{ needs.calculate-translation.outputs.has_unstaged }}
         run: |
           # Determine color based on translation percentage
           if [ "${TRANSLATION_PCT}" -ge 90 ]; then
@@ -79,11 +93,18 @@ jobs:
             COLOR="red"
           fi
 
+          # Set label based on whether there are unstaged changes
+          if [ "${HAS_UNSTAGED}" = "true" ]; then
+            LABEL="translations*"
+          else
+            LABEL="translations"
+          fi
+
           # Build JSON payload
           cat > current-badge.json << EOF
           {
             "schemaVersion": 1,
-            "label": "translations",
+            "label": "${LABEL}",
             "message": "${TRANSLATION_PCT}%",
             "color": "${COLOR}"
           }
