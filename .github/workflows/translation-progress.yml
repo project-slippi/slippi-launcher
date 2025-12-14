@@ -95,7 +95,7 @@ jobs:
 
           # Set label based on whether there are unstaged changes
           if [ "${HAS_UNSTAGED}" = "true" ]; then
-            LABEL="translations*"
+            LABEL="*translations"
           else
             LABEL="translations"
           fi
