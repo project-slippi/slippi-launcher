@@ -8,6 +8,8 @@ import { SUPPORTED_LANGUAGES } from "@/services/i18n/util";
 import { SettingItem } from "../../setting_item_section";
 import { LanguageSelectorMessages as Messages } from "./language_selector.messages";
 
+const sortedSupportedLanguages = [...SUPPORTED_LANGUAGES].sort((a, b) => a.label.localeCompare(b.label));
+
 export const LanguageSelector = React.memo(() => {
   const { i18nService } = useServices();
   const currentLanguage = useAppStore((state) => state.currentLanguage);
@@ -21,7 +23,7 @@ export const LanguageSelector = React.memo(() => {
 
   return (
     <SettingItem name={Messages.appLanguage()} description={Messages.appLanguageDescription()}>
-      <Dropdown value={currentLanguage} options={SUPPORTED_LANGUAGES} onChange={handleLanguageChange} />
+      <Dropdown value={currentLanguage} options={sortedSupportedLanguages} onChange={handleLanguageChange} />
     </SettingItem>
   );
 });
