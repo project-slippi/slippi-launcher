@@ -18,6 +18,13 @@ const log = electronLog.scope("spectate_remote_server");
 
 const CONNECTION_TIMEOUT_MS = 20000;
 
+enum EVENT_OP {
+  DOLPHIN_CLOSED = "dolphin-closed-event",
+  GAME_END = "game-end-event",
+  NEW_FILE = "new-file-event",
+  SPECTATING_BROADCASTS = "spectating-broadcasts-event",
+}
+
 enum REQUEST_OP {
   LIST_BROADCASTS = "list-broadcasts-request",
   SPECTATE_BROADCAST = "spectate-broadcast-request",
@@ -57,7 +64,7 @@ export class SpectateRemoteServer {
       })
       .subscribe(async (event) => {
         if (this.connection) {
-          this.connection.sendUTF(JSON.stringify({ op: "dolphin-closed-event", dolphinId: event.instanceId }));
+          this.connection.sendUTF(JSON.stringify({ op: EVENT_OP.DOLPHIN_CLOSED, dolphinId: event.instanceId }));
         }
       });
 
@@ -88,14 +95,14 @@ export class SpectateRemoteServer {
       .getSpectateDetailsObservable()
       .subscribe(({ broadcastId, dolphinId, filePath }) => {
         if (this.connection && filePath) {
-          this.connection.sendUTF(JSON.stringify({ op: "new-file-event", broadcastId, dolphinId, filePath }));
+          this.connection.sendUTF(JSON.stringify({ op: EVENT_OP.NEW_FILE, broadcastId, dolphinId, filePath }));
         }
       });
     this.gameEndSubscription = this.spectateController
       .getGameEndObservable()
-      .subscribe(({ broadcastId, dolphinId }) => {
+      .subscribe(({ broadcastId, dolphinId, filePath }) => {
         if (this.connection) {
-          this.connection.sendUTF(JSON.stringify({ op: "game-end-event", broadcastId, dolphinId }));
+          this.connection.sendUTF(JSON.stringify({ op: EVENT_OP.GAME_END, broadcastId, dolphinId, filePath }));
         }
       });
   }
@@ -200,7 +207,7 @@ export class SpectateRemoteServer {
       ipc_spectateRemoteStateEvent.main!.trigger({ connected: true, started: true }).catch(log.error);
       this.connection.sendUTF(
         JSON.stringify({
-          op: "spectating-broadcasts-event",
+          op: EVENT_OP.SPECTATING_BROADCASTS,
           spectatingBroadcasts: await this.spectateController!.getOpenBroadcasts(),
         }),
       );

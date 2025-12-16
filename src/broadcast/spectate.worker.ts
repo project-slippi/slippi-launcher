@@ -18,7 +18,7 @@ interface Methods {
   connect(authToken: string): Promise<void>;
   disconnect(): Promise<void>;
   refreshBroadcastList(): Promise<void>;
-  getOpenBroadcasts(): Promise<{ broadcastId: string; dolphinId: string }[]>;
+  getOpenBroadcasts(): Promise<{ broadcastId: string; dolphinId: string; filePath: string | null }[]>;
   getLogObservable(): Observable<string>;
   getErrorObservable(): Observable<Error | string>;
   getBroadcastListObservable(): Observable<BroadcasterItem[]>;
@@ -30,7 +30,7 @@ interface Methods {
     broadcasterName: string;
   }>;
   getReconnectObservable(): Observable<Record<never, never>>;
-  getGameEndObservable(): Observable<{ broadcastId: string; dolphinId: string }>;
+  getGameEndObservable(): Observable<{ broadcastId: string; dolphinId: string; filePath: string }>;
 }
 
 export type WorkerSpec = ModuleMethods & Methods;
@@ -48,7 +48,7 @@ const spectateDetailsSubject = new Subject<{
   broadcasterName: string;
 }>();
 const reconnectSubject = new Subject<Record<never, never>>();
-const gameEndSubject = new Subject<{ broadcastId: string; dolphinId: string }>();
+const gameEndSubject = new Subject<{ broadcastId: string; dolphinId: string; filePath: string }>();
 
 // Forward the events to the renderer
 spectateManager.on(SpectateEvent.BROADCAST_LIST_UPDATE, async (data: BroadcasterItem[]) => {
@@ -78,8 +78,8 @@ spectateManager.on(SpectateEvent.RECONNECT, async () => {
   reconnectSubject.next({});
 });
 
-spectateManager.on(SpectateEvent.GAME_END, async (broadcastId: string, dolphinId: string) => {
-  gameEndSubject.next({ broadcastId, dolphinId });
+spectateManager.on(SpectateEvent.GAME_END, async (broadcastId: string, dolphinId: string, filePath: string) => {
+  gameEndSubject.next({ broadcastId, dolphinId, filePath });
 });
 
 const methods: WorkerSpec = {
@@ -141,7 +141,7 @@ const methods: WorkerSpec = {
   getReconnectObservable(): Observable<Record<never, never>> {
     return Observable.from(reconnectSubject);
   },
-  getGameEndObservable(): Observable<{ broadcastId: string; dolphinId: string }> {
+  getGameEndObservable(): Observable<{ broadcastId: string; dolphinId: string; filePath: string }> {
     return Observable.from(gameEndSubject);
   },
 };
