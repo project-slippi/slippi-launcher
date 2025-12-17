@@ -69,9 +69,6 @@ export class SpectateManager extends EventEmitter {
           this.emit(SpectateEvent.LOG, "Game end explicit");
           broadcastInfo.fileWriter.endCurrentFile();
           broadcastInfo.gameStarted = false;
-
-          // Observers should be able to depend on the file being closed, so emit this last.
-          this.emit(SpectateEvent.GAME_END, broadcastId, broadcastInfo.dolphinId);
           break;
         }
         case "game_event": {
@@ -258,6 +255,9 @@ export class SpectateManager extends EventEmitter {
     slpFileWriter.on(SlpFileWriterEvent.NEW_FILE, (currFilePath) => {
       this._playFile(currFilePath, broadcastId, dolphinPlaybackId, broadcasterName).catch(console.warn);
     });
+    slpFileWriter.on(SlpFileWriterEvent.FILE_COMPLETE, (completedFilePath) => {
+      this.emit(SpectateEvent.GAME_END, broadcastId, dolphinPlaybackId, completedFilePath);
+    });
 
     this.addNewOpenBroadcast(broadcastId, dolphinPlaybackId, slpFileWriter);
 
@@ -313,6 +313,7 @@ export class SpectateManager extends EventEmitter {
     return Object.values(this.openBroadcasts).map((value) => ({
       broadcastId: value.broadcastId,
       dolphinId: value.dolphinId,
+      filePath: value.fileWriter.getCurrentFilename(),
     }));
   }
 

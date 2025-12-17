@@ -93,7 +93,7 @@ export interface SpectateController {
   dolphinClosed(playbackId: string): Promise<void>;
   connect(authToken: string): Promise<void>;
   refreshBroadcastList(): Promise<void>;
-  getOpenBroadcasts(): Promise<{ broadcastId: string; dolphinId: string }[]>;
+  getOpenBroadcasts(): Promise<{ broadcastId: string; dolphinId: string; filePath: string | null }[]>;
   getBroadcastListObservable(): Observable<BroadcasterItem[]>;
   getSpectateDetailsObservable(): Observable<{
     broadcastId: string;
@@ -101,6 +101,6 @@ export interface SpectateController {
     filePath: string;
     broadcasterName: string;
   }>;
-  getGameEndObservable(): Observable<{ broadcastId: string; dolphinId: string }>;
+  getGameEndObservable(): Observable<{ broadcastId: string; dolphinId: string; filePath: string }>;
   getErrorObservable(): Observable<Error | string>;
 }
