@@ -16,7 +16,7 @@ import { AddConnectionForm } from "./add_connection_form";
 
 type AddConnectionDialogProps = {
   open: boolean;
-  selectedConnection: Partial<StoredConnection> | null;
+  selectedConnection?: Partial<StoredConnection>;
   onSubmit: (conn: Omit<StoredConnection, "id">) => void;
   onCancel: () => void;
   disabled: boolean;

@@ -39,7 +39,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
   const [openActivationDialog, setOpenActivationDialog] = React.useState(false);
   const [openAddAccountDialog, setOpenAddAccountDialog] = React.useState(false);
   const [switching, setSwitching] = React.useState(false);
-  const [reAuthEmail, setReAuthEmail] = React.useState<string | null>(null);
+  const [reAuthEmail, setReAuthEmail] = React.useState<string | undefined>();
 
   const onLogout = async () => {
     try {
@@ -52,12 +52,12 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
     }
   };
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | undefined>();
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
   const closeMenu = () => {
-    setAnchorEl(null);
+    setAnchorEl(undefined);
   };
   const handleClose = () => {
     setOpenNameChangePrompt(false);
@@ -243,7 +243,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
         open={openAddAccountDialog}
         onClose={() => {
           setOpenAddAccountDialog(false);
-          setReAuthEmail(null);
+          setReAuthEmail(undefined);
         }}
         onSuccess={() => {
           if (multiAccountService) {
@@ -252,7 +252,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
             setAccounts(accountsList);
             setActiveAccountId(activeId);
           }
-          setReAuthEmail(null);
+          setReAuthEmail(undefined);
         }}
         defaultEmail={reAuthEmail}
       />

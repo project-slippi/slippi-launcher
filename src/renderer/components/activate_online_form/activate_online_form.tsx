@@ -25,13 +25,13 @@ export const ActivateOnlineForm = ({ onSubmit }: { onSubmit?: () => void }) => {
   return (
     <div>
       <div>{Messages.yourConnectCodeDescription()}</div>
-      <ConnectCodeSetter displayName={user ? user.displayName : null} onSuccess={onSubmit || refreshActivation} />
+      <ConnectCodeSetter displayName={user?.displayName} onSuccess={onSubmit || refreshActivation} />
     </div>
   );
 };
 
 type ConnectCodeSetterProps = {
-  displayName: string | null;
+  displayName?: string;
   onSuccess: () => void;
 };
 

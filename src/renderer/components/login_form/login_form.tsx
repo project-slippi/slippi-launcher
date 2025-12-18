@@ -68,7 +68,7 @@ export const LoginForm = ({ onSuccess, disableAutoFocus, defaultEmail }: LoginFo
   const toggleSignUp = () => setIsSignUp(!isSignUp);
 
   const { execute, loading, error, clearError } = useAsync(async () => {
-    let user: AuthUser | null;
+    let user: AuthUser | undefined;
     if (isSignUp) {
       if (password !== confirmPassword) {
         throw new Error(Messages.passwordsDoNotMatch());

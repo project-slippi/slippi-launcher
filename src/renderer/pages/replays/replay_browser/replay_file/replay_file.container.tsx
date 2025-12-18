@@ -45,9 +45,9 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
   fullPath,
   selectedFilesSet,
 }: ReplayFileContainerProps) {
-  const stageInfo = game.stageId != null ? stageUtils.getStageInfo(game.stageId) : null;
-  const stageImageUrl = stageInfo !== null && stageInfo.id !== -1 ? getStageImage(stageInfo.id) : undefined;
-  const stageName = stageInfo !== null ? stageInfo.name : Messages.unknownStage();
+  const stageInfo = game.stageId != null ? stageUtils.getStageInfo(game.stageId) : undefined;
+  const stageImageUrl = stageInfo != null && stageInfo.id !== -1 ? getStageImage(stageInfo.id) : undefined;
+  const stageName = stageInfo != null ? stageInfo.name : Messages.unknownStage();
 
   // Use Set for O(1) lookup instead of O(n) indexOf
   const selected = selectedFilesSet.has(fullPath);

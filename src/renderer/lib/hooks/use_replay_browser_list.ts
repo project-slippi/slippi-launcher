@@ -49,8 +49,8 @@ export const useReplayBrowserList = () => {
   const { index, total } = useReplays((store) => store.selectedFile);
   const { goToReplayStatsPage } = useReplayBrowserNavigation();
 
-  const setSelectedItem = (index: number | null) => {
-    if (index === null) {
+  const setSelectedItem = (index: number | undefined) => {
+    if (index == null) {
       presenter.clearSelectedFile();
       return;
     }
@@ -60,7 +60,7 @@ export const useReplayBrowserList = () => {
   };
 
   const selectNextFile = () => {
-    if (index === null) {
+    if (index == null) {
       return;
     }
     if (index < files.length - 1) {
@@ -69,7 +69,7 @@ export const useReplayBrowserList = () => {
   };
 
   const selectPrevFile = () => {
-    if (index === null) {
+    if (index == null) {
       return;
     }
     if (index > 0) {

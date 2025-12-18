@@ -92,15 +92,15 @@ const PlayerInfoDisplay = ({ isTeams, players }: PlayerInfoDisplayProps) => {
 
 type GameProfileHeaderProps = {
   file: FileResult;
-  index: number | null;
-  total: number | null;
+  index?: number;
+  total?: number;
   onNext: () => void;
   onPrev: () => void;
   onPlay: () => void;
   onClose: () => void;
   disabled?: boolean;
-  stats: StatsType | null;
-  stadiumStats: StadiumStatsType | null;
+  stats?: StatsType;
+  stadiumStats?: StadiumStatsType;
 };
 
 export const GameProfileHeader = ({
@@ -167,8 +167,8 @@ const GameDetails = ({
   stadiumStats,
 }: {
   file: FileResult;
-  stats: Pick<StatsType, "lastFrame"> | null;
-  stadiumStats: StadiumStatsType | null;
+  stats?: Pick<StatsType, "lastFrame">;
+  stadiumStats?: StadiumStatsType;
 }) => {
   const { game } = file;
   let stageName = Messages.unknown();
@@ -307,15 +307,15 @@ const Controls = ({
   onNext,
 }: {
   disabled?: boolean;
-  index: number | null;
-  total: number | null;
+  index?: number;
+  total?: number;
   onPlay: () => void;
   onPrev: () => void;
   onNext: () => void;
 }) => {
-  const indexLabel = index !== null && total !== null ? `${index + 1} / ${total}` : "1 / 1";
-  const atStart = index === null || index === 0;
-  const atEnd = total === null || index === total - 1;
+  const indexLabel = index != null && total != null ? `${index + 1} / ${total}` : "1 / 1";
+  const atStart = index == null || index === 0;
+  const atEnd = total == null || index === total - 1;
   return (
     <div
       css={css`

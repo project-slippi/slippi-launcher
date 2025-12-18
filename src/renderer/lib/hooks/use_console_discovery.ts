@@ -23,14 +23,8 @@ export const useConsoleDiscoveryStore = create(
             draft.connectedConsoles[ip].nickname = info.nickname ?? existing?.nickname;
             draft.connectedConsoles[ip].status = info.status ?? existing?.status;
             draft.connectedConsoles[ip].isMirroring = info.isMirroring ?? existing?.isMirroring;
-
-            // These values can be null so check against undefined
-            if (info.filename !== undefined) {
-              draft.connectedConsoles[ip].filename = info.filename;
-            }
-            if (info.nintendontVersion !== undefined) {
-              draft.connectedConsoles[ip].nintendontVersion = info.nintendontVersion;
-            }
+            draft.connectedConsoles[ip].filename = info.filename;
+            draft.connectedConsoles[ip].nintendontVersion = info.nintendontVersion;
           }),
         ),
     }),

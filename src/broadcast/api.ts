@@ -30,7 +30,7 @@ const broadcastApi: BroadcastService = {
     });
     return destroy;
   },
-  onBroadcastErrorMessage(handle: (message: string | null) => void) {
+  onBroadcastErrorMessage(handle: (message?: string) => void) {
     const { destroy } = ipc_broadcastErrorOccurredEvent.renderer!.handle(async ({ errorMessage }) => {
       handle(errorMessage);
     });
@@ -54,7 +54,7 @@ const broadcastApi: BroadcastService = {
     });
     return destroy;
   },
-  onSpectateErrorMessage(handle: (message: string | null) => void) {
+  onSpectateErrorMessage(handle: (message?: string) => void) {
     const { destroy } = ipc_spectateErrorOccurredEvent.renderer!.handle(async ({ errorMessage }) => {
       handle(errorMessage);
     });

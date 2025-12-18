@@ -6,15 +6,15 @@ function mapPlayerRecordToPlayerInfo(player: PlayerRecord): PlayerInfo {
   return {
     playerIndex: player.port - 1,
     port: player.port,
-    type: player.type,
-    characterId: player.character_id,
-    characterColor: player.character_color,
-    teamId: player.team_id,
+    type: player.type ?? undefined,
+    characterId: player.character_id ?? undefined,
+    characterColor: player.character_color ?? undefined,
+    teamId: player.team_id ?? undefined,
     isWinner: Boolean(player.is_winner),
-    connectCode: player.connect_code,
-    displayName: player.display_name,
-    tag: player.tag,
-    startStocks: player.start_stocks,
+    connectCode: player.connect_code ?? undefined,
+    displayName: player.display_name ?? undefined,
+    tag: player.tag ?? undefined,
+    startStocks: player.start_stocks ?? undefined,
   };
 }
 
@@ -30,14 +30,14 @@ export function mapGameRecordToFileResult(
     game: {
       players: playerRecords.map(mapPlayerRecordToPlayerInfo),
       isTeams: Boolean(gameAndFileRecord.is_teams),
-      stageId: gameAndFileRecord.stage,
-      startTime: gameAndFileRecord.start_time,
-      platform: gameAndFileRecord.platform,
-      consoleNickname: gameAndFileRecord.console_nickname,
-      mode: gameAndFileRecord.mode,
-      lastFrame: gameAndFileRecord.last_frame,
-      timerType: gameAndFileRecord.timer_type,
-      startingTimerSeconds: gameAndFileRecord.starting_timer_secs,
+      stageId: gameAndFileRecord.stage ?? undefined,
+      startTime: gameAndFileRecord.start_time ?? undefined,
+      platform: gameAndFileRecord.platform ?? undefined,
+      consoleNickname: gameAndFileRecord.console_nickname ?? undefined,
+      mode: gameAndFileRecord.mode ?? undefined,
+      lastFrame: gameAndFileRecord.last_frame ?? undefined,
+      timerType: gameAndFileRecord.timer_type ?? undefined,
+      startingTimerSeconds: gameAndFileRecord.starting_timer_secs ?? undefined,
     },
   };
 }

@@ -5,13 +5,13 @@ import unknownCharacterIcon from "@/styles/images/unknown.png";
 const characterIcons = require.context("../styles/images/characters", true);
 const stageIcons = require.context("../styles/images/stages");
 
-export const getCharacterIcon = (characterId: number | null, characterColor: number | null = 0): string => {
+export const getCharacterIcon = (characterId: number | undefined, characterColor: number | undefined = 0): string => {
   if (characterId != null) {
     const characterInfo = charUtils.getCharacterInfo(characterId);
     if (characterInfo.id !== charUtils.UnknownCharacter.id) {
       const allColors = characterInfo.colors;
       // Make sure it's a valid color, otherwise use the default color
-      const color = characterColor !== null && characterColor <= allColors.length - 1 ? characterColor : 0;
+      const color = characterColor != null && characterColor <= allColors.length - 1 ? characterColor : 0;
       try {
         return characterIcons(`./${characterId}/${color}/stock.png`);
       } catch (err) {

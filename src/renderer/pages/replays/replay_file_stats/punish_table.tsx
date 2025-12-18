@@ -47,7 +47,7 @@ export const PunishTable = ({ file, stats, player, opp, onPlay }: PunishTablePro
     const damageRange = renderDamageRangeCell(punish);
     const openingType = renderOpeningTypeCell(punish);
 
-    if (punish.endFrame !== null && punish.endFrame !== undefined) {
+    if (punish.endFrame != null) {
       end = convertFrameCountToDurationString(punish.endFrame);
     }
 

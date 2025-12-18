@@ -6,7 +6,7 @@ export type AvailableMessageType = {
 };
 
 export type UserData = {
-  playKey: PlayKey | null;
+  playKey: PlayKey | undefined;
   rulesAccepted: number;
 };
 
@@ -18,7 +18,7 @@ export type ChatMessageData = {
 
 export interface SlippiBackendService {
   validateUserId(userId: string): Promise<{ displayName: string; connectCode: string }>;
-  fetchUserData(): Promise<UserData | null>;
+  fetchUserData(): Promise<UserData | undefined>;
   assertPlayKey(playKey: PlayKey): Promise<void>;
   deletePlayKey(): Promise<void>;
   changeDisplayName(name: string): Promise<void>;

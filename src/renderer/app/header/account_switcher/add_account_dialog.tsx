@@ -12,7 +12,7 @@ type AddAccountDialogProps = {
   open: boolean;
   onClose: () => void;
   onSuccess?: () => void;
-  defaultEmail?: string | null;
+  defaultEmail?: string;
 };
 
 export const AddAccountDialog = ({ open, onClose, onSuccess, defaultEmail }: AddAccountDialogProps) => {
@@ -28,7 +28,7 @@ export const AddAccountDialog = ({ open, onClose, onSuccess, defaultEmail }: Add
     <Dialog open={open} onClose={onClose} fullWidth={true} fullScreen={fullScreen}>
       <DialogTitle>{defaultEmail ? Messages.reAuthenticateAccount() : Messages.addAnotherAccount()}</DialogTitle>
       <DialogContent>
-        <LoginForm onSuccess={handleSuccess} disableAutoFocus={false} defaultEmail={defaultEmail ?? undefined} />
+        <LoginForm onSuccess={handleSuccess} disableAutoFocus={false} defaultEmail={defaultEmail} />
       </DialogContent>
     </Dialog>
   );

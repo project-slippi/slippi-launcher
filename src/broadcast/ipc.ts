@@ -33,14 +33,14 @@ export const ipc_broadcastListUpdatedEvent = makeEndpoint.renderer(
 
 export const ipc_spectateErrorOccurredEvent = makeEndpoint.renderer(
   "broadcast_spectateErrorOccurred",
-  <{ errorMessage: string | null }>_,
+  <{ errorMessage?: string }>_,
 );
 
 export const ipc_spectateReconnectEvent = makeEndpoint.renderer("spectate_Reconnect", <EmptyPayload>_);
 
 export const ipc_broadcastErrorOccurredEvent = makeEndpoint.renderer(
   "broadcast_broadcastErrorOccurred",
-  <{ errorMessage: string | null }>_,
+  <{ errorMessage?: string }>_,
 );
 
 export const ipc_broadcastReconnectEvent = makeEndpoint.renderer(

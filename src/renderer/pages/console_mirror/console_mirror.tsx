@@ -39,7 +39,7 @@ export const ConsoleMirror = React.memo(() => {
   const { consoleService } = useServices();
   const [isScanning, setIsScanning] = React.useState(false);
   const [modalOpen, setModalOpen] = React.useState(false);
-  const [currentFormValues, setCurrentFormValues] = React.useState<Partial<StoredConnection> | null>(null);
+  const [currentFormValues, setCurrentFormValues] = React.useState<Partial<StoredConnection> | undefined>();
   const savedConnections = useSettings((store) => store.connections);
   const savedIps = savedConnections.map((conn) => conn.ipAddress);
   const availableConsoles = useConsoleDiscoveryStore((store) => store.consoleItems);
@@ -50,8 +50,8 @@ export const ConsoleMirror = React.memo(() => {
       if (!ipAddress) {
         return false;
       }
-      const status = connectedConsoles[ipAddress]?.status ?? null;
-      return status !== null && status !== ConnectionStatus.DISCONNECTED;
+      const status = connectedConsoles[ipAddress]?.status;
+      return status != null && status !== ConnectionStatus.DISCONNECTED;
     },
     [connectedConsoles],
   );
@@ -74,7 +74,7 @@ export const ConsoleMirror = React.memo(() => {
 
   const onCancel = () => {
     setModalOpen(false);
-    setCurrentFormValues(null);
+    setCurrentFormValues(undefined);
   };
 
   const onSubmit = async (data: EditConnectionType) => {

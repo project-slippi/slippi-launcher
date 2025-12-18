@@ -63,11 +63,11 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
   );
   const [dolphinBeta, setDolphinBeta] = useDolphinBeta(dolphinType);
   const [resetModalOpen, setResetModalOpen] = React.useState(false);
-  const [isResetType, setResetType] = React.useState<ResetType | null>(null);
+  const [isResetType, setResetType] = React.useState<ResetType | undefined>();
   const { dolphinService } = useServices();
   const { openConfigureDolphin, hardResetDolphin, softResetDolphin } = useDolphinActions(dolphinService);
   const { showWarning } = useToasts();
-  const dolphinIsReady = dolphinStatus === DolphinStatus.READY && !dolphinIsOpen && isResetType === null;
+  const dolphinIsReady = dolphinStatus === DolphinStatus.READY && !dolphinIsOpen && isResetType == null;
   const versionString: string =
     dolphinStatus === DolphinStatus.UNKNOWN
       ? Messages.notFound()
@@ -83,7 +83,7 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
     }
     await setDolphinBeta(useBeta);
     await softResetDolphin(dolphinType);
-    setResetType(null);
+    setResetType(undefined);
   };
 
   const openDolphinDirectoryHandler = React.useCallback(async () => {
@@ -97,13 +97,13 @@ export const DolphinSettings = ({ dolphinType }: { dolphinType: DolphinLaunchTyp
   const softResetDolphinHandler = async () => {
     setResetType(ResetType.SOFT);
     await softResetDolphin(dolphinType);
-    setResetType(null);
+    setResetType(undefined);
   };
 
   const hardResetDolphinHandler = async () => {
     setResetType(ResetType.HARD);
     await hardResetDolphin(dolphinType);
-    setResetType(null);
+    setResetType(undefined);
   };
 
   const dolphinTypeName = getDolphinTypeName(dolphinType);

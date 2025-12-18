@@ -38,7 +38,7 @@ export const useSettingsModal = () => {
   const location = useLocation();
   const resolved = useResolvedPath("/settings/*");
   const match = useMatch({ path: resolved.pathname });
-  const isOpen = match !== null;
+  const isOpen = match != null;
 
   const open = useCallback(
     (modalPage?: string) => {

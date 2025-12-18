@@ -43,20 +43,20 @@ const getInitialFolder = (): string => {
 type StoreState = {
   loading: boolean;
   loadingMore: boolean;
-  progress: Progress | null;
+  progress: Progress | undefined;
   files: FileResult[];
-  currentRoot: string | null;
+  currentRoot: string | undefined;
   currentFolder: string;
   selectedFiles: string[];
   selectAllMode: boolean;
   deselectedFiles: string[]; // Files explicitly deselected from select-all mode
-  totalFilesInFolder: number | null;
+  totalFilesInFolder: number | undefined;
   folderTree: FolderResult[];
   collapsedFolders: string[];
   selectedFile: {
-    index: number | null;
-    total: number | null;
-    fileResult: FileResult | null;
+    index: number | undefined;
+    total: number | undefined;
+    fileResult: FileResult | undefined;
   };
   hasMoreReplays: boolean;
   continuation: string | undefined;
@@ -65,20 +65,20 @@ type StoreState = {
 const initialState: StoreState = {
   loading: false,
   loadingMore: false,
-  progress: null,
+  progress: undefined,
   files: [],
   folderTree: [],
   collapsedFolders: [],
-  currentRoot: null,
+  currentRoot: undefined,
   currentFolder: getInitialFolder(),
   selectedFiles: [],
   selectAllMode: false,
   deselectedFiles: [],
-  totalFilesInFolder: null,
+  totalFilesInFolder: undefined,
   selectedFile: {
-    index: null,
-    total: null,
-    fileResult: null,
+    index: undefined,
+    total: undefined,
+    fileResult: undefined,
   },
   hasMoreReplays: false,
   continuation: undefined,
@@ -87,7 +87,7 @@ const initialState: StoreState = {
 export const useReplays = create<StoreState>()(immer(() => initialState));
 
 // Singleton instance of ReplayPresenter
-let presenterInstance: ReplayPresenter | null = null;
+let presenterInstance: ReplayPresenter | undefined = undefined;
 
 export class ReplayPresenter {
   private currentLoadRequestId = 0;
@@ -123,7 +123,7 @@ export class ReplayPresenter {
     await Promise.all([loadFolderList(), this.loadFolder(currentFolder ?? rootFolder, true)]);
   }
 
-  public selectFile(file: FileResult, index: number | null = null, total: number | null = null): void {
+  public selectFile(file: FileResult, index?: number, total?: number): void {
     useReplays.setState((state) => {
       state.selectedFile = { fileResult: file, index, total };
     });
@@ -132,9 +132,9 @@ export class ReplayPresenter {
   public clearSelectedFile() {
     useReplays.setState((state) => {
       state.selectedFile = {
-        fileResult: null,
-        index: null,
-        total: null,
+        fileResult: undefined,
+        index: undefined,
+        total: undefined,
       };
     });
   }
@@ -145,7 +145,7 @@ export class ReplayPresenter {
     });
   }
 
-  public updateProgress(progress: { current: number; total: number } | null) {
+  public updateProgress(progress: { current: number; total: number } | undefined) {
     useReplays.setState((state) => {
       state.progress = progress;
     });
@@ -191,7 +191,7 @@ export class ReplayPresenter {
       useReplays.setState((state) => {
         state.loading = true;
         state.loadingMore = false;
-        state.progress = null;
+        state.progress = undefined;
       });
       try {
         // Get current filter state
@@ -220,15 +220,15 @@ export class ReplayPresenter {
           state.files = result.files;
           state.loading = false;
           state.continuation = result.continuation;
-          state.hasMoreReplays = result.continuation !== undefined;
-          state.totalFilesInFolder = result.totalCount ?? null;
+          state.hasMoreReplays = result.continuation != null;
+          state.totalFilesInFolder = result.totalCount;
         });
       } catch (err) {
         // Only update state if this is still the current request
         if (this.currentLoadRequestId === requestId) {
           useReplays.setState((state) => {
             state.loading = false;
-            state.progress = null;
+            state.progress = undefined;
           });
         }
       }
@@ -374,7 +374,7 @@ export const useReplaySelection = () => {
   const { files } = useReplayBrowserList();
   const selectedFiles = useReplays((store) => store.selectedFiles);
 
-  const [lastClickIndex, setLastClickIndex] = useState<number | null>(null);
+  const [lastClickIndex, setLastClickIndex] = useState<number | undefined>();
 
   const toggleFiles = (fileNames: string[], mode: "toggle" | "select" | "deselect" = "toggle") => {
     const { selectAllMode } = useReplays.getState();
@@ -421,7 +421,7 @@ export const useReplaySelection = () => {
 
   const onFileClick = (index: number, isShiftHeld: boolean) => {
     const isCurrentSelected = selectedFiles.includes(files[index].fullPath);
-    if (lastClickIndex !== null && isShiftHeld) {
+    if (lastClickIndex != null && isShiftHeld) {
       // Shift is held
       // Find all the files between the last clicked file and the current one
       const startIndex = Math.min(index, lastClickIndex);

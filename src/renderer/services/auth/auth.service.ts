@@ -1,5 +1,6 @@
 import { Preconditions } from "@common/preconditions";
 import log from "electron-log";
+import type { User } from "firebase/auth";
 import {
   getAuth,
   onAuthStateChanged,
@@ -19,7 +20,7 @@ import type { AuthService, AuthUser, MultiAccountService } from "./types";
  * Initialize Firebase with multi-account support
  */
 class AuthClient implements AuthService {
-  private _userSubject = new Subject<AuthUser | null>();
+  private _userSubject = new Subject<AuthUser | undefined>();
   private _onAuthStateChanged = multicast(this._userSubject);
   private _multiAccountService: MultiAccountService;
 
@@ -27,7 +28,7 @@ class AuthClient implements AuthService {
     this._multiAccountService = createMultiAccountService();
   }
 
-  public async init(): Promise<AuthUser | null> {
+  public async init(): Promise<AuthUser | undefined> {
     // Initialize multi-account service
     await this._multiAccountService.init();
 
@@ -47,7 +48,7 @@ class AuthClient implements AuthService {
         if (user) {
           this._userSubject.next(this._mapFirebaseUserToAuthUser(user));
         } else {
-          this._userSubject.next(null);
+          this._userSubject.next(undefined);
         }
       });
     }
@@ -61,10 +62,10 @@ class AuthClient implements AuthService {
         if (user) {
           this._userSubject.next(this._mapFirebaseUserToAuthUser(user));
         } else {
-          this._userSubject.next(null);
+          this._userSubject.next(undefined);
         }
       } else {
-        this._userSubject.next(null);
+        this._userSubject.next(undefined);
       }
     });
   }
@@ -76,34 +77,29 @@ class AuthClient implements AuthService {
     return this._multiAccountService;
   }
 
-  private _mapFirebaseUserToAuthUser(user: {
-    uid: string;
-    displayName: string | null;
-    email: string | null;
-    emailVerified: boolean;
-  }): AuthUser {
+  private _mapFirebaseUserToAuthUser(user: Pick<User, "uid" | "displayName" | "email" | "emailVerified">): AuthUser {
     const displayPicture = generateDisplayPicture(user.uid);
     const userObject = {
       uid: user.uid,
-      displayName: user.displayName ?? "",
+      displayName: user.displayName || "",
       displayPicture,
-      email: user.email ?? "",
+      email: user.email || "",
       emailVerified: user.emailVerified,
     };
     return userObject;
   }
 
-  public onUserChange(onChange: (user: AuthUser | null) => void): () => void {
+  public onUserChange(onChange: (user: AuthUser | undefined) => void): () => void {
     const subscription = this._onAuthStateChanged.subscribe(onChange);
     return () => {
       subscription.unsubscribe();
     };
   }
 
-  public getCurrentUser(): AuthUser | null {
+  public getCurrentUser(): AuthUser | undefined {
     const auth = this._multiAccountService.getActiveAuth();
     if (!auth || !auth.currentUser) {
-      return null;
+      return undefined;
     }
     return this._mapFirebaseUserToAuthUser(auth.currentUser);
   }

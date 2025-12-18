@@ -611,7 +611,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
       const game = new SlippiGame(fullPath);
 
       let sizeBytes = 0;
-      let birthTime: string | null = null;
+      let birthTime: string | undefined = undefined;
       try {
         const fileInfo = await fs.stat(fullPath);
         sizeBytes = fileInfo.size;

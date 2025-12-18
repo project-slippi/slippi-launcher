@@ -23,11 +23,14 @@ type SavedConnectionsListProps = {
 
 export const SavedConnectionsList = ({ availableConsoles, onEdit, onDelete }: SavedConnectionsListProps) => {
   const [nintendontVersion, setNintendontVersion] = React.useState("1.8.0");
-  const [menuItem, setMenuItem] = React.useState<null | {
-    index: number;
-    anchorEl: HTMLElement;
-    ipAddress: string;
-  }>(null);
+  const [menuItem, setMenuItem] = React.useState<
+    | {
+        index: number;
+        anchorEl: HTMLElement;
+        ipAddress: string;
+      }
+    | undefined
+  >();
 
   const onOpenMenu = React.useCallback((index: number, target: any, ipAddress: string) => {
     setMenuItem({
@@ -45,14 +48,14 @@ export const SavedConnectionsList = ({ availableConsoles, onEdit, onDelete }: Sa
       if (!ipAddress) {
         return false;
       }
-      const status = connectedConsoles[ipAddress]?.status ?? null;
-      return status !== null && status !== ConnectionStatus.DISCONNECTED;
+      const status = connectedConsoles[ipAddress]?.status;
+      return status != null && status !== ConnectionStatus.DISCONNECTED;
     },
     [connectedConsoles],
   );
 
   const handleClose = () => {
-    setMenuItem(null);
+    setMenuItem(undefined);
   };
 
   const handleDelete = () => {
@@ -95,8 +98,8 @@ export const SavedConnectionsList = ({ availableConsoles, onEdit, onDelete }: Sa
                 status={status ?? ConnectionStatus.DISCONNECTED}
                 isMirroring={isMirroring ?? false}
                 isAvailable={Boolean(consoleInfo)}
-                currentFilename={consoleStatus?.filename ?? null}
-                nintendontVersion={consoleStatus?.nintendontVersion ?? null}
+                currentFilename={consoleStatus?.filename}
+                nintendontVersion={consoleStatus?.nintendontVersion}
                 latestVersion={nintendontVersion}
                 nickname={consoleStatus?.nickname ?? consoleInfo?.name}
                 connection={conn}
@@ -108,7 +111,7 @@ export const SavedConnectionsList = ({ availableConsoles, onEdit, onDelete }: Sa
         </div>
       )}
       <IconMenu
-        anchorEl={menuItem ? menuItem.anchorEl : null}
+        anchorEl={menuItem?.anchorEl}
         open={Boolean(menuItem)}
         onClose={handleClose}
         items={[

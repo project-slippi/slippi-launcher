@@ -70,7 +70,7 @@ class MockSlippiBackendClient implements SlippiBackendService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async fetchUserData(): Promise<UserData | null> {
+  public async fetchUserData(): Promise<UserData | undefined> {
     const user = this.authService.getCurrentUser();
     Preconditions.checkExists(user, "No user logged in");
 
@@ -78,7 +78,7 @@ class MockSlippiBackendClient implements SlippiBackendService {
       this.addFakeSlippiUser(user.uid, user.displayName);
     }
     const userData = this.fakeUsers.get(user.uid);
-    return userData ?? null;
+    return userData;
   }
 
   @delayAndMaybeError(SHOULD_ERROR)

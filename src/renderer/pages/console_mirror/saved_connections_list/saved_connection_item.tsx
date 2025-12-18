@@ -30,8 +30,8 @@ type SavedConnectionItemProps = {
   status: number;
   isMirroring: boolean;
   nickname?: string;
-  currentFilename: string | null;
-  nintendontVersion: string | null;
+  currentFilename?: string;
+  nintendontVersion?: string;
   latestVersion: string;
   connection: StoredConnection;
   onOpenMenu: (index: number, element: HTMLElement, ipAddress: string) => void;
@@ -84,7 +84,7 @@ export const SavedConnectionItem = ({
     status === ConnectionStatus.DISCONNECTED && isAvailable ? Messages.available() : renderStatusName(status);
   const isConnected = status !== ConnectionStatus.DISCONNECTED;
   const title = nickname ? `${connection.ipAddress} (${nickname})` : connection.ipAddress;
-  const nintendontIsOutdated = nintendontVersion !== null && lt(nintendontVersion, latestVersion);
+  const nintendontIsOutdated = nintendontVersion != null && lt(nintendontVersion, latestVersion);
   return (
     <Outer>
       <CardHeader

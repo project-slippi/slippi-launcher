@@ -71,8 +71,8 @@ export const ReplayBrowser = React.memo(() => {
   const { files: filteredFiles } = useReplayBrowserList();
   const { goToReplayStatsPage } = useReplayBrowserNavigation();
 
-  const setSelectedItem = (index: number | null) => {
-    if (index === null) {
+  const setSelectedItem = (index: number | undefined) => {
+    if (index == null) {
       void presenter.clearSelectedFile();
     } else {
       const file = filteredFiles[index];

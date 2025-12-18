@@ -44,8 +44,8 @@ const FileListResults = ({
   selectedFilesSet: Set<string>;
   hasMoreReplays: boolean;
 }) => {
-  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
-  const loadMoreSentinelRef = React.useRef<HTMLDivElement>(null);
+  const scrollContainerRef = React.useRef<HTMLDivElement | null>(null);
+  const loadMoreSentinelRef = React.useRef<HTMLDivElement | null>(null);
   const lastFolderRef = React.useRef(folderPath);
   const currentScrollOffsetRef = React.useRef(initialScrollOffset);
 
@@ -75,7 +75,7 @@ const FileListResults = ({
       return;
     }
 
-    let rafId: number | null = null;
+    let rafId: number | undefined = undefined;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -84,7 +84,7 @@ const FileListResults = ({
           // Defer loading to next frame to avoid blocking scroll
           rafId = requestAnimationFrame(() => {
             onLoadMore();
-            rafId = null;
+            rafId = undefined;
           });
         }
       },
@@ -99,7 +99,7 @@ const FileListResults = ({
 
     return () => {
       observer.disconnect();
-      if (rafId !== null) {
+      if (rafId != null) {
         cancelAnimationFrame(rafId);
       }
     };
@@ -176,10 +176,13 @@ export const FileList = React.memo(
     loadingMore: boolean;
     hasMoreReplays: boolean;
   }) => {
-    const [menuItem, setMenuItem] = React.useState<null | {
-      index: number;
-      anchorEl: HTMLElement;
-    }>(null);
+    const [menuItem, setMenuItem] = React.useState<
+      | {
+          index: number;
+          anchorEl: HTMLElement;
+        }
+      | undefined
+    >();
 
     // Read initial scroll position from store ONCE on mount (no subscription)
     // This persists scroll position across page navigation
@@ -201,18 +204,18 @@ export const FileList = React.memo(
       if (menuItem) {
         window.electron.shell.showItemInFolder(files[menuItem.index].fullPath);
       }
-      setMenuItem(null);
+      setMenuItem(undefined);
     }, [menuItem, files]);
 
     const handleDelete = React.useCallback(() => {
       if (menuItem) {
         onDelete(files[menuItem.index].fullPath);
       }
-      setMenuItem(null);
+      setMenuItem(undefined);
     }, [menuItem, files, onDelete]);
 
     const handleClose = React.useCallback(() => {
-      setMenuItem(null);
+      setMenuItem(undefined);
     }, []);
 
     return (
@@ -231,7 +234,7 @@ export const FileList = React.memo(
           hasMoreReplays={hasMoreReplays}
         />
         <IconMenu
-          anchorEl={menuItem ? menuItem.anchorEl : null}
+          anchorEl={menuItem?.anchorEl}
           open={Boolean(menuItem)}
           onClose={handleClose}
           items={[

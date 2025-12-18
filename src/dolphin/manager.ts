@@ -320,7 +320,7 @@ export class DolphinManager {
     });
   }
 
-  private _onComplete(dolphinType: DolphinLaunchType, dolphinVersion: string | null) {
+  private _onComplete(dolphinType: DolphinLaunchType, dolphinVersion: string | undefined) {
     this.eventSubject.next({
       type: DolphinEventType.DOWNLOAD_COMPLETE,
       dolphinType,

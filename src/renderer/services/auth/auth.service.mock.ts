@@ -14,8 +14,8 @@ const testUserPassword = "test";
 
 class MockAuthClient implements AuthService {
   private _usersMap = new Map<string, AuthUser>();
-  private _currentUser: AuthUser | null = null;
-  private _userSubject = new Subject<AuthUser | null>();
+  private _currentUser?: AuthUser;
+  private _userSubject = new Subject<AuthUser | undefined>();
   private _onAuthStateChanged = multicast(this._userSubject);
 
   constructor() {
@@ -32,20 +32,20 @@ class MockAuthClient implements AuthService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async init(): Promise<AuthUser | null> {
-    return null;
+  public async init(): Promise<AuthUser | undefined> {
+    return undefined;
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
   public async logout(): Promise<void> {
-    this._setCurrentUser(null);
+    this._setCurrentUser(undefined);
   }
 
-  public getCurrentUser(): AuthUser | null {
+  public getCurrentUser(): AuthUser | undefined {
     return this._currentUser;
   }
 
-  public onUserChange(onChange: (user: AuthUser | null) => void): () => void {
+  public onUserChange(onChange: (user: AuthUser | undefined) => void): () => void {
     const subscription = this._onAuthStateChanged.subscribe(onChange);
     return () => {
       subscription.unsubscribe();
@@ -58,7 +58,7 @@ class MockAuthClient implements AuthService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async login(args: { email: string; password: string }): Promise<AuthUser | null> {
+  public async login(args: { email: string; password: string }): Promise<AuthUser | undefined> {
     const hash = this._hashEmailPassword(args.email, args.password);
     const user = this._usersMap.get(hash);
     if (!user) {
@@ -69,7 +69,7 @@ class MockAuthClient implements AuthService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async signUp(args: { email: string; password: string; displayName: string }): Promise<AuthUser | null> {
+  public async signUp(args: { email: string; password: string; displayName: string }): Promise<AuthUser | undefined> {
     const uid = args.email + args.displayName;
     const newUser = generateFakeUser({ ...args, uid });
     this._usersMap.set(this._hashEmailPassword(args.email, args.password), newUser);
@@ -119,13 +119,13 @@ class MockAuthClient implements AuthService {
       removeAccount: async () => {},
       switchAccount: async () => {},
       getAccounts: () => [],
-      getActiveAccountId: () => null,
-      getActiveAuth: () => null,
+      getActiveAccountId: () => undefined,
+      getActiveAuth: () => undefined,
       onAccountsChange: () => () => {},
     };
   }
 
-  private _setCurrentUser(user: AuthUser | null) {
+  private _setCurrentUser(user: AuthUser | undefined) {
     this._currentUser = user;
     this._userSubject.next(user);
   }

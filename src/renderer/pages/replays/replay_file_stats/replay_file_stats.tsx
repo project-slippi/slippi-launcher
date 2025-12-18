@@ -58,8 +58,8 @@ const Content = styled.div`
 type ReplayFileStatsProps = {
   filePath: string;
   file?: FileResult;
-  index: number | null;
-  total: number | null;
+  index?: number;
+  total?: number;
   onNext: () => void;
   onPrev: () => void;
   onClose: () => void;
@@ -86,8 +86,8 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
 
   const file = gameStatsQuery.data?.file ?? props.file;
   const numPlayers = file?.game.players.length;
-  const gameStats = gameStatsQuery.data?.stats ?? null;
-  const stadiumStats = stadiumStatsQuery.data?.stadiumStats ?? null;
+  const gameStats = gameStatsQuery.data?.stats;
+  const stadiumStats = stadiumStatsQuery.data?.stadiumStats;
 
   // Add key bindings
   useMousetrap("escape", () => {
@@ -142,17 +142,17 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
         {...props}
         file={file}
         disabled={loading}
-        stats={gameStatsQuery.data?.stats ?? null}
-        stadiumStats={stadiumStatsQuery.data?.stadiumStats ?? null}
+        stats={gameStatsQuery.data?.stats ?? undefined}
+        stadiumStats={stadiumStatsQuery.data?.stadiumStats ?? undefined}
         onPlay={props.onPlay}
       />
       <Content>
         {!file || loading ? (
           <LoadingScreen message={Messages.crunchingNumbers()} />
         ) : game.mode == GameMode.TARGET_TEST ? (
-          <TargetTestProfile file={file} stats={stadiumStats}></TargetTestProfile>
+          <TargetTestProfile file={file} stats={stadiumStats ?? undefined} />
         ) : game.mode == GameMode.HOME_RUN_CONTEST ? (
-          <HomeRunProfile file={file} stats={stadiumStats}></HomeRunProfile>
+          <HomeRunProfile file={file} stats={stadiumStats ?? undefined} />
         ) : numPlayers !== 2 ? (
           <IconMessage Icon={ErrorIcon} label={Messages.gameStatsForTeamBattlesIsUnsupported()} />
         ) : error ? (

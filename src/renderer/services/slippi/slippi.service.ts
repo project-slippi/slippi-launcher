@@ -119,7 +119,7 @@ class SlippiBackendClient implements SlippiBackendService {
     throw new Error("No user with that ID");
   }
 
-  public async fetchUserData(): Promise<UserData | null> {
+  public async fetchUserData(): Promise<UserData | undefined> {
     const user = this.authService.getCurrentUser();
     Preconditions.checkExists(user, "User is not logged in");
 
@@ -137,9 +137,9 @@ class SlippiBackendClient implements SlippiBackendService {
     const playKey = res.data.getUser?.private?.playKey;
     const displayName = res.data.getUser?.displayName || "";
 
-    // If we don't have a connect code or play key, return it as null such that logic that
+    // If we don't have a connect code or play key, return it as undefined such that logic that
     // handles it will cause the user to set them up.
-    let playKeyObj: PlayKey | null = null;
+    let playKeyObj: PlayKey | undefined;
     if (connectCode && playKey) {
       playKeyObj = {
         uid: user.uid,

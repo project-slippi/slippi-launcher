@@ -2,12 +2,12 @@ import React from "react";
 
 export const useAsync = <T>(asyncFunction: (...args: any[]) => Promise<T>) => {
   const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState<any>(null);
-  const [result, setResult] = React.useState<T | null>(null);
+  const [error, setError] = React.useState<any>(undefined);
+  const [result, setResult] = React.useState<T | undefined>(undefined);
   const runAsync = async (...args: any[]) => {
     try {
       setLoading(true);
-      setError(null);
+      setError(undefined);
       const res = await asyncFunction(...args);
       setResult(res);
     } catch (error) {
@@ -22,6 +22,6 @@ export const useAsync = <T>(asyncFunction: (...args: any[]) => Promise<T>) => {
     loading,
     error,
     result,
-    clearError: React.useCallback(() => setError(null), []),
+    clearError: React.useCallback(() => setError(undefined), []),
   };
 };

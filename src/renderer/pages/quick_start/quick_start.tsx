@@ -33,7 +33,7 @@ function getStepHeader(step: QuickStartStep): string {
   }
 }
 
-const getStepContent = (step: QuickStartStep | null) => {
+const getStepContent = (step: QuickStartStep | undefined) => {
   switch (step) {
     case QuickStartStep.LOGIN:
       return <LoginStep />;
@@ -48,13 +48,13 @@ const getStepContent = (step: QuickStartStep | null) => {
     case QuickStartStep.COMPLETE:
       return <SetupCompleteStep />;
     default:
-      return null;
+      return undefined;
   }
 };
 
 type QuickStartProps = {
   allSteps: QuickStartStep[];
-  currentStep: QuickStartStep | null;
+  currentStep?: QuickStartStep;
   onNext?: () => void;
   onPrev?: () => void;
 };
@@ -66,7 +66,7 @@ export const QuickStart = ({ allSteps: steps, currentStep, onNext, onPrev }: Qui
 
   useMousetrap("escape", skipSetup);
 
-  if (currentStep === null) {
+  if (currentStep == null) {
     return null;
   }
 
