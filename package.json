@@ -144,7 +144,7 @@
     "rimraf": "^3.0.2",
     "sass": "^1.49.11",
     "sass-loader": "^12.6.0",
-    "storybook": "9.1.16",
+    "storybook": "9.1.17",
     "style-loader": "^3.3.1",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^3.12.0",
