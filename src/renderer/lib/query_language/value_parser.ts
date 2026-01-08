@@ -8,6 +8,22 @@
 import type { FilterDefinition } from "./types";
 
 /**
+ * Normalize a string for matching (must match the normalization in filter_schema.ts)
+ * - Converts to lowercase
+ * - Removes diacritics (é → e, ō → o, etc.)
+ * - Replaces spaces with underscores
+ * - Removes apostrophes and special characters
+ */
+function normalizeString(str: string): string {
+  return str
+    .toLowerCase()
+    .normalize("NFD") // Decompose accented characters
+    .replace(/[\u0300-\u036f]/g, "") // Remove diacritical marks
+    .replace(/\s+/g, "_") // Replace spaces with underscores
+    .replace(/[']/g, ""); // Remove apostrophes
+}
+
+/**
  * Parse a value according to its filter definition
  *
  * @throws Error if value is invalid
@@ -47,16 +63,22 @@ function parseEnumValue(value: string, def: FilterDefinition): any {
   }
 
   // Support comma-separated values
-  const values = value.split(",").map((v) => v.trim().toLowerCase());
+  const values = value.split(",").map((v) => v.trim());
   const enumValues = def.enumValues;
 
   const parsed = values.map((v) => {
-    // Try exact match first (on value field)
-    let match = enumValues.find((ev) => ev.value.toLowerCase() === v);
+    // Normalize the input value for matching
+    const normalizedInput = normalizeString(v);
+
+    // Try exact match first (on normalized value field)
+    let match = enumValues.find((ev) => ev.value === normalizedInput);
 
     // Try fuzzy match on label if no exact match
     if (!match) {
-      match = enumValues.find((ev) => ev.label.toLowerCase().includes(v) || v.includes(ev.label.toLowerCase()));
+      const lowerV = v.toLowerCase();
+      match = enumValues.find(
+        (ev) => ev.label.toLowerCase().includes(lowerV) || lowerV.includes(ev.label.toLowerCase()),
+      );
     }
 
     if (!match) {

@@ -148,10 +148,11 @@ function applyFilter(filters: QueryFilters, key: string, value: any, negate: boo
     return;
   }
 
-  // Stage filter - NOT IMPLEMENTED YET (backend doesn't support stage filter)
+  // Stage filter
   if (lowerKey === "stage") {
-    // Store for future use, but won't be applied to backend filters yet
-    // filters.stages = Array.isArray(value) ? value : [value];
+    const stageIds = Array.isArray(value) ? value : [value];
+    filters.stageIds = filters.stageIds || [];
+    filters.stageIds.push(...stageIds);
     return;
   }
 
@@ -260,6 +261,14 @@ export function convertToReplayFilters(queryFilters: QueryFilters): ReplayFilter
     filters.push({
       type: "gameMode",
       modes: queryFilters.gameModes,
+    });
+  }
+
+  // Stage filter
+  if (queryFilters.stageIds && queryFilters.stageIds.length > 0) {
+    filters.push({
+      type: "stage",
+      stageIds: queryFilters.stageIds,
     });
   }
 

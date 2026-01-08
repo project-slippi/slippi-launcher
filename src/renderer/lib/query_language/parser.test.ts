@@ -86,6 +86,44 @@ describe("Query Parser", () => {
     });
   });
 
+  describe("Stage filters", () => {
+    it("should parse single stage", () => {
+      const result = parseQuery("stage:battlefield");
+      expect(result.filters.stageIds).toEqual([31]); // Battlefield ID
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse multiple stages with comma", () => {
+      const result = parseQuery("stage:battlefield,final_destination");
+      expect(result.filters.stageIds).toEqual([31, 32]); // Battlefield, Final Destination IDs
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should handle stage with accented characters", () => {
+      const result = parseQuery("stage:pokemon_stadium");
+      expect(result.filters.stageIds).toEqual([3]); // Pokémon Stadium ID
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should handle stage with spaces as underscores", () => {
+      const result = parseQuery("stage:yoshis_story");
+      expect(result.filters.stageIds).toEqual([8]); // Yoshi's Story ID
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should convert stage filter to ReplayFilter", () => {
+      const parsed = parseQuery("stage:battlefield");
+      const filters = convertToReplayFilters(parsed.filters);
+
+      expect(filters).toHaveLength(1);
+      expect(filters[0].type).toBe("stage");
+      expect(filters[0]).toMatchObject({
+        type: "stage",
+        stageIds: [31],
+      });
+    });
+  });
+
   describe("Port-specific filters", () => {
     it("should parse p1 port alias", () => {
       const result = parseQuery("p1:fox");
