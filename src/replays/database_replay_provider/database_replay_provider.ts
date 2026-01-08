@@ -212,7 +212,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
     return mapGameRecordToFileResult(gameAndFileRecord, playerRecords);
   }
 
-  public async calculateGameStats(fullPath: string): Promise<StatsType | null> {
+  public async calculateGameStats(fullPath: string): Promise<StatsType | undefined> {
     const game = new SlippiGame(fullPath);
     const settings = game.getSettings();
     if (!settings || settings.players.length === 0) {
@@ -226,7 +226,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
     return game.getStats();
   }
 
-  public async calculateStadiumStats(fullPath: string): Promise<StadiumStatsType | null> {
+  public async calculateStadiumStats(fullPath: string): Promise<StadiumStatsType | undefined> {
     const game = new SlippiGame(fullPath);
     return game.getStadiumStats();
   }

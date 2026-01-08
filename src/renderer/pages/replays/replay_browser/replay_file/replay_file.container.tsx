@@ -117,11 +117,11 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
   const details = useMemo(() => {
     const date = new Date(game.startTime ? Date.parse(game.startTime) : 0);
     return generateReplayDetails({
-      gameMode: game.mode,
+      gameMode: game.mode ?? undefined,
       date,
-      lastFrame: game.lastFrame,
-      timerType: game.timerType,
-      startingTimerSeconds: game.startingTimerSeconds,
+      lastFrame: game.lastFrame ?? undefined,
+      timerType: game.timerType ?? undefined,
+      startingTimerSeconds: game.startingTimerSeconds ?? undefined,
       stageName,
     });
   }, [game.lastFrame, game.mode, game.startTime, game.startingTimerSeconds, game.timerType, stageName]);
@@ -173,15 +173,15 @@ const generateReplayDetails = ({
   stageName,
   gameMode,
   lastFrame,
-  timerType = null,
-  startingTimerSeconds = null,
+  timerType,
+  startingTimerSeconds,
 }: {
   date: Date;
   stageName: string;
-  gameMode: number | null;
-  lastFrame: number | null;
-  timerType: number | null;
-  startingTimerSeconds?: number | null;
+  gameMode?: number;
+  lastFrame?: number;
+  timerType?: number;
+  startingTimerSeconds?: number;
 }): ReplayDetail[] => {
   const replayDetails: ReplayDetail[] = [
     {
@@ -207,7 +207,7 @@ const generateReplayDetails = ({
   return replayDetails;
 };
 
-const getReplayStageIcon = (gameMode: number | null): React.ComponentType => {
+const getReplayStageIcon = (gameMode: number | undefined): React.ComponentType => {
   switch (gameMode) {
     case GameMode.HOME_RUN_CONTEST:
       return SportsCricket;

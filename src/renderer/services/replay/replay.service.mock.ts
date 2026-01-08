@@ -43,14 +43,14 @@ class MockReplayClient implements ReplayService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async calculateGameStats(_filePath: string): Promise<{ file: FileResult; stats: StatsType | null }> {
+  public async calculateGameStats(_filePath: string): Promise<{ file: FileResult; stats: StatsType | undefined }> {
     throw new Error("Method not implemented.");
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
   public async calculateStadiumStats(
     _filePath: string,
-  ): Promise<{ file: FileResult; stadiumStats: StadiumStatsType | null }> {
+  ): Promise<{ file: FileResult; stadiumStats: StadiumStatsType | undefined }> {
     throw new Error("Method not implemented.");
   }
 

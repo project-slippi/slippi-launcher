@@ -32,13 +32,13 @@ export const ipc_selectTreeFolder = makeEndpoint.main(
 export const ipc_calculateGameStats = makeEndpoint.main(
   "calculateGameStats",
   <{ filePath: string }>_,
-  <{ file: FileResult; stats: StatsType | null }>_,
+  <{ file: FileResult; stats: StatsType | undefined }>_,
 );
 
 export const ipc_calculateStadiumStats = makeEndpoint.main(
   "calculateStadiumStats",
   <{ filePath: string }>_,
-  <{ file: FileResult; stadiumStats: StadiumStatsType | null }>_,
+  <{ file: FileResult; stadiumStats: StadiumStatsType | undefined }>_,
 );
 
 export const ipc_deleteReplays = makeEndpoint.main("deleteReplays", <{ fileIds: string[] }>_, <{ success: boolean }>_);
