@@ -93,7 +93,7 @@ export const IsoSelectionStep = () => {
       "application/octet-stream": [".iso", ".gcm", ".gcz", ".ciso", ".rvz"],
       "application/x-7z-compressed": [".7z"],
     },
-    onDrop: onDrop,
+    onDrop,
     multiple: false,
     noClick: true,
     noKeyboard: true,

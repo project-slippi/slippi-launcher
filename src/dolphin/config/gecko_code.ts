@@ -125,7 +125,7 @@ export function parseGeckoCodes(input: string[], opts: { enabled?: boolean; user
         parsedCode = {
           ...parsedCode,
           name: name.trim(),
-          creator: creator,
+          creator,
           notes: [],
           codeLines: [],
         };

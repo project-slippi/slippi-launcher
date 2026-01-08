@@ -88,7 +88,7 @@ export async function fetchLatestVersion(
     fetchPolicy: "network-only",
     variables: {
       purpose: dolphinType.toUpperCase(),
-      includeBeta: includeBeta,
+      includeBeta,
     },
   });
 

@@ -136,7 +136,7 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
           characterId: player.characterId,
           characterColor: player.characterColor,
           port: player.port,
-          teamId: teamId,
+          teamId,
           variant: player.connectCode ? "code" : "tag",
           text: player.connectCode || player.tag || backupName,
           isWinner: player.isWinner,
