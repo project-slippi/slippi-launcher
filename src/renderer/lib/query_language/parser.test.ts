@@ -356,6 +356,88 @@ describe("Query Parser", () => {
     });
   });
 
+  describe("Empty filter values", () => {
+    it("should ignore filter keys with colon but no value", () => {
+      const result = parseQuery("char:");
+      expect(result.filters.playerFilters).toBeUndefined();
+      expect(result.filters.textSearch).toBeUndefined();
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should ignore stage filter with colon but no value", () => {
+      const result = parseQuery("stage:");
+      expect(result.filters.stageIds).toBeUndefined();
+      expect(result.filters.textSearch).toBeUndefined();
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should treat filter key WITHOUT colon as free text search", () => {
+      const result = parseQuery("char");
+      expect(result.filters.textSearch).toBe("char");
+      expect(result.filters.playerFilters).toBeUndefined();
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should treat stage WITHOUT colon as free text search", () => {
+      const result = parseQuery("stage");
+      expect(result.filters.textSearch).toBe("stage");
+      expect(result.filters.stageIds).toBeUndefined();
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should allow partial matches of filter keys as free text", () => {
+      const result = parseQuery("chara");
+      expect(result.filters.textSearch).toBe("chara");
+      expect(result.filters.playerFilters).toBeUndefined();
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should ignore multiple empty filters with colons", () => {
+      const result = parseQuery("char: stage: code:");
+      expect(result.filters.playerFilters).toBeUndefined();
+      expect(result.filters.stageIds).toBeUndefined();
+      expect(result.filters.textSearch).toBeUndefined();
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should process valid filters and ignore empty ones with colons", () => {
+      const result = parseQuery("char:fox stage: minDuration:30s");
+      expect(result.filters.playerFilters).toHaveLength(1);
+      expect(result.filters.playerFilters?.[0].characterIds).toEqual([2]);
+      expect(result.filters.stageIds).toBeUndefined();
+      expect(result.filters.minDuration).toBe(1800);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should process text search with empty filters", () => {
+      const result = parseQuery("mango char: stage:");
+      expect(result.filters.textSearch).toBe("mango");
+      expect(result.filters.playerFilters).toBeUndefined();
+      expect(result.filters.stageIds).toBeUndefined();
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should allow filter keys as text search when mixed with other text", () => {
+      const result = parseQuery("char stage mango");
+      expect(result.filters.textSearch).toBe("char stage mango");
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should ignore filter aliases with colons but no values", () => {
+      const result = parseQuery("character: name:");
+      expect(result.filters.playerFilters).toBeUndefined();
+      expect(result.filters.textSearch).toBeUndefined();
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should treat filter aliases WITHOUT colons as free text", () => {
+      const result = parseQuery("character name");
+      expect(result.filters.textSearch).toBe("character name");
+      expect(result.filters.playerFilters).toBeUndefined();
+      expect(result.errors).toHaveLength(0);
+    });
+  });
+
   describe("Negation (NOT operator)", () => {
     it("should parse NOT operator", () => {
       const result = parseQuery("NOT char:puff");
