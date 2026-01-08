@@ -117,11 +117,11 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
   const details = useMemo(() => {
     const date = new Date(game.startTime ? Date.parse(game.startTime) : 0);
     return generateReplayDetails({
-      gameMode: game.mode ?? undefined,
+      gameMode: game.mode,
       date,
-      lastFrame: game.lastFrame ?? undefined,
-      timerType: game.timerType ?? undefined,
-      startingTimerSeconds: game.startingTimerSeconds ?? undefined,
+      lastFrame: game.lastFrame,
+      timerType: game.timerType,
+      startingTimerSeconds: game.startingTimerSeconds,
       stageName,
     });
   }, [game.lastFrame, game.mode, game.startTime, game.startingTimerSeconds, game.timerType, stageName]);
@@ -133,10 +133,10 @@ export const ReplayFileContainer = React.memo(function ReplayFileContainer({
         const backupName = player.type === 1 ? "CPU" : `Player ${player.playerIndex + 1}`;
         const teamId = game.isTeams ? player.teamId : undefined;
         return {
-          characterId: player.characterId ?? undefined,
-          characterColor: player.characterColor ?? undefined,
+          characterId: player.characterId,
+          characterColor: player.characterColor,
           port: player.port,
-          teamId: teamId ?? undefined,
+          teamId: teamId,
           variant: player.connectCode ? "code" : "tag",
           text: player.connectCode || player.tag || backupName,
           isWinner: player.isWinner,

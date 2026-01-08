@@ -48,13 +48,13 @@ const PlayerInfoDisplay = ({ isTeams, players }: PlayerInfoDisplayProps) => {
           key={`player-${player.playerIndex}`}
           isTeams={Boolean(isTeams)}
           playerIndex={player.playerIndex}
-          type={player.type ?? undefined}
-          teamId={player.teamId ?? undefined}
-          characterId={player.characterId ?? undefined}
-          characterColor={player.characterColor ?? undefined}
-          connectCode={player.connectCode ?? undefined}
-          displayName={player.displayName ?? undefined}
-          tag={player.tag ?? undefined}
+          type={player.type}
+          teamId={player.teamId}
+          characterId={player.characterId}
+          characterColor={player.characterColor}
+          connectCode={player.connectCode}
+          displayName={player.displayName}
+          tag={player.tag}
         />
       );
     });
@@ -190,8 +190,8 @@ const GameDetails = ({
     lastFrame != null
       ? game.mode === GameMode.TARGET_TEST
         ? frameToGameTimer(lastFrame, {
-            startingTimerSeconds: game.startingTimerSeconds ?? undefined,
-            timerType: game.timerType ?? undefined,
+            startingTimerSeconds: game.startingTimerSeconds,
+            timerType: game.timerType,
           })
         : convertFrameCountToDurationString(lastFrame, "long")
       : Messages.unknown();

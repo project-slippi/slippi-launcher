@@ -37,7 +37,7 @@ const ChildPage = () => {
   return (
     <ReplayFileStats
       filePath={decodedFilePath}
-      file={selectedFile.fileResult ?? undefined}
+      file={selectedFile.fileResult}
       index={nav.index}
       total={nav.total}
       onNext={nav.selectNextFile}

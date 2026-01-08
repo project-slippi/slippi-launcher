@@ -142,17 +142,17 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
         {...props}
         file={file}
         disabled={loading}
-        stats={gameStatsQuery.data?.stats ?? undefined}
-        stadiumStats={stadiumStatsQuery.data?.stadiumStats ?? undefined}
+        stats={gameStatsQuery.data?.stats}
+        stadiumStats={stadiumStatsQuery.data?.stadiumStats}
         onPlay={props.onPlay}
       />
       <Content>
         {!file || loading ? (
           <LoadingScreen message={Messages.crunchingNumbers()} />
         ) : game.mode == GameMode.TARGET_TEST ? (
-          <TargetTestProfile file={file} stats={stadiumStats ?? undefined} />
+          <TargetTestProfile file={file} stats={stadiumStats} />
         ) : game.mode == GameMode.HOME_RUN_CONTEST ? (
-          <HomeRunProfile file={file} stats={stadiumStats ?? undefined} />
+          <HomeRunProfile file={file} stats={stadiumStats} />
         ) : numPlayers !== 2 ? (
           <IconMessage Icon={ErrorIcon} label={Messages.gameStatsForTeamBattlesIsUnsupported()} />
         ) : error ? (
