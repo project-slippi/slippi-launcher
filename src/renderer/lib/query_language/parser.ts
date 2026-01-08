@@ -94,6 +94,19 @@ export function parseQuery(query: string): ParsedQuery {
 
       case "QUOTED":
       case "WORD":
+        // Ignore WORD tokens that match known filter keys AND have a colon after them
+        // (e.g., "char:" or "stage:" with no value)
+        // This only applies if there's actually a colon, so "char" as free text is still valid
+        if (token.type === "WORD" && getFilterDefinition(token.value)) {
+          // Check if the original query has a colon after this word
+          const positionAfterWord = token.position + token.value.length;
+          if (positionAfterWord < query.length && query[positionAfterWord] === ":") {
+            // This is an incomplete filter expression (e.g., "char:"), skip it
+            negateNext = false;
+            break;
+          }
+        }
+
         if (!negateNext) {
           searchText.push(token.value);
         } else {
