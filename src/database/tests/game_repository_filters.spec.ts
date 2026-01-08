@@ -878,6 +878,63 @@ describe("GameRepository.searchGames with filters", () => {
     });
   });
 
+  describe("StageFilter", () => {
+    it("should filter games by single stage", async () => {
+      const folder = "/replays";
+
+      await addGameWithStage(folder, "battlefield.slp", 31); // Battlefield
+      await addGameWithStage(folder, "fd.slp", 32); // Final Destination
+      await addGameWithStage(folder, "yoshis.slp", 8); // Yoshi's Story
+
+      const filters: ReplayFilter[] = [{ type: "stage", stageIds: [31] }];
+
+      const results = await GameRepository.searchGames(db, folder, filters, {
+        limit: 10,
+        orderBy: { field: "startTime", direction: "desc" },
+      });
+
+      expect(results).toHaveLength(1);
+      expect(results[0].name).toBe("battlefield.slp");
+    });
+
+    it("should filter games by multiple stages", async () => {
+      const folder = "/replays";
+
+      await addGameWithStage(folder, "battlefield.slp", 31); // Battlefield
+      await addGameWithStage(folder, "fd.slp", 32); // Final Destination
+      await addGameWithStage(folder, "yoshis.slp", 8); // Yoshi's Story
+      await addGameWithStage(folder, "pokemon.slp", 3); // Pokémon Stadium
+
+      const filters: ReplayFilter[] = [
+        { type: "stage", stageIds: [31, 32] }, // Legal stages only
+      ];
+
+      const results = await GameRepository.searchGames(db, folder, filters, {
+        limit: 10,
+        orderBy: { field: "startTime", direction: "desc" },
+      });
+
+      expect(results).toHaveLength(2);
+      expect(results.map((r) => r.name)).toEqual(expect.arrayContaining(["battlefield.slp", "fd.slp"]));
+    });
+
+    it("should return all games if stageIds array is empty", async () => {
+      const folder = "/replays";
+
+      await addGameWithStage(folder, "battlefield.slp", 31);
+      await addGameWithStage(folder, "fd.slp", 32);
+
+      const filters: ReplayFilter[] = [{ type: "stage", stageIds: [] }];
+
+      const results = await GameRepository.searchGames(db, folder, filters, {
+        limit: 10,
+        orderBy: { field: "startTime", direction: "desc" },
+      });
+
+      expect(results).toHaveLength(2);
+    });
+  });
+
   describe("Multiple filters (AND logic)", () => {
     it("should apply multiple filters with AND logic", async () => {
       const folder = "/replays";
@@ -1114,6 +1171,12 @@ describe("GameRepository.searchGames with filters", () => {
   async function addGameWithMode(folder: string, filename: string, mode: number) {
     const { _id: fileId } = await FileRepository.insertFile(db, aMockFileWith({ folder, name: filename }));
     const { _id: gameId } = await GameRepository.insertGame(db, aMockGameWith(fileId, { mode }));
+    return { fileId, gameId };
+  }
+
+  async function addGameWithStage(folder: string, filename: string, stage: number) {
+    const { _id: fileId } = await FileRepository.insertFile(db, aMockFileWith({ folder, name: filename }));
+    const { _id: gameId } = await GameRepository.insertGame(db, aMockGameWith(fileId, { stage }));
     return { fileId, gameId };
   }
 

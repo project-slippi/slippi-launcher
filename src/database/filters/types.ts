@@ -57,6 +57,22 @@ export type GameModeFilter = {
 };
 
 /**
+ * Filter for stage
+ *
+ * Uses stage IDs from @slippi/slippi-js
+ * Multiple stage IDs are combined with OR logic (match any of the specified stages)
+ *
+ * Examples:
+ * - { stageIds: [31] } = Battlefield only
+ * - { stageIds: [31, 32] } = Battlefield OR Final Destination
+ * - { stageIds: [2, 3, 8, 28, 31, 32] } = Legal stages (FoD, PS, Yoshi's Story, DL, BF, FD)
+ */
+export type StageFilter = {
+  type: "stage";
+  stageIds: number[];
+};
+
+/**
  * Filter for general text searching across replay data
  *
  * Uses SQL LIKE for case-insensitive fuzzy matching (case-insensitive by default in SQLite).
@@ -79,7 +95,7 @@ export type TextSearchFilter = {
   searchFileNameOnly?: boolean;
 };
 
-export type ReplayFilter = DurationFilter | PlayerFilter | GameModeFilter | TextSearchFilter;
+export type ReplayFilter = DurationFilter | PlayerFilter | GameModeFilter | StageFilter | TextSearchFilter;
 
 // Game mode constants
 const GameModeValue = {
