@@ -230,7 +230,7 @@ export const OverallTable = ({ file, stats }: OverallTableProps) => {
       const oppCount = get(oppRatio, "count") || 0;
 
       let secondaryDisplay = null;
-      if (playerRatio !== null) {
+      if (playerRatio != null) {
         secondaryDisplay = <div style={{ display: "inline-block" }}>({Math.round(playerRatio * 100)}%)</div>;
       }
 

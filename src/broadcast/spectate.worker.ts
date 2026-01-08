@@ -18,7 +18,7 @@ interface Methods {
   connect(authToken: string): Promise<void>;
   disconnect(): Promise<void>;
   refreshBroadcastList(): Promise<void>;
-  getOpenBroadcasts(): Promise<{ broadcastId: string; dolphinId: string; filePath: string | null }[]>;
+  getOpenBroadcasts(): Promise<{ broadcastId: string; dolphinId: string; filePath?: string }[]>;
   getLogObservable(): Observable<string>;
   getErrorObservable(): Observable<Error | string>;
   getBroadcastListObservable(): Observable<BroadcasterItem[]>;

@@ -190,8 +190,8 @@ const GameDetails = ({
     lastFrame != null
       ? game.mode === GameMode.TARGET_TEST
         ? frameToGameTimer(lastFrame, {
-            startingTimerSeconds: game.startingTimerSeconds ?? null,
-            timerType: game.timerType ?? null,
+            startingTimerSeconds: game.startingTimerSeconds ?? undefined,
+            timerType: game.timerType ?? undefined,
           })
         : convertFrameCountToDurationString(lastFrame, "long")
       : Messages.unknown();

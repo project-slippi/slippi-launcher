@@ -15,8 +15,8 @@ export interface ParsedFileInfo {
   filename: string;
   sizeBytes: number;
   birthTime: string | null;
-  settings: GameStartType | null;
-  metadata: MetadataType | null;
+  settings: GameStartType | undefined;
+  metadata: MetadataType | undefined;
   winnerIndices: number[];
 }
 
