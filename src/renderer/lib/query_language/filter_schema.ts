@@ -13,6 +13,27 @@ import { characters, stages } from "@slippi/slippi-js";
 import type { FilterDefinition } from "./types";
 
 /**
+ * Normalize a string for matching stage/character names
+ * - Converts to lowercase
+ * - Removes diacritics (é → e, ō → o, etc.)
+ * - Replaces spaces with underscores
+ * - Removes apostrophes and special characters
+ *
+ * Examples:
+ * - "Pokémon Stadium" → "pokemon_stadium"
+ * - "Fountain of Dreams" → "fountain_of_dreams"
+ * - "Yoshi's Story" → "yoshis_story"
+ */
+function normalizeString(str: string): string {
+  return str
+    .toLowerCase()
+    .normalize("NFD") // Decompose accented characters
+    .replace(/[\u0300-\u036f]/g, "") // Remove diacritical marks
+    .replace(/\s+/g, "_") // Replace spaces with underscores
+    .replace(/[']/g, ""); // Remove apostrophes
+}
+
+/**
  * All available filter definitions
  */
 export const FILTER_SCHEMA: FilterDefinition[] = [
@@ -38,23 +59,23 @@ export const FILTER_SCHEMA: FilterDefinition[] = [
     description: "Character used by any player",
     valueType: "enum",
     enumValues: characters.getAllCharacters().map((char) => ({
-      value: char.name.toLowerCase().replace(/\s+/g, ""),
+      value: normalizeString(char.name),
       label: char.name,
       id: char.id,
     })),
-    examples: ["char:fox", "character:falco", "char:fox,falco"],
+    examples: ["char:fox", "character:falco", "char:ice_climbers"],
     category: "player",
   },
   {
     key: "stage",
     description: "Stage the game was played on",
     valueType: "enum",
-    enumValues: stages.getAllStages().map((stage) => ({
-      value: stage.name.toLowerCase().replace(/\s+/g, "").replace(/[']/g, ""),
+    enumValues: stages.getStages("vs").map((stage) => ({
+      value: normalizeString(stage.name),
       label: stage.name,
       id: stage.id,
     })),
-    examples: ["stage:battlefield", "stage:fd", "stage:yoshis"],
+    examples: ["stage:battlefield", "stage:final_destination", "stage:pokemon_stadium"],
     category: "game",
   },
   {

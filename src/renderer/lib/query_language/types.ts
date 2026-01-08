@@ -30,6 +30,9 @@ export type QueryFilters = {
   // Game mode filter
   gameModes?: number[];
 
+  // Stage filter
+  stageIds?: number[];
+
   // Free text search (when using searchText from query)
   textSearch?: string;
 

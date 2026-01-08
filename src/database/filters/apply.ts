@@ -29,6 +29,8 @@ function applyFilter(
       return applyPlayerFilter(query, filter);
     case "gameMode":
       return applyGameModeFilter(query, filter);
+    case "stage":
+      return applyStageFilter(query, filter);
     case "textSearch":
       return applyTextSearchFilter(query, filter);
     default: {
@@ -158,6 +160,20 @@ function applyGameModeFilter(
     return query;
   }
   return query.where("game.mode", "in", filter.modes);
+}
+
+/**
+ * Apply stage filter to query
+ * Filters games by stage ID using OR logic (match any of the specified stages)
+ */
+function applyStageFilter(
+  query: SelectQueryBuilder<Database, "file" | "game", {}>,
+  filter: Extract<ReplayFilter, { type: "stage" }>,
+): SelectQueryBuilder<Database, "file" | "game", {}> {
+  if (filter.stageIds.length === 0) {
+    return query;
+  }
+  return query.where("game.stage", "in", filter.stageIds);
 }
 
 /**
