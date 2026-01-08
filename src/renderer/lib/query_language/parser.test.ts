@@ -84,6 +84,27 @@ describe("Query Parser", () => {
       expect(result.filters.playerFilters?.[0].characterIds).toEqual([9]); // Marth ID
       expect(result.errors).toHaveLength(0);
     });
+
+    it("should fuzzy match unquoted character names", () => {
+      const result = parseQuery("char:climb");
+      expect(result.filters.playerFilters).toHaveLength(1);
+      expect(result.filters.playerFilters?.[0].characterIds).toEqual([14]); // Matches "Ice Climbers"
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should require exact match for quoted character names", () => {
+      const result = parseQuery('char:"climb"');
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0].type).toBe("INVALID_VALUE");
+      expect(result.errors[0].message).toContain("exact match");
+    });
+
+    it("should allow exact match with quoted normalized name", () => {
+      const result = parseQuery('char:"ice_climbers"');
+      expect(result.filters.playerFilters).toHaveLength(1);
+      expect(result.filters.playerFilters?.[0].characterIds).toEqual([14]); // Exact match
+      expect(result.errors).toHaveLength(0);
+    });
   });
 
   describe("Stage filters", () => {
@@ -108,6 +129,37 @@ describe("Query Parser", () => {
     it("should handle stage with spaces as underscores", () => {
       const result = parseQuery("stage:yoshis_story");
       expect(result.filters.stageIds).toEqual([8]); // Yoshi's Story ID
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should fuzzy match unquoted stage names", () => {
+      const result = parseQuery("stage:battle");
+      expect(result.filters.stageIds).toEqual([31]); // Matches "Battlefield"
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should fuzzy match partial stage names", () => {
+      const result = parseQuery("stage:yoshi");
+      expect(result.filters.stageIds).toEqual([8]); // Matches "Yoshi's Story"
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should fuzzy match 'fountain' to Fountain of Dreams", () => {
+      const result = parseQuery("stage:fountain");
+      expect(result.filters.stageIds).toEqual([2]); // Matches "Fountain of Dreams"
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should require exact match for quoted stage names", () => {
+      const result = parseQuery('stage:"battle"');
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0].type).toBe("INVALID_VALUE");
+      expect(result.errors[0].message).toContain("exact match");
+    });
+
+    it("should allow exact match with quoted full name", () => {
+      const result = parseQuery('stage:"battlefield"');
+      expect(result.filters.stageIds).toEqual([31]); // Exact match
       expect(result.errors).toHaveLength(0);
     });
 
