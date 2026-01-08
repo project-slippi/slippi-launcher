@@ -26,12 +26,15 @@ function normalizeString(str: string): string {
 /**
  * Parse a value according to its filter definition
  *
+ * @param value - The string value to parse
+ * @param def - The filter definition
+ * @param valueWasQuoted - Whether the value was quoted (for fuzzy vs exact matching)
  * @throws Error if value is invalid
  */
-export function parseValue(value: string, def: FilterDefinition): any {
+export function parseValue(value: string, def: FilterDefinition, valueWasQuoted?: boolean): any {
   switch (def.valueType) {
     case "enum":
-      return parseEnumValue(value, def);
+      return parseEnumValue(value, def, valueWasQuoted);
 
     case "boolean":
       return parseBooleanValue(value);
@@ -52,12 +55,18 @@ export function parseValue(value: string, def: FilterDefinition): any {
  * Parse enum value(s)
  * Supports comma-separated values for OR logic
  *
+ * Matching behavior:
+ * - Unquoted (fuzzy): "battle" matches "battlefield", "yoshis" matches "Yoshi's Story"
+ * - Quoted (exact): "battle" requires exact match on normalized value (will fail)
+ *
  * Examples:
  * - "fox" -> 2 (Fox's character ID)
  * - "fox,falco" -> [2, 20] (Fox and Falco IDs)
  * - "battlefield" -> 31 (Battlefield stage ID)
+ * - "battle" -> 31 (fuzzy match, unquoted)
+ * - "battle" (quoted) -> Error (exact match only)
  */
-function parseEnumValue(value: string, def: FilterDefinition): any {
+function parseEnumValue(value: string, def: FilterDefinition, valueWasQuoted?: boolean): any {
   if (!def.enumValues) {
     throw new Error(`No enum values defined for ${def.key}`);
   }
@@ -73,8 +82,9 @@ function parseEnumValue(value: string, def: FilterDefinition): any {
     // Try exact match first (on normalized value field)
     let match = enumValues.find((ev) => ev.value === normalizedInput);
 
-    // Try fuzzy match on label if no exact match
-    if (!match) {
+    // Try fuzzy match on label if no exact match AND value was not quoted
+    // Quoted values require exact match only (for precision)
+    if (!match && !valueWasQuoted) {
       const lowerV = v.toLowerCase();
       match = enumValues.find(
         (ev) => ev.label.toLowerCase().includes(lowerV) || lowerV.includes(ev.label.toLowerCase()),
@@ -82,8 +92,9 @@ function parseEnumValue(value: string, def: FilterDefinition): any {
     }
 
     if (!match) {
+      const matchType = valueWasQuoted ? "exact" : "fuzzy";
       throw new Error(
-        `Invalid value: "${v}". Expected one of: ${enumValues
+        `Invalid value: "${v}" (${matchType} match). Expected one of: ${enumValues
           .slice(0, 5)
           .map((e) => e.value)
           .join(", ")}${enumValues.length > 5 ? "..." : ""}`,
