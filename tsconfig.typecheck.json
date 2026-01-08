@@ -2,9 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "noEmit": true,
-    "incremental": false,
-    "allowJs": true,
-    "checkJs": false
+    "incremental": false
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts"],
 }
