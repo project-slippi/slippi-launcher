@@ -18,7 +18,7 @@ const isMac = process.platform === "darwin";
 export class MacOsRosettaRequiredError extends Error {
   constructor() {
     super(
-      "Rosetta is required to run this executable. Open Terminal and run 'softwareupdate --install-rosetta' to install Rosetta.",
+      `Rosetta is required to run this executable. Open Terminal and run "softwareupdate --install-rosetta" to install Rosetta.`,
     );
   }
 }

@@ -130,8 +130,8 @@ export class DolphinManager {
     const meleeIsoPath = launchMeleeOnPlay ? await this._getIsoPath() : undefined;
 
     // Create the Dolphin instance and start it
-    this.netplayDolphinInstance = new DolphinInstance(dolphinPath, meleeIsoPath);
-    this.netplayDolphinInstance.on("close", async (exitCode: number | null, signal: string | null) => {
+    const dolphinInstance = new DolphinInstance(dolphinPath, meleeIsoPath);
+    dolphinInstance.on("close", async (exitCode: number | null, signal: string | null) => {
       try {
         await this._updateLauncherSettings(DolphinLaunchType.NETPLAY);
       } catch (e) {
@@ -147,11 +147,13 @@ export class DolphinManager {
       log.warn(`Dolphin exit code: ${exitCode?.toString(16)}`);
       log.warn(`Dolphin exit signal: ${signal}`);
     });
-    this.netplayDolphinInstance.on("error", (err: Error) => {
+    dolphinInstance.on("error", (err: Error) => {
       log.error(err);
       throw err;
     });
-    await this.netplayDolphinInstance.start();
+
+    await dolphinInstance.start();
+    this.netplayDolphinInstance = dolphinInstance;
   }
 
   public async configureDolphin(launchType: DolphinLaunchType) {
