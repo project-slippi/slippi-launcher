@@ -151,7 +151,7 @@ export class DolphinManager {
       log.error(err);
       throw err;
     });
-    this.netplayDolphinInstance.start();
+    await this.netplayDolphinInstance.start();
   }
 
   public async configureDolphin(launchType: DolphinLaunchType) {
@@ -181,7 +181,7 @@ export class DolphinManager {
         log.error(err);
         throw err;
       });
-      instance.start();
+      await instance.start();
     } else if (launchType === DolphinLaunchType.PLAYBACK && this.playbackDolphinInstances.size === 0) {
       const instanceId = "configure";
       const instance = new PlaybackDolphinInstance(dolphinPath);
@@ -201,7 +201,7 @@ export class DolphinManager {
         log.error(err);
         throw err;
       });
-      instance.start();
+      await instance.start();
     }
   }
 
