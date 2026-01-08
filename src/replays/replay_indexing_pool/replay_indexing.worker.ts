@@ -14,7 +14,7 @@ import { expose } from "threads/worker";
 export interface ParsedFileInfo {
   filename: string;
   sizeBytes: number;
-  birthTime: string | null;
+  birthTime: string | undefined;
   settings: GameStartType | undefined;
   metadata: MetadataType | undefined;
   winnerIndices: number[];
@@ -49,7 +49,7 @@ const methods: WorkerSpec = {
 
       // Get file stats
       let sizeBytes = 0;
-      let birthTime: string | null = null;
+      let birthTime: string | undefined = undefined;
       try {
         const fileInfo = await fs.stat(fullPath);
         sizeBytes = fileInfo.size;

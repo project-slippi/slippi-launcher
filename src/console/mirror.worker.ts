@@ -54,7 +54,7 @@ mirrorManager.on(MirrorEvent.ERROR, async (error: Error | string) => {
 mirrorManager.on(
   MirrorEvent.NEW_FILE,
   async (playbackId: string, filePath: string, isRealtime: boolean, nickname?: string) => {
-    mirrorDetailsSubject.next({ playbackId, filePath, isRealtime, nickname: nickname });
+    mirrorDetailsSubject.next({ playbackId, filePath, isRealtime, nickname });
   },
 );
 

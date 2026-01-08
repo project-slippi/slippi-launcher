@@ -238,14 +238,14 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
     return !dolphinVersion || lt(dolphinVersion, latestVersion);
   }
 
-  public async getDolphinVersion(): Promise<string | null> {
+  public async getDolphinVersion(): Promise<string | undefined> {
     try {
       const dolphinPath = await this.findDolphinExecutable();
       const dolphinVersionOut = spawnSync(dolphinPath, ["--version"]).stdout.toString();
       const match = dolphinVersionOut.match(semverRegex);
-      return match?.[0] ?? null;
+      return match?.[0];
     } catch (err) {
-      return null;
+      return undefined;
     }
   }
 

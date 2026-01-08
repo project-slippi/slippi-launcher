@@ -19,8 +19,8 @@ import { StartBroadcastDialog } from "./start_broadcast_dialog";
 type BroadcastPanelProps = {
   dolphinStatus: ConnectionStatus;
   slippiServerStatus: ConnectionStatus;
-  startTime: Date | null;
-  endTime: Date | null;
+  startTime?: Date;
+  endTime?: Date;
   onStartBroadcast: (viewerId: string) => void;
   onDisconnect: () => void;
 };
@@ -105,7 +105,7 @@ export const BroadcastPanel = ({
           margin-top: 10px;
         `}
       >
-        {isConnected && startTime !== null && (
+        {isConnected && startTime != null && (
           <div>
             {Messages.broadcastStarted()} <TimeAgo date={startTime} formatter={intlFormatter} />
           </div>

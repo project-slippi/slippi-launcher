@@ -14,16 +14,16 @@ export class SessionExpiredError extends Error {
 }
 
 export interface AuthService {
-  getCurrentUser(): AuthUser | null;
+  getCurrentUser(): AuthUser | undefined;
   getUserToken(): Promise<string>;
-  init(): Promise<AuthUser | null>;
-  login(args: { email: string; password: string }): Promise<AuthUser | null>;
+  init(): Promise<AuthUser | undefined>;
+  login(args: { email: string; password: string }): Promise<AuthUser | undefined>;
   logout(): Promise<void>;
   refreshUser(): Promise<void>;
   sendVerificationEmail(): Promise<void>;
-  onUserChange(onChange: (user: AuthUser | null) => void): () => void;
+  onUserChange(onChange: (user: AuthUser | undefined) => void): () => void;
   resetPassword(email: string): Promise<void>;
-  signUp(args: { email: string; password: string; displayName: string }): Promise<AuthUser | null>;
+  signUp(args: { email: string; password: string; displayName: string }): Promise<AuthUser | undefined>;
   updateDisplayName(displayName: string): Promise<void>;
   // Multi-account support
   getMultiAccountService(): MultiAccountService;

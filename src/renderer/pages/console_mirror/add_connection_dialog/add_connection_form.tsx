@@ -268,7 +268,7 @@ export const AddConnectionForm = ({ defaultValues, onSubmit, disabled }: AddConn
                     value={isNaN(value) ? "" : value.toString()}
                     onChange={(e) => onChange(parseInt(e.target.value))}
                     error={Boolean(error)}
-                    helperText={error ? error.message : null}
+                    helperText={error?.message}
                     type="number"
                     disabled={disabled}
                   />

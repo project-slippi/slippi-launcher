@@ -56,7 +56,7 @@ const InternalPlayerBadge = ({
   isWinner,
   children,
 }: React.PropsWithChildren<CommonPlayerBadgeProps>) => {
-  const charIcon = getCharacterIcon(characterId ?? null, characterColor);
+  const charIcon = getCharacterIcon(characterId, characterColor);
   const color = getColor(port, teamId);
 
   return (

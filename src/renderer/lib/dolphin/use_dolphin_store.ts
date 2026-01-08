@@ -13,9 +13,9 @@ export const useDolphinStore = create(() => ({
   playbackStatus: DolphinStatus.UNKNOWN,
   netplayOpened: false,
   playbackOpened: false,
-  netplayDownloadProgress: null as { current: number; total: number } | null,
-  netplayDolphinVersion: null as string | null,
-  playbackDolphinVersion: null as string | null,
+  netplayDownloadProgress: undefined as { current: number; total: number } | undefined,
+  netplayDolphinVersion: undefined as string | undefined,
+  playbackDolphinVersion: undefined as string | undefined,
 }));
 
 export const setDolphinOpened = (dolphinType: DolphinLaunchType, isOpened = true) => {
@@ -40,7 +40,7 @@ export const setDolphinStatus = (dolphinType: DolphinLaunchType, status: Dolphin
   }
 };
 
-export const setDolphinVersion = (dolphinVersion: string | null, dolphinType: DolphinLaunchType) => {
+export const setDolphinVersion = (dolphinVersion: string | undefined, dolphinType: DolphinLaunchType) => {
   switch (dolphinType) {
     case DolphinLaunchType.NETPLAY:
       useDolphinStore.setState({ netplayDolphinVersion: dolphinVersion });
@@ -51,7 +51,7 @@ export const setDolphinVersion = (dolphinVersion: string | null, dolphinType: Do
   }
 };
 
-export const updateNetplayDownloadProgress = (progress: { current: number; total: number } | null) => {
+export const updateNetplayDownloadProgress = (progress: { current: number; total: number } | undefined) => {
   unstable_batchedUpdates(() => {
     useDolphinStore.setState({ netplayDownloadProgress: progress });
   });

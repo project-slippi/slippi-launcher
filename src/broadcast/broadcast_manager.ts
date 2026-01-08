@@ -496,7 +496,7 @@ export class BroadcastManager extends EventEmitter {
         const message = {
           type: "send-event",
           broadcastId: this.broadcastId,
-          event: event,
+          event,
         };
 
         switch (event.type) {

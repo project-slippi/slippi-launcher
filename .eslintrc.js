@@ -111,7 +111,8 @@ module.exports = {
     "lodash/import-scope": [2, "method"],
     "no-restricted-imports": ["error", "lodash/chain"],
     "react/jsx-curly-brace-presence": ["error", "never"],
-    "@typescript-eslint/no-require-imports": "off"
+    "@typescript-eslint/no-require-imports": "off",
+    "object-shorthand": ["warn", "always"]
   },
   overrides: [
     {

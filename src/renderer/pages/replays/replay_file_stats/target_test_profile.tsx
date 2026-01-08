@@ -6,7 +6,7 @@ import { IconMessage } from "@/components/message";
 
 type GameProfileProps = {
   file: FileResult;
-  stats: StadiumStatsType | null;
+  stats?: StadiumStatsType;
 };
 
 const StatSection = (_props: { title: string }) => {

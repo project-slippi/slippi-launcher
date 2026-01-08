@@ -17,7 +17,7 @@ export const GameMusicToggle = () => {
   const netplayDolphinOpen = useDolphinStore((store) => store.netplayOpened);
   const dolphinVersion = useDolphinStore((store) => store.netplayDolphinVersion);
 
-  const isJukeboxCompatible = dolphinVersion !== null && gte(dolphinVersion, MIN_DOLPHIN_VERSION_FOR_JUKEBOX);
+  const isJukeboxCompatible = dolphinVersion != null && gte(dolphinVersion, MIN_DOLPHIN_VERSION_FOR_JUKEBOX);
   const disabled = netplayDolphinOpen || !isJukeboxCompatible || !dolphinVersion;
 
   const jukeboxDescription = React.useMemo(() => {

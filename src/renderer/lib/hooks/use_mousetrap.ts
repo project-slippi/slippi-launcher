@@ -15,7 +15,7 @@ export type MousetrapCallback = (e: ExtendedKeyboardEvent, combo: string) => voi
  *                              If omitted, it will be chosen automatically based on the keys passed in.
  */
 export const useMousetrap = (handlerKey: string | string[], handlerCallback: MousetrapCallback, evtType?: string) => {
-  const actionRef = useRef<MousetrapCallback | null>(null);
+  const actionRef = useRef<MousetrapCallback | undefined>();
   actionRef.current = handlerCallback;
 
   useEffect(() => {
@@ -31,5 +31,5 @@ export const useMousetrap = (handlerKey: string | string[], handlerCallback: Mou
     return () => {
       mousetrap.unbind(handlerKey);
     };
-  }, [handlerKey, handlerCallback]);
+  }, [handlerKey, handlerCallback, evtType]);
 };

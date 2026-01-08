@@ -50,7 +50,7 @@ export const OverallTable = ({ file, stats }: OverallTableProps) => {
   const renderMultiStatField = (
     header: string,
     arrPath: string | string[],
-    fieldPaths: string | string[] | null,
+    fieldPaths?: string | string[],
     highlight?: (v: any[], ov: any[]) => boolean,
     valueMapper?: (a: any) => string,
     arrPathExtension?: string | string[],
@@ -71,7 +71,7 @@ export const OverallTable = ({ file, stats }: OverallTableProps) => {
     const player1Item = arrPathExtension ? get(itemsByPlayer[0], arrPathExtension) : itemsByPlayer[0] || {};
     const player2Item = arrPathExtension ? get(itemsByPlayer[1], arrPathExtension) : itemsByPlayer[1] || {};
     const generateValues = (item: any) => {
-      if (fieldPaths !== null) {
+      if (fieldPaths != null) {
         return toArray(pick(item, fieldPaths)).map((v) => (valueMapper ? valueMapper(v) : v));
       }
 
@@ -137,10 +137,10 @@ export const OverallTable = ({ file, stats }: OverallTableProps) => {
     highlightCondition: (a: number, b: number) => boolean,
   ) => {
     return renderRatioStatField(header, arrPath, fieldPath, (ratio: RatioType, oppRatio: RatioType) => {
-      const playerRatio = get(ratio, "ratio", null);
-      const oppRatioType = get(oppRatio, "ratio", null);
+      const playerRatio = ratio.ratio;
+      const oppRatioType = oppRatio.ratio;
 
-      if (playerRatio === null) {
+      if (playerRatio == null) {
         return (
           <T.TableCell>
             <div>N/A</div>
@@ -148,7 +148,7 @@ export const OverallTable = ({ file, stats }: OverallTableProps) => {
         );
       }
       const fixedPlayerRatio = playerRatio.toFixed(1);
-      const fixedOppRatio = oppRatioType !== null ? oppRatioType.toFixed(1) : "Infinity";
+      const fixedOppRatio = oppRatioType != null ? oppRatioType.toFixed(1) : "Infinity";
       return (
         <T.TableCell highlight={highlightCondition(parseFloat(fixedPlayerRatio), parseFloat(fixedOppRatio))}>
           <div>{fixedPlayerRatio}</div>
@@ -164,10 +164,10 @@ export const OverallTable = ({ file, stats }: OverallTableProps) => {
     highlightCondition: (a: number, b: number) => boolean,
   ) => {
     return renderRatioStatField(header, arrPath, fieldPath, (ratio, oppRatio) => {
-      const playerRatio = get(ratio, "ratio", null);
-      const oppRatioType = get(oppRatio, "ratio", null);
+      const playerRatio = ratio.ratio;
+      const oppRatioType = oppRatio.ratio;
 
-      if (playerRatio === null || oppRatioType === null) {
+      if (playerRatio == null || oppRatioType == null) {
         return (
           <T.TableCell>
             <div>N/A</div>
@@ -177,8 +177,8 @@ export const OverallTable = ({ file, stats }: OverallTableProps) => {
       const fixedPlayerRatio = playerRatio.toFixed(3);
       const fixedOppRatio = oppRatioType.toFixed(3);
 
-      const playerCount = get(ratio, "count");
-      const playerTotal = get(ratio, "total");
+      const playerCount = ratio.count;
+      const playerTotal = ratio.total;
 
       return (
         <T.TableCell highlight={highlightCondition(parseFloat(fixedPlayerRatio), parseFloat(fixedOppRatio))}>
@@ -224,10 +224,10 @@ export const OverallTable = ({ file, stats }: OverallTableProps) => {
     highlightCondition: (a: number, b: number) => boolean,
   ) => {
     return renderRatioStatField(header, arrPath, fieldPath, (ratio: RatioType, oppRatio: RatioType) => {
-      const playerCount = get(ratio, "count") || 0;
-      const playerRatio = get(ratio, "ratio");
+      const playerCount = ratio.count;
+      const playerRatio = ratio.ratio;
 
-      const oppCount = get(oppRatio, "count") || 0;
+      const oppCount = oppRatio.count;
 
       let secondaryDisplay = null;
       if (playerRatio != null) {
@@ -326,7 +326,7 @@ export const OverallTable = ({ file, stats }: OverallTableProps) => {
         {renderMultiStatField(
           "L-Cancel Success Rate",
           "actionCounts",
-          null,
+          undefined,
           undefined,
           (val: any) => {
             if (!val) {

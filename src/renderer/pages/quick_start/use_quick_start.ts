@@ -47,11 +47,11 @@ const useQuickStartOptions = () => {
 
 export const useQuickStart = () => {
   const options = useQuickStartOptions();
-  const [currentStep, setCurrentStep] = React.useState<QuickStartStep | null>(null);
+  const [currentStep, setCurrentStep] = React.useState<QuickStartStep | undefined>();
   const steps = useQuickStartStore((store) => store.steps);
 
   React.useEffect(() => {
-    let stepToShow: QuickStartStep | null = QuickStartStep.COMPLETE;
+    let stepToShow: QuickStartStep = QuickStartStep.COMPLETE;
     if (!options.hasIso) {
       stepToShow = QuickStartStep.SET_ISO_PATH;
     }
@@ -107,8 +107,8 @@ export const useQuickStart = () => {
  * Generates the quick start steps, and sets them in the store. This is called only once on app initialization.
  */
 export function generateQuickStartSteps(state: {
-  user: AuthUser | null;
-  userData: UserData | null;
+  user: AuthUser | undefined;
+  userData: UserData | undefined;
   serverError: boolean;
 }): void {
   const { user, userData, serverError } = state;

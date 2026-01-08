@@ -68,7 +68,7 @@ export const GameSettings = React.memo(() => {
       <SettingItem name={Messages.meleeIsoFile()} description={Messages.meleeIsoFileDescription()}>
         <PathInput
           tooltipText={netplayDolphinOpen || playbackDolphinOpen ? Messages.closeDolphinToChange() : ""}
-          value={isoPath !== null ? isoPath : ""}
+          value={isoPath || ""}
           onSelect={setIsoPath}
           placeholder={Messages.noFileSet()}
           disabled={verifying || netplayDolphinOpen || playbackDolphinOpen}

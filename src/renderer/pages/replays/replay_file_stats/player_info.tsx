@@ -32,7 +32,7 @@ export const PlayerInfo = ({
 }: PlayerInfoProps) => {
   const port = playerIndex + 1;
   const backupName = type === 1 ? "CPU" : `Player ${port}`;
-  const charIcon = getCharacterIcon(characterId ?? null, characterColor);
+  const charIcon = getCharacterIcon(characterId, characterColor);
   const slippiProfileUrl = `https://slippi.gg/user/${connectCode?.split("#").join("-")}`;
   return (
     <Outer>

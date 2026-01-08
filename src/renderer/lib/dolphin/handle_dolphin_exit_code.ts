@@ -2,12 +2,12 @@ const { isLinux, isWindows } = window.electron.bootstrap;
 
 import { HandleDolphinExitCodeMessages as Messages } from "./handle_dolphin_exit_code.messages";
 
-export const handleDolphinExitCode = (exitCode: number | null): string | null => {
-  if (exitCode === null || exitCode === 0) {
-    return null;
+export const handleDolphinExitCode = (exitCode: number | null): string | undefined => {
+  if (exitCode == null || exitCode === 0) {
+    return undefined;
   }
 
-  let err: string | null = null;
+  let err: string | undefined;
 
   if (isWindows) {
     err = handleWindowsExitCode(exitCode);
@@ -20,11 +20,11 @@ export const handleDolphinExitCode = (exitCode: number | null): string | null =>
   return err;
 };
 
-const handleWindowsExitCode = (exitCode: number): string | null => {
+const handleWindowsExitCode = (exitCode: number): string | undefined => {
   switch (exitCode) {
     case 0x3: {
       // returned when selecting update in game
-      return null;
+      return undefined;
     }
     case 0xc0000135:
     case 0xc000007b: {

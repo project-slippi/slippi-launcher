@@ -73,7 +73,7 @@ export class ConnectionScanner {
     }, CONSOLE_EXPIRY_TIMEOUT);
 
     const newConsole = {
-      ip: ip,
+      ip,
       mac: macAddr,
       name: nick,
       firstFound: previous ? previous.firstFound : new Date().toISOString(),

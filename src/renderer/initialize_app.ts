@@ -19,7 +19,7 @@ export async function initializeApp(services: Services) {
   // If we're logged in, check they have a valid play key
   promises.push(
     (async () => {
-      let user: AuthUser | null = null;
+      let user: AuthUser | undefined = undefined;
       try {
         user = await authService.init();
         // useAccount.getState().setUser(user);
@@ -27,7 +27,7 @@ export async function initializeApp(services: Services) {
         log.warn(err);
       }
 
-      let userData: UserData | null = null;
+      let userData: UserData | undefined = undefined;
       let serverError = false;
       if (user) {
         try {

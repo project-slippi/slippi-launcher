@@ -116,7 +116,7 @@ function installSpectateListeners({ spectateRemoteService }: { spectateRemoteSer
 export function installReplayListeners({ replayService }: { replayService: ReplayService }) {
   const replayPresenter = getReplayPresenter(replayService);
 
-  const updateProgress = (progress: Progress | null) => replayPresenter.updateProgress(progress);
+  const updateProgress = (progress: Progress | undefined) => replayPresenter.updateProgress(progress);
   const throttledUpdateProgress = throttle(updateProgress, 50);
   replayService.onReplayLoadProgressUpdate(throttledUpdateProgress);
 }

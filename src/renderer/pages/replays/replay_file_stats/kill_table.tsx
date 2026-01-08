@@ -57,7 +57,7 @@ export const KillTable = ({ file, stats, player, opp, onPlay }: KillTableProps) 
       start = "–";
     }
 
-    if (stock.endFrame !== null && stock.endFrame !== undefined) {
+    if (stock.endFrame != null && stock.endFrame) {
       end = convertFrameCountToDurationString(stock.endFrame);
 
       killedBy = renderKilledBy(stock);
@@ -107,8 +107,7 @@ export const KillTable = ({ file, stats, player, opp, onPlay }: KillTableProps) 
     // Only get punishes that killed
     const killingPunishes = playerPunishes.filter((punish) => punish.didKill);
     const killingPunishesByEndFrame = keyBy(killingPunishes, "endFrame");
-    const punishThatEndedStock =
-      stock.endFrame !== null && stock.endFrame !== undefined ? killingPunishesByEndFrame[stock.endFrame] : null;
+    const punishThatEndedStock = stock.endFrame != null ? killingPunishesByEndFrame[stock.endFrame] : undefined;
 
     if (!punishThatEndedStock) {
       // return <span className={styles['secondary-text']}>Self Destruct</span>;
@@ -123,7 +122,7 @@ export const KillTable = ({ file, stats, player, opp, onPlay }: KillTableProps) 
   };
 
   const renderKilledDirection = (stock: StockType) => {
-    if (stock.deathAnimation === null || stock.deathAnimation === undefined) {
+    if (stock.deathAnimation == null) {
       return undefined;
     }
 

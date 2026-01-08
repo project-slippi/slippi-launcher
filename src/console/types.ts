@@ -15,9 +15,9 @@ export enum Ports {
 export type ConsoleMirrorStatusUpdate = {
   status: number;
   isMirroring: boolean;
-  filename: string | null;
+  filename: string | undefined;
   nickname: string;
-  nintendontVersion: string | null;
+  nintendontVersion: string | undefined;
 };
 
 export type MirrorConfig = {

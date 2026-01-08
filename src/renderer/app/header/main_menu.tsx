@@ -48,7 +48,7 @@ const CustomLink = ({ title, children, to, ...props }: CustomLinkProps) => {
   const match = useMatch({ path: resolved.pathname, end: false });
 
   return (
-    <MenuButton selected={match !== null}>
+    <MenuButton selected={match != null}>
       <Tooltip title={title}>
         <Button
           component={Link}

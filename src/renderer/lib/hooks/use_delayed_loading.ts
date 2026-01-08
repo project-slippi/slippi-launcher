@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
  */
 export function useDelayedLoading(isLoading: boolean, delay = 300, minDisplay = 500): boolean {
   const [showLoading, setShowLoading] = useState(false);
-  const [shownAt, setShownAt] = useState<number | null>(null);
+  const [shownAt, setShownAt] = useState<number | undefined>();
 
   useEffect(() => {
     if (isLoading && !showLoading) {
@@ -27,7 +27,7 @@ export function useDelayedLoading(isLoading: boolean, delay = 300, minDisplay = 
       return () => clearTimeout(timer);
     }
 
-    if (!isLoading && showLoading && shownAt !== null) {
+    if (!isLoading && showLoading && shownAt != null) {
       // Finished loading: ensure indicator was shown for at least `minDisplay` ms
       const elapsed = Date.now() - shownAt;
       const remaining = minDisplay - elapsed;
@@ -35,7 +35,7 @@ export function useDelayedLoading(isLoading: boolean, delay = 300, minDisplay = 
       if (remaining > 0) {
         const timer = setTimeout(() => {
           setShowLoading(false);
-          setShownAt(null);
+          setShownAt(undefined);
         }, remaining);
 
         return () => clearTimeout(timer);
@@ -43,10 +43,10 @@ export function useDelayedLoading(isLoading: boolean, delay = 300, minDisplay = 
 
       // Cleanup immediately if minimum display time has passed
       setShowLoading(false);
-      setShownAt(null);
+      setShownAt(undefined);
     }
 
-    return undefined;
+    return;
   }, [isLoading, showLoading, shownAt, delay, minDisplay]);
 
   return showLoading;

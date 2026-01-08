@@ -3,27 +3,27 @@ import { create } from "zustand";
 
 type StoreState = {
   isBroadcasting: boolean;
-  startTime: Date | null;
-  endTime: Date | null;
+  startTime: Date | undefined;
+  endTime: Date | undefined;
   slippiConnectionStatus: ConnectionStatus;
   dolphinConnectionStatus: ConnectionStatus;
-  broadcastError: string | null;
+  broadcastError: string | undefined;
 };
 
 type StoreReducers = {
   setIsBroadcasting: (isBroadcasting: boolean) => void;
   setSlippiConnectionStatus: (connectionStatus: number) => void;
   setDolphinConnectionStatus: (connectionStatus: number) => void;
-  setBroadcastError: (error: string | null) => void;
+  setBroadcastError: (error: string | undefined) => void;
 };
 
 const initialState: StoreState = {
   isBroadcasting: false,
-  startTime: null,
-  endTime: null,
+  startTime: undefined,
+  endTime: undefined,
   slippiConnectionStatus: ConnectionStatus.DISCONNECTED,
   dolphinConnectionStatus: ConnectionStatus.DISCONNECTED,
-  broadcastError: null,
+  broadcastError: undefined,
 };
 
 export const useConsole = create<StoreState & StoreReducers>((set, get) => ({
@@ -43,7 +43,7 @@ export const useConsole = create<StoreState & StoreReducers>((set, get) => ({
       // We started broadcasting so update the start time
       set({
         startTime: new Date(),
-        endTime: null,
+        endTime: undefined,
       });
     }
     set({

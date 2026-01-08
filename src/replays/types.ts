@@ -4,15 +4,15 @@ import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
 export type PlayerInfo = {
   playerIndex: number;
   port: number;
-  type: number | null;
-  characterId: number | null;
-  characterColor: number | null;
-  teamId: number | null;
+  type: number | undefined;
+  characterId: number | undefined;
+  characterColor: number | undefined;
+  teamId: number | undefined;
   isWinner: boolean;
-  connectCode: string | null;
-  displayName: string | null;
-  tag: string | null;
-  startStocks: number | null;
+  connectCode: string | undefined;
+  displayName: string | undefined;
+  tag: string | undefined;
+  startStocks: number | undefined;
 };
 
 export type FileResult = {
@@ -25,14 +25,14 @@ export type FileResult = {
 export type GameInfo = {
   players: PlayerInfo[];
   isTeams: boolean;
-  stageId: number | null;
-  startTime: string | null;
-  platform: string | null;
-  consoleNickname: string | null;
-  mode: number | null;
-  lastFrame: number | null;
-  timerType: number | null;
-  startingTimerSeconds: number | null;
+  stageId: number | undefined;
+  startTime: string | undefined;
+  platform: string | undefined;
+  consoleNickname: string | undefined;
+  mode: number | undefined;
+  lastFrame: number | undefined;
+  timerType: number | undefined;
+  startingTimerSeconds: number | undefined;
 };
 
 export type FolderResult = {

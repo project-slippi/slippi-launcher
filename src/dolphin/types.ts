@@ -82,7 +82,7 @@ export type DolphinDownloadProgressEvent = {
 export type DolphinDownloadCompleteEvent = {
   type: DolphinEventType.DOWNLOAD_COMPLETE;
   dolphinType: DolphinLaunchType;
-  dolphinVersion: string | null;
+  dolphinVersion: string | undefined;
 };
 
 export type DolphinNetworkErrorEvent = {
@@ -139,6 +139,6 @@ export interface DolphinInstallation {
   addGamePath(gameDir: string): Promise<void>;
   getSettings(): Promise<SyncedDolphinSettings>;
   updateSettings(options: Partial<SyncedDolphinSettings>): Promise<void>;
-  getDolphinVersion(): Promise<string | null>;
+  getDolphinVersion(): Promise<string | undefined>;
   findPlayKey(): Promise<string>;
 }

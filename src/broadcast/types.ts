@@ -69,11 +69,11 @@ export type SlippiBroadcastPayloadEvent =
 export type BroadcastService = {
   onSpectateReconnect(handle: () => void): () => void;
   onBroadcastReconnect(handle: (config: StartBroadcastConfig) => void): () => void;
-  onBroadcastErrorMessage(handle: (message: string | null) => void): () => void;
+  onBroadcastErrorMessage(handle: (message?: string) => void): () => void;
   onBroadcastListUpdated(handle: (items: BroadcasterItem[]) => void): () => void;
   onDolphinStatusChanged(handle: (status: number) => void): () => void;
   onSlippiStatusChanged(handle: (status: number) => void): () => void;
-  onSpectateErrorMessage(handle: (message: string | null) => void): () => void;
+  onSpectateErrorMessage(handle: (message?: string) => void): () => void;
   connectToSpectateServer(authToken: string): Promise<void>;
   disconnectFromSpectateServer(): Promise<void>;
   refreshBroadcastList(): Promise<void>;
