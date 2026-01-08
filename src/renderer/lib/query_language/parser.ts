@@ -51,7 +51,7 @@ export function parseQuery(query: string): ParsedQuery {
             // Port alias - parse value as character
             const charFilter = getFilterDefinition("character");
             if (charFilter) {
-              const parsedValue = parseValue(token.value, charFilter);
+              const parsedValue = parseValue(token.value, charFilter, token.valueWasQuoted);
               const characterIds = Array.isArray(parsedValue) ? parsedValue : [parsedValue];
 
               if (negateNext) {
@@ -78,7 +78,7 @@ export function parseQuery(query: string): ParsedQuery {
             break;
           }
 
-          const parsedValue = parseValue(token.value, def);
+          const parsedValue = parseValue(token.value, def, token.valueWasQuoted);
           applyFilter(filters, token.key!, parsedValue, negateNext, token.valueWasQuoted);
           negateNext = false;
         } catch (err: any) {
