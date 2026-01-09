@@ -20,6 +20,16 @@ If you are on Ubuntu, PopOS, or similar, open a terminal and run
 sudo apt install libopengl0
 ~~~
 
+## It says "Unknown system error -86" when I hit Play!
+
+### MacOS
+
+Open the Terminal app (CMD+Space to search for it in Spotlight) and paste the following command:
+
+~~~bash
+softwareupdate --install-rosetta
+~~~
+
 ## How do I setup my GameCube Controller Adapter?
 
 Set your adapter to Wii U/Switch mode and then follow the section for your OS.

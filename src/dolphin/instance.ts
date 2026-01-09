@@ -15,6 +15,14 @@ import type { ReplayCommunication } from "./types";
 const log = electronLog.scope("dolphin/instance");
 const isMac = process.platform === "darwin";
 
+export class MacOsRosettaRequiredError extends Error {
+  constructor() {
+    super(
+      `Rosetta is required to run this executable. Open the Terminal app and run "softwareupdate --install-rosetta" to install Rosetta.`,
+    );
+  }
+}
+
 const generateTempCommunicationFile = (): string => {
   const tmpDir = path.join(app.getPath("userData"), "temp");
   fs.ensureDirSync(tmpDir);
@@ -38,7 +46,7 @@ export class DolphinInstance extends EventEmitter {
   /***
    * Spawns the Dolphin instance with any additional command line parameters
    */
-  public start(additionalParams?: string[]) {
+  public async start(additionalParams?: string[]): Promise<void> {
     const params: string[] = [];
 
     // Auto-start the ISO if provided
@@ -51,23 +59,7 @@ export class DolphinInstance extends EventEmitter {
       params.push(...additionalParams);
     }
 
-    // On macOS, the default process.spawn seems to have odd overhead and causes deadlocks in Dolphin's rendering
-    // process - as best I can tell, it's not separating the event loops and just choking immediately.
-    //
-    // If you read the Node.js source, execFile basically goes through `.spawn` as well, but sets a few
-    // different options along the way. Notably, there's a number of option flags that aren't available on the
-    // SpawnOptions TypeScript hint, for whatever reason... so trying to pass them here blows up.
-    //
-    // tl;dr: for macOS, pass through execFile and set a massively high buffer for performance reasons. The returned
-    // child process is ultimately the same, or close enough for now, and keeps the rest of the codebase intact.
-    if (isMac) {
-      this.process = execFile(this.executablePath, params, {
-        // 100MB
-        maxBuffer: 1000 * 1000 * 100,
-      });
-    } else {
-      this.process = spawn(this.executablePath, params);
-    }
+    this.process = await this.startProcess(this.executablePath, params);
 
     this.process.on("close", (code) => {
       this.emit("close", code);
@@ -86,6 +78,50 @@ export class DolphinInstance extends EventEmitter {
     this.process.stderr?.on("data", (data) => {
       combinedString += data.toString();
       debouncedErrorLog(combinedString);
+    });
+  }
+
+  private async startProcess(executablePath: string, params: string[]): Promise<ChildProcess> {
+    return new Promise((resolve, reject) => {
+      let started = false;
+      let child: ChildProcess;
+      // On macOS, the default process.spawn seems to have odd overhead and causes deadlocks in Dolphin's rendering
+      // process - as best I can tell, it's not separating the event loops and just choking immediately.
+      //
+      // If you read the Node.js source, execFile basically goes through `.spawn` as well, but sets a few
+      // different options along the way. Notably, there's a number of option flags that aren't available on the
+      // SpawnOptions TypeScript hint, for whatever reason... so trying to pass them here blows up.
+      //
+      // tl;dr: for macOS, pass through execFile and set a massively high buffer for performance reasons. The returned
+      // child process is ultimately the same, or close enough for now, and keeps the rest of the codebase intact.
+      try {
+        if (isMac) {
+          child = execFile(executablePath, params, {
+            // 100MB
+            maxBuffer: 1000 * 1000 * 100,
+          });
+        } else {
+          child = spawn(executablePath, params);
+        }
+
+        child.once("spawn", () => {
+          started = true;
+          resolve(child);
+        });
+
+        child.once("error", (err) => {
+          if (!started) {
+            reject(err);
+          }
+        });
+      } catch (err: unknown) {
+        if (isMac && process.arch === "arm64" && (err as NodeJS.ErrnoException).errno === -86) {
+          // EBADARCH – bad CPU type in executable
+          reject(new MacOsRosettaRequiredError());
+          return;
+        }
+        reject(err);
+      }
     });
   }
 }
@@ -144,7 +180,7 @@ export class PlaybackDolphinInstance extends DolphinInstance {
       // Launch this comms file
       params.push("-i", this.commPath);
 
-      this.start(params);
+      await this.start(params);
     }
   }
 }

@@ -130,8 +130,8 @@ export class DolphinManager {
     const meleeIsoPath = launchMeleeOnPlay ? await this._getIsoPath() : undefined;
 
     // Create the Dolphin instance and start it
-    this.netplayDolphinInstance = new DolphinInstance(dolphinPath, meleeIsoPath);
-    this.netplayDolphinInstance.on("close", async (exitCode: number | null, signal: string | null) => {
+    const dolphinInstance = new DolphinInstance(dolphinPath, meleeIsoPath);
+    dolphinInstance.on("close", async (exitCode: number | null, signal: string | null) => {
       try {
         await this._updateLauncherSettings(DolphinLaunchType.NETPLAY);
       } catch (e) {
@@ -147,11 +147,13 @@ export class DolphinManager {
       log.warn(`Dolphin exit code: ${exitCode?.toString(16)}`);
       log.warn(`Dolphin exit signal: ${signal}`);
     });
-    this.netplayDolphinInstance.on("error", (err: Error) => {
+    dolphinInstance.on("error", (err: Error) => {
       log.error(err);
       throw err;
     });
-    this.netplayDolphinInstance.start();
+
+    await dolphinInstance.start();
+    this.netplayDolphinInstance = dolphinInstance;
   }
 
   public async configureDolphin(launchType: DolphinLaunchType) {
@@ -163,7 +165,6 @@ export class DolphinManager {
     const dolphinPath = await installation.findDolphinExecutable();
     if (launchType === DolphinLaunchType.NETPLAY && !this.netplayDolphinInstance) {
       const instance = new DolphinInstance(dolphinPath);
-      this.netplayDolphinInstance = instance;
       instance.on("close", async (exitCode) => {
         try {
           await this._updateLauncherSettings(launchType);
@@ -181,11 +182,11 @@ export class DolphinManager {
         log.error(err);
         throw err;
       });
-      instance.start();
+      await instance.start();
+      this.netplayDolphinInstance = instance;
     } else if (launchType === DolphinLaunchType.PLAYBACK && this.playbackDolphinInstances.size === 0) {
       const instanceId = "configure";
       const instance = new PlaybackDolphinInstance(dolphinPath);
-      this.playbackDolphinInstances.set(instanceId, instance);
       instance.on("close", async (exitCode) => {
         this.eventSubject.next({
           type: DolphinEventType.CLOSED,
@@ -201,7 +202,8 @@ export class DolphinManager {
         log.error(err);
         throw err;
       });
-      instance.start();
+      await instance.start();
+      this.playbackDolphinInstances.set(instanceId, instance);
     }
   }
 
