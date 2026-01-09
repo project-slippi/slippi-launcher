@@ -62,6 +62,7 @@ export const FILTER_SCHEMA: FilterDefinition[] = [
       value: normalizeString(char.name),
       label: char.name,
       id: char.id,
+      alias: char.shortName ? normalizeString(char.shortName) : undefined,
     })),
     examples: ["char:fox", "character:falco", "char:ice_climbers"],
     category: "player",
