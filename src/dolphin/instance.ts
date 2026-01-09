@@ -111,17 +111,9 @@ export class DolphinInstance extends EventEmitter {
 
         child.once("error", (err: NodeJS.ErrnoException) => {
           // Process already started successfully, ignore error
-          if (started) {
-            return;
+          if (!started) {
+            reject(err);
           }
-
-          if (isMac && process.arch === "arm64" && err.errno === -86) {
-            // EBADARCH – bad CPU type in executable
-            reject(new MacOsRosettaRequiredError());
-            return;
-          }
-
-          reject(err);
         });
       } catch (err: unknown) {
         if (isMac && process.arch === "arm64" && (err as NodeJS.ErrnoException).errno === -86) {
