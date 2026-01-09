@@ -75,34 +75,56 @@ function parseEnumValue(value: string, def: FilterDefinition, valueWasQuoted?: b
   const values = value.split(",").map((v) => v.trim());
   const enumValues = def.enumValues;
 
-  const parsed = values.map((v) => {
+  const parsed = values.flatMap((v) => {
     // Normalize the input value for matching
     const normalizedInput = normalizeString(v);
 
-    // Try exact match first (on normalized value field)
-    let match = enumValues.find((ev) => ev.value === normalizedInput);
-
-    // Try fuzzy match on label if no exact match AND value was not quoted
-    // Quoted values require exact match only (for precision)
-    if (!match && !valueWasQuoted) {
-      const lowerV = v.toLowerCase();
-      match = enumValues.find(
-        (ev) => ev.label.toLowerCase().includes(lowerV) || lowerV.includes(ev.label.toLowerCase()),
-      );
-    }
-
-    if (!match) {
-      const matchType = valueWasQuoted ? "exact" : "fuzzy";
+    // For quoted values, require exact match on normalized value (precision)
+    if (valueWasQuoted) {
+      const exactMatch = enumValues.find((ev) => ev.value === normalizedInput);
+      if (exactMatch) {
+        return exactMatch.id !== undefined ? exactMatch.id : exactMatch.value;
+      }
+      // No exact match for quoted value
       throw new Error(
-        `Invalid value: "${v}" (${matchType} match). Expected one of: ${enumValues
+        `Invalid value: "${v}" (exact match). Expected one of: ${enumValues
           .slice(0, 5)
           .map((e) => e.value)
           .join(", ")}${enumValues.length > 5 ? "..." : ""}`,
       );
     }
 
-    // Return the ID if available, otherwise the value
-    return match.id !== undefined ? match.id : match.value;
+    // For unquoted values, find matches with priority:
+    // 1. First look for exact normalized matches (e.g., "falco" → "Falco", "yoshis_story" → "Yoshi's Story")
+    // 2. If no exact matches, do fuzzy matching (e.g., "dream" → "Fountain of Dreams", "Dream Land N64")
+
+    // Check for exact normalized matches first
+    const exactMatches = enumValues.filter((ev) => ev.value === normalizedInput);
+
+    if (exactMatches.length > 0) {
+      // Return exact matches only (e.g., "falco" matches "Falco" but not "Captain Falcon")
+      return exactMatches.map((match) => (match.id !== undefined ? match.id : match.value));
+    }
+
+    // No exact matches, try fuzzy matching on labels
+    const lowerV = v.toLowerCase();
+    const fuzzyMatches = enumValues.filter((ev) => {
+      const lowerLabel = ev.label.toLowerCase();
+      return lowerLabel.includes(lowerV) || lowerV.includes(lowerLabel);
+    });
+
+    if (fuzzyMatches.length > 0) {
+      // Return ALL fuzzy matches (e.g., "dream" matches both Dream stages)
+      return fuzzyMatches.map((match) => (match.id !== undefined ? match.id : match.value));
+    }
+
+    // No matches found
+    throw new Error(
+      `Invalid value: "${v}" (fuzzy match). Expected one of: ${enumValues
+        .slice(0, 5)
+        .map((e) => e.value)
+        .join(", ")}${enumValues.length > 5 ? "..." : ""}`,
+    );
   });
 
   // Return single value or array
