@@ -94,34 +94,43 @@ export class DolphinInstance extends EventEmitter {
       //
       // tl;dr: for macOS, pass through execFile and set a massively high buffer for performance reasons. The returned
       // child process is ultimately the same, or close enough for now, and keeps the rest of the codebase intact.
-      if (isMac) {
-        child = execFile(executablePath, params, {
-          // 100MB
-          maxBuffer: 1000 * 1000 * 100,
-        });
-      } else {
-        child = spawn(executablePath, params);
-      }
-
-      child.once("spawn", () => {
-        started = true;
-        resolve(child);
-      });
-
-      child.once("error", (err: NodeJS.ErrnoException) => {
-        // Process already started successfully, ignore error
-        if (started) {
-          return;
+      try {
+        if (isMac) {
+          child = execFile(executablePath, params, {
+            // 100MB
+            maxBuffer: 1000 * 1000 * 100,
+          });
+        } else {
+          child = spawn(executablePath, params);
         }
 
-        if (isMac && process.arch === "arm64" && err.errno === -86) {
+        child.once("spawn", () => {
+          started = true;
+          resolve(child);
+        });
+
+        child.once("error", (err: NodeJS.ErrnoException) => {
+          // Process already started successfully, ignore error
+          if (started) {
+            return;
+          }
+
+          if (isMac && process.arch === "arm64" && err.errno === -86) {
+            // EBADARCH – bad CPU type in executable
+            reject(new MacOsRosettaRequiredError());
+            return;
+          }
+
+          reject(err);
+        });
+      } catch (err: unknown) {
+        if (isMac && process.arch === "arm64" && (err as NodeJS.ErrnoException).errno === -86) {
           // EBADARCH – bad CPU type in executable
           reject(new MacOsRosettaRequiredError());
           return;
         }
-
         reject(err);
-      });
+      }
     });
   }
 }
