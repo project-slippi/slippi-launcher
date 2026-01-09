@@ -24,7 +24,6 @@ import { useServices } from "@/services";
 import { AddConnectionDialog } from "./add_connection_dialog/add_connection_dialog";
 import { ConsoleMirrorMessages as Messages } from "./console_mirror.messages";
 import { NewConnectionList } from "./new_connection_list/new_connection_list";
-import { OBSWebsocketNotice } from "./obs_websocket_notice";
 import { SavedConnectionsList } from "./saved_connections_list/saved_connections_list";
 
 const Outer = styled.div`
@@ -160,7 +159,6 @@ export const ConsoleMirror = React.memo(() => {
         onCancel={onCancel}
         disabled={consoleIsConnected(currentFormValues?.ipAddress)}
       />
-      <OBSWebsocketNotice />
     </Outer>
   );
 });
