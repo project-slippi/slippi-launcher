@@ -109,8 +109,7 @@ export class DolphinInstance extends EventEmitter {
           resolve(child);
         });
 
-        child.once("error", (err: NodeJS.ErrnoException) => {
-          // Process already started successfully, ignore error
+        child.once("error", (err) => {
           if (!started) {
             reject(err);
           }
