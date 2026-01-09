@@ -165,7 +165,6 @@ export class DolphinManager {
     const dolphinPath = await installation.findDolphinExecutable();
     if (launchType === DolphinLaunchType.NETPLAY && !this.netplayDolphinInstance) {
       const instance = new DolphinInstance(dolphinPath);
-      this.netplayDolphinInstance = instance;
       instance.on("close", async (exitCode) => {
         try {
           await this._updateLauncherSettings(launchType);
@@ -184,10 +183,10 @@ export class DolphinManager {
         throw err;
       });
       await instance.start();
+      this.netplayDolphinInstance = instance;
     } else if (launchType === DolphinLaunchType.PLAYBACK && this.playbackDolphinInstances.size === 0) {
       const instanceId = "configure";
       const instance = new PlaybackDolphinInstance(dolphinPath);
-      this.playbackDolphinInstances.set(instanceId, instance);
       instance.on("close", async (exitCode) => {
         this.eventSubject.next({
           type: DolphinEventType.CLOSED,
@@ -204,6 +203,7 @@ export class DolphinManager {
         throw err;
       });
       await instance.start();
+      this.playbackDolphinInstances.set(instanceId, instance);
     }
   }
 
