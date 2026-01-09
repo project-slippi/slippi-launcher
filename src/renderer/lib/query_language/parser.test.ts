@@ -92,6 +92,23 @@ describe("Query Parser", () => {
       expect(result.errors).toHaveLength(0);
     });
 
+    it("should return ALL fuzzy matches for character names (no exact match)", () => {
+      const result = parseQuery("char:mar");
+      expect(result.filters.playerFilters).toHaveLength(1);
+      expect(result.filters.playerFilters?.[0].characterIds).toHaveLength(3);
+      expect(result.filters.playerFilters?.[0].characterIds).toContain(8); // Mario
+      expect(result.filters.playerFilters?.[0].characterIds).toContain(9); // Marth
+      expect(result.filters.playerFilters?.[0].characterIds).toContain(22); // Dr. Mario
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should return only exact match when available (not fuzzy)", () => {
+      const result = parseQuery("char:falco");
+      expect(result.filters.playerFilters).toHaveLength(1);
+      expect(result.filters.playerFilters?.[0].characterIds).toEqual([20]); // Only Falco, not Captain Falcon
+      expect(result.errors).toHaveLength(0);
+    });
+
     it("should require exact match for quoted character names", () => {
       const result = parseQuery('char:"climb"');
       expect(result.errors).toHaveLength(1);
@@ -138,15 +155,33 @@ describe("Query Parser", () => {
       expect(result.errors).toHaveLength(0);
     });
 
-    it("should fuzzy match partial stage names", () => {
-      const result = parseQuery("stage:yoshi");
-      expect(result.filters.stageIds).toEqual([8]); // Matches "Yoshi's Story"
+    it("should return ALL fuzzy matches for stage names", () => {
+      const result = parseQuery("stage:dream");
+      expect(result.filters.stageIds).toHaveLength(2);
+      expect(result.filters.stageIds).toContain(2); // Fountain of Dreams
+      expect(result.filters.stageIds).toContain(28); // Dream Land N64
       expect(result.errors).toHaveLength(0);
     });
 
-    it("should fuzzy match 'fountain' to Fountain of Dreams", () => {
+    it("should return ALL fuzzy matches for 'land'", () => {
+      const result = parseQuery("stage:land");
+      expect(result.filters.stageIds).toHaveLength(3);
+      expect(result.filters.stageIds).toContain(16); // Yoshi's Island
+      expect(result.filters.stageIds).toContain(28); // Dream Land N64
+      expect(result.filters.stageIds).toContain(29); // Yoshi's Island N64
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should fuzzy match partial stage names", () => {
+      const result = parseQuery("stage:yoshi");
+      // Should match all stages with "yoshi" in the name
+      expect(result.filters.stageIds).toContain(8); // Yoshi's Story
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should fuzzy match 'fountain' to only Fountain of Dreams", () => {
       const result = parseQuery("stage:fountain");
-      expect(result.filters.stageIds).toEqual([2]); // Matches "Fountain of Dreams"
+      expect(result.filters.stageIds).toEqual([2]); // Only matches "Fountain of Dreams"
       expect(result.errors).toHaveLength(0);
     });
 
