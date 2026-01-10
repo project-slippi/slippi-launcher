@@ -37,6 +37,8 @@ export function parseQuery(query: string): ParsedQuery {
 
     switch (token.type) {
       case "OPERATOR":
+        // Only support negation via "-" prefix (e.g., -char:falco)
+        // We removed "NOT" keyword to avoid conflicts with player tags like "NOTTING"
         if (token.value === "NOT") {
           negateNext = true;
         }
@@ -293,8 +295,16 @@ export function convertToReplayFilters(queryFilters: QueryFilters): ReplayFilter
     });
   }
 
-  // TODO: Handle excludeFilters (negation) - requires backend support for negation
-  // For now, negation is parsed but not applied to backend filters
+  // Handle excludeFilters (negation)
+  if (queryFilters.excludeFilters) {
+    const excludeFilters = convertToReplayFilters(queryFilters.excludeFilters);
+    excludeFilters.forEach((filter) => {
+      filters.push({
+        ...filter,
+        negate: true,
+      });
+    });
+  }
 
   return filters;
 }
