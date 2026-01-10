@@ -10,6 +10,7 @@
 
 import { characters, stages } from "@slippi/slippi-js";
 
+import { CHARACTER_ALIASES, STAGE_ALIASES } from "./aliases";
 import type { FilterDefinition } from "./types";
 
 /**
@@ -58,12 +59,18 @@ export const FILTER_SCHEMA: FilterDefinition[] = [
     aliases: ["char"],
     description: "Character used by any player",
     valueType: "enum",
-    enumValues: characters.getAllCharacters().map((char) => ({
-      value: normalizeString(char.name),
-      label: char.name,
-      id: char.id,
-      aliases: char.shortName ? [normalizeString(char.shortName)] : [],
-    })),
+    enumValues: characters.getAllCharacters().map((char) => {
+      const aliases = CHARACTER_ALIASES.get(char.id) || [];
+      if (char.shortName && char.shortName !== char.name) {
+        aliases.push(char.shortName);
+      }
+      return {
+        value: normalizeString(char.name),
+        label: char.name,
+        id: char.id,
+        aliases: aliases.map(normalizeString),
+      };
+    }),
     examples: ["char:fox", "character:falco", "char:ice_climbers"],
     category: "player",
   },
@@ -71,11 +78,15 @@ export const FILTER_SCHEMA: FilterDefinition[] = [
     key: "stage",
     description: "Stage the game was played on",
     valueType: "enum",
-    enumValues: stages.getStages("vs").map((stage) => ({
-      value: normalizeString(stage.name),
-      label: stage.name,
-      id: stage.id,
-    })),
+    enumValues: stages.getStages("vs").map((stage) => {
+      const aliases = STAGE_ALIASES.get(stage.id) || [];
+      return {
+        value: normalizeString(stage.name),
+        label: stage.name,
+        id: stage.id,
+        aliases: aliases.map(normalizeString),
+      };
+    }),
     examples: ["stage:battlefield", "stage:final_destination", "stage:pokemon_stadium"],
     category: "game",
   },
