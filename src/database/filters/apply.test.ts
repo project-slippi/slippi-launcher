@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import type { Database as DatabaseSchema } from "../schema";
 import { applyFilters } from "./apply";
-import type { TextSearchFilter } from "./types";
+import type { PlayerFilter, StageFilter, TextSearchFilter } from "./types";
 
 describe("Text Search Filter", () => {
   let db: Kysely<DatabaseSchema>;
@@ -311,6 +311,262 @@ async function insertMockData(db: Kysely<DatabaseSchema>) {
         connect_code: "PLYR#666",
         display_name: "Generic2",
         tag: "Tag2",
+      },
+    ])
+    .execute();
+}
+
+describe("Filter Negation", () => {
+  let db: Kysely<DatabaseSchema>;
+
+  beforeEach(async () => {
+    db = await initTestDb();
+    await insertMockDataWithCharacters(db);
+  });
+
+  afterEach(async () => {
+    await db.destroy();
+  });
+
+  it("should exclude games with specific character when negated", async () => {
+    // Without negation: should find games with Marth (character ID 9)
+    const normalFilter: PlayerFilter = {
+      type: "player",
+      characterIds: [9], // Marth
+    };
+
+    let query1 = db.selectFrom("file").innerJoin("game", "game.file_id", "file._id");
+    query1 = applyFilters(query1, [normalFilter]);
+    const normalResults = await query1.selectAll(["file", "game"]).execute();
+    expect(normalResults.length).toBeGreaterThan(0);
+
+    // With negation: should exclude games with Marth
+    const negatedFilter: PlayerFilter = {
+      type: "player",
+      characterIds: [9], // Marth
+      negate: true,
+    };
+
+    let query2 = db.selectFrom("file").innerJoin("game", "game.file_id", "file._id");
+    query2 = applyFilters(query2, [negatedFilter]);
+    const negatedResults = await query2.selectAll(["file", "game"]).execute();
+
+    // Total games should equal normal + negated
+    const query3 = db.selectFrom("file").innerJoin("game", "game.file_id", "file._id");
+    const allResults = await query3.selectAll(["file", "game"]).execute();
+    expect(normalResults.length + negatedResults.length).toBe(allResults.length);
+
+    // Negated results should not contain any games from normal results
+    const normalFileIds = normalResults.map((r) => r._id);
+    const negatedFileIds = negatedResults.map((r) => r._id);
+    const overlap = normalFileIds.filter((id) => negatedFileIds.includes(id));
+    expect(overlap.length).toBe(0);
+  });
+
+  it("should exclude games on specific stage when negated", async () => {
+    const negatedFilter: StageFilter = {
+      type: "stage",
+      stageIds: [31], // Battlefield
+      negate: true,
+    };
+
+    let query = db.selectFrom("file").innerJoin("game", "game.file_id", "file._id");
+    query = applyFilters(query, [negatedFilter]);
+    const results = await query.selectAll(["file", "game"]).execute();
+
+    // Verify none of the results are on Battlefield
+    results.forEach((result) => {
+      expect(result.stage).not.toBe(31);
+    });
+  });
+
+  it("should exclude games matching text search when negated", async () => {
+    const negatedFilter: TextSearchFilter = {
+      type: "textSearch",
+      query: "MARTH",
+      negate: true,
+    };
+
+    let query = db.selectFrom("file").innerJoin("game", "game.file_id", "file._id");
+    query = applyFilters(query, [negatedFilter]);
+    const results = await query.selectAll(["file", "game"]).execute();
+
+    // Verify none of the results contain "MARTH" in connect_code
+    // (We set up test data where "MARTH" only appears in connect_code)
+    for (const result of results) {
+      const players = await db.selectFrom("player").where("game_id", "=", result._id).selectAll().execute();
+
+      const hasMarth = players.some(
+        (p) => p.connect_code?.includes("MARTH") || p.display_name?.includes("MARTH") || p.tag?.includes("MARTH"),
+      );
+      expect(hasMarth).toBe(false);
+    }
+  });
+
+  it("should combine positive and negative filters", async () => {
+    // Find games with Fox (character ID 2) but not on Battlefield (stage ID 31)
+    const filters = [
+      {
+        type: "player" as const,
+        characterIds: [2], // Fox
+      },
+      {
+        type: "stage" as const,
+        stageIds: [31], // Battlefield
+        negate: true,
+      },
+    ];
+
+    let query = db.selectFrom("file").innerJoin("game", "game.file_id", "file._id");
+    query = applyFilters(query, filters);
+    const results = await query.selectAll(["file", "game"]).execute();
+
+    // Verify all results:
+    // 1. Have at least one player with Fox (character ID 2)
+    // 2. Are not on Battlefield (stage ID 31)
+    for (const result of results) {
+      expect(result.stage).not.toBe(31);
+
+      const players = await db.selectFrom("player").where("game_id", "=", result._id).selectAll().execute();
+
+      const hasFox = players.some((p) => p.character_id === 2);
+      expect(hasFox).toBe(true);
+    }
+  });
+});
+
+async function insertMockDataWithCharacters(db: Kysely<DatabaseSchema>) {
+  // Game 1: Fox vs Marth on Battlefield
+  const fileId1 = await db
+    .insertInto("file")
+    .values({
+      name: "fox_vs_marth_bf.slp",
+      folder: "/test",
+      size_bytes: 1000,
+      birth_time: null,
+    })
+    .returning("_id")
+    .executeTakeFirstOrThrow();
+
+  const gameId1 = await db
+    .insertInto("game")
+    .values({
+      file_id: fileId1._id,
+      mode: 8,
+      stage: 31, // Battlefield
+      last_frame: 5000,
+    })
+    .returning("_id")
+    .executeTakeFirstOrThrow();
+
+  await db
+    .insertInto("player")
+    .values([
+      {
+        game_id: gameId1._id,
+        port: 1,
+        connect_code: "FOX#123",
+        character_id: 2, // Fox
+        display_name: "Player1",
+        tag: "FOX",
+      },
+      {
+        game_id: gameId1._id,
+        port: 2,
+        connect_code: "MARTH#456",
+        character_id: 9, // Marth
+        display_name: "Player2",
+        tag: "MARTH",
+      },
+    ])
+    .execute();
+
+  // Game 2: Falco vs Sheik on Final Destination
+  const fileId2 = await db
+    .insertInto("file")
+    .values({
+      name: "falco_vs_sheik_fd.slp",
+      folder: "/test",
+      size_bytes: 2000,
+      birth_time: null,
+    })
+    .returning("_id")
+    .executeTakeFirstOrThrow();
+
+  const gameId2 = await db
+    .insertInto("game")
+    .values({
+      file_id: fileId2._id,
+      mode: 8,
+      stage: 32, // Final Destination
+      last_frame: 4000,
+    })
+    .returning("_id")
+    .executeTakeFirstOrThrow();
+
+  await db
+    .insertInto("player")
+    .values([
+      {
+        game_id: gameId2._id,
+        port: 1,
+        connect_code: "FALCO#789",
+        character_id: 20, // Falco
+        display_name: "Player3",
+        tag: "FALCO",
+      },
+      {
+        game_id: gameId2._id,
+        port: 2,
+        connect_code: "SHEIK#101",
+        character_id: 19, // Sheik
+        display_name: "Player4",
+        tag: "SHEIK",
+      },
+    ])
+    .execute();
+
+  // Game 3: Fox vs Falco on Yoshis Story
+  const fileId3 = await db
+    .insertInto("file")
+    .values({
+      name: "fox_vs_falco_yoshi.slp",
+      folder: "/test",
+      size_bytes: 3000,
+      birth_time: null,
+    })
+    .returning("_id")
+    .executeTakeFirstOrThrow();
+
+  const gameId3 = await db
+    .insertInto("game")
+    .values({
+      file_id: fileId3._id,
+      mode: 8,
+      stage: 8, // Yoshi's Story
+      last_frame: 3500,
+    })
+    .returning("_id")
+    .executeTakeFirstOrThrow();
+
+  await db
+    .insertInto("player")
+    .values([
+      {
+        game_id: gameId3._id,
+        port: 1,
+        connect_code: "FOX#999",
+        character_id: 2, // Fox
+        display_name: "Player5",
+        tag: "FOX",
+      },
+      {
+        game_id: gameId3._id,
+        port: 2,
+        connect_code: "FALCO#888",
+        character_id: 20, // Falco
+        display_name: "Player6",
+        tag: "FALCO",
       },
     ])
     .execute();
