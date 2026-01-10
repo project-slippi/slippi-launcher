@@ -625,7 +625,9 @@ describe("Query Parser", () => {
         expect(filters).toHaveLength(1);
         expect(filters[0].type).toBe("player");
         expect(filters[0].negate).toBe(true);
-        expect(filters[0].characterIds).toEqual([15]);
+        if (filters[0].type === "player") {
+          expect(filters[0].characterIds).toEqual([15]);
+        }
       });
 
       it("should convert negated stage filter", () => {
@@ -635,7 +637,9 @@ describe("Query Parser", () => {
         expect(filters).toHaveLength(1);
         expect(filters[0].type).toBe("stage");
         expect(filters[0].negate).toBe(true);
-        expect(filters[0].stageIds).toEqual([31]);
+        if (filters[0].type === "stage") {
+          expect(filters[0].stageIds).toEqual([31]);
+        }
       });
 
       it("should convert mixed positive and negative filters", () => {
@@ -647,12 +651,16 @@ describe("Query Parser", () => {
         const positiveFilter = filters.find((f) => !f.negate);
         expect(positiveFilter).toBeDefined();
         expect(positiveFilter?.type).toBe("player");
-        expect(positiveFilter?.characterIds).toEqual([2]);
+        if (positiveFilter?.type === "player") {
+          expect(positiveFilter.characterIds).toEqual([2]);
+        }
 
         const negativeFilter = filters.find((f) => f.negate);
         expect(negativeFilter).toBeDefined();
         expect(negativeFilter?.type).toBe("stage");
-        expect(negativeFilter?.stageIds).toEqual([31]);
+        if (negativeFilter?.type === "stage") {
+          expect(negativeFilter.stageIds).toEqual([31]);
+        }
       });
 
       it("should convert multiple negated filters", () => {
@@ -665,11 +673,15 @@ describe("Query Parser", () => {
 
         const charFilter = filters.find((f) => f.type === "player");
         expect(charFilter).toBeDefined();
-        expect(charFilter?.characterIds).toEqual([15]);
+        if (charFilter?.type === "player") {
+          expect(charFilter.characterIds).toEqual([15]);
+        }
 
         const stageFilter = filters.find((f) => f.type === "stage");
         expect(stageFilter).toBeDefined();
-        expect(stageFilter?.stageIds).toEqual([31]);
+        if (stageFilter?.type === "stage") {
+          expect(stageFilter.stageIds).toEqual([31]);
+        }
       });
 
       it("should convert negated duration filter", () => {
@@ -679,7 +691,9 @@ describe("Query Parser", () => {
         expect(filters).toHaveLength(1);
         expect(filters[0].type).toBe("duration");
         expect(filters[0].negate).toBe(true);
-        expect(filters[0].minFrames).toBe(1800);
+        if (filters[0].type === "duration") {
+          expect(filters[0].minFrames).toBe(1800);
+        }
       });
 
       it("should convert negated player filters", () => {
@@ -689,7 +703,9 @@ describe("Query Parser", () => {
         expect(filters).toHaveLength(1);
         expect(filters[0].type).toBe("player");
         expect(filters[0].negate).toBe(true);
-        expect(filters[0].connectCode).toBe("MANG#0");
+        if (filters[0].type === "player") {
+          expect(filters[0].connectCode).toBe("MANG#0");
+        }
       });
 
       it("should convert complex query with negation", () => {
@@ -700,22 +716,30 @@ describe("Query Parser", () => {
 
         const textFilter = filters.find((f) => f.type === "textSearch");
         expect(textFilter).toBeDefined();
-        expect(textFilter?.query).toBe("mango");
-        expect(textFilter?.negate).toBeUndefined();
+        if (textFilter?.type === "textSearch") {
+          expect(textFilter.query).toBe("mango");
+          expect(textFilter.negate).toBeUndefined();
+        }
 
         const charFilter = filters.find((f) => f.type === "player" && !f.negate);
         expect(charFilter).toBeDefined();
-        expect(charFilter?.characterIds).toEqual([2]);
+        if (charFilter?.type === "player") {
+          expect(charFilter.characterIds).toEqual([2]);
+        }
 
         const stageFilter = filters.find((f) => f.type === "stage");
         expect(stageFilter).toBeDefined();
-        expect(stageFilter?.negate).toBe(true);
-        expect(stageFilter?.stageIds).toEqual([31]);
+        if (stageFilter?.type === "stage") {
+          expect(stageFilter.negate).toBe(true);
+          expect(stageFilter.stageIds).toEqual([31]);
+        }
 
         const durationFilter = filters.find((f) => f.type === "duration");
         expect(durationFilter).toBeDefined();
-        expect(durationFilter?.minFrames).toBe(1800);
-        expect(durationFilter?.negate).toBeUndefined();
+        if (durationFilter?.type === "duration") {
+          expect(durationFilter.minFrames).toBe(1800);
+          expect(durationFilter.negate).toBeUndefined();
+        }
       });
     });
   });
