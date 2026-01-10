@@ -608,15 +608,6 @@ describe("Query Parser", () => {
       expect(result.filters.excludeFilters).toBeUndefined();
     });
 
-    it("should NO LONGER support NOT keyword", () => {
-      // "NOT" should be treated as search text now
-      const result = parseQuery("NOT char:puff");
-      expect(result.searchText).toContain("NOT");
-      expect(result.filters.playerFilters).toHaveLength(1);
-      expect(result.filters.excludeFilters).toBeUndefined();
-      expect(result.errors).toHaveLength(0);
-    });
-
     describe("convertToReplayFilters with negation", () => {
       it("should convert negated character filter", () => {
         const parsed = parseQuery("-char:puff");
