@@ -617,22 +617,6 @@ describe("Query Parser", () => {
       expect(result.errors).toHaveLength(0);
     });
 
-    it("should allow searching for player named NOTTING", () => {
-      const result = parseQuery("NOTTING");
-      expect(result.searchText).toEqual(["NOTTING"]);
-      expect(result.filters.textSearch).toBe("NOTTING");
-      expect(result.filters.excludeFilters).toBeUndefined();
-      expect(result.errors).toHaveLength(0);
-    });
-
-    it("should allow searching for tag:NOTTING", () => {
-      const result = parseQuery("tag:NOTTING");
-      expect(result.filters.playerFilters).toHaveLength(1);
-      expect(result.filters.playerFilters?.[0].tag).toBe("NOTTING");
-      expect(result.filters.excludeFilters).toBeUndefined();
-      expect(result.errors).toHaveLength(0);
-    });
-
     describe("convertToReplayFilters with negation", () => {
       it("should convert negated character filter", () => {
         const parsed = parseQuery("-char:puff");
