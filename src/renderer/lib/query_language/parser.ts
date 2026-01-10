@@ -38,7 +38,6 @@ export function parseQuery(query: string): ParsedQuery {
     switch (token.type) {
       case "OPERATOR":
         // Only support negation via "-" prefix (e.g., -char:falco)
-        // We removed "NOT" keyword to avoid conflicts with player tags like "NOTTING"
         if (token.value === "NOT") {
           negateNext = true;
         }
