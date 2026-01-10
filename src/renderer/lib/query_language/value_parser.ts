@@ -96,11 +96,20 @@ function parseEnumValue(value: string, def: FilterDefinition, valueWasQuoted?: b
 
     // For unquoted values, find matches with priority:
     // 1. First look for exact normalized matches (e.g., "falco" → "Falco", "yoshis_story" → "Yoshi's Story")
-    // 2. Also check alias for exact matches (e.g., "falcon" → "Captain Falcon" via shortName)
+    // 2. Also check aliases for exact matches (e.g., "falcon" → "Captain Falcon" via shortName)
     // 3. If no exact matches, do fuzzy matching (e.g., "dream" → "Fountain of Dreams", "Dream Land N64")
 
-    // Check for exact normalized matches first (both value and alias)
-    const exactMatches = enumValues.filter((ev) => ev.value === normalizedInput || ev.alias === normalizedInput);
+    // Check for exact normalized matches first (both value and aliases)
+    const exactMatches = enumValues.filter((ev) => {
+      if (ev.value === normalizedInput) {
+        return true;
+      }
+      // Check if any of the aliases match
+      if (ev.aliases && Array.isArray(ev.aliases)) {
+        return ev.aliases.includes(normalizedInput);
+      }
+      return false;
+    });
 
     if (exactMatches.length > 0) {
       // Return exact matches only (e.g., "falco" matches "Falco" but not "Captain Falcon")

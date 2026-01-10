@@ -85,7 +85,7 @@ export type FilterDefinition = {
   aliases?: string[];
   description: string;
   valueType: "string" | "number" | "boolean" | "enum" | "duration" | "date";
-  enumValues?: Array<{ value: string; label: string; id?: number; alias?: string }>;
+  enumValues?: Array<{ value: string; label: string; id?: number; aliases: string[] }>;
   examples: string[];
   category: "player" | "game" | "date" | "platform";
 };
