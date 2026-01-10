@@ -109,21 +109,21 @@ describe("Query Parser", () => {
       expect(result.errors).toHaveLength(0);
     });
 
-    it("should match character by shortName (falcon -> Captain Falcon)", () => {
+    it("should match character by alias (falcon -> Captain Falcon)", () => {
       const result = parseQuery("char:falcon");
       expect(result.filters.playerFilters).toHaveLength(1);
       expect(result.filters.playerFilters?.[0].characterIds).toEqual([0]); // Only Captain Falcon (ID 0), not Falco
       expect(result.errors).toHaveLength(0);
     });
 
-    it("should match character by shortName (puff -> Jigglypuff)", () => {
+    it("should match character by alias (puff -> Jigglypuff)", () => {
       const result = parseQuery("char:puff");
       expect(result.filters.playerFilters).toHaveLength(1);
       expect(result.filters.playerFilters?.[0].characterIds).toEqual([15]); // Only Jigglypuff (ID 15)
       expect(result.errors).toHaveLength(0);
     });
 
-    it("should match character by shortName (dk -> Donkey Kong)", () => {
+    it("should match character by alias (dk -> Donkey Kong)", () => {
       const result = parseQuery("char:dk");
       expect(result.filters.playerFilters).toHaveLength(1);
       expect(result.filters.playerFilters?.[0].characterIds).toEqual([1]); // Donkey Kong (ID 1)
