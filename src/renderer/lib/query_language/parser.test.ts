@@ -494,27 +494,245 @@ describe("Query Parser", () => {
     });
   });
 
-  describe("Negation (NOT operator)", () => {
-    it("should parse NOT operator", () => {
-      const result = parseQuery("NOT char:puff");
-      expect(result.filters.excludeFilters).toBeDefined();
-      expect(result.filters.excludeFilters?.playerFilters).toHaveLength(1);
-      expect(result.errors).toHaveLength(0);
-    });
-
-    it("should parse dash negation", () => {
+  describe("Negation (dash operator)", () => {
+    it("should parse dash negation for character", () => {
       const result = parseQuery("-char:puff");
       expect(result.filters.excludeFilters).toBeDefined();
       expect(result.filters.excludeFilters?.playerFilters).toHaveLength(1);
+      expect(result.filters.excludeFilters?.playerFilters?.[0].characterIds).toEqual([15]); // Puff ID
       expect(result.errors).toHaveLength(0);
     });
 
-    // Note: Negation is parsed but not yet converted to backend filters
-    it("should not include negation in backend filters yet", () => {
-      const parsed = parseQuery("NOT char:puff");
-      const filters = convertToReplayFilters(parsed.filters);
-      // Should not crash, but negation not yet implemented
-      expect(filters).toBeDefined();
+    it("should parse dash negation for stage", () => {
+      const result = parseQuery("-stage:battlefield");
+      expect(result.filters.excludeFilters).toBeDefined();
+      expect(result.filters.excludeFilters?.stageIds).toEqual([31]); // Battlefield ID
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse dash negation for multiple characters", () => {
+      const result = parseQuery("-char:fox,falco");
+      expect(result.filters.excludeFilters).toBeDefined();
+      expect(result.filters.excludeFilters?.playerFilters).toHaveLength(1);
+      expect(result.filters.excludeFilters?.playerFilters?.[0].characterIds).toEqual([2, 20]); // Fox, Falco IDs
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse dash negation for port-specific character", () => {
+      const result = parseQuery("-p1:fox");
+      expect(result.filters.excludeFilters).toBeDefined();
+      expect(result.filters.excludeFilters?.playerFilters).toHaveLength(1);
+      expect(result.filters.excludeFilters?.playerFilters?.[0].port).toBe(1);
+      expect(result.filters.excludeFilters?.playerFilters?.[0].characterIds).toEqual([2]);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse dash negation for duration", () => {
+      const result = parseQuery("-minDuration:30s");
+      expect(result.filters.excludeFilters).toBeDefined();
+      expect(result.filters.excludeFilters?.minDuration).toBe(1800);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse dash negation for connect code", () => {
+      const result = parseQuery("-code:MANG#0");
+      expect(result.filters.excludeFilters).toBeDefined();
+      expect(result.filters.excludeFilters?.playerFilters).toHaveLength(1);
+      expect(result.filters.excludeFilters?.playerFilters?.[0].connectCode).toBe("MANG#0");
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse dash negation for tag", () => {
+      const result = parseQuery("-tag:Mango");
+      expect(result.filters.excludeFilters).toBeDefined();
+      expect(result.filters.excludeFilters?.playerFilters).toHaveLength(1);
+      expect(result.filters.excludeFilters?.playerFilters?.[0].tag).toBe("Mango");
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse dash negation for winner", () => {
+      const result = parseQuery("-winner:MANG#0");
+      expect(result.filters.excludeFilters).toBeDefined();
+      expect(result.filters.excludeFilters?.playerFilters).toHaveLength(1);
+      expect(result.filters.excludeFilters?.playerFilters?.[0].connectCode).toBe("MANG#0");
+      expect(result.filters.excludeFilters?.playerFilters?.[0].mustBeWinner).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should combine positive and negative filters", () => {
+      const result = parseQuery("char:fox -stage:battlefield");
+      expect(result.filters.playerFilters).toHaveLength(1);
+      expect(result.filters.playerFilters?.[0].characterIds).toEqual([2]); // Fox
+      expect(result.filters.excludeFilters).toBeDefined();
+      expect(result.filters.excludeFilters?.stageIds).toEqual([31]); // Battlefield
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should handle multiple negations", () => {
+      const result = parseQuery("-char:puff -stage:battlefield");
+      expect(result.filters.excludeFilters).toBeDefined();
+      expect(result.filters.excludeFilters?.playerFilters).toHaveLength(1);
+      expect(result.filters.excludeFilters?.playerFilters?.[0].characterIds).toEqual([15]); // Puff
+      expect(result.filters.excludeFilters?.stageIds).toEqual([31]); // Battlefield
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should handle negation with search text", () => {
+      const result = parseQuery("mango -char:puff");
+      expect(result.searchText).toEqual(["mango"]);
+      expect(result.filters.textSearch).toBe("mango");
+      expect(result.filters.excludeFilters).toBeDefined();
+      expect(result.filters.excludeFilters?.playerFilters).toHaveLength(1);
+      expect(result.filters.excludeFilters?.playerFilters?.[0].characterIds).toEqual([15]);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should NOT treat standalone dash as negation operator", () => {
+      const result = parseQuery("mango-man");
+      expect(result.searchText).toEqual(["mango-man"]);
+      expect(result.filters.excludeFilters).toBeUndefined();
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should NOT treat dash in middle of text as negation", () => {
+      const result = parseQuery("test-char:fox");
+      // This should parse as a WORD "test-char:fox", not as negation
+      expect(result.searchText).toContain("test-char:fox");
+      expect(result.filters.excludeFilters).toBeUndefined();
+    });
+
+    it("should NOT negate search text with dash", () => {
+      const result = parseQuery("- mango");
+      // Dash not followed by filter key, so "mango" should be in search text
+      expect(result.searchText).toContain("mango");
+      expect(result.filters.excludeFilters).toBeUndefined();
+    });
+
+    it("should NO LONGER support NOT keyword", () => {
+      // "NOT" should be treated as search text now
+      const result = parseQuery("NOT char:puff");
+      expect(result.searchText).toContain("NOT");
+      expect(result.filters.playerFilters).toHaveLength(1);
+      expect(result.filters.excludeFilters).toBeUndefined();
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should allow searching for player named NOTTING", () => {
+      const result = parseQuery("NOTTING");
+      expect(result.searchText).toEqual(["NOTTING"]);
+      expect(result.filters.textSearch).toBe("NOTTING");
+      expect(result.filters.excludeFilters).toBeUndefined();
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should allow searching for tag:NOTTING", () => {
+      const result = parseQuery("tag:NOTTING");
+      expect(result.filters.playerFilters).toHaveLength(1);
+      expect(result.filters.playerFilters?.[0].tag).toBe("NOTTING");
+      expect(result.filters.excludeFilters).toBeUndefined();
+      expect(result.errors).toHaveLength(0);
+    });
+
+    describe("convertToReplayFilters with negation", () => {
+      it("should convert negated character filter", () => {
+        const parsed = parseQuery("-char:puff");
+        const filters = convertToReplayFilters(parsed.filters);
+
+        expect(filters).toHaveLength(1);
+        expect(filters[0].type).toBe("player");
+        expect(filters[0].negate).toBe(true);
+        expect(filters[0].characterIds).toEqual([15]);
+      });
+
+      it("should convert negated stage filter", () => {
+        const parsed = parseQuery("-stage:battlefield");
+        const filters = convertToReplayFilters(parsed.filters);
+
+        expect(filters).toHaveLength(1);
+        expect(filters[0].type).toBe("stage");
+        expect(filters[0].negate).toBe(true);
+        expect(filters[0].stageIds).toEqual([31]);
+      });
+
+      it("should convert mixed positive and negative filters", () => {
+        const parsed = parseQuery("char:fox -stage:battlefield");
+        const filters = convertToReplayFilters(parsed.filters);
+
+        expect(filters).toHaveLength(2);
+
+        const positiveFilter = filters.find((f) => !f.negate);
+        expect(positiveFilter).toBeDefined();
+        expect(positiveFilter?.type).toBe("player");
+        expect(positiveFilter?.characterIds).toEqual([2]);
+
+        const negativeFilter = filters.find((f) => f.negate);
+        expect(negativeFilter).toBeDefined();
+        expect(negativeFilter?.type).toBe("stage");
+        expect(negativeFilter?.stageIds).toEqual([31]);
+      });
+
+      it("should convert multiple negated filters", () => {
+        const parsed = parseQuery("-char:puff -stage:battlefield");
+        const filters = convertToReplayFilters(parsed.filters);
+
+        expect(filters).toHaveLength(2);
+        expect(filters[0].negate).toBe(true);
+        expect(filters[1].negate).toBe(true);
+
+        const charFilter = filters.find((f) => f.type === "player");
+        expect(charFilter).toBeDefined();
+        expect(charFilter?.characterIds).toEqual([15]);
+
+        const stageFilter = filters.find((f) => f.type === "stage");
+        expect(stageFilter).toBeDefined();
+        expect(stageFilter?.stageIds).toEqual([31]);
+      });
+
+      it("should convert negated duration filter", () => {
+        const parsed = parseQuery("-minDuration:30s");
+        const filters = convertToReplayFilters(parsed.filters);
+
+        expect(filters).toHaveLength(1);
+        expect(filters[0].type).toBe("duration");
+        expect(filters[0].negate).toBe(true);
+        expect(filters[0].minFrames).toBe(1800);
+      });
+
+      it("should convert negated player filters", () => {
+        const parsed = parseQuery("-code:MANG#0");
+        const filters = convertToReplayFilters(parsed.filters);
+
+        expect(filters).toHaveLength(1);
+        expect(filters[0].type).toBe("player");
+        expect(filters[0].negate).toBe(true);
+        expect(filters[0].connectCode).toBe("MANG#0");
+      });
+
+      it("should convert complex query with negation", () => {
+        const parsed = parseQuery("mango char:fox -stage:battlefield minDuration:30s");
+        const filters = convertToReplayFilters(parsed.filters);
+
+        expect(filters.length).toBeGreaterThanOrEqual(3);
+
+        const textFilter = filters.find((f) => f.type === "textSearch");
+        expect(textFilter).toBeDefined();
+        expect(textFilter?.query).toBe("mango");
+        expect(textFilter?.negate).toBeUndefined();
+
+        const charFilter = filters.find((f) => f.type === "player" && !f.negate);
+        expect(charFilter).toBeDefined();
+        expect(charFilter?.characterIds).toEqual([2]);
+
+        const stageFilter = filters.find((f) => f.type === "stage");
+        expect(stageFilter).toBeDefined();
+        expect(stageFilter?.negate).toBe(true);
+        expect(stageFilter?.stageIds).toEqual([31]);
+
+        const durationFilter = filters.find((f) => f.type === "duration");
+        expect(durationFilter).toBeDefined();
+        expect(durationFilter?.minFrames).toBe(1800);
+        expect(durationFilter?.negate).toBeUndefined();
+      });
     });
   });
 });

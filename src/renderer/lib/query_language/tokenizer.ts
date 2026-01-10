@@ -14,7 +14,7 @@ import type { Token } from "./types";
  * - "mango" -> [{ type: "WORD", value: "mango", position: 0 }]
  * - "stage:FD" -> [{ type: "FILTER", value: "FD", key: "stage", position: 0 }]
  * - '"Liquid Hbox"' -> [{ type: "QUOTED", value: "Liquid Hbox", position: 0 }]
- * - "NOT char:puff" -> [{ type: "OPERATOR", value: "NOT", position: 0 }, { type: "FILTER", value: "puff", key: "char", position: 4 }]
+ * - "-char:puff" -> [{ type: "OPERATOR", value: "NOT", position: 0 }, { type: "FILTER", value: "puff", key: "char", position: 1 }]
  */
 export function tokenize(query: string): Token[] {
   const tokens: Token[] = [];
@@ -41,29 +41,40 @@ export function tokenize(query: string): Token[] {
       continue;
     }
 
-    // Negation operator (- at start of word)
+    // Negation operator (- at start of word, only for filter expressions)
     if (query[i] === "-" && (i === 0 || /\s/.test(query[i - 1]))) {
-      // Check if this is a filter expression (e.g., -stage:FD)
-      const nextChar = query[i + 1];
-      if (nextChar && /[a-zA-Z]/.test(nextChar)) {
+      // Check if this is followed by a filter expression (e.g., -stage:battlefield or -char:falco)
+      // Look ahead to see if there's a key:value pattern
+      // Note: Filter keys can only contain letters, numbers, and underscores (no dashes)
+      const lookAhead = query.slice(i + 1).match(/^([a-zA-Z0-9_]+):/);
+      if (lookAhead) {
         tokens.push({ type: "OPERATOR", value: "NOT", position: i });
         i++;
         continue;
       }
     }
 
-    // NOT operator
-    if (query.slice(i, i + 3).toUpperCase() === "NOT" && (i + 3 >= query.length || /\s/.test(query[i + 3]))) {
-      tokens.push({ type: "OPERATOR", value: "NOT", position: i });
-      i += 3;
-      continue;
+    // Check for potential filter-like patterns that aren't valid filters
+    // This handles cases like "test-char:fox" where the key contains invalid chars (dash)
+    // We want to treat these as plain WORD tokens, not split at the colon
+    const potentialFilterMatch = query.slice(i).match(/^([a-zA-Z0-9_-]+):([^\s]+)/);
+    if (potentialFilterMatch) {
+      const [full, key] = potentialFilterMatch;
+      // Check if this key matches our valid filter key pattern (no dashes)
+      if (!/^[a-zA-Z0-9_]+$/.test(key)) {
+        // Invalid filter key pattern (e.g., contains dash), treat whole thing as a word
+        tokens.push({ type: "WORD", value: full, position: i });
+        i += full.length;
+        continue;
+      }
     }
 
     // Filter expression (key:value)
     // Match key:value where value can be:
     // - Unquoted: alphanumeric, dash, underscore, hash, comma
     // - Quoted: anything inside quotes
-    const filterMatch = query.slice(i).match(/^([a-zA-Z0-9_-]+):("([^"]*)"|([^\s]+))/);
+    // Note: Filter keys can only contain letters, numbers, and underscores (no dashes in keys)
+    const filterMatch = query.slice(i).match(/^([a-zA-Z0-9_]+):("([^"]*)"|([^\s]+))/);
     if (filterMatch) {
       const [full, key, , quotedValue, unquotedValue] = filterMatch;
       const value = quotedValue !== undefined ? quotedValue : unquotedValue;
