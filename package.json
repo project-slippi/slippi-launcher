@@ -129,6 +129,7 @@
     "fdir": "^5.1.0",
     "file-loader": "^6.2.0",
     "fix-esm": "^1.0.1",
+    "gettext-parser": "^9.0.0",
     "html-webpack-plugin": "^5.5.0",
     "husky": "^4.3.0",
     "i18next-auto-keys": "^3.3.1",

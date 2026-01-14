@@ -1,3 +1,5 @@
+
+
 msgid ""
 msgstr ""
 "Project-Id-Version: slippi-launcher 1.0\n"
@@ -1840,7 +1842,7 @@ msgstr "{0}件削除されます"
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:10:43
 #. {0} count: number
 msgid "{0, plural, one {# replay} other {# replays}} filtered."
-msgstr "{0}件リプレーター済み"
+msgstr "{0}件リプレイター済み"
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:9:40
 #. {0} count: number
