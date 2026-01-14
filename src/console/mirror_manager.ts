@@ -152,7 +152,7 @@ export class MirrorManager extends EventEmitter {
       autoSwitcher.on(MirrorEvent.ERROR, (err) => this.emit(MirrorEvent.ERROR, err));
     }
 
-    fileWriter.on(SlpStreamEvent.COMMAND, (data) => {
+    fileWriter.getProcessor().on(SlpStreamEvent.COMMAND, (data) => {
       if (!autoSwitcher && !relay) {
         return;
       }
