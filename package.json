@@ -194,7 +194,7 @@
     "intl-messageformat": "^10.7.18",
     "is-ip": "^5.0.0",
     "jdenticon": "^3.1.1",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "mousetrap": "^1.6.5",
     "node-stream-zip": "^1.15.0",
     "nodejs-traceroute": "2.0.0",
