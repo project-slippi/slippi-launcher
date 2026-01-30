@@ -67,14 +67,6 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
   // Get multi-account service
   const multiAccountService = authService.getMultiAccountService();
 
-  // Update accounts in state when they change
-  React.useEffect(() => {
-    const accountsList = multiAccountService.getAccounts();
-    const activeId = multiAccountService.getActiveAccountId();
-    setAccounts(accountsList);
-    setActiveAccountId(activeId);
-  }, [multiAccountService, setAccounts, setActiveAccountId]);
-
   // Handle account switch
   const handleSwitchAccount = async (accountId: string) => {
     if (switching) {
