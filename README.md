@@ -21,8 +21,13 @@ These are the applications you will need to install in order to build this proje
 
 - Clone the repo via: `git clone https://github.com/project-slippi/slippi-launcher.git`
 - Navigate into the directory and run: `npm install` to install all dependencies
-- Use `npm run start` to run the app in develop mode
+- Use `npm run dev` to run the app in develop mode using **mocked services**
 - Use `npm run package` to build a release
+
+#### Development Commands
+
+- `npm run dev`: **(Recommended)** Runs the app with mocked services (see `src/renderer/services`). No production keys are required, but not every service feature is supported in this mode.
+- `npm run start`: Runs the app against production services. This may require production API keys, which are provided at discretion for specific feature work. Ask in the `#launcher` Discord channel if you need production API keys.
 
 #### Recommended IDE
 
