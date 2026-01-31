@@ -26,7 +26,7 @@ These are the applications you will need to install in order to build this proje
 
 #### Development Commands
 
-- `npm run dev`: **(Recommended)** Runs the app with mocked services (see `src/renderer/services`). No production keys are required, but not every service feature is supported in this mode.
+- `npm run dev`: **(Recommended)** Runs the app with mocked services (see `src/renderer/services`). No production keys are required, but not every service feature is supported in this mode. To test logged in features, you can login using the test account using username `test` and password `test`.
 - `npm run start`: Runs the app against production services. This may require production API keys, which are provided at discretion for specific feature work. Ask in the `#launcher` Discord channel if you need production API keys.
 
 #### Recommended IDE
