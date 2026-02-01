@@ -26,12 +26,6 @@ The translation system works through a multi-step process:
 3. **PO File Management**: Standard `.po` files are used for translations (compatible with most translation tools)
 4. **JSON Conversion**: At build time, PO files are converted to JSON format that i18next can consume
 
-### Supported Languages
-
-Currently supported languages:
-- `en` - English (default)
-- `es` - Spanish (Español)
-- `ja` - Japanese (日本語)
 
 ### Checking Translation Status
 

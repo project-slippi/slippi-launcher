@@ -21,8 +21,13 @@ These are the applications you will need to install in order to build this proje
 
 - Clone the repo via: `git clone https://github.com/project-slippi/slippi-launcher.git`
 - Navigate into the directory and run: `npm install` to install all dependencies
-- Use `npm run start` to run the app in develop mode
+- Use `npm run dev` to run the app in develop mode using **mocked services**
 - Use `npm run package` to build a release
+
+#### Development Commands
+
+- `npm run dev`: **(Recommended)** Runs the app with mocked services (see `src/renderer/services`). No production keys are required, but not every service feature is supported in this mode. To test logged in features, you can login using the test account using username `test` and password `test`.
+- `npm run start`: Runs the app against production services. This may require production API keys, which are provided at discretion for specific feature work. Ask in the `#launcher` Discord channel if you need production API keys.
 
 #### Recommended IDE
 
@@ -37,26 +42,30 @@ These extensions will provide automatic formatting and warnings about code quali
 ### The `src` folder is split into the following:
 
 - `common`
-  - Code shared between both `main` and `renderer` processes. Thus the code written should be agnostic to which thread its being imported from.
+  - Code shared between both `main` and `renderer` processes. Code written here should be agnostic to which process it is imported from.
 - `main`
-  - Code for the main process. e.g. electron config, menubars etc.
+  - Code for the main process (e.g. Electron config, menu bars, window management).
 - `renderer`
-  - Code for the all the visual components
+  - Code for the renderer process (the React application).
 - `<module>`
-  - Modules for the main process that handles specfic tasks should be kept in their own folder with a clear name.
+  - Main process modules that handle specific tasks (e.g. `broadcast`, `dolphin`, `database`) are kept in their own top-level folders.
 
 ### The `renderer` folder is organised as follows:
 
+- `app`
+  - Core application logic, setup, and global layout.
 - `components`
-  - "Dumb" components reusable throughout the app. These should not directly access or modify state but should accept handlers and state info via props.
-- `containers`
-  - Components that piece multiple dumb components together into a single "container". These can modify state and bind logic to the components but make sure most complex logic is in `lib`.
+  - Reusable display components. These should generally not access global state directly.
 - `lib`
-  - Reusable logic goes here to keep the components mainly representative and visual.
+  - Shared utilities and helper functions.
+- `listeners`
+  - IPC listeners for handling communication from the main process.
+- `pages`
+  - The root page components for different views in the app.
+- `services`
+  - Service layer for handling business logic and API interactions.
 - `styles`
-  - Code for app styles and theming.
-- `views`
-  - The root pages of the app. Give a starting point for finding components.
+  - Global styles and theming configuration.
 
 ## Contributing
 
