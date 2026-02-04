@@ -66,7 +66,6 @@ class MockMultiAccountClient implements MultiAccountService {
 
     try {
       this._notifyAccountsChanged();
-
       this._initialized = true;
       log.info("Multi-account service initialized");
     } catch (err) {
@@ -127,24 +126,13 @@ class MockMultiAccountClient implements MultiAccountService {
       throw new Error(`Invalid username or password. Try '${testUsers[0].email}' and '${testUsers[0].password}' or
         '${testUsers[1].email}' and '${testUsers[1].password}'.`);
     }
-    const mockAuth: MockAuth = {
-      currentUser: {
-        uid: user.uid,
-        displayName: user.displayName,
-        email: user.email,
-        emailVerified: user.emailVerified,
-        reload: async () => {},
-      },
-    };
 
     try {
       const storedAccount = mapUserToStoredAccount(user, email);
-      this._authInstances.set(storedAccount.id, mockAuth as unknown as Auth);
-
+      const mockAuth = this._createMockAuth(user);
+      this._authInstances.set(storedAccount.id, mockAuth);
       await this._signInWithStoredAccount(storedAccount);
-
       log.info(`Added and switched to account: ${storedAccount.displayName}`);
-
       return storedAccount;
     } catch (err) {
       log.error("Failed to add account:", err);
@@ -182,17 +170,13 @@ class MockMultiAccountClient implements MultiAccountService {
       }
 
       const currentUser = auth.currentUser;
-
       if (!currentUser) {
         throw new SessionExpiredError(account.email, accountId);
       }
 
       this._activeAccountId = accountId;
-
       account.lastActive = new Date();
-
       this._notifyAccountsChanged();
-
       log.info(`Switched to account: ${account.displayName}`);
     } catch (err) {
       log.error(`Failed to switch to account ${accountId}:`, err);
@@ -222,7 +206,6 @@ class MockMultiAccountClient implements MultiAccountService {
       }
 
       this._notifyAccountsChanged();
-
       log.info(`Removed account: ${removedAccount.displayName}`);
     } catch (err) {
       log.error(`Failed to remove account ${accountId}:`, err);
@@ -253,6 +236,19 @@ class MockMultiAccountClient implements MultiAccountService {
     return () => {
       subscription.unsubscribe();
     };
+  }
+  private _createMockAuth(user: AuthUser): Auth {
+    const mockAuth: MockAuth = {
+      currentUser: {
+        uid: user.uid,
+        displayName: user.displayName,
+        email: user.email,
+        emailVerified: user.emailVerified,
+        reload: async () => {},
+      },
+    };
+
+    return mockAuth as unknown as Auth;
   }
 }
 
