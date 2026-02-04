@@ -84,8 +84,7 @@ class MockAuthClient implements AuthService {
   @delayAndMaybeError(SHOULD_ERROR)
   public async updateDisplayName(displayName: string): Promise<void> {
     const auth = this._multiAccountService.getActiveAuth();
-    Preconditions.checkExists(auth, "No active account");
-    Preconditions.checkExists(auth.currentUser, "User is not logged in.");
+    Preconditions.checkExists(auth?.currentUser, "User is not logged in.");
 
     // Update stored account info
     const activeAccountId = this._multiAccountService.getActiveAccountId();
