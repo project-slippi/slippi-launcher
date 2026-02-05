@@ -5,6 +5,7 @@ import spectateRemoteApi from "@remote/api";
 import replaysApi from "@replays/api";
 import settingsApi from "@settings/api";
 import { contextBridge, ipcRenderer, shell, webUtils } from "electron";
+import fs from "fs-extra";
 import path from "path";
 import { isSubdirectory } from "utils/is_subdirectory";
 
@@ -24,6 +25,7 @@ const api = {
   remote: spectateRemoteApi,
   utils: {
     isSubdirectory,
+    pathExists: (folder: string) => fs.pathExists(folder),
     // This is needed since Electron won't return the full file path anymore
     getFilePath: (file: File): string => {
       // This returns the absolute path on disk

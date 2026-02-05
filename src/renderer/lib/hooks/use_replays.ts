@@ -105,13 +105,21 @@ export class ReplayPresenter {
       return;
     }
 
+    let folderToLoad: string;
+    // If the stored folder doesn't exist, just default back to the root folder
+    if (currentFolder && (await window.electron.utils.pathExists(currentFolder))) {
+      folderToLoad = currentFolder;
+    } else {
+      folderToLoad = rootFolder;
+    }
+
     const loadFolderList = async () => {
       const folders = [rootFolder, ...extraFolders];
       // Init the folder tree
       await this.replayService.initializeFolderTree(folders);
 
       // Get the result after folder selection
-      const folderTree = await this.replayService.selectTreeFolder(currentFolder ?? rootFolder);
+      const folderTree = await this.replayService.selectTreeFolder(folderToLoad);
 
       useReplays.setState((state) => {
         state.currentRoot = rootFolder;
@@ -120,7 +128,7 @@ export class ReplayPresenter {
       });
     };
 
-    await Promise.all([loadFolderList(), this.loadFolder(currentFolder ?? rootFolder, true)]);
+    await Promise.all([loadFolderList(), this.loadFolder(folderToLoad, true)]);
   }
 
   public selectFile(file: FileResult, index?: number, total?: number): void {
