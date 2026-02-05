@@ -4,6 +4,7 @@ export const UserMenuMessages = {
   manageAccount: () => "Manage account",
   editDisplayName: () => "Edit display name",
   logout: () => "Log out",
+  offline: () => "Offline",
   slippiServerError: () => "Slippi server error",
   onlineActivationRequired: () => "Online activation required",
   areYouSureYouWantToLogout: () => "Are you sure you want to log out?",

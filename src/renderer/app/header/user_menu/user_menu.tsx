@@ -7,6 +7,7 @@ import React from "react";
 import { ConfirmationModal } from "@/components/confirmation_modal/confirmation_modal";
 import { useDolphinStore } from "@/lib/dolphin/use_dolphin_store";
 import { useAccount } from "@/lib/hooks/use_account";
+import { useAppStore } from "@/lib/hooks/use_app_store";
 import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 import type { AuthUser } from "@/services/auth/types";
@@ -40,6 +41,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
   const [openAddAccountDialog, setOpenAddAccountDialog] = React.useState(false);
   const [switching, setSwitching] = React.useState(false);
   const [reAuthEmail, setReAuthEmail] = React.useState<string | undefined>();
+  const isOnline = useAppStore((state) => state.isOnline);
 
   const onLogout = async () => {
     try {
@@ -152,7 +154,9 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
   }, [accounts, activeAccountId]);
 
   let errMessage: string | undefined = undefined;
-  if (serverError) {
+  if (!isOnline) {
+    errMessage = Messages.offline();
+  } else if (serverError) {
     errMessage = Messages.slippiServerError();
   } else if (!userData?.playKey) {
     errMessage = Messages.onlineActivationRequired();
