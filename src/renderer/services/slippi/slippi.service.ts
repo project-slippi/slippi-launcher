@@ -69,7 +69,7 @@ class SlippiBackendClient implements SlippiBackendService {
       },
       attempts: {
         max: 3,
-        retryIf: (error) => Boolean(error),
+        retryIf: (error) => Boolean(error) && navigator.onLine,
       },
     });
     const errorLink = onError(({ graphQLErrors, networkError }) => {
