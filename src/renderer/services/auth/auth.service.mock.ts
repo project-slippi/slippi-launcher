@@ -1,34 +1,28 @@
 import { Preconditions } from "@common/preconditions";
+import type { User } from "firebase/auth";
 import multicast from "observable-fns/multicast";
 import Subject from "observable-fns/subject";
 
 import { generateDisplayPicture } from "@/lib/display_picture";
 
 import { delayAndMaybeError } from "../utils";
-import type { AuthService, AuthUser } from "./types";
+import { createMultiAccountService } from "./multi_account.service.mock";
+import type { AuthService, AuthUser, MultiAccountService } from "./types";
 
 const SHOULD_ERROR = false;
 
-const testUserEmail = "test";
-const testUserPassword = "test";
-
 class MockAuthClient implements AuthService {
-  private _usersMap = new Map<string, AuthUser>();
-  private _currentUser?: AuthUser;
   private _userSubject = new Subject<AuthUser | undefined>();
   private _onAuthStateChanged = multicast(this._userSubject);
+  private _multiAccountService: MultiAccountService;
 
   constructor() {
-    // Add our fake user
-    const testUser = generateFakeUser({
-      email: testUserEmail,
-      emailVerified: true,
-    });
-    this._usersMap.set(this._hashEmailPassword(testUserEmail, testUserPassword), testUser);
-  }
+    this._multiAccountService = createMultiAccountService();
 
-  private _hashEmailPassword(email: string, password: string): string {
-    return `email:${email}+password:${password}`;
+    this._multiAccountService.onAccountsChange(() => {
+      const user = this.getCurrentUser();
+      this._userSubject.next(user);
+    });
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
@@ -38,11 +32,19 @@ class MockAuthClient implements AuthService {
 
   @delayAndMaybeError(SHOULD_ERROR)
   public async logout(): Promise<void> {
-    this._setCurrentUser(undefined);
+    const activeAccountId = this._multiAccountService.getActiveAccountId();
+    if (activeAccountId) {
+      await this._multiAccountService.removeAccount(activeAccountId);
+      this._userSubject.next(undefined);
+    }
   }
 
   public getCurrentUser(): AuthUser | undefined {
-    return this._currentUser;
+    const auth = this._multiAccountService.getActiveAuth();
+    if (!auth || !auth.currentUser) {
+      return undefined;
+    }
+    return this._mapFirebaseUserToAuthUser(auth.currentUser);
   }
 
   public onUserChange(onChange: (user: AuthUser | undefined) => void): () => void {
@@ -59,22 +61,19 @@ class MockAuthClient implements AuthService {
 
   @delayAndMaybeError(SHOULD_ERROR)
   public async login(args: { email: string; password: string }): Promise<AuthUser | undefined> {
-    const hash = this._hashEmailPassword(args.email, args.password);
-    const user = this._usersMap.get(hash);
-    if (!user) {
-      throw new Error(`Invalid username or password. Try '${testUserEmail}' and '${testUserPassword}'.`);
-    }
-    this._setCurrentUser(user);
+    await this._multiAccountService.addAccount(args.email, args.password);
+    const user = this.getCurrentUser();
+
+    this._userSubject.next(user);
     return user;
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
   public async signUp(args: { email: string; password: string; displayName: string }): Promise<AuthUser | undefined> {
-    const uid = args.email + args.displayName;
-    const newUser = generateFakeUser({ ...args, uid });
-    this._usersMap.set(this._hashEmailPassword(args.email, args.password), newUser);
-    this._setCurrentUser(newUser);
-    return newUser;
+    await this._multiAccountService.signUp(args.email, args.password, args.displayName);
+    const user = this.getCurrentUser();
+    this._userSubject.next(user);
+    return user;
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
@@ -84,12 +83,32 @@ class MockAuthClient implements AuthService {
 
   @delayAndMaybeError(SHOULD_ERROR)
   public async updateDisplayName(displayName: string): Promise<void> {
-    this._updateCurrentUser({ displayName });
+    const auth = this._multiAccountService.getActiveAuth();
+    Preconditions.checkExists(auth?.currentUser, "User is not logged in.");
+
+    // Update stored account info
+    const activeAccountId = this._multiAccountService.getActiveAccountId();
+    if (activeAccountId) {
+      const accounts = this._multiAccountService.getAccounts();
+      const account = accounts.find((acc) => acc.id === activeAccountId);
+      if (account) {
+        account.displayName = displayName;
+        // The multi-account service will handle saving
+      }
+    }
+
+    // Notify listeners
+    this._userSubject.next(this.getCurrentUser());
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
   public async refreshUser(): Promise<void> {
-    this._updateCurrentUser({ emailVerified: true });
+    const auth = this._multiAccountService.getActiveAuth();
+    Preconditions.checkExists(auth?.currentUser, "User is not logged in.");
+
+    await auth.currentUser.reload();
+    // Notify listeners of the new user object
+    this._userSubject.next(this.getCurrentUser());
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
@@ -97,50 +116,21 @@ class MockAuthClient implements AuthService {
     // Do nothing
   }
 
-  private _updateCurrentUser(newUserDetails: Partial<AuthUser>): AuthUser {
-    const user = this._currentUser;
-    Preconditions.checkExists(user, "User is not logged in.");
-
-    const maybeUserRecord = Array.from(this._usersMap.entries()).find(([_, u]) => user.uid === u.uid);
-    Preconditions.checkExists(maybeUserRecord, `Could not find user with id: ${user.uid}`);
-
-    const [key, userRecord] = maybeUserRecord;
-    const updatedUser: AuthUser = { ...userRecord, ...newUserDetails };
-    this._usersMap.set(key, updatedUser);
-    this._setCurrentUser(updatedUser);
-    return updatedUser;
-  }
-
   public getMultiAccountService(): any {
     // Mock implementation - return a basic mock
-    return {
-      init: async () => {},
-      addAccount: async () => ({ id: "", email: "", displayName: "", displayPicture: "", lastActive: new Date() }),
-      removeAccount: async () => {},
-      switchAccount: async () => {},
-      getAccounts: () => [],
-      getActiveAccountId: () => undefined,
-      getActiveAuth: () => undefined,
-      onAccountsChange: () => () => {},
+    return this._multiAccountService;
+  }
+  private _mapFirebaseUserToAuthUser(user: Pick<User, "uid" | "displayName" | "email" | "emailVerified">): AuthUser {
+    const displayPicture = generateDisplayPicture(user.uid);
+    const userObject = {
+      uid: user.uid,
+      displayName: user.displayName || "",
+      displayPicture,
+      email: user.email || "",
+      emailVerified: user.emailVerified,
     };
+    return userObject;
   }
-
-  private _setCurrentUser(user: AuthUser | undefined) {
-    this._currentUser = user;
-    this._userSubject.next(user);
-  }
-}
-
-function generateFakeUser(options: Partial<AuthUser>): AuthUser {
-  const uid = options.uid ?? "userid";
-  const fakeUser: AuthUser = {
-    uid,
-    displayName: options.displayName ?? "Demo user",
-    displayPicture: options.displayPicture ?? generateDisplayPicture(uid),
-    email: options.email ?? "fake@user.com",
-    emailVerified: options.emailVerified ?? false,
-  };
-  return fakeUser;
 }
 
 export default function createMockAuthClient(): AuthService {
