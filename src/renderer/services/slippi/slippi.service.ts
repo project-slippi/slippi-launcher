@@ -48,13 +48,18 @@ class SlippiBackendClient implements SlippiBackendService {
     const httpLink = new HttpLink({ uri: SLIPPI_BACKEND_URL });
     const authLink = setContext(async () => {
       // The firebase ID token expires after 1 hour so we will update the header on all actions
-      const token = await this.authService.getUserToken();
+      try {
+        const token = await this.authService.getUserToken();
 
-      return {
-        headers: {
-          authorization: token ? `Bearer ${token}` : undefined,
-        },
-      };
+        return {
+          headers: {
+            authorization: token ? `Bearer ${token}` : undefined,
+          },
+        };
+      } catch (err) {
+        // Just return the request if we cannot get the user token
+        return {};
+      }
     });
     const retryLink = new RetryLink({
       delay: {
@@ -64,7 +69,7 @@ class SlippiBackendClient implements SlippiBackendService {
       },
       attempts: {
         max: 3,
-        retryIf: (error) => Boolean(error),
+        retryIf: (error) => Boolean(error) && navigator.onLine,
       },
     });
     const errorLink = onError(({ graphQLErrors, networkError }) => {
