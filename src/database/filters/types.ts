@@ -5,11 +5,13 @@
  * - { minFrames: 1800 } = at least 30 seconds
  * - { maxFrames: 18000 } = at most 5 minutes
  * - { minFrames: 1800, maxFrames: 18000 } = between 30s and 5min
+ * - { minFrames: 1800, negate: true } = exclude games shorter than 30 seconds
  */
 export type DurationFilter = {
   type: "duration";
   minFrames?: number;
   maxFrames?: number;
+  negate?: boolean; // If true, excludes matches instead of including them
 };
 
 /**
@@ -24,7 +26,9 @@ export type DurationFilter = {
  * - { connectCode: "MANG#0", port: 1, mustBeWinner: true } = games where MANG#0 was port 1 and won
  * - { connectCode: "MANG#0", characterIds: [2, 20], mustBeWinner: true } = games where MANG#0 played Fox or Falco and won
  * - { port: 1 } = games where port 1 exists (any player)
- * - { userId: "abc123", displayName: "Mango" } = games where user abc123 has display name "Mango"
+ * - { tag: "aklo" } = games where tag contains "aklo" (fuzzy LIKE match - default)
+ * - { tag: "aklo", tagExact: true } = games where tag exactly equals "aklo" (exact = match)
+ * - { characterIds: [15], negate: true } = exclude games with Puff
  */
 export type PlayerFilter = {
   type: "player";
@@ -37,6 +41,10 @@ export type PlayerFilter = {
   characterIds?: number[]; // Character IDs (OR logic - player played any of these characters)
   // Optional win condition
   mustBeWinner?: boolean;
+  // Exact matching flags (true = use exact match with =, false/undefined = fuzzy match with LIKE)
+  tagExact?: boolean;
+  displayNameExact?: boolean;
+  negate?: boolean; // If true, excludes matches instead of including them
 };
 
 /**
@@ -46,10 +54,30 @@ export type PlayerFilter = {
  * - { modes: [8] } = online games only
  * - { modes: [2, 8] } = vs or online
  * - { modes: [15, 32] } = stadium modes only
+ * - { modes: [15, 32], negate: true } = exclude stadium modes
  */
 export type GameModeFilter = {
   type: "gameMode";
   modes: number[];
+  negate?: boolean; // If true, excludes matches instead of including them
+};
+
+/**
+ * Filter for stage
+ *
+ * Uses stage IDs from @slippi/slippi-js
+ * Multiple stage IDs are combined with OR logic (match any of the specified stages)
+ *
+ * Examples:
+ * - { stageIds: [31] } = Battlefield only
+ * - { stageIds: [31, 32] } = Battlefield OR Final Destination
+ * - { stageIds: [2, 3, 8, 28, 31, 32] } = Legal stages (FoD, PS, Yoshi's Story, DL, BF, FD)
+ * - { stageIds: [32], negate: true } = exclude Final Destination
+ */
+export type StageFilter = {
+  type: "stage";
+  stageIds: number[];
+  negate?: boolean; // If true, excludes matches instead of including them
 };
 
 /**
@@ -73,9 +101,10 @@ export type TextSearchFilter = {
   query: string;
   // Optional: if true, only search file names (not player fields)
   searchFileNameOnly?: boolean;
+  negate?: boolean; // If true, excludes matches instead of including them
 };
 
-export type ReplayFilter = DurationFilter | PlayerFilter | GameModeFilter | TextSearchFilter;
+export type ReplayFilter = DurationFilter | PlayerFilter | GameModeFilter | StageFilter | TextSearchFilter;
 
 // Game mode constants
 const GameModeValue = {

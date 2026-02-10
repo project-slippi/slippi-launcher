@@ -2,6 +2,7 @@ import Sqlite from "better-sqlite3";
 import { app } from "electron";
 import log from "electron-log";
 import fs from "fs-extra";
+import type { LogEvent } from "kysely";
 import { Kysely, sql } from "kysely";
 import { SqliteWorkerDialect } from "kysely-sqlite-worker";
 import path from "path";
@@ -13,6 +14,8 @@ import type { Database } from "./schema";
  *  Only increment this when we want users to re-create the database from scratch.
  */
 const DATABASE_USER_VERSION = 0;
+
+const SHOULD_LOG_SQL = process.env.DEBUG_REPLAY_DATABASE === "1";
 
 /**
  * Apply SQLite PRAGMA settings for optimal performance.
@@ -96,6 +99,12 @@ async function initDatabaseAndRunMigrations(
     dialect: new SqliteWorkerDialect({
       source,
     }),
+    log: (event: LogEvent) => {
+      if (SHOULD_LOG_SQL && event.level === "query") {
+        console.debug("SQL:", event.query.sql);
+        console.debug("Params:", event.query.parameters);
+      }
+    },
   });
 
   // Apply performance optimizations via PRAGMA settings
