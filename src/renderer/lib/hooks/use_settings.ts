@@ -79,7 +79,9 @@ export const useSpectateRemoteControlPort = () => useSetting("spectateRemoteCont
 
 export const useRootSlpPath = () => useSetting("rootSlpPath");
 
-export const useMonthlySubfolders = () => useSetting("useMonthlySubfolders");
+export const useEnableNetplayReplays = () => useSetting("enableNetplayReplays");
+
+export const useEnableMonthlySubfolders = () => useSetting("useMonthlySubfolders");
 
 export const useEnableJukebox = () => useSetting("enableJukebox");
 

@@ -275,7 +275,9 @@ export class DolphinManager {
     const installation = this.getInstallation(launchType);
     await installation.updateSettings({
       replayPath: this.settingsManager.getRootSlpPath(),
-      useMonthlySubfolders: this.settingsManager.getUseMonthlySubfolders(),
+      enableNetplayReplays: this.settingsManager.getEnableNetplayReplays(),
+      enableMonthlySubfolders: this.settingsManager.getEnableMonthlySubfolders(),
+      enableJukebox: this.settingsManager.getEnableJukebox(),
     });
   }
 
@@ -289,8 +291,13 @@ export class DolphinManager {
       (val) => this.settingsManager.updateSetting("rootSlpPath", val),
     );
     await this._updateLauncherSetting(
-      this.settingsManager.getUseMonthlySubfolders(),
-      newSettings.useMonthlySubfolders,
+      this.settingsManager.getEnableNetplayReplays(),
+      newSettings.enableNetplayReplays,
+      (val) => this.settingsManager.updateSetting("enableNetplayReplays", val),
+    );
+    await this._updateLauncherSetting(
+      this.settingsManager.getEnableMonthlySubfolders(),
+      newSettings.enableMonthlySubfolders,
       (val) => this.settingsManager.updateSetting("useMonthlySubfolders", val),
     );
     await this._updateLauncherSetting(
