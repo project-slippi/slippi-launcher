@@ -3,7 +3,7 @@ export const ReplaySettingsMessages = {
   rootSlpFolderDescription: () => "The folder where your SLP replays should be saved.",
 
   saveReplaysToMonthlySubfolders: (currentDate: string) =>
-    "Save replays to monthly subfolders in YYYY-MM format (e.g. {0})",
+    "Save replays to monthly subfolders in YYYY-MM format (e.g. {0}).",
 
   closeDolphinToChangeSetting: () => "Close Dolphin to change this setting",
   noFolderSet: () => "No folder set",
@@ -14,5 +14,5 @@ export const ReplaySettingsMessages = {
   additionalSlpFoldersDescription: () => "Choose any additional SLP folders that should show up in the replay browser.",
 
   enableNetplayReplays: () => "Enable Netplay Replays",
-  enableNetplayReplaysDescription: () => "Save replays for netplay games to the Root SLP Folder",
+  enableNetplayReplaysDescription: () => "Save replays for netplay games to the Root SLP Folder.",
 };
