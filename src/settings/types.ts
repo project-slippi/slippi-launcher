@@ -52,7 +52,7 @@ export interface SettingsSchema {
 
   // Behavior settings
   enableNetplayReplays: boolean;
-  enableMonthlySubfolders: boolean;
+  useMonthlySubfolders: boolean;
   enableJukebox: boolean;
   launchMeleeOnPlay: boolean;
   autoUpdateLauncher: boolean;

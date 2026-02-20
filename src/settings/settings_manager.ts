@@ -128,7 +128,7 @@ export class SettingsManager extends EventEmitter {
   }
 
   public getEnableMonthlySubfolders(): boolean {
-    return this.get().settings.enableMonthlySubfolders;
+    return this.get().settings.useMonthlySubfolders;
   }
 
   public getEnableJukebox(): boolean {
