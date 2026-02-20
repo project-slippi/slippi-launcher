@@ -33,3 +33,4 @@ npm-debug.log.*
 
 # windows code signing tool
 CodeSignTool
+.tool-versions

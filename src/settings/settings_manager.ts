@@ -123,8 +123,16 @@ export class SettingsManager extends EventEmitter {
     return this.get().settings.rootSlpPath;
   }
 
-  public getUseMonthlySubfolders(): boolean {
-    return this.get().settings.useMonthlySubfolders;
+  public getEnableNetplayReplays(): boolean {
+    return this.get().settings.enableNetplayReplays;
+  }
+
+  public getEnableMonthlySubfolders(): boolean {
+    return this.get().settings.enableMonthlySubfolders;
+  }
+
+  public getEnableJukebox(): boolean {
+    return this.get().settings.enableJukebox;
   }
 
   public getUseDolphinBeta(type: DolphinLaunchType): boolean {

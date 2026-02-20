@@ -71,11 +71,16 @@ function setupSettingsSubscriptions(settingsManager: SettingsManager, dolphinMan
     await installation.updateSettings({ replayPath });
   });
 
-  // Subscribe to useMonthlySubfolders changes
-  // TypeScript knows useMonthlySubfolders is boolean - no casting! ✓
-  settingsManager.onSettingChange("useMonthlySubfolders", async (useMonthlySubfolders) => {
+  settingsManager.onSettingChange("enableNetplayReplays", async (enableNetplayReplays) => {
     const installation = dolphinManager.getInstallation(DolphinLaunchType.NETPLAY);
-    await installation.updateSettings({ useMonthlySubfolders });
+    await installation.updateSettings({ enableNetplayReplays });
+  });
+
+  // Subscribe to enableMonthlySubfolders changes
+  // TypeScript knows enableMonthlySubfolders is boolean - no casting! ✓
+  settingsManager.onSettingChange("enableMonthlySubfolders", async (enableMonthlySubfolders) => {
+    const installation = dolphinManager.getInstallation(DolphinLaunchType.NETPLAY);
+    await installation.updateSettings({ enableMonthlySubfolders });
   });
 
   // Subscribe to enableJukebox changes

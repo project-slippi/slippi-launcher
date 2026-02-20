@@ -51,7 +51,8 @@ export interface SettingsSchema {
   extraSlpPaths: string[];
 
   // Behavior settings
-  useMonthlySubfolders: boolean;
+  enableNetplayReplays: boolean;
+  enableMonthlySubfolders: boolean;
   enableJukebox: boolean;
   launchMeleeOnPlay: boolean;
   autoUpdateLauncher: boolean;
