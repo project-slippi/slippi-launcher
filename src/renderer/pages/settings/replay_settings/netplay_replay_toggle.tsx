@@ -1,6 +1,7 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { format } from "date-fns";
+import React from "react";
 
 import { Checkbox } from "@/components/form/checkbox";
 import { Toggle } from "@/components/form/toggle";
@@ -14,7 +15,9 @@ export const NetplayReplayToggles = () => {
   const [enableNetplayReplays, setEnableNetplayReplays] = useEnableNetplayReplays();
   const [enableMonthlySubfolders, setEnableMonthlySubfolders] = useEnableMonthlySubfolders();
   const netplayDolphinOpen = useDolphinStore((store) => store.netplayOpened);
-  const currentDate = format(new Date(), "yyyy-MM");
+  const currentDate = React.useMemo(() => {
+    return format(new Date(), "yyyy-MM");
+  }, []);
 
   const onEnableNetplayReplaysToggle = async (checked: boolean) => {
     await setEnableNetplayReplays(checked);
