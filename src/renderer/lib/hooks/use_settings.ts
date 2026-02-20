@@ -81,7 +81,7 @@ export const useRootSlpPath = () => useSetting("rootSlpPath");
 
 export const useEnableNetplayReplays = () => useSetting("enableNetplayReplays");
 
-export const useEnableMonthlySubfolders = () => useSetting("enableMonthlySubfolders");
+export const useEnableMonthlySubfolders = () => useSetting("useMonthlySubfolders");
 
 export const useEnableJukebox = () => useSetting("enableJukebox");
 

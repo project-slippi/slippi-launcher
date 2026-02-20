@@ -78,7 +78,7 @@ function setupSettingsSubscriptions(settingsManager: SettingsManager, dolphinMan
 
   // Subscribe to enableMonthlySubfolders changes
   // TypeScript knows enableMonthlySubfolders is boolean - no casting! ✓
-  settingsManager.onSettingChange("enableMonthlySubfolders", async (enableMonthlySubfolders) => {
+  settingsManager.onSettingChange("useMonthlySubfolders", async (enableMonthlySubfolders) => {
     const installation = dolphinManager.getInstallation(DolphinLaunchType.NETPLAY);
     await installation.updateSettings({ enableMonthlySubfolders });
   });

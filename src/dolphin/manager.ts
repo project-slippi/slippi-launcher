@@ -298,7 +298,7 @@ export class DolphinManager {
     await this._updateLauncherSetting(
       this.settingsManager.getEnableMonthlySubfolders(),
       newSettings.enableMonthlySubfolders,
-      (val) => this.settingsManager.updateSetting("enableMonthlySubfolders", val),
+      (val) => this.settingsManager.updateSetting("useMonthlySubfolders", val),
     );
     await this._updateLauncherSetting(
       this.settingsManager.get().settings.enableJukebox,
