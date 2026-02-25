@@ -64,8 +64,6 @@ function setupSettingsSubscriptions(settingsManager: SettingsManager, dolphinMan
     }
   });
 
-  // Subscribe to rootSlpPath changes
-  // TypeScript knows replayPath is string - no casting! ✓
   settingsManager.onSettingChange("rootSlpPath", async (replayPath) => {
     const installation = dolphinManager.getInstallation(DolphinLaunchType.NETPLAY);
     await installation.updateSettings({ replayPath });
@@ -76,22 +74,16 @@ function setupSettingsSubscriptions(settingsManager: SettingsManager, dolphinMan
     await installation.updateSettings({ enableNetplayReplays });
   });
 
-  // Subscribe to enableMonthlySubfolders changes
-  // TypeScript knows enableMonthlySubfolders is boolean - no casting! ✓
   settingsManager.onSettingChange("useMonthlySubfolders", async (enableMonthlySubfolders) => {
     const installation = dolphinManager.getInstallation(DolphinLaunchType.NETPLAY);
     await installation.updateSettings({ enableMonthlySubfolders });
   });
 
-  // Subscribe to enableJukebox changes
-  // TypeScript knows enableJukebox is boolean - no casting! ✓
   settingsManager.onSettingChange("enableJukebox", async (enableJukebox) => {
     const installation = dolphinManager.getInstallation(DolphinLaunchType.NETPLAY);
     await installation.updateSettings({ enableJukebox });
   });
 
-  // Subscribe to auto-update setting
-  // TypeScript knows autoUpdateLauncher is boolean - no casting! ✓
   settingsManager.onSettingChange("autoUpdateLauncher", (autoUpdateLauncher) => {
     autoUpdater.autoInstallOnAppQuit = autoUpdateLauncher;
   });
