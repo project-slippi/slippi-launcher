@@ -26,6 +26,7 @@ export const defaultAppSettings: AppSettings = {
   settings: {
     isoPath: null,
     rootSlpPath: getDefaultRootSlpPath(),
+    enableNetplayReplays: true,
     useMonthlySubfolders: true,
     enableJukebox: true,
     spectateSlpPath: path.join(getDefaultRootSlpPath(), "Spectate"),
