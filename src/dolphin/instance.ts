@@ -102,11 +102,14 @@ export class DolphinInstance extends EventEmitter {
           });
         } else {
           const appdir = process.env.APPDIR;
+          const dolphinEnv = {};
           for (const key in process.env) {
             const split_val = process.env[key].split(":");
-            process.env[key] = split_val.filter((val) => !val.includes(appdir)).join(":");
+            dolphinEnv[key] = split_val.filter((val) => !val.includes(appdir)).join(":");
           }
-          child = spawn(executablePath, params);
+          child = spawn(executablePath, params, {
+            env: dolphinEnv,
+          });
         }
 
         child.once("spawn", () => {
