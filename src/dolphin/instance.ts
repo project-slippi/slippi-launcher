@@ -101,6 +101,11 @@ export class DolphinInstance extends EventEmitter {
             maxBuffer: 1000 * 1000 * 100,
           });
         } else {
+          const appdir = process.env.APPDIR;
+          for (const key in process.env) {
+            const split_val = process.env[key].split(":");
+            process.env[key] = split_val.filter((val) => !val.includes(appdir)).join(":");
+          }
           child = spawn(executablePath, params);
         }
 
