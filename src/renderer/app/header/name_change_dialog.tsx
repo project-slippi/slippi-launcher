@@ -23,7 +23,6 @@ export const NameChangeDialog = ({
 }) => {
   const { slippiBackendService } = useServices();
   const { handleSubmit, watch, control } = useForm<{ displayName: string }>({
-    defaultValues: { displayName },
     values: { displayName },
   });
 
