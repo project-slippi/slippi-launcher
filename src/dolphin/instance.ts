@@ -101,7 +101,11 @@ export class DolphinInstance extends EventEmitter {
             maxBuffer: 1000 * 1000 * 100,
           });
         } else {
-          child = spawn(executablePath, params);
+          const appDir = process.env.APPDIR;
+          const dolphinEnv = appDir ? this.cleanAppImageEnv(appDir) : process.env;
+          child = spawn(executablePath, params, {
+            env: dolphinEnv,
+          });
         }
 
         child.once("spawn", () => {
@@ -123,6 +127,20 @@ export class DolphinInstance extends EventEmitter {
         reject(err);
       }
     });
+  }
+
+  private cleanAppImageEnv(appDir: string): NodeJS.ProcessEnv {
+    const cleanedEnv: NodeJS.ProcessEnv = {};
+
+    for (const key in process.env) {
+      const envVar = process.env[key];
+      if (envVar) {
+        const split_val = envVar.split(":");
+        cleanedEnv[key] = split_val.filter((val) => !val.includes(appDir)).join(":");
+      }
+    }
+
+    return cleanedEnv;
   }
 }
 
