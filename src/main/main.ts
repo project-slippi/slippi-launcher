@@ -26,6 +26,8 @@ import url from "url";
 import { download } from "utils/download";
 import { fileExists } from "utils/file_exists";
 
+import { updateBootToCssCode } from "@dolphin/util";
+
 import { getConfigFlags } from "./flags/flags";
 import { installModules } from "./install_modules";
 import { MenuBuilder } from "./menu";
@@ -244,6 +246,18 @@ const handleSlippiURIAsync = async (aUrl: string) => {
 
   switch (protocol) {
     case "slippi:": {
+      // Handle direct connect: slippi://direct?code=BURN%23123
+      if (myUrl.hostname === "direct") {
+        const connectCode = myUrl.searchParams.get("code");
+        if (!connectCode) {
+          log.warn("Direct connect URI missing 'code' parameter");
+          return;
+        }
+        await launchDirectConnect(connectCode);
+        break;
+      }
+
+      // Existing replay handling: slippi://?path=<replay_path>
       let replayPath = myUrl.searchParams.get("path");
       if (!replayPath) {
         return;
@@ -333,6 +347,34 @@ const playReplayAndShowStats = async (filePath: string, startFrame?: number) => 
   if (mainWindow) {
     await ipc_statsPageRequestedEvent.main!.trigger({ filePath });
   }
+};
+
+const launchDirectConnect = async (connectCode: string) => {
+  log.info(`Launching direct connect for code: ${connectCode}`);
+
+  // Ensure netplay dolphin is installed
+  await dolphinManager.installDolphin(DolphinLaunchType.NETPLAY);
+
+  // Enable "Boot to CSS" so the game skips straight to the character select screen
+  const installation = dolphinManager.getInstallation(DolphinLaunchType.NETPLAY);
+  await updateBootToCssCode(installation, { enable: true });
+
+  // Write the connect code to a well-known file that Dolphin can read.
+  // TODO: Once Dolphin supports a --connect-code CLI flag or reads this file natively,
+  // this will drive the full auto-connect flow. For now this file serves as:
+  // 1. A contract for future Dolphin builds to consume
+  // 2. A signal to companion apps (e.g. friendlies) that a direct connect was requested
+  const tmpDir = path.join(app.getPath("userData"), "temp");
+  await fs.ensureDir(tmpDir);
+  const directCodePath = path.join(tmpDir, "slippi-direct-code.json");
+  await fs.writeFile(
+    directCodePath,
+    JSON.stringify({ connectCode, timestamp: Date.now() }),
+  );
+  log.info(`Wrote direct connect code to ${directCodePath}`);
+
+  // Launch netplay Dolphin with the connect code
+  await dolphinManager.launchNetplayDolphin({ connectCode });
 };
 
 app

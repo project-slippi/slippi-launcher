@@ -118,7 +118,7 @@ export class DolphinManager {
     await playbackInstance.play(replayComm);
   }
 
-  public async launchNetplayDolphin() {
+  public async launchNetplayDolphin(options?: { connectCode?: string }) {
     Preconditions.checkState(this.netplayDolphinInstance == null, "Netplay dolphin is already open!");
 
     await this._updateDolphinSettings(DolphinLaunchType.NETPLAY);
@@ -129,8 +129,11 @@ export class DolphinManager {
     const launchMeleeOnPlay = this.settingsManager.get().settings.launchMeleeOnPlay;
     const meleeIsoPath = launchMeleeOnPlay ? await this._getIsoPath() : undefined;
 
+    // When a connect code is provided, always launch with the ISO so the game boots
+    const isoPath = options?.connectCode ? await this._getIsoPath() : meleeIsoPath;
+
     // Create the Dolphin instance and start it
-    const dolphinInstance = new DolphinInstance(dolphinPath, meleeIsoPath);
+    const dolphinInstance = new DolphinInstance(dolphinPath, isoPath);
     dolphinInstance.on("close", async (exitCode: number | null, signal: string | null) => {
       try {
         await this._updateLauncherSettings(DolphinLaunchType.NETPLAY);
@@ -151,6 +154,14 @@ export class DolphinManager {
       log.error(err);
       throw err;
     });
+
+    // TODO: When Slippi Dolphin supports a --connect-code CLI flag, pass it here:
+    //   await dolphinInstance.start(["--connect-code", options.connectCode]);
+    // For now, Dolphin launches to CSS and the connect code is written to a temp file
+    // at <userData>/temp/slippi-direct-code.json for future consumption.
+    if (options?.connectCode) {
+      log.info(`Direct connect requested for code: ${options.connectCode}`);
+    }
 
     await dolphinInstance.start();
     this.netplayDolphinInstance = dolphinInstance;

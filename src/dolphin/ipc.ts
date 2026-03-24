@@ -50,7 +50,7 @@ export const ipc_viewSlpReplay = makeEndpoint.main("viewSlpReplay", <{ files: Re
 
 export const ipc_launchNetplayDolphin = makeEndpoint.main(
   "launchNetplayDolphin",
-  <{ bootToCss?: boolean }>_,
+  <{ bootToCss?: boolean; connectCode?: string }>_,
   <SuccessPayload>_,
 );
 

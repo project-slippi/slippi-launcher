@@ -103,13 +103,13 @@ export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: Do
     return { success: true };
   });
 
-  ipc_launchNetplayDolphin.main!.handle(async ({ bootToCss }) => {
-    // Boot straight to CSS if necessary
+  ipc_launchNetplayDolphin.main!.handle(async ({ bootToCss, connectCode }) => {
+    // Boot straight to CSS if necessary (always enabled when a connect code is provided)
     const installation = dolphinManager.getInstallation(DolphinLaunchType.NETPLAY);
-    await updateBootToCssCode(installation, { enable: Boolean(bootToCss) });
+    await updateBootToCssCode(installation, { enable: Boolean(bootToCss) || Boolean(connectCode) });
 
     // Actually launch Dolphin
-    await dolphinManager.launchNetplayDolphin();
+    await dolphinManager.launchNetplayDolphin({ connectCode });
     return { success: true };
   });
 

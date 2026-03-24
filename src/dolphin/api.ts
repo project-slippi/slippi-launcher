@@ -54,7 +54,7 @@ const dolphinApi: DolphinService = {
   async viewSlpReplay(files: ReplayQueueItem[]): Promise<void> {
     await ipc_viewSlpReplay.renderer!.trigger({ files });
   },
-  async launchNetplayDolphin(options: { bootToCss?: boolean }): Promise<void> {
+  async launchNetplayDolphin(options: { bootToCss?: boolean; connectCode?: string }): Promise<void> {
     await ipc_launchNetplayDolphin.renderer!.trigger(options);
   },
   async fetchGeckoCodes(dolphinType: DolphinLaunchType): Promise<GeckoCode[]> {

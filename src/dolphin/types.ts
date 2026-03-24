@@ -110,7 +110,7 @@ export interface DolphinService {
   checkPlayKeyExists(key: PlayKey): Promise<boolean>;
   removePlayKeyFile(): Promise<void>;
   viewSlpReplay(files: ReplayQueueItem[]): Promise<void>;
-  launchNetplayDolphin(options: { bootToCss?: boolean }): Promise<void>;
+  launchNetplayDolphin(options: { bootToCss?: boolean; connectCode?: string }): Promise<void>;
   fetchGeckoCodes(dolphinLaunchType: DolphinLaunchType): Promise<GeckoCode[]>;
   saveGeckoCodes(dolphinLaunchType: DolphinLaunchType, geckoCodes: GeckoCode[]): Promise<void>;
   onEvent<T extends DolphinEventType>(eventType: T, handle: (event: DolphinEventMap[T]) => void): () => void;
