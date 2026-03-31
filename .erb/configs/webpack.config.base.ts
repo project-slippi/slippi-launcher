@@ -70,7 +70,7 @@ const configuration: webpack.Configuration = {
 
       // Environment Variables to expose in the renderer process
       DEBUG_I18N: null,
-      ENABLE_REPLAY_DATABASE: null,
+      DEBUG_REPLAY_DATABASE: null,
     }),
 
     new webpack.DefinePlugin({
