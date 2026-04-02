@@ -132,7 +132,7 @@ export const VerifyEmailStep = () => {
         <div css={classes.message}>{Messages.aConfirmationEmailHasBeenSentTo()}</div>
         <div css={classes.emailContainer}>{user.email}</div>
         <div css={classes.incorrectEmailContainer}>
-          {Messages.wrongEmail()} <A href={slippiManagePage}>{Messages.changeEmail()}</A>
+          {Messages.wrongEmail()} <A href={`${slippiManagePage}?expectedUid=${user.uid}`}>{Messages.changeEmail()}</A>
         </div>
         {user.emailVerified ? postVerification : preVerification}
       </>
