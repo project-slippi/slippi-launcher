@@ -1,4 +1,3 @@
-import { Ports } from "@console/types";
 import log from "electron-log";
 
 import { InfoBlock } from "@/components/info_block";
@@ -9,10 +8,6 @@ import { useToasts } from "@/lib/hooks/use_toasts";
 
 import { BroadcastPanel } from "./broadcast_panel";
 import { ShareGameplayBlockMessages as Messages } from "./share_gameplay_block.messages";
-
-// These are the default params for broadcasting Netplay Dolphin
-const ip = "127.0.0.1";
-const port = Ports.DEFAULT;
 
 export const ShareGameplayBlock = ({ className }: { className?: string }) => {
   const userData = useAccount((store) => store.userData);

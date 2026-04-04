@@ -118,7 +118,9 @@ export const BroadcastPanel = ({
         {isDisconnected && broadcastDuration && (
           <div>
             {Messages.broadcastEnded(
-              formatDuration(broadcastDuration, { locale: getLocale(currentLanguage as SupportedLanguage) }),
+              formatDuration(broadcastDuration, {
+                locale: getLocale(currentLanguage as SupportedLanguage),
+              }),
             )}
           </div>
         )}

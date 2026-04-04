@@ -26,10 +26,14 @@ import { useServices } from "@/services";
 
 import { StartBroadcastDialogMessages as Messages } from "./start_broadcast_dialog.messages";
 
+// These are the default params for broadcasting Netplay Dolphin
+const DEFAULT_IP = "127.0.0.1";
+const DEFAULT_PORT = 51441;
+
 type StartBroadcastDialogProps = {
   open: boolean;
   onClose: () => void;
-  onSubmit: (values: { ip: string; spectatorId: string; connectionType: "dolphin" | "console" }) => void;
+  onSubmit: (values: { ip: string; port: number; viewerId: string; connectionType: "dolphin" | "console" }) => void;
 };
 
 export const StartBroadcastDialog = ({ open, onClose, onSubmit }: StartBroadcastDialogProps) => {
@@ -72,10 +76,11 @@ export const StartBroadcastDialog = ({ open, onClose, onSubmit }: StartBroadcast
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const formData = new FormData(e.currentTarget);
     onSubmit({
-      connectionType: e.target.connectionType.value,
-      ip: e.target.ip.value,
-      port: Number(e.target.port.value),
+      connectionType: formData.get("connectionType") as "dolphin" | "console",
+      ip: formData.get("ip") as string,
+      port: Number(formData.get("port")),
       viewerId,
     });
     onClose();
@@ -117,12 +122,12 @@ export const StartBroadcastDialog = ({ open, onClose, onSubmit }: StartBroadcast
 
           <FormControl>
             <FormLabel>IP Address</FormLabel>
-            <TextField name="ip" />
+            <TextField name="ip" defaultValue={DEFAULT_IP} />
           </FormControl>
 
           <FormControl>
             <FormLabel>Port</FormLabel>
-            <TextField name="port" />
+            <TextField name="port" defaultValue={DEFAULT_PORT} />
           </FormControl>
 
           <FormControl>
