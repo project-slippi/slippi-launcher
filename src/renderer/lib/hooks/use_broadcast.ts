@@ -8,7 +8,7 @@ export const useBroadcast = () => {
 
   const startBroadcasting = async (config: Omit<StartBroadcastConfig, "authToken">) => {
     const authToken = await authService.getUserToken();
-    log.info("Starting broadcast");
+    log.info("Starting broadcast", config);
     await broadcastService.startBroadcast({
       ...config,
       authToken,

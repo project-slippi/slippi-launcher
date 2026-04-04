@@ -31,13 +31,14 @@ export const ShareGameplayBlock = ({ className }: { className?: string }) => {
         startTime={startTime}
         endTime={endTime}
         onDisconnect={stop}
-        onStartBroadcast={async (viewerId: string) => {
+        onStartBroadcast={async ({ ip, port, viewerId, connectionType }) => {
           try {
             await start({
               ip,
               port,
               viewerId,
               name: userData?.playKey ? userData.playKey.connectCode : undefined,
+              connectionType,
             });
           } catch (err) {
             log.error(err);

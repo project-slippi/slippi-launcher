@@ -16,6 +16,7 @@ export type StartBroadcastConfig = {
   viewerId: string;
   authToken: string;
   name?: string;
+  connectionType: "console" | "dolphin";
 };
 
 export enum BroadcastEvent {

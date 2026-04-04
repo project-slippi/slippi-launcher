@@ -1,5 +1,16 @@
 import { Preconditions } from "@common/preconditions";
-import { ConnectionEvent, ConnectionStatus, DolphinConnection, DolphinMessageType } from "@slippi/slippi-js/node";
+import type { SlpRawEventPayload } from "@slippi/slippi-js/node";
+import {
+  Command,
+  ConnectionEvent,
+  ConnectionStatus,
+  ConsoleConnection,
+  DolphinConnection,
+  DolphinMessageType,
+  SlpStream,
+  SlpStreamEvent,
+  SlpStreamMode,
+} from "@slippi/slippi-js/node";
 import { EventEmitter } from "events";
 import keyBy from "lodash/keyBy";
 import last from "lodash/last";
@@ -42,7 +53,9 @@ export class BroadcastManager extends EventEmitter {
 
   private wsClient: WebSocketClient | null;
   private wsConnection: connection | null;
-  private dolphinConnection: DolphinConnection;
+  // private dolphinConnection: DolphinConnection;
+
+  private connection?: DolphinConnection | ConsoleConnection | null;
 
   private connectingSubState: ConnectingSubState;
 
@@ -52,6 +65,7 @@ export class BroadcastManager extends EventEmitter {
     this.isBroadcastReady = false;
     this.wsClient = null;
     this.wsConnection = null;
+    this.connection = null;
     this.incomingEvents = [];
     this.slippiStatus = ConnectionStatus.DISCONNECTED;
     this.connectingSubState = {
@@ -65,42 +79,6 @@ export class BroadcastManager extends EventEmitter {
     this.backupEvents = [];
 
     this.nextGameCursor = null;
-
-    this.dolphinConnection = new DolphinConnection();
-    this.dolphinConnection.on(ConnectionEvent.STATUS_CHANGE, (status: number) => {
-      this.emit(BroadcastEvent.LOG, `Dolphin status change: ${status}`);
-      this.emit(BroadcastEvent.DOLPHIN_STATUS_CHANGE, status);
-
-      // Disconnect from Slippi server when we disconnect from Dolphin
-      if (status === ConnectionStatus.DISCONNECTED) {
-        // Kind of jank but this will hopefully stop the game on the spectator side when someone
-        // kills Dolphin. May no longer be necessary after Dolphin itself sends these messages
-        if (this.nextGameCursor !== null) {
-          this.incomingEvents.push({
-            type: DolphinMessageType.END_GAME,
-            cursor: this.nextGameCursor,
-            nextCursor: this.nextGameCursor,
-            payload: "",
-          });
-        }
-
-        this._handleGameData();
-        this.stop();
-
-        this.incomingEvents = [];
-        this.backupEvents = [];
-      }
-    });
-    this.dolphinConnection.on(ConnectionEvent.MESSAGE, (message: any) => {
-      this.incomingEvents.push(message);
-      this._handleGameData();
-    });
-    this.dolphinConnection.on(ConnectionEvent.ERROR, (err) => {
-      // Log the error messages we get from Dolphin
-      if (err) {
-        this.emit(BroadcastEvent.ERROR, err);
-      }
-    });
   }
 
   /**
@@ -108,16 +86,29 @@ export class BroadcastManager extends EventEmitter {
    */
   public async start(config: StartBroadcastConfig) {
     Preconditions.checkExists(SLIPPI_WS_SERVER, "Slippi websocket server is undefined");
+    this.emit(BroadcastEvent.ERROR, `start: ${JSON.stringify(config, null, 2)}`);
+
+    if (this.connection) {
+      this.connection.disconnect();
+      this.connection = null;
+    }
+
+    this.connection = config.connectionType === "dolphin" ? new DolphinConnection() : new ConsoleConnection();
+
+    const currentConnectionStatus = this.connection.getStatus();
+
+    this.emit(BroadcastEvent.LOG, `currentConnectionStatus: ${currentConnectionStatus}`);
 
     // First try to connect to Dolphin if we haven't already
-    if (this.dolphinConnection.getStatus() === ConnectionStatus.DISCONNECTED) {
+    if (this.connection.getStatus() === ConnectionStatus.DISCONNECTED) {
       try {
-        await this._connectToDolphin(config.ip, config.port);
+        await this._connect(config.ip, config.port);
+        this.setupListeners();
       } catch (err: any) {
         const errMsg = err.message || JSON.stringify(err);
         this.emit(BroadcastEvent.LOG, `Could not connect to Dolphin\n${errMsg}`);
         this.emit(BroadcastEvent.LOG, errMsg);
-        this.dolphinConnection.disconnect();
+        this.connection.disconnect();
         throw err;
       }
     }
@@ -225,11 +216,12 @@ export class BroadcastManager extends EventEmitter {
         this._handleGameData();
       };
 
-      connection.on("error", (err) => {
+      this.wsConnection.on("error", (err) => {
         this.emit(BroadcastEvent.ERROR, err);
       });
 
-      connection.on("close", (code: number, reason: string) => {
+      this.wsConnection.on("close", (code: number, reason: string) => {
+        Preconditions.checkExists(this.connection);
         this.emit(BroadcastEvent.LOG, `WS connection closed: ${code}, ${reason}`);
 
         // Clear the socket
@@ -244,12 +236,12 @@ export class BroadcastManager extends EventEmitter {
           this.emit(BroadcastEvent.RECONNECT, config);
         } else {
           // If normal close, disconnect from dolphin
-          this.dolphinConnection.disconnect();
+          this.connection.disconnect();
           this._setSlippiStatus(ConnectionStatus.DISCONNECTED);
         }
       });
 
-      connection.on("message", (data: Message) => {
+      this.wsConnection.on("message", (data: Message) => {
         if (data.type !== "utf8") {
           return;
         }
@@ -387,13 +379,16 @@ export class BroadcastManager extends EventEmitter {
 
   public stop() {
     // TODO: Handle cancelling the retry case
+    if (!this.connection) {
+      return;
+    }
 
     this.emit(BroadcastEvent.LOG, "Service stop message received");
 
-    if (this.dolphinConnection.getStatus() === ConnectionStatus.CONNECTED) {
+    if (this.connection.getStatus() === ConnectionStatus.CONNECTED) {
       this.emit(BroadcastEvent.LOG, "Disconnecting dolphin connection...");
 
-      this.dolphinConnection.disconnect();
+      this.connection.disconnect();
 
       // If the dolphin connection is still active, disconnecting it will cause the stop function
       // to be called again, so just return on this iteration and the callback will handle the rest
@@ -422,31 +417,154 @@ export class BroadcastManager extends EventEmitter {
       this.wsClient = null;
     }
 
+    this.connection.disconnect();
+    this.connection = null;
+
     // Clear incoming events
     this.incomingEvents = [];
+  }
+
+  private setupListeners() {
+    Preconditions.checkExists(this.connection);
+
+    if (this.connection instanceof ConsoleConnection) {
+      // duplicating logic from slippi-js (maybe? I think maybe the dolphin logic for this is in ishiiruka)
+      let ready = false;
+      let cursor = 0;
+
+      let payloads: Buffer[] = [];
+
+      const slippiStream = new SlpStream({
+        mode: SlpStreamMode.AUTO,
+      });
+
+      // 0x35, 0x36, 0x3c, 0x39, 0x10,
+      // by default we bundle all events in a single game frame to send in one websocket message
+      // all incoming events hit the queue, then if a received message was one of these, we send the queue as one bundle
+      const EVENTS_TO_SEND = [
+        Command.MESSAGE_SIZES,
+        Command.GAME_START,
+        Command.FRAME_BOOKEND,
+        Command.GAME_END,
+        Command.SPLIT_MESSAGE,
+      ];
+
+      slippiStream.on(SlpStreamEvent.RAW, (data: SlpRawEventPayload) => {
+        this.emit(BroadcastEvent.LOG, `new raw: ${JSON.stringify(data)}`);
+
+        // this should mean a game is starting. start collecting payloads, and inject a start_game payload
+        if (data.command === Command.MESSAGE_SIZES) {
+          ready = true;
+          this.incomingEvents.push({
+            cursor,
+            nextCursor: cursor + 1,
+            type: DolphinMessageType.START_GAME,
+          } as SlippiBroadcastPayloadEvent);
+
+          cursor++;
+        }
+
+        // if the game hasn't started, just wait
+        if (!ready) {
+          return;
+        }
+
+        payloads.push(data.payload);
+
+        // if this is not an event we flush on, bail out
+        if (!EVENTS_TO_SEND.includes(data.command)) {
+          return;
+        }
+
+        const event: SlippiBroadcastPayloadEvent = {
+          cursor,
+          // may need to be next_cursor?
+          nextCursor: cursor + 1,
+          type: data.command === Command.GAME_END ? DolphinMessageType.END_GAME : DolphinMessageType.GAME_EVENT,
+          payload: Buffer.concat(payloads).toString("base64"),
+        };
+
+        payloads = [];
+
+        cursor++;
+
+        this.incomingEvents.push(event);
+
+        if (data.command === Command.GAME_END) {
+          ready = false;
+        }
+      });
+
+      this.connection.on(ConnectionEvent.DATA, (data) => {
+        this.emit(BroadcastEvent.LOG, "received data");
+        slippiStream.process(data);
+      });
+    }
+
+    this.connection.on(ConnectionEvent.STATUS_CHANGE, (status: number) => {
+      this.emit(BroadcastEvent.LOG, `Dolphin status change: ${status}`);
+      this.emit(BroadcastEvent.DOLPHIN_STATUS_CHANGE, status);
+
+      // Disconnect from Slippi server when we disconnect from Dolphin
+      if (status === ConnectionStatus.DISCONNECTED) {
+        // Kind of jank but this will hopefully stop the game on the spectator side when someone
+        // kills Dolphin. May no longer be necessary after Dolphin itself sends these messages
+        if (this.nextGameCursor !== null) {
+          this.incomingEvents.push({
+            type: DolphinMessageType.END_GAME,
+            cursor: this.nextGameCursor,
+            nextCursor: this.nextGameCursor,
+            payload: "",
+          });
+        }
+
+        this._handleGameData();
+        this.stop();
+
+        this.incomingEvents = [];
+        this.backupEvents = [];
+      }
+    });
+
+    this.connection.on(ConnectionEvent.MESSAGE, (message: any) => {
+      this.incomingEvents.push(message);
+      this._handleGameData();
+    });
+    this.connection.on(ConnectionEvent.ERROR, (err) => {
+      // Log the error messages we get from Dolphin
+      if (err) {
+        this.emit(BroadcastEvent.ERROR, err);
+      }
+    });
   }
 
   /**
    * Initiates a connection to Dolphin but only resolves when it's actually connected.
    * The promise rejects if not connected before the timeout.
    */
-  private async _connectToDolphin(ip: string, port: number, timeout = 5000): Promise<void> {
+  private async _connect(ip: string, port: number, timeout = 5000): Promise<void> {
+    Preconditions.checkExists(this.connection);
     // We're already connected so do nothing
-    if (this.dolphinConnection.getStatus() === ConnectionStatus.CONNECTED) {
+    if (this.connection.getStatus() === ConnectionStatus.CONNECTED) {
       return;
     }
 
     return new Promise((resolve, reject) => {
+      Preconditions.checkExists(this.connection);
+
       // Set up the timeout
       const timer = setTimeout(() => {
         reject(new Error(`Dolphin connection request timed out after ${timeout}ms`));
       }, timeout);
 
       const connectionChangeHandler = (status: number) => {
+        Preconditions.checkExists(this.connection);
+        this.emit(BroadcastEvent.LOG, `connectionStatusChange: ${status}`, { status });
+
         switch (status) {
           case ConnectionStatus.CONNECTED: {
             // Stop listening to the event
-            this.dolphinConnection.removeListener(ConnectionEvent.STATUS_CHANGE, connectionChangeHandler);
+            this.connection.removeListener(ConnectionEvent.STATUS_CHANGE, connectionChangeHandler);
 
             clearTimeout(timer);
             resolve();
@@ -454,7 +572,7 @@ export class BroadcastManager extends EventEmitter {
           }
           case ConnectionStatus.DISCONNECTED: {
             // Stop listening to the event
-            this.dolphinConnection.removeListener(ConnectionEvent.STATUS_CHANGE, connectionChangeHandler);
+            this.connection.removeListener(ConnectionEvent.STATUS_CHANGE, connectionChangeHandler);
 
             clearTimeout(timer);
             reject(new Error("Broadcast manager failed to connect to Dolphin"));
@@ -464,10 +582,10 @@ export class BroadcastManager extends EventEmitter {
       };
 
       // Set up the listeners
-      this.dolphinConnection.on(ConnectionEvent.STATUS_CHANGE, connectionChangeHandler);
+      this.connection.on(ConnectionEvent.STATUS_CHANGE, connectionChangeHandler);
 
       // Actually initiate the connection
-      this.dolphinConnection.connect(ip, port).catch(reject);
+      this.connection.connect(ip, port).catch(reject);
     });
   }
 
