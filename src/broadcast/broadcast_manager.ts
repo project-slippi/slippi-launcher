@@ -1,16 +1,6 @@
 import { Preconditions } from "@common/preconditions";
-import type { SlpRawEventPayload } from "@slippi/slippi-js/node";
-import {
-  Command,
-  ConnectionEvent,
-  ConnectionStatus,
-  ConsoleConnection,
-  DolphinConnection,
-  DolphinMessageType,
-  SlpStream,
-  SlpStreamEvent,
-  SlpStreamMode,
-} from "@slippi/slippi-js/node";
+import type { BroadcastMessage } from "@slippi/slippi-js/node";
+import { ConnectionEvent, ConnectionStatus, ConsoleConnection, DolphinConnection } from "@slippi/slippi-js/node";
 import { EventEmitter } from "events";
 import keyBy from "lodash/keyBy";
 import last from "lodash/last";
@@ -18,7 +8,7 @@ import type { connection, Message } from "websocket";
 import { client as WebSocketClient } from "websocket";
 
 import type { SlippiBroadcastPayloadEvent, StartBroadcastConfig } from "./types";
-import { BroadcastEvent } from "./types";
+import { BroadcastEvent, BroadcastMessageType } from "./types";
 
 const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
 
@@ -421,10 +411,6 @@ export class BroadcastManager extends EventEmitter {
   private setupGameSourceListeners() {
     Preconditions.checkExists(this.connection);
 
-    if (this.connection instanceof ConsoleConnection) {
-      this._setupConsoleConnectionListeners(this.connection);
-    }
-
     this.connection.on(ConnectionEvent.STATUS_CHANGE, (status: number) => {
       this.emit(BroadcastEvent.LOG, `Game source status change: ${status}`);
       this.emit(BroadcastEvent.DOLPHIN_STATUS_CHANGE, status);
@@ -433,7 +419,7 @@ export class BroadcastManager extends EventEmitter {
         // Inject end game message if we have an active game
         if (this.nextGameCursor !== null) {
           this._queueEvent({
-            type: DolphinMessageType.END_GAME,
+            type: BroadcastMessageType.END_GAME,
             cursor: this.nextGameCursor,
             nextCursor: this.nextGameCursor,
             payload: "",
@@ -445,7 +431,8 @@ export class BroadcastManager extends EventEmitter {
       }
     });
 
-    this.connection.on(ConnectionEvent.MESSAGE, (message: unknown) => {
+    // Use the unified BROADCAST event from both connection types
+    this.connection.on(ConnectionEvent.BROADCAST, (message: BroadcastMessage) => {
       this._queueEvent(message as SlippiBroadcastPayloadEvent);
       this._handleGameData();
     });
@@ -454,69 +441,6 @@ export class BroadcastManager extends EventEmitter {
       if (err) {
         this.emit(BroadcastEvent.ERROR, err);
       }
-    });
-  }
-
-  private _setupConsoleConnectionListeners(consoleConnection: ConsoleConnection) {
-    let ready = false;
-    let cursor = 0;
-    let payloads: Buffer[] = [];
-
-    const slippiStream = new SlpStream({
-      mode: SlpStreamMode.AUTO,
-    });
-
-    const EVENTS_TO_SEND = [
-      Command.MESSAGE_SIZES,
-      Command.GAME_START,
-      Command.FRAME_BOOKEND,
-      Command.GAME_END,
-      Command.SPLIT_MESSAGE,
-    ];
-
-    slippiStream.on(SlpStreamEvent.RAW, (data: SlpRawEventPayload) => {
-      this.emit(BroadcastEvent.LOG, `new raw: ${JSON.stringify(data)}`);
-
-      // Game starting - inject start_game event
-      if (data.command === Command.MESSAGE_SIZES) {
-        ready = true;
-        this._queueEvent({
-          cursor,
-          nextCursor: cursor + 1,
-          type: DolphinMessageType.START_GAME,
-        } as SlippiBroadcastPayloadEvent);
-        cursor++;
-      }
-
-      if (!ready) {
-        return;
-      }
-
-      payloads.push(Buffer.from(data.payload));
-
-      // Only flush on specific events
-      if (!EVENTS_TO_SEND.includes(data.command)) {
-        return;
-      }
-
-      this._queueEvent({
-        cursor,
-        nextCursor: cursor + 1,
-        type: data.command === Command.GAME_END ? DolphinMessageType.END_GAME : DolphinMessageType.GAME_EVENT,
-        payload: Buffer.concat(payloads).toString("base64"),
-      });
-
-      payloads = [];
-      cursor++;
-
-      if (data.command === Command.GAME_END) {
-        ready = false;
-      }
-    });
-
-    consoleConnection.on(ConnectionEvent.DATA, (data) => {
-      this.emit(BroadcastEvent.LOG, "received data");
-      slippiStream.process(data);
     });
   }
 

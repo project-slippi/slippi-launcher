@@ -1,5 +1,22 @@
-import type { DolphinMessageType } from "@slippi/slippi-js/node";
 import type { Observable } from "observable-fns";
+
+// Re-export BroadcastMessageType from slippi-js for convenience
+export enum BroadcastMessageType {
+  CONNECT_REPLY = "connect_reply",
+  GAME_EVENT = "game_event",
+  START_GAME = "start_game",
+  END_GAME = "end_game",
+}
+
+export type BroadcastMessage = {
+  type: BroadcastMessageType;
+  cursor: number;
+  nextCursor: number;
+  payload?: string; // Base64 encoded game data
+  nick?: string;
+};
+
+export type SlippiBroadcastPayloadEvent = BroadcastMessage;
 
 export type BroadcasterItem = {
   broadcaster: {
@@ -37,36 +54,6 @@ export enum SpectateEvent {
   SPECTATE_LIST_UPDATE = "SPECTATE_LIST_UPDATE",
 }
 
-type TypeMap<M extends { [index: string]: any }> = {
-  [Key in keyof M]: M[Key] extends undefined
-    ? {
-        type: Key;
-      }
-    : {
-        type: Key;
-      } & M[Key];
-};
-
-type SlippiPlayload = {
-  payload: string;
-  cursor: number;
-  nextCursor: number;
-};
-
-type SlippiBroadcastEventPayload = {
-  [DolphinMessageType.CONNECT_REPLY]: {
-    version: number;
-    nick: string;
-    cursor: number;
-  };
-  [DolphinMessageType.GAME_EVENT]: SlippiPlayload;
-  [DolphinMessageType.END_GAME]: SlippiPlayload;
-  [DolphinMessageType.START_GAME]: SlippiPlayload;
-};
-
-export type SlippiBroadcastPayloadEvent =
-  TypeMap<SlippiBroadcastEventPayload>[keyof TypeMap<SlippiBroadcastEventPayload>];
-
 export type BroadcastService = {
   onSpectateReconnect(handle: () => void): () => void;
   onBroadcastReconnect(handle: (config: StartBroadcastConfig) => void): () => void;
@@ -102,6 +89,10 @@ export interface SpectateController {
     filePath: string;
     broadcasterName: string;
   }>;
-  getGameEndObservable(): Observable<{ broadcastId: string; dolphinId: string; filePath: string }>;
+  getGameEndObservable(): Observable<{
+    broadcastId: string;
+    dolphinId: string;
+    filePath: string;
+  }>;
   getErrorObservable(): Observable<Error | string>;
 }
