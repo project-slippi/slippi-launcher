@@ -74,7 +74,7 @@
     "@pmmmwh/react-refresh-webpack-plugin": "0.5.17",
     "@storybook/addon-docs": "9.1.16",
     "@storybook/addon-links": "9.1.16",
-    "@storybook/addon-webpack5-compiler-babel": "^4.0.0",
+    "@storybook/addon-webpack5-compiler-babel": "^3.0.6",
     "@storybook/preset-scss": "^1.0.3",
     "@storybook/react-webpack5": "9.1.16",
     "@stylexjs/eslint-plugin": "^0.4.1",
