@@ -12,7 +12,8 @@
       "@settings/*": ["settings/*"],
       "@console/*": ["console/*"],
       "@database/*": ["database/*"],
-      "@remote/*": ["remote/*"]
+      "@remote/*": ["remote/*"],
+      "@slippi/*": ["../.yalc/@slippi/*"]
     },
     "baseUrl": "./src",
     "outDir": "release/app/dist",

@@ -2,6 +2,7 @@ import { ConnectionStatus } from "@console/types";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import Button from "@mui/material/Button";
+import type { StoredConnection } from "@settings/types";
 import { formatDuration, intervalToDuration } from "date-fns";
 import React from "react";
 import TimeAgo from "react-timeago";
@@ -21,6 +22,7 @@ type BroadcastPanelProps = {
   slippiServerStatus: ConnectionStatus;
   startTime?: Date;
   endTime?: Date;
+  savedConnections: StoredConnection[];
   onStartBroadcast: (opts: {
     ip: string;
     port: number;
@@ -35,6 +37,7 @@ export const BroadcastPanel = ({
   dolphinStatus,
   startTime,
   endTime,
+  savedConnections,
   onStartBroadcast,
   onDisconnect,
 }: BroadcastPanelProps) => {
@@ -125,7 +128,12 @@ export const BroadcastPanel = ({
           </div>
         )}
       </div>
-      <StartBroadcastDialog open={modalOpen} onClose={() => setModalOpen(false)} onSubmit={onStartBroadcast} />
+      <StartBroadcastDialog
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSubmit={onStartBroadcast}
+        savedConnections={savedConnections}
+      />
     </div>
   );
 };

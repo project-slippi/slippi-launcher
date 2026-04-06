@@ -4,6 +4,7 @@ import { InfoBlock } from "@/components/info_block";
 import { useAccount } from "@/lib/hooks/use_account";
 import { useBroadcast } from "@/lib/hooks/use_broadcast";
 import { useConsole } from "@/lib/hooks/use_console";
+import { useSettings } from "@/lib/hooks/use_settings";
 import { useToasts } from "@/lib/hooks/use_toasts";
 
 import { BroadcastPanel } from "./broadcast_panel";
@@ -15,6 +16,7 @@ export const ShareGameplayBlock = ({ className }: { className?: string }) => {
   const endTime = useConsole((store) => store.endTime);
   const slippiStatus = useConsole((store) => store.slippiConnectionStatus);
   const dolphinStatus = useConsole((store) => store.dolphinConnectionStatus);
+  const savedConnections = useSettings((store) => store.connections);
   const [start, stop] = useBroadcast();
   const { showError } = useToasts();
 
@@ -25,6 +27,7 @@ export const ShareGameplayBlock = ({ className }: { className?: string }) => {
         dolphinStatus={dolphinStatus}
         startTime={startTime}
         endTime={endTime}
+        savedConnections={savedConnections}
         onDisconnect={stop}
         onStartBroadcast={async ({ ip, port, viewerId, connectionType }) => {
           try {
