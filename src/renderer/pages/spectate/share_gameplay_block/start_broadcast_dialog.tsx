@@ -65,12 +65,6 @@ type StartBroadcastDialogProps = {
   initialAdvancedExpanded?: boolean;
 };
 
-type SelectedConnectionType =
-  | { type: "saved"; id: number }
-  | { type: "discovered"; ip: string }
-  | { type: "manual" }
-  | null;
-
 export const StartBroadcastDialog = ({
   open,
   onClose,
@@ -78,15 +72,16 @@ export const StartBroadcastDialog = ({
   savedConnections,
   initialAdvancedExpanded = false,
 }: StartBroadcastDialogProps) => {
-  const { slippiBackendService } = useServices();
+  const { slippiBackendService, consoleService } = useServices();
 
-  // Minimal state - only what's needed for UX logic
-  const [viewerId, setViewerId] = React.useState("");
+  const [formData, setFormData] = React.useState<StartBroadcastFormData>({
+    viewerId: "",
+    ip: DEFAULT_IP,
+    port: DEFAULT_PORT,
+    connectionType: "dolphin",
+  });
   const [isAdvancedExpanded, setIsAdvancedExpanded] = React.useState(initialAdvancedExpanded);
-  const [connectionType, setConnectionType] = React.useState<"dolphin" | "console">("dolphin");
-  const [selectedConnection, setSelectedConnection] = React.useState<SelectedConnectionType>(null);
 
-  // Get discovered consoles from the store
   const discoveredConsoles = useConsoleDiscoveryStore((store) => store.consoleItems);
   const savedIps = savedConnections.map((conn) => conn.ipAddress);
   const availableConsoles = discoveredConsoles.filter((item) => !savedIps.includes(item.ip));
@@ -94,18 +89,13 @@ export const StartBroadcastDialog = ({
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // Refs for IP/Port inputs to populate them
-  const ipInputRef = React.useRef<HTMLInputElement>(null);
-  const portInputRef = React.useRef<HTMLInputElement>(null);
-
-  // User validation query
   const userQuery = useQuery(
-    ["userId", viewerId],
+    ["userId", formData.viewerId],
     async () => {
-      if (!viewerId.match(/^[0-9a-zA-Z]+$/)) {
+      if (!formData.viewerId.match(/^[0-9a-zA-Z]+$/)) {
         throw new Error(Messages.invalidUserIdFormat());
       }
-      const result = await slippiBackendService.validateUserId(viewerId);
+      const result = await slippiBackendService.validateUserId(formData.viewerId);
       return result;
     },
     {
@@ -121,84 +111,63 @@ export const StartBroadcastDialog = ({
   const handleViewerIdChange = React.useCallback(
     (inputText: string) => {
       userQuery.remove();
-      setViewerId(inputText);
+      setFormData((prev) => ({ ...prev, viewerId: inputText }));
       void fetchUser();
     },
     [fetchUser, userQuery],
   );
 
-  // Handle selecting a saved connection
+  // Start console discovery when connection type is console
+  React.useEffect(() => {
+    if (formData.connectionType === "dolphin") {
+      return;
+    }
+
+    void consoleService.startDiscovery();
+
+    return () => {
+      void consoleService.stopDiscovery();
+    };
+  }, [formData.connectionType, consoleService]);
+
   const handleSelectSavedConnection = (conn: StoredConnection) => {
-    setConnectionType("console");
-    setSelectedConnection({ type: "saved", id: conn.id });
-    if (ipInputRef.current) {
-      ipInputRef.current.value = conn.ipAddress;
-    }
-    if (portInputRef.current) {
-      portInputRef.current.value = String(conn.port ?? DEFAULT_PORT);
-    }
+    setFormData({
+      ...formData,
+      connectionType: "console",
+      ip: conn.ipAddress,
+      port: conn.port ?? DEFAULT_PORT,
+    });
   };
 
-  // Handle selecting a discovered console
   const handleSelectDiscoveredConsole = (console: DiscoveredConsoleInfo) => {
-    setConnectionType("console");
-    setSelectedConnection({ type: "discovered", ip: console.ip });
-    if (ipInputRef.current) {
-      ipInputRef.current.value = console.ip;
-    }
-    if (portInputRef.current) {
-      portInputRef.current.value = String(DEFAULT_PORT);
-    }
+    setFormData({
+      ...formData,
+      connectionType: "console",
+      ip: console.ip,
+      port: DEFAULT_PORT,
+    });
   };
 
-  // Handle accordion expansion change
-  const handleAccordionChange = (_: React.SyntheticEvent, expanded: boolean) => {
-    setIsAdvancedExpanded(expanded);
-    if (!expanded && connectionType === "console") {
-      setConnectionType("dolphin");
-    }
-  };
-
-  // Handle connection type change
   const handleConnectionTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newType = event.target.value as "dolphin" | "console";
-    setConnectionType(newType);
-    if (newType === "dolphin") {
-      // Reset to defaults when switching to Dolphin
-      if (ipInputRef.current) {
-        ipInputRef.current.value = DEFAULT_IP;
-      }
-      if (portInputRef.current) {
-        portInputRef.current.value = String(DEFAULT_PORT);
-      }
-    }
+    setFormData({
+      ...formData,
+      connectionType: newType,
+      ip: newType === "dolphin" ? DEFAULT_IP : formData.ip,
+      port: newType === "dolphin" ? DEFAULT_PORT : formData.port,
+    });
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-
-    const ip = (formData.get("ip") as string) || DEFAULT_IP;
-    const port = Number(formData.get("port")) || DEFAULT_PORT;
-
-    onSubmit({
-      connectionType,
-      ip,
-      port,
-      viewerId,
-    });
+    onSubmit(formData);
     onClose();
   };
 
-  const showErrorStatus = viewerId.length > 0 && userQuery.isError;
+  const showErrorStatus = formData.viewerId.length > 0 && userQuery.isError;
   if (showErrorStatus) {
     log.error(`could not get details about spectator: ${userQuery.error}`);
   }
-
-  // Check if a specific connection is selected
-  const isSavedSelected = (id: number) => selectedConnection?.type === "saved" && selectedConnection.id === id;
-  const isDiscoveredSelected = (ip: string) =>
-    selectedConnection?.type === "discovered" && selectedConnection.ip === ip;
 
   return (
     <Dialog
@@ -224,7 +193,7 @@ export const StartBroadcastDialog = ({
             </FormLabel>
             <Box display="flex" flexDirection="row" gap={2}>
               <TextField
-                value={viewerId}
+                value={formData.viewerId}
                 variant="filled"
                 style={{ width: "100%", flex: 1 }}
                 onChange={(e) => handleViewerIdChange(e.target.value)}
@@ -239,7 +208,7 @@ export const StartBroadcastDialog = ({
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      {viewerId.length > 0 ? (
+                      {formData.viewerId.length > 0 ? (
                         <Tooltip title={Messages.clear()}>
                           <IconButton size="small" onClick={() => handleViewerIdChange("")}>
                             <CloseIcon />
@@ -268,7 +237,7 @@ export const StartBroadcastDialog = ({
                   ),
                 }}
               />
-              <Box sx={{ opacity: viewerId.length === 0 ? 0 : 1 }}>
+              <Box sx={{ opacity: formData.viewerId.length === 0 ? 0 : 1 }}>
                 <Box sx={{ margin: "12px 12px 0 0" }}>
                   {userQuery.data ? (
                     <CheckCircleIcon
@@ -290,30 +259,27 @@ export const StartBroadcastDialog = ({
             </Box>
           </FormControl>
 
-          <Accordion expanded={isAdvancedExpanded} onChange={handleAccordionChange}>
+          <Accordion expanded={isAdvancedExpanded} onChange={(_, expanded) => setIsAdvancedExpanded(expanded)}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <FormLabel>Advanced</FormLabel>
             </AccordionSummary>
             <AccordionDetails style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <FormControl>
                 <FormLabel>Connection Type</FormLabel>
-                <RadioGroup value={connectionType} onChange={handleConnectionTypeChange} row={true}>
-                  <FormControlLabel value="dolphin" control={<Radio />} label="Dolphin (Netplay)" />
-                  <FormControlLabel value="console" control={<Radio />} label="Console (Wii/Nintendont)" />
+                <RadioGroup value={formData.connectionType} onChange={handleConnectionTypeChange} row={true}>
+                  <FormControlLabel value="dolphin" control={<Radio />} label="Dolphin" />
+                  <FormControlLabel value="console" control={<Radio />} label="Console" />
                 </RadioGroup>
               </FormControl>
 
-              {connectionType === "console" && (
+              {formData.connectionType === "console" && (
                 <FormControl>
                   <FormLabel>Select Connection</FormLabel>
                   <Paper variant="outlined" sx={{ maxHeight: 200, overflow: "auto" }}>
                     <List dense={true}>
                       {savedConnections.map((conn) => (
                         <ListItem key={`saved-${conn.id}`} disablePadding={true}>
-                          <ListItemButton
-                            selected={isSavedSelected(conn.id)}
-                            onClick={() => handleSelectSavedConnection(conn)}
-                          >
+                          <ListItemButton onClick={() => handleSelectSavedConnection(conn)}>
                             <ListItemIcon>
                               <WiiIcon fill="#ffffff" width="40px" />
                             </ListItemIcon>
@@ -327,10 +293,7 @@ export const StartBroadcastDialog = ({
 
                       {availableConsoles.map((console) => (
                         <ListItem key={`discovered-${console.ip}`} disablePadding={true}>
-                          <ListItemButton
-                            selected={isDiscoveredSelected(console.ip)}
-                            onClick={() => handleSelectDiscoveredConsole(console)}
-                          >
+                          <ListItemButton onClick={() => handleSelectDiscoveredConsole(console)}>
                             <ListItemIcon>
                               <WifiIcon />
                             </ListItemIcon>
@@ -362,14 +325,22 @@ export const StartBroadcastDialog = ({
               <Box sx={{ display: "flex", gap: 2 }}>
                 <FormControl sx={{ flex: 3 }}>
                   <FormLabel>IP Address</FormLabel>
-                  <TextField name="ip" inputRef={ipInputRef} defaultValue={DEFAULT_IP} fullWidth={true} />
+                  <TextField
+                    value={formData.ip}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, ip: e.target.value }))}
+                    fullWidth={true}
+                  />
                 </FormControl>
                 <FormControl sx={{ flex: 1 }}>
                   <FormLabel>Port</FormLabel>
                   <TextField
-                    name="port"
-                    inputRef={portInputRef}
-                    defaultValue={DEFAULT_PORT}
+                    value={formData.port}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        port: Number(e.target.value) || DEFAULT_PORT,
+                      }))
+                    }
                     type="number"
                     fullWidth={true}
                   />
@@ -383,7 +354,7 @@ export const StartBroadcastDialog = ({
           <Button onClick={onClose} color="secondary">
             {Messages.cancel()}
           </Button>
-          <Button color="primary" type="submit" disabled={viewerId.length === 0}>
+          <Button color="primary" type="submit" disabled={formData.viewerId.length === 0}>
             {Messages.confirm()}
           </Button>
         </DialogActions>

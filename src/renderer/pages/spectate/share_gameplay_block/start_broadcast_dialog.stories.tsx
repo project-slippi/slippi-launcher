@@ -8,7 +8,6 @@ import type { Services } from "@/services/types";
 
 import { StartBroadcastDialog } from "./start_broadcast_dialog";
 
-// Create a QueryClient for stories
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -18,7 +17,6 @@ const queryClient = new QueryClient({
   },
 });
 
-// Mock services - only slippiBackendService is needed for this component
 const mockServices: Partial<Services> = {
   slippiBackendService: {
     validateUserId: async (userId: string) => {
@@ -29,6 +27,11 @@ const mockServices: Partial<Services> = {
         connectCode: `${userId}#123`,
       };
     },
+  } as any,
+
+  consoleService: {
+    startDiscovery: () => Promise.resolve(),
+    stopDiscovery: () => Promise.resolve(),
   } as any,
 };
 

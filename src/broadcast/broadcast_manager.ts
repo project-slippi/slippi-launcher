@@ -71,17 +71,14 @@ export class BroadcastManager extends EventEmitter {
 
     this.connection = config.connectionType === "dolphin" ? new DolphinConnection() : new ConsoleConnection();
 
-    // Connect to Dolphin/Console if not already connected
-    if (this.connection.getStatus() === ConnectionStatus.DISCONNECTED) {
-      try {
-        await this._connectToGameSource(config.ip, config.port);
-        this.setupGameSourceListeners();
-      } catch (err: any) {
-        const errMsg = err?.message || String(err);
-        this.emit(BroadcastEvent.LOG, `Could not connect to game source\n${errMsg}`);
-        this.connection.disconnect();
-        throw err;
-      }
+    try {
+      await this._connectToGameSource(config.ip, config.port);
+      this.setupGameSourceListeners();
+    } catch (err: any) {
+      const errMsg = err?.message || String(err);
+      this.emit(BroadcastEvent.LOG, `Could not connect to game source\n${errMsg}`);
+      this.connection.disconnect();
+      throw err;
     }
 
     if (this.wsConnection) {
