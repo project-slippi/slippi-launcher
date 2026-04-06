@@ -71,9 +71,10 @@ export class BroadcastManager extends EventEmitter {
 
     this.connection = config.connectionType === "dolphin" ? new DolphinConnection() : new ConsoleConnection();
 
+    this.setupGameSourceListeners();
+
     try {
       await this._connectToGameSource(config.ip, config.port);
-      this.setupGameSourceListeners();
     } catch (err: any) {
       const errMsg = err?.message || String(err);
       this.emit(BroadcastEvent.LOG, `Could not connect to game source\n${errMsg}`);
