@@ -4,6 +4,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CloseIcon from "@mui/icons-material/Close";
 import ErrorIcon from "@mui/icons-material/Error";
 import HelpIcon from "@mui/icons-material/Help";
+import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@mui/material";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import Dialog from "@mui/material/Dialog";
@@ -25,27 +26,31 @@ import { useServices } from "@/services";
 
 import { StartBroadcastDialogMessages as Messages } from "./start_broadcast_dialog.messages";
 
+// These are the default params for broadcasting Netplay Dolphin
+const DEFAULT_IP = "127.0.0.1";
+const DEFAULT_PORT = 51441;
+
 type StartBroadcastDialogProps = {
   open: boolean;
   onClose: () => void;
-  onSubmit: (value: string) => void;
+  onSubmit: (values: { ip: string; port: number; viewerId: string; connectionType: "dolphin" | "console" }) => void;
 };
 
 export const StartBroadcastDialog = ({ open, onClose, onSubmit }: StartBroadcastDialogProps) => {
   const { slippiBackendService } = useServices();
-  const [value, setValue] = React.useState("");
+  const [viewerId, setViewerId] = React.useState("");
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   const userQuery = useQuery(
-    ["userId", value],
+    ["userId", viewerId],
     async () => {
       // First check that the user id is only alphanumeric
-      if (!value.match(/^[0-9a-zA-Z]+$/)) {
+      if (!viewerId.match(/^[0-9a-zA-Z]+$/)) {
         throw new Error(Messages.invalidUserIdFormat());
       }
       console.log("starting fetch: ", JSON.stringify(new Date()));
-      const result = await slippiBackendService.validateUserId(value);
+      const result = await slippiBackendService.validateUserId(viewerId);
       console.log("finished fetch: ", JSON.stringify(new Date()));
       return result;
     },
@@ -63,7 +68,7 @@ export const StartBroadcastDialog = ({ open, onClose, onSubmit }: StartBroadcast
     (inputText: string) => {
       // First clear the react-query state
       userQuery.remove();
-      setValue(inputText);
+      setViewerId(inputText);
       void fetchUser();
     },
     [fetchUser, userQuery],
@@ -71,12 +76,17 @@ export const StartBroadcastDialog = ({ open, onClose, onSubmit }: StartBroadcast
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("submitting form...");
-    onSubmit(value);
+    const formData = new FormData(e.currentTarget);
+    onSubmit({
+      connectionType: formData.get("connectionType") as "dolphin" | "console",
+      ip: formData.get("ip") as string,
+      port: Number(formData.get("port")),
+      viewerId,
+    });
     onClose();
   };
 
-  const showErrorStatus = value.length > 0 && userQuery.isError;
+  const showErrorStatus = viewerId.length > 0 && userQuery.isError;
   if (showErrorStatus) {
     log.error(`could not get details about spectator: ${userQuery.error}`);
   }
@@ -84,69 +94,91 @@ export const StartBroadcastDialog = ({ open, onClose, onSubmit }: StartBroadcast
   return (
     <Dialog
       open={open}
+      fullWidth={true}
+      fullScreen={fullScreen}
       onClose={(_, reason) => {
         if (reason !== "backdropClick") {
           onClose();
         }
       }}
-      fullWidth={true}
-      fullScreen={fullScreen}
     >
       <form onSubmit={handleSubmit}>
         <StyledDialogTitle>
-          {Messages.enterSpectatorId()}
+          Start Broadcast
           <Tooltip title={Messages.theUniqueViewerCodeOfTheSpectator()}>
             <HelpIcon style={{ marginLeft: 10, opacity: 0.7 }} fontSize="small" />
           </Tooltip>
         </StyledDialogTitle>
-        <DialogContent style={{ display: "flex" }}>
-          <TextField
-            label={Messages.spectatorId()}
-            value={value}
-            variant="filled"
-            style={{ width: "100%", flex: 1 }}
-            onChange={(e) => handleChange(e.target.value)}
-            error={showErrorStatus}
-            helperText={
-              userQuery.isSuccess && userQuery.data
-                ? Messages.broadcastToUser(userQuery.data.displayName, userQuery.data.connectCode)
-                : showErrorStatus
-                ? Messages.noAssociatedUserFound()
-                : undefined
-            }
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  {value.length > 0 ? (
-                    <Tooltip title={Messages.clear()}>
-                      <IconButton size="small" onClick={() => handleChange("")}>
-                        <CloseIcon />
-                      </IconButton>
-                    </Tooltip>
-                  ) : (
-                    <Tooltip title={Messages.paste()}>
-                      <IconButton
-                        size="small"
-                        onClick={() => {
-                          navigator.clipboard
-                            .readText()
-                            .then((text) => {
-                              if (text) {
-                                handleChange(text);
-                              }
-                            })
-                            .catch(console.error);
-                        }}
-                      >
-                        <AssignmentIcon />
-                      </IconButton>
-                    </Tooltip>
-                  )}
-                </InputAdornment>
-              ),
-            }}
-          />
-          <div style={{ opacity: value.length === 0 ? 0 : 1 }}>
+
+        <DialogContent style={{ display: "flex", flexDirection: "column" }}>
+          <FormControl>
+            <FormLabel>Connection Type</FormLabel>
+
+            <RadioGroup name="connectionType" row={true}>
+              <FormControlLabel value="dolphin" label="dolphin" control={<Radio />} />
+              <FormControlLabel value="console" label="console" control={<Radio />} />
+            </RadioGroup>
+          </FormControl>
+
+          <FormControl>
+            <FormLabel>IP Address</FormLabel>
+            <TextField name="ip" defaultValue={DEFAULT_IP} />
+          </FormControl>
+
+          <FormControl>
+            <FormLabel>Port</FormLabel>
+            <TextField name="port" defaultValue={DEFAULT_PORT} />
+          </FormControl>
+
+          <FormControl>
+            <FormLabel>{Messages.spectatorId()}</FormLabel>
+            <TextField
+              value={viewerId}
+              variant="filled"
+              style={{ width: "100%", flex: 1 }}
+              onChange={(e) => handleChange(e.target.value)}
+              error={showErrorStatus}
+              helperText={
+                userQuery.isSuccess && userQuery.data
+                  ? Messages.broadcastToUser(userQuery.data.displayName, userQuery.data.connectCode)
+                  : showErrorStatus
+                  ? Messages.noAssociatedUserFound()
+                  : undefined
+              }
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {viewerId.length > 0 ? (
+                      <Tooltip title={Messages.clear()}>
+                        <IconButton size="small" onClick={() => handleChange("")}>
+                          <CloseIcon />
+                        </IconButton>
+                      </Tooltip>
+                    ) : (
+                      <Tooltip title={Messages.paste()}>
+                        <IconButton
+                          size="small"
+                          onClick={() => {
+                            navigator.clipboard
+                              .readText()
+                              .then((text) => {
+                                if (text) {
+                                  handleChange(text);
+                                }
+                              })
+                              .catch(console.error);
+                          }}
+                        >
+                          <AssignmentIcon />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </FormControl>
+          <div style={{ opacity: viewerId.length === 0 ? 0 : 1 }}>
             <div style={{ margin: 12, marginRight: 0 }}>
               {userQuery.data ? (
                 <CheckCircleIcon
@@ -170,7 +202,7 @@ export const StartBroadcastDialog = ({ open, onClose, onSubmit }: StartBroadcast
           <Button onClick={onClose} color="secondary">
             {Messages.cancel()}
           </Button>
-          <Button color="primary" disabled={!userQuery.isSuccess} type="submit">
+          <Button color="primary" type="submit">
             {Messages.confirm()}
           </Button>
         </DialogActions>

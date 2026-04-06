@@ -21,7 +21,12 @@ type BroadcastPanelProps = {
   slippiServerStatus: ConnectionStatus;
   startTime?: Date;
   endTime?: Date;
-  onStartBroadcast: (viewerId: string) => void;
+  onStartBroadcast: (opts: {
+    ip: string;
+    port: number;
+    viewerId: string;
+    connectionType: "dolphin" | "console";
+  }) => void;
   onDisconnect: () => void;
 };
 
@@ -113,7 +118,9 @@ export const BroadcastPanel = ({
         {isDisconnected && broadcastDuration && (
           <div>
             {Messages.broadcastEnded(
-              formatDuration(broadcastDuration, { locale: getLocale(currentLanguage as SupportedLanguage) }),
+              formatDuration(broadcastDuration, {
+                locale: getLocale(currentLanguage as SupportedLanguage),
+              }),
             )}
           </div>
         )}

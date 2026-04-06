@@ -1,5 +1,6 @@
 import { Preconditions } from "@common/preconditions";
-import { ConnectionEvent, ConnectionStatus, DolphinConnection, DolphinMessageType } from "@slippi/slippi-js/node";
+import type { BroadcastMessage } from "@slippi/slippi-js/node";
+import { ConnectionEvent, ConnectionStatus, ConsoleConnection, DolphinConnection } from "@slippi/slippi-js/node";
 import { EventEmitter } from "events";
 import keyBy from "lodash/keyBy";
 import last from "lodash/last";
@@ -7,7 +8,7 @@ import type { connection, Message } from "websocket";
 import { client as WebSocketClient } from "websocket";
 
 import type { SlippiBroadcastPayloadEvent, StartBroadcastConfig } from "./types";
-import { BroadcastEvent } from "./types";
+import { BroadcastEvent, BroadcastMessageType } from "./types";
 
 const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
 
@@ -16,92 +17,45 @@ const SLIPPI_WS_SERVER = process.env.SLIPPI_WS_SERVER;
 const BACKUP_MAX_LENGTH = 1800;
 
 const CONNECTING_SUB_STEP_INITIAL_TIMEOUT = 2000;
+const CONNECTING_SUB_STEP_MAX_TIMEOUT = 30000;
+
 enum ConnectingSubStep {
   NONE = "NONE",
   SOCKET = "SOCKET",
   GET = "GET",
   START = "START",
 }
-type ConnectingSubState = {
-  step: ConnectingSubStep;
-  broadcastId: string | null;
-  timeout: number;
-};
+
+type WsMessage =
+  | {
+      type: "start-broadcast-resp";
+      broadcastId?: string;
+      recoveryGameCursor?: number;
+    }
+  | {
+      type: "get-broadcasts-resp";
+      broadcasts?: Array<{ id: string; name: string }>;
+    };
 
 /**
  * Responsible for retrieving Dolphin game data over enet and sending the data
  * to the Slippi server over websockets.
  */
 export class BroadcastManager extends EventEmitter {
-  private broadcastId: string | null;
-  private isBroadcastReady: boolean;
-  private incomingEvents: SlippiBroadcastPayloadEvent[];
-  private backupEvents: SlippiBroadcastPayloadEvent[];
-  private nextGameCursor: number | null;
-  private slippiStatus: ConnectionStatus;
+  private broadcastId: string | null = null;
+  private isBroadcastReady = false;
+  private incomingEvents: SlippiBroadcastPayloadEvent[] = [];
+  private backupEvents: SlippiBroadcastPayloadEvent[] = [];
+  private nextGameCursor: number | null = null;
+  private slippiStatus: ConnectionStatus = ConnectionStatus.DISCONNECTED;
 
-  private wsClient: WebSocketClient | null;
-  private wsConnection: connection | null;
-  private dolphinConnection: DolphinConnection;
+  private wsClient: WebSocketClient | null = null;
+  private wsConnection: connection | null = null;
+  private connection: DolphinConnection | ConsoleConnection | null = null;
 
-  private connectingSubState: ConnectingSubState;
-
-  constructor() {
-    super();
-    this.broadcastId = null;
-    this.isBroadcastReady = false;
-    this.wsClient = null;
-    this.wsConnection = null;
-    this.incomingEvents = [];
-    this.slippiStatus = ConnectionStatus.DISCONNECTED;
-    this.connectingSubState = {
-      step: ConnectingSubStep.NONE,
-      broadcastId: null,
-      timeout: CONNECTING_SUB_STEP_INITIAL_TIMEOUT,
-    };
-
-    // We need to store events as we process them in the event that we get a disconnect and
-    // we need to re-send some events to the server
-    this.backupEvents = [];
-
-    this.nextGameCursor = null;
-
-    this.dolphinConnection = new DolphinConnection();
-    this.dolphinConnection.on(ConnectionEvent.STATUS_CHANGE, (status: number) => {
-      this.emit(BroadcastEvent.LOG, `Dolphin status change: ${status}`);
-      this.emit(BroadcastEvent.DOLPHIN_STATUS_CHANGE, status);
-
-      // Disconnect from Slippi server when we disconnect from Dolphin
-      if (status === ConnectionStatus.DISCONNECTED) {
-        // Kind of jank but this will hopefully stop the game on the spectator side when someone
-        // kills Dolphin. May no longer be necessary after Dolphin itself sends these messages
-        if (this.nextGameCursor !== null) {
-          this.incomingEvents.push({
-            type: DolphinMessageType.END_GAME,
-            cursor: this.nextGameCursor,
-            nextCursor: this.nextGameCursor,
-            payload: "",
-          });
-        }
-
-        this._handleGameData();
-        this.stop();
-
-        this.incomingEvents = [];
-        this.backupEvents = [];
-      }
-    });
-    this.dolphinConnection.on(ConnectionEvent.MESSAGE, (message: any) => {
-      this.incomingEvents.push(message);
-      this._handleGameData();
-    });
-    this.dolphinConnection.on(ConnectionEvent.ERROR, (err) => {
-      // Log the error messages we get from Dolphin
-      if (err) {
-        this.emit(BroadcastEvent.ERROR, err);
-      }
-    });
-  }
+  private connectingSubStep: ConnectingSubStep = ConnectingSubStep.NONE;
+  private connectingRetryTimeout = CONNECTING_SUB_STEP_INITIAL_TIMEOUT;
+  private retryTimer: NodeJS.Timeout | null = null;
 
   /**
    * Connects to the Slippi server and the local Dolphin instance
@@ -109,34 +63,41 @@ export class BroadcastManager extends EventEmitter {
   public async start(config: StartBroadcastConfig) {
     Preconditions.checkExists(SLIPPI_WS_SERVER, "Slippi websocket server is undefined");
 
-    // First try to connect to Dolphin if we haven't already
-    if (this.dolphinConnection.getStatus() === ConnectionStatus.DISCONNECTED) {
+    // Clean up any existing connection first
+    if (this.connection) {
+      this.connection.disconnect();
+      this.connection = null;
+    }
+
+    this.connection = config.connectionType === "dolphin" ? new DolphinConnection() : new ConsoleConnection();
+
+    // Connect to Dolphin/Console if not already connected
+    if (this.connection.getStatus() === ConnectionStatus.DISCONNECTED) {
       try {
-        await this._connectToDolphin(config.ip, config.port);
+        await this._connectToGameSource(config.ip, config.port);
+        this.setupGameSourceListeners();
       } catch (err: any) {
-        const errMsg = err.message || JSON.stringify(err);
-        this.emit(BroadcastEvent.LOG, `Could not connect to Dolphin\n${errMsg}`);
-        this.emit(BroadcastEvent.LOG, errMsg);
-        this.dolphinConnection.disconnect();
+        const errMsg = err?.message || String(err);
+        this.emit(BroadcastEvent.LOG, `Could not connect to game source\n${errMsg}`);
+        this.connection.disconnect();
         throw err;
       }
     }
 
     if (this.wsConnection) {
-      // We're already connected
-      this.emit(BroadcastEvent.LOG, "we are already connected");
+      this.emit(BroadcastEvent.LOG, "WebSocket already connected");
       return;
     }
 
-    // If we don't have a WS connection but we do have a WS client we're somewhere mid-connecting. Just start over.
+    // If we have a WS client but no connection, we're mid-connecting. Start over.
     if (this.wsClient) {
       this.wsClient.removeAllListeners();
       this.wsClient.abort();
       this.wsClient = null;
     }
 
-    // Indicate we're connecting to the Slippi server
     this._setSlippiStatus(ConnectionStatus.CONNECTING);
+    this._resetConnectingState();
 
     const headers = {
       target: config.viewerId,
@@ -145,261 +106,30 @@ export class BroadcastManager extends EventEmitter {
     };
 
     this.wsClient = new WebSocketClient({ disableNagleAlgorithm: true });
-
-    this.wsClient.on("connectFailed", (err) => {
-      this.emit(BroadcastEvent.LOG, `WS failed to connect`);
-
-      const label = "x-websocket-reject-reason: ";
-      let message = err.message;
-      const pos = err.message.indexOf(label);
-      if (pos >= 0) {
-        const endPos = err.message.indexOf("\n", pos + label.length);
-        message = message.substring(pos + label.length, endPos >= 0 ? endPos : undefined);
-      }
-
-      this.emit(BroadcastEvent.ERROR, message);
-
-      const currentTimeout = this.connectingSubState.timeout;
-      setTimeout(() => {
-        if (this.wsClient) {
-          this.emit(
-            BroadcastEvent.LOG,
-            `Retrying connecting sub step: ${this.connectingSubState.step} after ${currentTimeout}ms`,
-          );
-          this.wsClient.connect(SLIPPI_WS_SERVER, "broadcast-protocol", undefined, headers);
-        }
-      }, currentTimeout);
-      this.connectingSubState.timeout *= 2;
-    });
-
-    this.wsClient.on("connect", (connection: connection) => {
-      this.connectingSubState.step = ConnectingSubStep.GET;
-      this.connectingSubState.timeout = CONNECTING_SUB_STEP_INITIAL_TIMEOUT;
-
-      this.emit(BroadcastEvent.LOG, "WS connection successful");
-      this.wsConnection = connection;
-
-      const getBroadcasts = async () => {
-        if (!this.wsConnection) {
-          this.emit(BroadcastEvent.LOG, "WS connection failed");
-          return;
-        }
-        this.wsConnection.send(
-          JSON.stringify({
-            type: "get-broadcasts",
-          }),
-        );
-      };
-
-      const startBroadcast = async (broadcastId: string | null, name?: string) => {
-        if (!this.wsConnection) {
-          this.emit(BroadcastEvent.LOG, "WS connection failed");
-          return;
-        }
-        this.wsConnection.send(
-          JSON.stringify({
-            type: "start-broadcast",
-            name: name ?? "Netplay",
-            broadcastId,
-          }),
-        );
-      };
-
-      const connectionComplete = (broadcastId: string) => {
-        this.emit(BroadcastEvent.LOG, `Starting broadcast to: ${broadcastId}`);
-
-        // Clear backup events when a connection completes. The backup events should already have
-        // been added back to the events to process at this point if that is relevant
-        this.backupEvents = [];
-        this.isBroadcastReady = true;
-
-        this.broadcastId = broadcastId;
-        this.connectingSubState = {
-          step: ConnectingSubStep.NONE,
-          broadcastId: null,
-          timeout: CONNECTING_SUB_STEP_INITIAL_TIMEOUT,
-        };
-        this._setSlippiStatus(ConnectionStatus.CONNECTED);
-
-        // Process any events that may have been missed when we disconnected
-        this._handleGameData();
-      };
-
-      connection.on("error", (err) => {
-        this.emit(BroadcastEvent.ERROR, err);
-      });
-
-      connection.on("close", (code: number, reason: string) => {
-        this.emit(BroadcastEvent.LOG, `WS connection closed: ${code}, ${reason}`);
-
-        // Clear the socket
-        this.wsConnection = null;
-        this.isBroadcastReady = false;
-
-        if (code === 1006) {
-          // Here we have an abnormal disconnect... try to reconnect?
-          // This error seems to occur primarily when the auth token for firebase expires,
-          // which lasts 1 hour, so the plan is to get a new token, use the same config, and reconnect.
-          this._setSlippiStatus(ConnectionStatus.RECONNECT_WAIT);
-          this.emit(BroadcastEvent.RECONNECT, config);
-        } else {
-          // If normal close, disconnect from dolphin
-          this.dolphinConnection.disconnect();
-          this._setSlippiStatus(ConnectionStatus.DISCONNECTED);
-        }
-      });
-
-      connection.on("message", (data: Message) => {
-        if (data.type !== "utf8") {
-          return;
-        }
-
-        let message: {
-          type: string;
-          broadcasts?: any[]; // todo: figure out what the heck this is (i think it might just be the broadcastIds)
-          broadcastId?: string;
-          recoveryGameCursor?: number; // probably, I haven't tested this yet
-        };
-
-        try {
-          if (data.utf8Data) {
-            message = JSON.parse(data.utf8Data);
-          } else {
-            return;
-          }
-        } catch (err: any) {
-          const errMsg = err.message || JSON.stringify(err);
-          this.emit(BroadcastEvent.LOG, `Failed to parse message from server\n${errMsg}\n${data.utf8Data}`);
-          return;
-        }
-
-        this.emit(BroadcastEvent.LOG, message);
-
-        switch (message.type) {
-          case "start-broadcast-resp": {
-            if (message.recoveryGameCursor !== undefined) {
-              const firstIncoming = this.incomingEvents[0];
-              let firstCursor: number | undefined;
-              if (firstIncoming) {
-                firstCursor = firstIncoming.cursor;
-              }
-
-              this.emit(
-                BroadcastEvent.LOG,
-                `Picking broadcast back up from ${message.recoveryGameCursor}. Last not sent: ${firstCursor}`,
-              );
-
-              // Add any events that didn't make it to the server to the front of the event queue
-              const backedEventsToUse = this.backupEvents.filter((event) => {
-                if (event.cursor !== null && event.cursor !== undefined && message.recoveryGameCursor !== undefined) {
-                  const isNeededByServer = event.cursor > message.recoveryGameCursor;
-
-                  // Make sure we aren't duplicating anything that is already in the incoming events array
-                  const isNotIncoming = firstCursor === undefined || event.cursor < firstCursor;
-
-                  return isNeededByServer && isNotIncoming;
-                }
-                return false;
-              });
-
-              this.incomingEvents = [...backedEventsToUse, ...this.incomingEvents];
-
-              let newFirstCursor: number | undefined;
-              const newFirstEvent = this.incomingEvents[0];
-              if (newFirstEvent) {
-                newFirstCursor = newFirstEvent.cursor;
-              }
-              const firstBackupCursor = (this.backupEvents[0] || {}).cursor;
-              const lastBackupCursor = (last(this.backupEvents) || {}).cursor;
-
-              this.emit(
-                BroadcastEvent.LOG,
-                `Backup events include range from: [${firstBackupCursor}, ${lastBackupCursor}]. Next cursor to be sent: ${newFirstCursor}`,
-              );
-            }
-            if (message.broadcastId !== undefined) {
-              connectionComplete(message.broadcastId);
-            }
-            break;
-          }
-          case "get-broadcasts-resp": {
-            this.connectingSubState.step = ConnectingSubStep.START;
-            this.connectingSubState.timeout = CONNECTING_SUB_STEP_INITIAL_TIMEOUT;
-
-            const broadcasts = message.broadcasts || [];
-
-            // Grab broadcastId we were currently using if the broadcast still exists, would happen
-            // in the case of a reconnect
-            if (this.broadcastId) {
-              const broadcastsById = keyBy(broadcasts, "id");
-              const prevBroadcast = broadcastsById[this.broadcastId];
-
-              if (prevBroadcast) {
-                this.connectingSubState.broadcastId = prevBroadcast.id;
-
-                // TODO: Figure out if this config.name guaranteed to be the correct name?
-                startBroadcast(prevBroadcast.id, config.name).catch(console.warn);
-                return;
-              }
-            }
-
-            // Pass in null as the broadcast ID to tell the server to generate an ID for us
-            startBroadcast(null, config.name).catch(console.warn);
-            break;
-          }
-
-          default: {
-            this.emit(BroadcastEvent.LOG, `Ws resp type ${message.type} not supported`);
-            break;
-          }
-        }
-      });
-
-      getBroadcasts().catch(console.warn);
-      const postSocketConnectingSubStepRetry = () => {
-        if (this.connectingSubState.step === ConnectingSubStep.NONE) {
-          return;
-        }
-
-        this.emit(
-          BroadcastEvent.LOG,
-          `Retrying connecting sub step: ${this.connectingSubState.step} after ${this.connectingSubState.timeout}ms`,
-        );
-        this.connectingSubState.timeout *= 2;
-        if (this.connectingSubState.step === ConnectingSubStep.GET) {
-          getBroadcasts().catch(console.warn);
-        } else {
-          startBroadcast(this.connectingSubState.broadcastId, config.name).catch(console.warn);
-        }
-        setTimeout(() => {
-          postSocketConnectingSubStepRetry();
-        }, this.connectingSubState.timeout);
-      };
-      setTimeout(() => {
-        postSocketConnectingSubStepRetry();
-      }, CONNECTING_SUB_STEP_INITIAL_TIMEOUT);
-    });
+    this._setupWsClientListeners(headers, config);
 
     this.emit(BroadcastEvent.LOG, "Connecting to WS service");
     this.wsClient.connect(SLIPPI_WS_SERVER, "broadcast-protocol", undefined, headers);
-    this.connectingSubState.step = ConnectingSubStep.SOCKET;
+    this.connectingSubStep = ConnectingSubStep.SOCKET;
   }
 
   public stop() {
-    // TODO: Handle cancelling the retry case
-
     this.emit(BroadcastEvent.LOG, "Service stop message received");
 
-    if (this.dolphinConnection.getStatus() === ConnectionStatus.CONNECTED) {
-      this.emit(BroadcastEvent.LOG, "Disconnecting dolphin connection...");
-
-      this.dolphinConnection.disconnect();
-
-      // If the dolphin connection is still active, disconnecting it will cause the stop function
-      // to be called again, so just return on this iteration and the callback will handle the rest
-      return;
+    // Clear retry timer
+    if (this.retryTimer) {
+      clearTimeout(this.retryTimer);
+      this.retryTimer = null;
     }
 
+    // Disconnect from game source
+    if (this.connection?.getStatus() === ConnectionStatus.CONNECTED) {
+      this.emit(BroadcastEvent.LOG, "Disconnecting game source connection...");
+      this.connection.disconnect();
+    }
+    this.connection = null;
+
+    // Disconnect WebSocket
     if (this.wsConnection) {
       this.emit(BroadcastEvent.LOG, "Disconnecting ws connection...");
 
@@ -422,60 +152,344 @@ export class BroadcastManager extends EventEmitter {
       this.wsClient = null;
     }
 
-    // Clear incoming events
+    // Reset state
+    this._resetConnectingState();
+    this.broadcastId = null;
+    this.isBroadcastReady = false;
     this.incomingEvents = [];
+    this.backupEvents = [];
+    this.nextGameCursor = null;
+    this._setSlippiStatus(ConnectionStatus.DISCONNECTED);
+  }
+
+  private _setupWsClientListeners(headers: Record<string, string | number>, config: StartBroadcastConfig) {
+    Preconditions.checkExists(this.wsClient);
+
+    this.wsClient.on("connectFailed", (err) => {
+      this.emit(BroadcastEvent.LOG, `WS failed to connect`);
+
+      const label = "x-websocket-reject-reason: ";
+      let message = err.message;
+      const pos = err.message.indexOf(label);
+      if (pos >= 0) {
+        const endPos = err.message.indexOf("\n", pos + label.length);
+        message = message.substring(pos + label.length, endPos >= 0 ? endPos : undefined);
+      }
+
+      this.emit(BroadcastEvent.ERROR, message);
+
+      // Retry with exponential backoff
+      const currentTimeout = this.connectingRetryTimeout;
+      this.retryTimer = setTimeout(() => {
+        if (this.wsClient && SLIPPI_WS_SERVER) {
+          this.emit(
+            BroadcastEvent.LOG,
+            `Retrying connecting sub step: ${this.connectingSubStep} after ${currentTimeout}ms`,
+          );
+          this.wsClient.connect(SLIPPI_WS_SERVER, "broadcast-protocol", undefined, headers);
+        }
+      }, currentTimeout);
+
+      this.connectingRetryTimeout = Math.min(this.connectingRetryTimeout * 2, CONNECTING_SUB_STEP_MAX_TIMEOUT);
+    });
+
+    this.wsClient.on("connect", (connection: connection) => {
+      this.connectingSubStep = ConnectingSubStep.GET;
+      this.connectingRetryTimeout = CONNECTING_SUB_STEP_INITIAL_TIMEOUT;
+
+      this.emit(BroadcastEvent.LOG, "WS connection successful");
+      this.wsConnection = connection;
+
+      this._setupWsConnectionListeners(connection, config);
+
+      // Start the get-broadcasts flow
+      this._sendGetBroadcasts().catch(console.warn);
+
+      // Setup retry timer for sub-steps
+      this._scheduleSubStepRetry(config);
+    });
+  }
+
+  private _setupWsConnectionListeners(connection: connection, config: StartBroadcastConfig) {
+    connection.on("error", (err) => {
+      this.emit(BroadcastEvent.ERROR, err);
+    });
+
+    connection.on("close", (code: number, reason: string) => {
+      this.emit(BroadcastEvent.LOG, `WS connection closed: ${code}, ${reason}`);
+
+      this.wsConnection = null;
+      this.isBroadcastReady = false;
+
+      if (code === 1006) {
+        // Abnormal disconnect - try to reconnect
+        this._setSlippiStatus(ConnectionStatus.RECONNECT_WAIT);
+        this.emit(BroadcastEvent.RECONNECT, config);
+      } else {
+        // Normal close - clean up everything
+        this.connection?.disconnect();
+        this._setSlippiStatus(ConnectionStatus.DISCONNECTED);
+      }
+    });
+
+    connection.on("message", (data: Message) => {
+      if (data.type !== "utf8" || !data.utf8Data) {
+        return;
+      }
+
+      let message: WsMessage;
+      try {
+        message = JSON.parse(data.utf8Data);
+      } catch (err: any) {
+        const errMsg = err?.message || String(err);
+        this.emit(BroadcastEvent.LOG, `Failed to parse message from server\n${errMsg}\n${data.utf8Data}`);
+        return;
+      }
+
+      this.emit(BroadcastEvent.LOG, message);
+      this._handleWsMessage(message, config);
+    });
+  }
+
+  private _handleWsMessage(message: WsMessage, config: StartBroadcastConfig) {
+    switch (message.type) {
+      case "start-broadcast-resp":
+        this._handleStartBroadcastResp(message, config);
+        break;
+      case "get-broadcasts-resp":
+        this._handleGetBroadcastsResp(message, config);
+        break;
+    }
+  }
+
+  private _handleStartBroadcastResp(
+    message: Extract<WsMessage, { type: "start-broadcast-resp" }>,
+    _config: StartBroadcastConfig,
+  ) {
+    if (message.recoveryGameCursor !== undefined) {
+      this._recoverFromCursor(message.recoveryGameCursor);
+    }
+
+    if (message.broadcastId) {
+      this._connectionComplete(message.broadcastId);
+    }
+  }
+
+  private _recoverFromCursor(recoveryGameCursor: number) {
+    const firstIncoming = this.incomingEvents[0];
+    const firstCursor = firstIncoming?.cursor;
+
+    this.emit(
+      BroadcastEvent.LOG,
+      `Picking broadcast back up from ${recoveryGameCursor}. Last not sent: ${firstCursor}`,
+    );
+
+    // Find events that need to be resent
+    const eventsToResend = this.backupEvents.filter((event) => {
+      if (event.cursor === null) {
+        return false;
+      }
+      const isNeededByServer = event.cursor > recoveryGameCursor;
+      const isNotIncoming = firstCursor == null || event.cursor < firstCursor;
+      return isNeededByServer && isNotIncoming;
+    });
+
+    this.incomingEvents = [...eventsToResend, ...this.incomingEvents];
+
+    const newFirstCursor = this.incomingEvents[0]?.cursor;
+    const firstBackupCursor = this.backupEvents[0]?.cursor;
+    const lastBackupCursor = last(this.backupEvents)?.cursor;
+
+    this.emit(
+      BroadcastEvent.LOG,
+      `Backup events include range from: [${firstBackupCursor}, ${lastBackupCursor}]. Next cursor to be sent: ${newFirstCursor}`,
+    );
+  }
+
+  private _handleGetBroadcastsResp(
+    message: Extract<WsMessage, { type: "get-broadcasts-resp" }>,
+    config: StartBroadcastConfig,
+  ) {
+    this.connectingSubStep = ConnectingSubStep.START;
+    this.connectingRetryTimeout = CONNECTING_SUB_STEP_INITIAL_TIMEOUT;
+
+    const broadcasts = message.broadcasts || [];
+
+    // Try to reuse existing broadcast if reconnecting
+    if (this.broadcastId) {
+      const broadcastsById = keyBy(broadcasts, "id");
+      const prevBroadcast = broadcastsById[this.broadcastId];
+
+      if (prevBroadcast) {
+        this._sendStartBroadcast(prevBroadcast.id, config.name).catch(console.warn);
+        return;
+      }
+    }
+
+    // Start new broadcast
+    this._sendStartBroadcast(null, config.name).catch(console.warn);
+  }
+
+  private _connectionComplete(broadcastId: string) {
+    this.emit(BroadcastEvent.LOG, `Starting broadcast to: ${broadcastId}`);
+
+    // Clear backup events when connection completes
+    this.backupEvents = [];
+    this.isBroadcastReady = true;
+    this.broadcastId = broadcastId;
+
+    this._resetConnectingState();
+    this._setSlippiStatus(ConnectionStatus.CONNECTED);
+
+    // Process any pending events
+    this._handleGameData();
+  }
+
+  private async _sendGetBroadcasts(): Promise<void> {
+    if (!this.wsConnection) {
+      return;
+    }
+
+    this.wsConnection.send(
+      JSON.stringify({
+        type: "get-broadcasts",
+      }),
+    );
+  }
+
+  private async _sendStartBroadcast(broadcastId: string | null, name?: string): Promise<void> {
+    if (!this.wsConnection) {
+      return;
+    }
+
+    this.connectingSubStep = ConnectingSubStep.START;
+    this.wsConnection.send(
+      JSON.stringify({
+        type: "start-broadcast",
+        name: name ?? "Netplay",
+        broadcastId,
+      }),
+    );
+  }
+
+  private _scheduleSubStepRetry(config: StartBroadcastConfig) {
+    if (this.retryTimer) {
+      clearTimeout(this.retryTimer);
+    }
+
+    this.retryTimer = setTimeout(() => {
+      if (this.connectingSubStep === ConnectingSubStep.NONE || !this.wsClient) {
+        return;
+      }
+
+      this.emit(
+        BroadcastEvent.LOG,
+        `Retrying connecting sub step: ${this.connectingSubStep} after ${this.connectingRetryTimeout}ms`,
+      );
+
+      this.connectingRetryTimeout = Math.min(this.connectingRetryTimeout * 2, CONNECTING_SUB_STEP_MAX_TIMEOUT);
+
+      if (this.connectingSubStep === ConnectingSubStep.GET) {
+        this._sendGetBroadcasts().catch(console.warn);
+      } else if (this.connectingSubStep === ConnectingSubStep.START) {
+        this._sendStartBroadcast(this.broadcastId, config.name).catch(console.warn);
+      }
+
+      this._scheduleSubStepRetry(config);
+    }, this.connectingRetryTimeout);
+  }
+
+  private _resetConnectingState() {
+    if (this.retryTimer) {
+      clearTimeout(this.retryTimer);
+      this.retryTimer = null;
+    }
+    this.connectingSubStep = ConnectingSubStep.NONE;
+    this.connectingRetryTimeout = CONNECTING_SUB_STEP_INITIAL_TIMEOUT;
+  }
+
+  private setupGameSourceListeners() {
+    Preconditions.checkExists(this.connection);
+
+    this.connection.on(ConnectionEvent.STATUS_CHANGE, (status: number) => {
+      this.emit(BroadcastEvent.LOG, `Game source status change: ${status}`);
+      this.emit(BroadcastEvent.DOLPHIN_STATUS_CHANGE, status);
+
+      if (status === ConnectionStatus.DISCONNECTED) {
+        // Inject end game message if we have an active game
+        if (this.nextGameCursor !== null) {
+          this._queueEvent({
+            type: BroadcastMessageType.END_GAME,
+            cursor: this.nextGameCursor,
+            nextCursor: this.nextGameCursor,
+            payload: "",
+          });
+        }
+
+        this._handleGameData();
+        this.stop();
+      }
+    });
+
+    // Use the unified BROADCAST event from both connection types
+    this.connection.on(ConnectionEvent.BROADCAST, (message: BroadcastMessage) => {
+      this._queueEvent(message as SlippiBroadcastPayloadEvent);
+      this._handleGameData();
+    });
+
+    this.connection.on(ConnectionEvent.ERROR, (err) => {
+      if (err) {
+        this.emit(BroadcastEvent.ERROR, err);
+      }
+    });
+  }
+
+  private _queueEvent(event: SlippiBroadcastPayloadEvent) {
+    this.incomingEvents.push(event);
   }
 
   /**
-   * Initiates a connection to Dolphin but only resolves when it's actually connected.
+   * Initiates a connection to the game source but only resolves when it's actually connected.
    * The promise rejects if not connected before the timeout.
    */
-  private async _connectToDolphin(ip: string, port: number, timeout = 5000): Promise<void> {
-    // We're already connected so do nothing
-    if (this.dolphinConnection.getStatus() === ConnectionStatus.CONNECTED) {
+  private async _connectToGameSource(ip: string, port: number, timeout = 5000): Promise<void> {
+    Preconditions.checkExists(this.connection);
+
+    if (this.connection.getStatus() === ConnectionStatus.CONNECTED) {
       return;
     }
 
     return new Promise((resolve, reject) => {
-      // Set up the timeout
+      Preconditions.checkExists(this.connection);
+
       const timer = setTimeout(() => {
-        reject(new Error(`Dolphin connection request timed out after ${timeout}ms`));
+        reject(new Error(`Game source connection request timed out after ${timeout}ms`));
       }, timeout);
 
       const connectionChangeHandler = (status: number) => {
-        switch (status) {
-          case ConnectionStatus.CONNECTED: {
-            // Stop listening to the event
-            this.dolphinConnection.removeListener(ConnectionEvent.STATUS_CHANGE, connectionChangeHandler);
+        Preconditions.checkExists(this.connection);
+        this.emit(BroadcastEvent.LOG, `connectionStatusChange: ${status}`, {
+          status,
+        });
 
-            clearTimeout(timer);
-            resolve();
-            return;
-          }
-          case ConnectionStatus.DISCONNECTED: {
-            // Stop listening to the event
-            this.dolphinConnection.removeListener(ConnectionEvent.STATUS_CHANGE, connectionChangeHandler);
-
-            clearTimeout(timer);
-            reject(new Error("Broadcast manager failed to connect to Dolphin"));
-            return;
-          }
+        if (status === ConnectionStatus.CONNECTED) {
+          this.connection!.removeListener(ConnectionEvent.STATUS_CHANGE, connectionChangeHandler);
+          clearTimeout(timer);
+          resolve();
+        } else if (status === ConnectionStatus.DISCONNECTED) {
+          this.connection!.removeListener(ConnectionEvent.STATUS_CHANGE, connectionChangeHandler);
+          clearTimeout(timer);
+          reject(new Error("Broadcast manager failed to connect to game source"));
         }
       };
 
-      // Set up the listeners
-      this.dolphinConnection.on(ConnectionEvent.STATUS_CHANGE, connectionChangeHandler);
-
-      // Actually initiate the connection
-      this.dolphinConnection.connect(ip, port).catch(reject);
+      this.connection!.on(ConnectionEvent.STATUS_CHANGE, connectionChangeHandler);
+      this.connection!.connect(ip, port).catch(reject);
     });
   }
 
   private _handleGameData() {
-    // On a disconnect, we need to wait until isBroadcastReady otherwise we will skip the messages
-    // that were missed because we will start sending new data immediately as soon as the ws
-    // is established. We need to wait until the service tells us where we need to pick back up
-    // at before starting to send messages again
+    // Wait until broadcast is ready to avoid sending stale data during reconnection
     if (!this.broadcastId || !this.wsConnection || !this.isBroadcastReady) {
       return;
     }
@@ -483,51 +497,44 @@ export class BroadcastManager extends EventEmitter {
     while (this.incomingEvents.length > 0) {
       const event = this.incomingEvents.shift();
       if (!event) {
-        this.emit(BroadcastEvent.LOG, "No incoming events");
-        return;
-      }
-      this.backupEvents.push(event);
-      if (this.backupEvents.length > BACKUP_MAX_LENGTH) {
-        // Remove element after adding one once size is too big
-        this.backupEvents.shift();
+        continue;
       }
 
-      if (event) {
-        const message = {
-          type: "send-event",
-          broadcastId: this.broadcastId,
-          event,
-        };
+      // Add to backup for potential recovery
+      this._addToBackup(event);
 
-        switch (event.type) {
-          // Only forward these message types to the server
-          case "start_game":
-          case "game_event":
-          case "end_game":
-            // const payload = event.payload || "";
-            // const payloadStart = payload.substring(0, 4);
-            // const buf = Buffer.from(payloadStart, 'base64');
-            // const command = buf[0];
+      // Only forward specific message types
+      if (!["start_game", "game_event", "end_game"].includes(event.type)) {
+        continue;
+      }
 
-            if (event.type === "game_event" && !event.payload) {
-              // Don't send empty payload game_event
-              break;
-            }
+      // Skip empty game_event payloads
+      if (event.type === "game_event" && !event.payload) {
+        continue;
+      }
 
-            if (event.nextCursor) {
-              this.nextGameCursor = event.nextCursor;
-            }
+      if ("nextCursor" in event && event.nextCursor) {
+        this.nextGameCursor = event.nextCursor;
+      }
 
-            this.wsConnection.send(JSON.stringify(message), (err) => {
-              if (err) {
-                this.emit(BroadcastEvent.ERROR, err);
-              }
-            });
-            break;
-          default:
-            break;
+      const message = {
+        type: "send-event",
+        broadcastId: this.broadcastId,
+        event,
+      };
+
+      this.wsConnection.send(JSON.stringify(message), (err) => {
+        if (err) {
+          this.emit(BroadcastEvent.ERROR, err);
         }
-      }
+      });
+    }
+  }
+
+  private _addToBackup(event: SlippiBroadcastPayloadEvent) {
+    this.backupEvents.push(event);
+    if (this.backupEvents.length > BACKUP_MAX_LENGTH) {
+      this.backupEvents.shift();
     }
   }
 
