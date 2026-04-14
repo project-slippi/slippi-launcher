@@ -35,7 +35,8 @@
     "extendInfo": {
       "NSAppTransportSecurity": {
         "NSAllowsArbitraryLoads": true
-      }
+      },
+      "NSLocationWhenInUseUsageDescription": "This app needs your location to provide location-based features"
     },
     "minimumSystemVersion": "10.13.6"
   },

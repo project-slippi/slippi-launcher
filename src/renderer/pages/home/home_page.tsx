@@ -6,6 +6,7 @@ import { DualPane } from "@/components/dual_pane";
 import { Footer } from "@/components/footer/footer";
 import { colors } from "@/styles/colors";
 
+import { LocalTournaments } from "./local_tournaments";
 import { NewsFeed } from "./news_feed/news_feed";
 import { Sidebar } from "./sidebar/sidebar";
 
@@ -41,6 +42,7 @@ export const HomePage = React.memo(function HomePage() {
           id="home-page"
           leftSide={
             <Main>
+              <LocalTournaments />
               <NewsFeed />
             </Main>
           }

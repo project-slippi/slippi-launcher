@@ -15,7 +15,7 @@ import { DolphinLaunchType } from "@dolphin/types";
 import { ipc_statsPageRequestedEvent } from "@replays/ipc";
 import { ipc_openSettingsModalEvent } from "@settings/ipc";
 import type CrossProcessExports from "electron";
-import { app, BrowserWindow, shell } from "electron";
+import { app, BrowserWindow, session, shell } from "electron";
 import log from "electron-log";
 import { autoUpdater } from "electron-updater";
 import * as fs from "fs-extra";
@@ -104,6 +104,13 @@ const createWindow = async () => {
       ${err instanceof Error ? err.message : JSON.stringify(err)}`,
     );
   }
+  session.defaultSession.setPermissionRequestHandler((webContents, permission, callback) => {
+    if (permission === "geolocation") {
+      callback(true); // allow
+    } else {
+      callback(false);
+    }
+  });
 
   mainWindow = new BrowserWindow({
     show: false,
