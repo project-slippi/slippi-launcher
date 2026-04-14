@@ -33,6 +33,7 @@ export const defaultAppSettings: AppSettings = {
     extraSlpPaths: [],
     launchMeleeOnPlay: true,
     autoUpdateLauncher: true,
+    enableLocationAccess: false,
     useNetplayBeta: false,
     usePlaybackBeta: false,
     enableSpectateRemoteControl: false,

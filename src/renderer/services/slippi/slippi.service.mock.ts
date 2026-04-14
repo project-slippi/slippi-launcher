@@ -11,7 +11,7 @@ const SHOULD_ERROR = false;
 
 const fakeUserId = "userid";
 
-type SavedUserData = UserData & { savedMessages: string[] };
+type SavedUserData = Omit<UserData, "activeSubscriptionLevel"> & { savedMessages: string[] };
 
 const savedMessages = [
   "ggs",
@@ -44,6 +44,7 @@ class MockSlippiBackendClient implements SlippiBackendService {
 
   private addFakeSlippiUser(userId: string, displayName?: string): void {
     const numUsers = this.fakeUsers.size;
+
     this.fakeUsers.set(userId, {
       playKey: {
         uid: userId,
@@ -78,7 +79,18 @@ class MockSlippiBackendClient implements SlippiBackendService {
       this.addFakeSlippiUser(user.uid, user.displayName);
     }
     const userData = this.fakeUsers.get(user.uid);
-    return userData;
+    if (!userData) {
+      return undefined;
+    }
+
+    // Mock the sub level based on the fake user's display name.
+    // If the display name contains sub - make it a subscribed user.
+    const userIsSub = userData?.playKey?.displayName.toLowerCase().includes("sub");
+    const activeSubscriptionLevel = generateUserSubscriptionLevel(userIsSub);
+    return {
+      ...userData,
+      activeSubscriptionLevel,
+    };
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
@@ -125,11 +137,7 @@ class MockSlippiBackendClient implements SlippiBackendService {
     const userData = this.fakeUsers.get(userId);
     Preconditions.checkExists(userData, "User not found");
 
-    const displayName = userData.playKey!.displayName.toLowerCase();
-    const subscriptionLevel = generateUserSubscriptionLevel(displayName.includes("sub"));
-
     return {
-      level: subscriptionLevel,
       availableMessages: [...generateMockChatMessage(10, false), ...generateMockChatMessage(20, true)],
       userMessages: userData.savedMessages,
     };

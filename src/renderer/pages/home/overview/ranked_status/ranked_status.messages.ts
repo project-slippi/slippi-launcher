@@ -9,4 +9,6 @@ export const RankedStatusMessages = {
   onceEveryFourDaysRankedPlayIsAvailable: () =>
     "Once every 4 days, ranked play is available to all users including non-subs. Check back soon!",
   viewRankedProfile: () => "View Ranked Profile",
+  activeSubscription: () => "You have an active subscription! Enjoy ranked play at any time!",
+  subscribeToRanked: () => "Subscribe",
 };

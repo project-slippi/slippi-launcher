@@ -1,0 +1,29 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: 25px 50px;
+  text-align: center;
+  overflow: auto;
+}
+
+.icon {
+  font-size: 48px;
+}
+
+.title {
+  margin-bottom: 16px;
+}
+
+.description {
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 16px;
+}
+
+.privacy {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 24px;
+}

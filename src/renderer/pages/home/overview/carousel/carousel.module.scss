@@ -1,0 +1,206 @@
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.slidesContainer {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.slidesTrack {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  transition: transform 0.4s ease-in-out;
+}
+
+.slide {
+  position: relative;
+  flex: 0 0 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.card {
+  display: flex;
+  flex: 1;
+}
+
+.image {
+  object-fit: cover;
+  display: block;
+}
+
+.arrowButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    opacity 0.2s ease-in-out,
+    background-color 0.2s ease-in-out;
+  color: white;
+  pointer-events: auto;
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+}
+
+.arrowLeft {
+  left: 8px;
+}
+
+.arrowRight {
+  right: 8px;
+}
+
+.container:hover .arrowButton {
+  opacity: 1;
+}
+
+.navContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.indicators {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  padding: 20px 0;
+}
+
+.indicator {
+  width: 45px;
+  height: 5px;
+  border-radius: 10px;
+  border: none;
+  background-color: #452B59;
+  cursor: pointer;
+  padding: 0;
+  pointer-events: auto;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.indicator:hover:not(.indicatorActive) {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+.indicatorActive {
+  background-color: #9F74C0;
+}
+
+.info {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background: linear-gradient(to top,
+  #29133B 0%,
+  #29133B 20%,
+  transparent 100%);
+  padding-top: 50%;
+  padding-bottom: 10px;
+}
+
+.link {
+  transition: opacity 0.2s ease-in-out;
+  &:hover {
+    opacity: 0.7;
+  }
+}
+
+.imageContainer {
+  flex: 1;
+}
+.title {
+  font-size: 32pt;
+  font-weight: bold;
+  padding: 0 20px;
+  margin: 0;
+}
+.subtitle {
+  font-size: 14pt;
+  font-weight: bold;
+  padding: 0 20px;
+  padding-top: 10px;
+  color: #8665A0;
+}
+
+.countdownBadge {
+  padding: 4px 10px 4px 8px;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1;
+
+  color: #bbb;
+  background-color: rgba(27, 11, 40, 0.9);
+  border-radius: 999px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.happeningNowBadge {
+  color: #fff;
+  background-color: #941414;
+}
+
+/* little "live" dot */
+.happeningNowBadge::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fff;
+  display: inline-block;
+
+  animation: happeningNowPulse 1.5s infinite ease-in-out;
+}
+
+/* subtle pulse animation */
+@keyframes happeningNowPulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  70% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+.happeningNowContainer {
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+  box-sizing: border-box;
+  padding: 15px 18px;
+  width: 100%;
+}

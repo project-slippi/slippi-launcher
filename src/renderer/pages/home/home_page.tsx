@@ -1,13 +1,23 @@
-import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import React from "react";
+import { useParams } from "react-router-dom";
 
-import { DualPane } from "@/components/dual_pane";
 import { Footer } from "@/components/footer/footer";
-import { cssVar } from "@/styles/css_variables";
 
+import { HomePageMessages as Messages } from "./home_page.messages";
 import { NewsFeed } from "./news_feed/news_feed";
-import { Sidebar } from "./sidebar/sidebar";
+import { HomeOverview } from "./overview/overview";
+import { Tabs } from "./tabs/tabs";
+import { UpcomingTournaments } from "./upcoming_tournaments/upcoming_tournaments";
+import { useHomeNavigation, useHomePageStore } from "./use_home_page";
+
+const enum TabId {
+  OVERVIEW = "overview",
+  LATEST_NEWS = "news",
+  UPCOMING_TOURNAMENTS = "tournaments",
+}
+
+const VALID_TABS = [TabId.OVERVIEW, TabId.LATEST_NEWS, TabId.UPCOMING_TOURNAMENTS] as const;
 
 const Outer = styled.div`
   display: flex;
@@ -17,36 +27,36 @@ const Outer = styled.div`
   min-width: 0;
 `;
 
-const Main = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  overflow-x: hidden;
-  padding: 20px;
-  padding-top: 0;
-`;
-
 export const HomePage = React.memo(function HomePage() {
+  const { tab } = useParams<{ tab?: string }>();
+  const navigateToHomeTab = useHomeNavigation();
+  const lastSelectedTab = useHomePageStore((state) => state.lastSelectedTab);
+
+  const hasValidTab = VALID_TABS.includes(tab as TabId);
+
+  React.useEffect(() => {
+    if (!hasValidTab) {
+      navigateToHomeTab(lastSelectedTab);
+    }
+  }, [hasValidTab, lastSelectedTab, navigateToHomeTab]);
+
+  const currentTab = hasValidTab ? (tab as TabId) : lastSelectedTab;
+
+  const handleTabChange = (newTab: string) => {
+    navigateToHomeTab(newTab as TabId);
+  };
+
   return (
     <Outer>
-      <div
-        css={css`
-          display: flex;
-          flex: 1;
-          position: relative;
-          overflow: hidden;
-        `}
-      >
-        <DualPane
-          id="home-page"
-          leftSide={
-            <Main>
-              <NewsFeed />
-            </Main>
-          }
-          rightSide={<Sidebar />}
-          rightStyle={{ backgroundColor: cssVar("purpleDark") }}
-          style={{ gridTemplateColumns: "auto 300px" }}
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
+        <Tabs
+          value={currentTab}
+          onChange={handleTabChange}
+          tabs={[
+            { id: TabId.OVERVIEW, label: Messages.overview(), content: <HomeOverview /> },
+            { id: TabId.LATEST_NEWS, label: Messages.latestNews(), content: <NewsFeed /> },
+            { id: TabId.UPCOMING_TOURNAMENTS, label: Messages.upcomingTournaments(), content: <UpcomingTournaments /> },
+          ]}
         />
       </div>
       <Footer />

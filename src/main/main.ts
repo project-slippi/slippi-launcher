@@ -49,6 +49,7 @@ log.transports.file.level = isDevelopment ? "info" : "warn";
 // In dev mode, both main and renderer import electron-log, which causes duplication
 if (isDevelopment) {
   log.transports.ipc.level = false;
+  app.commandLine.appendSwitch("remote-debugging-port", "9222");
 }
 
 // Only allow a single Slippi App instance

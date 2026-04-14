@@ -1,0 +1,159 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  padding-bottom: 0;
+  flex-shrink: 0;
+}
+
+.cardList {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 16px;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  transition: background-color 0.2s ease-in-out;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.thumbnail {
+  width: 64px;
+  height: 64px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.name {
+  flex: 1;
+  font-size: 14pt;
+  font-weight: bold;
+  color: white;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  color: #8665A0;
+}
+
+.date {
+  font-size: 12pt;
+}
+
+.dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background-color: #8665A0;
+  flex-shrink: 0;
+}
+
+.countdownOverlay {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  padding: 2px 8px;
+  background-color: rgb(27, 11, 40, 0.9);
+  border-top-left-radius: 8px;
+}
+
+.countdown {
+  font-size: 9pt;
+  color: #bbb;
+}
+
+.happeningNow {
+  background-color: #941414;
+
+  .countdown {
+    color: #fff;
+    font-weight: bold;
+  }
+}
+
+.distance {
+  font-size: 12pt;
+  color: #39d05d;
+  flex-shrink: 0;
+  margin-left: 10px;
+}
+
+.errorMessage,
+.loading {
+  color: #8665A0;
+  font-size: 11pt;
+  padding: 12px 16px;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  gap: 8px;
+}
+
+.emptyText {
+  color: #8665A0;
+  font-size: 11pt;
+}
+
+.action {
+  flex-shrink: 0;
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.actionButton {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.eventsCount {
+  padding: 12px 16px;
+  font-size: 11pt;
+  color: #8665A0;
+}
+
+.entrantsCount {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
