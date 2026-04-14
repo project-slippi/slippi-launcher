@@ -11,6 +11,7 @@ import { isSubdirectory } from "utils/is_subdirectory";
 
 import commonApi from "./api";
 import type { AppBootstrap } from "./bootstrap";
+import { fetchNearestTournaments } from "./fetch_cross_origin/smash_map";
 
 const bootstrap = ipcRenderer.sendSync("getAppBootstrapSync") as AppBootstrap;
 
@@ -39,6 +40,9 @@ const api = {
     openPath: shell.openPath,
     openExternal: shell.openExternal,
     showItemInFolder: shell.showItemInFolder,
+  },
+  fetch: {
+    fetchNearestTournaments,
   },
 };
 
