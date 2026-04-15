@@ -41,8 +41,6 @@ const api = {
     openPath: shell.openPath,
     openExternal: shell.openExternal,
     showItemInFolder: shell.showItemInFolder,
-    openLocationServices: () =>
-      shell.openExternal("x-apple.systempreferences:com.apple.preference.security?Privacy_LocationServices"),
   },
   fetch: {
     fetchCurrentLocation,

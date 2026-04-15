@@ -25,11 +25,23 @@ type MeleeMajorTournament = {
   "top8-start-time": string;
 };
 
-const SmashMapCard = ({ name, url, imageSrc }: { name: string; url: string; imageSrc: string }) => {
+const SmashMapCard = ({
+  name,
+  url,
+  imageSrc,
+  distanceKms,
+}: {
+  name: string;
+  url: string;
+  imageSrc: string;
+  distanceKms: number;
+}) => {
   return (
     <div>
       <img src={imageSrc} />
-      <A href={url}>{name}</A>
+      <A href={url}>
+        {name} ({distanceKms.toFixed(2)} km)
+      </A>
     </div>
   );
 };
@@ -45,6 +57,7 @@ const MajorTournamentCard = ({ name, url, imageSrc }: { name: string; url: strin
 
 export const LocalTournaments = () => {
   const meleeMajorsQuery = useQuery(["meleeMajorsQuery"], async () => {
+    // This endpoint seems to not be blocked by CORS so we can just fetch it in the frontend
     const result = await fetch("https://meleemajors.gg/api/v1/tournaments.json").then((res) => res.json());
     console.log(result);
     return result;
@@ -54,16 +67,29 @@ export const LocalTournaments = () => {
     console.log("query result: ", { result });
     const events = await window.electron.fetch.fetchNearestTournaments({ lat: result.lat, lng: result.lon });
     console.log(events);
-    return { events };
+    return { events, ip: result };
   });
   return (
     <div>
-      <button onClick={() => window.electron.shell.openLocationServices()}>open location services</button>
       <h1>Smash Map</h1>
       {geoLocationQuery.data &&
-        geoLocationQuery.data.events.map((event, index) => (
-          <SmashMapCard key={index} name={event.name} url={event.link} imageSrc={event.image.url} />
-        ))}
+        geoLocationQuery.data.events.map((event, index) => {
+          const distanceKms = haversineDistanceKm(
+            geoLocationQuery.data.ip.lat,
+            geoLocationQuery.data.ip.lon,
+            event.address.latitude,
+            event.address.longitude,
+          );
+          return (
+            <SmashMapCard
+              key={index}
+              name={event.name}
+              url={event.link}
+              imageSrc={event.image.url}
+              distanceKms={distanceKms}
+            />
+          );
+        })}
       <pre>{JSON.stringify(geoLocationQuery.data, null, 2)}</pre>
       <h1>Melee Majors</h1>
       {meleeMajorsQuery.data &&
@@ -79,3 +105,22 @@ export const LocalTournaments = () => {
     </div>
   );
 };
+
+function toRadians(degrees: number): number {
+  return degrees * (Math.PI / 180);
+}
+
+export function haversineDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371; // Earth's radius in km
+
+  const φ1 = toRadians(lat1);
+  const φ2 = toRadians(lat2);
+  const Δφ = toRadians(lat2 - lat1);
+  const Δλ = toRadians(lon2 - lon1);
+
+  const a = Math.sin(Δφ / 2) ** 2 + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) ** 2;
+
+  const c = 2 * Math.asin(Math.sqrt(a));
+
+  return R * c;
+}
