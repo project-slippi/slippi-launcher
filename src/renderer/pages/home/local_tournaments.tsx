@@ -1,7 +1,6 @@
 import { useQuery } from "react-query";
 
 import { ExternalLink as A } from "@/components/external_link";
-import { getLocation } from "@/lib/location_service";
 
 // type MeleeMajorsResponse = {
 //   lastUpdated: string;
@@ -51,15 +50,15 @@ export const LocalTournaments = () => {
     return result;
   });
   const geoLocationQuery = useQuery(["geoLocationQuery"], async () => {
-    const result = await getLocation();
+    // const result = await getLocation();
     // console.log("query result: ", { result });
     // const smashMapResult = await fetch(
     //   `https://smash-map.com/api/events?lat=${result.lat}&lng=${result.lng}&radius=100&games=1&paginate=false`,
     // ).then((res) => res.json());
     // console.log("query smash map result: ", { smashMapResult });
-    const events = await window.electron.fetch.fetchNearestTournaments(result);
+    const events = await window.electron.fetch.fetchNearestTournaments();
     console.log(events);
-    return { ...result, events };
+    return { events };
   });
   return (
     <div>
