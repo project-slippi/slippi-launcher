@@ -10,7 +10,7 @@ This module provides a query language parser for the Slippi Launcher replay brow
 - **Character/Stage matching**: Fuzzy matching for character and stage names
 - **Player filters**: Search by connect code, tag, character
 - **Matchup filters**: Search by character vs character (winner > loser syntax)
-- **Negation**: Use `NOT` or `-` prefix to exclude results
+- **Negation**: Use `-` prefix to exclude results
 - **Error handling**: Graceful error handling with detailed error messages
 
 ## Query Syntax
@@ -74,7 +74,10 @@ puff> stage:FD                          # Puff won on Final Destination
 ### Negation
 
 ```
--stage:FD               # Exclude FD games (parsed but needs backend support)
+- stage:FD               # Exclude FD games
+- char:puff              # Exclude Puff games
+- winner:MANG#0          # Exclude games where MANG#0 won
+- loser:MANG#0           # Exclude games where MANG#0 lost
 ```
 
 ## Usage
@@ -243,10 +246,9 @@ The parser is organized into several modules:
 
 ## Current Limitations
 
-1. **Negation**: Parsed but requires backend support for some filter types
-2. **Date filters**: Not yet implemented (after/before/date)
-3. **Game mode filters**: Not yet implemented (ranked/unranked)
-4. **Platform filter**: Not yet implemented (console/dolphin)
+1. **Date filters**: Not yet implemented (after/before/date)
+2. **Game mode filters**: Not yet implemented (ranked/unranked)
+3. **Platform filter**: Not yet implemented (console/dolphin)
 
 ## Future Enhancements
 
