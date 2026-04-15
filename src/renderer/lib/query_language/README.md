@@ -68,10 +68,8 @@ winner:MANG#0           # MANG#0 won the game
 ```
 @me                     # The current user's games
 -@me                    # Exclude the current user's games
-winner:@me              # Current user won the game
-loser:@me               # Current user lost the game
-@me char:fox            # Current user's Fox games
-@me stage:FD -@me       # Include and exclude current user (cancels out)
+winner:@me              # Games that the current user won
+loser:@me               # Games that the current user lost
 ```
 
 The `@me` marker is a special keyword that refers to the currently logged-in user's Firebase user ID. It can be used with player filters to quickly find games involving yourself. Use `-@me` to exclude your games. The marker is case-insensitive (`@ME`, `@Me`, `@me` all work).
