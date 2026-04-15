@@ -33,6 +33,8 @@ function applyFilter(
       return applyStageFilter(query, filter);
     case "textSearch":
       return applyTextSearchFilter(query, filter);
+    case "matchup":
+      return applyMatchupFilter(query, filter);
     default: {
       // TypeScript exhaustiveness check
       const _exhaustive: never = filter;
@@ -177,6 +179,10 @@ function applyPlayerFilter(
         // Add winner condition if specified
         if (filter.mustBeWinner === true) {
           conditions.push(eb2("player.is_winner", "=", 1));
+        } else if (filter.mustBeWinner === false) {
+          // MustBeWinner false means the player lost (is_winner = 0)
+          // We only want to match explicit losers, not unknown
+          conditions.push(eb2("player.is_winner", "=", 0));
         }
 
         // Combine all conditions with AND
@@ -286,4 +292,51 @@ function applyTextSearchFilter(
   }
 
   return query.where((eb) => buildSearchCondition(eb));
+}
+
+/**
+ * Apply matchup filter to query
+ * Requires BOTH conditions to be met in the SAME game:
+ * - A player who played one of the winning characters and won
+ * - A different player who played one of the losing characters and lost
+ * This uses a single query with correlated subqueries to ensure both conditions
+ * are met by different players in the same game.
+ */
+function applyMatchupFilter(
+  query: SelectQueryBuilder<Database, "file" | "game", {}>,
+  filter: Extract<ReplayFilter, { type: "matchup" }>,
+): SelectQueryBuilder<Database, "file" | "game", {}> {
+  // Build condition: There exists a winner player AND there exists a loser player in the same game
+  // Both must be different players (different ports)
+  return query.where((eb) => {
+    // Winner condition: some player with winning character who won
+    const winnerCondition = eb.exists(
+      eb
+        .selectFrom("player")
+        .whereRef("player.game_id", "=", "game._id")
+        .where("player.character_id", "in", filter.winnerCharIds)
+        .where("player.is_winner", "=", 1)
+        .select("player._id"),
+    );
+
+    // Loser condition: some player with losing character who lost (is_winner = 0)
+    // Note: We use is_winner = 0 (not is null) to ensure we only match actual losers
+    const loserCondition = eb.exists(
+      eb
+        .selectFrom("player")
+        .whereRef("player.game_id", "=", "game._id")
+        .where("player.character_id", "in", filter.loserCharIds)
+        .where("player.is_winner", "=", 0)
+        .select("player._id"),
+    );
+
+    // Both conditions must be true (AND logic)
+    const combined = eb.and([winnerCondition, loserCondition]);
+
+    if (filter.negate) {
+      return eb.not(combined);
+    }
+
+    return combined;
+  });
 }

@@ -813,22 +813,24 @@ describe("Query Parser", () => {
   });
 
   describe("Conversion to ReplayFilter[] with matchups", () => {
-    it("should convert fox>marth to player filters", () => {
+    it("should convert fox>marth to matchup filter (correlated)", () => {
       const parsed = parseQuery("fox>marth");
       const filters = convertToReplayFilters(parsed.filters);
 
-      // Should have two player filters: winner (fox) and loser (marth)
-      const winnerFilter = filters.find((f) => f.type === "player" && f.mustBeWinner === true);
-      expect(winnerFilter).toBeDefined();
-      if (winnerFilter?.type === "player") {
-        expect(winnerFilter.characterIds).toEqual([2]);
+      // Should have ONE matchup filter that ensures both conditions are met in the same game
+      const matchupFilter = filters.find((f) => f.type === "matchup");
+      expect(matchupFilter).toBeDefined();
+      if (matchupFilter?.type === "matchup") {
+        expect(matchupFilter.winnerCharIds).toEqual([2]); // Fox
+        expect(matchupFilter.loserCharIds).toEqual([9]); // Marth
       }
 
+      // Should NOT have separate winner/loser player filters (would cause false positives)
+      const winnerFilter = filters.find((f) => f.type === "player" && f.mustBeWinner === true);
+      expect(winnerFilter).toBeUndefined();
+
       const loserFilter = filters.find((f) => f.type === "player" && f.mustBeWinner === false);
-      expect(loserFilter).toBeDefined();
-      if (loserFilter?.type === "player") {
-        expect(loserFilter.characterIds).toEqual([9]);
-      }
+      expect(loserFilter).toBeUndefined();
     });
 
     it("should convert fox> to single winner filter", () => {
@@ -861,17 +863,19 @@ describe("Query Parser", () => {
       expect(winnerFilter).toBeUndefined();
     });
 
-    it("should convert fox>marth with stage to multiple filters", () => {
+    it("should convert fox>marth with stage to matchup + stage filters", () => {
       const parsed = parseQuery("fox>marth stage:FD");
       const filters = convertToReplayFilters(parsed.filters);
 
-      expect(filters.length).toBeGreaterThanOrEqual(3);
+      // Should have matchup filter + stage filter (2 filters, not separate winner/loser)
+      expect(filters.length).toBe(2);
 
-      const winnerFilter = filters.find((f) => f.type === "player" && f.mustBeWinner === true);
-      expect(winnerFilter).toBeDefined();
-
-      const loserFilter = filters.find((f) => f.type === "player" && f.mustBeWinner === false);
-      expect(loserFilter).toBeDefined();
+      const matchupFilter = filters.find((f) => f.type === "matchup");
+      expect(matchupFilter).toBeDefined();
+      if (matchupFilter?.type === "matchup") {
+        expect(matchupFilter.winnerCharIds).toEqual([2]);
+        expect(matchupFilter.loserCharIds).toEqual([9]);
+      }
 
       const stageFilter = filters.find((f) => f.type === "stage");
       expect(stageFilter).toBeDefined();
