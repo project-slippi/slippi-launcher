@@ -166,6 +166,7 @@ function parseBooleanValue(value: string): boolean {
 /**
  * Parse duration into frames (60 fps)
  * Supports prefix operators > and < for min/max duration filtering
+ * Supports combined units (e.g., "1h30m30s", "2h30m", "1m30s")
  *
  * Supported formats:
  * - "30s" -> { operator: undefined, frames: 1800 } (30 seconds * 60 fps)
@@ -176,13 +177,19 @@ function parseBooleanValue(value: string): boolean {
  * - "1800f" -> { operator: undefined, frames: 1800 } (explicit frames)
  * - ">1800f" -> { operator: ">", frames: 1800 }
  * - "90" -> { operator: undefined, frames: 5400 } (assumed seconds if no unit)
+ * - "1m30s" -> { operator: undefined, frames: 5400 } (1 minute 30 seconds)
+ * - "1h30m" -> { operator: undefined, frames: 5400 * 60 } (1 hour 30 minutes)
+ * - "1h30m15s" -> { operator: undefined, frames: 5415 * 60 } (1 hour 30 minutes 15 seconds)
  *
+ * Unit order must be descending: hours -> minutes -> seconds -> frames
  * Examples:
  * - parseDuration("30s") -> { operator: undefined, frames: 1800 }
  * - parseDuration(">30s") -> { operator: ">", frames: 1800 }
  * - parseDuration("<1m") -> { operator: "<", frames: 3600 }
  * - parseDuration("2.5m") -> { operator: undefined, frames: 9000 }
  * - parseDuration("1800f") -> { operator: undefined, frames: 1800 }
+ * - parseDuration("1m30s") -> { operator: undefined, frames: 5400 }
+ * - parseDuration("1h30m15s") -> { operator: undefined, frames: 5415 * 60 }
  */
 function parseDuration(value: string): {
   operator?: ">" | "<";
@@ -196,31 +203,53 @@ function parseDuration(value: string): {
   const [, operatorStr, valuePart] = operatorMatch;
   const operator = operatorStr === ">" || operatorStr === "<" ? operatorStr : undefined;
 
-  const match = valuePart.match(/^(\d+(?:\.\d+)?)(s|m|f)?$/i);
-  if (!match) {
+  const unitPattern = /(\d+(?:\.\d+)?)([hmsf])/gi;
+  const parts: Array<{ num: number; unit: string }> = [];
+  let match;
+
+  while ((match = unitPattern.exec(valuePart)) !== null) {
+    parts.push({ num: parseFloat(match[1]), unit: match[2].toLowerCase() });
+  }
+
+  if (parts.length === 0) {
     throw new Error(`Invalid duration format: "${value}". Expected format like 30s, 1m, or 1800f`);
   }
 
-  const [, numStr, unit = "s"] = match;
-  const num = parseFloat(numStr);
+  const expectedOrder = ["h", "m", "s", "f"];
+  let lastIndex = -1;
 
-  if (isNaN(num) || num < 0) {
-    throw new Error(`Invalid duration number: "${value}"`);
+  for (const part of parts) {
+    const currentIndex = expectedOrder.indexOf(part.unit);
+    if (currentIndex <= lastIndex) {
+      throw new Error(
+        `Invalid duration format: "${value}". Units must be in descending order (h > m > s > f). Example: 1h30m15s`,
+      );
+    }
+    lastIndex = currentIndex;
   }
 
-  let frames: number;
-  switch (unit.toLowerCase()) {
-    case "s":
-      frames = Math.floor(num * 60); // seconds to frames (60 fps)
-      break;
-    case "m":
-      frames = Math.floor(num * 60 * 60); // minutes to frames
-      break;
-    case "f":
-      frames = Math.floor(num); // already in frames
-      break;
-    default:
-      throw new Error(`Unknown duration unit: "${unit}". Use s (seconds), m (minutes), or f (frames)`);
+  let frames = 0;
+
+  for (const part of parts) {
+    const num = part.num;
+    if (isNaN(num) || num < 0) {
+      throw new Error(`Invalid duration number: "${value}"`);
+    }
+
+    switch (part.unit) {
+      case "h":
+        frames += Math.floor(num * 60 * 60 * 60); // hours to frames
+        break;
+      case "m":
+        frames += Math.floor(num * 60 * 60); // minutes to frames
+        break;
+      case "s":
+        frames += Math.floor(num * 60); // seconds to frames
+        break;
+      case "f":
+        frames += Math.floor(num); // already in frames
+        break;
+    }
   }
 
   return { operator, frames };

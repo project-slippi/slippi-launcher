@@ -67,6 +67,50 @@ describe("Query Parser", () => {
       expect(result.filters.maxDuration).toBe(14400); // 4 * 60 * 60 frames
       expect(result.errors).toHaveLength(0);
     });
+
+    it("should parse combined minutes and seconds", () => {
+      const result = parseQuery("duration:1m30s");
+      expect(result.filters.minDuration).toBe(5400); // (1 * 60 + 30) * 60 frames
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse combined hours and minutes", () => {
+      const result = parseQuery("duration:1h30m");
+      expect(result.filters.minDuration).toBe(324000); // (1 * 60 + 30) * 60 * 60 frames
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse combined hours, minutes, and seconds", () => {
+      const result = parseQuery("duration:1h30m15s");
+      expect(result.filters.minDuration).toBe(324900); // (1 * 3600 + 30 * 60 + 15) * 60 frames
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse combined duration with > operator", () => {
+      const result = parseQuery("duration:>1m30s");
+      expect(result.filters.minDuration).toBe(5400);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse combined duration with < operator", () => {
+      const result = parseQuery("duration:<2h30m");
+      expect(result.filters.maxDuration).toBe(540000); // (2 * 60 + 30) * 60 * 60 frames
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should reject invalid unit order (seconds before minutes)", () => {
+      const result = parseQuery("duration:30s1m");
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0].type).toBe("INVALID_VALUE");
+      expect(result.errors[0].key).toBe("duration");
+    });
+
+    it("should reject invalid unit order (minutes after seconds)", () => {
+      const result = parseQuery("duration:1s30m");
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0].type).toBe("INVALID_VALUE");
+      expect(result.errors[0].key).toBe("duration");
+    });
   });
 
   describe("Character filters", () => {
