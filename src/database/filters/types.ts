@@ -104,7 +104,35 @@ export type TextSearchFilter = {
   negate?: boolean; // If true, excludes matches instead of including them
 };
 
-export type ReplayFilter = DurationFilter | PlayerFilter | GameModeFilter | StageFilter | TextSearchFilter;
+/**
+ * Filter for matchup (character vs character)
+ * Requires BOTH conditions to be met:
+ * - A player who played one of the winner characters and won
+ * - A different player who played one of the loser characters and lost
+ * Both players must be in the same game.
+ *
+ * Examples:
+ * - { winnerCharIds: [2], loserCharIds: [9] } = Fox beat Marth
+ * - { winnerCharIds: [2], loserCharIds: null } = Fox won (any opponent) - USE PlayerFilter instead
+ * - { winnerCharIds: null, loserCharIds: [9] } = Marth lost (any opponent) - USE PlayerFilter instead
+ *
+ * Note: For single-sided filters (winner only or loser only), use PlayerFilter with mustBeWinner.
+ * MatchupFilter is specifically for when you want to match BOTH sides.
+ */
+export type MatchupFilter = {
+  type: "matchup";
+  winnerCharIds: number[]; // Character IDs of the winner (OR logic)
+  loserCharIds: number[]; // Character IDs of the loser (OR logic)
+  negate?: boolean; // If true, excludes matches instead of including them
+};
+
+export type ReplayFilter =
+  | DurationFilter
+  | PlayerFilter
+  | GameModeFilter
+  | StageFilter
+  | TextSearchFilter
+  | MatchupFilter;
 
 // Game mode constants
 const GameModeValue = {

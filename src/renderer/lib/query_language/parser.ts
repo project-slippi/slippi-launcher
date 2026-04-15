@@ -374,19 +374,33 @@ export function convertToReplayFilters(queryFilters: QueryFilters): ReplayFilter
   }
 
   // Matchup filters (e.g., "fox>marth" -> winner played Fox, loser played Marth)
+  // These require CORRELATED conditions - winner and loser must be different players in the SAME game
+  // For single-sided (winner only or loser only), we use PlayerFilter with mustBeWinner
   if (queryFilters.matchups && queryFilters.matchups.length > 0) {
     queryFilters.matchups.forEach((matchup) => {
-      // Winner filter: player who played the winning character(s)
-      if (matchup.winnerCharIds && matchup.winnerCharIds.length > 0) {
+      // Only create MatchupFilter if BOTH winner and loser are specified
+      // If only one side is specified, use the existing PlayerFilter approach
+      if (
+        matchup.winnerCharIds &&
+        matchup.winnerCharIds.length > 0 &&
+        matchup.loserCharIds &&
+        matchup.loserCharIds.length > 0
+      ) {
+        // Full matchup: Fox beat Marth (both sides specified)
+        filters.push({
+          type: "matchup",
+          winnerCharIds: matchup.winnerCharIds,
+          loserCharIds: matchup.loserCharIds,
+        });
+      } else if (matchup.winnerCharIds && matchup.winnerCharIds.length > 0) {
+        // Winner only: Fox won (any opponent) - use PlayerFilter
         filters.push({
           type: "player",
           characterIds: matchup.winnerCharIds,
           mustBeWinner: true,
         });
-      }
-
-      // Loser filter: player who played the losing character(s)
-      if (matchup.loserCharIds && matchup.loserCharIds.length > 0) {
+      } else if (matchup.loserCharIds && matchup.loserCharIds.length > 0) {
+        // Loser only: Marth lost (any opponent) - use PlayerFilter
         filters.push({
           type: "player",
           characterIds: matchup.loserCharIds,

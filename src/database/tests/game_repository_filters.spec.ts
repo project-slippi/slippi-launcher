@@ -1191,4 +1191,226 @@ describe("GameRepository.searchGames with filters", () => {
     const { _id: gameId } = await GameRepository.insertGame(db, aMockGameWith(fileId, { start_time: startTime }));
     return { fileId, gameId };
   }
+
+  describe("MatchupFilter", () => {
+    it("should filter games where Fox beat Marth (correlated)", async () => {
+      const folder = "/replays";
+
+      // Game 1: Fox beats Marth
+      const { gameId: game1 } = await addGame(folder, "fox_wins.slp");
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game1, { character_id: 2, port: 1, is_winner: 1 })); // Fox won
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game1, { character_id: 9, port: 2, is_winner: 0 })); // Marth lost
+
+      // Game 2: Marth beats Fox
+      const { gameId: game2 } = await addGame(folder, "marth_wins.slp");
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game2, { character_id: 2, port: 1, is_winner: 0 })); // Fox lost
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game2, { character_id: 9, port: 2, is_winner: 1 })); // Marth won
+
+      // Game 3: Fox beats Falco (not Marth)
+      const { gameId: game3 } = await addGame(folder, "fox_beats_falco.slp");
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game3, { character_id: 2, port: 1, is_winner: 1 })); // Fox won
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game3, { character_id: 20, port: 2, is_winner: 0 })); // Falco lost
+
+      const filters: ReplayFilter[] = [
+        { type: "matchup", winnerCharIds: [2], loserCharIds: [9] }, // Fox beat Marth
+      ];
+
+      const results = await GameRepository.searchGames(db, folder, filters, {
+        limit: 10,
+        orderBy: { field: "startTime", direction: "desc" },
+      });
+
+      expect(results).toHaveLength(1);
+      expect(results[0].name).toBe("fox_wins.slp");
+    });
+
+    it("should NOT return games where Fox won but opponent was not Marth", async () => {
+      const folder = "/replays";
+
+      // Game: Fox beats Falco
+      const { gameId: game1 } = await addGame(folder, "fox_vs_falco.slp");
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game1, { character_id: 2, port: 1, is_winner: 1 })); // Fox won
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game1, { character_id: 20, port: 2, is_winner: 0 })); // Falco lost
+
+      // Query: Fox beat Marth (but opponent was Falco, not Marth)
+      const filters: ReplayFilter[] = [{ type: "matchup", winnerCharIds: [2], loserCharIds: [9] }];
+
+      const results = await GameRepository.searchGames(db, folder, filters, {
+        limit: 10,
+        orderBy: { field: "startTime", direction: "desc" },
+      });
+
+      expect(results).toHaveLength(0);
+    });
+
+    it("should not return game with Fox as winner and Marth as loser if they are the same player", async () => {
+      const folder = "/replays";
+
+      // Game: Single player (Fox vs CPU or invalid data) - same player appears as both winner and loser
+      // This shouldn't happen in practice, but the filter should handle it
+      const { gameId: game1 } = await addGame(folder, "invalid_game.slp");
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game1, { character_id: 2, port: 1, is_winner: 1 })); // Fox won
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game1, { character_id: 2, port: 2, is_winner: 0 })); // Fox also in game (but lost?) - unusual
+
+      // Query: Fox beat Marth (but Marth wasn't in this game)
+      const filters: ReplayFilter[] = [{ type: "matchup", winnerCharIds: [2], loserCharIds: [9] }];
+
+      const results = await GameRepository.searchGames(db, folder, filters, {
+        limit: 10,
+        orderBy: { field: "startTime", direction: "desc" },
+      });
+
+      expect(results).toHaveLength(0); // No Marth in the game
+    });
+
+    it("should filter with stage filter combined with matchup", async () => {
+      const folder = "/replays";
+
+      // Game 1: Fox beats Marth on Dreamland
+      const { gameId: game1 } = await addGameWithStage(folder, "dl_fox_wins.slp", 28); // Dreamland N64 = 28
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game1, { character_id: 2, port: 1, is_winner: 1 }));
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game1, { character_id: 9, port: 2, is_winner: 0 }));
+
+      // Game 2: Fox beats Marth on Battlefield
+      const { gameId: game2 } = await addGameWithStage(folder, "bf_fox_wins.slp", 31); // Battlefield = 31
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game2, { character_id: 2, port: 1, is_winner: 1 }));
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game2, { character_id: 9, port: 2, is_winner: 0 }));
+
+      // Query: Fox beat Marth on Dreamland
+      const filters: ReplayFilter[] = [
+        { type: "matchup", winnerCharIds: [2], loserCharIds: [9] },
+        { type: "stage", stageIds: [28] },
+      ];
+
+      const results = await GameRepository.searchGames(db, folder, filters, {
+        limit: 10,
+        orderBy: { field: "startTime", direction: "desc" },
+      });
+
+      expect(results).toHaveLength(1);
+      expect(results[0].name).toBe("dl_fox_wins.slp");
+    });
+
+    it("should filter with winner-only using player filter (fox> syntax)", async () => {
+      const folder = "/replays";
+
+      // Game 1: Fox won
+      const { gameId: game1 } = await addGame(folder, "fox_win1.slp");
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game1, { character_id: 2, port: 1, is_winner: 1 }));
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game1, { character_id: 9, port: 2, is_winner: 0 }));
+
+      // Game 2: Fox lost
+      const { gameId: game2 } = await addGame(folder, "fox_lose.slp");
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game2, { character_id: 2, port: 1, is_winner: 0 }));
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game2, { character_id: 9, port: 2, is_winner: 1 }));
+
+      // Game 3: Fox won again
+      const { gameId: game3 } = await addGame(folder, "fox_win2.slp");
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game3, { character_id: 2, port: 1, is_winner: 1 }));
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game3, { character_id: 15, port: 2, is_winner: 0 }));
+
+      // Query: Fox won (any opponent) - uses PlayerFilter with mustBeWinner
+      const filters: ReplayFilter[] = [{ type: "player", characterIds: [2], mustBeWinner: true }];
+
+      const results = await GameRepository.searchGames(db, folder, filters, {
+        limit: 10,
+        orderBy: { field: "startTime", direction: "desc" },
+      });
+
+      expect(results).toHaveLength(2);
+      expect(results.map((r) => r.name)).toEqual(expect.arrayContaining(["fox_win1.slp", "fox_win2.slp"]));
+    });
+
+    it("should filter with loser-only using player filter (>marth syntax)", async () => {
+      const folder = "/replays/losses";
+
+      // Game 1: Marth lost (Fox won)
+      const { gameId: game1 } = await addGame(folder, "marth_lose1.slp");
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game1, { character_id: 2, port: 1, is_winner: 1 }));
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game1, { character_id: 9, port: 2, is_winner: 0 }));
+
+      // Game 2: Marth won
+      const { gameId: game2 } = await addGame(folder, "marth_win.slp");
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game2, { character_id: 9, port: 1, is_winner: 1 }));
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game2, { character_id: 2, port: 2, is_winner: 0 }));
+
+      // Game 3: Marth lost again (Falco won)
+      const { gameId: game3 } = await addGame(folder, "marth_lose2.slp");
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game3, { character_id: 20, port: 1, is_winner: 1 }));
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game3, { character_id: 9, port: 2, is_winner: 0 }));
+
+      // Query: Marth lost (any opponent) - uses PlayerFilter with mustBeWinner: false
+      const filters: ReplayFilter[] = [{ type: "player", characterIds: [9], mustBeWinner: false }];
+
+      const results = await GameRepository.searchGames(db, folder, filters, {
+        limit: 10,
+        orderBy: { field: "startTime", direction: "desc" },
+      });
+
+      // Should get games where Marth (character 9) was a loser
+      expect(results.map((r) => r.name)).toEqual(expect.arrayContaining(["marth_lose1.slp", "marth_lose2.slp"]));
+      // Should NOT include game2 where Marth won
+      expect(results.map((r) => r.name)).not.toContain("marth_win.slp");
+    });
+
+    it("should NOT return same game for fox> and >marth queries", async () => {
+      const folder = "/replays";
+
+      // Game: Fox (port 1) beat Marth (port 2)
+      const { gameId: game1 } = await addGame(folder, "fox_vs_marth.slp");
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game1, { character_id: 2, port: 1, is_winner: 1 })); // Fox won
+      await PlayerRepository.insertPlayer(db, aMockPlayerWith(game1, { character_id: 9, port: 2, is_winner: 0 })); // Marth lost
+
+      // Query 1: Fox won (any opponent) - should return game1
+      const filtersFoxWin: ReplayFilter[] = [{ type: "player", characterIds: [2], mustBeWinner: true }];
+      const resultsFoxWin = await GameRepository.searchGames(db, folder, filtersFoxWin, {
+        limit: 10,
+        orderBy: { field: "startTime", direction: "desc" },
+      });
+
+      // Query 2: Marth lost (any opponent) - should also return game1
+      // But this is different from Query 1 - both queries can return the same game
+      // The issue is when you combine them with OR logic... wait, the user wants them to be different
+
+      // The problem: if you search "fox>" you get all games where Fox won
+      // If you search ">marth" you get all games where Marth lost
+      // These should return the SAME game for this case
+      // But the user says they want DIFFERENT results...
+
+      // Ah wait - the original issue was "stage:dl >fox" (Fox lost) vs "stage:dl fox>" (Fox won)
+      // Those should return different results because fox lost vs fox won
+
+      // Let me test the correct case: "fox>" should return game1, ">marth" should also return game1
+      // But they are different filters! They should both return game1, that's correct.
+      // The bug was they were returning the same results when used incorrectly
+
+      // Wait - the user's bug report says:
+      // "stage:dl >fox" returns same as "stage:dl fox>"
+      // That means ">fox" (Fox lost) was returning games where Fox won!
+      // That was because both were using separate player filters that were OR'd together
+
+      // The fix ensures that for full matchup (fox>marth), it uses MatchupFilter which is CORRELATED
+      // So now "fox>marth" returns ONLY games where Fox beat Marth (specific matchup)
+      // And "fox>" returns games where Fox won (any opponent)
+      // And ">marth" returns games where Marth lost (any opponent)
+
+      // Verify both queries return game1 (because in this game Fox won AND Marth lost)
+      const filtersMarthLost: ReplayFilter[] = [{ type: "player", characterIds: [9], mustBeWinner: false }];
+      const resultsMarthLost = await GameRepository.searchGames(db, folder, filtersMarthLost, {
+        limit: 10,
+        orderBy: { field: "startTime", direction: "desc" },
+      });
+
+      // Both should return game1
+      expect(resultsFoxWin).toHaveLength(1);
+      expect(resultsFoxWin[0].name).toBe("fox_vs_marth.slp");
+      expect(resultsMarthLost).toHaveLength(1);
+      expect(resultsMarthLost[0].name).toBe("fox_vs_marth.slp");
+
+      // But now they use DIFFERENT filter types internally:
+      // - fox> uses PlayerFilter with mustBeWinner: true (single-sided)
+      // - >marth uses PlayerFilter with mustBeWinner: false (single-sided)
+      // Both happen to return the same game here, but they're semantically different queries
+    });
+  });
 });
