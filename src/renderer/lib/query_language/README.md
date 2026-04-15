@@ -8,7 +8,7 @@ This module provides a query language parser for the Slippi Launcher replay brow
 - **Quoted strings**: Support for names with spaces using quotes
 - **Duration parsing**: Multiple formats (30s, 1m, 1800f)
 - **Character/Stage matching**: Fuzzy matching for character and stage names
-- **Player filters**: Search by connect code, tag, port, character
+- **Player filters**: Search by connect code, tag, character
 - **Negation**: Use `NOT` or `-` prefix to exclude results
 - **Error handling**: Graceful error handling with detailed error messages
 
@@ -34,8 +34,6 @@ minDuration:1800f       # Minimum 1800 frames (explicit)
 ```
 char:fox                # Any player played Fox
 char:fox,falco          # Any player played Fox OR Falco
-p1:fox                  # Port 1 played Fox
-p2:marth                # Port 2 played Marth
 ```
 
 ### Player Filters
@@ -44,7 +42,6 @@ p2:marth                # Port 2 played Marth
 code:MANG#0             # Player with connect code MANG#0
 tag:Mango               # Player with tag "Mango"
 winner:MANG#0           # MANG#0 won the game
-port:1                  # Filter by port 1
 ```
 
 ### Matchup Filters
@@ -160,23 +157,7 @@ parseQuery("mango char:fox,falco minDuration:30s winner:MANG#0");
 // }
 ```
 
-### Example 4: Port-specific character
-
-```typescript
-parseQuery("p1:fox p2:marth");
-// Result: {
-//   searchText: [],
-//   filters: {
-//     playerFilters: [
-//       { port: 1, characterIds: [2] },
-//       { port: 2, characterIds: [9] }
-//     ]
-//   },
-//   errors: []
-// }
-```
-
-### Example 5: Error handling
+### Example 4: Error handling
 
 ```typescript
 parseQuery("char:invalidchar");

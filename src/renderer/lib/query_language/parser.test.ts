@@ -232,26 +232,6 @@ describe("Query Parser", () => {
     });
   });
 
-  describe("Port-specific filters", () => {
-    it("should parse p1 port alias", () => {
-      const result = parseQuery("p1:fox");
-      expect(result.filters.playerFilters).toHaveLength(1);
-      expect(result.filters.playerFilters?.[0].port).toBe(1);
-      expect(result.filters.playerFilters?.[0].characterIds).toEqual([2]);
-      expect(result.errors).toHaveLength(0);
-    });
-
-    it("should parse multiple port filters", () => {
-      const result = parseQuery("p1:fox p2:marth");
-      expect(result.filters.playerFilters).toHaveLength(2);
-      expect(result.filters.playerFilters?.[0].port).toBe(1);
-      expect(result.filters.playerFilters?.[0].characterIds).toEqual([2]);
-      expect(result.filters.playerFilters?.[1].port).toBe(2);
-      expect(result.filters.playerFilters?.[1].characterIds).toEqual([9]);
-      expect(result.errors).toHaveLength(0);
-    });
-  });
-
   describe("Player filters", () => {
     it("should parse connect code", () => {
       const result = parseQuery("code:MANG#0");
@@ -515,15 +495,6 @@ describe("Query Parser", () => {
       expect(result.filters.excludeFilters).toBeDefined();
       expect(result.filters.excludeFilters?.playerFilters).toHaveLength(1);
       expect(result.filters.excludeFilters?.playerFilters?.[0].characterIds).toEqual([2, 20]); // Fox, Falco IDs
-      expect(result.errors).toHaveLength(0);
-    });
-
-    it("should parse dash negation for port-specific character", () => {
-      const result = parseQuery("-p1:fox");
-      expect(result.filters.excludeFilters).toBeDefined();
-      expect(result.filters.excludeFilters?.playerFilters).toHaveLength(1);
-      expect(result.filters.excludeFilters?.playerFilters?.[0].port).toBe(1);
-      expect(result.filters.excludeFilters?.playerFilters?.[0].characterIds).toEqual([2]);
       expect(result.errors).toHaveLength(0);
     });
 

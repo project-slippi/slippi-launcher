@@ -7,7 +7,7 @@
 
 import type { ReplayFilter } from "@database/filters/types";
 
-import { getFilterDefinition, getPortFromAlias } from "./filter_schema";
+import { getFilterDefinition } from "./filter_schema";
 import { tokenize } from "./tokenizer";
 import type { MatchupFilter, ParsedQuery, QueryError, QueryFilters } from "./types";
 import { parseValue } from "./value_parser";
@@ -62,32 +62,6 @@ export function parseQuery(query: string): ParsedQuery {
 
       case "FILTER":
         try {
-          // Special handling for port aliases (p1, p2, p3, p4)
-          // They need character parsing, not port number parsing
-          const portNum = getPortFromAlias(token.key!);
-          if (portNum !== undefined) {
-            // Port alias - parse value as character
-            const charFilter = getFilterDefinition("character");
-            if (charFilter) {
-              const parsedValue = parseValue(token.value, charFilter, token.valueWasQuoted);
-              const characterIds = Array.isArray(parsedValue) ? parsedValue : [parsedValue];
-
-              if (negateNext) {
-                filters.excludeFilters = filters.excludeFilters || {};
-                filters.excludeFilters.playerFilters = filters.excludeFilters.playerFilters || [];
-                filters.excludeFilters.playerFilters.push({
-                  port: portNum,
-                  characterIds,
-                });
-              } else {
-                filters.playerFilters = filters.playerFilters || [];
-                filters.playerFilters.push({ port: portNum, characterIds });
-              }
-              negateNext = false;
-              break;
-            }
-          }
-
           const def = getFilterDefinition(token.key!);
           if (!def) {
             errors.push({
@@ -187,15 +161,6 @@ function applyFilter(filters: QueryFilters, key: string, value: any, negate: boo
     const stageIds = Array.isArray(value) ? value : [value];
     filters.stageIds = filters.stageIds || [];
     filters.stageIds.push(...stageIds);
-    return;
-  }
-
-  // Port filter (port:N)
-  // Note: Port aliases (p1, p2, p3, p4) are handled in parseQuery() before calling applyFilter()
-  if (lowerKey === "port") {
-    // port:N specified directly
-    filters.playerFilters = filters.playerFilters || [];
-    filters.playerFilters.push({ port: value });
     return;
   }
 
@@ -328,7 +293,6 @@ export function convertToReplayFilters(queryFilters: QueryFilters): ReplayFilter
         connectCode: pf.connectCode,
         displayName: pf.displayName,
         tag: pf.tag,
-        port: pf.port,
         characterIds: pf.characterIds,
         mustBeWinner: pf.mustBeWinner,
         // Pass through exact matching flags
