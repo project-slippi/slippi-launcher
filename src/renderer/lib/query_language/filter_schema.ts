@@ -111,6 +111,19 @@ export const FILTER_SCHEMA: FilterDefinition[] = [
     examples: ["date:2026", "date:2025-02", "date:2024-01-15", "date:>2025-02", "date:<2025-06", "date:>=2024-01-01"],
     category: "date",
   },
+  {
+    key: "is",
+    description: "Game type filter (ranked, unranked, teams, doubles, singles)",
+    valueType: "enum",
+    enumValues: [
+      { value: "ranked", label: "Ranked", aliases: [], id: "ranked" },
+      { value: "unranked", label: "Unranked", aliases: [], id: "unranked" },
+      { value: "singles", label: "Singles", aliases: [], id: "singles" },
+      { value: "doubles", label: "Doubles", aliases: ["teams"], id: "doubles" },
+    ],
+    examples: ["is:ranked", "-is:ranked", "is:teams", "is:doubles", "is:singles", "-is:teams"],
+    category: "game",
+  },
 ];
 
 /**

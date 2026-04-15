@@ -45,6 +45,10 @@ function applyFilter(
       return applyMatchupFilter(query, filter);
     case "date":
       return applyDateFilter(query, filter);
+    case "ranked":
+      return applyRankedFilter(query, filter);
+    case "teams":
+      return applyTeamsFilter(query, filter);
     default: {
       // TypeScript exhaustiveness check
       const _exhaustive: never = filter;
@@ -408,4 +412,36 @@ function applyDateFilter(
 
     return eb.or(conditions);
   });
+}
+
+/**
+ * Apply ranked filter to query
+ * Filters games by is_ranked column (0 = unranked, 1 = ranked)
+ * Supports negation to include the opposite
+ */
+function applyRankedFilter(
+  query: SelectQueryBuilder<Database, "file" | "game", {}>,
+  filter: Extract<ReplayFilter, { type: "ranked" }>,
+): SelectQueryBuilder<Database, "file" | "game", {}> {
+  if (filter.negate) {
+    return query.where("game.is_ranked", "!=", filter.isRanked ? 1 : 0);
+  }
+
+  return query.where("game.is_ranked", "=", filter.isRanked ? 1 : 0);
+}
+
+/**
+ * Apply teams filter to query
+ * Filters games by is_teams column (0 = singles, 1 = teams/doubles)
+ * Supports negation to include the opposite
+ */
+function applyTeamsFilter(
+  query: SelectQueryBuilder<Database, "file" | "game", {}>,
+  filter: Extract<ReplayFilter, { type: "teams" }>,
+): SelectQueryBuilder<Database, "file" | "game", {}> {
+  if (filter.negate) {
+    return query.where("game.is_teams", "!=", filter.isTeams ? 1 : 0);
+  }
+
+  return query.where("game.is_teams", "=", filter.isTeams ? 1 : 0);
 }

@@ -242,6 +242,38 @@ function applyFilter(filters: QueryFilters, key: string, value: any, negate: boo
     }
     return;
   }
+
+  // Game type filter: is:ranked, is:teams, is:doubles, is:singles, is:unranked
+  if (lowerKey === "is") {
+    const gameType = (value as string).toLowerCase();
+
+    // Handle aliases
+    if (gameType === "doubles") {
+      filters.isTeams = true;
+      return;
+    }
+    if (gameType === "singles") {
+      filters.isTeams = false;
+      return;
+    }
+    if (gameType === "unranked") {
+      filters.isRanked = false;
+      return;
+    }
+
+    // Direct values
+    if (gameType === "ranked") {
+      filters.isRanked = true;
+      return;
+    }
+    if (gameType === "teams") {
+      filters.isTeams = true;
+      return;
+    }
+
+    // Unknown value - ignore
+    return;
+  }
 }
 
 /**
@@ -410,6 +442,22 @@ export function convertToReplayFilters(queryFilters: QueryFilters): ReplayFilter
       minDate: queryFilters.minDate,
       maxDate: queryFilters.maxDate,
       maxDateExclusive: queryFilters.maxDateExclusive,
+    });
+  }
+
+  // Ranked filter
+  if (queryFilters.isRanked !== undefined) {
+    filters.push({
+      type: "ranked",
+      isRanked: queryFilters.isRanked,
+    });
+  }
+
+  // Teams filter
+  if (queryFilters.isTeams !== undefined) {
+    filters.push({
+      type: "teams",
+      isTeams: queryFilters.isTeams,
     });
   }
 
