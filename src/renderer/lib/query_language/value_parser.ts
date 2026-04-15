@@ -36,9 +36,6 @@ export function parseValue(value: string, def: FilterDefinition, valueWasQuoted?
     case "enum":
       return parseEnumValue(value, def, valueWasQuoted);
 
-    case "boolean":
-      return parseBooleanValue(value);
-
     case "duration":
       return parseDuration(value);
 
@@ -142,28 +139,6 @@ function parseEnumValue(value: string, def: FilterDefinition, valueWasQuoted?: b
 
   // Return single value or array
   return parsed.length === 1 ? parsed[0] : parsed;
-}
-
-/**
- * Parse boolean value
- *
- * Examples:
- * - "yes" -> true
- * - "no" -> false
- * - "true" -> true
- * - "false" -> false
- * - "1" -> true
- * - "0" -> false
- */
-function parseBooleanValue(value: string): boolean {
-  const lower = value.toLowerCase();
-  if (["yes", "true", "1"].includes(lower)) {
-    return true;
-  }
-  if (["no", "false", "0"].includes(lower)) {
-    return false;
-  }
-  throw new Error(`Invalid boolean value: "${value}". Expected yes/no or true/false`);
 }
 
 /**
