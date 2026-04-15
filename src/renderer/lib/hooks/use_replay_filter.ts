@@ -3,7 +3,7 @@ import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
 import { convertToReplayFilters, parseQuery } from "../query_language";
-import { ME_MARKER } from "../query_language/tokenizer";
+import { ME_MARKER } from "../query_language/parser";
 import { ReplaySortOption, SortDirection } from "../replay_file_sort";
 
 export const useReplayFilter = create(

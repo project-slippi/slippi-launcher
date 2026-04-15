@@ -8,9 +8,12 @@
 import type { ReplayFilter } from "@database/filters/types";
 
 import { getFilterDefinition } from "./filter_schema";
-import { ME_MARKER, tokenize } from "./tokenizer";
+import { tokenize } from "./tokenizer";
 import type { MatchupFilter, ParsedQuery, QueryError, QueryFilters } from "./types";
 import { parseValue } from "./value_parser";
+
+export const ME_MARKER = "@me";
+const NEGATED_ME_MARKER = `-${ME_MARKER}`;
 
 /**
  * Parse a query string into structured filters
@@ -89,20 +92,24 @@ export function parseQuery(query: string): ParsedQuery {
 
       case "QUOTED":
       case "WORD":
-        // Handle @me as a player filter (standalone)
-        // Check for @me marker, handling both normal and negated (-@me) cases
-        if (token.type === "WORD" && token.value.toLowerCase() === ME_MARKER) {
-          if (negateNext) {
-            // For negated filters, use excludeFilters
-            filters.excludeFilters = filters.excludeFilters || {};
-            filters.excludeFilters.playerFilters = filters.excludeFilters.playerFilters || [];
-            filters.excludeFilters.playerFilters.push({ userId: ME_MARKER });
-          } else {
-            filters.playerFilters = filters.playerFilters || [];
-            filters.playerFilters.push({ userId: ME_MARKER });
+        if (token.type === "WORD") {
+          // We have a fallthrough here, so we need to handle the WORD case
+          // and then break out of the switch
+          const lowerValue = token.value.toLowerCase();
+          const isMe = lowerValue === ME_MARKER;
+          const isNegatedMe = lowerValue === NEGATED_ME_MARKER;
+
+          if (isMe || isNegatedMe) {
+            if (isNegatedMe) {
+              filters.excludeFilters = filters.excludeFilters || {};
+              filters.excludeFilters.playerFilters = filters.excludeFilters.playerFilters || [];
+              filters.excludeFilters.playerFilters.push({ userId: ME_MARKER });
+            } else {
+              filters.playerFilters = filters.playerFilters || [];
+              filters.playerFilters.push({ userId: ME_MARKER });
+            }
+            break;
           }
-          negateNext = false;
-          break;
         }
 
         // Ignore WORD tokens that match known filter keys AND have a colon after them
