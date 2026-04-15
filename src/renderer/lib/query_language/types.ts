@@ -33,6 +33,10 @@ export type QueryFilters = {
   // Stage filter
   stageIds?: number[];
 
+  // Date filters
+  minDate?: string; // ISO date string
+  maxDate?: string; // ISO date string
+
   // Free text search (when using searchText from query)
   textSearch?: string;
 

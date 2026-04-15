@@ -104,6 +104,13 @@ export const FILTER_SCHEMA: FilterDefinition[] = [
     examples: ["winner:MANG#0", 'winner:"Liquid Hbox"'],
     category: "player",
   },
+  {
+    key: "date",
+    description: "Game start date (YYYY-MM-DD format)",
+    valueType: "date",
+    examples: ["date:>2024-01-01", "date:<2024-06-01", "date:2024-01-15", "date:>=2024-01-01"],
+    category: "date",
+  },
 ];
 
 /**

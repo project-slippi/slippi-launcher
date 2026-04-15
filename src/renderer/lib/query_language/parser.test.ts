@@ -913,4 +913,137 @@ describe("Query Parser", () => {
       }
     });
   });
+
+  describe("Date filters", () => {
+    it("should parse date with > operator (after date)", () => {
+      const result = parseQuery("date:>2024-01-01");
+      expect(result.filters.minDate).toBeDefined();
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse date with < operator (before date)", () => {
+      const result = parseQuery("date:<2024-06-01");
+      expect(result.filters.maxDate).toBeDefined();
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse date without operator (exact date)", () => {
+      const result = parseQuery("date:2024-01-15");
+      expect(result.filters.minDate).toBeDefined();
+      expect(result.filters.maxDate).toBeDefined();
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse date with >= operator (on or after)", () => {
+      const result = parseQuery("date:>=2024-01-01");
+      expect(result.filters.minDate).toBeDefined();
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse date with <= operator (on or before)", () => {
+      const result = parseQuery("date:<=2024-12-31");
+      expect(result.filters.maxDate).toBeDefined();
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse date range with separate > and < filters", () => {
+      const result = parseQuery("date:>2024-01-01 date:<2024-12-31");
+      expect(result.filters.minDate).toBeDefined();
+      expect(result.filters.maxDate).toBeDefined();
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should return error for invalid date format", () => {
+      const result = parseQuery("date:2024/01/15");
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0].type).toBe("INVALID_VALUE");
+    });
+
+    it("should return error for invalid month", () => {
+      const result = parseQuery("date:2024-13-01");
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0].type).toBe("INVALID_VALUE");
+    });
+
+    it("should return error for invalid day", () => {
+      const result = parseQuery("date:2024-01-32");
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0].type).toBe("INVALID_VALUE");
+    });
+
+    it("should allow date combined with character filter", () => {
+      const result = parseQuery("char:fox date:>2024-01-01");
+      expect(result.filters.playerFilters).toBeDefined();
+      expect(result.filters.minDate).toBeDefined();
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should allow date combined with text search", () => {
+      const result = parseQuery("mango date:>2024-01-01");
+      expect(result.searchText).toContain("mango");
+      expect(result.filters.minDate).toBeDefined();
+      expect(result.errors).toHaveLength(0);
+    });
+  });
+
+  describe("Date filter conversion to ReplayFilter[]", () => {
+    it("should convert date:>2024-01-01 to date filter with minDate", () => {
+      const parsed = parseQuery("date:>2024-01-01");
+      const filters = convertToReplayFilters(parsed.filters);
+
+      const dateFilter = filters.find((f) => f.type === "date");
+      expect(dateFilter).toBeDefined();
+      if (dateFilter?.type === "date") {
+        expect(dateFilter.minDate).toBeDefined();
+        expect(dateFilter.maxDate).toBeUndefined();
+      }
+    });
+
+    it("should convert date:<2024-12-31 to date filter with maxDate", () => {
+      const parsed = parseQuery("date:<2024-12-31");
+      const filters = convertToReplayFilters(parsed.filters);
+
+      const dateFilter = filters.find((f) => f.type === "date");
+      expect(dateFilter).toBeDefined();
+      if (dateFilter?.type === "date") {
+        expect(dateFilter.minDate).toBeUndefined();
+        expect(dateFilter.maxDate).toBeDefined();
+      }
+    });
+
+    it("should convert exact date to filter with both minDate and maxDate", () => {
+      const parsed = parseQuery("date:2024-01-15");
+      const filters = convertToReplayFilters(parsed.filters);
+
+      const dateFilter = filters.find((f) => f.type === "date");
+      expect(dateFilter).toBeDefined();
+      if (dateFilter?.type === "date") {
+        expect(dateFilter.minDate).toBeDefined();
+        expect(dateFilter.maxDate).toBeDefined();
+      }
+    });
+
+    it("should convert date range to filter with both minDate and maxDate", () => {
+      const parsed = parseQuery("date:>2024-01-01 date:<2024-12-31");
+      const filters = convertToReplayFilters(parsed.filters);
+
+      const dateFilter = filters.find((f) => f.type === "date");
+      expect(dateFilter).toBeDefined();
+      if (dateFilter?.type === "date") {
+        expect(dateFilter.minDate).toBeDefined();
+        expect(dateFilter.maxDate).toBeDefined();
+      }
+    });
+
+    it("should convert negated date filter", () => {
+      const parsed = parseQuery("-date:>2024-01-01");
+      const filters = convertToReplayFilters(parsed.filters);
+
+      const dateFilter = filters.find((f) => f.type === "date");
+      expect(dateFilter).toBeDefined();
+      if (dateFilter?.type === "date") {
+        expect(dateFilter.negate).toBe(true);
+      }
+    });
+  });
 });

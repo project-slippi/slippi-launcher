@@ -219,6 +219,28 @@ function applyFilter(filters: QueryFilters, key: string, value: any, negate: boo
     }
     return;
   }
+
+  // Date filter
+  if (lowerKey === "date") {
+    const date = value as {
+      operator?: ">" | "<" | ">=" | "<=";
+      isoString: string;
+    };
+    if (date.operator === ">") {
+      filters.minDate = date.isoString;
+    } else if (date.operator === "<") {
+      filters.maxDate = date.isoString;
+    } else if (date.operator === ">=") {
+      filters.minDate = date.isoString;
+    } else if (date.operator === "<=") {
+      filters.maxDate = date.isoString;
+    } else {
+      // Exact date: >= and <= the same date
+      filters.minDate = date.isoString;
+      filters.maxDate = date.isoString;
+    }
+    return;
+  }
 }
 
 /**
@@ -373,6 +395,15 @@ export function convertToReplayFilters(queryFilters: QueryFilters): ReplayFilter
           mustBeWinner: false,
         });
       }
+    });
+  }
+
+  // Date filter
+  if (queryFilters.minDate !== undefined || queryFilters.maxDate !== undefined) {
+    filters.push({
+      type: "date",
+      minDate: queryFilters.minDate,
+      maxDate: queryFilters.maxDate,
     });
   }
 

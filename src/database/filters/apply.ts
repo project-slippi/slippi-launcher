@@ -43,6 +43,8 @@ function applyFilter(
       return applyTextSearchFilter(query, filter);
     case "matchup":
       return applyMatchupFilter(query, filter);
+    case "date":
+      return applyDateFilter(query, filter);
     default: {
       // TypeScript exhaustiveness check
       const _exhaustive: never = filter;
@@ -348,5 +350,58 @@ function applyMatchupFilter(
     }
 
     return combined;
+  });
+}
+
+/**
+ * Apply date filter to query
+ * Filters games by start_time using comparison operators
+ * The database stores start_time as ISO 8601 strings in local time.
+ * Supports negation to exclude games within the date range
+ */
+function applyDateFilter(
+  query: SelectQueryBuilder<Database, "file" | "game", {}>,
+  filter: Extract<ReplayFilter, { type: "date" }>,
+): SelectQueryBuilder<Database, "file" | "game", {}> {
+  const buildDateConditions = (eb: any) => {
+    const dateConditions = [];
+
+    if (filter.minDate != null) {
+      dateConditions.push(eb("game.start_time", ">=", filter.minDate));
+    }
+
+    if (filter.maxDate != null) {
+      dateConditions.push(eb("game.start_time", "<=", filter.maxDate));
+    }
+
+    return dateConditions.length > 0 ? eb.and(dateConditions) : null;
+  };
+
+  if (filter.negate) {
+    return query.where((eb) => {
+      const conditions = [];
+
+      conditions.push(eb("game.start_time", "is", null));
+
+      const dateCondition = buildDateConditions(eb);
+      if (dateCondition) {
+        conditions.push(eb.not(dateCondition));
+      }
+
+      return eb.or(conditions);
+    });
+  }
+
+  return query.where((eb) => {
+    const conditions = [];
+
+    const dateCondition = buildDateConditions(eb);
+    if (dateCondition) {
+      conditions.push(dateCondition);
+    }
+
+    conditions.push(eb("game.start_time", "is", null));
+
+    return eb.or(conditions);
   });
 }
