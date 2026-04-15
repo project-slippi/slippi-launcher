@@ -3,6 +3,7 @@
  *
  * Breaks down a query string into tokens for parsing.
  * Handles quoted strings, filter expressions (key:value), and operators.
+ * Also handles matchup syntax (e.g., "fox>marth", "fox>", ">marth")
  */
 
 import type { Token } from "./types";
@@ -15,6 +16,9 @@ import type { Token } from "./types";
  * - "stage:FD" -> [{ type: "FILTER", value: "FD", key: "stage", position: 0 }]
  * - '"Liquid Hbox"' -> [{ type: "QUOTED", value: "Liquid Hbox", position: 0 }]
  * - "-char:puff" -> [{ type: "OPERATOR", value: "NOT", position: 0 }, { type: "FILTER", value: "puff", key: "char", position: 1 }]
+ * - "fox>marth" -> [{ type: "MATCHUP", winner: "fox", loser: "marth", position: 0 }]
+ * - "fox>" -> [{ type: "MATCHUP", winner: "fox", loser: "", position: 0 }]
+ * - ">marth" -> [{ type: "MATCHUP", winner: "", loser: "marth", position: 0 }]
  */
 export function tokenize(query: string): Token[] {
   const tokens: Token[] = [];
@@ -39,6 +43,27 @@ export function tokenize(query: string): Token[] {
       i++; // Skip closing quote
       tokens.push({ type: "QUOTED", value, position: start });
       continue;
+    }
+
+    // Matchup operator (> between character names)
+    // Check for patterns: winner>loser, winner>, >loser
+    // Must be at the start of a word (not preceded by alphanumeric)
+    // and followed by a valid character name pattern
+    // Does NOT require $ since there may be more text after (e.g., "fox>marth stage:FD")
+    const matchupMatch = query.slice(i).match(/^([a-zA-Z][a-zA-Z0-9]*)?>([a-zA-Z][a-zA-Z0-9]*)?/);
+    if (matchupMatch) {
+      const [, winner, loser] = matchupMatch;
+      // Only emit matchup token if at least one side has a value
+      if (winner || loser) {
+        tokens.push({
+          type: "MATCHUP",
+          winner: winner || "",
+          loser: loser || "",
+          position: i,
+        });
+        i += matchupMatch[0].length;
+        continue;
+      }
     }
 
     // Negation operator (- at start of word, only for filter expressions)
