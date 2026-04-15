@@ -112,14 +112,6 @@ export const FILTER_SCHEMA: FilterDefinition[] = [
     examples: ["winner:MANG#0", 'winner:"Liquid Hbox"'],
     category: "player",
   },
-  {
-    key: "port",
-    aliases: ["p1", "p2", "p3", "p4"],
-    description: "Filter by port number (1-4)",
-    valueType: "number",
-    examples: ["port:1", "port:2"],
-    category: "player",
-  },
 ];
 
 /**
@@ -133,42 +125,9 @@ FILTER_SCHEMA.forEach((def) => {
   def.aliases?.forEach((alias) => FILTER_KEY_MAP.set(alias.toLowerCase(), def));
 });
 
-// Add port aliases (p1, p2, p3, p4) with port numbers embedded
-const portFilter = FILTER_SCHEMA.find((f) => f.key === "port");
-if (portFilter) {
-  ["p1", "p2", "p3", "p4"].forEach((alias) => {
-    FILTER_KEY_MAP.set(alias.toLowerCase(), {
-      ...portFilter,
-      key: alias,
-      // Store the port number in a way we can retrieve it
-      examples: [`${alias}:fox`],
-    });
-  });
-}
-
 /**
  * Get filter definition by key (case-insensitive)
  */
 export function getFilterDefinition(key: string): FilterDefinition | undefined {
   return FILTER_KEY_MAP.get(key.toLowerCase());
-}
-
-/**
- * Extract port number from port alias (p1, p2, etc.)
- */
-export function getPortFromAlias(key: string): number | undefined {
-  const lower = key.toLowerCase();
-  if (lower === "p1") {
-    return 1;
-  }
-  if (lower === "p2") {
-    return 2;
-  }
-  if (lower === "p3") {
-    return 3;
-  }
-  if (lower === "p4") {
-    return 4;
-  }
-  return undefined;
 }

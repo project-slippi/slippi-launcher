@@ -64,7 +64,6 @@ export type PlayerFilterSpec = {
   connectCode?: string;
   displayName?: string;
   tag?: string;
-  port?: number; // Port number (1-4)
   characterIds?: number[]; // Character IDs (OR logic - player played any of these)
   mustBeWinner?: boolean;
   // Exact matching flags (true = use exact match with =, false/undefined = fuzzy match with LIKE)
