@@ -9,6 +9,7 @@ This module provides a query language parser for the Slippi Launcher replay brow
 - **Duration parsing**: Multiple formats (30s, 1m, 1800f)
 - **Character/Stage matching**: Fuzzy matching for character and stage names
 - **Player filters**: Search by connect code, tag, character
+- **Matchup filters**: Search by character vs character (winner > loser syntax)
 - **Negation**: Use `NOT` or `-` prefix to exclude results
 - **Error handling**: Graceful error handling with detailed error messages
 
@@ -34,6 +35,14 @@ minDuration:1800f       # Minimum 1800 frames (explicit)
 ```
 char:fox                # Any player played Fox
 char:fox,falco          # Any player played Fox OR Falco
+```
+
+### Stage Filters
+
+```
+stage: battlefield      # Games played on Battlefield
+stage: FD               # Games played on Final Destination
+stage: pokemon_stadium  # Games played on Pokémon Stadium
 ```
 
 ### Player Filters
@@ -62,10 +71,9 @@ fox>marth                               # Fox beat Marth
 puff> stage:FD                          # Puff won on Final Destination
 ```
 
-### Negation (Parsed but not yet applied to backend)
+### Negation
 
 ```
-NOT char:puff           # Exclude Puff games (parsed but needs backend support)
 -stage:FD               # Exclude FD games (parsed but needs backend support)
 ```
 
@@ -172,7 +180,7 @@ parseQuery("char:invalidchar");
 // }
 ```
 
-### Example 6: Matchup filters
+### Example 5: Matchup filters
 
 ```typescript
 parseQuery("fox>marth");
@@ -204,6 +212,24 @@ parseQuery(">marth");
 // }
 ```
 
+### Example 6: Stage filtering
+
+```typescript
+parseQuery("stage:battlefield");
+// Result: {
+//   searchText: [],
+//   filters: { stageIds: [31] },
+//   errors: []
+// }
+
+parseQuery("stage:final_destination");
+// Result: {
+//   searchText: [],
+//   filters: { stageIds: [32] },
+//   errors: []
+// }
+```
+
 ## Architecture
 
 The parser is organized into several modules:
@@ -217,11 +243,10 @@ The parser is organized into several modules:
 
 ## Current Limitations
 
-1. **Stage filter**: Parsed but not yet implemented in backend (database doesn't have stage filtering)
-2. **Negation**: Parsed but not yet applied to backend filters (requires backend support)
-3. **Date filters**: Not yet implemented (after/before/date)
-4. **Game mode filters**: Not yet implemented (ranked/unranked)
-5. **Platform filter**: Not yet implemented (console/dolphin)
+1. **Negation**: Parsed but requires backend support for some filter types
+2. **Date filters**: Not yet implemented (after/before/date)
+3. **Game mode filters**: Not yet implemented (ranked/unranked)
+4. **Platform filter**: Not yet implemented (console/dolphin)
 
 ## Future Enhancements
 
@@ -244,7 +269,7 @@ const { parseQuery } = require("@/lib/query_language");
 // Test various queries
 parseQuery("mango");
 parseQuery("char:fox minDuration:30s");
-parseQuery("winner:MANG#0 p1:fox");
+parseQuery("winner:MANG#0 char:fox");
 ```
 
 ## Contributing
