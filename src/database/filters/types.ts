@@ -145,6 +145,36 @@ export type DateFilter = {
   negate?: boolean; // If true, excludes matches instead of including them
 };
 
+/**
+ * Filter for ranked games
+ * Uses game.is_ranked column (0 = unranked, 1 = ranked)
+ *
+ * Examples:
+ * - { isRanked: true } = ranked games only
+ * - { isRanked: false } = unranked games only
+ * - { isRanked: true, negate: true } = unranked games only
+ */
+export type RankedFilter = {
+  type: "ranked";
+  isRanked: boolean;
+  negate?: boolean;
+};
+
+/**
+ * Filter for teams/doubles games
+ * Uses game.is_teams column (0 = singles, 1 = teams/doubles)
+ *
+ * Examples:
+ * - { isTeams: true } = teams/doubles games only
+ * - { isTeams: false } = singles games only
+ * - { isTeams: true, negate: true } = singles games only
+ */
+export type TeamsFilter = {
+  type: "teams";
+  isTeams: boolean;
+  negate?: boolean;
+};
+
 export type ReplayFilter =
   | DurationFilter
   | PlayerFilter
@@ -152,7 +182,9 @@ export type ReplayFilter =
   | StageFilter
   | TextSearchFilter
   | MatchupFilter
-  | DateFilter;
+  | DateFilter
+  | RankedFilter
+  | TeamsFilter;
 
 // Game mode constants
 const GameModeValue = {

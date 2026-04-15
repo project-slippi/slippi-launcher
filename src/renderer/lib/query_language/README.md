@@ -93,6 +93,20 @@ Date filters support three formats:
 
 Without an operator, the date matches the entire period. Operators allow range queries.
 
+### Game Type Filters
+
+```
+is:ranked               # Ranked games only
+-is:ranked              # Unranked games only (same as is:unranked)
+is:unranked             # Unranked games only
+is:teams                # Teams/doubles games only
+-is:teams               # Singles games only (same as is:singles)
+is:doubles              # Alias for is:teams
+is:singles              # Alias for -is:teams
+```
+
+Note: The `-` prefix negates the filter, so `-is:ranked` means "not ranked" (unranked).
+
 ### Combining Filters
 
 ```
@@ -278,8 +292,7 @@ The parser is organized into several modules:
 
 ## Current Limitations
 
-1. **Game mode filters**: Not yet implemented (ranked/unranked)
-2. **Platform filter**: Not yet implemented (console/dolphin)
+1. **Platform filter**: Not yet implemented (console/dolphin)
 
 ## Future Enhancements
 

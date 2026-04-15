@@ -1113,4 +1113,171 @@ describe("Query Parser", () => {
       }
     });
   });
+
+  describe("Game type filters (is:)", () => {
+    it("should parse is:ranked", () => {
+      const result = parseQuery("is:ranked");
+      expect(result.filters.isRanked).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse is:unranked", () => {
+      const result = parseQuery("is:unranked");
+      expect(result.filters.isRanked).toBe(false);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse is:teams", () => {
+      const result = parseQuery("is:teams");
+      expect(result.filters.isTeams).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse is:doubles as alias for is:teams", () => {
+      const result = parseQuery("is:doubles");
+      expect(result.filters.isTeams).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse is:singles as alias for -is:teams", () => {
+      const result = parseQuery("is:singles");
+      expect(result.filters.isTeams).toBe(false);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse -is:ranked as negation (unranked)", () => {
+      const result = parseQuery("-is:ranked");
+      expect(result.filters.excludeFilters).toBeDefined();
+      expect(result.filters.excludeFilters?.isRanked).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse -is:teams as negation (singles)", () => {
+      const result = parseQuery("-is:teams");
+      expect(result.filters.excludeFilters).toBeDefined();
+      expect(result.filters.excludeFilters?.isTeams).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should combine is:ranked with other filters", () => {
+      const result = parseQuery("is:ranked char:fox");
+      expect(result.filters.isRanked).toBe(true);
+      expect(result.filters.playerFilters).toHaveLength(1);
+      expect(result.filters.playerFilters?.[0].characterIds).toEqual([2]);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should combine -is:teams with text search", () => {
+      const result = parseQuery("mango -is:teams");
+      expect(result.searchText).toEqual(["mango"]);
+      expect(result.filters.excludeFilters?.isTeams).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should allow is:ranked with is:teams", () => {
+      const result = parseQuery("is:ranked is:teams");
+      expect(result.filters.isRanked).toBe(true);
+      expect(result.filters.isTeams).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+  });
+
+  describe("Game type filter conversion to ReplayFilter[]", () => {
+    it("should convert is:ranked to RankedFilter", () => {
+      const parsed = parseQuery("is:ranked");
+      const filters = convertToReplayFilters(parsed.filters);
+
+      const rankedFilter = filters.find((f) => f.type === "ranked");
+      expect(rankedFilter).toBeDefined();
+      if (rankedFilter?.type === "ranked") {
+        expect(rankedFilter.isRanked).toBe(true);
+        expect(rankedFilter.negate).toBeUndefined();
+      }
+    });
+
+    it("should convert is:unranked to RankedFilter with isRanked=false", () => {
+      const parsed = parseQuery("is:unranked");
+      const filters = convertToReplayFilters(parsed.filters);
+
+      const rankedFilter = filters.find((f) => f.type === "ranked");
+      expect(rankedFilter).toBeDefined();
+      if (rankedFilter?.type === "ranked") {
+        expect(rankedFilter.isRanked).toBe(false);
+      }
+    });
+
+    it("should convert -is:ranked to RankedFilter with negate", () => {
+      const parsed = parseQuery("-is:ranked");
+      const filters = convertToReplayFilters(parsed.filters);
+
+      const rankedFilter = filters.find((f) => f.type === "ranked");
+      expect(rankedFilter).toBeDefined();
+      if (rankedFilter?.type === "ranked") {
+        expect(rankedFilter.isRanked).toBe(true);
+        expect(rankedFilter.negate).toBe(true);
+      }
+    });
+
+    it("should convert is:teams to TeamsFilter", () => {
+      const parsed = parseQuery("is:teams");
+      const filters = convertToReplayFilters(parsed.filters);
+
+      const teamsFilter = filters.find((f) => f.type === "teams");
+      expect(teamsFilter).toBeDefined();
+      if (teamsFilter?.type === "teams") {
+        expect(teamsFilter.isTeams).toBe(true);
+      }
+    });
+
+    it("should convert is:doubles to TeamsFilter", () => {
+      const parsed = parseQuery("is:doubles");
+      const filters = convertToReplayFilters(parsed.filters);
+
+      const teamsFilter = filters.find((f) => f.type === "teams");
+      expect(teamsFilter).toBeDefined();
+      if (teamsFilter?.type === "teams") {
+        expect(teamsFilter.isTeams).toBe(true);
+      }
+    });
+
+    it("should convert is:singles to TeamsFilter with isTeams=false", () => {
+      const parsed = parseQuery("is:singles");
+      const filters = convertToReplayFilters(parsed.filters);
+
+      const teamsFilter = filters.find((f) => f.type === "teams");
+      expect(teamsFilter).toBeDefined();
+      if (teamsFilter?.type === "teams") {
+        expect(teamsFilter.isTeams).toBe(false);
+      }
+    });
+
+    it("should convert -is:teams to TeamsFilter with negate", () => {
+      const parsed = parseQuery("-is:teams");
+      const filters = convertToReplayFilters(parsed.filters);
+
+      const teamsFilter = filters.find((f) => f.type === "teams");
+      expect(teamsFilter).toBeDefined();
+      if (teamsFilter?.type === "teams") {
+        expect(teamsFilter.isTeams).toBe(true);
+        expect(teamsFilter.negate).toBe(true);
+      }
+    });
+
+    it("should convert combined is:ranked is:teams to both filters", () => {
+      const parsed = parseQuery("is:ranked is:teams");
+      const filters = convertToReplayFilters(parsed.filters);
+
+      const rankedFilter = filters.find((f) => f.type === "ranked");
+      expect(rankedFilter).toBeDefined();
+      if (rankedFilter?.type === "ranked") {
+        expect(rankedFilter.isRanked).toBe(true);
+      }
+
+      const teamsFilter = filters.find((f) => f.type === "teams");
+      expect(teamsFilter).toBeDefined();
+      if (teamsFilter?.type === "teams") {
+        expect(teamsFilter.isTeams).toBe(true);
+      }
+    });
+  });
 });

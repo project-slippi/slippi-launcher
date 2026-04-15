@@ -47,6 +47,10 @@ export type QueryFilters = {
   // Matchup filters (character vs character)
   // winner > loser syntax: "fox>marth" means fox beat marth
   matchups?: MatchupFilter[];
+
+  // Game type filters
+  isRanked?: boolean;
+  isTeams?: boolean;
 };
 
 /**
@@ -119,7 +123,7 @@ export type FilterDefinition = {
   enumValues?: Array<{
     value: string;
     label: string;
-    id?: number;
+    id?: number | string;
     aliases: string[];
   }>;
   examples: string[];
