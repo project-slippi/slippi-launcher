@@ -6,6 +6,14 @@ import type { ReplayFilter } from "./types";
 import { STADIUM_GAME_MODES } from "./types";
 
 /**
+ * Duration offset in frames.
+ * The first frame in a replay is -123, so raw last_frame values start at -123.
+ * When displaying duration to users, 123 is added (see time.ts).
+ * This constant converts user-facing frames to raw database frames.
+ */
+export const DURATION_OFFSET = -123;
+
+/**
  * Apply all filters to a query
  */
 export function applyFilters(
@@ -29,8 +37,18 @@ function applyFilter(
       return applyPlayerFilter(query, filter);
     case "gameMode":
       return applyGameModeFilter(query, filter);
+    case "stage":
+      return applyStageFilter(query, filter);
     case "textSearch":
       return applyTextSearchFilter(query, filter);
+    case "matchup":
+      return applyMatchupFilter(query, filter);
+    case "date":
+      return applyDateFilter(query, filter);
+    case "ranked":
+      return applyRankedFilter(query, filter);
+    case "teams":
+      return applyTeamsFilter(query, filter);
     default: {
       // TypeScript exhaustiveness check
       const _exhaustive: never = filter;
@@ -43,11 +61,58 @@ function applyFilter(
 /**
  * Apply duration filter to query
  * Stadium modes (Home Run Contest, Target Test) are excluded from duration filtering
+ * Supports negation to exclude games within the duration range
  */
 function applyDurationFilter(
   query: SelectQueryBuilder<Database, "file" | "game", {}>,
   filter: Extract<ReplayFilter, { type: "duration" }>,
 ): SelectQueryBuilder<Database, "file" | "game", {}> {
+  // Build duration conditions
+  const buildDurationConditions = (eb: any) => {
+    const durationConditions = [];
+
+    if (filter.minFrames != null) {
+      // Convert user-facing frames to raw database frames
+      durationConditions.push(eb("game.last_frame", ">=", filter.minFrames + DURATION_OFFSET));
+    }
+
+    if (filter.maxFrames != null) {
+      // Convert user-facing frames to raw database frames
+      durationConditions.push(eb("game.last_frame", "<=", filter.maxFrames + DURATION_OFFSET));
+    }
+
+    // Combine duration conditions with AND
+    return durationConditions.length > 0 ? eb.and(durationConditions) : null;
+  };
+
+  // Handle negation
+  if (filter.negate) {
+    // Negate: Exclude games that match the duration criteria
+    // Include games that:
+    // 1. Are stadium modes (excluded from duration filtering)
+    // 2. Have null duration (unknown)
+    // 3. Don't meet the duration criteria
+    return query.where((eb) => {
+      const conditions = [];
+
+      // Always include stadium modes
+      conditions.push(eb("game.mode", "in", STADIUM_GAME_MODES));
+
+      // Include games with unknown duration (null)
+      conditions.push(eb("game.last_frame", "is", null));
+
+      // Include games that DON'T match the duration range
+      const durationCondition = buildDurationConditions(eb);
+      if (durationCondition) {
+        conditions.push(eb.not(durationCondition));
+      }
+
+      // OR all conditions together
+      return eb.or(conditions);
+    });
+  }
+
+  // Normal (non-negated): Include games that match the duration criteria
   return query.where((eb) => {
     const conditions = [];
 
@@ -55,19 +120,9 @@ function applyDurationFilter(
     conditions.push(eb("game.mode", "in", STADIUM_GAME_MODES));
 
     // Build duration conditions
-    const durationConditions = [];
-
-    if (filter.minFrames != null) {
-      durationConditions.push(eb("game.last_frame", ">=", filter.minFrames));
-    }
-
-    if (filter.maxFrames != null) {
-      durationConditions.push(eb("game.last_frame", "<=", filter.maxFrames));
-    }
-
-    // Combine duration conditions with AND
-    if (durationConditions.length > 0) {
-      conditions.push(eb.and(durationConditions));
+    const durationCondition = buildDurationConditions(eb);
+    if (durationCondition) {
+      conditions.push(durationCondition);
     }
 
     // Always include games with unknown duration (null)
@@ -82,54 +137,86 @@ function applyDurationFilter(
  * Apply player filter to query
  * Uses EXISTS subquery to find games where a player matching the criteria participated
  * All filter fields must match the same player (AND logic)
+ *
+ * Supports both exact matching (=) and fuzzy matching (LIKE) for text fields:
+ * - tagExact/displayNameExact = true: Uses exact = match
+ * - tagExact/displayNameExact = false/undefined: Uses fuzzy LIKE with % wildcards (default)
+ *
+ * Supports negation:
+ * - negate = false/undefined: Include games where player matches (EXISTS)
+ * - negate = true: Exclude games where player matches (NOT EXISTS)
  */
 function applyPlayerFilter(
   query: SelectQueryBuilder<Database, "file" | "game", {}>,
   filter: Extract<ReplayFilter, { type: "player" }>,
 ): SelectQueryBuilder<Database, "file" | "game", {}> {
-  return query.where((eb) =>
-    eb.exists(
-      eb
-        .selectFrom("player")
-        .whereRef("player.game_id", "=", "game._id")
-        .where((eb2) => {
-          const conditions = [];
+  const existsQuery = (eb: any) =>
+    eb
+      .selectFrom("player")
+      .whereRef("player.game_id", "=", "game._id")
+      .where((eb2: any) => {
+        const conditions = [];
 
-          // Add identifier conditions (all must match - AND logic)
-          if (filter.connectCode != null) {
-            conditions.push(eb2("player.connect_code", "=", filter.connectCode));
-          }
-          if (filter.userId != null) {
-            conditions.push(eb2("player.user_id", "=", filter.userId));
-          }
-          if (filter.displayName != null) {
+        // Add identifier conditions (all must match - AND logic)
+        if (filter.connectCode != null) {
+          conditions.push(eb2("player.connect_code", "=", filter.connectCode));
+        }
+        if (filter.userId != null) {
+          conditions.push(eb2("player.user_id", "=", filter.userId));
+        }
+
+        // Display name - fuzzy (default) or exact match
+        if (filter.displayName != null) {
+          if (filter.displayNameExact) {
             conditions.push(eb2("player.display_name", "=", filter.displayName));
+          } else {
+            // Fuzzy match is default
+            conditions.push(eb2("player.display_name", "like", `%${filter.displayName}%`));
           }
-          if (filter.tag != null) {
+        }
+
+        // Tag - fuzzy (default) or exact match
+        if (filter.tag != null) {
+          if (filter.tagExact) {
             conditions.push(eb2("player.tag", "=", filter.tag));
+          } else {
+            // Fuzzy match is default
+            conditions.push(eb2("player.tag", "like", `%${filter.tag}%`));
           }
-          if (filter.port != null) {
-            conditions.push(eb2("player.port", "=", filter.port));
-          }
-          if (filter.characterIds != null && filter.characterIds.length > 0) {
-            conditions.push(eb2("player.character_id", "in", filter.characterIds));
-          }
+        }
 
-          // Add winner condition if specified
-          if (filter.mustBeWinner === true) {
-            conditions.push(eb2("player.is_winner", "=", 1));
-          }
+        if (filter.port != null) {
+          conditions.push(eb2("player.port", "=", filter.port));
+        }
+        if (filter.characterIds != null && filter.characterIds.length > 0) {
+          conditions.push(eb2("player.character_id", "in", filter.characterIds));
+        }
 
-          // Combine all conditions with AND
-          return eb2.and(conditions);
-        })
-        .select("player._id"),
-    ),
-  );
+        // Add winner condition if specified
+        if (filter.mustBeWinner === true) {
+          conditions.push(eb2("player.is_winner", "=", 1));
+        } else if (filter.mustBeWinner === false) {
+          // MustBeWinner false means the player lost (is_winner = 0)
+          // We only want to match explicit losers, not unknown
+          conditions.push(eb2("player.is_winner", "=", 0));
+        }
+
+        // Combine all conditions with AND
+        return eb2.and(conditions);
+      })
+      .select("player._id");
+
+  // Apply negation if specified
+  if (filter.negate) {
+    return query.where((eb) => eb.not(eb.exists(existsQuery(eb))));
+  }
+
+  return query.where((eb) => eb.exists(existsQuery(eb)));
 }
 
 /**
  * Apply game mode filter to query
+ * Supports negation to exclude specific game modes
  */
 function applyGameModeFilter(
   query: SelectQueryBuilder<Database, "file" | "game", {}>,
@@ -138,7 +225,34 @@ function applyGameModeFilter(
   if (filter.modes.length === 0) {
     return query;
   }
+
+  // Apply negation if specified
+  if (filter.negate) {
+    return query.where("game.mode", "not in", filter.modes);
+  }
+
   return query.where("game.mode", "in", filter.modes);
+}
+
+/**
+ * Apply stage filter to query
+ * Filters games by stage ID using OR logic (match any of the specified stages)
+ * Supports negation to exclude specific stages
+ */
+function applyStageFilter(
+  query: SelectQueryBuilder<Database, "file" | "game", {}>,
+  filter: Extract<ReplayFilter, { type: "stage" }>,
+): SelectQueryBuilder<Database, "file" | "game", {}> {
+  if (filter.stageIds.length === 0) {
+    return query;
+  }
+
+  // Apply negation if specified
+  if (filter.negate) {
+    return query.where("game.stage", "not in", filter.stageIds);
+  }
+
+  return query.where("game.stage", "in", filter.stageIds);
 }
 
 /**
@@ -146,6 +260,7 @@ function applyGameModeFilter(
  * Searches across player fields (connect code, display name, tag) and file names using case-insensitive LIKE
  * Note: SQLite's LIKE operator is case-insensitive by default (unlike PostgreSQL)
  * Returns games where ANY of the searchable fields match the query (OR logic)
+ * Supports negation to exclude games matching the search text
  */
 function applyTextSearchFilter(
   query: SelectQueryBuilder<Database, "file" | "game", {}>,
@@ -158,15 +273,15 @@ function applyTextSearchFilter(
 
   const searchPattern = `%${filter.query}%`;
 
-  // If only searching file names
-  if (filter.searchFileNameOnly) {
-    return query.where("file.name", "like", searchPattern);
-  }
+  // Build the search condition
+  const buildSearchCondition = (eb: any) => {
+    // If only searching file names
+    if (filter.searchFileNameOnly) {
+      return eb("file.name", "like", searchPattern);
+    }
 
-  // General search: check player fields OR file name
-  // Note: The array must be passed inline to eb.or(), not built separately
-  return query.where((eb) =>
-    eb.or([
+    // General search: check player fields OR file name
+    return eb.or([
       // Search in file name
       eb("file.name", "like", searchPattern),
       // Search in player fields using EXISTS subquery
@@ -175,7 +290,7 @@ function applyTextSearchFilter(
         eb
           .selectFrom("player")
           .whereRef("player.game_id", "=", "game._id")
-          .where((eb2) =>
+          .where((eb2: any) =>
             eb2.or([
               eb2("player.connect_code", "like", searchPattern),
               eb2("player.display_name", "like", searchPattern),
@@ -184,6 +299,149 @@ function applyTextSearchFilter(
           )
           .select("player._id"),
       ),
-    ]),
-  );
+    ]);
+  };
+
+  // Apply negation if specified
+  if (filter.negate) {
+    return query.where((eb) => eb.not(buildSearchCondition(eb)));
+  }
+
+  return query.where((eb) => buildSearchCondition(eb));
+}
+
+/**
+ * Apply matchup filter to query
+ * Requires BOTH conditions to be met in the SAME game:
+ * - A player who played one of the winning characters and won
+ * - A different player who played one of the losing characters and lost
+ * This uses a single query with correlated subqueries to ensure both conditions
+ * are met by different players in the same game.
+ */
+function applyMatchupFilter(
+  query: SelectQueryBuilder<Database, "file" | "game", {}>,
+  filter: Extract<ReplayFilter, { type: "matchup" }>,
+): SelectQueryBuilder<Database, "file" | "game", {}> {
+  // Build condition: There exists a winner player AND there exists a loser player in the same game
+  // Both must be different players (different ports)
+  return query.where((eb) => {
+    // Winner condition: some player with winning character who won
+    const winnerCondition = eb.exists(
+      eb
+        .selectFrom("player")
+        .whereRef("player.game_id", "=", "game._id")
+        .where("player.character_id", "in", filter.winnerCharIds)
+        .where("player.is_winner", "=", 1)
+        .select("player._id"),
+    );
+
+    // Loser condition: some player with losing character who lost (is_winner = 0)
+    // Note: We use is_winner = 0 (not is null) to ensure we only match actual losers
+    const loserCondition = eb.exists(
+      eb
+        .selectFrom("player")
+        .whereRef("player.game_id", "=", "game._id")
+        .where("player.character_id", "in", filter.loserCharIds)
+        .where("player.is_winner", "=", 0)
+        .select("player._id"),
+    );
+
+    // Both conditions must be true (AND logic)
+    const combined = eb.and([winnerCondition, loserCondition]);
+
+    if (filter.negate) {
+      return eb.not(combined);
+    }
+
+    return combined;
+  });
+}
+
+/**
+ * Apply date filter to query
+ * Filters games by start_time using comparison operators
+ * The database stores start_time as ISO 8601 strings in local time.
+ * Supports negation to exclude games within the date range
+ */
+function applyDateFilter(
+  query: SelectQueryBuilder<Database, "file" | "game", {}>,
+  filter: Extract<ReplayFilter, { type: "date" }>,
+): SelectQueryBuilder<Database, "file" | "game", {}> {
+  const buildDateConditions = (eb: any) => {
+    const dateConditions = [];
+
+    if (filter.minDate != null) {
+      dateConditions.push(eb("game.start_time", ">=", filter.minDate));
+    }
+
+    if (filter.maxDate != null) {
+      dateConditions.push(eb("game.start_time", "<=", filter.maxDate));
+    }
+
+    if (filter.maxDateExclusive != null) {
+      dateConditions.push(eb("game.start_time", "<", filter.maxDateExclusive));
+    }
+
+    return dateConditions.length > 0 ? eb.and(dateConditions) : null;
+  };
+
+  if (filter.negate) {
+    return query.where((eb) => {
+      const conditions = [];
+
+      conditions.push(eb("game.start_time", "is", null));
+
+      const dateCondition = buildDateConditions(eb);
+      if (dateCondition) {
+        conditions.push(eb.not(dateCondition));
+      }
+
+      return eb.or(conditions);
+    });
+  }
+
+  return query.where((eb) => {
+    const conditions = [];
+
+    const dateCondition = buildDateConditions(eb);
+    if (dateCondition) {
+      conditions.push(dateCondition);
+    }
+
+    conditions.push(eb("game.start_time", "is", null));
+
+    return eb.or(conditions);
+  });
+}
+
+/**
+ * Apply ranked filter to query
+ * Filters games by is_ranked column (0 = unranked, 1 = ranked)
+ * Supports negation to include the opposite
+ */
+function applyRankedFilter(
+  query: SelectQueryBuilder<Database, "file" | "game", {}>,
+  filter: Extract<ReplayFilter, { type: "ranked" }>,
+): SelectQueryBuilder<Database, "file" | "game", {}> {
+  if (filter.negate) {
+    return query.where("game.is_ranked", "!=", filter.isRanked ? 1 : 0);
+  }
+
+  return query.where("game.is_ranked", "=", filter.isRanked ? 1 : 0);
+}
+
+/**
+ * Apply teams filter to query
+ * Filters games by is_teams column (0 = singles, 1 = teams/doubles)
+ * Supports negation to include the opposite
+ */
+function applyTeamsFilter(
+  query: SelectQueryBuilder<Database, "file" | "game", {}>,
+  filter: Extract<ReplayFilter, { type: "teams" }>,
+): SelectQueryBuilder<Database, "file" | "game", {}> {
+  if (filter.negate) {
+    return query.where("game.is_teams", "!=", filter.isTeams ? 1 : 0);
+  }
+
+  return query.where("game.is_teams", "=", filter.isTeams ? 1 : 0);
 }
