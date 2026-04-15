@@ -45,6 +45,9 @@ export function parseValue(value: string, def: FilterDefinition, valueWasQuoted?
     case "number":
       return parseNumber(value);
 
+    case "date":
+      return parseDate(value);
+
     case "string":
     default:
       return value;
@@ -268,4 +271,51 @@ function parseNumber(value: string): number {
     throw new Error(`Invalid number: "${value}"`);
   }
   return num;
+}
+
+/**
+ * Parse date value with comparison operator
+ * Format: YYYY-MM-DD (ISO 8601)
+ * Supports operators: >, <, >=, <=, =
+ *
+ * Examples:
+ * - "2024-01-15" -> { operator: undefined, isoString: "2024-01-15T00:00:00.000Z" }
+ * - ">2024-01-15" -> { operator: ">", isoString: "2024-01-15T00:00:00.000Z" }
+ * - "<2024-06-01" -> { operator: "<", isoString: "2024-06-01T00:00:00.000Z" }
+ * - ">=2024-01-01" -> { operator: ">=", isoString: "2024-01-01T00:00:00.000Z" }
+ * - "<=2024-12-31" -> { operator: "<=", isoString: "2024-12-31T00:00:00.000Z" }
+ *
+ * Note: The ISO string uses the start of day (00:00:00.000) in the local timezone
+ * to ensure correct date filtering. The database stores start_time as ISO strings
+ * in local time, so we need to match that format.
+ */
+function parseDate(value: string): {
+  operator?: ">" | "<" | ">=" | "<=";
+  isoString: string;
+} {
+  const operatorMatch = value.match(/^([><=]+)?(\d{4}-\d{2}-\d{2})$/);
+  if (!operatorMatch) {
+    throw new Error(`Invalid date format: "${value}". Expected format: YYYY-MM-DD (e.g., 2024-01-15)`);
+  }
+
+  const [, operatorStr, dateStr] = operatorMatch;
+  const operator = operatorStr as (">" | "<" | ">=" | "<=") | undefined;
+
+  const dateParts = dateStr.split("-");
+  const year = parseInt(dateParts[0], 10);
+  const month = parseInt(dateParts[1], 10);
+  const day = parseInt(dateParts[2], 10);
+
+  if (month < 1 || month > 12) {
+    throw new Error(`Invalid month: ${month}. Must be between 01 and 12`);
+  }
+
+  if (day < 1 || day > 31) {
+    throw new Error(`Invalid day: ${day}. Must be between 01 and 31`);
+  }
+
+  const date = new Date(year, month - 1, day);
+  const isoString = date.toISOString();
+
+  return { operator, isoString };
 }

@@ -126,13 +126,32 @@ export type MatchupFilter = {
   negate?: boolean; // If true, excludes matches instead of including them
 };
 
+/**
+ * Filter for game start date
+ * The database stores start_time as ISO 8601 strings in local time.
+ * This filter compares against the game.start_time column.
+ *
+ * Examples:
+ * - { minDate: "2024-01-01T00:00:00.000Z" } = games on or after Jan 1, 2024
+ * - { maxDate: "2024-12-31T00:00:00.000Z" } = games on or before Dec 31, 2024
+ * - { minDate: "...", maxDate: "..." } = games between dates (inclusive)
+ * - { minDate: "...", maxDate: "...", negate: true } = exclude games in date range
+ */
+export type DateFilter = {
+  type: "date";
+  minDate?: string; // ISO date string (start of day in local time)
+  maxDate?: string; // ISO date string (start of day in local time)
+  negate?: boolean; // If true, excludes matches instead of including them
+};
+
 export type ReplayFilter =
   | DurationFilter
   | PlayerFilter
   | GameModeFilter
   | StageFilter
   | TextSearchFilter
-  | MatchupFilter;
+  | MatchupFilter
+  | DateFilter;
 
 // Game mode constants
 const GameModeValue = {
