@@ -34,8 +34,9 @@ export type QueryFilters = {
   stageIds?: number[];
 
   // Date filters
-  minDate?: string; // ISO date string
-  maxDate?: string; // ISO date string
+  minDate?: string; // ISO date string (inclusive)
+  maxDate?: string; // ISO date string (inclusive)
+  maxDateExclusive?: string; // ISO date string (exclusive, for exact date queries)
 
   // Free text search (when using searchText from query)
   textSearch?: string;

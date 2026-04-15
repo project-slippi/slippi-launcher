@@ -923,14 +923,14 @@ describe("Query Parser", () => {
 
     it("should parse date with < operator (before date)", () => {
       const result = parseQuery("date:<2024-06-01");
-      expect(result.filters.maxDate).toBeDefined();
+      expect(result.filters.maxDateExclusive).toBeDefined();
       expect(result.errors).toHaveLength(0);
     });
 
     it("should parse date without operator (exact date)", () => {
       const result = parseQuery("date:2024-01-15");
       expect(result.filters.minDate).toBeDefined();
-      expect(result.filters.maxDate).toBeDefined();
+      expect(result.filters.maxDateExclusive).toBeDefined();
       expect(result.errors).toHaveLength(0);
     });
 
@@ -949,7 +949,7 @@ describe("Query Parser", () => {
     it("should parse date range with separate > and < filters", () => {
       const result = parseQuery("date:>2024-01-01 date:<2024-12-31");
       expect(result.filters.minDate).toBeDefined();
-      expect(result.filters.maxDate).toBeDefined();
+      expect(result.filters.maxDateExclusive).toBeDefined();
       expect(result.errors).toHaveLength(0);
     });
 
@@ -999,7 +999,7 @@ describe("Query Parser", () => {
       }
     });
 
-    it("should convert date:<2024-12-31 to date filter with maxDate", () => {
+    it("should convert date:<2024-12-31 to date filter with maxDateExclusive", () => {
       const parsed = parseQuery("date:<2024-12-31");
       const filters = convertToReplayFilters(parsed.filters);
 
@@ -1007,11 +1007,12 @@ describe("Query Parser", () => {
       expect(dateFilter).toBeDefined();
       if (dateFilter?.type === "date") {
         expect(dateFilter.minDate).toBeUndefined();
-        expect(dateFilter.maxDate).toBeDefined();
+        expect(dateFilter.maxDate).toBeUndefined();
+        expect(dateFilter.maxDateExclusive).toBeDefined();
       }
     });
 
-    it("should convert exact date to filter with both minDate and maxDate", () => {
+    it("should convert exact date to filter with minDate and maxDateExclusive", () => {
       const parsed = parseQuery("date:2024-01-15");
       const filters = convertToReplayFilters(parsed.filters);
 
@@ -1019,11 +1020,12 @@ describe("Query Parser", () => {
       expect(dateFilter).toBeDefined();
       if (dateFilter?.type === "date") {
         expect(dateFilter.minDate).toBeDefined();
-        expect(dateFilter.maxDate).toBeDefined();
+        expect(dateFilter.maxDate).toBeUndefined();
+        expect(dateFilter.maxDateExclusive).toBeDefined();
       }
     });
 
-    it("should convert date range to filter with both minDate and maxDate", () => {
+    it("should convert date range with < to maxDateExclusive", () => {
       const parsed = parseQuery("date:>2024-01-01 date:<2024-12-31");
       const filters = convertToReplayFilters(parsed.filters);
 
@@ -1031,7 +1033,8 @@ describe("Query Parser", () => {
       expect(dateFilter).toBeDefined();
       if (dateFilter?.type === "date") {
         expect(dateFilter.minDate).toBeDefined();
-        expect(dateFilter.maxDate).toBeDefined();
+        expect(dateFilter.maxDate).toBeUndefined();
+        expect(dateFilter.maxDateExclusive).toBeDefined();
       }
     });
 

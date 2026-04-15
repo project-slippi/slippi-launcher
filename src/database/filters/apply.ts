@@ -374,6 +374,10 @@ function applyDateFilter(
       dateConditions.push(eb("game.start_time", "<=", filter.maxDate));
     }
 
+    if (filter.maxDateExclusive != null) {
+      dateConditions.push(eb("game.start_time", "<", filter.maxDateExclusive));
+    }
+
     return dateConditions.length > 0 ? eb.and(dateConditions) : null;
   };
 

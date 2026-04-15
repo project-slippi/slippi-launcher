@@ -139,8 +139,9 @@ export type MatchupFilter = {
  */
 export type DateFilter = {
   type: "date";
-  minDate?: string; // ISO date string (start of day in local time)
-  maxDate?: string; // ISO date string (start of day in local time)
+  minDate?: string; // ISO date string (inclusive)
+  maxDate?: string; // ISO date string (inclusive, for <= comparisons)
+  maxDateExclusive?: string; // ISO date string (exclusive, for exact date queries)
   negate?: boolean; // If true, excludes matches instead of including them
 };
 
