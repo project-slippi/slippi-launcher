@@ -8,34 +8,48 @@ const HOUR = 60 * MINUTE;
 
 const EXPIRES_IN_MS = 24 * HOUR;
 
-export type SmashMapTournament = {
+type SmashMapEventsResponse = {
+  data: SmashMapEvent[];
+};
+
+export type SmashMapEvent = {
   id: number;
-  game: { name: string; color: string };
-  address: {
-    country: { name: string; timezone: string };
-    name: string;
-    latitude: number;
-    longitude: number;
-  };
-  image: {
-    url: string;
-  };
-  is_online: number;
+  game: Game;
+  address: Address;
+  image: Image;
+  is_online: boolean;
   name: string;
-  timezone_start_date_time: string;
-  timezone_end_date_time: string;
+  timezone_start_date_time: string; // ISO string
+  timezone_end_date_time: string; // ISO string
   timezone: string;
   attendees: number;
   link: string;
   user_subscribed: boolean;
 };
 
-type SmashMapResponse = {
-  data: SmashMapTournament[];
+type Game = {
+  name: string;
+  color: string; // hex color
+};
+
+type Address = {
+  country: Country;
+  name: string;
+  latitude: number;
+  longitude: number;
+};
+
+type Country = {
+  name: string;
+  timezone: string;
+};
+
+type Image = {
+  url: string;
 };
 
 // Let's cache our responses to avoid hammering the backend
-const responseCache = new TimeExpiryCache<string, SmashMapTournament[]>(EXPIRES_IN_MS);
+const responseCache = new TimeExpiryCache<string, SmashMapEvent[]>(EXPIRES_IN_MS);
 
 const MAX_RADIUS = 200;
 const MIN_RADIUS = 1;
@@ -54,7 +68,7 @@ function isValidLatLng(lat: number, lng: number) {
 export async function fetchNearestTournaments(
   location: { lat: number; lng: number },
   radiusKms: number = 100,
-): Promise<SmashMapTournament[]> {
+): Promise<SmashMapEvent[]> {
   const { lat, lng } = location;
   Preconditions.checkState(isValidLatLng(lat, lng), `Invalid lat/long: ${lat},${lng}`);
 
@@ -68,7 +82,7 @@ export async function fetchNearestTournaments(
 
   // Fetch the data
   const res = await fetch(url);
-  const data = (await res.json()) as SmashMapResponse;
+  const data = (await res.json()) as SmashMapEventsResponse;
 
   // Cache the data
   responseCache.set(url, data.data);
