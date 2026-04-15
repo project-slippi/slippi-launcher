@@ -47,11 +47,22 @@ winner:MANG#0           # MANG#0 won the game
 port:1                  # Filter by port 1
 ```
 
+### Matchup Filters
+
+```
+fox>marth               # Fox beat Marth
+fox>                   # Fox won (any opponent)
+>marth                 # Marth lost (any opponent)
+puff>falco stage:FD    # Puff beat Falco on Final Destination
+```
+
 ### Combining Filters
 
 ```
 mango stage:FD minDuration:30s          # Multiple filters
 char:fox winner:MANG#0                  # Fox player who won
+fox>marth                               # Fox beat Marth
+puff> stage:FD                          # Puff won on Final Destination
 ```
 
 ### Negation (Parsed but not yet applied to backend)
@@ -66,7 +77,7 @@ NOT char:puff           # Exclude Puff games (parsed but needs backend support)
 ### Basic Parsing
 
 ```typescript
-import { parseQuery, convertToReplayFilters } from '@/lib/query_language';
+import { parseQuery, convertToReplayFilters } from "@/lib/query_language";
 
 const query = "mango char:fox minDuration:30s";
 const parsed = parseQuery(query);
@@ -96,7 +107,10 @@ const replayFilters = convertToReplayFilters(parsed.filters);
 The query parser is already integrated with `useReplayFilter` hook via the `buildReplayFilters` function:
 
 ```typescript
-import { buildReplayFilters, useReplayFilter } from '@/lib/hooks/use_replay_filter';
+import {
+  buildReplayFilters,
+  useReplayFilter,
+} from "@/lib/hooks/use_replay_filter";
 
 const searchText = useReplayFilter((store) => store.searchText);
 const hideShortGames = useReplayFilter((store) => store.hideShortGames);
@@ -108,14 +122,16 @@ const filters = buildReplayFilters(hideShortGames, searchText);
 ## Examples
 
 ### Example 1: Simple player search
+
 ```typescript
-parseQuery("mango")
+parseQuery("mango");
 // Result: { searchText: ["mango"], filters: { textSearch: "mango" }, errors: [] }
 ```
 
 ### Example 2: Character and duration
+
 ```typescript
-parseQuery("char:fox minDuration:1m")
+parseQuery("char:fox minDuration:1m");
 // Result: {
 //   searchText: [],
 //   filters: {
@@ -127,8 +143,9 @@ parseQuery("char:fox minDuration:1m")
 ```
 
 ### Example 3: Complex query
+
 ```typescript
-parseQuery("mango char:fox,falco minDuration:30s winner:MANG#0")
+parseQuery("mango char:fox,falco minDuration:30s winner:MANG#0");
 // Result: {
 //   searchText: ["mango"],
 //   filters: {
@@ -144,8 +161,9 @@ parseQuery("mango char:fox,falco minDuration:30s winner:MANG#0")
 ```
 
 ### Example 4: Port-specific character
+
 ```typescript
-parseQuery("p1:fox p2:marth")
+parseQuery("p1:fox p2:marth");
 // Result: {
 //   searchText: [],
 //   filters: {
@@ -159,8 +177,9 @@ parseQuery("p1:fox p2:marth")
 ```
 
 ### Example 5: Error handling
+
 ```typescript
-parseQuery("char:invalidchar")
+parseQuery("char:invalidchar");
 // Result: {
 //   searchText: [],
 //   filters: {},
@@ -169,6 +188,38 @@ parseQuery("char:invalidchar")
 //     message: 'Invalid value for char: Invalid value: "invalidchar". Expected one of: ...',
 //     key: "char"
 //   }]
+// }
+```
+
+### Example 6: Matchup filters
+
+```typescript
+parseQuery("fox>marth");
+// Result: {
+//   searchText: [],
+//   filters: {
+//     matchups: [{ winnerCharIds: [2], loserCharIds: [9] }]
+//   },
+//   errors: []
+// }
+
+parseQuery("fox> stage:FD");
+// Result: {
+//   searchText: [],
+//   filters: {
+//     matchups: [{ winnerCharIds: [2] }],
+//     stageIds: [32]
+//   },
+//   errors: []
+// }
+
+parseQuery(">marth");
+// Result: {
+//   searchText: [],
+//   filters: {
+//     matchups: [{ loserCharIds: [9] }]
+//   },
+//   errors: []
 // }
 ```
 
@@ -207,7 +258,7 @@ The parser is organized into several modules:
 You can test the parser in the browser console:
 
 ```javascript
-const { parseQuery } = require('@/lib/query_language');
+const { parseQuery } = require("@/lib/query_language");
 
 // Test various queries
 parseQuery("mango");
@@ -223,4 +274,3 @@ When adding new filters:
 2. Add parsing logic in `applyFilter()` in `parser.ts`
 3. Update `convertToReplayFilters()` if needed
 4. Update this README with examples
-

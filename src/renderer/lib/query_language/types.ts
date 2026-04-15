@@ -38,6 +38,22 @@ export type QueryFilters = {
 
   // Negated filters (for NOT operator)
   excludeFilters?: QueryFilters;
+
+  // Matchup filters (character vs character)
+  // winner > loser syntax: "fox>marth" means fox beat marth
+  matchups?: MatchupFilter[];
+};
+
+/**
+ * Matchup filter for character vs character queries
+ * Examples:
+ * - { winnerCharIds: [2], loserCharIds: [9] } = Fox beat Marth
+ * - { winnerCharIds: [2], loserCharIds: null } = Fox won (any opponent)
+ * - { winnerCharIds: null, loserCharIds: [9] } = Marth lost (any opponent)
+ */
+export type MatchupFilter = {
+  winnerCharIds?: number[]; // Character IDs of winner
+  loserCharIds?: number[]; // Character IDs of loser
 };
 
 /**
@@ -69,13 +85,24 @@ export type QueryError = {
 /**
  * Token from tokenization phase
  */
-export type Token = {
-  type: "WORD" | "FILTER" | "QUOTED" | "OPERATOR";
-  value: string;
-  key?: string; // For FILTER tokens
-  position: number;
-  valueWasQuoted?: boolean; // For FILTER tokens - was the value quoted?
-};
+export type Token =
+  | { type: "WORD"; value: string; position: number }
+  | {
+      type: "FILTER";
+      value: string;
+      key: string;
+      position: number;
+      valueWasQuoted?: boolean;
+    }
+  | { type: "QUOTED"; value: string; position: number }
+  | { type: "OPERATOR"; value: string; position: number }
+  | {
+      type: "MATCHUP";
+      winner: string;
+      loser: string;
+      position: number;
+      valueWasQuoted?: boolean;
+    };
 
 /**
  * Filter definition for schema
@@ -85,7 +112,12 @@ export type FilterDefinition = {
   aliases?: string[];
   description: string;
   valueType: "string" | "number" | "boolean" | "enum" | "duration" | "date";
-  enumValues?: Array<{ value: string; label: string; id?: number; aliases: string[] }>;
+  enumValues?: Array<{
+    value: string;
+    label: string;
+    id?: number;
+    aliases: string[];
+  }>;
   examples: string[];
   category: "player" | "game" | "date" | "platform";
 };

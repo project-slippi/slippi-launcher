@@ -734,4 +734,150 @@ describe("Query Parser", () => {
       });
     });
   });
+
+  describe("Matchup filters (> syntax)", () => {
+    it("should parse fox>marth (Fox beat Marth)", () => {
+      const result = parseQuery("fox>marth");
+      expect(result.filters.matchups).toHaveLength(1);
+      expect(result.filters.matchups?.[0].winnerCharIds).toEqual([2]); // Fox
+      expect(result.filters.matchups?.[0].loserCharIds).toEqual([9]); // Marth
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse fox> (Fox won - any opponent)", () => {
+      const result = parseQuery("fox>");
+      expect(result.filters.matchups).toHaveLength(1);
+      expect(result.filters.matchups?.[0].winnerCharIds).toEqual([2]); // Fox
+      expect(result.filters.matchups?.[0].loserCharIds).toBeUndefined();
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse >marth (Marth lost - any opponent)", () => {
+      const result = parseQuery(">marth");
+      expect(result.filters.matchups).toHaveLength(1);
+      expect(result.filters.matchups?.[0].winnerCharIds).toBeUndefined();
+      expect(result.filters.matchups?.[0].loserCharIds).toEqual([9]); // Marth
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse multiple matchups", () => {
+      const result = parseQuery("fox>marth falco>fox");
+      expect(result.filters.matchups).toHaveLength(2);
+      expect(result.filters.matchups?.[0].winnerCharIds).toEqual([2]); // Fox
+      expect(result.filters.matchups?.[0].loserCharIds).toEqual([9]); // Marth
+      expect(result.filters.matchups?.[1].winnerCharIds).toEqual([20]); // Falco
+      expect(result.filters.matchups?.[1].loserCharIds).toEqual([2]); // Fox
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse matchup with stage filter", () => {
+      const result = parseQuery("fox>marth stage:FD");
+      expect(result.filters.matchups).toHaveLength(1);
+      expect(result.filters.matchups?.[0].winnerCharIds).toEqual([2]);
+      expect(result.filters.matchups?.[0].loserCharIds).toEqual([9]);
+      expect(result.filters.stageIds).toEqual([32]); // Final Destination
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse matchup with character aliases", () => {
+      const result = parseQuery("puff>marth");
+      expect(result.filters.matchups).toHaveLength(1);
+      expect(result.filters.matchups?.[0].winnerCharIds).toEqual([15]); // Jigglypuff
+      expect(result.filters.matchups?.[0].loserCharIds).toEqual([9]); // Marth
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse fuzzy character match in matchup", () => {
+      const result = parseQuery("climb>marth");
+      // "climb" fuzzy matches Ice Climbers (id 14)
+      expect(result.filters.matchups).toHaveLength(1);
+      expect(result.filters.matchups?.[0].winnerCharIds).toEqual([14]); // Ice Climbers
+      expect(result.filters.matchups?.[0].loserCharIds).toEqual([9]); // Marth
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should return error for invalid character in matchup", () => {
+      const result = parseQuery("invalidchar>marth");
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0].type).toBe("INVALID_VALUE");
+    });
+
+    it("should allow matchup combined with text search", () => {
+      const result = parseQuery("mango fox>marth");
+      expect(result.searchText).toContain("mango");
+      expect(result.filters.matchups).toHaveLength(1);
+      expect(result.filters.matchups?.[0].winnerCharIds).toEqual([2]);
+      expect(result.filters.matchups?.[0].loserCharIds).toEqual([9]);
+      expect(result.errors).toHaveLength(0);
+    });
+  });
+
+  describe("Conversion to ReplayFilter[] with matchups", () => {
+    it("should convert fox>marth to player filters", () => {
+      const parsed = parseQuery("fox>marth");
+      const filters = convertToReplayFilters(parsed.filters);
+
+      // Should have two player filters: winner (fox) and loser (marth)
+      const winnerFilter = filters.find((f) => f.type === "player" && f.mustBeWinner === true);
+      expect(winnerFilter).toBeDefined();
+      if (winnerFilter?.type === "player") {
+        expect(winnerFilter.characterIds).toEqual([2]);
+      }
+
+      const loserFilter = filters.find((f) => f.type === "player" && f.mustBeWinner === false);
+      expect(loserFilter).toBeDefined();
+      if (loserFilter?.type === "player") {
+        expect(loserFilter.characterIds).toEqual([9]);
+      }
+    });
+
+    it("should convert fox> to single winner filter", () => {
+      const parsed = parseQuery("fox>");
+      const filters = convertToReplayFilters(parsed.filters);
+
+      const winnerFilter = filters.find((f) => f.type === "player" && f.mustBeWinner === true);
+      expect(winnerFilter).toBeDefined();
+      if (winnerFilter?.type === "player") {
+        expect(winnerFilter.characterIds).toEqual([2]);
+      }
+
+      // Should not have a loser filter
+      const loserFilter = filters.find((f) => f.type === "player" && f.mustBeWinner === false);
+      expect(loserFilter).toBeUndefined();
+    });
+
+    it("should convert >marth to single loser filter", () => {
+      const parsed = parseQuery(">marth");
+      const filters = convertToReplayFilters(parsed.filters);
+
+      const loserFilter = filters.find((f) => f.type === "player" && f.mustBeWinner === false);
+      expect(loserFilter).toBeDefined();
+      if (loserFilter?.type === "player") {
+        expect(loserFilter.characterIds).toEqual([9]);
+      }
+
+      // Should not have a winner filter
+      const winnerFilter = filters.find((f) => f.type === "player" && f.mustBeWinner === true);
+      expect(winnerFilter).toBeUndefined();
+    });
+
+    it("should convert fox>marth with stage to multiple filters", () => {
+      const parsed = parseQuery("fox>marth stage:FD");
+      const filters = convertToReplayFilters(parsed.filters);
+
+      expect(filters.length).toBeGreaterThanOrEqual(3);
+
+      const winnerFilter = filters.find((f) => f.type === "player" && f.mustBeWinner === true);
+      expect(winnerFilter).toBeDefined();
+
+      const loserFilter = filters.find((f) => f.type === "player" && f.mustBeWinner === false);
+      expect(loserFilter).toBeDefined();
+
+      const stageFilter = filters.find((f) => f.type === "stage");
+      expect(stageFilter).toBeDefined();
+      if (stageFilter?.type === "stage") {
+        expect(stageFilter.stageIds).toEqual([32]);
+      }
+    });
+  });
 });

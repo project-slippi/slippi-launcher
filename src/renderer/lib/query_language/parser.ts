@@ -9,7 +9,7 @@ import type { ReplayFilter } from "@database/filters/types";
 
 import { getFilterDefinition, getPortFromAlias } from "./filter_schema";
 import { tokenize } from "./tokenizer";
-import type { ParsedQuery, QueryError, QueryFilters } from "./types";
+import type { MatchupFilter, ParsedQuery, QueryError, QueryFilters } from "./types";
 import { parseValue } from "./value_parser";
 
 /**
@@ -19,6 +19,9 @@ import { parseValue } from "./value_parser";
  * - "mango" -> { searchText: ["mango"], filters: {}, errors: [] }
  * - "stage:FD minDuration:30s" -> { searchText: [], filters: { stages: [32], minDuration: 1800 }, errors: [] }
  * - "mango char:fox winner:MANG#0" -> Complex player filters
+ * - "fox>marth" -> Matchup filter: Fox beat Marth
+ * - "fox>" -> Matchup filter: Fox won (any opponent)
+ * - ">marth" -> Matchup filter: Marth lost (any opponent)
  *
  * @param query The query string to parse
  * @returns Parsed query with filters and any errors
@@ -43,6 +46,20 @@ export function parseQuery(query: string): ParsedQuery {
         }
         break;
 
+      case "MATCHUP":
+        try {
+          const matchup = parseMatchupToken(token);
+          filters.matchups = filters.matchups || [];
+          filters.matchups.push(matchup);
+        } catch (err: any) {
+          errors.push({
+            type: "INVALID_VALUE",
+            message: `Invalid matchup: ${err.message}`,
+            position: token.position,
+          });
+        }
+        break;
+
       case "FILTER":
         try {
           // Special handling for port aliases (p1, p2, p3, p4)
@@ -58,7 +75,10 @@ export function parseQuery(query: string): ParsedQuery {
               if (negateNext) {
                 filters.excludeFilters = filters.excludeFilters || {};
                 filters.excludeFilters.playerFilters = filters.excludeFilters.playerFilters || [];
-                filters.excludeFilters.playerFilters.push({ port: portNum, characterIds });
+                filters.excludeFilters.playerFilters.push({
+                  port: portNum,
+                  characterIds,
+                });
               } else {
                 filters.playerFilters = filters.playerFilters || [];
                 filters.playerFilters.push({ port: portNum, characterIds });
@@ -235,6 +255,54 @@ function applyFilter(filters: QueryFilters, key: string, value: any, negate: boo
 }
 
 /**
+ * Parse a matchup token (e.g., "fox>marth", "fox>", ">marth")
+ * Parses character names and creates matchup filter
+ */
+interface MatchupToken {
+  type: "MATCHUP";
+  winner: string;
+  loser: string;
+  position: number;
+  valueWasQuoted?: boolean;
+}
+
+function parseMatchupToken(token: MatchupToken): MatchupFilter {
+  const charFilter = getFilterDefinition("character");
+  if (!charFilter) {
+    throw new Error("Character filter definition not found");
+  }
+
+  const matchup: MatchupFilter = {};
+
+  // Parse winner side
+  if (token.winner) {
+    try {
+      const winnerIds = parseValue(token.winner, charFilter, false);
+      matchup.winnerCharIds = Array.isArray(winnerIds) ? winnerIds : [winnerIds];
+    } catch (err: any) {
+      throw new Error(`Invalid winner character "${token.winner}": ${err.message}`);
+    }
+  }
+
+  // Parse loser side
+  if (token.loser) {
+    try {
+      const loserIds = parseValue(token.loser, charFilter, false);
+      matchup.loserCharIds = Array.isArray(loserIds) ? loserIds : [loserIds];
+    } catch (err: any) {
+      throw new Error(`Invalid loser character "${token.loser}": ${err.message}`);
+    }
+  }
+
+  // Must have at least one side
+  if (!matchup.winnerCharIds && !matchup.loserCharIds) {
+    throw new Error("Matchup must have at least a winner or loser character");
+  }
+
+  return matchup;
+}
+
+/**
  * Convert QueryFilters to ReplayFilter[] for backend
  *
  * This function converts the parsed query filters into the ReplayFilter array
@@ -302,6 +370,29 @@ export function convertToReplayFilters(queryFilters: QueryFilters): ReplayFilter
         ...filter,
         negate: true,
       });
+    });
+  }
+
+  // Matchup filters (e.g., "fox>marth" -> winner played Fox, loser played Marth)
+  if (queryFilters.matchups && queryFilters.matchups.length > 0) {
+    queryFilters.matchups.forEach((matchup) => {
+      // Winner filter: player who played the winning character(s)
+      if (matchup.winnerCharIds && matchup.winnerCharIds.length > 0) {
+        filters.push({
+          type: "player",
+          characterIds: matchup.winnerCharIds,
+          mustBeWinner: true,
+        });
+      }
+
+      // Loser filter: player who played the losing character(s)
+      if (matchup.loserCharIds && matchup.loserCharIds.length > 0) {
+        filters.push({
+          type: "player",
+          characterIds: matchup.loserCharIds,
+          mustBeWinner: false,
+        });
+      }
     });
   }
 
