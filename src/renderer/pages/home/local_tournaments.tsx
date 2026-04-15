@@ -50,13 +50,9 @@ export const LocalTournaments = () => {
     return result;
   });
   const geoLocationQuery = useQuery(["geoLocationQuery"], async () => {
-    // const result = await getLocation();
-    // console.log("query result: ", { result });
-    // const smashMapResult = await fetch(
-    //   `https://smash-map.com/api/events?lat=${result.lat}&lng=${result.lng}&radius=100&games=1&paginate=false`,
-    // ).then((res) => res.json());
-    // console.log("query smash map result: ", { smashMapResult });
-    const events = await window.electron.fetch.fetchNearestTournaments();
+    const result = await window.electron.fetch.fetchCurrentLocation();
+    console.log("query result: ", { result });
+    const events = await window.electron.fetch.fetchNearestTournaments({ lat: result.lat, lng: result.lon });
     console.log(events);
     return { events };
   });
