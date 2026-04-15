@@ -9,10 +9,10 @@ const HOUR = 60 * MINUTE;
 const EXPIRES_IN_MS = 24 * HOUR;
 
 type SmashMapEventsResponse = {
-  data: SmashMapEvent[];
+  data: SmashMapEventResponse[];
 };
 
-export type SmashMapEvent = {
+type SmashMapEventResponse = {
   id: number;
   game: Game;
   address: Address;
@@ -49,7 +49,7 @@ type Image = {
 };
 
 // Let's cache our responses to avoid hammering the backend
-const smashMapResponseCache = new TimeExpiryCache<string, SmashMapEvent[]>(EXPIRES_IN_MS);
+const smashMapResponseCache = new TimeExpiryCache<string, SmashMapEventsResponse>(EXPIRES_IN_MS);
 
 const MAX_RADIUS = 200;
 const MIN_RADIUS = 1;
@@ -65,6 +65,18 @@ function isValidLatLng(lat: number, lng: number) {
   return isValidLatitude(lat) && isValidLongitude(lng);
 }
 
+export type SmashMapEvent = {
+  name: string;
+  imageSrc: string;
+  startDate: Date;
+  endDate: Date;
+  url: string;
+  location: {
+    lat: number;
+    lng: number;
+  };
+};
+
 export async function fetchNearestTournaments(
   location: { lat: number; lng: number },
   radiusKms: number = 100,
@@ -77,7 +89,7 @@ export async function fetchNearestTournaments(
   const url = `https://smash-map.com/api/events?lat=${lat}&lng=${lng}&radius=${clampedRadiusKms}&games=1&paginate=false`;
   const cachedResponse = smashMapResponseCache.get(url);
   if (cachedResponse) {
-    return cachedResponse;
+    return cachedResponse.data.map(mapSmashMapEventResponseToSmashMapEvent);
   }
 
   // Fetch the data
@@ -85,7 +97,35 @@ export async function fetchNearestTournaments(
   const data = (await res.json()) as SmashMapEventsResponse;
 
   // Cache the data
-  smashMapResponseCache.set(url, data.data);
+  smashMapResponseCache.set(url, data);
 
-  return data.data;
+  return data.data.map(mapSmashMapEventResponseToSmashMapEvent);
+}
+
+function parseApiDate(dateStr: string, timezone: string): Date {
+  // "04-05-2026 10:00:00"
+  const [datePart, timePart] = dateStr.split(" ");
+  const [day, month, year] = datePart.split("-").map(Number);
+
+  // "UTC +09:00" -> "+09:00"
+  const offset = timezone.replace("UTC", "").trim();
+
+  // Build ISO string
+  const iso = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}T${timePart}${offset}`;
+
+  return new Date(iso);
+}
+
+function mapSmashMapEventResponseToSmashMapEvent(event: SmashMapEventResponse): SmashMapEvent {
+  return {
+    name: event.name,
+    imageSrc: event.image.url,
+    startDate: parseApiDate(event.timezone_start_date_time, event.timezone),
+    endDate: parseApiDate(event.timezone_end_date_time, event.timezone),
+    url: event.link,
+    location: {
+      lat: event.address.latitude,
+      lng: event.address.longitude,
+    },
+  };
 }
