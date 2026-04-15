@@ -333,6 +333,34 @@ describe("Query Parser", () => {
     });
   });
 
+  describe("loser filter", () => {
+    it("should parse loser with connect code", () => {
+      const result = parseQuery("loser:MANG#0");
+      expect(result.filters.playerFilters).toHaveLength(1);
+      expect(result.filters.playerFilters?.[0].connectCode).toBe("MANG#0");
+      expect(result.filters.playerFilters?.[0].mustBeWinner).toBe(false);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse loser with unquoted tag (fuzzy - default)", () => {
+      const result = parseQuery("loser:Mango");
+      expect(result.filters.playerFilters).toHaveLength(1);
+      expect(result.filters.playerFilters?.[0].tag).toBe("Mango");
+      expect(result.filters.playerFilters?.[0].tagExact).toBeUndefined();
+      expect(result.filters.playerFilters?.[0].mustBeWinner).toBe(false);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse loser with quoted tag (exact)", () => {
+      const result = parseQuery('loser:"Mango"');
+      expect(result.filters.playerFilters).toHaveLength(1);
+      expect(result.filters.playerFilters?.[0].tag).toBe("Mango");
+      expect(result.filters.playerFilters?.[0].tagExact).toBe(true);
+      expect(result.filters.playerFilters?.[0].mustBeWinner).toBe(false);
+      expect(result.errors).toHaveLength(0);
+    });
+  });
+
   describe("Combined queries", () => {
     it("should parse search text with filters", () => {
       const result = parseQuery("mango char:fox duration:>30s");

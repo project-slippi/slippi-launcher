@@ -105,6 +105,13 @@ export const FILTER_SCHEMA: FilterDefinition[] = [
     category: "player",
   },
   {
+    key: "loser",
+    description: "Player who lost the game (connect code or tag)",
+    valueType: "string",
+    examples: ["loser:MANG#0", 'loser:"Liquid Hbox"'],
+    category: "player",
+  },
+  {
     key: "date",
     description: "Game start date (YYYY, YYYY-MM, or YYYY-MM-DD format)",
     valueType: "date",
