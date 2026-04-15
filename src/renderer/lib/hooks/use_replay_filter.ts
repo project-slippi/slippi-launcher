@@ -56,19 +56,11 @@ export const buildReplayFilters = (hideShortGames: boolean, searchText: string):
     // Check if there's already a duration filter from the query
     const existingDurationFilter = filters.find((f) => f.type === "duration");
 
-    if (existingDurationFilter) {
-      // Merge with existing: use the maximum of the two minFrames values
-      const shortGameThreshold = 30 * 60; // 30 seconds
-      if (existingDurationFilter.minFrames !== undefined) {
-        existingDurationFilter.minFrames = Math.max(existingDurationFilter.minFrames, shortGameThreshold);
-      } else {
-        existingDurationFilter.minFrames = shortGameThreshold;
-      }
-    } else {
-      // Add new duration filter
+    if (!existingDurationFilter) {
+      // Filter out the short games
       filters.push({
         type: "duration",
-        minFrames: 30 * 60, // 30 seconds
+        minFrames: 30 * 60 - 123, // 30 seconds minus the offset
       });
     }
   }
