@@ -984,6 +984,44 @@ describe("Query Parser", () => {
       expect(result.filters.minDate).toBeDefined();
       expect(result.errors).toHaveLength(0);
     });
+
+    it("should parse year-only date (exact match = entire year)", () => {
+      const result = parseQuery("date:2026");
+      expect(result.filters.minDate).toBeDefined();
+      expect(result.filters.maxDateExclusive).toBeDefined();
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse year-month date (exact match = entire month)", () => {
+      const result = parseQuery("date:2025-02");
+      expect(result.filters.minDate).toBeDefined();
+      expect(result.filters.maxDateExclusive).toBeDefined();
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse year-month with > operator", () => {
+      const result = parseQuery("date:>2025-02");
+      expect(result.filters.minDate).toBeDefined();
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse year-month with < operator", () => {
+      const result = parseQuery("date:<2025-06");
+      expect(result.filters.maxDateExclusive).toBeDefined();
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse year-only with >= operator", () => {
+      const result = parseQuery("date:>=2025");
+      expect(result.filters.minDate).toBeDefined();
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse year-only with <= operator", () => {
+      const result = parseQuery("date:<=2025");
+      expect(result.filters.maxDate).toBeDefined();
+      expect(result.errors).toHaveLength(0);
+    });
   });
 
   describe("Date filter conversion to ReplayFilter[]", () => {
@@ -1027,6 +1065,32 @@ describe("Query Parser", () => {
 
     it("should convert date range with < to maxDateExclusive", () => {
       const parsed = parseQuery("date:>2024-01-01 date:<2024-12-31");
+      const filters = convertToReplayFilters(parsed.filters);
+
+      const dateFilter = filters.find((f) => f.type === "date");
+      expect(dateFilter).toBeDefined();
+      if (dateFilter?.type === "date") {
+        expect(dateFilter.minDate).toBeDefined();
+        expect(dateFilter.maxDate).toBeUndefined();
+        expect(dateFilter.maxDateExclusive).toBeDefined();
+      }
+    });
+
+    it("should convert year-only exact date to filter with minDate and maxDateExclusive", () => {
+      const parsed = parseQuery("date:2026");
+      const filters = convertToReplayFilters(parsed.filters);
+
+      const dateFilter = filters.find((f) => f.type === "date");
+      expect(dateFilter).toBeDefined();
+      if (dateFilter?.type === "date") {
+        expect(dateFilter.minDate).toBeDefined();
+        expect(dateFilter.maxDate).toBeUndefined();
+        expect(dateFilter.maxDateExclusive).toBeDefined();
+      }
+    });
+
+    it("should convert year-month exact date to filter with minDate and maxDateExclusive", () => {
+      const parsed = parseQuery("date:2025-02");
       const filters = convertToReplayFilters(parsed.filters);
 
       const dateFilter = filters.find((f) => f.type === "date");

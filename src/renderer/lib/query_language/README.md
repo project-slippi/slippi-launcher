@@ -10,6 +10,7 @@ This module provides a query language parser for the Slippi Launcher replay brow
 - **Character/Stage matching**: Fuzzy matching for character and stage names
 - **Player filters**: Search by connect code, tag, character
 - **Matchup filters**: Search by character vs character (winner > loser syntax)
+- **Date filters**: Search by game date with partial date support (YYYY, YYYY-MM, YYYY-MM-DD)
 - **Negation**: Use `-` prefix to exclude results
 - **Error handling**: Graceful error handling with detailed error messages
 
@@ -69,6 +70,28 @@ fox>                   # Fox won (any opponent)
 >marth                 # Marth lost (any opponent)
 puff>falco stage:FD    # Puff beat Falco on Final Destination
 ```
+
+### Date Filters
+
+```
+date:2026              # Games from 2026 (entire year)
+date:2025-02           # Games from February 2025 (entire month)
+date:2024-01-15        # Games from January 15, 2024 (entire day)
+date:>2025-02          # Games after February 2025
+date:<2025-06          # Games before June 2025
+date:>=2024-01-01      # Games on or after January 1, 2024
+date:<=2024-12-31      # Games on or before December 31, 2024
+date:>2025-02 date:<2025-06  # Games between February and June 2025 (exclusive)
+-date:2024-01-15       # Exclude games from January 15, 2024
+```
+
+Date filters support three formats:
+
+- **Year**: `date:2026` matches all games from 2026
+- **Year-Month**: `date:2025-02` matches all games from February 2025
+- **Year-Month-Day**: `date:2024-01-15` matches all games from January 15, 2024
+
+Without an operator, the date matches the entire period. Operators allow range queries.
 
 ### Combining Filters
 
@@ -255,9 +278,8 @@ The parser is organized into several modules:
 
 ## Current Limitations
 
-1. **Date filters**: Not yet implemented (after/before/date)
-2. **Game mode filters**: Not yet implemented (ranked/unranked)
-3. **Platform filter**: Not yet implemented (console/dolphin)
+1. **Game mode filters**: Not yet implemented (ranked/unranked)
+2. **Platform filter**: Not yet implemented (console/dolphin)
 
 ## Future Enhancements
 
