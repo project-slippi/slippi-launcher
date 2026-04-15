@@ -17,7 +17,7 @@ import { parseValue } from "./value_parser";
  *
  * Examples:
  * - "mango" -> { searchText: ["mango"], filters: {}, errors: [] }
- * - "stage:FD minDuration:30s" -> { searchText: [], filters: { stages: [32], minDuration: 1800 }, errors: [] }
+ * - "stage:FD duration:>30s" -> { searchText: [], filters: { stages: [32], minDuration: 1800 }, errors: [] }
  * - "mango char:fox winner:MANG#0" -> Complex player filters
  * - "fox>marth" -> Matchup filter: Fox beat Marth
  * - "fox>" -> Matchup filter: Fox won (any opponent)
@@ -137,14 +137,16 @@ function applyFilter(filters: QueryFilters, key: string, value: any, negate: boo
 
   const lowerKey = key.toLowerCase();
 
-  // Duration filters
-  if (lowerKey === "minduration" || lowerKey === "minlength") {
-    filters.minDuration = value;
-    return;
-  }
-
-  if (lowerKey === "maxduration" || lowerKey === "maxlength") {
-    filters.maxDuration = value;
+  // Duration filter
+  if (lowerKey === "duration" || lowerKey === "length") {
+    const dur = value as { operator?: ">" | "<"; frames: number };
+    if (dur.operator === ">") {
+      filters.minDuration = dur.frames;
+    } else if (dur.operator === "<") {
+      filters.maxDuration = dur.frames;
+    } else {
+      filters.minDuration = dur.frames;
+    }
     return;
   }
 

@@ -39,19 +39,11 @@ function normalizeString(str: string): string {
  */
 export const FILTER_SCHEMA: FilterDefinition[] = [
   {
-    key: "minDuration",
-    aliases: ["minLength"],
-    description: "Minimum game duration",
+    key: "duration",
+    aliases: ["length"],
+    description: "Game duration",
     valueType: "duration",
-    examples: ["minDuration:30s", "minDuration:1m", "minDuration:1800f"],
-    category: "game",
-  },
-  {
-    key: "maxDuration",
-    aliases: ["maxLength"],
-    description: "Maximum game duration",
-    valueType: "duration",
-    examples: ["maxDuration:5m", "maxDuration:300s"],
+    examples: ["duration:>30s", "duration:<4m", "duration:30s", "duration:1m", "duration:1800f"],
     category: "game",
   },
   {

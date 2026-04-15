@@ -31,34 +31,40 @@ describe("Query Parser", () => {
   });
 
   describe("Duration filters", () => {
-    it("should parse minDuration in seconds", () => {
-      const result = parseQuery("minDuration:30s");
+    it("should parse duration with > operator (greater than)", () => {
+      const result = parseQuery("duration:>30s");
       expect(result.filters.minDuration).toBe(1800); // 30 * 60 frames
       expect(result.errors).toHaveLength(0);
     });
 
-    it("should parse minDuration in minutes", () => {
-      const result = parseQuery("minDuration:1m");
-      expect(result.filters.minDuration).toBe(3600); // 1 * 60 * 60 frames
-      expect(result.errors).toHaveLength(0);
-    });
-
-    it("should parse minDuration in frames", () => {
-      const result = parseQuery("minDuration:1800f");
-      expect(result.filters.minDuration).toBe(1800);
-      expect(result.errors).toHaveLength(0);
-    });
-
-    it("should parse maxDuration", () => {
-      const result = parseQuery("maxDuration:5m");
+    it("should parse duration with < operator (less than)", () => {
+      const result = parseQuery("duration:<5m");
       expect(result.filters.maxDuration).toBe(18000); // 5 * 60 * 60 frames
       expect(result.errors).toHaveLength(0);
     });
 
-    it("should parse both min and max duration", () => {
-      const result = parseQuery("minDuration:30s maxDuration:5m");
+    it("should parse duration without operator (defaults to min)", () => {
+      const result = parseQuery("duration:30s");
+      expect(result.filters.minDuration).toBe(1800); // 30 * 60 frames
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse duration in minutes", () => {
+      const result = parseQuery("duration:>1m");
+      expect(result.filters.minDuration).toBe(3600); // 1 * 60 * 60 frames
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse duration in frames", () => {
+      const result = parseQuery("duration:>1800f");
       expect(result.filters.minDuration).toBe(1800);
-      expect(result.filters.maxDuration).toBe(18000);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse both > and < duration filters", () => {
+      const result = parseQuery("duration:>30s duration:<4m");
+      expect(result.filters.minDuration).toBe(1800);
+      expect(result.filters.maxDuration).toBe(14400); // 4 * 60 * 60 frames
       expect(result.errors).toHaveLength(0);
     });
   });
@@ -285,7 +291,7 @@ describe("Query Parser", () => {
 
   describe("Combined queries", () => {
     it("should parse search text with filters", () => {
-      const result = parseQuery("mango char:fox minDuration:30s");
+      const result = parseQuery("mango char:fox duration:>30s");
       expect(result.searchText).toEqual(["mango"]);
       expect(result.filters.textSearch).toBe("mango");
       expect(result.filters.minDuration).toBe(1800);
@@ -295,7 +301,15 @@ describe("Query Parser", () => {
     });
 
     it("should parse complex query", () => {
-      const result = parseQuery("mango vs hbox char:fox,falco minDuration:1m winner:MANG#0");
+      const result = parseQuery("mango vs hbox char:fox,falco duration:>1m winner:MANG#0");
+      expect(result.searchText).toEqual(["mango", "vs", "hbox"]);
+      expect(result.filters.minDuration).toBe(3600);
+      expect(result.filters.playerFilters).toHaveLength(2);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse complex query", () => {
+      const result = parseQuery("mango vs hbox char:fox,falco duration:>1m winner:MANG#0");
       expect(result.searchText).toEqual(["mango", "vs", "hbox"]);
       expect(result.filters.minDuration).toBe(3600);
       expect(result.filters.playerFilters).toHaveLength(2);
@@ -319,16 +333,16 @@ describe("Query Parser", () => {
     });
 
     it("should report invalid duration format", () => {
-      const result = parseQuery("minDuration:invalid");
+      const result = parseQuery("duration:invalid");
       expect(result.errors).toHaveLength(1);
       expect(result.errors[0].type).toBe("INVALID_VALUE");
-      expect(result.errors[0].key).toBe("minDuration");
+      expect(result.errors[0].key).toBe("duration");
     });
   });
 
   describe("Conversion to ReplayFilter[]", () => {
     it("should convert duration filter", () => {
-      const parsed = parseQuery("minDuration:30s");
+      const parsed = parseQuery("duration:>30s");
       const filters = convertToReplayFilters(parsed.filters);
 
       expect(filters).toHaveLength(1);
@@ -364,7 +378,7 @@ describe("Query Parser", () => {
     });
 
     it("should convert complex query", () => {
-      const parsed = parseQuery("mango char:fox minDuration:30s");
+      const parsed = parseQuery("mango char:fox duration:>30s");
       const filters = convertToReplayFilters(parsed.filters);
 
       expect(filters).toHaveLength(3);
@@ -437,7 +451,7 @@ describe("Query Parser", () => {
     });
 
     it("should process valid filters and ignore empty ones with colons", () => {
-      const result = parseQuery("char:fox stage: minDuration:30s");
+      const result = parseQuery("char:fox stage: duration:>30s");
       expect(result.filters.playerFilters).toHaveLength(1);
       expect(result.filters.playerFilters?.[0].characterIds).toEqual([2]);
       expect(result.filters.stageIds).toBeUndefined();
@@ -499,7 +513,7 @@ describe("Query Parser", () => {
     });
 
     it("should parse dash negation for duration", () => {
-      const result = parseQuery("-minDuration:30s");
+      const result = parseQuery("-duration:>30s");
       expect(result.filters.excludeFilters).toBeDefined();
       expect(result.filters.excludeFilters?.minDuration).toBe(1800);
       expect(result.errors).toHaveLength(0);
@@ -647,7 +661,7 @@ describe("Query Parser", () => {
       });
 
       it("should convert negated duration filter", () => {
-        const parsed = parseQuery("-minDuration:30s");
+        const parsed = parseQuery("-duration:>30s");
         const filters = convertToReplayFilters(parsed.filters);
 
         expect(filters).toHaveLength(1);
@@ -671,7 +685,7 @@ describe("Query Parser", () => {
       });
 
       it("should convert complex query with negation", () => {
-        const parsed = parseQuery("mango char:fox -stage:battlefield minDuration:30s");
+        const parsed = parseQuery("mango char:fox -stage:battlefield duration:>30s");
         const filters = convertToReplayFilters(parsed.filters);
 
         expect(filters.length).toBeGreaterThanOrEqual(3);
