@@ -8,7 +8,7 @@
 import type { ReplayFilter } from "@database/filters/types";
 
 import { getFilterDefinition } from "./filter_schema";
-import { tokenize } from "./tokenizer";
+import { ME_MARKER, tokenize } from "./tokenizer";
 import type { MatchupFilter, ParsedQuery, QueryError, QueryFilters } from "./types";
 import { parseValue } from "./value_parser";
 
@@ -89,6 +89,22 @@ export function parseQuery(query: string): ParsedQuery {
 
       case "QUOTED":
       case "WORD":
+        // Handle @me as a player filter (standalone)
+        // Check for @me marker, handling both normal and negated (-@me) cases
+        if (token.type === "WORD" && token.value.toLowerCase() === ME_MARKER) {
+          if (negateNext) {
+            // For negated filters, use excludeFilters
+            filters.excludeFilters = filters.excludeFilters || {};
+            filters.excludeFilters.playerFilters = filters.excludeFilters.playerFilters || [];
+            filters.excludeFilters.playerFilters.push({ userId: ME_MARKER });
+          } else {
+            filters.playerFilters = filters.playerFilters || [];
+            filters.playerFilters.push({ userId: ME_MARKER });
+          }
+          negateNext = false;
+          break;
+        }
+
         // Ignore WORD tokens that match known filter keys AND have a colon after them
         // (e.g., "char:" or "stage:" with no value)
         // This only applies if there's actually a colon, so "char" as free text is still valid
@@ -189,6 +205,11 @@ function applyFilter(filters: QueryFilters, key: string, value: any, negate: boo
   // Winner filter
   if (lowerKey === "winner") {
     filters.playerFilters = filters.playerFilters || [];
+    // Handle @me as special userId filter
+    if (value === ME_MARKER) {
+      filters.playerFilters.push({ userId: ME_MARKER, mustBeWinner: true });
+      return;
+    }
     // Try to determine if it's a connect code or tag
     // Connect codes typically have # in them
     if (value.includes("#")) {
@@ -207,6 +228,11 @@ function applyFilter(filters: QueryFilters, key: string, value: any, negate: boo
   // Loser filter (winner: false)
   if (lowerKey === "loser") {
     filters.playerFilters = filters.playerFilters || [];
+    // Handle @me as special userId filter
+    if (value === ME_MARKER) {
+      filters.playerFilters.push({ userId: ME_MARKER, mustBeWinner: false });
+      return;
+    }
     if (value.includes("#")) {
       filters.playerFilters.push({ connectCode: value, mustBeWinner: false });
     } else {
@@ -348,6 +374,7 @@ export function convertToReplayFilters(queryFilters: QueryFilters): ReplayFilter
       filters.push({
         type: "player",
         connectCode: pf.connectCode,
+        userId: pf.userId,
         displayName: pf.displayName,
         tag: pf.tag,
         characterIds: pf.characterIds,
@@ -355,6 +382,7 @@ export function convertToReplayFilters(queryFilters: QueryFilters): ReplayFilter
         // Pass through exact matching flags
         tagExact: pf.tagExact,
         displayNameExact: pf.displayNameExact,
+        negate: pf.negate,
       });
     });
   }

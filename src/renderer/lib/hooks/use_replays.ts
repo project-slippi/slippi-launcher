@@ -5,6 +5,7 @@ import { immer } from "zustand/middleware/immer";
 
 import { useSettings } from "@/lib/hooks/use_settings";
 import { useServices } from "@/services";
+import type { AuthService } from "@/services/auth/types";
 
 import { useReplayBrowserList } from "./use_replay_browser_list";
 import { buildReplayFilters, useReplayFilter } from "./use_replay_filter";
@@ -92,7 +93,7 @@ let presenterInstance: ReplayPresenter | undefined = undefined;
 export class ReplayPresenter {
   private currentLoadRequestId = 0;
 
-  constructor(private readonly replayService: ReplayService) {}
+  constructor(private readonly replayService: ReplayService, private readonly authService: AuthService) {}
 
   public async init(
     rootFolder: string,
@@ -206,7 +207,8 @@ export class ReplayPresenter {
         const { sortBy, sortDirection, hideShortGames, searchText } = useReplayFilter.getState();
 
         // Build filters from current state
-        const filters = buildReplayFilters(hideShortGames, searchText);
+        const currentUserId = this.authService.getCurrentUser()?.uid;
+        const filters = buildReplayFilters(hideShortGames, searchText, currentUserId);
 
         // Use searchGames with pagination - load first batch
         const result = await this.replayService.searchGames({
@@ -312,7 +314,8 @@ export class ReplayPresenter {
       const { sortBy, sortDirection, hideShortGames, searchText } = useReplayFilter.getState();
 
       // Build filters from current state
-      const filters = buildReplayFilters(hideShortGames, searchText);
+      const currentUserId = this.authService.getCurrentUser()?.uid;
+      const filters = buildReplayFilters(hideShortGames, searchText, currentUserId);
 
       // Load next batch of replays
       const result = await this.replayService.searchGames({
@@ -361,9 +364,9 @@ export class ReplayPresenter {
  * Get the singleton instance of ReplayPresenter.
  * This ensures only one presenter instance exists across the entire application.
  */
-export const getReplayPresenter = (replayService: ReplayService): ReplayPresenter => {
+export const getReplayPresenter = (replayService: ReplayService, authService: AuthService): ReplayPresenter => {
   if (!presenterInstance) {
-    presenterInstance = new ReplayPresenter(replayService);
+    presenterInstance = new ReplayPresenter(replayService, authService);
   }
   return presenterInstance;
 };
@@ -373,8 +376,8 @@ export const getReplayPresenter = (replayService: ReplayService): ReplayPresente
  * Use this instead of creating new ReplayPresenter instances directly.
  */
 export const useReplayPresenter = () => {
-  const { replayService } = useServices();
-  return getReplayPresenter(replayService);
+  const { replayService, authService } = useServices();
+  return getReplayPresenter(replayService, authService);
 };
 
 export const useReplaySelection = () => {

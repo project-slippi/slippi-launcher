@@ -5,6 +5,7 @@ import throttle from "lodash/throttle";
 
 import { getReplayPresenter } from "@/lib/hooks/use_replays";
 import { refreshChatMessages, useChatMessagesStore } from "@/pages/settings/chat_settings/use_chat_messages";
+import type { AuthService } from "@/services/auth/types";
 
 import { clearUserData, refreshUserData, useAccount } from "../lib/hooks/use_account";
 import { useAppStore } from "../lib/hooks/use_app_store";
@@ -82,8 +83,8 @@ export function installAppListeners(services: Services) {
   installDolphinListeners({ dolphinService, notificationService });
   installBroadcastListeners({ broadcastService, authService });
   installConsoleListeners({ consoleService, notificationService });
-  installReplayListeners({ replayService });
-  installSettingsChangeListeners({ replayService });
+  installReplayListeners({ replayService, authService });
+  installSettingsChangeListeners({ replayService, authService });
   installSpectateListeners({ spectateRemoteService });
 }
 
@@ -113,8 +114,14 @@ function installSpectateListeners({ spectateRemoteService }: { spectateRemoteSer
   );
 }
 
-export function installReplayListeners({ replayService }: { replayService: ReplayService }) {
-  const replayPresenter = getReplayPresenter(replayService);
+export function installReplayListeners({
+  replayService,
+  authService,
+}: {
+  replayService: ReplayService;
+  authService: AuthService;
+}) {
+  const replayPresenter = getReplayPresenter(replayService, authService);
 
   const updateProgress = (progress: Progress | undefined) => replayPresenter.updateProgress(progress);
   const throttledUpdateProgress = throttle(updateProgress, 50);
