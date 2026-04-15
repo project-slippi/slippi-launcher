@@ -14,6 +14,7 @@ import { BasicFooter } from "@/components/footer/footer";
 import { LabelledText } from "@/components/labelled_text";
 import { IconMessage } from "@/components/message";
 import { useDolphinActions } from "@/lib/dolphin/use_dolphin_actions";
+import { useAccount } from "@/lib/hooks/use_account";
 import { useDelayedLoading } from "@/lib/hooks/use_delayed_loading";
 import { useReplayBrowserList, useReplayBrowserNavigation } from "@/lib/hooks/use_replay_browser_list";
 import { buildReplayFilters, useReplayFilter } from "@/lib/hooks/use_replay_filter";
@@ -51,6 +52,7 @@ export const ReplayBrowser = React.memo(() => {
     }
   }, [replayProgress]);
 
+  const user = useAccount((store) => store.user);
   const currentFolder = useReplays((store) => store.currentFolder);
   const folderTree = useReplays((store) => store.folderTree);
   const collapsedFolders = useReplays((store) => store.collapsedFolders);
@@ -116,7 +118,7 @@ export const ReplayBrowser = React.memo(() => {
       if (selectAllMode) {
         // Get all file paths from the current folder with the same filters
         const { sortBy, sortDirection, hideShortGames, searchText } = useReplayFilter.getState();
-        const filters = buildReplayFilters(hideShortGames, searchText);
+        const filters = buildReplayFilters(hideShortGames, searchText, user?.uid);
         const allFilePaths = await replayService.getAllFilePaths({
           folderPath: currentFolder,
           orderBy: {
@@ -144,7 +146,7 @@ export const ReplayBrowser = React.memo(() => {
     } catch (err) {
       showError(err);
     }
-  }, [selectAllMode, selectedFiles, deselectedFiles, currentFolder, replayService, viewReplays, showError]);
+  }, [selectAllMode, selectedFiles, deselectedFiles, currentFolder, replayService, viewReplays, showError, user]);
 
   const handleDeleteAll = React.useCallback(async () => {
     try {
@@ -153,7 +155,7 @@ export const ReplayBrowser = React.memo(() => {
       if (selectAllMode) {
         // Use bulk delete with filters
         const { hideShortGames, searchText } = useReplayFilter.getState();
-        const filters = buildReplayFilters(hideShortGames, searchText);
+        const filters = buildReplayFilters(hideShortGames, searchText, user?.uid);
         const result = await replayService.bulkDeleteReplays({
           folderPath: currentFolder,
           filters,
@@ -183,6 +185,7 @@ export const ReplayBrowser = React.memo(() => {
     showSuccess,
     filteredFiles,
     presenter,
+    user,
   ]);
 
   return (

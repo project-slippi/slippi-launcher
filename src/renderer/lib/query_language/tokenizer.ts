@@ -8,6 +8,8 @@
 
 import type { Token } from "./types";
 
+export const ME_MARKER = "@me";
+
 /**
  * Tokenize a query string into an array of tokens
  *
@@ -63,6 +65,26 @@ export function tokenize(query: string): Token[] {
         });
         i += matchupMatch[0].length;
         continue;
+      }
+    }
+
+    // Handle @me negation pattern (-@me)
+    // Must appear at start of word (preceded by whitespace or start of string)
+    if (query[i] === "-" && (i === 0 || /\s/.test(query[i - 1]))) {
+      const rest = query.slice(i + 1);
+      if (rest.toLowerCase().startsWith(ME_MARKER)) {
+        // Check if it's exactly -@me or -@me followed by whitespace
+        const afterAtMe = rest.slice(ME_MARKER.length); // After "@me" (4 chars)
+        if (
+          afterAtMe.length === 0 || // Just -@me at end
+          /\s/.test(afterAtMe[0]) || // -@me followed by whitespace
+          afterAtMe[0] === ":" // -@me followed by colon (would be invalid but handle anyway)
+        ) {
+          tokens.push({ type: "OPERATOR", value: "NOT", position: i });
+          tokens.push({ type: "WORD", value: ME_MARKER, position: i + 1 });
+          i += ME_MARKER.length + 1; // Skip -@me
+          continue;
+        }
       }
     }
 

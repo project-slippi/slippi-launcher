@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
 import { convertToReplayFilters, parseQuery } from "../query_language";
+import { ME_MARKER } from "../query_language/tokenizer";
 import { ReplaySortOption, SortDirection } from "../replay_file_sort";
 
 export const useReplayFilter = create(
@@ -34,13 +35,38 @@ export const useReplayFilter = create(
  * This function now uses the query language parser to convert search text into structured filters.
  * The hideShortGames checkbox is still supported as a quick filter and merged with query filters.
  */
-export const buildReplayFilters = (hideShortGames: boolean, searchText: string): ReplayFilter[] => {
+export const buildReplayFilters = (
+  hideShortGames: boolean,
+  searchText: string,
+  userId: string | undefined,
+): ReplayFilter[] => {
+  console.log("Building filters for user:", userId);
   const filters: ReplayFilter[] = [];
 
   // Parse the search text using the query language parser
   if (searchText && searchText.trim() !== "") {
     const parsed = parseQuery(searchText);
-    const queryFilters = convertToReplayFilters(parsed.filters);
+    let queryFilters = convertToReplayFilters(parsed.filters);
+
+    // Resolve @me to actual user ID, removing filters where resolution fails (not logged in)
+    queryFilters = queryFilters.filter((filter) => {
+      if (filter.type !== "player") {
+        return true;
+      }
+
+      if (filter.userId === ME_MARKER) {
+        // We want to replace the ME_MARKER with our actual user id
+        if (!userId) {
+          // User not logged in, remove this filter since it's invalid
+          return false;
+        }
+
+        filter.userId = userId;
+        return true;
+      }
+
+      return true;
+    });
 
     // Add all query filters
     filters.push(...queryFilters);

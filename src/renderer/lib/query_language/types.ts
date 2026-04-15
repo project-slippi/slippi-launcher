@@ -71,6 +71,7 @@ export type MatchupFilter = {
  */
 export type PlayerFilterSpec = {
   connectCode?: string;
+  userId?: string; // Firebase user ID (supports @me alias)
   displayName?: string;
   tag?: string;
   characterIds?: number[]; // Character IDs (OR logic - player played any of these)
@@ -78,6 +79,7 @@ export type PlayerFilterSpec = {
   // Exact matching flags (true = use exact match with =, false/undefined = fuzzy match with LIKE)
   tagExact?: boolean;
   displayNameExact?: boolean;
+  negate?: boolean; // If true, excludes matches instead of including them
 };
 
 /**

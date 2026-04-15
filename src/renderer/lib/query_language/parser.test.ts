@@ -359,6 +359,44 @@ describe("Query Parser", () => {
       expect(result.filters.playerFilters?.[0].mustBeWinner).toBe(false);
       expect(result.errors).toHaveLength(0);
     });
+
+    it("should parse winner:@me as userId filter", () => {
+      const result = parseQuery("winner:@me");
+      expect(result.filters.playerFilters).toHaveLength(1);
+      expect(result.filters.playerFilters?.[0].userId).toBe("@me");
+      expect(result.filters.playerFilters?.[0].mustBeWinner).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse loser:@me as userId filter", () => {
+      const result = parseQuery("loser:@me");
+      expect(result.filters.playerFilters).toHaveLength(1);
+      expect(result.filters.playerFilters?.[0].userId).toBe("@me");
+      expect(result.filters.playerFilters?.[0].mustBeWinner).toBe(false);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse standalone @me as userId filter", () => {
+      const result = parseQuery("@me");
+      expect(result.filters.playerFilters).toHaveLength(1);
+      expect(result.filters.playerFilters?.[0].userId).toBe("@me");
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse @me with mixed case as userId filter", () => {
+      const result = parseQuery("@ME");
+      expect(result.filters.playerFilters).toHaveLength(1);
+      expect(result.filters.playerFilters?.[0].userId).toBe("@me");
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse -@me as negated userId filter", () => {
+      const result = parseQuery("-@me");
+      expect(result.filters.excludeFilters).toBeDefined();
+      expect(result.filters.excludeFilters?.playerFilters).toHaveLength(1);
+      expect(result.filters.excludeFilters?.playerFilters?.[0].userId).toBe("@me");
+      expect(result.errors).toHaveLength(0);
+    });
   });
 
   describe("Combined queries", () => {
