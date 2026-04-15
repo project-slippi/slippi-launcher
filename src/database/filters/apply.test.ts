@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import type { Database as DatabaseSchema } from "../schema";
 import { applyFilters } from "./apply";
-import type { PlayerFilter, StageFilter, TextSearchFilter } from "./types";
+import type { DurationFilter, PlayerFilter, StageFilter, TextSearchFilter } from "./types";
 
 describe("Text Search Filter", () => {
   let db: Kysely<DatabaseSchema>;
@@ -571,3 +571,175 @@ async function insertMockDataWithCharacters(db: Kysely<DatabaseSchema>) {
     ])
     .execute();
 }
+
+describe("Duration Filter", () => {
+  let db: Kysely<DatabaseSchema>;
+
+  beforeEach(async () => {
+    db = await initTestDb();
+  });
+
+  afterEach(async () => {
+    await db.destroy();
+  });
+
+  it("should filter games by minimum duration accounting for offset", async () => {
+    const fileId1 = await db
+      .insertInto("file")
+      .values({
+        name: "short.slp",
+        folder: "/test",
+        size_bytes: 1000,
+        birth_time: null,
+      })
+      .returning("_id")
+      .executeTakeFirstOrThrow();
+
+    const fileId2 = await db
+      .insertInto("file")
+      .values({
+        name: "medium.slp",
+        folder: "/test",
+        size_bytes: 2000,
+        birth_time: null,
+      })
+      .returning("_id")
+      .executeTakeFirstOrThrow();
+
+    const fileId3 = await db
+      .insertInto("file")
+      .values({
+        name: "long.slp",
+        folder: "/test",
+        size_bytes: 3000,
+        birth_time: null,
+      })
+      .returning("_id")
+      .executeTakeFirstOrThrow();
+
+    await db.insertInto("game").values({ file_id: fileId1._id, mode: 8, last_frame: 177 }).execute();
+    await db.insertInto("game").values({ file_id: fileId2._id, mode: 8, last_frame: 1823 }).execute();
+    await db.insertInto("game").values({ file_id: fileId3._id, mode: 8, last_frame: 3600 }).execute();
+
+    const filter: DurationFilter = { type: "duration", minFrames: 1800 };
+
+    let query = db.selectFrom("file").innerJoin("game", "game.file_id", "file._id");
+    query = applyFilters(query, [filter]);
+    const results = await query.selectAll(["file", "game"]).execute();
+
+    expect(results).toHaveLength(2);
+    expect(results.map((r) => r.name)).toEqual(expect.arrayContaining(["medium.slp", "long.slp"]));
+  });
+
+  it("should filter games by maximum duration accounting for offset", async () => {
+    const fileId1 = await db
+      .insertInto("file")
+      .values({
+        name: "short.slp",
+        folder: "/test",
+        size_bytes: 1000,
+        birth_time: null,
+      })
+      .returning("_id")
+      .executeTakeFirstOrThrow();
+
+    const fileId2 = await db
+      .insertInto("file")
+      .values({
+        name: "medium.slp",
+        folder: "/test",
+        size_bytes: 2000,
+        birth_time: null,
+      })
+      .returning("_id")
+      .executeTakeFirstOrThrow();
+
+    const fileId3 = await db
+      .insertInto("file")
+      .values({
+        name: "long.slp",
+        folder: "/test",
+        size_bytes: 3000,
+        birth_time: null,
+      })
+      .returning("_id")
+      .executeTakeFirstOrThrow();
+
+    await db.insertInto("game").values({ file_id: fileId1._id, mode: 8, last_frame: 177 }).execute();
+    await db.insertInto("game").values({ file_id: fileId2._id, mode: 8, last_frame: 1823 }).execute();
+    await db.insertInto("game").values({ file_id: fileId3._id, mode: 8, last_frame: 3600 }).execute();
+
+    const filter: DurationFilter = { type: "duration", maxFrames: 1800 };
+
+    let query = db.selectFrom("file").innerJoin("game", "game.file_id", "file._id");
+    query = applyFilters(query, [filter]);
+    const results = await query.selectAll(["file", "game"]).execute();
+
+    expect(results).toHaveLength(1);
+    expect(results[0].name).toBe("short.slp");
+  });
+
+  it("should filter games by duration range accounting for offset", async () => {
+    const fileId1 = await db
+      .insertInto("file")
+      .values({
+        name: "very_short.slp",
+        folder: "/test",
+        size_bytes: 1000,
+        birth_time: null,
+      })
+      .returning("_id")
+      .executeTakeFirstOrThrow();
+
+    const fileId2 = await db
+      .insertInto("file")
+      .values({
+        name: "short.slp",
+        folder: "/test",
+        size_bytes: 2000,
+        birth_time: null,
+      })
+      .returning("_id")
+      .executeTakeFirstOrThrow();
+
+    const fileId3 = await db
+      .insertInto("file")
+      .values({
+        name: "medium.slp",
+        folder: "/test",
+        size_bytes: 3000,
+        birth_time: null,
+      })
+      .returning("_id")
+      .executeTakeFirstOrThrow();
+
+    const fileId4 = await db
+      .insertInto("file")
+      .values({
+        name: "long.slp",
+        folder: "/test",
+        size_bytes: 4000,
+        birth_time: null,
+      })
+      .returning("_id")
+      .executeTakeFirstOrThrow();
+
+    await db.insertInto("game").values({ file_id: fileId1._id, mode: 8, last_frame: 100 }).execute();
+    await db.insertInto("game").values({ file_id: fileId2._id, mode: 8, last_frame: 1777 }).execute();
+    await db.insertInto("game").values({ file_id: fileId3._id, mode: 8, last_frame: 2500 }).execute();
+    await db.insertInto("game").values({ file_id: fileId4._id, mode: 8, last_frame: 5000 }).execute();
+
+    const filter: DurationFilter = {
+      type: "duration",
+      minFrames: 600,
+      maxFrames: 2700,
+    };
+
+    let query = db.selectFrom("file").innerJoin("game", "game.file_id", "file._id");
+    query = applyFilters(query, [filter]);
+    const results = await query.selectAll(["file", "game"]).execute();
+
+    expect(results).toHaveLength(2);
+    expect(results.map((r) => r.name)).toEqual(expect.arrayContaining(["short.slp", "medium.slp"]));
+  });
+});

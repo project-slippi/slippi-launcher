@@ -6,6 +6,14 @@ import type { ReplayFilter } from "./types";
 import { STADIUM_GAME_MODES } from "./types";
 
 /**
+ * Duration offset in frames.
+ * The first frame in a replay is -123, so raw last_frame values start at -123.
+ * When displaying duration to users, 123 is added (see time.ts).
+ * This constant converts user-facing frames to raw database frames.
+ */
+export const DURATION_OFFSET = -123;
+
+/**
  * Apply all filters to a query
  */
 export function applyFilters(
@@ -58,11 +66,13 @@ function applyDurationFilter(
     const durationConditions = [];
 
     if (filter.minFrames != null) {
-      durationConditions.push(eb("game.last_frame", ">=", filter.minFrames));
+      // Convert user-facing frames to raw database frames
+      durationConditions.push(eb("game.last_frame", ">=", filter.minFrames + DURATION_OFFSET));
     }
 
     if (filter.maxFrames != null) {
-      durationConditions.push(eb("game.last_frame", "<=", filter.maxFrames));
+      // Convert user-facing frames to raw database frames
+      durationConditions.push(eb("game.last_frame", "<=", filter.maxFrames + DURATION_OFFSET));
     }
 
     // Combine duration conditions with AND
