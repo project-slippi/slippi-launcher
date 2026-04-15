@@ -18,16 +18,24 @@ This module provides a query language parser for the Slippi Launcher replay brow
 ### Basic Search
 
 ```
-mango                    # Search for "mango" in player names/tags/connect codes
+mango                   # Search for "mango" in player names/tags/connect codes
 "Liquid Hbox"           # Use quotes for names with spaces
 ```
 
 ### Duration Filters
 
 ```
-minDuration:30s         # Minimum 30 seconds
-maxDuration:5m          # Maximum 5 minutes
-minDuration:1800f       # Minimum 1800 frames (explicit)
+duration:>30s               # Games longer than 30 seconds
+duration:<5m                # Games less than 5 minutes
+duration:30s                # Games at least 30 seconds (default to min)
+duration:>30s duration:<4m  # Games between 30 seconds and 4 minutes
+duration:1800f              # Minimum 1800 frames (explicit)
+
+# Combined units (must be in descending order: h > m > s > f)
+duration:1m30s              # 1 minute 30 seconds
+duration:>1m30s             # Greater than 1 minute 30 seconds
+duration:<2h30m            # Less than 2 hours 30 minutes
+duration:1h30m15s          # 1 hour 30 minutes 15 seconds
 ```
 
 ### Character Filters
@@ -56,7 +64,7 @@ winner:MANG#0           # MANG#0 won the game
 ### Matchup Filters
 
 ```
-fox>marth               # Fox beat Marth
+fox>marth              # Fox beat Marth
 fox>                   # Fox won (any opponent)
 >marth                 # Marth lost (any opponent)
 puff>falco stage:FD    # Puff beat Falco on Final Destination
@@ -65,10 +73,11 @@ puff>falco stage:FD    # Puff beat Falco on Final Destination
 ### Combining Filters
 
 ```
-mango stage:FD minDuration:30s          # Multiple filters
+mango stage:FD duration:>30s            # Multiple filters
 char:fox winner:MANG#0                  # Fox player who won
 fox>marth                               # Fox beat Marth
 puff> stage:FD                          # Puff won on Final Destination
+duration:>30s duration:<4m              # Games between 30 seconds and 4 minutes
 ```
 
 ### Negation
@@ -87,7 +96,7 @@ puff> stage:FD                          # Puff won on Final Destination
 ```typescript
 import { parseQuery, convertToReplayFilters } from "@/lib/query_language";
 
-const query = "mango char:fox minDuration:30s";
+const query = "mango char:fox duration:>30s";
 const parsed = parseQuery(query);
 
 console.log(parsed);
@@ -139,7 +148,7 @@ parseQuery("mango");
 ### Example 2: Character and duration
 
 ```typescript
-parseQuery("char:fox minDuration:1m");
+parseQuery("char:fox duration:>1m");
 // Result: {
 //   searchText: [],
 //   filters: {
@@ -153,7 +162,7 @@ parseQuery("char:fox minDuration:1m");
 ### Example 3: Complex query
 
 ```typescript
-parseQuery("mango char:fox,falco minDuration:30s winner:MANG#0");
+parseQuery("mango char:fox,falco duration:>30s winner:MANG#0");
 // Result: {
 //   searchText: ["mango"],
 //   filters: {
@@ -270,7 +279,7 @@ const { parseQuery } = require("@/lib/query_language");
 
 // Test various queries
 parseQuery("mango");
-parseQuery("char:fox minDuration:30s");
+parseQuery("char:fox duration:>30s");
 parseQuery("winner:MANG#0 char:fox");
 ```
 
