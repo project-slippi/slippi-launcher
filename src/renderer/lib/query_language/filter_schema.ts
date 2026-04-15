@@ -106,9 +106,9 @@ export const FILTER_SCHEMA: FilterDefinition[] = [
   },
   {
     key: "date",
-    description: "Game start date (YYYY-MM-DD format)",
+    description: "Game start date (YYYY, YYYY-MM, or YYYY-MM-DD format)",
     valueType: "date",
-    examples: ["date:>2024-01-01", "date:<2024-06-01", "date:2024-01-15", "date:>=2024-01-01"],
+    examples: ["date:2026", "date:2025-02", "date:2024-01-15", "date:>2025-02", "date:<2025-06", "date:>=2024-01-01"],
     category: "date",
   },
 ];

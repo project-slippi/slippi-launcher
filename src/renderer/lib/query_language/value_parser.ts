@@ -275,52 +275,59 @@ function parseNumber(value: string): number {
 
 /**
  * Parse date value with comparison operator
- * Format: YYYY-MM-DD (ISO 8601)
+ * Supports partial dates: YYYY, YYYY-MM, YYYY-MM-DD
  * Supports operators: >, <, >=, <=, =
  *
  * Examples:
- * - "2024-01-15" -> { operator: undefined, isoString: "2024-01-15T00:00:00.000Z", endIsoString: "2024-01-16T00:00:00.000Z" }
- * - ">2024-01-15" -> { operator: ">", isoString: "2024-01-15T00:00:00.000Z" }
- * - "<2024-06-01" -> { operator: "<", isoString: "2024-06-01T00:00:00.000Z" }
- * - ">=2024-01-01" -> { operator: ">=", isoString: "2024-01-01T00:00:00.000Z" }
- * - "<=2024-12-31" -> { operator: "<=", isoString: "2024-12-31T00:00:00.000Z" }
+ * - "2026" -> { operator: undefined, isoString: "2026-01-01...", endIsoString: "2027-01-01..." }
+ * - "2025-02" -> { operator: undefined, isoString: "2025-02-01...", endIsoString: "2025-03-01..." }
+ * - "2024-01-15" -> { operator: undefined, isoString: "2024-01-15...", endIsoString: "2024-01-16..." }
+ * - ">2024-01-15" -> { operator: ">", isoString: "2024-01-15..." }
+ * - "<2024-06-01" -> { operator: "<", isoString: "2024-06-01..." }
+ * - ">=2024-01-01" -> { operator: ">=", isoString: "2024-01-01..." }
+ * - "<=2024-12-31" -> { operator: "<=", isoString: "2024-12-31..." }
  *
- * Note: For exact dates (no operator), endIsoString is set to the start of the next day
- * so that date:2024-01-15 matches any time on that day (>= start and < next day).
+ * For exact dates (no operator), endIsoString is set to the start of the next period
+ * so that date:2024-01-15 matches any time on that day, date:2025-02 matches all of February, etc.
  */
 function parseDate(value: string): {
   operator?: ">" | "<" | ">=" | "<=";
   isoString: string;
   endIsoString?: string;
 } {
-  const operatorMatch = value.match(/^([><=]+)?(\d{4}-\d{2}-\d{2})$/);
+  const operatorMatch = value.match(/^([><=]+)?(\d{4})(?:-(\d{2}))?(?:-(\d{2}))?$/);
   if (!operatorMatch) {
-    throw new Error(`Invalid date format: "${value}". Expected format: YYYY-MM-DD (e.g., 2024-01-15)`);
+    throw new Error(`Invalid date format: "${value}". Expected YYYY, YYYY-MM, or YYYY-MM-DD (e.g., 2024-01-15)`);
   }
 
-  const [, operatorStr, dateStr] = operatorMatch;
+  const [, operatorStr, yearStr, monthStr, dayStr] = operatorMatch;
   const operator = operatorStr as (">" | "<" | ">=" | "<=") | undefined;
 
-  const dateParts = dateStr.split("-");
-  const year = parseInt(dateParts[0], 10);
-  const month = parseInt(dateParts[1], 10);
-  const day = parseInt(dateParts[2], 10);
+  const year = parseInt(yearStr, 10);
+  const month = monthStr ? parseInt(monthStr, 10) : null;
+  const day = dayStr ? parseInt(dayStr, 10) : null;
 
-  if (month < 1 || month > 12) {
-    throw new Error(`Invalid month: ${month}. Must be between 01 and 12`);
+  if (month !== null && (month < 1 || month > 12)) {
+    throw new Error(`Invalid month: ${month}. Must be 01-12`);
   }
 
-  if (day < 1 || day > 31) {
-    throw new Error(`Invalid day: ${day}. Must be between 01 and 31`);
+  if (day !== null && (day < 1 || day > 31)) {
+    throw new Error(`Invalid day: ${day}. Must be 01-31`);
   }
 
-  const date = new Date(year, month - 1, day);
-  const isoString = date.toISOString();
+  const startDate = new Date(year, (month ?? 1) - 1, day ?? 1);
+  const isoString = startDate.toISOString();
 
   if (!operator) {
-    const nextDay = new Date(year, month - 1, day + 1);
-    const endIsoString = nextDay.toISOString();
-    return { operator, isoString, endIsoString };
+    let endDate: Date;
+    if (day !== null) {
+      endDate = new Date(year, month! - 1, day + 1);
+    } else if (month !== null) {
+      endDate = new Date(year, month, 1);
+    } else {
+      endDate = new Date(year + 1, 0, 1);
+    }
+    return { operator, isoString, endIsoString: endDate.toISOString() };
   }
 
   return { operator, isoString };
