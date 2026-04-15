@@ -12,6 +12,7 @@ This module provides a query language parser for the Slippi Launcher replay brow
 - **Matchup filters**: Search by character vs character (winner > loser syntax)
 - **Date filters**: Search by game date with partial date support (YYYY, YYYY-MM, YYYY-MM-DD)
 - **Negation**: Use `-` prefix to exclude results
+- **@me marker**: Special keyword for the current user's games
 - **Error handling**: Graceful error handling with detailed error messages
 
 ## Query Syntax
@@ -61,6 +62,19 @@ code:MANG#0             # Player with connect code MANG#0
 tag:Mango               # Player with tag "Mango"
 winner:MANG#0           # MANG#0 won the game
 ```
+
+### Special Markers
+
+```
+@me                     # The current user's games
+-@me                    # Exclude the current user's games
+winner:@me              # Current user won the game
+loser:@me               # Current user lost the game
+@me char:fox            # Current user's Fox games
+@me stage:FD -@me       # Include and exclude current user (cancels out)
+```
+
+The `@me` marker is a special keyword that refers to the currently logged-in user's Firebase user ID. It can be used with player filters to quickly find games involving yourself. Use `-@me` to exclude your games. The marker is case-insensitive (`@ME`, `@Me`, `@me` all work).
 
 ### Matchup Filters
 
