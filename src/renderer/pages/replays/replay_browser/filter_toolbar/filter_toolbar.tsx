@@ -56,9 +56,19 @@ export const FilterToolbar = React.forwardRef<HTMLInputElement, FilterToolbarPro
     presenter.init(rootSlpPath, extraSlpPaths, true, currentFolder).catch(showError);
   }, [presenter, rootSlpPath, extraSlpPaths, currentFolder, showError]);
 
-  const debounceChange = debounce((text: string) => {
-    setStoreSearchText(text);
-  }, 300);
+  const debounceChange = React.useMemo(
+    () =>
+      debounce((text: string) => {
+        setStoreSearchText(text);
+      }, 300),
+    [setStoreSearchText],
+  );
+
+  React.useEffect(() => {
+    return () => {
+      debounceChange.cancel();
+    };
+  }, [debounceChange]);
 
   const setNameFilter = (name: string) => {
     setSearchText(name);
