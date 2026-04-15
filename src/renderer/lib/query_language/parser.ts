@@ -225,19 +225,20 @@ function applyFilter(filters: QueryFilters, key: string, value: any, negate: boo
     const date = value as {
       operator?: ">" | "<" | ">=" | "<=";
       isoString: string;
+      endIsoString?: string;
     };
     if (date.operator === ">") {
       filters.minDate = date.isoString;
     } else if (date.operator === "<") {
-      filters.maxDate = date.isoString;
+      filters.maxDateExclusive = date.isoString;
     } else if (date.operator === ">=") {
       filters.minDate = date.isoString;
     } else if (date.operator === "<=") {
       filters.maxDate = date.isoString;
     } else {
-      // Exact date: >= and <= the same date
+      // Exact date: >= start of day AND < start of next day
       filters.minDate = date.isoString;
-      filters.maxDate = date.isoString;
+      filters.maxDateExclusive = date.endIsoString;
     }
     return;
   }
@@ -399,11 +400,16 @@ export function convertToReplayFilters(queryFilters: QueryFilters): ReplayFilter
   }
 
   // Date filter
-  if (queryFilters.minDate !== undefined || queryFilters.maxDate !== undefined) {
+  if (
+    queryFilters.minDate !== undefined ||
+    queryFilters.maxDate !== undefined ||
+    queryFilters.maxDateExclusive !== undefined
+  ) {
     filters.push({
       type: "date",
       minDate: queryFilters.minDate,
       maxDate: queryFilters.maxDate,
+      maxDateExclusive: queryFilters.maxDateExclusive,
     });
   }
 

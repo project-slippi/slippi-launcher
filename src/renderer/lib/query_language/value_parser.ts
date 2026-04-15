@@ -279,19 +279,19 @@ function parseNumber(value: string): number {
  * Supports operators: >, <, >=, <=, =
  *
  * Examples:
- * - "2024-01-15" -> { operator: undefined, isoString: "2024-01-15T00:00:00.000Z" }
+ * - "2024-01-15" -> { operator: undefined, isoString: "2024-01-15T00:00:00.000Z", endIsoString: "2024-01-16T00:00:00.000Z" }
  * - ">2024-01-15" -> { operator: ">", isoString: "2024-01-15T00:00:00.000Z" }
  * - "<2024-06-01" -> { operator: "<", isoString: "2024-06-01T00:00:00.000Z" }
  * - ">=2024-01-01" -> { operator: ">=", isoString: "2024-01-01T00:00:00.000Z" }
  * - "<=2024-12-31" -> { operator: "<=", isoString: "2024-12-31T00:00:00.000Z" }
  *
- * Note: The ISO string uses the start of day (00:00:00.000) in the local timezone
- * to ensure correct date filtering. The database stores start_time as ISO strings
- * in local time, so we need to match that format.
+ * Note: For exact dates (no operator), endIsoString is set to the start of the next day
+ * so that date:2024-01-15 matches any time on that day (>= start and < next day).
  */
 function parseDate(value: string): {
   operator?: ">" | "<" | ">=" | "<=";
   isoString: string;
+  endIsoString?: string;
 } {
   const operatorMatch = value.match(/^([><=]+)?(\d{4}-\d{2}-\d{2})$/);
   if (!operatorMatch) {
@@ -316,6 +316,12 @@ function parseDate(value: string): {
 
   const date = new Date(year, month - 1, day);
   const isoString = date.toISOString();
+
+  if (!operator) {
+    const nextDay = new Date(year, month - 1, day + 1);
+    const endIsoString = nextDay.toISOString();
+    return { operator, isoString, endIsoString };
+  }
 
   return { operator, isoString };
 }
