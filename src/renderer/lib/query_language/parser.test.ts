@@ -397,6 +397,48 @@ describe("Query Parser", () => {
       expect(result.filters.excludeFilters?.playerFilters?.[0].userId).toBe("@me");
       expect(result.errors).toHaveLength(0);
     });
+
+    it("should parse -@ME as negated userId filter (case insensitive)", () => {
+      const result = parseQuery("-@ME");
+      expect(result.filters.excludeFilters).toBeDefined();
+      expect(result.filters.excludeFilters?.playerFilters).toHaveLength(1);
+      expect(result.filters.excludeFilters?.playerFilters?.[0].userId).toBe("@me");
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse @me with other filters", () => {
+      const result = parseQuery("@me char:fox");
+      expect(result.filters.playerFilters).toHaveLength(2);
+      expect(result.filters.playerFilters?.[0].userId).toBe("@me");
+      expect(result.filters.playerFilters?.[1].characterIds).toEqual([2]);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse -@me with other filters", () => {
+      const result = parseQuery("-@me char:fox");
+      expect(result.filters.excludeFilters?.playerFilters).toHaveLength(1);
+      expect(result.filters.excludeFilters?.playerFilters?.[0].userId).toBe("@me");
+      expect(result.filters.playerFilters).toHaveLength(1);
+      expect(result.filters.playerFilters?.[0].characterIds).toEqual([2]);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse @me followed by -@me", () => {
+      const result = parseQuery("@me -@me");
+      expect(result.filters.playerFilters).toHaveLength(1);
+      expect(result.filters.playerFilters?.[0].userId).toBe("@me");
+      expect(result.filters.excludeFilters?.playerFilters).toHaveLength(1);
+      expect(result.filters.excludeFilters?.playerFilters?.[0].userId).toBe("@me");
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should parse @me with stage filter", () => {
+      const result = parseQuery("@me stage:FD");
+      expect(result.filters.playerFilters).toHaveLength(1);
+      expect(result.filters.playerFilters?.[0].userId).toBe("@me");
+      expect(result.filters.stageIds).toEqual([32]);
+      expect(result.errors).toHaveLength(0);
+    });
   });
 
   describe("Combined queries", () => {
