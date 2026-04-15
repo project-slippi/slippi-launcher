@@ -35,8 +35,8 @@ duration:1800f              # Minimum 1800 frames (explicit)
 # Combined units (must be in descending order: h > m > s > f)
 duration:1m30s              # 1 minute 30 seconds
 duration:>1m30s             # Greater than 1 minute 30 seconds
-duration:<2h30m            # Less than 2 hours 30 minutes
-duration:1h30m15s          # 1 hour 30 minutes 15 seconds
+duration:<2h30m             # Less than 2 hours 30 minutes
+duration:1h30m15s           # 1 hour 30 minutes 15 seconds
 ```
 
 ### Character Filters
@@ -74,15 +74,15 @@ puff>falco stage:FD    # Puff beat Falco on Final Destination
 ### Date Filters
 
 ```
-date:2026              # Games from 2026 (entire year)
-date:2025-02           # Games from February 2025 (entire month)
-date:2024-01-15        # Games from January 15, 2024 (entire day)
-date:>2025-02          # Games after February 2025
-date:<2025-06          # Games before June 2025
-date:>=2024-01-01      # Games on or after January 1, 2024
-date:<=2024-12-31      # Games on or before December 31, 2024
+date:2026                    # Games from 2026 (entire year)
+date:2025-02                 # Games from February 2025 (entire month)
+date:2024-01-15              # Games from January 15, 2024 (entire day)
+date:>2025-02                # Games after February 2025
+date:<2025-06                # Games before June 2025
+date:>=2024-01-01            # Games on or after January 1, 2024
+date:<=2024-12-31            # Games on or before December 31, 2024
 date:>2025-02 date:<2025-06  # Games between February and June 2025 (exclusive)
--date:2024-01-15       # Exclude games from January 15, 2024
+-date:2024-01-15             # Exclude games from January 15, 2024
 ```
 
 Date filters support three formats:
