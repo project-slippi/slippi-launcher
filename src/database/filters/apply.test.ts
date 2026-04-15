@@ -3,7 +3,7 @@ import type { Kysely } from "kysely";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import type { Database as DatabaseSchema } from "../schema";
-import { applyFilters } from "./apply";
+import { applyFilters, DURATION_OFFSET } from "./apply";
 import type { DurationFilter, PlayerFilter, StageFilter, TextSearchFilter } from "./types";
 
 describe("Text Search Filter", () => {
@@ -584,32 +584,36 @@ describe("Duration Filter", () => {
   });
 
   it("should filter games by minimum duration accounting for offset", async () => {
+    // User searches for 30s (1800 frames)
+    // Backend applies: last_frame >= 1800 + DURATION_OFFSET = 1800 - 123 = 1777
+    // So raw last_frame must be >= 1777 to be included
+    const userSearchFrames = 1800;
+    const minRawFrame = userSearchFrames + DURATION_OFFSET;
+
     const fileId1 = await db
       .insertInto("file")
       .values({
-        name: "short.slp",
+        name: "just_under.slp",
         folder: "/test",
         size_bytes: 1000,
         birth_time: null,
       })
       .returning("_id")
       .executeTakeFirstOrThrow();
-
     const fileId2 = await db
       .insertInto("file")
       .values({
-        name: "medium.slp",
+        name: "at_boundary.slp",
         folder: "/test",
         size_bytes: 2000,
         birth_time: null,
       })
       .returning("_id")
       .executeTakeFirstOrThrow();
-
     const fileId3 = await db
       .insertInto("file")
       .values({
-        name: "long.slp",
+        name: "just_over.slp",
         folder: "/test",
         size_bytes: 3000,
         birth_time: null,
@@ -617,122 +621,22 @@ describe("Duration Filter", () => {
       .returning("_id")
       .executeTakeFirstOrThrow();
 
-    await db.insertInto("game").values({ file_id: fileId1._id, mode: 8, last_frame: 177 }).execute();
-    await db.insertInto("game").values({ file_id: fileId2._id, mode: 8, last_frame: 1823 }).execute();
-    await db.insertInto("game").values({ file_id: fileId3._id, mode: 8, last_frame: 3600 }).execute();
-
-    const filter: DurationFilter = { type: "duration", minFrames: 1800 };
-
-    let query = db.selectFrom("file").innerJoin("game", "game.file_id", "file._id");
-    query = applyFilters(query, [filter]);
-    const results = await query.selectAll(["file", "game"]).execute();
-
-    expect(results).toHaveLength(2);
-    expect(results.map((r) => r.name)).toEqual(expect.arrayContaining(["medium.slp", "long.slp"]));
-  });
-
-  it("should filter games by maximum duration accounting for offset", async () => {
-    const fileId1 = await db
-      .insertInto("file")
-      .values({
-        name: "short.slp",
-        folder: "/test",
-        size_bytes: 1000,
-        birth_time: null,
-      })
-      .returning("_id")
-      .executeTakeFirstOrThrow();
-
-    const fileId2 = await db
-      .insertInto("file")
-      .values({
-        name: "medium.slp",
-        folder: "/test",
-        size_bytes: 2000,
-        birth_time: null,
-      })
-      .returning("_id")
-      .executeTakeFirstOrThrow();
-
-    const fileId3 = await db
-      .insertInto("file")
-      .values({
-        name: "long.slp",
-        folder: "/test",
-        size_bytes: 3000,
-        birth_time: null,
-      })
-      .returning("_id")
-      .executeTakeFirstOrThrow();
-
-    await db.insertInto("game").values({ file_id: fileId1._id, mode: 8, last_frame: 177 }).execute();
-    await db.insertInto("game").values({ file_id: fileId2._id, mode: 8, last_frame: 1823 }).execute();
-    await db.insertInto("game").values({ file_id: fileId3._id, mode: 8, last_frame: 3600 }).execute();
-
-    const filter: DurationFilter = { type: "duration", maxFrames: 1800 };
-
-    let query = db.selectFrom("file").innerJoin("game", "game.file_id", "file._id");
-    query = applyFilters(query, [filter]);
-    const results = await query.selectAll(["file", "game"]).execute();
-
-    expect(results).toHaveLength(1);
-    expect(results[0].name).toBe("short.slp");
-  });
-
-  it("should filter games by duration range accounting for offset", async () => {
-    const fileId1 = await db
-      .insertInto("file")
-      .values({
-        name: "very_short.slp",
-        folder: "/test",
-        size_bytes: 1000,
-        birth_time: null,
-      })
-      .returning("_id")
-      .executeTakeFirstOrThrow();
-
-    const fileId2 = await db
-      .insertInto("file")
-      .values({
-        name: "short.slp",
-        folder: "/test",
-        size_bytes: 2000,
-        birth_time: null,
-      })
-      .returning("_id")
-      .executeTakeFirstOrThrow();
-
-    const fileId3 = await db
-      .insertInto("file")
-      .values({
-        name: "medium.slp",
-        folder: "/test",
-        size_bytes: 3000,
-        birth_time: null,
-      })
-      .returning("_id")
-      .executeTakeFirstOrThrow();
-
-    const fileId4 = await db
-      .insertInto("file")
-      .values({
-        name: "long.slp",
-        folder: "/test",
-        size_bytes: 4000,
-        birth_time: null,
-      })
-      .returning("_id")
-      .executeTakeFirstOrThrow();
-
-    await db.insertInto("game").values({ file_id: fileId1._id, mode: 8, last_frame: 100 }).execute();
-    await db.insertInto("game").values({ file_id: fileId2._id, mode: 8, last_frame: 1777 }).execute();
-    await db.insertInto("game").values({ file_id: fileId3._id, mode: 8, last_frame: 2500 }).execute();
-    await db.insertInto("game").values({ file_id: fileId4._id, mode: 8, last_frame: 5000 }).execute();
+    // Game at boundary: last_frame = 1777 should be included (1777 >= 1777)
+    await db.insertInto("game").values({ file_id: fileId2._id, mode: 8, last_frame: minRawFrame }).execute();
+    // Game just under: last_frame = 1776 should be excluded (1776 < 1777)
+    await db
+      .insertInto("game")
+      .values({ file_id: fileId1._id, mode: 8, last_frame: minRawFrame - 1 })
+      .execute();
+    // Game just over: last_frame = 1778 should be included (1778 >= 1777)
+    await db
+      .insertInto("game")
+      .values({ file_id: fileId3._id, mode: 8, last_frame: minRawFrame + 1 })
+      .execute();
 
     const filter: DurationFilter = {
       type: "duration",
-      minFrames: 600,
-      maxFrames: 2700,
+      minFrames: userSearchFrames,
     };
 
     let query = db.selectFrom("file").innerJoin("game", "game.file_id", "file._id");
@@ -740,6 +644,172 @@ describe("Duration Filter", () => {
     const results = await query.selectAll(["file", "game"]).execute();
 
     expect(results).toHaveLength(2);
-    expect(results.map((r) => r.name)).toEqual(expect.arrayContaining(["short.slp", "medium.slp"]));
+    expect(results.map((r) => r.name)).toEqual(expect.arrayContaining(["at_boundary.slp", "just_over.slp"]));
+    expect(results.map((r) => r.name)).not.toContain("just_under.slp");
+  });
+
+  it("should filter games by maximum duration accounting for offset", async () => {
+    // User searches for max 30s (1800 frames)
+    // Backend applies: last_frame <= 1800 + DURATION_OFFSET = 1800 - 123 = 1777
+    // So raw last_frame must be <= 1777 to be included
+    const userSearchFrames = 1800;
+    const maxRawFrame = userSearchFrames + DURATION_OFFSET;
+
+    const fileId1 = await db
+      .insertInto("file")
+      .values({
+        name: "just_under.slp",
+        folder: "/test",
+        size_bytes: 1000,
+        birth_time: null,
+      })
+      .returning("_id")
+      .executeTakeFirstOrThrow();
+    const fileId2 = await db
+      .insertInto("file")
+      .values({
+        name: "at_boundary.slp",
+        folder: "/test",
+        size_bytes: 2000,
+        birth_time: null,
+      })
+      .returning("_id")
+      .executeTakeFirstOrThrow();
+    const fileId3 = await db
+      .insertInto("file")
+      .values({
+        name: "just_over.slp",
+        folder: "/test",
+        size_bytes: 3000,
+        birth_time: null,
+      })
+      .returning("_id")
+      .executeTakeFirstOrThrow();
+
+    // Game at boundary: last_frame = 1777 should be included (1777 <= 1777)
+    await db.insertInto("game").values({ file_id: fileId2._id, mode: 8, last_frame: maxRawFrame }).execute();
+    // Game just under: last_frame = 1776 should be included (1776 <= 1777)
+    await db
+      .insertInto("game")
+      .values({ file_id: fileId1._id, mode: 8, last_frame: maxRawFrame - 1 })
+      .execute();
+    // Game just over: last_frame = 1778 should be excluded (1778 > 1777)
+    await db
+      .insertInto("game")
+      .values({ file_id: fileId3._id, mode: 8, last_frame: maxRawFrame + 1 })
+      .execute();
+
+    const filter: DurationFilter = {
+      type: "duration",
+      maxFrames: userSearchFrames,
+    };
+
+    let query = db.selectFrom("file").innerJoin("game", "game.file_id", "file._id");
+    query = applyFilters(query, [filter]);
+    const results = await query.selectAll(["file", "game"]).execute();
+
+    expect(results).toHaveLength(2);
+    expect(results.map((r) => r.name)).toEqual(expect.arrayContaining(["just_under.slp", "at_boundary.slp"]));
+    expect(results.map((r) => r.name)).not.toContain("just_over.slp");
+  });
+
+  it("should filter games by duration range accounting for offset", async () => {
+    // User searches for min 10s (600 frames), max 45s (2700 frames)
+    // Backend applies:
+    //   min: last_frame >= 600 + DURATION_OFFSET = 600 - 123 = 477
+    //   max: last_frame <= 2700 + DURATION_OFFSET = 2700 - 123 = 2577
+    const userMinFrames = 600;
+    const userMaxFrames = 2700;
+    const minRawFrame = userMinFrames + DURATION_OFFSET;
+    const maxRawFrame = userMaxFrames + DURATION_OFFSET;
+
+    const fileId1 = await db
+      .insertInto("file")
+      .values({
+        name: "below_range.slp",
+        folder: "/test",
+        size_bytes: 1000,
+        birth_time: null,
+      })
+      .returning("_id")
+      .executeTakeFirstOrThrow();
+    const fileId2 = await db
+      .insertInto("file")
+      .values({
+        name: "at_min_boundary.slp",
+        folder: "/test",
+        size_bytes: 2000,
+        birth_time: null,
+      })
+      .returning("_id")
+      .executeTakeFirstOrThrow();
+    const fileId3 = await db
+      .insertInto("file")
+      .values({
+        name: "in_range.slp",
+        folder: "/test",
+        size_bytes: 3000,
+        birth_time: null,
+      })
+      .returning("_id")
+      .executeTakeFirstOrThrow();
+    const fileId4 = await db
+      .insertInto("file")
+      .values({
+        name: "at_max_boundary.slp",
+        folder: "/test",
+        size_bytes: 4000,
+        birth_time: null,
+      })
+      .returning("_id")
+      .executeTakeFirstOrThrow();
+    const fileId5 = await db
+      .insertInto("file")
+      .values({
+        name: "above_range.slp",
+        folder: "/test",
+        size_bytes: 5000,
+        birth_time: null,
+      })
+      .returning("_id")
+      .executeTakeFirstOrThrow();
+
+    // Below range: last_frame = 476 (< 477) - should be excluded
+    await db
+      .insertInto("game")
+      .values({ file_id: fileId1._id, mode: 8, last_frame: minRawFrame - 1 })
+      .execute();
+    // At min boundary: last_frame = 477 (>= 477 && <= 2577) - should be included
+    await db.insertInto("game").values({ file_id: fileId2._id, mode: 8, last_frame: minRawFrame }).execute();
+    // In range: last_frame = 1500 (>= 477 && <= 2577) - should be included
+    await db.insertInto("game").values({ file_id: fileId3._id, mode: 8, last_frame: 1500 }).execute();
+    // At max boundary: last_frame = 2577 (>= 477 && <= 2577) - should be included
+    await db.insertInto("game").values({ file_id: fileId4._id, mode: 8, last_frame: maxRawFrame }).execute();
+    // Above range: last_frame = 2578 (> 2577) - should be excluded
+    await db
+      .insertInto("game")
+      .values({ file_id: fileId5._id, mode: 8, last_frame: maxRawFrame + 1 })
+      .execute();
+
+    const filter: DurationFilter = {
+      type: "duration",
+      minFrames: userMinFrames,
+      maxFrames: userMaxFrames,
+    };
+
+    let query = db.selectFrom("file").innerJoin("game", "game.file_id", "file._id");
+    query = applyFilters(query, [filter]);
+    const results = await query.selectAll(["file", "game"]).execute();
+
+    expect(results).toHaveLength(3);
+    expect(results.map((r) => r.name)).toEqual(
+      expect.arrayContaining(["at_min_boundary.slp", "in_range.slp", "at_max_boundary.slp"]),
+    );
+    expect(results.map((r) => r.name)).not.toContain("below_range.slp");
+    expect(results.map((r) => r.name)).not.toContain("above_range.slp");
+  });
+
+  it("should verify DURATION_OFFSET constant is -123", () => {
+    expect(DURATION_OFFSET).toBe(-123);
   });
 });
