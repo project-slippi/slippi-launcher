@@ -24,7 +24,7 @@ For information on the query syntax, see [SYNTAX.md](SYNTAX.md).
 ### Basic Parsing
 
 ```typescript
-import { parseQuery, convertToReplayFilters } from "@/lib/query_language";
+import { parseQuery, convertToReplayFilters } from "@/lib/query_language/parser";
 
 const query = "mango char:fox duration:>30s";
 const parsed = parseQuery(query);
@@ -201,7 +201,7 @@ The parser is organized into several modules:
 You can test the parser in the browser console:
 
 ```javascript
-const { parseQuery } = require("@/lib/query_language");
+const { parseQuery } = require("@/lib/query_language/parser");
 
 // Test various queries
 parseQuery("mango");
