@@ -1,8 +1,13 @@
+// Should be kept in sync with _scrollbar.scss
+// We use this to keep the tab list bar from overlapping the vertical scrollbar
+$scrolltrack-width: 10px;
+
 .Root {
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100%;
+  position: relative;
 }
 
 .List {
@@ -11,6 +16,19 @@
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: none;
+  background: linear-gradient(
+    to bottom,
+    #1b0b28 0%,
+    #1b0b28 50%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: $scrolltrack-width;
+  z-index: 1;
+  padding: 0 10px;
+  box-sizing: border-box;
   &::-webkit-scrollbar {
     display: none;
   }
@@ -30,7 +48,7 @@
   line-height: 1;
   user-select: none;
   padding: 0 20px;
-  margin: 0 5px;
+  margin: 0;
   margin-top: 10px;
   opacity: 0.7;
   flex-shrink: 0;
@@ -40,7 +58,7 @@
     cursor: default;
     opacity: 0.9;
     font-weight: bold;
-    border-bottom: solid 2px #9F74C0;
+    border-bottom: solid 2px #9f74c0;
   }
 }
 
@@ -56,6 +74,9 @@
 .Content {
   flex-grow: 1;
   padding: 20px;
+  padding-top: 60px;
+  padding-right: $scrolltrack-width + 10px;
   outline: none;
   overflow: auto;
+  position: relative;
 }
