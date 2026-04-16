@@ -24,8 +24,8 @@ export const HomePage = React.memo(function HomePage() {
           defaultTab="overview"
           tabs={[
             { id: "overview", label: "Overview", content: <HomeOverview /> },
-            { id: "news", label: "News", content: <NewsFeed /> },
-            { id: "upcoming-tournaments", label: "Upcoming Tournaments", content: <LocalTournaments /> },
+            { id: "news", label: "Latest News", content: <NewsFeed /> },
+            { id: "tournaments", label: "Upcoming Tournaments", content: <LocalTournaments /> },
           ]}
         />
       </div>

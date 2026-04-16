@@ -13,6 +13,7 @@
 
 .Trigger {
   all: unset;
+  cursor: pointer;
   position: relative;
   height: 45px;
   text-align: center;
@@ -26,13 +27,11 @@
   padding: 0 20px;
   margin: 0 5px;
   margin-top: 10px;
-  &[data-state="active"] {
-    position: relative;
-    font-weight: bold;
-    border-bottom: solid 2px #9F74C0;
-  }
+  opacity: 0.7;
+  &[data-state="active"],
   &:focus {
-    position: relative;
+    cursor: default;
+    opacity: 0.9;
     font-weight: bold;
     border-bottom: solid 2px #9F74C0;
   }
