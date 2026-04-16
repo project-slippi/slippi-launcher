@@ -1,0 +1,40 @@
+.Root {
+	display: flex;
+	flex-direction: column;
+	width: 300px;
+}
+
+.List {
+	flex-shrink: 0;
+	display: flex;
+}
+
+.Trigger {
+	all: unset;
+	height: 45px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 15px;
+	line-height: 1;
+	user-select: none;
+  padding: 0 20px;
+	margin: 0 5px;
+	&[data-state="active"] {
+		position: relative;
+    font-weight: bold;
+		border-bottom: solid 2px #9F74C0;
+	}
+	&:focus {
+		position: relative;
+    font-weight: bold;
+		border-bottom: solid 2px #9F74C0;
+	}
+}
+
+.Content {
+	flex-grow: 1;
+	padding: 20px;
+	outline: none;
+	overflow: auto;
+}

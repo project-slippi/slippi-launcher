@@ -1,14 +1,12 @@
-import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import React from "react";
 
-import { DualPane } from "@/components/dual_pane";
 import { Footer } from "@/components/footer/footer";
-import { colors } from "@/styles/colors";
+import { Tabs } from "@/components/ui/tabs/tabs";
 
 import { LocalTournaments } from "./local_tournaments";
 import { NewsFeed } from "./news_feed/news_feed";
-import { Sidebar } from "./sidebar/sidebar";
+import { HomeOverview } from "./overview/overview";
 
 const Outer = styled.div`
   display: flex;
@@ -18,37 +16,17 @@ const Outer = styled.div`
   min-width: 0;
 `;
 
-const Main = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  overflow-x: hidden;
-  padding: 20px;
-  padding-top: 0;
-`;
-
 export const HomePage = React.memo(function HomePage() {
   return (
     <Outer>
-      <div
-        css={css`
-          display: flex;
-          flex: 1;
-          position: relative;
-          overflow: hidden;
-        `}
-      >
-        <DualPane
-          id="home-page"
-          leftSide={
-            <Main>
-              <LocalTournaments />
-              <NewsFeed />
-            </Main>
-          }
-          rightSide={<Sidebar />}
-          rightStyle={{ backgroundColor: colors.purpleDark }}
-          style={{ gridTemplateColumns: "auto 300px" }}
+      <div style={{ flex: 1 }}>
+        <Tabs
+          defaultTab="overview"
+          tabs={[
+            { id: "overview", label: "Overview", content: <HomeOverview /> },
+            { id: "news", label: "News", content: <NewsFeed /> },
+            { id: "local-tournaments", label: "Local Tournaments", content: <LocalTournaments /> },
+          ]}
         />
       </div>
       <Footer />
