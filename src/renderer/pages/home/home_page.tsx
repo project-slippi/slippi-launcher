@@ -19,13 +19,13 @@ const Outer = styled.div`
 export const HomePage = React.memo(function HomePage() {
   return (
     <Outer>
-      <div style={{ flex: 1 }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
         <Tabs
           defaultTab="overview"
           tabs={[
             { id: "overview", label: "Overview", content: <HomeOverview /> },
             { id: "news", label: "News", content: <NewsFeed /> },
-            { id: "local-tournaments", label: "Local Tournaments", content: <LocalTournaments /> },
+            { id: "upcoming-tournaments", label: "Upcoming Tournaments", content: <LocalTournaments /> },
           ]}
         />
       </div>

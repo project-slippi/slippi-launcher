@@ -9,7 +9,7 @@ type Tab = {
 };
 
 export const Tabs = ({ defaultTab, tabs }: { defaultTab?: string; tabs: Tab[] }) => (
-  <RadixTabs.Root defaultValue={defaultTab}>
+  <RadixTabs.Root defaultValue={defaultTab} className={styles.Root}>
     <RadixTabs.List className={styles.List}>
       {tabs.map((tab) => (
         <RadixTabs.Trigger className={styles.Trigger} value={tab.id} key={tab.id}>
