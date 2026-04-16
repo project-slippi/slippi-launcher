@@ -1,52 +1,28 @@
-import { css } from "@emotion/react";
-import styled from "@emotion/styled";
 import React from "react";
 
-import { DualPane } from "@/components/dual_pane";
-import { colors } from "@/styles/colors";
-
-import { Sidebar } from "./sidebar/sidebar";
-
-const Outer = styled.div`
-  display: flex;
-  flex-flow: column;
-  flex: 1;
-  position: relative;
-  min-width: 0;
-`;
-
-const Main = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  overflow-x: hidden;
-  padding: 20px;
-  padding-top: 0;
-`;
+import { NewsPreview } from "./news_preview";
+import styles from "./overview.module.scss";
+import { RankedStatus } from "./sidebar/ranked_status";
 
 export const HomeOverview = React.memo(function HomeOverview() {
   return (
-    <Outer>
-      <div
-        css={css`
-          display: flex;
-          flex: 1;
-          position: relative;
-          overflow: hidden;
-        `}
-      >
-        <DualPane
-          id="home-page"
-          leftSide={
-            <Main>
-              <div>foo bar baz</div>
-            </Main>
-          }
-          rightSide={<Sidebar />}
-          rightStyle={{ backgroundColor: colors.purpleDark }}
-          style={{ gridTemplateColumns: "auto 300px" }}
-        />
+    <div className={styles.container}>
+      <div className={styles.col1}>
+        <NewsPreview />
       </div>
-    </Outer>
+      <div className={styles.col2}>
+        <Box>div 2</Box>
+      </div>
+      <div className={styles.col3Top}>
+        <RankedStatus />
+      </div>
+      <div className={styles.col3Bottom}>
+        <Box>div 4</Box>
+      </div>
+    </div>
   );
 });
+
+const Box = ({ children }: { children: React.ReactNode }) => {
+  return <div style={{ height: "100%", width: "100%", backgroundColor: "gray" }}>{children}</div>;
+};
