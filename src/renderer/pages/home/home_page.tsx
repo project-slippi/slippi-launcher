@@ -26,6 +26,12 @@ export const HomePage = React.memo(function HomePage() {
             { id: "overview", label: "Overview", content: <HomeOverview /> },
             { id: "news", label: "Latest News", content: <NewsFeed /> },
             { id: "tournaments", label: "Upcoming Tournaments", content: <LocalTournaments /> },
+            { id: "foo", label: "Some Really Long Tab Name", content: <div /> },
+            { id: "foo", label: "Some Really Long Tab Name", content: <div /> },
+            { id: "foo", label: "Some Really Long Tab Name", content: <div /> },
+            { id: "foo", label: "Some Really Long Tab Name", content: <div /> },
+            { id: "foo", label: "Some Really Long Tab Name", content: <div /> },
+            { id: "foo", label: "Some Really Long Tab Name", content: <div /> },
           ]}
         />
       </div>
