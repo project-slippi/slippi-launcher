@@ -11,14 +11,14 @@ type Tab = {
 export const Tabs = ({ defaultTab, tabs }: { defaultTab?: string; tabs: Tab[] }) => (
   <BaseTabs.Root defaultValue={defaultTab} className={styles.Root}>
     <BaseTabs.List className={styles.List}>
-      {tabs.map((tab) => (
-        <BaseTabs.Tab className={styles.Trigger} value={tab.id} key={tab.id} data-label={tab.label}>
+      {tabs.map((tab, i) => (
+        <BaseTabs.Tab className={styles.Trigger} value={tab.id} key={i} data-label={tab.label}>
           {tab.label}
         </BaseTabs.Tab>
       ))}
     </BaseTabs.List>
-    {tabs.map((tab) => (
-      <BaseTabs.Panel className={styles.Content} value={tab.id} key={tab.id}>
+    {tabs.map((tab, i) => (
+      <BaseTabs.Panel className={styles.Content} value={tab.id} key={i}>
         {tab.content}
       </BaseTabs.Panel>
     ))}

@@ -3,29 +3,6 @@ import { useQuery } from "react-query";
 import { ExternalLink as A } from "@/components/external_link";
 import { useCountdown } from "@/lib/hooks/use_countdown";
 
-// type MeleeMajorsResponse = {
-//   lastUpdated: string;
-//   tournaments: MeleeMajorTournament[];
-// };
-
-type MeleeMajorTournament = {
-  "city-and-state": string;
-  "date-string": string;
-  entrants: string;
-  "full-address": string;
-  "image-url": string;
-  "maps-link": string;
-  name: string;
-  players: string[];
-  "schedule-url": string;
-  "start-timestamp": string;
-  "start.gg-tournament-name": string;
-  "start.gg-url": string;
-  "stream-url": string;
-  timezone: string;
-  "top8-start-time": string;
-};
-
 const SmashMapCard = ({
   name,
   url,
@@ -67,8 +44,7 @@ const MajorTournamentCard = ({ name, url, imageSrc }: { name: string; url: strin
 
 export const LocalTournaments = () => {
   const meleeMajorsQuery = useQuery(["meleeMajorsQuery"], async () => {
-    // This endpoint seems to not be blocked by CORS so we can just fetch it in the frontend
-    const result = await fetch("https://meleemajors.gg/api/v1/tournaments.json").then((res) => res.json());
+    const result = await window.electron.fetch.fetchUpcomingMeleeMajors();
     console.log(result);
     return result;
   });
@@ -106,12 +82,12 @@ export const LocalTournaments = () => {
       <pre>{JSON.stringify(geoLocationQuery.data, null, 2)}</pre>
       <h1>Melee Majors</h1>
       {meleeMajorsQuery.data &&
-        (meleeMajorsQuery.data.tournaments as MeleeMajorTournament[]).map((tournament, index) => (
+        meleeMajorsQuery.data.map((tournament, index) => (
           <MajorTournamentCard
             key={index}
             name={tournament.name}
-            url={tournament["start.gg-url"]}
-            imageSrc={tournament["image-url"]}
+            url={tournament.startggUrl}
+            imageSrc={tournament.imageUrl}
           />
         ))}
       <pre>{JSON.stringify(meleeMajorsQuery.data, null, 2)}</pre>
