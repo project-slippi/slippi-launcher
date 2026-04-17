@@ -53,7 +53,7 @@ $scrolltrack-width: 10px;
   opacity: 0.7;
   flex-shrink: 0;
   white-space: nowrap;
-  &[data-state="active"],
+  &[data-active],
   &:focus {
     cursor: default;
     opacity: 0.9;

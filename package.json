@@ -163,6 +163,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.11.10",
+    "@base-ui/react": "^1.4.0",
     "@emotion/react": "^11.4.0",
     "@emotion/styled": "^11.3.0",
     "@fontsource/maven-pro": "^4.4.2",
@@ -170,7 +171,6 @@
     "@mui/icons-material": "^5.11.16",
     "@mui/lab": "^5.0.0-alpha.127",
     "@mui/material": "^5.12.1",
-    "@radix-ui/react-tabs": "^1.1.13",
     "@slippi/slippi-js": "^9.0.0",
     "@stylexjs/stylex": "^0.4.1",
     "@xmcl/nat-api": "^0.4.1",

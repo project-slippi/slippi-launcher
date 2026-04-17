@@ -1,4 +1,4 @@
-import * as RadixTabs from "@radix-ui/react-tabs";
+import { Tabs as BaseTabs } from "@base-ui/react/tabs";
 
 import styles from "./tabs.module.scss";
 
@@ -9,18 +9,18 @@ type Tab = {
 };
 
 export const Tabs = ({ defaultTab, tabs }: { defaultTab?: string; tabs: Tab[] }) => (
-  <RadixTabs.Root defaultValue={defaultTab} className={styles.Root}>
-    <RadixTabs.List className={styles.List}>
+  <BaseTabs.Root defaultValue={defaultTab} className={styles.Root}>
+    <BaseTabs.List className={styles.List}>
       {tabs.map((tab) => (
-        <RadixTabs.Trigger className={styles.Trigger} value={tab.id} key={tab.id} data-label={tab.label}>
+        <BaseTabs.Tab className={styles.Trigger} value={tab.id} key={tab.id} data-label={tab.label}>
           {tab.label}
-        </RadixTabs.Trigger>
+        </BaseTabs.Tab>
       ))}
-    </RadixTabs.List>
+    </BaseTabs.List>
     {tabs.map((tab) => (
-      <RadixTabs.Content className={styles.Content} value={tab.id} key={tab.id}>
+      <BaseTabs.Panel className={styles.Content} value={tab.id} key={tab.id}>
         {tab.content}
-      </RadixTabs.Content>
+      </BaseTabs.Panel>
     ))}
-  </RadixTabs.Root>
+  </BaseTabs.Root>
 );
