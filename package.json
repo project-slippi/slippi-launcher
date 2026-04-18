@@ -163,6 +163,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.11.10",
+    "@base-ui/react": "^1.4.0",
     "@emotion/react": "^11.4.0",
     "@emotion/styled": "^11.3.0",
     "@fontsource/maven-pro": "^4.4.2",

@@ -74,9 +74,8 @@ const NewsFeedContent = React.memo(function NewsFeedContent() {
 
 export const NewsFeed = React.memo(function NewsFeed() {
   return (
-    <>
-      <h1>{Messages.latestNews()}</h1>
+    <div style={{ maxWidth: "800px" }}>
       <NewsFeedContent />
-    </>
+    </div>
   );
 });
