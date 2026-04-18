@@ -2,17 +2,16 @@ import { forwardRef } from "react";
 
 import styles from "./aspect_ratio_image.module.scss";
 
-export interface AspectRatioImageProps {
-  imageSrc: string;
-}
+type AspectRatioImageProps = {
+  src: string;
+  alt?: string;
+};
 
-export const AspectRatioImage = forwardRef<HTMLImageElement, AspectRatioImageProps>(({ imageSrc }, ref) => {
+export const AspectRatioImage = forwardRef<HTMLImageElement, AspectRatioImageProps>(({ src, alt }, ref) => {
   return (
     <div className={styles.Root}>
-      <img ref={ref} src={imageSrc} alt="" className={styles.BlurredLayer} aria-hidden="true" />
-      <img src={imageSrc} alt="" className={styles.SharpLayer} />
+      <img ref={ref} src={src} alt={alt} className={styles.BlurredLayer} aria-hidden="true" />
+      <img src={src} alt={alt} className={styles.SharpLayer} />
     </div>
   );
 });
-
-AspectRatioImage.displayName = "AspectRatioImage";

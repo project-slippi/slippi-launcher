@@ -76,6 +76,6 @@ const ResizableBox = ({
 
 export const ResizableContainer = () => (
   <ResizableBox>
-    <AspectRatioImage imageSrc={demoImage} />
+    <AspectRatioImage src={demoImage} />
   </ResizableBox>
 );
