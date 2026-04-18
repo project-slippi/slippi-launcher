@@ -1,6 +1,7 @@
 import { useQuery } from "react-query";
 
 import { ExternalLink as A } from "@/components/external_link";
+import { AspectRatioImage } from "@/components/ui/aspect_ratio_image/aspect_ratio_image";
 import { useCountdown } from "@/lib/hooks/use_countdown";
 
 const SmashMapCard = ({
@@ -24,7 +25,9 @@ const SmashMapCard = ({
 
   return (
     <div>
-      <img src={imageSrc} />
+      <div style={{ width: 600, height: 300 }}>
+        <AspectRatioImage src={imageSrc} />
+      </div>
       <span>starts in: {formatted}</span>
       <A href={url}>
         {name} ({distanceToRender.toFixed(2)} {unitsToRender})
@@ -36,7 +39,9 @@ const SmashMapCard = ({
 const MajorTournamentCard = ({ name, url, imageSrc }: { name: string; url: string; imageSrc: string }) => {
   return (
     <div>
-      <img src={imageSrc} />
+      <div style={{ width: 600, height: 300 }}>
+        <AspectRatioImage src={imageSrc} />
+      </div>
       <A href={url}>{name}</A>
     </div>
   );
