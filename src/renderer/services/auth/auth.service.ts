@@ -173,7 +173,7 @@ class AuthClient implements AuthService {
       const account = accounts.find((acc) => acc.id === activeAccountId);
       if (account) {
         account.displayName = displayName;
-        // The multi-account service will handle saving
+        await this._multiAccountService.saveAccounts();
       }
     }
 

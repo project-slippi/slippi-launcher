@@ -37,7 +37,10 @@ const testUsers = [
 ];
 
 class MockMultiAccountClient implements MultiAccountService {
-  private _accountsSubject = new Subject<{ accounts: StoredAccount[]; activeId: string | null }>();
+  private _accountsSubject = new Subject<{
+    accounts: StoredAccount[];
+    activeId: string | null;
+  }>();
   private _onAccountsChanged = multicast(this._accountsSubject);
   private _authInstances = new Map<string, Auth>();
   private _activeAccountId: string | null = null;
@@ -219,6 +222,10 @@ class MockMultiAccountClient implements MultiAccountService {
 
   public getActiveAccountId(): string | null {
     return this._activeAccountId;
+  }
+
+  public async saveAccounts(): Promise<void> {
+    // No-op for mock
   }
 
   public getActiveAuth(): Auth | null {

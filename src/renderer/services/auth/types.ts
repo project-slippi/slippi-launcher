@@ -45,6 +45,7 @@ export interface MultiAccountService {
   switchAccount(accountId: string): Promise<void>;
   getAccounts(): StoredAccount[];
   getActiveAccountId(): string | null;
+  saveAccounts(): Promise<void>;
 
   // Get the active Firebase Auth instance for AuthService to use
   getActiveAuth(): Auth | null; // Returns firebase Auth instance

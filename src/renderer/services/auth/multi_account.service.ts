@@ -47,7 +47,10 @@ const firebaseConfig = {
 const MAX_ACCOUNTS = 5;
 
 class MultiAccountClient implements MultiAccountService {
-  private _accountsSubject = new Subject<{ accounts: StoredAccount[]; activeId: string | null }>();
+  private _accountsSubject = new Subject<{
+    accounts: StoredAccount[];
+    activeId: string | null;
+  }>();
   private _onAccountsChanged = multicast(this._accountsSubject);
   private _firebaseApps = new Map<string, FirebaseApp>();
   private _authInstances = new Map<string, Auth>();
@@ -201,7 +204,7 @@ class MultiAccountClient implements MultiAccountService {
       this._authInstances.set(user.uid, defaultAuth);
 
       // Save the migrated account
-      await this._saveAccounts();
+      await this.saveAccounts();
 
       log.info("Successfully migrated existing session to multi-account system");
       log.info("User session preserved - no re-authentication required!");
@@ -214,7 +217,7 @@ class MultiAccountClient implements MultiAccountService {
   /**
    * Save accounts to settings
    */
-  private async _saveAccounts(): Promise<void> {
+  public async saveAccounts(): Promise<void> {
     try {
       const accountData: AccountData = {
         activeId: this._activeAccountId,
@@ -371,7 +374,7 @@ class MultiAccountClient implements MultiAccountService {
     account.lastActive = new Date();
 
     // Save to storage
-    await this._saveAccounts();
+    await this.saveAccounts();
   }
 
   /**
@@ -419,7 +422,7 @@ class MultiAccountClient implements MultiAccountService {
       account.lastActive = new Date();
 
       // Save to storage
-      await this._saveAccounts();
+      await this.saveAccounts();
 
       log.info(`Switched to account: ${account.displayName}`);
     } catch (err) {
@@ -478,7 +481,7 @@ class MultiAccountClient implements MultiAccountService {
       }
 
       // Save to storage
-      await this._saveAccounts();
+      await this.saveAccounts();
 
       log.info(`Removed account: ${removedAccount.displayName}`);
     } catch (err) {
