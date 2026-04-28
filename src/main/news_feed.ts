@@ -1,16 +1,20 @@
 import { partition } from "@common/partition";
 import type { NewsItem } from "@common/types";
-import log from "electron-log";
+import electronLog from "electron-log";
 import TurndownService from "turndown";
 
 import { getBlueskyFeed } from "./fetch_cross_origin/bluesky";
 import { getAllReleases } from "./fetch_cross_origin/github";
 import { getMediumFeed } from "./fetch_cross_origin/medium";
 
+const log = electronLog.scope("news_feed");
+
 const turndownService = new TurndownService();
 
 export async function fetchNewsFeedData(): Promise<NewsItem[]> {
+  const totalStart = Date.now();
   const newsPromises: Promise<NewsItem[]>[] = [];
+  log.info("Fetching news feed data...");
   newsPromises.push(fetchMediumNews());
   newsPromises.push(fetchGithubReleaseNews(["Ishiiruka", "slippi-launcher", "dolphin"]));
   newsPromises.push(fetchBlueskyPosts());
@@ -24,6 +28,8 @@ export async function fetchNewsFeedData(): Promise<NewsItem[]> {
     log.error(newsPromise.reason);
   });
 
+  log.info(`Total fetchNewsFeedData completed in ${Date.now() - totalStart}ms`);
+
   return allNews
     .flatMap((news) => news.value)
     .sort((a, b) => {
@@ -35,6 +41,8 @@ export async function fetchNewsFeedData(): Promise<NewsItem[]> {
 }
 
 async function fetchMediumNews(): Promise<NewsItem[]> {
+  const start = Date.now();
+  log.info("Fetching Medium news...");
   const result = await getMediumFeed("project-slippi");
 
   if (result.status !== "ok" || result.items === undefined) {
@@ -42,6 +50,8 @@ async function fetchMediumNews(): Promise<NewsItem[]> {
     log.error(result);
     return [];
   }
+
+  log.info(`Medium news fetched in ${Date.now() - start}ms`);
 
   return result.items.map((post): NewsItem => {
     // Parse the Medium pubDate format: "YYYY-MM-DD HH:MM:SS"
@@ -63,6 +73,8 @@ async function fetchMediumNews(): Promise<NewsItem[]> {
 }
 
 async function fetchGithubReleaseNews(repos: string[]): Promise<NewsItem[]> {
+  const start = Date.now();
+  log.info(`Fetching Github releases for ${repos.join(", ")}...`);
   const allReleases = await Promise.allSettled(
     repos.map(async (repo) => {
       const releases = await getAllReleases("project-slippi", repo);
@@ -79,6 +91,8 @@ async function fetchGithubReleaseNews(repos: string[]): Promise<NewsItem[]> {
     }),
   );
 
+  log.info(`Github releases fetched in ${Date.now() - start}ms`);
+
   return allReleases.flatMap((promise): NewsItem[] => {
     if (promise.status === "fulfilled") {
       return promise.value;
@@ -90,12 +104,16 @@ async function fetchGithubReleaseNews(repos: string[]): Promise<NewsItem[]> {
 }
 
 async function fetchBlueskyPosts(): Promise<NewsItem[]> {
+  const start = Date.now();
+  log.info("Fetching Bluesky posts...");
   const result = await getBlueskyFeed();
   if (result.error || result.feed === undefined) {
     log.error("Error fetching Bluesky feed:");
     log.error(result);
     return [];
   }
+
+  log.info(`Bluesky posts fetched in ${Date.now() - start}ms`);
 
   const news = result.feed.map((entry): NewsItem => {
     const post = entry.post;
