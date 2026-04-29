@@ -35,6 +35,10 @@ const config: StorybookConfig = {
       builder: {},
     },
   },
+  // Storybook collects telemetry by default so disable it
+  core: {
+    disableTelemetry: true,
+  },
   babel: async (options) => {
     return {
       ...options,
