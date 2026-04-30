@@ -33,6 +33,7 @@ export type BlueskyPost = {
     indexedAt: string;
     labels: string[];
   };
+  reply?: any;
   reason:
     | {
         by: BlueskyUser;

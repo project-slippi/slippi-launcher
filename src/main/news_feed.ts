@@ -115,19 +115,22 @@ async function fetchBlueskyPosts(): Promise<NewsItem[]> {
 
   log.info(`Bluesky posts fetched in ${Date.now() - start}ms`);
 
-  const news = result.feed.map((entry): NewsItem => {
-    const post = entry.post;
-    const publishedAt = new Date(post.record.createdAt).toISOString();
-    return {
-      id: `bluesky-${post.cid}`,
-      source: "bluesky",
-      title: post.author.displayName,
-      imageUrl: post.author.avatar,
-      body: post.record.text,
-      subtitle: `@${post.author.handle}`,
-      publishedAt,
-      permalink: `https://bsky.app/profile/${post.author.handle}/post/${post.uri.split("/").slice(-1)[0]}`,
-    };
-  });
+  const news = result.feed
+    // any api response with the reply field is not a top level post and we don't want to show those in the launcher
+    .filter((entry) => !entry.reply)
+    .map((entry): NewsItem => {
+      const post = entry.post;
+      const publishedAt = new Date(post.record.createdAt).toISOString();
+      return {
+        id: `bluesky-${post.cid}`,
+        source: "bluesky",
+        title: post.author.displayName,
+        imageUrl: post.author.avatar,
+        body: post.record.text,
+        subtitle: `@${post.author.handle}`,
+        publishedAt,
+        permalink: `https://bsky.app/profile/${post.author.handle}/post/${post.uri.split("/").slice(-1)[0]}`,
+      };
+    });
   return news;
 }
