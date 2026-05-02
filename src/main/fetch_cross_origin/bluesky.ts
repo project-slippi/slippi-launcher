@@ -52,7 +52,6 @@ const cache = new TimeExpiryCache<string, BlueskyFeed>(EXPIRES_IN);
 export async function getBlueskyFeed(): Promise<BlueskyFeed> {
   const url = new URL("https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed");
   url.searchParams.append("actor", "did:plc:6xwud4csg7p7243ptrc5sa5y");
-  // url.searchParams.append("limit", "20");
 
   const data = await cachedFetch(url.toString());
 
