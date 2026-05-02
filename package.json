@@ -51,7 +51,8 @@
     }
   },
   "lint-staged": {
-    "*.{js,ts,jsx,tsx}": "eslint --cache --fix"
+    "*.{js,ts,jsx,tsx}": "eslint --cache --fix",
+    "*.{css,scss}": "stylelint --fix"
   },
   "i18next-auto-keys": {
     "poTemplateName": "messages.pot",
