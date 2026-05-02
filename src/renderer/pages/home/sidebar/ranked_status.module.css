@@ -1,0 +1,26 @@
+.card {
+  margin: 6px;
+  padding: 10px;
+}
+
+.centerStack {
+  display: grid;
+  justify-content: center;
+  place-items: center center;
+}
+
+.stroke {
+  text-transform: uppercase;
+  text-shadow: -2px -2px 0 #231232, 0 -2px 0 #231232, 2px -2px 0 #231232, 2px 0 0 #231232, 2px 2px 0 #231232, 0 2px 0 #231232, -2px 2px 0 #231232, -2px 0 0 #231232;
+}
+
+.separator {
+  width: 50%;
+  height: 2px;
+  background-color: #d9d9d919;
+  margin: 12px 25%;
+}
+
+.buttonContainer {
+  margin: 16px 0 4px;
+}

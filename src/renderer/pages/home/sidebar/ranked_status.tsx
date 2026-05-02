@@ -1,5 +1,4 @@
 import { Button, Card, Typography } from "@mui/material";
-import * as stylex from "@stylexjs/stylex";
 import type { Duration } from "date-fns";
 import { formatDuration, intervalToDuration } from "date-fns";
 import React from "react";
@@ -14,39 +13,13 @@ import { ReactComponent as RankedDayInactiveIcon } from "@/styles/images/ranked_
 import { colors } from "@/styles/tokens.stylex";
 
 import { RankedStatusMessages as Messages } from "./ranked_status.messages";
+import styles from "./ranked_status.module.css";
 
 const userLocale = window.electron.bootstrap.locale;
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const FREE_ACCESS_START_AT = new Date(Date.UTC(2024, 3, 15, 14, 0, 0)); // Note: Month is 0-indexed, so 3 is April
 const FREE_ACCESS_OFFSET_FROM = new Date(Date.UTC(2024, 3, 15, 8, 0, 0)); // Note: Month is 0-indexed, so 3 is April
-
-const styles = stylex.create({
-  card: {
-    margin: "6px",
-    padding: "10px",
-  },
-  centerStack: {
-    display: "grid",
-    justifyContent: "center",
-    justifyItems: "center",
-    alignItems: "center",
-  },
-  stroke: {
-    textTransform: "uppercase",
-    textShadow:
-      "-2px -2px 0 #231232, 0 -2px 0 #231232, 2px -2px 0 #231232, 2px 0 0 #231232, 2px 2px 0 #231232, 0 2px 0 #231232, -2px 2px 0 #231232, -2px 0 0 #231232",
-  },
-  separator: {
-    width: "50%",
-    height: "2px",
-    backgroundColor: "#D9D9D919",
-    margin: "12px 25%",
-  },
-  buttonContainer: {
-    margin: "16px 0 4px 0",
-  },
-});
 
 const getFullAccessTimes = (now: Date): { isActive: boolean; nextStartTime: Date; nextEndTime: Date } => {
   const startTime = FREE_ACCESS_START_AT;
@@ -90,8 +63,8 @@ const InternalRankedStatus = ({
   const connectCode = userData?.playKey?.connectCode;
 
   return (
-    <Card {...stylex.props(styles.card)}>
-      <div {...stylex.props(styles.centerStack)}>
+    <Card className={styles.card}>
+      <div className={styles.centerStack}>
         <Typography
           variant="h6"
           color={colors.purpleLight}
@@ -104,7 +77,7 @@ const InternalRankedStatus = ({
         </Typography>
         {isFullAccess ? <RankedDayActiveIcon width={40} /> : <RankedDayInactiveIcon width={40} />}
         <Typography
-          {...stylex.props(styles.stroke)}
+          className={styles.stroke}
           variant="body1"
           color={isFullAccess ? colors.greenDark : colors.textDim}
           fontSize="20px"
@@ -113,8 +86,8 @@ const InternalRankedStatus = ({
           {isFullAccess ? Messages.active() : Messages.startingSoon()}
         </Typography>
       </div>
-      <div {...stylex.props(styles.separator)} />
-      <div {...stylex.props(styles.centerStack)}>
+      <div className={styles.separator} />
+      <div className={styles.centerStack}>
         <Typography
           variant="h6"
           color={colors.purpleLight}
@@ -143,7 +116,7 @@ const InternalRankedStatus = ({
       <Typography fontSize="11px" color={colors.textDim} marginTop="12px">
         {isFullAccess ? Messages.rankedPlayIsCurrentlyAvailable() : Messages.onceEveryFourDaysRankedPlayIsAvailable()}
       </Typography>
-      <div {...stylex.props(styles.buttonContainer)}>
+      <div className={styles.buttonContainer}>
         <Button
           variant="contained"
           sx={{ color: "white", fontSize: "13px", fontWeight: "medium", textTransform: "uppercase" }}
