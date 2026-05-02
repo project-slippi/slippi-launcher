@@ -9,7 +9,7 @@ import type { StoredAccount } from "@settings/types";
 import React from "react";
 
 import { UserIcon } from "@/components/user_icon";
-import { colors } from "@/styles/colors";
+import { cssVar } from "@/styles/colors";
 
 import { AccountSwitcherMessages as Messages } from "./account_switcher.messages";
 
@@ -73,7 +73,7 @@ const ActionButton = styled(ButtonBase)`
 
 const RemoveButton = styled(IconButton)`
   padding: 4px;
-  color: ${colors.textDim};
+  color: ${cssVar("textDim")};
   opacity: 0;
 
   &:hover {

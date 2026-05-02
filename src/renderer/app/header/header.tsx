@@ -19,7 +19,7 @@ import { useSettings } from "@/lib/hooks/use_settings";
 import { useSettingsModal } from "@/lib/hooks/use_settings_modal";
 import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
-import { colors } from "@/styles/colors";
+import { cssVar } from "@/styles/colors";
 import slippiLogo from "@/styles/images/slippi_logo.svg";
 import { platformTitleBarStyles } from "@/styles/platform_title_bar_styles";
 
@@ -35,7 +35,7 @@ const isMac = window.electron.bootstrap.isMac;
 
 const OuterBox = styled(Box)`
   background: radial-gradient(circle at left, #5c1394, transparent 30%);
-  background-color: ${colors.purple};
+  background-color: ${cssVar("purple")};
   height: 70px;
 `;
 

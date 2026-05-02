@@ -1,7 +1,7 @@
 import type { Theme } from "@mui/material/styles";
 import { createTheme } from "@mui/material/styles";
 
-import { colors } from "@/styles/colors";
+import { cssVar } from "@/styles/colors";
 
 import { withFont } from "./with_font";
 
@@ -16,15 +16,15 @@ const theme = createTheme({
       secondary: "#B4B4B4",
     },
     primary: {
-      main: colors.greenPrimary,
+      main: cssVar("greenPrimary"),
     },
     secondary: {
-      main: colors.purplePrimary,
+      main: cssVar("purplePrimary"),
     },
     divider: "rgba(255,255,255)",
     background: {
-      paper: colors.purpleDarker,
-      default: colors.purple,
+      paper: cssVar("purpleDarker"),
+      default: cssVar("purple"),
     },
   },
   typography: {
@@ -64,11 +64,11 @@ const addOverrides = (theme: Theme) => {
         },
         styleOverrides: {
           arrow: {
-            color: colors.offWhite,
+            color: cssVar("offWhite"),
           },
           tooltip: {
-            backgroundColor: colors.offWhite,
-            color: colors.purpleDarker,
+            backgroundColor: cssVar("offWhite"),
+            color: cssVar("purpleDarker"),
             boxShadow: theme.shadows[1],
             fontSize: 13,
           },

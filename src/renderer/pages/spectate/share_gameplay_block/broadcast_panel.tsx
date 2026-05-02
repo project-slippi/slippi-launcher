@@ -11,7 +11,7 @@ import { makeIntlFormatter } from "react-timeago/defaultFormatter";
 import { useAppStore } from "@/lib/hooks/use_app_store";
 import { getLocale } from "@/lib/time";
 import type { SupportedLanguage } from "@/services/i18n/util";
-import { colors } from "@/styles/colors";
+import { cssVar } from "@/styles/colors";
 
 import { BroadcastPanelMessages as Messages } from "./broadcast_panel.messages";
 import { StartBroadcastDialog } from "./start_broadcast_dialog";
@@ -78,7 +78,7 @@ export const BroadcastPanel = ({
             css={css`
               text-transform: uppercase;
               font-weight: bold;
-              color: ${colors.purpleLight};
+              color: ${cssVar("purpleLight")};
               margin-right: 10px;
             `}
           >

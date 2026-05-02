@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import React from "react";
 
-import { colors } from "@/styles/colors";
+import { cssVar } from "@/styles/colors";
 import { withFont } from "@/styles/with_font";
 
 type LabelledTextProps = {
@@ -24,7 +24,7 @@ export const LabelledText = ({ label, children, className }: React.PropsWithChil
           font-weight: bold;
           margin-bottom: 4px;
           text-transform: uppercase;
-          color: ${colors.purpleLight};
+          color: ${cssVar("purpleLight")};
           font-family: ${withFont("Maven Pro")};
         `}
       >

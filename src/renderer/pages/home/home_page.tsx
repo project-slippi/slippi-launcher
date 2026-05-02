@@ -4,7 +4,7 @@ import React from "react";
 
 import { DualPane } from "@/components/dual_pane";
 import { Footer } from "@/components/footer/footer";
-import { colors } from "@/styles/colors";
+import { cssVar } from "@/styles/colors";
 
 import { NewsFeed } from "./news_feed/news_feed";
 import { Sidebar } from "./sidebar/sidebar";
@@ -45,7 +45,7 @@ export const HomePage = React.memo(function HomePage() {
             </Main>
           }
           rightSide={<Sidebar />}
-          rightStyle={{ backgroundColor: colors.purpleDark }}
+          rightStyle={{ backgroundColor: cssVar("purpleDark") }}
           style={{ gridTemplateColumns: "auto 300px" }}
         />
       </div>

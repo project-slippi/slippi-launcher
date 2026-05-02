@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import React from "react";
 
-import { colors } from "@/styles/colors";
+import { cssVar } from "@/styles/colors";
 import { withFont } from "@/styles/with_font";
 
 export const PlayIcon = ({ children, fillPercent = 1 }: React.PropsWithChildren<{ fillPercent?: number }>) => {
@@ -32,8 +32,8 @@ export const PlayIcon = ({ children, fillPercent = 1 }: React.PropsWithChildren<
       <svg width="166" height="45" viewBox="0 0 166 45" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="gradient" x1="0" x2="1" y1="0" y2="0">
-            <stop offset="0%" stopColor={colors.greenDark} />
-            <stop offset={offset} stopColor={colors.greenDark} />
+            <stop offset="0%" stopColor={cssVar("greenDark")} />
+            <stop offset={offset} stopColor={cssVar("greenDark")} />
             <stop offset={offset} stopColor="transparent" stopOpacity="0" />
             <stop offset="100%" stopColor="transparent" stopOpacity="0" />
           </linearGradient>

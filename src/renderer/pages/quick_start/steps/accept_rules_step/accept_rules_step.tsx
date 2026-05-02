@@ -10,7 +10,7 @@ import { ExternalLink as A } from "@/components/external_link";
 import { refreshUserData, useAccount } from "@/lib/hooks/use_account";
 import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
-import { colors } from "@/styles/colors";
+import { cssVar } from "@/styles/colors";
 
 import { StepContainer } from "../../step_container";
 import { AcceptRulesStepMessages as Messages } from "./accept_rules_step.messages";
@@ -22,7 +22,7 @@ const classes = {
     font-weight: bold;
   `,
   rulesContainer: css`
-    color: ${colors.textSecondary};
+    color: ${cssVar("textSecondary")};
     padding: 8px;
     background-color: #00000040;
     border-radius: 8px;
@@ -108,16 +108,16 @@ export const AcceptRulesStep = () => {
           }
         />
         <Typography css={classes.sectionHeader}>{Messages.privacyPolicyAndTermsOfService()}</Typography>
-        <Typography color={colors.textSecondary}>{Messages.clickTheLinksBelow()}</Typography>
+        <Typography color={cssVar("textSecondary")}>{Messages.clickTheLinksBelow()}</Typography>
         <div css={classes.policiesList}>
-          <Typography color={colors.textSecondary}>●</Typography>
-          <Typography color={colors.textSecondary}>
+          <Typography color={cssVar("textSecondary")}>●</Typography>
+          <Typography color={cssVar("textSecondary")}>
             <A css={classes.link} href="https://slippi.gg/privacy">
               {Messages.slippiPrivacyPolicy()}
             </A>
           </Typography>
-          <Typography color={colors.textSecondary}>●</Typography>
-          <Typography color={colors.textSecondary}>
+          <Typography color={cssVar("textSecondary")}>●</Typography>
+          <Typography color={cssVar("textSecondary")}>
             <A css={classes.link} href="https://slippi.gg/tos">
               {Messages.slippiTermsOfService()}
             </A>

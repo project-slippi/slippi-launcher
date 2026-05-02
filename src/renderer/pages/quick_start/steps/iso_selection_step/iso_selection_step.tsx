@@ -12,7 +12,7 @@ import { useQuery } from "react-query";
 import { ConfirmationModal } from "@/components/confirmation_modal/confirmation_modal";
 import { useIsoPath } from "@/lib/hooks/use_settings";
 import { useToasts } from "@/lib/hooks/use_toasts";
-import { colors } from "@/styles/colors";
+import { cssVar } from "@/styles/colors";
 import { hasBorder } from "@/styles/has_border";
 
 import { QuickStartHeader } from "../../step_container";
@@ -23,7 +23,7 @@ const getColor = (props: any, defaultColor = "#eeeeee") => {
     return "#00e676";
   }
   if (props.isDragActive) {
-    return colors.greenPrimary;
+    return cssVar("greenPrimary");
   }
   return defaultColor;
 };

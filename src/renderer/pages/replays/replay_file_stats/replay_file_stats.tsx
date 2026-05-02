@@ -17,7 +17,7 @@ import { useDolphinActions } from "@/lib/dolphin/use_dolphin_actions";
 import { useMousetrap } from "@/lib/hooks/use_mousetrap";
 import { getStageImage } from "@/lib/utils";
 import { useServices } from "@/services";
-import { colors } from "@/styles/colors";
+import { cssVar } from "@/styles/colors";
 import { withFont } from "@/styles/with_font";
 
 import { GameProfile } from "./game_profile";
@@ -168,7 +168,7 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
           <IconButton onClick={handleRevealLocation} size="small">
             <FolderIcon
               css={css`
-                color: ${colors.purpleLight};
+                color: ${cssVar("purpleLight")};
               `}
             />
           </IconButton>

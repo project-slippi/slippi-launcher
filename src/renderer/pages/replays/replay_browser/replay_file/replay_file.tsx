@@ -6,7 +6,7 @@ import Tooltip from "@mui/material/Tooltip";
 import React from "react";
 
 import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/use_dolphin_store";
-import { colors } from "@/styles/colors";
+import { cssVar } from "@/styles/colors";
 
 import { DraggableFile } from "./draggable_file";
 import { ReplayFileMessages as Messages } from "./replay_file.messages";
@@ -142,8 +142,10 @@ const Outer = styled.div<{
   margin: 10px;
   background: ${(p) =>
     p.backgroundImage
-      ? `linear-gradient(to right, ${colors.purpleDark} 20%, transparent 35%, transparent 65%, ${colors.purpleDark} 80%)`
-      : colors.purpleDark};
+      ? `linear-gradient(to right, ${cssVar("purpleDark")} 20%, transparent 35%, transparent 65%, ${cssVar(
+          "purpleDark",
+        )} 80%)`
+      : cssVar("purpleDark")};
   will-change: border-color;
   &::before {
     z-index: -1;
@@ -207,7 +209,7 @@ const ActionButton = React.memo(({ action }: { action: ReplayFileAction }) => {
 
   return (
     <ReplayActionButton
-      color={primary ? colors.greenDark : undefined}
+      color={primary ? cssVar("greenDark") : undefined}
       label={finalLabel}
       onClick={onClick}
       disabled={finalDisabled}
@@ -225,7 +227,7 @@ const ReplayActionButton = React.memo(({ label, color, onClick, ...rest }: Repla
           css={css`
             padding: 5px;
             margin: 0 5px;
-            color: ${color ?? colors.purplePrimary};
+            color: ${color ?? cssVar("purplePrimary")};
           `}
           size="large"
           onClick={(e) => {
