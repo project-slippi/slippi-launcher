@@ -3,18 +3,12 @@ import { NatType, Presence } from "@common/types";
 import Button from "@mui/material/Button";
 import DialogActions from "@mui/material/DialogActions";
 import Typography from "@mui/material/Typography";
-import * as stylex from "@stylexjs/stylex";
 import React from "react";
 
 import { CgnatCommandSection } from "./cgnat_command_section";
 import { NatTypeSection } from "./nat_type_section";
 import { NetworkDiagnosticsResultMessages as Messages } from "./network_diagnostics_result.messages";
-
-const styles = stylex.create({
-  contentBody: {
-    marginBottom: "1em",
-  },
-});
+import styles from "./network_diagnostics_result.module.css";
 
 const getNatTypeTitle = (natType: NatType) => {
   if (natType === NatType.FAILED) {
@@ -120,9 +114,9 @@ export const NetworkDiagnosticsResult = React.memo(
         <div>
           <NatTypeSection address={ipAddress} description={natTypeDescription} natType={natType} title={natTypeTitle} />
           <Typography variant="subtitle2">{portMappingTitle}</Typography>
-          <div {...stylex.props(styles.contentBody)}>{portMappingDescription}</div>
+          <div className={styles.contentBody}>{portMappingDescription}</div>
           <Typography variant="subtitle2">{cgnatTitle}</Typography>
-          <div {...stylex.props(styles.contentBody)}>{cgnatDescription}</div>
+          <div className={styles.contentBody}>{cgnatDescription}</div>
           {cgnat === Presence.FAILED && ipAddress && <CgnatCommandSection address={ipAddress} />}
         </div>
         <DialogActions>

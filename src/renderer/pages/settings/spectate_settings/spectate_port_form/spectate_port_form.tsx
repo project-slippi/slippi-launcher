@@ -1,26 +1,12 @@
 import { TextField } from "@mui/material";
 import Button from "@mui/material/Button";
-import * as stylex from "@stylexjs/stylex";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import { SpectatePortFormMessages as Messages } from "./spectate_port_form.messages";
+import styles from "./spectate_port_form.module.css";
 
 const DEFAULT_PORT = 49809;
-
-const styles = stylex.create({
-  container: {
-    display: "flex",
-    alignItems: "flex-start",
-    gap: "8px",
-    flexWrap: "nowrap",
-    maxWidth: "fit-content",
-  },
-  button: {
-    whiteSpace: "nowrap",
-    flexShrink: 0,
-  },
-});
 
 export const SpectatePortForm = React.memo(({ port, onChange }: { port: number; onChange: (port: number) => void }) => {
   const {
@@ -50,7 +36,7 @@ export const SpectatePortForm = React.memo(({ port, onChange }: { port: number; 
   });
 
   return (
-    <div {...stylex.props(styles.container)}>
+    <div className={styles.container}>
       <Controller
         name="port"
         control={control}
@@ -82,7 +68,7 @@ export const SpectatePortForm = React.memo(({ port, onChange }: { port: number; 
         color="secondary"
         onClick={onFormSubmit}
         disabled={!isDirty}
-        {...stylex.props(styles.button)}
+        className={styles.button}
       >
         {Messages.save()}
       </Button>
@@ -91,7 +77,7 @@ export const SpectatePortForm = React.memo(({ port, onChange }: { port: number; 
         variant="outlined"
         onClick={onResetToDefault}
         disabled={!isNotDefaultPort}
-        {...stylex.props(styles.button)}
+        className={styles.button}
       >
         {Messages.resetToDefault()}
       </Button>
