@@ -4,7 +4,7 @@ import Paper from "@mui/material/Paper";
 import { alpha } from "@mui/material/styles";
 import React from "react";
 
-import { cssVar } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 
 export const Table = ({ children }: { children: React.ReactNode }) => {
   return (

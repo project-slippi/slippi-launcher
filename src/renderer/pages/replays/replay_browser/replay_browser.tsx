@@ -20,7 +20,7 @@ import { buildReplayFilters, useReplayFilter } from "@/lib/hooks/use_replay_filt
 import { useReplayPresenter, useReplays, useReplaySelection } from "@/lib/hooks/use_replays";
 import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
-import { cssVar } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 
 import { FileList } from "./file_list/file_list";
 import { FileListSkeleton } from "./file_list/file_list_skeleton";

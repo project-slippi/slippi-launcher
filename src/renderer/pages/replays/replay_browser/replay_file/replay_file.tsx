@@ -6,7 +6,7 @@ import Tooltip from "@mui/material/Tooltip";
 import React from "react";
 
 import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/use_dolphin_store";
-import { cssVar } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 
 import { DraggableFile } from "./draggable_file";
 import { ReplayFileMessages as Messages } from "./replay_file.messages";

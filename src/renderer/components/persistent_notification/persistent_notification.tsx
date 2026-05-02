@@ -5,7 +5,7 @@ import React from "react";
 
 import { useAppStore } from "@/lib/hooks/use_app_store";
 import { useAppUpdate } from "@/lib/hooks/use_app_update";
-import { cssVar } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 
 import { PersistentNotificationMessages as Messages } from "./persistent_notification.messages";
 

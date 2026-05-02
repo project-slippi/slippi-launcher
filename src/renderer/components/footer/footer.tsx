@@ -6,7 +6,7 @@ import Tooltip from "@mui/material/Tooltip";
 import React from "react";
 
 import { ExternalLink as A } from "@/components/external_link";
-import { cssVar } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 import { ReactComponent as DiscordIcon } from "@/styles/images/discord.svg";
 
 import { FooterMessages as Messages } from "./footer.messages";

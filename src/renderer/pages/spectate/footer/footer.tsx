@@ -8,7 +8,7 @@ import React from "react";
 import { BasicFooter } from "@/components/footer/footer";
 import { LabelledText } from "@/components/labelled_text";
 import { useSpectateSlpPath } from "@/lib/hooks/use_settings";
-import { cssVar } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 
 import { FooterMessages as Messages } from "./footer.messages";
 

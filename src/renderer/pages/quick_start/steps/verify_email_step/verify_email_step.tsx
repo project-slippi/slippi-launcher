@@ -8,7 +8,7 @@ import { ExternalLink as A } from "@/components/external_link";
 import { useAccount } from "@/lib/hooks/use_account";
 import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
-import { cssVar } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 
 import { StepContainer } from "../../step_container";
 import { VerifyEmailStepMessages as Messages } from "./verify_email_step.messages";

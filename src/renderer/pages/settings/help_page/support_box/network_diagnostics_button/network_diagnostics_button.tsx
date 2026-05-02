@@ -8,7 +8,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import React from "react";
 
 import { Button as ActionButton } from "@/components/form/button";
-import { cssVar } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 
 import { NetworkDiagnosticsResult } from "./network_diagnostic_result/network_diagnostics_result";
 import { NetworkDiagnosticsMessages as Messages } from "./network_diagnostics_button.messages";

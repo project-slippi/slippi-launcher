@@ -6,7 +6,7 @@ import React from "react";
 import type { LinkProps } from "react-router-dom";
 import { Link, useMatch, useResolvedPath } from "react-router-dom";
 
-import { cssVar } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 
 export type MenuItem = {
   subpath: string;

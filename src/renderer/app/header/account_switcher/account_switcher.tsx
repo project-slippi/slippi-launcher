@@ -9,7 +9,7 @@ import type { StoredAccount } from "@settings/types";
 import React from "react";
 
 import { UserIcon } from "@/components/user_icon";
-import { cssVar } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 
 import { AccountSwitcherMessages as Messages } from "./account_switcher.messages";
 

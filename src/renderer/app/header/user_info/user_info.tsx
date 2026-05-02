@@ -3,7 +3,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import React from "react";
 
 import { UserIcon } from "@/components/user_icon";
-import { cssVar } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 
 export const UserInfo = React.memo(function UserInfo({
   displayName,

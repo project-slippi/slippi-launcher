@@ -5,7 +5,7 @@ import InputBase from "@mui/material/InputBase";
 import React from "react";
 
 import { InfoBlock } from "@/components/info_block";
-import { cssVar } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 
 import { SpectateRemoteControlBlockMessages as Messages } from "./spectate_remote_control_block.messages";
 

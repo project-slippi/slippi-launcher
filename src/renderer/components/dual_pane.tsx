@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import debounce from "lodash/debounce";
 import React from "react";
 
-import { cssVar } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 
 const Outer = styled.div`
   position: relative;

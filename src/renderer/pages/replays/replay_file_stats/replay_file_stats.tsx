@@ -17,7 +17,7 @@ import { useDolphinActions } from "@/lib/dolphin/use_dolphin_actions";
 import { useMousetrap } from "@/lib/hooks/use_mousetrap";
 import { getStageImage } from "@/lib/utils";
 import { useServices } from "@/services";
-import { cssVar } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 import { withFont } from "@/styles/with_font";
 
 import { GameProfile } from "./game_profile";

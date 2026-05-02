@@ -12,7 +12,7 @@ import { useQuery } from "react-query";
 import { ConfirmationModal } from "@/components/confirmation_modal/confirmation_modal";
 import { useIsoPath } from "@/lib/hooks/use_settings";
 import { useToasts } from "@/lib/hooks/use_toasts";
-import { cssVar } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 import { hasBorder } from "@/styles/has_border";
 
 import { QuickStartHeader } from "../../step_container";

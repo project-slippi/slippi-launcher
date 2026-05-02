@@ -7,7 +7,7 @@ import log from "electron-log";
 import { ExternalLink as A } from "@/components/external_link";
 import { Button } from "@/components/form/button";
 import { useToasts } from "@/lib/hooks/use_toasts";
-import { cssVar } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 import { ReactComponent as DiscordIcon } from "@/styles/images/discord.svg";
 
 import { NetworkDiagnosticsButton } from "./network_diagnostics_button/network_diagnostics_button";

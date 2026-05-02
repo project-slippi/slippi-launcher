@@ -8,7 +8,7 @@ import { useAccount } from "@/lib/hooks/use_account";
 import { useAppStore } from "@/lib/hooks/use_app_store";
 import { getLocale, shortEnLocale } from "@/lib/time";
 import type { SupportedLanguage } from "@/services/i18n/util";
-import { cssVar } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 import { ReactComponent as RankedDayActiveIcon } from "@/styles/images/ranked_day_active.svg";
 import { ReactComponent as RankedDayInactiveIcon } from "@/styles/images/ranked_day_inactive.svg";
 

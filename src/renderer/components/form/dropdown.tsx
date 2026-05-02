@@ -4,7 +4,7 @@ import MenuItem from "@mui/material/MenuItem";
 import MatSelect from "@mui/material/Select";
 import React from "react";
 
-import { cssVar } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 
 type DropdownProps<T> = {
   value: T;

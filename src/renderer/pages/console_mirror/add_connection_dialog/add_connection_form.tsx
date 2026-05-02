@@ -15,7 +15,7 @@ import { Checkbox } from "@/components/form/checkbox";
 import { Toggle } from "@/components/form/toggle";
 import { PathInput } from "@/components/path_input/path_input";
 import { isValidIpAddress, isValidPort } from "@/lib/validate/validate";
-import { cssVar } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 
 import { AddConnectionFormMessages as Messages } from "./add_connection_form.messages";
 

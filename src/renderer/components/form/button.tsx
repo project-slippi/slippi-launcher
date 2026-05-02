@@ -1,7 +1,7 @@
 import type { ButtonProps } from "@mui/material/Button";
 import MatButton from "@mui/material/Button";
 
-import { cssVar } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 
 export const Button = ({ children, ...rest }: ButtonProps) => {
   return (

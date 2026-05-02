@@ -10,7 +10,7 @@ import { ExternalLink as A } from "@/components/external_link";
 import { refreshUserData, useAccount } from "@/lib/hooks/use_account";
 import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
-import { cssVar } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 
 import { StepContainer } from "../../step_container";
 import { AcceptRulesStepMessages as Messages } from "./accept_rules_step.messages";

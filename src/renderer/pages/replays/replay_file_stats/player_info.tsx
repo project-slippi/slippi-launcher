@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 import { ExternalLink as A } from "@/components/external_link";
 import { getColor } from "@/lib/player_colors";
 import { getCharacterIcon } from "@/lib/utils";
-import { cssVar } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 import { withFont } from "@/styles/with_font";
 
 type PlayerInfoProps = {

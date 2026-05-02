@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import React from "react";
 
 import { ExternalLink } from "@/components/external_link";
-import { cssVar } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 
 import { TournamentLinksMessages as Messages } from "./tournament_links.messages";
 import styles from "./tournament_links.module.css";

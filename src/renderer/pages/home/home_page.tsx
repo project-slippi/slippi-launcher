@@ -4,7 +4,7 @@ import React from "react";
 
 import { DualPane } from "@/components/dual_pane";
 import { Footer } from "@/components/footer/footer";
-import { cssVar } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 
 import { NewsFeed } from "./news_feed/news_feed";
 import { Sidebar } from "./sidebar/sidebar";

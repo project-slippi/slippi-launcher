@@ -19,7 +19,7 @@ import { useSettings } from "@/lib/hooks/use_settings";
 import { useSettingsModal } from "@/lib/hooks/use_settings_modal";
 import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
-import { cssVar } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 import slippiLogo from "@/styles/images/slippi_logo.svg";
 import { platformTitleBarStyles } from "@/styles/platform_title_bar_styles";
 

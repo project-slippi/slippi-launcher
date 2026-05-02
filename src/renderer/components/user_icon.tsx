@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
 
-import { cssVar } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 
 export const UserIcon = ({ imageUrl, size = 45 }: { imageUrl: string; size?: number }) => {
   return (

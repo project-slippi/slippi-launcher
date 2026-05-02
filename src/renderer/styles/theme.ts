@@ -1,7 +1,7 @@
 import type { Theme } from "@mui/material/styles";
 import { createTheme } from "@mui/material/styles";
 
-import { cssVar } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 
 import { withFont } from "./with_font";
 
