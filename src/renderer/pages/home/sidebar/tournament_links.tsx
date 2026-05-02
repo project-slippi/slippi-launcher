@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import React from "react";
 
 import { ExternalLink } from "@/components/external_link";
-import { colors } from "@/styles/tokens.stylex";
+import { cssVar } from "@/styles/colors";
 
 import { TournamentLinksMessages as Messages } from "./tournament_links.messages";
 import styles from "./tournament_links.module.css";
@@ -22,7 +22,7 @@ export const TournamentLinks = React.memo(function TournamentLinks() {
       <div className={styles.centerStack}>
         <Typography
           variant="h6"
-          color={colors.purpleLight}
+          color={cssVar("purpleLight")}
           fontSize="14px"
           fontWeight="semibold"
           marginBottom="8px"
