@@ -1,33 +1,12 @@
 import Button from "@mui/material/Button";
 import InputBase from "@mui/material/InputBase";
 import Typography from "@mui/material/Typography";
-import * as stylex from "@stylexjs/stylex";
 import React from "react";
 
+import styles from "./cgnat_command_section.module.css";
 import { NetworkDiagnosticsResultMessages as Messages } from "./network_diagnostics_result.messages";
 
 const hiddenIpAddress = "···.···.···.···";
-
-const styles = stylex.create({
-  button: {
-    marginLeft: "8px",
-    width: "auto",
-  },
-  cgnatCmd: {
-    padding: "4px 8px",
-    borderRadius: "10px",
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
-    fontSize: "1em",
-    margin: "8px 0",
-  },
-  body: {
-    marginBottom: "1em",
-  },
-  alignCenterDiv: {
-    display: "flex",
-    alignItems: "center",
-  },
-});
 
 type CgnatCommandSectionProps = {
   address: string;
@@ -54,16 +33,16 @@ export const CgnatCommandSection = ({ address }: CgnatCommandSectionProps) => {
   return (
     <div>
       <Typography variant="subtitle2">{Messages.runThisCommand()}</Typography>
-      <div {...stylex.props(styles.alignCenterDiv)}>
-        <InputBase disabled={true} value={displayedCgnatCommand} {...stylex.props(styles.cgnatCmd)} />
-        <Button variant="contained" color="secondary" onClick={onCgnatCommandShowHide} {...stylex.props(styles.button)}>
+      <div className={styles.alignCenterDiv}>
+        <InputBase disabled={true} value={displayedCgnatCommand} className={styles.cgnatCmd} />
+        <Button variant="contained" color="secondary" onClick={onCgnatCommandShowHide} className={styles.button}>
           {cgnatCommandHidden ? Messages.reveal() : Messages.hide()}
         </Button>
-        <Button variant="contained" color="secondary" onClick={onCgnatCommandCopy} {...stylex.props(styles.button)}>
+        <Button variant="contained" color="secondary" onClick={onCgnatCommandCopy} className={styles.button}>
           {cgnatCommandCopied ? Messages.copied() : Messages.copy()}
         </Button>
       </div>
-      <div {...stylex.props(styles.body)}>{Messages.cgnatOrDoubleNatDescription()}</div>
+      <div className={styles.body}>{Messages.cgnatOrDoubleNatDescription()}</div>
     </div>
   );
 };
