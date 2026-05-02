@@ -4,7 +4,7 @@ import Paper from "@mui/material/Paper";
 import { alpha } from "@mui/material/styles";
 import React from "react";
 
-import { colors } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 
 export const Table = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -15,7 +15,7 @@ export const Table = ({ children }: { children: React.ReactNode }) => {
         height: "fit-content",
         borderRadius: 4,
         border: "none",
-        backgroundColor: alpha(colors.purpleDark, 0.9),
+        backgroundColor: alpha(cssVar("purpleDark"), 0.9),
       }}
     >
       {children}

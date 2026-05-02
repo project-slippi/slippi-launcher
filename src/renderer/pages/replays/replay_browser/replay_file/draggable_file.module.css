@@ -1,0 +1,10 @@
+.draggable {
+  cursor: inherit;
+  cursor: grab;
+  user-select: auto;
+}
+
+.isDraggable {
+  -webkit-user-drag: element;
+  -webkit-app-region: no-drag;
+}

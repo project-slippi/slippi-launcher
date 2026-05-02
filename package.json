@@ -9,8 +9,10 @@
     "build:renderer": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.prod.ts",
     "build:migrations": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.migrations.prod.ts",
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir release/app",
-    "lint": "cross-env NODE_ENV=development eslint src --ext .js,.jsx,.ts,.tsx",
-    "lint:fix": "npm run lint -- --fix",
+    "lint": "concurrently \"npm run lint:js\" \"npm run lint:css\"",
+    "lint:js": "cross-env NODE_ENV=development eslint src --ext .js,.jsx,.ts,.tsx",
+    "lint:css": "stylelint \"src/**/*.{css,scss}\"",
+    "lint:fix": "npm run lint:js -- --fix && npm run lint:css -- --fix",
     "typecheck": "tsc -p tsconfig.typecheck.json",
     "clean": "ts-node ./.erb/scripts/clean.js dist",
     "package": "npm run clean && npm run build && electron-builder build --publish never",
@@ -49,7 +51,8 @@
     }
   },
   "lint-staged": {
-    "*.{js,ts,jsx,tsx}": "eslint --cache --fix"
+    "*.{js,ts,jsx,tsx}": "eslint --cache --fix",
+    "*.{css,scss}": "stylelint --fix"
   },
   "i18next-auto-keys": {
     "poTemplateName": "messages.pot",
@@ -77,8 +80,6 @@
     "@storybook/addon-webpack5-compiler-babel": "^3.0.6",
     "@storybook/preset-scss": "^1.0.3",
     "@storybook/react-webpack5": "9.1.16",
-    "@stylexjs/eslint-plugin": "^0.4.1",
-    "@stylexjs/webpack-plugin": "^0.4.1",
     "@svgr/webpack": "^6.1.2",
     "@teamsupercell/typings-for-css-modules-loader": "^2.5.1",
     "@testing-library/react": "^14.3.1",
@@ -147,6 +148,9 @@
     "sass-loader": "^12.6.0",
     "storybook": "9.1.19",
     "style-loader": "^3.3.1",
+    "stylelint": "^17.9.1",
+    "stylelint-config-standard-scss": "^17.0.0",
+    "stylelint-scss": "^7.0.0",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^3.12.0",
     "tsconfig-paths-webpack-plugin": "^4.1.0",
@@ -171,9 +175,9 @@
     "@mui/lab": "^5.0.0-alpha.127",
     "@mui/material": "^5.12.1",
     "@slippi/slippi-js": "^9.0.0",
-    "@stylexjs/stylex": "^0.4.1",
     "@xmcl/nat-api": "^0.4.1",
     "async-mutex": "^0.4.0",
+    "clsx": "^2.1.1",
     "compare-func": "^2.0.0",
     "cross-fetch": "^3.1.5",
     "date-fns": "^3.3.0",

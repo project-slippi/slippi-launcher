@@ -5,14 +5,14 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import * as stylex from "@stylexjs/stylex";
 import React from "react";
 
 import { Button as ActionButton } from "@/components/form/button";
-import { colors } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 
 import { NetworkDiagnosticsResult } from "./network_diagnostic_result/network_diagnostics_result";
 import { NetworkDiagnosticsMessages as Messages } from "./network_diagnostics_button.messages";
+import styles from "./network_diagnostics_button.module.css";
 
 type NetworkInformation = {
   address: string;
@@ -20,19 +20,6 @@ type NetworkInformation = {
   natType: NatType;
   portMapping: PortMapping;
 };
-
-const styles = stylex.create({
-  container: {
-    textAlign: "center",
-  },
-  text: {
-    marginTop: 20,
-  },
-  icon: {
-    height: 18,
-    width: 18,
-  },
-});
 
 export const NetworkDiagnosticsButton = React.memo(() => {
   const [dialogOpen, setDialogOpen] = React.useState(false);
@@ -60,9 +47,9 @@ export const NetworkDiagnosticsButton = React.memo(() => {
   const networkDiagnosticsContent = React.useMemo(() => {
     if (isLoading) {
       return (
-        <div {...stylex.props(styles.container)}>
+        <div className={styles.container}>
           <CircularProgress color="inherit" />
-          <div {...stylex.props(styles.text)}>{Messages.runningDiagnostics()}</div>
+          <div className={styles.text}>{Messages.runningDiagnostics()}</div>
         </div>
       );
     }
@@ -78,7 +65,7 @@ export const NetworkDiagnosticsButton = React.memo(() => {
   return (
     <div>
       <ActionButton
-        startIcon={<NetworkCheckIcon fill={colors.purpleLighter} {...stylex.props(styles.icon)} />}
+        startIcon={<NetworkCheckIcon fill={cssVar("purpleLighter")} className={styles.icon} />}
         color="secondary"
         variant="contained"
         onClick={openDialog}

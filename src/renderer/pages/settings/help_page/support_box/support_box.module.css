@@ -1,0 +1,21 @@
+.container {
+  background-color: var(--purple-light);
+  color: var(--off-white);
+  border-radius: 10px;
+  padding: 15px;
+}
+
+.iconContainer {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  margin-bottom: 10px;
+}
+
+.helpIcon {
+  margin-right: 8px;
+}
+
+.link {
+  text-decoration: underline;
+}

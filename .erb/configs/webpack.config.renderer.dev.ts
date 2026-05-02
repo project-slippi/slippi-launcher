@@ -1,7 +1,6 @@
 import "webpack-dev-server";
 
 import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
-import StylexPlugin from "@stylexjs/webpack-plugin";
 import chalk from "chalk";
 import { execSync, spawn } from "child_process";
 import fs from "fs";
@@ -205,14 +204,6 @@ export default (env?: Record<string, string | true>, _argv?: any) => {
         env: process.env.NODE_ENV,
         isDevelopment,
         nodeModules: webpackPaths.appNodeModulesPath,
-      }),
-
-      new StylexPlugin({
-        dev: isDevelopment,
-        unstable_moduleResolution: {
-          type: "commonJS",
-          rootDir: webpackPaths.rootPath,
-        },
       }),
     ],
 

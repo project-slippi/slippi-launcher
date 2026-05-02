@@ -2,38 +2,17 @@ import { socials } from "@common/constants";
 import { css } from "@emotion/react";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
 import LiveHelpIcon from "@mui/icons-material/LiveHelp";
-import * as stylex from "@stylexjs/stylex";
 import log from "electron-log";
 
 import { ExternalLink as A } from "@/components/external_link";
 import { Button } from "@/components/form/button";
 import { useToasts } from "@/lib/hooks/use_toasts";
+import { cssVar } from "@/styles/css_variables";
 import { ReactComponent as DiscordIcon } from "@/styles/images/discord.svg";
-import { colors } from "@/styles/tokens.stylex";
 
 import { NetworkDiagnosticsButton } from "./network_diagnostics_button/network_diagnostics_button";
 import { SupportBoxMessages as Messages } from "./support_box.messages";
-
-const styles = stylex.create({
-  container: {
-    backgroundColor: colors.purpleLight,
-    color: colors.offWhite,
-    borderRadius: "10px",
-    padding: "15px",
-  },
-  iconContainer: {
-    display: "flex",
-    alignItems: "center",
-    margin: 0,
-    marginBottom: "10px",
-  },
-  helpIcon: {
-    marginRight: 8,
-  },
-  link: {
-    textDecoration: "underline",
-  },
-});
+import styles from "./support_box.module.css";
 
 export const SupportBox = () => {
   const { showError, showSuccess } = useToasts();
@@ -52,9 +31,9 @@ export const SupportBox = () => {
   };
 
   return (
-    <div {...stylex.props(styles.container)}>
-      <h2 {...stylex.props(styles.iconContainer)}>
-        <LiveHelpIcon {...stylex.props(styles.helpIcon)} />
+    <div className={styles.container}>
+      <h2 className={styles.iconContainer}>
+        <LiveHelpIcon className={styles.helpIcon} />
         {Messages.needHelp()}
       </h2>
       <div>{Messages.bestWayToGetSupport()}</div>
@@ -71,7 +50,7 @@ export const SupportBox = () => {
         <div>
           <Button
             LinkComponent={A}
-            startIcon={<DiscordIcon fill={colors.purpleLighter} style={{ height: 18, width: 18 }} />}
+            startIcon={<DiscordIcon fill={cssVar("purpleLighter")} style={{ height: 18, width: 18 }} />}
             href={socials.discordUrl}
           >
             {Messages.joinDiscord()}

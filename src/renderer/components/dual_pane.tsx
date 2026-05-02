@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import debounce from "lodash/debounce";
 import React from "react";
 
-import { colors } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 
 const Outer = styled.div`
   position: relative;
@@ -21,7 +21,7 @@ const Column = styled.div`
 const ResizeHandle = styled.div`
   position: absolute;
   cursor: e-resize;
-  background-color: ${colors.offWhite};
+  background-color: ${cssVar("offWhite")};
   top: 0;
   height: 100%;
   opacity: 0;

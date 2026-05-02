@@ -9,7 +9,7 @@ import ListItemText from "@mui/material/ListItemText";
 import type { FolderResult } from "@replays/types";
 
 import { useReplays } from "@/lib/hooks/use_replays";
-import { colors } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 
 type FolderTreeNodeProps = {
   nestLevel?: number;
@@ -24,14 +24,14 @@ export const FolderTreeNode = ({ nestLevel = 0, folder, collapsedFolders, onClic
   const hasChildren = folder.subdirectories.length > 0;
   const isCollapsed = collapsedFolders.includes(folder.fullPath);
   const isSelected = currentFolder === folder.fullPath;
-  const labelColor = isSelected ? colors.grayDark : "rgba(255, 255, 255, 0.5)";
+  const labelColor = isSelected ? cssVar("grayDark") : "rgba(255, 255, 255, 0.5)";
   return (
     <div>
       <ListItem
         onClick={() => onClick(folder.fullPath)}
         button={true}
         style={{
-          backgroundColor: isSelected ? colors.greenPrimary : undefined,
+          backgroundColor: isSelected ? cssVar("greenPrimary") : undefined,
           color: labelColor,
           padding: 0,
           paddingLeft: nestLevel * 15,

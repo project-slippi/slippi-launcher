@@ -2,13 +2,13 @@ import LanguageIcon from "@mui/icons-material/Language";
 import PeopleIcon from "@mui/icons-material/People";
 import { Card, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
-import * as stylex from "@stylexjs/stylex";
 import React from "react";
 
 import { ExternalLink } from "@/components/external_link";
-import { colors } from "@/styles/tokens.stylex";
+import { cssVar } from "@/styles/css_variables";
 
 import { TournamentLinksMessages as Messages } from "./tournament_links.messages";
+import styles from "./tournament_links.module.css";
 
 const NEARBY_TOURNAMENTS_URL =
   "https://start.gg/search/near_me?refinementList%5Bevents.videogame.id%5D=1&refinementList%5BhasOnlineEvents%5D=&refinementList%5Bstate%5D%5B0%5D=1&page=1&configure%5BhitsPerPage%5D=15&configure%5Bfilters%5D=profileType%3Atournament&configure%5BaroundLatLngViaIP%5D=true&configure%5BaroundRadius%5D=160934";
@@ -16,26 +16,13 @@ const NEARBY_TOURNAMENTS_URL =
 const ONLINE_TOURNAMENTS_URL =
   "https://start.gg/search/tournaments?refinementList%5Bevents.videogame.id%5D=1&refinementList%5BhasOnlineEvents%5D%5B0%5D=true&page=1&configure%5BhitsPerPage%5D=15&configure%5Bfilters%5D=profileType%3Atournament&range%5BeffectiveRegistrationClosesAt%5D%5Bmin%5D=1";
 
-const styles = stylex.create({
-  card: {
-    margin: "6px",
-    padding: "10px",
-  },
-  centerStack: {
-    display: "grid",
-    justifyContent: "center",
-    justifyItems: "center",
-    alignItems: "center",
-  },
-});
-
 export const TournamentLinks = React.memo(function TournamentLinks() {
   return (
-    <Card {...stylex.props(styles.card)}>
-      <div {...stylex.props(styles.centerStack)}>
+    <Card className={styles.card}>
+      <div className={styles.centerStack}>
         <Typography
           variant="h6"
-          color={colors.purpleLight}
+          color={cssVar("purpleLight")}
           fontSize="14px"
           fontWeight="semibold"
           marginBottom="8px"

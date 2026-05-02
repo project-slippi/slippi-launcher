@@ -1,0 +1,12 @@
+.container {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  flex-wrap: nowrap;
+  max-width: fit-content;
+}
+
+.button {
+  white-space: nowrap;
+  flex-shrink: 0;
+}

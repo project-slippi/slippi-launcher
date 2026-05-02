@@ -3,7 +3,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import React from "react";
 
 import { UserIcon } from "@/components/user_icon";
-import { colors } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 
 export const UserInfo = React.memo(function UserInfo({
   displayName,
@@ -57,7 +57,7 @@ export const UserInfo = React.memo(function UserInfo({
             css={css`
               font-weight: bold;
               font-size: 14px;
-              color: ${errorMessage ? "red" : colors.purpleLight};
+              color: ${errorMessage ? "red" : cssVar("purpleLight")};
             `}
           >
             {subtext}

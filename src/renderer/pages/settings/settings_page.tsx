@@ -17,7 +17,7 @@ import { DualPane } from "@/components/dual_pane";
 import { useMousetrap } from "@/lib/hooks/use_mousetrap";
 import { useSettingsModal } from "@/lib/hooks/use_settings_modal";
 import type { SettingSection } from "@/pages/settings/types";
-import { colors } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 import { platformTitleBarStyles } from "@/styles/platform_title_bar_styles";
 import { withSlippiBackground } from "@/styles/with_slippi_background";
 
@@ -67,7 +67,7 @@ export const SettingsPage = React.memo(({ settings }: { settings: SettingSection
       <DualPane
         id="settings-view"
         width={275}
-        leftStyle={{ backgroundColor: colors.purpleDark }}
+        leftStyle={{ backgroundColor: cssVar("purpleDark") }}
         leftSide={
           <MenuColumn>
             <div
@@ -96,7 +96,7 @@ export const SettingsPage = React.memo(({ settings }: { settings: SettingSection
                             margin-top: 10px;
                             margin-bottom: 5px;
                             font-size: 14px;
-                            color: ${colors.purpleLight};
+                            color: ${cssVar("purpleLight")};
                           `}
                         >
                           {section.title?.()}

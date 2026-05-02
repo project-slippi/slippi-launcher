@@ -5,7 +5,7 @@ import React from "react";
 
 import { useAppStore } from "@/lib/hooks/use_app_store";
 import { useAppUpdate } from "@/lib/hooks/use_app_update";
-import { colors } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 
 import { PersistentNotificationMessages as Messages } from "./persistent_notification.messages";
 
@@ -62,7 +62,7 @@ const Outer = styled.div`
   justify-content: center;
   position: relative;
   height: 30px;
-  background-color: ${colors.purpleLight};
+  background-color: ${cssVar("purpleLight")};
   text-align: center;
   font-size: 14px;
 `;

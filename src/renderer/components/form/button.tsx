@@ -1,7 +1,7 @@
 import type { ButtonProps } from "@mui/material/Button";
 import MatButton from "@mui/material/Button";
 
-import { colors } from "@/styles/colors";
+import { cssVar } from "@/styles/css_variables";
 
 export const Button = ({ children, ...rest }: ButtonProps) => {
   return (
@@ -9,12 +9,12 @@ export const Button = ({ children, ...rest }: ButtonProps) => {
       variant="contained"
       color="inherit"
       sx={{
-        color: colors.purpleDarker,
+        color: cssVar("purpleDarker"),
         fontWeight: 500,
         fontSize: 12,
         backgroundColor: "white",
         "& .MuiButton-startIcon": {
-          color: colors.purpleLighter,
+          color: cssVar("purpleLighter"),
         },
         "&:hover": {
           backgroundColor: "rgba(255, 255, 255, 0.7)",

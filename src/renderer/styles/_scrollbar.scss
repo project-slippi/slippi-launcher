@@ -30,6 +30,7 @@ $scrollbar-min-height: 50px;
   background-color: $scrollbar-color;
   border-radius: $scrolltrack-width;
   min-height: $scrollbar-min-height;
+
   &:hover {
     background-color: $scrollbar-color-hover;
   }

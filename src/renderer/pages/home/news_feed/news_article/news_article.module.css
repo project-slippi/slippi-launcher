@@ -1,0 +1,29 @@
+.titleHeader {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.fixedCardHeight {
+  height: 200px;
+}
+
+.markdownContainer {
+  color: #ccc;
+  max-width: 700px;
+}
+
+.container {
+  margin-bottom: 20px;
+}
+
+.dateInfo {
+  margin-right: auto;
+  margin-left: 5px;
+  opacity: 0.6;
+  font-size: 15px;
+}
+
+.cardActions {
+  border-top: 1px solid rgb(255 255 255 / 20%);
+}
