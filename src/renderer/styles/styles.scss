@@ -10,7 +10,7 @@ body,
 }
 
 body {
-  font-family: "Rubik", "Helvetica", "Arial", sans-serif;
+  font-family: Rubik, Helvetica, Arial, sans-serif;
   color: white;
   background-color: #1B0B28,
 }
@@ -21,8 +21,8 @@ body {
   user-select: none;
   -webkit-user-drag: none;
   -webkit-app-region: no-drag;
-  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
-  -webkit-focus-ring-color: rgba(255, 255, 255, 0);
+  -webkit-tap-highlight-color: rgb(255 255 255 / 0%);
+  -webkit-focus-ring-color: rgb(255 255 255 / 0%);
 
   /**
    * This should only affect rendering on macOS. Light text on dark backgrounds can appear
@@ -32,7 +32,6 @@ body {
    * For more context: https://usabilitypost.com/2012/11/05/stop-fixing-font-smoothing/
    */
   -webkit-font-smoothing: antialiased;
-
   outline: none;
 }
 
@@ -42,7 +41,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Maven Pro", "Helvetica", "Arial", sans-serif;
+  font-family: "Maven Pro", Helvetica, Arial, sans-serif;
   font-weight: 400;
 }
 

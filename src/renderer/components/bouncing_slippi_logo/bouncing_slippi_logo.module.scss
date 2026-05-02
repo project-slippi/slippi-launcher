@@ -24,8 +24,9 @@
 
 @keyframes bounceAnimation {
   0% {
-    bottom: 0px;
+    bottom: 0;
   }
+
   100% {
     bottom: 25px;
   }
@@ -35,6 +36,7 @@
   0% {
     transform: rotate(0);
   }
+
   100% {
     transform: rotate(720deg);
   }
