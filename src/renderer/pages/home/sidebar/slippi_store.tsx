@@ -1,5 +1,4 @@
 import { Button, Typography } from "@mui/material";
-import * as stylex from "@stylexjs/stylex";
 import type { Duration } from "date-fns";
 import { formatDuration, intervalToDuration, isBefore } from "date-fns";
 import React from "react";
@@ -8,43 +7,16 @@ import { ExternalLink } from "@/components/external_link";
 import { shortEnLocale } from "@/lib/time";
 import shopImage from "@/styles/images/shop-image.png";
 
-const SHOP_CLOSES_AT = new Date("2024-02-28T08:00:00.000Z");
+import styles from "./slippi_store.module.css";
 
-const styles = stylex.create({
-  container: {
-    position: "relative",
-    flex: "1",
-    overflow: "hidden",
-    backgroundColor: "#21ba44",
-  },
-  image: {
-    position: "absolute",
-    width: "100%",
-    objectFit: "cover",
-  },
-  buttonContainer: {
-    position: "absolute",
-    top: "150px",
-    left: "40px",
-    width: "220px !important",
-  },
-  closeDate: {
-    position: "absolute",
-    fontWeight: "bold",
-    top: "200px",
-    width: "100%",
-    color: "white",
-    fontSize: 15,
-    textAlign: "center",
-  },
-});
+const SHOP_CLOSES_AT = new Date("2024-02-28T08:00:00.000Z");
 
 const InternalSlippiStore = ({ shopOpen, countdown }: { shopOpen: boolean; countdown: string }) => {
   const buttonText = shopOpen ? "Click to Shop" : "Shop closed";
   return (
-    <div {...stylex.props(styles.container)}>
-      <img src={shopImage} {...stylex.props(styles.image)} />
-      <div {...stylex.props(styles.buttonContainer)}>
+    <div className={styles.container}>
+      <img src={shopImage} className={styles.image} />
+      <div className={styles.buttonContainer}>
         <Button
           variant="contained"
           sx={{ color: "white", textTransform: "uppercase" }}
@@ -58,7 +30,7 @@ const InternalSlippiStore = ({ shopOpen, countdown }: { shopOpen: boolean; count
         </Button>
       </div>
       {countdown && (
-        <div {...stylex.props(styles.closeDate)}>
+        <div className={styles.closeDate}>
           <Typography variant="overline" sx={{ lineHeight: "initial" }}>
             Shop closes in
           </Typography>
