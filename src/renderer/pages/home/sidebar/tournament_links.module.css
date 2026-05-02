@@ -1,0 +1,10 @@
+.card {
+  margin: 6px;
+  padding: 10px;
+}
+
+.centerStack {
+  display: grid;
+  justify-content: center;
+  place-items: center center;
+}
