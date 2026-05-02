@@ -1,9 +1,4 @@
-<<<<<<< HEAD:src/renderer/pages/home/sidebar/ranked_status.tsx
-import { Button, Card, Typography } from "@mui/material";
-=======
 import { Button, Typography } from "@mui/material";
-import * as stylex from "@stylexjs/stylex";
->>>>>>> 98091992 (Add upcoming tournaments page):src/renderer/pages/home/overview/ranked_status/ranked_status.tsx
 import type { Duration } from "date-fns";
 import { formatDuration, intervalToDuration } from "date-fns";
 import React from "react";
@@ -69,23 +64,8 @@ const InternalRankedStatus = ({
   const connectCode = userData?.playKey?.connectCode;
 
   return (
-<<<<<<< HEAD:src/renderer/pages/home/sidebar/ranked_status.tsx
-    <Card className={styles.card}>
-      <div className={styles.centerStack}>
-        <Typography
-          variant="h6"
-          color={cssVar("purpleLight")}
-          fontSize="14px"
-          fontWeight="semibold"
-          marginBottom="8px"
-          textTransform="uppercase"
-        >
-          {Messages.rankedDay()}
-        </Typography>
-=======
     <div style={{ padding: 16 }}>
-      <div {...stylex.props(styles.centerStack)}>
->>>>>>> 98091992 (Add upcoming tournaments page):src/renderer/pages/home/overview/ranked_status/ranked_status.tsx
+      <div className={styles.centerStack}>
         {isFullAccess ? <RankedDayActiveIcon width={40} /> : <RankedDayInactiveIcon width={40} />}
         <Typography
           className={styles.stroke}
@@ -113,11 +93,7 @@ const InternalRankedStatus = ({
         <Typography fontWeight="medium" fontSize="20px">
           {countdown}
         </Typography>
-<<<<<<< HEAD:src/renderer/pages/home/sidebar/ranked_status.tsx
         <Typography fontSize="12px" color={cssVar("textDim")} marginTop="-4px">
-=======
-        <Typography fontSize="12pt" color={colors.textDim} marginTop="-4px">
->>>>>>> 98091992 (Add upcoming tournaments page):src/renderer/pages/home/overview/ranked_status/ranked_status.tsx
           {nextTime.toLocaleString([userLocale, currentLanguage], {
             year: "numeric",
             month: "numeric",
@@ -128,10 +104,6 @@ const InternalRankedStatus = ({
           })}
         </Typography>
       </div>
-<<<<<<< HEAD:src/renderer/pages/home/sidebar/ranked_status.tsx
-      <Typography fontSize="11px" color={cssVar("textDim")} marginTop="12px">
-        {isFullAccess ? Messages.rankedPlayIsCurrentlyAvailable() : Messages.onceEveryFourDaysRankedPlayIsAvailable()}
-=======
       {activeSubscriptionLevel === "NONE" || !connectCode ? (
         <SubscribeToRanked isFullAccess={isFullAccess} uid={userData?.playKey?.uid} />
       ) : (
@@ -144,9 +116,8 @@ const InternalRankedStatus = ({
 const AlreadySubscribed = ({ connectCode }: { connectCode: string }) => {
   return (
     <>
-      <Typography fontSize="11pt" color={colors.textDim} marginTop="12px">
+      <Typography fontSize="11pt" color={cssVar("textDim")} marginTop="12px">
         {Messages.activeSubscription()}
->>>>>>> 98091992 (Add upcoming tournaments page):src/renderer/pages/home/overview/ranked_status/ranked_status.tsx
       </Typography>
       <div className={styles.buttonContainer}>
         <Button
@@ -168,11 +139,11 @@ const AlreadySubscribed = ({ connectCode }: { connectCode: string }) => {
 const SubscribeToRanked = ({ isFullAccess, uid }: { isFullAccess: boolean; uid?: string }) => {
   return (
     <>
-      <Typography fontSize="11pt" color={colors.textDim} marginTop="12px">
+      <Typography fontSize="11pt" color={cssVar("textDim")} marginTop="12px">
         {isFullAccess ? Messages.rankedPlayIsCurrentlyAvailable() : Messages.onceEveryFourDaysRankedPlayIsAvailable()}
       </Typography>
       {uid && (
-        <div {...stylex.props(styles.buttonContainer)}>
+        <div className={styles.buttonContainer}>
           <Button
             variant="contained"
             sx={{ color: "white", fontSize: "13px", fontWeight: "medium", textTransform: "uppercase" }}

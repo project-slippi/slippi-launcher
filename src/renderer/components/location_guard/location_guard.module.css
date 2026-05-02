@@ -18,12 +18,12 @@
 }
 
 .description {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgb(255 255 255 / 70%);
   margin-bottom: 16px;
 }
 
 .privacy {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgb(255 255 255 / 70%);
   margin-bottom: 24px;
 }

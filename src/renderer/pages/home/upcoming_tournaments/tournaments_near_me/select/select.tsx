@@ -1,6 +1,6 @@
 import { Select as BaseSelect } from "@base-ui/react/select";
 
-import styles from "./select.module.scss";
+import styles from "./select.module.css";
 
 interface SelectOption<T> {
   label: string;

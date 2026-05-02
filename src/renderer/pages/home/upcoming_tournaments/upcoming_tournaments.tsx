@@ -12,7 +12,7 @@ import type { SupportedLanguage } from "@/services/i18n/util";
 import { MajorCard } from "./major_card/major_card";
 import { TournamentsNearMe } from "./tournaments_near_me/tournaments_near_me";
 import { UpcomingTournamentsMessages as Messages } from "./upcoming_tournaments.messages";
-import styles from "./upcoming_tournaments.module.scss";
+import styles from "./upcoming_tournaments.module.css";
 
 const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 

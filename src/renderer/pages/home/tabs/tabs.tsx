@@ -1,6 +1,6 @@
 import { Tabs as BaseTabs } from "@base-ui/react/tabs";
 
-import styles from "./tabs.module.scss";
+import styles from "./tabs.module.css";
 
 type Tab = {
   id: string;
@@ -16,16 +16,16 @@ type TabsProps = {
 };
 
 export const Tabs = ({ defaultTab, value, onChange, tabs }: TabsProps) => (
-  <BaseTabs.Root defaultValue={defaultTab} value={value} onValueChange={onChange} className={styles.Root}>
-    <BaseTabs.List className={styles.List}>
+  <BaseTabs.Root defaultValue={defaultTab} value={value} onValueChange={onChange} className={styles.root}>
+    <BaseTabs.List className={styles.list}>
       {tabs.map((tab, i) => (
-        <BaseTabs.Tab className={styles.Trigger} value={tab.id} key={i} data-label={tab.label}>
+        <BaseTabs.Tab className={styles.trigger} value={tab.id} key={i} data-label={tab.label}>
           {tab.label}
         </BaseTabs.Tab>
       ))}
     </BaseTabs.List>
     {tabs.map((tab, i) => (
-      <BaseTabs.Panel className={styles.Content} value={tab.id} key={i}>
+      <BaseTabs.Panel className={styles.content} value={tab.id} key={i}>
         {tab.content}
       </BaseTabs.Panel>
     ))}

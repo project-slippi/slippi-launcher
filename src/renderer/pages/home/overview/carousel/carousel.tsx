@@ -8,7 +8,7 @@ import { ExternalLink } from "@/components/external_link";
 import { Button } from "@/components/form/button";
 
 import { CarouselMessages as Messages } from "./carousel.messages";
-import styles from "./carousel.module.scss";
+import styles from "./carousel.module.css";
 
 const TRANSITION_DURATION_MS = 400;
 

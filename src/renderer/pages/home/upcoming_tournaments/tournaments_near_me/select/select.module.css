@@ -4,44 +4,44 @@
   justify-content: space-between;
   gap: 8px;
   padding: 6px 10px;
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: rgb(255 255 255 / 5%);
+  border: 1px solid rgb(255 255 255 / 10%);
   border-radius: 6px;
   color: white;
   font-size: 13px;
   cursor: pointer;
   min-width: 85px;
   transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
 
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
-  }
+.trigger:hover {
+  background-color: rgb(255 255 255 / 10%);
+  border-color: rgb(255 255 255 / 20%);
+}
 
-  &[data-popup-open] {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
-  }
+.trigger[data-popup-open] {
+  background-color: rgb(255 255 255 / 10%);
+  border-color: rgb(255 255 255 / 20%);
+}
 
-  &:focus-visible {
-    outline: none;
-    border-color: #9F74C0;
-  }
+.trigger:focus-visible {
+  outline: none;
+  border-color: var(--purple-lighter);
 }
 
 .value {
   flex: 1;
   text-align: left;
+}
 
-  &[data-placeholder] {
-    opacity: 0.7;
-  }
+.value[data-placeholder] {
+  opacity: 0.7;
 }
 
 .icon {
   display: flex;
   align-items: center;
-  color: #8665A0;
+  color: var(--purple-light);
   flex-shrink: 0;
 }
 
@@ -51,19 +51,19 @@
 }
 
 .popup {
-  background-color: #1B0B28;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background-color: var(--purple-darker);
+  border: 1px solid rgb(255 255 255 / 15%);
   border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 50%);
   max-height: 200px;
   overflow-y: auto;
   transform-origin: var(--transform-origin);
+}
 
-  &[data-starting-style],
-  &[data-ending-style] {
-    opacity: 0;
-    transform: scale(0.95);
-  }
+.popup[data-starting-style],
+.popup[data-ending-style] {
+  opacity: 0;
+  transform: scale(0.95);
 }
 
 .list {
@@ -76,22 +76,22 @@
   gap: 8px;
   padding: 8px 12px;
   cursor: pointer;
-  color: #cccccc;
+  color: #ccc;
   font-size: 13px;
   transition: background-color 0.15s ease-in-out;
+}
 
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.08);
-  }
+.item:hover {
+  background-color: rgb(255 255 255 / 8%);
+}
 
-  &[data-highlighted] {
-    background-color: rgba(159, 116, 192, 0.25);
-    color: white;
-  }
+.item[data-highlighted] {
+  background-color: rgb(159 116 192 / 25%);
+  color: white;
+}
 
-  &[data-selected] {
-    background-color: rgba(159, 116, 192, 0.2);
-  }
+.item[data-selected] {
+  background-color: rgb(159 116 192 / 20%);
 }
 
 .itemIndicator {

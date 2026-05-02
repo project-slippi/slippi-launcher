@@ -6,7 +6,7 @@ import { useNewsFeedQuery } from "@/lib/hooks/use_data_fetch_query";
 
 import { NewsArticleContainer as NewsArticle } from "../../news_feed/news_article/news_article.container";
 import { NewsPreviewMessages as Messages } from "./news_preview.messages";
-import styles from "./news_preview.module.scss";
+import styles from "./news_preview.module.css";
 
 export const NewsPreview = React.memo(function NewsPreview() {
   const { isLoading, error, data: allPosts = [] } = useNewsFeedQuery();

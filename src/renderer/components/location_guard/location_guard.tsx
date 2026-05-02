@@ -8,7 +8,7 @@ import { useQuery } from "react-query";
 import { useEnableLocationAccess } from "@/lib/hooks/use_settings";
 
 import { LocationGuardMessages as Messages } from "./location_guard.messages";
-import styles from "./location_guard.module.scss";
+import styles from "./location_guard.module.css";
 
 const LocationNotice = ({ onAllow }: { onAllow: () => void }) => {
   return (

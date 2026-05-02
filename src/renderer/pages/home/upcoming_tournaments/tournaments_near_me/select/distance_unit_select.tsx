@@ -1,7 +1,7 @@
 import { Select as BaseSelect } from "@base-ui/react/select";
 import { useMemo, useState } from "react";
 
-import styles from "./distance_unit_select.module.scss";
+import styles from "./distance_unit_select.module.css";
 
 const DISTANCE_OPTIONS = [
   { value: 50, label: "50" },

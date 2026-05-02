@@ -13,7 +13,7 @@ import type { SupportedLanguage } from "@/services/i18n/util";
 import { type DistanceValue, type UnitValue, DistanceUnitSelect } from "./select/distance_unit_select";
 import { Select } from "./select/select";
 import { TournamentsNearMeMessages as Messages } from "./tournaments_near_me.messages";
-import styles from "./tournaments_near_me.module.scss";
+import styles from "./tournaments_near_me.module.css";
 
 type SortOption = "distance" | "date" | "entrants";
 

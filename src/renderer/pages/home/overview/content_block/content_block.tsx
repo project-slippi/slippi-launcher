@@ -1,7 +1,7 @@
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { clsx } from "clsx";
 
-import styles from "./content_block.module.scss";
+import styles from "./content_block.module.css";
 
 export const ContentBlock = ({
   title,
@@ -13,12 +13,12 @@ export const ContentBlock = ({
   onClick?: () => void;
 }) => {
   return (
-    <div className={styles.Outer}>
-      <div className={clsx(styles.Header, onClick && styles.active)} onClick={onClick}>
-        <h3 className={styles.Title}>{title}</h3>
+    <div className={styles.outer}>
+      <div className={clsx(styles.header, onClick && styles.active)} onClick={onClick}>
+        <h3 className={styles.title}>{title}</h3>
         {onClick && <ChevronRightIcon />}
       </div>
-      <div className={styles.Content}>{content}</div>
+      <div className={styles.content}>{content}</div>
     </div>
   );
 };

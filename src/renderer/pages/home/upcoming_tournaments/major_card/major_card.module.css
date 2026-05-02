@@ -3,14 +3,14 @@
   grid-template-columns: 50% 50%;
   border-radius: 8px;
   overflow: hidden;
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgb(255 255 255 / 5%);
   transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
   min-height: 150px;
+}
 
-  &:hover {
-    transform: translateY(-2px);
-    background-color: rgba(255, 255, 255, 0.1);
-  }
+.card:hover {
+  transform: translateY(-2px);
+  background-color: rgb(255 255 255 / 10%);
 }
 
 .imageContainer {
@@ -34,7 +34,7 @@
   bottom: 0;
   right: 0;
   padding: 6px 10px;
-  background-color: rgb(27, 11, 40, 0.9);
+  background-color: rgb(27 11 40 / 90%);
   border-top-left-radius: 8px;
 }
 
@@ -45,13 +45,12 @@
 
 .happeningNow {
   background-color: #941414;
-
-  .countdown {
-    color: #fff;
-    font-weight: bold;
-  }
 }
 
+.happeningNow .countdown {
+  color: #fff;
+  font-weight: bold;
+}
 
 .content {
   position: relative;
@@ -75,7 +74,7 @@
   align-items: center;
   gap: 6px;
   font-size: 12pt;
-  color: #8665A0;
+  color: var(--purple-light);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -85,7 +84,7 @@
   width: 3px;
   height: 3px;
   border-radius: 50%;
-  background-color: #8665A0;
+  background-color: var(--purple-light);
   flex-shrink: 0;
 }
 
@@ -95,7 +94,7 @@
   gap: 4px;
   margin-top: 4px;
   font-size: 12pt;
-  color: #8665A0;
+  color: var(--purple-light);
 }
 
 .entrantsCount {

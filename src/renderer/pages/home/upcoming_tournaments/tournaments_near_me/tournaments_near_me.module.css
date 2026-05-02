@@ -27,13 +27,13 @@
   display: flex;
   gap: 10px;
   padding: 10px;
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgb(255 255 255 / 5%);
   border-radius: 8px;
   transition: background-color 0.2s ease-in-out;
+}
 
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-  }
+.card:hover {
+  background-color: rgb(255 255 255 / 10%);
 }
 
 .thumbnail {
@@ -67,7 +67,7 @@
   align-items: center;
   gap: 6px;
   flex-wrap: wrap;
-  color: #8665A0;
+  color: var(--purple-light);
 }
 
 .date {
@@ -78,7 +78,7 @@
   width: 3px;
   height: 3px;
   border-radius: 50%;
-  background-color: #8665A0;
+  background-color: var(--purple-light);
   flex-shrink: 0;
 }
 
@@ -87,7 +87,7 @@
   bottom: 0;
   right: 0;
   padding: 2px 8px;
-  background-color: rgb(27, 11, 40, 0.9);
+  background-color: rgb(27 11 40 / 90%);
   border-top-left-radius: 8px;
 }
 
@@ -98,23 +98,23 @@
 
 .happeningNow {
   background-color: #941414;
+}
 
-  .countdown {
-    color: #fff;
-    font-weight: bold;
-  }
+.happeningNow .countdown {
+  color: #fff;
+  font-weight: bold;
 }
 
 .distance {
   font-size: 12pt;
-  color: #39d05d;
+  color: var(--green-bright);
   flex-shrink: 0;
   margin-left: 10px;
 }
 
 .errorMessage,
 .loading {
-  color: #8665A0;
+  color: var(--purple-light);
   font-size: 11pt;
   padding: 12px 16px;
 }
@@ -130,7 +130,7 @@
 }
 
 .emptyText {
-  color: #8665A0;
+  color: var(--purple-light);
   font-size: 11pt;
 }
 
@@ -149,7 +149,7 @@
 .eventsCount {
   padding: 12px 16px;
   font-size: 11pt;
-  color: #8665A0;
+  color: var(--purple-light);
 }
 
 .entrantsCount {

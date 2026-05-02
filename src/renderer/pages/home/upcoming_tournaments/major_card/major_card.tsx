@@ -7,7 +7,7 @@ import { formatDateRange, formatRelativeDate } from "@/lib/time";
 import type { SupportedLanguage } from "@/services/i18n/util";
 
 import { MajorCardMessages as Messages } from "./major_card.messages";
-import styles from "./major_card.module.scss";
+import styles from "./major_card.module.css";
 
 type MajorCardProps = {
   name: string;

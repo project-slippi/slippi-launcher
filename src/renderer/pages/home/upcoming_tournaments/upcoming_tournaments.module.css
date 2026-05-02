@@ -22,8 +22,8 @@
 .section {
   display: flex;
   flex-direction: column;
-  background-color: #29133B;
-  border: 1px solid rgba(159, 116, 192, 0.1);
+  background-color: var(--purple-dark);
+  border: 1px solid rgb(159 116 192 / 10%);
   border-radius: 10px;
   overflow: hidden;
   flex: 1;
@@ -35,11 +35,11 @@
   height: 50px;
   display: flex;
   align-items: center;
-  color: #39d05d;
+  color: var(--green-bright);
   padding: 0 20px;
   font-size: 14pt;
   flex-shrink: 0;
-  border-bottom: 1px solid rgba(159, 116, 192, 0.1);
+  border-bottom: 1px solid rgb(159 116 192 / 10%);
 }
 
 .featuredCard {
@@ -59,10 +59,10 @@
   width: 100%;
   height: 100%;
   transition: transform 0.2s ease-in-out;
+}
 
-  .featuredCard:hover & {
-    transform: scale(1.01);
-  }
+.featuredCard:hover .featuredCardInner {
+  transform: scale(1.01);
 }
 
 .featuredImageContainer {
@@ -85,7 +85,12 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to top, #29133B 0%, #29133B 25%, transparent 100%);
+  background: linear-gradient(
+    to top,
+    var(--purple-dark) 0%,
+    var(--purple-dark) 25%,
+    transparent 100%
+  );
 }
 
 .featuredContent {
@@ -122,10 +127,12 @@
     transform: scale(1);
     opacity: 1;
   }
+
   70% {
     transform: scale(1.8);
     opacity: 0;
   }
+
   100% {
     transform: scale(1);
     opacity: 0;
@@ -135,7 +142,7 @@
 .startsInBadge {
   display: inline-block;
   padding: 6px 12px;
-  background-color: rgba(159, 116, 192, 0.6);
+  background-color: rgb(159 116 192 / 60%);
   border-radius: 999px;
   font-size: 11pt;
   font-weight: bold;
@@ -148,14 +155,14 @@
   font-size: 28pt;
   font-weight: bold;
   color: white;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 4px rgb(0 0 0 / 30%);
 }
 
 .featuredMeta {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #9F74C0;
+  color: var(--purple-lighter);
   font-size: 14pt;
   margin-top: 6px;
 }
@@ -164,7 +171,7 @@
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background-color: #8665A0;
+  background-color: var(--purple-light);
 }
 
 .majorGrid {
