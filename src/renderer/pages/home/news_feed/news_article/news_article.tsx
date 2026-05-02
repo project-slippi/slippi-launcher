@@ -3,7 +3,6 @@ import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import Tooltip from "@mui/material/Tooltip";
-import stylex from "@stylexjs/stylex";
 import { format, formatDistance } from "date-fns";
 import React from "react";
 
@@ -15,23 +14,7 @@ import { BlueskyPost } from "./bluesky_post";
 import { GithubPost } from "./github_post";
 import { MediumPost } from "./medium_post";
 import { NewsArticleMessages as Messages } from "./news_article.messages";
-
-const styles = stylex.create({
-  container: {
-    marginBottom: 20,
-  },
-  dateInfo: {
-    marginRight: "auto",
-    marginLeft: 5,
-    opacity: 0.6,
-    fontSize: 15,
-  },
-  cardActions: {
-    borderTopWidth: 1,
-    borderTopStyle: "solid",
-    borderTopColor: "rgba(255, 255, 255, 0.2)",
-  },
-});
+import styles from "./news_article.module.css";
 
 function getViewPostButtonText(source: NewsItem["source"]) {
   switch (source) {
@@ -73,12 +56,12 @@ export const NewsArticle = React.memo(function NewsArticle({
   }, [item]);
 
   return (
-    <div {...stylex.props(styles.container)}>
+    <div className={styles.container}>
       <Card>
         {postContent}
-        <CardActions disableSpacing={true} {...stylex.props(styles.cardActions)}>
+        <CardActions disableSpacing={true} className={styles.cardActions}>
           <Tooltip title={localDateString}>
-            <div {...stylex.props(styles.dateInfo)}>{Messages.posted(timeAgo)}</div>
+            <div className={styles.dateInfo}>{Messages.posted(timeAgo)}</div>
           </Tooltip>
           <Button LinkComponent={ExternalLink} size="small" color="primary" href={permalink}>
             {getViewPostButtonText(item.source)}
