@@ -1,6 +1,6 @@
 .inlineContainer {
   padding: 2px 6px;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgb(0 0 0 / 50%);
   border-radius: 5px;
   position: relative;
 }
@@ -9,7 +9,7 @@
   font-size: 15px;
   padding: 20px 30px;
   padding-right: 50px;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgb(0 0 0 / 50%);
   border-radius: 5px;
   position: relative;
 }
@@ -19,7 +19,6 @@
   line-height: 1.5em;
   white-space: pre-wrap;
   overflow-wrap: break-word;
-  word-break: break-word;
 }
 
 .buttonContainer {

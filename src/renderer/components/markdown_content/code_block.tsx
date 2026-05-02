@@ -4,7 +4,7 @@ import Tooltip from "@mui/material/Tooltip";
 import { clsx } from "clsx";
 import React from "react";
 
-import styles from "./code_block.module.scss";
+import styles from "./code_block.module.css";
 
 const StandaloneCodeBlock = React.memo(function StandaloneCodeBlock({ content }: { content: string }) {
   const [copied, setCopied] = React.useState<boolean>(false);

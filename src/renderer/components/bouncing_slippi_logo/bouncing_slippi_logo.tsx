@@ -3,7 +3,7 @@ import React from "react";
 
 import slippiLogo from "@/styles/images/slippi_logo.svg";
 
-import styles from "./bouncing_slippi_logo.module.scss";
+import styles from "./bouncing_slippi_logo.module.css";
 
 export const BouncingSlippiLogo = () => {
   const ref = React.createRef<HTMLDivElement>();
