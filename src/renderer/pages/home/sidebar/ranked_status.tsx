@@ -8,9 +8,9 @@ import { useAccount } from "@/lib/hooks/use_account";
 import { useAppStore } from "@/lib/hooks/use_app_store";
 import { getLocale, shortEnLocale } from "@/lib/time";
 import type { SupportedLanguage } from "@/services/i18n/util";
+import { cssVar } from "@/styles/colors";
 import { ReactComponent as RankedDayActiveIcon } from "@/styles/images/ranked_day_active.svg";
 import { ReactComponent as RankedDayInactiveIcon } from "@/styles/images/ranked_day_inactive.svg";
-import { colors } from "@/styles/tokens.stylex";
 
 import { RankedStatusMessages as Messages } from "./ranked_status.messages";
 import styles from "./ranked_status.module.css";
@@ -67,7 +67,7 @@ const InternalRankedStatus = ({
       <div className={styles.centerStack}>
         <Typography
           variant="h6"
-          color={colors.purpleLight}
+          color={cssVar("purpleLight")}
           fontSize="14px"
           fontWeight="semibold"
           marginBottom="8px"
@@ -79,7 +79,7 @@ const InternalRankedStatus = ({
         <Typography
           className={styles.stroke}
           variant="body1"
-          color={isFullAccess ? colors.greenDark : colors.textDim}
+          color={isFullAccess ? cssVar("greenDark") : cssVar("textDim")}
           fontSize="20px"
           fontWeight="medium"
         >
@@ -90,7 +90,7 @@ const InternalRankedStatus = ({
       <div className={styles.centerStack}>
         <Typography
           variant="h6"
-          color={colors.purpleLight}
+          color={cssVar("purpleLight")}
           className="14px"
           fontSize="14px"
           fontWeight="semibold"
@@ -102,7 +102,7 @@ const InternalRankedStatus = ({
         <Typography fontWeight="medium" fontSize="20px">
           {countdown}
         </Typography>
-        <Typography fontSize="12px" color={colors.textDim} marginTop="-4px">
+        <Typography fontSize="12px" color={cssVar("textDim")} marginTop="-4px">
           {nextTime.toLocaleString([userLocale, currentLanguage], {
             year: "numeric",
             month: "numeric",
@@ -113,7 +113,7 @@ const InternalRankedStatus = ({
           })}
         </Typography>
       </div>
-      <Typography fontSize="11px" color={colors.textDim} marginTop="12px">
+      <Typography fontSize="11px" color={cssVar("textDim")} marginTop="12px">
         {isFullAccess ? Messages.rankedPlayIsCurrentlyAvailable() : Messages.onceEveryFourDaysRankedPlayIsAvailable()}
       </Typography>
       <div className={styles.buttonContainer}>
