@@ -7,7 +7,7 @@ module.exports = {
     tsconfigRootDir: __dirname,
     createDefaultProgram: true,
   },
-  plugins: ["simple-import-sort", "react-hooks", "prettier", "@stylexjs", "lodash"],
+  plugins: ["simple-import-sort", "react-hooks", "prettier", "lodash"],
   extends: [
     "plugin:react/recommended",
     "eslint:recommended",
@@ -106,7 +106,6 @@ module.exports = {
     "react/jsx-boolean-value": ["error", "always"],
     "react/no-unstable-nested-components": "error",
     "react/no-unknown-property": ["error", { "ignore": ["css"] }],
-    "@stylexjs/valid-styles": "error",
     "lodash/chaining": "error",
     "lodash/import-scope": [2, "method"],
     "no-restricted-imports": ["error", "lodash/chain"],

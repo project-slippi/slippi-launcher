@@ -2,7 +2,6 @@
  * Build config for electron renderer process
  */
 
-import StylexPlugin from "@stylexjs/webpack-plugin";
 import { EsbuildPlugin } from "esbuild-loader";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import { I18nextAutoKeyEmitPlugin } from "i18next-auto-keys";
@@ -131,16 +130,6 @@ const configuration: webpack.Configuration = {
 
     new MiniCssExtractPlugin({
       filename: "style.css",
-    }),
-
-    new StylexPlugin({
-      dev: isDevelopment,
-      unstable_moduleResolution: {
-        type: "commonJS",
-        rootDir: webpackPaths.rootPath,
-      },
-      useCSSLayers: true,
-      appendTo: "style.css",
     }),
 
     new BundleAnalyzerPlugin({
