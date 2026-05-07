@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   position: relative;
+  box-sizing: border-box;
   border-style: solid;
   border-width: 1px;
   border-color: rgb(159 116 192 / 10%);
