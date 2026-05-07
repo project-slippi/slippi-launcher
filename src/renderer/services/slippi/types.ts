@@ -5,13 +5,15 @@ export type AvailableMessageType = {
   isPaid: boolean;
 };
 
+export type SubscriptionLevel = "NONE" | "TIER1" | "TIER2" | "TIER3";
+
 export type UserData = {
   playKey: PlayKey | undefined;
   rulesAccepted: number;
+  activeSubscriptionLevel: SubscriptionLevel;
 };
 
 export type ChatMessageData = {
-  level: string;
   availableMessages: AvailableMessageType[];
   userMessages: string[];
 };

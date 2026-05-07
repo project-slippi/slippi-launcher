@@ -2,6 +2,7 @@ import { css } from "@emotion/react";
 import React from "react";
 
 import { AuthGuard } from "@/components/auth_guard";
+import { useAccount } from "@/lib/hooks/use_account";
 import type { AuthUser } from "@/services/auth/types";
 
 import { SettingItem } from "../setting_item_section";
@@ -11,12 +12,12 @@ import { ChatSettingsMessages as Messages } from "./chat_settings.messages";
 import { useChatMessages } from "./use_chat_messages";
 
 const ChatConfigSettings = React.memo(({ user }: { user: AuthUser }) => {
+  const userData = useAccount((store) => store.userData);
   const {
     loading,
     localMessages,
     setLocalMessages,
     dirty,
-    subLevel,
     availableMessages,
     submitChatMessages,
     discardLocalChanges,
@@ -62,7 +63,7 @@ const ChatConfigSettings = React.memo(({ user }: { user: AuthUser }) => {
         messages={localMessages}
         updateMessages={setLocalMessages}
         availableMessages={availableMessages}
-        user={{ uid: user.uid, subLevel }}
+        user={{ uid: user.uid, subLevel: userData?.activeSubscriptionLevel ?? "NONE" }}
       />
       {footer}
     </>
