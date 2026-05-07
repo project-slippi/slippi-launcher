@@ -1,5 +1,3 @@
-import type { SubscriptionLevel } from "./types";
-
 export function generateMockChatMessage(count: number, isPaid = false) {
   const messages: { text: string; isPaid: boolean }[] = [];
   for (let i = 1; i <= count; i++) {
@@ -8,6 +6,6 @@ export function generateMockChatMessage(count: number, isPaid = false) {
   return messages;
 }
 
-export function generateUserSubscriptionLevel(isSub?: boolean): SubscriptionLevel {
+export function generateUserSubscriptionLevel(isSub?: boolean): string {
   return isSub ? "TIER1" : "NONE";
 }

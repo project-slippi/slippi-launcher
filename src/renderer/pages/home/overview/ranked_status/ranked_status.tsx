@@ -60,11 +60,10 @@ const InternalRankedStatus = ({
 }) => {
   const currentLanguage = useAppStore((store) => store.currentLanguage);
   const userData = useAccount((store) => store.userData);
-  const activeSubscriptionLevel = useAccount((store) => store.userData?.activeSubscriptionLevel);
   const connectCode = userData?.playKey?.connectCode;
 
   return (
-    <div style={{ padding: 16 }}>
+    <div className={styles.card}>
       <div className={styles.centerStack}>
         {isFullAccess ? <RankedDayActiveIcon width={40} /> : <RankedDayInactiveIcon width={40} />}
         <Typography
@@ -83,7 +82,7 @@ const InternalRankedStatus = ({
           variant="h6"
           color={cssVar("purpleLight")}
           className="14px"
-          fontSize="13pt"
+          fontSize="14px"
           fontWeight="semibold"
           marginBottom="4px"
           textTransform="uppercase"
@@ -104,20 +103,8 @@ const InternalRankedStatus = ({
           })}
         </Typography>
       </div>
-      {activeSubscriptionLevel === "NONE" || !connectCode ? (
-        <SubscribeToRanked isFullAccess={isFullAccess} uid={userData?.playKey?.uid} />
-      ) : (
-        <AlreadySubscribed connectCode={connectCode} />
-      )}
-    </div>
-  );
-};
-
-const AlreadySubscribed = ({ connectCode }: { connectCode: string }) => {
-  return (
-    <>
-      <Typography fontSize="11pt" color={cssVar("textDim")} marginTop="12px">
-        {Messages.activeSubscription()}
+      <Typography fontSize="11px" color={cssVar("textDim")} marginTop="12px">
+        {isFullAccess ? Messages.rankedPlayIsCurrentlyAvailable() : Messages.onceEveryFourDaysRankedPlayIsAvailable()}
       </Typography>
       <div className={styles.buttonContainer}>
         <Button
@@ -132,31 +119,7 @@ const AlreadySubscribed = ({ connectCode }: { connectCode: string }) => {
           {Messages.viewRankedProfile()}
         </Button>
       </div>
-    </>
-  );
-};
-
-const SubscribeToRanked = ({ isFullAccess, uid }: { isFullAccess: boolean; uid?: string }) => {
-  return (
-    <>
-      <Typography fontSize="11pt" color={cssVar("textDim")} marginTop="12px">
-        {isFullAccess ? Messages.rankedPlayIsCurrentlyAvailable() : Messages.onceEveryFourDaysRankedPlayIsAvailable()}
-      </Typography>
-      {uid && (
-        <div className={styles.buttonContainer}>
-          <Button
-            variant="contained"
-            sx={{ color: "white", fontSize: "13px", fontWeight: "medium", textTransform: "uppercase" }}
-            color="secondary"
-            fullWidth={true}
-            LinkComponent={ExternalLink}
-            href={`https://slippi.gg/manage?expectedUid=${uid}`}
-          >
-            {Messages.subscribeToRanked()}
-          </Button>
-        </div>
-      )}
-    </>
+    </div>
   );
 };
 

@@ -11,12 +11,12 @@ import { useChatMessages } from "./use_chat_messages";
 
 export const ChatSettings = React.memo(() => {
   const user = useAccount((store) => store.user);
-  const userData = useAccount((store) => store.userData);
   const {
     loading,
     localMessages,
     setLocalMessages,
     dirty,
+    subLevel,
     availableMessages,
     submitChatMessages,
     discardLocalChanges,
@@ -63,12 +63,12 @@ export const ChatSettings = React.memo(() => {
       `}
     >
       <SettingItem name={Messages.chatMessages()} description={Messages.chatMessagesDescription()}>
-        {user && userData ? (
+        {user ? (
           <ChatMessagesInput
             messages={localMessages}
             updateMessages={setLocalMessages}
             availableMessages={availableMessages}
-            user={{ uid: user.uid, subLevel: userData.activeSubscriptionLevel }}
+            user={{ uid: user.uid, subLevel }}
           />
         ) : (
           <div>{Messages.pleaseLoginToUseFeature()}</div>

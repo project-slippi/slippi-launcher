@@ -24,12 +24,14 @@ export const useChatMessagesStore = create(
       localMessages: [] as string[],
       dbMessages: [] as string[],
       availableMessages: [] as AvailableMessageType[],
+      subLevel: "NONE",
     },
     (set, get) => ({
       setLoading: (loading: boolean) => set({ loading }),
       setLocalMessages: (localMessages: string[]) => set({ localMessages }),
       setDbMessages: (dbMessages: string[]) => set({ dbMessages }),
       setAvailableMessages: (availableMessages: AvailableMessageType[]) => set({ availableMessages }),
+      setSubLevel: (subLevel: string) => set({ subLevel }),
       discardLocalChanges: () => {
         const { dbMessages } = get();
         set({ localMessages: dbMessages });
@@ -40,6 +42,7 @@ export const useChatMessagesStore = create(
           localMessages: [],
           dbMessages: [],
           availableMessages: [],
+          subLevel: "NONE",
         });
       },
     }),
@@ -62,6 +65,7 @@ export async function refreshChatMessages(slippiBackendService: SlippiBackendSer
       localMessages: validatedMessages,
       dbMessages: validatedMessages,
       availableMessages: msgData.availableMessages,
+      subLevel: msgData.level,
     });
   } catch (err) {
     useChatMessagesStore.setState({
@@ -102,6 +106,7 @@ export const useChatMessages = (uid?: string) => {
   const localMessages = useChatMessagesStore((state) => state.localMessages);
   const dbMessages = useChatMessagesStore((state) => state.dbMessages);
   const availableMessages = useChatMessagesStore((state) => state.availableMessages);
+  const subLevel = useChatMessagesStore((state) => state.subLevel);
   const setLocalMessages = useChatMessagesStore((state) => state.setLocalMessages);
   const discardLocalChanges = useChatMessagesStore((state) => state.discardLocalChanges);
 
@@ -124,6 +129,7 @@ export const useChatMessages = (uid?: string) => {
     setLocalMessages,
     dirty,
     availableMessages,
+    subLevel,
     submitChatMessages: handleSubmit,
     discardLocalChanges,
   };

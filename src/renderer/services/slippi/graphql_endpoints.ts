@@ -20,7 +20,6 @@ type User = {
   rulesAccepted: number;
   private: Nullable<PrivateUserInfo>;
   activeChatMessages: string[];
-  activeSubscription: Nullable<{ level: string }>;
 };
 
 type DolphinRelease = {
@@ -44,9 +43,7 @@ export const QUERY_VALIDATE_USER_ID: TypedDocumentNode<
 
 export const QUERY_GET_USER_DATA: TypedDocumentNode<
   {
-    getUser: Nullable<
-      Pick<User, "fbUid" | "displayName" | "connectCode" | "private" | "rulesAccepted" | "activeSubscription">
-    >;
+    getUser: Nullable<Pick<User, "fbUid" | "displayName" | "connectCode" | "private" | "rulesAccepted">>;
     getLatestDolphin: Nullable<Pick<DolphinRelease, "version">>;
   },
   {
@@ -59,9 +56,6 @@ export const QUERY_GET_USER_DATA: TypedDocumentNode<
       displayName
       connectCode {
         code
-      }
-      activeSubscription {
-        level
       }
       private {
         playKey
@@ -86,6 +80,9 @@ export const QUERY_CHAT_MESSAGE_DATA: TypedDocumentNode<
   query GetChatMessageConfigData($fbUid: String) {
     getUser(fbUid: $fbUid) {
       fbUid
+      activeSubscription {
+        level
+      }
       activeChatMessages
     }
     getChatMessageOptions {
