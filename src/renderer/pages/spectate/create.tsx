@@ -1,8 +1,8 @@
 import type { BroadcastService } from "@broadcast/types";
 import React from "react";
 
-import { useAccount } from "@/lib/hooks/use_account";
 import { useBroadcastList, useBroadcastListStore } from "@/lib/hooks/use_broadcast_list";
+import type { AuthUser } from "@/services/auth/types";
 
 import { SpectatePage } from "./spectate_page";
 
@@ -11,19 +11,18 @@ export type CreateSpectatePageArgs = {
 };
 
 export function createSpectatePage({ broadcastService }: CreateSpectatePageArgs): {
-  Page: React.ComponentType;
+  Page: React.ComponentType<{ user: AuthUser }>;
 } {
   const watchBroadcast = (id: string) => {
     void broadcastService.watchBroadcast(id);
   };
 
-  const Page = React.memo(() => {
-    const user = useAccount((store) => store.user);
+  const Page = React.memo(({ user }: { user: AuthUser }) => {
     const currentBroadcasts = useBroadcastListStore((store) => store.currentBroadcasts);
     const { refreshBroadcasts } = useBroadcastList();
     return (
       <SpectatePage
-        userId={user?.uid}
+        userId={user.uid}
         watchBroadcast={watchBroadcast}
         broadcasts={currentBroadcasts}
         onRefreshBroadcasts={refreshBroadcasts}

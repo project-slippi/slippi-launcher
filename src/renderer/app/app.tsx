@@ -6,13 +6,23 @@ import { LoginDialog } from "@/app/header/login_dialog";
 import type { MenuItem } from "@/app/header/main_menu";
 import { AdDialog } from "@/components/ad_dialog";
 import { AuthGuard } from "@/components/auth_guard";
+import { LoginNotice } from "@/components/login_notice/login_notice";
 import { PersistentNotification } from "@/components/persistent_notification/persistent_notification";
+import type { AuthUser } from "@/services/auth/types";
 
-export type MainMenuItem = MenuItem & {
-  Component: React.ComponentType;
+type PrivateMenuItem = MenuItem & {
+  Component: React.ComponentType<{ user: AuthUser }>;
   default?: boolean;
-  private?: boolean;
+  private: true;
 };
+
+export type MainMenuItem =
+  | (MenuItem & {
+      Component: React.ComponentType;
+      default?: boolean;
+      private?: false;
+    })
+  | PrivateMenuItem;
 
 export const App = React.memo(({ menuItems }: { menuItems: readonly MainMenuItem[] }) => {
   const defaultRoute = menuItems.find((item) => item.default);
@@ -32,9 +42,7 @@ export const App = React.memo(({ menuItems }: { menuItems: readonly MainMenuItem
         <Routes>
           {menuItems.map((item) => {
             const element = item.private ? (
-              <AuthGuard>
-                <item.Component />
-              </AuthGuard>
+              <AuthGuard fallback={<LoginNotice />} render={(user) => <item.Component user={user} />} />
             ) : (
               <item.Component />
             );

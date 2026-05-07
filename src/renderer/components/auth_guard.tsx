@@ -1,13 +1,18 @@
 import React from "react";
 
 import { useAccount } from "@/lib/hooks/use_account";
+import type { AuthUser } from "@/services/auth/types";
 
-import { LoginNotice } from "./login_notice/login_notice";
-
-export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
+export const AuthGuard = ({
+  fallback,
+  render,
+}: {
+  fallback?: React.ReactNode;
+  render: (user: AuthUser) => React.ReactNode;
+}) => {
   const user = useAccount((store) => store.user);
   if (!user) {
-    return <LoginNotice />;
+    return fallback ?? null;
   }
-  return <>{children}</>;
+  return <>{render(user)}</>;
 };

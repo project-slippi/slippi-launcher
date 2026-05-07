@@ -1,7 +1,8 @@
 import { css } from "@emotion/react";
 import React from "react";
 
-import { useAccount } from "@/lib/hooks/use_account";
+import { AuthGuard } from "@/components/auth_guard";
+import type { AuthUser } from "@/services/auth/types";
 
 import { SettingItem } from "../setting_item_section";
 import { ChatMessagesFooter } from "./chat_messages_footer";
@@ -9,8 +10,7 @@ import { ChatMessagesInput } from "./chat_messages_input";
 import { ChatSettingsMessages as Messages } from "./chat_settings.messages";
 import { useChatMessages } from "./use_chat_messages";
 
-export const ChatSettings = React.memo(() => {
-  const user = useAccount((store) => store.user);
+const ChatConfigSettings = React.memo(({ user }: { user: AuthUser }) => {
   const {
     loading,
     localMessages,
@@ -57,23 +57,30 @@ export const ChatSettings = React.memo(() => {
   }, [dirty, discardLocalChanges, loading, submitChatMessages]);
 
   return (
+    <>
+      <ChatMessagesInput
+        messages={localMessages}
+        updateMessages={setLocalMessages}
+        availableMessages={availableMessages}
+        user={{ uid: user.uid, subLevel }}
+      />
+      {footer}
+    </>
+  );
+});
+
+export const ChatSettings = React.memo(() => {
+  return (
     <div
       css={css`
         min-width: 450px;
       `}
     >
       <SettingItem name={Messages.chatMessages()} description={Messages.chatMessagesDescription()}>
-        {user ? (
-          <ChatMessagesInput
-            messages={localMessages}
-            updateMessages={setLocalMessages}
-            availableMessages={availableMessages}
-            user={{ uid: user.uid, subLevel }}
-          />
-        ) : (
-          <div>{Messages.pleaseLoginToUseFeature()}</div>
-        )}
-        {footer}
+        <AuthGuard
+          fallback={<div>{Messages.pleaseLoginToUseFeature()}</div>}
+          render={(user) => <ChatConfigSettings user={user} />}
+        />
       </SettingItem>
     </div>
   );

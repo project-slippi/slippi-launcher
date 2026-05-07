@@ -10,7 +10,8 @@ import { useEnableLocationAccess } from "@/lib/hooks/use_settings";
 import { LocationGuardMessages as Messages } from "./location_guard.messages";
 import styles from "./location_guard.module.css";
 
-const LocationNotice = ({ onAllow }: { onAllow: () => void }) => {
+export const LocationNotice = () => {
+  const [_enableLocationAccess, setEnableLocationAccess] = useEnableLocationAccess();
   return (
     <div className={styles.container}>
       <LocationOnIcon className={styles.icon} />
@@ -21,24 +22,29 @@ const LocationNotice = ({ onAllow }: { onAllow: () => void }) => {
       <Typography variant="caption" className={styles.privacy}>
         {Messages.privacyDisclosure()}
       </Typography>
-      <Button type="button" color="primary" variant="contained" onClick={onAllow}>
+      <Button type="button" color="primary" variant="contained" onClick={() => setEnableLocationAccess(true)}>
         {Messages.allow()}
       </Button>
     </div>
   );
 };
 
-export const LocationGuard = ({ children }: { children: (locationInfo: UserLocationInfo) => React.ReactNode }) => {
-  const [enableLocationAccess, setEnableLocationAccess] = useEnableLocationAccess();
-
+export const LocationGuard = ({
+  fallback,
+  render,
+}: {
+  fallback?: React.ReactNode;
+  render: (locationInfo: UserLocationInfo) => React.ReactNode;
+}) => {
+  const [enableLocationAccess] = useEnableLocationAccess();
   if (!enableLocationAccess) {
-    return <LocationNotice onAllow={() => setEnableLocationAccess(true)} />;
+    return fallback ?? null;
   }
 
-  return <LocationGuardImpl>{children}</LocationGuardImpl>;
+  return <LocationGuardImpl render={render} />;
 };
 
-const LocationGuardImpl = ({ children }: { children: (locationInfo: UserLocationInfo) => React.ReactNode }) => {
+const LocationGuardImpl = ({ render }: { render: (locationInfo: UserLocationInfo) => React.ReactNode }) => {
   const { data, isLoading, error } = useQuery(
     ["geoLocationQuery"],
     async () => await window.electron.fetch.fetchCurrentLocation(),
@@ -53,5 +59,5 @@ const LocationGuardImpl = ({ children }: { children: (locationInfo: UserLocation
     return <div>{Messages.error(error.message)}</div>;
   }
 
-  return <>{children(data)}</>;
+  return <>{render(data)}</>;
 };

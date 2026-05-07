@@ -2,7 +2,7 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 
 import { ExternalLink as A } from "@/components/external_link";
 import { Button } from "@/components/form/button";
-import { LocationGuard } from "@/components/location_guard/location_guard";
+import { LocationGuard, LocationNotice } from "@/components/location_guard/location_guard";
 import { useAppStore } from "@/lib/hooks/use_app_store";
 import { useCountdown } from "@/lib/hooks/use_countdown";
 import { useMeleeMajorsQuery } from "@/lib/hooks/use_data_fetch_query";
@@ -139,7 +139,10 @@ export const UpcomingTournaments = () => {
         <div className={styles.section}>
           <h3 className={styles.sectionTitle}>{Messages.tournamentsNearMe()}</h3>
           <div className={styles.nearMeContainer}>
-            <LocationGuard>{(locationInfo) => <TournamentsNearMe locationInfo={locationInfo} />}</LocationGuard>
+            <LocationGuard
+              fallback={<LocationNotice />}
+              render={(locationInfo) => <TournamentsNearMe locationInfo={locationInfo} />}
+            />
           </div>
         </div>
       </div>

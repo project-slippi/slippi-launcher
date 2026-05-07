@@ -1,5 +1,7 @@
 import React from "react";
 
+import type { AuthUser } from "@/services/auth/types";
+
 import type { CreateSpectatePageArgs } from "./create";
 
 export function lazyLoadSpectatePage(args: CreateSpectatePageArgs) {
@@ -9,7 +11,7 @@ export function lazyLoadSpectatePage(args: CreateSpectatePageArgs) {
     return { default: Page };
   });
 
-  const Page: React.ComponentType = (props) => (
+  const Page: React.ComponentType<{ user: AuthUser }> = (props: { user: AuthUser }) => (
     <React.Suspense fallback={null}>
       <LazyPage {...props} />
     </React.Suspense>
