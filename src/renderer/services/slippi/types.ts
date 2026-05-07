@@ -7,10 +7,17 @@ export type AvailableMessageType = {
 
 export type SubscriptionLevel = "NONE" | "TIER1" | "TIER2" | "TIER3";
 
+export type RankedProfile = {
+  rating: number;
+  hasPlacement: boolean;
+  setsPlayed: number;
+};
+
 export type UserData = {
   playKey: PlayKey | undefined;
   rulesAccepted: number;
   activeSubscriptionLevel: SubscriptionLevel;
+  rankedNetplayProfile: RankedProfile | undefined;
 };
 
 export type ChatMessageData = {

@@ -13,6 +13,14 @@ type PrivateUserInfo = {
   playKey: Nullable<string>;
 };
 
+type RankedNetplayProfile = {
+  id: string;
+  ratingOrdinal: Nullable<number>;
+  ratingUpdateCount: Nullable<number>;
+  dailyGlobalPlacement: Nullable<number>;
+  dailyRegionalPlacement: Nullable<number>;
+};
+
 type User = {
   connectCode: Nullable<ConnectCode>;
   displayName: Nullable<string>;
@@ -21,6 +29,7 @@ type User = {
   private: Nullable<PrivateUserInfo>;
   activeChatMessages: string[];
   activeSubscription: Nullable<{ level: string }>;
+  rankedNetplayProfile: Nullable<RankedNetplayProfile>;
 };
 
 type DolphinRelease = {
@@ -45,7 +54,16 @@ export const QUERY_VALIDATE_USER_ID: TypedDocumentNode<
 export const QUERY_GET_USER_DATA: TypedDocumentNode<
   {
     getUser: Nullable<
-      Pick<User, "fbUid" | "displayName" | "connectCode" | "private" | "rulesAccepted" | "activeSubscription">
+      Pick<
+        User,
+        | "fbUid"
+        | "displayName"
+        | "connectCode"
+        | "private"
+        | "rulesAccepted"
+        | "activeSubscription"
+        | "rankedNetplayProfile"
+      >
     >;
     getLatestDolphin: Nullable<Pick<DolphinRelease, "version">>;
   },
@@ -62,6 +80,13 @@ export const QUERY_GET_USER_DATA: TypedDocumentNode<
       }
       activeSubscription {
         level
+      }
+      rankedNetplayProfile {
+        id
+        ratingOrdinal
+        ratingUpdateCount
+        dailyGlobalPlacement
+        dailyRegionalPlacement
       }
       private {
         playKey

@@ -19,7 +19,14 @@ import {
   QUERY_GET_USER_DATA,
   QUERY_VALIDATE_USER_ID,
 } from "./graphql_endpoints";
-import type { AvailableMessageType, ChatMessageData, SlippiBackendService, SubscriptionLevel, UserData } from "./types";
+import type {
+  AvailableMessageType,
+  ChatMessageData,
+  RankedProfile,
+  SlippiBackendService,
+  SubscriptionLevel,
+  UserData,
+} from "./types";
 
 const SLIPPI_BACKEND_URL = process.env.SLIPPI_GRAPHQL_ENDPOINT;
 
@@ -141,7 +148,6 @@ class SlippiBackendClient implements SlippiBackendService {
     const connectCode = res.data.getUser?.connectCode?.code;
     const playKey = res.data.getUser?.private?.playKey;
     const displayName = res.data.getUser?.displayName || "";
-    const activeSubscriptionLevel = (res.data.getUser?.activeSubscription?.level ?? "NONE") as SubscriptionLevel;
 
     // If we don't have a connect code or play key, return it as undefined such that logic that
     // handles it will cause the user to set them up.
@@ -156,10 +162,27 @@ class SlippiBackendClient implements SlippiBackendService {
       };
     }
 
+    const activeSubscriptionLevel = (res.data.getUser?.activeSubscription?.level ?? "NONE") as SubscriptionLevel;
+    const netplayProfile = res.data.getUser?.rankedNetplayProfile ?? null;
+    let rankedNetplayProfile: RankedProfile | undefined = undefined;
+    if (netplayProfile) {
+      const rating = netplayProfile?.ratingOrdinal ?? 0;
+      const setsPlayed = netplayProfile?.ratingUpdateCount ?? 0;
+      const globalPlacement = netplayProfile?.dailyGlobalPlacement ?? null;
+      const regionalPlacement = netplayProfile?.dailyRegionalPlacement ?? null;
+      const hasPlacement = Boolean(globalPlacement) || Boolean(regionalPlacement);
+      rankedNetplayProfile = {
+        rating,
+        setsPlayed,
+        hasPlacement,
+      };
+    }
+
     return {
       playKey: playKeyObj,
       rulesAccepted: res.data.getUser?.rulesAccepted ?? 0,
       activeSubscriptionLevel,
+      rankedNetplayProfile,
     };
   }
 
