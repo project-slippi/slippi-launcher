@@ -1,6 +1,6 @@
 import { Rank } from "./types";
 
-export const SETS_REQUIRED_FOR_RANK = 5;
+const SETS_REQUIRED_FOR_RANK = 5;
 
 // Ranked Calibration Data:
 // https://docs.google.com/spreadsheets/d/1F4tPN7XxXeiHKDRpzfMIJeUkg9hwx14CM16YqYF4-FM/edit#gid=0
