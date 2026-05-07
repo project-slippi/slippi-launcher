@@ -1,11 +1,10 @@
 import { css } from "@emotion/react";
 import Button from "@mui/material/Button";
 import React from "react";
-import { useQuery } from "react-query";
 
 import { LoadingScreen } from "@/components/loading_screen/loading_screen";
+import { useNewsFeedQuery } from "@/lib/hooks/use_data_fetch_query";
 
-import { AdBanner } from "./ad_banner";
 import { NewsArticleContainer as NewsArticle } from "./news_article/news_article.container";
 import { NewsFeedMessages as Messages } from "./news_feed.messages";
 
@@ -14,8 +13,7 @@ const BATCH_SIZE = 5;
 
 const NewsFeedContent = React.memo(function NewsFeedContent() {
   const [numItemsToShow, setNumItemsToShow] = React.useState(ITEMS_TO_SHOW);
-  const newsFeedQuery = useQuery(["newsFeedQuery"], window.electron.common.fetchNewsFeed);
-  const { isLoading, error, data: allPosts = [], refetch } = newsFeedQuery;
+  const { isLoading, error, data: allPosts = [], refetch } = useNewsFeedQuery();
 
   const onShowMore = React.useCallback(() => {
     setNumItemsToShow(numItemsToShow + BATCH_SIZE);
@@ -52,7 +50,7 @@ const NewsFeedContent = React.memo(function NewsFeedContent() {
   }
 
   return (
-    <div>
+    <div style={{ display: "inline-flex", flexDirection: "column", gap: 20 }}>
       {posts.map((post) => (
         <NewsArticle key={post.id} item={post} />
       ))}
@@ -60,6 +58,7 @@ const NewsFeedContent = React.memo(function NewsFeedContent() {
         <div
           css={css`
             text-align: center;
+            margin-bottom: 20px;
           `}
         >
           <Button color="primary" variant="contained" size="small" onClick={onShowMore}>
@@ -67,16 +66,14 @@ const NewsFeedContent = React.memo(function NewsFeedContent() {
           </Button>
         </div>
       )}
-      <AdBanner />
     </div>
   );
 });
 
 export const NewsFeed = React.memo(function NewsFeed() {
   return (
-    <>
-      <h1>{Messages.latestNews()}</h1>
+    <div style={{ maxWidth: "800px", margin: "auto", height: "100%" }}>
       <NewsFeedContent />
-    </>
+    </div>
   );
 });

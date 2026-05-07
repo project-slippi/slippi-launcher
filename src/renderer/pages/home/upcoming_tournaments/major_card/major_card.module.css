@@ -1,0 +1,102 @@
+.card {
+  display: inline-grid;
+  grid-template-columns: 50% 50%;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: rgb(255 255 255 / 5%);
+  transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
+  min-height: 150px;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  background-color: rgb(255 255 255 / 10%);
+}
+
+.imageContainer {
+  position: relative;
+  overflow: hidden;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.2s ease-in-out;
+}
+
+.card:hover .image {
+  transform: scale(1.05);
+}
+
+.countdownOverlay {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  padding: 6px 10px;
+  background-color: rgb(27 11 40 / 90%);
+  border-top-left-radius: 8px;
+}
+
+.countdown {
+  font-size: 10pt;
+  color: #bbb;
+}
+
+.happeningNow {
+  background-color: #941414;
+}
+
+.happeningNow .countdown {
+  color: #fff;
+  font-weight: bold;
+}
+
+.content {
+  position: relative;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.name {
+  font-size: 14pt;
+  font-weight: bold;
+  color: white;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12pt;
+  color: var(--purple-light);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background-color: var(--purple-light);
+  flex-shrink: 0;
+}
+
+.entrants {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  font-size: 12pt;
+  color: var(--purple-light);
+}
+
+.entrantsCount {
+  font-weight: bold;
+}

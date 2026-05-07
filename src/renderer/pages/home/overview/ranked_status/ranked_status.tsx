@@ -1,4 +1,4 @@
-import { Button, Card, Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import type { Duration } from "date-fns";
 import { formatDuration, intervalToDuration } from "date-fns";
 import React from "react";
@@ -63,18 +63,8 @@ const InternalRankedStatus = ({
   const connectCode = userData?.playKey?.connectCode;
 
   return (
-    <Card className={styles.card}>
+    <div className={styles.card}>
       <div className={styles.centerStack}>
-        <Typography
-          variant="h6"
-          color={cssVar("purpleLight")}
-          fontSize="14px"
-          fontWeight="semibold"
-          marginBottom="8px"
-          textTransform="uppercase"
-        >
-          {Messages.rankedDay()}
-        </Typography>
         {isFullAccess ? <RankedDayActiveIcon width={40} /> : <RankedDayInactiveIcon width={40} />}
         <Typography
           className={styles.stroke}
@@ -129,7 +119,7 @@ const InternalRankedStatus = ({
           {Messages.viewRankedProfile()}
         </Button>
       </div>
-    </Card>
+    </div>
   );
 };
 

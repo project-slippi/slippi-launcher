@@ -1,0 +1,196 @@
+.container {
+  display: grid;
+  grid-template-columns: 65% 35%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-right: 16px;
+  overflow: hidden;
+}
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--purple-dark);
+  border: 1px solid rgb(159 116 192 / 10%);
+  border-radius: 10px;
+  overflow: hidden;
+  flex: 1;
+  min-height: 0;
+}
+
+.sectionTitle {
+  margin: 0;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  color: var(--green-bright);
+  padding: 0 20px;
+  font-size: 14pt;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgb(159 116 192 / 10%);
+}
+
+.featuredCard {
+  position: relative;
+  display: block;
+  height: 250px;
+  flex-shrink: 0;
+  cursor: pointer;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.featuredCardInner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.2s ease-in-out;
+}
+
+.featuredCard:hover .featuredCardInner {
+  transform: scale(1.01);
+}
+
+.featuredImageContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.featuredImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.featuredOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to top,
+    var(--purple-dark) 0%,
+    var(--purple-dark) 25%,
+    transparent 100%
+  );
+}
+
+.featuredContent {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  padding: 20px;
+}
+
+.liveBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background-color: #941414;
+  border-radius: 999px;
+  font-size: 11pt;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 8px;
+}
+
+.liveDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: white;
+  animation: livePulse 1.5s infinite ease-in-out;
+}
+
+@keyframes livePulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  70% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+.startsInBadge {
+  display: inline-block;
+  padding: 6px 12px;
+  background-color: rgb(159 116 192 / 60%);
+  border-radius: 999px;
+  font-size: 11pt;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 8px;
+}
+
+.featuredTitle {
+  margin: 0;
+  font-size: 28pt;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 2px 4px rgb(0 0 0 / 30%);
+}
+
+.featuredMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--purple-lighter);
+  font-size: 14pt;
+  margin-top: 6px;
+}
+
+.metaDot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--purple-light);
+}
+
+.majorGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 16px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.nearMeContainer {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.viewStreamButtonContainer {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}

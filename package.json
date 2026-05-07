@@ -167,6 +167,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.11.10",
+    "@base-ui/react": "^1.4.0",
     "@emotion/react": "^11.4.0",
     "@emotion/styled": "^11.3.0",
     "@fontsource/maven-pro": "^4.4.2",
@@ -180,7 +181,7 @@
     "clsx": "^2.1.1",
     "compare-func": "^2.0.0",
     "cross-fetch": "^3.1.5",
-    "date-fns": "^3.3.0",
+    "date-fns": "^4.1.0",
     "default-gateway": "^7.2.2",
     "dmg": "^0.1.0",
     "electron-debug": "^3.2.0",

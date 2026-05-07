@@ -56,18 +56,16 @@ export const NewsArticle = React.memo(function NewsArticle({
   }, [item]);
 
   return (
-    <div className={styles.container}>
-      <Card>
-        {postContent}
-        <CardActions disableSpacing={true} className={styles.cardActions}>
-          <Tooltip title={localDateString}>
-            <div className={styles.dateInfo}>{Messages.posted(timeAgo)}</div>
-          </Tooltip>
-          <Button LinkComponent={ExternalLink} size="small" color="primary" href={permalink}>
-            {getViewPostButtonText(item.source)}
-          </Button>
-        </CardActions>
-      </Card>
-    </div>
+    <Card>
+      {postContent}
+      <CardActions disableSpacing={true} className={styles.cardActions}>
+        <Tooltip title={localDateString}>
+          <div className={styles.dateInfo}>{Messages.posted(timeAgo)}</div>
+        </Tooltip>
+        <Button LinkComponent={ExternalLink} size="small" color="primary" href={permalink}>
+          {getViewPostButtonText(item.source)}
+        </Button>
+      </CardActions>
+    </Card>
   );
 });

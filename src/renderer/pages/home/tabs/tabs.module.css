@@ -1,0 +1,74 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.list {
+  flex-shrink: 0;
+  display: flex;
+  overflow: auto hidden;
+  scrollbar-width: none;
+  z-index: 1;
+  padding: 0 10px;
+  box-sizing: border-box;
+  gap: 10px;
+}
+
+.list::-webkit-scrollbar {
+  display: none;
+}
+
+.trigger {
+  all: unset;
+  cursor: pointer;
+  position: relative;
+  height: 45px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  line-height: 1;
+  user-select: none;
+  padding: 0 20px;
+  margin: 0;
+  padding-top: 10px;
+  opacity: 0.6;
+  flex-shrink: 0;
+  transition: all 0.2s ease-in-out;
+  white-space: nowrap;
+}
+
+.trigger[data-active],
+.trigger:focus {
+  cursor: default;
+  opacity: 0.9;
+  font-weight: bold;
+  border-bottom: solid 2px var(--purple-lighter);
+}
+
+.trigger:hover:not(:focus) {
+  opacity: 0.8;
+  border-bottom: solid 2px rgb(255 255 255 / 80%);
+}
+
+.trigger::after {
+  content: attr(data-label);
+  font-weight: bold;
+  visibility: hidden;
+  display: block;
+  height: 0;
+  overflow: hidden;
+}
+
+.content {
+  flex-grow: 1;
+  padding: 20px;
+  outline: none;
+  overflow: auto;
+  position: relative;
+}
