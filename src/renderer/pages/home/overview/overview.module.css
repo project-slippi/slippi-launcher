@@ -4,3 +4,10 @@
   gap: 16px;
   height: 100%;
 }
+
+.rankedSidebar {
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: 1fr 2fr;
+  gap: 16px;
+}

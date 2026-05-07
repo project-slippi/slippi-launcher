@@ -1,0 +1,40 @@
+.container {
+  overflow: hidden;
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.ratingContainer {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.rankNameLabel {
+  color: var(--off-white);
+  margin: 0;
+  margin-bottom: 5px;
+}
+
+.iconContainer {
+  right: 0;
+  height: 100%;
+  width: 60%;
+  position: absolute;
+  background-repeat: no-repeat;
+  background-size: 110%;
+  background-position: left 25%;
+}
+
+.gradientContainer {
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
