@@ -10,12 +10,15 @@ import log from "electron-log";
 import type { GraphQLFormattedError } from "graphql";
 
 import type { AuthService } from "../auth/types";
+import { calculateRank } from "./calculate_rank";
+import type { RankedNetplayProfile } from "./graphql_endpoints";
 import {
   MUTATION_ACCEPT_RULES,
   MUTATION_INIT_NETPLAY,
   MUTATION_RENAME_USER,
   MUTATION_SUBMIT_CHAT_MESSAGES,
   QUERY_CHAT_MESSAGE_DATA,
+  QUERY_GET_RANKED_NETPLAY_PROFILE,
   QUERY_GET_USER_DATA,
   QUERY_VALIDATE_USER_ID,
 } from "./graphql_endpoints";
@@ -39,6 +42,22 @@ const handleErrors = (errors: readonly GraphQLFormattedError[] | undefined) => {
     throw new Error(errMsgs);
   }
 };
+
+function mapSlippiRankedProfile(netplayProfile: RankedNetplayProfile | undefined): RankedProfile | undefined {
+  if (!netplayProfile) {
+    return undefined;
+  }
+
+  const rating = netplayProfile.ratingOrdinal ?? 0;
+  const setsPlayed = netplayProfile.ratingUpdateCount ?? 0;
+  const globalPlacement = netplayProfile.dailyGlobalPlacement ?? null;
+  const regionalPlacement = netplayProfile.dailyRegionalPlacement ?? null;
+  const hasPlacement = Boolean(globalPlacement) || Boolean(regionalPlacement);
+  return {
+    rating,
+    rank: calculateRank(rating, hasPlacement, setsPlayed),
+  };
+}
 
 class SlippiBackendClient implements SlippiBackendService {
   private client: ApolloClient<NormalizedCacheObject>;
@@ -163,20 +182,8 @@ class SlippiBackendClient implements SlippiBackendService {
     }
 
     const activeSubscriptionLevel = (res.data.getUser?.activeSubscription?.level ?? "NONE") as SubscriptionLevel;
-    const netplayProfile = res.data.getUser?.rankedNetplayProfile ?? null;
-    let rankedNetplayProfile: RankedProfile | undefined = undefined;
-    if (netplayProfile) {
-      const rating = netplayProfile?.ratingOrdinal ?? 0;
-      const setsPlayed = netplayProfile?.ratingUpdateCount ?? 0;
-      const globalPlacement = netplayProfile?.dailyGlobalPlacement ?? null;
-      const regionalPlacement = netplayProfile?.dailyRegionalPlacement ?? null;
-      const hasPlacement = Boolean(globalPlacement) || Boolean(regionalPlacement);
-      rankedNetplayProfile = {
-        rating,
-        setsPlayed,
-        hasPlacement,
-      };
-    }
+    const netplayProfile = res.data.getUser?.rankedNetplayProfile ?? undefined;
+    const rankedNetplayProfile = mapSlippiRankedProfile(netplayProfile);
 
     return {
       playKey: playKeyObj,
@@ -184,6 +191,25 @@ class SlippiBackendClient implements SlippiBackendService {
       activeSubscriptionLevel,
       rankedNetplayProfile,
     };
+  }
+
+  public async fetchRankedNetplayProfile(userId: string): Promise<RankedProfile | undefined> {
+    const res = await this.client.query({
+      query: QUERY_GET_RANKED_NETPLAY_PROFILE,
+      variables: {
+        fbUid: userId,
+      },
+      fetchPolicy: "network-only",
+    });
+
+    handleErrors(res.errors);
+
+    const netplayProfile = res.data.getUser?.rankedNetplayProfile ?? null;
+    if (!netplayProfile) {
+      return undefined;
+    }
+
+    return mapSlippiRankedProfile(netplayProfile);
   }
 
   public async fetchChatMessageData(userId: string): Promise<ChatMessageData> {

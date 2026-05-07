@@ -13,7 +13,7 @@ type PrivateUserInfo = {
   playKey: Nullable<string>;
 };
 
-type RankedNetplayProfile = {
+export type RankedNetplayProfile = {
   id: string;
   ratingOrdinal: Nullable<number>;
   ratingUpdateCount: Nullable<number>;
@@ -95,6 +95,28 @@ export const QUERY_GET_USER_DATA: TypedDocumentNode<
     }
     getLatestDolphin {
       version
+    }
+  }
+`;
+
+export const QUERY_GET_RANKED_NETPLAY_PROFILE: TypedDocumentNode<
+  {
+    getUser: Nullable<Pick<User, "fbUid" | "rankedNetplayProfile">>;
+  },
+  {
+    fbUid: string;
+  }
+> = gql`
+  query getUserKeyQuery($fbUid: String) {
+    getUser(fbUid: $fbUid) {
+      fbUid
+      rankedNetplayProfile {
+        id
+        ratingOrdinal
+        ratingUpdateCount
+        dailyGlobalPlacement
+        dailyRegionalPlacement
+      }
     }
   }
 `;
