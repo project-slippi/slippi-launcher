@@ -1,17 +1,6 @@
 .container {
   display: grid;
-  grid-template-columns: 3fr 1fr;
+  grid-template-columns: 1.5fr 1.5fr 1fr;
   gap: 16px;
   height: 100%;
-}
-
-.leftCol {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  overflow: hidden;
-}
-
-.col1 {
-  overflow: hidden;
 }
