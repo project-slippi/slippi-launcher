@@ -1,6 +1,6 @@
 .container {
   display: grid;
-  grid-template-columns: 400px 1fr;
+  grid-template-columns: 450px 1fr;
   height: 100%;
   position: relative;
 }
@@ -58,4 +58,11 @@
   overflow-y: auto;
   height: 100%;
   padding: 16px;
+}
+
+.detailPaneContent {
+  padding: 16px;
+  padding-top: 0;
+  max-width: 800px;
+  margin: auto;
 }

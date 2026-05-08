@@ -67,7 +67,6 @@
 
 .content {
   flex-grow: 1;
-  padding: 20px;
   outline: none;
   overflow: auto;
   position: relative;
