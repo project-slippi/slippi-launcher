@@ -46,7 +46,7 @@ export const ListItem = React.memo(function ListItem({
           <SourceIcon source={item.source} />
         </div>
         <div>
-          <div className={styles.title}>{item.title}</div>
+          <div className={styles.title}>{extractTitle(item)}</div>
           <div className={styles.date}>{timeAgo}</div>
         </div>
       </div>
@@ -62,5 +62,17 @@ const SourceIcon = ({ source }: { source: "medium" | "bluesky" | "github" }) => 
       return <img src={blueskyLogo} />;
     case "github":
       return <img src={githubLogo} />;
+  }
+};
+
+const extractTitle = (item: NewsItem): string => {
+  switch (item.source) {
+    case "bluesky": {
+      const text = item.body ?? "";
+      const firstLine = text.slice(0, text.search(/\r?\n|$/));
+      return [item.title, firstLine].filter(Boolean).join(": ");
+    }
+    default:
+      return item.title;
   }
 };
