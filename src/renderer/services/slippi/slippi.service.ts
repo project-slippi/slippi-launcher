@@ -55,7 +55,7 @@ function mapSlippiRankedProfile(netplayProfile: RankedNetplayProfile | undefined
   const hasPlacement = Boolean(globalPlacement) || Boolean(regionalPlacement);
   return {
     rating,
-    rank: calculateRank(rating, hasPlacement, setsPlayed),
+    rank: "master3", // calculateRank(rating, hasPlacement, setsPlayed),
   };
 }
 

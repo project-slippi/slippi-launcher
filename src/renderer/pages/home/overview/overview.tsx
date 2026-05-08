@@ -1,3 +1,5 @@
+import CachedIcon from "@mui/icons-material/Cached";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import React from "react";
 
 import { AuthGuard } from "@/components/auth_guard";
@@ -15,8 +17,14 @@ export const HomeOverview = React.memo(function HomeOverview() {
   const navigateToHomeTab = useHomeNavigation();
   return (
     <div className={styles.container}>
-      <ContentBlock title={Messages.latestNews()} content={<NewsPreview />} onClick={() => navigateToHomeTab("news")} />
       <ContentBlock
+        endIcon={<ChevronRightIcon />}
+        title={Messages.latestNews()}
+        content={<NewsPreview />}
+        onClick={() => navigateToHomeTab("news")}
+      />
+      <ContentBlock
+        endIcon={<ChevronRightIcon />}
         title={Messages.upcomingTournaments()}
         content={<MeleeMajorsCarousel />}
         onClick={() => navigateToHomeTab("tournaments")}
@@ -25,7 +33,7 @@ export const HomeOverview = React.memo(function HomeOverview() {
         <AuthGuard
           render={() => (
             <div className={styles.myRankingContainer}>
-              <ContentBlock title={Messages.myRanking()} content={<RankedProfile />} fill={true} />
+              <MyRanking />
             </div>
           )}
         />
@@ -33,4 +41,8 @@ export const HomeOverview = React.memo(function HomeOverview() {
       </div>
     </div>
   );
+});
+
+const MyRanking = React.memo(function MyRanking() {
+  return <ContentBlock endIcon={<CachedIcon />} title={Messages.myRanking()} content={<RankedProfile />} fill={true} />;
 });
