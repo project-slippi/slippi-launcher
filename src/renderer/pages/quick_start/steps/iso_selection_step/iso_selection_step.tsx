@@ -5,9 +5,9 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { useQuery } from "@tanstack/react-query";
 import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import { useQuery } from "react-query";
 
 import { ConfirmationModal } from "@/components/confirmation_modal/confirmation_modal";
 import { useIsoPath } from "@/lib/hooks/use_settings";
@@ -54,14 +54,17 @@ const Container = styled.div`
 export const IsoSelectionStep = () => {
   const { showError } = useToasts();
   const [tempIsoPath, setTempIsoPath] = React.useState("");
-  const validIsoPathQuery = useQuery(["validIsoPathQuery", tempIsoPath], async () => {
-    if (!tempIsoPath) {
-      return {
-        path: tempIsoPath,
-        valid: IsoValidity.UNVALIDATED,
-      };
-    }
-    return window.electron.common.checkValidIso(tempIsoPath);
+  const validIsoPathQuery = useQuery({
+    queryKey: ["validIsoPathQuery", tempIsoPath],
+    queryFn: async () => {
+      if (!tempIsoPath) {
+        return {
+          path: tempIsoPath,
+          valid: IsoValidity.UNVALIDATED,
+        };
+      }
+      return window.electron.common.checkValidIso(tempIsoPath);
+    },
   });
 
   const theme = useTheme();

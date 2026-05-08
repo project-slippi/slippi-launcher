@@ -2,8 +2,8 @@ import CastOutlinedIcon from "@mui/icons-material/CastOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import LiveTvOutlinedIcon from "@mui/icons-material/LiveTvOutlined";
 import SlowMotionVideoIcon from "@mui/icons-material/SlowMotionVideo";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
-import { QueryClient, QueryClientProvider } from "react-query";
 import { HashRouter as Router, Navigate, Route, Routes } from "react-router-dom";
 
 import { useAppStore } from "@/lib/hooks/use_app_store";

@@ -1,9 +1,9 @@
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import { useQuery } from "@tanstack/react-query";
 import { type UserLocationInfo } from "main/fetch_cross_origin/ip_api";
 import React from "react";
-import { useQuery } from "react-query";
 
 import { useEnableLocationAccess } from "@/lib/hooks/use_settings";
 
@@ -45,11 +45,11 @@ export const LocationGuard = ({
 };
 
 const LocationGuardImpl = ({ render }: { render: (locationInfo: UserLocationInfo) => React.ReactNode }) => {
-  const { data, isLoading, error } = useQuery(
-    ["geoLocationQuery"],
-    async () => await window.electron.fetch.fetchCurrentLocation(),
-    { staleTime: 5 * 60 * 1000 },
-  );
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["geoLocationQuery"],
+    queryFn: async () => await window.electron.fetch.fetchCurrentLocation(),
+    staleTime: 5 * 60 * 1000,
+  });
 
   if (isLoading || !data) {
     return null;
