@@ -5,7 +5,7 @@ import type { PlayKey } from "@dolphin/types";
 import type { AuthService } from "../auth/types";
 import { delayAndMaybeError } from "../utils";
 import { generateMockChatMessage, generateUserSubscriptionLevel } from "./mock_slippi_data_utils";
-import type { ChatMessageData, SlippiBackendService, UserData } from "./types";
+import type { ChatMessageData, RankedProfile, SlippiBackendService, UserData } from "./types";
 
 const SHOULD_ERROR = false;
 
@@ -35,11 +35,20 @@ const savedMessages = [
   "bad connection",
 ];
 
+const mockRankedProfile: RankedProfile = {
+  rank: "grandmaster" as any,
+  rating: 9001,
+};
+
 class MockSlippiBackendClient implements SlippiBackendService {
   private fakeUsers: Map<string, SavedUserData> = new Map();
 
   constructor(private authService: AuthService) {
     this.addFakeSlippiUser(fakeUserId);
+  }
+
+  public async fetchRankedNetplayProfile(_userId: string): Promise<RankedProfile | undefined> {
+    return Promise.resolve(mockRankedProfile);
   }
 
   private addFakeSlippiUser(userId: string, displayName?: string): void {
@@ -54,6 +63,7 @@ class MockSlippiBackendClient implements SlippiBackendService {
       },
       rulesAccepted: 0,
       savedMessages,
+      rankedNetplayProfile: mockRankedProfile,
     });
   }
 
