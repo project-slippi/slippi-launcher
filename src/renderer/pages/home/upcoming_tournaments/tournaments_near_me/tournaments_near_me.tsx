@@ -1,9 +1,9 @@
 import PeopleIcon from "@mui/icons-material/People";
 import Button from "@mui/material/Button";
+import { useQuery } from "@tanstack/react-query";
 import { clsx } from "clsx";
 import type { UserLocationInfo } from "main/fetch_cross_origin/ip_api";
 import { useEffect, useMemo, useState } from "react";
-import { useQuery } from "react-query";
 
 import { ExternalLink as A, ExternalLink } from "@/components/external_link";
 import { useAppStore } from "@/lib/hooks/use_app_store";
@@ -120,9 +120,9 @@ export const TournamentsNearMe = ({ locationInfo }: { locationInfo: UserLocation
     return radius;
   }, [radius, units]);
 
-  const geoLocationQuery = useQuery(
-    ["geoLocationQuery", radiusInKm],
-    async () => {
+  const geoLocationQuery = useQuery({
+    queryKey: ["geoLocationQuery", radiusInKm],
+    queryFn: async () => {
       if (!localStorage.getItem(STORAGE_KEY_UNITS)) {
         const defaultUnits: "km" | "mi" = ["US", "GB"].includes(locationInfo.countryCode) ? "mi" : "km";
         setUnits(defaultUnits);
@@ -143,8 +143,9 @@ export const TournamentsNearMe = ({ locationInfo }: { locationInfo: UserLocation
       );
       return { events };
     },
-    { staleTime: 5 * 60 * 1000, enabled: !!radius },
-  );
+    staleTime: 5 * 60 * 1000,
+    enabled: !!radius,
+  });
 
   useEffect(() => {
     storeValue(STORAGE_KEY_RADIUS, radius);

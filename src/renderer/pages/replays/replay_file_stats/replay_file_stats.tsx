@@ -8,7 +8,7 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import type { FileResult } from "@replays/types";
 import { GameMode } from "@slippi/slippi-js";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 
 import { BasicFooter } from "@/components/footer/footer";
 import { LoadingScreen } from "@/components/loading_screen/loading_screen";
@@ -71,14 +71,20 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
 
   const { dolphinService, replayService } = useServices();
   const { viewReplays } = useDolphinActions(dolphinService);
-  const gameStatsQuery = useQuery(["loadStatsQuery", filePath], async () => {
-    const result = await replayService.calculateGameStats(filePath);
-    return result;
+  const gameStatsQuery = useQuery({
+    queryKey: ["loadStatsQuery", filePath],
+    queryFn: async () => {
+      const result = await replayService.calculateGameStats(filePath);
+      return result;
+    },
   });
 
-  const stadiumStatsQuery = useQuery(["loadStadiumStatsQuery", filePath], async () => {
-    const result = await replayService.calculateStadiumStats(filePath);
-    return result;
+  const stadiumStatsQuery = useQuery({
+    queryKey: ["loadStadiumStatsQuery", filePath],
+    queryFn: async () => {
+      const result = await replayService.calculateStadiumStats(filePath);
+      return result;
+    },
   });
 
   const loading = gameStatsQuery.isLoading && stadiumStatsQuery.isLoading;

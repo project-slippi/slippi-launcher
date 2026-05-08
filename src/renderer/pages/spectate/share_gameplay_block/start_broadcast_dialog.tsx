@@ -16,10 +16,10 @@ import { useTheme } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Tooltip from "@mui/material/Tooltip";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import log from "electron-log";
 import debounce from "lodash/debounce";
 import React from "react";
-import { useQuery } from "react-query";
 
 import { useServices } from "@/services";
 
@@ -36,10 +36,11 @@ export const StartBroadcastDialog = ({ open, onClose, onSubmit }: StartBroadcast
   const [value, setValue] = React.useState("");
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const queryClient = useQueryClient();
 
-  const userQuery = useQuery(
-    ["userId", value],
-    async () => {
+  const userQuery = useQuery({
+    queryKey: ["userId", value],
+    queryFn: async () => {
       // First check that the user id is only alphanumeric
       if (!value.match(/^[0-9a-zA-Z]+$/)) {
         throw new Error(Messages.invalidUserIdFormat());
@@ -49,11 +50,9 @@ export const StartBroadcastDialog = ({ open, onClose, onSubmit }: StartBroadcast
       console.log("finished fetch: ", JSON.stringify(new Date()));
       return result;
     },
-    {
-      enabled: false, // We want to manually choose when to fetch the user
-      retry: false, // react-query auto retries on error'd queries
-    },
-  );
+    enabled: false, // We want to manually choose when to fetch the user
+    retry: false, // @tanstack/react-query auto retries on error'd queries
+  });
 
   const fetchUser = debounce(async () => {
     await userQuery.refetch();
@@ -61,12 +60,12 @@ export const StartBroadcastDialog = ({ open, onClose, onSubmit }: StartBroadcast
 
   const handleChange = React.useCallback(
     (inputText: string) => {
-      // First clear the react-query state
-      userQuery.remove();
+      // First clear the @tanstack/react-query state
+      queryClient.removeQueries({ queryKey: ["userId"] });
       setValue(inputText);
       void fetchUser();
     },
-    [fetchUser, userQuery],
+    [fetchUser, queryClient],
   );
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
