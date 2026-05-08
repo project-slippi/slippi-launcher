@@ -6,6 +6,7 @@ import type { AuthService } from "../auth/types";
 import { delayAndMaybeError } from "../utils";
 import { generateMockChatMessage, generateUserSubscriptionLevel } from "./mock_slippi_data_utils";
 import type { ChatMessageData, RankedProfile, SlippiBackendService, UserData } from "./types";
+import { Rank } from "./types";
 
 const SHOULD_ERROR = false;
 
@@ -36,7 +37,7 @@ const savedMessages = [
 ];
 
 const mockRankedProfile: RankedProfile = {
-  rank: "grandmaster" as any,
+  rank: Rank.GRANDMASTER,
   rating: 9001,
 };
 
@@ -45,10 +46,6 @@ class MockSlippiBackendClient implements SlippiBackendService {
 
   constructor(private authService: AuthService) {
     this.addFakeSlippiUser(fakeUserId);
-  }
-
-  public async fetchRankedNetplayProfile(_userId: string): Promise<RankedProfile | undefined> {
-    return Promise.resolve(mockRankedProfile);
   }
 
   private addFakeSlippiUser(userId: string, displayName?: string): void {
@@ -101,6 +98,11 @@ class MockSlippiBackendClient implements SlippiBackendService {
       ...userData,
       activeSubscriptionLevel,
     };
+  }
+
+  @delayAndMaybeError(SHOULD_ERROR)
+  public async fetchRankedNetplayProfile(_userId: string): Promise<RankedProfile | undefined> {
+    return Promise.resolve(mockRankedProfile);
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
