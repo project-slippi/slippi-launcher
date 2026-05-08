@@ -1,9 +1,13 @@
+import { Button } from "@base-ui/react";
 import type { NewsItem } from "@common/types";
 import { formatDistance } from "date-fns";
 import React from "react";
 
 import { getLocale } from "@/lib/time";
 import type { SupportedLanguage } from "@/services/i18n/util";
+import blueskyLogo from "@/styles/images/bluesky_logo.svg";
+import githubLogo from "@/styles/images/github_inverted.svg";
+import mediumLogo from "@/styles/images/medium_icon_white.svg";
 
 import styles from "./list_item.module.css";
 
@@ -25,11 +29,10 @@ export const ListItem = React.memo(function ListItem({
   });
 
   return (
-    <div
-      className={styles.row}
+    <Button
+      className={styles.container}
       data-selected={selected || undefined}
       onClick={onClick}
-      role="button"
       tabIndex={0}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -38,8 +41,26 @@ export const ListItem = React.memo(function ListItem({
         }
       }}
     >
-      <div className={styles.title}>{item.title}</div>
-      <div className={styles.date}>{timeAgo}</div>
-    </div>
+      <div className={styles.row}>
+        <div className={styles.iconContainer}>
+          <SourceIcon source={item.source} />
+        </div>
+        <div>
+          <div className={styles.title}>{item.title}</div>
+          <div className={styles.date}>{timeAgo}</div>
+        </div>
+      </div>
+    </Button>
   );
 });
+
+const SourceIcon = ({ source }: { source: "medium" | "bluesky" | "github" }) => {
+  switch (source) {
+    case "medium":
+      return <img src={mediumLogo} />;
+    case "bluesky":
+      return <img src={blueskyLogo} />;
+    case "github":
+      return <img src={githubLogo} />;
+  }
+};
