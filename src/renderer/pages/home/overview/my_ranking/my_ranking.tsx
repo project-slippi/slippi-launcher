@@ -47,7 +47,7 @@ const RefreshRatingButton = () => {
   });
 
   return (
-    <Tooltip title="Refresh">
+    <Tooltip title={Messages.refresh()}>
       <IconButton
         disabled={mutation.isPending || !user}
         onClick={() => {
