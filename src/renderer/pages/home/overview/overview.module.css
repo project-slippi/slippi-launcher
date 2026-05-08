@@ -11,3 +11,9 @@
   grid-template-rows: 1fr 2fr;
   gap: 16px;
 }
+
+@media (height <= 800px) {
+  .rankedSidebar {
+    grid-template-rows: 1fr 3fr;
+  }
+}

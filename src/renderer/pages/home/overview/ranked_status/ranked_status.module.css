@@ -1,6 +1,5 @@
-.card {
-  margin: 6px;
-  padding: 10px;
+.container {
+  padding: 10px 16px;
 }
 
 .centerStack {
@@ -23,4 +22,11 @@
 
 .buttonContainer {
   margin: 16px 0 4px;
+}
+
+@media (height <= 800px) {
+  .rankedDayIcon {
+    display: flex;
+    gap: 10px;
+  }
 }

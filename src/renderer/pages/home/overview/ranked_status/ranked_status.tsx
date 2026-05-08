@@ -1,4 +1,5 @@
 import { Button, Typography } from "@mui/material";
+import { clsx } from "clsx";
 import type { Duration } from "date-fns";
 import { formatDuration, intervalToDuration } from "date-fns";
 import React from "react";
@@ -64,8 +65,8 @@ const InternalRankedStatus = ({
   const connectCode = userData?.playKey?.connectCode;
 
   return (
-    <div style={{ padding: 16 }}>
-      <div className={styles.centerStack}>
+    <div className={styles.container}>
+      <div className={clsx(styles.centerStack, styles.rankedDayIcon)}>
         {isFullAccess ? <RankedDayActiveIcon width={40} /> : <RankedDayInactiveIcon width={40} />}
         <Typography
           className={styles.stroke}
