@@ -60,7 +60,7 @@ async function fetchMediumNews(): Promise<NewsItem[]> {
     const bodyMarkdown = turndownService.turndown(post.content);
 
     // The post.guid from Medium can contain special characters that break the id string
-    const safeId = encodeURIComponent(post.guid);
+    const safeId = makeUrlSafe(post.guid);
     return {
       id: `medium-${safeId}`,
       source: "medium",
@@ -135,4 +135,10 @@ async function fetchBlueskyPosts(): Promise<NewsItem[]> {
       };
     });
   return news;
+}
+
+function makeUrlSafe(text: string) {
+  const encoded = Buffer.from(text, "utf8").toString("base64");
+  const urlSafe = encoded.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  return urlSafe;
 }
