@@ -10,14 +10,21 @@ import { useServices } from "@/services";
 
 import { ContentBlock } from "../content_block/content_block";
 import { MyRankingMessages as Messages } from "./my_ranking.messages";
-import { RankedProfile } from "./ranked_profile";
+import { RankedUserProfile } from "./ranked_user_profile";
 
 export const MyRanking = React.memo(function MyRanking() {
+  // We update just the rankedNetplayProfile on refresh so we should make sure
+  // the selector is correct to ensure the UI updates as expected.
+  const rankedProfile = useAccount((store) => store.userData?.rankedNetplayProfile);
+  if (!rankedProfile) {
+    return null;
+  }
+
   return (
     <ContentBlock
       endIcon={<RefreshRatingButton />}
       title={Messages.myRanking()}
-      content={<RankedProfile />}
+      content={<RankedUserProfile rankedProfile={rankedProfile} />}
       fill={true}
     />
   );
