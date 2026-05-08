@@ -213,7 +213,7 @@
     "react-dropzone": "^14.2.10",
     "react-hook-form": "^7.75.0",
     "react-markdown": "^9.0.1",
-    "react-router-dom": "^7.15.0",
+    "react-router-dom": "^6.3.0",
     "react-timeago": "^8.3.0",
     "semver": "^7.7.4",
     "semver-regex": "^3.1.2",
