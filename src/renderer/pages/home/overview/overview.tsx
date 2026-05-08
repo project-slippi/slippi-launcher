@@ -1,5 +1,7 @@
 import React from "react";
 
+import { AuthGuard } from "@/components/auth_guard";
+
 import { useHomeNavigation } from "../use_home_page";
 import { ContentBlock } from "./content_block/content_block";
 import { MeleeMajorsCarousel } from "./melee_majors_carousel";
@@ -20,7 +22,13 @@ export const HomeOverview = React.memo(function HomeOverview() {
         onClick={() => navigateToHomeTab("tournaments")}
       />
       <div className={styles.rankedSidebar}>
-        <ContentBlock title={Messages.myRanking()} content={<RankedProfile />} />
+        <AuthGuard
+          render={() => (
+            <div className={styles.myRankingContainer}>
+              <ContentBlock title={Messages.myRanking()} content={<RankedProfile />} fill={true} />
+            </div>
+          )}
+        />
         <ContentBlock title={Messages.rankedDay()} content={<RankedStatus />} />
       </div>
     </div>

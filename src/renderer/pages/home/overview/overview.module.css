@@ -7,13 +7,24 @@
 
 .rankedSidebar {
   overflow: hidden;
-  display: grid;
-  grid-template-rows: 1fr 2fr;
+  display: flex;
+  flex-direction: column;
   gap: 16px;
 }
 
+.rankedSidebar:has(.myRankingContainer) {
+  display: grid;
+  grid-template-rows: 1fr 2fr;
+}
+
 @media (height <= 800px) {
-  .rankedSidebar {
+  .rankedSidebar:has(.myRankingContainer) {
     grid-template-rows: 1fr 3fr;
   }
+}
+
+.myRankingContainer {
+  display: flex;
+  height: 100%;
+  width: 100%;
 }

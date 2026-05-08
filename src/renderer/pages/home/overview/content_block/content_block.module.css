@@ -11,6 +11,10 @@
   border-radius: 10px;
 }
 
+.fill {
+  flex: 1;
+}
+
 .title {
   margin: 0;
   height: 60px;
