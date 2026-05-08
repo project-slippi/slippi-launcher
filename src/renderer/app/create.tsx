@@ -35,7 +35,7 @@ export function createApp({ services }: { services: Services }): {
 
   const menuItems: MainMenuItem[] = [
     {
-      subpath: "home/:tab?",
+      subpath: "home/:tab?/:newsId?",
       title: () => Messages.home(),
       Component: HomePage,
       Icon: HomeOutlinedIcon,

@@ -7,7 +7,13 @@ import { useNewsFeedQuery } from "@/lib/hooks/use_data_fetch_query";
 import { NewsDualPane } from "./news_dual_pane/news_dual_pane";
 import { NewsFeedMessages as Messages } from "./news_feed.messages";
 
-const NewsFeedContent = React.memo(function NewsFeedContent() {
+const NewsFeedContent = React.memo(function NewsFeedContent({
+  newsId,
+  onNewsIdChange,
+}: {
+  newsId: string | null;
+  onNewsIdChange: (id: string | null) => void;
+}) {
   const { isLoading, error, data: allPosts = [], refetch } = useNewsFeedQuery();
 
   if (isLoading) {
@@ -25,13 +31,19 @@ const NewsFeedContent = React.memo(function NewsFeedContent() {
     );
   }
 
-  return <NewsDualPane posts={allPosts} />;
+  return <NewsDualPane posts={allPosts} selectedNewsId={newsId} onSelectedNewsIdChange={onNewsIdChange} />;
 });
 
-export const NewsFeed = React.memo(function NewsFeed() {
+export const NewsFeed = React.memo(function NewsFeed({
+  newsId,
+  onNewsIdChange,
+}: {
+  newsId: string | null;
+  onNewsIdChange: (id: string | null) => void;
+}) {
   return (
     <div style={{ height: "100%" }}>
-      <NewsFeedContent />
+      <NewsFeedContent newsId={newsId} onNewsIdChange={onNewsIdChange} />
     </div>
   );
 });

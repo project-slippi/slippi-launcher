@@ -16,34 +16,44 @@ import styles from "./news_dual_pane.module.css";
 const INITIAL_VISIBLE = 20;
 const LOAD_MORE_COUNT = 10;
 
-export const NewsDualPane = React.memo(function NewsDualPane({ posts }: { posts: NewsItem[] }) {
-  const [selectedId, setSelectedId] = React.useState<string | null>(null);
+export const NewsDualPane = React.memo(function NewsDualPane({
+  posts,
+  selectedNewsId,
+  onSelectedNewsIdChange,
+}: {
+  posts: NewsItem[];
+  selectedNewsId: string | null;
+  onSelectedNewsIdChange: (id: string | null) => void;
+}) {
   const [visibleCount, setVisibleCount] = React.useState(INITIAL_VISIBLE);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const currentLanguage = useAppStore((store) => store.currentLanguage) as SupportedLanguage;
 
-  const selectedPost = React.useMemo(() => posts.find((p) => p.id === selectedId) ?? null, [posts, selectedId]);
+  const selectedPost = React.useMemo(() => posts.find((p) => p.id === selectedNewsId) ?? null, [posts, selectedNewsId]);
   const visiblePosts = React.useMemo(() => posts.slice(0, visibleCount), [posts, visibleCount]);
   const hasMore = visibleCount < posts.length;
 
-  const handleSelect = React.useCallback((id: string) => {
-    setSelectedId(id);
-  }, []);
+  const handleSelect = React.useCallback(
+    (id: string) => {
+      onSelectedNewsIdChange(id);
+    },
+    [onSelectedNewsIdChange],
+  );
 
   const handleLoadMore = React.useCallback(() => {
     setVisibleCount((prev) => Math.min(prev + LOAD_MORE_COUNT, posts.length));
   }, [posts.length]);
 
   const handleBack = React.useCallback(() => {
-    setSelectedId(null);
-  }, []);
+    onSelectedNewsIdChange(null);
+  }, [onSelectedNewsIdChange]);
 
   const listContent = visiblePosts.map((post) => (
     <ListItem
       key={post.id}
       item={post}
-      selected={post.id === selectedId}
+      selected={post.id === selectedNewsId}
       currentLanguage={currentLanguage}
       onClick={() => handleSelect(post.id)}
     />
@@ -61,7 +71,7 @@ export const NewsDualPane = React.memo(function NewsDualPane({ posts }: { posts:
   );
 
   if (isMobile) {
-    if (selectedId && selectedPost) {
+    if (selectedNewsId && selectedPost) {
       return (
         <div className={styles.mobileContainer}>
           <button className={styles.backButton} onClick={handleBack}>
