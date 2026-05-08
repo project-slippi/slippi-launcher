@@ -9,14 +9,14 @@ import styles from "./overview.module.css";
 import { RankedStatus } from "./ranked_status/ranked_status";
 
 export const HomeOverview = React.memo(function HomeOverview() {
-  const navigateToHomeTab = useHomeNavigation();
+  const { handleTabChange } = useHomeNavigation();
   return (
     <div className={styles.container}>
-      <ContentBlock title={Messages.latestNews()} content={<NewsPreview />} onClick={() => navigateToHomeTab("news")} />
+      <ContentBlock title={Messages.latestNews()} content={<NewsPreview />} onClick={() => handleTabChange("news")} />
       <ContentBlock
         title={Messages.upcomingTournaments()}
         content={<MeleeMajorsCarousel />}
-        onClick={() => navigateToHomeTab("tournaments")}
+        onClick={() => handleTabChange("tournaments")}
       />
       <div>
         <ContentBlock title={Messages.rankedDay()} content={<RankedStatus />} />

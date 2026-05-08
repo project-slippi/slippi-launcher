@@ -28,33 +28,40 @@ const Outer = styled.div`
 `;
 
 export const HomePage = React.memo(function HomePage() {
-  const { tab } = useParams<{ tab?: string }>();
-  const navigateToHomeTab = useHomeNavigation();
+  const { tab, newsId } = useParams<{ tab?: string; newsId?: string }>();
+  const { handleTabChange, handleNewsIdChange } = useHomeNavigation();
   const lastSelectedTab = useHomePageStore((state) => state.lastSelectedTab);
+  const lastSelectedNewsId = useHomePageStore((state) => state.lastSelectedNewsId);
 
   const hasValidTab = VALID_TABS.includes(tab as TabId);
 
   React.useEffect(() => {
     if (!hasValidTab) {
-      navigateToHomeTab(lastSelectedTab);
+      handleTabChange(lastSelectedTab, lastSelectedTab === "news" ? lastSelectedNewsId ?? undefined : undefined);
     }
-  }, [hasValidTab, lastSelectedTab, navigateToHomeTab]);
+  }, [hasValidTab, lastSelectedTab, lastSelectedNewsId, handleTabChange]);
 
   const currentTab = hasValidTab ? (tab as TabId) : lastSelectedTab;
 
-  const handleTabChange = (newTab: string) => {
-    navigateToHomeTab(newTab as TabId);
+  const onTabChange = (newTab: string) => {
+    handleTabChange(newTab as TabId);
   };
+
+  const activeNewsId = tab === TabId.LATEST_NEWS ? newsId ?? lastSelectedNewsId : null;
 
   return (
     <Outer>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
         <Tabs
           value={currentTab}
-          onChange={handleTabChange}
+          onChange={onTabChange}
           tabs={[
             { id: TabId.OVERVIEW, label: Messages.overview(), content: <HomeOverview /> },
-            { id: TabId.LATEST_NEWS, label: Messages.latestNews(), content: <NewsFeed /> },
+            {
+              id: TabId.LATEST_NEWS,
+              label: Messages.latestNews(),
+              content: <NewsFeed newsId={activeNewsId} onNewsIdChange={handleNewsIdChange} />,
+            },
             { id: TabId.UPCOMING_TOURNAMENTS, label: Messages.upcomingTournaments(), content: <UpcomingTournaments /> },
           ]}
         />
