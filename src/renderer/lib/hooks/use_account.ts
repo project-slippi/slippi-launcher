@@ -43,13 +43,13 @@ export const useAccount = create(
       setEmailVerificationSent: (emailVerificationSent: boolean) => set({ emailVerificationSent }),
       // Used to only fetch and update the user's rank and rating
       updateRanking: (rankedProfile: RankedProfile) =>
-        set((state) => {
-          return produce(state, (draft) => {
+        set((state) =>
+          produce(state, (draft) => {
             if (draft.userData) {
               draft.userData.rankedNetplayProfile = rankedProfile;
             }
-          });
-        }),
+          }),
+        ),
       // Multi-account actions
       setAccounts: (accounts: StoredAccount[]) => set({ accounts }),
       setActiveAccountId: (activeAccountId: string | null) => set({ activeAccountId }),
