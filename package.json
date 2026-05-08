@@ -211,15 +211,15 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-dropzone": "^14.2.10",
-    "react-hook-form": "^7.9.0",
+    "react-hook-form": "^7.75.0",
     "react-markdown": "^9.0.1",
-    "react-router-dom": "^6.3.0",
+    "react-router-dom": "^7.15.0",
     "react-timeago": "^8.3.0",
-    "semver": "^7.5.4",
+    "semver": "^7.7.4",
     "semver-regex": "^3.1.2",
     "stun": "^2.1.0",
     "turndown": "^7.2.2",
     "wget-improved": "^3.3.1",
-    "zustand": "^4.4.6"
+    "zustand": "^5.0.13"
   }
 }
