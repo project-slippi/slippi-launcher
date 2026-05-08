@@ -4,6 +4,7 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import React from "react";
 
+import { InfiniteScrollContainer } from "@/components/infinite_scroll_container/infinite_scroll_container";
 import { useAppStore } from "@/lib/hooks/use_app_store";
 import type { SupportedLanguage } from "@/services/i18n/util";
 
@@ -12,34 +13,33 @@ import { ListItem } from "./list_item";
 import { NewsDualPaneMessages as Messages } from "./news_dual_pane.messages";
 import styles from "./news_dual_pane.module.css";
 
+const INITIAL_VISIBLE = 20;
+const LOAD_MORE_COUNT = 10;
+
 export const NewsDualPane = React.memo(function NewsDualPane({ posts }: { posts: NewsItem[] }) {
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
-  const listRef = React.useRef<HTMLDivElement>(null);
-  const scrollPositionRef = React.useRef(0);
+  const [visibleCount, setVisibleCount] = React.useState(INITIAL_VISIBLE);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const currentLanguage = useAppStore((store) => store.currentLanguage) as SupportedLanguage;
 
   const selectedPost = React.useMemo(() => posts.find((p) => p.id === selectedId) ?? null, [posts, selectedId]);
+  const visiblePosts = React.useMemo(() => posts.slice(0, visibleCount), [posts, visibleCount]);
+  const hasMore = visibleCount < posts.length;
 
   const handleSelect = React.useCallback((id: string) => {
-    if (listRef.current) {
-      scrollPositionRef.current = listRef.current.scrollTop;
-    }
     setSelectedId(id);
   }, []);
+
+  const handleLoadMore = React.useCallback(() => {
+    setVisibleCount((prev) => Math.min(prev + LOAD_MORE_COUNT, posts.length));
+  }, [posts.length]);
 
   const handleBack = React.useCallback(() => {
     setSelectedId(null);
   }, []);
 
-  React.useEffect(() => {
-    if (!selectedId && listRef.current) {
-      listRef.current.scrollTop = scrollPositionRef.current;
-    }
-  }, [selectedId]);
-
-  const listContent = posts.map((post) => (
+  const listContent = visiblePosts.map((post) => (
     <ListItem
       key={post.id}
       item={post}
@@ -50,9 +50,14 @@ export const NewsDualPane = React.memo(function NewsDualPane({ posts }: { posts:
   ));
 
   const listPane = (
-    <div ref={listRef} className={isMobile ? styles.mobileList : styles.listPane}>
+    <InfiniteScrollContainer
+      className={isMobile ? styles.mobileList : styles.listPane}
+      onLoadMore={handleLoadMore}
+      hasMore={hasMore}
+      persistScrollId="news-feed-list"
+    >
       {listContent}
-    </div>
+    </InfiniteScrollContainer>
   );
 
   if (isMobile) {
