@@ -40,7 +40,7 @@ export const NewsPreview = React.memo(function NewsPreview() {
   return (
     <Outer>
       <div style={{ margin: 15, boxShadow: "4px 4px 8px rgba(0, 0, 0, 0.8)", overflow: "auto" }}>
-        <NewsArticle item={allPosts[0]} />
+        <NewsArticle item={allPosts[0]} autoTruncate={true} />
       </div>
     </Outer>
   );
