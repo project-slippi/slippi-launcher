@@ -46,18 +46,8 @@ const mapping = {
   grandmaster,
 } as const;
 
-export const RankIcon = ({ rank = "none", alt, height = "85px" }: RankIconProps) => {
-  return <img src={getRankIcon(rank)} alt={alt} height={height} />;
-};
+type Rank = keyof typeof mapping;
 
 export function getRankIcon(rank: Rank): string {
   return mapping[rank] as string;
 }
-
-type Rank = keyof typeof mapping;
-
-type RankIconProps = {
-  rank?: Rank;
-  alt?: string;
-  height?: string;
-};

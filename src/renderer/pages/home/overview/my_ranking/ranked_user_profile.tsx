@@ -1,9 +1,9 @@
 import React from "react";
 
-import { getRankIcon } from "@/components/rank_icon/rank_icon";
 import type { Rank, RankedProfile } from "@/services/slippi/types";
 
 import { getRankDetails } from "./get_rank_details";
+import { getRankIcon } from "./get_rank_icon";
 import { MyRankingMessages as Messages } from "./my_ranking.messages";
 import styles from "./ranked_user_profile.module.css";
 
