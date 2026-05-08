@@ -59,8 +59,10 @@ async function fetchMediumNews(): Promise<NewsItem[]> {
     // The NewsItem content needs to be in markdown format so convert the raw HTML content to markdown
     const bodyMarkdown = turndownService.turndown(post.content);
 
+    // The post.guid from Medium can contain special characters that break the id string
+    const safeId = encodeURIComponent(post.guid);
     return {
-      id: `medium-${post.guid}`,
+      id: `medium-${safeId}`,
       source: "medium",
       imageUrl: post.thumbnail || undefined,
       title: post.title,
