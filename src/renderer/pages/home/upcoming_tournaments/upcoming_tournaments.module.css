@@ -3,6 +3,8 @@
   grid-template-columns: 65% 35%;
   height: 100%;
   overflow: hidden;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .leftColumn {
