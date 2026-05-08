@@ -8,8 +8,9 @@ import { getRankDetails } from "./get_rank_details";
 import styles from "./ranked_profile.module.css";
 
 export const RankedProfile = () => {
-  const userData = useAccount((store) => store.userData);
-  const rankedProfile = userData?.rankedNetplayProfile;
+  // We update just the rankedNetplayProfile on refresh so we should make sure
+  // the selector is correct to ensure the UI updates as expected.
+  const rankedProfile = useAccount((store) => store.userData?.rankedNetplayProfile);
   if (!rankedProfile) {
     return null;
   }

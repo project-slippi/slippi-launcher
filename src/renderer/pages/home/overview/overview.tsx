@@ -1,4 +1,3 @@
-import CachedIcon from "@mui/icons-material/Cached";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import React from "react";
 
@@ -7,10 +6,10 @@ import { AuthGuard } from "@/components/auth_guard";
 import { useHomeNavigation } from "../use_home_page";
 import { ContentBlock } from "./content_block/content_block";
 import { MeleeMajorsCarousel } from "./melee_majors_carousel";
+import { MyRanking } from "./my_ranking/my_ranking";
 import { NewsPreview } from "./news_preview/news_preview";
 import { OverviewMessages as Messages } from "./overview.messages";
 import styles from "./overview.module.css";
-import { RankedProfile } from "./ranked_profile/ranked_profile";
 import { RankedStatus } from "./ranked_status/ranked_status";
 
 export const HomeOverview = React.memo(function HomeOverview() {
@@ -41,8 +40,4 @@ export const HomeOverview = React.memo(function HomeOverview() {
       </div>
     </div>
   );
-});
-
-const MyRanking = React.memo(function MyRanking() {
-  return <ContentBlock endIcon={<CachedIcon />} title={Messages.myRanking()} content={<RankedProfile />} fill={true} />;
 });
