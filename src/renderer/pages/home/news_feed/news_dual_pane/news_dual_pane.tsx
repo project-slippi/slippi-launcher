@@ -77,7 +77,9 @@ export const NewsDualPane = React.memo(function NewsDualPane({ posts }: { posts:
       {listPane}
       {selectedPost ? (
         <div className={styles.detailPane}>
-          <NewsArticleContainer item={selectedPost} />
+          <div style={{ padding: "0 16px", maxWidth: 800, margin: "auto" }}>
+            <NewsArticleContainer item={selectedPost} />
+          </div>
         </div>
       ) : (
         <div className={styles.detailEmpty}>{Messages.selectArticle()}</div>
