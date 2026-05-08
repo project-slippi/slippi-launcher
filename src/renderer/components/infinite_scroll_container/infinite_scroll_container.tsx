@@ -1,5 +1,8 @@
+import { clsx } from "clsx";
 import React from "react";
 import { create } from "zustand";
+
+import styles from "./infinite_scroll_container.module.css";
 
 const DEFAULT_LOOK_AHEAD = "200px";
 
@@ -214,13 +217,9 @@ export const InfiniteScrollContainer = React.memo(function InfiniteScrollContain
   return (
     <div
       ref={scrollContainerRef}
-      className={className}
+      className={clsx(styles.base, className)}
       style={{
-        height: "100%",
-        width: "100%",
-        overflow: "auto",
         opacity: isRestoringScroll ? 0 : 1,
-        transition: isRestoringScroll ? "none" : "opacity 0.15s ease-in",
       }}
     >
       {children}
