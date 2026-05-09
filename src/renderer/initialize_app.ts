@@ -14,7 +14,7 @@ export async function initializeApp(services: Services) {
 
   log.info("Initializing app...");
 
-  const promises: Promise<void>[] = [];
+  const promises: Promise<any>[] = [];
 
   // If we're logged in, check they have a valid play key
   promises.push(
@@ -58,6 +58,9 @@ export async function initializeApp(services: Services) {
 
   // Check if there is an update to the launcher
   promises.push(window.electron.common.checkForAppUpdates());
+
+  // Ensure the fonts are loaded to prevent FOUT (Flash of Unstyled Text)
+  promises.push(document.fonts.ready);
 
   // Wait for all the promises to complete before returning
   const results = await Promise.allSettled(promises);
