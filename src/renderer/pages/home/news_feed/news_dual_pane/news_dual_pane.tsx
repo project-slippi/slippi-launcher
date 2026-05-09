@@ -26,6 +26,12 @@ export const NewsDualPane = React.memo(function NewsDualPane({
   onSelectedNewsIdChange: (id: string | null) => void;
 }) {
   const [visibleCount, setVisibleCount] = React.useState(INITIAL_VISIBLE);
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    scrollRef.current?.scrollTo(0, 0);
+  }, [selectedNewsId]);
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const currentLanguage = useAppStore((store) => store.currentLanguage) as SupportedLanguage;
@@ -78,7 +84,7 @@ export const NewsDualPane = React.memo(function NewsDualPane({
             <ArrowBack fontSize="small" />
             {Messages.back()}
           </button>
-          <div className={styles.mobileDetail}>
+          <div ref={scrollRef} className={styles.mobileDetail}>
             <NewsArticleContainer item={selectedPost} />
           </div>
         </div>
@@ -91,7 +97,7 @@ export const NewsDualPane = React.memo(function NewsDualPane({
     <div className={styles.container}>
       {listPane}
       {selectedPost ? (
-        <div className={styles.detailPane}>
+        <div ref={scrollRef} className={styles.detailPane}>
           <div className={styles.detailPaneContent}>
             <NewsArticleContainer item={selectedPost} />
           </div>
