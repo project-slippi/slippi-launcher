@@ -40,7 +40,7 @@ export type BlueskyPost = {
     | undefined;
 };
 
-export type BlueskyFeed = {
+type BlueskyFeed = {
   feed: BlueskyPost[] | undefined;
   error?: string;
   message?: string;
@@ -49,13 +49,20 @@ export type BlueskyFeed = {
 // Let's cache our Bluesky responses to prevent hitting the API too much
 const cache = new TimeExpiryCache<string, BlueskyFeed>(EXPIRES_IN);
 
-export async function getBlueskyFeed(): Promise<BlueskyFeed> {
+export async function getBlueskyFeed(actorId: string): Promise<BlueskyPost[]> {
   const url = new URL("https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed");
-  url.searchParams.append("actor", "did:plc:6xwud4csg7p7243ptrc5sa5y");
+  url.searchParams.append("actor", actorId);
 
   const data = await cachedFetch(url.toString());
 
-  return data;
+  if (data.error || data.feed == null) {
+    throw new Error(`Error fetching Bluesky feed: ${data.message}`);
+  }
+
+  return (
+    // any api response with the reply field is not a top level post and we don't want to show those in the launcher
+    data.feed.filter((entry) => !entry.reply)
+  );
 }
 
 async function cachedFetch(url: string): Promise<BlueskyFeed> {
