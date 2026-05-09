@@ -1,7 +1,5 @@
+import { TimeExpiryCache } from "@common/time_expiry_cache";
 import { fetch } from "cross-fetch";
-import electronLog from "electron-log";
-
-const log = electronLog.scope("main/github");
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
@@ -18,12 +16,7 @@ export type GithubReleaseInfo = {
 };
 
 // Let's cache our Github responses so we don't exceed the 60 requests/hour rate limit
-type ResponseCacheEntry = {
-  time: number;
-  response: any;
-};
-
-const githubResponseCache: Record<string, ResponseCacheEntry> = {};
+const githubResponseCache = new TimeExpiryCache<string, any>(EXPIRES_IN);
 
 export async function getLatestRelease(owner: string, repo: string): Promise<GithubReleaseInfo> {
   // We can re-use api calls by returning the first item in all releases
@@ -42,29 +35,13 @@ export async function getAllReleases(owner: string, repo: string): Promise<Githu
 }
 
 async function cachedFetch(url: string): Promise<any> {
-  log.debug(`Checking cache for: ${url}`);
-  const cachedResponse = githubResponseCache[url];
-  if (cachedResponse) {
-    // Check if the cache has expired
-    const elapsedMs = Date.now() - cachedResponse.time;
-    if (elapsedMs <= EXPIRES_IN) {
-      log.debug(`Cache hit. Returning cached response.`);
-      return cachedResponse.response;
-    } else {
-      log.debug(`Cache expired. Refetching data...`);
-    }
+  let response = githubResponseCache.get(url);
+  if (!response) {
+    // Fetch the data
+    const res = await fetch(url);
+    response = await res.json();
+    githubResponseCache.set(url, response);
   }
 
-  log.debug(`Fetching: ${url}`);
-  // Fetch the data
-  const res = await fetch(url);
-  const data = await res.json();
-
-  // Cache the data
-  githubResponseCache[url] = {
-    response: data,
-    time: Date.now(),
-  };
-
-  return data;
+  return response;
 }

@@ -1,7 +1,6 @@
+import { Preconditions } from "@common/preconditions";
+import { TimeExpiryCache } from "@common/time_expiry_cache";
 import { fetch } from "cross-fetch";
-import electronLog from "electron-log";
-
-const log = electronLog.scope("main/medium");
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
@@ -24,70 +23,26 @@ export type MediumPost = {
 
 export type MediumFeed = {
   status: string | undefined;
-  items: MediumPost[] | undefined;
+  items: MediumPost[];
 };
 
 // Let's cache our Medium responses to prevent hitting the API too much
-type ResponseCacheEntry = {
-  time: number;
-  response: MediumFeed;
-};
-
-const mediumResponseCache: Record<string, ResponseCacheEntry> = {};
+const cache = new TimeExpiryCache<string, MediumFeed>(EXPIRES_IN);
 
 export async function getMediumFeed(profileName: string): Promise<MediumFeed> {
   const rssUrl = `https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/feed/${profileName}`;
-
-  try {
-    const data = await cachedFetch(rssUrl);
-    return data;
-  } catch (error) {
-    log.error("Error fetching Medium feed:", error);
-    return {
-      status: "error",
-      items: undefined,
-    };
-  }
+  return cachedFetch(rssUrl);
 }
 
 async function cachedFetch(rssUrl: string): Promise<MediumFeed> {
-  log.debug(`Checking cache for: ${rssUrl}`);
-
-  const cachedResponse = mediumResponseCache[rssUrl];
-  if (cachedResponse) {
-    // Check if the cache has expired
-    const elapsedMs = Date.now() - cachedResponse.time;
-    if (elapsedMs <= EXPIRES_IN) {
-      log.debug(`Cache hit. Returning cached response.`);
-      return cachedResponse.response;
-    } else {
-      log.debug(`Cache expired. Refetching data...`);
-    }
+  let response = cache.get(rssUrl);
+  if (!response) {
+    const rssRes = await fetch(rssUrl);
+    response = (await rssRes.json()) as MediumFeed;
+    cache.set(rssUrl, response);
   }
 
-  log.debug(`Fetching: ${rssUrl}`);
-
-  const rssRes = await fetch(rssUrl);
-  const rssJson = await rssRes.json();
-
-  // Check to make sure rss result is ok
-  if (rssJson.status !== "ok" || !rssJson.items) {
-    throw new Error(rssJson.message || "Error fetching Medium RSS feed");
-  }
-
-  // Return raw RSS items as MediumPost array
-  const items: MediumPost[] = rssJson.items;
-
-  const data: MediumFeed = {
-    status: "ok",
-    items,
-  };
-
-  // Cache the data
-  mediumResponseCache[rssUrl] = {
-    response: data,
-    time: Date.now(),
-  };
-
-  return data;
+  // Ensure the response is ok
+  Preconditions.checkState(response.status === "ok", "Error fetching Medium RSS feed");
+  return response;
 }
