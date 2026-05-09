@@ -1,51 +1,53 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { create } from "zustand";
 
-type HomeTab = "overview" | "news" | "tournaments";
+import type { HomeTab } from "./home_routes";
+import { HOME_TABS } from "./home_routes";
+
+const isHomeTab = (s: string | undefined): s is HomeTab => HOME_TABS.includes(s as HomeTab);
 
 interface HomePageState {
-  lastSelectedTab: HomeTab;
-  setLastSelectedTab: (tab: HomeTab) => void;
-  lastSelectedNewsId: string | null;
-  setLastSelectedNewsId: (id: string | null) => void;
+  lastTab: HomeTab;
+  subPaths: Record<string, string | null>;
+  setLastTab: (tab: HomeTab) => void;
+  setSubPath: (tab: string, subPath: string | null) => void;
 }
 
 export const useHomePageStore = create<HomePageState>((set) => ({
-  lastSelectedTab: "overview",
-  setLastSelectedTab: (tab) => set({ lastSelectedTab: tab }),
-  lastSelectedNewsId: null,
-  setLastSelectedNewsId: (id) => set({ lastSelectedNewsId: id }),
+  lastTab: "overview",
+  subPaths: {},
+  setLastTab: (tab) => set({ lastTab: tab }),
+  setSubPath: (tab, subPath) => set((s) => ({ subPaths: { ...s.subPaths, [tab]: subPath } })),
 }));
 
-export const useHomeNavigation = () => {
+export function useHomePage() {
   const navigate = useNavigate();
-  const setLastSelectedTab = useHomePageStore((state) => state.setLastSelectedTab);
-  const setLastSelectedNewsId = useHomePageStore((state) => state.setLastSelectedNewsId);
+  const { tab: urlTab, newsId } = useParams<{ tab?: string; newsId?: string }>();
+  const lastTab = useHomePageStore((s) => s.lastTab);
+  const subPaths = useHomePageStore((s) => s.subPaths);
+  const setLastTab = useHomePageStore((s) => s.setLastTab);
+  const setSubPath = useHomePageStore((s) => s.setSubPath);
 
-  const handleTabChange = React.useCallback(
-    (newTab: HomeTab, newsId?: string) => {
-      setLastSelectedTab(newTab);
-      if (newsId) {
-        setLastSelectedNewsId(newsId);
+  // Redirect when URL has no valid tab
+  useEffect(() => {
+    if (!isHomeTab(urlTab)) {
+      navigate(`/main/home/${lastTab}`, { replace: true });
+    }
+  }, [urlTab, lastTab, navigate]);
+
+  // Sync URL params into the store (preserve sub-paths per tab)
+  useEffect(() => {
+    if (isHomeTab(urlTab)) {
+      setLastTab(urlTab);
+      if (urlTab === "news" && newsId) {
+        setSubPath("news", newsId);
       }
-      navigate(`/main/home/${newTab}${newsId ? `/${newsId}` : ""}`, { replace: true });
-    },
-    [navigate, setLastSelectedTab, setLastSelectedNewsId],
-  );
+    }
+  }, [urlTab, newsId, setLastTab, setSubPath]);
 
-  const handleNewsIdChange = React.useCallback(
-    (newsId: string | null) => {
-      if (newsId) {
-        setLastSelectedNewsId(newsId);
-        navigate(`/main/home/news/${newsId}`, { replace: true });
-      } else {
-        setLastSelectedNewsId(null);
-        navigate("/main/home/news", { replace: true });
-      }
-    },
-    [navigate, setLastSelectedNewsId],
-  );
+  const currentTab: HomeTab = isHomeTab(urlTab) ? urlTab : lastTab;
+  const activeNewsId = currentTab === "news" ? newsId ?? subPaths.news ?? null : null;
 
-  return { handleTabChange, handleNewsIdChange };
-};
+  return { currentTab, activeNewsId };
+}
