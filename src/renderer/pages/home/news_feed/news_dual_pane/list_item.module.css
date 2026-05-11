@@ -16,6 +16,10 @@
   background-color: rgb(255 255 255 / 10%);
 }
 
+.container[data-selected="true"] .title {
+  color: var(--text-primary);
+}
+
 .row {
   display: flex;
   padding: 12px;
