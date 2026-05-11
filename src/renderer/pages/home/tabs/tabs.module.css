@@ -69,6 +69,21 @@
   overflow: hidden;
 }
 
+.labelRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: white;
+  flex-shrink: 0;
+}
+
 .content {
   flex-grow: 1;
   outline: none;
