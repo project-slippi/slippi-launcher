@@ -12,6 +12,7 @@ import { NewsArticleContainer } from "../news_article/news_article.container";
 import { ListItem } from "./list_item";
 import { NewsDualPaneMessages as Messages } from "./news_dual_pane.messages";
 import styles from "./news_dual_pane.module.css";
+import { isNewsUnread, useNewsReadStore } from "./news_read_store";
 
 const INITIAL_VISIBLE = 20;
 const LOAD_MORE_COUNT = 10;
@@ -36,15 +37,19 @@ export const NewsDualPane = React.memo(function NewsDualPane({
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const currentLanguage = useAppStore((store) => store.currentLanguage) as SupportedLanguage;
 
+  const markAsRead = useNewsReadStore((store) => store.markAsRead);
+  const readStatus = useNewsReadStore((store) => store.readStatus);
+
   const selectedPost = React.useMemo(() => posts.find((p) => p.id === selectedNewsId) ?? null, [posts, selectedNewsId]);
   const visiblePosts = React.useMemo(() => posts.slice(0, visibleCount), [posts, visibleCount]);
   const hasMore = visibleCount < posts.length;
 
   const handleSelect = React.useCallback(
     (id: string) => {
+      markAsRead(id);
       onSelectedNewsIdChange(id);
     },
-    [onSelectedNewsIdChange],
+    [markAsRead, onSelectedNewsIdChange],
   );
 
   const handleLoadMore = React.useCallback(() => {
@@ -60,6 +65,7 @@ export const NewsDualPane = React.memo(function NewsDualPane({
       key={post.id}
       item={post}
       selected={post.id === selectedNewsId}
+      isUnread={isNewsUnread(post, readStatus)}
       currentLanguage={currentLanguage}
       onClick={() => handleSelect(post.id)}
     />

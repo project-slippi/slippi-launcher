@@ -14,11 +14,13 @@ import styles from "./list_item.module.css";
 export const ListItem = React.memo(function ListItem({
   item,
   selected,
+  isUnread,
   currentLanguage,
   onClick,
 }: {
   item: NewsItem;
   selected: boolean;
+  isUnread: boolean;
   currentLanguage: SupportedLanguage;
   onClick: () => void;
 }) {
@@ -32,6 +34,7 @@ export const ListItem = React.memo(function ListItem({
     <Button
       className={styles.container}
       data-selected={selected || undefined}
+      data-unread={isUnread || undefined}
       onClick={onClick}
       tabIndex={0}
       onKeyDown={(e) => {
