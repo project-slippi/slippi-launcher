@@ -51,7 +51,7 @@ export const useNewsReadStore = create(
   ),
 );
 
-export function isNewsUnread(item: { id: string; publishedAt: string }, readStatus: Record<string, number>): boolean {
-  const age = Date.now() - new Date(item.publishedAt).getTime();
+export function isNewsUnread(item: { id: string; publishedAt: Date }, readStatus: Record<string, number>): boolean {
+  const age = Date.now() - item.publishedAt.getTime();
   return age < NEW_NEWS_THRESHOLD_MS && !readStatus[item.id];
 }
