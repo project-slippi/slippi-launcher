@@ -42,7 +42,7 @@
   opacity: 0.7;
 }
 
-.trigger[data-active],
+.trigger[data-active="true"],
 .trigger:focus {
   cursor: default;
   font-weight: 500;
