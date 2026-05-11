@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
@@ -54,4 +55,14 @@ export const useNewsReadStore = create(
 export function isNewsUnread(item: { id: string; publishedAt: Date }, readStatus: Record<string, number>): boolean {
   const age = Date.now() - item.publishedAt.getTime();
   return age < NEW_NEWS_THRESHOLD_MS && !readStatus[item.id];
+}
+
+export function useHasUnreadNews(): boolean {
+  const { data: allPosts = [] } = useQuery({
+    queryKey: ["newsFeedQuery"],
+    queryFn: window.electron.common.fetchNewsFeed,
+    staleTime: 15 * 60 * 1000,
+  });
+  const readStatus = useNewsReadStore((s) => s.readStatus);
+  return allPosts.some((post) => isNewsUnread(post, readStatus));
 }

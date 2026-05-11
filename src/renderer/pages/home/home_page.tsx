@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { Footer } from "@/components/footer/footer";
 
 import { HomePageMessages as Messages } from "./home_page.messages";
+import { useHasUnreadNews } from "./news_feed/news_dual_pane/news_read_store";
 import { NewsFeed } from "./news_feed/news_feed";
 import { HomeOverview } from "./overview/overview";
 import { Tabs } from "./tabs/tabs";
@@ -47,6 +48,7 @@ export const HomePage = React.memo(function HomePage() {
     handleTabChange(newTab as TabId);
   };
 
+  const hasUnreadNews = useHasUnreadNews();
   const activeNewsId = tab === TabId.LATEST_NEWS ? newsId ?? lastSelectedNewsId : null;
 
   return (
@@ -55,6 +57,7 @@ export const HomePage = React.memo(function HomePage() {
         <Tabs
           value={currentTab}
           onChange={onTabChange}
+          highlightedTabIds={hasUnreadNews ? [TabId.LATEST_NEWS] : []}
           tabs={[
             { id: TabId.OVERVIEW, label: Messages.overview(), content: <HomeOverview /> },
             {
