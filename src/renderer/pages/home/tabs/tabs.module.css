@@ -39,7 +39,6 @@
   padding-top: 10px;
   opacity: 0.6;
   flex-shrink: 0;
-  transition: all 0.2s ease-in-out;
   white-space: nowrap;
 }
 
@@ -47,7 +46,7 @@
 .trigger:focus {
   cursor: default;
   opacity: 0.9;
-  font-weight: bold;
+  font-weight: 500;
   border-bottom: solid 2px var(--purple-lighter);
 }
 
@@ -56,9 +55,14 @@
   border-bottom: solid 2px rgb(255 255 255 / 80%);
 }
 
+/* This is a trick to prevent the trigger's text from shifting all the tabs when switching
+ * from regular font weight to a bolded font weight. We create a hidden element which has
+ * the same text as the trigger, with the same style, but it's not visible. This way,
+ * the trigger's text will always have the same width, regardless of its font weight.
+ */
 .trigger::after {
   content: attr(data-label);
-  font-weight: bold;
+  font-weight: 500;
   visibility: hidden;
   display: block;
   height: 0;
