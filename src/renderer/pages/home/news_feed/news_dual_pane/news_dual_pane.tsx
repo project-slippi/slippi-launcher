@@ -45,11 +45,15 @@ export const NewsDualPane = React.memo(function NewsDualPane({
   const hasMore = visibleCount < posts.length;
 
   const handleSelect = React.useCallback(
-    (id: string) => {
-      markAsRead(id);
-      onSelectedNewsIdChange(id);
+    (post: NewsItem) => {
+      onSelectedNewsIdChange(post.id);
+
+      // Mark the news as read if it was unread to begin with
+      if (isNewsUnread(post, readStatus)) {
+        markAsRead(post.id);
+      }
     },
-    [markAsRead, onSelectedNewsIdChange],
+    [markAsRead, onSelectedNewsIdChange, readStatus],
   );
 
   const handleLoadMore = React.useCallback(() => {
@@ -67,7 +71,7 @@ export const NewsDualPane = React.memo(function NewsDualPane({
       selected={post.id === selectedNewsId}
       isUnread={isNewsUnread(post, readStatus)}
       currentLanguage={currentLanguage}
-      onClick={() => handleSelect(post.id)}
+      onClick={() => handleSelect(post)}
     />
   ));
 
