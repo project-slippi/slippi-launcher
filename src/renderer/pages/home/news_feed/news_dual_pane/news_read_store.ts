@@ -1,13 +1,24 @@
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
-const MONTH_MS = 30 * 24 * 60 * 60 * 1000;
+// Only consider news that is published within this time frame to be considered "new"
+const NEW_NEWS_THRESHOLD_MS = 30 * 24 * 60 * 60 * 1000; // 1 month in milliseconds
 const STORAGE_KEY = "news-read-status";
 
 function loadReadStatus(): Record<string, number> {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : {};
+    if (!raw) {
+      return {};
+    }
+    const parsed: Record<string, number> = JSON.parse(raw);
+
+    // Prevent the read status object from growing indefinitely.
+    // Ignore the entries which have been read before the cutoff date.
+    // The new filtered object will be written to storage on next write.
+    const cutoff = Date.now() - NEW_NEWS_THRESHOLD_MS;
+    const filtered = Object.fromEntries(Object.entries(parsed).filter(([, ts]) => ts >= cutoff));
+    return filtered;
   } catch {
     return {};
   }
@@ -42,5 +53,5 @@ export const useNewsReadStore = create(
 
 export function isNewsUnread(item: { id: string; publishedAt: string }, readStatus: Record<string, number>): boolean {
   const age = Date.now() - new Date(item.publishedAt).getTime();
-  return age < MONTH_MS && !readStatus[item.id];
+  return age < NEW_NEWS_THRESHOLD_MS && !readStatus[item.id];
 }
