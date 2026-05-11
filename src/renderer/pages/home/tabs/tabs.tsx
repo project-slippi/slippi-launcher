@@ -20,7 +20,12 @@ export const Tabs = ({ defaultTab, value, onChange, tabs, highlightedTabIds }: T
   <BaseTabs.Root defaultValue={defaultTab} value={value} onValueChange={onChange} className={styles.root}>
     <BaseTabs.List className={styles.list}>
       {tabs.map((tab, i) => (
-        <BaseTabs.Tab className={styles.trigger} value={tab.id} key={i}>
+        <BaseTabs.Tab
+          className={styles.trigger}
+          value={tab.id}
+          key={i}
+          data-active={tab.id === value ? "true" : undefined}
+        >
           <span className={styles.labelRow}>
             {highlightedTabIds?.includes(tab.id) && <span className={styles.dot} />}
             <span className={styles.label} data-label={tab.label}>
