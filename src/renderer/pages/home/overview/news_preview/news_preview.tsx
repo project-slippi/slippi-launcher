@@ -40,14 +40,23 @@ export const NewsPreview = React.memo(function NewsPreview() {
     );
   }
 
+  const postToShow = allPosts.find((post) => post.source === "bluesky") || allPosts[0];
   return (
     <Outer>
       <div className={styles.previewContainer}>
-        <ItemPreview item={allPosts.find((post) => post.source === "bluesky") || allPosts[0]} />
+        <ItemPreview item={postToShow} />
       </div>
-      <Button color="secondary" sx={{ width: "100%" }} size="medium" variant="outlined" endIcon={<ChevronRightIcon />}>
-        Read post
-      </Button>
+      <div className={styles.buttonContainer}>
+        <Button
+          color="secondary"
+          sx={{ width: "100%" }}
+          size="medium"
+          variant="outlined"
+          endIcon={<ChevronRightIcon />}
+        >
+          {Messages.readPost()}
+        </Button>
+      </div>
     </Outer>
   );
 });
