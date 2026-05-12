@@ -15,9 +15,8 @@ export const ItemPreview = React.memo(function ItemPreview({ item }: { item: New
   const currentLanguage = useAppStore((store) => store.currentLanguage) as SupportedLanguage;
   const { publishedAt } = item;
 
-  const publishedDate = new Date(publishedAt);
   const dateFnsLocale = getLocale(currentLanguage);
-  const localDateString = format(publishedDate, "PPP p", { locale: dateFnsLocale });
+  const localDateString = format(publishedAt, "PPP p", { locale: dateFnsLocale });
 
   const postContent = React.useMemo(() => {
     switch (item.source) {

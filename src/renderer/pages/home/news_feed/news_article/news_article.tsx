@@ -38,10 +38,9 @@ export const NewsArticle = React.memo(function NewsArticle({
 }) {
   const { permalink, publishedAt } = item;
 
-  const publishedDate = new Date(publishedAt);
   const dateFnsLocale = getLocale(currentLanguage);
-  const localDateString = format(publishedDate, "PPP p", { locale: dateFnsLocale });
-  const timeAgo = formatDistance(publishedDate, new Date(), {
+  const localDateString = format(publishedAt, "PPP p", { locale: dateFnsLocale });
+  const timeAgo = formatDistance(publishedAt, new Date(), {
     addSuffix: true,
     locale: dateFnsLocale,
   });
