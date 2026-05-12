@@ -25,7 +25,7 @@ export const ListItem = React.memo(function ListItem({
   onClick: () => void;
 }) {
   const dateFnsLocale = getLocale(currentLanguage);
-  const timeAgo = formatDistance(new Date(item.publishedAt), new Date(), {
+  const timeAgo = formatDistance(item.publishedAt, new Date(), {
     addSuffix: true,
     locale: dateFnsLocale,
   });
