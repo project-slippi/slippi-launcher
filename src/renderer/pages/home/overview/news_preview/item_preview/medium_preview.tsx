@@ -7,7 +7,7 @@ import { MarkdownContent } from "@/components/markdown_content/markdown_content"
 
 import styles from "./item_preview.module.css";
 
-export const MediumPreview = React.memo(function MediumPreview({ item }: { item: NewsItem; autoTruncate?: boolean }) {
+export const MediumPreview = React.memo(function MediumPreview({ item }: { item: NewsItem }) {
   const { imageUrl, title, subtitle, body = "" } = item;
 
   return (
