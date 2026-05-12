@@ -1,4 +1,3 @@
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import React from "react";
 
 import { AuthGuard } from "@/components/auth_guard";
@@ -15,11 +14,7 @@ export const HomeOverview = React.memo(function HomeOverview() {
   return (
     <div className={styles.container}>
       <ContentBlock title={Messages.latestNews()} content={<NewsPreview />} />
-      <ContentBlock
-        endIcon={<ChevronRightIcon />}
-        title={Messages.upcomingTournaments()}
-        content={<MeleeMajorsCarousel />}
-      />
+      <ContentBlock title={Messages.upcomingTournaments()} content={<MeleeMajorsCarousel />} />
       <div className={styles.rankedSidebar}>
         <AuthGuard render={() => <MyRanking />} />
         <ContentBlock content={<RankedStatus />} />
