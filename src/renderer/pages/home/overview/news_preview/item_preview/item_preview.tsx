@@ -31,7 +31,7 @@ export const ItemPreview = React.memo(function ItemPreview({ item }: { item: New
   }, [item]);
 
   return (
-    <div>
+    <div className={styles.previewContainer}>
       <div className={styles.dateHeader}>{localDateString}</div>
       <div>{postContent}</div>
     </div>
