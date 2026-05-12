@@ -6,7 +6,7 @@ export function generateFakeNewsItem(news: Partial<NewsItem>): NewsItem {
     source: "medium",
     title: "Lorem Ipsum",
     permalink: "https://youtu.be/dQw4w9WgXcQ",
-    publishedAt: new Date(2009, 10, 25, 6, 57, 33, 42).toISOString(),
+    publishedAt: new Date(2009, 10, 25, 6, 57, 33, 42),
     subtitle: "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur.",
     body: `
 ## Sub-heading
