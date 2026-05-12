@@ -4,8 +4,10 @@ import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import { clsx } from "clsx";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 import { useNewsFeedQuery } from "@/lib/hooks/use_data_fetch_query";
+import { HomeRoutes } from "@/pages/home/home_routes";
 
 import { ItemPreview } from "./item_preview/item_preview";
 import { NewsPreviewMessages as Messages } from "./news_preview.messages";
@@ -13,6 +15,7 @@ import styles from "./news_preview.module.css";
 
 export const NewsPreview = React.memo(function NewsPreview() {
   const { isLoading, error, data: allPosts = [] } = useNewsFeedQuery();
+  const navigate = useNavigate();
 
   if (isLoading) {
     return (
@@ -40,7 +43,7 @@ export const NewsPreview = React.memo(function NewsPreview() {
     );
   }
 
-  const postToShow = allPosts.find((post) => post.source === "bluesky") || allPosts[0];
+  const postToShow = allPosts[0];
   return (
     <Outer>
       <div className={styles.previewContainer}>
@@ -53,6 +56,7 @@ export const NewsPreview = React.memo(function NewsPreview() {
           size="medium"
           variant="outlined"
           endIcon={<ChevronRightIcon />}
+          onClick={() => navigate(HomeRoutes.latestNews(postToShow.id))}
         >
           {Messages.readPost()}
         </Button>
