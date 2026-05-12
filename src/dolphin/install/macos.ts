@@ -4,65 +4,89 @@ import path from "path";
 
 import { extractDmg, mountDmg, unmountDmg } from "./extract_dmg";
 
+type ProgressCallback = (message: string) => void;
+
+function createProgressCallback(onProgress?: ProgressCallback) {
+  return (message: string) => {
+    if (onProgress) {
+      onProgress(message);
+    }
+  };
+}
+
 export async function installIshiirukaDolphinOnMac({
   assetPath,
   destinationFolder,
-  log = console.log,
+  onProgress,
 }: {
   assetPath: string;
   destinationFolder: string;
-  log?: (message: string) => void;
+  onProgress?: (message: string) => void;
 }) {
-  log(`Extracting to: ${destinationFolder}`);
-  await extractDmg(assetPath, destinationFolder);
-  const files = await fs.readdir(destinationFolder);
-  await Promise.all(
-    files
-      .filter((file) => file !== "Slippi Dolphin.app")
-      .map(async (file) => {
-        await fs.remove(path.join(destinationFolder, file));
-      }),
-  );
+  const progressLog = createProgressCallback(onProgress);
+  progressLog(`Extracting to: ${destinationFolder}`);
+  await extractDmg(assetPath, destinationFolder, progressLog);
 
-  // sometimes permissions aren't set properly after the extraction so we will forcibly set them on install
+  const files = await fs.readdir(destinationFolder);
+  const filesToRemove = files.filter((file) => file !== "Slippi Dolphin.app");
+
+  // Remove files in parallel with progress tracking
+  for (let i = 0; i < filesToRemove.length; i++) {
+    const file = filesToRemove[i];
+    progressLog(`Removing file ${i + 1}/${filesToRemove.length}: ${file}`);
+    await fs.remove(path.join(destinationFolder, file));
+  }
+
+  // sometimes permissions aren't set properly after extraction so we will forcibly set them on install
   const binaryLocation = path.join(destinationFolder, "Slippi Dolphin.app", "Contents", "MacOS", "Slippi Dolphin");
   const userInfo = os.userInfo();
-  await fs.chmod(path.join(destinationFolder, "Slippi Dolphin.app"), "777");
-  await fs.chown(path.join(destinationFolder, "Slippi Dolphin.app"), userInfo.uid, userInfo.gid);
-  await fs.chmod(binaryLocation, "777");
-  await fs.chown(binaryLocation, userInfo.uid, userInfo.gid);
+  progressLog("Setting permissions...");
+
+  await Promise.all([
+    fs.chmod(path.join(destinationFolder, "Slippi Dolphin.app"), "777"),
+    fs.chown(path.join(destinationFolder, "Slippi Dolphin.app"), userInfo.uid, userInfo.gid),
+    fs.chmod(binaryLocation, "777"),
+    fs.chown(binaryLocation, userInfo.uid, userInfo.gid),
+  ]);
 }
 
 export async function installMainlineDolphinOnMac({
   assetPath,
   destinationFolder,
-  log = console.log,
+  onProgress,
 }: {
   assetPath: string;
   destinationFolder: string;
-  log?: (message: string) => void;
+  onProgress?: (message: string) => void;
 }) {
-  log(`Extracting to: ${destinationFolder}`);
-  const mountPath = await mountDmg(assetPath);
+  const progressLog = createProgressCallback(onProgress);
+  progressLog(`Extracting to: ${destinationFolder}`);
+
+  const mountPath = await mountDmg(assetPath, progressLog);
   try {
     const appMountPath = path.join(mountPath, "Slippi_Dolphin.app");
     const destPath = path.join(destinationFolder, "Slippi_Dolphin.app");
+    progressLog("Copying Dolphin application...");
     await fs.copy(appMountPath, destPath, { recursive: true });
   } catch {
-    log("Failed to copy files from DMG");
+    progressLog("Failed to copy files from DMG");
   } finally {
-    await unmountDmg(mountPath);
+    await unmountDmg(mountPath, progressLog);
   }
 
   try {
-    // sometimes permissions aren't set properly after the extraction so we will forcibly set them on install
+    // sometimes permissions aren't set properly after extraction so we will forcibly set them on install
     const binaryLocation = path.join(destinationFolder, "Slippi_Dolphin.app", "Contents", "MacOS", "Slippi_Dolphin");
     const userInfo = os.userInfo();
-    await fs.chmod(path.join(destinationFolder, "Slippi_Dolphin.app"), "777");
-    await fs.chown(path.join(destinationFolder, "Slippi_Dolphin.app"), userInfo.uid, userInfo.gid);
-    await fs.chmod(binaryLocation, "777");
-    await fs.chown(binaryLocation, userInfo.uid, userInfo.gid);
+    progressLog("Setting permissions...");
+
+    await Promise.all([
+      fs.chmod(path.join(destinationFolder, "Slippi_Dolphin.app"), "777"),
+      fs.chown(path.join(destinationFolder, "Slippi_Dolphin.app"), userInfo.uid, userInfo.gid),
+      fs.chmod(binaryLocation, "777"),
+      fs.chown(binaryLocation, userInfo.uid, userInfo.gid),
+    ]);
   } catch {
-    log("could not chown/chmod Dolphin");
+    progressLog("Could not chown/chmod Dolphin");
   }
 }

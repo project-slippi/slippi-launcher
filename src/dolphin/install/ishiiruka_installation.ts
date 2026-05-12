@@ -184,7 +184,14 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
     const downloadDir = path.join(app.getPath("userData"), "temp");
     const downloadedAsset = await downloadLatestDolphin(downloadUrl, downloadDir, onProgress);
     log.info(`Installing v${dolphinDownloadInfo.version} ${type} Dolphin...`);
-    await this._installDolphin(downloadedAsset, cleanInstall);
+
+    // Create installation progress callback
+    const installProgress = (message: string) => {
+      log.info(message);
+      // Could also emit progress events here if needed
+    };
+
+    await this._installDolphin(downloadedAsset, cleanInstall, installProgress);
     log.info(`Finished v${dolphinDownloadInfo.version} ${type} Dolphin install`);
 
     if (onComplete) {
@@ -297,24 +304,31 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
     }
   }
 
-  private async _installDolphin(assetPath: string, cleanInstall = false) {
+  private async _installDolphin(
+    assetPath: string,
+    cleanInstall = false,
+    onProgress?: (message: string) => void,
+  ): Promise<void> {
     const dolphinPath = this.installationFolder;
 
     if (cleanInstall) {
+      onProgress?.("Performing clean install...");
       await this._uninstallDolphin();
     } else {
       if (isLinux || isMac) {
         // macOS and Linux use bundles which are safe to delete since they contain no user config
         // deleting the bundle first lets us ignore any issues that would come up when overwriting the bundle
+        onProgress?.("Removing existing installation...");
         await fs.remove(this.installationFolder);
       }
+      onProgress?.("Clearing cache...");
       await this.clearCache(); // clear cache to avoid shader issues on new versions
     }
 
     switch (process.platform) {
       case "win32": {
         const { installDolphinOnWindows } = await import("./windows");
-        await installDolphinOnWindows({ assetPath, destinationFolder: dolphinPath });
+        await installDolphinOnWindows({ assetPath, destinationFolder: dolphinPath, onProgress });
         break;
       }
       case "darwin": {
@@ -322,6 +336,7 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
         await installIshiirukaDolphinOnMac({
           assetPath,
           destinationFolder: dolphinPath,
+          onProgress,
         });
         break;
       }
@@ -331,6 +346,7 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
           assetPath,
           destinationFolder: dolphinPath,
           installation: this,
+          onProgress,
         });
         break;
       }
