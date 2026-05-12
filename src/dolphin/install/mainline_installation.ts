@@ -1,7 +1,7 @@
 import type { SyncedDolphinSettings } from "@dolphin/config/config";
 import { addGamePath, getSlippiMainlineSettings, setSlippiMainlineSettings } from "@dolphin/config/config";
 import { IniFile } from "@dolphin/config/ini_file";
-import { spawnSync } from "child_process";
+import { spawn } from "child_process";
 import { app } from "electron";
 import electronLog from "electron-log";
 import * as fs from "fs-extra";
@@ -241,7 +241,7 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
   public async getDolphinVersion(): Promise<string | undefined> {
     try {
       const dolphinPath = await this.findDolphinExecutable();
-      const dolphinVersionOut = spawnSync(dolphinPath, ["--version"]).stdout.toString();
+      const dolphinVersionOut = await this._executeCommand(dolphinPath, ["--version"]);
       const match = dolphinVersionOut.match(semverRegex);
       return match?.[0];
     } catch (err) {
@@ -253,6 +253,34 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
     const slippiDir = path.join(this.userFolder, "Slippi");
     await fs.ensureDir(slippiDir);
     return path.resolve(slippiDir, "user.json");
+  }
+
+  private async _executeCommand(command: string, args: string[]): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const child = spawn(command, args);
+      let stdout = "";
+      let stderr = "";
+
+      child.stdout?.on("data", (data) => {
+        stdout += data.toString();
+      });
+
+      child.stderr?.on("data", (data) => {
+        stderr += data.toString();
+      });
+
+      child.on("close", (code) => {
+        if (code === 0) {
+          resolve(stdout);
+        } else {
+          reject(new Error(`Command failed with code ${code}: ${stderr}`));
+        }
+      });
+
+      child.on("error", (err) => {
+        reject(err);
+      });
+    });
   }
 
   private async _uninstallDolphin() {
