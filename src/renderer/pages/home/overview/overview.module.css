@@ -11,15 +11,3 @@
   flex-direction: column;
   gap: 16px;
 }
-
-.myRankingContainer {
-  display: flex;
-  height: 220px;
-  width: 100%;
-}
-
-@media (height <= 850px) {
-  .myRankingContainer {
-    height: 130px;
-  }
-}

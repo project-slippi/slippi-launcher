@@ -3,6 +3,7 @@ import React from "react";
 import { useAccount } from "@/lib/hooks/use_account";
 
 import { ContentBlock } from "../content_block/content_block";
+import styles from "./my_ranking.module.css";
 import { RankedUserProfile } from "./ranked_user_profile";
 
 export const MyRanking = React.memo(function MyRanking() {
@@ -16,11 +17,10 @@ export const MyRanking = React.memo(function MyRanking() {
   return (
     <ContentBlock
       content={
-        <div>
+        <div className={styles.myRankingContainer}>
           <RankedUserProfile rankedProfile={rankedProfile} />
         </div>
       }
-      fill={true}
     />
   );
 });

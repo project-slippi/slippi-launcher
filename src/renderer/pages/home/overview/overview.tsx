@@ -29,13 +29,7 @@ export const HomeOverview = React.memo(function HomeOverview() {
         onClick={() => navigateToHomeTab("tournaments")}
       />
       <div className={styles.rankedSidebar}>
-        <AuthGuard
-          render={() => (
-            <div className={styles.myRankingContainer}>
-              <MyRanking />
-            </div>
-          )}
-        />
+        <AuthGuard render={() => <MyRanking />} />
         <ContentBlock content={<RankedStatus />} />
       </div>
     </div>
