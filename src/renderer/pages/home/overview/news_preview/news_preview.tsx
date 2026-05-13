@@ -1,19 +1,25 @@
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Newspaper from "@mui/icons-material/Newspaper";
+import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
+import { clsx } from "clsx";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 import { useNewsFeedQuery } from "@/lib/hooks/use_data_fetch_query";
+import { HomeRoutes } from "@/pages/home/home_routes";
 
-import { NewsArticleContainer as NewsArticle } from "../../news_feed/news_article/news_article.container";
+import { ItemPreview } from "./item_preview/item_preview";
 import { NewsPreviewMessages as Messages } from "./news_preview.messages";
 import styles from "./news_preview.module.css";
 
 export const NewsPreview = React.memo(function NewsPreview() {
   const { isLoading, error, data: allPosts = [] } = useNewsFeedQuery();
+  const navigate = useNavigate();
 
   if (isLoading) {
     return (
-      <Outer>
+      <Outer centered={true}>
         <CircularProgress color="inherit" />
       </Outer>
     );
@@ -21,7 +27,7 @@ export const NewsPreview = React.memo(function NewsPreview() {
 
   if (error instanceof Error) {
     return (
-      <Outer>
+      <Outer centered={true}>
         <Newspaper style={{ fontSize: 64 }} />
         <h3>{Messages.failedToFetchNews()}</h3>
       </Outer>
@@ -30,22 +36,35 @@ export const NewsPreview = React.memo(function NewsPreview() {
 
   if (allPosts.length === 0) {
     return (
-      <Outer>
+      <Outer centered={true}>
         <Newspaper style={{ fontSize: 64 }} />
         <h3>{Messages.noNews()}</h3>
       </Outer>
     );
   }
 
+  const postToShow = allPosts[0];
   return (
     <Outer>
-      <div style={{ margin: 15, boxShadow: "4px 4px 8px rgba(0, 0, 0, 0.8)", overflow: "auto" }}>
-        <NewsArticle item={allPosts[0]} />
+      <div className={styles.previewContainer}>
+        <ItemPreview item={postToShow} />
+      </div>
+      <div className={styles.buttonContainer}>
+        <Button
+          color="secondary"
+          sx={{ width: "100%" }}
+          size="medium"
+          variant="outlined"
+          endIcon={<ChevronRightIcon />}
+          onClick={() => navigate(HomeRoutes.latestNews(postToShow.id))}
+        >
+          {Messages.readPost()}
+        </Button>
       </div>
     </Outer>
   );
 });
 
-const Outer = ({ children }: { children: React.ReactNode }) => {
-  return <div className={styles.container}>{children}</div>;
+const Outer = ({ children, centered }: { children: React.ReactNode; centered?: boolean }) => {
+  return <div className={clsx(styles.container, centered && styles.centered)}>{children}</div>;
 };

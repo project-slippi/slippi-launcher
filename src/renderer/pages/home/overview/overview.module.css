@@ -3,4 +3,6 @@
   grid-template-columns: 1.5fr 1.5fr 1fr;
   gap: 16px;
   height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
 }
