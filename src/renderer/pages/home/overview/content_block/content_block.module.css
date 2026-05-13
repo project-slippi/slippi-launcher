@@ -11,6 +11,10 @@
   border-radius: 10px;
 }
 
+.fill {
+  flex: 1;
+}
+
 .title {
   margin: 0;
   height: 60px;
@@ -22,6 +26,7 @@
 .content {
   flex: 1;
   overflow-y: auto;
+  display: grid;
 }
 
 .header {

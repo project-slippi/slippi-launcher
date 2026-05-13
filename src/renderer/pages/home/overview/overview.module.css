@@ -4,3 +4,10 @@
   gap: 16px;
   height: 100%;
 }
+
+.rankedSidebar {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

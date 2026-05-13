@@ -1,0 +1,11 @@
+.myRankingContainer {
+  display: flex;
+  height: 200px;
+  width: 100%;
+}
+
+@media (height <= 850px) {
+  .myRankingContainer {
+    height: 130px;
+  }
+}
