@@ -36,7 +36,7 @@ export const HomeOverview = React.memo(function HomeOverview() {
             </div>
           )}
         />
-        <ContentBlock title={Messages.rankedDay()} content={<RankedStatus />} />
+        <RankedStatus />
       </div>
     </div>
   );

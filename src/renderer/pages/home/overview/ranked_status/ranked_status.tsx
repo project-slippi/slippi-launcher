@@ -67,6 +67,16 @@ const InternalRankedStatus = ({
   return (
     <div className={styles.container}>
       <div className={clsx(styles.centerStack, styles.rankedDayIcon)}>
+        <Typography
+          variant="h6"
+          color={cssVar("purpleLight")}
+          fontSize="12pt"
+          fontWeight="semibold"
+          marginBottom="8px"
+          textTransform="uppercase"
+        >
+          {Messages.rankedDay()}
+        </Typography>
         {isFullAccess ? <RankedDayActiveIcon width={40} /> : <RankedDayInactiveIcon width={40} />}
         <Typography
           className={styles.stroke}
@@ -83,8 +93,7 @@ const InternalRankedStatus = ({
         <Typography
           variant="h6"
           color={cssVar("purpleLight")}
-          className="14px"
-          fontSize="13pt"
+          fontSize="11pt"
           fontWeight="semibold"
           marginBottom="4px"
           textTransform="uppercase"
@@ -117,7 +126,7 @@ const InternalRankedStatus = ({
 const AlreadySubscribed = ({ connectCode }: { connectCode: string }) => {
   return (
     <>
-      <Typography fontSize="11pt" color={cssVar("textDim")} marginTop="12px">
+      <Typography fontSize="10pt" color={cssVar("textDim")} marginTop="12px">
         {Messages.activeSubscription()}
       </Typography>
       <div className={styles.buttonContainer}>
@@ -140,7 +149,7 @@ const AlreadySubscribed = ({ connectCode }: { connectCode: string }) => {
 const SubscribeToRanked = ({ isFullAccess, uid }: { isFullAccess: boolean; uid?: string }) => {
   return (
     <>
-      <Typography fontSize="11pt" color={cssVar("textDim")} marginTop="12px">
+      <Typography fontSize="10pt" color={cssVar("textDim")} marginTop="12px">
         {isFullAccess ? Messages.rankedPlayIsCurrentlyAvailable() : Messages.onceEveryFourDaysRankedPlayIsAvailable()}
       </Typography>
       {uid && (
