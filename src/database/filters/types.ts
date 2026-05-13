@@ -5,11 +5,13 @@
  * - { minFrames: 1800 } = at least 30 seconds
  * - { maxFrames: 18000 } = at most 5 minutes
  * - { minFrames: 1800, maxFrames: 18000 } = between 30s and 5min
+ * - { minFrames: 1800, negate: true } = exclude games shorter than 30 seconds
  */
 export type DurationFilter = {
   type: "duration";
   minFrames?: number;
   maxFrames?: number;
+  negate?: boolean; // If true, excludes matches instead of including them
 };
 
 /**
@@ -24,7 +26,9 @@ export type DurationFilter = {
  * - { connectCode: "MANG#0", port: 1, mustBeWinner: true } = games where MANG#0 was port 1 and won
  * - { connectCode: "MANG#0", characterIds: [2, 20], mustBeWinner: true } = games where MANG#0 played Fox or Falco and won
  * - { port: 1 } = games where port 1 exists (any player)
- * - { userId: "abc123", displayName: "Mango" } = games where user abc123 has display name "Mango"
+ * - { tag: "aklo" } = games where tag contains "aklo" (fuzzy LIKE match - default)
+ * - { tag: "aklo", tagExact: true } = games where tag exactly equals "aklo" (exact = match)
+ * - { characterIds: [15], negate: true } = exclude games with Puff
  */
 export type PlayerFilter = {
   type: "player";
@@ -37,6 +41,10 @@ export type PlayerFilter = {
   characterIds?: number[]; // Character IDs (OR logic - player played any of these characters)
   // Optional win condition
   mustBeWinner?: boolean;
+  // Exact matching flags (true = use exact match with =, false/undefined = fuzzy match with LIKE)
+  tagExact?: boolean;
+  displayNameExact?: boolean;
+  negate?: boolean; // If true, excludes matches instead of including them
 };
 
 /**
@@ -46,10 +54,30 @@ export type PlayerFilter = {
  * - { modes: [8] } = online games only
  * - { modes: [2, 8] } = vs or online
  * - { modes: [15, 32] } = stadium modes only
+ * - { modes: [15, 32], negate: true } = exclude stadium modes
  */
 export type GameModeFilter = {
   type: "gameMode";
   modes: number[];
+  negate?: boolean; // If true, excludes matches instead of including them
+};
+
+/**
+ * Filter for stage
+ *
+ * Uses stage IDs from @slippi/slippi-js
+ * Multiple stage IDs are combined with OR logic (match any of the specified stages)
+ *
+ * Examples:
+ * - { stageIds: [31] } = Battlefield only
+ * - { stageIds: [31, 32] } = Battlefield OR Final Destination
+ * - { stageIds: [2, 3, 8, 28, 31, 32] } = Legal stages (FoD, PS, Yoshi's Story, DL, BF, FD)
+ * - { stageIds: [32], negate: true } = exclude Final Destination
+ */
+export type StageFilter = {
+  type: "stage";
+  stageIds: number[];
+  negate?: boolean; // If true, excludes matches instead of including them
 };
 
 /**
@@ -73,9 +101,90 @@ export type TextSearchFilter = {
   query: string;
   // Optional: if true, only search file names (not player fields)
   searchFileNameOnly?: boolean;
+  negate?: boolean; // If true, excludes matches instead of including them
 };
 
-export type ReplayFilter = DurationFilter | PlayerFilter | GameModeFilter | TextSearchFilter;
+/**
+ * Filter for matchup (character vs character)
+ * Requires BOTH conditions to be met:
+ * - A player who played one of the winner characters and won
+ * - A different player who played one of the loser characters and lost
+ * Both players must be in the same game.
+ *
+ * Examples:
+ * - { winnerCharIds: [2], loserCharIds: [9] } = Fox beat Marth
+ * - { winnerCharIds: [2], loserCharIds: null } = Fox won (any opponent) - USE PlayerFilter instead
+ * - { winnerCharIds: null, loserCharIds: [9] } = Marth lost (any opponent) - USE PlayerFilter instead
+ *
+ * Note: For single-sided filters (winner only or loser only), use PlayerFilter with mustBeWinner.
+ * MatchupFilter is specifically for when you want to match BOTH sides.
+ */
+export type MatchupFilter = {
+  type: "matchup";
+  winnerCharIds: number[]; // Character IDs of the winner (OR logic)
+  loserCharIds: number[]; // Character IDs of the loser (OR logic)
+  negate?: boolean; // If true, excludes matches instead of including them
+};
+
+/**
+ * Filter for game start date
+ * The database stores start_time as ISO 8601 strings in local time.
+ * This filter compares against the game.start_time column.
+ *
+ * Examples:
+ * - { minDate: "2024-01-01T00:00:00.000Z" } = games on or after Jan 1, 2024
+ * - { maxDate: "2024-12-31T00:00:00.000Z" } = games on or before Dec 31, 2024
+ * - { minDate: "...", maxDate: "..." } = games between dates (inclusive)
+ * - { minDate: "...", maxDate: "...", negate: true } = exclude games in date range
+ */
+export type DateFilter = {
+  type: "date";
+  minDate?: string; // ISO date string (inclusive)
+  maxDate?: string; // ISO date string (inclusive, for <= comparisons)
+  maxDateExclusive?: string; // ISO date string (exclusive, for exact date queries)
+  negate?: boolean; // If true, excludes matches instead of including them
+};
+
+/**
+ * Filter for ranked games
+ * Uses game.is_ranked column (0 = unranked, 1 = ranked)
+ *
+ * Examples:
+ * - { isRanked: true } = ranked games only
+ * - { isRanked: false } = unranked games only
+ * - { isRanked: true, negate: true } = unranked games only
+ */
+export type RankedFilter = {
+  type: "ranked";
+  isRanked: boolean;
+  negate?: boolean;
+};
+
+/**
+ * Filter for teams/doubles games
+ * Uses game.is_teams column (0 = singles, 1 = teams/doubles)
+ *
+ * Examples:
+ * - { isTeams: true } = teams/doubles games only
+ * - { isTeams: false } = singles games only
+ * - { isTeams: true, negate: true } = singles games only
+ */
+export type TeamsFilter = {
+  type: "teams";
+  isTeams: boolean;
+  negate?: boolean;
+};
+
+export type ReplayFilter =
+  | DurationFilter
+  | PlayerFilter
+  | GameModeFilter
+  | StageFilter
+  | TextSearchFilter
+  | MatchupFilter
+  | DateFilter
+  | RankedFilter
+  | TeamsFilter;
 
 // Game mode constants
 const GameModeValue = {

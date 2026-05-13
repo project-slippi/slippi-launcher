@@ -6,9 +6,16 @@ import log from "electron-log";
 import { useIsoVerification } from "@/lib/hooks/use_iso_verification";
 import { getReplayPresenter, useReplays } from "@/lib/hooks/use_replays";
 import { useSettingsStore } from "@/lib/hooks/use_settings";
+import type { AuthService } from "@/services/auth/types";
 
-export function installSettingsChangeListeners({ replayService }: { replayService: ReplayService }) {
-  const replayPresenter = getReplayPresenter(replayService);
+export function installSettingsChangeListeners({
+  replayService,
+  authService,
+}: {
+  replayService: ReplayService;
+  authService: AuthService;
+}) {
+  const replayPresenter = getReplayPresenter(replayService, authService);
 
   // Re-initialize the replay browser whenever the tracked SLP paths change
   const initReplayBrowser = (preserveCurrentFolder = false) => {
