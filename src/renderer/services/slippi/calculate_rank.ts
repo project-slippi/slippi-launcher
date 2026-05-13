@@ -2,9 +2,6 @@ import { Rank } from "./types";
 
 const SETS_REQUIRED_FOR_RANK = 5;
 
-// Ranked Calibration Data:
-// https://docs.google.com/spreadsheets/d/1F4tPN7XxXeiHKDRpzfMIJeUkg9hwx14CM16YqYF4-FM/edit#gid=0
-
 export const calculateRank = (rating: number, hasPlacement: boolean, setsPlayed: number): Rank => {
   if (setsPlayed === 0) {
     return Rank.NONE;
