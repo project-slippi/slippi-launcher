@@ -1,7 +1,6 @@
 import type { SyncedDolphinSettings } from "@dolphin/config/config";
 import { addGamePath, getSlippiIshiiSettings, setSlippiIshiiSettings } from "@dolphin/config/config";
 import { IniFile } from "@dolphin/config/ini_file";
-import { spawnSync } from "child_process";
 import { app } from "electron";
 import electronLog from "electron-log";
 import * as fs from "fs-extra";
@@ -12,6 +11,7 @@ import { lt } from "semver";
 import type { DolphinInstallation } from "../types";
 import { DolphinLaunchType } from "../types";
 import { downloadLatestDolphin } from "./download";
+import { executeCommand } from "./execute_command";
 import type { DolphinVersionResponse } from "./fetch_latest_version";
 
 const log = electronLog.scope("dolphin/ishiiInstallation");
@@ -231,7 +231,7 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
   public async getDolphinVersion(): Promise<string | undefined> {
     try {
       const dolphinPath = await this.findDolphinExecutable();
-      const dolphinVersionOut = spawnSync(dolphinPath, ["--version"]).stdout.toString();
+      const dolphinVersionOut = await executeCommand(dolphinPath, ["--version"]);
       const match = dolphinVersionOut.match(semverRegex);
       return match?.[0];
     } catch (err) {
