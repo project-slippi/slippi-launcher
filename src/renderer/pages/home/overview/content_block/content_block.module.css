@@ -27,7 +27,6 @@
   flex: 1;
   overflow-y: auto;
   display: grid;
-  align-items: center;
 }
 
 .header {

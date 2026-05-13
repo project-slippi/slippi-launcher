@@ -1,9 +1,6 @@
 .container {
-  padding: 10px 16px;
-  background-color: var(--purple-dark);
-  box-sizing: border-box;
-  border: solid 1px rgb(159 116 192 / 10%);
-  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
 }
 
 .centerStack {

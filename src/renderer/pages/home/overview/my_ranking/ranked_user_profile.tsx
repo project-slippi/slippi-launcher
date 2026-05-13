@@ -1,5 +1,11 @@
+import { Button } from "@base-ui/react";
+import CachedIcon from "@mui/icons-material/Cached";
+import CircularProgress from "@mui/material/CircularProgress";
+import { useMutation } from "@tanstack/react-query";
 import React from "react";
 
+import { useAccount } from "@/lib/hooks/use_account";
+import { useServices } from "@/services";
 import type { Rank, RankedProfile } from "@/services/slippi/types";
 
 import { getRankDetails } from "./get_rank_details";
@@ -36,9 +42,12 @@ export const RankedUserProfile = ({ rankedProfile }: { rankedProfile: RankedProf
           background: `linear-gradient(to right, transparent 20%, ${color} 175%)`,
         }}
       />
-      <div className={styles.ratingContainer}>
-        <h3 className={styles.rankNameLabel}>{rankNameLabel}</h3>
-        {!isUnrankedRank && <div style={{ color, fontWeight: "bold" }}>{rating}</div>}
+      <div className={styles.content}>
+        <div>
+          <h3 className={styles.rankNameLabel}>{rankNameLabel}</h3>
+          {!isUnrankedRank && <div style={{ color, fontWeight: "bold" }}>{rating}</div>}
+        </div>
+        <RefreshRatingButton />
       </div>
     </div>
   );
@@ -47,3 +56,48 @@ export const RankedUserProfile = ({ rankedProfile }: { rankedProfile: RankedProf
 function isUnranked(rank: Rank) {
   return rank === "none" || rank === "banned" || rank === "pending";
 }
+
+const RefreshRatingButton = () => {
+  const updateRanking = useAccount((s) => s.updateRanking);
+  const user = useAccount((s) => s.user);
+
+  const { slippiBackendService } = useServices();
+
+  const mutation = useMutation({
+    mutationFn: async (uid: string) => {
+      const profile = await slippiBackendService.fetchRankedNetplayProfile(uid);
+
+      // protect against auth changes during request
+      if (user?.uid !== uid) {
+        return;
+      }
+
+      if (profile) {
+        updateRanking(profile);
+      }
+
+      return profile;
+    },
+  });
+
+  return (
+    <Button
+      className={styles.refreshButton}
+      disabled={mutation.isPending || !user}
+      onClick={() => {
+        if (!user) {
+          return;
+        }
+
+        mutation.mutate(user.uid);
+      }}
+    >
+      {mutation.isPending ? (
+        <CircularProgress color="inherit" size={16} />
+      ) : (
+        <CachedIcon color="inherit" sx={{ fontSize: "16px", color: "var(--purple-light)" }} />
+      )}
+      <span>{Messages.refresh()}</span>
+    </Button>
+  );
+};

@@ -12,19 +12,14 @@
   gap: 16px;
 }
 
-.rankedSidebar:has(.myRankingContainer) {
-  display: grid;
-  grid-template-rows: 1fr 2fr;
-}
-
-@media (height <= 800px) {
-  .rankedSidebar:has(.myRankingContainer) {
-    grid-template-rows: 1fr 3fr;
-  }
-}
-
 .myRankingContainer {
   display: flex;
-  height: 100%;
+  height: 220px;
   width: 100%;
+}
+
+@media (height <= 850px) {
+  .myRankingContainer {
+    height: 130px;
+  }
 }

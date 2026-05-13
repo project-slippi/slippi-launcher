@@ -36,7 +36,7 @@ export const HomeOverview = React.memo(function HomeOverview() {
             </div>
           )}
         />
-        <RankedStatus />
+        <ContentBlock content={<RankedStatus />} />
       </div>
     </div>
   );
