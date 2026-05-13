@@ -1,7 +1,6 @@
 import type { SyncedDolphinSettings } from "@dolphin/config/config";
 import { addGamePath, getSlippiMainlineSettings, setSlippiMainlineSettings } from "@dolphin/config/config";
 import { IniFile } from "@dolphin/config/ini_file";
-import { spawn } from "child_process";
 import { app } from "electron";
 import electronLog from "electron-log";
 import * as fs from "fs-extra";
@@ -12,6 +11,7 @@ import { lt } from "semver";
 import type { DolphinInstallation } from "../types";
 import { DolphinLaunchType } from "../types";
 import { downloadLatestDolphin } from "./download";
+import { executeCommand } from "./execute_command";
 import type { DolphinVersionResponse } from "./fetch_latest_version";
 
 const log = electronLog.scope("dolphin/mainlineInstallation");
@@ -241,7 +241,7 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
   public async getDolphinVersion(): Promise<string | undefined> {
     try {
       const dolphinPath = await this.findDolphinExecutable();
-      const dolphinVersionOut = await this._executeCommand(dolphinPath, ["--version"]);
+      const dolphinVersionOut = await executeCommand(dolphinPath, ["--version"]);
       const match = dolphinVersionOut.match(semverRegex);
       return match?.[0];
     } catch (err) {
@@ -253,37 +253,6 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
     const slippiDir = path.join(this.userFolder, "Slippi");
     await fs.ensureDir(slippiDir);
     return path.resolve(slippiDir, "user.json");
-  }
-
-  private async _executeCommand(command: string, args: string[]): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const child = spawn(command, args);
-      let stdout = "";
-      let stderr = "";
-
-      child.stdout?.on("data", (data) => {
-        stdout += data.toString();
-      });
-
-      child.stderr?.on("data", (data) => {
-        stderr += data.toString();
-      });
-
-      child.on("close", (code) => {
-        // Dolphin often outputs version info to stderr, so prioritize stderr if stdout is empty
-        const output = stdout.trim() || stderr.trim();
-
-        if (code === 0 || output) {
-          resolve(output);
-        } else {
-          reject(new Error(`Command failed with code ${code}: ${stderr}`));
-        }
-      });
-
-      child.on("error", (err) => {
-        reject(err);
-      });
-    });
   }
 
   private async _uninstallDolphin() {
