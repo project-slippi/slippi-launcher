@@ -49,14 +49,10 @@ export const NewsFeed = React.memo(function NewsFeed() {
   React.useEffect(() => {
     if (urlNewsId) {
       setTabParam("home", "news", "newsId", urlNewsId);
-    }
-  }, [urlNewsId, setTabParam]);
-
-  React.useEffect(() => {
-    if (activeTab === "news" && !urlNewsId && memorizedNewsId) {
+    } else if (activeTab === "news" && memorizedNewsId) {
       navigate(memorizedNewsId, { relative: "route", replace: true });
     }
-  }, [activeTab, urlNewsId, memorizedNewsId, navigate]);
+  }, [urlNewsId, activeTab, memorizedNewsId, navigate, setTabParam]);
 
   const handleNewsIdChange = React.useCallback(
     (id: string | null) => {
