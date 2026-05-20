@@ -30,16 +30,17 @@ function getViewPostButtonText(source: NewsItem["source"]) {
 export const NewsArticle = React.memo(function NewsArticle({
   item,
   currentLanguage,
+  autoTruncate,
 }: {
   item: NewsItem;
   currentLanguage: SupportedLanguage;
+  autoTruncate?: boolean;
 }) {
   const { permalink, publishedAt } = item;
 
-  const publishedDate = new Date(publishedAt);
   const dateFnsLocale = getLocale(currentLanguage);
-  const localDateString = format(publishedDate, "PPP p", { locale: dateFnsLocale });
-  const timeAgo = formatDistance(publishedDate, new Date(), {
+  const localDateString = format(publishedAt, "PPP p", { locale: dateFnsLocale });
+  const timeAgo = formatDistance(publishedAt, new Date(), {
     addSuffix: true,
     locale: dateFnsLocale,
   });
@@ -49,11 +50,11 @@ export const NewsArticle = React.memo(function NewsArticle({
       case "bluesky":
         return <BlueskyPost item={item} />;
       case "medium":
-        return <MediumPost item={item} />;
+        return <MediumPost item={item} autoTruncate={autoTruncate} />;
       case "github":
         return <GithubPost item={item} />;
     }
-  }, [item]);
+  }, [item, autoTruncate]);
 
   return (
     <Card>

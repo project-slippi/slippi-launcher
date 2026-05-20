@@ -1,27 +1,20 @@
-import { css } from "@emotion/react";
 import Button from "@mui/material/Button";
 import React from "react";
 
 import { LoadingScreen } from "@/components/loading_screen/loading_screen";
 import { useNewsFeedQuery } from "@/lib/hooks/use_data_fetch_query";
 
-import { NewsArticleContainer as NewsArticle } from "./news_article/news_article.container";
+import { NewsDualPane } from "./news_dual_pane/news_dual_pane";
 import { NewsFeedMessages as Messages } from "./news_feed.messages";
 
-const ITEMS_TO_SHOW = 7;
-const BATCH_SIZE = 5;
-
-const NewsFeedContent = React.memo(function NewsFeedContent() {
-  const [numItemsToShow, setNumItemsToShow] = React.useState(ITEMS_TO_SHOW);
+const NewsFeedContent = React.memo(function NewsFeedContent({
+  newsId,
+  onNewsIdChange,
+}: {
+  newsId: string | null;
+  onNewsIdChange: (id: string | null) => void;
+}) {
   const { isLoading, error, data: allPosts = [], refetch } = useNewsFeedQuery();
-
-  const onShowMore = React.useCallback(() => {
-    setNumItemsToShow(numItemsToShow + BATCH_SIZE);
-  }, [setNumItemsToShow, numItemsToShow]);
-
-  const posts = React.useMemo(() => {
-    return numItemsToShow <= 0 ? allPosts : allPosts.slice(0, numItemsToShow);
-  }, [allPosts, numItemsToShow]);
 
   if (isLoading) {
     return <LoadingScreen message={Messages.loading()} />;
@@ -29,19 +22,8 @@ const NewsFeedContent = React.memo(function NewsFeedContent() {
 
   if (error) {
     return (
-      <div
-        css={css`
-          display: flex;
-          align-items: center;
-        `}
-      >
-        <div
-          css={css`
-            margin-right: 10px;
-          `}
-        >
-          {Messages.failedToFetch()}
-        </div>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <div style={{ marginRight: 10 }}>{Messages.failedToFetch()}</div>
         <Button color="primary" variant="text" size="small" onClick={() => refetch()}>
           {Messages.tryAgain()}
         </Button>
@@ -49,31 +31,19 @@ const NewsFeedContent = React.memo(function NewsFeedContent() {
     );
   }
 
-  return (
-    <div style={{ display: "inline-flex", flexDirection: "column", gap: 20 }}>
-      {posts.map((post) => (
-        <NewsArticle key={post.id} item={post} />
-      ))}
-      {allPosts.length > posts.length && (
-        <div
-          css={css`
-            text-align: center;
-            margin-bottom: 20px;
-          `}
-        >
-          <Button color="primary" variant="contained" size="small" onClick={onShowMore}>
-            {Messages.showMore()}
-          </Button>
-        </div>
-      )}
-    </div>
-  );
+  return <NewsDualPane posts={allPosts} selectedNewsId={newsId} onSelectedNewsIdChange={onNewsIdChange} />;
 });
 
-export const NewsFeed = React.memo(function NewsFeed() {
+export const NewsFeed = React.memo(function NewsFeed({
+  newsId,
+  onNewsIdChange,
+}: {
+  newsId: string | null;
+  onNewsIdChange: (id: string | null) => void;
+}) {
   return (
-    <div style={{ maxWidth: "800px", margin: "auto", height: "100%" }}>
-      <NewsFeedContent />
+    <div style={{ height: "100%" }}>
+      <NewsFeedContent newsId={newsId} onNewsIdChange={onNewsIdChange} />
     </div>
   );
 });

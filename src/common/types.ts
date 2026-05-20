@@ -3,7 +3,7 @@ export type NewsItem = {
   source: "bluesky" | "medium" | "github";
   title: string;
   permalink: string;
-  publishedAt: string; // ISO string
+  publishedAt: Date;
   subtitle?: string;
   imageUrl?: string;
   body?: string;

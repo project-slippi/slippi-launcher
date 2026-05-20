@@ -13,14 +13,25 @@ type TabsProps = {
   value?: string;
   onChange?: (tabId: string) => void;
   tabs: Tab[];
+  highlightedTabIds?: string[];
 };
 
-export const Tabs = ({ defaultTab, value, onChange, tabs }: TabsProps) => (
+export const Tabs = ({ defaultTab, value, onChange, tabs, highlightedTabIds }: TabsProps) => (
   <BaseTabs.Root defaultValue={defaultTab} value={value} onValueChange={onChange} className={styles.root}>
     <BaseTabs.List className={styles.list}>
       {tabs.map((tab, i) => (
-        <BaseTabs.Tab className={styles.trigger} value={tab.id} key={i} data-label={tab.label}>
-          {tab.label}
+        <BaseTabs.Tab
+          className={styles.trigger}
+          value={tab.id}
+          key={i}
+          data-active={tab.id === value ? "true" : undefined}
+        >
+          <span className={styles.labelRow}>
+            {highlightedTabIds?.includes(tab.id) && <span className={styles.dot} />}
+            <span className={styles.label} data-label={tab.label}>
+              {tab.label}
+            </span>
+          </span>
         </BaseTabs.Tab>
       ))}
     </BaseTabs.List>

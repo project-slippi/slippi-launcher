@@ -1,0 +1,6 @@
+.base {
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+  transition: opacity 0.15s ease-in;
+}

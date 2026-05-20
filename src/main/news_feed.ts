@@ -30,14 +30,7 @@ export async function fetchNewsFeedData(): Promise<NewsItem[]> {
 
   log.info(`Total fetchNewsFeedData completed in ${Date.now() - totalStart}ms`);
 
-  return allNews
-    .flatMap((news) => news.value)
-    .sort((a, b) => {
-      // Sort all news item by reverse chronological order
-      const aDate = new Date(a.publishedAt).getTime();
-      const bDate = new Date(b.publishedAt).getTime();
-      return bDate - aDate;
-    });
+  return allNews.flatMap((news) => news.value).sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime());
 }
 
 async function fetchMediumNews(): Promise<NewsItem[]> {
@@ -55,7 +48,7 @@ async function fetchMediumNews(): Promise<NewsItem[]> {
 
   return result.items.map((post): NewsItem => {
     // Parse the Medium pubDate format: "YYYY-MM-DD HH:MM:SS"
-    const publishedAt = new Date(post.pubDate.replace(" ", "T") + "Z").toISOString();
+    const publishedAt = new Date(post.pubDate.replace(" ", "T") + "Z");
     // The NewsItem content needs to be in markdown format so convert the raw HTML content to markdown
     const bodyMarkdown = turndownService.turndown(post.content);
 
@@ -86,7 +79,7 @@ async function fetchGithubReleaseNews(repos: string[]): Promise<NewsItem[]> {
           source: "github",
           title: `[${repo}] ${release.name}`,
           body: release.body,
-          publishedAt: release.published_at,
+          publishedAt: new Date(release.published_at),
           permalink: release.html_url,
         };
       });
@@ -114,7 +107,7 @@ async function fetchBlueskyPosts(): Promise<NewsItem[]> {
 
   const news = feed.map((entry): NewsItem => {
     const post = entry.post;
-    const publishedAt = new Date(post.record.createdAt).toISOString();
+    const publishedAt = new Date(post.record.createdAt);
     return {
       id: `bluesky-${post.cid}`,
       source: "bluesky",

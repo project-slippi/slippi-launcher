@@ -12,10 +12,16 @@ import styles from "./news_article.module.css";
 
 const MAX_BODY_LENGTH = 750;
 
-export const MediumPost = React.memo(function MediumPost({ item }: { item: NewsItem }) {
+export const MediumPost = React.memo(function MediumPost({
+  item,
+  autoTruncate,
+}: {
+  item: NewsItem;
+  autoTruncate?: boolean;
+}) {
   const { imageUrl, title, subtitle, body = "" } = item;
   const nextPageBreak = body?.indexOf("\n\n", MAX_BODY_LENGTH) ?? -1;
-  const [truncateBody, setTruncatedBody] = React.useState(nextPageBreak > 0);
+  const [truncateBody, setTruncatedBody] = React.useState(autoTruncate && nextPageBreak > 0);
 
   const bodyContent = truncateBody ? truncateString(body, nextPageBreak) : body;
 
