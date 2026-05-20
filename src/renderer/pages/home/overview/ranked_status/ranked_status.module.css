@@ -1,6 +1,6 @@
-.card {
-  margin: 6px;
-  padding: 10px;
+.container {
+  padding: 16px;
+  text-align: center;
 }
 
 .centerStack {

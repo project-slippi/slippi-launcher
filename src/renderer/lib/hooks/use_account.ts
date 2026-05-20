@@ -1,10 +1,11 @@
 import type { StoredAccount } from "@settings/types";
 import log from "electron-log";
+import { produce } from "immer";
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
 import type { AuthUser } from "@/services/auth/types";
-import type { SlippiBackendService, UserData } from "@/services/slippi/types";
+import type { RankedProfile, SlippiBackendService, UserData } from "@/services/slippi/types";
 
 export const useAccount = create(
   combine(
@@ -40,6 +41,15 @@ export const useAccount = create(
       setServerError: (serverError: boolean) => set({ serverError }),
       setDisplayName: (displayName: string) => set({ displayName }),
       setEmailVerificationSent: (emailVerificationSent: boolean) => set({ emailVerificationSent }),
+      // Used to only fetch and update the user's rank and rating
+      updateRanking: (rankedProfile: RankedProfile) =>
+        set((state) =>
+          produce(state, (draft) => {
+            if (draft.userData) {
+              draft.userData.rankedNetplayProfile = rankedProfile;
+            }
+          }),
+        ),
       // Multi-account actions
       setAccounts: (accounts: StoredAccount[]) => set({ accounts }),
       setActiveAccountId: (activeAccountId: string | null) => set({ activeAccountId }),

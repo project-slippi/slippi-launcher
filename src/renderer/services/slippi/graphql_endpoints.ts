@@ -13,6 +13,14 @@ type PrivateUserInfo = {
   playKey: Nullable<string>;
 };
 
+export type RankedNetplayProfile = {
+  id: string;
+  ratingOrdinal: Nullable<number>;
+  ratingUpdateCount: Nullable<number>;
+  dailyGlobalPlacement: Nullable<number>;
+  dailyRegionalPlacement: Nullable<number>;
+};
+
 type User = {
   connectCode: Nullable<ConnectCode>;
   displayName: Nullable<string>;
@@ -20,6 +28,8 @@ type User = {
   rulesAccepted: number;
   private: Nullable<PrivateUserInfo>;
   activeChatMessages: string[];
+  activeSubscription: Nullable<{ level: string }>;
+  rankedNetplayProfile: Nullable<RankedNetplayProfile>;
 };
 
 type DolphinRelease = {
@@ -43,7 +53,18 @@ export const QUERY_VALIDATE_USER_ID: TypedDocumentNode<
 
 export const QUERY_GET_USER_DATA: TypedDocumentNode<
   {
-    getUser: Nullable<Pick<User, "fbUid" | "displayName" | "connectCode" | "private" | "rulesAccepted">>;
+    getUser: Nullable<
+      Pick<
+        User,
+        | "fbUid"
+        | "displayName"
+        | "connectCode"
+        | "private"
+        | "rulesAccepted"
+        | "activeSubscription"
+        | "rankedNetplayProfile"
+      >
+    >;
     getLatestDolphin: Nullable<Pick<DolphinRelease, "version">>;
   },
   {
@@ -57,6 +78,16 @@ export const QUERY_GET_USER_DATA: TypedDocumentNode<
       connectCode {
         code
       }
+      activeSubscription {
+        level
+      }
+      rankedNetplayProfile {
+        id
+        ratingOrdinal
+        ratingUpdateCount
+        dailyGlobalPlacement
+        dailyRegionalPlacement
+      }
       private {
         playKey
       }
@@ -64,6 +95,28 @@ export const QUERY_GET_USER_DATA: TypedDocumentNode<
     }
     getLatestDolphin {
       version
+    }
+  }
+`;
+
+export const QUERY_GET_RANKED_NETPLAY_PROFILE: TypedDocumentNode<
+  {
+    getUser: Nullable<Pick<User, "fbUid" | "rankedNetplayProfile">>;
+  },
+  {
+    fbUid: string;
+  }
+> = gql`
+  query getUserKeyQuery($fbUid: String) {
+    getUser(fbUid: $fbUid) {
+      fbUid
+      rankedNetplayProfile {
+        id
+        ratingOrdinal
+        ratingUpdateCount
+        dailyGlobalPlacement
+        dailyRegionalPlacement
+      }
     }
   }
 `;
@@ -80,9 +133,6 @@ export const QUERY_CHAT_MESSAGE_DATA: TypedDocumentNode<
   query GetChatMessageConfigData($fbUid: String) {
     getUser(fbUid: $fbUid) {
       fbUid
-      activeSubscription {
-        level
-      }
       activeChatMessages
     }
     getChatMessageOptions {

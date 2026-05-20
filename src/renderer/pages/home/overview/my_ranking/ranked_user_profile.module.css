@@ -1,0 +1,54 @@
+.container {
+  overflow: hidden;
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.rankNameLabel {
+  color: var(--off-white);
+  margin: 0;
+  margin-bottom: 5px;
+}
+
+.iconContainer {
+  right: 0;
+  height: 100%;
+  width: 60%;
+  position: absolute;
+  background-repeat: no-repeat;
+  background-size: 110%;
+  background-position: left 25%;
+}
+
+.gradientContainer {
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+}
+
+.refreshButton {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--purple-lighter);
+  font-size: 10pt;
+}
+
+.refreshButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.content {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding: 16px;
+  box-sizing: border-box;
+}
