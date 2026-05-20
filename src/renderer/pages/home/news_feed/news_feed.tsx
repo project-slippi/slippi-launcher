@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { LoadingScreen } from "@/components/loading_screen/loading_screen";
 import { useNewsFeedQuery } from "@/lib/hooks/use_data_fetch_query";
+import { useTabMemory } from "@/lib/hooks/use_tab_memory";
 
 import { NewsDualPane } from "./news_dual_pane/news_dual_pane";
 import { NewsFeedMessages as Messages } from "./news_feed.messages";
@@ -38,18 +39,39 @@ const NewsFeedContent = React.memo(function NewsFeedContent({
 export const NewsFeed = React.memo(function NewsFeed() {
   const params = useParams();
   const navigate = useNavigate();
-  const newsId = (params["*"] as string) || null;
+
+  const activeTab = params.tab;
+  const urlNewsId = (params["*"] as string) || null;
+
+  const setTabParam = useTabMemory((s) => s.setTabParam);
+  const memorizedNewsId = useTabMemory((s) => s.tabState["home:news"]?.newsId ?? null);
+
+  React.useEffect(() => {
+    if (urlNewsId) {
+      setTabParam("home", "news", "newsId", urlNewsId);
+    }
+  }, [urlNewsId, setTabParam]);
+
+  React.useEffect(() => {
+    if (activeTab === "news" && !urlNewsId && memorizedNewsId) {
+      navigate(memorizedNewsId, { relative: "route", replace: true });
+    }
+  }, [activeTab, urlNewsId, memorizedNewsId, navigate]);
 
   const handleNewsIdChange = React.useCallback(
     (id: string | null) => {
       if (id) {
+        setTabParam("home", "news", "newsId", id);
         navigate(id, { relative: "route" });
       } else {
+        setTabParam("home", "news", "newsId", null);
         navigate("..");
       }
     },
-    [navigate],
+    [navigate, setTabParam],
   );
+
+  const newsId = urlNewsId ?? memorizedNewsId;
 
   return (
     <div style={{ height: "100%" }}>
