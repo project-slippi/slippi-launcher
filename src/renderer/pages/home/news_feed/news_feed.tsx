@@ -44,11 +44,11 @@ export const NewsFeed = React.memo(function NewsFeed() {
   const urlNewsId = (params["*"] as string) || null;
 
   const setTabParam = useTabMemory((s) => s.setTabParam);
-  const memorizedNewsId = useTabMemory((s) => s.tabState["home:news"]?.newsId ?? null);
+  const memorizedNewsId = useTabMemory((s) => s.tabState["newsFeed:selectedArticle"]?.id ?? null);
 
   React.useEffect(() => {
     if (urlNewsId) {
-      setTabParam("home", "news", "newsId", urlNewsId);
+      setTabParam("newsFeed", "selectedArticle", "id", urlNewsId);
     } else if (activeTab === "news" && memorizedNewsId) {
       navigate(memorizedNewsId, { relative: "route", replace: true });
     }
@@ -57,10 +57,10 @@ export const NewsFeed = React.memo(function NewsFeed() {
   const handleNewsIdChange = React.useCallback(
     (id: string | null) => {
       if (id) {
-        setTabParam("home", "news", "newsId", id);
+        setTabParam("newsFeed", "selectedArticle", "id", id);
         navigate(id, { relative: "route" });
       } else {
-        setTabParam("home", "news", "newsId", null);
+        setTabParam("newsFeed", "selectedArticle", "id", null);
         navigate("..");
       }
     },
